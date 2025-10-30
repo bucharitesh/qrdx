@@ -119,14 +119,6 @@ export default function MyComponent() {
 
 [Read full documentation →](./packages/qr/README.md)
 
-### [@repo/next-config](./packages/next-config) — Next.js Configuration
-
-Shared Next.js configuration with bundle analyzer and environment variable validation.
-
-[Read full documentation →](./packages/next-config/README.md)
-
-### [@repo/typescript-config](./packages/typescript-config) — TypeScript Configuration
-
 Shared TypeScript configurations for consistent type checking across the monorepo.
 
 ## Apps
@@ -192,6 +184,10 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 This project is licensed under the ISC License - see individual package LICENSE files for details.
 
 The QR code generation is based on [qrcode.react](https://github.com/zpao/qrcode.react) by Paul O'Shannessy.
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=flamapp/flam-qr&type=Date)](https://star-history.com/#flamapp/flam-qr&Date)
 
 ## Acknowledgments
 
