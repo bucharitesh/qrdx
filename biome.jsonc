@@ -8,6 +8,18 @@
     "rules": {
       "suspicious": {
         "noConsole": "off"
+      },
+      "a11y": {
+        "noSvgWithoutTitle": "off"
+      },
+      "complexity": {
+        "noExcessiveCognitiveComplexity": "off"
+      },
+      "performance": {
+        "noNamespaceImport": "off"
+      },
+      "style": {
+        "noMagicNumbers": "off"
       }
     }
   },

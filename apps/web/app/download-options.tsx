@@ -105,18 +105,21 @@ export const DownloadOptions: React.FC<DownloadOptionsProps> = ({
   };
 
   return (
-    <div className="space-y-3">
-      <div className="flex items-center gap-3">
+    <div className="w-full space-y-3">
+      <div className="flex w-full flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
         {/* Image Download Dropdown */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button className="flex items-center gap-2" variant="outline">
+            <Button
+              className="flex w-full items-center justify-center gap-2 sm:w-auto"
+              variant="outline"
+            >
               <DownloadIcon className="h-4 w-4" />
               Image
               <ChevronDownIcon className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start">
+          <DropdownMenuContent align="center">
             <DropdownMenuItem onClick={handleDownloadPNG}>
               Download PNG
             </DropdownMenuItem>
@@ -131,7 +134,7 @@ export const DownloadOptions: React.FC<DownloadOptionsProps> = ({
 
         {/* Copy SVG Button */}
         <Button
-          className="flex items-center gap-2"
+          className="flex w-full items-center justify-center gap-2 sm:w-auto"
           onClick={handleCopySVG}
           variant="outline"
         >

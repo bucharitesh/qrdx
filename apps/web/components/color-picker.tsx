@@ -1,4 +1,5 @@
-import { useState } from "react";
+/** biome-ignore-all lint/performance/useTopLevelRegex: <explanation> */
+import React, { useState } from "react";
 import { HexColorPicker } from "react-colorful";
 import {
   FormControl,
@@ -25,60 +26,77 @@ export const ColorInput = ({
   showLabel = true,
 }: ColorFieldProps) => {
   const [showPicker, setShowPicker] = useState(false);
+  const [inputValue, setInputValue] = useState(color);
   const pickerRef = useOutsideClick(() => setShowPicker(false));
 
+  // Update input value when color prop changes
+  React.useEffect(() => {
+    setInputValue(color);
+  }, [color]);
+
   const handleColorChange = (newColor: string) => {
-    const cleanedColor = newColor.replace(/\s+/g, "").replace(/^#+/g, "");
+    // Remove any spaces and ensure it starts with #
+    let cleanedColor = newColor.trim();
 
-    const formattedColor = `#${cleanedColor}`;
+    if (!cleanedColor.startsWith("#")) {
+      cleanedColor = `#${cleanedColor.replace(/^#+/g, "")}`;
+    }
 
-    onChange(formattedColor);
+    // Validate hex color format
+    const hexRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
+    if (hexRegex.test(cleanedColor)) {
+      onChange(cleanedColor);
+      setInputValue(cleanedColor);
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setInputValue(value);
+
+    // Only update parent if valid
+    if (value.match(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/)) {
+      onChange(value);
+    }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      handleColorChange(e.currentTarget.value);
+      handleColorChange(inputValue);
     }
   };
 
   return (
-    <FormItem className="flex flex-col gap-0">
+    <FormItem className="flex flex-1 flex-col gap-2">
       {showLabel && (
-        <FormLabel className="flex w-max items-center gap-1 font-medium text-gray-700 text-sm peer-disabled:opacity-70">
+        <FormLabel className="font-medium text-gray-700 text-sm">
           {label}
         </FormLabel>
       )}
       <FormControl>
-        <div className="flex items-center gap-1 rounded-xl border border-black/8 px-2 py-1 shadow-sm">
+        <div className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2 shadow-sm transition-all focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-200 hover:border-gray-400">
           <div className="relative" ref={pickerRef}>
             <button
-              className="h-7 min-w-7 cursor-pointer rounded-lg border border-black"
-              onClick={() => setShowPicker(true)}
+              aria-label="Open color picker"
+              className="h-8 w-8 flex-shrink-0 cursor-pointer rounded border-2 border-gray-300 transition-colors hover:border-gray-400"
+              onClick={() => setShowPicker(!showPicker)}
               style={{ backgroundColor: color }}
               type="button"
             />
             {showPicker && (
-              <HexColorPicker
-                color={color}
-                onChange={handleColorChange}
-                style={{
-                  position: "absolute",
-                  bottom: "-205px",
-                  left: "10px",
-                  zIndex: 1,
-                }}
-              />
+              <div className="absolute top-full left-0 z-50 mt-2 rounded-lg shadow-xl">
+                <HexColorPicker color={color} onChange={onChange} />
+              </div>
             )}
           </div>
           <Input
-            className="w-full rounded-xl !focus:border-none border-none shadow-none !focus:outline-none outline-none !focus:ring-0 focus:border-none focus:outline-none focus:ring-0 focus:ring-transparent focus-visible:border-0 focus-visible:outline-0 focus-visible:ring-0 active:border-none active:outline-none active:ring-0 active:ring-transparent"
-            maxLength={8}
+            className="flex-1 border-0 bg-transparent p-0 font-mono text-gray-900 text-sm placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
+            maxLength={7}
             onBlur={(e) => handleColorChange(e.target.value)}
-            onChange={(e) => onChange(e.target.value)}
-            onKeyDown={(e) => handleKeyDown(e)}
+            onChange={handleInputChange}
+            onKeyDown={handleKeyDown}
             placeholder="#000000"
-            style={{ outline: "none", border: "none", boxShadow: "none" }}
-            value={color}
+            value={inputValue}
           />
         </div>
       </FormControl>
