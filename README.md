@@ -36,20 +36,6 @@ The demo showcases:
 - Logo embedding
 - Contrast ratio validation
 - Multiple download formats
-
-## Project Structure
-
-This is a monorepo managed with [Turborepo](https://turborepo.com) and [pnpm](https://pnpm.io):
-
-```
-flam-qr/
-├── apps/
-│   └── web/              # Demo web application
-├── packages/
-│   ├── qr/               # Core QR code generation library
-│   ├── seo/              # SEO utilities and metadata
-│   ├── next-config/      # Shared Next.js configuration
-│   └── typescript-config/ # Shared TypeScript configurations
 ```
 
 ## Quick Start
@@ -121,21 +107,6 @@ export default function MyComponent() {
 
 Shared TypeScript configurations for consistent type checking across the monorepo.
 
-## Apps
-
-### [Web](./apps/web) — Demo Application
-
-A full-featured demo application showcasing the QR library capabilities.
-
-**Features:**
-- Real-time QR code preview
-- Color picker with contrast validation
-- Template selector
-- Multiple export formats (PNG, JPG, SVG)
-- Logo toggle
-- Responsive design
-
-[Read full documentation →](./apps/web/README.md)
 
 ## Development
 
