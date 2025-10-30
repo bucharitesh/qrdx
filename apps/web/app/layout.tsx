@@ -1,14 +1,9 @@
-import React from 'react'
-import "./globals.css"
+import "./globals.css";
 
-const Layout = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <html>
-        <body>
-            {children}
-        </body>
-    </html>
-  )
-}
+const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <html lang="en">
+    <body>{children}</body>
+  </html>
+);
 
-export default Layout
+export default Layout;

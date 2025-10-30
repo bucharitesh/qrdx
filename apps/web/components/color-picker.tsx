@@ -1,21 +1,21 @@
 import { useState } from "react";
 import { HexColorPicker } from "react-colorful";
-import { Input } from "@/components/ui/input";
 import {
   FormControl,
   FormItem,
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import { useOutsideClick } from "@/lib/hooks/use-outside-click";
 
-interface ColorFieldProps {
+type ColorFieldProps = {
   color: string;
   onChange: (color: string) => void;
   label?: string;
   error?: string;
   showLabel?: boolean;
-}
+};
 
 export const ColorInput = ({
   color,
@@ -44,40 +44,41 @@ export const ColorInput = ({
   return (
     <FormItem className="flex flex-col gap-0">
       {showLabel && (
-        <FormLabel className="flex items-center gap-1 peer-disabled:opacity-70 w-max text-sm font-medium text-gray-700">
+        <FormLabel className="flex w-max items-center gap-1 font-medium text-gray-700 text-sm peer-disabled:opacity-70">
           {label}
         </FormLabel>
       )}
       <FormControl>
-        <div className="flex gap-1 items-center rounded-xl border border-black/8 shadow-sm px-2 py-1">
+        <div className="flex items-center gap-1 rounded-xl border border-black/8 px-2 py-1 shadow-sm">
           <div className="relative" ref={pickerRef}>
-            <div
-              className="border border-black min-w-7 h-7  rounded-lg cursor-pointer"
-              style={{ backgroundColor: color }}
+            <button
+              className="h-7 min-w-7 cursor-pointer rounded-lg border border-black"
               onClick={() => setShowPicker(true)}
+              style={{ backgroundColor: color }}
+              type="button"
             />
             {showPicker && (
               <HexColorPicker
+                color={color}
+                onChange={handleColorChange}
                 style={{
                   position: "absolute",
                   bottom: "-205px",
                   left: "10px",
                   zIndex: 1,
                 }}
-                color={color}
-                onChange={handleColorChange}
               />
             )}
           </div>
           <Input
-            className="w-full rounded-xl border-none shadow-none outline-none focus-visible:ring-0 focus-visible:border-0 focus-visible:outline-0 focus:outline-none focus:border-none focus:ring-0 focus:ring-transparent active:border-none active:outline-none active:ring-0 active:ring-transparent !focus:outline-none !focus:border-none !focus:ring-0"
-            style={{ outline: "none", border: "none", boxShadow: "none" }}
-            value={color}
-            onChange={(e) => onChange(e.target.value)}
+            className="w-full rounded-xl !focus:border-none border-none shadow-none !focus:outline-none outline-none !focus:ring-0 focus:border-none focus:outline-none focus:ring-0 focus:ring-transparent focus-visible:border-0 focus-visible:outline-0 focus-visible:ring-0 active:border-none active:outline-none active:ring-0 active:ring-transparent"
+            maxLength={8}
             onBlur={(e) => handleColorChange(e.target.value)}
+            onChange={(e) => onChange(e.target.value)}
             onKeyDown={(e) => handleKeyDown(e)}
             placeholder="#000000"
-            maxLength={8}
+            style={{ outline: "none", border: "none", boxShadow: "none" }}
+            value={color}
           />
         </div>
       </FormControl>

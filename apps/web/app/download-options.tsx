@@ -1,5 +1,7 @@
 "use client";
 
+import { getQRAsCanvas, getQRAsSVGDataUri, getQRData } from "@repo/qr";
+import { ChevronDownIcon, CopyIcon, DownloadIcon } from "lucide-react";
 import React from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,10 +10,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ChevronDownIcon, DownloadIcon, CopyIcon } from "@radix-ui/react-icons";
-import { getQRAsCanvas, getQRAsSVGDataUri, getQRData } from "@repo/qr";
 
-interface DownloadOptionsProps {
+type DownloadOptionsProps = {
   url: string;
   fgColor: string;
   bgColor: string;
@@ -20,7 +20,7 @@ interface DownloadOptionsProps {
   showLogo: boolean;
   logo?: string;
   templateId?: string;
-}
+};
 
 export const DownloadOptions: React.FC<DownloadOptionsProps> = ({
   url,
@@ -32,8 +32,8 @@ export const DownloadOptions: React.FC<DownloadOptionsProps> = ({
   logo,
   templateId,
 }) => {
-  const qrProps = React.useMemo(() => {
-    return {
+  const qrProps = React.useMemo(
+    () => ({
       ...getQRData({
         url,
         fgColor,
@@ -44,8 +44,9 @@ export const DownloadOptions: React.FC<DownloadOptionsProps> = ({
         logo,
       }),
       templateId,
-    };
-  }, [url, fgColor, bgColor, showLogo, logo, templateId, eyeColor, dotColor]);
+    }),
+    [url, fgColor, bgColor, showLogo, logo, templateId, eyeColor, dotColor]
+  );
 
   const downloadFile = (dataUrl: string, filename: string) => {
     const link = document.createElement("a");
@@ -91,8 +92,10 @@ export const DownloadOptions: React.FC<DownloadOptionsProps> = ({
     try {
       const svgDataUri = await getQRAsSVGDataUri(qrProps);
       // Extract SVG content from data URI
-      const svgContent = decodeURIComponent(svgDataUri.replace("data:image/svg+xml,", ""));
-      
+      const svgContent = decodeURIComponent(
+        svgDataUri.replace("data:image/svg+xml,", "")
+      );
+
       await navigator.clipboard.writeText(svgContent);
       // You could add a toast notification here if available
       console.log("SVG copied to clipboard");
@@ -107,7 +110,7 @@ export const DownloadOptions: React.FC<DownloadOptionsProps> = ({
         {/* Image Download Dropdown */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="flex items-center gap-2">
+            <Button className="flex items-center gap-2" variant="outline">
               <DownloadIcon className="h-4 w-4" />
               Image
               <ChevronDownIcon className="h-4 w-4" />
@@ -127,7 +130,11 @@ export const DownloadOptions: React.FC<DownloadOptionsProps> = ({
         </DropdownMenu>
 
         {/* Copy SVG Button */}
-        <Button variant="outline" onClick={handleCopySVG} className="flex items-center gap-2">
+        <Button
+          className="flex items-center gap-2"
+          onClick={handleCopySVG}
+          variant="outline"
+        >
           <CopyIcon className="h-4 w-4" />
           Copy SVG
         </Button>

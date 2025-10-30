@@ -23,4 +23,4 @@ export const QR_LEVELS = ["L", "M", "Q", "H"] as const;
 // get an explicit height or width, I'd rather default to something than throw.
 export const DEFAULT_IMG_SCALE = 0.1;
 
-export const DUB_QR_LOGO = "https://instant.flamapp.ai/flogo-qr.svg";
+export const FLAM_QR_LOGO = "https://instant.flamapp.ai/flogo-qr.svg";
