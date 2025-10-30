@@ -1,140 +1,210 @@
-# ▲ / next-forge
+# Flam QR
 
-**Production-grade Turborepo template for Next.js apps.**
+A powerful, flexible QR code generation library and demo application from Flam, now open source.
+
+**[Live Demo](https://qr.flamapp.tech)** • Built with Next.js and React
 
 <div>
-  <img src="https://img.shields.io/npm/dy/next-forge" alt="" />
-  <img src="https://img.shields.io/npm/v/next-forge" alt="" />
-  <img src="https://img.shields.io/github/license/vercel/next-forge" alt="" />
+  <img src="https://img.shields.io/badge/license-ISC-blue" alt="License" />
+  <img src="https://img.shields.io/badge/react-19.2.0-blue" alt="React Version" />
+  <img src="https://img.shields.io/badge/next.js-16.0.0-black" alt="Next.js Version" />
 </div>
 
 ## Overview
 
-[next-forge](https://github.com/vercel/next-forge) is a production-grade [Turborepo](https://turborepo.com) template for [Next.js](https://nextjs.org/) apps. It's designed to be a comprehensive starting point for building SaaS applications, providing a solid, opinionated foundation with minimal configuration required.
+Flam QR is a production-ready QR code generation library with extensive customization options. Originally built for Flam's internal use, it now powers beautiful, customizable QR codes for anyone.
 
-Built on a decade of experience building web applications, next-forge balances speed and quality to help you ship thoroughly-built products faster.
+### Key Features
 
-### Philosophy
-
-next-forge is built around five core principles:
-
-- **Fast** — Quick to build, run, deploy, and iterate on
-- **Cheap** — Free to start with services that scale with you
-- **Opinionated** — Integrated tooling designed to work together
-- **Modern** — Latest stable features with healthy community support
-- **Safe** — End-to-end type safety and robust security posture
+- 🎨 **Highly Customizable** — Colors, logos, templates, and more
+- 🎭 **Multiple Templates** — Pre-designed templates for various use cases
+- 📱 **Multiple Formats** — SVG, PNG, JPG support with Canvas and SVG rendering
+- ♿ **Accessibility** — Automatic contrast checking for scannable QR codes
+- 🖼️ **Logo Support** — Embed custom logos or images in QR codes
+- ⚡ **Fast & Lightweight** — Optimized for performance
+- 🎯 **TypeScript First** — Full type safety out of the box
+- 🌐 **Server & Client** — Works in both browser and Node.js environments
 
 ## Demo
 
-Experience next-forge in action:
+Try it out at **[qr.flamapp.tech](https://qr.flamapp.tech)**
 
-- [Web](https://demo.next-forge.com) — Marketing website
-- [App](https://app.demo.next-forge.com) — Main application
-- [Storybook](https://storybook.demo.next-forge.com) — Component library
-- [API](https://api.demo.next-forge.com/health) — API health check
+The demo showcases:
+- Real-time QR code generation
+- Color customization with live preview
+- Template selection
+- Logo embedding
+- Contrast ratio validation
+- Multiple download formats
 
-## Features
+## Project Structure
 
-next-forge comes with batteries included:
+This is a monorepo managed with [Turborepo](https://turborepo.com) and [pnpm](https://pnpm.io):
 
-### Apps
+```
+flam-qr/
+├── apps/
+│   └── web/              # Demo web application
+├── packages/
+│   ├── qr/               # Core QR code generation library
+│   ├── seo/              # SEO utilities and metadata
+│   ├── next-config/      # Shared Next.js configuration
+│   └── typescript-config/ # Shared TypeScript configurations
+```
 
-- **Web** — Marketing site built with Tailwind CSS and TWBlocks
-- **App** — Main application with authentication and database integration
-- **API** — RESTful API with health checks and monitoring
-- **Docs** — Documentation site powered by Mintlify
-- **Email** — Email templates with React Email
-- **Storybook** — Component development environment
-
-### Packages
-
-- **Authentication** — Powered by [Clerk](https://clerk.com)
-- **Database** — Type-safe ORM with migrations
-- **Design System** — Comprehensive component library with dark mode
-- **Payments** — Subscription management via [Stripe](https://stripe.com)
-- **Email** — Transactional emails via [Resend](https://resend.com)
-- **Analytics** — Web ([Google Analytics](https://developers.google.com/analytics)) and product ([Posthog](https://posthog.com))
-- **Observability** — Error tracking ([Sentry](https://sentry.io)), logging, and uptime monitoring ([BetterStack](https://betterstack.com))
-- **Security** — Application security ([Arcjet](https://arcjet.com)), rate limiting, and secure headers
-- **CMS** — Type-safe content management for blogs and documentation
-- **SEO** — Metadata management, sitemaps, and JSON-LD
-- **AI** — AI integration utilities
-- **Webhooks** — Inbound and outbound webhook handling
-- **Collaboration** — Real-time features with avatars and live cursors
-- **Feature Flags** — Feature flag management
-- **Cron** — Scheduled job management
-- **Storage** — File upload and management
-- **Internationalization** — Multi-language support
-- **Notifications** — In-app notification system
-
-## Getting Started
+## Quick Start
 
 ### Prerequisites
 
-- Node.js 20+
-- [pnpm](https://pnpm.io) (or npm/yarn/bun)
-- [Stripe CLI](https://docs.stripe.com/stripe-cli) for local webhook testing
+- Node.js 18+
+- pnpm (recommended) or npm/yarn
 
 ### Installation
 
-Create a new next-forge project:
+```bash
+# Clone the repository
+git clone https://github.com/your-org/flam-qr.git
+cd flam-qr
 
-```sh
-npx next-forge@latest init
+# Install dependencies
+pnpm install
+
+# Run the development server
+pnpm dev
 ```
 
-### Setup
+The web app will be available at `http://localhost:3000`
 
-1. Configure your environment variables
-2. Set up required service accounts (Clerk, Stripe, Resend, etc.)
-3. Run the development server
+### Building for Production
 
-For detailed setup instructions, read the [documentation](https://www.next-forge.com/docs).
+```bash
+# Build all packages and apps
+pnpm build
 
-## Structure
-
-next-forge uses a monorepo structure managed by Turborepo:
-
-```
-next-forge/
-├── apps/           # Deployable applications
-│   ├── web/        # Marketing website (port 3001)
-│   ├── app/        # Main application (port 3000)
-│   ├── api/        # API server
-│   ├── docs/       # Documentation
-│   ├── email/      # Email templates
-│   └── storybook/  # Component library
-└── packages/       # Shared packages
-    ├── design-system/
-    ├── database/
-    ├── auth/
-    └── ...
+# Start production server
+cd apps/web
+pnpm start
 ```
 
-Each app is self-contained and independently deployable. Packages are shared across apps for consistency and maintainability.
+## Packages
 
-## Documentation
+### [@repo/qr](./packages/qr) — QR Code Generation Library
 
-Full documentation is available at [next-forge.com/docs](https://www.next-forge.com/docs), including:
+The core QR code generation library with extensive customization options.
 
-- Detailed setup guides
-- Package documentation
-- Migration guides for swapping providers
-- Deployment instructions
-- Examples and recipes
+**Features:**
+- Canvas and SVG rendering
+- Custom colors for QR code, background, eyes, and dots
+- Logo/image embedding with excavation
+- Multiple templates
+- Error correction levels (L, M, Q, H)
+- TypeScript support
+
+**Basic Usage:**
+
+```tsx
+import { QRCode } from '@repo/qr';
+
+export default function MyComponent() {
+  return (
+    <QRCode
+      url="https://example.com"
+      fgColor="#000000"
+      bgColor="#ffffff"
+      size={512}
+    />
+  );
+}
+```
+
+[Read full documentation →](./packages/qr/README.md)
+
+### [@repo/seo](./packages/seo) — SEO Utilities
+
+Metadata management, JSON-LD, and SEO helpers for Next.js applications.
+
+[Read full documentation →](./packages/seo/README.md)
+
+### [@repo/next-config](./packages/next-config) — Next.js Configuration
+
+Shared Next.js configuration with bundle analyzer and environment variable validation.
+
+[Read full documentation →](./packages/next-config/README.md)
+
+### [@repo/typescript-config](./packages/typescript-config) — TypeScript Configuration
+
+Shared TypeScript configurations for consistent type checking across the monorepo.
+
+## Apps
+
+### [Web](./apps/web) — Demo Application
+
+A full-featured demo application showcasing the QR library capabilities.
+
+**Features:**
+- Real-time QR code preview
+- Color picker with contrast validation
+- Template selector
+- Multiple export formats (PNG, JPG, SVG)
+- Logo toggle
+- Responsive design
+
+[Read full documentation →](./apps/web/README.md)
+
+## Development
+
+### Available Scripts
+
+```bash
+# Development
+pnpm dev          # Start all apps in development mode
+pnpm dev --filter web  # Start only the web app
+
+# Building
+pnpm build        # Build all packages and apps
+pnpm build --filter @repo/qr  # Build only the QR package
+
+# Testing & Quality
+pnpm typecheck    # Run TypeScript type checking
+pnpm check        # Run linting and formatting checks
+pnpm fix          # Auto-fix linting and formatting issues
+
+# Maintenance
+pnpm clean        # Clean all node_modules
+pnpm bump-deps    # Update all dependencies
+```
+
+### Project Tools
+
+- **Build System:** [Turborepo](https://turborepo.com)
+- **Package Manager:** [pnpm](https://pnpm.io)
+- **Linting & Formatting:** [Biome](https://biomejs.dev)
+- **Styling:** [Tailwind CSS](https://tailwindcss.com)
+- **UI Components:** [Radix UI](https://radix-ui.com)
+- **Forms:** [React Hook Form](https://react-hook-form.com)
 
 ## Contributing
 
-We welcome contributions! See the [contributing guide](https://github.com/vercel/next-forge/blob/main/.github/CONTRIBUTING.md) for details.
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-## Contributors
-
-<a href="https://github.com/vercel/next-forge/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=vercel/next-forge" />
-</a>
-
-Made with [contrib.rocks](https://contrib.rocks).
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## License
 
-MIT
+This project is licensed under the ISC License - see individual package LICENSE files for details.
+
+The QR code generation is based on [qrcode.react](https://github.com/zpao/qrcode.react) by Paul O'Shannessy.
+
+## Acknowledgments
+
+- Originally built for [Flam](https://flamapp.ai)
+- QR code generation based on qrcode.react
+- UI components powered by Radix UI and Tailwind CSS
+
+---
+
+Made with ❤️ by the Flam team
