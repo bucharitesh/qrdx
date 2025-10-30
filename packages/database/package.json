@@ -1,0 +1,30 @@
+{
+  "name": "@repo/database",
+  "version": "0.0.0",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "scripts": {
+    "analyze": "prisma generate --no-hints --schema=./prisma/schema.prisma",
+    "build": "prisma generate --no-hints --schema=./prisma/schema.prisma",
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^1.0.2",
+    "@prisma/adapter-neon": "6.18.0",
+    "@prisma/client": "6.18.0",
+    "@t3-oss/env-nextjs": "^0.13.8",
+    "server-only": "^0.0.1",
+    "undici": "^7.16.0",
+    "ws": "^8.18.3",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "24.9.1",
+    "@types/ws": "^8.18.1",
+    "bufferutil": "^4.0.9",
+    "prisma": "6.18.0",
+    "typescript": "^5.9.3"
+  }
+}
