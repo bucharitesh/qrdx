@@ -119,12 +119,6 @@ export default function MyComponent() {
 
 [Read full documentation →](./packages/qr/README.md)
 
-### [@repo/seo](./packages/seo) — SEO Utilities
-
-Metadata management, JSON-LD, and SEO helpers for Next.js applications.
-
-[Read full documentation →](./packages/seo/README.md)
-
 ### [@repo/next-config](./packages/next-config) — Next.js Configuration
 
 Shared Next.js configuration with bundle analyzer and environment variable validation.
