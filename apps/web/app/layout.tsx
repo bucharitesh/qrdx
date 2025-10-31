@@ -16,9 +16,9 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "v0 | Nano Banana Starter",
-  description: "Created with v0",
-  generator: "v0.app",
+  title: "Flam QR",
+  description: "Create QR codes with Flam",
+  generator: "flamapp.ai",
 };
 
 export default function RootLayout({
@@ -30,9 +30,7 @@ export default function RootLayout({
     <html className={`${inter.variable} ${jetbrainsMono.variable}`} lang="en">
       <body className="font-mono antialiased">
         <Suspense fallback={null}>
-          <div className="relative z-10">
-            {children}
-          </div>
+          <div className="relative z-10">{children}</div>
         </Suspense>
         <div className="fixed inset-0 z-0 select-none">
           <Dithering

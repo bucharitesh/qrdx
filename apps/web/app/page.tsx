@@ -21,6 +21,7 @@ type QRStyles = {
   dotColor: string;
   customLogo?: string;
   templateId?: string;
+  customText?: string;
 };
 
 const Page = () => {
@@ -31,6 +32,7 @@ const Page = () => {
     dotColor: "#000000",
     backgroundColor: "#ffffff",
     templateId: "default",
+    customText: "",
   });
   const [url, setUrl] = useState("https://www.flamapp.ai");
 
@@ -121,6 +123,31 @@ const Page = () => {
                     qrColor={qrStyles.qrColor}
                     selectedTemplateId={qrStyles.templateId}
                   />
+                  <div className="mt-4">
+                    <Label
+                      className="mb-2 block text-gray-700 text-sm"
+                      htmlFor="custom-text-input"
+                    >
+                      Custom Text (Optional)
+                    </Label>
+                    <Input
+                      className="text-gray-900 placeholder:text-gray-400"
+                      id="custom-text-input"
+                      maxLength={15}
+                      onChange={(e) =>
+                        setQrStyles((prev) => ({
+                          ...prev,
+                          customText: e.target.value,
+                        }))
+                      }
+                      placeholder="Enter custom text (e.g., Scan Me)"
+                      type="text"
+                      value={qrStyles.customText}
+                    />
+                    <p className="mt-1 text-gray-500 text-xs">
+                      Leave empty for default "Flam It" text (max 15 characters)
+                    </p>
+                  </div>
                 </div>
 
                 {/* Color Customization Section */}
@@ -243,6 +270,7 @@ const Page = () => {
                 </h2>
                 <QRCode
                   bgColor={qrStyles.backgroundColor}
+                  customText={qrStyles.customText}
                   dotColor={qrStyles.dotColor}
                   eyeColor={qrStyles.eyeColor}
                   fgColor={qrStyles.qrColor}
@@ -254,6 +282,7 @@ const Page = () => {
                 <div className="w-full border-gray-200 border-t pt-4">
                   <DownloadOptions
                     bgColor={qrStyles.backgroundColor}
+                    customText={qrStyles.customText}
                     dotColor={qrStyles.dotColor}
                     eyeColor={qrStyles.eyeColor}
                     fgColor={qrStyles.qrColor}

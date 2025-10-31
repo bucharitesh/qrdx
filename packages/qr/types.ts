@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react";
-import qrcodegen from "./codegen";
+import type qrcodegen from "./codegen";
 
 export type Modules = ReturnType<qrcodegen.QrCode["getModules"]>;
 export type Excavation = { x: number; y: number; w: number; h: number };
@@ -26,6 +26,7 @@ export type QRProps = {
   imageSettings?: ImageSettings;
   isOGContext?: boolean;
   templateId?: string;
+  customText?: string;
 };
 export type QRPropsCanvas = QRProps &
   React.CanvasHTMLAttributes<HTMLCanvasElement>;

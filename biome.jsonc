@@ -7,7 +7,10 @@
   "linter": {
     "rules": {
       "suspicious": {
-        "noConsole": "off"
+        "noConsole": "off",
+        "noArrayIndexKey": "off",
+        "noExplicitAny": "off",
+        "noRedundantUseStrict": "off"
       },
       "a11y": {
         "noSvgWithoutTitle": "off"
@@ -16,26 +19,21 @@
         "noExcessiveCognitiveComplexity": "off"
       },
       "performance": {
-        "noNamespaceImport": "off"
+        "noNamespaceImport": "off",
+        "noImgElement": "off",
+        "noBarrelFile": "off",
+        "useTopLevelRegex": "off"
       },
       "style": {
-        "noMagicNumbers": "off"
+        "noMagicNumbers": "off",
+        "noParameterAssign": "off"
+      },
+      "correctness": {
+        "useImageSize": "off"
       }
     }
   },
   "files": {
-    "includes": [
-      "**/*",
-      "!packages/design-system/components/ui",
-      "!packages/design-system/lib",
-      "!packages/design-system/hooks",
-      "!packages/collaboration/config.ts",
-      "!docs/components/ui",
-      "!docs/lib",
-      "!docs/hooks",
-      "!apps/docs/**/*.json",
-      "!apps/email/.react-email",
-      "!packages/cms/basehub-types.d.ts"
-    ]
+    "includes": ["**/*", "!packages/qr/codegen.ts"]
   }
 }

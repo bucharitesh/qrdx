@@ -20,6 +20,7 @@ type DownloadOptionsProps = {
   showLogo: boolean;
   logo?: string;
   templateId?: string;
+  customText?: string;
 };
 
 export const DownloadOptions: React.FC<DownloadOptionsProps> = ({
@@ -31,6 +32,7 @@ export const DownloadOptions: React.FC<DownloadOptionsProps> = ({
   showLogo,
   logo,
   templateId,
+  customText,
 }) => {
   const qrProps = React.useMemo(
     () => ({
@@ -44,8 +46,19 @@ export const DownloadOptions: React.FC<DownloadOptionsProps> = ({
         logo,
       }),
       templateId,
+      customText,
     }),
-    [url, fgColor, bgColor, showLogo, logo, templateId, eyeColor, dotColor]
+    [
+      url,
+      fgColor,
+      bgColor,
+      showLogo,
+      logo,
+      templateId,
+      eyeColor,
+      dotColor,
+      customText,
+    ]
   );
 
   const downloadFile = (dataUrl: string, filename: string) => {
