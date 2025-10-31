@@ -26,7 +26,8 @@
       },
       "style": {
         "noMagicNumbers": "off",
-        "noParameterAssign": "off"
+        "noParameterAssign": "off",
+        "noNestedTernary": "off"
       },
       "correctness": {
         "useImageSize": "off"

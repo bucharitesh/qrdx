@@ -1,11 +1,5 @@
 import type React from "react";
-import {
-  defaultTemplate,
-  FlamQR,
-  SquareBorder,
-  template1,
-  template2,
-} from "./template";
+import { defaultTemplate, FlamQR } from "./template";
 
 export type TemplateDefinition = {
   id: string;
@@ -21,9 +15,11 @@ export type TemplateDefinition = {
 export const TEMPLATES: Record<string, TemplateDefinition> = {
   default: defaultTemplate,
   FlamQR,
-  template1,
-  template2,
-  SquareBorder,
+  // Arrow,
+  // StandardBox,
+  // SquareBorder,
+  // StrikedBox,
+  // Halloween,
 };
 
 // Utility functions

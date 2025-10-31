@@ -1,9 +1,9 @@
 import type { TemplateDefinition } from "../templates";
 
-export const template2: TemplateDefinition = {
-  id: "template2",
-  name: "Square Border",
-  description: "QR code with square decorative border",
+export const StandardBox: TemplateDefinition = {
+  id: "StandardBox",
+  name: "Standard Box",
+  description: "QR code with standard box",
   wrapper: (children, props) => (
     <svg
       height="300"
