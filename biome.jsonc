@@ -1,9 +1,6 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "extends": ["ultracite/core", "ultracite/react", "ultracite/next"],
-  "javascript": {
-    "globals": ["Liveblocks"]
-  },
   "linter": {
     "rules": {
       "suspicious": {
@@ -35,6 +32,12 @@
     }
   },
   "files": {
-    "includes": ["**/*", "!packages/qr/codegen.ts"]
+    "includes": [
+      "**/*",
+      "!packages/qr/codegen.ts",
+      "!packages/design-system/components/ui",
+      "!packages/design-system/lib",
+      "!packages/design-system/hooks"
+    ]
   }
 }

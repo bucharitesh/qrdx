@@ -24,7 +24,7 @@ export async function getQRAsSVG(props: QRPropsSVG) {
 
   let cells = qrcodegen.QrCode.encodeText(
     value,
-    ERROR_LEVEL_MAP[level],
+    ERROR_LEVEL_MAP[level]
   ).getModules();
 
   const numCells = cells.length + margin * 2;
@@ -32,7 +32,7 @@ export async function getQRAsSVG(props: QRPropsSVG) {
     cells,
     size,
     margin,
-    imageSettings,
+    imageSettings
   );
 
   let image = <></>;
@@ -42,17 +42,17 @@ export async function getQRAsSVG(props: QRPropsSVG) {
     }
 
     const base64Image = await fetch(
-      `https://wsrv.nl/?url=${imageSettings.src}&w=100&h=100&encoding=base64`,
+      `https://wsrv.nl/?url=${imageSettings.src}&w=100&h=100&encoding=base64`
     ).then((res) => res.text());
 
     image = (
       <image
-        href={base64Image}
         height={calculatedImageSettings.h}
+        href={base64Image}
+        preserveAspectRatio="none"
         width={calculatedImageSettings.w}
         x={calculatedImageSettings.x + margin}
         y={calculatedImageSettings.y + margin}
-        preserveAspectRatio="none"
       />
     );
   }
@@ -68,17 +68,17 @@ export async function getQRAsSVG(props: QRPropsSVG) {
   return (
     <svg
       height={size}
-      width={size}
       viewBox={`0 0 ${numCells} ${numCells}`}
+      width={size}
       xmlns="http://www.w3.org/2000/svg"
       {...otherProps}
     >
       <path
-        fill={bgColor}
         d={`M0,0 h${numCells}v${numCells}H0z`}
+        fill={bgColor}
         shapeRendering="crispEdges"
       />
-      <path fill={fgColor} d={fgPath} shapeRendering="crispEdges" />
+      <path d={fgPath} fill={fgColor} shapeRendering="crispEdges" />
       {image}
     </svg>
   );

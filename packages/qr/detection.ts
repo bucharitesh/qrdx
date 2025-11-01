@@ -62,8 +62,8 @@ const decodeQRCode = (
           resolve(null);
           return;
         }
-        //shrinks the image according to the aspect ratio of the image
-        const decreaseRatio: number =
+
+        const decreaseRatio =
           imgElement.naturalWidth / imgElement.naturalHeight <= 0.33 ||
           imgElement.naturalWidth / imgElement.naturalHeight >= 3
             ? Math.sqrt(
@@ -78,115 +78,78 @@ const decodeQRCode = (
                   (imgElement.naturalWidth * imgElement.naturalHeight) / 640_000
                 );
 
-        // Calculate the actual source dimensions we're sampling from
-        const sourceWidth = Math.floor(imgElement.naturalWidth * ratio);
-        const sourceHeight = Math.floor(imgElement.naturalHeight * ratio);
-
-        // Calculate canvas dimensions
-        const canvasWidth = Math.floor(sourceWidth / decreaseRatio);
-        const canvasHeight = Math.floor(sourceHeight / decreaseRatio);
-
-        canvas.width = canvasWidth;
-        canvas.height = canvasHeight;
-
         const ctx = canvas.getContext("2d", {
           willReadFrequently: true,
         });
+
         if (!ctx) {
           resolve(null);
           return;
         }
 
-        ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-        ctx.imageSmoothingEnabled = true;
-        ctx.imageSmoothingQuality = "high";
+        // Try multiple scale ratios: 1.0, 0.8, 0.6, 0.4, 0.2, 0.1
+        const scaleRatios = [1.0, 0.8, 0.6, 0.4, 0.2, 0.1];
 
-        try {
-          ctx.drawImage(
-            imgElement,
-            Math.floor(dx),
-            Math.floor(dy),
-            sourceWidth,
-            sourceHeight,
-            0,
-            0,
-            canvasWidth,
-            canvasHeight
+        for (const scaleRatio of scaleRatios) {
+          const width = Math.floor(
+            (imgElement.naturalWidth * ratio * scaleRatio) / decreaseRatio
+          );
+          const height = Math.floor(
+            (imgElement.naturalHeight * ratio * scaleRatio) / decreaseRatio
           );
 
-          const imageData = ctx.getImageData(0, 0, canvasWidth, canvasHeight);
+          // Set canvas dimensions
+          canvas.width = width;
+          canvas.height = height;
+
+          // Clear canvas before drawing
+          ctx.clearRect(0, 0, width, height);
+
+          // Enable image smoothing for better quality
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = "high";
 
           try {
-            const qrCode = jsQR(imageData.data, canvasWidth, canvasHeight);
-            if (qrCode) {
-              const scaleX = sourceWidth / canvasWidth;
-              const scaleY = sourceHeight / canvasHeight;
+            ctx.drawImage(
+              imgElement,
+              Math.floor(dx),
+              Math.floor(dy),
+              Math.floor(imgElement.naturalWidth * ratio),
+              Math.floor(imgElement.naturalHeight * ratio),
+              0,
+              0,
+              width,
+              height
+            );
 
-              console.log("Scale factors:", {
-                scaleX,
-                scaleY,
-                dx,
-                dy,
-              });
-              console.log("QR location on canvas:", qrCode.location);
+            const imageData = ctx.getImageData(0, 0, width, height);
 
-              const boundingBox = [
-                // topLeft
-                {
-                  x: qrCode.location.topLeftCorner.x * scaleX + dx,
-                  y: qrCode.location.topLeftCorner.y * scaleY + dy,
-                },
-                // topRight
-                {
-                  x: qrCode.location.topRightCorner.x * scaleX + dx,
-                  y: qrCode.location.topRightCorner.y * scaleY + dy,
-                },
-                // bottomLeft
-                {
-                  x: qrCode.location.bottomLeftCorner.x * scaleX + dx,
-                  y: qrCode.location.bottomLeftCorner.y * scaleY + dy,
-                },
-                // bottomRight
-                {
-                  x: qrCode.location.bottomRightCorner.x * scaleX + dx,
-                  y: qrCode.location.bottomRightCorner.y * scaleY + dy,
-                },
-              ];
+            downloadImageData(
+              imageData,
+              width,
+              height,
+              `qr_processed_${width}x${height}_scale${scaleRatio}_${Date.now()}.png`
+            );
 
-              // Validate bounding box coordinates
-              const isValidBoundingBox = boundingBox.every(
-                (point) =>
-                  point.x >= 0 &&
-                  point.x <= imgElement.naturalWidth &&
-                  point.y >= 0 &&
-                  point.y <= imgElement.naturalHeight
-              );
-
-              if (!isValidBoundingBox) {
-                console.warn("Invalid bounding box coordinates:", boundingBox);
+            // Add error handling for QR detection
+            try {
+              const qrCode = jsQR(imageData.data, width, height);
+              if (qrCode?.data) {
+                console.log(`QR code found at scale ratio: ${scaleRatio}`);
+                resolve(qrCode);
+                return;
               }
-
-              console.log("Final bounding box:", boundingBox);
-              resolve({
-                data: qrCode.data ? qrCode.data : null,
-                boundingBox,
-              });
-              // downloadImageWithBoundingBox(
-              //     imgElement,
-              //     boundingBox,
-              //     "qr_with_box.png"
-              // );
-            } else {
-              resolve(null);
+            } catch (qrError) {
+              console.error("QR Detection error:", qrError);
             }
-          } catch (qrError) {
-            console.error("QR Detection error:", qrError);
-            resolve(null);
+          } catch (drawError) {
+            console.error("Canvas drawing error:", drawError);
           }
-        } catch (drawError) {
-          console.error("Canvas drawing error:", drawError);
           resolve(null);
         }
+
+        // If no QR code found at any scale
+        resolve(null);
       });
     }
   });
