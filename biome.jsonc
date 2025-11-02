@@ -19,7 +19,8 @@
         "noNamespaceImport": "off",
         "noImgElement": "off",
         "noBarrelFile": "off",
-        "useTopLevelRegex": "off"
+        "useTopLevelRegex": "off",
+        "noDynamicNamespaceImportAccess": "off"
       },
       "style": {
         "noMagicNumbers": "off",

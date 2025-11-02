@@ -1,0 +1,11 @@
+{
+  "root": true,
+  "pages": [
+    "index",
+    "getting-started",
+    "---QR Generation---",
+    "...qr",
+    "---Detection---",
+    "...detection"
+  ]
+}

@@ -76,10 +76,10 @@ export const ColorInput = ({
       )}
       <FormControl>
         <div className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2 shadow-sm transition-all focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-200 hover:border-gray-400">
-          <div className="relative" ref={pickerRef}>
+          <div className="relative h-full" ref={pickerRef}>
             <button
               aria-label="Open color picker"
-              className="h-8 w-8 flex-shrink-0 cursor-pointer rounded border-2 border-gray-300 transition-colors hover:border-gray-400"
+              className="h-8 w-8 shrink-0 cursor-pointer rounded border-2 border-gray-300 transition-colors hover:border-gray-400"
               onClick={() => setShowPicker(!showPicker)}
               style={{ backgroundColor: color }}
               type="button"
