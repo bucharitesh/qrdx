@@ -158,7 +158,7 @@ The QR code generation is based on [qrcode.react](https://github.com/zpao/qrcode
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=bucharitesh/qrdx&type=Date)](https://star-history.com/#bucharitesh/qrdx&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=bucharitesh/qrdx&type=date&legend=top-left)](https://www.star-history.com/#bucharitesh/qrdx&type=date&legend=top-left)
 
 ## Acknowledgments
 
