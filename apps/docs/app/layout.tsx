@@ -1,6 +1,10 @@
-import { RootProvider } from "fumadocs-ui/provider/next";
 import "./global.css";
+import { NextProvider } from "fumadocs-core/framework/next";
+import { TreeContextProvider } from "fumadocs-ui/contexts/tree";
 import { Inter } from "next/font/google";
+import { source } from "@/lib/source";
+import { Body } from "./layout.client";
+import { Provider } from "./providers";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -9,9 +13,13 @@ const inter = Inter({
 export default function Layout({ children }: LayoutProps<"/">) {
   return (
     <html className={inter.className} lang="en" suppressHydrationWarning>
-      <body className="flex min-h-screen flex-col">
-        <RootProvider>{children}</RootProvider>
-      </body>
+      <Body>
+        <NextProvider>
+          <TreeContextProvider tree={source.pageTree}>
+            <Provider>{children}</Provider>
+          </TreeContextProvider>
+        </NextProvider>
+      </Body>
     </html>
   );
 }

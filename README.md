@@ -1,6 +1,6 @@
-# Flam QR
+# qrdx
 
-A powerful, flexible QR code generation library and demo application from Flam, now open source.
+A powerful, flexible QR code generation library and demo application, now open source.
 
 **[Live Demo](https://qr.flamapp.tech)** • Built with Next.js and React
 
@@ -12,7 +12,7 @@ A powerful, flexible QR code generation library and demo application from Flam, 
 
 ## Overview
 
-Flam QR is a production-ready QR code generation library with extensive customization options. Originally built for Flam's internal use, it now powers beautiful, customizable QR codes for anyone.
+qrdx is a production-ready QR code generation library with extensive customization options. Originally built for Flam's internal use, it now powers beautiful, customizable QR codes for anyone.
 
 ### Key Features
 
@@ -49,8 +49,8 @@ The demo showcases:
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-org/flam-qr.git
-cd flam-qr
+git clone https://github.com/bucharitesh/qrdx.git
+cd qrdx
 
 # Install dependencies
 pnpm install
@@ -158,11 +158,10 @@ The QR code generation is based on [qrcode.react](https://github.com/zpao/qrcode
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=flamapp/flam-qr&type=Date)](https://star-history.com/#flamapp/flam-qr&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=bucharitesh/qrdx&type=Date)](https://star-history.com/#bucharitesh/qrdx&Date)
 
 ## Acknowledgments
 
-- Originally built for [Flam](https://flamapp.ai)
 - QR code generation based on qrcode.react
 - UI components powered by Radix UI and Tailwind CSS
 

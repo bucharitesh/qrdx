@@ -4,8 +4,7 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./*"],
-      "@repo/*": ["../../packages/*"],
-      "@./source": ["./source"]
+      "@repo/*": ["../../packages/*"]
     }
   },
   "include": [
@@ -13,6 +12,8 @@
     "next.config.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts"
-  ]
+    ".next/types/**/*.ts",
+    "content/docs/manual-installation/index.mdx"
+  ],
+  "exclude": ["node_modules"]
 }

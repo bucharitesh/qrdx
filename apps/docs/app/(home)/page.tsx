@@ -49,10 +49,10 @@ const Page = () => {
 
   return (
     <div className="relative z-10 mx-auto mt-10 w-full max-w-7xl select-none p-2 md:p-6">
-      <div className="rounded-xl border-0 bg-black/70 p-3 backdrop-blur-sm md:p-8">
+      <div className="rounded-xl border-0 p-3 backdrop-blur-sm md:p-8">
         <div className="grid h-full w-full grid-cols-1 gap-6 lg:grid-cols-5">
           {/* Left Column - Form Options */}
-          <div className="flex h-full h-full w-full flex-col gap-6 overflow-y-auto pr-0 lg:col-span-3 lg:pr-4">
+          <div className="flex h-full w-full flex-col gap-6 overflow-y-auto pr-0 lg:col-span-3 lg:pr-4">
             <FormProvider {...methods}>
               {/* Basic Settings Section */}
               <div className="space-y-4 rounded-xl border border-gray-200 bg-white/90 p-4 backdrop-blur-sm">

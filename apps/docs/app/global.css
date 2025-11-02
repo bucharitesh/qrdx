@@ -1,6 +1,9 @@
 @import 'tailwindcss';
 @import 'fumadocs-ui/css/neutral.css';
 @import 'fumadocs-ui/css/preset.css';
+@import 'fumadocs-twoslash/twoslash.css';
+
+/* @plugin 'tailwindcss-animate'; */
 
 :root {
   --color-fd-background: #F2F0E3;
@@ -17,6 +20,7 @@
   --color-fd-popover: #F2F0E3;
   --color-fd-popover-foreground: #2E2E2E;
   --color-fd-border: #EAE9E2;
+  --fd-layout-width: 100vw;
 }
  
 .dark {
