@@ -167,4 +167,4 @@ The QR code generation is based on [qrcode.react](https://github.com/zpao/qrcode
 
 ---
 
-Made with ❤️ by the Flam team
+Made with ❤️ by Ritesh Bucha

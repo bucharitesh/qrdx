@@ -33,7 +33,7 @@ const Page = () => {
     templateId: "default",
     customText: "",
   });
-  const [url, setUrl] = useState("https://www.flamapp.ai");
+  const [url, setUrl] = useState("https://www.google.com");
 
   const methods = useForm();
 
