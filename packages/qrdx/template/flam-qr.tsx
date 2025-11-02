@@ -1,6 +1,11 @@
-import type { TemplateDefinition } from "../templates";
+import type { TemplateDefinition } from "../types";
 
-export const FlamQR: TemplateDefinition = {
+// Custom props for FlamQR template
+export type FlamQRProps = {
+  customText?: string;
+};
+
+export const FlamQR: TemplateDefinition<FlamQRProps> = {
   id: "FlamQR",
   name: "Flam QR",
   description: "Flam QR code with Flam logo and text",
