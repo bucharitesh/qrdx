@@ -1,4 +1,4 @@
-import type { TemplateDefinition } from "../templates";
+import type { TemplateDefinition } from "../types";
 
 export const SquareBorder: TemplateDefinition = {
   id: "SquareBorder",

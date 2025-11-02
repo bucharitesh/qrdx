@@ -1,4 +1,3 @@
-import type React from "react";
 import {
   Arrow,
   defaultTemplate,
@@ -8,19 +7,10 @@ import {
   StandardBox,
   StrikedBox,
 } from "./template";
+import type { TemplateDefinition } from "./types";
 
-export type TemplateDefinition = {
-  id: string;
-  name: string;
-  description?: string;
-  wrapper: (
-    children: React.ReactNode,
-    props?: { fgColor?: string; bgColor?: string; customText?: string }
-  ) => React.ReactNode;
-};
-
-// Template registry
-export const TEMPLATES: Record<string, TemplateDefinition> = {
+// Template registry - using TemplateDefinition<any> to allow different custom props
+export const TEMPLATES: Record<string, TemplateDefinition<any>> = {
   default: defaultTemplate,
   FlamQR,
   Arrow,
@@ -33,9 +23,9 @@ export const TEMPLATES: Record<string, TemplateDefinition> = {
 // Utility functions
 export const getTemplate = (
   templateId: string
-): TemplateDefinition | undefined => TEMPLATES[templateId];
+): TemplateDefinition<any> | undefined => TEMPLATES[templateId];
 
-export const getAllTemplates = (): TemplateDefinition[] =>
+export const getAllTemplates = (): TemplateDefinition<any>[] =>
   Object.values(TEMPLATES);
 
 export const getTemplateIds = (): string[] => Object.keys(TEMPLATES);

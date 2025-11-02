@@ -35,7 +35,7 @@
   "files": {
     "includes": [
       "**/*",
-      "!packages/qr/codegen.ts",
+      "!packages/qrdx/codegen.ts",
       "!packages/design-system/components/ui",
       "!packages/design-system/lib",
       "!packages/design-system/hooks"
