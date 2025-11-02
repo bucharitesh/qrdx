@@ -1,7 +1,6 @@
 {
-  "name": "@repo/qr",
+  "name": "qrdx",
   "version": "0.0.1",
-  "private": true,
   "scripts": {
     "clean": "git clean -xdf .cache .turbo dist node_modules",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"

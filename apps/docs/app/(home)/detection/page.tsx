@@ -4,10 +4,6 @@
 import { Button } from "@repo/design-system/components/ui/button";
 import { Label } from "@repo/design-system/components/ui/label";
 import {
-  downloadImageWithBoundingBox,
-  handleImageLoad,
-} from "@repo/qr/detection";
-import {
   CheckCircle2,
   Download,
   Image as ImageIcon,
@@ -15,6 +11,7 @@ import {
   Upload,
   XCircle,
 } from "lucide-react";
+import { downloadImageWithBoundingBox, handleImageLoad } from "qrdx/detection";
 import { useRef, useState } from "react";
 
 type DetectionResult = {
