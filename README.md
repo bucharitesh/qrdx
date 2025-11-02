@@ -74,7 +74,7 @@ pnpm start
 
 ## Packages
 
-### [@repo/qr](./packages/qr) — QR Code Generation Library
+### [qrdx](./packages/qrdx) — QR Code Generation Library
 
 The core QR code generation library with extensive customization options.
 
@@ -89,7 +89,7 @@ The core QR code generation library with extensive customization options.
 **Basic Usage:**
 
 ```tsx
-import { QRCode } from '@repo/qr';
+import { QRCode } from 'qrdx';
 
 export default function MyComponent() {
   return (
@@ -119,7 +119,7 @@ pnpm dev --filter web  # Start only the web app
 
 # Building
 pnpm build        # Build all packages and apps
-pnpm build --filter @repo/qr  # Build only the QR package
+pnpm build --filter qrdx  # Build only the QR package
 
 # Testing & Quality
 pnpm typecheck    # Run TypeScript type checking

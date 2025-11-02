@@ -1,4 +1,4 @@
-# @repo/qr
+# qrdx
 
 A powerful, flexible React component library for generating customizable QR codes.
 
@@ -17,13 +17,13 @@ A powerful, flexible React component library for generating customizable QR code
 
 ```bash
 # Using pnpm (recommended in monorepo)
-pnpm add @repo/qr
+pnpm add qrdx@latest
 
 # Using npm
-npm install @repo/qr
+npm install qrdx@latest
 
 # Using yarn
-yarn add @repo/qr
+yarn add qrdx@latest
 ```
 
 ## Basic Usage
@@ -31,7 +31,7 @@ yarn add @repo/qr
 ### Simple QR Code
 
 ```tsx
-import { QRCode } from '@repo/qr';
+import { QRCode } from 'qrdx';
 
 export default function App() {
   return (
@@ -46,7 +46,7 @@ export default function App() {
 ### With Custom Colors
 
 ```tsx
-import { QRCode } from '@repo/qr';
+import { QRCode } from 'qrdx';
 
 export default function App() {
   return (
@@ -65,7 +65,7 @@ export default function App() {
 ### With Logo
 
 ```tsx
-import { QRCode } from '@repo/qr';
+import { QRCode } from 'qrdx';
 
 export default function App() {
   return (
@@ -82,7 +82,7 @@ export default function App() {
 ### With Template
 
 ```tsx
-import { QRCode } from '@repo/qr';
+import { QRCode } from 'qrdx';
 
 export default function App() {
   return (
@@ -132,7 +132,7 @@ Higher levels provide better resilience to damage but result in denser QR codes.
 Direct access to the canvas-based renderer.
 
 ```tsx
-import { QRCodeCanvas } from '@repo/qr';
+import { QRCodeCanvas } from 'qrdx';
 
 export default function App() {
   return (
@@ -160,7 +160,7 @@ export default function App() {
 Generate QR code as SVG data URI.
 
 ```tsx
-import { getQRAsSVGDataUri } from '@repo/qr';
+import { getQRAsSVGDataUri } from 'qrdx';
 
 const dataUri = await getQRAsSVGDataUri({
   value: "https://example.com",
@@ -175,7 +175,7 @@ const dataUri = await getQRAsSVGDataUri({
 Generate QR code as canvas or data URL.
 
 ```tsx
-import { getQRAsCanvas } from '@repo/qr';
+import { getQRAsCanvas } from 'qrdx';
 
 // Get as data URL
 const dataUrl = await getQRAsCanvas(
@@ -202,7 +202,7 @@ const canvas = await getQRAsCanvas(
 Helper function to prepare QR code data with sensible defaults.
 
 ```tsx
-import { getQRData } from '@repo/qr';
+import { getQRData } from 'qrdx';
 
 const qrData = getQRData({
   url: "https://example.com",
@@ -221,7 +221,7 @@ const qrData = getQRData({
 Calculate WCAG contrast ratio between two colors.
 
 ```tsx
-import { getContrastRatio } from '@repo/qr/utils';
+import { getContrastRatio } from 'qrdx/utils';
 
 const ratio = getContrastRatio("#000000", "#ffffff");
 // Returns: 21 (maximum contrast)
@@ -232,7 +232,7 @@ const ratio = getContrastRatio("#000000", "#ffffff");
 Get contrast level assessment for QR code scanability.
 
 ```tsx
-import { getContrastLevel } from '@repo/qr/utils';
+import { getContrastLevel } from 'qrdx/utils';
 
 const level = getContrastLevel(4.5);
 // Returns: { level: 'medium', warning: false, message: '...' }
@@ -259,7 +259,7 @@ Templates are automatically applied based on the `templateId` prop.
 The QR code generation works in both client and server environments:
 
 ```tsx
-import { getQRAsSVGDataUri } from '@repo/qr';
+import { getQRAsSVGDataUri } from 'qrdx';
 
 export default async function ServerComponent() {
   const qrDataUri = await getQRAsSVGDataUri({
@@ -274,7 +274,7 @@ export default async function ServerComponent() {
 ### Downloading QR Codes
 
 ```tsx
-import { getQRAsCanvas } from '@repo/qr';
+import { getQRAsCanvas } from 'qrdx';
 
 async function downloadQR() {
   const dataUrl = await getQRAsCanvas(
@@ -297,7 +297,7 @@ async function downloadQR() {
 ### Custom Image Settings
 
 ```tsx
-import { QRCodeCanvas } from '@repo/qr';
+import { QRCodeCanvas } from 'qrdx';
 
 <QRCodeCanvas
   value="https://example.com"
@@ -346,7 +346,7 @@ For optimal scanability:
 Full TypeScript support with comprehensive type definitions:
 
 ```tsx
-import type { QRProps, QRPropsCanvas, ImageSettings } from '@repo/qr';
+import type { QRProps, QRPropsCanvas, ImageSettings } from 'qrdx';
 
 const imageSettings: ImageSettings = {
   src: "https://example.com/logo.png",

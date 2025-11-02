@@ -63,9 +63,6 @@ importers:
       '@repo/design-system':
         specifier: workspace:*
         version: link:../../packages/design-system
-      '@repo/qr':
-        specifier: workspace:*
-        version: link:../../packages/qr
       ai:
         specifier: ^5.0.81
         version: 5.0.86(zod@4.1.12)
@@ -105,6 +102,9 @@ importers:
       next-themes:
         specifier: ^0.4.6
         version: 0.4.6(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      qrdx:
+        specifier: workspace:*
+        version: link:../../packages/qrdx
       react:
         specifier: ^19.2.0
         version: 19.2.0
@@ -319,7 +319,7 @@ importers:
         specifier: 16.0.1
         version: 16.0.1(@opentelemetry/api@1.9.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
 
-  packages/qr:
+  packages/qrdx:
     dependencies:
       jsqr:
         specifier: ^1.4.0

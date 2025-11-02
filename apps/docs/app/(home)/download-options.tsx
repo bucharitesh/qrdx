@@ -7,8 +7,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@repo/design-system/components/ui/dropdown-menu";
-import { getQRAsCanvas, getQRAsSVGDataUri, getQRData } from "@repo/qr";
 import { ChevronDownIcon, CopyIcon, DownloadIcon } from "lucide-react";
+import { getQRAsCanvas, getQRAsSVGDataUri, getQRData } from "qrdx";
 import React from "react";
 
 type DownloadOptionsProps = {
