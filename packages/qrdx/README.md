@@ -95,6 +95,33 @@ export default function App() {
 }
 ```
 
+### With Custom Dot Patterns
+
+Choose from 7 different dot patterns:
+
+```tsx
+import { QRCode } from 'qrdx';
+
+export default function App() {
+  return (
+    <QRCode
+      url="https://example.com"
+      dotPattern="rounded"
+      size={512}
+    />
+  );
+}
+```
+
+Available patterns:
+- `circle` — Classic circular dots (default)
+- `square` — Modern square dots
+- `diamond` — Diamond-shaped rotated squares
+- `circle-mixed` — Circles with varying sizes
+- `packman` — Pill-shaped rounded rectangles
+- `rounded` — Clean squares with smoothly rounded corners
+- `clean-square` — Clean rectangles only
+
 ## API Reference
 
 ### QRCode Component

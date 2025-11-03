@@ -13,6 +13,15 @@ export type ImageSettings = {
   y?: number;
 };
 
+export type DotPattern =
+  | "circle"
+  | "square"
+  | "diamond"
+  | "circle-mixed"
+  | "packman"
+  | "rounded"
+  | "clean-square";
+
 export type QRProps = {
   value: string;
   size?: number;
@@ -21,6 +30,7 @@ export type QRProps = {
   fgColor?: string;
   eyeColor?: string;
   dotColor?: string;
+  dotPattern?: DotPattern;
   margin?: number;
   style?: CSSProperties;
   imageSettings?: ImageSettings;

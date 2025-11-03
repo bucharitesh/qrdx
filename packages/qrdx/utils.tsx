@@ -112,36 +112,163 @@ function generateCornerSquarePath(
   return path;
 }
 
-// Generate circles for data modules
+// Generate circles for data modules with different patterns
 function generateDataCircles(
   modules: Modules,
-  margin: number,
-  _size: number,
-  pixelSize: number
+  options: {
+    margin: number;
+    pixelSize: number;
+    pattern?:
+      | "circle"
+      | "square"
+      | "diamond"
+      | "circle-mixed"
+      | "packman"
+      | "rounded"
+      | "clean-square";
+  }
 ): JSX.Element[] {
-  const circles: JSX.Element[] = [];
+  const { margin, pixelSize, pattern = "circle" } = options;
+  const shapes: JSX.Element[] = [];
   const qrSize = modules.length;
-  const radius = pixelSize * 0.3; // 30% of pixel size for radius
+  const radius = pixelSize * 0.333_333; // radius for circles
 
   modules.forEach((row, y) => {
     row.forEach((cell, x) => {
       if (cell && !isCornerModule(x, y, qrSize)) {
         const cx = (x + 0.5 + margin) * pixelSize;
         const cy = (y + 0.5 + margin) * pixelSize;
-        circles.push(
-          <circle
-            cx={cx}
-            cy={cy}
-            key={`${x}-${y}`}
-            r={radius}
-            transform={`rotate(0,${cx},${cy})`}
-          />
-        );
+        const key = `${x}-${y}`;
+
+        switch (pattern) {
+          case "circle":
+            // Pattern 1: Standard circles
+            shapes.push(
+              <circle
+                cx={cx}
+                cy={cy}
+                key={key}
+                r={radius}
+                transform={`rotate(0,${cx},${cy})`}
+              />
+            );
+            break;
+
+          case "square":
+            // Pattern 2: Squares
+            {
+              const halfSize = pixelSize * 0.357_143; // half of 71.4% pixel size
+              shapes.push(
+                <path
+                  d={`M ${cx - halfSize} ${cy - halfSize}v ${pixelSize * 0.714_286}h ${pixelSize * 0.714_286}v -${pixelSize * 0.714_286}z`}
+                  key={key}
+                  transform={`rotate(0,${cx},${cy})`}
+                />
+              );
+            }
+            break;
+
+          case "diamond":
+            // Pattern 3: Squares rotated 45 degrees (diamond shape)
+            {
+              const halfSize = pixelSize * 0.357_143;
+              shapes.push(
+                <path
+                  d={`M ${cx - halfSize} ${cy - halfSize}v ${pixelSize * 0.714_286}h ${pixelSize * 0.714_286}v -${pixelSize * 0.714_286}z`}
+                  key={key}
+                  transform={`rotate(45,${cx},${cy})`}
+                />
+              );
+            }
+            break;
+
+          case "circle-mixed":
+            // Pattern 4: Circles with varying sizes
+            {
+              const randomFactor =
+                (x + y) % 3 === 0 ? 1.5 : (x + y) % 2 === 0 ? 1.0 : 1.25;
+              const variedRadius = radius * randomFactor;
+              shapes.push(
+                <circle
+                  cx={cx}
+                  cy={cy}
+                  key={key}
+                  r={variedRadius}
+                  transform={`rotate(0,${cx},${cy})`}
+                />
+              );
+            }
+            break;
+
+          case "packman":
+            // Pattern 5: Rounded rectangles (pill shapes)
+            {
+              const halfWidth = pixelSize * 0.5;
+              const halfHeight = pixelSize * 0.357_143;
+              shapes.push(
+                <path
+                  d={`M ${cx - halfWidth} ${cy - halfHeight}v ${pixelSize * 0.714_286}h ${halfWidth}a ${halfWidth * 0.5} ${halfWidth * 0.5}, 0, 0, 0, 0 -${pixelSize * 0.714_286}h -${halfWidth}v -${pixelSize * 0.714_286}z`}
+                  key={key}
+                  transform={`rotate(${((x + y) % 2) === 0 ? 0 : 90},${cx},${cy})`}
+                />
+              );
+            }
+            break;
+
+          case "rounded":
+            // Pattern: Clean squares with rounded corners
+            {
+              const halfSize = pixelSize * 0.5;
+              const cornerRadius = pixelSize * 0.2; // 20% radius for smooth corners
+              shapes.push(
+                <rect
+                  height={pixelSize}
+                  key={key}
+                  rx={cornerRadius}
+                  ry={cornerRadius}
+                  transform={`rotate(0,${cx},${cy})`}
+                  width={pixelSize}
+                  x={cx - halfSize}
+                  y={cy - halfSize}
+                />
+              );
+            }
+            break;
+
+          case "clean-square":
+            // Pattern 12: Clean rectangles only
+            {
+              const halfSize = pixelSize * 0.5;
+              shapes.push(
+                <rect
+                  height={pixelSize}
+                  key={key}
+                  transform={`rotate(0,${cx},${cy})`}
+                  width={pixelSize}
+                  x={cx - halfSize}
+                  y={cy - halfSize}
+                />
+              );
+            }
+            break;
+
+          default:
+            // Default to circle
+            shapes.push(
+              <circle
+                cx={cx}
+                cy={cy}
+                key={key}
+                r={radius}
+                transform={`rotate(0,${cx},${cy})`}
+              />
+            );
+        }
       }
     });
   });
 
-  return circles;
+  return shapes;
 }
 
 export function getImageSettings(
@@ -214,6 +341,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
     fgColor = DEFAULT_FGCOLOR,
     eyeColor,
     dotColor,
+    dotPattern = "circle",
     margin = DEFAULT_MARGIN,
     isOGContext = false,
     imageSettings,
@@ -291,8 +419,12 @@ export function QRCodeSVG(props: QRPropsSVG) {
   const cornerSize = 7 * pixelSize; // Corner patterns are 7x7 modules
   const cornerDotRadius = 1.5 * pixelSize; // Inner dot radius
 
-  // Generate data circles
-  const dataCircles = generateDataCircles(cells, margin, qrSize, pixelSize);
+  // Generate data circles with selected pattern
+  const dataCircles = generateDataCircles(cells, {
+    margin,
+    pixelSize,
+    pattern: dotPattern,
+  });
 
   // Calculate corner positions with margin
   const topLeftX = margin * pixelSize;

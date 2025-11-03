@@ -13,6 +13,8 @@ export const QRCode = memo(
     bgColor,
     eyeColor,
     dotColor,
+    dotPattern,
+    errorLevel,
     scale = 1,
     margin = DEFAULT_MARGIN,
     templateId,
@@ -28,6 +30,15 @@ export const QRCode = memo(
     bgColor?: string;
     eyeColor?: string;
     dotColor?: string;
+    dotPattern?:
+      | "circle"
+      | "square"
+      | "diamond"
+      | "circle-mixed"
+      | "packman"
+      | "rounded"
+      | "clean-square";
+    errorLevel?: "L" | "M" | "Q" | "H";
     scale?: number;
     margin?: number;
     templateId?: string;
@@ -46,10 +57,21 @@ export const QRCode = memo(
           bgColor,
           eyeColor,
           dotColor,
+          dotPattern,
           logo,
           margin,
         }),
-      [url, fgColor, hideLogo, logo, margin, bgColor, eyeColor, dotColor]
+      [
+        url,
+        fgColor,
+        hideLogo,
+        logo,
+        margin,
+        bgColor,
+        eyeColor,
+        dotColor,
+        dotPattern,
+      ]
     );
 
     return (
@@ -57,12 +79,13 @@ export const QRCode = memo(
         bgColor={qrData.bgColor}
         customText={customText}
         dotColor={qrData.dotColor}
+        dotPattern={qrData.dotPattern}
         eyeColor={qrData.eyeColor}
         fgColor={qrData.fgColor}
         fontLetterSpacing={fontLetterSpacing}
         fontSize={fontSize}
         fontWeight={fontWeight}
-        level={qrData.level}
+        level={errorLevel || qrData.level}
         margin={qrData.margin}
         size={(qrData.size / 8) * scale}
         templateId={templateId}

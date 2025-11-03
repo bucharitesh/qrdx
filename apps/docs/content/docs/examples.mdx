@@ -21,3 +21,66 @@ The library fetches the latest version of component from the GitHub repository o
 When you use the library, it is guaranteed to be up-to-date.
 
 Make sure to use the latest version of qrdx.
+
+## Dot Patterns
+
+QRDX supports 7 different dot patterns to customize the appearance of your QR codes:
+
+### 1. Circle (Default)
+Standard circular dots for a classic QR code look.
+```tsx
+<QRCodeSVG value="https://example.com" dotPattern="circle" />
+```
+
+### 2. Square
+Clean square dots for a modern, geometric appearance.
+```tsx
+<QRCodeSVG value="https://example.com" dotPattern="square" />
+```
+
+### 3. Diamond
+Square dots rotated 45 degrees for a diamond-like pattern.
+```tsx
+<QRCodeSVG value="https://example.com" dotPattern="diamond" />
+```
+
+### 4. Circle Mixed
+Circles with varying sizes for a dynamic, organic look.
+```tsx
+<QRCodeSVG value="https://example.com" dotPattern="circle-mixed" />
+```
+
+### 5. Packman
+Pill-shaped rounded rectangles with alternating orientations.
+```tsx
+<QRCodeSVG value="https://example.com" dotPattern="packman" />
+```
+
+### 6. Rounded
+Clean squares with smoothly rounded corners.
+```tsx
+<QRCodeSVG value="https://example.com" dotPattern="rounded" />
+```
+
+### 7. Clean Square
+Clean rectangles only for a minimalist look.
+```tsx
+<QRCodeSVG value="https://example.com" dotPattern="clean-square" />
+```
+
+## Error Correction Levels
+
+QR codes support 4 different error correction levels:
+
+- **L (Low):** ~7% error correction - Best for clean environments
+- **M (Medium):** ~15% error correction - Good general purpose
+- **Q (Quartile):** ~25% error correction - Recommended when using logos
+- **H (High):** ~30% error correction - Maximum resilience to damage
+
+```tsx
+<QRCodeSVG 
+  value="https://example.com" 
+  level="Q"
+  dotPattern="rounded"
+/>
+```
