@@ -21,6 +21,10 @@ type QRStyles = {
   customLogo?: string;
   templateId?: string;
   customText?: string;
+  textColor?: string;
+  fontSize?: number;
+  fontWeight?: number;
+  fontLetterSpacing?: number;
 };
 
 const Page = () => {
@@ -32,6 +36,10 @@ const Page = () => {
     backgroundColor: "#ffffff",
     templateId: "default",
     customText: "",
+    textColor: "#000000",
+    fontSize: 16,
+    fontWeight: 700,
+    fontLetterSpacing: 0,
   });
   const [url, setUrl] = useState("https://instant.cdn.flamapp.com/card?o=1234");
 
@@ -93,31 +101,125 @@ const Page = () => {
                   qrColor={qrStyles.qrColor}
                   selectedTemplateId={qrStyles.templateId}
                 />
-                <div className="mt-4">
-                  <Label
-                    className="mb-2 block text-gray-700 text-sm"
-                    htmlFor="custom-text-input"
-                  >
-                    Custom Text (Optional)
-                  </Label>
-                  <Input
-                    className="text-gray-900 placeholder:text-gray-400"
-                    id="custom-text-input"
-                    maxLength={20}
-                    onChange={(e) =>
-                      setQrStyles((prev) => ({
-                        ...prev,
-                        customText: e.target.value,
-                      }))
-                    }
-                    placeholder="Enter custom text (e.g., Scan Me)"
-                    type="text"
-                    value={qrStyles.customText}
-                  />
-                  <p className="mt-1 text-gray-500 text-xs">
-                    Leave empty for default "Flam It" text (max 20 characters)
-                  </p>
-                </div>
+                {qrStyles.templateId === "FlamQR" && (
+                  <div className="mt-4 space-y-4">
+                    <div>
+                      <Label
+                        className="mb-2 block text-gray-700 text-sm"
+                        htmlFor="custom-text-input"
+                      >
+                        Custom Text (Optional)
+                      </Label>
+                      <Input
+                        className="text-gray-900 placeholder:text-gray-400"
+                        id="custom-text-input"
+                        maxLength={20}
+                        onChange={(e) =>
+                          setQrStyles((prev) => ({
+                            ...prev,
+                            customText: e.target.value,
+                          }))
+                        }
+                        placeholder="Enter custom text (e.g., Scan Me)"
+                        type="text"
+                        value={qrStyles.customText}
+                      />
+                      <p className="mt-1 text-gray-500 text-xs">
+                        Leave empty for default "Flam It" text (max 20
+                        characters)
+                      </p>
+                    </div>
+
+                    <div>
+                      <Label
+                        className="mb-2 block text-gray-700 text-sm"
+                        htmlFor="text-color-input"
+                      >
+                        Text Color
+                      </Label>
+                      <ColorInput
+                        color={qrStyles.textColor || "#000000"}
+                        onChange={(value) =>
+                          setQrStyles((prev) => ({
+                            ...prev,
+                            textColor: value,
+                          }))
+                        }
+                      />
+                    </div>
+
+                    <div>
+                      <Label
+                        className="mb-2 block text-gray-700 text-sm"
+                        htmlFor="font-size-input"
+                      >
+                        Font Size
+                      </Label>
+                      <Input
+                        className="text-gray-900 placeholder:text-gray-400"
+                        id="font-size-input"
+                        min={8}
+                        max={48}
+                        onChange={(e) =>
+                          setQrStyles((prev) => ({
+                            ...prev,
+                            fontSize: Number(e.target.value),
+                          }))
+                        }
+                        type="number"
+                        value={qrStyles.fontSize}
+                      />
+                    </div>
+
+                    <div>
+                      <Label
+                        className="mb-2 block text-gray-700 text-sm"
+                        htmlFor="font-weight-input"
+                      >
+                        Font Weight
+                      </Label>
+                      <Input
+                        className="text-gray-900 placeholder:text-gray-400"
+                        id="font-weight-input"
+                        min={100}
+                        max={900}
+                        step={100}
+                        onChange={(e) =>
+                          setQrStyles((prev) => ({
+                            ...prev,
+                            fontWeight: Number(e.target.value),
+                          }))
+                        }
+                        type="number"
+                        value={qrStyles.fontWeight}
+                      />
+                    </div>
+
+                    <div>
+                      <Label
+                        className="mb-2 block text-gray-700 text-sm"
+                        htmlFor="letter-spacing-input"
+                      >
+                        Letter Spacing
+                      </Label>
+                      <Input
+                        className="text-gray-900 placeholder:text-gray-400"
+                        id="letter-spacing-input"
+                        min={-5}
+                        max={20}
+                        step={0.5}
+                        onChange={(e) =>
+                          setQrStyles((prev) => ({
+                            ...prev,
+                            fontLetterSpacing: Number(e.target.value),
+                          }))
+                        }
+                        type="number"
+                        value={qrStyles.fontLetterSpacing}
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Color Customization Section */}
@@ -177,7 +279,7 @@ const Page = () => {
                   }`}
                 >
                   <div
-                    className={`flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full ${
+                    className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full ${
                       contrastInfo.warning ? "bg-orange-100" : "bg-green-100"
                     }`}
                   >
@@ -247,6 +349,10 @@ const Page = () => {
                 hideLogo={!qrStyles.showLogo}
                 scale={2}
                 templateId={qrStyles.templateId}
+                textColor={qrStyles.textColor}
+                fontSize={qrStyles.fontSize}
+                fontWeight={qrStyles.fontWeight}
+                fontLetterSpacing={qrStyles.fontLetterSpacing}
                 url={url}
               />
               <div className="w-full border-gray-200 border-t pt-4">
@@ -258,6 +364,10 @@ const Page = () => {
                   fgColor={qrStyles.qrColor}
                   showLogo={qrStyles.showLogo ?? false}
                   templateId={qrStyles.templateId}
+                  textColor={qrStyles.textColor}
+                  fontSize={qrStyles.fontSize}
+                  fontWeight={qrStyles.fontWeight}
+                  fontLetterSpacing={qrStyles.fontLetterSpacing}
                   url={url}
                 />
               </div>

@@ -490,6 +490,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
         fgColor,
         bgColor,
         customText,
+        ...otherProps,
       });
 
       // Clone the wrapped SVG element and override width/height to match requested size

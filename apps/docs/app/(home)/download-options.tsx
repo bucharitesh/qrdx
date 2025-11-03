@@ -21,6 +21,10 @@ type DownloadOptionsProps = {
   logo?: string;
   templateId?: string;
   customText?: string;
+  textColor?: string;
+  fontSize?: number;
+  fontWeight?: number;
+  fontLetterSpacing?: number;
 };
 
 export const DownloadOptions: React.FC<DownloadOptionsProps> = ({
@@ -33,6 +37,10 @@ export const DownloadOptions: React.FC<DownloadOptionsProps> = ({
   logo,
   templateId,
   customText,
+  textColor,
+  fontSize,
+  fontWeight,
+  fontLetterSpacing,
 }) => {
   const qrProps = React.useMemo(
     () => ({
@@ -47,6 +55,10 @@ export const DownloadOptions: React.FC<DownloadOptionsProps> = ({
       }),
       templateId,
       customText,
+      textColor,
+      fontSize,
+      fontWeight,
+      fontLetterSpacing,
     }),
     [
       url,
@@ -58,6 +70,10 @@ export const DownloadOptions: React.FC<DownloadOptionsProps> = ({
       eyeColor,
       dotColor,
       customText,
+      textColor,
+      fontSize,
+      fontWeight,
+      fontLetterSpacing,
     ],
   );
 

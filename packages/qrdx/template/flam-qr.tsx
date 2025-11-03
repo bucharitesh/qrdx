@@ -7,6 +7,7 @@ export type FlamQRProps = {
   fontSize?: number;
   fontWeight: number;
   fontLetterSpacing?: number;
+  fontFamily?: string;
 };
 
 export const FlamQR: TemplateDefinition<FlamQRProps> = {
@@ -1798,7 +1799,6 @@ export const FlamQR: TemplateDefinition<FlamQRProps> = {
               r="2.075675675675676"
               transform="rotate(0,10.378378378378379,121.0810810810811)"
             />
-
             <circle
               cx="378.993"
               cy="460.228"
@@ -2266,10 +2266,11 @@ export const FlamQR: TemplateDefinition<FlamQRProps> = {
             </defs>
             {/* Customizable circular text */}
             <text
-              fill={props?.fgColor || "black"}
+              fill={props?.textColor || "black"}
+              fontFamily={props?.fontFamily || "Arial, Helvetica, sans-serif"}
               fontSize={props?.fontSize || 40}
               fontWeight={props?.fontWeight || "900"}
-              letterSpacing={props?.fontLetterSpacing || 26}
+              letterSpacing={props?.fontLetterSpacing || 6}
             >
               <textPath href="#circlePath" startOffset="0%" textAnchor="start">
                 {props?.customText
