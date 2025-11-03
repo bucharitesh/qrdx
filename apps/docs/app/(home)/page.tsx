@@ -9,6 +9,8 @@ import { getContrastLevel, getContrastRatio } from "qrdx/utils";
 import { useMemo, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { DownloadOptions } from "./download-options";
+import { ErrorLevelSelector } from "./error-level-selector";
+import { PatternSelector } from "./pattern-selector";
 import { TemplateSelector } from "./template-selector";
 
 type QRStyles = {
@@ -18,6 +20,15 @@ type QRStyles = {
   backgroundColor: string;
   eyeColor: string;
   dotColor: string;
+  dotPattern?:
+    | "circle"
+    | "square"
+    | "diamond"
+    | "circle-mixed"
+    | "packman"
+    | "rounded"
+    | "clean-square";
+  errorLevel?: "L" | "M" | "Q" | "H";
   customLogo?: string;
   templateId?: string;
   customText?: string;
@@ -33,6 +44,8 @@ const Page = () => {
     qrColor: "#000000",
     eyeColor: "#000000",
     dotColor: "#000000",
+    dotPattern: "circle",
+    errorLevel: "L",
     backgroundColor: "#ffffff",
     templateId: "default",
     customText: "",
@@ -56,7 +69,7 @@ const Page = () => {
   }, [qrStyles.qrColor, qrStyles.backgroundColor]);
 
   return (
-    <div className="relative z-10 mx-auto mt-10 w-full max-w-7xl select-none p-2 md:p-6">
+    <div className="relative z-10 mx-auto w-full max-w-7xl select-none p-2 md:p-6">
       <div className="rounded-xl border-0 p-3 backdrop-blur-sm md:p-8">
         <div className="grid h-full w-full grid-cols-1 gap-6 lg:grid-cols-5">
           {/* Left Column - Form Options */}
@@ -83,6 +96,42 @@ const Page = () => {
                     value={url}
                   />
                 </div>
+              </div>
+
+              {/* Pattern Selection Section */}
+              <div className="space-y-4 rounded-xl border border-gray-200 bg-white/90 p-4 backdrop-blur-sm">
+                <h2 className="border-b pb-2 font-semibold text-gray-900 text-lg">
+                  Dot Patterns
+                </h2>
+                <PatternSelector
+                  backgroundColor={"transparent"}
+                  onPatternSelect={(pattern) =>
+                    setQrStyles((prev) => ({
+                      ...prev,
+                      dotPattern: pattern as QRStyles["dotPattern"],
+                    }))
+                  }
+                  qrColor={qrStyles.qrColor}
+                  selectedPattern={qrStyles.dotPattern}
+                />
+              </div>
+
+              {/* Error Correction Level Section */}
+              <div className="space-y-4 rounded-xl border border-gray-200 bg-white/90 p-4 backdrop-blur-sm">
+                <h2 className="border-b pb-2 font-semibold text-gray-900 text-lg">
+                  Error Correction
+                </h2>
+                <ErrorLevelSelector
+                  backgroundColor={qrStyles.backgroundColor}
+                  onLevelSelect={(level) =>
+                    setQrStyles((prev) => ({
+                      ...prev,
+                      errorLevel: level as QRStyles["errorLevel"],
+                    }))
+                  }
+                  qrColor={qrStyles.qrColor}
+                  selectedLevel={qrStyles.errorLevel}
+                />
               </div>
 
               {/* Template Selection Section */}
@@ -344,6 +393,8 @@ const Page = () => {
                 bgColor={qrStyles.backgroundColor}
                 customText={qrStyles.customText}
                 dotColor={qrStyles.dotColor}
+                dotPattern={qrStyles.dotPattern}
+                errorLevel={qrStyles.errorLevel}
                 eyeColor={qrStyles.eyeColor}
                 fgColor={qrStyles.qrColor}
                 hideLogo={!qrStyles.showLogo}
@@ -360,6 +411,8 @@ const Page = () => {
                   bgColor={qrStyles.backgroundColor}
                   customText={qrStyles.customText}
                   dotColor={qrStyles.dotColor}
+                  dotPattern={qrStyles.dotPattern}
+                  errorLevel={qrStyles.errorLevel}
                   eyeColor={qrStyles.eyeColor}
                   fgColor={qrStyles.qrColor}
                   showLogo={qrStyles.showLogo ?? false}

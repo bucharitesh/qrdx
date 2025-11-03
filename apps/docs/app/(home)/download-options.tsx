@@ -17,6 +17,15 @@ type DownloadOptionsProps = {
   bgColor: string;
   eyeColor: string;
   dotColor: string;
+  dotPattern?:
+    | "circle"
+    | "square"
+    | "diamond"
+    | "circle-mixed"
+    | "packman"
+    | "rounded"
+    | "clean-square";
+  errorLevel?: "L" | "M" | "Q" | "H";
   showLogo: boolean;
   logo?: string;
   templateId?: string;
@@ -33,6 +42,8 @@ export const DownloadOptions: React.FC<DownloadOptionsProps> = ({
   bgColor,
   eyeColor,
   dotColor,
+  dotPattern,
+  errorLevel,
   showLogo,
   logo,
   templateId,
@@ -50,9 +61,11 @@ export const DownloadOptions: React.FC<DownloadOptionsProps> = ({
         bgColor,
         eyeColor,
         dotColor,
+        dotPattern,
         hideLogo: !showLogo,
         logo,
       }),
+      level: errorLevel || "L",
       templateId,
       customText,
       textColor,
@@ -69,6 +82,8 @@ export const DownloadOptions: React.FC<DownloadOptionsProps> = ({
       templateId,
       eyeColor,
       dotColor,
+      dotPattern,
+      errorLevel,
       customText,
       textColor,
       fontSize,
