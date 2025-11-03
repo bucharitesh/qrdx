@@ -33,7 +33,7 @@ const Page = () => {
     templateId: "default",
     customText: "",
   });
-  const [url, setUrl] = useState("https://www.google.com");
+  const [url, setUrl] = useState("https://instant.cdn.flamapp.com/card?o=1234");
 
   const methods = useForm();
 
