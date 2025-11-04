@@ -1,6 +1,11 @@
 "use client";
 
 import { memo, useMemo } from "react";
+import type {
+  BodyPattern,
+  CornerEyeDotPattern,
+  CornerEyePattern,
+} from "@/types";
 import { DEFAULT_MARGIN } from "./constants";
 import { getQRData } from "./helpers";
 import { QRCodeSVG } from "./utils";
@@ -14,7 +19,7 @@ export const QRCode = memo(
     bgColor,
     eyeColor,
     dotColor,
-    dotPattern,
+    bodyPattern,
     cornerEyePattern,
     cornerEyeDotPattern,
     errorLevel,
@@ -33,34 +38,9 @@ export const QRCode = memo(
     bgColor?: string;
     eyeColor?: string;
     dotColor?: string;
-    dotPattern?:
-      | "circle"
-      | "square"
-      | "diamond"
-      | "circle-mixed"
-      | "pacman"
-      | "rounded"
-      | "clean-square";
-    cornerEyePattern?:
-      | "square"
-      | "rounded"
-      | "rounded-inward"
-      | "rounded-inward-flipped"
-      | "gear"
-      | "semi-round"
-      | "rounded-extra"
-      | "rounded-square"
-      | "circle";
-    cornerEyeDotPattern?:
-      | "square"
-      | "rounded-square"
-      | "circle"
-      | "rounded-inward"
-      | "rounded-inward-flipped"
-      | "semi-round"
-      | "leaf"
-      | "diamond"
-      | "diamond-rounded";
+    bodyPattern?: BodyPattern;
+    cornerEyePattern?: CornerEyePattern;
+    cornerEyeDotPattern?: CornerEyeDotPattern;
     errorLevel?: "L" | "M" | "Q" | "H";
     scale?: number;
     margin?: number;
@@ -80,7 +60,7 @@ export const QRCode = memo(
           bgColor,
           eyeColor,
           dotColor,
-          dotPattern,
+          bodyPattern,
           logo,
           margin,
         }),
@@ -93,18 +73,18 @@ export const QRCode = memo(
         bgColor,
         eyeColor,
         dotColor,
-        dotPattern,
+        bodyPattern,
       ]
     );
 
     return (
       <QRCodeSVG
         bgColor={qrData.bgColor}
+        bodyPattern={qrData.bodyPattern}
         cornerEyeDotPattern={cornerEyeDotPattern}
         cornerEyePattern={cornerEyePattern}
         customText={customText}
         dotColor={qrData.dotColor}
-        dotPattern={qrData.dotPattern}
         eyeColor={qrData.eyeColor}
         fgColor={qrData.fgColor}
         fontLetterSpacing={fontLetterSpacing}

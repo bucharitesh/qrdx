@@ -45,16 +45,7 @@ export const PatternSelector: React.FC<PatternSelectorProps> = ({
             <div className="flex h-16 w-16 items-center justify-center">
               <QRCodeSVG
                 bgColor={backgroundColor}
-                dotPattern={
-                  pattern.id as
-                    | "circle"
-                    | "square"
-                    | "diamond"
-                    | "circle-mixed"
-                    | "pacman"
-                    | "rounded"
-                    | "clean-square"
-                }
+                bodyPattern={pattern.id}
                 fgColor={qrColor}
                 size={64}
                 value="https://example.com"

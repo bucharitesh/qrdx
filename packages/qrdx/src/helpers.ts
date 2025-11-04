@@ -1,3 +1,4 @@
+import type { BodyPattern } from "@/types";
 import { FLAM_QR_LOGO } from "./constants";
 
 export function getQRData({
@@ -6,7 +7,7 @@ export function getQRData({
   bgColor,
   eyeColor,
   dotColor,
-  dotPattern,
+  bodyPattern,
   hideLogo,
   logo,
   margin,
@@ -16,14 +17,7 @@ export function getQRData({
   bgColor?: string;
   eyeColor?: string;
   dotColor?: string;
-  dotPattern?:
-    | "circle"
-    | "square"
-    | "diamond"
-    | "circle-mixed"
-    | "pacman"
-    | "rounded"
-    | "clean-square";
+  bodyPattern?: BodyPattern;
   hideLogo?: boolean;
   logo?: string;
   margin?: number;
@@ -34,7 +28,7 @@ export function getQRData({
     fgColor,
     eyeColor,
     dotColor,
-    dotPattern,
+    bodyPattern,
     size: 1024,
     level: "Q", // QR Code error correction level: https://blog.qrstuff.com/general/qr-code-error-correction
     hideLogo,

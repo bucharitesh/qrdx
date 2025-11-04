@@ -4,7 +4,14 @@ import { ColorInput } from "@repo/design-system/components/color-picker";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { Switch } from "@repo/design-system/components/ui/switch";
-import { getContrastLevel, getContrastRatio, QRCode } from "qrdx";
+import {
+  type BodyPattern,
+  type CornerEyeDotPattern,
+  type CornerEyePattern,
+  getContrastLevel,
+  getContrastRatio,
+  QRCode,
+} from "qrdx";
 import { useMemo, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { CornerEyeDotPatternSelector } from "./corner-eye-dot-pattern-selector";
@@ -21,34 +28,9 @@ type QRStyles = {
   backgroundColor: string;
   eyeColor: string;
   dotColor: string;
-  dotPattern?:
-    | "circle"
-    | "square"
-    | "diamond"
-    | "circle-mixed"
-    | "pacman"
-    | "rounded"
-    | "clean-square";
-  cornerEyePattern?:
-    | "square"
-    | "rounded"
-    | "rounded-inward"
-    | "rounded-inward-flipped"
-    | "gear"
-    | "semi-round"
-    | "rounded-extra"
-    | "rounded-square"
-    | "circle";
-  cornerEyeDotPattern?:
-    | "square"
-    | "rounded-square"
-    | "circle"
-    | "rounded-inward"
-    | "rounded-inward-flipped"
-    | "semi-round"
-    | "leaf"
-    | "diamond"
-    | "diamond-rounded";
+  bodyPattern?: BodyPattern;
+  cornerEyePattern?: CornerEyePattern;
+  cornerEyeDotPattern?: CornerEyeDotPattern;
   errorLevel?: "L" | "M" | "Q" | "H";
   customLogo?: string;
   templateId?: string;
@@ -65,7 +47,7 @@ const Page = () => {
     qrColor: "#000000",
     eyeColor: "#000000",
     dotColor: "#000000",
-    dotPattern: "circle",
+    bodyPattern: "circle",
     cornerEyePattern: "gear",
     cornerEyeDotPattern: "circle",
     errorLevel: "L",
@@ -131,11 +113,11 @@ const Page = () => {
                   onPatternSelect={(pattern) =>
                     setQrStyles((prev) => ({
                       ...prev,
-                      dotPattern: pattern as QRStyles["dotPattern"],
+                      bodyPattern: pattern as QRStyles["bodyPattern"],
                     }))
                   }
                   qrColor={qrStyles.qrColor}
-                  selectedPattern={qrStyles.dotPattern}
+                  selectedPattern={qrStyles.bodyPattern}
                 />
               </div>
 
@@ -451,7 +433,7 @@ const Page = () => {
                 cornerEyePattern={qrStyles.cornerEyePattern}
                 customText={qrStyles.customText}
                 dotColor={qrStyles.dotColor}
-                dotPattern={qrStyles.dotPattern}
+                bodyPattern={qrStyles.bodyPattern}
                 errorLevel={qrStyles.errorLevel}
                 eyeColor={qrStyles.eyeColor}
                 fgColor={qrStyles.qrColor}
@@ -471,7 +453,7 @@ const Page = () => {
                   cornerEyePattern={qrStyles.cornerEyePattern}
                   customText={qrStyles.customText}
                   dotColor={qrStyles.dotColor}
-                  dotPattern={qrStyles.dotPattern}
+                  bodyPattern={qrStyles.bodyPattern}
                   errorLevel={qrStyles.errorLevel}
                   eyeColor={qrStyles.eyeColor}
                   fgColor={qrStyles.qrColor}

@@ -44,9 +44,7 @@ export const CornerEyeDotPatternSelector: React.FC<
             <div className="flex h-16 w-16 items-center justify-center">
               <QRCodeSVG
                 bgColor={backgroundColor}
-                cornerEyeDotPattern={
-                  pattern.id as "square" | "rounded-square" | "circle" | "diamond"
-                }
+                cornerEyeDotPattern={pattern.id}
                 fgColor={qrColor}
                 size={64}
                 value="https://example.com"
@@ -72,4 +70,3 @@ export const CornerEyeDotPatternSelector: React.FC<
     </div>
   );
 };
-

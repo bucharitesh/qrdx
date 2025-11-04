@@ -1,4 +1,7 @@
 import type { CSSProperties } from "react";
+import type { CornerEyeDotPattern } from "./corner-dot";
+import type { CornerEyePattern } from "./corner-eye";
+import type { BodyPattern } from "./image-pattern";
 
 export type ImageSettings = {
   src: string;
@@ -9,37 +12,6 @@ export type ImageSettings = {
   y?: number;
 };
 
-export type DotPattern =
-  | "circle"
-  | "square"
-  | "diamond"
-  | "circle-mixed"
-  | "pacman"
-  | "rounded"
-  | "clean-square";
-
-export type CornerEyePattern =
-  | "square"
-  | "rounded"
-  | "rounded-inward"
-  | "rounded-inward-flipped"
-  | "gear"
-  | "semi-round"
-  | "rounded-extra"
-  | "rounded-square"
-  | "circle";
-
-export type CornerEyeDotPattern =
-  | "square"
-  | "rounded-square"
-  | "circle"
-  | "rounded-inward"
-  | "rounded-inward-flipped"
-  | "semi-round"
-  | "leaf"
-  | "diamond"
-  | "diamond-rounded";
-
 export type QRProps = {
   value: string;
   size?: number;
@@ -48,7 +20,7 @@ export type QRProps = {
   fgColor?: string;
   eyeColor?: string;
   dotColor?: string;
-  dotPattern?: DotPattern;
+  bodyPattern?: BodyPattern;
   cornerEyePattern?: CornerEyePattern;
   cornerEyeDotPattern?: CornerEyeDotPattern;
   margin?: number;

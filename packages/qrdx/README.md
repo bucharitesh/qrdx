@@ -106,7 +106,7 @@ export default function App() {
   return (
     <QRCode
       url="https://example.com"
-      dotPattern="rounded"
+      bodyPattern="rounded"
       size={512}
     />
   );

@@ -9,6 +9,11 @@ import {
 } from "@repo/design-system/components/ui/dropdown-menu";
 import { ChevronDownIcon, CopyIcon, DownloadIcon } from "lucide-react";
 import { getQRAsCanvas, getQRAsSVGDataUri, getQRData } from "qrdx";
+import type {
+  BodyPattern,
+  CornerEyeDotPattern,
+  CornerEyePattern,
+} from "qrdx/types";
 import React from "react";
 
 type DownloadOptionsProps = {
@@ -17,34 +22,9 @@ type DownloadOptionsProps = {
   bgColor: string;
   eyeColor: string;
   dotColor: string;
-  dotPattern?:
-    | "circle"
-    | "square"
-    | "diamond"
-    | "circle-mixed"
-    | "pacman"
-    | "rounded"
-    | "clean-square";
-  cornerEyePattern?:
-    | "square"
-    | "rounded"
-    | "rounded-inward"
-    | "rounded-inward-flipped"
-    | "gear"
-    | "semi-round"
-    | "rounded-extra"
-    | "rounded-square"
-    | "circle";
-  cornerEyeDotPattern?:
-    | "square"
-    | "rounded-square"
-    | "circle"
-    | "rounded-inward"
-    | "rounded-inward-flipped"
-    | "semi-round"
-    | "leaf"
-    | "diamond"
-    | "diamond-rounded";
+  bodyPattern?: BodyPattern;
+  cornerEyePattern?: CornerEyePattern;
+  cornerEyeDotPattern?: CornerEyeDotPattern;
   errorLevel?: "L" | "M" | "Q" | "H";
   showLogo: boolean;
   logo?: string;
@@ -62,7 +42,7 @@ export const DownloadOptions: React.FC<DownloadOptionsProps> = ({
   bgColor,
   eyeColor,
   dotColor,
-  dotPattern,
+  bodyPattern,
   cornerEyePattern,
   cornerEyeDotPattern,
   errorLevel,
@@ -83,7 +63,7 @@ export const DownloadOptions: React.FC<DownloadOptionsProps> = ({
         bgColor,
         eyeColor,
         dotColor,
-        dotPattern,
+        bodyPattern,
         hideLogo: !showLogo,
         logo,
       }),
@@ -106,7 +86,7 @@ export const DownloadOptions: React.FC<DownloadOptionsProps> = ({
       templateId,
       eyeColor,
       dotColor,
-      dotPattern,
+      bodyPattern,
       cornerEyePattern,
       cornerEyeDotPattern,
       errorLevel,
