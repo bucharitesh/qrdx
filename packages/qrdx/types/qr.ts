@@ -18,6 +18,17 @@ export type DotPattern =
   | "rounded"
   | "clean-square";
 
+export type CornerEyePattern =
+  | "square"
+  | "rounded"
+  | "rounded-inward"
+  | "rounded-inward-flipped"
+  | "gear"
+  | "semi-round"
+  | "rounded-extra"
+  | "rounded-square"
+  | "circle";
+
 export type QRProps = {
   value: string;
   size?: number;
@@ -27,6 +38,7 @@ export type QRProps = {
   eyeColor?: string;
   dotColor?: string;
   dotPattern?: DotPattern;
+  cornerEyePattern?: CornerEyePattern;
   margin?: number;
   style?: CSSProperties;
   imageSettings?: ImageSettings;

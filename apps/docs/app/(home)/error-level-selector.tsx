@@ -6,8 +6,6 @@ import type React from "react";
 type ErrorLevelSelectorProps = {
   selectedLevel?: string;
   onLevelSelect: (level: string) => void;
-  qrColor?: string;
-  backgroundColor?: string;
 };
 
 const errorLevels = [
@@ -20,8 +18,6 @@ const errorLevels = [
 export const ErrorLevelSelector: React.FC<ErrorLevelSelectorProps> = ({
   selectedLevel = "L",
   onLevelSelect,
-  qrColor = "#000000",
-  backgroundColor = "#ffffff",
 }) => {
   return (
     <div className="grid grid-cols-4 gap-3">
@@ -41,8 +37,8 @@ export const ErrorLevelSelector: React.FC<ErrorLevelSelectorProps> = ({
           <div className="mb-2 flex items-center justify-center">
             <div className="flex h-16 w-16 items-center justify-center">
               <QRCodeSVG
-                bgColor={backgroundColor}
-                fgColor={qrColor}
+                bgColor={"transparent"}
+                fgColor={"black"}
                 level={level.id}
                 size={64}
                 value="https://example.com"

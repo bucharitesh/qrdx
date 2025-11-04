@@ -13,8 +13,6 @@ type TemplateSelectorProps = {
 export const TemplateSelector: React.FC<TemplateSelectorProps> = ({
   selectedTemplateId = "default",
   onTemplateSelect,
-  qrColor = "#000000",
-  backgroundColor = "#ffffff",
 }) => {
   const templates = getAllTemplates();
 
@@ -36,8 +34,8 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({
           <div className="mb-3 flex items-center justify-center">
             <div className="flex h-20 w-20 items-center justify-center">
               <QRCode
-                bgColor={backgroundColor}
-                fgColor={qrColor}
+                bgColor={"transparent"}
+                fgColor={"black"}
                 hideLogo={true}
                 scale={0.6}
                 templateId={template.id}

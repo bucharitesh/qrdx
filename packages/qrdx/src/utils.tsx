@@ -93,8 +93,151 @@ function isCornerModule(x: number, y: number, size: number): boolean {
   return false;
 }
 
-// Generate corner square path (with new decorative design)
+// Generate corner square path based on pattern type
 function generateCornerSquarePath(
+  offsetX: number,
+  offsetY: number,
+  size: number,
+  pattern = "gear"
+): string {
+  switch (pattern) {
+    case "square":
+      return generateCornerSquarePattern(offsetX, offsetY, size);
+    case "rounded":
+      return generateCornerRoundedPattern(offsetX, offsetY, size);
+    case "rounded-inward":
+      return generateCornerRoundedInwardPattern(offsetX, offsetY, size);
+    case "rounded-inward-flipped":
+      return generateCornerRoundedInwardFlippedPattern(offsetX, offsetY, size);
+    case "semi-round":
+      return generateCornerSemiRoundPattern(offsetX, offsetY, size);
+    case "rounded-extra":
+      return generateCornerRoundedExtraPattern(offsetX, offsetY, size);
+    case "rounded-square":
+      return generateCornerRoundedSquarePattern(offsetX, offsetY, size);
+    case "circle":
+      return generateCornerCirclePattern(offsetX, offsetY, size);
+    default:
+      return generateCornerGearPattern(offsetX, offsetY, size);
+  }
+}
+
+// Pattern 1: Basic square corners
+function generateCornerSquarePattern(
+  offsetX: number,
+  offsetY: number,
+  size: number
+): string {
+  const scale = size / 80;
+  const transform = (coord: number, offset: number) => coord * scale + offset;
+
+  const path = `M ${transform(5, offsetX)} ${transform(5, offsetY)}v ${70 * scale}h ${70 * scale}v -${70 * scale}zM ${transform(15, offsetX)} ${transform(15, offsetY)}h ${50 * scale}v ${50 * scale}h -${50 * scale}z`;
+
+  return path;
+}
+
+// Pattern 2: Rounded corners
+function generateCornerRoundedPattern(
+  offsetX: number,
+  offsetY: number,
+  size: number
+): string {
+  const scale = size / 80;
+  const transform = (coord: number, offset: number) => coord * scale + offset;
+
+  // Using the exact path from user's specification - rounded square corners
+  const path = `M ${transform(5, offsetX)} ${transform(15, offsetY)}v ${50 * scale}a ${10 * scale} ${10 * scale}, 0, 0, 0, ${10 * scale} ${10 * scale}h ${50 * scale}a ${10 * scale} ${10 * scale}, 0, 0, 0, ${10 * scale} -${10 * scale}v -${50 * scale}a ${10 * scale} ${10 * scale}, 0, 0, 0, -${10 * scale} -${10 * scale}h -${50 * scale}a ${10 * scale} ${10 * scale}, 0, 0, 0, -${10 * scale} ${10 * scale}zM ${transform(20, offsetX)} ${transform(15, offsetY)}h ${40 * scale}a ${5 * scale} ${5 * scale}, 0, 0, 1, ${5 * scale} ${5 * scale}v ${40 * scale}a ${5 * scale} ${5 * scale}, 0, 0, 1, -${5 * scale} ${5 * scale}h -${40 * scale}a ${5 * scale} ${5 * scale}, 0, 0, 1, -${5 * scale} -${5 * scale}v -${40 * scale}a ${5 * scale} ${5 * scale}, 0, 0, 1, ${5 * scale} -${5 * scale}z`;
+
+  return path;
+}
+
+// Pattern 3: Rounded inward
+function generateCornerRoundedInwardPattern(
+  offsetX: number,
+  offsetY: number,
+  size: number
+): string {
+  const scale = size / 80;
+  const transform = (coord: number, offset: number) => coord * scale + offset;
+
+  const path = `M ${transform(5, offsetX)} ${transform(30, offsetY)}v 20a ${25 * scale} ${25 * scale}, 0, 0, 0, ${25 * scale} ${25 * scale}h 45v -45a ${25 * scale} ${25 * scale}, 0, 0, 0, -${25 * scale} -${25 * scale}h -20a ${25 * scale} ${25 * scale}, 0, 0, 0, -${25 * scale} ${25 * scale}M ${transform(30, offsetX)} ${transform(15, offsetY)}h 20a ${15 * scale} ${15 * scale}, 0, 0, 1, ${15 * scale} ${15 * scale}v 35h -35a ${15 * scale} ${15 * scale}, 0, 0, 1, -${15 * scale} -${15 * scale}v -20a ${15 * scale} ${15 * scale}, 0, 0, 1, ${15 * scale} -${15 * scale}`;
+
+  return path;
+}
+
+// Pattern 4: Rounded inward flipped
+function generateCornerRoundedInwardFlippedPattern(
+  offsetX: number,
+  offsetY: number,
+  size: number
+): string {
+  const scale = size / 80;
+  const transform = (coord: number, offset: number) => coord * scale + offset;
+
+  const path = `M ${transform(5, offsetX)} ${transform(30, offsetY)}v 20a ${25 * scale} ${25 * scale}, 0, 0, 0, ${25 * scale} ${25 * scale}h 45v -45a ${25 * scale} ${25 * scale}, 0, 0, 0, -${25 * scale} -${25 * scale}h -20a ${25 * scale} ${25 * scale}, 0, 0, 0, -${25 * scale} ${25 * scale}M ${transform(30, offsetX)} ${transform(15, offsetY)}h 20a ${15 * scale} ${15 * scale}, 0, 0, 1, ${15 * scale} ${15 * scale}v 35h -35a ${15 * scale} ${15 * scale}, 0, 0, 1, -${15 * scale} -${15 * scale}v -20a ${15 * scale} ${15 * scale}, 0, 0, 1, ${15 * scale} -${15 * scale}`;
+
+  return path;
+}
+
+// Pattern 6: Semi-round
+function generateCornerSemiRoundPattern(
+  offsetX: number,
+  offsetY: number,
+  size: number
+): string {
+  const scale = size / 80;
+  const transform = (coord: number, offset: number) => coord * scale + offset;
+
+  const path = `M ${transform(5, offsetX)} ${transform(30, offsetY)}v 20a ${25 * scale} ${25 * scale}, 0, 0, 0, ${25 * scale} ${25 * scale}h 45v -45a ${25 * scale} ${25 * scale}, 0, 0, 0, -${25 * scale} -${25 * scale}h -20H ${transform(5, offsetX)}zM ${transform(30, offsetX)} ${transform(15, offsetY)}h 20a ${15 * scale} ${15 * scale}, 0, 0, 1, ${15 * scale} ${15 * scale}v 35h -35a ${15 * scale} ${15 * scale}, 0, 0, 1, -${15 * scale} -${15 * scale}v -35z`;
+
+  return path;
+}
+
+// Pattern 7: Rounded-extra
+function generateCornerRoundedExtraPattern(
+  offsetX: number,
+  offsetY: number,
+  size: number
+): string {
+  const scale = size / 80;
+  const transform = (coord: number, offset: number) => coord * scale + offset;
+
+  const path = `M ${transform(5, offsetX)} ${transform(30, offsetY)}v 20a ${25 * scale} ${25 * scale}, 0, 0, 0, ${25 * scale} ${25 * scale}h 20a ${25 * scale} ${25 * scale}, 0, 0, 0, ${25 * scale} -${25 * scale}v -20a ${25 * scale} ${25 * scale}, 0, 0, 0, -${25 * scale} -${25 * scale}h -20a ${25 * scale} ${25 * scale}, 0, 0, 0, -${25 * scale} ${25 * scale}M ${transform(30, offsetX)} ${transform(15, offsetY)}h 20a ${15 * scale} ${15 * scale}, 0, 0, 1, ${15 * scale} ${15 * scale}v 20a ${15 * scale} ${15 * scale}, 0, 0, 1, -${15 * scale} ${15 * scale}h -20a ${15 * scale} ${15 * scale}, 0, 0, 1, -${15 * scale} -${15 * scale}v -20a ${15 * scale} ${15 * scale}, 0, 0, 1, ${15 * scale} -${15 * scale}`;
+
+  return path;
+}
+
+// Pattern 8: Rounded-square
+function generateCornerRoundedSquarePattern(
+  offsetX: number,
+  offsetY: number,
+  size: number
+): string {
+  const scale = size / 80;
+  const transform = (coord: number, offset: number) => coord * scale + offset;
+
+  const path = `M ${transform(5, offsetX)} ${transform(40, offsetY)}a ${35 * scale} ${35 * scale}, 0, 0, 0, ${35 * scale} ${35 * scale}h 30a ${5 * scale} ${5 * scale}, 0, 0, 0, ${5 * scale} -${5 * scale}v -30a ${35 * scale} ${35 * scale}, 0, 0, 0, -${35 * scale} -${35 * scale}a ${35 * scale} ${35 * scale}, 0, 0, 0, -${35 * scale} ${35 * scale}zM ${transform(40, offsetX)} ${transform(15, offsetY)}a ${25 * scale} ${25 * scale}, 0, 0, 1, ${25 * scale} ${25 * scale}v 25h -25a ${25 * scale} ${25 * scale}, 0, 0, 1, -${25 * scale} -${25 * scale}a ${25 * scale} ${25 * scale}, 0, 0, 1, ${25 * scale} -${25 * scale}z`;
+
+  return path;
+}
+
+// Pattern 9: Circle
+function generateCornerCirclePattern(
+  offsetX: number,
+  offsetY: number,
+  size: number
+): string {
+  const scale = size / 80;
+  const transform = (coord: number, offset: number) => coord * scale + offset;
+
+  // Using the exact path from user's specification - proper circles
+  const path = `M ${transform(40, offsetX)} ${transform(5, offsetY)}a ${35 * scale} ${35 * scale} 0 1 0 ${0.1 * scale} 0zm 0 ${10 * scale}a ${25 * scale} ${25 * scale} 0 1 1 -${0.1 * scale} 0Z`;
+
+  return path;
+}
+
+// Pattern 10: Gear (current default decorative design)
+function generateCornerGearPattern(
   offsetX: number,
   offsetY: number,
   size: number
@@ -342,6 +485,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
     eyeColor,
     dotColor,
     dotPattern = "circle",
+    cornerEyePattern = "gear",
     margin = DEFAULT_MARGIN,
     isOGContext = false,
     imageSettings,
@@ -464,7 +608,12 @@ export function QRCodeSVG(props: QRPropsSVG) {
       <g className="corners-square-color-0-0">
         <path
           clipRule="evenodd"
-          d={generateCornerSquarePath(topLeftX, topLeftY, cornerSize)}
+          d={generateCornerSquarePath(
+            topLeftX,
+            topLeftY,
+            cornerSize,
+            cornerEyePattern
+          )}
           transform={`rotate(0,${topLeftX + cornerSize / 2},${topLeftY + cornerSize / 2})`}
         />
       </g>
@@ -483,7 +632,12 @@ export function QRCodeSVG(props: QRPropsSVG) {
       <g className="corners-square-color-1-0">
         <path
           clipRule="evenodd"
-          d={generateCornerSquarePath(topRightX, topRightY, cornerSize)}
+          d={generateCornerSquarePath(
+            topRightX,
+            topRightY,
+            cornerSize,
+            cornerEyePattern
+          )}
           transform={`rotate(0,${topRightX + cornerSize / 2},${topRightY + cornerSize / 2})`}
         />
       </g>
@@ -502,7 +656,12 @@ export function QRCodeSVG(props: QRPropsSVG) {
       <g className="corners-square-color-0-1">
         <path
           clipRule="evenodd"
-          d={generateCornerSquarePath(bottomLeftX, bottomLeftY, cornerSize)}
+          d={generateCornerSquarePath(
+            bottomLeftX,
+            bottomLeftY,
+            cornerSize,
+            cornerEyePattern
+          )}
           transform={`rotate(0,${bottomLeftX + cornerSize / 2},${bottomLeftY + cornerSize / 2})`}
         />
       </g>
@@ -555,7 +714,12 @@ export function QRCodeSVG(props: QRPropsSVG) {
             <g className="corners-square-color-0-0">
               <path
                 clipRule="evenodd"
-                d={generateCornerSquarePath(topLeftX, topLeftY, cornerSize)}
+                d={generateCornerSquarePath(
+                  topLeftX,
+                  topLeftY,
+                  cornerSize,
+                  cornerEyePattern
+                )}
                 transform={`rotate(0,${topLeftX + cornerSize / 2},${topLeftY + cornerSize / 2})`}
               />
             </g>
@@ -574,7 +738,12 @@ export function QRCodeSVG(props: QRPropsSVG) {
             <g className="corners-square-color-1-0">
               <path
                 clipRule="evenodd"
-                d={generateCornerSquarePath(topRightX, topRightY, cornerSize)}
+                d={generateCornerSquarePath(
+                  topRightX,
+                  topRightY,
+                  cornerSize,
+                  cornerEyePattern
+                )}
                 transform={`rotate(0,${topRightX + cornerSize / 2},${topRightY + cornerSize / 2})`}
               />
             </g>
@@ -596,7 +765,8 @@ export function QRCodeSVG(props: QRPropsSVG) {
                 d={generateCornerSquarePath(
                   bottomLeftX,
                   bottomLeftY,
-                  cornerSize
+                  cornerSize,
+                  cornerEyePattern
                 )}
                 transform={`rotate(0,${bottomLeftX + cornerSize / 2},${bottomLeftY + cornerSize / 2})`}
               />
