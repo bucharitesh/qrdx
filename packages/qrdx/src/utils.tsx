@@ -1,6 +1,12 @@
 import type { JSX } from "react";
 import React from "react";
-import type { Excavation, ImageSettings, Modules, QRPropsSVG } from "../types";
+import type {
+  BodyPattern,
+  Excavation,
+  ImageSettings,
+  Modules,
+  QRPropsSVG,
+} from "../types";
 import qrcodegen from "./codegen";
 import {
   DEFAULT_BGCOLOR,
@@ -101,14 +107,7 @@ function generateDataCircles(
   options: {
     margin: number;
     pixelSize: number;
-    pattern?:
-      | "circle"
-      | "square"
-      | "diamond"
-      | "circle-mixed"
-      | "pacman"
-      | "rounded"
-      | "clean-square";
+    pattern?: BodyPattern;
   }
 ): JSX.Element[] {
   const { margin, pixelSize, pattern = "circle" } = options;
@@ -422,31 +421,14 @@ export function QRCodeSVG(props: QRPropsSVG) {
   // QR Code content (can be used standalone or inside wrapper)
   const qrContent = (
     <>
-      <style>{`
-        .background-color { fill: ${bgColor}; }
-        .dot-color { fill: ${fgColor}; }
-        .corners-square-color-0-0 { fill: ${eyeColor || fgColor}; }
-        .corners-dot-color-0-0 { fill: ${dotColor || fgColor}; }
-        .corners-square-color-1-0 { fill: ${eyeColor || fgColor}; }
-        .corners-dot-color-1-0 { fill: ${dotColor || fgColor}; }
-        .corners-square-color-0-1 { fill: ${eyeColor || fgColor}; }
-        .corners-dot-color-0-1 { fill: ${dotColor || fgColor}; }
-      `}</style>
-
       {/* Background */}
-      <rect
-        className="background-color"
-        height={size}
-        width={size}
-        x={0}
-        y={0}
-      />
+      <rect fill={bgColor} height={size} width={size} x={0} y={0} />
 
       {/* Data module circles */}
-      <g className="dot-color">{dataCircles}</g>
+      <g fill={fgColor}>{dataCircles}</g>
 
       {/* Top-left corner square */}
-      <g className="corners-square-color-0-0">
+      <g fill={eyeColor}>
         <path
           clipRule="evenodd"
           d={generateCornerSquarePath(
@@ -460,7 +442,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
       </g>
 
       {/* Top-left corner dot */}
-      <g className="corners-dot-color-0-0">
+      <g fill={dotColor}>
         {generateCornerDotPath(
           topLeftX + cornerSize / 2,
           topLeftY + cornerSize / 2,
@@ -470,7 +452,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
       </g>
 
       {/* Top-right corner square */}
-      <g className="corners-square-color-1-0">
+      <g fill={eyeColor}>
         <path
           clipRule="evenodd"
           d={generateCornerSquarePath(
@@ -484,7 +466,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
       </g>
 
       {/* Top-right corner dot */}
-      <g className="corners-dot-color-1-0">
+      <g fill={dotColor}>
         {generateCornerDotPath(
           topRightX + cornerSize / 2,
           topRightY + cornerSize / 2,
@@ -494,7 +476,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
       </g>
 
       {/* Bottom-left corner square */}
-      <g className="corners-square-color-0-1">
+      <g fill={eyeColor}>
         <path
           clipRule="evenodd"
           d={generateCornerSquarePath(
@@ -508,7 +490,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
       </g>
 
       {/* Bottom-left corner dot */}
-      <g className="corners-dot-color-0-1">
+      <g fill={dotColor}>
         {generateCornerDotPath(
           bottomLeftX + cornerSize / 2,
           bottomLeftY + cornerSize / 2,
@@ -536,23 +518,13 @@ export function QRCodeSVG(props: QRPropsSVG) {
           viewBox={`0 0 ${templateSize} ${templateSize}`}
           width={templateSize}
         >
-          <style>{`
-            .dot-color { fill: ${fgColor}; }
-            .corners-square-color-0-0 { fill: ${eyeColor}; }
-            .corners-dot-color-0-0 { fill: ${dotColor}; }
-            .corners-square-color-1-0 { fill: ${eyeColor}; }
-            .corners-dot-color-1-0 { fill: ${dotColor}; }
-            .corners-square-color-0-1 { fill: ${eyeColor}; }
-            .corners-dot-color-0-1 { fill: ${dotColor}; }
-          `}</style>
-
           {/* Scale all QR elements to fit template coordinate system */}
           <g transform={`scale(${templateSize / size})`}>
             {/* Data module circles */}
-            <g className="dot-color">{dataCircles}</g>
+            <g fill={fgColor}>{dataCircles}</g>
 
             {/* Top-left corner square */}
-            <g className="corners-square-color-0-0">
+            <g fill={eyeColor}>
               <path
                 clipRule="evenodd"
                 d={generateCornerSquarePath(
@@ -566,7 +538,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
             </g>
 
             {/* Top-left corner dot */}
-            <g className="corners-dot-color-0-0">
+            <g fill={dotColor}>
               {generateCornerDotPath(
                 topLeftX + cornerSize / 2,
                 topLeftY + cornerSize / 2,
@@ -576,7 +548,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
             </g>
 
             {/* Top-right corner square */}
-            <g className="corners-square-color-1-0">
+            <g fill={eyeColor}>
               <path
                 clipRule="evenodd"
                 d={generateCornerSquarePath(
@@ -590,7 +562,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
             </g>
 
             {/* Top-right corner dot */}
-            <g className="corners-dot-color-1-0">
+            <g fill={dotColor}>
               {generateCornerDotPath(
                 topRightX + cornerSize / 2,
                 topRightY + cornerSize / 2,
@@ -600,7 +572,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
             </g>
 
             {/* Bottom-left corner square */}
-            <g className="corners-square-color-0-1">
+            <g fill={eyeColor}>
               <path
                 clipRule="evenodd"
                 d={generateCornerSquarePath(
@@ -614,7 +586,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
             </g>
 
             {/* Bottom-left corner dot */}
-            <g className="corners-dot-color-0-1">
+            <g fill={dotColor}>
               {generateCornerDotPath(
                 bottomLeftX + cornerSize / 2,
                 bottomLeftY + cornerSize / 2,

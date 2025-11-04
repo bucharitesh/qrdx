@@ -38,7 +38,7 @@ export const ErrorLevelSelector: React.FC<ErrorLevelSelectorProps> = ({
             <div className="flex h-16 w-16 items-center justify-center">
               <QRCodeSVG
                 bgColor={"transparent"}
-                fgColor={"black"}
+                fgColor={"#000000"}
                 level={level.id}
                 size={64}
                 value="https://example.com"

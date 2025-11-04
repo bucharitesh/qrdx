@@ -105,14 +105,12 @@ const Page = () => {
                   Dot Patterns
                 </h2>
                 <PatternSelector
-                  backgroundColor={"transparent"}
                   onPatternSelect={(pattern) =>
                     setQrStyles((prev) => ({
                       ...prev,
                       bodyPattern: pattern as QRStyles["bodyPattern"],
                     }))
                   }
-                  qrColor={qrStyles.qrColor}
                   selectedPattern={qrStyles.bodyPattern}
                 />
               </div>
@@ -123,14 +121,12 @@ const Page = () => {
                   Corner Eye Patterns
                 </h2>
                 <CornerEyePatternSelector
-                  backgroundColor={"transparent"}
                   onPatternSelect={(pattern) =>
                     setQrStyles((prev) => ({
                       ...prev,
                       cornerEyePattern: pattern as QRStyles["cornerEyePattern"],
                     }))
                   }
-                  qrColor={qrStyles.qrColor}
                   selectedPattern={qrStyles.cornerEyePattern}
                 />
               </div>

@@ -1,6 +1,11 @@
 "use client";
 
-import { getAllTemplates, QRCode, type TemplateDefinition } from "qrdx";
+import {
+  getAllTemplates,
+  QRCode,
+  QRCodeSVG,
+  type TemplateDefinition,
+} from "qrdx";
 import type React from "react";
 
 type TemplateSelectorProps = {
@@ -33,13 +38,11 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({
           {/* Template Preview */}
           <div className="mb-3 flex items-center justify-center">
             <div className="flex h-20 w-20 items-center justify-center">
-              <QRCode
+              <QRCodeSVG
                 bgColor={"transparent"}
-                fgColor={"black"}
-                hideLogo={true}
-                scale={0.6}
+                fgColor={"#000000"}
                 templateId={template.id}
-                url="https://example.com"
+                value="https://example.com"
               />
             </div>
           </div>

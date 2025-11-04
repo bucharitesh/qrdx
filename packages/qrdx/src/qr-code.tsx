@@ -61,6 +61,14 @@ export const QRCode = memo(
           eyeColor,
           dotColor,
           bodyPattern,
+          cornerEyePattern,
+          cornerEyeDotPattern,
+          errorLevel,
+          fontSize,
+          fontWeight,
+          fontLetterSpacing,
+          templateId,
+          customText,
           logo,
           margin,
         }),
@@ -74,6 +82,14 @@ export const QRCode = memo(
         eyeColor,
         dotColor,
         bodyPattern,
+        cornerEyePattern,
+        cornerEyeDotPattern,
+        errorLevel,
+        fontSize,
+        fontWeight,
+        fontLetterSpacing,
+        templateId,
+        customText,
       ]
     );
 
@@ -81,19 +97,19 @@ export const QRCode = memo(
       <QRCodeSVG
         bgColor={qrData.bgColor}
         bodyPattern={qrData.bodyPattern}
-        cornerEyeDotPattern={cornerEyeDotPattern}
-        cornerEyePattern={cornerEyePattern}
+        cornerEyeDotPattern={qrData.cornerEyeDotPattern}
+        cornerEyePattern={qrData.cornerEyePattern}
         customText={customText}
         dotColor={qrData.dotColor}
         eyeColor={qrData.eyeColor}
         fgColor={qrData.fgColor}
-        fontLetterSpacing={fontLetterSpacing}
-        fontSize={fontSize}
-        fontWeight={fontWeight}
+        fontLetterSpacing={qrData.fontLetterSpacing}
+        fontSize={qrData.fontSize}
+        fontWeight={qrData.fontWeight}
         level={errorLevel || qrData.level}
         margin={qrData.margin}
         size={(qrData.size / 8) * scale}
-        templateId={templateId}
+        templateId={qrData.templateId}
         value={qrData.value}
         {...(qrData.imageSettings && {
           imageSettings: {

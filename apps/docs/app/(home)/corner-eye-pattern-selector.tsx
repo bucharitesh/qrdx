@@ -6,8 +6,6 @@ import type React from "react";
 type CornerEyePatternSelectorProps = {
   selectedPattern?: string;
   onPatternSelect: (pattern: string) => void;
-  qrColor?: string;
-  backgroundColor?: string;
 };
 
 const patterns = [
@@ -19,12 +17,7 @@ const patterns = [
 
 export const CornerEyePatternSelector: React.FC<
   CornerEyePatternSelectorProps
-> = ({
-  selectedPattern = "gear",
-  onPatternSelect,
-  qrColor = "#000000",
-  backgroundColor = "#ffffff",
-}) => {
+> = ({ selectedPattern = "gear", onPatternSelect }) => {
   return (
     <div className="grid grid-cols-4 gap-3">
       {patterns.map((pattern) => (
@@ -43,9 +36,9 @@ export const CornerEyePatternSelector: React.FC<
           <div className="mb-2 flex items-center justify-center">
             <div className="flex h-16 w-16 items-center justify-center">
               <QRCodeSVG
-                bgColor={backgroundColor}
+                bgColor={"transparent"}
                 cornerEyePattern={pattern.id}
-                fgColor={qrColor}
+                fgColor={"#000000"}
                 size={64}
                 value="https://example.com"
               />

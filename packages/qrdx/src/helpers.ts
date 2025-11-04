@@ -1,4 +1,8 @@
-import type { BodyPattern } from "@/types";
+import type {
+  BodyPattern,
+  CornerEyeDotPattern,
+  CornerEyePattern,
+} from "@/types";
 import { FLAM_QR_LOGO } from "./constants";
 
 export function getQRData({
@@ -11,6 +15,14 @@ export function getQRData({
   hideLogo,
   logo,
   margin,
+  cornerEyePattern,
+  cornerEyeDotPattern,
+  errorLevel,
+  fontSize,
+  fontWeight,
+  fontLetterSpacing,
+  templateId,
+  customText,
 }: {
   url: string;
   fgColor?: string;
@@ -21,6 +33,14 @@ export function getQRData({
   hideLogo?: boolean;
   logo?: string;
   margin?: number;
+  cornerEyePattern?: CornerEyePattern;
+  cornerEyeDotPattern?: CornerEyeDotPattern;
+  errorLevel?: "L" | "M" | "Q" | "H";
+  fontSize?: number;
+  fontWeight?: number;
+  fontLetterSpacing?: number;
+  templateId?: string;
+  customText?: string;
 }) {
   return {
     value: `${url}?qr=1`,
@@ -29,6 +49,14 @@ export function getQRData({
     eyeColor,
     dotColor,
     bodyPattern,
+    cornerEyePattern,
+    cornerEyeDotPattern,
+    errorLevel,
+    fontSize,
+    fontWeight,
+    fontLetterSpacing,
+    templateId,
+    customText,
     size: 1024,
     level: "Q", // QR Code error correction level: https://blog.qrstuff.com/general/qr-code-error-correction
     hideLogo,
