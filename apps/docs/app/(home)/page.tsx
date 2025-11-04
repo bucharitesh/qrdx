@@ -26,7 +26,7 @@ type QRStyles = {
     | "square"
     | "diamond"
     | "circle-mixed"
-    | "packman"
+    | "pacman"
     | "rounded"
     | "clean-square";
   cornerEyePattern?:
@@ -167,7 +167,8 @@ const Page = () => {
                   onPatternSelect={(pattern) =>
                     setQrStyles((prev) => ({
                       ...prev,
-                      cornerEyeDotPattern: pattern as QRStyles["cornerEyeDotPattern"],
+                      cornerEyeDotPattern:
+                        pattern as QRStyles["cornerEyeDotPattern"],
                     }))
                   }
                   qrColor={qrStyles.qrColor}

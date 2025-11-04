@@ -15,7 +15,7 @@ const patterns = [
   { id: "square", name: "Square" },
   { id: "diamond", name: "Diamond" },
   { id: "circle-mixed", name: "Mixed" },
-  { id: "packman", name: "Packman" },
+  { id: "pacman", name: "Pacman" },
   { id: "rounded", name: "Rounded" },
   { id: "clean-square", name: "Clean" },
 ] as const;
@@ -51,7 +51,7 @@ export const PatternSelector: React.FC<PatternSelectorProps> = ({
                     | "square"
                     | "diamond"
                     | "circle-mixed"
-                    | "packman"
+                    | "pacman"
                     | "rounded"
                     | "clean-square"
                 }

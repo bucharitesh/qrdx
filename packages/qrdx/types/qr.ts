@@ -14,7 +14,7 @@ export type DotPattern =
   | "square"
   | "diamond"
   | "circle-mixed"
-  | "packman"
+  | "pacman"
   | "rounded"
   | "clean-square";
 

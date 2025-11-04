@@ -22,7 +22,7 @@ type DownloadOptionsProps = {
     | "square"
     | "diamond"
     | "circle-mixed"
-    | "packman"
+    | "pacman"
     | "rounded"
     | "clean-square";
   cornerEyePattern?:

@@ -118,7 +118,7 @@ Available patterns:
 - `square` — Modern square dots
 - `diamond` — Diamond-shaped rotated squares
 - `circle-mixed` — Circles with varying sizes
-- `packman` — Pill-shaped rounded rectangles
+- `pacman` — Pill-shaped rounded rectangles
 - `rounded` — Clean squares with smoothly rounded corners
 - `clean-square` — Clean rectangles only
 

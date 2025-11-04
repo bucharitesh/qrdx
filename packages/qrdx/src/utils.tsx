@@ -376,7 +376,7 @@ function generateDataCircles(
       | "square"
       | "diamond"
       | "circle-mixed"
-      | "packman"
+      | "pacman"
       | "rounded"
       | "clean-square";
   }
@@ -453,7 +453,7 @@ function generateDataCircles(
             }
             break;
 
-          case "packman":
+          case "pacman":
             // Pattern 5: Rounded rectangles (pill shapes)
             {
               const halfWidth = pixelSize * 0.5;

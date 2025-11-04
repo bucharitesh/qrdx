@@ -21,7 +21,7 @@ export function getQRData({
     | "square"
     | "diamond"
     | "circle-mixed"
-    | "packman"
+    | "pacman"
     | "rounded"
     | "clean-square";
   hideLogo?: boolean;
@@ -49,4 +49,3 @@ export function getQRData({
     }),
   };
 }
-

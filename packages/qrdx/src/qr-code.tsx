@@ -38,7 +38,7 @@ export const QRCode = memo(
       | "square"
       | "diamond"
       | "circle-mixed"
-      | "packman"
+      | "pacman"
       | "rounded"
       | "clean-square";
     cornerEyePattern?:
