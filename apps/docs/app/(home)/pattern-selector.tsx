@@ -1,6 +1,6 @@
 "use client";
 
-import { QRCodeSVG } from "qrdx/utils";
+import { QRCodeSVG } from "qrdx";
 import type React from "react";
 
 type PatternSelectorProps = {
@@ -80,4 +80,3 @@ export const PatternSelector: React.FC<PatternSelectorProps> = ({
     </div>
   );
 };
-

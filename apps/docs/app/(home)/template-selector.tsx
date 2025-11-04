@@ -1,8 +1,6 @@
 "use client";
 
-import { QRCode } from "qrdx/qr-code";
-import { getAllTemplates } from "qrdx/templates";
-import type { TemplateDefinition } from "qrdx/types";
+import { getAllTemplates, QRCode, type TemplateDefinition } from "qrdx";
 import type React from "react";
 
 type TemplateSelectorProps = {

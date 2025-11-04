@@ -11,7 +11,7 @@ import {
   Upload,
   XCircle,
 } from "lucide-react";
-import { downloadImageWithBoundingBox, handleImageLoad } from "qrdx/detection";
+import { downloadImageWithBoundingBox, handleImageLoad } from "qrdx";
 import { useRef, useState } from "react";
 
 type DetectionResult = {

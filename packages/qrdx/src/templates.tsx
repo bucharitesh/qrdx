@@ -1,3 +1,4 @@
+import type { TemplateDefinition } from "../types";
 import {
   Arrow,
   defaultTemplate,
@@ -7,7 +8,6 @@ import {
   StandardBox,
   StrikedBox,
 } from "./template";
-import type { TemplateDefinition } from "./types";
 
 // Template registry - using TemplateDefinition<any> to allow different custom props
 export const TEMPLATES: Record<string, TemplateDefinition<any>> = {

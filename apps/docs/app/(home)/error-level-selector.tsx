@@ -1,6 +1,6 @@
 "use client";
 
-import { QRCodeSVG } from "qrdx/utils";
+import { QRCodeSVG } from "qrdx";
 import type React from "react";
 
 type ErrorLevelSelectorProps = {
@@ -71,4 +71,3 @@ export const ErrorLevelSelector: React.FC<ErrorLevelSelectorProps> = ({
     </div>
   );
 };
-

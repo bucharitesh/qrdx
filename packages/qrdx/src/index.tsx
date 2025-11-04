@@ -12,6 +12,7 @@
  * SPDX-License-Identifier: ISC
  */
 import { type JSX, useEffect, useRef, useState } from "react";
+import type { QRProps, QRPropsCanvas } from "../types";
 import qrcodegen from "./codegen";
 import {
   DEFAULT_BGCOLOR,
@@ -20,9 +21,7 @@ import {
   DEFAULT_MARGIN,
   DEFAULT_SIZE,
   ERROR_LEVEL_MAP,
-  FLAM_QR_LOGO,
 } from "./constants";
-import type { QRProps, QRPropsCanvas } from "./types";
 import {
   excavateModules,
   generatePath,
@@ -30,8 +29,11 @@ import {
   SUPPORTS_PATH2D,
 } from "./utils";
 
+export * from "../types";
+export * from "./api";
+export * from "./detection";
+export * from "./qr-code";
 export * from "./templates";
-export * from "./types";
 export * from "./utils";
 
 export function QRCodeCanvas(props: QRPropsCanvas) {
@@ -291,45 +293,4 @@ export async function getQRAsCanvas(
   });
 }
 
-export function getQRData({
-  url,
-  fgColor,
-  bgColor,
-  eyeColor,
-  dotColor,
-  dotPattern,
-  hideLogo,
-  logo,
-  margin,
-}: {
-  url: string;
-  fgColor?: string;
-  bgColor?: string;
-  eyeColor?: string;
-  dotColor?: string;
-  dotPattern?: "circle" | "square" | "diamond" | "circle-mixed" | "packman" | "rounded" | "clean-square";
-  hideLogo?: boolean;
-  logo?: string;
-  margin?: number;
-}) {
-  return {
-    value: `${url}?qr=1`,
-    bgColor,
-    fgColor,
-    eyeColor,
-    dotColor,
-    dotPattern,
-    size: 1024,
-    level: "Q", // QR Code error correction level: https://blog.qrstuff.com/general/qr-code-error-correction
-    hideLogo,
-    margin,
-    ...(!hideLogo && {
-      imageSettings: {
-        src: logo || FLAM_QR_LOGO,
-        height: 256,
-        width: 256,
-        excavate: true,
-      },
-    }),
-  };
-}
+export { getQRData } from "./helpers";

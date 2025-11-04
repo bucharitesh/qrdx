@@ -1,9 +1,35 @@
 {
   "name": "qrdx",
   "version": "0.0.1",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/src/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/src/index.d.ts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/src/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    },
+    "./types": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./types/index.ts",
+      "require": "./types/index.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "types",
+    "src"
+  ],
   "scripts": {
+    "build": "tsup && tsc --project tsconfig.build.json --emitDeclarationOnly",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
-    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "jsqr": "^1.4.0",
@@ -15,6 +41,10 @@
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",
     "next": "16.0.1",
+    "tsup": "^8.3.5",
     "typescript": "5.9.3"
+  },
+  "peerDependencies": {
+    "react-dom": ">=18.0.0"
   }
 }

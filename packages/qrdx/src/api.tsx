@@ -1,3 +1,4 @@
+import type { QRPropsSVG } from "../types";
 import qrcodegen from "./codegen";
 import {
   DEFAULT_BGCOLOR,
@@ -7,7 +8,6 @@ import {
   DEFAULT_SIZE,
   ERROR_LEVEL_MAP,
 } from "./constants";
-import type { QRPropsSVG } from "./types";
 import { excavateModules, generatePath, getImageSettings } from "./utils";
 
 export async function getQRAsSVG(props: QRPropsSVG) {

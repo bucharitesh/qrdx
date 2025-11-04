@@ -1,4 +1,4 @@
-import type { TemplateDefinition } from "../types";
+import type { TemplateDefinition } from "../../types";
 
 export const defaultTemplate: TemplateDefinition = {
   id: "default",
