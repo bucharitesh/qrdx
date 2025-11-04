@@ -230,10 +230,120 @@ function generateCornerCirclePattern(
   const scale = size / 80;
   const transform = (coord: number, offset: number) => coord * scale + offset;
 
-  // Using the exact path from user's specification - proper circles
-  const path = `M ${transform(40, offsetX)} ${transform(5, offsetY)}a ${35 * scale} ${35 * scale} 0 1 0 ${0.1 * scale} 0zm 0 ${10 * scale}a ${25 * scale} ${25 * scale} 0 1 1 -${0.1 * scale} 0Z`;
+  // Using the exact path from user's specification - proper circles (made slightly bigger)
+  const outerRadius = 37.5 * scale; // Increased from 35
+  const innerRadius = 27 * scale; // Increased from 25
+  const path = `M ${transform(40, offsetX)} ${transform(2.5, offsetY)}a ${outerRadius} ${outerRadius} 0 1 0 ${0.1 * scale} 0zm 0 ${10.5 * scale}a ${innerRadius} ${innerRadius} 0 1 1 -${0.1 * scale} 0Z`;
 
   return path;
+}
+
+// Generate corner dot pattern based on type
+function generateCornerDotPath(
+  cx: number,
+  cy: number,
+  radius: number,
+  pattern = "circle"
+): JSX.Element {
+  const size = radius * 2;
+  const halfSize = radius;
+
+  switch (pattern) {
+    case "square":
+      // Pattern 1: Square dot
+      return (
+        <rect
+          height={size}
+          transform={`rotate(0,${cx},${cy})`}
+          width={size}
+          x={cx - halfSize}
+          y={cy - halfSize}
+        />
+      );
+
+    case "rounded-square":
+      // Pattern 2: Rounded square dot
+      return (
+        <rect
+          height={size}
+          rx={radius * 0.5}
+          ry={radius * 0.5}
+          transform={`rotate(0,${cx},${cy})`}
+          width={size}
+          x={cx - halfSize}
+          y={cy - halfSize}
+        />
+      );
+
+    case "rounded-inward":
+      // Pattern 4: Rounded inward
+      return (
+        <path
+          clipRule="evenodd"
+          d={`M ${cx - halfSize} ${cy - halfSize * 0.428_571}v ${size * 0.285_714}a ${size * 0.357_143} ${size * 0.357_143}, 0, 0, 0, ${size * 0.357_143} ${size * 0.357_143}h ${size * 0.642_857}v -${size * 0.642_857}a ${size * 0.357_143} ${size * 0.357_143}, 0, 0, 0, -${size * 0.357_143} -${size * 0.357_143}h -${size * 0.285_714}a ${size * 0.357_143} ${size * 0.357_143}, 0, 0, 0, -${size * 0.357_143} ${size * 0.357_143}`}
+          transform={`rotate(0,${cx},${cy})`}
+        />
+      );
+
+    case "rounded-inward-flipped":
+      // Pattern 5: Rounded inward flipped
+      return (
+        <path
+          clipRule="evenodd"
+          d={`M ${cx - halfSize} ${cy - halfSize * 0.428_571}v ${size * 0.285_714}a ${size * 0.357_143} ${size * 0.357_143}, 0, 0, 0, ${size * 0.357_143} ${size * 0.357_143}h ${size * 0.642_857}v -${size * 0.642_857}a ${size * 0.357_143} ${size * 0.357_143}, 0, 0, 0, -${size * 0.357_143} -${size * 0.357_143}h -${size * 0.285_714}a ${size * 0.357_143} ${size * 0.357_143}, 0, 0, 0, -${size * 0.357_143} ${size * 0.357_143}`}
+          transform={`rotate(-180,${cx},${cy})`}
+        />
+      );
+
+    case "semi-round":
+      // Pattern 6: Semi-round
+      return (
+        <path
+          clipRule="evenodd"
+          d={`M ${cx - halfSize} ${cy - halfSize * 0.428_571}v ${size * 0.285_714}a ${size * 0.357_143} ${size * 0.357_143}, 0, 0, 0, ${size * 0.357_143} ${size * 0.357_143}h ${size * 0.642_857}v -${size * 0.642_857}a ${size * 0.357_143} ${size * 0.357_143}, 0, 0, 0, -${size * 0.357_143} -${size * 0.357_143}h -${size * 0.285_714}H ${cx - halfSize}z`}
+          transform={`rotate(0,${cx},${cy})`}
+        />
+      );
+
+    case "leaf":
+      // Pattern 8: Leaf shape
+      return (
+        <path
+          clipRule="evenodd"
+          d={`M ${cx - halfSize} ${cy - halfSize * 0.428_571}v ${size * 0.642_857}h ${size * 0.642_857}a ${size * 0.357_143} ${size * 0.357_143}, 0, 0, 0, ${size * 0.357_143} -${size * 0.357_143}v -${size * 0.642_857}h -${size * 0.642_857}a ${size * 0.357_143} ${size * 0.357_143}, 0, 0, 0, -${size * 0.357_143} ${size * 0.357_143}z`}
+          transform={`rotate(0,${cx},${cy})`}
+        />
+      );
+
+    case "diamond":
+      // Pattern 9: Diamond
+      return (
+        <path
+          d={`M ${cx - halfSize * 0.714_286} ${cy - halfSize * 0.714_286}v ${size * 0.714_286}h ${size * 0.714_286}v -${size * 0.714_286}z`}
+          transform={`rotate(45,${cx},${cy})`}
+        />
+      );
+
+    case "diamond-rounded":
+      // Pattern 10: Diamond with rounded corners
+      return (
+        <path
+          d={`M ${cx - halfSize * 0.571_429} ${cy - halfSize * 0.714_286}h ${size * 0.428_571}c ${size * 0.142_857} 0 ${size * 0.142_857} ${size * 0.142_857} ${size * 0.142_857} ${size * 0.142_857}v ${size * 0.428_571}c 0 ${size * 0.142_857} -${size * 0.142_857} ${size * 0.142_857} -${size * 0.142_857} ${size * 0.142_857}h -${size * 0.428_571}c -${size * 0.142_857} 0 -${size * 0.142_857} -${size * 0.142_857} -${size * 0.142_857} -${size * 0.142_857}v -${size * 0.428_571}c 0 -${size * 0.142_857} ${size * 0.142_857} -${size * 0.142_857} ${size * 0.142_857} -${size * 0.142_857}z`}
+          transform={`rotate(45,${cx},${cy})`}
+        />
+      );
+
+    default:
+      // Pattern 3: Circle (default)
+      return (
+        <circle
+          cx={cx}
+          cy={cy}
+          r={radius}
+          transform={`rotate(0,${cx},${cy})`}
+        />
+      );
+  }
 }
 
 // Pattern 10: Gear (current default decorative design)
@@ -486,6 +596,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
     dotColor,
     dotPattern = "circle",
     cornerEyePattern = "gear",
+    cornerEyeDotPattern = "circle",
     margin = DEFAULT_MARGIN,
     isOGContext = false,
     imageSettings,
@@ -620,12 +731,12 @@ export function QRCodeSVG(props: QRPropsSVG) {
 
       {/* Top-left corner dot */}
       <g className="corners-dot-color-0-0">
-        <circle
-          cx={topLeftX + cornerSize / 2}
-          cy={topLeftY + cornerSize / 2}
-          r={cornerDotRadius}
-          transform={`rotate(0,${topLeftX + cornerSize / 2},${topLeftY + cornerSize / 2})`}
-        />
+        {generateCornerDotPath(
+          topLeftX + cornerSize / 2,
+          topLeftY + cornerSize / 2,
+          cornerDotRadius,
+          cornerEyeDotPattern
+        )}
       </g>
 
       {/* Top-right corner square */}
@@ -644,12 +755,12 @@ export function QRCodeSVG(props: QRPropsSVG) {
 
       {/* Top-right corner dot */}
       <g className="corners-dot-color-1-0">
-        <circle
-          cx={topRightX + cornerSize / 2}
-          cy={topRightY + cornerSize / 2}
-          r={cornerDotRadius}
-          transform={`rotate(90,${topRightX + cornerSize / 2},${topRightY + cornerSize / 2})`}
-        />
+        {generateCornerDotPath(
+          topRightX + cornerSize / 2,
+          topRightY + cornerSize / 2,
+          cornerDotRadius,
+          cornerEyeDotPattern
+        )}
       </g>
 
       {/* Bottom-left corner square */}
@@ -668,12 +779,12 @@ export function QRCodeSVG(props: QRPropsSVG) {
 
       {/* Bottom-left corner dot */}
       <g className="corners-dot-color-0-1">
-        <circle
-          cx={bottomLeftX + cornerSize / 2}
-          cy={bottomLeftY + cornerSize / 2}
-          r={cornerDotRadius}
-          transform={`rotate(-90,${bottomLeftX + cornerSize / 2},${bottomLeftY + cornerSize / 2})`}
-        />
+        {generateCornerDotPath(
+          bottomLeftX + cornerSize / 2,
+          bottomLeftY + cornerSize / 2,
+          cornerDotRadius,
+          cornerEyeDotPattern
+        )}
       </g>
 
       {image}
@@ -726,12 +837,12 @@ export function QRCodeSVG(props: QRPropsSVG) {
 
             {/* Top-left corner dot */}
             <g className="corners-dot-color-0-0">
-              <circle
-                cx={topLeftX + cornerSize / 2}
-                cy={topLeftY + cornerSize / 2}
-                r={cornerDotRadius}
-                transform={`rotate(0,${topLeftX + cornerSize / 2},${topLeftY + cornerSize / 2})`}
-              />
+              {generateCornerDotPath(
+                topLeftX + cornerSize / 2,
+                topLeftY + cornerSize / 2,
+                cornerDotRadius,
+                cornerEyeDotPattern
+              )}
             </g>
 
             {/* Top-right corner square */}
@@ -750,12 +861,12 @@ export function QRCodeSVG(props: QRPropsSVG) {
 
             {/* Top-right corner dot */}
             <g className="corners-dot-color-1-0">
-              <circle
-                cx={topRightX + cornerSize / 2}
-                cy={topRightY + cornerSize / 2}
-                r={cornerDotRadius}
-                transform={`rotate(90,${topRightX + cornerSize / 2},${topRightY + cornerSize / 2})`}
-              />
+              {generateCornerDotPath(
+                topRightX + cornerSize / 2,
+                topRightY + cornerSize / 2,
+                cornerDotRadius,
+                cornerEyeDotPattern
+              )}
             </g>
 
             {/* Bottom-left corner square */}
@@ -774,12 +885,12 @@ export function QRCodeSVG(props: QRPropsSVG) {
 
             {/* Bottom-left corner dot */}
             <g className="corners-dot-color-0-1">
-              <circle
-                cx={bottomLeftX + cornerSize / 2}
-                cy={bottomLeftY + cornerSize / 2}
-                r={cornerDotRadius}
-                transform={`rotate(-90,${bottomLeftX + cornerSize / 2},${bottomLeftY + cornerSize / 2})`}
-              />
+              {generateCornerDotPath(
+                bottomLeftX + cornerSize / 2,
+                bottomLeftY + cornerSize / 2,
+                cornerDotRadius,
+                cornerEyeDotPattern
+              )}
             </g>
 
             {image}

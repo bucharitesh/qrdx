@@ -7,6 +7,7 @@ import { Switch } from "@repo/design-system/components/ui/switch";
 import { getContrastLevel, getContrastRatio, QRCode } from "qrdx";
 import { useMemo, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
+import { CornerEyeDotPatternSelector } from "./corner-eye-dot-pattern-selector";
 import { CornerEyePatternSelector } from "./corner-eye-pattern-selector";
 import { DownloadOptions } from "./download-options";
 import { ErrorLevelSelector } from "./error-level-selector";
@@ -38,6 +39,16 @@ type QRStyles = {
     | "rounded-extra"
     | "rounded-square"
     | "circle";
+  cornerEyeDotPattern?:
+    | "square"
+    | "rounded-square"
+    | "circle"
+    | "rounded-inward"
+    | "rounded-inward-flipped"
+    | "semi-round"
+    | "leaf"
+    | "diamond"
+    | "diamond-rounded";
   errorLevel?: "L" | "M" | "Q" | "H";
   customLogo?: string;
   templateId?: string;
@@ -56,6 +67,7 @@ const Page = () => {
     dotColor: "#000000",
     dotPattern: "circle",
     cornerEyePattern: "gear",
+    cornerEyeDotPattern: "circle",
     errorLevel: "L",
     backgroundColor: "#ffffff",
     templateId: "default",
@@ -142,6 +154,24 @@ const Page = () => {
                   }
                   qrColor={qrStyles.qrColor}
                   selectedPattern={qrStyles.cornerEyePattern}
+                />
+              </div>
+
+              {/* Corner Eye Dot Pattern Selection Section */}
+              <div className="space-y-4 rounded-xl border border-gray-200 bg-white/90 p-4 backdrop-blur-sm">
+                <h2 className="border-b pb-2 font-semibold text-gray-900 text-lg">
+                  Internal Eye Patterns
+                </h2>
+                <CornerEyeDotPatternSelector
+                  backgroundColor={"transparent"}
+                  onPatternSelect={(pattern) =>
+                    setQrStyles((prev) => ({
+                      ...prev,
+                      cornerEyeDotPattern: pattern as QRStyles["cornerEyeDotPattern"],
+                    }))
+                  }
+                  qrColor={qrStyles.qrColor}
+                  selectedPattern={qrStyles.cornerEyeDotPattern}
                 />
               </div>
 
@@ -416,6 +446,7 @@ const Page = () => {
               </h2>
               <QRCode
                 bgColor={qrStyles.backgroundColor}
+                cornerEyeDotPattern={qrStyles.cornerEyeDotPattern}
                 cornerEyePattern={qrStyles.cornerEyePattern}
                 customText={qrStyles.customText}
                 dotColor={qrStyles.dotColor}
@@ -435,6 +466,7 @@ const Page = () => {
               <div className="w-full border-gray-200 border-t pt-4">
                 <DownloadOptions
                   bgColor={qrStyles.backgroundColor}
+                  cornerEyeDotPattern={qrStyles.cornerEyeDotPattern}
                   cornerEyePattern={qrStyles.cornerEyePattern}
                   customText={qrStyles.customText}
                   dotColor={qrStyles.dotColor}

@@ -16,6 +16,7 @@ export const QRCode = memo(
     dotColor,
     dotPattern,
     cornerEyePattern,
+    cornerEyeDotPattern,
     errorLevel,
     scale = 1,
     margin = DEFAULT_MARGIN,
@@ -50,6 +51,16 @@ export const QRCode = memo(
       | "rounded-extra"
       | "rounded-square"
       | "circle";
+    cornerEyeDotPattern?:
+      | "square"
+      | "rounded-square"
+      | "circle"
+      | "rounded-inward"
+      | "rounded-inward-flipped"
+      | "semi-round"
+      | "leaf"
+      | "diamond"
+      | "diamond-rounded";
     errorLevel?: "L" | "M" | "Q" | "H";
     scale?: number;
     margin?: number;
@@ -89,6 +100,7 @@ export const QRCode = memo(
     return (
       <QRCodeSVG
         bgColor={qrData.bgColor}
+        cornerEyeDotPattern={cornerEyeDotPattern}
         cornerEyePattern={cornerEyePattern}
         customText={customText}
         dotColor={qrData.dotColor}
