@@ -14,6 +14,8 @@ export const PRESET_SIZES: Record<string, DownloadSize> = {
   medium: { width: 400, height: 400 },
   large: { width: 800, height: 800 },
   xlarge: { width: 1200, height: 1200 },
+  "2xl": { width: 1600, height: 1600 },
+  "3xl": { width: 2000, height: 2000 },
 };
 
 export type DownloadOptions = {

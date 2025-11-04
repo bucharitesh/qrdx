@@ -524,7 +524,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
             <g fill={fgColor}>{dataCircles}</g>
 
             {/* Top-left corner square */}
-            <g fill={eyeColor}>
+            <g fill={eyeColor || fgColor}>
               <path
                 clipRule="evenodd"
                 d={generateCornerSquarePath(
@@ -538,7 +538,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
             </g>
 
             {/* Top-left corner dot */}
-            <g fill={dotColor}>
+            <g fill={dotColor || fgColor}>
               {generateCornerDotPath(
                 topLeftX + cornerSize / 2,
                 topLeftY + cornerSize / 2,
@@ -548,7 +548,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
             </g>
 
             {/* Top-right corner square */}
-            <g fill={eyeColor}>
+            <g fill={eyeColor || fgColor}>
               <path
                 clipRule="evenodd"
                 d={generateCornerSquarePath(
@@ -562,7 +562,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
             </g>
 
             {/* Top-right corner dot */}
-            <g fill={dotColor}>
+            <g fill={dotColor || fgColor}>
               {generateCornerDotPath(
                 topRightX + cornerSize / 2,
                 topRightY + cornerSize / 2,
@@ -572,7 +572,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
             </g>
 
             {/* Bottom-left corner square */}
-            <g fill={eyeColor}>
+            <g fill={eyeColor || fgColor}>
               <path
                 clipRule="evenodd"
                 d={generateCornerSquarePath(
@@ -586,7 +586,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
             </g>
 
             {/* Bottom-left corner dot */}
-            <g fill={dotColor}>
+            <g fill={dotColor || fgColor}>
               {generateCornerDotPath(
                 bottomLeftX + cornerSize / 2,
                 bottomLeftY + cornerSize / 2,

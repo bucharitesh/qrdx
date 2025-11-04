@@ -42,6 +42,7 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({
                 bgColor={"transparent"}
                 fgColor={"#000000"}
                 templateId={template.id}
+                size={64}
                 value="https://example.com"
               />
             </div>
