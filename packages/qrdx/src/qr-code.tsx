@@ -2,7 +2,8 @@
 
 import { memo, useMemo } from "react";
 import { DEFAULT_MARGIN } from "./constants";
-import { getQRData, QRCodeSVG } from "./index";
+import { getQRData } from "./helpers";
+import { QRCodeSVG } from "./utils";
 
 export const QRCode = memo(
   ({

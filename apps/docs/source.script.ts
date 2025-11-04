@@ -18,7 +18,7 @@ function remarkElementIds() {
       );
 
       if (idAttr && typeof idAttr.value === "string") {
-        file.data!.elementIds!.push(idAttr.value);
+        file.data?.elementIds?.push(idAttr.value ?? "");
       }
     });
   };

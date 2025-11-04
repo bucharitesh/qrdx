@@ -1,5 +1,6 @@
 import type { JSX } from "react";
 import React from "react";
+import type { Excavation, ImageSettings, Modules, QRPropsSVG } from "../types";
 import qrcodegen from "./codegen";
 import {
   DEFAULT_BGCOLOR,
@@ -11,7 +12,6 @@ import {
   ERROR_LEVEL_MAP,
 } from "./constants";
 import { getTemplate } from "./templates";
-import type { Excavation, ImageSettings, Modules, QRPropsSVG } from "./types";
 
 // We could just do this in generatePath, except that we want to support
 // non-Path2D canvas, so we need to keep it an explicit step.

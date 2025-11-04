@@ -1,4 +1,4 @@
-import type { TemplateDefinition } from "../types";
+import type { TemplateDefinition } from "../../types";
 
 export const Arrow: TemplateDefinition = {
   id: "Arrow",

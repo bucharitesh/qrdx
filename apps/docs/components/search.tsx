@@ -1,14 +1,11 @@
-/** biome-ignore-all lint/suspicious/noArrayIndexKey: <explanation> */
 "use client";
 
-import { cn } from "@repo/design-system/lib/utils";
 import type { Item, Node } from "fumadocs-core/page-tree";
 import { useDocsSearch } from "fumadocs-core/search/client";
 import {
   SearchDialog,
   SearchDialogClose,
   SearchDialogContent,
-  SearchDialogFooter,
   SearchDialogHeader,
   SearchDialogIcon,
   SearchDialogInput,
@@ -17,23 +14,14 @@ import {
   type SearchItemType,
   type SharedProps,
 } from "fumadocs-ui/components/dialog/search";
-import { buttonVariants } from "fumadocs-ui/components/ui/button";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "fumadocs-ui/components/ui/popover";
 import { useTreeContext } from "fumadocs-ui/contexts/tree";
-import { ArrowRight, ChevronDown } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 
 export default function CustomSearchDialog(props: SharedProps) {
-  const [open, setOpen] = useState(false);
-  const [tag, setTag] = useState<string | undefined>();
   const { search, setSearch, query } = useDocsSearch({
     type: "fetch",
-    tag,
   });
   const { full } = useTreeContext();
   const router = useRouter();

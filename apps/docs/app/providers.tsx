@@ -1,4 +1,4 @@
-/** biome-ignore-all lint/security/noDangerouslySetInnerHtml: <explanation> */
+/** biome-ignore-all lint/security/noDangerouslySetInnerHtml: false positive */
 "use client";
 
 import { RootProvider } from "fumadocs-ui/provider/base";
