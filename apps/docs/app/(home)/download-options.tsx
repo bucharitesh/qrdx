@@ -45,6 +45,7 @@ type DownloadOptionsProps = {
   fontSize?: number;
   fontWeight?: number;
   fontLetterSpacing?: number;
+  fontFamily?: string;
 };
 
 export const DownloadOptions: React.FC<DownloadOptionsProps> = ({
@@ -65,6 +66,7 @@ export const DownloadOptions: React.FC<DownloadOptionsProps> = ({
   fontSize,
   fontWeight,
   fontLetterSpacing,
+  fontFamily,
 }) => {
   const [selectedSize, setSelectedSize] = React.useState<string>("medium");
   const [customWidth, setCustomWidth] = React.useState<string>("600");
@@ -95,6 +97,7 @@ export const DownloadOptions: React.FC<DownloadOptionsProps> = ({
       fontSize,
       fontWeight,
       fontLetterSpacing,
+      fontFamily,
     }),
     [
       url,
@@ -114,6 +117,7 @@ export const DownloadOptions: React.FC<DownloadOptionsProps> = ({
       fontSize,
       fontWeight,
       fontLetterSpacing,
+      fontFamily,
     ],
   );
 
@@ -202,6 +206,8 @@ export const DownloadOptions: React.FC<DownloadOptionsProps> = ({
               <SelectItem value="medium">400 × 400</SelectItem>
               <SelectItem value="large">800 × 800</SelectItem>
               <SelectItem value="xlarge">1200 × 1200</SelectItem>
+              <SelectItem value="2xl">1600 × 1600</SelectItem>
+              <SelectItem value="3xl">2000 × 2000</SelectItem>
               <SelectItem value="custom">Custom Size</SelectItem>
             </SelectContent>
           </Select>

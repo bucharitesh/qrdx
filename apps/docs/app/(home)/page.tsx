@@ -3,6 +3,13 @@
 import { ColorInput } from "@repo/design-system/components/color-picker";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@repo/design-system/components/ui/select";
 import { Switch } from "@repo/design-system/components/ui/switch";
 import {
   type BodyPattern,
@@ -39,6 +46,7 @@ type QRStyles = {
   fontSize?: number;
   fontWeight?: number;
   fontLetterSpacing?: number;
+  fontFamily?: string;
 };
 
 const Page = () => {
@@ -55,9 +63,10 @@ const Page = () => {
     templateId: "default",
     customText: "",
     textColor: "#000000",
-    fontSize: 16,
-    fontWeight: 700,
-    fontLetterSpacing: 0,
+    fontSize: 40,
+    fontWeight: 900,
+    fontLetterSpacing: 6,
+    fontFamily: "Arial, Helvetica, sans-serif",
   });
   const [url, setUrl] = useState("https://instant.cdn.flamapp.com/card?o=1234");
 
@@ -220,6 +229,63 @@ const Page = () => {
                           }))
                         }
                       />
+                    </div>
+
+                    <div>
+                      <Label
+                        className="mb-2 block text-sm"
+                        htmlFor="font-family-select"
+                      >
+                        Font Family
+                      </Label>
+                      <Select
+                        value={qrStyles.fontFamily}
+                        onValueChange={(value) =>
+                          setQrStyles((prev) => ({
+                            ...prev,
+                            fontFamily: value,
+                          }))
+                        }
+                      >
+                        <SelectTrigger
+                          id="font-family-select"
+                          className="w-full"
+                        >
+                          <SelectValue placeholder="Select font family" />
+                        </SelectTrigger>
+                        <SelectContent className="w-full">
+                          <SelectItem value="Arial, Helvetica, sans-serif">
+                            Arial
+                          </SelectItem>
+                          <SelectItem value="'Times New Roman', Times, serif">
+                            Times New Roman
+                          </SelectItem>
+                          <SelectItem value="'Courier New', Courier, monospace">
+                            Courier New
+                          </SelectItem>
+                          <SelectItem value="Georgia, serif">
+                            Georgia
+                          </SelectItem>
+                          <SelectItem value="Verdana, sans-serif">
+                            Verdana
+                          </SelectItem>
+                          <SelectItem value="'Trebuchet MS', sans-serif">
+                            Trebuchet MS
+                          </SelectItem>
+                          <SelectItem value="Impact, sans-serif">
+                            Impact
+                          </SelectItem>
+                          <SelectItem value="'Comic Sans MS', cursive">
+                            Comic Sans MS
+                          </SelectItem>
+                          <SelectItem value="'Lucida Console', Monaco, monospace">
+                            Lucida Console
+                          </SelectItem>
+                          <SelectItem value="Tahoma, sans-serif">
+                            Tahoma
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
 
                     <div>
@@ -426,6 +492,7 @@ const Page = () => {
                 fontSize={qrStyles.fontSize}
                 fontWeight={qrStyles.fontWeight}
                 fontLetterSpacing={qrStyles.fontLetterSpacing}
+                fontFamily={qrStyles.fontFamily}
                 url={url}
               />
               <div className="w-full border-t pt-4">
@@ -445,6 +512,7 @@ const Page = () => {
                   fontSize={qrStyles.fontSize}
                   fontWeight={qrStyles.fontWeight}
                   fontLetterSpacing={qrStyles.fontLetterSpacing}
+                  fontFamily={qrStyles.fontFamily}
                   url={url}
                 />
               </div>
