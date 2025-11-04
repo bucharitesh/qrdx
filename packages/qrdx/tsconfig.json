@@ -6,8 +6,9 @@
     "declarationMap": true,
     "emitDeclarationOnly": true,
     "outDir": "./dist",
-    "rootDir": "."
+    "rootDir": ".",
+    "jsx": "react-jsx"
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "types/**/*.ts"],
+  "include": ["src/**/*.ts", "src/**/*.tsx", "types/**/*.ts", "tests/**/*.ts", "tests/**/*.tsx"],
   "exclude": ["node_modules", "dist"]
 }
