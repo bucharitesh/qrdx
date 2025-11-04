@@ -27,9 +27,11 @@ export const QRCode = memo(
     margin = DEFAULT_MARGIN,
     templateId,
     customText,
+    textColor,
     fontSize,
     fontWeight,
     fontLetterSpacing,
+    fontFamily,
   }: {
     url: string;
     fgColor?: string;
@@ -50,6 +52,7 @@ export const QRCode = memo(
     fontSize?: number;
     fontWeight?: number;
     fontLetterSpacing?: number;
+    fontFamily?: string;
   }) => {
     const qrData = useMemo(
       () =>
@@ -67,6 +70,7 @@ export const QRCode = memo(
           fontSize,
           fontWeight,
           fontLetterSpacing,
+          fontFamily,
           templateId,
           customText,
           logo,
@@ -88,6 +92,7 @@ export const QRCode = memo(
         fontSize,
         fontWeight,
         fontLetterSpacing,
+        fontFamily,
         templateId,
         customText,
       ]
@@ -103,6 +108,7 @@ export const QRCode = memo(
         dotColor={qrData.dotColor}
         eyeColor={qrData.eyeColor}
         fgColor={qrData.fgColor}
+        fontFamily={fontFamily}
         fontLetterSpacing={qrData.fontLetterSpacing}
         fontSize={qrData.fontSize}
         fontWeight={qrData.fontWeight}
@@ -110,6 +116,7 @@ export const QRCode = memo(
         margin={qrData.margin}
         size={(qrData.size / 8) * scale}
         templateId={qrData.templateId}
+        textColor={textColor}
         value={qrData.value}
         {...(qrData.imageSettings && {
           imageSettings: {

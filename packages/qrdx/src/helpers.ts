@@ -21,6 +21,7 @@ export function getQRData({
   fontSize,
   fontWeight,
   fontLetterSpacing,
+  fontFamily,
   templateId,
   customText,
 }: {
@@ -39,6 +40,7 @@ export function getQRData({
   fontSize?: number;
   fontWeight?: number;
   fontLetterSpacing?: number;
+  fontFamily?: string;
   templateId?: string;
   customText?: string;
 }) {
@@ -55,6 +57,7 @@ export function getQRData({
     fontSize,
     fontWeight,
     fontLetterSpacing,
+    fontFamily,
     templateId,
     customText,
     size: 1024,

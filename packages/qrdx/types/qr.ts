@@ -33,6 +33,7 @@ export type QRProps = {
   fontSize?: number;
   fontWeight?: number;
   fontLetterSpacing?: number;
+  fontFamily?: string;
 };
 
 export type QRPropsCanvas = QRProps &
