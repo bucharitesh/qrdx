@@ -29,10 +29,10 @@ export const CornerEyePatternSelector: React.FC<
     <div className="grid grid-cols-4 gap-3">
       {patterns.map((pattern) => (
         <button
-          className={`relative cursor-pointer rounded-lg border-2 p-3 transition-all hover:shadow-md ${
+          className={`relative cursor-pointer rounded-lg ring-2 p-3 transition-all hover:shadow-md ${
             selectedPattern === pattern.id
-              ? "border-black bg-black/5"
-              : "border-gray-200 bg-white hover:border-gray-300"
+              ? "bg-black/5 ring-blue-400 dark:bg-white"
+              : "ring-gray-200 bg-white hover:ring-gray-300"
           }`}
           key={pattern.id}
           onClick={() => onPatternSelect(pattern.id)}
@@ -53,14 +53,14 @@ export const CornerEyePatternSelector: React.FC<
           </div>
 
           {/* Pattern Name */}
-          <p className="text-center text-gray-700 text-xs font-medium">
+          <p className="text-center text-black text-xs font-medium">
             {pattern.name}
           </p>
 
           {/* Selection Indicator */}
           {selectedPattern === pattern.id && (
             <div className="absolute top-2 right-2">
-              <div className="flex h-4 w-4 items-center justify-center rounded-full bg-black">
+              <div className="flex h-4 w-4 items-center justify-center rounded-full bg-blue-400">
                 <span className="font-bold text-white text-[10px]">✓</span>
               </div>
             </div>

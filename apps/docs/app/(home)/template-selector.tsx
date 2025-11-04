@@ -20,10 +20,10 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({
     <div className="grid grid-cols-3 gap-4">
       {templates.map((template: TemplateDefinition) => (
         <button
-          className={`relative cursor-pointer rounded-lg border-2 p-4 transition-all hover:shadow-md ${
+          className={`relative cursor-pointer rounded-lg ring-2 p-4 transition-all hover:shadow-md ${
             selectedTemplateId === template.id
-              ? "border-black bg-black/5"
-              : "border-gray-200 bg-white hover:border-gray-300"
+              ? "bg-black/5 ring-blue-400 dark:bg-white"
+              : "ring-gray-200 bg-white hover:ring-gray-300"
           }`}
           key={template.id}
           onClick={() => onTemplateSelect(template.id)}
@@ -47,7 +47,7 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({
           {/* Selection Indicator */}
           {selectedTemplateId === template.id && (
             <div className="absolute top-2 right-2">
-              <div className="flex h-5 w-5 items-center justify-center rounded-full bg-black">
+              <div className="flex h-5 w-5 items-center justify-center rounded-full bg-blue-400">
                 <span className="font-bold text-white text-xs">✓</span>
               </div>
             </div>

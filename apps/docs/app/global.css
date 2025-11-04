@@ -3,41 +3,10 @@
 @import "fumadocs-ui/css/preset.css";
 @import "fumadocs-twoslash/twoslash.css";
 
-/* @plugin 'tailwindcss-animate'; */
+@import '@repo/design-system/styles/globals.css';
 
 :root {
-  --color-fd-background: #f2f0e3;
-  --color-fd-foreground: #2e2e2e;
-  --color-fd-primary: #f76f53;
-  --color-fd-accent: #e6e4d7;
-  --color-fd-accent-foreground: #2e2e2e;
-  --color-fd-card: #f7f6ee;
-  --color-fd-card-foreground: #2e2e2e;
-  --color-fd-muted: #2e2e2e0b;
-  --color-fd-muted-foreground: #2e2e2ec5;
-  --color-fd-secondary: #e6e4d7;
-  --color-fd-secondary-foreground: #2e2e2e;
-  --color-fd-popover: #f2f0e3;
-  --color-fd-popover-foreground: #2e2e2e;
-  --color-fd-border: #eae9e2;
   --fd-layout-width: 100vw;
-}
-
-.dark {
-  --color-fd-background: #1f1f1f;
-  --color-fd-foreground: #d1cfc0;
-  --color-fd-primary: #f76f53;
-  --color-fd-accent: #363636;
-  --color-fd-accent-foreground: #d1cfc0;
-  --color-fd-card: #161616;
-  --color-fd-card-foreground: #d1cfc0;
-  --color-fd-muted: #d1cfc00b;
-  --color-fd-muted-foreground: #d1cfc0c5;
-  --color-fd-secondary: #363636;
-  --color-fd-secondary-foreground: #2e2e2e;
-  --color-fd-popover: #1f1f1f;
-  --color-fd-popover-foreground: #d1cfc0;
-  --color-fd-border: #2e2e2e;
 }
 
 aside {

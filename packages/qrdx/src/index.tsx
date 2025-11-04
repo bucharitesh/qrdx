@@ -32,6 +32,7 @@ import {
 export * from "../types";
 export * from "./api";
 export * from "./detection";
+export * from "./download";
 export * from "./qr-code";
 export * from "./templates";
 export * from "./utils";

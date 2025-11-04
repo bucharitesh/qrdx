@@ -27,6 +27,7 @@
     "src"
   ],
   "scripts": {
+    "preinstall": "pnpm build",
     "build": "tsup && tsc --project tsconfig.build.json --emitDeclarationOnly",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
     "typecheck": "tsc --noEmit"

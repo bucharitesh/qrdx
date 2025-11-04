@@ -23,10 +23,10 @@ export const ErrorLevelSelector: React.FC<ErrorLevelSelectorProps> = ({
     <div className="grid grid-cols-4 gap-3">
       {errorLevels.map((level) => (
         <button
-          className={`relative cursor-pointer rounded-lg border-2 p-3 transition-all hover:shadow-md ${
+          className={`relative cursor-pointer rounded-lg ring-2 p-3 transition-all hover:shadow-md ${
             selectedLevel === level.id
-              ? "border-black bg-black/5"
-              : "border-gray-200 bg-white hover:border-gray-300"
+              ? "bg-black/5 ring-blue-400 dark:bg-white"
+              : "ring-gray-200 bg-white hover:ring-gray-300"
           }`}
           key={level.id}
           onClick={() => onLevelSelect(level.id)}
@@ -47,17 +47,17 @@ export const ErrorLevelSelector: React.FC<ErrorLevelSelectorProps> = ({
           </div>
 
           {/* Level Name */}
-          <p className="text-center text-gray-900 text-xs font-bold">
+          <p className="text-center text-black text-xs font-bold">
             {level.name}
           </p>
-          <p className="text-center text-gray-500 text-[10px]">
+          <p className="text-center text-black text-[10px]">
             {level.description}
           </p>
 
           {/* Selection Indicator */}
           {selectedLevel === level.id && (
             <div className="absolute top-2 right-2">
-              <div className="flex h-4 w-4 items-center justify-center rounded-full bg-black">
+              <div className="flex h-4 w-4 items-center justify-center rounded-full bg-blue-400">
                 <span className="font-bold text-white text-[10px]">✓</span>
               </div>
             </div>

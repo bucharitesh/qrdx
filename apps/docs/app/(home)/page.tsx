@@ -81,19 +81,15 @@ const Page = () => {
           <div className="flex h-full w-full flex-col gap-6 overflow-y-auto pr-0 lg:col-span-3 lg:pr-4">
             <FormProvider {...methods}>
               {/* Basic Settings Section */}
-              <div className="space-y-4 rounded-xl border border-gray-200 bg-white/90 p-4 backdrop-blur-sm">
-                <h2 className="border-b pb-2 font-semibold text-gray-900 text-lg">
+              <div className="space-y-4 rounded-xl border p-4 backdrop-blur-sm">
+                <h2 className="border-b pb-2 font-semibold text-lg">
                   Basic Settings
                 </h2>
                 <div>
-                  <Label
-                    className="mb-2 block text-gray-700 text-sm"
-                    htmlFor="url-input"
-                  >
+                  <Label className="mb-2 block text-sm" htmlFor="url-input">
                     URL
                   </Label>
                   <Input
-                    className="text-gray-900 placeholder:text-gray-400"
                     id="url-input"
                     onChange={(e) => setUrl(e.target.value)}
                     placeholder="Enter URL"
@@ -104,8 +100,8 @@ const Page = () => {
               </div>
 
               {/* Pattern Selection Section */}
-              <div className="space-y-4 rounded-xl border border-gray-200 bg-white/90 p-4 backdrop-blur-sm">
-                <h2 className="border-b pb-2 font-semibold text-gray-900 text-lg">
+              <div className="space-y-4 rounded-xl border p-4 backdrop-blur-sm">
+                <h2 className="border-b pb-2 font-semibold text-lg">
                   Dot Patterns
                 </h2>
                 <PatternSelector
@@ -122,8 +118,8 @@ const Page = () => {
               </div>
 
               {/* Corner Eye Pattern Selection Section */}
-              <div className="space-y-4 rounded-xl border border-gray-200 bg-white/90 p-4 backdrop-blur-sm">
-                <h2 className="border-b pb-2 font-semibold text-gray-900 text-lg">
+              <div className="space-y-4 rounded-xl border p-4 backdrop-blur-sm">
+                <h2 className="border-b pb-2 font-semibold text-lg">
                   Corner Eye Patterns
                 </h2>
                 <CornerEyePatternSelector
@@ -140,12 +136,11 @@ const Page = () => {
               </div>
 
               {/* Corner Eye Dot Pattern Selection Section */}
-              <div className="space-y-4 rounded-xl border border-gray-200 bg-white/90 p-4 backdrop-blur-sm">
-                <h2 className="border-b pb-2 font-semibold text-gray-900 text-lg">
+              <div className="space-y-4 rounded-xl border p-4 backdrop-blur-sm">
+                <h2 className="border-b pb-2 font-semibold text-lg">
                   Internal Eye Patterns
                 </h2>
                 <CornerEyeDotPatternSelector
-                  backgroundColor={"transparent"}
                   onPatternSelect={(pattern) =>
                     setQrStyles((prev) => ({
                       ...prev,
@@ -153,14 +148,13 @@ const Page = () => {
                         pattern as QRStyles["cornerEyeDotPattern"],
                     }))
                   }
-                  qrColor={qrStyles.qrColor}
                   selectedPattern={qrStyles.cornerEyeDotPattern}
                 />
               </div>
 
               {/* Error Correction Level Section */}
-              <div className="space-y-4 rounded-xl border border-gray-200 bg-white/90 p-4 backdrop-blur-sm">
-                <h2 className="border-b pb-2 font-semibold text-gray-900 text-lg">
+              <div className="space-y-4 rounded-xl border p-4 backdrop-blur-sm">
+                <h2 className="border-b pb-2 font-semibold text-lg">
                   Error Correction
                 </h2>
                 <ErrorLevelSelector
@@ -175,10 +169,8 @@ const Page = () => {
               </div>
 
               {/* Template Selection Section */}
-              <div className="space-y-4 rounded-xl border border-gray-200 bg-white/90 p-4 backdrop-blur-sm">
-                <h2 className="border-b pb-2 font-semibold text-gray-900 text-lg">
-                  Frames
-                </h2>
+              <div className="space-y-4 rounded-xl border p-4 backdrop-blur-sm">
+                <h2 className="border-b pb-2 font-semibold text-lg">Frames</h2>
                 <TemplateSelector
                   onTemplateSelect={(templateId) =>
                     setQrStyles((prev) => ({
@@ -192,13 +184,12 @@ const Page = () => {
                   <div className="mt-4 space-y-4">
                     <div>
                       <Label
-                        className="mb-2 block text-gray-700 text-sm"
+                        className="mb-2 block text-sm"
                         htmlFor="custom-text-input"
                       >
                         Custom Text (Optional)
                       </Label>
                       <Input
-                        className="text-gray-900 placeholder:text-gray-400"
                         id="custom-text-input"
                         maxLength={20}
                         onChange={(e) =>
@@ -211,7 +202,7 @@ const Page = () => {
                         type="text"
                         value={qrStyles.customText}
                       />
-                      <p className="mt-1 text-gray-500 text-xs">
+                      <p className="mt-1 text-xs">
                         Leave empty for default "Flam It" text (max 20
                         characters)
                       </p>
@@ -219,7 +210,7 @@ const Page = () => {
 
                     <div>
                       <Label
-                        className="mb-2 block text-gray-700 text-sm"
+                        className="mb-2 block text-sm"
                         htmlFor="text-color-input"
                       >
                         Text Color
@@ -237,13 +228,12 @@ const Page = () => {
 
                     <div>
                       <Label
-                        className="mb-2 block text-gray-700 text-sm"
+                        className="mb-2 block text-sm"
                         htmlFor="font-size-input"
                       >
                         Font Size
                       </Label>
                       <Input
-                        className="text-gray-900 placeholder:text-gray-400"
                         id="font-size-input"
                         min={8}
                         max={48}
@@ -260,13 +250,12 @@ const Page = () => {
 
                     <div>
                       <Label
-                        className="mb-2 block text-gray-700 text-sm"
+                        className="mb-2 block text-sm"
                         htmlFor="font-weight-input"
                       >
                         Font Weight
                       </Label>
                       <Input
-                        className="text-gray-900 placeholder:text-gray-400"
                         id="font-weight-input"
                         min={100}
                         max={900}
@@ -284,13 +273,12 @@ const Page = () => {
 
                     <div>
                       <Label
-                        className="mb-2 block text-gray-700 text-sm"
+                        className="mb-2 block text-sm"
                         htmlFor="letter-spacing-input"
                       >
                         Letter Spacing
                       </Label>
                       <Input
-                        className="text-gray-900 placeholder:text-gray-400"
                         id="letter-spacing-input"
                         min={-5}
                         max={20}
@@ -310,8 +298,8 @@ const Page = () => {
               </div>
 
               {/* Color Customization Section */}
-              <div className="space-y-4 rounded-xl border border-gray-200 bg-white/90 p-4 backdrop-blur-sm">
-                <h2 className="border-b pb-2 font-semibold text-gray-900 text-lg">
+              <div className="space-y-4 rounded-xl border p-4 backdrop-blur-sm">
+                <h2 className="border-b pb-2 font-semibold text-lg">
                   Color Customization
                 </h2>
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -395,13 +383,13 @@ const Page = () => {
               </div>
 
               {/* Logo Settings Section */}
-              <div className="space-y-4 rounded-xl border border-gray-200 bg-white/90 p-4 backdrop-blur-sm">
-                <h2 className="border-b pb-2 font-semibold text-gray-900 text-lg">
+              <div className="space-y-4 rounded-xl border p-4 backdrop-blur-sm">
+                <h2 className="border-b pb-2 font-semibold text-lg">
                   Logo Settings
                 </h2>
-                <div className="flex items-center justify-between rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 transition-colors hover:bg-gray-100">
+                <div className="flex items-center justify-between rounded-lg border px-4 py-3 transition-colors hover:bg-gray-100">
                   <Label
-                    className="cursor-pointer font-medium text-gray-700 text-sm"
+                    className="cursor-pointer font-medium text-sm"
                     htmlFor="show-logo"
                   >
                     Show Logo
@@ -424,9 +412,7 @@ const Page = () => {
           {/* Right Column - Sticky QR Code Preview */}
           <div className="flex w-full justify-center lg:col-span-2 lg:justify-start">
             <div className="sticky top-4 flex h-fit w-full flex-col items-center justify-center gap-4 rounded-xl border border-gray-200 bg-white/90 p-6 shadow-lg backdrop-blur-sm">
-              <h2 className="text-center font-semibold text-gray-900 text-lg">
-                Preview
-              </h2>
+              <h2 className="text-center font-semibold text-lg">Preview</h2>
               <QRCode
                 bgColor={qrStyles.backgroundColor}
                 cornerEyeDotPattern={qrStyles.cornerEyeDotPattern}
@@ -446,7 +432,7 @@ const Page = () => {
                 fontLetterSpacing={qrStyles.fontLetterSpacing}
                 url={url}
               />
-              <div className="w-full border-gray-200 border-t pt-4">
+              <div className="w-full border-t pt-4">
                 <DownloadOptions
                   bgColor={qrStyles.backgroundColor}
                   cornerEyeDotPattern={qrStyles.cornerEyeDotPattern}
