@@ -14,3 +14,4 @@ export type TemplateDefinition<TCustomProps = Record<string, never>> = {
     props?: BaseTemplateProps & TCustomProps
   ) => React.ReactNode;
 };
+

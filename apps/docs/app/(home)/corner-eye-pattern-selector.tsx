@@ -3,59 +3,64 @@
 import { QRCodeSVG } from "qrdx";
 import type React from "react";
 
-type ErrorLevelSelectorProps = {
-  selectedLevel?: string;
-  onLevelSelect: (level: string) => void;
+type CornerEyePatternSelectorProps = {
+  selectedPattern?: string;
+  onPatternSelect: (pattern: string) => void;
+  qrColor?: string;
+  backgroundColor?: string;
 };
 
-const errorLevels = [
-  { id: "L", name: "Low", description: "~7%" },
-  { id: "M", name: "Medium", description: "~15%" },
-  { id: "Q", name: "Quartile", description: "~25%" },
-  { id: "H", name: "High", description: "~30%" },
+const patterns = [
+  { id: "square", name: "Square" },
+  { id: "rounded", name: "Rounded" },
+  { id: "circle", name: "Circle" },
+  { id: "gear", name: "Gear" },
 ] as const;
 
-export const ErrorLevelSelector: React.FC<ErrorLevelSelectorProps> = ({
-  selectedLevel = "L",
-  onLevelSelect,
+export const CornerEyePatternSelector: React.FC<
+  CornerEyePatternSelectorProps
+> = ({
+  selectedPattern = "gear",
+  onPatternSelect,
+  qrColor = "#000000",
+  backgroundColor = "#ffffff",
 }) => {
   return (
     <div className="grid grid-cols-4 gap-3">
-      {errorLevels.map((level) => (
+      {patterns.map((pattern) => (
         <button
           className={`relative cursor-pointer rounded-lg border-2 p-3 transition-all hover:shadow-md ${
-            selectedLevel === level.id
+            selectedPattern === pattern.id
               ? "border-black bg-black/5"
               : "border-gray-200 bg-white hover:border-gray-300"
           }`}
-          key={level.id}
-          onClick={() => onLevelSelect(level.id)}
+          key={pattern.id}
+          onClick={() => onPatternSelect(pattern.id)}
           tabIndex={0}
           type="button"
         >
-          {/* Level Preview */}
+          {/* Pattern Preview */}
           <div className="mb-2 flex items-center justify-center">
             <div className="flex h-16 w-16 items-center justify-center">
               <QRCodeSVG
-                bgColor={"transparent"}
-                fgColor={"black"}
-                level={level.id}
+                bgColor={backgroundColor}
+                cornerEyePattern={
+                  pattern.id as "square" | "rounded" | "circle" | "gear"
+                }
+                fgColor={qrColor}
                 size={64}
                 value="https://example.com"
               />
             </div>
           </div>
 
-          {/* Level Name */}
-          <p className="text-center text-gray-900 text-xs font-bold">
-            {level.name}
-          </p>
-          <p className="text-center text-gray-500 text-[10px]">
-            {level.description}
+          {/* Pattern Name */}
+          <p className="text-center text-gray-700 text-xs font-medium">
+            {pattern.name}
           </p>
 
           {/* Selection Indicator */}
-          {selectedLevel === level.id && (
+          {selectedPattern === pattern.id && (
             <div className="absolute top-2 right-2">
               <div className="flex h-4 w-4 items-center justify-center rounded-full bg-black">
                 <span className="font-bold text-white text-[10px]">✓</span>

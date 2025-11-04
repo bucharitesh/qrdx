@@ -7,6 +7,7 @@ import { Switch } from "@repo/design-system/components/ui/switch";
 import { getContrastLevel, getContrastRatio, QRCode } from "qrdx";
 import { useMemo, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
+import { CornerEyePatternSelector } from "./corner-eye-pattern-selector";
 import { DownloadOptions } from "./download-options";
 import { ErrorLevelSelector } from "./error-level-selector";
 import { PatternSelector } from "./pattern-selector";
@@ -27,6 +28,16 @@ type QRStyles = {
     | "packman"
     | "rounded"
     | "clean-square";
+  cornerEyePattern?:
+    | "square"
+    | "rounded"
+    | "rounded-inward"
+    | "rounded-inward-flipped"
+    | "gear"
+    | "semi-round"
+    | "rounded-extra"
+    | "rounded-square"
+    | "circle";
   errorLevel?: "L" | "M" | "Q" | "H";
   customLogo?: string;
   templateId?: string;
@@ -44,6 +55,7 @@ const Page = () => {
     eyeColor: "#000000",
     dotColor: "#000000",
     dotPattern: "circle",
+    cornerEyePattern: "gear",
     errorLevel: "L",
     backgroundColor: "#ffffff",
     templateId: "default",
@@ -115,20 +127,36 @@ const Page = () => {
                 />
               </div>
 
+              {/* Corner Eye Pattern Selection Section */}
+              <div className="space-y-4 rounded-xl border border-gray-200 bg-white/90 p-4 backdrop-blur-sm">
+                <h2 className="border-b pb-2 font-semibold text-gray-900 text-lg">
+                  Corner Eye Patterns
+                </h2>
+                <CornerEyePatternSelector
+                  backgroundColor={"transparent"}
+                  onPatternSelect={(pattern) =>
+                    setQrStyles((prev) => ({
+                      ...prev,
+                      cornerEyePattern: pattern as QRStyles["cornerEyePattern"],
+                    }))
+                  }
+                  qrColor={qrStyles.qrColor}
+                  selectedPattern={qrStyles.cornerEyePattern}
+                />
+              </div>
+
               {/* Error Correction Level Section */}
               <div className="space-y-4 rounded-xl border border-gray-200 bg-white/90 p-4 backdrop-blur-sm">
                 <h2 className="border-b pb-2 font-semibold text-gray-900 text-lg">
                   Error Correction
                 </h2>
                 <ErrorLevelSelector
-                  backgroundColor={qrStyles.backgroundColor}
                   onLevelSelect={(level) =>
                     setQrStyles((prev) => ({
                       ...prev,
                       errorLevel: level as QRStyles["errorLevel"],
                     }))
                   }
-                  qrColor={qrStyles.qrColor}
                   selectedLevel={qrStyles.errorLevel}
                 />
               </div>
@@ -139,14 +167,12 @@ const Page = () => {
                   Frames
                 </h2>
                 <TemplateSelector
-                  backgroundColor={qrStyles.backgroundColor}
                   onTemplateSelect={(templateId) =>
                     setQrStyles((prev) => ({
                       ...prev,
                       templateId,
                     }))
                   }
-                  qrColor={qrStyles.qrColor}
                   selectedTemplateId={qrStyles.templateId}
                 />
                 {qrStyles.templateId === "FlamQR" && (
@@ -390,6 +416,7 @@ const Page = () => {
               </h2>
               <QRCode
                 bgColor={qrStyles.backgroundColor}
+                cornerEyePattern={qrStyles.cornerEyePattern}
                 customText={qrStyles.customText}
                 dotColor={qrStyles.dotColor}
                 dotPattern={qrStyles.dotPattern}
@@ -408,6 +435,7 @@ const Page = () => {
               <div className="w-full border-gray-200 border-t pt-4">
                 <DownloadOptions
                   bgColor={qrStyles.backgroundColor}
+                  cornerEyePattern={qrStyles.cornerEyePattern}
                   customText={qrStyles.customText}
                   dotColor={qrStyles.dotColor}
                   dotPattern={qrStyles.dotPattern}

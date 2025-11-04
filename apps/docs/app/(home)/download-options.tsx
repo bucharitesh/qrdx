@@ -25,6 +25,16 @@ type DownloadOptionsProps = {
     | "packman"
     | "rounded"
     | "clean-square";
+  cornerEyePattern?:
+    | "square"
+    | "rounded"
+    | "rounded-inward"
+    | "rounded-inward-flipped"
+    | "gear"
+    | "semi-round"
+    | "rounded-extra"
+    | "rounded-square"
+    | "circle";
   errorLevel?: "L" | "M" | "Q" | "H";
   showLogo: boolean;
   logo?: string;
@@ -43,6 +53,7 @@ export const DownloadOptions: React.FC<DownloadOptionsProps> = ({
   eyeColor,
   dotColor,
   dotPattern,
+  cornerEyePattern,
   errorLevel,
   showLogo,
   logo,
@@ -66,6 +77,7 @@ export const DownloadOptions: React.FC<DownloadOptionsProps> = ({
         logo,
       }),
       level: errorLevel || "L",
+      cornerEyePattern,
       templateId,
       customText,
       textColor,
@@ -83,6 +95,7 @@ export const DownloadOptions: React.FC<DownloadOptionsProps> = ({
       eyeColor,
       dotColor,
       dotPattern,
+      cornerEyePattern,
       errorLevel,
       customText,
       textColor,
