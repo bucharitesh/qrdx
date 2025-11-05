@@ -70,7 +70,7 @@ export const ColorInput = ({
   return (
     <FormItem className="flex flex-1 flex-col gap-2">
       {showLabel && (
-        <FormLabel className="font-medium text-gray-700 text-sm">
+        <FormLabel className="font-medium dark:text-white text-dark text-sm">
           {label}
         </FormLabel>
       )}

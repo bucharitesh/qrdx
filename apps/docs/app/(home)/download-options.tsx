@@ -196,7 +196,7 @@ export const DownloadOptions: React.FC<DownloadOptionsProps> = ({
       <div className="grid gap-4 grid-cols-2">
         {/* Size Selection */}
         <div className="space-y-2">
-          <Label htmlFor="size-select" className="dark:text-black text-white">Size</Label>
+          <Label htmlFor="size-select" className="text-black">Size</Label>
           <Select value={selectedSize} onValueChange={setSelectedSize} className="dark:bg-black dark:text-white">
             <SelectTrigger id="size-select" className="w-full dark:bg-black/60 bg-white/60">
               <SelectValue placeholder="Select size" />
@@ -215,7 +215,7 @@ export const DownloadOptions: React.FC<DownloadOptionsProps> = ({
 
         {/* Format Selection */}
         <div className="space-y-2">
-          <Label htmlFor="format-select" className="dark:text-black text-white">Format</Label>
+          <Label htmlFor="format-select" className="text-black">Format</Label>
           <Select
             value={selectedFormat}
             onValueChange={(value) =>
