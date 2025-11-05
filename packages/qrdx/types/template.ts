@@ -1,5 +1,3 @@
-import type { BodyPattern } from "./image-pattern";
-
 // Base props that all templates support
 export type BaseTemplateProps = {
   fgColor?: string;
@@ -26,22 +24,7 @@ export type BaseTemplateProps = {
  * ```
  */
 export type TemplateConfig = {
-  // Dimensions (all in template coordinate space)
-  size: number; // Total size of the output
-  templateSize: number; // Template coordinate system size (typically 300)
-  margin: number; // Margin in modules
   pixelSize: number; // Calculated pixel size per QR module
-  numCells: number; // Total number of cells including margin
-  qrSize: number; // Number of QR code modules (without margin)
-
-  // Visual patterns
-  pattern?: BodyPattern; // Body pattern type (e.g., "circle", "square", "diamond")
-  cornerEyePattern?: string; // Corner eye pattern type (e.g., "square", "rounded")
-  cornerEyeDotPattern?: string; // Corner eye dot pattern type (e.g., "circle", "square")
-
-  // Sizing helpers
-  cornerSize: number; // Size of corner patterns (7 * pixelSize)
-  cornerDotRadius: number; // Inner corner dot radius (1.5 * pixelSize)
 };
 
 // Generic template definition that allows custom props

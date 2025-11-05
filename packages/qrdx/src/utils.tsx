@@ -617,22 +617,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
       );
 
       const templateConfig: TemplateConfig = {
-        // Dimensions
-        size,
-        templateSize,
-        margin,
         pixelSize,
-        numCells,
-        qrSize: cells.length,
-
-        // Patterns
-        pattern: bodyPattern,
-        cornerEyePattern,
-        cornerEyeDotPattern,
-
-        // Sizing helpers
-        cornerSize: 7 * pixelSize,
-        cornerDotRadius: 1.5 * pixelSize,
       };
 
       // Use template wrapper with the QR content and pass the size

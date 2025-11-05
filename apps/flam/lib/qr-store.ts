@@ -36,7 +36,7 @@ export const useQRStore = create<QRState>((set) => ({
     cornerEyeDotPattern: "circle",
     level: "Q",
     backgroundColor: "#ffffff",
-    templateId: "circle",
+    templateId: "FlamQR",
   },
   setUrl: (url) => set({ url }),
   setQrStyles: (styles) =>

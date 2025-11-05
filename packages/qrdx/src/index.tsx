@@ -4,7 +4,6 @@
 /** biome-ignore-all lint/a11y/noNoninteractiveElementInteractions: false positive */
 /** biome-ignore-all lint/performance/noImgElement: false positive */
 /** biome-ignore-all lint/complexity/noExcessiveCognitiveComplexity: false positive */
-"use client";
 
 /**
  * @license qrcode.react
