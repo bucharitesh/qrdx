@@ -229,6 +229,8 @@ export const DownloadOptions: React.FC<DownloadOptionsProps> = ({
               <SelectItem value="png">PNG</SelectItem>
               <SelectItem value="jpg">JPG</SelectItem>
               <SelectItem value="svg">SVG</SelectItem>
+              <SelectItem value="pdf">PDF</SelectItem>
+              <SelectItem value="eps">EPS</SelectItem>
             </SelectContent>
           </Select>
         </div>

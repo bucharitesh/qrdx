@@ -34,7 +34,9 @@
   },
   "dependencies": {
     "jsqr": "^1.4.0",
-    "react": "19.2.0"
+    "jspdf": "^2.5.2",
+    "react": "19.2.0",
+    "svg2pdf.js": "^2.2.4"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
