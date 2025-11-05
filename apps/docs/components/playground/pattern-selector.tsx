@@ -28,7 +28,12 @@ export const PatternSelector: React.FC = () => {
               : "ring-gray-200 bg-white hover:ring-gray-300"
           }`}
           key={pattern.id}
-          onClick={() => updateQrStyle("bodyPattern", pattern.id as typeof qrStyles.bodyPattern)}
+          onClick={() =>
+            updateQrStyle(
+              "bodyPattern",
+              pattern.id as typeof qrStyles.bodyPattern,
+            )
+          }
           tabIndex={0}
           type="button"
         >

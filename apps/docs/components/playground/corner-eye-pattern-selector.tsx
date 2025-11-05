@@ -24,7 +24,12 @@ export const CornerEyePatternSelector: React.FC = () => {
               : "ring-gray-200 bg-white hover:ring-gray-300"
           }`}
           key={pattern.id}
-          onClick={() => updateQrStyle("cornerEyePattern", pattern.id as typeof qrStyles.cornerEyePattern)}
+          onClick={() =>
+            updateQrStyle(
+              "cornerEyePattern",
+              pattern.id as typeof qrStyles.cornerEyePattern,
+            )
+          }
           tabIndex={0}
           type="button"
         >
