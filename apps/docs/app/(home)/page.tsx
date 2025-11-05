@@ -474,7 +474,7 @@ const Page = () => {
           {/* Right Column - Sticky QR Code Preview */}
           <div className="flex w-full justify-center lg:col-span-2 lg:justify-start">
             <div className="sticky top-18 flex h-fit w-full flex-col items-center justify-center gap-4 rounded-xl border border-gray-200 bg-white/90 p-6 shadow-lg backdrop-blur-sm">
-              <h2 className="text-center font-semibold text-lg">Preview</h2>
+              <h2 className="text-center font-semibold text-lg dark:text-black text-white">Preview</h2>
               <QRCode
                 bgColor={qrStyles.backgroundColor}
                 cornerEyeDotPattern={qrStyles.cornerEyeDotPattern}

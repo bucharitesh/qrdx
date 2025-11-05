@@ -196,9 +196,9 @@ export const DownloadOptions: React.FC<DownloadOptionsProps> = ({
       <div className="grid gap-4 grid-cols-2">
         {/* Size Selection */}
         <div className="space-y-2">
-          <Label htmlFor="size-select">Size</Label>
-          <Select value={selectedSize} onValueChange={setSelectedSize}>
-            <SelectTrigger id="size-select" className="w-full">
+          <Label htmlFor="size-select" className="dark:text-black text-white">Size</Label>
+          <Select value={selectedSize} onValueChange={setSelectedSize} className="dark:bg-black dark:text-white">
+            <SelectTrigger id="size-select" className="w-full dark:bg-black/60 bg-white/60">
               <SelectValue placeholder="Select size" />
             </SelectTrigger>
             <SelectContent className="w-full">
@@ -215,14 +215,14 @@ export const DownloadOptions: React.FC<DownloadOptionsProps> = ({
 
         {/* Format Selection */}
         <div className="space-y-2">
-          <Label htmlFor="format-select">Format</Label>
+          <Label htmlFor="format-select" className="dark:text-black text-white">Format</Label>
           <Select
             value={selectedFormat}
             onValueChange={(value) =>
               setSelectedFormat(value as DownloadFormat)
             }
           >
-            <SelectTrigger id="format-select" className="w-full">
+            <SelectTrigger id="format-select" className="w-full dark:bg-black/60 bg-white/60">
               <SelectValue placeholder="Select format" />
             </SelectTrigger>
             <SelectContent className="w-full">
@@ -280,7 +280,7 @@ export const DownloadOptions: React.FC<DownloadOptionsProps> = ({
           variant="outline"
           onClick={handleDownload}
           disabled={isDownloading || !!sizeError}
-          className="col-span-4"
+          className="col-span-4 dark:bg-black/60 bg-white/60"
         >
           <DownloadIcon className="h-4 w-4" />
           {isDownloading
@@ -290,7 +290,7 @@ export const DownloadOptions: React.FC<DownloadOptionsProps> = ({
 
         {/* Copy SVG Button */}
         <Button
-          className="col-span-2"
+          className="col-span-2 dark:bg-black/60 bg-white/60"
           onClick={handleCopySVG}
           variant="outline"
         >
