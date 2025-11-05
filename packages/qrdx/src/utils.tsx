@@ -347,7 +347,6 @@ export function QRCodeSVG(props: QRPropsSVG) {
     isOGContext = false,
     imageSettings,
     templateId,
-    customText,
     ...otherProps
   } = props;
 
@@ -642,7 +641,6 @@ export function QRCodeSVG(props: QRPropsSVG) {
         {
           fgColor,
           bgColor,
-          customText,
           ...otherProps,
         },
         templateConfig

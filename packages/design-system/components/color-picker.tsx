@@ -1,11 +1,5 @@
 "use client";
 
-import {
-  FormControl,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@repo/design-system/components/ui/form";
 import { Input } from "@repo/design-system/components/ui/input";
 import { useOutsideClick } from "@repo/design-system/hooks/use-outside-click";
 import React, { useState } from "react";
@@ -68,13 +62,11 @@ export const ColorInput = ({
   };
 
   return (
-    <FormItem className="flex flex-1 flex-col gap-2">
+    <div className="flex flex-1 flex-col gap-2">
       {showLabel && (
-        <FormLabel className="font-medium text-gray-700 text-sm">
-          {label}
-        </FormLabel>
+        <div className="font-medium text-gray-700 text-sm">{label}</div>
       )}
-      <FormControl>
+      <div>
         <div className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2 shadow-sm transition-all focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-200 hover:border-gray-400">
           <div className="relative h-full" ref={pickerRef}>
             <button
@@ -100,8 +92,8 @@ export const ColorInput = ({
             value={inputValue}
           />
         </div>
-      </FormControl>
-      {error && <FormMessage>{error}</FormMessage>}
-    </FormItem>
+      </div>
+      {error && <div>{error}</div>}
+    </div>
   );
 };

@@ -22,16 +22,10 @@ export const QRCode = memo(
     bodyPattern,
     cornerEyePattern,
     cornerEyeDotPattern,
-    errorLevel,
+    level,
     scale = 1,
     margin = DEFAULT_MARGIN,
     templateId,
-    customText,
-    textColor,
-    fontSize,
-    fontWeight,
-    fontLetterSpacing,
-    fontFamily,
   }: {
     url: string;
     fgColor?: string;
@@ -43,16 +37,10 @@ export const QRCode = memo(
     bodyPattern?: BodyPattern;
     cornerEyePattern?: CornerEyePattern;
     cornerEyeDotPattern?: CornerEyeDotPattern;
-    errorLevel?: "L" | "M" | "Q" | "H";
+    level?: "L" | "M" | "Q" | "H";
     scale?: number;
     margin?: number;
     templateId?: string;
-    customText?: string;
-    textColor?: string;
-    fontSize?: number;
-    fontWeight?: number;
-    fontLetterSpacing?: number;
-    fontFamily?: string;
   }) => {
     const qrData = useMemo(
       () =>
@@ -66,13 +54,8 @@ export const QRCode = memo(
           bodyPattern,
           cornerEyePattern,
           cornerEyeDotPattern,
-          errorLevel,
-          fontSize,
-          fontWeight,
-          fontLetterSpacing,
-          fontFamily,
+          level,
           templateId,
-          customText,
           logo,
           margin,
         }),
@@ -88,13 +71,8 @@ export const QRCode = memo(
         bodyPattern,
         cornerEyePattern,
         cornerEyeDotPattern,
-        errorLevel,
-        fontSize,
-        fontWeight,
-        fontLetterSpacing,
-        fontFamily,
+        level,
         templateId,
-        customText,
       ]
     );
 
@@ -104,19 +82,13 @@ export const QRCode = memo(
         bodyPattern={qrData.bodyPattern}
         cornerEyeDotPattern={qrData.cornerEyeDotPattern}
         cornerEyePattern={qrData.cornerEyePattern}
-        customText={customText}
         dotColor={qrData.dotColor}
         eyeColor={qrData.eyeColor}
         fgColor={qrData.fgColor}
-        fontFamily={fontFamily}
-        fontLetterSpacing={qrData.fontLetterSpacing}
-        fontSize={qrData.fontSize}
-        fontWeight={qrData.fontWeight}
-        level={errorLevel || qrData.level}
+        level={level || qrData.level}
         margin={qrData.margin}
         size={(qrData.size / 8) * scale}
         templateId={qrData.templateId}
-        textColor={textColor}
         value={qrData.value}
         {...(qrData.imageSettings && {
           imageSettings: {

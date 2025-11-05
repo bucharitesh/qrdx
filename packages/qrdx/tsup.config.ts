@@ -12,9 +12,9 @@ export default defineConfig({
   splitting: false,
   minify: true,
   esbuildOptions(options) {
-    options.banner = {
-      js: '"use client";',
-    };
+    // options.banner = {
+    //   js: '"use client";',
+    // };
     options.jsx = "automatic";
     options.jsxImportSource = "react";
   },

@@ -12,7 +12,6 @@ import {
 } from "@repo/design-system/components/ui/select";
 import { CopyIcon, DownloadIcon } from "lucide-react";
 import {
-  type DownloadFormat,
   type DownloadSize,
   downloadQRCode,
   getQRData,
@@ -20,59 +19,11 @@ import {
   PRESET_SIZES,
   validateSize,
 } from "qrdx";
-import type {
-  BodyPattern,
-  CornerEyeDotPattern,
-  CornerEyePattern,
-} from "qrdx/types";
 import React from "react";
+import { useQRStore } from "../../lib/qr-store";
 
-type DownloadOptionsProps = {
-  url: string;
-  fgColor: string;
-  bgColor: string;
-  eyeColor: string;
-  dotColor: string;
-  bodyPattern?: BodyPattern;
-  cornerEyePattern?: CornerEyePattern;
-  cornerEyeDotPattern?: CornerEyeDotPattern;
-  errorLevel?: "L" | "M" | "Q" | "H";
-  showLogo: boolean;
-  logo?: string;
-  templateId?: string;
-  customText?: string;
-  textColor?: string;
-  fontSize?: number;
-  fontWeight?: number;
-  fontLetterSpacing?: number;
-  fontFamily?: string;
-};
-
-export const DownloadOptions: React.FC<DownloadOptionsProps> = ({
-  url,
-  fgColor,
-  bgColor,
-  eyeColor,
-  dotColor,
-  bodyPattern,
-  cornerEyePattern,
-  cornerEyeDotPattern,
-  errorLevel,
-  showLogo,
-  logo,
-  templateId,
-  customText,
-  textColor,
-  fontSize,
-  fontWeight,
-  fontLetterSpacing,
-  fontFamily,
-}) => {
-  const [selectedSize, setSelectedSize] = React.useState<string>("medium");
-  const [customWidth, setCustomWidth] = React.useState<string>("600");
-  const [customHeight, setCustomHeight] = React.useState<string>("600");
-  const [selectedFormat, setSelectedFormat] =
-    React.useState<DownloadFormat>("png");
+export const DownloadOptions: React.FC = () => {
+  const { url, qrStyles, downloadOptions, updateDownloadOption } = useQRStore();
   const [sizeError, setSizeError] = React.useState<string>("");
   const [isDownloading, setIsDownloading] = React.useState(false);
 
@@ -80,63 +31,38 @@ export const DownloadOptions: React.FC<DownloadOptionsProps> = ({
     () => ({
       ...getQRData({
         url,
-        fgColor,
-        bgColor,
-        eyeColor,
-        dotColor,
-        bodyPattern,
-        hideLogo: !showLogo,
-        logo,
+        fgColor: qrStyles.qrColor,
+        bgColor: qrStyles.backgroundColor,
+        eyeColor: qrStyles.eyeColor,
+        dotColor: qrStyles.dotColor,
+        bodyPattern: qrStyles.bodyPattern,
+        hideLogo: !qrStyles.showLogo,
+        logo: qrStyles.qrLogo,
       }),
-      level: errorLevel || "L",
-      cornerEyePattern,
-      cornerEyeDotPattern,
-      templateId,
-      customText,
-      textColor,
-      fontSize,
-      fontWeight,
-      fontLetterSpacing,
-      fontFamily,
+      level: qrStyles.level,
+      cornerEyePattern: qrStyles.cornerEyePattern,
+      cornerEyeDotPattern: qrStyles.cornerEyeDotPattern,
+      templateId: qrStyles.templateId,
     }),
-    [
-      url,
-      fgColor,
-      bgColor,
-      showLogo,
-      logo,
-      templateId,
-      eyeColor,
-      dotColor,
-      bodyPattern,
-      cornerEyePattern,
-      cornerEyeDotPattern,
-      errorLevel,
-      customText,
-      textColor,
-      fontSize,
-      fontWeight,
-      fontLetterSpacing,
-      fontFamily,
-    ],
+    [url, qrStyles],
   );
 
   // Get the current size based on selection
   const getCurrentSize = (): DownloadSize => {
-    if (selectedSize === "custom") {
+    if (downloadOptions.size === "custom") {
       return {
-        width: Number.parseInt(customWidth, 10) || 600,
-        height: Number.parseInt(customHeight, 10) || 600,
+        width: downloadOptions.width,
+        height: downloadOptions.height,
       };
     }
-    return PRESET_SIZES[selectedSize] || PRESET_SIZES.medium;
+    return PRESET_SIZES[downloadOptions.size] || PRESET_SIZES.medium;
   };
 
   // Validate custom size when it changes
   React.useEffect(() => {
-    if (selectedSize === "custom") {
-      const width = Number.parseInt(customWidth, 10);
-      const height = Number.parseInt(customHeight, 10);
+    if (downloadOptions.size === "custom") {
+      const width = downloadOptions.width;
+      const height = downloadOptions.height;
 
       if (Number.isNaN(width) || Number.isNaN(height)) {
         setSizeError("Please enter valid numbers");
@@ -152,7 +78,7 @@ export const DownloadOptions: React.FC<DownloadOptionsProps> = ({
     } else {
       setSizeError("");
     }
-  }, [selectedSize, customWidth, customHeight]);
+  }, [downloadOptions.size, downloadOptions.width, downloadOptions.height]);
 
   const handleDownload = async () => {
     const size = getCurrentSize();
@@ -168,7 +94,7 @@ export const DownloadOptions: React.FC<DownloadOptionsProps> = ({
 
     try {
       await downloadQRCode(qrProps, {
-        format: selectedFormat,
+        format: downloadOptions.format,
         size,
       });
     } catch (error) {
@@ -197,7 +123,23 @@ export const DownloadOptions: React.FC<DownloadOptionsProps> = ({
         {/* Size Selection */}
         <div className="space-y-2">
           <Label htmlFor="size-select">Size</Label>
-          <Select value={selectedSize} onValueChange={setSelectedSize}>
+          <Select
+            defaultValue={downloadOptions.size}
+            value={downloadOptions.size}
+            onValueChange={(value) =>
+              updateDownloadOption(
+                "size",
+                value as
+                  | "small"
+                  | "medium"
+                  | "large"
+                  | "xlarge"
+                  | "2xl"
+                  | "3xl"
+                  | "custom",
+              )
+            }
+          >
             <SelectTrigger id="size-select" className="w-full">
               <SelectValue placeholder="Select size" />
             </SelectTrigger>
@@ -217,9 +159,10 @@ export const DownloadOptions: React.FC<DownloadOptionsProps> = ({
         <div className="space-y-2">
           <Label htmlFor="format-select">Format</Label>
           <Select
-            value={selectedFormat}
+            defaultValue={downloadOptions.format}
+            value={downloadOptions.format}
             onValueChange={(value) =>
-              setSelectedFormat(value as DownloadFormat)
+              updateDownloadOption("format", value as "png" | "jpg" | "svg")
             }
           >
             <SelectTrigger id="format-select" className="w-full">
@@ -235,7 +178,7 @@ export const DownloadOptions: React.FC<DownloadOptionsProps> = ({
       </div>
 
       {/* Custom Size Inputs */}
-      {selectedSize === "custom" && (
+      {downloadOptions.size === "custom" && (
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="custom-width">Width (px)</Label>
@@ -244,8 +187,10 @@ export const DownloadOptions: React.FC<DownloadOptionsProps> = ({
               type="number"
               min="50"
               max="5000"
-              value={customWidth}
-              onChange={(e) => setCustomWidth(e.target.value)}
+              value={downloadOptions.width}
+              onChange={(e) =>
+                updateDownloadOption("width", Number(e.target.value))
+              }
               placeholder="600"
             />
           </div>
@@ -256,8 +201,10 @@ export const DownloadOptions: React.FC<DownloadOptionsProps> = ({
               type="number"
               min="50"
               max="5000"
-              value={customHeight}
-              onChange={(e) => setCustomHeight(e.target.value)}
+              value={downloadOptions.height}
+              onChange={(e) =>
+                updateDownloadOption("height", Number(e.target.value))
+              }
               placeholder="600"
             />
           </div>
@@ -283,7 +230,7 @@ export const DownloadOptions: React.FC<DownloadOptionsProps> = ({
           <DownloadIcon className="h-4 w-4" />
           {isDownloading
             ? "Downloading..."
-            : `Download ${selectedFormat.toUpperCase()}`}
+            : `Download ${downloadOptions.format.toUpperCase()}`}
         </Button>
 
         {/* Copy SVG Button */}

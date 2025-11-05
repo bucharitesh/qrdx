@@ -2,27 +2,18 @@
 
 import { QRCodeSVG } from "qrdx";
 import type React from "react";
-
-type PatternSelectorProps = {
-  selectedPattern?: string;
-  onPatternSelect: (pattern: string) => void;
-};
+import { useQRStore } from "@/lib/qr-store";
 
 const patterns = [
-  { id: "circle", name: "Circle" },
-  { id: "circle-large", name: "Circle Large" },
   { id: "square", name: "Square" },
+  { id: "rounded-square", name: "Rounded" },
+  { id: "circle", name: "Circle" },
   { id: "diamond", name: "Diamond" },
-  { id: "circle-mixed", name: "Mixed" },
-  { id: "pacman", name: "Pacman" },
-  { id: "rounded", name: "Rounded" },
-  { id: "clean-square", name: "Clean" },
 ] as const;
 
-export const PatternSelector: React.FC<PatternSelectorProps> = ({
-  selectedPattern = "circle",
-  onPatternSelect,
-}) => {
+export const CornerEyeDotPatternSelector: React.FC = () => {
+  const { qrStyles, updateQrStyle } = useQRStore();
+  const selectedPattern = qrStyles.cornerEyeDotPattern || "circle";
   return (
     <div className="grid grid-cols-4 gap-3">
       {patterns.map((pattern) => (
@@ -33,7 +24,12 @@ export const PatternSelector: React.FC<PatternSelectorProps> = ({
               : "ring-gray-200 bg-white hover:ring-gray-300"
           }`}
           key={pattern.id}
-          onClick={() => onPatternSelect(pattern.id)}
+          onClick={() =>
+            updateQrStyle(
+              "cornerEyeDotPattern",
+              pattern.id as typeof qrStyles.cornerEyeDotPattern,
+            )
+          }
           tabIndex={0}
           type="button"
         >
@@ -42,8 +38,8 @@ export const PatternSelector: React.FC<PatternSelectorProps> = ({
             <div className="flex h-16 w-16 items-center justify-center">
               <QRCodeSVG
                 bgColor={"transparent"}
+                cornerEyeDotPattern={pattern.id}
                 fgColor={"#000000"}
-                bodyPattern={pattern.id}
                 size={64}
                 value="https://example.com"
               />
