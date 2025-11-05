@@ -1,13 +1,3 @@
-export type BodyPattern =
-  | "circle"
-  | "circle-large"
-  | "square"
-  | "diamond"
-  | "circle-mixed"
-  | "pacman"
-  | "rounded"
-  | "clean-square";
-
 export const BODY_PATTERN = [
   "circle",
   "circle-large",
@@ -18,3 +8,5 @@ export const BODY_PATTERN = [
   "rounded",
   "clean-square",
 ] as const;
+
+export type BodyPattern = (typeof BODY_PATTERN)[number];
