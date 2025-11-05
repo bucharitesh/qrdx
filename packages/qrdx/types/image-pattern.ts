@@ -1,5 +1,6 @@
 export type BodyPattern =
   | "circle"
+  | "circle-large"
   | "square"
   | "diamond"
   | "circle-mixed"
@@ -9,6 +10,7 @@ export type BodyPattern =
 
 export const BODY_PATTERN = [
   "circle",
+  "circle-large",
   "square",
   "diamond",
   "circle-mixed",

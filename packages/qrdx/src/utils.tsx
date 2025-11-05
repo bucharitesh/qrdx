@@ -124,7 +124,7 @@ function generateDataCircles(
 
         switch (pattern) {
           case "circle":
-            // Pattern 1: Standard circles
+            // Pattern 1: Standard circles with gaps
             shapes.push(
               <circle
                 cx={cx}
@@ -134,6 +134,22 @@ function generateDataCircles(
                 transform={`rotate(0,${cx},${cy})`}
               />
             );
+            break;
+
+          case "circle-large":
+            // Pattern: Large circles with no gaps (overlapping slightly)
+            {
+              const largeRadius = pixelSize * 0.5; // 55% of pixel size for overlapping circles
+              shapes.push(
+                <circle
+                  cx={cx}
+                  cy={cy}
+                  key={key}
+                  r={largeRadius}
+                  transform={`rotate(0,${cx},${cy})`}
+                />
+              );
+            }
             break;
 
           case "square":

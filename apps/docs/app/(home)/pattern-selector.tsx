@@ -10,6 +10,7 @@ type PatternSelectorProps = {
 
 const patterns = [
   { id: "circle", name: "Circle" },
+  { id: "circle-large", name: "Circle Large" },
   { id: "square", name: "Square" },
   { id: "diamond", name: "Diamond" },
   { id: "circle-mixed", name: "Mixed" },
