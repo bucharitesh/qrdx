@@ -197,7 +197,7 @@ export const DownloadOptions: React.FC<DownloadOptionsProps> = ({
         {/* Size Selection */}
         <div className="space-y-2">
           <Label htmlFor="size-select" className="text-black">Size</Label>
-          <Select value={selectedSize} onValueChange={setSelectedSize} className="dark:bg-black dark:text-white">
+          <Select value={selectedSize} onValueChange={setSelectedSize}>
             <SelectTrigger id="size-select" className="w-full dark:bg-black/60 bg-white/60">
               <SelectValue placeholder="Select size" />
             </SelectTrigger>
