@@ -1,23 +1,21 @@
 import type { TemplateDefinition } from "../types";
-import {
-  Arrow,
-  defaultTemplate,
-  FlamQR,
-  Halloween,
-  SquareBorder,
-  StandardBox,
-  StrikedBox,
-} from "./template";
+import * as templates from "./template";
+
+// Re-export template types for convenience
+export type { BaseTemplateProps, TemplateDefinition } from "../types";
+
+// Re-export individual templates for direct import
+export * from "./template";
 
 // Template registry - using TemplateDefinition<any> to allow different custom props
 export const TEMPLATES: Record<string, TemplateDefinition<any>> = {
-  default: defaultTemplate,
-  FlamQR,
-  Arrow,
-  StandardBox,
-  SquareBorder,
-  StrikedBox,
-  Halloween,
+  default: templates.defaultTemplate,
+  FlamQR: templates.FlamQR,
+  Arrow: templates.Arrow,
+  StandardBox: templates.StandardBox,
+  SquareBorder: templates.SquareBorder,
+  StrikedBox: templates.StrikedBox,
+  Halloween: templates.Halloween,
 };
 
 // Utility functions

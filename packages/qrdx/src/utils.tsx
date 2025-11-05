@@ -1,5 +1,6 @@
 import type { JSX } from "react";
 import React from "react";
+import type { TemplateConfig } from "@/types/template";
 import type {
   BodyPattern,
   Excavation,
@@ -139,7 +140,7 @@ function generateDataCircles(
           case "circle-large":
             // Pattern: Large circles with no gaps (overlapping slightly)
             {
-              const largeRadius = pixelSize * 0.5; // 55% of pixel size for overlapping circles
+              const largeRadius = pixelSize * 0.5; // 50% of pixel size for overlapping circles
               shapes.push(
                 <circle
                   cx={cx}
@@ -616,13 +617,36 @@ export function QRCodeSVG(props: QRPropsSVG) {
         </svg>
       );
 
+      const templateConfig: TemplateConfig = {
+        // Dimensions
+        size,
+        templateSize,
+        margin,
+        pixelSize,
+        numCells,
+        qrSize: cells.length,
+
+        // Patterns
+        pattern: bodyPattern,
+        cornerEyePattern,
+        cornerEyeDotPattern,
+
+        // Sizing helpers
+        cornerSize: 7 * pixelSize,
+        cornerDotRadius: 1.5 * pixelSize,
+      };
+
       // Use template wrapper with the QR content and pass the size
-      const wrappedSvg = template.wrapper(templateQrContent, {
-        fgColor,
-        bgColor,
-        customText,
-        ...otherProps,
-      });
+      const wrappedSvg = template.wrapper(
+        templateQrContent,
+        {
+          fgColor,
+          bgColor,
+          customText,
+          ...otherProps,
+        },
+        templateConfig
+      );
 
       // Clone the wrapped SVG element and override width/height to match requested size
       // This ensures downloads get the proper size while keeping viewBox for scaling

@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  getAllTemplates,
-  QRCode,
-  QRCodeSVG,
-  type TemplateDefinition,
-} from "qrdx";
+import { getAllTemplates, QRCodeSVG, type TemplateDefinition } from "qrdx";
 import type React from "react";
 
 type TemplateSelectorProps = {

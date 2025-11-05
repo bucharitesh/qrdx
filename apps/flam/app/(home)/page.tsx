@@ -8,15 +8,12 @@ import {
   type BodyPattern,
   type CornerEyeDotPattern,
   type CornerEyePattern,
-  getContrastLevel,
-  getContrastRatio,
   QRCode,
 } from "qrdx";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { DownloadOptions } from "./download-options";
-
-// import { ErrorLevelSelector } from "./error-level-selector";
+import { ErrorLevelSelector } from "./error-level-selector";
 
 type QRStyles = {
   showLogo?: boolean;
@@ -58,19 +55,11 @@ const Page = () => {
     fontLetterSpacing: 6,
     fontFamily: "Arial, Helvetica, sans-serif",
   });
-  const [url, setUrl] = useState("https://instant.cdn.flamapp.com/card?o=1234");
+  const [url, setUrl] = useState(
+    "https://instant.cdn.flamapp.com/card?o=12345"
+  );
 
   const methods = useForm();
-
-  // Calculate contrast ratio and level
-  const contrastInfo = useMemo(() => {
-    const ratio = getContrastRatio(qrStyles.qrColor, qrStyles.backgroundColor);
-    const level = getContrastLevel(ratio);
-    return {
-      ratio: ratio.toFixed(2),
-      ...level,
-    };
-  }, [qrStyles.qrColor, qrStyles.backgroundColor]);
 
   return (
     <div className="relative z-10 mx-auto w-full max-w-7xl select-none p-2 md:p-6">
@@ -99,7 +88,7 @@ const Page = () => {
               </div>
 
               {/* Error Correction Level Section */}
-              {/* <div className="space-y-4 rounded-xl border p-4 backdrop-blur-sm">
+              <div className="space-y-4 rounded-xl border p-4 backdrop-blur-sm">
                 <h2 className="border-b pb-2 font-semibold text-lg">
                   Error Correction
                 </h2>
@@ -112,7 +101,7 @@ const Page = () => {
                   }
                   selectedLevel={qrStyles.errorLevel}
                 />
-              </div> */}
+              </div>
 
               {/* Color Customization Section */}
               <div className="space-y-4 rounded-xl border p-4 backdrop-blur-sm">
@@ -160,42 +149,6 @@ const Page = () => {
                       }))
                     }
                   />
-                </div>
-
-                {/* Contrast Feedback within Color Section */}
-                <div
-                  className={`flex items-center gap-3 rounded-lg px-4 py-3 ${
-                    contrastInfo.warning
-                      ? "border border-orange-200 bg-orange-50"
-                      : "border border-green-200 bg-green-50"
-                  }`}
-                >
-                  <div
-                    className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full ${
-                      contrastInfo.warning ? "bg-orange-100" : "bg-green-100"
-                    }`}
-                  >
-                    {contrastInfo.warning ? (
-                      <span className="font-bold text-orange-600 text-sm">
-                        !
-                      </span>
-                    ) : (
-                      <span className="font-bold text-green-600 text-sm">
-                        ✓
-                      </span>
-                    )}
-                  </div>
-                  <span
-                    className={`font-medium text-sm ${
-                      contrastInfo.warning
-                        ? "text-orange-800"
-                        : "text-green-800"
-                    }`}
-                  >
-                    {contrastInfo.warning
-                      ? "Hard to scan. Use more contrast colors."
-                      : "Great! Your QR code is easy to scan."}
-                  </span>
                 </div>
               </div>
 
