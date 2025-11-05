@@ -17,13 +17,8 @@ export function getQRData({
   margin,
   cornerEyePattern,
   cornerEyeDotPattern,
-  errorLevel,
-  fontSize,
-  fontWeight,
-  fontLetterSpacing,
-  fontFamily,
+  level,
   templateId,
-  customText,
 }: {
   url: string;
   fgColor?: string;
@@ -36,13 +31,8 @@ export function getQRData({
   margin?: number;
   cornerEyePattern?: CornerEyePattern;
   cornerEyeDotPattern?: CornerEyeDotPattern;
-  errorLevel?: "L" | "M" | "Q" | "H";
-  fontSize?: number;
-  fontWeight?: number;
-  fontLetterSpacing?: number;
-  fontFamily?: string;
+  level?: "L" | "M" | "Q" | "H";
   templateId?: string;
-  customText?: string;
 }) {
   return {
     value: `${url}?qr=1`,
@@ -53,15 +43,9 @@ export function getQRData({
     bodyPattern,
     cornerEyePattern,
     cornerEyeDotPattern,
-    errorLevel,
-    fontSize,
-    fontWeight,
-    fontLetterSpacing,
-    fontFamily,
+    level,
     templateId,
-    customText,
     size: 1024,
-    level: "Q", // QR Code error correction level: https://blog.qrstuff.com/general/qr-code-error-correction
     hideLogo,
     margin,
     ...(!hideLogo && {

@@ -20,54 +20,11 @@ import {
   PRESET_SIZES,
   validateSize,
 } from "qrdx";
-import type {
-  BodyPattern,
-  CornerEyeDotPattern,
-  CornerEyePattern,
-} from "qrdx/types";
 import React from "react";
+import { useQRStore } from "../../lib/qr-store";
 
-type DownloadOptionsProps = {
-  url: string;
-  fgColor: string;
-  bgColor: string;
-  eyeColor: string;
-  dotColor: string;
-  bodyPattern?: BodyPattern;
-  cornerEyePattern?: CornerEyePattern;
-  cornerEyeDotPattern?: CornerEyeDotPattern;
-  errorLevel?: "L" | "M" | "Q" | "H";
-  showLogo: boolean;
-  logo?: string;
-  templateId?: string;
-  customText?: string;
-  textColor?: string;
-  fontSize?: number;
-  fontWeight?: number;
-  fontLetterSpacing?: number;
-  fontFamily?: string;
-};
-
-export const DownloadOptions: React.FC<DownloadOptionsProps> = ({
-  url,
-  fgColor,
-  bgColor,
-  eyeColor,
-  dotColor,
-  bodyPattern,
-  cornerEyePattern,
-  cornerEyeDotPattern,
-  errorLevel,
-  showLogo,
-  logo,
-  templateId,
-  customText,
-  textColor,
-  fontSize,
-  fontWeight,
-  fontLetterSpacing,
-  fontFamily,
-}) => {
+export const DownloadOptions: React.FC = () => {
+  const { url, qrStyles } = useQRStore();
   const [selectedSize, setSelectedSize] = React.useState<string>("medium");
   const [customWidth, setCustomWidth] = React.useState<string>("600");
   const [customHeight, setCustomHeight] = React.useState<string>("600");
@@ -80,45 +37,20 @@ export const DownloadOptions: React.FC<DownloadOptionsProps> = ({
     () => ({
       ...getQRData({
         url,
-        fgColor,
-        bgColor,
-        eyeColor,
-        dotColor,
-        bodyPattern,
-        hideLogo: !showLogo,
-        logo,
+        fgColor: qrStyles.qrColor,
+        bgColor: qrStyles.backgroundColor,
+        eyeColor: qrStyles.eyeColor,
+        dotColor: qrStyles.dotColor,
+        bodyPattern: qrStyles.bodyPattern,
+        hideLogo: !qrStyles.showLogo,
+        logo: qrStyles.qrLogo,
       }),
-      level: errorLevel || "L",
-      cornerEyePattern,
-      cornerEyeDotPattern,
-      templateId,
-      customText,
-      textColor,
-      fontSize,
-      fontWeight,
-      fontLetterSpacing,
-      fontFamily,
+      level: qrStyles.level,
+      cornerEyePattern: qrStyles.cornerEyePattern,
+      cornerEyeDotPattern: qrStyles.cornerEyeDotPattern,
+      templateId: qrStyles.templateId,
     }),
-    [
-      url,
-      fgColor,
-      bgColor,
-      showLogo,
-      logo,
-      templateId,
-      eyeColor,
-      dotColor,
-      bodyPattern,
-      cornerEyePattern,
-      cornerEyeDotPattern,
-      errorLevel,
-      customText,
-      textColor,
-      fontSize,
-      fontWeight,
-      fontLetterSpacing,
-      fontFamily,
-    ]
+    [url, qrStyles]
   );
 
   // Get the current size based on selection

@@ -2,11 +2,7 @@
 
 import { QRCodeSVG } from "qrdx";
 import type React from "react";
-
-type ErrorLevelSelectorProps = {
-  selectedLevel?: string;
-  onLevelSelect: (level: string) => void;
-};
+import { useQRStore } from "../../lib/qr-store";
 
 const errorLevels = [
   { id: "L", name: "Low", description: "~7%" },
@@ -15,10 +11,9 @@ const errorLevels = [
   { id: "H", name: "High", description: "~30%" },
 ] as const;
 
-export const ErrorLevelSelector: React.FC<ErrorLevelSelectorProps> = ({
-  selectedLevel = "L",
-  onLevelSelect,
-}) => {
+export const ErrorLevelSelector: React.FC = () => {
+  const { qrStyles, updateQrStyle } = useQRStore();
+  const selectedLevel = qrStyles.level || "L";
   return (
     <div className="grid grid-cols-4 gap-3">
       {errorLevels.map((level) => (
@@ -29,7 +24,9 @@ export const ErrorLevelSelector: React.FC<ErrorLevelSelectorProps> = ({
               : "bg-white ring-gray-200 hover:ring-gray-300"
           }`}
           key={level.id}
-          onClick={() => onLevelSelect(level.id)}
+          onClick={() =>
+            updateQrStyle("level", level.id as typeof qrStyles.level)
+          }
           tabIndex={0}
           type="button"
         >

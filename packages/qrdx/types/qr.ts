@@ -28,12 +28,6 @@ export type QRProps = {
   imageSettings?: ImageSettings;
   isOGContext?: boolean;
   templateId?: string;
-  customText?: string;
-  textColor?: string;
-  fontSize?: number;
-  fontWeight?: number;
-  fontLetterSpacing?: number;
-  fontFamily?: string;
 };
 
 export type QRPropsCanvas = QRProps &

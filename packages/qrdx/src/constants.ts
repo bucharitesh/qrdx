@@ -8,7 +8,7 @@ export const ERROR_LEVEL_MAP: { [index: string]: qrcodegen.QrCode.Ecc } = {
 };
 
 export const DEFAULT_SIZE = 128;
-export const DEFAULT_LEVEL = "L";
+export const DEFAULT_LEVEL = "Q";
 export const DEFAULT_BGCOLOR = "#FFFFFF";
 export const DEFAULT_FGCOLOR = "#000000";
 export const DEFAULT_EYECOLOR = "#000000";

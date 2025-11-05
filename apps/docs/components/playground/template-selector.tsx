@@ -2,18 +2,11 @@
 
 import { getAllTemplates, QRCodeSVG, type TemplateDefinition } from "qrdx";
 import type React from "react";
+import { useQRStore } from "../../lib/qr-store";
 
-type TemplateSelectorProps = {
-  selectedTemplateId?: string;
-  onTemplateSelect: (templateId: string) => void;
-  qrColor?: string;
-  backgroundColor?: string;
-};
-
-export const TemplateSelector: React.FC<TemplateSelectorProps> = ({
-  selectedTemplateId = "default",
-  onTemplateSelect,
-}) => {
+export const TemplateSelector: React.FC = () => {
+  const { qrStyles, updateQrStyle } = useQRStore();
+  const selectedTemplateId = qrStyles.templateId || "default";
   const templates = getAllTemplates();
 
   return (
@@ -26,7 +19,7 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({
               : "ring-gray-200 bg-white hover:ring-gray-300"
           }`}
           key={template.id}
-          onClick={() => onTemplateSelect(template.id)}
+          onClick={() => updateQrStyle("templateId", template.id)}
           tabIndex={0}
           type="button"
         >
