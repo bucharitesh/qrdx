@@ -49,6 +49,7 @@ export const DownloadOptions: React.FC = () => {
       cornerEyePattern: qrStyles.cornerEyePattern,
       cornerEyeDotPattern: qrStyles.cornerEyeDotPattern,
       templateId: qrStyles.templateId,
+      customProps: qrStyles.customProps,
     }),
     [url, qrStyles]
   );

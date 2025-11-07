@@ -8,16 +8,16 @@ export type FlamQRProps = {
   fontWeight: number;
   fontLetterSpacing?: number;
   fontFamily?: string;
+  outerStrokeWidth?: number;
+  innerStrokeWidth?: number;
 };
 
 export const FlamQR: TemplateDefinition<FlamQRProps> = {
   id: "FlamQR",
   name: "Flam QR",
   description: "Flam QR code with Flam logo and text",
-  wrapper: (children, props, templateConfig) => {
-    const pixelSize = templateConfig?.pixelSize
-      ? templateConfig.pixelSize * 0.55
-      : 4.413_793_103_448_276 * 0.55;
+  wrapper: (children, props) => {
+    const pixelSize = 4.413_793_103_448_276 * 0.55;
 
     return (
       <svg
@@ -2253,12 +2253,12 @@ export const FlamQR: TemplateDefinition<FlamQRProps> = {
             <path
               d="M295.518 528.173C422.926 528.173 526.21 424.889 526.21 297.482C526.21 170.074 422.926 66.79 295.518 66.79C168.111 66.79 64.8267 170.074 64.8267 297.482C64.8267 424.889 168.111 528.173 295.518 528.173Z"
               stroke={props?.fgColor || "black"}
-              strokeWidth="4"
+              strokeWidth={props?.innerStrokeWidth || 0}
             />
             <path
               d="M296.5 591C459.148 591 591 459.148 591 296.5C591 133.852 459.148 2 296.5 2C133.852 2 2 133.852 2 296.5C2 459.148 133.852 591 296.5 591Z"
               stroke={props?.fgColor || "black"}
-              strokeWidth="4"
+              strokeWidth={props?.outerStrokeWidth || 0}
             />
 
             {/* Circular text path definition */}

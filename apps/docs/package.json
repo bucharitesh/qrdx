@@ -11,6 +11,7 @@
     "format": "biome format --write"
   },
   "dependencies": {
+    "@ai-sdk/google": "^2.0.29",
     "@ai-sdk/openai-compatible": "^1.0.23",
     "@next/bundle-analyzer": "16.0.1",
     "@radix-ui/react-hover-card": "^1.1.15",
@@ -23,6 +24,7 @@
     "fumadocs-typescript": "^4.0.12",
     "fumadocs-ui": "16.0.7",
     "hast-util-to-jsx-runtime": "^2.3.6",
+    "idb-keyval": "^6.2.2",
     "katex": "^0.16.25",
     "lucide-react": "^0.552.0",
     "mermaid": "^11.12.1",

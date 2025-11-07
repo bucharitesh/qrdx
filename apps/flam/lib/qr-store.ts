@@ -14,6 +14,9 @@ export type QRStyles = {
   level?: "L" | "M" | "Q" | "H";
   customLogo?: string;
   templateId?: string;
+  // Generic custom props that can be used by any template
+  // Each template can define its own custom props type (e.g., FlamQRProps)
+  customProps?: Record<string, unknown>;
 };
 
 type QRState = {
@@ -22,6 +25,7 @@ type QRState = {
   setUrl: (url: string) => void;
   setQrStyles: (styles: Partial<QRStyles>) => void;
   updateQrStyle: <K extends keyof QRStyles>(key: K, value: QRStyles[K]) => void;
+  updateCustomProp: (key: string, value: unknown) => void;
 };
 
 export const useQRStore = create<QRState>((set) => ({
@@ -37,6 +41,15 @@ export const useQRStore = create<QRState>((set) => ({
     level: "Q",
     backgroundColor: "#ffffff",
     templateId: "FlamQR",
+    customProps: {
+      fontSize: 40,
+      fontWeight: 900,
+      fontLetterSpacing: 6,
+      fontFamily: "Arial, Helvetica, sans-serif",
+      textColor: "#000000",
+      innerStrokeWidth: 4,
+      outerStrokeWidth: 4,
+    },
   },
   setUrl: (url) => set({ url }),
   setQrStyles: (styles) =>
@@ -46,5 +59,15 @@ export const useQRStore = create<QRState>((set) => ({
   updateQrStyle: (key, value) =>
     set((state) => ({
       qrStyles: { ...state.qrStyles, [key]: value },
+    })),
+  updateCustomProp: (key, value) =>
+    set((state) => ({
+      qrStyles: {
+        ...state.qrStyles,
+        customProps: {
+          ...state.qrStyles.customProps,
+          [key]: value,
+        },
+      },
     })),
 }));

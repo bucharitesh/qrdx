@@ -347,6 +347,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
     isOGContext = false,
     imageSettings,
     templateId,
+    customProps,
     ...otherProps
   } = props;
 
@@ -621,11 +622,13 @@ export function QRCodeSVG(props: QRPropsSVG) {
       };
 
       // Use template wrapper with the QR content and pass the size
+      // Spread customProps so templates can access their custom properties directly
       const wrappedSvg = template.wrapper(
         templateQrContent,
         {
           fgColor,
           bgColor,
+          ...(customProps || {}),
           ...otherProps,
         },
         templateConfig

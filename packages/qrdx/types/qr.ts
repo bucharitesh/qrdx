@@ -28,6 +28,9 @@ export type QRProps = {
   imageSettings?: ImageSettings;
   isOGContext?: boolean;
   templateId?: string;
+  // Generic custom props that can be used by any template
+  // Each template can define its own custom props type (e.g., FlamQRProps)
+  customProps?: Record<string, any>;
 };
 
 export type QRPropsCanvas = QRProps &

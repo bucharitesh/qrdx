@@ -26,6 +26,7 @@ export const QRCode = memo(
     scale = 1,
     margin = DEFAULT_MARGIN,
     templateId,
+    customProps,
   }: {
     url: string;
     fgColor?: string;
@@ -41,6 +42,7 @@ export const QRCode = memo(
     scale?: number;
     margin?: number;
     templateId?: string;
+    customProps?: Record<string, any>;
   }) => {
     const qrData = useMemo(
       () =>
@@ -90,6 +92,7 @@ export const QRCode = memo(
         size={(qrData.size / 8) * scale}
         templateId={qrData.templateId}
         value={qrData.value}
+        customProps={customProps}
         {...(qrData.imageSettings && {
           imageSettings: {
             ...qrData.imageSettings,
