@@ -10,10 +10,8 @@ export type FlamQRProps = {
   fontFamily?: string;
   textRotation?: number;
   textPosition?: "top" | "bottom";
-  outerStrokeWidth?: number;
-  innerStrokeWidth?: number;
-  outerStrokeColor?: string;
-  innerStrokeColor?: string;
+  strokeWidth?: number;
+  strokeColor?: string;
   outerCircleColor?: string;
 };
 
@@ -446,7 +444,7 @@ export const FlamQR: TemplateDefinition<FlamQRProps> = {
       <svg
         fill="none"
         height="593"
-        id="svgQrWrapper"
+        id="FlamQR"
         style={{
           width: "100%",
           height: "100%",
@@ -456,102 +454,73 @@ export const FlamQR: TemplateDefinition<FlamQRProps> = {
         xmlns="http://www.w3.org/2000/svg"
         xmlnsXlink="http://www.w3.org/1999/xlink"
       >
-        <svg
-          height="593"
-          viewBox="0 0 593 593"
-          width="593"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <g>
-            {/* Background circle */}
+        <circle
+          cx="296.5"
+          cy="296.5"
+          fill={props?.bgColor || "rgb(255, 255, 255)"}
+          id="background-circle"
+          r="294.5"
+        />
+        <g id="circles-group">
+          {circles.map((coord, index) => (
             <circle
-              cx="296.5"
-              cy="296.5"
-              fill={props?.bgColor || "rgb(255, 255, 255)"}
-              r="294.5"
+              cx={coord.cx}
+              cy={coord.cy}
+              fill={props?.fgColor || "black"}
+              id={`circle-${index}`}
+              key={index}
+              r={pixelSize}
+              transform="rotate(0,10.378378378378379,121.0810810810811)"
             />
-            {circles.map((coord, index) => (
-              <circle
-                cx={coord.cx}
-                cy={coord.cy}
-                fill={props?.fgColor || "black"}
-                key={index}
-                r={pixelSize}
-                transform="rotate(0,10.378378378378379,121.0810810810811)"
-              />
-            ))}
+          ))}
+        </g>
 
-            {/* Ring fill between inner and outer strokes (gap color) */}
-            {props?.outerCircleColor && (
-              <>
-                <defs>
-                  <mask id="ringMask">
-                    <rect fill="white" height="593" width="593" />
-                    <circle cx="295.518" cy="297.482" fill="black" r="230.7" />
-                  </mask>
-                </defs>
-                <circle
-                  cx="296.5"
-                  cy="296.5"
-                  fill={props.outerCircleColor || "black"}
-                  mask="url(#ringMask)"
-                  r="294.5"
-                  stroke={props?.outerStrokeColor || "black"}
-                  strokeWidth={props?.outerStrokeWidth || 0}
-                />
-              </>
-            )}
+        <path
+          d="M296.5 0C460.252 -7.15782e-06 593 132.748 593 296.5C593 460.252 460.253 593 296.5 593C132.748 593 7.15782e-06 460.252 0 296.5C-7.15788e-06 132.748 132.748 7.15788e-06 296.5 0ZM296.5 527.728C424.204 527.728 527.728 424.204 527.728 296.5C527.728 168.796 424.204 65.2713 296.5 65.2713C168.796 65.2713 65.2714 168.796 65.2714 296.5C65.2714 424.204 168.796 527.728 296.5 527.728Z"
+          fill={props?.outerCircleColor || "black"}
+          id="outer-circle-path"
+          stroke={props?.strokeColor || "black"}
+          strokeWidth={props?.strokeWidth || 0}
+        />
 
-            {/* Inner circle stroke */}
-            {props?.innerStrokeWidth && props.innerStrokeWidth > 0 && (
-              <circle
-                cx="296.5"
-                cy="296.5"
-                fill="none"
-                r="230.7"
-                stroke={props?.innerStrokeColor || "black"}
-                strokeWidth={props.innerStrokeWidth}
-              />
-            )}
-
-            {/* Circular text path definition */}
-            <defs>
-              <path
-                d={
-                  props?.textPosition === "top"
-                    ? "M 296.5,50 A 246.5,246.5 0 1,1 296.5,543 A 246.5,246.5 0 1,1 296.5,50"
-                    : "M 296.5,50 A 246.5,246.5 0 1,0 296.5,543 A 246.5,246.5 0 1,0 296.5,50"
-                }
-                id="circlePath"
-              />
-            </defs>
-            {/* Customizable circular text */}
-            <text
-              dominantBaseline={
-                props?.textPosition === "top" ? "auto" : "hanging"
-              }
-              fill={props?.textColor || "black"}
-              fontFamily={props?.fontFamily || "Arial, Helvetica, sans-serif"}
-              fontSize={props?.fontSize || 40}
-              fontWeight={props?.fontWeight || "900"}
-              letterSpacing={props?.fontLetterSpacing || 6}
-              transform={
-                totalRotation !== 0
-                  ? `rotate(${totalRotation} 296.5 296.5)`
-                  : undefined
-              }
-            >
-              <textPath href="#circlePath" startOffset="0%" textAnchor="start">
-                {props?.customText
-                  ? props.customText
-                  : "enter your text here * Flam It * enter your text here * Flam It * "}
-              </textPath>
-            </text>
-            <g fill="none" transform="translate(146.5, 146.5) scale(1.0)">
-              {children}
-            </g>
-          </g>
-        </svg>
+        {/* Circular text path definition */}
+        <defs>
+          <path
+            d={
+              props?.textPosition === "top"
+                ? "M 296.5,50 A 246.5,246.5 0 1,1 296.5,543 A 246.5,246.5 0 1,1 296.5,50"
+                : "M 296.5,50 A 246.5,246.5 0 1,0 296.5,543 A 246.5,246.5 0 1,0 296.5,50"
+            }
+            id="circlePath"
+          />
+        </defs>
+        {/* Customizable circular text */}
+        <text
+          dominantBaseline={props?.textPosition === "top" ? "auto" : "hanging"}
+          fill={props?.textColor || "black"}
+          fontFamily={props?.fontFamily || "Arial, Helvetica, sans-serif"}
+          fontSize={props?.fontSize || 40}
+          fontWeight={props?.fontWeight || "900"}
+          id="text"
+          letterSpacing={props?.fontLetterSpacing || 6}
+          transform={
+            totalRotation !== 0
+              ? `rotate(${totalRotation} 296.5 296.5)`
+              : undefined
+          }
+        >
+          <textPath href="#circlePath" startOffset="0%" textAnchor="start">
+            {props?.customText
+              ? props.customText
+              : "enter your text here * Flam It * enter your text here * Flam It * "}
+          </textPath>
+        </text>
+        <text fill="none" id="text-path" stroke="black" strokeWidth="1">
+          hello
+        </text>
+        <g fill="none" transform="translate(146.5, 146.5) scale(1.0)">
+          {children}
+        </g>
       </svg>
     );
   },

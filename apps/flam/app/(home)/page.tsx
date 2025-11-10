@@ -353,79 +353,36 @@ const Page = () => {
                   </p>
                 </div>
 
-                {/* Inner Stroke Width */}
+                {/* Stroke Width */}
                 <div>
-                  <Label
-                    className="mb-2 block text-sm"
-                    htmlFor="inner-stroke-width"
-                  >
-                    Inner Stroke Width
+                  <Label className="mb-2 block text-sm" htmlFor="stroke-width">
+                    Stroke Width
                   </Label>
                   <Input
-                    id="inner-stroke-width"
+                    id="stroke-width"
                     max="10"
                     min="0"
                     onChange={(e) => {
                       const value = Number.parseFloat(e.target.value);
                       if (!Number.isNaN(value)) {
-                        updateCustomProp("innerStrokeWidth", value);
+                        updateCustomProp("strokeWidth", value);
                       }
                     }}
                     placeholder="0"
                     step="0.1"
                     type="number"
-                    value={(getCustomProp("innerStrokeWidth") as number) || ""}
+                    value={(getCustomProp("strokeWidth") as number) || ""}
                   />
                 </div>
 
-                {/* Inner Stroke Color */}
+                {/* Stroke Color */}
                 <ColorInput
-                  color={
-                    (getCustomProp("innerStrokeColor") as string) || "#000000"
-                  }
-                  label="Inner Stroke Color"
-                  onChange={(value) =>
-                    updateCustomProp("innerStrokeColor", value)
-                  }
+                  color={(getCustomProp("strokeColor") as string) || "#000000"}
+                  label="Stroke Color"
+                  onChange={(value) => updateCustomProp("strokeColor", value)}
                 />
 
-                {/* Outer Stroke Color */}
-                <ColorInput
-                  color={
-                    (getCustomProp("outerStrokeColor") as string) || "#000000"
-                  }
-                  label="Outer Stroke Color"
-                  onChange={(value) =>
-                    updateCustomProp("outerStrokeColor", value)
-                  }
-                />
-
-                {/* Outer Stroke Width */}
-                <div>
-                  <Label
-                    className="mb-2 block text-sm"
-                    htmlFor="outer-stroke-width"
-                  >
-                    Outer Stroke Width
-                  </Label>
-                  <Input
-                    id="outer-stroke-width"
-                    max="10"
-                    min="0"
-                    onChange={(e) => {
-                      const value = Number.parseFloat(e.target.value);
-                      if (!Number.isNaN(value)) {
-                        updateCustomProp("outerStrokeWidth", value);
-                      }
-                    }}
-                    placeholder="0"
-                    step="0.1"
-                    type="number"
-                    value={(getCustomProp("outerStrokeWidth") as number) || ""}
-                  />
-                </div>
-
-                {/* Outer Circle Color (Gap between strokes) */}
+                {/* Outer Circle Color */}
                 <ColorInput
                   color={
                     (getCustomProp("outerCircleColor") as string) || "#ffffff"
