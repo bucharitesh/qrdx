@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { ColorInput } from "@repo/design-system/components/color-picker";
@@ -301,6 +302,55 @@ const Page = () => {
                       </SelectItem>
                     </SelectContent>
                   </Select>
+                </div>
+
+                {/* Text Rotation */}
+                <div>
+                  <Label className="mb-2 block text-sm" htmlFor="text-rotation">
+                    Text Rotation (degrees)
+                  </Label>
+                  <Input
+                    id="text-rotation"
+                    max={360}
+                    min={-360}
+                    onChange={(e) => {
+                      const value = Number.parseFloat(e.target.value);
+                      if (!Number.isNaN(value)) {
+                        updateCustomProp("textRotation", value);
+                      }
+                    }}
+                    placeholder="0"
+                    step="1"
+                    type="number"
+                    value={(getCustomProp("textRotation") as number) ?? ""}
+                  />
+                  <p className="mt-1 text-muted-foreground text-xs">
+                    Rotate the text around the center (0° = no rotation)
+                  </p>
+                </div>
+
+                {/* Text Position */}
+                <div>
+                  <Label className="mb-2 block text-sm" htmlFor="text-position">
+                    Text Position
+                  </Label>
+                  <Select
+                    onValueChange={(value) =>
+                      updateCustomProp("textPosition", value)
+                    }
+                    value={(getCustomProp("textPosition") as string) || "top"}
+                  >
+                    <SelectTrigger className="w-full" id="text-position">
+                      <SelectValue placeholder="Select text position" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="top">Top</SelectItem>
+                      <SelectItem value="bottom">Bottom</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <p className="mt-1 text-muted-foreground text-xs">
+                    Position the text at the top or bottom of the circle
+                  </p>
                 </div>
 
                 {/* Inner Stroke Width */}

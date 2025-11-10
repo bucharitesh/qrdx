@@ -42,6 +42,7 @@ export const useQRStore = create<QRState>((set) => ({
     backgroundColor: "#ffffff",
     templateId: "FlamQR",
     customProps: {
+      customText: "hello",
       fontSize: 40,
       fontWeight: 900,
       fontLetterSpacing: 6,
@@ -52,6 +53,8 @@ export const useQRStore = create<QRState>((set) => ({
       outerStrokeColor: "#000000",
       innerStrokeColor: "#000000",
       outerCircleColor: "#000000",
+      textRotation: 0,
+      textPosition: "top",
     },
   },
   setUrl: (url) => set({ url }),

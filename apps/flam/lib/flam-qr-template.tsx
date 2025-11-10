@@ -8,6 +8,8 @@ export type FlamQRProps = {
   fontWeight: number;
   fontLetterSpacing?: number;
   fontFamily?: string;
+  textRotation?: number;
+  textPosition?: "top" | "bottom";
   outerStrokeWidth?: number;
   innerStrokeWidth?: number;
   outerStrokeColor?: string;
@@ -375,6 +377,66 @@ export const FlamQR: TemplateDefinition<FlamQRProps> = {
 
     const circles = selectCirclesFromUrl(url, 240);
 
+    // Calculate text centering rotation
+    // Uses a more accurate estimation based on font metrics
+    const calculateTextRotation = () => {
+      const text =
+        props?.customText ||
+        "enter your text here * Flam It * enter your text here * Flam It * ";
+      const fontSize = props?.fontSize || 40;
+      const letterSpacing = props?.fontLetterSpacing || 6;
+
+      // More accurate text length calculation
+      // Account for different character widths (narrow vs wide characters)
+      let textLength = 0;
+      for (let i = 0; i < text.length; i += 1) {
+        const char = text[i];
+        // Approximate character widths (relative to fontSize)
+        // Narrow chars: i, l, t, etc. ≈ 0.3
+        // Normal chars: a-z, A-Z, 0-9 ≈ 0.6
+        // Wide chars: W, M, etc. ≈ 0.8
+        // Spaces: typically about 0.3 * fontSize
+        if (char === " ") {
+          textLength += fontSize * 0.3;
+        } else if (/[il1|!']/.test(char)) {
+          textLength += fontSize * 0.3;
+        } else if (/[mwMW@%&]/.test(char)) {
+          textLength += fontSize * 0.8;
+        } else {
+          textLength += fontSize * 0.6;
+        }
+        // Add letter spacing between all characters (except after the last one)
+        if (i < text.length - 1) {
+          textLength += letterSpacing;
+        }
+      }
+
+      // Circular path radius is 246.5, so circumference = 2 * π * 246.5
+      const pathRadius = 246.5;
+      const pathLength = 2 * Math.PI * pathRadius;
+
+      // Calculate rotation to center the text
+      // If text is shorter than path, calculate rotation to center it
+      if (textLength < pathLength) {
+        // Calculate what percentage of the path the text occupies
+        const textPercent = (textLength / pathLength) * 100;
+        // To center the text, we need to rotate by half of the remaining space
+        // Convert percentage to degrees: (remaining% / 2) * (360 / 100)
+        const centeringRotation = ((100 - textPercent) / 2) * (360 / 100);
+
+        // Apply position offset: top = 0°, bottom = 180°
+        const positionOffset = props?.textPosition === "top" ? 180 : 0;
+
+        return centeringRotation + positionOffset;
+      }
+      // If text is longer than path, just apply position offset
+      return props?.textPosition === "top" ? 180 : 0;
+    };
+
+    const autoRotation = calculateTextRotation();
+    // Combine auto-rotation with manual rotation if provided
+    const totalRotation = autoRotation + (props?.textRotation || 0);
+
     return (
       <svg
         fill="none"
@@ -429,19 +491,23 @@ export const FlamQR: TemplateDefinition<FlamQRProps> = {
                   fill={props.outerCircleColor || "black"}
                   mask="url(#ringMask)"
                   r="294.5"
+                  stroke={props?.outerStrokeColor || "black"}
+                  strokeWidth={props?.outerStrokeWidth || 0}
                 />
               </>
             )}
-            <path
-              d="M295.518 528.173C422.926 528.173 526.21 424.889 526.21 297.482C526.21 170.074 422.926 66.79 295.518 66.79C168.111 66.79 64.8267 170.074 64.8267 297.482C64.8267 424.889 168.111 528.173 295.518 528.173Z"
-              stroke={props?.innerStrokeColor || "black"}
-              strokeWidth={props?.innerStrokeWidth || 0}
-            />
-            <path
-              d="M296.5 591C459.148 591 591 459.148 591 296.5C591 133.852 459.148 2 296.5 2C133.852 2 2 133.852 2 296.5C2 459.148 133.852 591 296.5 591Z"
-              stroke={props?.outerStrokeColor || "black"}
-              strokeWidth={props?.outerStrokeWidth || 0}
-            />
+
+            {/* Inner circle stroke */}
+            {props?.innerStrokeWidth && props.innerStrokeWidth > 0 && (
+              <circle
+                cx="296.5"
+                cy="296.5"
+                fill="none"
+                r="230.7"
+                stroke={props?.innerStrokeColor || "black"}
+                strokeWidth={props.innerStrokeWidth}
+              />
+            )}
 
             {/* Circular text path definition */}
             <defs>
@@ -457,12 +523,15 @@ export const FlamQR: TemplateDefinition<FlamQRProps> = {
               fontSize={props?.fontSize || 40}
               fontWeight={props?.fontWeight || "900"}
               letterSpacing={props?.fontLetterSpacing || 6}
+              transform={
+                totalRotation !== 0
+                  ? `rotate(${totalRotation} 296.5 296.5)`
+                  : undefined
+              }
             >
               <textPath href="#circlePath" startOffset="0%" textAnchor="start">
                 {props?.customText
-                  ? new Array(props.customText.length)
-                      .fill(props.customText)
-                      .join(" * Flam It * ")
+                  ? props.customText
                   : "enter your text here * Flam It * enter your text here * Flam It * "}
               </textPath>
             </text>
