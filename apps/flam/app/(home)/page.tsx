@@ -141,7 +141,7 @@ const Page = () => {
                       ref={fileInputRef}
                       type="file"
                     />
-                    <p className="mt-1 text-xs text-gray-500">
+                    <p className="mt-1 text-gray-500 text-xs">
                       Upload a custom logo image (PNG, JPG, SVG)
                     </p>
                   </div>
@@ -168,199 +168,224 @@ const Page = () => {
             </div>
 
             {/* FlamQR Customization Section */}
-            {qrStyles.templateId === "FlamQR" && (
-              <div className="space-y-4 rounded-xl border p-4 backdrop-blur-sm">
-                <h2 className="border-b pb-2 font-semibold text-lg">
-                  FlamQR Customization
-                </h2>
-                <div className="space-y-4">
-                  {/* Custom Text */}
-                  <div>
-                    <Label className="mb-2 block text-sm" htmlFor="custom-text">
-                      Custom Text
-                    </Label>
-                    <Input
-                      id="custom-text"
-                      onChange={(e) =>
-                        updateCustomProp("customText", e.target.value)
-                      }
-                      placeholder="Enter custom text"
-                      type="text"
-                      value={(getCustomProp("customText") as string) || ""}
-                    />
-                  </div>
-
-                  {/* Text Color */}
-                  <ColorInput
-                    color={(getCustomProp("textColor") as string) || "#000000"}
-                    label="Text Color"
-                    onChange={(value) => updateCustomProp("textColor", value)}
+            <div className="space-y-4 rounded-xl border p-4 backdrop-blur-sm">
+              <h2 className="border-b pb-2 font-semibold text-lg">
+                FlamQR Customization
+              </h2>
+              <div className="space-y-4">
+                {/* Custom Text */}
+                <div>
+                  <Label className="mb-2 block text-sm" htmlFor="custom-text">
+                    Custom Text
+                  </Label>
+                  <Input
+                    id="custom-text"
+                    onChange={(e) =>
+                      updateCustomProp("customText", e.target.value)
+                    }
+                    placeholder="Enter custom text"
+                    type="text"
+                    value={(getCustomProp("customText") as string) || ""}
                   />
-
-                  {/* Font Size */}
-                  <div>
-                    <Label className="mb-2 block text-sm" htmlFor="font-size">
-                      Font Size
-                    </Label>
-                    <Input
-                      id="font-size"
-                      onChange={(e) => {
-                        const value = Number.parseInt(e.target.value, 10);
-                        if (!Number.isNaN(value)) {
-                          updateCustomProp("fontSize", value);
-                        }
-                      }}
-                      placeholder="40"
-                      type="number"
-                      value={(getCustomProp("fontSize") as number) || ""}
-                    />
-                  </div>
-
-                  {/* Font Weight */}
-                  <div>
-                    <Label className="mb-2 block text-sm" htmlFor="font-weight">
-                      Font Weight
-                    </Label>
-                    <Input
-                      id="font-weight"
-                      onChange={(e) => {
-                        const value = Number.parseInt(e.target.value, 10);
-                        if (!Number.isNaN(value)) {
-                          updateCustomProp("fontWeight", value);
-                        }
-                      }}
-                      placeholder="900"
-                      step="100"
-                      type="number"
-                      value={(getCustomProp("fontWeight") as number) || 900}
-                    />
-                  </div>
-
-                  {/* Font Letter Spacing */}
-                  <div>
-                    <Label
-                      className="mb-2 block text-sm"
-                      htmlFor="font-letter-spacing"
-                    >
-                      Font Letter Spacing
-                    </Label>
-                    <Input
-                      id="font-letter-spacing"
-                      onChange={(e) => {
-                        const value = Number.parseFloat(e.target.value);
-                        if (!Number.isNaN(value)) {
-                          updateCustomProp("fontLetterSpacing", value);
-                        }
-                      }}
-                      placeholder="6"
-                      step="0.1"
-                      type="number"
-                      value={
-                        (getCustomProp("fontLetterSpacing") as number) || ""
-                      }
-                    />
-                  </div>
-
-                  {/* Font Family */}
-                  <div>
-                    <Label className="mb-2 block text-sm" htmlFor="font-family">
-                      Font Family
-                    </Label>
-                    <Select
-                      onValueChange={(value) =>
-                        updateCustomProp("fontFamily", value)
-                      }
-                      value={
-                        (getCustomProp("fontFamily") as string) ||
-                        "Arial, Helvetica, sans-serif"
-                      }
-                    >
-                      <SelectTrigger className="w-full" id="font-family">
-                        <SelectValue placeholder="Select font family" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Arial, Helvetica, sans-serif">
-                          Arial
-                        </SelectItem>
-                        <SelectItem value="Georgia, serif">Georgia</SelectItem>
-                        <SelectItem value="'Times New Roman', Times, serif">
-                          Times New Roman
-                        </SelectItem>
-                        <SelectItem value="'Courier New', Courier, monospace">
-                          Courier New
-                        </SelectItem>
-                        <SelectItem value="Verdana, Geneva, sans-serif">
-                          Verdana
-                        </SelectItem>
-                        <SelectItem value="'Trebuchet MS', Helvetica, sans-serif">
-                          Trebuchet MS
-                        </SelectItem>
-                        <SelectItem value="Impact, Charcoal, sans-serif">
-                          Impact
-                        </SelectItem>
-                        <SelectItem value="'Comic Sans MS', cursive">
-                          Comic Sans MS
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  {/* Inner Stroke Width */}
-                  <div>
-                    <Label
-                      className="mb-2 block text-sm"
-                      htmlFor="inner-stroke-width"
-                    >
-                      Inner Stroke Width
-                    </Label>
-                    <Input
-                      id="inner-stroke-width"
-                      max="10"
-                      min="0"
-                      onChange={(e) => {
-                        const value = Number.parseFloat(e.target.value);
-                        if (!Number.isNaN(value)) {
-                          updateCustomProp("innerStrokeWidth", value);
-                        }
-                      }}
-                      placeholder="0"
-                      step="0.1"
-                      type="number"
-                      value={
-                        (getCustomProp("innerStrokeWidth") as number) || ""
-                      }
-                    />
-                  </div>
-
-                  {/* Outer Stroke Width */}
-                  <div>
-                    <Label
-                      className="mb-2 block text-sm"
-                      htmlFor="outer-stroke-width"
-                    >
-                      Outer Stroke Width
-                    </Label>
-                    <Input
-                      id="outer-stroke-width"
-                      max="10"
-                      min="0"
-                      onChange={(e) => {
-                        const value = Number.parseFloat(e.target.value);
-                        if (!Number.isNaN(value)) {
-                          updateCustomProp("outerStrokeWidth", value);
-                        }
-                      }}
-                      placeholder="0"
-                      step="0.1"
-                      type="number"
-                      value={
-                        (getCustomProp("outerStrokeWidth") as number) || ""
-                      }
-                    />
-                  </div>
                 </div>
+
+                {/* Text Color */}
+                <ColorInput
+                  color={(getCustomProp("textColor") as string) || "#000000"}
+                  label="Text Color"
+                  onChange={(value) => updateCustomProp("textColor", value)}
+                />
+
+                {/* Font Size */}
+                <div>
+                  <Label className="mb-2 block text-sm" htmlFor="font-size">
+                    Font Size
+                  </Label>
+                  <Input
+                    id="font-size"
+                    onChange={(e) => {
+                      const value = Number.parseInt(e.target.value, 10);
+                      if (!Number.isNaN(value)) {
+                        updateCustomProp("fontSize", value);
+                      }
+                    }}
+                    placeholder="40"
+                    type="number"
+                    value={(getCustomProp("fontSize") as number) || ""}
+                  />
+                </div>
+
+                {/* Font Weight */}
+                <div>
+                  <Label className="mb-2 block text-sm" htmlFor="font-weight">
+                    Font Weight
+                  </Label>
+                  <Input
+                    id="font-weight"
+                    onChange={(e) => {
+                      const value = Number.parseInt(e.target.value, 10);
+                      if (!Number.isNaN(value)) {
+                        updateCustomProp("fontWeight", value);
+                      }
+                    }}
+                    placeholder="900"
+                    step="100"
+                    type="number"
+                    value={(getCustomProp("fontWeight") as number) || 900}
+                  />
+                </div>
+
+                {/* Font Letter Spacing */}
+                <div>
+                  <Label
+                    className="mb-2 block text-sm"
+                    htmlFor="font-letter-spacing"
+                  >
+                    Font Letter Spacing
+                  </Label>
+                  <Input
+                    id="font-letter-spacing"
+                    onChange={(e) => {
+                      const value = Number.parseFloat(e.target.value);
+                      if (!Number.isNaN(value)) {
+                        updateCustomProp("fontLetterSpacing", value);
+                      }
+                    }}
+                    placeholder="6"
+                    step="0.1"
+                    type="number"
+                    value={(getCustomProp("fontLetterSpacing") as number) || ""}
+                  />
+                </div>
+
+                {/* Font Family */}
+                <div>
+                  <Label className="mb-2 block text-sm" htmlFor="font-family">
+                    Font Family
+                  </Label>
+                  <Select
+                    onValueChange={(value) =>
+                      updateCustomProp("fontFamily", value)
+                    }
+                    value={
+                      (getCustomProp("fontFamily") as string) ||
+                      "Arial, Helvetica, sans-serif"
+                    }
+                  >
+                    <SelectTrigger className="w-full" id="font-family">
+                      <SelectValue placeholder="Select font family" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Arial, Helvetica, sans-serif">
+                        Arial
+                      </SelectItem>
+                      <SelectItem value="Georgia, serif">Georgia</SelectItem>
+                      <SelectItem value="'Times New Roman', Times, serif">
+                        Times New Roman
+                      </SelectItem>
+                      <SelectItem value="'Courier New', Courier, monospace">
+                        Courier New
+                      </SelectItem>
+                      <SelectItem value="Verdana, Geneva, sans-serif">
+                        Verdana
+                      </SelectItem>
+                      <SelectItem value="'Trebuchet MS', Helvetica, sans-serif">
+                        Trebuchet MS
+                      </SelectItem>
+                      <SelectItem value="Impact, Charcoal, sans-serif">
+                        Impact
+                      </SelectItem>
+                      <SelectItem value="'Comic Sans MS', cursive">
+                        Comic Sans MS
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Inner Stroke Width */}
+                <div>
+                  <Label
+                    className="mb-2 block text-sm"
+                    htmlFor="inner-stroke-width"
+                  >
+                    Inner Stroke Width
+                  </Label>
+                  <Input
+                    id="inner-stroke-width"
+                    max="10"
+                    min="0"
+                    onChange={(e) => {
+                      const value = Number.parseFloat(e.target.value);
+                      if (!Number.isNaN(value)) {
+                        updateCustomProp("innerStrokeWidth", value);
+                      }
+                    }}
+                    placeholder="0"
+                    step="0.1"
+                    type="number"
+                    value={(getCustomProp("innerStrokeWidth") as number) || ""}
+                  />
+                </div>
+
+                {/* Inner Stroke Color */}
+                <ColorInput
+                  color={
+                    (getCustomProp("innerStrokeColor") as string) || "#000000"
+                  }
+                  label="Inner Stroke Color"
+                  onChange={(value) =>
+                    updateCustomProp("innerStrokeColor", value)
+                  }
+                />
+
+                {/* Outer Stroke Color */}
+                <ColorInput
+                  color={
+                    (getCustomProp("outerStrokeColor") as string) || "#000000"
+                  }
+                  label="Outer Stroke Color"
+                  onChange={(value) =>
+                    updateCustomProp("outerStrokeColor", value)
+                  }
+                />
+
+                {/* Outer Stroke Width */}
+                <div>
+                  <Label
+                    className="mb-2 block text-sm"
+                    htmlFor="outer-stroke-width"
+                  >
+                    Outer Stroke Width
+                  </Label>
+                  <Input
+                    id="outer-stroke-width"
+                    max="10"
+                    min="0"
+                    onChange={(e) => {
+                      const value = Number.parseFloat(e.target.value);
+                      if (!Number.isNaN(value)) {
+                        updateCustomProp("outerStrokeWidth", value);
+                      }
+                    }}
+                    placeholder="0"
+                    step="0.1"
+                    type="number"
+                    value={(getCustomProp("outerStrokeWidth") as number) || ""}
+                  />
+                </div>
+
+                {/* Outer Circle Color (Gap between strokes) */}
+                <ColorInput
+                  color={
+                    (getCustomProp("outerCircleColor") as string) || "#ffffff"
+                  }
+                  label="Outer Circle Color (Gap)"
+                  onChange={(value) =>
+                    updateCustomProp("outerCircleColor", value)
+                  }
+                />
               </div>
-            )}
+            </div>
           </div>
 
           {/* Right Column - Sticky QR Code Preview */}

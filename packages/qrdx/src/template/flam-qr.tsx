@@ -10,6 +10,9 @@ export type FlamQRProps = {
   fontFamily?: string;
   outerStrokeWidth?: number;
   innerStrokeWidth?: number;
+  outerStrokeColor?: string;
+  innerStrokeColor?: string;
+  outerCircleColor?: string;
 };
 
 export const FlamQR: TemplateDefinition<FlamQRProps> = {
@@ -2252,14 +2255,32 @@ export const FlamQR: TemplateDefinition<FlamQRProps> = {
               transform="rotate(0,10.378378378378379,121.0810810810811)"
             />
 
+            {/* Ring fill between inner and outer strokes (gap color) */}
+            {props?.outerCircleColor && (
+              <>
+                <defs>
+                  <mask id="ringMask">
+                    <rect fill="white" height="593" width="593" />
+                    <circle cx="295.518" cy="297.482" fill="black" r="230.7" />
+                  </mask>
+                </defs>
+                <circle
+                  cx="296.5"
+                  cy="296.5"
+                  fill={props.outerCircleColor || "black"}
+                  mask="url(#ringMask)"
+                  r="294.5"
+                />
+              </>
+            )}
             <path
               d="M295.518 528.173C422.926 528.173 526.21 424.889 526.21 297.482C526.21 170.074 422.926 66.79 295.518 66.79C168.111 66.79 64.8267 170.074 64.8267 297.482C64.8267 424.889 168.111 528.173 295.518 528.173Z"
-              stroke={props?.fgColor || "black"}
+              stroke={props?.innerStrokeColor || "black"}
               strokeWidth={props?.innerStrokeWidth || 0}
             />
             <path
               d="M296.5 591C459.148 591 591 459.148 591 296.5C591 133.852 459.148 2 296.5 2C133.852 2 2 133.852 2 296.5C2 459.148 133.852 591 296.5 591Z"
-              stroke={props?.fgColor || "black"}
+              stroke={props?.outerStrokeColor || "black"}
               strokeWidth={props?.outerStrokeWidth || 0}
             />
 
