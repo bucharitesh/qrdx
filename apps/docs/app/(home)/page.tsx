@@ -1,11 +1,12 @@
 "use client";
 
 import { ColorInput } from "@repo/design-system/components/color-picker";
+import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { Switch } from "@repo/design-system/components/ui/switch";
 import { getContrastLevel, getContrastRatio, QRCode } from "qrdx";
-import { useMemo } from "react";
+import { useMemo, useRef } from "react";
 import { CornerEyeDotPatternSelector } from "@/components/playground/corner-eye-dot-pattern-selector";
 import { CornerEyePatternSelector } from "@/components/playground/corner-eye-pattern-selector";
 import { DownloadOptions } from "@/components/playground/download-options";
@@ -16,6 +17,7 @@ import { useQRStore } from "@/lib/qr-store";
 
 const Page = () => {
   const { url, qrStyles, setUrl, updateQrStyle } = useQRStore();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Calculate contrast ratio and level
   const contrastInfo = useMemo(() => {
@@ -26,6 +28,27 @@ const Page = () => {
       ...level,
     };
   }, [qrStyles.qrColor, qrStyles.backgroundColor]);
+
+  // Handle custom logo file upload
+  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const result = reader.result as string;
+        updateQrStyle("customLogo", result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // Clear custom logo
+  const handleClearLogo = () => {
+    updateQrStyle("customLogo", undefined);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
 
   return (
     <div className="relative z-10 mx-auto w-full max-w-7xl select-none p-2 md:p-6">
@@ -167,6 +190,43 @@ const Page = () => {
                   onCheckedChange={(value) => updateQrStyle("showLogo", value)}
                 />
               </div>
+              {qrStyles.showLogo && (
+                <div className="space-y-4">
+                  <div>
+                    <Label className="mb-2 block text-sm" htmlFor="logo-upload">
+                      Custom Logo Image
+                    </Label>
+                    <Input
+                      accept="image/*"
+                      id="logo-upload"
+                      onChange={handleLogoUpload}
+                      ref={fileInputRef}
+                      type="file"
+                    />
+                    <p className="mt-1 text-xs text-gray-500">
+                      Upload a custom logo image (PNG, JPG, SVG)
+                    </p>
+                  </div>
+                  {qrStyles.customLogo && (
+                    <div className="space-y-2">
+                      <div className="relative flex items-center justify-center rounded-lg border bg-gray-50 p-4">
+                        <img
+                          alt="Custom logo preview"
+                          className="max-h-32 max-w-full object-contain"
+                          src={qrStyles.customLogo}
+                        />
+                      </div>
+                      <Button
+                        onClick={handleClearLogo}
+                        size="sm"
+                        variant="outline"
+                      >
+                        Clear Custom Logo
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
 
@@ -184,6 +244,7 @@ const Page = () => {
                 eyeColor={qrStyles.eyeColor}
                 fgColor={qrStyles.qrColor}
                 hideLogo={!qrStyles.showLogo}
+                logo={qrStyles.customLogo}
                 scale={2}
                 templateId={qrStyles.templateId}
                 url={url}
