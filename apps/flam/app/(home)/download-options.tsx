@@ -30,7 +30,7 @@ export const DownloadOptions: React.FC = () => {
   const [customWidth, setCustomWidth] = React.useState<string>("600");
   const [customHeight, setCustomHeight] = React.useState<string>("600");
   const [selectedFormat, setSelectedFormat] =
-    React.useState<DownloadFormat>("svg");
+    React.useState<DownloadFormat>("png");
   const [sizeError, setSizeError] = React.useState<string>("");
   const [isDownloading, setIsDownloading] = React.useState(false);
 
@@ -163,7 +163,7 @@ export const DownloadOptions: React.FC = () => {
             <SelectContent className="w-full">
               <SelectItem value="png">PNG</SelectItem>
               <SelectItem value="jpg">JPG</SelectItem>
-              <SelectItem value="svg">SVG</SelectItem>
+              {/* <SelectItem value="svg">SVG</SelectItem> */}
             </SelectContent>
           </Select>
         </div>
