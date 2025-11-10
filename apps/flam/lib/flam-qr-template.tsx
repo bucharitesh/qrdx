@@ -424,10 +424,15 @@ export const FlamQR: TemplateDefinition<FlamQRProps> = {
         // Convert percentage to degrees: (remaining% / 2) * (360 / 100)
         const centeringRotation = ((100 - textPercent) / 2) * (360 / 100);
 
-        // Apply position offset: top = 0°, bottom = 180°
-        const positionOffset = props?.textPosition === "top" ? 180 : 0;
-
-        return centeringRotation + positionOffset;
+        // Apply position offset and centering
+        // For top: path is clockwise, rotate 180° to flip to bottom, then center
+        // For bottom: path is counter-clockwise, text appears at bottom naturally, just center it
+        if (props?.textPosition === "top") {
+          return centeringRotation + 180;
+        }
+        // For bottom, we need to subtract the centering rotation to center it properly
+        // because the path direction is counter-clockwise
+        return -centeringRotation;
       }
       // If text is longer than path, just apply position offset
       return props?.textPosition === "top" ? 180 : 0;
@@ -512,12 +517,19 @@ export const FlamQR: TemplateDefinition<FlamQRProps> = {
             {/* Circular text path definition */}
             <defs>
               <path
-                d="M 296.5,50 A 246.5,246.5 0 1,1 296.5,543 A 246.5,246.5 0 1,1 296.5,50"
+                d={
+                  props?.textPosition === "top"
+                    ? "M 296.5,50 A 246.5,246.5 0 1,1 296.5,543 A 246.5,246.5 0 1,1 296.5,50"
+                    : "M 296.5,50 A 246.5,246.5 0 1,0 296.5,543 A 246.5,246.5 0 1,0 296.5,50"
+                }
                 id="circlePath"
               />
             </defs>
             {/* Customizable circular text */}
             <text
+              dominantBaseline={
+                props?.textPosition === "top" ? "auto" : "hanging"
+              }
               fill={props?.textColor || "black"}
               fontFamily={props?.fontFamily || "Arial, Helvetica, sans-serif"}
               fontSize={props?.fontSize || 40}
