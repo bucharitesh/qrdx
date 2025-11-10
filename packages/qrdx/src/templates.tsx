@@ -2,7 +2,7 @@ import type { TemplateDefinition } from "../types";
 import * as templates from "./template";
 
 // Re-export template types for convenience
-export type { BaseTemplateProps, TemplateDefinition } from "../types";
+export type { BaseTemplateProps, TemplateConfig, TemplateDefinition } from "../types";
 
 // Re-export individual templates for direct import
 export * from "./template";

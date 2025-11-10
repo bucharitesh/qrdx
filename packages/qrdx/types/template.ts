@@ -25,6 +25,7 @@ export type BaseTemplateProps = {
  */
 export type TemplateConfig = {
   pixelSize: number; // Calculated pixel size per QR module
+  url: string; // The URL/value used to generate the QR code
 };
 
 // Generic template definition that allows custom props

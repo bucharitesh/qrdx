@@ -13,4 +13,4 @@ export type {
   QRPropsCanvas,
   QRPropsSVG,
 } from "./qr";
-export type { BaseTemplateProps, TemplateDefinition } from "./template";
+export type { BaseTemplateProps, TemplateConfig, TemplateDefinition } from "./template";

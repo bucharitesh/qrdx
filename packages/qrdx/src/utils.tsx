@@ -1,6 +1,6 @@
 import type { JSX } from "react";
 import React from "react";
-import type { TemplateConfig, TemplateDefinition } from "@/types/template";
+import type { TemplateConfig } from "@/types/template";
 import type {
   BodyPattern,
   Excavation,
@@ -522,7 +522,8 @@ export function QRCodeSVG(props: QRPropsSVG) {
   );
 
   // Check if template is specified (customTemplate takes precedence over templateId)
-  const template = customTemplate || (templateId ? getTemplate(templateId) : undefined);
+  const template =
+    customTemplate || (templateId ? getTemplate(templateId) : undefined);
   if (template) {
     // For templates, we need to create a properly sized SVG that fits the template coordinate system
     // Templates expect the QR content to be in a coordinate system that matches their transforms
@@ -530,91 +531,91 @@ export function QRCodeSVG(props: QRPropsSVG) {
 
     // Create QR content as a complete SVG for templates
     const templateQrContent = (
-        <svg
-          height={templateSize}
-          viewBox={`0 0 ${templateSize} ${templateSize}`}
-          width={templateSize}
-        >
-          {/* Scale all QR elements to fit template coordinate system */}
-          <g transform={`scale(${templateSize / size})`}>
-            {/* Data module circles */}
-            <g fill={fgColor}>{dataCircles}</g>
+      <svg
+        height={templateSize}
+        viewBox={`0 0 ${templateSize} ${templateSize}`}
+        width={templateSize}
+      >
+        {/* Scale all QR elements to fit template coordinate system */}
+        <g transform={`scale(${templateSize / size})`}>
+          {/* Data module circles */}
+          <g fill={fgColor}>{dataCircles}</g>
 
-            {/* Top-left corner square */}
-            <g fill={eyeColor || fgColor}>
-              <path
-                clipRule="evenodd"
-                d={generateCornerSquarePath(
-                  topLeftX,
-                  topLeftY,
-                  cornerSize,
-                  cornerEyePattern
-                )}
-                transform={`rotate(0,${topLeftX + cornerSize / 2},${topLeftY + cornerSize / 2})`}
-              />
-            </g>
-
-            {/* Top-left corner dot */}
-            <g fill={dotColor || fgColor}>
-              {generateCornerDotPath(
-                topLeftX + cornerSize / 2,
-                topLeftY + cornerSize / 2,
-                cornerDotRadius,
-                cornerEyeDotPattern
+          {/* Top-left corner square */}
+          <g fill={eyeColor || fgColor}>
+            <path
+              clipRule="evenodd"
+              d={generateCornerSquarePath(
+                topLeftX,
+                topLeftY,
+                cornerSize,
+                cornerEyePattern
               )}
-            </g>
-
-            {/* Top-right corner square */}
-            <g fill={eyeColor || fgColor}>
-              <path
-                clipRule="evenodd"
-                d={generateCornerSquarePath(
-                  topRightX,
-                  topRightY,
-                  cornerSize,
-                  cornerEyePattern
-                )}
-                transform={`rotate(0,${topRightX + cornerSize / 2},${topRightY + cornerSize / 2})`}
-              />
-            </g>
-
-            {/* Top-right corner dot */}
-            <g fill={dotColor || fgColor}>
-              {generateCornerDotPath(
-                topRightX + cornerSize / 2,
-                topRightY + cornerSize / 2,
-                cornerDotRadius,
-                cornerEyeDotPattern
-              )}
-            </g>
-
-            {/* Bottom-left corner square */}
-            <g fill={eyeColor || fgColor}>
-              <path
-                clipRule="evenodd"
-                d={generateCornerSquarePath(
-                  bottomLeftX,
-                  bottomLeftY,
-                  cornerSize,
-                  cornerEyePattern
-                )}
-                transform={`rotate(0,${bottomLeftX + cornerSize / 2},${bottomLeftY + cornerSize / 2})`}
-              />
-            </g>
-
-            {/* Bottom-left corner dot */}
-            <g fill={dotColor || fgColor}>
-              {generateCornerDotPath(
-                bottomLeftX + cornerSize / 2,
-                bottomLeftY + cornerSize / 2,
-                cornerDotRadius,
-                cornerEyeDotPattern
-              )}
-            </g>
-
-            {image}
+              transform={`rotate(0,${topLeftX + cornerSize / 2},${topLeftY + cornerSize / 2})`}
+            />
           </g>
-        </svg>
+
+          {/* Top-left corner dot */}
+          <g fill={dotColor || fgColor}>
+            {generateCornerDotPath(
+              topLeftX + cornerSize / 2,
+              topLeftY + cornerSize / 2,
+              cornerDotRadius,
+              cornerEyeDotPattern
+            )}
+          </g>
+
+          {/* Top-right corner square */}
+          <g fill={eyeColor || fgColor}>
+            <path
+              clipRule="evenodd"
+              d={generateCornerSquarePath(
+                topRightX,
+                topRightY,
+                cornerSize,
+                cornerEyePattern
+              )}
+              transform={`rotate(0,${topRightX + cornerSize / 2},${topRightY + cornerSize / 2})`}
+            />
+          </g>
+
+          {/* Top-right corner dot */}
+          <g fill={dotColor || fgColor}>
+            {generateCornerDotPath(
+              topRightX + cornerSize / 2,
+              topRightY + cornerSize / 2,
+              cornerDotRadius,
+              cornerEyeDotPattern
+            )}
+          </g>
+
+          {/* Bottom-left corner square */}
+          <g fill={eyeColor || fgColor}>
+            <path
+              clipRule="evenodd"
+              d={generateCornerSquarePath(
+                bottomLeftX,
+                bottomLeftY,
+                cornerSize,
+                cornerEyePattern
+              )}
+              transform={`rotate(0,${bottomLeftX + cornerSize / 2},${bottomLeftY + cornerSize / 2})`}
+            />
+          </g>
+
+          {/* Bottom-left corner dot */}
+          <g fill={dotColor || fgColor}>
+            {generateCornerDotPath(
+              bottomLeftX + cornerSize / 2,
+              bottomLeftY + cornerSize / 2,
+              cornerDotRadius,
+              cornerEyeDotPattern
+            )}
+          </g>
+
+          {image}
+        </g>
+      </svg>
     );
 
     // Scale pixelSize to match the template coordinate system
@@ -624,6 +625,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
 
     const templateConfig: TemplateConfig = {
       pixelSize: scaledPixelSize,
+      url: value,
     };
 
     // Use template wrapper with the QR content and pass the size
