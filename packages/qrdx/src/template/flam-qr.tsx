@@ -16,8 +16,10 @@ export const FlamQR: TemplateDefinition<FlamQRProps> = {
   id: "FlamQR",
   name: "Flam QR",
   description: "Flam QR code with Flam logo and text",
-  wrapper: (children, props) => {
-    const pixelSize = 4.413_793_103_448_276 * 0.55;
+  wrapper: (children, props, templateConfig) => {
+    const pixelSize = templateConfig?.pixelSize
+      ? templateConfig?.pixelSize * 0.5
+      : 4.413_793_103_448_276 * 0.55;
 
     return (
       <svg

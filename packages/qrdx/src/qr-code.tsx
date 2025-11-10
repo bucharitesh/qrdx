@@ -84,6 +84,7 @@ export const QRCode = memo(
         bodyPattern={qrData.bodyPattern}
         cornerEyeDotPattern={qrData.cornerEyeDotPattern}
         cornerEyePattern={qrData.cornerEyePattern}
+        customProps={customProps}
         dotColor={qrData.dotColor}
         eyeColor={qrData.eyeColor}
         fgColor={qrData.fgColor}
@@ -92,7 +93,6 @@ export const QRCode = memo(
         size={(qrData.size / 8) * scale}
         templateId={qrData.templateId}
         value={qrData.value}
-        customProps={customProps}
         {...(qrData.imageSettings && {
           imageSettings: {
             ...qrData.imageSettings,

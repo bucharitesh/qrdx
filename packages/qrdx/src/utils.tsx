@@ -617,8 +617,13 @@ export function QRCodeSVG(props: QRPropsSVG) {
         </svg>
       );
 
+      // Scale pixelSize to match the template coordinate system
+      // Since QR content is scaled to templateSize, pixelSize should also be scaled
+      const scaleFactor = templateSize / size;
+      const scaledPixelSize = pixelSize * scaleFactor;
+
       const templateConfig: TemplateConfig = {
-        pixelSize,
+        pixelSize: scaledPixelSize,
       };
 
       // Use template wrapper with the QR content and pass the size
