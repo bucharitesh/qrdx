@@ -1,4 +1,4 @@
-import type { TemplateDefinition } from "../../types";
+import type { TemplateDefinition } from "qrdx";
 
 // Custom props for FlamQR template
 export type FlamQRProps = {

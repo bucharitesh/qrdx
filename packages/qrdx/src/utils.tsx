@@ -1,6 +1,6 @@
 import type { JSX } from "react";
 import React from "react";
-import type { TemplateConfig } from "@/types/template";
+import type { TemplateConfig, TemplateDefinition } from "@/types/template";
 import type {
   BodyPattern,
   Excavation,
@@ -347,6 +347,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
     isOGContext = false,
     imageSettings,
     templateId,
+    customTemplate,
     customProps,
     ...otherProps
   } = props;
@@ -520,16 +521,15 @@ export function QRCodeSVG(props: QRPropsSVG) {
     </>
   );
 
-  // Check if template is specified
-  if (templateId) {
-    const template = getTemplate(templateId);
-    if (template) {
-      // For templates, we need to create a properly sized SVG that fits the template coordinate system
-      // Templates expect the QR content to be in a coordinate system that matches their transforms
-      const templateSize = 300; // All templates use 300x300 base coordinate system
+  // Check if template is specified (customTemplate takes precedence over templateId)
+  const template = customTemplate || (templateId ? getTemplate(templateId) : undefined);
+  if (template) {
+    // For templates, we need to create a properly sized SVG that fits the template coordinate system
+    // Templates expect the QR content to be in a coordinate system that matches their transforms
+    const templateSize = 300; // All templates use 300x300 base coordinate system
 
-      // Create QR content as a complete SVG for templates
-      const templateQrContent = (
+    // Create QR content as a complete SVG for templates
+    const templateQrContent = (
         <svg
           height={templateSize}
           viewBox={`0 0 ${templateSize} ${templateSize}`}
@@ -615,48 +615,47 @@ export function QRCodeSVG(props: QRPropsSVG) {
             {image}
           </g>
         </svg>
-      );
+    );
 
-      // Scale pixelSize to match the template coordinate system
-      // Since QR content is scaled to templateSize, pixelSize should also be scaled
-      const scaleFactor = templateSize / size;
-      const scaledPixelSize = pixelSize * scaleFactor;
+    // Scale pixelSize to match the template coordinate system
+    // Since QR content is scaled to templateSize, pixelSize should also be scaled
+    const scaleFactor = templateSize / size;
+    const scaledPixelSize = pixelSize * scaleFactor;
 
-      const templateConfig: TemplateConfig = {
-        pixelSize: scaledPixelSize,
-      };
+    const templateConfig: TemplateConfig = {
+      pixelSize: scaledPixelSize,
+    };
 
-      // Use template wrapper with the QR content and pass the size
-      // Spread customProps so templates can access their custom properties directly
-      const wrappedSvg = template.wrapper(
-        templateQrContent,
-        {
-          fgColor,
-          bgColor,
-          ...(customProps || {}),
-          ...otherProps,
-        },
-        templateConfig
-      );
+    // Use template wrapper with the QR content and pass the size
+    // Spread customProps so templates can access their custom properties directly
+    const wrappedSvg = template.wrapper(
+      templateQrContent,
+      {
+        fgColor,
+        bgColor,
+        ...(customProps || {}),
+        ...otherProps,
+      },
+      templateConfig
+    );
 
-      // Clone the wrapped SVG element and override width/height to match requested size
-      // This ensures downloads get the proper size while keeping viewBox for scaling
-      // Remove percentage-based styles that would interfere with absolute sizing
-      // @ts-expect-error
-      const originalStyle = wrappedSvg?.props?.style || {};
-      const newStyle = {
-        ...originalStyle,
-        width: undefined,
-        height: undefined,
-      };
+    // Clone the wrapped SVG element and override width/height to match requested size
+    // This ensures downloads get the proper size while keeping viewBox for scaling
+    // Remove percentage-based styles that would interfere with absolute sizing
+    // @ts-expect-error
+    const originalStyle = wrappedSvg?.props?.style || {};
+    const newStyle = {
+      ...originalStyle,
+      width: undefined,
+      height: undefined,
+    };
 
-      // @ts-expect-error
-      return React.cloneElement(wrappedSvg, {
-        width: size,
-        height: size,
-        style: newStyle,
-      });
-    }
+    // @ts-expect-error
+    return React.cloneElement(wrappedSvg, {
+      width: size,
+      height: size,
+      style: newStyle,
+    });
   }
 
   // Standard QR code without wrapper (backward compatibility)

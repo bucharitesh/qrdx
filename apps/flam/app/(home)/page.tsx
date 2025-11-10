@@ -14,6 +14,7 @@ import {
 import { Switch } from "@repo/design-system/components/ui/switch";
 import { QRCode } from "qrdx";
 import { useRef } from "react";
+import { FlamQR } from "@/lib/flam-qr-template";
 import { useQRStore } from "@/lib/qr-store";
 import { DownloadOptions } from "./download-options";
 import { ErrorLevelSelector } from "./error-level-selector";
@@ -398,6 +399,7 @@ const Page = () => {
                 cornerEyeDotPattern={qrStyles.cornerEyeDotPattern}
                 cornerEyePattern={qrStyles.cornerEyePattern}
                 customProps={qrStyles.customProps}
+                customTemplate={FlamQR}
                 dotColor={qrStyles.dotColor}
                 eyeColor={qrStyles.eyeColor}
                 fgColor={qrStyles.qrColor}
@@ -405,7 +407,6 @@ const Page = () => {
                 level={qrStyles.level}
                 logo={qrStyles.customLogo}
                 scale={2}
-                templateId={qrStyles.templateId}
                 url={url}
               />
               <div className="w-full border-t pt-4">

@@ -190,9 +190,19 @@ export async function getQRAsSVGDataUri(props: QRProps) {
   }
 
   // Create the SVG element with all props including templateId
+  // Filter out props that aren't valid for QRCodeSVG (like hideLogo, url, etc.)
+  const {
+    hideLogo: _hideLogo,
+    url: _url,
+    logo: _logo,
+    scale: _scale,
+    ...validSVGProps
+  } = updatedProps as any;
+
   const svgElement = React.createElement(QRCodeSVG, {
-    ...updatedProps,
+    ...validSVGProps,
     templateId: updatedProps.templateId, // Ensure templateId is passed
+    customTemplate: updatedProps.customTemplate, // Ensure customTemplate is passed
   });
   const svgString = renderToStaticMarkup(svgElement);
 

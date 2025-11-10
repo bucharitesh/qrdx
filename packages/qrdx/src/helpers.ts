@@ -46,7 +46,6 @@ export function getQRData({
     level,
     templateId,
     size: 1024,
-    hideLogo,
     margin,
     ...(!hideLogo && {
       imageSettings: {

@@ -5,6 +5,7 @@ import type {
   BodyPattern,
   CornerEyeDotPattern,
   CornerEyePattern,
+  TemplateDefinition,
 } from "@/types";
 import { DEFAULT_MARGIN } from "./constants";
 import { getQRData } from "./helpers";
@@ -26,6 +27,7 @@ export const QRCode = memo(
     scale = 1,
     margin = DEFAULT_MARGIN,
     templateId,
+    customTemplate,
     customProps,
   }: {
     url: string;
@@ -42,6 +44,7 @@ export const QRCode = memo(
     scale?: number;
     margin?: number;
     templateId?: string;
+    customTemplate?: TemplateDefinition<any>;
     customProps?: Record<string, any>;
   }) => {
     const qrData = useMemo(
@@ -92,6 +95,7 @@ export const QRCode = memo(
         margin={qrData.margin}
         size={(qrData.size / 8) * scale}
         templateId={qrData.templateId}
+        customTemplate={customTemplate}
         value={qrData.value}
         {...(qrData.imageSettings && {
           imageSettings: {

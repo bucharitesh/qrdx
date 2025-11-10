@@ -21,11 +21,12 @@ import {
   validateSize,
 } from "qrdx";
 import React from "react";
+import { FlamQR } from "../../lib/flam-qr-template";
 import { useQRStore } from "../../lib/qr-store";
 
 export const DownloadOptions: React.FC = () => {
   const { url, qrStyles } = useQRStore();
-  const [selectedSize, setSelectedSize] = React.useState<string>("medium");
+  const [selectedSize, setSelectedSize] = React.useState<string>("2xl");
   const [customWidth, setCustomWidth] = React.useState<string>("600");
   const [customHeight, setCustomHeight] = React.useState<string>("600");
   const [selectedFormat, setSelectedFormat] =
@@ -49,6 +50,7 @@ export const DownloadOptions: React.FC = () => {
       cornerEyePattern: qrStyles.cornerEyePattern,
       cornerEyeDotPattern: qrStyles.cornerEyeDotPattern,
       templateId: qrStyles.templateId,
+      customTemplate: FlamQR,
       customProps: qrStyles.customProps,
     }),
     [url, qrStyles]

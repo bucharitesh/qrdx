@@ -10,7 +10,6 @@ export * from "./template";
 // Template registry - using TemplateDefinition<any> to allow different custom props
 export const TEMPLATES: Record<string, TemplateDefinition<any>> = {
   default: templates.defaultTemplate,
-  FlamQR: templates.FlamQR,
   Arrow: templates.Arrow,
   StandardBox: templates.StandardBox,
   SquareBorder: templates.SquareBorder,
