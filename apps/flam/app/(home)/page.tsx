@@ -19,6 +19,7 @@ import { FlamQR } from "@/lib/flam-qr-template";
 import { useQRStore } from "@/lib/qr-store";
 import { DownloadOptions } from "./download-options";
 import { ErrorLevelSelector } from "./error-level-selector";
+import { fontOptions } from "./fonts";
 
 const Page = () => {
   const { url, qrStyles, setUrl, updateQrStyle, updateCustomProp } =
@@ -224,6 +225,8 @@ const Page = () => {
                   </Label>
                   <Input
                     id="font-weight"
+                    max="900"
+                    min="100"
                     onChange={(e) => {
                       const value = Number.parseInt(e.target.value, 10);
                       if (!Number.isNaN(value)) {
@@ -271,35 +274,18 @@ const Page = () => {
                     }
                     value={
                       (getCustomProp("fontFamily") as string) ||
-                      "Arial, Helvetica, sans-serif"
+                      fontOptions[0].value
                     }
                   >
                     <SelectTrigger className="w-full" id="font-family">
                       <SelectValue placeholder="Select font family" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Arial, Helvetica, sans-serif">
-                        Arial
-                      </SelectItem>
-                      <SelectItem value="Georgia, serif">Georgia</SelectItem>
-                      <SelectItem value="'Times New Roman', Times, serif">
-                        Times New Roman
-                      </SelectItem>
-                      <SelectItem value="'Courier New', Courier, monospace">
-                        Courier New
-                      </SelectItem>
-                      <SelectItem value="Verdana, Geneva, sans-serif">
-                        Verdana
-                      </SelectItem>
-                      <SelectItem value="'Trebuchet MS', Helvetica, sans-serif">
-                        Trebuchet MS
-                      </SelectItem>
-                      <SelectItem value="Impact, Charcoal, sans-serif">
-                        Impact
-                      </SelectItem>
-                      <SelectItem value="'Comic Sans MS', cursive">
-                        Comic Sans MS
-                      </SelectItem>
+                      {fontOptions.map((font) => (
+                        <SelectItem key={font.value} value={font.value}>
+                          {font.name}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>

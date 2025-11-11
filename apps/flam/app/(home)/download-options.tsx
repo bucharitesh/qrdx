@@ -163,7 +163,7 @@ export const DownloadOptions: React.FC = () => {
             <SelectContent className="w-full">
               <SelectItem value="png">PNG</SelectItem>
               <SelectItem value="jpg">JPG</SelectItem>
-              {/* <SelectItem value="svg">SVG</SelectItem> */}
+              <SelectItem value="svg">SVG</SelectItem>
             </SelectContent>
           </Select>
         </div>

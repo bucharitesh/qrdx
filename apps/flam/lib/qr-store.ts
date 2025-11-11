@@ -1,5 +1,6 @@
 import type { BodyPattern, CornerEyeDotPattern, CornerEyePattern } from "qrdx";
 import { create } from "zustand";
+import { fontOptions } from "@/app/(home)/fonts";
 
 export type QRStyles = {
   showLogo?: boolean;
@@ -46,7 +47,7 @@ export const useQRStore = create<QRState>((set) => ({
       fontSize: 40,
       fontWeight: 900,
       fontLetterSpacing: 6,
-      fontFamily: "Arial, Helvetica, sans-serif",
+      fontFamily: fontOptions[0].value,
       textColor: "#ffffff",
       strokeWidth: 0,
       strokeColor: "#000000",

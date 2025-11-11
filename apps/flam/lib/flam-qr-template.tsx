@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/style/useForOf: traditional for loop needed for index manipulation */
 import type { TemplateDefinition } from "qrdx";
 
 // Custom props for FlamQR template
@@ -25,6 +26,20 @@ function hashString(str: string): number {
     hash %= 2_147_483_647;
   }
   return Math.abs(hash);
+}
+
+// Calculate character width based on character type
+function getCharacterWidth(char: string, fontSize: number): number {
+  if (char === " ") {
+    return fontSize * 0.3;
+  }
+  if (/[il1|!']/.test(char)) {
+    return fontSize * 0.3;
+  }
+  if (/[mwMW@%&]/.test(char)) {
+    return fontSize * 0.8;
+  }
+  return fontSize * 0.6;
 }
 
 // Seeded random number generator for deterministic selection
@@ -389,20 +404,7 @@ export const FlamQR: TemplateDefinition<FlamQRProps> = {
       let textLength = 0;
       for (let i = 0; i < text.length; i += 1) {
         const char = text[i];
-        // Approximate character widths (relative to fontSize)
-        // Narrow chars: i, l, t, etc. ≈ 0.3
-        // Normal chars: a-z, A-Z, 0-9 ≈ 0.6
-        // Wide chars: W, M, etc. ≈ 0.8
-        // Spaces: typically about 0.3 * fontSize
-        if (char === " ") {
-          textLength += fontSize * 0.3;
-        } else if (/[il1|!']/.test(char)) {
-          textLength += fontSize * 0.3;
-        } else if (/[mwMW@%&]/.test(char)) {
-          textLength += fontSize * 0.8;
-        } else {
-          textLength += fontSize * 0.6;
-        }
+        textLength += getCharacterWidth(char, fontSize);
         // Add letter spacing between all characters (except after the last one)
         if (i < text.length - 1) {
           textLength += letterSpacing;
@@ -433,12 +435,78 @@ export const FlamQR: TemplateDefinition<FlamQRProps> = {
         return -centeringRotation;
       }
       // If text is longer than path, just apply position offset
-      return props?.textPosition === "top" ? 180 : 0;
+      return props?.textPosition === "top" ? 0 : 180;
+    };
+
+    // Generate positioned characters along circular path
+    const generatePositionedCharacters = () => {
+      const text =
+        props?.customText ||
+        "enter your text here * Flam It * enter your text here * Flam It * ";
+      const fontSize = props?.fontSize || 40;
+      const letterSpacing = props?.fontLetterSpacing || 6;
+      const textPosition = props?.textPosition || "bottom";
+      const pathRadius = 246.5;
+      const centerX = 296.5;
+      const centerY = 296.5;
+      const pathCircumference = 2 * Math.PI * pathRadius;
+
+      const startAngle = autoRotation + (props?.textRotation || 0);
+      const characters: {
+        char: string;
+        x: number;
+        y: number;
+        rotation: number;
+      }[] = [];
+      let cumulativeArcLength = 0;
+
+      const textArray =
+        textPosition === "top"
+          ? text.split("")
+          : (text.split("").reverse() as string[]);
+
+      for (let i = 0; i < textArray.length; i += 1) {
+        const char = textArray[i];
+        const charWidth = getCharacterWidth(char, fontSize);
+
+        // Check if character fits within circumference
+        if (cumulativeArcLength + charWidth > pathCircumference) {
+          break; // Stop rendering characters that exceed max length
+        }
+
+        // Calculate angle for this character (convert arc length to degrees)
+        const charCenterArcLength = cumulativeArcLength + charWidth / 2;
+        const angleInDegrees = (charCenterArcLength / pathCircumference) * 360;
+        const angleInRadians = (angleInDegrees + startAngle) * (Math.PI / 180);
+
+        // Calculate x, y position on circle
+        const x = centerX + pathRadius * Math.cos(angleInRadians - Math.PI / 2);
+        const y = centerY + pathRadius * Math.sin(angleInRadians - Math.PI / 2);
+
+        // Calculate rotation (tangent to circle at this point)
+        // The text should be tangent to the circle, with rotation = angle + 90
+        // For "top": add additional 180° to flip characters so they're readable from outside
+        // For "bottom": keep natural orientation for reading from outside
+        const rotation =
+          angleInDegrees + startAngle + (textPosition === "top" ? 0 : 180);
+
+        characters.push({
+          char,
+          x,
+          y,
+          rotation,
+        });
+
+        // Update cumulative length
+        cumulativeArcLength += charWidth + letterSpacing;
+      }
+
+      return characters;
     };
 
     const autoRotation = calculateTextRotation();
-    // Combine auto-rotation with manual rotation if provided
-    const totalRotation = autoRotation + (props?.textRotation || 0);
+
+    const positionedCharacters = generatePositionedCharacters();
 
     return (
       <svg
@@ -483,41 +551,27 @@ export const FlamQR: TemplateDefinition<FlamQRProps> = {
           strokeWidth={props?.strokeWidth || 0}
         />
 
-        {/* Circular text path definition */}
-        <defs>
-          <path
-            d={
-              props?.textPosition === "top"
-                ? "M 296.5,50 A 246.5,246.5 0 1,1 296.5,543 A 246.5,246.5 0 1,1 296.5,50"
-                : "M 296.5,50 A 246.5,246.5 0 1,0 296.5,543 A 246.5,246.5 0 1,0 296.5,50"
-            }
-            id="circlePath"
-          />
-        </defs>
-        {/* Customizable circular text */}
-        <text
-          dominantBaseline={props?.textPosition === "top" ? "auto" : "hanging"}
-          fill={props?.textColor || "black"}
-          fontFamily={props?.fontFamily || "Arial, Helvetica, sans-serif"}
-          fontSize={props?.fontSize || 40}
-          fontWeight={props?.fontWeight || "900"}
-          id="text"
-          letterSpacing={props?.fontLetterSpacing || 6}
-          transform={
-            totalRotation !== 0
-              ? `rotate(${totalRotation} 296.5 296.5)`
-              : undefined
-          }
-        >
-          <textPath href="#circlePath" startOffset="0%" textAnchor="start">
-            {props?.customText
-              ? props.customText
-              : "enter your text here * Flam It * enter your text here * Flam It * "}
-          </textPath>
-        </text>
-        <text fill="none" id="text-path" stroke="black" strokeWidth="1">
-          hello
-        </text>
+        {/* Individual character text elements */}
+        <g id="circular-text">
+          {positionedCharacters.map((charData, index) => (
+            <text
+              dominantBaseline={
+                props?.textPosition === "top" ? "auto" : "hanging"
+              }
+              fill={props?.textColor || "black"}
+              fontFamily={props?.fontFamily || "Arial, Helvetica, sans-serif"}
+              fontSize={props?.fontSize || 40}
+              fontWeight={props?.fontWeight || "900"}
+              key={index}
+              textAnchor="middle"
+              transform={`rotate(${charData.rotation} ${charData.x} ${charData.y})`}
+              x={charData.x}
+              y={charData.y}
+            >
+              {charData.char}
+            </text>
+          ))}
+        </g>
         <g fill="none" transform="translate(146.5, 146.5) scale(1.0)">
           {children}
         </g>
