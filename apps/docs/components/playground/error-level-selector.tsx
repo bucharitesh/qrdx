@@ -3,7 +3,7 @@
 import { QRCodeSVG } from "qrdx";
 import type { ErrorLevel } from "qrdx/types";
 import type React from "react";
-import { useQRStore } from "../../lib/qr-store";
+import { useQREditorStore as useQRStore } from "@/store/editor-store";
 
 const errorLevels: Array<{
   id: ErrorLevel;
@@ -17,8 +17,8 @@ const errorLevels: Array<{
 ] as const;
 
 export const ErrorLevelSelector: React.FC = () => {
-  const { qrStyles, updateQrStyle } = useQRStore();
-  const selectedLevel = qrStyles.level || "L";
+  const { style, setStyle } = useQRStore();
+  const selectedLevel = style.level || "L";
   return (
     <div className="grid grid-cols-4 gap-3">
       {errorLevels.map((level) => (
@@ -30,7 +30,7 @@ export const ErrorLevelSelector: React.FC = () => {
           }`}
           key={level.id}
           onClick={() =>
-            updateQrStyle("level", level.id as typeof qrStyles.level)
+            setStyle({ ...style, level: level.id })
           }
           tabIndex={0}
           type="button"

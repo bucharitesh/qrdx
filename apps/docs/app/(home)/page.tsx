@@ -5,29 +5,33 @@ import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { Switch } from "@repo/design-system/components/ui/switch";
+import { Redo2Icon, Undo2Icon } from "lucide-react";
 import { getContrastLevel, getContrastRatio, QRCode } from "qrdx";
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { CornerEyeDotPatternSelector } from "@/components/playground/corner-eye-dot-pattern-selector";
 import { CornerEyePatternSelector } from "@/components/playground/corner-eye-pattern-selector";
 import { DownloadOptions } from "@/components/playground/download-options";
 import { ErrorLevelSelector } from "@/components/playground/error-level-selector";
 import { PatternSelector } from "@/components/playground/pattern-selector";
 import { TemplateSelector } from "@/components/playground/template-selector";
-import { useQRStore } from "@/lib/qr-store";
+import { useQREditorStore as useQRStore } from "@/store/editor-store";
 
 const Page = () => {
-  const { url, qrStyles, setUrl, updateQrStyle } = useQRStore();
+  const { value, style, setValue, setStyle, undo, redo, canUndo, canRedo } =
+    useQRStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Calculate contrast ratio and level
   const contrastInfo = useMemo(() => {
-    const ratio = getContrastRatio(qrStyles.qrColor, qrStyles.backgroundColor);
+    const fgColor = style.fgColor || "#000000";
+    const bgColor = style.bgColor || "#ffffff";
+    const ratio = getContrastRatio(fgColor, bgColor);
     const level = getContrastLevel(ratio);
     return {
       ratio: ratio.toFixed(2),
       ...level,
     };
-  }, [qrStyles.qrColor, qrStyles.backgroundColor]);
+  }, [style.fgColor, style.bgColor]);
 
   // Handle custom logo file upload
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -36,7 +40,7 @@ const Page = () => {
       const reader = new FileReader();
       reader.onloadend = () => {
         const result = reader.result as string;
-        updateQrStyle("customLogo", result);
+        setStyle({ ...style, customLogo: result });
       };
       reader.readAsDataURL(file);
     }
@@ -44,11 +48,37 @@ const Page = () => {
 
   // Clear custom logo
   const handleClearLogo = () => {
-    updateQrStyle("customLogo", undefined);
+    setStyle({ ...style, customLogo: undefined });
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
   };
+
+  // Keyboard shortcuts for undo/redo
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ctrl+Z or Cmd+Z for undo
+      if ((e.ctrlKey || e.metaKey) && e.key === "z" && !e.shiftKey) {
+        e.preventDefault();
+        if (canUndo()) {
+          undo();
+        }
+      }
+      // Ctrl+Y or Cmd+Shift+Z for redo
+      if (
+        ((e.ctrlKey || e.metaKey) && e.key === "y") ||
+        ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key === "z")
+      ) {
+        e.preventDefault();
+        if (canRedo()) {
+          redo();
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [undo, redo, canUndo, canRedo]);
 
   return (
     <div className="relative z-10 mx-auto w-full max-w-7xl select-none p-2 md:p-6">
@@ -67,10 +97,10 @@ const Page = () => {
                 </Label>
                 <Input
                   id="url-input"
-                  onChange={(e) => setUrl(e.target.value)}
+                  onChange={(e) => setValue(e.target.value)}
                   placeholder="Enter URL"
                   type="text"
-                  value={url}
+                  value={value}
                 />
               </div>
             </div>
@@ -120,31 +150,31 @@ const Page = () => {
               </h2>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <ColorInput
-                  value={qrStyles.qrColor}
+                  value={style.fgColor || "#000000"}
                   label="QR Color"
                   onChange={(value) =>
-                    updateQrStyle("qrColor", value as string)
+                    setStyle({ ...style, fgColor: value as string })
                   }
                 />
                 <ColorInput
-                  value={qrStyles.backgroundColor}
+                  value={style.bgColor || "#ffffff"}
                   label="Background Color"
                   onChange={(value) =>
-                    updateQrStyle("backgroundColor", value as string)
+                    setStyle({ ...style, bgColor: value as string })
                   }
                 />
                 <ColorInput
-                  value={qrStyles.eyeColor || qrStyles.qrColor}
+                  value={style.eyeColor || style.fgColor || "#000000"}
                   label="Eye Color"
                   onChange={(value) =>
-                    updateQrStyle("eyeColor", value as string)
+                    setStyle({ ...style, eyeColor: value as string })
                   }
                 />
                 <ColorInput
-                  value={qrStyles.dotColor || qrStyles.qrColor}
+                  value={style.dotColor || style.fgColor || "#000000"}
                   label="Dot Color"
                   onChange={(value) =>
-                    updateQrStyle("dotColor", value as string)
+                    setStyle({ ...style, dotColor: value as string })
                   }
                 />
               </div>
@@ -193,12 +223,14 @@ const Page = () => {
                   Show Logo
                 </Label>
                 <Switch
-                  checked={qrStyles.showLogo}
+                  checked={style.showLogo || false}
                   id="show-logo"
-                  onCheckedChange={(value) => updateQrStyle("showLogo", value)}
+                  onCheckedChange={(value) =>
+                    setStyle({ ...style, showLogo: value })
+                  }
                 />
               </div>
-              {qrStyles.showLogo && (
+              {style.showLogo && (
                 <div className="space-y-4">
                   <div>
                     <Label className="mb-2 block text-sm" htmlFor="logo-upload">
@@ -215,13 +247,13 @@ const Page = () => {
                       Upload a custom logo image (PNG, JPG, SVG)
                     </p>
                   </div>
-                  {qrStyles.customLogo && (
+                  {style.customLogo && (
                     <div className="space-y-2">
                       <div className="relative flex items-center justify-center rounded-lg border bg-gray-50 p-4">
                         <img
                           alt="Custom logo preview"
                           className="max-h-32 max-w-full object-contain"
-                          src={qrStyles.customLogo}
+                          src={style.customLogo}
                         />
                       </div>
                       <Button
@@ -241,21 +273,43 @@ const Page = () => {
           {/* Right Column - Sticky QR Code Preview */}
           <div className="flex w-full justify-center lg:col-span-2 lg:justify-start">
             <div className="sticky top-18 flex h-fit w-full flex-col items-center justify-center gap-4 rounded-xl border border-gray-200 bg-white/90 p-6 shadow-lg backdrop-blur-sm">
-              <h2 className="text-center font-semibold text-lg">Preview</h2>
+              <div className="flex w-full items-center justify-between">
+                <h2 className="font-semibold text-lg">Preview</h2>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={undo}
+                    disabled={!canUndo()}
+                    title="Undo (Ctrl+Z)"
+                  >
+                    <Undo2Icon className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={redo}
+                    disabled={!canRedo()}
+                    title="Redo (Ctrl+Y)"
+                  >
+                    <Redo2Icon className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
               <QRCode
-                bgColor={qrStyles.backgroundColor}
-                cornerEyeDotPattern={qrStyles.cornerEyeDotPattern}
-                cornerEyePattern={qrStyles.cornerEyePattern}
-                dotColor={qrStyles.dotColor}
-                bodyPattern={qrStyles.bodyPattern}
-                level={qrStyles.level}
-                eyeColor={qrStyles.eyeColor}
-                fgColor={qrStyles.qrColor}
-                hideLogo={!qrStyles.showLogo}
-                logo={qrStyles.customLogo}
+                bgColor={style.bgColor}
+                cornerEyeDotPattern={style.cornerEyeDotPattern}
+                cornerEyePattern={style.cornerEyePattern}
+                dotColor={style.dotColor}
+                bodyPattern={style.bodyPattern}
+                level={style.level}
+                eyeColor={style.eyeColor}
+                fgColor={style.fgColor}
+                hideLogo={!style.showLogo}
+                logo={style.customLogo}
                 scale={2}
-                templateId={qrStyles.templateId}
-                value={url}
+                templateId={style.templateId}
+                value={value}
               />
               <div className="w-full border-t pt-4">
                 <DownloadOptions />

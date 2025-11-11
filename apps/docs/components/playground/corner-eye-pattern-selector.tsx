@@ -3,7 +3,7 @@
 import { QRCodeSVG } from "qrdx";
 import type { CornerEyePattern } from "qrdx/types";
 import type React from "react";
-import { useQRStore } from "../../lib/qr-store";
+import { useQREditorStore as useQRStore } from "@/store/editor-store";
 
 const patterns: Array<{ id: CornerEyePattern; name: string }> = [
   { id: "square", name: "Square" },
@@ -13,8 +13,8 @@ const patterns: Array<{ id: CornerEyePattern; name: string }> = [
 ] as const;
 
 export const CornerEyePatternSelector: React.FC = () => {
-  const { qrStyles, updateQrStyle } = useQRStore();
-  const selectedPattern = qrStyles.cornerEyePattern || "gear";
+  const { style, setStyle } = useQRStore();
+  const selectedPattern = style.cornerEyePattern || "gear";
   return (
     <div className="grid grid-cols-4 gap-3">
       {patterns.map((pattern) => (
@@ -26,10 +26,7 @@ export const CornerEyePatternSelector: React.FC = () => {
           }`}
           key={pattern.id}
           onClick={() =>
-            updateQrStyle(
-              "cornerEyePattern",
-              pattern.id as typeof qrStyles.cornerEyePattern,
-            )
+            setStyle({ ...style, cornerEyePattern: pattern.id })
           }
           tabIndex={0}
           type="button"

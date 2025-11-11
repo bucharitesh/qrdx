@@ -20,47 +20,50 @@ import {
   validateSize,
 } from "qrdx";
 import React from "react";
-import { useQRStore } from "../../lib/qr-store";
+import { useQREditorStore as useQRStore } from "@/store/editor-store";
+import { useDownloadStore } from "@/store/download-store";
+import type { DownloadOptions as DownloadOptionsType } from "@/types/qr";
 
 export const DownloadOptions: React.FC = () => {
-  const { url, qrStyles, downloadOptions, updateDownloadOption } = useQRStore();
+  const { value, style } = useQRStore();
+  const { downloadOptions, updateDownloadOption } = useDownloadStore();
   const [sizeError, setSizeError] = React.useState<string>("");
   const [isDownloading, setIsDownloading] = React.useState(false);
 
   const qrProps = React.useMemo(
     () => ({
       ...getQRData({
-        value: url,
-        fgColor: qrStyles.qrColor,
-        bgColor: qrStyles.backgroundColor,
-        eyeColor: qrStyles.eyeColor,
-        dotColor: qrStyles.dotColor,
-        bodyPattern: qrStyles.bodyPattern,
-        hideLogo: !qrStyles.showLogo,
-        logo: qrStyles.qrLogo,
+        value,
+        fgColor: style.fgColor,
+        bgColor: style.bgColor,
+        eyeColor: style.eyeColor,
+        dotColor: style.dotColor,
+        bodyPattern: style.bodyPattern,
+        hideLogo: !style.showLogo,
+        logo: style.customLogo,
       }),
-      level: qrStyles.level,
-      cornerEyePattern: qrStyles.cornerEyePattern,
-      cornerEyeDotPattern: qrStyles.cornerEyeDotPattern,
-      templateId: qrStyles.templateId,
+      level: style.level,
+      cornerEyePattern: style.cornerEyePattern,
+      cornerEyeDotPattern: style.cornerEyeDotPattern,
+      templateId: style.templateId,
     }),
-    [url, qrStyles],
+    [value, style],
   );
 
   // Get the current size based on selection
   const getCurrentSize = (): DownloadSize => {
-    if (downloadOptions.size === "custom") {
+    if (downloadOptions.sizePreset === "custom") {
       return {
         width: downloadOptions.width,
         height: downloadOptions.height,
       };
     }
-    return PRESET_SIZES[downloadOptions.size] || PRESET_SIZES.medium;
+    return PRESET_SIZES[downloadOptions.sizePreset] || PRESET_SIZES.medium;
   };
 
   // Validate custom size when it changes
   React.useEffect(() => {
-    if (downloadOptions.size === "custom") {
+    if (downloadOptions.sizePreset === "custom") {
       const width = downloadOptions.width;
       const height = downloadOptions.height;
 
@@ -78,7 +81,7 @@ export const DownloadOptions: React.FC = () => {
     } else {
       setSizeError("");
     }
-  }, [downloadOptions.size, downloadOptions.width, downloadOptions.height]);
+  }, [downloadOptions.sizePreset, downloadOptions.width, downloadOptions.height]);
 
   const handleDownload = async () => {
     const size = getCurrentSize();
@@ -124,20 +127,10 @@ export const DownloadOptions: React.FC = () => {
         <div className="space-y-2">
           <Label htmlFor="size-select">Size</Label>
           <Select
-            defaultValue={downloadOptions.size}
-            value={downloadOptions.size}
+            defaultValue={downloadOptions.sizePreset}
+            value={downloadOptions.sizePreset}
             onValueChange={(value) =>
-              updateDownloadOption(
-                "size",
-                value as
-                  | "small"
-                  | "medium"
-                  | "large"
-                  | "xlarge"
-                  | "2xl"
-                  | "3xl"
-                  | "custom",
-              )
+              updateDownloadOption("sizePreset", value as DownloadOptionsType["sizePreset"])
             }
           >
             <SelectTrigger id="size-select" className="w-full">
@@ -178,7 +171,7 @@ export const DownloadOptions: React.FC = () => {
       </div>
 
       {/* Custom Size Inputs */}
-      {downloadOptions.size === "custom" && (
+      {downloadOptions.sizePreset === "custom" && (
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="custom-width">Width (px)</Label>
