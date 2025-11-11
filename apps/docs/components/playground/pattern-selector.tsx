@@ -1,10 +1,11 @@
 "use client";
 
 import { QRCodeSVG } from "qrdx";
+import type { BodyPattern } from "qrdx/types";
 import type React from "react";
 import { useQRStore } from "../../lib/qr-store";
 
-const patterns = [
+const patterns: Array<{ id: BodyPattern; name: string }> = [
   { id: "circle", name: "Circle" },
   { id: "circle-large", name: "Circle Large" },
   { id: "square", name: "Square" },

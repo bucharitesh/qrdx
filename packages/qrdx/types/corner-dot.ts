@@ -1,13 +1,14 @@
+import { z } from "zod";
+
 export const CORNER_EYE_DOT_PATTERNS = [
   "square",
   "rounded-square",
   "circle",
-  "rounded-inward",
-  "rounded-inward-flipped",
-  "semi-round",
-  "leaf",
   "diamond",
-  "diamond-rounded",
 ] as const;
 
-export type CornerEyeDotPattern = (typeof CORNER_EYE_DOT_PATTERNS)[number];
+// Zod schema
+export const cornerEyeDotPatternSchema = z.enum(CORNER_EYE_DOT_PATTERNS);
+
+// Inferred type
+export type CornerEyeDotPattern = z.infer<typeof cornerEyeDotPatternSchema>;

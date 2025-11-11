@@ -1,12 +1,18 @@
-import type {
-  BodyPattern,
-  CornerEyeDotPattern,
-  CornerEyePattern,
-} from "@/types";
+import type { QRProps } from "../types";
 import { FLAM_QR_LOGO } from "./constants";
 
+interface QRDataProps extends QRProps {
+  hideLogo?: boolean;
+  logo?: string;
+}
+
+interface QRDataResult extends QRProps {
+  size: number; // Required in result
+}
+
 export function getQRData({
-  url,
+  value,
+  size = 1024,
   fgColor,
   bgColor,
   eyeColor,
@@ -19,23 +25,9 @@ export function getQRData({
   cornerEyeDotPattern,
   level,
   templateId,
-}: {
-  url: string;
-  fgColor?: string;
-  bgColor?: string;
-  eyeColor?: string;
-  dotColor?: string;
-  bodyPattern?: BodyPattern;
-  hideLogo?: boolean;
-  logo?: string;
-  margin?: number;
-  cornerEyePattern?: CornerEyePattern;
-  cornerEyeDotPattern?: CornerEyeDotPattern;
-  level?: "L" | "M" | "Q" | "H";
-  templateId?: string;
-}) {
+}: QRDataProps): QRDataResult {
   return {
-    value: `${url}?qr=1`,
+    value: `${value}?qr=1`,
     bgColor,
     fgColor,
     eyeColor,
@@ -45,7 +37,7 @@ export function getQRData({
     cornerEyeDotPattern,
     level,
     templateId,
-    size: 1024,
+    size,
     margin,
     ...(!hideLogo && {
       imageSettings: {

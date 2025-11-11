@@ -1,27 +1,42 @@
-import type { BodyPattern, CornerEyeDotPattern, CornerEyePattern } from "qrdx";
+import {
+  type BodyPattern,
+  bodyPatternSchema,
+  type CornerEyeDotPattern,
+  type CornerEyePattern,
+  cornerEyeDotPatternSchema,
+  cornerEyePatternSchema,
+  type ErrorLevel,
+  errorLevelSchema,
+} from "qrdx/types";
+import { z } from "zod";
 import { create } from "zustand";
 
-export interface QRStyles {
-  showLogo?: boolean;
-  qrLogo?: string;
-  qrColor: string;
-  backgroundColor: string;
-  eyeColor: string;
-  dotColor: string;
-  bodyPattern?: BodyPattern;
-  cornerEyePattern?: CornerEyePattern;
-  cornerEyeDotPattern?: CornerEyeDotPattern;
-  level?: "L" | "M" | "Q" | "H";
-  customLogo?: string;
-  templateId?: string;
-}
+// Zod schemas for the store
+export const qrStylesSchema = z.object({
+  showLogo: z.boolean().optional(),
+  qrLogo: z.string().optional(),
+  qrColor: z.string(),
+  backgroundColor: z.string(),
+  eyeColor: z.string(),
+  dotColor: z.string(),
+  bodyPattern: bodyPatternSchema.optional(),
+  cornerEyePattern: cornerEyePatternSchema.optional(),
+  cornerEyeDotPattern: cornerEyeDotPatternSchema.optional(),
+  level: errorLevelSchema.optional(),
+  customLogo: z.string().optional(),
+  templateId: z.string().optional(),
+});
 
-export interface DownloadOptions {
-  size: "small" | "medium" | "large" | "xlarge" | "2xl" | "3xl" | "custom";
-  format: "png" | "jpg" | "svg";
-  width: number;
-  height: number;
-}
+export const downloadOptionsSchema = z.object({
+  size: z.enum(["small", "medium", "large", "xlarge", "2xl", "3xl", "custom"]),
+  format: z.enum(["png", "jpg", "svg"]),
+  width: z.number(),
+  height: z.number(),
+});
+
+// Inferred types from schemas
+export type QRStyles = z.infer<typeof qrStylesSchema>;
+export type DownloadOptions = z.infer<typeof downloadOptionsSchema>;
 
 interface QRState {
   url: string;

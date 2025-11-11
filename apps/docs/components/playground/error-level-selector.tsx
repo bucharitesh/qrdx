@@ -1,10 +1,15 @@
 "use client";
 
 import { QRCodeSVG } from "qrdx";
+import type { ErrorLevel } from "qrdx/types";
 import type React from "react";
 import { useQRStore } from "../../lib/qr-store";
 
-const errorLevels = [
+const errorLevels: Array<{
+  id: ErrorLevel;
+  name: string;
+  description: string;
+}> = [
   { id: "L", name: "Low", description: "~7%" },
   { id: "M", name: "Medium", description: "~15%" },
   { id: "Q", name: "Quartile", description: "~25%" },

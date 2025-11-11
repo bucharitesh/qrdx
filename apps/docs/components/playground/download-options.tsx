@@ -30,7 +30,7 @@ export const DownloadOptions: React.FC = () => {
   const qrProps = React.useMemo(
     () => ({
       ...getQRData({
-        url,
+        value: url,
         fgColor: qrStyles.qrColor,
         bgColor: qrStyles.backgroundColor,
         eyeColor: qrStyles.eyeColor,

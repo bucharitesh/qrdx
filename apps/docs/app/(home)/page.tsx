@@ -255,7 +255,7 @@ const Page = () => {
                 logo={qrStyles.customLogo}
                 scale={2}
                 templateId={qrStyles.templateId}
-                url={url}
+                value={url}
               />
               <div className="w-full border-t pt-4">
                 <DownloadOptions />
