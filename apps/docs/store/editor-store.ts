@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { defaultQREditorState, getPresetStyle } from "@/config/qr";
+import { isDeepEqual } from "@/lib/utils";
 import type { QREditorState } from "@/types/editor";
 import type { QRPreset, QRStyle } from "@/types/qr";
 
@@ -14,13 +15,6 @@ interface QRHistoryEntry {
   style: Partial<QRStyle>;
   value: string;
   timestamp: number;
-}
-
-/**
- * Deep equality check for objects
- */
-function isDeepEqual(obj1: any, obj2: any): boolean {
-  return JSON.stringify(obj1) === JSON.stringify(obj2);
 }
 
 /**
