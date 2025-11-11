@@ -411,5 +411,4 @@ ISC License - Based on [qrcode.react](https://github.com/zpao/qrcode.react) by P
 ## Credits
 
 - QR code generation algorithm: [qrcode.react](https://github.com/zpao/qrcode.react)
-- Developed for [Flam](https://flamapp.ai)
 

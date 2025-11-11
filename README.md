@@ -2,8 +2,6 @@
 
 A powerful, flexible QR code generation library and demo application, now open source.
 
-**[Live Demo](https://qr.flamapp.tech)** • Built with Next.js and React
-
 <div>
   <img src="https://img.shields.io/badge/license-ISC-blue" alt="License" />
   <img src="https://img.shields.io/badge/react-19.2.0-blue" alt="React Version" />
@@ -26,8 +24,6 @@ qrdx is a production-ready QR code generation library with extensive customizati
 - 🌐 **Server & Client** — Works in both browser and Node.js environments
 
 ## Demo
-
-Try it out at **[qr.flamapp.tech](https://qr.flamapp.tech)**
 
 The demo showcases:
 - Real-time QR code generation

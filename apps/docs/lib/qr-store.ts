@@ -38,7 +38,7 @@ interface QRState {
 }
 
 export const useQRStore = create<QRState>((set) => ({
-  url: "https://instant.cdn.flamapp.com/card?o=1234",
+  url: "https://google.com",
   qrStyles: {
     showLogo: false,
     qrColor: "#000000",

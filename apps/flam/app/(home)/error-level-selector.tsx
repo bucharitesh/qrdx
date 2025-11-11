@@ -5,7 +5,6 @@ import type React from "react";
 import { useQRStore } from "../../lib/qr-store";
 
 const errorLevels = [
-  { id: "L", name: "Low", description: "~7%" },
   { id: "M", name: "Medium", description: "~15%" },
   { id: "Q", name: "Quartile", description: "~25%" },
   { id: "H", name: "High", description: "~30%" },
