@@ -14,11 +14,11 @@ import { DownloadOptions } from "@/components/playground/download-options";
 import { ErrorLevelSelector } from "@/components/playground/error-level-selector";
 import { PatternSelector } from "@/components/playground/pattern-selector";
 import { TemplateSelector } from "@/components/playground/template-selector";
-import { useQREditorStore as useQRStore } from "@/store/editor-store";
+import { useQREditorStore } from "@/store/editor-store";
 
 const Page = () => {
   const { value, style, setValue, setStyle, undo, redo, canUndo, canRedo } =
-    useQRStore();
+    useQREditorStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Calculate contrast ratio and level

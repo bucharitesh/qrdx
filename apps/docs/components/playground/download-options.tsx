@@ -20,12 +20,12 @@ import {
   validateSize,
 } from "qrdx";
 import React from "react";
-import { useQREditorStore as useQRStore } from "@/store/editor-store";
 import { useDownloadStore } from "@/store/download-store";
+import { useQREditorStore } from "@/store/editor-store";
 import type { DownloadOptions as DownloadOptionsType } from "@/types/qr";
 
 export const DownloadOptions: React.FC = () => {
-  const { value, style } = useQRStore();
+  const { value, style } = useQREditorStore();
   const { downloadOptions, updateDownloadOption } = useDownloadStore();
   const [sizeError, setSizeError] = React.useState<string>("");
   const [isDownloading, setIsDownloading] = React.useState(false);
@@ -81,7 +81,11 @@ export const DownloadOptions: React.FC = () => {
     } else {
       setSizeError("");
     }
-  }, [downloadOptions.sizePreset, downloadOptions.width, downloadOptions.height]);
+  }, [
+    downloadOptions.sizePreset,
+    downloadOptions.width,
+    downloadOptions.height,
+  ]);
 
   const handleDownload = async () => {
     const size = getCurrentSize();
@@ -130,7 +134,10 @@ export const DownloadOptions: React.FC = () => {
             defaultValue={downloadOptions.sizePreset}
             value={downloadOptions.sizePreset}
             onValueChange={(value) =>
-              updateDownloadOption("sizePreset", value as DownloadOptionsType["sizePreset"])
+              updateDownloadOption(
+                "sizePreset",
+                value as DownloadOptionsType["sizePreset"],
+              )
             }
           >
             <SelectTrigger id="size-select" className="w-full">

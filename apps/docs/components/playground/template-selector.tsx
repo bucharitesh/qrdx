@@ -2,10 +2,10 @@
 
 import { getAllTemplates, QRCodeSVG, type TemplateDefinition } from "qrdx";
 import type React from "react";
-import { useQREditorStore as useQRStore } from "@/store/editor-store";
+import { useQREditorStore } from "@/store/editor-store";
 
 export const TemplateSelector: React.FC = () => {
-  const { style, setStyle } = useQRStore();
+  const { style, setStyle } = useQREditorStore();
   const selectedTemplateId = style.templateId || "default";
   const templates = getAllTemplates();
 

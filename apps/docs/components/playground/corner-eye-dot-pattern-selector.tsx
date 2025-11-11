@@ -3,7 +3,7 @@
 import { QRCodeSVG } from "qrdx";
 import type { CornerEyeDotPattern } from "qrdx/types";
 import type React from "react";
-import { useQREditorStore as useQRStore } from "@/store/editor-store";
+import { useQREditorStore } from "@/store/editor-store";
 
 const patterns: Array<{ id: CornerEyeDotPattern; name: string }> = [
   { id: "square", name: "Square" },
@@ -13,7 +13,7 @@ const patterns: Array<{ id: CornerEyeDotPattern; name: string }> = [
 ] as const;
 
 export const CornerEyeDotPatternSelector: React.FC = () => {
-  const { style, setStyle } = useQRStore();
+  const { style, setStyle } = useQREditorStore();
   const selectedPattern = style.cornerEyeDotPattern || "circle";
   return (
     <div className="grid grid-cols-4 gap-3">
