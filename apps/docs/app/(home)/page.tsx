@@ -120,24 +120,32 @@ const Page = () => {
               </h2>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <ColorInput
-                  color={qrStyles.qrColor}
+                  value={qrStyles.qrColor}
                   label="QR Color"
-                  onChange={(value) => updateQrStyle("qrColor", value)}
+                  onChange={(value) =>
+                    updateQrStyle("qrColor", value as string)
+                  }
                 />
                 <ColorInput
-                  color={qrStyles.backgroundColor}
+                  value={qrStyles.backgroundColor}
                   label="Background Color"
-                  onChange={(value) => updateQrStyle("backgroundColor", value)}
+                  onChange={(value) =>
+                    updateQrStyle("backgroundColor", value as string)
+                  }
                 />
                 <ColorInput
-                  color={qrStyles.eyeColor || qrStyles.qrColor}
+                  value={qrStyles.eyeColor || qrStyles.qrColor}
                   label="Eye Color"
-                  onChange={(value) => updateQrStyle("eyeColor", value)}
+                  onChange={(value) =>
+                    updateQrStyle("eyeColor", value as string)
+                  }
                 />
                 <ColorInput
-                  color={qrStyles.dotColor || qrStyles.qrColor}
+                  value={qrStyles.dotColor || qrStyles.qrColor}
                   label="Dot Color"
-                  onChange={(value) => updateQrStyle("dotColor", value)}
+                  onChange={(value) =>
+                    updateQrStyle("dotColor", value as string)
+                  }
                 />
               </div>
 
