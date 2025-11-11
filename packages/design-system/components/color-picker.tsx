@@ -1,99 +1,121 @@
+/** biome-ignore-all lint/correctness/useExhaustiveDependencies: <explanation> */
 "use client";
 
+import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
-import { useOutsideClick } from "@repo/design-system/hooks/use-outside-click";
-import React, { useState } from "react";
+import { Label } from "@repo/design-system/components/ui/label";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@repo/design-system/components/ui/popover";
+import { useForwardedRef } from "@repo/design-system/hooks/use-forwarded-ref";
+import { cn } from "@repo/design-system/lib/utils";
+import { type ForwardedRef, useMemo, useState } from "react";
 import { HexColorPicker } from "react-colorful";
 
-type ColorFieldProps = {
-  color: string;
-  onChange: (color: string) => void;
+type ColorPickerProps = {
+  ref?: ForwardedRef<HTMLInputElement>;
+  value: string;
+  onChange: (value: string) => void;
+  onBlur?: () => void;
   label?: string;
-  error?: string;
-  showLabel?: boolean;
 };
 
-export const ColorInput = ({
-  color,
+const ColorInput = ({
+  disabled,
+  value,
   onChange,
+  onBlur,
+  name,
+  className,
+  size,
   label,
-  error,
-  showLabel = true,
-}: ColorFieldProps) => {
-  const [showPicker, setShowPicker] = useState(false);
-  const [inputValue, setInputValue] = useState(color);
-  const pickerRef = useOutsideClick(() => setShowPicker(false));
+  ref: forwardedRef,
+  ...props
+}: React.ComponentProps<"button"> &
+  ColorPickerProps &
+  React.ComponentProps<typeof Button> & {
+    ref?: ForwardedRef<HTMLInputElement>;
+  }) => {
+  const ref = useForwardedRef<HTMLInputElement>(
+    forwardedRef as ForwardedRef<HTMLInputElement>
+  );
+  const [open, setOpen] = useState(false);
 
-  // Update input value when color prop changes
-  React.useEffect(() => {
-    setInputValue(color);
-  }, [color]);
+  const parsedValue = useMemo(() => value || "#FFFFFF", [value]);
 
-  const handleColorChange = (newColor: string) => {
-    // Remove any spaces and ensure it starts with #
-    let cleanedColor = newColor.trim();
-
-    if (!cleanedColor.startsWith("#")) {
-      cleanedColor = `#${cleanedColor.replace(/^#+/g, "")}`;
-    }
-
-    // Validate hex color format
-    const hexRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
-    if (hexRegex.test(cleanedColor)) {
-      onChange(cleanedColor);
-      setInputValue(cleanedColor);
-    }
+  const validateHexColor = (color: string): boolean => {
+    const hexColorRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
+    return hexColorRegex.test(color);
   };
+
+  const isValid = useMemo(() => validateHexColor(parsedValue), [parsedValue]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setInputValue(value);
-
-    // Only update parent if valid
-    if (value.match(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/)) {
-      onChange(value);
-    }
+    const newValue = e.target.value;
+    onChange(newValue);
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
-      handleColorChange(inputValue);
+  const handleInputBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    if (!validateHexColor(e.target.value)) {
+      // Reset to last valid value on blur if invalid
+      onChange(parsedValue);
     }
+    onBlur?.();
   };
 
   return (
-    <div className="flex flex-1 flex-col gap-2">
-      {showLabel && (
-        <div className="font-medium text-gray-700 text-sm">{label}</div>
-      )}
-      <div>
-        <div className="flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2 shadow-sm transition-all focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-200 hover:border-gray-400">
-          <div className="relative h-full" ref={pickerRef}>
-            <button
-              aria-label="Open color picker"
-              className="h-8 w-8 shrink-0 cursor-pointer rounded border-2 border-gray-300 transition-colors hover:border-gray-400"
-              onClick={() => setShowPicker(!showPicker)}
-              style={{ backgroundColor: color }}
-              type="button"
+    <div className="flex flex-col gap-2">
+      {label && <Label>{label}</Label>}
+      <div className="flex items-center gap-2">
+        <Popover onOpenChange={setOpen} open={open}>
+          <PopoverTrigger asChild disabled={disabled} onBlur={onBlur}>
+            <Button
+              {...props}
+              className={cn("block", className)}
+              name={name}
+              onClick={() => {
+                setOpen(true);
+              }}
+              size={size}
+              style={{
+                backgroundColor: parsedValue,
+              }}
+              variant="outline"
+            >
+              <div />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-full space-y-4">
+            <HexColorPicker color={parsedValue} onChange={onChange} />
+            <Input
+              maxLength={7}
+              onChange={(e) => {
+                onChange(e?.currentTarget?.value);
+              }}
+              ref={ref}
+              value={parsedValue}
             />
-            {showPicker && (
-              <div className="absolute top-full left-0 z-50 mt-2 rounded-lg shadow-xl">
-                <HexColorPicker color={color} onChange={onChange} />
-              </div>
-            )}
-          </div>
-          <Input
-            className="flex-1 border-0 bg-transparent p-0 font-mono text-gray-900 text-sm placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
-            maxLength={7}
-            onBlur={(e) => handleColorChange(e.target.value)}
-            onChange={handleInputChange}
-            onKeyDown={handleKeyDown}
-            placeholder="#000000"
-            value={inputValue}
-          />
-        </div>
+          </PopoverContent>
+        </Popover>
+        <Input
+          className={cn(
+            "w-28 font-mono text-sm",
+            !isValid && "border-red-500 focus-visible:ring-red-500"
+          )}
+          disabled={disabled}
+          maxLength={7}
+          onBlur={handleInputBlur}
+          onChange={handleInputChange}
+          placeholder="#FFFFFF"
+          value={parsedValue}
+        />
       </div>
-      {error && <div>{error}</div>}
     </div>
   );
 };
+
+ColorInput.displayName = "ColorInput";
+
+export { ColorInput };
