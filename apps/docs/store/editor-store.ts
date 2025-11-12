@@ -1,9 +1,9 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { defaultQREditorState, getPresetStyle } from "@/config/qr";
 import { isDeepEqual } from "@/lib/utils";
 import type { QREditorState } from "@/types/editor";
 import type { QRPreset, QRStyle } from "@/types/qr";
+import { defaultQREditorState, getPresetStyle } from "@/utils/qr-presets";
 
 const MAX_HISTORY_COUNT = 30;
 const HISTORY_OVERRIDE_THRESHOLD_MS = 500; // 0.5 seconds

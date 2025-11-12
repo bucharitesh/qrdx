@@ -13,6 +13,7 @@ import { CornerEyePatternSelector } from "@/components/playground/corner-eye-pat
 import { DownloadOptions } from "@/components/playground/download-options";
 import { ErrorLevelSelector } from "@/components/playground/error-level-selector";
 import { PatternSelector } from "@/components/playground/pattern-selector";
+import { PresetSelector } from "@/components/playground/preset-selector";
 import { TemplateSelector } from "@/components/playground/template-selector";
 import { useQREditorStore } from "@/store/editor-store";
 
@@ -86,6 +87,11 @@ const Page = () => {
         <div className="grid h-full w-full grid-cols-1 gap-6 lg:grid-cols-5">
           {/* Left Column - Form Options */}
           <div className="flex h-full w-full flex-col gap-6 overflow-y-auto pr-0 lg:col-span-3 lg:pr-4">
+            {/* Presets Section */}
+            <div className="space-y-4 rounded-xl border p-4 backdrop-blur-sm">
+              <PresetSelector />
+            </div>
+
             {/* Basic Settings Section */}
             <div className="space-y-4 rounded-xl border p-4 backdrop-blur-sm">
               <h2 className="border-b pb-2 font-semibold text-lg">

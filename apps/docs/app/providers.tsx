@@ -1,9 +1,12 @@
 /** biome-ignore-all lint/security/noDangerouslySetInnerHtml: false positive */
 "use client";
 
+import { DesignSystemProvider } from "@repo/design-system";
 import { RootProvider } from "fumadocs-ui/provider/base";
 import dynamic from "next/dynamic";
-import type { ReactNode } from "react";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
+import { type ReactNode, Suspense } from "react";
+import { AuthDialogWrapper } from "@/components/auth-dialog-wrapper";
 
 const SearchDialog = dynamic(() => import("@/components/search"), {
   ssr: false,
@@ -35,7 +38,14 @@ export function Provider({ children }: { children: ReactNode }) {
         suppressHydrationWarning
         dangerouslySetInnerHTML={{ __html: inject }}
       />
-      {children}
+      <DesignSystemProvider>
+        <NuqsAdapter>
+          <Suspense>
+            <AuthDialogWrapper />
+            {children}
+          </Suspense>
+        </NuqsAdapter>
+      </DesignSystemProvider>
     </RootProvider>
   );
 }
