@@ -11,18 +11,22 @@ import {
 } from "@repo/design-system/components/ui/dialog";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@repo/design-system/components/ui/tabs";
-import { QRCodeSVG } from "qrdx";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@repo/design-system/components/ui/tabs";
 import { CheckIcon, PlusIcon, SaveIcon, Trash2Icon } from "lucide-react";
+import { QRCodeSVG } from "qrdx";
 import React from "react";
 import { useQREditorStore } from "@/store/editor-store";
 import { useQRPresetStore } from "@/store/qr-preset-store";
 import type { QRPreset } from "@/types/qr";
 
 export const PresetSelector: React.FC = () => {
-  const { style, setStyle, currentPreset, applyPreset } = useQREditorStore();
+  const { style, currentPreset, applyPreset } = useQREditorStore();
   const {
-    getAllPresets,
     getBuiltInPresets,
     getCustomPresets,
     registerPreset,
@@ -41,7 +45,7 @@ export const PresetSelector: React.FC = () => {
 
   const builtInPresets = getBuiltInPresets();
   const customPresets = getCustomPresets();
-  
+
   // Use 0 during SSR to match server rendering
   const customPresetsCount = mounted ? customPresets.length : 0;
 
@@ -271,4 +275,3 @@ export const PresetSelector: React.FC = () => {
     </div>
   );
 };
-
