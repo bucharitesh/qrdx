@@ -1,22 +1,51 @@
 import type { CSSProperties } from "react";
-import type { CornerEyeDotPattern } from "./corner-dot";
-import type { CornerEyePattern } from "./corner-eye";
-import type { BodyPattern } from "./image-pattern";
+import { z } from "zod";
+import {
+  type CornerEyeDotPattern,
+  cornerEyeDotPatternSchema,
+} from "./corner-dot";
+import { type CornerEyePattern, cornerEyePatternSchema } from "./corner-eye";
+import { type BodyPattern, bodyPatternSchema } from "./image-pattern";
 import type { TemplateDefinition } from "./template";
 
-export type ImageSettings = {
-  src: string;
-  height: number;
-  width: number;
-  excavate: boolean;
-  x?: number;
-  y?: number;
-};
+// Zod schemas
+export const imageSettingsSchema = z.object({
+  src: z.string(),
+  height: z.number(),
+  width: z.number(),
+  excavate: z.boolean(),
+  x: z.number().optional(),
+  y: z.number().optional(),
+});
+
+export const errorLevelSchema = z.enum(["L", "M", "Q", "H"]);
+
+export const qrPropsSchema = z.object({
+  value: z.string(),
+  size: z.number().optional(),
+  level: errorLevelSchema.optional(),
+  bgColor: z.string().optional(),
+  fgColor: z.string().optional(),
+  eyeColor: z.string().optional(),
+  dotColor: z.string().optional(),
+  bodyPattern: bodyPatternSchema.optional(),
+  cornerEyePattern: cornerEyePatternSchema.optional(),
+  cornerEyeDotPattern: cornerEyeDotPatternSchema.optional(),
+  margin: z.number().optional(),
+  imageSettings: imageSettingsSchema.optional(),
+  isOGContext: z.boolean().optional(),
+  templateId: z.string().optional(),
+  customProps: z.record(z.string(), z.any()).optional(),
+});
+
+// Inferred types
+export type ImageSettings = z.infer<typeof imageSettingsSchema>;
+export type ErrorLevel = z.infer<typeof errorLevelSchema>;
 
 export type QRProps = {
   value: string;
   size?: number;
-  level?: string;
+  level?: ErrorLevel;
   bgColor?: string;
   fgColor?: string;
   eyeColor?: string;

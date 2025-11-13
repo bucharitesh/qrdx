@@ -1,8 +1,10 @@
-// Base props that all templates support
-export type BaseTemplateProps = {
-  fgColor?: string;
-  bgColor?: string;
-};
+import { z } from "zod";
+
+// Zod schemas
+export const baseTemplatePropsSchema = z.object({
+  fgColor: z.string().optional(),
+  bgColor: z.string().optional(),
+});
 
 /**
  * Configuration object passed to template wrappers containing all QR code metadata.
@@ -23,10 +25,22 @@ export type BaseTemplateProps = {
  * }
  * ```
  */
-export type TemplateConfig = {
-  pixelSize: number; // Calculated pixel size per QR module
-  url: string; // The URL/value used to generate the QR code
-};
+export const templateConfigSchema = z.object({
+  pixelSize: z.number(),
+  url: z.string(),
+});
+
+// Note: TemplateDefinition cannot be fully represented in Zod due to React.ReactNode and function types
+// We'll keep the type definition but add validation for the serializable parts
+export const templateDefinitionBaseSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  description: z.string().optional(),
+});
+
+// Inferred types
+export type BaseTemplateProps = z.infer<typeof baseTemplatePropsSchema>;
+export type TemplateConfig = z.infer<typeof templateConfigSchema>;
 
 // Generic template definition that allows custom props
 export type TemplateDefinition<TCustomProps = Record<string, never>> = {
