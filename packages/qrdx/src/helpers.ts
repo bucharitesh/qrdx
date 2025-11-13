@@ -27,7 +27,7 @@ export function getQRData({
   templateId,
 }: QRDataProps): QRDataResult {
   return {
-    value: `${value}?qr=1`,
+    value: `${value}`,
     bgColor,
     fgColor,
     eyeColor,
