@@ -1,19 +1,20 @@
 "use client";
 
 import { memo, useMemo } from "react";
-import type {
-  BodyPattern,
-  CornerEyeDotPattern,
-  CornerEyePattern,
-  TemplateDefinition,
-} from "@/types";
+import type { QRProps } from "../types";
 import { DEFAULT_MARGIN } from "./constants";
 import { getQRData } from "./helpers";
 import { QRCodeSVG } from "./utils";
 
+interface QRCodeProps extends QRProps {
+  hideLogo?: boolean;
+  logo?: string;
+  scale?: number;
+}
+
 export const QRCode = memo(
   ({
-    url,
+    value,
     fgColor,
     hideLogo,
     logo,
@@ -29,28 +30,11 @@ export const QRCode = memo(
     templateId,
     customTemplate,
     customProps,
-  }: {
-    url: string;
-    fgColor?: string;
-    hideLogo?: boolean;
-    logo?: string;
-    bgColor?: string;
-    eyeColor?: string;
-    dotColor?: string;
-    bodyPattern?: BodyPattern;
-    cornerEyePattern?: CornerEyePattern;
-    cornerEyeDotPattern?: CornerEyeDotPattern;
-    level?: "L" | "M" | "Q" | "H";
-    scale?: number;
-    margin?: number;
-    templateId?: string;
-    customTemplate?: TemplateDefinition<any>;
-    customProps?: Record<string, any>;
-  }) => {
+  }: QRCodeProps) => {
     const qrData = useMemo(
       () =>
         getQRData({
-          url,
+          value,
           fgColor,
           hideLogo,
           bgColor,
@@ -65,7 +49,7 @@ export const QRCode = memo(
           margin,
         }),
       [
-        url,
+        value,
         fgColor,
         hideLogo,
         logo,
@@ -88,6 +72,7 @@ export const QRCode = memo(
         cornerEyeDotPattern={qrData.cornerEyeDotPattern}
         cornerEyePattern={qrData.cornerEyePattern}
         customProps={customProps}
+        customTemplate={customTemplate}
         dotColor={qrData.dotColor}
         eyeColor={qrData.eyeColor}
         fgColor={qrData.fgColor}
@@ -95,7 +80,6 @@ export const QRCode = memo(
         margin={qrData.margin}
         size={(qrData.size / 8) * scale}
         templateId={qrData.templateId}
-        customTemplate={customTemplate}
         value={qrData.value}
         {...(qrData.imageSettings && {
           imageSettings: {

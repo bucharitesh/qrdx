@@ -1,3 +1,5 @@
+import { z } from "zod";
+
 export const BODY_PATTERN = [
   "circle",
   "circle-large",
@@ -9,4 +11,8 @@ export const BODY_PATTERN = [
   "clean-square",
 ] as const;
 
-export type BodyPattern = (typeof BODY_PATTERN)[number];
+// Zod schema
+export const bodyPatternSchema = z.enum(BODY_PATTERN);
+
+// Inferred type
+export type BodyPattern = z.infer<typeof bodyPatternSchema>;

@@ -1,10 +1,11 @@
 "use client";
 
 import { QRCodeSVG } from "qrdx";
+import type { BodyPattern } from "qrdx/types";
 import type React from "react";
-import { useQRStore } from "../../lib/qr-store";
+import { useQREditorStore } from "@/store/editor-store";
 
-const patterns = [
+const patterns: Array<{ id: BodyPattern; name: string }> = [
   { id: "circle", name: "Circle" },
   { id: "circle-large", name: "Circle Large" },
   { id: "square", name: "Square" },
@@ -16,8 +17,8 @@ const patterns = [
 ] as const;
 
 export const PatternSelector: React.FC = () => {
-  const { qrStyles, updateQrStyle } = useQRStore();
-  const selectedPattern = qrStyles.bodyPattern || "circle";
+  const { style, setStyle } = useQREditorStore();
+  const selectedPattern = style.bodyPattern || "circle";
   return (
     <div className="grid grid-cols-4 gap-3">
       {patterns.map((pattern) => (
@@ -28,12 +29,7 @@ export const PatternSelector: React.FC = () => {
               : "ring-gray-200 bg-white hover:ring-gray-300"
           }`}
           key={pattern.id}
-          onClick={() =>
-            updateQrStyle(
-              "bodyPattern",
-              pattern.id as typeof qrStyles.bodyPattern,
-            )
-          }
+          onClick={() => setStyle({ ...style, bodyPattern: pattern.id })}
           tabIndex={0}
           type="button"
         >
