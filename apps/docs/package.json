@@ -15,7 +15,7 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
-    "@ai-sdk/google": "^2.0.29",
+    "@ai-sdk/google": "^2.0.44",
     "@ai-sdk/openai-compatible": "^1.0.23",
     "@hookform/resolvers": "^5.2.2",
     "@neondatabase/serverless": "^1.0.2",
