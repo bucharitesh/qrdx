@@ -69,7 +69,7 @@
     "@types/mdast": "^4.0.4",
     "@types/mdx": "^2.0.13",
     "@types/node": "^24.9.2",
-    "@types/react": "^19.2.2",
+    "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.2",
     "dotenv": "^17.2.3",
     "postcss": "^8.5.6",
