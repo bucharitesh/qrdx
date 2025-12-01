@@ -35,7 +35,7 @@
   "dependencies": {
     "jsqr": "^1.4.0",
     "react": "19.2.0",
-    "zod": "^4.1.12"
+    "zod": "^4.1.13"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
