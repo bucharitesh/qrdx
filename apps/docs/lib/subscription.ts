@@ -34,7 +34,7 @@ export async function validateSubscriptionAndUsage(
     const isSubscribed =
       !!activeSubscription &&
       activeSubscription?.productId ===
-        process.env.NEXT_PUBLIC_TWEAKCN_PRO_PRODUCT_ID;
+        process.env.NEXT_PUBLIC_QRDX_PRO_PRODUCT_ID;
 
     if (isSubscribed) {
       return {

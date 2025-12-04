@@ -7,6 +7,7 @@ import dynamic from "next/dynamic";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { type ReactNode, Suspense } from "react";
 import { AuthDialogWrapper } from "@/components/auth-dialog-wrapper";
+import { QueryProvider } from "@/lib/query-client";
 
 const SearchDialog = dynamic(() => import("@/components/search"), {
   ssr: false,
@@ -40,10 +41,12 @@ export function Provider({ children }: { children: ReactNode }) {
       />
       <DesignSystemProvider>
         <NuqsAdapter>
-          <Suspense>
-            <AuthDialogWrapper />
-            {children}
-          </Suspense>
+          <QueryProvider>
+            <Suspense>
+              <AuthDialogWrapper />
+              {children}
+            </Suspense>
+          </QueryProvider>
         </NuqsAdapter>
       </DesignSystemProvider>
     </RootProvider>

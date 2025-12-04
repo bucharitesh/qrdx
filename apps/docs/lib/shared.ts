@@ -1,8 +1,8 @@
-import type { User } from "better-auth";
+import { UnauthorizedError } from "@/types/errors";
+import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import type { NextRequest } from "next/server";
-import { auth } from "@/lib/auth";
-import { UnauthorizedError } from "@/types/errors";
+import type { User } from "better-auth";
 
 export async function getCurrentUserId(req?: NextRequest): Promise<string> {
   const session = await auth.api.getSession({

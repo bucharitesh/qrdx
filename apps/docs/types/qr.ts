@@ -10,10 +10,9 @@ import { z } from "zod";
  * QR Code Style Configuration Schema
  */
 export const qrStyleSchema = z.object({
-  value: z.string().describe("The URL or text to encode in the QR code"),
   size: z.number().optional().describe("Size of the QR code in pixels"),
-  bgColor: z.string().describe("Background color of the QR code"),
-  fgColor: z.string().describe("Foreground (main) color of the QR code"),
+  bgColor: z.string().optional().describe("Background color of the QR code"),
+  fgColor: z.string().optional().describe("Foreground (main) color of the QR code"),
   eyeColor: z.string().optional().describe("Color of the corner eye patterns"),
   dotColor: z.string().optional().describe("Color of the inner eye dots"),
   bodyPattern: bodyPatternSchema

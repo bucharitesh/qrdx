@@ -15,8 +15,8 @@ export default function Layout({ children }: LayoutProps<"/">) {
         },
         {
           icon: <QrCodeIcon />,
-          text: "Playground",
-          url: "/playground",
+          text: "Editor",
+          url: "/editor/qr",
           secondary: false,
         },
         ...linkItems,

@@ -2,6 +2,7 @@ import "./global.css";
 import { NextProvider } from "fumadocs-core/framework/next";
 import { TreeContextProvider } from "fumadocs-ui/contexts/tree";
 import { Inter } from "next/font/google";
+import { Toaster } from "@repo/design-system/components/ui/toaster";
 import { source } from "@/lib/source";
 import { Body } from "./layout.client";
 import { Provider } from "./providers";
@@ -19,6 +20,7 @@ export default function Layout({ children }: LayoutProps<"/">) {
             <Provider>{children}</Provider>
           </TreeContextProvider>
         </NextProvider>
+        <Toaster />
       </Body>
     </html>
   );

@@ -4,12 +4,15 @@ import { Separator } from "@repo/design-system/components/ui/separator";
 import { cn } from "@repo/design-system/lib/utils";
 import {
   ChartNoAxesCombined,
+  CreditCard,
   ExternalLink,
   type LucideIcon,
   Palette,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useMemo } from "react";
+import { useSubscription } from "@/lib/hooks/use-subscription";
 
 type NavItem =
   | {
@@ -25,12 +28,7 @@ type NavItem =
     };
 
 const BASE_NAV_ITEMS: NavItem[] = [
-  {
-    type: "link",
-    href: "/settings/qr-themes",
-    label: "QR Code Themes",
-    icon: Palette,
-  },
+  { type: "link", href: "/settings/themes", label: "Themes", icon: Palette },
   {
     type: "link",
     href: "/settings/usage",
@@ -39,10 +37,27 @@ const BASE_NAV_ITEMS: NavItem[] = [
   },
 ];
 
+const getSubscriptionNavItems = (): NavItem[] => [
+  { type: "separator", id: "subscription-separator" },
+  {
+    type: "link",
+    href: "/settings/portal",
+    label: "Manage Subscription",
+    icon: CreditCard,
+    isExternal: true,
+  },
+];
+
 export function SettingsSidebar() {
   const pathname = usePathname();
+  const { subscriptionStatus } = useSubscription();
 
-  const navItems = [...BASE_NAV_ITEMS];
+  const navItems = useMemo(() => {
+    if (subscriptionStatus?.isSubscribed) {
+      return [...BASE_NAV_ITEMS, ...getSubscriptionNavItems()];
+    }
+    return BASE_NAV_ITEMS;
+  }, [subscriptionStatus?.isSubscribed]);
 
   return (
     <aside className="w-64 shrink-0">

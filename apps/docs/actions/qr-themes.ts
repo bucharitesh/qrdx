@@ -55,7 +55,7 @@ const createThemeSchema = z.object({
     .string()
     .min(1, "Theme name cannot be empty")
     .max(50, "Theme name too long"),
-  styles: qrStyleSchema,
+  styles: qrStyleSchema.partial(),
 });
 
 const updateThemeSchema = z.object({
@@ -65,7 +65,7 @@ const updateThemeSchema = z.object({
     .min(1, "Theme name cannot be empty")
     .max(50, "Theme name too long")
     .optional(),
-  styles: qrStyleSchema.optional(),
+  styles: qrStyleSchema.partial().optional(),
 });
 
 // Layer 1: Clean server actions with proper error handling
