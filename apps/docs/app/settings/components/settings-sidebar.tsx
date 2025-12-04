@@ -4,7 +4,6 @@ import { Separator } from "@repo/design-system/components/ui/separator";
 import { cn } from "@repo/design-system/lib/utils";
 import {
   ChartNoAxesCombined,
-  CreditCard,
   ExternalLink,
   type LucideIcon,
   Palette,

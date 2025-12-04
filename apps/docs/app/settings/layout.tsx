@@ -18,7 +18,7 @@ export default async function SettingsLayout({
       <div className="container mx-auto flex w-full max-w-7xl items-center justify-between gap-2 px-4 pt-8 pb-4 md:justify-start md:px-6">
         <Button variant="ghost" asChild>
           <Link href="/playground">
-            <ArrowLeft /> Back to Playground
+            <ArrowLeft /> Back
           </Link>
         </Button>
 

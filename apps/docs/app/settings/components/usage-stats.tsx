@@ -1,6 +1,5 @@
 "use client";
 
-// import { getMyUsageChartData, getMyUsageStats } from "@/actions/ai-usage";
 import {
   Card,
   CardContent,
@@ -21,6 +20,7 @@ import {
 import { Skeleton } from "@repo/design-system/components/ui/skeleton";
 import { useEffect, useState } from "react";
 import { Bar, BarChart, XAxis, YAxis } from "recharts";
+import { getMyUsageChartData, getMyUsageStats } from "@/actions/ai-usage";
 
 type Timeframe = "1d" | "7d" | "30d";
 
@@ -50,30 +50,30 @@ const chartConfig = {
 };
 
 export function UsageStats() {
-  // const [timeframe, setTimeframe] = useState<Timeframe>("7d");
-  // const [stats, setStats] = useState<UsageStats | null>(null);
-  // const [chartData, setChartData] = useState<ChartDataPoint[]>([]);
-  // const [loading, setLoading] = useState(true);
+  const [timeframe, setTimeframe] = useState<Timeframe>("7d");
+  const [stats, setStats] = useState<UsageStats | null>(null);
+  const [chartData, setChartData] = useState<ChartDataPoint[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     setLoading(true);
-  //     try {
-  //       const [statsData, chartDataResponse] = await Promise.all([
-  //         getMyUsageStats(timeframe),
-  //         getMyUsageChartData(timeframe),
-  //       ]);
-  //       setStats(statsData);
-  //       setChartData(chartDataResponse);
-  //     } catch (error) {
-  //       console.error("Error fetching usage data:", error);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const [statsData, chartDataResponse] = await Promise.all([
+          getMyUsageStats(timeframe),
+          getMyUsageChartData(timeframe),
+        ]);
+        setStats(statsData);
+        setChartData(chartDataResponse);
+      } catch (error) {
+        console.error("Error fetching usage data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  //   fetchData();
-  // }, [timeframe]);
+    fetchData();
+  }, [timeframe]);
 
   const formatDate = (dateString: string, timeframe: Timeframe) => {
     const date = new Date(dateString);
@@ -88,7 +88,7 @@ export function UsageStats() {
 
   return (
     <div className="space-y-4">
-      {/* <div className="flex items-center justify-end">
+      <div className="flex items-center justify-end">
         <Select
           value={timeframe}
           onValueChange={(value: Timeframe) => setTimeframe(value)}
@@ -102,11 +102,11 @@ export function UsageStats() {
             <SelectItem value="30d">Last 30 days</SelectItem>
           </SelectContent>
         </Select>
-      </div> */}
+      </div>
 
       <Card>
         <CardHeader className="pb-4">
-          {/* {loading ? (
+          {loading ? (
             <div className="space-y-2">
               <Skeleton className="h-8 w-24" />
               <Skeleton className="h-4 w-48" />
@@ -120,10 +120,10 @@ export function UsageStats() {
                 requests in {timeframeLabels[timeframe].toLowerCase()}
               </p>
             </div>
-          )} */}
+          )}
         </CardHeader>
         <CardContent className="pt-0">
-          {/* {loading ? (
+          {loading ? (
             <div className="space-y-3">
               <div className="flex justify-between">
                 <Skeleton className="h-4 w-12" />
@@ -166,7 +166,7 @@ export function UsageStats() {
                 </p>
               </div>
             </div>
-          )} */}
+          )}
         </CardContent>
       </Card>
     </div>

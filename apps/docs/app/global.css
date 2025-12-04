@@ -9,15 +9,6 @@
   --fd-layout-width: 100vw;
 }
 
-aside {
-  background-color: var(--color-fd-background);
-}
-
-aside a[data-active="true"] {
-  color: var(--color-fd-foreground);
-  background-color: var(--color-fd-accent);
-}
-
 .prose :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   font-size: 14px;
 }

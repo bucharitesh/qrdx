@@ -13,7 +13,8 @@ import { useIsMobile } from "@repo/design-system/hooks/use-mobile";
 // import type { Theme } from "@/types/theme";
 import { ArrowUpDown, Search } from "lucide-react";
 import { useEffect, useState } from "react";
-import { ThemeCard } from "./theme-card";
+
+// import { ThemeCard } from "./theme-card";
 
 interface ThemesListProps {
   // themes: Theme[];

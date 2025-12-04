@@ -23,6 +23,7 @@
     "@ngard/tiny-isequal": "^1.1.0",
     "@radix-ui/react-hover-card": "^1.1.15",
     "@repo/design-system": "workspace:*",
+    "@tanstack/react-query": "^5.90.12",
     "ai": "^5.0.81",
     "better-auth": "^1.3.34",
     "cuid": "^3.0.0",

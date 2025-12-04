@@ -27,17 +27,17 @@ export class SubscriptionRequiredError extends Error {
   }
 }
 
-export class ThemeNotFoundError extends Error {
-  constructor(message = "Theme not found") {
+export class QRCodeThemeNotFoundError extends Error {
+  constructor(message = "QR code theme not found") {
     super(message);
-    this.name = "ThemeNotFoundError";
+    this.name = "QRCodeThemeNotFoundError";
   }
 }
 
-export class ThemeLimitError extends Error {
-  constructor(message = "Theme limit reached") {
+export class QRCodeThemeLimitError extends Error {
+  constructor(message = "QR code theme limit reached") {
     super(message);
-    this.name = "ThemeLimitError";
+    this.name = "QRCodeThemeLimitError";
   }
 }
 
