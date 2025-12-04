@@ -14,3 +14,7 @@ export const DesignSystemProvider = ({
     <Toaster />
   </ThemeProvider>
 );
+
+// Export Sonner toast function
+export { toast } from "sonner";
+export { Toaster } from "./components/ui/sonner";

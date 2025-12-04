@@ -1,17 +1,17 @@
 "use client";
 
-import { QrCodeIcon, GithubIcon } from "lucide-react";
-import Link from "next/link";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Separator } from "@repo/design-system/components/ui/separator";
-import { UserProfileDropdown } from "@/components/user-profile-dropdown";
-import { SocialLink } from "@/components/social-link";
+import { GithubIcon, QrCodeIcon } from "lucide-react";
+import Link from "next/link";
 import { GetProCTA } from "@/components/get-pro-cta";
+import { SocialLink } from "@/components/social-link";
+import { UserProfileDropdown } from "@/components/user-profile-dropdown";
 import { useGithubStars } from "@/lib/hooks/use-github-stars";
 import { formatCompactNumber } from "@/utils/format";
 
 export function Header() {
-  const { stargazersCount } = useGithubStars("your-username", "qrdx"); // Update with your GitHub repo
+  const { stargazersCount } = useGithubStars("bucharitesh", "qrdx"); // Update with your GitHub repo
 
   return (
     <header className="border-b">
@@ -26,13 +26,13 @@ export function Header() {
           <GetProCTA className="h-8" />
 
           <SocialLink
-            href="https://github.com/your-username/qrdx"
+            href="https://github.com/bucharitesh/qrdx"
             className="flex items-center gap-2 text-sm font-bold"
           >
             <GithubIcon className="size-4" />
             {stargazersCount > 0 && formatCompactNumber(stargazersCount)}
           </SocialLink>
-          
+
           <Separator orientation="vertical" className="h-8" />
           <UserProfileDropdown />
         </div>

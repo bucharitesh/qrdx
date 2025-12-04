@@ -12,13 +12,17 @@ import {
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { Loader2 } from "lucide-react";
-import { useState } from "react";
+import React, { useState } from "react";
 
 interface QRSaveDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSave: (name: string) => Promise<void>;
   isSaving: boolean;
+  initialThemeName?: string;
+  title?: string;
+  description?: string;
+  ctaLabel?: string;
 }
 
 export function QRSaveDialog({
@@ -26,8 +30,18 @@ export function QRSaveDialog({
   onOpenChange,
   onSave,
   isSaving,
+  initialThemeName = "",
+  title = "Save QR Code Theme",
+  description = "Save your QR code design as a theme to reuse later.",
+  ctaLabel = "Save Theme",
 }: QRSaveDialogProps) {
-  const [themeName, setThemeName] = useState("");
+  const [themeName, setThemeName] = useState(initialThemeName);
+
+  React.useEffect(() => {
+    if (open) {
+      setThemeName(initialThemeName);
+    }
+  }, [open, initialThemeName]);
 
   const handleSave = async () => {
     if (!themeName.trim()) return;
@@ -39,10 +53,8 @@ export function QRSaveDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Save QR Code Theme</DialogTitle>
-          <DialogDescription>
-            Save your QR code design as a theme to reuse later.
-          </DialogDescription>
+          <DialogTitle>{title}</DialogTitle>
+          <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
         <div className="space-y-4 py-4">
           <div className="space-y-2">
@@ -74,7 +86,7 @@ export function QRSaveDialog({
             disabled={isSaving || !themeName.trim()}
           >
             {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Save Theme
+            {ctaLabel}
           </Button>
         </DialogFooter>
       </DialogContent>

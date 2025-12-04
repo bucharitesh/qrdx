@@ -30,6 +30,65 @@ const config = {
       },
     ],
   },
+  turbopack: {
+    rules: {
+      "*.svg": {
+        loaders: [
+          {
+            loader: "@svgr/webpack",
+            options: {
+              icon: true,
+            },
+          },
+        ],
+        as: "*.js",
+      },
+    },
+  },
+  webpack(config) {
+    // Exclude SVG from default asset/resource loader
+    config.module.rules.forEach((rule) => {
+      if (rule.test?.toString().includes("svg")) {
+        rule.exclude = /\.svg$/i;
+      }
+    });
+
+    // Add SVG loader - process SVGs as React components
+    config.module.rules.push({
+      test: /\.svg$/,
+      use: [
+        {
+          loader: "@svgr/webpack",
+          options: {
+            icon: true,
+            babel: {
+              presets: [
+                [
+                  "@babel/preset-env",
+                  {
+                    targets: "defaults",
+                  },
+                ],
+                "@babel/preset-react",
+              ],
+            },
+            svgoConfig: {
+              plugins: [
+                {
+                  name: "convertColors",
+                  params: {
+                    currentColor: true,
+                  },
+                },
+              ],
+            },
+          },
+        },
+      ],
+    });
+
+    return config;
+  },
   async rewrites() {
     return [
       {

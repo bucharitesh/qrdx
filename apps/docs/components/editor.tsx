@@ -17,6 +17,7 @@ import React, { use, useEffect } from "react";
 import { QRDialogActionsProvider } from "@/lib/hooks/use-qr-dialog-actions";
 import { useQREditorStore } from "@/store/editor-store";
 import type { QRPreset, QRStyle } from "@/types/qr";
+import { getPresetById } from "@/utils/qr-presets";
 import QRControlPanel from "./qr-control-panel";
 import QRPreviewPanel from "./qr-preview-panel";
 
@@ -41,6 +42,16 @@ const EditorContent: React.FC<EditorProps> = ({ qrPromise }) => {
   useEffect(() => {
     if (initialQRPreset) {
       applyPreset(initialQRPreset);
+    } else {
+      // Apply default preset if no preset is loaded
+      const { currentPreset, applyPreset: applyPresetFn } =
+        useQREditorStore.getState();
+      if (!currentPreset) {
+        const defaultPreset = getPresetById("default");
+        if (defaultPreset) {
+          applyPresetFn(defaultPreset);
+        }
+      }
     }
   }, [initialQRPreset, applyPreset]);
 
@@ -103,7 +114,11 @@ const EditorContent: React.FC<EditorProps> = ({ qrPromise }) => {
               className="mt-0 h-[calc(100%-2.5rem)]"
             >
               <div className="flex h-full flex-col">
-                <QRControlPanel style={styles} onChange={handleStyleChange} />
+                <QRControlPanel
+                  style={styles}
+                  onChange={handleStyleChange}
+                  qrPromise={qrPromise}
+                />
               </div>
             </TabsContent>
             <TabsContent value="preview" className="mt-0 h-[calc(100%-2.5rem)]">
@@ -129,7 +144,11 @@ const EditorContent: React.FC<EditorProps> = ({ qrPromise }) => {
             className="z-1 min-w-[max(20%,22rem)]"
           >
             <div className="relative isolate flex h-full flex-1 flex-col">
-              <QRControlPanel style={style} onChange={handleStyleChange} />
+              <QRControlPanel
+                style={style}
+                onChange={handleStyleChange}
+                qrPromise={qrPromise}
+              />
             </div>
           </ResizablePanel>
           <ResizableHandle />

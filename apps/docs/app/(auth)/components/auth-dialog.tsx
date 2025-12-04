@@ -1,5 +1,7 @@
 "use client";
 
+import Github from "@/assets/github.svg";
+import Google from "@/assets/google.svg";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   ResponsiveDialog,
@@ -8,12 +10,10 @@ import {
   ResponsiveDialogTitle,
   ResponsiveDialogTrigger,
 } from "@repo/design-system/components/ui/revola";
+import { authClient } from "@/lib/auth-client";
 import { Loader2 } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-// import Github from "@/assets/github.svg";
-// import Google from "@/assets/google.svg";
-import { authClient } from "@/lib/auth-client";
 
 interface AuthDialogProps {
   open: boolean;
@@ -78,9 +78,7 @@ export function AuthDialog({
 
   return (
     <ResponsiveDialog open={open} onOpenChange={onOpenChange}>
-      {trigger && (
-        <ResponsiveDialogTrigger asChild>{trigger}</ResponsiveDialogTrigger>
-      )}
+      {trigger && <ResponsiveDialogTrigger asChild>{trigger}</ResponsiveDialogTrigger>}
       <ResponsiveDialogContent className="overflow-hidden sm:max-w-100">
         <div className="space-y-4">
           <ResponsiveDialogHeader className="sm:pt-8">
@@ -90,7 +88,7 @@ export function AuthDialog({
             <p className="text-muted-foreground text-center">
               {isSignIn
                 ? "Sign in to your account to continue"
-                : "Sign up to get started with tweakcn"}
+                : "Sign up to get started with qrdx"}
             </p>
           </ResponsiveDialogHeader>
 
@@ -103,11 +101,9 @@ export function AuthDialog({
                 className="hover:bg-primary/10 hover:text-foreground flex w-full items-center justify-center gap-2"
                 disabled={isGoogleLoading || isGithubLoading}
               >
-                {/* <Google className="h-5 w-5" /> */}
+                <Google className="h-5 w-5" />
                 <span className="font-medium">Continue with Google</span>
-                {isGoogleLoading && (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                )}
+                {isGoogleLoading && <Loader2 className="h-4 w-4 animate-spin" />}
               </Button>
 
               <Button
@@ -117,11 +113,9 @@ export function AuthDialog({
                 className="hover:bg-primary/10 hover:text-foreground flex w-full items-center justify-center gap-2"
                 disabled={isGoogleLoading || isGithubLoading}
               >
-                {/* <Github className="h-5 w-5" /> */}
+                <Github className="h-5 w-5" />
                 <span className="font-medium">Continue with GitHub</span>
-                {isGithubLoading && (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                )}
+                {isGithubLoading && <Loader2 className="h-4 w-4 animate-spin" />}
               </Button>
             </div>
 
@@ -139,7 +133,6 @@ export function AuthDialog({
 
               <div className="mt-6 text-center">
                 <button
-                  type="button"
                   onClick={toggleMode}
                   className="text-primary focus:ring-primary text-sm font-medium hover:underline focus:ring-2 focus:ring-offset-2 focus:outline-none"
                 >

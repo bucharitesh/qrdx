@@ -120,6 +120,7 @@ export const useQREditorStore = create<QREditorStore>()(
         const oldValue = get().value;
         const oldHistory = get().history;
 
+        // Merge preset style with defaults to ensure all fields are present
         const newStyle = { ...defaultQREditorState.style, ...preset.style };
 
         const newHistoryEntry = {
@@ -242,13 +243,28 @@ export const useQREditorStore = create<QREditorStore>()(
       hasUnsavedChanges: () => {
         const currentPreset = get().currentPreset;
         const currentStyle = get().style;
+        const checkpoint = get().checkpoint;
 
+        // If no preset is set, check against default
         if (!currentPreset) {
-          return !isDeepEqual(currentStyle, defaultQREditorState.style);
+          if (!checkpoint) return false;
+          const normalizedCurrent = { ...defaultQREditorState.style, ...currentStyle };
+          const normalizedCheckpoint = { ...defaultQREditorState.style, ...checkpoint.style };
+          return !isDeepEqual(normalizedCurrent, normalizedCheckpoint);
         }
 
-        const presetStyle = getPresetStyle(currentPreset.id);
-        return !isDeepEqual(currentStyle, presetStyle);
+        // Compare against checkpoint if available (most accurate)
+        if (checkpoint && checkpoint.preset?.id === currentPreset.id) {
+          // Normalize both styles before comparison
+          const normalizedCurrent = { ...defaultQREditorState.style, ...currentStyle };
+          const normalizedCheckpoint = { ...defaultQREditorState.style, ...checkpoint.style };
+          return !isDeepEqual(normalizedCurrent, normalizedCheckpoint);
+        }
+
+        // Fallback to comparing with preset style
+        const presetStyle = { ...defaultQREditorState.style, ...currentPreset.style };
+        const normalizedCurrentStyle = { ...defaultQREditorState.style, ...currentStyle };
+        return !isDeepEqual(normalizedCurrentStyle, presetStyle);
       },
 
       // Undo

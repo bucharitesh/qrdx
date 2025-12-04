@@ -1,7 +1,7 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "@repo/design-system/hooks/use-toast";
+import { toast } from "@repo/design-system";
 import {
   createTheme,
   deleteTheme,
@@ -40,17 +40,10 @@ export function useCreateQRTheme() {
     mutationFn: createTheme,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["qr-themes"] });
-      toast({
-        title: "Success",
-        description: "QR code theme saved successfully!",
-      });
+      toast.success("QR code theme saved successfully!");
     },
     onError: (error: Error) => {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to save QR code theme",
-        variant: "destructive",
-      });
+      toast.error(error.message || "Failed to save QR code theme");
     },
   });
 }
@@ -63,17 +56,10 @@ export function useUpdateQRTheme() {
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["qr-themes"] });
       queryClient.invalidateQueries({ queryKey: ["qr-theme", data.id] });
-      toast({
-        title: "Success",
-        description: "QR code theme updated successfully!",
-      });
+      toast.success("QR code theme updated successfully!");
     },
     onError: (error: Error) => {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to update QR code theme",
-        variant: "destructive",
-      });
+      toast.error(error.message || "Failed to update QR code theme");
     },
   });
 }
@@ -85,17 +71,10 @@ export function useDeleteQRTheme() {
     mutationFn: deleteTheme,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["qr-themes"] });
-      toast({
-        title: "Success",
-        description: "QR code theme deleted successfully!",
-      });
+      toast.success("QR code theme deleted successfully!");
     },
     onError: (error: Error) => {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to delete QR code theme",
-        variant: "destructive",
-      });
+      toast.error(error.message || "Failed to delete QR code theme");
     },
   });
 }

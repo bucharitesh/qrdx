@@ -9,6 +9,7 @@
   },
   "include": [
     "next-env.d.ts",
+    "svg.d.ts",
     "next.config.ts",
     "**/*.ts",
     "**/*.tsx",

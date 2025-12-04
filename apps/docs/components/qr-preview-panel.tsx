@@ -1,12 +1,12 @@
 "use client";
 
-import React from "react";
-import type { QRStyle } from "@/types/qr";
-import { QRCode } from "qrdx";
 import { ScrollArea } from "@repo/design-system/components/ui/scroll-area";
-import { useQREditorStore } from "@/store/editor-store";
-import { DownloadOptions } from "@/components/playground/download-options";
+import { motion } from "motion/react";
+import { QRCode } from "qrdx";
+import type React from "react";
 import { ActionBar } from "@/components/editor/action-bar";
+import { useQREditorStore } from "@/store/editor-store";
+import type { QRStyle } from "@/types/qr";
 
 interface QRPreviewPanelProps {
   style: Partial<QRStyle>;
@@ -22,12 +22,29 @@ const QRPreviewPanel: React.FC<QRPreviewPanelProps> = ({ style }) => {
 
       {/* Preview Content */}
       <div className="relative size-full overflow-hidden p-4 pt-1">
-        <div className="relative isolate size-full overflow-hidden rounded-lg border">
+        <div className="relative isolate size-full overflow-hidden rounded-lg border bg-background">
           <ScrollArea className="size-full">
-            <div className="flex min-h-full flex-col items-center justify-center gap-8 p-8">
+            <div className="flex min-h-full w-full items-center justify-center p-8">
               {/* QR Code Preview */}
-              <div className="flex flex-col items-center gap-6">
-                <div className="rounded-xl bg-card p-8 shadow-sm">
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{
+                  duration: 0.3,
+                  ease: [0.4, 0, 0.2, 1],
+                }}
+                className="flex items-center justify-center"
+              >
+                <motion.div
+                  key={`${value}-${JSON.stringify(style)}`}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{
+                    duration: 0.4,
+                    ease: [0.4, 0, 0.2, 1],
+                  }}
+                  className="flex items-center justify-center"
+                >
                   <QRCode
                     bgColor={style.bgColor}
                     cornerEyeDotPattern={style.cornerEyeDotPattern}
@@ -39,27 +56,12 @@ const QRPreviewPanel: React.FC<QRPreviewPanelProps> = ({ style }) => {
                     fgColor={style.fgColor}
                     hideLogo={!style.showLogo}
                     logo={style.customLogo}
-                    scale={2}
+                    scale={4}
                     templateId={style.templateId}
                     value={value}
                   />
-                </div>
-                
-                {/* URL Display */}
-                <div className="w-full max-w-md space-y-2">
-                  <p className="text-muted-foreground text-center text-xs font-medium">
-                    Content
-                  </p>
-                  <p className="break-all rounded-md bg-muted px-4 py-2 text-center font-mono text-sm">
-                    {value || "No content"}
-                  </p>
-                </div>
-              </div>
-
-              {/* Download Options */}
-              <div className="w-full max-w-md">
-                <DownloadOptions />
-              </div>
+                </motion.div>
+              </motion.div>
             </div>
           </ScrollArea>
         </div>

@@ -9,8 +9,8 @@ export function ActionBar() {
     useQRDialogActions();
 
   return (
-    <div className="border-b">
-      <HorizontalScrollArea className="flex h-14 w-full items-center justify-end gap-4 px-4">
+    <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <HorizontalScrollArea className="flex h-14 w-full items-center justify-between gap-4 px-4">
         <ActionBarButtons
           onSaveClick={() => handleSaveClick()}
           isSaving={isCreatingTheme}

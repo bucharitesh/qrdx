@@ -14,8 +14,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@repo/design-system/components/ui/dropdown-menu";
-import { Loader2, LogOut } from "lucide-react";
+import { BookLock, Loader2, LogOut, Settings } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { useAuthStore } from "@/store/auth-store";
@@ -100,19 +101,19 @@ export function UserProfileDropdown() {
                   </p>
                 </div>
               </DropdownMenuLabel>
-              {/* <DropdownMenuSeparator className="bg-border opacity-80" /> */}
-              {/* <DropdownMenuItem asChild>
+              <DropdownMenuSeparator className="bg-border opacity-80" />
+              <DropdownMenuItem asChild>
                 <Link href="/settings">
                   <Settings /> Settings
                 </Link>
-              </DropdownMenuItem> */}
+              </DropdownMenuItem>
               <DropdownMenuSeparator className="bg-border opacity-80" />
-              {/* <DropdownMenuItem asChild>
+              <DropdownMenuItem asChild>
                 <Link href="/privacy-policy">
                   <BookLock />
                   Privacy Policy
                 </Link>
-              </DropdownMenuItem> */}
+              </DropdownMenuItem>
               <DropdownMenuItem onClick={handleLogOut}>
                 <LogOut /> Log out
               </DropdownMenuItem>

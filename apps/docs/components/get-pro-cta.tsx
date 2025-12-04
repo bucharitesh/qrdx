@@ -21,7 +21,7 @@ export function GetProCTA({ className, ...props }: GetProCTAProps) {
       variant="ghost"
       className={cn(
         "text-primary animate-in fade-in-50 bg-primary/10 hover:bg-primary hover:text-primary-foreground shadow-none duration-300",
-        className
+        className,
       )}
       asChild
       {...props}
@@ -33,4 +33,3 @@ export function GetProCTA({ className, ...props }: GetProCTAProps) {
     </Button>
   );
 }
-

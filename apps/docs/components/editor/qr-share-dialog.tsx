@@ -9,7 +9,7 @@ import {
   DialogTitle,
 } from "@repo/design-system/components/ui/dialog";
 import { Input } from "@repo/design-system/components/ui/input";
-import { toast } from "@repo/design-system/hooks/use-toast";
+import { toast } from "@repo/design-system";
 import { Check, Copy } from "lucide-react";
 import { useState } from "react";
 
@@ -26,17 +26,10 @@ export function QRShareDialog({ open, onOpenChange, url }: QRShareDialogProps) {
     try {
       await navigator.clipboard.writeText(url);
       setCopied(true);
-      toast({
-        title: "Copied!",
-        description: "Share link copied to clipboard",
-      });
+      toast.success("Share link copied to clipboard");
       setTimeout(() => setCopied(false), 2000);
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to copy link",
-        variant: "destructive",
-      });
+      toast.error("Failed to copy link");
     }
   };
 

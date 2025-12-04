@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@repo/design-system/components/ui/button";
 import { Card } from "@repo/design-system/components/ui/card";
 import { Input } from "@repo/design-system/components/ui/input";
 import {
@@ -10,37 +11,65 @@ import {
   SelectValue,
 } from "@repo/design-system/components/ui/select";
 import { useIsMobile } from "@repo/design-system/hooks/use-mobile";
-// import type { Theme } from "@/types/theme";
-import { ArrowUpDown, Search } from "lucide-react";
+import { ArrowUpDown, Palette, Plus, Search } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useState } from "react";
-
-// import { ThemeCard } from "./theme-card";
+import { useQRThemes } from "@/lib/hooks/use-qr-themes";
+import { QRThemeCard } from "./qr-theme-card";
 
 interface ThemesListProps {
-  // themes: Theme[];
-  themes: any[];
+  themes: Array<{
+    id: string;
+    name: string;
+    style: {
+      bgColor?: string;
+      fgColor?: string;
+      eyeColor?: string;
+      dotColor?: string;
+      bodyPattern?: string;
+      cornerEyePattern?: string;
+      cornerEyeDotPattern?: string;
+      level?: string;
+      templateId?: string;
+      showLogo?: boolean;
+      customLogo?: string;
+    };
+    createdAt: Date | string;
+  }>;
 }
 
-export function ThemesList({ themes }: ThemesListProps) {
-  // const [filteredThemes, setFilteredThemes] = useState<Theme[]>(themes);
-  const [filteredThemes, setFilteredThemes] = useState<any[]>(themes);
+export function ThemesList({ themes: initialThemes }: ThemesListProps) {
+  // Use React Query to fetch themes so it updates when cache is invalidated
+  const { data: themes = initialThemes, isLoading } = useQRThemes();
+  const [filteredThemes, setFilteredThemes] = useState(themes || []);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [sortOption, setSortOption] = useState("newest");
   const isMobile = useIsMobile();
 
   useEffect(() => {
+    if (!themes) return;
+
     const filtered = themes.filter((theme) =>
       theme.name?.toLowerCase().includes(searchTerm.toLowerCase()),
     );
 
     // Sort based on selected option
     const sorted = [...filtered].sort((a, b) => {
+      const dateA =
+        a.createdAt instanceof Date
+          ? a.createdAt.getTime()
+          : new Date(a.createdAt).getTime();
+      const dateB =
+        b.createdAt instanceof Date
+          ? b.createdAt.getTime()
+          : new Date(b.createdAt).getTime();
+
       switch (sortOption) {
         case "newest":
-          return (b.createdAt?.getTime() || 0) - (a.createdAt?.getTime() || 0);
+          return (dateB || 0) - (dateA || 0);
         case "oldest":
-          return (a.createdAt?.getTime() || 0) - (b.createdAt?.getTime() || 0);
+          return (dateA || 0) - (dateB || 0);
         case "name":
           return (a.name || "").localeCompare(b.name || "");
         default:
@@ -50,6 +79,32 @@ export function ThemesList({ themes }: ThemesListProps) {
 
     setFilteredThemes(sorted);
   }, [themes, searchTerm, sortOption]);
+
+  // Show empty state if no themes at all (not just filtered)
+  if (!isLoading && (!themes || themes.length === 0)) {
+    return (
+      <Card className="flex flex-col items-center justify-center p-4 py-12 text-center">
+        <div className="bg-primary/10 mb-6 rounded-full p-4">
+          <Palette className="text-primary size-12" />
+        </div>
+        <h2 className="mb-2 text-xl font-semibold md:text-2xl">
+          No themes created yet
+        </h2>
+        <p className="text-muted-foreground mb-6 max-w-md text-pretty">
+          Create your first custom theme to personalize your projects with
+          unique color palettes.
+        </p>
+        <div className="w-full max-w-md">
+          <Link href="/editor/qr">
+            <Button size="lg" className="w-full gap-2">
+              <Plus className="size-4" />
+              Create Your First QR Theme
+            </Button>
+          </Link>
+        </div>
+      </Card>
+    );
+  }
 
   return (
     <section className="space-y-4">
@@ -77,7 +132,11 @@ export function ThemesList({ themes }: ThemesListProps) {
       </div>
 
       <Card className="space-y-4 p-4">
-        {filteredThemes.length === 0 && searchTerm ? (
+        {isLoading ? (
+          <div className="py-12 text-center">
+            <p className="text-muted-foreground">Loading themes...</p>
+          </div>
+        ) : filteredThemes.length === 0 && searchTerm ? (
           <div className="py-12 text-center">
             <Search className="text-muted-foreground mx-auto mb-4 size-12" />
             <h3 className="mb-1 text-lg font-medium">No themes found</h3>
@@ -87,9 +146,9 @@ export function ThemesList({ themes }: ThemesListProps) {
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {/* {filteredThemes.map((theme: Theme) => (
-              <ThemeCard key={theme.id} theme={theme} />
-            ))} */}
+            {filteredThemes.map((theme) => (
+              <QRThemeCard key={theme.id} theme={theme} />
+            ))}
           </div>
         )}
       </Card>

@@ -1,22 +1,29 @@
 "use client";
 
-import { createCheckout } from "@/actions/checkout";
+import { toast } from "@repo/design-system";
 import { Button } from "@repo/design-system/components/ui/button";
-import { toast } from "@repo/design-system/hooks/use-toast";
-import { usePostLoginAction } from "@/lib/hooks/use-post-login-action";
-import { SUBSCRIPTION_STATUS_QUERY_KEY, useSubscription } from "@/lib/hooks/use-subscription";
-import { authClient } from "@/lib/auth-client";
 import { cn } from "@repo/design-system/lib/utils";
-import { useAuthStore } from "@/store/auth-store";
 import { useQueryClient } from "@tanstack/react-query";
 import { Gem, Loader } from "lucide-react";
 import { useRouter } from "next/navigation";
 import type { ComponentProps } from "react";
 import { useTransition } from "react";
+import { createCheckout } from "@/actions/checkout";
+import { authClient } from "@/lib/auth-client";
+import { usePostLoginAction } from "@/lib/hooks/use-post-login-action";
+import {
+  SUBSCRIPTION_STATUS_QUERY_KEY,
+  useSubscription,
+} from "@/lib/hooks/use-subscription";
+import { useAuthStore } from "@/store/auth-store";
 
 interface CheckoutButtonProps extends ComponentProps<typeof Button> {}
 
-export function CheckoutButton({ disabled, className, ...props }: CheckoutButtonProps) {
+export function CheckoutButton({
+  disabled,
+  className,
+  ...props
+}: CheckoutButtonProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const { data: session } = authClient.useSession();
@@ -45,15 +52,13 @@ export function CheckoutButton({ disabled, className, ...props }: CheckoutButton
       const res = await createCheckout();
 
       if ("error" in res || !res.url) {
-        toast({
-          title: "Error",
-          description: res.error || "Failed to create checkout",
-          variant: "destructive",
-        });
+        toast.error(res.error || "Failed to create checkout");
         return;
       }
 
-      queryClient.invalidateQueries({ queryKey: [SUBSCRIPTION_STATUS_QUERY_KEY] });
+      queryClient.invalidateQueries({
+        queryKey: [SUBSCRIPTION_STATUS_QUERY_KEY],
+      });
       router.push(res.url);
     });
   };
@@ -82,4 +87,3 @@ export function CheckoutButton({ disabled, className, ...props }: CheckoutButton
     </Button>
   );
 }
-
