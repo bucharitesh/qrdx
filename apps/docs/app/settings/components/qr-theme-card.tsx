@@ -1,5 +1,6 @@
 "use client";
 
+import { toast } from "@repo/design-system";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,7 +19,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@repo/design-system/components/ui/dropdown-menu";
-import { QRCode } from "qrdx";
 import { cn } from "@repo/design-system/lib/utils";
 import {
   Copy,
@@ -29,11 +29,18 @@ import {
   Zap,
 } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { QRCode } from "qrdx";
+import type {
+  BodyPattern,
+  CornerEyeDotPattern,
+  CornerEyePattern,
+  ErrorLevel,
+} from "qrdx/types";
 import { useState } from "react";
 import { useDeleteQRTheme } from "@/lib/hooks/use-qr-themes";
 import { useQREditorStore } from "@/store/editor-store";
-import { useRouter } from "next/navigation";
-import { toast } from "@repo/design-system";
+import type { QRPreset } from "@/types/qr";
 
 interface QRThemeCardProps {
   theme: {
@@ -76,15 +83,26 @@ export function QRThemeCard({ theme, className }: QRThemeCardProps) {
   };
 
   const handleQuickApply = () => {
-    const preset = {
+    const preset: QRPreset = {
       id: theme.id,
       name: theme.name,
       description: "",
       source: "SAVED" as const,
-      createdAt: typeof theme.createdAt === "string" 
-        ? theme.createdAt 
-        : theme.createdAt.toISOString(),
-      style: theme.style,
+      createdAt:
+        typeof theme.createdAt === "string"
+          ? theme.createdAt
+          : theme.createdAt.toISOString(),
+      style: {
+        ...theme.style,
+        bodyPattern: theme.style.bodyPattern as BodyPattern | undefined,
+        cornerEyePattern: theme.style.cornerEyePattern as
+          | CornerEyePattern
+          | undefined,
+        cornerEyeDotPattern: theme.style.cornerEyeDotPattern as
+          | CornerEyeDotPattern
+          | undefined,
+        level: theme.style.level as ErrorLevel | undefined,
+      },
     };
     applyPreset(preset);
     router.push("/editor/qr");
@@ -109,10 +127,14 @@ export function QRThemeCard({ theme, className }: QRThemeCardProps) {
           fgColor={theme.style.fgColor || "#000000"}
           eyeColor={theme.style.eyeColor || theme.style.fgColor || "#000000"}
           dotColor={theme.style.dotColor || theme.style.fgColor || "#000000"}
-          bodyPattern={theme.style.bodyPattern}
-          cornerEyePattern={theme.style.cornerEyePattern}
-          cornerEyeDotPattern={theme.style.cornerEyeDotPattern}
-          level={theme.style.level as any}
+          bodyPattern={theme.style.bodyPattern as BodyPattern | undefined}
+          cornerEyePattern={
+            theme.style.cornerEyePattern as CornerEyePattern | undefined
+          }
+          cornerEyeDotPattern={
+            theme.style.cornerEyeDotPattern as CornerEyeDotPattern | undefined
+          }
+          level={theme.style.level as ErrorLevel | undefined}
           templateId={theme.style.templateId}
           hideLogo={!theme.style.showLogo}
           logo={theme.style.customLogo}
@@ -205,4 +227,3 @@ export function QRThemeCard({ theme, className }: QRThemeCardProps) {
     </Card>
   );
 }
-

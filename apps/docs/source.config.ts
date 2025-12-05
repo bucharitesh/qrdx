@@ -10,6 +10,7 @@ import {
   metaSchema,
 } from "fumadocs-mdx/config";
 import jsonSchema from "fumadocs-mdx/plugins/json-schema";
+import lastModified from "fumadocs-mdx/plugins/last-modified";
 import { transformerTwoslash } from "fumadocs-twoslash";
 import { createFileSystemTypesCache } from "fumadocs-twoslash/cache-fs";
 import { remarkAutoTypeTable } from "fumadocs-typescript";
@@ -17,7 +18,6 @@ import type { ElementContent } from "hast";
 import rehypeKatex from "rehype-katex";
 import remarkMath from "remark-math";
 import { z } from "zod";
-
 // You can customise Zod schemas for frontmatter and `meta.json` here
 // see https://fumadocs.dev/docs/mdx/collections
 export const docs = defineDocs({
@@ -43,10 +43,12 @@ export const docs = defineDocs({
 });
 
 export default defineConfig({
-  lastModifiedTime: "git",
   plugins: [
     jsonSchema({
       insert: true,
+    }),
+    lastModified({
+      versionControl: "git",
     }),
   ],
   mdxOptions: {

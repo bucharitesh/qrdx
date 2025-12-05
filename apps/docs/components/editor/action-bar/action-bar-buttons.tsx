@@ -3,6 +3,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { useQREditorStore } from "@/store/editor-store";
+import { CodeButton } from "./code-button";
 import { CopySVGButton } from "./copy-svg-button";
 import { DownloadButton } from "./download-button";
 import { EditButton } from "./edit-button";
@@ -72,6 +73,7 @@ export function ActionBarButtons({
         />
         <DownloadButton />
         <CopySVGButton />
+        <CodeButton />
       </div>
     </>
   );
