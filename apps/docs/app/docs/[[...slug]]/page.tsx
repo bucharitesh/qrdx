@@ -40,12 +40,11 @@ export default async function Page(props: PageProps<"/docs/[[...slug]]">) {
 
   if (!page) return <NotFound getSuggestions={() => Promise.resolve([])} />;
 
-  const { body: Mdx, toc, lastModified, preview } = page.data;
+  const { body: Mdx, toc, preview } = page.data;
 
   return (
     <DocsPage
       toc={toc}
-      lastUpdate={lastModified ? new Date(lastModified) : undefined}
       tableOfContent={{
         style: "clerk",
       }}
