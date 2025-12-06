@@ -102,7 +102,7 @@ function AssistantMessage({
             "border-border/50! bg-foreground relative flex size-6 shrink-0 items-center justify-center rounded-full border select-none",
           )}
         >
-          <Logo className={cn("text-background size-full p-0.5")} />
+          <Logo className={cn("text-background size-full p-1")} />
         </div>
       )}
 

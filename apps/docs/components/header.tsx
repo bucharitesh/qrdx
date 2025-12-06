@@ -3,6 +3,7 @@
 import { Separator } from "@repo/design-system/components/ui/separator";
 import { GithubIcon, QrCodeIcon, Sparkles } from "lucide-react";
 import Link from "next/link";
+import Logo from "@/assets/logo.svg";
 import { GetProCTA } from "@/components/get-pro-cta";
 import { SocialLink } from "@/components/social-link";
 import { UserProfileDropdown } from "@/components/user-profile-dropdown";
@@ -17,8 +18,8 @@ export function Header() {
       <div className="flex items-center justify-between gap-2 p-4">
         <div className="flex items-center gap-4">
           <Link href="/" className="flex items-center gap-2">
-            <QrCodeIcon className="size-6" />
-            <span className="hidden font-bold md:block">qrdx</span>
+            <Logo className="size-6" />
+            <span className="hidden font-bold md:block">QRdx</span>
           </Link>
         </div>
         <div className="flex items-center gap-3.5">
