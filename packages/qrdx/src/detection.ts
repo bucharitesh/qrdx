@@ -34,8 +34,6 @@ export const downloadImageData = (
   document.body.appendChild(downloadLink);
   downloadLink.click();
   document.body.removeChild(downloadLink);
-
-  console.log(`Downloaded image data as ${filename}`);
 };
 
 const decodeQRCode = (
@@ -135,7 +133,6 @@ const decodeQRCode = (
             try {
               const qrCode = jsQR(imageData.data, width, height);
               if (qrCode?.data) {
-                console.log(`QR code found at scale ratio: ${scaleRatio}`);
                 resolve(qrCode);
                 return;
               }

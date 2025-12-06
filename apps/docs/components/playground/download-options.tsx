@@ -118,7 +118,6 @@ export const DownloadOptions: React.FC = () => {
     try {
       const svgContent = await getSVGString(qrProps);
       await navigator.clipboard.writeText(svgContent);
-      console.log("SVG copied to clipboard");
     } catch (error) {
       console.error("Error copying SVG:", error);
     }

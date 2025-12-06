@@ -1,5 +1,5 @@
 import { HomeLayout } from "fumadocs-ui/layouts/home";
-import { BookIcon, CreditCard, QrCodeIcon } from "lucide-react";
+import { BookIcon, CreditCard, QrCodeIcon, Sparkles } from "lucide-react";
 import { baseOptions, linkItems } from "@/lib/layout.shared";
 
 export default function Layout({ children }: LayoutProps<"/">) {
@@ -23,6 +23,12 @@ export default function Layout({ children }: LayoutProps<"/">) {
           icon: <CreditCard />,
           text: "Pricing",
           url: "/pricing",
+          secondary: false,
+        },
+        {
+          icon: <Sparkles />,
+          text: "AI",
+          url: "/ai",
           secondary: false,
         },
         ...linkItems,

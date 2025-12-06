@@ -10,8 +10,10 @@ import {
   TabsContent,
   TabsList,
 } from "@repo/design-system/components/ui/tabs";
+import { Sparkle, Sparkles } from "lucide-react";
 import { getContrastLevel, getContrastRatio } from "qrdx";
-import React, { use, useState } from "react";
+import React, { use } from "react";
+import { AIChatPanel } from "@/components/editor/ai/ai-chat-panel";
 import { ColorPicker } from "@/components/editor/color-picker";
 import ControlSection from "@/components/editor/control-section";
 import { QREditActions } from "@/components/editor/qr-edit-actions";
@@ -23,6 +25,10 @@ import { CornerEyePatternSelector } from "@/components/playground/corner-eye-pat
 import { ErrorLevelSelector } from "@/components/playground/error-level-selector";
 import { PatternSelector } from "@/components/playground/pattern-selector";
 import { TemplateSelector } from "@/components/playground/template-selector";
+import {
+  type ControlTab,
+  useControlsTabFromUrl,
+} from "@/lib/hooks/use-controls-tab-from-url";
 import { useQREditorStore } from "@/store/editor-store";
 import type { QRPreset, QRStyle } from "@/types/qr";
 
@@ -38,7 +44,7 @@ const QRControlPanel: React.FC<QRControlPanelProps> = ({
 }) => {
   const { value, setValue, setStyle } = useQREditorStore();
   const fileInputRef = React.useRef<HTMLInputElement>(null);
-  const [activeTab, setActiveTab] = useState("content");
+  const { tab, handleSetTab } = useControlsTabFromUrl();
 
   // Unwrap the promise to check if we're editing a saved theme
   const theme = qrPromise ? use(qrPromise) : null;
@@ -98,8 +104,8 @@ const QRControlPanel: React.FC<QRControlPanelProps> = ({
       {/* Main Controls */}
       <div className="flex min-h-0 flex-1 flex-col space-y-4">
         <Tabs
-          value={activeTab}
-          onValueChange={setActiveTab}
+          value={tab}
+          onValueChange={(v) => handleSetTab(v as ControlTab)}
           className="flex min-h-0 w-full flex-1 flex-col"
         >
           <HorizontalScrollArea className="mt-2 mb-1 px-4">
@@ -110,6 +116,15 @@ const QRControlPanel: React.FC<QRControlPanelProps> = ({
               <TabsTriggerPill value="frames">Frames</TabsTriggerPill>
               <TabsTriggerPill value="logo">Logo</TabsTriggerPill>
               <TabsTriggerPill value="settings">Settings</TabsTriggerPill>
+              <TabsTriggerPill
+                value="ai"
+                className="data-[state=active]:[--effect:var(--secondary-foreground)] data-[state=active]:[--foreground:var(--muted-foreground)] data-[state=active]:[--muted-foreground:var(--effect)]"
+              >
+                <Sparkle className="mr-1 size-3.5 text-current" />
+                <span className="animate-text via-foreground from-muted-foreground to-muted-foreground flex items-center gap-1 bg-gradient-to-r from-50% via-60% to-100% bg-[200%_auto] bg-clip-text text-sm text-transparent">
+                  Generate
+                </span>
+              </TabsTriggerPill>
             </TabsList>
           </HorizontalScrollArea>
 
@@ -325,6 +340,10 @@ const QRControlPanel: React.FC<QRControlPanelProps> = ({
                 <ErrorLevelSelector />
               </ControlSection>
             </ScrollArea>
+          </TabsContent>
+
+          <TabsContent value="ai" className="mt-1 size-full overflow-hidden">
+            <AIChatPanel />
           </TabsContent>
         </Tabs>
       </div>

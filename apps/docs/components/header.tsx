@@ -1,8 +1,7 @@
 "use client";
 
-import { Button } from "@repo/design-system/components/ui/button";
 import { Separator } from "@repo/design-system/components/ui/separator";
-import { GithubIcon, QrCodeIcon } from "lucide-react";
+import { GithubIcon, QrCodeIcon, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { GetProCTA } from "@/components/get-pro-cta";
 import { SocialLink } from "@/components/social-link";
@@ -14,9 +13,9 @@ export function Header() {
   const { stargazersCount } = useGithubStars("bucharitesh", "qrdx"); // Update with your GitHub repo
 
   return (
-    <header className="border-b">
+    <header className="border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
       <div className="flex items-center justify-between gap-2 p-4">
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-4">
           <Link href="/" className="flex items-center gap-2">
             <QrCodeIcon className="size-6" />
             <span className="hidden font-bold md:block">qrdx</span>
