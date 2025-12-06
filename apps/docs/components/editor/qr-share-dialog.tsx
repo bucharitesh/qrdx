@@ -2,12 +2,12 @@
 
 import { Button } from "@repo/design-system/components/ui/button";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@repo/design-system/components/ui/dialog";
+  ResponsiveDialog,
+  ResponsiveDialogContent,
+  ResponsiveDialogDescription,
+  ResponsiveDialogHeader,
+  ResponsiveDialogTitle,
+} from "@repo/design-system/components/ui/revola";
 import { Input } from "@repo/design-system/components/ui/input";
 import { toast } from "@repo/design-system";
 import { Check, Copy } from "lucide-react";
@@ -34,14 +34,14 @@ export function QRShareDialog({ open, onOpenChange, url }: QRShareDialogProps) {
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Share QR Code</DialogTitle>
-          <DialogDescription>
+    <ResponsiveDialog open={open} onOpenChange={onOpenChange}>
+      <ResponsiveDialogContent className="p-6" showCloseButton={true}>
+        <ResponsiveDialogHeader>
+          <ResponsiveDialogTitle>Share QR Code</ResponsiveDialogTitle>
+          <ResponsiveDialogDescription>
             Share this link with others to show them your QR code design.
-          </DialogDescription>
-        </DialogHeader>
+          </ResponsiveDialogDescription>
+        </ResponsiveDialogHeader>
         <div className="space-y-4 py-4">
           <div className="flex gap-2">
             <Input value={url} readOnly className="flex-1" />
@@ -60,7 +60,7 @@ export function QRShareDialog({ open, onOpenChange, url }: QRShareDialogProps) {
             </Button>
           </div>
         </div>
-      </DialogContent>
-    </Dialog>
+      </ResponsiveDialogContent>
+    </ResponsiveDialog>
   );
 }

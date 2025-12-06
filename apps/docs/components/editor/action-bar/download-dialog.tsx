@@ -1,15 +1,16 @@
 "use client";
 
+import { toast } from "@repo/design-system";
 import { Button } from "@repo/design-system/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@repo/design-system/components/ui/dialog";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
+import {
+  ResponsiveDialog,
+  ResponsiveDialogContent,
+  ResponsiveDialogDescription,
+  ResponsiveDialogHeader,
+  ResponsiveDialogTitle,
+} from "@repo/design-system/components/ui/revola";
 import {
   Select,
   SelectContent,
@@ -17,7 +18,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@repo/design-system/components/ui/select";
-import { toast } from "@repo/design-system";
 import { DownloadIcon } from "lucide-react";
 import {
   type DownloadSize,
@@ -27,8 +27,8 @@ import {
   validateSize,
 } from "qrdx";
 import React from "react";
-import { useDownloadStore } from "@/store/download-store";
 import { useQREditorStore } from "@/store/editor-store";
+import { usePreferencesStore } from "@/store/preferences-store";
 import type { DownloadOptions as DownloadOptionsType } from "@/types/qr";
 
 interface DownloadDialogProps {
@@ -38,7 +38,7 @@ interface DownloadDialogProps {
 
 export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
   const { value, style } = useQREditorStore();
-  const { downloadOptions, updateDownloadOption } = useDownloadStore();
+  const { downloadOptions, updateDownloadOption } = usePreferencesStore();
   const [sizeError, setSizeError] = React.useState<string>("");
   const [isDownloading, setIsDownloading] = React.useState(false);
 
@@ -116,7 +116,9 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
         format: downloadOptions.format,
         size,
       });
-      toast.success(`QR code downloaded as ${downloadOptions.format.toUpperCase()}`);
+      toast.success(
+        `QR code downloaded as ${downloadOptions.format.toUpperCase()}`,
+      );
       onOpenChange(false);
     } catch (error) {
       console.error("Error downloading QR code:", error);
@@ -130,14 +132,17 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>Download QR Code</DialogTitle>
-          <DialogDescription>
+    <ResponsiveDialog open={open} onOpenChange={onOpenChange}>
+      <ResponsiveDialogContent
+        className="p-6 sm:max-w-md"
+        showCloseButton={true}
+      >
+        <ResponsiveDialogHeader>
+          <ResponsiveDialogTitle>Download QR Code</ResponsiveDialogTitle>
+          <ResponsiveDialogDescription>
             Choose the size and format for your QR code download.
-          </DialogDescription>
-        </DialogHeader>
+          </ResponsiveDialogDescription>
+        </ResponsiveDialogHeader>
         <div className="space-y-4 py-4">
           <div className="grid gap-4 grid-cols-2">
             {/* Size Selection */}
@@ -244,8 +249,7 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
               : `Download ${downloadOptions.format.toUpperCase()}`}
           </Button>
         </div>
-      </DialogContent>
-    </Dialog>
+      </ResponsiveDialogContent>
+    </ResponsiveDialog>
   );
 }
-

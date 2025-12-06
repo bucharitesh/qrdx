@@ -20,13 +20,13 @@ import {
   validateSize,
 } from "qrdx";
 import React from "react";
-import { useDownloadStore } from "@/store/download-store";
+import { usePreferencesStore } from "@/store/preferences-store";
 import { useQREditorStore } from "@/store/editor-store";
 import type { DownloadOptions as DownloadOptionsType } from "@/types/qr";
 
 export const DownloadOptions: React.FC = () => {
   const { value, style } = useQREditorStore();
-  const { downloadOptions, updateDownloadOption } = useDownloadStore();
+  const { downloadOptions, updateDownloadOption } = usePreferencesStore();
   const [sizeError, setSizeError] = React.useState<string>("");
   const [isDownloading, setIsDownloading] = React.useState(false);
 

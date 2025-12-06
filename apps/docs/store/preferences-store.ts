@@ -1,67 +1,40 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { ColorFormat } from "@/types";
-
-type PackageManager = "pnpm" | "npm" | "yarn" | "bun";
-export type ColorSelectorTab = "list" | "palette";
-
-const colorFormatsByVersion = {
-  "3": ["hex", "rgb", "hsl"] as const,
-  "4": ["hex", "rgb", "hsl", "oklch"] as const,
-};
+import type { DownloadOptions } from "@/types/qr";
 
 interface PreferencesStore {
-  tailwindVersion: "3" | "4";
-  colorFormat: ColorFormat;
-  packageManager: PackageManager;
-  colorSelectorTab: ColorSelectorTab;
   chatSuggestionsOpen: boolean;
-  setTailwindVersion: (version: "3" | "4") => void;
-  setColorFormat: (format: ColorFormat) => void;
-  setPackageManager: (pm: PackageManager) => void;
-  setColorSelectorTab: (tab: ColorSelectorTab) => void;
   setChatSuggestionsOpen: (open: boolean) => void;
-  getAvailableColorFormats: () => readonly ColorFormat[];
+  downloadOptions: DownloadOptions;
+  setDownloadOptions: (options: DownloadOptions) => void;
+  updateDownloadOption: <K extends keyof DownloadOptions>(
+    key: K,
+    value: DownloadOptions[K],
+  ) => void;
 }
 
 export const usePreferencesStore = create<PreferencesStore>()(
   persist(
-    (set, get) => ({
-      tailwindVersion: "4",
-      colorFormat: "oklch",
-      packageManager: "pnpm",
-      colorSelectorTab: "list",
+    (set) => ({
       chatSuggestionsOpen: true,
-      setTailwindVersion: (version: "3" | "4") => {
-        const currentFormat = get().colorFormat;
-        if (version === "3" && currentFormat === "oklch") {
-          set({ tailwindVersion: version, colorFormat: "hsl" });
-        } else {
-          set({ tailwindVersion: version });
-        }
-      },
-      setColorFormat: (format: ColorFormat) => {
-        const availableFormats = get().getAvailableColorFormats();
-        if (availableFormats.includes(format)) {
-          set({ colorFormat: format });
-        }
-      },
-      setPackageManager: (pm: PackageManager) => {
-        set({ packageManager: pm });
-      },
-      setColorSelectorTab: (tab: ColorSelectorTab) => {
-        set({ colorSelectorTab: tab });
-      },
-      getAvailableColorFormats: () => {
-        const version = get().tailwindVersion as "3" | "4";
-        return colorFormatsByVersion[version];
-      },
       setChatSuggestionsOpen: (open: boolean) => {
         set({ chatSuggestionsOpen: open });
       },
+      downloadOptions: {
+        format: "png",
+        sizePreset: "medium",
+        width: 600,
+        height: 600,
+        filename: undefined,
+      },
+      setDownloadOptions: (options) => set({ downloadOptions: options }),
+      updateDownloadOption: (key, value) =>
+        set((state) => ({
+          downloadOptions: { ...state.downloadOptions, [key]: value },
+        })),
     }),
     {
-      name: "preferences-storage", // unique name for localStorage
+      name: "preferences-storage",
     },
   ),
 );

@@ -3,12 +3,12 @@
 import { toast } from "@repo/design-system";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@repo/design-system/components/ui/dialog";
+  ResponsiveDialog,
+  ResponsiveDialogContent,
+  ResponsiveDialogDescription,
+  ResponsiveDialogHeader,
+  ResponsiveDialogTitle,
+} from "@repo/design-system/components/ui/revola";
 import {
   ScrollArea,
   ScrollBar,
@@ -88,20 +88,20 @@ ${props.join("\n")}
       setCopied(true);
       toast.success("Code copied to clipboard");
       setTimeout(() => setCopied(false), 2000);
-    } catch (error) {
+    } catch {
       toast.error("Failed to copy code");
     }
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="h-[90dvh] max-h-[90dvh] overflow-hidden shadow-lg sm:h-[80dvh] sm:max-h-[min(700px,90dvh)] sm:w-[calc(100%-2rem)] sm:max-w-4xl">
-        <DialogHeader>
-          <DialogTitle>QR Code Component</DialogTitle>
-          <DialogDescription className="sr-only">
+    <ResponsiveDialog open={open} onOpenChange={onOpenChange}>
+      <ResponsiveDialogContent className="h-[90dvh] max-h-[90dvh] overflow-hidden p-6 shadow-lg sm:h-[80dvh] sm:max-h-[min(700px,90dvh)] sm:w-[calc(100%-2rem)] sm:max-w-4xl" showCloseButton={true}>
+        <ResponsiveDialogHeader>
+          <ResponsiveDialogTitle>QR Code Component</ResponsiveDialogTitle>
+          <ResponsiveDialogDescription className="sr-only">
             View and copy the code for your QR code component.
-          </DialogDescription>
-        </DialogHeader>
+          </ResponsiveDialogDescription>
+        </ResponsiveDialogHeader>
         <div className="flex h-full flex-col">
           {/* Code container with file tab header like tweakcn */}
           <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border">
@@ -146,7 +146,7 @@ ${props.join("\n")}
             </ScrollArea>
           </div>
         </div>
-      </DialogContent>
-    </Dialog>
+      </ResponsiveDialogContent>
+    </ResponsiveDialog>
   );
 }

@@ -83,17 +83,32 @@ export function ContentTypeModal({
         className="gap-0 overflow-hidden p-0 sm:max-w-5xl"
       >
         <div className="flex h-[80vh] flex-col md:h-[70vh]">
-          {/* Header - Hidden on mobile */}
-          <ResponsiveDialogHeader className="hidden border-b px-6 py-4 md:block">
-            <div className="flex items-center justify-between">
-              <ResponsiveDialogTitle className="text-xl">
-                QR Content Categories
-              </ResponsiveDialogTitle>
+          {/* Header - Desktop only */}
+          <div className="hidden md:block">
+            <div className="flex items-center">
+              {/* Left: Title (same width as sidebar) */}
+              <div className="w-64 shrink-0 px-6 py-6">
+                <ResponsiveDialogTitle className="text-md font-bold">
+                  QR Content Categories
+                </ResponsiveDialogTitle>
+              </div>
+              {/* Right: Search bar (aligns with content) */}
+              <div className="flex-1 px-2">
+                <div className="relative w-full">
+                  <Search className="text-muted-foreground absolute left-3 top-1/2 size-4 -translate-y-1/2" />
+                  <Input
+                    placeholder="What would you like to create?"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+              </div>
             </div>
-          </ResponsiveDialogHeader>
+          </div>
 
-          {/* Search */}
-          <div className="border-b px-4 py-3 md:px-6">
+          {/* Search - Mobile only */}
+          <div className="px-4 py-3 md:hidden">
             <div className="relative">
               <Search className="text-muted-foreground absolute left-3 top-1/2 size-4 -translate-y-1/2" />
               <Input
@@ -106,7 +121,7 @@ export function ContentTypeModal({
           </div>
 
           {/* Category Pills - Mobile horizontal scroll */}
-          <div className="border-b md:hidden">
+          <div className="md:hidden">
             <div className="flex gap-2 overflow-x-auto px-4 py-3 scrollbar-hide">
               {CONTENT_CATEGORIES.map((category) => {
                 const Icon = category.icon
@@ -138,9 +153,9 @@ export function ContentTypeModal({
           {/* Main Content - Split Layout */}
           <div className="flex min-h-0 flex-1">
             {/* Left Sidebar - Categories - Desktop only */}
-            <div className="border-r bg-muted/20 hidden w-48 md:block">
+            <div className="hidden w-64 shrink-0 md:block">
               <ScrollArea className="h-full">
-                <div className="space-y-1 p-2">
+                <div className="space-y-1 p-4">
                   {CONTENT_CATEGORIES.map((category) => {
                     const Icon = category.icon
                       ? iconMap[category.icon as keyof typeof iconMap]
@@ -154,7 +169,7 @@ export function ContentTypeModal({
                         }}
                         type="button"
                         className={cn(
-                          "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-left text-sm transition-colors",
+                          "flex w-full items-center gap-3 rounded-lg px-4 py-2.5 text-left text-sm transition-colors",
                           activeCategory === category.id
                             ? "bg-primary/10 text-primary font-medium"
                             : "text-muted-foreground hover:bg-accent hover:text-foreground",
@@ -172,7 +187,7 @@ export function ContentTypeModal({
             {/* Right Content - Scrollable Rows */}
             <div className="flex-1">
               <ScrollArea className="h-full">
-                <div className="space-y-6 p-4 md:space-y-8 md:p-6">
+                <div className="space-y-6 p-4 md:space-y-8">
                   {searchQuery === "" ? (
                     <>
                       {activeCategory === "for-you" && (
@@ -201,16 +216,15 @@ export function ContentTypeModal({
                                           }
                                           type="button"
                                           className={cn(
-                                            "group relative flex w-[140px] shrink-0 flex-col gap-2 overflow-hidden rounded-xl border bg-muted/30 transition-all hover:border-primary hover:bg-accent md:w-[180px] md:gap-3 md:border md:bg-transparent md:p-6",
-                                            isActive
-                                              ? "border-primary bg-primary/5 ring-2 ring-primary/20"
-                                              : "border-border",
+                                            "group relative flex w-[140px] shrink-0 flex-col gap-2 overflow-hidden rounded-xl bg-muted/30 transition-all hover:bg-accent md:w-[180px] md:flex-col md:items-center md:gap-3 md:bg-muted/20 md:p-6",
+                                            isActive &&
+                                              "bg-primary/5 md:bg-primary/5",
                                           )}
                                         >
                                           <div
                                             className={cn(
                                               "bg-gradient-to-br from-primary/20 to-primary/5 flex aspect-[4/3] w-full items-center justify-center rounded-t-xl transition-all md:aspect-auto md:size-16 md:shrink-0 md:rounded-2xl",
-                                              isActive && "md:scale-110",
+                                              isActive && "md:scale-105",
                                             )}
                                           >
                                             <Icon
@@ -220,7 +234,7 @@ export function ContentTypeModal({
                                               )}
                                             />
                                           </div>
-                                          <div className="space-y-0.5 px-3 pb-3 md:space-y-1 md:p-0 md:text-center">
+                                          <div className="space-y-0.5 px-3 pb-3 text-left md:space-y-1 md:p-0 md:text-center">
                                             <div className="text-sm font-medium">
                                               {meta.label}
                                             </div>
