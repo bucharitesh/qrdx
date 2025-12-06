@@ -3,6 +3,7 @@ import { persist } from "zustand/middleware";
 import { isDeepEqual } from "@/lib/utils";
 import type { QREditorState } from "@/types/editor";
 import type { QRPreset, QRStyle } from "@/types/qr";
+import type { ContentType } from "@/types/qr-content";
 import { defaultQREditorState, getPresetStyle } from "@/utils/qr-presets";
 
 const MAX_HISTORY_COUNT = 30;
@@ -25,6 +26,7 @@ interface QREditorStore {
   style: Partial<QRStyle>;
   value: string;
   currentPreset?: QRPreset;
+  contentType: ContentType;
 
   // Checkpoint for unsaved changes
   checkpoint: QREditorState | null;
@@ -36,6 +38,7 @@ interface QREditorStore {
   // Actions
   setStyle: (style: Partial<QRStyle>) => void;
   setValue: (value: string) => void;
+  setContentType: (contentType: ContentType) => void;
   applyPreset: (preset: QRPreset) => void;
   saveCheckpoint: () => void;
   restoreCheckpoint: () => void;
@@ -63,6 +66,7 @@ export const useQREditorStore = create<QREditorStore>()(
       style: defaultQREditorState.style,
       value: defaultQREditorState.value,
       currentPreset: undefined,
+      contentType: "url" as ContentType,
       checkpoint: null,
       history: [],
       future: [],
@@ -111,6 +115,11 @@ export const useQREditorStore = create<QREditorStore>()(
       // Update value
       setValue: (newValue: string) => {
         set({ value: newValue });
+      },
+
+      // Update content type
+      setContentType: (contentType: ContentType) => {
+        set({ contentType });
       },
 
       // Apply preset
@@ -333,6 +342,7 @@ export const useQREditorStore = create<QREditorStore>()(
           style: defaultQREditorState.style,
           value: defaultQREditorState.value,
           currentPreset: undefined,
+          contentType: "url" as ContentType,
           checkpoint: null,
           history: [],
           future: [],
@@ -345,6 +355,7 @@ export const useQREditorStore = create<QREditorStore>()(
         style: state.style,
         value: state.value,
         currentPreset: state.currentPreset,
+        contentType: state.contentType,
       }),
     },
   ),
