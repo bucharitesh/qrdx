@@ -20,12 +20,13 @@ export const POST = Webhooks({
       type === "subscription.active" ||
       type === "subscription.canceled" ||
       type === "subscription.revoked" ||
+      type === "subscription.uncanceled" ||
       type === "subscription.updated"
     ) {
       console.log("🎯 Processing subscription webhook:", type);
       console.log("📦 Payload data:", JSON.stringify(data, null, 2));
       try {
-        const userId = data.customer?.id as string;
+        const userId = data.customer?.externalId;
 
         const subscriptionData = {
           id: data.id,
@@ -63,33 +64,37 @@ export const POST = Webhooks({
           amount: subscriptionData.amount,
         });
 
-        await db.insert(subscription).values({
-          id: subscriptionData.id,
-          createdAt: subscriptionData.createdAt,
-          modifiedAt: subscriptionData.modifiedAt || new Date(),
-          amount: subscriptionData.amount as number,
-          currency: subscriptionData.currency as string,
-          recurringInterval: subscriptionData.recurringInterval,
-          status: subscriptionData.status,
-          currentPeriodStart: subscriptionData.currentPeriodStart,
-          currentPeriodEnd: subscriptionData.currentPeriodEnd,
-          cancelAtPeriodEnd: subscriptionData.cancelAtPeriodEnd,
-          canceledAt: subscriptionData.canceledAt,
-          startedAt: subscriptionData.startedAt,
-          endsAt: subscriptionData.endsAt,
-          endedAt: subscriptionData.endedAt,
-          customerId: subscriptionData.customerId,
-          productId: subscriptionData.productId,
-          discountId: subscriptionData.discountId,
-          checkoutId: subscriptionData.checkoutId,
-          customerCancellationReason:
-            subscriptionData.customerCancellationReason,
-          customerCancellationComment:
-            subscriptionData.customerCancellationComment,
-          metadata: subscriptionData.metadata,
-          customFieldData: subscriptionData.customFieldData,
-          userId: subscriptionData.userId,
-        });
+        await db
+          .insert(subscription)
+          .values(subscriptionData)
+          .onConflictDoUpdate({
+            target: subscription.id,
+            set: {
+              modifiedAt: subscriptionData.modifiedAt || new Date(),
+              amount: subscriptionData.amount,
+              currency: subscriptionData.currency,
+              recurringInterval: subscriptionData.recurringInterval,
+              status: subscriptionData.status,
+              currentPeriodStart: subscriptionData.currentPeriodStart,
+              currentPeriodEnd: subscriptionData.currentPeriodEnd,
+              cancelAtPeriodEnd: subscriptionData.cancelAtPeriodEnd,
+              canceledAt: subscriptionData.canceledAt,
+              startedAt: subscriptionData.startedAt,
+              endsAt: subscriptionData.endsAt,
+              endedAt: subscriptionData.endedAt,
+              customerId: subscriptionData.customerId,
+              productId: subscriptionData.productId,
+              discountId: subscriptionData.discountId,
+              checkoutId: subscriptionData.checkoutId,
+              customerCancellationReason:
+                subscriptionData.customerCancellationReason,
+              customerCancellationComment:
+                subscriptionData.customerCancellationComment,
+              metadata: subscriptionData.metadata,
+              customFieldData: subscriptionData.customFieldData,
+              userId: subscriptionData.userId,
+            },
+          });
 
         console.log("🎉 Subscription data upserted successfully");
       } catch (error) {
