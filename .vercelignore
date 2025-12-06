@@ -1,0 +1,33 @@
+# Turbo cache
+.turbo
+
+# Node modules
+node_modules
+
+# Build artifacts
+.next
+out
+dist
+
+# Environment files
+.env*.local
+.env
+
+# Testing
+coverage
+.nyc_output
+
+# Misc
+.DS_Store
+*.log
+.vscode
+.idea
+
+# Database
+*.db
+*.sqlite
+
+# Temporary files
+*.tmp
+*.temp
+

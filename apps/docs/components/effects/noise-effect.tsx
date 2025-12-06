@@ -1,7 +1,8 @@
+/** biome-ignore-all lint/a11y/noSvgWithoutTitle: <explanation> */
 export function NoiseEffect() {
   return (
     <svg
-      className="pointer-events-none absolute inset-0 z-10 opacity-[8%]"
+      className="pointer-events-none absolute inset-0 z-10 opacity-8"
       width="100%"
       height="100%"
     >
