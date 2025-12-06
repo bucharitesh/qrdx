@@ -16,13 +16,13 @@ import { useSubscription } from "@/lib/hooks/use-subscription";
 import type { AIPromptData } from "@/types/ai";
 
 export function AIChatForm({
-  onGeneration,
-  isGenerating,
-  onCancelGeneration,
+  onThemeGeneration,
+  isGeneratingTheme,
+  onCancelThemeGeneration,
 }: {
-  onGeneration: (promptData: AIPromptData) => void;
-  isGenerating: boolean;
-  onCancelGeneration: () => void;
+  onThemeGeneration: (promptData: AIPromptData) => void;
+  isGeneratingTheme: boolean;
+  onCancelThemeGeneration: () => void;
 }) {
   const {
     editorContentDraft,
@@ -72,7 +72,7 @@ export function AIChatForm({
     // Proceed only if there is text, or at least one image
     if (isEmptyPrompt && images.length === 0) return;
 
-    onGeneration({
+    onThemeGeneration({
       ...promptData,
       content: promptData?.content ?? "",
       mentions: promptData?.mentions ?? [],
@@ -91,7 +91,7 @@ export function AIChatForm({
           isUserDragging={isUserDragging}
           disabled={isEnhancingPrompt}
           canSubmit={
-            !isGenerating &&
+            !isGeneratingTheme &&
             !isEnhancingPrompt &&
             !isEmptyPrompt &&
             !isSomeImageUploading &&
@@ -111,7 +111,9 @@ export function AIChatForm({
         <div className="flex items-center justify-between gap-2">
           <div className="flex w-full max-w-64 items-center gap-2 overflow-hidden">
             <QRPresetSelect
-              disabled={isGenerating || isEnhancingPrompt || isInitializing}
+              disabled={
+                isGeneratingTheme || isEnhancingPrompt || isInitializing
+              }
               withCycleThemes={false}
               variant="outline"
               size="sm"
@@ -125,7 +127,7 @@ export function AIChatForm({
                 isEnhancing={isEnhancingPrompt}
                 onStart={handleEnhancePrompt}
                 onStop={stopEnhance}
-                disabled={isGenerating || isInitializing}
+                disabled={isGeneratingTheme || isInitializing}
               />
             ) : null}
 
@@ -134,7 +136,7 @@ export function AIChatForm({
               onImagesUpload={handleImagesUpload}
               onClick={() => fileInputRef.current?.click()}
               disabled={
-                isGenerating ||
+                isGeneratingTheme ||
                 isEnhancingPrompt ||
                 isInitializing ||
                 uploadedImages.some((img) => img.loading) ||
@@ -142,11 +144,11 @@ export function AIChatForm({
               }
             />
 
-            {isGenerating ? (
+            {isGeneratingTheme ? (
               <Button
                 variant="destructive"
                 size="sm"
-                onClick={onCancelGeneration}
+                onClick={onCancelThemeGeneration}
                 className={cn(
                   "flex items-center gap-1",
                   "@max-[350px]/form:w-8",
@@ -163,12 +165,12 @@ export function AIChatForm({
                 disabled={
                   isEmptyPrompt ||
                   isSomeImageUploading ||
-                  isGenerating ||
+                  isGeneratingTheme ||
                   isEnhancingPrompt ||
                   isInitializing
                 }
               >
-                {isGenerating ? (
+                {isGeneratingTheme ? (
                   <Loader className="animate-spin" />
                 ) : (
                   <ArrowUp />

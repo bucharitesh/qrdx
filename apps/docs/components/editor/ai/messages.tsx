@@ -1,4 +1,4 @@
-/** biome-ignore-all lint/correctness/useExhaustiveDependencies: <explanation> */
+/** biome-ignore-all lint/correctness/useExhaustiveDependencies: false positive */
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import { X } from "lucide-react";
@@ -97,7 +97,7 @@ export function Messages({
       {/* Top fade out effect when scrolling */}
       <div
         className={cn(
-          "via-background/50 from-background pointer-events-none absolute top-0 right-0 left-0 z-20 h-6 bg-gradient-to-b to-transparent opacity-100 transition-opacity ease-out",
+          "via-background/50 from-background pointer-events-none absolute top-0 right-0 left-0 z-20 h-6 bg-linear-to-b to-transparent opacity-100 transition-opacity ease-out",
           isScrollStart ? "opacity-0" : "opacity-100",
         )}
       />
@@ -184,7 +184,7 @@ export function Messages({
       {/* Bottom fade out effect when scrolling */}
       <div
         className={cn(
-          "via-background/50 from-background pointer-events-none absolute right-0 bottom-0 left-0 z-20 h-6 bg-gradient-to-t to-transparent opacity-100 transition-opacity ease-out",
+          "via-background/50 from-background pointer-events-none absolute right-0 bottom-0 left-0 z-20 h-6 bg-linear-to-t to-transparent opacity-100 transition-opacity ease-out",
           isScrollEnd ? "opacity-0" : "opacity-100",
         )}
       />

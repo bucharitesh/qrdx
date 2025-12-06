@@ -26,7 +26,7 @@ export function AIChatHero() {
     startNewChat();
 
     generateQRCore(promptData);
-    router.push("/editor?tab=ai");
+    router.push("/editor/qr?tab=ai");
   };
 
   usePostLoginAction("AI_GENERATE_FROM_PAGE", ({ promptData }) => {
@@ -35,16 +35,16 @@ export function AIChatHero() {
 
   return (
     <div className="relative isolate flex w-full flex-1">
-      <div className="@container relative isolate z-1 mx-auto flex max-w-[49rem] flex-1 flex-col justify-center px-4">
+      <div className="@container relative isolate z-1 mx-auto flex max-w-196 flex-1 flex-col justify-center px-4">
         <ChatHeading isGenerating={isGenerating} />
 
         {/* Chat form input and suggestions */}
         <div className="relative mx-auto flex w-full flex-col gap-2">
           <div className="relative isolate z-10 w-full">
             <AIChatForm
-              onGeneration={handleRedirectAndGeneration}
-              isGenerating={isGenerating}
-              onCancelGeneration={cancelGeneration}
+              onThemeGeneration={handleRedirectAndGeneration}
+              isGeneratingTheme={isGenerating}
+              onCancelThemeGeneration={cancelGeneration}
             />
           </div>
 

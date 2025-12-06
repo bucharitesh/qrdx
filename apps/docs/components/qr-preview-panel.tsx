@@ -4,7 +4,6 @@ import { ScrollArea } from "@repo/design-system/components/ui/scroll-area";
 import { motion } from "motion/react";
 import { QRCode } from "qrdx";
 import type React from "react";
-import { ActionBar } from "@/components/editor/action-bar";
 import { useQREditorStore } from "@/store/editor-store";
 import type { QRStyle } from "@/types/qr";
 
@@ -17,12 +16,9 @@ const QRPreviewPanel: React.FC<QRPreviewPanelProps> = ({ style }) => {
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      {/* Action Bar */}
-      <ActionBar />
-
       {/* Preview Content */}
       <div className="relative size-full overflow-hidden p-4 pt-1">
-        <div className="relative isolate size-full overflow-hidden rounded-lg border bg-background">
+        <div className="relative isolate size-full overflow-hidden rounded-lg">
           <ScrollArea className="size-full">
             <div className="flex min-h-full w-full items-center justify-center p-8">
               {/* QR Code Preview */}

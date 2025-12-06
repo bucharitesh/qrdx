@@ -112,7 +112,7 @@ export function ChatInterface() {
   });
 
   return (
-    <section className="@container relative isolate z-1 mx-auto flex size-full max-w-[49rem] flex-1 flex-col justify-center">
+    <section className="@container relative isolate z-1 mx-auto flex size-full max-w-196 flex-1 flex-col justify-center">
       <div
         className={cn(
           "relative flex size-full flex-1 flex-col overflow-hidden transition-all duration-300 ease-out",

@@ -10,10 +10,9 @@ import {
   TabsContent,
   TabsList,
 } from "@repo/design-system/components/ui/tabs";
-import { Sparkle, Sparkles } from "lucide-react";
+import { Sparkle } from "lucide-react";
 import { getContrastLevel, getContrastRatio } from "qrdx";
 import React, { use } from "react";
-import { AIChatPanel } from "@/components/editor/ai/ai-chat-panel";
 import { ColorPicker } from "@/components/editor/color-picker";
 import ControlSection from "@/components/editor/control-section";
 import { QREditActions } from "@/components/editor/qr-edit-actions";
@@ -25,17 +24,19 @@ import { CornerEyePatternSelector } from "@/components/playground/corner-eye-pat
 import { ErrorLevelSelector } from "@/components/playground/error-level-selector";
 import { PatternSelector } from "@/components/playground/pattern-selector";
 import { TemplateSelector } from "@/components/playground/template-selector";
+import { useAIQRGenerationCore } from "@/lib/hooks/use-ai-qr-generation-core";
 import {
   type ControlTab,
   useControlsTabFromUrl,
 } from "@/lib/hooks/use-controls-tab-from-url";
 import { useQREditorStore } from "@/store/editor-store";
 import type { QRPreset, QRStyle } from "@/types/qr";
+import { ChatInterface } from "./editor/ai/chat-interface";
 
 interface QRControlPanelProps {
   style: Partial<QRStyle>;
-  onChange?: (style: Partial<QRStyle>) => void;
-  qrPromise?: Promise<QRPreset | null>;
+  onChange: (style: Partial<QRStyle>) => void;
+  qrPromise: Promise<QRPreset | null>;
 }
 
 const QRControlPanel: React.FC<QRControlPanelProps> = ({
@@ -45,9 +46,9 @@ const QRControlPanel: React.FC<QRControlPanelProps> = ({
   const { value, setValue, setStyle } = useQREditorStore();
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const { tab, handleSetTab } = useControlsTabFromUrl();
+  const { isGenerating } = useAIQRGenerationCore();
 
   // Unwrap the promise to check if we're editing a saved theme
-  const theme = qrPromise ? use(qrPromise) : null;
 
   // Calculate contrast ratio and level
   const contrastInfo = React.useMemo(() => {
@@ -82,22 +83,18 @@ const QRControlPanel: React.FC<QRControlPanelProps> = ({
     }
   };
 
+  const theme = use(qrPromise);
+
   return (
     <>
-      {/* Preset Selector or Edit Actions Header */}
       <div className="border-b">
         {!theme ? (
           <QRPresetSelect
             className="h-14 rounded-none"
-            withCycleThemes={true}
+            disabled={isGenerating}
           />
         ) : (
-          <QREditActions
-            theme={{
-              id: theme.id,
-              name: theme.name,
-            }}
-          />
+          <QREditActions theme={theme} disabled={isGenerating} />
         )}
       </div>
 
@@ -343,7 +340,7 @@ const QRControlPanel: React.FC<QRControlPanelProps> = ({
           </TabsContent>
 
           <TabsContent value="ai" className="mt-1 size-full overflow-hidden">
-            <AIChatPanel />
+            <ChatInterface />
           </TabsContent>
         </Tabs>
       </div>

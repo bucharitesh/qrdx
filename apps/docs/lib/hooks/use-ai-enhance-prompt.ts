@@ -17,7 +17,6 @@ export function useAIEnhancePrompt() {
     useCompletion({
       api: "/api/enhance-prompt",
       onError: (error) => {
-        console.error("[useAIEnhancePrompt] onError:", error);
         const defaultMessage = "Failed to enhance prompt. Please try again.";
         const normalized = parseAiSdkTransportError(error, defaultMessage);
 
@@ -74,20 +73,15 @@ export function useAIEnhancePrompt() {
         themeData: { light: {}, dark: {} },
       })),
     };
-    const jsonContent = convertPromptDataToJSONContent(promptData);
-    return jsonContent;
+    return convertPromptDataToJSONContent(promptData);
   }, [completion]);
 
   const startEnhance = useCallback(
     async (promptData: AIPromptData) => {
       const prompt = promptData?.content ?? "";
-      if (!prompt?.trim()) {
-        return;
-      }
+      if (!prompt?.trim()) return;
 
-      if (isLoading) {
-        stop();
-      }
+      if (isLoading) stop();
       setCompletion("");
 
       startTimeRef.current = Date.now();
