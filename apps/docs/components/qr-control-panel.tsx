@@ -14,6 +14,16 @@ import { Sparkle } from "lucide-react";
 import { getContrastLevel, getContrastRatio } from "qrdx";
 import React, { use } from "react";
 import { ColorPicker } from "@/components/editor/color-picker";
+import { AppStoresForm } from "@/components/editor/content-forms/app-stores-form";
+import { EmailForm } from "@/components/editor/content-forms/email-form";
+import { MapsForm } from "@/components/editor/content-forms/maps-form";
+import { PhoneForm } from "@/components/editor/content-forms/phone-form";
+import { SmsForm } from "@/components/editor/content-forms/sms-form";
+import { UrlForm } from "@/components/editor/content-forms/url-form";
+import { VCardForm } from "@/components/editor/content-forms/vcard-form";
+import { WhatsAppForm } from "@/components/editor/content-forms/whatsapp-form";
+import { WifiForm } from "@/components/editor/content-forms/wifi-form";
+import { ContentTypeSelector } from "@/components/editor/content-type-selector";
 import ControlSection from "@/components/editor/control-section";
 import { QREditActions } from "@/components/editor/qr-edit-actions";
 import QRPresetSelect from "@/components/editor/qr-preset-select";
@@ -43,7 +53,7 @@ const QRControlPanel: React.FC<QRControlPanelProps> = ({
   style,
   qrPromise,
 }) => {
-  const { value, setValue, setStyle } = useQREditorStore();
+  const { value, setValue, setStyle, contentType } = useQREditorStore();
   const fileInputRef = React.useRef<HTMLInputElement>(null);
   const { tab, handleSetTab } = useControlsTabFromUrl();
   const { isGenerating } = useAIQRGenerationCore();
@@ -130,23 +140,21 @@ const QRControlPanel: React.FC<QRControlPanelProps> = ({
             className="mt-1 size-full overflow-hidden"
           >
             <ScrollArea className="h-full px-4">
-              <ControlSection title="Content" expanded>
-                <div className="space-y-2">
-                  <Label className="text-xs" htmlFor="url-input">
-                    URL or Text
-                  </Label>
-                  <Input
-                    id="url-input"
-                    onChange={(e) => setValue(e.target.value)}
-                    placeholder="Enter URL or text"
-                    type="text"
-                    value={value}
-                  />
-                  <p className="text-muted-foreground text-xs">
-                    Enter the content for your QR code
-                  </p>
+              <div className="space-y-6 py-4">
+                <ContentTypeSelector />
+
+                <div className="space-y-4">
+                  {contentType === "url" && <UrlForm />}
+                  {contentType === "email" && <EmailForm />}
+                  {contentType === "phone" && <PhoneForm />}
+                  {contentType === "sms" && <SmsForm />}
+                  {contentType === "whatsapp" && <WhatsAppForm />}
+                  {contentType === "wifi" && <WifiForm />}
+                  {contentType === "vcard" && <VCardForm />}
+                  {contentType === "maps" && <MapsForm />}
+                  {contentType === "app-stores" && <AppStoresForm />}
                 </div>
-              </ControlSection>
+              </div>
             </ScrollArea>
           </TabsContent>
 
