@@ -7,4 +7,16 @@ export { WifiForm } from "./wifi-form";
 export { VCardForm } from "./vcard-form";
 export { MapsForm } from "./maps-form";
 export { AppStoresForm } from "./app-stores-form";
+export { FacebookForm } from "./facebook-form";
+export { InstagramForm } from "./instagram-form";
+export { RedditForm } from "./reddit-form";
+export { TikTokForm } from "./tiktok-form";
+export { TwitterForm } from "./twitter-form";
+export { LinkedInForm } from "./linkedin-form";
+export { YouTubeForm } from "./youtube-form";
+export { PinterestForm } from "./pinterest-form";
+export { SnapchatForm } from "./snapchat-form";
+export { ThreadsForm } from "./threads-form";
+export { UPIForm } from "./upi-form";
+export { PayPalForm } from "./paypal-form";
 

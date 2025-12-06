@@ -4,21 +4,36 @@ import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { Textarea } from "@repo/design-system/components/ui/textarea";
 import * as React from "react";
+import type { EmailFormData } from "@/lib/validations/qr-content";
+import { emailSchema } from "@/lib/validations/qr-content";
 import { useQREditorStore } from "@/store/editor-store";
-import type { EmailContent } from "@/types/qr-content";
 import { encodeEmail } from "@/utils/qr-content-encoder";
 
 export function EmailForm() {
   const { setValue } = useQREditorStore();
-  const [emailData, setEmailData] = React.useState<Omit<EmailContent, "type">>({
+  const [emailData, setEmailData] = React.useState<EmailFormData>({
     recipient: "",
     subject: "",
     body: "",
   });
+  const [errors, setErrors] = React.useState<Record<string, string>>({});
 
   React.useEffect(() => {
-    const encoded = encodeEmail({ type: "email", ...emailData });
-    setValue(encoded);
+    // Validate and encode
+    const result = emailSchema.safeParse(emailData);
+    
+    if (result.success) {
+      const encoded = encodeEmail({ type: "email", ...result.data });
+      setValue(encoded);
+      setErrors({});
+    } else {
+      const fieldErrors: Record<string, string> = {};
+      for (const issue of result.error.issues) {
+        const field = issue.path[0] as string;
+        fieldErrors[field] = issue.message;
+      }
+      setErrors(fieldErrors);
+    }
   }, [emailData, setValue]);
 
   return (
@@ -35,7 +50,11 @@ export function EmailForm() {
           onChange={(e) =>
             setEmailData({ ...emailData, recipient: e.target.value })
           }
+          className={errors.recipient ? "border-destructive" : ""}
         />
+        {errors.recipient && (
+          <p className="text-destructive text-[11px]">{errors.recipient}</p>
+        )}
       </div>
 
       <div className="space-y-2">

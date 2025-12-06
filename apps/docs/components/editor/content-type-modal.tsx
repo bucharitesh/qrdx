@@ -11,19 +11,32 @@ import {
 import { ScrollArea } from "@repo/design-system/components/ui/scroll-area";
 import { cn } from "@repo/design-system/lib/utils";
 import {
+  AtSign,
+  Camera,
+  CreditCard,
+  DollarSign,
+  Image,
+  Instagram,
   Link,
+  Linkedin,
+  type LucideIcon,
   Mail,
   MapPin,
   MessageCircle,
   MessageSquare,
   Phone,
   Search,
+  Share2,
   Sparkles,
   Store,
+  Twitter,
   UserCircle,
+  Video,
   Wifi,
+  Youtube,
 } from "lucide-react";
 import * as React from "react";
+import { ContentTypeCard } from "@/components/editor/content-type-card";
 import { useQREditorStore } from "@/store/editor-store";
 import type { ContentType } from "@/types/qr-content";
 import {
@@ -33,17 +46,28 @@ import {
 } from "@/types/qr-content";
 
 // Map icon names to actual icon components
-const iconMap = {
+const iconMap: Record<string, LucideIcon> = {
+  AtSign,
+  Camera,
+  CreditCard,
+  DollarSign,
+  Image,
+  Instagram,
   Link,
+  Linkedin,
   Mail,
-  Phone,
-  MessageSquare,
-  MessageCircle,
-  Wifi,
-  UserCircle,
   MapPin,
-  Store,
+  MessageCircle,
+  MessageSquare,
+  Phone,
+  Share2,
   Sparkles,
+  Store,
+  Twitter,
+  UserCircle,
+  Video,
+  Wifi,
+  Youtube,
 };
 
 interface ContentTypeModalProps {
@@ -201,48 +225,24 @@ export function ContentTypeModal({
                                 <div className="flex gap-3 overflow-x-auto px-4 pb-2 scrollbar-hide md:gap-4 md:px-0">
                                   {getContentByCategory(section.types).map(
                                     (meta, index) => {
-                                      const Icon =
-                                        iconMap[
-                                          meta.icon as keyof typeof iconMap
-                                        ];
+                                      const Icon = iconMap[
+                                        meta.icon
+                                      ] as LucideIcon;
                                       const isActive =
                                         contentType === meta.type;
 
                                       return (
-                                        <button
+                                        <ContentTypeCard
                                           key={index}
+                                          label={meta.label}
+                                          description={meta.description}
+                                          icon={Icon}
+                                          isActive={isActive}
                                           onClick={() =>
                                             handleSelectType(meta.type)
                                           }
-                                          type="button"
-                                          className={cn(
-                                            "group relative flex w-[140px] shrink-0 flex-col gap-2 overflow-hidden rounded-xl bg-muted/30 transition-all hover:bg-accent md:w-[180px] md:flex-col md:items-center md:gap-3 md:bg-muted/20 md:p-6",
-                                            isActive &&
-                                              "bg-primary/5 md:bg-primary/5",
-                                          )}
-                                        >
-                                          <div
-                                            className={cn(
-                                              "bg-gradient-to-br from-primary/20 to-primary/5 flex aspect-[4/3] w-full items-center justify-center rounded-t-xl transition-all md:aspect-auto md:size-16 md:shrink-0 md:rounded-2xl",
-                                              isActive && "md:scale-105",
-                                            )}
-                                          >
-                                            <Icon
-                                              className={cn(
-                                                "text-primary/60 size-10 md:size-8",
-                                                isActive && "text-primary",
-                                              )}
-                                            />
-                                          </div>
-                                          <div className="space-y-0.5 px-3 pb-3 text-left md:space-y-1 md:p-0 md:text-center">
-                                            <div className="text-sm font-medium">
-                                              {meta.label}
-                                            </div>
-                                            <div className="text-muted-foreground hidden text-xs md:block">
-                                              {meta.description}
-                                            </div>
-                                          </div>
-                                        </button>
+                                          variant="carousel"
+                                        />
                                       );
                                     },
                                   )}
@@ -256,55 +256,27 @@ export function ContentTypeModal({
                       {/* Other categories - show only relevant content */}
                       {activeCategory !== "for-you" && (
                         <section>
-                          <div className="relative -mx-4 md:mx-0">
-                            <div className="flex gap-3 overflow-x-auto px-4 pb-2 scrollbar-hide md:gap-4 md:px-0">
-                              {getContentByCategory(
-                                CONTENT_CATEGORIES.find(
-                                  (cat) => cat.id === activeCategory,
-                                )?.types || [],
-                              ).map((meta, index) => {
-                                const Icon =
-                                  iconMap[meta.icon as keyof typeof iconMap];
-                                const isActive = contentType === meta.type;
+                          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+                            {getContentByCategory(
+                              CONTENT_CATEGORIES.find(
+                                (cat) => cat.id === activeCategory,
+                              )?.types || [],
+                            ).map((meta, index) => {
+                              const Icon = iconMap[meta.icon] as LucideIcon;
+                              const isActive = contentType === meta.type;
 
-                                return (
-                                  <button
-                                    key={index}
-                                    onClick={() => handleSelectType(meta.type)}
-                                    type="button"
-                                    className={cn(
-                                      "group relative flex w-[140px] shrink-0 flex-col gap-2 overflow-hidden rounded-xl border bg-muted/30 transition-all hover:border-primary hover:bg-accent md:w-[180px] md:gap-3 md:border md:bg-transparent md:p-6",
-                                      isActive
-                                        ? "border-primary bg-primary/5 ring-2 ring-primary/20"
-                                        : "border-border",
-                                    )}
-                                  >
-                                    {/* Preview Area - Mobile optimized */}
-                                    <div
-                                      className={cn(
-                                        "bg-gradient-to-br from-primary/20 to-primary/5 flex aspect-[4/3] w-full items-center justify-center rounded-t-xl transition-all md:aspect-auto md:size-16 md:shrink-0 md:rounded-2xl",
-                                        isActive && "md:scale-110",
-                                      )}
-                                    >
-                                      <Icon
-                                        className={cn(
-                                          "text-primary/60 size-10 md:size-8",
-                                          isActive && "text-primary",
-                                        )}
-                                      />
-                                    </div>
-                                    <div className="space-y-0.5 px-3 pb-3 md:space-y-1 md:p-0 md:text-center">
-                                      <div className="text-sm font-medium">
-                                        {meta.label}
-                                      </div>
-                                      <div className="text-muted-foreground hidden text-xs md:block">
-                                        {meta.description}
-                                      </div>
-                                    </div>
-                                  </button>
-                                );
-                              })}
-                            </div>
+                              return (
+                                <ContentTypeCard
+                                  key={index}
+                                  label={meta.label}
+                                  description={meta.description}
+                                  icon={Icon}
+                                  isActive={isActive}
+                                  onClick={() => handleSelectType(meta.type)}
+                                  variant="default"
+                                />
+                              );
+                            })}
                           </div>
                         </section>
                       )}
@@ -318,44 +290,19 @@ export function ContentTypeModal({
                       </h3>
                       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
                         {filteredContent.map((meta, index) => {
-                          const Icon =
-                            iconMap[meta.icon as keyof typeof iconMap];
+                          const Icon = iconMap[meta.icon] as LucideIcon;
                           const isActive = contentType === meta.type;
 
                           return (
-                            <button
+                            <ContentTypeCard
                               key={index}
+                              label={meta.label}
+                              description={meta.description}
+                              icon={Icon}
+                              isActive={isActive}
                               onClick={() => handleSelectType(meta.type)}
-                              type="button"
-                              className={cn(
-                                "group relative flex flex-col items-center gap-3 overflow-hidden rounded-xl border p-6 text-center transition-all hover:border-primary hover:bg-accent",
-                                isActive
-                                  ? "border-primary bg-primary/5 ring-2 ring-primary/20"
-                                  : "border-border",
-                              )}
-                            >
-                              <div
-                                className={cn(
-                                  "bg-muted flex size-16 items-center justify-center rounded-2xl transition-all",
-                                  isActive && "bg-primary/10 scale-110",
-                                )}
-                              >
-                                <Icon
-                                  className={cn(
-                                    "text-muted-foreground size-8",
-                                    isActive && "text-primary",
-                                  )}
-                                />
-                              </div>
-                              <div className="space-y-1">
-                                <div className="text-sm font-medium">
-                                  {meta.label}
-                                </div>
-                                <div className="text-muted-foreground text-xs">
-                                  {meta.description}
-                                </div>
-                              </div>
-                            </button>
+                              variant="default"
+                            />
                           );
                         })}
                       </div>

@@ -12,7 +12,19 @@ export type ContentType =
   | "wifi"
   | "vcard"
   | "maps"
-  | "app-stores";
+  | "app-stores"
+  | "facebook"
+  | "instagram"
+  | "reddit"
+  | "tiktok"
+  | "twitter"
+  | "linkedin"
+  | "youtube"
+  | "pinterest"
+  | "snapchat"
+  | "threads"
+  | "upi"
+  | "paypal";
 
 /**
  * URL/Plain Text Content
@@ -103,6 +115,107 @@ export interface AppStoresContent {
 }
 
 /**
+ * Facebook Content
+ */
+export interface FacebookContent {
+  type: "facebook";
+  profileUrl: string;
+}
+
+/**
+ * Instagram Content
+ */
+export interface InstagramContent {
+  type: "instagram";
+  username: string;
+}
+
+/**
+ * Reddit Content
+ */
+export interface RedditContent {
+  type: "reddit";
+  username?: string;
+  subreddit?: string;
+}
+
+/**
+ * TikTok Content
+ */
+export interface TikTokContent {
+  type: "tiktok";
+  username: string;
+}
+
+/**
+ * Twitter/X Content
+ */
+export interface TwitterContent {
+  type: "twitter";
+  username: string;
+}
+
+/**
+ * LinkedIn Content
+ */
+export interface LinkedInContent {
+  type: "linkedin";
+  profileUrl: string;
+}
+
+/**
+ * YouTube Content
+ */
+export interface YouTubeContent {
+  type: "youtube";
+  channelUrl?: string;
+  videoUrl?: string;
+}
+
+/**
+ * Pinterest Content
+ */
+export interface PinterestContent {
+  type: "pinterest";
+  username: string;
+}
+
+/**
+ * Snapchat Content
+ */
+export interface SnapchatContent {
+  type: "snapchat";
+  username: string;
+}
+
+/**
+ * Threads Content
+ */
+export interface ThreadsContent {
+  type: "threads";
+  username: string;
+}
+
+/**
+ * UPI Payment Content (India)
+ */
+export interface UPIContent {
+  type: "upi";
+  upiId: string;
+  name?: string;
+  amount?: string;
+  note?: string;
+}
+
+/**
+ * PayPal Content
+ */
+export interface PayPalContent {
+  type: "paypal";
+  paypalUrl: string;
+}
+
+/**
  * Union type for all content configurations
  */
 export type QRContentConfig =
@@ -114,7 +227,19 @@ export type QRContentConfig =
   | WifiContent
   | VCardContent
   | MapsContent
-  | AppStoresContent;
+  | AppStoresContent
+  | FacebookContent
+  | InstagramContent
+  | RedditContent
+  | TikTokContent
+  | TwitterContent
+  | LinkedInContent
+  | YouTubeContent
+  | PinterestContent
+  | SnapchatContent
+  | ThreadsContent
+  | UPIContent
+  | PayPalContent;
 
 /**
  * Content type metadata for UI rendering
@@ -181,6 +306,78 @@ export const CONTENT_TYPES_METADATA: ContentTypeMetadata[] = [
     icon: "Store",
     description: "Download app link",
   },
+  {
+    type: "facebook",
+    label: "Facebook",
+    icon: "Share2",
+    description: "Link to Facebook profile",
+  },
+  {
+    type: "instagram",
+    label: "Instagram",
+    icon: "Instagram",
+    description: "Link to Instagram profile",
+  },
+  {
+    type: "reddit",
+    label: "Reddit",
+    icon: "MessageCircle",
+    description: "Link to Reddit profile/subreddit",
+  },
+  {
+    type: "tiktok",
+    label: "TikTok",
+    icon: "Video",
+    description: "Link to TikTok profile",
+  },
+  {
+    type: "twitter",
+    label: "Twitter / X",
+    icon: "Twitter",
+    description: "Link to Twitter/X profile",
+  },
+  {
+    type: "linkedin",
+    label: "LinkedIn",
+    icon: "Linkedin",
+    description: "Link to LinkedIn profile",
+  },
+  {
+    type: "youtube",
+    label: "YouTube",
+    icon: "Youtube",
+    description: "Link to YouTube channel/video",
+  },
+  {
+    type: "pinterest",
+    label: "Pinterest",
+    icon: "Image",
+    description: "Link to Pinterest profile",
+  },
+  {
+    type: "snapchat",
+    label: "Snapchat",
+    icon: "Camera",
+    description: "Link to Snapchat profile",
+  },
+  {
+    type: "threads",
+    label: "Threads",
+    icon: "AtSign",
+    description: "Link to Threads profile",
+  },
+  {
+    type: "upi",
+    label: "UPI Payment",
+    icon: "CreditCard",
+    description: "UPI payment link (India)",
+  },
+  {
+    type: "paypal",
+    label: "PayPal",
+    icon: "DollarSign",
+    description: "PayPal payment link",
+  },
 ];
 
 /**
@@ -198,13 +395,29 @@ export const CONTENT_CATEGORIES: ContentCategory[] = [
     id: "for-you",
     label: "For you",
     icon: "Sparkles",
-    types: ["url", "email", "phone", "whatsapp", "vcard"],
+    types: [
+      "url",
+      "email",
+      "phone",
+      "whatsapp",
+      "vcard",
+      "instagram",
+      "facebook",
+    ],
   },
   {
     id: "popular",
     label: "Popular",
     icon: null,
-    types: ["url", "email", "phone", "whatsapp"],
+    types: [
+      "url",
+      "email",
+      "phone",
+      "whatsapp",
+      "instagram",
+      "facebook",
+      "twitter",
+    ],
   },
   {
     id: "messaging",
@@ -213,10 +426,33 @@ export const CONTENT_CATEGORIES: ContentCategory[] = [
     types: ["sms", "whatsapp", "email"],
   },
   {
+    id: "social-media",
+    label: "Social Media",
+    icon: "Share2",
+    types: [
+      "facebook",
+      "instagram",
+      "twitter",
+      "linkedin",
+      "tiktok",
+      "youtube",
+      "reddit",
+      "snapchat",
+      "pinterest",
+      "threads",
+    ],
+  },
+  {
+    id: "payments",
+    label: "Payments",
+    icon: "CreditCard",
+    types: ["upi", "paypal"],
+  },
+  {
     id: "business",
     label: "Business",
     icon: "Store",
-    types: ["vcard", "url", "maps", "app-stores"],
+    types: ["vcard", "url", "maps", "app-stores", "linkedin"],
   },
   {
     id: "connectivity",
@@ -233,7 +469,31 @@ export const FOR_YOU_SECTIONS = [
   {
     id: "popular",
     title: "Popular",
-    types: ["url", "email", "phone", "whatsapp"] as ContentType[],
+    types: [
+      "url",
+      "email",
+      "phone",
+      "whatsapp",
+      "instagram",
+      "facebook",
+    ] as ContentType[],
+  },
+  {
+    id: "social-media",
+    title: "Social Media",
+    types: [
+      "instagram",
+      "facebook",
+      "twitter",
+      "linkedin",
+      "tiktok",
+      "youtube",
+    ] as ContentType[],
+  },
+  {
+    id: "payments",
+    title: "Payments",
+    types: ["upi", "paypal"] as ContentType[],
   },
   {
     id: "messaging",

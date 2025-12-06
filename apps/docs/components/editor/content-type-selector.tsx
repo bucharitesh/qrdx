@@ -2,16 +2,28 @@
 
 import { Button } from "@repo/design-system/components/ui/button";
 import {
+  AtSign,
+  Camera,
   ChevronDown,
+  CreditCard,
+  DollarSign,
+  Image,
+  Instagram,
   Link,
+  Linkedin,
+  type LucideIcon,
   Mail,
   MapPin,
   MessageCircle,
   MessageSquare,
   Phone,
+  Share2,
   Store,
+  Twitter,
   UserCircle,
+  Video,
   Wifi,
+  Youtube,
 } from "lucide-react";
 import * as React from "react";
 import { ContentTypeModal } from "@/components/editor/content-type-modal";
@@ -19,16 +31,27 @@ import { useQREditorStore } from "@/store/editor-store";
 import { CONTENT_TYPES_METADATA } from "@/types/qr-content";
 
 // Map icon names to actual icon components
-const iconMap = {
+const iconMap: Record<string, LucideIcon> = {
+  AtSign,
+  Camera,
+  CreditCard,
+  DollarSign,
+  Image,
+  Instagram,
   Link,
+  Linkedin,
   Mail,
-  Phone,
-  MessageSquare,
-  MessageCircle,
-  Wifi,
-  UserCircle,
   MapPin,
+  MessageCircle,
+  MessageSquare,
+  Phone,
+  Share2,
   Store,
+  Twitter,
+  UserCircle,
+  Video,
+  Wifi,
+  Youtube,
 };
 
 export function ContentTypeSelector() {
@@ -38,9 +61,8 @@ export function ContentTypeSelector() {
   const currentType = CONTENT_TYPES_METADATA.find(
     (m) => m.type === contentType,
   );
-  const Icon = currentType
-    ? iconMap[currentType.icon as keyof typeof iconMap]
-    : Link;
+  const Icon =
+    (currentType ? iconMap[currentType.icon] : iconMap.Link) || iconMap.Link;
 
   return (
     <>
