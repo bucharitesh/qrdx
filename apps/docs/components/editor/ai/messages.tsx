@@ -150,7 +150,7 @@ export function Messages({
                 >
                   <Logo
                     className={cn(
-                      "text-destructive-foreground size-full p-0.5",
+                      "fill-destructive-foreground size-full p-0.5",
                     )}
                   />
                 </div>

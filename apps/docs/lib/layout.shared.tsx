@@ -1,5 +1,5 @@
 import type { BaseLayoutProps, LinkItemType } from "fumadocs-ui/layouts/shared";
-import { QrCodeIcon } from "lucide-react";
+import Logo from "@/assets/logo.svg";
 import { owner, repo } from "./github";
 
 export const linkItems: LinkItemType[] = [
@@ -31,7 +31,7 @@ export const logo = (
       aria-label="Fumadocs"
     /> */}
     {/* <FumadocsIcon className="size-5 [.uwu_&]:hidden" /> */}
-    <QrCodeIcon className="size-5" />
+    <Logo className="size-5" />
   </>
 );
 
@@ -42,7 +42,7 @@ export function baseOptions(): BaseLayoutProps {
         <>
           {logo}
           <span className="font-medium in-[.uwu]:hidden in-[header_&]:text-[15px]">
-            qrdx
+            QRdx
           </span>
         </>
       ),
