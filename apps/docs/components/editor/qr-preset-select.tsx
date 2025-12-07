@@ -17,12 +17,7 @@ import {
 } from "@repo/design-system/components/ui/popover";
 import { ScrollArea } from "@repo/design-system/components/ui/scroll-area";
 import { Separator } from "@repo/design-system/components/ui/separator";
-import { TooltipWrapper } from "@/components/tooltip-wrapper";
-import { ThemeToggle } from "@/components/theme-toggle";
-import { authClient } from "@/lib/auth-client";
 import { cn } from "@repo/design-system/lib/utils";
-import { useQREditorStore } from "@/store/editor-store";
-import { builtInPresets } from "@/utils/qr-presets";
 import {
   ArrowLeft,
   ArrowRight,
@@ -34,9 +29,15 @@ import {
   Shuffle,
 } from "lucide-react";
 import Link from "next/link";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import type { QRPreset } from "@/types/qr";
+import type React from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { TooltipWrapper } from "@/components/tooltip-wrapper";
+import { authClient } from "@/lib/auth-client";
 import { useQRThemes } from "@/lib/hooks/use-qr-themes";
+import { useQREditorStore } from "@/store/editor-store";
+import type { QRPreset } from "@/types/qr";
+import { builtInPresets } from "@/utils/qr-presets";
 
 interface QRPresetSelectProps extends React.ComponentProps<typeof Button> {
   withCycleThemes?: boolean;
@@ -62,8 +63,12 @@ const QRColors: React.FC<QRColorsProps> = ({ preset }) => {
     <div className="flex gap-0.5">
       <ColorBox color={preset.style.bgColor || "#ffffff"} />
       <ColorBox color={preset.style.fgColor || "#000000"} />
-      <ColorBox color={preset.style.eyeColor || preset.style.fgColor || "#000000"} />
-      <ColorBox color={preset.style.dotColor || preset.style.fgColor || "#000000"} />
+      <ColorBox
+        color={preset.style.eyeColor || preset.style.fgColor || "#000000"}
+      />
+      <ColorBox
+        color={preset.style.dotColor || preset.style.fgColor || "#000000"}
+      />
     </div>
   );
 };
@@ -86,7 +91,10 @@ const QRCycleButton: React.FC<QRCycleButtonProps> = ({
   className,
   ...props
 }) => (
-  <TooltipWrapper label={direction === "prev" ? "Previous theme" : "Next theme"} asChild>
+  <TooltipWrapper
+    label={direction === "prev" ? "Previous theme" : "Next theme"}
+    asChild
+  >
     <Button
       variant="ghost"
       size="icon"
@@ -103,7 +111,8 @@ const QRCycleButton: React.FC<QRCycleButtonProps> = ({
   </TooltipWrapper>
 );
 
-interface QRPresetCycleControlsProps extends React.ComponentProps<typeof Button> {
+interface QRPresetCycleControlsProps
+  extends React.ComponentProps<typeof Button> {
   filteredPresets: QRPreset[];
   currentPresetId: string | undefined;
   className?: string;
@@ -128,10 +137,11 @@ const QRPresetCycleControls: React.FC<QRPresetCycleControlsProps> = ({
       const newIndex =
         direction === "next"
           ? (currentIndex + 1) % filteredPresets.length
-          : (currentIndex - 1 + filteredPresets.length) % filteredPresets.length;
+          : (currentIndex - 1 + filteredPresets.length) %
+            filteredPresets.length;
       applyPreset(filteredPresets[newIndex]);
     },
-    [currentIndex, filteredPresets, applyPreset]
+    [currentIndex, filteredPresets, applyPreset],
   );
 
   return (
@@ -169,7 +179,12 @@ const QRControls = () => {
     <div className="flex gap-1">
       <ThemeToggle variant="ghost" size="icon" className="size-6 p-1" />
       <TooltipWrapper label="Random QR style" asChild>
-        <Button variant="ghost" size="sm" className="size-6 p-1" onClick={randomize}>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="size-6 p-1"
+          onClick={randomize}
+        >
           <Shuffle className="h-3.5 w-3.5" />
         </Button>
       </TooltipWrapper>
@@ -182,7 +197,8 @@ const QRPresetSelect: React.FC<QRPresetSelectProps> = ({
   className,
   ...props
 }) => {
-  const { style, currentPreset, applyPreset, hasUnsavedChanges } = useQREditorStore();
+  const { style, currentPreset, applyPreset, hasUnsavedChanges } =
+    useQREditorStore();
   const [search, setSearch] = useState("");
   const [mounted, setMounted] = useState(false);
 
@@ -194,7 +210,7 @@ const QRPresetSelect: React.FC<QRPresetSelectProps> = ({
   const { data: session } = authClient.useSession();
   // Only fetch saved themes if user is logged in
   const { data: savedThemes = [] } = useQRThemes();
-  
+
   // Filter saved themes only if authenticated
   const userSavedThemes = session?.user ? savedThemes : [];
 
@@ -215,7 +231,7 @@ const QRPresetSelect: React.FC<QRPresetSelectProps> = ({
     (presetId: string) => {
       return allPresets.find((p) => p.id === presetId)?.source === "SAVED";
     },
-    [allPresets]
+    [allPresets],
   );
 
   const currentPresetId = currentPreset?.id;
@@ -225,12 +241,14 @@ const QRPresetSelect: React.FC<QRPresetSelectProps> = ({
       search.trim() === ""
         ? allPresets
         : allPresets.filter((preset) =>
-            preset.name.toLowerCase().includes(search.toLowerCase())
+            preset.name.toLowerCase().includes(search.toLowerCase()),
           );
 
     // Separate saved and built-in themes
     const savedThemesList = filteredList.filter((p) => p.source === "SAVED");
-    const builtInThemesList = filteredList.filter((p) => p.source === "BUILT_IN");
+    const builtInThemesList = filteredList.filter(
+      (p) => p.source === "BUILT_IN",
+    );
 
     return [...savedThemesList, ...builtInThemesList];
   }, [allPresets, search]);
@@ -251,7 +269,7 @@ const QRPresetSelect: React.FC<QRPresetSelectProps> = ({
             variant="ghost"
             className={cn(
               "group relative flex-1 justify-between md:min-w-56",
-              className
+              className,
             )}
             {...props}
           >
@@ -259,15 +277,20 @@ const QRPresetSelect: React.FC<QRPresetSelectProps> = ({
               <div className="flex gap-0.5">
                 <ColorBox color={style.bgColor || "#ffffff"} />
                 <ColorBox color={style.fgColor || "#000000"} />
-                <ColorBox color={style.eyeColor || style.fgColor || "#000000"} />
-                <ColorBox color={style.dotColor || style.fgColor || "#000000"} />
+                <ColorBox
+                  color={style.eyeColor || style.fgColor || "#000000"}
+                />
+                <ColorBox
+                  color={style.dotColor || style.fgColor || "#000000"}
+                />
               </div>
-              {mounted && currentPresetId &&
+              {mounted &&
+                currentPresetId &&
                 isSavedTheme(currentPresetId) &&
                 !hasUnsavedChanges() && (
                   <div className="bg-muted rounded-full p-1">
                     <Heart
-                      className="size-1"
+                      className="size-3"
                       stroke="var(--muted)"
                       fill="var(--muted-foreground)"
                     />
@@ -344,7 +367,10 @@ const QRPresetSelect: React.FC<QRPresetSelectProps> = ({
                             {preset.name}
                           </span>
                           {isThemeNew(preset) && (
-                            <Badge variant="secondary" className="rounded-full text-xs">
+                            <Badge
+                              variant="secondary"
+                              className="rounded-full text-xs"
+                            >
                               New
                             </Badge>
                           )}
@@ -366,7 +392,9 @@ const QRPresetSelect: React.FC<QRPresetSelectProps> = ({
                       <Heart className="fill-muted-foreground size-3" />
                       <span>Save</span>
                     </div>
-                    <span className="text-muted-foreground">a QR theme to find it here.</span>
+                    <span className="text-muted-foreground">
+                      a QR theme to find it here.
+                    </span>
                   </div>
                   <Separator />
                 </>
@@ -391,7 +419,10 @@ const QRPresetSelect: React.FC<QRPresetSelectProps> = ({
                           {preset.name}
                         </span>
                         {isThemeNew(preset) && (
-                          <Badge variant="secondary" className="rounded-full text-xs">
+                          <Badge
+                            variant="secondary"
+                            className="rounded-full text-xs"
+                          >
                             New
                           </Badge>
                         )}
@@ -421,4 +452,3 @@ const QRPresetSelect: React.FC<QRPresetSelectProps> = ({
 };
 
 export default QRPresetSelect;
-

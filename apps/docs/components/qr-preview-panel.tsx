@@ -6,6 +6,7 @@ import { QRCode } from "qrdx";
 import type React from "react";
 import { useQREditorStore } from "@/store/editor-store";
 import type { QRStyle } from "@/types/qr";
+import { QrdxLogoAnimation } from "./qrdx-logo-animation";
 
 interface QRPreviewPanelProps {
   style: Partial<QRStyle>;
@@ -33,28 +34,7 @@ const QRPreviewPanel: React.FC<QRPreviewPanelProps> = ({ style }) => {
               }}
               className="flex max-w-md flex-col items-center justify-center gap-4 text-center"
             >
-              <div className="relative">
-                <div className="bg-muted/50 flex size-24 items-center justify-center rounded-2xl">
-                  <QrCodeIcon
-                    className="text-muted-foreground size-12"
-                    strokeWidth={1.5}
-                  />
-                </div>
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{
-                    duration: 0.5,
-                    delay: 0.2,
-                    ease: [0.4, 0, 0.2, 1],
-                  }}
-                  className="absolute -right-2 -top-2"
-                >
-                  <div className="bg-primary/10 flex size-10 items-center justify-center rounded-full">
-                    <Sparkles className="text-primary size-5" />
-                  </div>
-                </motion.div>
-              </div>
+              <QrdxLogoAnimation size={80} />
 
               <div className="space-y-2">
                 <h3 className="text-lg font-semibold">
