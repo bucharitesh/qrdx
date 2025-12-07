@@ -1,8 +1,8 @@
 import { Separator } from "@repo/design-system/components/ui/separator";
-import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { useAIQRGenerationCore } from "@/lib/hooks/use-ai-qr-generation-core";
 import { useQREditorStore } from "@/store/editor-store";
+import { useThemePresetStore } from "@/store/theme-preset-store";
+import { ThemeToggle } from "../../theme-toggle";
 import { CodeButton } from "./code-button";
 import { CopySVGButton } from "./copy-svg-button";
 import { DownloadButton } from "./download-button";
@@ -23,58 +23,51 @@ export function ActionBarButtons({
   onShareClick,
   isSaving,
 }: ActionBarButtonsProps) {
-  const pathname = usePathname();
-  const { resetToPreset, hasUnsavedChanges, currentPreset } =
+  const { themeState, resetToCurrentPreset, hasUnsavedChanges } =
     useQREditorStore();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const { isGenerating } = useAIQRGenerationCore();
+  const { getPreset } = useThemePresetStore();
+  const currentPreset = themeState?.preset
+    ? getPreset(themeState?.preset)
+    : undefined;
+  const isSavedPreset = !!currentPreset && currentPreset.source === "SAVED";
 
   const handleReset = () => {
-    resetToPreset();
+    resetToCurrentPreset();
   };
 
-  const isSavedTheme = currentPreset?.source === "SAVED";
-  // Check if we're currently editing (URL contains the theme ID)
-  const isEditing = currentPreset?.id && pathname.includes(currentPreset.id);
-
-  // Only check unsaved changes after mount to avoid hydration mismatch
-  const hasChanges = mounted ? hasUnsavedChanges() : false;
-
   return (
-    <>
-      {/* Left side - Undo/Redo */}
+    <div className="w-full flex items-center justify-between gap-1">
       <div className="flex items-center gap-1">
-        <UndoRedoButtons />
+        <UndoRedoButtons disabled={isGenerating} />
+        <ResetButton
+          onClick={handleReset}
+          disabled={!hasUnsavedChanges() || isGenerating}
+        />
       </div>
 
-      {/* Right side - Other buttons */}
       <div className="flex items-center gap-1">
         <ThemeToggle />
-        <Separator
-          orientation="vertical"
-          className="mx-1 h-8 bg-border/60 dark:bg-border/40"
-        />
-        <ResetButton onClick={handleReset} disabled={!hasChanges} />
-        <Separator
-          orientation="vertical"
-          className="mx-1 h-8 bg-border/60 dark:bg-border/40"
-        />
-        {isSavedTheme && currentPreset?.id && !isEditing && (
-          <EditButton themeId={currentPreset.id} />
+        <Separator orientation="vertical" className="mx-1 h-8" />
+        {isSavedPreset && (
+          <EditButton
+            themeId={themeState.preset as string}
+            disabled={isGenerating}
+          />
         )}
-        <ShareButton onClick={() => onShareClick(currentPreset?.id)} />
-        {!isEditing && <SaveButton onClick={onSaveClick} isSaving={isSaving} />}
-        <Separator
-          orientation="vertical"
-          className="mx-1 h-8 bg-border/60 dark:bg-border/40"
+        <ShareButton
+          onClick={() => onShareClick(themeState.preset)}
+          disabled={isGenerating}
         />
-        <DownloadButton />
+        <SaveButton
+          onClick={onSaveClick}
+          isSaving={isSaving}
+          disabled={isGenerating}
+        />
         <CopySVGButton />
+        <DownloadButton />
         <CodeButton />
       </div>
-    </>
+    </div>
   );
 }

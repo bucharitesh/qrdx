@@ -38,9 +38,9 @@ import type {
   ErrorLevel,
 } from "qrdx/types";
 import { useState } from "react";
-import { useDeleteQRTheme } from "@/lib/hooks/use-qr-themes";
+import { useDeleteQRTheme } from "@/lib/hooks/use-themes";
 import { useQREditorStore } from "@/store/editor-store";
-import type { QRPreset } from "@/types/qr";
+import type { ThemePreset } from "@/types/theme";
 
 interface QRThemeCardProps {
   theme: {
@@ -65,7 +65,7 @@ interface QRThemeCardProps {
 }
 
 export function QRThemeCard({ theme, className }: QRThemeCardProps) {
-  const { applyPreset } = useQREditorStore();
+  const { applyThemePreset } = useQREditorStore();
   const deleteThemeMutation = useDeleteQRTheme();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const router = useRouter();
@@ -83,28 +83,7 @@ export function QRThemeCard({ theme, className }: QRThemeCardProps) {
   };
 
   const handleQuickApply = () => {
-    const preset: QRPreset = {
-      id: theme.id,
-      name: theme.name,
-      description: "",
-      source: "SAVED" as const,
-      createdAt:
-        typeof theme.createdAt === "string"
-          ? theme.createdAt
-          : theme.createdAt.toISOString(),
-      style: {
-        ...theme.style,
-        bodyPattern: theme.style.bodyPattern as BodyPattern | undefined,
-        cornerEyePattern: theme.style.cornerEyePattern as
-          | CornerEyePattern
-          | undefined,
-        cornerEyeDotPattern: theme.style.cornerEyeDotPattern as
-          | CornerEyeDotPattern
-          | undefined,
-        level: theme.style.level as ErrorLevel | undefined,
-      },
-    };
-    applyPreset(preset);
+    applyThemePreset(theme.id);
     router.push("/editor/qr");
   };
 

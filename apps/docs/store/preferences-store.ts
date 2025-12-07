@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { DownloadOptions } from "@/types/qr";
+import type { DownloadOptions } from "@/types/theme";
 
 interface PreferencesStore {
   chatSuggestionsOpen: boolean;

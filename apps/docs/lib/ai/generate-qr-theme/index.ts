@@ -1,5 +1,3 @@
-import { qrStyleSchema } from "@/types/qr";
+import { themeStylePropsSchema } from "@/types/theme";
 
-export const qrStyleOutputSchema = qrStyleSchema.partial();
-
-
+export const themeStylePropsOutputSchema = themeStylePropsSchema.partial();

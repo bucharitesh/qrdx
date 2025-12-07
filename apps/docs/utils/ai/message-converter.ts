@@ -72,7 +72,7 @@ export async function convertMessagesToModelMessages(
 
   for (const message of messages) {
     const promptData = message.metadata?.promptData;
-    const qrStyle = message.metadata?.qrStyle;
+    const themeStyles = message.metadata?.themeStyles;
 
     const msgTextContent = message.parts
       .map((part) => (part.type === "text" ? part.text : ""))
@@ -94,12 +94,12 @@ export async function convertMessagesToModelMessages(
         text: msgTextContent,
       });
 
-      // If the assistant message has qrStyle attached to the metadata,
+      // If the assistant message has themeStyles attached to the metadata,
       // we need to add it to the assistant content to provide more context for the next generations
-      if (qrStyle) {
+      if (themeStyles) {
         assistantContentParts.push({
           type: "text",
-          text: JSON.stringify(qrStyle),
+          text: JSON.stringify(themeStyles),
         });
       }
 

@@ -2,12 +2,14 @@
 
 import { Button } from "@repo/design-system/components/ui/button";
 import { Separator } from "@repo/design-system/components/ui/separator";
-import { TooltipWrapper } from "@/components/tooltip-wrapper";
-import { useUpdateQRTheme } from "@/lib/hooks/use-qr-themes";
-import { useQREditorStore } from "@/store/editor-store";
 import { Check, X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
+import { TooltipWrapper } from "@/components/tooltip-wrapper";
+import { useUpdateQRTheme } from "@/lib/hooks/use-themes";
+import { useQREditorStore } from "@/store/editor-store";
+import type { ThemeEditorState } from "@/types/editor";
+import type { ThemeStyles } from "@/types/theme";
 import { QRSaveDialog } from "./qr-save-dialog";
 
 interface QREditActionsProps {
@@ -22,7 +24,7 @@ export function QREditActions({ theme, disabled = false }: QREditActionsProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const updateThemeMutation = useUpdateQRTheme();
-  const { style, currentPreset, applyPreset } = useQREditorStore();
+  const { themeState, applyThemePreset } = useQREditorStore();
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
 
   const mainEditorUrl = `/editor/qr?${searchParams}`;
@@ -31,8 +33,8 @@ export function QREditActions({ theme, disabled = false }: QREditActionsProps) {
     // Keep the current search params for tab persistence
     router.push(mainEditorUrl);
     // Reset to default preset
-    if (currentPreset) {
-      applyPreset(currentPreset);
+    if (themeState.preset) {
+      applyThemePreset(themeState.preset);
     }
   };
 
@@ -40,7 +42,7 @@ export function QREditActions({ theme, disabled = false }: QREditActionsProps) {
     const dataToUpdate: {
       id: string;
       name?: string;
-      styles?: typeof style;
+      styles?: ThemeEditorState["styles"];
     } = {
       id: theme.id,
     };
@@ -51,8 +53,8 @@ export function QREditActions({ theme, disabled = false }: QREditActionsProps) {
       dataToUpdate.name = theme.name;
     }
 
-    if (style) {
-      dataToUpdate.styles = style;
+    if (themeState.styles as ThemeStyles) {
+      dataToUpdate.styles = themeState.styles as ThemeStyles;
     }
 
     if (!dataToUpdate.name && !dataToUpdate.styles) {
@@ -65,16 +67,7 @@ export function QREditActions({ theme, disabled = false }: QREditActionsProps) {
       if (result) {
         setIsSaveDialogOpen(false);
         router.push(mainEditorUrl);
-        // Apply the updated theme
-        const updatedPreset = {
-          id: result.id,
-          name: result.name,
-          description: result.description || "",
-          source: "SAVED" as const,
-          createdAt: result.createdAt.toISOString(),
-          style: result.style,
-        };
-        applyPreset(updatedPreset);
+        applyThemePreset(result.id);
       }
     } catch (error) {
       console.error("Failed to update theme:", error);
@@ -91,9 +84,13 @@ export function QREditActions({ theme, disabled = false }: QREditActionsProps) {
         <div className="flex min-h-14 flex-1 items-center gap-2 px-4">
           <div className="flex animate-pulse items-center gap-2">
             <div className="h-2 w-2 rounded-full bg-blue-500" />
-            <span className="text-card-foreground/60 text-sm font-medium">Editing</span>
+            <span className="text-card-foreground/60 text-sm font-medium">
+              Editing
+            </span>
           </div>
-          <span className="max-w-56 truncate px-2 text-sm font-semibold">{theme.name}</span>
+          <span className="max-w-56 truncate px-2 text-sm font-semibold">
+            {theme.name}
+          </span>
         </div>
 
         <Separator orientation="vertical" className="bg-border h-8" />
@@ -138,6 +135,3 @@ export function QREditActions({ theme, disabled = false }: QREditActionsProps) {
     </>
   );
 }
-
-
-

@@ -1,10 +1,10 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { defaultThemeState } from "@/config/qr";
 import { isDeepEqual } from "@/lib/utils";
-import type { QREditorState } from "@/types/editor";
-import type { QRPreset, QRStyle } from "@/types/qr";
+import type { ThemeEditorState } from "@/types/editor";
 import type { ContentType } from "@/types/qr-content";
-import { defaultQREditorState, getPresetStyle } from "@/utils/qr-presets";
+import { getPresetThemeStyles } from "@/utils/qr-presets-helper";
 
 const MAX_HISTORY_COUNT = 30;
 const HISTORY_OVERRIDE_THRESHOLD_MS = 500; // 0.5 seconds
@@ -13,8 +13,7 @@ const HISTORY_OVERRIDE_THRESHOLD_MS = 500; // 0.5 seconds
  * History entry for QR editor state
  */
 interface QRHistoryEntry {
-  style: Partial<QRStyle>;
-  value: string;
+  state: ThemeEditorState;
   timestamp: number;
 }
 
@@ -22,38 +21,26 @@ interface QRHistoryEntry {
  * QR Editor Store Interface
  */
 interface QREditorStore {
-  // Current state
-  style: Partial<QRStyle>;
   value: string;
-  currentPreset?: QRPreset;
-  contentType: ContentType;
-
-  // Checkpoint for unsaved changes
-  checkpoint: QREditorState | null;
-
-  // History for undo/redo
+  setValue: (value: string) => void;
+  themeState: ThemeEditorState;
+  themeCheckpoint: ThemeEditorState | null;
   history: QRHistoryEntry[];
   future: QRHistoryEntry[];
-
-  // Actions
-  setStyle: (style: Partial<QRStyle>) => void;
-  setValue: (value: string) => void;
-  setContentType: (contentType: ContentType) => void;
-  applyPreset: (preset: QRPreset) => void;
-  saveCheckpoint: () => void;
-  restoreCheckpoint: () => void;
-  resetToPreset: () => void;
-  hasChangedFromCheckpoint: () => boolean;
+  setThemeState: (state: ThemeEditorState) => void;
+  applyThemePreset: (preset: string) => void;
+  saveThemeCheckpoint: () => void;
+  restoreThemeCheckpoint: () => void;
+  resetToCurrentPreset: () => void;
+  hasThemeChangedFromCheckpoint: () => boolean;
   hasUnsavedChanges: () => boolean;
-
-  // Undo/Redo
   undo: () => void;
   redo: () => void;
   canUndo: () => boolean;
   canRedo: () => boolean;
 
-  // Reset
-  reset: () => void;
+  contentType: ContentType;
+  setContentType: (contentType: ContentType) => void;
 }
 
 /**
@@ -62,301 +49,221 @@ interface QREditorStore {
 export const useQREditorStore = create<QREditorStore>()(
   persist(
     (set, get) => ({
-      // Initial state
-      style: defaultQREditorState.style,
-      value: defaultQREditorState.value,
-      currentPreset: undefined,
-      contentType: "url" as ContentType,
-      checkpoint: null,
+      themeState: defaultThemeState,
+      themeCheckpoint: null,
       history: [],
       future: [],
-
-      // Update style with history tracking
-      setStyle: (newStyle: Partial<QRStyle>) => {
-        const currentTime = Date.now();
-        const oldStyle = get().style;
-        const oldValue = get().value;
+      value: "",
+      setValue: (value: string) => {
+        set({ value });
+      },
+      contentType: "url",
+      setContentType: (contentType: ContentType) => {
+        set({ contentType });
+      },
+      setThemeState: (newState: ThemeEditorState) => {
+        const oldThemeState = get().themeState;
         let currentHistory = get().history;
+        let currentFuture = get().future;
 
-        // Check if style actually changed
-        if (isDeepEqual(oldStyle, newStyle)) {
+        // Check if only currentMode changed
+        const oldStateWithoutMode = {
+          ...oldThemeState,
+        };
+        const newStateWithoutMode = { ...newState };
+
+        if (isDeepEqual(oldStateWithoutMode, newStateWithoutMode)) {
+          // Only currentMode changed
+          // Just update themeState without affecting history or future
+          set({ themeState: newState });
           return;
         }
 
+        const currentTime = Date.now();
+
+        // If other things changed, or if it's an actual identical state set (though less likely here)
+        // Proceed with history logic
         const lastHistoryEntry =
           currentHistory.length > 0
             ? currentHistory[currentHistory.length - 1]
             : null;
 
-        // Add to history if enough time has passed or it's the first entry
         if (
           !lastHistoryEntry ||
           currentTime - lastHistoryEntry.timestamp >=
             HISTORY_OVERRIDE_THRESHOLD_MS
         ) {
+          // Add a new history entry
           currentHistory = [
             ...currentHistory,
-            { style: oldStyle, value: oldValue, timestamp: currentTime },
+            { state: oldThemeState, timestamp: currentTime },
           ];
+          currentFuture = [];
         }
 
-        // Limit history size
         if (currentHistory.length > MAX_HISTORY_COUNT) {
-          currentHistory = currentHistory.slice(1);
+          currentHistory.shift(); // Remove the oldest entry
         }
 
         set({
-          style: newStyle,
+          themeState: newState,
           history: currentHistory,
-          future: [],
+          future: currentFuture,
         });
       },
-
-      // Update value
-      setValue: (newValue: string) => {
-        set({ value: newValue });
-      },
-
-      // Update content type
-      setContentType: (contentType: ContentType) => {
-        set({ contentType });
-      },
-
-      // Apply preset
-      applyPreset: (preset: QRPreset) => {
-        const currentTime = Date.now();
-        const oldStyle = get().style;
-        const oldValue = get().value;
+      applyThemePreset: (preset: string) => {
+        const currentThemeState = get().themeState;
         const oldHistory = get().history;
+        const currentTime = Date.now();
 
-        // Merge preset style with defaults to ensure all fields are present
-        const newStyle = { ...defaultQREditorState.style, ...preset.style };
-
-        const newHistoryEntry = {
-          style: oldStyle,
-          value: oldValue,
-          timestamp: currentTime,
-        };
-        let updatedHistory = [...oldHistory, newHistoryEntry];
-        if (updatedHistory.length > MAX_HISTORY_COUNT) {
-          updatedHistory = updatedHistory.slice(1);
-        }
-
-        const newState: QREditorState = {
-          style: newStyle,
-          value: get().value,
+        const newStyles = getPresetThemeStyles(preset);
+        const newThemeState: ThemeEditorState = {
+          ...currentThemeState,
           preset,
-          history: [],
-          historyIndex: -1,
+          styles: newStyles,
         };
-
-        set({
-          style: newStyle,
-          currentPreset: preset,
-          checkpoint: newState,
-          history: updatedHistory,
-          future: [],
-        });
-      },
-
-      // Save checkpoint
-      saveCheckpoint: () => {
-        const currentState: QREditorState = {
-          style: get().style,
-          value: get().value,
-          preset: get().currentPreset,
-          history: [],
-          historyIndex: -1,
-        };
-        set({ checkpoint: currentState });
-      },
-
-      // Restore checkpoint
-      restoreCheckpoint: () => {
-        const checkpoint = get().checkpoint;
-        if (!checkpoint) {
-          console.warn("No checkpoint available to restore");
-          return;
-        }
-
-        const currentTime = Date.now();
-        const oldStyle = get().style;
-        const oldValue = get().value;
-        const oldHistory = get().history;
 
         const newHistoryEntry = {
-          style: oldStyle,
-          value: oldValue,
+          state: currentThemeState,
           timestamp: currentTime,
         };
-        let updatedHistory = [...oldHistory, newHistoryEntry];
+        const updatedHistory = [...oldHistory, newHistoryEntry];
         if (updatedHistory.length > MAX_HISTORY_COUNT) {
-          updatedHistory = updatedHistory.slice(1);
+          updatedHistory.shift();
         }
 
         set({
-          style: checkpoint.style,
-          value: checkpoint.value,
-          currentPreset: checkpoint.preset,
+          themeState: newThemeState,
+          themeCheckpoint: newThemeState, // Applying a preset also updates the checkpoint
           history: updatedHistory,
           future: [],
         });
       },
+      saveThemeCheckpoint: () => {
+        set({ themeCheckpoint: get().themeState });
+      },
+      restoreThemeCheckpoint: () => {
+        const checkpoint = get().themeCheckpoint;
+        if (checkpoint) {
+          const oldThemeState = get().themeState;
+          const oldHistory = get().history;
+          const currentTime = Date.now();
 
-      // Reset to current preset
-      resetToPreset: () => {
-        const currentPreset = get().currentPreset;
-        if (!currentPreset) {
-          // Reset to default if no preset
+          const newHistoryEntry = {
+            state: oldThemeState,
+            timestamp: currentTime,
+          };
+          const updatedHistory = [...oldHistory, newHistoryEntry];
+          if (updatedHistory.length > MAX_HISTORY_COUNT) {
+            updatedHistory.shift();
+          }
+
           set({
-            style: defaultQREditorState.style,
-            value: get().value,
-            history: [],
+            themeState: {
+              ...checkpoint,
+            },
+            history: updatedHistory,
             future: [],
           });
-          return;
+        } else {
+          console.warn("No theme checkpoint available to restore to.");
         }
+      },
+      hasThemeChangedFromCheckpoint: () => {
+        const checkpoint = get().themeCheckpoint;
+        return !isDeepEqual(get().themeState, checkpoint);
+      },
+      hasUnsavedChanges: () => {
+        const themeState = get().themeState;
+        const presetThemeStyles = getPresetThemeStyles(
+          themeState.preset ?? "default",
+        );
+        const stylesChanged = !isDeepEqual(
+          themeState.styles,
+          presetThemeStyles,
+        );
+        return stylesChanged;
+      },
+      resetToCurrentPreset: () => {
+        const currentThemeState = get().themeState;
 
-        const presetStyle = getPresetStyle(currentPreset.id);
-        const newState: QREditorState = {
-          style: presetStyle,
-          value: get().value,
-          preset: currentPreset,
-          history: [],
-          historyIndex: -1,
+        const presetThemeStyles = getPresetThemeStyles(
+          currentThemeState.preset ?? "default",
+        );
+        const newThemeState: ThemeEditorState = {
+          ...currentThemeState,
+          styles: presetThemeStyles,
         };
 
         set({
-          style: presetStyle,
-          checkpoint: newState,
+          themeState: newThemeState,
+          themeCheckpoint: newThemeState,
           history: [],
           future: [],
         });
       },
-
-      // Check if changed from checkpoint
-      hasChangedFromCheckpoint: () => {
-        const checkpoint = get().checkpoint;
-        if (!checkpoint) return false;
-
-        const currentStyle = get().style;
-        const currentValue = get().value;
-
-        return (
-          !isDeepEqual(currentStyle, checkpoint.style) ||
-          currentValue !== checkpoint.value
-        );
-      },
-
-      // Check for unsaved changes
-      hasUnsavedChanges: () => {
-        const currentPreset = get().currentPreset;
-        const currentStyle = get().style;
-        const checkpoint = get().checkpoint;
-
-        // If no preset is set, check against default
-        if (!currentPreset) {
-          if (!checkpoint) return false;
-          const normalizedCurrent = { ...defaultQREditorState.style, ...currentStyle };
-          const normalizedCheckpoint = { ...defaultQREditorState.style, ...checkpoint.style };
-          return !isDeepEqual(normalizedCurrent, normalizedCheckpoint);
-        }
-
-        // Compare against checkpoint if available (most accurate)
-        if (checkpoint && checkpoint.preset?.id === currentPreset.id) {
-          // Normalize both styles before comparison
-          const normalizedCurrent = { ...defaultQREditorState.style, ...currentStyle };
-          const normalizedCheckpoint = { ...defaultQREditorState.style, ...checkpoint.style };
-          return !isDeepEqual(normalizedCurrent, normalizedCheckpoint);
-        }
-
-        // Fallback to comparing with preset style
-        const presetStyle = { ...defaultQREditorState.style, ...currentPreset.style };
-        const normalizedCurrentStyle = { ...defaultQREditorState.style, ...currentStyle };
-        return !isDeepEqual(normalizedCurrentStyle, presetStyle);
-      },
-
-      // Undo
       undo: () => {
         const history = get().history;
-        if (history.length === 0) return;
+        if (history.length === 0) {
+          return;
+        }
 
-        const currentStyle = get().style;
-        const currentValue = get().value;
+        const currentThemeState = get().themeState;
         const future = get().future;
 
         const lastHistoryEntry = history[history.length - 1];
         const newHistory = history.slice(0, -1);
 
         const newFutureEntry = {
-          style: currentStyle,
-          value: currentValue,
+          state: currentThemeState,
           timestamp: Date.now(),
         };
+        const newFuture = [newFutureEntry, ...future];
 
         set({
-          style: lastHistoryEntry.style,
-          value: lastHistoryEntry.value,
+          themeState: {
+            ...lastHistoryEntry.state,
+          },
+          themeCheckpoint: lastHistoryEntry.state,
           history: newHistory,
-          future: [newFutureEntry, ...future],
+          future: newFuture,
         });
       },
-
-      // Redo
       redo: () => {
         const future = get().future;
-        if (future.length === 0) return;
-
-        const currentStyle = get().style;
-        const currentValue = get().value;
+        if (future.length === 0) {
+          return;
+        }
         const history = get().history;
 
         const firstFutureEntry = future[0];
         const newFuture = future.slice(1);
 
+        const currentThemeState = get().themeState;
+
         const newHistoryEntry = {
-          style: currentStyle,
-          value: currentValue,
+          state: currentThemeState,
           timestamp: Date.now(),
         };
-        let updatedHistory = [...history, newHistoryEntry];
+        const updatedHistory = [...history, newHistoryEntry];
         if (updatedHistory.length > MAX_HISTORY_COUNT) {
-          updatedHistory = updatedHistory.slice(1);
+          updatedHistory.shift();
         }
 
         set({
-          style: firstFutureEntry.style,
-          value: firstFutureEntry.value,
+          themeState: {
+            ...firstFutureEntry.state,
+          },
+          themeCheckpoint: firstFutureEntry.state,
           history: updatedHistory,
           future: newFuture,
         });
       },
-
-      // Can undo/redo
       canUndo: () => get().history.length > 0,
       canRedo: () => get().future.length > 0,
-
-      // Reset to default
-      reset: () => {
-        set({
-          style: defaultQREditorState.style,
-          value: defaultQREditorState.value,
-          currentPreset: undefined,
-          contentType: "url" as ContentType,
-          checkpoint: null,
-          history: [],
-          future: [],
-        });
-      },
     }),
     {
-      name: "qr-editor-storage",
-      partialize: (state) => ({
-        style: state.style,
-        value: state.value,
-        currentPreset: state.currentPreset,
-        contentType: state.contentType,
-      }),
+      name: "editor-storage",
     },
   ),
 );

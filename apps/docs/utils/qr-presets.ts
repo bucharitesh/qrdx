@@ -1,17 +1,12 @@
-import { defaultQRStyle } from "@/config/qr";
-import type { BaseQREditorState } from "@/types/editor";
-import type { QRPreset, QRStyle } from "@/types/qr";
+import type { ThemePreset } from "@/types/theme";
 
 /**
  * Built-in QR code presets
  */
-export const builtInPresets: QRPreset[] = [
-  {
-    id: "default",
-    name: "Classic",
-    description: "Traditional black and white QR code",
-    source: "BUILT_IN",
-    style: {
+export const defaultPresets: Record<string, ThemePreset> = {
+  classic: {
+    label: "Classic",
+    styles: {
       bgColor: "#ffffff",
       fgColor: "#000000",
       eyeColor: "#000000",
@@ -22,12 +17,9 @@ export const builtInPresets: QRPreset[] = [
       level: "Q",
     },
   },
-  {
-    id: "modern",
-    name: "Modern",
-    description: "Sleek rounded design with clean patterns",
-    source: "BUILT_IN",
-    style: {
+  modern: {
+    label: "Modern",
+    styles: {
       bgColor: "#f8fafc",
       fgColor: "#0f172a",
       eyeColor: "#3b82f6",
@@ -38,12 +30,9 @@ export const builtInPresets: QRPreset[] = [
       level: "Q",
     },
   },
-  {
-    id: "vibrant",
-    name: "Vibrant",
-    description: "Bold colors with diamond patterns",
-    source: "BUILT_IN",
-    style: {
+  vibrant: {
+    label: "Vibrant",
+    styles: {
       bgColor: "#fef3c7",
       fgColor: "#7c2d12",
       eyeColor: "#dc2626",
@@ -54,12 +43,9 @@ export const builtInPresets: QRPreset[] = [
       level: "H",
     },
   },
-  {
-    id: "minimal",
-    name: "Minimal",
-    description: "Clean and simple square design",
-    source: "BUILT_IN",
-    style: {
+  minimal: {
+    label: "Minimal",
+    styles: {
       bgColor: "#ffffff",
       fgColor: "#404040",
       eyeColor: "#404040",
@@ -70,12 +56,9 @@ export const builtInPresets: QRPreset[] = [
       level: "M",
     },
   },
-  {
-    id: "gradient-blue",
-    name: "Ocean Blue",
-    description: "Blue gradient-inspired design",
-    source: "BUILT_IN",
-    style: {
+  gradientBlue: {
+    label: "Ocean Blue",
+    styles: {
       bgColor: "#eff6ff",
       fgColor: "#1e40af",
       eyeColor: "#3b82f6",
@@ -86,12 +69,9 @@ export const builtInPresets: QRPreset[] = [
       level: "Q",
     },
   },
-  {
-    id: "neon",
-    name: "Neon",
-    description: "Dark background with bright neon accents",
-    source: "BUILT_IN",
-    style: {
+  neon: {
+    label: "Neon",
+    styles: {
       bgColor: "#0f172a",
       fgColor: "#22d3ee",
       eyeColor: "#a855f7",
@@ -102,12 +82,9 @@ export const builtInPresets: QRPreset[] = [
       level: "Q",
     },
   },
-  {
-    id: "nature",
-    name: "Nature",
-    description: "Earth tones with organic patterns",
-    source: "BUILT_IN",
-    style: {
+  nature: {
+    label: "Nature",
+    styles: {
       bgColor: "#f0fdf4",
       fgColor: "#166534",
       eyeColor: "#15803d",
@@ -118,12 +95,9 @@ export const builtInPresets: QRPreset[] = [
       level: "Q",
     },
   },
-  {
-    id: "retro",
-    name: "Retro",
-    description: "Vintage-inspired design with warm tones",
-    source: "BUILT_IN",
-    style: {
+  retro: {
+    label: "Retro",
+    styles: {
       bgColor: "#fef2f2",
       fgColor: "#7f1d1d",
       eyeColor: "#b91c1c",
@@ -134,12 +108,9 @@ export const builtInPresets: QRPreset[] = [
       level: "M",
     },
   },
-  {
-    id: "amber-minimal",
-    name: "Amber Minimal",
-    description: "Warm amber tones with minimal design",
-    source: "BUILT_IN",
-    style: {
+  amberMinimal: {
+    label: "Amber Minimal",
+    styles: {
       bgColor: "#fffbeb",
       fgColor: "#92400e",
       eyeColor: "#f59e0b",
@@ -150,12 +121,9 @@ export const builtInPresets: QRPreset[] = [
       level: "M",
     },
   },
-  {
-    id: "amethyst-haze",
-    name: "Amethyst Haze",
-    description: "Purple and pink gradient design",
-    source: "BUILT_IN",
-    style: {
+  amethystHaze: {
+    label: "Amethyst Haze",
+    styles: {
       bgColor: "#faf5ff",
       fgColor: "#6b21a8",
       eyeColor: "#a855f7",
@@ -166,12 +134,9 @@ export const builtInPresets: QRPreset[] = [
       level: "Q",
     },
   },
-  {
-    id: "bold-tech",
-    name: "Bold Tech",
-    description: "Bold purple and blue tech-inspired design",
-    source: "BUILT_IN",
-    style: {
+  boldTech: {
+    label: "Bold Tech",
+    styles: {
       bgColor: "#f3e8ff",
       fgColor: "#581c87",
       eyeColor: "#7c3aed",
@@ -182,12 +147,9 @@ export const builtInPresets: QRPreset[] = [
       level: "H",
     },
   },
-  {
-    id: "bubblegum",
-    name: "Bubblegum",
-    description: "Playful pink, yellow, and teal colors",
-    source: "BUILT_IN",
-    style: {
+  bubblegum: {
+    label: "Bubblegum",
+    styles: {
       bgColor: "#fdf2f8",
       fgColor: "#9f1239",
       eyeColor: "#ec4899",
@@ -198,12 +160,9 @@ export const builtInPresets: QRPreset[] = [
       level: "Q",
     },
   },
-  {
-    id: "caffeine",
-    name: "Caffeine",
-    description: "Rich brown coffee-inspired tones",
-    source: "BUILT_IN",
-    style: {
+  caffeine: {
+    label: "Caffeine",
+    styles: {
       bgColor: "#fef3c7",
       fgColor: "#78350f",
       eyeColor: "#92400e",
@@ -214,12 +173,9 @@ export const builtInPresets: QRPreset[] = [
       level: "M",
     },
   },
-  {
-    id: "candyland",
-    name: "Candyland",
-    description: "Sweet yellow and blue candy colors",
-    source: "BUILT_IN",
-    style: {
+  candyland: {
+    label: "Candyland",
+    styles: {
       bgColor: "#fef9c3",
       fgColor: "#854d0e",
       eyeColor: "#eab308",
@@ -230,12 +186,9 @@ export const builtInPresets: QRPreset[] = [
       level: "Q",
     },
   },
-  {
-    id: "emerald",
-    name: "Emerald",
-    description: "Fresh green emerald tones",
-    source: "BUILT_IN",
-    style: {
+  emerald: {
+    label: "Emerald",
+    styles: {
       bgColor: "#ecfdf5",
       fgColor: "#064e3b",
       eyeColor: "#10b981",
@@ -246,12 +199,9 @@ export const builtInPresets: QRPreset[] = [
       level: "Q",
     },
   },
-  {
-    id: "rose",
-    name: "Rose",
-    description: "Elegant rose pink design",
-    source: "BUILT_IN",
-    style: {
+  rose: {
+    label: "Rose",
+    styles: {
       bgColor: "#fff1f2",
       fgColor: "#881337",
       eyeColor: "#e11d48",
@@ -262,12 +212,9 @@ export const builtInPresets: QRPreset[] = [
       level: "M",
     },
   },
-  {
-    id: "slate",
-    name: "Slate",
-    description: "Modern slate gray design",
-    source: "BUILT_IN",
-    style: {
+  slate: {
+    label: "Slate",
+    styles: {
       bgColor: "#f8fafc",
       fgColor: "#0f172a",
       eyeColor: "#475569",
@@ -278,12 +225,9 @@ export const builtInPresets: QRPreset[] = [
       level: "M",
     },
   },
-  {
-    id: "sunset",
-    name: "Sunset",
-    description: "Warm sunset orange and red",
-    source: "BUILT_IN",
-    style: {
+  sunset: {
+    label: "Sunset",
+    styles: {
       bgColor: "#fff7ed",
       fgColor: "#9a3412",
       eyeColor: "#ea580c",
@@ -294,12 +238,9 @@ export const builtInPresets: QRPreset[] = [
       level: "Q",
     },
   },
-  {
-    id: "midnight",
-    name: "Midnight",
-    description: "Deep dark blue midnight theme",
-    source: "BUILT_IN",
-    style: {
+  midnight: {
+    label: "Midnight",
+    styles: {
       bgColor: "#0f172a",
       fgColor: "#e0e7ff",
       eyeColor: "#6366f1",
@@ -310,27 +251,4 @@ export const builtInPresets: QRPreset[] = [
       level: "Q",
     },
   },
-];
-
-/**
- * Default QR editor state
- */
-export const defaultQREditorState: BaseQREditorState = {
-  style: defaultQRStyle,
-  value: "https://example.com",
-};
-
-/**
- * Get preset by ID
- */
-export function getPresetById(id: string): QRPreset | undefined {
-  return builtInPresets.find((preset) => preset.id === id);
-}
-
-/**
- * Get preset style by ID
- */
-export function getPresetStyle(id: string): Partial<QRStyle> {
-  const preset = getPresetById(id);
-  return preset?.style || defaultQRStyle;
-}
+} as const;

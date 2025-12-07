@@ -5,7 +5,8 @@ import type React from "react";
 import { useQREditorStore } from "@/store/editor-store";
 
 export const TemplateSelector: React.FC = () => {
-  const { style, setStyle } = useQREditorStore();
+  const { themeState, setThemeState } = useQREditorStore();
+  const style = themeState.styles;
   const selectedTemplateId = style.templateId || "default";
   const templates = getAllTemplates();
 
@@ -19,7 +20,12 @@ export const TemplateSelector: React.FC = () => {
               : "ring-gray-200 bg-white hover:ring-gray-300"
           }`}
           key={template.id}
-          onClick={() => setStyle({ ...style, templateId: template.id })}
+          onClick={() =>
+            setThemeState({
+              ...themeState,
+              styles: { ...style, templateId: template.id },
+            })
+          }
           tabIndex={0}
           type="button"
         >

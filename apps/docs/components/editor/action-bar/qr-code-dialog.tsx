@@ -24,8 +24,10 @@ interface QRCodeDialogProps {
 }
 
 export function QRCodeDialog({ open, onOpenChange }: QRCodeDialogProps) {
-  const { value, style } = useQREditorStore();
+  const { value, themeState } = useQREditorStore();
   const [copied, setCopied] = useState(false);
+
+  const style = themeState.styles;
 
   // Generate full component code
   const fullComponentCode = useMemo(() => {
@@ -95,7 +97,10 @@ ${props.join("\n")}
 
   return (
     <ResponsiveDialog open={open} onOpenChange={onOpenChange}>
-      <ResponsiveDialogContent className="h-[90dvh] max-h-[90dvh] overflow-hidden p-6 shadow-lg sm:h-[80dvh] sm:max-h-[min(700px,90dvh)] sm:w-[calc(100%-2rem)] sm:max-w-4xl" showCloseButton={true}>
+      <ResponsiveDialogContent
+        className="h-[90dvh] max-h-[90dvh] overflow-hidden p-6 shadow-lg sm:h-[80dvh] sm:max-h-[min(700px,90dvh)] sm:w-[calc(100%-2rem)] sm:max-w-4xl"
+        showCloseButton={true}
+      >
         <ResponsiveDialogHeader>
           <ResponsiveDialogTitle>QR Code Component</ResponsiveDialogTitle>
           <ResponsiveDialogDescription className="sr-only">

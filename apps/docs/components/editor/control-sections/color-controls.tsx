@@ -4,11 +4,11 @@ import { getContrastLevel, getContrastRatio } from "qrdx";
 import * as React from "react";
 import { ColorPicker } from "@/components/editor/color-picker";
 import ControlSection from "@/components/editor/control-section";
-import type { QRStyle } from "@/types/qr";
+import type { ThemeStyles } from "@/types/theme";
 
 interface ColorControlsProps {
-  style: Partial<QRStyle>;
-  onStyleChange: (style: Partial<QRStyle>) => void;
+  style: Partial<ThemeStyles>;
+  onStyleChange: (style: Partial<ThemeStyles>) => void;
 }
 
 export function ColorControls({ style, onStyleChange }: ColorControlsProps) {

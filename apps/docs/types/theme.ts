@@ -1,3 +1,4 @@
+import type { InferSelectModel } from "drizzle-orm";
 import {
   bodyPatternSchema,
   cornerEyeDotPatternSchema,
@@ -5,14 +6,18 @@ import {
   errorLevelSchema,
 } from "qrdx/types";
 import { z } from "zod";
+import type { qrPreset } from "@/db/schema";
 
 /**
  * QR Code Style Configuration Schema
  */
-export const qrStyleSchema = z.object({
+export const themeStylePropsSchema = z.object({
   size: z.number().optional().describe("Size of the QR code in pixels"),
   bgColor: z.string().optional().describe("Background color of the QR code"),
-  fgColor: z.string().optional().describe("Foreground (main) color of the QR code"),
+  fgColor: z
+    .string()
+    .optional()
+    .describe("Foreground (main) color of the QR code"),
   eyeColor: z.string().optional().describe("Color of the corner eye patterns"),
   dotColor: z.string().optional().describe("Color of the inner eye dots"),
   bodyPattern: bodyPatternSchema
@@ -36,41 +41,31 @@ export const qrStyleSchema = z.object({
     .describe("Custom logo image URL or data URI"),
 });
 
-export type QRStyle = z.infer<typeof qrStyleSchema>;
+export type ThemeStyles = z.infer<typeof themeStylePropsSchema>;
 
-/**
- * QR Code Preset Configuration
- */
-export const qrPresetSchema = z.object({
-  id: z.string(),
-  name: z.string().describe("Display name for the preset"),
-  description: z
-    .string()
-    .optional()
-    .describe("Description of the preset style"),
-  source: z.enum(["SAVED", "BUILT_IN"]).optional(),
-  createdAt: z.string().optional(),
-  style: qrStyleSchema.partial(),
-});
-
-export type QRPreset = z.infer<typeof qrPresetSchema>;
-
-/**
- * QR Code Editor Preview Props
- */
-export interface QREditorPreviewProps {
-  style: Partial<QRStyle>;
-  value: string;
+export interface ThemeEditorPreviewProps {
+  styles: ThemeStyles;
 }
 
-/**
- * QR Code Editor Controls Props
- */
-export interface QREditorControlsProps {
-  style: Partial<QRStyle>;
-  onChange: (style: Partial<QRStyle>) => void;
-  presets?: QRPreset[];
+export interface ThemeEditorControlsProps {
+  styles: ThemeStyles;
+  currentMode: "light" | "dark";
+  onChange: (styles: ThemeStyles) => void;
+  themePromise: Promise<Theme | null>;
 }
+
+export type ThemePreset = {
+  source?: "SAVED" | "BUILT_IN";
+  createdAt?: string;
+  label?: string;
+  styles: ThemeStyles;
+};
+
+// Type alias for backward compatibility
+export type QRPreset = ThemePreset;
+export type QRStyle = ThemeStyles;
+
+export type Theme = InferSelectModel<typeof qrPreset>;
 
 /**
  * Download Format Options

@@ -26,25 +26,23 @@ import {
   useControlsTabFromUrl,
 } from "@/lib/hooks/use-controls-tab-from-url";
 import { useQREditorStore } from "@/store/editor-store";
-import type { QRPreset, QRStyle } from "@/types/qr";
+import type { QRPreset, QRStyle, Theme } from "@/types/theme";
 import { ChatInterface } from "./editor/ai/chat-interface";
 
 interface QRControlPanelProps {
   style: Partial<QRStyle>;
   onChange: (style: Partial<QRStyle>) => void;
-  qrPromise: Promise<QRPreset | null>;
+  themePromise: Promise<Theme | null>;
 }
 
 const QRControlPanel: React.FC<QRControlPanelProps> = ({
   style,
-  qrPromise,
+  themePromise,
 }) => {
-  const { setStyle } = useQREditorStore();
+  const { themeState, setThemeState } = useQREditorStore();
   const { tab, handleSetTab } = useControlsTabFromUrl();
   const { isGenerating } = useAIQRGenerationCore();
-  const theme = use(qrPromise);
-
-  console.log("theme", qrPromise, theme);
+  const theme = use(themePromise);
 
   return (
     <>
@@ -99,7 +97,12 @@ const QRControlPanel: React.FC<QRControlPanelProps> = ({
             className="mt-1 size-full overflow-hidden"
           >
             <ScrollArea className="h-full px-4">
-              <ColorControls style={style} onStyleChange={setStyle} />
+              <ColorControls
+                style={themeState.styles}
+                onStyleChange={(styles) =>
+                  setThemeState({ ...themeState, styles })
+                }
+              />
             </ScrollArea>
           </TabsContent>
 
@@ -127,7 +130,12 @@ const QRControlPanel: React.FC<QRControlPanelProps> = ({
           >
             <ScrollArea className="h-full px-4">
               <SettingsControls />
-              <LogoControls style={style} onStyleChange={setStyle} />
+              <LogoControls
+                style={themeState.styles}
+                onStyleChange={(styles) =>
+                  setThemeState({ ...themeState, styles })
+                }
+              />
             </ScrollArea>
           </TabsContent>
 

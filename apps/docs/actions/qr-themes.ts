@@ -16,7 +16,7 @@ import {
   UnauthorizedError,
   ValidationError,
 } from "@/types/errors";
-import { type QRStyle, qrStyleSchema } from "@/types/qr";
+import { type ThemeStyles, themeStylePropsSchema } from "@/types/theme";
 
 // Helper to get user ID with better error handling
 async function getCurrentUserId(): Promise<string> {
@@ -55,7 +55,7 @@ const createThemeSchema = z.object({
     .string()
     .min(1, "Theme name cannot be empty")
     .max(50, "Theme name too long"),
-  styles: qrStyleSchema.partial(),
+  styles: themeStylePropsSchema.partial(),
 });
 
 const updateThemeSchema = z.object({
@@ -65,7 +65,7 @@ const updateThemeSchema = z.object({
     .min(1, "Theme name cannot be empty")
     .max(50, "Theme name too long")
     .optional(),
-  styles: qrStyleSchema.partial().optional(),
+  styles: themeStylePropsSchema.partial().optional(),
 });
 
 // Layer 1: Clean server actions with proper error handling
@@ -106,7 +106,10 @@ export const getTheme = cache(async (themeId: string) => {
   }
 });
 
-export async function createTheme(formData: { name: string; styles: QRStyle }) {
+export async function createTheme(formData: {
+  name: string;
+  styles: ThemeStyles;
+}) {
   try {
     const userId = await getCurrentUserId();
 
@@ -164,7 +167,7 @@ export async function createTheme(formData: { name: string; styles: QRStyle }) {
 export async function updateTheme(formData: {
   id: string;
   name?: string;
-  styles?: QRStyle;
+  styles?: ThemeStyles;
 }) {
   try {
     const userId = await getCurrentUserId();

@@ -6,11 +6,11 @@ import { Label } from "@repo/design-system/components/ui/label";
 import { Switch } from "@repo/design-system/components/ui/switch";
 import * as React from "react";
 import ControlSection from "@/components/editor/control-section";
-import type { QRStyle } from "@/types/qr";
+import type { ThemeStyles } from "@/types/theme";
 
 interface LogoControlsProps {
-  style: Partial<QRStyle>;
-  onStyleChange: (style: Partial<QRStyle>) => void;
+  style: Partial<ThemeStyles>;
+  onStyleChange: (styles: Partial<ThemeStyles>) => void;
 }
 
 export function LogoControls({ style, onStyleChange }: LogoControlsProps) {

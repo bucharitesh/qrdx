@@ -1,6 +1,6 @@
 import { streamObject, tool } from "ai";
 import z from "zod";
-import { qrStyleOutputSchema } from "@/lib/ai/generate-qr-theme";
+import { themeStylePropsOutputSchema } from "@/lib/ai/generate-qr-theme";
 import { baseProviderOptions, myProvider } from "@/lib/ai/providers";
 import type { AdditionalAIContext } from "@/types/ai";
 
@@ -8,7 +8,7 @@ export const QR_THEME_GENERATION_TOOLS = {
   generateQRTheme: tool({
     description: `Generates a QR code style theme based on the current conversation context. Use this tool once you have a clear understanding of the user's request, which may include a text prompt, images, an SVG, or a base theme reference (@[theme_name]).`,
     inputSchema: z.object({}),
-    outputSchema: qrStyleOutputSchema,
+    outputSchema: themeStylePropsOutputSchema,
     execute: async (
       _input,
       { messages, abortSignal, toolCallId, experimental_context },
@@ -20,7 +20,7 @@ export const QR_THEME_GENERATION_TOOLS = {
           abortSignal,
           model: myProvider.languageModel("qr-theme-generation"),
           providerOptions: baseProviderOptions,
-          schema: qrStyleOutputSchema,
+          schema: themeStylePropsOutputSchema,
           messages,
         });
 
@@ -30,21 +30,21 @@ export const QR_THEME_GENERATION_TOOLS = {
           writer.write({
             id: toolCallId,
             type: "data-generated-qr-style",
-            data: { status: "streaming", qrStyle: chunk },
+            data: { status: "streaming", themeStyles: chunk },
             transient: true,
           });
         }
 
-        const qrStyle = await object;
+        const themeStyles = await object;
 
         writer.write({
           id: toolCallId,
           type: "data-generated-qr-style",
-          data: { status: "ready", qrStyle },
+          data: { status: "ready", themeStyles },
           transient: true,
         });
 
-        return qrStyle;
+        return themeStyles;
       } catch (error) {
         console.error("Error in generateQRTheme tool:", error);
         // Return a default style on error to prevent tool failure
@@ -56,7 +56,7 @@ export const QR_THEME_GENERATION_TOOLS = {
         writer.write({
           id: toolCallId,
           type: "data-generated-qr-style",
-          data: { status: "ready", qrStyle: defaultStyle },
+          data: { status: "ready", themeStyles: defaultStyle },
           transient: true,
         });
 

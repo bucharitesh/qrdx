@@ -19,12 +19,15 @@ interface ChatContext extends ReturnType<typeof useChat<ChatMessage>> {
 const ChatContext = createContext<ChatContext | null>(null);
 
 function applyGeneratedQRStyle(qrStyle: Record<string, unknown>) {
-  const { setStyle, style } = useQREditorStore.getState();
+  const { themeState, setThemeState } = useQREditorStore.getState();
 
   // Merge the generated style with the current style
-  const mergedStyle = { ...style, ...qrStyle };
+  const mergedStyle = { ...themeState.styles, ...qrStyle };
 
-  setStyle(mergedStyle);
+  setThemeState({
+    ...themeState,
+    styles: mergedStyle,
+  });
 }
 
 export function ChatProvider({ children }: { children: React.ReactNode }) {
@@ -85,11 +88,14 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
 
       // Debug: Log messages to see the structure
 
-      // Check for qrStyle in metadata of the last assistant message
+      // Check for themeStyles in metadata of the last assistant message
       const lastMessage = chat.messages[chat.messages.length - 1];
-      if (lastMessage?.role === "assistant" && lastMessage?.metadata?.qrStyle) {
+      if (
+        lastMessage?.role === "assistant" &&
+        lastMessage?.metadata?.themeStyles
+      ) {
         applyGeneratedQRStyle(
-          lastMessage.metadata.qrStyle as Record<string, unknown>,
+          lastMessage.metadata.themeStyles as Record<string, unknown>,
         );
       }
     }
@@ -121,4 +127,3 @@ export function useChatContext() {
   }
   return ctx;
 }
-

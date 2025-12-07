@@ -17,7 +17,8 @@ const patterns: Array<{ id: BodyPattern; name: string }> = [
 ] as const;
 
 export const PatternSelector: React.FC = () => {
-  const { style, setStyle } = useQREditorStore();
+  const { themeState, setThemeState } = useQREditorStore();
+  const style = themeState.styles;
   const selectedPattern = style.bodyPattern || "circle";
   return (
     <div className="grid grid-cols-4 gap-3">
@@ -29,7 +30,12 @@ export const PatternSelector: React.FC = () => {
               : "ring-gray-200 bg-white hover:ring-gray-300"
           }`}
           key={pattern.id}
-          onClick={() => setStyle({ ...style, bodyPattern: pattern.id })}
+          onClick={() =>
+            setThemeState({
+              ...themeState,
+              styles: { ...style, bodyPattern: pattern.id },
+            })
+          }
           tabIndex={0}
           type="button"
         >

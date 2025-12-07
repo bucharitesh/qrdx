@@ -2,19 +2,21 @@
 
 import { ReactRenderer } from "@tiptap/react";
 import tippy from "tippy.js";
-import { useQRPresetStore } from "@/store/qr-preset-store";
+import { useThemePresetStore } from "@/store/theme-preset-store";
 import { MentionList } from "../mention-list";
 
 export const suggestion = {
   items: ({ query }: { query: string }) => {
     // Get all presets from the store
-    const allPresets = useQRPresetStore.getState().getAllPresets();
+    const allPresetsRecord = useThemePresetStore.getState().getAllPresets();
 
-    // Convert presets to the required array format { id: string, label: string }
-    const presetItems = allPresets.map((preset) => ({
-      id: preset.id,
-      label: preset.name,
-    }));
+    // Convert presets record to the required array format { id: string, label: string }
+    const presetItems = Object.entries(allPresetsRecord).map(
+      ([id, preset]) => ({
+        id: id,
+        label: preset.label,
+      }),
+    );
 
     // Filter based on the query
     return presetItems

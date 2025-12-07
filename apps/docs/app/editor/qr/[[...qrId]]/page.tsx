@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { getTheme } from "@/actions/qr-themes";
 import Editor from "@/components/editor";
-import { getPresetById } from "@/utils/qr-presets";
 
 export const metadata: Metadata = {
   title: "QR Code Editor — QRDX",
@@ -16,9 +15,8 @@ export default async function EditorPage({
 }) {
   const { qrId } = await params;
 
-  const qrPromise =
+  const themePromise =
     qrId?.length > 0 ? getTheme(qrId?.[0]) : Promise.resolve(null);
 
-  // @ts-expect-error
-  return <Editor qrPromise={qrPromise} />;
+  return <Editor themePromise={themePromise} />;
 }

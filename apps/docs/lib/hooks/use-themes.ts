@@ -1,7 +1,7 @@
 "use client";
 
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "@repo/design-system";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   createTheme,
   deleteTheme,
@@ -9,12 +9,11 @@ import {
   getThemes,
   updateTheme,
 } from "@/actions/qr-themes";
-import type { QRStyle } from "@/types/qr";
 import { authClient } from "@/lib/auth-client";
 
 export function useQRThemes() {
   const { data: session } = authClient.useSession();
-  
+
   return useQuery({
     queryKey: ["qr-themes"],
     queryFn: getThemes,
@@ -78,4 +77,3 @@ export function useDeleteQRTheme() {
     },
   });
 }
-

@@ -91,7 +91,7 @@ export async function POST(req: NextRequest) {
                 part.type === "tool-result" &&
                 part.toolName === "generateQRTheme"
               ) {
-                return { qrStyle: part.output };
+                return { themeStyles: part.output };
               }
             },
           }),
