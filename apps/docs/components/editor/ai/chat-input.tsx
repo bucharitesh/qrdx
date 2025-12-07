@@ -10,6 +10,7 @@ import { useAIChatForm } from "@/lib/hooks/use-ai-chat-form";
 import { useAIEnhancePrompt } from "@/lib/hooks/use-ai-enhance-prompt";
 import { useChatContext } from "@/lib/hooks/use-chat-context";
 import { useGuards } from "@/lib/hooks/use-gaurds";
+import { useMounted } from "@/lib/hooks/use-mounted";
 import { usePostLoginAction } from "@/lib/hooks/use-post-login-action";
 import { useSubscription } from "@/lib/hooks/use-subscription";
 import type { AIPromptData } from "@/types/ai";
@@ -39,6 +40,7 @@ export function ChatInput({
   const { messages, startNewChat } = useChatContext();
   const { checkValidSession, checkValidSubscription } = useGuards();
   const { subscriptionStatus } = useSubscription();
+  const isMounted = useMounted();
   const isPro = subscriptionStatus?.isSubscribed ?? false;
   const hasFreeRequestsLeft = (subscriptionStatus?.requestsRemaining ?? 0) > 0;
 
@@ -162,6 +164,7 @@ export function ChatInput({
                 isGeneratingTheme ||
                 isEnhancingPrompt ||
                 isInitializing ||
+                !isMounted ||
                 messages.length === 0
               }
               className="flex items-center gap-1.5 shadow-none"

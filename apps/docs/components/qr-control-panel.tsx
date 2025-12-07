@@ -44,6 +44,8 @@ const QRControlPanel: React.FC<QRControlPanelProps> = ({
   const { isGenerating } = useAIQRGenerationCore();
   const theme = use(qrPromise);
 
+  console.log("theme", qrPromise, theme);
+
   return (
     <>
       <div className="border-b">
