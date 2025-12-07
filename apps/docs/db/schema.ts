@@ -6,7 +6,7 @@ import {
   text,
   timestamp,
 } from "drizzle-orm/pg-core";
-import type { QRStyle } from "@/types/qr";
+import type { ThemeStyles } from "@/types/theme";
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -65,7 +65,7 @@ export const qrPreset = pgTable("qr_preset", {
     .references(() => user.id, { onDelete: "cascade" }),
   name: text("name").notNull(),
   description: text("description"),
-  style: json("style").$type<Partial<QRStyle>>().notNull(),
+  style: json("style").$type<Partial<ThemeStyles>>().notNull(),
   createdAt: timestamp("created_at").notNull(),
   updatedAt: timestamp("updated_at").notNull(),
 });

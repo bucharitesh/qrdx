@@ -5,7 +5,7 @@ import { motion } from "motion/react";
 import { QRCode } from "qrdx";
 import type React from "react";
 import { useQREditorStore } from "@/store/editor-store";
-import type { QRStyle } from "@/types/qr";
+import type { QRStyle } from "@/types/theme";
 import { QrdxLogoAnimation } from "./qrdx-logo-animation";
 
 interface QRPreviewPanelProps {
@@ -21,8 +21,13 @@ const QRPreviewPanel: React.FC<QRPreviewPanelProps> = ({ style }) => {
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       {/* Preview Content */}
-      <div className="relative flex size-full items-center justify-center overflow-hidden p-4 pt-1">
-        <div className="relative isolate flex size-full items-center justify-center overflow-hidden rounded-lg p-8">
+      <div className="relative flex size-full items-center justify-center overflow-hidden p-4">
+        <div
+          className="relative isolate flex size-full items-center justify-center overflow-hidden rounded-lg p-8"
+          style={{
+            backgroundColor: style.bgColor,
+          }}
+        >
           {!hasValidContent ? (
             // Empty State
             <motion.div
@@ -48,42 +53,23 @@ const QRPreviewPanel: React.FC<QRPreviewPanelProps> = ({ style }) => {
             </motion.div>
           ) : (
             // QR Code Preview
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{
-                duration: 0.3,
-                ease: [0.4, 0, 0.2, 1],
-              }}
-              className="flex items-center justify-center"
-            >
-              <motion.div
-                key={`${value}-${JSON.stringify(style)}`}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{
-                  duration: 0.4,
-                  ease: [0.4, 0, 0.2, 1],
-                }}
-                className="flex items-center justify-center"
-              >
-                <QRCode
-                  bgColor={style.bgColor}
-                  cornerEyeDotPattern={style.cornerEyeDotPattern}
-                  cornerEyePattern={style.cornerEyePattern}
-                  dotColor={style.dotColor}
-                  bodyPattern={style.bodyPattern}
-                  level={style.level}
-                  eyeColor={style.eyeColor}
-                  fgColor={style.fgColor}
-                  hideLogo={!style.showLogo}
-                  logo={style.customLogo}
-                  scale={4}
-                  templateId={style.templateId}
-                  value={value}
-                />
-              </motion.div>
-            </motion.div>
+            <div key={`${value}`} className="flex items-center justify-center">
+              <QRCode
+                bgColor={style.bgColor}
+                cornerEyeDotPattern={style.cornerEyeDotPattern}
+                cornerEyePattern={style.cornerEyePattern}
+                dotColor={style.dotColor}
+                bodyPattern={style.bodyPattern}
+                level={style.level}
+                eyeColor={style.eyeColor}
+                fgColor={style.fgColor}
+                hideLogo={!style.showLogo}
+                logo={style.customLogo}
+                scale={4}
+                templateId={style.templateId}
+                value={value}
+              />
+            </div>
           )}
         </div>
       </div>

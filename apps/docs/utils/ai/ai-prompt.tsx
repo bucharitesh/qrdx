@@ -1,10 +1,10 @@
 /** biome-ignore-all lint/suspicious/noArrayIndexKey: <explanation> */
-/** biome-ignore-all lint/suspicious/noImplicitAnyLet: <explanation> */
 /** biome-ignore-all lint/suspicious/useIterableCallbackReturn: <explanation> */
 import type { JSONContent } from "@tiptap/react";
 import { useQREditorStore } from "@/store/editor-store";
-import { useQRPresetStore } from "@/store/qr-preset-store";
+import { useThemePresetStore } from "@/store/theme-preset-store";
 import type { AIPromptData, MentionReference, PromptImage } from "@/types/ai";
+import type { ThemeStyles } from "@/types/theme";
 
 export const getTextContent = (promptData: AIPromptData | null) => {
   if (!promptData) return "";
@@ -53,23 +53,15 @@ export const buildAIPromptRender = (
   return textContent;
 };
 
-// Get current QR style as theme data format
-function getCurrentStyleAsThemeData() {
-  const style = useQREditorStore.getState().style;
-  // Convert QR style to a light/dark format for compatibility
-  return {
-    light: style as Record<string, string>,
-    dark: style as Record<string, string>,
-  };
-}
-
-export function attachCurrentStyleMention(
+export function attachCurrentThemeMention(
   promptData: AIPromptData,
 ): AIPromptData {
+  const currentThemeData = useQREditorStore.getState().themeState.styles;
+
   const mentionReference: MentionReference = {
     id: "editor:current-changes",
-    label: "Current Style",
-    themeData: getCurrentStyleAsThemeData(),
+    label: "Current Theme",
+    themeData: currentThemeData,
   };
 
   const promptDataWithMention = {
@@ -84,19 +76,21 @@ export function createCurrentThemePrompt({
 }: {
   prompt: string;
 }): AIPromptData {
+  const currentThemeData = useQREditorStore.getState().themeState.styles;
+
   const mentionReference: MentionReference = {
     id: "editor:current-changes",
-    label: "Current Style",
-    themeData: getCurrentStyleAsThemeData(),
+    label: "Current Theme",
+    themeData: currentThemeData,
   };
 
   return {
-    content: `Make the following changes to the @Current Style:\n${prompt}`,
+    content: `Make the following changes to the @Current Theme:\n${prompt}`,
     mentions: [mentionReference],
   };
 }
 
-export function mentionsCurrentStyle(promptData: AIPromptData): boolean {
+export function mentionsCurrentTheme(promptData: AIPromptData): boolean {
   return promptData.mentions.some(
     (mention) => mention.id === "editor:current-changes",
   );
@@ -110,23 +104,20 @@ export function createPromptDataFromMentions(
     if (id === "editor:current-changes") {
       return {
         id,
-        label: "Current Style",
-        themeData: getCurrentStyleAsThemeData(),
+        label: "Current Theme",
+        themeData: useQREditorStore.getState().themeState.styles,
       };
     }
 
-    const preset = useQRPresetStore.getState().getPresetById(id);
+    const preset = useThemePresetStore.getState().getPreset(id);
     if (!preset) {
-      throw new Error(`QR preset not found: ${id}`);
+      throw new Error(`Theme preset not found: ${id}`);
     }
 
     return {
       id,
-      label: preset.name || id,
-      themeData: {
-        light: preset.style as Record<string, string>,
-        dark: preset.style as Record<string, string>,
-      },
+      label: preset.label || id,
+      themeData: preset.styles,
     };
   });
 
@@ -138,30 +129,27 @@ export function createPromptDataFromMentions(
 
 export function createPromptDataFromPreset(
   prompt: string,
-  presetId: string,
+  presetName: string,
 ): AIPromptData {
-  const preset = useQRPresetStore.getState().getPresetById(presetId);
+  const preset = useThemePresetStore.getState().getPreset(presetName);
 
   if (!preset) {
-    throw new Error(`Preset "${presetId}" not found`);
+    throw new Error(`Preset "${presetName}" not found`);
   }
 
   return {
     content: prompt,
     mentions: [
       {
-        id: presetId,
-        label: preset.name ?? presetId,
-        themeData: {
-          light: preset.style as Record<string, string>,
-          dark: preset.style as Record<string, string>,
-        },
+        id: presetName,
+        label: preset.label ?? presetName,
+        themeData: preset.styles,
       },
     ],
   };
 }
 
-// Utility function to extract text content (user prompt) and QR style mentions from the JSON content
+// Utility function to extract text content (user prompt) and theme mentions from the JSON content
 // we need both separate to create the prompt data to send to the AI
 // we also need to handle the line breaks correctly, both in copy/paste and while typing directly
 export function extractTextContentAndMentions(node: JSONContent): {
@@ -180,17 +168,12 @@ export function extractTextContentAndMentions(node: JSONContent): {
       textArr.push(`@${n.attrs?.label}`);
       const id = n.attrs?.id;
       const label = n.attrs?.label;
-      let themeData;
+      let themeData: ThemeStyles;
       if (id === "editor:current-changes") {
-        themeData = getCurrentStyleAsThemeData();
+        themeData = useQREditorStore.getState().themeState.styles;
       } else {
-        const preset = useQRPresetStore.getState().getPresetById(id);
-        themeData = preset?.style
-          ? {
-              light: preset.style as Record<string, string>,
-              dark: preset.style as Record<string, string>,
-            }
-          : { light: {}, dark: {} };
+        const preset = useThemePresetStore.getState().getPreset(id);
+        themeData = preset?.styles || {};
       }
       mentionsArr.push({ id, label, themeData });
     }

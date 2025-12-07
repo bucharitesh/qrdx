@@ -5,12 +5,11 @@ import { QRSaveDialog } from "@/components/editor/qr-save-dialog";
 import { QRShareDialog } from "@/components/editor/qr-share-dialog";
 import { authClient } from "@/lib/auth-client";
 import { usePostLoginAction } from "@/lib/hooks/use-post-login-action";
-import { useCreateQRTheme } from "@/lib/hooks/use-qr-themes";
+import { useCreateQRTheme } from "@/lib/hooks/use-themes";
 import { useAuthStore } from "@/store/auth-store";
 import { useQREditorStore } from "@/store/editor-store";
-import { useQRPresetStore } from "@/store/qr-preset-store";
-import type { QRStyle } from "@/types/qr";
-import { getPresetById } from "@/utils/qr-presets";
+import { useThemePresetStore } from "@/store/theme-preset-store";
+import type { ThemeStyles } from "@/types/theme";
 
 interface QRDialogActionsContextType {
   // Dialog states
@@ -35,9 +34,9 @@ function useQRDialogActionsStore(): QRDialogActionsContextType {
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const [shareUrl, setShareUrl] = useState("");
 
-  const { style, value, currentPreset, hasChangedFromCheckpoint, applyPreset } =
+  const { themeState, value, applyThemePreset, hasThemeChangedFromCheckpoint } =
     useQREditorStore();
-  const { getPresetById } = useQRPresetStore();
+  const { getPreset } = useThemePresetStore();
   const { data: session } = authClient.useSession();
   const { openAuthDialog } = useAuthStore();
   const createThemeMutation = useCreateQRTheme();
@@ -69,7 +68,7 @@ function useQRDialogActionsStore(): QRDialogActionsContextType {
   const saveTheme = async (themeName: string) => {
     const themeData = {
       name: themeName,
-      styles: style as QRStyle,
+      styles: themeState.styles as ThemeStyles,
     };
 
     try {
@@ -86,7 +85,7 @@ function useQRDialogActionsStore(): QRDialogActionsContextType {
         style: theme.style,
       };
 
-      applyPreset(savedPreset);
+      applyThemePreset(theme.id);
 
       if (shareAfterSave) {
         await handleShareClick(theme.id);
@@ -102,12 +101,12 @@ function useQRDialogActionsStore(): QRDialogActionsContextType {
   };
 
   const handleShareClick = async (id?: string) => {
-    if (hasChangedFromCheckpoint()) {
+    if (hasThemeChangedFromCheckpoint()) {
       handleSaveClick({ shareAfterSave: true });
       return;
     }
 
-    const presetId = id ?? currentPreset?.id;
+    const presetId = id ?? themeState.preset;
 
     if (!presetId) {
       setShareUrl(`${window.location.origin}/editor/qr`);
@@ -115,8 +114,8 @@ function useQRDialogActionsStore(): QRDialogActionsContextType {
       return;
     }
 
-    const preset = getPresetById(presetId);
-    const isSavedPreset = currentPreset?.source === "SAVED";
+    const preset = getPreset(presetId);
+    const isSavedPreset = preset?.source === "SAVED";
 
     const url = isSavedPreset
       ? `${window.location.origin}/editor/qr/${presetId}`

@@ -17,7 +17,8 @@ const errorLevels: Array<{
 ] as const;
 
 export const ErrorLevelSelector: React.FC = () => {
-  const { style, setStyle } = useQREditorStore();
+  const { themeState, setThemeState } = useQREditorStore();
+  const style = themeState.styles;
   const selectedLevel = style.level || "L";
   return (
     <div className="grid grid-cols-4 gap-3">
@@ -29,7 +30,12 @@ export const ErrorLevelSelector: React.FC = () => {
               : "ring-gray-200 bg-white hover:ring-gray-300"
           }`}
           key={level.id}
-          onClick={() => setStyle({ ...style, level: level.id })}
+          onClick={() =>
+            setThemeState({
+              ...themeState,
+              styles: { ...style, level: level.id },
+            })
+          }
           tabIndex={0}
           type="button"
         >

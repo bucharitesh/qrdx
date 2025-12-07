@@ -5,18 +5,12 @@ import type {
   UIMessageStreamWriter,
 } from "ai";
 import type { QR_THEME_GENERATION_TOOLS } from "@/lib/ai/generate-qr-theme/tools";
-import type { QRStyle } from "@/types/qr";
-
-// Theme data for mentions (referencing presets/current styles)
-export type ThemeData = {
-  light: Record<string, string>;
-  dark: Record<string, string>;
-};
+import type { ThemeStyles } from "@/types/theme";
 
 export type MentionReference = {
   id: string;
   label: string;
-  themeData: ThemeData;
+  themeData: ThemeStyles;
 };
 
 export type PromptImage = {
@@ -31,18 +25,18 @@ export type AIPromptData = {
 
 export type MyMetadata = {
   promptData?: AIPromptData;
-  qrStyle?: Partial<QRStyle>;
+  themeStyles?: Partial<ThemeStyles>;
 };
 
 export type MyUIDataParts = {
   "generated-qr-style":
     | {
         status: "streaming";
-        qrStyle: DeepPartial<QRStyle>;
+        themeStyles: DeepPartial<ThemeStyles>;
       }
     | {
         status: "ready";
-        qrStyle: Partial<QRStyle>;
+        themeStyles: Partial<ThemeStyles>;
       };
 };
 

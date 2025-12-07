@@ -1,24 +1,27 @@
-/** biome-ignore-all lint/suspicious/noExplicitAny: <explanation> */
-/** biome-ignore-all lint/complexity/noBannedTypes: <explanation> */
-import type { QRPreset, QRStyle } from "./qr";
+/** biome-ignore-all lint/suspicious/noExplicitAny: false positive */
+/** biome-ignore-all lint/complexity/noBannedTypes: false positive */
+import type { ThemePreset, ThemeStyles } from "./theme";
 
-/**
- * Base interface for QR editor state
- */
-export interface BaseQREditorState {
-  style: Partial<QRStyle>;
-  value: string;
+export type QRPreset = ThemePreset;
+export type QRStyle = ThemeStyles;
+
+// Base interface for any editor's state
+export interface BaseEditorState {
+  styles: QRStyle;
 }
 
-/**
- * QR Editor State with preset support
- */
-export interface QREditorState extends BaseQREditorState {
-  preset?: QRPreset;
-  history: Partial<QRStyle>[];
-  historyIndex: number;
+// // Interface for editor-specific controls
+// export interface EditorControls {
+// }
+
+export interface EditorPreviewProps {
+  styles: QRStyle;
 }
 
+export interface ThemeEditorState extends BaseEditorState {
+  preset?: string;
+  styles: QRStyle;
+}
 /**
  * QR Editor Controls Props
  */
@@ -57,18 +60,7 @@ export type QREditorSection =
 export interface QREditorConfig {
   name: string;
   description: string;
-  defaultState: BaseQREditorState;
-  sections: QREditorSection[];
-  presets?: QRPreset[];
+  defaultState: BaseEditorState;
+  controls: React.ComponentType<any>;
+  preview: React.ComponentType<any>;
 }
-
-/**
- * QR Editor Action Types
- */
-export type QREditorAction =
-  | { type: "UPDATE_STYLE"; payload: Partial<QRStyle> }
-  | { type: "UPDATE_VALUE"; payload: string }
-  | { type: "LOAD_PRESET"; payload: QRPreset }
-  | { type: "RESET" }
-  | { type: "UNDO" }
-  | { type: "REDO" };

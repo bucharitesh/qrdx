@@ -16,49 +16,41 @@ import { useIsMobile } from "@repo/design-system/hooks/use-mobile";
 import { Eye, Sliders } from "lucide-react";
 import React, { use, useEffect } from "react";
 import { useQREditorStore } from "@/store/editor-store";
-import type { QRPreset, QRStyle } from "@/types/qr";
-import { getPresetById } from "@/utils/qr-presets";
+import type { Theme, ThemeStyles } from "@/types/theme";
 import { ActionBar } from "./editor/action-bar";
 import QRControlPanel from "./qr-control-panel";
 import QRPreviewPanel from "./qr-preview-panel";
 
 interface EditorProps {
-  qrPromise: Promise<QRPreset | null>;
+  themePromise: Promise<Theme | null>;
 }
 
-const Editor: React.FC<EditorProps> = ({ qrPromise }) => {
+const Editor: React.FC<EditorProps> = ({ themePromise }) => {
   const isMobile = useIsMobile();
 
-  const { applyPreset } = useQREditorStore();
+  const { applyThemePreset } = useQREditorStore();
 
-  const themeState = useQREditorStore((state) => state.style);
-  const setThemeState = useQREditorStore((state) => state.setStyle);
+  const themeState = useQREditorStore((state) => state.themeState);
+  const setThemeState = useQREditorStore((state) => state.setThemeState);
 
-  const initialQRPreset = qrPromise ? use(qrPromise) : null;
+  const initialQRPreset = themePromise ? use(themePromise) : null;
 
   const handleStyleChange = React.useCallback(
-    (newStyles: Partial<QRStyle>) => {
-      const prev = useQREditorStore.getState().style;
-      setThemeState({ ...prev, ...newStyles });
+    (newStyles: Partial<ThemeStyles>) => {
+      const prev = useQREditorStore.getState().themeState;
+      setThemeState({ ...prev, styles: newStyles });
     },
     [setThemeState],
   );
 
   useEffect(() => {
     if (initialQRPreset) {
-      applyPreset(initialQRPreset);
+      applyThemePreset(initialQRPreset.id);
     } else {
       // Apply default preset if no preset is loaded
-      const { currentPreset, applyPreset: applyPresetFn } =
-        useQREditorStore.getState();
-      if (!currentPreset) {
-        const defaultPreset = getPresetById("default");
-        if (defaultPreset) {
-          applyPresetFn(defaultPreset);
-        }
-      }
+      applyThemePreset("default");
     }
-  }, [initialQRPreset, applyPreset]);
+  }, [initialQRPreset, applyThemePreset]);
 
   if (initialQRPreset && !initialQRPreset.style) {
     return (
@@ -68,7 +60,7 @@ const Editor: React.FC<EditorProps> = ({ qrPromise }) => {
     );
   }
 
-  const styles = themeState as Partial<QRStyle>;
+  const styles = themeState.styles;
 
   // Mobile layout
   if (isMobile) {
@@ -94,7 +86,7 @@ const Editor: React.FC<EditorProps> = ({ qrPromise }) => {
                 <QRControlPanel
                   style={styles}
                   onChange={handleStyleChange}
-                  qrPromise={qrPromise}
+                  themePromise={themePromise}
                 />
               </div>
             </TabsContent>
@@ -125,7 +117,7 @@ const Editor: React.FC<EditorProps> = ({ qrPromise }) => {
               <QRControlPanel
                 style={styles}
                 onChange={handleStyleChange}
-                qrPromise={qrPromise}
+                themePromise={themePromise}
               />
             </div>
           </ResizablePanel>

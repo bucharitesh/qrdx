@@ -5,7 +5,7 @@ import { HorizontalScrollArea } from "@/components/horizontal-scroll-area";
 import {
   QRDialogActionsProvider,
   useQRDialogActions,
-} from "@/lib/hooks/use-qr-dialog-actions";
+} from "@/lib/hooks/use-dialog-actions";
 
 export function ActionBar() {
   return (

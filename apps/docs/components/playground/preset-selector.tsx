@@ -3,17 +3,24 @@
 import { QRCodeSVG } from "qrdx";
 import type React from "react";
 import { useQREditorStore } from "@/store/editor-store";
-import { builtInPresets } from "@/utils/qr-presets";
+import { defaultPresets } from "@/utils/qr-presets";
 
 export const PresetSelector: React.FC = () => {
-  const { currentPreset, applyPreset } = useQREditorStore();
+  const { themeState, applyThemePreset } = useQREditorStore();
+
+  const presets = Object.entries(defaultPresets).map(([id, preset]) => ({
+    id,
+    name: preset.label || id,
+    style: preset.styles,
+    source: preset.source || "BUILT_IN",
+  }));
 
   return (
     <div className="space-y-4">
       <h2 className="font-semibold text-lg">Presets</h2>
       <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-        {builtInPresets.map((preset) => {
-          const isSelected = currentPreset?.id === preset.id;
+        {presets.map((preset) => {
+          const isSelected = themeState.preset === preset.id;
           return (
             <button
               key={preset.id}
@@ -23,7 +30,7 @@ export const PresetSelector: React.FC = () => {
                   ? "border-blue-500 bg-blue-50/50 ring-2 ring-blue-200 dark:bg-blue-950/20"
                   : "border-gray-200 bg-white hover:border-gray-300 dark:border-gray-700 dark:bg-gray-900"
               }`}
-              onClick={() => applyPreset(preset)}
+              onClick={() => applyThemePreset(preset.id)}
             >
               {/* Preview */}
               <div className="mb-3 flex items-center justify-center rounded-md bg-gray-50 p-4 dark:bg-gray-800">
@@ -45,13 +52,6 @@ export const PresetSelector: React.FC = () => {
               <h3 className="font-semibold text-sm text-gray-900 dark:text-gray-100">
                 {preset.name}
               </h3>
-
-              {/* Description */}
-              {preset.description && (
-                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                  {preset.description}
-                </p>
-              )}
 
               {/* Selection Indicator */}
               {isSelected && (

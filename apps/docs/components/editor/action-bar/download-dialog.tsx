@@ -29,7 +29,7 @@ import {
 import React from "react";
 import { useQREditorStore } from "@/store/editor-store";
 import { usePreferencesStore } from "@/store/preferences-store";
-import type { DownloadOptions as DownloadOptionsType } from "@/types/qr";
+import type { DownloadOptions as DownloadOptionsType } from "@/types/theme";
 
 interface DownloadDialogProps {
   open: boolean;
@@ -37,7 +37,7 @@ interface DownloadDialogProps {
 }
 
 export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
-  const { value, style } = useQREditorStore();
+  const { value, themeState } = useQREditorStore();
   const { downloadOptions, updateDownloadOption } = usePreferencesStore();
   const [sizeError, setSizeError] = React.useState<string>("");
   const [isDownloading, setIsDownloading] = React.useState(false);
@@ -46,20 +46,20 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
     () => ({
       ...getQRData({
         value,
-        fgColor: style.fgColor,
-        bgColor: style.bgColor,
-        eyeColor: style.eyeColor,
-        dotColor: style.dotColor,
-        bodyPattern: style.bodyPattern,
-        hideLogo: !style.showLogo,
-        logo: style.customLogo,
+        fgColor: themeState.styles.fgColor,
+        bgColor: themeState.styles.bgColor,
+        eyeColor: themeState.styles.eyeColor,
+        dotColor: themeState.styles.dotColor,
+        bodyPattern: themeState.styles.bodyPattern,
+        hideLogo: !themeState.styles.showLogo,
+        logo: themeState.styles.customLogo,
       }),
-      level: style.level,
-      cornerEyePattern: style.cornerEyePattern,
-      cornerEyeDotPattern: style.cornerEyeDotPattern,
-      templateId: style.templateId,
+      level: themeState.styles.level,
+      cornerEyePattern: themeState.styles.cornerEyePattern,
+      cornerEyeDotPattern: themeState.styles.cornerEyeDotPattern,
+      templateId: themeState.styles.templateId,
     }),
-    [value, style],
+    [value, themeState],
   );
 
   // Get the current size based on selection

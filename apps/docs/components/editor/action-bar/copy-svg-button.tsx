@@ -9,7 +9,7 @@ import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { useQREditorStore } from "@/store/editor-store";
 
 export function CopySVGButton() {
-  const { value, style } = useQREditorStore();
+  const { themeState, value } = useQREditorStore();
   const [copied, setCopied] = useState(false);
 
   const handleCopySVG = async () => {
@@ -17,18 +17,18 @@ export function CopySVGButton() {
       const qrProps = {
         ...getQRData({
           value,
-          fgColor: style.fgColor,
-          bgColor: style.bgColor,
-          eyeColor: style.eyeColor,
-          dotColor: style.dotColor,
-          bodyPattern: style.bodyPattern,
-          hideLogo: !style.showLogo,
-          logo: style.customLogo,
+          fgColor: themeState.styles.fgColor,
+          bgColor: themeState.styles.bgColor,
+          eyeColor: themeState.styles.eyeColor,
+          dotColor: themeState.styles.dotColor,
+          bodyPattern: themeState.styles.bodyPattern,
+          hideLogo: !themeState.styles.showLogo,
+          logo: themeState.styles.customLogo,
         }),
-        level: style.level,
-        cornerEyePattern: style.cornerEyePattern,
-        cornerEyeDotPattern: style.cornerEyeDotPattern,
-        templateId: style.templateId,
+        level: themeState.styles.level,
+        cornerEyePattern: themeState.styles.cornerEyePattern,
+        cornerEyeDotPattern: themeState.styles.cornerEyeDotPattern,
+        templateId: themeState.styles.templateId,
       };
 
       const svgContent = await getSVGString(qrProps);
@@ -60,5 +60,3 @@ export function CopySVGButton() {
     </TooltipWrapper>
   );
 }
-
-

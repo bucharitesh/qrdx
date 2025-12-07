@@ -13,7 +13,8 @@ const patterns: Array<{ id: CornerEyePattern; name: string }> = [
 ] as const;
 
 export const CornerEyePatternSelector: React.FC = () => {
-  const { style, setStyle } = useQREditorStore();
+  const { themeState, setThemeState } = useQREditorStore();
+  const style = themeState.styles;
   const selectedPattern = style.cornerEyePattern || "gear";
   return (
     <div className="grid grid-cols-4 gap-3">
@@ -25,7 +26,12 @@ export const CornerEyePatternSelector: React.FC = () => {
               : "ring-gray-200 bg-white hover:ring-gray-300"
           }`}
           key={pattern.id}
-          onClick={() => setStyle({ ...style, cornerEyePattern: pattern.id })}
+          onClick={() =>
+            setThemeState({
+              ...themeState,
+              styles: { ...style, cornerEyePattern: pattern.id },
+            })
+          }
           tabIndex={0}
           type="button"
         >

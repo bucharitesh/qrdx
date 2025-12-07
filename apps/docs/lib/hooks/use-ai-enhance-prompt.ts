@@ -9,6 +9,7 @@ import { parseAiSdkTransportError } from "@/lib/ai/parse-ai-sdk-transport-error"
 import { useAILocalDraftStore } from "@/store/ai-local-draft-store";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 import type { AIPromptData } from "@/types/ai";
+import type { ThemeStyles } from "@/types/theme";
 import { convertPromptDataToJSONContent } from "@/utils/ai/ai-prompt";
 
 export function useAIEnhancePrompt() {
@@ -49,29 +50,23 @@ export function useAIEnhancePrompt() {
 
         const promptData: AIPromptData = {
           content: finalCompletion,
-          mentions: activeMentionsRef.current.map((m) => ({
-            id: m.id,
-            label: m.label,
-            themeData: { light: {}, dark: {} },
-          })),
+          mentions: activeMentionsRef.current,
         };
         const jsonContent = convertPromptDataToJSONContent(promptData);
         useAILocalDraftStore.getState().setEditorContentDraft(jsonContent);
       },
     });
 
-  const activeMentionsRef = useRef<Array<{ id: string; label: string }>>([]);
+  const activeMentionsRef = useRef<
+    Array<{ id: string; label: string; themeData: ThemeStyles }>
+  >([]);
   const startTimeRef = useRef<number | null>(null);
 
   const enhancedPromptAsJsonContent: JSONContent | undefined = useMemo(() => {
     if (!completion) return undefined;
     const promptData: AIPromptData = {
       content: completion,
-      mentions: activeMentionsRef.current.map((m) => ({
-        id: m.id,
-        label: m.label,
-        themeData: { light: {}, dark: {} },
-      })),
+      mentions: activeMentionsRef.current,
     };
     return convertPromptDataToJSONContent(promptData);
   }, [completion]);
@@ -85,8 +80,7 @@ export function useAIEnhancePrompt() {
       setCompletion("");
 
       startTimeRef.current = Date.now();
-      activeMentionsRef.current =
-        promptData?.mentions?.map((m) => ({ id: m.id, label: m.label })) ?? [];
+      activeMentionsRef.current = promptData?.mentions ?? [];
 
       try {
         posthog.capture("ENHANCE_PROMPT_START", {
