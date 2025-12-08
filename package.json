@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "scripts": {
     "build": "turbo build",
+    "build:qrdx": "turbo build --filter=qrdx",
     "dev": "turbo dev",
     "check": "npx ultracite@latest check",
     "fix": "npx ultracite@latest fix",
