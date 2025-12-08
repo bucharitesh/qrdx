@@ -17,7 +17,7 @@ import {
   SettingsControls,
 } from "@/components/editor/control-sections";
 import { QREditActions } from "@/components/editor/qr-edit-actions";
-import QRPresetSelect from "@/components/editor/qr-preset-select";
+import ThemePresetSelect from "@/components/editor/qr-preset-select";
 import TabsTriggerPill from "@/components/editor/tabs-trigger-pill";
 import { HorizontalScrollArea } from "@/components/horizontal-scroll-area";
 import { useAIQRGenerationCore } from "@/lib/hooks/use-ai-qr-generation-core";
@@ -48,7 +48,7 @@ const QRControlPanel: React.FC<QRControlPanelProps> = ({
     <>
       <div className="border-b">
         {!theme ? (
-          <QRPresetSelect
+          <ThemePresetSelect
             className="h-14 rounded-none"
             disabled={isGenerating}
           />

@@ -7,7 +7,7 @@ import { AIChatFormBody } from "@/components/editor/ai/ai-chat-form-body";
 import { AlertBanner } from "@/components/editor/ai/alert-banner";
 import { EnhancePromptButton } from "@/components/editor/ai/enhance-prompt-button";
 import { ImageUploader } from "@/components/editor/ai/image-uploader";
-import QRPresetSelect from "@/components/editor/qr-preset-select";
+import ThemePresetSelect from "@/components/editor/qr-preset-select";
 import { MAX_IMAGE_FILES } from "@/lib/constants";
 import { useAIChatForm } from "@/lib/hooks/use-ai-chat-form";
 import { useAIEnhancePrompt } from "@/lib/hooks/use-ai-enhance-prompt";
@@ -110,7 +110,7 @@ export function AIChatForm({
 
         <div className="flex items-center justify-between gap-2">
           <div className="flex w-full max-w-64 items-center gap-2 overflow-hidden">
-            <QRPresetSelect
+            <ThemePresetSelect
               disabled={
                 isGeneratingTheme || isEnhancingPrompt || isInitializing
               }

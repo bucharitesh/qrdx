@@ -1,4 +1,5 @@
 /** biome-ignore-all lint/suspicious/noArrayIndexKey: false positive */
+
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
@@ -65,10 +66,10 @@ const ThemeColors: React.FC<ThemeColorsProps> = ({ presetName }) => {
   const styles = getPresetThemeStyles(presetName);
   return (
     <div className="flex gap-0.5">
-      <ColorBox color={styles.bgColor || "#ffffff"} />
-      <ColorBox color={styles.fgColor || "#000000"} />
-      <ColorBox color={styles.eyeColor || "#000000"} />
-      <ColorBox color={styles.dotColor || "#000000"} />
+      {styles.bgColor && <ColorBox color={styles.bgColor} />}
+      {styles.fgColor && <ColorBox color={styles.fgColor} />}
+      {styles.eyeColor && <ColorBox color={styles.eyeColor} />}
+      {styles.dotColor && <ColorBox color={styles.dotColor} />}
     </div>
   );
 };
@@ -128,7 +129,7 @@ const ThemeCycleButton: React.FC<ThemeCycleButtonProps> = ({
       <Button
         variant="ghost"
         size="icon"
-        className={cn("shrink-0", className)}
+        className={cn("aspect-square h-full shrink-0", className)}
         onClick={onClick}
         {...props}
       >
@@ -311,10 +312,18 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
           >
             <div className="flex w-full items-center gap-3 overflow-hidden">
               <div className="flex gap-0.5">
-                <ColorBox color={themeState.styles.fgColor || "#000000"} />
-                <ColorBox color={themeState.styles.bgColor || "#ffffff"} />
-                <ColorBox color={themeState.styles.eyeColor || "#000000"} />
-                <ColorBox color={themeState.styles.dotColor || "#000000"} />
+                {themeState.styles.bgColor && (
+                  <ColorBox color={themeState.styles.bgColor} />
+                )}
+                {themeState.styles.fgColor && (
+                  <ColorBox color={themeState.styles.fgColor} />
+                )}
+                {themeState.styles.eyeColor && (
+                  <ColorBox color={themeState.styles.eyeColor} />
+                )}
+                {themeState.styles.dotColor && (
+                  <ColorBox color={themeState.styles.dotColor} />
+                )}
               </div>
               {currentPresetName !== "default" &&
                 currentPresetName &&
