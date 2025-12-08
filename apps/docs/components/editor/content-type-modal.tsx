@@ -1,11 +1,14 @@
 /** biome-ignore-all lint/suspicious/noArrayIndexKey: needed for list rendering */
+/** biome-ignore-all lint/a11y/noStaticElementInteractions: <explanation> */
+/** biome-ignore-all lint/a11y/useKeyWithClickEvents: <explanation> */
 "use client";
 
+import { Button } from "@repo/design-system/components/ui/button";
+import { Card, CardContent } from "@repo/design-system/components/ui/card";
 import { Input } from "@repo/design-system/components/ui/input";
 import {
   ResponsiveDialog,
   ResponsiveDialogContent,
-  ResponsiveDialogHeader,
   ResponsiveDialogTitle,
 } from "@repo/design-system/components/ui/revola";
 import { ScrollArea } from "@repo/design-system/components/ui/scroll-area";
@@ -36,6 +39,7 @@ import {
   Youtube,
 } from "lucide-react";
 import * as React from "react";
+import { Carousel, CarouselItem } from "@/components/carousel";
 import { ContentTypeCard } from "@/components/editor/content-type-card";
 import { useQREditorStore } from "@/store/editor-store";
 import type { ContentType } from "@/types/qr-content";
@@ -214,44 +218,61 @@ export function ContentTypeModal({
                 <div className="space-y-6 p-4 md:space-y-8">
                   {searchQuery === "" ? (
                     <>
-                      {activeCategory === "for-you" && (
-                        <>
-                          {FOR_YOU_SECTIONS.map((section) => (
+                      {activeCategory === "for-you" &&
+                        FOR_YOU_SECTIONS.map((section) => {
+                          return (
                             <section key={section.id}>
-                              <h3 className="mb-3 text-base font-bold md:mb-4 md:text-sm md:font-semibold">
+                              <h2 className="mb-3 text-xl font-bold md:mb-4">
                                 {section.title}
-                              </h3>
-                              <div className="relative -mx-4 md:mx-0">
-                                <div className="flex gap-3 overflow-x-auto px-4 pb-2 scrollbar-hide md:gap-4 md:px-0">
+                              </h2>
+                              <div className="relative w-full">
+                                <Carousel
+                                  opts={{
+                                    align: "start",
+                                    slidesToScroll: 3,
+                                    loop: false,
+                                  }}
+                                  className="w-full"
+                                >
                                   {getContentByCategory(section.types).map(
                                     (meta, index) => {
                                       const Icon = iconMap[
                                         meta.icon
                                       ] as LucideIcon;
-                                      const isActive =
-                                        contentType === meta.type;
 
                                       return (
-                                        <ContentTypeCard
+                                        <CarouselItem
                                           key={index}
-                                          label={meta.label}
-                                          description={meta.description}
-                                          icon={Icon}
-                                          isActive={isActive}
-                                          onClick={() =>
-                                            handleSelectType(meta.type)
-                                          }
-                                          variant="carousel"
-                                        />
+                                          className="basis-1/2 md:basis-1/4 pl-2 md:pl-4"
+                                        >
+                                          <div
+                                            onClick={() =>
+                                              handleSelectType(meta.type)
+                                            }
+                                            className="space-y-3 cursor-pointer"
+                                          >
+                                            <Card>
+                                              <CardContent className="flex aspect-video items-center justify-center p-0">
+                                                <div className="rounded-full p-3 md:p-4">
+                                                  <Icon className="size-6 md:size-8" />
+                                                </div>
+                                              </CardContent>
+                                            </Card>
+                                            <div className="text-start">
+                                              <h6 className="text-xs font-medium text-muted-foreground">
+                                                {meta.label}
+                                              </h6>
+                                            </div>
+                                          </div>
+                                        </CarouselItem>
                                       );
                                     },
                                   )}
-                                </div>
+                                </Carousel>
                               </div>
                             </section>
-                          ))}
-                        </>
-                      )}
+                          );
+                        })}
 
                       {/* Other categories - show only relevant content */}
                       {activeCategory !== "for-you" && (

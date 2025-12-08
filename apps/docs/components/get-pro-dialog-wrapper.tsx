@@ -13,6 +13,7 @@ import {
 import { cn } from "@repo/design-system/lib/utils";
 import { Calendar, Check } from "lucide-react";
 import Link from "next/link";
+import { QRCodeSVG } from "qrdx";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 import { PRO_SUB_FEATURES } from "@/utils/subscription";
 import { NoiseEffect } from "./effects/noise-effect";
@@ -73,8 +74,10 @@ export function GetProDialog({ isOpen, onClose }: GetProDialogProps) {
                 ))}
               </ul>
 
-              <p className="text-muted-foreground text-sm">{`Don't worry, full theme customization is still yours, for free. Upgrade to Pro to take it
-  to the next level, cancel anytime.`}</p>
+              <p className="text-muted-foreground text-sm">
+                Don't worry, full theme customization is still yours, for free.
+                Upgrade to Pro to take it to the next level, cancel anytime.
+              </p>
             </div>
 
             <ResponsiveDialogFooter className="bg-muted/30 relative flex-col border-t p-6">
@@ -109,9 +112,16 @@ export function GetProDialog({ isOpen, onClose }: GetProDialogProps) {
             <div className="bg-primary/15 absolute right-0 bottom-0 -z-10 size-70 translate-x-1/2 translate-y-1/2 rounded-full blur-3xl" />
             {/* ----Background effects---- */}
 
-            {/* <div className="absolute inset-4 top-4 z-10 flex items-center justify-center overflow-hidden rounded-lg border lg:inset-6">
-              <AIChatDemo />
-            </div> */}
+            <div className="absolute inset-4 top-4 z-10 flex items-center justify-center overflow-hidden rounded-lg border lg:inset-6">
+              <QRCodeSVG
+                value="https://qrdx.bucharitesh.in"
+                size={256}
+                className="rounded-md"
+                cornerEyePattern="square"
+                cornerEyeDotPattern="square"
+                bodyPattern="square"
+              />
+            </div>
           </section>
         </div>
       </ResponsiveDialogContent>
