@@ -126,6 +126,9 @@ importers:
       drizzle-orm:
         specifier: ^0.44.7
         version: 0.44.7(@neondatabase/serverless@1.0.2)(@opentelemetry/api@1.9.0)(@types/pg@8.15.6)(@upstash/redis@1.35.7)(kysely@0.28.8)
+      dub:
+        specifier: ^0.69.0
+        version: 0.69.0
       framer-motion:
         specifier: ^12.23.25
         version: 12.23.25(react-dom@19.2.1(react@19.2.0))(react@19.2.0)
@@ -4499,6 +4502,9 @@ packages:
         optional: true
       sqlite3:
         optional: true
+
+  dub@0.69.0:
+    resolution: {integrity: sha512-2UotC3GARdPxtduY9/mD6fwxYhHIJnfXe1emLY96b1kj4iRcMRRerYbde1y5FPRsAJKBhuO2PaoT0TZNmn7gxA==}
 
   duplexer@0.1.2:
     resolution: {integrity: sha512-jtD6YG370ZCIi/9GTaJKQxWTZD045+4R4hTk/x1UyoqadyJ9x9CgSi1RlVDQF8U2sxLLSnFkCaMihqljHIWgMg==}
@@ -10994,6 +11000,10 @@ snapshots:
       '@types/pg': 8.15.6
       '@upstash/redis': 1.35.7
       kysely: 0.28.8
+
+  dub@0.69.0:
+    dependencies:
+      zod: 4.1.13
 
   duplexer@0.1.2: {}
 
