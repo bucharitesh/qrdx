@@ -1,18 +1,43 @@
 export const PROMPTS = {
-  flatDesign: {
-    label: "Flat Design",
+  modernMinimal: {
+    label: "Modern Minimal",
     prompt:
-      "I want a flat design. Make the surface color tokens use the same color value, preferably the same as the 'background' color. Remove shadows completely. Default 'border' styles are okay.",
+      "Create a clean, modern QR code with rounded patterns throughout. Use black foreground on white background with matching eye colors. Set bodyPattern to rounded, cornerEyePattern to rounded, and cornerEyeDotPattern to rounded. Keep moderate margin.",
   },
-  minimalStyle: {
-    label: "Minimal Style",
+  vibrantColorful: {
+    label: "Vibrant & Colorful",
     prompt:
-      "Generate a minimalist theme palette. All surfaces color tokens should use subtle variations of the same base color, with enough contrast to distinguish them when they are next to each other. For brand colors, keep original color palette. Minimize borders and shadows. For borders, use a subtle grayscale color. Typography should be clean, modern, and easy to read.",
+      "Generate a vibrant, eye-catching QR code with bold colors. Use a bright, saturated foreground color with high contrast background. Set all eye colors to match the foreground. Use dots or extraRounded patterns for a playful look. Larger size for impact.",
   },
-  brutalist: {
-    label: "Brutalist Vibe",
+  elegantClassic: {
+    label: "Elegant Classic",
     prompt:
-      "Make it brutalist style. Set 'radius' to '0px'. The 'border' color should strongly contrast with the 'background' color. For shadows, use a 'shadow-color' that also contrasts sharply with the 'background', set 'shadow-blur' to '0px', 'shadow-opacity' to '100%', and use 'shadow-offset', and 'shadow-spread' to create a hard offset shadow effect, do not exceed 4px. Keep original color palette, and make colors slightly more vibrant.",
+      "Create an elegant QR code with classy and classyRounded patterns. Use sophisticated dark colors like navy or charcoal on a light cream or white background. Ensure eyeColor and dotColor match the foreground for consistency. Clean, professional aesthetic.",
+  },
+  fluidArtistic: {
+    label: "Fluid & Artistic",
+    prompt:
+      "Design an artistic QR code with fluid patterns throughout. Set bodyPattern, cornerEyePattern to fluid. Use creative color combinations with good contrast. All eye colors should complement the main foreground color. Slightly larger margin for breathing room.",
+  },
+  highContrast: {
+    label: "High Contrast",
+    prompt:
+      "Create a high contrast QR code optimized for scanning. Use pure black foreground on pure white background, or vice versa. Square or extraRounded patterns. Match all eye colors to foreground. Standard size with appropriate margin for clarity.",
+  },
+  softRounded: {
+    label: "Soft & Rounded",
+    prompt:
+      "Generate a friendly QR code with soft, rounded aesthetics. Use extraRounded patterns for body, eyes, and eye dots. Choose warm, approachable colors with sufficient contrast. All eye colors should match the main color scheme. Comfortable margin spacing.",
+  },
+  dotMatrix: {
+    label: "Dot Matrix",
+    prompt:
+      "Create a dot-style QR code with dots pattern for the body and rounded patterns for corner eyes. Use complementary colors with strong contrast. Ensure eyeColor and dotColor match the foreground color. Medium to large size for dot visibility.",
+  },
+  neonGlow: {
+    label: "Neon Glow",
+    prompt:
+      "Design a neon-inspired QR code with vibrant electric colors. Use bright neon foreground color (like cyan, magenta, or lime) on dark background (black or deep purple). Fluid or extraRounded patterns. Match all eye colors to the neon foreground for consistency.",
   },
 };
 
@@ -29,56 +54,78 @@ interface Prompt {
 
 export const CREATE_PROMPTS: Prompt[] = [
   {
-    displayContent: "JavaScript/TypeScript Advent of Code playground",
+    displayContent: "Retro gaming aesthetic with pixelated feel",
     prompt:
-      "Create a retro JavaScript Advent of Code theme. Use a grayish background with JavaScript yellow and TypeScript blue as primary/secondary colors. Change all fonts to monospace. Make borders sharp.",
+      "Create a retro gaming QR code with square patterns throughout. Use vibrant pixel-art inspired colors like bright red or blue on dark background. Set bodyPattern to square, all eye patterns to square for authentic retro feel.",
   },
   {
-    displayContent: "Retro Terminal UI, green phosphor glow",
+    displayContent: "Pastel gradient with soft rounded edges",
     prompt:
-      "Create a retro terminal theme with black background (dark mode) and grayish background (light mode), use phosphorescent pure green (#22FF22 and shades of it) for text and borders. Use monospace fonts and sharp borders.",
+      "Create a soft pastel QR code with gentle color gradients. Use light pastel colors like soft pink or lavender for foreground on cream background. ExtraRounded patterns for body and eyes. All eye colors matching the pastel foreground.",
   },
   {
-    displayContent: "Monochrome Manga-inspired theme",
+    displayContent: "Corporate professional with blue tones",
     prompt:
-      "Create a Manga-inspired theme. Monochromatic palette only (black, off-white, grays), square corners, small contrast solid offset shadows, and high-contrast borders (black on light, off-white on dark). Use a playful font, like Architects daughter.",
+      "Generate a professional corporate QR code with navy blue or corporate blue foreground on white background. Use classyRounded patterns for sophisticated look. Match all eye colors to the blue foreground. Clean margins.",
   },
   {
-    displayContent: "I want a minimal Ghibli Studio vibe",
+    displayContent: "Sunset gradient vibes with warm colors",
     prompt:
-      "Generate a theme inspired by Studio Ghibli — soft pastels, natural greens, organic colors, and hand-drawn charm.",
+      "Create a sunset-inspired QR code with warm orange or coral foreground on peachy background. Use fluid or rounded patterns. All eye colors should match the warm foreground color for consistency. Artistic yet scannable.",
   },
 ];
 
 export const REMIX_PROMPTS: RemixPrompt[] = [
   {
-    displayContent: "Make @Twitter but in a slick purple",
-    prompt: "Make @Twitter but in a slick purple",
-    basePreset: "twitter",
+    displayContent: "Make @Modern but in vibrant purple",
+    prompt:
+      "Take @Modern preset but change all colors to vibrant purple foreground on light background. Keep the rounded patterns and maintain eye color consistency.",
+    basePreset: "modern",
   },
   {
-    displayContent: "What if @Supabase was vibrant blue?",
-    prompt: "Make @Supabase but in vibrant blue",
-    basePreset: "supabase",
+    displayContent: "What if @Neon was green instead?",
+    prompt:
+      "Use @Neon preset but change to electric green foreground with matching eye colors. Keep the dark background and circular patterns.",
+    basePreset: "neon",
   },
   {
-    displayContent: "I want @Doom 64 with muted colors",
-    prompt: "I want @Doom 64 with alternate colors",
-    basePreset: "doom-64",
+    displayContent: "@Nature but with autumn orange tones",
+    prompt:
+      "Take @Nature preset but use warm autumn orange and brown colors instead of green. Keep the rounded organic patterns and eye color consistency.",
+    basePreset: "nature",
+  },
+  {
+    displayContent: "@Minimal but add some blue accent",
+    prompt:
+      "Use @Minimal preset but add subtle blue accent to the eye colors while keeping main foreground neutral. Maintain square patterns.",
+    basePreset: "minimal",
   },
 ];
 
 export const VARIANT_PROMPTS: Prompt[] = [
   {
-    displayContent: "Make my @Current Style more minimal",
-    prompt: PROMPTS.minimalStyle.prompt,
+    displayContent: "Make my @Current Style more rounded",
+    prompt:
+      "Take @Current Style and make all patterns more rounded. Change bodyPattern, cornerEyePattern, and cornerEyeDotPattern to rounded or extraRounded variants. Keep all colors the same.",
   },
   {
-    displayContent: "Simplify colors of my @Current Style",
-    prompt: PROMPTS.flatDesign.prompt,
+    displayContent: "Add more contrast to @Current Style",
+    prompt:
+      "Enhance @Current Style with higher contrast. Make background lighter or darker to increase contrast with foreground. Ensure all eye colors remain consistent with foreground for better scanability.",
   },
   {
-    displayContent: "Make my @Current Style more bold",
-    prompt: PROMPTS.brutalist.prompt,
+    displayContent: "Make @Current Style more fluid and artistic",
+    prompt:
+      "Transform @Current Style to use fluid patterns for body and corner eyes. Keep the same color scheme but make patterns more organic and flowing.",
+  },
+  {
+    displayContent: "Simplify @Current Style to dots pattern",
+    prompt:
+      "Simplify @Current Style by changing bodyPattern to dots while keeping corner eyes distinct. Maintain all color values and ensure eye colors match foreground.",
+  },
+  {
+    displayContent: "Make @Current Style more professional",
+    prompt:
+      "Refine @Current Style for professional use. Change patterns to classy or classyRounded, ensure colors are sophisticated with good contrast. Match all eye colors to foreground.",
   },
 ];
