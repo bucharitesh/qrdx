@@ -18,6 +18,7 @@ function decryptIntegration(
       ? decryptApiKey(integrationData.refreshToken)
       : null,
     status: integrationData.status as "active" | "disconnected" | "error",
+    metadata: integrationData.metadata as Record<string, any> | null,
   };
 }
 
@@ -145,4 +146,3 @@ export async function hasIntegration(
 
   return result.length > 0;
 }
-

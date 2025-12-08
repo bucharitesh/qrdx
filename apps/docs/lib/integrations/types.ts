@@ -54,22 +54,3 @@ export interface IntegrationConfigFile {
     pkce?: boolean;
   };
 }
-
-// Dub-specific types
-export interface DubWorkspace {
-  id: string;
-  name: string;
-  slug: string;
-  logo?: string;
-  plan?: string;
-  domains?: Array<{
-    id: string;
-    slug: string;
-    verified: boolean;
-  }>;
-}
-
-export interface DubIntegrationMetadata {
-  workspace?: DubWorkspace;
-}
-

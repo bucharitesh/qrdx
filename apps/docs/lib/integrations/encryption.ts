@@ -1,4 +1,4 @@
-import crypto from "crypto";
+import crypto from "node:crypto";
 import { env } from "@/lib/env";
 
 /**
@@ -13,7 +13,7 @@ export function encryptApiKey(text: string): string {
   const cipher = crypto.createCipheriv(algorithm, key, iv);
   let encrypted = cipher.update(text, "utf8", "hex");
   encrypted += cipher.final("hex");
-  return iv.toString("hex") + ":" + encrypted;
+  return `${iv.toString("hex")}:${encrypted}`;
 }
 
 /**
@@ -34,4 +34,3 @@ export function decryptApiKey(text: string): string {
   decrypted += decipher.final("utf8");
   return decrypted;
 }
-

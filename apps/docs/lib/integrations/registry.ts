@@ -44,7 +44,11 @@ function loadIntegrationConfig(provider: string): IntegrationConfig | null {
       authUrl:
         configFile.oauth?.authUrl || "https://app.dub.co/oauth/authorize",
       tokenUrl: configFile.oauth?.tokenUrl || "https://api.dub.co/oauth/token",
-      scopes: configFile.oauth?.scopes || ["workspaces.read"],
+      scopes: configFile.oauth?.scopes || [
+        "workspaces.read",
+        "links.read",
+        "links.write",
+      ],
       clientId: env.DUB_CLIENT_ID,
       clientSecret: env.DUB_CLIENT_SECRET,
       redirectUri: env.DUB_REDIRECT_URI,
@@ -84,4 +88,3 @@ export function getIntegrationConfig(provider: string): IntegrationConfig {
 export function getAvailableIntegrations(): IntegrationConfig[] {
   return Object.values(integrationRegistry).filter(Boolean);
 }
-
