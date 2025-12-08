@@ -3,6 +3,7 @@ import { useAIQRGenerationCore } from "@/lib/hooks/use-ai-qr-generation-core";
 import { useQREditorStore } from "@/store/editor-store";
 import { useThemePresetStore } from "@/store/theme-preset-store";
 import { ThemeToggle } from "../../theme-toggle";
+import ContrastChecker from "../contrast-checker";
 import { CodeButton } from "./code-button";
 import { CopySVGButton } from "./copy-svg-button";
 import { DownloadButton } from "./download-button";
@@ -47,6 +48,11 @@ export function ActionBarButtons({
       </div>
 
       <div className="flex items-center gap-1">
+        <ContrastChecker
+          currentStyles={themeState.styles}
+          disabled={isGenerating}
+        />
+        <Separator orientation="vertical" className="mx-1 h-8" />
         <ThemeToggle />
         <Separator orientation="vertical" className="mx-1 h-8" />
         {isSavedPreset && (
