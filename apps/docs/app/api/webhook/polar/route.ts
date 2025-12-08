@@ -1,6 +1,7 @@
 import { Webhooks } from "@polar-sh/nextjs";
 import { db } from "@/db";
 import { subscription } from "@/db/schema";
+import { env } from "@/lib/env";
 
 function safeParseDate(value: string | Date | null | undefined): Date | null {
   if (!value) return null;
@@ -8,12 +9,8 @@ function safeParseDate(value: string | Date | null | undefined): Date | null {
   return new Date(value);
 }
 
-if (!process.env.POLAR_WEBHOOK_SECRET) {
-  throw new Error("POLAR_WEBHOOK_SECRET environment variable is required");
-}
-
 export const POST = Webhooks({
-  webhookSecret: process.env.POLAR_WEBHOOK_SECRET,
+  webhookSecret: env.POLAR_WEBHOOK_SECRET,
   onPayload: async ({ data, type }) => {
     if (
       type === "subscription.created" ||

@@ -96,11 +96,11 @@ export function QRThemeCard({ theme, className }: QRThemeCardProps) {
   return (
     <Card
       className={cn(
-        "group overflow-hidden border shadow-sm transition-all duration-300 hover:shadow-md",
+        "group overflow-hidden border shadow-sm transition-all duration-300 hover:shadow-md py-0 gap-0",
         className,
       )}
     >
-      <div className="relative flex h-36 items-center justify-center bg-muted/30 p-4">
+      <div className="relative flex items-center justify-center bg-muted/30 py-4">
         <QRCode
           bgColor={theme.style.bgColor || "#ffffff"}
           fgColor={theme.style.fgColor || "#000000"}

@@ -15,7 +15,7 @@ export function useQRThemes() {
   const { data: session } = authClient.useSession();
 
   return useQuery({
-    queryKey: ["qr-themes"],
+    queryKey: ["themes"],
     queryFn: getThemes,
     enabled: !!session?.user, // Only fetch when authenticated
     retry: false,
@@ -38,7 +38,7 @@ export function useCreateQRTheme() {
   return useMutation({
     mutationFn: createTheme,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["qr-themes"] });
+      queryClient.invalidateQueries({ queryKey: ["themes"] });
       toast.success("QR code theme saved successfully!");
     },
     onError: (error: Error) => {
@@ -53,8 +53,8 @@ export function useUpdateQRTheme() {
   return useMutation({
     mutationFn: updateTheme,
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["qr-themes"] });
-      queryClient.invalidateQueries({ queryKey: ["qr-theme", data.id] });
+      queryClient.invalidateQueries({ queryKey: ["themes"] });
+      queryClient.invalidateQueries({ queryKey: ["theme", data.id] });
       toast.success("QR code theme updated successfully!");
     },
     onError: (error: Error) => {
@@ -69,7 +69,7 @@ export function useDeleteQRTheme() {
   return useMutation({
     mutationFn: deleteTheme,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["qr-themes"] });
+      queryClient.invalidateQueries({ queryKey: ["themes"] });
       toast.success("QR code theme deleted successfully!");
     },
     onError: (error: Error) => {

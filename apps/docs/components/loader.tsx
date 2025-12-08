@@ -1,4 +1,4 @@
-/** biome-ignore-all lint/suspicious/noArrayIndexKey: <explanation> */
+/** biome-ignore-all lint/suspicious/noArrayIndexKey: false positive */
 "use client";
 
 import { cn } from "@repo/design-system/lib/utils";

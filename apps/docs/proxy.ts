@@ -27,20 +27,25 @@ export default async function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // if (!session) {
-  //   return NextResponse.redirect(new URL(DEFAULT_LOGIN_REDIRECT, request.url));
-  // }
+  if (!session) {
+    return NextResponse.redirect(new URL(DEFAULT_LOGIN_REDIRECT, request.url));
+  }
 
   if (session) {
-    // // Redirect logged-in users from /dashboard or /settings (root) to /settings/themes
-    // if (pathname === "/dashboard" || pathname === "/settings") {
-    //   return NextResponse.redirect(new URL("/settings/themes", request.url));
-    // }
+    // Redirect logged-in users from /dashboard or /settings (root) to /settings/themes
+    if (pathname === "/dashboard" || pathname === "/settings") {
+      return NextResponse.redirect(new URL("/settings/themes", request.url));
+    }
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/playground", "/playground/:qrId"],
+  matcher: [
+    "/editor/theme/:themeId",
+    "/dashboard",
+    "/settings/:path*",
+    "/success",
+  ],
 };

@@ -9,5 +9,5 @@ export default async function SettingsIndex() {
 
   if (!session) redirect("/editor/qr");
 
-  redirect("/settings/qr-themes");
+  redirect("/settings/themes");
 }

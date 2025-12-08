@@ -1,6 +1,7 @@
 import { cn } from "@repo/design-system/lib/utils";
 import { Upload } from "lucide-react";
 import { useDropzone } from "react-dropzone";
+import { MAX_IMAGE_FILES } from "@/lib/constants";
 
 interface DragAndDropImageUploaderProps {
   onDrop: (files: File[]) => void;
@@ -25,6 +26,7 @@ export function DragAndDropImageUploader({
       "image/webp": [],
       // "image/svg+xml": [],
     },
+    maxFiles: MAX_IMAGE_FILES,
   });
 
   return (

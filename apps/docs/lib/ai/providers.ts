@@ -5,9 +5,10 @@ import {
   type GoogleGenerativeAIProviderOptions,
 } from "@ai-sdk/google";
 import { customProvider, type LanguageModel } from "ai";
+import { env } from "@/lib/env";
 
 const google = createGoogleGenerativeAI({
-  apiKey: process.env.GOOGLE_API_KEY,
+  apiKey: env.GOOGLE_API_KEY,
 });
 
 export const baseProviderOptions = {
@@ -32,5 +33,3 @@ export const myProvider: MyProvider = customProvider({
     "prompt-enhancement": google("gemini-2.5-flash"),
   },
 });
-
-
