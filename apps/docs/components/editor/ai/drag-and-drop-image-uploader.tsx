@@ -23,7 +23,7 @@ export function DragAndDropImageUploader({
       "image/jpg": [],
       "image/png": [],
       "image/webp": [],
-      "image/svg+xml": [],
+      // "image/svg+xml": [],
     },
   });
 

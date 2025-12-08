@@ -3,7 +3,7 @@ export const ALLOWED_IMAGE_TYPES = [
   "image/jpg",
   "image/png",
   "image/webp",
-  "image/svg+xml",
+  // "image/svg+xml",
 ];
 
 export function validateSvgContent(svgText: string): boolean {
@@ -38,5 +38,3 @@ export function optimizeSvgContent(svgText: string): string {
     return svgText.trim();
   }
 }
-
-
