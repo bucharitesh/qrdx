@@ -1,12 +1,11 @@
 "use server";
 
+import { database as db, qrPreset as qrPresetTable } from "@repo/database";
 import cuid from "cuid";
 import { and, eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { cache } from "react";
 import { z } from "zod";
-import { db } from "@/db";
-import { qrPreset as qrPresetTable } from "@/db/schema";
 import { auth } from "@/lib/auth";
 import { MAX_FREE_THEMES } from "@/lib/constants";
 import { getMyActiveSubscription } from "@/lib/subscription";

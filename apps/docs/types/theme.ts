@@ -1,3 +1,4 @@
+import type { qrPreset } from "@repo/database";
 import type { InferSelectModel } from "drizzle-orm";
 import {
   bodyPatternSchema,
@@ -6,7 +7,6 @@ import {
   errorLevelSchema,
 } from "qrdx/types";
 import { z } from "zod";
-import type { qrPreset } from "@/db/schema";
 
 /**
  * QR Code Style Configuration Schema

@@ -1,6 +1,5 @@
+import { database as db, integration } from "@repo/database";
 import { eq } from "drizzle-orm";
-import { db } from "@/db";
-import { integration } from "@/db/schema";
 import { decryptApiKey, encryptApiKey } from "./encryption";
 import { createOAuthHandler } from "./oauth";
 import { getIntegrationConfig } from "./registry";
@@ -142,4 +141,3 @@ async function performTokenRefresh(integrationId: string): Promise<string> {
     );
   }
 }
-

@@ -6,7 +6,12 @@ import {
   text,
   timestamp,
 } from "drizzle-orm/pg-core";
-import type { ThemeStyles } from "@/types/theme";
+
+export type ThemeStyles = {
+  // Define your theme styles type here
+  // This should match the type from your app
+  [key: string]: any;
+};
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),

@@ -1,6 +1,5 @@
+import { database as db, integration } from "@repo/database";
 import { and, eq } from "drizzle-orm";
-import { db } from "@/db";
-import { integration } from "@/db/schema";
 import { decryptApiKey } from "./encryption";
 import { refreshIntegrationToken, shouldRefreshToken } from "./token-refresh";
 import type { Integration } from "./types";

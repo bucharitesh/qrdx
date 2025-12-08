@@ -1,10 +1,9 @@
 "use server";
 
+import { aiUsage, database as db } from "@repo/database";
 import cuid from "cuid";
 import { and, count, eq, gte } from "drizzle-orm";
 import { z } from "zod";
-import { db } from "@/db";
-import { aiUsage } from "@/db/schema";
 import { getCurrentUserId } from "@/lib/shared";
 import { ValidationError } from "@/types/errors";
 
