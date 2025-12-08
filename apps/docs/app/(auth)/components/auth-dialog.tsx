@@ -1,7 +1,6 @@
 "use client";
 
-import Github from "@/assets/github.svg";
-import Google from "@/assets/google.svg";
+import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   ResponsiveDialog,
@@ -10,10 +9,12 @@ import {
   ResponsiveDialogTitle,
   ResponsiveDialogTrigger,
 } from "@repo/design-system/components/ui/revola";
-import { authClient } from "@/lib/auth-client";
 import { Loader2 } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import Github from "@/assets/github.svg";
+import Google from "@/assets/google.svg";
+import { authClient } from "@/lib/auth-client";
 
 interface AuthDialogProps {
   open: boolean;
@@ -33,6 +34,7 @@ export function AuthDialog({
   const [isSignIn, setIsSignIn] = useState(initialMode === "signin");
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [isGithubLoading, setIsGithubLoading] = useState(false);
+  const [lastLoginMethod, setLastLoginMethod] = useState<string | null>(null);
 
   const getCallbackUrl = () => {
     const baseUrl = pathname || "/editor/theme";
@@ -43,6 +45,9 @@ export function AuthDialog({
   useEffect(() => {
     if (open) {
       setIsSignIn(initialMode === "signin");
+      // Get the last used login method
+      const lastMethod = authClient.getLastUsedLoginMethod();
+      setLastLoginMethod(lastMethod);
     }
   }, [open, initialMode]);
 
@@ -78,7 +83,9 @@ export function AuthDialog({
 
   return (
     <ResponsiveDialog open={open} onOpenChange={onOpenChange}>
-      {trigger && <ResponsiveDialogTrigger asChild>{trigger}</ResponsiveDialogTrigger>}
+      {trigger && (
+        <ResponsiveDialogTrigger asChild>{trigger}</ResponsiveDialogTrigger>
+      )}
       <ResponsiveDialogContent className="overflow-hidden sm:max-w-100">
         <div className="space-y-4">
           <ResponsiveDialogHeader className="sm:pt-8">
@@ -94,29 +101,53 @@ export function AuthDialog({
 
           <div className="space-y-6 p-6 pt-2">
             <div className="space-y-3">
-              <Button
-                size="lg"
-                variant="outline"
-                onClick={handleGoogleSignIn}
-                className="hover:bg-primary/10 hover:text-foreground flex w-full items-center justify-center gap-2"
-                disabled={isGoogleLoading || isGithubLoading}
-              >
-                <Google className="h-5 w-5" />
-                <span className="font-medium">Continue with Google</span>
-                {isGoogleLoading && <Loader2 className="h-4 w-4 animate-spin" />}
-              </Button>
+              <div className="relative">
+                <Button
+                  size="lg"
+                  variant={lastLoginMethod === "google" ? "default" : "outline"}
+                  onClick={handleGoogleSignIn}
+                  className="hover:bg-primary/10 hover:text-foreground flex w-full items-center justify-center gap-2"
+                  disabled={isGoogleLoading || isGithubLoading}
+                >
+                  <Google className="h-5 w-5" />
+                  <span className="font-medium">Continue with Google</span>
+                  {isGoogleLoading && (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  )}
+                </Button>
+                {lastLoginMethod === "google" && (
+                  <Badge
+                    variant="secondary"
+                    className="absolute right-2 top-1/2 -translate-y-1/2"
+                  >
+                    Last used
+                  </Badge>
+                )}
+              </div>
 
-              <Button
-                variant="outline"
-                onClick={handleGithubSignIn}
-                size="lg"
-                className="hover:bg-primary/10 hover:text-foreground flex w-full items-center justify-center gap-2"
-                disabled={isGoogleLoading || isGithubLoading}
-              >
-                <Github className="h-5 w-5" />
-                <span className="font-medium">Continue with GitHub</span>
-                {isGithubLoading && <Loader2 className="h-4 w-4 animate-spin" />}
-              </Button>
+              <div className="relative">
+                <Button
+                  variant={lastLoginMethod === "github" ? "default" : "outline"}
+                  onClick={handleGithubSignIn}
+                  size="lg"
+                  className="hover:bg-primary/10 hover:text-foreground flex w-full items-center justify-center gap-2"
+                  disabled={isGoogleLoading || isGithubLoading}
+                >
+                  <Github className="h-5 w-5" />
+                  <span className="font-medium">Continue with GitHub</span>
+                  {isGithubLoading && (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  )}
+                </Button>
+                {lastLoginMethod === "github" && (
+                  <Badge
+                    variant="secondary"
+                    className="absolute right-2 top-1/2 -translate-y-1/2"
+                  >
+                    Last used
+                  </Badge>
+                )}
+              </div>
             </div>
 
             <div className="pt-2">
@@ -133,6 +164,7 @@ export function AuthDialog({
 
               <div className="mt-6 text-center">
                 <button
+                  type="button"
                   onClick={toggleMode}
                   className="text-primary focus:ring-primary text-sm font-medium hover:underline focus:ring-2 focus:ring-offset-2 focus:outline-none"
                 >
