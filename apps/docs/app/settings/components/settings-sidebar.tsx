@@ -8,6 +8,7 @@ import {
   ExternalLink,
   type LucideIcon,
   Palette,
+  Plug,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -34,6 +35,12 @@ const BASE_NAV_ITEMS: NavItem[] = [
     href: "/settings/usage",
     label: "AI Usage",
     icon: ChartNoAxesCombined,
+  },
+  {
+    type: "link",
+    href: "/settings/integrations",
+    label: "Integrations",
+    icon: Plug,
   },
 ];
 

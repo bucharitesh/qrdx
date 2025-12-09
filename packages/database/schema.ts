@@ -6,7 +6,12 @@ import {
   text,
   timestamp,
 } from "drizzle-orm/pg-core";
-import type { ThemeStyles } from "@/types/theme";
+
+export type ThemeStyles = {
+  // Define your theme styles type here
+  // This should match the type from your app
+  [key: string]: any;
+};
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -107,3 +112,21 @@ export const subscription = pgTable("subscription", {
   customFieldData: text("custom_field_data"), // JSON string
   userId: text("user_id").references(() => user.id),
 });
+
+export const integration = pgTable("integration", {
+  id: text("id").primaryKey(),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  provider: text("provider").notNull(), // "dub", "google-analytics", "stripe", etc.
+  accessToken: text("access_token").notNull(), // encrypted
+  refreshToken: text("refresh_token"), // encrypted, nullable for non-OAuth flows
+  expiresAt: timestamp("expires_at"), // when access token expires
+  scopes: text("scopes"), // comma-separated OAuth scopes
+  metadata: json("metadata"), // provider-specific data (workspace info, etc.)
+  status: text("status").notNull().default("active"), // "active", "disconnected", "error"
+  lastSyncAt: timestamp("last_sync_at"), // when integration was last used
+  createdAt: timestamp("created_at").notNull(),
+  updatedAt: timestamp("updated_at").notNull(),
+});
+

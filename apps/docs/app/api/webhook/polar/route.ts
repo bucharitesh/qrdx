@@ -1,6 +1,5 @@
 import { Webhooks } from "@polar-sh/nextjs";
-import { db } from "@/db";
-import { subscription } from "@/db/schema";
+import { database as db, subscription } from "@repo/database";
 import { env } from "@/lib/env";
 
 function safeParseDate(value: string | Date | null | undefined): Date | null {

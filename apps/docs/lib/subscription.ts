@@ -1,10 +1,9 @@
 "use server";
 
+import { database as db, subscription } from "@repo/database";
 import { and, eq } from "drizzle-orm";
 import type { NextRequest } from "next/server";
 import { getMyAllTimeRequestCount } from "@/actions/ai-usage";
-import { db } from "@/db";
-import { subscription } from "@/db/schema";
 import { SubscriptionRequiredError } from "@/types/errors";
 import type { SubscriptionCheck } from "@/types/subscription";
 import { AI_REQUEST_FREE_TIER_LIMIT } from "./constants";

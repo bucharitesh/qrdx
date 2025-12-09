@@ -1,0 +1,2 @@
+# Keep migration files but ignore other drizzle artifacts
+/drizzle
