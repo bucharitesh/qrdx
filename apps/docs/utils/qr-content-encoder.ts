@@ -197,7 +197,6 @@ export function encodeMaps(content: MapsContent): string {
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(content.location)}`;
 }
 
-
 /**
  * Encode Facebook content
  */
