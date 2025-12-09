@@ -7,24 +7,30 @@ import * as React from "react";
 import type { EmailFormData } from "@/lib/validations/qr-content";
 import { emailSchema } from "@/lib/validations/qr-content";
 import { useQREditorStore } from "@/store/editor-store";
+import type { EmailContent } from "@/types/qr-content";
 import { encodeEmail } from "@/utils/qr-content-encoder";
 
 export function EmailForm() {
-  const { setValue } = useQREditorStore();
+  const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
+
+  // Initialize from stored config or use defaults
+  const storedConfig = getContentConfig("email") as EmailContent | undefined;
   const [emailData, setEmailData] = React.useState<EmailFormData>({
-    recipient: "",
-    subject: "",
-    body: "",
+    recipient: storedConfig?.recipient || "",
+    subject: storedConfig?.subject || "",
+    body: storedConfig?.body || "",
   });
   const [errors, setErrors] = React.useState<Record<string, string>>({});
 
   React.useEffect(() => {
     // Validate and encode
     const result = emailSchema.safeParse(emailData);
-    
+
     if (result.success) {
-      const encoded = encodeEmail({ type: "email", ...result.data });
+      const config: EmailContent = { type: "email", ...result.data };
+      const encoded = encodeEmail(config);
       setValue(encoded);
+      setContentConfig("email", config);
       setErrors({});
     } else {
       const fieldErrors: Record<string, string> = {};
@@ -34,7 +40,7 @@ export function EmailForm() {
       }
       setErrors(fieldErrors);
     }
-  }, [emailData, setValue]);
+  }, [emailData, setValue, setContentConfig]);
 
   return (
     <div className="space-y-3">
@@ -92,4 +98,3 @@ export function EmailForm() {
     </div>
   );
 }
-

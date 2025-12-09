@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  AppStoresForm,
   EmailForm,
   FacebookForm,
   InstagramForm,
@@ -42,7 +41,6 @@ export function ContentControls() {
         {contentType === "wifi" && <WifiForm />}
         {contentType === "vcard" && <VCardForm />}
         {contentType === "maps" && <MapsForm />}
-        {contentType === "app-stores" && <AppStoresForm />}
         {contentType === "facebook" && <FacebookForm />}
         {contentType === "instagram" && <InstagramForm />}
         {contentType === "reddit" && <RedditForm />}

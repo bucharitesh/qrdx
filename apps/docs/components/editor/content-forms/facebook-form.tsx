@@ -8,17 +8,24 @@ import type { FacebookContent } from "@/types/qr-content";
 import { encodeFacebook } from "@/utils/qr-content-encoder";
 
 export function FacebookForm() {
-  const { setValue } = useQREditorStore();
+  const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
+
+  // Initialize from stored config or use defaults
+  const storedConfig = getContentConfig("facebook") as
+    | FacebookContent
+    | undefined;
   const [facebookData, setFacebookData] = React.useState<
     Omit<FacebookContent, "type">
   >({
-    profileUrl: "",
+    profileUrl: storedConfig?.profileUrl || "",
   });
 
   React.useEffect(() => {
-    const encoded = encodeFacebook({ type: "facebook", ...facebookData });
+    const config: FacebookContent = { type: "facebook", ...facebookData };
+    const encoded = encodeFacebook(config);
     setValue(encoded);
-  }, [facebookData, setValue]);
+    setContentConfig("facebook", config);
+  }, [facebookData, setValue, setContentConfig]);
 
   return (
     <div className="space-y-3">
@@ -46,4 +53,3 @@ export function FacebookForm() {
     </div>
   );
 }
-

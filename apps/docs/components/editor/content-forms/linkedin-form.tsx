@@ -8,17 +8,24 @@ import type { LinkedInContent } from "@/types/qr-content";
 import { encodeLinkedIn } from "@/utils/qr-content-encoder";
 
 export function LinkedInForm() {
-  const { setValue } = useQREditorStore();
+  const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
+
+  // Initialize from stored config or use defaults
+  const storedConfig = getContentConfig("linkedin") as
+    | LinkedInContent
+    | undefined;
   const [linkedinData, setLinkedinData] = React.useState<
     Omit<LinkedInContent, "type">
   >({
-    profileUrl: "",
+    profileUrl: storedConfig?.profileUrl || "",
   });
 
   React.useEffect(() => {
-    const encoded = encodeLinkedIn({ type: "linkedin", ...linkedinData });
+    const config: LinkedInContent = { type: "linkedin", ...linkedinData };
+    const encoded = encodeLinkedIn(config);
     setValue(encoded);
-  }, [linkedinData, setValue]);
+    setContentConfig("linkedin", config);
+  }, [linkedinData, setValue, setContentConfig]);
 
   return (
     <div className="space-y-3">
@@ -46,5 +53,3 @@ export function LinkedInForm() {
     </div>
   );
 }
-
-

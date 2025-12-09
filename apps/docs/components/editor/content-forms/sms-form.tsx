@@ -9,16 +9,21 @@ import type { SmsContent } from "@/types/qr-content";
 import { encodeSms } from "@/utils/qr-content-encoder";
 
 export function SmsForm() {
-  const { setValue } = useQREditorStore();
+  const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
+
+  // Initialize from stored config or use defaults
+  const storedConfig = getContentConfig("sms") as SmsContent | undefined;
   const [smsData, setSmsData] = React.useState<Omit<SmsContent, "type">>({
-    phoneNumber: "",
-    message: "",
+    phoneNumber: storedConfig?.phoneNumber || "",
+    message: storedConfig?.message || "",
   });
 
   React.useEffect(() => {
-    const encoded = encodeSms({ type: "sms", ...smsData });
+    const config: SmsContent = { type: "sms", ...smsData };
+    const encoded = encodeSms(config);
     setValue(encoded);
-  }, [smsData, setValue]);
+    setContentConfig("sms", config);
+  }, [smsData, setValue, setContentConfig]);
 
   return (
     <div className="space-y-3">
@@ -57,5 +62,3 @@ export function SmsForm() {
     </div>
   );
 }
-
-

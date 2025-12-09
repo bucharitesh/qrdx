@@ -6,7 +6,6 @@ export { WhatsAppForm } from "./whatsapp-form";
 export { WifiForm } from "./wifi-form";
 export { VCardForm } from "./vcard-form";
 export { MapsForm } from "./maps-form";
-export { AppStoresForm } from "./app-stores-form";
 export { FacebookForm } from "./facebook-form";
 export { InstagramForm } from "./instagram-form";
 export { RedditForm } from "./reddit-form";

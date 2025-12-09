@@ -8,17 +8,22 @@ import type { TikTokContent } from "@/types/qr-content";
 import { encodeTikTok } from "@/utils/qr-content-encoder";
 
 export function TikTokForm() {
-  const { setValue } = useQREditorStore();
+  const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
+
+  // Initialize from stored config or use defaults
+  const storedConfig = getContentConfig("tiktok") as TikTokContent | undefined;
   const [tiktokData, setTiktokData] = React.useState<
     Omit<TikTokContent, "type">
   >({
-    username: "",
+    username: storedConfig?.username || "",
   });
 
   React.useEffect(() => {
-    const encoded = encodeTikTok({ type: "tiktok", ...tiktokData });
+    const config: TikTokContent = { type: "tiktok", ...tiktokData };
+    const encoded = encodeTikTok(config);
     setValue(encoded);
-  }, [tiktokData, setValue]);
+    setContentConfig("tiktok", config);
+  }, [tiktokData, setValue, setContentConfig]);
 
   return (
     <div className="space-y-3">
@@ -46,5 +51,3 @@ export function TikTokForm() {
     </div>
   );
 }
-
-

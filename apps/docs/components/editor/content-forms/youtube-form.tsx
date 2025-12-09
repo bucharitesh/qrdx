@@ -8,18 +8,25 @@ import type { YouTubeContent } from "@/types/qr-content";
 import { encodeYouTube } from "@/utils/qr-content-encoder";
 
 export function YouTubeForm() {
-  const { setValue } = useQREditorStore();
+  const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
+
+  // Initialize from stored config or use defaults
+  const storedConfig = getContentConfig("youtube") as
+    | YouTubeContent
+    | undefined;
   const [youtubeData, setYoutubeData] = React.useState<
     Omit<YouTubeContent, "type">
   >({
-    channelUrl: "",
-    videoUrl: "",
+    channelUrl: storedConfig?.channelUrl || "",
+    videoUrl: storedConfig?.videoUrl || "",
   });
 
   React.useEffect(() => {
-    const encoded = encodeYouTube({ type: "youtube", ...youtubeData });
+    const config: YouTubeContent = { type: "youtube", ...youtubeData };
+    const encoded = encodeYouTube(config);
     setValue(encoded);
-  }, [youtubeData, setValue]);
+    setContentConfig("youtube", config);
+  }, [youtubeData, setValue, setContentConfig]);
 
   return (
     <div className="space-y-3">
@@ -62,5 +69,3 @@ export function YouTubeForm() {
     </div>
   );
 }
-
-

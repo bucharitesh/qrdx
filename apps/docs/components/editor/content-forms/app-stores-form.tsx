@@ -8,19 +8,26 @@ import type { AppStoresContent } from "@/types/qr-content";
 import { encodeAppStores } from "@/utils/qr-content-encoder";
 
 export function AppStoresForm() {
-  const { setValue } = useQREditorStore();
+  const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
+
+  // Initialize from stored config or use defaults
+  const storedConfig = getContentConfig("app-stores") as
+    | AppStoresContent
+    | undefined;
   const [appStoreData, setAppStoreData] = React.useState<
     Omit<AppStoresContent, "type">
   >({
-    iosUrl: "",
-    androidUrl: "",
-    fallbackUrl: "",
+    iosUrl: storedConfig?.iosUrl || "",
+    androidUrl: storedConfig?.androidUrl || "",
+    fallbackUrl: storedConfig?.fallbackUrl || "",
   });
 
   React.useEffect(() => {
-    const encoded = encodeAppStores({ type: "app-stores", ...appStoreData });
+    const config: AppStoresContent = { type: "app-stores", ...appStoreData };
+    const encoded = encodeAppStores(config);
     setValue(encoded);
-  }, [appStoreData, setValue]);
+    setContentConfig("app-stores", config);
+  }, [appStoreData, setValue, setContentConfig]);
 
   return (
     <div className="space-y-3">
@@ -70,10 +77,9 @@ export function AppStoresForm() {
       </div>
 
       <p className="text-muted-foreground text-xs">
-        Provide at least one app store link. For best results, include all three URLs.
+        Provide at least one app store link. For best results, include all three
+        URLs.
       </p>
     </div>
   );
 }
-
-

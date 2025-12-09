@@ -8,17 +8,24 @@ import type { ThreadsContent } from "@/types/qr-content";
 import { encodeThreads } from "@/utils/qr-content-encoder";
 
 export function ThreadsForm() {
-  const { setValue } = useQREditorStore();
+  const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
+
+  // Initialize from stored config or use defaults
+  const storedConfig = getContentConfig("threads") as
+    | ThreadsContent
+    | undefined;
   const [threadsData, setThreadsData] = React.useState<
     Omit<ThreadsContent, "type">
   >({
-    username: "",
+    username: storedConfig?.username || "",
   });
 
   React.useEffect(() => {
-    const encoded = encodeThreads({ type: "threads", ...threadsData });
+    const config: ThreadsContent = { type: "threads", ...threadsData };
+    const encoded = encodeThreads(config);
     setValue(encoded);
-  }, [threadsData, setValue]);
+    setContentConfig("threads", config);
+  }, [threadsData, setValue, setContentConfig]);
 
   return (
     <div className="space-y-3">
@@ -46,5 +53,3 @@ export function ThreadsForm() {
     </div>
   );
 }
-
-

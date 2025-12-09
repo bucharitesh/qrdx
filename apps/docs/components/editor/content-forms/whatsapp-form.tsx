@@ -9,18 +9,25 @@ import type { WhatsAppContent } from "@/types/qr-content";
 import { encodeWhatsApp } from "@/utils/qr-content-encoder";
 
 export function WhatsAppForm() {
-  const { setValue } = useQREditorStore();
+  const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
+
+  // Initialize from stored config or use defaults
+  const storedConfig = getContentConfig("whatsapp") as
+    | WhatsAppContent
+    | undefined;
   const [whatsappData, setWhatsappData] = React.useState<
     Omit<WhatsAppContent, "type">
   >({
-    phoneNumber: "",
-    message: "",
+    phoneNumber: storedConfig?.phoneNumber || "",
+    message: storedConfig?.message || "",
   });
 
   React.useEffect(() => {
-    const encoded = encodeWhatsApp({ type: "whatsapp", ...whatsappData });
+    const config: WhatsAppContent = { type: "whatsapp", ...whatsappData };
+    const encoded = encodeWhatsApp(config);
     setValue(encoded);
-  }, [whatsappData, setValue]);
+    setContentConfig("whatsapp", config);
+  }, [whatsappData, setValue, setContentConfig]);
 
   return (
     <div className="space-y-3">
@@ -64,5 +71,3 @@ export function WhatsAppForm() {
     </div>
   );
 }
-
-

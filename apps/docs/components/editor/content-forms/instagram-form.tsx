@@ -6,12 +6,18 @@ import * as React from "react";
 import type { InstagramFormData } from "@/lib/validations/qr-content";
 import { instagramSchema } from "@/lib/validations/qr-content";
 import { useQREditorStore } from "@/store/editor-store";
+import type { InstagramContent } from "@/types/qr-content";
 import { encodeInstagram } from "@/utils/qr-content-encoder";
 
 export function InstagramForm() {
-  const { setValue } = useQREditorStore();
+  const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
+
+  // Initialize from stored config or use defaults
+  const storedConfig = getContentConfig("instagram") as
+    | InstagramContent
+    | undefined;
   const [instagramData, setInstagramData] = React.useState<InstagramFormData>({
-    username: "",
+    username: storedConfig?.username || "",
   });
   const [errors, setErrors] = React.useState<Record<string, string>>({});
 
@@ -20,8 +26,10 @@ export function InstagramForm() {
     const result = instagramSchema.safeParse(instagramData);
 
     if (result.success) {
-      const encoded = encodeInstagram({ type: "instagram", ...result.data });
+      const config: InstagramContent = { type: "instagram", ...result.data };
+      const encoded = encodeInstagram(config);
       setValue(encoded);
+      setContentConfig("instagram", config);
       setErrors({});
     } else {
       const fieldErrors: Record<string, string> = {};
@@ -31,7 +39,7 @@ export function InstagramForm() {
       }
       setErrors(fieldErrors);
     }
-  }, [instagramData, setValue]);
+  }, [instagramData, setValue, setContentConfig]);
 
   return (
     <div className="space-y-3">

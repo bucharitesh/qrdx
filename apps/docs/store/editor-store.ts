@@ -3,7 +3,7 @@ import { persist } from "zustand/middleware";
 import { defaultThemeState } from "@/config/qr";
 import { isDeepEqual } from "@/lib/utils";
 import type { ThemeEditorState } from "@/types/editor";
-import type { ContentType } from "@/types/qr-content";
+import type { ContentType, QRContentConfig } from "@/types/qr-content";
 import { getPresetThemeStyles } from "@/utils/qr-presets-helper";
 
 const MAX_HISTORY_COUNT = 30;
@@ -41,6 +41,11 @@ interface QREditorStore {
 
   contentType: ContentType;
   setContentType: (contentType: ContentType) => void;
+
+  // Content configurations for each content type
+  contentConfigs: Partial<Record<ContentType, QRContentConfig>>;
+  setContentConfig: (type: ContentType, config: QRContentConfig) => void;
+  getContentConfig: (type: ContentType) => QRContentConfig | undefined;
 }
 
 /**
@@ -60,6 +65,18 @@ export const useQREditorStore = create<QREditorStore>()(
       contentType: "url",
       setContentType: (contentType: ContentType) => {
         set({ contentType });
+      },
+      contentConfigs: {},
+      setContentConfig: (type: ContentType, config: QRContentConfig) => {
+        set((state) => ({
+          contentConfigs: {
+            ...state.contentConfigs,
+            [type]: config,
+          },
+        }));
+      },
+      getContentConfig: (type: ContentType) => {
+        return get().contentConfigs[type];
       },
       setThemeState: (newState: ThemeEditorState) => {
         const oldThemeState = get().themeState;

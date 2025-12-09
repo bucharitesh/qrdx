@@ -8,17 +8,24 @@ import type { TwitterContent } from "@/types/qr-content";
 import { encodeTwitter } from "@/utils/qr-content-encoder";
 
 export function TwitterForm() {
-  const { setValue } = useQREditorStore();
+  const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
+
+  // Initialize from stored config or use defaults
+  const storedConfig = getContentConfig("twitter") as
+    | TwitterContent
+    | undefined;
   const [twitterData, setTwitterData] = React.useState<
     Omit<TwitterContent, "type">
   >({
-    username: "",
+    username: storedConfig?.username || "",
   });
 
   React.useEffect(() => {
-    const encoded = encodeTwitter({ type: "twitter", ...twitterData });
+    const config: TwitterContent = { type: "twitter", ...twitterData };
+    const encoded = encodeTwitter(config);
     setValue(encoded);
-  }, [twitterData, setValue]);
+    setContentConfig("twitter", config);
+  }, [twitterData, setValue, setContentConfig]);
 
   return (
     <div className="space-y-3">
@@ -46,5 +53,3 @@ export function TwitterForm() {
     </div>
   );
 }
-
-
