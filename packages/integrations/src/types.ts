@@ -25,6 +25,7 @@ export type OAuthConfig = {
   scopes: string[];
   pkce?: boolean;
   responseType?: string;
+  extraParams?: Record<string, string>;
 };
 
 /**

@@ -38,6 +38,12 @@ export class OAuthHandler {
       url.searchParams.append("state", state);
     }
 
+    for (const [key, value] of Object.entries(
+      this.config.oauth.extraParams || {}
+    )) {
+      url.searchParams.append(key, value);
+    }
+
     return url.toString();
   }
 

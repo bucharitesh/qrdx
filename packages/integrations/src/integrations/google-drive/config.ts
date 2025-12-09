@@ -19,6 +19,10 @@ export const googleDriveIntegration: IntegrationDefinition = {
     ],
     pkce: false,
     responseType: "code",
+    extraParams: {
+      access_type: "offline",
+      prompt: "consent",
+    },
   },
   features: [
     "Browse your Drive files",
