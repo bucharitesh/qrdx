@@ -3,12 +3,32 @@ import path from "path";
 import { env } from "@/lib/env";
 import type { IntegrationConfig, IntegrationConfigFile } from "./types";
 
+const defaultIntegrationConfigs: Record<string, IntegrationConfigFile> = {
+  dub: {
+    slug: "dub",
+    name: "Dub.sh",
+    type: "oauth",
+    logo: "/integrations/dub-icon.svg",
+    url: "https://dub.co",
+    categories: ["links", "analytics"],
+    description:
+      "Create and track short links with advanced analytics via Dub OAuth",
+    oauth: {
+      authUrl: "https://app.dub.co/oauth/authorize",
+      tokenUrl: "https://api.dub.co/oauth/token",
+      scopes: ["workspaces.read", "links.read", "links.write"],
+      pkce: true,
+    },
+  },
+};
+
 /**
  * Load integration configuration from the integration folder
  */
 function loadIntegrationConfigFile(
   provider: string,
 ): IntegrationConfigFile | null {
+  const fallbackConfig = defaultIntegrationConfigs[provider];
   try {
     const configPath = path.join(
       process.cwd(),
@@ -17,11 +37,37 @@ function loadIntegrationConfigFile(
       provider,
       "config.json",
     );
+    if (!fs.existsSync(configPath)) {
+      return fallbackConfig ?? null;
+    }
+
     const configContent = fs.readFileSync(configPath, "utf-8");
-    return JSON.parse(configContent) as IntegrationConfigFile;
+    const parsed = JSON.parse(configContent) as IntegrationConfigFile;
+
+    if (!fallbackConfig) {
+      return parsed;
+    }
+
+    const mergedOauth =
+      fallbackConfig.oauth || parsed.oauth
+        ? {
+            authUrl:
+              parsed.oauth?.authUrl ?? fallbackConfig.oauth?.authUrl ?? "",
+            tokenUrl:
+              parsed.oauth?.tokenUrl ?? fallbackConfig.oauth?.tokenUrl ?? "",
+            scopes: parsed.oauth?.scopes ?? fallbackConfig.oauth?.scopes ?? [],
+            pkce: parsed.oauth?.pkce ?? fallbackConfig.oauth?.pkce,
+          }
+        : undefined;
+
+    return {
+      ...fallbackConfig,
+      ...parsed,
+      ...(mergedOauth ? { oauth: mergedOauth } : {}),
+    };
   } catch (error) {
     console.error(`Failed to load config for ${provider}:`, error);
-    return null;
+    return fallbackConfig ?? null;
   }
 }
 
@@ -63,11 +109,16 @@ function loadIntegrationConfig(provider: string): IntegrationConfig | null {
 /**
  * Integration registry - central registry of all available integrations
  */
-export const integrationRegistry: Record<string, IntegrationConfig> = {
-  dub: loadIntegrationConfig("dub")!,
-  // Future integrations:
-  // "google-analytics": loadIntegrationConfig("google-analytics"),
-};
+const providers = ["dub"] as const;
+
+export const integrationRegistry: Record<string, IntegrationConfig> =
+  providers.reduce<Record<string, IntegrationConfig>>((registry, provider) => {
+    const config = loadIntegrationConfig(provider);
+    if (config) {
+      registry[provider] = config;
+    }
+    return registry;
+  }, {});
 
 /**
  * Get integration config by provider slug
