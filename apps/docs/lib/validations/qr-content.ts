@@ -67,7 +67,6 @@ export const mapsSchema = z.object({
   location: z.string().min(1, "Location is required"),
 });
 
-
 // Facebook
 export const facebookSchema = z.object({
   profileUrl: z
@@ -208,4 +207,3 @@ export type SnapchatFormData = z.infer<typeof snapchatSchema>;
 export type ThreadsFormData = z.infer<typeof threadsSchema>;
 export type UPIFormData = z.infer<typeof upiSchema>;
 export type PayPalFormData = z.infer<typeof paypalSchema>;
-

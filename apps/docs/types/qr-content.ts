@@ -103,7 +103,6 @@ export interface MapsContent {
   location: string; // Can be address or lat,long
 }
 
-
 /**
  * Facebook Content
  */
