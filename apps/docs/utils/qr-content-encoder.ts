@@ -4,7 +4,6 @@
  */
 
 import type {
-  AppStoresContent,
   EmailContent,
   FacebookContent,
   InstagramContent,
@@ -198,28 +197,6 @@ export function encodeMaps(content: MapsContent): string {
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(content.location)}`;
 }
 
-/**
- * Encode App Store links with platform detection
- */
-export function encodeAppStores(content: AppStoresContent): string {
-  // Priority: Android -> iOS -> Fallback
-  // In a real-world scenario, you'd detect the platform and return the appropriate URL
-  // For QR codes, we'll use a smart link approach or return the primary URL
-
-  // If all three are provided, we can use a custom landing page or smart link service
-  // For now, we'll prioritize in this order
-  const url = content.androidUrl || content.iosUrl || content.fallbackUrl || "";
-
-  // If multiple URLs are provided, you might want to create a landing page
-  // that detects the device and redirects accordingly
-  if (content.androidUrl && content.iosUrl) {
-    // This is a simplified approach - in production you'd use a real smart link service
-    // or create a landing page that does device detection
-    return content.androidUrl; // Default to Android for QR
-  }
-
-  return url;
-}
 
 /**
  * Encode Facebook content
@@ -368,8 +345,6 @@ export function encodeQRContent(content: QRContentConfig | null): string {
       return encodeVCard(content);
     case "maps":
       return encodeMaps(content);
-    case "app-stores":
-      return encodeAppStores(content);
     case "facebook":
       return encodeFacebook(content);
     case "instagram":
@@ -462,15 +437,6 @@ export function validateContent(content: QRContentConfig): {
     case "maps":
       if (!content.location || content.location.trim() === "") {
         return { valid: false, error: "Location is required" };
-      }
-      return { valid: true };
-
-    case "app-stores":
-      if (!content.iosUrl && !content.androidUrl && !content.fallbackUrl) {
-        return {
-          valid: false,
-          error: "At least one app store link is required",
-        };
       }
       return { valid: true };
 

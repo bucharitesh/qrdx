@@ -67,24 +67,6 @@ export const mapsSchema = z.object({
   location: z.string().min(1, "Location is required"),
 });
 
-// App Stores
-export const appStoresSchema = z
-  .object({
-    iosUrl: z.string().url("Invalid iOS URL").optional().or(z.literal("")),
-    androidUrl: z
-      .string()
-      .url("Invalid Android URL")
-      .optional()
-      .or(z.literal("")),
-    fallbackUrl: z
-      .string()
-      .url("Invalid fallback URL")
-      .optional()
-      .or(z.literal("")),
-  })
-  .refine((data) => data.iosUrl || data.androidUrl || data.fallbackUrl, {
-    message: "At least one app store link is required",
-  });
 
 // Facebook
 export const facebookSchema = z.object({
@@ -214,7 +196,6 @@ export type WhatsAppFormData = z.infer<typeof whatsappSchema>;
 export type WifiFormData = z.infer<typeof wifiSchema>;
 export type VCardFormData = z.infer<typeof vcardSchema>;
 export type MapsFormData = z.infer<typeof mapsSchema>;
-export type AppStoresFormData = z.infer<typeof appStoresSchema>;
 export type FacebookFormData = z.infer<typeof facebookSchema>;
 export type InstagramFormData = z.infer<typeof instagramSchema>;
 export type RedditFormData = z.infer<typeof redditSchema>;

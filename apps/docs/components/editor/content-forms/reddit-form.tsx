@@ -8,18 +8,23 @@ import type { RedditContent } from "@/types/qr-content";
 import { encodeReddit } from "@/utils/qr-content-encoder";
 
 export function RedditForm() {
-  const { setValue } = useQREditorStore();
+  const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
+
+  // Initialize from stored config or use defaults
+  const storedConfig = getContentConfig("reddit") as RedditContent | undefined;
   const [redditData, setRedditData] = React.useState<
     Omit<RedditContent, "type">
   >({
-    username: "",
-    subreddit: "",
+    username: storedConfig?.username || "",
+    subreddit: storedConfig?.subreddit || "",
   });
 
   React.useEffect(() => {
-    const encoded = encodeReddit({ type: "reddit", ...redditData });
+    const config: RedditContent = { type: "reddit", ...redditData };
+    const encoded = encodeReddit(config);
     setValue(encoded);
-  }, [redditData, setValue]);
+    setContentConfig("reddit", config);
+  }, [redditData, setValue, setContentConfig]);
 
   return (
     <div className="space-y-3">
@@ -62,5 +67,3 @@ export function RedditForm() {
     </div>
   );
 }
-
-

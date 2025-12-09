@@ -8,17 +8,24 @@ import type { SnapchatContent } from "@/types/qr-content";
 import { encodeSnapchat } from "@/utils/qr-content-encoder";
 
 export function SnapchatForm() {
-  const { setValue } = useQREditorStore();
+  const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
+
+  // Initialize from stored config or use defaults
+  const storedConfig = getContentConfig("snapchat") as
+    | SnapchatContent
+    | undefined;
   const [snapchatData, setSnapchatData] = React.useState<
     Omit<SnapchatContent, "type">
   >({
-    username: "",
+    username: storedConfig?.username || "",
   });
 
   React.useEffect(() => {
-    const encoded = encodeSnapchat({ type: "snapchat", ...snapchatData });
+    const config: SnapchatContent = { type: "snapchat", ...snapchatData };
+    const encoded = encodeSnapchat(config);
     setValue(encoded);
-  }, [snapchatData, setValue]);
+    setContentConfig("snapchat", config);
+  }, [snapchatData, setValue, setContentConfig]);
 
   return (
     <div className="space-y-3">
@@ -46,5 +53,3 @@ export function SnapchatForm() {
     </div>
   );
 }
-
-

@@ -16,18 +16,23 @@ import type { WifiContent } from "@/types/qr-content";
 import { encodeWifi } from "@/utils/qr-content-encoder";
 
 export function WifiForm() {
-  const { setValue } = useQREditorStore();
+  const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
+
+  // Initialize from stored config or use defaults
+  const storedConfig = getContentConfig("wifi") as WifiContent | undefined;
   const [wifiData, setWifiData] = React.useState<Omit<WifiContent, "type">>({
-    ssid: "",
-    password: "",
-    encryption: "WPA",
-    hidden: false,
+    ssid: storedConfig?.ssid || "",
+    password: storedConfig?.password || "",
+    encryption: storedConfig?.encryption || "WPA",
+    hidden: storedConfig?.hidden || false,
   });
 
   React.useEffect(() => {
-    const encoded = encodeWifi({ type: "wifi", ...wifiData });
+    const config: WifiContent = { type: "wifi", ...wifiData };
+    const encoded = encodeWifi(config);
     setValue(encoded);
-  }, [wifiData, setValue]);
+    setContentConfig("wifi", config);
+  }, [wifiData, setValue, setContentConfig]);
 
   return (
     <div className="space-y-3">
@@ -101,5 +106,3 @@ export function WifiForm() {
     </div>
   );
 }
-
-

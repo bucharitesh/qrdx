@@ -6,25 +6,31 @@ import * as React from "react";
 import type { UPIFormData } from "@/lib/validations/qr-content";
 import { upiSchema } from "@/lib/validations/qr-content";
 import { useQREditorStore } from "@/store/editor-store";
+import type { UPIContent } from "@/types/qr-content";
 import { encodeUPI } from "@/utils/qr-content-encoder";
 
 export function UPIForm() {
-  const { setValue } = useQREditorStore();
+  const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
+
+  // Initialize from stored config or use defaults
+  const storedConfig = getContentConfig("upi") as UPIContent | undefined;
   const [upiData, setUpiData] = React.useState<UPIFormData>({
-    upiId: "",
-    name: "",
-    amount: "",
-    note: "",
+    upiId: storedConfig?.upiId || "",
+    name: storedConfig?.name || "",
+    amount: storedConfig?.amount || "",
+    note: storedConfig?.note || "",
   });
   const [errors, setErrors] = React.useState<Record<string, string>>({});
 
   React.useEffect(() => {
     // Validate and encode
     const result = upiSchema.safeParse(upiData);
-    
+
     if (result.success) {
-      const encoded = encodeUPI({ type: "upi", ...result.data });
+      const config: UPIContent = { type: "upi", ...result.data };
+      const encoded = encodeUPI(config);
       setValue(encoded);
+      setContentConfig("upi", config);
       setErrors({});
     } else {
       const fieldErrors: Record<string, string> = {};
@@ -34,7 +40,7 @@ export function UPIForm() {
       }
       setErrors(fieldErrors);
     }
-  }, [upiData, setValue]);
+  }, [upiData, setValue, setContentConfig]);
 
   return (
     <div className="space-y-3">
@@ -109,4 +115,3 @@ export function UPIForm() {
     </div>
   );
 }
-

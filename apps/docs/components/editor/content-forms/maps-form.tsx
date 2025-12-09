@@ -8,15 +8,20 @@ import type { MapsContent } from "@/types/qr-content";
 import { encodeMaps } from "@/utils/qr-content-encoder";
 
 export function MapsForm() {
-  const { setValue } = useQREditorStore();
+  const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
+
+  // Initialize from stored config or use defaults
+  const storedConfig = getContentConfig("maps") as MapsContent | undefined;
   const [mapsData, setMapsData] = React.useState<Omit<MapsContent, "type">>({
-    location: "",
+    location: storedConfig?.location || "",
   });
 
   React.useEffect(() => {
-    const encoded = encodeMaps({ type: "maps", ...mapsData });
+    const config: MapsContent = { type: "maps", ...mapsData };
+    const encoded = encodeMaps(config);
     setValue(encoded);
-  }, [mapsData, setValue]);
+    setContentConfig("maps", config);
+  }, [mapsData, setValue, setContentConfig]);
 
   return (
     <div className="space-y-2">
@@ -31,10 +36,9 @@ export function MapsForm() {
         onChange={(e) => setMapsData({ location: e.target.value })}
       />
       <p className="text-muted-foreground text-xs">
-        Enter an address or coordinates (latitude, longitude). Scanning will open Google Maps.
+        Enter an address or coordinates (latitude, longitude). Scanning will
+        open Google Maps.
       </p>
     </div>
   );
 }
-
-

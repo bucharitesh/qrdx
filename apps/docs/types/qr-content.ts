@@ -12,7 +12,6 @@ export type ContentType =
   | "wifi"
   | "vcard"
   | "maps"
-  | "app-stores"
   | "facebook"
   | "instagram"
   | "reddit"
@@ -104,15 +103,6 @@ export interface MapsContent {
   location: string; // Can be address or lat,long
 }
 
-/**
- * App Store Links Content
- */
-export interface AppStoresContent {
-  type: "app-stores";
-  iosUrl?: string;
-  androidUrl?: string;
-  fallbackUrl?: string;
-}
 
 /**
  * Facebook Content
@@ -227,7 +217,6 @@ export type QRContentConfig =
   | WifiContent
   | VCardContent
   | MapsContent
-  | AppStoresContent
   | FacebookContent
   | InstagramContent
   | RedditContent
@@ -299,12 +288,6 @@ export const CONTENT_TYPES_METADATA: ContentTypeMetadata[] = [
     label: "Location",
     icon: "MapPin",
     description: "Open in Google Maps",
-  },
-  {
-    type: "app-stores",
-    label: "App Store",
-    icon: "Store",
-    description: "Download app link",
   },
   {
     type: "facebook",
@@ -452,7 +435,7 @@ export const CONTENT_CATEGORIES: ContentCategory[] = [
     id: "business",
     label: "Business",
     icon: "Store",
-    types: ["vcard", "url", "maps", "app-stores", "linkedin"],
+    types: ["vcard", "url", "maps", "linkedin"],
   },
   {
     id: "connectivity",
@@ -503,6 +486,6 @@ export const FOR_YOU_SECTIONS = [
   {
     id: "business",
     title: "Business & Professional",
-    types: ["vcard", "url", "maps", "app-stores"] as ContentType[],
+    types: ["vcard", "url", "maps"] as ContentType[],
   },
 ];

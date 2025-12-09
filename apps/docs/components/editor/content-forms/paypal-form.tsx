@@ -8,17 +8,22 @@ import type { PayPalContent } from "@/types/qr-content";
 import { encodePayPal } from "@/utils/qr-content-encoder";
 
 export function PayPalForm() {
-  const { setValue } = useQREditorStore();
+  const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
+
+  // Initialize from stored config or use defaults
+  const storedConfig = getContentConfig("paypal") as PayPalContent | undefined;
   const [paypalData, setPaypalData] = React.useState<
     Omit<PayPalContent, "type">
   >({
-    paypalUrl: "",
+    paypalUrl: storedConfig?.paypalUrl || "",
   });
 
   React.useEffect(() => {
-    const encoded = encodePayPal({ type: "paypal", ...paypalData });
+    const config: PayPalContent = { type: "paypal", ...paypalData };
+    const encoded = encodePayPal(config);
     setValue(encoded);
-  }, [paypalData, setValue]);
+    setContentConfig("paypal", config);
+  }, [paypalData, setValue, setContentConfig]);
 
   return (
     <div className="space-y-3">
@@ -46,5 +51,3 @@ export function PayPalForm() {
     </div>
   );
 }
-
-

@@ -9,22 +9,27 @@ import type { VCardContent } from "@/types/qr-content";
 import { encodeVCard } from "@/utils/qr-content-encoder";
 
 export function VCardForm() {
-  const { setValue } = useQREditorStore();
+  const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
+
+  // Initialize from stored config or use defaults
+  const storedConfig = getContentConfig("vcard") as VCardContent | undefined;
   const [vcardData, setVcardData] = React.useState<Omit<VCardContent, "type">>({
-    firstName: "",
-    lastName: "",
-    organization: "",
-    phone: "",
-    email: "",
-    url: "",
-    address: "",
-    note: "",
+    firstName: storedConfig?.firstName || "",
+    lastName: storedConfig?.lastName || "",
+    organization: storedConfig?.organization || "",
+    phone: storedConfig?.phone || "",
+    email: storedConfig?.email || "",
+    url: storedConfig?.url || "",
+    address: storedConfig?.address || "",
+    note: storedConfig?.note || "",
   });
 
   React.useEffect(() => {
-    const encoded = encodeVCard({ type: "vcard", ...vcardData });
+    const config: VCardContent = { type: "vcard", ...vcardData };
+    const encoded = encodeVCard(config);
     setValue(encoded);
-  }, [vcardData, setValue]);
+    setContentConfig("vcard", config);
+  }, [vcardData, setValue, setContentConfig]);
 
   return (
     <div className="space-y-3">
@@ -152,5 +157,3 @@ export function VCardForm() {
     </div>
   );
 }
-
-
