@@ -1,9 +1,18 @@
+import {
+  getIntegration,
+  getIntegrationConfigWithEnv,
+  getIntegrationRegistry,
+  initializeIntegrations,
+} from "@repo/integrations";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
-import { getIntegration } from "@/lib/integrations";
+import { env } from "@/lib/env";
 import { SettingsHeader } from "../components/settings-header";
 import { IntegrationCard } from "./components/integration-card";
+
+// Initialize integrations on module load
+initializeIntegrations();
 
 export default async function IntegrationsPage() {
   const session = await auth.api.getSession({
@@ -12,8 +21,72 @@ export default async function IntegrationsPage() {
 
   if (!session) redirect("/");
 
-  // Get Dub integration status
-  const dubIntegration = await getIntegration(session.user.id, "dub");
+  // Get all available integrations from registry
+  const registry = getIntegrationRegistry();
+  const availableIntegrations = registry.getAll();
+
+  // Fetch connection status for each integration
+  const integrationStatuses = await Promise.all(
+    availableIntegrations.map(async (integration) => {
+      try {
+        // Check if this integration is configured (has env vars)
+        const isConfigured = (() => {
+          try {
+            getIntegrationConfigWithEnv(integration.slug, env);
+            return true;
+          } catch {
+            return false;
+          }
+        })();
+
+        if (!isConfigured) {
+          return {
+            ...integration,
+            isConfigured: false,
+            isConnected: false,
+            status: undefined as
+              | "active"
+              | "disconnected"
+              | "error"
+              | undefined,
+            metadata: undefined as any,
+            connectedAt: undefined as Date | undefined,
+          };
+        }
+
+        // Get connection status from database
+        const config = getIntegrationConfigWithEnv(integration.slug, env);
+        const connectedIntegration = await getIntegration(
+          session.user.id,
+          integration.slug,
+          (slug) => getIntegrationConfigWithEnv(slug, env),
+        );
+
+        return {
+          ...integration,
+          isConfigured: true,
+          isConnected: !!connectedIntegration,
+          status: connectedIntegration?.status as
+            | "active"
+            | "disconnected"
+            | "error"
+            | undefined,
+          metadata: connectedIntegration?.metadata as any,
+          connectedAt: connectedIntegration?.createdAt as Date | undefined,
+        };
+      } catch (error) {
+        console.error(`Failed to fetch status for ${integration.slug}:`, error);
+        return {
+          ...integration,
+          isConfigured: false,
+          isConnected: false,
+          status: undefined as "active" | "disconnected" | "error" | undefined,
+          metadata: undefined as any,
+          connectedAt: undefined as Date | undefined,
+        };
+      }
+    }),
+  );
 
   return (
     <div className="space-y-6">
@@ -22,26 +95,24 @@ export default async function IntegrationsPage() {
         description="Connect third-party services to enhance your QR codes"
       />
 
-      <div className="grid gap-4 md:grid-cols-2">
-        <IntegrationCard
-          name="Dub.sh"
-          slug="dub"
-          description="Create and track short links with advanced analytics"
-          logo="/integrations/dub-icon.svg"
-          isConnected={!!dubIntegration}
-          status={dubIntegration?.status}
-          metadata={dubIntegration?.metadata}
-          connectedAt={dubIntegration?.createdAt}
-        />
-
-        {/* Placeholder for future integrations */}
-        <div className="border-muted bg-muted/20 flex items-center justify-center rounded-lg border-2 border-dashed p-8">
-          <p className="text-muted-foreground text-sm">
-            More integrations coming soon...
-          </p>
-        </div>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {integrationStatuses.map((integration) => (
+          <IntegrationCard
+            key={integration.slug}
+            name={integration.name}
+            slug={integration.slug}
+            description={integration.description}
+            logo={integration.logo}
+            isConnected={integration.isConnected}
+            isConfigured={integration.isConfigured}
+            status={integration.status}
+            metadata={integration.metadata}
+            connectedAt={integration.connectedAt}
+            features={integration.features}
+            category={integration.category}
+          />
+        ))}
       </div>
     </div>
   );
 }
-

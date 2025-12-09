@@ -38,3 +38,4 @@ export function optimizeSvgContent(svgText: string): string {
     return svgText.trim();
   }
 }
+

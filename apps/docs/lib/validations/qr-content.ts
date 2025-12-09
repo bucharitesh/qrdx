@@ -227,3 +227,4 @@ export type SnapchatFormData = z.infer<typeof snapchatSchema>;
 export type ThreadsFormData = z.infer<typeof threadsSchema>;
 export type UPIFormData = z.infer<typeof upiSchema>;
 export type PayPalFormData = z.infer<typeof paypalSchema>;
+

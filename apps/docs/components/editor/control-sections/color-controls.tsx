@@ -49,3 +49,4 @@ export function ColorControls({ style, onStyleChange }: ColorControlsProps) {
     </ControlSection>
   );
 }
+

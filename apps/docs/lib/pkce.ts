@@ -31,3 +31,4 @@ export function generatePKCE() {
     codeChallengeMethod: "S256" as const,
   };
 }
+

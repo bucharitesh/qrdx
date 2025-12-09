@@ -31,9 +31,12 @@ interface IntegrationCardProps {
   description: string;
   logo: string;
   isConnected: boolean;
+  isConfigured?: boolean;
   status?: "active" | "disconnected" | "error";
   metadata?: any;
   connectedAt?: Date;
+  features?: string[];
+  category?: string[];
 }
 
 export function IntegrationCard({
@@ -42,9 +45,12 @@ export function IntegrationCard({
   description,
   logo,
   isConnected,
+  isConfigured = true,
   status,
   metadata,
   connectedAt,
+  features,
+  category,
 }: IntegrationCardProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -74,6 +80,13 @@ export function IntegrationCard({
   }, [searchParams, slug, name, router]);
 
   const handleConnect = async () => {
+    if (!isConfigured) {
+      toast.error(
+        `${name} is not configured. Please add the required environment variables.`
+      );
+      return;
+    }
+
     setIsLoading(true);
     try {
       const result = await connectIntegrationAction(slug);
@@ -161,28 +174,65 @@ export function IntegrationCard({
         <CardDescription>{description}</CardDescription>
       </CardHeader>
 
-      {isConnected && metadata && (
-        <CardContent className="space-y-2">
-          {metadata.workspace && (
-            <div className="border-muted bg-muted/50 rounded-md border p-3">
-              <p className="text-muted-foreground text-xs font-medium">
-                Connected Workspace
-              </p>
-              <p className="text-sm font-semibold">{metadata.workspace.name}</p>
-              {metadata.workspace.slug && (
-                <p className="text-muted-foreground text-xs">
-                  {metadata.workspace.slug}
-                </p>
-              )}
-            </div>
-          )}
-          {connectedAt && (
-            <p className="text-muted-foreground text-xs">
-              Connected on {new Date(connectedAt).toLocaleDateString()}
+      <CardContent className="space-y-3">
+        {/* Features list */}
+        {features && features.length > 0 && (
+          <div>
+            <p className="text-muted-foreground mb-2 text-xs font-medium">
+              Features
             </p>
-          )}
-        </CardContent>
-      )}
+            <ul className="space-y-1">
+              {features.slice(0, 3).map((feature, idx) => (
+                <li key={idx} className="text-xs text-muted-foreground flex items-start">
+                  <span className="mr-2">•</span>
+                  <span>{feature}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {/* Connected metadata */}
+        {isConnected && metadata && (
+          <div className="space-y-2 pt-2 border-t">
+            {metadata.workspace && (
+              <div className="border-muted bg-muted/50 rounded-md border p-2">
+                <p className="text-muted-foreground text-xs font-medium">
+                  Connected Workspace
+                </p>
+                <p className="text-sm font-semibold">{metadata.workspace.name}</p>
+                {metadata.workspace.slug && (
+                  <p className="text-muted-foreground text-xs">
+                    {metadata.workspace.slug}
+                  </p>
+                )}
+              </div>
+            )}
+            {metadata.user && (
+              <div className="border-muted bg-muted/50 rounded-md border p-2">
+                <p className="text-muted-foreground text-xs font-medium">
+                  Connected Account
+                </p>
+                <p className="text-sm font-semibold">{metadata.user.displayName}</p>
+              </div>
+            )}
+            {connectedAt && (
+              <p className="text-muted-foreground text-xs">
+                Connected on {new Date(connectedAt).toLocaleDateString()}
+              </p>
+            )}
+          </div>
+        )}
+
+        {/* Not configured warning */}
+        {!isConfigured && (
+          <div className="rounded-md bg-yellow-50 border border-yellow-200 p-2">
+            <p className="text-xs text-yellow-800">
+              Not configured. Add environment variables to enable.
+            </p>
+          </div>
+        )}
+      </CardContent>
 
       <CardFooter className="gap-2">
         {isConnected ? (
@@ -211,11 +261,12 @@ export function IntegrationCard({
         ) : (
           <Button
             onClick={handleConnect}
-            disabled={isLoading}
+            disabled={isLoading || !isConfigured}
             className="w-full"
+            variant={isConfigured ? "default" : "secondary"}
           >
             {isLoading && <Loader2 className="mr-2 size-4 animate-spin" />}
-            Connect {name}
+            {isConfigured ? `Connect ${name}` : "Not Configured"}
           </Button>
         )}
       </CardFooter>

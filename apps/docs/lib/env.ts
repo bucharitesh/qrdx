@@ -26,6 +26,9 @@ export const env = createEnv({
     DUB_CLIENT_SECRET: z.string().min(1),
     DUB_REDIRECT_URI: z.url().min(1),
 
+    // Integrations - Google Drive
+    GOOGLE_DRIVE_REDIRECT_URI: z.url().optional(),
+
     // Integration encryption
     INTEGRATION_ENCRYPTION_KEY: z.string().min(32),
 
@@ -47,6 +50,7 @@ export const env = createEnv({
     DUB_CLIENT_ID: process.env.DUB_CLIENT_ID,
     DUB_CLIENT_SECRET: process.env.DUB_CLIENT_SECRET,
     DUB_REDIRECT_URI: process.env.DUB_REDIRECT_URI,
+    GOOGLE_DRIVE_REDIRECT_URI: process.env.GOOGLE_DRIVE_REDIRECT_URI,
     INTEGRATION_ENCRYPTION_KEY: process.env.INTEGRATION_ENCRYPTION_KEY,
     NODE_ENV: process.env.NODE_ENV,
   },

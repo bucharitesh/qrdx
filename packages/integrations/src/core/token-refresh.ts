@@ -1,9 +1,8 @@
 import { database as db, integration } from "@repo/database";
 import { eq } from "drizzle-orm";
+import type { Integration } from "../types";
 import { decryptApiKey, encryptApiKey } from "./encryption";
 import { createOAuthHandler } from "./oauth";
-import { getIntegrationConfig } from "./registry";
-import type { Integration } from "./types";
 
 // Mutex to prevent concurrent token refreshes for the same integration
 const refreshLocks = new Map<string, Promise<string>>();
@@ -26,18 +25,19 @@ export function shouldRefreshToken(integration: Integration): boolean {
  */
 export async function refreshIntegrationToken(
   integrationId: string,
+  getConfig: (provider: string) => any
 ): Promise<string> {
   // Check if there's already a refresh in progress
   const existingRefresh = refreshLocks.get(integrationId);
   if (existingRefresh) {
     console.log(
-      `Waiting for existing refresh for integration ${integrationId}`,
+      `Waiting for existing refresh for integration ${integrationId}`
     );
     return existingRefresh;
   }
 
   // Create new refresh promise
-  const refreshPromise = performTokenRefresh(integrationId);
+  const refreshPromise = performTokenRefresh(integrationId, getConfig);
   refreshLocks.set(integrationId, refreshPromise);
 
   try {
@@ -52,7 +52,10 @@ export async function refreshIntegrationToken(
 /**
  * Perform the actual token refresh
  */
-async function performTokenRefresh(integrationId: string): Promise<string> {
+async function performTokenRefresh(
+  integrationId: string,
+  getConfig: (provider: string) => any
+): Promise<string> {
   // Load integration from database
   const result = await db
     .select()
@@ -69,16 +72,16 @@ async function performTokenRefresh(integrationId: string): Promise<string> {
   // Check if integration has a refresh token
   if (!integrationData.refreshToken) {
     throw new Error(
-      `Integration ${integrationId} does not have a refresh token`,
+      `Integration ${integrationId} does not have a refresh token`
     );
   }
 
   // Get provider config
-  const config = getIntegrationConfig(integrationData.provider);
+  const config = getConfig(integrationData.provider);
 
   if (!config.supportsRefresh) {
     throw new Error(
-      `Provider ${integrationData.provider} does not support token refresh`,
+      `Provider ${integrationData.provider} does not support token refresh`
     );
   }
 
@@ -90,7 +93,7 @@ async function performTokenRefresh(integrationId: string): Promise<string> {
 
   try {
     const tokenResponse = await oauthHandler.refreshAccessToken(
-      decryptedRefreshToken,
+      decryptedRefreshToken
     );
 
     // Calculate new expiration timestamp
@@ -117,14 +120,14 @@ async function performTokenRefresh(integrationId: string): Promise<string> {
       .where(eq(integration.id, integrationId));
 
     console.log(
-      `Successfully refreshed token for integration ${integrationId}`,
+      `Successfully refreshed token for integration ${integrationId}`
     );
 
     return tokenResponse.access_token;
   } catch (error) {
     console.error(
       `Failed to refresh token for integration ${integrationId}:`,
-      error,
+      error
     );
 
     // Mark integration as error state
@@ -137,7 +140,7 @@ async function performTokenRefresh(integrationId: string): Promise<string> {
       .where(eq(integration.id, integrationId));
 
     throw new Error(
-      `Failed to refresh token: ${error instanceof Error ? error.message : "Unknown error"}`,
+      `Failed to refresh token: ${error instanceof Error ? error.message : "Unknown error"}`
     );
   }
 }

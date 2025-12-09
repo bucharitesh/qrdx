@@ -1,14 +1,14 @@
 import { database as db, integration } from "@repo/database";
 import { and, eq } from "drizzle-orm";
+import type { Integration } from "../types";
 import { decryptApiKey } from "./encryption";
 import { refreshIntegrationToken, shouldRefreshToken } from "./token-refresh";
-import type { Integration } from "./types";
 
 /**
  * Decrypt integration tokens
  */
 function decryptIntegration(
-  integrationData: typeof integration.$inferSelect,
+  integrationData: typeof integration.$inferSelect
 ): Integration {
   return {
     ...integrationData,
@@ -27,13 +27,14 @@ function decryptIntegration(
 export async function getIntegration(
   userId: string,
   provider: string,
+  getConfig: (provider: string) => any
 ): Promise<Integration | null> {
   // Fetch integration from database
   const result = await db
     .select()
     .from(integration)
     .where(
-      and(eq(integration.userId, userId), eq(integration.provider, provider)),
+      and(eq(integration.userId, userId), eq(integration.provider, provider))
     )
     .limit(1);
 
@@ -51,6 +52,7 @@ export async function getIntegration(
       console.log(`Auto-refreshing token for ${provider} integration`);
       const freshAccessToken = await refreshIntegrationToken(
         integrationData.id,
+        getConfig
       );
 
       // Return integration with fresh token
@@ -81,7 +83,7 @@ export async function getIntegration(
  * Get an integration by ID
  */
 export async function getIntegrationById(
-  integrationId: string,
+  integrationId: string
 ): Promise<Integration | null> {
   const result = await db
     .select()
@@ -100,7 +102,7 @@ export async function getIntegrationById(
  * List all integrations for a user
  */
 export async function listUserIntegrations(
-  userId: string,
+  userId: string
 ): Promise<Integration[]> {
   const result = await db
     .select()
@@ -115,12 +117,12 @@ export async function listUserIntegrations(
  */
 export async function disconnectIntegration(
   userId: string,
-  provider: string,
+  provider: string
 ): Promise<void> {
   await db
     .delete(integration)
     .where(
-      and(eq(integration.userId, userId), eq(integration.provider, provider)),
+      and(eq(integration.userId, userId), eq(integration.provider, provider))
     );
 }
 
@@ -129,7 +131,7 @@ export async function disconnectIntegration(
  */
 export async function hasIntegration(
   userId: string,
-  provider: string,
+  provider: string
 ): Promise<boolean> {
   const result = await db
     .select({ id: integration.id })
@@ -138,8 +140,8 @@ export async function hasIntegration(
       and(
         eq(integration.userId, userId),
         eq(integration.provider, provider),
-        eq(integration.status, "active"),
-      ),
+        eq(integration.status, "active")
+      )
     )
     .limit(1);
 

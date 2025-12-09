@@ -1,11 +1,18 @@
 "use server";
 
+import {
+  createOAuthHandler,
+  disconnectIntegration,
+  generateCodeVerifier,
+  getIntegrationConfigWithEnv,
+  initializeIntegrations,
+} from "@repo/integrations";
 import { cookies, headers } from "next/headers";
 import { auth } from "@/lib/auth";
-import { disconnectIntegration } from "@/lib/integrations";
-import { createOAuthHandler } from "@/lib/integrations/oauth";
-import { getIntegrationConfig } from "@/lib/integrations/registry";
-import { generateCodeVerifier } from "@/lib/pkce";
+import { env } from "@/lib/env";
+
+// Initialize integrations on module load
+initializeIntegrations();
 
 export async function connectIntegrationAction(provider: string) {
   const session = await auth.api.getSession({
@@ -16,8 +23,8 @@ export async function connectIntegrationAction(provider: string) {
     throw new Error("Unauthorized");
   }
 
-  // Get integration config
-  const config = getIntegrationConfig(provider);
+  // Get integration config with environment credentials
+  const config = getIntegrationConfigWithEnv(provider, env);
 
   // Generate PKCE code verifier
   const codeVerifier = generateCodeVerifier();
@@ -52,4 +59,3 @@ export async function disconnectIntegrationAction(provider: string) {
 
   return { success: true };
 }
-

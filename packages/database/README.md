@@ -67,3 +67,4 @@ DATABASE_URL=postgresql://user:password@host:port/database
 ```
 
 See `.env.example` for reference.
+

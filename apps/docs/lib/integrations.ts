@@ -1,27 +1,32 @@
 /**
- * Legacy integrations file - Re-exports from the new integrations system
- * This file is kept for backwards compatibility
+ * Legacy integrations file - Re-exports from the new @repo/integrations package
+ * This file is kept for backwards compatibility during migration
  */
 
-// Re-export core functionality from new system
+import { getIntegrationConfigWithEnv } from "@repo/integrations/src/registry/loader";
+import { env } from "./env";
+
+// Re-export core functionality from new package
 export {
   decryptApiKey,
   encryptApiKey,
-} from "./integrations/encryption";
-
-export {
   disconnectIntegration,
   getIntegration,
   hasIntegration,
   listUserIntegrations,
-} from "./integrations/manager";
+} from "@repo/integrations";
 
-export { getDubClient } from "./integrations/providers/dub/client";
+// Re-export Dub client
+export { createDubClient as getDubClient } from "@repo/integrations";
 
 // Legacy function for backwards compatibility
 export async function getDubIntegration(userId: string) {
-  const { getIntegration } = await import("./integrations/manager");
-  const integration = await getIntegration(userId, "dub");
+  const { getIntegration } = await import("@repo/integrations");
+  const integration = await getIntegration(
+    userId,
+    "dub",
+    (slug) => getIntegrationConfigWithEnv(slug, env)
+  );
 
   if (!integration) return null;
 
