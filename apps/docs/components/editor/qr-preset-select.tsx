@@ -22,7 +22,6 @@ import {
   TooltipTrigger,
 } from "@repo/design-system/components/ui/tooltip";
 import { cn } from "@repo/design-system/lib/utils";
-import { type ColorConfig, getSolidColor } from "@repo/qrdx";
 import {
   ArrowLeft,
   ArrowRight,
@@ -34,6 +33,8 @@ import {
   Shuffle,
 } from "lucide-react";
 import Link from "next/link";
+import type { ColorConfig } from "qrdx";
+import { getSolidColor } from "qrdx/types";
 import type React from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { authClient } from "@/lib/auth-client";

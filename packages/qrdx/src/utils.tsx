@@ -25,6 +25,7 @@ import {
 import { generateCornerDotPath } from "./corner-dot";
 import { generateCornerSquarePath } from "./corner-eye";
 import { getTemplate } from "./templates";
+import { getSolidColor } from "./utils/color";
 
 // We could just do this in generatePath, except that we want to support
 // non-Path2D canvas, so we need to keep it an explicit step.
@@ -534,30 +535,8 @@ function getFillValue(
   return fallback;
 }
 
-// Get solid color representation from ColorConfig (for non-gradient uses like corner dots)
-export function getSolidColor(
-  colorConfig: ColorConfig | undefined,
-  fallback: string
-): string {
-  if (!colorConfig) {
-    return fallback;
-  }
-
-  if (typeof colorConfig === "string") {
-    return colorConfig;
-  }
-
-  if (colorConfig.type === "solid") {
-    return colorConfig.color;
-  }
-
-  // For gradients, return the first stop color as representative
-  if (colorConfig.type === "linear" || colorConfig.type === "radial") {
-    return colorConfig.stops[0]?.color || fallback;
-  }
-
-  return fallback;
-}
+// Re-export getSolidColor from color utils
+export { getSolidColor } from "./utils/color";
 
 export function getImageSettings(
   cells: Modules,
