@@ -117,10 +117,24 @@ export function QRCodeDialog({ open, onOpenChange }: QRCodeDialogProps) {
       }
     }
     if (style.eyeColor) {
-      props.push(`${indent}eyeColor="${style.eyeColor}"`);
+      const serialized = serializeColorConfig(style.eyeColor, indent);
+      if (serialized.value) {
+        if (serialized.isMultiLine) {
+          props.push(`${indent}eyeColor={${serialized.value}}`);
+        } else {
+          props.push(`${indent}eyeColor={${serialized.value}}`);
+        }
+      }
     }
     if (style.dotColor) {
-      props.push(`${indent}dotColor="${style.dotColor}"`);
+      const serialized = serializeColorConfig(style.dotColor, indent);
+      if (serialized.value) {
+        if (serialized.isMultiLine) {
+          props.push(`${indent}dotColor={${serialized.value}}`);
+        } else {
+          props.push(`${indent}dotColor={${serialized.value}}`);
+        }
+      }
     }
     if (style.bodyPattern) {
       props.push(`${indent}bodyPattern="${style.bodyPattern}"`);

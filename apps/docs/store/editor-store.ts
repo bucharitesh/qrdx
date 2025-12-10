@@ -1,3 +1,4 @@
+import { getSolidColor } from "qrdx";
 import type { ColorConfig } from "qrdx/types";
 import { colorConfigSchema } from "qrdx/types";
 import { create } from "zustand";
@@ -284,18 +285,22 @@ export const useQREditorStore = create<QREditorStore>()(
     {
       name: "editor-storage",
       merge: (persistedState, currentState) => {
-        // Helper function to normalize fgColor in a styles object
-        const normalizeFgColor = (styles: Record<string, unknown>) => {
-          if (styles.fgColor !== undefined) {
+        // Helper function to normalize ColorConfig in a styles object
+        const normalizeColorConfig = (
+          styles: Record<string, unknown>,
+          key: "fgColor" | "eyeColor" | "dotColor",
+          defaultValue: ColorConfig | string | undefined,
+        ) => {
+          if (styles[key] !== undefined) {
             try {
               // Validate using zod schema
-              const validated = colorConfigSchema.safeParse(styles.fgColor);
+              const validated = colorConfigSchema.safeParse(styles[key]);
               if (validated.success) {
                 // Ensure proper structure - if it's an object, make sure it has required fields
                 const colorValue = validated.data as ColorConfig;
                 if (typeof colorValue === "string") {
                   // String color is valid
-                  styles.fgColor = colorValue;
+                  styles[key] = colorValue;
                 } else if (
                   typeof colorValue === "object" &&
                   colorValue !== null
@@ -311,9 +316,9 @@ export const useQREditorStore = create<QREditorStore>()(
                     // Ensure stops array has at least 2 items
                     if (colorValue.stops.length < 2) {
                       console.warn(
-                        "Gradient stops array has less than 2 items, using default",
+                        `Gradient stops array has less than 2 items for ${key}, using default`,
                       );
-                      styles.fgColor = defaultThemeState.styles.fgColor;
+                      styles[key] = defaultValue;
                     } else {
                       // For linear gradients, ensure angle is set (default to 0 if missing)
                       if (
@@ -331,14 +336,14 @@ export const useQREditorStore = create<QREditorStore>()(
                           typeof colorValue.angle === "number"
                             ? colorValue.angle
                             : 0;
-                        styles.fgColor = {
+                        styles[key] = {
                           type: "linear",
                           stops,
                           angle: angleValue,
                         } as ColorConfig;
                       } else {
                         // Radial gradient - no angle needed
-                        styles.fgColor = colorValue;
+                        styles[key] = colorValue;
                       }
                     }
                   } else if (
@@ -347,31 +352,56 @@ export const useQREditorStore = create<QREditorStore>()(
                     "color" in colorValue
                   ) {
                     // Solid color is valid
-                    styles.fgColor = colorValue;
+                    styles[key] = colorValue;
                   } else {
                     // Invalid structure, use default
-                    styles.fgColor = defaultThemeState.styles.fgColor;
+                    styles[key] = defaultValue;
                   }
                 } else {
                   // Fallback to default
-                  styles.fgColor = defaultThemeState.styles.fgColor;
+                  styles[key] = defaultValue;
                 }
               } else {
                 // If validation fails, fall back to default
                 console.warn(
-                  "Invalid fgColor in persisted state, using default",
+                  `Invalid ${key} in persisted state, using default`,
                   validated.error,
                 );
-                styles.fgColor = defaultThemeState.styles.fgColor;
+                styles[key] = defaultValue;
               }
             } catch (error) {
               console.warn(
-                "Error normalizing fgColor from persisted state:",
+                `Error normalizing ${key} from persisted state:`,
                 error,
               );
-              styles.fgColor = defaultThemeState.styles.fgColor;
+              styles[key] = defaultValue;
             }
           }
+        };
+
+        // Helper function to normalize fgColor (for backward compatibility)
+        const normalizeFgColor = (styles: Record<string, unknown>) => {
+          normalizeColorConfig(
+            styles,
+            "fgColor",
+            defaultThemeState.styles.fgColor ?? "#000000",
+          );
+          normalizeColorConfig(
+            styles,
+            "eyeColor",
+            getSolidColor(
+              defaultThemeState.styles.fgColor,
+              "#000000",
+            ) as ColorConfig,
+          );
+          normalizeColorConfig(
+            styles,
+            "dotColor",
+            getSolidColor(
+              defaultThemeState.styles.fgColor,
+              "#000000",
+            ) as ColorConfig,
+          );
         };
 
         // Validate and normalize ColorConfig objects when loading from storage
