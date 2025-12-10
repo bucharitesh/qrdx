@@ -105,7 +105,12 @@ export function QRCodeCanvas(props: QRPropsCanvas) {
       ctx.scale(scale, scale);
 
       // Draw solid background, only paint dark modules.
-      ctx.fillStyle = bgColor;
+      // Extract solid color from bgColor (canvas doesn't support gradient objects)
+      const bgColorNormalized = normalizeColorConfig(bgColor, DEFAULT_BGCOLOR);
+      ctx.fillStyle =
+        bgColorNormalized.type === "solid"
+          ? bgColorNormalized.color
+          : bgColorNormalized.stops[0]?.color || DEFAULT_BGCOLOR;
       ctx.fillRect(0, 0, numCells, numCells);
 
       // Extract solid color from fgColor (canvas doesn't support gradient objects)

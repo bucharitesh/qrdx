@@ -696,10 +696,20 @@ export function QRCodeSVG(props: QRPropsSVG) {
     pattern: bodyPattern,
   });
 
-  // Normalize fgColor first to ensure proper structure
+  // Normalize bgColor and fgColor first to ensure proper structure
+  const normalizedBgColor = normalizeColorConfig(bgColor, DEFAULT_BGCOLOR);
   const normalizedFgColor = normalizeColorConfig(fgColor, DEFAULT_FGCOLOR);
 
   // Generate gradient definitions if needed
+  const bgColorGradient =
+    normalizedBgColor.type === "linear" || normalizedBgColor.type === "radial"
+      ? generateGradientDef(
+          normalizedBgColor as LinearGradient | RadialGradient,
+          size,
+          "bg-color"
+        )
+      : null;
+
   const fgColorGradient =
     normalizedFgColor.type === "linear" || normalizedFgColor.type === "radial"
       ? generateGradientDef(
@@ -710,6 +720,12 @@ export function QRCodeSVG(props: QRPropsSVG) {
       : null;
 
   // Get fill values - use normalized color for gradient detection
+  const bgFillValue = getFillValue(
+    bgColor, // Pass original for getFillValue to handle normalization internally
+    bgColorGradient?.id ?? null,
+    DEFAULT_BGCOLOR
+  );
+
   const fgFillValue = getFillValue(
     fgColor, // Pass original for getFillValue to handle normalization internally
     fgColorGradient?.id ?? null,
@@ -846,6 +862,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
     <>
       {/* Gradient definitions */}
       <defs>
+        {bgColorGradient?.element}
         {fgColorGradient?.element}
         {topLeftEyeGradient?.element}
         {topRightEyeGradient?.element}
@@ -856,7 +873,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
       </defs>
 
       {/* Background */}
-      <rect fill={bgColor} height={size} width={size} x={0} y={0} />
+      <rect fill={bgFillValue} height={size} width={size} x={0} y={0} />
 
       {/* Data module circles */}
       <g fill={fgFillValue}>{dataCircles}</g>
@@ -945,6 +962,22 @@ export function QRCodeSVG(props: QRPropsSVG) {
     // Templates expect the QR content to be in a coordinate system that matches their transforms
     const templateSize = 300; // All templates use 300x300 base coordinate system
 
+    // Generate background gradient for template size (gradients use userSpaceOnUse, so coordinates must match)
+    const templateBgColorGradient =
+      normalizedBgColor.type === "linear" || normalizedBgColor.type === "radial"
+        ? generateGradientDef(
+            normalizedBgColor as LinearGradient | RadialGradient,
+            templateSize,
+            "bg-color-template"
+          )
+        : null;
+
+    const templateBgFillValue = getFillValue(
+      bgColor,
+      templateBgColorGradient?.id ?? null,
+      DEFAULT_BGCOLOR
+    );
+
     // Create QR content as a complete SVG for templates
     const templateQrContent = (
       <svg
@@ -954,6 +987,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
       >
         {/* Gradient definitions */}
         <defs>
+          {templateBgColorGradient?.element}
           {fgColorGradient?.element}
           {topLeftEyeGradient?.element}
           {topRightEyeGradient?.element}
@@ -962,6 +996,15 @@ export function QRCodeSVG(props: QRPropsSVG) {
           {topRightDotGradient?.element}
           {bottomLeftDotGradient?.element}
         </defs>
+
+        {/* Background */}
+        <rect
+          fill={templateBgFillValue}
+          height={templateSize}
+          width={templateSize}
+          x={0}
+          y={0}
+        />
 
         {/* Scale all QR elements to fit template coordinate system */}
         <g transform={`scale(${templateSize / size})`}>

@@ -8,6 +8,7 @@ import { useState } from "react";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { useUpdateQRTheme } from "@/lib/hooks/use-themes";
 import { useQREditorStore } from "@/store/editor-store";
+import { useThemePresetStore } from "@/store/theme-preset-store";
 import type { ThemeEditorState } from "@/types/editor";
 import type { ThemeStyles } from "@/types/theme";
 import { QRSaveDialog } from "./qr-save-dialog";
@@ -25,6 +26,7 @@ export function QREditActions({ theme, disabled = false }: QREditActionsProps) {
   const searchParams = useSearchParams();
   const updateThemeMutation = useUpdateQRTheme();
   const { themeState, applyThemePreset } = useQREditorStore();
+  const { updatePreset } = useThemePresetStore();
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
 
   const mainEditorUrl = `/editor/qr?${searchParams}`;
@@ -65,6 +67,15 @@ export function QREditActions({ theme, disabled = false }: QREditActionsProps) {
     try {
       const result = await updateThemeMutation.mutateAsync(dataToUpdate);
       if (result) {
+        // Update the preset in the store with the new data
+        const updatedPreset = {
+          label: result.name,
+          styles: result.style,
+          source: "SAVED" as const,
+          createdAt: result.createdAt.toISOString(),
+        };
+        updatePreset(result.id, updatedPreset);
+
         setIsSaveDialogOpen(false);
         router.push(mainEditorUrl);
         applyThemePreset(result.id);
@@ -135,5 +146,3 @@ export function QREditActions({ theme, disabled = false }: QREditActionsProps) {
     </>
   );
 }
-
-

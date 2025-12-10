@@ -1,6 +1,5 @@
 "use client";
 
-import { ColorInput } from "@repo/design-system/components/color-picker";
 import ControlSection from "@/components/editor/control-section";
 import { GradientPicker } from "@/components/editor/gradient-picker";
 import type { ThemeStyles } from "@/types/theme";
@@ -20,13 +19,11 @@ export function ColorControls({ style, onStyleChange }: ColorControlsProps) {
           value={style.fgColor}
           onChange={(value) => onStyleChange({ ...style, fgColor: value })}
         />
-        <ColorInput
-          value={style.bgColor || "#ffffff"}
+        <GradientPicker
+          fallbackColor="#ffffff"
           label="Background"
-          name="bgColor"
-          onChange={(value) =>
-            onStyleChange({ ...style, bgColor: value as string })
-          }
+          value={style.bgColor}
+          onChange={(value) => onStyleChange({ ...style, bgColor: value })}
         />
         <GradientPicker
           fallbackColor="#000000"

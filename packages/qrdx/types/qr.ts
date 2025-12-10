@@ -25,7 +25,7 @@ export const qrPropsSchema = z.object({
   value: z.string(),
   size: z.number().optional(),
   level: errorLevelSchema.optional(),
-  bgColor: z.string().optional(),
+  bgColor: colorConfigSchema.optional(),
   fgColor: colorConfigSchema.optional(),
   eyeColor: colorConfigSchema.optional(),
   dotColor: colorConfigSchema.optional(),
@@ -47,7 +47,7 @@ export type QRProps = {
   value: string;
   size?: number;
   level?: ErrorLevel;
-  bgColor?: string;
+  bgColor?: ColorConfig;
   fgColor?: ColorConfig;
   eyeColor?: ColorConfig;
   dotColor?: ColorConfig;

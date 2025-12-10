@@ -1,7 +1,5 @@
 "use client";
 
-import { QrCode as QrCodeIcon, Sparkles } from "lucide-react";
-import { motion } from "motion/react";
 import { QRCode } from "qrdx";
 import type React from "react";
 import { useQREditorStore } from "@/store/editor-store";
@@ -45,12 +43,7 @@ const QRPreviewPanel: React.FC<QRPreviewPanelProps> = ({ style }) => {
     <div className="flex min-h-0 flex-1 flex-col">
       {/* Preview Content */}
       <div className="relative flex size-full items-center justify-center overflow-hidden p-4">
-        <div
-          className="relative isolate flex size-full items-center justify-center overflow-hidden rounded-lg p-8"
-          style={{
-            backgroundColor: style.bgColor,
-          }}
-        >
+        <div className="relative isolate flex size-full items-center justify-center overflow-hidden rounded-lg p-8">
           <div key={`${value}`} className="flex items-center justify-center">
             <QRCode
               bgColor={style.bgColor}

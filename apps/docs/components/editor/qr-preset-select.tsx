@@ -34,7 +34,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import type { ColorConfig } from "qrdx";
-import { getSolidColor } from "qrdx/types";
+import { normalizeColorConfig } from "qrdx/types";
 import type React from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { authClient } from "@/lib/auth-client";
@@ -53,10 +53,47 @@ interface ColorBoxProps {
   color: string | ColorConfig | undefined;
 }
 
+/**
+ * Get CSS background style for a ColorConfig
+ * Supports solid colors, linear gradients, and radial gradients
+ */
+function getColorBackgroundStyle(
+  color: ColorConfig | string | undefined,
+): React.CSSProperties {
+  if (!color) {
+    return { backgroundColor: "#000000" };
+  }
+
+  if (typeof color === "string") {
+    return { backgroundColor: color };
+  }
+
+  const normalized = normalizeColorConfig(color);
+  if (normalized.type === "solid") {
+    return { backgroundColor: normalized.color };
+  }
+
+  // Generate gradient CSS
+  const sortedStops = [...normalized.stops].sort((a, b) => a.offset - b.offset);
+  const colorStops = sortedStops
+    .map((stop) => `${stop.color} ${stop.offset}%`)
+    .join(", ");
+
+  if (normalized.type === "linear") {
+    return {
+      background: `linear-gradient(${normalized.angle ?? 0}deg, ${colorStops})`,
+    };
+  }
+
+  return {
+    background: `radial-gradient(circle, ${colorStops})`,
+  };
+}
+
 const ColorBox: React.FC<ColorBoxProps> = ({ color }) => (
   <div
     className="border-muted h-3 w-3 rounded-sm border"
-    style={{ backgroundColor: getSolidColor(color, "#000000") }}
+    style={getColorBackgroundStyle(color)}
   />
 );
 

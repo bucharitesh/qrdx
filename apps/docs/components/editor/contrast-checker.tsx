@@ -40,7 +40,7 @@ type ColorPair = {
   foregroundId: keyof ThemeStyles;
   backgroundId: keyof ThemeStyles;
   foreground: ColorConfig | string | undefined;
-  background: string | undefined;
+  background: ColorConfig | string | undefined;
   label: string;
   category: ColorCategory;
 };
@@ -129,7 +129,7 @@ const ContrastChecker = ({ currentStyles, disabled }: ContrastCheckerProps) => {
       pair,
     ): pair is ColorPair & {
       foreground: ColorConfig | string;
-      background: string;
+      background: ColorConfig | string;
     } => !!pair.foreground && !!pair.background,
   );
   const contrastResults = useContrastChecker(validColorPairsToCheck);
@@ -302,8 +302,7 @@ const ContrastChecker = ({ currentStyles, disabled }: ContrastCheckerProps) => {
                               <div className="flex w-full items-center gap-3">
                                 <div
                                   style={{
-                                    backgroundColor:
-                                      pair.background ?? "#000000",
+                                    background: getColorStyle(pair.background),
                                   }}
                                   className="h-12 w-12 shrink-0 rounded-md border shadow-sm"
                                 ></div>
@@ -312,8 +311,35 @@ const ContrastChecker = ({ currentStyles, disabled }: ContrastCheckerProps) => {
                                     Background
                                   </span>
                                   <span className="text-muted-foreground font-mono text-xs">
-                                    {pair.background}
+                                    {getColorDisplayText(pair.background)}
                                   </span>
+                                  {(() => {
+                                    const normalized = normalizeColorConfig(
+                                      pair.background,
+                                    );
+                                    return (
+                                      normalized.type !== "solid" && (
+                                        <div className="mt-1 space-y-0.5">
+                                          {normalized.stops.map((stop) => (
+                                            <div
+                                              key={stop.color}
+                                              className="flex items-center gap-1 text-[10px]"
+                                            >
+                                              <div
+                                                className="h-3 w-3 rounded border"
+                                                style={{
+                                                  backgroundColor: stop.color,
+                                                }}
+                                              />
+                                              <span className="text-muted-foreground font-mono">
+                                                {stop.color.toUpperCase()}
+                                              </span>
+                                            </div>
+                                          ))}
+                                        </div>
+                                      )
+                                    );
+                                  })()}
                                 </div>
                               </div>
                               <div className="flex w-full items-center gap-3">
@@ -359,8 +385,9 @@ const ContrastChecker = ({ currentStyles, disabled }: ContrastCheckerProps) => {
                             </div>
                             <div
                               style={{
-                                backgroundColor:
-                                  pair.background ?? "transparent",
+                                background:
+                                  getColorStyle(pair.background) ||
+                                  "transparent",
                               }}
                               className="flex h-full min-h-[120px] flex-1 items-center justify-center overflow-hidden rounded-lg border shadow-sm"
                             >

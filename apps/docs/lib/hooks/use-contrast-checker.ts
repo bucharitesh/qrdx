@@ -7,7 +7,7 @@ import { debounce } from "@/utils/debounce";
 type ColorPair = {
   id: string;
   foreground: ColorConfig | string | undefined;
-  background: string | undefined;
+  background: ColorConfig | string | undefined;
 };
 
 type ContrastResult = {
@@ -60,23 +60,42 @@ export function useContrastChecker(colorPairs: ColorPair[]) {
             };
           }
 
-          const background = pair.background;
           const foregroundColors = extractColorsForContrast(pair.foreground);
-          if (foregroundColors.length === 0) {
+          const backgroundColors = extractColorsForContrast(pair.background);
+
+          if (foregroundColors.length === 0 || backgroundColors.length === 0) {
             return {
               id: pair.id,
               contrastRatio: 0,
             };
           }
 
-          // Calculate contrast for each foreground color against the background
-          const stopRatios = foregroundColors.map((fgColor) => ({
-            color: fgColor,
-            ratio: parseFloat(getContrastRatio(fgColor, background).toString()),
-          }));
+          // Calculate contrast for each foreground color against each background color
+          // For gradients, we need to check all combinations and find the worst ratio
+          const allRatios: number[] = [];
+          const stopRatios: Array<{ color: string; ratio: number }> = [];
 
-          // Return the worst (lowest) contrast ratio
-          const minRatio = Math.min(...stopRatios.map((sr) => sr.ratio));
+          foregroundColors.forEach((fgColor) => {
+            // Calculate ratios for this foreground color against all background colors
+            const ratiosForThisFg = backgroundColors.map((bgColor) => {
+              const ratio = parseFloat(
+                getContrastRatio(fgColor, bgColor).toString(),
+              );
+              allRatios.push(ratio);
+              return ratio;
+            });
+
+            // Track the worst ratio for this foreground color (for gradient display)
+            if (isGradient(pair.foreground)) {
+              stopRatios.push({
+                color: fgColor,
+                ratio: Math.min(...ratiosForThisFg),
+              });
+            }
+          });
+
+          // Return the worst (lowest) contrast ratio across all combinations
+          const minRatio = allRatios.length > 0 ? Math.min(...allRatios) : 0;
 
           return {
             id: pair.id,

@@ -76,7 +76,7 @@ export async function getQRAsSVG(props: QRPropsSVG) {
     >
       <path
         d={`M0,0 h${numCells}v${numCells}H0z`}
-        fill={bgColor}
+        fill={getSolidColor(bgColor, DEFAULT_BGCOLOR)}
         shapeRendering="crispEdges"
       />
       <path

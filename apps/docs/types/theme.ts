@@ -14,7 +14,11 @@ import { z } from "zod";
  */
 export const themeStylePropsSchema = z.object({
   size: z.number().optional().describe("Size of the QR code in pixels"),
-  bgColor: z.string().optional().describe("Background color of the QR code"),
+  bgColor: colorConfigSchema
+    .optional()
+    .describe(
+      "Background color of the QR code - supports solid colors and gradients",
+    ),
   fgColor: colorConfigSchema
     .optional()
     .describe(

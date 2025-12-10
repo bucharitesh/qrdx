@@ -287,7 +287,7 @@ export const useQREditorStore = create<QREditorStore>()(
         // Helper function to normalize ColorConfig in a styles object
         const normalizeColorConfig = (
           styles: Record<string, unknown>,
-          key: "fgColor" | "eyeColor" | "dotColor",
+          key: "fgColor" | "eyeColor" | "dotColor" | "bgColor",
           defaultValue: ColorConfig | string | undefined,
         ) => {
           if (styles[key] !== undefined) {
@@ -378,12 +378,17 @@ export const useQREditorStore = create<QREditorStore>()(
           }
         };
 
-        // Helper function to normalize fgColor (for backward compatibility)
+        // Helper function to normalize color configs (for backward compatibility)
         const normalizeFgColor = (styles: Record<string, unknown>) => {
           normalizeColorConfig(
             styles,
             "fgColor",
             defaultThemeState.styles.fgColor ?? "#000000",
+          );
+          normalizeColorConfig(
+            styles,
+            "bgColor",
+            defaultThemeState.styles.bgColor ?? "#ffffff",
           );
           normalizeColorConfig(
             styles,

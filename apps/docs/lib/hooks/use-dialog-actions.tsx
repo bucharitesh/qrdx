@@ -34,9 +34,9 @@ function useQRDialogActionsStore(): QRDialogActionsContextType {
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const [shareUrl, setShareUrl] = useState("");
 
-  const { themeState, value, applyThemePreset, hasThemeChangedFromCheckpoint } =
+  const { themeState, applyThemePreset, hasThemeChangedFromCheckpoint } =
     useQREditorStore();
-  const { getPreset } = useThemePresetStore();
+  const { getPreset, registerPreset } = useThemePresetStore();
   const { data: session } = authClient.useSession();
   const { openAuthDialog } = useAuthStore();
   const createThemeMutation = useCreateQRTheme();
@@ -75,16 +75,17 @@ function useQRDialogActionsStore(): QRDialogActionsContextType {
       const theme = await createThemeMutation.mutateAsync(themeData);
       if (!theme) return;
 
-      // Apply the saved theme as current preset
+      // Register the saved theme in the preset store
       const savedPreset = {
-        id: theme.id,
-        name: theme.name,
-        description: theme.description || "",
+        label: theme.name,
+        styles: theme.style,
         source: "SAVED" as const,
         createdAt: theme.createdAt.toISOString(),
-        style: theme.style,
       };
 
+      registerPreset(theme.id, savedPreset);
+
+      // Apply the saved theme as current preset
       applyThemePreset(theme.id);
 
       if (shareAfterSave) {
