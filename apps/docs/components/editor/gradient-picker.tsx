@@ -1,4 +1,5 @@
 /** biome-ignore-all lint/a11y/noStaticElementInteractions: false positive */
+/** biome-ignore-all lint/a11y/useAriaPropsSupportedByRole: <explanation> */
 /** biome-ignore-all lint/a11y/useKeyWithClickEvents: false positive */
 "use client";
 
@@ -46,6 +47,227 @@ const GRADIENT_ANGLES = [
   { label: "↓ Top to Bottom", value: 270 },
   { label: "↘ Top Left to Bottom Right", value: 315 },
 ] as const;
+
+// Star SVG Icon Component with Gradient Fill
+const StarIconWithGradient = ({
+  gradientId,
+  suggestion,
+}: {
+  gradientId: string;
+  suggestion: GradientSuggestion;
+}) => {
+  const angle = suggestion.type === "linear" ? (suggestion.angle ?? 0) : 0;
+  // Convert angle to SVG coordinates (SVG uses 0deg = top, CSS uses 0deg = right)
+  const rad = ((angle - 90) * Math.PI) / 180;
+  const x1 = 0.5 - 0.5 * Math.cos(rad);
+  const y1 = 0.5 - 0.5 * Math.sin(rad);
+  const x2 = 0.5 + 0.5 * Math.cos(rad);
+  const y2 = 0.5 + 0.5 * Math.sin(rad);
+
+  return (
+    <svg
+      width="100%"
+      height="100%"
+      viewBox="0 0 72 80"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <title>Star icon</title>
+      <defs>
+        {suggestion.type === "linear" ? (
+          <linearGradient
+            id={gradientId}
+            x1={`${x1 * 100}%`}
+            y1={`${y1 * 100}%`}
+            x2={`${x2 * 100}%`}
+            y2={`${y2 * 100}%`}
+          >
+            {suggestion.stops.map((stop) => (
+              <stop
+                key={`${stop.offset}-${stop.color}`}
+                offset={`${stop.offset}%`}
+                stopColor={stop.color}
+              />
+            ))}
+          </linearGradient>
+        ) : (
+          <radialGradient id={gradientId} cx="50%" cy="50%" r="50%">
+            {suggestion.stops.map((stop) => (
+              <stop
+                key={`${stop.offset}-${stop.color}`}
+                offset={`${stop.offset}%`}
+                stopColor={stop.color}
+              />
+            ))}
+          </radialGradient>
+        )}
+      </defs>
+      <path
+        fill={`url(#${gradientId})`}
+        d="M0.331543 52.6697C-1.04926 57.8231 2.00897 63.1201 7.16235 64.5009L17.3317 67.2258C18.9697 67.6646 20.4632 68.5269 21.6623 69.726L29.1069 77.1706C32.8794 80.9431 38.9958 80.9431 42.7684 77.1706L50.213 69.726C51.412 68.5269 52.9056 67.6646 54.5435 67.2258L64.713 64.5009C69.8663 63.1201 72.9246 57.823 71.5437 52.6697L68.8188 42.5003C68.3799 40.8623 68.3799 39.1377 68.8188 37.4998L71.5437 27.3304C72.9246 22.177 69.8663 16.8799 64.713 15.4991L54.5435 12.7743C52.9056 12.3354 51.412 11.4731 50.213 10.274L42.7684 2.82944C38.9958 -0.943146 32.8794 -0.943146 29.1069 2.82944L21.6623 10.274C20.4632 11.4731 18.9697 12.3354 17.3317 12.7743L7.16235 15.4991C2.00897 16.88 -1.04926 22.177 0.331543 27.3303L3.05646 37.4998C3.4953 39.1377 3.4953 40.8623 3.05646 42.5002L0.331543 52.6697Z"
+      />
+    </svg>
+  );
+};
+
+type GradientSuggestion =
+  | { type: "linear"; stops: GradientStop[]; angle?: number }
+  | { type: "radial"; stops: GradientStop[] };
+
+// 20 Gradient Suggestions (mix of linear and radial)
+const GRADIENT_SUGGESTIONS: GradientSuggestion[] = [
+  // Linear gradients
+  {
+    type: "linear",
+    stops: [
+      { color: "#FF6B6B", offset: 0 },
+      { color: "#4ECDC4", offset: 100 },
+    ],
+    angle: 45,
+  },
+  {
+    type: "linear",
+    stops: [
+      { color: "#667EEA", offset: 0 },
+      { color: "#764BA2", offset: 100 },
+    ],
+    angle: 135,
+  },
+  {
+    type: "linear",
+    stops: [
+      { color: "#F093FB", offset: 0 },
+      { color: "#F5576C", offset: 100 },
+    ],
+    angle: 90,
+  },
+  {
+    type: "linear",
+    stops: [
+      { color: "#4FACFE", offset: 0 },
+      { color: "#00F2FE", offset: 100 },
+    ],
+    angle: 0,
+  },
+  {
+    type: "linear",
+    stops: [
+      { color: "#43E97B", offset: 0 },
+      { color: "#38F9D7", offset: 100 },
+    ],
+    angle: 45,
+  },
+  {
+    type: "linear",
+    stops: [
+      { color: "#FA709A", offset: 0 },
+      { color: "#FEE140", offset: 100 },
+    ],
+    angle: 180,
+  },
+  {
+    type: "linear",
+    stops: [
+      { color: "#30CFD0", offset: 0 },
+      { color: "#330867", offset: 100 },
+    ],
+    angle: 270,
+  },
+  {
+    type: "linear",
+    stops: [
+      { color: "#A8EDEA", offset: 0 },
+      { color: "#FED6E3", offset: 100 },
+    ],
+    angle: 315,
+  },
+  {
+    type: "linear",
+    stops: [
+      { color: "#FF9A9E", offset: 0 },
+      { color: "#FECFEF", offset: 100 },
+    ],
+    angle: 225,
+  },
+  {
+    type: "linear",
+    stops: [
+      { color: "#FFECD2", offset: 0 },
+      { color: "#FCB69F", offset: 100 },
+    ],
+    angle: 90,
+  },
+  // Radial gradients
+  {
+    type: "radial",
+    stops: [
+      { color: "#FF6B6B", offset: 0 },
+      { color: "#4ECDC4", offset: 100 },
+    ],
+  },
+  {
+    type: "radial",
+    stops: [
+      { color: "#667EEA", offset: 0 },
+      { color: "#764BA2", offset: 100 },
+    ],
+  },
+  {
+    type: "radial",
+    stops: [
+      { color: "#F093FB", offset: 0 },
+      { color: "#F5576C", offset: 100 },
+    ],
+  },
+  {
+    type: "radial",
+    stops: [
+      { color: "#4FACFE", offset: 0 },
+      { color: "#00F2FE", offset: 100 },
+    ],
+  },
+  {
+    type: "radial",
+    stops: [
+      { color: "#43E97B", offset: 0 },
+      { color: "#38F9D7", offset: 100 },
+    ],
+  },
+  {
+    type: "radial",
+    stops: [
+      { color: "#FA709A", offset: 0 },
+      { color: "#FEE140", offset: 100 },
+    ],
+  },
+  {
+    type: "radial",
+    stops: [
+      { color: "#30CFD0", offset: 0 },
+      { color: "#330867", offset: 100 },
+    ],
+  },
+  {
+    type: "radial",
+    stops: [
+      { color: "#A8EDEA", offset: 0 },
+      { color: "#FED6E3", offset: 100 },
+    ],
+  },
+  {
+    type: "radial",
+    stops: [
+      { color: "#FF9A9E", offset: 0 },
+      { color: "#FECFEF", offset: 100 },
+    ],
+  },
+  {
+    type: "radial",
+    stops: [
+      { color: "#FFECD2", offset: 0 },
+      { color: "#FCB69F", offset: 100 },
+    ],
+  },
+];
 
 export function GradientPicker({
   value,
@@ -389,6 +611,30 @@ export function GradientPicker({
     return solidColor.toUpperCase();
   };
 
+  // Handle suggestion click
+  const handleSuggestionClick = useCallback(
+    (suggestion: GradientSuggestion) => {
+      if (suggestion.type === "linear") {
+        setMode("linear");
+        setStops(suggestion.stops);
+        setAngle(suggestion.angle ?? 0);
+        onChange({
+          type: "linear",
+          stops: suggestion.stops,
+          angle: suggestion.angle ?? 0,
+        });
+      } else if (suggestion.type === "radial") {
+        setMode("radial");
+        setStops(suggestion.stops);
+        onChange({
+          type: "radial",
+          stops: suggestion.stops,
+        });
+      }
+    },
+    [onChange],
+  );
+
   return (
     <div className="mb-3">
       <div className="mb-1.5 flex items-center justify-between">
@@ -617,6 +863,34 @@ export function GradientPicker({
                   </Select>
                 </div>
               )}
+
+              {/* Gradient Suggestions */}
+              <div className="space-y-2">
+                <Label className="text-xs text-muted-foreground">
+                  Suggestions
+                </Label>
+                <div className="flex flex-wrap gap-2">
+                  {GRADIENT_SUGGESTIONS.map((suggestion, index) => {
+                    const suggestionKey = `${suggestion.type}-${suggestion.stops[0]?.color}-${suggestion.stops[1]?.color}-${suggestion.type === "linear" ? (suggestion.angle ?? 0) : ""}`;
+                    const gradientId = `gradient-${suggestionKey}`;
+                    return (
+                      <div
+                        key={suggestionKey}
+                        onClick={() => handleSuggestionClick(suggestion)}
+                        className="group relative h-6 w-6 rounded overflow-hidden bg-transparent flex items-center justify-center"
+                        aria-label={`Apply gradient suggestion ${index + 1}`}
+                      >
+                        <div className="h-6 w-6">
+                          <StarIconWithGradient
+                            gradientId={gradientId}
+                            suggestion={suggestion}
+                          />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
             </TabsContent>
           </Tabs>
         </PopoverContent>

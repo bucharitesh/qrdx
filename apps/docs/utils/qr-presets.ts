@@ -34,13 +34,19 @@ export const defaultPresets: Record<string, ThemePreset> = {
     label: "Vibrant",
     styles: {
       bgColor: "#fef3c7",
-      fgColor: "#7c2d12",
+      fgColor: {
+        type: "radial",
+        stops: [
+          { color: "#dc2626", offset: 0 },
+          { color: "#7c2d12", offset: 100 },
+        ],
+      },
       eyeColor: "#dc2626",
       dotColor: "#ea580c",
       bodyPattern: "diamond",
       cornerEyePattern: "circle",
       cornerEyeDotPattern: "diamond",
-      level: "H",
+      level: "Q",
     },
   },
   minimal: {
@@ -53,14 +59,21 @@ export const defaultPresets: Record<string, ThemePreset> = {
       bodyPattern: "square",
       cornerEyePattern: "square",
       cornerEyeDotPattern: "square",
-      level: "M",
+      level: "Q",
     },
   },
   gradientBlue: {
     label: "Ocean Blue",
     styles: {
       bgColor: "#eff6ff",
-      fgColor: "#1e40af",
+      fgColor: {
+        type: "linear",
+        stops: [
+          { color: "#1e40af", offset: 0 },
+          { color: "#3b82f6", offset: 100 },
+        ],
+        angle: 135,
+      },
       eyeColor: "#3b82f6",
       dotColor: "#60a5fa",
       bodyPattern: "circle-large",
@@ -73,7 +86,15 @@ export const defaultPresets: Record<string, ThemePreset> = {
     label: "Neon",
     styles: {
       bgColor: "#0f172a",
-      fgColor: "#22d3ee",
+      fgColor: {
+        type: "linear",
+        stops: [
+          { color: "#22d3ee", offset: 0 },
+          { color: "#a855f7", offset: 50 },
+          { color: "#ec4899", offset: 100 },
+        ],
+        angle: 45,
+      },
       eyeColor: "#a855f7",
       dotColor: "#ec4899",
       bodyPattern: "circle-mixed",
@@ -105,7 +126,7 @@ export const defaultPresets: Record<string, ThemePreset> = {
       bodyPattern: "clean-square",
       cornerEyePattern: "square",
       cornerEyeDotPattern: "square",
-      level: "M",
+      level: "Q",
     },
   },
   amberMinimal: {
@@ -118,7 +139,7 @@ export const defaultPresets: Record<string, ThemePreset> = {
       bodyPattern: "square",
       cornerEyePattern: "square",
       cornerEyeDotPattern: "square",
-      level: "M",
+      level: "Q",
     },
   },
   amethystHaze: {
@@ -144,7 +165,7 @@ export const defaultPresets: Record<string, ThemePreset> = {
       bodyPattern: "diamond",
       cornerEyePattern: "gear",
       cornerEyeDotPattern: "diamond",
-      level: "H",
+      level: "Q",
     },
   },
   bubblegum: {
@@ -170,7 +191,7 @@ export const defaultPresets: Record<string, ThemePreset> = {
       bodyPattern: "rounded",
       cornerEyePattern: "rounded",
       cornerEyeDotPattern: "rounded",
-      level: "M",
+      level: "Q",
     },
   },
   candyland: {
@@ -209,7 +230,7 @@ export const defaultPresets: Record<string, ThemePreset> = {
       bodyPattern: "circle",
       cornerEyePattern: "circle",
       cornerEyeDotPattern: "circle",
-      level: "M",
+      level: "Q",
     },
   },
   slate: {
@@ -222,7 +243,7 @@ export const defaultPresets: Record<string, ThemePreset> = {
       bodyPattern: "square",
       cornerEyePattern: "square",
       cornerEyeDotPattern: "square",
-      level: "M",
+      level: "Q",
     },
   },
   sunset: {
@@ -248,6 +269,401 @@ export const defaultPresets: Record<string, ThemePreset> = {
       bodyPattern: "circle",
       cornerEyePattern: "gear",
       cornerEyeDotPattern: "circle",
+      level: "Q",
+    },
+  },
+  // New presets with gradients and variety
+  gradientSunset: {
+    label: "Gradient Sunset",
+    styles: {
+      bgColor: "#fff7ed",
+      fgColor: {
+        type: "linear",
+        stops: [
+          { color: "#f97316", offset: 0 },
+          { color: "#dc2626", offset: 100 },
+        ],
+        angle: 135,
+      },
+      eyeColor: "#ea580c",
+      dotColor: "#f97316",
+      bodyPattern: "rounded",
+      cornerEyePattern: "extra-rounded",
+      cornerEyeDotPattern: "rounded",
+      level: "Q",
+    },
+  },
+  gradientOcean: {
+    label: "Gradient Ocean",
+    styles: {
+      bgColor: "#f0f9ff",
+      fgColor: {
+        type: "linear",
+        stops: [
+          { color: "#0ea5e9", offset: 0 },
+          { color: "#3b82f6", offset: 100 },
+        ],
+        angle: 45,
+      },
+      eyeColor: {
+        type: "radial",
+        stops: [
+          { color: "#3b82f6", offset: 0 },
+          { color: "#1e40af", offset: 100 },
+        ],
+      },
+      dotColor: "#60a5fa",
+      bodyPattern: "circle-large",
+      cornerEyePattern: "circle",
+      cornerEyeDotPattern: "circle",
+      level: "Q",
+    },
+  },
+  gradientPurple: {
+    label: "Gradient Purple",
+    styles: {
+      bgColor: "#faf5ff",
+      fgColor: {
+        type: "linear",
+        stops: [
+          { color: "#a855f7", offset: 0 },
+          { color: "#7c3aed", offset: 100 },
+        ],
+        angle: 90,
+      },
+      eyeColor: "#9333ea",
+      dotColor: {
+        type: "radial",
+        stops: [
+          { color: "#c084fc", offset: 0 },
+          { color: "#a855f7", offset: 100 },
+        ],
+      },
+      bodyPattern: "diamond",
+      cornerEyePattern: "gear",
+      cornerEyeDotPattern: "star",
+      level: "Q",
+    },
+  },
+  gradientForest: {
+    label: "Gradient Forest",
+    styles: {
+      bgColor: "#f0fdf4",
+      fgColor: {
+        type: "linear",
+        stops: [
+          { color: "#16a34a", offset: 0 },
+          { color: "#15803d", offset: 100 },
+        ],
+        angle: 180,
+      },
+      eyeColor: "#22c55e",
+      dotColor: "#4ade80",
+      bodyPattern: "circle-mixed",
+      cornerEyePattern: "diya",
+      cornerEyeDotPattern: "diya",
+      level: "Q",
+    },
+  },
+  cyberpunk: {
+    label: "Cyberpunk",
+    styles: {
+      bgColor: "#030712",
+      fgColor: {
+        type: "linear",
+        stops: [
+          { color: "#ec4899", offset: 0 },
+          { color: "#8b5cf6", offset: 50 },
+          { color: "#06b6d4", offset: 100 },
+        ],
+        angle: 45,
+      },
+      eyeColor: "#a855f7",
+      dotColor: "#ec4899",
+      bodyPattern: "pacman",
+      cornerEyePattern: "pointy",
+      cornerEyeDotPattern: "star",
+      level: "Q",
+    },
+  },
+  pastelDream: {
+    label: "Pastel Dream",
+    styles: {
+      bgColor: "#fefce8",
+      fgColor: {
+        type: "linear",
+        stops: [
+          { color: "#fbbf24", offset: 0 },
+          { color: "#f472b6", offset: 50 },
+          { color: "#a78bfa", offset: 100 },
+        ],
+        angle: 120,
+      },
+      eyeColor: "#c084fc",
+      dotColor: "#f472b6",
+      bodyPattern: "rounded",
+      cornerEyePattern: "extra-rounded",
+      cornerEyeDotPattern: "rounded-triangle",
+      level: "Q",
+    },
+  },
+  monochrome: {
+    label: "Monochrome",
+    styles: {
+      bgColor: "#ffffff",
+      fgColor: "#1f2937",
+      eyeColor: "#4b5563",
+      dotColor: "#6b7280",
+      bodyPattern: "clean-square",
+      cornerEyePattern: "square",
+      cornerEyeDotPattern: "square",
+      level: "Q",
+    },
+  },
+  tropical: {
+    label: "Tropical",
+    styles: {
+      bgColor: "#f0fdfa",
+      fgColor: {
+        type: "linear",
+        stops: [
+          { color: "#14b8a6", offset: 0 },
+          { color: "#0d9488", offset: 100 },
+        ],
+        angle: 135,
+      },
+      eyeColor: "#2dd4bf",
+      dotColor: "#5eead4",
+      bodyPattern: "circle",
+      cornerEyePattern: "curly",
+      cornerEyeDotPattern: "banner",
+      level: "Q",
+    },
+  },
+  royal: {
+    label: "Royal",
+    styles: {
+      bgColor: "#fef3c7",
+      fgColor: {
+        type: "radial",
+        stops: [
+          { color: "#92400e", offset: 0 },
+          { color: "#78350f", offset: 100 },
+        ],
+      },
+      eyeColor: "#d97706",
+      dotColor: "#f59e0b",
+      bodyPattern: "diamond",
+      cornerEyePattern: "gear",
+      cornerEyeDotPattern: "star",
+      level: "Q",
+    },
+  },
+  lavender: {
+    label: "Lavender",
+    styles: {
+      bgColor: "#faf5ff",
+      fgColor: "#6b21a8",
+      eyeColor: "#a855f7",
+      dotColor: "#c084fc",
+      bodyPattern: "circle-large",
+      cornerEyePattern: "extra-rounded",
+      cornerEyeDotPattern: "rounded-triangle",
+      level: "Q",
+    },
+  },
+  fire: {
+    label: "Fire",
+    styles: {
+      bgColor: "#1c1917",
+      fgColor: {
+        type: "linear",
+        stops: [
+          { color: "#f97316", offset: 0 },
+          { color: "#dc2626", offset: 50 },
+          { color: "#991b1b", offset: 100 },
+        ],
+        angle: 45,
+      },
+      eyeColor: "#ea580c",
+      dotColor: "#f97316",
+      bodyPattern: "circle-mixed",
+      cornerEyePattern: "pointy",
+      cornerEyeDotPattern: "star",
+      level: "Q",
+    },
+  },
+  ice: {
+    label: "Ice",
+    styles: {
+      bgColor: "#f0f9ff",
+      fgColor: {
+        type: "linear",
+        stops: [
+          { color: "#0ea5e9", offset: 0 },
+          { color: "#0284c7", offset: 100 },
+        ],
+        angle: 90,
+      },
+      eyeColor: "#38bdf8",
+      dotColor: "#7dd3fc",
+      bodyPattern: "rounded",
+      cornerEyePattern: "circle",
+      cornerEyeDotPattern: "circle",
+      level: "Q",
+    },
+  },
+  message: {
+    label: "Message",
+    styles: {
+      bgColor: "#ffffff",
+      fgColor: "#1e40af",
+      eyeColor: "#3b82f6",
+      dotColor: "#60a5fa",
+      bodyPattern: "square",
+      cornerEyePattern: "message",
+      cornerEyeDotPattern: "message",
+      level: "Q",
+    },
+  },
+  diya: {
+    label: "Diya",
+    styles: {
+      bgColor: "#fff7ed",
+      fgColor: {
+        type: "radial",
+        stops: [
+          { color: "#f97316", offset: 0 },
+          { color: "#c2410c", offset: 100 },
+        ],
+      },
+      eyeColor: "#ea580c",
+      dotColor: "#fb923c",
+      bodyPattern: "circle",
+      cornerEyePattern: "diya",
+      cornerEyeDotPattern: "diya-reverse",
+      level: "Q",
+    },
+  },
+  starry: {
+    label: "Starry Night",
+    styles: {
+      bgColor: "#0f172a",
+      fgColor: {
+        type: "radial",
+        stops: [
+          { color: "#e0e7ff", offset: 0 },
+          { color: "#6366f1", offset: 100 },
+        ],
+      },
+      eyeColor: "#818cf8",
+      dotColor: "#a5b4fc",
+      bodyPattern: "circle",
+      cornerEyePattern: "circle",
+      cornerEyeDotPattern: "star",
+      level: "Q",
+    },
+  },
+  banner: {
+    label: "Banner",
+    styles: {
+      bgColor: "#f8fafc",
+      fgColor: "#475569",
+      eyeColor: "#64748b",
+      dotColor: "#94a3b8",
+      bodyPattern: "square",
+      cornerEyePattern: "square",
+      cornerEyeDotPattern: "banner",
+      level: "Q",
+    },
+  },
+  pointy: {
+    label: "Pointy",
+    styles: {
+      bgColor: "#ffffff",
+      fgColor: "#7c2d12",
+      eyeColor: "#991b1b",
+      dotColor: "#dc2626",
+      bodyPattern: "diamond",
+      cornerEyePattern: "pointy",
+      cornerEyeDotPattern: "rounded-triangle",
+      level: "Q",
+    },
+  },
+  curly: {
+    label: "Curly",
+    styles: {
+      bgColor: "#fdf2f8",
+      fgColor: {
+        type: "linear",
+        stops: [
+          { color: "#ec4899", offset: 0 },
+          { color: "#be185d", offset: 100 },
+        ],
+        angle: 135,
+      },
+      eyeColor: "#f472b6",
+      dotColor: "#f9a8d4",
+      bodyPattern: "rounded",
+      cornerEyePattern: "curly",
+      cornerEyeDotPattern: "rounded-triangle",
+      level: "Q",
+    },
+  },
+  pacman: {
+    label: "Pacman",
+    styles: {
+      bgColor: "#1e293b",
+      fgColor: {
+        type: "linear",
+        stops: [
+          { color: "#fbbf24", offset: 0 },
+          { color: "#f59e0b", offset: 100 },
+        ],
+        angle: 45,
+      },
+      eyeColor: "#fbbf24",
+      dotColor: "#fcd34d",
+      bodyPattern: "pacman",
+      cornerEyePattern: "circle",
+      cornerEyeDotPattern: "circle",
+      level: "Q",
+    },
+  },
+  rainbow: {
+    label: "Rainbow",
+    styles: {
+      bgColor: "#ffffff",
+      fgColor: {
+        type: "linear",
+        stops: [
+          { color: "#ef4444", offset: 0 },
+          { color: "#f97316", offset: 16.66 },
+          { color: "#eab308", offset: 33.33 },
+          { color: "#22c55e", offset: 50 },
+          { color: "#3b82f6", offset: 66.66 },
+          { color: "#8b5cf6", offset: 83.33 },
+          { color: "#ec4899", offset: 100 },
+        ],
+        angle: 45,
+      },
+      eyeColor: {
+        type: "radial",
+        stops: [
+          { color: "#3b82f6", offset: 0 },
+          { color: "#8b5cf6", offset: 100 },
+        ],
+      },
+      dotColor: {
+        type: "radial",
+        stops: [
+          { color: "#ec4899", offset: 0 },
+          { color: "#f97316", offset: 100 },
+        ],
+      },
+      bodyPattern: "circle-mixed",
+      cornerEyePattern: "extra-rounded",
+      cornerEyeDotPattern: "star",
       level: "Q",
     },
   },
