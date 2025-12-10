@@ -7,7 +7,7 @@ import { useQREditorStore } from "@/store/editor-store";
 export const TemplateSelector: React.FC = () => {
   const { themeState, setThemeState } = useQREditorStore();
   const style = themeState.styles;
-  const selectedTemplateId = style.templateId || "default";
+  const selectedTemplateId = style.templateId;
   const templates = getAllTemplates();
 
   return (

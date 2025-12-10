@@ -202,7 +202,7 @@ const ThemePresetCycleControls: React.FC<ThemePresetCycleControlsProps> = ({
 
   const currentIndex =
     useMemo(
-      () => filteredPresets.indexOf(currentPresetName || "default"),
+      () => filteredPresets.indexOf(currentPresetName),
       [filteredPresets, currentPresetName],
     ) ?? 0;
 
@@ -380,7 +380,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                 {hasUnsavedChanges() ? (
                   <>Custom (Unsaved)</>
                 ) : (
-                  presets[currentPresetName || "default"]?.label || "default"
+                  presets[currentPresetName || "default"]?.label
                 )}
               </span>
             </div>
