@@ -112,8 +112,8 @@ const StarIconWithGradient = ({
 };
 
 type GradientSuggestion =
-  | { type: "linear"; stops: GradientStop[]; angle?: number }
-  | { type: "radial"; stops: GradientStop[] };
+  | { type: "linear"; stops: GradientStop[]; angle?: number; name?: string }
+  | { type: "radial"; stops: GradientStop[]; name?: string };
 
 // 20 Solid Color Suggestions
 const SOLID_COLOR_SUGGESTIONS: string[] = [
@@ -139,159 +139,191 @@ const SOLID_COLOR_SUGGESTIONS: string[] = [
   "#9B59B6", // Purple
 ];
 
-// 20 Gradient Suggestions (mix of linear and radial)
+// 20 Gradient Suggestions (mix of linear and radial) - Themed presets
 const GRADIENT_SUGGESTIONS: GradientSuggestion[] = [
-  // Linear gradients
+  // Christmas Theme
   {
     type: "linear",
     stops: [
-      { color: "#FF6B6B", offset: 0 },
-      { color: "#4ECDC4", offset: 100 },
+      { color: "#DC2626", offset: 0 }, // Red
+      { color: "#16A34A", offset: 100 }, // Green
     ],
     angle: 45,
+    name: "Christmas",
   },
   {
     type: "linear",
     stops: [
-      { color: "#667EEA", offset: 0 },
-      { color: "#764BA2", offset: 100 },
+      { color: "#16A34A", offset: 0 }, // Green
+      { color: "#DC2626", offset: 100 }, // Red
+    ],
+    angle: 90,
+    name: "Christmas",
+  },
+  {
+    type: "radial",
+    stops: [
+      { color: "#DC2626", offset: 0 }, // Red
+      { color: "#16A34A", offset: 100 }, // Green
+    ],
+    name: "Christmas",
+  },
+  // New Years Theme
+  {
+    type: "linear",
+    stops: [
+      { color: "#F59E0B", offset: 0 }, // Gold
+      { color: "#E5E7EB", offset: 100 }, // Silver
     ],
     angle: 135,
+    name: "New Years",
   },
   {
     type: "linear",
     stops: [
-      { color: "#F093FB", offset: 0 },
-      { color: "#F5576C", offset: 100 },
-    ],
-    angle: 90,
-  },
-  {
-    type: "linear",
-    stops: [
-      { color: "#4FACFE", offset: 0 },
-      { color: "#00F2FE", offset: 100 },
-    ],
-    angle: 0,
-  },
-  {
-    type: "linear",
-    stops: [
-      { color: "#43E97B", offset: 0 },
-      { color: "#38F9D7", offset: 100 },
-    ],
-    angle: 45,
-  },
-  {
-    type: "linear",
-    stops: [
-      { color: "#FA709A", offset: 0 },
-      { color: "#FEE140", offset: 100 },
-    ],
-    angle: 180,
-  },
-  {
-    type: "linear",
-    stops: [
-      { color: "#30CFD0", offset: 0 },
-      { color: "#330867", offset: 100 },
+      { color: "#1E40AF", offset: 0 }, // Midnight Blue
+      { color: "#000000", offset: 100 }, // Black
     ],
     angle: 270,
+    name: "New Years",
   },
   {
-    type: "linear",
+    type: "radial",
     stops: [
-      { color: "#A8EDEA", offset: 0 },
-      { color: "#FED6E3", offset: 100 },
+      { color: "#F59E0B", offset: 0 }, // Gold
+      { color: "#000000", offset: 100 }, // Black
     ],
-    angle: 315,
+    name: "New Years",
   },
+  // Diwali Theme (Festival of Lights)
   {
     type: "linear",
     stops: [
-      { color: "#FF9A9E", offset: 0 },
-      { color: "#FECFEF", offset: 100 },
+      { color: "#F59E0B", offset: 0 }, // Gold
+      { color: "#EA580C", offset: 100 }, // Orange
     ],
-    angle: 225,
+    angle: 45,
+    name: "Diwali",
   },
   {
     type: "linear",
     stops: [
-      { color: "#FFECD2", offset: 0 },
-      { color: "#FCB69F", offset: 100 },
+      { color: "#FCD34D", offset: 0 }, // Bright Yellow
+      { color: "#F59E0B", offset: 100 }, // Gold
     ],
     angle: 90,
-  },
-  // Radial gradients
-  {
-    type: "radial",
-    stops: [
-      { color: "#FF6B6B", offset: 0 },
-      { color: "#4ECDC4", offset: 100 },
-    ],
+    name: "Diwali",
   },
   {
     type: "radial",
     stops: [
-      { color: "#667EEA", offset: 0 },
-      { color: "#764BA2", offset: 100 },
+      { color: "#FCD34D", offset: 0 }, // Bright Yellow
+      { color: "#EA580C", offset: 100 }, // Orange
     ],
+    name: "Diwali",
+  },
+  // Phataka (Fireworks) Theme
+  {
+    type: "linear",
+    stops: [
+      { color: "#DC2626", offset: 0 }, // Red
+      { color: "#1E40AF", offset: 100 }, // Blue
+    ],
+    angle: 45,
+    name: "Phataka",
+  },
+  {
+    type: "linear",
+    stops: [
+      { color: "#16A34A", offset: 0 }, // Green
+      { color: "#FCD34D", offset: 100 }, // Yellow
+    ],
+    angle: 135,
+    name: "Phataka",
+  },
+  {
+    type: "linear",
+    stops: [
+      { color: "#DC2626", offset: 0 }, // Red
+      { color: "#FCD34D", offset: 100 }, // Yellow
+    ],
+    angle: 0,
+    name: "Phataka",
   },
   {
     type: "radial",
     stops: [
-      { color: "#F093FB", offset: 0 },
-      { color: "#F5576C", offset: 100 },
+      { color: "#DC2626", offset: 0 }, // Red
+      { color: "#1E40AF", offset: 100 }, // Blue
     ],
+    name: "Phataka",
+  },
+  // Spiderman Theme
+  {
+    type: "linear",
+    stops: [
+      { color: "#E31E24", offset: 0 }, // Spiderman Red
+      { color: "#0D47A1", offset: 100 }, // Spiderman Blue
+    ],
+    angle: 45,
+    name: "Spiderman",
+  },
+  {
+    type: "linear",
+    stops: [
+      { color: "#DC143C", offset: 0 }, // Crimson Red
+      { color: "#1E3A8A", offset: 100 }, // Deep Blue
+    ],
+    angle: 90,
+    name: "Spiderman",
   },
   {
     type: "radial",
     stops: [
-      { color: "#4FACFE", offset: 0 },
-      { color: "#00F2FE", offset: 100 },
+      { color: "#E31E24", offset: 0 }, // Spiderman Red
+      { color: "#0D47A1", offset: 100 }, // Spiderman Blue
     ],
+    name: "Spiderman",
   },
+  // Other Good Themes
+  // Sunset
+  {
+    type: "linear",
+    stops: [
+      { color: "#F97316", offset: 0 }, // Orange
+      { color: "#FCD34D", offset: 100 }, // Yellow
+    ],
+    angle: 90,
+    name: "Sunset",
+  },
+  // Ocean
+  {
+    type: "linear",
+    stops: [
+      { color: "#0EA5E9", offset: 0 }, // Sky Blue
+      { color: "#0369A1", offset: 100 }, // Deep Blue
+    ],
+    angle: 180,
+    name: "Ocean",
+  },
+  // Forest
+  {
+    type: "linear",
+    stops: [
+      { color: "#22C55E", offset: 0 }, // Green
+      { color: "#15803D", offset: 100 }, // Dark Green
+    ],
+    angle: 135,
+    name: "Forest",
+  },
+  // Purple Dream
   {
     type: "radial",
     stops: [
-      { color: "#43E97B", offset: 0 },
-      { color: "#38F9D7", offset: 100 },
+      { color: "#A855F7", offset: 0 }, // Purple
+      { color: "#7C3AED", offset: 100 }, // Deep Purple
     ],
-  },
-  {
-    type: "radial",
-    stops: [
-      { color: "#FA709A", offset: 0 },
-      { color: "#FEE140", offset: 100 },
-    ],
-  },
-  {
-    type: "radial",
-    stops: [
-      { color: "#30CFD0", offset: 0 },
-      { color: "#330867", offset: 100 },
-    ],
-  },
-  {
-    type: "radial",
-    stops: [
-      { color: "#A8EDEA", offset: 0 },
-      { color: "#FED6E3", offset: 100 },
-    ],
-  },
-  {
-    type: "radial",
-    stops: [
-      { color: "#FF9A9E", offset: 0 },
-      { color: "#FECFEF", offset: 100 },
-    ],
-  },
-  {
-    type: "radial",
-    stops: [
-      { color: "#FFECD2", offset: 0 },
-      { color: "#FCB69F", offset: 100 },
-    ],
+    name: "Purple Dream",
   },
 ];
 

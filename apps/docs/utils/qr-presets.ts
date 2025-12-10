@@ -667,4 +667,17 @@ export const defaultPresets: Record<string, ThemePreset> = {
       level: "Q",
     },
   },
+  spiderman: {
+    label: "Spiderman",
+    styles: {
+      bgColor: "#000000",
+      fgColor: "#ffffff",
+      eyeColor: "#ff0000",
+      dotColor: "#ff0000",
+      bodyPattern: "diamond",
+      cornerEyePattern: "diya",
+      cornerEyeDotPattern: "diya",
+      level: "Q",
+    },
+  },
 } as const;
