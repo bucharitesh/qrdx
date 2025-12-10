@@ -2,9 +2,16 @@ import { z } from "zod";
 
 export const CORNER_EYE_DOT_PATTERNS = [
   "square",
-  "rounded-square",
+  "rounded",
   "circle",
   "diamond",
+  "message",
+  "message-reverse",
+  "diya",
+  "diya-reverse",
+  "rounded-triangle",
+  "star",
+  "banner",
 ] as const;
 
 // Zod schema

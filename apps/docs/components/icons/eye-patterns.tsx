@@ -21,7 +21,7 @@ export const Patterns: Record<
         width="27"
         height="27"
         stroke="black"
-        stroke-width="5"
+        strokeWidth="5"
       ></rect>
       <rect x="11" y="11" width="11" height="11" fill="#DDDDDD"></rect>
     </svg>
@@ -39,7 +39,7 @@ export const Patterns: Record<
         x="2.556"
         y="3.314"
         stroke="#000"
-        stroke-width="5"
+        strokeWidth="5"
         rx="4"
       ></rect>
       <path fill="#DDE0E4" d="M10.991 11.737h11.597v11.579H10.991z"></path>
@@ -59,7 +59,7 @@ export const Patterns: Record<
         height="27"
         rx="13.5"
         stroke="black"
-        stroke-width="5"
+        strokeWidth="5"
       ></rect>
       <rect x="11" y="11" width="11" height="11" fill="#DDDDDD"></rect>
     </svg>
@@ -87,7 +87,7 @@ export const Patterns: Record<
     >
       <path
         stroke="#000"
-        stroke-width="5"
+        strokeWidth="5"
         d="M3.318 2.494H23.87c5.523 0 10 4.478 10 10v20.553H13.318c-5.523 0-10-4.477-10-10V2.494Z"
       ></path>
       <path fill="#DDE0E4" d="M12.373 11.549H24.82v12.447H12.373z"></path>
@@ -106,7 +106,7 @@ export const Patterns: Record<
         x="3.306"
         y="3.314"
         stroke="#000"
-        stroke-width="5"
+        strokeWidth="5"
         rx="10"
       ></rect>
       <path fill="#DDE0E4" d="M11.742 11.737h11.597v11.579H11.742z"></path>
@@ -122,7 +122,7 @@ export const Patterns: Record<
       <path
         stroke="#000"
         stroke-linejoin="round"
-        stroke-width="5"
+        strokeWidth="5"
         d="M3.431 17.524c0-7.848 6.374-14.21 14.222-14.21 7.86 0 14.244 6.372 14.244 14.233v14.188H17.642c-7.848 0-14.21-6.362-14.21-14.21Z"
       ></path>
       <path fill="#DDE0E4" d="M11.867 11.737h11.597v11.579H11.867z"></path>
@@ -137,7 +137,7 @@ export const Patterns: Record<
     >
       <path
         stroke="#000"
-        stroke-width="5"
+        strokeWidth="5"
         d="M3.484 9.314a6 6 0 0 1 6-6h16.465a6 6 0 0 1 6 6v22.421H9.484a6 6 0 0 1-6-6V9.314Z"
       ></path>
       <path fill="#DDE0E4" d="M11.921 11.737h11.597v11.579H11.921z"></path>

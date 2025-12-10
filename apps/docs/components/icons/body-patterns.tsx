@@ -39,7 +39,7 @@ export const Patterns: Record<
   rounded: () => <p>hello</p>,
   circle: (props: EyePatternProps) => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" {...props}>
-      <g clip-path="url(#small-dots)">
+      <g clipPath="url(#small-dots)">
         <path fill="#fff" d="M0 .34h64v63H0z"></path>
         <path
           fill="#000"
