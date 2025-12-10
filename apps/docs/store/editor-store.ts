@@ -1,3 +1,5 @@
+import type { ColorConfig } from "qrdx/types";
+import { colorConfigSchema } from "qrdx/types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { defaultThemeState } from "@/config/qr";
@@ -281,6 +283,171 @@ export const useQREditorStore = create<QREditorStore>()(
     }),
     {
       name: "editor-storage",
+      merge: (persistedState, currentState) => {
+        // Helper function to normalize fgColor in a styles object
+        const normalizeFgColor = (styles: Record<string, unknown>) => {
+          if (styles.fgColor !== undefined) {
+            try {
+              // Validate using zod schema
+              const validated = colorConfigSchema.safeParse(styles.fgColor);
+              if (validated.success) {
+                // Ensure proper structure - if it's an object, make sure it has required fields
+                const colorValue = validated.data as ColorConfig;
+                if (typeof colorValue === "string") {
+                  // String color is valid
+                  styles.fgColor = colorValue;
+                } else if (
+                  typeof colorValue === "object" &&
+                  colorValue !== null
+                ) {
+                  // For gradients, ensure stops array is valid and has at least 2 items
+                  if (
+                    "type" in colorValue &&
+                    (colorValue.type === "linear" ||
+                      colorValue.type === "radial") &&
+                    "stops" in colorValue &&
+                    Array.isArray(colorValue.stops)
+                  ) {
+                    // Ensure stops array has at least 2 items
+                    if (colorValue.stops.length < 2) {
+                      console.warn(
+                        "Gradient stops array has less than 2 items, using default",
+                      );
+                      styles.fgColor = defaultThemeState.styles.fgColor;
+                    } else {
+                      // For linear gradients, ensure angle is set (default to 0 if missing)
+                      if (
+                        colorValue.type === "linear" &&
+                        "stops" in colorValue &&
+                        Array.isArray(colorValue.stops)
+                      ) {
+                        const stops = colorValue.stops as Array<{
+                          color: string;
+                          offset: number;
+                        }>;
+                        // Always create a new object to ensure angle is present
+                        const angleValue =
+                          "angle" in colorValue &&
+                          typeof colorValue.angle === "number"
+                            ? colorValue.angle
+                            : 0;
+                        styles.fgColor = {
+                          type: "linear",
+                          stops,
+                          angle: angleValue,
+                        } as ColorConfig;
+                      } else {
+                        // Radial gradient - no angle needed
+                        styles.fgColor = colorValue;
+                      }
+                    }
+                  } else if (
+                    "type" in colorValue &&
+                    colorValue.type === "solid" &&
+                    "color" in colorValue
+                  ) {
+                    // Solid color is valid
+                    styles.fgColor = colorValue;
+                  } else {
+                    // Invalid structure, use default
+                    styles.fgColor = defaultThemeState.styles.fgColor;
+                  }
+                } else {
+                  // Fallback to default
+                  styles.fgColor = defaultThemeState.styles.fgColor;
+                }
+              } else {
+                // If validation fails, fall back to default
+                console.warn(
+                  "Invalid fgColor in persisted state, using default",
+                  validated.error,
+                );
+                styles.fgColor = defaultThemeState.styles.fgColor;
+              }
+            } catch (error) {
+              console.warn(
+                "Error normalizing fgColor from persisted state:",
+                error,
+              );
+              styles.fgColor = defaultThemeState.styles.fgColor;
+            }
+          }
+        };
+
+        // Validate and normalize ColorConfig objects when loading from storage
+        if (
+          persistedState &&
+          typeof persistedState === "object" &&
+          "themeState" in persistedState &&
+          persistedState.themeState &&
+          typeof persistedState.themeState === "object" &&
+          "styles" in persistedState.themeState &&
+          persistedState.themeState.styles &&
+          typeof persistedState.themeState.styles === "object"
+        ) {
+          normalizeFgColor(
+            persistedState.themeState.styles as Record<string, unknown>,
+          );
+        }
+
+        // Also normalize checkpoint if it exists
+        if (
+          persistedState &&
+          typeof persistedState === "object" &&
+          "themeCheckpoint" in persistedState &&
+          persistedState.themeCheckpoint &&
+          typeof persistedState.themeCheckpoint === "object" &&
+          "styles" in persistedState.themeCheckpoint &&
+          persistedState.themeCheckpoint.styles &&
+          typeof persistedState.themeCheckpoint.styles === "object"
+        ) {
+          normalizeFgColor(
+            persistedState.themeCheckpoint.styles as Record<string, unknown>,
+          );
+        }
+
+        // Normalize history entries
+        if (
+          persistedState &&
+          typeof persistedState === "object" &&
+          "history" in persistedState &&
+          Array.isArray(persistedState.history)
+        ) {
+          persistedState.history.forEach((entry: unknown) => {
+            if (
+              entry &&
+              typeof entry === "object" &&
+              "state" in entry &&
+              entry.state &&
+              typeof entry.state === "object" &&
+              "styles" in entry.state &&
+              entry.state.styles &&
+              typeof entry.state.styles === "object"
+            ) {
+              normalizeFgColor(entry.state.styles as Record<string, unknown>);
+            }
+          });
+        }
+
+        // Merge persisted state with current state, ensuring persisted state takes precedence
+        const mergedState = {
+          ...currentState,
+          ...(persistedState as Partial<QREditorStore>),
+        } as QREditorStore;
+
+        // Ensure themeState is properly merged if it exists in persistedState
+        if (
+          persistedState &&
+          typeof persistedState === "object" &&
+          "themeState" in persistedState &&
+          persistedState.themeState
+        ) {
+          mergedState.themeState =
+            persistedState.themeState as ThemeEditorState;
+        }
+
+        return mergedState;
+      },
     },
   ),
 );

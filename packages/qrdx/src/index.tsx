@@ -12,6 +12,7 @@
  */
 import { type JSX, useEffect, useRef, useState } from "react";
 import type { QRProps, QRPropsCanvas } from "../types";
+import { normalizeColorConfig } from "../types/color";
 import qrcodegen from "./codegen";
 import {
   DEFAULT_BGCOLOR,
@@ -107,7 +108,12 @@ export function QRCodeCanvas(props: QRPropsCanvas) {
       ctx.fillStyle = bgColor;
       ctx.fillRect(0, 0, numCells, numCells);
 
-      ctx.fillStyle = fgColor;
+      // Extract solid color from fgColor (canvas doesn't support gradient objects)
+      const fgColorNormalized = normalizeColorConfig(fgColor, DEFAULT_FGCOLOR);
+      ctx.fillStyle =
+        fgColorNormalized.type === "solid"
+          ? fgColorNormalized.color
+          : fgColorNormalized.stops[0]?.color || DEFAULT_FGCOLOR;
       if (SUPPORTS_PATH2D) {
         // $FlowFixMe: Path2D c'tor doesn't support args yet.
         ctx.fill(new Path2D(generatePath(cells, margin)));

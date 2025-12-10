@@ -1,5 +1,25 @@
 // Re-export all types from domain files
 
+export type {
+  ColorConfig,
+  ColorType,
+  GradientStop,
+  LinearGradient,
+  RadialGradient,
+  SolidColor,
+} from "./color";
+export {
+  colorConfigSchema,
+  colorTypeSchema,
+  getColorString,
+  gradientStopSchema,
+  isGradient,
+  linearGradientSchema,
+  normalizeColorConfig,
+  radialGradientSchema,
+  solidColorSchema,
+} from "./color";
+
 export type { Excavation, Modules } from "./common";
 export { excavationSchema } from "./common";
 

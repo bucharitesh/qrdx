@@ -2,6 +2,7 @@ import type { qrPreset } from "@repo/database";
 import type { InferSelectModel } from "drizzle-orm";
 import {
   bodyPatternSchema,
+  colorConfigSchema,
   cornerEyeDotPatternSchema,
   cornerEyePatternSchema,
   errorLevelSchema,
@@ -14,12 +15,13 @@ import { z } from "zod";
 export const themeStylePropsSchema = z.object({
   size: z.number().optional().describe("Size of the QR code in pixels"),
   bgColor: z.string().optional().describe("Background color of the QR code"),
-  fgColor: z
-    .string()
+  fgColor: colorConfigSchema
     .optional()
-    .describe("Foreground (main) color of the QR code"),
+    .describe(
+      "Foreground (main) color of the QR code - supports solid colors and gradients",
+    ),
   eyeColor: z.string().optional().describe("Color of the corner eye patterns"),
-  dotColor: z.string().optional().describe("Color of the inner eye dots"),
+  dotColor: z.string().optional().describe("Color of the corner eye dots"),
   bodyPattern: bodyPatternSchema
     .optional()
     .describe("Pattern style for the QR code body"),

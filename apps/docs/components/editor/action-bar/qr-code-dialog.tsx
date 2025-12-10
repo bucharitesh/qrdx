@@ -14,6 +14,8 @@ import {
   ScrollBar,
 } from "@repo/design-system/components/ui/scroll-area";
 import { Check, Copy } from "lucide-react";
+import type { ColorConfig } from "qrdx/types";
+import { normalizeColorConfig } from "qrdx/types";
 import { useMemo, useState } from "react";
 import { CodeBlock } from "@/components/code-block";
 import { useQREditorStore } from "@/store/editor-store";
@@ -21,6 +23,70 @@ import { useQREditorStore } from "@/store/editor-store";
 interface QRCodeDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+}
+
+/**
+ * Serialize ColorConfig to a JavaScript object literal string with proper formatting
+ * Returns a string that can be used inside JSX braces: fgColor={serialized}
+ * @param color - The ColorConfig to serialize
+ * @param baseIndent - Base indentation for the prop line (e.g., "      " for 6 spaces)
+ */
+function serializeColorConfig(
+  color: ColorConfig | undefined,
+  baseIndent: string = "      ",
+): { value: string; isMultiLine: boolean } {
+  if (!color) return { value: "", isMultiLine: false };
+
+  // Handle string (backward compatibility)
+  if (typeof color === "string") {
+    return { value: `"${color}"`, isMultiLine: false };
+  }
+
+  const normalized = normalizeColorConfig(color);
+
+  if (normalized.type === "solid") {
+    return { value: `"${normalized.color}"`, isMultiLine: false };
+  }
+
+  // For gradients, serialize as formatted multi-line object
+  // Indentation levels:
+  // - baseIndent: prop line (e.g., "      ")
+  // - baseIndent + "  ": object properties (e.g., "        ")
+  // - baseIndent + "    ": array items (e.g., "          ")
+  const indent1 = `${baseIndent}  `; // 2 spaces more than base
+  const indent2 = `${baseIndent}    `; // 4 spaces more than base
+
+  if (normalized.type === "linear") {
+    const stops = normalized.stops
+      .map(
+        (stop) =>
+          `${indent2}{ color: "${stop.color}", offset: ${stop.offset} }`,
+      )
+      .join(",\n");
+    const angleLine =
+      normalized.angle !== undefined
+        ? `,\n${indent1}angle: ${normalized.angle}`
+        : "";
+    return {
+      value: `{\n${indent1}type: "linear",\n${indent1}stops: [\n${stops},\n${indent1}],${angleLine},\n${baseIndent}}`,
+      isMultiLine: true,
+    };
+  }
+
+  if (normalized.type === "radial") {
+    const stops = normalized.stops
+      .map(
+        (stop) =>
+          `${indent2}{ color: "${stop.color}", offset: ${stop.offset} }`,
+      )
+      .join(",\n");
+    return {
+      value: `{\n${indent1}type: "radial",\n${indent1}stops: [\n${stops},\n${indent1}],\n${baseIndent}}`,
+      isMultiLine: true,
+    };
+  }
+
+  return { value: "", isMultiLine: false };
 }
 
 export function QRCodeDialog({ open, onOpenChange }: QRCodeDialogProps) {
@@ -32,45 +98,53 @@ export function QRCodeDialog({ open, onOpenChange }: QRCodeDialogProps) {
   // Generate full component code
   const fullComponentCode = useMemo(() => {
     const props: string[] = [];
+    const indent = "      "; // 6 spaces to match JSX indentation
 
     if (value) {
-      props.push(`      value="${value}"`);
+      props.push(`${indent}value="${value}"`);
     }
     if (style.bgColor) {
-      props.push(`      bgColor="${style.bgColor}"`);
+      props.push(`${indent}bgColor="${style.bgColor}"`);
     }
     if (style.fgColor) {
-      props.push(`      fgColor="${style.fgColor}"`);
+      const serialized = serializeColorConfig(style.fgColor, indent);
+      if (serialized.value) {
+        if (serialized.isMultiLine) {
+          props.push(`${indent}fgColor={${serialized.value}}`);
+        } else {
+          props.push(`${indent}fgColor={${serialized.value}}`);
+        }
+      }
     }
     if (style.eyeColor) {
-      props.push(`      eyeColor="${style.eyeColor}"`);
+      props.push(`${indent}eyeColor="${style.eyeColor}"`);
     }
     if (style.dotColor) {
-      props.push(`      dotColor="${style.dotColor}"`);
+      props.push(`${indent}dotColor="${style.dotColor}"`);
     }
     if (style.bodyPattern) {
-      props.push(`      bodyPattern="${style.bodyPattern}"`);
+      props.push(`${indent}bodyPattern="${style.bodyPattern}"`);
     }
     if (style.cornerEyePattern) {
-      props.push(`      cornerEyePattern="${style.cornerEyePattern}"`);
+      props.push(`${indent}cornerEyePattern="${style.cornerEyePattern}"`);
     }
     if (style.cornerEyeDotPattern) {
-      props.push(`      cornerEyeDotPattern="${style.cornerEyeDotPattern}"`);
+      props.push(`${indent}cornerEyeDotPattern="${style.cornerEyeDotPattern}"`);
     }
     if (style.level) {
-      props.push(`      level="${style.level}"`);
+      props.push(`${indent}level="${style.level}"`);
     }
     if (style.templateId) {
-      props.push(`      templateId="${style.templateId}"`);
+      props.push(`${indent}templateId="${style.templateId}"`);
     }
     if (style.showLogo !== undefined) {
-      props.push(`      hideLogo={${!style.showLogo}}`);
+      props.push(`${indent}hideLogo={${!style.showLogo}}`);
     }
     if (style.customLogo) {
-      props.push(`      logo="${style.customLogo}"`);
+      props.push(`${indent}logo="${style.customLogo}"`);
     }
     if (style.size) {
-      props.push(`      size={${style.size}}`);
+      props.push(`${indent}size={${style.size}}`);
     }
 
     return `import { QRCode } from "qrdx";

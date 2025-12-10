@@ -3,11 +3,15 @@ import React from "react";
 import type { TemplateConfig } from "@/types/template";
 import type {
   BodyPattern,
+  ColorConfig,
   Excavation,
   ImageSettings,
+  LinearGradient,
   Modules,
   QRPropsSVG,
+  RadialGradient,
 } from "../types";
+import { normalizeColorConfig } from "../types/color";
 import qrcodegen from "./codegen";
 import {
   DEFAULT_BGCOLOR,
@@ -270,6 +274,157 @@ function generateDataCircles(
   return shapes;
 }
 
+// Helper to calculate gradient coordinates based on angle
+function calculateGradientCoordinates(
+  angle: number,
+  size: number
+): { x1: number; y1: number; x2: number; y2: number } {
+  // Convert angle to radians
+  const radians = (angle * Math.PI) / 180;
+
+  // Calculate center point
+  const centerX = size / 2;
+  const centerY = size / 2;
+
+  // Calculate vector length (half diagonal for maximum coverage)
+  const length = Math.sqrt(size * size + size * size) / 2;
+
+  // Calculate start and end points
+  const x1 = centerX - length * Math.cos(radians);
+  const y1 = centerY - length * Math.sin(radians);
+  const x2 = centerX + length * Math.cos(radians);
+  const y2 = centerY + length * Math.sin(radians);
+
+  return { x1, y1, x2, y2 };
+}
+
+// Generate unique gradient ID
+let gradientIdCounter = 0;
+function generateGradientId(prefix: string): string {
+  gradientIdCounter += 1;
+  return `${prefix}-${Date.now()}-${gradientIdCounter}`;
+}
+
+// Generate gradient definition elements
+function generateGradientDef(
+  colorConfig: ColorConfig,
+  size: number,
+  idPrefix: string
+): { id: string; element: JSX.Element } | null {
+  const normalized = normalizeColorConfig(colorConfig);
+
+  if (normalized.type === "solid") {
+    return null;
+  }
+
+  const id = generateGradientId(idPrefix);
+
+  if (normalized.type === "linear") {
+    const gradient = normalized as LinearGradient;
+    const angle = gradient.angle ?? 0;
+    const { x1, y1, x2, y2 } = calculateGradientCoordinates(angle, size);
+
+    return {
+      id,
+      element: (
+        <linearGradient
+          gradientUnits="userSpaceOnUse"
+          id={id}
+          key={id}
+          x1={x1}
+          x2={x2}
+          y1={y1}
+          y2={y2}
+        >
+          {gradient.stops.map((stop, index) => (
+            <stop
+              key={`${id}-stop-${index}`}
+              offset={`${stop.offset}%`}
+              stopColor={stop.color}
+            />
+          ))}
+        </linearGradient>
+      ),
+    };
+  }
+
+  if (normalized.type === "radial") {
+    const gradient = normalized as RadialGradient;
+    const centerX = size / 2;
+    const centerY = size / 2;
+    const radius = (size / 2) * 0.97; // Slightly less than half to ensure full coverage
+
+    return {
+      id,
+      element: (
+        <radialGradient
+          cx={centerX}
+          cy={centerY}
+          fx={centerX}
+          fy={centerY}
+          gradientUnits="userSpaceOnUse"
+          id={id}
+          key={id}
+          r={radius}
+        >
+          {gradient.stops.map((stop, index) => (
+            <stop
+              key={`${id}-stop-${index}`}
+              offset={`${stop.offset}%`}
+              stopColor={stop.color}
+            />
+          ))}
+        </radialGradient>
+      ),
+    };
+  }
+
+  return null;
+}
+
+// Get fill value from color config
+function getFillValue(
+  colorConfig: ColorConfig | undefined,
+  gradientId: string | null,
+  fallback: string
+): string {
+  if (gradientId) {
+    return `url(#${gradientId})`;
+  }
+
+  const normalized = normalizeColorConfig(colorConfig, fallback);
+  if (normalized.type === "solid") {
+    return normalized.color;
+  }
+
+  return fallback;
+}
+
+// Get solid color representation from ColorConfig (for non-gradient uses like corner dots)
+export function getSolidColor(
+  colorConfig: ColorConfig | undefined,
+  fallback: string
+): string {
+  if (!colorConfig) {
+    return fallback;
+  }
+
+  if (typeof colorConfig === "string") {
+    return colorConfig;
+  }
+
+  if (colorConfig.type === "solid") {
+    return colorConfig.color;
+  }
+
+  // For gradients, return the first stop color as representative
+  if (colorConfig.type === "linear" || colorConfig.type === "radial") {
+    return colorConfig.stops[0]?.color || fallback;
+  }
+
+  return fallback;
+}
+
 export function getImageSettings(
   cells: Modules,
   size: number,
@@ -428,6 +583,26 @@ export function QRCodeSVG(props: QRPropsSVG) {
     pattern: bodyPattern,
   });
 
+  // Normalize fgColor first to ensure proper structure
+  const normalizedFgColor = normalizeColorConfig(fgColor, DEFAULT_FGCOLOR);
+
+  // Generate gradient definitions if needed
+  const fgColorGradient =
+    normalizedFgColor.type === "linear" || normalizedFgColor.type === "radial"
+      ? generateGradientDef(
+          normalizedFgColor as LinearGradient | RadialGradient,
+          size,
+          "fg-color"
+        )
+      : null;
+
+  // Get fill values - use normalized color for gradient detection
+  const fgFillValue = getFillValue(
+    fgColor, // Pass original for getFillValue to handle normalization internally
+    fgColorGradient?.id ?? null,
+    DEFAULT_FGCOLOR
+  );
+
   // Calculate corner positions with margin
   const topLeftX = margin * pixelSize;
   const topLeftY = margin * pixelSize;
@@ -439,11 +614,14 @@ export function QRCodeSVG(props: QRPropsSVG) {
   // QR Code content (can be used standalone or inside wrapper)
   const qrContent = (
     <>
+      {/* Gradient definitions */}
+      {fgColorGradient && <defs>{fgColorGradient.element}</defs>}
+
       {/* Background */}
       <rect fill={bgColor} height={size} width={size} x={0} y={0} />
 
       {/* Data module circles */}
-      <g fill={fgColor}>{dataCircles}</g>
+      <g fill={fgFillValue}>{dataCircles}</g>
 
       {/* Top-left corner square */}
       <g fill={eyeColor}>
@@ -536,13 +714,18 @@ export function QRCodeSVG(props: QRPropsSVG) {
         viewBox={`0 0 ${templateSize} ${templateSize}`}
         width={templateSize}
       >
+        {/* Gradient definitions */}
+        {fgColorGradient && <defs>{fgColorGradient.element}</defs>}
+
         {/* Scale all QR elements to fit template coordinate system */}
         <g transform={`scale(${templateSize / size})`}>
           {/* Data module circles */}
-          <g fill={fgColor}>{dataCircles}</g>
+          <g fill={fgFillValue}>{dataCircles}</g>
 
           {/* Top-left corner square */}
-          <g fill={eyeColor || fgColor}>
+          <g
+            fill={eyeColor ? eyeColor : getSolidColor(fgColor, DEFAULT_FGCOLOR)}
+          >
             <path
               clipRule="evenodd"
               d={generateCornerSquarePath(
@@ -556,7 +739,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
           </g>
 
           {/* Top-left corner dot */}
-          <g fill={dotColor || fgColor}>
+          <g fill={dotColor || getSolidColor(fgColor, DEFAULT_FGCOLOR)}>
             {generateCornerDotPath(
               topLeftX + cornerSize / 2,
               topLeftY + cornerSize / 2,
@@ -566,7 +749,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
           </g>
 
           {/* Top-right corner square */}
-          <g fill={eyeColor || fgColor}>
+          <g fill={eyeColor || getSolidColor(fgColor, DEFAULT_FGCOLOR)}>
             <path
               clipRule="evenodd"
               d={generateCornerSquarePath(
@@ -580,7 +763,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
           </g>
 
           {/* Top-right corner dot */}
-          <g fill={dotColor || fgColor}>
+          <g fill={dotColor || getSolidColor(fgColor, DEFAULT_FGCOLOR)}>
             {generateCornerDotPath(
               topRightX + cornerSize / 2,
               topRightY + cornerSize / 2,
@@ -590,7 +773,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
           </g>
 
           {/* Bottom-left corner square */}
-          <g fill={eyeColor || fgColor}>
+          <g fill={eyeColor || getSolidColor(fgColor, DEFAULT_FGCOLOR)}>
             <path
               clipRule="evenodd"
               d={generateCornerSquarePath(
@@ -604,7 +787,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
           </g>
 
           {/* Bottom-left corner dot */}
-          <g fill={dotColor || fgColor}>
+          <g fill={dotColor || getSolidColor(fgColor, DEFAULT_FGCOLOR)}>
             {generateCornerDotPath(
               bottomLeftX + cornerSize / 2,
               bottomLeftY + cornerSize / 2,
