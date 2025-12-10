@@ -4,6 +4,7 @@ import { QRCodeSVG } from "qrdx";
 import type { BodyPattern } from "qrdx/types";
 import type React from "react";
 import { useQREditorStore } from "@/store/editor-store";
+import { BodyPatterns } from "../icons/body-patterns";
 
 const patterns: Array<{ id: BodyPattern; name: string }> = [
   { id: "circle", name: "Circle" },
@@ -42,13 +43,7 @@ export const PatternSelector: React.FC = () => {
           {/* Pattern Preview */}
           <div className="mb-2 flex items-center justify-center">
             <div className="flex h-16 w-16 items-center justify-center">
-              <QRCodeSVG
-                bgColor={"transparent"}
-                fgColor={"#000000"}
-                bodyPattern={pattern.id}
-                size={64}
-                value="https://example.com"
-              />
+              <BodyPatterns pattern={pattern.id} />
             </div>
           </div>
 

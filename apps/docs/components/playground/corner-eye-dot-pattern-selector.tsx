@@ -1,9 +1,9 @@
 "use client";
 
-import { QRCodeSVG } from "qrdx";
 import type { CornerEyeDotPattern } from "qrdx/types";
 import type React from "react";
 import { useQREditorStore } from "@/store/editor-store";
+import { EyeDotPatterns } from "../icons/internal-eye-patterns";
 
 const patterns: Array<{ id: CornerEyeDotPattern; name: string }> = [
   { id: "square", name: "Square" },
@@ -38,13 +38,7 @@ export const CornerEyeDotPatternSelector: React.FC = () => {
           {/* Pattern Preview */}
           <div className="mb-2 flex items-center justify-center">
             <div className="flex h-16 w-16 items-center justify-center">
-              <QRCodeSVG
-                bgColor={"transparent"}
-                cornerEyeDotPattern={pattern.id}
-                fgColor={"#000000"}
-                size={64}
-                value="https://example.com"
-              />
+              <EyeDotPatterns pattern={pattern.id} />
             </div>
           </div>
 
