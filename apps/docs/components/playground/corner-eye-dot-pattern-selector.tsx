@@ -7,9 +7,16 @@ import { EyeDotPatterns } from "../icons/internal-eye-patterns";
 
 const patterns: Array<{ id: CornerEyeDotPattern; name: string }> = [
   { id: "square", name: "Square" },
-  { id: "rounded-square", name: "Rounded" },
+  { id: "rounded", name: "Rounded" },
   { id: "circle", name: "Circle" },
   { id: "diamond", name: "Diamond" },
+  { id: "message", name: "Message" },
+  { id: "message-reverse", name: "Message Reverse" },
+  { id: "diya", name: "Diya" },
+  { id: "diya-reverse", name: "Diya Reverse" },
+  { id: "rounded-triangle", name: "Rounded Triangle" },
+  { id: "star", name: "Star" },
+  { id: "banner", name: "Banner" },
 ] as const;
 
 export const CornerEyeDotPatternSelector: React.FC = () => {

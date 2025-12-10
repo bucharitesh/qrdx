@@ -20,7 +20,7 @@ const patterns: Array<{ id: CornerEyePattern; name: string }> = [
 export const CornerEyePatternSelector: React.FC = () => {
   const { themeState, setThemeState } = useQREditorStore();
   const style = themeState.styles;
-  const selectedPattern = style.cornerEyePattern || "gear";
+  const selectedPattern = style.cornerEyePattern;
   return (
     <div className="grid grid-cols-4 gap-3">
       {patterns.map((pattern) => (
