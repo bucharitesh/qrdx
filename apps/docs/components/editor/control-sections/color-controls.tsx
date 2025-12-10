@@ -28,21 +28,17 @@ export function ColorControls({ style, onStyleChange }: ColorControlsProps) {
             onStyleChange({ ...style, bgColor: value as string })
           }
         />
-        <ColorInput
-          value={style.eyeColor || "#000000"}
+        <GradientPicker
+          fallbackColor="#000000"
           label="Eye Color"
-          name="eyeColor"
-          onChange={(value) =>
-            onStyleChange({ ...style, eyeColor: value as string })
-          }
+          value={style.eyeColor}
+          onChange={(value) => onStyleChange({ ...style, eyeColor: value })}
         />
-        <ColorInput
-          value={style.dotColor || "#000000"}
+        <GradientPicker
+          fallbackColor="#000000"
           label="Dot Color"
-          name="dotColor"
-          onChange={(value) =>
-            onStyleChange({ ...style, dotColor: value as string })
-          }
+          value={style.dotColor}
+          onChange={(value) => onStyleChange({ ...style, dotColor: value })}
         />
       </div>
     </ControlSection>

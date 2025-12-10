@@ -12,7 +12,7 @@ export function PatternControls() {
         <PatternSelector />
       </ControlSection>
 
-      <ControlSection title="Corner Eye Patterns" expanded>
+      <ControlSection title="Corner Eye Patterns">
         <CornerEyePatternSelector />
       </ControlSection>
 
@@ -22,5 +22,3 @@ export function PatternControls() {
     </>
   );
 }
-
-

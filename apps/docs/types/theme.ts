@@ -20,8 +20,16 @@ export const themeStylePropsSchema = z.object({
     .describe(
       "Foreground (main) color of the QR code - supports solid colors and gradients",
     ),
-  eyeColor: z.string().optional().describe("Color of the corner eye patterns"),
-  dotColor: z.string().optional().describe("Color of the corner eye dots"),
+  eyeColor: colorConfigSchema
+    .optional()
+    .describe(
+      "Color of the corner eye patterns - supports solid colors and gradients",
+    ),
+  dotColor: colorConfigSchema
+    .optional()
+    .describe(
+      "Color of the corner eye dots - supports solid colors and gradients",
+    ),
   bodyPattern: bodyPatternSchema
     .optional()
     .describe("Pattern style for the QR code body"),
