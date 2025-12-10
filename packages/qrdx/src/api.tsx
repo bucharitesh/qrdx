@@ -8,12 +8,8 @@ import {
   DEFAULT_SIZE,
   ERROR_LEVEL_MAP,
 } from "./constants";
-import {
-  excavateModules,
-  generatePath,
-  getImageSettings,
-  getSolidColor,
-} from "./utils";
+import { excavateModules, generatePath, getImageSettings } from "./utils";
+import { getSolidColor } from "./utils/color";
 
 export async function getQRAsSVG(props: QRPropsSVG) {
   const {

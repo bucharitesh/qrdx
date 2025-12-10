@@ -1,6 +1,5 @@
-import { getSolidColor } from "qrdx";
 import type { ColorConfig } from "qrdx/types";
-import { colorConfigSchema } from "qrdx/types";
+import { colorConfigSchema, getSolidColor } from "qrdx/types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { defaultThemeState } from "@/config/qr";
