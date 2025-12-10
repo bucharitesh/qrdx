@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 import { z } from "zod";
+import { type ColorConfig, colorConfigSchema } from "./color";
 import {
   type CornerEyeDotPattern,
   cornerEyeDotPatternSchema,
@@ -25,7 +26,7 @@ export const qrPropsSchema = z.object({
   size: z.number().optional(),
   level: errorLevelSchema.optional(),
   bgColor: z.string().optional(),
-  fgColor: z.string().optional(),
+  fgColor: colorConfigSchema.optional(),
   eyeColor: z.string().optional(),
   dotColor: z.string().optional(),
   bodyPattern: bodyPatternSchema.optional(),
@@ -47,7 +48,7 @@ export type QRProps = {
   size?: number;
   level?: ErrorLevel;
   bgColor?: string;
-  fgColor?: string;
+  fgColor?: ColorConfig;
   eyeColor?: string;
   dotColor?: string;
   bodyPattern?: BodyPattern;

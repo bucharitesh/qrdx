@@ -19,6 +19,8 @@ import {
 import { cn } from "@repo/design-system/lib/utils";
 import { AlertTriangle, Check, Contrast, Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
+import type { ColorConfig } from "qrdx/types";
+import { isGradient, normalizeColorConfig } from "qrdx/types";
 import { useState } from "react";
 import { useContrastChecker } from "@/lib/hooks/use-contrast-checker";
 import type { ThemeStyles } from "@/types/theme";
@@ -37,11 +39,52 @@ type ColorPair = {
   id: string;
   foregroundId: keyof ThemeStyles;
   backgroundId: keyof ThemeStyles;
-  foreground: string | undefined;
+  foreground: ColorConfig | string | undefined;
   background: string | undefined;
   label: string;
   category: ColorCategory;
 };
+
+/**
+ * Get CSS background style for a ColorConfig
+ */
+function getColorStyle(color: ColorConfig | string | undefined): string {
+  if (!color) return "transparent";
+  if (typeof color === "string") return color;
+
+  const normalized = normalizeColorConfig(color);
+  if (normalized.type === "solid") {
+    return normalized.color;
+  }
+
+  // Generate gradient CSS
+  const sortedStops = [...normalized.stops].sort((a, b) => a.offset - b.offset);
+  const colorStops = sortedStops
+    .map((stop) => `${stop.color} ${stop.offset}%`)
+    .join(", ");
+
+  if (normalized.type === "linear") {
+    return `linear-gradient(${normalized.angle ?? 0}deg, ${colorStops})`;
+  }
+  return `radial-gradient(circle, ${colorStops})`;
+}
+
+/**
+ * Get display text for a ColorConfig
+ */
+function getColorDisplayText(color: ColorConfig | string | undefined): string {
+  if (!color) return "N/A";
+  if (typeof color === "string") return color.toUpperCase();
+
+  const normalized = normalizeColorConfig(color);
+  if (normalized.type === "solid") {
+    return normalized.color.toUpperCase();
+  }
+  if (normalized.type === "linear") {
+    return "Linear Gradient";
+  }
+  return "Radial Gradient";
+}
 
 const ContrastChecker = ({ currentStyles, disabled }: ContrastCheckerProps) => {
   const [filter, setFilter] = useState<"all" | "issues">("all");
@@ -82,8 +125,12 @@ const ContrastChecker = ({ currentStyles, disabled }: ContrastCheckerProps) => {
   ];
 
   const validColorPairsToCheck = colorPairsToCheck.filter(
-    (pair): pair is ColorPair & { foreground: string; background: string } =>
-      !!pair.foreground && !!pair.background,
+    (
+      pair,
+    ): pair is ColorPair & {
+      foreground: ColorConfig | string;
+      background: string;
+    } => !!pair.foreground && !!pair.background,
   );
   const contrastResults = useContrastChecker(validColorPairsToCheck);
 
@@ -272,8 +319,7 @@ const ContrastChecker = ({ currentStyles, disabled }: ContrastCheckerProps) => {
                               <div className="flex w-full items-center gap-3">
                                 <div
                                   style={{
-                                    backgroundColor:
-                                      pair.foreground ?? "#ffffff",
+                                    background: getColorStyle(pair.foreground),
                                   }}
                                   className="h-12 w-12 shrink-0 rounded-md border shadow-sm"
                                 ></div>
@@ -282,8 +328,32 @@ const ContrastChecker = ({ currentStyles, disabled }: ContrastCheckerProps) => {
                                     Foreground
                                   </span>
                                   <span className="text-muted-foreground font-mono text-xs">
-                                    {pair.foreground}
+                                    {getColorDisplayText(pair.foreground)}
                                   </span>
+                                  {isGradient(pair.foreground) &&
+                                    result?.stopColors && (
+                                      <div className="mt-1 space-y-0.5">
+                                        {result.stopColors.map((stop) => (
+                                          <div
+                                            key={stop.color}
+                                            className="flex items-center gap-1 text-[10px]"
+                                          >
+                                            <div
+                                              className="h-3 w-3 rounded border"
+                                              style={{
+                                                backgroundColor: stop.color,
+                                              }}
+                                            />
+                                            <span className="text-muted-foreground font-mono">
+                                              {stop.color.toUpperCase()}
+                                            </span>
+                                            <span className="text-muted-foreground">
+                                              ({stop.ratio.toFixed(2)})
+                                            </span>
+                                          </div>
+                                        ))}
+                                      </div>
+                                    )}
                                 </div>
                               </div>
                             </div>
@@ -297,13 +367,27 @@ const ContrastChecker = ({ currentStyles, disabled }: ContrastCheckerProps) => {
                               {pair.foreground && pair.background ? (
                                 <div className="p-4 text-center">
                                   <p
-                                    style={{ color: pair.foreground }}
+                                    style={{
+                                      background: getColorStyle(
+                                        pair.foreground,
+                                      ),
+                                      WebkitBackgroundClip: "text",
+                                      WebkitTextFillColor: "transparent",
+                                      backgroundClip: "text",
+                                    }}
                                     className="mb-2 text-4xl font-bold tracking-wider"
                                   >
                                     Aa
                                   </p>
                                   <p
-                                    style={{ color: pair.foreground }}
+                                    style={{
+                                      background: getColorStyle(
+                                        pair.foreground,
+                                      ),
+                                      WebkitBackgroundClip: "text",
+                                      WebkitTextFillColor: "transparent",
+                                      backgroundClip: "text",
+                                    }}
                                     className="text-sm font-medium"
                                   >
                                     Sample Text

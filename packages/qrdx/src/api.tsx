@@ -8,7 +8,12 @@ import {
   DEFAULT_SIZE,
   ERROR_LEVEL_MAP,
 } from "./constants";
-import { excavateModules, generatePath, getImageSettings } from "./utils";
+import {
+  excavateModules,
+  generatePath,
+  getImageSettings,
+  getSolidColor,
+} from "./utils";
 
 export async function getQRAsSVG(props: QRPropsSVG) {
   const {
@@ -78,7 +83,11 @@ export async function getQRAsSVG(props: QRPropsSVG) {
         fill={bgColor}
         shapeRendering="crispEdges"
       />
-      <path d={fgPath} fill={fgColor} shapeRendering="crispEdges" />
+      <path
+        d={fgPath}
+        fill={getSolidColor(fgColor, DEFAULT_FGCOLOR)}
+        shapeRendering="crispEdges"
+      />
       {image}
     </svg>
   );
