@@ -1,5 +1,5 @@
 /** biome-ignore-all lint/a11y/noStaticElementInteractions: false positive */
-/** biome-ignore-all lint/a11y/useAriaPropsSupportedByRole: <explanation> */
+/** biome-ignore-all lint/a11y/useAriaPropsSupportedByRole: false positive */
 /** biome-ignore-all lint/a11y/useKeyWithClickEvents: false positive */
 "use client";
 
@@ -104,6 +104,8 @@ const StarIconWithGradient = ({
       <path
         fill={`url(#${gradientId})`}
         d="M0.331543 52.6697C-1.04926 57.8231 2.00897 63.1201 7.16235 64.5009L17.3317 67.2258C18.9697 67.6646 20.4632 68.5269 21.6623 69.726L29.1069 77.1706C32.8794 80.9431 38.9958 80.9431 42.7684 77.1706L50.213 69.726C51.412 68.5269 52.9056 67.6646 54.5435 67.2258L64.713 64.5009C69.8663 63.1201 72.9246 57.823 71.5437 52.6697L68.8188 42.5003C68.3799 40.8623 68.3799 39.1377 68.8188 37.4998L71.5437 27.3304C72.9246 22.177 69.8663 16.8799 64.713 15.4991L54.5435 12.7743C52.9056 12.3354 51.412 11.4731 50.213 10.274L42.7684 2.82944C38.9958 -0.943146 32.8794 -0.943146 29.1069 2.82944L21.6623 10.274C20.4632 11.4731 18.9697 12.3354 17.3317 12.7743L7.16235 15.4991C2.00897 16.88 -1.04926 22.177 0.331543 27.3303L3.05646 37.4998C3.4953 39.1377 3.4953 40.8623 3.05646 42.5002L0.331543 52.6697Z"
+        stroke="#0f0f0f"
+        strokeWidth="0.5"
       />
     </svg>
   );
@@ -112,6 +114,30 @@ const StarIconWithGradient = ({
 type GradientSuggestion =
   | { type: "linear"; stops: GradientStop[]; angle?: number }
   | { type: "radial"; stops: GradientStop[] };
+
+// 20 Solid Color Suggestions
+const SOLID_COLOR_SUGGESTIONS: string[] = [
+  "#000000", // Black
+  "#FFFFFF", // White
+  "#FF0000", // Red
+  "#00FF00", // Green
+  "#0000FF", // Blue
+  "#FFFF00", // Yellow
+  "#FF00FF", // Magenta
+  "#00FFFF", // Cyan
+  "#FF6B6B", // Coral Red
+  "#4ECDC4", // Turquoise
+  "#45B7D1", // Sky Blue
+  "#FFA07A", // Light Salmon
+  "#98D8C8", // Mint Green
+  "#F7DC6F", // Light Yellow
+  "#BB8FCE", // Lavender
+  "#85C1E2", // Light Blue
+  "#F8B739", // Golden Yellow
+  "#E74C3C", // Bright Red
+  "#2ECC71", // Emerald Green
+  "#9B59B6", // Purple
+];
 
 // 20 Gradient Suggestions (mix of linear and radial)
 const GRADIENT_SUGGESTIONS: GradientSuggestion[] = [
@@ -701,6 +727,40 @@ export function GradientPicker({
                   placeholder="#000000"
                   value={solidColor}
                 />
+              </div>
+
+              {/* Solid Color Suggestions */}
+              <div className="space-y-2">
+                <Label className="text-xs text-muted-foreground">
+                  Suggestions
+                </Label>
+                <div className="flex flex-wrap gap-2">
+                  {SOLID_COLOR_SUGGESTIONS.map((color) => (
+                    <div
+                      key={color}
+                      onClick={() => handleSolidColorChange(color)}
+                      className="group relative h-6 w-6 rounded overflow-hidden bg-transparent flex items-center justify-center cursor-pointer hover:scale-110 transition-transform"
+                      aria-label={`Apply color ${color}`}
+                    >
+                      <div className="h-6 w-6">
+                        <svg
+                          width="100%"
+                          height="100%"
+                          viewBox="0 0 72 80"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <title>Star icon</title>
+                          <path
+                            fill={color}
+                            d="M0.331543 52.6697C-1.04926 57.8231 2.00897 63.1201 7.16235 64.5009L17.3317 67.2258C18.9697 67.6646 20.4632 68.5269 21.6623 69.726L29.1069 77.1706C32.8794 80.9431 38.9958 80.9431 42.7684 77.1706L50.213 69.726C51.412 68.5269 52.9056 67.6646 54.5435 67.2258L64.713 64.5009C69.8663 63.1201 72.9246 57.823 71.5437 52.6697L68.8188 42.5003C68.3799 40.8623 68.3799 39.1377 68.8188 37.4998L71.5437 27.3304C72.9246 22.177 69.8663 16.8799 64.713 15.4991L54.5435 12.7743C52.9056 12.3354 51.412 11.4731 50.213 10.274L42.7684 2.82944C38.9958 -0.943146 32.8794 -0.943146 29.1069 2.82944L21.6623 10.274C20.4632 11.4731 18.9697 12.3354 17.3317 12.7743L7.16235 15.4991C2.00897 16.88 -1.04926 22.177 0.331543 27.3303L3.05646 37.4998C3.4953 39.1377 3.4953 40.8623 3.05646 42.5002L0.331543 52.6697Z"
+                            stroke="#0f0f0f"
+                            strokeWidth="0.5"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </TabsContent>
 
