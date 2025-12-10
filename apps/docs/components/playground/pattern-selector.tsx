@@ -1,6 +1,5 @@
 "use client";
 
-import { QRCodeSVG } from "qrdx";
 import type { BodyPattern } from "qrdx/types";
 import type React from "react";
 import { useQREditorStore } from "@/store/editor-store";
@@ -9,11 +8,11 @@ import { BodyPatterns } from "../icons/body-patterns";
 const patterns: Array<{ id: BodyPattern; name: string }> = [
   { id: "circle", name: "Circle" },
   { id: "circle-large", name: "Circle Large" },
-  { id: "square", name: "Square" },
+  // { id: "square", name: "Square" },
   { id: "diamond", name: "Diamond" },
   { id: "circle-mixed", name: "Mixed" },
-  { id: "pacman", name: "Pacman" },
-  { id: "rounded", name: "Rounded" },
+  // { id: "pacman", name: "Pacman" },
+  // { id: "rounded", name: "Rounded" },
   { id: "clean-square", name: "Clean" },
 ] as const;
 
