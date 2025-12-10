@@ -5,6 +5,11 @@ export const CORNER_EYE_PATTERNS = [
   "rounded",
   "gear",
   "circle",
+  "diya",
+  "extra-rounded",
+  "message",
+  "pointy",
+  "curly",
 ] as const;
 
 // Zod schema

@@ -71,6 +71,85 @@ function generateCornerGearPattern(
   return path;
 }
 
+function generateCornerDiyaPattern(
+  offsetX: number,
+  offsetY: number,
+  size: number
+): string {
+  const scale = size / 80;
+  const transform = (coord: number, offset: number) => coord * scale + offset;
+
+  // Diya pattern path - designed for 80x80 coordinate system
+  const path = `M ${transform(5, offsetX)} ${transform(30, offsetY)}v ${20 * scale}a ${25 * scale} ${25 * scale}, 0, 0, 0, ${25 * scale} ${25 * scale}h ${45 * scale}v -${45 * scale}a ${25 * scale} ${25 * scale}, 0, 0, 0, -${25 * scale} -${25 * scale}h -${20 * scale}H ${transform(5, offsetX)}zM ${transform(30, offsetX)} ${transform(15, offsetY)}h ${20 * scale}a ${15 * scale} ${15 * scale}, 0, 0, 1, ${15 * scale} ${15 * scale}v ${35 * scale}h -${35 * scale}a ${15 * scale} ${15 * scale}, 0, 0, 1, -${15 * scale} -${15 * scale}v -${35 * scale}z`;
+
+  return path;
+}
+
+/**
+ * Pattern: Extra rounded corners
+ */
+function generateCornerExtraRoundedPattern(
+  offsetX: number,
+  offsetY: number,
+  size: number
+): string {
+  const scale = size / 80;
+  const transform = (coord: number, offset: number) => coord * scale + offset;
+
+  const path = `M ${transform(5, offsetX)} ${transform(30, offsetY)}v ${20 * scale}a ${25 * scale} ${25 * scale}, 0, 0, 0, ${25 * scale} ${25 * scale}h ${20 * scale}a ${25 * scale} ${25 * scale}, 0, 0, 0, ${25 * scale} -${25 * scale}v -${20 * scale}a ${25 * scale} ${25 * scale}, 0, 0, 0, -${25 * scale} -${25 * scale}h -${20 * scale}a ${25 * scale} ${25 * scale}, 0, 0, 0, -${25 * scale} ${25 * scale}M ${transform(30, offsetX)} ${transform(15, offsetY)}h ${20 * scale}a ${15 * scale} ${15 * scale}, 0, 0, 1, ${15 * scale} ${15 * scale}v ${20 * scale}a ${15 * scale} ${15 * scale}, 0, 0, 1, -${15 * scale} ${15 * scale}h -${20 * scale}a ${15 * scale} ${15 * scale}, 0, 0, 1, -${15 * scale} -${15 * scale}v -${20 * scale}a ${15 * scale} ${15 * scale}, 0, 0, 1, ${15 * scale} -${15 * scale}z`;
+
+  return path;
+}
+
+/**
+ * Pattern: Message (chat bubble style)
+ */
+function generateCornerMessagePattern(
+  offsetX: number,
+  offsetY: number,
+  size: number
+): string {
+  const scale = size / 80;
+  const transform = (coord: number, offset: number) => coord * scale + offset;
+
+  const path = `M ${transform(5, offsetX)} ${transform(40, offsetY)}a ${35 * scale} ${35 * scale}, 0, 0, 0, ${35 * scale} ${35 * scale}h ${30 * scale}a ${5 * scale} ${5 * scale}, 0, 0, 0, ${5 * scale} -${5 * scale}v -${30 * scale}a ${35 * scale} ${35 * scale}, 0, 0, 0, -${35 * scale} -${35 * scale}a ${35 * scale} ${35 * scale}, 0, 0, 0, -${35 * scale} ${35 * scale}zM ${transform(40, offsetX)} ${transform(15, offsetY)}a ${25 * scale} ${25 * scale}, 0, 0, 1, ${25 * scale} ${25 * scale}v ${25 * scale}h -${25 * scale}a ${25 * scale} ${25 * scale}, 0, 0, 1, -${25 * scale} -${25 * scale}a ${25 * scale} ${25 * scale}, 0, 0, 1, ${25 * scale} -${25 * scale}z`;
+
+  return path;
+}
+
+/**
+ * Pattern: Pointy (sharp corners)
+ */
+function generateCornerPointyPattern(
+  offsetX: number,
+  offsetY: number,
+  size: number
+): string {
+  const scale = size / 80;
+  const transform = (coord: number, offset: number) => coord * scale + offset;
+
+  const path = `M ${transform(5, offsetX)} ${transform(30, offsetY)}v ${20 * scale}a ${25 * scale} ${25 * scale}, 0, 0, 0, ${25 * scale} ${25 * scale}h ${45 * scale}v -${45 * scale}a ${25 * scale} ${25 * scale}, 0, 0, 0, -${25 * scale} -${25 * scale}h -${20 * scale}a ${25 * scale} ${25 * scale}, 0, 0, 0, -${25 * scale} ${25 * scale}M ${transform(30, offsetX)} ${transform(15, offsetY)}h ${20 * scale}a ${15 * scale} ${15 * scale}, 0, 0, 1, ${15 * scale} ${15 * scale}v ${35 * scale}h -${35 * scale}a ${15 * scale} ${15 * scale}, 0, 0, 1, -${15 * scale} -${15 * scale}v -${20 * scale}a ${15 * scale} ${15 * scale}, 0, 0, 1, ${15 * scale} -${15 * scale}z`;
+
+  return path;
+}
+
+/**
+ * Pattern: Curly (decorative curved design)
+ */
+function generateCornerCurlyPattern(
+  offsetX: number,
+  offsetY: number,
+  size: number
+): string {
+  const scale = size / 80;
+  const transform = (coord: number, offset: number) => coord * scale + offset;
+
+  // Curly pattern - complex path with many curve points
+  const path = `M${transform(35.192_399_999_999_99, offsetX)} ${transform(5.837_547_376_725_838, offsetY)}C${transform(37.696_676_923_076_92, offsetX)} ${transform(3.873_707_069_033_530_5, offsetY)}, ${transform(41.218_430_769_230_764, offsetX)} ${transform(3.873_709_222_879_684_3, offsetY)}, ${transform(43.722_707_692_307_694, offsetX)} ${transform(5.837_547_376_725_838, offsetY)}L${transform(46.627_815_384_615_39, offsetX)} ${transform(8.115_648_915_187_375, offsetY)}L${transform(50.233_569_230_769_23, offsetX)} ${transform(7.323_615_069_033_53, offsetY)}C${transform(53.342, offsetX)} ${transform(6.640_824_299_802_762, offsetY)}, ${transform(56.514_830_769_230_77, offsetX)} ${transform(8.168_784_299_802_759, offsetY)}, ${transform(57.918_923_076_923_08, offsetX)} ${transform(11.024_719_684_418_145, offsetY)}L${transform(59.547_876_923_076_92, offsetX)} ${transform(14.337_679_684_418_145, offsetY)}L${transform(63.140_276_923_076_92, offsetX)} ${transform(15.188_578_145_956_608, offsetY)}C${transform(66.237_076_923_076_93, offsetX)} ${transform(15.922_091_992_110_452, offsetY)}, ${transform(68.432_707_692_307_69, offsetX)} ${transform(18.675_396_607_495_067, offsetY)}, ${transform(68.458_769_230_769_24, offsetX)} ${transform(21.857_768_915_187_375, offsetY)}L${transform(68.488_923_076_923_07, offsetX)} ${transform(25.549_310_453_648_91, offsetY)}L${transform(71.356_338_461_538_46, offsetX)} ${transform(27.874_602_761_341_222, offsetY)}C${transform(73.828_307_692_307_69, offsetX)} ${transform(29.879_187_376_725_838, offsetY)}, ${transform(74.611_876_923_076_92, offsetX)} ${transform(33.312_418_145_956_606, offsetY)}, ${transform(73.254_523_076_923_06, offsetX)} ${transform(36.191_033_530_571_99, offsetY)}L${transform(71.680_061_538_461_53, offsetX)} ${transform(39.530_141_222_879_685, offsetY)}L${transform(73.254_523_076_923_06, offsetX)} ${transform(42.869_248_915_187_38, offsetY)}C${transform(74.611_876_923_076_92, offsetX)} ${transform(45.747_864_299_802_764, offsetY)}, ${transform(73.828_307_692_307_69, offsetX)} ${transform(49.181_095_069_033_53, offsetY)}, ${transform(71.356_338_461_538_46, offsetX)} ${transform(51.185_679_684_418_15, offsetY)}L${transform(68.488_923_076_923_07, offsetX)} ${transform(53.510_971_992_110_456, offsetY)}L${transform(68.458_769_230_769_24, offsetX)} ${transform(57.202_664_299_802_755, offsetY)}C${transform(68.432_707_692_307_69, offsetX)} ${transform(60.384_971_992_110_46, offsetY)}, ${transform(66.237_076_923_076_93, offsetX)} ${transform(63.138_233_530_571_99, offsetY)}, ${transform(63.140_276_923_076_92, offsetX)} ${transform(63.871_833_530_572, offsetY)}L${transform(59.547_876_923_076_92, offsetX)} ${transform(64.722_602_761_341_21, offsetY)}L${transform(57.918_923_076_923_08, offsetX)} ${transform(68.035_648_915_187_37, offsetY)}C${transform(56.514_830_769_230_77, offsetX)} ${transform(70.891_648_915_187_37, offsetY)}, ${transform(53.342, offsetX)} ${transform(72.419_587_376_725_83, offsetY)}, ${transform(50.233_569_230_769_23, offsetX)} ${transform(71.736_818_145_956_6, offsetY)}L${transform(46.627_815_384_615_39, offsetX)} ${transform(70.944_633_530_571_99, offsetY)}L${transform(43.722_707_692_307_694, offsetX)} ${transform(73.222_756_607_495_06, offsetY)}C${transform(41.218_430_769_230_764, offsetX)} ${transform(75.186_633_530_571_98, offsetY)}, ${transform(37.696_676_923_076_92, offsetX)} ${transform(75.186_633_530_571_98, offsetY)}, ${transform(35.192_399_999_999_99, offsetX)} ${transform(73.222_756_607_495_06, offsetY)}L${transform(32.287_292_307_692_31, offsetX)} ${transform(70.944_633_530_571_99, offsetY)}L${transform(28.681_538_461_538_46, offsetX)} ${transform(71.736_818_145_956_6, offsetY)}C${transform(25.573_215_384_615_384, offsetX)} ${transform(72.419_587_376_725_83, offsetY)}, ${transform(22.400_384_615_384_613, offsetX)} ${transform(70.891_648_915_187_37, offsetY)}, ${transform(20.996_141_538_461_536, offsetX)} ${transform(68.035_648_915_187_37, offsetY)}L${transform(19.367_209_230_769_23, offsetX)} ${transform(64.722_602_761_341_21, offsetY)}L${transform(15.774_852_307_692_306, offsetX)} ${transform(63.871_833_530_572, offsetY)}C${transform(12.678_030_769_230_77, offsetX)} ${transform(63.138_233_530_571_99, offsetY)}, ${transform(10.482_378_461_538_46, offsetX)} ${transform(60.384_971_992_110_46, offsetY)}, ${transform(10.456_36, offsetX)} ${transform(57.202_664_299_802_755, offsetY)}L${transform(10.426_163_076_923_077, offsetX)} ${transform(53.510_971_992_110_456, offsetY)}L${transform(7.558_747_692_307_692, offsetX)} ${transform(51.185_679_684_418_15, offsetY)}C${transform(5.086_880_338_461_539, offsetX)} ${transform(49.181_095_069_033_53, offsetY)}, ${transform(4.303_258_769_230_769, offsetX)} ${transform(45.747_864_299_802_764, offsetY)}, ${transform(5.660_599_692_307_692, offsetX)} ${transform(42.869_248_915_187_38, offsetY)}L${transform(7.235_153_846_153_846, offsetX)} ${transform(39.530_141_222_879_685, offsetY)}L${transform(5.660_599_692_307_692, offsetX)} ${transform(36.191_033_530_571_99, offsetY)}C${transform(4.303_256_615_384_615_5, offsetX)} ${transform(33.312_418_145_956_606, offsetY)}, ${transform(5.086_885_938_461_538, offsetX)} ${transform(29.879_187_376_725_838, offsetY)}, ${transform(7.558_747_692_307_692, offsetX)} ${transform(27.874_602_761_341_222, offsetY)}L${transform(10.426_163_076_923_077, offsetX)} ${transform(25.549_310_453_648_91, offsetY)}L${transform(10.456_36, offsetX)} ${transform(21.857_768_915_187_375, offsetY)}C${transform(10.482_378_461_538_46, offsetX)} ${transform(18.675_375_069_033_53, offsetY)}, ${transform(12.678_052_307_692_308, offsetX)} ${transform(15.922_091_992_110_452, offsetY)}, ${transform(15.774_852_307_692_306, offsetX)} ${transform(15.188_578_145_956_608, offsetY)}L${transform(19.367_209_230_769_23, offsetX)} ${transform(14.337_679_684_418_145, offsetY)}L${transform(20.996_141_538_461_536, offsetX)} ${transform(11.024_719_684_418_145, offsetY)}C${transform(22.400_384_615_384_613, offsetX)} ${transform(8.168_784_299_802_759, offsetY)}, ${transform(25.573_215_384_615_384, offsetX)} ${transform(6.640_824_299_802_762, offsetY)}, ${transform(28.681_538_461_538_46, offsetX)} ${transform(7.323_615_069_033_53, offsetY)}L${transform(32.287_292_307_692_31, offsetX)} ${transform(8.115_648_915_187_375, offsetY)}L${transform(35.192_399_999_999_99, offsetX)} ${transform(5.837_547_376_725_838, offsetY)}M${transform(39.457_661_538_461_54, offsetX)} ${transform(13.665_055_069_033_532, offsetY)}L${transform(37.014_984_615_384_61, offsetX)} ${transform(15.580_535_069_033_53, offsetY)}C${transform(35.390_984_615_384_61, offsetX)} ${transform(16.854_061_222_879_682, offsetY)}, ${transform(33.282_799_999_999_995, offsetX)} ${transform(17.335_251_992_110_454, offsetY)}, ${transform(31.267_015_384_615_38, offsetX)} ${transform(16.892_464_299_802_757, offsetY)}L${transform(28.235_046_153_846_152, offsetX)} ${transform(16.226_495_069_033_53, offsetY)}L${transform(26.865_415_384_615_382, offsetX)} ${transform(19.012_107_376_725_837, offsetY)}C${transform(25.954_812_307_692_308, offsetX)} ${transform(20.864_178_145_956_608, offsetY)}, ${transform(24.264_193_846_153_844, offsetX)} ${transform(22.212_399_684_418_145, offsetY)}, ${transform(22.255_926_153_846_154, offsetX)} ${transform(22.688_076_607_495_066, offsetY)}L${transform(19.235_393_846_153_844, offsetX)} ${transform(23.403_541_222_879_68, offsetY)}L${transform(19.21, offsetX)} ${transform(26.507_556_607_495_065, offsetY)}C${transform(19.193_135_384_615_38, offsetX)} ${transform(28.571_371_992_110_45, offsetY)}, ${transform(18.254_92, offsetX)} ${transform(30.519_525_838_264_297, offsetY)}, ${transform(16.651_919_999_999_997, offsetX)} ${transform(31.819_371_992_110_45, offsetY)}L${transform(14.240_926_153_846_154, offsetX)} ${transform(33.774_633_530_572, offsetY)}L${transform(15.564_830_769_230_769, offsetX)} ${transform(36.582_387_376_725_84, offsetY)}C${transform(16.445_064_615_384_617, offsetX)} ${transform(38.448_910_453_648_92, offsetY)}, ${transform(16.445_064_615_384_617, offsetX)} ${transform(40.611_371_992_110_456, offsetY)}, ${transform(15.564_830_769_230_769, offsetX)} ${transform(42.478_110_453_648_92, offsetY)}L${transform(14.240_926_153_846_154, offsetX)} ${transform(45.285_648_915_187_38, offsetY)}L${transform(16.651_919_999_999_997, offsetX)} ${transform(47.240_910_453_648_915, offsetY)}L${transform(13.883_236_923_076_923, offsetX)} ${transform(50.654_971_992_110_454, offsetY)}L${transform(16.651_919_999_999_997, offsetX)} ${transform(47.240_910_453_648_915, offsetY)}C${transform(18.254_92, offsetX)} ${transform(48.540_756_607_495_07, offsetY)}, ${transform(19.193_135_384_615_38, offsetX)} ${transform(50.489_125_838_264_3, offsetY)}, ${transform(19.21, offsetX)} ${transform(52.552_725_838_264_3, offsetY)}L${transform(19.235_393_846_153_844, offsetX)} ${transform(55.656_848_915_187_38, offsetY)}L${transform(22.255_926_153_846_154, offsetX)} ${transform(56.372_356_607_495_07, offsetY)}C${transform(24.264_193_846_153_844, offsetX)} ${transform(56.847_925_838_264_295, offsetY)}, ${transform(25.954_812_307_692_308, offsetX)} ${transform(58.196_233_530_571_995, offsetY)}, ${transform(26.865_415_384_615_382, offsetX)} ${transform(60.048_325_838_264_3, offsetY)}L${transform(28.235_046_153_846_152, offsetX)} ${transform(62.833_895_069_033_524, offsetY)}L${transform(31.267_015_384_615_38, offsetX)} ${transform(62.167_925_838_264_3, offsetY)}C${transform(33.282_799_999_999_995, offsetX)} ${transform(61.725_095_069_033_53, offsetY)}, ${transform(35.390_984_615_384_61, offsetX)} ${transform(62.206_264_299_802_76, offsetY)}, ${transform(37.014_984_615_384_61, offsetX)} ${transform(63.479_833_530_571_99, offsetY)}L${transform(39.457_661_538_461_54, offsetX)} ${transform(65.395_248_915_187_37, offsetY)}L${transform(41.900_123_076_923_08, offsetX)} ${transform(63.479_833_530_571_99, offsetY)}C${transform(43.524_123_076_923_075, offsetX)} ${transform(62.206_264_299_802_76, offsetY)}, ${transform(45.632_307_692_307_684, offsetX)} ${transform(61.725_095_069_033_53, offsetY)}, ${transform(47.648_092_307_692_3, offsetX)} ${transform(62.167_925_838_264_3, offsetY)}L${transform(50.680_061_538_461_54, offsetX)} ${transform(62.833_895_069_033_524, offsetY)}L${transform(52.049_692_307_692_304, offsetX)} ${transform(60.048_325_838_264_3, offsetY)}C${transform(52.960_338_461_538_456, offsetX)} ${transform(58.196_233_530_571_995, offsetY)}, ${transform(54.650_892_307_692_3, offsetX)} ${transform(56.847_925_838_264_295, offsetY)}, ${transform(56.659_138_461_538_46, offsetX)} ${transform(56.372_356_607_495_07, offsetY)}L${transform(59.679_692_307_692_31, offsetX)} ${transform(55.656_848_915_187_38, offsetY)}L${transform(59.705_107_692_307_69, offsetX)} ${transform(52.552_725_838_264_3, offsetY)}C${transform(59.721_907_692_307_69, offsetX)} ${transform(50.489_125_838_264_3, offsetY)}, ${transform(60.660_123_076_923_07, offsetX)} ${transform(48.540_756_607_495_07, offsetY)}, ${transform(62.263_230_769_230_766, offsetX)} ${transform(47.240_910_453_648_915, offsetY)}L${transform(64.674_246_153_846_16, offsetX)} ${transform(45.285_648_915_187_38, offsetY)}L${transform(63.350_276_923_076_92, offsetX)} ${transform(42.478_110_453_648_92, offsetY)}C${transform(62.47, offsetX)} ${transform(40.611_371_992_110_456, offsetY)}, ${transform(62.47, offsetX)} ${transform(38.448_910_453_648_92, offsetY)}, ${transform(63.350_276_923_076_92, offsetX)} ${transform(36.582_387_376_725_84, offsetY)}L${transform(64.674_246_153_846_16, offsetX)} ${transform(33.774_633_530_572, offsetY)}L${transform(62.263_230_769_230_766, offsetX)} ${transform(31.819_587_376_725_84, offsetY)}C${transform(60.660_123_076_923_07, offsetX)} ${transform(30.519_525_838_264_297, offsetY)}, ${transform(59.721_907_692_307_69, offsetX)} ${transform(28.571_371_992_110_45, offsetY)}, ${transform(59.705_107_692_307_69, offsetX)} ${transform(26.507_556_607_495_065, offsetY)}L${transform(59.679_692_307_692_31, offsetX)} ${transform(23.403_541_222_879_68, offsetY)}L${transform(56.659_138_461_538_46, offsetX)} ${transform(22.688_076_607_495_066, offsetY)}C${transform(54.650_892_307_692_3, offsetX)} ${transform(22.212_399_684_418_145, offsetY)}, ${transform(52.960_338_461_538_456, offsetX)} ${transform(20.864_178_145_956_608, offsetY)}, ${transform(52.049_692_307_692_304, offsetX)} ${transform(19.012_128_915_187_375, offsetY)}L${transform(50.680_061_538_461_54, offsetX)} ${transform(16.226_495_069_033_53, offsetY)}L${transform(47.648_092_307_692_3, offsetX)} ${transform(16.892_464_299_802_757, offsetY)}C${transform(45.632_307_692_307_684, offsetX)} ${transform(17.335_251_992_110_454, offsetY)}, ${transform(43.524_338_461_538_456, offsetX)} ${transform(16.854_082_761_341_22, offsetY)}, ${transform(41.900_123_076_923_08, offsetX)} ${transform(15.580_535_069_033_53, offsetY)}L${transform(39.457_661_538_461_54, offsetX)} ${transform(13.665_055_069_033_532, offsetY)}Z`;
+
+  return path;
+}
+
 /**
  * Generate corner square path based on pattern type
  * @param offsetX - X offset for the corner
@@ -83,17 +162,26 @@ export function generateCornerSquarePath(
   offsetX: number,
   offsetY: number,
   size: number,
-  pattern: CornerEyePattern = "gear"
+  pattern: CornerEyePattern
 ): string {
   switch (pattern) {
-    case "square":
-      return generateCornerSquarePattern(offsetX, offsetY, size);
+    case "gear":
+      return generateCornerGearPattern(offsetX, offsetY, size);
     case "rounded":
       return generateCornerRoundedPattern(offsetX, offsetY, size);
     case "circle":
       return generateCornerCirclePattern(offsetX, offsetY, size);
-    // case "gear":
+    case "diya":
+      return generateCornerDiyaPattern(offsetX, offsetY, size);
+    case "extra-rounded":
+      return generateCornerExtraRoundedPattern(offsetX, offsetY, size);
+    case "message":
+      return generateCornerMessagePattern(offsetX, offsetY, size);
+    case "pointy":
+      return generateCornerPointyPattern(offsetX, offsetY, size);
+    case "curly":
+      return generateCornerCurlyPattern(offsetX, offsetY, size);
     default:
-      return generateCornerGearPattern(offsetX, offsetY, size);
+      return generateCornerSquarePattern(offsetX, offsetY, size);
   }
 }

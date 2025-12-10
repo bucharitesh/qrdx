@@ -45,12 +45,14 @@ const Editor: React.FC<EditorProps> = ({ themePromise }) => {
 
   useEffect(() => {
     if (initialQRPreset) {
-      applyThemePreset(initialQRPreset.id);
-    } else {
-      // Apply default preset if no preset is loaded
-      applyThemePreset("default");
+      const prev = useQREditorStore.getState().themeState;
+      setThemeState({
+        ...prev,
+        styles: initialQRPreset.style,
+        preset: initialQRPreset.id,
+      });
     }
-  }, [initialQRPreset, applyThemePreset]);
+  }, [initialQRPreset, setThemeState]);
 
   if (initialQRPreset && !initialQRPreset.style) {
     return (

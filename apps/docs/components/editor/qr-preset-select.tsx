@@ -22,6 +22,7 @@ import {
   TooltipTrigger,
 } from "@repo/design-system/components/ui/tooltip";
 import { cn } from "@repo/design-system/lib/utils";
+import { type ColorConfig, getSolidColor } from "@repo/qrdx";
 import {
   ArrowLeft,
   ArrowRight,
@@ -48,13 +49,13 @@ interface ThemePresetSelectProps extends React.ComponentProps<typeof Button> {
 }
 
 interface ColorBoxProps {
-  color: string;
+  color: string | ColorConfig | undefined;
 }
 
 const ColorBox: React.FC<ColorBoxProps> = ({ color }) => (
   <div
     className="border-muted h-3 w-3 rounded-sm border"
-    style={{ backgroundColor: color }}
+    style={{ backgroundColor: getSolidColor(color, "#000000") }}
   />
 );
 
