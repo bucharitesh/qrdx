@@ -109,7 +109,7 @@ export function UserProfileDropdown() {
               </DropdownMenuItem>
               <DropdownMenuSeparator className="bg-border opacity-80" />
               <DropdownMenuItem asChild>
-                <Link href="/privacy-policy">
+                <Link href="/legal/privacy-policy">
                   <BookLock />
                   Privacy Policy
                 </Link>

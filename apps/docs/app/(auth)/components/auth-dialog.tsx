@@ -181,9 +181,7 @@ export function AuthDialog({
             <li className="flex items-center gap-2 after:size-[1.5px] after:rounded-full after:bg-muted-foreground last:after:hidden">
               <Link
                 className="relative rounded-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-[#0033FF]"
-                href="https://qrdx.bucharitesh.in/privacy"
-                target="_blank"
-                rel="noopener noreferrer"
+                href="/legal/privacy-policy"
               >
                 Privacy
               </Link>
@@ -191,9 +189,7 @@ export function AuthDialog({
             <li className="flex items-center gap-2 after:size-[1.5px] after:rounded-full after:bg-muted-foreground last:after:hidden">
               <Link
                 className="relative rounded-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-[#0033FF]"
-                href="https://qrdx.bucharitesh.in/terms"
-                target="_blank"
-                rel="noopener noreferrer"
+                href="/legal/terms-of-service"
               >
                 Terms
               </Link>

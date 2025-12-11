@@ -42,6 +42,10 @@ export const docs = defineDocs({
   },
 });
 
+export const legal = defineDocs({
+  dir: "content/legal",
+});
+
 export default defineConfig({
   plugins: [
     jsonSchema({
