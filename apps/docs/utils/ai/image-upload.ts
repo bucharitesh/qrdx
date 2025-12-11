@@ -41,3 +41,4 @@ export function optimizeSvgContent(svgText: string): string {
 
 
 
+
