@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { baseUrl } from "@/lib/metadata";
-import { source } from "@/lib/source";
+import { legalSource, source } from "@/lib/source";
 
 export const revalidate = false;
 
@@ -31,6 +31,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         lastModified: lastModified ? new Date(lastModified) : undefined,
         changeFrequency: "weekly",
         priority: 0.5,
+      } as MetadataRoute.Sitemap[number];
+    }),
+    ...legalSource.getPages().flatMap((page) => {
+      const { lastModified } = page.data;
+
+      return {
+        url: url(page.url),
+        lastModified: lastModified ? new Date(lastModified) : undefined,
+        changeFrequency: "monthly",
+        priority: 0.3,
       } as MetadataRoute.Sitemap[number];
     }),
   ];
