@@ -2,6 +2,7 @@ import "./global.css";
 import { NextProvider } from "fumadocs-core/framework/next";
 import { TreeContextProvider } from "fumadocs-ui/contexts/tree";
 import { Inter } from "next/font/google";
+import FeaturebaseScript from "@/components/featurebase-script";
 import { ThemeScript } from "@/components/theme-script";
 import { source } from "@/lib/source";
 import { Body } from "./layout.client";
@@ -35,6 +36,7 @@ export default function Layout({ children }: LayoutProps<"/">) {
             <Provider>{children}</Provider>
           </TreeContextProvider>
         </NextProvider>
+        <FeaturebaseScript />
       </Body>
     </html>
   );
