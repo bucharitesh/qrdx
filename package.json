@@ -16,27 +16,24 @@
     "db:migrate": "cd packages/database && npx drizzle-kit migrate",
     "db:generate": "cd packages/database && npx drizzle-kit generate",
     "db:pull": "cd packages/database && npx drizzle-kit pull",
+    "knip": "knip",
+    "knip:fix": "knip --fix",
     "clean": "git clean -xdf node_modules"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.3.2",
     "@repo/typescript-config": "workspace:*",
-    "@turbo/gen": "^2.6.0",
     "@types/node": "^24.9.2",
+    "knip": "^5.73.3",
     "tsup": "^8.5.0",
     "turbo": "^2.5.8",
     "typescript": "^5.9.3",
-    "ultracite": "6.1.0",
-    "vitest": "^4.0.3"
+    "ultracite": "6.1.0"
   },
   "engines": {
     "node": ">=18"
   },
   "packageManager": "pnpm@10.19.0",
-  "dependencies": {
-    "@clack/prompts": "^0.11.0",
-    "commander": "^14.0.2"
-  },
+  "dependencies": {},
   "pnpm": {
     "overrides": {
       "parse5": "^7.2.1"

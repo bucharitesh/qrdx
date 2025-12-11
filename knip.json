@@ -1,0 +1,16 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "ignore": ["packages/database/drizzle.config.ts"],
+  "ignoreExportsUsedInFile": {
+    "interface": true,
+    "type": true
+  },
+  "tags": ["-lintignore"],
+  "workspaces": {
+    ".": {},
+    "packages/database": {
+      "ignore": ["drizzle.config.ts"],
+      "drizzle": false
+    }
+  }
+}
