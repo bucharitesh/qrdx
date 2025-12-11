@@ -37,7 +37,9 @@ export const env = createEnv({
       .enum(["development", "test", "production"])
       .default("development"),
   },
-  client: {},
+  client: {
+    NEXT_PUBLIC_FEATUREBASE_APP_ID: z.string().min(1),
+  },
   runtimeEnv: {
     DATABASE_URL: process.env.DATABASE_URL,
     GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
@@ -53,5 +55,6 @@ export const env = createEnv({
     GOOGLE_DRIVE_REDIRECT_URI: process.env.GOOGLE_DRIVE_REDIRECT_URI,
     INTEGRATION_ENCRYPTION_KEY: process.env.INTEGRATION_ENCRYPTION_KEY,
     NODE_ENV: process.env.NODE_ENV,
+    NEXT_PUBLIC_FEATUREBASE_APP_ID: process.env.NEXT_PUBLIC_FEATUREBASE_APP_ID,
   },
 });
