@@ -8,9 +8,10 @@ import { BodyPatterns } from "../icons/body-patterns";
 const patterns: Array<{ id: BodyPattern; name: string }> = [
   { id: "circle", name: "Circle" },
   { id: "circle-large", name: "Circle Large" },
-  // { id: "small-square", name: "Small Square" },
+  { id: "small-square", name: "Small Square" },
   { id: "diamond", name: "Diamond" },
   { id: "circle-mixed", name: "Mixed" },
+  { id: "vertical-line", name: "Vertical Line" },
   // { id: "pacman", name: "Pacman" },
   // { id: "rounded", name: "Rounded" },
   { id: "square", name: "Square" },

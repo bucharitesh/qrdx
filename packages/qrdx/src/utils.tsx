@@ -190,7 +190,7 @@ function generateDataCircles(
             // Pattern 4: Circles with varying sizes
             {
               const randomFactor =
-                (x + y) % 3 === 0 ? 1.5 : (x + y) % 2 === 0 ? 1.0 : 1.25;
+                (x + y) % 3 === 0 ? 1 : (x + y) % 2 === 0 ? 0.5 : 1.25;
               const variedRadius = radius * randomFactor;
               shapes.push(
                 <circle
@@ -251,6 +251,21 @@ function generateDataCircles(
                   width={pixelSize}
                   x={cx - halfSize}
                   y={cy - halfSize}
+                />
+              );
+            }
+            break;
+
+          case "vertical-line":
+            // Pattern: Horizontal lines
+            {
+              const lineHeight = pixelSize * 0.714_286; // ~71.4% height
+              const lineWidth = pixelSize; // full width
+              shapes.push(
+                <path
+                  d={`M ${cx - pixelSize * 0.5} ${cy - lineHeight * 0.5}v ${lineHeight}h ${lineWidth}v -${lineHeight}z`}
+                  key={key}
+                  transform={`rotate(90,${cx},${cy})`}
                 />
               );
             }

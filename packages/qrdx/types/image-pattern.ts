@@ -9,6 +9,7 @@ export const BODY_PATTERN = [
   "pacman",
   "rounded",
   "small-square",
+  "vertical-line",
 ] as const;
 
 // Zod schema
