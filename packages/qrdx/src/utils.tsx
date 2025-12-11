@@ -158,7 +158,7 @@ function generateDataCircles(
             }
             break;
 
-          case "square":
+          case "small-square":
             // Pattern 2: Squares
             {
               const halfSize = pixelSize * 0.357_143; // half of 71.4% pixel size
@@ -239,7 +239,7 @@ function generateDataCircles(
             }
             break;
 
-          case "clean-square":
+          case "square":
             // Pattern 12: Clean rectangles only
             {
               const halfSize = pixelSize * 0.5;
@@ -857,6 +857,48 @@ export function QRCodeSVG(props: QRPropsSVG) {
     getSolidColor(fgColor, DEFAULT_FGCOLOR)
   );
 
+  const topLeftEye = generateCornerSquarePath(
+    topLeftX,
+    topLeftY,
+    cornerSize,
+    cornerEyePattern
+  );
+
+  const topLeftDot = generateCornerDotPath(
+    topLeftX + cornerSize / 2,
+    topLeftY + cornerSize / 2,
+    cornerDotRadius,
+    cornerEyeDotPattern
+  );
+
+  const topRightEye = generateCornerSquarePath(
+    topRightX,
+    topRightY,
+    cornerSize,
+    cornerEyePattern
+  );
+
+  const topRightDot = generateCornerDotPath(
+    topRightX + cornerSize / 2,
+    topRightY + cornerSize / 2,
+    cornerDotRadius,
+    cornerEyeDotPattern
+  );
+
+  const bottomLeftEye = generateCornerSquarePath(
+    bottomLeftX,
+    bottomLeftY,
+    cornerSize,
+    cornerEyePattern
+  );
+
+  const bottomLeftDot = generateCornerDotPath(
+    bottomLeftX + cornerSize / 2,
+    bottomLeftY + cornerSize / 2,
+    cornerDotRadius,
+    cornerEyeDotPattern
+  );
+
   // QR Code content (can be used standalone or inside wrapper)
   const qrContent = (
     <>
@@ -882,73 +924,37 @@ export function QRCodeSVG(props: QRPropsSVG) {
       <g fill={topLeftEyeFillValue}>
         <path
           clipRule="evenodd"
-          d={generateCornerSquarePath(
-            topLeftX,
-            topLeftY,
-            cornerSize,
-            cornerEyePattern
-          )}
+          d={topLeftEye}
           transform={`rotate(0,${topLeftX + cornerSize / 2},${topLeftY + cornerSize / 2})`}
         />
       </g>
 
       {/* Top-left corner dot */}
-      <g fill={topLeftDotFillValue}>
-        {generateCornerDotPath(
-          topLeftX + cornerSize / 2,
-          topLeftY + cornerSize / 2,
-          cornerDotRadius,
-          cornerEyeDotPattern
-        )}
-      </g>
+      <g fill={topLeftDotFillValue}>{topLeftDot}</g>
 
       {/* Top-right corner square */}
       <g fill={topRightEyeFillValue}>
         <path
           clipRule="evenodd"
-          d={generateCornerSquarePath(
-            topRightX,
-            topRightY,
-            cornerSize,
-            cornerEyePattern
-          )}
+          d={topRightEye}
           transform={`rotate(0,${topRightX + cornerSize / 2},${topRightY + cornerSize / 2})`}
         />
       </g>
 
       {/* Top-right corner dot */}
-      <g fill={topRightDotFillValue}>
-        {generateCornerDotPath(
-          topRightX + cornerSize / 2,
-          topRightY + cornerSize / 2,
-          cornerDotRadius,
-          cornerEyeDotPattern
-        )}
-      </g>
+      <g fill={topRightDotFillValue}>{topRightDot}</g>
 
       {/* Bottom-left corner square */}
       <g fill={bottomLeftEyeFillValue}>
         <path
           clipRule="evenodd"
-          d={generateCornerSquarePath(
-            bottomLeftX,
-            bottomLeftY,
-            cornerSize,
-            cornerEyePattern
-          )}
+          d={bottomLeftEye}
           transform={`rotate(0,${bottomLeftX + cornerSize / 2},${bottomLeftY + cornerSize / 2})`}
         />
       </g>
 
       {/* Bottom-left corner dot */}
-      <g fill={bottomLeftDotFillValue}>
-        {generateCornerDotPath(
-          bottomLeftX + cornerSize / 2,
-          bottomLeftY + cornerSize / 2,
-          cornerDotRadius,
-          cornerEyeDotPattern
-        )}
-      </g>
+      <g fill={bottomLeftDotFillValue}>{bottomLeftDot}</g>
 
       {image}
     </>
