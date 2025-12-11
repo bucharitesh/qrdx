@@ -3,11 +3,13 @@
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Card } from "@repo/design-system/components/ui/card";
-import { Loader2 } from "lucide-react";
+import { Loader2, X } from "lucide-react";
+import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import Github from "@/assets/github.svg";
 import Google from "@/assets/google.svg";
+import { QrdxLogoAnimation } from "@/components/qrdx-logo-animation";
 import { authClient } from "@/lib/auth-client";
 
 interface AuthDialogProps {
@@ -78,97 +80,127 @@ export function AuthDialog({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-xl">
       {trigger}
-      <Card className="w-full max-w-md overflow-hidden shadow-lg">
-        <div className="space-y-4">
-          <div className="space-y-2 pt-8 px-6">
-            <h2 className="text-center text-2xl font-bold">
-              {isSignIn ? "Welcome back" : "Create account"}
-            </h2>
-            <p className="text-muted-foreground text-center">
-              {isSignIn
-                ? "Sign in to your account to continue"
-                : "Sign up to get started with qrdx"}
-            </p>
-          </div>
-
-          <div className="space-y-6 p-6 pt-2">
-            <div className="space-y-3">
-              <div className="relative">
-                <Button
-                  size="lg"
-                  variant={lastLoginMethod === "google" ? "default" : "outline"}
-                  onClick={handleGoogleSignIn}
-                  className="hover:bg-primary/10 hover:text-foreground flex w-full items-center justify-center gap-2"
-                  disabled={isGoogleLoading || isGithubLoading}
-                >
-                  <Google className="h-5 w-5" />
-                  <span className="font-medium">Continue with Google</span>
-                  {isGoogleLoading && (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  )}
-                </Button>
-                {lastLoginMethod === "google" && (
-                  <Badge
-                    variant="secondary"
-                    className="absolute right-2 top-1/2 -translate-y-1/2"
-                  >
-                    Last used
-                  </Badge>
-                )}
+      <button
+        type="button"
+        onClick={() => onOpenChange(false)}
+        className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none"
+      >
+        <X className="h-4 w-4" />
+        <span className="sr-only">Close</span>
+      </button>
+      <div className="relative z-10 flex p-4 h-full w-full max-w-120 flex-1 flex-col justify-center gap-y-6">
+        <div className="relative grid flex-1 content-center">
+          <Card className="w-full max-w-md overflow-hidden shadow-lg p-6 relative">
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <QrdxLogoAnimation size={60} className="mx-auto mb-8" />
+                <h2 className="text-center text-lg font-bold">
+                  {isSignIn ? "Sign in to QRdx" : "Create account"}
+                </h2>
+                <p className="text-muted-foreground text-center">
+                  {isSignIn
+                    ? "Welcome back! Please sign in to continue"
+                    : "Sign up to get started with qrdx"}
+                </p>
               </div>
 
-              <div className="relative">
-                <Button
-                  variant={lastLoginMethod === "github" ? "default" : "outline"}
-                  onClick={handleGithubSignIn}
-                  size="lg"
-                  className="hover:bg-primary/10 hover:text-foreground flex w-full items-center justify-center gap-2"
-                  disabled={isGoogleLoading || isGithubLoading}
-                >
-                  <Github className="h-5 w-5" />
-                  <span className="font-medium">Continue with GitHub</span>
-                  {isGithubLoading && (
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                  )}
-                </Button>
-                {lastLoginMethod === "github" && (
-                  <Badge
-                    variant="secondary"
-                    className="absolute right-2 top-1/2 -translate-y-1/2"
-                  >
-                    Last used
-                  </Badge>
-                )}
+              <div className="space-y-6 pt-4">
+                <div className="flex gap-2 items-center justify-center">
+                  <div className="relative w-full">
+                    <Button
+                      variant={"outline"}
+                      onClick={handleGoogleSignIn}
+                      className="hover:bg-primary/10 hover:text-foreground flex w-full items-center justify-center gap-2"
+                      disabled={isGoogleLoading || isGithubLoading}
+                    >
+                      <Google className="h-5 w-5" />
+                      <span className="font-medium">Google</span>
+                      {isGoogleLoading && (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      )}
+                    </Button>
+                    {lastLoginMethod === "google" && (
+                      <Badge className="absolute px text-[0.5rem] right-0 -top-1/2 translate-y-1/2">
+                        Last used
+                      </Badge>
+                    )}
+                  </div>
+
+                  <div className="relative w-full">
+                    <Button
+                      variant={"outline"}
+                      onClick={handleGithubSignIn}
+                      className="hover:bg-primary/10 hover:text-foreground flex w-full items-center justify-center gap-2"
+                      disabled={isGoogleLoading || isGithubLoading}
+                    >
+                      <Github className="h-5 w-5" />
+                      <span className="font-medium">GitHub</span>
+                      {isGithubLoading && (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      )}
+                    </Button>
+                    {lastLoginMethod === "github" && (
+                      <Badge className="absolute px text-[0.5rem] right-0 -top-1/2 translate-y-1/2">
+                        Last used
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+
+                <div className="pt-2">
+                  <div className="mt-6 text-muted-foreground text-sm font-medium text-center gap-2 flex items-center justify-center">
+                    Don't have an account?
+                    <button
+                      type="button"
+                      onClick={toggleMode}
+                      className="text-primary focus:ring-primary hover:underline focus:ring-2 focus:ring-offset-2 focus:outline-none"
+                    >
+                      {isSignIn ? "Sign up" : "Sign in to your account"}
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
-
-            <div className="pt-2">
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <span className="w-full border-t" />
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-muted text-muted-foreground px-2">
-                    {isSignIn ? "New to qrdx?" : "Already have an account?"}
-                  </span>
-                </div>
-              </div>
-
-              <div className="mt-6 text-center">
-                <button
-                  type="button"
-                  onClick={toggleMode}
-                  className="text-primary focus:ring-primary text-sm font-medium hover:underline focus:ring-2 focus:ring-offset-2 focus:outline-none"
-                >
-                  {isSignIn ? "Create an account" : "Sign in to your account"}
-                </button>
-              </div>
-            </div>
-          </div>
+          </Card>
         </div>
-      </Card>
+        <footer className="flex w-full max-w-120 justify-between text-sm">
+          <p className="text-muted-foreground">
+            © {new Date().getFullYear()} QRdx
+          </p>
+          <ul className="flex gap-2">
+            <li className="flex items-center gap-2 after:size-[1.5px] after:rounded-full after:bg-muted-foreground last:after:hidden">
+              <button
+                type="button"
+                className="relative rounded-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-[#0033FF]"
+              >
+                Support
+              </button>
+            </li>
+            <li className="flex items-center gap-2 after:size-[1.5px] after:rounded-full after:bg-muted-foreground last:after:hidden">
+              <Link
+                className="relative rounded-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-[#0033FF]"
+                href="https://qrdx.bucharitesh.in/privacy"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Privacy
+              </Link>
+            </li>
+            <li className="flex items-center gap-2 after:size-[1.5px] after:rounded-full after:bg-muted-foreground last:after:hidden">
+              <Link
+                className="relative rounded-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-[#0033FF]"
+                href="https://qrdx.bucharitesh.in/terms"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Terms
+              </Link>
+            </li>
+          </ul>
+        </footer>
+      </div>
     </div>
   );
 }
