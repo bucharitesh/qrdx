@@ -99,10 +99,10 @@ function AssistantMessage({
       ) : (
         <div
           className={cn(
-            "border-border/50! bg-foreground relative flex size-6 shrink-0 items-center justify-center rounded-full border select-none",
+            "border-border/50! bg-primary relative flex size-6 shrink-0 items-center justify-center rounded-full border select-none",
           )}
         >
-          <Logo className={cn("text-background size-full p-1")} />
+          <Logo className={cn("text-primary-foreground size-full p-1")} />
         </div>
       )}
 

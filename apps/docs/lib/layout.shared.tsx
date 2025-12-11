@@ -32,7 +32,7 @@ export const logo = (
       aria-label="Fumadocs"
     /> */}
     {/* <FumadocsIcon className="size-5 [.uwu_&]:hidden" /> */}
-    <Logo className="size-5 md:hidden block" />
+    <Logo className="size-5 md:hidden block text-primary" />
     <QrdxLogoAnimation size={30} className="hidden md:block" />
   </>
 );
