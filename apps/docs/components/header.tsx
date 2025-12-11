@@ -7,8 +7,8 @@ import Logo from "@/assets/logo.svg";
 import { GetProCTA } from "@/components/get-pro-cta";
 import { SocialLink } from "@/components/social-link";
 import { UserProfileDropdown } from "@/components/user-profile-dropdown";
+import { QrdxLogoAnimation } from "./qrdx-logo-animation";
 // import { useGithubStars } from "@/lib/hooks/use-github-stars";
-import { formatCompactNumber } from "@/utils/format";
 
 export function Header() {
   // const { stargazersCount } = useGithubStars("bucharitesh", "qrdx"); // Update with your GitHub repo
@@ -18,7 +18,8 @@ export function Header() {
       <div className="flex items-center justify-between gap-2 p-4">
         <div className="flex items-center gap-4">
           <Link href="/" className="flex items-center gap-2">
-            <Logo className="size-6" />
+            <Logo className="size-5 md:hidden block" />
+            <QrdxLogoAnimation size={30} className="hidden md:block" />
             <span className="hidden font-bold md:block">QRdx</span>
           </Link>
         </div>
