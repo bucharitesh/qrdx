@@ -18,7 +18,7 @@ export function Header() {
       <div className="flex items-center justify-between gap-2 p-4">
         <div className="flex items-center gap-4">
           <Link href="/" className="flex items-center gap-2">
-            <Logo className="size-5 md:hidden block" />
+            <Logo className="size-5 md:hidden block text-primary" />
             <QrdxLogoAnimation size={30} className="hidden md:block" />
             <span className="hidden font-bold md:block">QRdx</span>
           </Link>
