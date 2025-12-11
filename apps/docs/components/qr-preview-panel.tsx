@@ -1,14 +1,19 @@
 "use client";
 
-import { QRCode } from "qrdx";
 import type React from "react";
+import { lazy } from "react";
 import { useQREditorStore } from "@/store/editor-store";
 import type { QRStyle } from "@/types/theme";
+import ExamplesPreviewContainer from "./editor/theme-preview/examples-preview-container";
 import { QrdxLogoAnimation } from "./qrdx-logo-animation";
 
 interface QRPreviewPanelProps {
   style: Partial<QRStyle>;
 }
+
+const QRCode = lazy(() =>
+  import("qrdx").then((module) => ({ default: module.QRCode })),
+);
 
 const QRPreviewPanel: React.FC<QRPreviewPanelProps> = ({ style }) => {
   const { value } = useQREditorStore();
@@ -44,7 +49,7 @@ const QRPreviewPanel: React.FC<QRPreviewPanelProps> = ({ style }) => {
       {/* Preview Content */}
       <div className="relative flex size-full items-center justify-center overflow-hidden p-4">
         <div className="relative isolate flex size-full items-center justify-center overflow-hidden rounded-lg p-8">
-          <div key={`${value}`} className="flex items-center justify-center">
+          <ExamplesPreviewContainer className="size-full">
             <QRCode
               bgColor={style.bgColor}
               cornerEyeDotPattern={style.cornerEyeDotPattern}
@@ -60,7 +65,7 @@ const QRPreviewPanel: React.FC<QRPreviewPanelProps> = ({ style }) => {
               templateId={style.templateId}
               value={value}
             />
-          </div>
+          </ExamplesPreviewContainer>
         </div>
       </div>
     </div>

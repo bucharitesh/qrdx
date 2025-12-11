@@ -2,13 +2,7 @@
 
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
-import {
-  ResponsiveDialog,
-  ResponsiveDialogContent,
-  ResponsiveDialogHeader,
-  ResponsiveDialogTitle,
-  ResponsiveDialogTrigger,
-} from "@repo/design-system/components/ui/revola";
+import { Card } from "@repo/design-system/components/ui/card";
 import { Loader2 } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -81,23 +75,23 @@ export function AuthDialog({
     setIsSignIn(!isSignIn);
   };
 
+  if (!open) return null;
+
   return (
-    <ResponsiveDialog open={open} onOpenChange={onOpenChange}>
-      {trigger && (
-        <ResponsiveDialogTrigger asChild>{trigger}</ResponsiveDialogTrigger>
-      )}
-      <ResponsiveDialogContent className="overflow-hidden sm:max-w-100">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
+      {trigger}
+      <Card className="w-full max-w-md overflow-hidden shadow-lg">
         <div className="space-y-4">
-          <ResponsiveDialogHeader className="sm:pt-8">
-            <ResponsiveDialogTitle className="text-center text-2xl font-bold">
+          <div className="space-y-2 pt-8 px-6">
+            <h2 className="text-center text-2xl font-bold">
               {isSignIn ? "Welcome back" : "Create account"}
-            </ResponsiveDialogTitle>
+            </h2>
             <p className="text-muted-foreground text-center">
               {isSignIn
                 ? "Sign in to your account to continue"
                 : "Sign up to get started with qrdx"}
             </p>
-          </ResponsiveDialogHeader>
+          </div>
 
           <div className="space-y-6 p-6 pt-2">
             <div className="space-y-3">
@@ -174,7 +168,7 @@ export function AuthDialog({
             </div>
           </div>
         </div>
-      </ResponsiveDialogContent>
-    </ResponsiveDialog>
+      </Card>
+    </div>
   );
 }
