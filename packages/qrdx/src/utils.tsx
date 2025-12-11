@@ -190,7 +190,7 @@ function generateDataCircles(
             // Pattern 4: Circles with varying sizes
             {
               const randomFactor =
-                (x + y) % 3 === 0 ? 1 : (x + y) % 2 === 0 ? 0.5 : 1.25;
+                (x + y) % 3 === 0 ? 0.5 : (x + y) % 2 === 0 ? 1 : 1.25;
               const variedRadius = radius * randomFactor;
               shapes.push(
                 <circle
