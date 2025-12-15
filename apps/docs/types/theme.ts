@@ -84,7 +84,7 @@ export type Theme = InferSelectModel<typeof qrPreset>;
 /**
  * Download Format Options
  */
-export const downloadFormatSchema = z.enum(["png", "jpg", "svg", "pdf", "eps"]);
+export const downloadFormatSchema = z.enum(["png", "jpg", "svg", "pdf"]);
 export type DownloadFormat = z.infer<typeof downloadFormatSchema>;
 
 /**
