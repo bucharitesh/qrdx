@@ -1,20 +1,91 @@
 import "./global.css";
+import { cn } from "@repo/design-system/lib/utils";
 import { NextProvider } from "fumadocs-core/framework/next";
 import { TreeContextProvider } from "fumadocs-ui/contexts/tree";
-import { Inter } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Geist, Inter } from "next/font/google";
 import FeaturebaseScript from "@/components/featurebase-script";
 import { ThemeScript } from "@/components/theme-script";
 import { source } from "@/lib/source";
 import { Body } from "./layout.client";
 import { Provider } from "./providers";
 
-const inter = Inter({
-  subsets: ["latin"],
+const geist = Geist({
+  variable: "--font-geist",
 });
+
+const inter = Geist({
+  variable: "--font-inter",
+});
+
+export const metadata: Metadata = {
+  title: "QRdx.dev | Customisable QR Code Infrastucture",
+  description:
+    "AI-powered, fully customizable QR codes for designers, businesses, and developers. Open-source with batteries included.",
+  keywords:
+    "qr code, qr code generator, open source, ai powered, qr code customization, qr analytics, npm package, react qr code, custom qr codes, qr code api, qr code integrations, qr infrastructure, developer tools, qr code library, scannable qr codes",
+  authors: [{ name: "Ritesh Bucha" }],
+  creator: "Ritesh Bucha",
+  openGraph: {
+    title: "QRDX - Customisable QR Code Infrastucture",
+    description:
+      "AI-powered, fully customizable QR codes for designers, businesses, and developers. Open-source with batteries included.",
+    url: "https://qrdx.dev/",
+    siteName: "QRDX",
+    images: [
+      {
+        url: "https://qrdx.dev/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "QRDX - Customisable QR Code Infrastucture",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "QRDX - Customisable QR Code Infrastucture",
+    description:
+      "AI-powered, fully customizable QR codes for designers, businesses, and developers. Open-source with batteries included.",
+    creator: "@bucharitesh",
+    images: ["https://qrdx.dev/og-image.png"],
+  },
+  metadataBase: new URL("https://qrdx.dev"),
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/favicon-96x96.png", sizes: "96x96", type: "image/png" },
+    ],
+    apple: "/apple-touch-icon.png",
+  },
+  manifest: "/site.webmanifest",
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1.0,
+};
 
 export default function Layout({ children }: LayoutProps<"/">) {
   return (
-    <html className={inter.className} lang="en" suppressHydrationWarning>
+    <html
+      className={cn(geist.variable, inter.variable)}
+      lang="en"
+      suppressHydrationWarning
+    >
       <head>
         <ThemeScript />
         {/* PRELOAD FONTS USED BY BUILT-IN THEMES */}

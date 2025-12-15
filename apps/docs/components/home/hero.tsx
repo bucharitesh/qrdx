@@ -3,6 +3,7 @@
 
 "use client";
 
+import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import {
   motion,
@@ -86,7 +87,7 @@ export const Hero = () => {
         <div className="absolute left-[-10%] bottom-[-20%] w-[40%] h-[40%] rounded-full bg-primary/40 blur-[120px]" />
       </div>
 
-      <div className="relative z-10 flex flex-col items-center text-center px-4 max-w-3xl mx-auto space-y-6 pointer-events-none">
+      {/* <div className="relative z-10 flex flex-col items-center text-center px-4 max-w-3xl mx-auto space-y-6 pointer-events-none">
         <div className="space-y-2">
           <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-foreground drop-shadow-sm">
             QRDX
@@ -96,7 +97,34 @@ export const Hero = () => {
             Share your website, social media, and more.
           </p>
         </div>
-      </div>
+      </div> */}
+
+      <section className="relative pt-[16px] pb-16">
+        <div className="max-w-[1060px] mx-auto px-4">
+          <div className="flex flex-col items-center gap-12">
+            {/* Hero Content */}
+            <div className="max-w-[937px] flex flex-col items-center gap-3">
+              <div className="flex flex-col items-center gap-6">
+                <h1 className="max-w-[748px] text-center text-foreground text-5xl md:text-[80px] font-normal leading-tight md:leading-[96px]">
+                  The better way to create QR codes
+                </h1>
+                <p className="max-w-[620px] text-center text-muted-foreground text-lg font-medium leading-7">
+                  AI-powered, fully customizable QR codes for designers crafting
+                  beautiful brands, businesses tracking engagement, and
+                  developers building QR platforms where users create QR codes.
+                </p>
+              </div>
+            </div>
+
+            {/* CTA Button */}
+            <div className="flex justify-center">
+              <Button className="h-10 px-12 bg-primary/50 hover:bg-primary/90 text-white rounded-full font-medium text-sm shadow-[0px_0px_0px_2.5px_rgba(255,255,255,0.08)_inset]">
+                Start for free
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 };

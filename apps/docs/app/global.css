@@ -9,34 +9,23 @@
   --fd-layout-width: 100vw;
 }
 
+* {
+  color-scheme: light dark;
+}
+
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
 .prose :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   font-size: 14px;
 }
 
 g.main:has(> g.plot) > rect {
   display: none;
-}
-
-video {
-  border-radius: 40px;
-}
-
-@keyframes reveal {
-  from {
-    /* Use CSS variables for the origin, defaulting to center if not set */
-    clip-path: circle(0% at var(--x, 50%) var(--y, 50%));
-    opacity: 0.7;
-  }
-  to {
-    /* Use CSS variables for the origin, defaulting to center if not set */
-    clip-path: circle(150% at var(--x, 50%) var(--y, 50%));
-    opacity: 1;
-  }
-}
-
-::view-transition-new(root) {
-  /* Apply the reveal animation */
-  animation: reveal 0.4s ease-in-out forwards;
 }
 
 /* Mention styles */
