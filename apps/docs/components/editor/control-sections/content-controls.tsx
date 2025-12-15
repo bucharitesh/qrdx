@@ -1,8 +1,17 @@
 "use client";
 
 import {
+  AmazonForm,
+  AttendanceForm,
+  BitcoinForm,
+  CalcomForm,
+  DubshForm,
   EmailForm,
+  EthereumForm,
+  EtsyForm,
   FacebookForm,
+  FlipkartForm,
+  GoogleReviewForm,
   InstagramForm,
   LinkedInForm,
   MapsForm,
@@ -12,12 +21,15 @@ import {
   RedditForm,
   SmsForm,
   SnapchatForm,
+  SpotifyForm,
+  TextForm,
   ThreadsForm,
   TikTokForm,
   TwitterForm,
   UPIForm,
   UrlForm,
   VCardForm,
+  VenmoForm,
   WhatsAppForm,
   WifiForm,
   YouTubeForm,
@@ -34,6 +46,7 @@ export function ContentControls() {
 
       <div className="space-y-4">
         {contentType === "url" && <UrlForm />}
+        {contentType === "text" && <TextForm />}
         {contentType === "email" && <EmailForm />}
         {contentType === "phone" && <PhoneForm />}
         {contentType === "sms" && <SmsForm />}
@@ -53,6 +66,17 @@ export function ContentControls() {
         {contentType === "threads" && <ThreadsForm />}
         {contentType === "upi" && <UPIForm />}
         {contentType === "paypal" && <PayPalForm />}
+        {contentType === "google-review" && <GoogleReviewForm />}
+        {contentType === "venmo" && <VenmoForm />}
+        {contentType === "spotify" && <SpotifyForm />}
+        {contentType === "bitcoin" && <BitcoinForm />}
+        {contentType === "ethereum" && <EthereumForm />}
+        {contentType === "etsy" && <EtsyForm />}
+        {contentType === "dubsh" && <DubshForm />}
+        {contentType === "attendance" && <AttendanceForm />}
+        {contentType === "amazon" && <AmazonForm />}
+        {contentType === "flipkart" && <FlipkartForm />}
+        {contentType === "calcom" && <CalcomForm />}
       </div>
     </div>
   );

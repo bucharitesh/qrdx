@@ -186,8 +186,129 @@ export const paypalSchema = z.object({
     .url("Invalid PayPal URL"),
 });
 
+// Plain Text
+export const textSchema = z.object({
+  text: z.string().min(1, "Text is required"),
+});
+
+// Google Review
+export const googleReviewSchema = z.object({
+  placeId: z.string().min(1, "Place ID is required"),
+});
+
+// Venmo
+export const venmoSchema = z.object({
+  username: z
+    .string()
+    .min(1, "Venmo username is required")
+    .regex(/^@?[\w-]+$/, "Invalid Venmo username"),
+  amount: z
+    .string()
+    .regex(/^\d*\.?\d*$/, "Invalid amount format")
+    .optional()
+    .or(z.literal("")),
+  note: z.string().optional(),
+});
+
+// Spotify
+export const spotifySchema = z.object({
+  uri: z
+    .string()
+    .min(1, "Spotify URI or URL is required")
+    .refine(
+      (val) =>
+        val.startsWith("spotify:") ||
+        val.includes("spotify.com") ||
+        val.startsWith("https://"),
+      "Invalid Spotify URI or URL",
+    ),
+});
+
+// Bitcoin
+export const bitcoinSchema = z.object({
+  address: z
+    .string()
+    .min(26, "Invalid Bitcoin address")
+    .max(62, "Invalid Bitcoin address"),
+  amount: z
+    .string()
+    .regex(/^\d*\.?\d*$/, "Invalid amount format")
+    .optional()
+    .or(z.literal("")),
+  label: z.string().optional(),
+  message: z.string().optional(),
+});
+
+// Ethereum
+export const ethereumSchema = z.object({
+  address: z
+    .string()
+    .min(1, "Ethereum address is required")
+    .regex(/^0x[a-fA-F0-9]{40}$/, "Invalid Ethereum address format"),
+  amount: z
+    .string()
+    .regex(/^\d*\.?\d*$/, "Invalid amount format")
+    .optional()
+    .or(z.literal("")),
+  gas: z
+    .string()
+    .regex(/^\d*\.?\d*$/, "Invalid gas format")
+    .optional()
+    .or(z.literal("")),
+});
+
+// Etsy
+export const etsySchema = z.object({
+  shopUrl: z.string().min(1, "Etsy shop URL is required").url("Invalid URL"),
+});
+
+// Dub.sh
+export const dubshSchema = z.object({
+  shortUrl: z.string().min(1, "Short URL is required").url("Invalid URL"),
+});
+
+// Attendance (Google Form)
+export const attendanceSchema = z.object({
+  formUrl: z
+    .string()
+    .min(1, "Google Form URL is required")
+    .url("Invalid URL")
+    .refine(
+      (val) => val.includes("google.com/forms") || val.includes("forms.gle"),
+      "Must be a Google Forms URL",
+    ),
+});
+
+// Amazon
+export const amazonSchema = z.object({
+  productUrl: z
+    .string()
+    .min(1, "Amazon product URL is required")
+    .url("Invalid URL")
+    .refine((val) => val.includes("amazon."), "Must be an Amazon URL"),
+});
+
+// Flipkart
+export const flipkartSchema = z.object({
+  productUrl: z
+    .string()
+    .min(1, "Flipkart product URL is required")
+    .url("Invalid URL")
+    .refine((val) => val.includes("flipkart.com"), "Must be a Flipkart URL"),
+});
+
+// Cal.com
+export const calcomSchema = z.object({
+  bookingUrl: z
+    .string()
+    .min(1, "Cal.com booking URL is required")
+    .url("Invalid URL")
+    .refine((val) => val.includes("cal.com"), "Must be a Cal.com URL"),
+});
+
 // Export type inference helpers
 export type UrlFormData = z.infer<typeof urlSchema>;
+export type TextFormData = z.infer<typeof textSchema>;
 export type EmailFormData = z.infer<typeof emailSchema>;
 export type PhoneFormData = z.infer<typeof phoneSchema>;
 export type SmsFormData = z.infer<typeof smsSchema>;
@@ -207,3 +328,14 @@ export type SnapchatFormData = z.infer<typeof snapchatSchema>;
 export type ThreadsFormData = z.infer<typeof threadsSchema>;
 export type UPIFormData = z.infer<typeof upiSchema>;
 export type PayPalFormData = z.infer<typeof paypalSchema>;
+export type GoogleReviewFormData = z.infer<typeof googleReviewSchema>;
+export type VenmoFormData = z.infer<typeof venmoSchema>;
+export type SpotifyFormData = z.infer<typeof spotifySchema>;
+export type BitcoinFormData = z.infer<typeof bitcoinSchema>;
+export type EthereumFormData = z.infer<typeof ethereumSchema>;
+export type EtsyFormData = z.infer<typeof etsySchema>;
+export type DubshFormData = z.infer<typeof dubshSchema>;
+export type AttendanceFormData = z.infer<typeof attendanceSchema>;
+export type AmazonFormData = z.infer<typeof amazonSchema>;
+export type FlipkartFormData = z.infer<typeof flipkartSchema>;
+export type CalcomFormData = z.infer<typeof calcomSchema>;

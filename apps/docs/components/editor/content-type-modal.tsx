@@ -1,9 +1,8 @@
 /** biome-ignore-all lint/suspicious/noArrayIndexKey: needed for list rendering */
-/** biome-ignore-all lint/a11y/noStaticElementInteractions: <explanation> */
-/** biome-ignore-all lint/a11y/useKeyWithClickEvents: <explanation> */
+/** biome-ignore-all lint/a11y/noStaticElementInteractions: click handlers are intentional */
+/** biome-ignore-all lint/a11y/useKeyWithClickEvents: keyboard events handled by parent */
 "use client";
 
-import { Button } from "@repo/design-system/components/ui/button";
 import { Card, CardContent } from "@repo/design-system/components/ui/card";
 import { Input } from "@repo/design-system/components/ui/input";
 import {
@@ -15,27 +14,38 @@ import { ScrollArea } from "@repo/design-system/components/ui/scroll-area";
 import { cn } from "@repo/design-system/lib/utils";
 import {
   AtSign,
+  Bitcoin,
+  Calendar,
   Camera,
+  ClipboardCheck,
   CreditCard,
   DollarSign,
+  FileText,
+  Hexagon,
   Image,
   Instagram,
   Link,
+  Link2,
   Linkedin,
   type LucideIcon,
   Mail,
   MapPin,
   MessageCircle,
   MessageSquare,
+  Music,
   Phone,
   Search,
   Share2,
+  ShoppingBag,
+  ShoppingCart,
   Sparkles,
+  Star,
   Store,
   Twitter,
   UserCircle,
   Video,
   Wifi,
+  Wrench,
   Youtube,
 } from "lucide-react";
 import * as React from "react";
@@ -52,25 +62,36 @@ import {
 // Map icon names to actual icon components
 const iconMap: Record<string, LucideIcon> = {
   AtSign,
+  Bitcoin,
+  Calendar,
   Camera,
+  ClipboardCheck,
   CreditCard,
   DollarSign,
+  FileText,
+  Hexagon,
   Image,
   Instagram,
   Link,
+  Link2,
   Linkedin,
   Mail,
   MapPin,
   MessageCircle,
   MessageSquare,
+  Music,
   Phone,
   Share2,
+  ShoppingBag,
+  ShoppingCart,
   Sparkles,
+  Star,
   Store,
   Twitter,
   UserCircle,
   Video,
   Wifi,
+  Wrench,
   Youtube,
 };
 
