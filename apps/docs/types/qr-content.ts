@@ -5,6 +5,7 @@
 
 export type ContentType =
   | "url"
+  | "text"
   | "email"
   | "phone"
   | "sms"
@@ -23,7 +24,18 @@ export type ContentType =
   | "snapchat"
   | "threads"
   | "upi"
-  | "paypal";
+  | "paypal"
+  | "google-review"
+  | "venmo"
+  | "spotify"
+  | "bitcoin"
+  | "ethereum"
+  | "etsy"
+  | "dubsh"
+  | "attendance"
+  | "amazon"
+  | "flipkart"
+  | "calcom";
 
 /**
  * URL/Plain Text Content
@@ -205,10 +217,114 @@ export interface PayPalContent {
 }
 
 /**
+ * Plain Text Content (separate from URL)
+ */
+export interface TextContent {
+  type: "text";
+  text: string;
+}
+
+/**
+ * Google Review Content
+ */
+export interface GoogleReviewContent {
+  type: "google-review";
+  placeId: string;
+}
+
+/**
+ * Venmo Content
+ */
+export interface VenmoContent {
+  type: "venmo";
+  username: string;
+  amount?: string;
+  note?: string;
+}
+
+/**
+ * Spotify Content
+ */
+export interface SpotifyContent {
+  type: "spotify";
+  uri: string; // Can be artist, album, playlist, or track URI
+}
+
+/**
+ * Bitcoin Payment Content
+ */
+export interface BitcoinContent {
+  type: "bitcoin";
+  address: string;
+  amount?: string;
+  label?: string;
+  message?: string;
+}
+
+/**
+ * Ethereum Payment Content
+ */
+export interface EthereumContent {
+  type: "ethereum";
+  address: string;
+  amount?: string;
+  gas?: string;
+}
+
+/**
+ * Etsy Content
+ */
+export interface EtsyContent {
+  type: "etsy";
+  shopUrl: string;
+}
+
+/**
+ * Dub.sh Content
+ */
+export interface DubshContent {
+  type: "dubsh";
+  shortUrl: string;
+}
+
+/**
+ * Attendance Content (Google Form)
+ */
+export interface AttendanceContent {
+  type: "attendance";
+  formUrl: string;
+}
+
+/**
+ * Amazon Content
+ */
+export interface AmazonContent {
+  type: "amazon";
+  productUrl: string;
+}
+
+/**
+ * Flipkart Content
+ */
+export interface FlipkartContent {
+  type: "flipkart";
+  productUrl: string;
+}
+
+/**
+ * Cal.com Calendar Content
+ */
+export interface CalcomContent {
+  type: "calcom";
+  bookingUrl: string;
+}
+
+/**
  * Union type for all content configurations
  */
 export type QRContentConfig =
   | UrlContent
+  | TextContent
   | EmailContent
   | PhoneContent
   | SmsContent
@@ -227,7 +343,18 @@ export type QRContentConfig =
   | SnapchatContent
   | ThreadsContent
   | UPIContent
-  | PayPalContent;
+  | PayPalContent
+  | GoogleReviewContent
+  | VenmoContent
+  | SpotifyContent
+  | BitcoinContent
+  | EthereumContent
+  | EtsyContent
+  | DubshContent
+  | AttendanceContent
+  | AmazonContent
+  | FlipkartContent
+  | CalcomContent;
 
 /**
  * Content type metadata for UI rendering
@@ -242,9 +369,15 @@ export interface ContentTypeMetadata {
 export const CONTENT_TYPES_METADATA: ContentTypeMetadata[] = [
   {
     type: "url",
-    label: "URL / Text",
+    label: "URL",
     icon: "Link",
-    description: "Website link or plain text",
+    description: "Website link",
+  },
+  {
+    type: "text",
+    label: "Plain Text",
+    icon: "FileText",
+    description: "Plain text content",
   },
   {
     type: "email",
@@ -360,6 +493,72 @@ export const CONTENT_TYPES_METADATA: ContentTypeMetadata[] = [
     icon: "DollarSign",
     description: "PayPal payment link",
   },
+  {
+    type: "google-review",
+    label: "Google Review",
+    icon: "Star",
+    description: "Link to Google Business review",
+  },
+  {
+    type: "venmo",
+    label: "Venmo",
+    icon: "DollarSign",
+    description: "Venmo payment request",
+  },
+  {
+    type: "spotify",
+    label: "Spotify",
+    icon: "Music",
+    description: "Link to Spotify content",
+  },
+  {
+    type: "bitcoin",
+    label: "Bitcoin",
+    icon: "Bitcoin",
+    description: "Bitcoin payment address",
+  },
+  {
+    type: "ethereum",
+    label: "Ethereum",
+    icon: "Hexagon",
+    description: "Ethereum payment address",
+  },
+  {
+    type: "etsy",
+    label: "Etsy",
+    icon: "Store",
+    description: "Link to Etsy shop",
+  },
+  {
+    type: "dubsh",
+    label: "Dub.sh",
+    icon: "Link2",
+    description: "Dub.sh short link",
+  },
+  {
+    type: "attendance",
+    label: "Attendance",
+    icon: "ClipboardCheck",
+    description: "Google Form for attendance",
+  },
+  {
+    type: "amazon",
+    label: "Amazon",
+    icon: "ShoppingCart",
+    description: "Amazon product link",
+  },
+  {
+    type: "flipkart",
+    label: "Flipkart",
+    icon: "ShoppingBag",
+    description: "Flipkart product link",
+  },
+  {
+    type: "calcom",
+    label: "Cal.com",
+    icon: "Calendar",
+    description: "Cal.com booking link",
+  },
 ];
 
 /**
@@ -379,12 +578,14 @@ export const CONTENT_CATEGORIES: ContentCategory[] = [
     icon: "Sparkles",
     types: [
       "url",
+      "text",
       "email",
       "phone",
       "whatsapp",
       "vcard",
       "instagram",
       "facebook",
+      "calcom",
     ],
   },
   {
@@ -393,12 +594,14 @@ export const CONTENT_CATEGORIES: ContentCategory[] = [
     icon: null,
     types: [
       "url",
+      "text",
       "email",
       "phone",
       "whatsapp",
       "instagram",
       "facebook",
       "twitter",
+      "spotify",
     ],
   },
   {
@@ -422,19 +625,40 @@ export const CONTENT_CATEGORIES: ContentCategory[] = [
       "snapchat",
       "pinterest",
       "threads",
+      "spotify",
     ],
   },
   {
     id: "payments",
     label: "Payments",
     icon: "CreditCard",
-    types: ["upi", "paypal"],
+    types: ["upi", "paypal", "venmo", "bitcoin", "ethereum"],
   },
   {
     id: "business",
     label: "Business",
     icon: "Store",
-    types: ["vcard", "url", "maps", "linkedin"],
+    types: [
+      "vcard",
+      "url",
+      "maps",
+      "linkedin",
+      "google-review",
+      "calcom",
+      "attendance",
+    ],
+  },
+  {
+    id: "e-commerce",
+    label: "E-commerce",
+    icon: "ShoppingCart",
+    types: ["amazon", "flipkart", "etsy"],
+  },
+  {
+    id: "utilities",
+    label: "Utilities",
+    icon: "Wrench",
+    types: ["dubsh", "attendance", "calcom"],
   },
   {
     id: "connectivity",
@@ -453,11 +677,13 @@ export const FOR_YOU_SECTIONS = [
     title: "Popular",
     types: [
       "url",
+      "text",
       "email",
       "phone",
       "whatsapp",
       "instagram",
       "facebook",
+      "spotify",
     ] as ContentType[],
   },
   {
@@ -470,12 +696,13 @@ export const FOR_YOU_SECTIONS = [
       "linkedin",
       "tiktok",
       "youtube",
+      "spotify",
     ] as ContentType[],
   },
   {
     id: "payments",
     title: "Payments",
-    types: ["upi", "paypal"] as ContentType[],
+    types: ["upi", "paypal", "venmo", "bitcoin", "ethereum"] as ContentType[],
   },
   {
     id: "messaging",
@@ -485,6 +712,18 @@ export const FOR_YOU_SECTIONS = [
   {
     id: "business",
     title: "Business & Professional",
-    types: ["vcard", "url", "maps"] as ContentType[],
+    types: [
+      "vcard",
+      "url",
+      "maps",
+      "google-review",
+      "calcom",
+      "attendance",
+    ] as ContentType[],
+  },
+  {
+    id: "e-commerce",
+    title: "E-commerce",
+    types: ["amazon", "flipkart", "etsy"] as ContentType[],
   },
 ];

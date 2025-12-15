@@ -195,8 +195,10 @@ export async function getQRAsSVGDataUri(props: QRProps) {
         },
       };
     } catch (error) {
-      console.error("Failed to load image for QR code:", error);
-      // Continue without the image if it fails to load
+      // Remove the image from settings if it fails to load
+      // This prevents SVG from containing external URLs that will fail during canvas conversion
+      const { imageSettings: _removed, ...propsWithoutImage } = props;
+      updatedProps = propsWithoutImage;
     }
   }
 
@@ -215,6 +217,7 @@ export async function getQRAsSVGDataUri(props: QRProps) {
     templateId: updatedProps.templateId, // Ensure templateId is passed
     customTemplate: updatedProps.customTemplate, // Ensure customTemplate is passed
   });
+
   const svgString = renderToStaticMarkup(svgElement);
 
   return `data:image/svg+xml,${encodeURIComponent(svgString)}`;
@@ -222,26 +225,43 @@ export async function getQRAsSVGDataUri(props: QRProps) {
 
 const getBase64Image = (imgUrl: string) =>
   new Promise((resolve, reject) => {
+    // If already a data URL, return as is
+    if (imgUrl.startsWith("data:")) {
+      resolve(imgUrl);
+      return;
+    }
+
     const img = new Image();
-    img.src = imgUrl;
-    img.setAttribute("crossOrigin", "anonymous");
+    // Set crossOrigin before setting src
+    img.crossOrigin = "anonymous";
 
     img.onload = () => {
-      const canvas = document.createElement("canvas");
+      try {
+        const canvas = document.createElement("canvas");
+        canvas.width = img.naturalWidth || img.width;
+        canvas.height = img.naturalHeight || img.height;
 
-      canvas.width = img.width;
-      canvas.height = img.height;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          reject(new Error("Could not get canvas context"));
+          return;
+        }
 
-      const ctx = canvas.getContext("2d");
-      ctx?.drawImage(img, 0, 0);
+        ctx.drawImage(img, 0, 0);
+        const dataURL = canvas.toDataURL("image/png");
 
-      const dataURL = canvas.toDataURL("image/png");
-      resolve(dataURL);
+        canvas.remove();
+        resolve(dataURL);
+      } catch (error) {
+        reject(new Error(`Failed to convert image to base64: ${error}`));
+      }
     };
 
     img.onerror = () => {
-      reject("The image could not be loaded.");
+      reject(new Error(`Could not load image from ${imgUrl.substring(0, 100)}... Check CORS settings or use a data URL.`));
     };
+
+    img.src = imgUrl;
   });
 
 // function waitUntilImageLoaded(img: HTMLImageElement, src: string) {
@@ -269,25 +289,52 @@ export async function getQRAsCanvas(
     svgDataUri.replace("data:image/svg+xml,", "")
   );
 
+  // Convert SVG to base64 for better compatibility
+  let base64DataUri: string;
+  try {
+    // Use modern approach instead of deprecated unescape
+    const utf8Bytes = new TextEncoder().encode(svgString);
+    const binaryString = Array.from(utf8Bytes, (byte) =>
+      String.fromCharCode(byte)
+    ).join("");
+    const base64SVG = btoa(binaryString);
+    base64DataUri = `data:image/svg+xml;base64,${base64SVG}`;
+  } catch (error) {
+    throw new Error(`Failed to encode SVG for canvas conversion: ${error}`);
+  }
+
   return new Promise((resolve, reject) => {
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
+
+    if (!ctx) {
+      reject(new Error("Could not get canvas context"));
+      return;
+    }
+
     const img = new Image();
 
     // Set canvas size to match the QR code
-    canvas.width = props.size || DEFAULT_SIZE;
-    canvas.height = props.size || DEFAULT_SIZE;
+    const size = props.size || DEFAULT_SIZE;
+    canvas.width = size;
+    canvas.height = size;
+
+    // Add timeout to prevent hanging
+    const timeout = setTimeout(() => {
+      canvas.remove();
+      reject(new Error("SVG load timeout - image may be too large or contain invalid data"));
+    }, 30000); // 30 second timeout
 
     img.onload = () => {
-      URL.revokeObjectURL(url);
-      if (ctx) {
+      clearTimeout(timeout);
+      try {
         // Fill white background for JPG
         if (type === "image/jpeg") {
           ctx.fillStyle = "white";
           ctx.fillRect(0, 0, canvas.width, canvas.height);
         }
 
-        ctx.drawImage(img, 0, 0);
+        ctx.drawImage(img, 0, 0, size, size);
 
         if (getCanvas) {
           resolve(canvas);
@@ -296,21 +343,21 @@ export async function getQRAsCanvas(
           canvas.remove();
           resolve(dataUrl);
         }
-      } else {
-        reject(new Error("Could not get canvas context"));
+      } catch (error) {
+        clearTimeout(timeout);
+        canvas.remove();
+        reject(new Error(`Failed to draw SVG to canvas: ${error}`));
       }
     };
 
     img.onerror = () => {
-      URL.revokeObjectURL(url);
+      clearTimeout(timeout);
+      canvas.remove();
       reject(new Error("Could not load SVG"));
     };
 
-    const svgBlob = new Blob([svgString], {
-      type: "image/svg+xml;charset=utf-8",
-    });
-    const url = URL.createObjectURL(svgBlob);
-    img.src = url;
+    // Use base64-encoded data URI for maximum compatibility
+    img.src = base64DataUri;
   });
 }
 

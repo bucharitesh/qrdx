@@ -9,7 +9,7 @@ export default async function UsagePage() {
     headers: await headers(),
   });
 
-  if (!session) redirect("/editor/qr");
+  if (!session) redirect("/playground");
 
   return (
     <div>

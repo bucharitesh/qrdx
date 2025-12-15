@@ -15,7 +15,7 @@ export function EditButton({ themeId, disabled, className, ...props }: EditButto
   const isEditing = pathname.includes(themeId);
 
   // Keep the current search params for tab persistence
-  const href = `/editor/qr/${themeId}?${searchParams}`;
+  const href = `/playground/${themeId}?${searchParams}`;
 
   return (
     <TooltipWrapper label="Edit theme" asChild>

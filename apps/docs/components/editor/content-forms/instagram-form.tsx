@@ -21,6 +21,13 @@ export function InstagramForm() {
   });
   const [errors, setErrors] = React.useState<Record<string, string>>({});
 
+  // Sync with store when config changes (e.g., from smart paste)
+  React.useEffect(() => {
+    if (storedConfig?.username && storedConfig.username !== instagramData.username) {
+      setInstagramData({ username: storedConfig.username });
+    }
+  }, [storedConfig]);
+
   React.useEffect(() => {
     // Validate and encode
     const result = instagramSchema.safeParse(instagramData);

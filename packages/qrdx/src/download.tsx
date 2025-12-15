@@ -2,7 +2,7 @@ import type { QRProps } from "../types";
 import { DEFAULT_SIZE } from "./constants";
 import { getQRAsCanvas, getQRAsSVGDataUri } from "./index";
 
-export type DownloadFormat = "png" | "jpg" | "svg";
+export type DownloadFormat = "png" | "jpg" | "svg" | "pdf";
 
 export type DownloadSize = {
   width: number;
@@ -84,6 +84,8 @@ function getMimeType(format: DownloadFormat): string {
       return "image/jpeg";
     case "svg":
       return "image/svg+xml";
+    case "pdf":
+      return "application/pdf";
     default:
       return "image/png";
   }
@@ -93,8 +95,95 @@ function getMimeType(format: DownloadFormat): string {
  * Get the file extension for a given format
  */
 function getFileExtension(format: DownloadFormat): string {
-  return format === "jpg" ? "jpg" : format;
+  return format;
 }
+
+/**
+ * Convert QR code to PDF format
+ */
+async function getQRAsPDF(qrProps: QRProps): Promise<string> {
+  const { jsPDF } = await import("jspdf");
+
+  // Get the SVG as a data URI
+  const svgDataUri = await getQRAsSVGDataUri(qrProps);
+  const svgString = decodeURIComponent(
+    svgDataUri.replace("data:image/svg+xml,", "")
+  );
+
+  // Convert SVG to base64 for better compatibility
+  let base64DataUri: string;
+  try {
+    const utf8Bytes = new TextEncoder().encode(svgString);
+    const binaryString = Array.from(utf8Bytes, (byte) =>
+      String.fromCharCode(byte)
+    ).join("");
+    const base64SVG = btoa(binaryString);
+    base64DataUri = `data:image/svg+xml;base64,${base64SVG}`;
+  } catch (error) {
+    throw new Error(`Failed to encode SVG for PDF conversion: ${error}`);
+  }
+
+  // Get canvas from SVG using base64 encoding
+  const canvas = await new Promise<HTMLCanvasElement>((resolve, reject) => {
+    const img = new Image();
+    const tempCanvas = document.createElement("canvas");
+    const size = qrProps.size || DEFAULT_SIZE;
+
+    tempCanvas.width = size;
+    tempCanvas.height = size;
+
+    const ctx = tempCanvas.getContext("2d");
+    if (!ctx) {
+      reject(new Error("Could not get canvas context"));
+      return;
+    }
+
+    // Add timeout to prevent hanging
+    const timeout = setTimeout(() => {
+      tempCanvas.remove();
+      reject(new Error("SVG load timeout - image may be too large or contain invalid data"));
+    }, 30000); // 30 second timeout
+
+    img.onload = () => {
+      clearTimeout(timeout);
+      try {
+        ctx.drawImage(img, 0, 0, size, size);
+        resolve(tempCanvas);
+      } catch (error) {
+        clearTimeout(timeout);
+        tempCanvas.remove();
+        reject(new Error(`Failed to draw image to canvas: ${error}`));
+      }
+    };
+
+    img.onerror = () => {
+      clearTimeout(timeout);
+      tempCanvas.remove();
+      reject(new Error("Could not load SVG for PDF conversion"));
+    };
+
+    img.src = base64DataUri;
+  });
+
+  // Create PDF with the canvas
+  const imgData = canvas.toDataURL("image/png", 1.0);
+  const size = qrProps.size || DEFAULT_SIZE;
+  const mmSize = size * 0.264_583; // Convert pixels to mm (assuming 96 DPI)
+
+  const pdf = new jsPDF({
+    orientation: "portrait",
+    unit: "mm",
+    format: [mmSize, mmSize],
+  });
+
+  pdf.addImage(imgData, "PNG", 0, 0, mmSize, mmSize);
+
+  canvas.remove();
+
+  // Return as data URL
+  return pdf.output("dataurlstring");
+}
+
 
 /**
  * Downloads a QR code with the specified options
@@ -125,6 +214,10 @@ export async function downloadQRCode(
       // Download as SVG
       const svgDataUri = await getQRAsSVGDataUri(propsWithSize);
       downloadFile(svgDataUri, finalFilename);
+    } else if (format === "pdf") {
+      // Download as PDF
+      const pdfDataUrl = await getQRAsPDF(propsWithSize);
+      downloadFile(pdfDataUrl, finalFilename);
     } else {
       // Download as PNG or JPG
       const mimeType = getMimeType(format);
@@ -163,6 +256,10 @@ export async function getQRCodeDataUrl(
 
   if (format === "svg") {
     return await getQRAsSVGDataUri(propsWithSize);
+  }
+
+  if (format === "pdf") {
+    return await getQRAsPDF(propsWithSize);
   }
 
   const mimeType = getMimeType(format);
