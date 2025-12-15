@@ -84,11 +84,11 @@ export function QRThemeCard({ theme, className }: QRThemeCardProps) {
 
   const handleQuickApply = () => {
     applyThemePreset(theme.id);
-    router.push("/editor/qr");
+    router.push("/playground");
   };
 
   const handleShare = () => {
-    const url = `${window.location.origin}/editor/qr/${theme.id}`;
+    const url = `${window.location.origin}/playground/${theme.id}`;
     navigator.clipboard.writeText(url);
     toast.success("Theme URL copied to clipboard!");
   };
@@ -147,7 +147,7 @@ export function QRThemeCard({ theme, className }: QRThemeCardProps) {
               Quick Apply
             </DropdownMenuItem>
             <DropdownMenuItem asChild className="gap-2">
-              <Link href={`/editor/qr/${theme.id}`} target="_blank">
+              <Link href={`/playground/${theme.id}`} target="_blank">
                 <ExternalLink className="h-4 w-4" />
                 Open Theme
               </Link>

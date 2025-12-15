@@ -198,7 +198,7 @@ const ResponsiveDialogClose = ({
 };
 ResponsiveDialogClose.displayName = "ResponsiveDialogClose";
 
-const ResponsiveDialogContentVariants = cva("fixed z-[9999] bg-background", {
+const ResponsiveDialogContentVariants = cva("fixed z-[99] bg-background", {
   variants: {
     device: {
       desktop:

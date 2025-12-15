@@ -22,6 +22,19 @@ export function WhatsAppForm() {
     message: storedConfig?.message || "",
   });
 
+  // Sync with store when config changes (e.g., from smart paste)
+  React.useEffect(() => {
+    if (storedConfig && (storedConfig.phoneNumber || storedConfig.message)) {
+      if (storedConfig.phoneNumber !== whatsappData.phoneNumber || 
+          storedConfig.message !== whatsappData.message) {
+        setWhatsappData({
+          phoneNumber: storedConfig.phoneNumber || "",
+          message: storedConfig.message || "",
+        });
+      }
+    }
+  }, [storedConfig]);
+
   React.useEffect(() => {
     const config: WhatsAppContent = { type: "whatsapp", ...whatsappData };
     const encoded = encodeWhatsApp(config);

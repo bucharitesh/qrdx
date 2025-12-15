@@ -161,7 +161,7 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
                 <SelectTrigger id="size-select" className="w-full">
                   <SelectValue placeholder="Select size" />
                 </SelectTrigger>
-                <SelectContent className="w-full">
+                <SelectContent className="w-full z-100">
                   <SelectItem value="small">200 × 200</SelectItem>
                   <SelectItem value="medium">400 × 400</SelectItem>
                   <SelectItem value="large">800 × 800</SelectItem>
@@ -180,16 +180,20 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
                 defaultValue={downloadOptions.format}
                 value={downloadOptions.format}
                 onValueChange={(value) =>
-                  updateDownloadOption("format", value as "png" | "jpg" | "svg")
+                  updateDownloadOption(
+                    "format",
+                    value as "png" | "jpg" | "svg" | "pdf",
+                  )
                 }
               >
                 <SelectTrigger id="format-select" className="w-full">
                   <SelectValue placeholder="Select format" />
                 </SelectTrigger>
-                <SelectContent className="w-full">
+                <SelectContent className="w-full z-100">
                   <SelectItem value="png">PNG</SelectItem>
                   <SelectItem value="jpg">JPG</SelectItem>
                   <SelectItem value="svg">SVG</SelectItem>
+                  <SelectItem value="pdf">PDF</SelectItem>
                 </SelectContent>
               </Select>
             </div>

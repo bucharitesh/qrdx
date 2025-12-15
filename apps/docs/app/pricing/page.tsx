@@ -83,7 +83,7 @@ export default function PricingPage() {
                 className="hover:bg-muted/50 h-12 w-full text-base font-medium transition-all duration-200"
                 size="lg"
               >
-                <Link href="/editor/qr">Get Started Free</Link>
+                <Link href="/playground">Get Started Free</Link>
               </Button>
             </CardFooter>
           </Card>
@@ -147,7 +147,7 @@ export default function PricingPage() {
             </h2>
             <p className="text-muted-foreground mx-auto max-w-2xl text-base text-balance md:text-lg">
               Here&apos;s everything you may want to know. For any other info, just{" "}
-              <Link href="mailto:support@qrdx.com" className="text-primary hover:underline">
+              <Link href="mailto:support@qrdx.dev" className="text-primary hover:underline">
                 reach us
               </Link>
               .
@@ -176,7 +176,7 @@ export default function PricingPage() {
             <p className="text-muted-foreground text-pretty">
               Need something custom or have questions?
             </p>
-            <Link href="mailto:support@qrdx.com">
+            <Link href="mailto:support@qrdx.dev">
               <Button variant="link">
                 <Mail className="size-4" />
                 Get in touch

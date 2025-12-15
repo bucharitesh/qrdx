@@ -7,7 +7,7 @@ export default async function SettingsIndex() {
     headers: await headers(),
   });
 
-  if (!session) redirect("/editor/qr");
+  if (!session) redirect("/playground");
 
   redirect("/settings/themes");
 }

@@ -29,7 +29,7 @@ export function QREditActions({ theme, disabled = false }: QREditActionsProps) {
   const { updatePreset } = useThemePresetStore();
   const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
 
-  const mainEditorUrl = `/editor/qr?${searchParams}`;
+  const mainEditorUrl = `/playground?${searchParams}`;
 
   const handleCancel = () => {
     // Keep the current search params for tab persistence

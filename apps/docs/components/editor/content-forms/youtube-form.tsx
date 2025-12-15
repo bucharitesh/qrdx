@@ -21,6 +21,19 @@ export function YouTubeForm() {
     videoUrl: storedConfig?.videoUrl || "",
   });
 
+  // Sync with store when config changes (e.g., from smart paste)
+  React.useEffect(() => {
+    if (storedConfig && (storedConfig.channelUrl || storedConfig.videoUrl)) {
+      if (storedConfig.channelUrl !== youtubeData.channelUrl || 
+          storedConfig.videoUrl !== youtubeData.videoUrl) {
+        setYoutubeData({
+          channelUrl: storedConfig.channelUrl || "",
+          videoUrl: storedConfig.videoUrl || "",
+        });
+      }
+    }
+  }, [storedConfig]);
+
   React.useEffect(() => {
     const config: YouTubeContent = { type: "youtube", ...youtubeData };
     const encoded = encodeYouTube(config);

@@ -33,6 +33,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "jspdf": "^3.0.4",
     "jsqr": "^1.4.0",
     "react": "19.2.1",
     "zod": "^4.1.12"
