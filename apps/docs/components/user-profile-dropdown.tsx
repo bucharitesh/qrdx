@@ -18,6 +18,7 @@ import { BookLock, Loader2, LogOut, Settings } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { usePostHog } from "posthog-js/react";
 import { authClient } from "@/lib/auth-client";
 import { useAuthStore } from "@/store/auth-store";
 
@@ -25,8 +26,10 @@ export function UserProfileDropdown() {
   const { data: session, isPending } = authClient.useSession();
   const { openAuthDialog } = useAuthStore();
   const router = useRouter();
+  const posthog = usePostHog();
 
   const handleLogOut = async () => {
+    posthog.reset();
     await authClient.signOut();
     router.refresh();
   };

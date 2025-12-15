@@ -1,5 +1,6 @@
 "use client";
 
+import { usePostHog } from "posthog-js/react";
 import { createContext, type ReactNode, useContext, useState } from "react";
 import { QRSaveDialog } from "@/components/editor/qr-save-dialog";
 import { QRShareDialog } from "@/components/editor/qr-share-dialog";
@@ -40,6 +41,7 @@ function useQRDialogActionsStore(): QRDialogActionsContextType {
   const { data: session } = authClient.useSession();
   const { openAuthDialog } = useAuthStore();
   const createThemeMutation = useCreateQRTheme();
+  const posthog = usePostHog();
 
   usePostLoginAction("SAVE_THEME", () => {
     setSaveDialogOpen(true);
@@ -83,6 +85,12 @@ function useQRDialogActionsStore(): QRDialogActionsContextType {
         createdAt: theme.createdAt.toISOString(),
       };
 
+      posthog.capture("CREATE_THEME", {
+        themeId: theme.id,
+        themeName: theme.name,
+        themeStyles: theme.style,
+      });
+
       registerPreset(theme.id, savedPreset);
 
       // Apply the saved theme as current preset
@@ -117,6 +125,12 @@ function useQRDialogActionsStore(): QRDialogActionsContextType {
 
     const preset = getPreset(presetId);
     const isSavedPreset = preset?.source === "SAVED";
+
+    posthog.capture("SHARE_THEME", {
+      themeId: presetId,
+      themeName: preset?.label,
+      themeStyles: preset?.styles,
+    });
 
     const url = isSavedPreset
       ? `${window.location.origin}/playground/${presetId}`
