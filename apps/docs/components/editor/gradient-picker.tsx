@@ -428,6 +428,23 @@ export function GradientPicker({
   );
   const previewRef = useRef<HTMLDivElement>(null);
 
+  // Track previous value to detect external changes (e.g., theme changes)
+  const prevValueRef = useRef(value);
+
+  // TODO: Properly handle external changes to value prop
+  // Update internal state when value prop changes externally
+  if (prevValueRef.current !== value) {
+    prevValueRef.current = value;
+    setMode(getCurrentMode());
+    setSolidColor(getCurrentSolidColor());
+    setStops(getCurrentStops());
+    setAngle(
+      value && typeof value !== "string" && value.type === "linear"
+        ? (value.angle ?? 0)
+        : 0,
+    );
+  }
+
   const handleModeChange = useCallback(
     (newMode: ColorMode) => {
       setMode(newMode);
