@@ -20,6 +20,13 @@ export function TwitterForm() {
     username: storedConfig?.username || "",
   });
 
+  // Sync with store when config changes (e.g., from smart paste)
+  React.useEffect(() => {
+    if (storedConfig?.username && storedConfig.username !== twitterData.username) {
+      setTwitterData({ username: storedConfig.username });
+    }
+  }, [storedConfig]);
+
   React.useEffect(() => {
     const config: TwitterContent = { type: "twitter", ...twitterData };
     const encoded = encodeTwitter(config);
