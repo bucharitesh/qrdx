@@ -5,6 +5,7 @@ import { NextProvider } from "fumadocs-core/framework/next";
 import { TreeContextProvider } from "fumadocs-ui/contexts/tree";
 import type { Metadata, Viewport } from "next";
 import FeaturebaseScript from "@/components/featurebase-script";
+import { PostHogInit } from "@/components/posthog-init";
 import { ThemeScript } from "@/components/theme-script";
 import { source } from "@/lib/source";
 import { Body } from "./layout.client";
@@ -96,6 +97,7 @@ export default function Layout({ children }: LayoutProps<"/">) {
           </TreeContextProvider>
         </NextProvider>
         <FeaturebaseScript />
+        <PostHogInit />
       </Body>
     </html>
   );

@@ -1,5 +1,6 @@
 "use client";
 
+import { usePostHog } from "posthog-js/react";
 import { useEffect } from "react";
 import { AuthDialog } from "@/app/(auth)/components/auth-dialog";
 import { authClient } from "@/lib/auth-client";
@@ -15,10 +16,19 @@ export function AuthDialogWrapper() {
     clearPostLoginAction,
   } = useAuthStore();
   const { data: session } = authClient.useSession();
+  const posthog = usePostHog();
 
   useEffect(() => {
     if (isOpen && session) {
       closeAuthDialog();
+    }
+
+    if (session?.user?.email) {
+      // Identify user with PostHog
+      posthog.identify(session.user.email, {
+        name: session.user.name,
+        email: session.user.email,
+      });
     }
 
     if (session && postLoginAction) {
@@ -26,7 +36,14 @@ export function AuthDialogWrapper() {
       executePostLoginAction(postLoginAction);
       clearPostLoginAction();
     }
-  }, [session, isOpen, closeAuthDialog, postLoginAction, clearPostLoginAction]);
+  }, [
+    session,
+    isOpen,
+    closeAuthDialog,
+    postLoginAction,
+    clearPostLoginAction,
+    posthog,
+  ]);
 
   return (
     <AuthDialog
