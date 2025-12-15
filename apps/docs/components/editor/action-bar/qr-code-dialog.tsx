@@ -13,11 +13,11 @@ import {
   ScrollArea,
   ScrollBar,
 } from "@repo/design-system/components/ui/scroll-area";
+import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock";
 import { Check, Copy } from "lucide-react";
 import type { ColorConfig } from "qrdx/types";
 import { normalizeColorConfig } from "qrdx/types";
 import { useMemo, useState } from "react";
-import { CodeBlock } from "@/components/code-block";
 import { useQREditorStore } from "@/store/editor-store";
 
 interface QRCodeDialogProps {
@@ -229,11 +229,9 @@ ${props.join("\n")}
             </div>
             {/* Code content */}
             <ScrollArea className="relative flex-1">
-              <CodeBlock
-                code={fullComponentCode}
-                language="tsx"
-                className="h-full rounded-none border-0"
-              />
+              <div className="h-full w-full rounded-none border-0 bg-background [&_button[aria-label*='copy']]:hidden [&_button[aria-label*='Copy']]:hidden [&_pre]:m-0 [&_pre]:h-full [&_figure]:bg-transparent [&_figure]:border-0 [&_figure]:shadow-none [&_figure]:rounded-none">
+                <DynamicCodeBlock lang="tsx" code={fullComponentCode} />
+              </div>
               <ScrollBar orientation="horizontal" />
               <ScrollBar orientation="vertical" />
             </ScrollArea>
