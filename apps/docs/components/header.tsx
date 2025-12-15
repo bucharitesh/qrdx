@@ -14,7 +14,7 @@ export function Header() {
   // const { stargazersCount } = useGithubStars("bucharitesh", "qrdx"); // Update with your GitHub repo
 
   return (
-    <header className="border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
+    <header className="border-b bg-background/80 backdrop-blur supports-backdrop-filter:bg-background/10">
       <div className="flex items-center justify-between gap-2 p-4">
         <div className="flex items-center gap-4">
           <Link href="/" className="flex items-center gap-2">
