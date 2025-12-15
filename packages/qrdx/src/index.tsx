@@ -269,6 +269,10 @@ export async function getQRAsCanvas(
     svgDataUri.replace("data:image/svg+xml,", "")
   );
 
+  // Convert SVG to base64 for better compatibility
+  const base64SVG = btoa(unescape(encodeURIComponent(svgString)));
+  const base64DataUri = `data:image/svg+xml;base64,${base64SVG}`;
+
   return new Promise((resolve, reject) => {
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
@@ -279,7 +283,6 @@ export async function getQRAsCanvas(
     canvas.height = props.size || DEFAULT_SIZE;
 
     img.onload = () => {
-      URL.revokeObjectURL(url);
       if (ctx) {
         // Fill white background for JPG
         if (type === "image/jpeg") {
@@ -302,15 +305,11 @@ export async function getQRAsCanvas(
     };
 
     img.onerror = () => {
-      URL.revokeObjectURL(url);
       reject(new Error("Could not load SVG"));
     };
 
-    const svgBlob = new Blob([svgString], {
-      type: "image/svg+xml;charset=utf-8",
-    });
-    const url = URL.createObjectURL(svgBlob);
-    img.src = url;
+    // Use base64-encoded data URI for maximum compatibility
+    img.src = base64DataUri;
   });
 }
 
