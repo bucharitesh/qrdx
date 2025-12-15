@@ -1,0 +1,334 @@
+---
+title: Downloads & Export
+description: Export QR codes in multiple formats (PNG, JPG, SVG, PDF)
+icon: Download
+---
+
+## Download QR Codes
+
+qrdx provides comprehensive download functionality for exporting QR codes in multiple formats.
+
+## Basic Download with downloadQRCode
+
+The `downloadQRCode` function provides the easiest way to download QR codes:
+
+```tsx
+import { downloadQRCode, PRESET_SIZES } from 'qrdx';
+
+async function downloadQR() {
+  try {
+    await downloadQRCode(
+      {
+        value: "https://example.com",
+        size: 1024,
+        fgColor: "#000000",
+        bgColor: "#ffffff",
+        templateId: "default"
+      },
+      {
+        format: "png",
+        size: PRESET_SIZES.large, // { width: 800, height: 800 }
+        filename: "my-qrcode.png"
+      }
+    );
+  } catch (error) {
+    console.error("Download failed:", error);
+  }
+}
+```
+
+## Supported Formats
+
+### PNG (Portable Network Graphics)
+
+Best for web use, supports transparency:
+
+```tsx
+import { downloadQRCode } from 'qrdx';
+
+await downloadQRCode(
+  { value: "https://example.com", size: 512 },
+  { format: "png", size: { width: 512, height: 512 } }
+);
+```
+
+### JPG/JPEG (Joint Photographic Experts Group)
+
+Smaller file sizes, no transparency:
+
+```tsx
+import { downloadQRCode } from 'qrdx';
+
+await downloadQRCode(
+  { value: "https://example.com", size: 512 },
+  { format: "jpg", size: { width: 512, height: 512 } }
+);
+```
+
+### SVG (Scalable Vector Graphics)
+
+Perfect for print, infinitely scalable:
+
+```tsx
+import { downloadQRCode } from 'qrdx';
+
+await downloadQRCode(
+  { value: "https://example.com", size: 512 },
+  { format: "svg", size: { width: 512, height: 512 } }
+);
+```
+
+### PDF (Portable Document Format)
+
+Ideal for professional documents and printing:
+
+```tsx
+import { downloadQRCode } from 'qrdx';
+
+await downloadQRCode(
+  { value: "https://example.com", size: 1024 },
+  { format: "pdf", size: { width: 1024, height: 1024 } }
+);
+```
+
+## Preset Sizes
+
+qrdx includes convenient preset sizes:
+
+```tsx
+import { PRESET_SIZES, downloadQRCode } from 'qrdx';
+
+// Available presets
+console.log(PRESET_SIZES.small);   // { width: 200, height: 200 }
+console.log(PRESET_SIZES.medium);  // { width: 400, height: 400 }
+console.log(PRESET_SIZES.large);   // { width: 800, height: 800 }
+console.log(PRESET_SIZES.xlarge);  // { width: 1200, height: 1200 }
+console.log(PRESET_SIZES["2xl"]);  // { width: 1600, height: 1600 }
+console.log(PRESET_SIZES["3xl"]);  // { width: 2000, height: 2000 }
+
+// Usage
+await downloadQRCode(
+  { value: "https://example.com" },
+  { format: "png", size: PRESET_SIZES.large }
+);
+```
+
+## Getting Data URLs
+
+Get QR codes as data URLs for further processing:
+
+```tsx
+import { getQRCodeDataUrl } from 'qrdx';
+
+async function getQRDataUrl() {
+  const dataUrl = await getQRCodeDataUrl(
+    {
+      value: "https://example.com",
+      size: 512,
+      fgColor: "#1a56db"
+    },
+    "png", // format: "png" | "jpg" | "svg" | "pdf"
+    { width: 512, height: 512 }
+  );
+
+  // Use the data URL (e.g., set as img src, upload to server, etc.)
+  console.log(dataUrl);
+  // "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA..."
+
+  return dataUrl;
+}
+```
+
+## Clipboard Operations
+
+Copy QR codes directly to the clipboard:
+
+```tsx
+import { copyQRCodeToClipboard } from 'qrdx';
+
+async function copyToClipboard() {
+  try {
+    await copyQRCodeToClipboard(
+      {
+        value: "https://example.com",
+        fgColor: "#000000",
+        bgColor: "#ffffff"
+      },
+      { width: 512, height: 512 }
+    );
+    alert("QR code copied to clipboard!");
+  } catch (error) {
+    console.error("Failed to copy:", error);
+  }
+}
+```
+
+## SVG String Extraction
+
+Get SVG markup as a string for custom processing:
+
+```tsx
+import { getSVGString } from 'qrdx';
+
+async function getSVGMarkup() {
+  const svgString = await getSVGString({
+    value: "https://example.com",
+    size: 512,
+    fgColor: "#000000",
+    bgColor: "#ffffff"
+  });
+
+  // svgString contains the complete SVG markup
+  console.log(svgString);
+  // Output: <svg width="512" height="512" viewBox="0 0 29 29"...
+
+  // You can now manipulate the SVG, save it, or use it however needed
+  return svgString;
+}
+```
+
+## Advanced Canvas Control
+
+For more control, use `getQRAsCanvas` directly:
+
+```tsx
+import { getQRAsCanvas } from 'qrdx';
+
+async function advancedCanvasExample() {
+  // Get as data URL
+  const dataUrl = await getQRAsCanvas(
+    {
+      value: "https://example.com",
+      size: 1024,
+      fgColor: "#000000",
+      bgColor: "#ffffff",
+    },
+    "image/png"
+  );
+
+  // Get as canvas element for further manipulation
+  const canvas = await getQRAsCanvas(
+    {
+      value: "https://example.com",
+      size: 1024,
+    },
+    "image/png",
+    true // Return canvas element instead of data URL
+  );
+
+  // Use canvas element directly
+  document.body.appendChild(canvas);
+}
+```
+
+## Batch Downloads
+
+Download multiple QR codes at once:
+
+```tsx
+import { downloadQRCode } from 'qrdx';
+
+async function batchDownload() {
+  const qrCodes = [
+    { value: "https://example.com", filename: "site-qr.png" },
+    { value: "https://github.com/user/repo", filename: "github-qr.png" },
+    { value: "tel:+1234567890", filename: "phone-qr.png" }
+  ];
+
+  for (const qr of qrCodes) {
+    try {
+      await downloadQRCode(
+        { value: qr.value, size: 512 },
+        {
+          format: "png",
+          size: { width: 512, height: 512 },
+          filename: qr.filename
+        }
+      );
+    } catch (error) {
+      console.error(`Failed to download ${qr.filename}:`, error);
+    }
+  }
+}
+```
+
+## Custom Download Implementation
+
+Implement custom download logic using the data URLs:
+
+```tsx
+import { getQRCodeDataUrl } from 'qrdx';
+
+function customDownload(dataUrl: string, filename: string) {
+  const link = document.createElement('a');
+  link.href = dataUrl;
+  link.download = filename;
+  link.style.display = 'none';
+
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+async function customDownloadExample() {
+  const dataUrl = await getQRCodeDataUrl(
+    { value: "https://example.com", size: 512 },
+    "png",
+    { width: 512, height: 512 }
+  );
+
+  customDownload(dataUrl, "custom-qr-code.png");
+}
+```
+
+## Error Handling
+
+Always wrap download operations in try-catch blocks:
+
+```tsx
+import { downloadQRCode } from 'qrdx';
+
+async function safeDownload() {
+  try {
+    await downloadQRCode(
+      { value: "https://example.com", size: 512 },
+      { format: "png", size: { width: 512, height: 512 } }
+    );
+    console.log("Download successful!");
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error("Download failed:", error.message);
+      // Handle specific error types
+      if (error.message.includes("size")) {
+        alert("Invalid size specified");
+      } else if (error.message.includes("network")) {
+        alert("Network error - check your connection");
+      }
+    }
+  }
+}
+```
+
+## Size Validation
+
+qrdx validates download sizes to ensure quality QR codes:
+
+```tsx
+import { validateSize } from 'qrdx';
+
+const validation = validateSize(512, 512);
+if (validation.isValid) {
+  console.log("Size is valid");
+} else {
+  console.error("Invalid size:", validation.error);
+  // Error: Size must be at least 50x50 pixels
+  // Error: Size must not exceed 5000x5000 pixels
+  // Error: Width and height must be equal for QR codes
+}
+```
+
+## Next Steps
+
+- [Server Rendering](/docs/server-rendering) — Generate QR codes server-side
+- [QR Detection](/docs/qr-detection) — Read QR codes from images
+- [API Reference](/docs/api-reference) — Complete download API documentation

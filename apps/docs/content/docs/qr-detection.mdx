@@ -1,0 +1,424 @@
+---
+title: QR Code Detection
+description: Read and decode QR codes from images
+icon: Scan
+---
+
+## Overview
+
+qrdx includes powerful QR code detection capabilities for reading QR codes from uploaded images. This feature uses the `jsQR` library for reliable detection.
+
+## Basic Image Detection
+
+Use `handleImageLoad` to detect and extract QR codes from images:
+
+```tsx
+import { handleImageLoad } from 'qrdx';
+
+async function detectQRFromImage(file: File) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const img = new Image();
+      img.onload = async () => {
+        try {
+          const result = await handleImageLoad(img, 400, true);
+          if (result === "NO_QR") {
+            resolve("No QR code found in the image");
+          } else {
+            resolve(result); // Returns the decoded QR data
+          }
+        } catch (error) {
+          reject(error);
+        }
+      };
+      img.onerror = () => reject(new Error("Failed to load image"));
+      img.src = e.target?.result as string;
+    };
+    reader.onerror = () => reject(new Error("Failed to read file"));
+    reader.readAsDataURL(file);
+  });
+}
+
+// Usage in a React component
+import { useState } from 'react';
+
+export default function QRDetector() {
+  const [result, setResult] = useState<string>('');
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const qrData = await detectQRFromImage(file);
+      setResult(typeof qrData === 'string' ? qrData : JSON.stringify(qrData));
+    } catch (error) {
+      setResult(`Error: ${error.message}`);
+    }
+  };
+
+  return (
+    <div className="p-6 space-y-4">
+      <h2 className="text-xl font-semibold">QR Code Detector</h2>
+      <input
+        type="file"
+        accept="image/*"
+        onChange={handleFileUpload}
+        className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+      />
+      {result && (
+        <div className="p-4 bg-gray-50 rounded-lg">
+          <h3 className="font-medium mb-2">Result:</h3>
+          <p className="text-sm break-all">{result}</p>
+        </div>
+      )}
+    </div>
+  );
+}
+```
+
+## Detection Parameters
+
+The `handleImageLoad` function accepts several parameters:
+
+```tsx
+handleImageLoad(
+  imgElement: HTMLImageElement,  // The image element to scan
+  size: number,                  // Processing size (recommended: 400)
+  returnFullData?: boolean       // Return full QR data object or just text
+): Promise<string | any>
+```
+
+### Size Parameter
+
+The `size` parameter controls the processing resolution:
+
+- **Smaller values (200-400)**: Faster processing, good for clear images
+- **Larger values (600+)**: Better detection of small or damaged QR codes
+- **Recommended**: 400 for most use cases
+
+## Full Data Response
+
+When `returnFullData` is `true`, you get the complete QR detection result:
+
+```tsx
+import { handleImageLoad } from 'qrdx';
+
+const fullData = await handleImageLoad(img, 400, true);
+// Returns object like:
+// {
+//   data: "https://example.com",     // The decoded text
+//   binaryData: Uint8ClampedArray,   // Raw binary data
+//   location: {                      // Corner coordinates
+//     topLeftCorner: { x, y },
+//     topRightCorner: { x, y },
+//     bottomLeftCorner: { x, y },
+//     bottomRightCorner: { x, y }
+//   },
+//   chunks: [...]                    // Data chunks
+// }
+```
+
+## Debug Visualization
+
+Download images with bounding boxes around detected QR codes for debugging:
+
+```tsx
+import { downloadImageWithBoundingBox } from 'qrdx';
+
+function debugQRCode(imgElement: HTMLImageElement, boundingBox: any[]) {
+  downloadImageWithBoundingBox(
+    imgElement,
+    boundingBox,
+    `qr-debug-${Date.now()}.png`
+  );
+}
+
+// Usage with full data
+const fullData = await handleImageLoad(img, 400, true);
+if (fullData && fullData.location) {
+  const boundingBox = [
+    fullData.location.topLeftCorner,
+    fullData.location.topRightCorner,
+    fullData.location.bottomRightCorner,
+    fullData.location.bottomLeftCorner,
+  ];
+  debugQRCode(img, boundingBox);
+}
+```
+
+## Advanced Detection Strategies
+
+### Multiple Attempt Detection
+
+For better detection reliability, try multiple processing strategies:
+
+```tsx
+import { handleImageLoad } from 'qrdx';
+
+async function robustQRDetection(img: HTMLImageElement): Promise<string> {
+  const attempts = [
+    { size: 400, fullData: false },  // Fast, standard detection
+    { size: 600, fullData: false },  // Higher resolution
+    { size: 400, fullData: true },   // With full data for debugging
+  ];
+
+  for (const attempt of attempts) {
+    try {
+      const result = await handleImageLoad(img, attempt.size, attempt.fullData);
+      if (result && result !== "NO_QR") {
+        return typeof result === 'string' ? result : result.data;
+      }
+    } catch (error) {
+      console.warn(`Detection attempt failed:`, error);
+    }
+  }
+
+  return "NO_QR";
+}
+```
+
+### Batch Image Processing
+
+Process multiple images simultaneously:
+
+```tsx
+import { handleImageLoad } from 'qrdx';
+
+async function processMultipleImages(files: File[]): Promise<string[]> {
+  const results = await Promise.all(
+    files.map(async (file) => {
+      return new Promise<string>((resolve) => {
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+          const img = new Image();
+          img.onload = async () => {
+            try {
+              const result = await handleImageLoad(img, 400, false);
+              resolve(result === "NO_QR" ? "No QR found" : result);
+            } catch {
+              resolve("Detection failed");
+            }
+          };
+          img.src = e.target?.result as string;
+        };
+        reader.readAsDataURL(file);
+      });
+    })
+  );
+
+  return results;
+}
+```
+
+## Error Handling
+
+Always wrap detection in proper error handling:
+
+```tsx
+import { handleImageLoad } from 'qrdx';
+
+async function safeQRDetection(img: HTMLImageElement) {
+  try {
+    // Validate image
+    if (!img.complete || img.naturalWidth === 0) {
+      throw new Error("Image not fully loaded");
+    }
+
+    // Check image size
+    const maxSize = 4096; // Reasonable limit
+    if (img.naturalWidth > maxSize || img.naturalHeight > maxSize) {
+      throw new Error(`Image too large (max ${maxSize}px)`);
+    }
+
+    const result = await handleImageLoad(img, 400, false);
+
+    if (result === "NO_QR") {
+      return { success: false, error: "No QR code detected in image" };
+    }
+
+    return { success: true, data: result };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error"
+    };
+  }
+}
+```
+
+## Image Preprocessing
+
+For better detection results, consider preprocessing images:
+
+```tsx
+function preprocessImage(img: HTMLImageElement): HTMLCanvasElement {
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d')!;
+
+  // Set canvas size
+  const maxSize = 800;
+  const ratio = Math.min(maxSize / img.naturalWidth, maxSize / img.naturalHeight);
+  canvas.width = img.naturalWidth * ratio;
+  canvas.height = img.naturalHeight * ratio;
+
+  // Draw and enhance image
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+  // Apply basic image enhancement
+  const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  // ... apply filters like contrast adjustment, sharpening, etc.
+
+  ctx.putImageData(imageData, 0, 0);
+
+  return canvas;
+}
+
+// Usage
+async function detectWithPreprocessing(file: File) {
+  const img = new Image();
+  await new Promise(resolve => {
+    img.onload = resolve;
+    img.src = URL.createObjectURL(file);
+  });
+
+  const processedCanvas = preprocessImage(img);
+
+  // Convert canvas to image for detection
+  const processedImg = new Image();
+  await new Promise(resolve => {
+    processedImg.onload = resolve;
+    processedImg.src = processedCanvas.toDataURL();
+  });
+
+  return await handleImageLoad(processedImg, 400, false);
+}
+```
+
+## React Hook for QR Detection
+
+Create a reusable React hook for QR detection:
+
+```tsx
+import { useState, useCallback } from 'react';
+import { handleImageLoad } from 'qrdx';
+
+export function useQRDetector() {
+  const [isDetecting, setIsDetecting] = useState(false);
+  const [result, setResult] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const detectQR = useCallback(async (file: File) => {
+    setIsDetecting(true);
+    setResult(null);
+    setError(null);
+
+    try {
+      const reader = new FileReader();
+      await new Promise<void>((resolve, reject) => {
+        reader.onload = resolve;
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+
+      const img = new Image();
+      await new Promise<void>((resolve, reject) => {
+        img.onload = resolve;
+        img.onerror = reject;
+        img.src = reader.result as string;
+      });
+
+      const detectionResult = await handleImageLoad(img, 400, false);
+
+      if (detectionResult === "NO_QR") {
+        setError("No QR code found in the image");
+      } else {
+        setResult(detectionResult);
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Detection failed");
+    } finally {
+      setIsDetecting(false);
+    }
+  }, []);
+
+  return { detectQR, isDetecting, result, error };
+}
+
+// Usage
+export default function QRDetectorComponent() {
+  const { detectQR, isDetecting, result, error } = useQRDetector();
+
+  return (
+    <div className="p-6">
+      <input
+        type="file"
+        accept="image/*"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file) detectQR(file);
+        }}
+        disabled={isDetecting}
+      />
+
+      {isDetecting && <p>Detecting QR code...</p>}
+      {result && <p className="text-green-600">Found: {result}</p>}
+      {error && <p className="text-red-600">Error: {error}</p>}
+    </div>
+  );
+}
+```
+
+## Performance Considerations
+
+### Image Size Optimization
+
+Large images can slow down detection significantly:
+
+```tsx
+function optimizeImageForDetection(img: HTMLImageElement, maxSize = 800): HTMLCanvasElement {
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d')!;
+
+  // Calculate optimal size
+  const ratio = Math.min(maxSize / img.naturalWidth, maxSize / img.naturalHeight);
+  canvas.width = img.naturalWidth * ratio;
+  canvas.height = img.naturalHeight * ratio;
+
+  // Draw optimized image
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+  return canvas;
+}
+```
+
+### Detection Timeouts
+
+Add timeouts for long-running detections:
+
+```tsx
+async function detectWithTimeout(img: HTMLImageElement, timeoutMs = 10000) {
+  return Promise.race([
+    handleImageLoad(img, 400, false),
+    new Promise((_, reject) =>
+      setTimeout(() => reject(new Error("Detection timeout")), timeoutMs)
+    )
+  ]);
+}
+```
+
+## Browser Compatibility
+
+QR detection works in modern browsers that support:
+
+- `FileReader` API
+- `HTMLCanvasElement`
+- `ImageData` and `getImageData`
+- ES6+ features (Promises, async/await)
+
+## Next Steps
+
+- [Utilities](/docs/utilities) — More detection-related utilities
+- [Downloads](/docs/downloads) — Export detected QR data
+- [API Reference](/docs/api-reference) — Complete detection API

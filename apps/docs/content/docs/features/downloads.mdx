@@ -1,0 +1,514 @@
+---
+title: Downloads
+description: Export QR codes in multiple formats with advanced options
+icon: Download
+---
+
+# QR Code Downloads
+
+qrdx provides comprehensive download functionality for exporting QR codes in multiple formats. Download your QR codes as PNG, JPG, SVG, or PDF with custom sizes and filenames.
+
+## Quick Download
+
+### Basic Download Function
+
+The simplest way to download a QR code:
+
+```tsx
+import { downloadQRCode, PRESET_SIZES } from 'qrdx';
+
+async function downloadBasicQR() {
+  try {
+    await downloadQRCode(
+      {
+        value: "https://example.com",
+        size: 1024,
+        fgColor: "#000000",
+        bgColor: "#ffffff",
+      },
+      {
+        format: "png",
+        size: PRESET_SIZES.large, // 800x800px
+        filename: "my-qrcode.png"
+      }
+    );
+    console.log("Download successful!");
+  } catch (error) {
+    console.error("Download failed:", error);
+  }
+}
+```
+
+## Supported Formats
+
+### PNG (Portable Network Graphics)
+
+Best for web use, supports transparency, high quality:
+
+```tsx
+import { downloadQRCode } from 'qrdx';
+
+await downloadQRCode(
+  { value: "https://example.com", size: 512 },
+  {
+    format: "png",
+    size: { width: 512, height: 512 },
+    filename: "qrcode.png"
+  }
+);
+```
+
+### JPG/JPEG (Joint Photographic Experts Group)
+
+Smaller file sizes, solid backgrounds only:
+
+```tsx
+import { downloadQRCode } from 'qrdx';
+
+await downloadQRCode(
+  { value: "https://example.com", size: 512 },
+  {
+    format: "jpg",
+    size: { width: 512, height: 512 },
+    filename: "qrcode.jpg"
+  }
+);
+```
+
+### SVG (Scalable Vector Graphics)
+
+Perfect for print, infinitely scalable, vector format:
+
+```tsx
+import { downloadQRCode } from 'qrdx';
+
+await downloadQRCode(
+  { value: "https://example.com", size: 512 },
+  {
+    format: "svg",
+    size: { width: 512, height: 512 },
+    filename: "qrcode.svg"
+  }
+);
+```
+
+### PDF (Portable Document Format)
+
+Ideal for professional documents and high-quality printing:
+
+```tsx
+import { downloadQRCode } from 'qrdx';
+
+await downloadQRCode(
+  { value: "https://example.com", size: 1024 },
+  {
+    format: "pdf",
+    size: { width: 1024, height: 1024 },
+    filename: "qrcode.pdf"
+  }
+);
+```
+
+## Preset Sizes
+
+qrdx includes convenient preset sizes for common use cases:
+
+```tsx
+import { PRESET_SIZES } from 'qrdx';
+
+console.log(PRESET_SIZES.small);   // { width: 200, height: 200 }
+console.log(PRESET_SIZES.medium);  // { width: 400, height: 400 }
+console.log(PRESET_SIZES.large);   // { width: 800, height: 800 }
+console.log(PRESET_SIZES.xlarge);  // { width: 1200, height: 1200 }
+console.log(PRESET_SIZES["2xl"]);  // { width: 1600, height: 1600 }
+console.log(PRESET_SIZES["3xl"]);  // { width: 2000, height: 2000 }
+```
+
+### Size Recommendations
+
+- **Small (200px)**: Quick sharing, social media thumbnails
+- **Medium (400px)**: Standard web use, documents
+- **Large (800px)**: High-quality web images
+- **X-Large (1200px)**: Print materials, posters
+- **2X-Large (1600px)**: Large format printing
+- **3X-Large (2000px)**: Maximum quality printing
+
+## Custom Sizes
+
+### Exact Dimensions
+
+Specify exact pixel dimensions:
+
+```tsx
+import { downloadQRCode } from 'qrdx';
+
+// Custom size - QR codes must be square
+await downloadQRCode(
+  { value: "https://example.com" },
+  {
+    format: "png",
+    size: { width: 1024, height: 1024 }, // Must be square
+    filename: "custom-qr.png"
+  }
+);
+```
+
+### Size Validation
+
+qrdx validates download sizes for quality:
+
+```tsx
+import { validateSize } from 'qrdx';
+
+const validation = validateSize(512, 512);
+if (validation.isValid) {
+  console.log("Size is valid for download");
+} else {
+  console.error("Invalid size:", validation.error);
+  // Error: Size must be at least 50x50 pixels
+  // Error: Size must not exceed 5000x5000 pixels
+  // Error: Width and height must be equal for QR codes
+}
+```
+
+## Advanced Download Options
+
+### Get Data URLs
+
+Get QR codes as data URLs for further processing:
+
+```tsx
+import { getQRCodeDataUrl } from 'qrdx';
+
+async function getDataUrl() {
+  const dataUrl = await getQRCodeDataUrl(
+    {
+      value: "https://example.com",
+      size: 512,
+      fgColor: "#1a56db"
+    },
+    "png",
+    { width: 512, height: 512 }
+  );
+
+  // Use data URL for:
+  // - Setting img src
+  // - Uploading to server
+  // - Storing in database
+  // - Custom download logic
+
+  return dataUrl; // "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA..."
+}
+```
+
+### Clipboard Operations
+
+Copy QR codes directly to clipboard:
+
+```tsx
+import { copyQRCodeToClipboard } from 'qrdx';
+
+async function copyToClipboard() {
+  try {
+    await copyQRCodeToClipboard(
+      {
+        value: "https://example.com",
+        fgColor: "#000000",
+        bgColor: "#ffffff"
+      },
+      { width: 512, height: 512 }
+    );
+    console.log("QR code copied to clipboard!");
+  } catch (error) {
+    console.error("Failed to copy:", error);
+  }
+}
+```
+
+### SVG String Extraction
+
+Get SVG markup as a string for custom processing:
+
+```tsx
+import { getSVGString } from 'qrdx';
+
+async function getSVGCode() {
+  const svgString = await getSVGString({
+    value: "https://example.com",
+    size: 512,
+    fgColor: "#000000",
+    bgColor: "#ffffff"
+  });
+
+  // svgString contains complete SVG markup
+  console.log(svgString);
+  // Output: <svg width="512" height="512" viewBox="0 0 29 29"...
+
+  // You can now:
+  // - Modify the SVG
+  // - Save to file
+  // - Use in design tools
+  // - Convert to other formats
+}
+```
+
+## Batch Downloads
+
+### Multiple QR Codes
+
+Download multiple QR codes simultaneously:
+
+```tsx
+import { downloadQRCode } from 'qrdx';
+
+async function batchDownload() {
+  const qrCodes = [
+    {
+      props: { value: "https://example.com", size: 512 },
+      options: { format: "png", size: { width: 512, height: 512 }, filename: "site-qr.png" }
+    },
+    {
+      props: { value: "https://github.com/user/repo", size: 512 },
+      options: { format: "svg", size: { width: 512, height: 512 }, filename: "github-qr.svg" }
+    },
+    {
+      props: { value: "tel:+1234567890", size: 512 },
+      options: { format: "pdf", size: { width: 1024, height: 1024 }, filename: "phone-qr.pdf" }
+    }
+  ];
+
+  for (const qr of qrCodes) {
+    try {
+      await downloadQRCode(qr.props, qr.options);
+      console.log(`Downloaded ${qr.options.filename}`);
+    } catch (error) {
+      console.error(`Failed to download ${qr.options.filename}:`, error);
+    }
+  }
+}
+```
+
+### Dynamic Filenames
+
+Generate filenames based on content or date:
+
+```tsx
+import { downloadQRCode } from 'qrdx';
+
+function generateFilename(value: string, format: string): string {
+  // Create readable filename from URL or text
+  const sanitized = value
+    .replace(/^https?:\/\//, '') // Remove protocol
+    .replace(/[^a-zA-Z0-9]/g, '-') // Replace special chars
+    .substring(0, 30); // Limit length
+
+  const timestamp = new Date().toISOString().split('T')[0];
+  return `${sanitized}-${timestamp}.${format}`;
+}
+
+// Usage
+const filename = generateFilename("https://example.com", "png");
+// Output: "example-com-2024-01-15.png"
+```
+
+## Download with Customizations
+
+### Download with Templates
+
+```tsx
+import { downloadQRCode } from 'qrdx';
+
+await downloadQRCode(
+  {
+    value: "https://example.com",
+    templateId: "Arrow",
+    size: 512
+  },
+  {
+    format: "png",
+    size: { width: 512, height: 512 },
+    filename: "arrow-qr.png"
+  }
+);
+```
+
+### Download with Patterns
+
+```tsx
+import { downloadQRCode } from 'qrdx';
+
+await downloadQRCode(
+  {
+    value: "https://example.com",
+    bodyPattern: "rounded",
+    cornerEyePattern: "circle",
+    size: 512
+  },
+  {
+    format: "svg",
+    size: { width: 512, height: 512 },
+    filename: "pattern-qr.svg"
+  }
+);
+```
+
+### Download with Colors
+
+```tsx
+import { downloadQRCode } from 'qrdx';
+
+await downloadQRCode(
+  {
+    value: "https://example.com",
+    fgColor: "#1a56db",
+    bgColor: "#ffffff",
+    size: 512
+  },
+  {
+    format: "png",
+    size: { width: 512, height: 512 },
+    filename: "colored-qr.png"
+  }
+);
+```
+
+## Custom Download Implementation
+
+### Custom Download Logic
+
+Implement your own download handling:
+
+```tsx
+import { getQRCodeDataUrl } from 'qrdx';
+
+function customDownload(dataUrl: string, filename: string, mimeType?: string) {
+  const link = document.createElement('a');
+  link.href = dataUrl;
+  link.download = filename;
+  link.style.display = 'none';
+
+  // Optional: set MIME type
+  if (mimeType) {
+    link.type = mimeType;
+  }
+
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+
+async function customDownloadExample() {
+  const dataUrl = await getQRCodeDataUrl(
+    { value: "https://example.com", size: 512 },
+    "png",
+    { width: 512, height: 512 }
+  );
+
+  customDownload(dataUrl, "custom-qr-code.png", "image/png");
+}
+```
+
+### Download Progress
+
+For large downloads, show progress:
+
+```tsx
+import { downloadQRCode } from 'qrdx';
+
+async function downloadWithProgress() {
+  try {
+    // Show loading state
+    console.log("Starting download...");
+
+    await downloadQRCode(
+      { value: "https://example.com", size: 2048 }, // Large QR
+      {
+        format: "pdf",
+        size: { width: 2048, height: 2048 },
+        filename: "large-qr.pdf"
+      }
+    );
+
+    console.log("Download completed!");
+  } catch (error) {
+    console.error("Download failed:", error);
+  }
+}
+```
+
+## Error Handling
+
+### Comprehensive Error Handling
+
+```tsx
+import { downloadQRCode } from 'qrdx';
+
+async function safeDownload() {
+  try {
+    await downloadQRCode(
+      {
+        value: "https://example.com",
+        size: 512,
+        // Ensure all required props are provided
+      },
+      {
+        format: "png",
+        size: { width: 512, height: 512 },
+        filename: "safe-download.png"
+      }
+    );
+
+    console.log("Download successful!");
+  } catch (error) {
+    // Handle different error types
+    if (error instanceof Error) {
+      switch (true) {
+        case error.message.includes('size'):
+          alert('Invalid size specified. Please check dimensions.');
+          break;
+        case error.message.includes('network'):
+          alert('Network error. Please check your connection.');
+          break;
+        case error.message.includes('canvas'):
+          alert('Canvas rendering error. Try a different format.');
+          break;
+        default:
+          alert(`Download failed: ${error.message}`);
+      }
+    } else {
+      alert('An unexpected error occurred during download.');
+    }
+  }
+}
+```
+
+## Performance Considerations
+
+### Format Selection
+
+- **PNG**: Best quality, larger files, supports transparency
+- **JPG**: Smaller files, no transparency, good for photos
+- **SVG**: Scalable, small files, perfect for web/print
+- **PDF**: Professional, good for documents, larger files
+
+### Size Optimization
+
+- **Web use**: 256-512px, PNG format
+- **Print**: 1024px+, PDF or high-res PNG
+- **Mobile**: 256px, optimized for fast loading
+- **Email**: 200-300px, balance size/quality
+
+## Browser Compatibility
+
+Downloads work in modern browsers with these requirements:
+
+- **File API**: For file creation and download
+- **Canvas API**: For PNG/JPG generation
+- **Blob API**: For clipboard operations
+- **ES6+**: Modern JavaScript features
+
+## Next Steps
+
+- [Usage](/docs/usage) — Learn basic QR code generation
+- [Templates](/docs/features/templates) — Download pre-styled QR codes
+- [API Reference](/docs/api-reference) — Complete download API

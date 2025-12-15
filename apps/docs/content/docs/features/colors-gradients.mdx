@@ -1,0 +1,550 @@
+---
+title: Colors & Gradients
+description: Advanced color customization with solid colors and gradients
+icon: Palette
+---
+
+# Colors & Gradients
+
+qrdx supports extensive color customization, from simple solid colors to complex gradients. Colors can be applied to different QR code elements for sophisticated visual designs.
+
+## Solid Colors
+
+### Basic Color Customization
+
+Control individual QR code elements with solid colors:
+
+```tsx
+import { QRCode } from 'qrdx';
+
+export default function ColoredQR() {
+  return (
+    <QRCode
+      value="https://example.com"
+      size={256}
+      fgColor="#1a56db"      // Main QR code color
+      bgColor="#f9fafb"      // Background color
+      eyeColor="#0d47a1"     // Corner marker color
+      dotColor="#3b82f6"     // Data dot color
+    />
+  );
+}
+```
+
+### Color Formats
+
+qrdx accepts multiple color formats:
+
+```tsx
+import { QRCode } from 'qrdx';
+
+// Hex colors (3, 6, or 8 characters)
+<QRCode value="https://example.com" fgColor="#f00" />
+<QRCode value="https://example.com" fgColor="#ff0000" />
+<QRCode value="https://example.com" fgColor="#ff000080" /> // With alpha
+
+// Named colors
+<QRCode value="https://example.com" fgColor="red" />
+<QRCode value="https://example.com" fgColor="blue" />
+
+// RGB/RGBA
+<QRCode value="https://example.com" fgColor="rgb(255, 0, 0)" />
+<QRCode value="https://example.com" fgColor="rgba(255, 0, 0, 0.8)" />
+
+// HSL/HSLA
+<QRCode value="https://example.com" fgColor="hsl(0, 100%, 50%)" />
+<QRCode value="https://example.com" fgColor="hsla(0, 100%, 50%, 0.8)" />
+```
+
+## Color Gradients
+
+### Linear Gradients
+
+Create smooth color transitions across your QR code:
+
+```tsx
+import { QRCodeCanvas } from 'qrdx';
+
+export default function LinearGradientQR() {
+  return (
+    <QRCodeCanvas
+      value="https://example.com"
+      size={256}
+      fgColor={{
+        type: 'linear',
+        stops: [
+          { offset: 0, color: '#667eea' },   // Start color
+          { offset: 1, color: '#764ba2' }    // End color
+        ],
+        x1: 0, y1: 0,    // Start point (top-left)
+        x2: 1, y2: 1     // End point (bottom-right)
+      }}
+    />
+  );
+}
+```
+
+### Gradient Directions
+
+Control gradient direction with different start and end points:
+
+```tsx
+import { QRCodeCanvas } from 'qrdx';
+
+export default function GradientDirections() {
+  return (
+    <div className="grid grid-cols-2 gap-6">
+      {/* Horizontal gradient */}
+      <QRCodeCanvas
+        value="https://example.com"
+        size={128}
+        fgColor={{
+          type: 'linear',
+          stops: [
+            { offset: 0, color: '#ff6b6b' },
+            { offset: 1, color: '#4ecdc4' }
+          ],
+          x1: 0, y1: 0, x2: 1, y2: 0  // Left to right
+        }}
+      />
+
+      {/* Vertical gradient */}
+      <QRCodeCanvas
+        value="https://example.com"
+        size={128}
+        fgColor={{
+          type: 'linear',
+          stops: [
+            { offset: 0, color: '#667eea' },
+            { offset: 1, color: '#764ba2' }
+          ],
+          x1: 0, y1: 0, x2: 0, y2: 1  // Top to bottom
+        }}
+      />
+
+      {/* Diagonal gradient */}
+      <QRCodeCanvas
+        value="https://example.com"
+        size={128}
+        fgColor={{
+          type: 'linear',
+          stops: [
+            { offset: 0, color: '#f093fb' },
+            { offset: 1, color: '#f5576c' }
+          ],
+          x1: 0, y1: 0, x2: 1, y2: 1  // Top-left to bottom-right
+        }}
+      />
+
+      {/* Reverse diagonal */}
+      <QRCodeCanvas
+        value="https://example.com"
+        size={128}
+        fgColor={{
+          type: 'linear',
+          stops: [
+            { offset: 0, color: '#4facfe' },
+            { offset: 1, color: '#00f2fe' }
+          ],
+          x1: 1, y1: 0, x2: 0, y2: 1  // Top-right to bottom-left
+        }}
+      />
+    </div>
+  );
+}
+```
+
+### Multi-Stop Gradients
+
+Create complex gradients with multiple color stops:
+
+```tsx
+import { QRCodeCanvas } from 'qrdx';
+
+export default function MultiStopGradient() {
+  return (
+    <QRCodeCanvas
+      value="https://example.com"
+      size={256}
+      fgColor={{
+        type: 'linear',
+        stops: [
+          { offset: 0, color: '#667eea' },    // Blue
+          { offset: 0.3, color: '#764ba2' },  // Purple
+          { offset: 0.7, color: '#f093fb' },  // Pink
+          { offset: 1, color: '#f5576c' }     // Red
+        ],
+        x1: 0, y1: 0, x2: 1, y2: 1
+      }}
+    />
+  );
+}
+```
+
+### Radial Gradients
+
+Create circular gradient effects from a center point:
+
+```tsx
+import { QRCodeCanvas } from 'qrdx';
+
+export default function RadialGradientQR() {
+  return (
+    <QRCodeCanvas
+      value="https://example.com"
+      size={256}
+      fgColor={{
+        type: 'radial',
+        stops: [
+          { offset: 0, color: '#ff6b6b' },     // Center color
+          { offset: 0.5, color: '#4ecdc4' },  // Middle color
+          { offset: 1, color: '#ffe66d' }     // Outer color
+        ],
+        cx: 0.5, cy: 0.5,  // Center point (50%, 50%)
+        r: 0.5              // Radius (50%)
+      }}
+    />
+  );
+}
+```
+
+### Radial Gradient Variations
+
+Experiment with different center points and radii:
+
+```tsx
+import { QRCodeCanvas } from 'qrdx';
+
+export default function RadialVariations() {
+  return (
+    <div className="grid grid-cols-2 gap-6">
+      {/* Centered radial */}
+      <QRCodeCanvas
+        value="https://example.com"
+        size={128}
+        fgColor={{
+          type: 'radial',
+          stops: [
+            { offset: 0, color: '#ff6b6b' },
+            { offset: 1, color: '#4ecdc4' }
+          ],
+          cx: 0.5, cy: 0.5, r: 0.5
+        }}
+      />
+
+      {/* Off-center radial */}
+      <QRCodeCanvas
+        value="https://example.com"
+        size={128}
+        fgColor={{
+          type: 'radial',
+          stops: [
+            { offset: 0, color: '#667eea' },
+            { offset: 1, color: '#764ba2' }
+          ],
+          cx: 0.3, cy: 0.3, r: 0.7  // Offset center, larger radius
+        }}
+      />
+
+      {/* Tight radial */}
+      <QRCodeCanvas
+        value="https://example.com"
+        size={128}
+        fgColor={{
+          type: 'radial',
+          stops: [
+            { offset: 0, color: '#f093fb' },
+            { offset: 1, color: '#f5576c' }
+          ],
+          cx: 0.5, cy: 0.5, r: 0.3  // Smaller radius
+        }}
+      />
+
+      {/* Multi-color radial */}
+      <QRCodeCanvas
+        value="https://example.com"
+        size={128}
+        fgColor={{
+          type: 'radial',
+          stops: [
+            { offset: 0, color: '#667eea' },
+            { offset: 0.4, color: '#764ba2' },
+            { offset: 0.8, color: '#f093fb' },
+            { offset: 1, color: '#f5576c' }
+          ],
+          cx: 0.5, cy: 0.5, r: 0.5
+        }}
+      />
+    </div>
+  );
+}
+```
+
+## Color Application
+
+### Element-Specific Colors
+
+Apply different colors to different QR elements:
+
+```tsx
+import { QRCodeCanvas } from 'qrdx';
+
+export default function ElementColors() {
+  return (
+    <QRCodeCanvas
+      value="https://example.com"
+      size={256}
+      fgColor={{
+        type: 'linear',
+        stops: [
+          { offset: 0, color: '#667eea' },
+          { offset: 1, color: '#764ba2' }
+        ],
+        x1: 0, y1: 0, x2: 1, y2: 1
+      }}
+      eyeColor="#0d47a1"      // Solid color for eyes
+      dotColor={{
+        type: 'radial',
+        stops: [
+          { offset: 0, color: '#ff6b6b' },
+          { offset: 1, color: '#4ecdc4' }
+        ],
+        cx: 0.5, cy: 0.5, r: 0.5
+      }}
+      bgColor="#f8fafc"       // Solid background
+    />
+  );
+}
+```
+
+### Gradient Backgrounds
+
+Use gradients for backgrounds as well:
+
+```tsx
+import { QRCodeCanvas } from 'qrdx';
+
+export default function GradientBackground() {
+  return (
+    <QRCodeCanvas
+      value="https://example.com"
+      size={256}
+      fgColor="#000000"
+      bgColor={{
+        type: 'linear',
+        stops: [
+          { offset: 0, color: '#f093fb' },
+          { offset: 1, color: '#f5576c' }
+        ],
+        x1: 0, y1: 0, x2: 1, y2: 1
+      }}
+    />
+  );
+}
+```
+
+## Color Utilities
+
+### Color Contrast Checking
+
+qrdx provides utilities to ensure QR code readability:
+
+```tsx
+import { getContrastRatio, getContrastLevel } from 'qrdx';
+
+export default function ColorValidation() {
+  const fgColor = '#000000';
+  const bgColor = '#ffffff';
+
+  const ratio = getContrastRatio(fgColor, bgColor);
+  const level = getContrastLevel(ratio);
+
+  return (
+    <div className="p-4">
+      <p>Contrast Ratio: {ratio.toFixed(2)}:1</p>
+      <p>Level: {level.level} - {level.message}</p>
+      <div
+        className="w-16 h-16 border rounded"
+        style={{ backgroundColor: bgColor, color: fgColor }}
+      >
+        Test
+      </div>
+    </div>
+  );
+}
+```
+
+### Color Conversion
+
+Utility functions for color manipulation:
+
+```tsx
+import { hexToRgb, getLuminance } from 'qrdx';
+
+// Convert colors
+const rgb = hexToRgb('#ff6b6b');        // { r: 255, g: 107, b: 107 }
+const luminance = getLuminance(255, 107, 107); // 0.25 (dark color)
+
+// Check if colors work well together
+function validateQRColors(fgColor: string, bgColor: string) {
+  const fgRgb = hexToRgb(fgColor);
+  const bgRgb = hexToRgb(bgColor);
+
+  const fgLuminance = getLuminance(fgRgb.r, fgRgb.g, fgRgb.b);
+  const bgLuminance = getLuminance(bgRgb.r, bgRgb.g, bgRgb.b);
+
+  const contrastRatio = (Math.max(fgLuminance, bgLuminance) + 0.05) /
+                       (Math.min(fgLuminance, bgLuminance) + 0.05);
+
+  return contrastRatio >= 3.0; // Minimum contrast for QR codes
+}
+```
+
+## Color Schemes
+
+### Brand Colors
+
+Apply your brand colors to QR codes:
+
+```tsx
+import { QRCodeCanvas } from 'qrdx';
+
+const brandColors = {
+  primary: '#1a56db',
+  secondary: '#3b82f6',
+  accent: '#06b6d4',
+  neutral: '#f8fafc'
+};
+
+export default function BrandQR() {
+  return (
+    <QRCodeCanvas
+      value="https://example.com"
+      size={256}
+      fgColor={{
+        type: 'linear',
+        stops: [
+          { offset: 0, color: brandColors.primary },
+          { offset: 1, color: brandColors.secondary }
+        ],
+        x1: 0, y1: 0, x2: 1, y2: 1
+      }}
+      bgColor={brandColors.neutral}
+      eyeColor={brandColors.accent}
+    />
+  );
+}
+```
+
+### Seasonal Colors
+
+Create themed QR codes for different seasons:
+
+```tsx
+import { QRCodeCanvas } from 'qrdx';
+
+const seasonalColors = {
+  spring: { primary: '#10b981', secondary: '#34d399', accent: '#ec4899' },
+  summer: { primary: '#f59e0b', secondary: '#fbbf24', accent: '#06b6d4' },
+  autumn: { primary: '#f97316', secondary: '#fb923c', accent: '#a855f7' },
+  winter: { primary: '#3b82f6', secondary: '#60a5fa', accent: '#06b6d4' }
+};
+
+type Season = keyof typeof seasonalColors;
+
+interface SeasonalQRProps {
+  value: string;
+  season: Season;
+}
+
+export default function SeasonalQR({ value, season }: SeasonalQRProps) {
+  const colors = seasonalColors[season];
+
+  return (
+    <QRCodeCanvas
+      value={value}
+      size={256}
+      fgColor={{
+        type: 'radial',
+        stops: [
+          { offset: 0, color: colors.primary },
+          { offset: 1, color: colors.secondary }
+        ],
+        cx: 0.5, cy: 0.5, r: 0.5
+      }}
+      eyeColor={colors.accent}
+      bgColor="#ffffff"
+    />
+  );
+}
+```
+
+## Performance Considerations
+
+### Gradient Performance
+
+- **Solid colors**: Fastest rendering
+- **Simple gradients**: Good performance
+- **Complex gradients**: Higher processing requirements
+- **Canvas rendering**: Required for gradients (vs SVG for solids)
+
+### Optimization Tips
+
+```tsx
+import { QRCode } from 'qrdx';
+
+// For best performance
+<QRCode
+  value="https://example.com"
+  fgColor="#000000"        // Solid color
+  bgColor="#ffffff"        // Solid background
+/>
+
+// For visual appeal with good performance
+<QRCodeCanvas
+  value="https://example.com"
+  fgColor={{
+    type: 'linear',
+    stops: [
+      { offset: 0, color: '#667eea' },
+      { offset: 1, color: '#764ba2' }
+    ],
+    x1: 0, y1: 0, x2: 1, y2: 1
+  }}
+/>
+```
+
+## Accessibility
+
+### Contrast Requirements
+
+For optimal QR code scanning:
+- **Minimum contrast**: 3.0:1 ratio
+- **Recommended contrast**: 4.5:1 or higher
+- **Excellent contrast**: 7.0:1 or higher
+
+### Color Blindness Considerations
+
+Test your colors for accessibility:
+
+```tsx
+import { getContrastRatio } from 'qrdx';
+
+// Ensure sufficient contrast for all users
+function isAccessible(fgColor: string, bgColor: string): boolean {
+  const ratio = getContrastRatio(fgColor, bgColor);
+  return ratio >= 4.5; // WCAG AA standard
+}
+
+// For QR codes, even higher contrast is recommended
+function isQRReadable(fgColor: string, bgColor: string): boolean {
+  const ratio = getContrastRatio(fgColor, bgColor);
+  return ratio >= 7.0; // Higher standard for QR codes
+}
+```
+
+## Next Steps
+
+- [Logos](/docs/features/logos) — Add logos to your colored QR codes
+- [Patterns](/docs/features/patterns) — Combine colors with custom patterns
+- [Downloads](/docs/features/downloads) — Export your color-customized QR codes

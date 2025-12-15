@@ -1,4 +1,5 @@
-import { DocsLayout, type DocsLayoutProps } from "fumadocs-ui/layouts/docs";
+import { DocsLayout } from "fumadocs-ui/layouts/docs";
+import type { DocsLayoutProps } from "fumadocs-ui/layouts/docs";
 import { baseOptions, linkItems, logo } from "@/lib/layout.shared";
 import { source } from "@/lib/source";
 import "katex/dist/katex.min.css";

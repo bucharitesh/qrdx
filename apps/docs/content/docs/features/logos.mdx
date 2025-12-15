@@ -1,0 +1,512 @@
+---
+title: Logos
+description: Add and customize logos in your QR codes
+icon: Image
+---
+
+# QR Code Logos
+
+Logos add brand recognition and visual appeal to QR codes. qrdx provides sophisticated logo integration with automatic QR code adjustment to maintain scannability.
+
+## Basic Logo Integration
+
+### Simple Logo Addition
+
+Add a logo to your QR code with automatic positioning:
+
+```tsx
+import { QRCode } from 'qrdx';
+
+export default function LogoQR() {
+  return (
+    <QRCode
+      value="https://example.com"
+      size={256}
+      hideLogo={false}
+      logo="https://example.com/logo.png"
+    />
+  );
+}
+```
+
+### Logo with Custom Error Correction
+
+When adding logos, use higher error correction:
+
+```tsx
+import { QRCode } from 'qrdx';
+
+export default function LogoWithCorrection() {
+  return (
+    <QRCode
+      value="https://example.com"
+      size={256}
+      level="Q"           // Higher error correction for logos
+      hideLogo={false}
+      logo="https://example.com/logo.png"
+    />
+  );
+}
+```
+
+## Advanced Logo Settings
+
+### Precise Logo Control
+
+Use `QRCodeCanvas` for detailed logo customization:
+
+```tsx
+import { QRCodeCanvas } from 'qrdx';
+
+export default function AdvancedLogo() {
+  return (
+    <QRCodeCanvas
+      value="https://example.com"
+      size={512}
+      imageSettings={{
+        src: "https://example.com/logo.png",
+        height: 80,        // Logo height in QR modules
+        width: 80,         // Logo width in QR modules
+        excavate: true,    // Remove QR modules under logo
+        x: 216,            // X position (centered for 512px QR)
+        y: 216,            // Y position (centered for 512px QR)
+        opacity: 0.9       // Logo transparency
+      }}
+      level="Q"
+    />
+  );
+}
+```
+
+### Logo Positioning Calculations
+
+Calculate logo position for perfect centering:
+
+```tsx
+import { QRCodeCanvas } from 'qrdx';
+
+// For a 512px QR code with 80px logo
+const qrSize = 512;
+const logoSize = 80;
+const logoX = (qrSize - logoSize) / 2;  // 216
+const logoY = (qrSize - logoSize) / 2;  // 216
+
+export default function CenteredLogo() {
+  return (
+    <QRCodeCanvas
+      value="https://example.com"
+      size={qrSize}
+      imageSettings={{
+        src: "/logo.png",
+        height: logoSize,
+        width: logoSize,
+        excavate: true,
+        x: logoX,
+        y: logoY,
+      }}
+    />
+  );
+}
+```
+
+## Logo Size Guidelines
+
+### Recommended Logo Sizes
+
+- **Small QR (256px)**: 32-48px logo
+- **Medium QR (512px)**: 64-96px logo
+- **Large QR (1024px)**: 128-192px logo
+
+### Size Calculation Helper
+
+```tsx
+function calculateLogoSize(qrSize: number): { width: number; height: number } {
+  // Logo should be 15-25% of QR code size
+  const logoSize = Math.floor(qrSize * 0.2);
+  return { width: logoSize, height: logoSize };
+}
+
+// Usage
+const qrSize = 512;
+const logoSize = calculateLogoSize(qrSize);
+// Returns: { width: 102, height: 102 }
+```
+
+## Logo Excavation
+
+### What is Excavation?
+
+Excavation removes QR code modules from the area where the logo will be placed, ensuring the logo doesn't interfere with scanning:
+
+```tsx
+import { QRCodeCanvas } from 'qrdx';
+
+export default function ExcavationExamples() {
+  return (
+    <div className="grid grid-cols-2 gap-6">
+      {/* With excavation (recommended) */}
+      <div className="text-center">
+        <QRCodeCanvas
+          value="https://example.com"
+          size={256}
+          imageSettings={{
+            src: "/logo.png",
+            height: 48,
+            width: 48,
+            excavate: true,    // QR modules removed under logo
+            x: 104,
+            y: 104,
+          }}
+        />
+        <p className="text-sm mt-2">With Excavation</p>
+      </div>
+
+      {/* Without excavation */}
+      <div className="text-center">
+        <QRCodeCanvas
+          value="https://example.com"
+          size={256}
+          imageSettings={{
+            src: "/logo.png",
+            height: 48,
+            width: 48,
+            excavate: false,   // Logo overlays QR modules
+            x: 104,
+            y: 104,
+          }}
+        />
+        <p className="text-sm mt-2">Without Excavation</p>
+      </div>
+    </div>
+  );
+}
+```
+
+### When to Use Excavation
+
+- **✅ Recommended**: For logos with solid backgrounds
+- **✅ Required**: For logos that might interfere with scanning
+- **❌ Optional**: For transparent logos or watermarks
+- **❓ Careful**: Test scanning with your target devices
+
+## Logo Formats and Optimization
+
+### Supported Formats
+
+- **PNG**: Best for logos with transparency
+- **JPG/JPEG**: Good for photos, smaller file sizes
+- **SVG**: Scalable, but may have loading issues
+- **WebP**: Modern format, good compression
+
+### Logo Optimization
+
+```tsx
+// Recommended logo specifications
+const logoSpecs = {
+  format: 'PNG',        // With transparency
+  background: 'transparent', // Or white for solid backgrounds
+  size: '64x64px',     // Appropriate for medium QR codes
+  quality: 'high',     // Crisp edges
+  colors: 'brand colors' // Match your brand
+};
+```
+
+### Logo Loading Strategies
+
+Handle logo loading errors gracefully:
+
+```tsx
+import { QRCodeCanvas } from 'qrdx';
+import { useState } from 'react';
+
+export default function SafeLogoQR() {
+  const [logoError, setLogoError] = useState(false);
+
+  const handleLogoError = () => {
+    setLogoError(true);
+  };
+
+  return (
+    <QRCodeCanvas
+      value="https://example.com"
+      size={256}
+      imageSettings={logoError ? undefined : {
+        src: "/logo.png",
+        height: 48,
+        width: 48,
+        excavate: true,
+        x: 104,
+        y: 104,
+        // Handle loading errors
+        onError: handleLogoError
+      }}
+    />
+  );
+}
+```
+
+## Logo Styling
+
+### Logo Opacity
+
+Control logo transparency:
+
+```tsx
+import { QRCodeCanvas } from 'qrdx';
+
+export default function LogoOpacity() {
+  return (
+    <div className="grid grid-cols-3 gap-4">
+      <QRCodeCanvas
+        value="https://example.com"
+        size={128}
+        imageSettings={{
+          src: "/logo.png",
+          height: 32,
+          width: 32,
+          excavate: true,
+          x: 48,
+          y: 48,
+          opacity: 0.6     // 60% opacity
+        }}
+      />
+      <QRCodeCanvas
+        value="https://example.com"
+        size={128}
+        imageSettings={{
+          src: "/logo.png",
+          height: 32,
+          width: 32,
+          excavate: true,
+          x: 48,
+          y: 48,
+          opacity: 0.8     // 80% opacity
+        }}
+      />
+      <QRCodeCanvas
+        value="https://example.com"
+        size={128}
+        imageSettings={{
+          src: "/logo.png",
+          height: 32,
+          width: 32,
+          excavate: true,
+          x: 48,
+          y: 48,
+          opacity: 1.0     // 100% opacity
+        }}
+      />
+    </div>
+  );
+}
+```
+
+### Logo Shapes
+
+Different logo shapes work better in different contexts:
+
+```tsx
+import { QRCodeCanvas } from 'qrdx';
+
+export default function LogoShapes() {
+  return (
+    <div className="grid grid-cols-2 gap-6">
+      {/* Square logo */}
+      <div className="text-center">
+        <QRCodeCanvas
+          value="https://example.com"
+          size={256}
+          imageSettings={{
+            src: "/square-logo.png",
+            height: 64,
+            width: 64,
+            excavate: true,
+            x: 96,
+            y: 96,
+          }}
+        />
+        <p className="text-sm mt-2">Square Logo</p>
+      </div>
+
+      {/* Circular logo */}
+      <div className="text-center">
+        <QRCodeCanvas
+          value="https://example.com"
+          size={256}
+          imageSettings={{
+            src: "/circular-logo.png",
+            height: 64,
+            width: 64,
+            excavate: true,
+            x: 96,
+            y: 96,
+          }}
+        />
+        <p className="text-sm mt-2">Circular Logo</p>
+      </div>
+    </div>
+  );
+}
+```
+
+## Logo Best Practices
+
+### Design Guidelines
+
+1. **Keep it Simple**: Use clean, recognizable logos
+2. **High Contrast**: Ensure logo stands out from QR code
+3. **Appropriate Size**: Don't overpower the QR code
+4. **Test Scanning**: Always test with real devices
+
+### Technical Guidelines
+
+1. **Use PNG**: For transparency support
+2. **Optimize Size**: Balance quality and file size
+3. **Enable Excavation**: For better scannability
+4. **Higher Error Correction**: Use Q or H level
+
+### Logo Size Calculator
+
+```tsx
+interface LogoSize {
+  qrSize: number;
+  logoSize: number;
+  position: { x: number; y: number };
+}
+
+function calculateLogoPlacement(qrSize: number, logoRatio = 0.15): LogoSize {
+  const logoSize = Math.floor(qrSize * logoRatio);
+  const position = {
+    x: (qrSize - logoSize) / 2,
+    y: (qrSize - logoSize) / 2
+  };
+
+  return {
+    qrSize,
+    logoSize,
+    position
+  };
+}
+
+// Usage
+const placement = calculateLogoPlacement(512, 0.2);
+// { qrSize: 512, logoSize: 102, position: { x: 205, y: 205 } }
+```
+
+## Logo Integration with Other Features
+
+### Logos with Templates
+
+Combine logos with templates for branded QR codes:
+
+```tsx
+import { QRCodeCanvas } from 'qrdx';
+
+export default function TemplateWithLogo() {
+  return (
+    <QRCodeCanvas
+      value="https://example.com"
+      size={512}
+      templateId="Arrow"    // Use template
+      imageSettings={{
+        src: "/brand-logo.png",
+        height: 80,
+        width: 80,
+        excavate: true,
+        x: 216,
+        y: 216,
+      }}
+      level="Q"
+    />
+  );
+}
+```
+
+### Logos with Custom Patterns
+
+```tsx
+import { QRCodeCanvas } from 'qrdx';
+
+export default function PatternWithLogo() {
+  return (
+    <QRCodeCanvas
+      value="https://example.com"
+      size={512}
+      bodyPattern="rounded"
+      cornerEyePattern="circle"
+      fgColor="#1a56db"
+      imageSettings={{
+        src: "/logo.png",
+        height: 80,
+        width: 80,
+        excavate: true,
+        x: 216,
+        y: 216,
+      }}
+      level="Q"
+    />
+  );
+}
+```
+
+## Troubleshooting Logos
+
+### Logo Not Showing
+
+```tsx
+// Check these common issues:
+
+// 1. Wrong path
+imageSettings: {
+  src: "/correct/path/logo.png", // Ensure correct path
+}
+
+// 2. CORS issues
+imageSettings: {
+  src: "https://same-domain.com/logo.png", // Same domain or CORS enabled
+}
+
+// 3. File format issues
+imageSettings: {
+  src: "/logo.png", // Use PNG for transparency
+}
+```
+
+### Logo Too Small/Large
+
+```tsx
+// Adjust size proportionally
+const qrSize = 512;
+const logoSize = qrSize * 0.15; // 15% of QR size
+
+imageSettings: {
+  src: "/logo.png",
+  height: logoSize,
+  width: logoSize,
+  x: (qrSize - logoSize) / 2,
+  y: (qrSize - logoSize) / 2,
+}
+```
+
+### Scanning Issues
+
+```tsx
+// Solutions for scanning problems:
+
+// 1. Enable excavation
+imageSettings: {
+  excavate: true, // Always use for logos
+}
+
+// 2. Increase error correction
+<QRCode level="H" /> // Maximum error correction
+
+// 3. Test logo size
+// Start with smaller logos (10-20% of QR size)
+```
+
+## Next Steps
+
+- [Downloads](/docs/features/downloads) — Export QR codes with logos
+- [Templates](/docs/features/templates) — Combine logos with templates
+- [Colors & Gradients](/docs/features/colors-gradients) — Style logos with colors

@@ -1,0 +1,316 @@
+---
+title: Usage
+description: Complete guide to using qrdx for QR code generation
+icon: QrCode
+---
+
+## Quick Start
+
+The most basic way to generate a QR code:
+
+```tsx
+import { QRCode } from 'qrdx';
+
+export default function SimpleQR() {
+  return (
+    <QRCode
+      value="https://example.com"
+      size={256}
+    />
+  );
+}
+```
+
+## Core Props
+
+### Value (required)
+
+The URL or text to encode in the QR code:
+
+```tsx
+<QRCode value="https://example.com" />
+<QRCode value="Hello World!" />
+<QRCode value="tel:+1234567890" />
+```
+
+### Size
+
+Control the dimensions of your QR code:
+
+```tsx
+<QRCode
+  value="https://example.com"
+  size={128}   // Small
+/>
+
+<QRCode
+  value="https://example.com"
+  size={512}   // Medium
+/>
+
+<QRCode
+  value="https://example.com"
+  size={1024}  // Large (for print)
+/>
+```
+
+### Colors
+
+Customize the appearance with colors:
+
+```tsx
+<QRCode
+  value="https://example.com"
+  size={256}
+  fgColor="#000000"     // QR code color
+  bgColor="#ffffff"     // Background color
+  eyeColor="#1a56db"    // Corner markers
+  dotColor="#3b82f6"    // Data dots
+/>
+```
+
+### Error Correction
+
+Choose resilience level based on your use case:
+
+```tsx
+// For clean environments
+<QRCode value="https://example.com" level="L" />
+
+// For general use (recommended)
+<QRCode value="https://example.com" level="M" />
+
+// For logos or damaged environments
+<QRCode value="https://example.com" level="Q" />
+
+// For maximum resilience
+<QRCode value="https://example.com" level="H" />
+```
+
+**Error Correction Levels:**
+- **L (Low)**: ~7% - Smallest, basic environments
+- **M (Medium)**: ~15% - Balanced size and resilience
+- **Q (Quartile)**: ~25% - Good for logos and moderate damage
+- **H (High)**: ~30% - Maximum resilience
+
+## Advanced Customization
+
+### Scale and Margin
+
+```tsx
+<QRCode
+  value="https://example.com"
+  size={256}
+  scale={2}     // Double the size
+  margin={4}    // Add padding around QR code
+/>
+```
+
+### Logo Integration
+
+Add logos with automatic QR code adjustment:
+
+```tsx
+<QRCode
+  value="https://example.com"
+  size={512}
+  hideLogo={false}
+  logo="https://example.com/logo.png"
+/>
+```
+
+### Custom Image Settings
+
+Precise control over logo placement:
+
+```tsx
+import { QRCodeCanvas } from 'qrdx';
+
+<QRCodeCanvas
+  value="https://example.com"
+  size={512}
+  imageSettings={{
+    src: "https://example.com/logo.png",
+    height: 80,        // Logo height in QR modules
+    width: 80,         // Logo width in QR modules
+    excavate: true,    // Remove QR modules under logo
+    x: 216,            // X position (centered)
+    y: 216,            // Y position (centered)
+    opacity: 0.9       // Logo transparency
+  }}
+/>
+```
+
+## Pattern Customization
+
+### Body Patterns
+
+Choose from 7 different dot patterns:
+
+```tsx
+import { QRCode } from 'qrdx';
+
+export default function BodyPatterns() {
+  return (
+    <div className="grid grid-cols-4 gap-4">
+      <QRCode value="https://example.com" bodyPattern="circle" size={96} />
+      <QRCode value="https://example.com" bodyPattern="square" size={96} />
+      <QRCode value="https://example.com" bodyPattern="diamond" size={96} />
+      <QRCode value="https://example.com" bodyPattern="rounded" size={96} />
+      <QRCode value="https://example.com" bodyPattern="pacman" size={96} />
+      <QRCode value="https://example.com" bodyPattern="circle-mixed" size={96} />
+      <QRCode value="https://example.com" bodyPattern="clean-square" size={96} />
+    </div>
+  );
+}
+```
+
+### Corner Eye Patterns
+
+Customize corner positioning markers:
+
+```tsx
+<QRCode
+  value="https://example.com"
+  cornerEyePattern="square"    // Default
+/>
+
+<QRCode
+  value="https://example.com"
+  cornerEyePattern="rounded"
+/>
+
+<QRCode
+  value="https://example.com"
+  cornerEyePattern="circle"
+/>
+```
+
+### Corner Eye Dot Patterns
+
+Customize individual dots in corner markers:
+
+```tsx
+<QRCode
+  value="https://example.com"
+  cornerEyeDotPattern="square"   // Default
+/>
+
+<QRCode
+  value="https://example.com"
+  cornerEyeDotPattern="rounded"
+/>
+
+<QRCode
+  value="https://example.com"
+  cornerEyeDotPattern="circle"
+/>
+```
+
+## Color Gradients
+
+Use gradient colors for sophisticated designs:
+
+```tsx
+import { QRCodeCanvas } from 'qrdx';
+
+export default function GradientQR() {
+  return (
+    <QRCodeCanvas
+      value="https://example.com"
+      size={256}
+      fgColor={{
+        type: 'linear',
+        stops: [
+          { offset: 0, color: '#667eea' },
+          { offset: 1, color: '#764ba2' }
+        ],
+        x1: 0, y1: 0, x2: 1, y2: 1
+      }}
+    />
+  );
+}
+```
+
+## Component Variants
+
+### QRCodeCanvas
+
+Canvas-based rendering with full customization:
+
+```tsx
+import { QRCodeCanvas } from 'qrdx';
+
+<QRCodeCanvas
+  value="https://example.com"
+  size={512}
+  fgColor="#000000"
+  bgColor="#ffffff"
+  // All QRProps plus HTML canvas attributes
+/>
+```
+
+### QRCodeSVG
+
+SVG-based rendering for scalable graphics:
+
+```tsx
+import { QRCodeSVG } from 'qrdx';
+
+<QRCodeSVG
+  value="https://example.com"
+  size={512}
+  fgColor="#000000"
+  bgColor="#ffffff"
+  // All QRProps plus HTML SVG attributes
+/>
+```
+
+## Complete Props Reference
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `string` | **required** | URL or text to encode |
+| `size` | `number` | `128` | Size in pixels |
+| `scale` | `number` | `1` | Scale multiplier |
+| `fgColor` | `ColorConfig` | `#000000` | QR code color |
+| `bgColor` | `ColorConfig` | `#ffffff` | Background color |
+| `eyeColor` | `ColorConfig` | `fgColor` | Corner marker color |
+| `dotColor` | `ColorConfig` | `fgColor` | Data dot color |
+| `bodyPattern` | `BodyPattern` | `'circle'` | Data dot pattern |
+| `cornerEyePattern` | `CornerEyePattern` | `'square'` | Corner marker pattern |
+| `cornerEyeDotPattern` | `CornerEyeDotPattern` | `'square'` | Corner dot pattern |
+| `hideLogo` | `boolean` | `true` | Hide/show logo |
+| `logo` | `string` | Default | Logo image URL |
+| `templateId` | `string` | `'default'` | Template to use |
+| `customTemplate` | `TemplateDefinition` | - | Custom template |
+| `level` | `ErrorLevel` | `'L'` | Error correction level |
+| `margin` | `number` | `0` | Margin in modules |
+| `imageSettings` | `ImageSettings` | - | Logo settings |
+
+## Best Practices
+
+### Size Guidelines
+
+- **Minimum**: 128px for basic scanning
+- **Recommended**: 256-512px for most uses
+- **High quality**: 1024px+ for print or detailed designs
+
+### Error Correction Selection
+
+- **Use Q or H** when adding logos
+- **Use M** for general applications
+- **Use L** only in clean environments
+
+### Performance Tips
+
+- Use solid colors instead of gradients when possible
+- Choose simpler patterns (circle, square) for better performance
+- Cache QR codes server-side when possible
+
+## Next Steps
+
+- [Templates](/docs/features/templates) — Pre-designed styles
+- [Downloads](/docs/features/downloads) — Export options
+- [QR Detection](/docs/qr-detection) — Read QR codes
+- [Utilities](/docs/utilities) — Helper functions

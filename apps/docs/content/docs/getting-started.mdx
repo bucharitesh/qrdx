@@ -1,25 +1,56 @@
 ---
-title: Getting started
-description: If you're new to qrdx, you can follow these steps to get started building your QR code !
+title: Getting Started
+description: Learn how to install and set up qrdx for your project
 icon: Rocket
 ---
 
-## Automatic Installation
+## Installation
 
-Create a new app with `qrdx`, it requires Node.js 18+.
+qrdx requires Node.js 18+ and works with React 18+.
 
-Initialize a config for CLI:
+### Using npm
 
-```package-install
-qrdx@latest
+```bash
+npm install qrdx@latest
 ```
 
-You can change the output paths of components in the config.
+### Using yarn
 
+```bash
+yarn add qrdx@latest
+```
 
-#### How the magic works?
+### Using pnpm
 
-The CLI fetches the latest version of component from the GitHub repository of qrdx.
-When you install a component, it is guaranteed to be up-to-date.
+```bash
+pnpm add qrdx@latest
+```
 
-Make sure to use the latest version of qrdx.
+## Basic Setup
+
+After installation, you can start using qrdx in your React components:
+
+```tsx
+import { QRCode } from 'qrdx';
+
+export default function App() {
+  return (
+    <QRCode
+      value="https://example.com"
+      size={256}
+    />
+  );
+}
+```
+
+## Requirements
+
+- **Node.js**: 18.0.0 or higher
+- **React**: 18.0.0 or higher (with React DOM)
+- **TypeScript**: Optional but recommended for full type safety
+
+## Next Steps
+
+- [Basic Usage](/docs/basic-usage) — Learn the core QR code generation features
+- [Templates](/docs/templates) — Explore pre-built QR code styles
+- [Customization](/docs/customization) — Advanced styling and customization options
