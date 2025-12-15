@@ -3,7 +3,7 @@ import { getTheme } from "@/actions/qr-themes";
 import Editor from "@/components/editor";
 
 export const metadata: Metadata = {
-  title: "QR Code Editor — QRDX",
+  title: "QR Code Playground — QRDX",
   description:
     "Create and customize beautiful QR codes with advanced styling options. Design unique QR codes with custom colors, patterns, logos, and frames.",
 };
@@ -20,3 +20,4 @@ export default async function EditorPage({
 
   return <Editor themePromise={themePromise} />;
 }
+

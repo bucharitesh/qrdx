@@ -26,7 +26,7 @@ export function AIChatHero() {
     startNewChat();
 
     generateQRCore(promptData);
-    router.push("/editor/qr?tab=ai");
+    router.push("/playground?tab=ai");
   };
 
   usePostLoginAction("AI_GENERATE_FROM_PAGE", ({ promptData }) => {

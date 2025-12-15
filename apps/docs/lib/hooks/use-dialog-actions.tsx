@@ -110,7 +110,7 @@ function useQRDialogActionsStore(): QRDialogActionsContextType {
     const presetId = id ?? themeState.preset;
 
     if (!presetId) {
-      setShareUrl(`${window.location.origin}/editor/qr`);
+      setShareUrl(`${window.location.origin}/playground`);
       setShareDialogOpen(true);
       return;
     }
@@ -119,8 +119,8 @@ function useQRDialogActionsStore(): QRDialogActionsContextType {
     const isSavedPreset = preset?.source === "SAVED";
 
     const url = isSavedPreset
-      ? `${window.location.origin}/editor/qr/${presetId}`
-      : `${window.location.origin}/editor/qr?preset=${presetId}`;
+      ? `${window.location.origin}/playground/${presetId}`
+      : `${window.location.origin}/playground?preset=${presetId}`;
 
     setShareUrl(url);
     setShareDialogOpen(true);

@@ -8,3 +8,4 @@ export default function QREditorLayout({ children }: { children: React.ReactNode
     </div>
   );
 }
+

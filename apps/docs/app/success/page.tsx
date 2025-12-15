@@ -12,12 +12,13 @@ export default function SuccessPage() {
         <div className="space-y-2">
           <h1 className="text-3xl font-bold">Welcome to Pro! 🎉</h1>
           <p className="text-muted-foreground">
-            Your subscription is now active. Enjoy unlimited QR themes and all Pro features!
+            Your subscription is now active. Enjoy unlimited QR themes and all
+            Pro features!
           </p>
         </div>
         <div className="flex flex-col gap-3 pt-4">
           <Button asChild size="lg">
-            <Link href="/editor/qr">Start Creating</Link>
+            <Link href="/playground">Start Creating</Link>
           </Button>
           <Button asChild variant="outline">
             <Link href="/settings">Manage Subscription</Link>
@@ -27,11 +28,3 @@ export default function SuccessPage() {
     </div>
   );
 }
-
-
-
-
-
-
-
-

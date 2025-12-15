@@ -83,7 +83,7 @@ export default function PricingPage() {
                 className="hover:bg-muted/50 h-12 w-full text-base font-medium transition-all duration-200"
                 size="lg"
               >
-                <Link href="/editor/qr">Get Started Free</Link>
+                <Link href="/playground">Get Started Free</Link>
               </Button>
             </CardFooter>
           </Card>
