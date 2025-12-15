@@ -62,4 +62,4 @@ export const DEFAULT_IMG_SCALE = 0.1;
 /**
  * Default logo URL for QR codes
  */
-export const FLAM_QR_LOGO = "https://instant.flamapp.ai/flogo-qr.svg";
+export const FLAM_QR_LOGO = "https://qrdx.dev/logo.png";
