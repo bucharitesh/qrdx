@@ -1005,6 +1005,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
         height={templateSize}
         viewBox={`0 0 ${templateSize} ${templateSize}`}
         width={templateSize}
+        xmlns="http://www.w3.org/2000/svg"
       >
         {/* Gradient definitions */}
         <defs>
@@ -1157,6 +1158,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
       height={size}
       viewBox={`0 0 ${size} ${size}`}
       width={size}
+      xmlns="http://www.w3.org/2000/svg"
       {...otherProps}
     >
       {qrContent}

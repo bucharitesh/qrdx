@@ -57,7 +57,7 @@ export const Hero = () => {
         /> */}
         <img
           src={
-            "https://storage.googleapis.com/bucket-fi-production-apps-0672ab2d/original/images/q817ob59s1pugniz37nznlab.svg"
+            "https://storage.googleapis.com/bucket-fi-production-apps-0672ab2d/original/images/pi5y38xg074hmbj9pktb33qm.svg"
           }
           alt="Hero Outline"
           className="w-full h-full object-cover"
@@ -73,7 +73,7 @@ export const Hero = () => {
         /> */}
         <img
           src={
-            "https://storage.googleapis.com/bucket-fi-production-apps-0672ab2d/original/images/eoyn7z0mj6x1ic4w3pevg83w.svg"
+            "https://storage.googleapis.com/bucket-fi-production-apps-0672ab2d/original/images/pjcz89c7hhv518ey345mpgvj.svg"
           }
           alt="Hero Outline"
           className="w-full h-full object-cover"
