@@ -1,0 +1,326 @@
+---
+title: Templates
+description: Pre-designed QR code templates for instant styling
+icon: Palette
+---
+
+# QR Code Templates
+
+Templates are pre-designed QR code styles that instantly transform your QR codes with professional, consistent designs. Instead of manually configuring colors and patterns, templates provide complete style packages.
+
+## What Are Templates?
+
+Templates combine:
+- **Colors**: Foreground, background, eye, and dot colors
+- **Patterns**: Body patterns, corner eye patterns, and corner eye dot patterns
+- **Visual Style**: Coordinated design elements
+
+## Available Templates
+
+### Default
+
+Classic black and white QR code - the foundation template.
+
+```tsx
+import { QRCode } from 'qrdx';
+
+<QRCode
+  value="https://example.com"
+  templateId="default"
+  size={256}
+/>
+```
+
+**Style**: Basic, clean, professional
+**Colors**: Black foreground, white background
+**Use case**: Clean, minimal designs
+
+### Arrow
+
+Modern geometric design with arrow-inspired elements.
+
+```tsx
+import { QRCode } from 'qrdx';
+
+<QRCode
+  value="https://example.com"
+  templateId="Arrow"
+  size={256}
+/>
+```
+
+**Style**: Geometric, modern, dynamic
+**Colors**: Custom color palette
+**Use case**: Tech companies, modern brands
+
+### Standard Box
+
+Clean, structured design with boxed elements.
+
+```tsx
+import { QRCode } from 'qrdx';
+
+<QRCode
+  value="https://example.com"
+  templateId="StandardBox"
+  size={256}
+/>
+```
+
+**Style**: Structured, clean, professional
+**Colors**: Balanced color scheme
+**Use case**: Corporate, business applications
+
+### Square Border
+
+Bordered design with centered content and defined edges.
+
+```tsx
+import { QRCode } from 'qrdx';
+
+<QRCode
+  value="https://example.com"
+  templateId="SquareBorder"
+  size={256}
+/>
+```
+
+**Style**: Structured, bordered, defined
+**Colors**: Contrasting color palette
+**Use case**: Formal applications, documents
+
+### Striked Box
+
+Dynamic design with striking diagonal elements.
+
+```tsx
+import { QRCode } from 'qrdx';
+
+<QRCode
+  value="https://example.com"
+  templateId="StrikedBox"
+  size={256}
+/>
+```
+
+**Style**: Dynamic, energetic, attention-grabbing
+**Colors**: Bold color combinations
+**Use case**: Marketing, promotional materials
+
+### Halloween
+
+Seasonal Halloween-themed design with orange and black colors.
+
+```tsx
+import { QRCode } from 'qrdx';
+
+<QRCode
+  value="https://example.com"
+  templateId="Halloween"
+  size={256}
+/>
+```
+
+**Style**: Seasonal, fun, thematic
+**Colors**: Orange and black theme
+**Use case**: Holiday promotions, events
+
+## Using Templates
+
+### Basic Template Application
+
+Simply specify the `templateId` prop:
+
+```tsx
+import { QRCode } from 'qrdx';
+
+export default function TemplateExample() {
+  return (
+    <div className="grid grid-cols-3 gap-4">
+      <QRCode value="https://example.com" templateId="default" size={128} />
+      <QRCode value="https://example.com" templateId="Arrow" size={128} />
+      <QRCode value="https://example.com" templateId="Halloween" size={128} />
+    </div>
+  );
+}
+```
+
+### Template with Custom Overrides
+
+Templates provide defaults that you can override:
+
+```tsx
+import { QRCode } from 'qrdx';
+
+export default function CustomTemplate() {
+  return (
+    <QRCode
+      value="https://example.com"
+      templateId="Arrow"
+      // Override template colors
+      fgColor="#your-brand-color"
+      // Add logo
+      hideLogo={false}
+      logo="/your-logo.png"
+      // Adjust size
+      size={512}
+    />
+  );
+}
+```
+
+## Template Registry
+
+### Get All Templates
+
+Access all available templates programmatically:
+
+```tsx
+import { getAllTemplates } from 'qrdx';
+
+export default function TemplateList() {
+  const templates = getAllTemplates();
+
+  return (
+    <div>
+      {templates.map(template => (
+        <div key={template.id}>
+          <h3>{template.name}</h3>
+          <QRCode
+            value="https://example.com"
+            templateId={template.id}
+            size={128}
+          />
+        </div>
+      ))}
+    </div>
+  );
+}
+```
+
+### Get Specific Template
+
+Retrieve a single template by ID:
+
+```tsx
+import { getTemplate } from 'qrdx';
+
+const arrowTemplate = getTemplate('Arrow');
+// Returns template definition or undefined
+```
+
+### Get Template IDs
+
+Get a list of all available template IDs:
+
+```tsx
+import { getTemplateIds } from 'qrdx';
+
+const ids = getTemplateIds();
+// Returns: ['default', 'Arrow', 'StandardBox', 'SquareBorder', 'StrikedBox', 'Halloween']
+```
+
+## Custom Templates
+
+Create your own templates for brand consistency:
+
+```tsx
+import { QRCode } from 'qrdx';
+
+const brandTemplate = {
+  id: 'brand-template',
+  name: 'Brand Template',
+  colors: {
+    fgColor: '#1a56db',      // Brand blue
+    bgColor: '#ffffff',      // White background
+    eyeColor: '#0d47a1',     // Darker blue for eyes
+    dotColor: '#3b82f6'      // Medium blue for dots
+  },
+  bodyPattern: 'rounded',
+  cornerEyePattern: 'rounded',
+  cornerEyeDotPattern: 'rounded'
+};
+
+export default function CustomTemplateExample() {
+  return (
+    <QRCode
+      value="https://example.com"
+      customTemplate={brandTemplate}
+      size={256}
+    />
+  );
+}
+```
+
+## Template Structure
+
+Templates are defined with this structure:
+
+```tsx
+type TemplateDefinition = {
+  id: string;                    // Unique identifier
+  name: string;                  // Display name
+  colors: {
+    fgColor: ColorConfig;        // Main QR code color
+    bgColor: ColorConfig;        // Background color
+    eyeColor?: ColorConfig;      // Corner marker color (optional)
+    dotColor?: ColorConfig;      // Data dot color (optional)
+  };
+  bodyPattern?: BodyPattern;     // Data dot pattern
+  cornerEyePattern?: CornerEyePattern;     // Corner marker pattern
+  cornerEyeDotPattern?: CornerEyeDotPattern; // Corner dot pattern
+};
+```
+
+## Template Selection Guide
+
+### When to Use Templates
+
+- **Brand Consistency**: Ensure all QR codes match your brand
+- **Quick Setup**: Get professional results without design work
+- **Seasonal Campaigns**: Use themed templates for events
+- **Batch Generation**: Apply consistent styles across multiple QR codes
+
+### Choosing the Right Template
+
+| Template | Best For | Mood | Complexity |
+|----------|----------|------|------------|
+| Default | Professional, clean | Neutral | Low |
+| Arrow | Tech, modern brands | Dynamic | Medium |
+| Standard Box | Corporate, business | Professional | Low |
+| Square Border | Formal, documents | Structured | Low |
+| Striked Box | Marketing, promotions | Energetic | High |
+| Halloween | Seasonal, events | Fun | Medium |
+
+### Template Customization
+
+Templates are designed to be starting points:
+
+```tsx
+import { QRCode } from 'qrdx';
+
+// Start with template, customize as needed
+<QRCode
+  value="https://example.com"
+  templateId="Arrow"
+  size={512}
+  level="Q"           // Override error correction
+  margin={2}          // Add margin
+  hideLogo={false}    // Add logo
+  logo="/brand.png"
+/>
+```
+
+## Performance Considerations
+
+Templates are optimized for performance:
+- Pre-configured color combinations
+- Efficient pattern selections
+- Balanced complexity for rendering speed
+
+## Next Steps
+
+- [Patterns](/docs/features/patterns) — Detailed pattern customization
+- [Colors & Gradients](/docs/features/colors-gradients) — Advanced color options
+- [Logos](/docs/features/logos) — Logo integration guide
+- [Downloads](/docs/features/downloads) — Export your templates

@@ -1,0 +1,452 @@
+---
+title: Utility Functions
+description: Helper functions for colors, contrast, and QR code processing
+icon: Wrench
+---
+
+## Color Utilities
+
+### getSolidColor
+
+Extract a solid color from any color configuration, including gradients:
+
+```tsx
+import { getSolidColor } from 'qrdx';
+
+const solidColor = getSolidColor({
+  type: 'linear',
+  stops: [
+    { offset: 0, color: '#ff6b6b' },
+    { offset: 1, color: '#4ecdc4' }
+  ],
+  x1: 0, y1: 0, x2: 1, y2: 1
+});
+// Returns: "#ff6b6b" (first gradient stop)
+
+const fallbackColor = getSolidColor(undefined, '#000000');
+// Returns: "#000000" (fallback)
+```
+
+## Contrast and Accessibility
+
+### getContrastRatio
+
+Calculate WCAG contrast ratio between two colors:
+
+```tsx
+import { getContrastRatio } from 'qrdx';
+
+const ratio = getContrastRatio('#000000', '#ffffff');
+// Returns: 21 (maximum contrast - black on white)
+
+const lowRatio = getContrastRatio('#777777', '#888888');
+// Returns: 1.08 (very low contrast)
+```
+
+### getContrastLevel
+
+Get a human-readable assessment of contrast level for QR code scanability:
+
+```tsx
+import { getContrastLevel } from 'qrdx';
+
+const level = getContrastLevel(4.5);
+// Returns:
+// {
+//   level: 'medium',
+//   warning: false,
+//   message: 'Good contrast for QR code scanning'
+// }
+
+const poorLevel = getContrastLevel(1.5);
+// Returns:
+// {
+//   level: 'poor',
+//   warning: true,
+//   message: 'Contrast too low - QR code may not scan reliably'
+// }
+```
+
+**Contrast Level Guidelines:**
+- **Poor (< 3.0):** Not recommended for QR codes
+- **Medium (3.0 - 4.5):** Acceptable but may have scanning issues
+- **Good (4.5 - 7.0):** Excellent for most applications
+- **Excellent (> 7.0):** Maximum scanability
+
+### getLuminance
+
+Calculate the relative luminance of an RGB color:
+
+```tsx
+import { getLuminance } from 'qrdx';
+
+const luminance = getLuminance(255, 255, 255); // White
+// Returns: 1.0
+
+const darkLuminance = getLuminance(0, 0, 0); // Black
+// Returns: 0.0
+```
+
+### hexToRgb
+
+Convert hex color strings to RGB values:
+
+```tsx
+import { hexToRgb } from 'qrdx';
+
+const rgb = hexToRgb('#ff6b6b');
+// Returns: { r: 255, g: 107, b: 107 }
+
+const shortRgb = hexToRgb('#f6b');
+// Returns: { r: 255, g: 102, b: 187 }
+```
+
+## QR Code Processing
+
+### excavateModules
+
+Remove QR code modules from specific areas (used internally for logo placement):
+
+```tsx
+import { excavateModules } from 'qrdx';
+
+// This function is primarily used internally but can be useful for advanced customizations
+const modules = [
+  [true, false, true],
+  [false, true, false],
+  [true, false, true]
+];
+
+const excavated = excavateModules(modules, {
+  x: 1, y: 1, w: 1, h: 1
+});
+// Removes the center module
+```
+
+### generatePath
+
+Generate SVG path data from QR code modules:
+
+```tsx
+import { generatePath } from 'qrdx';
+
+const modules = [
+  [true, false, true],
+  [false, true, false],
+  [true, false, true]
+];
+
+const pathData = generatePath(modules, 0);
+// Returns: "M0,0 h1v1H0z M2,0 h1v1H2z M1,1 h1v1H1z..."
+```
+
+### getImageSettings
+
+Calculate optimal image placement settings for logos within QR codes:
+
+```tsx
+import { getImageSettings } from 'qrdx';
+
+// Used internally for logo positioning
+// Returns excavation area and positioning data
+```
+
+## Feature Detection
+
+### SUPPORTS_PATH2D
+
+Check if the browser supports the Path2D API for optimized rendering:
+
+```tsx
+import { SUPPORTS_PATH2D } from 'qrdx';
+
+if (SUPPORTS_PATH2D) {
+  // Use optimized Path2D rendering
+  ctx.fill(new Path2D(pathData));
+} else {
+  // Fallback to module-by-module rendering
+  modules.forEach((row, y) => {
+    row.forEach((cell, x) => {
+      if (cell) ctx.fillRect(x, y, 1, 1);
+    });
+  });
+}
+```
+
+## Validation Utilities
+
+### validateSize
+
+Validate QR code download dimensions:
+
+```tsx
+import { validateSize } from 'qrdx';
+
+const validation = validateSize(512, 512);
+if (validation.isValid) {
+  console.log("Size is valid");
+} else {
+  console.error("Invalid size:", validation.error);
+  // Error: Size must be at least 50x50 pixels
+  // Error: Size must not exceed 5000x5000 pixels
+  // Error: Width and height must be equal for QR codes
+}
+```
+
+## Utility Examples
+
+### Color Contrast Checker Component
+
+```tsx
+import { getContrastRatio, getContrastLevel } from 'qrdx';
+import { useState } from 'react';
+
+export default function ContrastChecker() {
+  const [fgColor, setFgColor] = useState('#000000');
+  const [bgColor, setBgColor] = useState('#ffffff');
+
+  const ratio = getContrastRatio(fgColor, bgColor);
+  const level = getContrastLevel(ratio);
+
+  return (
+    <div className="p-6 space-y-4">
+      <h2 className="text-xl font-semibold">Color Contrast Checker</h2>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium mb-2">Foreground</label>
+          <input
+            type="color"
+            value={fgColor}
+            onChange={(e) => setFgColor(e.target.value)}
+            className="w-full h-10 rounded border"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-2">Background</label>
+          <input
+            type="color"
+            value={bgColor}
+            onChange={(e) => setBgColor(e.target.value)}
+            className="w-full h-10 rounded border"
+          />
+        </div>
+      </div>
+
+      <div className="p-4 bg-gray-50 rounded-lg">
+        <div className="text-sm space-y-1">
+          <p><strong>Contrast Ratio:</strong> {ratio.toFixed(2)}:1</p>
+          <p><strong>Level:</strong> {level.level}</p>
+          <p><strong>Status:</strong>
+            <span className={`ml-2 px-2 py-1 rounded text-xs ${
+              level.warning ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800'
+            }`}>
+              {level.warning ? 'Warning' : 'Good'}
+            </span>
+          </p>
+          <p className="text-gray-600">{level.message}</p>
+        </div>
+      </div>
+
+      {/* Preview */}
+      <div
+        className="w-full h-20 rounded border flex items-center justify-center text-sm font-medium"
+        style={{ backgroundColor: bgColor, color: fgColor }}
+      >
+        Preview Text
+      </div>
+    </div>
+  );
+}
+```
+
+### QR Code Size Calculator
+
+```tsx
+import { validateSize } from 'qrdx';
+import { useState } from 'react';
+
+export default function SizeCalculator() {
+  const [width, setWidth] = useState(512);
+  const [height, setHeight] = useState(512);
+
+  const validation = validateSize(width, height);
+
+  return (
+    <div className="p-6 space-y-4">
+      <h2 className="text-xl font-semibold">QR Code Size Calculator</h2>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="block text-sm font-medium mb-2">Width (px)</label>
+          <input
+            type="number"
+            value={width}
+            onChange={(e) => setWidth(parseInt(e.target.value) || 0)}
+            className="w-full px-3 py-2 border rounded"
+            min="50"
+            max="5000"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium mb-2">Height (px)</label>
+          <input
+            type="number"
+            value={height}
+            onChange={(e) => setHeight(parseInt(e.target.value) || 0)}
+            className="w-full px-3 py-2 border rounded"
+            min="50"
+            max="5000"
+          />
+        </div>
+      </div>
+
+      <div className={`p-4 rounded-lg ${
+        validation.isValid ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'
+      } border`}>
+        <div className="flex items-center space-x-2">
+          <div className={`w-3 h-3 rounded-full ${
+            validation.isValid ? 'bg-green-500' : 'bg-red-500'
+          }`} />
+          <span className="font-medium">
+            {validation.isValid ? 'Valid Size' : 'Invalid Size'}
+          </span>
+        </div>
+        {!validation.isValid && (
+          <p className="text-red-700 text-sm mt-2">{validation.error}</p>
+        )}
+        {validation.isValid && (
+          <p className="text-green-700 text-sm mt-2">
+            This size will generate a {width}×{height}px QR code.
+          </p>
+        )}
+      </div>
+
+      {/* Size recommendations */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+        <div className="p-3 bg-blue-50 rounded">
+          <div className="text-lg font-semibold text-blue-700">200×200</div>
+          <div className="text-xs text-blue-600">Small</div>
+        </div>
+        <div className="p-3 bg-green-50 rounded">
+          <div className="text-lg font-semibold text-green-700">512×512</div>
+          <div className="text-xs text-green-600">Recommended</div>
+        </div>
+        <div className="p-3 bg-purple-50 rounded">
+          <div className="text-lg font-semibold text-purple-700">1024×1024</div>
+          <div className="text-xs text-purple-600">High Quality</div>
+        </div>
+        <div className="p-3 bg-orange-50 rounded">
+          <div className="text-lg font-semibold text-orange-700">2048×2048</div>
+          <div className="text-xs text-orange-600">Print Quality</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+```
+
+### Color Conversion Utilities
+
+```tsx
+import { hexToRgb, getLuminance } from 'qrdx';
+
+// Convert hex to RGB and analyze
+function analyzeColor(hexColor: string) {
+  const rgb = hexToRgb(hexColor);
+  const luminance = getLuminance(rgb.r, rgb.g, rgb.b);
+
+  return {
+    hex: hexColor,
+    rgb,
+    luminance,
+    isLight: luminance > 0.5,
+    isDark: luminance < 0.5
+  };
+}
+
+// Usage
+const colorAnalysis = analyzeColor('#1a56db');
+// Returns:
+// {
+//   hex: '#1a56db',
+//   rgb: { r: 26, g: 86, b: 219 },
+//   luminance: 0.25,
+//   isLight: false,
+//   isDark: true
+// }
+```
+
+### QR Module Inspector
+
+```tsx
+import { generatePath, excavateModules } from 'qrdx';
+import qrcodegen from 'qrdx/codegen';
+
+function inspectQRModules(text: string) {
+  // Generate QR code
+  const qr = qrcodegen.QrCode.encodeText(text, qrcodegen.QrCode.Ecc.MEDIUM);
+  const modules = qr.getModules();
+
+  // Basic info
+  const size = modules.length;
+  const darkModules = modules.flat().filter(Boolean).length;
+  const totalModules = size * size;
+  const density = (darkModules / totalModules) * 100;
+
+  // Generate SVG path
+  const pathData = generatePath(modules);
+
+  return {
+    size,
+    totalModules,
+    darkModules,
+    density: density.toFixed(1) + '%',
+    pathData,
+    modules
+  };
+}
+
+// Usage
+const inspection = inspectQRModules('https://example.com');
+// Returns QR code structural information
+```
+
+## Performance Utilities
+
+### Batch Color Processing
+
+```tsx
+import { getContrastRatio, getContrastLevel } from 'qrdx';
+
+function analyzeColorPalette(colors: string[]) {
+  const results = [];
+
+  for (let i = 0; i < colors.length; i++) {
+    for (let j = i + 1; j < colors.length; j++) {
+      const ratio = getContrastRatio(colors[i], colors[j]);
+      const level = getContrastLevel(ratio);
+
+      results.push({
+        colors: [colors[i], colors[j]],
+        ratio,
+        level,
+        accessible: ratio >= 4.5
+      });
+    }
+  }
+
+  return results.sort((a, b) => b.ratio - a.ratio);
+}
+
+// Usage
+const palette = ['#000000', '#ffffff', '#1a56db', '#f9fafb'];
+const analysis = analyzeColorPalette(palette);
+// Returns contrast analysis for all color combinations
+```
+
+## Next Steps
+
+- [Basic Usage](/docs/basic-usage) — Apply utilities to QR code generation
+- [Customization](/docs/customization) — Use utilities for advanced styling
+- [API Reference](/docs/api-reference) — Complete utility function reference

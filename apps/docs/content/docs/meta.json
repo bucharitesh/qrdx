@@ -3,9 +3,13 @@
   "pages": [
     "index",
     "getting-started",
-    "---QR Generation---",
-    "...qr",
+    "usage",
+    "features",
     "---Detection---",
-    "...detection"
+    "qr-detection",
+    "---Utilities---",
+    "utilities",
+    "---API---",
+    "api-reference"
   ]
 }

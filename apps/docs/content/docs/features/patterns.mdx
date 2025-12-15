@@ -1,0 +1,393 @@
+---
+title: Patterns
+description: Customize QR code patterns for unique visual styles
+icon: Grid3x3
+---
+
+# QR Code Patterns
+
+Patterns control the visual appearance of different parts of your QR code. qrdx provides extensive pattern customization for the data dots, corner markers, and their individual components.
+
+## Pattern Types
+
+### Body Patterns
+
+Body patterns control the shape of the data dots (the main part of the QR code):
+
+```tsx
+import { QRCode } from 'qrdx';
+
+export default function BodyPatterns() {
+  return (
+    <div className="grid grid-cols-4 gap-4">
+      <div className="text-center">
+        <QRCode value="https://example.com" bodyPattern="circle" size={96} />
+        <p className="text-sm mt-2 font-medium">circle</p>
+        <p className="text-xs text-gray-600">Classic rounded dots</p>
+      </div>
+      <div className="text-center">
+        <QRCode value="https://example.com" bodyPattern="square" size={96} />
+        <p className="text-sm mt-2 font-medium">square</p>
+        <p className="text-xs text-gray-600">Modern square dots</p>
+      </div>
+      <div className="text-center">
+        <QRCode value="https://example.com" bodyPattern="diamond" size={96} />
+        <p className="text-sm mt-2 font-medium">diamond</p>
+        <p className="text-xs text-gray-600">Rotated square diamonds</p>
+      </div>
+      <div className="text-center">
+        <QRCode value="https://example.com" bodyPattern="rounded" size={96} />
+        <p className="text-sm mt-2 font-medium">rounded</p>
+        <p className="text-xs text-gray-600">Smooth rounded squares</p>
+      </div>
+      <div className="text-center">
+        <QRCode value="https://example.com" bodyPattern="pacman" size={96} />
+        <p className="text-sm mt-2 font-medium">pacman</p>
+        <p className="text-xs text-gray-600">Pac-Man style rounded rectangles</p>
+      </div>
+      <div className="text-center">
+        <QRCode value="https://example.com" bodyPattern="circle-mixed" size={96} />
+        <p className="text-sm mt-2 font-medium">circle-mixed</p>
+        <p className="text-xs text-gray-600">Circles with varying sizes</p>
+      </div>
+      <div className="text-center">
+        <QRCode value="https://example.com" bodyPattern="clean-square" size={96} />
+        <p className="text-sm mt-2 font-medium">clean-square</p>
+        <p className="text-xs text-gray-600">Clean square rectangles</p>
+      </div>
+    </div>
+  );
+}
+```
+
+### Corner Eye Patterns
+
+Corner eye patterns control the shape of the three corner positioning markers:
+
+```tsx
+import { QRCode } from 'qrdx';
+
+export default function CornerEyePatterns() {
+  return (
+    <div className="grid grid-cols-3 gap-6">
+      <div className="text-center">
+        <QRCode value="https://example.com" cornerEyePattern="square" size={128} />
+        <p className="text-sm mt-2 font-medium">square</p>
+        <p className="text-xs text-gray-600">Traditional square markers</p>
+      </div>
+      <div className="text-center">
+        <QRCode value="https://example.com" cornerEyePattern="rounded" size={128} />
+        <p className="text-sm mt-2 font-medium">rounded</p>
+        <p className="text-xs text-gray-600">Rounded corner markers</p>
+      </div>
+      <div className="text-center">
+        <QRCode value="https://example.com" cornerEyePattern="circle" size={128} />
+        <p className="text-sm mt-2 font-medium">circle</p>
+        <p className="text-xs text-gray-600">Circular corner markers</p>
+      </div>
+    </div>
+  );
+}
+```
+
+### Corner Eye Dot Patterns
+
+Corner eye dot patterns control the individual dots within the corner markers:
+
+```tsx
+import { QRCode } from 'qrdx';
+
+export default function CornerEyeDotPatterns() {
+  return (
+    <div className="grid grid-cols-3 gap-6">
+      <div className="text-center">
+        <QRCode value="https://example.com" cornerEyeDotPattern="square" size={128} />
+        <p className="text-sm mt-2 font-medium">square</p>
+        <p className="text-xs text-gray-600">Square dots in corners</p>
+      </div>
+      <div className="text-center">
+        <QRCode value="https://example.com" cornerEyeDotPattern="rounded" size={128} />
+        <p className="text-sm mt-2 font-medium">rounded</p>
+        <p className="text-xs text-gray-600">Rounded dots in corners</p>
+      </div>
+      <div className="text-center">
+        <QRCode value="https://example.com" cornerEyeDotPattern="circle" size={128} />
+        <p className="text-sm mt-2 font-medium">circle</p>
+        <p className="text-xs text-gray-600">Circular dots in corners</p>
+      </div>
+    </div>
+  );
+}
+```
+
+## Combining Patterns
+
+Create unique combinations by mixing different pattern types:
+
+```tsx
+import { QRCode } from 'qrdx';
+
+export default function PatternCombinations() {
+  return (
+    <div className="grid grid-cols-2 gap-6">
+      {/* Rounded body with square corners */}
+      <div className="text-center">
+        <QRCode
+          value="https://example.com"
+          bodyPattern="rounded"
+          cornerEyePattern="square"
+          cornerEyeDotPattern="square"
+          size={128}
+        />
+        <p className="text-sm mt-2">Rounded + Square</p>
+      </div>
+
+      {/* Circle body with rounded corners */}
+      <div className="text-center">
+        <QRCode
+          value="https://example.com"
+          bodyPattern="circle"
+          cornerEyePattern="rounded"
+          cornerEyeDotPattern="circle"
+          size={128}
+        />
+        <p className="text-sm mt-2">Circle + Rounded</p>
+      </div>
+
+      {/* Diamond body with circular corners */}
+      <div className="text-center">
+        <QRCode
+          value="https://example.com"
+          bodyPattern="diamond"
+          cornerEyePattern="circle"
+          cornerEyeDotPattern="circle"
+          size={128}
+        />
+        <p className="text-sm mt-2">Diamond + Circle</p>
+      </div>
+
+      {/* Mixed body with mixed corners */}
+      <div className="text-center">
+        <QRCode
+          value="https://example.com"
+          bodyPattern="circle-mixed"
+          cornerEyePattern="rounded"
+          cornerEyeDotPattern="rounded"
+          size={128}
+        />
+        <p className="text-sm mt-2">Mixed + Rounded</p>
+      </div>
+    </div>
+  );
+}
+```
+
+## Pattern Performance
+
+Different patterns have different performance characteristics:
+
+### Fast Patterns (Recommended)
+- `circle` - Excellent performance, smooth rendering
+- `square` - Very fast, simple geometry
+- `clean-square` - Fast, minimal processing
+
+### Medium Patterns
+- `rounded` - Good balance of style and speed
+- `diamond` - Moderate performance impact
+
+### Complex Patterns (Use Sparingly)
+- `pacman` - Higher processing requirements
+- `circle-mixed` - Variable rendering complexity
+
+## Pattern Compatibility
+
+### QR Code Standards
+All patterns maintain QR code readability standards:
+- Minimum module size requirements
+- Proper contrast ratios
+- Standard positioning marker placement
+
+### Browser Support
+Patterns work across all modern browsers:
+- Canvas rendering for complex patterns
+- SVG fallback for simple patterns
+- Automatic optimization based on browser capabilities
+
+## Pattern Selection Guide
+
+### For Brand Identity
+```tsx
+// Minimal, professional
+<QRCode
+  value="https://example.com"
+  bodyPattern="rounded"
+  cornerEyePattern="square"
+/>
+
+// Modern, tech-focused
+<QRCode
+  value="https://example.com"
+  bodyPattern="circle"
+  cornerEyePattern="rounded"
+/>
+```
+
+### For Marketing
+```tsx
+// Eye-catching, fun
+<QRCode
+  value="https://example.com"
+  bodyPattern="pacman"
+  cornerEyePattern="circle"
+/>
+
+// Elegant, sophisticated
+<QRCode
+  value="https://example.com"
+  bodyPattern="diamond"
+  cornerEyePattern="rounded"
+/>
+```
+
+### For Print Materials
+```tsx
+// High contrast, clear
+<QRCode
+  value="https://example.com"
+  bodyPattern="square"
+  cornerEyePattern="square"
+/>
+
+// Smooth, professional
+<QRCode
+  value="https://example.com"
+  bodyPattern="rounded"
+  cornerEyePattern="rounded"
+/>
+```
+
+## Pattern Customization in Templates
+
+Patterns are automatically configured in templates:
+
+```tsx
+import { QRCode } from 'qrdx';
+
+// Templates include pattern combinations
+<QRCode value="https://example.com" templateId="Arrow" />
+
+// Override template patterns
+<QRCode
+  value="https://example.com"
+  templateId="Arrow"
+  bodyPattern="diamond"  // Override template pattern
+/>
+```
+
+## Advanced Pattern Usage
+
+### Conditional Patterns
+
+Use different patterns based on context:
+
+```tsx
+import { QRCode } from 'qrdx';
+
+type QRVariant = 'minimal' | 'standard' | 'premium';
+
+interface DynamicQRProps {
+  value: string;
+  variant: QRVariant;
+}
+
+export default function DynamicQR({ value, variant }: DynamicQRProps) {
+  const patternConfig = {
+    minimal: {
+      bodyPattern: 'square' as const,
+      cornerEyePattern: 'square' as const,
+    },
+    standard: {
+      bodyPattern: 'rounded' as const,
+      cornerEyePattern: 'rounded' as const,
+    },
+    premium: {
+      bodyPattern: 'circle' as const,
+      cornerEyePattern: 'circle' as const,
+    },
+  };
+
+  return (
+    <QRCode
+      value={value}
+      size={256}
+      {...patternConfig[variant]}
+    />
+  );
+}
+```
+
+### Pattern Themes
+
+Create pattern themes for consistent branding:
+
+```tsx
+import { QRCode } from 'qrdx';
+
+const patternThemes = {
+  corporate: {
+    bodyPattern: 'rounded',
+    cornerEyePattern: 'square',
+    cornerEyeDotPattern: 'square',
+  },
+  creative: {
+    bodyPattern: 'circle-mixed',
+    cornerEyePattern: 'rounded',
+    cornerEyeDotPattern: 'circle',
+  },
+  technical: {
+    bodyPattern: 'diamond',
+    cornerEyePattern: 'square',
+    cornerEyeDotPattern: 'square',
+  },
+} as const;
+
+type PatternTheme = keyof typeof patternThemes;
+
+interface ThemedQRProps {
+  value: string;
+  theme: PatternTheme;
+}
+
+export default function ThemedQR({ value, theme }: ThemedQRProps) {
+  return (
+    <QRCode
+      value={value}
+      size={256}
+      {...patternThemes[theme]}
+    />
+  );
+}
+```
+
+## Troubleshooting Patterns
+
+### Pattern Not Showing
+- Check browser console for errors
+- Ensure pattern name is spelled correctly
+- Verify qrdx version supports the pattern
+
+### Performance Issues
+- Switch to simpler patterns (circle, square)
+- Reduce QR code size
+- Use solid colors instead of gradients
+
+### Scanning Issues
+- Test with multiple QR readers
+- Ensure adequate contrast
+- Use higher error correction levels
+
+## Next Steps
+
+- [Colors & Gradients](/docs/features/colors-gradients) — Advanced color customization
+- [Templates](/docs/features/templates) — Pre-configured pattern combinations
+- [Logos](/docs/features/logos) — Logo integration with patterns
