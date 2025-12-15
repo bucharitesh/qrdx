@@ -182,7 +182,7 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
                 onValueChange={(value) =>
                   updateDownloadOption(
                     "format",
-                    value as "png" | "jpg" | "svg" | "pdf" | "eps",
+                    value as "png" | "jpg" | "svg" | "pdf",
                   )
                 }
               >
@@ -194,7 +194,6 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
                   <SelectItem value="jpg">JPG</SelectItem>
                   <SelectItem value="svg">SVG</SelectItem>
                   <SelectItem value="pdf">PDF</SelectItem>
-                  <SelectItem value="eps">EPS</SelectItem>
                 </SelectContent>
               </Select>
             </div>
