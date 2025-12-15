@@ -1,22 +1,14 @@
 import "./global.css";
+import { fonts } from "@repo/design-system/lib/fonts";
 import { cn } from "@repo/design-system/lib/utils";
 import { NextProvider } from "fumadocs-core/framework/next";
 import { TreeContextProvider } from "fumadocs-ui/contexts/tree";
 import type { Metadata, Viewport } from "next";
-import { Geist, Inter } from "next/font/google";
 import FeaturebaseScript from "@/components/featurebase-script";
 import { ThemeScript } from "@/components/theme-script";
 import { source } from "@/lib/source";
 import { Body } from "./layout.client";
 import { Provider } from "./providers";
-
-const geist = Geist({
-  variable: "--font-geist",
-});
-
-const inter = Geist({
-  variable: "--font-inter",
-});
 
 export const metadata: Metadata = {
   title: "QRdx.dev | Customisable QR Code Infrastucture",
@@ -81,11 +73,7 @@ export const viewport: Viewport = {
 
 export default function Layout({ children }: LayoutProps<"/">) {
   return (
-    <html
-      className={cn(geist.variable, inter.variable)}
-      lang="en"
-      suppressHydrationWarning
-    >
+    <html className={cn(fonts)} lang="en" suppressHydrationWarning>
       <head>
         <ThemeScript />
         {/* PRELOAD FONTS USED BY BUILT-IN THEMES */}
