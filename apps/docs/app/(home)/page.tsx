@@ -1,9 +1,11 @@
+import { Footer } from "@/components/footer";
 import { Hero } from "@/components/home/hero";
 
 const Page = () => {
   return (
-    <div className="h-dvh flex items-center justify-center text-2xl font-bold">
+    <div className="flex flex-col">
       <Hero />
+      <Footer />
     </div>
   );
 };

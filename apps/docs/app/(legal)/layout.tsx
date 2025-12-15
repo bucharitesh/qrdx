@@ -1,4 +1,5 @@
 import type React from "react";
+import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 
 interface LegalLayoutProps {
@@ -10,7 +11,7 @@ export default function LegalLayout({ children }: LegalLayoutProps) {
     <div className="flex min-h-screen flex-col">
       <Header />
       <main className="flex-1">{children}</main>
-      {/* <Footer /> */}
+      <Footer />
     </div>
   );
 }
