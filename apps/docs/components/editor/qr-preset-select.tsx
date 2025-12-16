@@ -47,6 +47,7 @@ import { TooltipWrapper } from "../tooltip-wrapper";
 
 interface ThemePresetSelectProps extends React.ComponentProps<typeof Button> {
   withCycleThemes?: boolean;
+  disabled?: boolean;
 }
 
 interface ColorBoxProps {

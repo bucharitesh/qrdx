@@ -10,6 +10,7 @@
     "cssVariables": true,
     "prefix": ""
   },
+  "iconLibrary": "lucide",
   "aliases": {
     "components": "@repo/design-system/components",
     "utils": "@repo/design-system/lib/utils",
@@ -17,5 +18,7 @@
     "lib": "@repo/design-system/lib",
     "ui": "@repo/design-system/components/ui"
   },
-  "iconLibrary": "lucide"
+  "menuColor": "inverted",
+  "menuAccent": "bold",
+  "registries": {}
 }
