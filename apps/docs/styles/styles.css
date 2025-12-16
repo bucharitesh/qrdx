@@ -1,29 +1,12 @@
-@import "tailwindcss";
+@import "@repo/design-system/styles/globals.css";
+
 @import "fumadocs-ui/css/neutral.css";
 @import "fumadocs-ui/css/preset.css";
 @import "fumadocs-twoslash/twoslash.css";
 @import "./loaders.css";
-@import "@repo/design-system/styles/globals.css";
 
 :root {
   --fd-layout-width: 100vw;
-}
-
-* {
-  color-scheme: light dark;
-}
-
-@layer base {
-  body {
-    color-scheme: light dark;
-    font-synthesis-weight: none;
-    text-rendering: optimizeLegibility;
-  }
-
-  button:not(:disabled),
-  [role="button"]:not(:disabled) {
-    cursor: pointer;
-  }
 }
 
 .prose :where(code):not(:where([class~="not-prose"], [class~="not-prose"] *)) {

@@ -1,4 +1,4 @@
-import "./global.css";
+import "@/styles/styles.css";
 import { fonts } from "@repo/design-system/lib/fonts";
 import { cn } from "@repo/design-system/lib/utils";
 import { NextProvider } from "fumadocs-core/framework/next";
