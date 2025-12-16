@@ -52,9 +52,9 @@ export function ActionBarButtons({
           currentStyles={themeState.styles}
           disabled={isGenerating}
         />
-        <Separator orientation="vertical" className="mx-1 h-8" />
+        <Separator orientation="vertical" className="mx-1 !h-8 w-px bg-border" />
         <ThemeToggle />
-        <Separator orientation="vertical" className="mx-1 h-8" />
+        <Separator orientation="vertical" className="mx-1 !h-8 w-px bg-border" />
         {isSavedPreset && (
           <EditButton
             themeId={themeState.preset as string}
