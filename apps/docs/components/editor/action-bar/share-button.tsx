@@ -29,7 +29,7 @@ export function ShareButton({
         ) : (
           <Share2 className="size-3.5" />
         )}
-        <span className="hidden text-sm md:block">Share</span>
+        <span className="hidden text-sm md:block sr-only">Share</span>
       </Button>
     </TooltipWrapper>
   );

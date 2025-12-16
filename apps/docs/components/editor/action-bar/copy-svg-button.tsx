@@ -48,12 +48,12 @@ export function CopySVGButton() {
         {copied ? (
           <>
             <Check className="h-4 w-4" />
-            <span className="hidden text-sm md:block">Copied</span>
+            <span className="hidden text-sm md:block sr-only">Copied</span>
           </>
         ) : (
           <>
             <Copy className="h-4 w-4" />
-            <span className="hidden text-sm md:block">Copy SVG</span>
+            <span className="hidden text-sm md:block sr-only">Copy SVG</span>
           </>
         )}
       </Button>

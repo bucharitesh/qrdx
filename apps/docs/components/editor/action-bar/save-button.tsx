@@ -27,7 +27,7 @@ export function SaveButton({
         ) : (
           <Heart className="size-3.5" />
         )}
-        <span className="hidden text-sm md:block">Save</span>
+        <span className="hidden text-sm md:block sr-only">Save</span>
       </Button>
     </TooltipWrapper>
   );

@@ -129,16 +129,16 @@ export function ContentTypeModal({
     <ResponsiveDialog open={open} onOpenChange={onOpenChange}>
       <ResponsiveDialogContent
         closeButtonClassName="hidden md:flex"
-        className="gap-0 overflow-hidden p-0 sm:max-w-5xl"
+        className="gap-0 overflow-hidden p-0 sm:max-w-7xl"
       >
-        <div className="flex h-[80vh] flex-col md:h-[70vh]">
+        <div className="flex h-[80vh] flex-col md:h-[90vh]">
           {/* Header - Desktop only */}
           <div className="hidden md:block">
             <div className="flex items-center">
               {/* Left: Title (same width as sidebar) */}
               <div className="w-64 shrink-0 px-6 py-6">
-                <ResponsiveDialogTitle className="text-md font-bold">
-                  QR Content Categories
+                <ResponsiveDialogTitle className="text-4xl font-bold">
+                  Content Categories
                 </ResponsiveDialogTitle>
               </div>
               {/* Right: Search bar (aligns with content) */}
