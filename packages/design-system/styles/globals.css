@@ -1,6 +1,9 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+
 @source "../**/*.{ts,tsx}";
+
+@plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -161,7 +164,12 @@
   * {
     @apply min-w-0;
   }
+  * {
+    color-scheme: light dark;
+  }
   html {
+    color-scheme: light dark;
+    font-synthesis-weight: none;
     text-rendering: optimizelegibility;
   }
   body {
