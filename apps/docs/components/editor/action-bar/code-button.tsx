@@ -14,7 +14,7 @@ export function CodeButton() {
       <TooltipWrapper label="View QR code" asChild>
         <Button variant="ghost" size="sm" onClick={() => setDialogOpen(true)}>
           <Braces className="h-4 w-4" />
-          <span className="hidden text-sm md:block">Code</span>
+          <span className="hidden text-sm md:block sr-only">Code</span>
         </Button>
       </TooltipWrapper>
       <QRCodeDialog open={dialogOpen} onOpenChange={setDialogOpen} />

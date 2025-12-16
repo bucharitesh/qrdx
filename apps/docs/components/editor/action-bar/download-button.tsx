@@ -14,7 +14,7 @@ export function DownloadButton() {
       <TooltipWrapper label="Download QR code" asChild>
         <Button variant="ghost" size="sm" onClick={() => setDialogOpen(true)}>
           <Download className="h-4 w-4" />
-          <span className="hidden text-sm md:block">Download</span>
+          <span className="hidden text-sm md:block sr-only">Download</span>
         </Button>
       </TooltipWrapper>
       <DownloadDialog open={dialogOpen} onOpenChange={setDialogOpen} />
