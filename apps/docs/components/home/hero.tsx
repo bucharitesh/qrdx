@@ -58,10 +58,17 @@ export const Hero = () => {
         /> */}
         <img
           src={
-            "https://storage.googleapis.com/bucket-fi-production-apps-0672ab2d/original/images/pi5y38xg074hmbj9pktb33qm.svg"
+            "./hero-light.svg"
           }
           alt="Hero Outline"
-          className="w-full h-full object-cover"
+          className="dark:hidden w-full h-full object-cover"
+        />
+        <img
+          src={
+            "./hero-dark.svg"
+          }
+          alt="Hero Outline"
+          className="hidden dark:block w-full h-full object-cover"
         />
       </div>
       <motion.div
@@ -74,10 +81,17 @@ export const Hero = () => {
         /> */}
         <img
           src={
-            "https://storage.googleapis.com/bucket-fi-production-apps-0672ab2d/original/images/pjcz89c7hhv518ey345mpgvj.svg"
+            "./hero-overlay-light.svg"
           }
           alt="Hero Outline"
-          className="w-full h-full object-cover"
+          className="dark:hidden w-full h-full object-cover"
+        />
+        <img
+          src={
+            "./hero-overlay-dark.svg"
+          }
+          alt="Hero Outline"
+          className="hidden dark:block w-full h-full object-cover"
         />
       </motion.div>
 
