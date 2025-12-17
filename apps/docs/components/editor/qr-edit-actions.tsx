@@ -104,7 +104,7 @@ export function QREditActions({ theme, disabled = false }: QREditActionsProps) {
           </span>
         </div>
 
-        <Separator orientation="vertical" className="!h-8 w-px bg-border" />
+        <Separator orientation="vertical" className="h-8! w-px bg-border" />
 
         <TooltipWrapper label="Cancel changes" asChild>
           <Button
@@ -118,7 +118,7 @@ export function QREditActions({ theme, disabled = false }: QREditActionsProps) {
           </Button>
         </TooltipWrapper>
 
-        <Separator orientation="vertical" className="!h-8 w-px bg-border" />
+        <Separator orientation="vertical" className="h-8! w-px bg-border" />
 
         <TooltipWrapper label="Save changes" asChild>
           <Button
