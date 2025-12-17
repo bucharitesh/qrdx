@@ -26,6 +26,10 @@ const navLinks = [
     text: "AI",
     url: "/ai",
   },
+  {
+    text: "Pricing",
+    url: "/pricing",
+  },
 ];
 
 export function Header() {

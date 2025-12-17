@@ -13,7 +13,9 @@ const DOCS_LAYOUT_PROPS: DocsLayoutProps = {
     title: (
       <>
         {logo}
-        <span className="font-medium in-[.uwu]:hidden max-md:hidden">qrdx</span>
+        <span className="font-medium in-[docs_layout_&]:text-[15px]">
+            QRdx
+        </span>
       </>
     ),
   },
