@@ -33,7 +33,7 @@ export function Header() {
             {stargazersCount > 0 && formatCompactNumber(stargazersCount)}
           </SocialLink>
 
-          <Separator orientation="vertical" className="h-8" />
+          <Separator orientation="vertical" className="h-8!" />
           <UserProfileDropdown />
         </div>
       </div>

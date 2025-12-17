@@ -46,6 +46,7 @@ import type { ThemePreset } from "@/types/theme";
 import { getPresetThemeStyles } from "@/utils/qr-presets-helper";
 import { ThemeToggle } from "../theme-toggle";
 import { TooltipWrapper } from "../tooltip-wrapper";
+import { useMounted } from "@/lib/hooks/use-mounted";
 
 interface ThemePresetSelectProps extends React.ComponentProps<typeof Button> {
   withCycleThemes?: boolean;
@@ -276,6 +277,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
   );
 
   const [search, setSearch] = useState("");
+  const isMounted = useMounted();
 
   const { data: session } = authClient.useSession();
 
@@ -377,7 +379,8 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                   <ColorBox color={themeState.styles.dotColor} />
                 )}
               </div>
-              {currentPresetName !== "default" &&
+              {isMounted &&
+                currentPresetName !== "default" &&
                 currentPresetName &&
                 isSavedTheme(currentPresetName) &&
                 !hasUnsavedChanges() && (
@@ -390,7 +393,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                   </div>
                 )}
               <span className="truncate text-left font-medium capitalize">
-                {hasUnsavedChanges() ? (
+                {isMounted && hasUnsavedChanges() ? (
                   <>Custom (Unsaved)</>
                 ) : (
                   presets[currentPresetName || "default"]?.label
