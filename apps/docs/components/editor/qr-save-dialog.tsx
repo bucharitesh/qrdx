@@ -13,6 +13,8 @@ import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { Loader2 } from "lucide-react";
 import React, { useState } from "react";
+import useMediaQuery from "@repo/design-system/hooks/use-media-query";
+import { cn } from "@repo/design-system/lib/utils";
 
 interface QRSaveDialogProps {
   open: boolean;
@@ -36,6 +38,8 @@ export function QRSaveDialog({
   ctaLabel = "Save Theme",
 }: QRSaveDialogProps) {
   const [themeName, setThemeName] = useState(initialThemeName);
+  const MOBILE_BREAKPOINT = "(min-width: 640px)";
+  const isDesktop = useMediaQuery(MOBILE_BREAKPOINT);
 
   React.useEffect(() => {
     if (open) {
@@ -51,7 +55,7 @@ export function QRSaveDialog({
 
   return (
     <ResponsiveDialog open={open} onOpenChange={onOpenChange}>
-      <ResponsiveDialogContent className="p-6" showCloseButton={true}>
+      <ResponsiveDialogContent className={cn("", isDesktop ? "p-6" : "p-2")} showCloseButton={true}>
         <ResponsiveDialogHeader>
           <ResponsiveDialogTitle>{title}</ResponsiveDialogTitle>
           <ResponsiveDialogDescription>{description}</ResponsiveDialogDescription>

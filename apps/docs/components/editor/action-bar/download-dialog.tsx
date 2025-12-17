@@ -30,6 +30,8 @@ import React from "react";
 import { useQREditorStore } from "@/store/editor-store";
 import { usePreferencesStore } from "@/store/preferences-store";
 import type { DownloadOptions as DownloadOptionsType } from "@/types/theme";
+import { cn } from "@repo/design-system/lib/utils";
+import useMediaQuery from "@repo/design-system/hooks/use-media-query";
 
 interface DownloadDialogProps {
   open: boolean;
@@ -41,7 +43,8 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
   const { downloadOptions, updateDownloadOption } = usePreferencesStore();
   const [sizeError, setSizeError] = React.useState<string>("");
   const [isDownloading, setIsDownloading] = React.useState(false);
-
+  const MOBILE_BREAKPOINT = "(min-width: 640px)";
+  const isDesktop = useMediaQuery(MOBILE_BREAKPOINT);
   const qrProps = React.useMemo(
     () => ({
       ...getQRData({
@@ -134,7 +137,7 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
   return (
     <ResponsiveDialog open={open} onOpenChange={onOpenChange}>
       <ResponsiveDialogContent
-        className="p-6 sm:max-w-md"
+        className={cn("sm:max-w-md", isDesktop ? "p-6" : "p-2")}
         showCloseButton={true}
       >
         <ResponsiveDialogHeader>

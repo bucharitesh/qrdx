@@ -12,6 +12,8 @@ import { Input } from "@repo/design-system/components/ui/input";
 import { toast } from "@repo/design-system";
 import { Check, Copy } from "lucide-react";
 import { useState } from "react";
+import useMediaQuery from "@repo/design-system/hooks/use-media-query";
+import { cn } from "@repo/design-system/lib/utils";
 
 interface QRShareDialogProps {
   open: boolean;
@@ -21,7 +23,8 @@ interface QRShareDialogProps {
 
 export function QRShareDialog({ open, onOpenChange, url }: QRShareDialogProps) {
   const [copied, setCopied] = useState(false);
-
+  const MOBILE_BREAKPOINT = "(min-width: 640px)";
+  const isDesktop = useMediaQuery(MOBILE_BREAKPOINT);
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(url);
@@ -35,7 +38,7 @@ export function QRShareDialog({ open, onOpenChange, url }: QRShareDialogProps) {
 
   return (
     <ResponsiveDialog open={open} onOpenChange={onOpenChange}>
-      <ResponsiveDialogContent className="p-6" showCloseButton={true}>
+      <ResponsiveDialogContent className={cn("", isDesktop ? "p-6" : "p-2")} showCloseButton={true}>
         <ResponsiveDialogHeader>
           <ResponsiveDialogTitle>Share QR Code</ResponsiveDialogTitle>
           <ResponsiveDialogDescription>

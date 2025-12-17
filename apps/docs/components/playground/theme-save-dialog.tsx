@@ -23,6 +23,8 @@ import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+import useMediaQuery from "@repo/design-system/hooks/use-media-query";
+import { cn } from "@repo/design-system/lib/utils";
 
 const formSchema = z.object({
   themeName: z.string().min(1, "Theme name cannot be empty."),
@@ -49,6 +51,8 @@ export function ThemeSaveDialog({
   title = "Save Theme",
   description = "Enter a name for your theme so you can find it later.",
 }: ThemeSaveDialogProps) {
+  const MOBILE_BREAKPOINT = "(min-width: 640px)";
+  const isDesktop = useMediaQuery(MOBILE_BREAKPOINT);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -73,7 +77,7 @@ export function ThemeSaveDialog({
   return (
     <ResponsiveDialog open={open} onOpenChange={handleOpenChange}>
       <ResponsiveDialogContent className="overflow-hidden shadow-lg sm:max-w-100">
-        <div className="space-y-6 p-6 pt-0 sm:pt-6 sm:pb-2">
+        <div className={cn("space-y-6", isDesktop ? "p-6" : "p-6")}>
           <ResponsiveDialogHeader>
             <ResponsiveDialogTitle>{title}</ResponsiveDialogTitle>
             <ResponsiveDialogDescription>
