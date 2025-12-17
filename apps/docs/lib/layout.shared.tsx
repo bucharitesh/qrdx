@@ -28,7 +28,7 @@ export function baseOptions(): BaseLayoutProps {
       title: (
         <>
           {logo}
-          <span className="font-medium in-[.uwu]:hidden in-[header_&]:text-[15px]">
+          <span className="font-medium in-[header_&]:text-[15px]">
             QRdx
           </span>
         </>
