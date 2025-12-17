@@ -63,6 +63,7 @@ const QRControlPanel: React.FC<QRControlPanelProps> = ({
           value={tab}
           onValueChange={(v) => handleSetTab(v as ControlTab)}
           className="flex min-h-0 w-full flex-1 flex-col"
+          id="qr-control-tabs"
         >
           <HorizontalScrollArea className="mt-2 mb-1 px-4">
             <TabsList className="bg-background text-muted-foreground inline-flex w-fit items-center justify-center rounded-full px-0">

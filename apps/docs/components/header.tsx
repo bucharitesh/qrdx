@@ -11,7 +11,6 @@ import { SocialLink } from "@/components/social-link";
 import { UserProfileDropdown } from "@/components/user-profile-dropdown";
 import { QrdxLogoAnimation } from "./qrdx-logo-animation";
 import { useGithubStars } from "@/lib/hooks/use-github-stars";
-import { useGithubStars } from "@/lib/hooks/use-github-stars";
 import { formatCompactNumber } from "@/utils/format";
 
 const navLinks = [
