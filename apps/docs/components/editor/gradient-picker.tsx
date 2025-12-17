@@ -10,6 +10,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@repo/design-system/components/ui/popover";
+import { Slider } from "@repo/design-system/components/ui/slider";
 import {
   Select,
   SelectContent,
@@ -35,18 +36,6 @@ interface GradientPickerProps {
 }
 
 type ColorMode = "solid" | "linear" | "radial";
-
-// Common gradient directions
-const GRADIENT_ANGLES = [
-  { label: "→ Left to Right", value: 0 },
-  { label: "↗ Bottom Left to Top Right", value: 45 },
-  { label: "↑ Bottom to Top", value: 90 },
-  { label: "↖ Bottom Right to Top Left", value: 135 },
-  { label: "← Right to Left", value: 180 },
-  { label: "↙ Top Right to Bottom Left", value: 225 },
-  { label: "↓ Top to Bottom", value: 270 },
-  { label: "↘ Top Left to Bottom Right", value: 315 },
-] as const;
 
 // Star SVG Icon Component with Gradient Fill
 const StarIconWithGradient = ({
@@ -559,8 +548,8 @@ export function GradientPicker({
   );
 
   const handleAngleChange = useCallback(
-    (newAngle: string) => {
-      const angleValue = Number.parseInt(newAngle, 10);
+    (newAngle: number | number[]) => {
+      const angleValue = Array.isArray(newAngle) ? newAngle[0] : newAngle;
       setAngle(angleValue);
       onChange({
         type: "linear",
@@ -946,30 +935,25 @@ export function GradientPicker({
                 </div>
               </div>
 
-              {/* Linear Gradient Direction */}
+              {/* Linear Gradient Rotation */}
               {mode === "linear" && (
                 <div className="space-y-2">
-                  <Label className="text-xs text-muted-foreground">
-                    Direction
-                  </Label>
-                  <Select
-                    value={angle.toString()}
-                    onValueChange={handleAngleChange}
-                  >
-                    <SelectTrigger className="h-8 text-sm">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {GRADIENT_ANGLES.map((option) => (
-                        <SelectItem
-                          key={option.value}
-                          value={option.value.toString()}
-                        >
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <div className="flex items-center justify-between">
+                    <Label className="text-xs text-muted-foreground">
+                      Rotation
+                    </Label>
+                    <span className="text-xs text-muted-foreground font-mono">
+                      {angle}°
+                    </span>
+                  </div>
+                  <Slider
+                    value={[angle]}
+                    onValueChange={(values) => handleAngleChange(values)}
+                    min={0}
+                    max={360}
+                    step={1}
+                    className="w-full"
+                  />
                 </div>
               )}
 
