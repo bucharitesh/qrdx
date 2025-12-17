@@ -1,166 +1,89 @@
-# qrdx
+<a href="https://qrdx.dev">
+  <img alt="QRdx is the modern, open-source QR Generation and Detection Platform." src="https://github.com/user-attachments/assets/b2126aa6-5e1d-4ec2-bd5a-59a09718f9a0">
+</a>
 
-A powerful, flexible QR code generation library and demo application, now open source.
+<h3 align="center">QRdx</h3>
 
-<div>
-  <img src="https://img.shields.io/badge/license-ISC-blue" alt="License" />
+<p align="center">
+    The open-source QR Generation and Detection Library.
+    <br />
+    <a href="https://qrdx.dev"><strong>Learn more »</strong></a>
+    <br />
+    <br />
+    <a href="#introduction"><strong>Introduction</strong></a> ·
+    <a href="#tech-stack"><strong>Tech Stack</strong></a> ·
+    <a href="#self-hosting"><strong>Self-hosting</strong></a> ·
+    <a href="#contributing"><strong>Contributing</strong></a>
+</p>
+
+<p align="center">
+  <a href="https://github.com/bucharitesh/qrdx/blob/main/LICENSE.md">
+    <img src="https://img.shields.io/github/license/bucharitesh/qrdx?label=license&logo=github&color=f80&logoColor=fff" alt="License" />
+  </a>
+  <img src="https://img.shields.io/badge/license-AGPLv3-blue" alt="License" />
   <img src="https://img.shields.io/badge/react-19.2.0-blue" alt="React Version" />
-  <img src="https://img.shields.io/badge/next.js-16.0.0-black" alt="Next.js Version" />
-</div>
+  <img src="https://img.shields.io/badge/next.js-16.0.8-black" alt="Next.js Version" />
+</p>
 
-## Overview
+<br/>
 
-qrdx is a production-ready QR code generation library with extensive customization options. Originally built for Flam's internal use, it now powers beautiful, customizable QR codes for anyone.
+## Introduction
 
-### Key Features
+QRdx is the modern, open-source QR Generation and Detection Platform.
 
-- 🎨 **Highly Customizable** — Colors, logos, templates, and more
-- 🎭 **Multiple Templates** — Pre-designed templates for various use cases
-- 📱 **Multiple Formats** — SVG, PNG, JPG support with Canvas and SVG rendering
-- ♿ **Accessibility** — Automatic contrast checking for scannable QR codes
-- 🖼️ **Logo Support** — Embed custom logos or images in QR codes
-- ⚡ **Fast & Lightweight** — Optimized for performance
-- 🎯 **TypeScript First** — Full type safety out of the box
-- 🌐 **Server & Client** — Works in both browser and Node.js environments
+Our platform powers 1000+ QR's monthly, and is used by marketing teams from companies like [Flam](https://flamapp.ai) and more.
 
-## Demo
+## Tech Stack
 
-The demo showcases:
-- Real-time QR code generation
-- Color customization with live preview
-- Template selection
-- Logo embedding
-- Contrast ratio validation
-- Multiple download formats
-```
+- [Next.js](https://nextjs.org/) – framework
+- [TypeScript](https://www.typescriptlang.org/) – language
+- [Tailwind](https://tailwindcss.com/) – CSS
+- [Drizzle ORM](https://orm.drizzle.team/) – ORM
+- [Neon](https://neon.tech/) – database
+- [Better Auth](https://www.better-auth.com/) – auth
+- [PostHog](https://posthog.com/) – analytics
+- [Turborepo](https://turbo.build/repo) – monorepo
+- [Polar](https://polar.sh/) – payments
+- [Fumadocs](https://fumadocs.vercel.app/) – documentation
+- [shadcn/ui](https://ui.shadcn.com/) – UI components
+- [Vercel](https://vercel.com/) – deployments
 
-## Quick Start
+## Self-Hosting
 
-### Prerequisites
-
-- Node.js 18+
-- pnpm (recommended) or npm/yarn
-
-### Installation
-
-```bash
-# Clone the repository
-git clone https://github.com/bucharitesh/qrdx.git
-cd qrdx
-
-# Install dependencies
-pnpm install
-
-# Run the development server
-pnpm dev
-```
-
-The web app will be available at `http://localhost:3000`
-
-### Building for Production
-
-```bash
-# Build all packages and apps
-pnpm build
-
-# Start production server
-cd apps/web
-pnpm start
-```
-
-## Packages
-
-### [qrdx](./packages/qrdx) — QR Code Generation Library
-
-The core QR code generation library with extensive customization options.
-
-**Features:**
-- Canvas and SVG rendering
-- Custom colors for QR code, background, eyes, and dots
-- Logo/image embedding with excavation
-- Multiple templates
-- Error correction levels (L, M, Q, H)
-- TypeScript support
-
-**Basic Usage:**
-
-```tsx
-import { QRCode } from 'qrdx';
-
-export default function MyComponent() {
-  return (
-    <QRCode
-      url="https://example.com"
-      fgColor="#000000"
-      bgColor="#ffffff"
-      size={512}
-    />
-  );
-}
-```
-
-[Read full documentation →](./packages/qr/README.md)
-
-Shared TypeScript configurations for consistent type checking across the monorepo.
-
-
-## Development
-
-### Available Scripts
-
-```bash
-# Development
-pnpm dev          # Start all apps in development mode
-pnpm dev --filter web  # Start only the web app
-
-# Building
-pnpm build        # Build all packages and apps
-pnpm build --filter qrdx  # Build only the QR package
-
-# Testing & Quality
-pnpm typecheck    # Run TypeScript type checking
-pnpm check        # Run linting and formatting checks
-pnpm fix          # Auto-fix linting and formatting issues
-
-# Maintenance
-pnpm clean        # Clean all node_modules
-pnpm bump-deps    # Update all dependencies
-```
-
-### Project Tools
-
-- **Build System:** [Turborepo](https://turborepo.com)
-- **Package Manager:** [pnpm](https://pnpm.io)
-- **Linting & Formatting:** [Biome](https://biomejs.dev)
-- **Styling:** [Tailwind CSS](https://tailwindcss.com)
-- **UI Components:** [Radix UI](https://radix-ui.com)
-- **Forms:** [React Hook Form](https://react-hook-form.com)
+You can self-host QRdx for greater control over your data and design.
 
 ## Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+We love our contributors! Here's how you can contribute:
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+- [Open an issue](https://github.com/bucharitesh/qrdx/issues) if you believe you've encountered a bug.
+- Make a [pull request](https://github.com/bucharitesh/qrdx/pull) to add new features/make quality-of-life improvements/fix bugs.
 
-## License
+### Recommended Versions
 
-This project is licensed under the ISC License - see individual package LICENSE files for details.
+| Package | Version   |
+| ------- | --------- |
+| node    | >=18      |
+| pnpm    | 10.26.0   |
 
-The QR code generation is based on [qrcode.react](https://github.com/zpao/qrcode.react) by Paul O'Shannessy.
+
+## Repo Activity
+
+![Qrdx repo activity – generated by Axiom](https://repobeats.axiom.co/api/embed/0694ff5c2725e0d236774058f6fc68c2e1a712d7.svg "Repobeats analytics image")
 
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=bucharitesh/qrdx&type=date&legend=top-left)](https://www.star-history.com/#bucharitesh/qrdx&type=date&legend=top-left)
 
+## License
+
+QRDX is licensed under the [GNU Affero General Public License v3.0 (AGPLv3)](https://opensource.org/license/agpl-v3). This is a copyleft license that ensures the software remains free and open source.
+
+For more details, see the [LICENSE](./license.md) file.
+
+
 ## Acknowledgments
 
-- QR code generation based on qrcode.react
+- QR code generation based on [qrcode.react](https://github.com/zpao/qrcode.react)
+- Design Inspiration for playground [tweakcn](https://github.com/jnsahaj/tweakcn)
 - UI components powered by Radix UI and Tailwind CSS
-
----
-
-Made with ❤️ by Ritesh Bucha
