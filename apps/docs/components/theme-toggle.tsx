@@ -22,7 +22,7 @@ export function ThemeToggle({ className, ...props }: ThemeToggleProps) {
   };
 
   return (
-    <TooltipWrapper label="Toggle theme" asChild>
+    <TooltipWrapper label="Toggle theme" kbd="L" asChild>
       <Button
         variant="ghost"
         size="icon"

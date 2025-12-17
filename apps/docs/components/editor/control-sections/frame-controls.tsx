@@ -5,7 +5,7 @@ import { TemplateSelector } from "@/components/playground/template-selector";
 
 export function FrameControls() {
   return (
-    <ControlSection title="Frames" expanded>
+    <ControlSection title="Frames" expanded kbd="F">
       <TemplateSelector />
     </ControlSection>
   );
