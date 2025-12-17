@@ -9,5 +9,5 @@ export default async function SettingsIndex() {
 
   if (!session) redirect("/playground");
 
-  redirect("/settings/themes");
+  redirect("/settings/general");
 }

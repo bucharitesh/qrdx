@@ -32,9 +32,9 @@ export default async function proxy(request: NextRequest) {
   }
 
   if (session) {
-    // Redirect logged-in users from /dashboard or /settings (root) to /settings/themes
+    // Redirect logged-in users from /dashboard or /settings (root) to /settings/general
     if (pathname === "/dashboard" || pathname === "/settings") {
-      return NextResponse.redirect(new URL("/settings/themes", request.url));
+      return NextResponse.redirect(new URL("/settings/general", request.url));
     }
   }
 

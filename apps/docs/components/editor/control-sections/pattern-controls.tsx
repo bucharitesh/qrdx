@@ -8,15 +8,15 @@ import { PatternSelector } from "@/components/playground/pattern-selector";
 export function PatternControls() {
   return (
     <>
-      <ControlSection title="Dot Patterns" expanded>
+      <ControlSection title="Dot Patterns" expanded kbd=",">
         <PatternSelector />
       </ControlSection>
 
-      <ControlSection title="Corner Eye Patterns">
+      <ControlSection title="Corner Eye Patterns" kbd=".">
         <CornerEyePatternSelector />
       </ControlSection>
 
-      <ControlSection title="Internal Eye Patterns">
+      <ControlSection title="Internal Eye Patterns" kbd="/">
         <CornerEyeDotPatternSelector />
       </ControlSection>
     </>

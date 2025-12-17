@@ -5,7 +5,7 @@ import type React from "react";
 import { useQREditorStore } from "@/store/editor-store";
 import { EyeDotPatterns } from "../icons/internal-eye-patterns";
 
-const patterns: Array<{ id: CornerEyeDotPattern; name: string }> = [
+export const patterns: Array<{ id: CornerEyeDotPattern; name: string }> = [
   { id: "square", name: "Square" },
   { id: "rounded", name: "Rounded" },
   { id: "circle", name: "Circle" },

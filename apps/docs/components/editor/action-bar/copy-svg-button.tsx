@@ -43,7 +43,7 @@ export function CopySVGButton() {
   };
 
   return (
-    <TooltipWrapper label="Copy SVG" asChild>
+    <TooltipWrapper label="Copy SVG" kbd="C" asChild>
       <Button variant="ghost" size="sm" onClick={handleCopySVG}>
         {copied ? (
           <>

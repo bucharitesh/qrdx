@@ -1,18 +1,23 @@
 /** biome-ignore-all lint/a11y/noStaticElementInteractions: false positive */
 /** biome-ignore-all lint/a11y/useKeyWithClickEvents: false positive */
 import { cn } from "@repo/design-system/lib/utils";
+import { Kbd } from "@repo/design-system/components/ui/kbd";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import React, { useState } from "react";
 import type { ControlSectionProps } from "@/types";
 import { SectionContext } from "./section-context";
+import { useUserSettings } from "@/lib/hooks/use-user-settings";
 
 function ControlSection({
   title,
   children,
   expanded = false,
   className,
+  kbd,
 }: ControlSectionProps) {
   const [isExpanded, setIsExpanded] = useState(expanded);
+  const { settings } = useUserSettings();
+  const showKbd = kbd && (settings?.keyboardShortcuts ?? true);
 
   return (
     <SectionContext.Provider
@@ -27,7 +32,10 @@ function ControlSection({
           className="bg-background hover:bg-muted flex cursor-pointer items-center justify-between p-3"
           onClick={() => setIsExpanded(!isExpanded)}
         >
-          <h3 className="text-sm font-medium">{title}</h3>
+          <div className="flex items-center gap-2">
+            <h3 className="text-sm font-medium">{title}</h3>
+            {showKbd && kbd && <Kbd>{kbd}</Kbd>}
+          </div>
           <button
             type="button"
             className="text-muted-foreground hover:text-foreground transition-colors"

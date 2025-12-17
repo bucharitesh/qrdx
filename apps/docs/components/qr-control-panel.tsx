@@ -18,7 +18,7 @@ import {
 } from "@/components/editor/control-sections";
 import { QREditActions } from "@/components/editor/qr-edit-actions";
 import ThemePresetSelect from "@/components/editor/qr-preset-select";
-import TabsTriggerPill from "@/components/editor/tabs-trigger-pill";
+import { TabsTriggerPillWithTooltip } from "@/components/editor/theme-preview/tabs-trigger-pill";
 import { HorizontalScrollArea } from "@/components/horizontal-scroll-area";
 import { useAIQRGenerationCore } from "@/lib/hooks/use-ai-qr-generation-core";
 import {
@@ -66,20 +66,58 @@ const QRControlPanel: React.FC<QRControlPanelProps> = ({
         >
           <HorizontalScrollArea className="mt-2 mb-1 px-4">
             <TabsList className="bg-background text-muted-foreground inline-flex w-fit items-center justify-center rounded-full px-0">
-              <TabsTriggerPill value="content">Content</TabsTriggerPill>
-              <TabsTriggerPill value="colors">Colors</TabsTriggerPill>
-              <TabsTriggerPill value="patterns">Patterns</TabsTriggerPill>
-              <TabsTriggerPill value="frames">Frames</TabsTriggerPill>
-              <TabsTriggerPill value="settings">Settings</TabsTriggerPill>
-              <TabsTriggerPill
+              <TabsTriggerPillWithTooltip 
+                value="content" 
+                kbd="1" 
+                label="Content" 
+                description="Manage QR code data, URL, text, and other content settings"
+              >
+                Content
+              </TabsTriggerPillWithTooltip>
+              <TabsTriggerPillWithTooltip 
+                value="colors" 
+                kbd="2" 
+                label="Colors" 
+                description="Customize QR code colors including foreground, background, and gradient styles"
+              >
+                Colors
+              </TabsTriggerPillWithTooltip>
+              <TabsTriggerPillWithTooltip 
+                value="patterns" 
+                kbd="3" 
+                label="Patterns" 
+                description="Choose from various QR code patterns, dots, eyes, and marker styles"
+              >
+                Patterns
+              </TabsTriggerPillWithTooltip>
+              <TabsTriggerPillWithTooltip 
+                value="frames" 
+                kbd="4" 
+                label="Frames" 
+                description="Add decorative frames, borders, and labels around your QR code"
+              >
+                Frames
+              </TabsTriggerPillWithTooltip>
+              <TabsTriggerPillWithTooltip 
+                value="settings" 
+                kbd="5" 
+                label="Settings" 
+                description="Configure advanced options including error correction, size, and logo placement"
+              >
+                Settings
+              </TabsTriggerPillWithTooltip>
+              <TabsTriggerPillWithTooltip
                 value="ai"
+                kbd="6"
+                label="AI Generate"
+                description="Use AI to automatically generate and customize QR codes with smart suggestions"
                 className="data-[state=active]:[--effect:var(--secondary-foreground)] data-[state=active]:[--foreground:var(--muted-foreground)] data-[state=active]:[--muted-foreground:var(--effect)]"
               >
                 <Sparkle className="mr-1 size-3.5 text-current" />
-                <span className="animate-text via-foreground from-muted-foreground to-muted-foreground flex items-center gap-1 bg-gradient-to-r from-50% via-60% to-100% bg-[200%_auto] bg-clip-text text-sm text-transparent">
+                <span className="animate-text via-foreground from-muted-foreground to-muted-foreground flex items-center gap-1 bg-linear-to-r from-50% via-60% to-100% bg-[200%_auto] bg-clip-text text-sm text-transparent">
                   Generate
                 </span>
-              </TabsTriggerPill>
+              </TabsTriggerPillWithTooltip>
             </TabsList>
           </HorizontalScrollArea>
 

@@ -9,6 +9,7 @@ import {
   CommandItem,
 } from "@repo/design-system/components/ui/command";
 import { Input } from "@repo/design-system/components/ui/input";
+import { Kbd } from "@repo/design-system/components/ui/kbd";
 import {
   Popover,
   PopoverContent,
@@ -38,6 +39,7 @@ import { normalizeColorConfig } from "qrdx/types";
 import type React from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { authClient } from "@/lib/auth-client";
+import { useUserSettings } from "@/lib/hooks/use-user-settings";
 import { useQREditorStore } from "@/store/editor-store";
 import { useThemePresetStore } from "@/store/theme-preset-store";
 import type { ThemePreset } from "@/types/theme";
@@ -140,7 +142,7 @@ const ThemeControls = () => {
     <div className="flex gap-1">
       <ThemeToggle variant="ghost" size="icon" className="size-6 p-1" />
 
-      <TooltipWrapper label="Random theme" asChild>
+      <TooltipWrapper label="Random theme" kbd="T" asChild>
         <Button
           variant="ghost"
           size="sm"
@@ -163,28 +165,38 @@ const ThemeCycleButton: React.FC<ThemeCycleButtonProps> = ({
   onClick,
   className,
   ...props
-}) => (
-  <Tooltip>
-    <TooltipTrigger asChild>
-      <Button
-        variant="ghost"
-        size="icon"
-        className={cn("aspect-square h-full shrink-0", className)}
-        onClick={onClick}
-        {...props}
-      >
-        {direction === "prev" ? (
-          <ArrowLeft className="h-4 w-4" />
-        ) : (
-          <ArrowRight className="h-4 w-4" />
-        )}
-      </Button>
-    </TooltipTrigger>
-    <TooltipContent>
-      {direction === "prev" ? "Previous theme" : "Next theme"}
-    </TooltipContent>
-  </Tooltip>
-);
+}) => {
+  const { settings } = useUserSettings();
+  const showKbd = settings?.keyboardShortcuts ?? true;
+
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          variant="ghost"
+          size="icon"
+          className={cn("aspect-square h-full shrink-0", className)}
+          onClick={onClick}
+          {...props}
+        >
+          {direction === "prev" ? (
+            <ArrowLeft className="h-4 w-4" />
+          ) : (
+            <ArrowRight className="h-4 w-4" />
+          )}
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent>
+        <div className="flex items-center gap-2">
+          <span className="text-xs">
+            {direction === "prev" ? "Previous theme" : "Next theme"}
+          </span>
+          {showKbd && <Kbd>{direction === "prev" ? "←" : "→"}</Kbd>}
+        </div>
+      </TooltipContent>
+    </Tooltip>
+  );
+};
 
 interface ThemePresetCycleControlsProps
   extends React.ComponentProps<typeof Button> {
@@ -220,22 +232,22 @@ const ThemePresetCycleControls: React.FC<ThemePresetCycleControlsProps> = ({
   );
   return (
     <>
-      <Separator orientation="vertical" className="min-h-8" />
+      <Separator orientation="vertical" className="min-h-8 shrink-0" />
 
       <ThemeCycleButton
         direction="prev"
         size="icon"
-        className={cn("aspect-square min-h-8 w-auto", className)}
+        className={cn("aspect-square min-h-8 w-auto shrink-0", className)}
         onClick={() => cycleTheme("prev")}
         {...props}
       />
 
-      <Separator orientation="vertical" className="min-h-8" />
+      <Separator orientation="vertical" className="min-h-8 shrink-0" />
 
       <ThemeCycleButton
         direction="next"
         size="icon"
-        className={cn("aspect-square min-h-8 w-auto", className)}
+        className={cn("aspect-square min-h-8 w-auto shrink-0", className)}
         onClick={() => cycleTheme("next")}
         {...props}
       />
@@ -339,13 +351,13 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
   }, [filteredPresets, isSavedTheme]);
 
   return (
-    <div className="flex w-full items-center">
+    <div className="flex w-full items-center gap-0">
       <Popover>
         <PopoverTrigger asChild>
           <Button
             variant="ghost"
             className={cn(
-              "group relative w-full justify-between md:min-w-56",
+              "group relative flex-1 justify-between md:min-w-56",
               className,
             )}
             {...props}
@@ -395,7 +407,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                 <Search className="size-4 shrink-0 opacity-50" />
                 <Input
                   placeholder="Search themes..."
-                  className="border-0 shadow-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                  className="border-0 shadow-none bg-transparent! focus-visible:ring-0 focus-visible:ring-offset-0"
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                 />

@@ -14,7 +14,7 @@ export function SaveButton({
   ...props
 }: SaveButtonProps) {
   return (
-    <TooltipWrapper label="Save QR theme" asChild>
+    <TooltipWrapper label="Save QR theme" kbd="S" asChild>
       <Button
         variant="ghost"
         size="sm"

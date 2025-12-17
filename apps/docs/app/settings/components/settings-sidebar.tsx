@@ -9,6 +9,7 @@ import {
   type LucideIcon,
   Palette,
   Plug,
+  Settings,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -29,6 +30,7 @@ type NavItem =
     };
 
 const BASE_NAV_ITEMS: NavItem[] = [
+  { type: "link", href: "/settings/general", label: "General", icon: Settings },
   { type: "link", href: "/settings/themes", label: "Themes", icon: Palette },
   {
     type: "link",
