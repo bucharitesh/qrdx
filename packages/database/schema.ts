@@ -13,12 +13,20 @@ export type ThemeStyles = {
   [key: string]: any;
 };
 
+export type UserSettings = {
+  keyboardShortcuts: boolean;
+  // Add more settings here in the future
+};
+
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
   emailVerified: boolean("email_verified").notNull(),
   image: text("image"),
+  settings: json("settings").$type<UserSettings>().default({
+    keyboardShortcuts: true,
+  }),
   createdAt: timestamp("created_at").notNull(),
   updatedAt: timestamp("updated_at").notNull(),
 });

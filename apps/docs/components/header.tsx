@@ -8,11 +8,10 @@ import { GetProCTA } from "@/components/get-pro-cta";
 import { SocialLink } from "@/components/social-link";
 import { UserProfileDropdown } from "@/components/user-profile-dropdown";
 import { QrdxLogoAnimation } from "./qrdx-logo-animation";
-// import { useGithubStars } from "@/lib/hooks/use-github-stars";
-
+import { useGithubStars } from "@/lib/hooks/use-github-stars";
+import { formatCompactNumber } from "@/utils/format";
 export function Header() {
-  // const { stargazersCount } = useGithubStars("bucharitesh", "qrdx"); // Update with your GitHub repo
-
+  const { stargazersCount } = useGithubStars("bucharitesh", "qrdx");
   return (
     <header className="border-b bg-background/80 backdrop-blur supports-backdrop-filter:bg-background/10">
       <div className="flex items-center justify-between gap-2 p-4">
@@ -31,7 +30,7 @@ export function Header() {
             className="flex items-center gap-2 text-sm font-bold"
           >
             <GithubIcon className="size-4" />
-            {/* {stargazersCount > 0 && formatCompactNumber(stargazersCount)} */}
+            {stargazersCount > 0 && formatCompactNumber(stargazersCount)}
           </SocialLink>
 
           <Separator orientation="vertical" className="h-8" />

@@ -22,7 +22,7 @@ import {
   REMIX_PROMPTS,
   VARIANT_PROMPTS,
 } from "@/utils/ai/prompts";
-import TabsTriggerPill from "../theme-preview/tabs-trigger-pill";
+import { TabsTriggerPill } from "../theme-preview/tabs-trigger-pill";
 
 export function NoMessagesPlaceholder({
   onGenerateTheme,

@@ -15,7 +15,7 @@ export function ShareButton({
   ...props
 }: ShareButtonProps) {
   return (
-    <TooltipWrapper label="Share QR code" asChild>
+    <TooltipWrapper label="Share QR code" kbd="X" asChild>
       <Button
         variant="ghost"
         size="sm"
