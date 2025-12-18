@@ -290,6 +290,180 @@ function generateDataCircles(
   return shapes;
 }
 
+// Generate white circles for empty cells (inverse of data circles) - for logo variant
+function generateInverseDataCircles(
+  modules: Modules,
+  options: {
+    margin: number;
+    pixelSize: number;
+    pattern?: BodyPattern;
+  }
+): JSX.Element[] {
+  const { margin, pixelSize, pattern = "circle" } = options;
+  const shapes: JSX.Element[] = [];
+  const qrSize = modules.length;
+  const radius = pixelSize * 0.333_333; // radius for circles
+
+  modules.forEach((row, y) => {
+    row.forEach((cell, x) => {
+      // Render where cell is false (empty) and not in corner areas
+      if (!cell && !isCornerModule(x, y, qrSize)) {
+        const cx = (x + 0.5 + margin) * pixelSize;
+        const cy = (y + 0.5 + margin) * pixelSize;
+        const key = `inv-${x}-${y}`;
+
+        switch (pattern) {
+          case "circle":
+            shapes.push(
+              <circle
+                cx={cx}
+                cy={cy}
+                key={key}
+                r={radius}
+                transform={`rotate(0,${cx},${cy})`}
+              />
+            );
+            break;
+
+          case "circle-large":
+            {
+              const largeRadius = pixelSize * 0.5;
+              shapes.push(
+                <circle
+                  cx={cx}
+                  cy={cy}
+                  key={key}
+                  r={largeRadius}
+                  transform={`rotate(0,${cx},${cy})`}
+                />
+              );
+            }
+            break;
+
+          case "small-square":
+            {
+              const halfSize = pixelSize * 0.357_143;
+              shapes.push(
+                <path
+                  d={`M ${cx - halfSize} ${cy - halfSize}v ${pixelSize * 0.714_286}h ${pixelSize * 0.714_286}v -${pixelSize * 0.714_286}z`}
+                  key={key}
+                  transform={`rotate(0,${cx},${cy})`}
+                />
+              );
+            }
+            break;
+
+          case "diamond":
+            {
+              const halfSize = pixelSize * 0.357_143;
+              shapes.push(
+                <path
+                  d={`M ${cx - halfSize} ${cy - halfSize}v ${pixelSize * 0.714_286}h ${pixelSize * 0.714_286}v -${pixelSize * 0.714_286}z`}
+                  key={key}
+                  transform={`rotate(45,${cx},${cy})`}
+                />
+              );
+            }
+            break;
+
+          case "circle-mixed":
+            {
+              const randomFactor =
+                (x + y) % 3 === 0 ? 0.5 : (x + y) % 2 === 0 ? 1 : 1.25;
+              const variedRadius = radius * randomFactor;
+              shapes.push(
+                <circle
+                  cx={cx}
+                  cy={cy}
+                  key={key}
+                  r={variedRadius}
+                  transform={`rotate(0,${cx},${cy})`}
+                />
+              );
+            }
+            break;
+
+          case "pacman":
+            {
+              const halfWidth = pixelSize * 0.5;
+              const halfHeight = pixelSize * 0.357_143;
+              shapes.push(
+                <path
+                  d={`M ${cx - halfWidth} ${cy - halfHeight}v ${pixelSize * 0.714_286}h ${halfWidth}a ${halfWidth * 0.5} ${halfWidth * 0.5}, 0, 0, 0, 0 -${pixelSize * 0.714_286}h -${halfWidth}v -${pixelSize * 0.714_286}z`}
+                  key={key}
+                  transform={`rotate(${((x + y) % 2) === 0 ? 0 : 90},${cx},${cy})`}
+                />
+              );
+            }
+            break;
+
+          case "rounded":
+            {
+              const halfSize = pixelSize * 0.5;
+              const cornerRadius = pixelSize * 0.2;
+              shapes.push(
+                <rect
+                  height={pixelSize}
+                  key={key}
+                  rx={cornerRadius}
+                  ry={cornerRadius}
+                  transform={`rotate(0,${cx},${cy})`}
+                  width={pixelSize}
+                  x={cx - halfSize}
+                  y={cy - halfSize}
+                />
+              );
+            }
+            break;
+
+          case "square":
+            {
+              const halfSize = pixelSize * 0.5;
+              shapes.push(
+                <rect
+                  height={pixelSize}
+                  key={key}
+                  transform={`rotate(0,${cx},${cy})`}
+                  width={pixelSize}
+                  x={cx - halfSize}
+                  y={cy - halfSize}
+                />
+              );
+            }
+            break;
+
+          case "vertical-line":
+            {
+              const halfWidth = pixelSize * 0.5;
+              const halfHeight = pixelSize * 0.166_667;
+              shapes.push(
+                <path
+                  d={`M ${cx - halfWidth} ${cy - halfHeight}v ${pixelSize * 0.333_334}h ${pixelSize}v -${pixelSize * 0.333_334}z`}
+                  key={key}
+                  transform={`rotate(0,${cx},${cy})`}
+                />
+              );
+            }
+            break;
+
+          default:
+            shapes.push(
+              <circle
+                cx={cx}
+                cy={cy}
+                key={key}
+                r={radius}
+                transform={`rotate(0,${cx},${cy})`}
+              />
+            );
+        }
+      }
+    });
+  });
+
+  return shapes;
+}
+
 // Helper to calculate gradient coordinates based on angle
 function calculateGradientCoordinates(
   angle: number,
@@ -628,12 +802,17 @@ export function QRCodeSVG(props: QRPropsSVG) {
     cornerEyeDotPattern = "circle",
     margin = DEFAULT_MARGIN,
     isOGContext = false,
-    imageSettings,
     templateId,
     customTemplate,
     customProps,
     ...otherProps
   } = props;
+  
+  const isLogoQR = props.type === "logo_qr";
+  
+  // Extract settings based on type
+  const imageSettings = !isLogoQR && "imageSettings" in props ? props.imageSettings : undefined;
+  const logoSettings = isLogoQR && "logoSettings" in props ? props.logoSettings : undefined;
 
   const shouldUseHigherErrorLevel =
     isOGContext && imageSettings?.excavate && (level === "L" || level === "M");
@@ -656,7 +835,44 @@ export function QRCodeSVG(props: QRPropsSVG) {
   );
 
   let image: null | JSX.Element = null;
-  if (imageSettings != null && calculatedImageSettings != null) {
+  
+  // Handle Logo QR
+  if (isLogoQR && logoSettings) {
+    // Calculate actual size from percentage
+    const actualSize = (size * logoSettings.logoSize) / 100;
+    const logoX = (size - actualSize) / 2;
+    const logoY = (size - actualSize) / 2;
+
+    if (isOGContext) {
+      image = (
+        <img
+          alt="Logo"
+          src={logoSettings.src}
+          style={{
+            position: "absolute",
+            left: `${logoX}px`,
+            top: `${logoY}px`,
+            width: `${actualSize}px`,
+            height: `${actualSize}px`,
+          }}
+        />
+      );
+    } else {
+      image = (
+        <image
+          height={actualSize}
+          href={logoSettings.src}
+          preserveAspectRatio="xMidYMid slice"
+          width={actualSize}
+          x={logoX}
+          y={logoY}
+        />
+      );
+    }
+  } 
+  // Handle Default QR
+  else if (!isLogoQR && imageSettings != null && calculatedImageSettings != null) {
+    // Excavate cells for default QR
     if (calculatedImageSettings.excavation != null) {
       cells = excavateModules(cells, calculatedImageSettings.excavation);
     }
@@ -711,9 +927,24 @@ export function QRCodeSVG(props: QRPropsSVG) {
     pattern: bodyPattern,
   });
 
+  // For logo QR, also generate inverse circles (white dots for empty cells)
+  const inverseDataCircles = isLogoQR
+    ? generateInverseDataCircles(cells, {
+        margin,
+        pixelSize,
+        pattern: bodyPattern,
+      })
+    : null;
+
+  // For logo QR, use fixed colors; for default QR, use customizable colors
+  const effectiveBgColor = isLogoQR ? "transparent" : bgColor;
+  const effectiveFgColor = isLogoQR ? "#000000" : fgColor;
+  const effectiveEyeColor = isLogoQR ? "#000000" : eyeColor;
+  const effectiveDotColor = isLogoQR ? "#000000" : dotColor;
+
   // Normalize bgColor and fgColor first to ensure proper structure
-  const normalizedBgColor = normalizeColorConfig(bgColor, DEFAULT_BGCOLOR);
-  const normalizedFgColor = normalizeColorConfig(fgColor, DEFAULT_FGCOLOR);
+  const normalizedBgColor = normalizeColorConfig(effectiveBgColor, DEFAULT_BGCOLOR);
+  const normalizedFgColor = normalizeColorConfig(effectiveFgColor, DEFAULT_FGCOLOR);
 
   // Generate gradient definitions if needed
   const bgColorGradient =
@@ -757,12 +988,12 @@ export function QRCodeSVG(props: QRPropsSVG) {
 
   // Normalize eyeColor and dotColor
   const normalizedEyeColor = normalizeColorConfig(
-    eyeColor,
-    getSolidColor(fgColor, DEFAULT_FGCOLOR)
+    effectiveEyeColor,
+    getSolidColor(effectiveFgColor, DEFAULT_FGCOLOR)
   );
   const normalizedDotColor = normalizeColorConfig(
-    dotColor,
-    getSolidColor(fgColor, DEFAULT_FGCOLOR)
+    effectiveDotColor,
+    getSolidColor(effectiveFgColor, DEFAULT_FGCOLOR)
   );
 
   // Generate gradient definitions for eyeColor (corner squares) for each corner
@@ -932,8 +1163,16 @@ export function QRCodeSVG(props: QRPropsSVG) {
       {/* Background */}
       <rect fill={bgFillValue} height={size} width={size} x={0} y={0} />
 
-      {/* Data module circles */}
+      {/* For logo variant, render logo as background before dots */}
+      {isLogoQR && image}
+
+      {/* Data module circles (black dots) */}
       <g fill={fgFillValue}>{dataCircles}</g>
+
+      {/* For logo QR, render white dots for empty cells */}
+      {isLogoQR && inverseDataCircles && (
+        <g fill="#ffffff">{inverseDataCircles}</g>
+      )}
 
       {/* Top-left corner square */}
       <g fill={topLeftEyeFillValue}>
@@ -971,7 +1210,8 @@ export function QRCodeSVG(props: QRPropsSVG) {
       {/* Bottom-left corner dot */}
       <g fill={bottomLeftDotFillValue}>{bottomLeftDot}</g>
 
-      {image}
+      {/* For standard variant, render logo on top */}
+      {!isLogoQR && image}
     </>
   );
 

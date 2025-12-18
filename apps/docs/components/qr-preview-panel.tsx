@@ -20,6 +20,9 @@ const QRPreviewPanel: React.FC<QRPreviewPanelProps> = ({ style }) => {
 
   // Check if value is empty or invalid
   const hasValidContent = value && value.trim().length > 0;
+  
+  // Determine QR type
+  const isLogoQR = style.type === "logo_qr";
 
   if (!hasValidContent) {
     return (
@@ -50,21 +53,41 @@ const QRPreviewPanel: React.FC<QRPreviewPanelProps> = ({ style }) => {
       <div className="relative flex size-full items-center justify-center overflow-hidden p-4">
         <div className="relative isolate flex size-full items-center justify-center overflow-hidden rounded-lg p-8">
           <ExamplesPreviewContainer className="size-full">
-            <QRCode
-              bgColor={style.bgColor}
-              cornerEyeDotPattern={style.cornerEyeDotPattern}
-              cornerEyePattern={style.cornerEyePattern}
-              dotColor={style.dotColor}
-              bodyPattern={style.bodyPattern}
-              level={style.level}
-              eyeColor={style.eyeColor}
-              fgColor={style.fgColor}
-              hideLogo={!style.showLogo}
-              logo={style.customLogo}
-              scale={4}
-              templateId={style.templateId}
-              value={value}
-            />
+            {isLogoQR && style.logoSettings ? (
+              <QRCode
+                bgColor={style.bgColor}
+                cornerEyeDotPattern={style.cornerEyeDotPattern}
+                cornerEyePattern={style.cornerEyePattern}
+                dotColor={style.dotColor}
+                bodyPattern={style.bodyPattern}
+                level={style.level}
+                eyeColor={style.eyeColor}
+                fgColor={style.fgColor}
+                scale={4}
+                templateId={style.templateId}
+                value={value}
+                type="logo_qr"
+                logoSettings={style.logoSettings}
+              />
+            ) : (
+              <QRCode
+                bgColor={style.bgColor}
+                cornerEyeDotPattern={style.cornerEyeDotPattern}
+                cornerEyePattern={style.cornerEyePattern}
+                dotColor={style.dotColor}
+                bodyPattern={style.bodyPattern}
+                level={style.level}
+                eyeColor={style.eyeColor}
+                fgColor={style.fgColor}
+                hideLogo={!style.showLogo}
+                logo={style.customLogo}
+                scale={4}
+                templateId={style.templateId}
+                value={value}
+                type="default"
+                imageSettings={style.imageSettings}
+              />
+            )}
           </ExamplesPreviewContainer>
         </div>
       </div>

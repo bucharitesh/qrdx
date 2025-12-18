@@ -46,9 +46,11 @@ export function QRCodeCanvas(props: QRPropsCanvas) {
     fgColor = DEFAULT_FGCOLOR,
     margin = DEFAULT_MARGIN,
     style,
-    imageSettings,
     ...otherProps
   } = props;
+  
+  // Extract imageSettings based on type (only for default QR)
+  const imageSettings = props.type !== "logo_qr" && "imageSettings" in props ? props.imageSettings : undefined;
   const imgSrc = imageSettings?.src;
   const _canvas = useRef<HTMLCanvasElement>(null);
   const _image = useRef<HTMLImageElement>(null);
@@ -180,25 +182,40 @@ export async function getQRAsSVGDataUri(props: QRProps) {
   const { renderToStaticMarkup } = await import("react-dom/server");
   const React = await import("react");
 
-  // If there's an image in imageSettings, convert it to base64 first
+  // Handle image/logo conversion to base64 based on QR type
   let updatedProps = { ...props };
-  if (props.imageSettings?.src) {
+  
+  // For default QR with imageSettings
+  if (props.type !== "logo_qr" && "imageSettings" in props && props.imageSettings?.src) {
     try {
-      const base64Image = (await getBase64Image(
-        props.imageSettings.src
-      )) as string;
+      const base64Image = (await getBase64Image(props.imageSettings.src)) as string;
       updatedProps = {
         ...props,
         imageSettings: {
           ...props.imageSettings,
           src: base64Image,
         },
-      };
+      } as QRProps;
     } catch (error) {
       // Remove the image from settings if it fails to load
-      // This prevents SVG from containing external URLs that will fail during canvas conversion
-      const { imageSettings: _removed, ...propsWithoutImage } = props;
-      updatedProps = propsWithoutImage;
+      updatedProps = { ...props, imageSettings: undefined } as QRProps;
+    }
+  }
+  
+  // For logo QR with logoSettings
+  if (props.type === "logo_qr" && "logoSettings" in props && props.logoSettings?.src) {
+    try {
+      const base64Image = (await getBase64Image(props.logoSettings.src)) as string;
+      updatedProps = {
+        ...props,
+        logoSettings: {
+          ...props.logoSettings,
+          src: base64Image,
+        },
+      } as QRProps;
+    } catch (error) {
+      // Keep original if conversion fails (data URIs should work)
+      updatedProps = props;
     }
   }
 

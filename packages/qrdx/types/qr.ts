@@ -9,7 +9,7 @@ import { type CornerEyePattern, cornerEyePatternSchema } from "./corner-eye";
 import { type BodyPattern, bodyPatternSchema } from "./image-pattern";
 import type { TemplateDefinition } from "./template";
 
-// Zod schemas
+// Image Settings for Default QRs (unchanged from original)
 export const imageSettingsSchema = z.object({
   src: z.string(),
   height: z.number(),
@@ -19,9 +19,16 @@ export const imageSettingsSchema = z.object({
   y: z.number().optional(),
 });
 
+// Logo Settings for Logo QRs
+export const logoSettingsSchema = z.object({
+  src: z.string(),
+  logoSize: z.number().min(10).max(100), // Percentage: 10-100%
+});
+
 export const errorLevelSchema = z.enum(["L", "M", "Q", "H"]);
 
-export const qrPropsSchema = z.object({
+// Common props shared by both QR types
+const commonQRPropsSchema = z.object({
   value: z.string(),
   size: z.number().optional(),
   level: errorLevelSchema.optional(),
@@ -33,17 +40,36 @@ export const qrPropsSchema = z.object({
   cornerEyePattern: cornerEyePatternSchema.optional(),
   cornerEyeDotPattern: cornerEyeDotPatternSchema.optional(),
   margin: z.number().optional(),
-  imageSettings: imageSettingsSchema.optional(),
   isOGContext: z.boolean().optional(),
   templateId: z.string().optional(),
   customProps: z.record(z.string(), z.any()).optional(),
 });
 
+// Default QR Props Schema
+const defaultQRPropsSchema = commonQRPropsSchema.extend({
+  type: z.literal("default").optional(),
+  imageSettings: imageSettingsSchema.optional(),
+});
+
+// Logo QR Props Schema
+const logoQRPropsSchema = commonQRPropsSchema.extend({
+  type: z.literal("logo_qr"),
+  logoSettings: logoSettingsSchema,
+});
+
+// Discriminated union schema
+export const qrPropsSchema = z.union([
+  defaultQRPropsSchema,
+  logoQRPropsSchema,
+]);
+
 // Inferred types
 export type ImageSettings = z.infer<typeof imageSettingsSchema>;
+export type LogoSettings = z.infer<typeof logoSettingsSchema>;
 export type ErrorLevel = z.infer<typeof errorLevelSchema>;
 
-export type QRProps = {
+// Common props type
+type CommonQRProps = {
   value: string;
   size?: number;
   level?: ErrorLevel;
@@ -56,15 +82,26 @@ export type QRProps = {
   cornerEyeDotPattern?: CornerEyeDotPattern;
   margin?: number;
   style?: CSSProperties;
-  imageSettings?: ImageSettings;
   isOGContext?: boolean;
   templateId?: string;
-  // Custom template definition - if provided, this will be used instead of looking up by templateId
   customTemplate?: TemplateDefinition<any>;
-  // Generic custom props that can be used by any template
-  // Each template can define its own custom props type (e.g., FlamQRProps)
   customProps?: Record<string, any>;
 };
+
+// Default QR Props
+type DefaultQRProps = CommonQRProps & {
+  type?: "default";
+  imageSettings?: ImageSettings;
+};
+
+// Logo QR Props
+type LogoQRProps = CommonQRProps & {
+  type: "logo_qr";
+  logoSettings: LogoSettings;
+};
+
+// Discriminated union type
+export type QRProps = DefaultQRProps | LogoQRProps;
 
 export type QRPropsCanvas = QRProps &
   React.CanvasHTMLAttributes<HTMLCanvasElement>;

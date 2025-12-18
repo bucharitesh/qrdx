@@ -6,6 +6,8 @@ import {
   cornerEyeDotPatternSchema,
   cornerEyePatternSchema,
   errorLevelSchema,
+  imageSettingsSchema,
+  logoSettingsSchema,
 } from "qrdx/types";
 import { z } from "zod";
 
@@ -53,6 +55,13 @@ export const themeStylePropsSchema = z.object({
     .string()
     .optional()
     .describe("Custom logo image URL or data URI"),
+  type: z.enum(["default", "logo_qr"]).optional().describe("QR type - default or logo_qr"),
+  imageSettings: imageSettingsSchema
+    .optional()
+    .describe("Image settings for default QR (centered logo with excavation)"),
+  logoSettings: logoSettingsSchema
+    .optional()
+    .describe("Logo settings for logo QR (full background with percentage size)"),
 });
 
 export type ThemeStyles = z.infer<typeof themeStylePropsSchema>;

@@ -19,9 +19,14 @@ export async function getQRAsSVG(props: QRPropsSVG) {
     bgColor = DEFAULT_BGCOLOR,
     fgColor = DEFAULT_FGCOLOR,
     margin = DEFAULT_MARGIN,
-    imageSettings,
     ...otherProps
   } = props;
+
+  const isLogoQR = props.type === "logo_qr";
+  
+  // Extract settings based on type
+  const imageSettings = !isLogoQR && "imageSettings" in props ? props.imageSettings : undefined;
+  const logoSettings = isLogoQR && "logoSettings" in props ? props.logoSettings : undefined;
 
   let cells = qrcodegen.QrCode.encodeText(
     value,
@@ -37,7 +42,32 @@ export async function getQRAsSVG(props: QRPropsSVG) {
   );
 
   let image = <></>;
-  if (imageSettings != null && calculatedImageSettings != null) {
+  
+  // Handle Logo QR
+  if (isLogoQR && logoSettings) {
+    // Calculate actual size from percentage
+    const actualSize = (size * logoSettings.logoSize) / 100;
+    const logoX = (size - actualSize) / 2;
+    const logoY = (size - actualSize) / 2;
+
+    const base64Image = await fetch(
+      `https://wsrv.nl/?url=${logoSettings.src}&w=100&h=100&encoding=base64`
+    ).then((res) => res.text());
+
+    image = (
+      <image
+        height={actualSize}
+        href={base64Image}
+        preserveAspectRatio="xMidYMid slice"
+        width={actualSize}
+        x={logoX}
+        y={logoY}
+      />
+    );
+  } 
+  // Handle Default QR
+  else if (!isLogoQR && imageSettings != null && calculatedImageSettings != null) {
+    // Excavate cells for default QR
     if (calculatedImageSettings.excavation != null) {
       cells = excavateModules(cells, calculatedImageSettings.excavation);
     }

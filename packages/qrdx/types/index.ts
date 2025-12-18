@@ -36,6 +36,7 @@ export { BODY_PATTERN, bodyPatternSchema } from "./image-pattern";
 export type {
   ErrorLevel,
   ImageSettings,
+  LogoSettings,
   QRProps,
   QRPropsCanvas,
   QRPropsSVG,
@@ -43,6 +44,7 @@ export type {
 export {
   errorLevelSchema,
   imageSettingsSchema,
+  logoSettingsSchema,
   qrPropsSchema,
 } from "./qr";
 export type {
