@@ -63,20 +63,53 @@ export interface DownloadEPSOptions {
   level: "L" | "M" | "Q" | "H";
   /** Output size in points (72 points = 1 inch) */
   size: number;
-  /** Foreground color (hex, e.g., "#000000") */
+  /** Foreground/body color (hex, e.g., "#000000") */
   color: string;
   /** Background color (hex, e.g., "#FFFFFF") */
   backgroundColor: string;
+  /** Eye/finder pattern color (hex, e.g., "#000000") */
+  eyeColor?: string;
+  /** Body pattern style (used to determine pixel rendering) */
+  bodyPattern?: string;
+  /** Corner eye pattern style (used to determine finder pattern rendering) */
+  cornerEyePattern?: string;
   /** Output filename (defaults to "qr-code.eps") */
   filename?: string;
+}
+
+/**
+ * Map body pattern string to EPS pixel style
+ */
+function mapBodyPatternToPixelStyle(bodyPattern?: string): "square" | "dot" | "rounded" {
+  if (!bodyPattern) return "square";
+  
+  const pattern = bodyPattern.toLowerCase();
+  if (pattern.includes("circle") || pattern.includes("dot")) {
+    return "dot";
+  }
+  if (pattern.includes("rounded")) {
+    return "rounded";
+  }
+  return "square";
+}
+
+/**
+ * Map corner eye pattern string to EPS eye style
+ */
+function mapCornerEyePatternToEyeStyle(cornerEyePattern?: string): "square" | "circle" {
+  if (!cornerEyePattern) return "square";
+  
+  const pattern = cornerEyePattern.toLowerCase();
+  if (pattern.includes("circle") || pattern.includes("rounded") || pattern.includes("dot")) {
+    return "circle";
+  }
+  return "square";
 }
 
 /**
  * Generate and download a QR code as an EPS file
  *
  * Creates a print-ready EPS file with CMYK colors.
- *
- * @param options - Download options including value, colors, and size
  */
 export async function downloadEPS(options: DownloadEPSOptions): Promise<void> {
   const {
@@ -85,18 +118,21 @@ export async function downloadEPS(options: DownloadEPSOptions): Promise<void> {
     size,
     color,
     backgroundColor,
+    eyeColor,
+    bodyPattern,
+    cornerEyePattern,
     filename = "qr-code.eps",
   } = options;
+
+  // Map patterns to EPS styles
+  const pixelStyle = mapBodyPatternToPixelStyle(bodyPattern);
+  const eyePattern = mapCornerEyePatternToEyeStyle(cornerEyePattern);
 
   // Generate QR code data using qrcode library
   const qrData = QRCode.create(value, {
     errorCorrectionLevel: level,
   });
 
-  // Extract module data
-  // qrData.modules is an object with:
-  // - data: Uint8Array (flat array of 0s and 1s)
-  // - size: number (width/height of the square matrix)
   const { data, size: moduleSize } = qrData.modules;
 
   // Convert flat Uint8Array to 2D boolean array
@@ -116,6 +152,9 @@ export async function downloadEPS(options: DownloadEPSOptions): Promise<void> {
     size,
     color,
     backgroundColor,
+    eyeColor: eyeColor || color,
+    pixelStyle,
+    eyePattern,
   });
 
   // Trigger browser download

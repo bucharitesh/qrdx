@@ -122,6 +122,9 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
           size: size.width,
           color: getSolidColor(qrProps.fgColor, "#000000"),
           backgroundColor: getSolidColor(qrProps.bgColor, "#FFFFFF"),
+          eyeColor: getSolidColor(qrProps.eyeColor, "#000000"),
+          bodyPattern: qrProps.bodyPattern,
+          cornerEyePattern: qrProps.cornerEyePattern,
           filename: "qr-code.eps",
         });
       } else {
