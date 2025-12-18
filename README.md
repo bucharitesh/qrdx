@@ -73,7 +73,7 @@ We love our contributors! Here's how you can contribute:
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=bucharitesh/qrdx&type=date&legend=top-left)](https://www.star-history.com/#bucharitesh/qrdx&type=date&legend=top-left)
+[![Star History Chart](https://api.star-history.com/svg?repos=bucharitesh/qrdx&type=date&legend=bottom-right)](https://www.star-history.com/#bucharitesh/qrdx&type=date&legend=bottom-right)
 
 ## License
 
