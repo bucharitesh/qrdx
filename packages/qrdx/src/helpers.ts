@@ -1,6 +1,6 @@
 import type { QRProps } from "../types";
-import { FLAM_QR_LOGO } from "./constants";
-import QRCode from "qrcode";
+import { ERROR_LEVEL_MAP, FLAM_QR_LOGO } from "./constants";
+import qrcodegen from "./codegen";
 import { generateEPS } from "./utils/eps-generator";
 
 // EPS Generator re-exports
@@ -60,7 +60,7 @@ export interface DownloadEPSOptions {
   /** The QR code value/URL to encode */
   value: string;
   /** Error correction level: L, M, Q, H */
-  level: "L" | "M" | "Q" | "H";
+  level?: "L" | "M" | "Q" | "H";
   /** Output size in points (72 points = 1 inch) */
   size: number;
   /** Foreground/body color (hex, e.g., "#000000") */
@@ -114,7 +114,7 @@ function mapCornerEyePatternToEyeStyle(cornerEyePattern?: string): "square" | "c
 export async function downloadEPS(options: DownloadEPSOptions): Promise<void> {
   const {
     value,
-    level,
+    level = "M",
     size,
     color,
     backgroundColor,
@@ -126,25 +126,13 @@ export async function downloadEPS(options: DownloadEPSOptions): Promise<void> {
 
   // Map patterns to EPS styles
   const pixelStyle = mapBodyPatternToPixelStyle(bodyPattern);
-  const eyePattern = mapCornerEyePatternToEyeStyle(cornerEyePattern);
+  const eyePatternStyle = mapCornerEyePatternToEyeStyle(cornerEyePattern);
 
-  // Generate QR code data using qrcode library
-  const qrData = QRCode.create(value, {
-    errorCorrectionLevel: level,
-  });
-
-  const { data, size: moduleSize } = qrData.modules;
-
-  // Convert flat Uint8Array to 2D boolean array
-  const matrix: boolean[][] = [];
-  for (let row = 0; row < moduleSize; row++) {
-    const rowData: boolean[] = [];
-    for (let col = 0; col < moduleSize; col++) {
-      const index = row * moduleSize + col;
-      rowData.push(data[index] === 1);
-    }
-    matrix.push(rowData);
-  }
+  // Generate QR code using internal generator (same as index.tsx)
+  const qr = qrcodegen.QrCode.encodeText(value, ERROR_LEVEL_MAP[level]);
+  
+  // getModules() returns boolean[][] directly - no conversion needed!
+  const matrix = qr.getModules();
 
   // Generate EPS content
   const epsContent = generateEPS({
@@ -154,7 +142,7 @@ export async function downloadEPS(options: DownloadEPSOptions): Promise<void> {
     backgroundColor,
     eyeColor: eyeColor || color,
     pixelStyle,
-    eyePattern,
+    eyePattern: eyePatternStyle,
   });
 
   // Trigger browser download
