@@ -1,6 +1,6 @@
-import Image from "next/image";
 import { siteConfig } from "@/config/site";
 import Link from "next/link";
+import { StripedPattern } from "../ui/backgrounds/striped";
 
 export function CTASection() {
   const { ctaSection } = siteConfig;
@@ -11,14 +11,8 @@ export function CTASection() {
       className="flex flex-col items-center justify-center w-full"
     >
       <div className="w-full">
-        <div className="h-[400px] md:h-[400px] overflow-hidden shadow-xl w-full border border-border rounded-xl bg-secondary relative z-20">
-          <Image
-            src={ctaSection.backgroundImage}
-            alt="Agent CTA Background"
-            className="absolute inset-0 w-full h-full object-cover object-right md:object-center"
-            fill
-            priority
-          />
+        <div className="h-[400px] md:h-[400px] overflow-hidden shadow-xl w-full border border-border rounded-xl bg-primary/90 relative z-20">
+          <StripedPattern className="z-0 text-secondary/40" />
           <div className="absolute inset-0 -top-32 md:-top-40 flex flex-col items-center justify-center">
             <h1 className="text-white text-4xl md:text-7xl font-medium tracking-tighter max-w-xs md:max-w-xl text-center">
               {ctaSection.title}

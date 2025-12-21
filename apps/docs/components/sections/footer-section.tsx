@@ -4,6 +4,7 @@ import { siteConfig } from "@/config/site";
 import { ChevronRightIcon, GithubIcon } from "lucide-react";
 import Link from "next/link";
 import Logo from "@/assets/logo.svg";
+import { Button } from "@repo/design-system/components/ui/button";
 
 export function FooterSection() {
   const currentYear = new Date().getFullYear();
@@ -13,18 +14,23 @@ export function FooterSection() {
       <div className="flex flex-col md:flex-row md:items-start md:justify-between p-10 gap-8">
         <div className="flex flex-col items-start justify-start gap-y-5 max-w-xs mx-0">
           <Link href="/" className="flex items-center gap-2">
-            <Logo className="size-6 text-primary" />
-            <p className="text-xl font-semibold text-primary">{siteConfig.name}</p>
+            <Logo className="size-6 text-secondary-foreground" />
+            <p className="text-xl font-semibold text-secondary-foreground">{siteConfig.name}</p>
           </Link>
           <p className="tracking-tight text-muted-foreground font-medium text-sm">
             {siteConfig.description}
           </p>
+          <div>
+            <Button variant="outline" size={"sm"}>
+              <GithubIcon className="size-3" />
+            </Button>
+          </div>
         </div>
         <div className="pt-5 md:w-1/2">
           <div className="flex flex-col items-start justify-start md:flex-row md:justify-between gap-y-5 lg:pl-10">
             {siteConfig.footerLinks.map((column, columnIndex) => (
               <ul key={columnIndex} className="flex flex-col gap-y-2">
-                <li className="mb-2 text-sm font-semibold text-primary">
+                <li className="mb-2 text-sm font-semibold text-secondary-foreground">
                   {column.title}
                 </li>
                 {column.links.map((link) => (

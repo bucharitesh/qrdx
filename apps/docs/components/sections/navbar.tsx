@@ -11,6 +11,8 @@ import Logo from "@/assets/logo.svg";
 import { QrdxLogoAnimation } from "@/components/qrdx-logo-animation";
 import { Button } from "@repo/design-system/components/ui/button";
 import { UserProfileDropdown } from "../user-profile-dropdown";
+import { ModeToggle } from "@repo/design-system/components/mode-toggle";
+import { ThemeToggle } from "../theme-toggle";
 
 const INITIAL_WIDTH = "70rem";
 const MAX_WIDTH = "800px";
@@ -89,15 +91,18 @@ export function Navbar() {
         >
           <div className="flex h-[56px] items-center justify-between p-4">
             <Link href="/" className="flex items-center gap-2">
-              <Logo className="size-5 md:hidden block text-primary" />
+              <Logo className="size-5 md:hidden block fill-secondary-foreground" />
               <QrdxLogoAnimation size={40} className="hidden md:block" />
-              <p className="text-lg font-semibold text-primary">QRdx</p>
+              <p className="text-lg font-semibold text-secondary-foreground">QRdx</p>
             </Link>
 
             <NavMenu />
 
             <div className="flex flex-row items-center gap-1 md:gap-3 shrink-0">
-              <UserProfileDropdown />
+              <ThemeToggle />
+              <Button>
+                Try the Playground
+              </Button>
               <Button
                 variant="secondary"
                 className="md:hidden"

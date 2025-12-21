@@ -17,10 +17,10 @@ export default function SuccessPage() {
           </p>
         </div>
         <div className="flex flex-col gap-3 pt-4">
-          <Button asChild size="lg">
+          <Button asChild>
             <Link href="/playground">Start Creating</Link>
           </Button>
-          <Button asChild variant="outline">
+          <Button variant="outline">
             <Link href="/settings">Manage Subscription</Link>
           </Button>
         </div>

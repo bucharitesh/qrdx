@@ -2,10 +2,10 @@ import Link from "fumadocs-core/link";
 import { PathUtils } from "fumadocs-core/source";
 import * as Twoslash from "fumadocs-twoslash/ui";
 import { createGenerator } from "fumadocs-typescript";
-import { AutoTypeTable } from "fumadocs-typescript/ui";
+import { Feedback } from '@/components/feedback';
 import { Callout } from "fumadocs-ui/components/callout";
 import { TypeTable } from "fumadocs-ui/components/type-table";
-import { DocsPage } from "fumadocs-ui/page";
+import { DocsPage, PageLastUpdate } from "fumadocs-ui/page";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { ComponentProps, FC, ReactNode } from "react";
@@ -20,6 +20,8 @@ import {
 } from "@/components/ui/hover-card";
 import { getPageImage, source } from "@/lib/source";
 import { getMDXComponents } from "@/mdx-components";
+import { LLMCopyButton, ViewOptions } from "@/components/ai/page-actions";
+import { owner, repo, onRateAction } from "@/lib/github";
 
 function PreviewRenderer({ preview }: { preview: string }): ReactNode {
   if (preview && preview in Preview) {
@@ -49,6 +51,17 @@ export default async function Page(props: PageProps<"/docs/[[...slug]]">) {
         style: "clerk",
       }}
     >
+      <h1 className="text-[1.75em] font-semibold">{page.data.title}</h1>
+      <p className="text-lg text-fd-muted-foreground mb-2">
+        {page.data.description}
+      </p>
+      <div className="flex flex-row flex-wrap gap-2 items-center border-b pb-6">
+        <LLMCopyButton markdownUrl={`${page.url}.mdx`} />
+        <ViewOptions
+          markdownUrl={`${page.url}.mdx`}
+          githubUrl={`https://github.com/${owner}/${repo}/blob/main/apps/docs/content/docs/${page.path}`}
+        />
+      </div>
       <div className="prose flex-1 text-fd-foreground/90">
         {preview ? <PreviewRenderer preview={preview} /> : null}
         <Mdx
@@ -84,14 +97,13 @@ export default async function Page(props: PageProps<"/docs/[[...slug]]">) {
             },
             Mermaid,
             TypeTable,
-            AutoTypeTable: (props) => (
-              <AutoTypeTable generator={generator} {...props} />
-            ),
             Wrapper,
             blockquote: Callout as unknown as FC<ComponentProps<"blockquote">>,
           })}
         />
       </div>
+      {/* <Feedback onRateAction={onRateAction} /> */}
+      {page.data.lastModified && <PageLastUpdate date={page.data.lastModified} />}
     </DocsPage>
   );
 }

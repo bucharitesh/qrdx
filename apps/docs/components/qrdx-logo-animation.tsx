@@ -48,7 +48,7 @@ const bottomRightShapes = [
 
 export const QrdxLogoAnimation: React.FC<QrdxLogoAnimationProps> = ({
   size = 256,
-  color = "var(--primary)",
+  color = "var(--secondary-foreground)",
   className = "",
 }) => {
   const [currentShape, setCurrentShape] = React.useState(0);
