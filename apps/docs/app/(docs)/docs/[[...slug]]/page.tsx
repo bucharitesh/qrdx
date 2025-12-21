@@ -2,13 +2,14 @@ import Link from "fumadocs-core/link";
 import { PathUtils } from "fumadocs-core/source";
 import * as Twoslash from "fumadocs-twoslash/ui";
 import { createGenerator } from "fumadocs-typescript";
-import { Feedback } from '@/components/feedback';
 import { Callout } from "fumadocs-ui/components/callout";
 import { TypeTable } from "fumadocs-ui/components/type-table";
 import { DocsPage, PageLastUpdate } from "fumadocs-ui/page";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { ComponentProps, FC, ReactNode } from "react";
+import { LLMCopyButton, ViewOptions } from "@/components/ai/page-actions";
+import { Feedback } from "@/components/feedback";
 import { Mermaid } from "@/components/mdx/mermaid";
 import { NotFound } from "@/components/not-found";
 import * as Preview from "@/components/preview";
@@ -18,10 +19,9 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
+import { onRateAction, owner, repo } from "@/lib/github";
 import { getPageImage, source } from "@/lib/source";
 import { getMDXComponents } from "@/mdx-components";
-import { LLMCopyButton, ViewOptions } from "@/components/ai/page-actions";
-import { owner, repo, onRateAction } from "@/lib/github";
 
 function PreviewRenderer({ preview }: { preview: string }): ReactNode {
   if (preview && preview in Preview) {
@@ -103,7 +103,9 @@ export default async function Page(props: PageProps<"/docs/[[...slug]]">) {
         />
       </div>
       {/* <Feedback onRateAction={onRateAction} /> */}
-      {page.data.lastModified && <PageLastUpdate date={page.data.lastModified} />}
+      {page.data.lastModified && (
+        <PageLastUpdate date={page.data.lastModified} />
+      )}
     </DocsPage>
   );
 }

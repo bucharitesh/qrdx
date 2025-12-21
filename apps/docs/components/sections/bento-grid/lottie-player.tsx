@@ -9,26 +9,26 @@ interface LottiePlayerProps {
   className?: string;
 }
 
-export function LottiePlayer({ 
-  animationData, 
-  loop = true, 
+export function LottiePlayer({
+  animationData,
+  loop = true,
   autoplay = true,
-  className = "" 
+  className = "",
 }: LottiePlayerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const animationRef = useRef<any>(null);
 
   useEffect(() => {
     let lottie: any;
-    
+
     // Dynamically import lottie-web to avoid SSR issues
-    import('lottie-web').then((module) => {
+    import("lottie-web").then((module) => {
       lottie = module.default;
-      
+
       if (containerRef.current && !animationRef.current) {
         animationRef.current = lottie.loadAnimation({
           container: containerRef.current,
-          renderer: 'svg',
+          renderer: "svg",
           loop,
           autoplay,
           animationData,
@@ -46,4 +46,3 @@ export function LottiePlayer({
 
   return <div ref={containerRef} className={className} />;
 }
-

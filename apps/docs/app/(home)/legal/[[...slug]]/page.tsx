@@ -55,4 +55,3 @@ export async function generateMetadata(
     description: page.data.description,
   };
 }
-

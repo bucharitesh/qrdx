@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Crown, Heart, Sparkles, Star, Zap } from "lucide-react";
 import { QRCodeSVG } from "qrdx";
-import { Sparkles, Heart, Zap, Star, Crown } from "lucide-react";
+import { useEffect, useState } from "react";
 
 const logos = [
   { icon: Sparkles, color: "#FFD700" },
@@ -36,16 +36,16 @@ export function LogoShowcase() {
           dotColor="#000000"
         />
         {/* Animated logo overlay */}
-        <div 
+        <div
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg p-2 shadow-lg transition-all duration-500"
-          style={{ 
+          style={{
             borderColor: logos[logoIndex].color,
-            borderWidth: '2px',
-            borderStyle: 'solid'
+            borderWidth: "2px",
+            borderStyle: "solid",
           }}
         >
-          <CurrentIcon 
-            className="w-6 h-6 transition-all duration-500" 
+          <CurrentIcon
+            className="w-6 h-6 transition-all duration-500"
             style={{ color: logos[logoIndex].color }}
           />
         </div>
@@ -53,4 +53,3 @@ export function LogoShowcase() {
     </div>
   );
 }
-

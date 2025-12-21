@@ -82,10 +82,7 @@ export function parseURL(url: string): ParsedURL | null {
   }
 
   // YouTube
-  if (
-    trimmedUrl.includes("youtube.com") ||
-    trimmedUrl.includes("youtu.be")
-  ) {
+  if (trimmedUrl.includes("youtube.com") || trimmedUrl.includes("youtu.be")) {
     // Check if it's a video or channel
     if (
       trimmedUrl.includes("/watch") ||
@@ -156,10 +153,7 @@ export function parseURL(url: string): ParsedURL | null {
   }
 
   // Spotify
-  if (
-    trimmedUrl.includes("spotify.com") ||
-    trimmedUrl.startsWith("spotify:")
-  ) {
+  if (trimmedUrl.includes("spotify.com") || trimmedUrl.startsWith("spotify:")) {
     return {
       type: "spotify",
       config: { type: "spotify", uri: trimmedUrl },
@@ -172,7 +166,12 @@ export function parseURL(url: string): ParsedURL | null {
     if (usernameMatch?.[1]) {
       return {
         type: "venmo",
-        config: { type: "venmo", username: usernameMatch[1], amount: "", note: "" },
+        config: {
+          type: "venmo",
+          username: usernameMatch[1],
+          amount: "",
+          note: "",
+        },
       };
     }
   }
@@ -244,7 +243,7 @@ export function parseURL(url: string): ParsedURL | null {
   ) {
     const coordsMatch = trimmedUrl.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
     const queryMatch = trimmedUrl.match(/[?&]q=([^&]+)/);
-    
+
     let location = "";
     if (coordsMatch) {
       location = `${coordsMatch[1]},${coordsMatch[2]}`;
@@ -416,7 +415,8 @@ export function extractPhoneNumber(text: string): string | null {
  * Extract email address
  */
 export function extractEmail(text: string): string | null {
-  const emailMatch = text.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
+  const emailMatch = text.match(
+    /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/,
+  );
   return emailMatch ? emailMatch[0] : null;
 }
-

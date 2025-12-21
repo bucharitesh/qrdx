@@ -1,9 +1,9 @@
 "use server";
 
+import { db } from "@repo/database";
+import { type UserSettings, user } from "@repo/database/schema";
 import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
-import { db } from "@repo/database";
-import { user, type UserSettings } from "@repo/database/schema";
 import { auth } from "@/lib/auth";
 
 export async function getUserSettings(): Promise<UserSettings | null> {
@@ -26,9 +26,11 @@ export async function getUserSettings(): Promise<UserSettings | null> {
   }
 
   // Return user settings or default values
-  return result[0].settings || {
-    keyboardShortcuts: true,
-  };
+  return (
+    result[0].settings || {
+      keyboardShortcuts: true,
+    }
+  );
 }
 
 export async function updateUserSettings(
@@ -79,4 +81,3 @@ export async function updateUserSettings(
     return { success: false };
   }
 }
-

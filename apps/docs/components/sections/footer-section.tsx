@@ -1,10 +1,10 @@
 "use client";
 
-import { siteConfig } from "@/config/site";
+import { Button } from "@repo/design-system/components/ui/button";
 import { ChevronRightIcon, GithubIcon } from "lucide-react";
 import Link from "next/link";
 import Logo from "@/assets/logo.svg";
-import { Button } from "@repo/design-system/components/ui/button";
+import { siteConfig } from "@/config/site";
 
 export function FooterSection() {
   const currentYear = new Date().getFullYear();
@@ -15,7 +15,9 @@ export function FooterSection() {
         <div className="flex flex-col items-start justify-start gap-y-5 max-w-xs mx-0">
           <Link href="/" className="flex items-center gap-2">
             <Logo className="size-6 text-secondary-foreground" />
-            <p className="text-xl font-semibold text-secondary-foreground">{siteConfig.name}</p>
+            <p className="text-xl font-semibold text-secondary-foreground">
+              {siteConfig.name}
+            </p>
           </Link>
           <p className="tracking-tight text-muted-foreground font-medium text-sm">
             {siteConfig.description}

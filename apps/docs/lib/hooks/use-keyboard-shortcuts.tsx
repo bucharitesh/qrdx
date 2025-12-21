@@ -1,16 +1,16 @@
 "use client";
 
-import { stableSort } from "@/utils/stable-sort";
 import {
-  Dispatch,
-  SetStateAction,
   createContext,
+  type Dispatch,
+  type SetStateAction,
   useCallback,
   useContext,
   useEffect,
   useId,
   useState,
 } from "react";
+import { stableSort } from "@/utils/stable-sort";
 
 type KeyboardShortcutListener = {
   id: string;

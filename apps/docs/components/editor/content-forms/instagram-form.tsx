@@ -23,7 +23,10 @@ export function InstagramForm() {
 
   // Sync with store when config changes (e.g., from smart paste)
   React.useEffect(() => {
-    if (storedConfig?.username && storedConfig.username !== instagramData.username) {
+    if (
+      storedConfig?.username &&
+      storedConfig.username !== instagramData.username
+    ) {
       setInstagramData({ username: storedConfig.username });
     }
   }, [storedConfig]);

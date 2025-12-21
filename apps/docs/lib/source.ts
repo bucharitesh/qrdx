@@ -4,7 +4,7 @@ import {
   loader,
 } from "fumadocs-core/source";
 import { lucideIconsPlugin } from "fumadocs-core/source/lucide-icons";
-import { docs, legal, changelog } from "@/.source/server";
+import { changelog, docs, legal } from "@/.source/server";
 
 export const source = loader({
   baseUrl: "/docs",

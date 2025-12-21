@@ -7,25 +7,22 @@ import { getIntegrationConfigWithEnv } from "@repo/integrations/src/registry/loa
 import { env } from "./env";
 
 // Re-export core functionality from new package
+// Re-export Dub client
 export {
+  createDubClient as getDubClient,
   decryptApiKey,
-  encryptApiKey,
   disconnectIntegration,
+  encryptApiKey,
   getIntegration,
   hasIntegration,
   listUserIntegrations,
 } from "@repo/integrations";
 
-// Re-export Dub client
-export { createDubClient as getDubClient } from "@repo/integrations";
-
 // Legacy function for backwards compatibility
 export async function getDubIntegration(userId: string) {
   const { getIntegration } = await import("@repo/integrations");
-  const integration = await getIntegration(
-    userId,
-    "dub",
-    (slug) => getIntegrationConfigWithEnv(slug, env)
+  const integration = await getIntegration(userId, "dub", (slug) =>
+    getIntegrationConfigWithEnv(slug, env),
   );
 
   if (!integration) return null;

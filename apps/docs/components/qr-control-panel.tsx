@@ -67,42 +67,42 @@ const QRControlPanel: React.FC<QRControlPanelProps> = ({
         >
           <HorizontalScrollArea className="mt-2 mb-1 px-4">
             <TabsList className="bg-background text-muted-foreground inline-flex w-fit items-center justify-center rounded-full px-0">
-              <TabsTriggerPillWithTooltip 
-                value="content" 
-                kbd="1" 
-                label="Content" 
+              <TabsTriggerPillWithTooltip
+                value="content"
+                kbd="1"
+                label="Content"
                 description="Manage QR code data, URL, text, and other content settings"
               >
                 Content
               </TabsTriggerPillWithTooltip>
-              <TabsTriggerPillWithTooltip 
-                value="colors" 
-                kbd="2" 
-                label="Colors" 
+              <TabsTriggerPillWithTooltip
+                value="colors"
+                kbd="2"
+                label="Colors"
                 description="Customize QR code colors including foreground, background, and gradient styles"
               >
                 Colors
               </TabsTriggerPillWithTooltip>
-              <TabsTriggerPillWithTooltip 
-                value="patterns" 
-                kbd="3" 
-                label="Patterns" 
+              <TabsTriggerPillWithTooltip
+                value="patterns"
+                kbd="3"
+                label="Patterns"
                 description="Choose from various QR code patterns, dots, eyes, and marker styles"
               >
                 Patterns
               </TabsTriggerPillWithTooltip>
-              <TabsTriggerPillWithTooltip 
-                value="frames" 
-                kbd="4" 
-                label="Frames" 
+              <TabsTriggerPillWithTooltip
+                value="frames"
+                kbd="4"
+                label="Frames"
                 description="Add decorative frames, borders, and labels around your QR code"
               >
                 Frames
               </TabsTriggerPillWithTooltip>
-              <TabsTriggerPillWithTooltip 
-                value="settings" 
-                kbd="5" 
-                label="Settings" 
+              <TabsTriggerPillWithTooltip
+                value="settings"
+                kbd="5"
+                label="Settings"
                 description="Configure advanced options including error correction, size, and logo placement"
               >
                 Settings

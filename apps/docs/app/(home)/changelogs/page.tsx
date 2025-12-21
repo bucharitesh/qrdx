@@ -1,31 +1,31 @@
-import { CTASection } from '@/components/sections/cta-section'
-import { SectionHeader } from '@/components/sections/section-header'
-import { changelogSource } from '@/lib/source'
-import { Badge } from '@repo/design-system/components/ui/badge'
-import type { Metadata } from 'next'
+import { Badge } from "@repo/design-system/components/ui/badge";
+import type { Metadata } from "next";
+import { CTASection } from "@/components/sections/cta-section";
+import { SectionHeader } from "@/components/sections/section-header";
+import { changelogSource } from "@/lib/source";
 
 export const metadata: Metadata = {
-  title: 'Changelog',
-  description: 'Latest updates and improvements to our product',
-}
+  title: "Changelog",
+  description: "Latest updates and improvements to our product",
+};
 
 function formatDate(date: Date): string {
-  return date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  })
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 }
 
 const Page = async () => {
-  const allPages = changelogSource.getPages()
-  
+  const allPages = changelogSource.getPages();
+
   // Sort by date, newest first
   const sortedChangelogs = allPages.sort((a, b) => {
-    const dateA = new Date(a.data.date).getTime()
-    const dateB = new Date(b.data.date).getTime()
-    return dateB - dateA
-  })
+    const dateA = new Date(a.data.date).getTime();
+    const dateB = new Date(b.data.date).getTime();
+    return dateB - dateA;
+  });
 
   return (
     <>
@@ -43,10 +43,10 @@ const Page = async () => {
           <div className="max-w-6xl mx-auto px-6 md:px-10 py-16">
             <div className="relative">
               {sortedChangelogs.map((changelog, index) => {
-                const MDX = changelog.data.body
-                const date = new Date(changelog.data.date)
-                const formattedDate = formatDate(date)
-                const isLast = index === sortedChangelogs.length - 1
+                const MDX = changelog.data.body;
+                const date = new Date(changelog.data.date);
+                const formattedDate = formatDate(date);
+                const isLast = index === sortedChangelogs.length - 1;
 
                 return (
                   <div key={changelog.url} className="relative">
@@ -72,7 +72,7 @@ const Page = async () => {
                         {!isLast && (
                           <div className="hidden md:block absolute top-8 -left-6 w-px h-full bg-border" />
                         )}
-                        
+
                         {/* Timeline dot */}
                         <div className="hidden md:block absolute top-2 -left-6 -translate-x-1/2 size-3 bg-primary rounded-full border-4 border-background z-10" />
 
@@ -83,18 +83,19 @@ const Page = async () => {
                             </h2>
 
                             {/* Tags */}
-                            {changelog.data.tags && changelog.data.tags.length > 0 && (
-                              <div className="flex flex-wrap gap-2">
-                                {changelog.data.tags.map((tag: string) => (
-                                  <span
-                                    key={tag}
-                                    className="h-7 w-fit px-3 text-xs font-medium bg-muted text-muted-foreground rounded-full border flex items-center justify-center"
-                                  >
-                                    {tag}
-                                  </span>
-                                ))}
-                              </div>
-                            )}
+                            {changelog.data.tags &&
+                              changelog.data.tags.length > 0 && (
+                                <div className="flex flex-wrap gap-2">
+                                  {changelog.data.tags.map((tag: string) => (
+                                    <span
+                                      key={tag}
+                                      className="h-7 w-fit px-3 text-xs font-medium bg-muted text-muted-foreground rounded-full border flex items-center justify-center"
+                                    >
+                                      {tag}
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
                           </div>
 
                           <div className="prose prose-neutral dark:prose-invert max-w-none prose-headings:scroll-mt-8 prose-headings:font-semibold prose-headings:tracking-tight prose-headings:text-balance prose-p:tracking-tight prose-p:text-balance prose-a:font-medium prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-a:underline-offset-4 prose-pre:bg-background prose-pre:border prose-code:text-sm prose-code:rounded-md prose-code:px-1.5 prose-code:py-0.5 prose-code:bg-muted/50 prose-code:before:content-none prose-code:after:content-none prose-ul:list-disc prose-ol:list-decimal prose-li:marker:text-muted-foreground">
@@ -104,7 +105,7 @@ const Page = async () => {
                       </div>
                     </div>
                   </div>
-                )
+                );
               })}
             </div>
           </div>
@@ -112,7 +113,7 @@ const Page = async () => {
       </section>
       <CTASection />
     </>
-  )
-}
+  );
+};
 
-export default Page
+export default Page;

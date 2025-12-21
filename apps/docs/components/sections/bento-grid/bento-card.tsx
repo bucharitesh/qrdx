@@ -1,5 +1,5 @@
-import type { ReactNode } from "react";
 import { cn } from "@repo/design-system/lib/utils";
+import type { ReactNode } from "react";
 
 interface BentoCardProps {
   gridClass?: string;
@@ -27,7 +27,7 @@ export function BentoCard({
       className={cn(
         "bg-muted/50 border border-border rounded-xl flex flex-col overflow-hidden",
         padding,
-        gridClass
+        gridClass,
       )}
     >
       <div className={contentClassName}>{children}</div>
@@ -41,4 +41,3 @@ export function BentoCard({
     </div>
   );
 }
-

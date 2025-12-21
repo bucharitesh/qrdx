@@ -8,10 +8,8 @@ export const Providers = ({ children }: { children: React.ReactNode }) => {
   return (
     <UserSettingsProvider>
       <KeyboardShortcutProvider>
-        <KeyboardShortcutsTrigger>
-          {children}
-        </KeyboardShortcutsTrigger>
+        <KeyboardShortcutsTrigger>{children}</KeyboardShortcutsTrigger>
       </KeyboardShortcutProvider>
     </UserSettingsProvider>
-  )
-}
+  );
+};

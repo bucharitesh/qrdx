@@ -258,7 +258,11 @@ const getBase64Image = (imgUrl: string) =>
     };
 
     img.onerror = () => {
-      reject(new Error(`Could not load image from ${imgUrl.substring(0, 100)}... Check CORS settings or use a data URL.`));
+      reject(
+        new Error(
+          `Could not load image from ${imgUrl.substring(0, 100)}... Check CORS settings or use a data URL.`
+        )
+      );
     };
 
     img.src = imgUrl;
@@ -322,8 +326,12 @@ export async function getQRAsCanvas(
     // Add timeout to prevent hanging
     const timeout = setTimeout(() => {
       canvas.remove();
-      reject(new Error("SVG load timeout - image may be too large or contain invalid data"));
-    }, 30000); // 30 second timeout
+      reject(
+        new Error(
+          "SVG load timeout - image may be too large or contain invalid data"
+        )
+      );
+    }, 30_000); // 30 second timeout
 
     img.onload = () => {
       clearTimeout(timeout);

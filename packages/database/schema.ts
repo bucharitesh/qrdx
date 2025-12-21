@@ -137,8 +137,3 @@ export const integration = pgTable("integration", {
   createdAt: timestamp("created_at").notNull(),
   updatedAt: timestamp("updated_at").notNull(),
 });
-
-
-
-
-

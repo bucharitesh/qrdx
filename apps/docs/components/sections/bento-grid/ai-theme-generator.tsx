@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { QRCodeSVG } from "qrdx";
 import { Sparkles } from "lucide-react";
+import { QRCodeSVG } from "qrdx";
+import { useEffect, useState } from "react";
 
 const themes = [
   {
@@ -45,13 +45,13 @@ export function AIThemeGenerator() {
   useEffect(() => {
     const interval = setInterval(() => {
       setIsGenerating(true);
-      
+
       setTimeout(() => {
         setThemeIndex((prev) => (prev + 1) % themes.length);
         setIsGenerating(false);
       }, 500);
     }, 2500);
-    
+
     return () => clearInterval(interval);
   }, []);
 
@@ -76,7 +76,7 @@ export function AIThemeGenerator() {
             dotColor={currentTheme.fgColor}
           />
         </motion.div>
-        
+
         {/* AI Sparkle Effect */}
         {isGenerating && (
           <motion.div
@@ -89,7 +89,7 @@ export function AIThemeGenerator() {
           </motion.div>
         )}
       </div>
-      
+
       <div className="flex items-center gap-2">
         <motion.div
           className="flex items-center gap-2 px-3 py-1.5 rounded-full border"
@@ -99,11 +99,11 @@ export function AIThemeGenerator() {
           }}
           transition={{ duration: 0.5 }}
         >
-          <Sparkles 
-            className="w-3.5 h-3.5" 
+          <Sparkles
+            className="w-3.5 h-3.5"
             style={{ color: currentTheme.fgColor }}
           />
-          <span 
+          <span
             className="text-xs font-semibold"
             style={{ color: currentTheme.fgColor }}
           >
@@ -114,4 +114,3 @@ export function AIThemeGenerator() {
     </div>
   );
 }
-

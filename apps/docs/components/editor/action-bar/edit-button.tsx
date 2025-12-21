@@ -1,15 +1,20 @@
-import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import { PenLine } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
+import { TooltipWrapper } from "@/components/tooltip-wrapper";
 
 interface EditButtonProps extends React.ComponentProps<typeof Button> {
   themeId: string;
 }
 
-export function EditButton({ themeId, disabled, className, ...props }: EditButtonProps) {
+export function EditButton({
+  themeId,
+  disabled,
+  className,
+  ...props
+}: EditButtonProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const isEditing = pathname.includes(themeId);
@@ -34,11 +39,3 @@ export function EditButton({ themeId, disabled, className, ...props }: EditButto
     </TooltipWrapper>
   );
 }
-
-
-
-
-
-
-
-

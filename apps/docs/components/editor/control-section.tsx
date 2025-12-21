@@ -1,12 +1,13 @@
 /** biome-ignore-all lint/a11y/noStaticElementInteractions: false positive */
 /** biome-ignore-all lint/a11y/useKeyWithClickEvents: false positive */
-import { cn } from "@repo/design-system/lib/utils";
+
 import { Kbd } from "@repo/design-system/components/ui/kbd";
+import { cn } from "@repo/design-system/lib/utils";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import React, { useState } from "react";
+import { useUserSettings } from "@/lib/hooks/use-user-settings";
 import type { ControlSectionProps } from "@/types";
 import { SectionContext } from "./section-context";
-import { useUserSettings } from "@/lib/hooks/use-user-settings";
 
 function ControlSection({
   title,

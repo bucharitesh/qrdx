@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useState } from "react";
 
 export function SpeedIndicator() {
   const [loading, setLoading] = useState(true);
@@ -21,7 +21,7 @@ export function SpeedIndicator() {
               className="h-8 w-24 bg-white/10 rounded"
               initial={{ opacity: 0.5 }}
               animate={{ opacity: [0.4, 0.7, 0.4] }}
-              exit={{ opacity: 0, y: -20, position: 'absolute' }}
+              exit={{ opacity: 0, y: -20, position: "absolute" }}
               transition={{ duration: 1, repeat: Infinity }}
             />
           ) : (
@@ -48,4 +48,3 @@ export function SpeedIndicator() {
     </div>
   );
 }
-

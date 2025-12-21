@@ -1,18 +1,22 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { getTemplateIds, QRCodeSVG } from "qrdx";
+import { useEffect, useState } from "react";
 
 export function TypeTester() {
   const [templateId, setTemplateId] = useState("Arrow");
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setTemplateId(getTemplateIds()[Math.floor(Math.random() * getTemplateIds().length)] as string);
+      setTemplateId(
+        getTemplateIds()[
+          Math.floor(Math.random() * getTemplateIds().length)
+        ] as string,
+      );
     }, 1000);
     return () => clearInterval(interval);
   }, []);
-  
+
   return (
     <div className="flex items-center justify-center h-full">
       <QRCodeSVG
@@ -30,4 +34,3 @@ export function TypeTester() {
     </div>
   );
 }
-

@@ -13,7 +13,9 @@ export function FlipkartForm() {
   const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
 
   // Initialize from stored config or use defaults
-  const storedConfig = getContentConfig("flipkart") as FlipkartContent | undefined;
+  const storedConfig = getContentConfig("flipkart") as
+    | FlipkartContent
+    | undefined;
   const [flipkartData, setFlipkartData] = React.useState<FlipkartFormData>({
     productUrl: storedConfig?.productUrl || "",
   });
@@ -69,4 +71,3 @@ export function FlipkartForm() {
     </div>
   );
 }
-

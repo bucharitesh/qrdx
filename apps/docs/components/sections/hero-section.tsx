@@ -1,21 +1,21 @@
 "use client";
 
-import { HeroVideoSection } from "@/components/sections/hero-video-section";
-import { siteConfig } from "@/config/site";
-import Link from "next/link";
+import { Button } from "@repo/design-system/components/ui/button";
 import {
   motion,
-  useMotionValue,
   useAnimationFrame,
   useMotionTemplate,
+  useMotionValue,
 } from "framer-motion";
+import Link from "next/link";
 import { useRef } from "react";
-import { Button } from "@repo/design-system/components/ui/button";
+import { HeroVideoSection } from "@/components/sections/hero-video-section";
+import { siteConfig } from "@/config/site";
 
 export function HeroSection() {
   const { hero } = siteConfig;
 
-   const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
@@ -42,8 +42,12 @@ export function HeroSection() {
   const maskImage = useMotionTemplate`radial-gradient(300px circle at ${mouseX}px ${mouseY}px, black, transparent)`;
 
   return (
-    <section ref={containerRef}
-      onMouseMove={handleMouseMove} id="hero" className="w-full relative">
+    <section
+      ref={containerRef}
+      onMouseMove={handleMouseMove}
+      id="hero"
+      className="w-full relative"
+    >
       <div className="absolute inset-0">
         <div className="absolute inset-0 -z-10 h-[600px] md:h-[800px] w-full [background:radial-gradient(125%_125%_at_50%_10%,var(--background)_40%,var(--primary)_100%)] rounded-b-xl"></div>
       </div>
@@ -97,19 +101,11 @@ export function HeroSection() {
             </p>
           </div>
           <div className="flex items-center gap-2.5 flex-wrap justify-center">
-            <Link
-              href={hero.cta.primary.href}
-            >
-              <Button>
-                {hero.cta.primary.text}
-              </Button>
+            <Link href={hero.cta.primary.href}>
+              <Button>{hero.cta.primary.text}</Button>
             </Link>
-            <Link
-              href={hero.cta.secondary.href}
-            >
-              <Button variant="outline">
-                {hero.cta.secondary.text}
-              </Button>
+            <Link href={hero.cta.secondary.href}>
+              <Button variant="outline">{hero.cta.secondary.text}</Button>
             </Link>
           </div>
         </div>

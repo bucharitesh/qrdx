@@ -51,11 +51,14 @@ export function getIntegrationConfigWithEnv(
   env: Record<string, string | undefined>
 ): IntegrationConfig {
   // Map slug to environment variable names
-  const envMappings: Record<string, {
-    clientId: string;
-    clientSecret: string;
-    redirectUri: string;
-  }> = {
+  const envMappings: Record<
+    string,
+    {
+      clientId: string;
+      clientSecret: string;
+      redirectUri: string;
+    }
+  > = {
     dub: {
       clientId: "DUB_CLIENT_ID",
       clientSecret: "DUB_CLIENT_SECRET",
@@ -102,4 +105,3 @@ export function getIntegrationConfigWithEnv(
 export function initializeIntegrations(): void {
   registerAllIntegrations();
 }
-

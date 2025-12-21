@@ -22,7 +22,10 @@ export function TwitterForm() {
 
   // Sync with store when config changes (e.g., from smart paste)
   React.useEffect(() => {
-    if (storedConfig?.username && storedConfig.username !== twitterData.username) {
+    if (
+      storedConfig?.username &&
+      storedConfig.username !== twitterData.username
+    ) {
       setTwitterData({ username: storedConfig.username });
     }
   }, [storedConfig]);

@@ -13,11 +13,3 @@ export function formatCompactNumber(num: number): string {
   }
   return num.toString();
 }
-
-
-
-
-
-
-
-

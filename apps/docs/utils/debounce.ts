@@ -1,6 +1,6 @@
 export function debounce<T extends (...args: any[]) => void>(
   fn: T,
-  delay: number
+  delay: number,
 ): T & { cancel: () => void } {
   let timeoutId: NodeJS.Timeout;
 

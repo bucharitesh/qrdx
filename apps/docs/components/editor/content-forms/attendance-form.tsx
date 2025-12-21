@@ -13,10 +13,13 @@ export function AttendanceForm() {
   const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
 
   // Initialize from stored config or use defaults
-  const storedConfig = getContentConfig("attendance") as AttendanceContent | undefined;
-  const [attendanceData, setAttendanceData] = React.useState<AttendanceFormData>({
-    formUrl: storedConfig?.formUrl || "",
-  });
+  const storedConfig = getContentConfig("attendance") as
+    | AttendanceContent
+    | undefined;
+  const [attendanceData, setAttendanceData] =
+    React.useState<AttendanceFormData>({
+      formUrl: storedConfig?.formUrl || "",
+    });
   const [errors, setErrors] = React.useState<Record<string, string>>({});
 
   React.useEffect(() => {
@@ -69,4 +72,3 @@ export function AttendanceForm() {
     </div>
   );
 }
-

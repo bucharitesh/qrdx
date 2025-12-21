@@ -22,7 +22,8 @@ export const Highlight = ({
 
 export const siteConfig = {
   name: "QRdx",
-  description: "AI-powered, fully customizable QR codes for designers crafting beautiful brands, businesses tracking engagement, and developers building QR platforms",
+  description:
+    "AI-powered, fully customizable QR codes for designers crafting beautiful brands, businesses tracking engagement, and developers building QR platforms",
   cta: "Try the Playground",
   url: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
   keywords: [
@@ -71,7 +72,7 @@ export const siteConfig = {
       },
     },
   },
-   companyShowcase: {
+  companyShowcase: {
     companyLogos: [
       {
         id: 1,
@@ -591,8 +592,10 @@ export const siteConfig = {
         price: "$8",
         period: "month",
         yearlyPrice: "$79",
-        polarMonthlyPriceId: env.NEXT_PUBLIC_QRDX_PRO_MONTHLY_PRODUCT_ID as string,
-        polarYearlyPriceId: env.NEXT_PUBLIC_QRDX_PRO_YEARLY_PRODUCT_ID as string,
+        polarMonthlyPriceId:
+          env.NEXT_PUBLIC_QRDX_PRO_MONTHLY_PRODUCT_ID as string,
+        polarYearlyPriceId:
+          env.NEXT_PUBLIC_QRDX_PRO_YEARLY_PRODUCT_ID as string,
         features: [
           "Unlimited saved QR themes",
           "Priority support",
@@ -715,7 +718,7 @@ export const siteConfig = {
         { id: 7, title: "Privacy Policy", url: "/legal/privacy-policy" },
         { id: 8, title: "Terms of Service", url: "/legal/terms-of-service" },
       ],
-    }
+    },
   ],
 };
 

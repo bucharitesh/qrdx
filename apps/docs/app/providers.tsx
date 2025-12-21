@@ -11,18 +11,18 @@ import { QueryProvider } from "@/lib/query-client";
 
 export function Provider({ children }: { children: ReactNode }) {
   return (
-      <DesignSystemProvider>
-        <NuqsAdapter>
-          <QueryProvider>
-            <ChatProvider>
-              <Suspense>
-                <AuthDialogWrapper />
-                <GetProDialogWrapper />
-                {children}
-              </Suspense>
-            </ChatProvider>
-          </QueryProvider>
-        </NuqsAdapter>
-      </DesignSystemProvider>
+    <DesignSystemProvider>
+      <NuqsAdapter>
+        <QueryProvider>
+          <ChatProvider>
+            <Suspense>
+              <AuthDialogWrapper />
+              <GetProDialogWrapper />
+              {children}
+            </Suspense>
+          </ChatProvider>
+        </QueryProvider>
+      </NuqsAdapter>
+    </DesignSystemProvider>
   );
 }

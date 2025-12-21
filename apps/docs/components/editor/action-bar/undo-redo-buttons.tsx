@@ -1,13 +1,16 @@
 "use client";
 
-import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { Button } from "@repo/design-system/components/ui/button";
-import { useQREditorStore } from "@/store/editor-store";
 import { Redo, Undo } from "lucide-react";
+import { TooltipWrapper } from "@/components/tooltip-wrapper";
+import { useQREditorStore } from "@/store/editor-store";
 
 interface UndoRedoButtonsProps extends React.ComponentProps<typeof Button> {}
 
-export function UndoRedoButtons({ disabled = false, ...props }: UndoRedoButtonsProps) {
+export function UndoRedoButtons({
+  disabled = false,
+  ...props
+}: UndoRedoButtonsProps) {
   const { undo, redo, canUndo, canRedo } = useQREditorStore();
 
   return (
@@ -38,11 +41,3 @@ export function UndoRedoButtons({ disabled = false, ...props }: UndoRedoButtonsP
     </div>
   );
 }
-
-
-
-
-
-
-
-

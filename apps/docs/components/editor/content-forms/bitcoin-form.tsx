@@ -13,7 +13,9 @@ export function BitcoinForm() {
   const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
 
   // Initialize from stored config or use defaults
-  const storedConfig = getContentConfig("bitcoin") as BitcoinContent | undefined;
+  const storedConfig = getContentConfig("bitcoin") as
+    | BitcoinContent
+    | undefined;
   const [bitcoinData, setBitcoinData] = React.useState<BitcoinFormData>({
     address: storedConfig?.address || "",
     amount: storedConfig?.amount || "",
@@ -53,7 +55,9 @@ export function BitcoinForm() {
           type="text"
           placeholder="1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"
           value={bitcoinData.address}
-          onChange={(e) => setBitcoinData({ ...bitcoinData, address: e.target.value })}
+          onChange={(e) =>
+            setBitcoinData({ ...bitcoinData, address: e.target.value })
+          }
           className={errors.address ? "border-destructive" : ""}
         />
         {errors.address && (
@@ -70,7 +74,9 @@ export function BitcoinForm() {
           type="text"
           placeholder="0.001"
           value={bitcoinData.amount}
-          onChange={(e) => setBitcoinData({ ...bitcoinData, amount: e.target.value })}
+          onChange={(e) =>
+            setBitcoinData({ ...bitcoinData, amount: e.target.value })
+          }
           className={errors.amount ? "border-destructive" : ""}
         />
         {errors.amount && (
@@ -87,7 +93,9 @@ export function BitcoinForm() {
           type="text"
           placeholder="Payment label"
           value={bitcoinData.label}
-          onChange={(e) => setBitcoinData({ ...bitcoinData, label: e.target.value })}
+          onChange={(e) =>
+            setBitcoinData({ ...bitcoinData, label: e.target.value })
+          }
         />
       </div>
 
@@ -100,7 +108,9 @@ export function BitcoinForm() {
           type="text"
           placeholder="Payment message"
           value={bitcoinData.message}
-          onChange={(e) => setBitcoinData({ ...bitcoinData, message: e.target.value })}
+          onChange={(e) =>
+            setBitcoinData({ ...bitcoinData, message: e.target.value })
+          }
         />
       </div>
 
@@ -110,4 +120,3 @@ export function BitcoinForm() {
     </div>
   );
 }
-

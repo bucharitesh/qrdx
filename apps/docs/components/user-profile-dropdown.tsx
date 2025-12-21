@@ -57,14 +57,9 @@ export function UserProfileDropdown() {
           className="flex gap-3.5"
         >
           <Link href="/playground">
-            <Button>
-              Try the Playground
-            </Button>
+            <Button>Try the Playground</Button>
           </Link>
-          <Button
-            variant="outline"
-            onClick={() => openAuthDialog("signin")}
-          >
+          <Button variant="outline" onClick={() => openAuthDialog("signin")}>
             Sign In
           </Button>
         </motion.div>

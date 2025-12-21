@@ -1,6 +1,9 @@
 "use client";
 
 import { Separator } from "@repo/design-system/components/ui/separator";
+import { useEffect, useState } from "react";
+import { KeyboardShortcutsButton } from "@/components/keyboard-shortcuts-button";
+import { useKeyboardShortcutsModal } from "@/components/keyboard-shortcuts-trigger";
 import { useAIQRGenerationCore } from "@/lib/hooks/use-ai-qr-generation-core";
 import { useQREditorStore } from "@/store/editor-store";
 import { useThemePresetStore } from "@/store/theme-preset-store";
@@ -14,9 +17,6 @@ import { ResetButton } from "./reset-button";
 import { SaveButton } from "./save-button";
 import { ShareButton } from "./share-button";
 import { UndoRedoButtons } from "./undo-redo-buttons";
-import { KeyboardShortcutsButton } from "@/components/keyboard-shortcuts-button";
-import { useKeyboardShortcutsModal } from "@/components/keyboard-shortcuts-trigger";
-import { useEffect, useState } from "react";
 
 interface ActionBarButtonsProps {
   onSaveClick: () => void;
@@ -70,21 +70,24 @@ export function ActionBarButtons({
     <div className="w-full flex items-center justify-between gap-1">
       <div className="flex items-center gap-1">
         <UndoRedoButtons disabled={undoRedoDisabled} />
-        <ResetButton
-          onClick={handleReset}
-          disabled={resetDisabled}
-        />
+        <ResetButton onClick={handleReset} disabled={resetDisabled} />
       </div>
 
       <div className="flex items-center gap-1">
-      <KeyboardShortcutsButton onClick={() => setOpen(true)} />
+        <KeyboardShortcutsButton onClick={() => setOpen(true)} />
         <ContrastChecker
           currentStyles={themeState.styles}
           disabled={contrastDisabled}
         />
-        <Separator orientation="vertical" className="mx-1 !h-8 w-px bg-border" />
+        <Separator
+          orientation="vertical"
+          className="mx-1 !h-8 w-px bg-border"
+        />
         <ThemeToggle />
-        <Separator orientation="vertical" className="mx-1 !h-8 w-px bg-border" />
+        <Separator
+          orientation="vertical"
+          className="mx-1 !h-8 w-px bg-border"
+        />
         {isSavedPreset && (
           <EditButton
             themeId={themeState.preset as string}
@@ -105,7 +108,10 @@ export function ActionBarButtons({
           dialogOpen={downloadDialogOpen}
           setDialogOpen={setDownloadDialogOpen}
         />
-        <CodeButton dialogOpen={codeDialogOpen} setDialogOpen={setCodeDialogOpen} />
+        <CodeButton
+          dialogOpen={codeDialogOpen}
+          setDialogOpen={setCodeDialogOpen}
+        />
       </div>
     </div>
   );

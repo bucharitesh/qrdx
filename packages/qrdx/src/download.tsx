@@ -22,7 +22,6 @@ export type DownloadOptions = {
   format: DownloadFormat;
   size: DownloadSize;
   filename?: string;
-
 };
 
 /**
@@ -142,8 +141,12 @@ async function getQRAsPDF(qrProps: QRProps): Promise<string> {
     // Add timeout to prevent hanging
     const timeout = setTimeout(() => {
       tempCanvas.remove();
-      reject(new Error("SVG load timeout - image may be too large or contain invalid data"));
-    }, 30000); // 30 second timeout
+      reject(
+        new Error(
+          "SVG load timeout - image may be too large or contain invalid data"
+        )
+      );
+    }, 30_000); // 30 second timeout
 
     img.onload = () => {
       clearTimeout(timeout);
@@ -185,7 +188,6 @@ async function getQRAsPDF(qrProps: QRProps): Promise<string> {
   return pdf.output("dataurlstring");
 }
 
-
 /**
  * Downloads a QR code with the specified options
  */
@@ -205,7 +207,6 @@ export async function downloadQRCode(
   const propsWithSize = {
     ...qrProps,
     size: size.width, // QR codes are square, so we just use width
-
   };
 
   const defaultFilename = `qr-code-${size.width}x${size.height}.${getFileExtension(format)}`;

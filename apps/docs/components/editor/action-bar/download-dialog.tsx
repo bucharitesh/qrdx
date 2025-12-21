@@ -24,6 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@repo/design-system/components/ui/select";
+import { Slider } from "@repo/design-system/components/ui/slider";
 import { DownloadIcon } from "lucide-react";
 import {
   type DownloadSize,
@@ -36,7 +37,6 @@ import React from "react";
 import { useQREditorStore } from "@/store/editor-store";
 import { usePreferencesStore } from "@/store/preferences-store";
 import type { DownloadOptions as DownloadOptionsType } from "@/types/theme";
-import { Slider } from "@repo/design-system/components/ui/slider";
 
 interface DownloadDialogProps {
   open: boolean;
@@ -110,7 +110,7 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
   ]);
 
   const handleDownload = async () => {
-    //1. Get size based on current selection 
+    //1. Get size based on current selection
     const size = getCurrentSize();
     //2. apply the multiplier only for the export
     const finalExportSize = {
@@ -118,7 +118,10 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
       height: size.height * downloadOptions.multiplier,
     };
     // 3. Validate FINAL size
-    const validation = validateSize(finalExportSize.width, finalExportSize.height);
+    const validation = validateSize(
+      finalExportSize.width,
+      finalExportSize.height,
+    );
     if (!validation.isValid) {
       setSizeError(validation.error || "Invalid size");
       return;
@@ -131,7 +134,6 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
         format: downloadOptions.format,
         size: finalExportSize,
         filename: downloadOptions.filename,
-
       });
       toast.success(
         `QR code downloaded as ${downloadOptions.format.toUpperCase()}`,
@@ -219,7 +221,13 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
           {/* Size Multiplier Slider Implementation */}
           <div className="space-y-2 py-2">
             <div className="flex justify-between items-center">
-              <Label htmlFor="multiplier-slider" className="text-sm text-gray-400">Scale <span className="text-[0.6rem] text-muted-foreground">X</span></Label>
+              <Label
+                htmlFor="multiplier-slider"
+                className="text-sm text-gray-400"
+              >
+                Scale{" "}
+                <span className="text-[0.6rem] text-muted-foreground">X</span>
+              </Label>
             </div>
             <div className="flex items-center gap-4">
               <Slider
@@ -228,7 +236,9 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
                 max={10}
                 step={1}
                 value={[downloadOptions.multiplier]}
-                onValueChange={(value) => updateDownloadOption("multiplier", value[0])}
+                onValueChange={(value) =>
+                  updateDownloadOption("multiplier", value[0])
+                }
               />
               <InputGroup className="w-24">
                 <InputGroupInput
@@ -239,7 +249,12 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
                   onBlur={(e) => {
                     const value = Number(e.target.value);
                     // If empty, NaN, or out of range, restore to current valid value
-                    if (!e.target.value || Number.isNaN(value) || value < 1 || value > 10) {
+                    if (
+                      !e.target.value ||
+                      Number.isNaN(value) ||
+                      value < 1 ||
+                      value > 10
+                    ) {
                       e.target.value = String(downloadOptions.multiplier);
                     } else {
                       updateDownloadOption("multiplier", value);
@@ -248,7 +263,12 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
                   onChange={(e) => {
                     const value = Number(e.target.value);
                     // Only update if valid
-                    if (e.target.value && !Number.isNaN(value) && value >= 1 && value <= 10) {
+                    if (
+                      e.target.value &&
+                      !Number.isNaN(value) &&
+                      value >= 1 &&
+                      value <= 10
+                    ) {
                       updateDownloadOption("multiplier", value);
                     }
                   }}
@@ -260,7 +280,8 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
               </InputGroup>
             </div>
             <p className="text-xs italic pt-2 text-gray-500">
-              {getCurrentSize().width * downloadOptions.multiplier} x {getCurrentSize().height * downloadOptions.multiplier} px
+              {getCurrentSize().width * downloadOptions.multiplier} x{" "}
+              {getCurrentSize().height * downloadOptions.multiplier} px
             </p>
           </div>
 
@@ -273,17 +294,23 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
                 aria-label="Transparent Background"
                 className="h-5 w-5 rounded border-gray-700 bg-gray-800  accent-primary text-[#10b981] focus:ring-[#10b981]"
                 checked={downloadOptions.transparent}
-                onChange={(e) => updateDownloadOption("transparent", e.target.checked)}
+                onChange={(e) =>
+                  updateDownloadOption("transparent", e.target.checked)
+                }
               />
             </div>
-            <Label htmlFor="transparent-bg" className="text-sm font-medium cursor-pointer">
+            <Label
+              htmlFor="transparent-bg"
+              className="text-sm font-medium cursor-pointer"
+            >
               Transparent Background
             </Label>
           </div>
 
           {downloadOptions.format === "jpg" && downloadOptions.transparent && (
             <p className="text-[10px] text-amber-500 mt-1 italic">
-              Note: JPG format does not support transparency. Background will be solid.
+              Note: JPG format does not support transparency. Background will be
+              solid.
             </p>
           )}
 

@@ -69,4 +69,3 @@ export function CalcomForm() {
     </div>
   );
 }
-

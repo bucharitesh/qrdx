@@ -5,11 +5,16 @@ import { cn } from "@repo/design-system/lib/utils";
 import { Keyboard } from "lucide-react";
 import { TooltipWrapper } from "./tooltip-wrapper";
 
-interface KeyboardShortcutsButtonProps extends React.ComponentProps<typeof Button> {
+interface KeyboardShortcutsButtonProps
+  extends React.ComponentProps<typeof Button> {
   onClick?: () => void;
 }
 
-export function KeyboardShortcutsButton({ className, onClick, ...props }: KeyboardShortcutsButtonProps) {
+export function KeyboardShortcutsButton({
+  className,
+  onClick,
+  ...props
+}: KeyboardShortcutsButtonProps) {
   return (
     <TooltipWrapper label="Keyboard shortcuts" kbd="?" asChild>
       <Button

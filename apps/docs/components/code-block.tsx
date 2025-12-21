@@ -3,7 +3,10 @@
 import { cn } from "@repo/design-system/lib/utils";
 import { useTheme } from "next-themes";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { oneDark, oneLight } from "react-syntax-highlighter/dist/esm/styles/prism";
+import {
+  oneDark,
+  oneLight,
+} from "react-syntax-highlighter/dist/esm/styles/prism";
 
 interface CodeBlockProps {
   code: string;
@@ -12,14 +15,19 @@ interface CodeBlockProps {
   showLineNumbers?: boolean;
 }
 
-export function CodeBlock({ code, language, className, showLineNumbers = false }: CodeBlockProps) {
+export function CodeBlock({
+  code,
+  language,
+  className,
+  showLineNumbers = false,
+}: CodeBlockProps) {
   const { resolvedTheme } = useTheme();
-  
+
   return (
     <div
       className={cn(
         "bg-background text-foreground relative w-full overflow-hidden rounded-md border",
-        className
+        className,
       )}
     >
       <SyntaxHighlighter
@@ -48,4 +56,3 @@ export function CodeBlock({ code, language, className, showLineNumbers = false }
     </div>
   );
 }
-

@@ -10,8 +10,3 @@ export function SettingsControls() {
     </ControlSection>
   );
 }
-
-
-
-
-

@@ -20,4 +20,3 @@ export default async function EditorPage({
 
   return <Editor themePromise={themePromise} />;
 }
-

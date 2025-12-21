@@ -1,18 +1,22 @@
 "use client";
 
-import { NavMenu } from "@/components/nav-menu";  
-import { siteConfig } from "@/config/site";
+import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import { Menu, X } from "lucide-react";
-import { AnimatePresence, motion, useScroll, Variants } from "motion/react";
+import {
+  AnimatePresence,
+  motion,
+  useScroll,
+  type Variants,
+} from "motion/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Logo from "@/assets/logo.svg";
+import { NavMenu } from "@/components/nav-menu";
 import { QrdxLogoAnimation } from "@/components/qrdx-logo-animation";
-import { Button } from "@repo/design-system/components/ui/button";
-import { UserProfileDropdown } from "../user-profile-dropdown";
-import { ModeToggle } from "@repo/design-system/components/mode-toggle";
+import { siteConfig } from "@/config/site";
 import { ThemeToggle } from "../theme-toggle";
+import { UserProfileDropdown } from "../user-profile-dropdown";
 
 const INITIAL_WIDTH = "70rem";
 const MAX_WIDTH = "800px";
@@ -93,16 +97,16 @@ export function Navbar() {
             <Link href="/" className="flex items-center gap-2">
               <Logo className="size-5 md:hidden block fill-secondary-foreground" />
               <QrdxLogoAnimation size={40} className="hidden md:block" />
-              <p className="text-lg font-semibold text-secondary-foreground">QRdx</p>
+              <p className="text-lg font-semibold text-secondary-foreground">
+                QRdx
+              </p>
             </Link>
 
             <NavMenu />
 
             <div className="flex flex-row items-center gap-1 md:gap-3 shrink-0">
               <ThemeToggle />
-              <Button>
-                Try the Playground
-              </Button>
+              <Button>Try the Playground</Button>
               <Button
                 variant="secondary"
                 className="md:hidden"
@@ -145,9 +149,7 @@ export function Navbar() {
                 <div className="flex items-center justify-between">
                   <Link href="/" className="flex items-center gap-2">
                     <Logo className="size-5 text-primary" />
-                    <p className="text-lg font-semibold text-primary">
-                      QRDX
-                    </p>
+                    <p className="text-lg font-semibold text-primary">QRDX</p>
                   </Link>
                   <button
                     onClick={toggleDrawer}
@@ -183,9 +185,7 @@ export function Navbar() {
                 {/* Action buttons */}
                 <div className="flex flex-col gap-2">
                   <Link href="/playground">
-                    <Button>
-                      Try the Playground
-                    </Button>
+                    <Button>Try the Playground</Button>
                   </Link>
                 </div>
               </div>

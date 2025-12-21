@@ -1,22 +1,30 @@
 "use client";
 
+import type { UserSettings } from "@repo/database/schema";
 import { toast } from "@repo/design-system";
 import { Button } from "@repo/design-system/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@repo/design-system/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@repo/design-system/components/ui/card";
 import { Label } from "@repo/design-system/components/ui/label";
 import { Switch } from "@repo/design-system/components/ui/switch";
 import { useState } from "react";
 import { updateUserSettings } from "@/actions/user-settings";
 import { useUserSettings } from "@/lib/hooks/use-user-settings";
-import type { UserSettings } from "@repo/database/schema";
 
 interface GeneralSettingsFormProps {
   initialSettings: UserSettings | null;
 }
 
-export function GeneralSettingsForm({ initialSettings }: GeneralSettingsFormProps) {
+export function GeneralSettingsForm({
+  initialSettings,
+}: GeneralSettingsFormProps) {
   const [keyboardShortcuts, setKeyboardShortcuts] = useState(
-    initialSettings?.keyboardShortcuts ?? true
+    initialSettings?.keyboardShortcuts ?? true,
   );
   const [isSaving, setIsSaving] = useState(false);
   const { refreshSettings } = useUserSettings();
@@ -44,7 +52,8 @@ export function GeneralSettingsForm({ initialSettings }: GeneralSettingsFormProp
     }
   };
 
-  const hasChanges = keyboardShortcuts !== (initialSettings?.keyboardShortcuts ?? true);
+  const hasChanges =
+    keyboardShortcuts !== (initialSettings?.keyboardShortcuts ?? true);
 
   return (
     <div className="space-y-6">
@@ -58,7 +67,9 @@ export function GeneralSettingsForm({ initialSettings }: GeneralSettingsFormProp
         <CardContent className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
-              <Label htmlFor="keyboard-shortcuts">Enable keyboard shortcuts</Label>
+              <Label htmlFor="keyboard-shortcuts">
+                Enable keyboard shortcuts
+              </Label>
               <p className="text-muted-foreground text-sm">
                 Allow keyboard shortcuts for quick actions in the playground
               </p>
@@ -82,4 +93,3 @@ export function GeneralSettingsForm({ initialSettings }: GeneralSettingsFormProp
     </div>
   );
 }
-

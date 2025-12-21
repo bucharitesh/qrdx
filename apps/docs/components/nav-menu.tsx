@@ -1,10 +1,10 @@
 "use client";
 
-import { siteConfig } from "@/config/site";
 import { motion } from "motion/react";
-import React, { useRef, useState, useEffect, useCallback } from "react";
-import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { siteConfig } from "@/config/site";
 
 interface NavItem {
   id: number;
@@ -17,21 +17,24 @@ const navs: NavItem[] = siteConfig.nav.links;
 export function NavMenu() {
   const ref = useRef<HTMLUListElement>(null);
   const pathname = usePathname();
-  
+
   const [left, setLeft] = useState(0);
   const [width, setWidth] = useState(0);
   const [isReady, setIsReady] = useState(false);
 
   // Determine if a nav item is active based on current pathname
-  const isActive = useCallback((item: NavItem): boolean => {
-    // Exact match for home page
-    if (pathname === "/" && item.href === "/") return true;
-    
-    // For non-home pages, check if pathname starts with the nav href
-    if (item.href !== "/" && pathname.startsWith(item.href)) return true;
-    
-    return false;
-  }, [pathname]);
+  const isActive = useCallback(
+    (item: NavItem): boolean => {
+      // Exact match for home page
+      if (pathname === "/" && item.href === "/") return true;
+
+      // For non-home pages, check if pathname starts with the nav href
+      if (item.href !== "/" && pathname.startsWith(item.href)) return true;
+
+      return false;
+    },
+    [pathname],
+  );
 
   // Find the currently active nav item
   const getActiveNavItem = useCallback((): NavItem | undefined => {
@@ -43,7 +46,7 @@ export function NavMenu() {
     const navItem = ref.current?.querySelector(
       `[href="${targetPath}"]`,
     )?.parentElement;
-    
+
     if (navItem && ref.current) {
       setLeft(navItem.offsetLeft);
       setWidth(navItem.getBoundingClientRect().width);

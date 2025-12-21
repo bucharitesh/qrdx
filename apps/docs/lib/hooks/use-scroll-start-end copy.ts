@@ -18,7 +18,10 @@ import { useEffect, useMemo, useRef, useState } from "react";
  * - scrollStartRef, scrollEndRef: attach inside the scrollable content near the start/end edges
  */
 
-type IntersectionObserverInitWithoutRoot = Omit<IntersectionObserverInit, "root"> & {
+type IntersectionObserverInitWithoutRoot = Omit<
+  IntersectionObserverInit,
+  "root"
+> & {
   root?: never;
 };
 
@@ -54,7 +57,11 @@ export function useScrollStartEnd({
       ...observerOptions,
       root: containerRef?.current ?? observerOptions.root ?? null,
     };
-  }, [observerOptions.root, observerOptions.threshold, observerOptions.rootMargin]);
+  }, [
+    observerOptions.root,
+    observerOptions.threshold,
+    observerOptions.rootMargin,
+  ]);
 
   useEffect(() => {
     const startMarker = scrollStartRef.current;
@@ -63,7 +70,8 @@ export function useScrollStartEnd({
 
     const observer = new IntersectionObserver((entries) => {
       for (const entry of entries) {
-        if (entry.target === startMarker) setIsScrollStart(entry.isIntersecting);
+        if (entry.target === startMarker)
+          setIsScrollStart(entry.isIntersecting);
         if (entry.target === endMarker) setIsScrollEnd(entry.isIntersecting);
       }
     }, intersectionObserverOptions);

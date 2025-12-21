@@ -29,10 +29,3 @@ export async function CustomerPortalLink() {
     </Link>
   );
 }
-
-
-
-
-
-
-

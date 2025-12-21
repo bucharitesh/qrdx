@@ -1,18 +1,17 @@
 "use client";
 
 import { Globe } from "lucide-react";
-
-import { SectionHeader } from "./section-header";
-import { 
-  TypeTester, 
-  PatternAnimation,
-  LottiePlayer,
-  BentoCard,
-  LogoShowcase,
-  ExportFormats,
-  AIThemeGenerator
-} from "./bento-grid";
 import lottieAnimation from "@/public/lottie.json";
+import {
+  AIThemeGenerator,
+  BentoCard,
+  ExportFormats,
+  LogoShowcase,
+  LottiePlayer,
+  PatternAnimation,
+  TypeTester,
+} from "./bento-grid";
+import { SectionHeader } from "./section-header";
 
 function BentoGridSection() {
   return (
@@ -22,7 +21,8 @@ function BentoGridSection() {
           Built for Flexibility
         </h2>
         <p className="text-muted-foreground text-center text-balance font-medium">
-          Customize every aspect of your QR codes with powerful features designed for developers and designers.
+          Customize every aspect of your QR codes with powerful features
+          designed for developers and designers.
         </p>
       </SectionHeader>
 
@@ -81,8 +81,8 @@ function BentoGridSection() {
             description="Instant QR code scanning with modern detection."
             contentClassName="flex-1 flex items-center justify-center"
           >
-            <LottiePlayer 
-              animationData={lottieAnimation} 
+            <LottiePlayer
+              animationData={lottieAnimation}
               className="absolute w-full h-full max-w-[320px] -translate-y-10 translate-x-20"
             />
           </BentoCard>
@@ -96,11 +96,10 @@ function BentoGridSection() {
           >
             <AIThemeGenerator />
           </BentoCard>
-
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 export default BentoGridSection;

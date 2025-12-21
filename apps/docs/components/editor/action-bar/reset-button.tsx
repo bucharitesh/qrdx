@@ -1,7 +1,7 @@
-import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import { RefreshCw } from "lucide-react";
+import { TooltipWrapper } from "@/components/tooltip-wrapper";
 
 interface ResetButtonProps extends React.ComponentProps<typeof Button> {}
 
@@ -15,11 +15,3 @@ export function ResetButton({ className, ...props }: ResetButtonProps) {
     </TooltipWrapper>
   );
 }
-
-
-
-
-
-
-
-

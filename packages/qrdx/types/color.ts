@@ -103,4 +103,3 @@ export function getColorString(
   }
   return normalized.stops[0]?.color || fallback;
 }
-

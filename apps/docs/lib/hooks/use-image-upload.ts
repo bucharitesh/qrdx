@@ -163,10 +163,3 @@ export function useImageUpload({
     isSomeImageUploading,
   };
 }
-
-
-
-
-
-
-

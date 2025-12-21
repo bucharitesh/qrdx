@@ -1,7 +1,13 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import type { UserSettings } from "@repo/database/schema";
+import {
+  createContext,
+  type ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { getUserSettings } from "@/actions/user-settings";
 
 interface UserSettingsContextType {
@@ -36,7 +42,9 @@ export function UserSettingsProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <UserSettingsContext.Provider value={{ settings, isLoading, refreshSettings }}>
+    <UserSettingsContext.Provider
+      value={{ settings, isLoading, refreshSettings }}
+    >
       {children}
     </UserSettingsContext.Provider>
   );
@@ -49,4 +57,3 @@ export function useUserSettings() {
   }
   return context;
 }
-

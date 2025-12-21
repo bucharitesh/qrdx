@@ -1,33 +1,33 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { FileCode, Download, Image, Code2 } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { Code2, Download, FileCode, Image } from "lucide-react";
+import { useEffect, useState } from "react";
 
 const formats = [
-  { 
-    icon: FileCode, 
-    name: "SVG", 
+  {
+    icon: FileCode,
+    name: "SVG",
     color: "#FF6B35",
-    description: "Vector"
+    description: "Vector",
   },
-  { 
-    icon: Image, 
-    name: "PNG", 
+  {
+    icon: Image,
+    name: "PNG",
     color: "#4169E1",
-    description: "Raster"
+    description: "Raster",
   },
-  { 
-    icon: Code2, 
-    name: "React", 
+  {
+    icon: Code2,
+    name: "React",
     color: "#61DAFB",
-    description: "Component"
+    description: "Component",
   },
-  { 
-    icon: Download, 
-    name: "Export", 
+  {
+    icon: Download,
+    name: "Export",
     color: "#10B981",
-    description: "Download"
+    description: "Download",
   },
 ];
 
@@ -47,7 +47,7 @@ export function ExportFormats() {
         {formats.map((format, index) => {
           const Icon = format.icon;
           const isActive = index === activeIndex;
-          
+
           return (
             <motion.div
               key={format.name}
@@ -55,9 +55,7 @@ export function ExportFormats() {
               animate={{
                 scale: isActive ? 1.05 : 1,
                 borderColor: isActive ? format.color : "hsl(var(--border))",
-                backgroundColor: isActive 
-                  ? `${format.color}10` 
-                  : "transparent",
+                backgroundColor: isActive ? `${format.color}10` : "transparent",
               }}
               transition={{ duration: 0.3 }}
             >
@@ -68,9 +66,9 @@ export function ExportFormats() {
                 }}
                 transition={{ duration: 0.5 }}
               >
-                <Icon 
-                  className="w-8 h-8 mb-2" 
-                  style={{ 
+                <Icon
+                  className="w-8 h-8 mb-2"
+                  style={{
                     color: isActive ? format.color : "currentColor",
                   }}
                 />
@@ -79,7 +77,7 @@ export function ExportFormats() {
               <div className="text-xs text-muted-foreground">
                 {format.description}
               </div>
-              
+
               <AnimatePresence>
                 {isActive && (
                   <motion.div
@@ -99,4 +97,3 @@ export function ExportFormats() {
     </div>
   );
 }
-

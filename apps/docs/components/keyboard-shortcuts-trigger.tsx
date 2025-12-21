@@ -10,17 +10,24 @@ interface KeyboardShortcutsContextType {
   setOpen: (open: boolean) => void;
 }
 
-const KeyboardShortcutsContext = createContext<KeyboardShortcutsContextType | null>(null);
+const KeyboardShortcutsContext =
+  createContext<KeyboardShortcutsContextType | null>(null);
 
 export function useKeyboardShortcutsModal() {
   const context = useContext(KeyboardShortcutsContext);
   if (!context) {
-    throw new Error("useKeyboardShortcutsModal must be used within KeyboardShortcutsTrigger");
+    throw new Error(
+      "useKeyboardShortcutsModal must be used within KeyboardShortcutsTrigger",
+    );
   }
   return context;
 }
 
-export function KeyboardShortcutsTrigger({ children }: { children?: React.ReactNode }) {
+export function KeyboardShortcutsTrigger({
+  children,
+}: {
+  children?: React.ReactNode;
+}) {
   const [open, setOpen] = useState(false);
   const { settings } = useUserSettings();
   const shortcutsEnabled = settings?.keyboardShortcuts ?? true;
@@ -31,7 +38,7 @@ export function KeyboardShortcutsTrigger({ children }: { children?: React.ReactN
     () => {
       setOpen(true);
     },
-    { enabled: shortcutsEnabled }
+    { enabled: shortcutsEnabled },
   );
 
   return (

@@ -52,7 +52,9 @@ export function VenmoForm() {
           type="text"
           placeholder="@username"
           value={venmoData.username}
-          onChange={(e) => setVenmoData({ ...venmoData, username: e.target.value })}
+          onChange={(e) =>
+            setVenmoData({ ...venmoData, username: e.target.value })
+          }
           className={errors.username ? "border-destructive" : ""}
         />
         {errors.username && (
@@ -69,7 +71,9 @@ export function VenmoForm() {
           type="text"
           placeholder="25.00"
           value={venmoData.amount}
-          onChange={(e) => setVenmoData({ ...venmoData, amount: e.target.value })}
+          onChange={(e) =>
+            setVenmoData({ ...venmoData, amount: e.target.value })
+          }
           className={errors.amount ? "border-destructive" : ""}
         />
         {errors.amount && (
@@ -96,4 +100,3 @@ export function VenmoForm() {
     </div>
   );
 }
-

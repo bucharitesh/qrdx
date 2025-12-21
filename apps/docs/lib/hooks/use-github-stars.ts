@@ -8,14 +8,17 @@ interface GithubRepo {
 
 async function fetchGithubStars(owner: string, repo: string): Promise<number> {
   try {
-    const response = await fetch(`https://api.github.com/repos/${owner}/${repo}`, {
-      next: { revalidate: 3600 }, // Cache for 1 hour
-    });
-    
+    const response = await fetch(
+      `https://api.github.com/repos/${owner}/${repo}`,
+      {
+        next: { revalidate: 3600 }, // Cache for 1 hour
+      },
+    );
+
     if (!response.ok) {
       return 0;
     }
-    
+
     const data: GithubRepo = await response.json();
     return data.stargazers_count;
   } catch (error) {
@@ -33,11 +36,3 @@ export function useGithubStars(owner: string, repo: string) {
 
   return { stargazersCount };
 }
-
-
-
-
-
-
-
-

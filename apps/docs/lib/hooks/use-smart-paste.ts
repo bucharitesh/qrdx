@@ -31,7 +31,7 @@ export function useSmartPaste(options: UseSmartPasteOptions = {}) {
 
       // Update the store with the new content type and config
       setContentType(parsed.type);
-      
+
       // Set the config for the detected type
       if (parsed.config) {
         setContentConfig(parsed.type, parsed.config as any);
@@ -47,4 +47,3 @@ export function useSmartPaste(options: UseSmartPasteOptions = {}) {
 
   return { handlePaste };
 }
-

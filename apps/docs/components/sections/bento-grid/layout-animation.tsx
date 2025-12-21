@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 
 export function LayoutAnimation() {
   const [layout, setLayout] = useState(0);
@@ -34,4 +34,3 @@ export function LayoutAnimation() {
     </div>
   );
 }
-

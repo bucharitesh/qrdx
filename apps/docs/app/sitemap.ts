@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import { baseUrl } from "@/lib/metadata";
-import { legalSource, source } from "@/lib/source";
+import { changelogSource, legalSource, source } from "@/lib/source";
 
 export const revalidate = false;
 
@@ -14,6 +14,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 1,
     },
     {
+      url: url("/playground"),
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
+    {
+      url: url("/pricing"),
+      changeFrequency: "monthly",
+      priority: 0.9,
+    },
+    {
+      url: url("/ai"),
+      changeFrequency: "weekly",
+      priority: 0.9,
+    },
+    {
       url: url("/showcase"),
       changeFrequency: "monthly",
       priority: 0.8,
@@ -23,6 +38,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "monthly",
       priority: 0.8,
     },
+    {
+      url: url("/changelogs"),
+      changeFrequency: "weekly",
+      priority: 0.7,
+    },
     ...source.getPages().flatMap((page) => {
       const { lastModified } = page.data;
 
@@ -30,6 +50,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         url: url(page.url),
         lastModified: lastModified ? new Date(lastModified) : undefined,
         changeFrequency: "weekly",
+        priority: 0.5,
+      } as MetadataRoute.Sitemap[number];
+    }),
+    ...changelogSource.getPages().flatMap((page) => {
+      const { date } = page.data;
+
+      return {
+        url: url(page.url),
+        lastModified: date ? new Date(date) : undefined,
+        changeFrequency: "monthly",
         priority: 0.5,
       } as MetadataRoute.Sitemap[number];
     }),

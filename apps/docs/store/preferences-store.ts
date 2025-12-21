@@ -26,9 +26,8 @@ export const usePreferencesStore = create<PreferencesStore>()(
         width: 600,
         height: 600,
         filename: undefined,
-        multiplier: 1 ,
+        multiplier: 1,
         transparent: false,
-
       },
       setDownloadOptions: (options) => set({ downloadOptions: options }),
       updateDownloadOption: (key, value) =>

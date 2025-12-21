@@ -13,7 +13,9 @@ export function GoogleReviewForm() {
   const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
 
   // Initialize from stored config or use defaults
-  const storedConfig = getContentConfig("google-review") as GoogleReviewContent | undefined;
+  const storedConfig = getContentConfig("google-review") as
+    | GoogleReviewContent
+    | undefined;
   const [reviewData, setReviewData] = React.useState<GoogleReviewFormData>({
     placeId: storedConfig?.placeId || "",
   });
@@ -24,7 +26,10 @@ export function GoogleReviewForm() {
     const result = googleReviewSchema.safeParse(reviewData);
 
     if (result.success) {
-      const config: GoogleReviewContent = { type: "google-review", ...result.data };
+      const config: GoogleReviewContent = {
+        type: "google-review",
+        ...result.data,
+      };
       const encoded = encodeGoogleReview(config);
       setValue(encoded);
       setContentConfig("google-review", config);
@@ -77,4 +82,3 @@ export function GoogleReviewForm() {
     </div>
   );
 }
-

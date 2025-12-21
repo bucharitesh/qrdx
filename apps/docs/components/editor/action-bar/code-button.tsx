@@ -23,10 +23,3 @@ export function CodeButton({ dialogOpen, setDialogOpen }: CodeButtonProps) {
     </>
   );
 }
-
-
-
-
-
-
-

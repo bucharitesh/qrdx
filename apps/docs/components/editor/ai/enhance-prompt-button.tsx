@@ -61,10 +61,3 @@ export function EnhancePromptButton({
     </TooltipWrapper>
   );
 }
-
-
-
-
-
-
-

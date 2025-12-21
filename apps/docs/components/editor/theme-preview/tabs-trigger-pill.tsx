@@ -1,9 +1,9 @@
-import { TooltipWrapper } from "@/components/tooltip-wrapper";
-import { useUserSettings } from "@/lib/hooks/use-user-settings";
 import { Kbd, KbdGroup } from "@repo/design-system/components/ui/kbd";
 import { TabsTrigger } from "@repo/design-system/components/ui/tabs";
 import { cn } from "@repo/design-system/lib/utils";
 import type * as React from "react";
+import { TooltipWrapper } from "@/components/tooltip-wrapper";
+import { useUserSettings } from "@/lib/hooks/use-user-settings";
 
 const TabsTriggerPill = ({
   children,
@@ -57,9 +57,7 @@ const TabsTriggerPillWithTooltip = ({
               </KbdGroup>
             )}
           </div>
-          <p className="text-xs text-muted leading-relaxed">
-            {description}
-          </p>
+          <p className="text-xs text-muted leading-relaxed">{description}</p>
         </div>
       }
       side="bottom"

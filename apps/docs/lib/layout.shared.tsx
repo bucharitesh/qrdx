@@ -3,9 +3,7 @@ import Logo from "@/assets/logo.svg";
 import { QrdxLogoAnimation } from "@/components/qrdx-logo-animation";
 import { owner, repo } from "./github";
 
-export const linkItems: LinkItemType[] = [
- 
-];
+export const linkItems: LinkItemType[] = [];
 
 export const logo = (
   <>
@@ -28,9 +26,7 @@ export function baseOptions(): BaseLayoutProps {
       title: (
         <>
           {logo}
-          <span className="font-medium in-[header_&]:text-[15px]">
-            QRdx
-          </span>
+          <span className="font-medium in-[header_&]:text-[15px]">QRdx</span>
         </>
       ),
     },

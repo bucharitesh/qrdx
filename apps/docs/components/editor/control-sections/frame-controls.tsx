@@ -10,8 +10,3 @@ export function FrameControls() {
     </ControlSection>
   );
 }
-
-
-
-
-

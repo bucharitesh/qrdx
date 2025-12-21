@@ -43,5 +43,3 @@ export function handleError(
   logError(error as Error, context);
   return new Response("Internal Server Error", { status: 500 });
 }
-
-

@@ -354,16 +354,16 @@ export function encodeGoogleReview(content: GoogleReviewContent): string {
 export function encodeVenmo(content: VenmoContent): string {
   if (!content.username) return "";
   const cleanUsername = content.username.replace(/^@/, "");
-  
+
   const params: string[] = [`txn=pay`];
-  
+
   if (content.amount) {
     params.push(`amount=${encodeURIComponent(content.amount)}`);
   }
   if (content.note) {
     params.push(`note=${encodeURIComponent(content.note)}`);
   }
-  
+
   const queryString = params.length > 0 ? `?${params.join("&")}` : "";
   return `https://venmo.com/${cleanUsername}${queryString}`;
 }
@@ -373,17 +373,17 @@ export function encodeVenmo(content: VenmoContent): string {
  */
 export function encodeSpotify(content: SpotifyContent): string {
   if (!content.uri) return "";
-  
+
   // If it's already a Spotify URI (spotify:track:xxx), return as is
   if (content.uri.startsWith("spotify:")) {
     return content.uri;
   }
-  
+
   // If it's a Spotify URL, return as is
   if (content.uri.includes("spotify.com")) {
     return content.uri;
   }
-  
+
   return content.uri;
 }
 
@@ -392,7 +392,7 @@ export function encodeSpotify(content: SpotifyContent): string {
  */
 export function encodeBitcoin(content: BitcoinContent): string {
   if (!content.address) return "";
-  
+
   const params: string[] = [];
   if (content.amount) {
     params.push(`amount=${content.amount}`);
@@ -403,7 +403,7 @@ export function encodeBitcoin(content: BitcoinContent): string {
   if (content.message) {
     params.push(`message=${encodeURIComponent(content.message)}`);
   }
-  
+
   const queryString = params.length > 0 ? `?${params.join("&")}` : "";
   return `bitcoin:${content.address}${queryString}`;
 }
@@ -413,7 +413,7 @@ export function encodeBitcoin(content: BitcoinContent): string {
  */
 export function encodeEthereum(content: EthereumContent): string {
   if (!content.address) return "";
-  
+
   const params: string[] = [];
   if (content.amount) {
     params.push(`value=${content.amount}`);
@@ -421,7 +421,7 @@ export function encodeEthereum(content: EthereumContent): string {
   if (content.gas) {
     params.push(`gas=${content.gas}`);
   }
-  
+
   const queryString = params.length > 0 ? `?${params.join("&")}` : "";
   return `ethereum:${content.address}${queryString}`;
 }

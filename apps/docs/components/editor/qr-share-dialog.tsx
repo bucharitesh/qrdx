@@ -1,6 +1,8 @@
 "use client";
 
+import { toast } from "@repo/design-system";
 import { Button } from "@repo/design-system/components/ui/button";
+import { Input } from "@repo/design-system/components/ui/input";
 import {
   ResponsiveDialog,
   ResponsiveDialogContent,
@@ -8,8 +10,6 @@ import {
   ResponsiveDialogHeader,
   ResponsiveDialogTitle,
 } from "@repo/design-system/components/ui/revola";
-import { Input } from "@repo/design-system/components/ui/input";
-import { toast } from "@repo/design-system";
 import { Check, Copy } from "lucide-react";
 import { useState } from "react";
 

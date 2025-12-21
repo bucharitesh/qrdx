@@ -1,3 +1,3 @@
+export { createDubClient, DubClient } from "./client";
 export { dubIntegration } from "./config";
-export { DubClient, createDubClient } from "./client";
-export type { DubWorkspace, DubLink, DubError } from "./types";
+export type { DubError, DubLink, DubWorkspace } from "./types";

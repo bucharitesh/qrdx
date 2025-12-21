@@ -40,10 +40,3 @@ export const useControlsTabFromUrl = () => {
 
   return { tab, handleSetTab };
 };
-
-
-
-
-
-
-

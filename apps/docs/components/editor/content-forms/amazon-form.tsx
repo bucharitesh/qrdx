@@ -21,7 +21,10 @@ export function AmazonForm() {
 
   // Sync with store when config changes (e.g., from smart paste)
   React.useEffect(() => {
-    if (storedConfig?.productUrl && storedConfig.productUrl !== amazonData.productUrl) {
+    if (
+      storedConfig?.productUrl &&
+      storedConfig.productUrl !== amazonData.productUrl
+    ) {
       setAmazonData({ productUrl: storedConfig.productUrl });
     }
   }, [storedConfig]);
@@ -76,4 +79,3 @@ export function AmazonForm() {
     </div>
   );
 }
-

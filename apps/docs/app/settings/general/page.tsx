@@ -1,7 +1,8 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
 import { getUserSettings } from "@/actions/user-settings";
+import { auth } from "@/lib/auth";
+import { AppearanceForm } from "./components/appearance-form";
 import { GeneralSettingsForm } from "./components/general-settings-form";
 
 export default async function GeneralSettingsPage() {
@@ -23,6 +24,8 @@ export default async function GeneralSettingsPage() {
           Manage your general preferences and settings
         </p>
       </div>
+
+      <AppearanceForm />
 
       <GeneralSettingsForm initialSettings={userSettings} />
     </div>

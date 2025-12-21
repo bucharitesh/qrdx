@@ -10,7 +10,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@repo/design-system/components/ui/popover";
-import { Slider } from "@repo/design-system/components/ui/slider";
 import {
   Select,
   SelectContent,
@@ -18,6 +17,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@repo/design-system/components/ui/select";
+import { Slider } from "@repo/design-system/components/ui/slider";
 import {
   Tabs,
   TabsContent,

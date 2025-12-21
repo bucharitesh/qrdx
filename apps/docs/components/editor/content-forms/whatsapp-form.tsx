@@ -25,8 +25,10 @@ export function WhatsAppForm() {
   // Sync with store when config changes (e.g., from smart paste)
   React.useEffect(() => {
     if (storedConfig && (storedConfig.phoneNumber || storedConfig.message)) {
-      if (storedConfig.phoneNumber !== whatsappData.phoneNumber || 
-          storedConfig.message !== whatsappData.message) {
+      if (
+        storedConfig.phoneNumber !== whatsappData.phoneNumber ||
+        storedConfig.message !== whatsappData.message
+      ) {
         setWhatsappData({
           phoneNumber: storedConfig.phoneNumber || "",
           message: storedConfig.message || "",

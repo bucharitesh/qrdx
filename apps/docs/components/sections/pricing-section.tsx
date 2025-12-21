@@ -1,18 +1,18 @@
 "use client";
 
+import { toast } from "@repo/design-system";
+import { cn } from "@repo/design-system/lib/utils";
+import { Loader } from "lucide-react";
+import { motion } from "motion/react";
+import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
+import { createCheckout } from "@/actions/checkout";
 import { SectionHeader } from "@/components/sections/section-header";
 import { siteConfig } from "@/config/site";
-import { cn } from "@repo/design-system/lib/utils";
-import { motion } from "motion/react";
-import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
-import { createCheckout } from "@/actions/checkout";
 import { authClient } from "@/lib/auth-client";
-import { useAuthStore } from "@/store/auth-store";
-import { useSubscription } from "@/lib/hooks/use-subscription";
 import { usePostLoginAction } from "@/lib/hooks/use-post-login-action";
-import { toast } from "@repo/design-system";
-import { Loader } from "lucide-react";
+import { useSubscription } from "@/lib/hooks/use-subscription";
+import { useAuthStore } from "@/store/auth-store";
 
 interface TabsProps {
   activeTab: "yearly" | "monthly";
@@ -55,7 +55,9 @@ function PricingTabs({ activeTab, setActiveTab, className }: TabsProps) {
           <span
             className={cn(
               "relative block text-sm font-medium duration-200 shrink-0",
-              activeTab === tab ? "text-secondary-foreground" : "text-muted-foreground",
+              activeTab === tab
+                ? "text-secondary-foreground"
+                : "text-muted-foreground",
             )}
           >
             {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -92,7 +94,7 @@ export function PricingSection() {
     startTransition(async () => {
       // Get the Pro tier pricing info
       const proTier = siteConfig.pricing.pricingItems.find(
-        (item) => item.name === "Pro"
+        (item) => item.name === "Pro",
       );
 
       if (!proTier) {
@@ -107,7 +109,7 @@ export function PricingSection() {
           ? proTier.polarYearlyPriceId
           : proTier.polarMonthlyPriceId;
 
-      if(!productId) {
+      if (!productId) {
         toast.error("Product ID not found");
         setPendingTier(null);
         return;
@@ -129,7 +131,9 @@ export function PricingSection() {
     handleProCheckout();
   });
 
-  const handleTierClick = (tier: (typeof siteConfig.pricing.pricingItems)[0]) => {
+  const handleTierClick = (
+    tier: (typeof siteConfig.pricing.pricingItems)[0],
+  ) => {
     // If it's the free tier, navigate to playground
     if (tier.name === "Free") {
       router.push("/playground");

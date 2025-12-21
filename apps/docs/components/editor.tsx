@@ -71,11 +71,11 @@ const Editor: React.FC<EditorProps> = ({ themePromise }) => {
   if (!isMounted) {
     return (
       <div className="flex h-screen w-full items-center justify-center">
-      <div className="flex flex-col items-center gap-4">
-        <QrdxLogoAnimation size={100} />
-        <p className="text-muted-foreground text-sm">Loading Playground...</p>
+        <div className="flex flex-col items-center gap-4">
+          <QrdxLogoAnimation size={100} />
+          <p className="text-muted-foreground text-sm">Loading Playground...</p>
+        </div>
       </div>
-    </div>
     );
   }
 
@@ -84,7 +84,11 @@ const Editor: React.FC<EditorProps> = ({ themePromise }) => {
     return (
       <div className="relative isolate flex flex-1 overflow-hidden">
         <div className="size-full flex-1 overflow-hidden">
-          <Tabs defaultValue="controls" className="h-full" id="mobile-editor-tabs">
+          <Tabs
+            defaultValue="controls"
+            className="h-full"
+            id="mobile-editor-tabs"
+          >
             <TabsList className="w-full rounded-none">
               <TabsTrigger value="controls" className="flex-1">
                 <Sliders className="mr-2 h-4 w-4" />
@@ -123,8 +127,8 @@ const Editor: React.FC<EditorProps> = ({ themePromise }) => {
   return (
     <div className="relative isolate flex flex-1 overflow-hidden">
       <div className="size-full">
-        <ResizablePanelGroup 
-          direction="horizontal" 
+        <ResizablePanelGroup
+          direction="horizontal"
           className="isolate"
           id="editor-panel-group"
         >
@@ -144,10 +148,7 @@ const Editor: React.FC<EditorProps> = ({ themePromise }) => {
             </div>
           </ResizablePanel>
           <ResizableHandle id="editor-resize-handle" />
-          <ResizablePanel 
-            id="preview-panel"
-            defaultSize={70}
-          >
+          <ResizablePanel id="preview-panel" defaultSize={70}>
             <div className="flex h-full flex-col">
               <div className="flex min-h-0 flex-1 flex-col">
                 <ActionBar />

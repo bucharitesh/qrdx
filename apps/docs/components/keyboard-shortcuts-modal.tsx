@@ -71,9 +71,7 @@ const shortcutCategories: ShortcutCategory[] = [
   },
   {
     title: "Help",
-    shortcuts: [
-      { keys: ["?"], description: "Show this shortcuts dialog" },
-    ],
+    shortcuts: [{ keys: ["?"], description: "Show this shortcuts dialog" }],
   },
 ];
 
@@ -90,7 +88,7 @@ export function KeyboardShortcutsModal({
     () => {
       if (open) onOpenChange(false);
     },
-    { enabled: open, modal: true, priority: 100 }
+    { enabled: open, modal: true, priority: 100 },
   );
 
   if (!shortcutsEnabled) {
@@ -103,7 +101,8 @@ export function KeyboardShortcutsModal({
               Keyboard Shortcuts
             </DialogTitle>
             <DialogDescription>
-              Keyboard shortcuts are currently disabled. Enable them in settings to use these shortcuts.
+              Keyboard shortcuts are currently disabled. Enable them in settings
+              to use these shortcuts.
             </DialogDescription>
           </DialogHeader>
         </DialogContent>
@@ -155,8 +154,9 @@ export function KeyboardShortcutsModal({
 
         <div className="mt-4 rounded-lg border border-border bg-muted/30 px-4 py-3">
           <p className="text-xs text-muted-foreground">
-            <span className="font-semibold text-foreground">Pro tip:</span> Press{" "}
-            <Kbd className="inline-flex mx-1">?</Kbd> anytime to view this dialog
+            <span className="font-semibold text-foreground">Pro tip:</span>{" "}
+            Press <Kbd className="inline-flex mx-1">?</Kbd> anytime to view this
+            dialog
           </p>
         </div>
       </DialogContent>

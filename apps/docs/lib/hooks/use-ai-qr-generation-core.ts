@@ -23,11 +23,3 @@ export function useAIQRGenerationCore() {
     cancelGeneration: stop,
   };
 }
-
-
-
-
-
-
-
-

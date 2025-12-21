@@ -39,6 +39,7 @@ import { normalizeColorConfig } from "qrdx/types";
 import type React from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { authClient } from "@/lib/auth-client";
+import { useMounted } from "@/lib/hooks/use-mounted";
 import { useUserSettings } from "@/lib/hooks/use-user-settings";
 import { useQREditorStore } from "@/store/editor-store";
 import { useThemePresetStore } from "@/store/theme-preset-store";
@@ -46,7 +47,6 @@ import type { ThemePreset } from "@/types/theme";
 import { getPresetThemeStyles } from "@/utils/qr-presets-helper";
 import { ThemeToggle } from "../theme-toggle";
 import { TooltipWrapper } from "../tooltip-wrapper";
-import { useMounted } from "@/lib/hooks/use-mounted";
 
 interface ThemePresetSelectProps extends React.ComponentProps<typeof Button> {
   withCycleThemes?: boolean;

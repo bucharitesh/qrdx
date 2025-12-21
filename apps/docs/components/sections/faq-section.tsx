@@ -40,9 +40,7 @@ export function FAQSection() {
                 {faq.question}
               </AccordionTrigger>
               <AccordionContent className="p-3 border text-muted-foreground rounded-lg bg-muted">
-                <p className="font-medium leading-relaxed">
-                  {faq.answer}
-                </p>
+                <p className="font-medium leading-relaxed">{faq.answer}</p>
               </AccordionContent>
             </AccordionItem>
           ))}

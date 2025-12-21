@@ -35,9 +35,3 @@ export default function IntegrationsLoading() {
     </div>
   );
 }
-
-
-
-
-
-

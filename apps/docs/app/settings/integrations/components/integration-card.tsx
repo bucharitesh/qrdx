@@ -82,7 +82,7 @@ export function IntegrationCard({
   const handleConnect = async () => {
     if (!isConfigured) {
       toast.error(
-        `${name} is not configured. Please add the required environment variables.`
+        `${name} is not configured. Please add the required environment variables.`,
       );
       return;
     }
@@ -183,7 +183,10 @@ export function IntegrationCard({
             </p>
             <ul className="space-y-1">
               {features.slice(0, 3).map((feature, idx) => (
-                <li key={idx} className="text-xs text-muted-foreground flex items-start">
+                <li
+                  key={idx}
+                  className="text-xs text-muted-foreground flex items-start"
+                >
                   <span className="mr-2">•</span>
                   <span>{feature}</span>
                 </li>
@@ -200,7 +203,9 @@ export function IntegrationCard({
                 <p className="text-muted-foreground text-xs font-medium">
                   Connected Workspace
                 </p>
-                <p className="text-sm font-semibold">{metadata.workspace.name}</p>
+                <p className="text-sm font-semibold">
+                  {metadata.workspace.name}
+                </p>
                 {metadata.workspace.slug && (
                   <p className="text-muted-foreground text-xs">
                     {metadata.workspace.slug}
@@ -213,7 +218,9 @@ export function IntegrationCard({
                 <p className="text-muted-foreground text-xs font-medium">
                   Connected Account
                 </p>
-                <p className="text-sm font-semibold">{metadata.user.displayName}</p>
+                <p className="text-sm font-semibold">
+                  {metadata.user.displayName}
+                </p>
               </div>
             )}
             {connectedAt && (
@@ -273,4 +280,3 @@ export function IntegrationCard({
     </Card>
   );
 }
-

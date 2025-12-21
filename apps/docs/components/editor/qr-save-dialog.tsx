@@ -1,6 +1,8 @@
 "use client";
 
 import { Button } from "@repo/design-system/components/ui/button";
+import { Input } from "@repo/design-system/components/ui/input";
+import { Label } from "@repo/design-system/components/ui/label";
 import {
   ResponsiveDialog,
   ResponsiveDialogContent,
@@ -9,8 +11,6 @@ import {
   ResponsiveDialogHeader,
   ResponsiveDialogTitle,
 } from "@repo/design-system/components/ui/revola";
-import { Input } from "@repo/design-system/components/ui/input";
-import { Label } from "@repo/design-system/components/ui/label";
 import { Loader2 } from "lucide-react";
 import React, { useState } from "react";
 
@@ -54,7 +54,9 @@ export function QRSaveDialog({
       <ResponsiveDialogContent className="p-6" showCloseButton={true}>
         <ResponsiveDialogHeader>
           <ResponsiveDialogTitle>{title}</ResponsiveDialogTitle>
-          <ResponsiveDialogDescription>{description}</ResponsiveDialogDescription>
+          <ResponsiveDialogDescription>
+            {description}
+          </ResponsiveDialogDescription>
         </ResponsiveDialogHeader>
         <div className="space-y-4 py-4">
           <div className="space-y-2">
@@ -81,10 +83,7 @@ export function QRSaveDialog({
           >
             Cancel
           </Button>
-          <Button
-            onClick={handleSave}
-            disabled={isSaving || !themeName.trim()}
-          >
+          <Button onClick={handleSave} disabled={isSaving || !themeName.trim()}>
             {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {ctaLabel}
           </Button>
@@ -93,4 +92,3 @@ export function QRSaveDialog({
     </ResponsiveDialog>
   );
 }
-

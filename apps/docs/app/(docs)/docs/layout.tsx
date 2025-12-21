@@ -1,5 +1,5 @@
-import { DocsLayout } from "fumadocs-ui/layouts/docs";
 import type { DocsLayoutProps } from "fumadocs-ui/layouts/docs";
+import { DocsLayout } from "fumadocs-ui/layouts/docs";
 import { baseOptions, linkItems, logo } from "@/lib/layout.shared";
 import { source } from "@/lib/source";
 import "katex/dist/katex.min.css";
@@ -15,9 +15,7 @@ const DOCS_LAYOUT_PROPS: DocsLayoutProps = {
     title: (
       <>
         {logo}
-        <span className="font-medium in-[docs_layout_&]:text-[15px]">
-            QRdx
-        </span>
+        <span className="font-medium in-[docs_layout_&]:text-[15px]">QRdx</span>
       </>
     ),
   },
@@ -25,9 +23,11 @@ const DOCS_LAYOUT_PROPS: DocsLayoutProps = {
 
 export default function Layout({ children }: LayoutProps<"/docs">) {
   return (
-    <RootProvider search={{
-      SearchDialog: CustomSearchDialog,
-    }}>
+    <RootProvider
+      search={{
+        SearchDialog: CustomSearchDialog,
+      }}
+    >
       <DocsLayout {...DOCS_LAYOUT_PROPS}>
         <div className="fixed inset-0 z-[-1] bg-[url('/background.png')] bg-fixed bg-no-repeat bg-top-right" />
         {children}

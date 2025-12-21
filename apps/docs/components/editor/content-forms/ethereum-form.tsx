@@ -13,7 +13,9 @@ export function EthereumForm() {
   const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
 
   // Initialize from stored config or use defaults
-  const storedConfig = getContentConfig("ethereum") as EthereumContent | undefined;
+  const storedConfig = getContentConfig("ethereum") as
+    | EthereumContent
+    | undefined;
   const [ethereumData, setEthereumData] = React.useState<EthereumFormData>({
     address: storedConfig?.address || "",
     amount: storedConfig?.amount || "",
@@ -52,7 +54,9 @@ export function EthereumForm() {
           type="text"
           placeholder="0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb"
           value={ethereumData.address}
-          onChange={(e) => setEthereumData({ ...ethereumData, address: e.target.value })}
+          onChange={(e) =>
+            setEthereumData({ ...ethereumData, address: e.target.value })
+          }
           className={errors.address ? "border-destructive" : ""}
         />
         {errors.address && (
@@ -74,7 +78,9 @@ export function EthereumForm() {
           type="text"
           placeholder="0.1"
           value={ethereumData.amount}
-          onChange={(e) => setEthereumData({ ...ethereumData, amount: e.target.value })}
+          onChange={(e) =>
+            setEthereumData({ ...ethereumData, amount: e.target.value })
+          }
           className={errors.amount ? "border-destructive" : ""}
         />
         {errors.amount && (
@@ -91,7 +97,9 @@ export function EthereumForm() {
           type="text"
           placeholder="21000"
           value={ethereumData.gas}
-          onChange={(e) => setEthereumData({ ...ethereumData, gas: e.target.value })}
+          onChange={(e) =>
+            setEthereumData({ ...ethereumData, gas: e.target.value })
+          }
           className={errors.gas ? "border-destructive" : ""}
         />
         {errors.gas && (
@@ -105,4 +113,3 @@ export function EthereumForm() {
     </div>
   );
 }
-

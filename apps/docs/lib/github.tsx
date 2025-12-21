@@ -1,10 +1,10 @@
-import { App, Octokit } from 'octokit';
-import type { ActionResponse, Feedback } from '@/components/feedback';
-import { env } from '@/lib/env';
+import { App, type Octokit } from "octokit";
+import type { ActionResponse, Feedback } from "@/components/feedback";
+import { env } from "@/lib/env";
 
 export const repo = "qrdx";
 export const owner = "bucharitesh";
-export const DocsCategory = 'Docs Feedback';
+export const DocsCategory = "Docs Feedback";
 
 let instance: Octokit | undefined;
 
@@ -15,7 +15,7 @@ async function getOctokit(): Promise<Octokit> {
 
   if (!appId || !privateKey) {
     throw new Error(
-      'No GitHub keys provided for Github app, docs feedback feature will not work.',
+      "No GitHub keys provided for Github app, docs feedback feature will not work.",
     );
   }
 
@@ -25,12 +25,12 @@ async function getOctokit(): Promise<Octokit> {
   });
 
   const { data } = await app.octokit.request(
-    'GET /repos/{owner}/{repo}/installation',
+    "GET /repos/{owner}/{repo}/installation",
     {
       owner,
       repo,
       headers: {
-        'X-GitHub-Api-Version': '2022-11-28',
+        "X-GitHub-Api-Version": "2022-11-28",
       },
     },
   );
@@ -75,11 +75,11 @@ export async function onRateAction(
   url: string,
   feedback: Feedback,
 ): Promise<ActionResponse> {
-  'use server';
+  "use server";
   const octokit = await getOctokit();
   const destination = await getFeedbackDestination();
   if (!octokit || !destination)
-    throw new Error('GitHub comment integration is not configured.');
+    throw new Error("GitHub comment integration is not configured.");
 
   const category = destination.discussionCategories.nodes.find(
     (category) => category.name === DocsCategory,

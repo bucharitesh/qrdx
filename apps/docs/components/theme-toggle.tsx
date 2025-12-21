@@ -39,4 +39,3 @@ export function ThemeToggle({ className, ...props }: ThemeToggleProps) {
     </TooltipWrapper>
   );
 }
-

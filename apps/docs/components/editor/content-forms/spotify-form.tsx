@@ -13,7 +13,9 @@ export function SpotifyForm() {
   const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
 
   // Initialize from stored config or use defaults
-  const storedConfig = getContentConfig("spotify") as SpotifyContent | undefined;
+  const storedConfig = getContentConfig("spotify") as
+    | SpotifyContent
+    | undefined;
   const [spotifyData, setSpotifyData] = React.useState<SpotifyFormData>({
     uri: storedConfig?.uri || "",
   });
@@ -76,4 +78,3 @@ export function SpotifyForm() {
     </div>
   );
 }
-
