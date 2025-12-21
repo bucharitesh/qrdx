@@ -699,20 +699,21 @@ export const siteConfig = {
         { id: 1, title: "Playground", url: "/playground" },
         { id: 2, title: "Pricing", url: "/pricing" },
         { id: 3, title: "Documentation", url: "/docs" },
+        { id: 4, title: "Changelogs", url: "/changelogs" },
       ],
     },
     {
       title: "Support",
       links: [
-        { id: 4, title: "Contact", url: "mailto:support@qrdx.app" },
-        { id: 5, title: "GitHub", url: "https://github.com/bucharitesh/qrdx" },
+        { id: 5, title: "Contact", url: "mailto:support@qrdx.app" },
+        { id: 6, title: "GitHub", url: "https://github.com/bucharitesh/qrdx" },
       ],
     },
     {
       title: "Legal",
       links: [
-        { id: 6, title: "Privacy Policy", url: "/legal/privacy-policy" },
-        { id: 7, title: "Terms of Service", url: "/legal/terms-of-service" },
+        { id: 7, title: "Privacy Policy", url: "/legal/privacy-policy" },
+        { id: 8, title: "Terms of Service", url: "/legal/terms-of-service" },
       ],
     }
   ],

@@ -46,6 +46,17 @@ export const legal = defineDocs({
   dir: "content/legal",
 });
 
+export const changelog = defineDocs({
+  dir: "content/changelog",
+  docs: {
+    schema: frontmatterSchema.extend({
+      date: z.string(),
+      tags: z.array(z.string()).optional(),
+      version: z.string().optional(),
+    }),
+  },
+});
+
 export default defineConfig({
   plugins: [
     jsonSchema({

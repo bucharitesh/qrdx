@@ -1,0 +1,48 @@
+---
+title: "Initial Release"
+description: "Beautiful QR code generator with advanced customization and professional export options"
+date: "2025-12-22"
+tags: ["Launch"]
+version: "0.0.1"
+---
+
+Welcome to QRdx! Create, customize, and export beautiful QR codes with professional-grade tools.
+
+## ✨ Key Features
+
+- **Advanced Customization** - Full color control with gradients and 12+ unique patterns
+- **Logo Integration** - Add your brand logo with automatic sizing and scannability protection
+- **Professional Exports** - Download as SVG, PNG, PDF, or JPEG in high resolution
+- **Theme Library** - 20+ pre-designed themes and templates for quick customization
+- **Real-time Preview** - See changes instantly as you customize
+- **Scannability Validation** - Built-in checker ensures your QR codes work everywhere
+
+## 🎨 Customization Options
+
+```tsx
+import { QRCode } from '@qrdx/core'
+
+const qr = new QRCode({
+  data: 'https://qrdx.dev',
+  foreground: '#667eea',
+  background: '#ffffff',
+  pattern: 'dots',
+  logo: {
+    src: '/logo.png',
+    size: 0.3,
+  },
+})
+```
+
+## 🚀 Built for Performance
+
+- ⚡ Instant QR code generation
+- 📱 Fully responsive on all devices
+- 🌙 Dark mode support
+- 🔐 Privacy-focused (all generation happens in your browser)
+- ⌨️ Keyboard shortcuts for power users
+
+---
+
+Ready to create beautiful QR codes? [Try the playground](/playground) →
+
