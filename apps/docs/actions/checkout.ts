@@ -4,12 +4,15 @@ import { polar } from "@/lib/polar";
 import { getCurrentUser, logError } from "@/lib/shared";
 import { getOrCreateCustomer } from "./customer";
 
-export const createCheckout = async () => {
+export const createCheckout = async (
+  productId: string
+) => {
   try {
     const user = await getCurrentUser();
     const customer = await getOrCreateCustomer(user);
+    
     const checkout = await polar.checkouts.create({
-      products: [process.env.NEXT_PUBLIC_QRDX_PRO_PRODUCT_ID as string],
+      products: [productId as string],
       customerId: customer?.id,
       successUrl: `${process.env.BASE_URL}/success?checkout_id={CHECKOUT_ID}`,
     });

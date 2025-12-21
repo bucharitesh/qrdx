@@ -57,15 +57,16 @@ export function UserProfileDropdown() {
           className="flex gap-3.5"
         >
           <Button
-            variant="link"
+            variant="outline"
             onClick={() => openAuthDialog("signin")}
-            className="text-foreground hover:text-primary h-8 px-0 hover:no-underline"
           >
             Sign In
           </Button>
-          <Button onClick={() => openAuthDialog("signup")} className="h-8">
-            Sign Up
-          </Button>
+          <Link href="/playground">
+            <Button>
+              Try the Playground
+            </Button>
+          </Link>
         </motion.div>
       ) : (
         <motion.div

@@ -127,8 +127,10 @@ export async function createTheme(formData: {
       const activeSubscription = await getMyActiveSubscription(userId);
       const isSubscribed =
         !!activeSubscription &&
-        activeSubscription?.productId ===
-          process.env.NEXT_PUBLIC_QRDX_PRO_PRODUCT_ID;
+        (activeSubscription?.productId ===
+          process.env.NEXT_PUBLIC_QRDX_PRO_MONTHLY_PRODUCT_ID ||
+          activeSubscription?.productId ===
+            process.env.NEXT_PUBLIC_QRDX_PRO_YEARLY_PRODUCT_ID);
 
       if (!isSubscribed) {
         throw new QRCodeThemeLimitError(

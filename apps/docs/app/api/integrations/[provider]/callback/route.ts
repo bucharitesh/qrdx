@@ -87,15 +87,12 @@ export async function GET(request: Request, context: RouteContext) {
     // Create OAuth handler
     const oauthHandler = createOAuthHandler(config);
 
-    console.log(`[${provider}] Exchanging code for tokens...`);
-
     // Exchange authorization code for access token
     const tokenData = await oauthHandler.exchangeCodeForTokens(
       code,
       codeVerifier,
     );
 
-    console.log(`[${provider}] Token exchange successful`);
     const { access_token, refresh_token, expires_in } = tokenData;
 
     // Calculate expiration timestamp

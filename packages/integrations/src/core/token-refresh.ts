@@ -30,9 +30,6 @@ export async function refreshIntegrationToken(
   // Check if there's already a refresh in progress
   const existingRefresh = refreshLocks.get(integrationId);
   if (existingRefresh) {
-    console.log(
-      `Waiting for existing refresh for integration ${integrationId}`
-    );
     return existingRefresh;
   }
 
@@ -118,10 +115,6 @@ async function performTokenRefresh(
         updatedAt: new Date(),
       })
       .where(eq(integration.id, integrationId));
-
-    console.log(
-      `Successfully refreshed token for integration ${integrationId}`
-    );
 
     return tokenResponse.access_token;
   } catch (error) {
