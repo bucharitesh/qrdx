@@ -21,7 +21,7 @@ export const Highlight = ({
 };
 
 export const siteConfig = {
-  name: "QRDX",
+  name: "QRdx",
   description: "AI-powered, fully customizable QR codes for designers crafting beautiful brands, businesses tracking engagement, and developers building QR platforms",
   cta: "Try the Playground",
   url: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
@@ -56,7 +56,7 @@ export const siteConfig = {
         <path d="M2 2h5v5H2V2zm7 0h5v5H9V2zM2 9h5v5H2V9zm9.5 0h2v2h-2V9zm0 3h2v2h-2v-2zm-2-3h2v2h-2V9zm0 3h2v2h-2v-2z" />
       </svg>
     ),
-    badge: "AI-powered QR code Generation",
+    badge: "AI-powered QR Code Generation",
     title: "The better way to create QR codes",
     description:
       "AI-powered, fully customizable QR codes for designers crafting beautiful brands, businesses tracking engagement, and developers building QR platforms where users create QR codes.",
@@ -66,7 +66,7 @@ export const siteConfig = {
         href: "/playground",
       },
       secondary: {
-        text: "Log in",
+        text: "Sign in",
         href: "/playground",
       },
     },
@@ -542,7 +542,6 @@ export const siteConfig = {
             hello
           </div>
         ),
-
         title: "Advanced Task Security",
         description:
           "Safeguard your tasks with state-of-art encryption and secure access to your workflow data.",
@@ -583,7 +582,7 @@ export const siteConfig = {
         ],
         description: "No credit card required",
         buttonText: "Get Started Free",
-        buttonColor: "bg-accent text-primary border-2",
+        buttonColor: "bg-background text-secondary-foreground border-2",
         isPopular: false,
       },
       {
@@ -604,7 +603,7 @@ export const siteConfig = {
         description: "Billed monthly • Cancel anytime",
         yearlyDescription: "Billed annually • Cancel anytime",
         buttonText: "Upgrade to Pro",
-        buttonColor: "bg-secondary text-white",
+        buttonColor: "bg-primary text-white",
         isPopular: true,
       },
     ],
@@ -687,7 +686,6 @@ export const siteConfig = {
   ctaSection: {
     id: "cta",
     title: "Automate. Simplify. Thrive",
-    backgroundImage: "/agent-cta-background.png",
     button: {
       text: "Start Creating QR Codes for Free",
       href: "/playground",

@@ -4,6 +4,7 @@ import { siteConfig } from "@/config/site";
 import { ChevronRightIcon, GithubIcon } from "lucide-react";
 import Link from "next/link";
 import Logo from "@/assets/logo.svg";
+import { Button } from "@repo/design-system/components/ui/button";
 
 export function FooterSection() {
   const currentYear = new Date().getFullYear();
@@ -19,6 +20,11 @@ export function FooterSection() {
           <p className="tracking-tight text-muted-foreground font-medium text-sm">
             {siteConfig.description}
           </p>
+          <div>
+            <Button variant="outline" size={"sm"}>
+              <GithubIcon className="size-3" />
+            </Button>
+          </div>
         </div>
         <div className="pt-5 md:w-1/2">
           <div className="flex flex-col items-start justify-start md:flex-row md:justify-between gap-y-5 lg:pl-10">

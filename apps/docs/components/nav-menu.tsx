@@ -2,9 +2,9 @@
 
 import { siteConfig } from "@/config/site";
 import { motion } from "motion/react";
-import Link from "next/link";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import { usePathname } from "next/navigation";
-import React, { useRef, useState } from "react";
+import Link from "next/link";
 
 interface NavItem {
   id: number;
@@ -16,67 +16,51 @@ const navs: NavItem[] = siteConfig.nav.links;
 
 export function NavMenu() {
   const ref = useRef<HTMLUListElement>(null);
+  const pathname = usePathname();
+  
   const [left, setLeft] = useState(0);
   const [width, setWidth] = useState(0);
   const [isReady, setIsReady] = useState(false);
-  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
-  const pathname = usePathname();
 
-  React.useEffect(() => {
-    // Initialize with active item
-    const activeItem = navs.find((item) => {
-      if (item.href === "/") return pathname === "/";
-      return pathname.startsWith(item.href);
-    });
-
-    if (activeItem && ref.current) {
-      const element = ref.current.querySelector(
-        `[data-nav-id="${activeItem.id}"]`,
-      );
-      if (element) {
-        const rect = element.getBoundingClientRect();
-        const listRect = ref.current.getBoundingClientRect();
-        setLeft(
-          (element as HTMLElement).offsetLeft,
-        );
-        setWidth(rect.width);
-        setIsReady(true);
-      }
-    }
+  // Determine if a nav item is active based on current pathname
+  const isActive = useCallback((item: NavItem): boolean => {
+    // Exact match for home page
+    if (pathname === "/" && item.href === "/") return true;
+    
+    // For non-home pages, check if pathname starts with the nav href
+    if (item.href !== "/" && pathname.startsWith(item.href)) return true;
+    
+    return false;
   }, [pathname]);
 
-  const handleMouseEnter = (item: NavItem, e: React.MouseEvent<HTMLLIElement>) => {
-    setHoveredItem(item.href);
-    const listItem = e.currentTarget;
-    const rect = listItem.getBoundingClientRect();
-    setLeft(listItem.offsetLeft);
-    setWidth(rect.width);
-  };
+  // Find the currently active nav item
+  const getActiveNavItem = useCallback((): NavItem | undefined => {
+    return navs.find((nav) => isActive(nav));
+  }, [isActive]);
 
-  const handleMouseLeave = () => {
-    setHoveredItem(null);
-    // Reset to active item
-    const activeItem = navs.find((item) => {
-      if (item.href === "/") return pathname === "/";
-      return pathname.startsWith(item.href);
-    });
-
-    if (activeItem && ref.current) {
-      const element = ref.current.querySelector(
-        `[data-nav-id="${activeItem.id}"]`,
-      );
-      if (element) {
-        const rect = element.getBoundingClientRect();
-        setLeft((element as HTMLElement).offsetLeft);
-        setWidth(rect.width);
-      }
+  // Update nav indicator position based on active route
+  const updateNavIndicator = useCallback((targetPath: string) => {
+    const navItem = ref.current?.querySelector(
+      `[href="${targetPath}"]`,
+    )?.parentElement;
+    
+    if (navItem && ref.current) {
+      setLeft(navItem.offsetLeft);
+      setWidth(navItem.getBoundingClientRect().width);
     }
-  };
+  }, []);
 
-  const isActive = (item: NavItem) => {
-    if (item.href === "/") return pathname === "/";
-    return pathname.startsWith(item.href);
-  };
+  // Initialize and update on route change
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const activeRoute = getActiveNavItem();
+      const targetPath = activeRoute?.href || navs[0].href;
+      updateNavIndicator(targetPath);
+      setIsReady(true);
+    }, 50);
+
+    return () => clearTimeout(timer);
+  }, [pathname, getActiveNavItem, updateNavIndicator]);
 
   return (
     <div className="w-full hidden md:block">
@@ -87,16 +71,13 @@ export function NavMenu() {
         {navs.map((item) => (
           <li
             key={item.id}
-            data-nav-id={item.id}
             className={`z-10 cursor-pointer h-full flex items-center justify-center px-4 py-2 text-sm font-medium transition-colors duration-200 ${
               isActive(item)
-                ? "text-primary"
-                : "text-primary/60 hover:text-primary"
+                ? "text-secondary-foreground"
+                : "text-secondary-foreground/60 hover:text-secondary-foreground"
             } tracking-tight`}
-            onMouseEnter={(e) => handleMouseEnter(item, e)}
-            onMouseLeave={handleMouseLeave}
           >
-            <Link href={item.href}>
+            <Link href={item.href} prefetch={true}>
               {item.name}
             </Link>
           </li>
@@ -105,11 +86,10 @@ export function NavMenu() {
           <motion.li
             animate={{ left, width }}
             transition={{ type: "spring", stiffness: 400, damping: 30 }}
-            className="absolute inset-0 my-1.5 rounded-full bg-accent/60 border border-border"
+            className="absolute inset-0 my-1.5 rounded-full bg-secondary/60 border border-border"
           />
         )}
       </ul>
     </div>
   );
 }
-
