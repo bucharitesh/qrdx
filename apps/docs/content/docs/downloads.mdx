@@ -98,14 +98,6 @@ qrdx includes convenient preset sizes:
 ```tsx
 import { PRESET_SIZES, downloadQRCode } from 'qrdx';
 
-// Available presets
-console.log(PRESET_SIZES.small);   // { width: 200, height: 200 }
-console.log(PRESET_SIZES.medium);  // { width: 400, height: 400 }
-console.log(PRESET_SIZES.large);   // { width: 800, height: 800 }
-console.log(PRESET_SIZES.xlarge);  // { width: 1200, height: 1200 }
-console.log(PRESET_SIZES["2xl"]);  // { width: 1600, height: 1600 }
-console.log(PRESET_SIZES["3xl"]);  // { width: 2000, height: 2000 }
-
 // Usage
 await downloadQRCode(
   { value: "https://example.com" },
@@ -130,10 +122,6 @@ async function getQRDataUrl() {
     "png", // format: "png" | "jpg" | "svg" | "pdf"
     { width: 512, height: 512 }
   );
-
-  // Use the data URL (e.g., set as img src, upload to server, etc.)
-  console.log(dataUrl);
-  // "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA..."
 
   return dataUrl;
 }
@@ -177,10 +165,6 @@ async function getSVGMarkup() {
     fgColor: "#000000",
     bgColor: "#ffffff"
   });
-
-  // svgString contains the complete SVG markup
-  console.log(svgString);
-  // Output: <svg width="512" height="512" viewBox="0 0 29 29"...
 
   // You can now manipulate the SVG, save it, or use it however needed
   return svgString;
@@ -294,7 +278,6 @@ async function safeDownload() {
       { value: "https://example.com", size: 512 },
       { format: "png", size: { width: 512, height: 512 } }
     );
-    console.log("Download successful!");
   } catch (error) {
     if (error instanceof Error) {
       console.error("Download failed:", error.message);

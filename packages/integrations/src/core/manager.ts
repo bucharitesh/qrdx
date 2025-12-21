@@ -49,7 +49,6 @@ export async function getIntegration(
 
   if (shouldRefreshToken(decryptedIntegration)) {
     try {
-      console.log(`Auto-refreshing token for ${provider} integration`);
       const freshAccessToken = await refreshIntegrationToken(
         integrationData.id,
         getConfig

@@ -41,9 +41,6 @@ export function useSmartPaste(options: UseSmartPasteOptions = {}) {
       if (onPaste) {
         onPaste(parsed.type, parsed.config);
       }
-
-      // Show a brief notification (optional - could add toast here)
-      console.log(`Smart paste detected: ${parsed.type}`, parsed.config);
     },
     [enabled, onPaste, setContentType, setContentConfig],
   );

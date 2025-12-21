@@ -417,9 +417,6 @@ import { downloadQRCode } from 'qrdx';
 
 async function downloadWithProgress() {
   try {
-    // Show loading state
-    console.log("Starting download...");
-
     await downloadQRCode(
       { value: "https://example.com", size: 2048 }, // Large QR
       {
@@ -428,8 +425,6 @@ async function downloadWithProgress() {
         filename: "large-qr.pdf"
       }
     );
-
-    console.log("Download completed!");
   } catch (error) {
     console.error("Download failed:", error);
   }
