@@ -55,7 +55,6 @@ export default async function IntegrationsPage() {
         }
 
         // Get connection status from database
-        const config = getIntegrationConfigWithEnv(integration.slug, env);
         const connectedIntegration = await getIntegration(
           session.user.id,
           integration.slug,
@@ -95,7 +94,7 @@ export default async function IntegrationsPage() {
         description="Connect third-party services to enhance your QR codes"
       />
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 grid-cols-1">
         {integrationStatuses.map((integration) => (
           <IntegrationCard
             key={integration.slug}

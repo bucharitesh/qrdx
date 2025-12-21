@@ -6,7 +6,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@repo/design-system/components/ui/card";
@@ -48,13 +47,12 @@ export function IntegrationCard({
   isConfigured = true,
   status,
   metadata,
-  connectedAt,
   features,
-  category,
 }: IntegrationCardProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   // Handle OAuth callback success/error
   useEffect(() => {
@@ -149,12 +147,17 @@ export function IntegrationCard({
     }
   };
 
+  const hasExpandableContent =
+    (features && features.length > 0) ||
+    (isConnected && metadata) ||
+    !isConfigured;
+
   return (
     <Card>
       <CardHeader>
-        <div className="flex items-start justify-between">
-          <div className="flex items-center gap-3">
-            <div className="bg-primary/10 flex size-10 items-center justify-center rounded-lg p-2">
+        <div className="flex items-start justify-between gap-4">
+          <div className="flex items-center gap-3 flex-1">
+            <div className="bg-white border border-border flex size-10 items-center justify-center rounded-lg p-2 shrink-0">
               {logo ? (
                 <img
                   src={logo}
@@ -165,118 +168,130 @@ export function IntegrationCard({
                 <ExternalLink className="text-primary size-5" />
               )}
             </div>
-            <div>
-              <CardTitle className="text-lg">{name}</CardTitle>
-              {getStatusBadge()}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <CardTitle className="text-lg">{name}</CardTitle>
+                {getStatusBadge()}
+              </div>
+              <CardDescription className="mt-1">{description}</CardDescription>
             </div>
           </div>
-        </div>
-        <CardDescription>{description}</CardDescription>
-      </CardHeader>
-
-      <CardContent className="space-y-3">
-        {/* Features list */}
-        {features && features.length > 0 && (
-          <div>
-            <p className="text-muted-foreground mb-2 text-xs font-medium">
-              Features
-            </p>
-            <ul className="space-y-1">
-              {features.slice(0, 3).map((feature, idx) => (
-                <li
-                  key={idx}
-                  className="text-xs text-muted-foreground flex items-start"
-                >
-                  <span className="mr-2">•</span>
-                  <span>{feature}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-
-        {/* Connected metadata */}
-        {isConnected && metadata && (
-          <div className="space-y-2 pt-2 border-t">
-            {metadata.workspace && (
-              <div className="border-muted bg-muted/50 rounded-md border p-2">
-                <p className="text-muted-foreground text-xs font-medium">
-                  Connected Workspace
-                </p>
-                <p className="text-sm font-semibold">
-                  {metadata.workspace.name}
-                </p>
-                {metadata.workspace.slug && (
-                  <p className="text-muted-foreground text-xs">
-                    {metadata.workspace.slug}
-                  </p>
+          
+          <div className="flex items-center gap-2 shrink-0">
+            {isConnected ? (
+              <>
+                {status === "error" && (
+                  <Button
+                    onClick={handleConnect}
+                    disabled={isLoading}
+                    variant="outline"
+                    size="sm"
+                  >
+                    {isLoading && <Loader2 className="mr-2 size-4 animate-spin" />}
+                    Reconnect
+                  </Button>
                 )}
-              </div>
-            )}
-            {metadata.user && (
-              <div className="border-muted bg-muted/50 rounded-md border p-2">
-                <p className="text-muted-foreground text-xs font-medium">
-                  Connected Account
-                </p>
-                <p className="text-sm font-semibold">
-                  {metadata.user.displayName}
-                </p>
-              </div>
-            )}
-            {connectedAt && (
-              <p className="text-muted-foreground text-xs">
-                Connected on {new Date(connectedAt).toLocaleDateString()}
-              </p>
-            )}
-          </div>
-        )}
-
-        {/* Not configured warning */}
-        {!isConfigured && (
-          <div className="rounded-md bg-yellow-50 border border-yellow-200 p-2">
-            <p className="text-xs text-yellow-800">
-              Not configured. Add environment variables to enable.
-            </p>
-          </div>
-        )}
-      </CardContent>
-
-      <CardFooter className="gap-2">
-        {isConnected ? (
-          <>
-            {status === "error" && (
+                <Button
+                  onClick={handleDisconnect}
+                  disabled={isLoading}
+                  variant={status === "error" ? "destructive" : "outline"}
+                  size="sm"
+                >
+                  {isLoading && <Loader2 className="mr-2 size-4 animate-spin" />}
+                  Disconnect
+                </Button>
+              </>
+            ) : (
               <Button
                 onClick={handleConnect}
-                disabled={isLoading}
-                variant="outline"
-                className="flex-1"
+                disabled={isLoading || !isConfigured}
+                size="sm"
+                variant={isConfigured ? "default" : "secondary"}
               >
                 {isLoading && <Loader2 className="mr-2 size-4 animate-spin" />}
-                Reconnect
+                {isConfigured ? "Connect" : "Not Configured"}
               </Button>
             )}
-            <Button
-              onClick={handleDisconnect}
-              disabled={isLoading}
-              variant={status === "error" ? "destructive" : "outline"}
-              className={status !== "error" ? "flex-1" : ""}
-            >
-              {isLoading && <Loader2 className="mr-2 size-4 animate-spin" />}
-              Disconnect
-            </Button>
-          </>
-        ) : (
+          </div>
+        </div>
+      </CardHeader>
+
+      {!isExpanded && hasExpandableContent && (
+        <div className="px-6 pb-2 space-y-1">
+          {features && features.length > 0 && (
+            <div className="flex flex-col items-start gap-0">
+              <ul className="space-y-1">
+                {features.slice(0, 2).map((feature, idx) => (
+                  <li
+                    key={idx}
+                    className="text-xs text-muted-foreground flex items-start"
+                  >
+                    <span className="mr-2">•</span>
+                    <span>{feature}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+          {!isConfigured && (
+            <p className="text-xs text-yellow-600">
+              ⚠️ Configuration required to enable this integration
+            </p>
+          )}
+        </div>
+      )}
+
+      {isExpanded && hasExpandableContent && (
+        <CardContent className="space-y-3 pt-0">
+          {/* Features list */}
+          {features && features.length > 0 && (
+            <div>
+              <ul className="space-y-1">
+                {features.map((feature, idx) => (
+                  <li
+                    key={idx}
+                    className="text-xs text-muted-foreground flex items-start"
+                  >
+                    <span className="mr-2">•</span>
+                    <span>{feature}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+
+          {/* Not configured warning */}
+          {!isConfigured && (
+            <div className="rounded-md bg-yellow-50 border border-yellow-200 p-2">
+              <p className="text-xs text-yellow-800">
+                Not configured. Add environment variables to enable.
+              </p>
+            </div>
+          )}
+        </CardContent>
+      )}
+
+      {hasExpandableContent && (
+        <div className="px-6 pb-3">
           <Button
-            onClick={handleConnect}
-            disabled={isLoading || !isConfigured}
-            className="w-full"
-            variant={isConfigured ? "default" : "secondary"}
+            variant="link"
+            size="sm"
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="w-fit text-xs text-muted-foreground hover:text-foreground p-0 h-auto"
           >
-            {isLoading && <Loader2 className="mr-2 size-4 animate-spin" />}
-            {isConfigured ? `Connect ${name}` : "Not Configured"}
+            {isExpanded ? (
+              <>
+                Show less
+              </>
+            ) : (
+              <>
+                Read more...
+              </>
+            )}
           </Button>
-        )}
-      </CardFooter>
+        </div>
+      )}
     </Card>
   );
 }

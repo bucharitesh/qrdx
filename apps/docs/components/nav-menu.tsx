@@ -57,9 +57,12 @@ export function NavMenu() {
   useEffect(() => {
     const timer = setTimeout(() => {
       const activeRoute = getActiveNavItem();
-      const targetPath = activeRoute?.href || navs[0].href;
-      updateNavIndicator(targetPath);
-      setIsReady(true);
+      if (activeRoute) {
+        updateNavIndicator(activeRoute.href);
+        setIsReady(true);
+      } else {
+        setIsReady(false);
+      }
     }, 50);
 
     return () => clearTimeout(timer);
