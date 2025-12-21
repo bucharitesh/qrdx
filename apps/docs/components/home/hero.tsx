@@ -101,18 +101,6 @@ export const Hero = () => {
         <div className="absolute left-[-10%] bottom-[-20%] w-[40%] h-[40%] rounded-full bg-primary/40 blur-[120px]" />
       </div>
 
-      {/* <div className="relative z-10 flex flex-col items-center text-center px-4 max-w-3xl mx-auto space-y-6 pointer-events-none">
-        <div className="space-y-2">
-          <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-foreground drop-shadow-sm">
-            QRDX
-          </h1>
-          <p className="text-lg md:text-xl text-muted-foreground">
-            Generate QR codes for your business. <br />
-            Share your website, social media, and more.
-          </p>
-        </div>
-      </div> */}
-
       <section className="relative pt-[16px] pb-16">
         <div className="max-w-[1060px] mx-auto px-4">
           <div className="flex flex-col items-center gap-12">
@@ -133,7 +121,7 @@ export const Hero = () => {
             {/* CTA Button */}
             <div className="flex justify-center">
               <Button className="h-10 px-12 bg-primary/50 hover:bg-primary/90 text-white rounded-full font-medium text-sm shadow-[0px_0px_0px_2.5px_rgba(255,255,255,0.08)_inset]">
-                Start for free
+                Try the Playground
               </Button>
             </div>
           </div>

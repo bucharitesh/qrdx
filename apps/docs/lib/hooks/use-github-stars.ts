@@ -11,8 +11,6 @@ async function fetchGithubStars(owner: string, repo: string): Promise<number> {
     const response = await fetch(`https://api.github.com/repos/${owner}/${repo}`, {
       next: { revalidate: 3600 }, // Cache for 1 hour
     });
-
-    console.log("response", response);
     
     if (!response.ok) {
       return 0;

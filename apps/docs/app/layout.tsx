@@ -8,7 +8,6 @@ import FeaturebaseScript from "@/components/featurebase-script";
 import { PostHogInit } from "@/components/posthog-init";
 import { ThemeScript } from "@/components/theme-script";
 import { source } from "@/lib/source";
-import { Body } from "./layout.client";
 import { Provider } from "./providers";
 
 export const metadata: Metadata = {
@@ -90,7 +89,7 @@ export default function Layout({ children }: LayoutProps<"/">) {
         />
         <meta name="darkreader-lock" />
       </head>
-      <Body>
+      <body className="antialiased font-sans bg-background relative flex min-h-screen flex-col">
         <NextProvider>
           <TreeContextProvider tree={source.pageTree}>
             <Provider>{children}</Provider>
@@ -98,7 +97,7 @@ export default function Layout({ children }: LayoutProps<"/">) {
         </NextProvider>
         <FeaturebaseScript />
         <PostHogInit />
-      </Body>
+      </body>
     </html>
   );
 }

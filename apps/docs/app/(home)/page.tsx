@@ -1,11 +1,15 @@
-import { Hero } from "@/components/home/hero";
+import { HeroSection } from "@/components/sections/hero-section";
+import { CTASection } from "@/components/sections/cta-section";
+import { GrowthSection } from "@/components/sections/growth-section";
+import {FAQSection } from "@/components/sections/faq-section"
 
-const Page = () => {
+export default function Home() {
   return (
-    <div className="flex flex-col">
-      <Hero />
-    </div>
+    <main className="flex flex-col items-center justify-center divide-y divide-border min-h-screen w-full">
+      <HeroSection />
+      <GrowthSection />
+      <FAQSection />
+      <CTASection />
+    </main>
   );
-};
-
-export default Page;
+}
