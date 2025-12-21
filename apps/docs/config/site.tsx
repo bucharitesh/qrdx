@@ -685,7 +685,7 @@ export const siteConfig = {
   },
   ctaSection: {
     id: "cta",
-    title: "Automate. Simplify. Thrive",
+    title: "Automate. QR. Creation",
     button: {
       text: "Start Creating QR Codes for Free",
       href: "/playground",
