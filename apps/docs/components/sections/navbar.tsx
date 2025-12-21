@@ -2,7 +2,7 @@
 
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
-import { Menu, X } from "lucide-react";
+import { GithubIcon, Menu, X } from "lucide-react";
 import {
   AnimatePresence,
   motion,
@@ -16,7 +16,9 @@ import { NavMenu } from "@/components/nav-menu";
 import { QrdxLogoAnimation } from "@/components/qrdx-logo-animation";
 import { siteConfig } from "@/config/site";
 import { ThemeToggle } from "../theme-toggle";
-import { UserProfileDropdown } from "../user-profile-dropdown";
+import { SocialLink } from "../social-link";
+import { formatCompactNumber } from "@/utils/format";
+import { useGithubStars } from "@/lib/hooks/use-github-stars";
 
 const INITIAL_WIDTH = "70rem";
 const MAX_WIDTH = "800px";
@@ -62,6 +64,7 @@ export function Navbar() {
   const { scrollY } = useScroll();
   const [hasScrolled, setHasScrolled] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const { stargazersCount } = useGithubStars("bucharitesh", "qrdx");
 
   useEffect(() => {
     const unsubscribe = scrollY.on("change", (latest) => {
@@ -104,9 +107,15 @@ export function Navbar() {
 
             <NavMenu />
 
-            <div className="flex flex-row items-center gap-1 md:gap-3 shrink-0">
-              <ThemeToggle />
-              <Button>Try the Playground</Button>
+            <div className="flex flex-row items-center gap-3 md:gap-4 shrink-0">
+              <SocialLink
+                href="https://github.com/bucharitesh/qrdx"
+                className="flex items-center gap-2 text-sm font-bold"
+              >
+                <GithubIcon className="size-4" />
+                {stargazersCount > 0 && formatCompactNumber(stargazersCount)}
+              </SocialLink>
+              <Link href="/playground"><Button>Try the Playground</Button></Link>
               <Button
                 variant="secondary"
                 className="md:hidden"

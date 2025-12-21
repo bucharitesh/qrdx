@@ -11,7 +11,7 @@ export function CTASection() {
       className="flex flex-col items-center justify-center w-full"
     >
       <div className="w-full">
-        <div className="h-[400px] md:h-[400px] overflow-hidden shadow-xl w-full border border-border rounded-xl bg-primary/90 relative z-20">
+        <div className="h-[400px] md:h-[400px] overflow-hidden shadow-xl w-full border border-border rounded-xl bg-primary/90 relative z-10">
           <StripedPattern className="z-0 text-secondary/40" />
           <div className="absolute inset-0 -top-32 md:-top-40 flex flex-col items-center justify-center">
             <h1 className="text-white text-4xl md:text-7xl font-medium tracking-tighter max-w-xs md:max-w-xl text-center">

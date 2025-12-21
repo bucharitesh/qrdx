@@ -1,10 +1,8 @@
 "use client";
 
 import { Separator } from "@repo/design-system/components/ui/separator";
-import { cn } from "@repo/design-system/lib/utils";
 import { GithubIcon } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
 import Logo from "@/assets/logo.svg";
 import { GetProCTA } from "@/components/get-pro-cta";
 import { SocialLink } from "@/components/social-link";
@@ -34,7 +32,6 @@ const navLinks = [
 ];
 
 export function Header() {
-  const pathname = usePathname();
   const { stargazersCount } = useGithubStars("bucharitesh", "qrdx"); // Update with your GitHub repo
 
   return (
