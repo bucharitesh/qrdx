@@ -21,8 +21,10 @@ import {
 import { DownloadIcon } from "lucide-react";
 import {
   type DownloadSize,
+  downloadEPS,
   downloadQRCode,
   getQRData,
+  getSolidColor,
   PRESET_SIZES,
   validateSize,
 } from "qrdx";
@@ -112,10 +114,25 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
     setSizeError("");
 
     try {
-      await downloadQRCode(qrProps, {
-        format: downloadOptions.format,
-        size,
-      });
+      // Handle EPS format separately (uses different generation path)
+      if (downloadOptions.format === "eps") {
+        await downloadEPS({
+          value: qrProps.value,
+          level: qrProps.level || "M",
+          size: size.width,
+          color: getSolidColor(qrProps.fgColor, "#000000"),
+          backgroundColor: getSolidColor(qrProps.bgColor, "#FFFFFF"),
+          eyeColor: getSolidColor(qrProps.eyeColor, "#000000"),
+          bodyPattern: qrProps.bodyPattern,
+          cornerEyePattern: qrProps.cornerEyePattern,
+          filename: "qr-code.eps",
+        });
+      } else {
+        await downloadQRCode(qrProps, {
+          format: downloadOptions.format,
+          size,
+        });
+      }
       toast.success(
         `QR code downloaded as ${downloadOptions.format.toUpperCase()}`,
       );
@@ -182,7 +199,7 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
                 onValueChange={(value) =>
                   updateDownloadOption(
                     "format",
-                    value as "png" | "jpg" | "svg" | "pdf",
+                    value as "png" | "jpg" | "svg" | "pdf" | "eps",
                   )
                 }
               >
@@ -194,6 +211,7 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
                   <SelectItem value="jpg">JPG</SelectItem>
                   <SelectItem value="svg">SVG</SelectItem>
                   <SelectItem value="pdf">PDF</SelectItem>
+                  <SelectItem value="eps">EPS (Print)</SelectItem>
                 </SelectContent>
               </Select>
             </div>

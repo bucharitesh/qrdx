@@ -36,6 +36,10 @@ export * from "./download";
 export * from "./qr-code";
 export * from "./templates";
 export * from "./utils";
+export { generateEPS } from "./utils/eps-generator";
+export type { GenerateEPSOptions, CMYKColor } from "./utils/eps-generator";
+export { downloadEPS } from "./helpers";
+export type { DownloadEPSOptions } from "./helpers";
 
 export function QRCodeCanvas(props: QRPropsCanvas) {
   const {
