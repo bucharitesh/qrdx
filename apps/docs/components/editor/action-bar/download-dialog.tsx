@@ -3,6 +3,12 @@
 import { toast } from "@repo/design-system";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+  InputGroupText,
+} from "@repo/design-system/components/ui/input-group";
 import { Label } from "@repo/design-system/components/ui/label";
 import {
   ResponsiveDialog,
@@ -30,6 +36,7 @@ import React from "react";
 import { useQREditorStore } from "@/store/editor-store";
 import { usePreferencesStore } from "@/store/preferences-store";
 import type { DownloadOptions as DownloadOptionsType } from "@/types/theme";
+import { Slider } from "@repo/design-system/components/ui/slider";
 
 interface DownloadDialogProps {
   open: boolean;
@@ -210,33 +217,51 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
           </div>
 
           {/* Size Multiplier Slider Implementation */}
-          <div className="space-y-4 py-2">
+          <div className="space-y-2 py-2">
             <div className="flex justify-between items-center">
-              <Label htmlFor="multiplier-slider" className="text-sm text-gray-400">Scale X</Label>
-              <span className="text-sm font-bold bg-secondary px-2 py-1 rounded">
-                {downloadOptions.multiplier}x
-              </span>
+              <Label htmlFor="multiplier-slider" className="text-sm text-gray-400">Scale <span className="text-[0.6rem] text-muted-foreground">X</span></Label>
             </div>
             <div className="flex items-center gap-4">
-              <input
+              <Slider
                 id="multiplier-slider"
-                type="range"
-                min="1"
-                max="10"
-                step="1"
-                title="Adjust size multiplier"
-                aria-label="Size Multiplier Slider"
-                className="flex-1 h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-[#a855f7]"
-                value={downloadOptions.multiplier}
-                onChange={(e) => updateDownloadOption("multiplier", Number(e.target.value))}
+                min={1}
+                max={10}
+                step={1}
+                value={[downloadOptions.multiplier]}
+                onValueChange={(value) => updateDownloadOption("multiplier", value[0])}
               />
-              <div className="flex justify-between items-center w-12 h-12 text-[10px] text-muted-foreground px-1 border-gray-700 rounded-xl bg-transparent font-medium" aria-hidden="true">
-                {downloadOptions.multiplier}
-              </div>
-              <p className="text-xs  italic border-t pt-2 text-gray-500">
-                {getCurrentSize().width * downloadOptions.multiplier} x {getCurrentSize().height * downloadOptions.multiplier} px
-              </p>
+              <InputGroup className="w-24">
+                <InputGroupInput
+                  type="number"
+                  min={1}
+                  max={10}
+                  value={downloadOptions.multiplier}
+                  onBlur={(e) => {
+                    const value = Number(e.target.value);
+                    // If empty, NaN, or out of range, restore to current valid value
+                    if (!e.target.value || Number.isNaN(value) || value < 1 || value > 10) {
+                      e.target.value = String(downloadOptions.multiplier);
+                    } else {
+                      updateDownloadOption("multiplier", value);
+                    }
+                  }}
+                  onChange={(e) => {
+                    const value = Number(e.target.value);
+                    // Only update if valid
+                    if (e.target.value && !Number.isNaN(value) && value >= 1 && value <= 10) {
+                      updateDownloadOption("multiplier", value);
+                    }
+                  }}
+                  className="text-sm font-bold text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                />
+                <InputGroupAddon align="inline-end">
+                  <InputGroupText>x</InputGroupText>
+                </InputGroupAddon>
+              </InputGroup>
             </div>
+            <p className="text-xs italic pt-2 text-gray-500">
+              {getCurrentSize().width * downloadOptions.multiplier} x {getCurrentSize().height * downloadOptions.multiplier} px
+            </p>
           </div>
 
           {/* Transparency toggle */}
