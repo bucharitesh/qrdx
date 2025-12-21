@@ -5,11 +5,10 @@
     "getting-started",
     "usage",
     "features",
-    "---Detection---",
+    "---Advanced---",
     "qr-detection",
-    "---Utilities---",
     "utilities",
-    "---API---",
+    "---API Reference---",
     "api-reference"
   ]
 }

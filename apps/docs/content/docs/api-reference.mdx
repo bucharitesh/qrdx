@@ -1,14 +1,18 @@
 ---
 title: API Reference
-description: Complete API documentation for all qrdx functions and types
+description: Complete API documentation
 icon: Code
 ---
+
+# API Reference
+
+Complete reference for all QRDX functions and types.
 
 ## Components
 
 ### QRCode
 
-The main component for rendering QR codes.
+Main component for rendering QR codes.
 
 ```tsx
 import { QRCode } from 'qrdx';
@@ -25,28 +29,27 @@ import { QRCode } from 'qrdx';
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `value` | `string` | **required** | The URL or text to encode |
-| `size` | `number` | `128` | Size of the QR code in pixels |
+| `value` | `string` | **required** | URL or text to encode |
+| `size` | `number` | `128` | Size in pixels |
 | `scale` | `number` | `1` | Scale multiplier |
-| `fgColor` | `ColorConfig` | `#000000` | Foreground/QR code color |
+| `fgColor` | `ColorConfig` | `#000000` | QR code color |
 | `bgColor` | `ColorConfig` | `#ffffff` | Background color |
-| `eyeColor` | `ColorConfig` | `fgColor` | Color for position markers (eyes) |
-| `dotColor` | `ColorConfig` | `fgColor` | Color for data dots |
-| `bodyPattern` | `BodyPattern` | `'circle'` | Pattern for data dots |
-| `cornerEyePattern` | `CornerEyePattern` | `'square'` | Pattern for corner markers |
-| `cornerEyeDotPattern` | `CornerEyeDotPattern` | `'square'` | Pattern for corner dots |
-| `hideLogo` | `boolean` | `true` | Whether to hide the logo |
-| `logo` | `string` | Default logo | URL to custom logo image |
-| `templateId` | `string` | `'default'` | ID of template to use |
-| `customTemplate` | `TemplateDefinition` | `undefined` | Custom template definition |
-| `customProps` | `Record<string, any>` | `undefined` | Custom template properties |
-| `level` | `ErrorLevel` | `'L'` | Error correction level |
-| `margin` | `number` | `0` | Margin around QR code (in modules) |
-| `imageSettings` | `ImageSettings` | `undefined` | Logo/image embedding settings |
+| `eyeColor` | `ColorConfig` | `fgColor` | Corner marker color |
+| `dotColor` | `ColorConfig` | `fgColor` | Data dot color |
+| `bodyPattern` | `BodyPattern` | `'circle'` | Data dot pattern |
+| `cornerEyePattern` | `CornerEyePattern` | `'square'` | Corner marker pattern |
+| `cornerEyeDotPattern` | `CornerEyeDotPattern` | `'square'` | Corner dot pattern |
+| `hideLogo` | `boolean` | `true` | Hide/show logo |
+| `logo` | `string` | Default | Logo URL |
+| `templateId` | `string` | `'default'` | Template ID |
+| `customTemplate` | `TemplateDefinition` | — | Custom template |
+| `level` | `ErrorLevel` | `'L'` | Error correction |
+| `margin` | `number` | `0` | Margin in modules |
+| `imageSettings` | `ImageSettings` | — | Logo settings |
 
 ### QRCodeCanvas
 
-Canvas-based QR code rendering.
+Canvas-based rendering.
 
 ```tsx
 import { QRCodeCanvas } from 'qrdx';
@@ -55,15 +58,12 @@ import { QRCodeCanvas } from 'qrdx';
   value="https://example.com"
   size={512}
   fgColor="#000000"
-  bgColor="#ffffff"
 />
 ```
 
-**Additional props:** All standard HTML canvas element props.
-
 ### QRCodeSVG
 
-SVG-based QR code rendering.
+SVG-based rendering.
 
 ```tsx
 import { QRCodeSVG } from 'qrdx';
@@ -71,12 +71,8 @@ import { QRCodeSVG } from 'qrdx';
 <QRCodeSVG
   value="https://example.com"
   size={512}
-  fgColor="#000000"
-  bgColor="#ffffff"
 />
 ```
-
-**Additional props:** All standard HTML SVG element props.
 
 ## Download Functions
 
@@ -97,7 +93,7 @@ downloadQRCode(
 
 ### getQRCodeDataUrl
 
-Get QR codes as data URLs.
+Get as data URL.
 
 ```tsx
 getQRCodeDataUrl(
@@ -109,7 +105,7 @@ getQRCodeDataUrl(
 
 ### copyQRCodeToClipboard
 
-Copy QR codes to clipboard.
+Copy to clipboard.
 
 ```tsx
 copyQRCodeToClipboard(
@@ -120,40 +116,10 @@ copyQRCodeToClipboard(
 
 ### getSVGString
 
-Get SVG markup as string.
+Get SVG markup.
 
 ```tsx
 getSVGString(qrProps: QRProps): Promise<string>
-```
-
-## Generation Functions
-
-### getQRAsSVGDataUri
-
-Generate QR codes as SVG data URIs.
-
-```tsx
-getQRAsSVGDataUri(props: QRProps): Promise<string>
-```
-
-### getQRAsCanvas
-
-Generate QR codes as canvas or data URLs.
-
-```tsx
-getQRAsCanvas(
-  props: QRProps,
-  type: string,
-  getCanvas?: boolean
-): Promise<HTMLCanvasElement | string>
-```
-
-### getQRData
-
-Prepare QR code data with defaults.
-
-```tsx
-getQRData(props: QRProps): QRData
 ```
 
 ## Detection Functions
@@ -172,7 +138,7 @@ handleImageLoad(
 
 ### downloadImageWithBoundingBox
 
-Download debug images with bounding boxes.
+Debug with bounding boxes.
 
 ```tsx
 downloadImageWithBoundingBox(
@@ -186,7 +152,7 @@ downloadImageWithBoundingBox(
 
 ### getTemplate
 
-Get a specific template.
+Get specific template.
 
 ```tsx
 getTemplate(templateId: string): TemplateDefinition | undefined
@@ -194,7 +160,7 @@ getTemplate(templateId: string): TemplateDefinition | undefined
 
 ### getAllTemplates
 
-Get all available templates.
+Get all templates.
 
 ```tsx
 getAllTemplates(): TemplateDefinition[]
@@ -202,7 +168,7 @@ getAllTemplates(): TemplateDefinition[]
 
 ### getTemplateIds
 
-Get all template IDs.
+Get template IDs.
 
 ```tsx
 getTemplateIds(): string[]
@@ -218,19 +184,6 @@ getContrastRatio(color1: string, color2: string): number
 getContrastLevel(ratio: number): ContrastLevel
 getLuminance(r: number, g: number, b: number): number
 hexToRgb(hex: string): { r: number; g: number; b: number }
-```
-
-### QR Processing
-
-```tsx
-excavateModules(modules: Modules, excavation: Excavation): Modules
-generatePath(modules: Modules, margin?: number): string
-getImageSettings(
-  modules: Modules,
-  size: number,
-  margin: number,
-  imageSettings?: ImageSettings
-): ImageSettings | null
 ```
 
 ### Validation
@@ -261,7 +214,7 @@ type QRProps = {
   fgColor?: ColorConfig;
   margin?: number;
   imageSettings?: ImageSettings;
-  // ... additional props
+  // ...
 };
 
 type ColorConfig =
@@ -286,47 +239,7 @@ type BodyPattern =
   | 'clean-square';
 
 type CornerEyePattern = 'square' | 'rounded' | 'circle';
-
 type CornerEyeDotPattern = 'square' | 'rounded' | 'circle';
-```
-
-### Template Types
-
-```tsx
-type TemplateDefinition<T = any> = {
-  id: string;
-  name: string;
-  colors: {
-    fgColor: ColorConfig;
-    bgColor: ColorConfig;
-    eyeColor?: ColorConfig;
-    dotColor?: ColorConfig;
-  };
-  bodyPattern?: BodyPattern;
-  cornerEyePattern?: CornerEyePattern;
-  cornerEyeDotPattern?: CornerEyeDotPattern;
-};
-```
-
-### Image & Excavation Types
-
-```tsx
-type ImageSettings = {
-  src: string;
-  height: number;
-  width: number;
-  excavate?: boolean;
-  x?: number;
-  y?: number;
-  opacity?: number;
-};
-
-type Excavation = {
-  x: number;
-  y: number;
-  w: number;
-  h: number;
-};
 ```
 
 ### Download Types
@@ -339,12 +252,6 @@ type DownloadSize = {
   height: number;
 };
 
-type DownloadOptions = {
-  format: DownloadFormat;
-  size: DownloadSize;
-  filename?: string;
-};
-
 const PRESET_SIZES: Record<string, DownloadSize> = {
   small: { width: 200, height: 200 },
   medium: { width: 400, height: 400 },
@@ -355,114 +262,91 @@ const PRESET_SIZES: Record<string, DownloadSize> = {
 };
 ```
 
-### Contrast Types
-
-```tsx
-type ContrastLevel = {
-  level: 'poor' | 'medium' | 'good' | 'excellent';
-  warning: boolean;
-  message: string;
-};
-```
-
-### Detection Types
-
-```tsx
-// handleImageLoad return types
-type DetectionResult = string | {
-  data: string;
-  binaryData: Uint8ClampedArray;
-  location: {
-    topLeftCorner: { x: number; y: number };
-    topRightCorner: { x: number; y: number };
-    bottomLeftCorner: { x: number; y: number };
-    bottomRightCorner: { x: number; y: number };
-  };
-  chunks: any[];
-};
-```
-
-## Gradient Types
+### Gradient Types
 
 ```tsx
 type LinearGradient = {
   type: 'linear';
   stops: GradientStop[];
-  x1: number; // Start x (0-1)
-  y1: number; // Start y (0-1)
-  x2: number; // End x (0-1)
-  y2: number; // End y (0-1)
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
 };
 
 type RadialGradient = {
   type: 'radial';
   stops: GradientStop[];
-  cx: number; // Center x (0-1)
-  cy: number; // Center y (0-1)
-  r: number;  // Radius (0-1)
+  cx: number;
+  cy: number;
+  r: number;
 };
 
 type GradientStop = {
-  offset: number; // 0-1
+  offset: number;
   color: string;
 };
 ```
 
-## Constants
+### Image Settings
 
 ```tsx
-// Error correction levels
-const ERROR_LEVEL_MAP = {
-  L: qrcodegen.QrCode.Ecc.LOW,
-  M: qrcodegen.QrCode.Ecc.MEDIUM,
-  Q: qrcodegen.QrCode.Ecc.QUARTILE,
-  H: qrcodegen.QrCode.Ecc.HIGH,
-} as const;
+type ImageSettings = {
+  src: string;
+  height: number;
+  width: number;
+  excavate?: boolean;
+  x?: number;
+  y?: number;
+  opacity?: number;
+};
+```
 
-// Default values
-const DEFAULT_SIZE = 128;
-const DEFAULT_MARGIN = 0;
-const DEFAULT_LEVEL: ErrorLevel = 'L';
-const DEFAULT_BGCOLOR = '#ffffff';
-const DEFAULT_FGCOLOR = '#000000';
-const DEFAULT_IMG_SCALE = 0.1;
+## Error Correction Levels
+
+```tsx
+const ERROR_LEVELS = {
+  L: 'Low (~7%)',
+  M: 'Medium (~15%)',
+  Q: 'Quartile (~25%)',
+  H: 'High (~30%)',
+} as const;
 ```
 
 ## Error Handling
 
-All async functions may throw errors. Always wrap in try-catch:
+Wrap async functions in try-catch:
 
 ```tsx
 try {
   await downloadQRCode(props, options);
 } catch (error) {
-  console.error('QR operation failed:', error);
-  // Handle error appropriately
+  console.error('Failed:', error);
 }
 ```
 
-Common error scenarios:
-- Invalid image URLs for logos
-- Network failures during image loading
+Common errors:
+- Invalid image URLs
+- Network failures
 - Invalid size parameters
 - Canvas context unavailable
-- File system permissions (in Node.js)
 
-## Browser Compatibility
+## Browser Support
 
-- Modern browsers with Canvas and SVG support
-- Chrome 90+, Firefox 88+, Safari 14+, Edge 90+
-- Requires ES2020+ features (optional chaining, nullish coalescing)
+- Chrome 90+
+- Firefox 88+
+- Safari 14+
+- Edge 90+
 
-## Server Compatibility
+## Server Support
 
-All functions work in Node.js environments:
-- Next.js (App Router, Pages Router)
+Works in Node.js environments:
+- Next.js
 - Remix
 - Express.js
 - Other Node.js frameworks
 
 Some features require browser APIs:
-- Canvas operations (downloads, gradients)
-- Clipboard API (copyQRCodeToClipboard)
-- File API (QR detection)
+- Canvas operations
+- Clipboard API
+- File API
