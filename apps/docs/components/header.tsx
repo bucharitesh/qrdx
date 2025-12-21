@@ -12,6 +12,7 @@ import { UserProfileDropdown } from "@/components/user-profile-dropdown";
 import { QrdxLogoAnimation } from "./qrdx-logo-animation";
 import { useGithubStars } from "@/lib/hooks/use-github-stars";
 import { formatCompactNumber } from "@/utils/format";
+import { NavMenu } from "./nav-menu";
 
 const navLinks = [
   {
@@ -41,27 +42,11 @@ export function Header() {
       <div className="flex items-center justify-between gap-2 p-4">
         <div className="flex items-center gap-4">
           <Link href="/" className="flex items-center gap-2">
-            <Logo className="size-5 md:hidden block text-primary" />
-            <QrdxLogoAnimation size={30} className="hidden md:block" />
-            <span className="hidden font-bold md:block">QRdx</span>
-          </Link>
-          <nav className="hidden md:flex items-center gap-6">
-            {navLinks.map((link) => {
-              const isActive = pathname === link.url || pathname.startsWith(`${link.url}/`);
-              return (
-                <Link
-                  key={link.url}
-                  href={link.url}
-                  className={cn(
-                    "text-sm font-medium transition-colors text-muted-foreground hover:text-foreground",
-                    isActive && "text-foreground"
-                  )}
-                >
-                  {link.text}
-                </Link>
-              );
-            })}
-          </nav>
+              <Logo className="size-5 md:hidden block fill-secondary-foreground" />
+              <QrdxLogoAnimation size={40} className="hidden md:block" />
+              <p className="text-sm md:text-lg font-semibold text-secondary-foreground">QRdx</p>
+            </Link>
+          <NavMenu />
         </div>
         <div className="flex items-center gap-3.5">
           <GetProCTA className="h-8" />

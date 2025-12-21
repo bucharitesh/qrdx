@@ -1,34 +1,22 @@
 ---
-title: Getting Started
-description: Learn how to install and set up qrdx for your project
+title: Installation
+description: Install and set up qrdx in minutes
 icon: Rocket
 ---
 
+# Installation
+
+Install QRDX and create your first QR code in minutes.
+
 ## Installation
 
-qrdx requires Node.js 18+ and works with React 18+.
-
-### Using npm
-
-```bash
-npm install qrdx@latest
+```package-install
+qrdx@latest
 ```
 
-### Using yarn
+## Quick Start
 
-```bash
-yarn add qrdx@latest
-```
-
-### Using pnpm
-
-```bash
-pnpm add qrdx@latest
-```
-
-## Basic Setup
-
-After installation, you can start using qrdx in your React components:
+Create your first QR code:
 
 ```tsx
 import { QRCode } from 'qrdx';
@@ -43,14 +31,24 @@ export default function App() {
 }
 ```
 
-## Requirements
-
-- **Node.js**: 18.0.0 or higher
-- **React**: 18.0.0 or higher (with React DOM)
-- **TypeScript**: Optional but recommended for full type safety
+That's it. You now have a working QR code.
 
 ## Next Steps
 
-- [Basic Usage](/docs/basic-usage) — Learn the core QR code generation features
-- [Templates](/docs/templates) — Explore pre-built QR code styles
-- [Customization](/docs/customization) — Advanced styling and customization options
+<Cards>
+  <Card
+    href="/docs/usage"
+    title="Learn Usage"
+    description="Customize colors, patterns, and more"
+  />
+  <Card
+    href="/docs/features/templates"
+    title="Use Templates"
+    description="Apply pre-built styles instantly"
+  />
+  <Card
+    href="/docs/api-reference"
+    title="API Reference"
+    description="Complete prop documentation"
+  />
+</Cards>

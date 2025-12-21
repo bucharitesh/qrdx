@@ -1,13 +1,10 @@
 import "@/styles/styles.css";
 import { fonts } from "@repo/design-system/lib/fonts";
 import { cn } from "@repo/design-system/lib/utils";
-import { NextProvider } from "fumadocs-core/framework/next";
-import { TreeContextProvider } from "fumadocs-ui/contexts/tree";
 import type { Metadata, Viewport } from "next";
 import FeaturebaseScript from "@/components/featurebase-script";
 import { PostHogInit } from "@/components/posthog-init";
 import { ThemeScript } from "@/components/theme-script";
-import { source } from "@/lib/source";
 import { Provider } from "./providers";
 
 export const metadata: Metadata = {
@@ -76,7 +73,6 @@ export default function Layout({ children }: LayoutProps<"/">) {
     <html className={cn(fonts)} lang="en" suppressHydrationWarning>
       <head>
         <ThemeScript />
-        {/* PRELOAD FONTS USED BY BUILT-IN THEMES */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link
           rel="preconnect"
@@ -90,11 +86,7 @@ export default function Layout({ children }: LayoutProps<"/">) {
         <meta name="darkreader-lock" />
       </head>
       <body className="antialiased font-sans bg-background relative flex min-h-screen flex-col">
-        <NextProvider>
-          <TreeContextProvider tree={source.pageTree}>
-            <Provider>{children}</Provider>
-          </TreeContextProvider>
-        </NextProvider>
+        <Provider>{children}</Provider>
         <FeaturebaseScript />
         <PostHogInit />
       </body>

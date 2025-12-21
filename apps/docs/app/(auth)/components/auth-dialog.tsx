@@ -86,7 +86,7 @@ export function AuthDialog({
       {trigger}
       <div className="absolute inset-0 z-0 bg-radial-[125%_125%_at_50%_10%,transparent_40%,var(--primary)_100%] bg-size-100 bg-no-repeat" />
       <motion.svg
-        className="absolute right-[calc(50%-13.5rem)] top-[calc(50%-13.8rem)] hidden sm:block pointer-events-none text-primary"
+        className="absolute right-[calc(50%-14rem)] top-[calc(50%-14.2rem)] hidden sm:block pointer-events-none text-primary"
         fill="none"
         height="41"
         viewBox="0 0 43 41"

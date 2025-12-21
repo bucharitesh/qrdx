@@ -56,17 +56,17 @@ export function UserProfileDropdown() {
           transition={{ duration: 0.2 }}
           className="flex gap-3.5"
         >
+          <Link href="/playground">
+            <Button>
+              Try the Playground
+            </Button>
+          </Link>
           <Button
             variant="outline"
             onClick={() => openAuthDialog("signin")}
           >
             Sign In
           </Button>
-          <Link href="/playground">
-            <Button>
-              Try the Playground
-            </Button>
-          </Link>
         </motion.div>
       ) : (
         <motion.div

@@ -42,7 +42,7 @@ function PricingTabs({ activeTab, setActiveTab, className }: TabsProps) {
           {activeTab === tab && (
             <motion.div
               layoutId="active-tab"
-              className="absolute inset-0 rounded-full bg-white dark:bg-[#3F3F46]  shadow-md border border-border"
+              className="absolute inset-0 rounded-full bg-white dark:bg-[#3F3F46] shadow-md border border-border"
               transition={{
                 duration: 0.2,
                 type: "spring",
@@ -55,12 +55,12 @@ function PricingTabs({ activeTab, setActiveTab, className }: TabsProps) {
           <span
             className={cn(
               "relative block text-sm font-medium duration-200 shrink-0",
-              activeTab === tab ? "text-primary" : "text-muted-foreground",
+              activeTab === tab ? "text-secondary-foreground" : "text-muted-foreground",
             )}
           >
             {tab.charAt(0).toUpperCase() + tab.slice(1)}
             {tab === "yearly" && (
-              <span className="ml-2 text-xs font-semibold text-secondary bg-secondary/15 py-0.5 w-[calc(100%+1rem)] px-1 rounded-full">
+              <span className="ml-2 text-xs font-semibold text-primary bg-primary/15 py-0.5 w-[calc(100%+1rem)] px-1 rounded-full">
                 -20%
               </span>
             )}
@@ -201,7 +201,7 @@ export function PricingSection() {
               className={cn(
                 "rounded-xl grid grid-rows-[180px_auto_1fr] relative h-fit min-[650px]:h-full min-[900px]:h-fit",
                 tier.isPopular
-                  ? "md:shadow-[0px_61px_24px_-10px_rgba(0,0,0,0.01),0px_34px_20px_-8px_rgba(0,0,0,0.05),0px_15px_15px_-6px_rgba(0,0,0,0.09),0px_4px_8px_-2px_rgba(0,0,0,0.10),0px_0px_0px_1px_rgba(0,0,0,0.08)] bg-accent"
+                  ? "md:shadow-[0px_61px_24px_-10px_rgba(0,0,0,0.01),0px_34px_20px_-8px_rgba(0,0,0,0.05),0px_15px_15px_-6px_rgba(0,0,0,0.09),0px_4px_8px_-2px_rgba(0,0,0,0.10),0px_0px_0px_1px_rgba(0,0,0,0.08)] bg-secondary"
                   : "bg-[#F3F4F6] dark:bg-[#F9FAFB]/2 border border-border",
               )}
             >
@@ -209,7 +209,7 @@ export function PricingSection() {
                 <p className="text-sm">
                   {tier.name}
                   {tier.isPopular && (
-                    <span className="bg-linear-to-b from-secondary/50 from-[1.92%] to-secondary to-100% text-white h-6 inline-flex w-fit items-center justify-center px-2 rounded-full text-sm ml-2 shadow-[0px_6px_6px_-3px_rgba(0,0,0,0.08),0px_3px_3px_-1.5px_rgba(0,0,0,0.08),0px_1px_1px_-0.5px_rgba(0,0,0,0.08),0px_0px_0px_1px_rgba(255,255,255,0.12)_inset,0px_1px_0px_0px_rgba(255,255,255,0.12)_inset]">
+                    <span className="bg-linear-to-b from-primary/50 from-[1.92%] to-primary to-100% text-white h-6 inline-flex w-fit items-center justify-center px-2 rounded-full text-sm ml-2 shadow-[0px_6px_6px_-3px_rgba(0,0,0,0.08),0px_3px_3px_-1.5px_rgba(0,0,0,0.08),0px_1px_1px_-0.5px_rgba(0,0,0,0.08),0px_0px_0px_1px_rgba(255,255,255,0.12)_inset,0px_1px_0px_0px_rgba(255,255,255,0.12)_inset]">
                       Popular
                     </span>
                   )}
