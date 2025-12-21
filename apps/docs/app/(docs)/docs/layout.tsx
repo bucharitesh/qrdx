@@ -29,6 +29,7 @@ export default function Layout({ children }: LayoutProps<"/docs">) {
       SearchDialog: CustomSearchDialog,
     }}>
       <DocsLayout {...DOCS_LAYOUT_PROPS}>
+        <div className="fixed inset-0 z-[-1] bg-[url('/background.png')] bg-fixed bg-no-repeat bg-top-right" />
         {children}
       </DocsLayout>
     </RootProvider>
