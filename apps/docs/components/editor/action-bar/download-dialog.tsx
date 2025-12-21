@@ -47,7 +47,10 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
       ...getQRData({
         value,
         fgColor: themeState.styles.fgColor,
-        bgColor: themeState.styles.bgColor,
+        bgColor:
+          downloadOptions.transparent && downloadOptions.format !== "jpg"
+            ? "transparent"
+            : themeState.styles.bgColor,
         eyeColor: themeState.styles.eyeColor,
         dotColor: themeState.styles.dotColor,
         bodyPattern: themeState.styles.bodyPattern,
@@ -59,7 +62,7 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
       cornerEyeDotPattern: themeState.styles.cornerEyeDotPattern,
       templateId: themeState.styles.templateId,
     }),
-    [value, themeState],
+    [value, themeState, downloadOptions.transparent, downloadOptions.format],
   );
 
   // Get the current size based on selection
@@ -100,21 +103,28 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
   ]);
 
   const handleDownload = async () => {
+    //1. Get size based on current selection 
     const size = getCurrentSize();
-    const validation = validateSize(size.width, size.height);
-
+    //2. apply the multiplier only for the export
+    const finalExportSize = {
+      width: size.width * downloadOptions.multiplier,
+      height: size.height * downloadOptions.multiplier,
+    };
+    // 3. Validate FINAL size
+    const validation = validateSize(finalExportSize.width, finalExportSize.height);
     if (!validation.isValid) {
       setSizeError(validation.error || "Invalid size");
       return;
     }
-
     setIsDownloading(true);
     setSizeError("");
 
     try {
       await downloadQRCode(qrProps, {
         format: downloadOptions.format,
-        size,
+        size: finalExportSize,
+        filename: downloadOptions.filename,
+
       });
       toast.success(
         `QR code downloaded as ${downloadOptions.format.toUpperCase()}`,
@@ -198,6 +208,59 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
               </Select>
             </div>
           </div>
+
+          {/* Size Multiplier Slider Implementation */}
+          <div className="space-y-4 py-2">
+            <div className="flex justify-between items-center">
+              <Label htmlFor="multiplier-slider" className="text-sm text-gray-400">Scale X</Label>
+              <span className="text-sm font-bold bg-secondary px-2 py-1 rounded">
+                {downloadOptions.multiplier}x
+              </span>
+            </div>
+            <div className="flex items-center gap-4">
+              <input
+                id="multiplier-slider"
+                type="range"
+                min="1"
+                max="10"
+                step="1"
+                title="Adjust size multiplier"
+                aria-label="Size Multiplier Slider"
+                className="flex-1 h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-[#a855f7]"
+                value={downloadOptions.multiplier}
+                onChange={(e) => updateDownloadOption("multiplier", Number(e.target.value))}
+              />
+              <div className="flex justify-between items-center w-12 h-12 text-[10px] text-muted-foreground px-1 border-gray-700 rounded-xl bg-transparent font-medium" aria-hidden="true">
+                {downloadOptions.multiplier}
+              </div>
+              <p className="text-xs  italic border-t pt-2 text-gray-500">
+                {getCurrentSize().width * downloadOptions.multiplier} x {getCurrentSize().height * downloadOptions.multiplier} px
+              </p>
+            </div>
+          </div>
+
+          {/* Transparency toggle */}
+          <div className="flex items-center space-x-3 py-2">
+            <div className="relative inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                id="transparent-bg"
+                aria-label="Transparent Background"
+                className="h-5 w-5 rounded border-gray-700 bg-gray-800  accent-primary text-[#10b981] focus:ring-[#10b981]"
+                checked={downloadOptions.transparent}
+                onChange={(e) => updateDownloadOption("transparent", e.target.checked)}
+              />
+            </div>
+            <Label htmlFor="transparent-bg" className="text-sm font-medium cursor-pointer">
+              Transparent Background
+            </Label>
+          </div>
+
+          {downloadOptions.format === "jpg" && downloadOptions.transparent && (
+            <p className="text-[10px] text-amber-500 mt-1 italic">
+              Note: JPG format does not support transparency. Background will be solid.
+            </p>
+          )}
 
           {/* Custom Size Inputs */}
           {downloadOptions.sizePreset === "custom" && (
