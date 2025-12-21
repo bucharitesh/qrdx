@@ -120,6 +120,8 @@ export const downloadOptionsSchema = z.object({
   width: z.number(),
   height: z.number(),
   filename: z.string().optional(),
+  multiplier: z.number().default(1) ,// new Field
+  transparent: z.boolean().default(false)// new Field
 });
 
 export type DownloadOptions = z.infer<typeof downloadOptionsSchema>;

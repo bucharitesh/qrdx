@@ -22,6 +22,7 @@ export type DownloadOptions = {
   format: DownloadFormat;
   size: DownloadSize;
   filename?: string;
+
 };
 
 /**
@@ -204,6 +205,7 @@ export async function downloadQRCode(
   const propsWithSize = {
     ...qrProps,
     size: size.width, // QR codes are square, so we just use width
+
   };
 
   const defaultFilename = `qr-code-${size.width}x${size.height}.${getFileExtension(format)}`;
