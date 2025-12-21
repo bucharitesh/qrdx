@@ -3,7 +3,9 @@
 
 @source "../**/*.{ts,tsx}";
 
-@plugin "@tailwindcss/typography";
+@plugin "@tailwindcss/typography" {
+  className: wysiwyg;
+}
 
 @custom-variant dark (&:is(.dark *));
 
