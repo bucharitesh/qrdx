@@ -41,17 +41,6 @@ export const metadata: Metadata = {
     images: ["https://qrdx.dev/og-image.png"],
   },
   metadataBase: new URL("https://qrdx.dev"),
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-    },
-  },
   icons: {
     icon: [
       { url: "/favicon.ico", sizes: "any" },
