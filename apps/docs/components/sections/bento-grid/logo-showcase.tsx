@@ -1,15 +1,15 @@
 "use client";
 
-import { Crown, Heart, Sparkles, Star, Zap } from "lucide-react";
+import { Icons } from "@/components/icons";
 import { QRCodeSVG } from "qrdx";
 import { useEffect, useState } from "react";
 
 const logos = [
-  { icon: Sparkles, color: "#FFD700" },
-  { icon: Heart, color: "#FF1493" },
-  { icon: Zap, color: "#FF6B35" },
-  { icon: Star, color: "#4169E1" },
-  { icon: Crown, color: "#9333EA" },
+  { icon: Icons.Sparkles, color: "#FFD700" },
+  { icon: Icons.Heart, color: "#FF1493" },
+  { icon: Icons.Zap, color: "#FF6B35" },
+  { icon: Icons.Star, color: "#4169E1" },
+  { icon: Icons.Crown, color: "#9333EA" },
 ];
 
 export function LogoShowcase() {

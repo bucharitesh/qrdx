@@ -4,13 +4,11 @@
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Card } from "@repo/design-system/components/ui/card";
-import { Loader2, X } from "lucide-react";
+import { Icons } from "@/components/icons";
 import { motion } from "motion/react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import Github from "@/assets/github.svg";
-import Google from "@/assets/google.svg";
 import { QrdxLogoAnimation } from "@/components/qrdx-logo-animation";
 import { authClient } from "@/lib/auth-client";
 
@@ -129,7 +127,7 @@ export function AuthDialog({
         onClick={() => onOpenChange(false)}
         className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none"
       >
-        <X className="h-4 w-4" />
+        <Icons.X className="h-4 w-4" />
         <span className="sr-only">Close</span>
       </button>
       <div className="relative z-10 flex p-4 h-full w-full max-w-100 flex-1 flex-col justify-center gap-y-6">
@@ -157,10 +155,10 @@ export function AuthDialog({
                       className="hover:bg-primary/10 hover:text-foreground flex w-full items-center justify-center gap-2"
                       disabled={isGoogleLoading || isGithubLoading}
                     >
-                      <Google className="h-5 w-5" />
+                      <Icons.google className="h-5 w-5" />
                       <span className="font-medium">Google</span>
                       {isGoogleLoading && (
-                        <Loader2 className="h-4 w-4 animate-spin" />
+                        <Icons.Loader className="h-4 w-4 animate-spin" />
                       )}
                     </Button>
                     {lastLoginMethod === "google" && (
@@ -177,10 +175,10 @@ export function AuthDialog({
                       className="hover:bg-primary/10 hover:text-foreground flex w-full items-center justify-center gap-2"
                       disabled={isGoogleLoading || isGithubLoading}
                     >
-                      <Github className="h-5 w-5" />
+                      <Icons.github className="h-5 w-5" />
                       <span className="font-medium">GitHub</span>
                       {isGithubLoading && (
-                        <Loader2 className="h-4 w-4 animate-spin" />
+                        <Icons.Loader className="h-4 w-4 animate-spin" />
                       )}
                     </Button>
                     {lastLoginMethod === "github" && (

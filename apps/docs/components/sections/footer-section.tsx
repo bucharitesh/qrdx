@@ -1,10 +1,10 @@
 "use client";
 
 import { Button } from "@repo/design-system/components/ui/button";
-import { ChevronRightIcon, GithubIcon } from "lucide-react";
+import { Icons } from "@/components/icons";
 import Link from "next/link";
-import Logo from "@/assets/logo.svg";
 import { siteConfig } from "@/config/site";
+import { QrdxLogo } from "../qrdx-logo";
 
 export function FooterSection() {
   const currentYear = new Date().getFullYear();
@@ -14,7 +14,7 @@ export function FooterSection() {
       <div className="flex flex-col md:flex-row md:items-start md:justify-between p-10 gap-8">
         <div className="flex flex-col items-start justify-start gap-y-5 max-w-xs mx-0">
           <Link href="/" className="flex items-center gap-2">
-            <Logo className="size-6 text-secondary-foreground" />
+            <QrdxLogo className="size-6 text-secondary-foreground" />
             <p className="text-xl font-semibold text-secondary-foreground">
               {siteConfig.name}
             </p>
@@ -24,7 +24,7 @@ export function FooterSection() {
           </p>
           <div>
             <Button variant="outline" size={"sm"}>
-              <GithubIcon className="size-3" />
+              <Icons.github className="size-3" />
             </Button>
           </div>
         </div>
@@ -42,7 +42,7 @@ export function FooterSection() {
                   >
                     <Link href={link.url}>{link.title}</Link>
                     <div className="flex size-4 items-center justify-center border border-border rounded translate-x-0 transform opacity-0 transition-all duration-300 ease-out group-hover:translate-x-1 group-hover:opacity-100">
-                      <ChevronRightIcon className="h-4 w-4 " />
+                      <Icons.ArrowRight className="h-4 w-4 " />
                     </div>
                   </li>
                 ))}

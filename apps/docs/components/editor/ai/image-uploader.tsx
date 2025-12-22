@@ -2,7 +2,7 @@
 
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
-import { ImagePlus } from "lucide-react";
+import { Icons } from "@/components/icons";
 import type { ComponentProps } from "react";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { MAX_IMAGE_FILE_SIZE, MAX_IMAGE_FILES } from "@/lib/constants";
@@ -54,7 +54,7 @@ export function ImageUploader({
           disabled={disabled}
           {...props}
         >
-          <ImagePlus />
+          <Icons.ImagePlus />
           <span className="hidden @[350px]/form:inline-flex">Image</span>
         </Button>
       </TooltipWrapper>

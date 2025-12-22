@@ -3,7 +3,7 @@
 
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
-import { X } from "lucide-react";
+import { Icons } from "@/components/icons";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { authClient } from "@/lib/auth-client";
@@ -84,7 +84,7 @@ export function AlertBanner() {
             className="size-4 [&>svg]:size-3"
             onClick={() => setShowBanner(false)}
           >
-            <X />
+            <Icons.X />
           </Button>
         </div>
       </div>

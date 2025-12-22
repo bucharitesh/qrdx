@@ -1,6 +1,6 @@
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
-import { Loader2, Share2 } from "lucide-react";
+import { Icons } from "@/components/icons";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 
 interface ShareButtonProps extends React.ComponentProps<typeof Button> {
@@ -25,9 +25,9 @@ export function ShareButton({
         {...props}
       >
         {isSharing ? (
-          <Loader2 className="size-3.5 animate-spin" />
+          <Icons.Loader className="size-3.5 animate-spin" />
         ) : (
-          <Share2 className="size-3.5" />
+          <Icons.Share2 className="size-3.5" />
         )}
         <span className="hidden text-sm md:block sr-only">Share</span>
       </Button>

@@ -14,7 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@repo/design-system/components/ui/dropdown-menu";
-import { BookLock, Loader2, LogOut, Settings } from "lucide-react";
+import { Icons } from "@/components/icons";
 import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -45,7 +45,7 @@ export function UserProfileDropdown() {
           transition={{ duration: 0.2 }}
           className="flex size-8 items-center justify-center"
         >
-          <Loader2 className="text-muted-foreground size-7 animate-spin" />
+          <Icons.Loader className="text-muted-foreground size-7 animate-spin" />
         </motion.div>
       ) : !session?.user ? (
         <motion.div
@@ -103,18 +103,18 @@ export function UserProfileDropdown() {
               <DropdownMenuSeparator className="bg-border opacity-80" />
               <DropdownMenuItem asChild>
                 <Link href="/settings">
-                  <Settings /> Settings
+                  <Icons.Settings /> Settings
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator className="bg-border opacity-80" />
               <DropdownMenuItem asChild>
                 <Link href="/legal/privacy-policy">
-                  <BookLock />
+                  <Icons.BookLock />
                   Privacy Policy
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem onClick={handleLogOut}>
-                <LogOut /> Log out
+                <Icons.LogOut /> Log out
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

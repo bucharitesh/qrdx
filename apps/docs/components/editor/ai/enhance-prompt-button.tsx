@@ -2,7 +2,7 @@
 
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
-import { Sparkles, StopCircle } from "lucide-react";
+import { Icons } from "@/components/icons";
 import type { ComponentProps } from "react";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 
@@ -34,7 +34,7 @@ export function EnhancePromptButton({
           )}
           {...props}
         >
-          <StopCircle className="size-4" />
+          <Icons.StopCircle className="size-4" />
           <span className="hidden @[350px]/form:inline-flex">Stop</span>
         </Button>
       </TooltipWrapper>
@@ -55,7 +55,7 @@ export function EnhancePromptButton({
         )}
         {...props}
       >
-        <Sparkles className="size-4" />
+        <Icons.Sparkles className="size-4" />
         <span className="hidden @[350px]/form:inline-flex">Enhance</span>
       </Button>
     </TooltipWrapper>

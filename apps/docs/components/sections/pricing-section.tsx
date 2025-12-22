@@ -2,7 +2,7 @@
 
 import { toast } from "@repo/design-system";
 import { cn } from "@repo/design-system/lib/utils";
-import { Loader } from "lucide-react";
+import { Icons } from "@/components/icons";
 import { motion } from "motion/react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
@@ -239,7 +239,7 @@ export function PricingSection() {
                 >
                   {isPending && pendingTier === tier.name ? (
                     <span className="flex items-center gap-2">
-                      <Loader className="size-4 animate-spin" />
+                      <Icons.Loader className="size-4 animate-spin" />
                       Redirecting...
                     </span>
                   ) : (

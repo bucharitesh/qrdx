@@ -10,7 +10,7 @@ import {
   ResponsiveDialogHeader,
   ResponsiveDialogTitle,
 } from "@repo/design-system/components/ui/revola";
-import { Check, Copy } from "lucide-react";
+import { Icons } from "@/components/icons";
 import { useState } from "react";
 
 interface QRShareDialogProps {
@@ -48,12 +48,12 @@ export function QRShareDialog({ open, onOpenChange, url }: QRShareDialogProps) {
             <Button size="sm" onClick={handleCopy} className="shrink-0">
               {copied ? (
                 <>
-                  <Check className="h-4 w-4" />
+                  <Icons.Check className="h-4 w-4" />
                   Copied
                 </>
               ) : (
                 <>
-                  <Copy className="h-4 w-4" />
+                  <Icons.Copy className="h-4 w-4" />
                   Copy
                 </>
               )}

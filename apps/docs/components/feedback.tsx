@@ -6,7 +6,7 @@ import {
   Collapsible,
   CollapsibleContent,
 } from "fumadocs-ui/components/ui/collapsible";
-import { ThumbsDown, ThumbsUp } from "lucide-react";
+import { Icons } from "@/components/icons";
 import { usePathname } from "next/navigation";
 import { type SyntheticEvent, useEffect, useState, useTransition } from "react";
 
@@ -106,7 +106,7 @@ export function Feedback({
             setOpinion("good");
           }}
         >
-          <ThumbsUp />
+          <Icons.ThumbsUp />
           Good
         </button>
         <button
@@ -120,7 +120,7 @@ export function Feedback({
             setOpinion("bad");
           }}
         >
-          <ThumbsDown />
+          <Icons.ThumbsDown />
           Bad
         </button>
       </div>

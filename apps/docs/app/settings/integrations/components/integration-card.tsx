@@ -10,12 +10,8 @@ import {
   CardTitle,
 } from "@repo/design-system/components/ui/card";
 import {
-  AlertCircle,
-  CheckCircle,
-  ExternalLink,
-  Loader2,
-  XCircle,
-} from "lucide-react";
+  Icons
+} from "@/components/icons";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -124,21 +120,21 @@ export function IntegrationCard({
       case "active":
         return (
           <Badge variant="default" className="gap-1">
-            <CheckCircle className="size-3" />
+            <Icons.CheckCircle className="size-3" />
             Connected
           </Badge>
         );
       case "error":
         return (
           <Badge variant="destructive" className="gap-1">
-            <XCircle className="size-3" />
+            <Icons.XCircle className="size-3" />
             Error
           </Badge>
         );
       case "disconnected":
         return (
           <Badge variant="secondary" className="gap-1">
-            <AlertCircle className="size-3" />
+            <Icons.AlertCircle className="size-3" />
             Disconnected
           </Badge>
         );
@@ -165,7 +161,7 @@ export function IntegrationCard({
                   className="size-full object-contain"
                 />
               ) : (
-                <ExternalLink className="text-primary size-5" />
+                <Icons.ExternalLink className="text-primary size-5" />
               )}
             </div>
             <div className="flex-1 min-w-0">
@@ -187,7 +183,7 @@ export function IntegrationCard({
                     variant="outline"
                     size="sm"
                   >
-                    {isLoading && <Loader2 className="mr-2 size-4 animate-spin" />}
+                    {isLoading && <Icons.Loader className="mr-2 size-4 animate-spin" />}
                     Reconnect
                   </Button>
                 )}
@@ -197,7 +193,7 @@ export function IntegrationCard({
                   variant={status === "error" ? "destructive" : "outline"}
                   size="sm"
                 >
-                  {isLoading && <Loader2 className="mr-2 size-4 animate-spin" />}
+                  {isLoading && <Icons.Loader className="mr-2 size-4 animate-spin" />}
                   Disconnect
                 </Button>
               </>
@@ -208,7 +204,7 @@ export function IntegrationCard({
                 size="sm"
                 variant={isConfigured ? "default" : "secondary"}
               >
-                {isLoading && <Loader2 className="mr-2 size-4 animate-spin" />}
+                {isLoading && <Icons.Loader className="mr-2 size-4 animate-spin" />}
                 {isConfigured ? "Connect" : "Not Configured"}
               </Button>
             )}

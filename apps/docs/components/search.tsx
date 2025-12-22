@@ -15,7 +15,7 @@ import {
   type SharedProps,
 } from "fumadocs-ui/components/dialog/search";
 import { useTreeContext } from "fumadocs-ui/contexts/tree";
-import { ArrowRight } from "lucide-react";
+import { Icons } from "@/components/icons";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 
@@ -52,7 +52,7 @@ export default function CustomSearchDialog(props: SharedProps) {
         type: "action",
         node: (
           <div className="inline-flex items-center gap-2 text-fd-muted-foreground">
-            <ArrowRight className="size-4" />
+            <Icons.ArrowRight className="size-4" />
             <p>
               Jump to{" "}
               <span className="font-medium text-fd-foreground">

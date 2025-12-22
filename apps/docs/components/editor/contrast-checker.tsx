@@ -17,7 +17,7 @@ import {
   TooltipTrigger,
 } from "@repo/design-system/components/ui/tooltip";
 import { cn } from "@repo/design-system/lib/utils";
-import { AlertTriangle, Check, Contrast, Moon, Sun } from "lucide-react";
+import { Icons } from "@/components/icons";
 import { useTheme } from "next-themes";
 import type { ColorConfig } from "qrdx/types";
 import { isGradient, normalizeColorConfig } from "qrdx/types";
@@ -176,7 +176,7 @@ const ContrastChecker = ({ currentStyles, disabled }: ContrastCheckerProps) => {
             className="justify-start px-2"
             disabled={disabled}
           >
-            <Contrast className="h-4 w-4" />
+            <Icons.contrast className="h-4 w-4" />
           </Button>
         </ResponsiveDialogTrigger>
       </TooltipWrapper>
@@ -208,9 +208,9 @@ const ContrastChecker = ({ currentStyles, disabled }: ContrastCheckerProps) => {
                   onClick={() => setTheme(theme === "light" ? "dark" : "light")}
                 >
                   {theme === "light" ? (
-                    <Sun className="h-3.5 w-3.5" />
+                    <Icons.Sun className="h-3.5 w-3.5" />
                   ) : (
-                    <Moon className="h-3.5 w-3.5" />
+                    <Icons.Moon className="h-3.5 w-3.5" />
                   )}
                 </Button>
               </TooltipTrigger>
@@ -231,7 +231,7 @@ const ContrastChecker = ({ currentStyles, disabled }: ContrastCheckerProps) => {
               variant={filter === "issues" ? "default" : "outline"}
               onClick={() => setFilter("issues")}
             >
-              <AlertTriangle className={cn("mr-1 h-3 w-3")} />
+              <Icons.AlertTriangle className={cn("mr-1 h-3 w-3")} />
               Issues ({totalIssues})
             </Button>
           </div>
@@ -272,7 +272,7 @@ const ContrastChecker = ({ currentStyles, disabled }: ContrastCheckerProps) => {
                             >
                               {pair.label}
                               {!isValid && (
-                                <AlertTriangle className="ml-1 size-3.5" />
+                                <Icons.AlertTriangle className="ml-1 size-3.5" />
                               )}
                             </h3>
                             <Badge
@@ -286,12 +286,12 @@ const ContrastChecker = ({ currentStyles, disabled }: ContrastCheckerProps) => {
                             >
                               {isValid ? (
                                 <>
-                                  <Check className="h-3 w-3" />
+                                  <Icons.Check className="h-3 w-3" />
                                   {contrastRatio}
                                 </>
                               ) : (
                                 <>
-                                  <AlertTriangle className="h-3 w-3" />
+                                  <Icons.AlertTriangle className="h-3 w-3" />
                                   {contrastRatio}
                                 </>
                               )}

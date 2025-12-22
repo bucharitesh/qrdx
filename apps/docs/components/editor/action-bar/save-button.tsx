@@ -1,6 +1,6 @@
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
-import { Heart, Loader2 } from "lucide-react";
+import { Icons } from "@/components/icons";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 
 interface SaveButtonProps extends React.ComponentProps<typeof Button> {
@@ -23,9 +23,9 @@ export function SaveButton({
         {...props}
       >
         {isSaving ? (
-          <Loader2 className="size-3.5 animate-spin" />
+          <Icons.Loader className="size-3.5 animate-spin" />
         ) : (
-          <Heart className="size-3.5" />
+          <Icons.Heart className="size-3.5" />
         )}
         <span className="hidden text-sm md:block sr-only">Save</span>
       </Button>

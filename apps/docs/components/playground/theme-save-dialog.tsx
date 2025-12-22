@@ -19,7 +19,7 @@ import {
   ResponsiveDialogHeader,
   ResponsiveDialogTitle,
 } from "@repo/design-system/components/ui/revola";
-import { Loader2 } from "lucide-react";
+import { Icons } from "@/components/icons";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -118,7 +118,7 @@ export function ThemeSaveDialog({
           >
             {isSaving || form.formState.isSubmitting ? (
               <>
-                <Loader2 className="mr-1 size-4 animate-spin" />
+                <Icons.Loader className="mr-1 size-4 animate-spin" />
                 Saving
               </>
             ) : (

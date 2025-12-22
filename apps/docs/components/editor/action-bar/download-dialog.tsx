@@ -25,7 +25,7 @@ import {
   SelectValue,
 } from "@repo/design-system/components/ui/select";
 import { Slider } from "@repo/design-system/components/ui/slider";
-import { DownloadIcon } from "lucide-react";
+import { Icons } from "@/components/icons";
 import {
   type DownloadSize,
   downloadQRCode,
@@ -362,7 +362,7 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
             disabled={isDownloading || !!sizeError}
             className="w-full"
           >
-            <DownloadIcon className="h-4 w-4" />
+            <Icons.DownloadIcon className="h-4 w-4" />
             {isDownloading
               ? "Downloading..."
               : `Download ${downloadOptions.format.toUpperCase()}`}

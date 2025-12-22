@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@repo/design-system/components/ui/button";
-import { Redo, Undo } from "lucide-react";
+import { Icons } from "@/components/icons";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { useQREditorStore } from "@/store/editor-store";
 
@@ -23,7 +23,7 @@ export function UndoRedoButtons({
           {...props}
           onClick={undo}
         >
-          <Undo className="h-4 w-4" />
+          <Icons.Undo className="h-4 w-4" />
         </Button>
       </TooltipWrapper>
 
@@ -35,7 +35,7 @@ export function UndoRedoButtons({
           {...props}
           onClick={redo}
         >
-          <Redo className="h-4 w-4" />
+          <Icons.Redo className="h-4 w-4" />
         </Button>
       </TooltipWrapper>
     </div>

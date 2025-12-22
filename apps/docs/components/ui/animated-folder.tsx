@@ -216,7 +216,7 @@ export function AnimatedFolder({
   );
 }
 
-import { ChevronLeft, ChevronRight, ExternalLink, X } from "lucide-react";
+import { Icons } from "@/components/icons";
 import type React from "react";
 import { useCallback, useEffect, useLayoutEffect } from "react";
 
@@ -426,7 +426,7 @@ export function ImageLightbox({
           transition: "opacity 300ms ease-out, transform 300ms ease-out",
         }}
       >
-        <X className="w-4 h-4" strokeWidth={2.5} />
+        <Icons.X className="w-4 h-4" strokeWidth={2.5} />
       </button>
 
       <button
@@ -456,7 +456,7 @@ export function ImageLightbox({
             "opacity 300ms ease-out 150ms, transform 300ms ease-out 150ms",
         }}
       >
-        <ChevronLeft className="w-5 h-5" strokeWidth={2.5} />
+        <Icons.ChevronLeft className="w-5 h-5" strokeWidth={2.5} />
       </button>
 
       <button
@@ -486,7 +486,7 @@ export function ImageLightbox({
             "opacity 300ms ease-out 150ms, transform 300ms ease-out 150ms",
         }}
       >
-        <ChevronRight className="w-5 h-5" strokeWidth={2.5} />
+        <Icons.ChevronRight className="w-5 h-5" strokeWidth={2.5} />
       </button>
 
       <div
@@ -601,7 +601,7 @@ export function ImageLightbox({
                 )}
               >
                 <span>View</span>
-                <ExternalLink className="w-3.5 h-3.5" />
+                <Icons.ExternalLink className="w-3.5 h-3.5" />
               </button>
             </div>
           </div>

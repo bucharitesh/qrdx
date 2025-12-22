@@ -1,7 +1,7 @@
 /** biome-ignore-all lint/correctness/useExhaustiveDependencies: <explanation> */
 "use client";
 
-import { ImageIcon, Sparkles } from "lucide-react";
+import { Icons } from "@/components/icons";
 import { useEffect, useReducer } from "react";
 import { PillActionButton } from "@/components/editor/ai/pill-action-button";
 import { MAX_IMAGE_FILE_SIZE } from "@/lib/constants";
@@ -79,7 +79,7 @@ export function SuggestedPillActions({
           disabled={isGenerating}
           style={{ display: "none" }}
         />
-        <ImageIcon /> From an Image
+        <Icons.ImageIcon /> From an Image
       </PillActionButton>
 
       {Object.entries(PROMPTS).map(([key, { label, prompt }]) => (
@@ -88,7 +88,7 @@ export function SuggestedPillActions({
           onClick={() => handleSetPrompt(prompt)}
           disabled={isGenerating}
         >
-          <Sparkles /> {label}
+          <Icons.Sparkles /> {label}
         </PillActionButton>
       ))}
     </>

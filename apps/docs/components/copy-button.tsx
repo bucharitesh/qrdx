@@ -2,7 +2,7 @@
 
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
-import { Copy, CopyCheck } from "lucide-react";
+import { Icons } from "@/components/icons";
 import type { ComponentProps } from "react";
 import { useCopyToClipboard } from "@/lib/hooks/use-copy-clipboard";
 import { TooltipWrapper } from "./tooltip-wrapper";
@@ -32,7 +32,7 @@ export function CopyButton({
         onClick={() => copyToClipboard(textToCopy, successMessage)}
         {...props}
       >
-        {hasCopied ? <CopyCheck /> : <Copy />}
+        {hasCopied ? <Icons.CopyCheck /> : <Icons.Copy />}
         <span className="sr-only">Copy</span>
       </Button>
     </TooltipWrapper>

@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Sparkles } from "lucide-react";
+import { Icons } from "@/components/icons";
 import { QRCodeSVG } from "qrdx";
 import { useEffect, useState } from "react";
 
@@ -85,7 +85,7 @@ export function AIThemeGenerator() {
             animate={{ scale: 1, rotate: 180 }}
             exit={{ scale: 0 }}
           >
-            <Sparkles className="w-6 h-6 text-yellow-500" />
+            <Icons.Sparkles className="w-6 h-6 text-yellow-500" />
           </motion.div>
         )}
       </div>
@@ -99,7 +99,7 @@ export function AIThemeGenerator() {
           }}
           transition={{ duration: 0.5 }}
         >
-          <Sparkles
+          <Icons.Sparkles
             className="w-3.5 h-3.5"
             style={{ color: currentTheme.fgColor }}
           />

@@ -1,6 +1,6 @@
 "use client";
 
-import { Globe } from "lucide-react";
+import { Icons } from "@/components/icons";
 import lottieAnimation from "@/public/lottie.json";
 import {
   AIThemeGenerator,
@@ -53,7 +53,7 @@ function BentoGridSection() {
             padding="p-6"
             title="Patterns"
             description="Flexible patterns that can be customized."
-            icon={<Globe className="w-5 h-5" />}
+            icon={<Icons.Globe className="w-5 h-5" />}
             contentClassName="flex-1 flex items-center justify-center"
             footerClassName="mt-auto relative z-20 p-2"
           >

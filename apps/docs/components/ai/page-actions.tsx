@@ -8,12 +8,8 @@ import {
 } from "fumadocs-ui/components/ui/popover";
 import { useCopyButton } from "fumadocs-ui/utils/use-copy-button";
 import {
-  Check,
-  ChevronDown,
-  Copy,
-  ExternalLinkIcon,
-  MessageCircleIcon,
-} from "lucide-react";
+  Icons
+} from "@/components/icons";
 import { useMemo, useState } from "react";
 
 const cache = new Map<string, string>();
@@ -62,7 +58,7 @@ export function LLMCopyButton({
       )}
       onClick={onClick}
     >
-      {checked ? <Check /> : <Copy />}
+      {checked ? <Icons.Check /> : <Icons.Copy />}
       Copy Markdown
     </button>
   );
@@ -208,7 +204,7 @@ export function ViewOptions({
         href: `https://t3.chat/new?${new URLSearchParams({
           q,
         })}`,
-        icon: <MessageCircleIcon />,
+        icon: <Icons.MessageCircle />,
       },
     ];
   }, [githubUrl, markdownUrl]);
@@ -225,7 +221,7 @@ export function ViewOptions({
         )}
       >
         Open
-        <ChevronDown className="size-3.5 text-fd-muted-foreground" />
+        <Icons.ChevronDown className="size-3.5 text-fd-muted-foreground" />
       </PopoverTrigger>
       <PopoverContent className="flex flex-col">
         {items.map((item) => (
@@ -238,7 +234,7 @@ export function ViewOptions({
           >
             {item.icon}
             {item.title}
-            <ExternalLinkIcon className="text-fd-muted-foreground size-3.5 ms-auto" />
+            <Icons.ExternalLink className="text-fd-muted-foreground size-3.5 ms-auto" />
           </a>
         ))}
       </PopoverContent>

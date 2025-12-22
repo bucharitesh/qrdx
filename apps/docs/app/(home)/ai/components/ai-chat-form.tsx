@@ -2,7 +2,7 @@
 
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
-import { ArrowUp, Loader, StopCircle } from "lucide-react";
+import { Icons } from "@/components/icons";
 import { AIChatFormBody } from "@/components/editor/ai/ai-chat-form-body";
 import { AlertBanner } from "@/components/editor/ai/alert-banner";
 import { EnhancePromptButton } from "@/components/editor/ai/enhance-prompt-button";
@@ -154,7 +154,7 @@ export function AIChatForm({
                   "@max-[350px]/form:w-8",
                 )}
               >
-                <StopCircle />
+                <Icons.StopCircle />
                 <span className="hidden @[350px]/form:inline-flex">Stop</span>
               </Button>
             ) : (
@@ -171,9 +171,9 @@ export function AIChatForm({
                 }
               >
                 {isGeneratingTheme ? (
-                  <Loader className="animate-spin" />
+                  <Icons.Loader className="animate-spin" />
                 ) : (
-                  <ArrowUp />
+                  <Icons.ArrowUp />
                 )}
               </Button>
             )}

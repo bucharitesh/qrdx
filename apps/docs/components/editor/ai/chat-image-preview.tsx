@@ -6,7 +6,7 @@ import {
   ResponsiveDialogTrigger,
 } from "@repo/design-system/components/ui/revola";
 import { cn } from "@repo/design-system/lib/utils";
-import { ImageIcon } from "lucide-react";
+import { Icons } from "@/components/icons";
 import Image from "next/image";
 import type { ComponentProps } from "react";
 
@@ -39,7 +39,7 @@ export function ChatImagePreview({
           />
 
           <div className="bg-accent/75 text-accent-foreground border-border/50! absolute right-2 bottom-2 z-1 flex items-center justify-end rounded-lg border p-1 opacity-0 backdrop-blur transition-opacity group-hover/preview:opacity-100">
-            <ImageIcon className="size-3.5" />
+            <Icons.ImageIcon className="size-3.5" />
           </div>
         </div>
       </ResponsiveDialogTrigger>

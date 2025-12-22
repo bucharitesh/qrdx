@@ -20,14 +20,7 @@ import {
   DropdownMenuTrigger,
 } from "@repo/design-system/components/ui/dropdown-menu";
 import { cn } from "@repo/design-system/lib/utils";
-import {
-  Copy,
-  ExternalLink,
-  Loader2,
-  MoreVertical,
-  Trash2,
-  Zap,
-} from "lucide-react";
+import { Icons } from "@/components/icons";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { QRCode } from "qrdx";
@@ -138,22 +131,22 @@ export function QRThemeCard({ theme, className }: QRThemeCardProps) {
         <DropdownMenu>
           <DropdownMenuTrigger>
             <div className="hover:bg-accent rounded-md p-2">
-              <MoreVertical className="text-muted-foreground h-4 w-4" />
+              <Icons.MoreVertical className="text-muted-foreground h-4 w-4" />
             </div>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="bg-popover w-48">
             <DropdownMenuItem onClick={handleQuickApply} className="gap-2">
-              <Zap className="h-4 w-4" />
+              <Icons.Zap className="h-4 w-4" />
               Quick Apply
             </DropdownMenuItem>
             <DropdownMenuItem asChild className="gap-2">
               <Link href={`/playground/${theme.id}`} target="_blank">
-                <ExternalLink className="h-4 w-4" />
+                <Icons.ExternalLink className="h-4 w-4" />
                 Open Theme
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem onClick={handleShare} className="gap-2">
-              <Copy className="h-4 w-4" />
+              <Icons.Copy className="h-4 w-4" />
               Copy URL
             </DropdownMenuItem>
             <DropdownMenuSeparator className="mx-2" />
@@ -163,9 +156,9 @@ export function QRThemeCard({ theme, className }: QRThemeCardProps) {
               disabled={deleteThemeMutation.isPending}
             >
               {deleteThemeMutation.isPending ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <Icons.Loader className="h-4 w-4 animate-spin" />
               ) : (
-                <Trash2 className="h-4 w-4" />
+                <Icons.Trash className="h-4 w-4" />
               )}
               Delete Theme
             </DropdownMenuItem>
@@ -193,7 +186,7 @@ export function QRThemeCard({ theme, className }: QRThemeCardProps) {
             >
               {deleteThemeMutation.isPending ? (
                 <>
-                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  <Icons.Loader className="h-4 w-4 animate-spin mr-2" />
                   Deleting...
                 </>
               ) : (

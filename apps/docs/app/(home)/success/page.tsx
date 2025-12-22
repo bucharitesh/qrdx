@@ -1,5 +1,5 @@
 import { Button } from "@repo/design-system/components/ui/button";
-import { CheckCircle } from "lucide-react";
+import { Icons } from "@/components/icons";
 import Link from "next/link";
 
 export default function SuccessPage() {
@@ -7,7 +7,7 @@ export default function SuccessPage() {
     <div className="flex min-h-screen items-center justify-center p-4">
       <div className="mx-auto max-w-md space-y-6 text-center">
         <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-green-100 dark:bg-green-900">
-          <CheckCircle className="h-12 w-12 text-green-600 dark:text-green-400" />
+          <Icons.CheckCircle className="h-12 w-12 text-green-600 dark:text-green-400" />
         </div>
         <div className="space-y-2">
           <h1 className="text-3xl font-bold">Welcome to Pro! 🎉</h1>

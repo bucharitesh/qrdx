@@ -1,12 +1,12 @@
 /** biome-ignore-all lint/a11y/noRedundantAlt: false positive */
 /** biome-ignore-all lint/suspicious/noArrayIndexKey: false positive */
 import { cn } from "@repo/design-system/lib/utils";
-import Logo from "@/assets/logo.svg";
 import type { AIPromptData, ChatMessage } from "@/types/ai";
 import { buildAIPromptRender } from "@/utils/ai/ai-prompt";
 import { LoadingLogo } from "./loading-logo";
 import { MessageActions } from "./message-actions";
 import { StreamText } from "./stream-text";
+import { QrdxLogo } from "@/components/qrdx-logo";
 
 type MessageProps = {
   message: ChatMessage;
@@ -102,7 +102,7 @@ function AssistantMessage({
             "border-border/50! bg-primary relative flex size-6 shrink-0 items-center justify-center rounded-full border select-none",
           )}
         >
-          <Logo className={cn("text-primary-foreground size-full p-1")} />
+          <QrdxLogo className={cn("text-primary-foreground size-full p-1")} />
         </div>
       )}
 
