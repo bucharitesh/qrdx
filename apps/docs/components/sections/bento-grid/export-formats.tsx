@@ -1,30 +1,30 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { Code2, Download, FileCode, Image } from "lucide-react";
+import { Icons } from "@/components/icons";
 import { useEffect, useState } from "react";
 
 const formats = [
   {
-    icon: FileCode,
+    icon: Icons.FileCode,
     name: "SVG",
     color: "#FF6B35",
     description: "Vector",
   },
   {
-    icon: Image,
+    icon: Icons.Image,
     name: "PNG",
     color: "#4169E1",
     description: "Raster",
   },
   {
-    icon: Code2,
+    icon: Icons.Code2,
     name: "React",
     color: "#61DAFB",
     description: "Component",
   },
   {
-    icon: Download,
+    icon: Icons.Download,
     name: "Export",
     color: "#10B981",
     description: "Download",

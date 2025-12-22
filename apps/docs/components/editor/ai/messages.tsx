@@ -1,9 +1,8 @@
 /** biome-ignore-all lint/correctness/useExhaustiveDependencies: false positive */
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
-import { X } from "lucide-react";
 import { useEffect, useMemo, useRef } from "react";
-import Logo from "@/assets/logo.svg";
+import { Icons } from "@/components/icons";
 import {
   Conversation,
   ConversationContent,
@@ -22,6 +21,7 @@ import {
 } from "@/utils/ai/messages";
 import { LoadingLogo } from "./loading-logo";
 import Message from "./message";
+import { QrdxLogo } from "@/components/qrdx-logo";
 
 type ChatMessagesProps = {
   messages: ChatMessage[];
@@ -148,7 +148,7 @@ export function Messages({
                     "border-border/50! bg-destructive relative flex size-6 shrink-0 items-center justify-center rounded-full border select-none",
                   )}
                 >
-                  <Logo
+                  <QrdxLogo
                     className={cn(
                       "fill-destructive-foreground size-full p-0.5",
                     )}
@@ -169,7 +169,7 @@ export function Messages({
                       className="invisible ml-auto size-4 shrink-0 group-hover/error-banner:visible [&>svg]:size-3"
                       onClick={clearError}
                     >
-                      <X />
+                      <Icons.X />
                     </Button>
                   </TooltipWrapper>
                 </div>

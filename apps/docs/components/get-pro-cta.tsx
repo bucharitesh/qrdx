@@ -2,7 +2,7 @@
 
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
-import { Gem } from "lucide-react";
+import { Icons } from "@/components/icons";
 import Link from "next/link";
 import { useSubscription } from "@/lib/hooks/use-subscription";
 
@@ -27,7 +27,7 @@ export function GetProCTA({ className, ...props }: GetProCTAProps) {
       {...props}
     >
       <Link href="/pricing">
-        <Gem className="h-4 w-4" />
+        <Icons.Gem className="h-4 w-4" />
         Get Pro
       </Link>
     </Button>

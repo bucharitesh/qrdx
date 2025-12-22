@@ -1,5 +1,5 @@
 import { Button } from "@repo/design-system/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { Icons } from "@/components/icons";
 import Link from "next/link";
 import { Header } from "@/components/header";
 import { UserSettingsProvider } from "@/lib/hooks/use-user-settings";
@@ -18,7 +18,7 @@ export default async function SettingsLayout({
           <div className="flex flex-col gap-2">
             <Link href="/playground" className="w-fit">
               <Button variant="outline">
-                <ArrowLeft /> Back
+                <Icons.ArrowLeft /> Back
               </Button>
             </Link>
             <SettingsSidebar />

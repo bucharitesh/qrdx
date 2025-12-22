@@ -24,15 +24,8 @@ import {
 } from "@repo/design-system/components/ui/tooltip";
 import { cn } from "@repo/design-system/lib/utils";
 import {
-  ArrowLeft,
-  ArrowRight,
-  Check,
-  ChevronDown,
-  Heart,
-  Search,
-  Settings,
-  Shuffle,
-} from "lucide-react";
+  Icons
+} from "@/components/icons";
 import Link from "next/link";
 import type { ColorConfig } from "qrdx";
 import { normalizeColorConfig } from "qrdx/types";
@@ -150,7 +143,7 @@ const ThemeControls = () => {
           className="size-6 p-1"
           onClick={randomize}
         >
-          <Shuffle className="h-3.5 w-3.5" />
+          <Icons.Shuffle className="h-3.5 w-3.5" />
         </Button>
       </TooltipWrapper>
     </div>
@@ -181,9 +174,9 @@ const ThemeCycleButton: React.FC<ThemeCycleButtonProps> = ({
           {...props}
         >
           {direction === "prev" ? (
-            <ArrowLeft className="h-4 w-4" />
+            <Icons.ArrowLeft className="h-4 w-4" />
           ) : (
-            <ArrowRight className="h-4 w-4" />
+            <Icons.ArrowRight className="h-4 w-4" />
           )}
         </Button>
       </TooltipTrigger>
@@ -385,7 +378,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                 isSavedTheme(currentPresetName) &&
                 !hasUnsavedChanges() && (
                   <div className="bg-muted rounded-full p-1">
-                    <Heart
+                    <Icons.Heart
                       className="size-1"
                       stroke="var(--muted)"
                       fill="var(--muted-foreground)"
@@ -400,14 +393,14 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                 )}
               </span>
             </div>
-            <ChevronDown className="size-4 shrink-0" />
+            <Icons.ChevronDown className="size-4 shrink-0" />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-[300px] p-0" align="center">
           <Command className="h-100 w-full">
             <div className="flex w-full items-center">
               <div className="flex w-full items-center border-b px-3 py-1">
-                <Search className="size-4 shrink-0 opacity-50" />
+                <Icons.Search className="size-4 shrink-0 opacity-50" />
                 <Input
                   placeholder="Search themes..."
                   className="border-0 shadow-none bg-transparent! focus-visible:ring-0 focus-visible:ring-offset-0"
@@ -441,7 +434,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                             className="text-muted-foreground hover:text-foreground flex items-center gap-1.5 p-0 text-xs"
                           >
                             <span>Manage</span>
-                            <Settings className="size-3.5!" />
+                            <Icons.Settings className="size-3.5!" />
                           </Button>
                         </Link>
                       </div>
@@ -477,7 +470,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                               )}
                           </div>
                           {presetName === currentPresetName && (
-                            <Check className="h-4 w-4 shrink-0 opacity-70" />
+                            <Icons.Check className="h-4 w-4 shrink-0 opacity-70" />
                           )}
                         </CommandItem>
                       ))}
@@ -490,7 +483,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                 <>
                   <div className="text-muted-foreground flex items-center gap-1.5 px-3 py-2 text-xs font-medium">
                     <div className="bg-muted flex items-center gap-1 rounded-md border px-2 py-0.5">
-                      <Heart className="fill-muted-foreground size-3" />
+                      <Icons.Heart className="fill-muted-foreground size-3" />
                       <span>Save</span>
                     </div>
                     <span className="text-muted-foreground">
@@ -530,7 +523,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                           )}
                       </div>
                       {presetName === currentPresetName && (
-                        <Check className="h-4 w-4 shrink-0 opacity-70" />
+                        <Icons.Check className="h-4 w-4 shrink-0 opacity-70" />
                       )}
                     </CommandItem>
                   ))}

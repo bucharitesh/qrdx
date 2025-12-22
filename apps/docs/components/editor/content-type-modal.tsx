@@ -12,42 +12,6 @@ import {
 } from "@repo/design-system/components/ui/revola";
 import { ScrollArea } from "@repo/design-system/components/ui/scroll-area";
 import { cn } from "@repo/design-system/lib/utils";
-import {
-  AtSign,
-  Bitcoin,
-  Calendar,
-  Camera,
-  ClipboardCheck,
-  CreditCard,
-  DollarSign,
-  FileText,
-  Hexagon,
-  Image,
-  Instagram,
-  Link,
-  Link2,
-  Linkedin,
-  type LucideIcon,
-  Mail,
-  MapPin,
-  MessageCircle,
-  MessageSquare,
-  Music,
-  Phone,
-  Search,
-  Share2,
-  ShoppingBag,
-  ShoppingCart,
-  Sparkles,
-  Star,
-  Store,
-  Twitter,
-  UserCircle,
-  Video,
-  Wifi,
-  Wrench,
-  Youtube,
-} from "lucide-react";
 import * as React from "react";
 import { Carousel, CarouselItem } from "@/components/carousel";
 import { ContentTypeCard } from "@/components/editor/content-type-card";
@@ -58,41 +22,43 @@ import {
   CONTENT_TYPES_METADATA,
   FOR_YOU_SECTIONS,
 } from "@/types/qr-content";
+import { LucideIcon } from "lucide-react";
+import { Icons } from "@/components/icons";
 
 // Map icon names to actual icon components
 const iconMap: Record<string, LucideIcon> = {
-  AtSign,
-  Bitcoin,
-  Calendar,
-  Camera,
-  ClipboardCheck,
-  CreditCard,
-  DollarSign,
-  FileText,
-  Hexagon,
-  Image,
-  Instagram,
-  Link,
-  Link2,
-  Linkedin,
-  Mail,
-  MapPin,
-  MessageCircle,
-  MessageSquare,
-  Music,
-  Phone,
-  Share2,
-  ShoppingBag,
-  ShoppingCart,
-  Sparkles,
-  Star,
-  Store,
-  Twitter,
-  UserCircle,
-  Video,
-  Wifi,
-  Wrench,
-  Youtube,
+  AtSign: Icons.AtSign,
+  Bitcoin: Icons.Bitcoin,
+  Calendar: Icons.Calendar,
+  Camera: Icons.Camera,
+  ClipboardCheck: Icons.ClipboardCheck,
+  CreditCard: Icons.CreditCard,
+  DollarSign: Icons.DollarSign,
+  FileText: Icons.FileText,
+  Hexagon: Icons.Hexagon,
+  Image: Icons.Image,
+  Instagram: Icons.Instagram,
+  Link: Icons.Link,
+  Link2: Icons.Link2,
+  Linkedin: Icons.Linkedin,
+  Mail: Icons.Mail,
+  MapPin: Icons.MapPin,
+  MessageCircle: Icons.MessageCircle,
+  MessageSquare: Icons.MessageSquare,
+  Music: Icons.Music,
+  Phone: Icons.Phone,
+  Share2: Icons.Share2,
+  ShoppingBag: Icons.ShoppingBag,
+  ShoppingCart: Icons.ShoppingCart,
+  Sparkles: Icons.Sparkles,
+  Star: Icons.Star,
+  Store: Icons.Store,
+  Twitter: Icons.Twitter,
+  UserCircle: Icons.UserCircle,
+  Video: Icons.Video,
+  Wifi: Icons.Wifi,
+  Wrench: Icons.Wrench,
+  Youtube: Icons.Youtube,
 };
 
 interface ContentTypeModalProps {
@@ -144,7 +110,7 @@ export function ContentTypeModal({
               {/* Right: Search bar (aligns with content) */}
               <div className="flex-1 px-2">
                 <div className="relative w-full">
-                  <Search className="text-muted-foreground absolute left-3 top-1/2 size-4 -translate-y-1/2" />
+                  <Icons.Search className="text-muted-foreground absolute left-3 top-1/2 size-4 -translate-y-1/2" />
                   <Input
                     placeholder="What would you like to create?"
                     value={searchQuery}
@@ -159,7 +125,7 @@ export function ContentTypeModal({
           {/* Search - Mobile only */}
           <div className="px-4 py-3 md:hidden">
             <div className="relative">
-              <Search className="text-muted-foreground absolute left-3 top-1/2 size-4 -translate-y-1/2" />
+              <Icons.Search className="text-muted-foreground absolute left-3 top-1/2 size-4 -translate-y-1/2" />
               <Input
                 placeholder="What would you like to create?"
                 value={searchQuery}

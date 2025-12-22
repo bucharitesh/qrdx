@@ -3,7 +3,7 @@
 
 import { Kbd } from "@repo/design-system/components/ui/kbd";
 import { cn } from "@repo/design-system/lib/utils";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { Icons } from "@/components/icons";
 import React, { useState } from "react";
 import { useUserSettings } from "@/lib/hooks/use-user-settings";
 import type { ControlSectionProps } from "@/types";
@@ -43,9 +43,9 @@ function ControlSection({
             aria-label={isExpanded ? "Collapse section" : "Expand section"}
           >
             {isExpanded ? (
-              <ChevronUp className="h-4 w-4" />
+              <Icons.ChevronUp className="h-4 w-4" />
             ) : (
-              <ChevronDown className="h-4 w-4" />
+              <Icons.ChevronDown className="h-4 w-4" />
             )}
           </button>
         </div>

@@ -8,7 +8,7 @@ import {
   TabsList,
 } from "@repo/design-system/components/ui/tabs";
 import { cn } from "@repo/design-system/lib/utils";
-import { Blend, PaintRoller, WandSparkles } from "lucide-react";
+import { Icons } from "@/components/icons";
 import { type ComponentProps, Fragment } from "react";
 import { HorizontalScrollArea } from "@/components/horizontal-scroll-area";
 import { authClient } from "@/lib/auth-client";
@@ -48,21 +48,21 @@ export function NoMessagesPlaceholder({
               value="create-prompts"
               className="flex items-center gap-1"
             >
-              <PaintRoller className="size-3.5" aria-hidden="true" />
+              <Icons.PaintRoller className="size-3.5" aria-hidden="true" />
               Create
             </TabsTriggerPill>
             <TabsTriggerPill
               value="variant-prompts"
               className="flex items-center gap-1"
             >
-              <Blend className="size-3.5" aria-hidden="true" />
+              <Icons.Blend className="size-3.5" aria-hidden="true" />
               Remix
             </TabsTriggerPill>
             <TabsTriggerPill
               value="tweak-prompts"
               className="flex items-center gap-1"
             >
-              <WandSparkles className="size-3.5" aria-hidden="true" />
+              <Icons.WandSparkles className="size-3.5" aria-hidden="true" />
               Tweak
             </TabsTriggerPill>
           </TabsList>

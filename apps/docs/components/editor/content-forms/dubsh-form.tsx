@@ -18,7 +18,7 @@ import {
 } from "@repo/design-system/components/ui/popover";
 import { Skeleton } from "@repo/design-system/components/ui/skeleton";
 import { cn } from "@repo/design-system/lib/utils";
-import { Check, ChevronsUpDown, ExternalLink, Link2 } from "lucide-react";
+import { Icons } from "@/components/icons";
 import * as React from "react";
 import { useDubIntegration } from "@/lib/hooks/use-dub-integration";
 import type { DubshFormData } from "@/lib/validations/qr-content";
@@ -77,7 +77,7 @@ export function DubshForm() {
                 onClick={() => setUseManualInput(false)}
                 className="h-auto p-0 text-xs text-primary"
               >
-                <Link2 className="mr-1 size-3" />
+                <Icons.Link2 className="mr-1 size-3" />
                 Select from Dub
               </Button>
             )}
@@ -172,7 +172,7 @@ export function DubshForm() {
                   Select a short link...
                 </span>
               )}
-              <ChevronsUpDown className="ml-2 size-4 shrink-0 opacity-50" />
+              <Icons.ChevronsUpDown className="ml-2 size-4 shrink-0 opacity-50" />
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-[400px] p-0">
@@ -196,7 +196,7 @@ export function DubshForm() {
                         className="flex items-center justify-between"
                       >
                         <div className="flex items-center gap-2">
-                          <Check
+                          <Icons.Check
                             className={cn(
                               "size-4",
                               isSelected ? "opacity-100" : "opacity-0",
@@ -217,7 +217,7 @@ export function DubshForm() {
                               {link.clicks}
                             </span>
                           )}
-                          <ExternalLink className="size-3 text-muted-foreground" />
+                          <Icons.ExternalLink className="size-3 text-muted-foreground" />
                         </div>
                       </CommandItem>
                     );

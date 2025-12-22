@@ -2,7 +2,7 @@
 
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
-import { ArrowDownIcon } from "lucide-react";
+import { Icons } from "@/components/icons";
 import type { ComponentProps } from "react";
 import { useCallback } from "react";
 import { StickToBottom, useStickToBottomContext } from "use-stick-to-bottom";
@@ -55,7 +55,7 @@ export const ConversationScrollButton = ({
         variant="outline"
         {...props}
       >
-        <ArrowDownIcon className="size-4" />
+        <Icons.ArrowDown className="size-4" />
       </Button>
     )
   );

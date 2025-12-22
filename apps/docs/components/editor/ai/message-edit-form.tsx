@@ -2,7 +2,7 @@
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import type { JSONContent } from "@tiptap/react";
-import { Check, X } from "lucide-react";
+import { Icons } from "@/components/icons";
 import { useMemo, useReducer, useState } from "react";
 import { HorizontalScrollArea } from "@/components/horizontal-scroll-area";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
@@ -137,7 +137,7 @@ export function MessageEditForm({
               onClick={onEditCancel}
               className="size-8 shadow-none"
             >
-              <X />
+              <Icons.X />
             </Button>
           </TooltipWrapper>
 
@@ -149,7 +149,7 @@ export function MessageEditForm({
               onClick={handleEditConfirm}
               disabled={isSomeImageUploading || isEmptyPrompt || disabled}
             >
-              <Check />
+              <Icons.Check />
             </Button>
           </TooltipWrapper>
         </div>

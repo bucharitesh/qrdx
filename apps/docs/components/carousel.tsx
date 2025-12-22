@@ -6,7 +6,7 @@ import {
   CarouselContent,
   CarouselItem as CarouselItemBase,
 } from "@repo/design-system/components/ui/carousel";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Icons } from "@/components/icons";
 import * as React from "react";
 
 interface CarouselProps extends React.ComponentProps<typeof CarouselBase> {
@@ -46,7 +46,7 @@ const Carousel = ({ className, children, ...props }: CarouselProps) => {
             className="w-8 h-8 rounded-full bg-transparent cursor-pointer hover:scale-110 transition-all duration-300"
             onClick={() => api?.scrollPrev()}
           >
-            <ChevronLeft className="size-4 text-muted-foreground" />
+            <Icons.ChevronLeft className="size-4 text-muted-foreground" />
           </button>
         </div>
       )}
@@ -57,7 +57,7 @@ const Carousel = ({ className, children, ...props }: CarouselProps) => {
             className="w-8 h-8 rounded-full bg-transparent cursor-pointer hover:scale-110 transition-all duration-300"
             onClick={() => api?.scrollNext()}
           >
-            <ChevronRight className="size-4 text-muted-foreground" />
+            <Icons.ChevronRight className="size-4 text-muted-foreground" />
           </button>
         </div>
       )}

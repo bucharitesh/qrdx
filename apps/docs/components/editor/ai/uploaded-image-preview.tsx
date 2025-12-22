@@ -2,7 +2,7 @@
 
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
-import { Loader2, X } from "lucide-react";
+import { Icons } from "@/components/icons";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import {
   HoverCard,
@@ -26,7 +26,7 @@ export function UploadedImagePreview({
   if (isImageLoading) {
     return (
       <div className="bg-muted flex size-14 items-center justify-center rounded-md border">
-        <Loader2 className="text-muted-foreground size-4 animate-spin" />
+        <Icons.Loader className="text-muted-foreground size-4 animate-spin" />
       </div>
     );
   }
@@ -56,7 +56,7 @@ export function UploadedImagePreview({
               )}
               onClick={handleImageRemove}
             >
-              <X className="size-3!" />
+              <Icons.X className="size-3!" />
             </Button>
           </TooltipWrapper>
         </div>

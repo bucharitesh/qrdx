@@ -2,7 +2,7 @@
 
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
-import { Moon, Sun } from "lucide-react";
+import { Icons } from "@/components/icons";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { TooltipWrapper } from "./tooltip-wrapper";
@@ -31,9 +31,9 @@ export function ThemeToggle({ className, ...props }: ThemeToggleProps) {
         onClick={handleThemeToggle}
       >
         {mounted && theme === "light" ? (
-          <Sun className="h-4 w-4" />
+          <Icons.Sun className="h-4 w-4" />
         ) : (
-          <Moon className="h-4 w-4" />
+          <Icons.Moon className="h-4 w-4" />
         )}
       </Button>
     </TooltipWrapper>

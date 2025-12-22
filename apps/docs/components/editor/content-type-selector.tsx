@@ -1,79 +1,46 @@
 "use client";
 
 import { Button } from "@repo/design-system/components/ui/button";
-import {
-  AtSign,
-  Bitcoin,
-  Calendar,
-  Camera,
-  ChevronDown,
-  ClipboardCheck,
-  CreditCard,
-  DollarSign,
-  FileText,
-  Hexagon,
-  Image,
-  Instagram,
-  Link,
-  Link2,
-  Linkedin,
-  type LucideIcon,
-  Mail,
-  MapPin,
-  MessageCircle,
-  MessageSquare,
-  Music,
-  Phone,
-  Share2,
-  ShoppingBag,
-  ShoppingCart,
-  Star,
-  Store,
-  Twitter,
-  UserCircle,
-  Video,
-  Wifi,
-  Wrench,
-  Youtube,
-} from "lucide-react";
 import * as React from "react";
 import { ContentTypeModal } from "@/components/editor/content-type-modal";
 import { useQREditorStore } from "@/store/editor-store";
 import { CONTENT_TYPES_METADATA } from "@/types/qr-content";
+import { LucideIcon } from "lucide-react";
+import { Icons } from "../icons";
 
 // Map icon names to actual icon components
 const iconMap: Record<string, LucideIcon> = {
-  AtSign,
-  Bitcoin,
-  Calendar,
-  Camera,
-  ClipboardCheck,
-  CreditCard,
-  DollarSign,
-  FileText,
-  Hexagon,
-  Image,
-  Instagram,
-  Link,
-  Link2,
-  Linkedin,
-  Mail,
-  MapPin,
-  MessageCircle,
-  MessageSquare,
-  Music,
-  Phone,
-  Share2,
-  ShoppingBag,
-  ShoppingCart,
-  Store,
-  Star,
-  Twitter,
-  UserCircle,
-  Video,
-  Wifi,
-  Wrench,
-  Youtube,
+  AtSign: Icons.AtSign,
+  Bitcoin: Icons.Bitcoin,
+  Calendar: Icons.Calendar,
+  Camera: Icons.Camera,
+  ClipboardCheck: Icons.ClipboardCheck,
+  CreditCard: Icons.CreditCard,
+  DollarSign: Icons.DollarSign,
+  FileText: Icons.FileText,
+  Hexagon: Icons.Hexagon,
+  Image: Icons.Image,
+  Instagram: Icons.Instagram,
+  Link: Icons.Link,
+  Link2: Icons.Link2,
+  Linkedin: Icons.Linkedin,
+  Mail: Icons.Mail,
+  MapPin: Icons.MapPin,
+  MessageCircle: Icons.MessageCircle,
+  MessageSquare: Icons.MessageSquare,
+  Music: Icons.Music,
+  Phone: Icons.Phone,
+  Share2: Icons.Share2,
+  ShoppingBag: Icons.ShoppingBag,
+  ShoppingCart: Icons.ShoppingCart,
+  Store: Icons.Store,
+  Star: Icons.Star,
+  Twitter: Icons.Twitter,
+  UserCircle: Icons.UserCircle,
+  Video: Icons.Video,
+  Wifi: Icons.Wifi,
+  Wrench: Icons.Wrench,
+  Youtube: Icons.Youtube,
 };
 
 export function ContentTypeSelector() {
@@ -106,7 +73,7 @@ export function ContentTypeSelector() {
             </div>
           </div>
         </div>
-        <ChevronDown className="size-4 text-muted-foreground" />
+        <Icons.ChevronDown className="size-4 text-muted-foreground" />
       </Button>
 
       <ContentTypeModal open={modalOpen} onOpenChange={setModalOpen} />

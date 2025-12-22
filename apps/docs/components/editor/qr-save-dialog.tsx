@@ -11,7 +11,7 @@ import {
   ResponsiveDialogHeader,
   ResponsiveDialogTitle,
 } from "@repo/design-system/components/ui/revola";
-import { Loader2 } from "lucide-react";
+import { Icons } from "@/components/icons";
 import React, { useState } from "react";
 
 interface QRSaveDialogProps {
@@ -84,7 +84,7 @@ export function QRSaveDialog({
             Cancel
           </Button>
           <Button onClick={handleSave} disabled={isSaving || !themeName.trim()}>
-            {isSaving && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            {isSaving && <Icons.Loader className="mr-2 h-4 w-4 animate-spin" />}
             {ctaLabel}
           </Button>
         </ResponsiveDialogFooter>

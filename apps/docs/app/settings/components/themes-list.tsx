@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from "@repo/design-system/components/ui/select";
 import { useIsMobile } from "@repo/design-system/hooks/use-mobile";
-import { ArrowUpDown, Search } from "lucide-react";
+import { Icons } from "@/components/icons";
 import { useEffect, useState } from "react";
 import type { Theme } from "@/types/theme";
 import { QRThemeCard } from "./qr-theme-card";
@@ -51,7 +51,7 @@ export function ThemesList({ themes }: ThemesListProps) {
     <section className="space-y-4">
       <div className="ml-auto flex w-fit flex-row gap-2">
         <div className="relative w-fit">
-          <Search className="text-muted-foreground absolute top-2.5 left-2.5 size-4" />
+          <Icons.Search className="text-muted-foreground absolute top-2.5 left-2.5 size-4" />
           <Input
             placeholder="Search themes..."
             className="w-full pl-8"
@@ -61,7 +61,7 @@ export function ThemesList({ themes }: ThemesListProps) {
         </div>
         <Select value={sortOption} onValueChange={setSortOption}>
           <SelectTrigger className="w-[80px] gap-2 md:w-[180px]">
-            <ArrowUpDown className="text-muted-foreground h-4 w-4" />
+            <Icons.ArrowUpDown className="text-muted-foreground h-4 w-4" />
             {!isMobile && <SelectValue placeholder="Sort by" />}
           </SelectTrigger>
           <SelectContent>
@@ -75,7 +75,7 @@ export function ThemesList({ themes }: ThemesListProps) {
       <Card className="space-y-4 p-4">
         {filteredThemes.length === 0 && searchTerm ? (
           <div className="py-12 text-center">
-            <Search className="text-muted-foreground mx-auto mb-4 size-12" />
+            <Icons.Search className="text-muted-foreground mx-auto mb-4 size-12" />
             <h3 className="mb-1 text-lg font-medium">No themes found</h3>
             <p className="text-muted-foreground text-pretty">
               No themes match your search term &quot;{searchTerm}&quot;.

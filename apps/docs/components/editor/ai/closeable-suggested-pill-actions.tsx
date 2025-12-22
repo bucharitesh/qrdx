@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@repo/design-system/components/ui/button";
-import { Sparkles, X } from "lucide-react";
+import { Icons } from "@/components/icons";
 import { HorizontalScrollArea } from "@/components/horizontal-scroll-area";
 import { usePreferencesStore } from "@/store/preferences-store";
 import type { AIPromptData } from "@/types/ai";
@@ -35,7 +35,7 @@ export function ClosableSuggestedPillActions({
           className="size-6 [&>svg]:size-3"
           onClick={() => setChatSuggestionsOpen(false)}
         >
-          <X />
+          <Icons.X />
         </Button>
       </div>
 
@@ -46,7 +46,7 @@ export function ClosableSuggestedPillActions({
             onClick={() => handleSetPrompt(prompt)}
             disabled={isGeneratingTheme}
           >
-            <Sparkles /> {label}
+            <Icons.Sparkles /> {label}
           </PillActionButton>
         ))}
       </HorizontalScrollArea>

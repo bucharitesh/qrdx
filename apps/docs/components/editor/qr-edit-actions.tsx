@@ -2,7 +2,7 @@
 
 import { Button } from "@repo/design-system/components/ui/button";
 import { Separator } from "@repo/design-system/components/ui/separator";
-import { Check, X } from "lucide-react";
+import { Icons } from "@/components/icons";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
@@ -114,7 +114,7 @@ export function QREditActions({ theme, disabled = false }: QREditActionsProps) {
             onClick={handleCancel}
             disabled={disabled}
           >
-            <X className="h-4 w-4" />
+            <Icons.X className="h-4 w-4" />
           </Button>
         </TooltipWrapper>
 
@@ -128,7 +128,7 @@ export function QREditActions({ theme, disabled = false }: QREditActionsProps) {
             onClick={handleSaveClick}
             disabled={disabled || updateThemeMutation.isPending}
           >
-            <Check className="h-4 w-4" />
+            <Icons.Check className="h-4 w-4" />
           </Button>
         </TooltipWrapper>
       </div>

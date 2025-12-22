@@ -1,6 +1,6 @@
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
-import { PenLine } from "lucide-react";
+import { Icons } from "@/components/icons";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
@@ -32,7 +32,7 @@ export function EditButton({
           disabled={disabled || isEditing}
           {...props}
         >
-          <PenLine className="size-3.5" />
+          <Icons.PenLine className="size-3.5" />
           <span className="hidden text-sm md:block">Edit</span>
         </Button>
       </Link>

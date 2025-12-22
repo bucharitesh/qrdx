@@ -6,7 +6,7 @@ import {
   TabsContent,
   TabsList,
 } from "@repo/design-system/components/ui/tabs";
-import { Sparkle } from "lucide-react";
+import { Icons } from "@/components/icons";
 import { use } from "react";
 import {
   ColorControls,
@@ -114,7 +114,7 @@ const QRControlPanel: React.FC<QRControlPanelProps> = ({
                 description="Use AI to automatically generate and customize QR codes with smart suggestions"
                 className="data-[state=active]:[--effect:var(--secondary-foreground)] data-[state=active]:[--foreground:var(--muted-foreground)] data-[state=active]:[--muted-foreground:var(--effect)]"
               >
-                <Sparkle className="mr-1 size-3.5 text-current" />
+                <Icons.Sparkle className="mr-1 size-3.5 text-current" />
                 <span className="animate-text via-foreground from-muted-foreground to-muted-foreground flex items-center gap-1 bg-linear-to-r from-50% via-60% to-100% bg-[200%_auto] bg-clip-text text-sm text-transparent">
                   Generate
                 </span>

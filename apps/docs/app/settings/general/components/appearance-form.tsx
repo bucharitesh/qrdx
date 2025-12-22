@@ -9,7 +9,7 @@ import {
 } from "@repo/design-system/components/ui/card";
 import { Label } from "@repo/design-system/components/ui/label";
 import { cn } from "@repo/design-system/lib/utils";
-import { Check } from "lucide-react";
+import { Icons } from "@/components/icons";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import { DarkTheme } from "./dark-theme";
@@ -109,7 +109,7 @@ export function AppearanceForm() {
                   {/* Selected indicator */}
                   {isSelected && (
                     <div className="absolute right-3 top-3 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
-                      <Check className="h-3 w-3 text-primary-foreground" />
+                      <Icons.Check className="h-3 w-3 text-primary-foreground" />
                     </div>
                   )}
 

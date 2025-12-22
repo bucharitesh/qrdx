@@ -2,7 +2,7 @@
 
 import { toast } from "@repo/design-system";
 import { Button } from "@repo/design-system/components/ui/button";
-import { Check, Copy } from "lucide-react";
+import { Icons } from "@/components/icons";
 import { getQRData, getSVGString } from "qrdx";
 import { useState } from "react";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
@@ -47,12 +47,12 @@ export function CopySVGButton() {
       <Button variant="ghost" size="sm" onClick={handleCopySVG}>
         {copied ? (
           <>
-            <Check className="h-4 w-4" />
+            <Icons.Check className="h-4 w-4" />
             <span className="hidden text-sm md:block sr-only">Copied</span>
           </>
         ) : (
           <>
-            <Copy className="h-4 w-4" />
+            <Icons.Copy className="h-4 w-4" />
             <span className="hidden text-sm md:block sr-only">Copy SVG</span>
           </>
         )}

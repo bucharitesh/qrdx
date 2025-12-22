@@ -9,7 +9,7 @@ import {
 } from "@repo/design-system/components/ui/dialog";
 import { Kbd, KbdGroup } from "@repo/design-system/components/ui/kbd";
 import { ScrollArea } from "@repo/design-system/components/ui/scroll-area";
-import { Keyboard } from "lucide-react";
+import { Icons } from "@/components/icons";
 import { useKeyboardShortcut } from "@/lib/hooks/use-keyboard-shortcuts";
 import { useUserSettings } from "@/lib/hooks/use-user-settings";
 
@@ -97,7 +97,7 @@ export function KeyboardShortcutsModal({
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Keyboard className="size-5" />
+              <Icons.Keyboard className="size-5" />
               Keyboard Shortcuts
             </DialogTitle>
             <DialogDescription>
@@ -115,7 +115,7 @@ export function KeyboardShortcutsModal({
       <DialogContent className="max-w-2xl max-h-[85vh]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Keyboard className="size-5" />
+            <Icons.Keyboard className="size-5" />
             Keyboard Shortcuts
           </DialogTitle>
           <DialogDescription>
@@ -163,3 +163,4 @@ export function KeyboardShortcutsModal({
     </Dialog>
   );
 }
+

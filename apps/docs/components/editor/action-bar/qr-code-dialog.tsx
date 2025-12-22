@@ -14,7 +14,7 @@ import {
   ScrollBar,
 } from "@repo/design-system/components/ui/scroll-area";
 import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock";
-import { Check, Copy } from "lucide-react";
+import { Icons } from "@/components/icons";
 import type { ColorConfig } from "qrdx/types";
 import { normalizeColorConfig } from "qrdx/types";
 import { useMemo, useState } from "react";
@@ -216,12 +216,12 @@ ${props.join("\n")}
               >
                 {copied ? (
                   <>
-                    <Check className="size-4" />
+                    <Icons.Check className="size-4" />
                     <span className="sr-only md:not-sr-only">Copied</span>
                   </>
                 ) : (
                   <>
-                    <Copy className="size-4" />
+                    <Icons.Copy className="size-4" />
                     <span className="sr-only md:not-sr-only">Copy</span>
                   </>
                 )}

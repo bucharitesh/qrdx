@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Lock } from "lucide-react";
+import { Icons } from "@/components/icons";
 import { useEffect, useState } from "react";
 
 export function SecurityBadge() {
@@ -37,7 +37,7 @@ export function SecurityBadge() {
           animate={{ scale: shield.active ? 1.1 : 1 }}
           transition={{ duration: 0.3 }}
         >
-          <Lock
+          <Icons.Lock
             className={`w-5 h-5 ${shield.active ? "text-white" : "text-gray-600"}`}
           />
         </motion.div>

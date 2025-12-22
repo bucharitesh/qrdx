@@ -13,7 +13,7 @@ import {
   TabsTrigger,
 } from "@repo/design-system/components/ui/tabs";
 import { useIsMobile } from "@repo/design-system/hooks/use-mobile";
-import { Eye, Sliders } from "lucide-react";
+import { Icons } from "@/components/icons";
 import React, { use, useEffect } from "react";
 import { useMounted } from "@/lib/hooks/use-mounted";
 import { useQREditorStore } from "@/store/editor-store";
@@ -91,11 +91,11 @@ const Editor: React.FC<EditorProps> = ({ themePromise }) => {
           >
             <TabsList className="w-full rounded-none">
               <TabsTrigger value="controls" className="flex-1">
-                <Sliders className="mr-2 h-4 w-4" />
+                <Icons.Sliders className="mr-2 h-4 w-4" />
                 Controls
               </TabsTrigger>
               <TabsTrigger value="preview" className="flex-1">
-                <Eye className="mr-2 h-4 w-4" />
+                <Icons.Eye className="mr-2 h-4 w-4" />
                 Preview
               </TabsTrigger>
             </TabsList>

@@ -2,7 +2,7 @@
 
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
-import { ArrowUp, Loader as LoaderIcon, Plus, StopCircle } from "lucide-react";
+import { Icons } from "@/components/icons";
 import { Loader } from "@/components/loader";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { MAX_IMAGE_FILES } from "@/lib/constants";
@@ -127,7 +127,7 @@ export function ChatInput({
     <div className="relative transition-all contain-layout">
       <BannerWrapper show={isGeneratingTheme}>
         <div className="flex size-full items-center gap-1.5">
-          <LoaderIcon className="size-2.5 animate-spin" />
+          <Icons.Loader className="size-2.5 animate-spin" />
           <Loader variant="text-shimmer" text="Generating..." size="sm" />
         </div>
       </BannerWrapper>
@@ -169,7 +169,7 @@ export function ChatInput({
               }
               className="flex items-center gap-1.5 shadow-none"
             >
-              <Plus />
+              <Icons.Plus className="size-3.5" />
               <span>New chat</span>
             </Button>
           </TooltipWrapper>
@@ -208,7 +208,7 @@ export function ChatInput({
                     "@max-[350px]/form:w-8",
                   )}
                 >
-                  <StopCircle />
+                  <Icons.StopCircle className="size-3.5" />
                   <span className="hidden @[350px]/form:inline-flex">Stop</span>
                 </Button>
               </TooltipWrapper>
@@ -227,9 +227,9 @@ export function ChatInput({
                   }
                 >
                   {isGeneratingTheme ? (
-                    <LoaderIcon className="animate-spin" />
+                    <Icons.Loader className="animate-spin" />
                   ) : (
-                    <ArrowUp />
+                    <Icons.ArrowUp className="size-3.5" />
                   )}
                 </Button>
               </TooltipWrapper>

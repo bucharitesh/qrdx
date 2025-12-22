@@ -2,7 +2,7 @@
 
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
-import { CheckIcon, CopyIcon } from "lucide-react";
+import { Icons } from "@/components/icons";
 import { useTheme } from "next-themes";
 import type { ComponentProps, HTMLAttributes, ReactNode } from "react";
 import { createContext, useContext, useState } from "react";
@@ -113,7 +113,7 @@ export const CodeBlockCopyButton = ({
     }
   };
 
-  const Icon = isCopied ? CheckIcon : CopyIcon;
+  const Icon = isCopied ? Icons.Check : Icons.Copy;
 
   return (
     <Button

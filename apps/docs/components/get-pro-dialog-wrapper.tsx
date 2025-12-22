@@ -11,7 +11,7 @@ import {
   ResponsiveDialogTitle,
 } from "@repo/design-system/components/ui/revola";
 import { cn } from "@repo/design-system/lib/utils";
-import { Calendar, Check } from "lucide-react";
+import { Icons } from "@/components/icons";
 import Link from "next/link";
 import { QRCodeSVG } from "qrdx";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
@@ -57,9 +57,9 @@ export function GetProDialog({ isOpen, onClose }: GetProDialogProps) {
                       )}
                     >
                       {feature.status === "done" ? (
-                        <Check className="text-primary size-3 stroke-2" />
+                        <Icons.Check className="text-primary size-3 stroke-2" />
                       ) : (
-                        <Calendar className="text-muted-foreground size-3 stroke-2" />
+                        <Icons.Calendar className="text-muted-foreground size-3 stroke-2" />
                       )}
                     </div>
                     <span
