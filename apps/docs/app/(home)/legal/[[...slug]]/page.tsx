@@ -16,7 +16,7 @@ export default async function LegalPage(
   const { body: Mdx } = page.data;
 
   return (
-    <div className="container mx-auto px-4 py-12 md:px-6 md:py-20 lg:max-w-4xl">
+    <div className="container mx-auto px-4 py-12 md:px-6 md:py-20 lg:max-w-6xl">
       <h1 className="mb-6 text-3xl font-bold">{page.data.title}</h1>
       {page.data.lastModified && (
         <p className="text-muted-foreground mb-8 text-sm">

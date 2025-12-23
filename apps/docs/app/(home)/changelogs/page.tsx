@@ -1,6 +1,5 @@
 import { Badge } from "@repo/design-system/components/ui/badge";
 import type { Metadata } from "next";
-import { CTASection } from "@/components/sections/cta-section";
 import { SectionHeader } from "@/components/sections/section-header";
 import { changelogSource } from "@/lib/source";
 
@@ -111,7 +110,6 @@ const Page = async () => {
           </div>
         </div>
       </section>
-      <CTASection />
     </>
   );
 };

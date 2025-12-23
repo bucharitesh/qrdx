@@ -706,19 +706,35 @@ export const siteConfig = {
       ],
     },
     {
-      title: "Support",
+      title: "Resources",
       links: [
-        { id: 5, title: "Contact", url: "mailto:support@qrdx.app" },
-        { id: 6, title: "GitHub", url: "https://github.com/bucharitesh/qrdx" },
-      ],
+        { id: 1, title: "Docs", url: "/docs" },
+        // { id: 11, title: "Integrations", url: "/integrations" },
+        { id: 2, title: "Pricing", url: "/pricing" },
+      ]
     },
     {
-      title: "Legal",
+      title: "Company",
       links: [
-        { id: 7, title: "Privacy Policy", url: "/legal/privacy-policy" },
-        { id: 8, title: "Terms of Service", url: "/legal/terms-of-service" },
+        { id: 1, title: "Contact", url: "mailto:support@qrdx.app" },
+        { id: 2, title: "Privacy", url: "/legal/privacy-policy" },
+        {
+          id: 3, 
+          title: "Legal", 
+          children: [
+            { id: 1, title: "Terms of Service", url: "/legal/terms-of-service" },
+            { id: 2, title: "Subprocessors", url: "/legal/subprocessors" },
+            { id: 3, title: "Report Abuse", url: "/legal/report-abuse" },
+          ]
+        },
       ],
     },
+    // {
+    //   title: "Compare",
+    //   links: [
+    //    { id: 1, title: "QRDX", url: "/compare" },
+    //   ]
+    // }
   ],
 };
 

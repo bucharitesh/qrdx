@@ -1,10 +1,16 @@
 "use client";
 
 import { Button } from "@repo/design-system/components/ui/button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@repo/design-system/components/ui/popover";
 import { Icons } from "@/components/icons";
 import Link from "next/link";
 import { siteConfig } from "@/config/site";
 import { QrdxLogo } from "../qrdx-logo";
+import { ChevronDown } from "lucide-react";
 
 export function FooterSection() {
   const currentYear = new Date().getFullYear();
@@ -35,17 +41,51 @@ export function FooterSection() {
                 <li className="mb-2 text-sm font-semibold text-secondary-foreground">
                   {column.title}
                 </li>
-                {column.links.map((link) => (
-                  <li
-                    key={link.id}
-                    className="group inline-flex cursor-pointer items-center justify-start gap-1 text-[15px]/snug text-muted-foreground"
-                  >
-                    <Link href={link.url}>{link.title}</Link>
-                    <div className="flex size-4 items-center justify-center border border-border rounded translate-x-0 transform opacity-0 transition-all duration-300 ease-out group-hover:translate-x-1 group-hover:opacity-100">
-                      <Icons.ArrowRight className="h-4 w-4 " />
-                    </div>
-                  </li>
-                ))}
+                {column.links?.map((link) => {
+                  const hasChildren = "children" in link && link.children && link.children.length > 0;
+                  
+                  if (hasChildren) {
+                    return (
+                      <li
+                        key={link.id}
+                        className="inline-flex cursor-pointer items-center justify-start gap-1 text-[15px]/snug text-muted-foreground hover:text-secondary-foreground transition-all duration-300"
+                      >
+                        <Popover>
+                          <PopoverTrigger className="inline-flex items-center gap-1">
+                            {link.title}
+                            <ChevronDown className="size-3" />
+                          </PopoverTrigger>
+                          <PopoverContent 
+                            className="w-56 p-2"
+                            align="start"
+                            side="top"
+                          >
+                            <div className="flex flex-col gap-1">
+                              {link.children?.map((child) => (
+                                <Link
+                                  key={child.id}
+                                  href={child.url as string}
+                                  className="px-3 py-2 text-sm text-muted-foreground hover:text-secondary-foreground hover:bg-accent rounded-md transition-all"
+                                >
+                                  {child.title}
+                                </Link>
+                              ))}
+                            </div>
+                          </PopoverContent>
+                        </Popover>
+                      </li>
+                    );
+                  }
+                  
+                  return (
+                    <li
+                      key={link.id}
+                      className="inline-flex cursor-pointer items-center justify-start gap-1 text-[15px]/snug text-muted-foreground hover:text-secondary-foreground transition-all duration-300"
+                    >
+                      <Link href={link.url as string}>{link.title}</Link>
+                    </li>
+                  );
+                })}
               </ul>
             ))}
           </div>
