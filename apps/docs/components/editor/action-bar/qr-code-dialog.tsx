@@ -19,6 +19,8 @@ import type { ColorConfig } from "qrdx/types";
 import { normalizeColorConfig } from "qrdx/types";
 import { useMemo, useState } from "react";
 import { useQREditorStore } from "@/store/editor-store";
+import useMediaQuery from "@repo/design-system/hooks/use-media-query";
+import { cn } from "@repo/design-system/lib/utils";
 
 interface QRCodeDialogProps {
   open: boolean;
@@ -92,7 +94,8 @@ function serializeColorConfig(
 export function QRCodeDialog({ open, onOpenChange }: QRCodeDialogProps) {
   const { value, themeState } = useQREditorStore();
   const [copied, setCopied] = useState(false);
-
+  const MOBILE_BREAKPOINT = "(min-width: 640px)";
+  const isDesktop = useMediaQuery(MOBILE_BREAKPOINT);
   const style = themeState.styles;
 
   // Generate full component code
@@ -186,7 +189,7 @@ ${props.join("\n")}
   return (
     <ResponsiveDialog open={open} onOpenChange={onOpenChange}>
       <ResponsiveDialogContent
-        className="h-[90dvh] max-h-[90dvh] overflow-hidden p-6 shadow-lg sm:h-[80dvh] sm:max-h-[min(700px,90dvh)] sm:w-[calc(100%-2rem)] sm:max-w-4xl"
+        className={cn("h-[90dvh] max-h-[90dvh] overflow-hidden shadow-lg sm:h-[80dvh] sm:max-h-[min(700px,90dvh)] sm:w-[calc(100%-2rem)] sm:max-w-4xl", isDesktop ? "p-6" : "p-2")}
         showCloseButton={true}
       >
         <ResponsiveDialogHeader>
