@@ -224,7 +224,7 @@ export const Compare = ({
           {firstImage ? (
             <motion.div
               className={cn(
-                "absolute inset-0 z-20 rounded-2xl shrink-0 w-full h-full select-none overflow-hidden",
+                "absolute inset-0 z-20 shrink-0 w-full h-full select-none overflow-hidden",
                 firstImageClassName
               )}
               style={{
@@ -239,7 +239,7 @@ export const Compare = ({
                 alt="first image"
                 src={firstImage}
                 className={cn(
-                  "absolute inset-0  z-20 rounded-2xl shrink-0 w-full h-full select-none",
+                  "absolute inset-0 z-20 shrink-0 w-full h-full select-none",
                   firstImageClassName
                 )}
                 draggable={false}
@@ -253,7 +253,7 @@ export const Compare = ({
         {secondImage ? (
           <motion.img
             className={cn(
-              "absolute top-0 left-0 z-19 rounded-2xl w-full h-full select-none",
+              "absolute top-0 left-0 z-19 w-full h-full select-none",
               secondImageClassname
             )}
             alt="second image"
