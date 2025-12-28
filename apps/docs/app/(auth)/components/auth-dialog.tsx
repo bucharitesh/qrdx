@@ -134,8 +134,8 @@ export function AuthDialog({
         <div className="relative grid flex-1 content-center">
           <Card className="w-full max-w-md overflow-hidden shadow-lg p-6 relative">
             <div className="space-y-4">
-              <div className="space-y-2">
-                <QrdxLogoAnimation size={60} className="mx-auto mb-8" />
+              <div className="flex flex-col items-center space-y-2">
+                <QrdxLogoAnimation season="christmas" size={60} className="my-4" />
                 <h2 className="text-center text-lg font-bold">
                   {isSignIn ? "Sign in to QRdx" : "Create account"}
                 </h2>
