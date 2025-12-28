@@ -14,7 +14,6 @@ import { Icons } from "@/components/icons";
 import { NavMenu } from "@/components/nav-menu";
 import { QrdxLogoAnimation } from "@/components/qrdx-logo-animation";
 import { siteConfig } from "@/config/site";
-import { ThemeToggle } from "../theme-toggle";
 import { SocialLink } from "../social-link";
 import { formatCompactNumber } from "@/utils/format";
 import { useGithubStars } from "@/lib/hooks/use-github-stars";
@@ -99,7 +98,7 @@ export function Navbar() {
           <div className="flex h-[56px] items-center justify-between p-4">
             <Link href="/" className="flex items-center gap-2">
               <QrdxLogo season="christmas" className="size-5 md:hidden block fill-secondary-foreground" />
-              <QrdxLogoAnimation season="christmas" size={40} className="hidden md:block" />
+              <QrdxLogoAnimation season="christmas" size={30} className="hidden md:block" />
               <p className="text-lg font-semibold text-secondary-foreground">
                 QRdx
               </p>

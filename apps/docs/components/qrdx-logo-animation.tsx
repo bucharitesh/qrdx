@@ -71,7 +71,7 @@ export const QrdxLogoAnimation: React.FC<QrdxLogoAnimationProps> = ({
       {season === "christmas" && <div className="z-1 relative">
         <Icons.santa 
           className="absolute"
-          style={{ top: "-10px", left: "12px", width: "28px", height: "28px", rotate: "20deg" }}
+          style={{ top: size * -0.3, left: size * 0.35, width: size * 0.7, height: size * 0.7, rotate: "20deg" }}
         />
       </div>}
       <motion.svg
