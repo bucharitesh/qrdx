@@ -1,5 +1,5 @@
 <a href="https://qrdx.dev">
-  <img alt="QRdx is the modern, open-source QR Generation and Detection Platform." src="https://github.com/user-attachments/assets/b2126aa6-5e1d-4ec2-bd5a-59a09718f9a0">
+  <img alt="QRdx is the modern, open-source QR Generation and Detection Platform." src="https://github.com/user-attachments/assets/3a1ed345-e594-4c19-9c45-3bc5222cffee">
 </a>
 
 <h3 align="center">QRdx</h3>
