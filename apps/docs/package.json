@@ -27,7 +27,7 @@
     "@tiptap/extension-character-count": "^3.13.0",
     "@tiptap/extension-mention": "^3.13.0",
     "@tiptap/extension-placeholder": "^3.13.0",
-    "@tiptap/pm": "^3.13.0",
+    "@tiptap/pm": "^3.14.0",
     "@tiptap/react": "^3.13.0",
     "@tiptap/starter-kit": "^3.13.0",
     "@tiptap/suggestion": "^3.13.0",
