@@ -28,7 +28,7 @@
     "@tiptap/extension-mention": "^3.14.0",
     "@tiptap/extension-placeholder": "^3.13.0",
     "@tiptap/pm": "^3.13.0",
-    "@tiptap/react": "^3.13.0",
+    "@tiptap/react": "^3.15.3",
     "@tiptap/starter-kit": "^3.13.0",
     "@tiptap/suggestion": "^3.13.0",
     "@upstash/ratelimit": "^2.0.7",
