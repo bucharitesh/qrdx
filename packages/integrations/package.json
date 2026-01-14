@@ -13,7 +13,7 @@
     "drizzle-orm": "^0.45.1",
     "zod": "^4.2.1",
     "react": "19.2.3",
-    "lucide-react": "^0.561.0"
+    "lucide-react": "^0.562.0"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
