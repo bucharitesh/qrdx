@@ -17,7 +17,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/bucharitesh/qrdx/blob/main/LICENSE.md">
+  <a href="https://github.com/bucharitesh/qrdx/blob/main/license.md">
     <img src="https://img.shields.io/github/license/bucharitesh/qrdx?label=license&logo=github&color=f80&logoColor=fff" alt="License" />
   </a>
   <img src="https://img.shields.io/badge/license-AGPLv3-blue" alt="License" />
