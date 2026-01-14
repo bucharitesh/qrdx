@@ -16,7 +16,7 @@
     "@hookform/resolvers": "^5.2.2",
     "@next/bundle-analyzer": "16.0.10",
     "@ngard/tiny-isequal": "^1.1.0",
-    "@polar-sh/nextjs": "^0.9.1",
+    "@polar-sh/nextjs": "^0.9.3",
     "@polar-sh/sdk": "^0.41.5",
     "@radix-ui/react-hover-card": "^1.1.15",
     "@repo/database": "workspace:*",
