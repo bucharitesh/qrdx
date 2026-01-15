@@ -132,7 +132,10 @@ Detect QR codes from images.
 handleImageLoad(
   imgElement: HTMLImageElement,
   size: number,
-  returnFullData?: boolean
+  returnFullData?: boolean,
+  options?: {
+    debugDownloads?: boolean
+  }
 ): Promise<string | any>
 ```
 
