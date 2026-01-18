@@ -145,7 +145,7 @@ export function UsageStats() {
                 />
                 <YAxis hide />
                 <ChartTooltip
-                  content={<ChartTooltipContent />}
+                  content={(props) => <ChartTooltipContent {...props} />}
                   labelFormatter={(value) => formatDate(value, timeframe)}
                 />
                 <Bar
