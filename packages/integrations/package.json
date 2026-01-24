@@ -11,7 +11,7 @@
     "@repo/database": "workspace:*",
     "@repo/design-system": "workspace:*",
     "drizzle-orm": "^0.45.1",
-    "zod": "^4.2.1",
+    "zod": "^4.3.5",
     "react": "19.2.3",
     "lucide-react": "^0.562.0"
   },
