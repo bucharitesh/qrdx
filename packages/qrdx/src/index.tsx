@@ -31,7 +31,28 @@ import {
 
 export * from "../types";
 export * from "./api";
-export * from "./detection";
+// Legacy detection exports (for backwards compatibility)
+export { handleImageLoad, downloadImageData, downloadImageWithBoundingBox } from "./detection";
+// New detection API
+export {
+  detect,
+  detectFromUrl,
+  detectFromElement,
+  detectFromImageData,
+  isQRCodeReadable,
+  verifyQRCode,
+  initOpenCVWorker,
+  getOpenCVStatus,
+} from "./detection/index";
+export type {
+  QRDetectionResult,
+  QRDetectionOptions,
+  QRPosition,
+  QRLocation,
+  FinderPattern,
+  DetectionProgress,
+  OpenCVStatus,
+} from "./detection/index";
 export * from "./download";
 export * from "./qr-code";
 export * from "./templates";

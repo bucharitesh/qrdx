@@ -15,6 +15,7 @@ import { DownloadButton } from "./download-button";
 import { EditButton } from "./edit-button";
 import { ResetButton } from "./reset-button";
 import { SaveButton } from "./save-button";
+import { ScanButton } from "./scan-dialog";
 import { ShareButton } from "./share-button";
 import { UndoRedoButtons } from "./undo-redo-buttons";
 
@@ -108,6 +109,7 @@ export function ActionBarButtons({
           dialogOpen={downloadDialogOpen}
           setDialogOpen={setDownloadDialogOpen}
         />
+        <ScanButton />
         <CodeButton
           dialogOpen={codeDialogOpen}
           setDialogOpen={setCodeDialogOpen}
