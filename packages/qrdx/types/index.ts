@@ -3,6 +3,25 @@
 // Re-export utility functions that don't require React
 // These can be used in server contexts without "use client" directive
 export { getSolidColor } from "../src/utils/color";
+
+// Detection types
+export type {
+  QRDetectionResult,
+  QRDetectionOptions,
+  QRPosition,
+  QRLocation,
+  FinderPattern,
+  DetectionProgress,
+  OpenCVStatus,
+  OpenCVWorkerMessage,
+  OpenCVWorkerResponse,
+} from "./detection";
+export {
+  qrPositionSchema,
+  qrLocationSchema,
+  qrDetectionResultSchema,
+  qrDetectionOptionsSchema,
+} from "./detection";
 export type {
   ColorConfig,
   ColorType,
