@@ -114,8 +114,8 @@ importers:
         specifier: ^0.45.1
         version: 0.45.1(@neondatabase/serverless@1.0.2)(@opentelemetry/api@1.9.0)(@types/pg@8.15.6)(@upstash/redis@1.36.1)(kysely@0.28.8)
       dub:
-        specifier: ^0.69.0
-        version: 0.69.0
+        specifier: ^0.71.0
+        version: 0.71.0
       framer-motion:
         specifier: ^12.23.26
         version: 12.23.26(react-dom@19.2.3(react@19.2.3))(react@19.2.3)
@@ -4974,8 +4974,8 @@ packages:
       sqlite3:
         optional: true
 
-  dub@0.69.0:
-    resolution: {integrity: sha512-2UotC3GARdPxtduY9/mD6fwxYhHIJnfXe1emLY96b1kj4iRcMRRerYbde1y5FPRsAJKBhuO2PaoT0TZNmn7gxA==}
+  dub@0.71.0:
+    resolution: {integrity: sha512-b9xcQN194sIkjuYDISAQUu8DCee/vIlwDQlgtAAKjK//lRrFdqSoZJSK4UQcKdW7SI4uznzD/hnILGxDdyenqw==}
 
   duplexer@0.1.2:
     resolution: {integrity: sha512-jtD6YG370ZCIi/9GTaJKQxWTZD045+4R4hTk/x1UyoqadyJ9x9CgSi1RlVDQF8U2sxLLSnFkCaMihqljHIWgMg==}
@@ -11226,7 +11226,7 @@ snapshots:
       '@upstash/redis': 1.36.1
       kysely: 0.28.8
 
-  dub@0.69.0:
+  dub@0.71.0:
     dependencies:
       zod: 4.3.5
 
