@@ -202,7 +202,7 @@ const ResponsiveDialogContentVariants = cva("fixed z-[99] bg-background", {
   variants: {
     device: {
       desktop:
-        "left-1/2 top-1/2 grid max-h-[calc(100%-4rem)] w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border border-transparent dark:!border-primary/10 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 sm:max-w-lg",
+        "left-1/2 top-1/2 grid max-h-[calc(100%-4rem)] w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border border-transparent dark:!border-primary/10 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 sm:max-w-lg p-6",
       mobile: "flex ",
     },
     direction: {
@@ -221,7 +221,7 @@ const ResponsiveDialogContentVariants = cva("fixed z-[99] bg-background", {
       device: "mobile",
       direction: "bottom",
       className:
-        "inset-x-0 bottom-0 mt-24 h-fit max-h-[75%] flex-col rounded-t-lg border border-b-0 !border-primary/10",
+        "inset-x-0 bottom-0 mt-24 h-fit max-h-[75%] flex-col rounded-t-lg border border-b-0 !border-primary/10 !p-2",
     },
     {
       device: "mobile",
@@ -274,7 +274,7 @@ const ResponsiveDialogContent = React.forwardRef<
       ? DialogPrimitive.Content
       : VaulDrawerContent;
 
-    const shouldShowCloseButton = !alert && showCloseButton;
+    const shouldShowCloseButton = isDesktop;
     const shouldPreventEscape = !dismissible && !alert;
     const shouldPreventOutsideInteraction =
       !modal || (!dismissible && !alert) || alert;
