@@ -37,7 +37,7 @@
     "class-variance-authority": "^0.7.1",
     "cuid": "^3.0.0",
     "drizzle-orm": "^0.45.1",
-    "dub": "^0.69.0",
+    "dub": "^0.71.0",
     "framer-motion": "^12.23.26",
     "fumadocs-core": "16.2.5",
     "fumadocs-docgen": "3.0.4",
