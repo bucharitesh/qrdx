@@ -73,7 +73,10 @@ export default function QRDetector() {
 handleImageLoad(
   imgElement: HTMLImageElement,
   size: number,              // Processing size (recommended: 400)
-  returnFullData?: boolean   // Return full data or just text
+  returnFullData?: boolean,  // Return full data or just text
+  options?: {
+    debugDownloads?: boolean // Download processed frames for debugging
+  }
 )
 ```
 
@@ -82,6 +85,7 @@ handleImageLoad(
 - **200-400** — Faster, good for clear images
 - **600+** — Better for small/damaged QR codes
 - **Recommended** — 400 for most cases
+- The image is scaled so its longest side matches `size`
 
 ## Full Data Response
 
@@ -115,6 +119,12 @@ if (fullData?.location) {
   ];
   downloadImageWithBoundingBox(img, boundingBox, "debug.png");
 }
+```
+
+Optional: download each processed frame while debugging.
+
+```tsx
+await handleImageLoad(img, 400, false, { debugDownloads: true });
 ```
 
 ## Error Handling
