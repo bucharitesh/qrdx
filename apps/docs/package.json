@@ -11,7 +11,7 @@
     "format": "biome format --write"
   },
   "dependencies": {
-    "@ai-sdk/google": "^3.0.19",
+    "@ai-sdk/google": "^2.0.52",
     "@ai-sdk/react": "^2.0.115",
     "@hookform/resolvers": "^5.2.2",
     "@next/bundle-analyzer": "16.0.10",
