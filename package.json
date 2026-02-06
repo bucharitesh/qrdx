@@ -22,7 +22,7 @@
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
-    "@types/node": "^25.0.2",
+    "@types/node": "^25.1.0",
     "knip": "^5.74.0",
     "tsup": "^8.5.1",
     "turbo": "^2.6.3",
