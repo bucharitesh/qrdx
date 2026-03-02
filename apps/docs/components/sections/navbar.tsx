@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/a11y/useButtonType: <explanation> */
 "use client";
 
 import { Button } from "@repo/design-system/components/ui/button";
@@ -14,10 +15,10 @@ import { Icons } from "@/components/icons";
 import { NavMenu } from "@/components/nav-menu";
 import { QrdxLogoAnimation } from "@/components/qrdx-logo-animation";
 import { siteConfig } from "@/config/site";
-import { SocialLink } from "../social-link";
-import { formatCompactNumber } from "@/utils/format";
 import { useGithubStars } from "@/lib/hooks/use-github-stars";
+import { formatCompactNumber } from "@/utils/format";
 import { QrdxLogo } from "../qrdx-logo";
+import { SocialLink } from "../social-link";
 
 const INITIAL_WIDTH = "70rem";
 const MAX_WIDTH = "800px";
@@ -97,8 +98,8 @@ export function Navbar() {
         >
           <div className="flex h-[56px] items-center justify-between p-4">
             <Link href="/" className="flex items-center gap-2">
-              <QrdxLogo season="christmas" className="size-5 md:hidden block fill-secondary-foreground" />
-              <QrdxLogoAnimation season="christmas" size={30} className="hidden md:block" />
+              <QrdxLogo className="size-5 md:hidden block fill-secondary-foreground" />
+              <QrdxLogoAnimation size={30} className="hidden md:block" />
               <p className="text-lg font-semibold text-secondary-foreground">
                 QRdx
               </p>
@@ -114,7 +115,9 @@ export function Navbar() {
                 <Icons.github className="size-4" />
                 {stargazersCount > 0 && formatCompactNumber(stargazersCount)}
               </SocialLink>
-              <Link href="/playground"><Button>Try the Playground</Button></Link>
+              <Link href="/playground">
+                <Button>Try the Playground</Button>
+              </Link>
               <Button
                 variant="secondary"
                 className="md:hidden"
@@ -157,7 +160,9 @@ export function Navbar() {
                 <div className="flex items-center justify-between">
                   <Link href="/" className="flex items-center gap-2">
                     <QrdxLogo className="size-5 text-secondary-foreground" />
-                    <p className="text-lg font-semibold text-secondary-foreground">QRDX</p>
+                    <p className="text-lg font-semibold text-secondary-foreground">
+                      QRDX
+                    </p>
                   </Link>
                   <button
                     onClick={toggleDrawer}
@@ -201,7 +206,8 @@ export function Navbar() {
                     className="flex items-center gap-2 text-sm font-bold"
                   >
                     <Icons.github className="size-4" />
-                    {stargazersCount > 0 && formatCompactNumber(stargazersCount)}
+                    {stargazersCount > 0 &&
+                      formatCompactNumber(stargazersCount)}
                   </SocialLink>
                 </div>
               </div>
