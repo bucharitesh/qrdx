@@ -1,6 +1,6 @@
-import React from "react";
-import { Icons } from "./icons";
 import { cn } from "@repo/design-system/lib/utils";
+import type React from "react";
+import { Icons } from "./icons";
 
 interface QrdxLogoProps {
   className?: string;
@@ -15,16 +15,20 @@ export const QrdxLogo: React.FC<QrdxLogoProps> = ({
     return (
       <div className="relative">
         <div className="z-1 relative">
-          <Icons.santa 
+          <Icons.santa
             className={cn("absolute", className)}
-            style={{ top: "-7px", left: "10px", width: "18px", height: "18px", rotate: "20deg" }}
+            style={{
+              top: "-7px",
+              left: "10px",
+              width: "18px",
+              height: "18px",
+              rotate: "20deg",
+            }}
           />
         </div>
         <Icons.logo className={cn("size-full", className)} />
       </div>
     );
   }
-  return (
-    <Icons.logo className={cn("size-full", className)} />
-  );
+  return <Icons.logo className={cn("size-full", className)} />;
 };

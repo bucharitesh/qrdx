@@ -138,7 +138,7 @@ const GRADIENT_SUGGESTIONS: GradientSuggestion[] = [
       { color: "#16A34A", offset: 100 }, // Green
     ],
     angle: 45,
-    name: "Christmas",
+    // name: "Christmas",
   },
   {
     type: "linear",
@@ -147,7 +147,7 @@ const GRADIENT_SUGGESTIONS: GradientSuggestion[] = [
       { color: "#DC2626", offset: 100 }, // Red
     ],
     angle: 90,
-    name: "Christmas",
+    // name: "Christmas",
   },
   {
     type: "radial",
@@ -155,7 +155,7 @@ const GRADIENT_SUGGESTIONS: GradientSuggestion[] = [
       { color: "#DC2626", offset: 0 }, // Red
       { color: "#16A34A", offset: 100 }, // Green
     ],
-    name: "Christmas",
+    // name: "Christmas",
   },
   // New Years Theme
   {

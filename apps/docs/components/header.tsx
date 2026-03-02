@@ -2,15 +2,15 @@
 
 import { Separator } from "@repo/design-system/components/ui/separator";
 import Link from "next/link";
-import { Icons } from "@/components/icons";
 import { GetProCTA } from "@/components/get-pro-cta";
+import { Icons } from "@/components/icons";
 import { SocialLink } from "@/components/social-link";
 import { UserProfileDropdown } from "@/components/user-profile-dropdown";
 import { useGithubStars } from "@/lib/hooks/use-github-stars";
 import { formatCompactNumber } from "@/utils/format";
 import { NavMenu } from "./nav-menu";
-import { QrdxLogoAnimation } from "./qrdx-logo-animation";
 import { QrdxLogo } from "./qrdx-logo";
+import { QrdxLogoAnimation } from "./qrdx-logo-animation";
 
 const navLinks = [
   {
@@ -39,8 +39,8 @@ export function Header() {
       <div className="flex items-center justify-between gap-2 p-4">
         <div className="flex items-center gap-4">
           <Link href="/" className="flex items-center gap-2">
-            <QrdxLogo season="christmas" className="size-5 md:hidden block fill-secondary-foreground" />
-            <QrdxLogoAnimation season="christmas" size={40} className="hidden md:block" />
+            <QrdxLogo className="size-5 md:hidden block fill-secondary-foreground" />
+            <QrdxLogoAnimation size={40} className="hidden md:block" />
             <p className="text-sm md:text-lg font-semibold text-secondary-foreground">
               QRdx
             </p>
