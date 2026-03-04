@@ -4,34 +4,19 @@
 import { communityTheme, db, qrPreset as themeTable } from "@repo/database";
 import cuid from "cuid";
 import { and, eq, sql } from "drizzle-orm";
-import { headers } from "next/headers";
 import { cache } from "react";
 import { z } from "zod";
-import { auth } from "@/lib/auth";
 import { MAX_FREE_THEMES } from "@/lib/constants";
+import { getCurrentUserId } from "@/lib/shared";
 import { getMyActiveSubscription } from "@/lib/subscription";
 import {
   actionError,
   actionSuccess,
   ErrorCode,
   QRCodeThemeNotFoundError,
-  UnauthorizedError,
   ValidationError,
 } from "@/types/errors";
 import { type ThemeStyles, themeStylePropsSchema } from "@/types/theme";
-
-// Helper to get user ID with better error handling
-async function getCurrentUserId(): Promise<string> {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  if (!session?.user?.id) {
-    throw new UnauthorizedError();
-  }
-
-  return session.user.id;
-}
 
 // Log errors for observability
 function logError(error: Error, context: Record<string, any>) {

@@ -22,6 +22,7 @@ import {
   COMMUNITY_THEMES_PAGE_SIZE,
   MAX_TAGS_PER_THEME,
 } from "@/lib/constants";
+import { getCurrentUserId } from "@/lib/shared";
 import type {
   CommunityFilterOption,
   CommunitySortOption,
@@ -52,18 +53,6 @@ async function getOptionalUserId(): Promise<string | null> {
   } catch {
     return null;
   }
-}
-
-async function getCurrentUserId(): Promise<string> {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
-  if (!session?.user?.id) {
-    throw new UnauthorizedError();
-  }
-
-  return session.user.id;
 }
 
 function logError(error: Error, context: Record<string, unknown>) {
