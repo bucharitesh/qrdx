@@ -39,6 +39,7 @@ export function ThemePreview({ styles, name, className }: ThemePreviewProps) {
             style={{
               backgroundColor: color as string,
               borderRadius: "0.5rem",
+              border: color === c.bg ? `1px solid ${c.fg}` : undefined,
             }}
           />
         ))}
