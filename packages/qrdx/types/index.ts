@@ -14,7 +14,9 @@ export type {
 export {
   colorConfigSchema,
   colorTypeSchema,
+  getColorBackgroundStyle,
   getColorString,
+  getNormalizedColor,
   gradientStopSchema,
   isGradient,
   linearGradientSchema,

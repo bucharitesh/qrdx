@@ -1,8 +1,16 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@repo/design-system/components/ui/button";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@repo/design-system/components/ui/form";
 import { Input } from "@repo/design-system/components/ui/input";
-import { Label } from "@repo/design-system/components/ui/label";
 import {
   ResponsiveDialog,
   ResponsiveDialogContent,
@@ -11,8 +19,15 @@ import {
   ResponsiveDialogHeader,
   ResponsiveDialogTitle,
 } from "@repo/design-system/components/ui/revola";
-import { Icons } from "@/components/icons";
-import React, { useState } from "react";
+import { Separator } from "@repo/design-system/components/ui/separator";
+import { Loader2 } from "lucide-react";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
+
+const formSchema = z.object({
+  themeName: z.string().min(1, "Theme name cannot be empty."),
+});
 
 interface QRSaveDialogProps {
   open: boolean;
@@ -23,6 +38,9 @@ interface QRSaveDialogProps {
   title?: string;
   description?: string;
   ctaLabel?: string;
+  existingThemeName?: string;
+  onUpdateExisting?: () => Promise<void>;
+  isUpdating?: boolean;
 }
 
 export function QRSaveDialog({
@@ -34,58 +52,119 @@ export function QRSaveDialog({
   title = "Save QR Code Theme",
   description = "Save your QR code design as a theme to reuse later.",
   ctaLabel = "Save Theme",
+  existingThemeName,
+  onUpdateExisting,
+  isUpdating = false,
 }: QRSaveDialogProps) {
-  const [themeName, setThemeName] = useState(initialThemeName);
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      themeName: initialThemeName,
+    },
+  });
 
-  React.useEffect(() => {
-    if (open) {
-      setThemeName(initialThemeName);
-    }
-  }, [open, initialThemeName]);
-
-  const handleSave = async () => {
-    if (!themeName.trim()) return;
-    await onSave(themeName);
-    setThemeName("");
+  const onSubmit = (values: z.infer<typeof formSchema>) => {
+    onSave(values.themeName);
   };
 
+  useEffect(() => {
+    if (open) {
+      form.reset({ themeName: initialThemeName });
+    }
+  }, [open, initialThemeName, form]);
+
+  const handleOpenChange = (newOpen: boolean) => {
+    onOpenChange(newOpen);
+  };
+
+  const hasUpdateOption = !!existingThemeName && !!onUpdateExisting;
+
   return (
-    <ResponsiveDialog open={open} onOpenChange={onOpenChange}>
-      <ResponsiveDialogContent className="p-6" showCloseButton={true}>
-        <ResponsiveDialogHeader>
-          <ResponsiveDialogTitle>{title}</ResponsiveDialogTitle>
-          <ResponsiveDialogDescription>
-            {description}
-          </ResponsiveDialogDescription>
-        </ResponsiveDialogHeader>
-        <div className="space-y-4 py-4">
-          <div className="space-y-2">
-            <Label htmlFor="theme-name">Theme Name</Label>
-            <Input
-              id="theme-name"
-              placeholder="My Awesome QR Code"
-              value={themeName}
-              onChange={(e) => setThemeName(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && themeName.trim()) {
-                  handleSave();
-                }
-              }}
-              disabled={isSaving}
-            />
-          </div>
+    <ResponsiveDialog open={open} onOpenChange={handleOpenChange}>
+      <ResponsiveDialogContent className="overflow-hidden shadow-lg sm:max-w-100">
+        <div className="space-y-6 p-6 pt-0 sm:pt-6 sm:pb-2">
+          <ResponsiveDialogHeader>
+            <ResponsiveDialogTitle>{title}</ResponsiveDialogTitle>
+            <ResponsiveDialogDescription>
+              {description}
+            </ResponsiveDialogDescription>
+          </ResponsiveDialogHeader>
+
+          {hasUpdateOption && (
+            <>
+              <Button
+                className="w-full"
+                disabled={isUpdating || isSaving}
+                onClick={onUpdateExisting}
+              >
+                {isUpdating ? (
+                  <>
+                    <Loader2 className="mr-1 size-4 animate-spin" />
+                    Updating
+                  </>
+                ) : (
+                  <>Update &ldquo;{existingThemeName}&rdquo;</>
+                )}
+              </Button>
+
+              <div className="flex items-center gap-3">
+                <Separator className="flex-1" />
+                <span className="text-muted-foreground text-xs">
+                  or save as a new theme
+                </span>
+                <Separator className="flex-1" />
+              </div>
+            </>
+          )}
+
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <FormField
+                control={form.control}
+                name="themeName"
+                render={({ field }) => (
+                  <FormItem className="grid">
+                    <FormLabel>Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="My Awesome Theme" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </form>
+          </Form>
         </div>
-        <ResponsiveDialogFooter>
+        <ResponsiveDialogFooter className="bg-muted/30 border-t px-6 py-4">
           <Button
-            variant="outline"
+            size="sm"
+            disabled={isSaving || isUpdating}
+            variant="ghost"
             onClick={() => onOpenChange(false)}
-            disabled={isSaving}
           >
             Cancel
           </Button>
-          <Button onClick={handleSave} disabled={isSaving || !themeName.trim()}>
-            {isSaving && <Icons.Loader className="mr-2 h-4 w-4 animate-spin" />}
-            {ctaLabel}
+          <Button
+            size="sm"
+            type="submit"
+            disabled={
+              isSaving ||
+              isUpdating ||
+              !form.formState.isValid ||
+              form.formState.isSubmitting
+            }
+            onClick={form.handleSubmit(onSubmit)}
+          >
+            {isSaving || form.formState.isSubmitting ? (
+              <>
+                <Loader2 className="mr-1 size-4 animate-spin" />
+                Saving
+              </>
+            ) : hasUpdateOption ? (
+              "Save as New"
+            ) : (
+              ctaLabel
+            )}
           </Button>
         </ResponsiveDialogFooter>
       </ResponsiveDialogContent>

@@ -103,3 +103,68 @@ export function getColorString(
   }
   return normalized.stops[0]?.color || fallback;
 }
+
+export function getNormalizedColor(
+  color: ColorConfig | string | undefined
+): string {
+  if (!color) {
+    return "#000000";
+  }
+
+  if (typeof color === "string") {
+    return color;
+  }
+
+  const normalized = normalizeColorConfig(color);
+  if (normalized.type === "solid") {
+    return normalized.color;
+  }
+
+  const sortedStops = [...normalized.stops].sort((a, b) => a.offset - b.offset);
+  const colorStops = sortedStops
+    .map((stop) => `${stop.color} ${stop.offset}%`)
+    .join(", ");
+
+  if (normalized.type === "linear") {
+    return `linear-gradient(${normalized.angle ?? 0}deg, ${colorStops})`;
+  }
+
+  return `radial-gradient(circle, ${colorStops})`;
+}
+
+/**
+ * Get CSS background style for a ColorConfig
+ * Supports solid colors, linear gradients, and radial gradients
+ */
+export function getColorBackgroundStyle(
+  color: ColorConfig | string | undefined
+): React.CSSProperties {
+  if (!color) {
+    return { backgroundColor: "#000000" };
+  }
+
+  if (typeof color === "string") {
+    return { backgroundColor: color };
+  }
+
+  const normalized = normalizeColorConfig(color);
+  if (normalized.type === "solid") {
+    return { backgroundColor: normalized.color };
+  }
+
+  // Generate gradient CSS
+  const sortedStops = [...normalized.stops].sort((a, b) => a.offset - b.offset);
+  const colorStops = sortedStops
+    .map((stop) => `${stop.color} ${stop.offset}%`)
+    .join(", ");
+
+  if (normalized.type === "linear") {
+    return {
+      background: `linear-gradient(${normalized.angle ?? 0}deg, ${colorStops})`,
+    };
+  }
+
+  return {
+    background: `radial-gradient(circle, ${colorStops})`,
+  };
+}

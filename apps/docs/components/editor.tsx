@@ -13,15 +13,15 @@ import {
   TabsTrigger,
 } from "@repo/design-system/components/ui/tabs";
 import { useIsMobile } from "@repo/design-system/hooks/use-mobile";
-import { Icons } from "@/components/icons";
+import { Sliders } from "lucide-react";
 import React, { use, useEffect } from "react";
-import { useMounted } from "@/lib/hooks/use-mounted";
+import { DialogActionsProvider } from "@/lib/hooks/use-dialog-actions";
 import { useQREditorStore } from "@/store/editor-store";
 import type { Theme, ThemeStyles } from "@/types/theme";
 import { ActionBar } from "./editor/action-bar";
 import QRControlPanel from "./qr-control-panel";
+import ThemeControlPanel from "./qr-control-panel";
 import QRPreviewPanel from "./qr-preview-panel";
-import { QrdxLogoAnimation } from "./qrdx-logo-animation";
 
 interface EditorProps {
   themePromise: Promise<Theme | null>;
@@ -29,9 +29,6 @@ interface EditorProps {
 
 const Editor: React.FC<EditorProps> = ({ themePromise }) => {
   const isMobile = useIsMobile();
-  const isMounted = useMounted();
-
-  const { applyThemePreset } = useQREditorStore();
 
   const themeState = useQREditorStore((state) => state.themeState);
   const setThemeState = useQREditorStore((state) => state.setThemeState);
@@ -67,98 +64,80 @@ const Editor: React.FC<EditorProps> = ({ themePromise }) => {
 
   const styles = themeState.styles;
 
-  // Prevent hydration mismatch by only rendering after mount
-  if (!isMounted) {
-    return (
-      <div className="flex h-screen w-full items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <QrdxLogoAnimation size={100} />
-          <p className="text-muted-foreground text-sm">Loading Playground...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Mobile layout
   if (isMobile) {
     return (
-      <div className="relative isolate flex flex-1 overflow-hidden">
-        <div className="size-full flex-1 overflow-hidden">
-          <Tabs
-            defaultValue="controls"
-            className="h-full"
-            id="mobile-editor-tabs"
-          >
-            <TabsList className="w-full rounded-none">
-              <TabsTrigger value="controls" className="flex-1">
-                <Icons.Sliders className="mr-2 h-4 w-4" />
-                Controls
-              </TabsTrigger>
-              <TabsTrigger value="preview" className="flex-1">
-                <Icons.Eye className="mr-2 h-4 w-4" />
-                Preview
-              </TabsTrigger>
-            </TabsList>
-            <TabsContent
-              value="controls"
-              className="mt-0 h-[calc(100%-2.5rem)]"
-            >
-              <div className="flex h-full flex-col">
-                <QRControlPanel
-                  style={styles}
-                  onChange={handleStyleChange}
-                  themePromise={themePromise}
-                />
-              </div>
-            </TabsContent>
-            <TabsContent value="preview" className="mt-0 h-[calc(100%-2.5rem)]">
-              <div className="flex h-full flex-col">
-                <ActionBar />
-                <QRPreviewPanel style={styles} />
-              </div>
-            </TabsContent>
-          </Tabs>
+      <DialogActionsProvider>
+        <div className="relative isolate flex flex-1 overflow-hidden">
+          <div className="size-full flex-1 overflow-hidden">
+            <Tabs defaultValue="controls" className="h-full">
+              <TabsList className="w-full rounded-none">
+                <TabsTrigger value="controls" className="flex-1">
+                  <Sliders className="mr-2 h-4 w-4" />
+                  Controls
+                </TabsTrigger>
+                <TabsTrigger value="preview" className="flex-1">
+                  Preview
+                </TabsTrigger>
+              </TabsList>
+              <TabsContent
+                value="controls"
+                className="mt-0 h-[calc(100%-2.5rem)]"
+              >
+                <div className="flex h-full flex-col">
+                  <ThemeControlPanel
+                    styles={styles}
+                    onChange={handleStyleChange}
+                  />
+                </div>
+              </TabsContent>
+              <TabsContent
+                value="preview"
+                className="mt-0 h-[calc(100%-2.5rem)]"
+              >
+                <div className="flex h-full flex-col">
+                  <ActionBar />
+                  <QRPreviewPanel style={styles} />
+                </div>
+              </TabsContent>
+            </Tabs>
+          </div>
         </div>
-      </div>
+      </DialogActionsProvider>
     );
   }
 
   // Desktop layout
   return (
-    <div className="relative isolate flex flex-1 overflow-hidden">
-      <div className="size-full">
-        <ResizablePanelGroup
-          direction="horizontal"
-          className="isolate"
-          id="editor-panel-group"
-        >
-          <ResizablePanel
-            id="control-panel"
-            defaultSize={30}
-            minSize={20}
-            maxSize={40}
-            className="z-1 min-w-[max(20%,22rem)]"
-          >
-            <div className="relative isolate flex h-full flex-1 flex-col">
-              <QRControlPanel
-                style={styles}
-                onChange={handleStyleChange}
-                themePromise={themePromise}
-              />
-            </div>
-          </ResizablePanel>
-          <ResizableHandle id="editor-resize-handle" />
-          <ResizablePanel id="preview-panel" defaultSize={70}>
-            <div className="flex h-full flex-col">
-              <div className="flex min-h-0 flex-1 flex-col">
-                <ActionBar />
-                <QRPreviewPanel style={styles} />
+    <DialogActionsProvider>
+      <div className="relative isolate flex flex-1 overflow-hidden">
+        <div className="size-full">
+          <ResizablePanelGroup direction="horizontal" className="isolate">
+            <ResizablePanel
+              defaultSize={30}
+              minSize={20}
+              maxSize={40}
+              className="z-1 min-w-[max(20%,22rem)]"
+            >
+              <div className="relative isolate flex h-full flex-1 flex-col">
+                <ThemeControlPanel
+                  styles={styles}
+                  onChange={handleStyleChange}
+                />
               </div>
-            </div>
-          </ResizablePanel>
-        </ResizablePanelGroup>
+            </ResizablePanel>
+            <ResizableHandle />
+            <ResizablePanel defaultSize={70}>
+              <div className="flex h-full flex-col">
+                <div className="flex min-h-0 flex-1 flex-col">
+                  <ActionBar />
+                  <QRPreviewPanel style={styles} />
+                </div>
+              </div>
+            </ResizablePanel>
+          </ResizablePanelGroup>
+        </div>
       </div>
-    </div>
+    </DialogActionsProvider>
   );
 };
 

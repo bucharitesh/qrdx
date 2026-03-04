@@ -1,4 +1,5 @@
-/** biome-ignore-all lint/suspicious/noExplicitAny: <explanation> */
+/** biome-ignore-all lint/suspicious/noExplicitAny: false positive */
+
 import { useEffect } from "react";
 
 export type PostLoginActionType =
@@ -9,7 +10,8 @@ export type PostLoginActionType =
   | "AI_GENERATE_EDIT"
   | "AI_GENERATE_RETRY"
   | "SAVE_THEME_FOR_SHARE"
-  | "CHECKOUT";
+  | "CHECKOUT"
+  | "LIKE_THEME";
 
 export interface PostLoginActionPayload<T = any> {
   type: PostLoginActionType;

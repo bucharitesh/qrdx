@@ -1,6 +1,6 @@
 import { Button } from "@repo/design-system/components/ui/button";
 import { Card } from "@repo/design-system/components/ui/card";
-import { Icons } from "@/components/icons";
+import { Palette, Plus } from "lucide-react";
 import { headers } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -30,7 +30,7 @@ export default async function ThemesPage() {
       {sortedThemes.length === 0 ? (
         <Card className="flex flex-col items-center justify-center p-4 py-12 text-center">
           <div className="bg-primary/10 mb-6 rounded-full p-4">
-            <Icons.Palette className="text-primary size-12" />
+            <Palette className="text-primary size-12" />
           </div>
           <h2 className="mb-2 text-xl font-semibold md:text-2xl">
             No themes created yet
@@ -42,7 +42,7 @@ export default async function ThemesPage() {
           <div className="w-full max-w-md">
             <Link href="/editor/theme">
               <Button size="lg" className="w-full gap-2">
-                <Icons.Plus className="size-4" />
+                <Plus className="size-4" />
                 Create Your First Theme
               </Button>
             </Link>

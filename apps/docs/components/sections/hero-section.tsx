@@ -1,10 +1,10 @@
+/** biome-ignore-all lint/a11y/noStaticElementInteractions: <explanation> */
 "use client";
 
 import { Button } from "@repo/design-system/components/ui/button";
 import {
-  motion,
   useAnimationFrame,
-  useMotionTemplate,
+  // useMotionTemplate,
   useMotionValue,
 } from "framer-motion";
 import Link from "next/link";
@@ -39,7 +39,7 @@ export function HeroSection() {
     gridOffsetY.set((currentY + speedY) % 40);
   });
 
-  const maskImage = useMotionTemplate`radial-gradient(300px circle at ${mouseX}px ${mouseY}px, black, transparent)`;
+  // const maskImage = useMotionTemplate`radial-gradient(300px circle at ${mouseX}px ${mouseY}px, black, transparent)`;
 
   return (
     <section
@@ -48,9 +48,7 @@ export function HeroSection() {
       id="hero"
       className="w-full relative"
     >
-      <div className="absolute inset-0">
-        <div className="absolute inset-0 -z-10 h-[600px] md:h-[800px] w-full [background:radial-gradient(125%_125%_at_50%_10%,var(--background)_40%,var(--primary)_100%)] rounded-b-xl"></div>
-      </div>
+      <div className="absolute inset-0 -z-10 h-[600px] md:h-[800px] w-full [background:radial-gradient(125%_125%_at_50%_10%,var(--background)_40%,var(--primary)_100%)] rounded-b-xl"></div>
       {/* <div className="absolute inset-0 z-0 opacity-[0.05]">
         <img
           src={

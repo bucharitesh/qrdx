@@ -23,17 +23,15 @@ import {
   TooltipTrigger,
 } from "@repo/design-system/components/ui/tooltip";
 import { cn } from "@repo/design-system/lib/utils";
-import {
-  Icons
-} from "@/components/icons";
 import Link from "next/link";
 import type { ColorConfig } from "qrdx";
-import { normalizeColorConfig } from "qrdx/types";
 import type React from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { Icons } from "@/components/icons";
 import { authClient } from "@/lib/auth-client";
 import { useMounted } from "@/lib/hooks/use-mounted";
 import { useUserSettings } from "@/lib/hooks/use-user-settings";
+import { getColorBackgroundStyle } from "@/lib/utils/color";
 import { useQREditorStore } from "@/store/editor-store";
 import { useThemePresetStore } from "@/store/theme-preset-store";
 import type { ThemePreset } from "@/types/theme";
@@ -48,43 +46,6 @@ interface ThemePresetSelectProps extends React.ComponentProps<typeof Button> {
 
 interface ColorBoxProps {
   color: string | ColorConfig | undefined;
-}
-
-/**
- * Get CSS background style for a ColorConfig
- * Supports solid colors, linear gradients, and radial gradients
- */
-function getColorBackgroundStyle(
-  color: ColorConfig | string | undefined,
-): React.CSSProperties {
-  if (!color) {
-    return { backgroundColor: "#000000" };
-  }
-
-  if (typeof color === "string") {
-    return { backgroundColor: color };
-  }
-
-  const normalized = normalizeColorConfig(color);
-  if (normalized.type === "solid") {
-    return { backgroundColor: normalized.color };
-  }
-
-  // Generate gradient CSS
-  const sortedStops = [...normalized.stops].sort((a, b) => a.offset - b.offset);
-  const colorStops = sortedStops
-    .map((stop) => `${stop.color} ${stop.offset}%`)
-    .join(", ");
-
-  if (normalized.type === "linear") {
-    return {
-      background: `linear-gradient(${normalized.angle ?? 0}deg, ${colorStops})`,
-    };
-  }
-
-  return {
-    background: `radial-gradient(circle, ${colorStops})`,
-  };
 }
 
 const ColorBox: React.FC<ColorBoxProps> = ({ color }) => (

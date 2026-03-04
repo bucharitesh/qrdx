@@ -4,23 +4,23 @@ import { useState } from "react";
 import { ActionBarButtons } from "@/components/editor/action-bar/action-bar-buttons";
 import { HorizontalScrollArea } from "@/components/horizontal-scroll-area";
 import {
-  QRDialogActionsProvider,
-  useQRDialogActions,
+  DialogActionsProvider,
+  useDialogActions,
 } from "@/lib/hooks/use-dialog-actions";
 import { usePlaygroundShortcuts } from "@/lib/hooks/use-playground-shortcuts";
 import { useQREditorStore } from "@/store/editor-store";
 
 export function ActionBar() {
   return (
-    <QRDialogActionsProvider>
+    <DialogActionsProvider>
       <ActionBarContent />
-    </QRDialogActionsProvider>
+    </DialogActionsProvider>
   );
 }
 
 function ActionBarContent() {
   const { isCreatingTheme, handleSaveClick, handleShareClick } =
-    useQRDialogActions();
+    useDialogActions();
   const { resetToCurrentPreset } = useQREditorStore();
   const [downloadDialogOpen, setDownloadDialogOpen] = useState(false);
   const [codeDialogOpen, setCodeDialogOpen] = useState(false);

@@ -1,148 +1,100 @@
-"use client";
+/** biome-ignore-all lint/suspicious/noArrayIndexKey: <explanation> */
 
 import { Button } from "@repo/design-system/components/ui/button";
-import { Separator } from "@repo/design-system/components/ui/separator";
-import { Icons } from "@/components/icons";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
-import { TooltipWrapper } from "@/components/tooltip-wrapper";
-import { useUpdateQRTheme } from "@/lib/hooks/use-themes";
-import { useQREditorStore } from "@/store/editor-store";
-import { useThemePresetStore } from "@/store/theme-preset-store";
-import type { ThemeEditorState } from "@/types/editor";
-import type { ThemeStyles } from "@/types/theme";
-import { QRSaveDialog } from "./qr-save-dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@repo/design-system/components/ui/dropdown-menu";
+import { cn } from "@repo/design-system/lib/utils";
+import { type LucideIcon, Palette, RefreshCw, Undo2 } from "lucide-react";
 
-interface QREditActionsProps {
-  theme: {
-    id: string;
-    name: string;
-  };
+interface MenuItemProps {
+  icon: LucideIcon;
+  label: string;
+  onClick: () => void;
   disabled?: boolean;
+  title?: string;
 }
 
-export function QREditActions({ theme, disabled = false }: QREditActionsProps) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const updateThemeMutation = useUpdateQRTheme();
-  const { themeState, applyThemePreset } = useQREditorStore();
-  const { updatePreset } = useThemePresetStore();
-  const [isSaveDialogOpen, setIsSaveDialogOpen] = useState(false);
+const MenuItem = ({
+  icon: Icon,
+  label,
+  onClick,
+  disabled,
+  title,
+}: MenuItemProps) => {
+  return (
+    <DropdownMenuItem
+      onClick={onClick}
+      disabled={disabled}
+      className={cn(
+        "flex items-center gap-2 px-3 py-2 rounded-md transition-colors",
+        disabled
+          ? "opacity-50 cursor-not-allowed"
+          : "hover:bg-accent/50 cursor-pointer",
+      )}
+      title={title}
+    >
+      <Icon className="h-4 w-4 text-muted-foreground" />
+      <span>{label}</span>
+    </DropdownMenuItem>
+  );
+};
 
-  const mainEditorUrl = `/playground?${searchParams}`;
+interface ThemeControlActionsProps {
+  hasChanges: boolean;
+  hasPresetChanges: boolean;
+  onReset: () => void;
+  onResetToPreset: () => void;
+  onImportClick: () => void;
+}
 
-  const handleCancel = () => {
-    // Keep the current search params for tab persistence
-    router.push(mainEditorUrl);
-    // Reset to default preset
-    if (themeState.preset) {
-      applyThemePreset(themeState.preset);
-    }
-  };
-
-  const handleSaveTheme = async (newName: string) => {
-    const dataToUpdate: {
-      id: string;
-      name?: string;
-      styles?: ThemeEditorState["styles"];
-    } = {
-      id: theme.id,
-    };
-
-    if (newName !== theme.name) {
-      dataToUpdate.name = newName;
-    } else {
-      dataToUpdate.name = theme.name;
-    }
-
-    if (themeState.styles as ThemeStyles) {
-      dataToUpdate.styles = themeState.styles as ThemeStyles;
-    }
-
-    if (!dataToUpdate.name && !dataToUpdate.styles) {
-      setIsSaveDialogOpen(false);
-      return;
-    }
-
-    try {
-      const result = await updateThemeMutation.mutateAsync(dataToUpdate);
-      if (result) {
-        // Update the preset in the store with the new data
-        const updatedPreset = {
-          label: result.name,
-          styles: result.style,
-          source: "SAVED" as const,
-          createdAt: result.createdAt.toISOString(),
-        };
-        updatePreset(result.id, updatedPreset);
-
-        setIsSaveDialogOpen(false);
-        router.push(mainEditorUrl);
-        applyThemePreset(result.id);
-      }
-    } catch (error) {
-      console.error("Failed to update theme:", error);
-    }
-  };
-
-  const handleSaveClick = () => {
-    setIsSaveDialogOpen(true);
-  };
+const ThemeControlActions = ({
+  hasChanges,
+  hasPresetChanges,
+  onReset,
+  onResetToPreset,
+}: ThemeControlActionsProps) => {
+  const menuItems: MenuItemProps[] = [
+    {
+      icon: RefreshCw,
+      label: "Reset to Current Preset",
+      onClick: onResetToPreset,
+      disabled: !hasPresetChanges,
+      title: hasPresetChanges
+        ? "Reset to current preset"
+        : "No changes from preset",
+    },
+    {
+      icon: Undo2,
+      label: "Reset to Default Theme",
+      onClick: onReset,
+      disabled: !hasChanges,
+      title: hasChanges ? "Reset to base theme" : "No changes to reset",
+    },
+  ];
 
   return (
-    <>
-      <div className="bg-card/80 text-card-foreground flex items-center">
-        <div className="flex min-h-14 flex-1 items-center gap-2 px-4">
-          <div className="flex animate-pulse items-center gap-2">
-            <div className="h-2 w-2 rounded-full bg-blue-500" />
-            <span className="text-card-foreground/60 text-sm font-medium">
-              Editing
-            </span>
-          </div>
-          <span className="max-w-56 truncate px-2 text-sm font-semibold">
-            {theme.name}
-          </span>
-        </div>
-
-        <Separator orientation="vertical" className="h-8! w-px bg-border" />
-
-        <TooltipWrapper label="Cancel changes" asChild>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="size-14 shrink-0 rounded-none"
-            onClick={handleCancel}
-            disabled={disabled}
-          >
-            <Icons.X className="h-4 w-4" />
-          </Button>
-        </TooltipWrapper>
-
-        <Separator orientation="vertical" className="h-8! w-px bg-border" />
-
-        <TooltipWrapper label="Save changes" asChild>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="size-14 shrink-0 rounded-none"
-            onClick={handleSaveClick}
-            disabled={disabled || updateThemeMutation.isPending}
-          >
-            <Icons.Check className="h-4 w-4" />
-          </Button>
-        </TooltipWrapper>
-      </div>
-
-      <QRSaveDialog
-        open={isSaveDialogOpen}
-        onOpenChange={setIsSaveDialogOpen}
-        onSave={handleSaveTheme}
-        isSaving={updateThemeMutation.isPending}
-        initialThemeName={theme.name}
-        title="Save Theme Changes"
-        description="Confirm or update the theme name before saving."
-        ctaLabel="Save Changes"
-      />
-    </>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-8 px-2 gap-1.5 text-muted-foreground hover:text-foreground hover:bg-accent/50"
+        >
+          <Palette className="size-3.5" />
+          <span className="text-sm">Options</span>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-fit p-2">
+        {menuItems.map((item, index) => (
+          <MenuItem key={index} {...item} />
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
-}
+};
+
+export default ThemeControlActions;

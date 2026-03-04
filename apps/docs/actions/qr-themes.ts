@@ -1,8 +1,9 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: false positive */
 "use server";
 
-import { database as db, qrPreset as qrPresetTable } from "@repo/database";
+import { communityTheme, db, qrPreset as themeTable } from "@repo/database";
 import cuid from "cuid";
-import { and, eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { headers } from "next/headers";
 import { cache } from "react";
 import { z } from "zod";
@@ -10,7 +11,9 @@ import { auth } from "@/lib/auth";
 import { MAX_FREE_THEMES } from "@/lib/constants";
 import { getMyActiveSubscription } from "@/lib/subscription";
 import {
-  QRCodeThemeLimitError,
+  actionError,
+  actionSuccess,
+  ErrorCode,
   QRCodeThemeNotFoundError,
   UnauthorizedError,
   ValidationError,
@@ -54,7 +57,7 @@ const createThemeSchema = z.object({
     .string()
     .min(1, "Theme name cannot be empty")
     .max(50, "Theme name too long"),
-  styles: themeStylePropsSchema.partial(),
+  styles: themeStylePropsSchema,
 });
 
 const updateThemeSchema = z.object({
@@ -64,7 +67,7 @@ const updateThemeSchema = z.object({
     .min(1, "Theme name cannot be empty")
     .max(50, "Theme name too long")
     .optional(),
-  styles: themeStylePropsSchema.partial().optional(),
+  styles: themeStylePropsSchema.optional(),
 });
 
 // Layer 1: Clean server actions with proper error handling
@@ -72,9 +75,20 @@ export async function getThemes() {
   try {
     const userId = await getCurrentUserId();
     const userThemes = await db
-      .select()
-      .from(qrPresetTable)
-      .where(eq(qrPresetTable.userId, userId));
+      .select({
+        id: themeTable.id,
+        userId: themeTable.userId,
+        name: themeTable.name,
+        style: themeTable.style,
+        createdAt: themeTable.createdAt,
+        updatedAt: themeTable.updatedAt,
+        isPublished: sql<boolean>`${communityTheme.id} is not null`.as(
+          "is_published",
+        ),
+      })
+      .from(themeTable)
+      .leftJoin(communityTheme, eq(themeTable.id, communityTheme.themeId))
+      .where(eq(themeTable.userId, userId));
     return userThemes;
   } catch (error) {
     logError(error as Error, { action: "getThemes" });
@@ -90,8 +104,8 @@ export const getTheme = cache(async (themeId: string) => {
 
     const [theme] = await db
       .select()
-      .from(qrPresetTable)
-      .where(eq(qrPresetTable.id, themeId))
+      .from(themeTable)
+      .where(eq(themeTable.id, themeId))
       .limit(1);
 
     if (!theme) {
@@ -107,7 +121,7 @@ export const getTheme = cache(async (themeId: string) => {
 
 export async function createTheme(formData: {
   name: string;
-  styles: ThemeStyles;
+  style: ThemeStyles;
 }) {
   try {
     const userId = await getCurrentUserId();
@@ -120,21 +134,20 @@ export async function createTheme(formData: {
     // Check theme limit
     const userThemes = await db
       .select()
-      .from(qrPresetTable)
-      .where(eq(qrPresetTable.userId, userId));
+      .from(themeTable)
+      .where(eq(themeTable.userId, userId));
 
     if (userThemes.length >= MAX_FREE_THEMES) {
       const activeSubscription = await getMyActiveSubscription(userId);
       const isSubscribed =
         !!activeSubscription &&
-        (activeSubscription?.productId ===
-          process.env.NEXT_PUBLIC_QRDX_PRO_MONTHLY_PRODUCT_ID ||
-          activeSubscription?.productId ===
-            process.env.NEXT_PUBLIC_QRDX_PRO_YEARLY_PRODUCT_ID);
+        activeSubscription?.productId ===
+          process.env.NEXT_PUBLIC_TWEAKCN_PRO_PRODUCT_ID;
 
       if (!isSubscribed) {
-        throw new QRCodeThemeLimitError(
-          `You cannot have more than ${MAX_FREE_THEMES} themes.`,
+        return actionError(
+          ErrorCode.THEME_LIMIT_REACHED,
+          `You have reached the limit of ${MAX_FREE_THEMES} themes.`,
         );
       }
     }
@@ -144,7 +157,7 @@ export async function createTheme(formData: {
     const now = new Date();
 
     const [insertedTheme] = await db
-      .insert(qrPresetTable)
+      .insert(themeTable)
       .values({
         id: newThemeId,
         userId: userId,
@@ -155,7 +168,7 @@ export async function createTheme(formData: {
       })
       .returning();
 
-    return insertedTheme;
+    return actionSuccess(insertedTheme);
   } catch (error) {
     logError(error as Error, {
       action: "createTheme",
@@ -184,18 +197,16 @@ export async function updateTheme(formData: {
       throw new ValidationError("No update data provided");
     }
 
-    const updateData: Partial<typeof qrPresetTable.$inferInsert> = {
+    const updateData: Partial<typeof themeTable.$inferInsert> = {
       updatedAt: new Date(),
     };
     if (name) updateData.name = name;
     if (styles) updateData.style = styles;
 
     const [updatedTheme] = await db
-      .update(qrPresetTable)
+      .update(themeTable)
       .set(updateData)
-      .where(
-        and(eq(qrPresetTable.id, themeId), eq(qrPresetTable.userId, userId)),
-      )
+      .where(and(eq(themeTable.id, themeId), eq(themeTable.userId, userId)))
       .returning();
 
     if (!updatedTheme) {
@@ -220,11 +231,9 @@ export async function deleteTheme(themeId: string) {
     }
 
     const [deletedTheme] = await db
-      .delete(qrPresetTable)
-      .where(
-        and(eq(qrPresetTable.id, themeId), eq(qrPresetTable.userId, userId)),
-      )
-      .returning({ id: qrPresetTable.id, name: qrPresetTable.name });
+      .delete(themeTable)
+      .where(and(eq(themeTable.id, themeId), eq(themeTable.userId, userId)))
+      .returning({ id: themeTable.id, name: themeTable.name });
 
     if (!deletedTheme) {
       throw new QRCodeThemeNotFoundError(
