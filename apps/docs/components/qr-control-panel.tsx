@@ -6,119 +6,88 @@ import {
   TabsContent,
   TabsList,
 } from "@repo/design-system/components/ui/tabs";
-import { Icons } from "@/components/icons";
-import { use } from "react";
-import {
-  ColorControls,
-  ContentControls,
-  FrameControls,
-  LogoControls,
-  PatternControls,
-  SettingsControls,
-} from "@/components/editor/control-sections";
-import { QREditActions } from "@/components/editor/qr-edit-actions";
-import ThemePresetSelect from "@/components/editor/qr-preset-select";
-import { TabsTriggerPillWithTooltip } from "@/components/editor/theme-preview/tabs-trigger-pill";
+import { Sparkle } from "lucide-react";
+import React from "react";
+import { ChatInterface } from "@/components/editor/ai/chat-interface";
+import ControlSection from "@/components/editor/control-section";
+import { GradientPicker } from "@/components/editor/gradient-picker";
+import QrPresetSelect from "@/components/editor/qr-preset-select";
+import { TabsTriggerPill } from "@/components/editor/theme-preview/tabs-trigger-pill";
 import { HorizontalScrollArea } from "@/components/horizontal-scroll-area";
+import { defaultThemeState } from "@/config/qr";
 import { useAIQRGenerationCore } from "@/lib/hooks/use-ai-qr-generation-core";
 import {
   type ControlTab,
   useControlsTabFromUrl,
 } from "@/lib/hooks/use-controls-tab-from-url";
-import { useQREditorStore } from "@/store/editor-store";
-import type { QRPreset, QRStyle, Theme } from "@/types/theme";
-import { ChatInterface } from "./editor/ai/chat-interface";
+import type { QRStyle } from "@/types/theme";
+import { ContentControls } from "./editor/control-sections/content-controls";
+import { LogoControls } from "./editor/control-sections/logo-controls";
+import { CornerEyeDotPatternSelector } from "./playground/corner-eye-dot-pattern-selector";
+import { CornerEyePatternSelector } from "./playground/corner-eye-pattern-selector";
+import { ErrorLevelSelector } from "./playground/error-level-selector";
+import { PatternSelector } from "./playground/pattern-selector";
+import { TemplateSelector } from "./playground/template-selector";
 
-interface QRControlPanelProps {
-  style: Partial<QRStyle>;
-  onChange: (style: Partial<QRStyle>) => void;
-  themePromise: Promise<Theme | null>;
+interface ThemeControlPanelProps {
+  styles: QRStyle;
+  onChange: (styles: QRStyle) => void;
 }
 
-const QRControlPanel: React.FC<QRControlPanelProps> = ({
-  style,
-  themePromise,
-}) => {
-  const { themeState, setThemeState } = useQREditorStore();
+const ThemeControlPanel = ({ styles, onChange }: ThemeControlPanelProps) => {
   const { tab, handleSetTab } = useControlsTabFromUrl();
   const { isGenerating } = useAIQRGenerationCore();
-  const theme = use(themePromise);
+
+  const currentStyles = React.useMemo(
+    () => ({
+      ...defaultThemeState.styles,
+      ...styles,
+    }),
+    [styles],
+  );
+
+  const updateStyle = React.useCallback(
+    <K extends keyof QRStyle>(key: K, value: QRStyle[K]) => {
+      onChange({
+        ...styles,
+        [key]: value,
+      });
+    },
+    [onChange, styles],
+  );
+
+  // Ensure we have valid styles for the current mode
+  if (!currentStyles) {
+    return null; // Or some fallback UI
+  }
 
   return (
     <>
       <div className="border-b">
-        {!theme ? (
-          <ThemePresetSelect
-            className="h-14 rounded-none"
-            disabled={isGenerating}
-          />
-        ) : (
-          <QREditActions theme={theme} disabled={isGenerating} />
-        )}
+        <QrPresetSelect className="h-14 rounded-none" disabled={isGenerating} />
       </div>
-
-      {/* Main Controls */}
       <div className="flex min-h-0 flex-1 flex-col space-y-4">
         <Tabs
           value={tab}
           onValueChange={(v) => handleSetTab(v as ControlTab)}
           className="flex min-h-0 w-full flex-1 flex-col"
-          id="qr-control-tabs"
         >
           <HorizontalScrollArea className="mt-2 mb-1 px-4">
             <TabsList className="bg-background text-muted-foreground inline-flex w-fit items-center justify-center rounded-full px-0">
-              <TabsTriggerPillWithTooltip
-                value="content"
-                kbd="1"
-                label="Content"
-                description="Manage QR code data, URL, text, and other content settings"
-              >
-                Content
-              </TabsTriggerPillWithTooltip>
-              <TabsTriggerPillWithTooltip
-                value="colors"
-                kbd="2"
-                label="Colors"
-                description="Customize QR code colors including foreground, background, and gradient styles"
-              >
-                Colors
-              </TabsTriggerPillWithTooltip>
-              <TabsTriggerPillWithTooltip
-                value="patterns"
-                kbd="3"
-                label="Patterns"
-                description="Choose from various QR code patterns, dots, eyes, and marker styles"
-              >
-                Patterns
-              </TabsTriggerPillWithTooltip>
-              <TabsTriggerPillWithTooltip
-                value="frames"
-                kbd="4"
-                label="Frames"
-                description="Add decorative frames, borders, and labels around your QR code"
-              >
-                Frames
-              </TabsTriggerPillWithTooltip>
-              <TabsTriggerPillWithTooltip
-                value="settings"
-                kbd="5"
-                label="Settings"
-                description="Configure advanced options including error correction, size, and logo placement"
-              >
-                Settings
-              </TabsTriggerPillWithTooltip>
-              <TabsTriggerPillWithTooltip
+              <TabsTriggerPill value="content">Content</TabsTriggerPill>
+              <TabsTriggerPill value="colors">Colors</TabsTriggerPill>
+              <TabsTriggerPill value="patterns">Patterns</TabsTriggerPill>
+              <TabsTriggerPill value="frames">Frames</TabsTriggerPill>
+              <TabsTriggerPill value="settings">Settings</TabsTriggerPill>
+              <TabsTriggerPill
                 value="ai"
-                kbd="6"
-                label="AI Generate"
-                description="Use AI to automatically generate and customize QR codes with smart suggestions"
                 className="data-[state=active]:[--effect:var(--secondary-foreground)] data-[state=active]:[--foreground:var(--muted-foreground)] data-[state=active]:[--muted-foreground:var(--effect)]"
               >
-                <Icons.Sparkle className="mr-1 size-3.5 text-current" />
-                <span className="animate-text via-foreground from-muted-foreground to-muted-foreground flex items-center gap-1 bg-linear-to-r from-50% via-60% to-100% bg-[200%_auto] bg-clip-text text-sm text-transparent">
+                <Sparkle className="mr-1 size-3.5 text-current" />
+                <span className="animate-text via-foreground from-muted-foreground to-muted-foreground flex items-center gap-1 bg-linear-to-r from-50% via-60% to-100% bg-size-[200%_auto] bg-clip-text text-sm text-transparent">
                   Generate
                 </span>
-              </TabsTriggerPillWithTooltip>
+              </TabsTriggerPill>
             </TabsList>
           </HorizontalScrollArea>
 
@@ -132,16 +101,13 @@ const QRControlPanel: React.FC<QRControlPanelProps> = ({
           </TabsContent>
 
           <TabsContent
-            value="colors"
+            value="frames"
             className="mt-1 size-full overflow-hidden"
           >
             <ScrollArea className="h-full px-4">
-              <ColorControls
-                style={themeState.styles}
-                onStyleChange={(styles) =>
-                  setThemeState({ ...themeState, styles })
-                }
-              />
+              <ControlSection title="Frames" expanded kbd="F">
+                <TemplateSelector />
+              </ControlSection>
             </ScrollArea>
           </TabsContent>
 
@@ -150,16 +116,54 @@ const QRControlPanel: React.FC<QRControlPanelProps> = ({
             className="mt-1 size-full overflow-hidden"
           >
             <ScrollArea className="h-full px-4">
-              <PatternControls />
+              <ControlSection title="Dot Patterns" expanded kbd=",">
+                <PatternSelector />
+              </ControlSection>
+
+              <ControlSection title="Corner Eye Patterns" kbd=".">
+                <CornerEyePatternSelector />
+              </ControlSection>
+
+              <ControlSection title="Internal Eye Patterns" kbd="/">
+                <CornerEyeDotPatternSelector />
+              </ControlSection>
             </ScrollArea>
           </TabsContent>
 
           <TabsContent
-            value="frames"
+            value="colors"
             className="mt-1 size-full overflow-hidden"
           >
             <ScrollArea className="h-full px-4">
-              <FrameControls />
+              <ControlSection title="Primary Colors" expanded>
+                <GradientPicker
+                  fallbackColor="#000000"
+                  value={currentStyles.bgColor}
+                  onChange={(color) => updateStyle("bgColor", color)}
+                  label="Primary"
+                />
+                <GradientPicker
+                  fallbackColor="#000000"
+                  value={currentStyles.fgColor}
+                  onChange={(color) => updateStyle("fgColor", color)}
+                  label="Primary Foreground"
+                />
+              </ControlSection>
+
+              <ControlSection title="Secondary Colors" expanded>
+                <GradientPicker
+                  fallbackColor="#000000"
+                  value={currentStyles.eyeColor}
+                  onChange={(color) => updateStyle("eyeColor", color)}
+                  label="Secondary"
+                />
+                <GradientPicker
+                  fallbackColor="#000000"
+                  value={currentStyles.dotColor}
+                  onChange={(color) => updateStyle("dotColor", color)}
+                  label="Secondary Foreground"
+                />
+              </ControlSection>
             </ScrollArea>
           </TabsContent>
 
@@ -168,13 +172,16 @@ const QRControlPanel: React.FC<QRControlPanelProps> = ({
             className="mt-1 size-full overflow-hidden"
           >
             <ScrollArea className="h-full px-4">
-              <SettingsControls />
               <LogoControls
-                style={themeState.styles}
-                onStyleChange={(styles) =>
-                  setThemeState({ ...themeState, styles })
-                }
+                style={currentStyles}
+                onStyleChange={(styles) => {
+                  updateStyle("customLogo", styles.customLogo);
+                  updateStyle("showLogo", styles.showLogo);
+                }}
               />
+              <ControlSection title="Error Correction" expanded>
+                <ErrorLevelSelector />
+              </ControlSection>
             </ScrollArea>
           </TabsContent>
 
@@ -187,4 +194,4 @@ const QRControlPanel: React.FC<QRControlPanelProps> = ({
   );
 };
 
-export default QRControlPanel;
+export default ThemeControlPanel;

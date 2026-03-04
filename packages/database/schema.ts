@@ -1,22 +1,24 @@
 import {
   boolean,
+  index,
   integer,
   json,
   pgTable,
+  primaryKey,
   text,
   timestamp,
 } from "drizzle-orm/pg-core";
 
-export type ThemeStyles = {
+export interface ThemeStyles {
   // Define your theme styles type here
   // This should match the type from your app
   [key: string]: any;
-};
+}
 
-export type UserSettings = {
+export interface UserSettings {
   keyboardShortcuts: boolean;
   // Add more settings here in the future
-};
+}
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -77,8 +79,7 @@ export const qrPreset = pgTable("qr_preset", {
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
   name: text("name").notNull(),
-  description: text("description"),
-  style: json("style").$type<Partial<ThemeStyles>>().notNull(),
+  style: json("style").$type<ThemeStyles>().notNull(),
   createdAt: timestamp("created_at").notNull(),
   updatedAt: timestamp("updated_at").notNull(),
 });
@@ -137,3 +138,47 @@ export const integration = pgTable("integration", {
   createdAt: timestamp("created_at").notNull(),
   updatedAt: timestamp("updated_at").notNull(),
 });
+
+export const communityTheme = pgTable(
+  "community_theme",
+  {
+    id: text("id").primaryKey(),
+    themeId: text("theme_id")
+      .notNull()
+      .unique()
+      .references(() => qrPreset.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    publishedAt: timestamp("published_at").notNull(),
+  },
+  (table) => [index("community_theme_published_at_idx").on(table.publishedAt)]
+);
+
+export const communityThemeTag = pgTable(
+  "community_theme_tag",
+  {
+    communityThemeId: text("community_theme_id")
+      .notNull()
+      .references(() => communityTheme.id, { onDelete: "cascade" }),
+    tag: text("tag").notNull(),
+  },
+  (table) => [
+    primaryKey({ columns: [table.communityThemeId, table.tag] }),
+    index("community_theme_tag_tag_idx").on(table.tag),
+  ]
+);
+
+export const themeLike = pgTable(
+  "theme_like",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    themeId: text("theme_id")
+      .notNull()
+      .references(() => communityTheme.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at").notNull(),
+  },
+  (table) => [primaryKey({ columns: [table.userId, table.themeId] })]
+);

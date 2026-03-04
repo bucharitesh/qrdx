@@ -21,7 +21,7 @@ import { QrdxLogo } from "../qrdx-logo";
 import { SocialLink } from "../social-link";
 
 const INITIAL_WIDTH = "70rem";
-const MAX_WIDTH = "800px";
+const MAX_WIDTH = "60rem";
 
 // Animation variants
 const overlayVariants = {

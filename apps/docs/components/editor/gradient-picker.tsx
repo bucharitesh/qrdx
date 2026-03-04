@@ -709,7 +709,7 @@ export function GradientPicker({
         <PopoverTrigger asChild>
           <div className="flex w-full items-center gap-2 ">
             <div
-              className="h-8 w-8 shrink-0 rounded"
+              className="h-8 w-8 shrink-0 rounded border-2 cursor-pointer"
               style={{ background: getGradientPreview() }}
             />
             <div className="flex w-full items-center bg-input/25 flex-1 text-left border-border/20 h-8 rounded border px-2  text-sm hover:bg-input/40">

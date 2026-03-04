@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/a11y/noSvgWithoutTitle: <explanation> */
 import { cn } from "@repo/design-system/lib/utils";
 import { env } from "@/lib/env";
 
@@ -42,6 +43,7 @@ export const siteConfig = {
       { id: 2, name: "Pricing", href: "/pricing" },
       { id: 3, name: "Docs", href: "/docs" },
       { id: 4, name: "Playground", href: "/playground" },
+      { id: 5, name: "Community", href: "/community" },
     ],
   },
   hero: {
@@ -700,9 +702,10 @@ export const siteConfig = {
       title: "Product",
       links: [
         { id: 1, title: "Playground", url: "/playground" },
-        { id: 2, title: "Pricing", url: "/pricing" },
-        { id: 3, title: "Documentation", url: "/docs" },
-        { id: 4, title: "Changelogs", url: "/changelogs" },
+        { id: 2, title: "Community", url: "/community" },
+        { id: 3, title: "Pricing", url: "/pricing" },
+        { id: 4, title: "Documentation", url: "/docs" },
+        { id: 5, title: "Changelogs", url: "/changelogs" },
       ],
     },
     {
@@ -711,7 +714,7 @@ export const siteConfig = {
         { id: 1, title: "Docs", url: "/docs" },
         // { id: 11, title: "Integrations", url: "/integrations" },
         { id: 2, title: "Pricing", url: "/pricing" },
-      ]
+      ],
     },
     {
       title: "Company",
@@ -719,13 +722,17 @@ export const siteConfig = {
         { id: 1, title: "Contact", url: "mailto:support@qrdx.app" },
         { id: 2, title: "Privacy", url: "/legal/privacy-policy" },
         {
-          id: 3, 
-          title: "Legal", 
+          id: 3,
+          title: "Legal",
           children: [
-            { id: 1, title: "Terms of Service", url: "/legal/terms-of-service" },
+            {
+              id: 1,
+              title: "Terms of Service",
+              url: "/legal/terms-of-service",
+            },
             { id: 2, title: "Subprocessors", url: "/legal/subprocessors" },
             { id: 3, title: "Report Abuse", url: "/legal/report-abuse" },
-          ]
+          ],
         },
       ],
     },

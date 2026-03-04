@@ -66,7 +66,7 @@ export function NavMenu() {
     }, 50);
 
     return () => clearTimeout(timer);
-  }, [pathname, getActiveNavItem, updateNavIndicator]);
+  }, [getActiveNavItem, updateNavIndicator]);
 
   return (
     <div className="w-full hidden md:block">

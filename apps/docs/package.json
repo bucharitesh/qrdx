@@ -32,6 +32,7 @@
     "@tiptap/starter-kit": "^3.13.0",
     "@tiptap/suggestion": "^3.13.0",
     "@upstash/ratelimit": "^2.0.8",
+    "@vercel/kv": "^3.0.0",
     "ai": "^5.0.113",
     "better-auth": "^1.4.7",
     "class-variance-authority": "^0.7.1",

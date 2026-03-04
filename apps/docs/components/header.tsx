@@ -12,25 +12,6 @@ import { NavMenu } from "./nav-menu";
 import { QrdxLogo } from "./qrdx-logo";
 import { QrdxLogoAnimation } from "./qrdx-logo-animation";
 
-const navLinks = [
-  {
-    text: "Documentation",
-    url: "/docs",
-  },
-  {
-    text: "Playground",
-    url: "/playground",
-  },
-  {
-    text: "AI",
-    url: "/ai",
-  },
-  {
-    text: "Pricing",
-    url: "/pricing",
-  },
-];
-
 export function Header() {
   const { stargazersCount } = useGithubStars("bucharitesh", "qrdx"); // Update with your GitHub repo
 
