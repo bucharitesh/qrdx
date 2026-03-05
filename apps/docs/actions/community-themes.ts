@@ -10,8 +10,7 @@ import {
   qrPreset as themeTable,
   user as userTable,
 } from "@repo/database";
-import { Ratelimit } from "@upstash/ratelimit";
-import { kv } from "@vercel/kv";
+import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import cuid from "cuid";
 import { and, asc, count, desc, eq, inArray, sql } from "drizzle-orm";
 import { headers } from "next/headers";
@@ -38,11 +37,6 @@ import {
   UnauthorizedError,
   ValidationError,
 } from "@/types/errors";
-
-const ratelimit = new Ratelimit({
-  redis: kv,
-  limiter: Ratelimit.fixedWindow(5, "3600s"),
-});
 
 async function getOptionalUserId(): Promise<string | null> {
   try {
@@ -257,6 +251,10 @@ export async function publishTheme(
   try {
     const userId = await getCurrentUserId();
 
+    const rateLimiter = createRateLimiter({
+      limiter: slidingWindow(10, "10 s"),
+    });
+
     if (!themeId) {
       throw new ValidationError("Theme ID required");
     }
@@ -300,7 +298,7 @@ export async function publishTheme(
 
     // Rate limit
     if (process.env.NODE_ENV !== "development") {
-      const { success } = await ratelimit.limit(`publish:${userId}`);
+      const { success } = await rateLimiter.limit(`publish:${userId}`);
       if (!success) {
         return actionError(
           ErrorCode.UNKNOWN_ERROR,

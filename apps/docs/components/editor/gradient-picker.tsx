@@ -25,7 +25,11 @@ import {
   TabsTrigger,
 } from "@repo/design-system/components/ui/tabs";
 import { cn } from "@repo/design-system/lib/utils";
-import type { ColorConfig, GradientStop } from "qrdx/types";
+import {
+  type ColorConfig,
+  type GradientStop,
+  getNormalizedColor,
+} from "qrdx/types";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { HexColorPicker } from "react-colorful";
 import {
@@ -413,11 +417,10 @@ export function GradientPicker({
   const [mode, setMode] = useState<ColorMode>(getCurrentMode);
   const [solidColor, setSolidColor] = useState(getCurrentSolidColor);
   const [stops, setStops] = useState<GradientStop[]>(getCurrentStops);
-  const [angle, setAngle] = useState(
-    () =>
-      value && typeof value !== "string" && value.type === "linear"
-        ? (value.angle ?? 0)
-        : 0,
+  const [angle, setAngle] = useState(() =>
+    value && typeof value !== "string" && value.type === "linear"
+      ? (value.angle ?? 0)
+      : 0,
   );
   const [draggingStopIndex, setDraggingStopIndex] = useState<number | null>(
     null,
@@ -718,7 +721,6 @@ export function GradientPicker({
     return () => unregisterColor(name);
   }, [name, registerColor, unregisterColor]);
 
-
   const isHighlighted = name && highlightTarget === name;
 
   useEffect(() => {
@@ -775,7 +777,7 @@ export function GradientPicker({
           <div className="flex w-full items-center gap-2 ">
             <div
               className="h-8 w-8 shrink-0 rounded border-2 cursor-pointer"
-              style={{ background: getGradientPreview() }}
+              style={{ background: getNormalizedColor(value) }}
             />
             <div className="flex w-full items-center bg-input/25 flex-1 text-left border-border/20 h-8 rounded border px-2  text-sm hover:bg-input/40">
               {getTriggerText()}

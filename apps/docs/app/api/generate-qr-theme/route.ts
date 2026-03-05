@@ -1,12 +1,10 @@
-import { Ratelimit } from "@upstash/ratelimit";
-import { kv } from "@vercel/kv";
+import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import {
   createUIMessageStream,
   createUIMessageStreamResponse,
   stepCountIs,
   streamText,
 } from "ai";
-import { headers } from "next/headers";
 import type { NextRequest } from "next/server";
 import { recordAIUsage } from "@/actions/ai-usage";
 import { QR_THEME_GENERATION_TOOLS } from "@/lib/ai/generate-qr-theme/tools";
@@ -19,30 +17,18 @@ import type { AdditionalAIContext, ChatMessage } from "@/types/ai";
 import { SubscriptionRequiredError } from "@/types/errors";
 import { convertMessagesToModelMessages } from "@/utils/ai/message-converter";
 
-const ratelimit = new Ratelimit({
-  redis: kv,
-  limiter: Ratelimit.fixedWindow(5, "60s"),
+const rateLimiter = createRateLimiter({
+  limiter: slidingWindow(10, "10 s"),
 });
-
 export async function POST(req: NextRequest) {
   try {
     const userId = await getCurrentUserId(req);
-    const headersList = await headers();
 
-    if (process.env.NODE_ENV !== "development") {
-      const ip = headersList.get("x-forwarded-for") ?? "anonymous";
-      const { success, limit, reset, remaining } = await ratelimit.limit(ip);
-
-      if (!success) {
-        return new Response("Rate limit exceeded. Please try again later.", {
-          status: 429,
-          headers: {
-            "X-RateLimit-Limit": limit.toString(),
-            "X-RateLimit-Remaining": remaining.toString(),
-            "X-RateLimit-Reset": reset.toString(),
-          },
-        });
-      }
+    const { success } = await rateLimiter.limit(`generate-qr-theme:${userId}`);
+    if (!success) {
+      return new Response("Rate limit exceeded. Please try again later.", {
+        status: 429,
+      });
     }
 
     const subscriptionCheck = await validateSubscriptionAndUsage(userId);

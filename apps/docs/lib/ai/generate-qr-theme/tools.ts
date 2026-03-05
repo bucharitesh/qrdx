@@ -6,7 +6,7 @@ import type { AdditionalAIContext } from "@/types/ai";
 
 export const QR_THEME_GENERATION_TOOLS = {
   generateQRTheme: tool({
-    description: `Generates a QR code style theme based on the current conversation context. Use this tool once you have a clear understanding of the user's request, which may include a text prompt, images, an SVG, or a base theme reference (@[theme_name]).`,
+    description: `Generates a QR code style theme based on the current conversation context. Output ALL relevant properties: colors (solid HEX only, no gradients), patterns, frames, logo if asked. Do not generate templateId. COMPULSORY: bgColor must contrast with fgColor, eyeColor, and dotColor combined—never produce poor contrast. Use this tool once you have a clear understanding of the user's request, which may include a text prompt, images, an SVG, or a base theme reference (@[theme_name]).`,
     inputSchema: z.object({}),
     outputSchema: themeStylePropsOutputSchema,
     execute: async (

@@ -7,6 +7,7 @@ import React from "react";
 import { useAIQRGenerationCore } from "@/lib/hooks/use-ai-qr-generation-core";
 import { useChatContext } from "@/lib/hooks/use-chat-context";
 import { useGuards } from "@/lib/hooks/use-gaurds";
+import { useMounted } from "@/lib/hooks/use-mounted";
 import { usePostLoginAction } from "@/lib/hooks/use-post-login-action";
 import type { AIPromptData } from "@/types/ai";
 import { ChatInput } from "./chat-input";
@@ -35,6 +36,8 @@ export function ChatInterface() {
     useAIQRGenerationCore();
 
   const { checkValidSession, checkValidSubscription } = useGuards();
+
+  const isMounted = useMounted();
 
   const hasMessages = messages.length > 0;
   const [editingMessageIndex, setEditingMessageIndex] = React.useState<
@@ -118,7 +121,7 @@ export function ChatInterface() {
           "relative flex size-full flex-1 flex-col overflow-hidden transition-all duration-300 ease-out",
         )}
       >
-        {hasMessages ? (
+        {isMounted && hasMessages ? (
           <Messages
             messages={messages}
             onRetry={handleRetry}
@@ -143,7 +146,11 @@ export function ChatInterface() {
         <div
           className={cn(
             "transition-all ease-out",
-            hasMessages ? "scale-100 opacity-100" : "h-0 scale-80 opacity-0",
+            !isMounted
+              ? "h-0 scale-80 opacity-0"
+              : hasMessages
+                ? "scale-100 opacity-100"
+                : "h-0 scale-80 opacity-0",
           )}
         >
           <ClosableSuggestedPillActions
