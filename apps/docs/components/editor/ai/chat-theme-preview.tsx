@@ -118,27 +118,19 @@ export function ChatThemePreview({
           <div className="flex gap-1">
             <div
               className="ring-border size-3 rounded-sm ring-1 @sm:size-4"
-              style={{
-                backgroundColor: getNormalizedColor(themeStyles.bgColor),
-              }}
+              style={{ background: getNormalizedColor(themeStyles.bgColor) }}
             />
             <div
               className="ring-border size-3 rounded-sm ring-1 @sm:size-4"
-              style={{
-                backgroundColor: getNormalizedColor(themeStyles.fgColor),
-              }}
+              style={{ background: getNormalizedColor(themeStyles.fgColor) }}
             />
             <div
               className="ring-border size-3 rounded-sm ring-1 @sm:size-4"
-              style={{
-                backgroundColor: getNormalizedColor(themeStyles.dotColor),
-              }}
+              style={{ background: getNormalizedColor(themeStyles.dotColor) }}
             />
             <div
               className="ring-border size-3 rounded-sm ring-1 @sm:size-4"
-              style={{
-                backgroundColor: getNormalizedColor(themeStyles.eyeColor),
-              }}
+              style={{ background: getNormalizedColor(themeStyles.eyeColor) }}
             />
           </div>
 

@@ -16,19 +16,25 @@ interface ColorPreviewProps {
 function ColorPreviewItem({
   label,
   color,
+  colorConfig,
   name,
 }: {
   label: string;
   color: string;
+  colorConfig: import("qrdx/types").ColorConfig | undefined;
   name: string;
 }) {
   const { focusColor } = useColorControlFocus();
+  const swatchStyle =
+    colorConfig !== undefined && colorConfig !== null
+      ? { backgroundColor: getNormalizedColor(colorConfig) }
+      : { backgroundColor: color };
 
   return (
     <div className="group/color-preview hover:bg-muted/60 relative flex items-center gap-2 rounded-md p-1 transition-colors">
       <div
         className="size-14 shrink-0 rounded-md border @max-3xl:size-12"
-        style={{ backgroundColor: color }}
+        style={swatchStyle}
       />
       <div className="flex-1 space-y-1 overflow-hidden">
         <p className="line-clamp-2 text-sm leading-tight font-medium @max-3xl:text-xs">
@@ -72,21 +78,25 @@ const ColorPreview = ({ styles }: ColorPreviewProps) => {
           <ColorPreviewItem
             label="Background"
             color={getNormalizedColor(styles.bgColor)}
+            colorConfig={styles.bgColor}
             name="background"
           />
           <ColorPreviewItem
             label="Foreground"
             color={getNormalizedColor(styles.fgColor)}
+            colorConfig={styles.fgColor}
             name="foreground"
           />
           <ColorPreviewItem
             label="Dot Color"
             color={getNormalizedColor(styles.dotColor)}
+            colorConfig={styles.dotColor}
             name="primary"
           />
           <ColorPreviewItem
             label="Eye Color"
             color={getNormalizedColor(styles.eyeColor)}
+            colorConfig={styles.eyeColor}
             name="primary-foreground"
           />
         </div>

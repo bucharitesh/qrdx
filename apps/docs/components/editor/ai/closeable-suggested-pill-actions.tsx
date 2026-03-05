@@ -3,6 +3,7 @@
 import { Button } from "@repo/design-system/components/ui/button";
 import { Sparkles, X } from "lucide-react";
 import { HorizontalScrollArea } from "@/components/horizontal-scroll-area";
+import { useMounted } from "@/lib/hooks/use-mounted";
 import { usePreferencesStore } from "@/store/preferences-store";
 import type { AIPromptData } from "@/types/ai";
 import { createCurrentThemePrompt } from "@/utils/ai/ai-prompt";
@@ -17,13 +18,14 @@ export function ClosableSuggestedPillActions({
   isGeneratingTheme: boolean;
 }) {
   const { chatSuggestionsOpen, setChatSuggestionsOpen } = usePreferencesStore();
+  const isMounted = useMounted();
 
   const handleSetPrompt = async (prompt: string) => {
     const promptData = createCurrentThemePrompt({ prompt });
     onGenerateTheme(promptData);
   };
 
-  if (!chatSuggestionsOpen) return null;
+  if (!isMounted || !chatSuggestionsOpen) return null;
 
   return (
     <div className="relative flex flex-col items-center justify-center">

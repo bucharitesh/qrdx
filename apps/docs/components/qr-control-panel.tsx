@@ -23,7 +23,6 @@ import {
 import type { QRStyle } from "@/types/theme";
 import { ContentControls } from "./editor/control-sections/content-controls";
 import { LogoControls } from "./editor/control-sections/logo-controls";
-import { Icons } from "./icons";
 import { CornerEyeDotPatternSelector } from "./playground/corner-eye-dot-pattern-selector";
 import { CornerEyePatternSelector } from "./playground/corner-eye-pattern-selector";
 import { ErrorLevelSelector } from "./playground/error-level-selector";
