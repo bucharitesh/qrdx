@@ -1,8 +1,6 @@
-"use client";
-
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
-import { Icons } from "@/components/icons";
+import { ImagePlus } from "lucide-react";
 import type { ComponentProps } from "react";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { MAX_IMAGE_FILE_SIZE, MAX_IMAGE_FILES } from "@/lib/constants";
@@ -37,7 +35,7 @@ export function ImageUploader({
         size={MAX_IMAGE_FILE_SIZE}
         accept={ALLOWED_IMAGE_TYPES.join(",")}
         className="hidden"
-        aria-label="Upload image for QR theme generation"
+        aria-label="Upload image for theme generation"
         ref={fileInputRef}
         onChange={handleImagesUpload}
         disabled={disabled}
@@ -54,7 +52,7 @@ export function ImageUploader({
           disabled={disabled}
           {...props}
         >
-          <Icons.ImagePlus />
+          <ImagePlus />{" "}
           <span className="hidden @[350px]/form:inline-flex">Image</span>
         </Button>
       </TooltipWrapper>

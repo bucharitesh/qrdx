@@ -17,11 +17,11 @@ import {
   TooltipTrigger,
 } from "@repo/design-system/components/ui/tooltip";
 import { cn } from "@repo/design-system/lib/utils";
-import { Icons } from "@/components/icons";
 import { useTheme } from "next-themes";
 import type { ColorConfig } from "qrdx/types";
 import { isGradient, normalizeColorConfig } from "qrdx/types";
 import { useState } from "react";
+import { Icons } from "@/components/icons";
 import { useContrastChecker } from "@/lib/hooks/use-contrast-checker";
 import type { ThemeStyles } from "@/types/theme";
 import { TooltipWrapper } from "../tooltip-wrapper";
@@ -237,7 +237,7 @@ const ContrastChecker = ({ currentStyles, disabled }: ContrastCheckerProps) => {
           </div>
         </div>
 
-        <ScrollArea className="relative flex flex-1 flex-col">
+        <ScrollArea className="relative flex flex-1 flex-col overflow-y-auto">
           <div className="space-y-6 px-6 pb-6">
             {groupedPairs.map((group) => (
               <div key={group.category} className="">

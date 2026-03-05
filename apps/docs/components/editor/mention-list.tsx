@@ -1,5 +1,4 @@
 /** biome-ignore-all lint/correctness/useExhaustiveDependencies: <explanation> */
-/** biome-ignore-all lint/a11y/useButtonType: <explanation> */
 "use client";
 
 import { cn } from "@repo/design-system/lib/utils";
@@ -112,10 +111,11 @@ export const MentionList = forwardRef<MentionListRef, MentionListProps>(
         {props.items.length ? (
           props.items.map((item, index) => (
             <button
+              type="button"
               ref={index === selectedIndex ? selectedItemRef : null}
               // Use Tailwind classes mimicking shadcn/ui DropdownMenuItem with cn utility
               className={cn(
-                "focus:bg-accent focus:text-accent-foreground hover:bg-accent hover:text-accent-foreground relative flex w-full items-center rounded-sm p-1.5 text-xs transition-colors outline-none data-disabled:pointer-events-none data-disabled:opacity-50",
+                "focus:bg-accent focus:text-accent-foreground hover:bg-accent hover:text-accent-foreground relative flex w-full items-center rounded-sm p-1.5 text-xs transition-colors outline-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
                 index === selectedIndex && "bg-accent text-accent-foreground",
               )}
               key={item.id} // Use item.id as the key

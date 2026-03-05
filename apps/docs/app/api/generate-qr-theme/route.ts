@@ -1,9 +1,12 @@
+import { Ratelimit } from "@upstash/ratelimit";
+import { kv } from "@vercel/kv";
 import {
   createUIMessageStream,
   createUIMessageStreamResponse,
   stepCountIs,
   streamText,
 } from "ai";
+import { headers } from "next/headers";
 import type { NextRequest } from "next/server";
 import { recordAIUsage } from "@/actions/ai-usage";
 import { QR_THEME_GENERATION_TOOLS } from "@/lib/ai/generate-qr-theme/tools";
@@ -12,17 +15,35 @@ import { baseProviderOptions, myProvider } from "@/lib/ai/providers";
 import { handleError } from "@/lib/error-response";
 import { getCurrentUserId, logError } from "@/lib/shared";
 import { validateSubscriptionAndUsage } from "@/lib/subscription";
-import type {
-  AdditionalAIContext,
-  AIPromptData,
-  ChatMessage,
-} from "@/types/ai";
+import type { AdditionalAIContext, ChatMessage } from "@/types/ai";
 import { SubscriptionRequiredError } from "@/types/errors";
 import { convertMessagesToModelMessages } from "@/utils/ai/message-converter";
+
+const ratelimit = new Ratelimit({
+  redis: kv,
+  limiter: Ratelimit.fixedWindow(5, "60s"),
+});
 
 export async function POST(req: NextRequest) {
   try {
     const userId = await getCurrentUserId(req);
+    const headersList = await headers();
+
+    if (process.env.NODE_ENV !== "development") {
+      const ip = headersList.get("x-forwarded-for") ?? "anonymous";
+      const { success, limit, reset, remaining } = await ratelimit.limit(ip);
+
+      if (!success) {
+        return new Response("Rate limit exceeded. Please try again later.", {
+          status: 429,
+          headers: {
+            "X-RateLimit-Limit": limit.toString(),
+            "X-RateLimit-Remaining": remaining.toString(),
+            "X-RateLimit-Reset": reset.toString(),
+          },
+        });
+      }
+    }
 
     const subscriptionCheck = await validateSubscriptionAndUsage(userId);
 
@@ -32,24 +53,8 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    const body = await req.json();
-    const { messages, promptData } = body as {
-      messages: ChatMessage[];
-      promptData?: AIPromptData;
-    };
-
-    const modelMessages = await convertMessagesToModelMessages(
-      messages,
-      promptData,
-    );
-
-    // Validate that we have at least one message to process
-    if (modelMessages.length === 0) {
-      return new Response(
-        JSON.stringify({ error: "No valid messages to process" }),
-        { status: 400, headers: { "Content-Type": "application/json" } },
-      );
-    }
+    const { messages }: { messages: ChatMessage[] } = await req.json();
+    const modelMessages = await convertMessagesToModelMessages(messages);
 
     const stream = createUIMessageStream<ChatMessage>({
       execute: ({ writer }) => {
@@ -71,8 +76,7 @@ export async function POST(req: NextRequest) {
             const { totalUsage } = result;
             try {
               await recordAIUsage({
-                modelId:
-                  (model as { modelId?: string }).modelId ?? "gemini-2.5-flash",
+                modelId: model.toString(),
                 promptTokens: totalUsage.inputTokens,
                 completionTokens: totalUsage.outputTokens,
               });

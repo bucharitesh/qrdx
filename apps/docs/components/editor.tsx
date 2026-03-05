@@ -19,7 +19,6 @@ import { DialogActionsProvider } from "@/lib/hooks/use-dialog-actions";
 import { useQREditorStore } from "@/store/editor-store";
 import type { Theme, ThemeStyles } from "@/types/theme";
 import { ActionBar } from "./editor/action-bar";
-import QRControlPanel from "./qr-control-panel";
 import ThemeControlPanel from "./qr-control-panel";
 import QRPreviewPanel from "./qr-preview-panel";
 

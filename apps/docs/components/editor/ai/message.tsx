@@ -1,12 +1,17 @@
-/** biome-ignore-all lint/a11y/noRedundantAlt: false positive */
 /** biome-ignore-all lint/suspicious/noArrayIndexKey: false positive */
+/** biome-ignore-all lint/suspicious/useIterableCallbackReturn: false positive */
+import { ScrollArea } from "@repo/design-system/components/ui/scroll-area";
 import { cn } from "@repo/design-system/lib/utils";
+import { QrdxLogo } from "@/components/qrdx-logo";
 import type { AIPromptData, ChatMessage } from "@/types/ai";
 import { buildAIPromptRender } from "@/utils/ai/ai-prompt";
+import ColorPreview from "../theme-preview/color-preview";
+import { ChatImagePreview } from "./chat-image-preview";
+import { ChatThemePreview } from "./chat-theme-preview";
 import { LoadingLogo } from "./loading-logo";
 import { MessageActions } from "./message-actions";
+import { MessageEditForm } from "./message-edit-form";
 import { StreamText } from "./stream-text";
-import { QrdxLogo } from "@/components/qrdx-logo";
 
 type MessageProps = {
   message: ChatMessage;
@@ -41,7 +46,12 @@ export default function Message({
         isUser ? "justify-end" : "justify-start",
       )}
     >
-      <div className={cn("flex w-full max-w-[90%] items-start")}>
+      <div
+        className={cn(
+          "flex w-full max-w-[90%] items-start",
+          isUser ? "justify-end" : "",
+        )}
+      >
         <div
           className={cn(
             "group/message relative flex w-full flex-col gap-2 wrap-anywhere whitespace-pre-wrap",
@@ -91,22 +101,22 @@ function AssistantMessage({
   isLastMessageStreaming,
 }: AssistantMessageProps) {
   return (
-    <div className="flex items-start gap-1.5">
+    <div className="flex items-start gap-3">
       {isLastMessageStreaming ? (
-        <div className="relative flex size-6 shrink-0 items-center justify-center">
+        <div className="relative flex size-8 shrink-0 items-center justify-center">
           <LoadingLogo />
         </div>
       ) : (
         <div
           className={cn(
-            "border-border/50! bg-primary relative flex size-6 shrink-0 items-center justify-center rounded-full border select-none",
+            "border-border/40 bg-background shadow-sm relative flex size-8 shrink-0 items-center justify-center rounded-full border select-none",
           )}
         >
-          <QrdxLogo className={cn("text-primary-foreground size-full p-1")} />
+          <QrdxLogo className={cn("text-foreground size-5")} />
         </div>
       )}
 
-      <div className="relative flex w-full flex-col gap-3">
+      <div className="relative flex w-full flex-col gap-3 mt-1.5">
         {message.parts.map((part, idx) => {
           const { type } = part;
           const key = `message-${message.id}-part-${idx}`;
@@ -116,7 +126,7 @@ function AssistantMessage({
               <StreamText
                 key={key}
                 text={part.text}
-                className="w-fit text-sm"
+                className="w-fit text-sm leading-relaxed"
                 animate={isLastMessageStreaming}
                 markdown
               />
@@ -127,42 +137,33 @@ function AssistantMessage({
             const { state } = part;
 
             if (state === "output-available") {
+              const themeStyles = part.output;
               return (
-                <div
+                <ChatThemePreview
                   key={key}
-                  className="bg-muted/50 rounded-lg border p-3 text-sm"
+                  status="complete"
+                  themeStyles={themeStyles}
+                  className="p-0 border-border/40 shadow-sm overflow-hidden rounded-xl"
                 >
-                  <span className="text-muted-foreground">
-                    QR style generated successfully
-                  </span>
-                </div>
+                  <ScrollArea className="h-48">
+                    <div className="p-3">
+                      <ColorPreview styles={themeStyles} />
+                    </div>
+                  </ScrollArea>
+                </ChatThemePreview>
               );
             }
 
             if (state === "output-error") {
               return (
-                <div
-                  key={key}
-                  className="bg-destructive/10 text-destructive rounded-lg border p-3 text-sm"
-                >
-                  Error generating QR style
-                </div>
+                <ChatThemePreview key={key} status="error" className="p-0" />
               );
             }
 
             return (
-              <div
-                key={key}
-                className="bg-muted/50 animate-pulse rounded-lg border p-3 text-sm"
-              >
-                <span className="text-muted-foreground">
-                  Generating QR style...
-                </span>
-              </div>
+              <ChatThemePreview key={key} status="loading" className="p-0" />
             );
           }
-
-          return null;
         })}
       </div>
     </div>
@@ -206,21 +207,21 @@ function UserMessage({
 
     if (images.length === 1) {
       return (
-        <div className="self-end">
-          <img
+        <div className="self-end mb-2">
+          <ChatImagePreview
             src={images[0].url}
             alt="Image preview"
-            className="max-h-32 max-w-32 rounded-lg object-cover"
+            className="rounded-xl border border-border/20 shadow-sm"
           />
         </div>
       );
     } else if (images.length > 1) {
       return (
-        <div className="flex flex-row items-center justify-end gap-1 self-end">
+        <div className="flex flex-row items-center justify-end gap-2 self-end mb-2">
           {images.map((image, idx) => (
             <div key={idx} className="aspect-square size-full max-w-32 flex-1">
-              <img
-                className="size-full rounded-lg object-cover"
+              <ChatImagePreview
+                className="size-full object-cover rounded-xl border border-border/20 shadow-sm"
                 src={image.url}
                 alt="Image preview"
               />
@@ -235,24 +236,26 @@ function UserMessage({
 
   const msgImages = getImagesToDisplay();
 
-  // For now, don't support editing - just show the message
   if (isEditing) {
-    // TODO: Implement MessageEditForm component
     return (
-      <div className="bg-muted/50 rounded-lg border p-3 text-sm">
-        <span className="text-muted-foreground">Editing not supported yet</span>
-      </div>
+      <MessageEditForm
+        key={message.id}
+        message={message}
+        onEditSubmit={onEditSubmit}
+        onEditCancel={onEditCancel}
+        disabled={isGeneratingTheme}
+      />
     );
   }
 
   return (
-    <div className="relative flex flex-col gap-1">
+    <div className="relative flex flex-col items-end gap-1">
       {msgImages}
 
       {shouldDisplayMsgContent && (
         <div
           className={cn(
-            "bg-card/75 text-card-foreground/90 w-fit self-end rounded-lg border p-3 text-sm",
+            "bg-primary text-primary-foreground w-fit self-end rounded-2xl rounded-tr-sm px-4 py-2.5 text-sm shadow-sm leading-relaxed",
           )}
         >
           {msgContent}

@@ -40,7 +40,7 @@ export function LogoControls({ style, onStyleChange }: LogoControlsProps) {
   return (
     <ControlSection title="Logo" expanded>
       <div className="space-y-4">
-        <div className="flex items-center justify-between rounded-lg border px-3 py-2 transition-colors hover:bg-muted/50">
+        <div className="flex items-center justify-between px-3 py-2 transition-colors hover:bg-muted/50">
           <Label className="cursor-pointer text-xs" htmlFor="show-logo">
             Show Logo
           </Label>

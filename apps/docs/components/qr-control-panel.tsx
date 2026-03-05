@@ -12,7 +12,7 @@ import { ChatInterface } from "@/components/editor/ai/chat-interface";
 import ControlSection from "@/components/editor/control-section";
 import { GradientPicker } from "@/components/editor/gradient-picker";
 import QrPresetSelect from "@/components/editor/qr-preset-select";
-import { TabsTriggerPill } from "@/components/editor/theme-preview/tabs-trigger-pill";
+import TabsTriggerPill from "@/components/editor/theme-preview/tabs-trigger-pill";
 import { HorizontalScrollArea } from "@/components/horizontal-scroll-area";
 import { defaultThemeState } from "@/config/qr";
 import { useAIQRGenerationCore } from "@/lib/hooks/use-ai-qr-generation-core";
@@ -23,6 +23,7 @@ import {
 import type { QRStyle } from "@/types/theme";
 import { ContentControls } from "./editor/control-sections/content-controls";
 import { LogoControls } from "./editor/control-sections/logo-controls";
+import { Icons } from "./icons";
 import { CornerEyeDotPatternSelector } from "./playground/corner-eye-dot-pattern-selector";
 import { CornerEyePatternSelector } from "./playground/corner-eye-pattern-selector";
 import { ErrorLevelSelector } from "./playground/error-level-selector";
@@ -75,15 +76,15 @@ const ThemeControlPanel = ({ styles, onChange }: ThemeControlPanelProps) => {
           <HorizontalScrollArea className="mt-2 mb-1 px-4">
             <TabsList className="bg-background text-muted-foreground inline-flex w-fit items-center justify-center rounded-full px-0">
               <TabsTriggerPill value="content">Content</TabsTriggerPill>
-              <TabsTriggerPill value="colors">Colors</TabsTriggerPill>
-              <TabsTriggerPill value="patterns">Patterns</TabsTriggerPill>
-              <TabsTriggerPill value="frames">Frames</TabsTriggerPill>
+              <TabsTriggerPill value="customisations">
+                Customisations
+              </TabsTriggerPill>
               <TabsTriggerPill value="settings">Settings</TabsTriggerPill>
               <TabsTriggerPill
                 value="ai"
                 className="data-[state=active]:[--effect:var(--secondary-foreground)] data-[state=active]:[--foreground:var(--muted-foreground)] data-[state=active]:[--muted-foreground:var(--effect)]"
               >
-                <Sparkle className="mr-1 size-3.5 text-current" />
+                <Sparkle className="size-3.5 text-current" />
                 <span className="animate-text via-foreground from-muted-foreground to-muted-foreground flex items-center gap-1 bg-linear-to-r from-50% via-60% to-100% bg-size-[200%_auto] bg-clip-text text-sm text-transparent">
                   Generate
                 </span>
@@ -101,21 +102,38 @@ const ThemeControlPanel = ({ styles, onChange }: ThemeControlPanelProps) => {
           </TabsContent>
 
           <TabsContent
-            value="frames"
+            value="customisations"
             className="mt-1 size-full overflow-hidden"
           >
             <ScrollArea className="h-full px-4">
-              <ControlSection title="Frames" expanded kbd="F">
-                <TemplateSelector />
-              </ControlSection>
-            </ScrollArea>
-          </TabsContent>
+              <ControlSection title="Colors" expanded>
+                <GradientPicker
+                  name="bgColor"
+                  value={currentStyles.bgColor}
+                  onChange={(color) => updateStyle("bgColor", color)}
+                  label="Background Color"
+                />
+                <GradientPicker
+                  name="fgColor"
+                  value={currentStyles.fgColor}
+                  onChange={(color) => updateStyle("fgColor", color)}
+                  label="Foreground Color"
+                />
 
-          <TabsContent
-            value="patterns"
-            className="mt-1 size-full overflow-hidden"
-          >
-            <ScrollArea className="h-full px-4">
+                <GradientPicker
+                  name="eyeColor"
+                  value={currentStyles.eyeColor}
+                  onChange={(color) => updateStyle("eyeColor", color)}
+                  label="Eye Color"
+                />
+                <GradientPicker
+                  name="dotColor"
+                  value={currentStyles.dotColor}
+                  onChange={(color) => updateStyle("dotColor", color)}
+                  label="Dot Color"
+                />
+              </ControlSection>
+
               <ControlSection title="Dot Patterns" expanded kbd=",">
                 <PatternSelector />
               </ControlSection>
@@ -127,42 +145,9 @@ const ThemeControlPanel = ({ styles, onChange }: ThemeControlPanelProps) => {
               <ControlSection title="Internal Eye Patterns" kbd="/">
                 <CornerEyeDotPatternSelector />
               </ControlSection>
-            </ScrollArea>
-          </TabsContent>
 
-          <TabsContent
-            value="colors"
-            className="mt-1 size-full overflow-hidden"
-          >
-            <ScrollArea className="h-full px-4">
-              <ControlSection title="Primary Colors" expanded>
-                <GradientPicker
-                  fallbackColor="#000000"
-                  value={currentStyles.bgColor}
-                  onChange={(color) => updateStyle("bgColor", color)}
-                  label="Primary"
-                />
-                <GradientPicker
-                  fallbackColor="#000000"
-                  value={currentStyles.fgColor}
-                  onChange={(color) => updateStyle("fgColor", color)}
-                  label="Primary Foreground"
-                />
-              </ControlSection>
-
-              <ControlSection title="Secondary Colors" expanded>
-                <GradientPicker
-                  fallbackColor="#000000"
-                  value={currentStyles.eyeColor}
-                  onChange={(color) => updateStyle("eyeColor", color)}
-                  label="Secondary"
-                />
-                <GradientPicker
-                  fallbackColor="#000000"
-                  value={currentStyles.dotColor}
-                  onChange={(color) => updateStyle("dotColor", color)}
-                  label="Secondary Foreground"
-                />
+              <ControlSection title="Frames" expanded kbd="F">
+                <TemplateSelector />
               </ControlSection>
             </ScrollArea>
           </TabsContent>

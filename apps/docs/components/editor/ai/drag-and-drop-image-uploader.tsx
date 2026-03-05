@@ -1,7 +1,6 @@
 import { cn } from "@repo/design-system/lib/utils";
-import { Icons } from "@/components/icons";
+import { Upload } from "lucide-react";
 import { useDropzone } from "react-dropzone";
-import { MAX_IMAGE_FILES } from "@/lib/constants";
 
 interface DragAndDropImageUploaderProps {
   onDrop: (files: File[]) => void;
@@ -24,9 +23,8 @@ export function DragAndDropImageUploader({
       "image/jpg": [],
       "image/png": [],
       "image/webp": [],
-      // "image/svg+xml": [],
+      "image/svg+xml": [],
     },
-    maxFiles: MAX_IMAGE_FILES,
   });
 
   return (
@@ -42,7 +40,7 @@ export function DragAndDropImageUploader({
       >
         <input {...getInputProps()} />
         <div className="flex w-full items-center justify-center gap-2">
-          <Icons.Upload className="text-muted-foreground size-4" />
+          <Upload className="text-muted-foreground size-4" />
           <span className="text-muted-foreground text-sm font-medium">
             Drop images here
           </span>

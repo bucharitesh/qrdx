@@ -1,3 +1,8 @@
+import {
+  HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
+} from "@repo/design-system/components/ui/hover-card";
 import Link from "fumadocs-core/link";
 import { PathUtils } from "fumadocs-core/source";
 import * as Twoslash from "fumadocs-twoslash/ui";
@@ -9,17 +14,11 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { ComponentProps, FC, ReactNode } from "react";
 import { LLMCopyButton, ViewOptions } from "@/components/ai/page-actions";
-import { Feedback } from "@/components/feedback";
 import { Mermaid } from "@/components/mdx/mermaid";
 import { NotFound } from "@/components/not-found";
 import * as Preview from "@/components/preview";
 import { Wrapper } from "@/components/preview/wrapper";
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@/components/ui/hover-card";
-import { onRateAction, owner, repo } from "@/lib/github";
+import { owner, repo } from "@/lib/github";
 import { getPageImage, source } from "@/lib/source";
 import { getMDXComponents } from "@/mdx-components";
 

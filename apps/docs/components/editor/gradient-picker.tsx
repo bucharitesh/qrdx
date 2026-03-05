@@ -24,15 +24,21 @@ import {
   TabsList,
   TabsTrigger,
 } from "@repo/design-system/components/ui/tabs";
+import { cn } from "@repo/design-system/lib/utils";
 import type { ColorConfig, GradientStop } from "qrdx/types";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { HexColorPicker } from "react-colorful";
+import {
+  type FocusColorId,
+  useColorControlFocus,
+} from "@/store/color-control-focus-store";
+import { SectionContext } from "./section-context";
 
 interface GradientPickerProps {
+  name: FocusColorId;
   value: ColorConfig | undefined;
   onChange: (value: ColorConfig) => void;
   label: string;
-  fallbackColor?: string;
 }
 
 type ColorMode = "solid" | "linear" | "radial";
@@ -317,10 +323,10 @@ const GRADIENT_SUGGESTIONS: GradientSuggestion[] = [
 ];
 
 export function GradientPicker({
+  name,
   value,
   onChange,
   label,
-  fallbackColor = "#000000",
 }: GradientPickerProps) {
   // Parse current value
   const getCurrentMode = (): ColorMode => {
@@ -335,8 +341,8 @@ export function GradientPicker({
 
     if (!value || typeof value === "string") {
       stops = [
-        { color: fallbackColor, offset: 0 },
-        { color: fallbackColor, offset: 100 },
+        { color: "#000000", offset: 0 },
+        { color: "#000000", offset: 100 },
       ];
     } else if (value.type === "solid") {
       stops = [
@@ -361,14 +367,14 @@ export function GradientPicker({
         ];
       } else {
         stops = [
-          { color: fallbackColor, offset: 0 },
-          { color: fallbackColor, offset: 100 },
+          { color: "#000000", offset: 0 },
+          { color: "#000000", offset: 100 },
         ];
       }
     } else {
       stops = [
-        { color: fallbackColor, offset: 0 },
-        { color: fallbackColor, offset: 100 },
+        { color: "#000000", offset: 0 },
+        { color: "#000000", offset: 100 },
       ];
     }
 
@@ -384,7 +390,7 @@ export function GradientPicker({
 
     // Ensure we have exactly 2 stops
     if (stops.length < 2) {
-      const firstColor = stops[0]?.color || fallbackColor;
+      const firstColor = stops[0]?.color;
       return [
         { color: firstColor, offset: 0 },
         { color: firstColor, offset: 100 },
@@ -396,34 +402,32 @@ export function GradientPicker({
 
   const getCurrentSolidColor = (): string => {
     if (!value || typeof value === "string") {
-      return typeof value === "string" ? value : fallbackColor;
+      return typeof value === "string" ? value : "#000000";
     }
     if (value.type === "solid") {
       return value.color;
     }
-    return fallbackColor;
+    return "#000000";
   };
 
-  const [mode, setMode] = useState<ColorMode>(getCurrentMode());
-  const [solidColor, setSolidColor] = useState(getCurrentSolidColor());
-  const [stops, setStops] = useState<GradientStop[]>(getCurrentStops());
+  const [mode, setMode] = useState<ColorMode>(getCurrentMode);
+  const [solidColor, setSolidColor] = useState(getCurrentSolidColor);
+  const [stops, setStops] = useState<GradientStop[]>(getCurrentStops);
   const [angle, setAngle] = useState(
-    value && typeof value !== "string" && value.type === "linear"
-      ? (value.angle ?? 0)
-      : 0,
+    () =>
+      value && typeof value !== "string" && value.type === "linear"
+        ? (value.angle ?? 0)
+        : 0,
   );
   const [draggingStopIndex, setDraggingStopIndex] = useState<number | null>(
     null,
   );
   const previewRef = useRef<HTMLDivElement>(null);
 
-  // Track previous value to detect external changes (e.g., theme changes)
-  const prevValueRef = useRef(value);
-
-  // TODO: Properly handle external changes to value prop
-  // Update internal state when value prop changes externally
-  if (prevValueRef.current !== value) {
-    prevValueRef.current = value;
+  // Sync internal state when value prop changes externally (e.g., store hydration on refresh)
+  // Using useEffect ensures we run after hydration/commit, fixing colors not loading on refresh
+  // biome-ignore lint/correctness/useExhaustiveDependencies: getters derive from value only
+  useEffect(() => {
     setMode(getCurrentMode());
     setSolidColor(getCurrentSolidColor());
     setStops(getCurrentStops());
@@ -432,7 +436,7 @@ export function GradientPicker({
         ? (value.angle ?? 0)
         : 0,
     );
-  }
+  }, [value]);
 
   const handleModeChange = useCallback(
     (newMode: ColorMode) => {
@@ -699,8 +703,69 @@ export function GradientPicker({
     [onChange],
   );
 
+  const [shouldAnimate, setShouldAnimate] = useState(false);
+
+  const rootRef = useRef<HTMLDivElement>(null);
+  const animationTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const sectionCtx = useContext(SectionContext);
+
+  const { registerColor, unregisterColor, highlightTarget } =
+    useColorControlFocus();
+
+  useEffect(() => {
+    if (!name) return;
+    registerColor(name, rootRef.current);
+    return () => unregisterColor(name);
+  }, [name, registerColor, unregisterColor]);
+
+
+  const isHighlighted = name && highlightTarget === name;
+
+  useEffect(() => {
+    if (animationTimerRef.current) {
+      clearTimeout(animationTimerRef.current);
+      animationTimerRef.current = null;
+    }
+
+    if (isHighlighted) {
+      setShouldAnimate(true);
+      sectionCtx?.setIsExpanded(true);
+
+      setTimeout(
+        () => {
+          rootRef.current?.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
+        },
+        sectionCtx?.isExpanded ? 0 : 100,
+      );
+
+      animationTimerRef.current = setTimeout(() => {
+        setShouldAnimate(false);
+        animationTimerRef.current = null;
+      }, 1500);
+    } else {
+      setShouldAnimate(false);
+    }
+
+    return () => {
+      if (animationTimerRef.current) {
+        clearTimeout(animationTimerRef.current);
+        animationTimerRef.current = null;
+      }
+    };
+  }, [isHighlighted, sectionCtx]);
+
   return (
-    <div className="mb-3">
+    <div
+      ref={rootRef}
+      className={cn(
+        "mb-3 transition-all duration-300",
+        shouldAnimate &&
+          "bg-border/50 ring-primary -m-1.5 mb-1.5 rounded-sm p-1.5 ring-2",
+      )}
+    >
       <div className="mb-1.5 flex items-center justify-between">
         <Label className="text-xs font-medium">{label}</Label>
       </div>

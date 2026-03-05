@@ -1,8 +1,8 @@
-/**
- * Color control focus IDs for QR editor.
- * These map to QR style properties that can be programmatically focused.
- */
-export type FocusColorId = "fgColor" | "bgColor" | "eyeColor" | "dotColor";
+import { create } from "zustand";
+
+import { useControlsTabFromUrl } from "@/lib/hooks/use-controls-tab-from-url";
+
+export type FocusColorId = "bgColor" | "fgColor" | "eyeColor" | "dotColor";
 
 interface ColorRefEntry {
   ref: HTMLElement | null;
@@ -18,8 +18,6 @@ interface ColorControlFocusState {
   registerColor: (name: FocusColorId, ref: HTMLElement | null) => void;
   unregisterColor: (name: FocusColorId) => void;
 }
-
-import { create } from "zustand";
 
 export const useColorControlFocusStore = create<ColorControlFocusState>(
   (set, get) => ({
@@ -61,7 +59,10 @@ export const useColorControlFocusStore = create<ColorControlFocusState>(
  * Hook that exposes helper functions for color control focus behaviour.
  */
 export const useColorControlFocus = () => {
+  const { handleSetTab } = useControlsTabFromUrl();
+
   const focusColor = (name: FocusColorId) => {
+    handleSetTab("customisations");
     requestAnimationFrame(() => {
       useColorControlFocusStore.getState().focusColor(name);
     });

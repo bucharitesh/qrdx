@@ -1,8 +1,9 @@
-/** biome-ignore-all lint/suspicious/noArrayIndexKey: <explanation> */
+/** biome-ignore-all lint/suspicious/noArrayIndexKey: false positive */
+
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import type { JSONContent } from "@tiptap/react";
-import { Icons } from "@/components/icons";
+import { Check, X } from "lucide-react";
 import { useMemo, useReducer, useState } from "react";
 import { HorizontalScrollArea } from "@/components/horizontal-scroll-area";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
@@ -137,7 +138,7 @@ export function MessageEditForm({
               onClick={onEditCancel}
               className="size-8 shadow-none"
             >
-              <Icons.X />
+              <X />
             </Button>
           </TooltipWrapper>
 
@@ -149,7 +150,7 @@ export function MessageEditForm({
               onClick={handleEditConfirm}
               disabled={isSomeImageUploading || isEmptyPrompt || disabled}
             >
-              <Icons.Check />
+              <Check />
             </Button>
           </TooltipWrapper>
         </div>

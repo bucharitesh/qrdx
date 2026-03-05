@@ -7,6 +7,7 @@ import {
   CommandEmpty,
   CommandGroup,
   CommandItem,
+  CommandList,
 } from "@repo/design-system/components/ui/command";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Kbd } from "@repo/design-system/components/ui/kbd";
@@ -15,7 +16,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@repo/design-system/components/ui/popover";
-import { ScrollArea } from "@repo/design-system/components/ui/scroll-area";
 import { Separator } from "@repo/design-system/components/ui/separator";
 import {
   Tooltip,
@@ -23,19 +23,19 @@ import {
   TooltipTrigger,
 } from "@repo/design-system/components/ui/tooltip";
 import { cn } from "@repo/design-system/lib/utils";
+import { Check, ChevronDown, Heart, Search, Settings } from "lucide-react";
 import Link from "next/link";
-import type { ColorConfig } from "qrdx";
+import { type ColorConfig, getColorString } from "qrdx";
 import type React from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Icons } from "@/components/icons";
 import { authClient } from "@/lib/auth-client";
 import { useMounted } from "@/lib/hooks/use-mounted";
 import { useUserSettings } from "@/lib/hooks/use-user-settings";
-import { getColorBackgroundStyle } from "@/lib/utils/color";
 import { useQREditorStore } from "@/store/editor-store";
 import { useThemePresetStore } from "@/store/theme-preset-store";
 import type { ThemePreset } from "@/types/theme";
 import { getPresetThemeStyles } from "@/utils/qr-presets-helper";
+import { Icons } from "../icons";
 import { ThemeToggle } from "../theme-toggle";
 import { TooltipWrapper } from "../tooltip-wrapper";
 
@@ -45,13 +45,13 @@ interface ThemePresetSelectProps extends React.ComponentProps<typeof Button> {
 }
 
 interface ColorBoxProps {
-  color: string | ColorConfig | undefined;
+  color: ColorConfig | string | undefined;
 }
 
 const ColorBox: React.FC<ColorBoxProps> = ({ color }) => (
   <div
     className="border-muted h-3 w-3 rounded-sm border"
-    style={getColorBackgroundStyle(color)}
+    style={{ backgroundColor: getColorString(color) }}
   />
 );
 
@@ -63,10 +63,10 @@ const ThemeColors: React.FC<ThemeColorsProps> = ({ presetName }) => {
   const styles = getPresetThemeStyles(presetName);
   return (
     <div className="flex gap-0.5">
-      {styles.bgColor && <ColorBox color={styles.bgColor} />}
-      {styles.fgColor && <ColorBox color={styles.fgColor} />}
-      {styles.eyeColor && <ColorBox color={styles.eyeColor} />}
-      {styles.dotColor && <ColorBox color={styles.dotColor} />}
+      <ColorBox color={styles.bgColor} />
+      <ColorBox color={styles.fgColor} />
+      <ColorBox color={styles.eyeColor} />
+      <ColorBox color={styles.dotColor} />
     </div>
   );
 };
@@ -146,7 +146,7 @@ const ThemeCycleButton: React.FC<ThemeCycleButtonProps> = ({
           <span className="text-xs">
             {direction === "prev" ? "Previous theme" : "Next theme"}
           </span>
-          {showKbd && <Kbd>{direction === "prev" ? "←" : "→"}</Kbd>}
+          {showKbd && <Kbd>{direction === "prev" ? "<" : ">"}</Kbd>}
         </div>
       </TooltipContent>
     </Tooltip>
@@ -170,7 +170,7 @@ const ThemePresetCycleControls: React.FC<ThemePresetCycleControlsProps> = ({
 
   const currentIndex =
     useMemo(
-      () => filteredPresets.indexOf(currentPresetName),
+      () => filteredPresets.indexOf(currentPresetName || "default"),
       [filteredPresets, currentPresetName],
     ) ?? 0;
 
@@ -192,17 +192,17 @@ const ThemePresetCycleControls: React.FC<ThemePresetCycleControlsProps> = ({
       <ThemeCycleButton
         direction="prev"
         size="icon"
-        className={cn("aspect-square min-h-8 w-auto shrink-0", className)}
+        className={cn("aspect-square min-h-8 w-auto", className)}
         onClick={() => cycleTheme("prev")}
         {...props}
       />
 
-      <Separator orientation="vertical" className="min-h-8 shrink-0" />
+      <Separator orientation="vertical" className="min-h-8" />
 
       <ThemeCycleButton
         direction="next"
         size="icon"
-        className={cn("aspect-square min-h-8 w-auto shrink-0", className)}
+        className={cn("aspect-square min-h-8 w-auto", className)}
         onClick={() => cycleTheme("next")}
         {...props}
       />
@@ -231,9 +231,10 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
   );
 
   const [search, setSearch] = useState("");
-  const isMounted = useMounted();
 
   const { data: session } = authClient.useSession();
+
+  const isMounted = useMounted();
 
   useEffect(() => {
     if (session?.user) {
@@ -307,34 +308,25 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
   }, [filteredPresets, isSavedTheme]);
 
   return (
-    <div className="flex w-full items-center gap-0">
+    <div className="flex w-full items-center">
       <Popover>
         <PopoverTrigger asChild>
           <Button
             variant="ghost"
             className={cn(
-              "group relative flex-1 justify-between md:min-w-56",
+              "group relative w-full justify-between md:min-w-56",
               className,
             )}
             {...props}
           >
             <div className="flex w-full items-center gap-3 overflow-hidden">
               <div className="flex gap-0.5">
-                {themeState.styles.bgColor && (
-                  <ColorBox color={themeState.styles.bgColor} />
-                )}
-                {themeState.styles.fgColor && (
-                  <ColorBox color={themeState.styles.fgColor} />
-                )}
-                {themeState.styles.eyeColor && (
-                  <ColorBox color={themeState.styles.eyeColor} />
-                )}
-                {themeState.styles.dotColor && (
-                  <ColorBox color={themeState.styles.dotColor} />
-                )}
+                <ColorBox color={themeState.styles.bgColor} />
+                <ColorBox color={themeState.styles.fgColor} />
+                <ColorBox color={themeState.styles.eyeColor} />
+                <ColorBox color={themeState.styles.dotColor} />
               </div>
-              {isMounted &&
-                currentPresetName !== "default" &&
+              {currentPresetName !== "default" &&
                 currentPresetName &&
                 isSavedTheme(currentPresetName) &&
                 !hasUnsavedChanges() && (
@@ -347,18 +339,17 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                   </div>
                 )}
               <span className="truncate text-left font-medium capitalize">
-                {isMounted && hasUnsavedChanges() ? (
-                  <>Custom (Unsaved)</>
-                ) : (
-                  presets[currentPresetName || "default"]?.label
-                )}
+                {presets[currentPresetName || "default"]?.label ||
+                  currentPresetName ||
+                  "default"}
+                {isMounted && hasUnsavedChanges() && "*"}
               </span>
             </div>
             <Icons.ChevronDown className="size-4 shrink-0" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-[300px] p-0" align="center">
-          <Command className="h-100 w-full">
+        <PopoverContent className="w-[400px] p-0" align="center">
+          <Command className="w-full">
             <div className="flex w-full items-center">
               <div className="flex w-full items-center border-b px-3 py-1">
                 <Icons.Search className="size-4 shrink-0 opacity-50" />
@@ -378,7 +369,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
               <ThemeControls />
             </div>
             <Separator />
-            <ScrollArea className="h-[500px] max-h-[70vh]">
+            <CommandList className="max-h-[500px]">
               <CommandEmpty>No themes found.</CommandEmpty>
 
               {/* Saved Themes Group */}
@@ -395,7 +386,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                             className="text-muted-foreground hover:text-foreground flex items-center gap-1.5 p-0 text-xs"
                           >
                             <span>Manage</span>
-                            <Icons.Settings className="size-3.5!" />
+                            <Settings className="size-3.5!" />
                           </Button>
                         </Link>
                       </div>
@@ -431,7 +422,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                               )}
                           </div>
                           {presetName === currentPresetName && (
-                            <Icons.Check className="h-4 w-4 shrink-0 opacity-70" />
+                            <Check className="h-4 w-4 shrink-0 opacity-70" />
                           )}
                         </CommandItem>
                       ))}
@@ -444,7 +435,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                 <>
                   <div className="text-muted-foreground flex items-center gap-1.5 px-3 py-2 text-xs font-medium">
                     <div className="bg-muted flex items-center gap-1 rounded-md border px-2 py-0.5">
-                      <Icons.Heart className="fill-muted-foreground size-3" />
+                      <Heart className="fill-muted-foreground size-3" />
                       <span>Save</span>
                     </div>
                     <span className="text-muted-foreground">
@@ -484,13 +475,25 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                           )}
                       </div>
                       {presetName === currentPresetName && (
-                        <Icons.Check className="h-4 w-4 shrink-0 opacity-70" />
+                        <Check className="h-4 w-4 shrink-0 opacity-70" />
                       )}
                     </CommandItem>
                   ))}
                 </CommandGroup>
               )}
-            </ScrollArea>
+              <Separator className="my-1" />
+              <div className="px-3 py-2">
+                <Link href="/community">
+                  <Button
+                    variant="link"
+                    size="sm"
+                    className="text-muted-foreground hover:text-foreground w-full justify-center text-xs"
+                  >
+                    Discover more themes →
+                  </Button>
+                </Link>
+              </div>
+            </CommandList>
           </Command>
         </PopoverContent>
       </Popover>

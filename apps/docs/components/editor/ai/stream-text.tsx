@@ -1,4 +1,3 @@
-/** biome-ignore-all lint/correctness/useExhaustiveDependencies: <explanation> */
 import { useCallback, useEffect, useRef } from "react";
 import { Response } from "@/components/ai-elements/response";
 import { useStreamText } from "@/lib/hooks/use-stream-text";
@@ -36,7 +35,7 @@ export function StreamText({
       if (markdown) return <Response className={className}>{text}</Response>;
       else return <span className={className}>{text}</span>;
     },
-    [markdown],
+    [markdown, className],
   );
 
   if (!animate) return wrap(text);

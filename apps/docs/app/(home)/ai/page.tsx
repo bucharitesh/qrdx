@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { AIAnnouncement } from "./components/ai-announcement";
 import { AIChatHero } from "./components/ai-chat-hero";
 
 export const metadata: Metadata = {
@@ -12,8 +13,12 @@ export const metadata: Metadata = {
 
 export default function AiPage() {
   return (
-    <div className="relative isolate flex min-h-[calc(100vh-4rem)] flex-1 flex-col items-center justify-center px-4 py-16 md:px-6">
-      <AIChatHero />
+    <div className="relative isolate container mx-auto flex flex-1 flex-col gap-24 overflow-x-hidden overflow-y-auto px-4 md:px-6">
+      {/* AI Chat entry point section */}
+      <section className="relative isolate flex flex-col gap-4 py-100">
+        <AIAnnouncement />
+        <AIChatHero />
+      </section>
     </div>
   );
 }

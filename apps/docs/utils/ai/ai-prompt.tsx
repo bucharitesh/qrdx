@@ -4,7 +4,6 @@ import type { JSONContent } from "@tiptap/react";
 import { useQREditorStore } from "@/store/editor-store";
 import { useThemePresetStore } from "@/store/theme-preset-store";
 import type { AIPromptData, MentionReference, PromptImage } from "@/types/ai";
-import type { ThemeStyles } from "@/types/theme";
 
 export const getTextContent = (promptData: AIPromptData | null) => {
   if (!promptData) return "";
@@ -143,7 +142,9 @@ export function createPromptDataFromPreset(
       {
         id: presetName,
         label: preset.label ?? presetName,
-        themeData: preset.styles,
+        themeData: {
+          ...preset.styles,
+        },
       },
     ],
   };
@@ -168,7 +169,7 @@ export function extractTextContentAndMentions(node: JSONContent): {
       textArr.push(`@${n.attrs?.label}`);
       const id = n.attrs?.id;
       const label = n.attrs?.label;
-      let themeData: ThemeStyles;
+      let themeData: any;
       if (id === "editor:current-changes") {
         themeData = useQREditorStore.getState().themeState.styles;
       } else {

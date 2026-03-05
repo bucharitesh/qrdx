@@ -1,62 +1,33 @@
-"use client";
-
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
-import { Icons } from "@/components/icons";
-import type { ComponentProps } from "react";
+import { CircleStop, WandSparkles } from "lucide-react";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 
-interface EnhancePromptButtonProps extends ComponentProps<typeof Button> {
+interface EnhancePromptButtonProps extends React.ComponentProps<typeof Button> {
   isEnhancing: boolean;
   onStart: () => void;
   onStop: () => void;
 }
 
 export function EnhancePromptButton({
+  className,
+  disabled,
   isEnhancing,
   onStart,
   onStop,
-  disabled,
-  className,
   ...props
 }: EnhancePromptButtonProps) {
-  if (isEnhancing) {
-    return (
-      <TooltipWrapper label="Stop enhancing" asChild>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={onStop}
-          className={cn(
-            "flex items-center gap-1.5 shadow-none",
-            "@max-[350px]/form:w-8",
-            className,
-          )}
-          {...props}
-        >
-          <Icons.StopCircle className="size-4" />
-          <span className="hidden @[350px]/form:inline-flex">Stop</span>
-        </Button>
-      </TooltipWrapper>
-    );
-  }
-
   return (
-    <TooltipWrapper label="Enhance prompt with AI" asChild>
+    <TooltipWrapper label={isEnhancing ? "Stop" : "Enhance prompt"} asChild>
       <Button
-        variant="outline"
-        size="sm"
-        onClick={onStart}
+        size="icon"
+        variant={isEnhancing ? "destructive" : "outline"}
+        className={cn("relative size-8 shadow-none", className)}
+        onClick={isEnhancing ? onStop : onStart}
         disabled={disabled}
-        className={cn(
-          "flex items-center gap-1.5 shadow-none",
-          "@max-[350px]/form:w-8",
-          className,
-        )}
         {...props}
       >
-        <Icons.Sparkles className="size-4" />
-        <span className="hidden @[350px]/form:inline-flex">Enhance</span>
+        {isEnhancing ? <CircleStop /> : <WandSparkles />}
       </Button>
     </TooltipWrapper>
   );

@@ -1,6 +1,7 @@
 "use server";
 
-import { database as db, subscription } from "@repo/database";
+import { db } from "@repo/database";
+import { subscription } from "@repo/database/schema";
 import { and, eq } from "drizzle-orm";
 import type { NextRequest } from "next/server";
 import { getMyAllTimeRequestCount } from "@/actions/ai-usage";
@@ -32,10 +33,8 @@ export async function validateSubscriptionAndUsage(
 
     const isSubscribed =
       !!activeSubscription &&
-      (activeSubscription?.productId ===
-        process.env.NEXT_PUBLIC_QRDX_PRO_MONTHLY_PRODUCT_ID ||
-        activeSubscription?.productId ===
-          process.env.NEXT_PUBLIC_QRDX_PRO_YEARLY_PRODUCT_ID);
+      activeSubscription?.productId ===
+        process.env.NEXT_PUBLIC_TWEAKCN_PRO_PRODUCT_ID;
 
     if (isSubscribed) {
       return {

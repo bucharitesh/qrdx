@@ -2,7 +2,7 @@
 
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
-import { Icons } from "@/components/icons";
+import { ArrowUp, Loader as LoaderIcon, Plus, StopCircle } from "lucide-react";
 import { Loader } from "@/components/loader";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { MAX_IMAGE_FILES } from "@/lib/constants";
@@ -10,7 +10,6 @@ import { useAIChatForm } from "@/lib/hooks/use-ai-chat-form";
 import { useAIEnhancePrompt } from "@/lib/hooks/use-ai-enhance-prompt";
 import { useChatContext } from "@/lib/hooks/use-chat-context";
 import { useGuards } from "@/lib/hooks/use-gaurds";
-import { useMounted } from "@/lib/hooks/use-mounted";
 import { usePostLoginAction } from "@/lib/hooks/use-post-login-action";
 import { useSubscription } from "@/lib/hooks/use-subscription";
 import type { AIPromptData } from "@/types/ai";
@@ -40,7 +39,6 @@ export function ChatInput({
   const { messages, startNewChat } = useChatContext();
   const { checkValidSession, checkValidSubscription } = useGuards();
   const { subscriptionStatus } = useSubscription();
-  const isMounted = useMounted();
   const isPro = subscriptionStatus?.isSubscribed ?? false;
   const hasFreeRequestsLeft = (subscriptionStatus?.requestsRemaining ?? 0) > 0;
 
@@ -127,7 +125,7 @@ export function ChatInput({
     <div className="relative transition-all contain-layout">
       <BannerWrapper show={isGeneratingTheme}>
         <div className="flex size-full items-center gap-1.5">
-          <Icons.Loader className="size-2.5 animate-spin" />
+          <LoaderIcon className="size-2.5 animate-spin" />
           <Loader variant="text-shimmer" text="Generating..." size="sm" />
         </div>
       </BannerWrapper>
@@ -164,12 +162,11 @@ export function ChatInput({
                 isGeneratingTheme ||
                 isEnhancingPrompt ||
                 isInitializing ||
-                !isMounted ||
                 messages.length === 0
               }
               className="flex items-center gap-1.5 shadow-none"
             >
-              <Icons.Plus className="size-3.5" />
+              <Plus />
               <span>New chat</span>
             </Button>
           </TooltipWrapper>
@@ -208,7 +205,7 @@ export function ChatInput({
                     "@max-[350px]/form:w-8",
                   )}
                 >
-                  <Icons.StopCircle className="size-3.5" />
+                  <StopCircle />
                   <span className="hidden @[350px]/form:inline-flex">Stop</span>
                 </Button>
               </TooltipWrapper>
@@ -227,9 +224,9 @@ export function ChatInput({
                   }
                 >
                   {isGeneratingTheme ? (
-                    <Icons.Loader className="animate-spin" />
+                    <LoaderIcon className="animate-spin" />
                   ) : (
-                    <Icons.ArrowUp className="size-3.5" />
+                    <ArrowUp />
                   )}
                 </Button>
               </TooltipWrapper>

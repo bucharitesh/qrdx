@@ -1,5 +1,4 @@
-/** biome-ignore-all lint/suspicious/noArrayIndexKey: false positive */
-
+/** biome-ignore-all lint/suspicious/noArrayIndexKey: <explanation> */
 import { Button } from "@repo/design-system/components/ui/button";
 import { Separator } from "@repo/design-system/components/ui/separator";
 import {
@@ -8,7 +7,7 @@ import {
   TabsList,
 } from "@repo/design-system/components/ui/tabs";
 import { cn } from "@repo/design-system/lib/utils";
-import { Icons } from "@/components/icons";
+import { Blend, PaintRoller, WandSparkles } from "lucide-react";
 import { type ComponentProps, Fragment } from "react";
 import { HorizontalScrollArea } from "@/components/horizontal-scroll-area";
 import { authClient } from "@/lib/auth-client";
@@ -22,7 +21,7 @@ import {
   REMIX_PROMPTS,
   VARIANT_PROMPTS,
 } from "@/utils/ai/prompts";
-import { TabsTriggerPill } from "../theme-preview/tabs-trigger-pill";
+import TabsTriggerPill from "../theme-preview/tabs-trigger-pill";
 
 export function NoMessagesPlaceholder({
   onGenerateTheme,
@@ -48,21 +47,21 @@ export function NoMessagesPlaceholder({
               value="create-prompts"
               className="flex items-center gap-1"
             >
-              <Icons.PaintRoller className="size-3.5" aria-hidden="true" />
+              <PaintRoller className="size-3.5" aria-hidden="true" />
               Create
             </TabsTriggerPill>
             <TabsTriggerPill
               value="variant-prompts"
               className="flex items-center gap-1"
             >
-              <Icons.Blend className="size-3.5" aria-hidden="true" />
+              <Blend className="size-3.5" aria-hidden="true" />
               Remix
             </TabsTriggerPill>
             <TabsTriggerPill
               value="tweak-prompts"
               className="flex items-center gap-1"
             >
-              <Icons.WandSparkles className="size-3.5" aria-hidden="true" />
+              <WandSparkles className="size-3.5" aria-hidden="true" />
               Tweak
             </TabsTriggerPill>
           </TabsList>
@@ -136,7 +135,7 @@ export function NoMessagesPlaceholder({
   );
 }
 
-type PromptButtonProps = ComponentProps<typeof Button>;
+interface PromptButtonProps extends ComponentProps<typeof Button> {}
 
 function PromptButton({ className, children, ...props }: PromptButtonProps) {
   return (

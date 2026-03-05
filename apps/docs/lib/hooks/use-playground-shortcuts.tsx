@@ -244,7 +244,7 @@ export function usePlaygroundShortcuts({
   );
 
   // Tab switching (1-6)
-  const tabs = ["content", "colors", "patterns", "frames", "settings", "ai"];
+  const tabs = ["content", "customisations", "settings", "ai"];
 
   useKeyboardShortcut("1", () => handleSetTab(tabs[0] as any), {
     enabled: shortcutsEnabled,
@@ -256,12 +256,6 @@ export function usePlaygroundShortcuts({
     enabled: shortcutsEnabled,
   });
   useKeyboardShortcut("4", () => handleSetTab(tabs[3] as any), {
-    enabled: shortcutsEnabled,
-  });
-  useKeyboardShortcut("5", () => handleSetTab(tabs[4] as any), {
-    enabled: shortcutsEnabled,
-  });
-  useKeyboardShortcut("6", () => handleSetTab(tabs[5] as any), {
     enabled: shortcutsEnabled,
   });
 }

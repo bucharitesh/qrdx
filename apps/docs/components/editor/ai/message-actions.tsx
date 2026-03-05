@@ -1,6 +1,6 @@
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
-import { Icons } from "@/components/icons";
+import { Edit, RefreshCw } from "lucide-react";
 import { CopyButton } from "@/components/copy-button";
 import { DebugButton } from "@/components/debug-button";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
@@ -61,7 +61,7 @@ export function MessageActions({
             disabled={isGeneratingTheme}
             onClick={onRetry}
           >
-            <Icons.RefreshCw />
+            <RefreshCw />
           </Button>
         </TooltipWrapper>
       )}
@@ -75,7 +75,7 @@ export function MessageActions({
             disabled={isGeneratingTheme || isEditing}
             onClick={onEdit}
           >
-            <Icons.Edit />
+            <Edit />
           </Button>
         </TooltipWrapper>
       )}
