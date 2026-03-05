@@ -1,5 +1,5 @@
-/** biome-ignore-all lint/suspicious/noArrayIndexKey: false positive */
 /** biome-ignore-all lint/a11y/noLabelWithoutControl: false positive */
+/** biome-ignore-all lint/suspicious/noArrayIndexKey: false positive */
 "use client";
 
 import { cn } from "@repo/design-system/lib/utils";
@@ -72,7 +72,7 @@ export function AIChatFormBody({
           <HorizontalScrollArea className="w-full">
             {uploadedImages.map((img, idx) => (
               <UploadedImagePreview
-                key={img.url}
+                key={idx}
                 src={img.url}
                 isImageLoading={img.loading}
                 handleImageRemove={() => handleImageRemove(idx)}

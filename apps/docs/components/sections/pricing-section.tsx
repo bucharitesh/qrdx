@@ -1,12 +1,13 @@
+/** biome-ignore-all lint/a11y/noSvgWithoutTitle: <explanation> */
 "use client";
 
 import { toast } from "@repo/design-system";
 import { cn } from "@repo/design-system/lib/utils";
-import { Icons } from "@/components/icons";
 import { motion } from "motion/react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { createCheckout } from "@/actions/checkout";
+import { Icons } from "@/components/icons";
 import { SectionHeader } from "@/components/sections/section-header";
 import { siteConfig } from "@/config/site";
 import { authClient } from "@/lib/auth-client";
@@ -30,6 +31,7 @@ function PricingTabs({ activeTab, setActiveTab, className }: TabsProps) {
     >
       {["monthly", "yearly"].map((tab) => (
         <button
+          type="button"
           key={tab}
           onClick={() => setActiveTab(tab as "yearly" | "monthly")}
           className={cn(
@@ -229,6 +231,7 @@ export function PricingSection() {
 
               <div className="flex flex-col gap-2 p-4">
                 <button
+                  type="button"
                   onClick={() => handleTierClick(tier)}
                   disabled={isPending && pendingTier === tier.name}
                   className={`h-10 w-full flex items-center justify-center text-sm font-normal tracking-wide rounded-full px-4 cursor-pointer transition-all ease-out active:scale-95 disabled:opacity-70 disabled:cursor-not-allowed ${

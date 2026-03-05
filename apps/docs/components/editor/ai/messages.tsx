@@ -1,14 +1,14 @@
-/** biome-ignore-all lint/correctness/useExhaustiveDependencies: false positive */
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import { useEffect, useMemo, useRef } from "react";
-import { Icons } from "@/components/icons";
 import {
   Conversation,
   ConversationContent,
   ConversationScrollButton,
 } from "@/components/ai-elements/conversation";
+import { Icons } from "@/components/icons";
 import { Loader } from "@/components/loader";
+import { QrdxLogo } from "@/components/qrdx-logo";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { parseAiSdkTransportError } from "@/lib/ai/parse-ai-sdk-transport-error";
 import { useChatContext } from "@/lib/hooks/use-chat-context";
@@ -21,7 +21,6 @@ import {
 } from "@/utils/ai/messages";
 import { LoadingLogo } from "./loading-logo";
 import Message from "./message";
-import { QrdxLogo } from "@/components/qrdx-logo";
 
 type ChatMessagesProps = {
   messages: ChatMessage[];
@@ -65,7 +64,7 @@ export function Messages({
     requestAnimationFrame(() => {
       scrollEndElement.scrollIntoView({ behavior: "smooth", block: "start" });
     });
-  }, [messages, status]);
+  }, [messages, status, scrollEndRef.current]);
 
   const visibleMessages = useMemo(
     () => filterMessagesToDisplay(messages),
@@ -150,7 +149,7 @@ export function Messages({
                 >
                   <QrdxLogo
                     className={cn(
-                      "fill-destructive-foreground size-full p-0.5",
+                      "text-destructive-foreground size-full p-0.5",
                     )}
                   />
                 </div>

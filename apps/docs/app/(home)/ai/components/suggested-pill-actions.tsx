@@ -1,7 +1,6 @@
-/** biome-ignore-all lint/correctness/useExhaustiveDependencies: <explanation> */
 "use client";
 
-import { Icons } from "@/components/icons";
+import { ImageIcon, Sparkles } from "lucide-react";
 import { useEffect, useReducer } from "react";
 import { PillActionButton } from "@/components/editor/ai/pill-action-button";
 import { MAX_IMAGE_FILE_SIZE } from "@/lib/constants";
@@ -12,11 +11,11 @@ import { createCurrentThemePrompt } from "@/utils/ai/ai-prompt";
 import { PROMPTS } from "@/utils/ai/prompts";
 
 export function SuggestedPillActions({
-  onGeneration,
-  isGenerating,
+  onThemeGeneration,
+  isGeneratingTheme,
 }: {
-  onGeneration: (promptData: AIPromptData) => void;
-  isGenerating: boolean;
+  onThemeGeneration: (promptData: AIPromptData) => void;
+  isGeneratingTheme: boolean;
 }) {
   const [uploadedImages, dispatch] = useReducer(imageUploadReducer, []);
 
@@ -35,7 +34,7 @@ export function SuggestedPillActions({
   // Automatically send prompt when an image is selected and loaded
   useEffect(() => {
     if (uploadedImages.length > 0 && !isSomeImageUploading) {
-      onGeneration({
+      onThemeGeneration({
         content: "", // No text prompt
         mentions: [], // No mentions
         images: [uploadedImages[0]],
@@ -43,11 +42,11 @@ export function SuggestedPillActions({
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [uploadedImages, isSomeImageUploading]);
+  }, [uploadedImages, isSomeImageUploading, onThemeGeneration]);
 
   const handleSetPrompt = async (prompt: string) => {
     const promptData = createCurrentThemePrompt({ prompt });
-    onGeneration(promptData);
+    onThemeGeneration(promptData);
   };
 
   const handleImageButtonClick = () => {
@@ -68,7 +67,7 @@ export function SuggestedPillActions({
     <>
       <PillActionButton
         onClick={handleImageButtonClick}
-        disabled={isGenerating}
+        disabled={isGeneratingTheme}
       >
         <input
           type="file"
@@ -76,19 +75,19 @@ export function SuggestedPillActions({
           multiple={false}
           ref={fileInputRef}
           onChange={handleImageUpload}
-          disabled={isGenerating}
+          disabled={isGeneratingTheme}
           style={{ display: "none" }}
         />
-        <Icons.ImageIcon /> From an Image
+        <ImageIcon /> From an Image
       </PillActionButton>
 
       {Object.entries(PROMPTS).map(([key, { label, prompt }]) => (
         <PillActionButton
           key={key}
           onClick={() => handleSetPrompt(prompt)}
-          disabled={isGenerating}
+          disabled={isGeneratingTheme}
         >
-          <Icons.Sparkles /> {label}
+          <Sparkles /> {label}
         </PillActionButton>
       ))}
     </>

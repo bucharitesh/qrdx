@@ -2,15 +2,7 @@
 
 import { useQueryState } from "nuqs";
 
-const TABS = [
-  "content",
-  "colors",
-  "patterns",
-  "frames",
-  "logo",
-  "settings",
-  "ai",
-] as const;
+const TABS = ["content", "customisations", "settings", "ai"] as const;
 export const DEFAULT_TAB = TABS[0];
 export type ControlTab = (typeof TABS)[number];
 

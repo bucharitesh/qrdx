@@ -66,7 +66,6 @@ export function buildUserContentPartsFromPromptData(
 
 export async function convertMessagesToModelMessages(
   messages: ChatMessage[],
-  latestPromptData?: AIPromptData,
 ): Promise<ModelMessage[]> {
   const modelMessages: ModelMessage[] = [];
 
@@ -108,16 +107,6 @@ export async function convertMessagesToModelMessages(
         content: assistantContentParts,
       });
     }
-  }
-
-  // If there's a latest promptData (for the current request), add it as a user message
-  if (latestPromptData) {
-    const userContentParts =
-      buildUserContentPartsFromPromptData(latestPromptData);
-    modelMessages.push({
-      role: "user",
-      content: userContentParts,
-    });
   }
 
   return modelMessages;

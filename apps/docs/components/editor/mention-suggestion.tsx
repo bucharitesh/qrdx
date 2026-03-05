@@ -2,24 +2,22 @@
 
 import { ReactRenderer } from "@tiptap/react";
 import tippy from "tippy.js";
-import { useThemePresetStore } from "@/store/theme-preset-store";
-import { MentionList } from "../mention-list";
+import { MentionList } from "@/components/editor/mention-list"; // We'll create this component next
+import { useThemePresetStore } from "@/store/theme-preset-store"; // Import the theme store
 
 export const suggestion = {
   items: ({ query }: { query: string }) => {
     // Get all presets from the store
-    const allPresetsRecord = useThemePresetStore.getState().getAllPresets();
+    const allPresets = useThemePresetStore.getState().getAllPresets();
 
-    // Convert presets record to the required array format { id: string, label: string }
-    const presetItems = Object.entries(allPresetsRecord).map(
-      ([id, preset]) => ({
-        id: id,
-        label: preset.label,
-      }),
-    );
+    // Convert presets object to the required array format { id: string, label: string }
+    const themeItems = Object.entries(allPresets).map(([id, preset]) => ({
+      id: id, // Use the preset key as the id
+      label: preset.label, // Use the preset label
+    }));
 
     // Filter based on the query
-    return presetItems
+    return themeItems
       .filter((item) => {
         const labelWithoutSpaces =
           item.label?.replace(/\s+/g, "").toLowerCase() || "";
@@ -27,7 +25,7 @@ export const suggestion = {
         return labelWithoutSpaces.includes(queryWithoutSpaces);
       })
       .slice(0, 7)
-      .concat({ id: "editor:current-changes", label: "Current Theme" });
+      .concat({ id: "editor:current-changes", label: "Current Theme" }); // Limit to 5 suggestions
   },
 
   render: () => {

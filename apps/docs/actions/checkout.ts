@@ -9,6 +9,8 @@ export const createCheckout = async (productId: string) => {
     const user = await getCurrentUser();
     const customer = await getOrCreateCustomer(user);
 
+    console.log("customer", user, customer);
+
     const checkout = await polar.checkouts.create({
       products: [productId as string],
       customerId: customer?.id,

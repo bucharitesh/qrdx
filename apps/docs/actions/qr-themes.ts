@@ -42,7 +42,7 @@ const createThemeSchema = z.object({
     .string()
     .min(1, "Theme name cannot be empty")
     .max(50, "Theme name too long"),
-  styles: themeStylePropsSchema,
+  style: themeStylePropsSchema,
 });
 
 const updateThemeSchema = z.object({
@@ -137,7 +137,7 @@ export async function createTheme(formData: {
       }
     }
 
-    const { name, styles } = validation.data;
+    const { name, style } = validation.data;
     const newThemeId = cuid();
     const now = new Date();
 
@@ -147,7 +147,7 @@ export async function createTheme(formData: {
         id: newThemeId,
         userId: userId,
         name: name,
-        style: styles,
+        style: style,
         createdAt: now,
         updatedAt: now,
       })

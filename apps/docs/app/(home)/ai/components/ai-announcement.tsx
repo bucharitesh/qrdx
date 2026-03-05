@@ -1,6 +1,6 @@
 "use client";
 
-import { Icons } from "@/components/icons";
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { useSubscription } from "@/lib/hooks/use-subscription";
 
@@ -22,7 +22,7 @@ export function AIAnnouncement() {
           Upgrade to Pro for unlimited requests
         </span>
 
-        <Icons.ArrowRight className="text-muted-foreground group-hover:text-foreground size-4 -rotate-45 transition-all group-hover:rotate-0" />
+        <ArrowRight className="text-muted-foreground group-hover:text-foreground size-4 -rotate-45 transition-all group-hover:rotate-0" />
       </Link>
     </div>
   );

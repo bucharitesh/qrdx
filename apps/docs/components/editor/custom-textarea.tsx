@@ -1,18 +1,15 @@
 "use client";
 
+import { toast } from "@repo/design-system";
 import { cn } from "@repo/design-system/lib/utils";
 import CharacterCount from "@tiptap/extension-character-count";
 import Mention from "@tiptap/extension-mention";
+import { SuggestionPluginKey } from "@tiptap/suggestion";
 import Placeholder from "@tiptap/extension-placeholder";
-import { PluginKey } from "@tiptap/pm/state";
 import { EditorContent, type JSONContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { useEffect } from "react";
-import { toast } from "sonner";
-import { suggestion } from "./ai/mention-suggestion";
-
-// Create a stable plugin key for the mention suggestion
-const mentionSuggestionPluginKey = new PluginKey("mentionSuggestion");
+import { suggestion } from "@/components/editor/mention-suggestion";
 
 interface CustomTextareaProps {
   className?: string;
@@ -48,10 +45,7 @@ export default function CustomTextarea({
         HTMLAttributes: {
           class: "mention",
         },
-        suggestion: {
-          ...suggestion,
-          pluginKey: mentionSuggestionPluginKey,
-        },
+        suggestion: suggestion,
       }),
       Placeholder.configure({
         placeholder: "Describe your theme...",
@@ -84,16 +78,15 @@ export default function CustomTextarea({
           canSubmit
         ) {
           const { state } = view;
-          const mentionState = mentionSuggestionPluginKey.getState(state);
+          const mentionState = SuggestionPluginKey.getState(state);
 
-          // If mention popup is active, don't submit (let the mention handle it)
           if (mentionState?.active) {
             return false;
+          } else {
+            event.preventDefault();
+            onSubmit();
+            return true;
           }
-
-          event.preventDefault();
-          onSubmit();
-          return true;
         }
         return false;
       },

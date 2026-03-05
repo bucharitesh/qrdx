@@ -3,8 +3,8 @@
 
 import { Kbd } from "@repo/design-system/components/ui/kbd";
 import { cn } from "@repo/design-system/lib/utils";
+import { useState } from "react";
 import { Icons } from "@/components/icons";
-import React, { useState } from "react";
 import { useUserSettings } from "@/lib/hooks/use-user-settings";
 import type { ControlSectionProps } from "@/types";
 import { SectionContext } from "./section-context";

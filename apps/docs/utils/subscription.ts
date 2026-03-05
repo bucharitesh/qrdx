@@ -1,45 +1,28 @@
-export const FREE_SUB_FEATURES = [
+import { AI_REQUEST_FREE_TIER_LIMIT, MAX_FREE_THEMES } from "@/lib/constants";
+
+type Feature = {
+  description: string;
+  status: "done" | "pending";
+};
+
+export const FREE_SUB_FEATURES: Feature[] = [
+  { description: "Full QR code customization", status: "done" },
   {
-    description: "Unlimited QR code customization",
-    status: "done" as const,
+    description: `${AI_REQUEST_FREE_TIER_LIMIT} AI generated themes`,
+    status: "done",
   },
   {
-    description: "Access to all built-in presets",
-    status: "done" as const,
+    description: `Save and share up to ${MAX_FREE_THEMES} themes`,
+    status: "done",
   },
-  {
-    description: "Download in PNG, JPG, and SVG formats",
-    status: "done" as const,
-  },
-  {
-    description: "Up to 3 saved QR themes",
-    status: "done" as const,
-  },
-  {
-    description: "Basic patterns and frames",
-    status: "done" as const,
-  },
+  { description: "Export PNG, JPG, and SVG formats", status: "done" },
+  { description: "Contrast checker", status: "done" },
 ];
 
-export const PRO_SUB_FEATURES = [
-  {
-    description: "Unlimited saved QR themes",
-    status: "done" as const,
-  },
-  {
-    description: "Priority support",
-    status: "done" as const,
-  },
-  {
-    description: "Early access to new features",
-    status: "planned" as const,
-  },
-  {
-    description: "AI-powered QR generation",
-    status: "planned" as const,
-  },
-  {
-    description: "Advanced analytics",
-    status: "planned" as const,
-  },
+export const PRO_SUB_FEATURES: Feature[] = [
+  { description: "Save and share unlimited themes", status: "done" },
+  { description: "Unlimited AI generated themes", status: "done" },
+  { description: "Generate themes from images using AI", status: "done" },
+  { description: "Priority support", status: "done" },
+  { description: "Save your own fonts and colors", status: "pending" },
 ];

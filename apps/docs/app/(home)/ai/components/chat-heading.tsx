@@ -1,19 +1,23 @@
-export function ChatHeading({ isGenerating }: { isGenerating: boolean }) {
+export function ChatHeading({
+  isGeneratingTheme,
+}: {
+  isGeneratingTheme: boolean;
+}) {
   return (
     <h1
       style={
         {
-          "--gradient-accent": isGenerating
+          "--gradient-accent": isGeneratingTheme
             ? "var(--foreground)"
             : "var(--foreground)",
-          "--gradient-base": isGenerating
+          "--gradient-base": isGeneratingTheme
             ? "var(--muted-foreground)"
             : "var(--foreground)",
         } as React.CSSProperties
       }
-      className="animate-text bg-gradient-to-r from-(--gradient-base) via-(--gradient-accent) to-(--gradient-base) bg-[200%_auto] bg-clip-text pb-4 text-center text-[clamp(24px,7cqw,46px)] font-semibold tracking-tighter text-pretty text-transparent"
+      className="animate-text bg-linear-to-r from-(--gradient-base) via-(--gradient-accent) to-(--gradient-base) bg-size-[200%_auto] bg-clip-text pb-4 text-center text-[clamp(24px,7cqw,46px)] font-semibold tracking-tighter text-pretty text-transparent"
     >
-      What QR style can I create for you?
+      What can I help you theme?
     </h1>
   );
 }

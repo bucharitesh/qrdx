@@ -9,6 +9,8 @@ export async function GET(request: NextRequest) {
     const { isSubscribed, requestsRemaining, requestsUsed } =
       await validateSubscriptionAndUsage(userId);
 
+    console.log("xx", isSubscribed, requestsRemaining, requestsUsed);
+
     const response: SubscriptionStatus = {
       isSubscribed,
       requestsRemaining,

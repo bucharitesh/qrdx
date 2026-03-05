@@ -1,14 +1,14 @@
 "use client";
 
 import { Button } from "@repo/design-system/components/ui/button";
-import { cn } from "@repo/design-system/lib/utils";
-import { Icons } from "@/components/icons";
-import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
-} from "@/components/ui/hover-card";
+} from "@repo/design-system/components/ui/hover-card";
+import { cn } from "@repo/design-system/lib/utils";
+import { Icons } from "@/components/icons";
+import { TooltipWrapper } from "@/components/tooltip-wrapper";
 
 interface ImagePreviewProps {
   src: string;

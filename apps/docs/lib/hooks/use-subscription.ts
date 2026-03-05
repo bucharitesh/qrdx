@@ -4,6 +4,7 @@ import type { SubscriptionStatus } from "@/types/subscription";
 
 async function fetchSubscriptionStatus(): Promise<SubscriptionStatus> {
   const res = await fetch("/api/subscription", { method: "GET" });
+  console.log("xx", res);
   return res.json();
 }
 

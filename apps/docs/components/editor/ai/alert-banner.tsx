@@ -1,9 +1,8 @@
-/** biome-ignore-all lint/correctness/useExhaustiveDependencies: <explanation> */
 "use client";
 
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
-import { Icons } from "@/components/icons";
+import { X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { authClient } from "@/lib/auth-client";
@@ -36,7 +35,7 @@ export function AlertBanner() {
 
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLoggedIn, isPro, freeProMessagesLeft]);
+  }, [isLoggedIn, isPro, freeProMessagesLeft, showBanner]);
 
   const getBannerContent = () => {
     if (isLoggedIn && !isPro && freeProMessagesLeft > 0) {
@@ -84,7 +83,7 @@ export function AlertBanner() {
             className="size-4 [&>svg]:size-3"
             onClick={() => setShowBanner(false)}
           >
-            <Icons.X />
+            <X />
           </Button>
         </div>
       </div>

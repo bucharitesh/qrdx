@@ -29,7 +29,7 @@ interface MyProvider {
 export const myProvider: MyProvider = customProvider({
   languageModels: {
     base: google("gemini-2.5-flash"),
-    "qr-theme-generation": google("gemini-2.5-flash"),
+    "qr-theme-generation": google("gemini-3-flash-preview"),
     "prompt-enhancement": google("gemini-2.5-flash"),
   },
 });

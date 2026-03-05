@@ -7,10 +7,8 @@ import {
   PopoverTrigger,
 } from "fumadocs-ui/components/ui/popover";
 import { useCopyButton } from "fumadocs-ui/utils/use-copy-button";
-import {
-  Icons
-} from "@/components/icons";
 import { useMemo, useState } from "react";
+import { Icons } from "@/components/icons";
 
 const cache = new Map<string, string>();
 
