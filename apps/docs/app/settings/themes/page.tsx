@@ -1,3 +1,4 @@
+import { auth } from "@repo/auth/server";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Card } from "@repo/design-system/components/ui/card";
 import { Palette, Plus } from "lucide-react";
@@ -6,7 +7,6 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getThemes } from "@/actions/qr-themes";
 import { ThemesList } from "@/app/settings/components/themes-list";
-import { auth } from "@/lib/auth";
 import { SettingsHeader } from "../components/settings-header";
 
 export default async function ThemesPage() {

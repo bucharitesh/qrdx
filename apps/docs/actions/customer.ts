@@ -1,15 +1,19 @@
 import "server-only";
 
 import type { Customer } from "@polar-sh/sdk/models/components/customer.js";
-import type { User } from "better-auth";
+import type { user } from "@repo/database/schema";
 import { polar } from "@/lib/polar";
 import { logError } from "@/lib/shared";
 
-export const getOrCreateCustomer = async (user: User) => {
+export const getOrCreateCustomer = async (
+  userRecord: typeof user.$inferSelect,
+) => {
   let customer: Customer | null = null;
 
   try {
-    customer = await polar.customers.getExternal({ externalId: user.id });
+    customer = await polar.customers.getExternal({
+      externalId: userRecord.id,
+    });
   } catch (_e) {
     customer = null;
   }
@@ -18,14 +22,14 @@ export const getOrCreateCustomer = async (user: User) => {
 
   try {
     const newCustomer = await polar.customers.create({
-      email: user.email,
-      externalId: user.id,
-      name: user.name,
+      email: userRecord.email,
+      externalId: userRecord.id,
+      name: userRecord.name,
     });
 
     return newCustomer;
   } catch (err) {
-    logError(err as Error, { action: "createCustomer", user });
+    logError(err as Error, { action: "createCustomer", user: userRecord });
   }
 
   return null;

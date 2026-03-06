@@ -1,5 +1,6 @@
 "use client";
 
+import { authClient } from "@repo/auth/client";
 import { toast } from "@repo/design-system";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -9,7 +10,6 @@ import {
   getThemes,
   updateTheme,
 } from "@/actions/qr-themes";
-import { authClient } from "@/lib/auth-client";
 
 export function useQRThemes() {
   const { data: session } = authClient.useSession();

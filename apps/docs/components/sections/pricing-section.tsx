@@ -1,6 +1,7 @@
 /** biome-ignore-all lint/a11y/noSvgWithoutTitle: <explanation> */
 "use client";
 
+import { authClient } from "@repo/auth/client";
 import { toast } from "@repo/design-system";
 import { cn } from "@repo/design-system/lib/utils";
 import { motion } from "motion/react";
@@ -10,7 +11,6 @@ import { createCheckout } from "@/actions/checkout";
 import { Icons } from "@/components/icons";
 import { SectionHeader } from "@/components/sections/section-header";
 import { siteConfig } from "@/config/site";
-import { authClient } from "@/lib/auth-client";
 import { usePostLoginAction } from "@/lib/hooks/use-post-login-action";
 import { useSubscription } from "@/lib/hooks/use-subscription";
 import { useAuthStore } from "@/store/auth-store";

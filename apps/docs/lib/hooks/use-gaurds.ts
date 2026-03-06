@@ -1,4 +1,4 @@
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@repo/auth/client";
 import { useAuthStore } from "@/store/auth-store";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 import type { PostLoginActionType } from "./use-post-login-action";

@@ -1,5 +1,5 @@
+import { authClient } from "@repo/auth/client";
 import { useQuery } from "@tanstack/react-query";
-import { authClient } from "@/lib/auth-client";
 import type { SubscriptionStatus } from "@/types/subscription";
 
 async function fetchSubscriptionStatus(): Promise<SubscriptionStatus> {

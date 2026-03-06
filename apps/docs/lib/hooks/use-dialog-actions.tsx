@@ -1,9 +1,9 @@
+import { authClient } from "@repo/auth/client";
 import { usePostHog } from "posthog-js/react";
 import { createContext, type ReactNode, useContext, useState } from "react";
 // import { QRCodeDialog } from "@/components/editor/qr";
 import { QRSaveDialog } from "@/components/editor/qr-save-dialog";
 import { QRShareDialog } from "@/components/editor/qr-share-dialog";
-import { authClient } from "@/lib/auth-client";
 import {
   useCreateTheme,
   useUpdateTheme,

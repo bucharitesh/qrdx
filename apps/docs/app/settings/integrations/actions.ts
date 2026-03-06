@@ -1,5 +1,6 @@
 "use server";
 
+import { auth } from "@repo/auth/server";
 import {
   createOAuthHandler,
   disconnectIntegration,
@@ -8,7 +9,6 @@ import {
   initializeIntegrations,
 } from "@repo/integrations";
 import { cookies, headers } from "next/headers";
-import { auth } from "@/lib/auth";
 import { env } from "@/lib/env";
 
 // Initialize integrations on module load

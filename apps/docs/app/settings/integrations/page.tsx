@@ -1,3 +1,4 @@
+import { auth } from "@repo/auth/server";
 import {
   getIntegration,
   getIntegrationConfigWithEnv,
@@ -6,7 +7,6 @@ import {
 } from "@repo/integrations";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
 import { env } from "@/lib/env";
 import { SettingsHeader } from "../components/settings-header";
 import { IntegrationCard } from "./components/integration-card";

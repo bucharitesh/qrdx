@@ -1,7 +1,7 @@
+import { auth } from "@repo/auth/server";
 import { cn } from "@repo/design-system/lib/utils";
 import { headers } from "next/headers";
 import Link from "next/link";
-import { auth } from "@/lib/auth";
 import { polar } from "@/lib/polar";
 
 export async function CustomerPortalLink() {

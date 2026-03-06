@@ -1,7 +1,9 @@
 import { config, withAnalyzer } from "@repo/next-config";
 import { createMDX } from "fumadocs-mdx/next";
+import type { NextConfig } from "next";
+import { env } from "@/env";
 
-let nextConfig = {
+let nextConfig: NextConfig = {
   ...config,
   reactStrictMode: true,
   serverExternalPackages: [
@@ -28,4 +30,4 @@ if (env.ANALYZE === "true") {
 
 const withMDX = createMDX();
 
-export default withAnalyzer(withMDX(config));
+export default withMDX(config);
