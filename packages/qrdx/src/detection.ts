@@ -40,7 +40,9 @@ const decodeQRCode = (
   imgElement: HTMLImageElement,
   ratio: number,
   dx: number,
-  dy: number
+  dy: number,
+  maxSize: number,
+  options?: { debugDownloads?: boolean }
 ) => {
   return new Promise((resolve) => {
     // Ensure image is fully loaded
@@ -61,6 +63,14 @@ const decodeQRCode = (
           return;
         }
 
+        const targetMaxSize =
+          Number.isFinite(maxSize) && maxSize > 0 ? maxSize : 0;
+        const maxDimension = Math.max(
+          imgElement.naturalWidth * ratio,
+          imgElement.naturalHeight * ratio
+        );
+        const sizeScale =
+          targetMaxSize > 0 ? targetMaxSize / maxDimension : null;
         const decreaseRatio =
           imgElement.naturalWidth / imgElement.naturalHeight <= 0.33 ||
           imgElement.naturalWidth / imgElement.naturalHeight >= 3
@@ -89,11 +99,19 @@ const decodeQRCode = (
         const scaleRatios = [1.0, 0.8, 0.6, 0.4, 0.2, 0.1];
 
         for (const scaleRatio of scaleRatios) {
-          const width = Math.floor(
-            (imgElement.naturalWidth * ratio * scaleRatio) / decreaseRatio
+          const scaleBase =
+            sizeScale !== null ? sizeScale : 1 / decreaseRatio;
+          const width = Math.max(
+            1,
+            Math.floor(
+              imgElement.naturalWidth * ratio * scaleRatio * scaleBase
+            )
           );
-          const height = Math.floor(
-            (imgElement.naturalHeight * ratio * scaleRatio) / decreaseRatio
+          const height = Math.max(
+            1,
+            Math.floor(
+              imgElement.naturalHeight * ratio * scaleRatio * scaleBase
+            )
           );
 
           // Set canvas dimensions
@@ -122,12 +140,14 @@ const decodeQRCode = (
 
             const imageData = ctx.getImageData(0, 0, width, height);
 
-            downloadImageData(
-              imageData,
-              width,
-              height,
-              `qr_processed_${width}x${height}_scale${scaleRatio}_${Date.now()}.png`
-            );
+            if (options?.debugDownloads) {
+              downloadImageData(
+                imageData,
+                width,
+                height,
+                `qr_processed_${width}x${height}_scale${scaleRatio}_${Date.now()}.png`
+              );
+            }
 
             // Add error handling for QR detection
             try {
@@ -142,7 +162,6 @@ const decodeQRCode = (
           } catch (drawError) {
             console.error("Canvas drawing error:", drawError);
           }
-          resolve(null);
         }
 
         // If no QR code found at any scale
@@ -154,8 +173,9 @@ const decodeQRCode = (
 
 export const handleImageLoad = async (
   uploadedImage: HTMLImageElement,
-  _size: number,
-  returnFullData = false
+  size: number,
+  returnFullData = false,
+  options?: { debugDownloads?: boolean }
 ) => {
   if (!uploadedImage) {
     return "NO_QR";
@@ -186,7 +206,9 @@ export const handleImageLoad = async (
         uploadedImage,
         attempt.ratio,
         attempt.dx,
-        attempt.dy
+        attempt.dy,
+        size,
+        options
       );
 
       if (embeddedQRData?.data) {
@@ -236,8 +258,8 @@ export function downloadImageWithBoundingBox(
   ctx.beginPath();
   ctx.moveTo(boundingBox[0].x, boundingBox[0].y); // topLeft
   ctx.lineTo(boundingBox[1].x, boundingBox[1].y); // topRight
-  ctx.lineTo(boundingBox[3].x, boundingBox[3].y); // bottomRight
-  ctx.lineTo(boundingBox[2].x, boundingBox[2].y); // bottomLeft
+  ctx.lineTo(boundingBox[2].x, boundingBox[2].y); // bottomRight
+  ctx.lineTo(boundingBox[3].x, boundingBox[3].y); // bottomLeft
   ctx.closePath();
   ctx.stroke();
 
