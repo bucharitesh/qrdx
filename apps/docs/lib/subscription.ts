@@ -1,6 +1,6 @@
 "use server";
 
-import { db } from "@repo/database";
+import { database as db } from "@repo/database";
 import { subscription } from "@repo/database/schema";
 import { and, eq } from "drizzle-orm";
 import type { NextRequest } from "next/server";

@@ -1,6 +1,6 @@
 "use server";
 
-import { db } from "@repo/database";
+import { database as db } from "@repo/database";
 import { type UserSettings, user } from "@repo/database/schema";
 import { eq } from "drizzle-orm";
 import { headers } from "next/headers";

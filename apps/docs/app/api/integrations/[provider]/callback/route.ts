@@ -1,4 +1,4 @@
-import { db, integration } from "@repo/database";
+import { database as db, integration } from "@repo/database";
 import {
   createOAuthHandler,
   encryptApiKey,

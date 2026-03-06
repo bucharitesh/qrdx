@@ -11,7 +11,9 @@ const refreshLocks = new Map<string, Promise<string>>();
  * Check if a token should be refreshed (expires in < 5 minutes)
  */
 export function shouldRefreshToken(integration: Integration): boolean {
-  if (!integration.expiresAt) return false;
+  if (!integration.expiresAt) {
+    return false;
+  }
 
   const fiveMinutes = 5 * 60 * 1000; // 5 minutes in milliseconds
   const expiresIn = integration.expiresAt.getTime() - Date.now();

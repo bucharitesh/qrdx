@@ -1,18 +1,9 @@
-import createBundleAnalyzer from "@next/bundle-analyzer";
+import { config, withAnalyzer } from "@repo/next-config";
 import { createMDX } from "fumadocs-mdx/next";
 
-const withAnalyzer = createBundleAnalyzer({
-  enabled: process.env.ANALYZE === "true",
-});
-
-/** @type {import('next').NextConfig} */
-const config = {
+let nextConfig = {
+  ...config,
   reactStrictMode: true,
-  logging: {
-    fetches: {
-      fullUrl: true,
-    },
-  },
   serverExternalPackages: [
     "ts-morph",
     "typescript",
@@ -21,20 +12,6 @@ const config = {
     "shiki",
     "@takumi-rs/core",
   ],
-  images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "avatars.githubusercontent.com",
-        port: "",
-      },
-      {
-        protocol: "https",
-        hostname: "lh3.googleusercontent.com",
-        port: "",
-      },
-    ],
-  },
   async rewrites() {
     return [
       {
@@ -44,6 +21,10 @@ const config = {
     ];
   },
 };
+
+if (env.ANALYZE === "true") {
+  nextConfig = withAnalyzer(nextConfig);
+}
 
 const withMDX = createMDX();
 

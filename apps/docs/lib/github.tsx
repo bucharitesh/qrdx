@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/suspicious/noAssignInExpressions: <explanation> */
 import { App, type Octokit } from "octokit";
 import type { ActionResponse, Feedback } from "@/components/feedback";
 import { env } from "@/lib/env";

@@ -6,11 +6,13 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build", "test"],
-      "outputs": [".next/**", "!.next/cache/**"]
-    },
-    "qrdx#build": {
-      "dependsOn": ["^build"],
-      "outputs": ["dist/**"]
+      "outputs": [
+        ".next/**",
+        "!.next/cache/**",
+        "**/generated/**",
+        "storybook-static/**",
+        ".react-email/**"
+      ]
     },
     "test": {
       "dependsOn": ["^test"]
@@ -21,6 +23,10 @@
     "dev": {
       "cache": false,
       "persistent": true
+    },
+    "translate": {
+      "dependsOn": ["^translate"],
+      "cache": false
     },
     "clean": {
       "cache": false
