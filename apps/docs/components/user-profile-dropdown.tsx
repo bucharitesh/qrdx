@@ -1,5 +1,6 @@
 "use client";
 
+import { authClient } from "@repo/auth/client";
 import {
   Avatar,
   AvatarFallback,
@@ -14,12 +15,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@repo/design-system/components/ui/dropdown-menu";
-import { Icons } from "@/components/icons";
 import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
-import { authClient } from "@/lib/auth-client";
+import { Icons } from "@/components/icons";
 import { useAuthStore } from "@/store/auth-store";
 
 export function UserProfileDropdown() {

@@ -1,9 +1,9 @@
 "use client";
 
+import { authClient } from "@repo/auth/client";
 import { usePostHog } from "posthog-js/react";
 import { useEffect } from "react";
 import { AuthDialog } from "@/app/(auth)/components/auth-dialog";
-import { authClient } from "@/lib/auth-client";
 import { executePostLoginAction } from "@/lib/hooks/use-post-login-action";
 import { useAuthStore } from "@/store/auth-store";
 

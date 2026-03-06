@@ -1,7 +1,7 @@
+import { auth } from "@repo/auth/server";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { getUserSettings } from "@/actions/user-settings";
-import { auth } from "@/lib/auth";
 import { AppearanceForm } from "./components/appearance-form";
 import { GeneralSettingsForm } from "./components/general-settings-form";
 
@@ -31,4 +31,3 @@ export default async function GeneralSettingsPage() {
     </div>
   );
 }
-

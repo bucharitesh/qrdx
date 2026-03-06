@@ -1,3 +1,4 @@
+import { auth } from "@repo/auth/server";
 import { database as db, integration } from "@repo/database";
 import {
   createOAuthHandler,
@@ -9,7 +10,6 @@ import {
 import { and, eq } from "drizzle-orm";
 import { cookies, headers } from "next/headers";
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
 import { env } from "@/lib/env";
 
 // Initialize integrations on module load

@@ -10,7 +10,7 @@ import { cn } from "@repo/design-system/lib/utils";
 import { Blend, PaintRoller, WandSparkles } from "lucide-react";
 import { type ComponentProps, Fragment } from "react";
 import { HorizontalScrollArea } from "@/components/horizontal-scroll-area";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@repo/auth/client";
 import type { AIPromptData } from "@/types/ai";
 import {
   createCurrentThemePrompt,

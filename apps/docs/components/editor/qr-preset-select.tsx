@@ -1,5 +1,6 @@
 /** biome-ignore-all lint/suspicious/noArrayIndexKey: false positive */
 
+import { authClient } from "@repo/auth/client";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
@@ -28,7 +29,6 @@ import Link from "next/link";
 import { type ColorConfig, getColorString } from "qrdx";
 import type React from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { authClient } from "@/lib/auth-client";
 import { useMounted } from "@/lib/hooks/use-mounted";
 import { useUserSettings } from "@/lib/hooks/use-user-settings";
 import { useQREditorStore } from "@/store/editor-store";
@@ -321,10 +321,18 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
           >
             <div className="flex w-full items-center gap-3 overflow-hidden">
               <div className="flex gap-0.5">
-                <ColorBox color={themeState.styles.bgColor} />
-                <ColorBox color={themeState.styles.fgColor} />
-                <ColorBox color={themeState.styles.eyeColor} />
-                <ColorBox color={themeState.styles.dotColor} />
+                {themeState.styles.bgColor && (
+                  <ColorBox color={themeState.styles.bgColor} />
+                )}
+                {themeState.styles.fgColor && (
+                  <ColorBox color={themeState.styles.fgColor} />
+                )}
+                {themeState.styles.eyeColor && (
+                  <ColorBox color={themeState.styles.eyeColor} />
+                )}
+                {themeState.styles.dotColor && (
+                  <ColorBox color={themeState.styles.dotColor} />
+                )}
               </div>
               {currentPresetName !== "default" &&
                 currentPresetName &&

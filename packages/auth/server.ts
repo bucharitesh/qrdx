@@ -3,7 +3,7 @@ import { database as db } from "@repo/database";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { lastLoginMethod } from "better-auth/plugins";
-import { keys } from "@/keys";
+import { keys } from "./keys";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {

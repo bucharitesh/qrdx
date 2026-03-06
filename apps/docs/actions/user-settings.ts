@@ -1,10 +1,10 @@
 "use server";
 
+import { auth } from "@repo/auth/server";
 import { database as db } from "@repo/database";
 import { type UserSettings, user } from "@repo/database/schema";
 import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
 
 export async function getUserSettings(): Promise<UserSettings | null> {
   const session = await auth.api.getSession({

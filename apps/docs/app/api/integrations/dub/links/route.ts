@@ -1,6 +1,6 @@
+import { auth } from "@repo/auth/server";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
 import { getDubClient, getDubIntegration } from "@/lib/integrations";
 
 /**

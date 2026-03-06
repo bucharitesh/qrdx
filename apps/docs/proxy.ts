@@ -1,7 +1,7 @@
+import { auth } from "@repo/auth/server";
 import { isMarkdownPreferred, rewritePath } from "fumadocs-core/negotiation";
 import { headers } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
-import { auth } from "./lib/auth";
 import { API_AUTH_PREFIX, DEFAULT_LOGIN_REDIRECT } from "./routes";
 
 const { rewrite: rewriteLLM } = rewritePath("/docs/*path", "/llms.mdx/*path");

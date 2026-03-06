@@ -1,16 +1,16 @@
 /** biome-ignore-all lint/a11y/noSvgWithoutTitle: false positive */
 "use client";
 
+import { authClient } from "@repo/auth/client";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Card } from "@repo/design-system/components/ui/card";
-import { Icons } from "@/components/icons";
 import { motion } from "motion/react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import { Icons } from "@/components/icons";
 import { QrdxLogoAnimation } from "@/components/qrdx-logo-animation";
-import { authClient } from "@/lib/auth-client";
 
 interface AuthDialogProps {
   open: boolean;

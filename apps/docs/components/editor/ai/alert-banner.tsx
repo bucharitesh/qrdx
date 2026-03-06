@@ -1,11 +1,11 @@
 "use client";
 
+import { authClient } from "@repo/auth/client";
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import { X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { authClient } from "@/lib/auth-client";
 import { AI_REQUEST_FREE_TIER_LIMIT } from "@/lib/constants";
 import { useSubscription } from "@/lib/hooks/use-subscription";
 

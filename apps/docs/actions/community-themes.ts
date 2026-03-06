@@ -2,6 +2,7 @@
 
 "use server";
 
+import { auth } from "@repo/auth/server";
 import {
   communityTheme,
   communityThemeTag,
@@ -15,7 +16,6 @@ import cuid from "cuid";
 import { and, asc, count, desc, eq, inArray, sql } from "drizzle-orm";
 import { headers } from "next/headers";
 import { z } from "zod";
-import { auth } from "@/lib/auth";
 import {
   COMMUNITY_THEME_TAGS,
   COMMUNITY_THEMES_PAGE_SIZE,
