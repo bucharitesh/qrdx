@@ -52,6 +52,20 @@ Our platform powers 1000+ QR's monthly, and is used by marketing teams from comp
 
 You can self-host QRdx for greater control over your data and design.
 
+### Running with Docker
+
+1.  **Prerequisites**: Ensure you have Docker and Docker Compose installed.
+2.  **Environment Setup**:
+    *   Copy `apps/docs/.env.docker` to `apps/docs/.env` (or set env vars manually).
+    *   Copy `packages/database/.env.docker` to `packages/database/.env` (if needed for local scripts).
+3.  **Start Services**:
+    ```bash
+    docker compose up --build
+    ```
+4.  **Access**:
+    *   App: `http://localhost:3000`
+    *   Database: `localhost:5432` (user: `postgres`, password: `postgres`, db: `qrdx`)
+
 ## Contributing
 
 We love our contributors! Here's how you can contribute:
