@@ -1,7 +1,11 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: false positive */
 "use server";
 
-import { communityTheme, db, qrPreset as themeTable } from "@repo/database";
+import {
+  communityTheme,
+  database as db,
+  qrPreset as themeTable,
+} from "@repo/database";
 import cuid from "cuid";
 import { and, eq, sql } from "drizzle-orm";
 import { cache } from "react";

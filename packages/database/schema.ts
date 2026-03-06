@@ -20,6 +20,11 @@ export interface UserSettings {
   // Add more settings here in the future
 }
 
+export const page = pgTable("page", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+});
+
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),

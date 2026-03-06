@@ -5,7 +5,7 @@
 import {
   communityTheme,
   communityThemeTag,
-  db,
+  database as db,
   themeLike,
   qrPreset as themeTable,
   user as userTable,
