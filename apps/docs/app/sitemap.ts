@@ -1,6 +1,12 @@
 import type { MetadataRoute } from "next";
 import { baseUrl } from "@/lib/metadata";
-import { changelogSource, legalSource, source } from "@/lib/source";
+import {
+  blogSource,
+  changelogSource,
+  compareSource,
+  legalSource,
+  source,
+} from "@/lib/source";
 
 export const revalidate = false;
 
@@ -76,6 +82,31 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         lastModified: lastModified ? new Date(lastModified) : undefined,
         changeFrequency: "monthly",
         priority: 0.3,
+      } as MetadataRoute.Sitemap[number];
+    }),
+    {
+      url: url("/blog"),
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
+    ...blogSource.getPages().flatMap((page) => {
+      const { date } = page.data;
+
+      return {
+        url: url(page.url),
+        lastModified: date ? new Date(date) : undefined,
+        changeFrequency: "monthly",
+        priority: 0.7,
+      } as MetadataRoute.Sitemap[number];
+    }),
+    ...compareSource.getPages().flatMap((page) => {
+      const { lastModified } = page.data;
+
+      return {
+        url: url(page.url),
+        lastModified: lastModified ? new Date(lastModified) : undefined,
+        changeFrequency: "monthly",
+        priority: 0.6,
       } as MetadataRoute.Sitemap[number];
     }),
   ];

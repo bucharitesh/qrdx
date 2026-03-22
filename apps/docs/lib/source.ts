@@ -4,7 +4,7 @@ import {
   loader,
 } from "fumadocs-core/source";
 import { lucideIconsPlugin } from "fumadocs-core/source/lucide-icons";
-import { changelog, compare, docs, legal } from "@/.source/server";
+import { blog, changelog, compare, docs, legal } from "@/.source/server";
 
 export const source = loader({
   baseUrl: "/docs",
@@ -25,6 +25,11 @@ export const changelogSource = loader({
 export const compareSource = loader({
   baseUrl: "/compare",
   source: compare.toFumadocsSource(),
+});
+
+export const blogSource = loader({
+  baseUrl: "/blog",
+  source: blog.toFumadocsSource(),
 });
 
 export function getPageImage(page: InferPageType<typeof source>) {
