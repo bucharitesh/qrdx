@@ -69,7 +69,7 @@ export function NavMenu() {
   }, [getActiveNavItem, updateNavIndicator]);
 
   return (
-    <div className="w-full hidden md:block">
+    <div className="w-full hidden lg:block">
       <ul
         className="relative mx-auto flex w-fit rounded-full h-11 px-2 items-center justify-center"
         ref={ref}
@@ -88,11 +88,12 @@ export function NavMenu() {
             </Link>
           </li>
         ))}
-        {isReady && (
+        {isReady && width > 0 && (
           <motion.li
+            initial={false}
             animate={{ left, width }}
             transition={{ type: "spring", stiffness: 400, damping: 30 }}
-            className="absolute inset-0 my-1.5 rounded-full bg-secondary/60 border border-border"
+            className="pointer-events-none absolute top-1.5 bottom-1.5 rounded-full border border-border bg-secondary/60"
           />
         )}
       </ul>
