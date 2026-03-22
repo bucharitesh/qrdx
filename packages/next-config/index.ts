@@ -15,6 +15,11 @@ export const config: NextConfig = {
         hostname: "lh3.googleusercontent.com",
         port: "",
       },
+      {
+        protocol: "https",
+        hostname: "assets.qrdx.dev",
+        port: "",
+      },
     ],
   },
 

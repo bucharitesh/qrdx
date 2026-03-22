@@ -1,5 +1,6 @@
 "use client";
 
+import { AnimatePresence, motion } from "framer-motion";
 import type React from "react";
 import { lazy } from "react";
 import { useQREditorStore } from "@/store/editor-store";
@@ -50,21 +51,32 @@ const QRPreviewPanel: React.FC<QRPreviewPanelProps> = ({ style }) => {
       <div className="relative flex size-full items-center justify-center overflow-hidden p-4">
         <div className="relative isolate flex size-full items-center justify-center overflow-hidden rounded-lg p-8">
           <ExamplesPreviewContainer className="size-full">
-            <QRCode
-              bgColor={style.bgColor}
-              cornerEyeDotPattern={style.cornerEyeDotPattern}
-              cornerEyePattern={style.cornerEyePattern}
-              dotColor={style.dotColor}
-              bodyPattern={style.bodyPattern}
-              level={style.level}
-              eyeColor={style.eyeColor}
-              fgColor={style.fgColor}
-              hideLogo={!style.showLogo}
-              logo={style.customLogo}
-              scale={4}
-              templateId={style.templateId}
-              value={value}
-            />
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={value}
+                initial={{ filter: "blur(2px)", opacity: 0.4 }}
+                animate={{ filter: "blur(0px)", opacity: 1 }}
+                exit={{ filter: "blur(2px)", opacity: 0.4 }}
+                transition={{ duration: 0.1 }}
+                className="relative flex size-full items-center justify-center"
+              >
+                <QRCode
+                  bgColor={style.bgColor}
+                  cornerEyeDotPattern={style.cornerEyeDotPattern}
+                  cornerEyePattern={style.cornerEyePattern}
+                  dotColor={style.dotColor}
+                  bodyPattern={style.bodyPattern}
+                  level={style.level}
+                  eyeColor={style.eyeColor}
+                  fgColor={style.fgColor}
+                  hideLogo={!style.showLogo}
+                  logo={style.customLogo}
+                  scale={4}
+                  templateId={style.templateId}
+                  value={value}
+                />
+              </motion.div>
+            </AnimatePresence>
           </ExamplesPreviewContainer>
         </div>
       </div>

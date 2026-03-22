@@ -194,7 +194,7 @@ export async function getQRAsSVGDataUri(props: QRProps) {
           src: base64Image,
         },
       };
-    } catch (error) {
+    } catch (_error) {
       // Remove the image from settings if it fails to load
       // This prevents SVG from containing external URLs that will fail during canvas conversion
       const { imageSettings: _removed, ...propsWithoutImage } = props;
