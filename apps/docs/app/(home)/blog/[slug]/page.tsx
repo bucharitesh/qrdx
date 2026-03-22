@@ -1,11 +1,13 @@
 import { Badge } from "@repo/design-system/components/ui/badge";
 import type { Metadata } from "next";
 import Image from "next/image";
+import Link from "next/link";
 import { notFound } from "next/navigation";
-import { BlogAuthorBar } from "@/components/sections/blog/blog-author-bar";
 import { BlogCard } from "@/components/sections/blog/blog-card";
-import { getAuthor } from "@/lib/blog-authors";
+import { BlogToc } from "@/components/sections/blog/blog-toc";
+import { resolveAuthors } from "@/lib/blog-authors";
 import { blogSource } from "@/lib/source";
+import { getMDXComponents } from "@/mdx-components";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -31,11 +33,12 @@ export default async function BlogPostPage({ params }: PageProps) {
     title,
     description,
     date,
-    author: authorId,
+    author: authorIds,
     category,
     image,
   } = page.data;
-  const author = getAuthor(authorId);
+
+  const authors = resolveAuthors(authorIds);
   const MDX = page.data.body;
 
   const allPages = blogSource.getPages();
@@ -54,42 +57,34 @@ export default async function BlogPostPage({ params }: PageProps) {
   return (
     <article className="flex flex-col items-center justify-center divide-y divide-border min-h-screen w-full">
       <div className="flex flex-col items-center justify-center w-full relative">
-        <div className="w-full border-b">
-          <div className="mx-auto px-10 md:px-14 py-10 md:py-16">
-            <div className="flex items-center gap-3 mb-6">
+        {/* Post header */}
+        <div className="w-full border-b p-10 md:p-14">
+          <div className="max-w-4xl mx-auto flex flex-col gap-4">
+            <div className="flex items-center gap-3">
               <Badge variant="secondary">{category}</Badge>
               <time className="text-sm text-muted-foreground">
                 {formatDate(date)}
               </time>
             </div>
 
-            <h1 className="text-3xl md:text-5xl font-medium tracking-tighter text-balance mb-6">
+            <h1 className="text-3xl md:text-5xl font-medium tracking-tighter text-balance">
               {title}
             </h1>
 
             {description && (
-              <p className="text-lg text-muted-foreground text-balance mb-8">
+              <p className="text-lg text-muted-foreground text-balance">
                 {description}
               </p>
-            )}
-
-            {author && (
-              <BlogAuthorBar
-                authorId={authorId}
-                author={author}
-                date={date}
-                size="md"
-              />
             )}
           </div>
         </div>
 
-        <div className="px-5 md:px-10">
+        <div className="px-5 md:px-10 w-full">
           <div className="md:border-x md:mx-10 relative">
-            <div className="absolute hidden lg:block top-0 -left-4 md:-left-14 h-full w-4 md:w-14 text-primary/5 bg-size-[10px_10px] bg-[repeating-linear-gradient(315deg,currentColor_0_1px,#0000_0_50%)]"></div>
-            <div className="absolute hidden lg:block top-0 -right-4 md:-right-14 h-full w-4 md:w-14 text-primary/5 bg-size-[10px_10px] bg-[repeating-linear-gradient(315deg,currentColor_0_1px,#0000_0_50%)]"></div>
+            <div className="absolute hidden lg:block top-0 -left-4 md:-left-14 h-full w-4 md:w-14 text-primary/5 bg-size-[10px_10px] bg-[repeating-linear-gradient(315deg,currentColor_0_1px,#0000_0_50%)]" />
+            <div className="absolute hidden lg:block top-0 -right-4 md:-right-14 h-full w-4 md:w-14 text-primary/5 bg-size-[10px_10px] bg-[repeating-linear-gradient(315deg,currentColor_0_1px,#0000_0_50%)]" />
 
-            <div className="flex flex-col lg:flex-row gap-12">
+            <div className="flex flex-col lg:flex-row">
               {/* MDX Body */}
               <div className="flex-1 min-w-0 md:border-r">
                 {image && (
@@ -103,35 +98,52 @@ export default async function BlogPostPage({ params }: PageProps) {
                     />
                   </div>
                 )}
-                <div className="prose prose-neutral max-w-none transition-all prose-headings:relative prose-headings:scroll-mt-20 prose-headings:font-display prose-a:font-medium prose-a:text-neutral-500 prose-a:underline-offset-4 hover:prose-a:text-black prose-thead:text-lg px-5 py-10 sm:px-12 prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-a:underline-offset-4 ">
-                  <MDX />
+                <div className="prose prose-neutral max-w-none transition-all px-5 py-10 sm:px-12">
+                  <MDX components={getMDXComponents()} />
                 </div>
               </div>
 
-              {/* Table of Contents sidebar */}
-              {toc && toc.length > 0 && (
-                <aside className="hidden lg:block w-max shrink-0">
-                  <div className="sticky top-24">
-                    <p className="text-sm font-semibold text-secondary-foreground mb-4">
-                      On this page
-                    </p>
-                    <nav className="flex flex-col gap-2">
-                      {toc.map((item) => (
-                        <a
-                          key={item.url}
-                          href={item.url}
-                          className="text-sm text-muted-foreground hover:text-secondary-foreground transition-colors underline-offset-4"
-                          style={{
-                            paddingLeft: `${(item.depth - 2) * 12}px`,
-                          }}
-                        >
-                          {item.title}
-                        </a>
-                      ))}
-                    </nav>
-                  </div>
-                </aside>
-              )}
+              {/* Sidebar — authors + TOC */}
+              <aside className="hidden lg:sticky lg:top-24 lg:flex lg:h-[calc(100vh-6rem)] lg:w-full lg:max-w-xs lg:shrink-0 lg:flex-col lg:overflow-y-auto">
+                <div className="flex flex-col">
+                  {/* Written by */}
+                  {authors.length > 0 && (
+                    <div className="border-b border-border px-5 py-5">
+                      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">
+                        Written by
+                      </p>
+                      <div className="flex flex-col gap-4">
+                        {authors.map((a) => (
+                          <Link
+                            key={a.id}
+                            href={`/blog/authors/${a.id}`}
+                            className="group flex items-center gap-3"
+                          >
+                            <img
+                              src={a.avatar}
+                              alt={a.name}
+                              width={36}
+                              height={36}
+                              className="rounded-full shrink-0 transition-all group-hover:brightness-90"
+                            />
+                            <div className="min-w-0">
+                              <p className="text-sm font-medium text-secondary-foreground truncate">
+                                {a.name}
+                              </p>
+                              <p className="text-xs text-muted-foreground truncate">
+                                {a.role}
+                              </p>
+                            </div>
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Table of contents */}
+                  {toc && toc.length > 0 && <BlogToc items={toc} />}
+                </div>
+              </aside>
             </div>
           </div>
 
@@ -149,7 +161,7 @@ export default async function BlogPostPage({ params }: PageProps) {
                       description={post.data.description ?? ""}
                       slug={post.slugs[0] ?? ""}
                       date={post.data.date}
-                      authorId={post.data.author}
+                      author={resolveAuthors(post.data.author)}
                       image={post.data.image}
                     />
                   ))}

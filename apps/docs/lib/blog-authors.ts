@@ -1,29 +1,34 @@
-export interface BlogAuthor {
+import { blogAuthorsSource } from "@/lib/source";
+
+export interface ResolvedAuthor {
+  id: string;
   name: string;
   role: string;
   avatar: string;
   twitter?: string;
+  linkedin?: string;
   github?: string;
 }
 
-export const authors: Record<string, BlogAuthor> = {
-  ritesh: {
-    name: "Ritesh Bucha",
-    role: "Founder & Creator, QRdx",
-    avatar: "https://github.com/bucharitesh.png",
-    twitter: "bucharitesh",
-    github: "bucharitesh",
-  },
-};
+export function resolveAuthors(ids: string[]): ResolvedAuthor[] {
+  return ids.map((id) => {
+    const page = blogAuthorsSource.getPage([id]);
 
-export function getAuthor(id: string): BlogAuthor | undefined {
-  return authors[id];
-}
+    if (!page) {
+      throw new Error(
+        `[blog-authors] Unknown author id "${id}". ` +
+          `Create content/blog-authors/${id}.mdx to fix this.`,
+      );
+    }
 
-export function getAuthorSlug(id: string): string {
-  return id;
-}
-
-export function getAllAuthorSlugs(): string[] {
-  return Object.keys(authors);
+    return {
+      id,
+      name: page.data.title,
+      role: page.data.role,
+      avatar: page.data.avatar,
+      twitter: page.data.twitter,
+      linkedin: page.data.linkedin,
+      github: page.data.github,
+    };
+  });
 }

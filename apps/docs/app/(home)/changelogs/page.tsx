@@ -19,7 +19,6 @@ function formatDate(date: Date): string {
 const Page = async () => {
   const allPages = changelogSource.getPages();
 
-  // Sort by date, newest first
   const sortedChangelogs = allPages.sort((a, b) => {
     const dateA = new Date(a.data.date).getTime();
     const dateB = new Date(b.data.date).getTime();
@@ -30,9 +29,9 @@ const Page = async () => {
     <section className="flex flex-col items-center justify-center w-full min-h-screen">
       <div className="w-full">
         <SectionHeader>
-          <h2 className="text-3xl md:text-4xl font-medium tracking-tighter text-center text-balance">
+          <h1 className="text-3xl md:text-4xl font-medium tracking-tighter text-center text-balance">
             Changelog
-          </h2>
+          </h1>
           <p className="text-muted-foreground text-center text-balance font-medium">
             Latest updates and improvements to our product
           </p>
@@ -80,7 +79,6 @@ const Page = async () => {
                             {changelog.data.title}
                           </h2>
 
-                          {/* Tags */}
                           {changelog.data.tags &&
                             changelog.data.tags.length > 0 && (
                               <div className="flex flex-wrap gap-2">

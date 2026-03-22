@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { SectionHeader } from "@/components/sections/section-header";
 import { BlogList } from "@/components/sections/blog/blog-list";
+import { SectionHeader } from "@/components/sections/section-header";
+import { resolveAuthors } from "@/lib/blog-authors";
 import { blogSource } from "@/lib/source";
 
 export const metadata: Metadata = {
@@ -22,7 +23,7 @@ export default function BlogPage() {
       title: page.data.title,
       description: page.data.description ?? "",
       date: page.data.date,
-      author: page.data.author,
+      author: resolveAuthors(page.data.author),
       category: page.data.category,
       image: page.data.image,
     }));

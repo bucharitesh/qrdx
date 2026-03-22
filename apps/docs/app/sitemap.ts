@@ -50,7 +50,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     },
     {
-      url: url("/changelog"),
+      url: url("/changelogs"),
       changeFrequency: "weekly",
       priority: 0.7,
     },
@@ -88,6 +88,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: url("/blog"),
       changeFrequency: "weekly",
       priority: 0.8,
+    },
+    {
+      url: url("/blog/category/company"),
+      changeFrequency: "weekly",
+      priority: 0.7,
+    },
+    {
+      url: url("/blog/category/engineering"),
+      changeFrequency: "weekly",
+      priority: 0.7,
+    },
+    {
+      url: url("/blog/category/education"),
+      changeFrequency: "weekly",
+      priority: 0.7,
     },
     ...blogSource.getPages().flatMap((page) => {
       const { date } = page.data;
