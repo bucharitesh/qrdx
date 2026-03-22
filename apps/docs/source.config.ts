@@ -57,6 +57,35 @@ export const changelog = defineDocs({
   },
 });
 
+export const compare = defineDocs({
+  dir: "content/compare",
+  docs: {
+    schema: frontmatterSchema.extend({
+      competitor: z.string(),
+      competitorUrl: z.string(),
+      /** Full URL to competitor logo (SVG or PNG) for compare UI */
+      competitorLogo: z.url(),
+      tagline: z.string(),
+      qrdxPlan: z.string().default("Free · Open Source"),
+      competitorPlan: z.string().default("Paid"),
+      tableRows: z.array(
+        z.object({
+          feature: z.string(),
+          tooltip: z.string().optional(),
+          qrdx: z.union([z.string(), z.boolean()]),
+          competitor: z.union([z.string(), z.boolean()]),
+        }),
+      ),
+      featureHighlights: z.array(
+        z.object({
+          title: z.string(),
+          description: z.string(),
+        }),
+      ),
+    }),
+  },
+});
+
 export default defineConfig({
   plugins: [
     jsonSchema({

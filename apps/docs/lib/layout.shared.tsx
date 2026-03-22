@@ -1,6 +1,6 @@
 import type { BaseLayoutProps, LinkItemType } from "fumadocs-ui/layouts/shared";
-import { QrdxLogoAnimation } from "@/components/qrdx-logo-animation";
 import { QrdxLogo } from "@/components/qrdx-logo";
+import { QrdxLogoAnimation } from "@/components/qrdx-logo-animation";
 
 export const linkItems: LinkItemType[] = [];
 

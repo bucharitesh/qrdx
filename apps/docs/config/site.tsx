@@ -736,12 +736,20 @@ export const siteConfig = {
         },
       ],
     },
-    // {
-    //   title: "Compare",
-    //   links: [
-    //    { id: 1, title: "QRDX", url: "/compare" },
-    //   ]
-    // }
+    {
+      title: "Compare",
+      links: [
+        { id: 1, title: "ME-QR", url: "/compare/me-qr" },
+        { id: 2, title: "QR Tiger", url: "/compare/qr-tiger" },
+        { id: 3, title: "Flowcode", url: "/compare/flowcode" },
+        { id: 4, title: "Adobe Express", url: "/compare/adobe-express" },
+        { id: 5, title: "QR Code.io", url: "/compare/qr-code-io" },
+        { id: 6, title: "QR Code Chimp", url: "/compare/qr-code-chimp" },
+        { id: 7, title: "goQR.me", url: "/compare/goqr" },
+        { id: 8, title: "QRStuff", url: "/compare/qrstuff" },
+        { id: 9, title: "Uniqode", url: "/compare/uniqode" },
+      ],
+    },
   ],
 };
 
