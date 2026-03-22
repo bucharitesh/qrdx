@@ -98,8 +98,8 @@ export function Navbar() {
         >
           <div className="flex h-[56px] items-center justify-between p-4">
             <Link href="/" className="flex items-center gap-2">
-              <QrdxLogo className="size-5 md:hidden block fill-secondary-foreground" />
-              <QrdxLogoAnimation size={30} className="hidden md:block" />
+              <QrdxLogo className="size-5 block fill-secondary-foreground lg:hidden" />
+              <QrdxLogoAnimation size={30} className="hidden lg:block" />
               <p className="text-lg font-semibold text-secondary-foreground">
                 QRdx
               </p>
@@ -107,20 +107,20 @@ export function Navbar() {
 
             <NavMenu />
 
-            <div className="flex flex-row items-center gap-3 md:gap-4 shrink-0">
+            <div className="flex flex-row items-center gap-3 lg:gap-4 shrink-0">
               <SocialLink
                 href="https://github.com/bucharitesh/qrdx"
-                className="items-center gap-2 text-sm font-bold hidden md:flex"
+                className="hidden items-center gap-2 text-sm font-bold lg:flex"
               >
                 <Icons.github className="size-4" />
                 {stargazersCount > 0 && formatCompactNumber(stargazersCount)}
               </SocialLink>
-              {/* <Link href="/playground">
+              <Link className="hidden lg:block" href="/playground">
                 <Button>Try the Playground</Button>
-              </Link> */}
+              </Link>
               <Button
                 variant="secondary"
-                className="md:hidden"
+                className="lg:hidden"
                 onClick={toggleDrawer}
               >
                 {isDrawerOpen ? (
