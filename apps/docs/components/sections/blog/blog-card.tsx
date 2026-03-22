@@ -1,15 +1,16 @@
 import Image from "next/image";
 import Link from "next/link";
-import { getAuthor } from "@/lib/blog-authors";
-import { BlogAuthorBar } from "./blog-author-bar";
 
 interface BlogCardProps {
   title: string;
   description: string;
   slug: string;
   date: string;
-  authorId: string;
-  image?: string;
+  author: {
+    name: string;
+    avatar: string;
+  }[];
+  image: string;
 }
 
 export function BlogCard({
@@ -17,40 +18,54 @@ export function BlogCard({
   description,
   slug,
   date,
-  authorId,
+  author,
   image,
 }: BlogCardProps) {
-  const author = getAuthor(authorId);
-
   return (
-    <Link href={`/blog/${slug}`} className="group flex flex-col">
-      <div className="relative aspect-16/10 w-full overflow-hidden rounded-xl border border-border bg-muted/30">
-        {image ? (
-          <Image
-            src={image}
-            alt={title}
-            fill
-            className="object-cover transition-transform duration-300 group-hover:scale-105"
-            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          />
-        ) : (
-          <div className="flex h-full items-center justify-center">
-            <div className="size-12 rounded-lg bg-muted" />
-          </div>
-        )}
+    <Link
+      href={`/blog/${slug}`}
+      className="w-full h-full flex flex-col border-r border-b border-border hover:bg-accent/50 transition-colors duration-100"
+    >
+      <div className="relative h-52 w-full shrink-0 overflow-hidden">
+        <Image
+          src={image}
+          alt={title}
+          fill
+          className="object-cover"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+        />
       </div>
-      <div className="mt-4 flex flex-1 flex-col gap-2">
-        <h3 className="text-lg font-semibold tracking-tight text-secondary-foreground group-hover:underline underline-offset-4">
-          {title}
-        </h3>
-        <p className="text-sm text-muted-foreground line-clamp-2">
-          {description}
-        </p>
-        {author && (
-          <div className="mt-auto pt-3">
-            <BlogAuthorBar authorId={authorId} author={author} date={date} linked={false} />
+      <div className="flex flex-1 flex-col justify-between p-6">
+        <div>
+          <h2 className="line-clamp-2 text-lg font-bold tracking-tight text-foreground">
+            {title}
+          </h2>
+          <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">
+            {description}
+          </p>
+        </div>
+        <div className="mt-6 flex items-center gap-2">
+          <div className="flex items-center -space-x-2">
+            {author.map((authorItem) => (
+              <img
+                alt={authorItem.name}
+                key={authorItem.name}
+                loading="lazy"
+                width="28"
+                height="28"
+                className="rounded-full ring-2 ring-background"
+                src={authorItem.avatar}
+              />
+            ))}
           </div>
-        )}
+          <time dateTime={date} className="text-sm text-muted-foreground">
+            {new Date(date).toLocaleDateString("en-US", {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+            })}
+          </time>
+        </div>
       </div>
     </Link>
   );

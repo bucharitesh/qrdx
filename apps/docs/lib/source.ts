@@ -4,7 +4,15 @@ import {
   loader,
 } from "fumadocs-core/source";
 import { lucideIconsPlugin } from "fumadocs-core/source/lucide-icons";
-import { blog, changelog, compare, docs, legal } from "@/.source/server";
+import {
+  blog,
+  blogAuthors,
+  blogCategories,
+  changelog,
+  compare,
+  docs,
+  legal,
+} from "@/.source/server";
 
 export const source = loader({
   baseUrl: "/docs",
@@ -18,7 +26,7 @@ export const legalSource = loader({
 });
 
 export const changelogSource = loader({
-  baseUrl: "/changelog",
+  baseUrl: "/changelogs",
   source: changelog.toFumadocsSource(),
 });
 
@@ -30,6 +38,16 @@ export const compareSource = loader({
 export const blogSource = loader({
   baseUrl: "/blog",
   source: blog.toFumadocsSource(),
+});
+
+export const blogCategoriesSource = loader({
+  baseUrl: "/blog/category",
+  source: blogCategories.toFumadocsSource(),
+});
+
+export const blogAuthorsSource = loader({
+  baseUrl: "/blog/authors",
+  source: blogAuthors.toFumadocsSource(),
 });
 
 export function getPageImage(page: InferPageType<typeof source>) {

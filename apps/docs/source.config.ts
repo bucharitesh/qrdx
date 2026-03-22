@@ -86,16 +86,36 @@ export const compare = defineDocs({
   },
 });
 
+export const blogCategories = defineDocs({
+  dir: "content/blog-categories",
+  docs: {
+    schema: frontmatterSchema,
+  },
+});
+
+export const blogAuthors = defineDocs({
+  dir: "content/blog-authors",
+  docs: {
+    schema: frontmatterSchema.extend({
+      role: z.string(),
+      avatar: z.string(),
+      twitter: z.string().optional(),
+      linkedin: z.string().optional(),
+      github: z.string().optional(),
+    }),
+  },
+});
+
 export const blog = defineDocs({
   dir: "content/blog",
   docs: {
     schema: frontmatterSchema.extend({
       date: z.string(),
-      author: z.string(),
+      author: z.array(z.string()),
       category: z
         .enum(["Company News", "Engineering", "Education", "Changelog"])
         .default("Company News"),
-      image: z.string().optional(),
+      image: z.string(),
       related: z.array(z.string()).optional(),
     }),
   },

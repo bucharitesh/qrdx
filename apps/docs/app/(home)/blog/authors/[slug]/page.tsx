@@ -1,14 +1,10 @@
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@repo/design-system/components/ui/avatar";
+import { Github, Linkedin, Twitter } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { BlogCard } from "@/components/sections/blog/blog-card";
-import { getAllAuthorSlugs, getAuthor } from "@/lib/blog-authors";
-import { blogSource } from "@/lib/source";
+import { BlogList } from "@/components/sections/blog/blog-list";
+import { resolveAuthors } from "@/lib/blog-authors";
+import { blogAuthorsSource, blogSource } from "@/lib/source";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -16,104 +12,135 @@ interface PageProps {
 
 export default async function AuthorPage({ params }: PageProps) {
   const { slug } = await params;
-  const author = getAuthor(slug);
+  const authorPage = blogAuthorsSource.getPage([slug]);
 
-  if (!author) {
+  if (!authorPage) {
     notFound();
   }
 
+  const { title: name, role, avatar, twitter, linkedin, github } =
+    authorPage.data;
+
+  const firstName = name.split(" ")[0];
+  const hasSocials = twitter || linkedin || github;
+
   const allPages = blogSource.getPages();
   const authorPosts = allPages
-    .filter((page) => page.data.author === slug)
+    .filter((page) => page.data.author.includes(slug))
     .sort(
       (a, b) =>
-        new Date(b.data.date).getTime() - new Date(a.data.date).getTime()
-    );
+        new Date(b.data.date).getTime() - new Date(a.data.date).getTime(),
+    )
+    .map((page) => ({
+      slug: page.slugs[0] ?? "",
+      title: page.data.title,
+      description: page.data.description ?? "",
+      date: page.data.date,
+      author: resolveAuthors(page.data.author),
+      category: page.data.category,
+      image: page.data.image,
+    }));
 
   return (
-    <section className="flex flex-col items-center justify-center w-full min-h-screen">
+    <section className="flex flex-col w-full min-h-screen">
       <div className="w-full">
-        <div className="border-b w-full h-full p-10 md:p-14">
-          <div className="max-w-xl mx-auto flex flex-col items-center justify-center gap-4">
+        {/* Author profile header */}
+        <div className="border-b w-full p-10 md:p-14">
+          <div className="max-w-6xl mx-auto flex flex-col gap-6">
             <Link
               href="/blog"
-              className="text-sm text-muted-foreground hover:text-secondary-foreground transition-colors"
+              className="text-sm text-muted-foreground hover:text-secondary-foreground transition-colors w-fit"
             >
               &larr; Back to Blog
             </Link>
 
-            <Avatar className="size-20">
-              <AvatarImage src={author.avatar} alt={author.name} />
-              <AvatarFallback className="text-2xl">
-                {author.name.charAt(0)}
-              </AvatarFallback>
-            </Avatar>
+            <div className="flex items-end justify-between gap-6">
+              {/* Left: avatar + name + role */}
+              <div className="flex flex-col gap-4">
+                <img
+                  src={avatar}
+                  alt={name}
+                  width={64}
+                  height={64}
+                  className="rounded-full"
+                />
+                <div className="flex flex-col gap-1">
+                  <h1 className="text-3xl md:text-4xl font-semibold tracking-tight">
+                    {name}
+                  </h1>
+                  <p className="text-muted-foreground">{role}</p>
+                </div>
+              </div>
 
-            <h1 className="text-3xl md:text-4xl font-medium tracking-tighter text-center">
-              {author.name}
-            </h1>
-
-            <p className="text-muted-foreground text-center font-medium">
-              {author.role}
-            </p>
-
-            <div className="flex items-center gap-4">
-              {author.twitter && (
-                <a
-                  href={`https://twitter.com/${author.twitter}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-muted-foreground hover:text-secondary-foreground transition-colors"
-                >
-                  Follow {author.name.split(" ")[0]} on socials &rarr;
-                </a>
+              {/* Right: follow on socials */}
+              {hasSocials && (
+                <div className="flex items-center gap-3 shrink-0">
+                  <span className="text-sm text-muted-foreground hidden sm:block">
+                    Follow {firstName} on socials &rarr;
+                  </span>
+                  {twitter && (
+                    <a
+                      href={`https://twitter.com/${twitter}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`${name} on X`}
+                      className="flex items-center justify-center size-8 rounded-lg bg-secondary hover:bg-secondary/70 transition-colors"
+                    >
+                      <Twitter className="size-4" />
+                    </a>
+                  )}
+                  {linkedin && (
+                    <a
+                      href={`https://linkedin.com/in/${linkedin}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`${name} on LinkedIn`}
+                      className="flex items-center justify-center size-8 rounded-lg bg-secondary hover:bg-secondary/70 transition-colors"
+                    >
+                      <Linkedin className="size-4" />
+                    </a>
+                  )}
+                  {github && (
+                    <a
+                      href={`https://github.com/${github}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`${name} on GitHub`}
+                      className="flex items-center justify-center size-8 rounded-lg bg-secondary hover:bg-secondary/70 transition-colors"
+                    >
+                      <Github className="size-4" />
+                    </a>
+                  )}
+                </div>
               )}
             </div>
           </div>
         </div>
 
-        <div className="max-w-6xl mx-auto px-6 md:px-10 py-10 md:py-16">
-          {authorPosts.length === 0 ? (
-            <p className="text-center text-muted-foreground py-20">
-              No posts yet.
-            </p>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-10">
-              {authorPosts.map((post) => (
-                <BlogCard
-                  key={post.url}
-                  title={post.data.title}
-                  description={post.data.description ?? ""}
-                  slug={post.slugs[0] ?? ""}
-                  date={post.data.date}
-                  authorId={post.data.author}
-                  image={post.data.image}
-                />
-              ))}
-            </div>
-          )}
-        </div>
+        <BlogList posts={authorPosts} showCategories={false} />
       </div>
     </section>
   );
 }
 
 export function generateStaticParams() {
-  return getAllAuthorSlugs().map((slug) => ({ slug }));
+  return blogAuthorsSource
+    .getPages()
+    .map((page) => ({ slug: page.slugs[0] ?? "" }));
 }
 
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const author = getAuthor(slug);
+  const authorPage = blogAuthorsSource.getPage([slug]);
 
-  if (!author) {
+  if (!authorPage) {
     notFound();
   }
 
   return {
-    title: `${author.name} | QRdx Blog`,
-    description: `${author.role} - Read blog posts by ${author.name}`,
+    title: `${authorPage.data.title} | QRdx Blog`,
+    description: `${authorPage.data.role} — Read blog posts by ${authorPage.data.title}`,
   };
 }

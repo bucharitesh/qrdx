@@ -706,7 +706,7 @@ export const siteConfig = {
         { id: 2, title: "Community", url: "/community" },
         { id: 3, title: "Pricing", url: "/pricing" },
         { id: 4, title: "Documentation", url: "/docs" },
-        { id: 5, title: "Changelog", url: "/changelog" },
+        { id: 5, title: "Changelogs", url: "/changelogs" },
         { id: 6, title: "Blog", url: "/blog" },
       ],
     },
