@@ -115,9 +115,9 @@ export function Navbar() {
                 <Icons.github className="size-4" />
                 {stargazersCount > 0 && formatCompactNumber(stargazersCount)}
               </SocialLink>
-              <Link href="/playground">
+              {/* <Link href="/playground">
                 <Button>Try the Playground</Button>
-              </Link>
+              </Link> */}
               <Button
                 variant="secondary"
                 className="md:hidden"

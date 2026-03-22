@@ -1,3 +1,5 @@
+/** biome-ignore-all lint/suspicious/noArrayIndexKey: index is used for the footer links */
+
 "use client";
 
 import { Button } from "@repo/design-system/components/ui/button";
@@ -6,11 +8,11 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@repo/design-system/components/ui/popover";
-import { Icons } from "@/components/icons";
+import { ChevronDown } from "lucide-react";
 import Link from "next/link";
+import { Icons } from "@/components/icons";
 import { siteConfig } from "@/config/site";
 import { QrdxLogo } from "../qrdx-logo";
-import { ChevronDown } from "lucide-react";
 
 export function FooterSection() {
   const currentYear = new Date().getFullYear();
@@ -42,8 +44,11 @@ export function FooterSection() {
                   {column.title}
                 </li>
                 {column.links?.map((link) => {
-                  const hasChildren = "children" in link && link.children && link.children.length > 0;
-                  
+                  const hasChildren =
+                    "children" in link &&
+                    link.children &&
+                    link.children.length > 0;
+
                   if (hasChildren) {
                     return (
                       <li
@@ -55,7 +60,7 @@ export function FooterSection() {
                             {link.title}
                             <ChevronDown className="size-3" />
                           </PopoverTrigger>
-                          <PopoverContent 
+                          <PopoverContent
                             className="w-56 p-2"
                             align="start"
                             side="top"
@@ -76,7 +81,7 @@ export function FooterSection() {
                       </li>
                     );
                   }
-                  
+
                   return (
                     <li
                       key={link.id}

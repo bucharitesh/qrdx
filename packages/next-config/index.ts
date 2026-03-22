@@ -20,6 +20,11 @@ export const config: NextConfig = {
         hostname: "assets.qrdx.dev",
         port: "",
       },
+      {
+        protocol: "https",
+        hostname: "github.com",
+        port: "",
+      },
     ],
   },
 

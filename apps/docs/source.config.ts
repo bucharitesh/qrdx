@@ -86,6 +86,21 @@ export const compare = defineDocs({
   },
 });
 
+export const blog = defineDocs({
+  dir: "content/blog",
+  docs: {
+    schema: frontmatterSchema.extend({
+      date: z.string(),
+      author: z.string(),
+      category: z
+        .enum(["Company News", "Engineering", "Education", "Changelog"])
+        .default("Company News"),
+      image: z.string().optional(),
+      related: z.array(z.string()).optional(),
+    }),
+  },
+});
+
 export default defineConfig({
   plugins: [
     jsonSchema({
