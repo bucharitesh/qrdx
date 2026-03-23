@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 };
 
 export default function BlogPage() {
-  const allPages = blogSource.getPages();
+  const allPages = blogSource.getPages().filter((p) => p.data.published);
 
   const sortedPosts = allPages
     .sort((a, b) => {

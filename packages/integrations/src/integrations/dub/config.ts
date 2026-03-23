@@ -8,7 +8,7 @@ export const dubIntegration: IntegrationDefinition = {
   name: "Dub.sh",
   description: "Create and track short links with advanced analytics",
   logo: "/integrations/dub-icon.svg",
-  category: ["link-management", "analytics"],
+  category: ["analytics"],
   type: "oauth",
   oauth: {
     authUrl: "https://app.dub.co/oauth/authorize",
@@ -29,7 +29,7 @@ export const dubIntegration: IntegrationDefinition = {
     "QR code generation",
     "Link expiration",
   ],
-  configurable: false,
+  configurable: true,
   developedBy: "Dub.sh",
   website: "https://dub.co",
 };

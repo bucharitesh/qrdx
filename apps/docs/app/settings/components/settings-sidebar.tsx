@@ -2,10 +2,10 @@
 
 import { Separator } from "@repo/design-system/components/ui/separator";
 import { cn } from "@repo/design-system/lib/utils";
-import { Icons } from "@/components/icons";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useMemo } from "react";
+import { Icons } from "@/components/icons";
 import { useSubscription } from "@/lib/hooks/use-subscription";
 
 type NavItem =
@@ -22,8 +22,18 @@ type NavItem =
     };
 
 const BASE_NAV_ITEMS: NavItem[] = [
-  { type: "link", href: "/settings/general", label: "General", icon: Icons.Settings },
-  { type: "link", href: "/settings/themes", label: "Themes", icon: Icons.Palette },
+  {
+    type: "link",
+    href: "/settings/general",
+    label: "General",
+    icon: Icons.Settings,
+  },
+  {
+    type: "link",
+    href: "/settings/themes",
+    label: "My Themes",
+    icon: Icons.Palette,
+  },
   {
     type: "link",
     href: "/settings/usage",
@@ -80,7 +90,9 @@ export function SettingsSidebar() {
             >
               {item.icon && <item.icon className="size-4" />}
               {item.label}
-              {item.isExternal && <Icons.ExternalLink className="ml-auto size-4" />}
+              {item.isExternal && (
+                <Icons.ExternalLink className="ml-auto size-4" />
+              )}
             </Link>
           );
         })}

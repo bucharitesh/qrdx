@@ -1,0 +1,80 @@
+---
+title: Introducing QRdx Integrations
+description: Connect the tools you already use to supercharge your QR code workflow. Introducing our Integrations platform – starting with Dub.sh and Google Drive.
+date: "2026-03-23"
+author: ["ritesh-bucha"]
+category: Company News
+image: https://assets.qrdx.dev/hero.webp
+published: false
+---
+
+Today, we're excited to announce a major new addition to QRdx: **Integrations**.
+
+QRdx has always been about giving you the most powerful, most beautiful QR code experience possible. But your workflow doesn't live in isolation – you use other tools, other platforms, other services. Starting today, QRdx connects to them.
+
+## What are QRdx Integrations?
+
+QRdx Integrations let you connect third-party tools directly to your QRdx account. Once connected, these integrations unlock new capabilities inside the QRdx editor and dashboard that simply weren't possible before.
+
+All integrations are authorized via **OAuth 2.0**, meaning you never share a password with us. You grant access, we store tokens securely with end-to-end encryption, and your credentials are automatically refreshed in the background so things just keep working.
+
+You can find, connect, and manage all integrations from **Settings → Integrations**.
+
+## Flagship Integrations
+
+We're shipping two integrations today:
+
+### Dub.sh — Short links with advanced analytics
+
+[Dub.sh](https://dub.co) is the open-source link management platform. With the Dub integration, you can generate short links for your QR codes directly inside QRdx — without ever leaving the editor.
+
+Once connected, you can:
+
+- **Create short links** – Turn any long URL into a clean, branded short link
+- **Track link analytics** – See click counts, referrers, devices, and locations
+- **Use custom domains** – Connect your own domain via your Dub workspace
+- **Set link expiration** – Expire links on a date you choose
+- **Generate QR codes** – Round-trip: create a short link and QR code together
+
+The integration uses Dub's OAuth 2.0 flow with PKCE for added security. You authorize QRdx to access your Dub workspaces and links — and we only request the exact scopes we need: `workspaces.read`, `workspaces.write`, `links.read`, and `links.write`.
+
+### Google Drive — Import assets from your Drive
+
+Creating a QR code with a custom logo or brand image? With the Google Drive integration, you can browse and import images directly from your Drive — no downloading and re-uploading required.
+
+Once connected, you can:
+
+- **Browse your Drive files** – See all your images in a file picker inside QRdx
+- **Import images for QR codes** – Use any Drive image as a logo or background
+- **Search for files** – Find the right asset fast with real-time search
+- **Preview thumbnails** – See what you're picking before you import it
+
+## How OAuth works in QRdx
+
+Here's the flow when you connect an integration:
+
+1. Click **Connect** on an integration in your settings.
+2. You're redirected to the provider's OAuth authorization page (Dub, Google, etc.).
+3. You grant QRdx the permissions it requests — scoped to exactly what's needed.
+4. You're redirected back to QRdx and the connection is established.
+
+Tokens are stored **encrypted at rest** and never exposed to the client. When a token is close to expiring, QRdx automatically refreshes it in the background — you never have to reconnect.
+
+## Build your own (soon)
+
+We've architected the integrations platform to be fully extensible. Under the hood, each integration is a self-contained module with a config, a typed API client, and a UI layer. Adding a new provider is a matter of implementing a standard interface.
+
+We're planning to open up integrations to community contributions — so if there's a tool you'd love to see connected to QRdx, stay tuned. Or open an issue on [GitHub](https://github.com/bucharitesh/qrdx) and let us know.
+
+## What's next?
+
+This is just the start. We're already exploring integrations with:
+
+- **Notion** – Pull page content or brand assets into your QR code metadata
+- **Cloudinary** – Use your existing media library as a logo source
+- **Zapier** – Trigger QR code generation from any event in your stack
+- **Analytics providers** – Push QR scan events to your existing data pipeline
+
+If there's an integration you'd love to see — or if you want to build one — open an issue or start a discussion on GitHub.
+
+[Explore Integrations →](/integrations)

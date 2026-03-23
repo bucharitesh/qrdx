@@ -24,7 +24,7 @@ export default async function AuthorPage({ params }: PageProps) {
   const firstName = name.split(" ")[0];
   const hasSocials = twitter || linkedin || github;
 
-  const allPages = blogSource.getPages();
+  const allPages = blogSource.getPages().filter((p) => p.data.published);
   const authorPosts = allPages
     .filter((page) => page.data.author.includes(slug))
     .sort(

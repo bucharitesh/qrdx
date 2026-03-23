@@ -24,7 +24,7 @@ export const Highlight = ({
 export const siteConfig = {
   name: "QRdx",
   description:
-    "AI-powered, fully customizable QR codes for designers crafting beautiful brands, businesses tracking engagement, and developers building QR platforms",
+    "AI-powered, fully customizable QR codes for designers crafting beautiful brands, businesses tracking engagement, and developers building QR platforms.",
   cta: "Try the Playground",
   url: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
   keywords: [
@@ -39,9 +39,8 @@ export const siteConfig = {
   },
   nav: {
     links: [
-      { id: 1, name: "Home", href: "/" },
-      { id: 2, name: "Pricing", href: "/pricing" },
       { id: 3, name: "Docs", href: "/docs" },
+      { id: 2, name: "Pricing", href: "/pricing" },
       { id: 4, name: "Community", href: "/community" },
       { id: 5, name: "Playground", href: "/playground" },
       { id: 6, name: "Blog", href: "/blog" },
@@ -613,79 +612,47 @@ export const siteConfig = {
         isPopular: true,
       },
     ],
-    faqs: [
-      {
-        question: "What do I get when I upgrade to Pro?",
-        answer:
-          "You get unlimited saved QR themes, priority support, early access to new features, and more coming soon. We're constantly developing new features for Pro users!",
-      },
-      {
-        question: "Can I still use QRDX for free?",
-        answer:
-          "Yes! QRDX provides a comprehensive free tier that includes full QR code customization, access to all preset styles, and up to 3 saved themes. You can create and download QR codes without any payment required.",
-      },
-      {
-        question: "Does QRDX offer a free trial for the Pro plan?",
-        answer:
-          "No, there are no free trials. However, you get full access to create unlimited QR codes with the free tier, plus you can save up to 3 themes without any payment.",
-      },
-      {
-        question: "What happens to saved themes when downgrading to free?",
-        answer:
-          "All your created themes remain yours forever. When you downgrade from Pro, you keep full access to all themes you've built, but you'll be limited to the free tier's 3 saved themes quota.",
-      },
-      {
-        question: "Can I cancel or switch at any time?",
-        answer:
-          "Yes! You have complete control over your subscription. Cancel anytime through your account settings, and you'll retain Pro access until your current billing period ends before automatically switching to the free tier.",
-      },
-      {
-        question: "How secure is the payment?",
-        answer:
-          "We use Polar for secure payment processing, which handles all transactions with industry-standard encryption. Your payment details are never stored on our servers.",
-      },
-    ],
   },
   faqSection: {
     title: "Frequently Asked Questions",
     description:
-      "Here's everything you may want to know. For any other info, just reach us at support@qrdx.app",
+      "Everything you need to know about QRdx. For anything else, reach us at support@qrdx.app",
     faQitems: [
       {
         id: 1,
-        question: "What do I get when I upgrade to Pro?",
+        question: "Is QRdx really free? Are there hidden limits?",
         answer:
-          "You get unlimited saved QR themes, priority support, early access to new features, and more coming soon. We're constantly developing new features for Pro users!",
+          "QRdx is genuinely free with no hidden limits on QR code generation. You can create unlimited QR codes, apply full customization (29 dot patterns, gradients, logo overlays), and download in PNG, SVG, or JPG — all without an account or credit card. No watermarks, no scan limits, no ads. The only Pro feature is unlimited saved themes ($8/mo); generating and downloading codes is free forever.",
       },
       {
         id: 2,
-        question: "Can I still use QRDX for free?",
+        question: "Do I need to sign up or create an account?",
         answer:
-          "Yes! QRDX provides a comprehensive free tier that includes full QR code customization, access to all preset styles, and up to 3 saved themes. You can create and download QR codes without any payment required.",
+          "No signup is required to generate and download QR codes. Open the playground, enter your URL or content, customize the design, and download. Creating a free account lets you save up to 3 custom themes across sessions and access scan analytics. Pro unlocks unlimited saved themes.",
       },
       {
         id: 3,
-        question: "Does QRDX offer a free trial for the Pro plan?",
+        question: "How does QRdx compare to QR Tiger, QR Code Monkey, or Flowcode?",
         answer:
-          "No, there are no free trials. However, you get full access to create unlimited QR codes with the free tier, plus you can save up to 3 themes without any payment.",
+          "QRdx offers more on the free tier than any major competitor. QR Tiger limits the free plan to 3 codes with 500 scans each and shows ads. Flowcode allows only 2 free codes with 500 total scans. QR Code Monkey generates static-only codes with no analytics. QRdx provides unlimited free QR codes, full customization, analytics, no scan caps, no watermarks, and an open-source npm package — at zero cost.",
       },
       {
         id: 4,
-        question: "What happens to saved themes when downgrading to free?",
+        question: "Can I add a logo to my QR code for free?",
         answer:
-          "All your created themes remain yours forever. When you downgrade from Pro, you keep full access to all themes you've built, but you'll be limited to the free tier's 3 saved themes quota.",
+          "Yes. Logo overlay is included on the free tier. Upload any image (PNG with transparent background recommended) and QRdx centers it within the QR code. QRdx uses Reed-Solomon error correction (ISO/IEC 18004) at level H, which provides 30% recovery capacity — enough to keep the code scannable even with a logo covering up to 25% of the code area.",
       },
       {
         id: 5,
-        question: "Can I cancel or switch at any time?",
+        question: "Is QRdx open source?",
         answer:
-          "Yes! You have complete control over your subscription. Cancel anytime through your account settings, and you'll retain Pro access until your current billing period ends before automatically switching to the free tier.",
+          "Yes. QRdx is MIT-licensed and publicly available on GitHub. You can review the source code, contribute features, file issues, or self-host your own instance. The core QR generation library is also published as an npm package (`npm install qrdx`) for use in any React or Node.js application.",
       },
       {
         id: 6,
-        question: "How secure is the payment?",
+        question: "What do I get when I upgrade to Pro?",
         answer:
-          "We use Polar for secure payment processing, which handles all transactions with industry-standard encryption. Your payment details are never stored on our servers.",
+          "Pro ($8/mo or $79/year) unlocks: unlimited saved QR themes, AI-powered theme generation, advanced scan analytics, priority support, and early access to new features. All QR code generation remains free — Pro is for teams and creators who want to save and manage many custom themes at scale.",
       },
     ],
   },
@@ -704,18 +671,16 @@ export const siteConfig = {
       links: [
         { id: 1, title: "Playground", url: "/playground" },
         { id: 2, title: "Community", url: "/community" },
-        { id: 3, title: "Pricing", url: "/pricing" },
-        { id: 4, title: "Documentation", url: "/docs" },
-        { id: 5, title: "Changelogs", url: "/changelogs" },
-        { id: 6, title: "Blog", url: "/blog" },
       ],
     },
     {
       title: "Resources",
       links: [
-        { id: 1, title: "Docs", url: "/docs" },
-        // { id: 11, title: "Integrations", url: "/integrations" },
-        { id: 2, title: "Pricing", url: "/pricing" },
+        { id: 1, title: "Blog", url: "/blog" },
+        { id: 2, title: "Documentation", url: "/docs" },
+        { id: 3, title: "Integrations", url: "/integrations" },
+        { id: 4, title: "Changelogs", url: "/changelogs" },
+        { id: 5, title: "Pricing", url: "/pricing" },
       ],
     },
     {
@@ -741,15 +706,16 @@ export const siteConfig = {
     {
       title: "Compare",
       links: [
-        { id: 1, title: "ME-QR", url: "/compare/me-qr" },
+        { id: 1, title: "QR Code Monkey", url: "/compare/qr-code-monkey" },
         { id: 2, title: "QR Tiger", url: "/compare/qr-tiger" },
-        { id: 3, title: "Flowcode", url: "/compare/flowcode" },
-        { id: 4, title: "Adobe Express", url: "/compare/adobe-express" },
-        { id: 5, title: "QR Code.io", url: "/compare/qr-code-io" },
-        { id: 6, title: "QR Code Chimp", url: "/compare/qr-code-chimp" },
-        { id: 7, title: "goQR.me", url: "/compare/goqr" },
-        { id: 8, title: "QRStuff", url: "/compare/qrstuff" },
-        { id: 9, title: "Uniqode", url: "/compare/uniqode" },
+        { id: 3, title: "Canva QR", url: "/compare/canva-qr" },
+        { id: 4, title: "Bitly QR", url: "/compare/bitly-qr" },
+        { id: 5, title: "Flowcode", url: "/compare/flowcode" },
+        { id: 6, title: "QR-Verse", url: "/compare/qr-verse" },
+        { id: 7, title: "Adobe Express", url: "/compare/adobe-express" },
+        { id: 8, title: "QR Code Chimp", url: "/compare/qr-code-chimp" },
+        { id: 9, title: "ME-QR", url: "/compare/me-qr" },
+        { id: 10, title: "Uniqode", url: "/compare/uniqode" },
       ],
     },
   ],
