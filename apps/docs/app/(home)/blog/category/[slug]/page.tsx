@@ -26,7 +26,7 @@ export default async function BlogCategoryPage({ params }: PageProps) {
   const headerDescription = categoryPage?.data.description ?? "";
 
   const categoryName = SLUG_TO_CATEGORY[slug];
-  const allPages = blogSource.getPages();
+  const allPages = blogSource.getPages().filter((p) => p.data.published);
   const filteredPosts = allPages
     .filter((page) => page.data.category === categoryName)
     .sort(

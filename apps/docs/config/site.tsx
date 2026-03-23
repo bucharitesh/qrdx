@@ -39,9 +39,8 @@ export const siteConfig = {
   },
   nav: {
     links: [
-      { id: 1, name: "Home", href: "/" },
-      { id: 2, name: "Pricing", href: "/pricing" },
       { id: 3, name: "Docs", href: "/docs" },
+      { id: 2, name: "Pricing", href: "/pricing" },
       { id: 4, name: "Community", href: "/community" },
       { id: 5, name: "Playground", href: "/playground" },
       { id: 6, name: "Blog", href: "/blog" },
@@ -704,18 +703,16 @@ export const siteConfig = {
       links: [
         { id: 1, title: "Playground", url: "/playground" },
         { id: 2, title: "Community", url: "/community" },
-        { id: 3, title: "Pricing", url: "/pricing" },
-        { id: 4, title: "Documentation", url: "/docs" },
-        { id: 5, title: "Changelogs", url: "/changelogs" },
-        { id: 6, title: "Blog", url: "/blog" },
       ],
     },
     {
       title: "Resources",
       links: [
-        { id: 1, title: "Docs", url: "/docs" },
-        // { id: 11, title: "Integrations", url: "/integrations" },
-        { id: 2, title: "Pricing", url: "/pricing" },
+        { id: 1, title: "Blog", url: "/blog" },
+        { id: 2, title: "Documentation", url: "/docs" },
+        { id: 3, title: "Integrations", url: "/integrations" },
+        { id: 4, title: "Changelogs", url: "/changelogs" },
+        { id: 5, title: "Pricing", url: "/pricing" },
       ],
     },
     {

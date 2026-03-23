@@ -29,7 +29,7 @@ export const dubIntegration: IntegrationDefinition = {
     "QR code generation",
     "Link expiration",
   ],
-  configurable: false,
+  configurable: true,
   developedBy: "Dub.sh",
   website: "https://dub.co",
 };
