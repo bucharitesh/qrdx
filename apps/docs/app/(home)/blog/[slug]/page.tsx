@@ -25,7 +25,7 @@ export default async function BlogPostPage({ params }: PageProps) {
   const { slug } = await params;
   const page = blogSource.getPage([slug]);
 
-  if (!page) {
+  if (!page || !page.data.published) {
     notFound();
   }
 
@@ -41,7 +41,7 @@ export default async function BlogPostPage({ params }: PageProps) {
   const authors = resolveAuthors(authorIds);
   const MDX = page.data.body;
 
-  const allPages = blogSource.getPages();
+  const allPages = blogSource.getPages().filter((p) => p.data.published);
   const relatedPosts = page.data.related
     ? allPages.filter((p) => page.data.related?.includes(p.slugs[0] ?? ""))
     : allPages
@@ -176,9 +176,10 @@ export default async function BlogPostPage({ params }: PageProps) {
 }
 
 export function generateStaticParams() {
-  return blogSource.generateParams().map((params) => ({
-    slug: params.slug?.[0] ?? "",
-  }));
+  return blogSource
+    .getPages()
+    .filter((p) => p.data.published)
+    .map((p) => ({ slug: p.slugs[0] ?? "" }));
 }
 
 export async function generateMetadata({
@@ -187,7 +188,7 @@ export async function generateMetadata({
   const { slug } = await params;
   const page = blogSource.getPage([slug]);
 
-  if (!page) {
+  if (!page || !page.data.published) {
     notFound();
   }
 
