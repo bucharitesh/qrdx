@@ -95,13 +95,20 @@ ${BOLD}Generate Options:${RESET}
                         ${DIM}square, rounded, circle, diamond, message,${RESET}
                         ${DIM}message-reverse, diya, diya-reverse,${RESET}
                         ${DIM}rounded-triangle, star, banner${RESET}
-  --fg                Foreground color  ${DIM}(default: #000000)${RESET}
-  --bg                Background color  ${DIM}(default: #ffffff)${RESET}
-  --eye-color         Corner eye color  ${DIM}(default: matches --fg)${RESET}
-  --dot-color         Corner dot color  ${DIM}(default: matches --fg)${RESET}
+  --fg                Foreground color — hex or JSON gradient  ${DIM}(default: #000000)${RESET}
+  --bg                Background color — hex or JSON gradient  ${DIM}(default: #ffffff)${RESET}
+  --eye-color         Corner eye color — hex or JSON gradient  ${DIM}(default: matches --fg)${RESET}
+  --dot-color         Corner dot color — hex or JSON gradient  ${DIM}(default: matches --fg)${RESET}
   --logo              Logo URL for center image
   --margin            Quiet zone margin in modules  ${DIM}(default: 0)${RESET}
   --size              Output pixel size for SVG/PNG  ${DIM}(default: 512)${RESET}
+  --template          Decorative template wrapper:
+                        ${DIM}Arrow, StandardBox, SquareBorder, StrikedBox, Halloween${RESET}
+
+${BOLD}Gradient Colors:${RESET}
+  Pass a JSON object to --fg / --bg / --eye-color / --dot-color for gradients:
+  ${DIM}Linear:  '{"type":"linear","stops":[{"color":"#f00","offset":0},{"color":"#00f","offset":100}],"angle":45}'${RESET}
+  ${DIM}Radial:  '{"type":"radial","stops":[{"color":"#f00","offset":0},{"color":"#00f","offset":100}]}'${RESET}
 
 ${BOLD}Global Options:${RESET}
   --help, -h          Show this help message
@@ -113,7 +120,10 @@ ${BOLD}Examples:${RESET}
   ${DIM}$${RESET} qrdx generate "https://qrdx.dev" -o qr.svg
   ${DIM}$${RESET} qrdx generate "https://qrdx.dev" -o qr.png --body circle --eye gear --dot star
   ${DIM}$${RESET} qrdx generate "https://qrdx.dev" --fg "#ff0000" --bg "#ffffff" --size 1024
-  ${DIM}$${RESET} qrdx generate "https://qrdx.dev" --logo "https://qrdx.dev/logo.png" -o branded.svg
+  ${DIM}$${RESET} qrdx generate "https://qrdx.dev" --logo "https://qrdx.dev/logo.png" --level H -o branded.svg
+  ${DIM}$${RESET} qrdx generate "https://qrdx.dev" --template Arrow -o arrow.svg
+  ${DIM}$${RESET} qrdx generate "https://qrdx.dev" --template Halloween --body circle --eye gear -o halloween.svg
+  ${DIM}$${RESET} qrdx generate "https://qrdx.dev" --fg '{"type":"linear","stops":[{"color":"#6366f1","offset":0},{"color":"#ec4899","offset":100}],"angle":135}' -o gradient.svg
 
   Visit ${TEXT}https://qrdx.dev${RESET} for more.
 `);

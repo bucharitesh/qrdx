@@ -12,6 +12,7 @@ import {
   CORNER_EYE_DOT_PATTERNS,
   CORNER_EYE_PATTERNS,
   DEFAULT_MARGIN,
+  getTemplateIds,
 } from "qrdx";
 import { saveOutput } from "../render/output";
 
@@ -26,15 +27,32 @@ interface GenerateFlags {
   body?: BodyPattern;
   eye?: CornerEyePattern;
   dot?: CornerEyeDotPattern;
-  fg?: string;
-  bg?: string;
-  eyeColor?: string;
-  dotColor?: string;
+  fg?: ColorConfig;
+  bg?: ColorConfig;
+  eyeColor?: ColorConfig;
+  dotColor?: ColorConfig;
   logo?: string;
   noLogo?: boolean;
   margin?: number;
   output?: string;
   size?: number;
+  template?: string;
+}
+
+/**
+ * Parses a color flag value: accepts a hex string or a JSON ColorConfig object.
+ * e.g. "#ff0000" or '{"type":"linear","stops":[...],"angle":45}'
+ */
+function parseColorFlag(value: string): ColorConfig {
+  const trimmed = value.trim();
+  if (trimmed.startsWith("{")) {
+    try {
+      return JSON.parse(trimmed) as ColorConfig;
+    } catch {
+      // fall through to raw string
+    }
+  }
+  return trimmed;
 }
 
 // When stdin is not a TTY (piped/CI), skip all prompts and use flags/defaults
@@ -81,19 +99,19 @@ function parseFlags(args: string[]): GenerateFlags {
         i += 2;
         break;
       case "--fg":
-        flags.fg = next;
+        flags.fg = next ? parseColorFlag(next) : undefined;
         i += 2;
         break;
       case "--bg":
-        flags.bg = next;
+        flags.bg = next ? parseColorFlag(next) : undefined;
         i += 2;
         break;
       case "--eye-color":
-        flags.eyeColor = next;
+        flags.eyeColor = next ? parseColorFlag(next) : undefined;
         i += 2;
         break;
       case "--dot-color":
-        flags.dotColor = next;
+        flags.dotColor = next ? parseColorFlag(next) : undefined;
         i += 2;
         break;
       case "--logo":
@@ -111,6 +129,10 @@ function parseFlags(args: string[]): GenerateFlags {
       case "--no-logo":
         flags.noLogo = true;
         i++;
+        break;
+      case "--template":
+        flags.template = next;
+        i += 2;
         break;
       default:
         i++;
@@ -152,7 +174,8 @@ export async function runGenerate(args: string[]): Promise<void> {
       flags.dotColor ||
       flags.logo ||
       flags.level ||
-      flags.margin !== undefined
+      flags.margin !== undefined ||
+      flags.template
   );
 
   p.intro(`${TEXT}qrdx${RESET} ${DIM}— QR Code Generator${RESET}`);
@@ -218,12 +241,13 @@ export async function runGenerate(args: string[]): Promise<void> {
   let body = flags.body ?? ("square" as BodyPattern);
   let eye = flags.eye ?? ("square" as CornerEyePattern);
   let dot = flags.dot ?? ("square" as CornerEyeDotPattern);
-  let fg = flags.fg ?? "#000000";
-  let bg = flags.bg ?? "#ffffff";
-  let eyeColor = flags.eyeColor;
-  let dotColor = flags.dotColor;
+  let fg: ColorConfig = flags.fg ?? "#000000";
+  let bg: ColorConfig = flags.bg ?? "#ffffff";
+  let eyeColor: ColorConfig | undefined = flags.eyeColor;
+  let dotColor: ColorConfig | undefined = flags.dotColor;
   let logo = flags.logo;
   let margin = flags.margin ?? DEFAULT_MARGIN;
+  let template = flags.template;
 
   if (wantAdvanced && !nonInteractive) {
     // ── Error correction ──────────────────────────────────────────────
@@ -290,46 +314,79 @@ export async function runGenerate(args: string[]): Promise<void> {
     // ── Foreground color ──────────────────────────────────────────────
     if (!flags.fg) {
       const res = await p.text({
-        message: "Foreground color",
+        message: `Foreground color ${DIM}(hex or JSON gradient)${RESET}`,
         placeholder: "#000000",
         defaultValue: "#000000",
         validate(v) {
-          if (v && !/^#[0-9a-fA-F]{3,8}$/.test(v)) {
-            return "Enter a valid hex color (e.g. #000000)";
+          if (!v) {
+            return undefined;
+          }
+          if (v.trim().startsWith("{")) {
+            try {
+              JSON.parse(v.trim());
+            } catch {
+              return "Enter a valid hex color or JSON gradient object";
+            }
+            return undefined;
+          }
+          if (!/^#[0-9a-fA-F]{3,8}$/.test(v)) {
+            return "Enter a valid hex color (e.g. #000000) or JSON gradient";
           }
         },
       });
       if (isCancel(res)) {
         handleCancel();
       }
-      fg = (res as string) || "#000000";
+      fg = parseColorFlag((res as string) || "#000000");
     }
 
     // ── Background color ──────────────────────────────────────────────
     if (!flags.bg) {
       const res = await p.text({
-        message: "Background color",
+        message: `Background color ${DIM}(hex or JSON gradient)${RESET}`,
         placeholder: "#ffffff",
         defaultValue: "#ffffff",
         validate(v) {
-          if (v && !/^#[0-9a-fA-F]{3,8}$/.test(v)) {
-            return "Enter a valid hex color (e.g. #ffffff)";
+          if (!v) {
+            return undefined;
+          }
+          if (v.trim().startsWith("{")) {
+            try {
+              JSON.parse(v.trim());
+            } catch {
+              return "Enter a valid hex color or JSON gradient object";
+            }
+            return undefined;
+          }
+          if (!/^#[0-9a-fA-F]{3,8}$/.test(v)) {
+            return "Enter a valid hex color (e.g. #ffffff) or JSON gradient";
           }
         },
       });
       if (isCancel(res)) {
         handleCancel();
       }
-      bg = (res as string) || "#ffffff";
+      bg = parseColorFlag((res as string) || "#ffffff");
     }
 
     // ── Eye color (optional) ──────────────────────────────────────────
     if (eyeColor === undefined) {
       const res = await p.text({
         message: `Corner eye color ${DIM}(leave blank to match foreground)${RESET}`,
-        placeholder: fg,
+        placeholder: "leave blank",
         validate(v) {
-          if (v && !/^#[0-9a-fA-F]{3,8}$/.test(v)) {
+          if (!v) {
+            return undefined;
+          }
+          if (v.trim().startsWith("{")) {
+            try {
+              JSON.parse(v.trim());
+            } catch {
+              return "Enter a valid hex color or JSON gradient object";
+            }
+            return undefined;
+          }
+          if (!/^#[0-9a-fA-F]{3,8}$/.test(v)) {
             return "Enter a valid hex color or leave blank";
           }
         },
@@ -337,16 +394,28 @@ export async function runGenerate(args: string[]): Promise<void> {
       if (isCancel(res)) {
         handleCancel();
       }
-      eyeColor = (res as string) || undefined;
+      const eyeVal = res as string;
+      eyeColor = eyeVal ? parseColorFlag(eyeVal) : undefined;
     }
 
     // ── Dot color (optional) ──────────────────────────────────────────
     if (dotColor === undefined) {
       const res = await p.text({
         message: `Corner dot color ${DIM}(leave blank to match foreground)${RESET}`,
-        placeholder: fg,
+        placeholder: "leave blank",
         validate(v) {
-          if (v && !/^#[0-9a-fA-F]{3,8}$/.test(v)) {
+          if (!v) {
+            return undefined;
+          }
+          if (v.trim().startsWith("{")) {
+            try {
+              JSON.parse(v.trim());
+            } catch {
+              return "Enter a valid hex color or JSON gradient object";
+            }
+            return undefined;
+          }
+          if (!/^#[0-9a-fA-F]{3,8}$/.test(v)) {
             return "Enter a valid hex color or leave blank";
           }
         },
@@ -354,7 +423,27 @@ export async function runGenerate(args: string[]): Promise<void> {
       if (isCancel(res)) {
         handleCancel();
       }
-      dotColor = (res as string) || undefined;
+      const dotVal = res as string;
+      dotColor = dotVal ? parseColorFlag(dotVal) : undefined;
+    }
+
+    // ── Template ──────────────────────────────────────────────────────
+    if (!flags.template) {
+      const templateIds = getTemplateIds();
+      const res = await p.select<string>({
+        message: `Template ${DIM}(decorative wrapper around the QR code)${RESET}`,
+        options: [
+          { value: "", label: "none" },
+          ...templateIds
+            .filter((id) => id !== "default")
+            .map((id) => ({ value: id, label: id })),
+        ],
+        initialValue: "",
+      });
+      if (isCancel(res)) {
+        handleCancel();
+      }
+      template = (res as string) || undefined;
     }
 
     // ── Logo ──────────────────────────────────────────────────────────
@@ -421,12 +510,13 @@ export async function runGenerate(args: string[]): Promise<void> {
       bodyPattern: body,
       cornerEyePattern: eye,
       cornerEyeDotPattern: dot,
-      fgColor: fg as ColorConfig,
-      bgColor: bg as ColorConfig,
-      ...(eyeColor ? { eyeColor: eyeColor as ColorConfig } : {}),
-      ...(dotColor ? { dotColor: dotColor as ColorConfig } : {}),
+      fgColor: fg,
+      bgColor: bg,
+      ...(eyeColor ? { eyeColor } : {}),
+      ...(dotColor ? { dotColor } : {}),
       margin,
       size,
+      ...(template ? { templateId: template } : {}),
       ...(logo
         ? {
             imageSettings: {
