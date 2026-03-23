@@ -72,9 +72,9 @@ qrdx generate
 
 **Body** (`--body`): `square` `circle` `circle-large` `diamond` `circle-mixed` `pacman` `rounded` `small-square` `vertical-line`
 
-**Eye** (`--eye`): `square` `rounded` `gear` `circle` `diya` `cushion` `boxy` `pointed`
+**Eye** (`--eye`): `square` `rounded` `gear` `circle` `diya` `extra-rounded` `message` `pointy` `curly`
 
-**Dot** (`--dot`): `square` `rounded` `circle` `heart` `diamond` `star`
+**Dot** (`--dot`): `square` `rounded` `circle` `diamond` `message` `message-reverse` `diya` `diya-reverse` `rounded-triangle` `star` `banner`
 
 ## Interactive mode
 
