@@ -5,12 +5,12 @@ description: Generate a QR code from a URL, text, Wi-Fi credentials, or vCard an
 
 # Generate QR Code
 
-Generate a styled, scannable QR code as SVG or PNG using `@qrdx/cli`.
+Generate a styled, scannable QR code as SVG or PNG using `qrdx-cli`.
 
 ## How It Works
 
 1. Accepts a data string (URL, text, Wi-Fi, vCard) and an output path
-2. Runs `npx @qrdx/cli` non-interactively with the provided flags
+2. Runs `npx qrdx-cli` non-interactively with the provided flags
 3. Returns a JSON result with the output path and file size
 4. Displays the result to the user
 
