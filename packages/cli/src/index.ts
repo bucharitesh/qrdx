@@ -69,7 +69,7 @@ function showBanner(): void {
     `  ${DIM}$${RESET} ${TEXT}qrdx --version${RESET}                  ${DIM}Show version${RESET}`
   );
   console.log();
-  console.log(`  ${DIM}try:${RESET} npx qrdx-cli generate "https://qrdx.dev"`);
+  console.log(`  ${DIM}try:${RESET} npx @qrdx/cli generate "https://qrdx.dev"`);
   console.log();
 }
 

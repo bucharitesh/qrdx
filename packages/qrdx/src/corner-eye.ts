@@ -8,11 +8,12 @@ function generateCornerSquarePattern(
   offsetY: number,
   size: number
 ): string {
-  const scale = size / 80;
-  const transform = (coord: number, offset: number) => coord * scale + offset;
-
-  const path = `M ${transform(5, offsetX)} ${transform(5, offsetY)}v ${70 * scale}h ${70 * scale}v -${70 * scale}zM ${transform(15, offsetX)} ${transform(15, offsetY)}h ${50 * scale}v ${50 * scale}h -${50 * scale}z`;
-
+  // Use exact module-aligned boundaries so the finder pattern produces the
+  // required 1:1:3:1:1 dark:light:dark:light:dark ratio that QR scanners need.
+  const m = size / 7; // one module width
+  const path =
+    `M ${offsetX} ${offsetY}v ${size}h ${size}v -${size}z` +
+    `M ${offsetX + m} ${offsetY + m}h ${5 * m}v ${5 * m}h -${5 * m}z`;
   return path;
 }
 
@@ -24,13 +25,35 @@ function generateCornerRoundedPattern(
   offsetY: number,
   size: number
 ): string {
-  const scale = size / 80;
-  const transform = (coord: number, offset: number) => coord * scale + offset;
+  const m = size / 7; // one module width
+  const r = m * 0.875; // outer corner radius (~6.25 units in old 80-unit space)
+  const r2 = m * 0.4375; // inner corner radius (~3.5 units in old 80-unit space)
 
-  // Using the exact path from user's specification - rounded square corners
-  const path = `M ${transform(5, offsetX)} ${transform(15, offsetY)}v ${50 * scale}a ${10 * scale} ${10 * scale}, 0, 0, 0, ${10 * scale} ${10 * scale}h ${50 * scale}a ${10 * scale} ${10 * scale}, 0, 0, 0, ${10 * scale} -${10 * scale}v -${50 * scale}a ${10 * scale} ${10 * scale}, 0, 0, 0, -${10 * scale} -${10 * scale}h -${50 * scale}a ${10 * scale} ${10 * scale}, 0, 0, 0, -${10 * scale} ${10 * scale}zM ${transform(20, offsetX)} ${transform(15, offsetY)}h ${40 * scale}a ${5 * scale} ${5 * scale}, 0, 0, 1, ${5 * scale} ${5 * scale}v ${40 * scale}a ${5 * scale} ${5 * scale}, 0, 0, 1, -${5 * scale} ${5 * scale}h -${40 * scale}a ${5 * scale} ${5 * scale}, 0, 0, 1, -${5 * scale} -${5 * scale}v -${40 * scale}a ${5 * scale} ${5 * scale}, 0, 0, 1, ${5 * scale} -${5 * scale}z`;
+  // Outer rounded rect: covers the full 7×7 corner area
+  const outer =
+    `M ${offsetX + r} ${offsetY}` +
+    `h ${size - 2 * r}` +
+    `a ${r} ${r} 0 0 1 ${r} ${r}` +
+    `v ${size - 2 * r}` +
+    `a ${r} ${r} 0 0 1 ${-r} ${r}` +
+    `h ${-(size - 2 * r)}` +
+    `a ${r} ${r} 0 0 1 ${-r} ${-r}` +
+    `v ${-(size - 2 * r)}` +
+    `a ${r} ${r} 0 0 1 ${r} ${-r}z`;
 
-  return path;
+  // Inner rounded rect: 1-module inset on all sides (5×5 area), creates the hole
+  const inner =
+    `M ${offsetX + m + r2} ${offsetY + m}` +
+    `h ${5 * m - 2 * r2}` +
+    `a ${r2} ${r2} 0 0 1 ${r2} ${r2}` +
+    `v ${5 * m - 2 * r2}` +
+    `a ${r2} ${r2} 0 0 1 ${-r2} ${r2}` +
+    `h ${-(5 * m - 2 * r2)}` +
+    `a ${r2} ${r2} 0 0 1 ${-r2} ${-r2}` +
+    `v ${-(5 * m - 2 * r2)}` +
+    `a ${r2} ${r2} 0 0 1 ${r2} ${-r2}z`;
+
+  return outer + inner;
 }
 
 // Pattern 9: Circle
@@ -39,14 +62,21 @@ function generateCornerCirclePattern(
   offsetY: number,
   size: number
 ): string {
-  const scale = size / 80;
-  const transform = (coord: number, offset: number) => coord * scale + offset;
-
-  // Using the exact path from user's specification - proper circles (made slightly bigger)
-  const outerRadius = 37.5 * scale; // Increased from 35
-  const innerRadius = 27 * scale; // Increased from 25
-  const path = `M ${transform(40, offsetX)} ${transform(2.5, offsetY)}a ${outerRadius} ${outerRadius} 0 1 0 ${0.1 * scale} 0zm 0 ${10.5 * scale}a ${innerRadius} ${innerRadius} 0 1 1 -${0.1 * scale} 0Z`;
-
+  // Center of the 7×7 corner area
+  const cx = offsetX + size / 2;
+  const cy = offsetY + size / 2;
+  // Outer radius = exactly 3.5 modules (touches corner boundary)
+  const outerRadius = size / 2;
+  // Inner radius = 2.5 modules (leaves exactly 1-module ring on each side)
+  const innerRadius = size * (2.5 / 7);
+  // Use two arcs to draw each circle (SVG can't do full-circle arcs in one arc command)
+  const path =
+    `M ${cx - outerRadius} ${cy}` +
+    `a ${outerRadius} ${outerRadius} 0 1 0 ${outerRadius * 2} 0` +
+    `a ${outerRadius} ${outerRadius} 0 1 0 ${-outerRadius * 2} 0z` +
+    `M ${cx - innerRadius} ${cy}` +
+    `a ${innerRadius} ${innerRadius} 0 1 1 ${innerRadius * 2} 0` +
+    `a ${innerRadius} ${innerRadius} 0 1 1 ${-innerRadius * 2} 0z`;
   return path;
 }
 
@@ -93,12 +123,36 @@ function generateCornerExtraRoundedPattern(
   offsetY: number,
   size: number
 ): string {
-  const scale = size / 80;
-  const transform = (coord: number, offset: number) => coord * scale + offset;
+  const m = size / 7; // one module width
+  // Max r for module (0,0) to stay dark: r ≤ m/( 1 - 1/√2 ) ≈ 1.71m
+  const r = m * 1.5; // outer corner radius — very rounded (1.5 modules keeps corners dark)
+  const r2 = m * 0.75; // inner corner radius
 
-  const path = `M ${transform(5, offsetX)} ${transform(30, offsetY)}v ${20 * scale}a ${25 * scale} ${25 * scale}, 0, 0, 0, ${25 * scale} ${25 * scale}h ${20 * scale}a ${25 * scale} ${25 * scale}, 0, 0, 0, ${25 * scale} -${25 * scale}v -${20 * scale}a ${25 * scale} ${25 * scale}, 0, 0, 0, -${25 * scale} -${25 * scale}h -${20 * scale}a ${25 * scale} ${25 * scale}, 0, 0, 0, -${25 * scale} ${25 * scale}M ${transform(30, offsetX)} ${transform(15, offsetY)}h ${20 * scale}a ${15 * scale} ${15 * scale}, 0, 0, 1, ${15 * scale} ${15 * scale}v ${20 * scale}a ${15 * scale} ${15 * scale}, 0, 0, 1, -${15 * scale} ${15 * scale}h -${20 * scale}a ${15 * scale} ${15 * scale}, 0, 0, 1, -${15 * scale} -${15 * scale}v -${20 * scale}a ${15 * scale} ${15 * scale}, 0, 0, 1, ${15 * scale} -${15 * scale}z`;
+  // Outer rounded rect: full 7×7, very large corner radius
+  const outer =
+    `M ${offsetX + r} ${offsetY}` +
+    `h ${size - 2 * r}` +
+    `a ${r} ${r} 0 0 1 ${r} ${r}` +
+    `v ${size - 2 * r}` +
+    `a ${r} ${r} 0 0 1 ${-r} ${r}` +
+    `h ${-(size - 2 * r)}` +
+    `a ${r} ${r} 0 0 1 ${-r} ${-r}` +
+    `v ${-(size - 2 * r)}` +
+    `a ${r} ${r} 0 0 1 ${r} ${-r}z`;
 
-  return path;
+  // Inner hole: 1-module inset (5×5 area)
+  const inner =
+    `M ${offsetX + m + r2} ${offsetY + m}` +
+    `h ${5 * m - 2 * r2}` +
+    `a ${r2} ${r2} 0 0 1 ${r2} ${r2}` +
+    `v ${5 * m - 2 * r2}` +
+    `a ${r2} ${r2} 0 0 1 ${-r2} ${r2}` +
+    `h ${-(5 * m - 2 * r2)}` +
+    `a ${r2} ${r2} 0 0 1 ${-r2} ${-r2}` +
+    `v ${-(5 * m - 2 * r2)}` +
+    `a ${r2} ${r2} 0 0 1 ${r2} ${-r2}z`;
+
+  return outer + inner;
 }
 
 /**

@@ -25,7 +25,7 @@ fi
 echo "Generating QR code for: $DATA" >&2
 echo "Output: $OUTPUT" >&2
 
-npx --yes qrdx-cli generate "$DATA" -o "$OUTPUT" "${EXTRA_FLAGS[@]}" >&2
+npx --yes @qrdx/cli generate "$DATA" -o "$OUTPUT" "${EXTRA_FLAGS[@]}" >&2
 
 # ── Collect result metadata ───────────────────────────────────────────────────
 if [ ! -f "$OUTPUT" ]; then

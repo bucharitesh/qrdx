@@ -42,7 +42,9 @@ export const DEFAULT_EYECOLOR = "#000000";
 export const DEFAULT_DOTCOLOR = "#000000";
 
 /**
- * Default margin around the QR code
+ * Default margin around the QR code.
+ * The QR spec requires a minimum quiet zone of 4 modules on all sides
+ * for reliable scanning.
  */
 export const DEFAULT_MARGIN = 0;
 

@@ -11,6 +11,7 @@ import {
   BODY_PATTERN,
   CORNER_EYE_DOT_PATTERNS,
   CORNER_EYE_PATTERNS,
+  DEFAULT_MARGIN,
 } from "qrdx";
 import { saveOutput } from "../render/output";
 
@@ -100,7 +101,7 @@ function parseFlags(args: string[]): GenerateFlags {
         i += 2;
         break;
       case "--margin":
-        flags.margin = next ? Number.parseInt(next, 10) : 0;
+        flags.margin = next ? Number.parseInt(next, 10) : DEFAULT_MARGIN;
         i += 2;
         break;
       case "--size":
@@ -222,7 +223,7 @@ export async function runGenerate(args: string[]): Promise<void> {
   let eyeColor = flags.eyeColor;
   let dotColor = flags.dotColor;
   let logo = flags.logo;
-  let margin = flags.margin ?? 0;
+  let margin = flags.margin ?? DEFAULT_MARGIN;
 
   if (wantAdvanced && !nonInteractive) {
     // ── Error correction ──────────────────────────────────────────────
@@ -391,8 +392,8 @@ export async function runGenerate(args: string[]): Promise<void> {
     if (flags.margin === undefined) {
       const res = await p.text({
         message: "Quiet zone margin (modules)",
-        placeholder: "0",
-        defaultValue: "0",
+        placeholder: String(DEFAULT_MARGIN),
+        defaultValue: String(DEFAULT_MARGIN),
         validate(v) {
           if (v && Number.isNaN(Number.parseInt(v, 10))) {
             return "Enter a number";
@@ -405,7 +406,7 @@ export async function runGenerate(args: string[]): Promise<void> {
       if (isCancel(res)) {
         handleCancel();
       }
-      margin = Number.parseInt((res as string) || "0", 10);
+      margin = Number.parseInt((res as string) || String(DEFAULT_MARGIN), 10);
     }
   }
 

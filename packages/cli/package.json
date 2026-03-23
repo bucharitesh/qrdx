@@ -1,5 +1,5 @@
 {
-  "name": "qrdx-cli",
+  "name": "@qrdx/cli",
   "version": "0.0.1",
   "description": "QR code generator CLI for developers",
   "bin": {
@@ -21,8 +21,8 @@
     "@clack/prompts": "^0.10.0",
     "picocolors": "^1.1.1",
     "qrdx": "workspace:*",
-    "react": "19.2.3",
-    "react-dom": "19.2.3",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "sharp": "^0.34.2"
   },
   "devDependencies": {
