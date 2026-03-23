@@ -1,6 +1,6 @@
 {
   "name": "qrdx",
-  "version": "0.0.43",
+  "version": "0.0.45",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/src/index.d.ts",
@@ -30,7 +30,6 @@
     "src"
   ],
   "scripts": {
-    "preinstall": "pnpm build",
     "build": "tsup && tsc --project tsconfig.build.json --emitDeclarationOnly",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
     "typecheck": "tsc --noEmit"
