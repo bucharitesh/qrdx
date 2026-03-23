@@ -21,6 +21,9 @@
       "require": "./types/index.ts"
     }
   },
+  "bin": {
+    "qrdx": "./dist/cli.js"
+  },
   "files": [
     "dist",
     "types",
@@ -36,6 +39,7 @@
     "jspdf": "^3.0.4",
     "jsqr": "^1.4.0",
     "react": "19.2.3",
+    "sharp": "^0.34.2",
     "zod": "^4.3.5"
   },
   "devDependencies": {

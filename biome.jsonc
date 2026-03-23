@@ -28,7 +28,8 @@
         "noNestedTernary": "off"
       },
       "correctness": {
-        "useImageSize": "off"
+        "useImageSize": "off",
+        "noGlobalDirnameFilename": "off"
       }
     }
   },
@@ -36,6 +37,7 @@
     "includes": [
       "**/*",
       "!packages/qrdx/src/codegen.ts",
+      "!packages/cli/src/lib/codegen.ts",
       "!packages/design-system/components/ui",
       "!packages/design-system/lib",
       "!packages/design-system/hooks"
