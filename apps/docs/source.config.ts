@@ -117,6 +117,7 @@ export const blog = defineDocs({
         .default("Company News"),
       image: z.string(),
       related: z.array(z.string()).optional(),
+      published: z.boolean().default(false),
     }),
   },
 });

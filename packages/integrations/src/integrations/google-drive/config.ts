@@ -30,7 +30,7 @@ export const googleDriveIntegration: IntegrationDefinition = {
     "Search for files",
     "Preview thumbnails",
   ],
-  configurable: false,
+  configurable: true,
   developedBy: "Google",
   website: "https://www.google.com/drive/",
 };

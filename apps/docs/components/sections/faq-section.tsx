@@ -1,4 +1,4 @@
-/** biome-ignore-all lint/suspicious/noArrayIndexKey: <explanation> */
+/** biome-ignore-all lint/suspicious/noArrayIndexKey: FAQ items are static config with stable order */
 import {
   Accordion,
   AccordionContent,
@@ -11,11 +11,29 @@ import { siteConfig } from "@/config/site";
 export function FAQSection() {
   const { faqSection } = siteConfig;
 
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqSection.faQitems.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.answer,
+      },
+    })),
+  };
+
   return (
     <section
       id="faq"
       className="flex flex-col items-center justify-center gap-10 pb-10 w-full relative"
     >
+      <script
+        type="application/ld+json"
+        // biome-ignore lint/security/noDangerouslySetInnerHtml: schema markup requires raw JSON
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
       <SectionHeader>
         <h2 className="text-3xl md:text-4xl font-medium tracking-tighter text-center text-balance">
           {faqSection.title}

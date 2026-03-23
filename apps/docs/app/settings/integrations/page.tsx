@@ -9,7 +9,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { env } from "@/lib/env";
 import { SettingsHeader } from "../components/settings-header";
-import { IntegrationCard } from "./components/integration-card";
+import { IntegrationsClient } from "./components/integrations-client";
 
 // Initialize integrations on module load
 initializeIntegrations();
@@ -29,7 +29,6 @@ export default async function IntegrationsPage() {
   const integrationStatuses = await Promise.all(
     availableIntegrations.map(async (integration) => {
       try {
-        // Check if this integration is configured (has env vars)
         const isConfigured = (() => {
           try {
             getIntegrationConfigWithEnv(integration.slug, env);
@@ -54,7 +53,6 @@ export default async function IntegrationsPage() {
           };
         }
 
-        // Get connection status from database
         const connectedIntegration = await getIntegration(
           session.user.id,
           integration.slug,
@@ -93,25 +91,7 @@ export default async function IntegrationsPage() {
         title="Integrations"
         description="Connect third-party services to enhance your QR codes"
       />
-
-      <div className="grid gap-4 grid-cols-1">
-        {integrationStatuses.map((integration) => (
-          <IntegrationCard
-            key={integration.slug}
-            name={integration.name}
-            slug={integration.slug}
-            description={integration.description}
-            logo={integration.logo}
-            isConnected={integration.isConnected}
-            isConfigured={integration.isConfigured}
-            status={integration.status}
-            metadata={integration.metadata}
-            connectedAt={integration.connectedAt}
-            features={integration.features}
-            category={integration.category}
-          />
-        ))}
-      </div>
+      <IntegrationsClient integrations={integrationStatuses} />
     </div>
   );
 }

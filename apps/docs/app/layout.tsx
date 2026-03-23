@@ -8,25 +8,25 @@ import { ThemeScript } from "@/components/theme-script";
 import { Provider } from "./providers";
 
 export const metadata: Metadata = {
-  title: "QRdx.dev | Customisable QR Code Infrastucture",
+  title: "Free QR Code Generator | QRdx — Unlimited, AI-Powered, No Signup",
   description:
-    "AI-powered, fully customizable QR codes for designers, businesses, and developers. Open-source with batteries included.",
+    "Create unlimited free QR codes with AI-powered customization. No signup required. Custom colors, logos, dot patterns, analytics, and a developer API. Open-source and free forever.",
   keywords:
-    "qr code, qr code generator, open source, ai powered, qr code customization, qr analytics, npm package, react qr code, custom qr codes, qr code api, qr code integrations, qr infrastructure, developer tools, qr code library, scannable qr codes",
+    "free qr code generator, unlimited qr codes, custom qr code, qr code generator no signup, ai qr code generator, dynamic qr code free, qr code with logo free, open source qr code generator, react qr code component, qr code generator online free, qr code customization, qr analytics, npm package, qr code integrations, developer tools, qr code library, scannable qr codes, qr code infrastructure",
   authors: [{ name: "Ritesh Bucha" }],
   creator: "Ritesh Bucha",
   openGraph: {
-    title: "QRDX - Customisable QR Code Infrastucture",
+    title: "Free QR Code Generator | QRdx — Unlimited, AI-Powered, No Signup",
     description:
-      "AI-powered, fully customizable QR codes for designers, businesses, and developers. Open-source with batteries included.",
+      "Create unlimited free QR codes with AI-powered customization. No signup required. Custom colors, logos, dot patterns, analytics, and a developer API. Open-source and free forever.",
     url: "https://qrdx.dev/",
-    siteName: "QRDX",
+    siteName: "QRdx",
     images: [
       {
         url: "https://qrdx.dev/og-image.png",
         width: 1200,
         height: 630,
-        alt: "QRDX - Customisable QR Code Infrastucture",
+        alt: "QRdx - Free Unlimited QR Code Generator",
       },
     ],
     locale: "en_US",
@@ -34,9 +34,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "QRDX - Customisable QR Code Infrastucture",
+    title: "Free QR Code Generator | QRdx — Unlimited, AI-Powered, No Signup",
     description:
-      "AI-powered, fully customizable QR codes for designers, businesses, and developers. Open-source with batteries included.",
+      "Create unlimited free QR codes with AI-powered customization. No signup required. Custom colors, logos, dot patterns, analytics, and a developer API. Open-source and free forever.",
     creator: "@bucharitesh",
     images: ["https://qrdx.dev/og-image.png"],
   },
