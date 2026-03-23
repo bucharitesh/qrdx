@@ -1,0 +1,43 @@
+{
+  "name": "qrdx-cli",
+  "version": "0.0.1",
+  "description": "QR code generator CLI for developers",
+  "bin": {
+    "qrdx": "./dist/index.js"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@clack/prompts": "^0.10.0",
+    "picocolors": "^1.1.1",
+    "qrdx": "workspace:*",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "sharp": "^0.34.2"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "^25.1.0",
+    "@types/react": "19.2.7",
+    "@types/react-dom": "19.2.3",
+    "tsup": "^8.5.1",
+    "typescript": "5.9.3",
+    "vitest": "^4.0.18"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
