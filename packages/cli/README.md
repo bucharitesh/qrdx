@@ -1,17 +1,21 @@
-# qrdx-cli
+# @qrdx/cli
 
 QR code generator CLI for developers. Generate styled, scannable QR codes as SVG or PNG — fully non-interactive, CI-friendly.
 
 ## Install
 
 ```bash
-npm install -g qrdx-cli
+# Install the qrdx library package (includes the CLI binary)
+npm install -g qrdx
+
+# Or install the standalone CLI package
+npm install -g @qrdx/cli
 ```
 
 Or run without installing:
 
 ```bash
-npx qrdx-cli generate "https://example.com" -o qr.svg
+npx qrdx generate "https://example.com" -o qr.svg
 ```
 
 ## Usage

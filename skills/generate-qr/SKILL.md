@@ -5,12 +5,12 @@ description: Generate a QR code from a URL, text, Wi-Fi credentials, or vCard an
 
 # Generate QR Code
 
-Generate a styled, scannable QR code as SVG or PNG using `qrdx-cli`.
+Generate a styled, scannable QR code as SVG or PNG using `@qrdx/cli`.
 
 ## How It Works
 
 1. Accepts a data string (URL, text, Wi-Fi, vCard) and an output path
-2. Runs `npx qrdx-cli` non-interactively with the provided flags
+2. Runs `npx qrdx` non-interactively with the provided flags
 3. Returns a JSON result with the output path and file size
 4. Displays the result to the user
 
@@ -41,18 +41,18 @@ bash /mnt/skills/user/generate-qr/scripts/generate.sh <data> [output] [flags]
 
 ```bash
 # Basic URL → SVG
-bash /mnt/skills/user/generate-qr/scripts/generate.sh "https://example.com" qr.svg
+bash /mnt/skills/user/generate-qr/scripts/generate.sh "https://qrdx.dev" qr.svg
 
 # High-res PNG for print
-bash /mnt/skills/user/generate-qr/scripts/generate.sh "https://example.com" qr.png --size 2048 --level H
+bash /mnt/skills/user/generate-qr/scripts/generate.sh "https://qrdx.dev" qr.png --size 2048 --level H
 
 # Branded style
-bash /mnt/skills/user/generate-qr/scripts/generate.sh "https://example.com" branded.svg \
+bash /mnt/skills/user/generate-qr/scripts/generate.sh "https://qrdx.dev" branded.svg \
   --fg "#1a1a2e" --bg "#f0f0f0" --body circle --eye rounded
 
 # With center logo
-bash /mnt/skills/user/generate-qr/scripts/generate.sh "https://example.com" logo-qr.svg \
-  --logo "https://example.com/logo.png" --level H
+bash /mnt/skills/user/generate-qr/scripts/generate.sh "https://qrdx.dev" logo-qr.svg \
+  --logo "https://qrdx.dev/logo.png" --level H
 
 # Wi-Fi QR
 bash /mnt/skills/user/generate-qr/scripts/generate.sh \
@@ -64,7 +64,7 @@ bash /mnt/skills/user/generate-qr/scripts/generate.sh \
 VERSION:3.0
 FN:Jane Smith
 TEL:+15551234567
-EMAIL:jane@example.com
+EMAIL:jane@qrdx.dev
 END:VCARD" contact.svg
 ```
 

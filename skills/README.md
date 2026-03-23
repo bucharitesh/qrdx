@@ -8,7 +8,7 @@ Skills follow the [Agent Skills](https://agentskills.io/) format.
 
 ### generate-qr
 
-Generate styled, scannable QR codes as SVG or PNG using `qrdx-cli`. Supports URLs, plain text, Wi-Fi credentials, vCards, and any string payload.
+Generate styled, scannable QR codes as SVG or PNG using `@qrdx/cli`. Supports URLs, plain text, Wi-Fi credentials, vCards, and any string payload.
 
 **Use when:**
 - "Create a QR code for this URL"

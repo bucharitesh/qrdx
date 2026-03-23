@@ -34,6 +34,7 @@ export type { CornerEyePattern } from "./corner-eye";
 export { CORNER_EYE_PATTERNS, cornerEyePatternSchema } from "./corner-eye";
 export type { BodyPattern } from "./image-pattern";
 export { BODY_PATTERN, bodyPatternSchema } from "./image-pattern";
+export { DEFAULT_MARGIN } from "../src/constants";
 export type {
   ErrorLevel,
   ImageSettings,

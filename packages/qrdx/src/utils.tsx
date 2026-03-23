@@ -119,7 +119,7 @@ function generateDataCircles(
   const { margin, pixelSize, pattern = "circle" } = options;
   const shapes: JSX.Element[] = [];
   const qrSize = modules.length;
-  const radius = pixelSize * 0.333_333; // radius for circles
+  const radius = pixelSize * 0.45; // radius for circles (≥0.45 needed for reliable scanning)
 
   modules.forEach((row, y) => {
     row.forEach((cell, x) => {
@@ -938,7 +938,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
       {/* Top-left corner square */}
       <g fill={topLeftEyeFillValue}>
         <path
-          clipRule="evenodd"
+          fillRule="evenodd"
           d={topLeftEye}
           transform={`rotate(0,${topLeftX + cornerSize / 2},${topLeftY + cornerSize / 2})`}
         />
@@ -950,7 +950,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
       {/* Top-right corner square */}
       <g fill={topRightEyeFillValue}>
         <path
-          clipRule="evenodd"
+          fillRule="evenodd"
           d={topRightEye}
           transform={`rotate(0,${topRightX + cornerSize / 2},${topRightY + cornerSize / 2})`}
         />
@@ -962,7 +962,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
       {/* Bottom-left corner square */}
       <g fill={bottomLeftEyeFillValue}>
         <path
-          clipRule="evenodd"
+          fillRule="evenodd"
           d={bottomLeftEye}
           transform={`rotate(0,${bottomLeftX + cornerSize / 2},${bottomLeftY + cornerSize / 2})`}
         />
@@ -1036,7 +1036,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
           {/* Top-left corner square */}
           <g fill={topLeftEyeFillValue}>
             <path
-              clipRule="evenodd"
+              fillRule="evenodd"
               d={generateCornerSquarePath(
                 topLeftX,
                 topLeftY,
@@ -1060,7 +1060,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
           {/* Top-right corner square */}
           <g fill={topRightEyeFillValue}>
             <path
-              clipRule="evenodd"
+              fillRule="evenodd"
               d={generateCornerSquarePath(
                 topRightX,
                 topRightY,
@@ -1084,7 +1084,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
           {/* Bottom-left corner square */}
           <g fill={bottomLeftEyeFillValue}>
             <path
-              clipRule="evenodd"
+              fillRule="evenodd"
               d={generateCornerSquarePath(
                 bottomLeftX,
                 bottomLeftY,

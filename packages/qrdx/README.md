@@ -142,7 +142,7 @@ The main component for rendering QR codes.
 | `hideLogo` | `boolean` | `true` | Whether to hide the logo |
 | `logo` | `string` | Default Flam logo | URL to custom logo image |
 | `templateId` | `string` | `'default'` | ID of the template to use |
-| `level` | `'L' \| 'M' \| 'Q' \| 'H'` | `'L'` | Error correction level |
+| `level` | `'L' \| 'M' \| 'Q' \| 'H'` | `'Q'` | Error correction level |
 | `margin` | `number` | `0` | Margin around the QR code (in modules) |
 
 #### Error Correction Levels
@@ -248,7 +248,7 @@ const qrData = getQRData({
 Calculate WCAG contrast ratio between two colors.
 
 ```tsx
-import { getContrastRatio } from 'qrdx/utils';
+import { getContrastRatio } from 'qrdx';
 
 const ratio = getContrastRatio("#000000", "#ffffff");
 // Returns: 21 (maximum contrast)
@@ -259,7 +259,7 @@ const ratio = getContrastRatio("#000000", "#ffffff");
 Get contrast level assessment for QR code scanability.
 
 ```tsx
-import { getContrastLevel } from 'qrdx/utils';
+import { getContrastLevel } from 'qrdx';
 
 const level = getContrastLevel(4.5);
 // Returns: { level: 'medium', warning: false, message: '...' }
