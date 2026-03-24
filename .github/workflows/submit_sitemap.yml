@@ -36,9 +36,10 @@ jobs:
         run: npm init -y && npm install googleapis google-auth-library
 
       - name: Publish Sitemap
-        run: node .github/scripts/submit_sitemap.mjs
+        run: |
+          cp .github/scripts/submit_sitemap.mjs /tmp/
+          node /tmp/submit_sitemap.mjs
         env:
-          NODE_PATH: /tmp/node_modules
           GOOGLE_SEARCH_CONSOLE_JSON_KEY: ${{ secrets.GOOGLE_SEARCH_CONSOLE_JSON_KEY }}
           SITE_URL: ${{ env.SITE_URL }}
           SITEMAP_URL: ${{ inputs.sitemap_url || env.SITEMAP_URL }}
