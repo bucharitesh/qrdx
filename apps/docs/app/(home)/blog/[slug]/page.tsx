@@ -5,6 +5,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BlogCard } from "@/components/sections/blog/blog-card";
 import { BlogToc } from "@/components/sections/blog/blog-toc";
+import { SectionHeader } from "@/components/sections/section-header";
 import { resolveAuthors } from "@/lib/blog-authors";
 import { blogSource } from "@/lib/source";
 import { getMDXComponents } from "@/mdx-components";
@@ -79,7 +80,7 @@ export default async function BlogPostPage({ params }: PageProps) {
           </div>
         </div>
 
-        <div className="px-5 md:px-10 w-full">
+        <div className="px-5 md:px-10 w-full border-b">
           <div className="md:border-x md:mx-10 relative">
             <div className="absolute hidden lg:block top-0 -left-4 md:-left-14 h-full w-4 md:w-14 text-primary/5 bg-size-[10px_10px] bg-[repeating-linear-gradient(315deg,currentColor_0_1px,#0000_0_50%)]" />
             <div className="absolute hidden lg:block top-0 -right-4 md:-right-14 h-full w-4 md:w-14 text-primary/5 bg-size-[10px_10px] bg-[repeating-linear-gradient(315deg,currentColor_0_1px,#0000_0_50%)]" />
@@ -146,14 +147,21 @@ export default async function BlogPostPage({ params }: PageProps) {
               </aside>
             </div>
           </div>
-
-          {relatedPosts.length > 0 && (
-            <div className="border-t border-border w-full">
-              <div className="max-w-6xl mx-auto px-6 md:px-10 py-10 md:py-16">
-                <h2 className="text-2xl font-semibold tracking-tight mb-8">
+        </div>
+        {relatedPosts.length > 0 && (
+          <section className="flex flex-col items-center justify-center w-full min-h-screen">
+            <div className="w-full">
+              <SectionHeader>
+                <h1 className="text-4xl md:text-5xl font-medium tracking-tighter text-center">
                   Read more
-                </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-10">
+                </h1>
+                <p className="text-muted-foreground text-center text-balance font-medium">
+                  Read more posts from the same category
+                </p>
+              </SectionHeader>
+
+              <div className="px-6 min-h-screen">
+                <div className="grid w-full max-w-7xl grid-cols-2 md:grid-cols-4 border-l border-border auto-rows-fr">
                   {relatedPosts.map((post) => (
                     <BlogCard
                       key={post.url}
@@ -168,8 +176,8 @@ export default async function BlogPostPage({ params }: PageProps) {
                 </div>
               </div>
             </div>
-          )}
-        </div>
+          </section>
+        )}
       </div>
     </article>
   );
