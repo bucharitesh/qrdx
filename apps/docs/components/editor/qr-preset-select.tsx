@@ -130,7 +130,7 @@ const ThemeCycleButton: React.FC<ThemeCycleButtonProps> = ({
         <Button
           variant="ghost"
           size="icon"
-          className={cn("aspect-square h-full shrink-0", className)}
+          className={cn("size-8 shrink-0", className)}
           onClick={onClick}
           {...props}
         >
@@ -192,7 +192,7 @@ const ThemePresetCycleControls: React.FC<ThemePresetCycleControlsProps> = ({
       <ThemeCycleButton
         direction="prev"
         size="icon"
-        className={cn("aspect-square min-h-8 w-auto", className)}
+        className={cn("size-8", className)}
         onClick={() => cycleTheme("prev")}
         {...props}
       />
@@ -202,7 +202,7 @@ const ThemePresetCycleControls: React.FC<ThemePresetCycleControlsProps> = ({
       <ThemeCycleButton
         direction="next"
         size="icon"
-        className={cn("aspect-square min-h-8 w-auto", className)}
+        className={cn("size-8", className)}
         onClick={() => cycleTheme("next")}
         {...props}
       />

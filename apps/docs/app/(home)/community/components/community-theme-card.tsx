@@ -1,12 +1,8 @@
 "use client";
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@repo/design-system/components/ui/avatar";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { cn } from "@repo/design-system/lib/utils";
+import { Avatar, AvatarFallback, AvatarImage } from "facehash";
 import { Heart } from "lucide-react";
 import Link from "next/link";
 import { ThemePreview } from "@/components/theme-preview";
@@ -89,12 +85,7 @@ export function CommunityThemeCard({ theme }: CommunityThemeCardProps) {
           <div className="mt-1 flex items-center gap-3">
             <div className="flex min-w-0 max-w-[120px] items-center gap-1.5">
               <Avatar className="h-4 w-4 shrink-0">
-                {theme.author.image && (
-                  <AvatarImage
-                    src={theme.author.image}
-                    alt={theme.author.name}
-                  />
-                )}
+                <AvatarImage src={theme.author.image} alt={theme.author.name} />
                 <AvatarFallback className="text-[8px]">
                   {authorInitials}
                 </AvatarFallback>

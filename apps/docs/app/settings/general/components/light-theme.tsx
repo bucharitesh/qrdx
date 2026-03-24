@@ -1,13 +1,13 @@
-import React from "react"
+import type { LucideProps } from "lucide-react";
 
-export const LightTheme = () => {
+export const LightTheme = (props: LucideProps) => {
   return (
     <svg
-      width="177"
-      height="140"
       viewBox="0 0 177 140"
       fill="none"
+      aria-label="Light theme"
       xmlns="http://www.w3.org/2000/svg"
+      {...props}
     >
       <g clipPath="url(#clip0_77_15)">
         <rect width="177" height="162" rx="3" fill="white" />
@@ -118,5 +118,5 @@ export const LightTheme = () => {
         </clipPath>
       </defs>
     </svg>
-  )
-}
+  );
+};
