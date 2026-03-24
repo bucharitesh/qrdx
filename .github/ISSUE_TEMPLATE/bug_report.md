@@ -1,31 +1,85 @@
----
-name: Bug report
-about: Create a report to help us improve
-title: ''
-labels: bug
-assignees: ''
+name: "Bug report"
+description: Report an issue with Magic UI
+title: "[bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### Thanks for taking the time to create a bug report. Please search open/closed issues before submitting, as the issue may have already been reported/addressed.
 
----
+  - type: markdown
+    attributes:
+      value: |
+        #### If you aren't sure this is a bug or not, please open a discussion instead:
+        - [Discussions](https://github.com/bucharitesh/qrdx/discussions/new?category=general)
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: Describe the bug
+      description: A clear and concise description of what the bug is. If you intend to submit a PR for this issue, tell us how in the description. Thanks!
+      placeholder: Bug description
+    validations:
+      required: true
 
-**next-forge version**
-I am using version ...
+  - type: input
+    id: components-affected
+    attributes:
+      label: Affected component/components
+      description: Which Magic UI components are affected?
+      placeholder: ex. Rainbow Button, Terminal...
+    validations:
+      required: true
 
-**To Reproduce**
-Steps to reproduce the behavior:
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: How to reproduce
+      description: A step-by-step description of how to reproduce the bug.
+      placeholder: |
+        1. Go to '...'
+        2. Click on '....'
+        3. See error
+    validations:
+      required: true
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+  - type: input
+    id: codesandbox-stackblitz
+    attributes:
+      label: Codesandbox/StackBlitz link
+      description: |
+        A link to a CodeSandbox or StackBlitz that includes a minimal reproduction of the problem. In rare cases when not applicable, you can link to a GitHub repository that we can easily run to recreate the issue. If a report is vague and does not have a reproduction, it will be closed without warning. 
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+        > [!CAUTION]
+        > If you skip this step, this issue might be **labeled** with `please add a reproduction` and **closed**.
+    validations:
+      required: false
 
-**Desktop (please complete the following information):**
- - OS: [e.g. MacOS]
- - Browser [e.g. chrome v130, safari]
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: "Please include browser console and server logs around the time this bug occurred. Optional if provided reproduction. Please try not to insert an image but copy paste the log text."
+      render: bash
+
+  - type: textarea
+    id: system-info
+    attributes:
+      label: System Info
+      description: Information about browsers, system or binaries that's relevant.
+      render: bash
+      placeholder: System, Binaries, Browsers
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Before submitting
+      description: By submitting this issue, you agree to follow our [Contributing Guidelines](https://github.com/bucharitesh/qrdx/blob/main/CONTRIBUTING.md).
+      options:
+        - label: I've made research efforts and searched the documentation
+          required: true
+        - label: I've searched for existing issues
+          required: true

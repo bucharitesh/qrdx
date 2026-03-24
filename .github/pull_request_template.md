@@ -1,24 +1,20 @@
 ## Description
+<!-- Summarize what this PR changes in 2-4 lines. -->
 
-Please provide a brief description of the changes introduced in this pull request.
+## Changes
+<!-- List concrete changes by item (e.g., feature, refactor, bug fix). -->
 
-## Related Issues
+## Motivation
+<!-- Briefly explain why this change is needed and what problem it solves. -->
 
-Closes #<issue_number>
+## Breaking Changes
+<!-- If this affects compatibility, describe impact and migration steps. If not, write None. -->
 
-## Checklist
+## Screenshots
+<!-- For UI changes, attach Before/After screenshots and device/browser info. -->
+<!-- Optional for UI changes -->
+> Device / Browser / Viewport:
 
-- [ ] My code follows the code style of this project.
-- [ ] I have performed a self-review of my code.
-- [ ] I have commented my code, particularly in hard-to-understand areas.
-- [ ] I have updated the documentation, if necessary.
-- [ ] I have added tests that prove my fix is effective or my feature works.
-- [ ] New and existing tests pass locally with my changes.
-
-## Screenshots (if applicable)
-
-<!-- Add screenshots to help explain your changes, especially if this is a UI-related PR. -->
-
-## Additional Notes
-
-<!-- Add any additional information or context about the pull request here. -->
+| Before | After |
+| --- | --- |
+|  |  |
