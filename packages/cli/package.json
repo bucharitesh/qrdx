@@ -1,6 +1,6 @@
 {
   "name": "@qrdx/cli",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "QR code generator CLI for developers",
   "bin": {
     "qrdx": "./dist/index.js"
@@ -22,7 +22,9 @@
     "picocolors": "^1.1.1",
     "qrdx": "workspace:*",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "optionalDependencies": {
     "sharp": "^0.34.2"
   },
   "devDependencies": {

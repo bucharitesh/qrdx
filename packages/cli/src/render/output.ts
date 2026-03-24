@@ -31,8 +31,16 @@ export async function saveOutput(options: OutputOptions): Promise<void> {
     return;
   }
 
-  // PNG: use sharp to rasterize the SVG
-  const sharp = (await import("sharp")).default;
+  type SharpFactory = typeof import("sharp");
+  let sharp: SharpFactory;
+  try {
+    const mod = await import("sharp");
+    sharp = (mod as { default: SharpFactory }).default;
+  } catch {
+    throw new Error(
+      "PNG output needs the sharp package (native binaries). It is optional and may not have installed; use SVG or reinstall: https://sharp.pixelplumbing.com/install",
+    );
+  }
   const svgBuffer = Buffer.from(svgString, "utf-8");
   const size = qrProps.size ?? 512;
 
