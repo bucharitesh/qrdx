@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BlogCard } from "@/components/sections/blog/blog-card";
+import { Contribute } from "@/components/sections/blog/blog-contribute";
 import { BlogToc } from "@/components/sections/blog/blog-toc";
 import { SectionHeader } from "@/components/sections/section-header";
 import { resolveAuthors } from "@/lib/blog-authors";
@@ -140,9 +141,10 @@ export default async function BlogPostPage({ params }: PageProps) {
                       </div>
                     </div>
                   )}
-
                   {/* Table of contents */}
                   {toc && toc.length > 0 && <BlogToc items={toc} />}
+
+                  <Contribute page={page} />
                 </div>
               </aside>
             </div>
