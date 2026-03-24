@@ -1,17 +1,55 @@
----
-name: Feature request
-about: Suggest an idea for this project
-title: ''
-labels: enhancement
-assignees: ''
+name: "Feature request"
+description: Create a feature request for Magic UI
+title: "[feat]: "
+labels: ["area: request"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ### Thanks for taking the time to create a feature request! Please search open/closed issues before submitting, as the issue may have already been reported/addressed.
 
----
+  - type: markdown
+    attributes:
+      value: |
+        #### If you aren't sure this is a bug or not, please open a discussion instead:
+        - [Discussions](https://github.com/bucharitesh/qrdx/discussions/new?category=general)
 
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+  - type: textarea
+    id: feature-description
+    attributes:
+      label: Feature description
+      description: Tell us about your feature request
+      placeholder: "I think this feature would be great because..."
+      value: "Describe your feature request..."
+    validations:
+      required: true
 
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen.
+  - type: input
+    id: components-affected
+    attributes:
+      label: Affected component/components
+      description: Is this feature request relevant to any of the already existing components?
+      placeholder: ex. Button, Checkbox...
+    validations:
+      required: false
 
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: Add any other context about the feature here.
+      placeholder: ex. screenshots, Stack Overflow links, forum links, etc.
+      value: "Additional details here..."
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Before submitting
+      description: By submitting this issue, you agree to follow our [Contributing Guidelines](https://github.com/bucharitesh/qrdx/blob/main/CONTRIBUTING.md).
+      options:
+        - label: I've made research efforts and searched the documentation
+          required: true
+        - label: I've searched for existing issues and PRs
+          required: true
