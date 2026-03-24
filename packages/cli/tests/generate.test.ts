@@ -18,23 +18,34 @@ afterEach(() => {
 describe("generate command", () => {
   describe("non-interactive mode (stdin not a TTY)", () => {
     it("exits 0 with a value", () => {
-      const { exitCode } = runCli(["generate", "https://qrdx.dev"]);
+      const out = tmp("ni-value.svg");
+      cleanups.push(out);
+      const { exitCode } = runCli([
+        "generate",
+        "https://qrdx.dev",
+        "-o",
+        out,
+      ]);
       expect(exitCode).toBe(0);
     });
 
     it("exits 1 with no value", () => {
       const { exitCode, stdout, stderr } = runCli(["generate"]);
       expect(exitCode).toBe(1);
-      expect(stdout + stderr).toContain("No data provided");
+      expect(stdout + stderr).toContain("No data to encode");
     });
 
     it("gen alias works", () => {
-      const { exitCode } = runCli(["gen", "https://qrdx.dev"]);
+      const out = tmp("gen-alias.svg");
+      cleanups.push(out);
+      const { exitCode } = runCli(["gen", "https://qrdx.dev", "-o", out]);
       expect(exitCode).toBe(0);
     });
 
     it("g alias works", () => {
-      const { exitCode } = runCli(["g", "https://qrdx.dev"]);
+      const out = tmp("g-alias.svg");
+      cleanups.push(out);
+      const { exitCode } = runCli(["g", "https://qrdx.dev", "-o", out]);
       expect(exitCode).toBe(0);
     });
   });
@@ -104,41 +115,64 @@ describe("generate command", () => {
 
   describe("flags", () => {
     it("--level flag is accepted", () => {
-      const { exitCode } = runCli(["generate", "https://qrdx.dev", "-l", "H"]);
+      const out = tmp("flag-level.svg");
+      cleanups.push(out);
+      const { exitCode } = runCli([
+        "generate",
+        "https://qrdx.dev",
+        "-l",
+        "H",
+        "-o",
+        out,
+      ]);
       expect(exitCode).toBe(0);
     });
 
     it("--body flag is accepted", () => {
+      const out = tmp("flag-body.svg");
+      cleanups.push(out);
       const { exitCode } = runCli([
         "generate",
         "https://qrdx.dev",
         "--body",
         "circle",
+        "-o",
+        out,
       ]);
       expect(exitCode).toBe(0);
     });
 
     it("--eye flag is accepted", () => {
+      const out = tmp("flag-eye.svg");
+      cleanups.push(out);
       const { exitCode } = runCli([
         "generate",
         "https://qrdx.dev",
         "--eye",
         "gear",
+        "-o",
+        out,
       ]);
       expect(exitCode).toBe(0);
     });
 
     it("--dot flag is accepted", () => {
+      const out = tmp("flag-dot.svg");
+      cleanups.push(out);
       const { exitCode } = runCli([
         "generate",
         "https://qrdx.dev",
         "--dot",
         "star",
+        "-o",
+        out,
       ]);
       expect(exitCode).toBe(0);
     });
 
     it("--fg and --bg flags are accepted", () => {
+      const out = tmp("flag-fgbg.svg");
+      cleanups.push(out);
       const { exitCode } = runCli([
         "generate",
         "https://qrdx.dev",
@@ -146,16 +180,22 @@ describe("generate command", () => {
         "#1a1a1a",
         "--bg",
         "#f5f5f5",
+        "-o",
+        out,
       ]);
       expect(exitCode).toBe(0);
     });
 
     it("--margin flag is accepted", () => {
+      const out = tmp("flag-margin.svg");
+      cleanups.push(out);
       const { exitCode } = runCli([
         "generate",
         "https://qrdx.dev",
         "--margin",
         "4",
+        "-o",
+        out,
       ]);
       expect(exitCode).toBe(0);
     });
