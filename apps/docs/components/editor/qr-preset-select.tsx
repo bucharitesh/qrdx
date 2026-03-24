@@ -130,7 +130,7 @@ const ThemeCycleButton: React.FC<ThemeCycleButtonProps> = ({
         <Button
           variant="ghost"
           size="icon"
-          className={cn("size-8 shrink-0", className)}
+          className={cn("aspect-square h-full shrink-0", className)}
           onClick={onClick}
           {...props}
         >
@@ -192,7 +192,7 @@ const ThemePresetCycleControls: React.FC<ThemePresetCycleControlsProps> = ({
       <ThemeCycleButton
         direction="prev"
         size="icon"
-        className={cn("size-8", className)}
+        className={cn("aspect-square min-h-8 w-auto", className)}
         onClick={() => cycleTheme("prev")}
         {...props}
       />
@@ -202,7 +202,7 @@ const ThemePresetCycleControls: React.FC<ThemePresetCycleControlsProps> = ({
       <ThemeCycleButton
         direction="next"
         size="icon"
-        className={cn("size-8", className)}
+        className={cn("aspect-square min-h-8 w-auto", className)}
         onClick={() => cycleTheme("next")}
         {...props}
       />
@@ -309,206 +309,208 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
 
   return (
     <div className="flex w-full items-center">
-      <div className="flex-1 min-w-0 overflow-hidden">
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant="ghost"
-              className={cn("group relative w-full justify-between", className)}
-              {...props}
-            >
-              <div className="flex w-full items-center gap-3 overflow-hidden">
-                <div className="flex gap-0.5">
-                  {themeState.styles.bgColor && (
-                    <ColorBox color={themeState.styles.bgColor} />
-                  )}
-                  {themeState.styles.fgColor && (
-                    <ColorBox color={themeState.styles.fgColor} />
-                  )}
-                  {themeState.styles.eyeColor && (
-                    <ColorBox color={themeState.styles.eyeColor} />
-                  )}
-                  {themeState.styles.dotColor && (
-                    <ColorBox color={themeState.styles.dotColor} />
-                  )}
-                </div>
-                {currentPresetName !== "default" &&
-                  currentPresetName &&
-                  isSavedTheme(currentPresetName) &&
-                  !hasUnsavedChanges() && (
-                    <div className="bg-muted rounded-full p-1">
-                      <Icons.Heart
-                        className="size-1"
-                        stroke="var(--muted)"
-                        fill="var(--muted-foreground)"
-                      />
-                    </div>
-                  )}
-                <span className="truncate text-left font-medium capitalize">
-                  {presets[currentPresetName || "default"]?.label ||
-                    currentPresetName ||
-                    "default"}
-                  {isMounted && hasUnsavedChanges() && "*"}
-                </span>
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button
+            variant="ghost"
+            className={cn(
+              "group relative w-full justify-between md:min-w-56",
+              className,
+            )}
+            {...props}
+          >
+            <div className="flex w-full items-center gap-3 overflow-hidden">
+              <div className="flex gap-0.5">
+                {themeState.styles.bgColor && (
+                  <ColorBox color={themeState.styles.bgColor} />
+                )}
+                {themeState.styles.fgColor && (
+                  <ColorBox color={themeState.styles.fgColor} />
+                )}
+                {themeState.styles.eyeColor && (
+                  <ColorBox color={themeState.styles.eyeColor} />
+                )}
+                {themeState.styles.dotColor && (
+                  <ColorBox color={themeState.styles.dotColor} />
+                )}
               </div>
-              <Icons.ChevronDown className="size-4 shrink-0" />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-[400px] p-0" align="center">
-            <Command className="w-full">
-              <div className="flex w-full items-center">
-                <div className="flex w-full items-center border-b px-3 py-1">
-                  <Icons.Search className="size-4 shrink-0 opacity-50" />
-                  <Input
-                    placeholder="Search themes..."
-                    className="border-0 shadow-none bg-transparent! focus-visible:ring-0 focus-visible:ring-offset-0"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                  />
-                </div>
+              {currentPresetName !== "default" &&
+                currentPresetName &&
+                isSavedTheme(currentPresetName) &&
+                !hasUnsavedChanges() && (
+                  <div className="bg-muted rounded-full p-1">
+                    <Icons.Heart
+                      className="size-1"
+                      stroke="var(--muted)"
+                      fill="var(--muted-foreground)"
+                    />
+                  </div>
+                )}
+              <span className="truncate text-left font-medium capitalize">
+                {presets[currentPresetName || "default"]?.label ||
+                  currentPresetName ||
+                  "default"}
+                {isMounted && hasUnsavedChanges() && "*"}
+              </span>
+            </div>
+            <Icons.ChevronDown className="size-4 shrink-0" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-[400px] p-0" align="center">
+          <Command className="w-full">
+            <div className="flex w-full items-center">
+              <div className="flex w-full items-center border-b px-3 py-1">
+                <Icons.Search className="size-4 shrink-0 opacity-50" />
+                <Input
+                  placeholder="Search themes..."
+                  className="border-0 shadow-none bg-transparent! focus-visible:ring-0 focus-visible:ring-offset-0"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
               </div>
-              <div className="flex items-center justify-between px-3 py-2">
-                <div className="text-muted-foreground text-sm">
-                  {filteredPresets.length} theme
-                  {filteredPresets.length !== 1 ? "s" : ""}
-                </div>
-                <ThemeControls />
+            </div>
+            <div className="flex items-center justify-between px-3 py-2">
+              <div className="text-muted-foreground text-sm">
+                {filteredPresets.length} theme
+                {filteredPresets.length !== 1 ? "s" : ""}
               </div>
-              <Separator />
-              <CommandList className="max-h-[500px]">
-                <CommandEmpty>No themes found.</CommandEmpty>
+              <ThemeControls />
+            </div>
+            <Separator />
+            <CommandList className="max-h-[500px]">
+              <CommandEmpty>No themes found.</CommandEmpty>
 
-                {/* Saved Themes Group */}
-                {filteredSavedThemes.length > 0 && (
-                  <>
-                    <CommandGroup
-                      heading={
-                        <div className="flex w-full items-center justify-between">
-                          <span>Saved Themes</span>
-                          <Link href="/settings/themes">
-                            <Button
-                              variant="link"
-                              size="sm"
-                              className="text-muted-foreground hover:text-foreground flex items-center gap-1.5 p-0 text-xs"
-                            >
-                              <span>Manage</span>
-                              <Settings className="size-3.5!" />
-                            </Button>
-                          </Link>
-                        </div>
-                      }
-                    >
-                      {filteredSavedThemes
-                        .filter(
-                          (name) => name !== "default" && isSavedTheme(name),
-                        )
-                        .map((presetName, index) => (
-                          <CommandItem
-                            key={`${presetName}-${index}`}
-                            value={`${presetName}-${index}`}
-                            onSelect={() => {
-                              applyThemePreset(presetName);
-                              setSearch("");
-                            }}
-                            className="data-highlighted:bg-secondary/50 flex items-center gap-2 py-2"
+              {/* Saved Themes Group */}
+              {filteredSavedThemes.length > 0 && (
+                <>
+                  <CommandGroup
+                    heading={
+                      <div className="flex w-full items-center justify-between">
+                        <span>Saved Themes</span>
+                        <Link href="/settings/themes">
+                          <Button
+                            variant="link"
+                            size="sm"
+                            className="text-muted-foreground hover:text-foreground flex items-center gap-1.5 p-0 text-xs"
                           >
-                            <ThemeColors presetName={presetName} />
-                            <div className="flex flex-1 items-center gap-2">
-                              <span className="line-clamp-1 text-sm font-medium capitalize">
-                                {presets[presetName]?.label || presetName}
-                              </span>
-                              {presets[presetName] &&
-                                isThemeNew(presets[presetName]) && (
-                                  <Badge
-                                    variant="secondary"
-                                    className="rounded-full text-xs"
-                                  >
-                                    New
-                                  </Badge>
-                                )}
-                            </div>
-                            {presetName === currentPresetName && (
-                              <Check className="h-4 w-4 shrink-0 opacity-70" />
-                            )}
-                          </CommandItem>
-                        ))}
-                    </CommandGroup>
-                    <Separator className="my-2" />
-                  </>
-                )}
-
-                {filteredSavedThemes.length === 0 && search.trim() === "" && (
-                  <>
-                    <div className="text-muted-foreground flex items-center gap-1.5 px-3 py-2 text-xs font-medium">
-                      <div className="bg-muted flex items-center gap-1 rounded-md border px-2 py-0.5">
-                        <Heart className="fill-muted-foreground size-3" />
-                        <span>Save</span>
+                            <span>Manage</span>
+                            <Settings className="size-3.5!" />
+                          </Button>
+                        </Link>
                       </div>
-                      <span className="text-muted-foreground">
-                        a theme to find it here.
-                      </span>
-                    </div>
-                    <Separator />
-                  </>
-                )}
-
-                {/* Default Theme Group */}
-                {filteredDefaultThemes.length > 0 && (
-                  <CommandGroup heading="Built-in Themes">
-                    {filteredDefaultThemes.map((presetName, index) => (
-                      <CommandItem
-                        key={`${presetName}-${index}`}
-                        value={`${presetName}-${index}`}
-                        onSelect={() => {
-                          applyThemePreset(presetName);
-                          setSearch("");
-                        }}
-                        className="data-highlighted:bg-secondary/50 flex items-center gap-2 py-2"
-                      >
-                        <ThemeColors presetName={presetName} />
-                        <div className="flex flex-1 items-center gap-2">
-                          <span className="text-sm font-medium capitalize">
-                            {presets[presetName]?.label || presetName}
-                          </span>
-                          {presets[presetName] &&
-                            isThemeNew(presets[presetName]) && (
-                              <Badge
-                                variant="secondary"
-                                className="rounded-full text-xs"
-                              >
-                                New
-                              </Badge>
-                            )}
-                        </div>
-                        {presetName === currentPresetName && (
-                          <Check className="h-4 w-4 shrink-0 opacity-70" />
-                        )}
-                      </CommandItem>
-                    ))}
+                    }
+                  >
+                    {filteredSavedThemes
+                      .filter(
+                        (name) => name !== "default" && isSavedTheme(name),
+                      )
+                      .map((presetName, index) => (
+                        <CommandItem
+                          key={`${presetName}-${index}`}
+                          value={`${presetName}-${index}`}
+                          onSelect={() => {
+                            applyThemePreset(presetName);
+                            setSearch("");
+                          }}
+                          className="data-highlighted:bg-secondary/50 flex items-center gap-2 py-2"
+                        >
+                          <ThemeColors presetName={presetName} />
+                          <div className="flex flex-1 items-center gap-2">
+                            <span className="line-clamp-1 text-sm font-medium capitalize">
+                              {presets[presetName]?.label || presetName}
+                            </span>
+                            {presets[presetName] &&
+                              isThemeNew(presets[presetName]) && (
+                                <Badge
+                                  variant="secondary"
+                                  className="rounded-full text-xs"
+                                >
+                                  New
+                                </Badge>
+                              )}
+                          </div>
+                          {presetName === currentPresetName && (
+                            <Check className="h-4 w-4 shrink-0 opacity-70" />
+                          )}
+                        </CommandItem>
+                      ))}
                   </CommandGroup>
-                )}
-                <Separator className="my-1" />
-                <div className="px-3 py-2">
-                  <Link href="/community">
-                    <Button
-                      variant="link"
-                      size="sm"
-                      className="text-muted-foreground hover:text-foreground w-full justify-center text-xs"
+                  <Separator className="my-2" />
+                </>
+              )}
+
+              {filteredSavedThemes.length === 0 && search.trim() === "" && (
+                <>
+                  <div className="text-muted-foreground flex items-center gap-1.5 px-3 py-2 text-xs font-medium">
+                    <div className="bg-muted flex items-center gap-1 rounded-md border px-2 py-0.5">
+                      <Heart className="fill-muted-foreground size-3" />
+                      <span>Save</span>
+                    </div>
+                    <span className="text-muted-foreground">
+                      a theme to find it here.
+                    </span>
+                  </div>
+                  <Separator />
+                </>
+              )}
+
+              {/* Default Theme Group */}
+              {filteredDefaultThemes.length > 0 && (
+                <CommandGroup heading="Built-in Themes">
+                  {filteredDefaultThemes.map((presetName, index) => (
+                    <CommandItem
+                      key={`${presetName}-${index}`}
+                      value={`${presetName}-${index}`}
+                      onSelect={() => {
+                        applyThemePreset(presetName);
+                        setSearch("");
+                      }}
+                      className="data-highlighted:bg-secondary/50 flex items-center gap-2 py-2"
                     >
-                      Discover more themes →
-                    </Button>
-                  </Link>
-                </div>
-              </CommandList>
-            </Command>
-          </PopoverContent>
-        </Popover>
-      </div>
+                      <ThemeColors presetName={presetName} />
+                      <div className="flex flex-1 items-center gap-2">
+                        <span className="text-sm font-medium capitalize">
+                          {presets[presetName]?.label || presetName}
+                        </span>
+                        {presets[presetName] &&
+                          isThemeNew(presets[presetName]) && (
+                            <Badge
+                              variant="secondary"
+                              className="rounded-full text-xs"
+                            >
+                              New
+                            </Badge>
+                          )}
+                      </div>
+                      {presetName === currentPresetName && (
+                        <Check className="h-4 w-4 shrink-0 opacity-70" />
+                      )}
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              )}
+              <Separator className="my-1" />
+              <div className="px-3 py-2">
+                <Link href="/community">
+                  <Button
+                    variant="link"
+                    size="sm"
+                    className="text-muted-foreground hover:text-foreground w-full justify-center text-xs"
+                  >
+                    Discover more themes →
+                  </Button>
+                </Link>
+              </div>
+            </CommandList>
+          </Command>
+        </PopoverContent>
+      </Popover>
 
       {withCycleThemes && (
         <ThemePresetCycleControls
           filteredPresets={filteredPresets}
           currentPresetName={currentPresetName || "default"}
+          className={className}
           disabled={props.disabled}
         />
       )}
