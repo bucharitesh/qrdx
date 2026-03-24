@@ -506,6 +506,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
           </Command>
         </PopoverContent>
       </Popover>
+      </div>
 
       {withCycleThemes && (
         <ThemePresetCycleControls
