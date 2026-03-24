@@ -1,4 +1,6 @@
+import { createReadStream } from "node:fs";
 import { extname } from "node:path";
+import * as readline from "node:readline";
 import * as p from "@clack/prompts";
 import type {
   BodyPattern,
@@ -55,8 +57,38 @@ function parseColorFlag(value: string): ColorConfig {
   return trimmed;
 }
 
-// When stdin is not a TTY (piped/CI), skip all prompts and use flags/defaults
-const IS_TTY = Boolean(process.stdin.isTTY);
+const isCI = process.env.CI === "true";
+/** Clack needs stdin+stdout TTY; `npx` often leaves stdin non-TTY in a real terminal. */
+const canUseClack =
+  process.stdin.isTTY === true &&
+  process.stdout.isTTY === true &&
+  !isCI;
+
+function readLineFromTTY(question: string): Promise<string | undefined> {
+  if (process.platform === "win32") {
+    return Promise.resolve(undefined);
+  }
+  return new Promise((resolve) => {
+    let stream: ReturnType<typeof createReadStream>;
+    try {
+      stream = createReadStream("/dev/tty", { flags: "r" });
+    } catch {
+      resolve(undefined);
+      return;
+    }
+    const rl = readline.createInterface({
+      input: stream,
+      output: process.stdout,
+    });
+    const finish = (answer: string | undefined) => {
+      rl.close();
+      stream.destroy();
+      resolve(answer);
+    };
+    stream.once("error", () => finish(undefined));
+    rl.question(question, (answer) => finish(answer));
+  });
+}
 
 function parseFlags(args: string[]): GenerateFlags {
   const flags: GenerateFlags = {};
@@ -148,6 +180,9 @@ function isCancel(value: unknown): boolean {
 
 function handleCancel(): never {
   p.cancel("Cancelled.");
+  console.error(
+    `${DIM}Tip:${RESET} ${TEXT}qrdx generate "https://…" -o qr.svg${RESET} — local dev: ${TEXT}pnpm qrdx -- generate …${RESET}`,
+  );
   process.exit(0);
 }
 
@@ -161,7 +196,7 @@ function inferFormat(outputPath: string): "svg" | "png" {
 
 export async function runGenerate(args: string[]): Promise<void> {
   const flags = parseFlags(args);
-  const nonInteractive = !IS_TTY;
+  const nonInteractive = !canUseClack;
 
   // Any advanced flag explicitly passed → skip the "customize?" gate
   const hasAdvancedFlags = Boolean(
@@ -180,47 +215,89 @@ export async function runGenerate(args: string[]): Promise<void> {
 
   p.intro(`${TEXT}qrdx${RESET} ${DIM}— QR Code Generator${RESET}`);
 
+  if (canUseClack) {
+    process.stdin.resume();
+  }
+
   // ── 1. Data ──────────────────────────────────────────────────────────
   let value = flags.value;
   if (!value) {
-    if (nonInteractive) {
-      p.log.error("No data provided. Pass a URL or text as an argument.");
+    if (canUseClack) {
+      const promptStart = performance.now();
+      const res = await p.text({
+        message: "URL or text to encode",
+        placeholder: "https://qrdx.dev",
+        validate(v) {
+          if (!v.trim()) {
+            return "Please enter a value to encode.";
+          }
+        },
+      });
+      if (isCancel(res)) {
+        const instant =
+          performance.now() - promptStart < 120 &&
+          process.platform !== "win32" &&
+          process.stdout.isTTY &&
+          !isCI;
+        if (instant) {
+          const line = await readLineFromTTY(
+            `${TEXT}URL or text to encode${RESET} ${DIM}(e.g. https://qrdx.dev)${RESET}: `,
+          );
+          if (line?.trim()) {
+            value = line.trim();
+          } else {
+            handleCancel();
+          }
+        } else {
+          handleCancel();
+        }
+      } else {
+        value = res as string;
+      }
+    } else if (process.stdout.isTTY && !isCI) {
+      const line = await readLineFromTTY(
+        `${TEXT}URL or text to encode${RESET} ${DIM}(e.g. https://qrdx.dev)${RESET}: `,
+      );
+      if (line?.trim()) {
+        value = line.trim();
+      }
+    }
+    if (!value) {
+      console.error(
+        "No data to encode. Example: npx @qrdx/cli generate \"https://example.com\" -o qr.svg",
+      );
       process.exit(1);
     }
-    const res = await p.text({
-      message: "URL or text to encode",
-      placeholder: "https://qrdx.dev",
-      validate(v) {
-        if (!v.trim()) {
-          return "Please enter a value to encode.";
-        }
-      },
-    });
-    if (isCancel(res)) {
-      handleCancel();
-    }
-    value = res as string;
   }
 
   // ── 2. Output path ────────────────────────────────────────────────────
   let outputPath = flags.output;
   const size = flags.size ?? 512;
 
-  if (!(outputPath || nonInteractive)) {
-    const pathRes = await p.text({
-      message: "Output file (.svg or .png)",
-      placeholder: "qr.svg",
-      defaultValue: "qr.svg",
-      validate(v) {
-        if (!v.trim()) {
-          return "Please enter an output path.";
-        }
-      },
-    });
-    if (isCancel(pathRes)) {
-      handleCancel();
+  if (!outputPath) {
+    if (canUseClack) {
+      const pathRes = await p.text({
+        message: "Output file (.svg or .png)",
+        placeholder: "qr.svg",
+        defaultValue: "qr.svg",
+        validate(v) {
+          if (!v.trim()) {
+            return "Please enter an output path.";
+          }
+        },
+      });
+      if (isCancel(pathRes)) {
+        handleCancel();
+      }
+      outputPath = (pathRes as string) || "qr.svg";
+    } else if (process.stdout.isTTY && !isCI) {
+      const pathAns = await readLineFromTTY(
+        `Output file ${DIM}(.svg or .png, Enter = qr.svg)${RESET}: `,
+      );
+      outputPath = pathAns?.trim() || "qr.svg";
+    } else {
+      outputPath = "qr.svg";
     }
-    outputPath = (pathRes as string) || "qr.svg";
   }
 
   // ── 3. Advanced customizations? ───────────────────────────────────────
