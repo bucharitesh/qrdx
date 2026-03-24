@@ -105,7 +105,7 @@ export default async function BlogPostPage({ params }: PageProps) {
               </div>
 
               {/* Sidebar — authors + TOC */}
-              <aside className="hidden lg:sticky lg:top-24 lg:flex lg:h-[calc(100vh-6rem)] lg:w-full lg:max-w-xs lg:shrink-0 lg:flex-col lg:overflow-y-auto">
+              <aside className="hidden lg:sticky lg:top-24 lg:flex lg:h-max lg:w-full lg:max-w-xs lg:shrink-0 lg:flex-col lg:overflow-y-auto">
                 <div className="flex flex-col">
                   {/* Written by */}
                   {authors.length > 0 && (
