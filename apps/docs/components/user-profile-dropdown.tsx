@@ -1,11 +1,6 @@
 "use client";
 
 import { authClient } from "@repo/auth/client";
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@repo/design-system/components/ui/avatar";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   DropdownMenu,
@@ -15,6 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@repo/design-system/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "facehash";
 import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -78,14 +74,14 @@ export function UserProfileDropdown() {
                 variant="ghost"
                 className="0 relative isolate size-8 rounded-full"
               >
-                <Avatar className="size-8">
+                <Avatar className="size-8 rounded-full">
                   <AvatarImage
                     src={session.user.image || ""}
                     alt={session.user.name || ""}
                   />
-                  <AvatarFallback>
-                    {session.user.name?.[0] || "U"}
-                  </AvatarFallback>
+                  <AvatarFallback
+                    name={session.user.name || session.user.email || "U"}
+                  />
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>

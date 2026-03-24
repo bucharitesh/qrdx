@@ -1,13 +1,13 @@
-import React from "react"
+import type { LucideProps } from "lucide-react";
 
-export const SystemTheme = () => {
+export const SystemTheme = (props: LucideProps) => {
   return (
     <svg
-      width="177"
-      height="140"
       viewBox="0 0 177 140"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      aria-label="System theme"
+      {...props}
     >
       <g clipPath="url(#clip0_77_39)">
         <path d="M-12 -12H189L-12 140V-12Z" fill="#F5F5F5" />
@@ -277,5 +277,5 @@ export const SystemTheme = () => {
         </clipPath>
       </defs>
     </svg>
-  )
-}
+  );
+};
