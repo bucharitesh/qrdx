@@ -309,12 +309,13 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
 
   return (
     <div className="flex w-full items-center">
+      <div className="flex-1 min-w-0 overflow-hidden">
       <Popover>
         <PopoverTrigger asChild>
           <Button
             variant="ghost"
             className={cn(
-              "group relative w-full justify-between md:min-w-56",
+              "group relative w-full justify-between",
               className,
             )}
             {...props}
