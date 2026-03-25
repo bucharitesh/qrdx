@@ -13,7 +13,7 @@ export function buildSVGString(props: QRProps & { size?: number }): string {
     {
       size: props.size ?? 512,
       ...props,
-    }
+    },
   );
   return renderToStaticMarkup(element);
 }
@@ -39,7 +39,7 @@ export function buildPNGBuffer(props: QRProps & { size?: number }): Buffer {
   writeFileSync(
     svgPath,
     `<?xml version="1.0" encoding="UTF-8"?>\n${svgString}`,
-    "utf-8"
+    "utf-8",
   );
 
   try {
@@ -48,7 +48,7 @@ export function buildPNGBuffer(props: QRProps & { size?: number }): Buffer {
     // the initial rasterisation so the output is always exactly size×size.
     execSync(
       `sips -s format png "${svgPath}" --out "${pngPath}" --resampleHeightWidth ${size} ${size} 2>/dev/null`,
-      { stdio: "pipe" }
+      { stdio: "pipe" },
     );
     return readFileSync(pngPath);
   } finally {

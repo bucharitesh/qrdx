@@ -18,7 +18,7 @@ export default async function listSaved(input: Input): Promise<string> {
     ? allSaved.filter(
         (q) =>
           q.name.toLowerCase().includes(input.query!.toLowerCase()) ||
-          q.url.toLowerCase().includes(input.query!.toLowerCase())
+          q.url.toLowerCase().includes(input.query!.toLowerCase()),
       )
     : allSaved;
 

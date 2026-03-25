@@ -60,7 +60,7 @@ function parseAIResponse(raw: string): Partial<Settings> & { url?: string } {
 
 function mergeSettings(
   base: Settings,
-  ai: Partial<Settings> & { url?: string }
+  ai: Partial<Settings> & { url?: string },
 ): Settings {
   return {
     ...base,

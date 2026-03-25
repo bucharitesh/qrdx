@@ -39,7 +39,7 @@ import {
 
 export function buildQRProps(
   url: string,
-  s: Settings
+  s: Settings,
 ): QRProps & { size: number } {
   const size = Math.max(64, Number.parseInt(s.size || "512", 10) || 512);
   const margin = Number.parseInt(s.margin || "0", 10) || 0;
@@ -265,7 +265,7 @@ export function QRPreview({
     writeFileSync(
       outPath,
       `<?xml version="1.0" encoding="UTF-8"?>\n${svgString}`,
-      "utf-8"
+      "utf-8",
     );
     await showHUD(`SVG saved → ${outPath}`);
   }
