@@ -18,7 +18,10 @@
     "db:pull": "cd packages/database && npx drizzle-kit pull",
     "knip": "knip",
     "knip:fix": "knip --fix",
-    "clean": "git clean -xdf node_modules"
+    "clean": "git clean -xdf node_modules",
+    "raycast:publish": "cd plugins/raycast && npx @raycast/api@latest publish",
+    "raycast:dev": "cd plugins/raycast && pnpm dev",
+    "raycast:build": "cd plugins/raycast && pnpm build"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
