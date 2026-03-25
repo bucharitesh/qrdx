@@ -31,8 +31,10 @@ export function FooterSection() {
             {siteConfig.description}
           </p>
           <div>
-            <Button variant="outline" size={"sm"}>
-              <Icons.github className="size-3" />
+            <Button variant="outline" size={"sm"} asChild>
+              <Link href={siteConfig.links.github}>
+                <Icons.github className="size-3" />
+              </Link>
             </Button>
           </div>
         </div>
