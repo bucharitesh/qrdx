@@ -19,7 +19,10 @@ export default function IntegrationsLoading() {
             <Skeleton className="h-4 w-28" />
             <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
               {[1, 2, 3].map((i) => (
-                <div key={i} className="rounded-xl border bg-card p-4 space-y-3">
+                <div
+                  key={i}
+                  className="rounded-xl border bg-card p-4 space-y-3"
+                >
                   <Skeleton className="size-10 rounded-lg" />
                   <div className="space-y-2">
                     <Skeleton className="h-4 w-24" />

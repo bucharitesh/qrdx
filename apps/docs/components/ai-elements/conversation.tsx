@@ -2,10 +2,10 @@
 
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
-import { Icons } from "@/components/icons";
 import type { ComponentProps } from "react";
 import { useCallback } from "react";
 import { StickToBottom, useStickToBottomContext } from "use-stick-to-bottom";
+import { Icons } from "@/components/icons";
 
 export type ConversationProps = ComponentProps<typeof StickToBottom>;
 

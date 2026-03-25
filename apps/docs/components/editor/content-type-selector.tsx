@@ -1,11 +1,11 @@
 "use client";
 
 import { Button } from "@repo/design-system/components/ui/button";
+import type { LucideIcon } from "lucide-react";
 import * as React from "react";
 import { ContentTypeModal } from "@/components/editor/content-type-modal";
 import { useQREditorStore } from "@/store/editor-store";
 import { CONTENT_TYPES_METADATA } from "@/types/qr-content";
-import { LucideIcon } from "lucide-react";
 import { Icons } from "../icons";
 
 // Map icon names to actual icon components

@@ -34,7 +34,7 @@ export function YouTubeForm() {
         });
       }
     }
-  }, [storedConfig]);
+  }, [storedConfig, youtubeData.channelUrl, youtubeData.videoUrl]);
 
   React.useEffect(() => {
     const config: YouTubeContent = { type: "youtube", ...youtubeData };

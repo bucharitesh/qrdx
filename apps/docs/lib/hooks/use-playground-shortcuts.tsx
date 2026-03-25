@@ -3,7 +3,6 @@
 import { toast } from "@repo/design-system";
 import { useTheme } from "next-themes";
 import { getAllTemplates, getQRData, getSVGString } from "qrdx";
-import { useCallback, useRef } from "react";
 import { patterns as cornerEyeDotPatterns } from "@/components/playground/corner-eye-dot-pattern-selector";
 import { patterns as cornerEyePatterns } from "@/components/playground/corner-eye-pattern-selector";
 import { patterns as bodyPatterns } from "@/components/playground/pattern-selector";

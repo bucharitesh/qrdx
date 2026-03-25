@@ -6,8 +6,8 @@ import {
   CarouselContent,
   CarouselItem as CarouselItemBase,
 } from "@repo/design-system/components/ui/carousel";
-import { Icons } from "@/components/icons";
 import * as React from "react";
+import { Icons } from "@/components/icons";
 
 interface CarouselProps extends React.ComponentProps<typeof CarouselBase> {
   children: React.ReactNode;

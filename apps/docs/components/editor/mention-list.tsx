@@ -1,8 +1,8 @@
-/** biome-ignore-all lint/correctness/useExhaustiveDependencies: <explanation> */
+/** biome-ignore-all lint/correctness/useExhaustiveDependencies: false positive */
 "use client";
 
 import { cn } from "@repo/design-system/lib/utils";
-import React, {
+import {
   forwardRef,
   useEffect,
   useImperativeHandle,

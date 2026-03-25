@@ -12,9 +12,11 @@ import {
 } from "@repo/design-system/components/ui/revola";
 import { ScrollArea } from "@repo/design-system/components/ui/scroll-area";
 import { cn } from "@repo/design-system/lib/utils";
+import type { LucideIcon } from "lucide-react";
 import * as React from "react";
 import { Carousel, CarouselItem } from "@/components/carousel";
 import { ContentTypeCard } from "@/components/editor/content-type-card";
+import { Icons } from "@/components/icons";
 import { useQREditorStore } from "@/store/editor-store";
 import type { ContentType } from "@/types/qr-content";
 import {
@@ -22,8 +24,6 @@ import {
   CONTENT_TYPES_METADATA,
   FOR_YOU_SECTIONS,
 } from "@/types/qr-content";
-import { LucideIcon } from "lucide-react";
-import { Icons } from "@/components/icons";
 
 // Map icon names to actual icon components
 const iconMap: Record<string, LucideIcon> = {

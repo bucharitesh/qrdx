@@ -1,7 +1,7 @@
 import { Button } from "@repo/design-system/components/ui/button";
-import { Icons } from "@/components/icons";
 import Link from "next/link";
 import { Header } from "@/components/header";
+import { Icons } from "@/components/icons";
 import { UserSettingsProvider } from "@/lib/hooks/use-user-settings";
 import { SettingsSidebar } from "./components/settings-sidebar";
 

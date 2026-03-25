@@ -29,7 +29,7 @@ export function InstagramForm() {
     ) {
       setInstagramData({ username: storedConfig.username });
     }
-  }, [storedConfig]);
+  }, [storedConfig, instagramData.username]);
 
   React.useEffect(() => {
     // Validate and encode

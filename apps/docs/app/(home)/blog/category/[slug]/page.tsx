@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { SLUG_TO_CATEGORY } from "@/lib/blog-constants";
 import { BlogList } from "@/components/sections/blog/blog-list";
 import { SectionHeader } from "@/components/sections/section-header";
 import { resolveAuthors } from "@/lib/blog-authors";
+import { SLUG_TO_CATEGORY } from "@/lib/blog-constants";
 import { blogCategoriesSource, blogSource } from "@/lib/source";
 
 interface PageProps {

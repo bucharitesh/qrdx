@@ -1,8 +1,8 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
-import { Icons } from "@/components/icons";
 import { useEffect, useState } from "react";
+import { Icons } from "@/components/icons";
 
 const formats = [
   {

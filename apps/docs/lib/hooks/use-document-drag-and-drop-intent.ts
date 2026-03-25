@@ -11,7 +11,7 @@ export function useDocumentDragAndDropIntent() {
         setIsUserDragging(true);
       }
     };
-    const handleDragLeave = (e: DragEvent) => {
+    const handleDragLeave = (_e: DragEvent) => {
       dragCounter.current--;
       if (dragCounter.current <= 0) {
         setIsUserDragging(false);

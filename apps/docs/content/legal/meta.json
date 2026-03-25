@@ -1,4 +1,9 @@
 {
   "title": "Legal",
-  "pages": ["privacy-policy", "terms-of-service", "subprocessors", "report-abuse"]
+  "pages": [
+    "privacy-policy",
+    "terms-of-service",
+    "subprocessors",
+    "report-abuse"
+  ]
 }

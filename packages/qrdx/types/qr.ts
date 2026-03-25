@@ -43,7 +43,7 @@ export const qrPropsSchema = z.object({
 export type ImageSettings = z.infer<typeof imageSettingsSchema>;
 export type ErrorLevel = z.infer<typeof errorLevelSchema>;
 
-export type QRProps = {
+export interface QRProps {
   value: string;
   size?: number;
   level?: ErrorLevel;
@@ -64,7 +64,7 @@ export type QRProps = {
   // Generic custom props that can be used by any template
   // Each template can define its own custom props type (e.g., FlamQRProps)
   customProps?: Record<string, any>;
-};
+}
 
 export type QRPropsCanvas = QRProps &
   React.CanvasHTMLAttributes<HTMLCanvasElement>;

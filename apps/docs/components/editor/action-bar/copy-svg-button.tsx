@@ -2,9 +2,9 @@
 
 import { toast } from "@repo/design-system";
 import { Button } from "@repo/design-system/components/ui/button";
-import { Icons } from "@/components/icons";
 import { getQRData, getSVGString } from "qrdx";
 import { useState } from "react";
+import { Icons } from "@/components/icons";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { useQREditorStore } from "@/store/editor-store";
 

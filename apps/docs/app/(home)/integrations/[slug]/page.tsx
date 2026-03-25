@@ -193,7 +193,6 @@ export default async function IntegrationDetailPage({
             </h2>
             <ol className="space-y-3 mt-2">
               {installSteps.map((step, idx) => (
-                // biome-ignore lint/suspicious/noArrayIndexKey: ordered steps
                 <li key={idx} className="flex items-start gap-3 text-sm">
                   <span className="mt-px flex size-5 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-foreground">
                     {idx + 1}

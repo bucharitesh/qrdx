@@ -51,8 +51,7 @@ export async function GET(request: Request, context: RouteContext) {
         const config = getIntegrationConfigWithEnv(provider, env);
 
         // Generate PKCE parameters
-        const { codeVerifier, codeChallenge, codeChallengeMethod } =
-          generatePKCE();
+        const { codeVerifier } = generatePKCE();
 
         // Store code verifier in a secure cookie
         const cookieStore = await cookies();
@@ -111,7 +110,7 @@ export async function GET(request: Request, context: RouteContext) {
 }
 
 // DELETE - Disconnect integration
-export async function DELETE(request: Request, context: RouteContext) {
+export async function DELETE(_request: Request, context: RouteContext) {
   const { provider } = await context.params;
 
   try {

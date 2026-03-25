@@ -26,7 +26,7 @@ export function TextForm() {
     if (storedConfig?.text && storedConfig.text !== textData.text) {
       setTextData({ text: storedConfig.text });
     }
-  }, [storedConfig]);
+  }, [storedConfig, textData.text]);
 
   React.useEffect(() => {
     // Validate and encode

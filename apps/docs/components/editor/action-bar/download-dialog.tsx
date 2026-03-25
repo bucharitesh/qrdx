@@ -25,7 +25,6 @@ import {
   SelectValue,
 } from "@repo/design-system/components/ui/select";
 import { Slider } from "@repo/design-system/components/ui/slider";
-import { Icons } from "@/components/icons";
 import {
   type DownloadSize,
   downloadQRCode,
@@ -34,6 +33,7 @@ import {
   validateSize,
 } from "qrdx";
 import React from "react";
+import { Icons } from "@/components/icons";
 import { useQREditorStore } from "@/store/editor-store";
 import { usePreferencesStore } from "@/store/preferences-store";
 import type { DownloadOptions as DownloadOptionsType } from "@/types/theme";

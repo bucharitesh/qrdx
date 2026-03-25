@@ -15,9 +15,9 @@ import {
   type SharedProps,
 } from "fumadocs-ui/components/dialog/search";
 import { useTreeContext } from "fumadocs-ui/contexts/tree";
-import { Icons } from "@/components/icons";
 import { useRouter } from "next/navigation";
 import { useMemo } from "react";
+import { Icons } from "@/components/icons";
 
 export default function CustomSearchDialog(props: SharedProps) {
   const { search, setSearch, query } = useDocsSearch({

@@ -48,7 +48,6 @@ g.main:has(> g.plot) > rect {
   }
 }
 
-
 @utility scrollbar-thin {
   scrollbar-width: thin;
   scrollbar-color: var(--color-border) transparent;

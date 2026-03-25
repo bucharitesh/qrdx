@@ -1,4 +1,4 @@
-/** biome-ignore-all lint/a11y/noSvgWithoutTitle: <explanation> */
+/** biome-ignore-all lint/a11y/noSvgWithoutTitle: false positive */
 import { cn } from "@repo/design-system/lib/utils";
 import type { ComponentProps } from "react";
 

@@ -1,10 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
+/** biome-ignore-all lint/a11y/useSemanticElements: false positive */
 "use client";
 
 import { cn } from "@repo/design-system/lib/utils";
-import { Icons } from "@/components/icons";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
+import { Icons } from "@/components/icons";
 
 type AnimationStyle =
   | "from-bottom"
@@ -82,6 +83,11 @@ export function HeroVideoDialog({
       <div
         className="group relative cursor-pointer"
         onClick={() => setIsVideoOpen(true)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") setIsVideoOpen(true);
+        }}
+        role="button"
+        tabIndex={0}
       >
         {thumbnailSrc ? (
           <img
@@ -133,6 +139,7 @@ export function HeroVideoDialog({
               <div className="relative isolate z-1 size-full overflow-hidden rounded-2xl border-2 border-white">
                 <iframe
                   src={videoSrc}
+                  title="Video player"
                   className="size-full"
                   allowFullScreen
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"

@@ -6,9 +6,9 @@ import {
   Collapsible,
   CollapsibleContent,
 } from "fumadocs-ui/components/ui/collapsible";
-import { Icons } from "@/components/icons";
 import { usePathname } from "next/navigation";
 import { type SyntheticEvent, useEffect, useState, useTransition } from "react";
+import { Icons } from "@/components/icons";
 
 const rateButtonVariants = cva(
   "inline-flex items-center gap-2 px-3 py-2 rounded-full font-medium border text-sm [&_svg]:size-4 disabled:cursor-not-allowed",
@@ -96,6 +96,7 @@ export function Feedback({
       <div className="flex flex-row items-center gap-2">
         <p className="text-sm font-medium pe-2">How is this guide?</p>
         <button
+          type="button"
           disabled={previous !== null}
           className={cn(
             rateButtonVariants({
@@ -110,6 +111,7 @@ export function Feedback({
           Good
         </button>
         <button
+          type="button"
           disabled={previous !== null}
           className={cn(
             rateButtonVariants({
@@ -144,6 +146,7 @@ export function Feedback({
               </a>
 
               <button
+                type="button"
                 className={cn(
                   buttonVariants({
                     color: "secondary",
@@ -162,7 +165,6 @@ export function Feedback({
         ) : (
           <form className="flex flex-col gap-3" onSubmit={submit}>
             <textarea
-              autoFocus
               required
               value={message}
               onChange={(e) => setMessage(e.target.value)}

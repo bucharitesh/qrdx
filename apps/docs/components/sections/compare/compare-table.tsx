@@ -95,8 +95,8 @@ export function CompareTable({
           at a glance
         </h2>
         <p className="text-muted-foreground text-center text-balance font-medium">
-          QRdx is a free, open-source QR code library — everything{" "}
-          {competitor} charges for, included at no cost.
+          QRdx is a free, open-source QR code library — everything {competitor}{" "}
+          charges for, included at no cost.
         </p>
       </SectionHeader>
 

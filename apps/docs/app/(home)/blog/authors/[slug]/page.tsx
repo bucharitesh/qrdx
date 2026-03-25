@@ -18,8 +18,14 @@ export default async function AuthorPage({ params }: PageProps) {
     notFound();
   }
 
-  const { title: name, role, avatar, twitter, linkedin, github } =
-    authorPage.data;
+  const {
+    title: name,
+    role,
+    avatar,
+    twitter,
+    linkedin,
+    github,
+  } = authorPage.data;
 
   const firstName = name.split(" ")[0];
   const hasSocials = twitter || linkedin || github;

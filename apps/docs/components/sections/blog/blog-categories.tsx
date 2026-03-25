@@ -5,8 +5,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BLOG_CATEGORIES } from "@/lib/blog-constants";
 
-export { BLOG_CATEGORIES, SLUG_TO_CATEGORY } from "@/lib/blog-constants";
 export type { BlogCategorySlug } from "@/lib/blog-constants";
+export { BLOG_CATEGORIES, SLUG_TO_CATEGORY } from "@/lib/blog-constants";
 
 interface BlogCategoriesProps {
   className?: string;

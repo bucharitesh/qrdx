@@ -216,9 +216,9 @@ export function AnimatedFolder({
   );
 }
 
-import { Icons } from "@/components/icons";
 import type React from "react";
 import { useCallback, useEffect, useLayoutEffect } from "react";
+import { Icons } from "@/components/icons";
 
 interface Project {
   id: string;

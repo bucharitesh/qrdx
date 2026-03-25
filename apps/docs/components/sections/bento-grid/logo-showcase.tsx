@@ -1,8 +1,8 @@
 "use client";
 
-import { Icons } from "@/components/icons";
 import { QRCodeSVG } from "qrdx";
 import { useEffect, useState } from "react";
+import { Icons } from "@/components/icons";
 
 const logos = [
   { icon: Icons.Sparkles, color: "#FFD700" },

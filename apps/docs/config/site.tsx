@@ -1,4 +1,4 @@
-/** biome-ignore-all lint/a11y/noSvgWithoutTitle: <explanation> */
+/** biome-ignore-all lint/a11y/noSvgWithoutTitle: false positive */
 import { cn } from "@repo/design-system/lib/utils";
 import { env } from "@/lib/env";
 
@@ -632,7 +632,8 @@ export const siteConfig = {
       },
       {
         id: 3,
-        question: "How does QRdx compare to QR Tiger, QR Code Monkey, or Flowcode?",
+        question:
+          "How does QRdx compare to QR Tiger, QR Code Monkey, or Flowcode?",
         answer:
           "QRdx offers more on the free tier than any major competitor. QR Tiger limits the free plan to 3 codes with 500 scans each and shows ads. Flowcode allows only 2 free codes with 500 total scans. QR Code Monkey generates static-only codes with no analytics. QRdx provides unlimited free QR codes, full customization, analytics, no scan caps, no watermarks, and an open-source npm package — at zero cost.",
       },

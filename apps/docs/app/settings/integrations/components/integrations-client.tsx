@@ -74,7 +74,7 @@ export function IntegrationsClient({ integrations }: IntegrationsClientProps) {
       if (!map.has(primaryCategory)) {
         map.set(primaryCategory, []);
       }
-      map.get(primaryCategory)!.push(integration);
+      map.get(primaryCategory)?.push(integration);
     }
     return map;
   }, [filtered]);

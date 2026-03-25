@@ -9,9 +9,9 @@ import {
 } from "@repo/design-system/components/ui/card";
 import { Label } from "@repo/design-system/components/ui/label";
 import { cn } from "@repo/design-system/lib/utils";
-import { Icons } from "@/components/icons";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
+import { Icons } from "@/components/icons";
 import { DarkTheme } from "./dark-theme";
 import { LightTheme } from "./light-theme";
 import { SystemTheme } from "./system-theme";
@@ -141,4 +141,3 @@ export function AppearanceForm() {
     </Card>
   );
 }
-

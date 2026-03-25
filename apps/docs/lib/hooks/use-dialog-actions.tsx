@@ -65,7 +65,6 @@ function useDialogActionsStore(): DialogActionsContextType {
 
   const {
     themeState,
-    setThemeState,
     applyThemePreset,
     hasThemeChangedFromCheckpoint,
     hasUnsavedChanges,
@@ -260,7 +259,6 @@ export const DialogActionsContext =
   createContext<DialogActionsContextType | null>(null);
 
 export function DialogActionsProvider({ children }: { children: ReactNode }) {
-  const { themeState } = useQREditorStore();
   const store = useDialogActionsStore();
 
   return (

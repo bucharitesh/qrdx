@@ -1,0 +1,39 @@
+{
+  "name": "@qrdx/canva-plugin",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "webpack serve --config webpack.config.js",
+    "build": "webpack --config webpack.config.js --mode production"
+  },
+  "dependencies": {
+    "@canva/app-hooks": "^0.0.0-beta.4",
+    "@canva/app-ui-kit": "^5.7.0",
+    "@canva/asset": "^2.3.0",
+    "@canva/design": "^2.8.0",
+    "@canva/intents": "^2.2.0",
+    "@canva/platform": "^2.2.2",
+    "qrdx": "workspace:*",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@repo/typescript-config": "workspace:*",
+    "@types/node": "^24.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@types/webpack-env": "^1.18.0",
+    "css-loader": "^7.1.0",
+    "cssnano": "^7.0.0",
+    "postcss-loader": "^8.1.0",
+    "style-loader": "^4.0.0",
+    "terser-webpack-plugin": "^5.4.0",
+    "ts-loader": "^9.5.0",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0",
+    "webpack": "^5.105.0",
+    "webpack-cli": "^6.0.0",
+    "webpack-dev-server": "^5.2.0"
+  }
+}

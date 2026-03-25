@@ -7,7 +7,7 @@ import type {
 /**
  * Integration definition - metadata about an available integration
  */
-export type IntegrationDefinition = {
+export interface IntegrationDefinition {
   slug: string;
   name: string;
   description: string;
@@ -19,7 +19,7 @@ export type IntegrationDefinition = {
   configurable: boolean;
   developedBy?: string;
   website?: string;
-};
+}
 
 /**
  * Integration configuration with credentials

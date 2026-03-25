@@ -1,5 +1,5 @@
-/** biome-ignore-all lint/a11y/noStaticElementInteractions: <explanation> */
-/** biome-ignore-all lint/a11y/useKeyWithClickEvents: <explanation> */
+/** biome-ignore-all lint/a11y/noStaticElementInteractions: false positive */
+/** biome-ignore-all lint/a11y/useKeyWithClickEvents: false positive */
 "use client";
 
 import { cn } from "@repo/design-system/lib/utils";

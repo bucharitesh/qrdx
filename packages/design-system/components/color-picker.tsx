@@ -1,4 +1,4 @@
-/** biome-ignore-all lint/correctness/useExhaustiveDependencies: <explanation> */
+/** biome-ignore-all lint/correctness/useExhaustiveDependencies: false positive */
 "use client";
 
 import { Button } from "@repo/design-system/components/ui/button";
@@ -14,13 +14,13 @@ import { cn } from "@repo/design-system/lib/utils";
 import { type ForwardedRef, useMemo, useState } from "react";
 import { HexColorPicker } from "react-colorful";
 
-type ColorPickerProps = {
+interface ColorPickerProps {
   ref?: ForwardedRef<HTMLInputElement>;
   value: string;
   onChange: (value: string) => void;
   onBlur?: () => void;
   label?: string;
-};
+}
 
 const ColorInput = ({
   disabled,

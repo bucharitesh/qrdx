@@ -26,7 +26,7 @@ export function SpotifyForm() {
     if (storedConfig?.uri && storedConfig.uri !== spotifyData.uri) {
       setSpotifyData({ uri: storedConfig.uri });
     }
-  }, [storedConfig]);
+  }, [storedConfig, spotifyData.uri]);
 
   React.useEffect(() => {
     // Validate and encode

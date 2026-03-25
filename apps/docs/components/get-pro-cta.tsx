@@ -2,8 +2,8 @@
 
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
-import { Icons } from "@/components/icons";
 import Link from "next/link";
+import { Icons } from "@/components/icons";
 import { useSubscription } from "@/lib/hooks/use-subscription";
 
 interface GetProCTAProps extends React.ComponentProps<typeof Button> {}

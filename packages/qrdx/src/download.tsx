@@ -4,10 +4,10 @@ import { getQRAsCanvas, getQRAsSVGDataUri } from "./index";
 
 export type DownloadFormat = "png" | "jpg" | "svg" | "pdf";
 
-export type DownloadSize = {
+export interface DownloadSize {
   width: number;
   height: number;
-};
+}
 
 export const PRESET_SIZES: Record<string, DownloadSize> = {
   small: { width: 200, height: 200 },
@@ -18,11 +18,11 @@ export const PRESET_SIZES: Record<string, DownloadSize> = {
   "3xl": { width: 2000, height: 2000 },
 };
 
-export type DownloadOptions = {
+export interface DownloadOptions {
   format: DownloadFormat;
   size: DownloadSize;
   filename?: string;
-};
+}
 
 /**
  * Validates if a size value is within acceptable bounds

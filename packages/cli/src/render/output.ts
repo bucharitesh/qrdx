@@ -38,7 +38,7 @@ export async function saveOutput(options: OutputOptions): Promise<void> {
     sharp = (mod as { default: SharpFactory }).default;
   } catch {
     throw new Error(
-      "PNG output needs the sharp package (native binaries). It is optional and may not have installed; use SVG or reinstall: https://sharp.pixelplumbing.com/install",
+      "PNG output needs the sharp package (native binaries). It is optional and may not have installed; use SVG or reinstall: https://sharp.pixelplumbing.com/install"
     );
   }
   const svgBuffer = Buffer.from(svgString, "utf-8");

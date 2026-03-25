@@ -23,7 +23,7 @@ export function UrlForm() {
     if (storedConfig?.url && storedConfig.url !== urlData.url) {
       setUrlData({ url: storedConfig.url });
     }
-  }, [storedConfig]);
+  }, [storedConfig, urlData.url]);
 
   React.useEffect(() => {
     const config: UrlContent = { type: "url", ...urlData };

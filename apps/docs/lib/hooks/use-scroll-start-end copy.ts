@@ -61,6 +61,8 @@ export function useScrollStartEnd({
     observerOptions.root,
     observerOptions.threshold,
     observerOptions.rootMargin,
+    containerRef?.current,
+    observerOptions,
   ]);
 
   useEffect(() => {
