@@ -30,7 +30,7 @@ import { toLabel } from "./types";
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function formatDate(ts: number): string {
-  return new Date(ts).toLocaleDateString(undefined, {
+  return new Date(ts).toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
     year: "numeric",

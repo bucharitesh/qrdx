@@ -10,9 +10,8 @@ import {
 import { useAI } from "@raycast/utils";
 import { useMemo, useState } from "react";
 import { buildQRProps, QRPreview } from "./generate-qr";
-import { getSVGDataURI } from "./qr-engine";
 import type { Settings } from "./types";
-import { DEFAULT_SETTINGS, toLabel } from "./types";
+import { DEFAULT_SETTINGS } from "./types";
 
 // ─── AI prompt ───────────────────────────────────────────────────────────────
 
@@ -152,27 +151,6 @@ function AIQRResult({
   }
 
   const qrProps = buildQRProps(url, settings);
-  const _dataURI = getSVGDataURI(qrProps);
-
-  const _settingsMd = [
-    "| Setting | Value |",
-    "|---|---|",
-    `| **URL** | \`${url}\` |`,
-    `| **Body** | ${toLabel(settings.bodyPattern)} |`,
-    `| **Corner Eye** | ${toLabel(settings.cornerEyePattern)} |`,
-    `| **Corner Dot** | ${toLabel(settings.cornerEyeDotPattern)} |`,
-    ...(settings.fgColor !== "#000000"
-      ? [`| **Foreground** | \`${settings.fgColor}\` |`]
-      : []),
-    ...(settings.bgColor !== "#ffffff"
-      ? [`| **Background** | \`${settings.bgColor}\` |`]
-      : []),
-    ...(settings.templateId
-      ? [`| **Template** | ${toLabel(settings.templateId)} |`]
-      : []),
-    ...(settings.logo ? [`| **Logo** | ${settings.logo} |`] : []),
-    `| **Error Correction** | ${settings.level} |`,
-  ].join("\n");
 
   return (
     <QRPreview

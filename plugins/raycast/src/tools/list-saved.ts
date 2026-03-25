@@ -39,7 +39,7 @@ export default async function listSaved(input: Input): Promise<string> {
       ...(q.settings.fgColor !== "#000000"
         ? [`Color: ${q.settings.fgColor}`]
         : []),
-      `Saved: ${new Date(q.savedAt).toLocaleDateString()}`,
+      `Saved: ${new Date(q.savedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`,
     ];
     return parts.join(" · ");
   });
