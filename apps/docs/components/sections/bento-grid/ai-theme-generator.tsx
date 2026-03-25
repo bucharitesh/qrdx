@@ -1,9 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Icons } from "@/components/icons";
 import { QRCodeSVG } from "qrdx";
 import { useEffect, useState } from "react";
+import { Icons } from "@/components/icons";
 
 const themes = [
   {

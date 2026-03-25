@@ -1,4 +1,4 @@
-/** biome-ignore-all lint/correctness/useExhaustiveDependencies: <explanation> */
+/** biome-ignore-all lint/correctness/useExhaustiveDependencies: false positive */
 "use client";
 
 import { Button } from "@repo/design-system/components/ui/button";
@@ -21,12 +21,12 @@ import {
 import { useEffect, useState } from "react";
 import type { DriveFile } from "../types";
 
-type GoogleDriveFilePickerProps = {
+interface GoogleDriveFilePickerProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onFileSelect: (file: DriveFile) => void;
   accessToken: string;
-};
+}
 
 export function GoogleDriveFilePicker({
   open,

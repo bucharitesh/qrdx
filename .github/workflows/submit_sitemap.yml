@@ -37,8 +37,8 @@ jobs:
 
       - name: Publish Sitemap
         run: |
-          cp .github/scripts/submit_sitemap.mjs /tmp/
-          node /tmp/submit_sitemap.mjs
+          cp .github/scripts/submit-sitemap.mjs /tmp/
+          node /tmp/submit-sitemap.mjs
         env:
           GOOGLE_SEARCH_CONSOLE_JSON_KEY: ${{ secrets.GOOGLE_SEARCH_CONSOLE_JSON_KEY }}
           SITE_URL: ${{ env.SITE_URL }}

@@ -43,7 +43,7 @@ export type BaseTemplateProps = z.infer<typeof baseTemplatePropsSchema>;
 export type TemplateConfig = z.infer<typeof templateConfigSchema>;
 
 // Generic template definition that allows custom props
-export type TemplateDefinition<TCustomProps = Record<string, never>> = {
+export interface TemplateDefinition<TCustomProps = Record<string, never>> {
   id: string;
   name: string;
   description?: string;
@@ -52,4 +52,4 @@ export type TemplateDefinition<TCustomProps = Record<string, never>> = {
     props?: BaseTemplateProps & TCustomProps,
     templateConfig?: TemplateConfig
   ) => React.ReactNode;
-};
+}

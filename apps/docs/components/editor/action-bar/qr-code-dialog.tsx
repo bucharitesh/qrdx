@@ -14,10 +14,10 @@ import {
   ScrollBar,
 } from "@repo/design-system/components/ui/scroll-area";
 import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock";
-import { Icons } from "@/components/icons";
 import type { ColorConfig } from "qrdx/types";
 import { normalizeColorConfig } from "qrdx/types";
 import { useMemo, useState } from "react";
+import { Icons } from "@/components/icons";
 import { useQREditorStore } from "@/store/editor-store";
 
 interface QRCodeDialogProps {

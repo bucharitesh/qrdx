@@ -1,5 +1,5 @@
-/** biome-ignore-all lint/suspicious/noArrayIndexKey: <explanation> */
-/** biome-ignore-all lint/suspicious/useIterableCallbackReturn: <explanation> */
+/** biome-ignore-all lint/suspicious/noArrayIndexKey: false positive */
+/** biome-ignore-all lint/suspicious/useIterableCallbackReturn: false positive */
 import type { JSONContent } from "@tiptap/react";
 import { useQREditorStore } from "@/store/editor-store";
 import { useThemePresetStore } from "@/store/theme-preset-store";

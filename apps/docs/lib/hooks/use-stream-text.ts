@@ -64,7 +64,7 @@ export function useStreamText({ speed = 5 }: UseStreamTextProps = {}) {
       }
       isAnimatingRef.current = false;
     };
-  }, [parts]);
+  }, [parts, speed]);
 
   return { stream, addPart, reset };
 }

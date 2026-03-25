@@ -23,7 +23,7 @@ interface TooltipWrapperProps {
 export function TooltipWrapper({
   label,
   children,
-  asChild,
+  asChild = true,
   side = "bottom",
   align = "center",
   kbd,
@@ -53,7 +53,7 @@ export function TooltipWrapper({
 
   return (
     <Tooltip delayDuration={delayDuration}>
-      <TooltipTrigger asChild>
+      <TooltipTrigger asChild={asChild}>
         <span className="inline-flex">{children}</span>
       </TooltipTrigger>
       <TooltipContent side={side} align={align} className={contentClassName}>

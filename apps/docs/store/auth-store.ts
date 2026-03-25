@@ -1,4 +1,4 @@
-/** biome-ignore-all lint/suspicious/noExplicitAny: <explanation> */
+/** biome-ignore-all lint/suspicious/noExplicitAny: false positive */
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type {

@@ -322,7 +322,6 @@ function generateGradientId(prefix: string): string {
 }
 
 // Helper to calculate gradient coordinates for a corner based on corner position
-/** biome-ignore lint: Function needs multiple parameters for corner-specific gradients */
 function calculateCornerGradientCoordinates(
   angle: number,
   cornerX: number,
@@ -369,7 +368,6 @@ function calculateCornerGradientCoordinates(
 }
 
 // Generate gradient definition elements for corners
-// biome-ignore lint: Function needs multiple parameters for corner-specific gradients
 function generateCornerGradientDef(
   colorConfig: ColorConfig,
   cornerX: number,
@@ -938,8 +936,8 @@ export function QRCodeSVG(props: QRPropsSVG) {
       {/* Top-left corner square */}
       <g fill={topLeftEyeFillValue}>
         <path
-          fillRule="evenodd"
           d={topLeftEye}
+          fillRule="evenodd"
           transform={`rotate(0,${topLeftX + cornerSize / 2},${topLeftY + cornerSize / 2})`}
         />
       </g>
@@ -950,8 +948,8 @@ export function QRCodeSVG(props: QRPropsSVG) {
       {/* Top-right corner square */}
       <g fill={topRightEyeFillValue}>
         <path
-          fillRule="evenodd"
           d={topRightEye}
+          fillRule="evenodd"
           transform={`rotate(0,${topRightX + cornerSize / 2},${topRightY + cornerSize / 2})`}
         />
       </g>
@@ -962,8 +960,8 @@ export function QRCodeSVG(props: QRPropsSVG) {
       {/* Bottom-left corner square */}
       <g fill={bottomLeftEyeFillValue}>
         <path
-          fillRule="evenodd"
           d={bottomLeftEye}
+          fillRule="evenodd"
           transform={`rotate(0,${bottomLeftX + cornerSize / 2},${bottomLeftY + cornerSize / 2})`}
         />
       </g>
@@ -1036,13 +1034,13 @@ export function QRCodeSVG(props: QRPropsSVG) {
           {/* Top-left corner square */}
           <g fill={topLeftEyeFillValue}>
             <path
-              fillRule="evenodd"
               d={generateCornerSquarePath(
                 topLeftX,
                 topLeftY,
                 cornerSize,
                 cornerEyePattern
               )}
+              fillRule="evenodd"
               transform={`rotate(0,${topLeftX + cornerSize / 2},${topLeftY + cornerSize / 2})`}
             />
           </g>
@@ -1060,13 +1058,13 @@ export function QRCodeSVG(props: QRPropsSVG) {
           {/* Top-right corner square */}
           <g fill={topRightEyeFillValue}>
             <path
-              fillRule="evenodd"
               d={generateCornerSquarePath(
                 topRightX,
                 topRightY,
                 cornerSize,
                 cornerEyePattern
               )}
+              fillRule="evenodd"
               transform={`rotate(0,${topRightX + cornerSize / 2},${topRightY + cornerSize / 2})`}
             />
           </g>
@@ -1084,13 +1082,13 @@ export function QRCodeSVG(props: QRPropsSVG) {
           {/* Bottom-left corner square */}
           <g fill={bottomLeftEyeFillValue}>
             <path
-              fillRule="evenodd"
               d={generateCornerSquarePath(
                 bottomLeftX,
                 bottomLeftY,
                 cornerSize,
                 cornerEyePattern
               )}
+              fillRule="evenodd"
               transform={`rotate(0,${bottomLeftX + cornerSize / 2},${bottomLeftY + cornerSize / 2})`}
             />
           </g>

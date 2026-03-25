@@ -33,7 +33,7 @@ function PreviewRenderer({ preview }: { preview: string }): ReactNode {
 
 export const revalidate = false;
 
-const generator = createGenerator();
+const _generator = createGenerator();
 
 export default async function Page(props: PageProps<"/docs/[[...slug]]">) {
   const params = await props.params;

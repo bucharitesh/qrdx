@@ -1,4 +1,4 @@
-/** biome-ignore-all lint/style/noParameterProperties: <explanation> */
+/** biome-ignore-all lint/style/noParameterProperties: false positive */
 import type { DubLink, DubWorkspace } from "./types";
 
 /**

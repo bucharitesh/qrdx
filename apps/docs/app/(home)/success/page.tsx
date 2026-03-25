@@ -1,6 +1,6 @@
 import { Button } from "@repo/design-system/components/ui/button";
-import { Icons } from "@/components/icons";
 import Link from "next/link";
+import { Icons } from "@/components/icons";
 
 export default function SuccessPage() {
   return (

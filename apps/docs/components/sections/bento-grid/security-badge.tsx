@@ -1,8 +1,8 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Icons } from "@/components/icons";
 import { useEffect, useState } from "react";
+import { Icons } from "@/components/icons";
 
 export function SecurityBadge() {
   const [shields, setShields] = useState([

@@ -1,8 +1,8 @@
 "use client";
 
+import { cn } from "@repo/design-system/lib/utils";
 import type { ReactNode } from "react";
 import { useEffect, useState } from "react";
-import { cn } from "@repo/design-system/lib/utils";
 
 interface TocItem {
   title: ReactNode;

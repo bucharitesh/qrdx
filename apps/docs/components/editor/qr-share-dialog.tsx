@@ -10,8 +10,8 @@ import {
   ResponsiveDialogHeader,
   ResponsiveDialogTitle,
 } from "@repo/design-system/components/ui/revola";
-import { Icons } from "@/components/icons";
 import { useState } from "react";
+import { Icons } from "@/components/icons";
 
 interface QRShareDialogProps {
   open: boolean;
@@ -28,7 +28,7 @@ export function QRShareDialog({ open, onOpenChange, url }: QRShareDialogProps) {
       setCopied(true);
       toast.success("Share link copied to clipboard");
       setTimeout(() => setCopied(false), 2000);
-    } catch (error) {
+    } catch (_error) {
       toast.error("Failed to copy link");
     }
   };

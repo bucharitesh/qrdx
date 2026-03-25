@@ -1,4 +1,4 @@
-/** biome-ignore-all lint/a11y/noStaticElementInteractions: <explanation> */
+/** biome-ignore-all lint/a11y/noStaticElementInteractions: false positive */
 "use client";
 
 import { Button } from "@repo/design-system/components/ui/button";

@@ -4,6 +4,7 @@ import type { UserSettings } from "@repo/database/schema";
 import {
   createContext,
   type ReactNode,
+  useCallback,
   useContext,
   useEffect,
   useState,
@@ -26,7 +27,7 @@ export function UserSettingsProvider({ children }: { children: ReactNode }) {
   const [settings, setSettings] = useState<UserSettings | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  const refreshSettings = async () => {
+  const refreshSettings = useCallback(async () => {
     try {
       const userSettings = await getUserSettings();
       setSettings(userSettings);
@@ -35,11 +36,11 @@ export function UserSettingsProvider({ children }: { children: ReactNode }) {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     refreshSettings();
-  }, []);
+  }, [refreshSettings]);
 
   return (
     <UserSettingsContext.Provider

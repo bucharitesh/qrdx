@@ -1,4 +1,6 @@
-/** biome-ignore-all lint/suspicious/noArrayIndexKey: <explanation> */
+/** biome-ignore-all lint/suspicious/noArrayIndexKey: false positive */
+
+import { authClient } from "@repo/auth/client";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Separator } from "@repo/design-system/components/ui/separator";
 import {
@@ -10,7 +12,6 @@ import { cn } from "@repo/design-system/lib/utils";
 import { Blend, PaintRoller, WandSparkles } from "lucide-react";
 import { type ComponentProps, Fragment } from "react";
 import { HorizontalScrollArea } from "@/components/horizontal-scroll-area";
-import { authClient } from "@repo/auth/client";
 import type { AIPromptData } from "@/types/ai";
 import {
   createCurrentThemePrompt,

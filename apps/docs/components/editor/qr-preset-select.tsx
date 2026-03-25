@@ -24,7 +24,7 @@ import {
   TooltipTrigger,
 } from "@repo/design-system/components/ui/tooltip";
 import { cn } from "@repo/design-system/lib/utils";
-import { Check, ChevronDown, Heart, Search, Settings } from "lucide-react";
+import { Check, Heart, Settings } from "lucide-react";
 import Link from "next/link";
 import { type ColorConfig, getColorString } from "qrdx";
 import type React from "react";

@@ -1,6 +1,103 @@
-import { 
-  ArrowLeft, ArrowRight, MoreVertical, ArrowUp, CheckCircle, Copy, ExternalLink, ImageIcon, Loader2, Sparkles, StopCircle, TerminalSquareIcon, Trash2, X, Zap, Search, ArrowUpDown, CreditCard, ChartNoAxesCombined, Settings, Plug, Palette, Check, XCircle, AlertCircle, Plus, Home, Menu,
-  Lock, Keyboard, Gem, Shuffle, MessageCircle, ImagePlus, Redo, Undo, Heart, RefreshCw, Braces, Moon, Sun, ChevronDown, ChevronUp, Blend, PaintRoller, WandSparkles, ChevronLeft, ChevronRight, Loader, BookLock, LogOut, Play, XIcon, Globe, Sparkle, Code2, Download, FileCode, Crown, Star, ThumbsDown, ThumbsUp, Eye, Sliders, PenLine, Calendar, AlertTriangle, ChevronsUpDown, Edit, Upload, Bug, CopyCheck, ArrowDown as ArrowDownIcon, CheckIcon, CopyIcon, AtSign, Bitcoin, Camera, ClipboardCheck, DollarSign, FileText, Hexagon, Image, Instagram, Link, Link2, Linkedin, Mail, MapPin, MessageSquare, Music, Phone, Share2, ShoppingBag, ShoppingCart, Store, Twitter, UserCircle, Video, Wifi, Wrench, Youtube
+import {
+  AlertCircle,
+  AlertTriangle,
+  ArrowDown as ArrowDownIcon,
+  ArrowLeft,
+  ArrowRight,
+  ArrowUp,
+  ArrowUpDown,
+  AtSign,
+  Bitcoin,
+  Blend,
+  BookLock,
+  Braces,
+  Bug,
+  Calendar,
+  Camera,
+  ChartNoAxesCombined,
+  Check,
+  CheckCircle,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  ChevronsUpDown,
+  ChevronUp,
+  ClipboardCheck,
+  Code2,
+  Copy,
+  CopyCheck,
+  CreditCard,
+  Crown,
+  DollarSign,
+  Download,
+  Edit,
+  ExternalLink,
+  Eye,
+  FileCode,
+  FileText,
+  Gem,
+  Globe,
+  Heart,
+  Hexagon,
+  Home,
+  Image,
+  ImageIcon,
+  ImagePlus,
+  Instagram,
+  Keyboard,
+  Link,
+  Link2,
+  Linkedin,
+  Loader2,
+  Lock,
+  LogOut,
+  Mail,
+  MapPin,
+  Menu,
+  MessageCircle,
+  MessageSquare,
+  Moon,
+  MoreVertical,
+  Music,
+  PaintRoller,
+  Palette,
+  PenLine,
+  Phone,
+  Play,
+  Plug,
+  Plus,
+  Redo,
+  RefreshCw,
+  Search,
+  Settings,
+  Share2,
+  ShoppingBag,
+  ShoppingCart,
+  Shuffle,
+  Sliders,
+  Sparkle,
+  Sparkles,
+  Star,
+  StopCircle,
+  Store,
+  Sun,
+  TerminalSquareIcon,
+  ThumbsDown,
+  ThumbsUp,
+  Trash2,
+  Twitter,
+  Undo,
+  Upload,
+  UserCircle,
+  Video,
+  WandSparkles,
+  Wifi,
+  Wrench,
+  X,
+  XCircle,
+  XIcon,
+  Youtube,
+  Zap,
 } from "lucide-react";
 
 type IconProps = React.HTMLAttributes<SVGElement>;
@@ -8,7 +105,10 @@ type IconProps = React.HTMLAttributes<SVGElement>;
 export const Icons = {
   logo: (props: IconProps) => (
     <svg viewBox="0 0 256 256" {...props}>
-      <path d="M0 49.78C0 22.285 22.285 0 49.78 0H76.285C84.14 0 90.505 6.37 90.505 14.22C90.505 22.07 84.135 28.44 76.285 28.44H49.78C38 28.44 28.445 37.99 28.445 49.775V76.28C28.445 84.135 22.075 90.5 14.225 90.5C6.375 90.5 0 84.14 0 76.285V49.78ZM165.495 14.22C165.495 6.37 171.865 0 179.715 0H206.22C233.715 0 256 22.285 256 49.78V76.285C256 84.14 249.635 90.505 241.78 90.505C233.925 90.505 227.56 84.135 227.56 76.285V49.78C227.56 38 218.01 28.445 206.225 28.445H179.72C171.865 28.445 165.495 22.075 165.495 14.22ZM14.22 165.495C22.075 165.495 28.44 171.86 28.44 179.715V206.22C28.44 218 37.99 227.555 49.775 227.555H76.28C84.135 227.555 90.5 233.925 90.5 241.775C90.5 249.63 84.13 255.995 76.28 255.995H49.78C22.285 256 0 233.715 0 206.22V179.715C0 171.865 6.37 165.495 14.22 165.495ZM241.78 165.495C249.635 165.495 256 171.86 256 179.715V206.22C256 233.71 233.715 256 206.22 256H179.715C171.86 256 165.495 249.635 165.495 241.78C165.495 233.925 171.865 227.56 179.715 227.56H206.22C218 227.56 227.555 218.01 227.555 206.225V179.72C227.555 171.865 233.925 165.495 241.78 165.495ZM99.555 56.89H56.89V99.555H99.555V156.445H56.89V199.11H99.555V156.445H156.445V199.11H199.11V156.445H156.445V99.555H199.11V56.89H156.445V99.555H99.555V56.89Z" fill="currentColor"/>
+      <path
+        d="M0 49.78C0 22.285 22.285 0 49.78 0H76.285C84.14 0 90.505 6.37 90.505 14.22C90.505 22.07 84.135 28.44 76.285 28.44H49.78C38 28.44 28.445 37.99 28.445 49.775V76.28C28.445 84.135 22.075 90.5 14.225 90.5C6.375 90.5 0 84.14 0 76.285V49.78ZM165.495 14.22C165.495 6.37 171.865 0 179.715 0H206.22C233.715 0 256 22.285 256 49.78V76.285C256 84.14 249.635 90.505 241.78 90.505C233.925 90.505 227.56 84.135 227.56 76.285V49.78C227.56 38 218.01 28.445 206.225 28.445H179.72C171.865 28.445 165.495 22.075 165.495 14.22ZM14.22 165.495C22.075 165.495 28.44 171.86 28.44 179.715V206.22C28.44 218 37.99 227.555 49.775 227.555H76.28C84.135 227.555 90.5 233.925 90.5 241.775C90.5 249.63 84.13 255.995 76.28 255.995H49.78C22.285 256 0 233.715 0 206.22V179.715C0 171.865 6.37 165.495 14.22 165.495ZM241.78 165.495C249.635 165.495 256 171.86 256 179.715V206.22C256 233.71 233.715 256 206.22 256H179.715C171.86 256 165.495 249.635 165.495 241.78C165.495 233.925 171.865 227.56 179.715 227.56H206.22C218 227.56 227.555 218.01 227.555 206.225V179.72C227.555 171.865 233.925 165.495 241.78 165.495ZM99.555 56.89H56.89V99.555H99.555V156.445H56.89V199.11H99.555V156.445H156.445V199.11H199.11V156.445H156.445V99.555H199.11V56.89H156.445V99.555H99.555V56.89Z"
+        fill="currentColor"
+      />
     </svg>
   ),
   pnpm: (props: IconProps) => (
@@ -183,13 +283,34 @@ export const Icons = {
   ),
   santa: (props: IconProps) => (
     <svg viewBox="0 0 456 456" fill="none" {...props}>
-      <path d="M410.146 308.522C408.413 318.926 407.808 340.344 405.334 349.152C403.397 356.052 401.506 361.882 399.382 367.068C389.309 391.651 355.339 388.87 334.894 371.906C285.444 330.878 198.813 272.935 130.782 276.478C86.4127 276.478 66.8258 294.137 35.3928 293.249C11.0994 292.562 10.0723 268.085 10.0723 257.407C10.0723 220.257 37.2022 166.645 57.5035 135.357C64.0889 125.208 74.9155 118.636 87.0048 118.167C136.07 116.263 207.941 131.501 241.32 145.335C284.698 163.306 419.381 120.344 433.57 196.269C436.846 213.798 414.905 279.972 410.146 308.522Z" fill="black"/>
-      <path d="M337.392 361.817C347.153 387.511 329.427 424.514 303.66 434.304C277.894 444.093 239.332 418.015 229.571 392.321C219.81 366.629 234.521 342.432 260.287 332.642C286.054 322.853 327.631 336.122 337.392 361.817Z" fill="black"/>
-      <path d="M387.561 321.034C387.561 332.734 386.803 341.134 384.609 348.113C376.915 372.586 341.39 367.935 321.792 351.379C275.316 312.125 194.403 255.492 131.335 258.619C90.0289 258.619 63.9836 279.711 34.7209 278.923C12.1047 278.314 12.2979 263.88 12.2979 254.419C12.2979 221.686 39.4961 166.761 59.1051 136.369C65.5189 126.428 76.1813 120.191 88.0025 119.729C134.32 117.923 203.329 130.208 234.24 142.402C283.949 162.005 387.561 253.368 387.561 321.034Z" fill="white"/>
-      <path d="M373.968 290.743C376.61 290.743 379.205 290.942 381.749 291.235C385.438 301.464 387.562 311.47 387.562 321.024C387.562 332.724 386.803 341.138 384.61 348.118C376.913 372.586 341.395 367.927 321.797 351.374C320.285 350.098 318.718 348.821 317.134 347.508C316.654 344.966 316.358 342.36 316.358 339.703C316.366 312.667 342.156 290.743 373.968 290.743Z" fill="white"/>
-      <path d="M431.566 197.756C431.566 272.412 411.422 259.517 386.174 310.022C376.114 261.538 364.013 322.15 301.313 363.41C284.283 374.616 286.553 373.954 275.69 363.41C275.69 314.885 261.878 194.638 243.737 169.474C222.526 140.047 136.204 119.916 88.8457 119.916C129.22 48.3362 128.34 3.82115 164.703 3.82031C213.218 3.82031 253.445 87.4433 313.385 108.868C383.451 133.912 431.566 157.521 431.566 197.756Z" fill="#D8001B"/>
-      <path d="M312.953 360.943C321.123 382.447 312.13 411.279 290.628 419.448C269.124 427.618 243.255 412.027 235.087 390.526C226.918 369.024 239.179 348.792 260.681 340.625C282.185 332.455 304.786 339.442 312.953 360.943Z" fill="white"/>
-      <path d="M431.45 194.704C431.51 195.709 431.566 196.725 431.566 197.751C431.566 272.407 411.415 259.512 386.167 310.018C382.133 290.578 377.815 288.715 369.996 296.071C386.345 274.8 422.134 248.131 430.956 194.681C431.122 194.681 431.285 194.699 431.45 194.704Z" fill="black"/>
+      <path
+        d="M410.146 308.522C408.413 318.926 407.808 340.344 405.334 349.152C403.397 356.052 401.506 361.882 399.382 367.068C389.309 391.651 355.339 388.87 334.894 371.906C285.444 330.878 198.813 272.935 130.782 276.478C86.4127 276.478 66.8258 294.137 35.3928 293.249C11.0994 292.562 10.0723 268.085 10.0723 257.407C10.0723 220.257 37.2022 166.645 57.5035 135.357C64.0889 125.208 74.9155 118.636 87.0048 118.167C136.07 116.263 207.941 131.501 241.32 145.335C284.698 163.306 419.381 120.344 433.57 196.269C436.846 213.798 414.905 279.972 410.146 308.522Z"
+        fill="black"
+      />
+      <path
+        d="M337.392 361.817C347.153 387.511 329.427 424.514 303.66 434.304C277.894 444.093 239.332 418.015 229.571 392.321C219.81 366.629 234.521 342.432 260.287 332.642C286.054 322.853 327.631 336.122 337.392 361.817Z"
+        fill="black"
+      />
+      <path
+        d="M387.561 321.034C387.561 332.734 386.803 341.134 384.609 348.113C376.915 372.586 341.39 367.935 321.792 351.379C275.316 312.125 194.403 255.492 131.335 258.619C90.0289 258.619 63.9836 279.711 34.7209 278.923C12.1047 278.314 12.2979 263.88 12.2979 254.419C12.2979 221.686 39.4961 166.761 59.1051 136.369C65.5189 126.428 76.1813 120.191 88.0025 119.729C134.32 117.923 203.329 130.208 234.24 142.402C283.949 162.005 387.561 253.368 387.561 321.034Z"
+        fill="white"
+      />
+      <path
+        d="M373.968 290.743C376.61 290.743 379.205 290.942 381.749 291.235C385.438 301.464 387.562 311.47 387.562 321.024C387.562 332.724 386.803 341.138 384.61 348.118C376.913 372.586 341.395 367.927 321.797 351.374C320.285 350.098 318.718 348.821 317.134 347.508C316.654 344.966 316.358 342.36 316.358 339.703C316.366 312.667 342.156 290.743 373.968 290.743Z"
+        fill="white"
+      />
+      <path
+        d="M431.566 197.756C431.566 272.412 411.422 259.517 386.174 310.022C376.114 261.538 364.013 322.15 301.313 363.41C284.283 374.616 286.553 373.954 275.69 363.41C275.69 314.885 261.878 194.638 243.737 169.474C222.526 140.047 136.204 119.916 88.8457 119.916C129.22 48.3362 128.34 3.82115 164.703 3.82031C213.218 3.82031 253.445 87.4433 313.385 108.868C383.451 133.912 431.566 157.521 431.566 197.756Z"
+        fill="#D8001B"
+      />
+      <path
+        d="M312.953 360.943C321.123 382.447 312.13 411.279 290.628 419.448C269.124 427.618 243.255 412.027 235.087 390.526C226.918 369.024 239.179 348.792 260.681 340.625C282.185 332.455 304.786 339.442 312.953 360.943Z"
+        fill="white"
+      />
+      <path
+        d="M431.45 194.704C431.51 195.709 431.566 196.725 431.566 197.751C431.566 272.407 411.415 259.512 386.167 310.018C382.133 290.578 377.815 288.715 369.996 296.071C386.345 274.8 422.134 248.131 430.956 194.681C431.122 194.681 431.285 194.699 431.45 194.704Z"
+        fill="black"
+      />
     </svg>
   ),
 
@@ -375,12 +496,7 @@ export const Icons = {
           />
           <feOffset dy="1" />
           <feGaussianBlur stdDeviation="1" />
-          <feComposite
-            in2="hardAlpha"
-            operator="arithmetic"
-            k2="-1"
-            k3="1"
-          />
+          <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
           <feColorMatrix
             type="matrix"
             values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"
@@ -398,12 +514,7 @@ export const Icons = {
           />
           <feOffset dy="3" />
           <feGaussianBlur stdDeviation="1.5" />
-          <feComposite
-            in2="hardAlpha"
-            operator="arithmetic"
-            k2="-1"
-            k3="1"
-          />
+          <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
           <feColorMatrix
             type="matrix"
             values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.09 0"
@@ -421,12 +532,7 @@ export const Icons = {
           />
           <feOffset dy="8" />
           <feGaussianBlur stdDeviation="2.5" />
-          <feComposite
-            in2="hardAlpha"
-            operator="arithmetic"
-            k2="-1"
-            k3="1"
-          />
+          <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
           <feColorMatrix
             type="matrix"
             values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.05 0"
@@ -444,12 +550,7 @@ export const Icons = {
           />
           <feOffset dy="14" />
           <feGaussianBlur stdDeviation="3" />
-          <feComposite
-            in2="hardAlpha"
-            operator="arithmetic"
-            k2="-1"
-            k3="1"
-          />
+          <feComposite in2="hardAlpha" operator="arithmetic" k2="-1" k3="1" />
           <feColorMatrix
             type="matrix"
             values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.01 0"
@@ -466,17 +567,17 @@ export const Icons = {
   ArrowRight,
   ArrowLeft,
   X,
-  Loader:Loader2,
+  Loader: Loader2,
   ArrowUp,
   StopCircle,
-  Sparkles, 
+  Sparkles,
   ImageIcon,
   Check,
   CheckCircle,
   MoreVertical,
   Copy,
   ExternalLink,
-  Trash:Trash2,
+  Trash: Trash2,
   Zap,
   ArrowUpDown,
   Search,
@@ -563,7 +664,6 @@ export const Icons = {
   Wrench,
   Youtube,
 };
-
 
 export function getIconForPackageManager(manager: string) {
   switch (manager) {

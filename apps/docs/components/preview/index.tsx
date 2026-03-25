@@ -7,8 +7,8 @@ import { Heading } from "fumadocs-ui/components/heading";
 import { Step, Steps } from "fumadocs-ui/components/steps";
 import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 import { TypeTable } from "fumadocs-ui/components/type-table";
-import { Icons } from "@/components/icons";
 import type { ReactNode } from "react";
+import { Icons } from "@/components/icons";
 import {
   Banner,
   File,

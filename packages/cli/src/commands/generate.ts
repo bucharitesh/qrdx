@@ -60,9 +60,7 @@ function parseColorFlag(value: string): ColorConfig {
 const isCI = process.env.CI === "true";
 /** Clack needs stdin+stdout TTY; `npx` often leaves stdin non-TTY in a real terminal. */
 const canUseClack =
-  process.stdin.isTTY === true &&
-  process.stdout.isTTY === true &&
-  !isCI;
+  process.stdin.isTTY === true && process.stdout.isTTY === true && !isCI;
 
 function readLineFromTTY(question: string): Promise<string | undefined> {
   if (process.platform === "win32") {
@@ -181,7 +179,7 @@ function isCancel(value: unknown): boolean {
 function handleCancel(): never {
   p.cancel("Cancelled.");
   console.error(
-    `${DIM}Tip:${RESET} ${TEXT}qrdx generate "https://…" -o qr.svg${RESET} — local dev: ${TEXT}pnpm qrdx -- generate …${RESET}`,
+    `${DIM}Tip:${RESET} ${TEXT}qrdx generate "https://…" -o qr.svg${RESET} — local dev: ${TEXT}pnpm qrdx -- generate …${RESET}`
   );
   process.exit(0);
 }
@@ -241,7 +239,7 @@ export async function runGenerate(args: string[]): Promise<void> {
           !isCI;
         if (instant) {
           const line = await readLineFromTTY(
-            `${TEXT}URL or text to encode${RESET} ${DIM}(e.g. https://qrdx.dev)${RESET}: `,
+            `${TEXT}URL or text to encode${RESET} ${DIM}(e.g. https://qrdx.dev)${RESET}: `
           );
           if (line?.trim()) {
             value = line.trim();
@@ -256,7 +254,7 @@ export async function runGenerate(args: string[]): Promise<void> {
       }
     } else if (process.stdout.isTTY && !isCI) {
       const line = await readLineFromTTY(
-        `${TEXT}URL or text to encode${RESET} ${DIM}(e.g. https://qrdx.dev)${RESET}: `,
+        `${TEXT}URL or text to encode${RESET} ${DIM}(e.g. https://qrdx.dev)${RESET}: `
       );
       if (line?.trim()) {
         value = line.trim();
@@ -264,7 +262,7 @@ export async function runGenerate(args: string[]): Promise<void> {
     }
     if (!value) {
       console.error(
-        "No data to encode. Example: npx @qrdx/cli generate \"https://example.com\" -o qr.svg",
+        'No data to encode. Example: npx @qrdx/cli generate "https://example.com" -o qr.svg'
       );
       process.exit(1);
     }
@@ -292,7 +290,7 @@ export async function runGenerate(args: string[]): Promise<void> {
       outputPath = (pathRes as string) || "qr.svg";
     } else if (process.stdout.isTTY && !isCI) {
       const pathAns = await readLineFromTTY(
-        `Output file ${DIM}(.svg or .png, Enter = qr.svg)${RESET}: `,
+        `Output file ${DIM}(.svg or .png, Enter = qr.svg)${RESET}: `
       );
       outputPath = pathAns?.trim() || "qr.svg";
     } else {

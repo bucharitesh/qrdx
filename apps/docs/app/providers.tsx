@@ -1,7 +1,6 @@
 "use client";
 
 import { DesignSystemProvider } from "@repo/design-system";
-import { RootProvider } from "fumadocs-ui/provider/base";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { type ReactNode, Suspense } from "react";
 import { AuthDialogWrapper } from "@/components/auth-dialog-wrapper";

@@ -28,7 +28,7 @@ export function TwitterForm() {
     ) {
       setTwitterData({ username: storedConfig.username });
     }
-  }, [storedConfig]);
+  }, [storedConfig, twitterData.username]);
 
   React.useEffect(() => {
     const config: TwitterContent = { type: "twitter", ...twitterData };

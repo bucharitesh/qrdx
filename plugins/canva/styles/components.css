@@ -1,0 +1,95 @@
+/* Scroll container — standard Canva starter kit pattern */
+.scrollContainer {
+  box-sizing: border-box;
+  overflow-y: scroll;
+  height: 100%;
+  padding-top: var(--ui-kit-space-200);
+  padding-right: var(--ui-kit-space-200);
+  padding-bottom: var(--ui-kit-space-200);
+
+  /* firefox */
+  scrollbar-width: thin;
+  scrollbar-color: var(--ui-kit-color-content-placeholder-fg) transparent;
+}
+
+.scrollContainer::-webkit-scrollbar {
+  position: absolute;
+  width: var(--ui-kit-base-unit);
+  height: 0;
+}
+
+.scrollContainer::-webkit-scrollbar-track {
+  background: transparent;
+  width: var(--ui-kit-base-unit);
+  margin-top: var(--ui-kit-space-100);
+  margin-bottom: var(--ui-kit-space-100);
+}
+
+.scrollContainer::-webkit-scrollbar-thumb {
+  border-radius: var(--ui-kit-radius-element-standard);
+  background: var(--ui-kit-color-content-placeholder-fg);
+  visibility: hidden;
+}
+
+.scrollContainer:hover::-webkit-scrollbar-thumb,
+.scrollContainer:focus::-webkit-scrollbar-thumb,
+.scrollContainer:focus-within::-webkit-scrollbar-thumb {
+  visibility: visible;
+}
+
+/* QR code preview container */
+.previewContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  aspect-ratio: 1;
+  background-color: var(--ui-kit-color-surface-default-default);
+  border-radius: var(--ui-kit-radius-element-standard);
+  border: 1px solid var(--ui-kit-color-border-default);
+  overflow: hidden;
+}
+
+.previewImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.previewEmpty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  aspect-ratio: 1;
+  background-color: var(--ui-kit-color-surface-default-default);
+  border-radius: var(--ui-kit-radius-element-standard);
+  border: 1px solid var(--ui-kit-color-border-default);
+}
+
+/* Color picker row */
+.colorRow {
+  display: flex;
+  align-items: center;
+  gap: var(--ui-kit-space-100);
+}
+
+.colorInput {
+  width: 36px;
+  height: 28px;
+  padding: 2px;
+  border: 1px solid var(--ui-kit-color-border-default);
+  border-radius: var(--ui-kit-radius-element-standard);
+  background: none;
+  cursor: pointer;
+}
+
+.colorInput::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.colorInput::-webkit-color-swatch {
+  border: none;
+  border-radius: calc(var(--ui-kit-radius-element-standard) - 2px);
+}

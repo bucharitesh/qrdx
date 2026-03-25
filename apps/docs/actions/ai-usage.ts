@@ -200,7 +200,7 @@ export async function getMyUsageChartData(
     for (let i = days - 1; i >= 0; i--) {
       const daysSince = getDaysSinceEpoch(i);
       const dayEvents = events.filter(
-        (e) => parseInt(e.daysSinceEpoch) === daysSince,
+        (e) => parseInt(e.daysSinceEpoch, 10) === daysSince,
       );
 
       const totalRequests = dayEvents.length;
@@ -257,11 +257,11 @@ export async function getDetailedUsageStats(
 
     const requests = events.length;
     const promptTokens = events.reduce(
-      (sum, e) => sum + parseInt(e.promptTokens),
+      (sum, e) => sum + parseInt(e.promptTokens, 10),
       0,
     );
     const completionTokens = events.reduce(
-      (sum, e) => sum + parseInt(e.completionTokens),
+      (sum, e) => sum + parseInt(e.completionTokens, 10),
       0,
     );
     const totalTokens = promptTokens + completionTokens;

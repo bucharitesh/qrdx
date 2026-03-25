@@ -27,7 +27,7 @@ export function AmazonForm() {
     ) {
       setAmazonData({ productUrl: storedConfig.productUrl });
     }
-  }, [storedConfig]);
+  }, [storedConfig, amazonData.productUrl]);
 
   React.useEffect(() => {
     // Validate and encode

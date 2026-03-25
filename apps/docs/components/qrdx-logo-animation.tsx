@@ -1,10 +1,10 @@
 /** biome-ignore-all lint/a11y/noSvgWithoutTitle: false positive */
 "use client";
 
+import { cn } from "@repo/design-system/lib/utils";
 import { AnimatePresence, motion } from "motion/react";
 import React from "react";
 import { Icons } from "./icons";
-import { cn } from "@repo/design-system/lib/utils";
 
 interface QrdxLogoAnimationProps {
   size?: number;
@@ -68,12 +68,20 @@ export const QrdxLogoAnimation: React.FC<QrdxLogoAnimationProps> = ({
 
   return (
     <div className={cn("relative mr-2", className)}>
-      {season === "christmas" && <div className="z-1 relative">
-        <Icons.santa 
-          className="absolute"
-          style={{ top: size * -0.3, left: size * 0.35, width: size * 0.7, height: size * 0.7, rotate: "20deg" }}
-        />
-      </div>}
+      {season === "christmas" && (
+        <div className="z-1 relative">
+          <Icons.santa
+            className="absolute"
+            style={{
+              top: size * -0.3,
+              left: size * 0.35,
+              width: size * 0.7,
+              height: size * 0.7,
+              rotate: "20deg",
+            }}
+          />
+        </div>
+      )}
       <motion.svg
         width={size}
         height={size}

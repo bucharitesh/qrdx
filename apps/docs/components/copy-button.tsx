@@ -2,8 +2,8 @@
 
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
-import { Icons } from "@/components/icons";
 import type { ComponentProps } from "react";
+import { Icons } from "@/components/icons";
 import { useCopyToClipboard } from "@/lib/hooks/use-copy-clipboard";
 import { TooltipWrapper } from "./tooltip-wrapper";
 

@@ -1,4 +1,4 @@
-/** biome-ignore-all lint/suspicious/noArrayIndexKey: <explanation> */
+/** biome-ignore-all lint/suspicious/noArrayIndexKey: false positive */
 "use client";
 
 import { Button } from "@repo/design-system/components/ui/button";
@@ -11,9 +11,9 @@ import {
   ResponsiveDialogTitle,
 } from "@repo/design-system/components/ui/revola";
 import { cn } from "@repo/design-system/lib/utils";
-import { Icons } from "@/components/icons";
 import Link from "next/link";
 import { QRCodeSVG } from "qrdx";
+import { Icons } from "@/components/icons";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 import { PRO_SUB_FEATURES } from "@/utils/subscription";
 import { NoiseEffect } from "./effects/noise-effect";

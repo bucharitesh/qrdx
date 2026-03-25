@@ -2,9 +2,9 @@
 
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
-import { Icons } from "@/components/icons";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
+import { Icons } from "@/components/icons";
 import { TooltipWrapper } from "./tooltip-wrapper";
 
 interface ThemeToggleProps extends React.ComponentProps<typeof Button> {}

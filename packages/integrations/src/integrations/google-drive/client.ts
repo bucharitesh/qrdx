@@ -6,9 +6,12 @@ import { IMAGE_QUERY } from "./types";
  * Provides methods to interact with the Google Drive API
  */
 export class GoogleDriveClient {
-  private baseUrl = "https://www.googleapis.com/drive/v3";
+  private readonly baseUrl = "https://www.googleapis.com/drive/v3";
+  private readonly accessToken: string;
 
-  constructor(private accessToken: string) {}
+  constructor(accessToken: string) {
+    this.accessToken = accessToken;
+  }
 
   /**
    * Make an authenticated request to the Google Drive API
@@ -41,7 +44,7 @@ export class GoogleDriveClient {
   /**
    * List files in Drive
    */
-  async listFiles(params?: {
+  listFiles(params?: {
     pageSize?: number;
     pageToken?: string;
     query?: string;
@@ -63,7 +66,7 @@ export class GoogleDriveClient {
   /**
    * List only image files
    */
-  async listImageFiles(params?: {
+  listImageFiles(params?: {
     pageSize?: number;
     pageToken?: string;
     orderBy?: string;
@@ -77,7 +80,7 @@ export class GoogleDriveClient {
   /**
    * Search for files
    */
-  async searchFiles(
+  searchFiles(
     searchTerm: string,
     params?: {
       pageSize?: number;
@@ -101,7 +104,7 @@ export class GoogleDriveClient {
   /**
    * Get file metadata
    */
-  async getFile(fileId: string): Promise<DriveFile> {
+  getFile(fileId: string): Promise<DriveFile> {
     const searchParams = new URLSearchParams({
       fields:
         "id, name, mimeType, thumbnailLink, webContentLink, webViewLink, iconLink, createdTime, modifiedTime, size, owners",

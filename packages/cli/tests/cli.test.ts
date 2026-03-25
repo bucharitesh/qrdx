@@ -41,7 +41,7 @@ describe("qrdx CLI", () => {
     it("matches package.json version", () => {
       const output = runCliOutput(["--version"]);
       const pkg = JSON.parse(
-        readFileSync(`${__dirname}/../package.json`, "utf-8"),
+        readFileSync(`${__dirname}/../package.json`, "utf-8")
       ) as { version: string };
       expect(output.trim()).toBe(pkg.version);
     });

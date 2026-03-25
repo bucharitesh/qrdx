@@ -4,10 +4,10 @@ import { toast } from "@repo/design-system";
 import { cn } from "@repo/design-system/lib/utils";
 import CharacterCount from "@tiptap/extension-character-count";
 import Mention from "@tiptap/extension-mention";
-import { SuggestionPluginKey } from "@tiptap/suggestion";
 import Placeholder from "@tiptap/extension-placeholder";
 import { EditorContent, type JSONContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
+import { SuggestionPluginKey } from "@tiptap/suggestion";
 import { useEffect } from "react";
 import { suggestion } from "@/components/editor/mention-suggestion";
 

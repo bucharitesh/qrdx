@@ -20,12 +20,7 @@ describe("generate command", () => {
     it("exits 0 with a value", () => {
       const out = tmp("ni-value.svg");
       cleanups.push(out);
-      const { exitCode } = runCli([
-        "generate",
-        "https://qrdx.dev",
-        "-o",
-        out,
-      ]);
+      const { exitCode } = runCli(["generate", "https://qrdx.dev", "-o", out]);
       expect(exitCode).toBe(0);
     });
 

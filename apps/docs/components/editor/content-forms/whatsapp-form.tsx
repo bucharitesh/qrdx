@@ -35,7 +35,7 @@ export function WhatsAppForm() {
         });
       }
     }
-  }, [storedConfig]);
+  }, [storedConfig, whatsappData.message, whatsappData.phoneNumber]);
 
   React.useEffect(() => {
     const config: WhatsAppContent = { type: "whatsapp", ...whatsappData };

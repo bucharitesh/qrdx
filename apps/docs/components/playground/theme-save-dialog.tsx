@@ -19,10 +19,10 @@ import {
   ResponsiveDialogHeader,
   ResponsiveDialogTitle,
 } from "@repo/design-system/components/ui/revola";
-import { Icons } from "@/components/icons";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
+import { Icons } from "@/components/icons";
 
 const formSchema = z.object({
   themeName: z.string().min(1, "Theme name cannot be empty."),

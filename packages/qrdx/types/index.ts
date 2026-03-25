@@ -1,5 +1,6 @@
 // Re-export all types from domain files
 
+export { DEFAULT_MARGIN } from "../src/constants";
 // Re-export utility functions that don't require React
 // These can be used in server contexts without "use client" directive
 export { getSolidColor } from "../src/utils/color";
@@ -34,7 +35,6 @@ export type { CornerEyePattern } from "./corner-eye";
 export { CORNER_EYE_PATTERNS, cornerEyePatternSchema } from "./corner-eye";
 export type { BodyPattern } from "./image-pattern";
 export { BODY_PATTERN, bodyPatternSchema } from "./image-pattern";
-export { DEFAULT_MARGIN } from "../src/constants";
 export type {
   ErrorLevel,
   ImageSettings,

@@ -40,22 +40,34 @@ describe("buildSVGString", () => {
   });
 
   it("respects foreground color", () => {
-    const svg = buildSVGString({ value: "https://qrdx.dev", fgColor: "#ff0000" });
+    const svg = buildSVGString({
+      value: "https://qrdx.dev",
+      fgColor: "#ff0000",
+    });
     expect(svg).toContain("#ff0000");
   });
 
   it("respects background color", () => {
-    const svg = buildSVGString({ value: "https://qrdx.dev", bgColor: "#0000ff" });
+    const svg = buildSVGString({
+      value: "https://qrdx.dev",
+      bgColor: "#0000ff",
+    });
     expect(svg).toContain("#0000ff");
   });
 
   it("accepts body pattern", () => {
-    const svg = buildSVGString({ value: "https://qrdx.dev", bodyPattern: "circle" });
+    const svg = buildSVGString({
+      value: "https://qrdx.dev",
+      bodyPattern: "circle",
+    });
     expect(svg).toMatch(/^<svg/);
   });
 
   it("accepts corner eye pattern", () => {
-    const svg = buildSVGString({ value: "https://qrdx.dev", cornerEyePattern: "gear" });
+    const svg = buildSVGString({
+      value: "https://qrdx.dev",
+      cornerEyePattern: "gear",
+    });
     expect(svg).toMatch(/^<svg/);
   });
 
@@ -72,14 +84,22 @@ describe("saveOutput – SVG", () => {
   it("writes an SVG file to disk", async () => {
     const out = tmp("save.svg");
     cleanups.push(out);
-    await saveOutput({ value: "https://qrdx.dev", outputPath: out, format: "svg" });
+    await saveOutput({
+      value: "https://qrdx.dev",
+      outputPath: out,
+      format: "svg",
+    });
     expect(existsSync(out)).toBe(true);
   });
 
   it("SVG file begins with <?xml declaration", async () => {
     const out = tmp("xmldecl.svg");
     cleanups.push(out);
-    await saveOutput({ value: "https://qrdx.dev", outputPath: out, format: "svg" });
+    await saveOutput({
+      value: "https://qrdx.dev",
+      outputPath: out,
+      format: "svg",
+    });
     const content = readFileSync(out, "utf-8");
     expect(content).toMatch(/^<\?xml/);
   });
@@ -87,7 +107,11 @@ describe("saveOutput – SVG", () => {
   it("SVG file contains <svg and </svg>", async () => {
     const out = tmp("valid.svg");
     cleanups.push(out);
-    await saveOutput({ value: "https://qrdx.dev", outputPath: out, format: "svg" });
+    await saveOutput({
+      value: "https://qrdx.dev",
+      outputPath: out,
+      format: "svg",
+    });
     const content = readFileSync(out, "utf-8");
     expect(content).toContain("<svg");
     expect(content).toContain("</svg>");
