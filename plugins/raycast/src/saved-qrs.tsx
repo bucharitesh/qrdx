@@ -100,7 +100,7 @@ function SavedQRActions({
     writeFileSync(
       outPath,
       `<?xml version="1.0" encoding="UTF-8"?>\n${svgString}`,
-      "utf-8"
+      "utf-8",
     );
     await showHUD(`SVG saved → ${outPath}`);
   }

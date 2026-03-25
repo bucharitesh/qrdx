@@ -37,12 +37,12 @@ export function generateSavedPreview(id: string, svgString: string): void {
   writeFileSync(
     svgPath,
     `<?xml version="1.0" encoding="UTF-8"?>\n${svgString}`,
-    "utf-8"
+    "utf-8",
   );
   try {
     execSync(
       `sips -s format png "${svgPath}" --out "${pngPath}" --resampleHeightWidth ${PREVIEW_SIZE} ${PREVIEW_SIZE} 2>/dev/null`,
-      { stdio: "pipe" }
+      { stdio: "pipe" },
     );
   } finally {
     try {
