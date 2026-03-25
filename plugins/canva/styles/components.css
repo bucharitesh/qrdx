@@ -72,24 +72,76 @@
 .colorRow {
   display: flex;
   align-items: center;
-  gap: var(--ui-kit-space-100);
+  gap: var(--ui-kit-space-150);
 }
 
-.colorInput {
-  width: 36px;
-  height: 28px;
-  padding: 2px;
+/* Horizontal pattern/template picker */
+.pickerLabel {
+  margin-bottom: 4px;
+}
+
+.pickerRow {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pickerScroll {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  flex: 1;
+  padding-bottom: 2px;
+}
+
+.pickerScroll::-webkit-scrollbar {
+  display: none;
+}
+
+.pickerCard {
+  flex-shrink: 0;
+  width: 76px;
+  height: 76px;
+  border-radius: var(--ui-kit-radius-element-standard);
+  border: 2px solid var(--ui-kit-color-border-default);
+  background: var(--ui-kit-color-surface-default-default);
+  cursor: pointer;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease;
+}
+
+.pickerCard:hover {
+  border-color: var(--ui-kit-color-content-primary);
+}
+
+.pickerCardSelected {
+  border-color: var(--ui-kit-color-brand, #7b5ea7);
+  border-width: 2px;
+}
+
+.pickerScrollBtn {
+  flex-shrink: 0;
+  width: 28px;
+  height: 76px;
   border: 1px solid var(--ui-kit-color-border-default);
   border-radius: var(--ui-kit-radius-element-standard);
-  background: none;
+  background: var(--ui-kit-color-surface-default-default);
   cursor: pointer;
-}
-
-.colorInput::-webkit-color-swatch-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: var(--ui-kit-color-content-secondary);
   padding: 0;
+  line-height: 1;
 }
 
-.colorInput::-webkit-color-swatch {
-  border: none;
-  border-radius: calc(var(--ui-kit-radius-element-standard) - 2px);
+.pickerScrollBtn:hover {
+  background: var(--ui-kit-color-surface-default-hover);
 }
