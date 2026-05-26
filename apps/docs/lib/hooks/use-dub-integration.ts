@@ -3,6 +3,7 @@
  */
 
 import * as React from "react";
+import { apiFetch } from "@/lib/api-fetch";
 
 interface DubLink {
   id: string;
@@ -33,14 +34,7 @@ export function useDubIntegration(): UseDubIntegrationReturn {
       setIsLoading(true);
       setError(null);
 
-      const response = await fetch("/api/integrations/dub/links");
-
-      if (response.status === 401) {
-        // Not authenticated
-        setIsConnected(false);
-        setLinks([]);
-        return;
-      }
+      const response = await apiFetch("/api/integrations/dub/links");
 
       if (response.status === 404) {
         // Dub integration not connected
