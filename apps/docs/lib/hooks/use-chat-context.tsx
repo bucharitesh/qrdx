@@ -56,15 +56,11 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       });
     },
     onData: (dataPart) => {
-      // Handle generated QR style data - apply during both streaming and ready states
-      const { type, data } = dataPart as {
-        type: string;
-        data: { status: string; qrStyle?: Record<string, unknown> };
-      };
+      if (dataPart.type !== "data-generated-qr-style") return;
 
-      if (type === "data-generated-qr-style" && data?.qrStyle) {
-        // Apply the style during both streaming and ready states for real-time preview
-        applyGeneratedQRStyle(data.qrStyle);
+      const { themeStyles } = dataPart.data;
+      if (themeStyles) {
+        applyGeneratedQRStyle(themeStyles as Record<string, unknown>);
       }
     },
     onFinish: () => {
