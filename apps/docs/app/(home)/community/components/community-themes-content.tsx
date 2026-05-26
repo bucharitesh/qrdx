@@ -42,12 +42,15 @@ import {
 } from "nuqs";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useCommunityThemes } from "@/lib/hooks/themes/use-community-themes";
+import { useQREditorStore } from "@/store/editor-store";
 import type {
   CommunityFilterOption,
+  CommunityTheme,
   CommunityTimeRange,
 } from "@/types/community";
 import { CommunitySidebarContent } from "./community-sidebar";
 import { CommunityThemeCard } from "./community-theme-card";
+import { CommunityThemePreviewDialog } from "./community-theme-preview-dialog";
 
 const popularOptions: {
   timeRange: CommunityTimeRange;
@@ -88,6 +91,16 @@ export function CommunityThemesContent() {
     ),
   );
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [previewTheme, setPreviewTheme] = useState<CommunityTheme | null>(null);
+  const { themeState, setThemeState } = useQREditorStore();
+
+  const handlePreview = useCallback(
+    (theme: CommunityTheme) => {
+      setThemeState({ ...themeState, styles: theme.styles });
+      setPreviewTheme(theme);
+    },
+    [themeState, setThemeState],
+  );
 
   const handleFilterChange = useCallback(
     (newFilter: CommunityFilterOption) => {
@@ -314,7 +327,11 @@ export function CommunityThemesContent() {
             <>
               <div className="grid gap-5 gap-y-8 grid-cols-[repeat(auto-fill,minmax(280px,1fr))]">
                 {themes.map((theme) => (
-                  <CommunityThemeCard key={theme.id} theme={theme} />
+                  <CommunityThemeCard
+                    key={theme.id}
+                    theme={theme}
+                    onPreview={handlePreview}
+                  />
                 ))}
               </div>
 
@@ -327,6 +344,15 @@ export function CommunityThemesContent() {
           )}
         </div>
       </div>
+      <CommunityThemePreviewDialog
+        theme={previewTheme}
+        themes={themes}
+        open={!!previewTheme}
+        onOpenChange={(open) => {
+          if (!open) setPreviewTheme(null);
+        }}
+        onNavigate={handlePreview}
+      />
     </div>
   );
 }
