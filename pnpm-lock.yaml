@@ -898,8 +898,8 @@ importers:
         specifier: ^1.19.1
         version: 1.19.1(@raycast/api@1.104.11(@types/node@20.19.37)(@types/react@19.0.10))
       qrdx:
-        specifier: workspace:*
-        version: link:../../packages/qrdx
+        specifier: ^0.0.46
+        version: 0.0.46(react-dom@19.2.4(react@19.2.4))
       react:
         specifier: 19.2.4
         version: 19.2.4
@@ -9621,6 +9621,12 @@ packages:
   pvutils@1.1.5:
     resolution: {integrity: sha512-KTqnxsgGiQ6ZAzZCVlJH5eOjSnvlyEgx1m8bkRJfOhmGRqfo5KLvmAlACQkrjEtOQ4B7wF9TdSLIs9O90MX9xA==}
     engines: {node: '>=16.0.0'}
+
+  qrdx@0.0.46:
+    resolution: {integrity: sha512-ce2CRsNTdIWGmaocX2h0Qhe92M7fAxPhq1Ecz3cWsPJfKCfA3NJFTgF36woyoVaK8ifIYL+WLUJC5fI801TXAQ==}
+    hasBin: true
+    peerDependencies:
+      react-dom: 19.2.4
 
   qs@6.14.2:
     resolution: {integrity: sha512-V/yCWTTF7VJ9hIh18Ugr2zhJMP01MY7c5kh4J870L7imm6/DIzBsNLTXzMwUA3yZ5b/KBqLx8Kp3uRvd7xSe3Q==}
@@ -20288,6 +20294,15 @@ snapshots:
       tslib: 2.8.1
 
   pvutils@1.1.5: {}
+
+  qrdx@0.0.46(react-dom@19.2.4(react@19.2.4)):
+    dependencies:
+      jspdf: 3.0.4
+      jsqr: 1.4.0
+      react: 19.2.4
+      react-dom: 19.2.4(react@19.2.4)
+      sharp: 0.34.5
+      zod: 4.3.6
 
   qs@6.14.2:
     dependencies:
