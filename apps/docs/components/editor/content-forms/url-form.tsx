@@ -9,25 +9,30 @@ import type { UrlContent } from "@/types/qr-content";
 import { encodeUrl } from "@/utils/qr-content-encoder";
 
 export function UrlForm() {
-  const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
+  const storedUrl = useQREditorStore(
+    (state) => (state.contentConfigs.url as UrlContent | undefined)?.url ?? "",
+  );
+  const setValue = useQREditorStore((state) => state.setValue);
+  const setContentConfig = useQREditorStore((state) => state.setContentConfig);
   const { handlePaste } = useSmartPaste();
 
-  // Initialize from stored config or use defaults
-  const storedConfig = getContentConfig("url") as UrlContent | undefined;
-  const [urlData, setUrlData] = React.useState({
-    url: storedConfig?.url || "",
-  });
+  const [urlData, setUrlData] = React.useState({ url: storedUrl });
 
-  // Sync with store when config changes (e.g., from smart paste)
+  // Sync with store when config changes externally (e.g., smart paste)
   React.useEffect(() => {
-    if (storedConfig?.url && storedConfig.url !== urlData.url) {
-      setUrlData({ url: storedConfig.url });
-    }
-  }, [storedConfig, urlData.url]);
+    setUrlData({ url: storedUrl });
+  }, [storedUrl]);
 
   React.useEffect(() => {
     const config: UrlContent = { type: "url", ...urlData };
     const encoded = encodeUrl(config);
+    const { value, contentConfigs } = useQREditorStore.getState();
+    const currentConfig = contentConfigs.url as UrlContent | undefined;
+
+    if (currentConfig?.url === urlData.url && value === encoded) {
+      return;
+    }
+
     setValue(encoded);
     setContentConfig("url", config);
   }, [urlData, setValue, setContentConfig]);

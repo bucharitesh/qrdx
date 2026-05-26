@@ -49,7 +49,7 @@ interface Input {
   size?: number;
 }
 
-export const confirmation: Tool.Confirmation<Input> = (input) => {
+export const confirmation: Tool.Confirmation<Input> = async (input) => {
   return {
     message: `Save QR code for "${input.url}" to Downloads?`,
     info: [
