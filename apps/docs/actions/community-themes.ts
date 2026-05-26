@@ -26,6 +26,7 @@ import { getCurrentUserId } from "@/lib/shared";
 import type {
   CommunityFilterOption,
   CommunitySortOption,
+  CommunityTimeRange,
   CommunityTheme,
   CommunityThemesResponse,
 } from "@/types/community";
@@ -68,6 +69,7 @@ const getCommunityThemesSchema = z.object({
   limit: z.number().min(1).max(50).default(COMMUNITY_THEMES_PAGE_SIZE),
   filter: z.enum(["all", "mine", "liked"]).default("all"),
   tags: z.array(z.string()).default([]),
+  timeRange: z.enum(["weekly", "monthly", "all"]).default("all"),
 });
 
 async function fetchCommunityThemesCore(
@@ -77,6 +79,7 @@ async function fetchCommunityThemesCore(
   filter: string,
   tags: string[],
   userId: string | null,
+  timeRange: string = "all",
 ): Promise<CommunityThemesResponse> {
   const fetchLimit = limit + 1;
   const conditions = [];
@@ -99,6 +102,16 @@ async function fetchCommunityThemesCore(
         tags.map((t) => sql`${t}`),
         sql`, `,
       )}))`,
+    );
+  }
+
+  if (sort === "popular" && timeRange !== "all") {
+    const intervalSql =
+      timeRange === "weekly"
+        ? sql`interval '7 days'`
+        : sql`interval '30 days'`;
+    conditions.push(
+      sql`${communityTheme.publishedAt} > now() - ${intervalSql}`,
     );
   }
 
@@ -219,6 +232,7 @@ export async function getCommunityThemes(
   limit: number = COMMUNITY_THEMES_PAGE_SIZE,
   filter: CommunityFilterOption = "all",
   tags: string[] = [],
+  timeRange: CommunityTimeRange = "all",
 ): Promise<CommunityThemesResponse> {
   try {
     const validation = getCommunityThemesSchema.safeParse({
@@ -227,6 +241,7 @@ export async function getCommunityThemes(
       limit,
       filter,
       tags,
+      timeRange,
     });
     if (!validation.success) {
       throw new ValidationError("Invalid input", validation.error.format());
@@ -241,6 +256,7 @@ export async function getCommunityThemes(
       filter,
       tags,
       userId,
+      timeRange,
     );
   } catch (error) {
     logError(error as Error, { action: "getCommunityThemes", sort, cursor });
