@@ -20,7 +20,7 @@ import { cn } from "@repo/design-system/lib/utils";
 import { useTheme } from "next-themes";
 import type { ColorConfig } from "qrdx/types";
 import { isGradient, normalizeColorConfig } from "qrdx/types";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Icons } from "@/components/icons";
 import { useContrastChecker } from "@/lib/hooks/use-contrast-checker";
 import type { ThemeStyles } from "@/types/theme";
@@ -90,47 +90,53 @@ const ContrastChecker = ({ currentStyles, disabled }: ContrastCheckerProps) => {
   const [filter, setFilter] = useState<"all" | "issues">("all");
   const { theme, setTheme } = useTheme();
 
-  const colorPairsToCheck: ColorPair[] = [
-    // QR Code Base Colors
-    {
-      id: "base",
-      foregroundId: "fgColor",
-      backgroundId: "bgColor",
-      foreground: currentStyles?.fgColor,
-      background: currentStyles?.bgColor,
-      label: "QR Code Base",
-      category: "content",
-    },
-    {
-      id: "eye",
-      foregroundId: "eyeColor",
-      backgroundId: "bgColor",
-      foreground: currentStyles?.eyeColor || currentStyles?.fgColor,
-      background: currentStyles?.bgColor,
-      label: "Corner Eyes",
-      category: "interactive",
-    },
-    {
-      id: "dot",
-      foregroundId: "dotColor",
-      backgroundId: "bgColor",
-      foreground:
-        currentStyles?.dotColor ||
-        currentStyles?.eyeColor ||
-        currentStyles?.fgColor,
-      background: currentStyles?.bgColor,
-      label: "Eye Dots",
-      category: "functional",
-    },
-  ];
+  const colorPairsToCheck: ColorPair[] = useMemo(
+    () => [
+      {
+        id: "base",
+        foregroundId: "fgColor",
+        backgroundId: "bgColor",
+        foreground: currentStyles?.fgColor,
+        background: currentStyles?.bgColor,
+        label: "QR Code Base",
+        category: "content",
+      },
+      {
+        id: "eye",
+        foregroundId: "eyeColor",
+        backgroundId: "bgColor",
+        foreground: currentStyles?.eyeColor || currentStyles?.fgColor,
+        background: currentStyles?.bgColor,
+        label: "Corner Eyes",
+        category: "interactive",
+      },
+      {
+        id: "dot",
+        foregroundId: "dotColor",
+        backgroundId: "bgColor",
+        foreground:
+          currentStyles?.dotColor ||
+          currentStyles?.eyeColor ||
+          currentStyles?.fgColor,
+        background: currentStyles?.bgColor,
+        label: "Eye Dots",
+        category: "functional",
+      },
+    ],
+    [currentStyles],
+  );
 
-  const validColorPairsToCheck = colorPairsToCheck.filter(
-    (
-      pair,
-    ): pair is ColorPair & {
-      foreground: ColorConfig | string;
-      background: ColorConfig | string;
-    } => !!pair.foreground && !!pair.background,
+  const validColorPairsToCheck = useMemo(
+    () =>
+      colorPairsToCheck.filter(
+        (
+          pair,
+        ): pair is ColorPair & {
+          foreground: ColorConfig | string;
+          background: ColorConfig | string;
+        } => !!pair.foreground && !!pair.background,
+      ),
+    [colorPairsToCheck],
   );
   const contrastResults = useContrastChecker(validColorPairsToCheck);
 
