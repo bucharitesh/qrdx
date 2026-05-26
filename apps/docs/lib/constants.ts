@@ -67,3 +67,7 @@ export const COMMUNITY_THEME_TAGS = [
 ] as const;
 
 export const MAX_TAGS_PER_THEME = 5;
+
+export const OAUTH_ACCESS_TOKEN_EXPIRY_SECONDS = 60 * 60; // 1 hour
+export const OAUTH_REFRESH_TOKEN_EXPIRY_SECONDS = 60 * 60 * 24 * 30; // 30 days
+export const OAUTH_AUTHORIZATION_CODE_EXPIRY_SECONDS = 60 * 10; // 10 minutes
