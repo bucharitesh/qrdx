@@ -34,6 +34,7 @@
     "@tiptap/suggestion": "^3.13.0",
     "@upstash/ratelimit": "^2.0.8",
     "ai": "^5.0.113",
+    "bcryptjs": "^3.0.2",
     "class-variance-authority": "^0.7.1",
     "cuid": "^3.0.0",
     "drizzle-orm": "^0.45.1",
