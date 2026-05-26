@@ -1,9 +1,18 @@
 "use client";
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {
+  MutationCache,
+  QueryCache,
+  QueryClient,
+  QueryClientProvider,
+} from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import posthog from "posthog-js";
 import { type ReactNode, useState } from "react";
+import {
+  handleUnauthorizedIfNeeded,
+  isUnauthorized,
+} from "@/lib/handle-unauthorized";
 
 function logClientError(error: Error, context: Record<string, unknown>) {
   console.error("Query error:", error, context);
@@ -24,6 +33,16 @@ function logClientError(error: Error, context: Record<string, unknown>) {
 
 function createQueryClient() {
   return new QueryClient({
+    queryCache: new QueryCache({
+      onError: (error) => {
+        void handleUnauthorizedIfNeeded(error);
+      },
+    }),
+    mutationCache: new MutationCache({
+      onError: (error) => {
+        void handleUnauthorizedIfNeeded(error);
+      },
+    }),
     defaultOptions: {
       queries: {
         staleTime: 1000 * 60 * 5, // 5 minutes
@@ -31,7 +50,7 @@ function createQueryClient() {
         retry: (failureCount, error: Error) => {
           // Don't retry on authentication or validation errors
           if (
-            error?.name === "UnauthorizedError" ||
+            isUnauthorized(error) ||
             error?.name === "ValidationError"
           ) {
             return false;
@@ -45,7 +64,7 @@ function createQueryClient() {
         retry: (failureCount, error: Error) => {
           // Don't retry mutations on client errors (4xx)
           if (
-            error?.name === "UnauthorizedError" ||
+            isUnauthorized(error) ||
             error?.name === "ValidationError"
           ) {
             return false;
@@ -54,6 +73,10 @@ function createQueryClient() {
           return failureCount < 1;
         },
         onError: (error: Error, variables: unknown, context: unknown) => {
+          if (isUnauthorized(error)) {
+            return;
+          }
+
           logClientError(error, {
             type: "mutation",
             variables: JSON.stringify(variables),

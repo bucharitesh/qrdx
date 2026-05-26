@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import posthog from "posthog-js";
 import { createTheme, deleteTheme, updateTheme } from "@/actions/qr-themes";
 import { MAX_FREE_THEMES } from "@/lib/constants";
+import { isUnauthorized } from "@/lib/handle-unauthorized";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 import { useThemePresetStore } from "@/store/theme-preset-store";
 import { ErrorCode } from "@/types/errors";
@@ -11,11 +12,15 @@ import type { Theme, ThemeStyles } from "@/types/theme";
 import { themeKeys } from "./use-themes-data";
 
 function handleMutationError(error: Error, operation: string) {
+  if (isUnauthorized(error)) {
+    return error;
+  }
+
   console.error(`Theme ${operation} error:`, error);
 
   const errorName = error.name;
 
-  if (errorName !== "UnauthorizedError" && errorName !== "ValidationError") {
+  if (error.name !== "UnauthorizedError" && error.name !== "ValidationError") {
     try {
       posthog.capture("theme_mutation_error", {
         operation,
