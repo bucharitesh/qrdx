@@ -6,6 +6,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { DefaultChatTransport } from "ai";
 import { createContext, useContext, useEffect, useRef } from "react";
 import { parseAiSdkTransportError } from "@/lib/ai/parse-ai-sdk-transport-error";
+import { isDeepEqual } from "@/lib/utils";
 import { useAIChatStore } from "@/store/ai-chat-store";
 import { useQREditorStore } from "@/store/editor-store";
 import type { ChatMessage } from "@/types/ai";
@@ -23,6 +24,10 @@ function applyGeneratedQRStyle(qrStyle: Record<string, unknown>) {
 
   // Merge the generated style with the current style
   const mergedStyle = { ...themeState.styles, ...qrStyle };
+
+  if (isDeepEqual(themeState.styles, mergedStyle)) {
+    return;
+  }
 
   setThemeState({
     ...themeState,
@@ -84,9 +89,10 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
 
     // Only update the stored messages when the chat is not currently processing a request
     if (chat.status === "ready" || chat.status === "error") {
-      setStoredMessages(chat.messages);
-
-      // Debug: Log messages to see the structure
+      const persistedMessages = useAIChatStore.getState().messages;
+      if (!isDeepEqual(persistedMessages, chat.messages)) {
+        setStoredMessages(chat.messages);
+      }
 
       // Check for themeStyles in metadata of the last assistant message
       const lastMessage = chat.messages[chat.messages.length - 1];
@@ -109,7 +115,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     }
 
     hasInitializedRef.current = true;
-  }, [hasStoreHydrated, storedMessages, chat]);
+  }, [hasStoreHydrated, storedMessages, chat.setMessages]);
 
   return (
     <ChatContext.Provider
