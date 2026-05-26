@@ -1,10 +1,15 @@
 import { authClient } from "@repo/auth/client";
 import { useQuery } from "@tanstack/react-query";
+import { apiFetch } from "@/lib/api-fetch";
 import type { SubscriptionStatus } from "@/types/subscription";
 
 async function fetchSubscriptionStatus(): Promise<SubscriptionStatus> {
-  const res = await fetch("/api/subscription", { method: "GET" });
-  console.log("xx", res);
+  const res = await apiFetch("/api/subscription", { method: "GET" });
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch subscription status");
+  }
+
   return res.json();
 }
 

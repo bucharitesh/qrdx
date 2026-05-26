@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { getCurrentUserId, logError } from "@/lib/shared";
+import { handleError } from "@/lib/error-response";
+import { getCurrentUserId } from "@/lib/shared";
 import { validateSubscriptionAndUsage } from "@/lib/subscription";
 import type { SubscriptionStatus } from "@/types/subscription";
 
@@ -9,8 +10,6 @@ export async function GET(request: NextRequest) {
     const { isSubscribed, requestsRemaining, requestsUsed } =
       await validateSubscriptionAndUsage(userId);
 
-    console.log("xx", isSubscribed, requestsRemaining, requestsUsed);
-
     const response: SubscriptionStatus = {
       isSubscribed,
       requestsRemaining,
@@ -19,10 +18,6 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(response);
   } catch (error) {
-    logError(error as Error);
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 },
-    );
+    return handleError(error, { route: "/api/subscription" });
   }
 }

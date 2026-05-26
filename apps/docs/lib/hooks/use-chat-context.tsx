@@ -6,6 +6,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { DefaultChatTransport } from "ai";
 import { createContext, useContext, useEffect, useRef } from "react";
 import { parseAiSdkTransportError } from "@/lib/ai/parse-ai-sdk-transport-error";
+import { handleUnauthorized } from "@/lib/handle-unauthorized";
 import { isDeepEqual } from "@/lib/utils";
 import { useAIChatStore } from "@/store/ai-chat-store";
 import { useQREditorStore } from "@/store/editor-store";
@@ -50,6 +51,14 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     onError: (error) => {
       const defaultMessage = "Failed to generate QR style. Please try again.";
       const normalizedError = parseAiSdkTransportError(error, defaultMessage);
+
+      if (
+        normalizedError.code === "UNAUTHORIZED" ||
+        normalizedError.status === 401
+      ) {
+        void handleUnauthorized();
+        return;
+      }
 
       toast.error("An error occurred", {
         description: normalizedError.message,
