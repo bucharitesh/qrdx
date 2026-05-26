@@ -2,7 +2,7 @@
 
 import { database as db } from "@repo/database";
 import { subscription } from "@repo/database/schema";
-import { and, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 import type { NextRequest } from "next/server";
 import { getMyAllTimeRequestCount } from "@/actions/ai-usage";
 import { SubscriptionRequiredError } from "@/types/errors";
@@ -18,8 +18,10 @@ export async function getMyActiveSubscription(
     .from(subscription)
     .where(
       and(eq(subscription.userId, userId), eq(subscription.status, "active")),
-    );
-  return sub[0];
+    )
+    .orderBy(desc(subscription.createdAt))
+    .limit(1);
+  return sub[0] ?? null;
 }
 
 export async function validateSubscriptionAndUsage(
@@ -31,10 +33,7 @@ export async function validateSubscriptionAndUsage(
       getMyAllTimeRequestCount(userId),
     ]);
 
-    const isSubscribed =
-      !!activeSubscription &&
-      activeSubscription?.productId ===
-        process.env.NEXT_PUBLIC_TWEAKCN_PRO_PRODUCT_ID;
+    const isSubscribed = !!activeSubscription;
 
     if (isSubscribed) {
       return {

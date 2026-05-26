@@ -132,10 +132,7 @@ export async function createTheme(formData: {
 
     if (userThemes.length >= MAX_FREE_THEMES) {
       const activeSubscription = await getMyActiveSubscription(userId);
-      const isSubscribed =
-        !!activeSubscription &&
-        activeSubscription?.productId ===
-          process.env.NEXT_PUBLIC_TWEAKCN_PRO_PRODUCT_ID;
+      const isSubscribed = !!activeSubscription;
 
       if (!isSubscribed) {
         return actionError(
