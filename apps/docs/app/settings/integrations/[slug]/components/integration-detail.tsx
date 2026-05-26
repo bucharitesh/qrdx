@@ -22,6 +22,7 @@ import {
   connectIntegrationAction,
   disconnectIntegrationAction,
 } from "../../actions";
+import { DubManagement } from "./dub-management";
 
 const CATEGORY_LABELS: Record<IntegrationCategory, string> = {
   analytics: "Analytics",
@@ -45,6 +46,7 @@ interface IntegrationDetailProps {
   isConnected: boolean;
   status?: "active" | "disconnected" | "error";
   connectedAt?: Date;
+  metadata?: Record<string, unknown>;
 }
 
 export function IntegrationDetail({
@@ -60,6 +62,7 @@ export function IntegrationDetail({
   isConnected,
   status,
   connectedAt,
+  metadata,
 }: IntegrationDetailProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -300,6 +303,8 @@ export function IntegrationDetail({
           )}
         </div>
       </div>
+
+      {slug === "dub" && isConnected && <DubManagement metadata={metadata} />}
 
       {/* Features */}
       {features.length > 0 && (

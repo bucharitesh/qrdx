@@ -265,6 +265,12 @@ export const etsySchema = z.object({
 // Dub.sh
 export const dubshSchema = z.object({
   shortUrl: z.string().min(1, "Short URL is required").url("Invalid URL"),
+  source: z.enum(["manual", "dub-selected", "dub-created"]).optional(),
+  dubLinkId: z.string().optional(),
+  domain: z.string().optional(),
+  key: z.string().optional(),
+  destinationUrl: z.string().url("Invalid URL").optional(),
+  qrCodeUrl: z.string().url("Invalid URL").optional(),
 });
 
 // Attendance (Google Form)

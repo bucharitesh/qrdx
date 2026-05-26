@@ -61,6 +61,10 @@ const iconMap: Record<string, LucideIcon> = {
   Youtube: Icons.Youtube,
 };
 
+function getLogoSrc(type: ContentType) {
+  return type === "dubsh" ? "/integrations/dub-icon.svg" : undefined;
+}
+
 interface ContentTypeModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -241,7 +245,17 @@ export function ContentTypeModal({
                                             <Card>
                                               <CardContent className="flex aspect-video items-center justify-center p-0">
                                                 <div className="rounded-full p-3 md:p-4">
-                                                  <Icon className="size-6 md:size-8" />
+                                                  {getLogoSrc(meta.type) ? (
+                                                    <img
+                                                      src={getLogoSrc(
+                                                        meta.type,
+                                                      )}
+                                                      alt=""
+                                                      className="size-6 object-contain md:size-8"
+                                                    />
+                                                  ) : (
+                                                    <Icon className="size-6 md:size-8" />
+                                                  )}
                                                 </div>
                                               </CardContent>
                                             </Card>
@@ -279,6 +293,7 @@ export function ContentTypeModal({
                                   label={meta.label}
                                   description={meta.description}
                                   icon={Icon}
+                                  logoSrc={getLogoSrc(meta.type)}
                                   isActive={isActive}
                                   onClick={() => handleSelectType(meta.type)}
                                   variant="default"
@@ -307,6 +322,7 @@ export function ContentTypeModal({
                               label={meta.label}
                               description={meta.description}
                               icon={Icon}
+                              logoSrc={getLogoSrc(meta.type)}
                               isActive={isActive}
                               onClick={() => handleSelectType(meta.type)}
                               variant="default"
