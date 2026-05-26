@@ -1,3 +1,6 @@
+"use client";
+
+import { authClient } from "@repo/auth/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getTheme, getThemes } from "@/actions/qr-themes";
 import type { Theme } from "@/types/theme";
@@ -7,17 +10,21 @@ export type ThemeWithPublished = Awaited<ReturnType<typeof getThemes>>[number];
 export const themeKeys = {
   all: ["themes"] as const,
   lists: () => [...themeKeys.all, "list"] as const,
-  list: (filters: Record<string, any>) =>
+  list: (filters: Record<string, unknown>) =>
     [...themeKeys.lists(), { filters }] as const,
   details: () => [...themeKeys.all, "detail"] as const,
   detail: (id: string) => [...themeKeys.details(), { id }] as const,
 };
 
 export function useThemesData(initialData?: ThemeWithPublished[]) {
+  const { data: session } = authClient.useSession();
+
   return useQuery({
     queryKey: themeKeys.lists(),
     queryFn: getThemes,
     initialData,
+    enabled: !!session?.user,
+    placeholderData: [],
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
 }
