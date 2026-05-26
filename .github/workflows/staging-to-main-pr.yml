@@ -1,0 +1,61 @@
+name: Staging to Main PR
+
+on:
+  push:
+    branches:
+      - staging
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: staging-to-main-pr
+  cancel-in-progress: true
+
+jobs:
+  create-or-update-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Fetch base branch
+        run: git fetch origin main:main
+
+      - name: Generate PR title and body
+        id: generate
+        env:
+          BASE_BRANCH: main
+          HEAD_BRANCH: staging
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          set +e
+          node .github/scripts/generate-staging-pr-body.mjs
+          exit_code=$?
+          set -e
+          if [ "$exit_code" -eq 2 ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          elif [ "$exit_code" -ne 0 ]; then
+            exit "$exit_code"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Create or update pull request
+        if: steps.generate.outputs.skip != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          title="$(cat pr-title.txt)"
+          existing_pr="$(gh pr list --base main --head staging --state open --json number --jq '.[0].number // empty')"
+
+          if [ -n "$existing_pr" ]; then
+            gh pr edit "$existing_pr" --title "$title" --body-file pr-body.md
+            echo "Updated PR #$existing_pr"
+          else
+            gh pr create --base main --head staging --title "$title" --body-file pr-body.md
+            echo "Created new PR from staging to main"
+          fi
