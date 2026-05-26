@@ -15,6 +15,7 @@ import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import cuid from "cuid";
 import { and, asc, count, desc, eq, inArray, sql } from "drizzle-orm";
 import { headers } from "next/headers";
+import { revalidateTag, unstable_cache } from "next/cache";
 import { z } from "zod";
 import {
   COMMUNITY_THEME_TAGS,
@@ -69,6 +70,149 @@ const getCommunityThemesSchema = z.object({
   tags: z.array(z.string()).default([]),
 });
 
+async function fetchCommunityThemesCore(
+  sort: string,
+  cursor: string | number | null,
+  limit: number,
+  filter: string,
+  tags: string[],
+  userId: string | null,
+): Promise<CommunityThemesResponse> {
+  const fetchLimit = limit + 1;
+  const conditions = [];
+
+  if (filter === "mine") {
+    if (!userId) throw new UnauthorizedError();
+    conditions.push(eq(communityTheme.userId, userId));
+  }
+
+  if (filter === "liked") {
+    if (!userId) throw new UnauthorizedError();
+    conditions.push(
+      sql`exists(select 1 from theme_like where theme_like.theme_id = ${communityTheme.id} and theme_like.user_id = ${userId})`,
+    );
+  }
+
+  if (tags.length > 0) {
+    conditions.push(
+      sql`exists(select 1 from community_theme_tag where community_theme_tag.community_theme_id = ${communityTheme.id} and community_theme_tag.tag in (${sql.join(
+        tags.map((t) => sql`${t}`),
+        sql`, `,
+      )}))`,
+    );
+  }
+
+  const baseQuery = db
+    .select({
+      id: communityTheme.id,
+      themeId: communityTheme.themeId,
+      publishedAt: communityTheme.publishedAt,
+      themeName: themeTable.name,
+      themeStyles: themeTable.style,
+      authorId: userTable.id,
+      authorName: userTable.name,
+      authorImage: userTable.image,
+      likeCount: communityTheme.likeCount,
+      ...(userId
+        ? {
+            isLikedByMe: sql<boolean>`exists(
+              select 1 from theme_like
+              where theme_like.theme_id = ${communityTheme.id}
+              and theme_like.user_id = ${userId}
+            )`.as("is_liked_by_me"),
+          }
+        : {}),
+    })
+    .from(communityTheme)
+    .innerJoin(themeTable, eq(communityTheme.themeId, themeTable.id))
+    .innerJoin(userTable, eq(communityTheme.userId, userTable.id));
+
+  let results: any;
+
+  if (sort === "popular") {
+    const offset = typeof cursor === "number" ? cursor : 0;
+    results = await baseQuery
+      .where(conditions.length > 0 ? and(...conditions) : undefined)
+      .orderBy(desc(communityTheme.likeCount), desc(communityTheme.publishedAt))
+      .limit(fetchLimit)
+      .offset(offset);
+  } else if (sort === "newest") {
+    if (cursor && typeof cursor === "string") {
+      conditions.push(sql`${communityTheme.publishedAt} < ${cursor}`);
+    }
+    results = await baseQuery
+      .where(conditions.length > 0 ? and(...conditions) : undefined)
+      .orderBy(desc(communityTheme.publishedAt))
+      .limit(fetchLimit);
+  } else {
+    if (cursor && typeof cursor === "string") {
+      conditions.push(sql`${communityTheme.publishedAt} > ${cursor}`);
+    }
+    results = await baseQuery
+      .where(conditions.length > 0 ? and(...conditions) : undefined)
+      .orderBy(asc(communityTheme.publishedAt))
+      .limit(fetchLimit);
+  }
+
+  const hasMore = results.length > limit;
+  const themes = results.slice(0, limit);
+
+  let nextCursor: string | number | null = null;
+  if (hasMore) {
+    if (sort === "popular") {
+      nextCursor = (typeof cursor === "number" ? cursor : 0) + limit;
+    } else {
+      const lastTheme = themes[themes.length - 1];
+      nextCursor = lastTheme.publishedAt.toISOString();
+    }
+  }
+
+  const communityThemeIds = themes.map((t: any) => t.id);
+  const tagsRows =
+    communityThemeIds.length > 0
+      ? await db
+          .select({
+            communityThemeId: communityThemeTag.communityThemeId,
+            tag: communityThemeTag.tag,
+          })
+          .from(communityThemeTag)
+          .where(
+            inArray(communityThemeTag.communityThemeId, communityThemeIds),
+          )
+      : [];
+
+  const tagsMap = new Map<string, string[]>();
+  for (const row of tagsRows) {
+    const existing = tagsMap.get(row.communityThemeId) ?? [];
+    existing.push(row.tag);
+    tagsMap.set(row.communityThemeId, existing);
+  }
+
+  const mappedThemes: CommunityTheme[] = themes.map((row: any) => ({
+    id: row.id,
+    themeId: row.themeId,
+    name: row.themeName,
+    styles: row.themeStyles,
+    author: {
+      id: row.authorId,
+      name: row.authorName,
+      image: row.authorImage,
+    },
+    likeCount: Number(row.likeCount),
+    isLikedByMe: "isLikedByMe" in row ? Boolean(row.isLikedByMe) : false,
+    publishedAt: row.publishedAt.toISOString(),
+    tags: tagsMap.get(row.id) ?? [],
+  }));
+
+  return { themes: mappedThemes, nextCursor };
+}
+
+const getCachedCommunityThemes = unstable_cache(
+  fetchCommunityThemesCore,
+  ["community-themes"],
+  { revalidate: 60, tags: ["community-themes"] },
+);
+
 export async function getCommunityThemes(
   sort: CommunitySortOption = "popular",
   cursor?: string | number,
@@ -89,155 +233,15 @@ export async function getCommunityThemes(
     }
 
     const userId = await getOptionalUserId();
-    const fetchLimit = limit + 1;
 
-    // Subquery for like counts
-    const likeCountSubquery = db
-      .select({
-        themeId: themeLike.themeId,
-        likeCount: count().as("like_count"),
-      })
-      .from(themeLike)
-      .groupBy(themeLike.themeId)
-      .as("like_counts");
-
-    // Build where conditions
-    const conditions = [];
-
-    if (filter === "mine") {
-      if (!userId) throw new UnauthorizedError();
-      conditions.push(eq(communityTheme.userId, userId));
-    }
-
-    if (filter === "liked") {
-      if (!userId) throw new UnauthorizedError();
-      conditions.push(
-        sql`exists(select 1 from theme_like where theme_like.theme_id = ${communityTheme.id} and theme_like.user_id = ${userId})`,
-      );
-    }
-
-    if (tags.length > 0) {
-      conditions.push(
-        sql`exists(select 1 from community_theme_tag where community_theme_tag.community_theme_id = ${communityTheme.id} and community_theme_tag.tag in (${sql.join(
-          tags.map((t) => sql`${t}`),
-          sql`, `,
-        )}))`,
-      );
-    }
-
-    // Base query with joins
-    const baseQuery = db
-      .select({
-        id: communityTheme.id,
-        themeId: communityTheme.themeId,
-        publishedAt: communityTheme.publishedAt,
-        themeName: themeTable.name,
-        themeStyles: themeTable.style,
-        authorId: userTable.id,
-        authorName: userTable.name,
-        authorImage: userTable.image,
-        likeCount: sql<number>`coalesce(${likeCountSubquery.likeCount}, 0)`.as(
-          "total_likes",
-        ),
-        ...(userId
-          ? {
-              isLikedByMe: sql<boolean>`exists(
-                select 1 from theme_like
-                where theme_like.theme_id = ${communityTheme.id}
-                and theme_like.user_id = ${userId}
-              )`.as("is_liked_by_me"),
-            }
-          : {}),
-      })
-      .from(communityTheme)
-      .innerJoin(themeTable, eq(communityTheme.themeId, themeTable.id))
-      .innerJoin(userTable, eq(communityTheme.userId, userTable.id))
-      .leftJoin(
-        likeCountSubquery,
-        eq(communityTheme.id, likeCountSubquery.themeId),
-      );
-
-    let results: any;
-
-    if (sort === "popular") {
-      // Offset-based for popular sort (order is dynamic)
-      const offset = typeof cursor === "number" ? cursor : 0;
-      results = await baseQuery
-        .where(conditions.length > 0 ? and(...conditions) : undefined)
-        .orderBy(sql`total_likes desc`, desc(communityTheme.publishedAt))
-        .limit(fetchLimit)
-        .offset(offset);
-    } else if (sort === "newest") {
-      if (cursor && typeof cursor === "string") {
-        conditions.push(sql`${communityTheme.publishedAt} < ${cursor}`);
-      }
-      results = await baseQuery
-        .where(conditions.length > 0 ? and(...conditions) : undefined)
-        .orderBy(desc(communityTheme.publishedAt))
-        .limit(fetchLimit);
-    } else {
-      // oldest
-      if (cursor && typeof cursor === "string") {
-        conditions.push(sql`${communityTheme.publishedAt} > ${cursor}`);
-      }
-      results = await baseQuery
-        .where(conditions.length > 0 ? and(...conditions) : undefined)
-        .orderBy(asc(communityTheme.publishedAt))
-        .limit(fetchLimit);
-    }
-
-    const hasMore = results.length > limit;
-    const themes = results.slice(0, limit);
-
-    let nextCursor: string | number | null = null;
-    if (hasMore) {
-      if (sort === "popular") {
-        nextCursor = (typeof cursor === "number" ? cursor : 0) + limit;
-      } else {
-        const lastTheme = themes[themes.length - 1];
-        nextCursor = lastTheme.publishedAt.toISOString();
-      }
-    }
-
-    // Fetch tags for all themes in the page
-    const communityThemeIds = themes.map((t: any) => t.id);
-    const tagsRows =
-      communityThemeIds.length > 0
-        ? await db
-            .select({
-              communityThemeId: communityThemeTag.communityThemeId,
-              tag: communityThemeTag.tag,
-            })
-            .from(communityThemeTag)
-            .where(
-              inArray(communityThemeTag.communityThemeId, communityThemeIds),
-            )
-        : [];
-
-    const tagsMap = new Map<string, string[]>();
-    for (const row of tagsRows) {
-      const existing = tagsMap.get(row.communityThemeId) ?? [];
-      existing.push(row.tag);
-      tagsMap.set(row.communityThemeId, existing);
-    }
-
-    const mappedThemes: CommunityTheme[] = themes.map((row: any) => ({
-      id: row.id,
-      themeId: row.themeId,
-      name: row.themeName,
-      styles: row.themeStyles,
-      author: {
-        id: row.authorId,
-        name: row.authorName,
-        image: row.authorImage,
-      },
-      likeCount: Number(row.likeCount),
-      isLikedByMe: "isLikedByMe" in row ? Boolean(row.isLikedByMe) : false,
-      publishedAt: row.publishedAt.toISOString(),
-      tags: tagsMap.get(row.id) ?? [],
-    }));
-
-    return { themes: mappedThemes, nextCursor };
+    return getCachedCommunityThemes(
+      sort,
+      cursor ?? null,
+      limit,
+      filter,
+      tags,
+      userId,
+    );
   } catch (error) {
     logError(error as Error, { action: "getCommunityThemes", sort, cursor });
     throw error;
@@ -330,6 +334,9 @@ export async function publishTheme(
       }
     }
 
+    revalidateTag("community-themes", "max");
+    revalidateTag("community-tag-counts", "max");
+
     return actionSuccess({ id });
   } catch (error) {
     logError(error as Error, { action: "publishTheme", themeId });
@@ -363,6 +370,9 @@ export async function unpublishTheme(
       );
     }
 
+    revalidateTag("community-themes", "max");
+    revalidateTag("community-tag-counts", "max");
+
     return actionSuccess({ success: true });
   } catch (error) {
     logError(error as Error, { action: "unpublishTheme", themeId });
@@ -393,7 +403,6 @@ export async function toggleLikeTheme(
       .limit(1);
 
     if (existingLike) {
-      // Unlike
       await db
         .delete(themeLike)
         .where(
@@ -402,24 +411,38 @@ export async function toggleLikeTheme(
             eq(themeLike.themeId, communityThemeId),
           ),
         );
-    } else {
-      // Like
-      await db.insert(themeLike).values({
-        userId,
-        themeId: communityThemeId,
-        createdAt: new Date(),
+      const [updated] = await db
+        .update(communityTheme)
+        .set({
+          likeCount: sql`GREATEST(${communityTheme.likeCount} - 1, 0)`,
+        })
+        .where(eq(communityTheme.id, communityThemeId))
+        .returning({ likeCount: communityTheme.likeCount });
+
+      revalidateTag("community-themes", "max");
+
+      return actionSuccess({
+        liked: false,
+        likeCount: updated.likeCount,
       });
     }
 
-    // Get updated count
-    const [result] = await db
-      .select({ count: count() })
-      .from(themeLike)
-      .where(eq(themeLike.themeId, communityThemeId));
+    await db.insert(themeLike).values({
+      userId,
+      themeId: communityThemeId,
+      createdAt: new Date(),
+    });
+    const [updated] = await db
+      .update(communityTheme)
+      .set({ likeCount: sql`${communityTheme.likeCount} + 1` })
+      .where(eq(communityTheme.id, communityThemeId))
+      .returning({ likeCount: communityTheme.likeCount });
+
+    revalidateTag("community-themes", "max");
 
     return actionSuccess({
-      liked: !existingLike,
-      likeCount: result.count,
+      liked: true,
+      likeCount: updated.likeCount,
     });
   } catch (error) {
     logError(error as Error, {
@@ -429,6 +452,68 @@ export async function toggleLikeTheme(
     throw error;
   }
 }
+
+async function fetchCommunityDataForThemeCore(
+  themeId: string,
+  userId: string | null,
+): Promise<{
+  communityThemeId: string;
+  author: { id: string; name: string; image: string | null };
+  likeCount: number;
+  isLikedByMe: boolean;
+  publishedAt: string;
+  tags: string[];
+} | null> {
+  const [result] = await db
+    .select({
+      id: communityTheme.id,
+      publishedAt: communityTheme.publishedAt,
+      authorId: userTable.id,
+      authorName: userTable.name,
+      authorImage: userTable.image,
+      likeCount: communityTheme.likeCount,
+      ...(userId
+        ? {
+            isLikedByMe: sql<boolean>`exists(
+              select 1 from theme_like
+              where theme_like.theme_id = ${communityTheme.id}
+              and theme_like.user_id = ${userId}
+            )`.as("is_liked_by_me"),
+          }
+        : {}),
+    })
+    .from(communityTheme)
+    .innerJoin(userTable, eq(communityTheme.userId, userTable.id))
+    .where(eq(communityTheme.themeId, themeId))
+    .limit(1);
+
+  if (!result) return null;
+
+  const tagRows = await db
+    .select({ tag: communityThemeTag.tag })
+    .from(communityThemeTag)
+    .where(eq(communityThemeTag.communityThemeId, result.id));
+
+  return {
+    communityThemeId: result.id,
+    author: {
+      id: result.authorId,
+      name: result.authorName,
+      image: result.authorImage,
+    },
+    likeCount: Number(result.likeCount),
+    isLikedByMe:
+      "isLikedByMe" in result ? Boolean(result.isLikedByMe) : false,
+    publishedAt: result.publishedAt.toISOString(),
+    tags: tagRows.map((r) => r.tag),
+  };
+}
+
+const getCachedCommunityDataForTheme = unstable_cache(
+  fetchCommunityDataForThemeCore,
+  ["community-theme-data"],
+  { revalidate: 60, tags: ["community-themes"] },
+);
 
 export async function getCommunityDataForTheme(themeId: string): Promise<{
   communityThemeId: string;
@@ -440,66 +525,7 @@ export async function getCommunityDataForTheme(themeId: string): Promise<{
 } | null> {
   try {
     const userId = await getOptionalUserId();
-
-    const likeCountSubquery = db
-      .select({
-        themeId: themeLike.themeId,
-        likeCount: count().as("like_count"),
-      })
-      .from(themeLike)
-      .groupBy(themeLike.themeId)
-      .as("like_counts");
-
-    const [result] = await db
-      .select({
-        id: communityTheme.id,
-        publishedAt: communityTheme.publishedAt,
-        authorId: userTable.id,
-        authorName: userTable.name,
-        authorImage: userTable.image,
-        likeCount: sql<number>`coalesce(${likeCountSubquery.likeCount}, 0)`.as(
-          "total_likes",
-        ),
-        ...(userId
-          ? {
-              isLikedByMe: sql<boolean>`exists(
-                select 1 from theme_like
-                where theme_like.theme_id = ${communityTheme.id}
-                and theme_like.user_id = ${userId}
-              )`.as("is_liked_by_me"),
-            }
-          : {}),
-      })
-      .from(communityTheme)
-      .innerJoin(userTable, eq(communityTheme.userId, userTable.id))
-      .leftJoin(
-        likeCountSubquery,
-        eq(communityTheme.id, likeCountSubquery.themeId),
-      )
-      .where(eq(communityTheme.themeId, themeId))
-      .limit(1);
-
-    if (!result) return null;
-
-    // Fetch tags for this community theme
-    const tagRows = await db
-      .select({ tag: communityThemeTag.tag })
-      .from(communityThemeTag)
-      .where(eq(communityThemeTag.communityThemeId, result.id));
-
-    return {
-      communityThemeId: result.id,
-      author: {
-        id: result.authorId,
-        name: result.authorName,
-        image: result.authorImage,
-      },
-      likeCount: Number(result.likeCount),
-      isLikedByMe:
-        "isLikedByMe" in result ? Boolean(result.isLikedByMe) : false,
-      publishedAt: result.publishedAt.toISOString(),
-      tags: tagRows.map((r) => r.tag),
-    };
+    return getCachedCommunityDataForTheme(themeId, userId);
   } catch (error) {
     logError(error as Error, {
       action: "getCommunityDataForTheme",
@@ -578,6 +604,9 @@ export async function updateCommunityThemeTags(
       );
     }
 
+    revalidateTag("community-themes", "max");
+    revalidateTag("community-tag-counts", "max");
+
     return actionSuccess({ tags: validTags });
   } catch (error) {
     logError(error as Error, {
@@ -588,10 +617,8 @@ export async function updateCommunityThemeTags(
   }
 }
 
-export async function getCommunityTagCounts(): Promise<
-  { tag: string; count: number }[]
-> {
-  try {
+const getCachedTagCounts = unstable_cache(
+  async () => {
     const rows = await db
       .select({
         tag: communityThemeTag.tag,
@@ -602,6 +629,16 @@ export async function getCommunityTagCounts(): Promise<
       .orderBy(sql`tag_count desc`);
 
     return rows.map((r) => ({ tag: r.tag, count: Number(r.count) }));
+  },
+  ["community-tag-counts"],
+  { revalidate: 300, tags: ["community-tag-counts"] },
+);
+
+export async function getCommunityTagCounts(): Promise<
+  { tag: string; count: number }[]
+> {
+  try {
+    return getCachedTagCounts();
   } catch (error) {
     logError(error as Error, { action: "getCommunityTagCounts" });
     return [];
