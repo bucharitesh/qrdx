@@ -17,6 +17,8 @@ declare namespace Preferences {
   export type GenerateQr = ExtensionPreferences & {}
   /** Preferences accessible in the `saved-qrs` command */
   export type SavedQrs = ExtensionPreferences & {}
+  /** Preferences accessible in the `ai-generate` command */
+  export type AiGenerate = ExtensionPreferences & {}
 }
 
 declare namespace Arguments {
@@ -24,5 +26,7 @@ declare namespace Arguments {
   export type GenerateQr = {}
   /** Arguments passed to the `saved-qrs` command */
   export type SavedQrs = {}
+  /** Arguments passed to the `ai-generate` command */
+  export type AiGenerate = {}
 }
 
