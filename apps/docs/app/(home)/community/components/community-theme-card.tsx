@@ -4,7 +4,6 @@ import { Badge } from "@repo/design-system/components/ui/badge";
 import { cn } from "@repo/design-system/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "facehash";
 import { Heart } from "lucide-react";
-import Link from "next/link";
 import { ThemePreview } from "@/components/theme-preview";
 import { useToggleLike } from "@/lib/hooks/themes";
 import { useSessionGuard } from "@/lib/hooks/use-gaurds";
@@ -13,9 +12,13 @@ import type { CommunityTheme } from "@/types/community";
 
 interface CommunityThemeCardProps {
   theme: CommunityTheme;
+  onPreview: (theme: CommunityTheme) => void;
 }
 
-export function CommunityThemeCard({ theme }: CommunityThemeCardProps) {
+export function CommunityThemeCard({
+  theme,
+  onPreview,
+}: CommunityThemeCardProps) {
   const toggleLike = useToggleLike();
   const { checkValidSession } = useSessionGuard();
 
@@ -53,14 +56,24 @@ export function CommunityThemeCard({ theme }: CommunityThemeCardProps) {
   );
 
   return (
-    <Link href={`/playground/${theme.themeId}`} className="group">
-      <div className="relative h-44 w-full overflow-hidden rounded-xl border shadow-sm transition-all duration-200 group-hover:shadow-md group-hover:border-foreground/20">
+    <div
+      role="button"
+      tabIndex={0}
+      onClick={() => onPreview(theme)}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onPreview(theme);
+        }
+      }}
+      className="group cursor-pointer"
+    >
+      <div className="relative h-44 w-full overflow-hidden rounded-xl border shadow-sm transition-all duration-200 group-hover:border-foreground/20 group-hover:shadow-md">
         <ThemePreview
           styles={theme.styles}
           name={theme.name}
           className="transition-transform duration-300 group-hover:scale-102"
         />
-        Theme Preview
         {theme.tags.length > 0 && (
           <div className="pointer-events-none absolute top-2 left-2 flex items-center gap-1">
             {theme.tags.slice(0, 2).map((tag) => (
@@ -115,6 +128,6 @@ export function CommunityThemeCard({ theme }: CommunityThemeCardProps) {
           {theme.likeCount > 0 && <span>{theme.likeCount}</span>}
         </button>
       </div>
-    </Link>
+    </div>
   );
 }

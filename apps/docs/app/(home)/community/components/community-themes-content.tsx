@@ -3,6 +3,14 @@
 
 import { Button } from "@repo/design-system/components/ui/button";
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@repo/design-system/components/ui/dropdown-menu";
+import {
   Popover,
   PopoverContent,
   PopoverTrigger,
@@ -17,7 +25,14 @@ import {
 } from "@repo/design-system/components/ui/sheet";
 import { Skeleton } from "@repo/design-system/components/ui/skeleton";
 import { cn } from "@repo/design-system/lib/utils";
-import { Flame, Info, Loader2, SlidersHorizontal } from "lucide-react";
+import {
+  Check,
+  ChevronDown,
+  Flame,
+  Info,
+  Loader2,
+  SlidersHorizontal,
+} from "lucide-react";
 import Link from "next/link";
 import {
   parseAsArrayOf,
@@ -27,20 +42,31 @@ import {
 } from "nuqs";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useCommunityThemes } from "@/lib/hooks/themes/use-community-themes";
+import { useQREditorStore } from "@/store/editor-store";
 import type {
   CommunityFilterOption,
-  CommunitySortOption,
+  CommunityTheme,
+  CommunityTimeRange,
 } from "@/types/community";
 import { CommunitySidebarContent } from "./community-sidebar";
 import { CommunityThemeCard } from "./community-theme-card";
+import { CommunityThemePreviewDialog } from "./community-theme-preview-dialog";
 
-const sortOptions: {
-  value: CommunitySortOption;
+const popularOptions: {
+  timeRange: CommunityTimeRange;
   label: string;
 }[] = [
-  { value: "popular", label: "Popular" },
-  { value: "newest", label: "Newest" },
-  { value: "oldest", label: "Oldest" },
+  { timeRange: "all", label: "All Time" },
+  { timeRange: "monthly", label: "This Month" },
+  { timeRange: "weekly", label: "This Week" },
+];
+
+const otherSortOptions: {
+  sort: "newest" | "oldest";
+  label: string;
+}[] = [
+  { sort: "newest", label: "Newest" },
+  { sort: "oldest", label: "Oldest" },
 ];
 
 export function CommunityThemesContent() {
@@ -58,7 +84,23 @@ export function CommunityThemesContent() {
     "tags",
     parseAsArrayOf(parseAsString, ",").withDefault([]),
   );
+  const [timeRange, setTimeRange] = useQueryState(
+    "t",
+    parseAsStringLiteral(["weekly", "monthly", "all"] as const).withDefault(
+      "all",
+    ),
+  );
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [previewThemeId, setPreviewThemeId] = useState<string | null>(null);
+  const { themeState, setThemeState } = useQREditorStore();
+
+  const handlePreview = useCallback(
+    (theme: CommunityTheme) => {
+      setThemeState({ ...themeState, styles: theme.styles });
+      setPreviewThemeId(theme.id);
+    },
+    [themeState, setThemeState],
+  );
 
   const handleFilterChange = useCallback(
     (newFilter: CommunityFilterOption) => {
@@ -70,17 +112,23 @@ export function CommunityThemesContent() {
 
   const handleTagToggle = useCallback(
     (tag: string) => {
-      setTags((prev) =>
-        prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag],
-      );
+      setTags((prev) => (prev.includes(tag) ? [] : [tag]));
     },
     [setTags],
   );
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } =
-    useCommunityThemes(sort, filter, tags);
+    useCommunityThemes(
+      sort,
+      filter,
+      tags,
+      sort === "popular" ? timeRange : "all",
+    );
 
   const themes = data?.pages.flatMap((page) => page.themes) ?? [];
+  const previewTheme = previewThemeId
+    ? (themes.find((t) => t.id === previewThemeId) ?? null)
+    : null;
 
   const sentinelRef = useRef<HTMLDivElement>(null);
 
@@ -154,27 +202,54 @@ export function CommunityThemesContent() {
                 </SheetContent>
               </Sheet>
 
-              <div className="flex items-center">
-                {sortOptions.map((option, i) => (
-                  <div key={option.value} className="flex items-center">
-                    {i > 0 && (
-                      <Separator orientation="vertical" className="mx-1 h-4" />
-                    )}
-                    <button
-                      type="button"
-                      onClick={() => setSort(option.value)}
-                      className={cn(
-                        "rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
-                        sort === option.value
-                          ? "bg-foreground/10 text-foreground"
-                          : "text-muted-foreground hover:text-foreground hover:bg-foreground/5",
-                      )}
-                    >
-                      {option.label}
-                    </button>
-                  </div>
-                ))}
-              </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="outline" size="sm" className="gap-1.5">
+                    {sort === "popular"
+                      ? `Popular / ${popularOptions.find((o) => o.timeRange === timeRange)?.label ?? "All Time"}`
+                      : sort === "newest"
+                        ? "Newest"
+                        : "Oldest"}
+                    <ChevronDown className="size-3.5 opacity-50" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="start" className="w-44">
+                  <DropdownMenuLabel>Popular</DropdownMenuLabel>
+                  {popularOptions.map((option) => {
+                    const isActive =
+                      sort === "popular" && timeRange === option.timeRange;
+                    return (
+                      <DropdownMenuItem
+                        key={option.timeRange}
+                        onClick={() => {
+                          setSort("popular");
+                          setTimeRange(option.timeRange);
+                        }}
+                        className="cursor-pointer justify-between"
+                      >
+                        {option.label}
+                        {isActive && <Check className="size-3.5" />}
+                      </DropdownMenuItem>
+                    );
+                  })}
+                  <DropdownMenuSeparator />
+                  {otherSortOptions.map((option) => {
+                    const isActive = sort === option.sort;
+                    return (
+                      <DropdownMenuItem
+                        key={option.sort}
+                        onClick={() => {
+                          setSort(option.sort);
+                        }}
+                        className="cursor-pointer justify-between"
+                      >
+                        {option.label}
+                        {isActive && <Check className="size-3.5" />}
+                      </DropdownMenuItem>
+                    );
+                  })}
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
 
             <Popover>
@@ -253,7 +328,11 @@ export function CommunityThemesContent() {
             <>
               <div className="grid gap-5 gap-y-8 grid-cols-[repeat(auto-fill,minmax(280px,1fr))]">
                 {themes.map((theme) => (
-                  <CommunityThemeCard key={theme.id} theme={theme} />
+                  <CommunityThemeCard
+                    key={theme.id}
+                    theme={theme}
+                    onPreview={handlePreview}
+                  />
                 ))}
               </div>
 
@@ -266,6 +345,15 @@ export function CommunityThemesContent() {
           )}
         </div>
       </div>
+      <CommunityThemePreviewDialog
+        theme={previewTheme}
+        themes={themes}
+        open={!!previewThemeId}
+        onOpenChange={(open) => {
+          if (!open) setPreviewThemeId(null);
+        }}
+        onNavigate={handlePreview}
+      />
     </div>
   );
 }
