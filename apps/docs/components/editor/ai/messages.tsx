@@ -106,7 +106,7 @@ export function Messages({
           <div ref={scrollStartRef} />
           <div className="flex flex-col gap-8 pb-8 wrap-anywhere whitespace-pre-wrap">
             {visibleMessages.map((message, index) => {
-              const isLastMessage = index === messages.length - 1;
+              const isLastMessage = index === visibleMessages.length - 1;
               const isStreaming =
                 status === "submitted" || status === "streaming";
               const isLastMessageStreaming =

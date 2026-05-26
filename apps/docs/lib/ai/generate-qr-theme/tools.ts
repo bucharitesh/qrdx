@@ -1,12 +1,13 @@
 import { streamObject, tool } from "ai";
 import z from "zod";
 import { themeStylePropsOutputSchema } from "@/lib/ai/generate-qr-theme";
+import { GENERATE_QR_THEME_OBJECT_SYSTEM } from "@/lib/ai/prompts";
 import { baseProviderOptions, myProvider } from "@/lib/ai/providers";
 import type { AdditionalAIContext } from "@/types/ai";
 
 export const QR_THEME_GENERATION_TOOLS = {
   generateQRTheme: tool({
-    description: `Generates a QR code style theme based on the current conversation context. Output ALL relevant properties: colors (solid HEX only, no gradients), patterns, frames, logo if asked. Do not generate templateId. COMPULSORY: bgColor must contrast with fgColor, eyeColor, and dotColor combined—never produce poor contrast. Use this tool once you have a clear understanding of the user's request, which may include a text prompt, images, an SVG, or a base theme reference (@[theme_name]).`,
+    description: `Generates a QR code style theme from the conversation. Honor explicit user specs (colors, pattern names, margin) over creative defaults. For @Current Theme or @[name] mentions, start from the attached JSON and apply only the requested delta. Use character recipes (e.g. Spider-Man: black bg, white fg, red eyes, diamond + diya) only when the user asks for that character. Output solid HEX colors only, no gradients or templateId. bgColor must contrast with fgColor, eyeColor, and dotColor.`,
     inputSchema: z.object({}),
     outputSchema: themeStylePropsOutputSchema,
     execute: async (
@@ -19,6 +20,7 @@ export const QR_THEME_GENERATION_TOOLS = {
         abortSignal,
         model: myProvider.languageModel("qr-theme-generation"),
         providerOptions: baseProviderOptions,
+        system: GENERATE_QR_THEME_OBJECT_SYSTEM,
         schema: themeStylePropsOutputSchema,
         messages,
       });

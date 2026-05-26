@@ -59,7 +59,7 @@ export function ChatThemePreview({
     return (
       <Card
         className={cn(
-          "w-full max-w-[550px] py-0 overflow-hidden rounded-lg shadow-none",
+          "w-full max-w-[550px] gap-0 overflow-hidden rounded-lg py-0 shadow-none",
         )}
       >
         <div className="flex size-full h-10 items-center gap-2 p-1.5">
@@ -77,7 +77,7 @@ export function ChatThemePreview({
     return (
       <Card
         className={cn(
-          "max-w-[550px] py-0 overflow-hidden rounded-lg shadow-none",
+          "max-w-[550px] gap-0 overflow-hidden rounded-lg py-0 shadow-none",
         )}
       >
         <div className="flex size-full h-10 items-center gap-2 p-1.5">

@@ -18,6 +18,7 @@ import {
   actionSuccess,
   ErrorCode,
   QRCodeThemeNotFoundError,
+  UnauthorizedError,
   ValidationError,
 } from "@/types/errors";
 import { type ThemeStyles, themeStylePropsSchema } from "@/types/theme";
@@ -80,6 +81,9 @@ export async function getThemes() {
       .where(eq(themeTable.userId, userId));
     return userThemes;
   } catch (error) {
+    if (error instanceof UnauthorizedError) {
+      return [];
+    }
     logError(error as Error, { action: "getThemes" });
     throw error;
   }

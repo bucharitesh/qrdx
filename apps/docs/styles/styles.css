@@ -1,4 +1,7 @@
 @import "@repo/design-system/styles/globals.css";
+@import "streamdown/styles.css";
+
+@source "../node_modules/streamdown/dist";
 
 @import "fumadocs-ui/css/neutral.css";
 @import "fumadocs-ui/css/preset.css";

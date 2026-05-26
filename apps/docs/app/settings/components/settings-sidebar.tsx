@@ -46,6 +46,13 @@ const BASE_NAV_ITEMS: NavItem[] = [
     label: "Integrations",
     icon: Icons.Plug,
   },
+  { type: "separator", id: "account-separator" },
+  {
+    type: "link",
+    href: "/settings/account",
+    label: "Account",
+    icon: Icons.UserCircle,
+  },
 ];
 
 const getSubscriptionNavItems = (): NavItem[] => [
