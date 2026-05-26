@@ -1,0 +1,12 @@
+name: Staging Push Probe
+
+on:
+  push:
+    branches:
+      - staging
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "staging push received"
