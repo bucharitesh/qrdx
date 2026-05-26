@@ -285,6 +285,12 @@ export interface EtsyContent {
 export interface DubshContent {
   type: "dubsh";
   shortUrl: string;
+  source?: "manual" | "dub-selected" | "dub-created";
+  dubLinkId?: string;
+  domain?: string;
+  key?: string;
+  destinationUrl?: string;
+  qrCodeUrl?: string;
 }
 
 /**

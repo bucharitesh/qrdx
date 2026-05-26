@@ -9,6 +9,7 @@ interface ContentTypeCardProps {
   label: string;
   description: string;
   icon: LucideIcon;
+  logoSrc?: string;
   isActive?: boolean;
   onClick: () => void;
   variant?: "default" | "carousel";
@@ -18,6 +19,7 @@ export function ContentTypeCard({
   label,
   description,
   icon: Icon,
+  logoSrc,
   isActive = false,
   onClick,
 }: ContentTypeCardProps) {
@@ -38,12 +40,16 @@ export function ContentTypeCard({
           isActive && "scale-110",
         )}
       >
-        <Icon
-          className={cn(
-            "size-8 text-primary/60 transition-colors",
-            isActive && "text-primary",
-          )}
-        />
+        {logoSrc ? (
+          <img src={logoSrc} alt="" className="size-8 object-contain" />
+        ) : (
+          <Icon
+            className={cn(
+              "size-8 text-primary/60 transition-colors",
+              isActive && "text-primary",
+            )}
+          />
+        )}
       </div>
 
       {/* Text content */}
