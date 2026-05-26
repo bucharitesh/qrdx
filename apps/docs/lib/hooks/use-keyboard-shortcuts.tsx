@@ -136,5 +136,13 @@ export function useKeyboardShortcut(
 
     return () =>
       setListeners((prev) => prev.filter((listener) => listener.id !== id));
-  }, [options.enabled, options.priority, key, options, id, setListeners]);
+  }, [
+    id,
+    key,
+    setListeners,
+    options.enabled,
+    options.priority,
+    options.modal,
+    options.sheet,
+  ]);
 }

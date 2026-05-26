@@ -76,8 +76,8 @@ export default function Layout({ children }: LayoutProps<"/">) {
       </head>
       <body className="antialiased font-sans bg-background relative flex min-h-screen flex-col">
         <Provider>{children}</Provider>
-        <FeaturebaseScript />
-        <PostHogInit />
+        {process.env.NODE_ENV === "production" && <FeaturebaseScript />}
+        {process.env.NODE_ENV === "production" && <PostHogInit />}
       </body>
     </html>
   );
