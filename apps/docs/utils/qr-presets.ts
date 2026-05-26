@@ -407,6 +407,28 @@ export const defaultPresets: Record<string, ThemePreset> = {
       level: "Q",
     },
   },
+  pastelDreams: {
+    label: "Pastel Dreams",
+    createdAt: "2025-05-22",
+    styles: {
+      bgColor: "#fdf6f9",
+      fgColor: {
+        type: "linear",
+        stops: [
+          { color: "#a8d5ba", offset: 0 },
+          { color: "#b5d8eb", offset: 50 },
+          { color: "#f9d5e5", offset: 100 },
+        ],
+        angle: 135,
+      },
+      eyeColor: "#c4a8d8",
+      dotColor: "#a8d5ba",
+      bodyPattern: "rounded",
+      cornerEyePattern: "extra-rounded",
+      cornerEyeDotPattern: "rounded",
+      level: "Q",
+    },
+  },
   monochrome: {
     label: "Monochrome",
     styles: {
