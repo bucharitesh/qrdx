@@ -67,7 +67,8 @@ export default async function IntegrationPage({
       slug={integration.slug}
       name={integration.name}
       description={integration.description}
-      logo={integration.logo}
+      logos={integration.logos}
+      capabilities={integration.capabilities}
       features={integration.features}
       developedBy={integration.developedBy}
       website={integration.website}

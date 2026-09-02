@@ -3,7 +3,9 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@repo/design-system/*": ["../design-system/*"],
+      "@repo/integration-kit": ["../integration-kit/src/index.ts"]
     }
   },
   "include": ["src/**/*.ts", "src/**/*.tsx"],

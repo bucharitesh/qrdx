@@ -1,6 +1,7 @@
 "use client";
 
 import { Input } from "@repo/design-system/components/ui/input";
+import { getCapabilityLabel } from "@repo/integration-kit";
 import type {
   IntegrationCategory,
   IntegrationDefinition,
@@ -94,6 +95,16 @@ export function IntegrationsClient({ integrations }: IntegrationsClientProps) {
         />
       </div>
 
+      <div className="rounded-xl border bg-card p-5">
+        <div className="max-w-2xl space-y-1">
+          <h2 className="text-lg font-semibold">Integration platform</h2>
+          <p className="text-muted-foreground text-sm">
+            Apps expose approved QRDX capabilities like QR sources, asset
+            pickers, manual URL parsing, and short-link actions.
+          </p>
+        </div>
+      </div>
+
       {/* Enabled integrations */}
       {enabledIntegrations.length > 0 && (
         <div className="space-y-3">
@@ -112,20 +123,28 @@ export function IntegrationsClient({ integrations }: IntegrationsClientProps) {
                 href={`/settings/integrations/${integration.slug}`}
                 className="flex items-center gap-3 px-4 py-3 hover:bg-muted/50 transition-colors border-b last:border-b-0"
               >
-                <div className="bg-white border border-border flex size-8 items-center justify-center rounded-md p-1.5 shrink-0">
-                  {integration.logo ? (
-                    <img
-                      src={integration.logo}
-                      alt={`${integration.name} logo`}
-                      className="size-full object-contain"
-                    />
-                  ) : (
-                    <div className="size-full bg-muted rounded" />
-                  )}
+                <div className="border border-border flex size-8 items-center justify-center rounded-md bg-background p-1.5 shrink-0">
+                  <img
+                    src={integration.logos.light}
+                    alt={`${integration.name} logo`}
+                    className="size-full object-contain dark:hidden"
+                  />
+                  <img
+                    src={integration.logos.dark}
+                    alt={`${integration.name} logo`}
+                    className="hidden size-full object-contain dark:block"
+                  />
                 </div>
-                <span className="flex-1 text-sm font-medium">
-                  {integration.name}
-                </span>
+                <div className="min-w-0 flex-1">
+                  <span className="text-sm font-medium">
+                    {integration.name}
+                  </span>
+                  <p className="truncate text-muted-foreground text-xs">
+                    {integration.capabilities
+                      .map((capability) => getCapabilityLabel(capability.kind))
+                      .join(", ")}
+                  </p>
+                </div>
                 <ChevronRight className="size-4 text-muted-foreground" />
               </Link>
             ))}
@@ -157,7 +176,8 @@ export function IntegrationsClient({ integrations }: IntegrationsClientProps) {
                   slug={integration.slug}
                   name={integration.name}
                   description={integration.description}
-                  logo={integration.logo}
+                  logos={integration.logos}
+                  capabilities={integration.capabilities}
                   isConnected={integration.isConnected}
                   isConfigured={integration.isConfigured}
                 />

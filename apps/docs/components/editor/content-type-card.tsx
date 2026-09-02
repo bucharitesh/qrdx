@@ -10,6 +10,7 @@ interface ContentTypeCardProps {
   description: string;
   icon: LucideIcon;
   logoSrc?: string;
+  logoDarkSrc?: string;
   isActive?: boolean;
   onClick: () => void;
   variant?: "default" | "carousel";
@@ -20,6 +21,7 @@ export function ContentTypeCard({
   description,
   icon: Icon,
   logoSrc,
+  logoDarkSrc,
   isActive = false,
   onClick,
 }: ContentTypeCardProps) {
@@ -36,12 +38,28 @@ export function ContentTypeCard({
       {/* Icon container with gradient background */}
       <div
         className={cn(
-          "flex size-16 items-center justify-center rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 transition-all",
+          "flex size-16 items-center justify-center rounded-2xl bg-linear-to-br from-primary/20 to-primary/5 transition-all",
           isActive && "scale-110",
         )}
       >
         {logoSrc ? (
-          <img src={logoSrc} alt="" className="size-8 object-contain" />
+          <>
+            <img
+              src={logoSrc}
+              alt=""
+              className={cn(
+                "size-8 object-contain",
+                logoDarkSrc && "dark:hidden",
+              )}
+            />
+            {logoDarkSrc && (
+              <img
+                src={logoDarkSrc}
+                alt=""
+                className="hidden size-8 object-contain dark:block"
+              />
+            )}
+          </>
         ) : (
           <Icon
             className={cn(

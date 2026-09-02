@@ -235,6 +235,23 @@ export function parseURL(url: string): ParsedURL | null {
     };
   }
 
+  // Google Drive and Google Workspace files
+  if (
+    trimmedUrl.includes("drive.google.com") ||
+    /docs\.google\.com\/(document|spreadsheets|presentation|drawings)\/d\//.test(
+      trimmedUrl,
+    )
+  ) {
+    return {
+      type: "google-drive",
+      config: {
+        type: "google-drive",
+        url: trimmedUrl,
+        source: "manual",
+      },
+    };
+  }
+
   // Google Maps
   if (
     trimmedUrl.includes("google.com/maps") ||

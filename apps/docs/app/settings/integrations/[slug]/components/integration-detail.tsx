@@ -4,7 +4,12 @@
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Separator } from "@repo/design-system/components/ui/separator";
-import type { IntegrationCategory } from "@repo/integrations";
+import { getCapabilityLabel, hasCapability } from "@repo/integration-kit";
+import type {
+  IntegrationCapability,
+  IntegrationCategory,
+  IntegrationLogoSet,
+} from "@repo/integrations";
 import {
   AlertCircle,
   ArrowLeft,
@@ -37,7 +42,8 @@ interface IntegrationDetailProps {
   slug: string;
   name: string;
   description: string;
-  logo: string;
+  logos: IntegrationLogoSet;
+  capabilities: IntegrationCapability[];
   features: string[];
   developedBy?: string;
   website?: string;
@@ -53,7 +59,8 @@ export function IntegrationDetail({
   slug,
   name,
   description,
-  logo,
+  logos,
+  capabilities,
   features,
   developedBy,
   website,
@@ -67,6 +74,7 @@ export function IntegrationDetail({
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
+  const hasShortLinks = hasCapability(capabilities, "short-link-provider");
 
   useEffect(() => {
     const success = searchParams.get("success");
@@ -170,13 +178,20 @@ export function IntegrationDetail({
       <div className="rounded-xl border bg-card p-6">
         <div className="flex items-start justify-between gap-4">
           <div className="flex items-start gap-4">
-            <div className="bg-white border border-border flex size-14 items-center justify-center rounded-full p-2.5 shrink-0">
-              {logo ? (
-                <img
-                  src={logo}
-                  alt={`${name} logo`}
-                  className="size-full object-contain"
-                />
+            <div className="border border-border flex size-14 items-center justify-center rounded-full bg-background p-2.5 shrink-0">
+              {logos.light ? (
+                <>
+                  <img
+                    src={logos.light}
+                    alt={`${name} logo`}
+                    className="size-full object-contain dark:hidden"
+                  />
+                  <img
+                    src={logos.dark}
+                    alt={`${name} logo`}
+                    className="hidden size-full object-contain dark:block"
+                  />
+                </>
               ) : (
                 <ExternalLink className="size-6 text-muted-foreground" />
               )}
@@ -195,6 +210,13 @@ export function IntegrationDetail({
                 )}
               </div>
               <p className="text-sm text-muted-foreground">{description}</p>
+              <div className="flex flex-wrap gap-1.5 pt-1">
+                {capabilities.map((capability) => (
+                  <Badge key={capability.id} variant="secondary">
+                    {getCapabilityLabel(capability.kind)}
+                  </Badge>
+                ))}
+              </div>
             </div>
           </div>
 
@@ -304,7 +326,33 @@ export function IntegrationDetail({
         </div>
       </div>
 
-      {slug === "dub" && isConnected && <DubManagement metadata={metadata} />}
+      {hasShortLinks && isConnected && <DubManagement metadata={metadata} />}
+
+      {capabilities.length > 0 && (
+        <div className="rounded-xl border bg-card p-6 space-y-4">
+          <div>
+            <h2 className="text-base font-semibold">QRDX capabilities</h2>
+            <p className="text-sm text-muted-foreground">
+              These are the approved integration surfaces this app can use.
+            </p>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {capabilities.map((capability) => (
+              <div key={capability.id} className="rounded-lg border p-4">
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-sm font-medium">{capability.label}</p>
+                  <Badge variant="outline">
+                    {getCapabilityLabel(capability.kind)}
+                  </Badge>
+                </div>
+                <p className="mt-2 text-muted-foreground text-xs leading-relaxed">
+                  {capability.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Features */}
       {features.length > 0 && (
