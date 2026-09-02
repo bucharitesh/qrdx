@@ -1,5 +1,6 @@
 import type { IntegrationCategory } from "@repo/integrations";
 import {
+  getCapabilityLabel,
   getIntegrationRegistry,
   initializeIntegrations,
 } from "@repo/integrations";
@@ -73,13 +74,20 @@ export default async function IntegrationDetailPage({
         {/* ── Left sidebar ── */}
         <aside className="w-full md:w-72 shrink-0 flex flex-col gap-8 p-6">
           {/* Logo */}
-          <div className="bg-white border border-border flex size-20 items-center justify-center rounded-full p-3.5 shadow-sm">
-            {integration.logo ? (
-              <img
-                src={integration.logo}
-                alt={`${integration.name} logo`}
-                className="size-full object-contain"
-              />
+          <div className="bg-background border border-border flex size-20 items-center justify-center rounded-full p-3.5 shadow-sm">
+            {integration.logos.light ? (
+              <>
+                <img
+                  src={integration.logos.light}
+                  alt={`${integration.name} logo`}
+                  className="size-full object-contain dark:hidden"
+                />
+                <img
+                  src={integration.logos.dark}
+                  alt={`${integration.name} logo`}
+                  className="hidden size-full object-contain dark:block"
+                />
+              </>
             ) : (
               <ExternalLink className="size-8 text-muted-foreground" />
             )}
@@ -183,6 +191,27 @@ export default async function IntegrationDetailPage({
                   </li>
                 ))}
               </ul>
+            </div>
+          )}
+
+          {integration.capabilities.length > 0 && (
+            <div className="space-y-4">
+              <h2 className="text-xl font-semibold tracking-tight">
+                QRDX capabilities
+              </h2>
+              <div className="grid gap-3 sm:grid-cols-2">
+                {integration.capabilities.map((capability) => (
+                  <div key={capability.id} className="rounded-xl border p-4">
+                    <p className="text-sm font-medium">{capability.label}</p>
+                    <p className="mt-1 text-muted-foreground text-xs">
+                      {getCapabilityLabel(capability.kind)}
+                    </p>
+                    <p className="mt-2 text-muted-foreground text-sm">
+                      {capability.description}
+                    </p>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
 

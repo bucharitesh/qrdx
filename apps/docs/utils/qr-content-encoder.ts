@@ -14,6 +14,7 @@ import type {
   EtsyContent,
   FacebookContent,
   FlipkartContent,
+  GoogleDriveContent,
   GoogleReviewContent,
   InstagramContent,
   LinkedInContent,
@@ -475,6 +476,14 @@ export function encodeCalcom(content: CalcomContent): string {
 }
 
 /**
+ * Encode Google Drive content
+ */
+export function encodeGoogleDrive(content: GoogleDriveContent): string {
+  if (!content.url) return "";
+  return content.url;
+}
+
+/**
  * Main encoder function that handles all content types
  */
 export function encodeQRContent(content: QRContentConfig | null): string {
@@ -545,6 +554,8 @@ export function encodeQRContent(content: QRContentConfig | null): string {
       return encodeFlipkart(content);
     case "calcom":
       return encodeCalcom(content);
+    case "google-drive":
+      return encodeGoogleDrive(content);
     default:
       return "";
   }
@@ -773,6 +784,12 @@ export function validateContent(content: QRContentConfig): {
     case "calcom":
       if (!content.bookingUrl || content.bookingUrl.trim() === "") {
         return { valid: false, error: "Cal.com booking URL is required" };
+      }
+      return { valid: true };
+
+    case "google-drive":
+      if (!content.url || content.url.trim() === "") {
+        return { valid: false, error: "Google Drive URL is required" };
       }
       return { valid: true };
 

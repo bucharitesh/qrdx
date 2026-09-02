@@ -8,6 +8,7 @@ export { EthereumForm } from "./ethereum-form";
 export { EtsyForm } from "./etsy-form";
 export { FacebookForm } from "./facebook-form";
 export { FlipkartForm } from "./flipkart-form";
+export { GoogleDriveForm } from "./google-drive-form";
 export { GoogleReviewForm } from "./google-review-form";
 export { InstagramForm } from "./instagram-form";
 export { LinkedInForm } from "./linkedin-form";

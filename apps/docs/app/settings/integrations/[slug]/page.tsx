@@ -44,6 +44,7 @@ export default async function IntegrationPage({
   let isConnected = false;
   let status: "active" | "disconnected" | "error" | undefined;
   let connectedAt: Date | undefined;
+  let metadata: Record<string, unknown> | undefined;
 
   if (isConfigured) {
     try {
@@ -55,6 +56,7 @@ export default async function IntegrationPage({
       isConnected = !!connectedIntegration;
       status = connectedIntegration?.status as typeof status;
       connectedAt = connectedIntegration?.createdAt as Date | undefined;
+      metadata = connectedIntegration?.metadata ?? undefined;
     } catch {
       // leave defaults
     }
@@ -65,7 +67,8 @@ export default async function IntegrationPage({
       slug={integration.slug}
       name={integration.name}
       description={integration.description}
-      logo={integration.logo}
+      logos={integration.logos}
+      capabilities={integration.capabilities}
       features={integration.features}
       developedBy={integration.developedBy}
       website={integration.website}
@@ -74,6 +77,7 @@ export default async function IntegrationPage({
       isConnected={isConnected}
       status={status}
       connectedAt={connectedAt}
+      metadata={metadata}
     />
   );
 }

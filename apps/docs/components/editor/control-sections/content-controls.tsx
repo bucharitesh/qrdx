@@ -11,6 +11,7 @@ import {
   EtsyForm,
   FacebookForm,
   FlipkartForm,
+  GoogleDriveForm,
   GoogleReviewForm,
   InstagramForm,
   LinkedInForm,
@@ -73,6 +74,7 @@ export function ContentControls() {
         {contentType === "ethereum" && <EthereumForm />}
         {contentType === "etsy" && <EtsyForm />}
         {contentType === "dubsh" && <DubshForm />}
+        {contentType === "google-drive" && <GoogleDriveForm />}
         {contentType === "attendance" && <AttendanceForm />}
         {contentType === "amazon" && <AmazonForm />}
         {contentType === "flipkart" && <FlipkartForm />}
