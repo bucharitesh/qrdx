@@ -1,6 +1,7 @@
 "use client";
 
 import { cn } from "@repo/design-system/lib/utils";
+import { getCapabilityLabel } from "@repo/integration-kit";
 import type {
   IntegrationCategory,
   IntegrationDefinition,
@@ -116,13 +117,20 @@ export function IntegrationCard({
       )}
 
       {/* Logo */}
-      <div className="flex size-12 items-center justify-center rounded-lg border border-border bg-white p-2.5 shrink-0">
-        {integration.logo ? (
-          <img
-            src={integration.logo}
-            alt={`${integration.name} logo`}
-            className="size-full object-contain"
-          />
+      <div className="flex size-12 items-center justify-center rounded-lg border border-border bg-background p-2.5 shrink-0">
+        {integration.logos.light ? (
+          <>
+            <img
+              src={integration.logos.light}
+              alt={`${integration.name} logo`}
+              className="size-full object-contain dark:hidden"
+            />
+            <img
+              src={integration.logos.dark}
+              alt={`${integration.name} logo`}
+              className="hidden size-full object-contain dark:block"
+            />
+          </>
         ) : (
           <ExternalLink className="size-5 text-muted-foreground" />
         )}
@@ -141,6 +149,16 @@ export function IntegrationCard({
         <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
           {integration.description}
         </p>
+        <div className="flex flex-wrap gap-1 pt-1">
+          {integration.capabilities.slice(0, 2).map((capability) => (
+            <span
+              key={capability.id}
+              className="rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium text-muted-foreground"
+            >
+              {getCapabilityLabel(capability.kind)}
+            </span>
+          ))}
+        </div>
       </div>
     </Link>
   );

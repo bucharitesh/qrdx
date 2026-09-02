@@ -4,6 +4,7 @@ import { Button } from "@repo/design-system/components/ui/button";
 import type { LucideIcon } from "lucide-react";
 import * as React from "react";
 import { ContentTypeModal } from "@/components/editor/content-type-modal";
+import { getIntegrationByContentType } from "@/lib/integration-catalog";
 import { useQREditorStore } from "@/store/editor-store";
 import { CONTENT_TYPES_METADATA } from "@/types/qr-content";
 import { Icons } from "../icons";
@@ -43,10 +44,6 @@ const iconMap: Record<string, LucideIcon> = {
   Youtube: Icons.Youtube,
 };
 
-function getLogoSrc(type: string | undefined) {
-  return type === "dubsh" ? "/integrations/dub-icon.svg" : undefined;
-}
-
 export function ContentTypeSelector() {
   const { contentType } = useQREditorStore();
   const [modalOpen, setModalOpen] = React.useState(false);
@@ -56,7 +53,7 @@ export function ContentTypeSelector() {
   );
   const Icon =
     (currentType ? iconMap[currentType.icon] : iconMap.Link) || iconMap.Link;
-  const logoSrc = getLogoSrc(currentType?.type);
+  const integration = getIntegrationByContentType(currentType?.type);
 
   return (
     <>
@@ -67,8 +64,19 @@ export function ContentTypeSelector() {
       >
         <div className="flex items-center gap-3">
           <div className="flex size-10 items-center justify-center rounded-full bg-primary/10">
-            {logoSrc ? (
-              <img src={logoSrc} alt="" className="size-5 object-contain" />
+            {integration ? (
+              <>
+                <img
+                  src={integration.logos.light}
+                  alt=""
+                  className="size-5 object-contain dark:hidden"
+                />
+                <img
+                  src={integration.logos.dark}
+                  alt=""
+                  className="hidden size-5 object-contain dark:block"
+                />
+              </>
             ) : (
               <Icon className="size-5 text-primary" />
             )}

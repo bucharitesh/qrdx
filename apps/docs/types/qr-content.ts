@@ -35,7 +35,8 @@ export type ContentType =
   | "attendance"
   | "amazon"
   | "flipkart"
-  | "calcom";
+  | "calcom"
+  | "google-drive";
 
 /**
  * URL/Plain Text Content
@@ -294,6 +295,18 @@ export interface DubshContent {
 }
 
 /**
+ * Google Drive Content
+ */
+export interface GoogleDriveContent {
+  type: "google-drive";
+  url: string;
+  name?: string;
+  fileId?: string;
+  mimeType?: string;
+  source?: "manual" | "drive-selected";
+}
+
+/**
  * Attendance Content (Google Form)
  */
 export interface AttendanceContent {
@@ -357,6 +370,7 @@ export type QRContentConfig =
   | EthereumContent
   | EtsyContent
   | DubshContent
+  | GoogleDriveContent
   | AttendanceContent
   | AmazonContent
   | FlipkartContent
@@ -540,6 +554,12 @@ export const CONTENT_TYPES_METADATA: ContentTypeMetadata[] = [
     label: "Dub.sh",
     icon: "Link2",
     description: "Dub.sh short link",
+  },
+  {
+    type: "google-drive",
+    label: "Google Drive",
+    icon: "FileText",
+    description: "Google Drive file or folder",
   },
   {
     type: "attendance",

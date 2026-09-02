@@ -1,4 +1,8 @@
 import type {
+  IntegrationCapability,
+  IntegrationLogoSet,
+} from "@repo/integration-kit";
+import type {
   IntegrationCategory,
   IntegrationType,
   OAuthConfig,
@@ -11,10 +15,11 @@ export interface IntegrationDefinition {
   slug: string;
   name: string;
   description: string;
-  logo: string;
+  logos: IntegrationLogoSet;
   category: IntegrationCategory[];
   type: IntegrationType;
   oauth?: OAuthConfig;
+  capabilities: IntegrationCapability[];
   features: string[];
   configurable: boolean;
   developedBy?: string;

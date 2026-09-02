@@ -65,6 +65,19 @@ export type {
   IntegrationConfig,
   IntegrationDefinition,
 } from "./registry/types";
+export type {
+  AssetPickerCapability,
+  IntegrationCapability,
+  IntegrationLogoSet,
+  ManualUrlParserCapability,
+  QrContentSourceCapability,
+  ShortLinkProviderCapability,
+} from "@repo/integration-kit";
+export {
+  getCapabilityLabel,
+  hasCapability,
+  INTEGRATION_CAPABILITY_LABELS,
+} from "@repo/integration-kit";
 // Types
 export type {
   Integration,
