@@ -10,6 +10,8 @@
 # goes first because the CLI depends on it: pnpm publish turns the CLI's
 # "qrdx": "workspace:*" into the exact qrdx version from the workspace.
 # Each release gets an npm provenance statement (needs id-token: write).
+# Until the NPM_TOKEN secret exists, the run skips publishing with a notice
+# instead of failing, so merging to main stays green.
 name: Publish
 
 on:
@@ -56,9 +58,24 @@ jobs:
           cache: pnpm
           registry-url: https://registry.npmjs.org
 
+      # Secrets can't be read in `if:`, so expose "is it set" as an output.
+      - name: Check for the npm token
+        id: token
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [ -n "$NODE_AUTH_TOKEN" ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::NPM_TOKEN isn't set, so nothing was published. Add it under Settings → Secrets and variables → Actions, then re-run this workflow."
+            echo "Skipped: the NPM_TOKEN secret isn't set." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
       # Only a 404 from npm means "not published yet"; any other npm error
       # (network, auth) stops the run instead of guessing.
       - name: Find unpublished versions
+        if: steps.token.outputs.present == 'true'
         id: versions
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
