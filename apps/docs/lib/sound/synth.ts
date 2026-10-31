@@ -304,4 +304,79 @@ export const SYNTH: Record<SoundName, SynthRecipe> = {
       });
     }
   },
+  // Christmas: small glass bell.
+  "seasonal-bauble": (ctx, out, t) => {
+    chime(ctx, out, t, 1760, 0.16, 0.18);
+    chime(ctx, out, t + 0.05, 2349.3, 0.12, 0.1);
+  },
+  // Paper rustle, then a soft bell.
+  "seasonal-gift": (ctx, out, t) => {
+    noise(ctx, out, t, {
+      filter: "bandpass",
+      freq: 3200,
+      q: 0.8,
+      attack: 0.01,
+      decay: 0.07,
+      gain: 0.18,
+    });
+    chime(ctx, out, t + 0.07, 1318.5, 0.14, 0.18);
+  },
+  // Soft snowy puff with a low, round note.
+  "seasonal-snowman": (ctx, out, t) => {
+    noise(ctx, out, t, {
+      filter: "lowpass",
+      freq: 900,
+      to: 400,
+      attack: 0.02,
+      decay: 0.12,
+      gain: 0.3,
+    });
+    tone(ctx, out, t + 0.02, { freq: 392, to: 370, decay: 0.15, gain: 0.16 });
+  },
+  // New Year: a muted cork pop.
+  "seasonal-cork": (ctx, out, t) => {
+    tone(ctx, out, t, {
+      freq: 620,
+      to: 180,
+      attack: 0.001,
+      decay: 0.05,
+      gain: 0.4,
+    });
+    noise(ctx, out, t + 0.03, {
+      filter: "highpass",
+      freq: 4000,
+      attack: 0.01,
+      decay: 0.12,
+      gain: 0.08,
+    });
+  },
+  // Rising whistle into a quiet crackle.
+  "seasonal-firework": (ctx, out, t) => {
+    tone(ctx, out, t, {
+      freq: 900,
+      to: 1900,
+      attack: 0.01,
+      decay: 0.1,
+      gain: 0.08,
+    });
+    for (let i = 0; i < 4; i++) {
+      noise(ctx, out, t + 0.11 + i * 0.03, {
+        filter: "bandpass",
+        freq: 2600 + i * 300,
+        q: 1.2,
+        decay: 0.02,
+        gain: 0.16 * (1 - i * 0.15),
+      });
+    }
+  },
+  // A light upward boop.
+  "seasonal-balloon": (ctx, out, t) => {
+    tone(ctx, out, t, {
+      freq: 520,
+      to: 880,
+      attack: 0.01,
+      decay: 0.12,
+      gain: 0.22,
+    });
+  },
 };

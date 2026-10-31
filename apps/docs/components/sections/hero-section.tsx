@@ -17,7 +17,7 @@ export function HeroSection() {
           <AsciiField
             variant="scan"
             density={0.9}
-            className="[mask-image:radial-gradient(ellipse_72%_62%_at_50%_36%,rgba(0,0,0,0.3)_18%,black_52%,transparent_82%)]"
+            className="[mask-image:radial-gradient(ellipse_46%_34%_at_50%_46%,rgba(0,0,0,0.28)_55%,black_100%),radial-gradient(ellipse_80%_70%_at_50%_38%,black_45%,transparent_85%)] [mask-composite:intersect]"
           />
         </Backdrop>
         <div className="relative mx-auto flex w-full max-w-3xl flex-col items-center gap-7 px-6 text-center md:gap-8">

@@ -45,7 +45,7 @@ interface AsciiFieldProps {
 }
 
 const DEFAULT_FOCUS: Partial<Record<AsciiVariant, readonly [number, number]>> =
-  { ramp: [1, 0], halo: [0.5, 0.45] };
+  { ramp: [1, 0], halo: [0.5, 0.45], scan: [0.5, 0.16] };
 
 const PATTERNS: Partial<
   Record<AsciiVariant, (options: PatternOptions) => AsciiSpec>

@@ -29,8 +29,7 @@ import {
 } from "@/lib/migrate/providers";
 import type { JobItem, JobSummary } from "@/lib/migrate/types";
 import { soundEvent } from "@/lib/sound";
-import { Note, plural, StepLayout, Stat } from "./import-shared";
-import { saveText } from "./import-shared";
+import { Note, plural, StepLayout, Stat, saveText } from "./import-shared";
 
 function reasonsOf(items: JobItem[], status: JobItem["status"]) {
   const counts = new Map<string, number>();
@@ -63,7 +62,6 @@ export function RunStep({
   const [attach, setAttach] = useState<
     { state: "idle" | "busy" } | { state: "done"; count: number } | { state: "error"; message: string }
   >({ state: "idle" });
-  const stop = useRef(false);
   const finishedOnce = useRef(false);
 
   const refresh = useCallback(async () => {
@@ -73,22 +71,33 @@ export function RunStep({
     return result.job;
   }, [client, jobId]);
 
+  // One loop at a time: a new run (or a pause) retires the previous loop, and
+  // waits for its request so two chunks never run at once from this tab.
+  const loop = useRef(0);
+  const pending = useRef<Promise<unknown> | null>(null);
   const run = useCallback(async () => {
-    stop.current = false;
+    const id = ++loop.current;
     setRunning(true);
     setError(null);
     try {
+      if (pending.current) await pending.current.catch(() => null);
       for (;;) {
-        if (stop.current) break;
-        const result = await withRetry(() => client.run(jobId), {
+        if (loop.current !== id) return;
+        const request = withRetry(() => client.run(jobId), {
           onWait: setWaiting,
         });
+        pending.current = request;
+        const result = await request.finally(() => {
+          pending.current = null;
+        });
+        if (loop.current !== id) return;
         setWaiting(null);
         setJob(result.job);
         if (result.done) break;
       }
       await refresh();
     } catch (failure) {
+      if (loop.current !== id) return;
       setError(
         failure instanceof MigrateApiError
           ? failure.message
@@ -96,22 +105,30 @@ export function RunStep({
       );
       soundEvent("error");
     } finally {
-      setWaiting(null);
-      setRunning(false);
+      if (loop.current === id) {
+        setWaiting(null);
+        setRunning(false);
+      }
     }
   }, [client, jobId, refresh]);
+
+  const pause = () => {
+    loop.current += 1;
+    setRunning(false);
+    setWaiting(null);
+  };
 
   useEffect(() => {
     let cancelled = false;
     refresh()
       .then((loaded) => {
-        if (!cancelled && loaded.status === "running") void run();
         if (loaded.status === "done") finishedOnce.current = true;
+        if (!cancelled && loaded.status === "running") void run();
       })
       .catch(() => setError("Couldn't load this import."));
     return () => {
       cancelled = true;
-      stop.current = true;
+      loop.current += 1;
     };
   }, [refresh, run]);
 
@@ -187,12 +204,7 @@ export function RunStep({
               Closing is safe: open Import later to continue.
             </span>
             {running ? (
-              <Button
-                onClick={() => {
-                  stop.current = true;
-                }}
-                variant="outline"
-              >
+              <Button onClick={pause} variant="outline">
                 Pause
               </Button>
             ) : (

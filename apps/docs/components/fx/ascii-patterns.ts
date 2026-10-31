@@ -50,13 +50,18 @@ export function rampSpec(o: PatternOptions): AsciiSpec {
       const h = rows * o.cellH;
       const dx = (c + 0.5) * o.cellW - fx * w;
       const dy = (r + 0.5) * o.cellH - fy * h;
-      const reach = Math.hypot(w, h) * 0.72;
+      const reach = Math.min(Math.hypot(w, h) * 0.62, 1100);
       let v = 1 - Math.min(1, Math.hypot(dx, dy) / reach);
-      v = v * v * (0.8 + 0.4 * valueNoise(c * 0.05 + o.seed, r * 0.1));
-      v = clamp01(v + dither(c, r, o.seed) * 0.16);
-      const g = Math.round(v * (dark ? LAST : LAST - 3));
+      v = v ** 2.2 * (0.8 + 0.4 * valueNoise(c * 0.05 + o.seed, r * 0.1));
+      // Soften the field's own edges so the corner never ends in a hard cut.
+      const x = (c + 0.5) * o.cellW;
+      const y = (r + 0.5) * o.cellH;
+      const edge = Math.min(x, w - x, y, h - y);
+      v *= 0.3 + 0.7 * smoothstep(clamp01(edge / 110));
+      v = clamp01(v + dither(c, r, o.seed) * 0.14);
+      const g = Math.round(v * (dark ? LAST - 2 : LAST - 4));
       out.g = !dark && g < 2 ? 0 : g;
-      out.a = dark ? 0.035 + 0.15 * v : 0.03 + 0.11 * v;
+      out.a = dark ? 0.03 + 0.13 * v : 0.028 + 0.1 * v;
     },
     hot(_c, _r, t, wave, out) {
       densify(t, wave, out);
@@ -312,9 +317,10 @@ export function scanSpec(o: PatternOptions): AsciiSpec {
 
   const ambient: AsciiAmbient = {
     step: 33,
-    // The still frame catches the line a little above the middle.
+    // The still frame (reduced motion) holds the line at the focus row, by
+    // default high up, clear of a centred headline.
     get still() {
-      const p = ((rows * 0.42 + SCAN_LEAD + 1) / SCAN_SPEED) * 1000;
+      const p = ((rows * o.focus[1] + SCAN_LEAD + 1) / SCAN_SPEED) * 1000;
       return p - offset + periodMs() * 4;
     },
     wait(now) {
@@ -341,8 +347,8 @@ export function scanSpec(o: PatternOptions): AsciiSpec {
       const b = d >= 0 ? 1 - d / SCAN_LEAD : Math.exp(d / 2.6);
       const n = hash2(c * 5 + o.seed, r * 11);
       const level = Math.round(b * (3 + 5 * n)) + (b > 0.8 ? 1 : 0);
-      out.g = Math.min(dark ? LAST : LAST - 2, Math.max(out.g, level));
-      out.a += ((dark ? 0.3 : 0.24) - out.a) * b;
+      out.g = Math.min(dark ? LAST - 1 : LAST - 3, Math.max(out.g, level));
+      out.a += ((dark ? 0.24 : 0.19) - out.a) * b;
     },
   };
 

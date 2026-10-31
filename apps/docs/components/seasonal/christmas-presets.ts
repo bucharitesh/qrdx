@@ -64,7 +64,7 @@ export const christmasPresets = {
       eyeColor: "#8A6100",
       dotColor: "#8A6100",
       bodyPattern: "square",
-      cornerEyePattern: "square",
+      cornerEyePattern: "rounded",
       cornerEyeDotPattern: "star",
       level: "Q",
       margin: 2,
