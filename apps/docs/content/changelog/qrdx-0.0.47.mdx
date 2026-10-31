@@ -1,0 +1,58 @@
+---
+title: "qrdx 0.0.47 and @qrdx/cli 0.0.5"
+description: "The first library and CLI release since March: new patterns, eyes and frames, Logo QR and Image QR art, print-ready files and a scan score."
+date: "2026-11-01"
+tags: ["Developers", "CLI"]
+---
+
+## New styles
+
+- **14 body patterns**, including `liquid`, `classy`, `mosaic`, `random-dots`, `heart` and `star`. `liquid` and `classy` join neighbouring modules into one smooth shape.
+- **9 eye frames** and **13 eye centres**, such as `leaf`, `drop`, `squircle`, `shield` and `flower`. `leaf`, `drop` and `petal` eyes turn to face their corner of the code.
+- **20 call-to-action frames** with the `frame` option: banners, speech bubbles, a polaroid, a phone, a ticket, a menu card and more. Set the label, a second label and the label size.
+- See every option drawn live at [qrdx.dev/docs/styles](/docs/styles).
+
+## Colors and fit
+
+- **Per-eye colors**: `eyeColors` gives each corner eye its own outer and inner color or gradient.
+- **Module scale**: `moduleScale` (0.5 to 1) shrinks the modules for a spaced-out look. Each pattern stops at the smallest size that still scans.
+- **Auto error level**: `autoLevel` raises the level to H when a logo covers more than 7% of the code.
+- **Logo padding**: `imageSettings.padding` adds clear space around a logo.
+- `bgColor="transparent"` leaves the background empty in PNG, SVG, PDF and EPS.
+
+## Logo QR and Image QR
+
+The `art` option blends a logo or photo into a real, scannable code. It is vector output with no AI. See [Art QR](/docs/features/art-qr).
+
+- **Logo QR** has two looks: `blend` traces the logo into crisp shapes under a fine dot screen, and `badge` puts the logo on a plate in the middle of a code tinted with its colors.
+- **Image QR** shows a photo in full color (`color`) or as a black-and-white halftone (`mono`).
+- `matchEyes` colors the corner eyes from the logo.
+
+## Print and export
+
+- EPS export for print shops and design tools.
+- Print-ready PDF, SVG and EPS at an exact physical size, with bleed, crop marks and CMYK colors.
+
+## Will it scan?
+
+- `getScanScore` estimates how reliably a design scans, and `getImageScanScore` checks an image you already have.
+- `getStylePairRisk` warns about eye and pattern pairs that some scanners struggle with.
+
+## Retired styles
+
+`curly` eyes and `diamond`, `star` and `banner` eye centres are no longer offered, because some phone scanners can't read them. Saved designs that use them still render, but the CLI no longer accepts them.
+
+## Upgrading from 0.0.46
+
+- `QRCode` no longer adds a logo unless you pass `logo`.
+- `react` and `react-dom` are now peer dependencies. PDF export needs `jspdf`, which you install yourself, and `qrdx` no longer installs sharp.
+- `QRCodeSVG` and `QRCode` work in React Server Components.
+- The `qrdx` command moved to its own package: run `npx @qrdx/cli generate`.
+
+## @qrdx/cli 0.0.5
+
+- Every new pattern, eye, eye centre and frame. Add a frame with `--frame`, `--frame-text`, `--frame-color` and `--frame-text-color`.
+- EPS output: `-o qr.eps`, or `--format eps`.
+- Logos are drawn into PNG output.
+- Clear errors for bad flag values, listing the accepted ones.
+- It installs without sharp where your platform doesn't support it. SVG and EPS still work.

@@ -15,7 +15,10 @@ describe("safeReturnPath", () => {
   it.each([
     ["/dashboard/codes?import=dub", "/dashboard/codes?import=dub"],
     ["/dashboard/codes?import=bitly", "/dashboard/codes?import=bitly"],
-    ["/dashboard/codes?q=menu&import=dub", "/dashboard/codes?q=menu&import=dub"],
+    [
+      "/dashboard/codes?q=menu&import=dub",
+      "/dashboard/codes?q=menu&import=dub",
+    ],
     ["/", "/"],
     ["/settings/integrations#dub", "/settings/integrations#dub"],
     // Dot segments resolve to a plain path on this site

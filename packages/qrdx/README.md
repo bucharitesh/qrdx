@@ -127,11 +127,11 @@ import { QRCodeCanvas } from "qrdx";
 
 See every option drawn live at [qrdx.dev/docs/styles](https://qrdx.dev/docs/styles).
 
-**Body** (`bodyPattern`, 23): `circle` (default), `circle-large`, `square`, `diamond`, `circle-mixed`, `pacman`, `rounded`, `small-square`, `vertical-line`, `horizontal-line`, `liquid`, `liquid-horizontal`, `liquid-vertical`, `classy`, `classy-rounded`, `leaf`, `plus`, `hexagon`, `star`, `heart`, `random-dots`, `mosaic`, `octagon`
+**Body** (`bodyPattern`, default `circle`): <!-- catalogue:BODY_PATTERN -->`circle`, `circle-large`, `square`, `diamond`, `circle-mixed`, `pacman`, `rounded`, `small-square`, `vertical-line`, `horizontal-line`, `liquid`, `liquid-horizontal`, `liquid-vertical`, `classy`, `classy-rounded`, `leaf`, `plus`, `hexagon`, `star`, `heart`, `random-dots`, `mosaic`, `octagon`<!-- /catalogue -->
 
-**Corner eye** (`cornerEyePattern`, 17): `square`, `rounded`, `gear` (default), `circle`, `diya`, `extra-rounded`, `message`, `pointy`, `leaf`, `drop`, `octagon`, `bevel`, `squircle`, `cushion`, `shield`, `petal`, `leaf-reverse`
+**Corner eye** (`cornerEyePattern`, default `gear`): <!-- catalogue:CORNER_EYE_PATTERNS -->`square`, `rounded`, `gear`, `circle`, `diya`, `extra-rounded`, `message`, `pointy`, `leaf`, `drop`, `octagon`, `bevel`, `squircle`, `cushion`, `shield`, `petal`, `leaf-reverse`<!-- /catalogue -->
 
-**Corner eye dot** (`cornerEyeDotPattern`, 21): `square`, `rounded`, `circle` (default), `message`, `message-reverse`, `diya`, `diya-reverse`, `rounded-triangle`, `leaf`, `drop`, `plus`, `cross-rounded`, `hexagon`, `octagon`, `flower`, `heart`, `squircle`, `dots`, `extra-rounded`, `leaf-reverse`, `drop-reverse`
+**Corner eye dot** (`cornerEyeDotPattern`, default `circle`): <!-- catalogue:CORNER_EYE_DOT_PATTERNS -->`square`, `rounded`, `circle`, `message`, `message-reverse`, `diya`, `diya-reverse`, `rounded-triangle`, `leaf`, `drop`, `plus`, `cross-rounded`, `hexagon`, `octagon`, `flower`, `heart`, `squircle`, `dots`, `extra-rounded`, `leaf-reverse`, `drop-reverse`<!-- /catalogue -->
 
 The same lists are exported as `BODY_PATTERN`, `CORNER_EYE_PATTERNS` and `CORNER_EYE_DOT_PATTERNS`. `liquid` and `classy` join neighbouring modules into one outline; `leaf`, `drop` and `petal` eyes turn to face their corner of the code. Alignment patterns are always drawn as solid squares. Every value is tested to decode with jsQR through a phone-camera model next to every other value (and was checked with ZXing and in sharp renders); `square` and `rounded` eyes scan most reliably and `circle` eyes may be missed by some apps. A few body × eye pairs are weak together (`WEAK_BODY_EYES`), and `getStylePairRisk(props)` returns the warning `getScanScore` shows.
 
@@ -210,7 +210,7 @@ const Framed: TemplateDefinition<{ label?: string }> = {
 
 | Option | Default | Notes |
 | --- | --- | --- |
-| `style` | — | 20 styles (`FRAME_STYLES`): `none` `banner-bottom` `banner-top` `banner-top-bottom` `border` `rounded-border` `gradient-border` `focus` `speech-bubble` `speech-bubble-top` `chat-bubble` `circle` `badge` `sticker` `polaroid` `phone` `ticket` `tag` `envelope` `menu-card` |
+| `style` | — | One of `FRAME_STYLES`: <!-- catalogue:FRAME_STYLES -->`none`, `banner-bottom`, `banner-top`, `border`, `rounded-border`, `speech-bubble`, `banner-top-bottom`, `speech-bubble-top`, `chat-bubble`, `circle`, `polaroid`, `phone`, `ticket`, `badge`, `envelope`, `tag`, `menu-card`, `sticker`, `gradient-border`, `focus`<!-- /catalogue --> |
 | `text` | `"Scan me"` | Up to 24 characters; `""` hides the label |
 | `color` | `#000000` | Frame color (`gradient-border`: start color) |
 | `textColor` | white on the frame, `color` on light areas | Label color |
@@ -235,7 +235,14 @@ const image = await loadQRArtImage(file, { mode: "logo" });
 <QRCodeSVG value="https://example.com" size={512} level="H" art={{ mode: "logo", image, intensity: 0.7 }} />;
 ```
 
-`mode` is `logo` (modules inside the logo take its colors) or `halftone` (every module shows the photo around a center that keeps the true value). `intensity` goes from `0` (plain) to `1` (default `0.6`). In Node, pass decoded RGBA pixels to `createQRArtImage` instead of `loadQRArtImage`. `art.image` is plain JSON, so you can store it with a design. Use level `H` and check the result with `getScanScore`. See the [Art QR docs](https://qrdx.dev/docs/features/art-qr).
+`mode` is `logo` (modules inside the logo take its colors) or `halftone` (every module shows the photo around a center that keeps the true value). `intensity` goes from `0` (plain) to `1` (default `0.6`).
+
+`variant` picks a look within the mode (`QR_ART_VARIANTS`; the first is the default):
+
+- `logo`: `blend` traces the logo into crisp vector shapes that fill the code under a fine dot screen; `badge` puts it on a rounded plate in the middle of a code tinted with its colors.
+- `halftone`: `color` shows the photo in full color; `mono` is an error-diffused black-and-white halftone.
+
+In logo mode the finder eyes take the logo's colors unless you pass `matchEyes: false`; per-eye `eyeColors` still win. In Node, pass decoded RGBA pixels to `createQRArtImage` instead of `loadQRArtImage`. `art.image` is plain JSON, so you can store it with a design. Use level `H` and check the result with `getScanScore`. See the [Art QR docs](https://qrdx.dev/docs/features/art-qr).
 
 ## Export and download (browser)
 
@@ -294,7 +301,7 @@ EPS has no transparency or crop marks, gradients print as their first color, and
 
 ## Will it scan? (browser)
 
-`getScanScore(props)` estimates how reliably a design scans. It renders the code at 96, 160 and 320 px, simulates camera blur and contrast loss, decodes each with jsQR, and combines that with contrast, polarity, logo coverage vs. error correction, quiet zone and eye-shape risk (`curly` eyes fail strict decoders; `circle` eyes only read in lenient ones).
+`getScanScore(props)` estimates how reliably a design scans. It renders the code at 96, 160 and 320 px, simulates camera blur and contrast loss, decodes each with jsQR, and combines that with contrast, polarity, logo coverage vs. error correction, quiet zone and eye-shape risk (`circle` eyes only read in lenient decoders; retired `curly` eyes in saved designs fail strict ones).
 
 ```ts
 import { getScanScore, getImageScanScore } from "qrdx";
