@@ -9,7 +9,12 @@ import {
   ERROR_LEVEL_MAP,
 } from "./constants";
 import { isFrameActive, wrapWithFrame } from "./frame";
-import { excavateModules, generatePath, getImageSettings } from "./utils";
+import {
+  excavateModules,
+  generatePath,
+  getImageSettings,
+  resolveErrorLevel,
+} from "./utils";
 import { getSolidColor } from "./utils/color";
 
 export async function getQRAsSVG(props: QRPropsSVG) {
@@ -33,12 +38,23 @@ export async function getQRAsSVG(props: QRPropsSVG) {
     customProps: _customProps,
     frame,
     art: _art,
+    eyeColors: _eyeColors,
+    moduleScale: _moduleScale,
+    autoLevel,
     ...otherProps
   } = props;
+  const effectiveLevel = resolveErrorLevel({
+    value,
+    size,
+    level,
+    margin,
+    imageSettings,
+    autoLevel,
+  });
 
   let cells = qrcodegen.QrCode.encodeText(
     value,
-    ERROR_LEVEL_MAP[level]
+    ERROR_LEVEL_MAP[effectiveLevel]
   ).getModules();
 
   const numCells = cells.length + margin * 2;

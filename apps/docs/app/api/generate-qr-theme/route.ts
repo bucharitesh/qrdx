@@ -12,6 +12,7 @@ import {
   baseProviderOptions,
   myProvider,
 } from "@/lib/ai/providers";
+import { streamErrorMessage } from "@/lib/ai/stream-error-message";
 import { MAX_AI_REQUEST_BODY_BYTES } from "@/lib/constants";
 import { handleError } from "@/lib/error-response";
 import {
@@ -50,6 +51,7 @@ export async function POST(req: NextRequest) {
     );
 
     const stream = createUIMessageStream<ChatMessage>({
+      onError: streamErrorMessage,
       execute: ({ writer }) => {
         const context: AdditionalAIContext = { writer };
 
@@ -83,6 +85,7 @@ export async function POST(req: NextRequest) {
 
         writer.merge(
           result.toUIMessageStream({
+            onError: streamErrorMessage,
             messageMetadata: ({ part }) => {
               // `toolName` is not typed for some reason, must be kept in sync with the actual tool names
               if (

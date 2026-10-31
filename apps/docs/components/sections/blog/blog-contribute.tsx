@@ -1,6 +1,10 @@
 /** biome-ignore-all lint/suspicious/noArrayIndexKey: false positive */
 import type { Page, PageData } from "fumadocs-core/source";
-import { BugIcon, LightbulbIcon, PencilIcon } from "lucide-react";
+import {
+  Danger as BugIcon,
+  LampOn as LightbulbIcon,
+  Edit2 as PencilIcon,
+} from "iconsax-reactjs";
 import Link from "next/link";
 
 import { getGitHubIssueUrl, getGithubFileUrl } from "@/lib/github";

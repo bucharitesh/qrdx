@@ -9,6 +9,7 @@ import { CodeActivityEmail } from "./code-activity";
 import { FirstScanEmail } from "./first-scan";
 import { FormSubmissionEmail } from "./form-submission";
 import { ScanMilestoneEmail } from "./scan-milestone";
+import { SignInCodeEmail } from "./sign-in-code";
 import { TeamInviteEmail } from "./team-invite";
 import { WeeklyDigestEmail, weekOverWeek } from "./weekly-digest";
 
@@ -168,5 +169,25 @@ describe("email templates", () => {
     assert.match(ack.text, /We received your report/i);
     assert.match(ack.text, /rep_1/);
     assert.doesNotMatch(ack.text, /Unsubscribe/);
+  });
+
+  it("sign-in code email shows the code and has no tracking links", async () => {
+    const { html, text } = await both(<SignInCodeEmail code="402871" />);
+    assert.match(text, /Your QRdx sign-in code/i);
+    assert.match(text, /402871/);
+    assert.match(text, /expires in 5 minutes/);
+    assert.match(text, /If you didn't ask for this, ignore this email/);
+    assert.doesNotMatch(text, /Unsubscribe/);
+    // The code renders large and letter-spaced (still copyable as one word).
+    assert.match(html, /letter-spacing:0\.4em[^"]*"[^>]*>402871</);
+    assert.match(html, /font-size:34px/);
+    // Only the plain site links from the layout: no query strings, no pixels.
+    const hrefs = [...html.matchAll(/href="([^"]*)"/g)].map((m) => m[1]);
+    assert.ok(hrefs.length > 0);
+    for (const href of hrefs) {
+      assert.equal(new URL(href).search, "", href);
+      assert.equal(new URL(href).pathname, "/", href);
+    }
+    assert.doesNotMatch(html, /<img/i);
   });
 });

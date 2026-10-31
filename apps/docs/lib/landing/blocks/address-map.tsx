@@ -1,5 +1,5 @@
 import { cn } from "@repo/design-system/lib/utils";
-import { MapPin, Navigation } from "lucide-react";
+import { Location as MapPin, Routing as Navigation } from "iconsax-reactjs";
 import { z } from "zod";
 import {
   addressSchema,

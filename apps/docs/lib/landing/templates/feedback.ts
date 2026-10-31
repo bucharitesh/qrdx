@@ -1,4 +1,4 @@
-import { MessageSquareHeart } from "lucide-react";
+import { MessageFavorite as MessageSquareHeart } from "iconsax-reactjs";
 import { themePreset } from "@/components/landing/theme";
 import { registerTemplate } from "./registry";
 

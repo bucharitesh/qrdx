@@ -1,0 +1,133 @@
+# Publishes qrdx and @qrdx/cli to npm from main.
+#
+# Required secret: NPM_TOKEN (Settings → Secrets and variables → Actions).
+# Use an npm granular access token with read and write access to the qrdx
+# and @qrdx/cli packages (or a classic Automation token), so 2FA doesn't
+# block CI publishes.
+#
+# A package is published only when the version in its package.json is not
+# on npm yet, so a push that doesn't bump a version publishes nothing. qrdx
+# goes first because the CLI depends on it: pnpm publish turns the CLI's
+# "qrdx": "workspace:*" into the exact qrdx version from the workspace.
+# Each release gets an npm provenance statement (needs id-token: write).
+# Until the NPM_TOKEN secret exists, the run skips publishing with a notice
+# instead of failing, so merging to main stays green.
+name: Publish
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - packages/qrdx/**
+      - packages/cli/**
+  workflow_dispatch:
+
+# Never cancel a publish halfway; queue the next one instead.
+concurrency:
+  group: publish-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  TURBO_TELEMETRY_DISABLED: 1
+
+jobs:
+  publish:
+    name: Publish to npm
+    # Manual runs publish only from main too.
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      # Uses the version pinned in package.json "packageManager".
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      # registry-url writes an .npmrc that reads the token from NODE_AUTH_TOKEN.
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+
+      # Secrets can't be read in `if:`, so expose "is it set" as an output.
+      - name: Check for the npm token
+        id: token
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [ -n "$NODE_AUTH_TOKEN" ]; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "::notice::NPM_TOKEN isn't set, so nothing was published. Add it under Settings → Secrets and variables → Actions, then re-run this workflow."
+            echo "Skipped: the NPM_TOKEN secret isn't set." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      # Only a 404 from npm means "not published yet"; any other npm error
+      # (network, auth) stops the run instead of guessing.
+      - name: Find unpublished versions
+        if: steps.token.outputs.present == 'true'
+        id: versions
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          any=false
+          for dir in qrdx cli; do
+            name="$(node -p "require('./packages/$dir/package.json').name")"
+            version="$(node -p "require('./packages/$dir/package.json').version")"
+            if output="$(npm view "$name@$version" version 2>&1)"; then
+              published="$output"
+            elif printf '%s' "$output" | grep -q E404; then
+              published=""
+            else
+              echo "::error::Could not check $name@$version on npm: $output"
+              exit 1
+            fi
+            if [ "$published" = "$version" ]; then
+              echo "$name@$version is already on npm, skipping." | tee -a "$GITHUB_STEP_SUMMARY"
+              echo "$dir=false" >> "$GITHUB_OUTPUT"
+            else
+              echo "$name@$version will be published." | tee -a "$GITHUB_STEP_SUMMARY"
+              echo "$dir=true" >> "$GITHUB_OUTPUT"
+              any=true
+            fi
+          done
+          echo "any=$any" >> "$GITHUB_OUTPUT"
+
+      - name: Install dependencies
+        if: steps.versions.outputs.any == 'true'
+        run: pnpm install --frozen-lockfile
+
+      # The CLI and its tests consume qrdx from its dist/ output.
+      - name: Build
+        if: steps.versions.outputs.any == 'true'
+        run: pnpm turbo build --filter=qrdx --filter=@qrdx/cli
+
+      - name: Test
+        if: steps.versions.outputs.any == 'true'
+        run: pnpm turbo test --filter=qrdx --filter=@qrdx/cli
+
+      # prepublishOnly rebuilds, retests and checks the README option lists
+      # once more, so a stale dist/ can't ship.
+      - name: Publish qrdx
+        if: steps.versions.outputs.qrdx == 'true'
+        working-directory: packages/qrdx
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: pnpm publish --access public --no-git-checks --provenance
+
+      - name: Publish @qrdx/cli
+        if: steps.versions.outputs.cli == 'true'
+        working-directory: packages/cli
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: pnpm publish --access public --no-git-checks --provenance

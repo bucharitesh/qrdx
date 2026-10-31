@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <title>Bloom (sample florist mark)</title>
+  <g transform="translate(128 128)">
+    <g fill="#e2557a">
+      <ellipse cx="0" cy="-62" rx="36" ry="58"/>
+      <ellipse cx="0" cy="-62" rx="36" ry="58" transform="rotate(120)"/>
+      <ellipse cx="0" cy="-62" rx="36" ry="58" transform="rotate(240)"/>
+    </g>
+    <g fill="#b8325c">
+      <ellipse cx="0" cy="-62" rx="36" ry="58" transform="rotate(60)"/>
+      <ellipse cx="0" cy="-62" rx="36" ry="58" transform="rotate(180)"/>
+      <ellipse cx="0" cy="-62" rx="36" ry="58" transform="rotate(300)"/>
+    </g>
+    <circle r="36" fill="#f4b23e"/>
+    <circle r="16" fill="#d9862a"/>
+  </g>
+</svg>

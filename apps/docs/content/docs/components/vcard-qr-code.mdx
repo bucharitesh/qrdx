@@ -1,0 +1,52 @@
+---
+title: vCard QR Code
+description: A QR code that saves a contact card when scanned, with a typed vCard 3.0 builder.
+icon: Users
+---
+
+<ComponentLinks name="vcard-qr-code" />
+
+<ComponentPreview name="vcard-qr-code-demo" />
+
+## Installation
+
+<InstallationTabs name="vcard-qr-code" />
+
+## Usage
+
+```tsx
+import { VCardQrCode } from "@/components/vcard-qr-code";
+```
+
+```tsx
+<VCardQrCode
+  contact={{
+    firstName: "Ada",
+    lastName: "Lovelace",
+    organization: "Analytical Engines",
+    email: "ada@example.com",
+  }}
+/>
+```
+
+Phone cameras offer to save the contact when they scan the code. Empty fields are left out, which keeps the code small and quick to scan.
+
+## Examples
+
+### vCard builder
+
+`buildVCard` returns the vCard 3.0 text the code encodes, with commas, semicolons, backslashes and line breaks escaped. Use it with any QR renderer, or to offer the same contact as a `.vcf` download.
+
+<ComponentPreview name="vcard-qr-code-payload" />
+
+Contact cards hold more text than a link, so the component uses error correction level `M` to keep the modules large. Add only the fields people need, and check how large to print it with the [print size calculator](/tools/print-size).
+
+## API Reference
+
+<auto-type-table path="../../../registry/qrdx/vcard-qr-code.tsx" type="{ [K in keyof VCardQrCodeProps as K extends keyof ComponentProps<'figure'> ? never : K]: VCardQrCodeProps[K] }" />
+
+Any other prop, such as `className`, is passed to the wrapping `<figure>`.
+
+### VCardContact
+
+<auto-type-table path="../../../registry/qrdx/vcard-qr-code.tsx" name="VCardContact" />

@@ -13,6 +13,7 @@ import * as React from "react";
 import { toast } from "sonner";
 import { Icons } from "@/components/icons";
 import { apiFetch } from "@/lib/api-fetch";
+import { soundEvent } from "@/lib/sound/emit";
 
 interface DubLink {
   id: string;
@@ -157,6 +158,7 @@ export function DubManagement({ metadata }: DubManagementProps) {
   const handleCopy = async (link: DubLink) => {
     await navigator.clipboard.writeText(getShortUrl(link));
     toast.success("Short link copied");
+    soundEvent("copy");
   };
 
   const handleArchive = async (link: DubLink) => {

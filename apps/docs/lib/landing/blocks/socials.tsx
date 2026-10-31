@@ -1,5 +1,5 @@
 import { cn } from "@repo/design-system/lib/utils";
-import { AtSign } from "lucide-react";
+import { Hashtag as AtSign } from "iconsax-reactjs";
 import { z } from "zod";
 import {
   itemIdSchema,

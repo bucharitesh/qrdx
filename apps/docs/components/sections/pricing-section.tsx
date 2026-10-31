@@ -2,15 +2,23 @@
 
 import { authClient } from "@repo/auth/client";
 import { toast } from "@repo/design-system";
+import {
+  GithubLogo,
+  Spinner,
+  Tick,
+} from "@repo/design-system/components/icons";
+import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
+import { Card } from "@repo/design-system/components/ui/card";
 import { cn } from "@repo/design-system/lib/utils";
-import { Check, Github, Loader2, Server } from "lucide-react";
+import { Book1, Driver } from "iconsax-reactjs";
 import { motion } from "motion/react";
 import Link from "next/link";
 import { useState, useTransition } from "react";
 import { createCheckout } from "@/actions/checkout";
+import { AsciiField, RadialHalo } from "@/components/fx";
+import { LAYOUT_TRANSITION } from "@/components/mockups/motion";
 import { maxYearlySavingsPercent } from "@/components/sections/pricing/plan-content";
-import { SectionHeader } from "@/components/sections/section-header";
 import { siteConfig } from "@/config/site";
 import { usePostLoginAction } from "@/lib/hooks/use-post-login-action";
 import {
@@ -66,41 +74,47 @@ function BillingToggle({
   savings: number;
 }) {
   return (
-    <fieldset className="flex h-10 w-fit items-center rounded-full border bg-muted p-0.5">
+    <fieldset className="flex h-10 w-fit items-center rounded-full border bg-muted/60 p-1">
       <legend className="sr-only">Billing period</legend>
       {BILLING_INTERVALS.map((option) => (
         <button
           aria-pressed={interval === option}
-          className="relative flex h-9 cursor-pointer items-center rounded-full px-4"
+          className="relative flex h-8 cursor-pointer items-center rounded-full px-4 outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
           key={option}
           onClick={() => onChange(option)}
           type="button"
         >
           {interval === option && (
             <motion.span
-              className="absolute inset-0 rounded-full border border-border bg-white shadow-sm dark:bg-[#3F3F46]"
+              className="absolute inset-0 rounded-full bg-background shadow-xs ring-1 ring-border dark:bg-accent"
               layoutId="billing-interval"
-              transition={{ type: "spring", stiffness: 300, damping: 25 }}
+              transition={LAYOUT_TRANSITION}
             />
           )}
           <span
             className={cn(
-              "relative flex items-center gap-2 text-sm font-medium",
+              "relative flex items-center gap-2 text-sm font-medium transition-colors",
               interval === option
-                ? "text-secondary-foreground"
-                : "text-muted-foreground",
+                ? "text-foreground"
+                : "text-muted-foreground hover:text-foreground",
             )}
           >
             {INTERVAL_LABELS[option]}
             {option === "year" && savings > 0 && (
-              <span className="rounded-full bg-primary/15 px-1.5 py-0.5 text-xs font-semibold text-primary">
-                Save up to {savings}%
-              </span>
+              <SavingsBadge>Save up to {savings}%</SavingsBadge>
             )}
           </span>
         </button>
       ))}
     </fieldset>
+  );
+}
+
+function SavingsBadge({ children }: { children: React.ReactNode }) {
+  return (
+    <Badge className="border-transparent bg-emerald-500/10 text-emerald-700 tabular-nums dark:text-emerald-400">
+      {children}
+    </Badge>
   );
 }
 
@@ -122,7 +136,7 @@ function CurrencyNote({ currency }: { currency: PricingCurrency }) {
     <p className="text-center text-sm text-muted-foreground">
       {currency === "INR" ? "Prices in ₹ for India." : "Prices in US$."}{" "}
       <Link
-        className="font-medium text-primary underline-offset-4 hover:underline"
+        className="font-medium text-foreground underline decoration-foreground/30 underline-offset-4 transition-colors hover:decoration-foreground"
         href={`/pricing?${CURRENCY_PARAM}=${value}`}
         onClick={remember}
         replace
@@ -134,23 +148,19 @@ function CurrencyNote({ currency }: { currency: PricingCurrency }) {
   );
 }
 
-function CheckIcon() {
-  return (
-    <span className="mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-full bg-primary/15">
-      <Check aria-hidden className="size-3 text-primary" strokeWidth={3} />
-    </span>
-  );
-}
-
 function FeatureList({ items, lead }: { items: string[]; lead?: string }) {
   return (
     <div className="flex flex-col gap-3">
       {lead && <p className="text-sm font-medium">{lead}</p>}
       <ul className="flex flex-col gap-2.5">
         {items.map((item) => (
-          <li className="flex items-start gap-2 text-sm" key={item}>
-            <CheckIcon />
-            <span>{item}</span>
+          <li className="flex items-start gap-2.5 text-sm" key={item}>
+            <Tick
+              aria-hidden
+              className="mt-0.5 size-4 shrink-0 text-muted-foreground"
+              strokeWidth={2}
+            />
+            <span className="text-foreground/90">{item}</span>
           </li>
         ))}
       </ul>
@@ -162,19 +172,22 @@ function PriceLine({
   plan,
   interval,
   currency,
+  toggled,
 }: {
   plan: Plan;
   interval: BillingInterval;
   currency: PricingCurrency;
+  /** True once the visitor has switched the billing period. */
+  toggled: boolean;
 }) {
   if (plan === "free") {
     return (
-      <div className="flex flex-col gap-1">
-        <p className="flex items-baseline gap-1">
-          <span className="text-4xl font-semibold tracking-tight">
+      <div className="flex flex-col gap-1.5">
+        <p className="flex items-baseline gap-1.5">
+          <span className="text-4xl font-semibold tracking-tight tabular-nums">
             {formatPrice(0, currency)}
           </span>
-          <span className="text-muted-foreground">forever</span>
+          <span className="text-sm text-muted-foreground">forever</span>
         </p>
         <p className="text-xs text-muted-foreground">No credit card needed</p>
       </div>
@@ -186,25 +199,31 @@ function PriceLine({
   const savings = Math.round((1 - amount / (monthly * 12)) * 100);
 
   return (
-    <div className="flex flex-col gap-1">
-      <p className="flex items-baseline gap-1">
+    <div className="flex flex-col gap-1.5">
+      <p className="flex flex-wrap items-baseline gap-x-1.5 gap-y-1">
         <motion.span
           animate={{ opacity: 1, y: 0 }}
-          className="text-4xl font-semibold tracking-tight"
-          initial={{ opacity: 0, y: 4 }}
+          className="text-4xl font-semibold tracking-tight tabular-nums"
+          // Server HTML shows the price; only later changes animate in.
+          initial={toggled ? { opacity: 0, y: 4 } : false}
           key={`${interval}-${currency}`}
-          transition={{ duration: 0.2 }}
+          transition={LAYOUT_TRANSITION}
         >
           {formatPrice(amount, currency)}
         </motion.span>
-        <span className="text-muted-foreground">
+        <span className="text-sm text-muted-foreground">
           /{interval === "year" ? "year" : "month"}
         </span>
+        {interval === "year" && savings > 0 && (
+          <span className="ml-1 self-center">
+            <SavingsBadge>Save {savings}%</SavingsBadge>
+          </span>
+        )}
       </p>
       <p className="text-xs text-muted-foreground">
         {interval === "year"
-          ? `About ${formatPrice(Math.round(amount / 12), currency)} a month, billed yearly · save ${savings}%`
-          : "Billed monthly · cancel anytime"}
+          ? `About ${formatPrice(Math.round(amount / 12), currency)} a month, billed yearly`
+          : "Billed monthly, cancel anytime"}
       </p>
     </div>
   );
@@ -217,6 +236,11 @@ export function PricingSection({
 }: PricingSectionProps) {
   const { pricing } = siteConfig;
   const [interval, setInterval] = useState<BillingInterval>("year");
+  const [toggled, setToggled] = useState(false);
+  const changeInterval = (next: BillingInterval) => {
+    setToggled(true);
+    setInterval(next);
+  };
   const [pendingPlan, setPendingPlan] = useState<PaidPlan | null>(null);
   const [isPending, startTransition] = useTransition();
   const { data: session } = authClient.useSession();
@@ -311,8 +335,8 @@ export function PricingSection({
         >
           {busy ? (
             <>
-              <Loader2 aria-hidden className="animate-spin" />
-              Redirecting...
+              <Spinner aria-hidden />
+              Redirecting…
             </>
           ) : (
             tier.cta
@@ -359,51 +383,69 @@ export function PricingSection({
       className="relative flex w-full flex-col items-center pb-12"
       id="pricing"
     >
-      <SectionHeader>
-        <h1 className="text-3xl md:text-4xl font-medium tracking-tighter text-center text-balance">
-          {pricing.title}
-        </h1>
-        <p className="text-muted-foreground text-center text-balance font-medium">
-          {pricing.description}
-        </p>
-      </SectionHeader>
-
-      <div className="flex w-full flex-col items-center gap-3 px-6 pt-10 pb-8">
-        <BillingToggle
-          interval={interval}
-          onChange={setInterval}
-          savings={maxYearlySavingsPercent(currency)}
+      <div className="relative w-full overflow-hidden">
+        <AsciiField
+          variant="ramp"
+          focus={[1, 0]}
+          className="[mask-image:linear-gradient(to_bottom,black_45%,transparent)]"
         />
-        <CurrencyNote currency={currency} />
+        <div className="relative mx-auto flex max-w-2xl flex-col items-center gap-3 px-6 pt-14 pb-10 text-center md:pt-20">
+          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+            Pricing
+          </p>
+          <h1 className="text-3xl font-semibold tracking-tight text-balance md:text-5xl">
+            {pricing.title}
+          </h1>
+          <p className="max-w-xl text-pretty text-muted-foreground md:text-lg">
+            {pricing.description}
+          </p>
+          <div className="mt-5 flex flex-col items-center gap-3">
+            <BillingToggle
+              interval={interval}
+              onChange={changeInterval}
+              savings={maxYearlySavingsPercent(currency)}
+            />
+            <CurrencyNote currency={currency} />
+          </div>
+        </div>
       </div>
 
-      <div className="grid w-full max-w-6xl gap-4 px-6 md:grid-cols-3">
+      <div className="relative grid w-full max-w-6xl gap-4 px-6 md:grid-cols-3">
+        {/* The Pro card (the middle one, also when stacked) sits in a soft light. */}
+        <RadialHalo className="-inset-y-32" width={760} height={1000} />
         {cards.map(({ plan, lead, action }) => {
           const popular = plan === "pro";
           return (
-            <div
+            <Card
               className={cn(
-                "relative flex flex-col gap-6 rounded-xl border p-6",
+                "relative p-6",
                 popular
-                  ? "border-primary/40 bg-secondary shadow-lg ring-1 ring-primary/30"
-                  : "border-border bg-[#F3F4F6] dark:bg-[#F9FAFB]/2",
+                  ? "border-foreground/20 shadow-lg shadow-black/[0.06] dark:border-white/20 dark:bg-accent/60 dark:shadow-black/40"
+                  : "bg-muted/40 shadow-none dark:bg-card",
               )}
               key={plan}
             >
-              <div className="flex flex-col gap-2">
-                <h2 className="flex items-center gap-2 text-lg font-medium">
+              {popular && (
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute inset-x-10 -top-px h-px bg-gradient-to-r from-transparent via-foreground/60 to-transparent"
+                />
+              )}
+              <div className="flex flex-col gap-1.5">
+                <h2 className="flex items-center gap-2 text-lg font-semibold tracking-tight">
                   {PLAN_NAMES[plan]}
-                  {popular && (
-                    <span className="rounded-full bg-primary px-2 py-0.5 text-xs font-medium text-primary-foreground">
-                      Popular
-                    </span>
-                  )}
+                  {popular && <Badge>Popular</Badge>}
                 </h2>
                 <p className="text-sm text-muted-foreground">
                   {pricing.tiers[plan].tagline}
                 </p>
               </div>
-              <PriceLine currency={currency} interval={interval} plan={plan} />
+              <PriceLine
+                currency={currency}
+                interval={interval}
+                plan={plan}
+                toggled={toggled}
+              />
               <div className="flex flex-col gap-2">
                 {action.button}
                 {action.caption && (
@@ -412,47 +454,47 @@ export function PricingSection({
                   </p>
                 )}
               </div>
-              <hr className="border-border dark:border-white/20" />
+              <hr className="border-border" />
               <FeatureList items={highlights[plan]} lead={lead} />
-            </div>
+            </Card>
           );
         })}
       </div>
 
       <div className="mt-4 w-full max-w-6xl px-6">
-        <div className="flex flex-col gap-4 rounded-xl border border-dashed border-border p-6 md:flex-row md:items-center md:justify-between">
+        <Card className="gap-4 bg-muted/40 p-5 shadow-none md:flex-row md:items-center md:justify-between dark:bg-card">
           <div className="flex items-start gap-4">
-            <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-muted">
-              <Server aria-hidden className="size-5 text-muted-foreground" />
+            <span className="grid size-9 shrink-0 place-items-center rounded-full border bg-muted/40">
+              <Driver aria-hidden className="size-4 text-foreground/80" />
             </span>
             <div className="flex flex-col gap-1">
-              <h2 className="text-lg font-medium">
-                {pricing.selfHost.title}{" "}
+              <h2 className="flex flex-wrap items-baseline gap-x-2 font-semibold tracking-tight">
+                {pricing.selfHost.title}
                 <span className="text-sm font-normal text-muted-foreground">
-                  · {formatPrice(0, currency)} · {pricing.selfHost.license}
+                  {formatPrice(0, currency)} · {pricing.selfHost.license}
                 </span>
               </h2>
-              <p className="max-w-2xl text-sm text-muted-foreground">
+              <p className="max-w-2xl text-sm text-pretty text-muted-foreground">
                 {pricing.selfHost.description}
               </p>
             </div>
           </div>
-          <div className="flex shrink-0 flex-wrap gap-2">
-            <Button asChild variant="outline">
+          <div className="flex shrink-0 flex-wrap gap-2 pl-13 md:pl-0">
+            <Button asChild size="sm" variant="outline">
               <Link href="/docs/self-hosting">
-                <Server aria-hidden />
+                <Book1 aria-hidden />
                 Self-hosting guide
               </Link>
             </Button>
-            <Button asChild variant="ghost">
+            <Button asChild size="sm" variant="ghost">
               <a href={siteConfig.links.github} rel="noopener" target="_blank">
-                <Github aria-hidden />
+                <GithubLogo aria-hidden />
                 GitHub
               </a>
             </Button>
           </div>
-        </div>
-        <p className="mt-6 text-center text-xs text-muted-foreground">
+        </Card>
+        <p className="mx-auto mt-6 max-w-2xl text-center text-xs text-pretty text-muted-foreground">
           {pricing.footnote}
         </p>
       </div>

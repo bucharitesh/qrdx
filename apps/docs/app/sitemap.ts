@@ -1,10 +1,9 @@
-import {
-  getIntegrationRegistry,
-  initializeIntegrations,
-} from "@repo/integrations";
+import { getCatalogBySurface } from "@repo/integrations/src/catalog";
 import type { MetadataRoute } from "next";
 import { SLUG_TO_CATEGORY } from "@/lib/blog-constants";
 import { env } from "@/lib/env";
+import { getIntegrationAvailability } from "@/lib/integration-availability";
+import { filterVisible } from "@/lib/integration-availability-rules";
 import { baseUrl } from "@/lib/metadata";
 import { QR_TYPE_SLUGS } from "@/lib/qr-types-content";
 import { industries, placements } from "@/lib/seo-content";
@@ -31,8 +30,6 @@ const latest = (dates: (Date | string | undefined)[]): Date | undefined => {
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const url = (path: string): string => new URL(path, baseUrl).toString();
-
-  initializeIntegrations();
 
   const posts = blogSource.getPages().filter((p) => p.data.published);
   const postDate = (p: (typeof posts)[number]) =>
@@ -106,23 +103,33 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       priority: 0.8,
     },
+    { url: url("/templates"), changeFrequency: "monthly", priority: 0.8 },
     {
       url: url("/integrations"),
       changeFrequency: "monthly",
       priority: 0.8,
     },
-    ...getIntegrationRegistry()
-      .getAll()
-      .map(
-        (integration) =>
-          ({
-            url: url(`/integrations/${integration.slug}`),
-            changeFrequency: "monthly",
-            priority: 0.6,
-          }) satisfies Entry,
-      ),
+    // Third-party integrations only, and none that need setup here: AI
+    // assistants, developer tools and plugins redirect to their own pages.
+    ...filterVisible(
+      getIntegrationAvailability(),
+      getCatalogBySurface("integrations"),
+      (integration) => integration.slug,
+    ).map(
+      (integration) =>
+        ({
+          url: url(`/integrations/${integration.slug}`),
+          changeFrequency: "monthly",
+          priority: 0.6,
+        }) satisfies Entry,
+    ),
     {
       url: url("/mcp"),
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    {
+      url: url("/plugins"),
       changeFrequency: "monthly",
       priority: 0.7,
     },

@@ -5,18 +5,42 @@ import {
   createOAuthHandler,
   generateCodeVerifier,
   getIntegrationConfigWithEnv,
+  getIntegrationRegistry,
 } from "@repo/integrations";
 import { cookies } from "next/headers";
 import { env } from "@/lib/env";
+import { safeReturnPath } from "@/lib/integration-return";
 
 const OAUTH_COOKIE_MAX_AGE_SECONDS = 60 * 10; // 10 minutes
 
+const canEncryptTokens = () =>
+  !(env.NODE_ENV === "production" && !env.INTEGRATION_ENCRYPTION_KEY);
+
 /**
- * True when the integration's OAuth credentials are set and, in production,
- * stored tokens can be encrypted (INTEGRATION_ENCRYPTION_KEY).
+ * True when the integration can be connected: its OAuth credentials are set
+ * (or people connect with their own API key) and, in production, stored
+ * tokens can be encrypted (INTEGRATION_ENCRYPTION_KEY).
  */
 export function isIntegrationConfigured(provider: string): boolean {
-  if (env.NODE_ENV === "production" && !env.INTEGRATION_ENCRYPTION_KEY) {
+  if (!canEncryptTokens()) {
+    return false;
+  }
+
+  try {
+    getIntegrationConfigWithEnv(provider, env);
+    return true;
+  } catch {
+    // An API-key fallback (Bitly's access token) works without app credentials
+    return Boolean(getIntegrationRegistry().get(provider)?.apiKey);
+  }
+}
+
+/** True when the OAuth sign-in flow itself can start for this provider. */
+export function isOAuthConfigured(provider: string): boolean {
+  const definition = getIntegrationRegistry().get(provider);
+  if (
+    !(definition?.oauth && definition.type === "oauth" && canEncryptTokens())
+  ) {
     return false;
   }
 
@@ -30,13 +54,17 @@ export function isIntegrationConfigured(provider: string): boolean {
 
 const verifierCookieName = (provider: string) => `${provider}_code_verifier`;
 const stateCookieName = (provider: string) => `${provider}_oauth_state`;
+const returnCookieName = (provider: string) => `${provider}_oauth_return`;
 
 /**
  * Starts an integration OAuth flow: stores the PKCE verifier and a random
  * `state` in httpOnly cookies and returns the provider authorization URL.
+ * `returnTo` (a same-site path, validated here) is where the callback sends
+ * the browser afterwards instead of Settings → Integrations.
  */
 export async function createIntegrationAuthUrl(
   provider: string,
+  options: { returnTo?: unknown } = {},
 ): Promise<string> {
   const config = getIntegrationConfigWithEnv(provider, env);
   const codeVerifier = generateCodeVerifier();
@@ -52,6 +80,17 @@ export async function createIntegrationAuthUrl(
   };
   cookieStore.set(verifierCookieName(provider), codeVerifier, cookieOptions);
   cookieStore.set(stateCookieName(provider), state, cookieOptions);
+  // Always replace: a stale return path must not outlive the flow it came with.
+  const returnTo = safeReturnPath(options.returnTo);
+  if (returnTo) {
+    cookieStore.set(
+      returnCookieName(provider),
+      Buffer.from(returnTo).toString("base64url"),
+      cookieOptions,
+    );
+  } else {
+    cookieStore.delete(returnCookieName(provider));
+  }
 
   return createOAuthHandler(config).generateAuthUrl(codeVerifier, state);
 }
@@ -91,4 +130,18 @@ export async function consumeIntegrationOAuthState(
   }
 
   return { codeVerifier };
+}
+
+/**
+ * Reads (and clears) the flow's return path: a same-site path, re-validated
+ * on the way out, or null to fall back to Settings → Integrations.
+ */
+export async function takeIntegrationReturnPath(
+  provider: string,
+): Promise<string | null> {
+  const cookieStore = await cookies();
+  const stored = cookieStore.get(returnCookieName(provider))?.value;
+  if (stored === undefined) return null;
+  cookieStore.delete(returnCookieName(provider));
+  return safeReturnPath(Buffer.from(stored, "base64url").toString("utf8"));
 }

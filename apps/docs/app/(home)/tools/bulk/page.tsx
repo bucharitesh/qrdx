@@ -65,6 +65,7 @@ export default function BulkPage() {
   return (
     <main className="flex flex-col divide-y divide-border min-h-screen w-full">
       <ToolHero
+        pattern="rain"
         crumbs={[
           { name: "Home", path: "/" },
           { name: "Tools", path: "/tools" },
@@ -90,12 +91,12 @@ export default function BulkPage() {
           {steps.map((step, index) => (
             <li
               key={step.title}
-              className="flex flex-col gap-2 rounded-xl border border-border bg-accent/50 p-4"
+              className="flex flex-col gap-2 rounded-xl border border-border bg-card p-5 shadow-sm"
             >
-              <span className="text-xs font-medium text-muted-foreground">
-                Step {index + 1}
+              <span className="grid size-7 place-items-center rounded-md border bg-muted/40 font-mono text-xs text-foreground/80">
+                {index + 1}
               </span>
-              <h3 className="font-medium">{step.title}</h3>
+              <h3 className="mt-1 font-medium">{step.title}</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
                 {step.body}
               </p>

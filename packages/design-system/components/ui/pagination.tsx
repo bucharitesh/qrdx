@@ -1,9 +1,5 @@
 import * as React from "react"
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  MoreHorizontalIcon,
-} from "lucide-react"
+import { ArrowLeft2 as ChevronLeftIcon, ArrowRight2 as ChevronRightIcon, More as MoreHorizontalIcon } from "iconsax-reactjs"
 
 import { cn } from "@repo/design-system/lib/utils"
 import { buttonVariants, type Button } from "@repo/design-system/components/ui/button"

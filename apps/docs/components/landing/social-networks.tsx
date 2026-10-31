@@ -1,39 +1,34 @@
 import {
-  AtSign,
+  GithubLogo as Github,
+  LinkedinLogo as Linkedin,
+  XLogo,
+} from "@repo/design-system/components/icons";
+import {
+  Be,
   Cloud,
   Dribbble,
   Facebook,
-  Figma,
-  Ghost,
-  Github,
-  Globe,
+  Global as Globe,
+  Hashtag,
   Instagram,
-  Linkedin,
-  Mail,
-  MessageCircle,
-  MessagesSquare,
+  Sms as Mail,
+  Messages2 as MessagesSquare,
   Music,
-  Music2,
-  Phone,
-  Pin,
-  Podcast,
-  Rss,
-  Send,
+  Musicnote as Music2,
+  Call as Phone,
+  Bookmark as Pin,
+  Microphone2 as Podcast,
+  Brodcast as Rss,
+  Send2 as Send,
+  Snapchat,
+  Spotify,
   Twitch,
+  Whatsapp,
   Youtube,
-} from "lucide-react";
-import type { ComponentType, SVGProps } from "react";
+} from "iconsax-reactjs";
+import type { ComponentType } from "react";
 
 type Icon = ComponentType<{ className?: string }>;
-
-/** X (formerly Twitter) logo; lucide's bird icon is outdated. */
-function XLogo(props: SVGProps<SVGSVGElement>) {
-  return (
-    <svg aria-hidden="true" fill="currentColor" viewBox="0 0 24 24" {...props}>
-      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-    </svg>
-  );
-}
 
 export interface SocialNetwork {
   id: string;
@@ -90,7 +85,7 @@ export const SOCIAL_NETWORKS: SocialNetwork[] = [
   {
     id: "whatsapp",
     label: "WhatsApp",
-    icon: MessageCircle,
+    icon: Whatsapp,
     hosts: ["wa.me", "whatsapp.com"],
     placeholder: "https://wa.me/15550100",
   },
@@ -104,7 +99,7 @@ export const SOCIAL_NETWORKS: SocialNetwork[] = [
   {
     id: "threads",
     label: "Threads",
-    icon: AtSign,
+    icon: Hashtag,
     hosts: ["threads.net", "threads.com"],
     placeholder: "https://threads.net/@yourname",
   },
@@ -125,7 +120,7 @@ export const SOCIAL_NETWORKS: SocialNetwork[] = [
   {
     id: "snapchat",
     label: "Snapchat",
-    icon: Ghost,
+    icon: Snapchat,
     hosts: ["snapchat.com"],
     placeholder: "https://snapchat.com/add/yourname",
   },
@@ -146,7 +141,7 @@ export const SOCIAL_NETWORKS: SocialNetwork[] = [
   {
     id: "spotify",
     label: "Spotify",
-    icon: Music,
+    icon: Spotify,
     hosts: ["spotify.com"],
     placeholder: "https://open.spotify.com/artist/...",
   },
@@ -181,7 +176,7 @@ export const SOCIAL_NETWORKS: SocialNetwork[] = [
   {
     id: "behance",
     label: "Behance",
-    icon: Figma,
+    icon: Be,
     hosts: ["behance.net"],
     placeholder: "https://behance.net/yourname",
   },

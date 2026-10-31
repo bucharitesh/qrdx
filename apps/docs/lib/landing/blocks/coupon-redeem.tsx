@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@repo/design-system/lib/utils";
-import { CircleCheck } from "lucide-react";
+import { TickCircle as CircleCheck } from "iconsax-reactjs";
 import { useEffect, useState } from "react";
 import { buttonClass, mutedTextClass } from "@/components/landing/block-kit";
 import { COUPON_REDEEM_EVENT } from "./coupon-schema";

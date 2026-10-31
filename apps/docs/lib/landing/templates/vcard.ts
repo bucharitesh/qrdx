@@ -1,4 +1,4 @@
-import { Contact } from "lucide-react";
+import { Personalcard as Contact } from "iconsax-reactjs";
 import { themePreset } from "@/components/landing/theme";
 import { registerTemplate } from "./registry";
 

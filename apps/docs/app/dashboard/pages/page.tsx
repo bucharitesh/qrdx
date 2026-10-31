@@ -7,7 +7,7 @@ import {
   EmptyHeader,
   EmptyTitle,
 } from "@repo/design-system/components/ui/empty";
-import { PanelsTopLeft, Pencil } from "lucide-react";
+import { Element2 as PanelsTopLeft, Edit2 as Pencil } from "iconsax-reactjs";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHeader } from "@/app/dashboard/_components/page-header";
@@ -30,8 +30,28 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-export default async function PagesPage() {
+export default async function PagesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{
+    new?: string | string[];
+    template?: string | string[];
+  }>;
+}) {
   const scope = await requireDashboardScope();
+  const { new: requested, template: requestedTemplate } = await searchParams;
+  // `?new=<type>` comes from the editor's type picker; unknown types are ignored.
+  const newType =
+    typeof requested === "string" && getTemplate(requested)
+      ? requested
+      : undefined;
+  // `&template=<id>` comes from a template demo (/templates/<type>/<id>).
+  const newVariant =
+    newType &&
+    typeof requestedTemplate === "string" &&
+    getTemplate(newType)?.variants.some((item) => item.id === requestedTemplate)
+      ? requestedTemplate
+      : undefined;
   const [usage, pages] = await Promise.all([
     getPageUsage(scope),
     listPages(scope),
@@ -44,7 +64,11 @@ export default async function PagesPage() {
         description="Mobile pages your QR codes open: link lists, business pages, digital business cards and more."
         title="Pages"
       >
-        <NewPageButton usage={usage} />
+        <NewPageButton
+          autoOpenType={newType}
+          autoOpenVariant={newVariant}
+          usage={usage}
+        />
       </PageHeader>
 
       <PageUsageMeter usage={usage} />
@@ -81,7 +105,7 @@ export default async function PagesPage() {
                 key={page.id}
               >
                 <div className="flex items-start gap-3">
-                  <span className="bg-primary/10 text-primary flex size-9 shrink-0 items-center justify-center rounded-md">
+                  <span className="flex size-9 shrink-0 items-center justify-center rounded-md border bg-muted/40 text-foreground/80">
                     <Icon className="size-4.5" />
                   </span>
                   <div className="min-w-0 flex-1">

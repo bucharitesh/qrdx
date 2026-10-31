@@ -83,6 +83,9 @@ export function withQRSize(qrProps: QRProps, size: number): QRProps {
       height: imageSettings.height * ratio,
       ...(imageSettings.x != null && { x: imageSettings.x * ratio }),
       ...(imageSettings.y != null && { y: imageSettings.y * ratio }),
+      ...(imageSettings.padding != null && {
+        padding: imageSettings.padding * ratio,
+      }),
     },
   };
 }

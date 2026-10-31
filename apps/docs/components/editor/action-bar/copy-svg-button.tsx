@@ -1,10 +1,12 @@
 "use client";
 
 import { toast } from "@repo/design-system";
+import { Tick as Check } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
+import { Copy } from "iconsax-reactjs";
 import { getQRData, getSVGString } from "qrdx";
 import { useState } from "react";
-import { Icons } from "@/components/icons";
+import { emitSound } from "@/components/editor/sound";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
 import { useQREditorStore } from "@/store/editor-store";
@@ -37,6 +39,7 @@ export function CopySVGButton() {
       const svgContent = await getSVGString(qrProps);
       await navigator.clipboard.writeText(svgContent);
       setCopied(true);
+      emitSound("copy");
       toast.success("SVG copied to clipboard");
       setTimeout(() => setCopied(false), 2000);
     } catch (error) {
@@ -50,12 +53,12 @@ export function CopySVGButton() {
       <Button variant="ghost" size="sm" onClick={handleCopySVG}>
         {copied ? (
           <>
-            <Icons.Check className="h-4 w-4" />
+            <Check className="size-4" />
             <span className="hidden text-sm md:block sr-only">Copied</span>
           </>
         ) : (
           <>
-            <Icons.Copy className="h-4 w-4" />
+            <Copy className="size-4" />
             <span className="hidden text-sm md:block sr-only">Copy SVG</span>
           </>
         )}

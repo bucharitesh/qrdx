@@ -1,95 +1,234 @@
 ---
 title: Privacy Policy
-description: Privacy Policy for qrdx.
+description: What QRdx collects, why, who it is shared with, how long it is kept and the choices you have, for the website, accounts, dynamic codes, hosted pages, the API and the AI features.
+lastUpdated: 2026-11-01
 ---
 
-## Introduction
+<Callout title="Summary">
 
-We value your privacy and are committed to safeguarding your personal data. This privacy policy explains how qrdx collects, uses, and protects your information when you use our platform, as well as your privacy rights and how they are protected by law.
+- We collect what we need to run your account and your codes: your email address (with your name and profile picture if you sign in with Google or GitHub), the codes, pages and files you create, and your plan status from Polar.
+- When someone scans a dynamic code, we record coarse facts about the scan: country and city, device, browser, language and time. We never store the scanner's IP address. We keep a salted hash that changes every day, so unique visitors can be counted.
+- Your hosted pages and forms collect data from your own visitors. For that data you are in charge (the controller) and we process it for you under the [Data Processing Addendum](/legal/dpa).
+- Product analytics (PostHog) and the feedback widget (Featurebase) load only if you allow them in **Cookie settings**. We use no advertising cookies and we don't sell personal data.
+- You can delete codes, pages, responses, files and your whole account yourself. For anything else, email [support@qrdx.dev](mailto:support@qrdx.dev).
 
-## Data Collection
+</Callout>
 
-When you use qrdx, we collect and process the following types of data:
+## Who we are
 
-- **Web Analytics:** Anonymous usage data is collected to improve our service and understand how users interact with qrdx.
-- **Authentication Data:** When you sign up, we collect necessary information such as your email address and authentication credentials.
+QRdx ("QRdx", "we", "us") is operated by **[[LEGAL ENTITY NAME]]**, **[[REGISTERED ADDRESS]]**. You can reach us about privacy at [support@qrdx.dev](mailto:support@qrdx.dev).
 
-## How We Use Your Data
+This policy covers qrdx.dev, QRdx short links and hosted pages, the dashboard, the REST API, the CLI and the MCP server at `https://mcp.qrdx.dev/mcp` (together, the "Service"). It doesn't cover copies of the open-source app that other people host themselves: whoever runs that copy is responsible for it.
 
-We use the collected data to:
+In this policy:
 
-- Provide and maintain the qrdx service
-- Generate, store, and manage your QR codes
-- Authenticate your identity and secure your account
-- Improve our platform and develop new features
-- Communicate with you about updates, security alerts, and support
-- Analyze usage patterns to enhance user experience
+- **"You"** means a person who uses QRdx or holds a QRdx account.
+- **"Customer Content"** means everything you create, upload or import: codes, destinations, hosted pages, files, themes, settings and the like.
+- **"End Users"** means the people who scan your codes, open your hosted pages or fill in your forms.
 
-## Sharing and Transferring Your Data
+## Our role
 
-We do not sell, lease, or trade your personal information. However, we may share your data with trusted third parties to:
+| Data | Our role | What applies |
+| --- | --- | --- |
+| Your account, billing, support requests, visits to qrdx.dev, abuse reports | Controller (a "Data Fiduciary" under India's DPDP Act) | This policy |
+| End User data collected through your codes, hosted pages and forms: scans, page events, form responses, conversions | Processor, acting on your instructions (a "Data Processor" under the DPDP Act) | The [Data Processing Addendum](/legal/dpa). You decide how that data is used and you tell your End Users. |
 
-- Process payments securely
-- Provide cloud hosting services
-- Deliver analytics and performance monitoring
-- Comply with legal obligations
+## What we collect
 
-We ensure that all third-party providers we work with adhere to data protection standards, in compliance with relevant laws such as the Information Technology Act 2000 and Digital Personal Data Protection Act 2023 under Indian law or any other applicable laws.
+### When you visit qrdx.dev
 
-## Data Security
+- **Request data.** Your browser sends your IP address, user agent and the page requested. Our host, Vercel, processes these to deliver the page and protect the Service. We read the country from Vercel's IP-country header to show prices in Indian rupees or US dollars. We don't store your IP address with your visit.
+- **Browser storage.** Settings such as your theme, editor state and chosen currency are saved in your browser. The [Cookie Policy](/legal/cookie-policy) lists every item.
+- **Product analytics, only if you allow it.** PostHog records the pages you view, the clicks you make and the features you use. If you are signed in, these events are linked to your email address and name.
+- **Feedback widget, only if you allow it.** Featurebase loads its widget, and what you type into it goes to Featurebase.
 
-We have implemented suitable technical and organizational measures to protect your personal data from unauthorized access, loss, or misuse, including:
+### Static codes and free tools
 
-- Encrypted data transmission (HTTPS)
-- Secure authentication mechanisms
-- Regular security audits and updates
-- Access controls and monitoring
-- Secure data storage practices
+Static codes you make in the editor are generated in your browser. Their content isn't sent to us unless you save the design, use an AI feature, or use the [Image API](/docs/developers/image-api), where the content is part of the request. The QR scanner keeps its history in your browser only. The scan checker sends the link you check to our server and to Google Web Risk to test it; we don't store the link.
 
-## Data Protection Rights
+### Your account
 
-You have the following rights concerning your personal data:
+- **Sign-in.** You sign in with Google, GitHub or a one-time code we email you. With Google or GitHub, we receive your name, email address, profile picture and your account ID at that provider, plus the tokens the provider issues for signing in. With an email code, we receive only your email address. The code expires after 5 minutes, and we store it only as a hash until it is used. QRdx has no passwords.
+- **Sessions.** A session cookie keeps you signed in. With each session we store the IP address and user agent of the device that signed in, to secure your account.
+- **Settings.** Your preferences and notification settings: which events you want, and the email addresses or Slack and Discord webhook URLs they go to.
 
-- **Access:** You have the right to request a copy of the personal data we hold about you.
-- **Correction:** If any of your data is incorrect or incomplete, you can request to have it updated.
-- **Erasure:** You can request that we delete your personal data, subject to applicable legal exceptions.
-- **Objection:** You can object to the processing of your personal data for certain purposes.
-- **Restriction:** You can ask us to restrict the use of your data under certain conditions.
-- **Data Portability:** You have the right to transfer your personal data to another service provider, if applicable.
-- **Withdrawal of Consent:** You can withdraw your consent to process your personal data at any time.
+### What you create
 
-## Data Retention
+- **Dynamic codes:** destination and fallback URLs, title, notes, design, folder and tags, routing rules, UTM settings, tracking pixel IDs, schedules and scan limits. A code's password is stored only as a hash. We keep an edit history of each code.
+- **Hosted pages:** their content and earlier versions, which can include contact details you publish, such as a vCard.
+- **Files** you upload, for example images, PDFs, audio or video for your pages.
+- **Saved themes**, and **community themes** you publish. Published themes are public and show your name and profile picture.
+- **Custom domains**, **webhook endpoints** and their signing secrets, and data you **import** from other services.
 
-We retain your personal data only for as long as necessary to fulfill the purposes outlined in this privacy policy, unless a longer retention period is required or permitted by law.
+### Teams
 
-## Cookies
+The team's name and logo, its members and their roles, and invitations: the invitee's email address, the role offered and who sent it. What you create inside a team belongs to the team. See [Teams](/docs/teams).
 
-Our platform uses essential cookies necessary for:
+### Scans of dynamic codes (End User data)
 
-- User authentication and session management
-- Maintaining your login status
-- Securing access to your account
-- Remembering your preferences
+| We record | We don't record |
+| --- | --- |
+| Time of the scan | IP address |
+| Country, region and city, looked up from the IP address by Vercel | Full user agent string |
+| Device type, operating system and browser, read from the user agent | Precise location |
+| Referring website (host name only, never the full address) | Cookies or device identifiers |
+| Preferred language, from the browser's language setting | |
+| Which A/B variant was served, if the owner set up a split | |
+| A visitor hash | |
 
-We do not use cookies for tracking or advertising purposes without your explicit consent.
+The **visitor hash** is a salted SHA-256 hash of the IP address, the user agent and the date (UTC). Because the date is part of it, the hash changes every day. It lets the code's owner count unique visitors per day without anyone storing the IP address, and it can't be used to follow someone from one day to the next.
 
-## Third-Party Services
+**Bots aren't counted.** Known bots, link previews and browser prefetches are skipped. Repeated scans of one code from one IP address stop counting after 20 a minute; the code still redirects.
 
-qrdx may integrate with third-party services for enhanced functionality. These services have their own privacy policies, and we encourage you to review them.
+**Password-protected codes** set a cookie on the scanner's device for 6 hours after the right password is entered. **Conversion tracking**, if the owner turns it on, adds a signed `qrdx_sid` parameter to the destination link, and we store the conversions the owner reports back (name, value, currency and any details they send).
 
-## Children's Privacy
+### Hosted pages and forms (End User data)
 
-qrdx is not intended for use by children under the age of 13. We do not knowingly collect personal information from children under 13.
+- **Page views and clicks.** A cookieless beacon records the event type, which block or link was used, the time and the visitor hash.
+- **Form responses.** We store the answers, which can include a name, email address, phone number, ratings, choices or consent ticks, with the time and the visitor hash. A hidden honeypot field and, where it's enabled, Cloudflare Turnstile filter out spam. Turnstile sends the visitor's IP address to Cloudflare to check it.
+- **Notifications.** Owners can receive responses by email, which we send through Resend, and can send events to their own webhooks, Slack or Discord.
+- **Owner's tracking pixels.** An owner can add Google Analytics 4, Google Tag Manager, Meta, TikTok or LinkedIn pixels to their pages. In the EEA, the UK, Switzerland and wherever a visitor's country is unknown, these wait for the visitor's consent. Elsewhere they respect Global Privacy Control. The visitor's choice is stored in their browser. The owner is responsible for their pixels.
+- **Embedded content.** If the owner adds a map or a video, it is loaded from Google Maps, YouTube (in its privacy-enhanced mode), Vimeo or Loom, and those providers receive the visitor's request.
 
-## Modifications to This Privacy Policy
+QRdx's own analytics and feedback widget never load on hosted pages.
 
-We may update this privacy policy occasionally to reflect changes in our practices or legal requirements. Any changes will be posted here, and the effective date will be updated. Your continued use of qrdx after such changes constitutes acceptance of the updated policy.
+### AI features
 
-## Contact Us
+Your prompts, attached images and, for AI art, the content of the code are sent to Google (Gemini) or fal.ai to generate the result. We store a usage record (which model, how many tokens or credits, when). We don't store your prompts or images on our servers. The [AI Features](/legal/ai-features) notice has the details.
 
-If you have any questions or concerns about this privacy policy, please reach out at [support@qrdx.dev](mailto:support@qrdx.dev)
+### Integrations and imports
+
+When you connect an integration, such as Dub or Google Drive, we store the access and refresh tokens it issues, encrypted with AES-256-GCM, together with the permissions you granted and account details like the workspace name. Data then moves between QRdx and that service only as you direct.
+
+### API, CLI and MCP server
+
+For OAuth apps and access tokens we store a hash of each token, its scopes and its expiry date, never the token itself. We count your requests to apply your plan's daily limit.
+
+### Billing
+
+[Polar](https://polar.sh) is the merchant of record for paid plans. Polar, and Stripe for card payments, collect your payment details, billing address and tax ID. We receive your plan, its price and currency, billing period dates, subscription status, your Polar customer ID and, if you give one, your reason for cancelling. We never see your full card number.
+
+### Emails
+
+We send transactional email only, through Resend: sign-in codes, team invitations, form response notifications, first-scan and milestone alerts, and weekly digests if you turn them on. Alerts and digests include a one-click unsubscribe link. We don't send marketing email.
+
+### Abuse reports and safety
+
+The [report form](/report-abuse) collects the reported link, a reason, optional details and an optional email address, plus a visitor hash. It uses Cloudflare Turnstile. Your IP address is used to limit how many reports can be sent from one connection. Destinations of dynamic codes are checked with Google Web Risk and offline checks. Staff actions on accounts, codes and files are recorded in an internal audit log.
+
+### Support
+
+What you send us when you email for help.
+
+## Why we use it and our legal bases
+
+For people in the EEA, the UK and Switzerland, these are our legal bases under the GDPR.
+
+| Purpose | Data | Legal basis |
+| --- | --- | --- |
+| Run your account and the Service: codes, pages, files, teams, integrations, API | Account data, Customer Content | Contract |
+| Billing and tax records | Billing data | Contract and legal obligation |
+| Security, abuse and fraud prevention, rate limits | IP addresses (briefly), visitor hashes, sessions, reports, audit log, Web Risk checks | Legitimate interests: keeping QRdx and the people who scan codes safe |
+| Scan, page and form data for code owners | End User data | Processed on the owner's instructions under the [DPA](/legal/dpa); the owner needs their own legal basis |
+| Transactional email, alerts and digests you choose | Email address, event details | Contract |
+| Prices in your currency | Country from the IP-country header | Legitimate interests |
+| Product analytics | PostHog events | Consent |
+| Feedback widget | What you send through Featurebase | Consent |
+| Answering lawful requests and defending claims | What the request concerns | Legal obligation and legitimate interests |
+
+We don't make decisions with legal or similarly significant effects by automated means alone. Automated safety checks can hold a new account's code for review or switch off a code whose link is listed as malware or phishing; a person reviews those cases.
+
+## Who we share it with
+
+- **Subprocessors** that run parts of the Service for us, such as hosting, the database, email and billing. They are listed with their locations on the [Subprocessors](/legal/subprocessors) page.
+- **Integrations you connect.** When you link a service, data goes to it because you asked for that. Those services are not our subprocessors, and their own terms apply.
+- **Your team.** Members can see and manage the team's content according to their role.
+- **The public.** Your codes' destinations, your hosted pages and the community themes you publish are public by design.
+- **Authorities and others, when we must.** We share data if the law requires it, or where it is needed to protect people, QRdx or our users from harm or fraud.
+- **A buyer or successor.** If QRdx is merged, acquired or its assets are sold, data may move to the new owner, who must keep honouring this policy. We'll tell you if that happens.
+
+We don't sell personal data, and we don't share it for cross-context behavioural advertising.
+
+## How long we keep it
+
+| Data | How long |
+| --- | --- |
+| Account profile and sign-in tokens | Until you delete your account |
+| Email sign-in codes | Deleted when used, or soon after they expire (5 minutes) |
+| Sessions, with IP address and user agent | A session expires 7 days after you last use QRdx. Session records are deleted with your account at the latest. |
+| Customer Content | Until you delete it or your account. Trashed codes stay in the trash, switched off, until you empty it. |
+| Edit history of codes and pages | As long as the code or page exists |
+| Scans, page events and conversions | As long as the code or page exists. Your plan decides how far back you can view them: 90 days on Free, 3 years on Pro, everything on Business. Older scans may be combined into daily totals. |
+| Form responses | Until the page owner deletes them, the page, or their account |
+| Webhook delivery logs | 30 days |
+| Files | Until you delete them, which removes them from storage straight away. When an account is deleted, its file records are deleted and the files stop being served. |
+| AI usage records | Until you delete your account |
+| Our billing records | Until you delete your account. Polar keeps invoices and tax records for as long as the law requires. |
+| Abuse reports and the staff audit log | As long as needed to handle the report, keep the platform safe and deal with legal claims |
+| Rate-limit counters, which can include an IP address | They expire on their own within 2 days |
+| Support emails | As long as needed to resolve your request and keep a record of it |
+| Browser storage | In your browser until you clear it, or for the lifetime listed in the [Cookie Policy](/legal/cookie-policy) |
+
+**Deleting your account** (Settings → Account) deletes your personal workspace: your codes and their scans, pages, responses, files, themes, domains, integrations and sessions. Codes and other content you created inside a team are handed to another team member, so printed team codes keep working. We also ask Polar to delete your customer record. Deleted data can stay in our database provider's short point-in-time recovery history until it rolls over.
+
+## International transfers
+
+Our main infrastructure (Vercel for hosting and Neon for the database) is in the United States, and some subprocessors work from other countries. When personal data from the EEA, the UK or Switzerland goes to a country without an adequacy decision, we rely on the European Commission's Standard Contractual Clauses (with the UK Addendum and the Swiss amendments where needed) or on the provider's certification under the EU-US Data Privacy Framework. Data from India may be transferred abroad except to countries the Government of India restricts.
+
+## How we protect it
+
+- Every connection to QRdx uses HTTPS.
+- You sign in through Google or GitHub, so QRdx stores no passwords.
+- API and OAuth access tokens are stored only as SHA-256 hashes. Integration tokens are encrypted with AES-256-GCM. Code passwords are stored as hashes.
+- Scanner IP addresses are never written to the database (see [scans](#scans-of-dynamic-codes-end-user-data)).
+- Webhook payloads are signed so you can check they came from us.
+- Rate limits, bot filtering and Cloudflare Turnstile protect forms and public endpoints.
+- Only staff accounts can open the admin tools, and every staff action there is logged.
+
+No system is perfectly secure. If we learn of a breach that affects your personal data, we'll tell you and the relevant authorities as the law requires. To report a vulnerability, see [Security](/legal/security).
+
+## Your rights
+
+### Everyone
+
+You can see, correct, export or delete your data. Most of it you can handle yourself:
+
+- **Delete** codes, pages, form responses and files in the dashboard, or your whole account in **Settings → Account**.
+- **Export** a code as SVG or PNG, its scans as CSV, and form responses as CSV. Read your codes through the [REST API](/docs/developers/rest-api).
+- **Change your cookie choices** at any time with **Cookie settings** in the footer.
+- **Stop alerts and digests** with the unsubscribe link in any of them, or in your notification settings.
+
+For anything else, email [support@qrdx.dev](mailto:support@qrdx.dev). We may need to confirm it's you before acting, and we reply within the time the law gives us (one month under the GDPR, 45 days under California law).
+
+### EEA, UK and Switzerland
+
+You also have the right to restrict or object to our processing, to data portability, and to withdraw consent at any time without affecting earlier processing. You can complain to your data protection authority. Our EU and UK representative: **[[EU/UK REPRESENTATIVE, OR "NOT APPOINTED"]]**.
+
+### India (DPDP Act 2023)
+
+You can ask for a summary of the personal data we process and who we've shared it with, and ask us to correct, complete, update or erase it. You can nominate someone to exercise your rights if you die or become unable to. Send grievances to our Grievance Officer, **[[GRIEVANCE OFFICER NAME]]**, at [support@qrdx.dev](mailto:support@qrdx.dev). If you aren't satisfied with our answer, you can complain to the Data Protection Board of India.
+
+### California (CCPA/CPRA)
+
+Where California law applies to us: in the last 12 months we collected identifiers (name, email address, account IDs, IP address), commercial information (plan and billing history), internet activity (how you use QRdx, if you allowed analytics) and approximate location (country, from the IP address), for the purposes described above. We don't sell or share personal information, and we don't use sensitive personal information to infer anything about you. You have the right to know, correct and delete your personal information, to use an authorised agent, and not to be treated differently for using these rights.
+
+### End Users of someone else's code or page
+
+If you scanned a code or used a page or form made by a QRdx customer, the customer decides how that data is used. Contact them first. If you contact us, we'll pass your request to the customer when we can identify them.
+
+## Children
+
+QRdx is not meant for children under 13, and we don't knowingly collect their personal data. In places that set a higher age for consent to online services (up to 16 in parts of the EEA, and under 18 in India), a child needs a parent's or guardian's permission to use an account. If you believe a child has given us personal data, email us and we'll delete it.
+
+## Changes to this policy
+
+When this policy changes, we update this page and the date at the top. For significant changes, we also email account holders before the change takes effect.
+
+## Contact
+
+Questions or requests about privacy: [support@qrdx.dev](mailto:support@qrdx.dev). Related pages: [Cookie Policy](/legal/cookie-policy), [Subprocessors](/legal/subprocessors), [Data Processing Addendum](/legal/dpa), [AI Features](/legal/ai-features).
 
 ---
 
-By continuing to use qrdx, you confirm that you have read and understood this Privacy Policy.
+**Changes:** 1 November 2026. Rewritten to match how QRdx works today: scan analytics without stored IP addresses, hosted pages and forms, teams, integrations, AI features, the API and MCP server, retention periods, and DPDP Act and CCPA sections.
 

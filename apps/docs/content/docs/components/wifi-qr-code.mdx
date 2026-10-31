@@ -1,0 +1,49 @@
+---
+title: Wi-Fi QR Code
+description: A QR code that joins a Wi-Fi network when scanned, with a typed, escaped payload builder.
+icon: Globe
+---
+
+<ComponentLinks name="wifi-qr-code" />
+
+<ComponentPreview name="wifi-qr-code-demo" />
+
+## Installation
+
+<InstallationTabs name="wifi-qr-code" />
+
+## Usage
+
+```tsx
+import { WifiQrCode } from "@/components/wifi-qr-code";
+```
+
+```tsx
+<WifiQrCode ssid="Cafe Guest" password="espresso-2024" />
+```
+
+The iOS and Android cameras offer to join the network when they scan the code. No app is needed.
+
+## Examples
+
+### Variants
+
+`showPassword` prints the password for guests who type it in. Use `encryption="nopass"` for open networks and `hidden` for networks that don't broadcast their name.
+
+<ComponentPreview name="wifi-qr-code-variants" />
+
+### Payload builder
+
+`buildWifiPayload` returns the `WIFI:` text the code encodes. It escapes `\`, `;`, `,`, `:` and `"` in names and passwords, which is where hand-written payloads usually break. Use it with any QR renderer, or to print the payload for debugging.
+
+<ComponentPreview name="wifi-qr-code-payload" />
+
+## API Reference
+
+<auto-type-table path="../../../registry/qrdx/wifi-qr-code.tsx" type="{ [K in keyof WifiQrCodeProps as K extends Exclude<keyof ComponentProps<'figure'>, 'hidden'> ? never : K]: WifiQrCodeProps[K] }" />
+
+Any other prop, such as `className`, is passed to the wrapping `<figure>`.
+
+### buildWifiPayload
+
+`buildWifiPayload(network: WifiNetwork): string` takes the same network fields as the component: `ssid`, `password`, `encryption` and `hidden`.

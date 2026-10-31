@@ -21,7 +21,12 @@ import {
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { cn } from "@repo/design-system/lib/utils";
-import { Folder, FolderOpen, FolderPlus, Inbox } from "lucide-react";
+import {
+  Folder2 as Folder,
+  FolderOpen,
+  FolderAdd as FolderPlus,
+  DirectInbox as Inbox,
+} from "iconsax-reactjs";
 import {
   type FormEvent,
   type ReactNode,

@@ -1,5 +1,6 @@
 "use client";
 
+import { Close as X } from "@repo/design-system/components/icons";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
@@ -9,7 +10,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@repo/design-system/components/ui/select";
-import { X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
 

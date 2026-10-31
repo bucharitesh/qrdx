@@ -6,7 +6,6 @@ import qrcodegen from "./codegen";
 import {
   DEFAULT_BGCOLOR,
   DEFAULT_FGCOLOR,
-  DEFAULT_LEVEL,
   DEFAULT_MARGIN,
   DEFAULT_SIZE,
   ERROR_LEVEL_MAP,
@@ -15,7 +14,8 @@ import { handleImageLoad } from "./detection";
 import { withQRSize } from "./download";
 import { FRAME_GAP_RATIO, getFrameDimensions, isFrameActive } from "./frame";
 import { getQRAsSVGDataUri } from "./index";
-import { getImageSettings, getLuminance } from "./utils";
+import { getStylePairRisk } from "./scan-risk";
+import { getImageSettings, getLuminance, resolveErrorLevel } from "./utils";
 import { parseColor, type RGBAColor } from "./utils/parse-color";
 
 export type ScanGrade = "great" | "ok" | "risky" | "fails";
@@ -378,7 +378,7 @@ function contrastChecks(props: QRProps): {
 function moduleCount(props: QRProps) {
   return qrcodegen.QrCode.encodeText(
     props.value,
-    ERROR_LEVEL_MAP[props.level ?? DEFAULT_LEVEL]
+    ERROR_LEVEL_MAP[resolveErrorLevel(props)]
   ).getModules();
 }
 
@@ -404,7 +404,7 @@ function logoCheck(props: QRProps): {
     ? settings.excavation.w * settings.excavation.h
     : settings.w * settings.h;
   const coverage = area / (cells.length * cells.length);
-  const level = props.level ?? DEFAULT_LEVEL;
+  const level = resolveErrorLevel(props);
   const capacity = EC_CAPACITY[level];
   const ratio = coverage / capacity;
   const percent = Math.round(coverage * 100);
@@ -565,6 +565,13 @@ export async function getScanScore(
   penalty += quietZone.penalty;
   const eye = eyeCheck(props);
   penalty += eye.penalty;
+  // Known-weak style pairs and centres (see scan-risk.ts); weak eyes on
+  // their own are already covered by the eye-shape check above.
+  const styleRisk = getStylePairRisk(props);
+  const pairRisk = styleRisk?.kind === "eye" ? null : styleRisk;
+  if (pairRisk) {
+    penalty += 10;
+  }
 
   const jsQR = await loadDecoder();
   throwIfAborted(signal);
@@ -615,6 +622,14 @@ export async function getScanScore(
     checks.push(logo.check);
   }
   checks.push(eye.check, quietZone.check);
+  if (pairRisk) {
+    checks.push({
+      id: "style-pair",
+      passed: false,
+      message: pairRisk.message,
+      fix: pairRisk.fix,
+    });
+  }
 
   const fails = largestFails || contrast.fails;
   let score = Math.max(0, Math.min(100, 100 - penalty));

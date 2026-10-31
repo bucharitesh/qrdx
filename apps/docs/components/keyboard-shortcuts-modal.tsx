@@ -10,6 +10,7 @@ import {
 import { Kbd, KbdGroup } from "@repo/design-system/components/ui/kbd";
 import { ScrollArea } from "@repo/design-system/components/ui/scroll-area";
 import { Icons } from "@/components/icons";
+import { SoundSwitch } from "@/components/sound/sound-switch";
 import { useKeyboardShortcut } from "@/lib/hooks/use-keyboard-shortcuts";
 import { useUserSettings } from "@/lib/hooks/use-user-settings";
 
@@ -33,11 +34,8 @@ const shortcutCategories: ShortcutCategory[] = [
     title: "Navigation",
     shortcuts: [
       { keys: ["1"], description: "Open Content tab" },
-      { keys: ["2"], description: "Open Colors tab" },
-      { keys: ["3"], description: "Open Patterns tab" },
-      { keys: ["4"], description: "Open Frames tab" },
-      { keys: ["5"], description: "Open Settings tab" },
-      { keys: ["6"], description: "Open AI Generate tab" },
+      { keys: ["2"], description: "Open Design tab" },
+      { keys: ["3"], description: "Open Generate (AI) tab" },
     ],
   },
   {
@@ -54,7 +52,7 @@ const shortcutCategories: ShortcutCategory[] = [
   {
     title: "Theme & Appearance",
     shortcuts: [
-      { keys: ["T"], description: "Apply random theme" },
+      { keys: ["T"], description: "Shuffle a new theme" },
       { keys: ["L"], description: "Toggle light/dark mode" },
       { keys: ["←"], description: "Previous theme preset" },
       { keys: ["→"], description: "Next theme preset" },
@@ -152,7 +150,9 @@ export function KeyboardShortcutsModal({
           </div>
         </ScrollArea>
 
-        <div className="mt-4 rounded-lg border border-border bg-muted/30 px-4 py-3">
+        <SoundSwitch className="mt-4" />
+
+        <div className="rounded-lg border border-border bg-muted/30 px-4 py-3">
           <p className="text-xs text-muted-foreground">
             <span className="font-semibold text-foreground">Pro tip:</span>{" "}
             Press <Kbd className="inline-flex mx-1">?</Kbd> anytime to view this

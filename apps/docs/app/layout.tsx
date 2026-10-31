@@ -1,12 +1,15 @@
 import "@/styles/styles.css";
-import { fonts } from "@repo/design-system/lib/fonts";
 import { cn } from "@repo/design-system/lib/utils";
 import type { Metadata, Viewport } from "next";
-import FeaturebaseScript from "@/components/featurebase-script";
-import { NotOnCustomerPages } from "@/components/landing/not-on-customer-pages";
-import { PostHogInit } from "@/components/posthog-init";
 import { ThemeScript } from "@/components/theme-script";
-import { baseUrl, siteDescription, siteName, siteTitle } from "@/lib/metadata";
+import { fonts } from "@/lib/fonts";
+import {
+  baseUrl,
+  siteDescription,
+  siteKeywords,
+  siteName,
+  siteTitle,
+} from "@/lib/metadata";
 import { Provider } from "./providers";
 
 // No canonical/og:url here (every child would inherit them); pages set their own via createMetadata().
@@ -18,18 +21,7 @@ export const metadata: Metadata = {
   },
   description: siteDescription,
   applicationName: siteName,
-  keywords: [
-    "free qr code generator",
-    "unlimited qr codes",
-    "custom qr code",
-    "qr code generator no signup",
-    "qr code with logo free",
-    "ai qr code generator",
-    "open source qr code generator",
-    "react qr code component",
-    "qr code npm package",
-    "svg qr code",
-  ],
+  keywords: siteKeywords,
   authors: [{ name: "Ritesh Bucha", url: "https://github.com/bucharitesh" }],
   creator: "Ritesh Bucha",
   openGraph: {
@@ -65,15 +57,8 @@ export default function Layout({ children }: LayoutProps<"/">) {
         <meta name="darkreader-lock" />
       </head>
       <body className="antialiased font-sans bg-background relative flex min-h-screen flex-col">
+        {/* PostHog and Featurebase load from the consent manager in Provider, after consent. */}
         <Provider>{children}</Provider>
-        {/* Never on customer pages (/p, /q gates, /ended; only owner-set pixels load there) or the no-tracking scanner (/scan). */}
-        <NotOnCustomerPages>
-          {process.env.NODE_ENV === "production" &&
-            Boolean(process.env.NEXT_PUBLIC_FEATUREBASE_APP_ID) && (
-              <FeaturebaseScript />
-            )}
-          {process.env.NODE_ENV === "production" && <PostHogInit />}
-        </NotOnCustomerPages>
       </body>
     </html>
   );

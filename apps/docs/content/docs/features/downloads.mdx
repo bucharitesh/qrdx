@@ -1,6 +1,6 @@
 ---
 title: Downloads
-description: Export QR codes as PNG, JPG, SVG or PDF, copy them to the clipboard or get a data URL.
+description: Export QR codes as PNG, JPG, SVG, PDF or vector EPS, copy them to the clipboard or get a data URL.
 icon: Download
 ---
 
@@ -93,7 +93,7 @@ const eps = await getQRAsEPS(
 );
 ```
 
-EPS has no transparency, gradients print as their first color, and there are no crop marks. PNG and JPEG logos are embedded.
+EPS has no transparency and no crop marks. Linear and radial gradients print as smooth PostScript Level 3 shadings. PNG and JPEG logos are embedded.
 
 ## Preset Sizes
 

@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { GripVerticalIcon } from "lucide-react"
+import { Menu as GripVerticalIcon } from "iconsax-reactjs"
 import * as ResizablePrimitive from "react-resizable-panels"
 
 import { cn } from "@repo/design-system/lib/utils"

@@ -40,70 +40,156 @@ import type {
   YouTubeContent,
 } from "@/types/qr-content";
 
-/**
- * Encode URL/Plain Text content
- */
-export function encodeUrl(content: UrlContent): string {
-  return content.url || "";
+/** Largest payload a QR code holds (version 40-L, byte mode). */
+export const MAX_QR_PAYLOAD_BYTES = 2953;
+
+/** IDN hosts become punycode (RFC 5891) so every scanner sees a valid URL. */
+function asciiHost(url: string): string {
+  const match = /^([a-z][a-z\d+.-]*:\/\/)([^/?#@]*)(.*)$/is.exec(url);
+  // biome-ignore lint/suspicious/noControlCharactersInRegex: ASCII range check
+  if (!match || /^[\x00-\x7f]*$/.test(match[2] as string)) return url;
+  try {
+    return `${match[1]}${new URL(`${match[1]}${match[2]}`).host}${match[3]}`;
+  } catch {
+    return url;
+  }
 }
 
 /**
- * Encode Email content into mailto: format
+ * Trims a web address and adds https:// when it has no scheme, as browsers
+ * do. "host:port" is not mistaken for a scheme; query and fragment are kept.
+ */
+export function normalizeWebUrl(raw: string): string {
+  const value = raw.trim();
+  if (!value) return "";
+  const scheme = /^([a-z][a-z\d+.-]*):(.*)$/is.exec(value);
+  const hasScheme =
+    scheme !== null &&
+    !(scheme[1] as string).includes(".") &&
+    !/^\d+(?:[/?#]|$)/.test(scheme[2] as string);
+  return asciiHost(hasScheme ? value : `https://${value}`);
+}
+
+/** A full URL as given, or `base` + handle when only a username is typed. */
+function profileUrl(raw: string, base: string): string {
+  const value = raw.trim();
+  if (!value) return "";
+  if (/[./:]/.test(value)) return normalizeWebUrl(value);
+  return `${base}${encodeURIComponent(value.replace(/^@/, ""))}`;
+}
+
+/**
+ * The bare handle from "@name", "name", or a pasted profile URL on `host`
+ * (e.g. "https://www.instagram.com/name/?igsh=…" → "name").
+ */
+function handleFrom(raw: string, host: string, prefix = ""): string {
+  let value = raw.trim();
+  const url = new RegExp(
+    `^(?:https?://)?(?:[\\w-]+\\.)*${host.replace(/\./g, "\\.")}/+${prefix}([^/?#]+)`,
+    "i",
+  ).exec(value);
+  if (url) value = url[1] as string;
+  return value.replace(/^@/, "").replace(/\/+$/, "");
+}
+
+/**
+ * Phone number for tel:/sms: URIs (RFC 3966): visual separators removed, a
+ * single leading "+", the international "00" prefix written as "+" (E.164),
+ * and an extension ("ext 12", "x12") kept apart.
+ */
+export function normalizePhone(raw: string): {
+  number: string;
+  extension?: string;
+} {
+  const match = /^(.*?)(?:\s*(?:ext\.?|extension|x)\s*(\d+))?\s*$/is.exec(
+    raw.trim(),
+  );
+  let number = (match?.[1] ?? "").replace(/[^\d+]/g, "");
+  number = number.replace(/(?!^)\+/g, "");
+  if (number.startsWith("00")) number = `+${number.slice(2)}`;
+  if (!/\d/.test(number)) return { number: "" };
+  return match?.[2] ? { number, extension: match[2] } : { number };
+}
+
+/**
+ * Encode URL content: trimmed, https:// added when missing
+ */
+export function encodeUrl(content: UrlContent): string {
+  return normalizeWebUrl(content.url || "");
+}
+
+/** Addresses for a mailto: URI: "@", "+" and "," stay readable (RFC 6068). */
+function encodeMailtoAddresses(raw: string): string {
+  return raw
+    .split(",")
+    .map((address) => address.trim())
+    .filter(Boolean)
+    .map((address) =>
+      encodeURIComponent(address).replace(/%40/g, "@").replace(/%2B/gi, "+"),
+    )
+    .join(",");
+}
+
+/**
+ * Encode Email content into a mailto: URI (RFC 6068)
  */
 export function encodeEmail(content: EmailContent): string {
-  if (!content.recipient) return "";
+  const to = encodeMailtoAddresses(content.recipient || "");
+  if (!to) return "";
 
   const params: string[] = [];
   if (content.subject) {
     params.push(`subject=${encodeURIComponent(content.subject)}`);
   }
   if (content.body) {
-    params.push(`body=${encodeURIComponent(content.body)}`);
+    // RFC 6068 §5: line breaks in the body are encoded as %0D%0A.
+    const body = content.body.replace(/\r\n|\r|\n/g, "\r\n");
+    params.push(`body=${encodeURIComponent(body)}`);
   }
 
   const queryString = params.length > 0 ? `?${params.join("&")}` : "";
-  return `mailto:${content.recipient}${queryString}`;
+  return `mailto:${to}${queryString}`;
 }
 
 /**
- * Encode Phone content into tel: format
+ * Encode Phone content into a tel: URI (RFC 3966)
  */
 export function encodePhone(content: PhoneContent): string {
-  if (!content.phoneNumber) return "";
-  // Remove non-numeric characters except + for international format
-  const cleanNumber = content.phoneNumber.replace(/[^\d+]/g, "");
-  return `tel:${cleanNumber}`;
+  const { number, extension } = normalizePhone(content.phoneNumber || "");
+  if (!number) return "";
+  return `tel:${number}${extension ? `;ext=${extension}` : ""}`;
 }
 
 /**
  * Encode SMS content
  */
 export function encodeSms(content: SmsContent): string {
-  if (!content.phoneNumber) return "";
-  const cleanNumber = content.phoneNumber.replace(/[^\d+]/g, "");
+  const { number } = normalizePhone(content.phoneNumber || "");
+  if (!number) return "";
 
   // Different formats for iOS and Android compatibility
   if (content.message) {
     // SMSTO format is more widely supported
-    return `SMSTO:${cleanNumber}:${content.message}`;
+    return `SMSTO:${number}:${content.message}`;
   }
-  return `sms:${cleanNumber}`;
+  return `sms:${number}`;
 }
 
 /**
- * Encode WhatsApp content
+ * Encode WhatsApp content as a wa.me click-to-chat link
  */
 export function encodeWhatsApp(content: WhatsAppContent): string {
-  if (!content.phoneNumber) return "";
-  // Remove non-numeric characters except +
-  const cleanNumber = content.phoneNumber.replace(/[^\d+]/g, "");
-  // Remove + if present as WhatsApp API doesn't use it
-  const numberWithoutPlus = cleanNumber.replace(/^\+/, "");
+  // wa.me wants the full international number: digits only, no "+" or "00".
+  const number = normalizePhone(content.phoneNumber || "").number.replace(
+    /^\+/,
+    "",
+  );
+  if (!number) return "";
 
   if (content.message) {
-    return `https://wa.me/${numberWithoutPlus}?text=${encodeURIComponent(content.message)}`;
+    return `https://wa.me/${number}?text=${encodeURIComponent(content.message)}`;
   }
-  return `https://wa.me/${numberWithoutPlus}`;
+  return `https://wa.me/${number}`;
 }
 
 /**
@@ -122,7 +208,7 @@ export function encodeWifi(content: WifiContent): string {
   const escapedPassword = escapeWifiString(password);
 
   if (encryption === "nopass") {
-    return `WIFI:T:nopass;S:${escapedSsid};;`;
+    return `WIFI:T:nopass;S:${escapedSsid};${content.hidden ? "H:true;" : ""};`;
   }
 
   return `WIFI:T:${encryption};S:${escapedSsid};P:${escapedPassword};H:${hidden};;`;
@@ -141,103 +227,150 @@ function escapeWifiString(str: string): string {
     .replace(/"/g, '\\"');
 }
 
+/** vCard TEXT escaping (RFC 2426 §4, RFC 6350 §3.4): \ , ; and newlines. */
+function escapeVCardText(value: string): string {
+  return value
+    .replace(/\\/g, "\\\\")
+    .replace(/\r\n|\r|\n/g, "\\n")
+    .replace(/,/g, "\\,")
+    .replace(/;/g, "\\;");
+}
+
+const utf8 = new TextEncoder();
+
+/** Folds a content line at 75 octets without splitting UTF-8 characters. */
+function foldVCardLine(line: string): string {
+  const parts: string[] = [];
+  let current = "";
+  let bytes = 0;
+  for (const char of line) {
+    const size = utf8.encode(char).length;
+    // Continuation lines start with a space, so they hold 74 octets of content.
+    if (bytes + size > (parts.length === 0 ? 75 : 74)) {
+      parts.push(current);
+      current = "";
+      bytes = 0;
+    }
+    current += char;
+    bytes += size;
+  }
+  parts.push(current);
+  return parts.join("\r\n ");
+}
+
 /**
- * Encode vCard content into VCARD 3.0 format
+ * Encode vCard content into VCARD 3.0 format (RFC 2426): escaped values,
+ * CRLF line endings, lines folded at 75 octets
  */
 export function encodeVCard(content: VCardContent): string {
-  if (!content.firstName) return "";
+  const firstName = content.firstName?.trim();
+  if (!firstName) return "";
+  const lastName = content.lastName?.trim() ?? "";
+  const single = (value: string) => value.replace(/[\r\n]+/g, " ").trim();
 
   const lines: string[] = [];
   lines.push("BEGIN:VCARD");
   lines.push("VERSION:3.0");
 
   // Name (required)
-  const fullName = [content.firstName, content.lastName]
-    .filter(Boolean)
-    .join(" ");
-  lines.push(`FN:${fullName}`);
-  lines.push(`N:${content.lastName || ""};${content.firstName};;;`);
+  const fullName = [firstName, lastName].filter(Boolean).join(" ");
+  lines.push(`FN:${escapeVCardText(fullName)}`);
+  lines.push(`N:${escapeVCardText(lastName)};${escapeVCardText(firstName)};;;`);
 
   // Organization
-  if (content.organization) {
-    lines.push(`ORG:${content.organization}`);
+  if (content.organization?.trim()) {
+    lines.push(`ORG:${escapeVCardText(content.organization.trim())}`);
   }
 
   // Phone
-  if (content.phone) {
-    lines.push(`TEL;TYPE=CELL:${content.phone}`);
+  if (content.phone?.trim()) {
+    lines.push(`TEL;TYPE=CELL:${single(content.phone)}`);
   }
 
   // Email
-  if (content.email) {
-    lines.push(`EMAIL:${content.email}`);
+  if (content.email?.trim()) {
+    lines.push(`EMAIL:${single(content.email)}`);
   }
 
-  // URL
-  if (content.url) {
-    lines.push(`URL:${content.url}`);
+  // URL (a URI, not TEXT: commas stay as they are)
+  if (content.url?.trim()) {
+    lines.push(`URL:${single(content.url)}`);
   }
 
   // Address
-  if (content.address) {
-    lines.push(`ADR:;;${content.address};;;;`);
+  if (content.address?.trim()) {
+    lines.push(`ADR:;;${escapeVCardText(content.address.trim())};;;;`);
   }
 
   // Note
-  if (content.note) {
-    lines.push(`NOTE:${content.note}`);
+  if (content.note?.trim()) {
+    lines.push(`NOTE:${escapeVCardText(content.note.trim())}`);
   }
 
   lines.push("END:VCARD");
 
-  return lines.join("\n");
+  return `${lines.map(foldVCardLine).join("\r\n")}\r\n`;
 }
 
 /**
  * Encode Maps content into Google Maps URL
  */
 export function encodeMaps(content: MapsContent): string {
-  if (!content.location) return "";
+  const location = content.location?.trim();
+  if (!location) return "";
 
-  // Check if it's coordinates (lat,long format)
-  const coordsRegex = /^-?\d+\.?\d*,\s*-?\d+\.?\d*$/;
-  if (coordsRegex.test(content.location.trim())) {
-    const coords = content.location.trim().replace(/\s+/g, "");
-    return `https://www.google.com/maps?q=${coords}`;
+  // Coordinates ("lat, long") within the WGS 84 ranges of RFC 5870 §3.4.2
+  const coords = /^([+-]?\d+(?:\.\d+)?),\s*([+-]?\d+(?:\.\d+)?)$/.exec(
+    location,
+  );
+  if (
+    coords &&
+    Math.abs(Number(coords[1])) <= 90 &&
+    Math.abs(Number(coords[2])) <= 180
+  ) {
+    const strip = (value: string) => value.replace(/^\+/, "");
+    return `https://www.google.com/maps?q=${strip(coords[1] as string)},${strip(coords[2] as string)}`;
   }
 
   // Otherwise treat as address
-  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(content.location)}`;
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location)}`;
 }
 
 /**
  * Encode Facebook content
  */
 export function encodeFacebook(content: FacebookContent): string {
-  if (!content.profileUrl) return "";
-  return content.profileUrl;
+  return profileUrl(content.profileUrl || "", "https://www.facebook.com/");
 }
 
 /**
  * Encode Instagram content
  */
 export function encodeInstagram(content: InstagramContent): string {
-  if (!content.username) return "";
-  const cleanUsername = content.username.replace(/^@/, "");
-  return `https://www.instagram.com/${cleanUsername}`;
+  const username = handleFrom(content.username || "", "instagram.com");
+  if (!username) return "";
+  return `https://www.instagram.com/${encodeURIComponent(username)}`;
 }
 
 /**
  * Encode Reddit content
  */
 export function encodeReddit(content: RedditContent): string {
-  if (content.subreddit) {
-    const cleanSubreddit = content.subreddit.replace(/^r\//, "");
-    return `https://www.reddit.com/r/${cleanSubreddit}`;
+  const subreddit = handleFrom(content.subreddit || "", "reddit.com", "r/+")
+    .replace(/^\/?r\//i, "")
+    .replace(/\/+$/, "");
+  if (subreddit) {
+    return `https://www.reddit.com/r/${encodeURIComponent(subreddit)}`;
   }
-  if (content.username) {
-    const cleanUsername = content.username.replace(/^u\//, "");
-    return `https://www.reddit.com/user/${cleanUsername}`;
+  const username = handleFrom(
+    content.username || "",
+    "reddit.com",
+    "(?:u|user)/+",
+  )
+    .replace(/^\/?(?:u|user)\//i, "")
+    .replace(/\/+$/, "");
+  if (username) {
+    return `https://www.reddit.com/user/${encodeURIComponent(username)}`;
   }
   return "";
 }
@@ -246,81 +379,92 @@ export function encodeReddit(content: RedditContent): string {
  * Encode TikTok content
  */
 export function encodeTikTok(content: TikTokContent): string {
-  if (!content.username) return "";
-  const cleanUsername = content.username.replace(/^@/, "");
-  return `https://www.tiktok.com/@${cleanUsername}`;
+  const username = handleFrom(content.username || "", "tiktok.com");
+  if (!username) return "";
+  return `https://www.tiktok.com/@${encodeURIComponent(username)}`;
 }
 
 /**
  * Encode Twitter/X content
  */
 export function encodeTwitter(content: TwitterContent): string {
-  if (!content.username) return "";
-  const cleanUsername = content.username.replace(/^@/, "");
-  return `https://twitter.com/${cleanUsername}`;
+  const username = handleFrom(
+    handleFrom(content.username || "", "twitter.com"),
+    "x.com",
+  );
+  if (!username) return "";
+  return `https://twitter.com/${encodeURIComponent(username)}`;
 }
 
 /**
  * Encode LinkedIn content
  */
 export function encodeLinkedIn(content: LinkedInContent): string {
-  if (!content.profileUrl) return "";
-  return content.profileUrl;
+  return profileUrl(content.profileUrl || "", "https://www.linkedin.com/in/");
 }
 
 /**
  * Encode YouTube content
  */
 export function encodeYouTube(content: YouTubeContent): string {
-  if (content.videoUrl) return content.videoUrl;
-  if (content.channelUrl) return content.channelUrl;
-  return "";
+  const url = content.videoUrl?.trim() || content.channelUrl?.trim() || "";
+  // A bare "@handle" is a channel.
+  if (/^@[\w.-]+$/.test(url)) return `https://www.youtube.com/${url}`;
+  return normalizeWebUrl(url);
 }
 
 /**
  * Encode Pinterest content
  */
 export function encodePinterest(content: PinterestContent): string {
-  if (!content.username) return "";
-  const cleanUsername = content.username.replace(/^@/, "");
-  return `https://www.pinterest.com/${cleanUsername}`;
+  const username = handleFrom(content.username || "", "pinterest.com");
+  if (!username) return "";
+  return `https://www.pinterest.com/${encodeURIComponent(username)}`;
 }
 
 /**
  * Encode Snapchat content
  */
 export function encodeSnapchat(content: SnapchatContent): string {
-  if (!content.username) return "";
-  const cleanUsername = content.username.replace(/^@/, "");
-  return `https://www.snapchat.com/add/${cleanUsername}`;
+  const username = handleFrom(content.username || "", "snapchat.com", "add/+");
+  if (!username) return "";
+  return `https://www.snapchat.com/add/${encodeURIComponent(username)}`;
 }
 
 /**
  * Encode Threads content
  */
 export function encodeThreads(content: ThreadsContent): string {
-  if (!content.username) return "";
-  const cleanUsername = content.username.replace(/^@/, "");
-  return `https://www.threads.net/@${cleanUsername}`;
+  const username = handleFrom(
+    handleFrom(content.username || "", "threads.net"),
+    "threads.com",
+  );
+  if (!username) return "";
+  return `https://www.threads.net/@${encodeURIComponent(username)}`;
 }
 
 /**
- * Encode UPI payment content
+ * Encode UPI payment content (NPCI UPI linking spec:
+ * upi://pay?pa=&pn=&am=&cu=INR&tn=)
  */
 export function encodeUPI(content: UPIContent): string {
-  if (!content.upiId) return "";
+  const upiId = content.upiId?.trim();
+  if (!upiId) return "";
 
   const params: string[] = [];
-  params.push(`pa=${encodeURIComponent(content.upiId)}`);
+  // Some UPI apps reject a percent-encoded "@" in the VPA.
+  params.push(`pa=${encodeURIComponent(upiId).replace(/%40/g, "@")}`);
 
-  if (content.name) {
-    params.push(`pn=${encodeURIComponent(content.name)}`);
+  if (content.name?.trim()) {
+    params.push(`pn=${encodeURIComponent(content.name.trim())}`);
   }
-  if (content.amount) {
-    params.push(`am=${encodeURIComponent(content.amount)}`);
+  if (content.amount?.trim()) {
+    params.push(`am=${encodeURIComponent(content.amount.trim())}`);
   }
-  if (content.note) {
-    params.push(`tn=${encodeURIComponent(content.note)}`);
+  // Currency is required by the spec; UPI only supports INR.
+  params.push("cu=INR");
+  if (content.note?.trim()) {
+    params.push(`tn=${encodeURIComponent(content.note.trim())}`);
   }
 
   return `upi://pay?${params.join("&")}`;
@@ -330,8 +474,7 @@ export function encodeUPI(content: UPIContent): string {
  * Encode PayPal content
  */
 export function encodePayPal(content: PayPalContent): string {
-  if (!content.paypalUrl) return "";
-  return content.paypalUrl;
+  return profileUrl(content.paypalUrl || "", "https://paypal.me/");
 }
 
 /**
@@ -345,58 +488,58 @@ export function encodeText(content: TextContent): string {
  * Encode Google Review content
  */
 export function encodeGoogleReview(content: GoogleReviewContent): string {
-  if (!content.placeId) return "";
-  return `https://search.google.com/local/writereview?placeid=${content.placeId}`;
+  // Accept a pasted review link as well as the bare Place ID.
+  const raw = content.placeId?.trim() ?? "";
+  const placeId = /[?&]placeid=([^&#]+)/i.exec(raw)?.[1] ?? raw;
+  if (!placeId) return "";
+  return `https://search.google.com/local/writereview?placeid=${encodeURIComponent(placeId)}`;
 }
 
 /**
  * Encode Venmo content
  */
 export function encodeVenmo(content: VenmoContent): string {
-  if (!content.username) return "";
-  const cleanUsername = content.username.replace(/^@/, "");
+  const username = handleFrom(content.username || "", "venmo.com", "(?:u/+)?");
+  if (!username) return "";
 
   const params: string[] = [`txn=pay`];
 
-  if (content.amount) {
-    params.push(`amount=${encodeURIComponent(content.amount)}`);
+  if (content.amount?.trim()) {
+    params.push(`amount=${encodeURIComponent(content.amount.trim())}`);
   }
   if (content.note) {
     params.push(`note=${encodeURIComponent(content.note)}`);
   }
 
   const queryString = params.length > 0 ? `?${params.join("&")}` : "";
-  return `https://venmo.com/${cleanUsername}${queryString}`;
+  return `https://venmo.com/${encodeURIComponent(username)}${queryString}`;
 }
 
 /**
- * Encode Spotify content
+ * Encode Spotify content: a spotify: URI or an open.spotify.com link
  */
 export function encodeSpotify(content: SpotifyContent): string {
-  if (!content.uri) return "";
+  const uri = content.uri?.trim() ?? "";
+  if (!uri) return "";
 
   // If it's already a Spotify URI (spotify:track:xxx), return as is
-  if (content.uri.startsWith("spotify:")) {
-    return content.uri;
+  if (/^spotify:/i.test(uri)) {
+    return uri;
   }
 
-  // If it's a Spotify URL, return as is
-  if (content.uri.includes("spotify.com")) {
-    return content.uri;
-  }
-
-  return content.uri;
+  return normalizeWebUrl(uri);
 }
 
 /**
- * Encode Bitcoin content
+ * Encode Bitcoin content as a BIP-21 URI
  */
 export function encodeBitcoin(content: BitcoinContent): string {
-  if (!content.address) return "";
+  const address = content.address?.trim();
+  if (!address) return "";
 
   const params: string[] = [];
-  if (content.amount) {
-    params.push(`amount=${content.amount}`);
+  if (content.amount?.trim()) {
+    params.push(`amount=${encodeURIComponent(content.amount.trim())}`);
   }
   if (content.label) {
     params.push(`label=${encodeURIComponent(content.label)}`);
@@ -406,85 +549,79 @@ export function encodeBitcoin(content: BitcoinContent): string {
   }
 
   const queryString = params.length > 0 ? `?${params.join("&")}` : "";
-  return `bitcoin:${content.address}${queryString}`;
+  return `bitcoin:${address}${queryString}`;
 }
 
 /**
- * Encode Ethereum content
+ * Encode Ethereum content as an EIP-681 URI
  */
 export function encodeEthereum(content: EthereumContent): string {
-  if (!content.address) return "";
+  const address = content.address?.trim();
+  if (!address) return "";
 
   const params: string[] = [];
-  if (content.amount) {
+  if (content.amount?.trim()) {
     // EIP-681 amounts are in wei: convert plain decimal ETH, leave exponent forms as given
     const amount = content.amount.trim();
     params.push(
-      `value=${/^\d*\.?\d+$/.test(amount) ? `${amount}e18` : amount}`,
+      `value=${/^\d*\.?\d+$/.test(amount) ? `${amount}e18` : encodeURIComponent(amount)}`,
     );
   }
-  if (content.gas) {
-    params.push(`gas=${content.gas}`);
+  if (content.gas?.trim()) {
+    params.push(`gas=${encodeURIComponent(content.gas.trim())}`);
   }
 
   const queryString = params.length > 0 ? `?${params.join("&")}` : "";
-  return `ethereum:${content.address}${queryString}`;
+  return `ethereum:${address}${queryString}`;
 }
 
 /**
  * Encode Etsy content
  */
 export function encodeEtsy(content: EtsyContent): string {
-  if (!content.shopUrl) return "";
-  return content.shopUrl;
+  return profileUrl(content.shopUrl || "", "https://www.etsy.com/shop/");
 }
 
 /**
  * Encode Dub.sh content
  */
 export function encodeDubsh(content: DubshContent): string {
-  if (!content.shortUrl) return "";
-  return content.shortUrl;
+  return normalizeWebUrl(content.shortUrl || "");
 }
 
 /**
  * Encode Attendance (Google Form) content
  */
 export function encodeAttendance(content: AttendanceContent): string {
-  if (!content.formUrl) return "";
-  return content.formUrl;
+  return normalizeWebUrl(content.formUrl || "");
 }
 
 /**
  * Encode Amazon content
  */
 export function encodeAmazon(content: AmazonContent): string {
-  if (!content.productUrl) return "";
-  return content.productUrl;
+  return normalizeWebUrl(content.productUrl || "");
 }
 
 /**
  * Encode Flipkart content
  */
 export function encodeFlipkart(content: FlipkartContent): string {
-  if (!content.productUrl) return "";
-  return content.productUrl;
+  return normalizeWebUrl(content.productUrl || "");
 }
 
 /**
  * Encode Cal.com content
  */
 export function encodeCalcom(content: CalcomContent): string {
-  if (!content.bookingUrl) return "";
-  return content.bookingUrl;
+  return profileUrl(content.bookingUrl || "", "https://cal.com/");
 }
 
 /**
  * Encode Google Drive content
  */
 export function encodeGoogleDrive(content: GoogleDriveContent): string {
-  if (!content.url) return "";
-  return content.url;
+  return normalizeWebUrl(content.url || "");
 }
 
 /**
@@ -565,13 +702,68 @@ export function encodeQRContent(content: QRContentConfig | null): string {
   }
 }
 
+type Validation = { valid: boolean; error?: string };
+
+/** E.164 allows at most 15 digits; anything under 3 can't be dialed. */
+function validatePhone(raw: string | undefined): Validation {
+  if (!raw || raw.trim() === "") {
+    return { valid: false, error: "Phone number is required" };
+  }
+  const digits = normalizePhone(raw).number.replace(/\D/g, "").length;
+  if (digits < 3 || digits > 15) {
+    return { valid: false, error: "Enter a valid phone number (3-15 digits)" };
+  }
+  return { valid: true };
+}
+
+/** Usernames are letters, digits, "_", "." and "-" on every network. */
+function validateHandle(handle: string, network: string): Validation {
+  return /^[\w.-]+$/.test(handle)
+    ? { valid: true }
+    : {
+        valid: false,
+        error: `${network} usernames can only use letters, numbers, "_", "." and "-"`,
+      };
+}
+
+/** A non-negative decimal with at most `decimals` places, or empty. */
+function validateAmount(
+  raw: string | undefined,
+  decimals: number,
+  label: string,
+): Validation {
+  const amount = raw?.trim();
+  if (!amount) return { valid: true };
+  if (
+    !new RegExp(`^\\d+(\\.\\d{1,${decimals}})?$`).test(amount) ||
+    Number(amount) === 0
+  ) {
+    return {
+      valid: false,
+      error: `${label} must be a positive number with up to ${decimals} decimals`,
+    };
+  }
+  return { valid: true };
+}
+
 /**
- * Validate content before encoding
+ * Validate content before encoding: required fields, field formats, and
+ * that the encoded payload fits in a QR code
  */
-export function validateContent(content: QRContentConfig): {
-  valid: boolean;
-  error?: string;
-} {
+export function validateContent(content: QRContentConfig): Validation {
+  const fields = validateFields(content);
+  if (!fields.valid) return fields;
+  const bytes = utf8.encode(encodeQRContent(content)).length;
+  if (bytes > MAX_QR_PAYLOAD_BYTES) {
+    return {
+      valid: false,
+      error: `Content is too long for a QR code (${bytes} bytes, the maximum is ${MAX_QR_PAYLOAD_BYTES})`,
+    };
+  }
+  return fields;
+}
+
+function validateFields(content: QRContentConfig): Validation {
   switch (content.type) {
     case "url":
       if (!content.url || content.url.trim() === "") {
@@ -589,41 +781,49 @@ export function validateContent(content: QRContentConfig): {
       if (!content.recipient || content.recipient.trim() === "") {
         return { valid: false, error: "Recipient email is required" };
       }
-      // Basic email validation
-      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(content.recipient)) {
+      // Basic email validation (one or more comma-separated addresses)
+      if (
+        !content.recipient
+          .split(",")
+          .every((address) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(address.trim()))
+      ) {
         return { valid: false, error: "Invalid email format" };
       }
       return { valid: true };
 
     case "phone":
-      if (!content.phoneNumber || content.phoneNumber.trim() === "") {
-        return { valid: false, error: "Phone number is required" };
-      }
-      return { valid: true };
-
     case "sms":
-      if (!content.phoneNumber || content.phoneNumber.trim() === "") {
-        return { valid: false, error: "Phone number is required" };
-      }
-      return { valid: true };
-
     case "whatsapp":
-      if (!content.phoneNumber || content.phoneNumber.trim() === "") {
-        return { valid: false, error: "Phone number is required" };
-      }
-      return { valid: true };
+      return validatePhone(content.phoneNumber);
 
-    case "wifi":
+    case "wifi": {
       if (!content.ssid || content.ssid.trim() === "") {
         return { valid: false, error: "WiFi SSID is required" };
       }
-      if (content.encryption !== "nopass" && !content.password) {
+      // IEEE 802.11: an SSID is at most 32 bytes.
+      if (utf8.encode(content.ssid).length > 32) {
+        return { valid: false, error: "Network names are at most 32 bytes" };
+      }
+      const password = content.password ?? "";
+      if (content.encryption !== "nopass" && !password) {
         return {
           valid: false,
           error: "Password is required for secured networks",
         };
       }
+      // WPA/WPA2 passphrases are 8-63 characters, or a 64-digit hex key.
+      if (
+        content.encryption === "WPA" &&
+        (password.length < 8 || password.length > 63) &&
+        !/^[0-9a-f]{64}$/i.test(password)
+      ) {
+        return {
+          valid: false,
+          error: "WPA passwords are 8-63 characters long",
+        };
+      }
       return { valid: true };
+    }
 
     case "vcard":
       if (!content.firstName || content.firstName.trim() === "") {
@@ -647,7 +847,10 @@ export function validateContent(content: QRContentConfig): {
       if (!content.username || content.username.trim() === "") {
         return { valid: false, error: "Instagram username is required" };
       }
-      return { valid: true };
+      return validateHandle(
+        handleFrom(content.username, "instagram.com"),
+        "Instagram",
+      );
 
     case "reddit":
       if (!content.username && !content.subreddit) {
@@ -662,13 +865,19 @@ export function validateContent(content: QRContentConfig): {
       if (!content.username || content.username.trim() === "") {
         return { valid: false, error: "TikTok username is required" };
       }
-      return { valid: true };
+      return validateHandle(
+        handleFrom(content.username, "tiktok.com"),
+        "TikTok",
+      );
 
     case "twitter":
       if (!content.username || content.username.trim() === "") {
         return { valid: false, error: "Twitter username is required" };
       }
-      return { valid: true };
+      return validateHandle(
+        handleFrom(handleFrom(content.username, "twitter.com"), "x.com"),
+        "Twitter",
+      );
 
     case "linkedin":
       if (!content.profileUrl || content.profileUrl.trim() === "") {
@@ -689,29 +898,39 @@ export function validateContent(content: QRContentConfig): {
       if (!content.username || content.username.trim() === "") {
         return { valid: false, error: "Pinterest username is required" };
       }
-      return { valid: true };
+      return validateHandle(
+        handleFrom(content.username, "pinterest.com"),
+        "Pinterest",
+      );
 
     case "snapchat":
       if (!content.username || content.username.trim() === "") {
         return { valid: false, error: "Snapchat username is required" };
       }
-      return { valid: true };
+      return validateHandle(
+        handleFrom(content.username, "snapchat.com", "add/+"),
+        "Snapchat",
+      );
 
     case "threads":
       if (!content.username || content.username.trim() === "") {
         return { valid: false, error: "Threads username is required" };
       }
-      return { valid: true };
+      return validateHandle(
+        handleFrom(handleFrom(content.username, "threads.net"), "threads.com"),
+        "Threads",
+      );
 
     case "upi":
       if (!content.upiId || content.upiId.trim() === "") {
         return { valid: false, error: "UPI ID is required" };
       }
       // Basic UPI ID validation (user@bank format)
-      if (!/^[\w.-]+@[\w.-]+$/.test(content.upiId)) {
+      if (!/^[\w.-]+@[\w.-]+$/.test(content.upiId.trim())) {
         return { valid: false, error: "Invalid UPI ID format" };
       }
-      return { valid: true };
+      // NPCI: amounts are rupees with up to 2 decimals.
+      return validateAmount(content.amount, 2, "Amount");
 
     case "paypal":
       if (!content.paypalUrl || content.paypalUrl.trim() === "") {
@@ -741,19 +960,28 @@ export function validateContent(content: QRContentConfig): {
       if (!content.address || content.address.trim() === "") {
         return { valid: false, error: "Bitcoin address is required" };
       }
-      if (content.address.length < 26 || content.address.length > 62) {
+      if (
+        content.address.trim().length < 26 ||
+        content.address.trim().length > 62
+      ) {
         return { valid: false, error: "Invalid Bitcoin address length" };
       }
-      return { valid: true };
+      // BIP-21: decimal BTC, "." separator, at most 8 decimals (satoshis).
+      return validateAmount(content.amount, 8, "Amount");
 
     case "ethereum":
       if (!content.address || content.address.trim() === "") {
         return { valid: false, error: "Ethereum address is required" };
       }
-      if (!/^0x[a-fA-F0-9]{40}$/.test(content.address)) {
+      if (!/^0x[a-fA-F0-9]{40}$/.test(content.address.trim())) {
         return { valid: false, error: "Invalid Ethereum address format" };
       }
-      return { valid: true };
+      // Wei in EIP-681 scientific notation ("1.5e18") is passed through.
+      if (/^\d+(\.\d+)?e\d+$/i.test(content.amount?.trim() ?? "")) {
+        return { valid: true };
+      }
+      // Decimal ETH converts to whole wei: at most 18 decimals.
+      return validateAmount(content.amount, 18, "Amount");
 
     case "etsy":
       if (!content.shopUrl || content.shopUrl.trim() === "") {

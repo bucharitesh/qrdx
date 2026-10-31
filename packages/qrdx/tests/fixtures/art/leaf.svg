@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <title>Leaf (sample organics mark)</title>
+  <g transform="rotate(40 128 128) translate(128 128) scale(0.84) translate(-128 -128)">
+    <path fill="#2f9447" d="M128 10C206 84 226 178 128 246 30 178 50 84 128 10z"/>
+    <g fill="none" stroke="#b5e3a1" stroke-linecap="round" stroke-linejoin="round" stroke-width="11">
+      <path d="M128 70v190"/>
+      <path d="M128 132l-34-26M128 132l34-26M128 184l-38-28M128 184l38-28"/>
+    </g>
+  </g>
+</svg>

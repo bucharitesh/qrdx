@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@repo/design-system/lib/utils";
-import { Pause, Play } from "lucide-react";
+import { Pause, Play } from "iconsax-reactjs";
 import { useEffect, useRef, useState } from "react";
 
 export interface LoopVideoProps {
@@ -14,6 +14,10 @@ export interface LoopVideoProps {
   /** Describes what the clip shows (the video has no audio or captions). */
   label: string;
   className?: string;
+  /** Classes for the <video> element (e.g. object-cover sizing). */
+  videoClassName?: string;
+  /** Classes for the pause/play button. */
+  buttonClassName?: string;
 }
 
 /**
@@ -29,6 +33,8 @@ export function LoopVideo({
   height,
   label,
   className,
+  videoClassName,
+  buttonClassName,
 }: LoopVideoProps) {
   const ref = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(false);
@@ -70,7 +76,7 @@ export function LoopVideo({
       <video
         ref={ref}
         aria-label={label}
-        className="block h-auto w-full"
+        className={cn("block h-auto w-full", videoClassName)}
         height={height}
         loop
         muted
@@ -88,12 +94,15 @@ export function LoopVideo({
         type="button"
         onClick={() => setUserPaused(playing)}
         aria-label={playing ? "Pause video" : "Play video"}
-        className="absolute right-3 bottom-3 flex size-8 items-center justify-center rounded-full border border-border bg-background/90 text-foreground shadow-sm backdrop-blur transition-colors hover:bg-muted"
+        className={cn(
+          "absolute right-3 bottom-3 flex size-8 items-center justify-center rounded-full border border-border bg-background/85 text-foreground shadow-sm backdrop-blur transition-[background-color,transform] duration-150 hover:bg-muted active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
+          buttonClassName,
+        )}
       >
         {playing ? (
-          <Pause className="size-3.5" />
+          <Pause variant="Bold" className="size-3.5" />
         ) : (
-          <Play className="size-3.5" />
+          <Play variant="Bold" className="size-3.5" />
         )}
       </button>
     </div>

@@ -1,5 +1,5 @@
 import { Button } from "@repo/design-system/components/ui/button";
-import { SquarePen } from "lucide-react";
+import { Edit as SquarePen } from "iconsax-reactjs";
 import { getNormalizedColor } from "qrdx";
 import { CopyButton } from "@/components/copy-button";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";

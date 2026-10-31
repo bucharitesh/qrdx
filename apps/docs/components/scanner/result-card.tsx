@@ -3,24 +3,24 @@
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   Barcode,
-  CalendarDays,
-  CalendarPlus,
-  Contact,
-  Download,
+  Calendar1 as CalendarDays,
+  CalendarAdd as CalendarPlus,
+  Personalcard as Contact,
+  Import as Download,
   Eye,
-  EyeOff,
+  EyeSlash as EyeOff,
   Link2,
-  type LucideIcon,
-  Mail,
-  MapPin,
+  type Icon as LucideIcon,
+  Sms as Mail,
+  Location as MapPin,
   MessageSquare,
-  Package,
-  Phone,
-  Search,
-  Type,
+  Box as Package,
+  Call as Phone,
+  SearchNormal1 as Search,
+  Text as Type,
   Wallet,
   Wifi,
-} from "lucide-react";
+} from "iconsax-reactjs";
 import { useMemo, useState } from "react";
 import { OpenButton } from "./confirm-open";
 import { formatLabel } from "./detector";

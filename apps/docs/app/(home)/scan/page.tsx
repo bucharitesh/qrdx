@@ -1,7 +1,25 @@
+import { cn } from "@repo/design-system/lib/utils";
+import {
+  Barcode,
+  Calendar,
+  Call,
+  Card,
+  DocumentText,
+  Link,
+  Location,
+  Personalcard,
+  Wifi,
+} from "iconsax-reactjs";
 import type { Metadata } from "next";
-import Link from "next/link";
+import NextLink from "next/link";
 import { RegisterScannerServiceWorker } from "@/components/scanner/register-sw";
 import { Scanner } from "@/components/scanner/scanner";
+import {
+  type CardIcon,
+  cardClass,
+  IconTile,
+  SectionHeading,
+} from "@/components/sections/tools/cards";
 import { FaqList } from "@/components/sections/tools/faq-list";
 import { JsonLd } from "@/components/sections/tools/json-ld";
 import { ToolHero } from "@/components/sections/tools/tool-hero";
@@ -27,28 +45,54 @@ const FORMATS = [
   "Code 39",
 ];
 
-const CONTENT_TYPES: { name: string; detail: string }[] = [
+const CONTENT_TYPES: { name: string; detail: string; icon: CardIcon }[] = [
   {
     name: "Links",
-    detail: "a safety preview first; opens only when you tap Open",
+    detail: "A safety preview first; opens only when you tap Open.",
+    icon: Link,
   },
-  { name: "Wi-Fi", detail: "network name, security and a copyable password" },
-  { name: "Contacts (vCard, MeCard)", detail: "save straight to a .vcf file" },
-  { name: "Calendar events", detail: "add to your calendar as an .ics file" },
-  { name: "Locations", detail: "open in Google Maps or OpenStreetMap" },
-  { name: "Phone, SMS and email", detail: "start a call, text or email" },
+  {
+    name: "Wi-Fi",
+    detail: "Network name, security and a copyable password.",
+    icon: Wifi,
+  },
+  {
+    name: "Contacts (vCard, MeCard)",
+    detail: "Save straight to a .vcf file.",
+    icon: Personalcard,
+  },
+  {
+    name: "Calendar events",
+    detail: "Add to your calendar as an .ics file.",
+    icon: Calendar,
+  },
+  {
+    name: "Locations",
+    detail: "Open in Google Maps or OpenStreetMap.",
+    icon: Location,
+  },
+  {
+    name: "Phone, SMS and email",
+    detail: "Start a call, text or email.",
+    icon: Call,
+  },
   {
     name: "Payments",
     detail:
-      "UPI, Bitcoin, Ethereum, PayPal, Venmo and SEPA (EPC) codes, always with a confirm step",
+      "UPI, Bitcoin, Ethereum, PayPal, Venmo and SEPA (EPC) codes, always with a confirm step.",
+    icon: Card,
   },
   {
     name: "Product codes",
     detail:
-      "EAN/UPC numbers and GS1 data (GTIN, batch, expiry), including GS1 Digital Link",
+      "EAN/UPC numbers and GS1 data (GTIN, batch, expiry), including GS1 Digital Link.",
+    icon: Barcode,
   },
-  { name: "Plain text", detail: "read and copy" },
+  { name: "Plain text", detail: "Read and copy.", icon: DocumentText },
 ];
+
+const linkClass =
+  "font-medium text-foreground underline decoration-foreground/30 underline-offset-4 transition-colors hover:decoration-foreground";
 
 function faqs(webRisk: boolean) {
   return [
@@ -129,6 +173,7 @@ export default function ScanPage() {
         }}
       />
       <ToolHero
+        pattern="scan"
         crumbs={[
           { name: "Home", path: "/" },
           { name: "Tools", path: "/tools" },
@@ -151,73 +196,99 @@ export default function ScanPage() {
         <RegisterScannerServiceWorker />
       </section>
 
-      <section className="w-full px-6 md:px-10 py-10 grid gap-8 md:grid-cols-2">
-        <div className="flex flex-col gap-3">
-          <h2 className="text-2xl font-medium tracking-tighter">
-            What it reads
-          </h2>
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            Barcode formats: {FORMATS.join(", ")}. Several codes in one frame or
-            image are read together.
-          </p>
-          <ul className="flex list-disc flex-col gap-2 pl-5 text-sm text-muted-foreground leading-relaxed">
-            {CONTENT_TYPES.map((type) => (
-              <li key={type.name}>
-                <span className="text-foreground font-medium">{type.name}</span>
-                : {type.detail}.
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div className="flex flex-col gap-3">
-          <h2 className="text-2xl font-medium tracking-tighter">
-            A safety preview for every link
-          </h2>
-          <ol className="flex list-decimal flex-col gap-2 pl-5 text-sm text-muted-foreground leading-relaxed">
-            <li>
-              The link is shown first, with its domain highlighted. Nothing
-              opens on its own.
+      <section
+        aria-labelledby="reads"
+        className="w-full px-6 md:px-10 py-12 flex flex-col gap-8"
+      >
+        <SectionHeading
+          id="reads"
+          eyebrow="Formats"
+          title="What it reads"
+          description={`${FORMATS.join(", ")}. Several codes in one frame or image are read together, and each kind of content gets its own actions.`}
+        />
+        <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 sm:[&>li:last-child]:col-span-2 lg:[&>li:last-child]:col-span-1">
+          {CONTENT_TYPES.map((type) => (
+            <li
+              key={type.name}
+              className={cn(cardClass, "flex min-w-0 items-start gap-3.5 p-4")}
+            >
+              <IconTile icon={type.icon} />
+              <div className="flex min-w-0 flex-col gap-0.5">
+                <h3 className="text-sm font-medium text-foreground">
+                  {type.name}
+                </h3>
+                <p className="text-sm leading-snug text-muted-foreground text-pretty">
+                  {type.detail}
+                </p>
+              </div>
             </li>
-            <li>
-              QRdx follows the redirects from its server (up to five, without
-              downloading the pages) and shows where the link ends up.
-            </li>
-            <li>
-              {webRisk
+          ))}
+        </ul>
+      </section>
+
+      <section
+        aria-labelledby="safety"
+        className="w-full px-6 md:px-10 py-12 grid gap-8 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]"
+      >
+        <SectionHeading
+          id="safety"
+          eyebrow="Safety"
+          title="A safety preview for every link"
+          description={
+            <>
+              Making codes instead? Use the{" "}
+              <NextLink href="/qr-code-generator" className={linkClass}>
+                QR code generators
+              </NextLink>{" "}
+              or the{" "}
+              <NextLink href="/playground" className={linkClass}>
+                editor
+              </NextLink>
+              , and test a design with the{" "}
+              <NextLink href="/tools/scan-checker" className={linkClass}>
+                scan checker
+              </NextLink>{" "}
+              before you print.
+            </>
+          }
+          className="items-start self-start"
+        />
+        <ol className="flex flex-col gap-2">
+          {[
+            "The link is shown first, with its domain highlighted. Nothing opens on its own.",
+            "QRdx follows the redirects from its server (up to five, without downloading the pages) and shows where the link ends up.",
+            `${
+              webRisk
                 ? "Each address is checked with Google Web Risk for phishing and malware, and against common tricks"
-                : "Each address is checked against common tricks"}
-              : lookalike letters, IP addresses, shorteners, hidden user names,
-              brand names on unrelated domains, unencrypted pages and app
-              downloads.
+                : "Each address is checked against common tricks"
+            }: lookalike letters, IP addresses, shorteners, hidden user names, brand names on unrelated domains, unencrypted pages and app downloads.`,
+            "Genuine, active QRdx codes get a Verified QRdx code badge. Password-protected codes keep their destination hidden.",
+          ].map((step, index) => (
+            <li
+              key={step}
+              className={cn(cardClass, "flex gap-3.5 p-4 text-sm")}
+            >
+              <span className="grid size-7 shrink-0 place-items-center rounded-md border bg-muted/40 font-mono text-xs text-foreground/80">
+                {index + 1}
+              </span>
+              <span className="leading-relaxed text-muted-foreground text-pretty">
+                {step}
+              </span>
             </li>
-            <li>
-              Genuine, active QRdx codes get a Verified QRdx code badge.
-              Password-protected codes keep their destination hidden.
-            </li>
-            <li>
+          ))}
+          <li className={cn(cardClass, "flex gap-3.5 p-4 text-sm")}>
+            <span className="grid size-7 shrink-0 place-items-center rounded-md border bg-muted/40 font-mono text-xs text-foreground/80">
+              5
+            </span>
+            <span className="leading-relaxed text-muted-foreground text-pretty">
               Spotted a scam? Use{" "}
-              <Link href="/report-abuse" className="underline">
+              <NextLink href="/report-abuse" className={linkClass}>
                 Report this code
-              </Link>{" "}
+              </NextLink>{" "}
               on the result.
-            </li>
-          </ol>
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            Making codes instead? Use the{" "}
-            <Link href="/qr-code-generator" className="underline">
-              QR code generators
-            </Link>{" "}
-            or the{" "}
-            <Link href="/playground" className="underline">
-              editor
-            </Link>
-            , and test a design with the{" "}
-            <Link href="/tools/scan-checker" className="underline">
-              scan checker
-            </Link>{" "}
-            before you print.
-          </p>
-        </div>
+            </span>
+          </li>
+        </ol>
       </section>
 
       <FaqList title="QR code scanner FAQ" faqs={faqs(webRisk)} />

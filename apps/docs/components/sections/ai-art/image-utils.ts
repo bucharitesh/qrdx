@@ -1,4 +1,5 @@
 import { getImageScanScore } from "qrdx";
+import { soundEvent } from "@/lib/sound/emit";
 import { ART_REFERENCE_MAX_BYTES, ART_REFERENCE_MAX_SIDE } from "./config";
 
 export type ScanStatus =
@@ -143,6 +144,7 @@ export async function downloadImage(
     document.body.appendChild(link);
     link.click();
     link.remove();
+    soundEvent("download");
     setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
   } catch {
     window.open(imageUrl, "_blank", "noopener,noreferrer");

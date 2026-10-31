@@ -1,4 +1,4 @@
-import { Settings2 } from "lucide-react";
+import { Setting4 as Settings2 } from "iconsax-reactjs";
 import { z } from "zod";
 import { registerBlock } from "@/lib/landing/registry";
 import type { LandingPageContent } from "@/types/landing";

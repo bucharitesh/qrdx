@@ -7,8 +7,10 @@ icon: Bot
 QRdx runs a public [Model Context Protocol](https://modelcontextprotocol.io) server at:
 
 ```txt
-https://qrdx.dev/api/mcp
+https://mcp.qrdx.dev/mcp
 ```
+
+The same server also answers at `https://qrdx.dev/api/mcp`, and a self-hosted QRdx serves it at `/api/mcp` on your own domain.
 
 It uses the Streamable HTTP transport, needs no account or API key, and keeps no session state. Your AI assistant can call it to render QR codes, list the available styles, and build correctly formatted payloads for Wi-Fi, contacts, email, SMS and map locations.
 
@@ -17,7 +19,7 @@ It uses the Streamable HTTP transport, needs no account or API key, and keeps no
 <Tabs items={["Claude Code", "Cursor", "VS Code", "Other clients"]}>
   <Tab value="Claude Code">
     ```bash
-    claude mcp add --transport http qrdx https://qrdx.dev/api/mcp
+    claude mcp add --transport http qrdx https://mcp.qrdx.dev/mcp
     ```
   </Tab>
   <Tab value="Cursor">
@@ -27,7 +29,7 @@ It uses the Streamable HTTP transport, needs no account or API key, and keeps no
     {
       "mcpServers": {
         "qrdx": {
-          "url": "https://qrdx.dev/api/mcp"
+          "url": "https://mcp.qrdx.dev/mcp"
         }
       }
     }
@@ -41,21 +43,21 @@ It uses the Streamable HTTP transport, needs no account or API key, and keeps no
       "servers": {
         "qrdx": {
           "type": "http",
-          "url": "https://qrdx.dev/api/mcp"
+          "url": "https://mcp.qrdx.dev/mcp"
         }
       }
     }
     ```
   </Tab>
   <Tab value="Other clients">
-    Clients that support remote (Streamable HTTP) servers only need the URL `https://qrdx.dev/api/mcp`. For clients that only run local stdio servers, bridge it with [`mcp-remote`](https://www.npmjs.com/package/mcp-remote):
+    Clients that support remote (Streamable HTTP) servers only need the URL `https://mcp.qrdx.dev/mcp`. For clients that only run local stdio servers, bridge it with [`mcp-remote`](https://www.npmjs.com/package/mcp-remote):
 
     ```json
     {
       "mcpServers": {
         "qrdx": {
           "command": "npx",
-          "args": ["-y", "mcp-remote", "https://qrdx.dev/api/mcp"]
+          "args": ["-y", "mcp-remote", "https://mcp.qrdx.dev/mcp"]
         }
       }
     }

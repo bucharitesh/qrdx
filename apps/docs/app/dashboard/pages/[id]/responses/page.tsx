@@ -14,7 +14,12 @@ import {
   EmptyTitle,
 } from "@repo/design-system/components/ui/empty";
 import { cn } from "@repo/design-system/lib/utils";
-import { ArrowLeft, ChevronLeft, ChevronRight, Download } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowLeft2 as ChevronLeft,
+  ArrowRight2 as ChevronRight,
+  Import as Download,
+} from "iconsax-reactjs";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -28,6 +33,7 @@ import {
 } from "@/app/api/forms/_lib/responses";
 import { PageHeader } from "@/app/dashboard/_components/page-header";
 import { requireDashboardScope } from "@/app/dashboard/codes/_lib/qr-codes";
+import { SheetsExport } from "@/components/data-connections/sheets-export";
 import { HairlineFigure } from "@/components/mockups/hairline";
 import { HttpError } from "@/lib/error-response";
 import { ResponseUsage } from "./_components/response-usage";
@@ -141,6 +147,7 @@ export default async function FormResponsesPage({
             </a>
           </Button>
         )}
+        {total > 0 && <SheetsExport pageId={page.id} />}
       </PageHeader>
 
       <ResponseUsage

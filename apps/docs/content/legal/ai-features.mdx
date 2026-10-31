@@ -1,0 +1,58 @@
+---
+title: AI Features
+description: What QRdx sends to AI model providers when you use AI themes and AI QR art, what we keep, whether providers may train on it, and your responsibility for the results.
+lastUpdated: 2026-11-01
+---
+
+<Callout title="Summary">
+
+- AI themes send your prompt, the chat so far and any images you attach to Google's Gemini API. AI QR art sends the code's content, your prompt and any reference image to fal.ai.
+- QRdx keeps a usage record (which model, how much, when) to apply your plan's limits. We don't store your prompts or images on our servers, and we don't train any models.
+- Whether a provider may use your content to improve its own models depends on that provider's terms, explained below.
+- AI output can be wrong or hard to scan. Check it before you print it. How you use it is up to you.
+
+</Callout>
+
+## Which features use AI
+
+| Feature | Provider | What is sent |
+| --- | --- | --- |
+| **AI themes** (the AI chat in the editor) | Google, Gemini API | Your prompt, the earlier messages in that chat, images you attach (JPEG, PNG, WebP or SVG) and the theme settings the model works with |
+| **Prompt enhancement** | Google, Gemini API | The prompt you ask it to improve |
+| **AI QR art** | fal.ai (Illusion Diffusion, a Stable Diffusion model) | The text or link your code contains, rendered as a plain QR image, your prompt and negative prompt, the style settings, and a reference image if you add one |
+| **AI art upscaling** | fal.ai (Real-ESRGAN) | The generated image you upscale |
+
+You need to be signed in to use these features. Don't put passwords, personal data about other people or confidential information into prompts or images.
+
+## What QRdx keeps
+
+- **On our servers:** a usage record for each request: your account, the model, the tokens or credits used and the date. We use it to apply your plan's limits and to watch costs. It's deleted with your account.
+- **In your browser:** your AI theme chat history, unsent drafts and recent AI themes, so you can pick up where you left off. The [Cookie Policy](/legal/cookie-policy) lists these items. Clearing your browser data deletes them.
+- **Not kept:** we don't store your prompts, attached images or AI art results on our servers. AI art results come back as links to images hosted by fal.ai. Download the ones you want to keep.
+
+## What providers may do with it
+
+**Google (Gemini API).** Under Google's [Gemini API terms](https://ai.google.dev/gemini-api/terms), when the API is used as a paid service Google doesn't use prompts or responses to improve its products, and keeps them for a limited time only to detect abuse. When it's used as an unpaid service, Google may use content to improve its products, and human reviewers may read it. For users in the EEA, Switzerland and the UK, Google applies the paid-service terms either way. QRdx uses the Gemini API on the **[[GEMINI API TIER: PAID OR UNPAID]]** tier.
+
+**fal.ai.** Under fal's [terms](https://fal.ai/legal/terms-of-service), fal processes the content we send to provide the service and treats inputs and outputs as confidential. It may use anonymised or aggregated usage data, which can be derived from inputs, to develop its products and models. Its [privacy policy](https://fal.ai/legal/privacy-policy) has more.
+
+Both providers are on our [Subprocessors](/legal/subprocessors) list.
+
+## Your responsibility for the results
+
+- **Check before you use it.** AI output can be inaccurate, unexpected, or similar to other people's work. AI art can be harder to scan than a plain code: test it at the size you'll print, for example with the [scan checker](/tools/scan-checker).
+- **Your inputs.** Only upload images and write prompts you have the right to use.
+- **Your outputs.** As between you and QRdx, you own what you generate, to the extent the law allows. We can't promise that an output is unique or that it can be protected as intellectual property.
+- **Follow the rules.** Don't use AI features to make anything the [Acceptable Use Policy](/legal/acceptable-use-policy) bans, realistic fakes of real people, or other people's logos and trademarks without permission.
+
+## Limits and credits
+
+AI themes and AI art have usage limits by plan. AI art uses one credit per image and per upscale, credits reset on the first of each month (UTC), and credits for failed generations are returned. Current numbers are in [Plans and limits](/docs/plans-and-limits) and the [AI QR art](/docs/features/art-qr) guide.
+
+## Self-hosting
+
+If you run your own copy of QRdx, you choose whether to turn on AI features and with which provider keys. The provider terms that apply are the ones you agreed to.
+
+---
+
+**Changes:** 1 November 2026. First version.

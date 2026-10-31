@@ -21,7 +21,7 @@ export default function BlogPage() {
   return (
     <section className="flex flex-col items-center justify-center w-full min-h-screen">
       <div className="w-full">
-        <SectionHeader>
+        <SectionHeader eyebrow="Guides and news" pattern="noise">
           <h1 className="text-4xl md:text-5xl font-medium tracking-tighter text-center">
             Blog
           </h1>

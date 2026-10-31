@@ -1,11 +1,11 @@
 import { cn } from "@repo/design-system/lib/utils";
 import {
-  CalendarDays,
-  CalendarPlus,
-  MapPin,
-  UserRound,
+  Calendar1 as CalendarDays,
+  CalendarAdd as CalendarPlus,
+  Location as MapPin,
+  Profile as UserRound,
   Video,
-} from "lucide-react";
+} from "iconsax-reactjs";
 import type { ReactNode } from "react";
 import {
   buttonClass,
@@ -16,8 +16,10 @@ import {
 } from "@/components/landing/block-kit";
 import { type BlockRenderProps, registerBlock } from "../registry";
 import {
+  buildIcs,
   formatEventDisplay,
   googleCalendarUrl,
+  icsFilename,
   isEventOver,
   mapSearchUrl,
   outlookCalendarUrl,
@@ -179,6 +181,14 @@ export function EventBlock({
                 <EventIcsLink
                   blockId={id}
                   className={calendarOptionClass}
+                  demoFile={
+                    context.demo
+                      ? {
+                          href: `data:text/calendar;charset=utf-8,${encodeURIComponent(buildIcs(calendar, { uid: `${id}@demo.qrdx.dev` }))}`,
+                          filename: icsFilename(props.title),
+                        }
+                      : undefined
+                  }
                   live={context.mode === "live"}
                 >
                   Apple Calendar (.ics)

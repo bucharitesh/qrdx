@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@repo/design-system/components/ui/button";
-import { Gem } from "lucide-react";
+import { Diamonds as Gem } from "iconsax-reactjs";
 import type { ComponentProps } from "react";
 import { useSwitchTeam } from "@/components/org-switcher";
 import { useAuthStore } from "@/store/auth-store";

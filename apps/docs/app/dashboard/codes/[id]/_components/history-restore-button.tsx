@@ -10,7 +10,7 @@ import {
   AlertDialogTitle,
 } from "@repo/design-system/components/ui/alert-dialog";
 import { Button } from "@repo/design-system/components/ui/button";
-import { History } from "lucide-react";
+import { ArrowRotateLeft as History } from "iconsax-reactjs";
 import { useState } from "react";
 import { restoreQrCodeVersion } from "@/actions/bulk-codes";
 import { useOrganizeAction } from "@/app/dashboard/codes/_components/use-organize-action";

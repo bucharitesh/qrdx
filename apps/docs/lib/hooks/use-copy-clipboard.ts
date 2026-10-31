@@ -1,5 +1,6 @@
 import { toast } from "@repo/design-system";
 import { useState } from "react";
+import { soundEvent } from "@/lib/sound/emit";
 
 export function useCopyToClipboard() {
   const [isCopying, setIsCopying] = useState(false);
@@ -13,6 +14,7 @@ export function useCopyToClipboard() {
       setIsCopying(true);
       await navigator.clipboard.writeText(text);
       setHasCopied(true);
+      soundEvent("copy");
 
       if (successMessage) {
         toast.success(successMessage.title || "Copied to clipboard", {

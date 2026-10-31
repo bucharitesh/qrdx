@@ -1,4 +1,4 @@
-import { ChevronDown } from "lucide-react";
+import { ArrowDown2 as ChevronDown } from "iconsax-reactjs";
 import type { ReactNode } from "react";
 
 interface TocItem {

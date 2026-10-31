@@ -18,7 +18,7 @@ import {
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { Switch } from "@repo/design-system/components/ui/switch";
-import { Lock, ShieldAlert } from "lucide-react";
+import { Lock, ShieldCross as ShieldAlert } from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
 import { type FormEvent, useEffect, useState, useTransition } from "react";
 import {

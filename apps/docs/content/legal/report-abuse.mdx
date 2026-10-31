@@ -1,73 +1,64 @@
 ---
 title: Report Abuse
-description: Report misuse of qrdx platform for creating malicious QR codes.
+description: How to report a QR code, short link or hosted page made with QRdx that leads to phishing, malware, scams or other harmful content, and what happens after you report it.
+lastUpdated: 2026-11-01
 ---
 
-## Preventing Abuse
+<Callout title="Summary">
 
-qrdx is committed to preventing abuse and misuse of its platform to create malicious QR codes, including but not limited to the following:
+- If a QR code made with QRdx leads somewhere harmful, **[use the report form](/report-abuse)**. You don't need an account, and your report stays anonymous unless you leave your email.
+- We review reports within 24–48 hours. Codes that break our rules are switched off for everyone, and their owner can't switch them back on.
+- Links that Google Web Risk lists as malware or phishing are switched off as soon as they're reported.
+- Don't enter passwords, card numbers or one-time codes on a page you reached from a QR code you don't trust.
 
-- Phishing or scam websites
-- Pornography or adult content
-- Betting or gambling
-- Copyright infringement
-- Malware distribution
-- Hate speech
-- Illegal goods and services
-- Terrorism or violent extremism
+</Callout>
 
-However, since QR codes are created by individual users, we are unable to control the content of every QR code created on our platform.
+## What to report
 
-## Report a QR Code
+Anything that breaks the [Acceptable Use Policy](/legal/acceptable-use-policy). The report form offers these reasons:
 
-If you believe a QR code created with qrdx is being used for malicious purposes, **[use the report form](/report-abuse)**. It takes a minute, needs no account, and every page a dynamic QRdx code opens (password screens and "campaign ended" pages included) links to it.
+- Phishing or a fake login page
+- Scam or fraud
+- Malware or a harmful download
+- Adult content
+- Illegal goods or services
+- Copyright or trademark infringement
+- Hate speech or violent extremism
+- Spam
+- Something else
 
-You can also email [support@qrdx.dev](mailto:support@qrdx.dev), for example for copyright (DMCA) notices, with the following information:
+## How to report
 
-- **Your Name:** (Optional but helpful)
-- **Your Email:** So we can follow up with you
-- **QR Code Details:** URL or screenshot of the problematic QR code
-- **Type of Abuse:** What kind of malicious content it links to
-- **Reason for Reporting:** Detailed description of why you're reporting this QR code
+1. Open the **[report form](/report-abuse)**. Every page a dynamic QRdx code opens links to it, including password screens and "campaign ended" pages, and the form fills in the link for you when you arrive from one of them.
+2. Paste the code's short link, hosted page link or 7-character short code. Links on a customer's own domain work too.
+3. Choose a reason and add any details that help, up to 2,000 characters.
+4. Leave your email address if you'd like to hear what we did. It's optional.
 
-## How we prevent abuse
+The form uses Cloudflare Turnstile to block automated reports and accepts a limited number of reports from one connection per day. If the form doesn't fit what you need to tell us, for example a copyright (DMCA) notice, a legal request or evidence that doesn't fit in a text box, email [support@qrdx.dev](mailto:support@qrdx.dev) with the link, what's wrong and how to reach you.
 
-- New dynamic codes are checked against [Google Web Risk](https://cloud.google.com/web-risk) where it is enabled; links listed as malware, phishing or unwanted software can't be used.
-- Accounts in their first 7 days can create a limited number of dynamic codes per hour, and their codes that point to URL shorteners, bare IP addresses or lookalike (homoglyph) domains stay switched off until we have reviewed them.
-- Codes we switch off after a report stop working for everyone and can't be turned back on by their owner.
+## What happens next
 
-## Our Response
+1. **Automatic check.** When a report names a working QRdx code that redirects, we check its destination with [Google Web Risk](https://cloud.google.com/web-risk) straight away. If the link is listed as malware, phishing or unwanted software, the code is switched off immediately and queued for a person to confirm.
+2. **Review.** A person reviews every report within 24–48 hours.
+3. **Action.** If the code, page or file breaks our rules, we switch it off, block the file, or suspend the account behind it. A switched-off code shows scanners a neutral "This QR code is no longer active" page, and its owner can't turn it back on.
+4. **Follow-up.** If you left your email, we tell you what we did.
 
-We take all abuse reports seriously and will:
+Several reports of the same code from the same person within a day count as one.
 
-1. Review your report within 24-48 hours
-2. Investigate the reported QR code
-3. Take appropriate action if the QR code violates our Terms of Service
-4. Follow up with you via email regarding the outcome
+## What we do to prevent abuse
 
-## Types of Abuse We Monitor
+- Destinations of new and edited dynamic codes are checked with Google Web Risk and offline checks. Links listed as malware, phishing or unwanted software, and dangerous link types, can't be used.
+- During an account's first 7 days it can create up to 30 dynamic codes an hour, and its codes that point to URL shorteners, bare IP addresses or lookalike domains stay switched off until we've reviewed them.
+- Our [Never-Hostage Guarantee](/guarantee) means we never switch codes off over billing. Abuse is the one exception.
 
-### Phishing & Scams
-QR codes linking to fake login pages, fraudulent websites, or scam operations designed to steal personal information.
+## Static codes and other services
 
-### Malware Distribution
-QR codes that redirect to websites hosting or distributing malware, viruses, or other malicious software.
+A static QR code holds its content directly, so it never passes through QRdx and we can't switch it off. If it points to a harmful website, report that site to its host, or to [Google Safe Browsing](https://safebrowsing.google.com/safebrowsing/report_phish/). If the code wasn't made with QRdx, report it to the service that made it.
 
-### Adult Content
-QR codes linking to pornographic or sexually explicit material, especially when not properly labeled or targeted at minors.
+## If your code was switched off
 
-### Illegal Content
-QR codes promoting illegal activities, controlled substances, weapons, or other prohibited goods and services.
-
-### Copyright Infringement
-QR codes used to distribute pirated content, counterfeit goods, or materials that violate intellectual property rights.
-
-### Hate Speech
-QR codes linking to content promoting violence, discrimination, or hatred against individuals or groups.
-
-### Spam & Abuse
-Automated or mass creation of QR codes for spamming, harassment, or other abusive purposes.
+If you think we got it wrong, email [support@qrdx.dev](mailto:support@qrdx.dev) with "[appeal]" in the subject and the code's short link. We'll look at it again and reply.
 
 ---
 
-**Last updated:** October 31, 2026
+**Changes:** 1 November 2026. Aligned with the report form and review process, added the automatic Web Risk check, static codes and appeals, and moved the list of banned content to the [Acceptable Use Policy](/legal/acceptable-use-policy).

@@ -6,7 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@repo/design-system/components/ui/card";
-import { Users } from "lucide-react";
+import { Profile2User as Users } from "iconsax-reactjs";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -111,7 +111,7 @@ export default async function TeamPage({
               </div>
             </div>
             <Link
-              className="text-primary text-sm font-medium hover:underline"
+              className="text-sm font-medium text-foreground underline decoration-foreground/30 underline-offset-4 transition-colors hover:decoration-foreground"
               href={invitePath(invite.id)}
             >
               View invitation
@@ -138,8 +138,8 @@ export default async function TeamPage({
           <CardContent>
             {teams.length === 0 ? (
               <div className="flex flex-col items-center gap-3 py-8 text-center">
-                <div className="bg-primary/10 rounded-full p-3">
-                  <Users className="text-primary size-6" />
+                <div className="grid size-12 place-items-center rounded-full border bg-muted/40">
+                  <Users className="size-5 text-foreground/80" />
                 </div>
                 <p className="font-medium">You're not in any team yet</p>
                 <p className="text-muted-foreground max-w-md text-sm">

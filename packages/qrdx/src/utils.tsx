@@ -3,6 +3,7 @@ import React from "react";
 import type {
   BodyPattern,
   ColorConfig,
+  ErrorLevel,
   Excavation,
   ImageSettings,
   LinearGradient,
@@ -12,7 +13,14 @@ import type {
   TemplateConfig,
 } from "../types";
 import { normalizeColorConfig } from "../types/color";
-import { isQRArtActive, renderQRArt } from "./art";
+import { AUTO_LEVEL_LOGO_COVERAGE, type EyePosition } from "../types/qr";
+import { getQRArtEyeColors, isQRArtActive, renderQRArt } from "./art";
+import {
+  alignmentMask,
+  clampModuleScale,
+  isShapedBodyPattern,
+  renderShapedBody,
+} from "./body-patterns";
 import qrcodegen from "./codegen";
 import {
   DEFAULT_BGCOLOR,
@@ -26,8 +34,10 @@ import {
 import { generateCornerDotPath } from "./corner-dot";
 import { generateCornerSquarePath } from "./corner-eye";
 import { isFrameActive, wrapWithFrame } from "./frame";
+import { hashString } from "./shapes";
 import { getTemplate } from "./templates";
 import { getSolidColor } from "./utils/color";
+import { parseColor } from "./utils/parse-color";
 
 // We could just do this in generatePath, except that we want to support
 // non-Path2D canvas, so we need to keep it an explicit step.
@@ -109,6 +119,10 @@ function isCornerModule(x: number, y: number, size: number): boolean {
   return false;
 }
 
+// Radius factor of circle-mixed's smallest dots (× 0.45 modules). It was 0.5
+// (0.225 modules), which camera blur erased; 0.8 still fails with some eyes.
+const CIRCLE_MIXED_SMALL = 0.9;
+
 // Generate circles for data modules with different patterns
 function generateDataCircles(
   modules: Modules,
@@ -116,12 +130,24 @@ function generateDataCircles(
     margin: number;
     pixelSize: number;
     pattern?: BodyPattern;
+    /** Size of each module, 0.5 to 1 (see `moduleScale`) */
+    scale?: number;
   }
 ): JSX.Element[] {
   const { margin, pixelSize, pattern = "circle" } = options;
+  if (isShapedBodyPattern(pattern)) {
+    return renderShapedBody(modules, {
+      margin,
+      pixelSize,
+      pattern,
+      scale: options.scale,
+    });
+  }
+  const scale = clampModuleScale(options.scale, pattern);
   const shapes: JSX.Element[] = [];
   const qrSize = modules.length;
   const radius = pixelSize * 0.45; // radius for circles (≥0.45 needed for reliable scanning)
+  const isAlignmentModule = alignmentMask(qrSize);
 
   modules.forEach((row, y) => {
     row.forEach((cell, x) => {
@@ -129,6 +155,22 @@ function generateDataCircles(
         const cx = (x + 0.5 + margin) * pixelSize;
         const cy = (y + 0.5 + margin) * pixelSize;
         const key = `${x}-${y}`;
+        const start = shapes.length;
+
+        // Alignment patterns stay solid in every style: jsQR and ZXing find
+        // them by their 1:1:1 dark/light rings, which dots and gaps break.
+        if (isAlignmentModule(x, y)) {
+          shapes.push(
+            <rect
+              height={pixelSize}
+              key={key}
+              width={pixelSize}
+              x={cx - pixelSize / 2}
+              y={cy - pixelSize / 2}
+            />
+          );
+          return;
+        }
 
         switch (pattern) {
           case "circle":
@@ -192,7 +234,11 @@ function generateDataCircles(
             // Pattern 4: Circles with varying sizes
             {
               const randomFactor =
-                (x + y) % 3 === 0 ? 0.5 : (x + y) % 2 === 0 ? 1 : 1.25;
+                (x + y) % 3 === 0
+                  ? CIRCLE_MIXED_SMALL
+                  : (x + y) % 2 === 0
+                    ? 1
+                    : 1.25;
               const variedRadius = radius * randomFactor;
               shapes.push(
                 <circle
@@ -285,6 +331,19 @@ function generateDataCircles(
               />
             );
         }
+
+        // A smaller moduleScale shrinks the shape around its center
+        if (scale !== 1 && shapes.length > start) {
+          const shape = shapes.pop() as JSX.Element;
+          shapes.push(
+            <g
+              key={key}
+              transform={`translate(${cx},${cy}) scale(${scale}) translate(${-cx},${-cy})`}
+            >
+              {shape}
+            </g>
+          );
+        }
       }
     });
   });
@@ -316,11 +375,11 @@ function calculateGradientCoordinates(
   return { x1, y1, x2, y2 };
 }
 
-// Generate unique gradient ID
-let gradientIdCounter = 0;
-function generateGradientId(prefix: string): string {
-  gradientIdCounter += 1;
-  return `${prefix}-${Date.now()}-${gradientIdCounter}`;
+// Gradient ids are derived from the gradient itself, so the server and the
+// client render identical markup (hydration-safe). Two codes on one page
+// that share an id also share an identical gradient.
+function generateGradientId(prefix: string, seed: unknown): string {
+  return `${prefix}-${hashString(JSON.stringify(seed))}`;
 }
 
 // Helper to calculate gradient coordinates for a corner based on corner position
@@ -384,7 +443,13 @@ function generateCornerGradientDef(
     return null;
   }
 
-  const id = generateGradientId(idPrefix);
+  const id = generateGradientId(idPrefix, [
+    normalized,
+    cornerX,
+    cornerY,
+    cornerSize,
+    cornerType,
+  ]);
 
   if (normalized.type === "linear") {
     const gradient = normalized as LinearGradient;
@@ -467,7 +532,7 @@ function generateGradientDef(
     return null;
   }
 
-  const id = generateGradientId(idPrefix);
+  const id = generateGradientId(idPrefix, [normalized, size]);
 
   if (normalized.type === "linear") {
     const gradient = normalized as LinearGradient;
@@ -556,7 +621,7 @@ export { getSolidColor } from "./utils/color";
 export function getImageSettings(
   cells: Modules,
   size: number,
-  _margin: number,
+  margin: number,
   imageSettings?: ImageSettings
 ): null | {
   x: number;
@@ -571,7 +636,9 @@ export function getImageSettings(
 
   const qrCodeSize = cells.length;
   const defaultSize = Math.floor(size * DEFAULT_IMG_SCALE);
-  const scale = qrCodeSize / size;
+  // Pixels → modules across the whole artwork (margin included), so a logo
+  // keeps its pixel size whatever the margin
+  const scale = (qrCodeSize + 2 * margin) / size;
   const w = (imageSettings.width || defaultSize) * scale;
   const h = (imageSettings.height || defaultSize) * scale;
 
@@ -583,14 +650,61 @@ export function getImageSettings(
 
   let excavation: Excavation | null = null;
   if (imageSettings.excavate) {
-    const floorX = Math.floor(x);
-    const floorY = Math.floor(y);
-    const ceilW = Math.ceil(w + x - floorX);
-    const ceilH = Math.ceil(h + y - floorY);
+    // Optional clear space around the logo (pixels → modules)
+    const pad = Math.max(0, imageSettings.padding ?? 0) * scale;
+    const floorX = Math.floor(x - pad);
+    const floorY = Math.floor(y - pad);
+    const ceilW = Math.ceil(w + x + pad - floorX);
+    const ceilH = Math.ceil(h + y + pad - floorY);
     excavation = { x: floorX, y: floorY, w: ceilW, h: ceilH };
   }
 
   return { x, y, h, w, excavation };
+}
+
+/**
+ * Error correction level a code is drawn at. With `autoLevel`, a logo that
+ * covers more than `AUTO_LEVEL_LOGO_COVERAGE` (7%) of the code raises the
+ * level to H. `isOGContext` with an excavated logo raises L/M to Q (as before).
+ */
+export function resolveErrorLevel(props: {
+  value: string;
+  size?: number;
+  level?: ErrorLevel;
+  margin?: number;
+  imageSettings?: ImageSettings;
+  isOGContext?: boolean;
+  autoLevel?: boolean;
+}): ErrorLevel {
+  const level = props.level ?? DEFAULT_LEVEL;
+  const { imageSettings } = props;
+  let effective: ErrorLevel =
+    props.isOGContext &&
+    imageSettings?.excavate &&
+    (level === "L" || level === "M")
+      ? "Q"
+      : level;
+  if (props.autoLevel && imageSettings && effective !== "H") {
+    const cells = qrcodegen.QrCode.encodeText(
+      props.value,
+      ERROR_LEVEL_MAP[effective]
+    ).getModules();
+    const settings = getImageSettings(
+      cells,
+      props.size ?? DEFAULT_SIZE,
+      props.margin ?? DEFAULT_MARGIN,
+      imageSettings
+    );
+    if (settings) {
+      const area = settings.excavation
+        ? settings.excavation.w * settings.excavation.h
+        : settings.w * settings.h;
+      if (area / (cells.length * cells.length) > AUTO_LEVEL_LOGO_COVERAGE) {
+        effective = "H";
+      }
+    }
+  }
+  return effective;
 }
 
 export function convertImageSettingsToPixels(
@@ -634,6 +748,9 @@ export function QRCodeSVG(props: QRPropsSVG) {
     customProps,
     frame,
     art,
+    eyeColors,
+    moduleScale,
+    autoLevel,
     ...otherProps
   } = props;
 
@@ -645,12 +762,17 @@ export function QRCodeSVG(props: QRPropsSVG) {
       ? wrapWithFrame(element, { size, frame, bgColor, svgProps: otherProps })
       : element;
 
-  const shouldUseHigherErrorLevel =
-    isOGContext && imageSettings?.excavate && (level === "L" || level === "M");
-
-  // Use a higher error correction level 'Q' when excavation is enabled
-  // to ensure the QR code remains scannable despite the removed modules.
-  const effectiveLevel = shouldUseHigherErrorLevel ? "Q" : level;
+  // An excavated logo in OG images raises L/M to Q; with autoLevel, a logo
+  // covering more than 7% of the code raises the level to H.
+  const effectiveLevel = resolveErrorLevel({
+    value,
+    size,
+    level,
+    margin,
+    imageSettings,
+    isOGContext,
+    autoLevel,
+  });
 
   const qrCode = qrcodegen.QrCode.encodeText(
     value,
@@ -715,7 +837,12 @@ export function QRCodeSVG(props: QRPropsSVG) {
   const cornerSize = 7 * pixelSize; // Corner patterns are 7x7 modules
   const cornerDotRadius = 1.5 * pixelSize; // Inner dot radius
 
-  // Art modes replace the body pattern; finder eyes keep their own styles.
+  // Art modes replace the body pattern; finder eyes keep their own styles
+  // (Logo QR can tint them from the logo, see getQRArtEyeColors).
+  const artColors = {
+    fgColor: getSolidColor(fgColor, DEFAULT_FGCOLOR),
+    bgColor: getSolidColor(bgColor, DEFAULT_BGCOLOR),
+  };
   const artLayer = isQRArtActive(art)
     ? renderQRArt({
         art,
@@ -723,10 +850,20 @@ export function QRCodeSVG(props: QRPropsSVG) {
         version: qrCode.version,
         margin,
         pixelSize,
-        fgColor: getSolidColor(fgColor, DEFAULT_FGCOLOR),
-        bgColor: getSolidColor(bgColor, DEFAULT_BGCOLOR),
+        ...artColors,
+        body: (artModules) =>
+          generateDataCircles(artModules, {
+            margin,
+            pixelSize,
+            pattern: bodyPattern,
+            scale: moduleScale,
+          }),
       })
     : null;
+  const artEyes =
+    artLayer && art
+      ? getQRArtEyeColors({ art, version: qrCode.version, ...artColors })
+      : null;
 
   // Generate data circles with selected pattern
   const dataCircles = artLayer
@@ -735,6 +872,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
         margin,
         pixelSize,
         pattern: bodyPattern,
+        scale: moduleScale,
       });
 
   // Normalize bgColor and fgColor first to ensure proper structure
@@ -781,163 +919,157 @@ export function QRCodeSVG(props: QRPropsSVG) {
   const bottomLeftX = margin * pixelSize;
   const bottomLeftY = (qrSize - 7 + margin) * pixelSize;
 
-  // Normalize eyeColor and dotColor
-  const normalizedEyeColor = normalizeColorConfig(
-    eyeColor,
-    getSolidColor(fgColor, DEFAULT_FGCOLOR)
+  // Eye colors: a per-eye override (eyeColors) wins over Logo QR's matched
+  // colors, then eyeColor (outer frame) and dotColor (inner dot), which fall
+  // back to the foreground.
+  const fgSolid = getSolidColor(fgColor, DEFAULT_FGCOLOR);
+  const outerColor = (position: EyePosition) =>
+    eyeColors?.[position]?.outer ?? artEyes?.[position]?.outer ?? eyeColor;
+  const innerColor = (position: EyePosition) =>
+    eyeColors?.[position]?.inner ?? artEyes?.[position]?.inner ?? dotColor;
+  const cornerGradient = (
+    color: ColorConfig | undefined,
+    cornerX: number,
+    cornerY: number,
+    cornerType: "top-left" | "top-right" | "bottom-left",
+    idPrefix: string
+  ) => {
+    const normalized = normalizeColorConfig(color, fgSolid);
+    return normalized.type === "linear" || normalized.type === "radial"
+      ? generateCornerGradientDef(
+          normalized,
+          cornerX,
+          cornerY,
+          cornerSize,
+          cornerType,
+          idPrefix
+        )
+      : null;
+  };
+
+  // Gradient definitions for the corner squares and dots, per corner
+  const topLeftEyeGradient = cornerGradient(
+    outerColor("topLeft"),
+    topLeftX,
+    topLeftY,
+    "top-left",
+    "corners-square-color-0-0"
   );
-  const normalizedDotColor = normalizeColorConfig(
-    dotColor,
-    getSolidColor(fgColor, DEFAULT_FGCOLOR)
+  const topRightEyeGradient = cornerGradient(
+    outerColor("topRight"),
+    topRightX,
+    topRightY,
+    "top-right",
+    "corners-square-color-1-0"
+  );
+  const bottomLeftEyeGradient = cornerGradient(
+    outerColor("bottomLeft"),
+    bottomLeftX,
+    bottomLeftY,
+    "bottom-left",
+    "corners-square-color-0-1"
+  );
+  const topLeftDotGradient = cornerGradient(
+    innerColor("topLeft"),
+    topLeftX,
+    topLeftY,
+    "top-left",
+    "corners-dot-color-0-0"
+  );
+  const topRightDotGradient = cornerGradient(
+    innerColor("topRight"),
+    topRightX,
+    topRightY,
+    "top-right",
+    "corners-dot-color-1-0"
+  );
+  const bottomLeftDotGradient = cornerGradient(
+    innerColor("bottomLeft"),
+    bottomLeftX,
+    bottomLeftY,
+    "bottom-left",
+    "corners-dot-color-0-1"
   );
 
-  // Generate gradient definitions for eyeColor (corner squares) for each corner
-  const topLeftEyeGradient =
-    normalizedEyeColor.type === "linear" || normalizedEyeColor.type === "radial"
-      ? generateCornerGradientDef(
-          normalizedEyeColor as LinearGradient | RadialGradient,
-          topLeftX,
-          topLeftY,
-          cornerSize,
-          "top-left",
-          "corners-square-color-0-0"
-        )
-      : null;
-
-  const topRightEyeGradient =
-    normalizedEyeColor.type === "linear" || normalizedEyeColor.type === "radial"
-      ? generateCornerGradientDef(
-          normalizedEyeColor as LinearGradient | RadialGradient,
-          topRightX,
-          topRightY,
-          cornerSize,
-          "top-right",
-          "corners-square-color-1-0"
-        )
-      : null;
-
-  const bottomLeftEyeGradient =
-    normalizedEyeColor.type === "linear" || normalizedEyeColor.type === "radial"
-      ? generateCornerGradientDef(
-          normalizedEyeColor as LinearGradient | RadialGradient,
-          bottomLeftX,
-          bottomLeftY,
-          cornerSize,
-          "bottom-left",
-          "corners-square-color-0-1"
-        )
-      : null;
-
-  // Generate gradient definitions for dotColor (corner dots) for each corner
-  const topLeftDotGradient =
-    normalizedDotColor.type === "linear" || normalizedDotColor.type === "radial"
-      ? generateCornerGradientDef(
-          normalizedDotColor as LinearGradient | RadialGradient,
-          topLeftX,
-          topLeftY,
-          cornerSize,
-          "top-left",
-          "corners-dot-color-0-0"
-        )
-      : null;
-
-  const topRightDotGradient =
-    normalizedDotColor.type === "linear" || normalizedDotColor.type === "radial"
-      ? generateCornerGradientDef(
-          normalizedDotColor as LinearGradient | RadialGradient,
-          topRightX,
-          topRightY,
-          cornerSize,
-          "top-right",
-          "corners-dot-color-1-0"
-        )
-      : null;
-
-  const bottomLeftDotGradient =
-    normalizedDotColor.type === "linear" || normalizedDotColor.type === "radial"
-      ? generateCornerGradientDef(
-          normalizedDotColor as LinearGradient | RadialGradient,
-          bottomLeftX,
-          bottomLeftY,
-          cornerSize,
-          "bottom-left",
-          "corners-dot-color-0-1"
-        )
-      : null;
-
-  // Get fill values for eyeColor and dotColor
+  // Get fill values for the corner squares and dots
   const topLeftEyeFillValue = getFillValue(
-    eyeColor,
+    outerColor("topLeft"),
     topLeftEyeGradient?.id ?? null,
-    getSolidColor(fgColor, DEFAULT_FGCOLOR)
+    fgSolid
   );
   const topRightEyeFillValue = getFillValue(
-    eyeColor,
+    outerColor("topRight"),
     topRightEyeGradient?.id ?? null,
-    getSolidColor(fgColor, DEFAULT_FGCOLOR)
+    fgSolid
   );
   const bottomLeftEyeFillValue = getFillValue(
-    eyeColor,
+    outerColor("bottomLeft"),
     bottomLeftEyeGradient?.id ?? null,
-    getSolidColor(fgColor, DEFAULT_FGCOLOR)
+    fgSolid
   );
 
   const topLeftDotFillValue = getFillValue(
-    dotColor,
+    innerColor("topLeft"),
     topLeftDotGradient?.id ?? null,
-    getSolidColor(fgColor, DEFAULT_FGCOLOR)
+    fgSolid
   );
   const topRightDotFillValue = getFillValue(
-    dotColor,
+    innerColor("topRight"),
     topRightDotGradient?.id ?? null,
-    getSolidColor(fgColor, DEFAULT_FGCOLOR)
+    fgSolid
   );
   const bottomLeftDotFillValue = getFillValue(
-    dotColor,
+    innerColor("bottomLeft"),
     bottomLeftDotGradient?.id ?? null,
-    getSolidColor(fgColor, DEFAULT_FGCOLOR)
+    fgSolid
   );
 
   const topLeftEye = generateCornerSquarePath(
     topLeftX,
     topLeftY,
     cornerSize,
-    cornerEyePattern
+    cornerEyePattern,
+    "top-left"
   );
 
   const topLeftDot = generateCornerDotPath(
     topLeftX + cornerSize / 2,
     topLeftY + cornerSize / 2,
     cornerDotRadius,
-    cornerEyeDotPattern
+    cornerEyeDotPattern,
+    "top-left"
   );
 
   const topRightEye = generateCornerSquarePath(
     topRightX,
     topRightY,
     cornerSize,
-    cornerEyePattern
+    cornerEyePattern,
+    "top-right"
   );
 
   const topRightDot = generateCornerDotPath(
     topRightX + cornerSize / 2,
     topRightY + cornerSize / 2,
     cornerDotRadius,
-    cornerEyeDotPattern
+    cornerEyeDotPattern,
+    "top-right"
   );
 
   const bottomLeftEye = generateCornerSquarePath(
     bottomLeftX,
     bottomLeftY,
     cornerSize,
-    cornerEyePattern
+    cornerEyePattern,
+    "bottom-left"
   );
 
   const bottomLeftDot = generateCornerDotPath(
     bottomLeftX + cornerSize / 2,
     bottomLeftY + cornerSize / 2,
     cornerDotRadius,
-    cornerEyeDotPattern
+    cornerEyeDotPattern,
+    "bottom-left"
   );
 
   // QR Code content (can be used standalone or inside wrapper)
@@ -1062,74 +1194,38 @@ export function QRCodeSVG(props: QRPropsSVG) {
           {/* Top-left corner square */}
           <g fill={topLeftEyeFillValue}>
             <path
-              d={generateCornerSquarePath(
-                topLeftX,
-                topLeftY,
-                cornerSize,
-                cornerEyePattern
-              )}
+              d={topLeftEye}
               fillRule="evenodd"
               transform={`rotate(0,${topLeftX + cornerSize / 2},${topLeftY + cornerSize / 2})`}
             />
           </g>
 
           {/* Top-left corner dot */}
-          <g fill={topLeftDotFillValue}>
-            {generateCornerDotPath(
-              topLeftX + cornerSize / 2,
-              topLeftY + cornerSize / 2,
-              cornerDotRadius,
-              cornerEyeDotPattern
-            )}
-          </g>
+          <g fill={topLeftDotFillValue}>{topLeftDot}</g>
 
           {/* Top-right corner square */}
           <g fill={topRightEyeFillValue}>
             <path
-              d={generateCornerSquarePath(
-                topRightX,
-                topRightY,
-                cornerSize,
-                cornerEyePattern
-              )}
+              d={topRightEye}
               fillRule="evenodd"
               transform={`rotate(0,${topRightX + cornerSize / 2},${topRightY + cornerSize / 2})`}
             />
           </g>
 
           {/* Top-right corner dot */}
-          <g fill={topRightDotFillValue}>
-            {generateCornerDotPath(
-              topRightX + cornerSize / 2,
-              topRightY + cornerSize / 2,
-              cornerDotRadius,
-              cornerEyeDotPattern
-            )}
-          </g>
+          <g fill={topRightDotFillValue}>{topRightDot}</g>
 
           {/* Bottom-left corner square */}
           <g fill={bottomLeftEyeFillValue}>
             <path
-              d={generateCornerSquarePath(
-                bottomLeftX,
-                bottomLeftY,
-                cornerSize,
-                cornerEyePattern
-              )}
+              d={bottomLeftEye}
               fillRule="evenodd"
               transform={`rotate(0,${bottomLeftX + cornerSize / 2},${bottomLeftY + cornerSize / 2})`}
             />
           </g>
 
           {/* Bottom-left corner dot */}
-          <g fill={bottomLeftDotFillValue}>
-            {generateCornerDotPath(
-              bottomLeftX + cornerSize / 2,
-              bottomLeftY + cornerSize / 2,
-              cornerDotRadius,
-              cornerEyeDotPattern
-            )}
-          </g>
+          <g fill={bottomLeftDotFillValue}>{bottomLeftDot}</g>
 
           {image}
         </g>
@@ -1246,9 +1342,21 @@ export const getLuminance = (r: number, g: number, b: number): number => {
   return 0.2126 * rs + 0.7152 * gs + 0.0722 * bs;
 };
 
+/** Any CSS color parseColor reads, composited over white (the paper). */
+const toOpaqueRgb = (
+  color: string
+): { r: number; g: number; b: number } | null => {
+  const parsed = parseColor(color);
+  if (!parsed) {
+    return null;
+  }
+  const over = (channel: number) => channel * parsed.a + 255 * (1 - parsed.a);
+  return { r: over(parsed.r), g: over(parsed.g), b: over(parsed.b) };
+};
+
 export const getContrastRatio = (color1: string, color2: string): number => {
-  const rgb1 = hexToRgb(color1);
-  const rgb2 = hexToRgb(color2);
+  const rgb1 = toOpaqueRgb(color1);
+  const rgb2 = toOpaqueRgb(color2);
 
   if (!(rgb1 && rgb2)) {
     return 1;

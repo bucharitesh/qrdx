@@ -1,44 +1,65 @@
-import {
-  getIntegrationRegistry,
-  initializeIntegrations,
-} from "@repo/integrations";
+import { getCatalogBySurface } from "@repo/integrations/src/catalog";
 import type { Metadata } from "next";
-import { SectionHeader } from "@/components/sections/section-header";
+import { Suspense } from "react";
+import { breadcrumbSchema, JsonLd } from "@/components/sections/tools/json-ld";
+import { getIntegrationAvailability } from "@/lib/integration-availability";
+import { filterVisible } from "@/lib/integration-availability-rules";
+import { toAvailabilityView } from "@/lib/integration-availability-view";
 import { createMetadata } from "@/lib/metadata";
-import { IntegrationsGrid } from "./components/integrations-grid";
+import { IntegrationsDirectory } from "./components/integrations-directory";
 import { IntegrationsHero } from "./components/integrations-hero";
+import { IntegrationsMore } from "./components/integrations-more";
 
-initializeIntegrations();
+/**
+ * Third-party connections this server can offer: in production and preview
+ * builds, the ones that need setup on QRdx's side are left out.
+ */
+function listedIntegrations() {
+  return filterVisible(
+    getIntegrationAvailability(),
+    getCatalogBySurface("integrations"),
+    (entry) => entry.slug,
+  );
+}
 
-export const metadata: Metadata = createMetadata({
-  title: "Integrations",
-  description:
-    "Connect QRdx to the tools you already use: Dub.sh short links with click analytics and Google Drive images and share links.",
-  path: "/integrations",
-});
+export function generateMetadata(): Metadata {
+  const listed = listedIntegrations();
+  const names = listed.slice(0, 8).map((entry) => entry.name);
+  return createMetadata({
+    title: "Integrations",
+    description: `Connect QRdx to ${names.join(", ")} and more: ${listed.length} integrations with exact setup steps.`,
+    path: "/integrations",
+  });
+}
 
 export default function IntegrationsPage() {
-  const registry = getIntegrationRegistry();
-  const integrations = registry.getAll();
+  const listed = listedIntegrations();
+  const { needsSetup } = toAvailabilityView(getIntegrationAvailability());
 
   return (
-    <main className="flex flex-col items-center justify-center divide-y divide-border w-full">
-      <IntegrationsHero />
+    <main className="flex w-full flex-col">
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: "Home", path: "/" },
+          { name: "Integrations", path: "/integrations" },
+        ])}
+      />
+      <IntegrationsHero entries={listed} />
 
       <section
-        id="all-integrations"
-        className="flex flex-col items-center justify-center gap-10 w-full relative px-6 pb-40"
+        id="directory"
+        aria-label="All integrations"
+        className="scroll-mt-20 border-b px-6 py-12 md:px-10 md:py-16"
       >
-        <SectionHeader>
-          <h2 className="text-2xl md:text-3xl font-medium tracking-tighter text-center text-balance">
-            All integrations
-          </h2>
-          <p className="text-muted-foreground text-center text-balance font-medium text-sm">
-            Browse and connect tools that fit your workflow.
-          </p>
-        </SectionHeader>
-        <IntegrationsGrid integrations={integrations} />
+        <Suspense fallback={<div className="min-h-[40rem]" />}>
+          <IntegrationsDirectory
+            slugs={listed.map((entry) => entry.slug)}
+            needsSetup={needsSetup}
+          />
+        </Suspense>
       </section>
+
+      <IntegrationsMore />
     </main>
   );
 }

@@ -89,7 +89,6 @@ const CORNER_EYE_PATTERN_VALUES: CornerEyePattern[] = [
   "extra-rounded",
   "message",
   "pointy",
-  "curly",
 ];
 
 export const cornerEyePatternPreviews: Record<CornerEyePattern, string> =
@@ -110,14 +109,11 @@ const CORNER_DOT_PATTERN_VALUES: CornerEyeDotPattern[] = [
   "square",
   "rounded",
   "circle",
-  "diamond",
   "message",
   "message-reverse",
   "diya",
   "diya-reverse",
   "rounded-triangle",
-  "star",
-  "banner",
 ];
 
 export const cornerDotPatternPreviews: Record<CornerEyeDotPattern, string> =

@@ -14,7 +14,7 @@ import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Checkbox } from "@repo/design-system/components/ui/checkbox";
 import { cn } from "@repo/design-system/lib/utils";
-import { Trash2 } from "lucide-react";
+import { Trash as Trash2 } from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
 import { useId, useState, useTransition } from "react";
 import { deleteFormResponses } from "@/actions/form-responses";

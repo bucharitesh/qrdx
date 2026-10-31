@@ -1,9 +1,13 @@
 "use client";
 
 import { toast } from "@repo/design-system";
+import { Spinner as LoaderCircle } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
-import { ClipboardPaste, ImageUp, LoaderCircle } from "lucide-react";
+import {
+  ClipboardImport as ClipboardPaste,
+  GalleryExport as ImageUp,
+} from "iconsax-reactjs";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { type DetectedCode, detectCodesInImage } from "./detector";
@@ -112,7 +116,7 @@ export function ImageScan({
         {...getRootProps()}
         className={cn(
           "flex min-h-64 flex-col items-center justify-center gap-4 rounded-xl border-2 border-dashed px-6 py-10 text-center transition-colors",
-          isDragActive ? "border-primary bg-primary/5" : "border-border",
+          isDragActive ? "border-foreground/30 bg-muted/50" : "border-border",
         )}
       >
         <input

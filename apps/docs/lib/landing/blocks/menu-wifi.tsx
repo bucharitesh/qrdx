@@ -1,5 +1,5 @@
 import { cn } from "@repo/design-system/lib/utils";
-import { Wifi } from "lucide-react";
+import { Wifi } from "iconsax-reactjs";
 import { z } from "zod";
 import {
   lineText,

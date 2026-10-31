@@ -37,7 +37,7 @@ export function BlogList({
         </div>
       )}
 
-      <div className="px-6 min-h-screen">
+      <div className="px-6 pb-16">
         {posts.length === 0 ? (
           <p className="text-center text-muted-foreground py-20">
             No posts in this category yet.
@@ -55,6 +55,7 @@ export function BlogList({
                 image={post.image}
                 imageAlt={post.imageAlt}
                 featured={featureFirst && index === 0}
+                priority={index < (featureFirst ? 1 : 3)}
               />
             ))}
           </div>

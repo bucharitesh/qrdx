@@ -1,0 +1,3 @@
+# Typecheck, lint and tests before every push (CI doesn't run tests).
+# Skip once with: git push --no-verify
+pnpm prepush

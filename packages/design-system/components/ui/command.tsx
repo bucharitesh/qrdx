@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { Command as CommandPrimitive } from "cmdk"
-import { SearchIcon } from "lucide-react"
+import { SearchNormal1 as SearchIcon } from "iconsax-reactjs"
 
 import { cn } from "@repo/design-system/lib/utils"
 import {

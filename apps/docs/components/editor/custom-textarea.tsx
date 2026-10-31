@@ -8,7 +8,7 @@ import Placeholder from "@tiptap/extension-placeholder";
 import { EditorContent, type JSONContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { SuggestionPluginKey } from "@tiptap/suggestion";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { suggestion } from "@/components/editor/mention-suggestion";
 
 interface CustomTextareaProps {
@@ -22,6 +22,8 @@ interface CustomTextareaProps {
   initialEditorContent?: JSONContent | null;
   externalEditorContent?: JSONContent | null;
   isStreamingContent?: boolean;
+  /** Placeholder ideas that rotate every few seconds while empty */
+  placeholders?: string[];
 }
 
 export default function CustomTextarea({
@@ -35,7 +37,11 @@ export default function CustomTextarea({
   initialEditorContent,
   externalEditorContent,
   isStreamingContent = false,
+  placeholders,
 }: CustomTextareaProps) {
+  const placeholderIndex = useRef(0);
+  const placeholderList = useRef(placeholders);
+  placeholderList.current = placeholders;
   const editor = useEditor({
     immediatelyRender: false,
     editable: !disabled,
@@ -48,7 +54,10 @@ export default function CustomTextarea({
         suggestion: suggestion,
       }),
       Placeholder.configure({
-        placeholder: "Describe your theme...",
+        placeholder: () =>
+          placeholderList.current?.[
+            placeholderIndex.current % (placeholderList.current?.length || 1)
+          ] ?? "Describe your theme…",
         emptyEditorClass:
           "cursor-text before:content-[attr(data-placeholder)] before:absolute before:inset-x-1 before:top-1 before:opacity-50 before-pointer-events-none",
       }),
@@ -60,7 +69,7 @@ export default function CustomTextarea({
     editorProps: {
       attributes: {
         class: cn(
-          "min-w-0 min-h-[50px] max-h-[120px] wrap-anywhere text-foreground/90 scrollbar-thin overflow-y-auto w-full bg-background p-1 text-sm focus-visible:outline-none max-sm:text-[16px]! transition-all",
+          "min-w-0 min-h-[50px] max-h-[120px] wrap-anywhere text-foreground/90 scrollbar-thin overflow-y-auto w-full bg-transparent p-1 text-sm focus-visible:outline-none max-sm:text-[16px]! transition-all",
           disabled && "opacity-75 pointer-events-none",
           className,
         ),
@@ -165,6 +174,18 @@ export default function CustomTextarea({
       // If setContent fails for any reason, silently ignore; user can keep typing
     }
   }, [externalEditorContent, editor, isStreamingContent]);
+
+  // Rotate the placeholder while the prompt is empty (static with reduced motion).
+  useEffect(() => {
+    if (!(editor && placeholders && placeholders.length > 1)) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const timer = setInterval(() => {
+      if (!editor.isEmpty || editor.isDestroyed) return;
+      placeholderIndex.current += 1;
+      editor.view.dispatch(editor.state.tr.setMeta("placeholder-rotate", true));
+    }, 3500);
+    return () => clearInterval(timer);
+  }, [editor, placeholders]);
 
   if (!editor) {
     return null;

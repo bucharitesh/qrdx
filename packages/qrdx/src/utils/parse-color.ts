@@ -83,6 +83,10 @@ export function parseColor(input: string | null | undefined): RGBAColor | null {
   if (fn) {
     const [channels, alpha] = fn[1].split("/");
     const parts = channels.split(/[\s,]+/).filter(Boolean);
+    // Three channels, plus an alpha either after "/" or as a fourth value.
+    if (parts.length !== (alpha === undefined && parts.length === 4 ? 4 : 3)) {
+      return null;
+    }
     const alphaPart = alpha ?? parts[3];
     const [r, g, b] = parts.slice(0, 3).map((part) => parseChannel(part, 255));
     const a = alphaPart === undefined ? 1 : parseChannel(alphaPart, 1);

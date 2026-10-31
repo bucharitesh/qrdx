@@ -54,20 +54,25 @@ function zoneOffset(utcMs: number, timeZone: string): number {
   return asUtc - (utcMs - (utcMs % 1000));
 }
 
+const DAY_MS = 24 * 60 * 60 * 1000;
+
 /**
- * The UTC instant of a wall-clock time in `timeZone`. Times skipped by a DST
- * change resolve to the first valid instant after them.
+ * The UTC instant of a wall-clock time in `timeZone`, as RFC 5545 §3.3.5
+ * reads it: a time repeated by a DST change is its first occurrence, and a
+ * time skipped by one uses the UTC offset from before the gap (02:30 on a
+ * spring-forward night is 03:30 daylight time).
  */
 export function zonedTimeToUtc(local: string, timeZone: string): Date {
   const match = LOCAL_DATE_TIME.exec(local);
   if (!match) throw new Error(`Invalid local date-time "${local}"`);
   const [, y, m, d, h = "00", min = "00"] = match;
   const guess = Date.UTC(+y, +m - 1, +d, +h, +min);
-  const offset = zoneOffset(guess, timeZone);
-  let result = guess - offset;
-  const corrected = zoneOffset(result, timeZone);
-  if (corrected !== offset) result = guess - corrected;
-  return new Date(result);
+  const before = zoneOffset(guess - DAY_MS, timeZone);
+  const after = zoneOffset(guess + DAY_MS, timeZone);
+  const valid = [...new Set([before, after])]
+    .map((offset) => guess - offset)
+    .filter((instant) => zoneOffset(instant, timeZone) === guess - instant);
+  return new Date(valid.length > 0 ? Math.min(...valid) : guess - before);
 }
 
 const pad = (n: number) => String(n).padStart(2, "0");

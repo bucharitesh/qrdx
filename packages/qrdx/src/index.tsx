@@ -10,14 +10,18 @@ export * from "./api";
 export {
   createQRArtImage,
   DEFAULT_ART_INTENSITY,
+  getQRArtEyeColors,
+  getQRArtVariant,
   getQRFunctionModules,
   isQRArtActive,
   loadQRArtImage,
   QR_ART_SAMPLE_SIZES,
+  type QRArtEyeColorOptions,
   type QRArtPixels,
   type QRArtRenderOptions,
   renderQRArt,
 } from "./art";
+export { clampModuleScale, MODULE_SCALE_FLOOR } from "./body-patterns";
 export * from "./detection";
 export * from "./download";
 export {
@@ -34,20 +38,32 @@ export {
   type FrameBox,
   type FrameLabel,
   type FrameLayout,
+  type FramePath,
   type FramePolygon,
   type FrameRect,
   type FrameShape,
+  frameLabels,
   getFrameDimensions,
   getFrameLayout,
+  getFrameSecondaryText,
   getFrameText,
   isFrameActive,
 } from "./frame";
+export { GRADIENT_FRAME_DEFAULTS, mixFrameColors } from "./frame-styles";
 export * from "./print";
 export * from "./qr-code";
 // QRCodeCanvas is the only export that needs client-only hooks. It lives in
 // its own "use client" module (built as a separate entry) so the rest of the
 // package stays usable from React Server Components.
 export { QRCodeCanvas } from "./qr-code-canvas";
+export {
+  getStylePairRisk,
+  type StylePairRisk,
+  WEAK_BODY_EYES,
+  WEAK_DOT_EYES,
+  WEAK_DOTS,
+  WEAK_EYES,
+} from "./scan-risk";
 export * from "./scan-score";
 export * from "./templates";
 export * from "./utils";

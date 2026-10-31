@@ -1,4 +1,5 @@
-import { GitFork, Star } from "lucide-react";
+import { Star } from "@repo/design-system/components/icons";
+import { Hierarchy3 as GitFork } from "iconsax-reactjs";
 
 interface GitHubRepo {
   full_name: string;

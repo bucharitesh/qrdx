@@ -1,5 +1,6 @@
 "use client";
 
+import { Spinner as Loader2 } from "@repo/design-system/components/icons";
 import {
   Alert,
   AlertDescription,
@@ -9,11 +10,18 @@ import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { Skeleton } from "@repo/design-system/components/ui/skeleton";
 import type { DriveFile } from "@repo/integrations";
-import { FileText, Folder, Loader2, Search } from "lucide-react";
+import {
+  DocumentText as FileText,
+  Folder2 as Folder,
+  SearchNormal1 as Search,
+} from "iconsax-reactjs";
 import * as React from "react";
 import { toast } from "sonner";
+import { NeedsSetupNote } from "@/components/needs-setup";
 import { apiFetch } from "@/lib/api-fetch";
 import { useGoogleDriveIntegration } from "@/lib/hooks/use-google-drive-integration";
+import { useIntegrationAvailability } from "@/lib/hooks/use-integration-availability";
+import { isHiddenIn, needsSetupIn } from "@/lib/integration-availability-view";
 import type { GoogleDriveFormData } from "@/lib/validations/qr-content";
 import { googleDriveSchema } from "@/lib/validations/qr-content";
 import { useQREditorStore } from "@/store/editor-store";
@@ -39,6 +47,14 @@ export function GoogleDriveForm() {
     search,
     loadMore,
   } = useGoogleDriveIntegration();
+  // Offer "Connect Google Drive" only where it is set up (production hides it).
+  const availability = useIntegrationAvailability();
+  const canConnect = Boolean(
+    availability && !isHiddenIn(availability, "google-drive"),
+  );
+  const driveSetup = availability
+    ? needsSetupIn(availability, "google-drive")
+    : undefined;
 
   const storedConfig = getContentConfig("google-drive") as
     | GoogleDriveContent
@@ -118,13 +134,14 @@ export function GoogleDriveForm() {
 
   return (
     <div className="space-y-4">
-      {!isConnected && (
+      {!isConnected && canConnect && (
         <Alert>
           <AlertDescription className="space-y-3">
             <p>
               Connect Google Drive to browse files and folders, or paste a Drive
               URL manually below.
             </p>
+            <NeedsSetupNote names={driveSetup} />
             <Button
               disabled={isConnecting}
               onClick={handleConnect}

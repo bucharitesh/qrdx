@@ -1,0 +1,56 @@
+---
+title: Teams
+description: Share dynamic QR codes, pages, files, domains and themes with your team, invite people by email and choose owner, admin or member roles.
+icon: Users
+---
+
+A team is a shared workspace. Everything created while a team is open belongs to the team instead of to you: dynamic codes and [hosted pages](/docs/landing-pages), [files](/docs/files), [custom domains](/docs/custom-domains), folders and tags, form responses and [webhooks](/docs/webhooks). Owners and admins can also copy saved themes to the team so every member designs with the same colors. Your personal workspace stays separate, and you switch between the two with the workspace switcher at the top of the dashboard sidebar.
+
+Creating a team needs Pro or Business. A Pro team has up to 3 members, a Business team has no member limit. Anyone can join a team they're invited to, including people on the Free plan.
+
+## Create a team
+
+1. Open the workspace switcher and click **Create team**, or go to [Dashboard → Team](/dashboard/team).
+2. Enter a name and a team URL (3 to 48 lowercase letters, numbers and dashes).
+3. The new team opens as your active workspace, with you as its owner.
+
+## Invite people
+
+Owners and admins invite people from [Dashboard → Team](/dashboard/team):
+
+1. Enter the person's email address and pick a role, **Member** or **Admin**.
+2. QRdx emails them an invitation. Every invitation also has a link you can copy and send yourself.
+3. They open the link, sign in with the invited email address and click **Accept invitation**. The team then becomes their active workspace.
+
+Invitations expire after 48 hours and only work for the email address they were sent to, so a forwarded link can't be used by someone else. Pending invitations take up a seat until they are accepted, so revoke the ones you no longer need.
+
+## Roles
+
+| | Member | Admin | Owner |
+| --- | --- | --- | --- |
+| Create and edit codes and pages, upload files | Yes | Yes | Yes |
+| Delete codes, files and form responses | Their own | Any | Any |
+| Add saved themes to the team | No | Yes | Yes |
+| Invite and remove people, change roles | No | Yes | Yes |
+| Add, verify and remove custom domains | No | Yes | Yes |
+| Manage webhook endpoints and see signing secrets | No | Yes | Yes |
+| Make someone an owner | No | No | Yes |
+| Delete the team | No | No | Yes |
+
+Members can see webhook endpoints and their delivery logs, and use the team's verified domains for their codes. [Notification settings](/docs/notifications) are personal: every member chooses their own alerts for each team.
+
+## Plans and limits
+
+A team uses the best plan among its owners, so one owner on Business gives the whole team Business limits and members don't need their own subscription. Limits such as dynamic codes, pages, storage and form responses are counted per team, separately from each member's personal workspace. See [Plans and limits](/docs/plans-and-limits).
+
+If the owners' plan changes, current members stay and every code keeps working; only new invitations and new things over the limit are blocked.
+
+## Leave or delete a team
+
+- **Leave:** click **Leave team** in the danger zone. The last owner can't leave: make another member an owner first, or delete the team.
+- **Remove a member:** the codes and pages they created stay with the team.
+- **Delete a team:** owners only. You confirm by typing the team URL. Nothing stops working: codes, pages, files, domains and other team items move back to the personal workspace of whoever created them.
+
+## API access
+
+[REST API](/docs/developers/rest-api) requests made with an OAuth access token act on the token owner's personal workspace. Requests made from a signed-in browser session act on the team that is open.

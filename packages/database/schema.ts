@@ -299,18 +299,45 @@ export const themeLike = pgTable(
   (table) => [primaryKey({ columns: [table.userId, table.themeId] })]
 );
 
-export const oauthApp = pgTable("oauth_app", {
-  id: text("id").primaryKey(),
-  name: text("name").notNull(),
-  description: text("description"),
-  clientId: text("client_id").notNull().unique(),
-  clientSecretHash: text("client_secret_hash").notNull(),
-  redirectUris: json("redirect_uris").$type<string[]>().notNull(),
-  scopes: json("scopes").$type<string[]>().notNull(),
-  isActive: boolean("is_active").notNull().default(true),
-  createdAt: timestamp("created_at").notNull(),
-  updatedAt: timestamp("updated_at").notNull(),
-});
+// OAuth apps. Apps without an owner (owner_user_id null) were registered by the
+// QRdx team (scripts/create-oauth-app.ts) and count as first-party. Apps that
+// developers create in Settings → Developers belong to their creator, plus the
+// team in organization_id when they were made in a team workspace.
+// SQL: packages/database/manual-sql/0008_oauth_app_owner.sql
+export const oauthApp = pgTable(
+  "oauth_app",
+  {
+    id: text("id").primaryKey(),
+    name: text("name").notNull(),
+    description: text("description"),
+    clientId: text("client_id").notNull().unique(),
+    clientSecretHash: text("client_secret_hash").notNull(),
+    redirectUris: json("redirect_uris").$type<string[]>().notNull(),
+    scopes: json("scopes").$type<string[]>().notNull(),
+    isActive: boolean("is_active").notNull().default(true),
+    // Creator; deleting their account deletes the app and its tokens.
+    ownerUserId: text("owner_user_id").references(() => user.id, {
+      onDelete: "cascade",
+    }),
+    // Team that owns the app (null = the creator's personal workspace).
+    organizationId: text("organization_id").references(() => organization.id, {
+      onDelete: "set null",
+    }),
+    logoUrl: text("logo_url"),
+    websiteUrl: text("website_url"),
+    // Reviewed by the QRdx team; the consent screen warns about unverified apps.
+    verified: boolean("verified").notNull().default(false),
+    // Authorization requests must carry an S256 code_challenge.
+    pkceRequired: boolean("pkce_required").notNull().default(false),
+    secretRotatedAt: timestamp("secret_rotated_at"),
+    createdAt: timestamp("created_at").notNull(),
+    updatedAt: timestamp("updated_at").notNull(),
+  },
+  (table) => [
+    index("oauth_app_owner_user_id_idx").on(table.ownerUserId),
+    index("oauth_app_organization_id_idx").on(table.organizationId),
+  ]
+);
 
 export const oauthAuthorizationCode = pgTable("oauth_authorization_code", {
   id: text("id").primaryKey(),
@@ -330,23 +357,30 @@ export const oauthAuthorizationCode = pgTable("oauth_authorization_code", {
   createdAt: timestamp("created_at").notNull(),
 });
 
-export const oauthToken = pgTable("oauth_token", {
-  id: text("id").primaryKey(),
-  accessTokenHash: text("access_token_hash").notNull().unique(),
-  refreshTokenHash: text("refresh_token_hash").unique(),
-  appId: text("app_id")
-    .notNull()
-    .references(() => oauthApp.id, { onDelete: "cascade" }),
-  userId: text("user_id")
-    .notNull()
-    .references(() => user.id, { onDelete: "cascade" }),
-  scopes: json("scopes").$type<string[]>().notNull(),
-  accessTokenExpiresAt: timestamp("access_token_expires_at").notNull(),
-  refreshTokenExpiresAt: timestamp("refresh_token_expires_at"),
-  revokedAt: timestamp("revoked_at"),
-  createdAt: timestamp("created_at").notNull(),
-  updatedAt: timestamp("updated_at").notNull(),
-});
+export const oauthToken = pgTable(
+  "oauth_token",
+  {
+    id: text("id").primaryKey(),
+    accessTokenHash: text("access_token_hash").notNull().unique(),
+    refreshTokenHash: text("refresh_token_hash").unique(),
+    appId: text("app_id")
+      .notNull()
+      .references(() => oauthApp.id, { onDelete: "cascade" }),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    scopes: json("scopes").$type<string[]>().notNull(),
+    accessTokenExpiresAt: timestamp("access_token_expires_at").notNull(),
+    refreshTokenExpiresAt: timestamp("refresh_token_expires_at"),
+    revokedAt: timestamp("revoked_at"),
+    createdAt: timestamp("created_at").notNull(),
+    updatedAt: timestamp("updated_at").notNull(),
+  },
+  // Remembered consent and per-app user counts look tokens up by app and user.
+  (table) => [
+    index("oauth_token_app_id_user_id_idx").on(table.appId, table.userId),
+  ]
+);
 
 export const adminAuditLog = pgTable(
   "admin_audit_log",

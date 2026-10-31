@@ -763,7 +763,7 @@ export function GradientPicker({
     <div
       ref={rootRef}
       className={cn(
-        "mb-3 transition-all duration-300",
+        "min-w-0 transition-all duration-300",
         shouldAnimate &&
           "bg-border/50 ring-primary -m-1.5 mb-1.5 rounded-sm p-1.5 ring-2",
       )}
@@ -774,15 +774,19 @@ export function GradientPicker({
 
       <Popover>
         <PopoverTrigger asChild>
-          <div className="flex w-full items-center gap-2 ">
-            <div
-              className="h-8 w-8 shrink-0 rounded border-2 cursor-pointer"
+          <button
+            aria-label={`${label}: ${getTriggerText()}`}
+            className="group focus-visible:ring-ring/50 flex w-full min-w-0 items-center gap-2 rounded-full text-left outline-none focus-visible:ring-[3px]"
+            type="button"
+          >
+            <span
+              className="size-9 shrink-0 rounded-full border shadow-xs"
               style={{ background: getNormalizedColor(value) }}
             />
-            <div className="flex w-full items-center bg-input/25 flex-1 text-left border-border/20 h-8 rounded border px-2  text-sm hover:bg-input/40">
-              {getTriggerText()}
-            </div>
-          </div>
+            <span className="border-input dark:bg-input/30 group-hover:bg-accent/40 flex h-9 min-w-0 flex-1 items-center rounded-md border px-3 font-mono text-xs shadow-xs transition-colors">
+              <span className="truncate">{getTriggerText()}</span>
+            </span>
+          </button>
         </PopoverTrigger>
         <PopoverContent align="start" className="w-[320px] p-4">
           <Tabs

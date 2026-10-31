@@ -1,4 +1,4 @@
-import { MousePointerClick } from "lucide-react";
+import { MouseCircle as MousePointerClick } from "iconsax-reactjs";
 import { z } from "zod";
 import {
   buttonClass,
