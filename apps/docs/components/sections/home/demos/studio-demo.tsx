@@ -3,7 +3,9 @@
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { cn } from "@repo/design-system/lib/utils";
+import { ArrowRight } from "iconsax-reactjs";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import Link from "next/link";
 import { QRCode } from "qrdx";
 import {
   BODY_PATTERN,
@@ -113,11 +115,36 @@ const ANGLES = [
   { value: "135", label: "135°" },
 ] as const;
 
-const SHOWN_EYES: CornerEyePattern[] = CORNER_EYE_PATTERNS.filter((eye) =>
-  ["square", "rounded", "extra-rounded", "circle", "gear", "pointy"].includes(
-    eye,
-  ),
-);
+// A curated few per tab, so the card stays calm; the playground has them all.
+const SHOWN_BODIES: BodyPattern[] = (
+  [
+    "rounded",
+    "square",
+    "circle",
+    "classy-rounded",
+    "liquid",
+    "leaf",
+    "heart",
+    "mosaic",
+  ] as const
+).filter((item) => BODY_PATTERN.includes(item));
+
+const SHOWN_EYES: CornerEyePattern[] = (
+  ["extra-rounded", "rounded", "square", "leaf", "gear"] as const
+).filter((item) => CORNER_EYE_PATTERNS.includes(item));
+
+const SHOWN_FRAMES: FrameStyle[] = (
+  [
+    "none",
+    "banner-bottom",
+    "rounded-border",
+    "speech-bubble",
+    "polaroid",
+    "ticket",
+  ] as const
+).filter((item) => FRAME_STYLES.includes(item));
+
+const MORE_LABEL = `All ${BODY_PATTERN.length} patterns, ${CORNER_EYE_PATTERNS.length} eyes and ${FRAME_STYLES.length - 1} frames in the playground`;
 
 /** Patterns / colors / frames playground in miniature, using the real renderer. */
 export function StudioDemo() {
@@ -158,10 +185,10 @@ export function StudioDemo() {
               <>
                 <fieldset className="flex flex-col gap-2">
                   <legend className="mb-2">
-                    <Readout>body · {BODY_PATTERN.length} shapes</Readout>
+                    <Readout>body</Readout>
                   </legend>
                   <div className="flex flex-wrap gap-1">
-                    {BODY_PATTERN.map((item) => (
+                    {SHOWN_BODIES.map((item) => (
                       <Chip
                         key={item}
                         selected={body === item}
@@ -247,7 +274,7 @@ export function StudioDemo() {
                     <Readout>frame</Readout>
                   </legend>
                   <div className="flex flex-wrap gap-1">
-                    {FRAME_STYLES.map((item) => (
+                    {SHOWN_FRAMES.map((item) => (
                       <Chip
                         key={item}
                         selected={frameStyle === item}
@@ -274,6 +301,13 @@ export function StudioDemo() {
             )}
           </motion.div>
         </AnimatePresence>
+        <Link
+          className="mt-auto inline-flex w-fit items-center gap-1 text-xs text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
+          href="/playground"
+        >
+          {MORE_LABEL}
+          <ArrowRight aria-hidden className="size-3.5" />
+        </Link>
       </div>
       <DemoStage className="flex items-center justify-center border-t bg-muted/30 p-6 md:border-t-0 md:border-l">
         <motion.div
@@ -281,11 +315,15 @@ export function StudioDemo() {
           initial={reduce ? false : { opacity: 0.55, scale: 0.97 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: DURATION.base, ease: EASE }}
-          className="w-full max-w-56"
+          className="w-full max-w-48"
         >
           <QrTile
             label="Live preview of the QR code with the chosen style"
-            className="w-full"
+            className={cn(
+              "w-full",
+              // Framed codes are taller than wide: let the tile follow them.
+              frameStyle !== "none" && "aspect-auto [&_svg]:h-auto",
+            )}
           >
             <QRCode
               value={easterEggUrl("studio")}

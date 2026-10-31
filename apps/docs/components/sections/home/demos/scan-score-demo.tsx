@@ -35,6 +35,9 @@ const RING = {
   fails: "stroke-red-500",
 } as const;
 
+/** Check rows always drawn, so the list never changes height. */
+const CHECK_ROWS = 3;
+
 const R = 30;
 const CIRC = 2 * Math.PI * R;
 
@@ -87,7 +90,7 @@ export function ScanScoreDemo() {
   const checks = result
     ? [...result.checks]
         .sort((a, b) => Number(a.passed) - Number(b.passed))
-        .slice(0, 3)
+        .slice(0, CHECK_ROWS)
     : [];
 
   return (
@@ -134,7 +137,9 @@ export function ScanScoreDemo() {
             />
           )}
         </div>
-        <div className="flex min-w-0 flex-col gap-3">
+        {/* Fixed width and three reserved rows: switching ink or waiting for
+            the score never moves the code or the card. */}
+        <div className="flex w-[12.5rem] min-w-0 flex-col gap-3 sm:w-[17rem]">
           <div className="flex items-center gap-3">
             <div className="relative size-[72px] shrink-0">
               <svg
@@ -172,7 +177,7 @@ export function ScanScoreDemo() {
                 {result ? score : "…"}
               </span>
             </div>
-            <div className="flex flex-col">
+            <div className="flex min-w-0 flex-col">
               <span className="text-sm font-medium">
                 {result ? GRADE_LABELS[result.grade] : "Checking"}
               </span>
@@ -180,21 +185,33 @@ export function ScanScoreDemo() {
             </div>
           </div>
           <ul className="flex flex-col gap-1.5">
-            {checks.map((check) => (
-              <li
-                key={check.id}
-                className="flex min-w-0 items-center gap-1.5 text-xs"
-              >
-                {check.passed ? (
-                  <Tick className="size-3.5 shrink-0 text-emerald-600 dark:text-emerald-400" />
-                ) : (
-                  <Close className="size-3.5 shrink-0 text-red-500" />
-                )}
-                <span className="truncate text-muted-foreground">
-                  {check.message}
-                </span>
-              </li>
-            ))}
+            {Array.from({ length: CHECK_ROWS }, (_, index) => {
+              const check = checks[index];
+              return (
+                <li
+                  key={check?.id ?? `pending-${index}`}
+                  className="flex h-4 min-w-0 items-center gap-1.5 text-xs"
+                >
+                  {check ? (
+                    <>
+                      {check.passed ? (
+                        <Tick className="size-3.5 shrink-0 text-emerald-600 dark:text-emerald-400" />
+                      ) : (
+                        <Close className="size-3.5 shrink-0 text-red-500" />
+                      )}
+                      <span className="truncate text-muted-foreground">
+                        {check.message}
+                      </span>
+                    </>
+                  ) : (
+                    <span
+                      aria-hidden="true"
+                      className="h-2 w-4/5 rounded-full bg-muted motion-safe:animate-pulse"
+                    />
+                  )}
+                </li>
+              );
+            })}
           </ul>
         </div>
       </DemoStage>
