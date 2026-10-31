@@ -3,16 +3,33 @@
 
 import type { QRProps } from "../types";
 import { DEFAULT_SIZE } from "./constants";
+import { getFrameDimensions } from "./frame";
 
 export * from "../types";
 export * from "./api";
 export * from "./detection";
 export * from "./download";
+export {
+  FRAME_FONT_FAMILY,
+  FRAME_GAP_RATIO,
+  type FrameBox,
+  type FrameLabel,
+  type FrameLayout,
+  type FramePolygon,
+  type FrameRect,
+  type FrameShape,
+  getFrameDimensions,
+  getFrameLayout,
+  getFrameText,
+  isFrameActive,
+} from "./frame";
+export * from "./print";
 export * from "./qr-code";
 // QRCodeCanvas is the only export that needs client-only hooks. It lives in
 // its own "use client" module (built as a separate entry) so the rest of the
 // package stays usable from React Server Components.
 export { QRCodeCanvas } from "./qr-code-canvas";
+export * from "./scan-score";
 export * from "./templates";
 export * from "./utils";
 
@@ -160,10 +177,13 @@ export async function getQRAsCanvas(
 
     const img = new Image();
 
-    // Set canvas size to match the QR code
-    const size = props.size || DEFAULT_SIZE;
-    canvas.width = size;
-    canvas.height = size;
+    // Set canvas size to match the QR code (plus its frame, if any)
+    const { width, height } = getFrameDimensions(
+      props.size || DEFAULT_SIZE,
+      props.frame
+    );
+    canvas.width = Math.round(width);
+    canvas.height = Math.round(height);
 
     // Add timeout to prevent hanging
     const timeout = setTimeout(() => {
@@ -184,7 +204,7 @@ export async function getQRAsCanvas(
           ctx.fillRect(0, 0, canvas.width, canvas.height);
         }
 
-        ctx.drawImage(img, 0, 0, size, size);
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
         if (getCanvas) {
           resolve(canvas);

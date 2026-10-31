@@ -1,7 +1,7 @@
 import { writeFileSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import type { QRProps } from "qrdx";
-import { QRCodeSVG } from "qrdx";
+import { getFrameDimensions, QRCodeSVG } from "qrdx";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 
@@ -97,7 +97,11 @@ export async function saveOutput(options: OutputOptions): Promise<void> {
   }
   const svgBuffer = Buffer.from(svgString, "utf-8");
   const size = qrProps.size ?? 512;
-  const qrImage = sharp(svgBuffer).resize(size, size).png();
+  // A frame makes the output larger than (and not as square as) the code.
+  const { width, height } = getFrameDimensions(size, qrProps.frame);
+  const qrImage = sharp(svgBuffer)
+    .resize(Math.round(width), Math.round(height))
+    .png();
 
   // sharp's bundled SVG renderer skips embedded <image> elements, so the logo
   // is composited onto the rendered QR code instead.

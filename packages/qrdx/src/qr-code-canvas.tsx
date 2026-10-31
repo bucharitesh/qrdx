@@ -22,6 +22,7 @@ import {
   DEFAULT_SIZE,
   ERROR_LEVEL_MAP,
 } from "./constants";
+import { drawFrameOnCanvas, getFrameLayout, isFrameActive } from "./frame";
 import {
   excavateModules,
   generatePath,
@@ -50,9 +51,15 @@ export function QRCodeCanvas(props: QRPropsCanvas) {
     templateId: _templateId,
     customTemplate: _customTemplate,
     customProps: _customProps,
+    frame,
     ...otherProps
   } = props;
   const imgSrc = imageSettings?.src;
+  const frameLayout = isFrameActive(frame)
+    ? getFrameLayout(size, frame, bgColor)
+    : null;
+  const outputWidth = frameLayout?.width ?? size;
+  const outputHeight = frameLayout?.height ?? size;
   const _canvas = useRef<HTMLCanvasElement>(null);
   const _image = useRef<HTMLImageElement>(null);
 
@@ -102,8 +109,14 @@ export function QRCodeCanvas(props: QRPropsCanvas) {
       // result in some potentially unwanted single pixel issues between
       // blocks, only in environments that don't support Path2D.
       const pixelRatio = window.devicePixelRatio || 1;
-      canvas.height = canvas.width = size * pixelRatio;
-      const scale = (size / numCells) * pixelRatio;
+      canvas.width = outputWidth * pixelRatio;
+      canvas.height = outputHeight * pixelRatio;
+      ctx.scale(pixelRatio, pixelRatio);
+      if (frameLayout) {
+        drawFrameOnCanvas(ctx, frameLayout);
+        ctx.translate(frameLayout.qrX, frameLayout.qrY);
+      }
+      const scale = size / numCells;
       ctx.scale(scale, scale);
 
       // Draw solid background, only paint dark modules.
@@ -146,7 +159,7 @@ export function QRCodeCanvas(props: QRPropsCanvas) {
     }
   });
 
-  const canvasStyle = { height: size, width: size, ...style };
+  const canvasStyle = { height: outputHeight, width: outputWidth, ...style };
   let img: JSX.Element | null = null;
   if (imgSrc != null) {
     img = (
@@ -165,10 +178,10 @@ export function QRCodeCanvas(props: QRPropsCanvas) {
   return (
     <>
       <canvas
-        height={size}
+        height={outputHeight}
         ref={_canvas}
         style={canvasStyle}
-        width={size}
+        width={outputWidth}
         {...otherProps}
       />
       {img}

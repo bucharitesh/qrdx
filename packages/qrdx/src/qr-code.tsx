@@ -32,6 +32,7 @@ export const QRCode = memo(
     templateId,
     customTemplate,
     customProps,
+    frame,
   }: QRCodeProps) => {
     // getQRData lays the logo out on a 1024px canvas; scale it to the rendered size.
     const renderSize = size * scale;
@@ -80,6 +81,7 @@ export const QRCode = memo(
         dotColor={qrData.dotColor}
         eyeColor={qrData.eyeColor}
         fgColor={qrData.fgColor}
+        frame={frame}
         level={level || qrData.level}
         margin={qrData.margin}
         size={renderSize}

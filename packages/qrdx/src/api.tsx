@@ -8,6 +8,7 @@ import {
   DEFAULT_SIZE,
   ERROR_LEVEL_MAP,
 } from "./constants";
+import { isFrameActive, wrapWithFrame } from "./frame";
 import { excavateModules, generatePath, getImageSettings } from "./utils";
 import { getSolidColor } from "./utils/color";
 
@@ -30,6 +31,7 @@ export async function getQRAsSVG(props: QRPropsSVG) {
     templateId: _templateId,
     customTemplate: _customTemplate,
     customProps: _customProps,
+    frame,
     ...otherProps
   } = props;
 
@@ -84,14 +86,15 @@ export async function getQRAsSVG(props: QRPropsSVG) {
   // For level 1, 441 nodes -> 2
   // For level 40, 31329 -> 2
   const fgPath = generatePath(cells, margin);
+  const framed = isFrameActive(frame);
 
-  return (
+  const code = (
     <svg
       height={size}
       viewBox={`0 0 ${numCells} ${numCells}`}
       width={size}
       xmlns="http://www.w3.org/2000/svg"
-      {...otherProps}
+      {...(framed ? {} : otherProps)}
     >
       <path
         d={`M0,0 h${numCells}v${numCells}H0z`}
@@ -106,4 +109,8 @@ export async function getQRAsSVG(props: QRPropsSVG) {
       {image}
     </svg>
   );
+
+  return framed
+    ? wrapWithFrame(code, { size, frame, bgColor, svgProps: otherProps })
+    : code;
 }

@@ -7,7 +7,9 @@ import {
   database as db,
   integration,
   oauthApp,
+  qrCode,
   qrPreset,
+  qrScan,
   session,
   subscription,
   user,
@@ -563,4 +565,98 @@ export async function listAuditLog({ page }: { page: number }) {
   ]);
 
   return { total, entries: rows };
+}
+
+// Dynamic QR codes
+
+export type AdminCodeStatus = "all" | "active" | "archived" | "disabled";
+
+const codeStatusWhere: Record<AdminCodeStatus, SQL | undefined> = {
+  all: undefined,
+  active: sql`${qrCode.isActive} and ${qrCode.archivedAt} is null`,
+  archived: isNotNull(qrCode.archivedAt),
+  disabled: eq(qrCode.isActive, false),
+};
+
+export async function listDynamicCodes({
+  q,
+  status,
+  page,
+}: {
+  q?: string;
+  status: AdminCodeStatus;
+  page: number;
+}) {
+  const term = q?.trim();
+  const pattern = term ? `%${escapeLike(term)}%` : null;
+  const where = and(
+    codeStatusWhere[status],
+    term && pattern
+      ? or(
+          eq(qrCode.slug, term),
+          eq(qrCode.id, term),
+          ilike(qrCode.destinationUrl, pattern),
+          ilike(qrCode.title, pattern),
+          ilike(user.email, pattern),
+        )
+      : undefined,
+  );
+
+  const [rows, [{ total }]] = await Promise.all([
+    db
+      .select({
+        id: qrCode.id,
+        slug: qrCode.slug,
+        title: qrCode.title,
+        destinationUrl: qrCode.destinationUrl,
+        isActive: qrCode.isActive,
+        archivedAt: qrCode.archivedAt,
+        scanCount: qrCode.scanCount,
+        lastScannedAt: qrCode.lastScannedAt,
+        createdAt: qrCode.createdAt,
+        organizationId: qrCode.organizationId,
+        ownerId: user.id,
+        ownerEmail: user.email,
+      })
+      .from(qrCode)
+      .innerJoin(user, eq(user.id, qrCode.userId))
+      .where(where)
+      .orderBy(desc(qrCode.createdAt))
+      .limit(PAGE_SIZE)
+      .offset((page - 1) * PAGE_SIZE),
+    db
+      .select({ total: count() })
+      .from(qrCode)
+      .innerJoin(user, eq(user.id, qrCode.userId))
+      .where(where),
+  ]);
+
+  return { total, codes: rows };
+}
+
+export async function getDynamicCodeStats() {
+  const [[codes], [scans]] = await Promise.all([
+    db
+      .select({
+        total: count(),
+        active:
+          sql<number>`count(*) filter (where ${codeStatusWhere.active})`.mapWith(
+            Number,
+          ),
+        disabled:
+          sql<number>`count(*) filter (where ${codeStatusWhere.disabled})`.mapWith(
+            Number,
+          ),
+        scans: sql<number>`coalesce(sum(${qrCode.scanCount}), 0)`.mapWith(
+          Number,
+        ),
+      })
+      .from(qrCode),
+    db
+      .select({ last7d: count() })
+      .from(qrScan)
+      .where(gte(qrScan.scannedAt, daysAgo(7))),
+  ]);
+
+  return { ...codes, scansLast7d: scans.last7d };
 }

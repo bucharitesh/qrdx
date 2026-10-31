@@ -33,6 +33,14 @@ export {
 } from "./corner-dot";
 export type { CornerEyePattern } from "./corner-eye";
 export { CORNER_EYE_PATTERNS, cornerEyePatternSchema } from "./corner-eye";
+export type { FrameStyle, QRFrame } from "./frame";
+export {
+  DEFAULT_FRAME_TEXT,
+  FRAME_STYLES,
+  FRAME_TEXT_MAX_LENGTH,
+  frameSchema,
+  frameStyleSchema,
+} from "./frame";
 export type { BodyPattern } from "./image-pattern";
 export { BODY_PATTERN, bodyPatternSchema } from "./image-pattern";
 export type {

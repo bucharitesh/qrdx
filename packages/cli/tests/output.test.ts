@@ -81,6 +81,38 @@ describe("buildSVGString", () => {
   });
 });
 
+describe("buildSVGString – frames", () => {
+  it("keeps the QR code at full size inside the frame", () => {
+    const svg = buildSVGString({
+      value: "https://qrdx.dev",
+      size: 300,
+      frame: { style: "border", text: "Hi" },
+    });
+    expect(svg).toMatch(/^<svg[^>]*width="372"/);
+    // The code itself is nested at its original size.
+    expect(svg).toMatch(/<svg[^>]*height="300"[^>]*width="300"[^>]*x="36"/);
+  });
+
+  it("caps the label at 24 characters", () => {
+    const svg = buildSVGString({
+      value: "https://qrdx.dev",
+      frame: { style: "banner-top", text: "A".repeat(30) },
+    });
+    expect(svg).toContain(`>${"A".repeat(24)}</text>`);
+  });
+
+  it("puts caller SVG attributes on the outer frame element", () => {
+    const svg = buildSVGString({
+      value: "https://qrdx.dev",
+      frame: { style: "banner-bottom" },
+      // @ts-expect-error SVG attribute passthrough
+      "aria-label": "Menu QR code",
+    });
+    expect(svg).toMatch(/^<svg[^>]*aria-label="Menu QR code"/);
+    expect(svg.match(/aria-label/g)).toHaveLength(1);
+  });
+});
+
 describe("saveOutput – SVG", () => {
   it("writes an SVG file to disk", async () => {
     const out = tmp("save.svg");

@@ -64,9 +64,28 @@ export function GET() {
       ),
   ];
 
+  const developers = [
+    link(
+      "QR code image API",
+      "/docs/developers/image-api",
+      "GET /api/v1/qr?data=...&format=svg|png returns a QR code image; no API key",
+    ),
+    link(
+      "MCP server",
+      "/docs/developers/mcp",
+      "Remote MCP endpoint at /api/mcp (Streamable HTTP, no auth) with QR generation and Wi-Fi/vCard/email/SMS/geo payload tools",
+    ),
+    link(
+      "shadcn/ui registry",
+      "/docs/developers/shadcn",
+      `Install a QR code component: npx shadcn@latest add ${url("/r/qr-code.json")}`,
+    ),
+  ];
+
   const sections: [string, string[]][] = [
     ["Product", product],
     ["Docs", docs],
+    ["Developers", developers],
     ["Blog", blog],
     ["Compare", compare],
   ];

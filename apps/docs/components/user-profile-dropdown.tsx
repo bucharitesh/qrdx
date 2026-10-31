@@ -98,6 +98,11 @@ export function UserProfileDropdown() {
               </DropdownMenuLabel>
               <DropdownMenuSeparator className="bg-border opacity-80" />
               <DropdownMenuItem asChild>
+                <Link href="/dashboard">
+                  <Icons.Link2 /> Dashboard
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
                 <Link href="/settings">
                   <Icons.Settings /> Settings
                 </Link>

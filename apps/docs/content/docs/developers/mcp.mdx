@@ -1,0 +1,96 @@
+---
+title: MCP server
+description: Let Claude, Cursor, VS Code and other AI tools generate styled QR codes with the QRdx MCP server.
+icon: Bot
+---
+
+QRdx runs a public [Model Context Protocol](https://modelcontextprotocol.io) server at:
+
+```txt
+https://qrdx.dev/api/mcp
+```
+
+It uses the Streamable HTTP transport, needs no account or API key, and keeps no session state. Your AI assistant can call it to render QR codes, list the available styles, and build correctly formatted payloads for Wi-Fi, contacts, email, SMS and map locations.
+
+## Setup
+
+<Tabs items={["Claude Code", "Cursor", "VS Code", "Other clients"]}>
+  <Tab value="Claude Code">
+    ```bash
+    claude mcp add --transport http qrdx https://qrdx.dev/api/mcp
+    ```
+  </Tab>
+  <Tab value="Cursor">
+    Add the server to `~/.cursor/mcp.json` (all projects) or `.cursor/mcp.json` (one project):
+
+    ```json
+    {
+      "mcpServers": {
+        "qrdx": {
+          "url": "https://qrdx.dev/api/mcp"
+        }
+      }
+    }
+    ```
+  </Tab>
+  <Tab value="VS Code">
+    Add the server to `.vscode/mcp.json` in your workspace:
+
+    ```json
+    {
+      "servers": {
+        "qrdx": {
+          "type": "http",
+          "url": "https://qrdx.dev/api/mcp"
+        }
+      }
+    }
+    ```
+  </Tab>
+  <Tab value="Other clients">
+    Clients that support remote (Streamable HTTP) servers only need the URL `https://qrdx.dev/api/mcp`. For clients that only run local stdio servers, bridge it with [`mcp-remote`](https://www.npmjs.com/package/mcp-remote):
+
+    ```json
+    {
+      "mcpServers": {
+        "qrdx": {
+          "command": "npx",
+          "args": ["-y", "mcp-remote", "https://qrdx.dev/api/mcp"]
+        }
+      }
+    }
+    ```
+  </Tab>
+</Tabs>
+
+Then ask for what you need, for example:
+
+- "Make a QR code for https://example.com in our brand blue, #155dfc, with rounded modules."
+- "Create a Wi-Fi QR code for the network Office Guest with password correct-horse-battery."
+- "Generate a contact QR code for Ada Lovelace, ada@example.com, and add it to the README."
+
+## Tools
+
+| Tool | What it does |
+|------|--------------|
+| `generate_qr_code` | Renders a QR code. Returns a PNG image and public [image API](/docs/developers/image-api) URLs (SVG and PNG) ready for Markdown or HTML, plus the SVG markup on request. |
+| `list_qr_styles` | Lists body patterns, corner eye and eye dot shapes, frame templates, error correction levels, defaults and limits. |
+| `qr_payload_wifi` | Builds a `WIFI:` network payload (WPA, WEP or open, optionally hidden) with special characters escaped. |
+| `qr_payload_vcard` | Builds a vCard 3.0 contact (RFC 2426): name, organization, title, phones, email, website, address and note. |
+| `qr_payload_email` | Builds a `mailto:` link (RFC 6068) with optional cc, bcc, subject and body. |
+| `qr_payload_sms` | Builds an `sms:` link (RFC 5724) with an optional message, or the older `SMSTO:` form. |
+| `qr_payload_geo` | Builds a `geo:` location (RFC 5870) from latitude and longitude. |
+
+The payload tools return a plain string. Your assistant then passes it as `data` to `generate_qr_code`.
+
+### generate_qr_code inputs
+
+The inputs match the [image API parameters](/docs/developers/image-api#parameters): `data` (required), `size`, `fg`, `bg`, `eyeColor`, `dotColor`, `body`, `eye`, `dot`, `level`, `margin` and `template`. Set `include_svg` to `true` to also get the SVG markup as text, for example to save an `.svg` file. It is off by default because the markup is often 50 to 150 KB, which would fill the conversation.
+
+Like the image API, the MCP server renders solid colors only. It doesn't support logos or gradients.
+
+## Privacy and limits
+
+- The tools only render images and format text. They don't read or change any QRdx account data, and the server doesn't save the codes you generate.
+- The image URLs that `generate_qr_code` returns contain the encoded data. Don't share them if the data is private, such as a Wi-Fi password.
+- Requests are limited to 120 per minute per IP address.

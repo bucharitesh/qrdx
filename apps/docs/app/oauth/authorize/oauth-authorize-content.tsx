@@ -10,6 +10,8 @@ import { Icons } from "@/components/icons";
 const SCOPE_LABELS: Record<string, string> = {
   "themes:read": "Read your saved QR themes",
   "profile:read": "Read your profile (name, email)",
+  "codes:read": "Read your dynamic QR codes and their scan analytics",
+  "codes:write": "Create, edit and delete your dynamic QR codes",
 };
 
 export function OAuthAuthorizeContent() {

@@ -1,6 +1,5 @@
 import type { DriveFile } from "@repo/integrations";
 import * as React from "react";
-import { apiFetch } from "@/lib/api-fetch";
 
 interface UseGoogleDriveIntegrationReturn {
   files: DriveFile[];
@@ -46,9 +45,10 @@ export function useGoogleDriveIntegration(): UseGoogleDriveIntegrationReturn {
         setIsLoading(true);
         setError(null);
 
-        const response = await apiFetch(getFilesUrl(search, pageToken));
+        // Plain fetch: a 401 here means "not connected", not "sign the user out"
+        const response = await fetch(getFilesUrl(search, pageToken));
 
-        if (response.status === 404) {
+        if (response.status === 404 || response.status === 401) {
           setIsConnected(false);
           setFiles([]);
           setNextPageToken(undefined);

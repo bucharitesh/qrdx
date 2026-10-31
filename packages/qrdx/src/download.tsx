@@ -1,5 +1,6 @@
 import type { QRProps } from "../types";
 import { DEFAULT_SIZE } from "./constants";
+import { getFrameDimensions } from "./frame";
 import { getQRAsCanvas, getQRAsSVGDataUri } from "./index";
 
 export type DownloadFormat = "png" | "jpg" | "svg" | "pdf";
@@ -62,9 +63,32 @@ export function validateSize(
 }
 
 /**
+ * Returns props rendered at `size`. A logo laid out for the props' own `size`
+ * (as `getQRData` does on a 1024px canvas) is scaled along with the code.
+ */
+export function withQRSize(qrProps: QRProps, size: number): QRProps {
+  const { imageSettings, size: fromSize } = qrProps;
+  if (!(imageSettings && fromSize) || fromSize === size) {
+    return { ...qrProps, size };
+  }
+  const ratio = size / fromSize;
+  return {
+    ...qrProps,
+    size,
+    imageSettings: {
+      ...imageSettings,
+      width: imageSettings.width * ratio,
+      height: imageSettings.height * ratio,
+      ...(imageSettings.x != null && { x: imageSettings.x * ratio }),
+      ...(imageSettings.y != null && { y: imageSettings.y * ratio }),
+    },
+  };
+}
+
+/**
  * Downloads a file to the user's device
  */
-function downloadFile(dataUrl: string, filename: string) {
+export function downloadFile(dataUrl: string, filename: string) {
   const link = document.createElement("a");
   link.href = dataUrl;
   link.download = filename;
@@ -131,14 +155,18 @@ async function getQRAsPDF(qrProps: QRProps): Promise<string> {
     throw new Error(`Failed to encode SVG for PDF conversion: ${error}`);
   }
 
+  const { width, height } = getFrameDimensions(
+    qrProps.size || DEFAULT_SIZE,
+    qrProps.frame
+  );
+
   // Get canvas from SVG using base64 encoding
   const canvas = await new Promise<HTMLCanvasElement>((resolve, reject) => {
     const img = new Image();
     const tempCanvas = document.createElement("canvas");
-    const size = qrProps.size || DEFAULT_SIZE;
 
-    tempCanvas.width = size;
-    tempCanvas.height = size;
+    tempCanvas.width = Math.round(width);
+    tempCanvas.height = Math.round(height);
 
     const ctx = tempCanvas.getContext("2d");
     if (!ctx) {
@@ -159,7 +187,7 @@ async function getQRAsPDF(qrProps: QRProps): Promise<string> {
     img.onload = () => {
       clearTimeout(timeout);
       try {
-        ctx.drawImage(img, 0, 0, size, size);
+        ctx.drawImage(img, 0, 0, tempCanvas.width, tempCanvas.height);
         resolve(tempCanvas);
       } catch (error) {
         clearTimeout(timeout);
@@ -179,16 +207,17 @@ async function getQRAsPDF(qrProps: QRProps): Promise<string> {
 
   // Create PDF with the canvas
   const imgData = canvas.toDataURL("image/png", 1.0);
-  const size = qrProps.size || DEFAULT_SIZE;
-  const mmSize = size * 0.264_583; // Convert pixels to mm (assuming 96 DPI)
+  // Convert pixels to mm (assuming 96 DPI)
+  const mmWidth = width * 0.264_583;
+  const mmHeight = height * 0.264_583;
 
   const pdf = new jsPDF({
-    orientation: "portrait",
+    orientation: mmWidth > mmHeight ? "landscape" : "portrait",
     unit: "mm",
-    format: [mmSize, mmSize],
+    format: [mmWidth, mmHeight],
   });
 
-  pdf.addImage(imgData, "PNG", 0, 0, mmSize, mmSize);
+  pdf.addImage(imgData, "PNG", 0, 0, mmWidth, mmHeight);
 
   canvas.remove();
 
@@ -211,11 +240,8 @@ export async function downloadQRCode(
     throw new Error(validation.error);
   }
 
-  // Create props with the custom size
-  const propsWithSize = {
-    ...qrProps,
-    size: size.width, // QR codes are square, so we just use width
-  };
+  // Create props with the custom size (QR codes are square, so use width)
+  const propsWithSize = withQRSize(qrProps, size.width);
 
   const defaultFilename = `qr-code-${size.width}x${size.height}.${getFileExtension(format)}`;
   const finalFilename = filename || defaultFilename;
@@ -260,10 +286,7 @@ export async function getQRCodeDataUrl(
   }
 
   // Create props with the custom size
-  const propsWithSize = {
-    ...qrProps,
-    size: size.width,
-  };
+  const propsWithSize = withQRSize(qrProps, size.width);
 
   if (format === "svg") {
     return await getQRAsSVGDataUri(propsWithSize);
@@ -297,10 +320,7 @@ export async function copyQRCodeToClipboard(
       throw new Error(validation.error);
     }
 
-    const propsWithSize = {
-      ...qrProps,
-      size: size.width,
-    };
+    const propsWithSize = withQRSize(qrProps, size.width);
 
     // Render inside a promise handed straight to ClipboardItem: Safari rejects
     // clipboard writes that start after an await (outside the user gesture).

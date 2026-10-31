@@ -8,14 +8,20 @@ import type {
   CornerEyeDotPattern,
   CornerEyePattern,
   ErrorLevel,
+  FrameStyle,
+  QRFrame,
 } from "qrdx";
 import {
   BODY_PATTERN,
   CORNER_EYE_DOT_PATTERNS,
   CORNER_EYE_PATTERNS,
   colorConfigSchema,
+  DEFAULT_FRAME_TEXT,
   DEFAULT_MARGIN,
   errorLevelSchema,
+  FRAME_STYLES,
+  FRAME_TEXT_MAX_LENGTH,
+  getFrameDimensions,
   getTemplateIds,
 } from "qrdx";
 import { saveOutput } from "../render/output";
@@ -41,7 +47,13 @@ interface GenerateFlags {
   output?: string;
   size?: number;
   template?: string;
+  frame?: FrameStyle;
+  frameText?: string;
+  frameColor?: string;
+  frameTextColor?: string;
 }
+
+const HEX_COLOR = /^#(?:[0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})$/i;
 
 /**
  * Parses a color flag value: accepts a hex string or a JSON ColorConfig object.
@@ -93,6 +105,41 @@ function parseIntegerFlag(
   return parsed;
 }
 
+function assertHexColor(flag: string, value: string | undefined): void {
+  if (value !== undefined && !HEX_COLOR.test(value)) {
+    throw new Error(
+      `Invalid ${flag} "${value}". Expected a hex color like #000000.`
+    );
+  }
+}
+
+function requireValue(flag: string, value: string | undefined): string {
+  if (value === undefined) {
+    throw new Error(`${flag} needs a value. Run qrdx --help to see options.`);
+  }
+  return value;
+}
+
+/** Frame options from flags; frame text/colors alone imply a bottom banner. */
+function frameFromFlags(flags: GenerateFlags): QRFrame | undefined {
+  const style =
+    flags.frame ??
+    (flags.frameText !== undefined ||
+    flags.frameColor !== undefined ||
+    flags.frameTextColor !== undefined
+      ? "banner-bottom"
+      : undefined);
+  if (!style || style === "none") {
+    return undefined;
+  }
+  return {
+    style,
+    ...(flags.frameText !== undefined && { text: flags.frameText }),
+    ...(flags.frameColor && { color: flags.frameColor }),
+    ...(flags.frameTextColor && { textColor: flags.frameTextColor }),
+  };
+}
+
 /** Rejects bad flag values up front instead of failing deep inside rendering. */
 function validateFlags(flags: GenerateFlags): void {
   assertOneOf("--level", flags.level, errorLevelSchema.options);
@@ -104,6 +151,17 @@ function validateFlags(flags: GenerateFlags): void {
     flags.template,
     getTemplateIds().filter((id) => id !== "default")
   );
+  assertOneOf("--frame", flags.frame, FRAME_STYLES);
+  if (
+    flags.frameText !== undefined &&
+    flags.frameText.length > FRAME_TEXT_MAX_LENGTH
+  ) {
+    throw new Error(
+      `Invalid --frame-text "${flags.frameText}". Use ${FRAME_TEXT_MAX_LENGTH} characters or fewer.`
+    );
+  }
+  assertHexColor("--frame-color", flags.frameColor);
+  assertHexColor("--frame-text-color", flags.frameTextColor);
   if (flags.output !== undefined) {
     const ext = extname(flags.output).toLowerCase();
     if (!["", ".svg", ".png"].includes(ext)) {
@@ -224,6 +282,22 @@ function parseFlags(args: string[]): GenerateFlags {
         flags.template = next;
         i += 2;
         break;
+      case "--frame":
+        flags.frame = requireValue(arg, next) as FrameStyle;
+        i += 2;
+        break;
+      case "--frame-text":
+        flags.frameText = requireValue(arg, next);
+        i += 2;
+        break;
+      case "--frame-color":
+        flags.frameColor = requireValue(arg, next);
+        i += 2;
+        break;
+      case "--frame-text-color":
+        flags.frameTextColor = requireValue(arg, next);
+        i += 2;
+        break;
       default:
         throw new Error(
           `Unknown option "${arg}". Run qrdx --help to see all options.`
@@ -271,7 +345,8 @@ export async function runGenerate(args: string[]): Promise<void> {
       flags.logo ||
       flags.level ||
       flags.margin !== undefined ||
-      flags.template
+      flags.template ||
+      frameFromFlags(flags)
   );
 
   p.intro(`${TEXT}qrdx${RESET} ${DIM}— QR Code Generator${RESET}`);
@@ -386,6 +461,7 @@ export async function runGenerate(args: string[]): Promise<void> {
   let logo = flags.logo;
   let margin = flags.margin ?? DEFAULT_MARGIN;
   let template = flags.template;
+  let frame = frameFromFlags(flags);
 
   if (wantAdvanced && !nonInteractive) {
     // ── Error correction ──────────────────────────────────────────────
@@ -584,6 +660,37 @@ export async function runGenerate(args: string[]): Promise<void> {
       template = (res as string) || undefined;
     }
 
+    // ── Frame ─────────────────────────────────────────────────────────
+    if (flags.frame === undefined && !frame) {
+      const res = await p.select<FrameStyle>({
+        message: `Frame ${DIM}(call-to-action label around the code)${RESET}`,
+        options: FRAME_STYLES.map((style) => ({ value: style, label: style })),
+        initialValue: "none" as FrameStyle,
+      });
+      if (isCancel(res)) {
+        handleCancel();
+      }
+      if (res !== "none") {
+        const text = await p.text({
+          message: `Frame text ${DIM}(up to ${FRAME_TEXT_MAX_LENGTH} characters)${RESET}`,
+          placeholder: DEFAULT_FRAME_TEXT,
+          defaultValue: DEFAULT_FRAME_TEXT,
+          validate(v) {
+            if (v && v.length > FRAME_TEXT_MAX_LENGTH) {
+              return `Use ${FRAME_TEXT_MAX_LENGTH} characters or fewer`;
+            }
+          },
+        });
+        if (isCancel(text)) {
+          handleCancel();
+        }
+        frame = {
+          style: res as FrameStyle,
+          text: (text as string) || DEFAULT_FRAME_TEXT,
+        };
+      }
+    }
+
     // ── Logo ──────────────────────────────────────────────────────────
     if (logo === undefined && !flags.noLogo) {
       const addLogo = await p.confirm({
@@ -655,6 +762,7 @@ export async function runGenerate(args: string[]): Promise<void> {
       margin,
       size,
       ...(template ? { templateId: template } : {}),
+      ...(frame ? { frame } : {}),
       ...(logo
         ? {
             imageSettings: {
@@ -670,8 +778,9 @@ export async function runGenerate(args: string[]): Promise<void> {
     if (outputPath) {
       const format = inferFormat(outputPath);
       await saveOutput({ ...qrProps, outputPath, format });
+      const dimensions = getFrameDimensions(size, frame);
       spinner.stop(
-        `${GREEN}✔${RESET}  Saved to ${TEXT}${outputPath}${RESET} ${DIM}(${size}×${size})${RESET}`
+        `${GREEN}✔${RESET}  Saved to ${TEXT}${outputPath}${RESET} ${DIM}(${Math.round(dimensions.width)}×${Math.round(dimensions.height)})${RESET}`
       );
     } else {
       spinner.stop("QR code ready");

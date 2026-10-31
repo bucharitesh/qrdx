@@ -4,7 +4,9 @@ import {
 } from "@repo/integrations";
 import type { MetadataRoute } from "next";
 import { SLUG_TO_CATEGORY } from "@/lib/blog-constants";
+import { env } from "@/lib/env";
 import { baseUrl } from "@/lib/metadata";
+import { QR_TYPE_SLUGS } from "@/lib/qr-types-content";
 import {
   blogAuthorsSource,
   blogSource,
@@ -83,6 +85,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       priority: 0.9,
     },
+    // AI QR art is only listed where it can run (same check as lib/ai/art.ts).
+    ...(env.FAL_KEY
+      ? [
+          {
+            url: url("/ai/art"),
+            changeFrequency: "monthly",
+            priority: 0.8,
+          } satisfies Entry,
+        ]
+      : []),
     {
       url: url("/community"),
       changeFrequency: "weekly",
@@ -135,6 +147,39 @@ export default function sitemap(): MetadataRoute.Sitemap {
           priority: 0.7,
         }) satisfies Entry,
     ),
+    {
+      url: url("/qr-code-generator"),
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    ...QR_TYPE_SLUGS.map(
+      (type) =>
+        ({
+          url: url(`/qr-code-generator/${type}`),
+          changeFrequency: "monthly",
+          priority: 0.7,
+        }) satisfies Entry,
+    ),
+    {
+      url: url("/tools"),
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    {
+      url: url("/tools/bulk"),
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    {
+      url: url("/tools/print-size"),
+      changeFrequency: "monthly",
+      priority: 0.6,
+    },
+    {
+      url: url("/tools/scan-checker"),
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
     {
       url: url("/compare"),
       lastModified: latest(compares.map((p) => p.data.lastModified)),
