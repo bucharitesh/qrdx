@@ -54,7 +54,7 @@ describe("catalog surfaces", () => {
         "meta-pixel",
         "tiktok-pixel",
         "linkedin-insight-tag",
-      ].sort(),
+      ].sort()
     );
   });
 
@@ -69,10 +69,10 @@ describe("catalog surfaces", () => {
         "gemini-cli",
         "vscode",
         "windsurf",
-      ].sort(),
+      ].sort()
     );
     expect(slugs("developers").sort()).toEqual(
-      ["cli", "image-api", "react", "rest-api", "shadcn", "webhooks"].sort(),
+      ["cli", "image-api", "react", "rest-api", "shadcn", "webhooks"].sort()
     );
     expect(slugs("plugins")).toEqual(["chrome", "figma", "raycast", "canva"]);
     expect(slugs("feature").sort()).toEqual(["custom-domains", "email-alerts"]);
@@ -101,10 +101,10 @@ describe("catalog surfaces", () => {
 
   it("points AI assistants at their /mcp tab and plugins at their anchor", () => {
     expect(getCatalogRedirect(getCatalogEntry("cursor")!)).toBe(
-      "/mcp?tab=cursor",
+      "/mcp?tab=cursor"
     );
     expect(getCatalogRedirect(getCatalogEntry("gemini-cli")!)).toBe(
-      "/mcp?tab=gemini",
+      "/mcp?tab=gemini"
     );
     for (const entry of getCatalogBySurface("plugins")) {
       expect(getCatalogRedirect(entry)).toBe(`/plugins#${entry.slug}`);
@@ -117,7 +117,7 @@ describe("catalog data", () => {
     for (const entry of getIntegrationCatalog()) {
       if (entry.logo.type !== "image") continue;
       expect(existsSync(join(PUBLIC, entry.logo.src)), entry.logo.src).toBe(
-        true,
+        true
       );
     }
   });
@@ -136,7 +136,7 @@ describe("catalog data", () => {
       expect(related.length, entry.slug).toBeGreaterThan(0);
       for (const item of related) {
         expect(isListedIntegration(item), `${entry.slug} → ${item.slug}`).toBe(
-          true,
+          true
         );
         expect(item.slug).not.toBe(entry.slug);
       }
@@ -145,7 +145,7 @@ describe("catalog data", () => {
 
   it("hides categories that have no listed integration", () => {
     const used = getUsedCategories(getCatalogBySurface("integrations")).map(
-      (category) => category.id,
+      (category) => category.id
     );
     expect(used).not.toContain("ai");
     expect(used).not.toContain("plugins");
@@ -153,8 +153,8 @@ describe("catalog data", () => {
     // Display order is kept.
     expect(used).toEqual(
       CATALOG_CATEGORIES.map((category) => category.id).filter((id) =>
-        used.includes(id),
-      ),
+        used.includes(id)
+      )
     );
   });
 });

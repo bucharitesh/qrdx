@@ -169,22 +169,29 @@ export function getUsedCategories(
 
 /**
  * Explicit `related` first, then entries sharing the first category. Only
- * entries on the same surface, so an integration links to integrations.
+ * entries on the same surface, so an integration links to integrations,
+ * and only those `include` accepts (e.g. the ones shown on this server).
  */
 export function getRelatedEntries(
   entry: IntegrationCatalogEntry,
-  limit = 3
+  limit = 3,
+  include: (candidate: IntegrationCatalogEntry) => boolean = () => true
 ): IntegrationCatalogEntry[] {
   const picked = new Map<string, IntegrationCatalogEntry>();
   const eligible = (candidate: IntegrationCatalogEntry) =>
-    candidate.slug !== entry.slug && candidate.surface === entry.surface;
+    candidate.slug !== entry.slug &&
+    candidate.surface === entry.surface &&
+    include(candidate);
   for (const slug of entry.related ?? []) {
     const related = BY_SLUG.get(slug);
     if (related && eligible(related)) picked.set(slug, related);
   }
   for (const candidate of ENTRIES) {
     if (picked.size >= limit) break;
-    if (eligible(candidate) && candidate.categories[0] === entry.categories[0]) {
+    if (
+      eligible(candidate) &&
+      candidate.categories[0] === entry.categories[0]
+    ) {
       picked.set(candidate.slug, candidate);
     }
   }

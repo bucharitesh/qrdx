@@ -22,8 +22,10 @@ function metaFor(
   loaded: boolean,
 ): string {
   if (!loaded) return "Checking connection…";
-  if (entry?.available === false) return "Not available yet";
   if (entry?.connection === "active") return "Connected";
+  // Local dev only: production leaves these providers out.
+  if (entry?.needsSetup?.length)
+    return `Needs setup · ${entry.needsSetup.join(", ")}`;
   if (entry?.connection === "error") return "Reconnect needed";
   return API_PROVIDERS[id].connect === "oauth"
     ? "Connect by signing in"
@@ -79,32 +81,37 @@ export function ProviderStep({
 }) {
   const status = (id: ApiProviderId) =>
     statuses?.find((entry) => entry.id === id);
+  // Providers this deployment doesn't offer (they need setup in production).
+  const apiIds = API_PROVIDER_IDS.filter(
+    (id) => status(id)?.available !== false,
+  );
 
   return (
     <StepLayout>
       <div className="space-y-6">
-        <section className="space-y-2.5">
-          <div>
-            <h3 className="text-sm font-semibold">From a connected account</h3>
-            <p className="text-muted-foreground text-xs">
-              Pick links from the account, preview, import. Where the API allows
-              it, old links can then point to their new QRdx codes.
-            </p>
-          </div>
-          <div className="grid gap-2 sm:grid-cols-2">
-            {API_PROVIDER_IDS.map((id) => {
-              const entry = status(id);
-              return (
+        {apiIds.length > 0 && (
+          <section className="space-y-2.5">
+            <div>
+              <h3 className="text-sm font-semibold">
+                From a connected account
+              </h3>
+              <p className="text-muted-foreground text-xs">
+                Pick links from the account, preview, import. Where the API
+                allows it, old links can then point to their new QRdx codes.
+              </p>
+            </div>
+            <div className="grid gap-2 sm:grid-cols-2">
+              {apiIds.map((id) => (
                 <Tile
                   key={id}
-                  meta={metaFor(id, entry, statuses !== null)}
+                  meta={metaFor(id, status(id), statuses !== null)}
                   onClick={() => onPickApi(id)}
                   provider={id}
                 />
-              );
-            })}
-          </div>
-        </section>
+              ))}
+            </div>
+          </section>
+        )}
 
         <section className="space-y-2.5">
           <div>

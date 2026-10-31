@@ -25,6 +25,8 @@ export type IntegrationWithStatus = IntegrationDefinition & {
   status?: "active" | "disconnected" | "error";
   metadata?: any;
   connectedAt?: Date;
+  /** Local dev only: the env variable names it still needs. */
+  needsSetup?: string[];
 };
 
 /** Built-in integrations are set up where they live in the app. */
@@ -71,7 +73,7 @@ const SHORTCUTS: {
     title: "AI assistants",
     description:
       "Make QR codes from Claude, ChatGPT, Cursor and more over MCP.",
-    href: "/integrations?category=ai",
+    href: "/mcp",
     slugs: ["claude", "chatgpt", "cursor"],
   },
 ];
@@ -83,9 +85,14 @@ function matches(text: string[], query: string): boolean {
 
 interface IntegrationsClientProps {
   integrations: IntegrationWithStatus[];
+  /** Slugs this deployment hides because they need setup (production). */
+  hiddenSlugs?: string[];
 }
 
-export function IntegrationsClient({ integrations }: IntegrationsClientProps) {
+export function IntegrationsClient({
+  integrations,
+  hiddenSlugs = [],
+}: IntegrationsClientProps) {
   const [search, setSearch] = useState("");
 
   const filtered = useMemo(
@@ -101,19 +108,22 @@ export function IntegrationsClient({ integrations }: IntegrationsClientProps) {
       SHORTCUTS.map((shortcut) => ({
         ...shortcut,
         entries: shortcut.slugs
+          .filter((slug) => !hiddenSlugs.includes(slug))
           .map((slug) => getCatalogEntry(slug))
           .filter((entry): entry is IntegrationCatalogEntry => Boolean(entry)),
-      })).filter((shortcut) =>
-        matches(
-          [
-            shortcut.title,
-            shortcut.description,
-            ...shortcut.entries.map((entry) => entry.name),
-          ],
-          search,
-        ),
+      })).filter(
+        (shortcut) =>
+          shortcut.entries.length > 0 &&
+          matches(
+            [
+              shortcut.title,
+              shortcut.description,
+              ...shortcut.entries.map((entry) => entry.name),
+            ],
+            search,
+          ),
       ),
-    [search],
+    [search, hiddenSlugs],
   );
 
   const connected = filtered.filter((i) => i.isConnected);
@@ -187,7 +197,7 @@ export function IntegrationsClient({ integrations }: IntegrationsClientProps) {
                 logos={integration.logos}
                 capabilities={integration.capabilities}
                 isConnected={integration.isConnected}
-                isConfigured={integration.isConfigured}
+                needsSetup={integration.needsSetup}
               />
             ))}
           </div>

@@ -102,6 +102,63 @@ export function getIntegrationRedirectUri(slug: string): string {
   return `${getIntegrationRedirectOrigin()}/api/integrations/${slug}/callback`;
 }
 
+/** Environment variable names for an OAuth integration's app credentials. */
+export interface IntegrationEnvVars {
+  clientId: string;
+  clientSecret: string;
+  /** Without it, the callback is built from the app origin (getIntegrationRedirectUri). */
+  redirectUri?: string;
+}
+
+/**
+ * The OAuth integrations' credential variables, by slug. API-key ("api_key")
+ * and no-connection ("none") integrations need none.
+ */
+export const INTEGRATION_ENV_VARS: Record<string, IntegrationEnvVars> = {
+  bitly: { clientId: "BITLY_CLIENT_ID", clientSecret: "BITLY_CLIENT_SECRET" },
+  dropbox: {
+    clientId: "DROPBOX_CLIENT_ID",
+    clientSecret: "DROPBOX_CLIENT_SECRET",
+  },
+  onedrive: {
+    clientId: "MICROSOFT_CLIENT_ID",
+    clientSecret: "MICROSOFT_CLIENT_SECRET",
+  },
+  box: { clientId: "BOX_CLIENT_ID", clientSecret: "BOX_CLIENT_SECRET" },
+  notion: {
+    clientId: "NOTION_CLIENT_ID",
+    clientSecret: "NOTION_CLIENT_SECRET",
+  },
+  dub: {
+    clientId: "DUB_CLIENT_ID",
+    clientSecret: "DUB_CLIENT_SECRET",
+    redirectUri: "DUB_REDIRECT_URI",
+  },
+  "google-drive": {
+    clientId: "GOOGLE_CLIENT_ID",
+    clientSecret: "GOOGLE_CLIENT_SECRET",
+    redirectUri: "GOOGLE_DRIVE_REDIRECT_URI",
+  },
+  // Same Google OAuth client as Drive/sign-in, its own grant and callback
+  "google-sheets": {
+    clientId: "GOOGLE_CLIENT_ID",
+    clientSecret: "GOOGLE_CLIENT_SECRET",
+  },
+  calendly: {
+    clientId: "CALENDLY_CLIENT_ID",
+    clientSecret: "CALENDLY_CLIENT_SECRET",
+  },
+  slack: { clientId: "SLACK_CLIENT_ID", clientSecret: "SLACK_CLIENT_SECRET" },
+  hubspot: {
+    clientId: "HUBSPOT_CLIENT_ID",
+    clientSecret: "HUBSPOT_CLIENT_SECRET",
+  },
+  mailchimp: {
+    clientId: "MAILCHIMP_CLIENT_ID",
+    clientSecret: "MAILCHIMP_CLIENT_SECRET",
+  },
+};
+
 /**
  * Get integration config by slug with environment credentials
  */
@@ -122,61 +179,7 @@ export function getIntegrationConfigWithEnv(
     };
   }
 
-  // Map slug to environment variable names. Without `redirectUri`, the
-  // callback is built from the app origin (getIntegrationRedirectUri).
-  const envMappings: Record<
-    string,
-    {
-      clientId: string;
-      clientSecret: string;
-      redirectUri?: string;
-    }
-  > = {
-    bitly: { clientId: "BITLY_CLIENT_ID", clientSecret: "BITLY_CLIENT_SECRET" },
-    dropbox: {
-      clientId: "DROPBOX_CLIENT_ID",
-      clientSecret: "DROPBOX_CLIENT_SECRET",
-    },
-    onedrive: {
-      clientId: "MICROSOFT_CLIENT_ID",
-      clientSecret: "MICROSOFT_CLIENT_SECRET",
-    },
-    box: { clientId: "BOX_CLIENT_ID", clientSecret: "BOX_CLIENT_SECRET" },
-    notion: {
-      clientId: "NOTION_CLIENT_ID",
-      clientSecret: "NOTION_CLIENT_SECRET",
-    },
-    dub: {
-      clientId: "DUB_CLIENT_ID",
-      clientSecret: "DUB_CLIENT_SECRET",
-      redirectUri: "DUB_REDIRECT_URI",
-    },
-    "google-drive": {
-      clientId: "GOOGLE_CLIENT_ID",
-      clientSecret: "GOOGLE_CLIENT_SECRET",
-      redirectUri: "GOOGLE_DRIVE_REDIRECT_URI",
-    },
-    // Same Google OAuth client as Drive/sign-in, its own grant and callback
-    "google-sheets": {
-      clientId: "GOOGLE_CLIENT_ID",
-      clientSecret: "GOOGLE_CLIENT_SECRET",
-    },
-    calendly: {
-      clientId: "CALENDLY_CLIENT_ID",
-      clientSecret: "CALENDLY_CLIENT_SECRET",
-    },
-    slack: { clientId: "SLACK_CLIENT_ID", clientSecret: "SLACK_CLIENT_SECRET" },
-    hubspot: {
-      clientId: "HUBSPOT_CLIENT_ID",
-      clientSecret: "HUBSPOT_CLIENT_SECRET",
-    },
-    mailchimp: {
-      clientId: "MAILCHIMP_CLIENT_ID",
-      clientSecret: "MAILCHIMP_CLIENT_SECRET",
-    },
-  };
-
-  const mapping = envMappings[slug];
+  const mapping = INTEGRATION_ENV_VARS[slug];
   if (!mapping) {
     throw new Error(`Unknown integration: ${slug}`);
   }

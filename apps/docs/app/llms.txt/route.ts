@@ -1,6 +1,8 @@
-import { getIntegrationCatalog } from "@repo/integrations/src/catalog";
+import { getCatalogBySurface } from "@repo/integrations/src/catalog";
 import { AI_REQUEST_FREE_TIER_LIMIT, MAX_FREE_THEMES } from "@/lib/constants";
 import { env } from "@/lib/env";
+import { getIntegrationAvailability } from "@/lib/integration-availability";
+import { filterVisible } from "@/lib/integration-availability-rules";
 import { baseUrl } from "@/lib/metadata";
 import { PLAN_LIMITS } from "@/lib/plans";
 import { formatPrice, type PaidPlan, PRICING } from "@/lib/pricing";
@@ -146,7 +148,12 @@ export function GET() {
     link(
       "Integrations",
       "/integrations",
-      "Slack, Discord, Zapier, Make, n8n, Dub, Google Drive, AI assistants, analytics pixels and more",
+      "Third-party tools QRdx connects to: chat alerts, Zapier, Make and n8n workflows, short links, file storage, content sources, CRMs and analytics pixels",
+    ),
+    link(
+      "Plugins",
+      "/plugins",
+      "QRdx for Chrome, Figma, Raycast and Canva: styled QR codes inside those apps, free and open source",
     ),
     link("Changelog", "/changelogs"),
     link("Source code", "https://github.com/bucharitesh/qrdx"),
@@ -183,8 +190,22 @@ export function GET() {
     ),
   ];
 
-  const integrations = getIntegrationCatalog().map((entry) =>
+  // Only third-party integrations this deployment offers (AI assistants,
+  // developer tools and plugins are listed under their own pages).
+  const integrations = filterVisible(
+    getIntegrationAvailability(),
+    getCatalogBySurface("integrations"),
+    (entry) => entry.slug,
+  ).map((entry) =>
     link(entry.name, `/integrations/${entry.slug}`, entry.tagline),
+  );
+
+  const plugins = getCatalogBySurface("plugins").map((entry) =>
+    link(
+      entry.name,
+      entry.canonicalPath ?? "/plugins",
+      `${entry.tagline}${entry.note ? ` ${entry.note}` : ""}`,
+    ),
   );
 
   const useCases = [
@@ -275,6 +296,7 @@ export function GET() {
     ["Product", product],
     ["Developers", developers],
     ["Integrations", integrations],
+    ["Plugins", plugins],
     ["Tools", tools],
     ["Use cases", useCases],
     ["Docs", docs],

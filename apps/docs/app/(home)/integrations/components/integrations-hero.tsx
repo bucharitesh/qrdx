@@ -1,9 +1,7 @@
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import {
-  CATALOG_CATEGORIES,
-  getCatalogEntry,
-  getIntegrationCatalog,
+  getUsedCategories,
   type IntegrationCatalogEntry,
 } from "@repo/integrations/src/catalog";
 import { ArrowDown, ArrowRight } from "iconsax-reactjs";
@@ -13,22 +11,38 @@ import { AsciiField, Backdrop, MeshGradient } from "@/components/fx";
 import { QrdxLogo } from "@/components/qrdx-logo";
 import { IntegrationLogo } from "@/components/sections/integrations/integration-logo";
 
-const pick = (slugs: string[]) =>
-  slugs
-    .map((slug) => getCatalogEntry(slug))
-    .filter((entry): entry is IntegrationCatalogEntry => Boolean(entry));
-
-const OUTER = pick([
+/** Logos for the orbit, best known first; the rest fill in when hidden. */
+const ORBIT_ORDER = [
   "slack",
   "zapier",
-  "claude",
   "google-drive",
   "discord",
   "make",
-  "cursor",
+  "hubspot",
+  "notion",
   "google-analytics",
-]);
-const INNER = pick(["dub", "n8n", "chatgpt", "figma", "vscode"]);
+  "dub",
+  "n8n",
+  "stripe",
+  "mailchimp",
+  "dropbox",
+];
+const OUTER_COUNT = 8;
+const ORBIT_COUNT = 13;
+
+/** Names for the headline, in order of preference. */
+const HEADLINE_ORDER = ["slack", "zapier", "google-drive", "hubspot", "make"];
+
+function byPreference(
+  entries: IntegrationCatalogEntry[],
+  order: string[],
+): IntegrationCatalogEntry[] {
+  const rank = (entry: IntegrationCatalogEntry) => {
+    const index = order.indexOf(entry.slug);
+    return index === -1 ? order.length : index;
+  };
+  return [...entries].sort((a, b) => rank(a) - rank(b));
+}
 
 function Ring({
   entries,
@@ -88,7 +102,11 @@ function Ring({
 }
 
 /** QRdx in the middle, a few of the tools it connects to orbiting around it. */
-function Orbit() {
+function Orbit({ entries }: { entries: IntegrationCatalogEntry[] }) {
+  const shown = byPreference(entries, ORBIT_ORDER).slice(0, ORBIT_COUNT);
+  const outer = shown.slice(0, OUTER_COUNT);
+  const inner = shown.slice(OUTER_COUNT);
+
   return (
     <div
       aria-hidden
@@ -97,8 +115,8 @@ function Orbit() {
       <div className="absolute inset-[7%] rounded-full border border-dashed border-foreground/10" />
       <div className="absolute inset-[25%] rounded-full border border-dashed border-foreground/10" />
       <div className="absolute inset-[38%] rounded-full bg-[radial-gradient(closest-side,color-mix(in_oklab,var(--foreground)_6%,transparent),transparent)]" />
-      <Ring entries={OUTER} radius={0.43} />
-      <Ring entries={INNER} radius={0.25} reverse />
+      <Ring entries={outer} radius={0.43} />
+      {inner.length > 0 && <Ring entries={inner} radius={0.25} reverse />}
       <div className="absolute top-1/2 left-1/2 grid size-16 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border bg-card shadow-sm">
         <QrdxLogo className="size-7 fill-foreground" />
       </div>
@@ -106,14 +124,22 @@ function Orbit() {
   );
 }
 
-export function IntegrationsHero() {
-  const entries = getIntegrationCatalog();
+export function IntegrationsHero({
+  entries,
+}: {
+  /** The integrations listed on this server. */
+  entries: IntegrationCatalogEntry[];
+}) {
   const count = (kind: IntegrationCatalogEntry["kind"]) =>
     entries.filter((entry) => entry.kind === kind).length;
+  const named = byPreference(entries, HEADLINE_ORDER)
+    .slice(0, 3)
+    .map((entry) => entry.name);
+  const more = entries.length - named.length;
 
   const stats = [
     { value: entries.length, label: "integrations" },
-    { value: CATALOG_CATEGORIES.length, label: "categories" },
+    { value: getUsedCategories(entries).length, label: "categories" },
     { value: count("native"), label: "built in" },
   ];
 
@@ -133,14 +159,14 @@ export function IntegrationsHero() {
             Integrations
           </p>
           <h1 className="text-4xl font-semibold tracking-tighter text-balance text-secondary-foreground md:text-5xl">
-            Connect QRdx to Slack, Zapier, Claude and {entries.length - 3} more
-            tools
+            Connect QRdx to {named.join(", ")}
+            {more > 0 ? ` and ${more} more tools` : ""}
           </h1>
           <p className="max-w-xl text-base leading-relaxed text-muted-foreground text-pretty md:text-lg">
-            Get scan milestones and form responses in Slack or Discord, run
-            Zapier, Make and n8n workflows on every event, and generate codes
-            from Claude, ChatGPT or Cursor. Each one comes with exact setup
-            steps.
+            Send scan milestones and form responses to your team&rsquo;s chat,
+            run Zapier, Make and n8n workflows on every event, add your own
+            analytics pixels to hosted pages and turn what&rsquo;s already in
+            your accounts into codes. Each one comes with exact setup steps.
           </p>
           <div className="flex flex-wrap items-center gap-2.5">
             <Button asChild>
@@ -150,8 +176,8 @@ export function IntegrationsHero() {
               </Link>
             </Button>
             <Button variant="outline" asChild>
-              <Link href="/integrations/webhooks">
-                Webhooks and API
+              <Link href="#build">
+                Build with QRdx
                 <ArrowRight aria-hidden className="size-4" />
               </Link>
             </Button>
@@ -170,7 +196,7 @@ export function IntegrationsHero() {
             ))}
           </ul>
         </div>
-        <Orbit />
+        <Orbit entries={entries} />
       </div>
     </section>
   );

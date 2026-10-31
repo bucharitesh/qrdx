@@ -8,6 +8,7 @@ import {
   Category,
   Clock,
   Code1,
+  ElementPlus,
   Link21,
   MagicStar,
   MessageProgramming,
@@ -194,6 +195,12 @@ export const siteConfig = {
             icon: Box,
           },
           {
+            name: "Plugins",
+            href: "/plugins",
+            description: "QRdx for Chrome, Figma, Raycast and Canva",
+            icon: ElementPlus,
+          },
+          {
             name: "GitHub",
             href: "https://github.com/bucharitesh/qrdx",
             description: "Source code, issues and releases",
@@ -229,7 +236,7 @@ export const siteConfig = {
           {
             name: "Integrations",
             href: "/integrations",
-            description: "Dub.sh short links and Google Drive",
+            description: "Zapier, Make, Discord, analytics pixels and more",
             icon: Link21,
           },
         ],
@@ -922,6 +929,7 @@ export const siteConfig = {
         { id: 2, title: "Image API", url: "/docs/developers/image-api" },
         { id: 3, title: "MCP server", url: "/mcp" },
         { id: 4, title: "shadcn/ui registry", url: "/docs/developers/shadcn" },
+        { id: 7, title: "Plugins", url: "/plugins" },
         { id: 5, title: "Self-hosting", url: "/docs/self-hosting" },
         { id: 6, title: "GitHub", url: "https://github.com/bucharitesh/qrdx" },
       ],

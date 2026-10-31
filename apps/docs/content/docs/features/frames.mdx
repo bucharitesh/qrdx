@@ -123,7 +123,7 @@ layout.maxScanDistance; // 400 (mm)
 - `size` is the width of the code; a frame adds to the finished size.
 - With bleed, the background (or a square frame's color) extends past the trim edge so trimming leaves no white sliver. Crop marks sit outside the bleed.
 - `colorMode: "cmyk"` uses a simple conversion (`rgbToCmyk`: K = 1 − max(R, G, B), no ICC profile; pure black prints as K only). Ask your printer for a color-managed conversion when exact brand colors matter.
-- Gradients are flattened to their first color stop in the PDF; the print SVG keeps them but stays RGB.
+- Linear and radial gradients print as smooth shadings in the PDF, in CMYK when the PDF is CMYK; the print SVG keeps them but stays RGB.
 - Frame text in the PDF uses Helvetica Bold, so characters outside Latin-1 may not render. Use the SVG for other scripts.
 - `getQRAsPrintPDF` and `getQRAsPrintPDFBuffer` return the file instead of downloading it, and also work in Node.
 

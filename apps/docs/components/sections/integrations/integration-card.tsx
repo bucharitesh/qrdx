@@ -12,20 +12,21 @@ import { ArrowRight } from "iconsax-reactjs";
 import Link from "next/link";
 import { SpotlightCard } from "@/components/fx";
 import { PRESSABLE } from "@/components/mockups/motion";
+import { NeedsSetupBadge } from "@/components/needs-setup";
 import { IntegrationLogo } from "./integration-logo";
 
 interface IntegrationCardProps {
   entry: IntegrationCatalogEntry;
   className?: string;
-  /** Needs app credentials this server doesn't have. */
-  notConfigured?: boolean;
+  /** Local dev only: env variable names it still needs (never values). */
+  needsSetup?: string[];
 }
 
 /** Dense directory card: logo, name, one-liner, kind badge. The card is the link. */
 export function IntegrationCard({
   entry,
   className,
-  notConfigured = false,
+  needsSetup,
 }: IntegrationCardProps) {
   return (
     <Link
@@ -42,12 +43,16 @@ export function IntegrationCard({
       >
         <div className="flex items-start justify-between gap-3">
           <IntegrationLogo logo={entry.logo} />
-          <Badge
-            variant="outline"
-            className="font-normal text-muted-foreground"
-          >
-            {notConfigured ? "Not configured" : CATALOG_KIND_LABELS[entry.kind]}
-          </Badge>
+          {needsSetup?.length ? (
+            <NeedsSetupBadge names={needsSetup} />
+          ) : (
+            <Badge
+              variant="outline"
+              className="font-normal text-muted-foreground"
+            >
+              {CATALOG_KIND_LABELS[entry.kind]}
+            </Badge>
+          )}
         </div>
         <div className="flex min-w-0 flex-1 flex-col gap-1">
           <h3 className="font-medium leading-snug text-foreground">

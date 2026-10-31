@@ -21,6 +21,9 @@ export type CatalogCategory =
 /** Lowest plan the integration needs. */
 export type CatalogPlan = "no-account" | "free" | "pro" | "business";
 
+/** Built by QRdx, or by another developer on the QRdx platform. */
+export type CatalogPublisher = "qrdx" | "community";
+
 /**
  * Where an entry is presented on the site.
  * - "integrations": a third-party connection, listed on /integrations with
@@ -123,7 +126,14 @@ export interface IntegrationCatalogEntry {
   categories: CatalogCategory[];
   logo: CatalogLogo;
   plan: CatalogPlan;
+  /** Who maintains it: "QRdx", or the developer or company behind a community app. */
   builtBy: string;
+  /**
+   * "community" for integrations other developers build on the QRdx platform
+   * (Settings → Developers OAuth apps), shown with a Community badge.
+   * Omitted means "qrdx".
+   */
+  publisher?: CatalogPublisher;
   website?: string;
   docs?: string;
   primaryAction: CatalogAction;

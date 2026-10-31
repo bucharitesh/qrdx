@@ -336,7 +336,7 @@ export const oauthApp = pgTable(
   (table) => [
     index("oauth_app_owner_user_id_idx").on(table.ownerUserId),
     index("oauth_app_organization_id_idx").on(table.organizationId),
-  ],
+  ]
 );
 
 export const oauthAuthorizationCode = pgTable("oauth_authorization_code", {
@@ -377,7 +377,9 @@ export const oauthToken = pgTable(
     updatedAt: timestamp("updated_at").notNull(),
   },
   // Remembered consent and per-app user counts look tokens up by app and user.
-  (table) => [index("oauth_token_app_id_user_id_idx").on(table.appId, table.userId)],
+  (table) => [
+    index("oauth_token_app_id_user_id_idx").on(table.appId, table.userId),
+  ]
 );
 
 export const adminAuditLog = pgTable(

@@ -27,6 +27,8 @@ export interface ConnectedProvider {
   configured: boolean;
   connected: boolean;
   status: "active" | "disconnected" | "error" | null;
+  /** Local dev only: env variable names it still needs (production omits it). */
+  needsSetup?: string[];
 }
 
 export class ConnectedAccountError extends Error {

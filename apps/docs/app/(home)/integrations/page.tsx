@@ -1,26 +1,41 @@
-import { Card } from "@repo/design-system/components/ui/card";
-import { getIntegrationCatalog } from "@repo/integrations/src/catalog";
-import { ArrowRight } from "iconsax-reactjs";
+import { getCatalogBySurface } from "@repo/integrations/src/catalog";
 import type { Metadata } from "next";
-import Link from "next/link";
 import { Suspense } from "react";
-import { HairlineFigure } from "@/components/mockups/hairline";
 import { breadcrumbSchema, JsonLd } from "@/components/sections/tools/json-ld";
-import { getUnconfiguredIntegrationSlugs } from "@/lib/integration-availability";
+import { getIntegrationAvailability } from "@/lib/integration-availability";
+import { filterVisible } from "@/lib/integration-availability-rules";
+import { toAvailabilityView } from "@/lib/integration-availability-view";
 import { createMetadata } from "@/lib/metadata";
 import { IntegrationsDirectory } from "./components/integrations-directory";
 import { IntegrationsHero } from "./components/integrations-hero";
+import { IntegrationsMore } from "./components/integrations-more";
 
-export const metadata: Metadata = createMetadata({
-  title: "Integrations",
-  description: `Connect QRdx to Slack, Discord, Zapier, Make, n8n, Dub, Google Drive, Claude, ChatGPT, Cursor and more: ${getIntegrationCatalog().length} integrations with exact setup steps.`,
-  path: "/integrations",
-});
+/**
+ * Third-party connections this server can offer: in production and preview
+ * builds, the ones that need setup on QRdx's side are left out.
+ */
+function listedIntegrations() {
+  return filterVisible(
+    getIntegrationAvailability(),
+    getCatalogBySurface("integrations"),
+    (entry) => entry.slug,
+  );
+}
 
-const linkClass =
-  "inline-flex items-center gap-1 font-medium text-foreground underline decoration-foreground/30 underline-offset-4 transition-colors hover:decoration-foreground";
+export function generateMetadata(): Metadata {
+  const listed = listedIntegrations();
+  const names = listed.slice(0, 8).map((entry) => entry.name);
+  return createMetadata({
+    title: "Integrations",
+    description: `Connect QRdx to ${names.join(", ")} and more: ${listed.length} integrations with exact setup steps.`,
+    path: "/integrations",
+  });
+}
 
 export default function IntegrationsPage() {
+  const listed = listedIntegrations();
+  const { needsSetup } = toAvailabilityView(getIntegrationAvailability());
+
   return (
     <main className="flex w-full flex-col">
       <JsonLd
@@ -29,7 +44,7 @@ export default function IntegrationsPage() {
           { name: "Integrations", path: "/integrations" },
         ])}
       />
-      <IntegrationsHero />
+      <IntegrationsHero entries={listed} />
 
       <section
         id="directory"
@@ -38,47 +53,13 @@ export default function IntegrationsPage() {
       >
         <Suspense fallback={<div className="min-h-[40rem]" />}>
           <IntegrationsDirectory
-            unconfigured={getUnconfiguredIntegrationSlugs()}
+            slugs={listed.map((entry) => entry.slug)}
+            needsSetup={needsSetup}
           />
         </Suspense>
       </section>
 
-      <section className="px-6 py-12 md:px-10 md:py-16">
-        <Card className="grid items-center gap-6 p-6 shadow-xs md:grid-cols-[minmax(0,1fr)_auto] md:p-8 dark:shadow-none">
-          <div className="flex flex-col gap-2">
-            <h2 className="text-2xl font-semibold tracking-tight text-balance md:text-3xl">
-              Don&rsquo;t see your tool?
-            </h2>
-            <p className="max-w-2xl text-muted-foreground text-pretty">
-              Anything that accepts a webhook or calls an HTTP API can work with
-              QRdx: send events with{" "}
-              <Link href="/integrations/webhooks" className={linkClass}>
-                webhooks
-              </Link>
-              , manage codes with the{" "}
-              <Link href="/integrations/rest-api" className={linkClass}>
-                REST API
-              </Link>
-              , or{" "}
-              <a
-                href="https://github.com/bucharitesh/qrdx/issues/new"
-                target="_blank"
-                rel="noopener noreferrer"
-                className={linkClass}
-              >
-                request an integration
-                <ArrowRight aria-hidden className="size-3.5 -rotate-45" />
-              </a>
-              .
-            </p>
-          </div>
-          <HairlineFigure
-            figure="Hub"
-            surface="card"
-            className="hidden aspect-square w-36 md:block"
-          />
-        </Card>
-      </section>
+      <IntegrationsMore />
     </main>
   );
 }

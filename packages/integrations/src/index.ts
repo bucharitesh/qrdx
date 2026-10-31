@@ -147,6 +147,8 @@ export {
 // Registry loader
 export {
   getIntegrationConfigWithEnv,
+  INTEGRATION_ENV_VARS,
+  type IntegrationEnvVars,
   initializeIntegrations,
   registerAllIntegrations,
 } from "./registry/loader";

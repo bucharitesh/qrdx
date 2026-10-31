@@ -21,6 +21,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { NeedsSetupBadge, NeedsSetupNote } from "@/components/needs-setup";
 import {
   IntegrationLogo,
   logoForIntegration,
@@ -58,6 +59,8 @@ interface IntegrationDetailProps {
   website?: string;
   category: IntegrationCategory[];
   isConfigured: boolean;
+  /** Local dev only: the env variable names it still needs. */
+  needsSetup?: string[];
   isConnected: boolean;
   status?: "active" | "disconnected" | "error";
   connectedAt?: Date;
@@ -79,6 +82,7 @@ export function IntegrationDetail({
   website,
   category,
   isConfigured,
+  needsSetup,
   isConnected,
   status,
   connectedAt,
@@ -114,7 +118,7 @@ export function IntegrationDetail({
         plan_required: "Slack alerts are part of the Business plan.",
         limit_reached:
           "That workspace already has 10 Slack or Discord channels.",
-        not_configured: `${name} isn't configured on this server.`,
+        not_configured: `${name} can't be connected right now.`,
         dev_disabled: "Calls to connected tools are off outside production.",
         provider_rejected: `${name} didn't finish the connection. Try again.`,
         rate_limited: "Too many attempts. Wait a minute and try again.",
@@ -219,14 +223,7 @@ export function IntegrationDetail({
               <div className="flex items-center gap-2 flex-wrap">
                 <h1 className="text-xl font-semibold">{name}</h1>
                 {statusBadge()}
-                {!isConfigured && (
-                  <Badge
-                    variant="outline"
-                    className="border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-400"
-                  >
-                    Not configured
-                  </Badge>
-                )}
+                <NeedsSetupBadge names={needsSetup} />
               </div>
               <p className="text-sm text-muted-foreground">{description}</p>
               <div className="flex flex-wrap gap-1.5 pt-1">
@@ -272,7 +269,7 @@ export function IntegrationDetail({
                 size="sm"
               >
                 {isLoading && <Spinner className="size-3.5" />}
-                {canOAuth ? "Enable" : "Not configured"}
+                {canOAuth ? "Enable" : "Needs setup"}
               </Button>
             ) : null}
           </div>
@@ -446,16 +443,10 @@ export function IntegrationDetail({
         </div>
       )}
 
-      {/* Not configured warning */}
-      {!isConfigured && (
-        <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4">
-          <p className="text-sm font-medium text-amber-800 dark:text-amber-300">
-            Not configured
-          </p>
-          <p className="mt-1 text-xs text-amber-700 dark:text-amber-400">
-            {name} can&rsquo;t be connected on this server yet: its app
-            credentials haven&rsquo;t been set up.
-          </p>
+      {/* Local dev only: production hides integrations that need setup */}
+      {needsSetup && needsSetup.length > 0 && (
+        <div className="rounded-xl border bg-card p-4">
+          <NeedsSetupNote names={needsSetup} />
         </div>
       )}
     </div>

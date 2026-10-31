@@ -15,7 +15,7 @@ export interface OutputOptions extends QRProps {
   format: OutputFormat;
 }
 
-type SharpFactory = typeof import("sharp");
+type SharpFactory = typeof import("sharp").default;
 
 export function buildSVGString(props: QRProps & { size?: number }): string {
   const element = createElement(QRCodeSVG as React.ComponentType<QRProps>, {
