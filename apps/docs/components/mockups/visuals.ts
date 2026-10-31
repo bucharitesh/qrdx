@@ -1,3 +1,4 @@
+import { mediaUrl } from "@/lib/media";
 import type { QrTypeGroup } from "@/lib/qr-types-content";
 
 // Every marketing image and clip in one place. Paths are under apps/docs/public.
@@ -57,8 +58,8 @@ export interface LoopClip {
 // Posters are real screenshots, so the slot looks right before the clips exist.
 export const loopVideos = {
   playground: {
-    mp4: "/videos/playground-style-export.mp4",
-    webm: "/videos/playground-style-export.webm",
+    mp4: mediaUrl("/videos/playground-style-export.mp4"),
+    webm: mediaUrl("/videos/playground-style-export.webm"),
     poster: "/images/product/video-poster-playground.webp",
     width: 1280,
     height: 800,
@@ -66,8 +67,8 @@ export const loopVideos = {
       "Screen recording: a link typed into the QRdx playground, dot patterns changed in the customisation panel, then the download dialog opened",
   },
   bulk: {
-    mp4: "/videos/bulk-csv-to-zip.mp4",
-    webm: "/videos/bulk-csv-to-zip.webm",
+    mp4: mediaUrl("/videos/bulk-csv-to-zip.mp4"),
+    webm: mediaUrl("/videos/bulk-csv-to-zip.webm"),
     poster: "/images/product/video-poster-bulk.webp",
     width: 1200,
     height: 600,
@@ -75,8 +76,8 @@ export const loopVideos = {
       "Screen recording: a seven-row CSV uploaded to the bulk generator, columns mapped and seven QR codes generated into a ZIP file",
   },
   scanChecker: {
-    mp4: "/videos/scan-checker.mp4",
-    webm: "/videos/scan-checker.webm",
+    mp4: mediaUrl("/videos/scan-checker.mp4"),
+    webm: mediaUrl("/videos/scan-checker.webm"),
     poster: "/images/product/video-poster-scan-checker.webp",
     width: 928,
     height: 880,

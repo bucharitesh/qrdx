@@ -168,13 +168,14 @@ export function ScanScoreBadge({
   }
 
   const state = result ? `${result.score}-${result.grade}` : "checking";
-  const fade = reduceMotion
-    ? { initial: false as const, animate: { opacity: 1 }, exit: { opacity: 0 } }
-    : {
-        initial: { opacity: 0, y: 4, filter: "blur(2px)" },
-        animate: { opacity: 1, y: 0, filter: "blur(0px)" },
-        exit: { opacity: 0, y: -4, filter: "blur(2px)" },
-      };
+  // Same motion values on the server and client (useReducedMotion is null
+  // during SSR); reduced motion only zeroes the duration.
+  const fade = {
+    initial: { opacity: 0, y: 4, filter: "blur(2px)" },
+    animate: { opacity: 1, y: 0, filter: "blur(0px)" },
+    exit: { opacity: 0, y: -4, filter: "blur(2px)" },
+  };
+  const ease = [0.32, 0.72, 0, 1] as const;
 
   return (
     <Popover>
@@ -190,8 +191,8 @@ export function ScanScoreBadge({
             "bg-background/90 hover:bg-muted inline-flex h-8 items-center gap-2 overflow-hidden rounded-full border px-3 text-xs font-medium whitespace-nowrap shadow-sm backdrop-blur transition-colors",
             className,
           )}
-          layout={!reduceMotion}
-          transition={{ duration: 0.25, ease: [0.32, 0.72, 0, 1] }}
+          layout
+          transition={{ duration: reduceMotion ? 0 : 0.25, ease }}
           type="button"
         >
           <span className="relative grid size-3.5 shrink-0 place-items-center">
@@ -213,7 +214,7 @@ export function ScanScoreBadge({
                 checking && result && "opacity-60",
               )}
               key={state}
-              transition={{ duration: 0.2, ease: [0.32, 0.72, 0, 1] }}
+              transition={{ duration: reduceMotion ? 0 : 0.2, ease }}
               {...fade}
             >
               {result

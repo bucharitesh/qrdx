@@ -148,9 +148,11 @@ export function HeroEditor() {
           {trimmed ? (
             <motion.div
               key={`${styleKey}-${frameKey}`}
-              initial={reduce ? false : { opacity: 0.4, scale: 0.97 }}
+              // Same initial on server and client (useReducedMotion is null
+              // during SSR); reduced motion only skips the transition.
+              initial={{ opacity: 0.4, scale: 0.97 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: DURATION.base, ease: EASE }}
+              transition={{ duration: reduce ? 0 : DURATION.base, ease: EASE }}
               className="size-full rounded-2xl bg-white p-2 shadow-[0_1px_2px_rgba(0,0,0,0.06),0_16px_32px_-16px_rgba(0,0,0,0.3)] ring-1 ring-black/5"
               role="img"
               aria-label={`QR code for ${trimmed}`}

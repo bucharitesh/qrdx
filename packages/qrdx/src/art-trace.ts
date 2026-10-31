@@ -155,8 +155,14 @@ function extractPalette(
     }
   }
   // Two k-means rounds over solid pixels to settle the colors
-  let stats: { n: number; r: number; g: number; b: number; x: number; y: number }[] =
-    [];
+  let stats: {
+    n: number;
+    r: number;
+    g: number;
+    b: number;
+    x: number;
+    y: number;
+  }[] = [];
   let error = 0;
   for (let round = 0; round < 3; round++) {
     stats = centers.map(() => ({ n: 0, r: 0, g: 0, b: 0, x: 0, y: 0 }));
@@ -431,10 +437,7 @@ function smoothPath(loop: Point[], radius: number): string {
     const p = loop[i];
     const a = toward(p, loop[(i - 1 + n) % n]);
     const b = toward(p, loop[(i + 1) % n]);
-    d +=
-      i === 0
-        ? `M${r2(a[0])} ${r2(a[1])}`
-        : `L${r2(a[0])} ${r2(a[1])}`;
+    d += i === 0 ? `M${r2(a[0])} ${r2(a[1])}` : `L${r2(a[0])} ${r2(a[1])}`;
     d += `Q${r2(p[0])} ${r2(p[1])} ${r2(b[0])} ${r2(b[1])}`;
   }
   return `${d}Z`;

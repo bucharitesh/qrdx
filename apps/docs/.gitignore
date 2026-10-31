@@ -26,3 +26,6 @@ yarn-error.log*
 next-env.d.ts
 
 /drizzle
+
+# video sources (served from R2; see scripts/media/upload.mjs)
+/media/

@@ -4,6 +4,7 @@
 
 /** Live examples drawn with the real qrdx engine (components/help/hint-visual.tsx). */
 export type LiveExample =
+  | "ai-prompt"
   | "art-modes"
   | "colors-contrast"
   | "custom-domain"
@@ -208,10 +209,10 @@ export const HINTS = {
     title: "Generate with AI",
     body: "Describe a brand, a mood or a season, or attach up to 2 images, and the AI picks colors, dots and eyes. Type @ to build on a preset or your current style.",
     visual: {
-      type: "video",
-      name: "ai-theme",
+      type: "live",
+      example: "ai-prompt",
       label:
-        "Screen recording: a prompt sent in the Generate tab and the new theme applied to the QR code preview",
+        "Example: the prompt “Cozy autumn café” turned into a warm brown code with rounded dots",
     },
   },
 

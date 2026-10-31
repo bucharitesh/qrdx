@@ -481,8 +481,7 @@ const BLUR = 0.3;
 /** Share of a blurred module center that comes from a centered dot */
 const circleWeight = (diameter: number) =>
   1 - Math.exp(-((diameter / 2) ** 2) / (2 * BLUR ** 2));
-const squareWeight = (side: number) =>
-  erf(side / (2 * BLUR * Math.SQRT2)) ** 2;
+const squareWeight = (side: number) => erf(side / (2 * BLUR * Math.SQRT2)) ** 2;
 
 const smoothstep = (edge0: number, edge1: number, x: number) => {
   const t = Math.min(1, Math.max(0, (x - edge0) / (edge1 - edge0)));
@@ -1523,7 +1522,12 @@ function renderMonoHalftone(ctx: RenderContext): JSX.Element[] {
   }
   const fgHex = toHex(fg);
   return [
-    cellLayer(ctx, cells, (cell) => (dark[cell] ? fgHex : null), "art-halftone"),
+    cellLayer(
+      ctx,
+      cells,
+      (cell) => (dark[cell] ? fgHex : null),
+      "art-halftone"
+    ),
     ...alignmentLayer(ctx, fgHex),
   ];
 }
