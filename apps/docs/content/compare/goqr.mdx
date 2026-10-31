@@ -6,7 +6,7 @@ seoDescription: "goQR.me makes free static QR codes in PNG, JPEG, SVG and EPS an
 competitor: goQR.me
 competitorUrl: https://goqr.me
 competitorLogo: https://assets.qrdx.dev/compare/goqr.png
-tagline: "goQR.me is a no-frills static QR generator with an HTTP API. QRdx is a free, open-source generator and React library for designed QR codes."
+tagline: "goQR.me is a no-frills static QR generator with an HTTP API. QRdx is an open-source platform for designed QR codes, with an image API and dynamic codes."
 qrdxPlan: "Free · Open Source"
 competitorPlan: "Free (static)"
 lastVerified: "2026-10-31"
@@ -15,7 +15,7 @@ sources:
   - https://goqr.me/api/
 tableRows:
   - feature: Price
-    qrdx: "Free"
+    qrdx: "Free; paid from $5/mo"
     competitor: "Free for static codes"
   - feature: Commercial use
     qrdx: true
@@ -33,13 +33,13 @@ tableRows:
     qrdx: true
     competitor: "On request"
   - feature: Download formats
-    qrdx: "PNG, JPG, SVG, PDF"
+    qrdx: "PNG, JPG, SVG, PDF, EPS"
     competitor: "PNG, JPEG, SVG, EPS"
   - feature: Hosted HTTP API
-    qrdx: false
+    qrdx: true
     competitor: true
   - feature: Dynamic (editable) QR codes
-    qrdx: "Via Dub integration"
+    qrdx: "10 free; unlimited from $5/mo"
     competitor: "Via QR-Server platform"
   - feature: Open source
     qrdx: "AGPL-3.0"
@@ -50,8 +50,8 @@ tableRows:
 featureHighlights:
   - title: Designed codes, not just colors
     description: "goQR.me lets you pick foreground and background colors. QRdx adds 9 body patterns, 9 eye shapes, 11 eye-dot shapes, gradients, logo overlay and six templates."
-  - title: A React library, not only a web form
-    description: "QRdx is also an npm package with React components and TypeScript types, so you can render styled codes in your own app."
+  - title: A React library and an image API
+    description: "QRdx is also an npm package with React components and TypeScript types, and has a hosted image API, so you can render styled codes in your own app or from a URL."
   - title: Open source
     description: "QRdx is AGPL-3.0 licensed and self-hostable. goQR.me is a closed-source service."
   - title: Copy your design as code
@@ -64,20 +64,18 @@ goQR.me is one of the simplest ways to make a QR code: type your content, pick c
 
 goQR.me fits anyone who needs a plain, reliable code fast, especially if they want EPS files or an image URL they can drop into an `img` tag. Editable, trackable codes are offered separately through its QR-Server management platform.
 
-QRdx fits designers who want patterns, gradients, logos and frames, and developers who want a component they can style and ship.
+QRdx fits designers who want patterns, gradients, logos and frames, people who need editable codes with scan analytics, and developers who want a component or an image API they can style and ship.
 
 ## Where goQR.me is the better choice
 
-- You need **EPS** output. QRdx exports PNG, JPG, SVG and PDF, but not EPS.
-- You want a **hosted HTTP API** that returns a QR image from a URL. QRdx has no hosted image endpoint; you render codes with its npm package instead.
 - You want the plainest possible code with nothing to configure.
 
 ## Key differences
 
 - **Design:** goQR.me changes colors; QRdx changes shapes, colors and gradients, and adds logos and frames.
 - **Logo:** goQR.me handles custom logo codes on request through a separate page. QRdx lets you upload a logo in the editor.
-- **Integration:** goQR.me integrates over HTTP. QRdx integrates as a React library with TypeScript types, plus a CLI.
-- **Editable codes:** goQR.me offers them through QR-Server. QRdx can encode a [Dub](/integrations/dub) short link so you can change the destination in Dub.
+- **Integration:** goQR.me integrates over HTTP. QRdx has a hosted [image API](/docs/developers/image-api) too (SVG, PNG or EPS), plus a React library with TypeScript types, a CLI and an MCP server.
+- **Editable codes:** goQR.me offers them through QR-Server. QRdx has dynamic codes built in: 10 on the Free plan and unlimited on Pro ($5/mo or $48/yr).
 
 ## Switching from goQR.me
 

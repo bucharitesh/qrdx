@@ -24,7 +24,11 @@ import {
   getFrameDimensions,
   getTemplateIds,
 } from "qrdx";
-import { saveOutput } from "../render/output";
+import {
+  OUTPUT_FORMATS,
+  type OutputFormat,
+  saveOutput,
+} from "../render/output";
 
 const RESET = "\x1b[0m";
 const TEXT = "\x1b[38;5;145m";
@@ -45,6 +49,7 @@ interface GenerateFlags {
   noLogo?: boolean;
   margin?: number;
   output?: string;
+  format?: OutputFormat;
   size?: number;
   template?: string;
   frame?: FrameStyle;
@@ -162,11 +167,17 @@ function validateFlags(flags: GenerateFlags): void {
   }
   assertHexColor("--frame-color", flags.frameColor);
   assertHexColor("--frame-text-color", flags.frameTextColor);
+  assertOneOf("--format", flags.format, OUTPUT_FORMATS);
   if (flags.output !== undefined) {
     const ext = extname(flags.output).toLowerCase();
-    if (!["", ".svg", ".png"].includes(ext)) {
+    if (!["", ".svg", ".png", ".eps"].includes(ext)) {
       throw new Error(
-        `Unsupported output format "${ext}". Use a .svg or .png file name.`
+        `Unsupported output format "${ext}". Use a .svg, .png or .eps file name.`
+      );
+    }
+    if (ext && flags.format && ext !== `.${flags.format}`) {
+      throw new Error(
+        `--format ${flags.format} does not match the output file "${flags.output}". Use a .${flags.format} file name or drop --format.`
       );
     }
   }
@@ -227,6 +238,10 @@ function parseFlags(args: string[]): GenerateFlags {
           throw new Error(`${arg} needs a file path, e.g. ${arg} qr.svg`);
         }
         flags.output = next;
+        i += 2;
+        break;
+      case "--format":
+        flags.format = requireValue(arg, next).toLowerCase() as OutputFormat;
         i += 2;
         break;
       case "-l":
@@ -321,12 +336,18 @@ function handleCancel(): never {
   process.exit(0);
 }
 
-function inferFormat(outputPath: string): "svg" | "png" {
+function inferFormat(
+  outputPath: string,
+  format: OutputFormat | undefined
+): OutputFormat {
   const ext = extname(outputPath).toLowerCase();
   if (ext === ".png") {
     return "png";
   }
-  return "svg";
+  if (ext === ".eps") {
+    return "eps";
+  }
+  return ext === ".svg" ? "svg" : (format ?? "svg");
 }
 
 export async function runGenerate(args: string[]): Promise<void> {
@@ -409,13 +430,14 @@ export async function runGenerate(args: string[]): Promise<void> {
   // ── 2. Output path ────────────────────────────────────────────────────
   let outputPath = flags.output;
   const size = flags.size ?? 512;
+  const defaultOutput = `qr.${flags.format ?? "svg"}`;
 
   if (!outputPath) {
     if (canUseClack) {
       const pathRes = await p.text({
-        message: "Output file (.svg or .png)",
-        placeholder: "qr.svg",
-        defaultValue: "qr.svg",
+        message: "Output file (.svg, .png or .eps)",
+        placeholder: defaultOutput,
+        defaultValue: defaultOutput,
         validate(v) {
           if (!v.trim()) {
             return "Please enter an output path.";
@@ -425,14 +447,14 @@ export async function runGenerate(args: string[]): Promise<void> {
       if (isCancel(pathRes)) {
         handleCancel();
       }
-      outputPath = (pathRes as string) || "qr.svg";
+      outputPath = (pathRes as string) || defaultOutput;
     } else if (process.stdout.isTTY && !isCI) {
       const pathAns = await readLineFromTTY(
-        `Output file ${DIM}(.svg or .png, Enter = qr.svg)${RESET}: `
+        `Output file ${DIM}(.svg, .png or .eps, Enter = ${defaultOutput})${RESET}: `
       );
-      outputPath = pathAns?.trim() || "qr.svg";
+      outputPath = pathAns?.trim() || defaultOutput;
     } else {
-      outputPath = "qr.svg";
+      outputPath = defaultOutput;
     }
   }
 
@@ -776,7 +798,7 @@ export async function runGenerate(args: string[]): Promise<void> {
     };
 
     if (outputPath) {
-      const format = inferFormat(outputPath);
+      const format = inferFormat(outputPath, flags.format);
       await saveOutput({ ...qrProps, outputPath, format });
       const dimensions = getFrameDimensions(size, frame);
       spinner.stop(

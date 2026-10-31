@@ -6,9 +6,10 @@ import { database } from "@repo/database";
 export const ENTITLED_SUBSCRIPTION_STATUSES = ["active", "trialing"];
 
 /**
- * True when the user has an active Pro subscription. Used to gate Pro-only
- * Better Auth features (creating organizations); apps/docs/lib/plans.ts is
- * the source of truth for everything else.
+ * True when the user holds any entitled subscription. Gates team creation:
+ * every paid product maps to Pro or Business (unknown products count as Pro,
+ * see apps/docs/lib/plans.ts `planForSubscriptionProduct`) and both include
+ * teams. apps/docs/lib/plans.ts is the source of truth for everything else.
  */
 export async function hasEntitledSubscription(userId: string) {
   const row = await database.query.subscription.findFirst({

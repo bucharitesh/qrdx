@@ -28,9 +28,16 @@ function getUpstashCredentials(): { url: string; token: string } | null {
 
 const credentials = getUpstashCredentials();
 
-export const redis = credentials ? new Redis(credentials) : null;
+// One quick retry at most: a dead Upstash should fail fast (the limiter fails open).
+export const redis = credentials
+  ? new Redis({ ...credentials, retry: { retries: 1, backoff: () => 50 } })
+  : null;
 
 let warnedNoopInProduction = false;
+
+// After a failed call, skip Upstash for a while so every request doesn't pay for it.
+const UPSTASH_FAILURE_COOLDOWN_MS = 5 * 60_000;
+let upstashUnavailableUntil = 0;
 
 export const createRateLimiter = (
   props: Omit<RatelimitConfig, "redis">
@@ -49,21 +56,34 @@ export const createRateLimiter = (
     redis,
     limiter: props.limiter ?? Ratelimit.slidingWindow(10, "10 s"),
     prefix: props.prefix ?? "qrdx",
+    // Upstash allows the request itself when a check takes longer than this.
+    timeout: 1000,
   });
 
   return {
     limit: async (identifier: string) => {
+      if (Date.now() < upstashUnavailableUntil) {
+        return noopRateLimiter.limit(identifier);
+      }
       try {
-        return await ratelimit.limit(identifier);
-      } catch (error) {
-        if (process.env.NODE_ENV === "development") {
-          console.warn(
-            "[rate-limit] Upstash unavailable, allowing request in development:",
-            error instanceof Error ? error.message : error
+        const result = await ratelimit.limit(identifier);
+        if (result.reason === "timeout") {
+          // Upstash already allowed this request; back off like a failure.
+          upstashUnavailableUntil = Date.now() + UPSTASH_FAILURE_COOLDOWN_MS;
+          console.error(
+            "[rate-limit] Upstash timed out; allowing requests without rate limiting for 5 minutes."
           );
-          return noopRateLimiter.limit(identifier);
         }
-        throw error;
+        return result;
+      } catch (error) {
+        // Fail open: an unreachable Upstash must never take routes (or QR
+        // redirects) down. Cost-sensitive quotas are enforced in the database.
+        upstashUnavailableUntil = Date.now() + UPSTASH_FAILURE_COOLDOWN_MS;
+        console.error(
+          "[rate-limit] Upstash unavailable; allowing requests without rate limiting for 5 minutes:",
+          error instanceof Error ? error.message : error
+        );
+        return noopRateLimiter.limit(identifier);
       }
     },
   };

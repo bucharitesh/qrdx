@@ -1,0 +1,65 @@
+---
+title: Smart routing
+description: Send each scan of a dynamic QR code to a different URL by device, country, language, time or scan count, run A/B tests and add UTM parameters.
+icon: Split
+---
+
+A [dynamic QR code](/docs/dynamic-qr-codes) normally sends every scan to one destination. With smart routing, one printed code can open the App Store on iPhones and Google Play on Android, a Spanish page for Spanish-speaking visitors, or a different offer outside business hours. You set it up in the **Smart routing** panel on the code's page in the [dashboard](/dashboard) (open a code, then scroll to **Settings**).
+
+Smart routing and UTM parameters are part of Pro and Business. They apply to codes that open a website link; [hosted pages](/docs/landing-pages) don't redirect, so they have no routing.
+
+## How rules work
+
+- A code has up to 20 **rules**. Each rule has conditions ("when") and an action ("then").
+- Rules are checked **top to bottom** for every scan. The **first rule whose conditions all match** decides where the scan goes. Use the arrows to reorder rules.
+- When no rule matches, the scan goes to the code's main destination.
+- A rule without conditions matches every scan, so rules below it never run.
+- Turn a rule **off** to keep it without using it.
+- Changes apply to the next scan; you never need to reprint the code.
+
+If a rule can't be evaluated for some reason, the scan still goes to the main destination: routing never stops a code from working.
+
+## Conditions
+
+Each condition can be inverted with **is not** (for example "country is not US").
+
+| Condition | Matches when | Notes |
+| --- | --- | --- |
+| Device | The scanner uses a phone, tablet, desktop or other device | From the browser's user agent |
+| Operating system | iOS, Android, Windows, macOS, Linux, ChromeOS, HarmonyOS, … | iPhone and iPad both count as iOS |
+| Country | The scan comes from one of the listed countries | 2-letter codes like `US, CA, GB` |
+| Region | The scan comes from one of the listed regions | Codes like `US-CA, US-NY` (country + subdivision) |
+| Language | The visitor's preferred browser language is one of the listed ones | `es` matches every Spanish variant (`es-MX`, `es-ES`); `pt-BR` only Brazilian Portuguese |
+| Time of day | The scan happens on the chosen weekdays between two times in a time zone you pick | A window like 22:00–02:00 runs past midnight and belongs to the day it starts |
+| Date range | The scan happens between two dates | Leave one side empty for "until" or "from"; dates are in your browser's time zone |
+| Scan count | It's one of the first N scans, or any scan after N | Counts recorded scans (bots aren't counted), so it is approximate when many people scan at once |
+
+Country and region come from the scanner's IP address, which QRdx never stores. When a location is unknown, location conditions don't match (and "is not" conditions do).
+
+## Smart app links
+
+Choose **Add rule → Smart app link** to create two rules at once: iOS goes to your App Store link, Android to your Google Play link. Everyone else (desktop, other phones) goes to the main destination, for example your website.
+
+## A/B tests
+
+Set a rule's action to **Split between URLs (A/B)** and add 2 to 5 variants, each with a URL and a weight. A split of 70 and 30 sends about 70% of visitors to the first URL.
+
+- Assignment is **sticky**: a visitor who scans again the same day gets the same variant. It is based on an anonymous daily visitor hash, never a cookie.
+- The code's analytics show **scans per variant** since the split's variants or weights last changed. Each scan stores the variant it was served. Scans recorded before QRdx stored variants are replayed with your current rules and the card is marked as an estimate.
+- A split can have conditions too, for example "A/B test for visitors in Germany only".
+
+## Test your rules
+
+**Test your rules** at the bottom of the panel shows where a scan would go, for any device, operating system, country, region, language, date and time, scan number and visitor, using your unsaved changes. It lists which rule matched and why the others didn't, and shows the final URL including UTM parameters.
+
+## UTM parameters
+
+The **UTM parameters** panel adds `utm_source`, `utm_medium`, `utm_campaign`, `utm_term`, `utm_content` and up to 10 parameters of your own to the URL each scan opens, so analytics tools can tell QR traffic apart.
+
+- Parameters are added after routing, to whichever URL the scan goes to.
+- A parameter the URL already has is never replaced, and the rest of the URL is kept exactly as you entered it.
+- Names starting with `qrdx_` are reserved for [conversion tracking](/docs/tracking-and-conversions).
+
+## Plans and downgrades
+
+Rules and UTM parameters saved on Pro keep working if you downgrade: limits only block creating new things. Without Pro you can still turn rules off and delete them or remove UTM parameters; changing them needs Pro again.

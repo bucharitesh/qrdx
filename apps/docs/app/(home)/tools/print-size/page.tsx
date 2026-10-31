@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { MockupImage } from "@/components/mockups/mockup-image";
+import { useCaseImages } from "@/components/mockups/visuals";
 import { FaqList } from "@/components/sections/tools/faq-list";
 import { PrintSizeCalculator } from "@/components/sections/tools/print-size-calculator";
 import { ToolHero } from "@/components/sections/tools/tool-hero";
@@ -123,6 +125,11 @@ export default function PrintSizePage() {
               , then export as SVG for print.
             </li>
           </ul>
+          <MockupImage
+            {...useCaseImages.busStopPoster}
+            sizes="(min-width: 1280px) 600px, (min-width: 768px) 50vw, 100vw"
+            className="mt-3"
+          />
         </div>
       </section>
 

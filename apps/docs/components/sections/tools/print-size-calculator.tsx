@@ -227,7 +227,7 @@ export function PrintSizeCalculator() {
         aria-live="polite"
         className="flex flex-col gap-3 rounded-xl border border-border bg-card p-5"
       >
-        <h3 className="font-medium">Minimum printed size</h3>
+        <h2 className="font-medium">Minimum printed size</h2>
         {!distanceMm && (
           <p className="text-sm text-destructive">
             Enter a scanning distance greater than zero.

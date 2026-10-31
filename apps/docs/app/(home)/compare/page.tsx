@@ -21,7 +21,7 @@ const groups = [
     category: "generator",
     heading: "QR code generators",
     intro:
-      "Hosted tools for making QR codes in the browser. Most of them sell dynamic (editable, trackable) codes; QRdx makes static codes and adds editable links through its Dub integration.",
+      "Hosted tools for making QR codes in the browser. Most of them sell dynamic (editable, trackable) codes; QRdx has free static codes, plus dynamic codes and hosted pages that keep working on every plan.",
   },
   {
     category: "library",

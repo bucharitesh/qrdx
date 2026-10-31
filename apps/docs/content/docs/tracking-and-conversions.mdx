@@ -1,0 +1,92 @@
+---
+title: Tracking and conversions
+description: Add your analytics and retargeting pixels to hosted pages, see when and how people scan, and attribute sales and sign-ups to QR code scans.
+icon: Target
+---
+
+Every [dynamic QR code](/docs/dynamic-qr-codes) records scans without cookies. On top of that you can load your own pixels on hosted pages (Pro) and attribute conversions such as purchases to the scan that brought the visitor (Business). Both are set up on the code's page in the [dashboard](/dashboard), under **Settings**.
+
+## Analytics on every code
+
+Besides scans over time, countries, cities, devices, operating systems, browsers and referrers, each code's page shows:
+
+- **When people scan:** scans by hour of day and by weekday, in UTC or in your own time zone.
+- **Languages:** each visitor's preferred browser language ("Unknown" when the browser doesn't send one, and for scans from before languages were recorded).
+- **A/B splits:** scans per variant for each [A/B split rule](/docs/smart-routing#ab-tests).
+- **Page activity** (hosted pages): page views, unique viewers, taps and the most tapped links and buttons.
+- **Conversions**, when the code has any.
+
+[Dashboard → Analytics](/dashboard/analytics) adds up every code in the workspace: totals, scans over time, top codes, countries, devices, languages, scan times, and a comparison of up to 4 codes side by side.
+
+Bots and link previews aren't counted, and a visitor counts once per day for "unique". IP addresses are never stored.
+
+## Tracking pixels on hosted pages (Pro)
+
+For codes that open a hosted page, the **Tracking pixels** panel loads your own tags on that page:
+
+| Provider | ID format |
+| --- | --- |
+| Google Analytics 4 | `G-XXXXXXXXXX` |
+| Google Tag Manager | `GTM-XXXXXXX` |
+| Meta (Facebook) pixel | 6–20 digits |
+| TikTok pixel | 10–30 letters and digits |
+| LinkedIn Insight Tag | partner ID, 3–12 digits |
+
+Pixels only ever load when you set them up; QRdx adds no third-party scripts of its own to hosted pages.
+
+**Consent.** Pixels never load before the visitor agrees:
+
+- **Where required** (default): visitors in the EU/EEA, the UK and Switzerland, and visitors whose location is unknown, see a short banner naming your providers and choose **Accept** or **Decline**. The choice is remembered for that page, and **Cookie settings** lets them change it. Elsewhere pixels load right away, except for browsers that send the Global Privacy Control signal.
+- **For every visitor:** everyone sees the banner first.
+
+You remain responsible for your own privacy policy and for how you use the data your pixels collect.
+
+Codes that open your own website go there directly, so add your pixels to your site instead.
+
+## Conversion tracking (Business)
+
+Conversion tracking tells you which scans led to a sale, sign-up or any other goal, with revenue.
+
+1. On a code that opens your website, turn on **Conversion tracking**. Every scan then opens your URL with a signed `qrdx_sid` parameter added, for example `https://shop.example/?qrdx_sid=…`.
+2. Add the snippet to the pages people land on and the page where they convert:
+
+```html
+<script async src="https://qrdx.dev/conversions.js"></script>
+<script>
+  window.qrdx = window.qrdx || function () {
+    (window.qrdx.q = window.qrdx.q || []).push(arguments);
+  };
+  // Where the conversion happens, e.g. your order confirmation page:
+  qrdx("conversion", { name: "purchase", value: 49.99, currency: "USD", id: "ORDER-1234" });
+</script>
+```
+
+The script remembers `qrdx_sid` in a first-party cookie on your domain for 30 days (add `data-storage="session"` to the script tag to keep it only for the browser session) and removes it from the address bar. Conversions are only sent for visitors who arrived from a scan, so other visitors are never tracked.
+
+| Field | Meaning |
+| --- | --- |
+| `name` | What happened, e.g. `purchase` or `signup` (default `conversion`) |
+| `value` | Amount, up to 2 decimals (optional) |
+| `currency` | ISO 4217 code like `USD`; defaults to `USD` when a value is given |
+| `id` | Your order or event id: sending the same id twice records it once |
+| `metadata` | Up to 20 extra key/value pairs (optional) |
+
+### From your server
+
+To report conversions from your backend (more reliable than the browser), keep `qrdx_sid` with the order and call the API with an [API token](/docs/api-reference) that has the `codes:write` scope:
+
+```bash
+curl -X POST https://qrdx.dev/api/v1/conversions \
+  -H "Authorization: Bearer $QRDX_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"sid": "<qrdx_sid>", "name": "purchase", "value": 49.99, "currency": "USD", "id": "ORDER-1234"}'
+```
+
+With a token you can also send `"code": "<code id>"` instead of `sid` when the scan isn't known. The API answers `201` for a new conversion and `200` with `"duplicate": true` when the `id` was already recorded.
+
+### Limits
+
+- A scan can be attributed for 30 days after it happened.
+- `qrdx_sid` is signed, so it can't be guessed or changed to point at another code.
+- Browser reports need conversion tracking to be on for the code, and each scan can report a limited number of conversions per hour.
+- Conversions stop being recorded if the workspace leaves Business; existing ones stay in your analytics, and turning tracking off is always possible.

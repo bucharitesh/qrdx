@@ -43,7 +43,9 @@ export function CodeQr({
         fgColor={s.fgColor}
         hideLogo={!s.showLogo}
         level={s.level}
+        frame={s.frame}
         logo={s.customLogo ?? DEFAULT_QR_LOGO}
+        margin={s.margin}
         templateId={s.templateId}
         value={value}
       />
@@ -67,11 +69,13 @@ export async function downloadCodeQr(
         bodyPattern: s.bodyPattern,
         hideLogo: !s.showLogo,
         logo: s.customLogo ?? DEFAULT_QR_LOGO,
+        margin: s.margin,
       }),
       level: s.level,
       cornerEyePattern: s.cornerEyePattern,
       cornerEyeDotPattern: s.cornerEyeDotPattern,
       templateId: s.templateId,
+      frame: s.frame,
     },
     {
       format,

@@ -3,9 +3,10 @@ import "server-only";
 import { aiUsage, database as db } from "@repo/database";
 import { subscription } from "@repo/database/schema";
 import cuid from "cuid";
-import { and, count, desc, eq, inArray } from "drizzle-orm";
+import { and, count, desc, eq, inArray, notInArray } from "drizzle-orm";
 import { SubscriptionRequiredError } from "@/types/errors";
 import type { SubscriptionCheck } from "@/types/subscription";
+import { ART_MODEL_ID, ART_UPSCALE_MODEL_ID } from "./ai/art";
 import { AI_REQUEST_FREE_TIER_LIMIT } from "./constants";
 
 // Polar keeps a subscription "active" until a cancellation takes effect at period end;
@@ -14,11 +15,19 @@ const ENTITLED_SUBSCRIPTION_STATUSES = ["active", "trialing"];
 
 const FREE_LIMIT_REACHED_MESSAGE = `You've reached your free limit of ${AI_REQUEST_FREE_TIER_LIMIT} requests. Please upgrade to continue.`;
 
+// AI art has its own monthly credits (lib/ai/art.ts), so its rows don't use
+// up the free AI theme requests.
+const freeTierUsage = (userId: string) =>
+  and(
+    eq(aiUsage.userId, userId),
+    notInArray(aiUsage.modelId, [ART_MODEL_ID, ART_UPSCALE_MODEL_ID]),
+  );
+
 async function getAllTimeRequestCount(userId: string): Promise<number> {
   const result = await db
     .select({ count: count() })
     .from(aiUsage)
-    .where(eq(aiUsage.userId, userId));
+    .where(freeTierUsage(userId));
   return result[0]?.count ?? 0;
 }
 
@@ -114,7 +123,7 @@ export async function reserveAIRequest(
   const [result] = await db
     .select({ count: count() })
     .from(aiUsage)
-    .where(eq(aiUsage.userId, userId));
+    .where(freeTierUsage(userId));
 
   if ((result?.count ?? 0) > AI_REQUEST_FREE_TIER_LIMIT) {
     await releaseAIRequest(usageId);

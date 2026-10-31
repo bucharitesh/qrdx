@@ -1,0 +1,73 @@
+---
+title: Landing pages
+description: Build a mobile page for a QR code from blocks, with no website needed. Link lists, business pages, vCard Plus and custom pages.
+icon: PanelsTopLeft
+---
+
+A hosted landing page is a mobile page that QRdx serves for you at `https://qrdx.dev/p/<slug>` (or on your [custom domain](/docs/custom-domains)). Every page comes with a [dynamic QR code](/docs/dynamic-qr-codes), so you can keep editing the page after the code is printed and see every scan.
+
+## Create a page
+
+1. Open [Dashboard → Pages](/dashboard/pages) and click **New page**, or click **New code** on the codes list and pick a page type instead of **Website link**.
+2. Pick a page type and a template from its gallery:
+   - **Link list**: your links, socials and latest work on one page (Creator, Musician, Minimal, Podcast).
+   - **Business**: opening hours, location, contact details and a call to action (Local shop, Salon & studio, Professional services).
+   - **vCard Plus**: a digital business card with a **Save contact** button (Classic, Midnight, Minimal).
+   - **Custom page**: start blank or from an announcement layout.
+
+   Other page types (menus, coupons, events, app links, forms, PDFs, images, audio and video) appear in the same picker.
+3. Click **Create page**. The editor opens with the template's blocks and the QR code is ready to download from **QR code**.
+
+## Edit and publish
+
+The editor has three tabs and a live phone preview. Tap a block in the preview to jump to its settings.
+
+- **Blocks**: add blocks with **Add block**, reorder them by dragging (or with the arrow buttons), hide a block without deleting it, duplicate or remove it. Each block has its own form; problems (for example a link without `https://`) are flagged on the block and must be fixed before publishing.
+- **Design**: use the colors of one of your [saved QR themes](/dashboard/themes) so the page matches the printed code, pick a preset palette or set each color yourself. Choose a font, corner radius, a solid, gradient or image background and an optional logo. **Match colors** derives readable text and card colors from your background and accent, and a warning appears when text contrast is low.
+- **Settings**: the share preview description and image, whether search engines may index the page (off by default), and custom CSS on Business.
+
+Click **Publish** (or press <kbd>⌘</kbd>/<kbd>Ctrl</kbd> + <kbd>S</kbd>) to put your changes live. Nothing changes for visitors until you publish; unpublished edits are kept in your browser so you can restore them after closing the tab. Each publish is stored as a version. If a teammate publishes the same page while you are editing, QRdx asks you to reload instead of overwriting their changes.
+
+## Core blocks
+
+| Block | What it shows |
+| --- | --- |
+| Profile header | Photo or logo, name, bio and an optional cover image |
+| Text | A heading and a paragraph (line breaks are kept) |
+| Button | One call to action: a web link, email address or phone number |
+| Link list | A stack of link buttons, with site icons for Instagram, YouTube, WhatsApp and more |
+| Social icons | Profiles as round icons or buttons |
+| Image | A photo or banner, optionally linked |
+| Video | A YouTube, Vimeo or Loom video. It loads from the video site only after the visitor taps play |
+| Contact card | Name, job title, phones, emails, website, address, quick actions (call, WhatsApp, email, directions), **Save contact** and **Share** |
+| Address & map | Your address with Google Maps and Apple Maps directions, and an optional embedded map |
+| Opening hours | Hours per day (split shifts and past-midnight hours included) with an **Open now** badge in your time zone |
+| Divider, Spacer | Layout helpers |
+
+### vCard Plus and Save contact
+
+**Save contact** downloads a vCard 3.0 file (`.vcf`) that phones open in their contacts app. It contains the name, company, job title, phones, emails, website, address, bio, the page's social profiles and the photo. Photos uploaded to QRdx storage are embedded in the file; photos linked from other sites are included as a link (QRdx never downloads images from other sites). **Share** opens the phone's share sheet, or copies the page link on computers.
+
+## Plans
+
+| | Free | Pro | Business |
+| --- | --- | --- | --- |
+| Hosted pages | 3 | Unlimited | Unlimited |
+| "Made with QRdx" footer | Shown | Removed | Removed |
+| White-label (your logo as the browser icon, no QRdx branding) | — | — | ✓ |
+| Custom CSS | — | — | ✓ |
+
+Limits only stop you from creating new pages. Pages you already have keep working on every plan, including after a downgrade; on a downgrade from Business, custom CSS simply stops being applied. Each page also uses one of your plan's dynamic codes. See [Plans and limits](/docs/plans-and-limits).
+
+### Custom CSS (Business)
+
+Write plain CSS in **Settings → Custom CSS**. Rules only apply inside your page: every selector is scoped to the page content, and each block can be targeted with `.lp-block-<type>`, for example `.lp-block-links a` or `.lp-block-contact h1`. For safety, CSS can't load files (`url()`, `@import`, `@font-face`), can't use backslash escapes, and supports the `@media`, `@supports`, `@container` and `@keyframes` at-rules only.
+
+## What visitors get
+
+- Fast, server-rendered pages built for phones, with no QRdx analytics or chat scripts. Tracking pixels load only if you add them to the code yourself.
+- Hidden from search engines unless you turn on **Show in search engines**.
+- Share previews (title, description, image) for chat apps and social networks. Password-protected codes never reveal page details in previews.
+- A small **Report abuse** link on every page, including white-label pages.
+
+Password protection, start and end dates, scan limits and pausing from [code controls](/docs/code-controls) apply to the page and its **Save contact** file too, also when someone opens the page link directly.

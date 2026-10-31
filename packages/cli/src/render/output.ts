@@ -1,11 +1,13 @@
 import { writeFileSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import type { QRProps } from "qrdx";
-import { getFrameDimensions, QRCodeSVG } from "qrdx";
+import { getFrameDimensions, QRCodeSVG, svgToEPS } from "qrdx";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 
-export type OutputFormat = "svg" | "png";
+export type OutputFormat = "svg" | "png" | "eps";
+
+export const OUTPUT_FORMATS: readonly OutputFormat[] = ["svg", "png", "eps"];
 
 export interface OutputOptions extends QRProps {
   size?: number;
@@ -41,6 +43,48 @@ async function loadLogo(src: string): Promise<Buffer> {
     return Buffer.from(await res.arrayBuffer());
   }
   return readFile(src);
+}
+
+/**
+ * EPS embeds PNG and JPEG logos, so other formats (SVG, WebP, …) are
+ * converted with sharp when it is installed. Returns null when that fails.
+ */
+async function logoAsEmbeddableDataUrl(src: string): Promise<string | null> {
+  const bytes = await loadLogo(src);
+  if (bytes[0] === 0x89 && bytes[1] === 0x50) {
+    return `data:image/png;base64,${bytes.toString("base64")}`;
+  }
+  if (bytes[0] === 0xff && bytes[1] === 0xd8) {
+    return `data:image/jpeg;base64,${bytes.toString("base64")}`;
+  }
+  try {
+    const mod = await import("sharp");
+    const sharp = (mod as { default: SharpFactory }).default;
+    const png = await sharp(bytes).png().toBuffer();
+    return `data:image/png;base64,${png.toString("base64")}`;
+  } catch {
+    return null;
+  }
+}
+
+/** Vector EPS, `size` points wide (72 per inch), plus any frame. */
+async function buildEPSString(props: QRProps & { size?: number }) {
+  const src = props.imageSettings?.src;
+  let epsProps = props;
+  if (src && props.imageSettings) {
+    const dataUrl = await logoAsEmbeddableDataUrl(src);
+    if (dataUrl) {
+      epsProps = {
+        ...props,
+        imageSettings: { ...props.imageSettings, src: dataUrl },
+      };
+    } else {
+      console.warn(
+        "The logo could not be converted for EPS (PNG or JPEG work best), so it was left out."
+      );
+    }
+  }
+  return await svgToEPS(buildSVGString(epsProps));
 }
 
 /**
@@ -83,6 +127,11 @@ export async function saveOutput(options: OutputOptions): Promise<void> {
   if (format === "svg") {
     const svgContent = `<?xml version="1.0" encoding="UTF-8"?>\n${svgString}`;
     writeFileSync(outputPath, svgContent, "utf-8");
+    return;
+  }
+
+  if (format === "eps") {
+    writeFileSync(outputPath, await buildEPSString(qrProps), "utf-8");
     return;
   }
 

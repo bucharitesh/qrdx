@@ -18,6 +18,8 @@ import {
   eq,
   gte,
   inArray,
+  isNotNull,
+  isNull,
   lt,
   type SQL,
   sql,
@@ -166,6 +168,28 @@ function scanHashSalt(): string {
   return cachedSalt;
 }
 
+/** The highest-q language tag of an Accept-Language header, lowercase. */
+export function preferredLanguage(header: string | null): string | null {
+  if (!header) return null;
+  let best: string | null = null;
+  let bestQ = 0;
+  for (const part of header.slice(0, 512).split(",").slice(0, 20)) {
+    const [rawTag = "", ...params] = part.split(";");
+    const tag = rawTag.trim().toLowerCase();
+    if (!/^[a-z]{1,8}(?:-[a-z0-9]{1,8})*$/.test(tag)) continue;
+    let q = 1;
+    for (const param of params) {
+      const match = /^\s*q\s*=\s*([01](?:\.\d{0,3})?)\s*$/.exec(param);
+      if (match) q = Number(match[1]);
+    }
+    if (q > bestQ) {
+      best = tag;
+      bestQ = q;
+    }
+  }
+  return best?.slice(0, 35) ?? null;
+}
+
 /** Salted SHA-256 of ip + user agent + UTC day: counts unique visitors per day without storing IPs. */
 export function visitorHash(
   ip: string,
@@ -200,40 +224,57 @@ function isPrefetch(headers: Headers): boolean {
   return /prefetch|prerender/i.test(purpose);
 }
 
+/** Id for a scan row, created before the redirect so routing can pass it on. */
+export function createScanId(): string {
+  return cuid();
+}
+
 /**
  * Stores one scan and bumps the code's counters in a single transaction.
  * Bots, link previews, prefetches and bursts from one IP are skipped.
- * Returns whether a scan was recorded.
+ * Returns the stored scan's id, or null when the scan was skipped.
  */
 export async function recordScan(
   qrCodeId: string,
   request: Request,
-  now: Date = new Date(),
-): Promise<boolean> {
+  {
+    scanId = createScanId(),
+    now = new Date(),
+    variant = null,
+  }: {
+    scanId?: string;
+    now?: Date;
+    /** A/B variant served (lib/redirect/routing.ts scanVariantKey) */
+    variant?: string | null;
+  } = {},
+): Promise<string | null> {
   const { headers } = request;
   const ua = headers.get("user-agent")?.slice(0, 512) ?? "";
   if (!ua || isbot(ua) || isPrefetch(headers)) {
-    return false;
+    return null;
   }
   const ip = getClientIp(request);
   if (!(await withinRecordLimit(qrCodeId, ip))) {
-    return false;
+    return null;
   }
 
   const { deviceType, os, browser } = parseUserAgent(ua);
+  const scan = {
+    id: scanId,
+    qrCodeId,
+    scannedAt: now,
+    ...scanGeo(headers),
+    deviceType,
+    os,
+    browser,
+    referer: refererHost(headers.get("referer")),
+    visitorHash: visitorHash(ip, ua, now),
+    language: preferredLanguage(headers.get("accept-language")),
+    variant: variant?.slice(0, 64) ?? null,
+  };
 
-  await db.batch([
-    db.insert(qrScan).values({
-      id: cuid(),
-      qrCodeId,
-      scannedAt: now,
-      ...scanGeo(headers),
-      deviceType,
-      os,
-      browser,
-      referer: refererHost(headers.get("referer")),
-      visitorHash: visitorHash(ip, ua, now),
-    }),
+  const [, [counted]] = await db.batch([
+    db.insert(qrScan).values(scan),
     db
       .update(qrCode)
       .set({
@@ -242,9 +283,23 @@ export async function recordScan(
         // A scan is not an edit: keep updated_at as it was.
         updatedAt: sql`${qrCode.updatedAt}`,
       })
-      .where(eq(qrCode.id, qrCodeId)),
+      .where(eq(qrCode.id, qrCodeId))
+      // The post-increment count lets lib/events fire each milestone once.
+      .returning({
+        id: qrCode.id,
+        userId: qrCode.userId,
+        organizationId: qrCode.organizationId,
+        slug: qrCode.slug,
+        title: qrCode.title,
+        scanCount: qrCode.scanCount,
+      }),
   ]);
-  return true;
+  if (counted) {
+    // Webhooks + notifications (scan.created batched, scan.milestone); never throws.
+    const { emitScanRecorded } = await import("@/lib/events/emit");
+    await emitScanRecorded(scan, counted);
+  }
+  return scanId;
 }
 
 // ─── Analytics ───────────────────────────────────────────────────────────────
@@ -254,9 +309,19 @@ export const SCAN_RANGES = {
   "30d": 30,
   "90d": 90,
   "365d": 365,
+  // Pro keeps 3 years; Business keeps everything (lib/plans).
+  "1095d": 1095,
 } as const;
 
 export type ScanRange = keyof typeof SCAN_RANGES;
+
+/** "30 days", "1 year", "3 years" */
+export function scanRangeLabel(range: ScanRange): string {
+  const days = SCAN_RANGES[range];
+  if (days < 365) return `${days} days`;
+  const years = Math.round(days / 365);
+  return `${years} year${years === 1 ? "" : "s"}`;
+}
 
 export const SCAN_RANGE_KEYS = Object.keys(SCAN_RANGES) as ScanRange[];
 
@@ -435,6 +500,211 @@ export async function getScanSparklines(
     );
   }
   return result;
+}
+
+// ─── Time of day and A/B splits ──────────────────────────────────────────────
+
+/** Scans of one code (its id) or of the codes a condition selects. */
+export type ScanFilter = string | SQL;
+
+const scanFilterSql = (filter: ScanFilter): SQL =>
+  typeof filter === "string" ? eq(qrScan.qrCodeId, filter) : filter;
+
+/** A valid IANA time zone, or "UTC". */
+export function normalizeTimeZone(value: unknown): string {
+  if (
+    typeof value !== "string" ||
+    value.length > 64 ||
+    !/^[A-Za-z0-9_+\-/]+$/.test(value)
+  ) {
+    return "UTC";
+  }
+  try {
+    return new Intl.DateTimeFormat("en-US", {
+      timeZone: value,
+    }).resolvedOptions().timeZone;
+  } catch {
+    return "UTC";
+  }
+}
+
+export interface TimeBreakdown {
+  timeZone: string;
+  /** Scans per local hour, 0–23 */
+  hours: number[];
+  /** Scans per local weekday, 0 = Sunday … 6 = Saturday */
+  weekdays: number[];
+}
+
+export async function getScanTimeBreakdown(
+  filter: ScanFilter,
+  from: Date,
+  timeZone = "UTC",
+): Promise<TimeBreakdown> {
+  const zone = normalizeTimeZone(timeZone);
+  // scanned_at holds UTC wall time.
+  const local = sql`((${qrScan.scannedAt} at time zone 'UTC') at time zone ${zone}::text)`;
+  const where = and(scanFilterSql(filter), gte(qrScan.scannedAt, from));
+  const [hourRows, dayRows] = await db.batch([
+    db
+      .select({
+        key: sql<number>`extract(hour from ${local})::int`,
+        count: count(),
+      })
+      .from(qrScan)
+      .where(where)
+      .groupBy(sql`1`),
+    db
+      .select({
+        key: sql<number>`extract(dow from ${local})::int`,
+        count: count(),
+      })
+      .from(qrScan)
+      .where(where)
+      .groupBy(sql`1`),
+  ]);
+  const fill = (rows: { key: number; count: number }[], size: number) => {
+    const values = Array.from({ length: size }, () => 0);
+    for (const row of rows) {
+      const index = Number(row.key);
+      if (index >= 0 && index < size) values[index] = row.count;
+    }
+    return values;
+  };
+  return {
+    timeZone: zone,
+    hours: fill(hourRows, 24),
+    weekdays: fill(dayRows, 7),
+  };
+}
+
+export interface SplitVariantCounts {
+  /** Scans per variant id */
+  counts: Map<string, number>;
+  /** Scans whose variant was stored when they were served (qr_scan.variant) */
+  recorded: number;
+  /** Older scans, from before variants were stored, assigned by replay */
+  replayed: number;
+}
+
+/**
+ * Scans per variant of one A/B split rule. Scans store the variant they were
+ * served (`<prefix><variantId>`, see lib/redirect/routing.ts scanVariantKey).
+ * Scans from before the code's first stored variant are replayed instead:
+ * lib/redirect/routing.ts assigns a visitor to the first variant whose
+ * threshold is above int(first 7 hex digits of sha256(key + visitor_hash)),
+ * and `where` selects the scans that reached the rule. `thresholds` are
+ * ascending exclusive upper bounds; the last variant takes the rest.
+ */
+export async function getSplitVariantCounts(
+  qrCodeId: string,
+  {
+    from,
+    prefix,
+    key,
+    thresholds,
+    where,
+  }: {
+    from: Date;
+    prefix: string;
+    key: string;
+    thresholds: { id: string; below: number }[];
+    where?: SQL;
+  },
+): Promise<SplitVariantCounts> {
+  const counts = new Map(thresholds.map((t) => [t.id, 0]));
+  const last = thresholds.at(-1);
+  if (!last) return { counts, recorded: 0, replayed: 0 };
+
+  const inRange = and(
+    eq(qrScan.qrCodeId, qrCodeId),
+    gte(qrScan.scannedAt, from),
+  );
+  // Uses the (qr_code_id, scanned_at) index and stops at the first match.
+  const firstStored = sql`coalesce((select min(${qrScan.scannedAt}) from ${qrScan} where ${qrScan.qrCodeId} = ${qrCodeId} and ${qrScan.variant} is not null), 'infinity'::timestamp)`;
+  const legacy = db
+    .select({
+      bucket:
+        sql<number>`('x' || substr(encode(sha256(convert_to(${key}::text || ${qrScan.visitorHash}, 'UTF8')), 'hex'), 1, 7))::bit(28)::int`.as(
+          "bucket",
+        ),
+    })
+    .from(qrScan)
+    .where(
+      and(
+        inRange,
+        isNull(qrScan.variant),
+        isNotNull(qrScan.visitorHash),
+        sql`${qrScan.scannedAt} < ${firstStored}`,
+        where,
+      ),
+    )
+    .as("legacy");
+  const cases = thresholds
+    .slice(0, -1)
+    .map(
+      (t) => sql`when ${legacy.bucket} < ${t.below}::int then ${t.id}::text`,
+    );
+  const replayVariant =
+    cases.length > 0
+      ? sql<string>`case ${sql.join(cases, sql` `)} else ${last.id}::text end`
+      : sql<string>`${last.id}::text`;
+
+  const [stored, replayed] = await db.batch([
+    db
+      .select({ variant: qrScan.variant, count: count() })
+      .from(qrScan)
+      .where(and(inRange, isNotNull(qrScan.variant)))
+      .groupBy(qrScan.variant),
+    db
+      .select({ variant: replayVariant, count: count() })
+      .from(legacy)
+      .groupBy(sql`1`),
+  ]);
+
+  let recordedTotal = 0;
+  for (const row of stored) {
+    const id = row.variant?.startsWith(prefix)
+      ? row.variant.slice(prefix.length)
+      : null;
+    if (id !== null && counts.has(id)) {
+      counts.set(id, (counts.get(id) ?? 0) + row.count);
+      recordedTotal += row.count;
+    }
+  }
+  let replayedTotal = 0;
+  for (const row of replayed) {
+    if (counts.has(row.variant)) {
+      counts.set(row.variant, (counts.get(row.variant) ?? 0) + row.count);
+      replayedTotal += row.count;
+    }
+  }
+  return { counts, recorded: recordedTotal, replayed: replayedTotal };
+}
+
+export interface LanguageBreakdown {
+  /** Scans in range (shares are of this) */
+  total: number;
+  /** Top languages; null = not sent by the browser or scanned before languages were stored */
+  rows: BreakdownRow[];
+}
+
+export async function getLanguageBreakdown(
+  filter: ScanFilter,
+  from: Date,
+): Promise<LanguageBreakdown> {
+  const where = and(scanFilterSql(filter), gte(qrScan.scannedAt, from));
+  const [[totals], rows] = await db.batch([
+    db.select({ total: count() }).from(qrScan).where(where),
+    db
+      .select({ value: qrScan.language, count: count() })
+      .from(qrScan)
+      .where(where)
+      .groupBy(qrScan.language)
+      .orderBy(desc(count()), asc(qrScan.language))
+      .limit(BREAKDOWN_LIMIT),
+  ]);
+  return { total: totals?.total ?? 0, rows };
 }
 
 export interface ScanEvent {

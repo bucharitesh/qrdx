@@ -1,12 +1,12 @@
 ---
 title: QR Code.io
-description: "QRdx vs QR Code.io: a free open-source static QR code generator compared with a subscription dynamic QR platform that starts with a free trial."
+description: "QRdx vs QR Code.io: an open-source QR platform with free static and dynamic codes compared with a subscription dynamic QR platform that starts with a free trial."
 seoTitle: "QRdx vs QR Code.io: Free QR Codes vs Trial-Then-Subscription"
-seoDescription: "QR Code.io offers 18 QR types, dynamic codes and scan analytics on paid plans after a free trial, with no refunds. QRdx is free, open source and needs no account."
+seoDescription: "QR Code.io offers 18 QR types, dynamic codes and scan analytics on paid plans after a free trial, with no refunds. QRdx has a permanent free plan and is open source."
 competitor: QR Code.io
 competitorUrl: https://qr-code.io
 competitorLogo: https://assets.qrdx.dev/compare/qr-code.io.svg
-tagline: "QR Code.io is a subscription dynamic QR platform that starts with a trial. QRdx is free for good, open source, and needs no account."
+tagline: "QR Code.io is a subscription dynamic QR platform that starts with a trial. QRdx has a permanent free plan, is open source, and its static codes need no account."
 qrdxPlan: "Free · Open Source"
 competitorPlan: "Free trial / subscription"
 lastVerified: "2026-10-31"
@@ -15,7 +15,7 @@ sources:
   - https://qr-code.io/plans-and-prices
 tableRows:
   - feature: Price
-    qrdx: "Free"
+    qrdx: "Free; paid from $5/mo"
     competitor: "Monthly, quarterly or annual subscription"
   - feature: Free tier
     qrdx: "Free forever"
@@ -27,10 +27,10 @@ tableRows:
     qrdx: "30+, incl. URL, Wi-Fi, vCard"
     competitor: "18 listed"
   - feature: Dynamic (editable) QR codes
-    qrdx: "Via Dub integration"
+    qrdx: "10 free; unlimited from $5/mo"
     competitor: "Unlimited on paid plans"
   - feature: Scan analytics
-    qrdx: "Link clicks via Dub"
+    qrdx: "Built in, unlimited scans"
     competitor: "Count, location, time, device"
   - feature: Logo and frames
     qrdx: true
@@ -49,39 +49,38 @@ tableRows:
     competitor: false
 featureHighlights:
   - title: Free for good, not for a trial
-    description: "QRdx has no trial and no expiry: make and download codes without an account. QR Code.io offers a free trial before a paid subscription, and its pricing page states it does not refund subscriptions."
+    description: "QRdx has no trial and no expiry: make static codes without an account, or sign up free for 10 dynamic codes. QR Code.io offers a free trial before a paid subscription, and its pricing page states it does not refund subscriptions."
   - title: Codes that do not depend on a subscription
-    description: "QRdx codes are static by default, so they keep working whatever happens to any account. If you want editable links, encode a Dub short link."
+    description: "QRdx static codes need no service at all, and QRdx dynamic codes keep redirecting on every plan, even after you cancel."
   - title: Developer-native
-    description: "Install the qrdx npm package and render styled codes in a React app with TypeScript types. QR Code.io is a hosted dashboard."
+    description: "Use the REST API, or install the qrdx npm package and render styled codes in a React app with TypeScript types. QR Code.io is a hosted dashboard."
   - title: Open source
     description: "QRdx is AGPL-3.0 licensed and self-hostable. QR Code.io is a proprietary platform."
 ---
 
-QR Code.io is a hosted dynamic QR platform. You sign up, start with a free trial, and continue on a monthly, quarterly or annual subscription that includes unlimited dynamic codes, unlimited scans, unlimited users and scan analytics (how many scans, when, where and on which device). QRdx works the other way around: it is free with no trial, makes static codes that never expire, and is open source.
+QR Code.io is a hosted dynamic QR platform. You sign up, start with a free trial, and continue on a monthly, quarterly or annual subscription that includes unlimited dynamic codes, unlimited scans, unlimited users and scan analytics (how many scans, when, where and on which device). QRdx works the other way around: a permanent free plan with no trial, static codes that never expire, dynamic codes that keep redirecting even if you cancel, and open-source code.
 
 ## Who each tool is for
 
 QR Code.io fits teams that want many content types behind editable codes, such as PDFs, menus, vCards, coupons, MP3s and lists of links, with hosting and analytics handled for them. Its homepage lists 18 types.
 
-QRdx fits anyone who wants a well-designed code for a URL, Wi-Fi network, contact card, payment link or other content without signing up, and developers who want to render codes in their own app.
+QRdx fits anyone who wants a well-designed code for a URL, Wi-Fi network, contact card, payment link or other content without signing up, anyone who wants editable codes and hosted pages without a trial deadline, and developers who want to render codes in their own app.
 
 ## Where QR Code.io is the better choice
 
-- You need **hosted content** behind the code, such as a PDF or menu page, rather than a link to something you already host.
-- You need **editable codes with scan analytics** for a team.
+- You need one of QR Code.io's **18 content types** that QRdx's hosted pages don't cover yet.
 - You are happy to pay a subscription for an all-in-one tool.
 
 ## Key differences
 
-- **Pricing:** QR Code.io is a subscription after a trial, and its plans page says subscriptions are not refunded, so check current prices there before you start. QRdx is free; Pro ($8/mo or $79/yr) only adds unlimited AI theme generation and saved themes.
-- **Code model:** QR Code.io's dynamic codes depend on its service. QRdx codes are static unless you choose to encode a [Dub](/integrations/dub) short link.
+- **Pricing:** QR Code.io is a subscription after a trial, and its plans page says subscriptions are not refunded, so check current prices there before you start. QRdx's static codes are free; Pro ($5/mo or $48/yr) adds unlimited dynamic codes, longer analytics history and custom domains.
+- **Code model:** QR Code.io's dynamic codes depend on its service. QRdx static codes need no service, and QRdx dynamic codes keep redirecting on every plan ([Never-Hostage Guarantee](/guarantee)).
 - **Design:** QRdx gives separate control over 9 body patterns, 9 eye shapes and 11 eye-dot shapes, plus gradients, logos and six templates.
 - **Openness:** QRdx is open source (AGPL-3.0) with an npm package and CLI.
 
 ## Switching from QR Code.io
 
 1. Find every printed code that points at QR Code.io and decide whether to keep paying until you reprint; dynamic codes rely on the platform.
-2. Recreate new codes in the [QRdx playground](/playground), pointing straight at your content.
-3. Host files such as PDFs yourself (or in Google Drive) and encode that link.
+2. Recreate codes in QRdx: static codes in the [playground](/playground), or dynamic codes and hosted pages in the dashboard.
+3. Rebuild hosted content such as link lists, vCard Plus cards or PDFs as QRdx hosted pages, or host files yourself and encode that link.
 4. Test each code on a few phones before printing.

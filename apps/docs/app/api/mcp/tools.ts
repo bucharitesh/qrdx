@@ -50,7 +50,7 @@ export function registerQrTools(server: McpServer) {
     {
       title: "Generate QR code",
       description:
-        "Render a styled QR code. Returns a PNG image and public image URLs (SVG and PNG) for embedding in Markdown or HTML; set include_svg to also get the SVG markup. Logos and gradients are not supported here; use solid hex colors.",
+        "Render a styled QR code. Returns a PNG image and public image URLs (SVG and PNG for embedding in Markdown or HTML, plus a vector EPS for print); set include_svg to also get the SVG markup. Logos and gradients are not supported here; use solid hex colors.",
       inputSchema: generateInput,
       annotations: { ...readOnly, title: "Generate QR code" },
     },
@@ -74,6 +74,7 @@ export function registerQrTools(server: McpServer) {
             `QR code, ${options.size}x${options.size}px, error correction ${options.level}.`,
             `SVG URL: ${url}`,
             `PNG URL: ${buildQrImageUrl(options, "png")}`,
+            `EPS URL (vector, for print; ${options.size} pt wide): ${buildQrImageUrl(options, "eps")}`,
             `Markdown: ![QR code](${url})`,
           ].join("\n"),
         ),

@@ -4,6 +4,14 @@ export { DEFAULT_MARGIN } from "../src/constants";
 // Re-export utility functions that don't require React
 // These can be used in server contexts without "use client" directive
 export { getSolidColor } from "../src/utils/color";
+export type { QRArt, QRArtImage, QRArtMode } from "./art";
+export {
+  QR_ART_MAX_SAMPLE_SIZE,
+  QR_ART_MODES,
+  qrArtImageSchema,
+  qrArtModeSchema,
+  qrArtSchema,
+} from "./art";
 export type {
   ColorConfig,
   ColorType,

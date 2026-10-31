@@ -1,0 +1,59 @@
+---
+title: Notifications
+description: Email alerts, a weekly digest, and Slack or Discord messages when your QR codes get scanned or your forms get responses.
+icon: Bell
+---
+
+Choose what QRdx tells you about in [Settings → Notifications](/settings/notifications). Settings are per person and per workspace: your personal workspace and every team you belong to have their own switches, and in a team every member picks their own.
+
+| Channel | What you can get | Plan |
+| --- | --- | --- |
+| Email | Weekly digest, scan milestones, form submissions, new codes, code changes | Pro and Business |
+| Slack, Discord | Scan milestones, form submissions, new codes, code changes | Business |
+| [Webhooks](/docs/webhooks), Zapier, Make | Every event, including each scan | Business |
+
+Team workspaces follow the plan of the team's owners. Everything is off until you turn it on.
+
+## Alerts
+
+- **Scan milestones:** a code's first scan (with when, where and on which device), then 10, 100, 500, 1,000, 5,000, 10,000 scans and beyond.
+- **Form submissions:** the answers from a form on one of your [hosted pages](/docs/landing-pages), with a link to all responses.
+- **New codes** and **code changes:** who created a code, or changed its destination, title, design or domain. Most useful in teams.
+
+To keep a busy form or a bulk import from flooding your inbox or channel, each target gets at most 30 alerts of one kind per hour; the rest are skipped (the weekly digest still counts them, and webhooks still receive every event).
+
+## Weekly digest
+
+Every Monday (UTC) you get last week's numbers for the workspace: scans compared with the week before, unique visitors, your top 5 codes, the top countries, new codes and form responses. It's skipped when there were no scans for two weeks and no form responses.
+
+## Email
+
+Alert emails go to your account's email address. Each one has an **Unsubscribe** link that turns off that kind of email without signing in (mail apps that support one-click unsubscribe show it too). Turn emails back on, or off, in notification settings at any time.
+
+Team invitations and other account emails are not affected by these settings.
+
+## Slack and Discord
+
+1. Create an incoming webhook:
+   - **Slack:** add the [Incoming WebHooks](https://slack.com/apps/A0F7XDUAZ-incoming-webhooks) app, or your own Slack app with incoming webhooks, to a channel and copy the URL (`https://hooks.slack.com/services/...`).
+   - **Discord:** channel settings → **Integrations** → **Webhooks** → **New Webhook** → **Copy Webhook URL** (`https://discord.com/api/webhooks/...`).
+2. In [Settings → Notifications](/settings/notifications), click **+ Slack** or **+ Discord** in the workspace, paste the URL and pick the events.
+3. Use the send button to post a test message.
+
+Only Slack and Discord webhook URLs are accepted. After saving, QRdx shows only the start of the URL, because anyone who has it can post to the channel. Messages never mention `@everyone`, `@here` or roles, whatever visitors type into a form.
+
+## Plans and downgrades
+
+If a workspace's plan no longer includes a channel, its alerts stop, but your settings are kept and you can still turn them off or remove targets. Your QR codes keep working on every plan.
+
+## Self-hosting
+
+Emails are sent through [Resend](https://resend.com): set `RESEND_API_KEY` and `EMAIL_FROM` (an address on a domain verified in Resend). Without them, emails are skipped and logged, and team invites fall back to copyable links.
+
+The weekly digest runs from a scheduled job on Monday mornings (`apps/docs/vercel.json` on Vercel calls `/api/cron/digest?shard=all`, which sends every subscriber's digest in one run). With many subscribers you can instead call it hourly on Mondays without `shard=all`, so each run handles a twenty-fourth of them. Elsewhere, call it with the `CRON_SECRET` from your environment:
+
+```bash
+curl -H "Authorization: Bearer $CRON_SECRET" https://your-host/api/cron/digest
+```
+
+Unsubscribe links are signed with `BETTER_AUTH_SECRET`; changing it invalidates links in emails already sent.

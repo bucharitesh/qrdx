@@ -7,6 +7,7 @@ import { SLUG_TO_CATEGORY } from "@/lib/blog-constants";
 import { env } from "@/lib/env";
 import { baseUrl } from "@/lib/metadata";
 import { QR_TYPE_SLUGS } from "@/lib/qr-types-content";
+import { industries, placements } from "@/lib/seo-content";
 import {
   blogAuthorsSource,
   blogSource,
@@ -81,6 +82,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9,
     },
     {
+      url: url("/guarantee"),
+      changeFrequency: "yearly",
+      priority: 0.6,
+    },
+    {
       url: url("/ai"),
       changeFrequency: "weekly",
       priority: 0.9,
@@ -115,6 +121,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
             priority: 0.6,
           }) satisfies Entry,
       ),
+    {
+      url: url("/mcp"),
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
     {
       url: url("/changelogs"),
       lastModified: latest(changelogSource.getPages().map((p) => p.data.date)),
@@ -160,6 +171,21 @@ export default function sitemap(): MetadataRoute.Sitemap {
           priority: 0.7,
         }) satisfies Entry,
     ),
+    ...[industries, placements].flatMap((collection) => [
+      {
+        url: url(collection.basePath),
+        changeFrequency: "monthly",
+        priority: 0.7,
+      } satisfies Entry,
+      ...collection.items.map(
+        (topic) =>
+          ({
+            url: url(collection.path(topic.slug)),
+            changeFrequency: "monthly",
+            priority: 0.6,
+          }) satisfies Entry,
+      ),
+    ]),
     {
       url: url("/tools"),
       changeFrequency: "monthly",
@@ -179,6 +205,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: url("/tools/scan-checker"),
       changeFrequency: "monthly",
       priority: 0.7,
+    },
+    {
+      url: url("/scan"),
+      changeFrequency: "monthly",
+      priority: 0.8,
     },
     {
       url: url("/compare"),
@@ -204,5 +235,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
           priority: 0.3,
         }) satisfies Entry,
     ),
+    {
+      url: url("/report-abuse"),
+      changeFrequency: "yearly",
+      priority: 0.3,
+    },
   ];
 }

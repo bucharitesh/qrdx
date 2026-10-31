@@ -86,7 +86,7 @@ export function CreateTeamDialog({
           <DialogHeader>
             <DialogTitle>Create a team</DialogTitle>
             <DialogDescription>
-              Teams share dynamic QR codes and brand kits. You can invite
+              Teams share dynamic QR codes and team themes. You can invite
               members after creating it.
             </DialogDescription>
           </DialogHeader>

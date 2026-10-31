@@ -133,6 +133,7 @@ export function usePlaygroundShortcuts({
           cornerEyePattern: themeState.styles.cornerEyePattern,
           cornerEyeDotPattern: themeState.styles.cornerEyeDotPattern,
           templateId: themeState.styles.templateId,
+          margin: themeState.styles.margin,
           frame: themeState.styles.frame,
         };
 

@@ -1,11 +1,12 @@
 {
-  "title": "Customization",
+  "title": "Features",
   "pages": [
-    "colors-gradients",
     "patterns",
+    "colors-gradients",
     "logos",
     "templates",
     "frames",
+    "art-qr",
     "downloads"
   ]
 }

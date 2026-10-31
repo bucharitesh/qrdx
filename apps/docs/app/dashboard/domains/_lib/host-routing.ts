@@ -9,12 +9,17 @@ import {
   requestHostname,
 } from "./hostname";
 
-// Used by proxy.ts: requests on a customer's domain only ever reach short links.
+// Used by proxy.ts: requests on a customer's domain only ever reach short links
+// and the hosted pages they open.
 
 interface CustomHost {
   id: string;
   verified: boolean;
 }
+
+/** The only API routes served on custom domains (tagged with the domain id). */
+const PAGE_API_PATH =
+  /^\/api\/(?:events\/?|(?:forms|vcard|calendar)\/[^/]+\/?)$/;
 
 const CACHE_TTL_MS = 60_000;
 const CACHE_MAX_ENTRIES = 1000;
@@ -115,8 +120,11 @@ a{display:inline-block;margin-top:28px;color:var(--fg);font-size:14px;font-weigh
 /**
  * Routing for requests on a customer's domain. Returns null for QRdx's own
  * hosts and unknown hosts, which continue through the normal app.
- * Verified domains: `/<slug>` → `/q/<slug>` (tagged with the domain id),
- * `/` → a small page, everything else 404. Pending domains serve nothing.
+ * Verified domains: `/<slug>` → `/q/<slug>` and `/p/<slug>` → `/p/<slug>`
+ * (both tagged with the domain id), `/api/forms/<id>`, `/api/events`,
+ * `/api/vcard/<slug>` and `/api/calendar/<slug>` pass through (tagged too),
+ * `/` → a small page, everything else 404.
+ * Pending domains serve nothing.
  */
 export async function routeCustomDomain(
   request: NextRequest,
@@ -149,11 +157,21 @@ export async function routeCustomDomain(
     );
   }
 
-  const slug = pathname.slice(1);
+  // Endpoints hosted pages call same-origin (forms, events, vCard, .ics).
+  if (PAGE_API_PATH.test(pathname)) {
+    const headers = new Headers(request.headers);
+    headers.set(CUSTOM_DOMAIN_HEADER, host.id);
+    return NextResponse.next({ request: { headers } });
+  }
+
+  // `/<slug>` is the short link; `/p/<slug>` the hosted page it redirects to.
+  const isPagePath = pathname.startsWith("/p/");
+  const slug = pathname.slice(isPagePath ? 3 : 1);
   if (isValidSlug(slug)) {
     const headers = new Headers(request.headers);
     headers.set(CUSTOM_DOMAIN_HEADER, host.id);
-    return NextResponse.rewrite(new URL(`/q/${slug}`, request.url), {
+    const target = isPagePath ? `/p/${slug}` : `/q/${slug}`;
+    return NextResponse.rewrite(new URL(target, request.url), {
       request: { headers },
     });
   }

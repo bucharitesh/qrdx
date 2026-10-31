@@ -280,3 +280,4 @@ packages/database/generated
 
 packages/database/*.sql
 packages/database/meta
+.gstack/

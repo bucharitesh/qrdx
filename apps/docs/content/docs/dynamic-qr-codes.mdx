@@ -1,6 +1,6 @@
 ---
 title: Dynamic QR codes
-description: Print a QR code once, change where it points later, and see how often it is scanned
+description: Print a QR code once, change where it points later, and see how often it is scanned.
 icon: QrCode
 ---
 
@@ -22,7 +22,18 @@ From the dashboard you can:
 - **Edit link:** change the destination or title. The printed code keeps working and opens the new destination on the next scan.
 - **Edit design in playground:** opens the code in the editor, still bound to its short link.
 - **Archive:** the short link shows a "no longer active" page until you restore the code. Archived codes don't count toward your plan limit.
-- **Delete:** removes the code and its scan history. The short link then shows a "not found" page.
+- **Move to trash:** the short link shows a "no longer active" page (HTTP 410) and the code stops counting toward your plan. Restore it from **Trash**, or delete it forever there, which also removes its scan history. Deleting through the API (`DELETE /api/v1/codes/{id}`) is permanent immediately.
+- **Duplicate:** copies the destination, design, folder, tags and notes into a new code with a new short link and no scans.
+- **Version history:** every change is recorded on the code's page; restoring a version saves the current settings first, so a restore can be undone.
+
+## Organize codes
+
+- **Folders:** nest up to 5 levels deep. Drag codes onto a folder or use **Move to folder**. Deleting a folder moves its codes and subfolders up one level.
+- **Tags:** filter by several tags to see codes that have all of them.
+- **Favourites and notes:** star codes and keep private notes; notes are searchable.
+- **Search** covers titles, destinations, notes, tags and slugs (paste a short link to find its code).
+- **Bulk actions:** select codes to move, tag, pause, archive, favourite, trash or download them as a ZIP of PNG or SVG files.
+- **CSV import:** **Codes → Import** creates up to 1,000 dynamic codes from a CSV (destination, title, folder, tags, optional slug). Importing more than one row needs Pro.
 
 Codes in a team belong to the team. Every member can create and edit them; members can delete their own codes, owners and admins can delete any team code.
 
@@ -32,18 +43,18 @@ Codes in a team belong to the team. Every member can create and edit them; membe
 
 ## Plans
 
-| | Free | Pro |
-| --- | --- | --- |
-| Active dynamic codes | 5 | Unlimited |
-| Scans | Unlimited | Unlimited |
-| Scan history | 30 days | 365 days |
-| Bulk creation via the API | No | Up to 100 per request |
+| | Free | Pro | Business |
+| --- | --- | --- | --- |
+| Active dynamic codes | 10 | Unlimited | Unlimited |
+| Scans | Unlimited | Unlimited | Unlimited |
+| Scan history | 90 days | 3 years | Unlimited |
+| Bulk creation via the API | No | Up to 100 per request | Up to 100 per request |
 
-Team codes use the plan of the team's owner.
+Team codes use the best plan among the team's owners. See [Plans and limits](/docs/plans-and-limits) for everything else each plan includes.
 
 ## Scan analytics
 
-Each code has an analytics page with scans over time, unique visitors, top countries and cities, devices, operating systems, browsers and referrers for the last 7, 30, 90 or 365 days (limited by your plan's history). You can export the scans in the selected range as CSV.
+Each code has an analytics page with scans over time, unique visitors, top countries and cities, devices, operating systems, browsers and referrers for the last 7, 30 or 90 days, 1 year or 3 years (limited by your plan's history). You can export the scans in the selected range as CSV.
 
 What is recorded for each scan:
 
@@ -63,9 +74,9 @@ Manage codes programmatically under `https://qrdx.dev/api/v1/codes`. Requests ar
 | `GET` | `/api/v1/codes` | List codes. Query: `status` (`active`, `archived`, `all`), `q`, `limit` (≤ 100), `offset` |
 | `POST` | `/api/v1/codes` | Create one code, or an array of up to 100 (arrays need Pro) |
 | `GET` | `/api/v1/codes/{id}` | Get one code |
-| `PATCH` | `/api/v1/codes/{id}` | Update `destinationUrl`, `title`, `style` or `archived` |
+| `PATCH` | `/api/v1/codes/{id}` | Update `destinationUrl`, `title`, `style`, `domainId` ([custom domains](/docs/custom-domains)) or `archived` |
 | `DELETE` | `/api/v1/codes/{id}` | Delete a code and its scans |
-| `GET` | `/api/v1/codes/{id}/scans` | Analytics for `range` (`7d`, `30d`, `90d`, `365d`). Add `limit` (≤ 500) for individual scans, and `before` (the last `scannedAt`) for the next page |
+| `GET` | `/api/v1/codes/{id}/scans` | Analytics for `range` (`7d`, `30d`, `90d`, `365d`, `1095d`; limited by your plan's history). Add `limit` (≤ 500) for individual scans, and `before` (the last `scannedAt`) for the next page |
 
 Create a code:
 
@@ -82,6 +93,8 @@ curl https://qrdx.dev/api/v1/codes \
     "id": "cm3x...",
     "slug": "aB3dE5f",
     "shortLink": "https://qrdx.dev/q/aB3dE5f",
+    "defaultShortLink": "https://qrdx.dev/q/aB3dE5f",
+    "domain": null,
     "destinationUrl": "https://example.com/menu",
     "title": "Spring menu",
     "contentType": "url",

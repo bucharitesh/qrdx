@@ -7,11 +7,16 @@ import {
   database as db,
   member,
   qrCode,
+  qrPreset,
   subscription,
   user as userTable,
 } from "@repo/database";
-import { and, eq, isNotNull, ne } from "drizzle-orm";
+import { and, eq, isNotNull, isNull, ne } from "drizzle-orm";
 import { headers } from "next/headers";
+import {
+  getCustomDomainMode,
+  removeVercelProjectDomain,
+} from "@/lib/custom-domains";
 import { isBillingConfigured, polar } from "@/lib/polar";
 import { getCurrentUserId, logError } from "@/lib/shared";
 import {
@@ -34,36 +39,50 @@ const roleRank = (role: string) =>
  * are left as they are.
  */
 async function handOverTeamResources(userId: string) {
-  const [codeTeams, kitTeams, domainTeams, memberships] = await Promise.all([
-    db
-      .selectDistinct({ organizationId: qrCode.organizationId })
-      .from(qrCode)
-      .where(and(eq(qrCode.userId, userId), isNotNull(qrCode.organizationId))),
-    db
-      .selectDistinct({ organizationId: brandKit.organizationId })
-      .from(brandKit)
-      .where(
-        and(eq(brandKit.userId, userId), isNotNull(brandKit.organizationId)),
-      ),
-    db
-      .selectDistinct({ organizationId: customDomain.organizationId })
-      .from(customDomain)
-      .where(
-        and(
-          eq(customDomain.userId, userId),
-          isNotNull(customDomain.organizationId),
+  const [codeTeams, kitTeams, themeTeams, domainTeams, memberships] =
+    await Promise.all([
+      db
+        .selectDistinct({ organizationId: qrCode.organizationId })
+        .from(qrCode)
+        .where(
+          and(eq(qrCode.userId, userId), isNotNull(qrCode.organizationId)),
         ),
-      ),
-    db
-      .select({ organizationId: member.organizationId, role: member.role })
-      .from(member)
-      .where(eq(member.userId, userId)),
-  ]);
+      db
+        .selectDistinct({ organizationId: brandKit.organizationId })
+        .from(brandKit)
+        .where(
+          and(eq(brandKit.userId, userId), isNotNull(brandKit.organizationId)),
+        ),
+      db
+        .selectDistinct({ organizationId: qrPreset.organizationId })
+        .from(qrPreset)
+        .where(
+          and(eq(qrPreset.userId, userId), isNotNull(qrPreset.organizationId)),
+        ),
+      db
+        .selectDistinct({ organizationId: customDomain.organizationId })
+        .from(customDomain)
+        .where(
+          and(
+            eq(customDomain.userId, userId),
+            isNotNull(customDomain.organizationId),
+          ),
+        ),
+      db
+        .select({ organizationId: member.organizationId, role: member.role })
+        .from(member)
+        .where(eq(member.userId, userId)),
+    ]);
 
   const organizationIds = new Set<string>(
     memberships.map((m) => m.organizationId),
   );
-  for (const row of [...codeTeams, ...kitTeams, ...domainTeams]) {
+  for (const row of [
+    ...codeTeams,
+    ...kitTeams,
+    ...themeTeams,
+    ...domainTeams,
+  ]) {
     if (row.organizationId) organizationIds.add(row.organizationId);
   }
 
@@ -136,6 +155,15 @@ async function handOverTeamResources(userId: string) {
             ),
           ),
         db
+          .update(qrPreset)
+          .set(handOver)
+          .where(
+            and(
+              eq(qrPreset.userId, userId),
+              eq(qrPreset.organizationId, organizationId),
+            ),
+          ),
+        db
           .update(customDomain)
           .set(handOver)
           .where(
@@ -155,6 +183,29 @@ export async function deleteAccount(): Promise<ActionResult<boolean>> {
 
     // Must succeed before anything is deleted, or team codes would cascade away.
     await handOverTeamResources(userId);
+
+    // Personal domains are deleted with the account; free their hostnames on Vercel too.
+    if (getCustomDomainMode() === "vercel") {
+      const personalDomains = await db
+        .select({ hostname: customDomain.hostname })
+        .from(customDomain)
+        .where(
+          and(
+            eq(customDomain.userId, userId),
+            isNull(customDomain.organizationId),
+          ),
+        );
+      await Promise.all(
+        personalDomains.map(({ hostname }) =>
+          removeVercelProjectDomain(hostname).catch((error) =>
+            logError(error as Error, {
+              action: "deleteAccount.removeDomain",
+              hostname,
+            }),
+          ),
+        ),
+      );
+    }
 
     if (isBillingConfigured) {
       try {

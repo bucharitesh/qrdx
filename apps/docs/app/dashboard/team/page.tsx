@@ -15,6 +15,7 @@ import {
   getPlan,
   getPlanLimits,
 } from "@/lib/plans";
+import { PLAN_NAMES } from "@/lib/pricing";
 import { type ActiveScope, getActiveScope } from "@/lib/scope";
 import { getCurrentUser } from "@/lib/shared";
 import { UnauthorizedError } from "@/types/errors";
@@ -74,7 +75,7 @@ export default async function TeamPage({
       description={
         team
           ? "Manage members, roles and invitations for this team."
-          : "Teams share dynamic QR codes and brand kits with your colleagues."
+          : "Teams share dynamic QR codes and team themes with your colleagues."
       }
       title={team ? "Team" : "Teams"}
     >
@@ -131,7 +132,7 @@ export default async function TeamPage({
             <CardTitle>Your teams</CardTitle>
             <CardDescription>
               You're in your personal workspace. Open a team to work on its
-              codes and brand kits.
+              codes and themes.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -205,15 +206,15 @@ export default async function TeamPage({
           <div className="flex flex-wrap items-center gap-2">
             <CardTitle className="text-lg">{team.name}</CardTitle>
             <Badge variant="outline">{TEAM_ROLE_LABELS[scope.role]}</Badge>
-            <Badge variant={teamPlan === "pro" ? "default" : "secondary"}>
-              {teamPlan === "pro" ? "Pro" : "Free"}
+            <Badge variant={teamPlan !== "free" ? "default" : "secondary"}>
+              {PLAN_NAMES[teamPlan]}
             </Badge>
           </div>
           <CardDescription>
             Team URL: <span className="font-mono">{team.slug}</span> ·{" "}
             {members.length} member{members.length === 1 ? "" : "s"}
             {teamPlan === "free" &&
-              " · Team limits follow its owners' plan; no owner is on Pro right now. Existing codes keep working."}
+              " · Team limits follow its owners' plan; no owner is on Pro or Business right now. Existing codes keep working."}
           </CardDescription>
         </CardHeader>
       </Card>

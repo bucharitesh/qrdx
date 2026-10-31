@@ -33,6 +33,8 @@ export type QrCodeErrorCode =
   | "LIMIT_REACHED"
   | "PLAN_REQUIRED"
   | "RATE_LIMITED"
+  | "DOMAIN_NOT_VERIFIED"
+  | "UNSAFE_DESTINATION"
   | "UNKNOWN_ERROR";
 
 export type QrCodeActionResult<T> =
@@ -45,6 +47,8 @@ const KNOWN_CODES = new Set<string>([
   "LIMIT_REACHED",
   "PLAN_REQUIRED",
   "RATE_LIMITED",
+  "DOMAIN_NOT_VERIFIED",
+  "UNSAFE_DESTINATION",
 ]);
 
 function failure(

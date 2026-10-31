@@ -83,7 +83,9 @@ ${BOLD}Commands:${RESET}
 
 ${BOLD}Generate Options:${RESET}
   <data>              URL or text to encode (positional)
-  -o, --output        Output file path (.svg or .png)
+  -o, --output        Output file path (.svg, .png or .eps)
+  --format            Output format when the file name has no extension:
+                        ${DIM}svg, png, eps${RESET}  ${DIM}(EPS is vector; --size = width in points)${RESET}
   -l, --level         Error correction: L, M, Q, H  ${DIM}(default: Q)${RESET}
   --body              Body dot pattern:
                         ${DIM}square, circle, circle-large, diamond,${RESET}
@@ -127,6 +129,7 @@ ${BOLD}Examples:${RESET}
   ${DIM}$${RESET} qrdx generate "https://qrdx.dev"
   ${DIM}$${RESET} qrdx generate "https://qrdx.dev" -o qr.svg
   ${DIM}$${RESET} qrdx generate "https://qrdx.dev" -o qr.png --body circle --eye gear --dot star
+  ${DIM}$${RESET} qrdx generate "https://qrdx.dev" -o qr.eps --size 144
   ${DIM}$${RESET} qrdx generate "https://qrdx.dev" --fg "#ff0000" --bg "#ffffff" --size 1024
   ${DIM}$${RESET} qrdx generate "https://qrdx.dev" --logo "https://qrdx.dev/logo.png" --level H -o branded.svg
   ${DIM}$${RESET} qrdx generate "https://qrdx.dev" --template Arrow -o arrow.svg

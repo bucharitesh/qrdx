@@ -1,9 +1,11 @@
 import type { QRProps } from "../types";
 import { DEFAULT_SIZE } from "./constants";
+import { epsToDataUrl, getQRAsEPS } from "./eps";
 import { getFrameDimensions } from "./frame";
 import { getQRAsCanvas, getQRAsSVGDataUri } from "./index";
 
-export type DownloadFormat = "png" | "jpg" | "svg" | "pdf";
+/** "eps" is vector PostScript: `size.width` becomes points (72 per inch). */
+export type DownloadFormat = "png" | "jpg" | "svg" | "pdf" | "eps";
 
 export interface DownloadSize {
   width: number;
@@ -110,6 +112,8 @@ function getMimeType(format: DownloadFormat): string {
       return "image/svg+xml";
     case "pdf":
       return "application/pdf";
+    case "eps":
+      return "application/postscript";
     default:
       return "image/png";
   }
@@ -120,6 +124,17 @@ function getMimeType(format: DownloadFormat): string {
  */
 function getFileExtension(format: DownloadFormat): string {
   return format;
+}
+
+// One CSS pixel = one PostScript point (72 per inch).
+const MM_PER_POINT = 25.4 / 72;
+
+/** EPS of the code at `size` points wide, as a data URL. */
+async function getQRAsEPSDataUrl(qrProps: QRProps): Promise<string> {
+  const eps = await getQRAsEPS(qrProps, {
+    sizeMm: (qrProps.size ?? DEFAULT_SIZE) * MM_PER_POINT,
+  });
+  return epsToDataUrl(eps);
 }
 
 /**
@@ -255,6 +270,8 @@ export async function downloadQRCode(
       // Download as PDF
       const pdfDataUrl = await getQRAsPDF(propsWithSize);
       downloadFile(pdfDataUrl, finalFilename);
+    } else if (format === "eps") {
+      downloadFile(await getQRAsEPSDataUrl(propsWithSize), finalFilename);
     } else {
       // Download as PNG or JPG
       const mimeType = getMimeType(format);
@@ -294,6 +311,10 @@ export async function getQRCodeDataUrl(
 
   if (format === "pdf") {
     return await getQRAsPDF(propsWithSize);
+  }
+
+  if (format === "eps") {
+    return await getQRAsEPSDataUrl(propsWithSize);
   }
 
   const mimeType = getMimeType(format);

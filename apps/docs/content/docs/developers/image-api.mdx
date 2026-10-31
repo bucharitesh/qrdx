@@ -1,10 +1,10 @@
 ---
 title: QR code image API
 description: Turn any URL into a QR code image you can embed in Markdown, HTML or emails. No API key needed.
-icon: Image
+icon: ImageDown
 ---
 
-`GET https://qrdx.dev/api/v1/qr` returns a QR code as an SVG or PNG image. Everything is in the query string, so the URL itself is the image: paste it into a README, an `<img>` tag or an email template.
+`GET https://qrdx.dev/api/v1/qr` returns a QR code as an SVG or PNG image, or as a vector EPS file for print and design tools. Everything is in the query string, so the URL itself is the image: paste it into a README, an `<img>` tag or an email template.
 
 ```md
 ![QR code](https://qrdx.dev/api/v1/qr?data=https://github.com/you/repo)
@@ -29,6 +29,12 @@ Download a PNG with curl (quote the URL so your shell keeps the `&`):
 curl -o qr.png "https://qrdx.dev/api/v1/qr?data=https://qrdx.dev&format=png&size=1024"
 ```
 
+Get a vector EPS for Illustrator, InDesign or a print shop (`size` is the width in points, 72 per inch, so `144` is 2 inches):
+
+```bash
+curl -o qr.eps "https://qrdx.dev/api/v1/qr?data=https://qrdx.dev&format=eps&size=144"
+```
+
 Stylised dots with a frame:
 
 ```txt
@@ -44,7 +50,7 @@ https://qrdx.dev/api/v1/qr?data=https://qrdx.dev&body=rounded&eye=rounded&dot=ro
 | Parameter | Default | Description |
 |-----------|---------|-------------|
 | `data` | required | Text or URL to encode, up to 2048 characters |
-| `format` | `svg` | `svg` or `png` |
+| `format` | `svg` | `svg`, `png` or `eps` (vector PostScript; `size` is then the width in points) |
 | `size` | `512` | Width and height in pixels, `64` to `2048` |
 | `fg` | `000000` | Module color as hex (`155dfc`, `fff`, or 8 digits with alpha) |
 | `bg` | `ffffff` | Background color as hex. `00000000` gives a transparent background |
@@ -72,7 +78,7 @@ These are the same styles as the [`qrdx` React library](/docs/features/patterns)
 
 A successful request returns the image with:
 
-- `Content-Type: image/svg+xml` or `image/png`
+- `Content-Type: image/svg+xml`, `image/png` or `application/postscript` (EPS is sent as a `qr-code.eps` download)
 - `Cache-Control: public, max-age=31536000, immutable`
 - `Access-Control-Allow-Origin: *`, so you can `fetch` it from any website
 

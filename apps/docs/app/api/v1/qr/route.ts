@@ -11,6 +11,7 @@ import {
   QrDataTooLongError,
   qrImageFormats,
   qrOptionsSchema,
+  renderQrEps,
   renderQrPng,
   renderQrSvg,
 } from "@/lib/qr-render";
@@ -101,6 +102,16 @@ export async function GET(req: NextRequest) {
       const png = await renderQrPng(options);
       return new Response(png, {
         headers: { ...headers, "Content-Type": "image/png" },
+      });
+    }
+
+    if (format === "eps") {
+      return new Response(await renderQrEps(options), {
+        headers: {
+          ...headers,
+          "Content-Type": "application/postscript",
+          "Content-Disposition": 'attachment; filename="qr-code.eps"',
+        },
       });
     }
 

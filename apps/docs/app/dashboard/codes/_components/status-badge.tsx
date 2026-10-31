@@ -7,7 +7,24 @@ const LABELS: Record<QrCodeStatus, string> = {
   disabled: "Disabled",
 };
 
-export function StatusBadge({ status }: { status: QrCodeStatus }) {
+export function StatusBadge({
+  status,
+  paused = false,
+}: {
+  status: QrCodeStatus;
+  /** Shown instead of "Active" for paused codes */
+  paused?: boolean;
+}) {
+  if (paused && status === "active") {
+    return (
+      <Badge
+        title="Paused: scans go to the fallback URL or a neutral 'paused' page"
+        variant="outline"
+      >
+        Paused
+      </Badge>
+    );
+  }
   return (
     <Badge
       title={

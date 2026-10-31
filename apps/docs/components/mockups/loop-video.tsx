@@ -1,0 +1,101 @@
+"use client";
+
+import { cn } from "@repo/design-system/lib/utils";
+import { Pause, Play } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+
+export interface LoopVideoProps {
+  mp4: string;
+  webm?: string;
+  /** First frame, shown before playback and instead of it with reduced motion. */
+  poster: string;
+  width: number;
+  height: number;
+  /** Describes what the clip shows (the video has no audio or captions). */
+  label: string;
+  className?: string;
+}
+
+/**
+ * Short muted screen recording that loops while on screen. It never
+ * autoplays with prefers-reduced-motion (the poster stays), pauses when
+ * scrolled away, and has a visible pause/play button.
+ */
+export function LoopVideo({
+  mp4,
+  webm,
+  poster,
+  width,
+  height,
+  label,
+  className,
+}: LoopVideoProps) {
+  const ref = useRef<HTMLVideoElement>(null);
+  const [playing, setPlaying] = useState(false);
+  // null until the user presses the button; then their choice wins.
+  const [userPaused, setUserPaused] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const video = ref.current;
+    if (!video) return;
+    video.muted = true;
+    const reduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    const wantsPlay = userPaused === null ? !reduced : !userPaused;
+    if (!wantsPlay) {
+      video.pause();
+      return;
+    }
+    if (typeof IntersectionObserver === "undefined") {
+      video.play().catch(() => undefined);
+      return;
+    }
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting) {
+          video.play().catch(() => undefined);
+        } else {
+          video.pause();
+        }
+      },
+      { threshold: 0.3 },
+    );
+    observer.observe(video);
+    return () => observer.disconnect();
+  }, [userPaused]);
+
+  return (
+    <div className={cn("relative overflow-hidden bg-muted", className)}>
+      <video
+        ref={ref}
+        aria-label={label}
+        className="block h-auto w-full"
+        height={height}
+        loop
+        muted
+        onPause={() => setPlaying(false)}
+        onPlay={() => setPlaying(true)}
+        playsInline
+        poster={poster}
+        preload="metadata"
+        width={width}
+      >
+        {webm && <source src={webm} type="video/webm" />}
+        <source src={mp4} type="video/mp4" />
+      </video>
+      <button
+        type="button"
+        onClick={() => setUserPaused(playing)}
+        aria-label={playing ? "Pause video" : "Play video"}
+        className="absolute right-3 bottom-3 flex size-8 items-center justify-center rounded-full border border-border bg-background/90 text-foreground shadow-sm backdrop-blur transition-colors hover:bg-muted"
+      >
+        {playing ? (
+          <Pause className="size-3.5" />
+        ) : (
+          <Play className="size-3.5" />
+        )}
+      </button>
+    </div>
+  );
+}

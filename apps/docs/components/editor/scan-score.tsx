@@ -97,6 +97,8 @@ export function ScanScoreBadge({
       cornerEyeDotPattern: style.cornerEyeDotPattern,
       templateId: style.templateId,
       frame: style.frame,
+      margin: style.margin,
+      art: style.art,
     }),
     [value, style],
   );

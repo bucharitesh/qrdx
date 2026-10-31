@@ -6,11 +6,10 @@ import { Progress } from "@repo/design-system/components/ui/progress";
 import { Gem, Plus } from "lucide-react";
 import { type ComponentProps, useState } from "react";
 import type { CodeUsage } from "@/app/dashboard/codes/_lib/qr-codes";
+import { PLAN_NAMES } from "@/lib/pricing";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
-import { CodeDialog } from "./code-dialog";
 import { formatNumber } from "./format";
-
-const PLAN_LABELS = { free: "Free", pro: "Pro" } as const;
+import { NewCodeDialog } from "./new-code-dialog";
 
 const isAtLimit = (usage: CodeUsage) =>
   usage.limit !== null && usage.used >= usage.limit;
@@ -24,7 +23,7 @@ export function UsageMeter({ usage }: { usage: CodeUsage }) {
     return (
       <p className="text-muted-foreground text-sm">
         {formatNumber(usage.used)} active dynamic{" "}
-        {usage.used === 1 ? "code" : "codes"} · {PLAN_LABELS[usage.plan]} plan,
+        {usage.used === 1 ? "code" : "codes"} · {PLAN_NAMES[usage.plan]} plan,
         unlimited codes
       </p>
     );
@@ -38,7 +37,7 @@ export function UsageMeter({ usage }: { usage: CodeUsage }) {
         <div className="flex items-center justify-between gap-2 text-sm">
           <span className="font-medium">
             {formatNumber(usage.used)} / {formatNumber(usage.limit)} dynamic
-            codes ({PLAN_LABELS[usage.plan]})
+            codes ({PLAN_NAMES[usage.plan]})
           </span>
           {isAtLimit(usage) && (
             <span className="text-muted-foreground text-xs">Limit reached</span>
@@ -84,7 +83,8 @@ export function NewCodeButton({
         <Plus />
         {children}
       </Button>
-      <CodeDialog onOpenChange={setOpen} open={open} />
+      {/* Website link (redirect) or a hosted page type */}
+      <NewCodeDialog onOpenChange={setOpen} open={open} />
     </>
   );
 }

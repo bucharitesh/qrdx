@@ -202,7 +202,7 @@ export function MembersTable({
             </AlertDialogTitle>
             <AlertDialogDescription>
               They lose access to this team right away. Dynamic QR codes and
-              brand kits they created stay with the team and keep working.
+              themes they created stay with the team and keep working.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

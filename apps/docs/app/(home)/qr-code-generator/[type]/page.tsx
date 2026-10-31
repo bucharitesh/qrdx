@@ -2,6 +2,8 @@ import { ArrowRight } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { MockupImage } from "@/components/mockups/mockup-image";
+import { qrTypeGroupImages } from "@/components/mockups/visuals";
 import { FaqList } from "@/components/sections/tools/faq-list";
 import { ToolHero } from "@/components/sections/tools/tool-hero";
 import { TypeGenerator } from "@/components/sections/tools/type-generator";
@@ -83,6 +85,11 @@ export default async function QrTypePage({ params }: PageProps) {
               </li>
             ))}
           </ol>
+          <MockupImage
+            {...qrTypeGroupImages[content.group]}
+            sizes="(min-width: 1280px) 600px, (min-width: 768px) 50vw, 100vw"
+            className="mt-2 aspect-[3/2] object-cover"
+          />
         </div>
 
         <div className="px-6 md:px-10 py-10 flex flex-col gap-4 min-w-0">

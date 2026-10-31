@@ -34,6 +34,7 @@ import {
 } from "@repo/design-system/components/ui/tabs";
 import {
   type DownloadSize,
+  downloadPrintEPS,
   downloadPrintPDF,
   downloadPrintSVG,
   downloadQRCode,
@@ -46,6 +47,7 @@ import {
   type PrintUnit,
   validateSize,
 } from "qrdx";
+import type { QRArt } from "qrdx/types";
 import React from "react";
 import { Icons } from "@/components/icons";
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
@@ -115,7 +117,9 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
       cornerEyePattern: themeState.styles.cornerEyePattern,
       cornerEyeDotPattern: themeState.styles.cornerEyeDotPattern,
       templateId: themeState.styles.templateId,
+      margin: themeState.styles.margin,
       frame: themeState.styles.frame,
+      art: (themeState.styles as { art?: QRArt }).art,
     }),
     [value, themeState, downloadOptions.transparent, downloadOptions.format],
   );
@@ -237,7 +241,7 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
     }
   };
 
-  const handlePrintDownload = async (format: "pdf" | "svg") => {
+  const handlePrintDownload = async (format: PrintFormat) => {
     const { layout } = printLayout;
     if (!layout) {
       return;
@@ -245,7 +249,14 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
     setIsDownloading(true);
     const filename = `qr-code-print-${printSize}${printUnit}.${format}`;
     try {
-      if (format === "pdf") {
+      if (format === "eps") {
+        await downloadPrintEPS(printProps, {
+          sizeMm: printUnit === "in" ? printSize * 25.4 : printSize,
+          bleedMm: printBleed,
+          colorMode,
+          filename,
+        });
+      } else if (format === "pdf") {
         await downloadPrintPDF(printProps, {
           size: printSize,
           unit: printUnit,
@@ -283,7 +294,7 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
           <ResponsiveDialogTitle>Download QR Code</ResponsiveDialogTitle>
           <ResponsiveDialogDescription>
             {tab === "print"
-              ? "Vector PDF at an exact physical size, ready for a print shop."
+              ? "Vector PDF or EPS at an exact physical size, ready for a print shop."
               : "Choose the size and format for your QR code download."}
           </ResponsiveDialogDescription>
         </ResponsiveDialogHeader>
@@ -336,7 +347,7 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
                     onValueChange={(value) =>
                       updateDownloadOption(
                         "format",
-                        value as "png" | "jpg" | "svg" | "pdf",
+                        value as DownloadOptionsType["format"],
                       )
                     }
                   >
@@ -348,6 +359,7 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
                       <SelectItem value="jpg">JPG</SelectItem>
                       <SelectItem value="svg">SVG</SelectItem>
                       <SelectItem value="pdf">PDF</SelectItem>
+                      <SelectItem value="eps">EPS (vector)</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -539,6 +551,8 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
   );
 }
 
+type PrintFormat = "pdf" | "svg" | "eps";
+
 interface PrintOptionsProps {
   size: number;
   unit: PrintUnit;
@@ -553,7 +567,7 @@ interface PrintOptionsProps {
   onBleedChange: (bleed: number) => void;
   onCropMarksChange: (cropMarks: boolean) => void;
   onColorModeChange: (colorMode: PrintColorMode) => void;
-  onDownload: (format: "pdf" | "svg") => void;
+  onDownload: (format: PrintFormat) => void;
 }
 
 function PrintOptions({
@@ -690,7 +704,7 @@ function PrintOptions({
         </div>
       )}
 
-      <div className="grid grid-cols-[1fr_auto] gap-2">
+      <div className="grid grid-cols-[1fr_auto_auto] gap-2">
         <Button
           disabled={isDownloading || !layout}
           onClick={() => onDownload("pdf")}
@@ -705,10 +719,18 @@ function PrintOptions({
         >
           Print SVG
         </Button>
+        <Button
+          disabled={isDownloading || !layout}
+          onClick={() => onDownload("eps")}
+          variant="outline"
+        >
+          EPS
+        </Button>
       </div>
       <p className="text-muted-foreground text-xs">
-        The PDF draws every dot as a vector shape (logos stay images). Gradients
-        print as their first color; Print SVG keeps them and uses RGB.
+        PDF and EPS draw every dot as a vector shape (logos stay images).
+        Gradients print as their first color; Print SVG keeps them and uses RGB.
+        EPS has no crop marks.
       </p>
     </div>
   );
