@@ -11,8 +11,8 @@ export const TEAM_ROLE_LABELS: Record<TeamRole, string> = {
 
 export const TEAM_ROLE_DESCRIPTIONS: Record<TeamRole, string> = {
   owner: "Everything admins can do, plus making owners and deleting the team",
-  admin: "Invite and remove members, change roles",
-  member: "Create and edit the team's codes and brand kits",
+  admin: "Invite and remove members, change roles, manage team themes",
+  member: "Create and edit the team's codes, use team themes",
 };
 
 /** Strongest role in Better Auth's comma-separated role field. */

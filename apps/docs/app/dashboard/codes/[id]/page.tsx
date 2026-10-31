@@ -10,6 +10,7 @@ import { ArrowLeft, Download, Lock } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getCodeMarketing } from "@/actions/code-marketing";
 import {
   BreakdownCard,
   type BreakdownItem,
@@ -24,6 +25,13 @@ import {
   getCode,
   requireDashboardScope,
 } from "@/app/dashboard/codes/_lib/qr-codes";
+import { AnalyticsExtra } from "@/app/dashboard/codes/[id]/_components/analytics-extra";
+import { HistoryPanel } from "@/app/dashboard/codes/[id]/_components/history-panel";
+import { LandingPagePanel } from "@/app/dashboard/codes/[id]/_components/landing-page-panel";
+import { LifecyclePanel } from "@/app/dashboard/codes/[id]/_components/lifecycle-panel";
+import { PixelsPanel } from "@/app/dashboard/codes/[id]/_components/pixels-panel";
+import { RoutingPanel } from "@/app/dashboard/codes/[id]/_components/routing-panel";
+import { UtmPanel } from "@/app/dashboard/codes/[id]/_components/utm-panel";
 import { HttpError } from "@/lib/error-response";
 import { getPlanForScope, getPlanLimits } from "@/lib/plans";
 import {
@@ -32,6 +40,7 @@ import {
   resolveScanRange,
   SCAN_RANGE_KEYS,
   SCAN_RANGES,
+  scanRangeLabel,
 } from "@/lib/scans";
 
 export const metadata: Metadata = {
@@ -117,6 +126,8 @@ export default async function CodeDetailPage({
     (key) => SCAN_RANGES[key] > retentionDays,
   );
   const detailHref = `/dashboard/codes/${encodeURIComponent(code.id)}`;
+  // Shared by the routing, UTM and pixels panels (streams in).
+  const marketing = getCodeMarketing(code.id);
 
   return (
     <div className="space-y-6">
@@ -137,10 +148,10 @@ export default async function CodeDetailPage({
                 disabled
                 key={key}
                 size="sm"
-                title="Pro keeps 365 days of scan history"
+                title="Pro keeps 3 years of scan history"
                 variant="ghost"
               >
-                {SCAN_RANGES[key]} days
+                {scanRangeLabel(key)}
                 <Lock />
               </Button>
             ) : (
@@ -155,7 +166,7 @@ export default async function CodeDetailPage({
                   href={`${detailHref}?range=${key}`}
                   scroll={false}
                 >
-                  {SCAN_RANGES[key]} days
+                  {scanRangeLabel(key)}
                 </Link>
               </Button>
             ),
@@ -174,7 +185,7 @@ export default async function CodeDetailPage({
           <Link className="underline" href="/pricing">
             Pro
           </Link>{" "}
-          keeps 365 days.
+          keeps 3 years and Business keeps all of it.
         </p>
       )}
 
@@ -261,10 +272,24 @@ export default async function CodeDetailPage({
           total={analytics.total}
         />
       </div>
+      <AnalyticsExtra codeId={code.id} days={days} query={query} />
       <p className="text-muted-foreground text-xs">
         Bots and link previews are not counted. Locations come from the
         visitor's IP address, which is never stored.
       </p>
+
+      {/* Settings panels: one line each, stacked. */}
+      <section aria-labelledby="code-settings" className="space-y-4">
+        <h2 className="text-lg font-semibold" id="code-settings">
+          Settings
+        </h2>
+        <LandingPagePanel codeId={code.id} />
+        <LifecyclePanel codeId={code.id} />
+        <RoutingPanel settings={marketing} />
+        <UtmPanel settings={marketing} />
+        <PixelsPanel settings={marketing} />
+        <HistoryPanel codeId={code.id} />
+      </section>
     </div>
   );
 }

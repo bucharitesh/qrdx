@@ -573,7 +573,7 @@ export type AdminCodeStatus = "all" | "active" | "archived" | "disabled";
 
 const codeStatusWhere: Record<AdminCodeStatus, SQL | undefined> = {
   all: undefined,
-  active: sql`${qrCode.isActive} and ${qrCode.archivedAt} is null`,
+  active: sql`${qrCode.isActive} and ${qrCode.archivedAt} is null and ${qrCode.deletedAt} is null`,
   archived: isNotNull(qrCode.archivedAt),
   disabled: eq(qrCode.isActive, false),
 };

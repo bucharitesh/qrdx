@@ -80,8 +80,12 @@ function useDialogActionsStore(): DialogActionsContextType {
   const currentPreset = themeState?.preset
     ? getPreset(themeState.preset)
     : undefined;
+  // Team members can't overwrite team themes (owners/admins manage them).
   const isOnSavedPreset =
-    !!currentPreset && currentPreset.source === "SAVED" && hasUnsavedChanges();
+    !!currentPreset &&
+    currentPreset.source === "SAVED" &&
+    currentPreset.canEdit !== false &&
+    hasUnsavedChanges();
   const existingThemeName = isOnSavedPreset ? currentPreset.label : undefined;
 
   usePostLoginAction("SAVE_THEME", () => {

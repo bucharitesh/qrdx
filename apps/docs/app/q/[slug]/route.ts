@@ -3,8 +3,19 @@ import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import { eq } from "drizzle-orm";
 import { after, type NextRequest } from "next/server";
 import { CUSTOM_DOMAIN_HEADER } from "@/app/dashboard/domains/_lib/hostname";
+import { type RedirectCode, redirectCodeColumns } from "@/lib/redirect/code";
+import {
+  evaluateLifecycle,
+  gateResponse,
+  type LifecycleResult,
+} from "@/lib/redirect/lifecycle";
+import { endedPage } from "@/lib/redirect/pages";
+import {
+  type RoutingContext,
+  resolveDestination,
+} from "@/lib/redirect/routing";
 import { getClientIp } from "@/lib/request-guards";
-import { recordScan } from "@/lib/scans";
+import { createScanId, recordScan } from "@/lib/scans";
 import { isValidSlug } from "@/lib/short-links";
 import { statusPage } from "./status-page";
 
@@ -27,6 +38,23 @@ async function isRateLimited(request: NextRequest): Promise<boolean> {
   }
 }
 
+// Never 301: destinations change and browsers cache permanent redirects.
+// 303 after a POST (gate form) so the browser follows with a GET.
+function redirect(location: string, status: 302 | 303): Response {
+  return new Response(null, {
+    status,
+    headers: {
+      Location: location,
+      "Cache-Control": "no-store",
+      "X-Robots-Tag": "noindex",
+    },
+  });
+}
+
+/**
+ * The redirect pipeline: lookup → on/off checks → lifecycle
+ * (lib/redirect/lifecycle.ts) → page or routing (lib/redirect/routing.ts).
+ */
 async function resolveShortLink(
   request: NextRequest,
   slug: string,
@@ -37,19 +65,10 @@ async function resolveShortLink(
   }
   // The limiter runs alongside the lookup so scans don't wait on it.
   const limited = isRateLimited(request);
-  let code: Pick<
-    typeof qrCode.$inferSelect,
-    "id" | "destinationUrl" | "isActive" | "archivedAt" | "domainId"
-  > | null;
+  let code: RedirectCode | null;
   try {
     [code = null] = await db
-      .select({
-        id: qrCode.id,
-        destinationUrl: qrCode.destinationUrl,
-        isActive: qrCode.isActive,
-        archivedAt: qrCode.archivedAt,
-        domainId: qrCode.domainId,
-      })
+      .select(redirectCodeColumns)
       .from(qrCode)
       .where(eq(qrCode.slug, slug))
       .limit(1);
@@ -67,30 +86,68 @@ async function resolveShortLink(
   if (!code || (customDomainId && code.domainId !== customDomainId)) {
     return statusPage("not-found");
   }
-  // Only the owner archiving or an admin disabling turns a code off; plan changes never do.
-  if (!code.isActive || code.archivedAt) {
+  // Only the owner archiving or trashing, or an admin disabling, turns a code
+  // off; plan changes never do.
+  if (!code.isActive || code.archivedAt || code.deletedAt) {
     return statusPage("inactive");
   }
 
+  let lifecycle: LifecycleResult;
+  try {
+    lifecycle = await evaluateLifecycle(code, request);
+  } catch (error) {
+    // Fail closed: a broken check must not skip a password gate.
+    console.error("Short link lifecycle check failed:", error);
+    return statusPage("unavailable");
+  }
+
+  const now = new Date();
+  const scanId = createScanId();
+  // resolveDestination sets `variant`; the scan is recorded after the response.
+  const routingContext: RoutingContext = { scanId, now };
   if (record) {
     const qrCodeId = code.id;
-    // Runs after the redirect is sent, so scanning never waits on analytics.
+    // Runs after the response is sent, so scanning never waits on analytics.
     after(() =>
-      recordScan(qrCodeId, request).catch((error) => {
+      recordScan(qrCodeId, request, {
+        scanId,
+        now,
+        variant: routingContext.variant,
+      }).catch((error) => {
         console.error("Failed to record scan:", error);
       }),
     );
   }
 
-  // 302, never 301: destinations change and browsers cache permanent redirects.
-  return new Response(null, {
-    status: 302,
-    headers: {
-      Location: code.destinationUrl,
-      "Cache-Control": "no-store",
-      "X-Robots-Tag": "noindex",
-    },
-  });
+  if (lifecycle.action === "gate") {
+    try {
+      return await gateResponse(code, request, lifecycle.reason);
+    } catch (error) {
+      console.error("Short link gate failed:", error);
+      return statusPage("unavailable");
+    }
+  }
+
+  const status = request.method === "POST" ? 303 : 302;
+  if (lifecycle.action === "ended") {
+    return lifecycle.fallbackUrl
+      ? redirect(lifecycle.fallbackUrl, status)
+      : endedPage(lifecycle.reason, code.slug);
+  }
+
+  if (code.kind === "page") {
+    // Relative, so the visitor stays on the host they scanned (custom domains too).
+    return redirect(`/p/${encodeURIComponent(code.slug)}`, status);
+  }
+
+  let destination = code.destinationUrl;
+  try {
+    destination = await resolveDestination(code, request, routingContext);
+  } catch (error) {
+    // Fail open: a broken rule must never stop a code from redirecting.
+    console.error("Short link routing failed:", error);
+  }
+  return redirect(destination, status);
 }
 
 export async function GET(request: NextRequest, { params }: Context) {
@@ -99,6 +156,12 @@ export async function GET(request: NextRequest, { params }: Context) {
 }
 
 export async function HEAD(request: NextRequest, { params }: Context) {
+  const { slug } = await params;
+  return resolveShortLink(request, slug, { record: false });
+}
+
+/** Gate form submissions (password); the GET that showed the gate already counted the scan. */
+export async function POST(request: NextRequest, { params }: Context) {
   const { slug } = await params;
   return resolveShortLink(request, slug, { record: false });
 }

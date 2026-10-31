@@ -22,6 +22,7 @@ import { CopyButton } from "@/components/copy-button";
 import { normalizeDestination } from "@/components/editor/dynamic-link-toggle";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 import { CodeDownloadButtons, CodeQr } from "./code-qr";
+import { DomainPicker, useDomainOptions } from "./domain-picker";
 import { useOpenInPlayground } from "./use-open-in-playground";
 
 interface CodeDialogProps {
@@ -39,26 +40,35 @@ export function CodeDialog({ open, onOpenChange, code }: CodeDialogProps) {
   );
   const [destination, setDestination] = useState("");
   const [title, setTitle] = useState("");
+  const [domainId, setDomainId] = useState<string | null>(null);
   const [created, setCreated] = useState<QrCodeView | null>(null);
   const [error, setError] = useState<{ code: string; message: string } | null>(
     null,
   );
   const [isPending, startTransition] = useTransition();
+  const domainOptions = useDomainOptions(open);
 
   useEffect(() => {
     if (open) {
       setDestination(code?.destinationUrl ?? "");
       setTitle(code?.title ?? "");
+      setDomainId(code?.domain?.id ?? null);
       setCreated(null);
       setError(null);
     }
   }, [open, code]);
 
   const preview = code ?? created;
+  const domainChanged =
+    Boolean(code) && domainId !== (code?.domain?.id ?? null);
+
+  const isPage = code?.kind === "page";
 
   const submit = (event: FormEvent) => {
     event.preventDefault();
-    const destinationUrl = normalizeDestination(destination);
+    const destinationUrl = isPage
+      ? code?.destinationUrl
+      : normalizeDestination(destination);
     if (!destinationUrl) {
       setError({
         code: "VALIDATION_ERROR",
@@ -70,17 +80,29 @@ export function CodeDialog({ open, onOpenChange, code }: CodeDialogProps) {
     setError(null);
     startTransition(async () => {
       const result = code
-        ? await updateQrCode({ id: code.id, destinationUrl, title })
-        : await createQrCode({ destinationUrl, title });
+        ? await updateQrCode({
+            id: code.id,
+            // Page codes point at their hosted page; it's edited in the page editor.
+            ...(!isPage && { destinationUrl }),
+            title,
+            // Only when changed: editing stays allowed after a downgrade.
+            ...(domainChanged && { domainId }),
+          })
+        : await createQrCode({ destinationUrl, title, domainId });
       if (!result.success) {
         setError(result.error);
         return;
       }
       router.refresh();
       if (code) {
-        toast.success("Changes saved", {
-          description: "Scans now open the updated destination.",
-        });
+        toast.success(
+          "Changes saved",
+          domainChanged
+            ? {
+                description: `Download the QR code again: it now encodes ${result.data.shortLink}.`,
+              }
+            : { description: "Scans now open the updated destination." },
+        );
         onOpenChange(false);
       } else {
         setCreated(result.data);
@@ -131,19 +153,35 @@ export function CodeDialog({ open, onOpenChange, code }: CodeDialogProps) {
             </div>
           ) : (
             <form className="space-y-4" id="code-form" onSubmit={submit}>
-              <div className="space-y-1.5">
-                <Label htmlFor="code-destination">Destination URL</Label>
-                <Input
-                  autoFocus
-                  id="code-destination"
-                  inputMode="url"
-                  maxLength={2048}
-                  onChange={(event) => setDestination(event.target.value)}
-                  placeholder="https://example.com/menu"
-                  required
-                  value={destination}
-                />
-              </div>
+              {isPage ? (
+                <div className="rounded-lg border p-3 text-sm">
+                  <p className="text-muted-foreground">
+                    This code opens a hosted page.
+                  </p>
+                  {code?.pageId && (
+                    <Link
+                      className="font-medium underline underline-offset-4"
+                      href={`/dashboard/pages/${code.pageId}`}
+                    >
+                      Edit page
+                    </Link>
+                  )}
+                </div>
+              ) : (
+                <div className="space-y-1.5">
+                  <Label htmlFor="code-destination">Destination URL</Label>
+                  <Input
+                    autoFocus
+                    id="code-destination"
+                    inputMode="url"
+                    maxLength={2048}
+                    onChange={(event) => setDestination(event.target.value)}
+                    placeholder="https://example.com/menu"
+                    required
+                    value={destination}
+                  />
+                </div>
+              )}
               <div className="space-y-1.5">
                 <Label htmlFor="code-title">
                   Title{" "}
@@ -159,6 +197,26 @@ export function CodeDialog({ open, onOpenChange, code }: CodeDialogProps) {
                   value={title}
                 />
               </div>
+              <DomainPicker
+                current={code?.domain ?? null}
+                disabled={isPending}
+                onChange={setDomainId}
+                options={domainOptions}
+                value={domainId}
+              />
+              {domainChanged && (
+                <p
+                  className={
+                    code?.domain?.verified
+                      ? "bg-destructive/10 text-destructive rounded-md p-3 text-sm"
+                      : "bg-muted rounded-md p-3 text-sm"
+                  }
+                >
+                  {code?.domain?.verified
+                    ? `QR codes already printed with ${code.shortLink} will stop working. Codes printed with ${code.defaultShortLink} keep working.`
+                    : "The QR code changes to the new link, so download it again after saving. Codes you already printed keep working."}
+                </p>
+              )}
               {error && (
                 <div
                   className="bg-destructive/10 text-destructive space-y-2 rounded-md p-3 text-sm"

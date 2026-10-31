@@ -42,6 +42,7 @@ import { VenmoForm } from "@/components/editor/content-forms/venmo-form";
 import { WhatsAppForm } from "@/components/editor/content-forms/whatsapp-form";
 import { WifiForm } from "@/components/editor/content-forms/wifi-form";
 import { YouTubeForm } from "@/components/editor/content-forms/youtube-form";
+import { HairlineFigure } from "@/components/mockups/hairline";
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
 import { dubshSchema, googleDriveSchema } from "@/lib/validations/qr-content";
 import { useQREditorStore } from "@/store/editor-store";
@@ -289,9 +290,12 @@ export function TypeGenerator({ type }: { type: ContentType }) {
               value={payload}
             />
           ) : (
-            <p className="px-6 text-center text-sm text-muted-foreground">
-              Fill in the form to see your QR code.
-            </p>
+            <div className="flex flex-col items-center gap-3 px-6 text-center">
+              <HairlineFigure figure="Loupe" className="aspect-square w-28" />
+              <p className="text-sm text-muted-foreground">
+                Fill in the form to see your QR code.
+              </p>
+            </div>
           )}
         </div>
 

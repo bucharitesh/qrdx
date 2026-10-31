@@ -1,19 +1,22 @@
 import "server-only";
 
-import { database as db, qrCode } from "@repo/database";
+import { database as db, qrCode, qrCodeTag, tag } from "@repo/database";
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import cuid from "cuid";
 import {
   and,
+  asc,
   count,
   desc,
   eq,
+  exists,
   ilike,
   inArray,
   isNotNull,
   isNull,
   or,
   type SQL,
+  sql,
 } from "drizzle-orm";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -22,10 +25,13 @@ import {
   type DomainRef,
   getDomainRefs,
 } from "@/app/dashboard/domains/_lib/domains";
+import { getDefaultThemeStyle } from "@/app/dashboard/themes/_lib/queries";
+import { snapshotCodeVersion } from "@/lib/code-versions";
 import { HttpError } from "@/lib/error-response";
 import { baseUrl } from "@/lib/metadata";
 import { getPlanForScope, getPlanLimits, type Plan } from "@/lib/plans";
 import { enforceRateLimits } from "@/lib/request-guards";
+import { screenNewCodes, screenUrlChange } from "@/lib/safety/destinations";
 import { type ActiveScope, getActiveScope, isInScope } from "@/lib/scope";
 import { generateSlug, SHORT_LINK_BASE, shortLinkUrl } from "@/lib/short-links";
 import { UnauthorizedError } from "@/types/errors";
@@ -144,6 +150,9 @@ export interface QrCodeView {
   defaultShortLink: string;
   domain: DomainRef | null;
   destinationUrl: string;
+  /** "redirect" sends visitors to destinationUrl; "page" opens the hosted page */
+  kind: QrCodeRow["kind"];
+  pageId: string | null;
   title: string | null;
   contentType: string;
   style: ThemeStyles | null;
@@ -181,6 +190,8 @@ export function toCodeView(
     defaultShortLink,
     domain,
     destinationUrl: row.destinationUrl,
+    kind: row.kind,
+    pageId: row.pageId,
     title: row.title,
     contentType: row.contentType,
     style: (row.style as ThemeStyles | null) ?? null,
@@ -218,7 +229,7 @@ export async function requireDashboardScope(): Promise<ActiveScope> {
   }
 }
 
-function scopeWhere(scope: ActiveScope): SQL {
+export function scopeWhere(scope: ActiveScope): SQL {
   return scope.organizationId
     ? eq(qrCode.organizationId, scope.organizationId)
     : (and(
@@ -227,11 +238,18 @@ function scopeWhere(scope: ActiveScope): SQL {
       ) as SQL);
 }
 
-async function countUnarchived(scope: ActiveScope): Promise<number> {
+/** Codes that use a plan slot: not archived and not in the trash. */
+export async function countUnarchived(scope: ActiveScope): Promise<number> {
   const [row] = await db
     .select({ total: count() })
     .from(qrCode)
-    .where(and(scopeWhere(scope), isNull(qrCode.archivedAt)));
+    .where(
+      and(
+        scopeWhere(scope),
+        isNull(qrCode.archivedAt),
+        isNull(qrCode.deletedAt),
+      ),
+    );
   return row?.total ?? 0;
 }
 
@@ -259,7 +277,7 @@ export async function getCodeUsage(scope: ActiveScope): Promise<CodeUsage> {
   };
 }
 
-function limitReached(limit: number): HttpError {
+export function limitReached(limit: number): HttpError {
   return new HttpError(
     402,
     "LIMIT_REACHED",
@@ -282,7 +300,124 @@ export function enforceCreateRateLimit(userId: string): Promise<void> {
 
 // ─── Queries ─────────────────────────────────────────────────────────────────
 
-export type CodeListStatus = "active" | "archived" | "all";
+/** "all" = every code outside the trash; "trash" = only trashed codes. */
+export type CodeListStatus = "active" | "archived" | "all" | "trash";
+export type CodeListSort = "newest" | "oldest" | "scans" | "recent" | "title";
+
+export interface TagRef {
+  id: string;
+  name: string;
+  color: string | null;
+}
+
+/** A row of the codes list: the code plus how it is organized. */
+export interface QrCodeListItem extends QrCodeView {
+  kind: QrCodeRow["kind"];
+  folderId: QrCodeRow["folderId"];
+  isFavorite: QrCodeRow["isFavorite"];
+  notes: QrCodeRow["notes"];
+  pausedAt: QrCodeRow["pausedAt"];
+  deletedAt: QrCodeRow["deletedAt"];
+  tags: TagRef[];
+}
+
+function listStatusWhere(status: CodeListStatus): SQL | undefined {
+  switch (status) {
+    case "trash":
+      return isNotNull(qrCode.deletedAt);
+    case "archived":
+      return and(isNull(qrCode.deletedAt), isNotNull(qrCode.archivedAt));
+    case "all":
+      return isNull(qrCode.deletedAt);
+    default:
+      return and(isNull(qrCode.deletedAt), isNull(qrCode.archivedAt));
+  }
+}
+
+// A pasted short link (".../q/AbC1234" or "https://go.brand.com/AbC1234") finds its code.
+const SHORT_LINK_SLUG = /\/(?:q\/)?([0-9A-Za-z]{7})(?:[/?#]|$)/;
+
+/** Title, destination, notes, tag names (substring) or slug (exact). */
+function searchWhere(term: string): SQL {
+  const pattern = `%${term.replace(/[\\%_]/g, "\\$&")}%`;
+  return or(
+    ilike(qrCode.title, pattern),
+    ilike(qrCode.destinationUrl, pattern),
+    ilike(qrCode.notes, pattern),
+    eq(qrCode.slug, term.match(SHORT_LINK_SLUG)?.[1] ?? term),
+    exists(
+      db
+        .select({ one: sql`1` })
+        .from(qrCodeTag)
+        .innerJoin(tag, eq(tag.id, qrCodeTag.tagId))
+        .where(
+          and(eq(qrCodeTag.qrCodeId, qrCode.id), ilike(tag.name, pattern)),
+        ),
+    ),
+  ) as SQL;
+}
+
+/** Codes carrying every one of the tags. */
+function allTagsWhere(tagIds: string[]): SQL {
+  return inArray(
+    qrCode.id,
+    db
+      .select({ id: qrCodeTag.qrCodeId })
+      .from(qrCodeTag)
+      .where(inArray(qrCodeTag.tagId, tagIds))
+      .groupBy(qrCodeTag.qrCodeId)
+      .having(sql`count(*) = ${tagIds.length}`),
+  );
+}
+
+function listOrder(sort: CodeListSort, status: CodeListStatus): SQL[] {
+  switch (sort) {
+    case "oldest":
+      return [asc(qrCode.createdAt), asc(qrCode.id)];
+    case "scans":
+      return [desc(qrCode.scanCount), desc(qrCode.createdAt), desc(qrCode.id)];
+    case "recent":
+      return [
+        sql`${qrCode.lastScannedAt} desc nulls last`,
+        desc(qrCode.createdAt),
+        desc(qrCode.id),
+      ];
+    case "title":
+      return [
+        sql`lower(coalesce(nullif(${qrCode.title}, ''), ${qrCode.destinationUrl}))`,
+        asc(qrCode.id),
+      ];
+    default:
+      return status === "trash"
+        ? [desc(qrCode.deletedAt), desc(qrCode.id)]
+        : [desc(qrCode.createdAt), desc(qrCode.id)];
+  }
+}
+
+/** Tags of each code, by code id (sorted by name). */
+export async function getCodeTags(
+  codeIds: string[],
+): Promise<Map<string, TagRef[]>> {
+  const byCode = new Map<string, TagRef[]>();
+  if (codeIds.length === 0) return byCode;
+  const rows = await db
+    .select({
+      codeId: qrCodeTag.qrCodeId,
+      id: tag.id,
+      name: tag.name,
+      color: tag.color,
+    })
+    .from(qrCodeTag)
+    .innerJoin(tag, eq(tag.id, qrCodeTag.tagId))
+    .where(inArray(qrCodeTag.qrCodeId, codeIds))
+    .orderBy(asc(tag.name));
+  for (const { codeId, ...ref } of rows) {
+    const list = byCode.get(codeId) ?? [];
+    list.push(ref);
+    byCode.set(codeId, list);
+  }
+  return byCode;
+}
 
 export async function listCodes(
   scope: ActiveScope,
@@ -291,21 +426,35 @@ export async function listCodes(
     q,
     limit = 50,
     offset = 0,
-  }: { status?: CodeListStatus; q?: string; limit?: number; offset?: number },
-): Promise<{ codes: QrCodeView[]; total: number }> {
+    folderId,
+    tagIds = [],
+    favorites = false,
+    sort = "newest",
+  }: {
+    status?: CodeListStatus;
+    q?: string;
+    limit?: number;
+    offset?: number;
+    /** A folder's own codes; null = codes outside any folder; omit for all */
+    folderId?: string | null;
+    /** Codes carrying all of these tags */
+    tagIds?: string[];
+    favorites?: boolean;
+    sort?: CodeListSort;
+  },
+): Promise<{ codes: QrCodeListItem[]; total: number }> {
   const term = q?.trim().slice(0, 200);
-  const pattern = term ? `%${term.replace(/[\\%_]/g, "\\$&")}%` : null;
   const where = and(
     scopeWhere(scope),
-    status === "active" ? isNull(qrCode.archivedAt) : undefined,
-    status === "archived" ? isNotNull(qrCode.archivedAt) : undefined,
-    pattern
-      ? or(
-          ilike(qrCode.title, pattern),
-          ilike(qrCode.destinationUrl, pattern),
-          eq(qrCode.slug, term as string),
-        )
-      : undefined,
+    listStatusWhere(status),
+    term ? searchWhere(term) : undefined,
+    folderId === undefined
+      ? undefined
+      : folderId === null
+        ? isNull(qrCode.folderId)
+        : eq(qrCode.folderId, folderId),
+    tagIds.length > 0 ? allTagsWhere(tagIds) : undefined,
+    favorites ? eq(qrCode.isFavorite, true) : undefined,
   );
 
   const [rows, [totalRow]] = await Promise.all([
@@ -313,22 +462,39 @@ export async function listCodes(
       .select()
       .from(qrCode)
       .where(where)
-      .orderBy(desc(qrCode.createdAt), desc(qrCode.id))
+      .orderBy(...listOrder(sort, status))
       .limit(limit)
       .offset(offset),
     db.select({ total: count() }).from(qrCode).where(where),
   ]);
 
-  return { codes: await toCodeViews(rows), total: totalRow?.total ?? 0 };
+  const [views, tags] = await Promise.all([
+    toCodeViews(rows),
+    getCodeTags(rows.map((row) => row.id)),
+  ]);
+  const codes = views.map((view, index): QrCodeListItem => {
+    const row = rows[index] as QrCodeRow;
+    return {
+      ...view,
+      kind: row.kind,
+      folderId: row.folderId,
+      isFavorite: row.isFavorite,
+      notes: row.notes,
+      pausedAt: row.pausedAt,
+      deletedAt: row.deletedAt,
+      tags: tags.get(row.id) ?? [],
+    };
+  });
+  return { codes, total: totalRow?.total ?? 0 };
 }
 
 async function findCodeRow(scope: ActiveScope, id: string): Promise<QrCodeRow> {
   const [row] = await db
     .select()
     .from(qrCode)
-    .where(eq(qrCode.id, id))
+    .where(and(eq(qrCode.id, id), isNull(qrCode.deletedAt)))
     .limit(1);
-  // Codes outside the scope look exactly like missing ones.
+  // Codes outside the scope (or in the trash) look exactly like missing ones.
   if (!(row && isInScope(scope, row))) throw notFound();
   return row;
 }
@@ -381,7 +547,8 @@ async function deleteRows(ids: string[]) {
  */
 export async function createCodes(
   scope: ActiveScope,
-  inputs: CreateCodeInput[],
+  // pageId: a hosted-page code (kind 'page'), created by actions/landing-pages
+  inputs: (CreateCodeInput & { pageId?: string })[],
 ): Promise<QrCodeView[]> {
   if (inputs.length === 0) return [];
 
@@ -415,6 +582,10 @@ export async function createCodes(
     inputs.flatMap((input) => (input.domainId ? [input.domainId] : [])),
   );
 
+  // Codes created without a design start from the scope's default theme.
+  const defaultStyle = inputs.some((input) => !input.style)
+    ? (styleSchema.safeParse(await getDefaultThemeStyle(scope)).data ?? null)
+    : null;
   const now = new Date();
   const rows = inputs.map((input) => ({
     id: cuid(),
@@ -423,12 +594,15 @@ export async function createCodes(
     slug: generateSlug(),
     destinationUrl: input.destinationUrl,
     title: input.title ?? null,
-    style: input.style ?? null,
+    style: input.style ?? defaultStyle,
     domainId: input.domainId ?? null,
+    ...(input.pageId && { kind: "page" as const, pageId: input.pageId }),
     createdAt: now,
     updatedAt: now,
   }));
-  const inserted = await insertWithUniqueSlugs(rows);
+  const inserted = await insertWithUniqueSlugs(
+    await screenNewCodes(scope, rows),
+  );
 
   if (capped && (await countUnarchived(scope)) > limits.dynamicCodes) {
     await deleteRows(inserted.map((row) => row.id));
@@ -437,7 +611,12 @@ export async function createCodes(
 
   // Keep the caller's order (returning() order is not guaranteed).
   const byId = new Map(inserted.map((row) => [row.id, row]));
-  return toCodeViews(rows.map((row) => byId.get(row.id) as QrCodeRow));
+  const views = await toCodeViews(
+    rows.map((row) => byId.get(row.id) as QrCodeRow),
+  );
+  // code.created webhooks + alerts, after the response (never throws).
+  (await import("@/lib/events/emit")).emitCodesCreated(scope, views);
+  return views;
 }
 
 /**
@@ -454,6 +633,11 @@ export async function updateCode(
   const values: Partial<typeof qrCode.$inferInsert> = {};
   if (patch.destinationUrl !== undefined) {
     values.destinationUrl = patch.destinationUrl;
+    const change = {
+      previous: current.destinationUrl,
+      next: patch.destinationUrl,
+    };
+    if (await screenUrlChange(scope, current, change)) values.isActive = false;
   }
   if (patch.title !== undefined) values.title = patch.title;
   if (patch.style !== undefined) values.style = patch.style;
@@ -463,13 +647,21 @@ export async function updateCode(
   }
   if (Object.keys(values).length === 0) return toOneCodeView(current);
 
+  await snapshotCodeVersion(id, scope.userId);
   const [row] = await db
     .update(qrCode)
     .set(values)
     .where(and(eq(qrCode.id, id), scopeWhere(scope)))
     .returning();
   if (!row) throw notFound();
-  return toOneCodeView(row);
+  const view = await toOneCodeView(row);
+  // code.updated webhooks + alerts, after the response (never throws).
+  (await import("@/lib/events/emit")).emitCodeUpdated(
+    scope,
+    view,
+    Object.keys(values).filter((field) => field !== "isActive"),
+  );
+  return view;
 }
 
 /** Archived codes stop redirecting and free a slot; unarchiving needs a free slot. */

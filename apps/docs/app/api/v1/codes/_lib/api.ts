@@ -101,6 +101,14 @@ export function serializeCode(code: QrCodeView) {
     id: code.id,
     slug: code.slug,
     shortLink: code.shortLink,
+    defaultShortLink: code.defaultShortLink,
+    domain: code.domain
+      ? {
+          id: code.domain.id,
+          hostname: code.domain.hostname,
+          verified: code.domain.verified,
+        }
+      : null,
     destinationUrl: code.destinationUrl,
     title: code.title,
     contentType: code.contentType,

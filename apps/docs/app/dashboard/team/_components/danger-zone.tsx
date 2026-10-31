@@ -58,8 +58,8 @@ export function LeaveTeamButton({
         <AlertDialogHeader>
           <AlertDialogTitle>Leave {teamName}?</AlertDialogTitle>
           <AlertDialogDescription>
-            You lose access to the team's codes and brand kits. Codes you
-            created stay with the team. You need a new invitation to rejoin.
+            You lose access to the team's codes and themes. Codes you created
+            stay with the team. You need a new invitation to rejoin.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -121,7 +121,7 @@ export function DeleteTeamButton({
           <AlertDialogTitle>Delete {teamName}?</AlertDialogTitle>
           <AlertDialogDescription>
             This removes the team, its members and pending invitations. The
-            team's dynamic QR codes keep redirecting: each code, brand kit and
+            team's dynamic QR codes keep redirecting: each code, theme and
             domain moves to the personal workspace of the member who created it.
           </AlertDialogDescription>
         </AlertDialogHeader>

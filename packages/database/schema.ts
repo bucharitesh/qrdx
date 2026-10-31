@@ -1,9 +1,12 @@
 import { relations } from "drizzle-orm";
 import {
+  type AnyPgColumn,
+  bigint,
   boolean,
   index,
   integer,
   json,
+  numeric,
   pgTable,
   primaryKey,
   text,
@@ -150,6 +153,7 @@ export const invitation = pgTable(
   ]
 );
 
+/** Saved QR themes (brand kits were merged into these). */
 export const qrPreset = pgTable(
   "qr_preset",
   {
@@ -157,12 +161,21 @@ export const qrPreset = pgTable(
     userId: text("user_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
+    // Set when the theme is shared with a team
+    organizationId: text("organization_id").references(() => organization.id, {
+      onDelete: "set null",
+    }),
     name: text("name").notNull(),
     style: json("style").$type<ThemeStyles>().notNull(),
+    // Preselected for new codes in its scope (personal or team)
+    isDefault: boolean("is_default").notNull().default(false),
     createdAt: timestamp("created_at").notNull(),
     updatedAt: timestamp("updated_at").notNull(),
   },
-  (table) => [index("qr_preset_user_id_idx").on(table.userId)]
+  (table) => [
+    index("qr_preset_user_id_idx").on(table.userId),
+    index("qr_preset_organization_id_idx").on(table.organizationId),
+  ]
 );
 
 export const aiUsage = pgTable(
@@ -366,6 +379,13 @@ export const SCAN_DEVICE_TYPES = [
 ] as const;
 export type ScanDeviceType = (typeof SCAN_DEVICE_TYPES)[number];
 
+/** "redirect": /q/<slug> 302s to destination_url. "page": it opens the hosted page at /p/<slug>. */
+export const QR_CODE_KINDS = ["redirect", "page"] as const;
+export type QrCodeKind = (typeof QR_CODE_KINDS)[number];
+
+export const NOTIFICATION_CHANNELS = ["email", "slack", "discord"] as const;
+export type NotificationChannel = (typeof NOTIFICATION_CHANNELS)[number];
+
 /** Brand kit palette (fg, bg, eye, dot, ...): hex colors or gradient configs. */
 export interface BrandKitColors {
   [key: string]: any;
@@ -423,6 +443,30 @@ export const qrCode = pgTable(
     archivedAt: timestamp("archived_at"),
     scanCount: integer("scan_count").notNull().default(0),
     lastScannedAt: timestamp("last_scanned_at"),
+    kind: text("kind", { enum: QR_CODE_KINDS }).notNull().default("redirect"),
+    // Hosted landing page shown when kind = 'page'
+    pageId: text("page_id").references(() => landingPage.id, {
+      onDelete: "set null",
+    }),
+    folderId: text("folder_id").references(() => folder.id, {
+      onDelete: "set null",
+    }),
+    notes: text("notes"),
+    isFavorite: boolean("is_favorite").notNull().default(false),
+    // Lifecycle (lib/redirect/lifecycle.ts): password gate, schedule, scan cap, pause
+    passwordHash: text("password_hash"),
+    startsAt: timestamp("starts_at"),
+    expiresAt: timestamp("expires_at"),
+    scanLimit: integer("scan_limit"),
+    pausedAt: timestamp("paused_at"),
+    // Where ended (expired, paused, over the scan limit) codes send visitors
+    fallbackUrl: text("fallback_url"),
+    // Validated by the app (lib/redirect/*) on read and write
+    routing: json("routing").$type<unknown>(),
+    utm: json("utm").$type<unknown>(),
+    pixels: json("pixels").$type<unknown>(),
+    // Moved to the trash (restorable)
+    deletedAt: timestamp("deleted_at"),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at")
       .notNull()
@@ -433,6 +477,8 @@ export const qrCode = pgTable(
     index("qr_code_user_id_idx").on(table.userId),
     index("qr_code_organization_id_idx").on(table.organizationId),
     index("qr_code_domain_id_idx").on(table.domainId),
+    index("qr_code_folder_id_idx").on(table.folderId),
+    index("qr_code_page_id_idx").on(table.pageId),
   ]
 );
 
@@ -454,6 +500,10 @@ export const qrScan = pgTable(
     referer: text("referer"),
     // Salted SHA-256 of ip + user agent + day; raw IPs are never stored
     visitorHash: text("visitor_hash"),
+    /** Most preferred Accept-Language tag, lowercase */
+    language: text("language"),
+    /** A/B variant served, as "<ruleId>:<variantId>", when a split rule matched */
+    variant: text("variant"),
   },
   (table) => [
     index("qr_scan_qr_code_id_scanned_at_idx").on(
@@ -493,6 +543,329 @@ export const brandKit = pgTable(
   ]
 );
 
+// ─── Round 3: pages, organization, files, events, integrations ──────────────
+// Same ownership rule as above: user_id is the creator, organization_id the team.
+// JSON columns are validated by the app (zod) on read and write.
+
+/** Hosted landing page; content is `types/landing.ts` LandingPageContent. */
+export const landingPage = pgTable(
+  "landing_page",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    organizationId: text("organization_id").references(() => organization.id, {
+      onDelete: "set null",
+    }),
+    // Page template id (lib/landing)
+    type: text("type").notNull(),
+    title: text("title"),
+    content: json("content").$type<Record<string, unknown>>().notNull(),
+    // Content revision, incremented on save
+    version: integer("version").notNull().default(1),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at")
+      .notNull()
+      .defaultNow()
+      .$onUpdate(() => new Date()),
+  },
+  (table) => [
+    index("landing_page_user_id_idx").on(table.userId),
+    index("landing_page_organization_id_idx").on(table.organizationId),
+  ]
+);
+
+export const landingPageVersion = pgTable(
+  "landing_page_version",
+  {
+    id: text("id").primaryKey(),
+    pageId: text("page_id")
+      .notNull()
+      .references(() => landingPage.id, { onDelete: "cascade" }),
+    content: json("content").$type<Record<string, unknown>>().notNull(),
+    // User id; no FK so history survives the editor leaving the team
+    createdBy: text("created_by"),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (table) => [index("landing_page_version_page_id_idx").on(table.pageId)]
+);
+
+/** Edit history of a dynamic code (destination, lifecycle, routing, ...). */
+export const qrCodeVersion = pgTable(
+  "qr_code_version",
+  {
+    id: text("id").primaryKey(),
+    qrCodeId: text("qr_code_id")
+      .notNull()
+      .references(() => qrCode.id, { onDelete: "cascade" }),
+    snapshot: json("snapshot").$type<Record<string, unknown>>().notNull(),
+    // User id; no FK so history survives the editor leaving the team
+    createdBy: text("created_by"),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (table) => [index("qr_code_version_qr_code_id_idx").on(table.qrCodeId)]
+);
+
+export const folder = pgTable(
+  "folder",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    organizationId: text("organization_id").references(() => organization.id, {
+      onDelete: "set null",
+    }),
+    // Deleting a parent moves its subfolders to the top level
+    parentId: text("parent_id").references((): AnyPgColumn => folder.id, {
+      onDelete: "set null",
+    }),
+    name: text("name").notNull(),
+    position: integer("position").notNull().default(0),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (table) => [
+    index("folder_user_id_idx").on(table.userId),
+    index("folder_organization_id_idx").on(table.organizationId),
+    index("folder_parent_id_idx").on(table.parentId),
+  ]
+);
+
+export const tag = pgTable(
+  "tag",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    organizationId: text("organization_id").references(() => organization.id, {
+      onDelete: "set null",
+    }),
+    name: text("name").notNull(),
+    color: text("color"),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (table) => [
+    index("tag_user_id_idx").on(table.userId),
+    index("tag_organization_id_idx").on(table.organizationId),
+  ]
+);
+
+export const qrCodeTag = pgTable(
+  "qr_code_tag",
+  {
+    qrCodeId: text("qr_code_id")
+      .notNull()
+      .references(() => qrCode.id, { onDelete: "cascade" }),
+    tagId: text("tag_id")
+      .notNull()
+      .references(() => tag.id, { onDelete: "cascade" }),
+  },
+  (table) => [
+    primaryKey({ columns: [table.qrCodeId, table.tagId] }),
+    index("qr_code_tag_tag_id_idx").on(table.tagId),
+  ]
+);
+
+/** Uploaded file in R2 (lib/storage/r2.ts). */
+export const fileAsset = pgTable(
+  "file_asset",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    organizationId: text("organization_id").references(() => organization.id, {
+      onDelete: "set null",
+    }),
+    storageKey: text("storage_key").notNull().unique(),
+    filename: text("filename").notNull(),
+    mime: text("mime").notNull(),
+    // Bytes
+    size: bigint("size", { mode: "number" }).notNull(),
+    sha256: text("sha256"),
+    // "pending" until the upload is confirmed, then "ready"
+    status: text("status").notNull().default("pending"),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (table) => [
+    index("file_asset_user_id_idx").on(table.userId),
+    index("file_asset_organization_id_idx").on(table.organizationId),
+  ]
+);
+
+/** Submission of a form block on a landing page. */
+export const formResponse = pgTable(
+  "form_response",
+  {
+    id: text("id").primaryKey(),
+    pageId: text("page_id")
+      .notNull()
+      .references(() => landingPage.id, { onDelete: "cascade" }),
+    qrCodeId: text("qr_code_id").references(() => qrCode.id, {
+      onDelete: "set null",
+    }),
+    data: json("data").$type<Record<string, unknown>>().notNull(),
+    visitorHash: text("visitor_hash"),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (table) => [
+    index("form_response_page_id_created_at_idx").on(
+      table.pageId,
+      table.createdAt
+    ),
+  ]
+);
+
+/** Interaction on a landing page (view, click on a block, download, ...). */
+export const landingEvent = pgTable(
+  "landing_event",
+  {
+    id: text("id").primaryKey(),
+    pageId: text("page_id")
+      .notNull()
+      .references(() => landingPage.id, { onDelete: "cascade" }),
+    qrCodeId: text("qr_code_id").references(() => qrCode.id, {
+      onDelete: "set null",
+    }),
+    type: text("type").notNull(),
+    // Block id or link the event refers to
+    target: text("target"),
+    visitorHash: text("visitor_hash"),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (table) => [
+    index("landing_event_page_id_created_at_idx").on(
+      table.pageId,
+      table.createdAt
+    ),
+  ]
+);
+
+export const conversion = pgTable(
+  "conversion",
+  {
+    id: text("id").primaryKey(),
+    qrCodeId: text("qr_code_id")
+      .notNull()
+      .references(() => qrCode.id, { onDelete: "cascade" }),
+    // qr_scan.id that led to the conversion, when known (no FK: scans may be rolled up)
+    scanId: text("scan_id"),
+    name: text("name").notNull(),
+    // Decimal string, e.g. "19.99"
+    value: numeric("value", { precision: 14, scale: 2 }),
+    currency: text("currency"),
+    metadata: json("metadata").$type<Record<string, unknown>>(),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (table) => [
+    index("conversion_qr_code_id_created_at_idx").on(
+      table.qrCodeId,
+      table.createdAt
+    ),
+  ]
+);
+
+export const webhookEndpoint = pgTable(
+  "webhook_endpoint",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    organizationId: text("organization_id").references(() => organization.id, {
+      onDelete: "set null",
+    }),
+    url: text("url").notNull(),
+    // Signing secret for payload signatures
+    secret: text("secret").notNull(),
+    // Subscribed event names
+    events: json("events").$type<string[]>().notNull(),
+    active: boolean("active").notNull().default(true),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (table) => [
+    index("webhook_endpoint_user_id_idx").on(table.userId),
+    index("webhook_endpoint_organization_id_idx").on(table.organizationId),
+  ]
+);
+
+export const webhookDelivery = pgTable(
+  "webhook_delivery",
+  {
+    id: text("id").primaryKey(),
+    endpointId: text("endpoint_id")
+      .notNull()
+      .references(() => webhookEndpoint.id, { onDelete: "cascade" }),
+    event: text("event").notNull(),
+    payload: json("payload").$type<Record<string, unknown>>().notNull(),
+    // "pending" | "succeeded" | "failed"
+    status: text("status").notNull().default("pending"),
+    attempts: integer("attempts").notNull().default(0),
+    nextAttemptAt: timestamp("next_attempt_at"),
+    lastError: text("last_error"),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (table) => [
+    index("webhook_delivery_status_next_attempt_at_idx").on(
+      table.status,
+      table.nextAttemptAt
+    ),
+    index("webhook_delivery_endpoint_id_idx").on(table.endpointId),
+  ]
+);
+
+export const notificationSetting = pgTable(
+  "notification_setting",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    organizationId: text("organization_id").references(() => organization.id, {
+      onDelete: "set null",
+    }),
+    channel: text("channel", { enum: NOTIFICATION_CHANNELS }).notNull(),
+    // Email address or incoming-webhook URL
+    target: text("target").notNull(),
+    events: json("events").$type<string[]>().notNull(),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (table) => [
+    index("notification_setting_user_id_idx").on(table.userId),
+    index("notification_setting_organization_id_idx").on(table.organizationId),
+  ]
+);
+
+/** Public "report this code/page" submissions. */
+export const abuseReport = pgTable(
+  "abuse_report",
+  {
+    id: text("id").primaryKey(),
+    qrCodeId: text("qr_code_id").references(() => qrCode.id, {
+      onDelete: "set null",
+    }),
+    pageId: text("page_id").references(() => landingPage.id, {
+      onDelete: "set null",
+    }),
+    url: text("url"),
+    reason: text("reason").notNull(),
+    details: text("details"),
+    reporterEmail: text("reporter_email"),
+    // "open" | "actioned" | "dismissed"
+    status: text("status").notNull().default("open"),
+    visitorHash: text("visitor_hash"),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (table) => [
+    index("abuse_report_status_created_at_idx").on(
+      table.status,
+      table.createdAt
+    ),
+  ]
+);
+
 // Relations (for `database.query.*` with `with`); no effect on SQL.
 
 export const organizationRelations = relations(organization, ({ many }) => ({
@@ -501,6 +874,21 @@ export const organizationRelations = relations(organization, ({ many }) => ({
   qrCodes: many(qrCode),
   customDomains: many(customDomain),
   brandKits: many(brandKit),
+  qrPresets: many(qrPreset),
+  landingPages: many(landingPage),
+  folders: many(folder),
+  tags: many(tag),
+  fileAssets: many(fileAsset),
+  webhookEndpoints: many(webhookEndpoint),
+  notificationSettings: many(notificationSetting),
+}));
+
+export const qrPresetRelations = relations(qrPreset, ({ one }) => ({
+  user: one(user, { fields: [qrPreset.userId], references: [user.id] }),
+  organization: one(organization, {
+    fields: [qrPreset.organizationId],
+    references: [organization.id],
+  }),
 }));
 
 export const memberRelations = relations(member, ({ one }) => ({
@@ -541,7 +929,15 @@ export const qrCodeRelations = relations(qrCode, ({ one, many }) => ({
     fields: [qrCode.domainId],
     references: [customDomain.id],
   }),
+  page: one(landingPage, {
+    fields: [qrCode.pageId],
+    references: [landingPage.id],
+  }),
+  folder: one(folder, { fields: [qrCode.folderId], references: [folder.id] }),
   scans: many(qrScan),
+  versions: many(qrCodeVersion),
+  tags: many(qrCodeTag),
+  conversions: many(conversion),
 }));
 
 export const qrScanRelations = relations(qrScan, ({ one }) => ({
@@ -553,5 +949,153 @@ export const brandKitRelations = relations(brandKit, ({ one }) => ({
   organization: one(organization, {
     fields: [brandKit.organizationId],
     references: [organization.id],
+  }),
+}));
+
+export const landingPageRelations = relations(landingPage, ({ one, many }) => ({
+  user: one(user, { fields: [landingPage.userId], references: [user.id] }),
+  organization: one(organization, {
+    fields: [landingPage.organizationId],
+    references: [organization.id],
+  }),
+  qrCodes: many(qrCode),
+  versions: many(landingPageVersion),
+  formResponses: many(formResponse),
+  events: many(landingEvent),
+}));
+
+export const landingPageVersionRelations = relations(
+  landingPageVersion,
+  ({ one }) => ({
+    page: one(landingPage, {
+      fields: [landingPageVersion.pageId],
+      references: [landingPage.id],
+    }),
+  })
+);
+
+export const qrCodeVersionRelations = relations(qrCodeVersion, ({ one }) => ({
+  qrCode: one(qrCode, {
+    fields: [qrCodeVersion.qrCodeId],
+    references: [qrCode.id],
+  }),
+}));
+
+export const folderRelations = relations(folder, ({ one, many }) => ({
+  user: one(user, { fields: [folder.userId], references: [user.id] }),
+  organization: one(organization, {
+    fields: [folder.organizationId],
+    references: [organization.id],
+  }),
+  parent: one(folder, {
+    fields: [folder.parentId],
+    references: [folder.id],
+    relationName: "folder_parent",
+  }),
+  children: many(folder, { relationName: "folder_parent" }),
+  qrCodes: many(qrCode),
+}));
+
+export const tagRelations = relations(tag, ({ one, many }) => ({
+  user: one(user, { fields: [tag.userId], references: [user.id] }),
+  organization: one(organization, {
+    fields: [tag.organizationId],
+    references: [organization.id],
+  }),
+  qrCodes: many(qrCodeTag),
+}));
+
+export const qrCodeTagRelations = relations(qrCodeTag, ({ one }) => ({
+  qrCode: one(qrCode, {
+    fields: [qrCodeTag.qrCodeId],
+    references: [qrCode.id],
+  }),
+  tag: one(tag, { fields: [qrCodeTag.tagId], references: [tag.id] }),
+}));
+
+export const fileAssetRelations = relations(fileAsset, ({ one }) => ({
+  user: one(user, { fields: [fileAsset.userId], references: [user.id] }),
+  organization: one(organization, {
+    fields: [fileAsset.organizationId],
+    references: [organization.id],
+  }),
+}));
+
+export const formResponseRelations = relations(formResponse, ({ one }) => ({
+  page: one(landingPage, {
+    fields: [formResponse.pageId],
+    references: [landingPage.id],
+  }),
+  qrCode: one(qrCode, {
+    fields: [formResponse.qrCodeId],
+    references: [qrCode.id],
+  }),
+}));
+
+export const landingEventRelations = relations(landingEvent, ({ one }) => ({
+  page: one(landingPage, {
+    fields: [landingEvent.pageId],
+    references: [landingPage.id],
+  }),
+  qrCode: one(qrCode, {
+    fields: [landingEvent.qrCodeId],
+    references: [qrCode.id],
+  }),
+}));
+
+export const conversionRelations = relations(conversion, ({ one }) => ({
+  qrCode: one(qrCode, {
+    fields: [conversion.qrCodeId],
+    references: [qrCode.id],
+  }),
+}));
+
+export const webhookEndpointRelations = relations(
+  webhookEndpoint,
+  ({ one, many }) => ({
+    user: one(user, {
+      fields: [webhookEndpoint.userId],
+      references: [user.id],
+    }),
+    organization: one(organization, {
+      fields: [webhookEndpoint.organizationId],
+      references: [organization.id],
+    }),
+    deliveries: many(webhookDelivery),
+  })
+);
+
+export const webhookDeliveryRelations = relations(
+  webhookDelivery,
+  ({ one }) => ({
+    endpoint: one(webhookEndpoint, {
+      fields: [webhookDelivery.endpointId],
+      references: [webhookEndpoint.id],
+    }),
+  })
+);
+
+export const notificationSettingRelations = relations(
+  notificationSetting,
+  ({ one }) => ({
+    user: one(user, {
+      fields: [notificationSetting.userId],
+      references: [user.id],
+    }),
+    organization: one(organization, {
+      fields: [notificationSetting.organizationId],
+      references: [organization.id],
+    }),
+  })
+);
+
+export const abuseReportRelations = relations(abuseReport, ({ one }) => ({
+  qrCode: one(qrCode, {
+    fields: [abuseReport.qrCodeId],
+    references: [qrCode.id],
+  }),
+  page: one(landingPage, {
+    fields: [abuseReport.pageId],
+    references: [landingPage.id],
   }),
 }));

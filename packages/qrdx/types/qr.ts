@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 import { z } from "zod";
+import { type QRArt, qrArtSchema } from "./art";
 import { type ColorConfig, colorConfigSchema } from "./color";
 import {
   type CornerEyeDotPattern,
@@ -39,6 +40,7 @@ export const qrPropsSchema = z.object({
   templateId: z.string().optional(),
   customProps: z.record(z.string(), z.any()).optional(),
   frame: frameSchema.optional(),
+  art: qrArtSchema.optional(),
 });
 
 // Inferred types
@@ -68,6 +70,8 @@ export interface QRProps {
   customProps?: Record<string, any>;
   // Call-to-action frame around the code; the rendered output grows to fit it
   frame?: QRFrame;
+  // Blend a logo or photo into the modules (vector, no AI); see types/art.ts
+  art?: QRArt;
 }
 
 export type QRPropsCanvas = QRProps &

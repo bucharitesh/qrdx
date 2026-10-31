@@ -189,7 +189,9 @@ function pickRanked<T extends { rank: number }>(
  * Brings the project domain up to date: re-adds it when it went missing,
  * retries the ownership challenge, and reads the DNS configuration.
  */
-export async function checkVercelDomain(hostname: string): Promise<DomainCheck> {
+export async function checkVercelDomain(
+  hostname: string,
+): Promise<DomainCheck> {
   let domain =
     (await getVercelProjectDomain(hostname)) ??
     (await addVercelProjectDomain(hostname));

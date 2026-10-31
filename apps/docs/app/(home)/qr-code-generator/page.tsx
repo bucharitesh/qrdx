@@ -1,6 +1,8 @@
 import { ArrowRight } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
+import { MockupImage } from "@/components/mockups/mockup-image";
+import { qrTypeGroupImages } from "@/components/mockups/visuals";
 import { SectionHeader } from "@/components/sections/section-header";
 import { ToolHero } from "@/components/sections/tools/tool-hero";
 import { createMetadata } from "@/lib/metadata";
@@ -51,22 +53,29 @@ export default function QrTypesHubPage() {
                 {group.description}
               </p>
             </SectionHeader>
-            <div className="w-full px-6 md:px-10 py-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {items.map((item) => (
-                <Link
-                  key={item.type}
-                  href={`/qr-code-generator/${item.type}`}
-                  className="group rounded-xl border border-border bg-accent/50 hover:bg-accent transition-colors p-4 flex flex-col gap-1"
-                >
-                  <span className="flex items-center gap-2 font-medium text-secondary-foreground">
-                    {item.name} QR code generator
-                    <ArrowRight className="ml-auto size-4 text-muted-foreground group-hover:translate-x-0.5 transition-transform" />
-                  </span>
-                  <span className="text-sm text-muted-foreground">
-                    {item.summary}
-                  </span>
-                </Link>
-              ))}
+            <div className="w-full px-6 md:px-10 py-10 grid gap-6 lg:grid-cols-3">
+              <MockupImage
+                {...qrTypeGroupImages[group.id]}
+                sizes="(min-width: 1280px) 400px, (min-width: 1024px) 33vw, 100vw"
+                className="aspect-[3/2] object-cover lg:sticky lg:top-24 lg:self-start"
+              />
+              <div className="grid gap-3 sm:grid-cols-2 lg:col-span-2 content-start">
+                {items.map((item) => (
+                  <Link
+                    key={item.type}
+                    href={`/qr-code-generator/${item.type}`}
+                    className="group rounded-xl border border-border bg-accent/50 hover:bg-accent transition-colors p-4 flex flex-col gap-1"
+                  >
+                    <span className="flex items-center gap-2 font-medium text-secondary-foreground">
+                      {item.name} QR code generator
+                      <ArrowRight className="ml-auto size-4 text-muted-foreground group-hover:translate-x-0.5 transition-transform" />
+                    </span>
+                    <span className="text-sm text-muted-foreground">
+                      {item.summary}
+                    </span>
+                  </Link>
+                ))}
+              </div>
             </div>
           </section>
         );

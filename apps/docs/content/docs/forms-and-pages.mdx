@@ -1,0 +1,127 @@
+---
+title: Menus, coupons, events and forms
+description: Hosted page types for restaurants, offers, events and app downloads, plus forms that collect feedback into a response inbox.
+icon: ClipboardList
+---
+
+A dynamic QR code can open a hosted page instead of a website. Besides link lists, business pages and vCards, QRdx has five page types for common print jobs. Each starts from a template you can change block by block in the page editor, with a live phone preview.
+
+| Page type | Made for | Blocks it starts with |
+| --- | --- | --- |
+| **Menu** | Cafés, restaurants, bars | Menu, Wi-Fi, opening hours, map |
+| **Coupon** | Discounts and freebies | Coupon with barcode and Redeem button |
+| **Event** | Parties, conferences, webinars | Event with add-to-calendar |
+| **App download** | One code for every app store | App download |
+| **Feedback & forms** | Reviews, NPS surveys, sign-ups | Form, review links |
+
+Every block below can also be added to any other page.
+
+## Menu
+
+The **Menu** block lists sections (Starters, Mains, ...) with items. Each item can have a description, a price, a note after the price ("per glass", "Market price"), a photo, a short badge ("Chef's pick") and:
+
+- **Dietary tags:** vegetarian, vegan, gluten-free, dairy-free, halal, kosher, spicy, organic.
+- **Allergens:** the 14 allergens food businesses must declare in the EU and UK (gluten, crustaceans, eggs, fish, peanuts, soy, milk, tree nuts, celery, mustard, sesame, sulphites, lupin, molluscs), shown as "Contains: …".
+- **Sold out:** the item stays on the menu, dimmed and marked as sold out.
+
+All prices on one menu use the currency you pick. With two or more sections, shortcut chips at the top jump to each section. A menu holds up to 30 sections and 300 items.
+
+The **Wi-Fi** block shows your network name and password with copy buttons. Phones can't join a network from a web page, so guests copy the password and paste it in their Wi-Fi settings. Anyone who opens the page can see the password.
+
+## Coupon
+
+The **Coupon** block shows a headline, the code with a copy button and, optionally, a barcode your till can scan:
+
+- **Code 128** encodes up to 48 letters, digits and symbols (no accents or emoji).
+- **EAN-13** takes 12 digits (QRdx adds the check digit) or all 13. Numbers starting with 20–29 are reserved for in-store use, which suits coupon codes.
+
+By default the barcode encodes the coupon code; set **Barcode value** to encode something else, such as your point-of-sale number.
+
+**Valid from** and **Valid until** are calendar days. A coupon counts as started once its first day has begun anywhere in the world and as expired only after its last day has ended everywhere, so nobody sees "expired" early because of their time zone. Expired coupons stay visible, marked as expired.
+
+Turn on **Redeem button** to count redemptions: the visitor shows the screen to your staff and taps **Redeem now**. The page then shows "Redeemed" with the time on that phone, and the count appears on the page's [Responses](#responses) screen. It can't stop the same code being shown on another phone, so treat it as a counter, not a lock.
+
+## Event
+
+The **Event** block shows the date and time, venue and address (with an **Open in Maps** link), an online link, the organizer and a button such as **Get tickets**. Times are entered in the event's time zone and shown to visitors in that time zone, for example "7:00 – 10:00 PM GMT+1". All-day and multi-day events are supported; without an end time an event lasts an hour.
+
+**Add to calendar** offers Google Calendar, Apple Calendar (an `.ics` file), Outlook.com and Yahoo Calendar. The `.ics` download is served from your page's address, so it also works on a [custom domain](/docs/custom-domains); in the editor preview it's disabled until the page is published. Once the event is over, the block says so and hides the calendar button.
+
+## App download
+
+The **App download** block takes your App Store link (`apps.apple.com`), Google Play link (`play.google.com`) and a website. The visitor's store comes first: iPhone and iPad users see the App Store button on top, Android users Google Play, everyone else your website. The other links stay underneath, so nobody is stuck.
+
+## Forms
+
+The **Form** block collects answers. Questions can be:
+
+| Type | Visitors answer with |
+| --- | --- |
+| Text | A short or long answer (you set the maximum length) |
+| Email | An email address |
+| Phone | A phone number |
+| Star rating | Stars, out of 3 to 10 (you choose; 5 by default) |
+| NPS | A 0–10 "how likely are you to recommend us" score |
+| Choice | One option, or several when **Allow several answers** is on |
+| Checkbox | A tick, for example consent to be contacted |
+
+Mark questions as **Required** to make them mandatory. Visitors see errors next to the question, and a thank-you message you write after sending. Ask only for what you need, and say how you'll use contact details.
+
+Spam protection is built in: a hidden field that only bots fill in, and limits on how often one device can send a form. When the server has [Cloudflare Turnstile](#cloudflare-turnstile) keys, forms also run Turnstile's invisible check.
+
+### Review links
+
+The **Review links** block shows "Review us on Google" (and Tripadvisor, Yelp, Facebook, Trustpilot or any other site) buttons. It's shown to every visitor, whatever they answered in a form. Review sites, Google included, don't allow showing review links only to people who rated you highly, so QRdx never hides them based on a rating.
+
+In Google Business Profile, choose **Ask for reviews** to copy your review link.
+
+## Responses
+
+Open a page in **Dashboard → Pages** and choose **Responses** (or go to `/dashboard/pages/<page id>/responses`). Responses are listed newest first, 25 per screen, with the time (UTC), the code the visitor scanned and every answer. Email addresses and phone numbers are links.
+
+- **Several forms on one page:** tabs filter by form.
+- **Export CSV:** one row per response and one column per question. Columns follow the current questions, then questions you removed that still have answers. Renaming a question keeps its column.
+- **Delete:** select responses, or use the trash button on one. Deleting can't be undone. In a team, members can delete responses on pages they created; owners and admins on any page.
+
+Responses belong to the page. Deleting the page deletes its responses.
+
+### Monthly limits
+
+| Plan | Responses per month |
+| --- | --- |
+| Free | 50 |
+| Pro | 1,000 |
+| Business | 10,000 |
+
+The limit counts responses received by all pages in the personal workspace or team, per calendar month (UTC), and starts over on the 1st. The Responses screen shows how many you've used.
+
+When the limit is reached, forms show "This form isn't accepting responses right now" and keep what the visitor typed. Responses you already have are never deleted or hidden, on any plan, including after a downgrade.
+
+## Access rules
+
+Forms and calendar files follow the page's [code controls](/docs/code-controls): while a code is paused, scheduled for later, expired or over its scan limit, its form stops accepting responses and the `.ics` file isn't served. On a password-protected page they work once the visitor has entered the password.
+
+## Notifications and webhooks
+
+Every response sends a `form.submitted` event with the answers. Use it for [email or Slack/Discord notifications](/docs/notifications) and [webhooks](/docs/webhooks) (Zapier, Make, your own server).
+
+## Privacy
+
+Answers are stored with the page in your workspace. QRdx doesn't store visitors' IP addresses with responses: each response keeps only a salted hash of the IP address and browser for that day, which can't be turned back into either.
+
+## Self-hosting
+
+### Cloudflare Turnstile
+
+Set both variables to protect forms with [Cloudflare Turnstile](https://developers.cloudflare.com/turnstile/):
+
+```bash
+NEXT_PUBLIC_TURNSTILE_SITE_KEY=0x4AAAAAAA...
+TURNSTILE_SECRET_KEY=0x4AAAAAAA...
+```
+
+With only one of them set, Turnstile stays off. The Turnstile script loads when a visitor first touches a form, not with the page, and runs invisibly unless Cloudflare needs the visitor to click. If Cloudflare can't be reached, responses are still accepted so you never lose feedback; the other spam protections still apply.
+
+### Custom domains
+
+On a verified [custom domain](/docs/custom-domains), the form endpoint (`/api/forms/...`) and calendar files (`/api/calendar/...`) are served next to your pages, so forms and add-to-calendar work there without extra setup.

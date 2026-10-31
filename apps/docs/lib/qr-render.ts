@@ -1,7 +1,7 @@
 import "server-only";
 
 import { ImageResponse } from "next/og";
-import { getAllTemplates, getTemplateIds, QRCodeSVG } from "qrdx";
+import { getAllTemplates, getTemplateIds, QRCodeSVG, svgToEPS } from "qrdx";
 import {
   BODY_PATTERN,
   type BodyPattern,
@@ -110,7 +110,7 @@ export const qrOptionsSchema = z.object({
 
 export type QrOptions = z.output<typeof qrOptionsSchema>;
 
-export const qrImageFormats = ["svg", "png"] as const;
+export const qrImageFormats = ["svg", "png", "eps"] as const;
 export type QrImageFormat = (typeof qrImageFormats)[number];
 
 /** Thrown when the data does not fit in a QR code at the chosen level. */
@@ -249,6 +249,14 @@ export async function renderQrPng(options: QrOptions): Promise<ArrayBuffer> {
     { width: options.size, height: options.size },
   );
   return image.arrayBuffer();
+}
+
+/**
+ * Renders the QR code as vector EPS (PostScript), `size` points wide
+ * (72 points per inch), converted from the same SVG.
+ */
+export async function renderQrEps(options: QrOptions): Promise<string> {
+  return await svgToEPS(renderQrSvg(options), { width: options.size });
 }
 
 /** Public image API URL for these options; defaults are left out. */

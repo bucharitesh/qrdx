@@ -1,6 +1,6 @@
 import { Button } from "@repo/design-system/components/ui/button";
 import Link from "next/link";
-import { HeroVideoSection } from "@/components/sections/hero-video-section";
+import { HeroEditor } from "@/components/sections/home/hero-editor";
 import { siteConfig } from "@/config/site";
 
 export function HeroSection() {
@@ -33,7 +33,9 @@ export function HeroSection() {
           </div>
         </div>
       </div>
-      <HeroVideoSection />
+      <div className="relative mx-auto w-full max-w-5xl px-6 pt-10 pb-12 md:px-10 md:pt-14 md:pb-16">
+        <HeroEditor />
+      </div>
     </section>
   );
 }

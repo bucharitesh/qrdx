@@ -4,10 +4,11 @@ import {
   getIntegrationRegistry,
   initializeIntegrations,
 } from "@repo/integrations";
-import { ChevronLeft, ExternalLink } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Breadcrumbs } from "@/components/sections/breadcrumbs";
 import { SectionHeader } from "@/components/sections/section-header";
 import { createMetadata } from "@/lib/metadata";
 import { IntegrationCard } from "../components/integrations-grid";
@@ -65,13 +66,14 @@ export default async function IntegrationDetailPage({
     <main className="w-full min-h-screen divide-y divide-border mt-20">
       {/* Breadcrumb bar */}
       <div className="px-8 md:px-10 py-3">
-        <Link
-          href="/integrations"
-          className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
-        >
-          <ChevronLeft className="size-4" />
-          Browse all
-        </Link>
+        <Breadcrumbs
+          align="start"
+          items={[
+            { name: "Home", path: "/" },
+            { name: "Integrations", path: "/integrations" },
+            { name: integration.name, path: `/integrations/${slug}` },
+          ]}
+        />
       </div>
 
       {/* Two-column body */}

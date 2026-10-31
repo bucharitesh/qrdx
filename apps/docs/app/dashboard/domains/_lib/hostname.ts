@@ -17,8 +17,7 @@ const IPV4_PATTERN = /^\d{1,3}(?:\.\d{1,3}){3}$/;
 function toHostname(value: string | undefined): string | null {
   if (!value) return null;
   try {
-    return new URL(value.includes("://") ? value : `https://${value}`)
-      .hostname;
+    return new URL(value.includes("://") ? value : `https://${value}`).hostname;
   } catch {
     return null;
   }
@@ -131,6 +130,9 @@ export function parseCustomHostname(input: string): HostnameResult {
  */
 export function requestHostname(hostHeader: string | null): string | null {
   if (!hostHeader || hostHeader.startsWith("[")) return null;
-  const hostname = hostHeader.split(":", 1)[0]?.toLowerCase().replace(/\.$/, "");
+  const hostname = hostHeader
+    .split(":", 1)[0]
+    ?.toLowerCase()
+    .replace(/\.$/, "");
   return hostname && isDnsHostname(hostname) ? hostname : null;
 }

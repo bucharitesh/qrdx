@@ -32,6 +32,7 @@ export async function getQRAsSVG(props: QRPropsSVG) {
     customTemplate: _customTemplate,
     customProps: _customProps,
     frame,
+    art: _art,
     ...otherProps
   } = props;
 

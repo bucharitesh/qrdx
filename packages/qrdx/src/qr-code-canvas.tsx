@@ -52,6 +52,7 @@ export function QRCodeCanvas(props: QRPropsCanvas) {
     customTemplate: _customTemplate,
     customProps: _customProps,
     frame,
+    art: _art,
     ...otherProps
   } = props;
   const imgSrc = imageSettings?.src;

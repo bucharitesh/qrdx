@@ -237,6 +237,7 @@ describe("generate command", () => {
       ["--fg", ["--fg", '{"type":"linear"'], "Invalid gradient JSON"],
       ["--bg", ["--bg", '{"type":"linear","stops":[]}'], "Invalid gradient"],
       ["-o", ["-o", "qr.jpg"], 'Unsupported output format ".jpg"'],
+      ["--format", ["--format", "gif"], 'Invalid --format "gif"'],
       ["--frame", ["--frame", "banner"], 'Invalid --frame "banner"'],
       [
         "--frame-text",
@@ -285,6 +286,53 @@ describe("generate command", () => {
         out,
       ]);
       expect(exitCode).toBe(0);
+    });
+  });
+
+  describe("EPS output", () => {
+    it("-o file.eps writes vector EPS", () => {
+      const out = tmp("cli.eps");
+      cleanups.push(out);
+      const { exitCode } = runCli(["generate", "https://qrdx.dev", "-o", out]);
+      expect(exitCode).toBe(0);
+      const eps = readFileSync(out, "utf-8");
+      expect(eps.startsWith("%!PS-Adobe-3.0 EPSF-3.0")).toBe(true);
+      expect(eps).toContain("%%BoundingBox: 0 0 512 512");
+    });
+
+    it("--format eps applies to a file name without an extension", () => {
+      const out = tmp("cli-noext");
+      cleanups.push(out);
+      const { exitCode } = runCli([
+        "generate",
+        "https://qrdx.dev",
+        "--format",
+        "eps",
+        "--size",
+        "100",
+        "-o",
+        out,
+      ]);
+      expect(exitCode).toBe(0);
+      expect(readFileSync(out, "utf-8")).toContain(
+        "%%BoundingBox: 0 0 100 100"
+      );
+    });
+
+    it("rejects --format that contradicts the file extension", () => {
+      const out = tmp("cli-mismatch.png");
+      cleanups.push(out);
+      const { exitCode, stdout, stderr } = runCli([
+        "generate",
+        "https://qrdx.dev",
+        "--format",
+        "eps",
+        "-o",
+        out,
+      ]);
+      expect(exitCode).toBe(1);
+      expect(stdout + stderr).toContain("--format eps does not match");
+      expect(existsSync(out)).toBe(false);
     });
   });
 

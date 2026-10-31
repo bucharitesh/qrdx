@@ -167,7 +167,7 @@ export default async function InvitePage({
       title={`Join ${invitation.teamName}`}
     >
       <p className="text-muted-foreground text-xs">
-        Team members share the team's dynamic QR codes and brand kits. Expires{" "}
+        Team members share the team's dynamic QR codes and themes. Expires{" "}
         {formatUtcDateTime(invitation.expiresAt)}.
       </p>
       <div className="w-full">

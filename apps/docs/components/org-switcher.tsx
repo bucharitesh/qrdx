@@ -30,7 +30,7 @@ export function useRefreshTeams() {
     authClient.$store.notify("$sessionSignal");
     authClient.$store.notify("$listOrg");
     authClient.$store.notify("$activeOrgSignal");
-    // Scoped client data (brand kits, codes) belongs to the previous workspace.
+    // Scoped client data (themes, codes) belongs to the previous workspace.
     queryClient.invalidateQueries();
     router.refresh();
   }, [queryClient, router]);

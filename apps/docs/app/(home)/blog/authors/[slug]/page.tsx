@@ -1,8 +1,8 @@
 import { Github, Linkedin, Twitter } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BlogList } from "@/components/sections/blog/blog-list";
+import { Breadcrumbs } from "@/components/sections/breadcrumbs";
 import { blogAuthorsSource } from "@/lib/source";
 import { getMDXComponents } from "@/mdx-components";
 import {
@@ -76,12 +76,14 @@ export default async function AuthorPage({ params }: PageProps) {
         {/* Author profile header */}
         <div className="border-b w-full p-10 md:p-14">
           <div className="max-w-6xl mx-auto flex flex-col gap-6">
-            <Link
-              href="/blog"
-              className="text-sm text-muted-foreground hover:text-secondary-foreground transition-colors w-fit"
-            >
-              &larr; Back to Blog
-            </Link>
+            <Breadcrumbs
+              align="start"
+              items={[
+                { name: "Home", path: "/" },
+                { name: "Blog", path: "/blog" },
+                { name, path: `/blog/authors/${slug}` },
+              ]}
+            />
 
             <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
               {/* Left: avatar + name + role */}

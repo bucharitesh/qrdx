@@ -1,0 +1,67 @@
+---
+title: Plans and limits
+description: What Free, Pro and Business include, how limits apply to personal and team workspaces, and what happens when you downgrade or cancel.
+icon: Gauge
+---
+
+QRdx has three plans. Static QR codes from the playground and the `qrdx` library are free and unlimited on all of them, with no account. Compare prices on the [pricing page](/pricing).
+
+| | Free | Pro | Business |
+| --- | --- | --- | --- |
+| Price (US$) | $0 | $5/month or $48/year | $15/month or $144/year |
+| Price (India) | ₹0 | ₹199/month or ₹1,499/year | ₹599/month or ₹4,999/year |
+
+Visitors from India see prices in rupees. Checkout is handled by [Polar](https://polar.sh), which charges customers in India in ₹ and everyone else in US$, and adds local taxes where they apply.
+
+## Limits
+
+| | Free | Pro | Business |
+| --- | --- | --- | --- |
+| Dynamic QR codes | 10 | Unlimited | Unlimited |
+| Scans | Unlimited | Unlimited | Unlimited |
+| Hosted landing pages | 3, with a "Made with QRdx" footer | Unlimited, no footer | Unlimited, white-label, custom CSS |
+| Analytics history | 90 days | 3 years | Unlimited (scan-level for 13 months, then daily totals) |
+| Custom domains | None | 5 | 25 |
+| Team members | 1 (no teams) | 3 | Unlimited |
+| Smart routing, A/B tests, UTM tags | No | Yes | Yes |
+| Passwords, schedules, expiry, scan limits | No | Yes | Yes |
+| Retargeting pixels | No | Yes | Yes |
+| Conversion tracking | No | No | Yes |
+| Email digests and alerts | No | Yes | Yes |
+| Webhooks, Zapier and Slack | No | No | Yes |
+| File storage (largest file) | 50 MB (10 MB) | 5 GB (100 MB) | 50 GB (250 MB) |
+| Form responses per month | 50 | 1,000 | 10,000 |
+| API requests per day | 1,000 | 10,000, plus bulk creation | 100,000, plus bulk creation |
+| AI art images per month | 3 | 30 | 150, pooled per team |
+| AI theme generations | 5 in total | Unlimited | Unlimited |
+| Saved themes | 10 | Unlimited, shared with your team | Unlimited, shared with your team |
+| Folder permissions and audit log | No | No | Coming soon |
+
+Only active dynamic codes count toward the code limit: archived codes don't. Scans never count toward anything, and no plan pauses a code because of traffic. The only scan caps are the ones you set yourself on a code.
+
+## Personal and team workspaces
+
+Your personal workspace uses your own plan. A team uses the best plan among its owners, so one owner on Business gives the whole team Business limits. Members don't need their own subscription.
+
+Free accounts can't create teams. A Pro team has up to 3 seats, a Business team has no limit. Seats are members, owner included, plus pending invitations, so revoke an invitation you no longer need to free its seat. If the owners' plan changes, current members stay; only new invitations are blocked.
+
+## Going over a limit, downgrading and cancelling
+
+<Callout type="info">
+  Limits only stop new things. Existing codes keep redirecting on every plan, including after a downgrade, a failed payment or a cancellation. That's the [Never-Hostage Guarantee](/guarantee).
+</Callout>
+
+- **Over a limit:** you can't create more until you're under it. You can still edit, archive and export what you have.
+- **Downgrading:** codes, landing pages and verified custom domains keep working. Analytics show the history your new plan includes.
+- **Cancelling:** your plan stays active until the end of the period you paid for, then your account moves to Free.
+- **A failed payment:** once the subscription lapses, it's the same as cancelling. Nothing is paused.
+
+Codes that end for a reason you chose, such as an expiry date, a pause or a scan limit, send scanners to your fallback URL or to a neutral "This campaign has ended" page, never to a QRdx page.
+
+## Billing
+
+Upgrade from the [pricing page](/pricing). To change plans, switch between monthly and yearly, update your card or cancel, open **Manage subscription** in your settings, which takes you to the Polar billing portal. One subscription covers your account, so while you have one, plan changes go through the portal instead of a new checkout.
+
+## Self-hosting
+
+A [self-hosted](/docs/self-hosting) instance uses the same plans. The limits are defined in one file, `apps/docs/lib/plans.ts`, which you can change for your instance. Without Polar configured, upgrades are unavailable and every account uses the Free limits.

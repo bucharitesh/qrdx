@@ -21,6 +21,7 @@ import Papa from "papaparse";
 import { getQRCodeDataUrl, QRCode } from "qrdx";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDropzone } from "react-dropzone";
+import { HairlineFigure } from "@/components/mockups/hairline";
 import { defaultThemeState } from "@/config/qr";
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
 import { useMounted } from "@/lib/hooks/use-mounted";
@@ -381,7 +382,7 @@ export function BulkGenerator() {
       <div className="flex flex-col gap-6 rounded-xl border border-border bg-card p-5">
         <div className="flex flex-col gap-3">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <h3 className="font-medium">1. Upload a CSV</h3>
+            <h2 className="font-medium">1. Upload a CSV</h2>
             <Button size="sm" variant="ghost" onClick={downloadSampleCsv}>
               <FileSpreadsheet className="size-4" />
               Sample CSV
@@ -451,7 +452,7 @@ export function BulkGenerator() {
 
         {table && (
           <div className="flex flex-col gap-3">
-            <h3 className="font-medium">2. Map columns</h3>
+            <h2 className="font-medium">2. Map columns</h2>
             <div className="grid gap-3 sm:grid-cols-2">
               <div className="flex flex-col gap-1.5">
                 <Label className="text-xs">QR code content</Label>
@@ -503,7 +504,7 @@ export function BulkGenerator() {
         )}
 
         <div className="flex flex-col gap-3">
-          <h3 className="font-medium">{table ? "3." : "2."} Choose a style</h3>
+          <h2 className="font-medium">{table ? "3." : "2."} Choose a style</h2>
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="flex flex-col gap-1.5">
               <Label className="text-xs">Style</Label>
@@ -630,9 +631,12 @@ export function BulkGenerator() {
               value={previewValue}
             />
           ) : (
-            <p className="px-4 text-center text-sm text-muted-foreground">
-              Upload a CSV to preview the first code.
-            </p>
+            <div className="flex flex-col items-center gap-3 px-4 text-center">
+              <HairlineFigure figure="Stack" className="aspect-square w-28" />
+              <p className="text-sm text-muted-foreground">
+                Upload a CSV to preview the first code.
+              </p>
+            </div>
           )}
         </div>
         {previewValue && (

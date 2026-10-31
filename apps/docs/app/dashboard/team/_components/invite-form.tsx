@@ -20,9 +20,11 @@ export function InviteForm() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [role, setRole] = useState<"member" | "admin">("member");
-  const [created, setCreated] = useState<{ id: string; email: string } | null>(
-    null,
-  );
+  const [created, setCreated] = useState<{
+    id: string;
+    email: string;
+    emailed: boolean;
+  } | null>(null);
   const [isPending, startTransition] = useTransition();
 
   const submit = (event: React.FormEvent) => {
@@ -33,7 +35,11 @@ export function InviteForm() {
         toast.error(result.error);
         return;
       }
-      setCreated({ id: result.data.id, email: result.data.email });
+      setCreated({
+        id: result.data.id,
+        email: result.data.email,
+        emailed: result.data.emailed,
+      });
       setEmail("");
       router.refresh();
     });
@@ -81,9 +87,12 @@ export function InviteForm() {
       {created && (
         <div className="bg-muted/40 space-y-2 rounded-lg border p-3">
           <p className="text-sm">
-            Send this link to{" "}
-            <span className="font-medium">{created.email}</span>. They need to
-            sign in with that email address to join.
+            {created.emailed
+              ? "We emailed the invitation to "
+              : "Send this link to "}
+            <span className="font-medium">{created.email}</span>
+            {created.emailed ? ". You can also share this link." : "."} They
+            need to sign in with that email address to join.
           </p>
           <InviteLinkField invitationId={created.id} />
         </div>

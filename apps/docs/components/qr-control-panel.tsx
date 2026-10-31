@@ -9,7 +9,6 @@ import {
 import { Sparkle } from "lucide-react";
 import React from "react";
 import { ChatInterface } from "@/components/editor/ai/chat-interface";
-import { BrandKitPicker } from "@/components/editor/brand-kit-picker";
 import ControlSection from "@/components/editor/control-section";
 import { GradientPicker } from "@/components/editor/gradient-picker";
 import QrPresetSelect from "@/components/editor/qr-preset-select";
@@ -22,9 +21,11 @@ import {
   useControlsTabFromUrl,
 } from "@/lib/hooks/use-controls-tab-from-url";
 import type { QRStyle } from "@/types/theme";
+import { ArtControls } from "./editor/control-sections/art-controls";
 import { ContentControls } from "./editor/control-sections/content-controls";
 import { FrameControls } from "./editor/control-sections/frame-controls";
 import { LogoControls } from "./editor/control-sections/logo-controls";
+import { PaddingControls } from "./editor/control-sections/padding-controls";
 import { CornerEyeDotPatternSelector } from "./playground/corner-eye-dot-pattern-selector";
 import { CornerEyePatternSelector } from "./playground/corner-eye-pattern-selector";
 import { ErrorLevelSelector } from "./playground/error-level-selector";
@@ -107,7 +108,6 @@ const ThemeControlPanel = ({ styles, onChange }: ThemeControlPanelProps) => {
             className="mt-1 size-full overflow-hidden"
           >
             <ScrollArea className="h-full px-4">
-              <BrandKitPicker />
               <ControlSection title="Colors" expanded>
                 <GradientPicker
                   name="bgColor"
@@ -136,6 +136,8 @@ const ThemeControlPanel = ({ styles, onChange }: ThemeControlPanelProps) => {
                 />
               </ControlSection>
 
+              <ArtControls styles={styles} onChange={onChange} />
+
               <ControlSection title="Dot Patterns" expanded kbd=",">
                 <PatternSelector />
               </ControlSection>
@@ -154,6 +156,13 @@ const ThemeControlPanel = ({ styles, onChange }: ThemeControlPanelProps) => {
 
               <ControlSection title="Call to action" expanded>
                 <FrameControls />
+              </ControlSection>
+
+              <ControlSection title="Padding" expanded>
+                <PaddingControls
+                  value={currentStyles.margin}
+                  onChange={(margin) => updateStyle("margin", margin)}
+                />
               </ControlSection>
             </ScrollArea>
           </TabsContent>

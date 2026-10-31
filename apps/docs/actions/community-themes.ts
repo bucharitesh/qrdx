@@ -13,7 +13,7 @@ import {
 } from "@repo/database";
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import cuid from "cuid";
-import { and, asc, count, desc, eq, inArray, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, inArray, isNull, sql } from "drizzle-orm";
 import { revalidateTag, unstable_cache } from "next/cache";
 import { headers } from "next/headers";
 import { z } from "zod";
@@ -289,7 +289,14 @@ export async function publishTheme(
     const [existingTheme] = await db
       .select()
       .from(themeTable)
-      .where(and(eq(themeTable.id, themeId), eq(themeTable.userId, userId)))
+      .where(
+        and(
+          eq(themeTable.id, themeId),
+          eq(themeTable.userId, userId),
+          // Team themes belong to the team, not to one member.
+          isNull(themeTable.organizationId),
+        ),
+      )
       .limit(1);
 
     if (!existingTheme) {

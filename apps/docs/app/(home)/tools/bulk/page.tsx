@@ -1,4 +1,7 @@
 import type { Metadata } from "next";
+import { BrowserFrame } from "@/components/mockups/browser-frame";
+import { LoopVideo } from "@/components/mockups/loop-video";
+import { loopVideos } from "@/components/mockups/visuals";
 import { BulkGenerator } from "@/components/sections/tools/bulk-generator";
 import { FaqList } from "@/components/sections/tools/faq-list";
 import { ToolHero } from "@/components/sections/tools/tool-hero";
@@ -99,6 +102,12 @@ export default function BulkPage() {
             </li>
           ))}
         </ol>
+        <BrowserFrame
+          url="qrdx.dev/tools/bulk"
+          className="mx-auto w-full max-w-4xl"
+        >
+          <LoopVideo {...loopVideos.bulk} />
+        </BrowserFrame>
       </section>
 
       <FaqList title="Bulk QR code FAQ" faqs={faqs} />

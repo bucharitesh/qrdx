@@ -139,8 +139,8 @@ async function domainLimit(scope: ActiveScope): Promise<number> {
       402,
       "PLAN_REQUIRED",
       scope.organizationId
-        ? "Custom domains need a team owner on the Pro plan."
-        : "Custom domains are a Pro feature.",
+        ? "Custom domains need a team owner on Pro or Business."
+        : "Custom domains are part of Pro and Business.",
     );
   }
   return limit;
@@ -209,10 +209,7 @@ async function codeCounts(ids: string[]): Promise<Map<string, number>> {
   return new Map(rows.map((row) => [row.domainId as string, row.total]));
 }
 
-async function findInScope(
-  scope: ActiveScope,
-  id: string,
-): Promise<DomainRow> {
+async function findInScope(scope: ActiveScope, id: string): Promise<DomainRow> {
   const [row] = await db
     .select()
     .from(customDomain)

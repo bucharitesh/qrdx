@@ -1,11 +1,15 @@
 import { createRequire } from "node:module";
 import { inflateSync } from "node:zlib";
 import {
+  createQRArtImage,
   FRAME_STYLES,
   getFrameDimensions,
   getPrintLayout,
+  getQRAsEPS,
   getQRAsPrintPDFBuffer,
   getQRAsPrintSVG,
+  getQRFunctionModules,
+  isQRArtActive,
   type QRProps,
   rgbToCmyk,
   withQRSize,
@@ -178,5 +182,119 @@ describe("print export", () => {
     expect(svg).toMatch(/^<\?xml/);
     expect(svg).toMatch(/<svg[^>]*width="2in"/);
     expect(svg).toMatch(/<svg[^>]*height="2in"/);
+  });
+});
+
+describe("art modes", () => {
+  const artImage = async (svg: string, maxSize: number) => {
+    const { data, info } = await sharp(Buffer.from(svg))
+      .ensureAlpha()
+      .raw()
+      .toBuffer({ resolveWithObject: true });
+    return createQRArtImage(
+      { data, width: info.width, height: info.height },
+      { maxSize }
+    );
+  };
+  const logo = () =>
+    artImage(
+      `<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><circle cx="100" cy="100" r="80" fill="#e11d48"/><circle cx="100" cy="100" r="35" fill="#f59e0b"/></svg>`,
+      64
+    );
+  const photo = () =>
+    artImage(
+      `<svg xmlns="http://www.w3.org/2000/svg" width="240" height="160"><defs><linearGradient id="g" x2="1" y2="1"><stop offset="0" stop-color="#0ea5e9"/><stop offset="1" stop-color="#f97316"/></linearGradient></defs><rect width="240" height="160" fill="url(#g)"/><circle cx="80" cy="70" r="40" fill="#fde047"/><rect x="130" y="60" width="80" height="90" fill="#14532d"/></svg>`,
+      96
+    );
+
+  it("samples images into a compact RGBA grid", async () => {
+    const image = await photo();
+    expect(image.width).toBe(96);
+    expect(image.height).toBe(64);
+    expect(Buffer.from(image.data, "base64")).toHaveLength(96 * 64 * 4);
+    expect(isQRArtActive({ mode: "halftone", image })).toBe(true);
+    expect(
+      isQRArtActive({ mode: "halftone", image: { ...image, width: 95 } })
+    ).toBe(false);
+  });
+
+  it("marks finder, timing, alignment and version modules", () => {
+    const mask = getQRFunctionModules(7);
+    expect(mask).toHaveLength(45);
+    expect(mask[0]?.[0]).toBe(true); // finder
+    expect(mask[6]?.[20]).toBe(true); // timing
+    expect(mask[22]?.[22]).toBe(true); // alignment center
+    expect(mask[0]?.[34]).toBe(true); // version block
+    expect(mask[12]?.[12]).toBe(false); // data
+  });
+
+  for (const mode of ["logo", "halftone"] as const) {
+    it(`${mode} mode stays scannable from subtle to full intensity`, async () => {
+      const image = mode === "logo" ? await logo() : await photo();
+      for (const intensity of [0.3, 0.6, 1]) {
+        const svg = buildSVGString({
+          value: VALUE,
+          size: 400,
+          margin: 2,
+          level: "H",
+          cornerEyePattern: "square",
+          cornerEyeDotPattern: "square",
+          art: { mode, image, intensity },
+        });
+        expect(svg).toContain(`data-qrdx-art="${mode}"`);
+        expect(await decodeSVG(svg), `${mode} ${intensity}`).toBe(VALUE);
+      }
+    });
+  }
+
+  it("draws the art layer only with a usable image", () => {
+    const svg = buildSVGString({
+      value: VALUE,
+      art: {
+        mode: "halftone",
+        image: { width: 2, height: 2, data: "broken" },
+      },
+    });
+    expect(svg).not.toContain("data-qrdx-art");
+  });
+});
+
+describe("getQRAsEPS", () => {
+  it("is sized in points from millimetres and keeps colors", async () => {
+    const eps = await getQRAsEPS(
+      { value: VALUE, fgColor: "#155dfc" },
+      { sizeMm: 25.4 }
+    );
+    expect(eps).toContain("%%BoundingBox: 0 0 72 72");
+    expect(eps).toContain("%%HiResBoundingBox: 0 0 72 72");
+    expect(eps).toContain("0.082 0.365 0.988 rg");
+  });
+
+  it("writes CMYK and fills the bleed", async () => {
+    const eps = await getQRAsEPS(
+      { value: VALUE, bgColor: "#fef3c7" },
+      { sizeMm: 25.4, bleedMm: 3, colorMode: "cmyk" }
+    );
+    const bleed = (3 * 72) / 25.4;
+    expect(eps).toContain(
+      `%%BoundingBox: 0 0 ${Math.ceil(72 + 2 * bleed)} ${Math.ceil(72 + 2 * bleed)}`
+    );
+    expect(eps).toContain(" cmyk ");
+    expect(eps).not.toMatch(/ rg /);
+  });
+
+  it("flattens gradients to their first color", async () => {
+    const eps = await getQRAsEPS({
+      value: VALUE,
+      fgColor: {
+        type: "linear",
+        angle: 0,
+        stops: [
+          { color: "#ff0000", offset: 0 },
+          { color: "#0000ff", offset: 100 },
+        ],
+      },
+    });
+    expect(eps).toContain("1 0 0 rg");
   });
 });

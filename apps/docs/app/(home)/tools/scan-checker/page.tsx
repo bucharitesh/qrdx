@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { BrowserFrame } from "@/components/mockups/browser-frame";
+import { LoopVideo } from "@/components/mockups/loop-video";
+import { loopVideos } from "@/components/mockups/visuals";
 import { FaqList } from "@/components/sections/tools/faq-list";
 import { ToolHero } from "@/components/sections/tools/tool-hero";
 import { createMetadata } from "@/lib/metadata";
@@ -105,6 +108,9 @@ export default function ScanCheckerPage() {
             </Link>{" "}
             to choose how big to print it.
           </p>
+          <BrowserFrame url="qrdx.dev/tools/scan-checker" className="mt-3">
+            <LoopVideo {...loopVideos.scanChecker} />
+          </BrowserFrame>
         </div>
       </section>
 

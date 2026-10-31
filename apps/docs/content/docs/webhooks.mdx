@@ -1,0 +1,186 @@
+---
+title: Webhooks
+description: Get a signed HTTPS request when your QR codes are scanned, created or changed, or when someone submits a form. Works with Zapier, Make and n8n.
+icon: Webhook
+---
+
+Webhooks send events from a workspace to a URL you control, as they happen. Use them to update a CRM when someone fills in a form, post to an internal tool when a code passes 1,000 scans, or keep your own copy of scan data.
+
+Webhooks, Zapier/Make hooks and Slack/Discord alerts are part of the **Business** plan. Email alerts and the weekly digest are part of Pro; see [Notifications](/docs/notifications).
+
+## Add an endpoint
+
+1. Open [Dashboard → Webhooks](/dashboard/webhooks) in the workspace whose events you want (your personal workspace or a team).
+2. Click **Add endpoint**, enter an `https://` URL and pick the events.
+3. Copy the **signing secret** shown after saving. Owners and admins can show it again, or rotate it, later.
+4. Click **Send test**. QRdx sends a signed `ping` event and shows the response status.
+
+In a team, owners and admins manage endpoints; members can see the endpoints and their delivery logs. A workspace can have up to 20 endpoints.
+
+Endpoint URLs must be public `https://` host names. IP addresses, `localhost` and names that resolve to private networks are refused, and redirects are not followed.
+
+## Events
+
+| Event | When | Notes |
+| --- | --- | --- |
+| `scan.created` | A dynamic code is scanned | Batched: one request per minute per endpoint with up to 100 scans and the exact `count` |
+| `scan.milestone` | A code's 1st scan, then 10, 100, 500, 1,000, 5,000, 10,000, 50,000, 100,000, 500,000 and 1,000,000 scans, then every million | Fires once per milestone |
+| `code.created` | A dynamic code is created (dashboard or API) | One event per code, also for bulk creation |
+| `code.updated` | A code's destination, title, design or short-link domain changes | `changes` lists the fields |
+| `form.submitted` | Someone submits a form on a hosted page | Includes the answers |
+| `ping` | You click **Send test** | |
+
+Scans by bots, link previews and prefetchers, and rapid repeats from one visitor, are not counted and don't trigger events, exactly as in [scan analytics](/docs/dynamic-qr-codes).
+
+## Payloads
+
+Every request is a `POST` with a JSON body and these headers:
+
+| Header | Value |
+| --- | --- |
+| `Content-Type` | `application/json` |
+| `User-Agent` | `QRdx-Webhooks/1.0 (+https://qrdx.dev/docs/webhooks)` |
+| `X-QRdx-Event` | The event type, e.g. `code.created` |
+| `X-QRdx-Delivery` | Delivery id: the same on every retry, so you can ignore duplicates |
+| `X-QRdx-Timestamp` | Unix seconds when this attempt was signed |
+| `X-QRdx-Signature` | `t=<timestamp>,v1=<hex HMAC-SHA256>` |
+
+The body is always an envelope:
+
+```json
+{
+  "id": "evt_cm3x8c1a20001",
+  "type": "code.created",
+  "created_at": "2026-10-31T09:30:00.000Z",
+  "data": {
+    "code": {
+      "id": "cm3x7q2l40000",
+      "slug": "aB3dE5f",
+      "title": "Spring menu",
+      "short_link": "https://qrdx.dev/q/aB3dE5f",
+      "destination_url": "https://example.com/menu",
+      "status": "active",
+      "scan_count": 0,
+      "created_at": "2026-10-31T09:30:00.000Z",
+      "updated_at": "2026-10-31T09:30:00.000Z"
+    },
+    "actor_id": "user_123"
+  }
+}
+```
+
+A `scan.created` batch:
+
+```json
+{
+  "id": "evt_cm3x9d0b10002",
+  "type": "scan.created",
+  "created_at": "2026-10-31T09:31:00.000Z",
+  "data": {
+    "window_started_at": "2026-10-31T09:31:00.000Z",
+    "window_seconds": 60,
+    "count": 2,
+    "scans": [
+      {
+        "scan_id": "cm3x9d0b00001",
+        "code": { "id": "cm3x7q2l40000", "slug": "aB3dE5f", "title": "Spring menu" },
+        "scanned_at": "2026-10-31T09:31:00.000Z",
+        "country": "DE",
+        "region": "BE",
+        "city": "Berlin",
+        "device_type": "mobile",
+        "os": "iOS",
+        "browser": "Safari",
+        "referer": null
+      }
+    ]
+  }
+}
+```
+
+When more than 100 scans arrive in one minute, `scans` holds the first 100 and `count` the exact total. Scan payloads never include IP addresses or visitor hashes.
+
+Other events carry:
+
+- `scan.milestone`: `milestone`, `code` (`id`, `slug`, `title`, `scan_count`) and the `scan` that reached it.
+- `code.updated`: like `code.created`, plus `changes`, e.g. `["destination_url"]`.
+- `form.submitted`: `response_id`, `page` (`id`, `title`), `code` (`id`, `slug`, or `null`), `fields` (`name`, `label`, `value` as text) and `submitted_at`.
+
+## Verify signatures
+
+Compute an HMAC-SHA256 of `<timestamp>.<raw body>` with your signing secret and compare it with `v1` in `X-QRdx-Signature`. Use the raw request body, before any JSON parsing, and reject timestamps older than five minutes.
+
+```ts
+import { createHmac, timingSafeEqual } from "node:crypto";
+
+export function isFromQRdx(rawBody: string, header: string, secret: string) {
+  const parts = Object.fromEntries(
+    header.split(",").map((part) => part.trim().split("=", 2)),
+  );
+  const timestamp = Number(parts.t);
+  if (!timestamp || Math.abs(Date.now() / 1000 - timestamp) > 300) return false;
+
+  const expected = createHmac("sha256", secret)
+    .update(`${timestamp}.${rawBody}`)
+    .digest("hex");
+  const received = Buffer.from(parts.v1 ?? "");
+  return (
+    received.length === expected.length &&
+    timingSafeEqual(received, Buffer.from(expected))
+  );
+}
+```
+
+Rotating the secret takes effect immediately: the old secret stops verifying, so update your server right after rotating.
+
+## Retries and the delivery log
+
+Respond with any `2xx` status within 10 seconds. Anything else (an error status, a redirect, a timeout, an unreachable host) counts as a failure, and QRdx retries with growing waits: after about 1 minute, 4 minutes, 16 minutes, 1 hour, 4 hours, 17 hours and 24 hours. That's 8 attempts over roughly two days, after which the delivery is marked **Failed**.
+
+Each endpoint's **Deliveries** page lists the last 50 deliveries with their status, attempts, last error and payload. **Retry** re-sends one immediately (also for delivered ones). Deliveries are kept for 30 days.
+
+Deliveries can arrive more than once (a retry after a slow response, a manual retry) and out of order. Use `X-QRdx-Delivery` or the envelope `id` to ignore duplicates.
+
+Disabling an endpoint stops new deliveries; deleting it also deletes its log. If a workspace's plan no longer includes webhooks, endpoints are kept but nothing is sent until it is on Business again. Your QR codes keep working either way.
+
+## Zapier, Make and n8n (REST Hooks)
+
+Automation tools can subscribe and unsubscribe on their own through the REST Hooks API. Authenticate with an OAuth access token, like the [codes API](/docs/dynamic-qr-codes#rest-api): `codes:write` to subscribe or unsubscribe, `codes:read` to list. Token requests act on your personal workspace. Subscriptions are ordinary endpoints: they appear in Dashboard → Webhooks, where you can also remove them.
+
+| Method | Path | Description |
+| --- | --- | --- |
+| `POST` | `/api/v1/hooks` | Subscribe. Body: `target_url` (or Zapier's `hookUrl`) and `event` (or an `events` array). Returns `201` with the subscription `id` and its `secret` |
+| `DELETE` | `/api/v1/hooks/{id}` | Unsubscribe (`204`) |
+| `GET` | `/api/v1/hooks` | List subscriptions and endpoints |
+| `GET` | `/api/v1/hooks/{id}` | One subscription |
+| `GET` | `/api/v1/hooks/sample?event=<event>` | Recent example payloads for `event`, as an array (Zapier's "perform list") |
+
+```bash
+curl https://qrdx.dev/api/v1/hooks \
+  -H "Authorization: Bearer $QRDX_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"target_url": "https://hooks.zapier.com/hooks/standard/123/abc/", "event": "form.submitted"}'
+```
+
+```json
+{
+  "id": "cm3xa1b2c0003",
+  "target_url": "https://hooks.zapier.com/hooks/standard/123/abc/",
+  "events": ["form.submitted"],
+  "event": "form.submitted",
+  "active": true,
+  "created_at": "2026-10-31T09:40:00.000Z",
+  "secret": "whsec_..."
+}
+```
+
+Without Business the subscribe call returns `402 PLAN_REQUIRED`. A `scan.created` delivery is one batch, so in Zapier use the `data.scans` line items to act on each scan.
+
+## Self-hosting
+
+Deliveries are sent right away; retries and scan batches whose minute has ended are sent by a scheduled job. On Vercel, `apps/docs/vercel.json` runs it once a day, which works on every plan; on Vercel Pro you can change the schedule to every 5 minutes (`*/5 * * * *`) for faster retries. Elsewhere, call the job yourself with the `CRON_SECRET` you set in the environment:
+
+```bash
+# every 1-5 minutes
+curl -H "Authorization: Bearer $CRON_SECRET" https://your-host/api/cron/webhooks
+```

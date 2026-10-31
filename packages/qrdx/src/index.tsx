@@ -7,8 +7,27 @@ import { getFrameDimensions } from "./frame";
 
 export * from "../types";
 export * from "./api";
+export {
+  createQRArtImage,
+  DEFAULT_ART_INTENSITY,
+  getQRFunctionModules,
+  isQRArtActive,
+  loadQRArtImage,
+  QR_ART_SAMPLE_SIZES,
+  type QRArtPixels,
+  type QRArtRenderOptions,
+  renderQRArt,
+} from "./art";
 export * from "./detection";
 export * from "./download";
+export {
+  downloadPrintEPS,
+  type EPSOptions,
+  epsToDataUrl,
+  getQRAsEPS,
+  type SVGToEPSOptions,
+  svgToEPS,
+} from "./eps";
 export {
   FRAME_FONT_FAMILY,
   FRAME_GAP_RATIO,

@@ -160,7 +160,10 @@ export async function getCustomDomainOptions(): Promise<
   CustomDomainActionResult<DomainOptions>
 > {
   try {
-    return { success: true, data: await getDomainOptions(await getActiveScope()) };
+    return {
+      success: true,
+      data: await getDomainOptions(await getActiveScope()),
+    };
   } catch (error) {
     return failure(error, "getCustomDomainOptions");
   }

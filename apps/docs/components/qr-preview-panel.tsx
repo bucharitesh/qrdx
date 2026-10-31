@@ -68,6 +68,7 @@ const QRPreviewPanel: React.FC<QRPreviewPanelProps> = ({ style }) => {
                 className="relative flex size-full items-center justify-center"
               >
                 <QRCode
+                  art={style.art}
                   bgColor={style.bgColor}
                   cornerEyeDotPattern={style.cornerEyeDotPattern}
                   cornerEyePattern={style.cornerEyePattern}
@@ -80,6 +81,7 @@ const QRPreviewPanel: React.FC<QRPreviewPanelProps> = ({ style }) => {
                   hideLogo={!style.showLogo}
                   logo={style.customLogo ?? DEFAULT_QR_LOGO}
                   scale={previewScale}
+                  margin={style.margin}
                   templateId={style.templateId}
                   value={value}
                 />
