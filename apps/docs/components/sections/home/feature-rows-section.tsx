@@ -2,6 +2,11 @@ import { Card } from "@repo/design-system/components/ui/card";
 import { cn } from "@repo/design-system/lib/utils";
 import { ArrowRight } from "iconsax-reactjs";
 import Link from "next/link";
+import {
+  BODY_PATTERN,
+  CORNER_EYE_DOT_PATTERNS,
+  CORNER_EYE_PATTERNS,
+} from "qrdx/types";
 import type { ReactNode } from "react";
 import { SpotlightCard } from "@/components/fx/spotlight-card";
 import { BrowserFrame } from "@/components/mockups/browser-frame";
@@ -143,7 +148,7 @@ export function FeatureRowsSection() {
         <Row
           index="01 / Design"
           title="Design every detail"
-          description="Choose from 9 body patterns, 9 corner eye shapes and 11 eye dot styles, use solid or gradient colors, and add a call-to-action frame. This is the same renderer the playground and the qrdx React library use."
+          description={`Choose from ${BODY_PATTERN.length} body patterns, ${CORNER_EYE_PATTERNS.length} corner eye shapes and ${CORNER_EYE_DOT_PATTERNS.length} eye centres, use solid or gradient colors, and add a call-to-action frame. This is the same renderer the playground and the qrdx React library use.`}
           link={<MoreLink href="/playground">Open the playground</MoreLink>}
           aside={
             <HairlineFigure
