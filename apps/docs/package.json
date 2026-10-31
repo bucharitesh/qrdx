@@ -25,6 +25,7 @@
     "@repo/integration-kit": "workspace:*",
     "@repo/integrations": "workspace:*",
     "@repo/next-config": "workspace:*",
+    "@repo/rate-limit": "workspace:*",
     "@t3-oss/env-nextjs": "^0.13.10",
     "@tanstack/react-query": "^5.90.12",
     "@tanstack/react-query-devtools": "^5.91.3",

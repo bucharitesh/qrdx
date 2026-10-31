@@ -60,7 +60,9 @@ export class DubClient {
    * Get a specific workspace by ID
    */
   getWorkspace(workspaceId: string): Promise<DubWorkspace> {
-    return this.request<DubWorkspace>(`/workspaces/${workspaceId}`);
+    return this.request<DubWorkspace>(
+      `/workspaces/${encodeURIComponent(workspaceId)}`
+    );
   }
 
   /**
@@ -85,7 +87,7 @@ export class DubClient {
    * Get link information
    */
   getLink(linkId: string): Promise<DubLink> {
-    return this.request<DubLink>(`/links/${linkId}`);
+    return this.request<DubLink>(`/links/${encodeURIComponent(linkId)}`);
   }
 
   /**
@@ -140,7 +142,7 @@ export class DubClient {
       archived?: boolean;
     }
   ): Promise<DubLink> {
-    return this.request<DubLink>(`/links/${linkId}`, {
+    return this.request<DubLink>(`/links/${encodeURIComponent(linkId)}`, {
       method: "PATCH",
       body: JSON.stringify(data),
     });
@@ -150,7 +152,7 @@ export class DubClient {
    * Delete a link
    */
   async deleteLink(linkId: string): Promise<void> {
-    await this.request<void>(`/links/${linkId}`, {
+    await this.request<void>(`/links/${encodeURIComponent(linkId)}`, {
       method: "DELETE",
     });
   }

@@ -49,10 +49,7 @@ function createQueryClient() {
         gcTime: 1000 * 60 * 10, // 10 minutes (formerly cacheTime)
         retry: (failureCount, error: Error) => {
           // Don't retry on authentication or validation errors
-          if (
-            isUnauthorized(error) ||
-            error?.name === "ValidationError"
-          ) {
+          if (isUnauthorized(error) || error?.name === "ValidationError") {
             return false;
           }
           // Retry up to 3 times for other errors
@@ -63,10 +60,7 @@ function createQueryClient() {
       mutations: {
         retry: (failureCount, error: Error) => {
           // Don't retry mutations on client errors (4xx)
-          if (
-            isUnauthorized(error) ||
-            error?.name === "ValidationError"
-          ) {
+          if (isUnauthorized(error) || error?.name === "ValidationError") {
             return false;
           }
           // Only retry once for server errors (5xx)

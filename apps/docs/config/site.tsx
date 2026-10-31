@@ -24,17 +24,19 @@ export const Highlight = ({
 export const siteConfig = {
   name: "QRdx",
   description:
-    "AI-powered, fully customizable QR codes for designers crafting beautiful brands, businesses tracking engagement, and developers building QR platforms.",
+    "Free, open-source QR code generator and React library. Custom patterns, gradients, logos and frames, with PNG, JPG, SVG and PDF downloads. No signup, no watermark.",
   cta: "Try the Playground",
   url: process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
   keywords: [
-    "QR Code Generator",
+    "Free QR Code Generator",
+    "Open Source QR Code Generator",
     "Custom QR Codes",
+    "QR Code with Logo",
+    "React QR Code",
     "AI QR Codes",
-    "Business QR Codes",
   ],
   links: {
-    email: "support@qrdx.app",
+    email: "support@qrdx.dev",
     github: "https://github.com/bucharitesh/qrdx",
   },
   nav: {
@@ -59,18 +61,18 @@ export const siteConfig = {
         <path d="M2 2h5v5H2V2zm7 0h5v5H9V2zM2 9h5v5H2V9zm9.5 0h2v2h-2V9zm0 3h2v2h-2v-2zm-2-3h2v2h-2V9zm0 3h2v2h-2v-2z" />
       </svg>
     ),
-    badge: "AI-powered QR Code Generation",
-    title: "The better way to create QR codes",
+    badge: "Free and open source (AGPL-3.0)",
+    title: "Free, open-source QR code generator — no signup, no watermark",
     description:
-      "AI-powered, fully customizable QR codes for designers crafting beautiful brands, businesses tracking engagement, and developers building QR platforms where users create QR codes.",
+      "The better way to create QR codes. Design branded, scannable codes with custom patterns, gradients, logos and frames, download PNG, JPG, SVG or PDF, and embed them in your app with the qrdx React library.",
     cta: {
       primary: {
         text: "Try the Playground",
         href: "/playground",
       },
       secondary: {
-        text: "Sign in",
-        href: "/playground",
+        text: "Read the docs",
+        href: "/docs",
       },
     },
   },
@@ -577,11 +579,11 @@ export const siteConfig = {
         polarMonthlyPriceId: null,
         polarYearlyPriceId: null,
         features: [
-          "Unlimited QR code customization",
-          "Access to all built-in presets",
-          "Download in PNG, JPG, and SVG formats",
-          "Up to 3 saved QR themes",
-          "Basic patterns and frames",
+          "Unlimited QR codes, no signup to create or download",
+          "Every pattern, gradient, logo option and frame template",
+          "Download in PNG, JPG, SVG, and PDF formats",
+          "Save up to 10 QR themes with a free account",
+          "5 AI theme generations with a free account",
         ],
         description: "No credit card required",
         buttonText: "Get Started Free",
@@ -595,15 +597,14 @@ export const siteConfig = {
         period: "month",
         yearlyPrice: "$79",
         polarMonthlyPriceId:
-          env.NEXT_PUBLIC_QRDX_PRO_MONTHLY_PRODUCT_ID as string,
-        polarYearlyPriceId:
-          env.NEXT_PUBLIC_QRDX_PRO_YEARLY_PRODUCT_ID as string,
+          env.NEXT_PUBLIC_QRDX_PRO_MONTHLY_PRODUCT_ID ?? null,
+        polarYearlyPriceId: env.NEXT_PUBLIC_QRDX_PRO_YEARLY_PRODUCT_ID ?? null,
         features: [
+          "Everything in Free",
           "Unlimited saved QR themes",
+          "Unlimited AI theme generation",
+          "Generate themes from images with AI",
           "Priority support",
-          "Early access to new features",
-          "AI-powered QR generation",
-          "Advanced analytics",
         ],
         description: "Billed monthly • Cancel anytime",
         yearlyDescription: "Billed annually • Cancel anytime",
@@ -616,44 +617,50 @@ export const siteConfig = {
   faqSection: {
     title: "Frequently Asked Questions",
     description:
-      "Everything you need to know about QRdx. For anything else, reach us at support@qrdx.app",
+      "Everything you need to know about QRdx. For anything else, reach us at support@qrdx.dev",
     faQitems: [
       {
         id: 1,
         question: "Is QRdx really free? Are there hidden limits?",
         answer:
-          "QRdx is genuinely free with no hidden limits on QR code generation. You can create unlimited QR codes, apply full customization (29 dot patterns, gradients, logo overlays), and download in PNG, SVG, or JPG — all without an account or credit card. No watermarks, no scan limits, no ads. The only Pro feature is unlimited saved themes ($8/mo); generating and downloading codes is free forever.",
+          "Yes. Creating, customizing and downloading QR codes is free and needs no account: unlimited codes, every design option (9 body patterns, 9 corner-eye shapes and 11 eye-dot shapes, gradients, logos and frame templates), and PNG, JPG, SVG and PDF downloads. There are no watermarks and no ads. QRdx makes static QR codes, which store your content in the code itself, so they never expire and have no scan limits. A free account adds up to 10 saved themes and 5 AI theme generations; Pro ($8/mo or $79/year) makes both unlimited.",
       },
       {
         id: 2,
         question: "Do I need to sign up or create an account?",
         answer:
-          "No signup is required to generate and download QR codes. Open the playground, enter your URL or content, customize the design, and download. Creating a free account lets you save up to 3 custom themes across sessions and access scan analytics. Pro unlocks unlimited saved themes.",
+          "No. Open the playground, enter your URL or content, customize the design and download it without signing up. A free account lets you save up to 10 themes, publish themes to the community, and try AI theme generation (5 generations). Pro unlocks unlimited saved themes and unlimited AI generations.",
       },
       {
         id: 3,
-        question:
-          "How does QRdx compare to QR Tiger, QR Code Monkey, or Flowcode?",
+        question: "Does QRdx support dynamic QR codes or scan analytics?",
         answer:
-          "QRdx offers more on the free tier than any major competitor. QR Tiger limits the free plan to 3 codes with 500 scans each and shows ads. Flowcode allows only 2 free codes with 500 total scans. QR Code Monkey generates static-only codes with no analytics. QRdx provides unlimited free QR codes, full customization, analytics, no scan caps, no watermarks, and an open-source npm package — at zero cost.",
+          "Not built in yet. QRdx makes static QR codes, which point straight at your content and cannot be edited after printing. If you need to change the destination later or count clicks, connect the Dub.sh integration and encode a Dub short link: you can then edit where it points and see click analytics in your Dub account.",
       },
       {
         id: 4,
-        question: "Can I add a logo to my QR code for free?",
+        question:
+          "How does QRdx compare to QR Tiger, QR Code Monkey, or Flowcode?",
         answer:
-          "Yes. Logo overlay is included on the free tier. Upload any image (PNG with transparent background recommended) and QRdx centers it within the QR code. QRdx uses Reed-Solomon error correction (ISO/IEC 18004) at level H, which provides 30% recovery capacity — enough to keep the code scannable even with a logo covering up to 25% of the code area.",
+          "QR TIGER and Flowcode are dynamic QR platforms: codes redirect through their service so you can edit them and track scans, and pricing grows with the number of codes. QR TIGER's free plan includes 3 dynamic codes with 500 scans each, and Flowcode's free plan allows 2 codes. QR Code Monkey, like QRdx, makes free static codes. QRdx stands out with unlimited free static codes, deep styling, no ads, and an open-source React library. Our compare pages cover each tool in detail, including where it is the better choice.",
       },
       {
         id: 5,
-        question: "Is QRdx open source?",
+        question: "Can I add a logo to my QR code for free?",
         answer:
-          "Yes. QRdx is MIT-licensed and publicly available on GitHub. You can review the source code, contribute features, file issues, or self-host your own instance. The core QR generation library is also published as an npm package (`npm install qrdx`) for use in any React or Node.js application.",
+          "Yes. Logo overlay is included on the free tier. Upload an image (a PNG with a transparent background works best) and QRdx centers it and clears the modules underneath. QR codes use Reed-Solomon error correction (ISO/IEC 18004); QRdx defaults to level Q, which can recover roughly 25% of the code, so a centered logo stays scannable. Test with a few phones before printing.",
       },
       {
         id: 6,
+        question: "Is QRdx open source?",
+        answer:
+          "Yes. QRdx is open source under the GNU AGPL-3.0 (or later) and developed in public on GitHub. You can review the code, file issues, contribute, or self-host your own instance. The QR library is published on npm (`npm install qrdx`) for React apps. AGPL is a copyleft license, so check that it fits your project before embedding it in closed-source software.",
+      },
+      {
+        id: 7,
         question: "What do I get when I upgrade to Pro?",
         answer:
-          "Pro ($8/mo or $79/year) unlocks: unlimited saved QR themes, AI-powered theme generation, advanced scan analytics, priority support, and early access to new features. All QR code generation remains free — Pro is for teams and creators who want to save and manage many custom themes at scale.",
+          "Pro ($8/mo or $79/year) unlocks unlimited saved QR themes, unlimited AI theme generation (including generating themes from images), and priority support. Free accounts get 10 saved themes and 5 AI generations. Creating, customizing and downloading QR codes stays free.",
       },
     ],
   },
@@ -664,7 +671,7 @@ export const siteConfig = {
       text: "Start Creating QR Codes for Free",
       href: "/playground",
     },
-    subtext: "Cancel anytime, no questions asked",
+    subtext: "Free forever. No signup, no watermark.",
   },
   footerLinks: [
     {
@@ -687,7 +694,7 @@ export const siteConfig = {
     {
       title: "Company",
       links: [
-        { id: 1, title: "Contact", url: "mailto:support@qrdx.app" },
+        { id: 1, title: "Contact", url: "mailto:support@qrdx.dev" },
         { id: 2, title: "Privacy", url: "/legal/privacy-policy" },
         {
           id: 3,
@@ -707,16 +714,22 @@ export const siteConfig = {
     {
       title: "Compare",
       links: [
-        { id: 1, title: "QR Code Monkey", url: "/compare/qr-code-monkey" },
-        { id: 2, title: "QR Tiger", url: "/compare/qr-tiger" },
-        { id: 3, title: "Canva QR", url: "/compare/canva-qr" },
-        { id: 4, title: "Bitly QR", url: "/compare/bitly-qr" },
-        { id: 5, title: "Flowcode", url: "/compare/flowcode" },
-        { id: 6, title: "QR-Verse", url: "/compare/qr-verse" },
-        { id: 7, title: "Adobe Express", url: "/compare/adobe-express" },
-        { id: 8, title: "QR Code Chimp", url: "/compare/qr-code-chimp" },
-        { id: 9, title: "ME-QR", url: "/compare/me-qr" },
-        { id: 10, title: "Uniqode", url: "/compare/uniqode" },
+        { id: 1, title: "All comparisons", url: "/compare" },
+        { id: 2, title: "QR Code Monkey", url: "/compare/qr-code-monkey" },
+        { id: 3, title: "QR Tiger", url: "/compare/qr-tiger" },
+        { id: 4, title: "Canva QR", url: "/compare/canva-qr" },
+        { id: 5, title: "Bitly QR", url: "/compare/bitly-qr" },
+        { id: 6, title: "Flowcode", url: "/compare/flowcode" },
+        { id: 7, title: "QR-Verse", url: "/compare/qr-verse" },
+        { id: 8, title: "Adobe Express", url: "/compare/adobe-express" },
+        { id: 9, title: "QR Code Chimp", url: "/compare/qr-code-chimp" },
+        { id: 10, title: "ME-QR", url: "/compare/me-qr" },
+        { id: 11, title: "Uniqode", url: "/compare/uniqode" },
+        { id: 12, title: "QRStuff", url: "/compare/qrstuff" },
+        { id: 13, title: "QR Code.io", url: "/compare/qr-code-io" },
+        { id: 14, title: "goQR.me", url: "/compare/goqr" },
+        { id: 15, title: "qrcode.react", url: "/compare/qrcode-react" },
+        { id: 16, title: "qr-code-styling", url: "/compare/qr-code-styling" },
       ],
     },
   ],

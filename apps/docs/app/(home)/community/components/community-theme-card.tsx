@@ -56,6 +56,7 @@ export function CommunityThemeCard({
   );
 
   return (
+    // biome-ignore lint/a11y/useSemanticElements: the card contains the like <button>, which a <button> wrapper cannot nest
     <div
       role="button"
       tabIndex={0}

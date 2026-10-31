@@ -1,414 +1,260 @@
 # qrdx
 
-A powerful, flexible React component library for generating customizable QR codes.
+Customizable QR codes for React: SVG and canvas rendering, dot and eye patterns, gradients, logos, decorative templates, PNG/JPG/SVG/PDF export and QR scanning.
 
-## Features
-
-- 🎨 **Highly Customizable** — Control colors for QR code, background, eyes, and dots
-- 🖼️ **Logo Support** — Embed custom logos or images with automatic excavation
-- 🎭 **Templates** — Pre-designed templates for various visual styles
-- 📱 **Multiple Formats** — Canvas and SVG rendering with export options
-- ♿ **Accessibility** — Built-in contrast checking utilities
-- ⚡ **Performance** — Optimized rendering with Path2D support
-- 🎯 **TypeScript** — Full type safety and IntelliSense support
-- 🔒 **Error Correction** — Configurable error correction levels (L, M, Q, H)
+Docs: [qrdx.dev/docs](https://qrdx.dev/docs) · CLI: [`@qrdx/cli`](https://www.npmjs.com/package/@qrdx/cli)
 
 ## Installation
 
 ```bash
-# Using pnpm (recommended in monorepo)
-pnpm add qrdx@latest
-
-# Using npm
-npm install qrdx@latest
-
-# Using yarn
-yarn add qrdx@latest
+npm install qrdx
+# or: pnpm add qrdx / yarn add qrdx
 ```
 
-## Basic Usage
+`react` and `react-dom` (18 or newer) are peer dependencies. PDF export also needs the optional `jspdf` peer:
 
-### Simple QR Code
+```bash
+npm install jspdf
+```
+
+## Quick start
 
 ```tsx
-import { QRCode } from 'qrdx';
+import { QRCodeSVG } from "qrdx";
 
-export default function App() {
-  return (
-    <QRCode
-      url="https://example.com"
-      size={512}
-    />
-  );
+export function Example() {
+  return <QRCodeSVG value="https://example.com" size={256} />;
 }
 ```
 
-### With Custom Colors
+`QRCodeSVG` and `QRCode` use no client-only hooks, so they render in React Server Components as well as on the client. `QRCodeCanvas` is a client component (it ships with `"use client"`). The download, clipboard and scanning helpers need a browser DOM.
+
+## Components
+
+### `QRCodeSVG`
+
+The core renderer. Every styling option is supported here.
 
 ```tsx
-import { QRCode } from 'qrdx';
+import { QRCodeSVG } from "qrdx";
 
-export default function App() {
-  return (
-    <QRCode
-      url="https://example.com"
-      fgColor="#1a56db"
-      bgColor="#f9fafb"
-      eyeColor="#0d47a1"
-      dotColor="#1976d2"
-      size={512}
-    />
-  );
-}
+<QRCodeSVG
+  value="https://example.com"
+  size={512}
+  level="H"
+  fgColor="#1a56db"
+  bgColor="#f9fafb"
+  eyeColor="#0d47a1"
+  dotColor="#1976d2"
+  bodyPattern="rounded"
+  cornerEyePattern="rounded"
+  cornerEyeDotPattern="circle"
+  margin={2}
+  imageSettings={{
+    src: "https://example.com/logo.png",
+    width: 128,
+    height: 128,
+    excavate: true,
+  }}
+/>;
 ```
-
-### With Logo
-
-```tsx
-import { QRCode } from 'qrdx';
-
-export default function App() {
-  return (
-    <QRCode
-      url="https://example.com"
-      hideLogo={false}
-      logo="https://example.com/logo.png"
-      size={1024}
-    />
-  );
-}
-```
-
-### With Template
-
-```tsx
-import { QRCode } from 'qrdx';
-
-export default function App() {
-  return (
-    <QRCode
-      url="https://example.com"
-      templateId="gradient-blue"
-      size={512}
-    />
-  );
-}
-```
-
-### With Custom Dot Patterns
-
-Choose from 7 different dot patterns:
-
-```tsx
-import { QRCode } from 'qrdx';
-
-export default function App() {
-  return (
-    <QRCode
-      url="https://example.com"
-      bodyPattern="rounded"
-      size={512}
-    />
-  );
-}
-```
-
-Available patterns:
-- `circle` — Classic circular dots (default)
-- `square` — Modern square dots
-- `diamond` — Diamond-shaped rotated squares
-- `circle-mixed` — Circles with varying sizes
-- `pacman` — Pill-shaped rounded rectangles
-- `rounded` — Clean squares with smoothly rounded corners
-- `clean-square` — Clean rectangles only
-
-## API Reference
-
-### QRCode Component
-
-The main component for rendering QR codes.
-
-#### Props
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `url` | `string` | **required** | The URL or text to encode |
-| `size` | `number` | `128` | Size of the QR code in pixels |
-| `scale` | `number` | `1` | Scale multiplier for the QR code |
-| `fgColor` | `string` | `#000000` | Foreground/QR code color |
-| `bgColor` | `string` | `#ffffff` | Background color |
-| `eyeColor` | `string` | `fgColor` | Color for the position markers (eyes) |
-| `dotColor` | `string` | `fgColor` | Color for the data dots |
-| `hideLogo` | `boolean` | `true` | Whether to hide the logo |
-| `logo` | `string` | Default Flam logo | URL to custom logo image |
-| `templateId` | `string` | `'default'` | ID of the template to use |
-| `level` | `'L' \| 'M' \| 'Q' \| 'H'` | `'Q'` | Error correction level |
-| `margin` | `number` | `0` | Margin around the QR code (in modules) |
+| `value` | `string` | **required** | Text or URL to encode |
+| `size` | `number` | `128` | Width and height in pixels |
+| `level` | `"L" \| "M" \| "Q" \| "H"` | `"Q"` | Error correction level |
+| `fgColor` | `ColorConfig` | `"#000000"` | Data module color (solid or gradient) |
+| `bgColor` | `ColorConfig` | `"#FFFFFF"` | Background color (solid or gradient) |
+| `eyeColor` | `ColorConfig` | `fgColor` | Color of the three corner eyes (outer squares) |
+| `dotColor` | `ColorConfig` | `fgColor` | Color of the dots inside the corner eyes |
+| `bodyPattern` | `BodyPattern` | `"circle"` | Shape of the data modules |
+| `cornerEyePattern` | `CornerEyePattern` | `"gear"` | Shape of the corner eyes |
+| `cornerEyeDotPattern` | `CornerEyeDotPattern` | `"circle"` | Shape of the corner eye dots |
+| `margin` | `number` | `0` | Quiet zone in modules. The QR spec recommends 4 when the code sits on a busy or dark background |
+| `imageSettings` | `ImageSettings` | — | Center image; see below |
+| `templateId` | `string` | — | Built-in decorative template; see [Templates](#templates) |
+| `customTemplate` | `TemplateDefinition` | — | Your own template (takes precedence over `templateId`) |
+| `customProps` | `Record<string, any>` | — | Extra props passed to the template wrapper |
+| `isOGContext` | `boolean` | `false` | Render the logo as an absolutely positioned `<img>` for OG image renderers |
 
-#### Error Correction Levels
+Any other SVG attribute (`className`, `style`, `aria-label`, …) is forwarded to the root `<svg>`.
 
-- **L (Low):** ~7% error correction
-- **M (Medium):** ~15% error correction
-- **Q (Quartile):** ~25% error correction
-- **H (High):** ~30% error correction
+`imageSettings`: `src` (image URL or data URL), `width` and `height` (pixels, relative to `size`), `excavate` (clear the modules behind the image), optional `x` / `y`. Use level `H` (or at least `Q`) with a logo and keep it under roughly 25% of the code's width.
 
-Higher levels provide better resilience to damage but result in denser QR codes.
+### `QRCode`
 
-### QRCodeCanvas Component
-
-Direct access to the canvas-based renderer.
+A convenience wrapper around `QRCodeSVG` with a simpler logo API (`logo` / `hideLogo`).
 
 ```tsx
-import { QRCodeCanvas } from 'qrdx';
+import { QRCode } from "qrdx";
 
-export default function App() {
-  return (
-    <QRCodeCanvas
-      value="https://example.com"
-      size={512}
-      bgColor="#ffffff"
-      fgColor="#000000"
-      level="Q"
-      imageSettings={{
-        src: "https://example.com/logo.png",
-        height: 128,
-        width: 128,
-        excavate: true,
-      }}
-    />
-  );
-}
+<QRCode value="https://example.com" size={256} />; // no logo
+<QRCode value="https://example.com" size={256} logo="https://example.com/logo.png" level="H" />;
 ```
 
-### Utility Functions
+It accepts the `QRCodeSVG` styling props above (`value`, `size`, `level`, colors, patterns, `margin`, `templateId`, `customTemplate`, `customProps`, `style`) plus:
 
-#### getQRAsSVGDataUri
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `logo` | `string` | — | Center logo URL or data URL. No logo is drawn unless you pass one |
+| `hideLogo` | `boolean` | `false` | Hide the logo even when `logo` is set (handy for toggles) |
+| `scale` | `number` | `1` | Multiplier applied to `size` |
 
-Generate QR code as SVG data URI.
+The logo is drawn at 25% of the code's width with the modules behind it excavated, so pair it with level `H` (or at least the default `Q`).
 
-```tsx
-import { getQRAsSVGDataUri } from 'qrdx';
+### `QRCodeCanvas`
 
-const dataUri = await getQRAsSVGDataUri({
-  value: "https://example.com",
-  size: 512,
-  fgColor: "#000000",
-  bgColor: "#ffffff",
-});
-```
-
-#### getQRAsCanvas
-
-Generate QR code as canvas or data URL.
+Renders to a `<canvas>` (device-pixel-ratio aware). It draws plain square modules with solid colors only — gradients fall back to their first stop, and the pattern, eye/dot color and template props are ignored. Use `QRCodeSVG` for styled codes.
 
 ```tsx
-import { getQRAsCanvas } from 'qrdx';
-
-// Get as data URL
-const dataUrl = await getQRAsCanvas(
-  {
-    value: "https://example.com",
-    size: 1024,
-  },
-  "image/png"
-);
-
-// Get as canvas element
-const canvas = await getQRAsCanvas(
-  {
-    value: "https://example.com",
-    size: 1024,
-  },
-  "image/png",
-  true
-);
-```
-
-#### getQRData
-
-Helper function to prepare QR code data with sensible defaults.
-
-```tsx
-import { getQRData } from 'qrdx';
-
-const qrData = getQRData({
-  url: "https://example.com",
-  fgColor: "#000000",
-  bgColor: "#ffffff",
-  eyeColor: "#1a56db",
-  dotColor: "#3b82f6",
-  hideLogo: false,
-  logo: "https://example.com/logo.png",
-  margin: 4,
-});
-```
-
-#### getContrastRatio
-
-Calculate WCAG contrast ratio between two colors.
-
-```tsx
-import { getContrastRatio } from 'qrdx';
-
-const ratio = getContrastRatio("#000000", "#ffffff");
-// Returns: 21 (maximum contrast)
-```
-
-#### getContrastLevel
-
-Get contrast level assessment for QR code scanability.
-
-```tsx
-import { getContrastLevel } from 'qrdx';
-
-const level = getContrastLevel(4.5);
-// Returns: { level: 'medium', warning: false, message: '...' }
-```
-
-## Templates
-
-The library includes several pre-designed templates:
-
-- `default` — Classic black and white
-- `gradient-blue` — Blue gradient style
-- `gradient-purple` — Purple gradient style
-- `gradient-green` — Green gradient style
-- `dots` — Rounded dot style
-- `rounded` — Rounded corners style
-- And many more...
-
-Templates are automatically applied based on the `templateId` prop.
-
-## Advanced Usage
-
-### Server-Side Rendering
-
-The QR code generation works in both client and server environments:
-
-```tsx
-import { getQRAsSVGDataUri } from 'qrdx';
-
-export default async function ServerComponent() {
-  const qrDataUri = await getQRAsSVGDataUri({
-    value: "https://example.com",
-    size: 512,
-  });
-  
-  return <img src={qrDataUri} alt="QR Code" />;
-}
-```
-
-### Downloading QR Codes
-
-```tsx
-import { getQRAsCanvas } from 'qrdx';
-
-async function downloadQR() {
-  const dataUrl = await getQRAsCanvas(
-    {
-      value: "https://example.com",
-      size: 2048,
-      fgColor: "#000000",
-      bgColor: "#ffffff",
-    },
-    "image/png"
-  );
-  
-  const link = document.createElement('a');
-  link.download = 'qrcode.png';
-  link.href = dataUrl;
-  link.click();
-}
-```
-
-### Custom Image Settings
-
-```tsx
-import { QRCodeCanvas } from 'qrdx';
+"use client";
+import { QRCodeCanvas } from "qrdx";
 
 <QRCodeCanvas
   value="https://example.com"
-  size={1024}
-  imageSettings={{
-    src: "https://example.com/logo.png",
-    height: 256,        // Logo height in QR modules
-    width: 256,         // Logo width in QR modules
-    excavate: true,     // Remove QR modules under the logo
-    x: 384,            // Optional: x position
-    y: 384,            // Optional: y position
+  size={256}
+  level="Q"
+  fgColor="#000000"
+  bgColor="#ffffff"
+  imageSettings={{ src: "/logo.png", width: 64, height: 64, excavate: true }}
+/>;
+```
+
+## Patterns
+
+**Body** (`bodyPattern`, 9): `circle` (default), `circle-large`, `square`, `diamond`, `circle-mixed`, `pacman`, `rounded`, `small-square`, `vertical-line`
+
+**Corner eye** (`cornerEyePattern`, 9): `square`, `rounded`, `gear` (default), `circle`, `diya`, `extra-rounded`, `message`, `pointy`, `curly`
+
+**Corner eye dot** (`cornerEyeDotPattern`, 11): `square`, `rounded`, `circle` (default), `diamond`, `message`, `message-reverse`, `diya`, `diya-reverse`, `rounded-triangle`, `star`, `banner`
+
+The same lists are exported as `BODY_PATTERN`, `CORNER_EYE_PATTERNS` and `CORNER_EYE_DOT_PATTERNS`. Decorative shapes trade some scan tolerance for style: `square` and `rounded` eyes scan most reliably, so test `circle` and `curly` eyes with the scanners your audience uses.
+
+## Colors and gradients
+
+Every color prop takes a `ColorConfig`: a CSS color string, `{ type: "solid", color }`, or a gradient.
+
+```tsx
+<QRCodeSVG
+  value="https://example.com"
+  fgColor={{
+    type: "linear",
+    angle: 135, // 0 = left→right, 90 = top→bottom
+    stops: [
+      { color: "#6366f1", offset: 0 },
+      { color: "#ec4899", offset: 100 },
+    ],
+  }}
+  bgColor={{
+    type: "radial",
+    stops: [
+      { color: "#ffffff", offset: 0 },
+      { color: "#f1f5f9", offset: 100 },
+    ],
   }}
 />
 ```
 
-## Best Practices
+Gradients need at least 2 stops; `offset` is a percentage (0–100).
 
-### Contrast Requirements
+## Templates
 
-For optimal scanability:
-- Maintain a contrast ratio of **at least 3:1** (minimum)
-- Aim for **4.5:1 or higher** for best results
-- Use the built-in `getContrastRatio` utility to validate
+Built-in `templateId` values: `default`, `Arrow`, `StandardBox`, `SquareBorder`, `StrikedBox`, `Halloween` (case-sensitive). `getTemplateIds()`, `getAllTemplates()` and `getTemplate(id)` list them at runtime.
 
-### Size Recommendations
-
-- **Minimum size:** 128px for basic QR codes
-- **Recommended:** 512px for general use
-- **High quality:** 1024px or larger for print
-- **With logo:** Use larger sizes (1024px+) to maintain scanability
-
-### Error Correction
-
-- Use `Q` level when embedding logos
-- Use `H` level for QR codes that might get damaged
-- Use `L` level for simple, clean environments
-
-### Logo Size
-
-- Keep logo size between 10-30% of QR code area
-- Enable `excavate: true` to maintain scanability
-- Test scanning with your target devices
-
-## TypeScript Support
-
-Full TypeScript support with comprehensive type definitions:
+A custom template wraps the QR content (a 300×300 SVG) in your own SVG:
 
 ```tsx
-import type { QRProps, QRPropsCanvas, ImageSettings } from 'qrdx';
+import { QRCodeSVG, type TemplateDefinition } from "qrdx";
 
-const imageSettings: ImageSettings = {
-  src: "https://example.com/logo.png",
-  height: 256,
-  width: 256,
-  excavate: true,
+const Framed: TemplateDefinition<{ label?: string }> = {
+  id: "Framed",
+  name: "Framed",
+  wrapper: (children, props) => (
+    <svg viewBox="0 0 300 340" xmlns="http://www.w3.org/2000/svg">
+      <g transform="translate(20, 20) scale(0.87)">{children}</g>
+      <text x="150" y="325" textAnchor="middle" fill={props?.fgColor}>
+        {props?.label}
+      </text>
+    </svg>
+  ),
 };
 
-const qrProps: QRProps = {
-  value: "https://example.com",
-  size: 512,
-  imageSettings,
-};
+<QRCodeSVG value="https://example.com" customTemplate={Framed} customProps={{ label: "Scan me" }} />;
 ```
 
-## Browser Support
+## Export and download (browser)
 
-- Modern browsers with Canvas and SVG support
-- Chrome 90+
-- Firefox 88+
-- Safari 14+
-- Edge 90+
+```tsx
+import {
+  copyQRCodeToClipboard,
+  downloadQRCode,
+  getQRCodeDataUrl,
+  getSVGString,
+  PRESET_SIZES,
+} from "qrdx";
 
-## Performance
+const props = { value: "https://example.com", bodyPattern: "rounded" as const };
 
-- Optimized Path2D rendering when available
-- Efficient module excavation for logo placement
-- Minimal re-renders with React hooks
-- Supports high-DPI displays automatically
+await downloadQRCode(props, { format: "png", size: PRESET_SIZES.large }); // png | jpg | svg | pdf
+await downloadQRCode(props, { format: "pdf", size: { width: 1200, height: 1200 }, filename: "qr.pdf" });
+const dataUrl = await getQRCodeDataUrl(props, "svg", { width: 512, height: 512 });
+await copyQRCodeToClipboard(props, { width: 512, height: 512 }); // PNG to the clipboard
+const svgMarkup = await getSVGString(props);
+```
+
+Sizes must be square and between 50 and 5000 pixels (`validateSize`). PDF export loads `jspdf` on demand and throws a clear error if it is not installed. Lower-level helpers: `getQRAsSVGDataUri(props)` and `getQRAsCanvas(props, mimeType, returnCanvas?)`.
+
+## Scanning (browser)
+
+`handleImageLoad` decodes a QR code from an `<img>` using [jsQR](https://github.com/cozmo/jsQR), trying several crops and scales. jsQR is loaded on first use.
+
+```ts
+import { handleImageLoad } from "qrdx";
+
+const text = await handleImageLoad(imgElement, 400); // decoded string, or "NO_QR"
+const full = await handleImageLoad(imgElement, 400, true); // full jsQR result (data, location, …)
+```
+
+`downloadImageWithBoundingBox(img, [topLeft, topRight, bottomLeft, bottomRight], filename)` saves a debug copy of the image with the detected corners outlined.
+
+## Utilities
+
+```ts
+import { getContrastLevel, getContrastRatio, getQRData } from "qrdx";
+
+getContrastRatio("#000000", "#ffffff"); // 21 (accepts #rgb, #rrggbb, #rrggbbaa)
+getContrastLevel(4.5); // { level: "AA", warning: false, message: "Good contrast" }
+
+// Normalised props, including the logo imageSettings used by <QRCode>
+const data = getQRData({ value: "https://example.com", logo: "https://example.com/logo.png" });
+```
+
+`getContrastLevel` returns `AAA` (≥ 7), `AA` (≥ 4.5), `AA Large` (≥ 3, with a warning) or `Fail`.
+
+### Server-safe types and schemas
+
+`qrdx/types` exports the TypeScript types, the [zod](https://zod.dev) schemas (`qrPropsSchema`, `colorConfigSchema`, …), the pattern lists and the color helpers without any React code:
+
+```ts
+import { colorConfigSchema, normalizeColorConfig, type ColorConfig } from "qrdx/types";
+
+const parsed = colorConfigSchema.parse(JSON.parse(userInput));
+```
+
+## Error correction
+
+| Level | Recovers |
+|-------|----------|
+| `L` | ~7% |
+| `M` | ~15% |
+| `Q` | ~25% (default) |
+| `H` | ~30% |
+
+Higher levels survive more damage (and larger logos) but produce denser codes.
 
 ## License
 
-ISC License - Based on [qrcode.react](https://github.com/zpao/qrcode.react) by Paul O'Shannessy
+[AGPL-3.0-or-later](https://github.com/bucharitesh/qrdx/blob/main/license.md) © Ritesh Bucha
 
-## Credits
-
-- QR code generation algorithm: [qrcode.react](https://github.com/zpao/qrcode.react)
-
+Includes code from [qrcode.react](https://github.com/zpao/qrcode.react) (ISC, © Paul O'Shannessy) and the [QR Code generator library](https://www.nayuki.io/page/qr-code-generator-library) (MIT, © Project Nayuki).

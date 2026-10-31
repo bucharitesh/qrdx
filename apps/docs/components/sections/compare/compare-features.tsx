@@ -22,8 +22,8 @@ export function CompareFeatures({
           Why choose QRdx over {competitor}?
         </h2>
         <p className="text-muted-foreground text-center text-balance font-medium">
-          QRdx gives you more power and flexibility — built for developers,
-          loved by everyone.
+          The areas where QRdx is the stronger pick. The guide below also covers
+          where {competitor} is the better choice.
         </p>
       </SectionHeader>
 

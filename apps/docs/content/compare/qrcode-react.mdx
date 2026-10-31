@@ -1,0 +1,89 @@
+---
+title: qrcode.react
+description: "QRdx vs qrcode.react: the most popular React QR code component compared with QRdx's styled React QR library, on license, styling, exports and footprint."
+seoTitle: "QRdx vs qrcode.react: Styled React QR Codes vs the Standard"
+seoDescription: "qrcode.react is the ISC-licensed standard React QR component with about 39.5M monthly downloads. QRdx adds patterns, gradients, templates and downloads under AGPL-3.0."
+competitor: qrcode.react
+competitorUrl: https://github.com/zpao/qrcode.react
+category: library
+tagline: "qrcode.react is the lightweight, permissively licensed standard. QRdx builds on its encoder and adds patterns, gradients, templates and download helpers."
+qrdxPlan: "npm · AGPL-3.0"
+competitorPlan: "npm · ISC"
+lastVerified: "2026-10-31"
+sources:
+  - https://github.com/zpao/qrcode.react
+  - https://www.npmjs.com/package/qrcode.react
+  - https://api.npmjs.org/downloads/point/last-month/qrcode.react
+  - https://www.npmjs.com/package/qrdx
+tableRows:
+  - feature: License
+    qrdx: "AGPL-3.0"
+    competitor: "ISC"
+  - feature: Downloads (last 30 days)
+    qrdx: "63"
+    competitor: "About 39.5 million"
+  - feature: Latest version
+    qrdx: "0.0.46"
+    competitor: "4.2.0"
+  - feature: Runtime dependencies
+    qrdx: "Several (PDF, scanning, validation)"
+    competitor: "None"
+  - feature: SVG and canvas rendering
+    qrdx: true
+    competitor: true
+  - feature: Logo with excavation
+    qrdx: true
+    competitor: true
+  - feature: Body, eye and eye-dot shapes
+    qrdx: "9 · 9 · 11"
+    competitor: "Square modules only"
+  - feature: Gradients
+    qrdx: "Linear + radial"
+    competitor: false
+  - feature: Frame templates
+    qrdx: "6"
+    competitor: false
+  - feature: PNG/JPG/SVG/PDF download helpers
+    qrdx: true
+    competitor: false
+  - feature: Visual editor that exports code
+    qrdx: true
+    competitor: false
+featureHighlights:
+  - title: Styling built in
+    description: "qrcode.react renders standard square modules with a foreground and background color. QRdx adds 9 body patterns, 9 eye shapes, 11 eye-dot shapes, separate eye and dot colors, and linear or radial gradients."
+  - title: Downloads included
+    description: "QRdx ships helpers to download a code as PNG, JPG, SVG or PDF. With qrcode.react you write that export code yourself."
+  - title: Design it visually first
+    description: "Style a code in the QRdx playground, then copy it as a ready-to-paste QRCode component with the same props."
+  - title: Same encoder lineage
+    description: "QRdx's renderer builds on qrcode.react's QR encoding code (credited under its ISC license in the source), so the core encoding is battle-tested."
+---
+
+If you need a QR code in a React app, qrcode.react is the default choice, and for good reason. It is tiny, has no runtime dependencies, supports every React version from 16.8 to 19, and is used enormously: about 39.5 million npm downloads in the last 30 days, against 63 for QRdx's `qrdx` package. QRdx actually builds on qrcode.react's encoder, and its source credits it under the ISC license.
+
+## Who each library is for
+
+qrcode.react is for apps that need a correct, plain QR code with minimal weight. It exports `QRCodeSVG` and `QRCodeCanvas`, with props for size, error-correction level, colors, margin, title, minimum version and an embedded image with excavation.
+
+QRdx is for apps where the code is part of the brand: custom body patterns, eye shapes, gradients, frames and built-in downloads, plus a visual playground that exports the matching component code.
+
+## Where qrcode.react is the better choice
+
+- **Licensing.** qrcode.react is ISC, a permissive license that is easy to ship in closed-source products. QRdx is AGPL-3.0, a strong copyleft license; check with your legal team before using it in proprietary software.
+- **Bundle size.** qrcode.react has no runtime dependencies. QRdx depends on jsqr and zod for scanning and validation; jspdf is an optional peer dependency, needed only for PDF export.
+- **Maturity.** qrcode.react is on version 4 with a very large user base. QRdx is pre-1.0 and its API may still change.
+- **Older React.** qrcode.react supports React 16.8 and up.
+
+## Key differences
+
+- **Styling:** qrcode.react supports foreground and background colors and a logo. QRdx adds patterns, eye styles, gradients and templates.
+- **Export:** QRdx includes download and data-URI helpers for PNG, JPG, SVG and PDF.
+- **Extras:** QRdx includes a contrast checker and QR detection utilities.
+
+## Switching from qrcode.react
+
+1. Install with `npm install qrdx`.
+2. Replace `QRCodeSVG` with the `QRCode` component from `qrdx`. The `value`, `size`, `level`, `bgColor` and `fgColor` props carry over.
+3. Add `bodyPattern`, `cornerEyePattern` and `cornerEyeDotPattern`, or design the code in the [playground](/playground) and copy the generated component.
+4. Read the [docs](/docs) for logos, gradients and download helpers, and confirm the license fits your project.

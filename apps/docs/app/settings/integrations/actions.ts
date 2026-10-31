@@ -2,14 +2,15 @@
 
 import { auth } from "@repo/auth/server";
 import {
-  createOAuthHandler,
   disconnectIntegration,
-  generateCodeVerifier,
-  getIntegrationConfigWithEnv,
+  getIntegrationRegistry,
   initializeIntegrations,
 } from "@repo/integrations";
-import { cookies, headers } from "next/headers";
-import { env } from "@/lib/env";
+import { headers } from "next/headers";
+import {
+  createIntegrationAuthUrl,
+  isIntegrationConfigured,
+} from "@/lib/integration-oauth";
 
 // Initialize integrations on module load
 initializeIntegrations();
@@ -23,25 +24,16 @@ export async function connectIntegrationAction(provider: string) {
     throw new Error("Unauthorized");
   }
 
-  // Get integration config with environment credentials
-  const config = getIntegrationConfigWithEnv(provider, env);
+  const definition = getIntegrationRegistry().get(provider);
+  if (!definition) {
+    throw new Error(`Unknown integration: ${provider}`);
+  }
 
-  // Generate PKCE code verifier
-  const codeVerifier = generateCodeVerifier();
+  if (!isIntegrationConfigured(provider)) {
+    throw new Error(`${definition.name} is not configured on this server`);
+  }
 
-  // Store code verifier in cookie
-  const cookieStore = await cookies();
-  cookieStore.set(`${provider}_code_verifier`, codeVerifier, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    maxAge: 60 * 10, // 10 minutes
-    path: "/",
-    sameSite: "lax",
-  });
-
-  // Create OAuth handler and generate auth URL
-  const oauthHandler = createOAuthHandler(config);
-  const authUrl = oauthHandler.generateAuthUrl(codeVerifier);
+  const authUrl = await createIntegrationAuthUrl(provider);
 
   return { url: authUrl };
 }

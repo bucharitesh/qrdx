@@ -2,16 +2,32 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { BlogList } from "@/components/sections/blog/blog-list";
 import { SectionHeader } from "@/components/sections/section-header";
-import { resolveAuthors } from "@/lib/blog-authors";
 import { SLUG_TO_CATEGORY } from "@/lib/blog-constants";
-import { blogCategoriesSource, blogSource } from "@/lib/source";
+import { createMetadata } from "@/lib/metadata";
+import { blogCategoriesSource } from "@/lib/source";
+import {
+  getPublishedPosts,
+  rssAlternateTypes,
+  toPostCard,
+} from "../../_lib/posts";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
+/** Categories with fewer published posts than this are kept out of the index. */
+const MIN_POSTS_TO_INDEX = 2;
+
+export const dynamicParams = false;
+
 export function generateStaticParams() {
   return Object.keys(SLUG_TO_CATEGORY).map((slug) => ({ slug }));
+}
+
+function getCategoryPosts(categoryName: string) {
+  return getPublishedPosts().filter(
+    (page) => page.data.category === categoryName,
+  );
 }
 
 export default async function BlogCategoryPage({ params }: PageProps) {
@@ -25,23 +41,9 @@ export default async function BlogCategoryPage({ params }: PageProps) {
   const headerTitle = categoryPage?.data.title ?? SLUG_TO_CATEGORY[slug];
   const headerDescription = categoryPage?.data.description ?? "";
 
-  const categoryName = SLUG_TO_CATEGORY[slug];
-  const allPages = blogSource.getPages().filter((p) => p.data.published);
-  const filteredPosts = allPages
-    .filter((page) => page.data.category === categoryName)
-    .sort(
-      (a, b) =>
-        new Date(b.data.date).getTime() - new Date(a.data.date).getTime(),
-    )
-    .map((page) => ({
-      slug: page.slugs[0] ?? "",
-      title: page.data.title,
-      description: page.data.description ?? "",
-      date: page.data.date,
-      author: resolveAuthors(page.data.author),
-      category: page.data.category,
-      image: page.data.image,
-    }));
+  const filteredPosts = getCategoryPosts(SLUG_TO_CATEGORY[slug]).map(
+    toPostCard,
+  );
 
   return (
     <section className="flex flex-col items-center justify-center w-full min-h-screen">
@@ -67,13 +69,21 @@ export async function generateMetadata({
   const { slug } = await params;
 
   if (!SLUG_TO_CATEGORY[slug]) {
-    return {};
+    notFound();
   }
 
   const categoryPage = blogCategoriesSource.getPage([slug]);
+  const title = `Blog: ${categoryPage?.data.title ?? SLUG_TO_CATEGORY[slug]}`;
+  const description = categoryPage?.data.description;
+  const postCount = getCategoryPosts(SLUG_TO_CATEGORY[slug]).length;
 
-  return {
-    title: categoryPage?.data.title ?? SLUG_TO_CATEGORY[slug],
-    description: categoryPage?.data.description,
-  };
+  return createMetadata({
+    title,
+    description,
+    path: `/blog/category/${slug}`,
+    alternates: { types: rssAlternateTypes },
+    ...(postCount < MIN_POSTS_TO_INDEX && {
+      robots: { index: false, follow: true },
+    }),
+  });
 }

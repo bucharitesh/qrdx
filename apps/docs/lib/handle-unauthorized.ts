@@ -2,8 +2,8 @@
 
 import { authClient } from "@repo/auth/client";
 import posthog from "posthog-js";
-import { ApiError, UnauthorizedError } from "@/types/errors";
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
+import { ApiError, UnauthorizedError } from "@/types/errors";
 
 let isSigningOut = false;
 
@@ -36,14 +36,19 @@ export async function handleUnauthorized(): Promise<void> {
     await authClient.signOut();
     window.location.href = DEFAULT_LOGIN_REDIRECT;
   } catch (signOutError) {
-    console.error("Failed to sign out after unauthorized response:", signOutError);
+    console.error(
+      "Failed to sign out after unauthorized response:",
+      signOutError,
+    );
     window.location.href = DEFAULT_LOGIN_REDIRECT;
   } finally {
     isSigningOut = false;
   }
 }
 
-export async function handleUnauthorizedIfNeeded(error: unknown): Promise<void> {
+export async function handleUnauthorizedIfNeeded(
+  error: unknown,
+): Promise<void> {
   if (isUnauthorized(error)) {
     await handleUnauthorized();
   }

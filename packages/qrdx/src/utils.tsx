@@ -1,6 +1,5 @@
 import type { JSX } from "react";
 import React from "react";
-import type { TemplateConfig } from "@/types/template";
 import type {
   BodyPattern,
   ColorConfig,
@@ -10,6 +9,7 @@ import type {
   Modules,
   QRPropsSVG,
   RadialGradient,
+  TemplateConfig,
 } from "../types";
 import { normalizeColorConfig } from "../types/color";
 import qrcodegen from "./codegen";
@@ -1140,10 +1140,14 @@ export function QRCodeSVG(props: QRPropsSVG) {
       ...originalStyle,
       width: undefined,
       height: undefined,
+      ...otherProps.style,
     };
 
+    // Forward the caller's SVG attributes (className, aria-*, etc.) to the
+    // root element, same as the non-template path below.
     // @ts-expect-error
     return React.cloneElement(wrappedSvg, {
+      ...otherProps,
       width: size,
       height: size,
       style: newStyle,
@@ -1182,7 +1186,19 @@ export const SUPPORTS_PATH2D = (() => {
 export const hexToRgb = (
   hex: string
 ): { r: number; g: number; b: number } | null => {
-  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  // Expand shorthand (#rgb / #rgba) and drop any alpha channel so "#fff" and
+  // "#ffffff80" are read as colors instead of failing the contrast check.
+  let normalized = hex.trim().replace(/^#/, "");
+  if (normalized.length === 3 || normalized.length === 4) {
+    normalized = normalized
+      .slice(0, 3)
+      .split("")
+      .map((c) => c + c)
+      .join("");
+  } else if (normalized.length === 8) {
+    normalized = normalized.slice(0, 6);
+  }
+  const result = /^([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(normalized);
   return result
     ? {
         r: Number.parseInt(result[1], 16),

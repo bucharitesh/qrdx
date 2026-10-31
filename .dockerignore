@@ -1,0 +1,33 @@
+# Dependencies and build output (rebuilt inside the image)
+**/node_modules
+**/.next
+**/.turbo
+**/.source
+**/dist
+**/*.tgz
+**/*.tsbuildinfo
+**/coverage
+
+# Secrets: never send env files to the build context (examples are fine)
+**/.env
+**/.env.*
+!**/.env.example
+.vercel
+
+# Repo tooling, editors, OS files
+.git
+.github
+.claude
+.vscode
+.idea
+**/.DS_Store
+**/npm-debug.log*
+**/pnpm-debug.log*
+
+# Docker files themselves
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Not used by the web app image
+skills/*.zip
