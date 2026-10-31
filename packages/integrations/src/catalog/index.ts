@@ -13,6 +13,7 @@ import type {
   CatalogCategory,
   CatalogKind,
   CatalogPlan,
+  CatalogSurface,
   IntegrationCatalogEntry,
 } from "./types";
 
@@ -73,7 +74,7 @@ export const CATALOG_CATEGORIES: {
   {
     id: "plugins",
     label: "Plugins",
-    description: "QRdx inside your browser, design tool and launcher.",
+    description: "QRdx inside your browser, design tools and launcher.",
   },
   {
     id: "developers",
@@ -117,9 +118,34 @@ const ENTRIES: IntegrationCatalogEntry[] = [
 
 const BY_SLUG = new Map(ENTRIES.map((entry) => [entry.slug, entry]));
 
-/** Every catalog entry, in display order. */
+/**
+ * Every catalog entry, in display order, whatever its surface. Use
+ * `getCatalogBySurface("integrations")` for what /integrations lists.
+ */
 export function getIntegrationCatalog(): IntegrationCatalogEntry[] {
   return ENTRIES;
+}
+
+/** The entries presented on one surface, in display order. */
+export function getCatalogBySurface(
+  surface: CatalogSurface
+): IntegrationCatalogEntry[] {
+  return ENTRIES.filter((entry) => entry.surface === surface);
+}
+
+/** True for third-party connections: listed on /integrations with a page. */
+export function isListedIntegration(entry: IntegrationCatalogEntry): boolean {
+  return entry.surface === "integrations";
+}
+
+/**
+ * Where /integrations/<slug> sends visitors for an entry that lives on
+ * another surface (its `canonicalPath`); undefined for listed integrations.
+ */
+export function getCatalogRedirect(
+  entry: IntegrationCatalogEntry
+): string | undefined {
+  return isListedIntegration(entry) ? undefined : entry.canonicalPath;
 }
 
 export function getCatalogEntry(
@@ -132,22 +158,33 @@ export function getCategoryLabel(category: CatalogCategory): string {
   return CATALOG_CATEGORIES.find((item) => item.id === category)?.label ?? "";
 }
 
-/** Explicit `related` first, then entries sharing the first category. */
+/** The categories (in display order) that at least one of `entries` is in. */
+export function getUsedCategories(
+  entries: IntegrationCatalogEntry[]
+): typeof CATALOG_CATEGORIES {
+  return CATALOG_CATEGORIES.filter((category) =>
+    entries.some((entry) => entry.categories.includes(category.id))
+  );
+}
+
+/**
+ * Explicit `related` first, then entries sharing the first category. Only
+ * entries on the same surface, so an integration links to integrations.
+ */
 export function getRelatedEntries(
   entry: IntegrationCatalogEntry,
   limit = 3
 ): IntegrationCatalogEntry[] {
   const picked = new Map<string, IntegrationCatalogEntry>();
+  const eligible = (candidate: IntegrationCatalogEntry) =>
+    candidate.slug !== entry.slug && candidate.surface === entry.surface;
   for (const slug of entry.related ?? []) {
     const related = BY_SLUG.get(slug);
-    if (related && related.slug !== entry.slug) picked.set(slug, related);
+    if (related && eligible(related)) picked.set(slug, related);
   }
   for (const candidate of ENTRIES) {
     if (picked.size >= limit) break;
-    if (
-      candidate.slug !== entry.slug &&
-      candidate.categories[0] === entry.categories[0]
-    ) {
+    if (eligible(candidate) && candidate.categories[0] === entry.categories[0]) {
       picked.set(candidate.slug, candidate);
     }
   }

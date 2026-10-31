@@ -7,6 +7,7 @@ import { CompareMigrate } from "@/components/sections/compare/compare-migrate";
 import { CompareOthers } from "@/components/sections/compare/compare-others";
 import { CompareTable } from "@/components/sections/compare/compare-table";
 import { createMetadata } from "@/lib/metadata";
+import { getLatestVersion } from "@/lib/npm-version";
 import { compareSource } from "@/lib/source";
 import { getMDXComponents } from "@/mdx-components";
 
@@ -34,6 +35,17 @@ export default async function ComparePage({ params }: PageProps) {
     body: Mdx,
   } = page.data;
 
+  // `{ npmVersion }` cells show what npm installs, not a hand-copied number.
+  const rows = await Promise.all(
+    tableRows.map(async ({ qrdx, ...row }) => ({
+      ...row,
+      qrdx:
+        typeof qrdx === "object"
+          ? await getLatestVersion(qrdx.npmVersion)
+          : qrdx,
+    })),
+  );
+
   return (
     <main className="flex min-h-screen w-full flex-col items-center justify-center divide-y divide-border">
       <CompareHero competitor={competitor} slug={slug} tagline={tagline} />
@@ -41,7 +53,7 @@ export default async function ComparePage({ params }: PageProps) {
         competitor={competitor}
         competitorPlan={competitorPlan}
         qrdxPlan={qrdxPlan}
-        rows={tableRows}
+        rows={rows}
         slug={slug}
       />
       <CompareFeatures competitor={competitor} highlights={featureHighlights} />

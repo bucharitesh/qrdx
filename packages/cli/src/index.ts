@@ -107,9 +107,10 @@ ${BOLD}Generate Options:${RESET}
   --size              Output pixel size for SVG/PNG  ${DIM}(default: 512)${RESET}
   --template          Decorative template wrapper:
                         ${DIM}Arrow, StandardBox, SquareBorder, StrikedBox, Halloween${RESET}
-  --frame             Call-to-action frame (adds space around the code):
-                        ${DIM}none, banner-bottom, banner-top, border,${RESET}
-                        ${DIM}rounded-border, speech-bubble${RESET}
+  --frame             Call-to-action frame (adds space around the code), e.g.:
+                        ${DIM}none, banner-bottom, banner-top, rounded-border,${RESET}
+                        ${DIM}speech-bubble, polaroid, phone, ticket, sticker${RESET}
+                        ${DIM}All frames: https://qrdx.dev/docs/styles${RESET}
   --frame-text        Frame label, up to 24 characters  ${DIM}(default: Scan me; "" hides it)${RESET}
   --frame-color       Frame color — hex  ${DIM}(default: #000000)${RESET}
   --frame-text-color  Frame label color — hex  ${DIM}(default: white on banners)${RESET}
@@ -128,7 +129,7 @@ ${BOLD}Examples:${RESET}
   ${DIM}$${RESET} qrdx generate
   ${DIM}$${RESET} qrdx generate "https://qrdx.dev"
   ${DIM}$${RESET} qrdx generate "https://qrdx.dev" -o qr.svg
-  ${DIM}$${RESET} qrdx generate "https://qrdx.dev" -o qr.png --body circle --eye gear --dot star
+  ${DIM}$${RESET} qrdx generate "https://qrdx.dev" -o qr.png --body circle --eye gear --dot flower
   ${DIM}$${RESET} qrdx generate "https://qrdx.dev" -o qr.eps --size 144
   ${DIM}$${RESET} qrdx generate "https://qrdx.dev" --fg "#ff0000" --bg "#ffffff" --size 1024
   ${DIM}$${RESET} qrdx generate "https://qrdx.dev" --logo "https://qrdx.dev/logo.png" --level H -o branded.svg

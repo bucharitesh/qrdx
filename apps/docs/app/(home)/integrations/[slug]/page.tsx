@@ -7,42 +7,34 @@ import {
   CATALOG_PLAN_LABELS,
   type CatalogSnippet,
   getCatalogEntry,
+  getCatalogRedirect,
   getCategoryLabel,
   getIntegrationCatalog,
   getRelatedEntries,
-  MCP_PROMPTS,
   withOrigin,
 } from "@repo/integrations/src/catalog";
 import { ArrowRight, InfoCircle } from "iconsax-reactjs";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import type { ReactNode } from "react";
 import { GridLines } from "@/components/fx";
 import { Breadcrumbs } from "@/components/sections/breadcrumbs";
-import {
-  CodeSnippet,
-  CopyButton,
-} from "@/components/sections/integrations/code-snippet";
+import { CodeSnippet } from "@/components/sections/integrations/code-snippet";
 import { IntegrationAction } from "@/components/sections/integrations/integration-action";
 import { IntegrationCard } from "@/components/sections/integrations/integration-card";
 import { IntegrationLogo } from "@/components/sections/integrations/integration-logo";
-import { PromptGallery } from "@/components/sections/integrations/prompt-gallery";
 import { resolveAction } from "@/components/sections/integrations/resolve-action";
 import { breadcrumbSchema, JsonLd } from "@/components/sections/tools/json-ld";
 import { isIntegrationUnconfigured } from "@/lib/integration-availability";
-import {
-  CLAUDE_CONNECTORS_URL,
-  chatgptChatUrl,
-  claudeChatUrl,
-  mcpServerUrl,
-} from "@/lib/mcp-clients";
 import { baseUrl, createMetadata } from "@/lib/metadata";
 
 interface IntegrationPageProps {
   params: Promise<{ slug: string }>;
 }
 
+// Every slug, including the ones that moved: those prerender as a 308 to
+// their new page (getCatalogRedirect), so old links and bookmarks keep working.
 export function generateStaticParams() {
   return getIntegrationCatalog().map((entry) => ({ slug: entry.slug }));
 }
@@ -52,7 +44,7 @@ export async function generateMetadata({
 }: IntegrationPageProps): Promise<Metadata> {
   const { slug } = await params;
   const entry = getCatalogEntry(slug);
-  if (!entry) return {};
+  if (!entry || getCatalogRedirect(entry)) return {};
   return createMetadata({
     title: `${entry.name} integration`,
     description: entry.tagline,
@@ -61,24 +53,6 @@ export async function generateMetadata({
 }
 
 const ORIGIN = baseUrl.origin;
-
-/** Chat apps that take a prefilled prompt, with a "connect first" line. */
-const PROMPT_CLIENTS: Record<
-  string,
-  { name: string; chatUrl: (prompt: string) => string; connect: string }
-> = {
-  claude: {
-    name: "Claude",
-    chatUrl: claudeChatUrl,
-    connect: `add it at ${CLAUDE_CONNECTORS_URL} using {url} first`,
-  },
-  chatgpt: {
-    name: "ChatGPT",
-    chatUrl: chatgptChatUrl,
-    connect:
-      "turn on developer mode in ChatGPT settings and add {url} as an app first",
-  },
-};
 
 const linkClass =
   "font-medium text-foreground underline decoration-foreground/30 underline-offset-4 transition-colors hover:decoration-foreground";
@@ -139,6 +113,10 @@ export default async function IntegrationDetailPage({
   const { slug } = await params;
   const entry = getCatalogEntry(slug);
   if (!entry) notFound();
+  // AI assistants, developer tools, plugins and QRdx features have their own
+  // pages now; /integrations only covers third-party connections.
+  const moved = getCatalogRedirect(entry);
+  if (moved) permanentRedirect(moved);
 
   const related = getRelatedEntries(entry, 3);
   const notConfigured = isIntegrationUnconfigured(entry.slug);
@@ -146,9 +124,6 @@ export default async function IntegrationDetailPage({
   const secondary = entry.secondaryAction
     ? resolveAction(entry.secondaryAction, ORIGIN)
     : null;
-  const isMcp = entry.categories.includes("ai");
-  const serverUrl = mcpServerUrl(ORIGIN);
-  const promptClient = PROMPT_CLIENTS[entry.slug];
   const crumbs = [
     { name: "Home", path: "/" },
     { name: "Integrations", path: "/integrations" },
@@ -194,21 +169,10 @@ export default async function IntegrationDetailPage({
                 </div>
               </div>
             </div>
-            <div className="flex shrink-0 flex-col gap-3 lg:items-end">
-              <div className="flex flex-wrap gap-2.5">
-                <IntegrationAction action={primary} />
-                {secondary && (
-                  <IntegrationAction action={secondary} variant="outline" />
-                )}
-              </div>
-              {isMcp && (
-                <div className="flex max-w-full items-center gap-1 rounded-full border bg-background/80 py-1 pr-1 pl-3.5 backdrop-blur-sm">
-                  <span className="sr-only">MCP server URL:</span>
-                  <code className="truncate font-mono text-xs text-muted-foreground">
-                    {serverUrl}
-                  </code>
-                  <CopyButton text={serverUrl} label="MCP server URL" />
-                </div>
+            <div className="flex shrink-0 flex-wrap gap-2.5">
+              <IntegrationAction action={primary} />
+              {secondary && (
+                <IntegrationAction action={secondary} variant="outline" />
               )}
             </div>
           </div>
@@ -268,24 +232,6 @@ export default async function IntegrationDetailPage({
               ))}
             </ol>
           </Section>
-
-          {promptClient && (
-            <Section
-              id="prompts"
-              title="Try a prompt"
-              description={`Opens ${promptClient.name} with the prompt filled in, plus a line on how to connect QRdx if you haven't yet.`}
-            >
-              <PromptGallery
-                clientName={promptClient.name}
-                prompts={MCP_PROMPTS.map((item) => ({
-                  ...item,
-                  href: promptClient.chatUrl(
-                    `${item.prompt}\n\nIf QRdx isn't connected, ${promptClient.connect.replace("{url}", serverUrl)}.`,
-                  ),
-                }))}
-              />
-            </Section>
-          )}
 
           <Section id="capabilities" title="What you get">
             <ul

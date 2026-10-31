@@ -357,10 +357,7 @@ class EpsPainter extends SvgPainter {
     if (!invertMatrix(matrix)) {
       return;
     }
-    const dictionary = shadingDictionary(
-      gradient,
-      this.cmyk ? "cmyk" : "rgb"
-    );
+    const dictionary = shadingDictionary(gradient, this.cmyk ? "cmyk" : "rgb");
     let name = this.shadingNames.get(dictionary);
     if (!name) {
       name = `Sh${this.shadingNames.size}`;

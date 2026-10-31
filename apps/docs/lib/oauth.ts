@@ -8,14 +8,9 @@ import {
   OAUTH_ACCESS_TOKEN_EXPIRY_SECONDS,
   OAUTH_REFRESH_TOKEN_EXPIRY_SECONDS,
 } from "@/lib/constants";
+import { OAUTH_SCOPES, type OAuthScope } from "@/lib/oauth-scopes";
 
-export const OAUTH_SCOPES = [
-  "themes:read",
-  "profile:read",
-  "codes:read",
-  "codes:write",
-] as const;
-export type OAuthScope = (typeof OAUTH_SCOPES)[number];
+export { OAUTH_SCOPES, type OAuthScope };
 
 export const PKCE_METHODS = ["S256", "plain"] as const;
 // RFC 7636 §4.1/4.2: 43-128 chars from the unreserved set
