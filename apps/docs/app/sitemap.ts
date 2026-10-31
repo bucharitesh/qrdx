@@ -1,6 +1,15 @@
-import type { MetadataRoute } from "next";
-import { baseUrl } from "@/lib/metadata";
 import {
+  getIntegrationRegistry,
+  initializeIntegrations,
+} from "@repo/integrations";
+import type { MetadataRoute } from "next";
+import { SLUG_TO_CATEGORY } from "@/lib/blog-constants";
+import { env } from "@/lib/env";
+import { baseUrl } from "@/lib/metadata";
+import { QR_TYPE_SLUGS } from "@/lib/qr-types-content";
+import { industries, placements } from "@/lib/seo-content";
+import {
+  blogAuthorsSource,
   blogSource,
   changelogSource,
   compareSource,
@@ -10,19 +19,57 @@ import {
 
 export const revalidate = false;
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+type Entry = MetadataRoute.Sitemap[number];
+
+const latest = (dates: (Date | string | undefined)[]): Date | undefined => {
+  const times = dates
+    .filter((d): d is Date | string => Boolean(d))
+    .map((d) => new Date(d).getTime())
+    .filter((t) => !Number.isNaN(t));
+  return times.length > 0 ? new Date(Math.max(...times)) : undefined;
+};
+
+export default function sitemap(): MetadataRoute.Sitemap {
   const url = (path: string): string => new URL(path, baseUrl).toString();
+
+  initializeIntegrations();
+
+  const posts = blogSource.getPages().filter((p) => p.data.published);
+  const postDate = (p: (typeof posts)[number]) =>
+    latest([p.data.updated, p.data.lastModified, p.data.date]);
+  const compares = compareSource.getPages();
+
+  const categories = Object.entries(SLUG_TO_CATEGORY).flatMap(
+    ([slug, name]) => {
+      const inCategory = posts.filter((p) => p.data.category === name);
+      // Mirrors MIN_POSTS_TO_INDEX in blog/category/[slug]: thinner categories are noindex.
+      if (inCategory.length < 2) return [];
+      return {
+        url: url(`/blog/category/${slug}`),
+        lastModified: latest(inCategory.map(postDate)),
+        changeFrequency: "weekly",
+        priority: 0.6,
+      } satisfies Entry;
+    },
+  );
+
+  const authors = blogAuthorsSource.getPages().flatMap((author) => {
+    const slug = author.slugs[0] ?? "";
+    const authored = posts.filter((p) => p.data.author.includes(slug));
+    if (authored.length === 0) return [];
+    return {
+      url: url(author.url),
+      lastModified: latest(authored.map(postDate)),
+      changeFrequency: "monthly",
+      priority: 0.4,
+    } satisfies Entry;
+  });
 
   return [
     {
       url: url("/"),
       changeFrequency: "monthly",
       priority: 1,
-    },
-    {
-      url: url("/community"),
-      changeFrequency: "monthly",
-      priority: 0.9,
     },
     {
       url: url("/playground"),
@@ -35,94 +82,163 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
     },
     {
+      url: url("/guarantee"),
+      changeFrequency: "yearly",
+      priority: 0.6,
+    },
+    {
       url: url("/ai"),
       changeFrequency: "weekly",
       priority: 0.9,
     },
+    // AI QR art is only listed where it can run (same check as lib/ai/art.ts).
+    ...(env.FAL_KEY
+      ? [
+          {
+            url: url("/ai/art"),
+            changeFrequency: "monthly",
+            priority: 0.8,
+          } satisfies Entry,
+        ]
+      : []),
     {
-      url: url("/integrations"),
+      url: url("/community"),
       changeFrequency: "weekly",
       priority: 0.8,
     },
     {
-      url: url("/docs"),
+      url: url("/integrations"),
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    ...getIntegrationRegistry()
+      .getAll()
+      .map(
+        (integration) =>
+          ({
+            url: url(`/integrations/${integration.slug}`),
+            changeFrequency: "monthly",
+            priority: 0.6,
+          }) satisfies Entry,
+      ),
+    {
+      url: url("/mcp"),
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    {
+      url: url("/changelogs"),
+      lastModified: latest(changelogSource.getPages().map((p) => p.data.date)),
+      changeFrequency: "weekly",
+      priority: 0.6,
+    },
+    ...source.getPages().map(
+      (page) =>
+        ({
+          url: url(page.url),
+          lastModified: page.data.lastModified,
+          changeFrequency: "weekly",
+          priority: page.url === "/docs" ? 0.8 : 0.5,
+        }) satisfies Entry,
+    ),
+    {
+      url: url("/blog"),
+      lastModified: latest(posts.map(postDate)),
+      changeFrequency: "weekly",
+      priority: 0.8,
+    },
+    ...categories,
+    ...authors,
+    ...posts.map(
+      (page) =>
+        ({
+          url: url(page.url),
+          lastModified: postDate(page),
+          changeFrequency: "monthly",
+          priority: 0.7,
+        }) satisfies Entry,
+    ),
+    {
+      url: url("/qr-code-generator"),
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
+    ...QR_TYPE_SLUGS.map(
+      (type) =>
+        ({
+          url: url(`/qr-code-generator/${type}`),
+          changeFrequency: "monthly",
+          priority: 0.7,
+        }) satisfies Entry,
+    ),
+    ...[industries, placements].flatMap((collection) => [
+      {
+        url: url(collection.basePath),
+        changeFrequency: "monthly",
+        priority: 0.7,
+      } satisfies Entry,
+      ...collection.items.map(
+        (topic) =>
+          ({
+            url: url(collection.path(topic.slug)),
+            changeFrequency: "monthly",
+            priority: 0.6,
+          }) satisfies Entry,
+      ),
+    ]),
+    {
+      url: url("/tools"),
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    {
+      url: url("/tools/bulk"),
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    {
+      url: url("/tools/print-size"),
+      changeFrequency: "monthly",
+      priority: 0.6,
+    },
+    {
+      url: url("/tools/scan-checker"),
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    {
+      url: url("/scan"),
       changeFrequency: "monthly",
       priority: 0.8,
     },
     {
-      url: url("/changelogs"),
-      changeFrequency: "weekly",
+      url: url("/compare"),
+      lastModified: latest(compares.map((p) => p.data.lastModified)),
+      changeFrequency: "monthly",
       priority: 0.7,
     },
-    ...source.getPages().flatMap((page) => {
-      const { lastModified } = page.data;
-
-      return {
-        url: url(page.url),
-        lastModified: lastModified ? new Date(lastModified) : undefined,
-        changeFrequency: "weekly",
-        priority: 0.5,
-      } as MetadataRoute.Sitemap[number];
-    }),
-    ...changelogSource.getPages().flatMap((page) => {
-      const { date } = page.data;
-
-      return {
-        url: url(page.url),
-        lastModified: date ? new Date(date) : undefined,
-        changeFrequency: "monthly",
-        priority: 0.5,
-      } as MetadataRoute.Sitemap[number];
-    }),
-    ...legalSource.getPages().flatMap((page) => {
-      const { lastModified } = page.data;
-
-      return {
-        url: url(page.url),
-        lastModified: lastModified ? new Date(lastModified) : undefined,
-        changeFrequency: "monthly",
-        priority: 0.3,
-      } as MetadataRoute.Sitemap[number];
-    }),
+    ...compares.map(
+      (page) =>
+        ({
+          url: url(page.url),
+          lastModified: page.data.lastModified,
+          changeFrequency: "monthly",
+          priority: 0.6,
+        }) satisfies Entry,
+    ),
+    ...legalSource.getPages().map(
+      (page) =>
+        ({
+          url: url(page.url),
+          lastModified: page.data.lastModified,
+          changeFrequency: "yearly",
+          priority: 0.3,
+        }) satisfies Entry,
+    ),
     {
-      url: url("/blog"),
-      changeFrequency: "weekly",
-      priority: 0.8,
+      url: url("/report-abuse"),
+      changeFrequency: "yearly",
+      priority: 0.3,
     },
-    {
-      url: url("/blog/category/company"),
-      changeFrequency: "weekly",
-      priority: 0.7,
-    },
-    {
-      url: url("/blog/category/engineering"),
-      changeFrequency: "weekly",
-      priority: 0.7,
-    },
-    {
-      url: url("/blog/category/education"),
-      changeFrequency: "weekly",
-      priority: 0.7,
-    },
-    ...blogSource.getPages().flatMap((page) => {
-      const { date } = page.data;
-
-      return {
-        url: url(page.url),
-        lastModified: date ? new Date(date) : undefined,
-        changeFrequency: "monthly",
-        priority: 0.7,
-      } as MetadataRoute.Sitemap[number];
-    }),
-    ...compareSource.getPages().flatMap((page) => {
-      const { lastModified } = page.data;
-
-      return {
-        url: url(page.url),
-        lastModified: lastModified ? new Date(lastModified) : undefined,
-        changeFrequency: "monthly",
-        priority: 0.6,
-      } as MetadataRoute.Sitemap[number];
-    }),
   ];
 }

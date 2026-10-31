@@ -8,6 +8,7 @@ import {
   DEFAULT_SIZE,
   ERROR_LEVEL_MAP,
 } from "./constants";
+import { isFrameActive, wrapWithFrame } from "./frame";
 import { excavateModules, generatePath, getImageSettings } from "./utils";
 import { getSolidColor } from "./utils/color";
 
@@ -20,6 +21,18 @@ export async function getQRAsSVG(props: QRPropsSVG) {
     fgColor = DEFAULT_FGCOLOR,
     margin = DEFAULT_MARGIN,
     imageSettings,
+    // Styling props this plain renderer does not support; keep them off <svg>.
+    eyeColor: _eyeColor,
+    dotColor: _dotColor,
+    bodyPattern: _bodyPattern,
+    cornerEyePattern: _cornerEyePattern,
+    cornerEyeDotPattern: _cornerEyeDotPattern,
+    isOGContext: _isOGContext,
+    templateId: _templateId,
+    customTemplate: _customTemplate,
+    customProps: _customProps,
+    frame,
+    art: _art,
     ...otherProps
   } = props;
 
@@ -42,9 +55,18 @@ export async function getQRAsSVG(props: QRPropsSVG) {
       cells = excavateModules(cells, calculatedImageSettings.excavation);
     }
 
-    const base64Image = await fetch(
-      `https://wsrv.nl/?url=${imageSettings.src}&w=100&h=100&encoding=base64`
-    ).then((res) => res.text());
+    const base64Image = imageSettings.src.startsWith("data:")
+      ? imageSettings.src
+      : await fetch(
+          `https://wsrv.nl/?url=${encodeURIComponent(imageSettings.src)}&w=100&h=100&encoding=base64`
+        ).then((res) => {
+          if (!res.ok) {
+            throw new Error(
+              `Failed to load QR logo (${res.status}): ${imageSettings.src}`
+            );
+          }
+          return res.text();
+        });
 
     image = (
       <image
@@ -65,14 +87,15 @@ export async function getQRAsSVG(props: QRPropsSVG) {
   // For level 1, 441 nodes -> 2
   // For level 40, 31329 -> 2
   const fgPath = generatePath(cells, margin);
+  const framed = isFrameActive(frame);
 
-  return (
+  const code = (
     <svg
       height={size}
       viewBox={`0 0 ${numCells} ${numCells}`}
       width={size}
       xmlns="http://www.w3.org/2000/svg"
-      {...otherProps}
+      {...(framed ? {} : otherProps)}
     >
       <path
         d={`M0,0 h${numCells}v${numCells}H0z`}
@@ -87,4 +110,8 @@ export async function getQRAsSVG(props: QRPropsSVG) {
       {image}
     </svg>
   );
+
+  return framed
+    ? wrapWithFrame(code, { size, frame, bgColor, svgProps: otherProps })
+    : code;
 }

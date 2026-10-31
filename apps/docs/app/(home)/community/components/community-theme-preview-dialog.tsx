@@ -22,6 +22,7 @@ import { useRouter } from "next/navigation";
 import { lazy, useCallback, useEffect } from "react";
 import ExamplesPreviewContainer from "@/components/editor/theme-preview/examples-preview-container";
 import { siteConfig } from "@/config/site";
+import { DEFAULT_QR_LOGO } from "@/lib/constants";
 import { useToggleLike } from "@/lib/hooks/themes";
 import { useSessionGuard } from "@/lib/hooks/use-gaurds";
 import { usePostLoginAction } from "@/lib/hooks/use-post-login-action";
@@ -198,9 +199,7 @@ export function CommunityThemePreviewDialog({
                     ? "bg-red-500/10 text-red-500 hover:bg-red-500/20"
                     : "text-muted-foreground hover:bg-accent hover:text-foreground",
                 )}
-                title={
-                  displayTheme.isLikedByMe ? "Unlike theme" : "Like theme"
-                }
+                title={displayTheme.isLikedByMe ? "Unlike theme" : "Like theme"}
               >
                 <Heart
                   className={cn(
@@ -246,8 +245,9 @@ export function CommunityThemePreviewDialog({
                     eyeColor={styles.eyeColor}
                     fgColor={styles.fgColor}
                     hideLogo={!styles.showLogo}
-                    logo={styles.customLogo}
+                    logo={styles.customLogo ?? DEFAULT_QR_LOGO}
                     scale={4}
+                    margin={styles.margin}
                     templateId={styles.templateId}
                     value={PREVIEW_VALUE}
                   />

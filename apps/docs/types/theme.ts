@@ -6,6 +6,8 @@ import {
   cornerEyeDotPatternSchema,
   cornerEyePatternSchema,
   errorLevelSchema,
+  frameSchema,
+  qrArtSchema,
 } from "qrdx/types";
 import { z } from "zod";
 
@@ -48,11 +50,19 @@ export const themeStylePropsSchema = z.object({
     .describe("Error correction level (L, M, Q, H)"),
   margin: z.number().optional().describe("Margin around the QR code"),
   templateId: z.string().optional().describe("Template/frame ID to use"),
+  frame: frameSchema
+    .optional()
+    .describe(
+      "Call-to-action frame around the QR code, e.g. a 'Scan me' banner (text up to 24 characters)",
+    ),
   showLogo: z.boolean().optional().describe("Whether to show a logo in center"),
   customLogo: z
     .string()
     .optional()
     .describe("Custom logo image URL or data URI"),
+  art: qrArtSchema
+    .optional()
+    .describe("Logo QR or Image QR (halftone) art built from an image"),
 });
 
 export type ThemeStyles = z.infer<typeof themeStylePropsSchema>;
@@ -84,7 +94,7 @@ export type Theme = InferSelectModel<typeof qrPreset>;
 /**
  * Download Format Options
  */
-export const downloadFormatSchema = z.enum(["png", "jpg", "svg", "pdf"]);
+export const downloadFormatSchema = z.enum(["png", "jpg", "svg", "pdf", "eps"]);
 export type DownloadFormat = z.infer<typeof downloadFormatSchema>;
 
 /**

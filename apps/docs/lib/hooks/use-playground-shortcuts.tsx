@@ -6,6 +6,7 @@ import { getAllTemplates, getQRData, getSVGString } from "qrdx";
 import { patterns as cornerEyeDotPatterns } from "@/components/playground/corner-eye-dot-pattern-selector";
 import { patterns as cornerEyePatterns } from "@/components/playground/corner-eye-pattern-selector";
 import { patterns as bodyPatterns } from "@/components/playground/pattern-selector";
+import { DEFAULT_QR_LOGO } from "@/lib/constants";
 import { useControlsTabFromUrl } from "@/lib/hooks/use-controls-tab-from-url";
 import { useKeyboardShortcut } from "@/lib/hooks/use-keyboard-shortcuts";
 import { useUserSettings } from "@/lib/hooks/use-user-settings";
@@ -126,12 +127,14 @@ export function usePlaygroundShortcuts({
             dotColor: themeState.styles.dotColor,
             bodyPattern: themeState.styles.bodyPattern,
             hideLogo: !themeState.styles.showLogo,
-            logo: themeState.styles.customLogo,
+            logo: themeState.styles.customLogo ?? DEFAULT_QR_LOGO,
           }),
           level: themeState.styles.level,
           cornerEyePattern: themeState.styles.cornerEyePattern,
           cornerEyeDotPattern: themeState.styles.cornerEyeDotPattern,
           templateId: themeState.styles.templateId,
+          margin: themeState.styles.margin,
+          frame: themeState.styles.frame,
         };
 
         const svgContent = await getSVGString(qrProps);

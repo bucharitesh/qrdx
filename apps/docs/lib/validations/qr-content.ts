@@ -265,6 +265,34 @@ export const etsySchema = z.object({
 // Dub.sh
 export const dubshSchema = z.object({
   shortUrl: z.string().min(1, "Short URL is required").url("Invalid URL"),
+  source: z.enum(["manual", "dub-selected", "dub-created"]).optional(),
+  dubLinkId: z.string().optional(),
+  domain: z.string().optional(),
+  key: z.string().optional(),
+  destinationUrl: z.string().url("Invalid URL").optional(),
+  qrCodeUrl: z.string().url("Invalid URL").optional(),
+});
+
+// Google Drive
+function isGoogleDriveContentUrl(value: string): boolean {
+  return (
+    value.includes("drive.google.com") ||
+    /docs\.google\.com\/(document|spreadsheets|presentation|drawings)\/d\//.test(
+      value,
+    )
+  );
+}
+
+export const googleDriveSchema = z.object({
+  url: z
+    .string()
+    .min(1, "Google Drive URL is required")
+    .url("Invalid URL")
+    .refine(isGoogleDriveContentUrl, "Must be a Google Drive URL"),
+  name: z.string().optional(),
+  fileId: z.string().optional(),
+  mimeType: z.string().optional(),
+  source: z.enum(["manual", "drive-selected"]).optional(),
 });
 
 // Attendance (Google Form)
@@ -335,6 +363,7 @@ export type BitcoinFormData = z.infer<typeof bitcoinSchema>;
 export type EthereumFormData = z.infer<typeof ethereumSchema>;
 export type EtsyFormData = z.infer<typeof etsySchema>;
 export type DubshFormData = z.infer<typeof dubshSchema>;
+export type GoogleDriveFormData = z.infer<typeof googleDriveSchema>;
 export type AttendanceFormData = z.infer<typeof attendanceSchema>;
 export type AmazonFormData = z.infer<typeof amazonSchema>;
 export type FlipkartFormData = z.infer<typeof flipkartSchema>;

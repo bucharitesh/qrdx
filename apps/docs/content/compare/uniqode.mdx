@@ -1,61 +1,83 @@
 ---
 title: Uniqode
+description: "QRdx vs Uniqode: an open-source QR platform with free static and dynamic codes compared with Uniqode's enterprise QR platform with dynamic codes, compliance and SSO."
+seoTitle: "QRdx vs Uniqode: Free Open-Source QR Codes vs Enterprise QR Platform"
+seoDescription: "Uniqode is an enterprise QR platform with SOC 2, HIPAA and SSO, free for static codes and paid from $9/mo billed annually. QRdx is free, open source and self-hostable."
 competitor: Uniqode
 competitorUrl: https://www.uniqode.com
 competitorLogo: https://assets.qrdx.dev/compare/unicode.svg
-tagline: Enterprise-grade features without enterprise pricing — free, open source, and developer-ready.
+tagline: "Uniqode is an enterprise QR platform with compliance and SSO. QRdx is an open-source QR platform with free static and dynamic codes that you can host yourself."
 qrdxPlan: "Free · Open Source"
-competitorPlan: Essential ($9/mo)
+competitorPlan: "Free static / from $9"
+lastVerified: "2026-10-31"
+sources:
+  - https://www.uniqode.com/pricing
 tableRows:
-  - feature: Monthly pricing
-    qrdx: "Free"
-    competitor: "$9–$399+/mo"
-  - feature: Free tier
-    qrdx: "Full features"
-    competitor: false
+  - feature: Price
+    qrdx: "Free; paid from $5/mo"
+    competitor: "From $9/mo, annual billing only"
+  - feature: Free static QR codes
+    qrdx: true
+    competitor: true
+  - feature: Free trial of paid features
+    qrdx: "Not needed"
+    competitor: "14 days"
+  - feature: Dynamic (editable) QR codes
+    qrdx: "10 free; unlimited from $5/mo"
+    competitor: "Paid plans"
+  - feature: Scan analytics
+    qrdx: "Built in, unlimited scans"
+    competitor: "Paid plans"
+  - feature: SOC 2 / HIPAA / GDPR listed
+    qrdx: false
+    competitor: true
+  - feature: SSO
+    qrdx: false
+    competitor: true
   - feature: Open source
+    qrdx: "AGPL-3.0"
+    competitor: false
+  - feature: React component on npm
     qrdx: true
     competitor: false
-  - feature: React component
-    qrdx: true
-    competitor: false
-  - feature: TypeScript support
-    qrdx: true
-    competitor: false
-  - feature: Dot patterns
-    qrdx: "29 combinations"
-    competitor: "Standard"
-  - feature: Gradient colors
-    qrdx: "Linear + Radial"
-    competitor: "Limited"
-  - feature: Logo overlay
-    qrdx: true
-    competitor: true
-  - feature: AI-powered generation
-    qrdx: "Pro ($8/mo)"
-    competitor: false
-  - feature: Analytics
-    qrdx: true
-    competitor: "All paid tiers"
-  - feature: SOC 2 / HIPAA compliance
-    qrdx: false
-    competitor: true
-  - feature: Enterprise SSO (SAML)
-    qrdx: false
-    competitor: "Business+ only"
   - feature: Self-hostable
     qrdx: true
     competitor: false
-  - feature: Free tier available
-    qrdx: true
-    competitor: false
 featureHighlights:
-  - title: Free forever
-    description: QRdx has a full-featured free tier. Uniqode has no free plan for QR codes — their cheapest option is $9/mo.
-  - title: Free vs $9–$399/mo
-    description: QRdx gives you patterns, gradients, analytics, and more at no cost. Comparable Uniqode features require $49/mo (Core) or higher. Only AI generation is a paid add-on via QRdx Pro.
-  - title: Open source React component
-    description: QRdx is a npm package you embed in your product with full TypeScript support. Uniqode is an enterprise SaaS with REST API only.
-  - title: Developer SDK — npm install, not REST API
-    description: Install QRdx with one command, render a typed React component. Uniqode requires API calls with rate limits and usage caps.
+  - title: Full design for free
+    description: "Uniqode is free only for static codes and its premium features start at $9/mo, billed annually. QRdx keeps every pattern, gradient, logo, frame and export format free."
+  - title: Own your stack instead of buying compliance
+    description: "QRdx is AGPL-3.0 licensed and self-hostable, so sensitive teams can run it inside their own infrastructure. Uniqode instead offers a hosted platform with SOC 2, HIPAA and GDPR listed."
+  - title: Developer SDK
+    description: "Install the qrdx npm package and render a typed React component. No API quota, no network call to generate a code."
+  - title: Codes that do not lapse
+    description: "Uniqode says dynamic codes become inactive when a trial ends without a subscription. Static QRdx codes have no service behind them to lapse, and QRdx dynamic codes keep redirecting on every plan, even after a cancellation."
 ---
+
+Uniqode is built for larger organizations: dynamic codes, digital business cards, analytics and the security documentation enterprise buyers ask for. QRdx is an open-source QR platform with a free plan, aimed at designers, small teams and developers who want great-looking static and dynamic codes without a contract.
+
+## Who each tool is for
+
+Uniqode fits companies that need editable codes at scale with the paperwork enterprise buyers ask for. Its pricing page lists SOC 2, HIPAA, GDPR, ISO, 2FA and SSO in its security section, offers a 14-day free trial, bills annually only, and starts premium features at $9/month, with its Core plan at $49/month. Static codes are free.
+
+QRdx fits individuals, small teams and developers who want unlimited, fully styled static codes for free, dynamic codes from the Free plan (10) to unlimited on Pro ($5/mo or $48/yr), or to self-host the whole platform.
+
+## Where Uniqode is the better choice
+
+- Your security team requires a vendor with **SOC 2 or HIPAA** documentation.
+- You need **SSO** and a managed platform with vendor support.
+
+QRdx does not offer compliance certifications or SSO. Its alternative is control: because it is open source, you can review the code and run it on infrastructure you already trust.
+
+## Key differences
+
+- **Pricing:** Uniqode's paid plans are annual only, from $9/month. QRdx's static codes are free; Pro ($5/mo or $48/yr) adds unlimited dynamic codes, longer analytics history and custom domains.
+- **Code model:** Uniqode's dynamic codes stop working if you do not keep a subscription. QRdx static codes need no service, and QRdx dynamic codes keep redirecting on every plan ([Never-Hostage Guarantee](/guarantee)).
+- **Developers:** QRdx has a REST API and an MCP server, and is an npm package with TypeScript types and a CLI, so codes can also be generated locally.
+
+## Switching from Uniqode
+
+1. Inventory printed dynamic codes; they need an active Uniqode plan until reprinted.
+2. Design replacements in the [QRdx playground](/playground) and save your brand style as a theme.
+3. Encode final URLs directly in static codes, or use QRdx dynamic codes if destinations may change.
+4. Test every code on a few phones before printing.

@@ -6,17 +6,17 @@ description: Generate a QR code from a URL, text, Wi-Fi credentials, or vCard an
 
 # Generate QR Code
 
-Generate a styled, scannable QR code as SVG or PNG using the `qrdx` CLI.
+Generate a styled, scannable QR code as SVG or PNG using the [`@qrdx/cli`](https://www.npmjs.com/package/@qrdx/cli) package (its command is `qrdx`; the `qrdx` npm package itself is the React library).
 
 ## Usage
 
 ```bash
-npx qrdx generate "<data>" -o <output> [flags]
+npx @qrdx/cli generate "<data>" -o <output> [flags]
 ```
 
 **Arguments:**
 - `<data>` — URL or text to encode (required). Wrap in quotes.
-- `-o <path>` — Output file path. Extension sets format: `.svg` or `.png`
+- `-o <path>` — Output file path. Extension sets format: `.svg` or `.png` (defaults to `qr.svg`)
 
 **Flags (all optional):**
 
@@ -33,7 +33,7 @@ npx qrdx generate "<data>" -o <output> [flags]
 | `--dot-color <color>` | matches `--fg` | Corner dot color (hex or JSON gradient) |
 | `--logo <url>` | — | Center logo image URL (use with `--level H`) |
 | `--margin <n>` | `0` | Quiet zone margin in modules |
-| `--template <id>` | — | Decorative template wrapper |
+| `--template <id>` | — | Decorative template wrapper (case-sensitive) |
 
 ## Patterns
 
@@ -78,51 +78,51 @@ Templates can be combined with any other flags (patterns, colors, gradients, log
 
 ```bash
 # Basic URL → SVG
-npx qrdx generate "https://qrdx.dev" -o qr.svg
+npx @qrdx/cli generate "https://qrdx.dev" -o qr.svg
 
 # High-res PNG for print
-npx qrdx generate "https://qrdx.dev" -o qr.png --size 2048 --level H
+npx @qrdx/cli generate "https://qrdx.dev" -o qr.png --size 2048 --level H
 
 # Branded style with custom patterns
-npx qrdx generate "https://qrdx.dev" -o branded.svg \
+npx @qrdx/cli generate "https://qrdx.dev" -o branded.svg \
   --fg "#1a1a2e" --bg "#f5f5f5" --body circle --eye rounded --dot star
 
 # With center logo (use --level H for best scanability)
-npx qrdx generate "https://qrdx.dev" -o logo-qr.svg \
+npx @qrdx/cli generate "https://qrdx.dev" -o logo-qr.svg \
   --logo "https://qrdx.dev/logo.png" --level H
 
 # Linear gradient foreground
-npx qrdx generate "https://qrdx.dev" -o gradient.svg \
+npx @qrdx/cli generate "https://qrdx.dev" -o gradient.svg \
   --fg '{"type":"linear","stops":[{"color":"#6366f1","offset":0},{"color":"#ec4899","offset":100}],"angle":135}'
 
 # Radial gradient background
-npx qrdx generate "https://qrdx.dev" -o radial-bg.svg \
+npx @qrdx/cli generate "https://qrdx.dev" -o radial-bg.svg \
   --bg '{"type":"radial","stops":[{"color":"#fef9c3","offset":0},{"color":"#fde047","offset":100}]}'
 
 # Gradient fg + gradient eye color
-npx qrdx generate "https://qrdx.dev" -o multi-gradient.svg \
+npx @qrdx/cli generate "https://qrdx.dev" -o multi-gradient.svg \
   --fg '{"type":"linear","stops":[{"color":"#0ea5e9","offset":0},{"color":"#6366f1","offset":100}],"angle":90}' \
   --eye-color '{"type":"radial","stops":[{"color":"#f97316","offset":0},{"color":"#ef4444","offset":100}]}'
 
 # Arrow template
-npx qrdx generate "https://qrdx.dev" -o arrow.svg --template Arrow
+npx @qrdx/cli generate "https://qrdx.dev" -o arrow.svg --template Arrow
 
-# Halloween template with spooky styling
-npx qrdx generate "https://qrdx.dev" -o halloween.svg \
+# Halloween template with spooky styling (keep a light background so it scans)
+npx @qrdx/cli generate "https://qrdx.dev" -o halloween.svg \
   --template Halloween --body circle --eye gear --dot star \
-  --fg "#1a0a00" --bg "#ff6600"
+  --fg "#1a0a00"
 
 # Combined: template + gradient + logo
-npx qrdx generate "https://qrdx.dev" -o full.svg \
+npx @qrdx/cli generate "https://qrdx.dev" -o full.svg \
   --template StandardBox --level H \
   --fg '{"type":"linear","stops":[{"color":"#1e3a5f","offset":0},{"color":"#3b82f6","offset":100}],"angle":45}' \
   --logo "https://qrdx.dev/logo.png"
 
 # Wi-Fi QR
-npx qrdx generate "WIFI:T:WPA;S:MyNetwork;P:MyPassword;;" -o wifi.svg
+npx @qrdx/cli generate "WIFI:T:WPA;S:MyNetwork;P:MyPassword;;" -o wifi.svg
 
 # vCard
-npx qrdx generate "BEGIN:VCARD
+npx @qrdx/cli generate "BEGIN:VCARD
 VERSION:3.0
 FN:Jane Smith
 TEL:+15551234567
@@ -145,10 +145,18 @@ If gradients were used: briefly describe the effect (e.g. "indigo-to-pink diagon
 
 ## Troubleshooting
 
-**`Error: No data provided`** — The data string is missing. Wrap multi-line values (vCard, Wi-Fi) in quotes.
+Invalid input makes the CLI exit with code `1` and a message on stderr; nothing is written.
 
-**Network errors with `--logo`** — The logo URL must be publicly accessible. Use a direct image URL (`.png`, `.svg`, `.jpg`).
+**`No data to encode`** — The data string is missing. Wrap multi-line values (vCard, Wi-Fi) in quotes.
 
-**Gradient JSON parse error** — Ensure the JSON is single-quoted in the shell and uses double quotes internally. Validate with `echo '<json>' | python3 -m json.tool`.
+**`Invalid --body "…"` / `--eye` / `--dot` / `--level` / `--template`** — The message lists the accepted values. Template IDs are case-sensitive: `Arrow`, not `arrow`.
 
-**Template not applied** — Template IDs are case-sensitive: `Arrow`, not `arrow`.
+**`Invalid gradient JSON` / `Invalid gradient`** — Single-quote the JSON in the shell, use double quotes inside it, and give at least 2 stops with `offset` 0–100. Validate with `echo '<json>' | python3 -m json.tool`.
+
+**`Unsupported output format`** — Only `.svg` and `.png` are supported.
+
+**`Could not download logo`** — The `--logo` URL must be publicly accessible. Use a direct image URL (`.png`, `.svg`, `.jpg`).
+
+**`PNG output needs the sharp package`** — sharp's native binary did not install on this platform. Use `.svg`, or reinstall following https://sharp.pixelplumbing.com/install.
+
+**QR code does not scan** — Use `--level H` with a logo, prefer `square` or `rounded` eyes, keep strong contrast between `--fg` and `--bg`, and add `--margin 4` if the code will sit on a dark or busy background.

@@ -6,6 +6,7 @@ import { getQRData, getSVGString } from "qrdx";
 import { useState } from "react";
 import { Icons } from "@/components/icons";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
+import { DEFAULT_QR_LOGO } from "@/lib/constants";
 import { useQREditorStore } from "@/store/editor-store";
 
 export function CopySVGButton() {
@@ -23,12 +24,14 @@ export function CopySVGButton() {
           dotColor: themeState.styles.dotColor,
           bodyPattern: themeState.styles.bodyPattern,
           hideLogo: !themeState.styles.showLogo,
-          logo: themeState.styles.customLogo,
+          logo: themeState.styles.customLogo ?? DEFAULT_QR_LOGO,
         }),
         level: themeState.styles.level,
         cornerEyePattern: themeState.styles.cornerEyePattern,
         cornerEyeDotPattern: themeState.styles.cornerEyeDotPattern,
         templateId: themeState.styles.templateId,
+        margin: themeState.styles.margin,
+        frame: themeState.styles.frame,
       };
 
       const svgContent = await getSVGString(qrProps);

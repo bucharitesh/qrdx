@@ -3,17 +3,36 @@ import {
   oauthAuthorizationCode,
   oauthToken,
 } from "@repo/database";
+import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import { and, eq, isNull } from "drizzle-orm";
 import type { NextRequest } from "next/server";
 import {
   authenticateClient,
   createTokenPair,
   hashToken,
+  NO_STORE_HEADERS,
   oauthError,
   verifyCodeChallenge,
 } from "@/lib/oauth";
+import { getClientIp } from "@/lib/request-guards";
+
+// bcrypt client-secret checks are CPU-heavy: cap attempts per IP.
+const tokenRateLimiter = createRateLimiter({
+  limiter: slidingWindow(30, "60 s"),
+});
 
 export async function POST(req: NextRequest) {
+  const { success } = await tokenRateLimiter.limit(
+    `oauth-token:ip:${getClientIp(req)}`,
+  );
+  if (!success) {
+    return oauthError(
+      "temporarily_unavailable",
+      "Too many requests. Please try again later.",
+      429,
+    );
+  }
+
   const body = await req.formData().catch(() => null);
   if (!body) {
     return oauthError("invalid_request", "Request body must be form-encoded");
@@ -54,25 +73,27 @@ async function handleAuthorizationCode(body: FormData) {
     return oauthError("invalid_client", "Invalid client credentials", 401);
   }
 
+  const now = new Date();
+
+  // Consume the code atomically: concurrent exchanges of one code can't both win.
   const [authCode] = await db
-    .select({
-      id: oauthAuthorizationCode.id,
+    .update(oauthAuthorizationCode)
+    .set({ usedAt: now })
+    .where(
+      and(
+        eq(oauthAuthorizationCode.code, hashToken(code)),
+        eq(oauthAuthorizationCode.appId, app.id),
+        isNull(oauthAuthorizationCode.usedAt),
+      ),
+    )
+    .returning({
       expiresAt: oauthAuthorizationCode.expiresAt,
       redirectUri: oauthAuthorizationCode.redirectUri,
       codeChallenge: oauthAuthorizationCode.codeChallenge,
       codeChallengeMethod: oauthAuthorizationCode.codeChallengeMethod,
       userId: oauthAuthorizationCode.userId,
       scopes: oauthAuthorizationCode.scopes,
-    })
-    .from(oauthAuthorizationCode)
-    .where(
-      and(
-        eq(oauthAuthorizationCode.code, code),
-        eq(oauthAuthorizationCode.appId, app.id),
-        isNull(oauthAuthorizationCode.usedAt),
-      ),
-    )
-    .limit(1);
+    });
 
   if (!authCode) {
     return oauthError(
@@ -81,7 +102,7 @@ async function handleAuthorizationCode(body: FormData) {
     );
   }
 
-  if (new Date() > authCode.expiresAt) {
+  if (now > authCode.expiresAt) {
     return oauthError("invalid_grant", "Authorization code expired");
   }
 
@@ -102,12 +123,13 @@ async function handleAuthorizationCode(body: FormData) {
     ) {
       return oauthError("invalid_grant", "PKCE verification failed");
     }
+  } else if (codeVerifier) {
+    // PKCE downgrade: a verifier for a code issued without a challenge
+    return oauthError(
+      "invalid_grant",
+      "code_verifier sent for a code issued without code_challenge",
+    );
   }
-
-  await db
-    .update(oauthAuthorizationCode)
-    .set({ usedAt: new Date() })
-    .where(eq(oauthAuthorizationCode.id, authCode.id));
 
   const tokenResponse = await createTokenPair(
     app.id,
@@ -115,7 +137,7 @@ async function handleAuthorizationCode(body: FormData) {
     authCode.scopes,
   );
 
-  return Response.json(tokenResponse);
+  return Response.json(tokenResponse, { headers: NO_STORE_HEADERS });
 }
 
 async function handleRefreshToken(body: FormData) {
@@ -135,23 +157,24 @@ async function handleRefreshToken(body: FormData) {
     return oauthError("invalid_client", "Invalid client credentials", 401);
   }
 
-  const refreshTokenHash = hashToken(refreshToken);
+  const now = new Date();
+
+  // Rotate atomically: a refresh token can be redeemed exactly once.
   const [tokenRecord] = await db
-    .select({
-      id: oauthToken.id,
-      userId: oauthToken.userId,
-      scopes: oauthToken.scopes,
-      refreshTokenExpiresAt: oauthToken.refreshTokenExpiresAt,
-    })
-    .from(oauthToken)
+    .update(oauthToken)
+    .set({ revokedAt: now, updatedAt: now })
     .where(
       and(
-        eq(oauthToken.refreshTokenHash, refreshTokenHash),
+        eq(oauthToken.refreshTokenHash, hashToken(refreshToken)),
         eq(oauthToken.appId, app.id),
         isNull(oauthToken.revokedAt),
       ),
     )
-    .limit(1);
+    .returning({
+      userId: oauthToken.userId,
+      scopes: oauthToken.scopes,
+      refreshTokenExpiresAt: oauthToken.refreshTokenExpiresAt,
+    });
 
   if (!tokenRecord) {
     return oauthError("invalid_grant", "Invalid refresh token");
@@ -159,15 +182,10 @@ async function handleRefreshToken(body: FormData) {
 
   if (
     tokenRecord.refreshTokenExpiresAt &&
-    new Date() > tokenRecord.refreshTokenExpiresAt
+    now > tokenRecord.refreshTokenExpiresAt
   ) {
     return oauthError("invalid_grant", "Refresh token expired");
   }
-
-  await db
-    .update(oauthToken)
-    .set({ revokedAt: new Date(), updatedAt: new Date() })
-    .where(eq(oauthToken.id, tokenRecord.id));
 
   const tokenResponse = await createTokenPair(
     app.id,
@@ -175,5 +193,5 @@ async function handleRefreshToken(body: FormData) {
     tokenRecord.scopes,
   );
 
-  return Response.json(tokenResponse);
+  return Response.json(tokenResponse, { headers: NO_STORE_HEADERS });
 }

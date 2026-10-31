@@ -1,5 +1,4 @@
 import type { QRProps } from "../types";
-import { FLAM_QR_LOGO } from "./constants";
 
 interface QRDataProps extends QRProps {
   hideLogo?: boolean;
@@ -25,6 +24,7 @@ export function getQRData({
   cornerEyeDotPattern,
   level,
   templateId,
+  frame,
 }: QRDataProps): QRDataResult {
   return {
     value: `${value}`,
@@ -39,13 +39,16 @@ export function getQRData({
     templateId,
     size,
     margin,
-    ...(!hideLogo && {
-      imageSettings: {
-        src: logo || FLAM_QR_LOGO,
-        height: 256,
-        width: 256,
-        excavate: true,
-      },
-    }),
+    ...(frame && { frame }),
+    // No default logo: only render (and excavate for) one the caller passes.
+    ...(!hideLogo &&
+      logo && {
+        imageSettings: {
+          src: logo,
+          height: 256,
+          width: 256,
+          excavate: true,
+        },
+      }),
   };
 }

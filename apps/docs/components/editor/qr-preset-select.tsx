@@ -1,6 +1,5 @@
 /** biome-ignore-all lint/suspicious/noArrayIndexKey: false positive */
 
-import { authClient } from "@repo/auth/client";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
@@ -28,7 +27,7 @@ import { Check, Heart, Settings } from "lucide-react";
 import Link from "next/link";
 import { type ColorConfig, getColorString } from "qrdx";
 import type React from "react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useMounted } from "@/lib/hooks/use-mounted";
 import { useUserSettings } from "@/lib/hooks/use-user-settings";
 import { useQREditorStore } from "@/store/editor-store";
@@ -38,6 +37,7 @@ import { getPresetThemeStyles } from "@/utils/qr-presets-helper";
 import { Icons } from "../icons";
 import { ThemeToggle } from "../theme-toggle";
 import { TooltipWrapper } from "../tooltip-wrapper";
+import { useSavedThemes } from "./use-saved-themes";
 
 interface ThemePresetSelectProps extends React.ComponentProps<typeof Button> {
   withCycleThemes?: boolean;
@@ -101,6 +101,7 @@ const ThemeControls = () => {
         <Button
           variant="ghost"
           size="sm"
+          aria-label="Random theme"
           className="size-6 p-1"
           onClick={randomize}
         >
@@ -130,6 +131,7 @@ const ThemeCycleButton: React.FC<ThemeCycleButtonProps> = ({
         <Button
           variant="ghost"
           size="icon"
+          aria-label={direction === "prev" ? "Previous theme" : "Next theme"}
           className={cn("aspect-square h-full shrink-0", className)}
           onClick={onClick}
           {...props}
@@ -223,26 +225,13 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
   const currentPreset = themeState.preset;
 
   const presets = useThemePresetStore((store) => store.getAllPresets());
-  const loadSavedPresets = useThemePresetStore(
-    (store) => store.loadSavedPresets,
-  );
-  const unloadSavedPresets = useThemePresetStore(
-    (store) => store.unloadSavedPresets,
-  );
+  const defaultPresetId = useThemePresetStore((store) => store.defaultPresetId);
 
   const [search, setSearch] = useState("");
 
-  const { data: session } = authClient.useSession();
-
   const isMounted = useMounted();
 
-  useEffect(() => {
-    if (session?.user) {
-      loadSavedPresets();
-    } else {
-      unloadSavedPresets();
-    }
-  }, [loadSavedPresets, unloadSavedPresets, session?.user]);
+  useSavedThemes();
 
   const isSavedTheme = useCallback(
     (presetId: string) => {
@@ -300,6 +289,23 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
       (name) => name !== "default" && isSavedTheme(name),
     );
   }, [filteredPresets, isSavedTheme]);
+
+  // Team themes (shared with the active team) above your personal ones.
+  const savedThemeGroups = useMemo(() => {
+    const team = filteredSavedThemes.filter(
+      (name) => presets[name]?.scope === "team",
+    );
+    const personal = filteredSavedThemes.filter(
+      (name) => presets[name]?.scope !== "team",
+    );
+    return [
+      { heading: "Team themes", names: team },
+      {
+        heading: team.length > 0 ? "Your themes" : "Saved themes",
+        names: personal,
+      },
+    ].filter((group) => group.names.length > 0);
+  }, [filteredSavedThemes, presets]);
 
   const filteredDefaultThemes = useMemo(() => {
     return filteredPresets.filter(
@@ -381,14 +387,15 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
               <CommandList className="max-h-[500px]">
                 <CommandEmpty>No themes found.</CommandEmpty>
 
-                {/* Saved Themes Group */}
-                {filteredSavedThemes.length > 0 && (
-                  <>
-                    <CommandGroup
-                      heading={
-                        <div className="flex w-full items-center justify-between">
-                          <span>Saved Themes</span>
-                          <Link href="/settings/themes">
+                {/* Saved Themes Groups */}
+                {savedThemeGroups.map((group, groupIndex) => (
+                  <CommandGroup
+                    key={group.heading}
+                    heading={
+                      <div className="flex w-full items-center justify-between">
+                        <span>{group.heading}</span>
+                        {groupIndex === 0 && (
+                          <Link href="/dashboard/themes">
                             <Button
                               variant="link"
                               size="sm"
@@ -398,47 +405,52 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                               <Settings className="size-3.5!" />
                             </Button>
                           </Link>
+                        )}
+                      </div>
+                    }
+                  >
+                    {group.names.map((presetName, index) => (
+                      <CommandItem
+                        key={`${presetName}-${index}`}
+                        value={`${presetName}-${index}`}
+                        onSelect={() => {
+                          applyThemePreset(presetName);
+                          setSearch("");
+                        }}
+                        className="data-highlighted:bg-secondary/50 flex items-center gap-2 py-2"
+                      >
+                        <ThemeColors presetName={presetName} />
+                        <div className="flex flex-1 items-center gap-2">
+                          <span className="line-clamp-1 text-sm font-medium capitalize">
+                            {presets[presetName]?.label || presetName}
+                          </span>
+                          {presetName === defaultPresetId ? (
+                            <Badge
+                              variant="outline"
+                              className="rounded-full text-xs"
+                            >
+                              Default
+                            </Badge>
+                          ) : (
+                            presets[presetName] &&
+                            isThemeNew(presets[presetName]) && (
+                              <Badge
+                                variant="secondary"
+                                className="rounded-full text-xs"
+                              >
+                                New
+                              </Badge>
+                            )
+                          )}
                         </div>
-                      }
-                    >
-                      {filteredSavedThemes
-                        .filter(
-                          (name) => name !== "default" && isSavedTheme(name),
-                        )
-                        .map((presetName, index) => (
-                          <CommandItem
-                            key={`${presetName}-${index}`}
-                            value={`${presetName}-${index}`}
-                            onSelect={() => {
-                              applyThemePreset(presetName);
-                              setSearch("");
-                            }}
-                            className="data-highlighted:bg-secondary/50 flex items-center gap-2 py-2"
-                          >
-                            <ThemeColors presetName={presetName} />
-                            <div className="flex flex-1 items-center gap-2">
-                              <span className="line-clamp-1 text-sm font-medium capitalize">
-                                {presets[presetName]?.label || presetName}
-                              </span>
-                              {presets[presetName] &&
-                                isThemeNew(presets[presetName]) && (
-                                  <Badge
-                                    variant="secondary"
-                                    className="rounded-full text-xs"
-                                  >
-                                    New
-                                  </Badge>
-                                )}
-                            </div>
-                            {presetName === currentPresetName && (
-                              <Check className="h-4 w-4 shrink-0 opacity-70" />
-                            )}
-                          </CommandItem>
-                        ))}
-                    </CommandGroup>
-                    <Separator className="my-2" />
-                  </>
-                )}
+                        {presetName === currentPresetName && (
+                          <Check className="h-4 w-4 shrink-0 opacity-70" />
+                        )}
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                ))}
+                {savedThemeGroups.length > 0 && <Separator className="my-2" />}
 
                 {filteredSavedThemes.length === 0 && search.trim() === "" && (
                   <>

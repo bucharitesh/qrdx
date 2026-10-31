@@ -83,7 +83,9 @@ ${BOLD}Commands:${RESET}
 
 ${BOLD}Generate Options:${RESET}
   <data>              URL or text to encode (positional)
-  -o, --output        Output file path (.svg or .png)
+  -o, --output        Output file path (.svg, .png or .eps)
+  --format            Output format when the file name has no extension:
+                        ${DIM}svg, png, eps${RESET}  ${DIM}(EPS is vector; --size = width in points)${RESET}
   -l, --level         Error correction: L, M, Q, H  ${DIM}(default: Q)${RESET}
   --body              Body dot pattern:
                         ${DIM}square, circle, circle-large, diamond,${RESET}
@@ -99,11 +101,19 @@ ${BOLD}Generate Options:${RESET}
   --bg                Background color — hex or JSON gradient  ${DIM}(default: #ffffff)${RESET}
   --eye-color         Corner eye color — hex or JSON gradient  ${DIM}(default: matches --fg)${RESET}
   --dot-color         Corner dot color — hex or JSON gradient  ${DIM}(default: matches --fg)${RESET}
-  --logo              Logo URL for center image
+  --logo              Logo URL for center image (use with --level H)
+  --no-logo           Skip the logo prompt in interactive mode
   --margin            Quiet zone margin in modules  ${DIM}(default: 0)${RESET}
   --size              Output pixel size for SVG/PNG  ${DIM}(default: 512)${RESET}
   --template          Decorative template wrapper:
                         ${DIM}Arrow, StandardBox, SquareBorder, StrikedBox, Halloween${RESET}
+  --frame             Call-to-action frame (adds space around the code):
+                        ${DIM}none, banner-bottom, banner-top, border,${RESET}
+                        ${DIM}rounded-border, speech-bubble${RESET}
+  --frame-text        Frame label, up to 24 characters  ${DIM}(default: Scan me; "" hides it)${RESET}
+  --frame-color       Frame color — hex  ${DIM}(default: #000000)${RESET}
+  --frame-text-color  Frame label color — hex  ${DIM}(default: white on banners)${RESET}
+                        ${DIM}Frame text/colors without --frame use banner-bottom${RESET}
 
 ${BOLD}Gradient Colors:${RESET}
   Pass a JSON object to --fg / --bg / --eye-color / --dot-color for gradients:
@@ -119,10 +129,12 @@ ${BOLD}Examples:${RESET}
   ${DIM}$${RESET} qrdx generate "https://qrdx.dev"
   ${DIM}$${RESET} qrdx generate "https://qrdx.dev" -o qr.svg
   ${DIM}$${RESET} qrdx generate "https://qrdx.dev" -o qr.png --body circle --eye gear --dot star
+  ${DIM}$${RESET} qrdx generate "https://qrdx.dev" -o qr.eps --size 144
   ${DIM}$${RESET} qrdx generate "https://qrdx.dev" --fg "#ff0000" --bg "#ffffff" --size 1024
   ${DIM}$${RESET} qrdx generate "https://qrdx.dev" --logo "https://qrdx.dev/logo.png" --level H -o branded.svg
   ${DIM}$${RESET} qrdx generate "https://qrdx.dev" --template Arrow -o arrow.svg
   ${DIM}$${RESET} qrdx generate "https://qrdx.dev" --template Halloween --body circle --eye gear -o halloween.svg
+  ${DIM}$${RESET} qrdx generate "https://qrdx.dev" --frame banner-bottom --frame-text "Scan for the menu" -o menu.png
   ${DIM}$${RESET} qrdx generate "https://qrdx.dev" --fg '{"type":"linear","stops":[{"color":"#6366f1","offset":0},{"color":"#ec4899","offset":100}],"angle":135}' -o gradient.svg
 
   Visit ${TEXT}https://qrdx.dev${RESET} for more.
@@ -164,8 +176,9 @@ async function main(): Promise<void> {
     default:
       // If it looks like a URL or plain text, treat as implicit generate
       if (command.startsWith("-")) {
-        console.log(`Unknown command: ${command}`);
-        console.log(`Run ${BOLD}qrdx --help${RESET} for usage.`);
+        console.error(`Unknown command: ${command}`);
+        console.error(`Run ${BOLD}qrdx --help${RESET} for usage.`);
+        process.exitCode = 1;
       } else {
         showLogo();
         console.log();

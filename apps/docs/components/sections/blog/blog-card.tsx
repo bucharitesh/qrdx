@@ -1,3 +1,4 @@
+import { cn } from "@repo/design-system/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -11,6 +12,8 @@ interface BlogCardProps {
     avatar: string;
   }[];
   image: string;
+  imageAlt?: string;
+  featured?: boolean;
 }
 
 export function BlogCard({
@@ -20,27 +23,62 @@ export function BlogCard({
   date,
   author,
   image,
+  imageAlt,
+  featured = false,
 }: BlogCardProps) {
   return (
     <Link
       href={`/blog/${slug}`}
-      className="w-full h-full flex flex-col border-r border-b border-border hover:bg-accent/50 transition-colors duration-100"
+      className={cn(
+        "w-full h-full flex flex-col border-r border-b border-border hover:bg-accent/50 transition-colors duration-100",
+        featured && "col-span-full md:grid md:grid-cols-2",
+      )}
     >
-      <div className="relative h-52 w-full shrink-0 overflow-hidden">
+      <div
+        className={cn(
+          "relative aspect-video w-full shrink-0 overflow-hidden",
+          featured && "md:border-r md:border-border",
+        )}
+      >
         <Image
           src={image}
-          alt={title}
+          alt={imageAlt ?? title}
           fill
           className="object-cover"
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+          priority={featured}
+          sizes={
+            featured
+              ? "(max-width: 768px) 100vw, 640px"
+              : "(max-width: 640px) 100vw, (max-width: 768px) 50vw, 33vw"
+          }
         />
       </div>
-      <div className="flex flex-1 flex-col justify-between p-6">
+      <div
+        className={cn(
+          "flex flex-1 flex-col justify-between p-6",
+          featured && "md:p-10",
+        )}
+      >
         <div>
-          <h2 className="line-clamp-2 text-lg font-bold tracking-tight text-foreground">
+          {featured && (
+            <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Latest post
+            </p>
+          )}
+          <h2
+            className={cn(
+              "line-clamp-2 font-bold tracking-tight text-foreground",
+              featured ? "text-2xl md:text-3xl" : "text-lg",
+            )}
+          >
             {title}
           </h2>
-          <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">
+          <p
+            className={cn(
+              "mt-2 text-sm text-muted-foreground",
+              featured ? "line-clamp-4 md:text-base" : "line-clamp-2",
+            )}
+          >
             {description}
           </p>
         </div>
@@ -63,6 +101,7 @@ export function BlogCard({
               year: "numeric",
               month: "long",
               day: "numeric",
+              timeZone: "UTC",
             })}
           </time>
         </div>

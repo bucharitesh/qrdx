@@ -1,10 +1,8 @@
 ---
-title: Basic Usage
-description: Learn how to customize QR codes
+title: Basic usage
+description: Render a QR code with the QRCode component, then change its colors, patterns, logo, template and error correction.
 icon: QrCode
 ---
-
-# Basic Usage
 
 Create and customize QR codes for your needs.
 
@@ -34,7 +32,7 @@ import { QRCode } from 'qrdx';
 
 ## Add Patterns
 
-Choose from 7 different body patterns:
+Choose from 9 body patterns, 9 corner eye patterns and 11 corner eye dot patterns:
 
 ```tsx
 <QRCode
@@ -45,7 +43,7 @@ Choose from 7 different body patterns:
 />
 ```
 
-Available patterns: `circle`, `square`, `diamond`, `rounded`, `pacman`, `circle-mixed`, `clean-square`
+Body patterns: `circle`, `circle-large`, `square`, `diamond`, `circle-mixed`, `pacman`, `rounded`, `small-square`, `vertical-line`. See [Patterns](/docs/features/patterns) for the corner eye and eye dot options.
 
 ## Add a Logo
 

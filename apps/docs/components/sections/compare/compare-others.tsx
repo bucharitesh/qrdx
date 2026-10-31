@@ -1,6 +1,7 @@
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { QrdxLogo } from "@/components/qrdx-logo";
+import { CompetitorLogo } from "@/components/sections/compare/competitor-logo";
 import { SectionHeader } from "@/components/sections/section-header";
 import { compareSource } from "@/lib/source";
 
@@ -21,8 +22,8 @@ export function CompareOthers({ currentSlug }: CompareOthersProps) {
           QRdx vs. others
         </h2>
         <p className="text-muted-foreground text-center text-balance font-medium">
-          See how QRdx compares to every major QR code platform — free, open
-          source, and developer-first.
+          See how QRdx stacks up against other QR code generators and React QR
+          code libraries.
         </p>
       </SectionHeader>
 
@@ -48,10 +49,10 @@ export function CompareOthers({ currentSlug }: CompareOthersProps) {
                 <div className="relative flex items-end justify-center px-5 pb-5 pt-2 h-36">
                   <QrdxLogo className="size-30 absolute opacity-10 -bottom-10 -left-10" />
                   <div className="absolute bottom-4 right-8 size-20 flex items-center justify-center p-1.5">
-                    <img
+                    <CompetitorLogo
+                      name={competitor}
                       src={competitorLogo}
-                      alt={`${competitor} logo`}
-                      className="size-full object-contain"
+                      className="size-full text-lg"
                     />
                   </div>
                 </div>

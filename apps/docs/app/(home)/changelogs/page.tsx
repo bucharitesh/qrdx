@@ -1,12 +1,15 @@
 import { Badge } from "@repo/design-system/components/ui/badge";
 import type { Metadata } from "next";
 import { SectionHeader } from "@/components/sections/section-header";
+import { createMetadata } from "@/lib/metadata";
 import { changelogSource } from "@/lib/source";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = createMetadata({
   title: "Changelog",
-  description: "Latest updates and improvements to our product",
-};
+  description:
+    "Release notes for QRdx: new QR code customization options, integrations, library updates and fixes.",
+  path: "/changelogs",
+});
 
 function formatDate(date: Date): string {
   return date.toLocaleDateString("en-US", {
@@ -95,7 +98,12 @@ const Page = async () => {
                         </div>
 
                         <div className="prose prose-neutral dark:prose-invert max-w-none prose-headings:scroll-mt-8 prose-headings:font-semibold prose-headings:tracking-tight prose-headings:text-balance prose-p:tracking-tight prose-p:text-balance prose-a:font-medium prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-a:underline-offset-4 prose-pre:bg-background prose-pre:border prose-code:text-sm prose-code:rounded-md prose-code:px-1.5 prose-code:py-0.5 prose-code:bg-muted/50 prose-code:before:content-none prose-code:after:content-none prose-ul:list-disc prose-ol:list-decimal prose-li:marker:text-muted-foreground">
-                          <MDX />
+                          <MDX
+                            components={{
+                              h2: (props) => <h3 {...props} />,
+                              h3: (props) => <h4 {...props} />,
+                            }}
+                          />
                         </div>
                       </div>
                     </div>

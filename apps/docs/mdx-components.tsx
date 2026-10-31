@@ -5,6 +5,8 @@ import defaultMdxComponents from "fumadocs-ui/mdx";
 import * as icons from "lucide-react";
 import type { MDXComponents } from "mdx/types";
 import { GithubCard } from "@/components/mdx/github-card";
+import { ErrorCorrectionDemo } from "@/components/sections/blog/error-correction-demo";
+import { Figure } from "@/components/sections/blog/figure";
 
 export function getMDXComponents(components?: MDXComponents): MDXComponents {
   return {
@@ -15,6 +17,8 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
     Accordion,
     Accordions,
     GithubCard,
+    Figure,
+    ErrorCorrectionDemo,
     ...components,
   };
 }

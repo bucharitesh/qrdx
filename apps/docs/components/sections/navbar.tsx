@@ -11,10 +11,10 @@ import {
 } from "motion/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { HeaderMobileNavList } from "@/components/header-mobile-nav";
+import { HeaderNav } from "@/components/header-nav";
 import { Icons } from "@/components/icons";
-import { NavMenu } from "@/components/nav-menu";
 import { QrdxLogoAnimation } from "@/components/qrdx-logo-animation";
-import { siteConfig } from "@/config/site";
 import { useGithubStars } from "@/lib/hooks/use-github-stars";
 import { formatCompactNumber } from "@/utils/format";
 import { QrdxLogo } from "../qrdx-logo";
@@ -51,11 +51,6 @@ const drawerVariants = {
 };
 
 const drawerMenuContainerVariants = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1 },
-};
-
-const drawerMenuVariants = {
   hidden: { opacity: 0 },
   visible: { opacity: 1 },
 };
@@ -105,7 +100,7 @@ export function Navbar() {
               </p>
             </Link>
 
-            <NavMenu />
+            <HeaderNav />
 
             <div className="flex flex-row items-center gap-3 lg:gap-4 shrink-0">
               <SocialLink
@@ -122,6 +117,8 @@ export function Navbar() {
                 variant="secondary"
                 className="lg:hidden"
                 onClick={toggleDrawer}
+                aria-label={isDrawerOpen ? "Close menu" : "Open menu"}
+                aria-expanded={isDrawerOpen}
               >
                 {isDrawerOpen ? (
                   <Icons.X className="size-5" />
@@ -161,39 +158,24 @@ export function Navbar() {
                   <Link href="/" className="flex items-center gap-2">
                     <QrdxLogo className="size-5 text-secondary-foreground" />
                     <p className="text-lg font-semibold text-secondary-foreground">
-                      QRDX
+                      QRdx
                     </p>
                   </Link>
                   <button
                     onClick={toggleDrawer}
+                    aria-label="Close menu"
                     className="border border-border rounded-md p-1 cursor-pointer"
                   >
                     <Icons.X className="size-5" />
                   </button>
                 </div>
 
-                <motion.ul
-                  className="flex flex-col text-sm mb-4 border border-border rounded-md"
-                  variants={drawerMenuContainerVariants}
-                >
-                  <AnimatePresence>
-                    {siteConfig.nav.links.map((item) => (
-                      <motion.li
-                        key={item.id}
-                        className="p-2.5 border-b border-border last:border-b-0"
-                        variants={drawerMenuVariants}
-                      >
-                        <Link
-                          href={item.href}
-                          onClick={() => setIsDrawerOpen(false)}
-                          className="underline-offset-4 hover:text-secondary-foreground/80 transition-colors text-secondary-foreground/60"
-                        >
-                          {item.name}
-                        </Link>
-                      </motion.li>
-                    ))}
-                  </AnimatePresence>
-                </motion.ul>
+                <motion.div variants={drawerMenuContainerVariants}>
+                  <HeaderMobileNavList
+                    onNavigate={() => setIsDrawerOpen(false)}
+                    className="max-h-[60vh] rounded-md border border-border p-4"
+                  />
+                </motion.div>
 
                 {/* Action buttons */}
                 <div className="flex items-center gap-2">

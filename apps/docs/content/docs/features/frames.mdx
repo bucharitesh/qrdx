@@ -1,0 +1,110 @@
+---
+title: Frames & print
+description: Call-to-action frames, a "Will it scan?" score and print-ready PDF export.
+icon: Frame
+---
+
+Add a "Scan me" frame, check that a design scans before you ship it, and export a vector file at an exact physical size.
+
+## Call-to-action frames
+
+The `frame` prop draws a frame with a short label around the code. It works on `QRCode`, `QRCodeSVG`, `QRCodeCanvas`, `getQRAsSVG`, `getQRData` and all download helpers.
+
+```tsx
+import { QRCode } from "qrdx";
+
+<QRCode
+  value="https://example.com/menu"
+  frame={{ style: "banner-bottom", text: "Scan for the menu", color: "#1e3a8a" }}
+/>
+```
+
+The frame is added **around** the code: the output gets bigger, and the QR modules and quiet zone are never covered, so scannability is unchanged. A light gap in the code's background color separates the code from the frame.
+
+| Option | Default | Notes |
+| --- | --- | --- |
+| `style` | — | `none`, `banner-bottom`, `banner-top`, `border`, `rounded-border`, `speech-bubble` |
+| `text` | `"Scan me"` | Up to 24 characters. Pass `""` to hide the label |
+| `color` | `#000000` | Frame color |
+| `textColor` | white on banners, `color` on borders | Label color |
+
+The label uses the system font stack, so nothing is downloaded. Because the output grows, use `getFrameDimensions(size, frame)` when you need the final width and height:
+
+```ts
+import { getFrameDimensions } from "qrdx";
+
+getFrameDimensions(400, { style: "banner-bottom" }); // { width: 496, height: 568 }
+```
+
+`FRAME_STYLES`, `frameSchema` (zod) and the `QRFrame` / `FrameStyle` types are also exported from `qrdx/types` for server-side validation.
+
+### In the CLI
+
+```bash
+qrdx generate "https://example.com/menu" --frame banner-bottom --frame-text "Scan for the menu" -o menu.png
+```
+
+`--frame-color` and `--frame-text-color` take hex colors. Passing text or colors without `--frame` uses `banner-bottom`.
+
+## Will it scan?
+
+`getScanScore` estimates how reliably a design scans. It runs in the browser and loads [jsQR](https://github.com/cozmo/jsQR) on demand.
+
+```ts
+import { getScanScore } from "qrdx";
+
+const { score, grade, checks } = await getScanScore({
+  value: "https://example.com",
+  bodyPattern: "circle",
+  cornerEyePattern: "gear",
+});
+// score: 0–100, grade: "great" | "ok" | "risky" | "fails"
+// checks: [{ id, passed, message, fix? }]
+```
+
+What it checks:
+
+- **Decoding at 96, 160 and 320 px.** The design is rendered at each width, given camera-like blur and contrast loss, and decoded a few times at slightly different scales.
+- **Contrast** between every code color (including gradient stops, eye and dot colors) and the background, and whether the code is dark on light.
+- **Logo coverage** compared with what the error-correction level can recover.
+- **Quiet zone**: the margin, plus the gap a frame adds.
+- **Eye shape risk**: `curly` eyes fail strict decoders such as ZXing-based apps, and `circle` eyes only read in lenient ones.
+
+`getImageScanScore(fileOrImage)` does the same for an existing image: it returns the decoded content plus decode, contrast, polarity, quiet-zone and resolution checks measured from the pixels. The [scan checker](/tools/scan-checker) is built on it.
+
+<Callout type="info">
+  The score is a heuristic built on one open-source decoder. Phone camera apps are often more forgiving, so treat it as a guide and test-scan important prints.
+</Callout>
+
+## Print-ready export
+
+`downloadPrintPDF` writes a vector PDF at an exact physical size. Modules, eyes and frames are vector paths (a logo stays a raster image).
+
+```ts
+import { downloadPrintPDF, downloadPrintSVG, getPrintLayout } from "qrdx";
+
+const props = { value: "https://example.com", frame: { style: "banner-bottom" } } as const;
+
+await downloadPrintPDF(props, {
+  size: 40, // width of the code itself
+  unit: "mm", // or "in"
+  bleed: 3, // millimetres on every side
+  cropMarks: true,
+  colorMode: "cmyk",
+});
+
+await downloadPrintSVG(props, { size: 1.5, unit: "in" }); // width="…in" height="…in"
+
+const layout = getPrintLayout(props, { size: 40 });
+layout.trimWidth; // finished width in mm, frame included
+layout.maxScanDistance; // 400 (mm)
+```
+
+- `size` is the width of the code; a frame adds to the finished size.
+- With bleed, the background (or a square frame's color) extends past the trim edge so trimming leaves no white sliver. Crop marks sit outside the bleed.
+- `colorMode: "cmyk"` uses a simple conversion (`rgbToCmyk`: K = 1 − max(R, G, B), no ICC profile; pure black prints as K only). Ask your printer for a color-managed conversion when exact brand colors matter.
+- Gradients are flattened to their first color stop in the PDF; the print SVG keeps them but stays RGB.
+- Frame text in the PDF uses Helvetica Bold, so characters outside Latin-1 may not render. Use the SVG for other scripts.
+- `getQRAsPrintPDF` and `getQRAsPrintPDFBuffer` return the file instead of downloading it, and also work in Node.
+
+**How big to print:** a code scans from about ten times its width, so size ≈ scan distance ÷ 10 (2 cm wide for 20 cm). Denser codes need more; the [print size calculator](/tools/print-size) accounts for that.

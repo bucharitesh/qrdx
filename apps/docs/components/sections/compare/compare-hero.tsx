@@ -2,28 +2,39 @@ import { FlickeringGrid } from "@repo/design-system/components/flickering-grid";
 import { Button } from "@repo/design-system/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { Breadcrumbs } from "@/components/sections/breadcrumbs";
 import { CompareHeroLogos } from "@/components/sections/compare/compare-hero-logos";
+import { breadcrumbSchema, JsonLd } from "@/components/sections/tools/json-ld";
 
 interface CompareHeroProps {
+  slug: string;
   competitor: string;
   tagline: string;
-  competitorLogo: string;
+  competitorLogo?: string;
 }
 
 export function CompareHero({
+  slug,
   competitor,
   tagline,
   competitorLogo,
 }: CompareHeroProps) {
+  const crumbs = [
+    { name: "Home", path: "/" },
+    { name: "Compare", path: "/compare" },
+    { name: `QRdx vs ${competitor}`, path: `/compare/${slug}` },
+  ];
+
   return (
     <section className="w-full relative">
+      <JsonLd data={breadcrumbSchema(crumbs)} />
       <div className="absolute inset-0 -z-10 h-full w-full [background:radial-gradient(125%_125%_at_50%_10%,var(--background)_40%,var(--primary)_100%)] rounded-b-xl" />
       <div className="relative flex flex-col items-center w-full px-6">
         <div className="relative z-10 pt-32 pb-20 w-full h-full flex flex-col gap-8 items-center justify-center">
           <div className="relative hidden h-[242px] w-full overflow-hidden md:block">
             <div className="mx-auto h-full">
               <svg
-                aria-label="QRdx vs {competitor} comparison"
+                aria-label={`QRdx vs ${competitor} comparison`}
                 width="562"
                 height="242"
                 viewBox="0 0 562 242"
@@ -145,6 +156,7 @@ export function CompareHero({
           </div>
 
           <div className="flex flex-col items-center justify-center gap-5">
+            <Breadcrumbs items={crumbs} />
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-semibold tracking-tighter text-balance text-center text-secondary-foreground">
               QRdx vs {competitor}
             </h1>

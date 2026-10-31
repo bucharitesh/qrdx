@@ -1,5 +1,11 @@
 /** biome-ignore-all lint/style/noParameterProperties: false positive */
-import type { DubLink, DubWorkspace } from "./types";
+import type {
+  DubAnalyticsEvent,
+  DubAnalyticsGroupBy,
+  DubAnalyticsResult,
+  DubLink,
+  DubWorkspace,
+} from "./types";
 
 /**
  * Dub API Client
@@ -36,6 +42,10 @@ export class DubClient {
       );
     }
 
+    if (response.status === 204) {
+      return undefined as T;
+    }
+
     return response.json();
   }
 
@@ -50,7 +60,9 @@ export class DubClient {
    * Get a specific workspace by ID
    */
   getWorkspace(workspaceId: string): Promise<DubWorkspace> {
-    return this.request<DubWorkspace>(`/workspaces/${workspaceId}`);
+    return this.request<DubWorkspace>(
+      `/workspaces/${encodeURIComponent(workspaceId)}`
+    );
   }
 
   /**
@@ -75,7 +87,7 @@ export class DubClient {
    * Get link information
    */
   getLink(linkId: string): Promise<DubLink> {
-    return this.request<DubLink>(`/links/${linkId}`);
+    return this.request<DubLink>(`/links/${encodeURIComponent(linkId)}`);
   }
 
   /**
@@ -85,6 +97,7 @@ export class DubClient {
     domain?: string;
     search?: string;
     userId?: string;
+    showArchived?: boolean;
     page?: number;
     pageSize?: number;
   }): Promise<DubLink[]> {
@@ -97,6 +110,9 @@ export class DubClient {
     }
     if (params?.userId) {
       searchParams.set("userId", params.userId);
+    }
+    if (params?.showArchived !== undefined) {
+      searchParams.set("showArchived", String(params.showArchived));
     }
     if (params?.page) {
       searchParams.set("page", params.page.toString());
@@ -123,9 +139,10 @@ export class DubClient {
       title?: string;
       description?: string;
       image?: string;
+      archived?: boolean;
     }
   ): Promise<DubLink> {
-    return this.request<DubLink>(`/links/${linkId}`, {
+    return this.request<DubLink>(`/links/${encodeURIComponent(linkId)}`, {
       method: "PATCH",
       body: JSON.stringify(data),
     });
@@ -135,7 +152,7 @@ export class DubClient {
    * Delete a link
    */
   async deleteLink(linkId: string): Promise<void> {
-    await this.request<void>(`/links/${linkId}`, {
+    await this.request<void>(`/links/${encodeURIComponent(linkId)}`, {
       method: "DELETE",
     });
   }
@@ -143,15 +160,24 @@ export class DubClient {
   /**
    * Get analytics for a link
    */
-  getAnalytics(
-    linkId: string,
-    params?: {
-      start?: string;
-      end?: string;
-      timezone?: string;
-    }
-  ): Promise<any> {
+  getAnalytics(params: {
+    linkId: string;
+    event?: DubAnalyticsEvent;
+    groupBy?: DubAnalyticsGroupBy;
+    interval?: string;
+    start?: string;
+    end?: string;
+    timezone?: string;
+  }): Promise<DubAnalyticsResult> {
     const searchParams = new URLSearchParams();
+    searchParams.set("linkId", params.linkId);
+    searchParams.set("event", params.event ?? "clicks");
+    if (params.groupBy) {
+      searchParams.set("groupBy", params.groupBy);
+    }
+    if (params.interval) {
+      searchParams.set("interval", params.interval);
+    }
     if (params?.start) {
       searchParams.set("start", params.start);
     }
@@ -163,11 +189,9 @@ export class DubClient {
     }
 
     const queryString = searchParams.toString();
-    const endpoint = queryString
-      ? `/links/${linkId}/analytics?${queryString}`
-      : `/links/${linkId}/analytics`;
+    const endpoint = queryString ? `/analytics?${queryString}` : "/analytics";
 
-    return this.request<any>(endpoint);
+    return this.request<DubAnalyticsResult>(endpoint);
   }
 }
 

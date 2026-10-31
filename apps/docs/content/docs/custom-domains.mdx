@@ -1,0 +1,74 @@
+---
+title: Custom domains
+description: Serve your dynamic QR codes' short links from a domain you own.
+icon: Globe
+---
+
+By default a [dynamic QR code](/docs/dynamic-qr-codes) encodes a short link such as `https://qrdx.dev/q/aB3dE5f`. With a custom domain it encodes `https://go.yourbrand.com/aB3dE5f` instead, so people see your brand before they scan. Redirects, editing and scan analytics work the same way.
+
+Custom domains are part of Pro (up to 5 per personal workspace or team) and Business (up to 25).
+
+## Connect a domain
+
+1. Open [Dashboard → Domains](/dashboard/domains) and enter the domain, for example `go.yourbrand.com`. A subdomain works best, because your main website stays where it is.
+2. Add the DNS records shown for the domain at your DNS provider (where you bought the domain, Cloudflare, ...):
+   - a subdomain gets a `CNAME` record,
+   - a root domain (`yourbrand.com`) gets an `A` record,
+   - a `TXT` record is shown too when ownership has to be confirmed.
+
+   Copy the exact values from the dashboard. Most providers want only the part before your domain as the name (`go`, or `@` for the root).
+3. Click **Verify**. DNS changes usually show up within minutes but can take up to 48 hours, so try again later if the records aren't found yet.
+
+Once verified, the domain appears in the **Short link domain** picker when you create or edit a dynamic code. Verified domains stay verified until you remove them, and **Check DNS** re-reads the records any time.
+
+<Callout type="info">
+  A domain that isn't verified within 3 days can be added by another account, so nobody can hold on to a domain they don't control.
+</Callout>
+
+## Use it for codes
+
+- **New code:** pick the domain in **Short link domain** before you click **Create code**.
+- **Existing code:** choose the domain in **Edit link**, save, and download the QR code again, because the encoded link changes.
+
+Every code also keeps working at its default `https://qrdx.dev/q/<slug>` link, so QR codes you printed before moving a code to your domain never break. Moving a code from one custom domain to another (or back to the default) does break QR codes printed with the old custom-domain link; the dialog warns you before you save.
+
+On your domain:
+
+- `https://go.yourbrand.com/<slug>` redirects for codes that use that domain. Codes on other domains, or on the default link only, show a "not found" page there.
+- `https://go.yourbrand.com/` shows a small page saying the domain hosts QR code links.
+- Every other path returns "not found". The domain never serves the rest of QRdx.
+
+Changes (a newly verified or removed domain) take up to a minute to reach every server.
+
+## Teams
+
+Domains added while a team is active belong to the team. Owners and admins add, verify and remove them; every member can use verified team domains for their codes.
+
+## Plans and removing domains
+
+- Downgrading never breaks anything: verified domains keep serving the codes that use them. Without Pro or Business you can't add or verify domains or move more codes onto one, but you can still edit those codes and remove domains.
+- Removing a domain switches its codes back to their default `qrdx.dev/q/<slug>` link. QR codes printed with the custom-domain link stop working, so the dialog shows how many codes use the domain first.
+
+## REST API
+
+The [codes API](/docs/dynamic-qr-codes#rest-api) accepts `domainId` (the id of a verified domain in the same workspace) on `POST /api/v1/codes` and `PATCH /api/v1/codes/{id}`. Send `"domainId": null` in a `PATCH` to switch back to the default link. Moving a code onto a domain needs Pro and returns `402 PLAN_REQUIRED` otherwise.
+
+Each code in a response includes:
+
+| Field | Description |
+| --- | --- |
+| `shortLink` | The link to encode: on the custom domain once it is verified |
+| `defaultShortLink` | `https://qrdx.dev/q/<slug>`, which always works |
+| `domain` | `{ "id", "hostname", "verified" }`, or `null` |
+
+## Self-hosting
+
+How domains get connected depends on your deployment:
+
+- **On Vercel:** set `VERCEL_API_TOKEN` (a token with access to the project), `VERCEL_PROJECT_ID` and, for a team project, `VERCEL_TEAM_ID`. Domains are then added to the project through the Vercel Domains API, which also issues the TLS certificates. Without these variables the Domains page explains that custom domains aren't set up, because Vercel only routes domains that were added to the project.
+- **Anywhere else** (Docker, Node.js): leave those variables unset. Domains are verified manually:
+  1. Point the domain at your server with a `CNAME` (to your app's host name) or an `A` record (your server's IP).
+  2. Make your reverse proxy accept the domain, serve HTTPS for it (for example with Caddy's on-demand TLS or a certbot certificate), and forward the original `Host` header to the app. With nginx that's `proxy_set_header Host $host;`; Caddy does it by default.
+  3. Add the domain on the Domains page, create the `TXT` record it shows (`_qrdx-challenge.<your-domain>` with the value `qrdx-verify=<token>`), and click **Verify**. The app checks the record with a DNS lookup.
+
+The app recognizes custom domains by the `Host` header. Requests for your own app URL, `NEXT_PUBLIC_SHORT_LINK_BASE_URL`, `localhost` and `*.vercel.app` are always treated as the main app.

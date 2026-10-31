@@ -42,9 +42,10 @@ export const DEFAULT_EYECOLOR = "#000000";
 export const DEFAULT_DOTCOLOR = "#000000";
 
 /**
- * Default margin around the QR code.
- * The QR spec requires a minimum quiet zone of 4 modules on all sides
- * for reliable scanning.
+ * Default margin (quiet zone) around the QR code, in modules.
+ * Defaults to 0 so the code fills its box; the QR spec recommends a 4-module
+ * light quiet zone, so set `margin` (or give the container light padding)
+ * when the code sits on a busy or dark background.
  */
 export const DEFAULT_MARGIN = 0;
 
@@ -60,8 +61,3 @@ export const QR_LEVELS: readonly ErrorLevel[] = ["L", "M", "Q", "H"] as const;
  * get an explicit height or width, I'd rather default to something than throw.
  */
 export const DEFAULT_IMG_SCALE = 0.1;
-
-/**
- * Default logo URL for QR codes
- */
-export const FLAM_QR_LOGO = "https://qrdx.dev/logo.png";

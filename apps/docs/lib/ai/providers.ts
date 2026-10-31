@@ -6,10 +6,20 @@ import {
 } from "@ai-sdk/google";
 import { customProvider, type LanguageModel } from "ai";
 import { env } from "@/lib/env";
+import { HttpError } from "@/lib/error-response";
 
 const google = createGoogleGenerativeAI({
   apiKey: env.GOOGLE_API_KEY,
 });
+
+export const isAIConfigured = Boolean(env.GOOGLE_API_KEY);
+
+/** Rejects AI requests with a 503 when no provider key is set. */
+export function assertAIConfigured(): void {
+  if (!isAIConfigured) {
+    throw new HttpError(503, "AI_NOT_CONFIGURED", "AI is not configured");
+  }
+}
 
 export const baseProviderOptions = {
   google: {

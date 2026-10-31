@@ -80,8 +80,12 @@ function useDialogActionsStore(): DialogActionsContextType {
   const currentPreset = themeState?.preset
     ? getPreset(themeState.preset)
     : undefined;
+  // Team members can't overwrite team themes (owners/admins manage them).
   const isOnSavedPreset =
-    !!currentPreset && currentPreset.source === "SAVED" && hasUnsavedChanges();
+    !!currentPreset &&
+    currentPreset.source === "SAVED" &&
+    currentPreset.canEdit !== false &&
+    hasUnsavedChanges();
   const existingThemeName = isOnSavedPreset ? currentPreset.label : undefined;
 
   usePostLoginAction("SAVE_THEME", () => {
@@ -140,33 +144,34 @@ function useDialogActionsStore(): DialogActionsContextType {
   };
 
   const handleShareClick = async (id?: string) => {
-    if (hasThemeChangedFromCheckpoint()) {
+    // `id` is passed right after a save, before the preset store has refreshed
+    if (!id && hasThemeChangedFromCheckpoint()) {
       handleSaveClick({ shareAfterSave: true });
       return;
     }
 
     const presetId = id ?? themeState.preset;
     const currentPreset = presetId ? getPreset(presetId) : undefined;
+    const isSavedPreset = !!id || currentPreset?.source === "SAVED";
 
-    if (!currentPreset) {
-      setShareUrl(`https://tweakcn.com/editor/theme`);
-      setShareDialogOpen(true);
+    // Only saved themes have a shareable URL (/playground/<id>)
+    if (!(presetId && isSavedPreset)) {
+      handleSaveClick({ shareAfterSave: true });
       return;
     }
 
-    const isSavedPreset = !!currentPreset && currentPreset.source === "SAVED";
-
     posthog.capture("SHARE_THEME", {
-      theme_id: id,
+      theme_id: presetId,
       theme_name: currentPreset?.label,
       is_saved: isSavedPreset,
     });
 
-    const url = isSavedPreset
-      ? `https://tweakcn.com/themes/${id}`
-      : `https://tweakcn.com/editor/theme?theme=${id}`;
-
-    setShareUrl(url);
+    setShareUrl(
+      new URL(
+        `/playground/${encodeURIComponent(presetId)}`,
+        window.location.origin,
+      ).toString(),
+    );
     setShareDialogOpen(true);
   };
 
