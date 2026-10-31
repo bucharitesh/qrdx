@@ -133,6 +133,20 @@ const BODY_DESCRIPTIONS: Partial<Record<BodyPattern, string>> = {
   rounded: "Squares with rounded corners",
   "small-square": "Smaller squares with gaps",
   "vertical-line": "Vertical bar segments",
+  "horizontal-line": "Horizontal bar segments",
+  liquid: "Modules melt into smooth connected shapes",
+  "liquid-horizontal": "Rounded capsules joined along rows",
+  "liquid-vertical": "Rounded capsules joined along columns",
+  classy: "Connected modules with two rounded opposite corners",
+  "classy-rounded": "Connected modules with soft rounded corners",
+  leaf: "Leaf-shaped tiles (two opposite corners rounded)",
+  plus: "Plus signs",
+  hexagon: "Hexagons",
+  star: "Five-pointed stars",
+  heart: "Hearts",
+  "random-dots": "Dots in varied sizes (the same every time)",
+  mosaic: "Slightly turned square tiles (the same every time)",
+  octagon: "Octagons",
 };
 
 const EYE_DESCRIPTIONS: Partial<Record<CornerEyePattern, string>> = {
@@ -145,6 +159,15 @@ const EYE_DESCRIPTIONS: Partial<Record<CornerEyePattern, string>> = {
   message: "Speech-bubble frame",
   pointy: "Frame with one pointed corner",
   curly: "Curly ornamental frame",
+  leaf: "Leaf frame facing each corner (sharp outer and inner corners)",
+  "leaf-reverse": "Leaf frame with round outer and inner corners",
+  drop: "Teardrop frame with a sharp outer corner",
+  petal: "Square frame with one big round outer corner",
+  octagon: "Octagonal frame",
+  bevel: "Square frame with cut corners",
+  squircle: "Superellipse (squircle) frame",
+  cushion: "Rounded frame with gently pinched sides",
+  shield: "Shield-shaped frame",
 };
 
 const DOT_DESCRIPTIONS: Partial<Record<CornerEyeDotPattern, string>> = {
@@ -159,6 +182,19 @@ const DOT_DESCRIPTIONS: Partial<Record<CornerEyeDotPattern, string>> = {
   "rounded-triangle": "Rounded triangle dot",
   star: "Star dot",
   banner: "Banner dot",
+  leaf: "Leaf-shaped dot facing each corner",
+  "leaf-reverse": "Mirrored leaf-shaped dot",
+  drop: "Teardrop dot with a sharp outer corner",
+  "drop-reverse": "Teardrop dot pointing to the centre of the code",
+  plus: "Plus-shaped dot",
+  "cross-rounded": "Cross with rounded arms",
+  hexagon: "Hexagonal dot",
+  octagon: "Octagonal dot",
+  flower: "Four-petal flower",
+  heart: "Heart dot",
+  squircle: "Superellipse (squircle) dot",
+  dots: "Grid of nine small dots",
+  "extra-rounded": "Square dot with very round corners",
 };
 
 /** Patterns, templates and limits, for the MCP `list_qr_styles` tool. */

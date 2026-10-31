@@ -1,6 +1,7 @@
 "use client";
 
 import { toast } from "@repo/design-system";
+import { Close as X } from "@repo/design-system/components/icons";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
@@ -34,15 +35,14 @@ import { cn } from "@repo/design-system/lib/utils";
 import {
   ArrowDown,
   ArrowUp,
-  CheckCircle2,
-  CircleSlash,
-  FlaskConical,
-  Gem,
+  TickCircle as CheckCircle2,
+  Forbidden as CircleSlash,
+  ChemicalGlass as FlaskConical,
+  Diamonds as Gem,
   Lock,
-  Plus,
-  Trash2,
-  X,
-} from "lucide-react";
+  Add as Plus,
+  Trash as Trash2,
+} from "iconsax-reactjs";
 import Link from "next/link";
 import {
   type ReactNode,
@@ -61,6 +61,8 @@ import {
   saveCodeRouting,
   testCodeRouting,
 } from "@/actions/code-marketing";
+import { InfoHint } from "@/components/help/info-hint";
+import type { HintId } from "@/lib/help/hints";
 import type {
   RoutingCondition,
   RoutingConfig,
@@ -89,11 +91,14 @@ export function PanelCard({
   title,
   description,
   badge,
+  hint,
   children,
 }: {
   title: string;
   description: ReactNode;
   badge?: "Pro" | "Business";
+  /** Info (i) after the title; content lives in lib/help/hints.ts */
+  hint?: HintId;
   children: ReactNode;
 }) {
   return (
@@ -101,6 +106,7 @@ export function PanelCard({
       <CardHeader className="px-4">
         <div className="flex flex-wrap items-center gap-2">
           <CardTitle>{title}</CardTitle>
+          {hint && <InfoHint align="start" className="-ml-0.5" id={hint} />}
           {badge && <Badge variant="outline">{badge}</Badge>}
         </div>
         <CardDescription>{description}</CardDescription>

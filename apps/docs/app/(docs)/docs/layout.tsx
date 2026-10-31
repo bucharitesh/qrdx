@@ -29,7 +29,11 @@ export default function Layout({ children }: LayoutProps<"/docs">) {
       }}
     >
       <DocsLayout {...DOCS_LAYOUT_PROPS}>
-        <div className="fixed inset-0 z-[-1] bg-[url('/background.png')] bg-fixed bg-no-repeat bg-top-right" />
+        {/* Neutral light from the top right (the old image was a blue glow). */}
+        <div
+          aria-hidden
+          className="pointer-events-none fixed inset-0 z-[-1] bg-[radial-gradient(ellipse_55%_45%_at_100%_0%,color-mix(in_oklab,var(--color-foreground)_7%,transparent),transparent)]"
+        />
         {children}
       </DocsLayout>
     </RootProvider>

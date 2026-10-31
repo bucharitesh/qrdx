@@ -5,6 +5,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@repo/design-system/components/ui/accordion";
+import { HairlineFigure } from "@/components/mockups/hairline";
 import { SectionHeader } from "@/components/sections/section-header";
 import { siteConfig } from "@/config/site";
 
@@ -27,14 +28,14 @@ export function FAQSection() {
   return (
     <section
       id="faq"
-      className="flex flex-col items-center justify-center gap-10 pb-10 w-full relative"
+      className="flex flex-col items-center justify-center gap-10 pb-14 md:gap-14 md:pb-20 w-full relative"
     >
       <script
         type="application/ld+json"
         // biome-ignore lint/security/noDangerouslySetInnerHtml: schema markup requires raw JSON
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
-      <SectionHeader>
+      <SectionHeader eyebrow="FAQ" pattern="halo">
         <h2 className="text-3xl md:text-4xl font-medium tracking-tighter text-center text-balance">
           {faqSection.title}
         </h2>
@@ -43,23 +44,33 @@ export function FAQSection() {
         </p>
       </SectionHeader>
 
-      <div className="max-w-3xl w-full mx-auto px-10">
-        <Accordion
-          type="single"
-          collapsible
-          className="w-full border-b-0 grid gap-2"
-        >
+      <div className="mx-auto grid w-full max-w-5xl gap-10 px-6 md:grid-cols-[16rem_minmax(0,1fr)] md:gap-14 md:px-10">
+        <div className="hidden flex-col gap-4 md:flex">
+          <HairlineFigure figure="Query" className="aspect-[5/4] w-full" />
+          <p className="text-sm text-muted-foreground text-pretty leading-relaxed">
+            Something else?{" "}
+            <a
+              href="mailto:support@qrdx.dev"
+              className="font-medium text-foreground underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground"
+            >
+              support@qrdx.dev
+            </a>
+          </p>
+        </div>
+        <Accordion type="single" collapsible className="w-full border-t">
           {faqSection.faQitems.map((faq, index) => (
             <AccordionItem
               key={index}
               value={index.toString()}
-              className="border-0 grid gap-2"
+              className="last:border-b"
             >
-              <AccordionTrigger className="border bg-secondary-muted border-border rounded-lg px-4 py-3.5 cursor-pointer no-underline hover:no-underline data-[state=open]:ring data-[state=open]:ring-secondary/20">
+              <AccordionTrigger className="cursor-pointer py-5 text-base hover:no-underline data-[state=open]:text-foreground [&:not([data-state=open])]:text-foreground/85">
                 {faq.question}
               </AccordionTrigger>
-              <AccordionContent className="p-3 border text-muted-foreground rounded-lg bg-muted">
-                <p className="font-medium leading-relaxed">{faq.answer}</p>
+              <AccordionContent className="pb-5 text-muted-foreground">
+                <p className="max-w-prose leading-relaxed text-pretty">
+                  {faq.answer}
+                </p>
               </AccordionContent>
             </AccordionItem>
           ))}

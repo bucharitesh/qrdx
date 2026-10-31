@@ -10,6 +10,16 @@ export const CORNER_EYE_PATTERNS = [
   "message",
   "pointy",
   "curly",
+  // Added after 0.0.46
+  "leaf",
+  "drop",
+  "octagon",
+  "bevel",
+  "squircle",
+  "cushion",
+  "shield",
+  "petal",
+  "leaf-reverse",
 ] as const;
 
 // Zod schema

@@ -4,7 +4,17 @@ import { useChat } from "@ai-sdk/react";
 import { toast } from "@repo/design-system";
 import { useQueryClient } from "@tanstack/react-query";
 import { DefaultChatTransport } from "ai";
-import { createContext, useContext, useEffect, useRef } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { getAIMockMode } from "@/components/editor/ai/dev-mock-mode";
+import { emitSound } from "@/components/editor/sound";
 import { parseAiSdkTransportError } from "@/lib/ai/parse-ai-sdk-transport-error";
 import { handleUnauthorized } from "@/lib/handle-unauthorized";
 import { isDeepEqual } from "@/lib/utils";
@@ -13,10 +23,41 @@ import { useQREditorStore } from "@/store/editor-store";
 import type { ChatMessage } from "@/types/ai";
 import { SUBSCRIPTION_STATUS_QUERY_KEY } from "./use-subscription";
 
+export interface ThemeEvent {
+  kind: "applied" | "error";
+  /** Increases with every event, so effects can tell them apart */
+  at: number;
+}
+
 interface ChatContext extends ReturnType<typeof useChat<ChatMessage>> {
   startNewChat: () => void;
   resetMessagesUpToIndex: (index: number) => void;
+  /**
+   * A generateQRTheme call of the current request is running: from its first
+   * tool or data part until its output is applied, it fails, or the request
+   * ends. Plain chat replies never set this.
+   */
+  themeInFlight: boolean;
+  /** Last theme outcome (applied / error), for the preview glow. */
+  themeEvent: ThemeEvent | null;
 }
+
+const TOOL_TYPE = "tool-generateQRTheme";
+/** Stop a request whose stream went silent this long. */
+const STALLED_STREAM_MS = 60_000;
+
+/** Dev only: `?ai-mock=theme|chat|error` replays a recorded response. */
+const devFetch: typeof fetch | undefined =
+  process.env.NODE_ENV === "development"
+    ? async (input, init) => {
+        const mode = getAIMockMode();
+        if (!mode) return fetch(input, init);
+        const { mockChatResponse } = await import(
+          "@/components/editor/ai/dev-mock-chat"
+        );
+        return mockChatResponse(mode);
+      }
+    : undefined;
 
 const ChatContext = createContext<ChatContext | null>(null);
 
@@ -44,9 +85,36 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
   const hasStoreHydrated = useAIChatStore((s) => s.hasHydrated);
   const hasInitializedRef = useRef(false);
 
+  // Theme application bookkeeping: each tool call applies (and chimes) once.
+  const appliedIds = useRef(new Set<string>());
+  const failedIds = useRef(new Set<string>());
+  const [streamingToolId, setStreamingToolId] = useState<string | null>(null);
+  // useChat keeps its first callbacks, so onError reads this through a ref.
+  const inFlightToolIdRef = useRef<string | null>(null);
+  const [themeEvent, setThemeEvent] = useState<ThemeEvent | null>(null);
+
+  const markApplied = useCallback(
+    (toolCallId: string, themeStyles?: Record<string, unknown>) => {
+      if (themeStyles) applyGeneratedQRStyle(themeStyles);
+      if (appliedIds.current.has(toolCallId)) return;
+      appliedIds.current.add(toolCallId);
+      setThemeEvent((prev) => ({ kind: "applied", at: (prev?.at ?? 0) + 1 }));
+      emitSound("ai-done");
+    },
+    [],
+  );
+
+  const markFailed = useCallback((toolCallId: string) => {
+    if (failedIds.current.has(toolCallId)) return;
+    failedIds.current.add(toolCallId);
+    setThemeEvent((prev) => ({ kind: "error", at: (prev?.at ?? 0) + 1 }));
+    emitSound("error");
+  }, []);
+
   const chat = useChat<ChatMessage>({
     transport: new DefaultChatTransport({
       api: "/api/generate-qr-theme",
+      fetch: devFetch,
     }),
     onError: (error) => {
       const defaultMessage = "Failed to generate QR style. Please try again.";
@@ -60,6 +128,8 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         return;
       }
 
+      if (inFlightToolIdRef.current) markFailed(inFlightToolIdRef.current);
+      else emitSound("error");
       toast.error("An error occurred", {
         description: normalizedError.message,
       });
@@ -67,7 +137,13 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     onData: (dataPart) => {
       if (dataPart.type !== "data-generated-qr-style") return;
 
-      const { themeStyles } = dataPart.data;
+      const toolCallId = dataPart.id ?? "current";
+      const { themeStyles, status } = dataPart.data;
+      if (status === "ready") {
+        markApplied(toolCallId, themeStyles as Record<string, unknown>);
+        return;
+      }
+      if (!appliedIds.current.has(toolCallId)) setStreamingToolId(toolCallId);
       if (themeStyles) {
         applyGeneratedQRStyle(themeStyles as Record<string, unknown>);
       }
@@ -78,6 +154,73 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
       });
     },
   });
+
+  const requestActive =
+    chat.status === "submitted" || chat.status === "streaming";
+
+  // The tool part is the source of truth; transient data parts only add the
+  // live preview. Apply the final output if the "ready" data part was missed.
+  const lastMessage = chat.messages.at(-1);
+  const toolParts = useMemo(
+    () =>
+      lastMessage?.role === "assistant"
+        ? lastMessage.parts.flatMap((part) =>
+            part.type === TOOL_TYPE ? [part] : [],
+          )
+        : [],
+    [lastMessage],
+  );
+
+  useEffect(() => {
+    for (const part of toolParts) {
+      if (part.state === "output-available") {
+        markApplied(
+          part.toolCallId,
+          part.output as unknown as Record<string, unknown>,
+        );
+      } else if (part.state === "output-error") {
+        markFailed(part.toolCallId);
+      }
+    }
+  }, [toolParts, markApplied, markFailed]);
+
+  const isPending = (toolCallId: string) =>
+    !appliedIds.current.has(toolCallId) && !failedIds.current.has(toolCallId);
+  const pendingToolPart = toolParts.find(
+    (part) =>
+      (part.state === "input-streaming" || part.state === "input-available") &&
+      isPending(part.toolCallId),
+  );
+  const inFlightToolId = requestActive
+    ? (pendingToolPart?.toolCallId ??
+      (streamingToolId && isPending(streamingToolId) ? streamingToolId : null))
+    : null;
+  const themeInFlight = inFlightToolId !== null;
+  inFlightToolIdRef.current = inFlightToolId;
+
+  // A request is over (finished, failed or stopped): nothing is streaming.
+  useEffect(() => {
+    if (!requestActive) setStreamingToolId(null);
+  }, [requestActive]);
+
+  // Safety net: stop a request whose stream went silent, so the busy UI ends.
+  const lastActivity = useRef(Date.now());
+  // biome-ignore lint/correctness/useExhaustiveDependencies: any new chunk counts as activity
+  useEffect(() => {
+    lastActivity.current = Date.now();
+  }, [chat.messages, chat.status]);
+  useEffect(() => {
+    if (!requestActive) return;
+    const timer = setInterval(() => {
+      if (Date.now() - lastActivity.current > STALLED_STREAM_MS) {
+        chat.stop();
+        toast.error("The AI stopped responding", {
+          description: "Try again in a moment.",
+        });
+      }
+    }, 5_000);
+    return () => clearInterval(timer);
+  }, [requestActive, chat.stop]);
 
   const startNewChat = () => {
     chat.stop();
@@ -116,6 +259,11 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     if (!hasStoreHydrated || hasInitializedRef.current) return;
 
     if (storedMessages.length > 0) {
+      for (const message of storedMessages) {
+        for (const part of message.parts) {
+          if (part.type === TOOL_TYPE) appliedIds.current.add(part.toolCallId);
+        }
+      }
       chat.setMessages(storedMessages);
     }
 
@@ -124,7 +272,13 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <ChatContext.Provider
-      value={{ ...chat, startNewChat, resetMessagesUpToIndex }}
+      value={{
+        ...chat,
+        startNewChat,
+        resetMessagesUpToIndex,
+        themeInFlight,
+        themeEvent,
+      }}
     >
       {children}
     </ChatContext.Provider>

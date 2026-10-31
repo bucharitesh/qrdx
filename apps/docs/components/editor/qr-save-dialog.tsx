@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Spinner as Loader2 } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   Form,
@@ -20,7 +21,6 @@ import {
   ResponsiveDialogTitle,
 } from "@repo/design-system/components/ui/revola";
 import { Separator } from "@repo/design-system/components/ui/separator";
-import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";

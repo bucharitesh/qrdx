@@ -1,16 +1,16 @@
 "use client";
 
 import { toast } from "@repo/design-system";
+import { Spinner as LoaderCircle } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import {
-  ClipboardPaste,
+  ClipboardImport as ClipboardPaste,
   Copy,
-  ExternalLink,
-  ImageUp,
-  LoaderCircle,
-  ShieldCheck,
-} from "lucide-react";
+  ExportSquare as ExternalLink,
+  GalleryExport as ImageUp,
+  ShieldTick as ShieldCheck,
+} from "iconsax-reactjs";
 import { getImageScanScore, type ImageScanScoreResult } from "qrdx";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useDropzone } from "react-dropzone";
@@ -19,6 +19,8 @@ import {
   GRADE_LABELS,
   ScanCheckList,
 } from "@/components/editor/scan-score";
+import { InfoHint } from "@/components/help/info-hint";
+import { soundEvent } from "@/lib/sound/emit";
 
 const MAX_IMAGE_BYTES = 20 * 1024 * 1024;
 
@@ -71,6 +73,7 @@ export function ScanChecker() {
       const result = await getImageScanScore(file);
       if (run === runRef.current) {
         setStatus({ phase: "done", result });
+        soundEvent(result.score >= 75 ? "good" : "low");
       }
     } catch (error) {
       console.error("Scan check failed:", error);
@@ -143,14 +146,15 @@ export function ScanChecker() {
         {...getRootProps()}
         className={cn(
           "flex flex-col items-center justify-center gap-4 rounded-xl border-2 border-dashed px-6 py-10 text-center transition-colors",
-          isDragActive ? "border-primary bg-primary/5" : "border-border",
+          isDragActive ? "border-foreground/30 bg-muted/50" : "border-border",
         )}
       >
         <input {...getInputProps()} aria-label="QR code image" />
         <ImageUp aria-hidden className="text-muted-foreground size-8" />
         <div className="space-y-1">
           <p className="font-medium">
-            Drop a QR code image here, choose a file or paste it
+            Drop a QR code image here, choose a file or paste it{" "}
+            <InfoHint id="scan-checker" />
           </p>
           <p className="text-muted-foreground text-sm">
             Screenshots and photos work. Press Ctrl+V or ⌘V to paste.
@@ -233,6 +237,7 @@ export function ScanChecker() {
                               result.data ?? "",
                             );
                             toast.success("Copied");
+                            soundEvent("copy");
                           } catch {
                             toast.error("Couldn't copy");
                           }

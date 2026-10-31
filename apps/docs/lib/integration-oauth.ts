@@ -5,18 +5,41 @@ import {
   createOAuthHandler,
   generateCodeVerifier,
   getIntegrationConfigWithEnv,
+  getIntegrationRegistry,
 } from "@repo/integrations";
 import { cookies } from "next/headers";
 import { env } from "@/lib/env";
 
 const OAUTH_COOKIE_MAX_AGE_SECONDS = 60 * 10; // 10 minutes
 
+const canEncryptTokens = () =>
+  !(env.NODE_ENV === "production" && !env.INTEGRATION_ENCRYPTION_KEY);
+
 /**
- * True when the integration's OAuth credentials are set and, in production,
- * stored tokens can be encrypted (INTEGRATION_ENCRYPTION_KEY).
+ * True when the integration can be connected: its OAuth credentials are set
+ * (or people connect with their own API key) and, in production, stored
+ * tokens can be encrypted (INTEGRATION_ENCRYPTION_KEY).
  */
 export function isIntegrationConfigured(provider: string): boolean {
-  if (env.NODE_ENV === "production" && !env.INTEGRATION_ENCRYPTION_KEY) {
+  if (!canEncryptTokens()) {
+    return false;
+  }
+
+  try {
+    getIntegrationConfigWithEnv(provider, env);
+    return true;
+  } catch {
+    // An API-key fallback (Bitly's access token) works without app credentials
+    return Boolean(getIntegrationRegistry().get(provider)?.apiKey);
+  }
+}
+
+/** True when the OAuth sign-in flow itself can start for this provider. */
+export function isOAuthConfigured(provider: string): boolean {
+  const definition = getIntegrationRegistry().get(provider);
+  if (
+    !(definition?.oauth && definition.type === "oauth" && canEncryptTokens())
+  ) {
     return false;
   }
 

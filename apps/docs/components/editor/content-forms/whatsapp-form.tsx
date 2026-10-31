@@ -7,6 +7,7 @@ import * as React from "react";
 import { useQREditorStore } from "@/store/editor-store";
 import type { WhatsAppContent } from "@/types/qr-content";
 import { encodeWhatsApp } from "@/utils/qr-content-encoder";
+import { useExternalConfigSync } from "./use-external-config-sync";
 
 export function WhatsAppForm() {
   const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
@@ -22,27 +23,21 @@ export function WhatsAppForm() {
     message: storedConfig?.message || "",
   });
 
-  // Sync with store when config changes (e.g., from smart paste)
-  React.useEffect(() => {
-    if (storedConfig && (storedConfig.phoneNumber || storedConfig.message)) {
-      if (
-        storedConfig.phoneNumber !== whatsappData.phoneNumber ||
-        storedConfig.message !== whatsappData.message
-      ) {
-        setWhatsappData({
-          phoneNumber: storedConfig.phoneNumber || "",
-          message: storedConfig.message || "",
-        });
-      }
-    }
-  }, [storedConfig, whatsappData.message, whatsappData.phoneNumber]);
+  // Only external changes (e.g. smart paste) flow back into the form
+  const markWritten = useExternalConfigSync(storedConfig, (config) =>
+    setWhatsappData({
+      phoneNumber: config.phoneNumber || "",
+      message: config.message || "",
+    }),
+  );
 
   React.useEffect(() => {
     const config: WhatsAppContent = { type: "whatsapp", ...whatsappData };
     const encoded = encodeWhatsApp(config);
     setValue(encoded);
+    markWritten(config);
     setContentConfig("whatsapp", config);
-  }, [whatsappData, setValue, setContentConfig]);
+  }, [whatsappData, setValue, setContentConfig, markWritten]);
 
   return (
     <div className="space-y-3">

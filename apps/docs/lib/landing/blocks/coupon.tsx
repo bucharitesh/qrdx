@@ -1,5 +1,8 @@
 import { cn } from "@repo/design-system/lib/utils";
-import { CalendarClock, TicketPercent } from "lucide-react";
+import {
+  CalendarTick as CalendarClock,
+  TicketDiscount as TicketPercent,
+} from "iconsax-reactjs";
 import {
   buttonClass,
   linkProps,

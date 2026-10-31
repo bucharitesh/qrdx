@@ -1,0 +1,58 @@
+---
+title: Shapes, eyes and frames
+description: Every body pattern, eye frame, eye centre and call-to-action frame, drawn live by the qrdx renderer and decoded in your browser.
+icon: Grid3x3
+---
+
+import { QrCatalog } from "@/components/docs/qr-catalog";
+
+Every style below is drawn by the same renderer as your downloads, with its option name and the API value to copy. Each tile is decoded with [jsQR](https://github.com/cozmo/jsQR) right here in your browser, one at a time, so the **Scans** badge is a live result rather than a promise.
+
+All of them are also tested in the package (`packages/qrdx/tests/catalog-*.test.ts`): each value decodes through a phone-camera model (contrast loss and a quarter-module blur) at 4, 6 and 9 pixels per module, next to every other body, eye and centre, at error correction L, M, Q and H, at 148 px and 1024 px, light-on-dark, with brand colours and with a centre logo. A few existing pairings are still weak; they are marked **caution** and listed under [Pairs to avoid](#pairs-to-avoid).
+
+## Body patterns
+
+The shape of the data modules (`bodyPattern`). Connected styles (`liquid`, `classy`) merge neighbouring modules into one outline. `random-dots` and `mosaic` vary per module but are deterministic: the same value always draws the same code.
+
+<QrCatalog kind="body" />
+
+## Eye frames
+
+The outer ring of the three corner markers (`cornerEyePattern`). `leaf`, `leaf-reverse`, `drop` and `petal` turn each eye so it faces the corner of the code. Each tile pairs the eye with its recommended centre.
+
+<QrCatalog kind="eye" />
+
+## Eye centres
+
+The solid centre of each corner marker (`cornerEyeDotPattern`), shown inside square eyes.
+
+<QrCatalog kind="dot" />
+
+## Frames
+
+Call-to-action frames are drawn around the code, so the code and its quiet zone are never covered and the downloaded image grows to fit. Every frame takes `text` (up to 24 characters), `color`, `textColor` and `fontScale` (0.5 to 1.5). `banner-top-bottom`, `circle` and `menu-card` also show `secondaryText`; `gradient-border` runs from `color` to `secondaryColor`.
+
+<QrCatalog kind="frame" />
+
+```tsx
+import { QRCode } from "qrdx";
+
+<QRCode
+  value="https://example.com"
+  bodyPattern="liquid"
+  cornerEyePattern="leaf"
+  cornerEyeDotPattern="leaf"
+  frame={{ style: "circle", text: "Scan me", secondaryText: "example.com" }}
+/>;
+```
+
+## Pairs to avoid
+
+These pairings fail in our decode tests, so the scan score warns about them (`style-pair`):
+
+- `diamond` centres in most eyes, and `banner` centres in `square`, `rounded`, `diya` and `leaf` eyes: neither is a solid 3 × 3 block, so the finder pattern's 1:1:3:1:1 ratio breaks on the diagonal.
+- `curly` eyes with `square`, `diya` or `message` centres.
+- `diamond` bodies next to `square` eyes, `pacman` next to `rounded`, and `small-square` next to `square` or `rounded` eyes, up close.
+- `circle` and `curly` eyes on their own: lenient readers decode them, strict ones such as ZXing-based apps may not.
+
+The same lists ship in the package as `WEAK_DOT_EYES` and `WEAK_BODY_EYES`, and `getStylePairRisk(props)` returns the warning for a style.

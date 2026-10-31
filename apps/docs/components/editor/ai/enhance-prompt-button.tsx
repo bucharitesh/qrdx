@@ -1,6 +1,9 @@
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
-import { CircleStop, WandSparkles } from "lucide-react";
+import {
+  StopCircle as CircleStop,
+  Magicpen as WandSparkles,
+} from "iconsax-reactjs";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 
 interface EnhancePromptButtonProps extends React.ComponentProps<typeof Button> {

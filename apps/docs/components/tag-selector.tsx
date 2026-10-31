@@ -1,5 +1,9 @@
 "use client";
 
+import {
+  Tick as Check,
+  Close as X,
+} from "@repo/design-system/components/icons";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import {
   Command,
@@ -15,7 +19,7 @@ import {
   PopoverTrigger,
 } from "@repo/design-system/components/ui/popover";
 import { cn } from "@repo/design-system/lib/utils";
-import { Check, ChevronsUpDown, X } from "lucide-react";
+import { ArrowDown2 as ChevronsUpDown } from "iconsax-reactjs";
 import { useState } from "react";
 import { COMMUNITY_THEME_TAGS, MAX_TAGS_PER_THEME } from "@/lib/constants";
 

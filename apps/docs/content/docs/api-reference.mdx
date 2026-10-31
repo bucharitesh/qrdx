@@ -1,6 +1,6 @@
 ---
-title: API reference
-description: Every component, function and type exported by the qrdx React library.
+title: Library API reference
+description: Every component, function and type exported by the qrdx React library. For HTTP endpoints, see the REST API.
 icon: Code
 ---
 
@@ -42,8 +42,14 @@ import { QRCode } from 'qrdx';
 | `templateId` | `string` | `'default'` | Template ID |
 | `customTemplate` | `TemplateDefinition` | — | Custom template |
 | `level` | `ErrorLevel` | `'Q'` | Error correction |
+| `autoLevel` | `boolean` | `false` | Raise `level` to H when the logo covers more than 7% of the code (`AUTO_LEVEL_LOGO_COVERAGE`) |
 | `margin` | `number` | `0` | Margin in modules |
 | `imageSettings` | `ImageSettings` | — | Logo settings |
+| `eyeColors` | `EyeColors` | — | Per-eye `outer` / `inner` colors for `topLeft`, `topRight` and `bottomLeft`; each overrides `eyeColor` / `dotColor` |
+| `moduleScale` | `number` | `1` | Data module size, 0.5 to 1. Each pattern stops at the smallest size that still scans (`MODULE_SCALE_FLOOR`) |
+| `frame` | `QRFrame` | — | Call-to-action frame; see [Frames & print](/docs/features/frames) |
+
+All 23 body patterns, 18 eyes, 24 eye centres and 20 frames are shown live in [Shapes, eyes and frames](/docs/styles).
 
 ### QRCodeCanvas
 
@@ -227,40 +233,43 @@ type ErrorLevel = 'L' | 'M' | 'Q' | 'H';
 ### Pattern Types
 
 ```tsx
+// The arrays BODY_PATTERN, CORNER_EYE_PATTERNS, CORNER_EYE_DOT_PATTERNS and
+// FRAME_STYLES (and their zod schemas) are exported from 'qrdx/types'.
+
 type BodyPattern =
-  | 'circle'
-  | 'circle-large'
-  | 'square'
-  | 'diamond'
-  | 'circle-mixed'
-  | 'pacman'
-  | 'rounded'
-  | 'small-square'
-  | 'vertical-line';
+  | 'circle' | 'circle-large' | 'square' | 'diamond' | 'circle-mixed'
+  | 'pacman' | 'rounded' | 'small-square' | 'vertical-line'
+  | 'horizontal-line' | 'liquid' | 'liquid-horizontal' | 'liquid-vertical'
+  | 'classy' | 'classy-rounded' | 'leaf' | 'plus' | 'hexagon' | 'star'
+  | 'heart' | 'random-dots' | 'mosaic' | 'octagon';
 
 type CornerEyePattern =
-  | 'square'
-  | 'rounded'
-  | 'gear'
-  | 'circle'
-  | 'diya'
-  | 'extra-rounded'
-  | 'message'
-  | 'pointy'
-  | 'curly';
+  | 'square' | 'rounded' | 'gear' | 'circle' | 'diya' | 'extra-rounded'
+  | 'message' | 'pointy' | 'curly' | 'leaf' | 'drop' | 'octagon' | 'bevel'
+  | 'squircle' | 'cushion' | 'shield' | 'petal' | 'leaf-reverse';
 
 type CornerEyeDotPattern =
-  | 'square'
-  | 'rounded'
-  | 'circle'
-  | 'diamond'
-  | 'message'
-  | 'message-reverse'
-  | 'diya'
-  | 'diya-reverse'
-  | 'rounded-triangle'
-  | 'star'
-  | 'banner';
+  | 'square' | 'rounded' | 'circle' | 'diamond' | 'message'
+  | 'message-reverse' | 'diya' | 'diya-reverse' | 'rounded-triangle' | 'star'
+  | 'banner' | 'leaf' | 'drop' | 'plus' | 'cross-rounded' | 'hexagon'
+  | 'octagon' | 'flower' | 'heart' | 'squircle' | 'dots' | 'extra-rounded'
+  | 'leaf-reverse' | 'drop-reverse';
+
+type EyeColors = {
+  topLeft?: { outer?: ColorConfig; inner?: ColorConfig };
+  topRight?: { outer?: ColorConfig; inner?: ColorConfig };
+  bottomLeft?: { outer?: ColorConfig; inner?: ColorConfig };
+};
+
+type QRFrame = {
+  style: FrameStyle; // 20 styles, see FRAME_STYLES
+  text?: string; // up to 24 characters, default "Scan me"
+  color?: string;
+  textColor?: string;
+  secondaryText?: string; // banner-top-bottom, circle, menu-card
+  secondaryColor?: string; // gradient-border end color
+  fontScale?: number; // 0.5 to 1.5
+};
 ```
 
 ### Download Types
@@ -319,6 +328,8 @@ type ImageSettings = {
   excavate?: boolean;
   x?: number;
   y?: number;
+  /** Extra clear space around the logo when excavating, in pixels */
+  padding?: number;
   opacity?: number;
 };
 ```

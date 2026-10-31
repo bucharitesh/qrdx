@@ -23,10 +23,29 @@ The frame is added **around** the code: the output gets bigger, and the QR modul
 
 | Option | Default | Notes |
 | --- | --- | --- |
-| `style` | — | `none`, `banner-bottom`, `banner-top`, `border`, `rounded-border`, `speech-bubble` |
+| `style` | — | One of the 20 styles below (`FRAME_STYLES`) |
 | `text` | `"Scan me"` | Up to 24 characters. Pass `""` to hide the label |
-| `color` | `#000000` | Frame color |
-| `textColor` | white on banners, `color` on borders | Label color |
+| `color` | `#000000` | Frame color (`gradient-border`: start color, default violet) |
+| `textColor` | white on the frame, `color` on light areas | Label color |
+| `secondaryText` | none | Second label, up to 24 characters: the bottom band of `banner-top-bottom`, the lower arc of `circle`, the footer of `menu-card` |
+| `secondaryColor` | `#db2777` | End color of `gradient-border` |
+| `fontScale` | `1` | Label size from 0.5 to 1.5; labels still shrink to fit |
+
+Styles:
+
+- Banners and borders: `banner-bottom`, `banner-top`, `banner-top-bottom`, `border`, `rounded-border`, `gradient-border`, `focus` (corner brackets)
+- Bubbles: `speech-bubble`, `speech-bubble-top`, `chat-bubble`
+- Badges: `circle` (text set around a ring), `badge` (ribbon), `sticker` (die-cut with a shadow)
+- Objects: `polaroid`, `phone`, `ticket`, `tag` (hang tag with a hole), `envelope`, `menu-card`
+
+See them all, decoded in your browser, in [Shapes, eyes and frames](/docs/styles#frames). Every frame is plain shapes and text with opaque colors, so SVG, PNG, PDF and EPS exports match (the gradient border is drawn as fine solid color steps, and the circle frame's curved letters are rotated text in every format).
+
+```tsx
+<QRCode
+  value="https://example.com"
+  frame={{ style: "circle", text: "Scan me", secondaryText: "example.com", fontScale: 1.2 }}
+/>
+```
 
 The label uses the system font stack, so nothing is downloaded. Because the output grows, use `getFrameDimensions(size, frame)` when you need the final width and height:
 
@@ -69,6 +88,7 @@ What it checks:
 - **Logo coverage** compared with what the error-correction level can recover.
 - **Quiet zone**: the margin, plus the gap a frame adds.
 - **Eye shape risk**: `curly` eyes fail strict decoders such as ZXing-based apps, and `circle` eyes only read in lenient ones.
+- **Style pairs** (`style-pair`): eye and centre or body and eye pairs that fail in our decode tests, such as `diamond` centres in square eyes (see `getStylePairRisk`).
 
 `getImageScanScore(fileOrImage)` does the same for an existing image: it returns the decoded content plus decode, contrast, polarity, quiet-zone and resolution checks measured from the pixels. The [scan checker](/tools/scan-checker) is built on it.
 

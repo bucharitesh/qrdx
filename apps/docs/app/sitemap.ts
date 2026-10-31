@@ -1,7 +1,4 @@
-import {
-  getIntegrationRegistry,
-  initializeIntegrations,
-} from "@repo/integrations";
+import { getIntegrationCatalog } from "@repo/integrations/src/catalog";
 import type { MetadataRoute } from "next";
 import { SLUG_TO_CATEGORY } from "@/lib/blog-constants";
 import { env } from "@/lib/env";
@@ -31,8 +28,6 @@ const latest = (dates: (Date | string | undefined)[]): Date | undefined => {
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const url = (path: string): string => new URL(path, baseUrl).toString();
-
-  initializeIntegrations();
 
   const posts = blogSource.getPages().filter((p) => p.data.published);
   const postDate = (p: (typeof posts)[number]) =>
@@ -106,21 +101,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       priority: 0.8,
     },
+    { url: url("/templates"), changeFrequency: "monthly", priority: 0.8 },
     {
       url: url("/integrations"),
       changeFrequency: "monthly",
       priority: 0.8,
     },
-    ...getIntegrationRegistry()
-      .getAll()
-      .map(
-        (integration) =>
-          ({
-            url: url(`/integrations/${integration.slug}`),
-            changeFrequency: "monthly",
-            priority: 0.6,
-          }) satisfies Entry,
-      ),
+    ...getIntegrationCatalog().map(
+      (integration) =>
+        ({
+          url: url(`/integrations/${integration.slug}`),
+          changeFrequency: "monthly",
+          priority: 0.6,
+        }) satisfies Entry,
+    ),
     {
       url: url("/mcp"),
       changeFrequency: "monthly",

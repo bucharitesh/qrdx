@@ -1,4 +1,4 @@
-import { Video } from "lucide-react";
+import { Video } from "iconsax-reactjs";
 import { themePreset } from "@/components/landing/theme";
 import { registerTemplate } from "./registry";
 

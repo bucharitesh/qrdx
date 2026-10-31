@@ -1,4 +1,4 @@
-import { Loader2Icon } from "lucide-react"
+import { Spinner as Loader2Icon } from "../icons"
 
 import { cn } from "@repo/design-system/lib/utils"
 

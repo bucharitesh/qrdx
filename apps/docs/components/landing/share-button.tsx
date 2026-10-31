@@ -1,6 +1,7 @@
 "use client";
 
-import { Check, Share2 } from "lucide-react";
+import { Tick as Check } from "@repo/design-system/components/icons";
+import { Share as Share2 } from "iconsax-reactjs";
 import { useState } from "react";
 import { buttonClass } from "./block-kit";
 

@@ -8,7 +8,10 @@ import {
 import { headers } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import { env } from "@/lib/env";
-import { isIntegrationConfigured } from "@/lib/integration-oauth";
+import {
+  isIntegrationConfigured,
+  isOAuthConfigured,
+} from "@/lib/integration-oauth";
 import { IntegrationDetail } from "./components/integration-detail";
 
 initializeIntegrations();
@@ -68,6 +71,8 @@ export default async function IntegrationPage({
       website={integration.website}
       category={integration.category}
       isConfigured={isConfigured}
+      oauthConfigured={isOAuthConfigured(slug)}
+      apiKey={integration.apiKey}
       isConnected={isConnected}
       status={status}
       connectedAt={connectedAt}

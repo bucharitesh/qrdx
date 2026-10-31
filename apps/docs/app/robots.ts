@@ -23,6 +23,7 @@ const disallow = [
   "/dashboard",
   "/invite",
   "/q/",
+  "/m/",
 ];
 
 export default function robots(): MetadataRoute.Robots {

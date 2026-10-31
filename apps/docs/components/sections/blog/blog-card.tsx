@@ -14,6 +14,8 @@ interface BlogCardProps {
   image: string;
   imageAlt?: string;
   featured?: boolean;
+  /** Load the image eagerly (cards in the first row are the page's LCP). */
+  priority?: boolean;
 }
 
 export function BlogCard({
@@ -25,12 +27,13 @@ export function BlogCard({
   image,
   imageAlt,
   featured = false,
+  priority = false,
 }: BlogCardProps) {
   return (
     <Link
       href={`/blog/${slug}`}
       className={cn(
-        "w-full h-full flex flex-col border-r border-b border-border hover:bg-accent/50 transition-colors duration-100",
+        "group w-full h-full flex flex-col border-r border-b border-border transition-colors duration-200 hover:bg-accent/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring/40",
         featured && "col-span-full md:grid md:grid-cols-2",
       )}
     >
@@ -44,8 +47,8 @@ export function BlogCard({
           src={image}
           alt={imageAlt ?? title}
           fill
-          className="object-cover"
-          priority={featured}
+          className="object-cover transition-transform duration-500 ease-[cubic-bezier(.32,.72,0,1)] group-hover:scale-[1.02] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+          priority={featured || priority}
           sizes={
             featured
               ? "(max-width: 768px) 100vw, 640px"
@@ -61,13 +64,13 @@ export function BlogCard({
       >
         <div>
           {featured && (
-            <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            <p className="mb-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
               Latest post
             </p>
           )}
           <h2
             className={cn(
-              "line-clamp-2 font-bold tracking-tight text-foreground",
+              "line-clamp-2 font-semibold tracking-tight text-balance text-foreground",
               featured ? "text-2xl md:text-3xl" : "text-lg",
             )}
           >

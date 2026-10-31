@@ -1,7 +1,9 @@
 /** biome-ignore-all lint/suspicious/noArrayIndexKey: false positive */
 "use client";
 
+import { Spinner, Tick } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
+import { Card } from "@repo/design-system/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -25,14 +27,7 @@ import {
 } from "@repo/design-system/components/ui/sheet";
 import { Skeleton } from "@repo/design-system/components/ui/skeleton";
 import { cn } from "@repo/design-system/lib/utils";
-import {
-  Check,
-  ChevronDown,
-  Flame,
-  Info,
-  Loader2,
-  SlidersHorizontal,
-} from "lucide-react";
+import { ArrowDown2, Brush2, Filter, InfoCircle } from "iconsax-reactjs";
 import Link from "next/link";
 import {
   parseAsArrayOf,
@@ -41,6 +36,7 @@ import {
   useQueryState,
 } from "nuqs";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { HairlineFigure } from "@/components/mockups/hairline";
 import { useCommunityThemes } from "@/lib/hooks/themes/use-community-themes";
 import { useQREditorStore } from "@/store/editor-store";
 import type {
@@ -51,6 +47,8 @@ import type {
 import { CommunitySidebarContent } from "./community-sidebar";
 import { CommunityThemeCard } from "./community-theme-card";
 import { CommunityThemePreviewDialog } from "./community-theme-preview-dialog";
+
+const GRID = "grid gap-5 sm:grid-cols-2 xl:grid-cols-3";
 
 const popularOptions: {
   timeRange: CommunityTimeRange;
@@ -159,7 +157,7 @@ export function CommunityThemesContent() {
   };
 
   return (
-    <div className="min-h-screen flex flex-1 px-6">
+    <div className="flex min-h-[60vh] flex-1 px-6">
       {/* Desktop sidebar */}
       <aside className="hidden w-56 shrink-0 border-r lg:block">
         <div className="p-3">
@@ -180,13 +178,13 @@ export function CommunityThemesContent() {
                     size="sm"
                     className={cn(
                       "gap-1.5 lg:hidden",
-                      hasActiveFilters && "border-primary text-primary",
+                      hasActiveFilters && "border-foreground/30",
                     )}
                   >
-                    <SlidersHorizontal className="size-3.5" />
+                    <Filter className="size-3.5" />
                     Filters
                     {hasActiveFilters && (
-                      <span className="bg-primary text-primary-foreground flex size-4 items-center justify-center rounded-full text-[10px] font-bold">
+                      <span className="flex size-4 items-center justify-center rounded-full bg-foreground text-[10px] font-semibold text-background tabular-nums">
                         {(filter !== "all" ? 1 : 0) + tags.length}
                       </span>
                     )}
@@ -210,7 +208,7 @@ export function CommunityThemesContent() {
                       : sort === "newest"
                         ? "Newest"
                         : "Oldest"}
-                    <ChevronDown className="size-3.5 opacity-50" />
+                    <ArrowDown2 className="size-3.5 opacity-60" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="start" className="w-44">
@@ -228,7 +226,7 @@ export function CommunityThemesContent() {
                         className="cursor-pointer justify-between"
                       >
                         {option.label}
-                        {isActive && <Check className="size-3.5" />}
+                        {isActive && <Tick className="size-3.5" />}
                       </DropdownMenuItem>
                     );
                   })}
@@ -244,7 +242,7 @@ export function CommunityThemesContent() {
                         className="cursor-pointer justify-between"
                       >
                         {option.label}
-                        {isActive && <Check className="size-3.5" />}
+                        {isActive && <Tick className="size-3.5" />}
                       </DropdownMenuItem>
                     );
                   })}
@@ -259,7 +257,7 @@ export function CommunityThemesContent() {
                   size="sm"
                   className="text-muted-foreground gap-1.5 text-xs"
                 >
-                  <Info className="size-3.5" />
+                  <InfoCircle className="size-3.5" />
                   <span className="hidden sm:inline">How to publish</span>
                 </Button>
               </PopoverTrigger>
@@ -290,43 +288,54 @@ export function CommunityThemesContent() {
           </div>
 
           {isLoading ? (
-            <div className="grid gap-5 grid-cols-[repeat(auto-fill,minmax(280px,1fr))]">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="space-y-0 overflow-hidden rounded-xl border"
-                >
-                  <Skeleton className="h-36 rounded-none" />
-                  <div className="space-y-2 p-3">
-                    <Skeleton className="h-4 w-2/3" />
+            <div className={GRID}>
+              {Array.from({ length: 6 }).map((_, i) => (
+                <Card className="gap-0 overflow-hidden py-0 shadow-xs" key={i}>
+                  <Skeleton className="h-44 rounded-none" />
+                  <div className="flex items-center gap-2 px-4 py-3">
+                    <Skeleton className="size-5 rounded-full" />
                     <Skeleton className="h-3 w-1/3" />
                   </div>
-                </div>
+                </Card>
               ))}
             </div>
           ) : themes.length === 0 ? (
-            <div className="py-24 text-center">
-              <div className="bg-muted mx-auto mb-4 flex size-16 items-center justify-center rounded-full">
-                <Flame className="text-muted-foreground size-8" />
-              </div>
-              <h3 className="mb-2 text-lg font-semibold">
+            <div className="flex flex-col items-center gap-3 py-20 text-center">
+              <HairlineFigure className="aspect-square w-40" figure="Stack" />
+              <h3 className="text-lg font-semibold tracking-tight">
                 {filter === "mine"
                   ? "No published themes"
                   : filter === "liked"
                     ? "No liked themes"
                     : "No themes yet"}
               </h3>
-              <p className="text-muted-foreground mx-auto max-w-sm">
+              <p className="max-w-sm text-sm text-pretty text-muted-foreground">
                 {filter === "mine"
-                  ? "You haven't published any themes yet. Save a theme in the editor, then publish it."
+                  ? "Save a theme in the editor, then publish it to share it here."
                   : filter === "liked"
-                    ? "You haven't liked any themes yet. Browse community themes and like your favorites."
-                    : "Be the first to publish a theme to the community! Save a theme in the editor, then publish it from your settings."}
+                    ? "Tap the heart on any community theme to keep it here."
+                    : "Be the first: save a theme in the editor, then publish it."}
               </p>
+              {filter === "liked" ? (
+                <Button
+                  className="mt-2"
+                  onClick={() => handleFilterChange("all")}
+                  variant="outline"
+                >
+                  Browse all themes
+                </Button>
+              ) : (
+                <Button asChild className="mt-2" variant="outline">
+                  <Link href="/playground?tab=customisations">
+                    <Brush2 aria-hidden />
+                    Open the editor
+                  </Link>
+                </Button>
+              )}
             </div>
           ) : (
             <>
-              <div className="grid gap-5 gap-y-8 grid-cols-[repeat(auto-fill,minmax(280px,1fr))]">
+              <div className={GRID}>
                 {themes.map((theme) => (
                   <CommunityThemeCard
                     key={theme.id}
@@ -338,7 +347,7 @@ export function CommunityThemesContent() {
 
               <div ref={sentinelRef} className="flex justify-center pt-4">
                 {isFetchingNextPage && (
-                  <Loader2 className="text-muted-foreground h-6 w-6 animate-spin" />
+                  <Spinner className="size-6 text-muted-foreground" />
                 )}
               </div>
             </>

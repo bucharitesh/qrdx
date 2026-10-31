@@ -1,5 +1,6 @@
 "use client";
 
+import { Spinner as Loader2 } from "@repo/design-system/components/icons";
 import {
   Alert,
   AlertDescription,
@@ -9,7 +10,11 @@ import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { Skeleton } from "@repo/design-system/components/ui/skeleton";
 import type { DriveFile } from "@repo/integrations";
-import { FileText, Folder, Loader2, Search } from "lucide-react";
+import {
+  DocumentText as FileText,
+  Folder2 as Folder,
+  SearchNormal1 as Search,
+} from "iconsax-reactjs";
 import * as React from "react";
 import { toast } from "sonner";
 import { apiFetch } from "@/lib/api-fetch";

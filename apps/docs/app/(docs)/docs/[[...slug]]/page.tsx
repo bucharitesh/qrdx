@@ -15,7 +15,6 @@ import { notFound } from "next/navigation";
 import type { ComponentProps, FC, ReactNode } from "react";
 import { LLMCopyButton, ViewOptions } from "@/components/ai/page-actions";
 import { Mermaid } from "@/components/mdx/mermaid";
-import { NotFound } from "@/components/not-found";
 import * as Preview from "@/components/preview";
 import { Wrapper } from "@/components/preview/wrapper";
 import { owner, repo } from "@/lib/github";
@@ -40,7 +39,7 @@ export default async function Page(props: PageProps<"/docs/[[...slug]]">) {
   const params = await props.params;
   const page = source.getPage(params.slug);
 
-  if (!page) return <NotFound getSuggestions={() => Promise.resolve([])} />;
+  if (!page) notFound();
 
   const { body: Mdx, toc, preview } = page.data;
 

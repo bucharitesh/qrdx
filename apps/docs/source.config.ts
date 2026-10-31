@@ -187,7 +187,8 @@ export default defineConfig({
     },
     remarkPlugins: [
       remarkSteps,
-      remarkMath,
+      // "$12 vs $15" in prose is prices, not inline math; use $$…$$ for math.
+      [remarkMath, { singleDollarTextMath: false }],
       remarkAutoTypeTable,
       remarkTypeScriptToJavaScript,
     ],

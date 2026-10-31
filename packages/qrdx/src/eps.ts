@@ -390,6 +390,16 @@ class EpsPainter extends SvgPainter {
         : state.textAnchor === "end"
           ? " dup stringwidth pop neg 0 rmoveto"
           : "";
+    // Rotated text (letters set on a curve): turn the baseline with the
+    // matrix. The matrix already flips y, so its x axis gives the PS angle.
+    const angle =
+      (Math.atan2(state.matrix[1], state.matrix[0]) * 180) / Math.PI;
+    if (Math.abs(angle) > 0.01) {
+      this.out.push(
+        `gsave ${this.color(color)} ${font} findfont ${fontSize} scalefont setfont ${fmt(x)} ${fmt(y)} translate ${fmt(angle)} rotate ${psString(content)}${fit} 0 0 moveto${align} show grestore`
+      );
+      return;
+    }
     this.out.push(
       `gsave ${this.color(color)} ${font} findfont ${fontSize} scalefont setfont ${psString(content)}${fit} ${fmt(x)} ${fmt(y)} moveto${align} show grestore`
     );

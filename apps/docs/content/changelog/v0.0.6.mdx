@@ -1,0 +1,29 @@
+---
+title: "Faster pages, safer accounts and self-hosting"
+description: "Server-rendered pages, link previews, a tighter security model, library fixes and a documented way to run QRdx yourself."
+date: "2026-10-31"
+tags: ["Performance", "Security", "Self-hosting"]
+version: "0.0.6"
+---
+
+## Faster, easier to find
+
+- Pages render on the server again, so they show content sooner and search engines can read them.
+- Links to QRdx, blog posts and docs pages now unfurl with a preview image in chats and social posts.
+- The blog has an RSS feed, new illustrations, a table of contents on phones and a new guide, [Understanding QR codes](/blog/understanding-qr-codes), with an interactive error-correction demo.
+- New [comparison pages](/compare) put QRdx next to other generators and libraries, with sourced and dated facts.
+
+## Security
+
+- Stricter checks on AI image URLs, rate limits on AI and sign-in routes, and a free AI quota that can't be overspent.
+- Integration tokens are encrypted with AES-256-GCM, and integration sign-ins verify their state.
+
+## qrdx library and CLI
+
+- `qrdx` no longer adds a logo by default, respects the `size` prop, works in React Server Components and lists React as a peer dependency. PDF export's jsPDF is now optional.
+- Fixes for QR detection, contrast checks and eye patterns.
+- `@qrdx/cli` draws logos into PNG output, validates its flags and installs without sharp when your platform doesn't support it (SVG still works).
+
+## Run it yourself
+
+QRdx now ships a Dockerfile and a Compose file, with a [self-hosting guide](/docs/self-hosting). It boots with three environment variables and one sign-in provider; optional services switch off cleanly when they aren't configured.

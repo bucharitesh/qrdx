@@ -1,5 +1,5 @@
 import { cn } from "@repo/design-system/lib/utils";
-import { ChevronRight } from "lucide-react";
+import { ArrowRight2 as ChevronRight } from "iconsax-reactjs";
 import Link from "next/link";
 
 export interface BreadcrumbItem {

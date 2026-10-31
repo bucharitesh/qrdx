@@ -1,43 +1,87 @@
-export const PROMPTS = {
-  modernMinimal: {
-    label: "Modern Minimal",
+/** How a suggestion looks, drawn as a tiny chip next to its label. */
+export interface PromptSwatch {
+  fg: string;
+  bg: string;
+  /** Eye colour, when it differs from the modules. */
+  accent?: string;
+  shape: "square" | "rounded" | "dot";
+}
+
+interface Suggestion {
+  label: string;
+  prompt: string;
+  swatch: PromptSwatch;
+}
+
+// Each prompt names exact colours and patterns, so the result matches its chip.
+export const PROMPTS: Record<string, Suggestion> = {
+  inkPaper: {
+    label: "Ink & Paper",
     prompt:
-      "Create a clean, modern QR code with rounded patterns throughout. Use black foreground on white background with matching eye colors. Set bodyPattern to rounded, cornerEyePattern to rounded, and cornerEyeDotPattern to rounded. Keep moderate margin.",
+      "A calm, editorial QR code: near-black #111111 modules on a warm paper #FAF7F2 background. bodyPattern rounded, cornerEyePattern rounded, cornerEyeDotPattern rounded. eyeColor and dotColor #111111. Generous margin.",
+    swatch: { fg: "#111111", bg: "#FAF7F2", shape: "rounded" },
   },
-  vibrantColorful: {
-    label: "Vibrant & Colorful",
+  midnightGold: {
+    label: "Midnight & Gold",
     prompt:
-      "Generate a vibrant, eye-catching QR code with bold colors. Use a bright, saturated foreground color with high contrast background. Set eyeColor and dotColor to match fgColor. Use circle or rounded patterns for a playful look. Larger size for impact.",
+      "An elegant, premium QR code: deep navy #1E2A5A modules on a cream #F4EFE6 background, with antique gold #9A7428 eye dots. bodyPattern rounded, cornerEyePattern gear, cornerEyeDotPattern rounded. eyeColor #1E2A5A, dotColor #9A7428.",
+    swatch: {
+      fg: "#1E2A5A",
+      bg: "#F4EFE6",
+      accent: "#9A7428",
+      shape: "rounded",
+    },
   },
-  elegantClassic: {
-    label: "Elegant Classic",
+  sunsetCoral: {
+    label: "Sunset Coral",
     prompt:
-      "Create an elegant QR code with rounded and gear patterns. Use sophisticated dark colors like navy or charcoal on a light cream or white background. Ensure eyeColor and dotColor match the foreground for consistency. Clean, professional aesthetic.",
+      "A warm sunset QR code: coral #C3412A modules on a soft peach #FFF1E6 background, with amber #C0700B eyes. bodyPattern circle, cornerEyePattern extra-rounded, cornerEyeDotPattern circle. eyeColor and dotColor #C0700B.",
+    swatch: { fg: "#C3412A", bg: "#FFF1E6", accent: "#C0700B", shape: "dot" },
   },
-  fluidArtistic: {
-    label: "Fluid & Artistic",
+  oceanCalm: {
+    label: "Ocean Calm",
     prompt:
-      "Design an artistic QR code with circle patterns throughout. Set bodyPattern to circle, cornerEyePattern to circle, cornerEyeDotPattern to rounded. Use creative color combinations with good contrast. Set eyeColor and dotColor to match fgColor. Slightly larger margin for breathing room.",
+      "A fresh ocean QR code: deep sea blue #0B5482 modules on a pale aqua #EAF6FB background, with teal #0F9488 eyes. bodyPattern rounded, cornerEyePattern extra-rounded, cornerEyeDotPattern rounded. eyeColor and dotColor #0F9488.",
+    swatch: {
+      fg: "#0B5482",
+      bg: "#EAF6FB",
+      accent: "#0F9488",
+      shape: "rounded",
+    },
   },
-  highContrast: {
-    label: "High Contrast",
+  forestMoss: {
+    label: "Forest Moss",
     prompt:
-      "Create a high contrast QR code optimized for scanning. Use pure black foreground on pure white background, or vice versa. Square or rounded patterns. Match eyeColor and dotColor to fgColor. Standard size with appropriate margin for clarity.",
+      "An organic, natural QR code: forest green #1F5130 modules on a light sage #F0F5EA background, with moss #5E8A3A eyes. bodyPattern circle, cornerEyePattern rounded, cornerEyeDotPattern circle. eyeColor and dotColor #5E8A3A.",
+    swatch: { fg: "#1F5130", bg: "#F0F5EA", accent: "#5E8A3A", shape: "dot" },
   },
-  softRounded: {
-    label: "Soft & Rounded",
+  pastelDream: {
+    label: "Pastel Dream",
     prompt:
-      "Generate a friendly QR code with soft, rounded aesthetics. Use rounded or extra-rounded patterns for body and eyes. Choose warm, approachable colors with sufficient contrast. Set eyeColor and dotColor to match fgColor. Comfortable margin spacing.",
+      "A soft, dreamy QR code: lavender #6E44B8 modules on a blush #FDF2F8 background, with pink #D9579A eyes. bodyPattern rounded, cornerEyePattern extra-rounded, cornerEyeDotPattern circle. eyeColor and dotColor #D9579A. Keep the modules dark enough to scan.",
+    swatch: {
+      fg: "#6E44B8",
+      bg: "#FDF2F8",
+      accent: "#D9579A",
+      shape: "rounded",
+    },
   },
-  dotMatrix: {
-    label: "Dot Matrix",
+  neonNight: {
+    label: "Neon Night",
     prompt:
-      "Create a dot-style QR code with circle pattern for the body and rounded patterns for corner eyes. Use complementary colors with strong contrast. Set eyeColor and dotColor to match the foreground color. Medium to large size for dot visibility.",
+      "A glowing neon QR code: electric cyan #22E1FF modules on a near-black #0B0B16 background, with magenta #FF3DF2 eyes. bodyPattern circle, cornerEyePattern circle, cornerEyeDotPattern circle. eyeColor and dotColor #FF3DF2.",
+    swatch: { fg: "#22E1FF", bg: "#0B0B16", accent: "#FF3DF2", shape: "dot" },
   },
-  neonGlow: {
-    label: "Neon Glow",
+  retroArcade: {
+    label: "Retro Arcade",
     prompt:
-      "Design a neon-inspired QR code with vibrant electric colors. Use bright neon foreground (cyan, magenta, or lime) on dark background (black or deep purple). Use circle patterns for body and corner eyes. Set eyeColor and dotColor to match fgColor for consistent neon look.",
+      "A retro arcade, pixel-art QR code: royal blue #2B2BD6 modules on a warm cream #FFF4D6 background, with red #E63946 eyes. bodyPattern square, cornerEyePattern square, cornerEyeDotPattern square. eyeColor and dotColor #E63946.",
+    swatch: {
+      fg: "#2B2BD6",
+      bg: "#FFF4D6",
+      accent: "#E63946",
+      shape: "square",
+    },
   },
 };
 

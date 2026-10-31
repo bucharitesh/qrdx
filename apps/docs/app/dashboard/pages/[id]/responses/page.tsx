@@ -14,7 +14,12 @@ import {
   EmptyTitle,
 } from "@repo/design-system/components/ui/empty";
 import { cn } from "@repo/design-system/lib/utils";
-import { ArrowLeft, ChevronLeft, ChevronRight, Download } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowLeft2 as ChevronLeft,
+  ArrowRight2 as ChevronRight,
+  Import as Download,
+} from "iconsax-reactjs";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";

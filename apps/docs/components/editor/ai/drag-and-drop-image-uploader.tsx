@@ -1,5 +1,5 @@
 import { cn } from "@repo/design-system/lib/utils";
-import { Upload } from "lucide-react";
+import { Export as Upload } from "iconsax-reactjs";
 import { useDropzone } from "react-dropzone";
 
 interface DragAndDropImageUploaderProps {

@@ -2,19 +2,24 @@ import { cn } from "@repo/design-system/lib/utils";
 import {
   ArrowRight,
   Camera,
-  Code,
-  Contact,
-  Files,
-  type LucideIcon,
+  Category,
+  Code1,
+  Personalcard,
   Ruler,
-  ScanLine,
-  Shapes,
+  TableDocument,
+  Verify,
   Wifi,
-} from "lucide-react";
+} from "iconsax-reactjs";
 import type { Metadata } from "next";
-import Link from "next/link";
 import { MockupImage } from "@/components/mockups/mockup-image";
 import { productShots, type Visual } from "@/components/mockups/visuals";
+import {
+  type CardIcon,
+  cardClass,
+  IconTile,
+  interactiveCardClass,
+} from "@/components/sections/tools/cards";
+import { SpotlightLink } from "@/components/sections/tools/spotlight-link";
 import { ToolHero } from "@/components/sections/tools/tool-hero";
 import { createMetadata } from "@/lib/metadata";
 import { QR_TYPES } from "@/lib/qr-types-content";
@@ -30,7 +35,7 @@ interface Tool {
   href: string;
   title: string;
   description: string;
-  icon: LucideIcon;
+  icon: CardIcon;
   /** Screenshot of the tool; tools with one are shown as large cards. */
   image?: Visual;
   /** object-position for the cropped thumbnail. */
@@ -50,7 +55,7 @@ const tools: Tool[] = [
     title: "Bulk QR code generator",
     description:
       "Upload a CSV and download up to 5,000 styled codes as PNG or SVG in one ZIP, generated in your browser.",
-    icon: Files,
+    icon: TableDocument,
     image: productShots.bulkGenerator,
     imagePosition: "object-right-top",
   },
@@ -59,7 +64,7 @@ const tools: Tool[] = [
     title: "QR code scan checker",
     description:
       "Upload an image of a QR code to decode it and check how reliably it scans.",
-    icon: ScanLine,
+    icon: Verify,
     image: productShots.scanChecker,
     imagePosition: "object-[50%_78%]",
   },
@@ -86,21 +91,21 @@ const tools: Tool[] = [
     title: "vCard QR code generator",
     description:
       "Put your contact details on a business card that saves straight to the phone.",
-    icon: Contact,
+    icon: Personalcard,
   },
   {
     href: "/qr-code-generator",
     title: `All ${QR_TYPES.length} QR code types`,
     description:
       "Generators for WhatsApp, UPI, email, SMS, social profiles, payments and more.",
-    icon: Shapes,
+    icon: Category,
   },
   {
     href: "/docs/developers/image-api",
     title: "QR code image API",
     description:
       "Get a QR code image from a URL for READMEs, emails and HTML, with no API key.",
-    icon: Code,
+    icon: Code1,
   },
 ];
 
@@ -109,12 +114,16 @@ const otherTools = tools.filter((tool) => !tool.image);
 
 function ToolCard({ tool }: { tool: Tool }) {
   return (
-    <Link
+    <SpotlightLink
       href={tool.href}
-      className="group rounded-xl border border-border bg-accent/50 hover:bg-accent transition-colors overflow-hidden flex flex-col"
+      className={cn(
+        cardClass,
+        interactiveCardClass,
+        "flex h-full min-w-0 flex-col overflow-hidden",
+      )}
     >
       {tool.image && (
-        <div className="aspect-video overflow-hidden border-b border-border bg-background">
+        <div className="aspect-[16/8] overflow-hidden border-b border-border bg-muted/30">
           <MockupImage
             {...tool.image}
             bare
@@ -123,21 +132,22 @@ function ToolCard({ tool }: { tool: Tool }) {
           />
         </div>
       )}
-      <div className="p-5 flex flex-col gap-3">
-        <div className="flex items-center gap-3">
-          <span className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-border bg-background">
-            <tool.icon className="size-4" />
+      <div className="flex flex-1 items-start gap-3.5 p-4 sm:p-5">
+        <IconTile icon={tool.icon} />
+        <div className="flex min-w-0 flex-1 flex-col gap-1">
+          <span className="flex items-start gap-2 font-medium leading-snug text-foreground">
+            <span className="min-w-0 text-pretty">{tool.title}</span>
+            <ArrowRight
+              aria-hidden
+              className="mt-0.5 ml-auto size-3.5 shrink-0 text-muted-foreground transition-[transform,color] duration-200 group-hover:translate-x-0.5 group-hover:text-foreground"
+            />
           </span>
-          <span className="font-semibold text-secondary-foreground">
-            {tool.title}
-          </span>
-          <ArrowRight className="ml-auto size-4 text-muted-foreground group-hover:translate-x-0.5 transition-transform" />
+          <p className="text-sm text-muted-foreground leading-relaxed text-pretty">
+            {tool.description}
+          </p>
         </div>
-        <p className="text-sm text-muted-foreground leading-relaxed">
-          {tool.description}
-        </p>
       </div>
-    </Link>
+    </SpotlightLink>
   );
 }
 
@@ -155,13 +165,16 @@ export default function ToolsPage() {
         ]}
       />
 
-      <section className="w-full px-6 md:px-10 py-10 flex flex-col gap-4">
-        <div className="grid gap-4 sm:grid-cols-2">
+      <section
+        aria-label="Tools"
+        className="w-full px-6 md:px-10 py-10 flex flex-col gap-3"
+      >
+        <div className="grid gap-3 sm:grid-cols-2">
           {featuredTools.map((tool) => (
             <ToolCard key={tool.href} tool={tool} />
           ))}
         </div>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           {otherTools.map((tool) => (
             <ToolCard key={tool.href} tool={tool} />
           ))}

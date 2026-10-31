@@ -5,18 +5,19 @@ import { Button } from "@repo/design-system/components/ui/button";
 import { Card } from "@repo/design-system/components/ui/card";
 import { cn } from "@repo/design-system/lib/utils";
 import {
-  AlertCircle,
-  CheckCheck,
-  ChevronsUpDown,
-  Loader2,
-  Zap,
-} from "lucide-react";
-import { getNormalizedColor } from "qrdx";
+  InfoCircle as AlertCircle,
+  TickCircle as CheckCheck,
+  ArrowDown2 as ChevronsUpDown,
+  MagicStar as Zap,
+} from "iconsax-reactjs";
+import { getNormalizedColor, QRCodeSVG } from "qrdx";
 import { type ComponentProps, useState } from "react";
-import { Loader } from "@/components/loader";
 import { useFeedbackText } from "@/lib/hooks/use-feedback-text";
+import { soundEvent } from "@/lib/sound/emit";
 import type { ThemeStyles } from "@/types/theme";
 import { applyGeneratedTheme } from "@/utils/ai/apply-theme";
+import { AnimatedBot } from "./animated-bot";
+import { ShineText } from "./shine-border";
 
 type ChatThemePreviewProps = ComponentProps<"div"> & ChatThemePreviewPropsBase;
 
@@ -62,12 +63,11 @@ export function ChatThemePreview({
           "w-full max-w-[550px] gap-0 overflow-hidden rounded-lg py-0 shadow-none",
         )}
       >
-        <div className="flex size-full h-10 items-center gap-2 p-1.5">
-          <div className="bg-muted flex size-7 items-center justify-center rounded-sm">
-            <Loader2 className="text-muted-foreground size-4 animate-spin" />
+        <div className="flex size-full h-11 items-center gap-2.5 p-2">
+          <div className="bg-muted/60 grid size-7 place-items-center rounded-full border">
+            <AnimatedBot className="size-4" thinking />
           </div>
-
-          <Loader variant="text-shimmer" text={feedbackText} size="md" />
+          <ShineText className="text-sm font-medium">{feedbackText}</ShineText>
         </div>
       </Card>
     );
@@ -81,11 +81,11 @@ export function ChatThemePreview({
         )}
       >
         <div className="flex size-full h-10 items-center gap-2 p-1.5">
-          <div className="bg-destructive flex size-7 items-center justify-center rounded-sm">
-            <AlertCircle className="text-destructive-foreground size-4" />
+          <div className="bg-destructive/10 text-destructive grid size-7 place-items-center rounded-full">
+            <AlertCircle className="size-4" />
           </div>
           <span className="text-foreground/90 text-sm">
-            Generation cancelled or failed.
+            Stopped or failed. Retry from the message above.
           </span>
         </div>
       </Card>
@@ -94,7 +94,9 @@ export function ChatThemePreview({
   const handleApplyTheme = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    if (status === "complete") applyGeneratedTheme(themeStyles);
+    if (status !== "complete") return;
+    applyGeneratedTheme(themeStyles);
+    soundEvent("apply");
   };
 
   if (status === "complete")
@@ -111,9 +113,25 @@ export function ChatThemePreview({
           )}
           onClick={() => setIsExpanded(!isExpanded)}
         >
-          <div className="bg-primary/15 flex size-7 items-center justify-center rounded-sm">
-            <CheckCheck className="text-primary size-4" />
+          <div className="grid size-7 shrink-0 place-items-center overflow-hidden rounded-[10px] bg-white p-0.5 ring-1 ring-black/10 [&_svg]:size-full">
+            <QRCodeSVG
+              bgColor={themeStyles.bgColor}
+              bodyPattern={themeStyles.bodyPattern}
+              cornerEyeDotPattern={themeStyles.cornerEyeDotPattern}
+              cornerEyePattern={themeStyles.cornerEyePattern}
+              dotColor={themeStyles.dotColor}
+              eyeColor={themeStyles.eyeColor}
+              fgColor={themeStyles.fgColor}
+              level="L"
+              margin={1}
+              size={28}
+              value="qrdx.dev"
+            />
           </div>
+          <CheckCheck
+            className="size-4 shrink-0 text-emerald-600 dark:text-emerald-400"
+            variant="Bold"
+          />
 
           <div className="flex gap-1">
             <div
@@ -149,7 +167,12 @@ export function ChatThemePreview({
               className="text-foreground/75 group-hover/control:text-foreground ml-auto transition-colors"
               aria-label={isExpanded ? "Collapse section" : "Expand section"}
             >
-              <ChevronsUpDown className="size-4" />
+              <ChevronsUpDown
+                className={cn(
+                  "size-4 transition-transform",
+                  isExpanded && "rotate-180",
+                )}
+              />
             </button>
           </div>
         </div>
@@ -173,9 +196,8 @@ export function ChatThemePreview({
 }
 
 const FEEDBACK_MESSAGES = [
-  "Generating your theme...",
-  "Tweaking color tokens...",
-  "Making a good theme takes time...",
-  "Still working on your theme...",
-  "Almost there...",
+  "Picking colours that scan…",
+  "Shaping the dots and eyes…",
+  "Checking contrast…",
+  "Almost there…",
 ];

@@ -19,7 +19,11 @@ import {
   CardTitle,
 } from "@repo/design-system/components/ui/card";
 import { Input } from "@repo/design-system/components/ui/input";
-import { Eye, EyeOff, RefreshCw } from "lucide-react";
+import {
+  Eye,
+  EyeSlash as EyeOff,
+  Refresh2 as RefreshCw,
+} from "iconsax-reactjs";
 import { useState, useTransition } from "react";
 import { CopyButton } from "../../_components/event-checkboxes";
 import { revealWebhookSecret, rotateWebhookSecret } from "../../_lib/actions";

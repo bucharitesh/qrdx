@@ -1,4 +1,4 @@
-import { FileText } from "lucide-react";
+import { DocumentText as FileText } from "iconsax-reactjs";
 import { themePreset } from "@/components/landing/theme";
 import { registerTemplate } from "./registry";
 

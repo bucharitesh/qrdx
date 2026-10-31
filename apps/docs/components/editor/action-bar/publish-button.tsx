@@ -1,5 +1,6 @@
 "use client";
 
+import { Spinner as Loader2 } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   Dialog,
@@ -10,7 +11,7 @@ import {
   DialogTitle,
 } from "@repo/design-system/components/ui/dialog";
 import { cn } from "@repo/design-system/lib/utils";
-import { Globe, Loader2 } from "lucide-react";
+import { Global as Globe } from "iconsax-reactjs";
 import { useState } from "react";
 import { TagSelector } from "@/components/tag-selector";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
@@ -42,7 +43,7 @@ export function PublishButton({
           className={cn("text-muted-foreground", className)}
           disabled
         >
-          <Globe className="size-3.5" />
+          <Globe className="size-4" />
           <span className="hidden text-sm md:block">Published</span>
         </Button>
       </TooltipWrapper>
@@ -72,9 +73,9 @@ export function PublishButton({
           onClick={() => setShowDialog(true)}
         >
           {publishMutation.isPending ? (
-            <Loader2 className="size-3.5 animate-spin" />
+            <Loader2 className="size-4" />
           ) : (
-            <Globe className="size-3.5" />
+            <Globe className="size-4" />
           )}
           <span className="hidden text-sm md:block">Publish</span>
         </Button>

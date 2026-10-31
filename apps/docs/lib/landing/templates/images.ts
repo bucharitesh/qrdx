@@ -1,4 +1,4 @@
-import { Images } from "lucide-react";
+import { Gallery as Images } from "iconsax-reactjs";
 import { themePreset } from "@/components/landing/theme";
 import { registerTemplate } from "./registry";
 

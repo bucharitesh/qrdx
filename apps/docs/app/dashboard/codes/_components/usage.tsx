@@ -3,7 +3,7 @@
 import { toast } from "@repo/design-system";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Progress } from "@repo/design-system/components/ui/progress";
-import { Gem, Plus } from "lucide-react";
+import { Diamonds as Gem, Add as Plus } from "iconsax-reactjs";
 import { type ComponentProps, useState } from "react";
 import type { CodeUsage } from "@/app/dashboard/codes/_lib/qr-codes";
 import { PLAN_NAMES } from "@/lib/pricing";

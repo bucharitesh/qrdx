@@ -1,0 +1,351 @@
+/* Halloween characters. Transform/opacity only; static under reduced motion. */
+
+/* Speech bubbles ("Boo!", "Meow!", "Hss!", "purr…") */
+.bubble {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 2px);
+  translate: -50% 4px;
+  opacity: 0;
+  scale: 0.85;
+  transition:
+    opacity 160ms ease,
+    translate 260ms cubic-bezier(0.32, 0.72, 0, 1),
+    scale 260ms cubic-bezier(0.32, 0.72, 0, 1);
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+[data-bubble="true"] > .bubble,
+[data-bubble="true"] .bubble {
+  opacity: 1;
+  translate: -50% 0;
+  scale: 1;
+}
+
+/* Spider */
+.spiderBody {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 20%;
+}
+
+.spider:hover .spiderBody {
+  animation: jiggle 110ms linear infinite alternate;
+}
+
+.spider[data-spin="true"] .spiderBody {
+  animation: spin 620ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* Jack-o'-lantern */
+.pumpkin {
+  position: absolute;
+  pointer-events: auto;
+  touch-action: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.pumpkinGlow {
+  position: absolute;
+  inset: -60%;
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle,
+    rgb(255 176 64 / 0.55),
+    rgb(255 122 26 / 0.16) 45%,
+    transparent 68%
+  );
+  opacity: calc(0.18 + var(--near, 0) * 0.82);
+  scale: calc(0.75 + var(--near, 0) * 0.45);
+  pointer-events: none;
+}
+
+.pumpkinFlicker {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  animation: flicker 2.6s infinite;
+}
+
+.pumpkinBody {
+  position: relative;
+  display: block;
+  transform-origin: 50% 100%;
+}
+
+.pumpkin[data-squash="true"] .pumpkinBody {
+  animation: squash 520ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.pumpkinBody img {
+  transition: filter 220ms ease;
+  filter: brightness(calc(1 + var(--near, 0) * 0.18))
+    drop-shadow(0 0 calc(var(--near, 0) * 6px) rgb(255 176 64 / 0.8));
+}
+
+/* Ghost: lazy figure-8 (x at half the y frequency), springs away from the cursor */
+.fig8x {
+  animation: fig8x 9s ease-in-out infinite;
+}
+
+.fig8y {
+  animation: fig8y 4.5s ease-in-out infinite;
+}
+
+.ghost {
+  position: relative;
+  pointer-events: auto;
+  touch-action: manipulation;
+  transition: opacity 220ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ghost[data-caught="true"] {
+  opacity: 0.4;
+}
+
+/* Cat */
+.cat {
+  position: absolute;
+  bottom: 0;
+  pointer-events: auto;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.catBody {
+  position: relative;
+  transform-origin: 50% 100%;
+  transition: scale 260ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.cat[data-mood="meow"] .catBody {
+  animation: stretch 820ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.cat[data-mood="purr"] .catBody {
+  animation: purr 70ms linear infinite alternate;
+}
+
+.cat[data-mood="hiss"] .catBody {
+  scale: 1.16 1.12;
+  animation: hiss 90ms linear 6 alternate;
+}
+
+.pupil {
+  transform: translate(var(--px, 0px), var(--py, 0px));
+}
+
+.lid {
+  transform-box: fill-box;
+  transform-origin: 50% 0;
+  transform: scaleY(0);
+  transition: transform 70ms ease;
+}
+
+.cat[data-blink="true"] .lid,
+.cat[data-mood="purr"] .lid {
+  transform: scaleY(1.05);
+}
+
+.cat[data-mood="purr"] .lid {
+  transform: scaleY(0.62);
+}
+
+/* Bats */
+.bat {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: auto;
+  will-change: transform;
+}
+
+.batWings {
+  display: block;
+  transform-origin: 50% 45%;
+}
+
+.bat[data-mode="roost"] .batWings {
+  animation: roost 3.4s ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+}
+
+.bat[data-mode="fly"] {
+  pointer-events: none;
+}
+
+.bat[data-mode="fly"] .batWings {
+  animation: flap 0.22s ease-in-out infinite alternate;
+}
+
+/* Canvas fog */
+.fog {
+  position: absolute;
+  bottom: -30px;
+  height: 120px;
+  width: 70%;
+  border-radius: 9999px;
+  background: radial-gradient(
+    ellipse at center,
+    color-mix(in oklab, var(--foreground) 9%, transparent),
+    transparent 70%
+  );
+  filter: blur(14px);
+  animation: drift 18s ease-in-out infinite alternate;
+  animation-delay: var(--delay, 0s);
+}
+
+@keyframes jiggle {
+  from {
+    transform: rotate(-5deg);
+  }
+  to {
+    transform: rotate(5deg);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes flicker {
+  0%,
+  100% {
+    opacity: 0.85;
+  }
+  12% {
+    opacity: 0.55;
+  }
+  20% {
+    opacity: 1;
+  }
+  37% {
+    opacity: 0.7;
+  }
+  55% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 0.72;
+  }
+  82% {
+    opacity: 0.95;
+  }
+}
+
+@keyframes squash {
+  0% {
+    transform: scale(1.22, 0.74);
+  }
+  40% {
+    transform: scale(0.9, 1.12);
+  }
+  70% {
+    transform: scale(1.05, 0.96);
+  }
+  100% {
+    transform: scale(1, 1);
+  }
+}
+
+@keyframes fig8x {
+  0%,
+  100% {
+    transform: translateX(calc(var(--fx, 14px) * -1)) rotate(-4deg);
+  }
+  50% {
+    transform: translateX(var(--fx, 14px)) rotate(4deg);
+  }
+}
+
+@keyframes fig8y {
+  0%,
+  100% {
+    transform: translateY(calc(var(--fy, 9px) * -1));
+  }
+  50% {
+    transform: translateY(var(--fy, 9px));
+  }
+}
+
+@keyframes stretch {
+  0%,
+  100% {
+    transform: scale(1, 1);
+  }
+  35% {
+    transform: scale(1.08, 0.88);
+  }
+  65% {
+    transform: scale(0.97, 1.05);
+  }
+}
+
+@keyframes purr {
+  from {
+    transform: translateX(-0.5px) rotate(-0.4deg);
+  }
+  to {
+    transform: translateX(0.5px) rotate(0.4deg);
+  }
+}
+
+@keyframes hiss {
+  from {
+    transform: translateX(-1.5px);
+  }
+  to {
+    transform: translateX(1.5px);
+  }
+}
+
+@keyframes roost {
+  0%,
+  100% {
+    transform: rotate(-3deg) scale(1, 1);
+  }
+  50% {
+    transform: rotate(3deg) scale(0.86, 0.96);
+  }
+}
+
+@keyframes flap {
+  from {
+    transform: scale(1, 1);
+  }
+  to {
+    transform: scale(0.9, 0.45);
+  }
+}
+
+@keyframes drift {
+  from {
+    transform: translateX(-12%);
+  }
+  to {
+    transform: translateX(28%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spider:hover .spiderBody,
+  .spider[data-spin="true"] .spiderBody,
+  .pumpkinFlicker,
+  .pumpkin[data-squash="true"] .pumpkinBody,
+  .fig8x,
+  .fig8y,
+  .cat[data-mood] .catBody,
+  .bat .batWings,
+  .fog {
+    animation: none;
+  }
+
+  .bubble,
+  .lid {
+    transition: none;
+  }
+}

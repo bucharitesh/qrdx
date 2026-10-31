@@ -1,4 +1,4 @@
-import { Smartphone } from "lucide-react";
+import { Mobile as Smartphone } from "iconsax-reactjs";
 import { themePreset } from "@/components/landing/theme";
 import { registerTemplate } from "./registry";
 

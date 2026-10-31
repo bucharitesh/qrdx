@@ -6,6 +6,7 @@ import * as React from "react";
 import { useQREditorStore } from "@/store/editor-store";
 import type { YouTubeContent } from "@/types/qr-content";
 import { encodeYouTube } from "@/utils/qr-content-encoder";
+import { useExternalConfigSync } from "./use-external-config-sync";
 
 export function YouTubeForm() {
   const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
@@ -21,27 +22,21 @@ export function YouTubeForm() {
     videoUrl: storedConfig?.videoUrl || "",
   });
 
-  // Sync with store when config changes (e.g., from smart paste)
-  React.useEffect(() => {
-    if (storedConfig && (storedConfig.channelUrl || storedConfig.videoUrl)) {
-      if (
-        storedConfig.channelUrl !== youtubeData.channelUrl ||
-        storedConfig.videoUrl !== youtubeData.videoUrl
-      ) {
-        setYoutubeData({
-          channelUrl: storedConfig.channelUrl || "",
-          videoUrl: storedConfig.videoUrl || "",
-        });
-      }
-    }
-  }, [storedConfig, youtubeData.channelUrl, youtubeData.videoUrl]);
+  // Only external changes (e.g. smart paste) flow back into the form
+  const markWritten = useExternalConfigSync(storedConfig, (config) =>
+    setYoutubeData({
+      channelUrl: config.channelUrl || "",
+      videoUrl: config.videoUrl || "",
+    }),
+  );
 
   React.useEffect(() => {
     const config: YouTubeContent = { type: "youtube", ...youtubeData };
     const encoded = encodeYouTube(config);
     setValue(encoded);
+    markWritten(config);
     setContentConfig("youtube", config);
-  }, [youtubeData, setValue, setContentConfig]);
+  }, [youtubeData, setValue, setContentConfig, markWritten]);
 
   return (
     <div className="space-y-3">

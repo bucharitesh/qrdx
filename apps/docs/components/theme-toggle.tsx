@@ -24,6 +24,7 @@ export function ThemeToggle({ className, ...props }: ThemeToggleProps) {
   return (
     <TooltipWrapper label="Toggle theme" kbd="L" asChild>
       <Button
+        aria-label="Toggle theme"
         variant="ghost"
         size="icon"
         className={cn("cursor-pointer", className)}

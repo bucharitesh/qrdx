@@ -4,6 +4,7 @@ import { database as db, webhookDelivery } from "@repo/database";
 import cuid from "cuid";
 import { and, asc, eq, gt, inArray, sql } from "drizzle-orm";
 import { after } from "next/server";
+import { triggerIntegrationSyncs } from "@/lib/data-connections/sync";
 import { getPlanLimits } from "@/lib/plans";
 import { shortLinkUrl } from "@/lib/short-links";
 import { claimDueDeliveries, deliverNow, processClaimed } from "./deliveries";
@@ -326,6 +327,8 @@ export function emitFormSubmitted(
     submitted_at: (input.submittedAt ?? new Date()).toISOString(),
   };
   emitEventInBackground("form.submitted", data, scope);
+  // HubSpot / Mailchimp streams (lib/data-connections): sent right away
+  triggerIntegrationSyncs(scope, "responses");
 }
 
 // ─── Scans (called by lib/scans.ts recordScan) ───────────────────────────────
@@ -380,6 +383,8 @@ export async function emitScanRecorded(
 ): Promise<void> {
   try {
     const scope = { userId: code.userId, organizationId: code.organizationId };
+    // Google Sheets "keep in sync": batched, at most every 5 min per sheet
+    triggerIntegrationSyncs(scope, "scans");
     const subscribers = await loadSubscribers(scope, { cached: true });
     if (!subscribers) return;
     const summary = scanSummary(scan, code);

@@ -1,3 +1,4 @@
+import { runIntegrationSyncs } from "@/lib/data-connections/sync";
 import { pruneDeliveries, runDeliveryWorker } from "@/lib/events/deliveries";
 import { isAuthorizedCronRequest, unauthorized } from "../_lib/auth";
 
@@ -20,7 +21,11 @@ export async function GET(request: Request) {
   } catch (error) {
     console.error("Pruning webhook deliveries failed:", error);
   }
-  console.info(JSON.stringify({ event: "cron.webhooks", ...summary, pruned }));
+  // Data-out streams (Google Sheets, HubSpot, Mailchimp) ride the same cron.
+  const integrations = await runIntegrationSyncs({ budgetMs: 12_000 });
+  console.info(
+    JSON.stringify({ event: "cron.webhooks", ...summary, pruned, integrations }),
+  );
   return Response.json(
     { ...summary, pruned },
     { headers: { "Cache-Control": "no-store" } },

@@ -1,3 +1,4 @@
+import { Briefcase, Ruler, Verify } from "iconsax-reactjs";
 import type { Metadata } from "next";
 import { HubPage } from "@/app/(home)/qr-codes-for/_components/hub-page";
 import { createMetadata } from "@/lib/metadata";
@@ -23,21 +24,21 @@ export default function PlacementsHubPage() {
           href: "/qr-codes-for",
           title: "Browse by industry",
           description: `Restaurants, retail, real estate, healthcare and ${industries.items.length - 4} more industries, with the code types each one uses.`,
-          cta: "QR codes by industry",
+          icon: Briefcase,
         },
         {
           href: "/tools/print-size",
           title: "Print size calculator",
           description:
             "The minimum size for your exact content, distance and error-correction level.",
-          cta: "Calculate your size",
+          icon: Ruler,
         },
         {
           href: "/tools/scan-checker",
           title: "Scan checker",
           description:
             "Upload your design to decode it and check contrast, quiet zone and module size before printing.",
-          cta: "Check a QR code",
+          icon: Verify,
         },
       ]}
       faqs={[

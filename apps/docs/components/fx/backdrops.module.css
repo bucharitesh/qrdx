@@ -1,0 +1,164 @@
+/*
+ * Structure and motion for the gradient backdrops that sit under an ASCII
+ * field. Colours come from CSS variables that each component sets per theme
+ * with Tailwind classes (light mode is tuned on its own, not inverted).
+ * Motion is transform-only, paused off screen or in a hidden tab
+ * ([data-paused], set by usePlayback) and removed for reduced motion.
+ */
+
+.layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* (0,2,0) beats the single-class animation shorthands below. */
+.layer[data-paused] * {
+  animation-play-state: paused;
+}
+
+/* ---------------------------------------------------------------- mesh */
+
+.blob {
+  position: absolute;
+  border-radius: 50%;
+  will-change: transform;
+  background: radial-gradient(
+    closest-side,
+    var(--blob),
+    color-mix(in oklab, var(--blob) 62%, transparent) 38%,
+    color-mix(in oklab, var(--blob) 22%, transparent) 68%,
+    transparent
+  );
+}
+.blobA {
+  --blob: var(--mesh-a);
+  width: 58%;
+  aspect-ratio: 1.35;
+  left: -6%;
+  top: -34%;
+  animation: drift-a 68s ease-in-out infinite alternate;
+}
+.blobB {
+  --blob: var(--mesh-b);
+  width: 52%;
+  aspect-ratio: 1.2;
+  right: -10%;
+  top: -18%;
+  animation: drift-b 84s ease-in-out infinite alternate;
+}
+.blobC {
+  --blob: var(--mesh-c);
+  width: 46%;
+  aspect-ratio: 1.5;
+  left: 30%;
+  bottom: -38%;
+  animation: drift-c 96s ease-in-out infinite alternate;
+}
+
+@keyframes drift-a {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(9%, 7%, 0) scale(1.08);
+  }
+  to {
+    transform: translate3d(3%, 12%, 0) scale(0.96);
+  }
+}
+@keyframes drift-b {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-10%, 9%, 0) scale(0.94);
+  }
+  to {
+    transform: translate3d(-4%, -4%, 0) scale(1.06);
+  }
+}
+@keyframes drift-c {
+  from {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-12%, -8%, 0) scale(1.1);
+  }
+  to {
+    transform: translate3d(8%, -3%, 0) scale(1);
+  }
+}
+
+/* -------------------------------------------------------------- aurora */
+
+.aurora {
+  -webkit-mask-image: linear-gradient(to bottom, black 20%, transparent 95%);
+  mask-image: linear-gradient(to bottom, black 20%, transparent 95%);
+}
+
+.auroraBand {
+  position: absolute;
+  inset: -25% -30% 15% -30%;
+  will-change: transform;
+  background:
+    radial-gradient(ellipse 30% 55% at 36% 18%, var(--au-1), transparent 72%),
+    radial-gradient(ellipse 28% 50% at 64% 10%, var(--au-2), transparent 72%),
+    conic-gradient(
+      from 156deg at 50% -6%,
+      transparent 0deg,
+      var(--au-core) 18deg,
+      color-mix(in oklab, var(--au-core) 60%, transparent) 24deg,
+      var(--au-core) 30deg,
+      transparent 48deg
+    );
+  animation: aurora-shift 56s ease-in-out infinite alternate;
+}
+.auroraRim {
+  position: absolute;
+  top: 0;
+  left: 18%;
+  right: 18%;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--au-rim),
+    transparent
+  );
+}
+
+@keyframes aurora-shift {
+  from {
+    transform: translate3d(-3.5%, 0, 0) scaleY(1);
+  }
+  to {
+    transform: translate3d(3.5%, 2%, 0) scaleY(1.12);
+  }
+}
+
+/* ---------------------------------------------------------------- halo */
+
+.haloGlow {
+  position: absolute;
+  translate: -50% -50%;
+  border-radius: 50%;
+  will-change: transform;
+  background: radial-gradient(
+    closest-side,
+    var(--halo-core),
+    color-mix(in oklab, var(--halo-core) 55%, var(--halo-edge)) 36%,
+    var(--halo-edge) 62%,
+    transparent
+  );
+  transition: transform 1.4s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* Last, so it wins over the rules above at equal specificity. */
+@media (prefers-reduced-motion: reduce) {
+  .layer * {
+    animation: none;
+    transition: none;
+  }
+}

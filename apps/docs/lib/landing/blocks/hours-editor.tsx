@@ -1,9 +1,10 @@
 "use client";
 
+import { Close as X } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Switch } from "@repo/design-system/components/ui/switch";
-import { Copy, LocateFixed, Plus, X } from "lucide-react";
+import { Copy, Gps as LocateFixed, Add as Plus } from "iconsax-reactjs";
 import { useId, useMemo } from "react";
 import { FieldRow, TextField } from "@/components/landing/editor/fields";
 import { WEEKDAYS } from "@/components/landing/opening-hours";

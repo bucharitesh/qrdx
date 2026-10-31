@@ -1,12 +1,13 @@
 "use client";
 
 import { toast } from "@repo/design-system";
+import { Spinner as Loader2 } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { Skeleton } from "@repo/design-system/components/ui/skeleton";
 import { Switch } from "@repo/design-system/components/ui/switch";
-import { ArrowRight, Download, Loader2 } from "lucide-react";
+import { ArrowRight, Import as Download } from "iconsax-reactjs";
 import Link from "next/link";
 import { downloadQRCode, QRCode } from "qrdx";
 import { type ComponentType, useEffect, useState } from "react";
@@ -42,8 +43,10 @@ import { VenmoForm } from "@/components/editor/content-forms/venmo-form";
 import { WhatsAppForm } from "@/components/editor/content-forms/whatsapp-form";
 import { WifiForm } from "@/components/editor/content-forms/wifi-form";
 import { YouTubeForm } from "@/components/editor/content-forms/youtube-form";
+import { InfoHint } from "@/components/help/info-hint";
 import { HairlineFigure } from "@/components/mockups/hairline";
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
+import { soundEvent } from "@/lib/sound/emit";
 import { dubshSchema, googleDriveSchema } from "@/lib/validations/qr-content";
 import { useQREditorStore } from "@/store/editor-store";
 import {
@@ -223,6 +226,7 @@ export function TypeGenerator({ type }: { type: ContentType }) {
         size: { width: 1024, height: 1024 },
         filename: `${activeType}-qr-code.${format}`,
       });
+      soundEvent("download");
     } catch (error) {
       toast.error("Download failed", {
         description: error instanceof Error ? error.message : undefined,
@@ -300,9 +304,12 @@ export function TypeGenerator({ type }: { type: ContentType }) {
         </div>
 
         <div className="flex w-full items-center justify-between gap-3">
-          <Label htmlFor="quiet-zone" className="text-xs">
-            Quiet zone (blank border)
-          </Label>
+          <span className="flex items-center gap-1.5">
+            <Label htmlFor="quiet-zone" className="text-xs">
+              Quiet zone (blank border)
+            </Label>
+            <InfoHint align="start" id="quiet-zone" />
+          </span>
           <Switch
             id="quiet-zone"
             checked={quietZone}

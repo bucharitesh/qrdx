@@ -1,9 +1,11 @@
 "use client";
 
+import { Close as X } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
-import { Link2, X } from "lucide-react";
+import { Link2 } from "iconsax-reactjs";
 import { type FormEvent, useId, useState } from "react";
+import { CloudFileButton } from "@/components/connected-accounts/cloud-file-button";
 import { FieldRow, normalizeLink } from "@/components/landing/editor/fields";
 import { landingUrlSchema } from "@/types/landing";
 import type { FileSource } from "../source";
@@ -169,6 +171,9 @@ export function FileSourceField({
           {STORAGE_OFF_MESSAGE}
           {allowLink && " Paste a link to the file instead."}
         </p>
+      )}
+      {allowLink && (
+        <CloudFileButton onPick={(url) => onChange({ type: "url", url })} />
       )}
       {allowLink && (
         <div className="space-y-1">

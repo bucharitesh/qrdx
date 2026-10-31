@@ -1,4 +1,4 @@
-import { Clapperboard } from "lucide-react";
+import { VideoSquare as Clapperboard } from "iconsax-reactjs";
 import { z } from "zod";
 import { lineText } from "@/components/landing/block-kit";
 import {

@@ -1,17 +1,17 @@
 "use client";
 
+import { Spinner as LoaderCircle } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Slider } from "@repo/design-system/components/ui/slider";
 import { cn } from "@repo/design-system/lib/utils";
 import {
   Camera,
-  CameraOff,
-  Flashlight,
-  FlashlightOff,
-  LoaderCircle,
-  SwitchCamera,
-  ZoomIn,
-} from "lucide-react";
+  CameraSlash as CameraOff,
+  FlashCircle as Flashlight,
+  FlashSlash as FlashlightOff,
+  Repeat as SwitchCamera,
+  SearchZoomIn as ZoomIn,
+} from "iconsax-reactjs";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { type DetectedCode, detectCodes, getDetector } from "./detector";
 

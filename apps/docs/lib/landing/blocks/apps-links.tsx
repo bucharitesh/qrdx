@@ -1,6 +1,6 @@
 "use client";
 
-import { Apple, Globe, Play } from "lucide-react";
+import { Apple, Global as Globe, GooglePlay } from "iconsax-reactjs";
 import { useEffect, useState } from "react";
 import { buttonClass, linkProps } from "@/components/landing/block-kit";
 import {
@@ -10,7 +10,7 @@ import {
   orderAppLinks,
 } from "./apps-platform";
 
-const ICONS = { ios: Apple, android: Play, web: Globe } as const;
+const ICONS = { ios: Apple, android: GooglePlay, web: Globe } as const;
 
 /**
  * Store buttons with the visitor's store first. `platform` comes from the

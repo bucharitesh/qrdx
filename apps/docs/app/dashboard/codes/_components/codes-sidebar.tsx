@@ -1,5 +1,6 @@
 "use client";
 
+import { Star } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   DropdownMenu,
@@ -18,20 +19,19 @@ import {
 } from "@repo/design-system/components/ui/sheet";
 import { cn } from "@repo/design-system/lib/utils";
 import {
-  Archive,
-  ChevronRight,
-  Folder,
+  ArchiveBox as Archive,
+  ArrowRight2 as ChevronRight,
+  Folder2 as Folder,
   FolderOpen,
-  FolderPlus,
-  FolderTree,
-  Inbox,
-  MoreHorizontal,
-  Pencil,
-  Plus,
-  QrCode,
-  Star,
-  Trash2,
-} from "lucide-react";
+  FolderAdd as FolderPlus,
+  Hierarchy as FolderTree,
+  DirectInbox as Inbox,
+  More as MoreHorizontal,
+  Edit2 as Pencil,
+  Add as Plus,
+  ScanBarcode as QrCode,
+  Trash as Trash2,
+} from "iconsax-reactjs";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {

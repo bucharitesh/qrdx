@@ -47,6 +47,7 @@ export default function ScanCheckerPage() {
   return (
     <main className="flex flex-col divide-y divide-border min-h-screen w-full">
       <ToolHero
+        pattern="scan"
         crumbs={[
           { name: "Home", path: "/" },
           { name: "Tools", path: "/tools" },
@@ -98,12 +99,18 @@ export default function ScanCheckerPage() {
           </h2>
           <p className="text-sm text-muted-foreground leading-relaxed">
             The{" "}
-            <Link href="/playground" className="underline">
+            <Link
+              href="/playground"
+              className="font-medium text-foreground underline decoration-foreground/30 underline-offset-4 transition-colors hover:decoration-foreground"
+            >
               QRdx editor
             </Link>{" "}
             shows a live scan score while you design, flags risky eye shapes and
             oversized logos, and exports print-ready vector PDFs. Use the{" "}
-            <Link href="/tools/print-size" className="underline">
+            <Link
+              href="/tools/print-size"
+              className="font-medium text-foreground underline decoration-foreground/30 underline-offset-4 transition-colors hover:decoration-foreground"
+            >
               print size calculator
             </Link>{" "}
             to choose how big to print it.

@@ -2,6 +2,7 @@
 
 import { authClient } from "@repo/auth/client";
 import { toast } from "@repo/design-system";
+import { Tick as Check } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   DropdownMenu,
@@ -13,7 +14,12 @@ import {
 } from "@repo/design-system/components/ui/dropdown-menu";
 import { cn } from "@repo/design-system/lib/utils";
 import { useQueryClient } from "@tanstack/react-query";
-import { Check, ChevronsUpDown, Plus, Settings, User } from "lucide-react";
+import {
+  ArrowSwapVertical as ChevronsUpDown,
+  Add as Plus,
+  Setting2 as Settings,
+  User,
+} from "iconsax-reactjs";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useState, useTransition } from "react";

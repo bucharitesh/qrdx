@@ -1,8 +1,10 @@
 /** biome-ignore-all lint/a11y/useButtonType: false positive */
 "use client";
 
+import { Close } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
+import { HamburgerMenu } from "iconsax-reactjs";
 import {
   AnimatePresence,
   motion,
@@ -11,14 +13,12 @@ import {
 } from "motion/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { GithubStars } from "@/components/github-stars";
 import { HeaderMobileNavList } from "@/components/header-mobile-nav";
 import { HeaderNav } from "@/components/header-nav";
-import { Icons } from "@/components/icons";
+import { DURATION, EASE } from "@/components/mockups/motion";
 import { QrdxLogoAnimation } from "@/components/qrdx-logo-animation";
-import { useGithubStars } from "@/lib/hooks/use-github-stars";
-import { formatCompactNumber } from "@/utils/format";
 import { QrdxLogo } from "../qrdx-logo";
-import { SocialLink } from "../social-link";
 
 const INITIAL_WIDTH = "70rem";
 const MAX_WIDTH = "60rem";
@@ -31,22 +31,18 @@ const overlayVariants = {
 };
 
 const drawerVariants = {
-  hidden: { opacity: 0, y: 100 },
+  hidden: { opacity: 0, y: 24, scale: 0.98 },
   visible: {
     opacity: 1,
     y: 0,
-    rotate: 0,
-    transition: {
-      type: "spring",
-      damping: 15,
-      stiffness: 200,
-      staggerChildren: 0.03,
-    },
+    scale: 1,
+    transition: { duration: DURATION.slow, ease: EASE },
   },
   exit: {
     opacity: 0,
-    y: 100,
-    transition: { duration: 0.1 },
+    y: 16,
+    scale: 0.98,
+    transition: { duration: DURATION.fast, ease: EASE },
   },
 };
 
@@ -59,7 +55,6 @@ export function Navbar() {
   const { scrollY } = useScroll();
   const [hasScrolled, setHasScrolled] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const { stargazersCount } = useGithubStars("bucharitesh", "qrdx");
 
   useEffect(() => {
     const unsubscribe = scrollY.on("change", (latest) => {
@@ -103,13 +98,9 @@ export function Navbar() {
             <HeaderNav />
 
             <div className="flex flex-row items-center gap-3 lg:gap-4 shrink-0">
-              <SocialLink
-                href="https://github.com/bucharitesh/qrdx"
-                className="hidden items-center gap-2 text-sm font-bold lg:flex"
-              >
-                <Icons.github className="size-4" />
-                {stargazersCount > 0 && formatCompactNumber(stargazersCount)}
-              </SocialLink>
+              <div className="flex items-center gap-1">
+                <GithubStars />
+              </div>
               <Link className="hidden lg:block" href="/playground">
                 <Button>Try the Playground</Button>
               </Link>
@@ -121,9 +112,9 @@ export function Navbar() {
                 aria-expanded={isDrawerOpen}
               >
                 {isDrawerOpen ? (
-                  <Icons.X className="size-5" />
+                  <Close aria-hidden className="size-5" />
                 ) : (
-                  <Icons.Menu className="size-5" />
+                  <HamburgerMenu aria-hidden className="size-5" />
                 )}
               </Button>
             </div>
@@ -146,7 +137,7 @@ export function Navbar() {
             />
 
             <motion.div
-              className="fixed z-50 inset-x-0 w-[95%] mx-auto bottom-3 bg-background border border-border p-4 rounded-xl shadow-lg"
+              className="fixed z-50 inset-x-0 w-[95%] mx-auto bottom-3 origin-bottom bg-background border border-border p-4 rounded-2xl shadow-lg"
               initial="hidden"
               animate="visible"
               exit="exit"
@@ -164,16 +155,16 @@ export function Navbar() {
                   <button
                     onClick={toggleDrawer}
                     aria-label="Close menu"
-                    className="border border-border rounded-md p-1 cursor-pointer"
+                    className="grid size-8 cursor-pointer place-items-center rounded-lg border border-border transition-colors hover:bg-accent"
                   >
-                    <Icons.X className="size-5" />
+                    <Close aria-hidden className="size-5" />
                   </button>
                 </div>
 
                 <motion.div variants={drawerMenuContainerVariants}>
                   <HeaderMobileNavList
                     onNavigate={() => setIsDrawerOpen(false)}
-                    className="max-h-[60vh] rounded-md border border-border p-4"
+                    className="max-h-[62vh] rounded-xl border border-border bg-muted/20 p-3"
                   />
                 </motion.div>
 
@@ -183,14 +174,7 @@ export function Navbar() {
                     <Button>Try the Playground</Button>
                   </Link>
 
-                  <SocialLink
-                    href="https://github.com/bucharitesh/qrdx"
-                    className="flex items-center gap-2 text-sm font-bold"
-                  >
-                    <Icons.github className="size-4" />
-                    {stargazersCount > 0 &&
-                      formatCompactNumber(stargazersCount)}
-                  </SocialLink>
+                  <GithubStars full />
                 </div>
               </div>
             </motion.div>

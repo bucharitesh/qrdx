@@ -19,6 +19,9 @@ importers:
       '@types/node':
         specifier: ^25.1.0
         version: 25.1.0
+      husky:
+        specifier: 9.1.7
+        version: 9.1.7
       knip:
         specifier: ^5.74.0
         version: 5.74.0(@types/node@25.1.0)(typescript@5.9.3)
@@ -51,7 +54,7 @@ importers:
         version: 10.42.0(@opentelemetry/context-async-hooks@2.6.0(@opentelemetry/api@1.9.0))(@opentelemetry/core@2.6.0(@opentelemetry/api@1.9.0))(@opentelemetry/sdk-trace-base@2.6.0(@opentelemetry/api@1.9.0))(next@16.0.10(@babel/core@7.29.0)(@opentelemetry/api@1.9.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)(webpack@5.105.4(esbuild@0.27.1))
       '@t3-oss/env-nextjs':
         specifier: ^0.13.8
-        version: 0.13.10(typescript@5.9.3)(zod@4.3.6)
+        version: 0.13.10(typescript@5.9.3)(valibot@1.4.2(typescript@5.9.3))(zod@4.3.6)
       import-in-the-middle:
         specifier: ^2.0.0
         version: 2.0.6
@@ -116,6 +119,9 @@ importers:
       '@aws-sdk/s3-request-presigner':
         specifier: ^3.1161.0
         version: 3.1161.0
+      '@c15t/nextjs':
+        specifier: 3.1.0
+        version: 3.1.0(next@16.1.1(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@5.9.3)
       '@fal-ai/client':
         specifier: ^1.10.1
         version: 1.10.1
@@ -169,7 +175,7 @@ importers:
         version: link:../../packages/rate-limit
       '@t3-oss/env-nextjs':
         specifier: ^0.13.10
-        version: 0.13.10(typescript@5.9.3)(zod@4.3.5)
+        version: 0.13.10(typescript@5.9.3)(valibot@1.4.2(typescript@5.9.3))(zod@4.3.5)
       '@tanstack/react-query':
         specifier: ^5.90.12
         version: 5.90.12(react@19.2.4)
@@ -251,6 +257,9 @@ importers:
       hast-util-to-jsx-runtime:
         specifier: ^2.3.6
         version: 2.3.6
+      iconsax-reactjs:
+        specifier: 0.0.8
+        version: 0.0.8(react@19.2.4)
       idb-keyval:
         specifier: ^6.2.2
         version: 6.2.2
@@ -420,9 +429,15 @@ importers:
       ts-morph:
         specifier: ^27.0.2
         version: 27.0.2
+      tsx:
+        specifier: ^4.21.0
+        version: 4.21.0
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
+      vitest:
+        specifier: ^4.0.18
+        version: 4.0.18(@opentelemetry/api@1.9.0)(@types/node@25.1.0)(jiti@2.6.1)(jsdom@28.1.0(@noble/hashes@2.0.1))(lightningcss@1.31.1)(terser@5.46.0)(tsx@4.21.0)
 
   packages/auth:
     dependencies:
@@ -431,7 +446,7 @@ importers:
         version: 1.5.3(@better-auth/core@1.5.3(@better-auth/utils@0.3.1)(@better-fetch/fetch@1.1.21)(better-call@1.3.2(zod@4.3.6))(jose@6.1.3)(kysely@0.28.11)(nanostores@1.1.1))(@better-auth/utils@0.3.1)(drizzle-orm@0.45.1(@neondatabase/serverless@1.0.2)(@opentelemetry/api@1.9.0)(@types/pg@8.15.6)(@upstash/redis@1.36.1)(kysely@0.28.11))
       '@t3-oss/env-nextjs':
         specifier: ^0.13.8
-        version: 0.13.10(typescript@5.9.3)(zod@4.3.6)
+        version: 0.13.10(typescript@5.9.3)(valibot@1.4.2(typescript@5.9.3))(zod@4.3.6)
       better-auth:
         specifier: ^1.4.18
         version: 1.5.3(@better-auth/drizzle-adapter@1.5.3(@better-auth/core@1.5.3(@better-auth/utils@0.3.1)(@better-fetch/fetch@1.1.21)(better-call@1.3.2(zod@4.3.6))(jose@6.1.3)(kysely@0.28.11)(nanostores@1.1.1))(@better-auth/utils@0.3.1)(drizzle-orm@0.45.1(@neondatabase/serverless@1.0.2)(@opentelemetry/api@1.9.0)(@types/pg@8.15.6)(@upstash/redis@1.36.1)(kysely@0.28.11)))(drizzle-kit@0.31.8)(drizzle-orm@0.45.1(@neondatabase/serverless@1.0.2)(@opentelemetry/api@1.9.0)(@types/pg@8.15.6)(@upstash/redis@1.36.1)(kysely@0.28.11))(next@16.1.6(@opentelemetry/api@1.9.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(vitest@4.0.18(@opentelemetry/api@1.9.0)(@types/node@24.10.1)(jiti@2.6.1)(jsdom@28.1.0(@noble/hashes@2.0.1))(lightningcss@1.31.1)(terser@5.46.0)(tsx@4.21.0))
@@ -521,7 +536,7 @@ importers:
         version: 1.0.2
       '@t3-oss/env-nextjs':
         specifier: ^0.13.10
-        version: 0.13.10(typescript@5.9.3)(zod@4.3.5)
+        version: 0.13.10(typescript@5.9.3)(valibot@1.4.2(typescript@5.9.3))(zod@4.3.5)
       drizzle-orm:
         specifier: ^0.45.1
         version: 0.45.1(@neondatabase/serverless@1.0.2)(@opentelemetry/api@1.9.0)(@types/pg@8.15.6)(@upstash/redis@1.36.1)(kysely@0.28.11)
@@ -664,12 +679,12 @@ importers:
       geist:
         specifier: ^1.7.0
         version: 1.7.0(next@16.1.6(@opentelemetry/api@1.9.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))
+      iconsax-reactjs:
+        specifier: 0.0.8
+        version: 0.0.8(react@19.2.4)
       input-otp:
         specifier: ^1.4.2
         version: 1.4.2(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      lucide-react:
-        specifier: ^0.562.0
-        version: 0.562.0(react@19.2.4)
       next-themes:
         specifier: ^0.4.6
         version: 0.4.6(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -764,9 +779,9 @@ importers:
       drizzle-orm:
         specifier: ^0.45.1
         version: 0.45.1(@neondatabase/serverless@1.0.2)(@opentelemetry/api@1.9.0)(@types/pg@8.15.6)(@upstash/redis@1.36.1)(kysely@0.28.11)
-      lucide-react:
-        specifier: ^0.562.0
-        version: 0.562.0(react@19.2.4)
+      iconsax-reactjs:
+        specifier: 0.0.8
+        version: 0.0.8(react@19.2.4)
       react:
         specifier: 19.2.4
         version: 19.2.4
@@ -794,10 +809,10 @@ importers:
         version: 16.0.10(bufferutil@4.0.9)
       '@t3-oss/env-core':
         specifier: ^0.13.10
-        version: 0.13.10(typescript@5.9.3)(zod@4.3.5)
+        version: 0.13.10(typescript@5.9.3)(valibot@1.4.2(typescript@5.9.3))(zod@4.3.5)
       '@t3-oss/env-nextjs':
         specifier: ^0.13.10
-        version: 0.13.10(typescript@5.9.3)(zod@4.3.5)
+        version: 0.13.10(typescript@5.9.3)(valibot@1.4.2(typescript@5.9.3))(zod@4.3.5)
       zod:
         specifier: ^4.3.5
         version: 4.3.5
@@ -807,7 +822,7 @@ importers:
         version: link:../typescript-config
       next:
         specifier: 16.1.1
-        version: 16.1.1(@opentelemetry/api@1.9.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        version: 16.1.1(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
 
   packages/qrdx:
     dependencies:
@@ -838,7 +853,7 @@ importers:
         version: 3.0.4
       next:
         specifier: 16.1.1
-        version: 16.1.1(@opentelemetry/api@1.9.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        version: 16.1.1(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       react:
         specifier: 19.2.4
         version: 19.2.4
@@ -848,12 +863,15 @@ importers:
       typescript:
         specifier: 5.9.3
         version: 5.9.3
+      vitest:
+        specifier: ^4.0.18
+        version: 4.0.18(@opentelemetry/api@1.9.0)(@types/node@25.1.0)(jiti@2.6.1)(jsdom@28.1.0(@noble/hashes@2.0.1))(lightningcss@1.31.1)(terser@5.46.0)(tsx@4.21.0)
 
   packages/rate-limit:
     dependencies:
       '@t3-oss/env-nextjs':
         specifier: ^0.13.8
-        version: 0.13.10(typescript@5.9.3)(zod@4.3.6)
+        version: 0.13.10(typescript@5.9.3)(valibot@1.4.2(typescript@5.9.3))(zod@4.3.6)
       '@upstash/ratelimit':
         specifier: ^2.0.7
         version: 2.0.8(@upstash/redis@1.36.1)
@@ -1946,6 +1964,49 @@ packages:
   '@bramus/specificity@2.4.2':
     resolution: {integrity: sha512-ctxtJ/eA+t+6q2++vj5j7FYX3nRu311q1wfYH3xjlLOsczhlhxAg2FWNUXhpGvAw3BWo1xBcvOV6/YLc2r5FJw==}
     hasBin: true
+
+  '@c15t/core@3.1.0':
+    resolution: {integrity: sha512-WmXB1WXIeeZbVHZXoZs1//L+cb0aSYWRkr+qCNPYVnadq/FCFPCy0Z2TrC0BlKrVDrduJelyD+ky/p66CPf65A==}
+
+  '@c15t/dev-tools@3.1.0':
+    resolution: {integrity: sha512-xdYMJbTnC/zPGi1rSAkHujbdHkHZ2DFfvwQw45TNU/Sez8djFsu0Fu3KNvfJ9e3mf66qAKKfd9Mfc7BjI5fbzQ==}
+
+  '@c15t/iab@3.1.0':
+    resolution: {integrity: sha512-80N1npr+8UduWu5olRdC27/alDzz8mPBpqs87ty7sXWqJ70KkBGTt/La18r0Nr6xZ9rMqKqfw4Ny5bQ9Ux3HDg==}
+
+  '@c15t/nextjs@3.1.0':
+    resolution: {integrity: sha512-XlpCmtKoSQAKPO2yGFzFDNlkh0B5EOUOT8cH7w+L/t0NM9jGuVUKPvSu3npvFM/f9MJjKGVP8mPxDGJxAUJKWA==}
+    peerDependencies:
+      next: ^15.0.0 || ^16.0.0
+      react: 19.2.4
+      react-dom: 19.2.4
+    peerDependenciesMeta:
+      next:
+        optional: true
+      react:
+        optional: true
+      react-dom:
+        optional: true
+
+  '@c15t/react@3.1.0':
+    resolution: {integrity: sha512-wnQzW0Tz3IZY3etDCWr+6VQU5GRe6At1emvrn0S4MYPBhFNQNbZoUB+GikuRFLaL1wCbgOMlJcf9Tc19AxnyAg==}
+    peerDependencies:
+      react: 19.2.4
+      react-dom: 19.2.4
+    peerDependenciesMeta:
+      react:
+        optional: true
+      react-dom:
+        optional: true
+
+  '@c15t/schema@3.1.0':
+    resolution: {integrity: sha512-gAOMNlkNSwDZ7igutDWeLvEwPl3VoWIFsNHdgu8yUnNKjkdE64F4udpMbtr6e3JRM3h1CQhLQUG5B/fQbF5eDQ==}
+
+  '@c15t/translations@3.1.0':
+    resolution: {integrity: sha512-oL4Egzd6LPEQYuv5JisnPocsF1c5wYp/1EzjPsMpsYRBlVIXme5d8voGMrCjNFYDH662UHvSlMTHXYYmCjPXNw==}
+
+  '@c15t/ui@3.0.1':
+    resolution: {integrity: sha512-casq1k+H5GfkE0FMUMkvvniH5/3NkjOTmxK6fbwDE/ZA2CM8GX+qa5AdIKhvZjXW8d3rx0m/XJsrD4COb+r+mw==}
 
   '@canva/app-hooks@0.0.0-beta.4':
     resolution: {integrity: sha512-QPIoVyIRz55Ta0PNxD07OHvyGOD7R1irwEPfs1T7At21TJHFAnlTt/Je8IfZcm6lrNR6oOSBBZrRiFeJA49PEg==}
@@ -3118,6 +3179,9 @@ packages:
   '@humanwhocodes/retry@0.4.3':
     resolution: {integrity: sha512-bV0Tgo9K4hfPCek+aMAn81RppFKv2ySDQeMoSZuvTASywNTnVJCArCZE2FWqpvIatKu7VMRLWlR1EazvVhDyhQ==}
     engines: {node: '>=18.18'}
+
+  '@iabtechlabtcf/core@1.5.22':
+    resolution: {integrity: sha512-Iaz42mXXflxLL19nU7S7RBV1hjELln32mettVVTxdzFFqxVPze6dOzgaNMHP/L9a2Anr017D7yFAcPzMgnfchw==}
 
   '@iconify/types@2.0.0':
     resolution: {integrity: sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg==}
@@ -6374,6 +6438,9 @@ packages:
   '@types/geojson@7946.0.16':
     resolution: {integrity: sha512-6C8nqWur3j98U6+lXDfTUWIfgvZU+EumvpHKcYjujKH7woYyLj2sUmff0tRhrqM7BohUw7Pz3ZB1jj2gW9Fvmg==}
 
+  '@types/google.maps@3.65.3':
+    resolution: {integrity: sha512-tqbbx7MUtoDk+RwpZMymPDj6Skez0FhqDZNhLhS5UDmCx4D1dgP+BJOHTebiO/rhjJLa1f8te2p6mJJeFKVFOQ==}
+
   '@types/har-format@1.2.16':
     resolution: {integrity: sha512-fluxdy7ryD3MV6h8pTfTYpy/xQzCFC7m89nOH9y94cNqJ1mDIDPut7MnRHI3F6qRmh/cT2fUjG1MLdCNb4hE9A==}
 
@@ -6883,6 +6950,9 @@ packages:
 
   barcode-detector@3.2.3:
     resolution: {integrity: sha512-PLinpWGiOQoQH4X+YObWZ6iXeffXKDM3d4vnOD86481SvukIfvkf7jEE/tud9oI4HTDxtDdlHaFilA5Kn7Xa7A==}
+
+  base-x@5.0.1:
+    resolution: {integrity: sha512-M7uio8Zt++eg3jPj+rHMfCC+IuygQHHCOU+IYsVtik6FWjuYpVt/+MRKcgsAMHh8mMFAwnB+Bs+mTrFiXjMzKg==}
 
   base64-arraybuffer@1.0.2:
     resolution: {integrity: sha512-I3yl4r9QB5ZRY3XuJVEPfc2XhZO6YweFPI+UovAzn+8/hb3oJ6lnysaFcjVpkCPfVWFUDvoZ8kmVDP7WyRtYtQ==}
@@ -8635,9 +8705,19 @@ packages:
     resolution: {integrity: sha512-vK9P5/iUfdl95AI+JVyUuIcVtd4ofvtrOr3HNtM2yxC9bnMbEdp3x01OhQNnjb8IJYi38VlTE3mBXwcfvywuSw==}
     engines: {node: '>= 14'}
 
+  husky@9.1.7:
+    resolution: {integrity: sha512-5gs5ytaNjBrh5Ow3zrvdUUY+0VxIuWVL4i9irt6friV+BqdCfmV11CQTWMiBYWHbXhco+J1kHfTOUkePhCDvMA==}
+    engines: {node: '>=18'}
+    hasBin: true
+
   hyperdyperid@1.2.0:
     resolution: {integrity: sha512-Y93lCzHYgGWdrJ66yIktxiaGULYc6oGiABxhcO5AufBeOyoIdZF7bIfLaOrbM0iGIOXQQgxxRrFEnb+Y6w1n4A==}
     engines: {node: '>=10.18'}
+
+  iconsax-reactjs@0.0.8:
+    resolution: {integrity: sha512-cb+uTMxbkSFNbu8ZclX7BWQVfOWQt8+m/PsDjnsm/H+mcYrnfTYMjHxiof1FB43k7UAgt1ds+0oFeMVKdqyslw==}
+    peerDependencies:
+      react: 19.2.4
 
   iconv-lite@0.4.24:
     resolution: {integrity: sha512-v3MXnZAcvnywkTUEZomIActle7RXXeedOR31wwl7VlyoXO4Qi9arvSenNQWne1TcRwhCL1HwLI21bEqdpj8/rA==}
@@ -11456,6 +11536,14 @@ packages:
   v8-compile-cache-lib@3.0.1:
     resolution: {integrity: sha512-wa7YjyUGfNZngI/vtK0UHAN+lgDCxBPCylVXGp0zu59Fz5aiGtNXaq3DhIov063MorB+VfufLh3JlF2KdTK3xg==}
 
+  valibot@1.4.2:
+    resolution: {integrity: sha512-gjdCvJ6d3RyHAneqxMYMW9QMCwYMb3jpOO0IyHZV1bnRHFBHrX3VkIILt5XYR0WhwHiH7Mty8ovuPZ/O3gamrg==}
+    peerDependencies:
+      typescript: '>=5'
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+
   vary@1.1.2:
     resolution: {integrity: sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==}
     engines: {node: '>= 0.8'}
@@ -13024,6 +13112,72 @@ snapshots:
     dependencies:
       css-tree: 3.2.1
 
+  '@c15t/core@3.1.0(typescript@5.9.3)':
+    dependencies:
+      '@c15t/schema': 3.1.0(typescript@5.9.3)
+      '@c15t/translations': 3.1.0
+    transitivePeerDependencies:
+      - typescript
+
+  '@c15t/dev-tools@3.1.0(typescript@5.9.3)':
+    dependencies:
+      '@c15t/core': 3.1.0(typescript@5.9.3)
+    transitivePeerDependencies:
+      - typescript
+
+  '@c15t/iab@3.1.0(typescript@5.9.3)':
+    dependencies:
+      '@c15t/core': 3.1.0(typescript@5.9.3)
+      '@c15t/schema': 3.1.0(typescript@5.9.3)
+      '@iabtechlabtcf/core': 1.5.22
+    transitivePeerDependencies:
+      - typescript
+
+  '@c15t/nextjs@3.1.0(next@16.1.1(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@5.9.3)':
+    dependencies:
+      '@c15t/core': 3.1.0(typescript@5.9.3)
+      '@c15t/react': 3.1.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@5.9.3)
+      '@c15t/schema': 3.1.0(typescript@5.9.3)
+      '@c15t/translations': 3.1.0
+    optionalDependencies:
+      next: 16.1.1(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      react: 19.2.4
+      react-dom: 19.2.4(react@19.2.4)
+    transitivePeerDependencies:
+      - typescript
+
+  '@c15t/react@3.1.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@5.9.3)':
+    dependencies:
+      '@c15t/core': 3.1.0(typescript@5.9.3)
+      '@c15t/dev-tools': 3.1.0(typescript@5.9.3)
+      '@c15t/iab': 3.1.0(typescript@5.9.3)
+      '@c15t/schema': 3.1.0(typescript@5.9.3)
+      '@c15t/translations': 3.1.0
+      '@c15t/ui': 3.0.1(typescript@5.9.3)
+      '@types/google.maps': 3.65.3
+    optionalDependencies:
+      react: 19.2.4
+      react-dom: 19.2.4(react@19.2.4)
+    transitivePeerDependencies:
+      - typescript
+
+  '@c15t/schema@3.1.0(typescript@5.9.3)':
+    dependencies:
+      '@c15t/translations': 3.1.0
+      base-x: 5.0.1
+      valibot: 1.4.2(typescript@5.9.3)
+    transitivePeerDependencies:
+      - typescript
+
+  '@c15t/translations@3.1.0': {}
+
+  '@c15t/ui@3.0.1(typescript@5.9.3)':
+    dependencies:
+      '@c15t/core': 3.1.0(typescript@5.9.3)
+      '@c15t/translations': 3.1.0
+    transitivePeerDependencies:
+      - typescript
+
   '@canva/app-hooks@0.0.0-beta.4(@canva/design@2.8.0(@canva/error@2.2.1))(@canva/platform@2.2.2(@canva/error@2.2.1))(react@19.2.4)':
     dependencies:
       '@canva/design': 2.8.0(@canva/error@2.2.1)
@@ -13763,6 +13917,8 @@ snapshots:
   '@humanwhocodes/module-importer@1.0.1': {}
 
   '@humanwhocodes/retry@0.4.3': {}
+
+  '@iabtechlabtcf/core@1.5.22': {}
 
   '@iconify/types@2.0.0': {}
 
@@ -16496,28 +16652,32 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
-  '@t3-oss/env-core@0.13.10(typescript@5.9.3)(zod@4.3.5)':
+  '@t3-oss/env-core@0.13.10(typescript@5.9.3)(valibot@1.4.2(typescript@5.9.3))(zod@4.3.5)':
     optionalDependencies:
       typescript: 5.9.3
+      valibot: 1.4.2(typescript@5.9.3)
       zod: 4.3.5
 
-  '@t3-oss/env-core@0.13.10(typescript@5.9.3)(zod@4.3.6)':
+  '@t3-oss/env-core@0.13.10(typescript@5.9.3)(valibot@1.4.2(typescript@5.9.3))(zod@4.3.6)':
     optionalDependencies:
       typescript: 5.9.3
+      valibot: 1.4.2(typescript@5.9.3)
       zod: 4.3.6
 
-  '@t3-oss/env-nextjs@0.13.10(typescript@5.9.3)(zod@4.3.5)':
+  '@t3-oss/env-nextjs@0.13.10(typescript@5.9.3)(valibot@1.4.2(typescript@5.9.3))(zod@4.3.5)':
     dependencies:
-      '@t3-oss/env-core': 0.13.10(typescript@5.9.3)(zod@4.3.5)
+      '@t3-oss/env-core': 0.13.10(typescript@5.9.3)(valibot@1.4.2(typescript@5.9.3))(zod@4.3.5)
     optionalDependencies:
       typescript: 5.9.3
+      valibot: 1.4.2(typescript@5.9.3)
       zod: 4.3.5
 
-  '@t3-oss/env-nextjs@0.13.10(typescript@5.9.3)(zod@4.3.6)':
+  '@t3-oss/env-nextjs@0.13.10(typescript@5.9.3)(valibot@1.4.2(typescript@5.9.3))(zod@4.3.6)':
     dependencies:
-      '@t3-oss/env-core': 0.13.10(typescript@5.9.3)(zod@4.3.6)
+      '@t3-oss/env-core': 0.13.10(typescript@5.9.3)(valibot@1.4.2(typescript@5.9.3))(zod@4.3.6)
     optionalDependencies:
       typescript: 5.9.3
+      valibot: 1.4.2(typescript@5.9.3)
       zod: 4.3.6
 
   '@tailwindcss/node@4.2.1':
@@ -17056,6 +17216,8 @@ snapshots:
       '@types/serve-static': 1.15.10
 
   '@types/geojson@7946.0.16': {}
+
+  '@types/google.maps@3.65.3': {}
 
   '@types/har-format@1.2.16': {}
 
@@ -17646,6 +17808,8 @@ snapshots:
       zxing-wasm: 3.1.6(@types/emscripten@1.41.6)
     transitivePeerDependencies:
       - '@types/emscripten'
+
+  base-x@5.0.1: {}
 
   base64-arraybuffer@1.0.2:
     optional: true
@@ -19644,7 +19808,13 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  husky@9.1.7: {}
+
   hyperdyperid@1.2.0: {}
+
+  iconsax-reactjs@0.0.8(react@19.2.4):
+    dependencies:
+      react: 19.2.4
 
   iconv-lite@0.4.24:
     dependencies:
@@ -20814,31 +20984,6 @@ snapshots:
       - '@babel/core'
       - babel-plugin-macros
 
-  next@16.1.1(@opentelemetry/api@1.9.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
-    dependencies:
-      '@next/env': 16.1.1
-      '@swc/helpers': 0.5.15
-      baseline-browser-mapping: 2.9.14
-      caniuse-lite: 1.0.30001764
-      postcss: 8.4.31
-      react: 19.2.4
-      react-dom: 19.2.4(react@19.2.4)
-      styled-jsx: 5.1.6(@babel/core@7.29.0)(react@19.2.4)
-    optionalDependencies:
-      '@next/swc-darwin-arm64': 16.1.1
-      '@next/swc-darwin-x64': 16.1.1
-      '@next/swc-linux-arm64-gnu': 16.1.1
-      '@next/swc-linux-arm64-musl': 16.1.1
-      '@next/swc-linux-x64-gnu': 16.1.1
-      '@next/swc-linux-x64-musl': 16.1.1
-      '@next/swc-win32-arm64-msvc': 16.1.1
-      '@next/swc-win32-x64-msvc': 16.1.1
-      '@opentelemetry/api': 1.9.0
-      sharp: 0.34.5
-    transitivePeerDependencies:
-      - '@babel/core'
-      - babel-plugin-macros
-
   next@16.1.6(@opentelemetry/api@1.9.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
     dependencies:
       '@next/env': 16.1.6
@@ -20848,7 +20993,7 @@ snapshots:
       postcss: 8.4.31
       react: 19.2.4
       react-dom: 19.2.4(react@19.2.4)
-      styled-jsx: 5.1.6(@babel/core@7.29.0)(react@19.2.4)
+      styled-jsx: 5.1.6(@babel/core@7.28.5)(react@19.2.4)
     optionalDependencies:
       '@next/swc-darwin-arm64': 16.1.6
       '@next/swc-darwin-x64': 16.1.6
@@ -22832,7 +22977,7 @@ snapshots:
 
   tsx@4.21.0:
     dependencies:
-      esbuild: 0.27.2
+      esbuild: 0.27.4
       get-tsconfig: 4.13.0
     optionalDependencies:
       fsevents: 2.3.3
@@ -23045,6 +23190,10 @@ snapshots:
   uuid@9.0.1: {}
 
   v8-compile-cache-lib@3.0.1: {}
+
+  valibot@1.4.2(typescript@5.9.3):
+    optionalDependencies:
+      typescript: 5.9.3
 
   vary@1.1.2: {}
 

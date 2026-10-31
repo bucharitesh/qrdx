@@ -6,19 +6,14 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@repo/design-system/components/ui/resizable";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@repo/design-system/components/ui/tabs";
 import { useIsMobile } from "@repo/design-system/hooks/use-mobile";
-import { Sliders } from "lucide-react";
 import React, { use, useEffect } from "react";
 import { DialogActionsProvider } from "@/lib/hooks/use-dialog-actions";
+import { useMounted } from "@/lib/hooks/use-mounted";
 import { useQREditorStore } from "@/store/editor-store";
 import type { Theme, ThemeStyles } from "@/types/theme";
 import { ActionBar } from "./editor/action-bar";
+import { AIWorkingGlow } from "./editor/ai/ai-working-glow";
 import ThemeControlPanel from "./qr-control-panel";
 import QRPreviewPanel from "./qr-preview-panel";
 
@@ -26,8 +21,30 @@ interface EditorProps {
   themePromise: Promise<Theme | null>;
 }
 
+/** Static placeholder with the editor's layout, shown until hydration. */
+function EditorShell() {
+  return (
+    <div
+      aria-busy="true"
+      className="relative isolate flex flex-1 flex-col-reverse overflow-hidden md:flex-row"
+    >
+      <div className="flex shrink-0 flex-col gap-3 border-b p-4 md:w-[30%] md:min-w-[22rem] md:border-r md:border-b-0">
+        <div className="bg-muted/60 h-10 animate-pulse rounded-full" />
+        <div className="bg-muted/40 h-16 animate-pulse rounded-xl" />
+        <div className="bg-muted/40 h-9 animate-pulse rounded-md" />
+        <div className="bg-muted/30 hidden h-40 animate-pulse rounded-xl md:block" />
+      </div>
+      <div className="flex flex-1 items-center justify-center p-8">
+        <div className="bg-muted/30 aspect-square w-full max-w-72 animate-pulse rounded-2xl" />
+      </div>
+      <span className="sr-only">Loading the editor…</span>
+    </div>
+  );
+}
+
 const Editor: React.FC<EditorProps> = ({ themePromise }) => {
   const isMobile = useIsMobile();
+  const isMounted = useMounted();
 
   const themeState = useQREditorStore((state) => state.themeState);
   const setThemeState = useQREditorStore((state) => state.setThemeState);
@@ -61,44 +78,31 @@ const Editor: React.FC<EditorProps> = ({ themePromise }) => {
     );
   }
 
+  // The editor store restores from localStorage on the client, so anything
+  // rendered from it would differ from the server HTML (hydration errors and
+  // shifted Radix ids). Render a neutral shell until mounted.
+  if (!isMounted) {
+    return <EditorShell />;
+  }
+
   const styles = themeState.styles;
 
   if (isMobile) {
+    // Preview stays visible on top; the controls sit in a sheet below it.
     return (
       <DialogActionsProvider>
-        <div className="relative isolate flex flex-1 overflow-hidden">
-          <div className="size-full flex-1 overflow-hidden">
-            <Tabs defaultValue="controls" className="h-full">
-              <TabsList className="w-full rounded-none">
-                <TabsTrigger value="controls" className="flex-1">
-                  <Sliders className="mr-2 h-4 w-4" />
-                  Controls
-                </TabsTrigger>
-                <TabsTrigger value="preview" className="flex-1">
-                  Preview
-                </TabsTrigger>
-              </TabsList>
-              <TabsContent
-                value="controls"
-                className="mt-0 h-[calc(100%-2.5rem)]"
-              >
-                <div className="flex h-full flex-col">
-                  <ThemeControlPanel
-                    styles={styles}
-                    onChange={handleStyleChange}
-                  />
-                </div>
-              </TabsContent>
-              <TabsContent
-                value="preview"
-                className="mt-0 h-[calc(100%-2.5rem)]"
-              >
-                <div className="flex h-full flex-col">
-                  <ActionBar />
-                  <QRPreviewPanel style={styles} />
-                </div>
-              </TabsContent>
-            </Tabs>
+        <div className="relative isolate flex flex-1 flex-col overflow-hidden">
+          <ActionBar />
+          <div className="relative flex h-[32svh] min-h-52 shrink-0 flex-col overflow-hidden">
+            <QRPreviewPanel style={styles} />
+            <AIWorkingGlow />
+          </div>
+          <div className="bg-background relative z-10 -mt-3 flex min-h-0 flex-1 flex-col overflow-hidden rounded-t-[calc(var(--radius)+0.25rem)] border-t shadow-[0_-8px_24px_-12px_rgba(0,0,0,0.25)]">
+            <div
+              aria-hidden
+              className="bg-muted-foreground/25 mx-auto mt-2 mb-1 h-1 w-10 shrink-0 rounded-full"
+            />
+            <ThemeControlPanel styles={styles} onChange={handleStyleChange} />
           </div>
         </div>
       </DialogActionsProvider>
@@ -129,7 +133,10 @@ const Editor: React.FC<EditorProps> = ({ themePromise }) => {
               <div className="flex h-full flex-col">
                 <div className="flex min-h-0 flex-1 flex-col">
                   <ActionBar />
-                  <QRPreviewPanel style={styles} />
+                  <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
+                    <QRPreviewPanel style={styles} />
+                    <AIWorkingGlow />
+                  </div>
                 </div>
               </div>
             </ResizablePanel>

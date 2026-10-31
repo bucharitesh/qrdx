@@ -1,5 +1,6 @@
 "use client";
 
+import { Star } from "@repo/design-system/components/icons";
 import { Checkbox } from "@repo/design-system/components/ui/checkbox";
 import {
   Table,
@@ -10,7 +11,7 @@ import {
   TableRow,
 } from "@repo/design-system/components/ui/table";
 import { cn } from "@repo/design-system/lib/utils";
-import { Folder, NotebookPen, Star } from "lucide-react";
+import { Folder2 as Folder, Notepad2 as NotebookPen } from "iconsax-reactjs";
 import Link from "next/link";
 import { setQrCodesFavorite } from "@/actions/bulk-codes";
 import type { TagRow } from "@/app/dashboard/codes/_lib/organize";
@@ -43,10 +44,8 @@ function FavoriteButton({ code }: { code: QrCodeListItem }) {
       type="button"
     >
       <Star
-        className={cn(
-          "size-4",
-          code.isFavorite && "fill-amber-400 text-amber-400",
-        )}
+        className={cn("size-4", code.isFavorite && "text-amber-400")}
+        variant={code.isFavorite ? "Bold" : "Linear"}
       />
     </button>
   );

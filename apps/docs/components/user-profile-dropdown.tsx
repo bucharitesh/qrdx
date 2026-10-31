@@ -1,6 +1,7 @@
 "use client";
 
 import { authClient } from "@repo/auth/client";
+import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   DropdownMenu,
@@ -11,12 +12,14 @@ import {
   DropdownMenuTrigger,
 } from "@repo/design-system/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "facehash";
+import { Card, Crown1 } from "iconsax-reactjs";
 import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
 import { hasAdminRole } from "@/components/app-shell/nav-config";
 import { Icons } from "@/components/icons";
+import { useSubscription } from "@/lib/hooks/use-subscription";
 import { useAuthStore } from "@/store/auth-store";
 
 export function UserProfileDropdown() {
@@ -24,6 +27,8 @@ export function UserProfileDropdown() {
   const { openAuthDialog } = useAuthStore();
   const router = useRouter();
   const posthog = usePostHog();
+  const { subscriptionStatus } = useSubscription();
+  const isPro = subscriptionStatus?.isSubscribed === true;
 
   const handleLogOut = async () => {
     posthog.reset();
@@ -79,6 +84,7 @@ export function UserProfileDropdown() {
                   <AvatarImage
                     src={session.user.image || ""}
                     alt={session.user.name || ""}
+                    referrerPolicy="no-referrer"
                   />
                   <AvatarFallback
                     name={session.user.name || session.user.email || "U"}
@@ -89,9 +95,19 @@ export function UserProfileDropdown() {
             <DropdownMenuContent className="w-56" align="end" forceMount>
               <DropdownMenuLabel className="font-normal">
                 <div className="flex flex-col space-y-0.5">
-                  <p className="text-sm leading-tight font-medium">
-                    {session.user.name}{" "}
-                  </p>
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="truncate text-sm leading-tight font-medium">
+                      {session.user.name}
+                    </p>
+                    {subscriptionStatus && (
+                      <Badge
+                        variant={isPro ? "default" : "secondary"}
+                        className="shrink-0"
+                      >
+                        {isPro ? "Pro" : "Free"}
+                      </Badge>
+                    )}
+                  </div>
                   <p className="text-muted-foreground text-xs leading-tight">
                     {session.user.email}
                   </p>
@@ -108,6 +124,21 @@ export function UserProfileDropdown() {
                   <Icons.Settings /> Settings
                 </Link>
               </DropdownMenuItem>
+              {subscriptionStatus &&
+                (isPro ? (
+                  <DropdownMenuItem asChild>
+                    {/* Route handler that redirects to the Polar portal. */}
+                    <a href="/settings/portal">
+                      <Card /> Manage billing
+                    </a>
+                  </DropdownMenuItem>
+                ) : (
+                  <DropdownMenuItem asChild>
+                    <Link href="/pricing">
+                      <Crown1 /> Upgrade to Pro
+                    </Link>
+                  </DropdownMenuItem>
+                ))}
               {hasAdminRole(session.user.role) && (
                 <DropdownMenuItem asChild>
                   <Link href="/admin">

@@ -57,8 +57,10 @@
   ],
   "scripts": {
     "build": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\" && tsup && tsc --project tsconfig.build.json --emitDeclarationOnly",
+    "build:inplace": "tsup && tsc --project tsconfig.build.json --emitDeclarationOnly",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
   },
   "dependencies": {
     "jsqr": "^1.4.0",
@@ -73,7 +75,8 @@
     "next": "16.1.1",
     "react": "^19.0.0",
     "tsup": "^8.5.1",
-    "typescript": "5.9.3"
+    "typescript": "5.9.3",
+    "vitest": "^4.0.18"
   },
   "peerDependencies": {
     "jspdf": "^2.5.0 || ^3.0.0",
