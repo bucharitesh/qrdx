@@ -107,6 +107,8 @@ curl -X POST https://qrdx.dev/api/oauth/revoke -d token=$TOKEN
 
 `GET /api/oauth/userinfo` returns the user as `sub`, `name`, `email` and `picture` for tokens with `profile:read`.
 
+People can revoke an app's access themselves in **Settings → Authorized apps**. Its tokens for that account then fail with `invalid_token` (API calls) and `invalid_grant` (refresh), and the app has to ask again.
+
 ## Errors and limits
 
 The codes, conversions and hooks endpoints return errors as `{ "code": "...", "message": "...", "status": 400 }`; the status codes are listed under [Dynamic QR codes](/docs/dynamic-qr-codes#rest-api). The OAuth, themes and profile endpoints use the OAuth shape, `{ "error": "invalid_token", "error_description": "..." }`.

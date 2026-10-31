@@ -10,6 +10,7 @@ import {
   Element2 as PanelsTopLeft,
   Electricity as Plug,
   ScanBarcode as QrCode,
+  ShieldTick,
   Setting4 as SlidersHorizontal,
   ColorsSquare as SwatchBook,
   Profile2User as Users,
@@ -67,6 +68,12 @@ export const APP_NAV: AppNavGroup[] = [
     label: "Account",
     items: [
       { href: "/settings/integrations", label: "Integrations", icon: Plug },
+      // Apps the user let into their account over OAuth (revocable).
+      {
+        href: "/settings/authorized-apps",
+        label: "Authorized apps",
+        icon: ShieldTick,
+      },
       // OAuth apps of the active workspace (personal or the open team).
       { href: "/settings/developers", label: "Developers", icon: CodeXml },
       {

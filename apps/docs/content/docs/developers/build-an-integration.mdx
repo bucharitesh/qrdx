@@ -257,6 +257,10 @@ await fetch("https://qrdx.dev/api/oauth/revoke", {
 });
 ```
 
+### Revoking access
+
+People can take access back themselves at any time, in **Settings → Authorized apps** on QRdx. Every token your app holds for their account stops working at once: API calls answer `401` with `invalid_token` and refreshing answers `invalid_grant`. Treat both as "disconnected" and ask them to connect again; they'll see the consent screen again.
+
 To identify who connected, call `GET /api/oauth/userinfo` with a `profile:read` token. It returns OpenID-style claims:
 
 ```bash

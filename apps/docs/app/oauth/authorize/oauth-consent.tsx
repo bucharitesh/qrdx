@@ -241,7 +241,8 @@ export function OAuthConsent({
       <p className="text-muted-foreground mt-4 text-center text-xs text-pretty">
         You'll be sent back to{" "}
         <span className="text-foreground font-medium">{redirectHost}</span>.
-        Only authorize apps you trust with your QRdx data.
+        Only authorize apps you trust with your QRdx data. You can revoke access
+        at any time in Settings → Authorized apps.
       </p>
     </AuthorizeShell>
   );
