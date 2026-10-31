@@ -1,0 +1,84 @@
+name: Bug report
+description: Report something that doesn't work in QRdx
+title: "[bug]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug. Please search [open and closed issues](https://github.com/bucharitesh/qrdx/issues?q=is%3Aissue) first; it may already be reported or fixed.
+
+        Not sure it's a bug? Start a [discussion](https://github.com/bucharitesh/qrdx/discussions/new?category=general) instead. Security issues go through [SECURITY.md](https://github.com/bucharitesh/qrdx/blob/main/SECURITY.md), not public issues.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Where does it happen?
+      options:
+        - Web app (qrdx.dev editor, accounts, themes)
+        - React library (qrdx)
+        - CLI (@qrdx/cli)
+        - Self-hosting / Docker
+        - Integrations (Dub, Google Drive, Raycast, Canva)
+        - Documentation
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Describe the bug
+      description: What happened, and what did you expect to happen? If you plan to send a PR, tell us how you'd fix it.
+      placeholder: When I set a gradient foreground and download as PNG, the gradient is missing...
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: How to reproduce
+      description: Step-by-step instructions, the CLI command you ran, or a minimal code sample.
+      placeholder: |
+        1. Go to '...'
+        2. Click on '...'
+        3. See error
+    validations:
+      required: true
+
+  - type: input
+    id: reproduction-link
+    attributes:
+      label: Reproduction link
+      description: Optional link to a CodeSandbox, StackBlitz or repository that shows the problem.
+
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Package version (for example qrdx 0.0.46), commit SHA for self-hosted instances, or "qrdx.dev".
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: Browser console or server logs from around the time of the bug. Paste text rather than screenshots, and remove any secrets.
+      render: shell
+
+  - type: textarea
+    id: system-info
+    attributes:
+      label: System info
+      description: Browser, OS, Node.js version or device, as relevant.
+      placeholder: macOS 15, Chrome 130, Node.js 20.18
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Before submitting
+      description: By submitting this issue, you agree to follow our [contributing guidelines](https://github.com/bucharitesh/qrdx/blob/main/CONTRIBUTING.md).
+      options:
+        - label: I searched the documentation and existing issues
+          required: true

@@ -14,9 +14,9 @@ export function CTASection() {
         <div className="h-[400px] md:h-[400px] overflow-hidden shadow-xl w-full border border-border rounded-xl bg-primary/90 relative z-10">
           <StripedPattern className="z-0 text-secondary/40" />
           <div className="absolute inset-0 -top-32 md:-top-40 flex flex-col items-center justify-center">
-            <h1 className="text-white text-4xl md:text-7xl font-medium tracking-tighter max-w-xs md:max-w-xl text-center">
+            <h2 className="text-white text-4xl md:text-7xl font-medium tracking-tighter max-w-xs md:max-w-xl text-center">
               {ctaSection.title}
-            </h1>
+            </h2>
             <div className="absolute bottom-10 flex flex-col items-center justify-center gap-2">
               <Link
                 href={ctaSection.button.href}

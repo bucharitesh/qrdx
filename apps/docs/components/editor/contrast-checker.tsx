@@ -179,6 +179,7 @@ const ContrastChecker = ({ currentStyles, disabled }: ContrastCheckerProps) => {
           <Button
             variant="ghost"
             size="icon"
+            aria-label="Open contrast checker"
             className="justify-start px-2"
             disabled={disabled}
           >
@@ -198,6 +199,7 @@ const ContrastChecker = ({ currentStyles, disabled }: ContrastCheckerProps) => {
                 href="https://www.w3.org/TR/WCAG21/"
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="Learn more about WCAG contrast requirements"
                 className="text-primary hover:text-primary/80 underline transition-colors"
               >
                 Learn more

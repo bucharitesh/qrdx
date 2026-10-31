@@ -2,9 +2,12 @@
 title: Introducing QRdx Integrations
 description: Connect the tools you already use to supercharge your QR code workflow. Introducing our Integrations platform – starting with Dub.sh and Google Drive.
 date: "2026-03-23"
+updated: "2026-10-31"
 author: ["ritesh-bucha"]
 category: Company News
-image: https://assets.qrdx.dev/hero.webp
+tags: ["integrations", "dub.sh", "google drive", "oauth"]
+image: /blog/introducing-qrdx-integrations/hero.webp
+imageAlt: A QR code at the center of a hub connected by glowing glass tubes to five blank app tokens
 published: false
 ---
 
@@ -16,7 +19,7 @@ QRdx has always been about giving you the most powerful, most beautiful QR code 
 
 QRdx Integrations let you connect third-party tools directly to your QRdx account. Once connected, these integrations unlock new capabilities inside the QRdx editor and dashboard that simply weren't possible before.
 
-All integrations are authorized via **OAuth 2.0**, meaning you never share a password with us. You grant access, we store tokens securely with end-to-end encryption, and your credentials are automatically refreshed in the background so things just keep working.
+All integrations are authorized via **OAuth 2.0**, meaning you never share a password with us. You grant access, we store tokens encrypted at rest on our servers, and your credentials are automatically refreshed in the background so things just keep working.
 
 You can find, connect, and manage all integrations from **Settings → Integrations**.
 
@@ -25,6 +28,14 @@ You can find, connect, and manage all integrations from **Settings → Integrati
 We're shipping two integrations today:
 
 ### Dub.sh — Short links with advanced analytics
+
+<Figure
+  src="/blog/introducing-qrdx-integrations/dub.webp"
+  alt="A long ribbon compressing into a short link that connects to a QR code, with rising bars representing click analytics"
+  width={1500}
+  height={1000}
+  caption="Encode a Dub short link in your QR code and every scan shows up as a click in your Dub analytics."
+/>
 
 [Dub.sh](https://dub.co) is the open-source link management platform. With the Dub integration, you can generate short links for your QR codes directly inside QRdx — without ever leaving the editor.
 
@@ -40,6 +51,14 @@ The integration uses Dub's OAuth 2.0 flow with PKCE for added security. You auth
 
 ### Google Drive — Import assets from your Drive
 
+<Figure
+  src="/blog/introducing-qrdx-integrations/drive.webp"
+  alt="An image card floating from a folder into the center of a QR code as its logo"
+  width={1500}
+  height={1000}
+  caption="Pick a logo straight from your Drive instead of downloading and re-uploading it."
+/>
+
 Creating a QR code with a custom logo or brand image? With the Google Drive integration, you can browse and import images directly from your Drive — no downloading and re-uploading required.
 
 Once connected, you can:
@@ -50,6 +69,14 @@ Once connected, you can:
 - **Preview thumbnails** – See what you're picking before you import it
 
 ## How OAuth works in QRdx
+
+<Figure
+  src="/blog/introducing-qrdx-integrations/oauth.webp"
+  alt="A small blue key token passing through a row of frosted glass gates, representing a secure OAuth handshake"
+  width={1600}
+  height={900}
+  caption="You approve access on the provider's own page; QRdx only ever receives a scoped token, never your password."
+/>
 
 Here's the flow when you connect an integration:
 
@@ -62,6 +89,14 @@ Tokens are stored **encrypted at rest** and never exposed to the client. When a 
 
 ## Build your own (soon)
 
+<Figure
+  src="/blog/introducing-qrdx-integrations/extensible.webp"
+  alt="A blank plug-in cartridge being inserted into a modular dock under a QR code"
+  width={1600}
+  height={1200}
+  caption="Each integration is a self-contained module, so adding a provider means implementing one standard interface."
+/>
+
 We've architected the integrations platform to be fully extensible. Under the hood, each integration is a self-contained module with a config, a typed API client, and a UI layer. Adding a new provider is a matter of implementing a standard interface.
 
 We're planning to open up integrations to community contributions — so if there's a tool you'd love to see connected to QRdx, stay tuned. Or open an issue on [GitHub](https://github.com/bucharitesh/qrdx) and let us know.
@@ -73,8 +108,12 @@ This is just the start. We're already exploring integrations with:
 - **Notion** – Pull page content or brand assets into your QR code metadata
 - **Cloudinary** – Use your existing media library as a logo source
 - **Zapier** – Trigger QR code generation from any event in your stack
-- **Analytics providers** – Push QR scan events to your existing data pipeline
+- **Analytics providers** – Send link-click events to your existing data pipeline
 
 If there's an integration you'd love to see — or if you want to build one — open an issue or start a discussion on GitHub.
 
 [Explore Integrations →](/integrations)
+
+Like where this is heading? A star on GitHub helps other people find QRdx:
+
+<GithubCard repo="bucharitesh/qrdx" />

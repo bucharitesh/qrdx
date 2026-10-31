@@ -1,64 +1,87 @@
 ---
 title: goQR.me
+description: "QRdx vs goQR.me: a styled open-source QR code generator and React library compared with a simple free static QR generator and QR code API."
+seoTitle: "QRdx vs goQR.me: Styled QR Codes and a React Library"
+seoDescription: "goQR.me makes free static QR codes in PNG, JPEG, SVG and EPS and offers a QR code API. QRdx adds patterns, gradients, logos, frames and an open-source React library."
 competitor: goQR.me
 competitorUrl: https://goqr.me
 competitorLogo: https://assets.qrdx.dev/compare/goqr.png
-tagline: A modern React QR library with gradients, patterns, and more — free and open source vs a basic static generator.
+tagline: "goQR.me is a no-frills static QR generator with an HTTP API. QRdx is a free, open-source generator and React library for designed QR codes."
 qrdxPlan: "Free · Open Source"
-competitorPlan: QR-Server (paid)
+competitorPlan: "Free (static)"
+lastVerified: "2026-10-31"
+sources:
+  - https://goqr.me/
+  - https://goqr.me/api/
 tableRows:
-  - feature: Monthly pricing
+  - feature: Price
     qrdx: "Free"
-    competitor: "Free (static) / QR-Server (paid)"
-  - feature: Free tier
-    qrdx: "Full customization"
-    competitor: "Static codes only"
-  - feature: Open source
+    competitor: "Free for static codes"
+  - feature: Commercial use
     qrdx: true
-    competitor: false
-  - feature: React component
+    competitor: true
+  - feature: No signup to download
     qrdx: true
-    competitor: false
-  - feature: TypeScript support
-    qrdx: true
-    competitor: false
-  - feature: Dot patterns
-    qrdx: "29 combinations"
-    competitor: false
-  - feature: Gradient colors
-    qrdx: "Linear + Radial"
-    competitor: "Solid colors only"
+    competitor: true
+  - feature: Colors
+    qrdx: "Solid + linear/radial gradients"
+    competitor: "Foreground + background"
+  - feature: Shape options
+    qrdx: "9 body · 9 eye · 11 eye-dot"
+    competitor: "None listed"
   - feature: Logo overlay
     qrdx: true
+    competitor: "On request"
+  - feature: Download formats
+    qrdx: "PNG, JPG, SVG, PDF"
+    competitor: "PNG, JPEG, SVG, EPS"
+  - feature: Hosted HTTP API
+    qrdx: false
     competitor: true
-  - feature: Frame templates
-    qrdx: "6 free"
+  - feature: Dynamic (editable) QR codes
+    qrdx: "Via Dub integration"
+    competitor: "Via QR-Server platform"
+  - feature: Open source
+    qrdx: "AGPL-3.0"
     competitor: false
-  - feature: Dynamic QR codes
-    qrdx: true
-    competitor: "QR-Server only"
-  - feature: AI-powered generation
-    qrdx: "Pro ($8/mo)"
-    competitor: false
-  - feature: Analytics
-    qrdx: true
-    competitor: "QR-Server only"
-  - feature: SVG/EPS/PNG export
-    qrdx: true
-    competitor: true
-  - feature: Self-hostable
-    qrdx: true
-    competitor: false
-  - feature: Interactive playground
+  - feature: React component on npm
     qrdx: true
     competitor: false
 featureHighlights:
-  - title: Rich visual customization
-    description: 29 pattern combinations with linear and radial gradients, frame templates, and logo overlay. goQR.me generates basic black-and-white codes with optional foreground/background color.
-  - title: React component, not a web form
-    description: QRdx is a React library you embed in your app. goQR.me is a web form with no code integration — copy-paste URLs into a textbox.
-  - title: Free and open source core
-    description: QR generation, analytics, and a playground — all free and open source. AI-powered generation is available via Pro ($8/mo). goQR.me splits features across a free tool and a separate paid "QR-Server" product.
-  - title: Developer SDK with TypeScript
-    description: First-class TypeScript types, npm package, full API. goQR.me offers a REST API with no SDK or type safety.
+  - title: Designed codes, not just colors
+    description: "goQR.me lets you pick foreground and background colors. QRdx adds 9 body patterns, 9 eye shapes, 11 eye-dot shapes, gradients, logo overlay and six templates."
+  - title: A React library, not only a web form
+    description: "QRdx is also an npm package with React components and TypeScript types, so you can render styled codes in your own app."
+  - title: Open source
+    description: "QRdx is AGPL-3.0 licensed and self-hostable. goQR.me is a closed-source service."
+  - title: Copy your design as code
+    description: "The QRdx playground can export the current design as a ready-to-paste React component, so designers and developers share one source of truth."
 ---
+
+goQR.me is one of the simplest ways to make a QR code: type your content, pick colors, download. It is free for static codes, allows commercial and print use, and offers vector downloads (SVG and EPS) without registration. It also runs a QR code API that returns an image from a URL, which is handy in emails or server templates. QRdx is for when you want the code to look designed, or want to render it inside your own React app.
+
+## Who each tool is for
+
+goQR.me fits anyone who needs a plain, reliable code fast, especially if they want EPS files or an image URL they can drop into an `img` tag. Editable, trackable codes are offered separately through its QR-Server management platform.
+
+QRdx fits designers who want patterns, gradients, logos and frames, and developers who want a component they can style and ship.
+
+## Where goQR.me is the better choice
+
+- You need **EPS** output. QRdx exports PNG, JPG, SVG and PDF, but not EPS.
+- You want a **hosted HTTP API** that returns a QR image from a URL. QRdx has no hosted image endpoint; you render codes with its npm package instead.
+- You want the plainest possible code with nothing to configure.
+
+## Key differences
+
+- **Design:** goQR.me changes colors; QRdx changes shapes, colors and gradients, and adds logos and frames.
+- **Logo:** goQR.me handles custom logo codes on request through a separate page. QRdx lets you upload a logo in the editor.
+- **Integration:** goQR.me integrates over HTTP. QRdx integrates as a React library with TypeScript types, plus a CLI.
+- **Editable codes:** goQR.me offers them through QR-Server. QRdx can encode a [Dub](/integrations/dub) short link so you can change the destination in Dub.
+
+## Switching from goQR.me
+
+1. Paste the same content into the [QRdx playground](/playground). Your existing static codes keep working, so nothing needs replacing.
+2. Style the code and save the look as a theme.
+3. Developers: run `npm install qrdx` and render the `QRCode` component with the same value. The [docs](/docs) cover props for patterns, colors and logos.
+4. Test the result on a few phones, especially with a logo or low-contrast colors.

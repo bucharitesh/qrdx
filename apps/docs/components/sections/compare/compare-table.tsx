@@ -2,6 +2,7 @@ import { cn } from "@repo/design-system/lib/utils";
 import { Check, Minus, X } from "lucide-react";
 import Image from "next/image";
 import { QrdxLogo } from "@/components/qrdx-logo";
+import { CompetitorLogo } from "@/components/sections/compare/competitor-logo";
 import { SectionHeader } from "@/components/sections/section-header";
 
 export interface TableRow {
@@ -15,19 +16,28 @@ interface CompareTableProps {
   competitor: string;
   qrdxPlan: string;
   competitorPlan: string;
-  competitorLogo: string;
+  competitorLogo?: string;
   rows: TableRow[];
 }
 
 function HeaderLogo({
   src,
-  alt,
+  name,
   className,
 }: {
-  src: string;
-  alt: string;
+  src?: string;
+  name: string;
   className?: string;
 }) {
+  const alt = `${name} logo`;
+  if (!src) {
+    return (
+      <CompetitorLogo
+        name={name}
+        className={cn("size-6 text-[10px]", className)}
+      />
+    );
+  }
   const isSvg = src.endsWith(".svg") || src.includes(".svg?");
   if (isSvg) {
     return (
@@ -95,8 +105,8 @@ export function CompareTable({
           at a glance
         </h2>
         <p className="text-muted-foreground text-center text-balance font-medium">
-          QRdx is a free, open-source QR code library — everything {competitor}{" "}
-          charges for, included at no cost.
+          Pricing, design options and developer tooling side by side. Where{" "}
+          {competitor} is ahead, the table says so.
         </p>
       </SectionHeader>
 
@@ -119,7 +129,7 @@ export function CompareTable({
               <div className="flex items-center justify-center gap-2 mb-1">
                 <HeaderLogo
                   src={competitorLogo}
-                  alt={`${competitor} logo`}
+                  name={competitor}
                   className="shrink-0"
                 />
               </div>

@@ -85,7 +85,10 @@ export function GoogleDriveForm() {
       );
 
       if (!response.ok) {
-        throw new Error("Failed to start Google Drive connection");
+        const body = await response.json().catch(() => null);
+        throw new Error(
+          body?.error ?? "Failed to start Google Drive connection",
+        );
       }
 
       const data = await response.json();

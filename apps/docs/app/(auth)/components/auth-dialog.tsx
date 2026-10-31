@@ -2,6 +2,7 @@
 "use client";
 
 import { authClient } from "@repo/auth/client";
+import { toast } from "@repo/design-system";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Card } from "@repo/design-system/components/ui/card";
@@ -50,10 +51,15 @@ export function AuthDialog({
   const handleGoogleSignIn = async () => {
     setIsGoogleLoading(true);
     try {
-      await authClient.signIn.social({
+      const { error } = await authClient.signIn.social({
         provider: "google",
         callbackURL: getCallbackUrl(),
       });
+      // e.g. the provider is not configured on this server
+      if (error) {
+        setIsGoogleLoading(false);
+        toast.error("Google sign-in is not available right now");
+      }
     } catch (error) {
       console.error("Google Sign In Error:", error);
       // Handle error appropriately (e.g., show a toast notification)
@@ -63,10 +69,14 @@ export function AuthDialog({
   const handleGithubSignIn = async () => {
     setIsGithubLoading(true);
     try {
-      await authClient.signIn.social({
+      const { error } = await authClient.signIn.social({
         provider: "github",
         callbackURL: getCallbackUrl(),
       });
+      if (error) {
+        setIsGithubLoading(false);
+        toast.error("GitHub sign-in is not available right now");
+      }
     } catch (error) {
       console.error("GitHub Sign In Error:", error);
       // Handle error appropriately

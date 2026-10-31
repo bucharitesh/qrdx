@@ -3,8 +3,23 @@ import { createMDX } from "fumadocs-mdx/next";
 import type { NextConfig } from "next";
 import { env } from "@/env";
 
+type Rewrites = Awaited<ReturnType<NonNullable<NextConfig["rewrites"]>>>;
+type RewritePhases = Required<Exclude<Rewrites, unknown[]>>;
+
+// A plain array is shorthand for `afterFiles`.
+const toRewritePhases = (rewrites: Rewrites = []): RewritePhases =>
+  Array.isArray(rewrites)
+    ? { beforeFiles: [], afterFiles: rewrites, fallback: [] }
+    : {
+        beforeFiles: rewrites.beforeFiles ?? [],
+        afterFiles: rewrites.afterFiles ?? [],
+        fallback: rewrites.fallback ?? [],
+      };
+
 let nextConfig: NextConfig = {
   ...config,
+  // Opt-in for Docker / self-hosting: NEXT_OUTPUT=standalone pnpm build
+  output: process.env.NEXT_OUTPUT === "standalone" ? "standalone" : undefined,
   reactStrictMode: true,
   serverExternalPackages: [
     "ts-morph",
@@ -14,13 +29,19 @@ let nextConfig: NextConfig = {
     "shiki",
     "@takumi-rs/core",
   ],
+  // Keep the shared rewrites (PostHog /ingest proxy) alongside the docs ones.
   async rewrites() {
-    return [
-      {
-        source: "/docs/:path*.mdx",
-        destination: "/llms.mdx/:path*",
-      },
-    ];
+    const base = toRewritePhases(await config.rewrites?.());
+    return {
+      ...base,
+      afterFiles: [
+        ...base.afterFiles,
+        {
+          source: "/docs/:path*.mdx",
+          destination: "/llms.mdx/:path*",
+        },
+      ],
+    };
   },
 };
 
@@ -30,4 +51,4 @@ if (env.ANALYZE === "true") {
 
 const withMDX = createMDX();
 
-export default withMDX(config);
+export default withMDX(nextConfig);

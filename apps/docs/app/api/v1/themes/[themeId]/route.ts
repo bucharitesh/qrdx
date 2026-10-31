@@ -22,10 +22,7 @@ export async function GET(
     })
     .from(qrPreset)
     .where(
-      and(
-        eq(qrPreset.id, themeId),
-        eq(qrPreset.userId, auth.tokenData.userId),
-      ),
+      and(eq(qrPreset.id, themeId), eq(qrPreset.userId, auth.tokenData.userId)),
     )
     .limit(1);
 

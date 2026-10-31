@@ -1,21 +1,13 @@
 "use server";
 
 import { aiUsage, database as db } from "@repo/database";
-import cuid from "cuid";
-import { and, count, eq, gte } from "drizzle-orm";
+import { and, eq, gte } from "drizzle-orm";
 import { z } from "zod";
 import { getCurrentUserId } from "@/lib/shared";
 import { ValidationError } from "@/types/errors";
 
 const getDaysSinceEpoch = (daysAgo: number = 0) =>
   Math.floor(Date.now() / (24 * 60 * 60 * 1000)) - daysAgo;
-
-// Schema for recording usage events (internal use - still tracks tokens)
-const recordUsageSchema = z.object({
-  promptTokens: z.number().min(0).default(0),
-  completionTokens: z.number().min(0).default(0),
-  modelId: z.string(),
-});
 
 // Schema for timeframe validation
 const timeframeSchema = z.union([
@@ -38,45 +30,6 @@ interface ChartDataPoint {
   hoursSinceEpoch?: number;
   date: string;
   totalRequests: number;
-}
-
-export async function recordAIUsage(input: {
-  modelId: string;
-  promptTokens?: number;
-  completionTokens?: number;
-}) {
-  try {
-    const userId = await getCurrentUserId();
-
-    const validation = recordUsageSchema.safeParse(input);
-    if (!validation.success) {
-      throw new ValidationError(
-        "Invalid usage data",
-        validation.error.format(),
-      );
-    }
-
-    const { promptTokens, completionTokens, modelId } = validation.data;
-    const daysSinceEpoch = getDaysSinceEpoch(0);
-
-    const [insertedUsage] = await db
-      .insert(aiUsage)
-      .values({
-        id: cuid(),
-        userId,
-        modelId,
-        promptTokens: promptTokens.toString(),
-        completionTokens: completionTokens.toString(),
-        daysSinceEpoch: daysSinceEpoch.toString(),
-        createdAt: new Date(),
-      })
-      .returning();
-
-    return insertedUsage;
-  } catch (error) {
-    console.error("Error recording usage:", error);
-    throw error;
-  }
 }
 
 export async function getMyUsageStats(
@@ -110,22 +63,6 @@ export async function getMyUsageStats(
     };
   } catch (error) {
     console.error("Error getting usage stats:", error);
-    throw error;
-  }
-}
-
-export async function getMyAllTimeRequestCount(
-  userId: string,
-): Promise<number> {
-  try {
-    const result = await db
-      .select({ count: count() })
-      .from(aiUsage)
-      .where(eq(aiUsage.userId, userId));
-
-    return result[0]?.count ?? 0;
-  } catch (error) {
-    console.error("Error getting all-time request count:", error);
     throw error;
   }
 }
@@ -217,64 +154,6 @@ export async function getMyUsageChartData(
     return chartData;
   } catch (error) {
     console.error("Error getting usage chart data:", error);
-    throw error;
-  }
-}
-
-// Internal function for detailed usage (including tokens) - not exposed to users
-export async function getDetailedUsageStats(
-  timeframe: Timeframe,
-  modelId: string,
-): Promise<{
-  requests: number;
-  promptTokens: number;
-  completionTokens: number;
-  totalTokens: number;
-  timeframe: Timeframe;
-}> {
-  try {
-    const userId = await getCurrentUserId();
-
-    const validation = timeframeSchema.safeParse(timeframe);
-    if (!validation.success) {
-      throw new ValidationError("Invalid timeframe");
-    }
-
-    const days = timeframe === "1d" ? 1 : timeframe === "7d" ? 7 : 30;
-    const startDay = getDaysSinceEpoch(days);
-
-    // Get user's events for the model
-    const events = await db
-      .select()
-      .from(aiUsage)
-      .where(
-        and(
-          eq(aiUsage.userId, userId),
-          eq(aiUsage.modelId, modelId),
-          gte(aiUsage.daysSinceEpoch, startDay.toString()),
-        ),
-      );
-
-    const requests = events.length;
-    const promptTokens = events.reduce(
-      (sum, e) => sum + parseInt(e.promptTokens, 10),
-      0,
-    );
-    const completionTokens = events.reduce(
-      (sum, e) => sum + parseInt(e.completionTokens, 10),
-      0,
-    );
-    const totalTokens = promptTokens + completionTokens;
-
-    return {
-      requests,
-      promptTokens,
-      completionTokens,
-      totalTokens,
-      timeframe,
-    };
-  } catch (error) {
-    console.error("Error getting detailed usage stats:", error);
     throw error;
   }
 }

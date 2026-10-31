@@ -1,13 +1,30 @@
 import { CustomerPortal } from "@polar-sh/nextjs";
-import { polar } from "@/lib/polar";
+import { type NextRequest, NextResponse } from "next/server";
+import { env } from "@/lib/env";
+import { BILLING_NOT_CONFIGURED_MESSAGE, polar } from "@/lib/polar";
 import { getCurrentUserId } from "@/lib/shared";
 
-export const GET = CustomerPortal({
-  accessToken: process.env.POLAR_ACCESS_TOKEN as string,
-  server: process.env.NODE_ENV === "production" ? "production" : "sandbox",
-  getCustomerId: async (req) => {
-    const userId = await getCurrentUserId(req);
-    const customer = await polar.customers.getExternal({ externalId: userId });
-    return customer.id;
-  },
-});
+const handlePortal = env.POLAR_ACCESS_TOKEN
+  ? CustomerPortal({
+      accessToken: env.POLAR_ACCESS_TOKEN,
+      server: process.env.NODE_ENV === "production" ? "production" : "sandbox",
+      getCustomerId: async (req) => {
+        const userId = await getCurrentUserId(req);
+        const customer = await polar.customers.getExternal({
+          externalId: userId,
+        });
+        return customer.id;
+      },
+    })
+  : null;
+
+export async function GET(request: NextRequest) {
+  if (!handlePortal) {
+    return NextResponse.json(
+      { error: BILLING_NOT_CONFIGURED_MESSAGE },
+      { status: 503 },
+    );
+  }
+
+  return handlePortal(request);
+}

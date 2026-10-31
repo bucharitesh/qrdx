@@ -40,6 +40,8 @@
       "**/*",
       "!packages/qrdx/src/codegen.ts",
       "!packages/cli/src/lib/codegen.ts",
+      // Sample CLI output, not source
+      "!packages/cli/qr.svg",
       "!packages/design-system/components/ui",
       "!packages/design-system/lib",
       "!packages/design-system/hooks",

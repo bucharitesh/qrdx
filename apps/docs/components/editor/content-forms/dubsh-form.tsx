@@ -123,7 +123,8 @@ export function DubshForm() {
       const response = await apiFetch("/api/integrations/dub?action=connect");
 
       if (!response.ok) {
-        throw new Error("Failed to start Dub connection");
+        const body = await response.json().catch(() => null);
+        throw new Error(body?.error ?? "Failed to start Dub connection");
       }
 
       const data = await response.json();

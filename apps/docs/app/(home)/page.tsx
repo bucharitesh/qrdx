@@ -1,83 +1,86 @@
+import type { Metadata } from "next";
 import { FAQSection } from "@/components/sections/faq-section";
 import { HeroSection } from "@/components/sections/hero-section";
+import {
+  baseUrl,
+  createMetadata,
+  defaultOgImage,
+  siteDescription,
+  siteName,
+  siteTitle,
+} from "@/lib/metadata";
+
+export const metadata: Metadata = createMetadata({
+  title: { absolute: siteTitle },
+  description: siteDescription,
+  path: "/",
+});
+
+const url = (path: string): string => new URL(path, baseUrl).toString();
 
 const softwareApplicationSchema = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
-  name: "QRdx",
-  applicationCategory: "UtilitiesApplication",
+  name: siteName,
+  applicationCategory: "DesignApplication",
   operatingSystem: "Web",
-  url: "https://qrdx.dev",
+  url: url("/"),
   offers: {
     "@type": "Offer",
     price: "0",
     priceCurrency: "USD",
-    description: "Free forever with unlimited QR code generation",
+    description: "Free plan with unlimited static QR code generation",
   },
   description:
-    "Free unlimited QR code generator with AI-powered customization. No signup required. Custom colors, logos, 29 dot pattern combinations, analytics, and an embeddable React component. Open-source (MIT licensed).",
+    "Free QR code generator with custom colors, gradients, logos and 29 pattern styles. No signup or watermark. AI-designed themes, an embeddable React component, and open-source code (AGPL-3.0).",
   featureList: [
-    "Unlimited free QR code generation",
-    "No signup or account required",
-    "AI-powered theme generation",
-    "29 dot pattern combinations",
+    "Unlimited free static QR code generation",
+    "No signup required to create and download",
+    "PNG, JPG and SVG export",
+    "29 pattern styles (body dots, corner eyes, eye dots)",
     "Linear and radial gradient colors",
     "Logo overlay support",
-    "Real-time scan analytics",
+    "AI-designed QR code themes",
     "React/TypeScript npm component",
     "No ads or watermarks",
     "Self-hostable",
-    "Open-source (MIT)",
+    "Open source (AGPL-3.0)",
   ],
-  screenshot: "https://qrdx.dev/og-image.png",
+  screenshot: url(defaultOgImage.url),
   softwareVersion: "latest",
+  license: "https://www.gnu.org/licenses/agpl-3.0.html",
   author: {
     "@type": "Person",
     name: "Ritesh Bucha",
     url: "https://github.com/bucharitesh",
-  },
-  aggregateRating: {
-    "@type": "AggregateRating",
-    ratingValue: "5",
-    ratingCount: "1",
-    bestRating: "5",
-    worstRating: "1",
   },
 };
 
 const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
-  name: "QRdx",
-  url: "https://qrdx.dev",
-  logo: "https://qrdx.dev/favicon-96x96.png",
+  name: siteName,
+  url: url("/"),
+  logo: url("/logo.png"),
   description:
-    "Open-source QR code infrastructure for designers, businesses, and developers. Free, unlimited, and AI-powered.",
-  email: "support@qrdx.app",
+    "Open-source QR code generator and developer library for designers, businesses and developers.",
+  email: "support@qrdx.dev",
   foundingDate: "2024",
   sameAs: ["https://github.com/bucharitesh/qrdx"],
   contactPoint: {
     "@type": "ContactPoint",
     contactType: "customer support",
-    email: "support@qrdx.app",
+    email: "support@qrdx.dev",
   },
 };
 
 const webSiteSchema = {
   "@context": "https://schema.org",
   "@type": "WebSite",
-  name: "QRdx",
-  url: "https://qrdx.dev",
+  name: siteName,
+  url: url("/"),
   description:
-    "Free unlimited QR code generator — no signup required. AI-powered customization, open-source, and developer-first.",
-  potentialAction: {
-    "@type": "SearchAction",
-    target: {
-      "@type": "EntryPoint",
-      urlTemplate: "https://qrdx.dev/docs?q={search_term_string}",
-    },
-    "query-input": "required name=search_term_string",
-  },
+    "Free QR code generator — no signup required. Open source, AI-assisted design, and developer-first.",
 };
 
 export default function Home() {

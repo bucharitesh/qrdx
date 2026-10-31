@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { createMetadata } from "@/lib/metadata";
 import { legalSource } from "@/lib/source";
 import { getMDXComponents } from "@/mdx-components";
 
@@ -50,8 +51,9 @@ export async function generateMetadata(
     notFound();
   }
 
-  return {
-    title: `${page.data.title} | qrdx`,
+  return createMetadata({
+    title: page.data.title,
     description: page.data.description,
-  };
+    path: page.url,
+  });
 }

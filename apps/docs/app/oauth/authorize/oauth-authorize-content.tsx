@@ -59,7 +59,12 @@ export function OAuthAuthorizeContent() {
   const handleSignIn = async (provider: "google" | "github") => {
     setLoadingProvider(provider);
     try {
-      await authClient.signIn.social({ provider, callbackURL });
+      const { error } = await authClient.signIn.social({
+        provider,
+        callbackURL,
+      });
+      // e.g. the provider is not configured on this server
+      if (error) setLoadingProvider(null);
     } catch {
       setLoadingProvider(null);
     }

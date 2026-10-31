@@ -14,11 +14,12 @@ export function Provider({ children }: { children: ReactNode }) {
       <NuqsAdapter>
         <QueryProvider>
           <ChatProvider>
-            <Suspense>
+            {/* AuthDialog reads useSearchParams(); keep its CSR bailout away from page content */}
+            <Suspense fallback={null}>
               <AuthDialogWrapper />
               <GetProDialogWrapper />
-              {children}
             </Suspense>
+            {children}
           </ChatProvider>
         </QueryProvider>
       </NuqsAdapter>

@@ -1,8 +1,8 @@
-"use client";
-
+// memo/useMemo are available in React Server Components, so QRCode can render
+// on the server; only QRCodeCanvas needs a client boundary.
 import { memo, useMemo } from "react";
 import type { QRProps } from "../types";
-import { DEFAULT_MARGIN } from "./constants";
+import { DEFAULT_MARGIN, DEFAULT_SIZE } from "./constants";
 import { getQRData } from "./helpers";
 import { QRCodeSVG } from "./utils";
 
@@ -25,12 +25,16 @@ export const QRCode = memo(
     cornerEyePattern,
     cornerEyeDotPattern,
     level,
+    size = DEFAULT_SIZE,
     scale = 1,
     margin = DEFAULT_MARGIN,
+    style,
     templateId,
     customTemplate,
     customProps,
   }: QRCodeProps) => {
+    // getQRData lays the logo out on a 1024px canvas; scale it to the rendered size.
+    const renderSize = size * scale;
     const qrData = useMemo(
       () =>
         getQRData({
@@ -78,18 +82,15 @@ export const QRCode = memo(
         fgColor={qrData.fgColor}
         level={level || qrData.level}
         margin={qrData.margin}
-        size={(qrData.size / 8) * scale}
+        size={renderSize}
+        style={style}
         templateId={qrData.templateId}
         value={qrData.value}
         {...(qrData.imageSettings && {
           imageSettings: {
             ...qrData.imageSettings,
-            height: qrData.imageSettings
-              ? (qrData.imageSettings.height / 8) * scale
-              : 0,
-            width: qrData.imageSettings
-              ? (qrData.imageSettings.width / 8) * scale
-              : 0,
+            height: (qrData.imageSettings.height / qrData.size) * renderSize,
+            width: (qrData.imageSettings.width / qrData.size) * renderSize,
           },
         })}
       />

@@ -1,6 +1,12 @@
 import { Button } from "@repo/design-system/components/ui/button";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Icons } from "@/components/icons";
+
+export const metadata: Metadata = {
+  title: "Welcome to Pro",
+  robots: { index: false, follow: false },
+};
 
 export default function SuccessPage() {
   return (

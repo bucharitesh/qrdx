@@ -12,14 +12,21 @@ interface BlogPost {
   }[];
   category: string;
   image: string;
+  imageAlt?: string;
 }
 
 interface BlogListProps {
   posts: BlogPost[];
   showCategories?: boolean;
+  /** Render the first post as a full-width featured card */
+  featureFirst?: boolean;
 }
 
-export function BlogList({ posts, showCategories = true }: BlogListProps) {
+export function BlogList({
+  posts,
+  showCategories = true,
+  featureFirst = false,
+}: BlogListProps) {
   return (
     <>
       {showCategories && (
@@ -36,8 +43,8 @@ export function BlogList({ posts, showCategories = true }: BlogListProps) {
             No posts in this category yet.
           </p>
         ) : (
-          <div className="grid w-full max-w-7xl grid-cols-2 md:grid-cols-3 border-l border-border auto-rows-fr">
-            {posts.map((post) => (
+          <div className="grid w-full max-w-7xl grid-cols-1 sm:grid-cols-2 md:grid-cols-3 border-l border-border">
+            {posts.map((post, index) => (
               <BlogCard
                 key={post.slug}
                 title={post.title}
@@ -46,6 +53,8 @@ export function BlogList({ posts, showCategories = true }: BlogListProps) {
                 date={post.date}
                 author={post.author}
                 image={post.image}
+                imageAlt={post.imageAlt}
+                featured={featureFirst && index === 0}
               />
             ))}
           </div>

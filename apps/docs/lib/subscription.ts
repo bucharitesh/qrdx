@@ -1,14 +1,26 @@
-"use server";
+import "server-only";
 
-import { database as db } from "@repo/database";
+import { aiUsage, database as db } from "@repo/database";
 import { subscription } from "@repo/database/schema";
-import { and, desc, eq } from "drizzle-orm";
-import type { NextRequest } from "next/server";
-import { getMyAllTimeRequestCount } from "@/actions/ai-usage";
+import cuid from "cuid";
+import { and, count, desc, eq, inArray } from "drizzle-orm";
 import { SubscriptionRequiredError } from "@/types/errors";
 import type { SubscriptionCheck } from "@/types/subscription";
 import { AI_REQUEST_FREE_TIER_LIMIT } from "./constants";
-import { getCurrentUserId } from "./shared";
+
+// Polar keeps a subscription "active" until a cancellation takes effect at period end;
+// "canceled", "past_due", "unpaid" and "incomplete*" do not grant access.
+const ENTITLED_SUBSCRIPTION_STATUSES = ["active", "trialing"];
+
+const FREE_LIMIT_REACHED_MESSAGE = `You've reached your free limit of ${AI_REQUEST_FREE_TIER_LIMIT} requests. Please upgrade to continue.`;
+
+async function getAllTimeRequestCount(userId: string): Promise<number> {
+  const result = await db
+    .select({ count: count() })
+    .from(aiUsage)
+    .where(eq(aiUsage.userId, userId));
+  return result[0]?.count ?? 0;
+}
 
 export async function getMyActiveSubscription(
   userId: string,
@@ -17,7 +29,10 @@ export async function getMyActiveSubscription(
     .select()
     .from(subscription)
     .where(
-      and(eq(subscription.userId, userId), eq(subscription.status, "active")),
+      and(
+        eq(subscription.userId, userId),
+        inArray(subscription.status, ENTITLED_SUBSCRIPTION_STATUSES),
+      ),
     )
     .orderBy(desc(subscription.createdAt))
     .limit(1);
@@ -30,7 +45,7 @@ export async function validateSubscriptionAndUsage(
   try {
     const [activeSubscription, requestsUsed] = await Promise.all([
       getMyActiveSubscription(userId),
-      getMyAllTimeRequestCount(userId),
+      getAllTimeRequestCount(userId),
     ]);
 
     const isSubscribed = !!activeSubscription;
@@ -56,7 +71,7 @@ export async function validateSubscriptionAndUsage(
         isSubscribed: false,
         requestsUsed,
         requestsRemaining: 0,
-        error: `You've reached your free limit of ${AI_REQUEST_FREE_TIER_LIMIT} requests. Please upgrade to continue.`,
+        error: FREE_LIMIT_REACHED_MESSAGE,
       };
     }
 
@@ -72,15 +87,59 @@ export async function validateSubscriptionAndUsage(
   }
 }
 
-export async function requireSubscriptionOrFreeUsage(
-  req: NextRequest,
-): Promise<void> {
-  const userId = await getCurrentUserId(req);
-  const validation = await validateSubscriptionAndUsage(userId);
+/**
+ * Records one AI request up front and returns its usage row id.
+ * Free users are counted *after* the insert, so parallel requests can never
+ * exceed the free quota (the losers are rolled back and rejected).
+ */
+export async function reserveAIRequest(
+  userId: string,
+  modelId: string,
+): Promise<string> {
+  const activeSubscription = await getMyActiveSubscription(userId);
+  const usageId = cuid();
 
-  if (!validation.canProceed) {
-    throw new SubscriptionRequiredError(validation.error, {
-      requestsRemaining: validation.requestsRemaining,
+  await db.insert(aiUsage).values({
+    id: usageId,
+    userId,
+    modelId,
+    daysSinceEpoch: Math.floor(Date.now() / (24 * 60 * 60 * 1000)).toString(),
+    createdAt: new Date(),
+  });
+
+  if (activeSubscription) {
+    return usageId;
+  }
+
+  const [result] = await db
+    .select({ count: count() })
+    .from(aiUsage)
+    .where(eq(aiUsage.userId, userId));
+
+  if ((result?.count ?? 0) > AI_REQUEST_FREE_TIER_LIMIT) {
+    await releaseAIRequest(usageId);
+    throw new SubscriptionRequiredError(FREE_LIMIT_REACHED_MESSAGE, {
+      requestsRemaining: 0,
     });
   }
+
+  return usageId;
+}
+
+export async function finalizeAIRequest(
+  usageId: string,
+  usage: { inputTokens?: number; outputTokens?: number },
+): Promise<void> {
+  await db
+    .update(aiUsage)
+    .set({
+      promptTokens: String(usage.inputTokens ?? 0),
+      completionTokens: String(usage.outputTokens ?? 0),
+    })
+    .where(eq(aiUsage.id, usageId));
+}
+
+/** Refunds a reserved request (e.g. the model call failed). */
+export async function releaseAIRequest(usageId: string): Promise<void> {
+  await db.delete(aiUsage).where(eq(aiUsage.id, usageId));
 }

@@ -1,4 +1,3 @@
-import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import {
   createUIMessageStream,
   createUIMessageStreamResponse,
@@ -6,46 +5,53 @@ import {
   streamText,
 } from "ai";
 import type { NextRequest } from "next/server";
-import { recordAIUsage } from "@/actions/ai-usage";
 import { QR_THEME_GENERATION_TOOLS } from "@/lib/ai/generate-qr-theme/tools";
 import { GENERATE_QR_THEME_SYSTEM } from "@/lib/ai/prompts";
-import { baseProviderOptions, myProvider } from "@/lib/ai/providers";
+import {
+  assertAIConfigured,
+  baseProviderOptions,
+  myProvider,
+} from "@/lib/ai/providers";
+import { MAX_AI_REQUEST_BODY_BYTES } from "@/lib/constants";
 import { handleError } from "@/lib/error-response";
+import {
+  enforceAIRateLimit,
+  parseWithSchema,
+  readJsonBody,
+} from "@/lib/request-guards";
 import { getCurrentUserId, logError } from "@/lib/shared";
-import { validateSubscriptionAndUsage } from "@/lib/subscription";
+import {
+  finalizeAIRequest,
+  releaseAIRequest,
+  reserveAIRequest,
+} from "@/lib/subscription";
+import { generateQRThemeRequestSchema } from "@/lib/validations/ai";
 import type { AdditionalAIContext, ChatMessage } from "@/types/ai";
-import { SubscriptionRequiredError } from "@/types/errors";
 import { convertMessagesToModelMessages } from "@/utils/ai/message-converter";
 
-const rateLimiter = createRateLimiter({
-  limiter: slidingWindow(10, "10 s"),
-});
 export async function POST(req: NextRequest) {
   try {
     const userId = await getCurrentUserId(req);
+    assertAIConfigured();
+    await enforceAIRateLimit(req, "generate-qr-theme", userId);
 
-    const { success } = await rateLimiter.limit(`generate-qr-theme:${userId}`);
-    if (!success) {
-      return new Response("Rate limit exceeded. Please try again later.", {
-        status: 429,
-      });
-    }
+    const { messages } = parseWithSchema(
+      generateQRThemeRequestSchema,
+      await readJsonBody(req, MAX_AI_REQUEST_BODY_BYTES),
+    );
+    const modelMessages = await convertMessagesToModelMessages(
+      messages as unknown as ChatMessage[],
+    );
 
-    const subscriptionCheck = await validateSubscriptionAndUsage(userId);
-
-    if (!subscriptionCheck.canProceed) {
-      throw new SubscriptionRequiredError(subscriptionCheck.error, {
-        requestsRemaining: subscriptionCheck.requestsRemaining,
-      });
-    }
-
-    const { messages }: { messages: ChatMessage[] } = await req.json();
-    const modelMessages = await convertMessagesToModelMessages(messages);
+    const model = myProvider.languageModel("base");
+    const usageId = await reserveAIRequest(
+      userId,
+      typeof model === "string" ? model : model.modelId,
+    );
 
     const stream = createUIMessageStream<ChatMessage>({
       execute: ({ writer }) => {
         const context: AdditionalAIContext = { writer };
-        const model = myProvider.languageModel("base");
 
         const result = streamText({
           abortSignal: req.signal,
@@ -55,19 +61,21 @@ export async function POST(req: NextRequest) {
           messages: modelMessages,
           tools: QR_THEME_GENERATION_TOOLS,
           stopWhen: stepCountIs(5),
-          onError: (error) => {
-            if (error instanceof Error) console.error(error);
+          onError: async ({ error }) => {
+            logError(error as Error, { route: "/api/generate-qr-theme" });
+            await releaseAIRequest(usageId).catch((releaseError) =>
+              logError(releaseError as Error, { action: "releaseAIRequest" }),
+            );
           },
           onFinish: async (result) => {
             const { totalUsage } = result;
             try {
-              await recordAIUsage({
-                modelId: model.toString(),
-                promptTokens: totalUsage.inputTokens,
-                completionTokens: totalUsage.outputTokens,
-              });
+              await finalizeAIRequest(usageId, totalUsage);
             } catch (error) {
-              logError(error as Error, { action: "recordAIUsage", totalUsage });
+              logError(error as Error, {
+                action: "finalizeAIRequest",
+                totalUsage,
+              });
             }
           },
           experimental_context: context,

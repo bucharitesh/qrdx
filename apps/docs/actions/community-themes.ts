@@ -14,8 +14,8 @@ import {
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import cuid from "cuid";
 import { and, asc, count, desc, eq, inArray, sql } from "drizzle-orm";
-import { headers } from "next/headers";
 import { revalidateTag, unstable_cache } from "next/cache";
+import { headers } from "next/headers";
 import { z } from "zod";
 import {
   COMMUNITY_THEME_TAGS,
@@ -26,9 +26,9 @@ import { getCurrentUserId } from "@/lib/shared";
 import type {
   CommunityFilterOption,
   CommunitySortOption,
-  CommunityTimeRange,
   CommunityTheme,
   CommunityThemesResponse,
+  CommunityTimeRange,
 } from "@/types/community";
 import {
   type ActionResult,
@@ -107,9 +107,7 @@ async function fetchCommunityThemesCore(
 
   if (sort === "popular" && timeRange !== "all") {
     const intervalSql =
-      timeRange === "weekly"
-        ? sql`interval '7 days'`
-        : sql`interval '30 days'`;
+      timeRange === "weekly" ? sql`interval '7 days'` : sql`interval '30 days'`;
     conditions.push(
       sql`${communityTheme.publishedAt} > now() - ${intervalSql}`,
     );
@@ -189,9 +187,7 @@ async function fetchCommunityThemesCore(
             tag: communityThemeTag.tag,
           })
           .from(communityThemeTag)
-          .where(
-            inArray(communityThemeTag.communityThemeId, communityThemeIds),
-          )
+          .where(inArray(communityThemeTag.communityThemeId, communityThemeIds))
       : [];
 
   const tagsMap = new Map<string, string[]>();
@@ -518,8 +514,7 @@ async function fetchCommunityDataForThemeCore(
       image: result.authorImage,
     },
     likeCount: Number(result.likeCount),
-    isLikedByMe:
-      "isLikedByMe" in result ? Boolean(result.isLikedByMe) : false,
+    isLikedByMe: "isLikedByMe" in result ? Boolean(result.isLikedByMe) : false,
     publishedAt: result.publishedAt.toISOString(),
     tags: tagRows.map((r) => r.tag),
   };

@@ -20,18 +20,20 @@ Welcome to QRdx! Create, customize, and export beautiful QR codes with professio
 ## 🎨 Customization Options
 
 ```tsx
-import { QRCode } from '@qrdx/core'
+import { QRCode } from 'qrdx'
 
-const qr = new QRCode({
-  data: 'https://qrdx.dev',
-  foreground: '#667eea',
-  background: '#ffffff',
-  pattern: 'dots',
-  logo: {
-    src: '/logo.png',
-    size: 0.3,
-  },
-})
+export function Example() {
+  return (
+    <QRCode
+      value="https://qrdx.dev"
+      fgColor="#667eea"
+      bgColor="#ffffff"
+      bodyPattern="circle"
+      logo="/logo.png"
+      size={256}
+    />
+  )
+}
 ```
 
 ## 🚀 Built for Performance
