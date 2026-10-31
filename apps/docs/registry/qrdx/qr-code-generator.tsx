@@ -79,7 +79,7 @@ export const QR_CODE_PRESETS: QrCodePreset[] = [
       },
       bodyPattern: "diamond",
       cornerEyePattern: "rounded",
-      cornerEyeDotPattern: "diamond",
+      cornerEyeDotPattern: "octagon",
     },
   },
   {

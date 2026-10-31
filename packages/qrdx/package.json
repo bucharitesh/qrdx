@@ -1,7 +1,7 @@
 {
   "name": "qrdx",
-  "version": "0.0.46",
-  "description": "Customizable QR code generator for React: SVG and canvas rendering, dot and eye patterns, gradients, logos, templates, PNG/SVG/PDF export and QR scanning.",
+  "version": "0.0.47",
+  "description": "Customizable QR code generator for React: SVG and canvas rendering, dot and eye patterns, gradients, logos, frames, Logo QR and Image QR art, PNG/SVG/PDF/EPS export, a scan score and QR scanning.",
   "keywords": [
     "qr-code",
     "qrcode",
@@ -10,7 +10,11 @@
     "react",
     "svg",
     "typescript",
-    "qr-scanner"
+    "qr-scanner",
+    "qr-code-svg",
+    "qr-code-logo",
+    "eps",
+    "pdf"
   ],
   "homepage": "https://qrdx.dev/docs",
   "bugs": {
@@ -60,7 +64,9 @@
     "build:inplace": "tsup && tsc --project tsconfig.build.json --emitDeclarationOnly",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "readme": "node scripts/readme-catalogue.mjs",
+    "prepublishOnly": "node -e \"if(!(process.env.npm_config_user_agent||'').startsWith('pnpm/')){console.error('Publish with pnpm publish: it turns workspace: ranges into real versions.');process.exit(1)}\" && pnpm run build && pnpm run test && node scripts/readme-catalogue.mjs --check"
   },
   "dependencies": {
     "jsqr": "^1.4.0",
@@ -87,5 +93,8 @@
     "jspdf": {
       "optional": true
     }
+  },
+  "engines": {
+    "node": ">=18"
   }
 }

@@ -24,7 +24,7 @@ export const developers: IntegrationCatalogEntry[] = [
     secondaryAction: {
       type: "copy",
       label: "Copy example",
-      text: `curl https://qrdx.dev/api/v1/codes \\\n  -H "Authorization: Bearer $QRDX_TOKEN" \\\n  -H "Content-Type: application/json" \\\n  -d '{"destinationUrl": "https://example.com/menu", "title": "Spring menu"}'`,
+      text: `curl https://api.qrdx.dev/v1/codes \\\n  -H "Authorization: Bearer $QRDX_TOKEN" \\\n  -H "Content-Type: application/json" \\\n  -d '{"destinationUrl": "https://example.com/menu", "title": "Spring menu"}'`,
       toast: "Example copied",
     },
     steps: [
@@ -37,7 +37,7 @@ export const developers: IntegrationCatalogEntry[] = [
         snippet: {
           label: "Terminal",
           language: "bash",
-          code: `curl https://qrdx.dev/api/v1/codes \\\n  -H "Authorization: Bearer $QRDX_TOKEN" \\\n  -H "Content-Type: application/json" \\\n  -d '{"destinationUrl": "https://example.com/menu", "title": "Spring menu"}'`,
+          code: `curl https://api.qrdx.dev/v1/codes \\\n  -H "Authorization: Bearer $QRDX_TOKEN" \\\n  -H "Content-Type: application/json" \\\n  -d '{"destinationUrl": "https://example.com/menu", "title": "Spring menu"}'`,
         },
       },
       {
@@ -87,7 +87,7 @@ export const developers: IntegrationCatalogEntry[] = [
     primaryAction: {
       type: "copy",
       label: "Copy image URL",
-      text: "https://qrdx.dev/api/v1/qr?data=https://example.com&size=512",
+      text: "https://api.qrdx.dev/v1/qr?data=https://example.com&size=512",
       toast: "Image URL copied",
     },
     secondaryAction: {
@@ -101,7 +101,7 @@ export const developers: IntegrationCatalogEntry[] = [
         snippet: {
           label: "README.md",
           language: "text",
-          code: "![QR code](https://qrdx.dev/api/v1/qr?data=https://github.com/you/repo)",
+          code: "![QR code](https://api.qrdx.dev/v1/qr?data=https://github.com/you/repo)",
         },
       },
       {
@@ -109,7 +109,7 @@ export const developers: IntegrationCatalogEntry[] = [
         snippet: {
           label: "index.html",
           language: "html",
-          code: `<img\n  src="https://qrdx.dev/api/v1/qr?data=https://qrdx.dev&size=256&fg=155dfc"\n  width="256" height="256" alt="QR code for qrdx.dev"\n/>`,
+          code: `<img\n  src="https://api.qrdx.dev/v1/qr?data=https://qrdx.dev&size=256&fg=155dfc"\n  width="256" height="256" alt="QR code for qrdx.dev"\n/>`,
         },
       },
       {

@@ -99,13 +99,13 @@ qrdx generate
 
 ## Patterns
 
-**Body** (`--body`): `square` `circle` `circle-large` `diamond` `circle-mixed` `pacman` `rounded` `small-square` `vertical-line`
+**Body** (`--body`): `square` `circle` `circle-large` `diamond` `circle-mixed` `pacman` `rounded` `small-square` `vertical-line` `horizontal-line` `liquid` `liquid-horizontal` `liquid-vertical` `classy` `classy-rounded` `leaf` `plus` `hexagon` `star` `heart` `random-dots` `mosaic` `octagon`
 
-**Eye** (`--eye`): `square` `rounded` `gear` `circle` `diya` `extra-rounded` `message` `pointy` `curly`
+**Eye** (`--eye`): `square` `rounded` `gear` `circle` `diya` `extra-rounded` `message` `pointy` `leaf` `drop` `octagon` `bevel` `squircle` `cushion` `shield` `petal` `leaf-reverse`
 
-**Dot** (`--dot`): `square` `rounded` `circle` `diamond` `message` `message-reverse` `diya` `diya-reverse` `rounded-triangle` `star` `banner`
+**Dot** (`--dot`): `square` `rounded` `circle` `message` `message-reverse` `diya` `diya-reverse` `rounded-triangle` `leaf` `drop` `plus` `cross-rounded` `hexagon` `octagon` `flower` `heart` `squircle` `dots` `extra-rounded` `leaf-reverse` `drop-reverse`
 
-Decorative patterns trade some scan tolerance for style. `square` and `rounded` eyes scan most reliably; test `circle` and `curly` eyes with the scanners your audience uses.
+See them all at [qrdx.dev/docs/styles](https://qrdx.dev/docs/styles). Every option decodes in our tests; `square` and `rounded` eyes scan most reliably, and `circle` eyes may be missed by strict scanners. Curly eyes and diamond, star and banner dots were retired because they don't scan reliably.
 
 ## Gradients
 

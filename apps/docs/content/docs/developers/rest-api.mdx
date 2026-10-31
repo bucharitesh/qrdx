@@ -4,25 +4,27 @@ description: Manage dynamic QR codes, read scan analytics, report conversions an
 icon: Code
 ---
 
-The QRdx REST API lives under `https://qrdx.dev/api/v1`. It uses JSON and, apart from the keyless [image API](/docs/developers/image-api), authenticates requests with an OAuth 2.0 access token:
+The QRdx REST API lives under `https://api.qrdx.dev/v1`. It uses JSON and, apart from the keyless [image API](/docs/developers/image-api), authenticates requests with an OAuth 2.0 access token:
 
 ```bash
-curl https://qrdx.dev/api/v1/codes -H "Authorization: Bearer $QRDX_TOKEN"
+curl https://api.qrdx.dev/v1/codes -H "Authorization: Bearer $QRDX_TOKEN"
 ```
 
 Requests made with a token act on the token owner's personal workspace. The codes, conversions and hooks endpoints also accept the browser session of someone signed in to QRdx; those requests act on the open [team](/docs/teams).
+
+The same endpoints also answer under `https://qrdx.dev/api/v1`. Browser-session requests use that path, since the sign-in cookie belongs to qrdx.dev, and a [self-hosted](/docs/self-hosting) instance serves the API at `/api/v1` on its own domain.
 
 ## Endpoints
 
 | Endpoint | Scope | What it does |
 | --- | --- | --- |
-| `GET /api/v1/qr` | None | QR code image as SVG, PNG or EPS. See [Image API](/docs/developers/image-api) |
-| `/api/v1/codes` | `codes:read`, `codes:write` | List, create (one or up to 100 at a time), update and delete dynamic codes. See [Dynamic QR codes](/docs/dynamic-qr-codes#rest-api) |
-| `GET /api/v1/codes/{id}/scans` | `codes:read` | Scan analytics for a code, or individual scans page by page |
-| `POST /api/v1/conversions` | `codes:write` | Attribute a sale or sign-up to the scan that led to it (Business). See [Tracking and conversions](/docs/tracking-and-conversions) |
-| `/api/v1/hooks` | `codes:read`, `codes:write` | Subscribe a URL to events, REST Hooks style, for Zapier, Make and n8n. See [Webhooks](/docs/webhooks) |
-| `GET /api/v1/themes`, `GET /api/v1/themes/{id}` | `themes:read` | Your saved QR themes (name and style) |
-| `GET /api/v1/me` | `profile:read` | The signed-in user's id, name, email and avatar |
+| `GET /v1/qr` | None | QR code image as SVG, PNG or EPS. See [Image API](/docs/developers/image-api) |
+| `/v1/codes` | `codes:read`, `codes:write` | List, create (one or up to 100 at a time), update and delete dynamic codes. See [Dynamic QR codes](/docs/dynamic-qr-codes#rest-api) |
+| `GET /v1/codes/{id}/scans` | `codes:read` | Scan analytics for a code, or individual scans page by page |
+| `POST /v1/conversions` | `codes:write` | Attribute a sale or sign-up to the scan that led to it (Business). See [Tracking and conversions](/docs/tracking-and-conversions) |
+| `/v1/hooks` | `codes:read`, `codes:write` | Subscribe a URL to events, REST Hooks style, for Zapier, Make and n8n. See [Webhooks](/docs/webhooks) |
+| `GET /v1/themes`, `GET /v1/themes/{id}` | `themes:read` | Your saved QR themes (name and style) |
+| `GET /v1/me` | `profile:read` | The signed-in user's id, name, email and avatar |
 
 `codes:write` also allows everything `codes:read` does.
 

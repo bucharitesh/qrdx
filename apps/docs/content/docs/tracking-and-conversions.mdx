@@ -76,7 +76,7 @@ The script remembers `qrdx_sid` in a first-party cookie on your domain for 30 da
 To report conversions from your backend (more reliable than the browser), keep `qrdx_sid` with the order and call the API with an [OAuth access token](/docs/developers/rest-api#get-an-access-token) that has the `codes:write` scope:
 
 ```bash
-curl -X POST https://qrdx.dev/api/v1/conversions \
+curl -X POST https://api.qrdx.dev/v1/conversions \
   -H "Authorization: Bearer $QRDX_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"sid": "<qrdx_sid>", "name": "purchase", "value": 49.99, "currency": "USD", "id": "ORDER-1234"}'

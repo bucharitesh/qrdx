@@ -51,21 +51,35 @@ const ALL = "__all";
 
 // ─── Connect ─────────────────────────────────────────────────────────────────
 
+/** What the OAuth callback's `connect_error` means to the person connecting. */
+function connectErrorMessage(code: string | null, name: string) {
+  if (!code) return null;
+  return code === "access_denied"
+    ? `The ${name} sign-in was cancelled.`
+    : `Couldn't connect ${name}. Try again.`;
+}
+
 function ConnectPanel({
   client,
   provider,
   status,
+  returnTo,
+  connectError,
   onConnected,
 }: {
   client: MigrateClient;
   provider: ApiProviderId;
   status: ProviderStatus | undefined;
+  returnTo: string;
+  connectError: string | null;
   onConnected: () => void;
 }) {
   const { name } = API_PROVIDERS[provider];
   const [key, setKey] = useState("");
   const [busy, setBusy] = useState<"oauth" | "key" | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(() =>
+    connectErrorMessage(connectError, name),
+  );
 
   if (status && !status.available) {
     return (
@@ -79,7 +93,7 @@ function ConnectPanel({
     setBusy("oauth");
     setError(null);
     try {
-      const url = await client.connectOAuth(provider);
+      const url = await client.connectOAuth(provider, returnTo);
       if (client.mock) {
         onConnected();
         setBusy(null);
@@ -135,8 +149,7 @@ function ConnectPanel({
             Sign in with {name}
           </Button>
           <p className="text-muted-foreground text-xs">
-            After signing in you land in Settings → Integrations. Come back here
-            and open Import again to pick your links.
+            After signing in you come straight back here to pick your links.
           </p>
         </div>
       )}
@@ -218,6 +231,8 @@ export function LinksStep({
   client,
   provider,
   status,
+  returnTo,
+  connectError,
   onConnected,
   onBack,
   onContinue,
@@ -225,6 +240,10 @@ export function LinksStep({
   client: MigrateClient;
   provider: ApiProviderId;
   status: ProviderStatus | undefined;
+  /** Same-site path the OAuth sign-in returns to (reopens this step) */
+  returnTo: string;
+  /** `connect_error` from a sign-in that came back without connecting */
+  connectError: string | null;
   onConnected: () => void;
   onBack: () => void;
   onContinue: (links: SourceLink[]) => void;
@@ -329,8 +348,10 @@ export function LinksStep({
       >
         <ConnectPanel
           client={client}
+          connectError={connectError}
           onConnected={onConnected}
           provider={provider}
+          returnTo={returnTo}
           status={status}
         />
       </StepLayout>

@@ -14,9 +14,18 @@ import {
 import { getScanScore } from "../src/scan-score";
 import { getImageSettings, resolveErrorLevel } from "../src/utils";
 import type { QRProps, RadialGradient } from "../types";
-import { CORNER_EYE_DOT_PATTERNS } from "../types/corner-dot";
-import { CORNER_EYE_PATTERNS } from "../types/corner-eye";
+import {
+  CORNER_EYE_DOT_PATTERNS,
+  pickableCornerEyeDotPatternSchema,
+  RETIRED_CORNER_EYE_DOT_PATTERNS,
+} from "../types/corner-dot";
+import {
+  CORNER_EYE_PATTERNS,
+  pickableCornerEyePatternSchema,
+  RETIRED_CORNER_EYE_PATTERNS,
+} from "../types/corner-eye";
 import { BODY_PATTERN } from "../types/image-pattern";
+import { qrPropsSchema } from "../types/qr";
 import {
   FRAME_TEXT,
   LOGO,
@@ -183,6 +192,38 @@ describe("autoLevel and logo padding", () => {
     expect(
       unreadable({ ...PLAIN, level: "H", imageSettings: logo(50, 8) })
     ).toEqual([]);
+  });
+});
+
+describe("retired shapes", () => {
+  const retired = [
+    ...RETIRED_CORNER_EYE_DOT_PATTERNS.map((dot) => ({
+      cornerEyeDotPattern: dot,
+    })),
+    ...RETIRED_CORNER_EYE_PATTERNS.map((eye) => ({ cornerEyePattern: eye })),
+  ];
+
+  it("are no longer offered", () => {
+    for (const dot of RETIRED_CORNER_EYE_DOT_PATTERNS) {
+      expect(CORNER_EYE_DOT_PATTERNS as readonly string[]).not.toContain(dot);
+      expect(pickableCornerEyeDotPatternSchema.safeParse(dot).success).toBe(
+        false
+      );
+    }
+    for (const eye of RETIRED_CORNER_EYE_PATTERNS) {
+      expect(CORNER_EYE_PATTERNS as readonly string[]).not.toContain(eye);
+      expect(pickableCornerEyePatternSchema.safeParse(eye).success).toBe(false);
+    }
+  });
+
+  it.each(retired)("still validate, render and get flagged: %o", (style) => {
+    // Saved designs keep loading and drawing exactly as before
+    expect(qrPropsSchema.safeParse({ value: VALUE, ...style }).success).toBe(
+      true
+    );
+    const svg = renderSvg({ value: VALUE, size: 256, ...style });
+    expect(svg).toContain("<svg");
+    expect(getStylePairRisk(style)).not.toBeNull();
   });
 });
 

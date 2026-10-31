@@ -22,7 +22,7 @@ From the dashboard you can:
 - **Edit link:** change the destination or title. The printed code keeps working and opens the new destination on the next scan.
 - **Edit design in playground:** opens the code in the editor, still bound to its short link.
 - **Archive:** the short link shows a "no longer active" page until you restore the code. Archived codes don't count toward your plan limit.
-- **Move to trash:** the short link shows a "no longer active" page (HTTP 410) and the code stops counting toward your plan. Restore it from **Trash**, or delete it forever there, which also removes its scan history. Deleting through the API (`DELETE /api/v1/codes/{id}`) is permanent immediately.
+- **Move to trash:** the short link shows a "no longer active" page (HTTP 410) and the code stops counting toward your plan. Restore it from **Trash**, or delete it forever there, which also removes its scan history. Deleting through the API (`DELETE /v1/codes/{id}`) is permanent immediately.
 - **Duplicate:** copies the destination, design, folder, tags and notes into a new code with a new short link and no scans.
 - **Version history:** every change is recorded on the code's page; restoring a version saves the current settings first, so a restore can be undone.
 
@@ -67,21 +67,21 @@ Known bots, link previews and browser prefetches are not counted.
 
 ## REST API
 
-Manage codes programmatically under `https://qrdx.dev/api/v1/codes`. Requests are authenticated with an OAuth access token (`Authorization: Bearer <token>`) that has the `codes:read` or `codes:write` scope; see [REST API and OAuth](/docs/developers/rest-api) for how to get one. Token requests act on your personal workspace. Requests from a signed-in browser session also work and act on the active team.
+Manage codes programmatically under `https://api.qrdx.dev/v1/codes`. Requests are authenticated with an OAuth access token (`Authorization: Bearer <token>`) that has the `codes:read` or `codes:write` scope; see [REST API and OAuth](/docs/developers/rest-api) for how to get one. Token requests act on your personal workspace. Requests from a signed-in browser session also work and act on the active team.
 
 | Method | Path | Description |
 | --- | --- | --- |
-| `GET` | `/api/v1/codes` | List codes. Query: `status` (`active`, `archived`, `all`), `q`, `limit` (≤ 100), `offset` |
-| `POST` | `/api/v1/codes` | Create one code, or an array of up to 100 (arrays need Pro) |
-| `GET` | `/api/v1/codes/{id}` | Get one code |
-| `PATCH` | `/api/v1/codes/{id}` | Update `destinationUrl`, `title`, `style`, `domainId` ([custom domains](/docs/custom-domains)) or `archived` |
-| `DELETE` | `/api/v1/codes/{id}` | Delete a code and its scans |
-| `GET` | `/api/v1/codes/{id}/scans` | Analytics for `range` (`7d`, `30d`, `90d`, `365d`, `1095d`; limited by your plan's history). Add `limit` (≤ 500) for individual scans, and `before` (the last `scannedAt`) for the next page |
+| `GET` | `/v1/codes` | List codes. Query: `status` (`active`, `archived`, `all`), `q`, `limit` (≤ 100), `offset` |
+| `POST` | `/v1/codes` | Create one code, or an array of up to 100 (arrays need Pro) |
+| `GET` | `/v1/codes/{id}` | Get one code |
+| `PATCH` | `/v1/codes/{id}` | Update `destinationUrl`, `title`, `style`, `domainId` ([custom domains](/docs/custom-domains)) or `archived` |
+| `DELETE` | `/v1/codes/{id}` | Delete a code and its scans |
+| `GET` | `/v1/codes/{id}/scans` | Analytics for `range` (`7d`, `30d`, `90d`, `365d`, `1095d`; limited by your plan's history). Add `limit` (≤ 500) for individual scans, and `before` (the last `scannedAt`) for the next page |
 
 Create a code:
 
 ```bash
-curl https://qrdx.dev/api/v1/codes \
+curl https://api.qrdx.dev/v1/codes \
   -H "Authorization: Bearer $QRDX_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"destinationUrl": "https://example.com/menu", "title": "Spring menu"}'
@@ -113,7 +113,7 @@ curl https://qrdx.dev/api/v1/codes \
 Change the destination:
 
 ```bash
-curl -X PATCH https://qrdx.dev/api/v1/codes/cm3x... \
+curl -X PATCH https://api.qrdx.dev/v1/codes/cm3x... \
   -H "Authorization: Bearer $QRDX_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"destinationUrl": "https://example.com/summer-menu"}'

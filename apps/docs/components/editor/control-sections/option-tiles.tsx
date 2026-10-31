@@ -90,6 +90,7 @@ export function OptionTile({
   name,
   hint,
   risk,
+  blocked,
   onSelect,
   children,
   className,
@@ -99,11 +100,13 @@ export function OptionTile({
   hint?: string;
   /** Why this option may not scan with the current style (shown as a hint). */
   risk?: string | null;
+  /** Doesn't scan with the rest of the style, so it can't be picked. */
+  blocked?: boolean;
   onSelect: () => void;
   children: React.ReactNode;
   className?: string;
 }) {
-  const note = risk ? "May not scan" : hint;
+  const note = blocked ? "Won't scan here" : risk ? "May not scan" : hint;
   return (
     <button
       aria-pressed={selected}
@@ -112,8 +115,10 @@ export function OptionTile({
         "hover:border-foreground/20 hover:bg-accent/40 focus-visible:border-foreground/30 focus-visible:ring-ring/40 focus-visible:ring-[3px]",
         selected &&
           "border-foreground/40 bg-accent/60 hover:border-foreground/40",
+        blocked && "cursor-not-allowed opacity-45 active:scale-100",
         className,
       )}
+      disabled={blocked}
       onClick={onSelect}
       title={risk ?? undefined}
       type="button"
@@ -174,26 +179,42 @@ function CompactTile({
   name,
   selected,
   risk,
+  blocked,
   onSelect,
   children,
 }: {
   name: string;
   selected: boolean;
   risk?: string | null;
+  blocked?: boolean;
   onSelect: () => void;
   children: React.ReactNode;
 }) {
   return (
     <button
-      aria-label={risk ? `${name}, may not scan` : name}
+      aria-label={
+        blocked
+          ? `${name}, won't scan with this style`
+          : risk
+            ? `${name}, may not scan`
+            : name
+      }
       aria-pressed={selected}
       className={cn(
         SMALL_TILE,
         selected &&
           "border-foreground/40 bg-accent/60 hover:border-foreground/40",
+        blocked && "cursor-not-allowed opacity-45 active:scale-100",
       )}
+      disabled={blocked}
       onClick={onSelect}
-      title={risk ? `${name}: may not scan` : name}
+      title={
+        blocked
+          ? `${name}: won't scan with this style`
+          : risk
+            ? `${name}: may not scan`
+            : name
+      }
       type="button"
     >
       <span className="grid size-full place-items-center overflow-hidden rounded-[10px] bg-white p-1.5 ring-1 ring-black/5 [&_svg]:max-h-full [&_svg]:max-w-full">
@@ -236,6 +257,8 @@ interface ShapePickerProps<T extends string> {
   preview: (id: T) => React.ReactNode;
   /** Why an option may not scan with the rest of the style, if it may not. */
   riskOf?: (id: T) => string | null;
+  /** Options that don't scan with the rest of the style (can't be picked). */
+  blockedOf?: (id: T) => boolean;
 }
 
 /**
@@ -254,6 +277,7 @@ export function ShapePicker<T extends string>({
   categories = SHAPE_CATEGORIES,
   preview,
   riskOf,
+  blockedOf,
 }: ShapePickerProps<T>) {
   const [open, setOpen] = React.useState(false);
   const [query, setQuery] = React.useState("");
@@ -316,6 +340,7 @@ export function ShapePicker<T extends string>({
       <OptionGrid columns={6} label={`Common ${noun}`}>
         {row.map((id) => (
           <CompactTile
+            blocked={value !== id && blockedOf?.(id)}
             key={id}
             name={byId.get(id)?.name ?? id}
             onSelect={() => onChange(id)}
@@ -418,6 +443,7 @@ export function ShapePicker<T extends string>({
               <OptionGrid label={label}>
                 {visible.map((option) => (
                   <OptionTile
+                    blocked={value !== option.id && blockedOf?.(option.id)}
                     key={option.id}
                     name={option.name}
                     onSelect={() => onChange(option.id)}

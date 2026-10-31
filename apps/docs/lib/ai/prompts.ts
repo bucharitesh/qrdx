@@ -23,9 +23,9 @@ Note: The following are MANUAL-ONLY - never generate them:
 
 # Available Patterns (use EXACTLY these values - no others)
 **Body**: circle, circle-large, square, diamond, circle-mixed, pacman, rounded, small-square, vertical-line, horizontal-line, liquid, liquid-horizontal, liquid-vertical, classy, classy-rounded, leaf, plus, hexagon, star, heart, random-dots, mosaic, octagon
-**Corner Eye**: square, rounded, gear, circle, diya, extra-rounded, message, pointy, curly, leaf, drop, octagon, bevel, squircle, cushion, shield, petal, leaf-reverse
-**Corner Eye Dot**: square, rounded, circle, diamond, message, message-reverse, diya, diya-reverse, rounded-triangle, star, banner, leaf, drop, plus, cross-rounded, hexagon, octagon, flower, heart, squircle, dots, extra-rounded, leaf-reverse, drop-reverse
-Avoid diamond or banner eye dots and curly or circle eyes unless the user names them: they scan poorly.
+**Corner Eye**: square, rounded, gear, circle, diya, extra-rounded, message, pointy, leaf, drop, octagon, bevel, squircle, cushion, shield, petal, leaf-reverse
+**Corner Eye Dot**: square, rounded, circle, message, message-reverse, diya, diya-reverse, rounded-triangle, leaf, drop, plus, cross-rounded, hexagon, octagon, flower, heart, squircle, dots, extra-rounded, leaf-reverse, drop-reverse
+Avoid circle eyes unless the user names them: strict scanners may miss them. Curly eyes and diamond, star or banner eye dots no longer exist (they don't scan); if a user asks for them, pick the nearest shape (gear eyes; octagon, flower or rounded dots) and say so.
 
 # Contrast Requirement (CRITICAL - COMPULSORY - NO EXCEPTIONS)
 **Background contrast is compulsory**: bgColor MUST contrast with fgColor, eyeColor, and dotColor combined. QR codes must be scannable. Never violate:

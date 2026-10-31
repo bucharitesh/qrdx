@@ -14,7 +14,11 @@ import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import { prepareDataConnect } from "@/lib/data-connections/server";
 import { env } from "@/lib/env";
-import { consumeIntegrationOAuthState } from "@/lib/integration-oauth";
+import {
+  consumeIntegrationOAuthState,
+  takeIntegrationReturnPath,
+} from "@/lib/integration-oauth";
+import { returnUrl } from "@/lib/integration-return";
 
 // Initialize integrations on module load
 initializeIntegrations();
@@ -34,20 +38,33 @@ export async function GET(request: Request, context: RouteContext) {
   const state = searchParams.get("state");
   const error = searchParams.get("error");
 
-  // Check for OAuth errors
-  if (error) {
-    return NextResponse.redirect(
-      new URL(
-        `/settings/integrations?error=${encodeURIComponent(error)}`,
-        request.url,
-      ),
+  // Check if integration exists in registry
+  const registry = getIntegrationRegistry();
+  const integrationDef = registry.get(provider);
+
+  // Where the flow started (e.g. the Import dialog's `?import=<provider>`), a
+  // same-site path from an httpOnly cookie; otherwise Settings → Integrations.
+  const returnTo = integrationDef
+    ? await takeIntegrationReturnPath(provider)
+    : null;
+  const fail = (reason: string) =>
+    NextResponse.redirect(
+      returnUrl(returnTo, request.url, {
+        connect_error: /^[a-z_]{1,64}$/.test(reason) ? reason : "oauth_error",
+      }) ??
+        new URL(
+          `/settings/integrations?error=${encodeURIComponent(reason)}`,
+          request.url,
+        ),
     );
+
+  // Check for OAuth errors (access_denied when the user cancels)
+  if (error) {
+    return fail(error);
   }
 
   if (!code) {
-    return NextResponse.redirect(
-      new URL("/settings/integrations?error=no_code", request.url),
-    );
+    return fail("no_code");
   }
 
   // Verify user is authenticated
@@ -56,28 +73,18 @@ export async function GET(request: Request, context: RouteContext) {
   });
 
   if (!session) {
-    return NextResponse.redirect(
-      new URL("/settings/integrations?error=unauthorized", request.url),
-    );
+    return fail("unauthorized");
   }
 
-  // Check if integration exists in registry
-  const registry = getIntegrationRegistry();
-  const integrationDef = registry.get(provider);
-
   if (!integrationDef) {
-    return NextResponse.redirect(
-      new URL(`/settings/integrations?error=unknown_integration`, request.url),
-    );
+    return fail("unknown_integration");
   }
 
   // Verify state (CSRF) and retrieve the PKCE verifier; both cookies are cleared
   const oauthState = await consumeIntegrationOAuthState(provider, state);
 
   if ("error" in oauthState) {
-    return NextResponse.redirect(
-      new URL(`/settings/integrations?error=${oauthState.error}`, request.url),
-    );
+    return fail(oauthState.error);
   }
 
   const { codeVerifier } = oauthState;
@@ -184,18 +191,17 @@ export async function GET(request: Request, context: RouteContext) {
       return NextResponse.redirect(new URL(dataConnect.redirect, request.url));
     }
 
-    // Redirect back to integrations page with success
+    // Back where the flow started, else the integrations page with success
     return NextResponse.redirect(
-      new URL(
-        `/settings/integrations?success=${provider}_connected`,
-        request.url,
-      ),
+      returnUrl(returnTo, request.url) ??
+        new URL(
+          `/settings/integrations?success=${provider}_connected`,
+          request.url,
+        ),
     );
   } catch (error) {
     console.error(`[${provider}] OAuth callback error:`, error);
-    return NextResponse.redirect(
-      new URL("/settings/integrations?error=unexpected_error", request.url),
-    );
+    return fail("unexpected_error");
   }
 }
 
