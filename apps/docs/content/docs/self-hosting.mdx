@@ -13,7 +13,7 @@ QRdx is AGPL-3.0 licensed, and you can run the whole web app (QR editor, account
 ## Requirements
 
 - Docker with Compose v2, or Node.js 20+ and pnpm 10 for the manual setup
-- A GitHub or Google OAuth app. Sign-in is OAuth-only, so you need at least one provider to create accounts.
+- A way to sign in, so accounts can be created: a GitHub or Google OAuth app, or [Resend](https://resend.com) for email sign-in codes. Codes are emailed only when `NEXT_PUBLIC_APP_URL` isn't `localhost`; `pnpm dev` prints them in the terminal instead.
 - Postgres: the container bundled in `docker-compose.yml`, or a [Neon](https://neon.tech) database
 
 ### How the database connection works
@@ -65,7 +65,7 @@ docker compose logs -f migrate app   # follow the schema sync and the app
 
 ### 4. Create your first user
 
-Open `NEXT_PUBLIC_APP_URL` in a browser and sign in with GitHub or Google. Your account is created on first sign-in.
+Open `NEXT_PUBLIC_APP_URL` in a browser and sign in with GitHub, Google or an email code. Your account is created on first sign-in.
 
 ### 5. Create your first admin
 
@@ -139,7 +139,7 @@ DATABASE_HTTP_ENDPOINT=http://localhost:4444/sql
 | `DATABASE_URL` | Postgres connection string (set by Compose) |
 | `BETTER_AUTH_SECRET` | Signs sessions and cookies |
 
-Add one OAuth provider (GitHub or Google) so people can sign in.
+Add one OAuth provider (GitHub or Google), or Resend for email sign-in codes, so people can sign in.
 
 ### Optional services
 
@@ -154,7 +154,7 @@ Add one OAuth provider (GitHub or Google) so people can sign in.
 | Short-link origin | `NEXT_PUBLIC_SHORT_LINK_BASE_URL` | [Dynamic codes](/docs/dynamic-qr-codes#self-hosting) use `NEXT_PUBLIC_APP_URL` |
 | Scan privacy salt | `SCAN_HASH_SALT` | Derived from `BETTER_AUTH_SECRET` |
 | File storage (Cloudflare R2) | `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`, `R2_PUBLIC_BASE_URL` | Uploads are off; pages can still link to files hosted elsewhere. See [Files](/docs/files#set-up-storage-self-hosting) |
-| Email (Resend) | `RESEND_API_KEY`, `EMAIL_FROM` | Emails are skipped and logged; team invites use copyable links. See [Notifications](/docs/notifications#self-hosting) |
+| Email (Resend) | `RESEND_API_KEY`, `EMAIL_FROM` | Emails are skipped and logged, so email sign-in codes can't be sent; team invites use copyable links. See [Notifications](/docs/notifications#self-hosting) |
 | Custom domains on Vercel | `VERCEL_API_TOKEN`, `VERCEL_PROJECT_ID`, `VERCEL_TEAM_ID` | Leave unset off Vercel: domains are then verified with a DNS `TXT` record. See [Custom domains](/docs/custom-domains#self-hosting) |
 | Scheduled jobs | `CRON_SECRET` | In production the weekly digest and webhook retry jobs refuse to run |
 | Link safety (Google Web Risk) | `WEB_RISK_API_KEY` | Destinations are checked by the offline rules only. See [Code controls](/docs/code-controls) |

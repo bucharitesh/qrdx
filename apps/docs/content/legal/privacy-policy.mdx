@@ -6,7 +6,7 @@ lastUpdated: 2026-11-01
 
 <Callout title="Summary">
 
-- We collect what we need to run your account and your codes: your name, email and profile picture from Google or GitHub, the codes, pages and files you create, and your plan status from Polar.
+- We collect what we need to run your account and your codes: your email address (with your name and profile picture if you sign in with Google or GitHub), the codes, pages and files you create, and your plan status from Polar.
 - When someone scans a dynamic code, we record coarse facts about the scan: country and city, device, browser, language and time. We never store the scanner's IP address. We keep a salted hash that changes every day, so unique visitors can be counted.
 - Your hosted pages and forms collect data from your own visitors. For that data you are in charge (the controller) and we process it for you under the [Data Processing Addendum](/legal/dpa).
 - Product analytics (PostHog) and the feedback widget (Featurebase) load only if you allow them in **Cookie settings**. We use no advertising cookies and we don't sell personal data.
@@ -48,7 +48,7 @@ Static codes you make in the editor are generated in your browser. Their content
 
 ### Your account
 
-- **Sign-in.** You sign in with Google or GitHub. We receive your name, email address, profile picture and your account ID at that provider, plus the tokens the provider issues for signing in. QRdx has no passwords.
+- **Sign-in.** You sign in with Google, GitHub or a one-time code we email you. With Google or GitHub, we receive your name, email address, profile picture and your account ID at that provider, plus the tokens the provider issues for signing in. With an email code, we receive only your email address. The code expires after 5 minutes, and we store it only as a hash until it is used. QRdx has no passwords.
 - **Sessions.** A session cookie keeps you signed in. With each session we store the IP address and user agent of the device that signed in, to secure your account.
 - **Settings.** Your preferences and notification settings: which events you want, and the email addresses or Slack and Discord webhook URLs they go to.
 
@@ -110,7 +110,7 @@ For OAuth apps and access tokens we store a hash of each token, its scopes and i
 
 ### Emails
 
-We send transactional email only, through Resend: team invitations, form response notifications, first-scan and milestone alerts, and weekly digests if you turn them on. Alerts and digests include a one-click unsubscribe link. We don't send marketing email.
+We send transactional email only, through Resend: sign-in codes, team invitations, form response notifications, first-scan and milestone alerts, and weekly digests if you turn them on. Alerts and digests include a one-click unsubscribe link. We don't send marketing email.
 
 ### Abuse reports and safety
 
@@ -154,6 +154,7 @@ We don't sell personal data, and we don't share it for cross-context behavioural
 | Data | How long |
 | --- | --- |
 | Account profile and sign-in tokens | Until you delete your account |
+| Email sign-in codes | Deleted when used, or soon after they expire (5 minutes) |
 | Sessions, with IP address and user agent | A session expires 7 days after you last use QRdx. Session records are deleted with your account at the latest. |
 | Customer Content | Until you delete it or your account. Trashed codes stay in the trash, switched off, until you empty it. |
 | Edit history of codes and pages | As long as the code or page exists |

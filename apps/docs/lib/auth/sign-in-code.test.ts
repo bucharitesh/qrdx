@@ -6,6 +6,7 @@ import {
   registerSignInCodeSender,
   SIGN_IN_CODE_NOT_SENT,
   sendVerificationOTP,
+  signInCodeRateLimited,
 } from "@repo/auth/email-otp";
 import {
   deliverSignInCode,
@@ -101,6 +102,20 @@ describe("@repo/auth sendVerificationOTP", () => {
       (error: { body?: { code?: string; message?: string } }) => {
         assert.equal(error.body?.code, SIGN_IN_CODE_NOT_SENT);
         assert.doesNotMatch(error.body?.message ?? "", /402871/);
+        return true;
+      },
+    );
+  });
+
+  it("answers 429 when the address asked for too many codes", async () => {
+    registerSignInCodeSender(async () => {
+      throw signInCodeRateLimited();
+    });
+    await assert.rejects(
+      sendVerificationOTP({ ...CODE, type: "sign-in" }),
+      (error: { statusCode?: number; body?: { code?: string } }) => {
+        assert.equal(error.statusCode, 429);
+        assert.equal(error.body?.code, "SIGN_IN_CODE_RATE_LIMITED");
         return true;
       },
     );
