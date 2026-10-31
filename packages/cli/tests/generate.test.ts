@@ -237,6 +237,23 @@ describe("generate command", () => {
       ["--fg", ["--fg", '{"type":"linear"'], "Invalid gradient JSON"],
       ["--bg", ["--bg", '{"type":"linear","stops":[]}'], "Invalid gradient"],
       ["-o", ["-o", "qr.jpg"], 'Unsupported output format ".jpg"'],
+      ["--format", ["--format", "gif"], 'Invalid --format "gif"'],
+      ["--frame", ["--frame", "banner"], 'Invalid --frame "banner"'],
+      [
+        "--frame-text",
+        ["--frame-text", "This label is far too long!"],
+        "Use 24 characters or fewer",
+      ],
+      [
+        "--frame-color",
+        ["--frame-color", "red"],
+        'Invalid --frame-color "red"',
+      ],
+      [
+        "--frame-text-color",
+        ["--frame-text-color", "#12"],
+        'Invalid --frame-text-color "#12"',
+      ],
       ["unknown", ["--colour", "red"], 'Unknown option "--colour"'],
     ];
 
@@ -269,6 +286,150 @@ describe("generate command", () => {
         out,
       ]);
       expect(exitCode).toBe(0);
+    });
+  });
+
+  describe("EPS output", () => {
+    it("-o file.eps writes vector EPS", () => {
+      const out = tmp("cli.eps");
+      cleanups.push(out);
+      const { exitCode } = runCli(["generate", "https://qrdx.dev", "-o", out]);
+      expect(exitCode).toBe(0);
+      const eps = readFileSync(out, "utf-8");
+      expect(eps.startsWith("%!PS-Adobe-3.0 EPSF-3.0")).toBe(true);
+      expect(eps).toContain("%%BoundingBox: 0 0 512 512");
+    });
+
+    it("--format eps applies to a file name without an extension", () => {
+      const out = tmp("cli-noext");
+      cleanups.push(out);
+      const { exitCode } = runCli([
+        "generate",
+        "https://qrdx.dev",
+        "--format",
+        "eps",
+        "--size",
+        "100",
+        "-o",
+        out,
+      ]);
+      expect(exitCode).toBe(0);
+      expect(readFileSync(out, "utf-8")).toContain(
+        "%%BoundingBox: 0 0 100 100"
+      );
+    });
+
+    it("rejects --format that contradicts the file extension", () => {
+      const out = tmp("cli-mismatch.png");
+      cleanups.push(out);
+      const { exitCode, stdout, stderr } = runCli([
+        "generate",
+        "https://qrdx.dev",
+        "--format",
+        "eps",
+        "-o",
+        out,
+      ]);
+      expect(exitCode).toBe(1);
+      expect(stdout + stderr).toContain("--format eps does not match");
+      expect(existsSync(out)).toBe(false);
+    });
+  });
+
+  describe("frames", () => {
+    it("--frame wraps the code in a labelled frame", () => {
+      const out = tmp("frame.svg");
+      cleanups.push(out);
+      const { exitCode } = runCli([
+        "generate",
+        "https://qrdx.dev",
+        "--frame",
+        "banner-bottom",
+        "--size",
+        "300",
+        "-o",
+        out,
+      ]);
+      expect(exitCode).toBe(0);
+      const content = readFileSync(out, "utf-8");
+      expect(content).toContain('data-qrdx-frame="banner-bottom"');
+      expect(content).toContain(">Scan me</text>");
+      // The frame adds space around the 300px code.
+      const width = Number(content.match(/<svg[^>]*\swidth="([\d.]+)"/)?.[1]);
+      const height = Number(content.match(/<svg[^>]*\sheight="([\d.]+)"/)?.[1]);
+      expect(width).toBeGreaterThan(300);
+      expect(height).toBeGreaterThan(width);
+    });
+
+    it("frame text and colors imply a bottom banner", () => {
+      const out = tmp("frame-implied.svg");
+      cleanups.push(out);
+      const { exitCode } = runCli([
+        "generate",
+        "https://qrdx.dev",
+        "--frame-text",
+        "Order here",
+        "--frame-color",
+        "#ff0000",
+        "--frame-text-color",
+        "#ffff00",
+        "-o",
+        out,
+      ]);
+      expect(exitCode).toBe(0);
+      const content = readFileSync(out, "utf-8");
+      expect(content).toContain('data-qrdx-frame="banner-bottom"');
+      expect(content).toContain(">Order here</text>");
+      expect(content).toContain('fill="#ff0000"');
+      expect(content).toContain('fill="#ffff00"');
+    });
+
+    it('--frame-text "" hides the label', () => {
+      const out = tmp("frame-no-text.svg");
+      cleanups.push(out);
+      runCli([
+        "generate",
+        "https://qrdx.dev",
+        "--frame",
+        "border",
+        "--frame-text",
+        "",
+        "-o",
+        out,
+      ]);
+      const content = readFileSync(out, "utf-8");
+      expect(content).toContain('data-qrdx-frame="border"');
+      expect(content).not.toContain("<text");
+    });
+
+    it("--frame none renders a plain code", () => {
+      const out = tmp("frame-none.svg");
+      cleanups.push(out);
+      runCli(["generate", "https://qrdx.dev", "--frame", "none", "-o", out]);
+      expect(readFileSync(out, "utf-8")).not.toContain("data-qrdx-frame");
+    });
+
+    it("framed PNG keeps the frame proportions", () => {
+      const out = tmp("frame.png");
+      cleanups.push(out);
+      const { exitCode, stdout } = runCli([
+        "generate",
+        "https://qrdx.dev",
+        "--frame",
+        "speech-bubble",
+        "--size",
+        "300",
+        "-o",
+        out,
+      ]);
+      expect(exitCode).toBe(0);
+      const buf = readFileSync(out);
+      // PNG IHDR: width and height are big-endian at bytes 16 and 20.
+      const width = buf.readUInt32BE(16);
+      const height = buf.readUInt32BE(20);
+      expect(width).toBeGreaterThan(300);
+      expect(height).toBeGreaterThan(width);
+      expect(stdout).toContain(`${width}×${height}`);
     });
   });
 

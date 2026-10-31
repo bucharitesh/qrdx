@@ -152,6 +152,12 @@ export function QRCodeDialog({ open, onOpenChange }: QRCodeDialogProps) {
     if (style.templateId) {
       props.push(`${indent}templateId="${style.templateId}"`);
     }
+    if (style.margin) {
+      props.push(`${indent}margin={${style.margin}}`);
+    }
+    if (style.frame && style.frame.style !== "none") {
+      props.push(`${indent}frame={${JSON.stringify(style.frame)}}`);
+    }
     if (style.showLogo !== undefined) {
       props.push(`${indent}hideLogo={${!style.showLogo}}`);
     }

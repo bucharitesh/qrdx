@@ -18,6 +18,8 @@ describe("qrdx CLI", () => {
       expect(output).toContain("--bg");
       expect(output).toContain("--logo");
       expect(output).toContain("--size");
+      expect(output).toContain("--format");
+      expect(output).toContain(".eps");
     });
 
     it("-h produces identical output to --help", () => {

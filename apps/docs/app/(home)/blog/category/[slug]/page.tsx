@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { BlogList } from "@/components/sections/blog/blog-list";
+import { Breadcrumbs } from "@/components/sections/breadcrumbs";
 import { SectionHeader } from "@/components/sections/section-header";
 import { SLUG_TO_CATEGORY } from "@/lib/blog-constants";
 import { createMetadata } from "@/lib/metadata";
@@ -49,6 +50,14 @@ export default async function BlogCategoryPage({ params }: PageProps) {
     <section className="flex flex-col items-center justify-center w-full min-h-screen">
       <div className="w-full">
         <SectionHeader>
+          <Breadcrumbs
+            className="mb-2"
+            items={[
+              { name: "Home", path: "/" },
+              { name: "Blog", path: "/blog" },
+              { name: headerTitle, path: `/blog/category/${slug}` },
+            ]}
+          />
           <h1 className="text-4xl md:text-5xl font-medium tracking-tighter text-center">
             {headerTitle}
           </h1>

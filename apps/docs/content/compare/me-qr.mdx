@@ -1,12 +1,12 @@
 ---
 title: ME-QR
-description: "QRdx vs ME-QR: an ad-free open-source static QR code generator compared with ME-QR's free dynamic QR codes that show ads to people who scan them."
-seoTitle: "QRdx vs ME-QR: Ad-Free QR Codes vs Free Dynamic Codes with Ads"
-seoDescription: "ME-QR's free plan makes dynamic QR codes with analytics, but scanners may see ads after the first 10 scans. QRdx makes ad-free static codes and is open source."
+description: "QRdx vs ME-QR: an ad-free open-source QR platform compared with ME-QR's free dynamic QR codes that show ads to people who scan them."
+seoTitle: "QRdx vs ME-QR: Ad-Free QR Codes vs Free Codes with Ads"
+seoDescription: "ME-QR's free plan makes dynamic QR codes with analytics, but scanners may see ads after the first 10 scans. QRdx's free codes never show ads, and it is open source."
 competitor: ME-QR
 competitorUrl: https://me-qr.com
 competitorLogo: https://assets.qrdx.dev/compare/Me-Qr.svg
-tagline: "ME-QR gives away dynamic QR codes and shows ads to the people who scan them. QRdx makes ad-free static codes and is open source."
+tagline: "ME-QR gives away dynamic QR codes and shows ads to the people who scan them. QRdx's static and dynamic codes are ad-free on every plan."
 qrdxPlan: "Free · Open Source"
 competitorPlan: "Free with ads / paid"
 lastVerified: "2026-10-31"
@@ -15,16 +15,16 @@ sources:
   - https://me-qr.com/
 tableRows:
   - feature: Price
-    qrdx: "Free"
+    qrdx: "Free; paid from $5/mo"
     competitor: "Free with ads; Lite and Premium paid"
   - feature: Ads shown to people who scan
     qrdx: "Never"
     competitor: "Free plan, after 10 scans"
   - feature: Dynamic (editable) QR codes
-    qrdx: "Via Dub integration"
+    qrdx: "10 free; unlimited from $5/mo"
     competitor: true
   - feature: Scan analytics
-    qrdx: "Link clicks via Dub"
+    qrdx: "Built in, unlimited scans"
     competitor: "Free (1-year history)"
   - feature: Frame options
     qrdx: "6 templates"
@@ -47,15 +47,15 @@ tableRows:
 featureHighlights:
   - title: Your scanners never see ads
     description: "ME-QR's free plan lists all codes as carrying ads, and its FAQ says visitors may see a short ad before your content after the first 10 scans. QRdx codes open your content directly."
-  - title: No service between scan and content
-    description: "QRdx codes are static by default, so they do not depend on any account staying active. If you need editable links, encode a Dub short link."
+  - title: Straight to your content
+    description: "QRdx static codes open your content directly, with no account to keep active. QRdx dynamic codes redirect straight to your destination, with no ads or interstitials, on every plan."
   - title: Developer-first
-    description: "QRdx ships an npm package with React components and TypeScript types. ME-QR is a hosted web app."
+    description: "QRdx has a REST API, an MCP server and an npm package with React components and TypeScript types. ME-QR is a hosted web app."
   - title: Open source
     description: "QRdx is AGPL-3.0 licensed and self-hostable. ME-QR is closed source."
 ---
 
-ME-QR and QRdx take opposite approaches to "free". ME-QR's free plan is generous with dynamic codes (up to 10,000 created, with analytics and a year of history) and pays for it with ads: its pricing page lists free codes as "with ads", and its FAQ says the first 10 scans are ad-free, after which visitors may see a short advertisement before your content. QRdx is free with no ads at all, because it makes static codes that open your content directly.
+ME-QR and QRdx take opposite approaches to "free". ME-QR's free plan is generous with dynamic codes (up to 10,000 created, with analytics and a year of history) and pays for it with ads: its pricing page lists free codes as "with ads", and its FAQ says the first 10 scans are ad-free, after which visitors may see a short advertisement before your content. QRdx is free with no ads at all: static codes open your content directly, and its dynamic codes (10 on the Free plan) redirect straight to your destination.
 
 ## Who each tool is for
 
@@ -65,20 +65,18 @@ QRdx fits anyone printing codes for customers, guests or clients who should land
 
 ## Where ME-QR is the better choice
 
-- You need **editable codes and analytics for free**, and ads are acceptable.
+- You need **thousands of editable codes for free**, and ads are acceptable. ME-QR's free plan allows up to 10,000; QRdx Free includes 10.
 - You want a huge **frame library**: ME-QR advertises 1,000+ frame options, including holiday themes. QRdx has six templates.
-- You want file hosting, folders and bulk creation in one hosted tool.
 
 ## Key differences
 
 - **Ads:** ME-QR's free codes can show ads to scanners. QRdx never does.
-- **Code model:** ME-QR codes are dynamic and resolve through ME-QR. QRdx codes are static; editable links are possible through the [Dub](/integrations/dub) integration.
+- **Code model:** ME-QR codes are dynamic and resolve through ME-QR. QRdx offers both: static codes that need no service, and dynamic codes that redirect without ads on every plan.
 - **Design:** QRdx gives separate control over 9 body patterns, 9 eye shapes and 11 eye-dot shapes with linear and radial gradients. ME-QR offers dotted and shaped codes, logos and a large frame catalog.
 - **Openness:** QRdx is open source (AGPL-3.0) with an npm package.
 
 ## Switching from ME-QR
 
 1. Leave existing ME-QR codes in place; they redirect through ME-QR, so deleting them or the account breaks printed codes.
-2. For new codes, design them in the [QRdx playground](/playground) and point them straight at your destination.
-3. If you still need to change destinations later, connect Dub and encode a Dub link.
-4. Test every printed code on a few phones.
+2. For new codes, design them in the [QRdx playground](/playground). Point static codes straight at your destination, or create a dynamic code in the dashboard if you need to change it later.
+3. Test every printed code on a few phones.

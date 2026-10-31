@@ -24,6 +24,7 @@ export function getQRData({
   cornerEyeDotPattern,
   level,
   templateId,
+  frame,
 }: QRDataProps): QRDataResult {
   return {
     value: `${value}`,
@@ -38,6 +39,7 @@ export function getQRData({
     templateId,
     size,
     margin,
+    ...(frame && { frame }),
     // No default logo: only render (and excavate for) one the caller passes.
     ...(!hideLogo &&
       logo && {

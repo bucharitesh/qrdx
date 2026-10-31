@@ -1,12 +1,12 @@
 ---
 title: Bitly QR Codes
-description: "QRdx vs Bitly QR Codes: a free open-source QR code generator compared with Bitly's link-management platform and its monthly QR code allowances."
+description: "QRdx vs Bitly QR Codes: an open-source QR platform with free static and dynamic codes compared with Bitly's link-management platform and its monthly QR code allowances."
 seoTitle: "QRdx vs Bitly QR Codes: Unlimited Free QR Codes vs 2 a Month"
 seoDescription: "Bitly's free plan includes 2 QR codes a month with ads and limited styling; paid plans start at $10/mo billed annually. QRdx is free for unlimited styled static codes."
 competitor: Bitly
 competitorUrl: https://bitly.com/pages/qr-codes
 competitorLogo: https://assets.qrdx.dev/compare/bitly.svg
-tagline: "Bitly is a link-management platform with QR codes on top. QRdx is a free, open-source QR code generator built for design."
+tagline: "Bitly is a link-management platform with QR codes on top. QRdx is an open-source QR platform built for design, with free static and dynamic codes."
 qrdxPlan: "Free · Open Source"
 competitorPlan: "Free (2/mo) / from $10"
 lastVerified: "2026-10-31"
@@ -14,7 +14,7 @@ sources:
   - https://bitly.com/pages/pricing
 tableRows:
   - feature: Price
-    qrdx: "Free"
+    qrdx: "Free; paid from $5/mo"
     competitor: "Free; Core $10/mo billed annually"
   - feature: QR codes per month
     qrdx: "Unlimited"
@@ -29,10 +29,10 @@ tableRows:
     qrdx: true
     competitor: "Paid plans"
   - feature: Scan and click analytics
-    qrdx: "Link clicks via Dub"
+    qrdx: "Built in, unlimited scans"
     competitor: "30 days to 1 year history (paid)"
   - feature: Short links
-    qrdx: "Via Dub integration"
+    qrdx: "Built in for QR codes; Dub integration for other links"
     competitor: true
   - feature: Open source
     qrdx: "AGPL-3.0"
@@ -45,7 +45,7 @@ tableRows:
     competitor: false
 featureHighlights:
   - title: Unlimited codes, not 2 a month
-    description: "Bitly's free plan includes 2 QR codes per month; Core raises that to 5 and Premium to 200. QRdx has no monthly cap."
+    description: "Bitly's free plan includes 2 QR codes per month; Core raises that to 5 and Premium to 200. QRdx has no monthly cap: static codes are unlimited and Free includes 10 active dynamic codes."
   - title: Full styling on the free tier
     description: "Bitly limits colors and frames on its free plan and reserves pattern customization for paid plans. QRdx gives every user 9 body patterns, 9 eye shapes, 11 eye-dot shapes, gradients, logos and frames."
   - title: No ads
@@ -54,7 +54,7 @@ featureHighlights:
     description: "QRdx is AGPL-3.0 licensed and can run on your own infrastructure. Bitly is a closed-source SaaS."
 ---
 
-Bitly is first a link shortener and link-management platform; QR codes are one feature among links, landing pages and analytics. QRdx does one thing: it makes well-designed QR codes, for free, with an open-source React library behind it.
+Bitly is first a link shortener and link-management platform; QR codes are one feature among links, landing pages and analytics. QRdx is built around the QR code itself: design, print output, hosted pages and scan analytics, with a free plan and an open-source codebase.
 
 ## Who each tool is for
 
@@ -65,21 +65,20 @@ QRdx fits anyone who needs more than a couple of codes, wants full control over 
 ## Where Bitly is the better choice
 
 - Your links already live in Bitly and you want QR scans and link clicks in one report.
-- You want up to a year of scan history from the same vendor that hosts your links.
 - Non-technical teammates need a single dashboard for links and codes.
 
-QRdx does not shorten links itself. It integrates with [Dub](/integrations/dub), a link-management platform, so you can encode a Dub short link and track clicks there.
+QRdx's dynamic codes use QRdx short links for scans, but QRdx isn't a general link shortener for links you share online. For that, it integrates with [Dub](/integrations/dub), a link-management platform.
 
 ## Key differences
 
-- **Volume:** Bitly meters QR codes per month; QRdx does not.
-- **Design:** Bitly's free plan has limited colors and frames and no pattern customization. QRdx's free tier has every pattern, gradients, logos, six templates and PNG, JPG, SVG and PDF export.
-- **Code model:** Bitly codes are tied to Bitly links. QRdx codes are static unless you choose to encode a short link.
-- **Developers:** QRdx is also an npm package with TypeScript types, so you can render the same codes in your own app.
+- **Volume:** Bitly meters QR codes per month. QRdx doesn't meter static codes or scans; Free accounts are limited to 10 active dynamic codes, and Pro ($5/mo or $48/yr) has no limit.
+- **Design:** Bitly's free plan has limited colors and frames and no pattern customization. QRdx's free tier has every pattern, gradients, logos, six templates and PNG, JPG, SVG, PDF and EPS export.
+- **Code model:** Bitly codes are tied to Bitly links. QRdx offers static codes, which need no service, and dynamic codes on QRdx short links, which keep redirecting on every plan.
+- **Developers:** QRdx has a REST API and an MCP server, and is also an npm package with TypeScript types, so you can render the same codes in your own app.
 
 ## Switching from Bitly
 
 1. Keep Bitly codes that are already printed on an active account; they resolve through Bitly links.
 2. Recreate your brand style in the [QRdx playground](/playground) and save it as a theme.
-3. Encode the final URL directly, or a Dub link if you need to change it later.
+3. Encode the final URL directly in a static code, or use a QRdx dynamic code if you need to change it later.
 4. Test each new code on a few phones before you print.

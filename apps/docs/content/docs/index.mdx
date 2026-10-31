@@ -1,49 +1,145 @@
 ---
-title: Documentation
-description: Complete guide to qrdx - a powerful QR code generation library
+title: Introduction
+description: QRdx is a free, open-source QR code generator, React library and developer toolkit. Pick a section to get started.
 icon: Book
 ---
 
-# Introduction
+QRdx is an open-source (AGPL-3.0) QR code generator you can use in several ways: design codes in the [playground](/playground), render them in your own React app with the [`qrdx`](https://www.npmjs.com/package/qrdx) library, or generate them over HTTP and from AI assistants with the image API and MCP server. With an account you can also create dynamic codes whose destination you can change after printing.
 
-QRDX is a React library for creating customizable QR codes. Add it to your project, customize colors and patterns, and download in multiple formats.
-
-## Key Features
-
-Here are some of the features QRDX offers:
-
-- [Custom colors and gradients](/docs/features/colors-gradients)
-- [Built-in templates](/docs/features/templates) for instant styling
-- [Logo integration](/docs/features/logos) with automatic positioning
-- [Multiple patterns](/docs/features/patterns) for unique designs
-- [Download as PNG, JPG, SVG, or PDF](/docs/features/downloads)
-- [QR code detection](/docs/qr-detection) from images
-- Full TypeScript support with type safety
-- Server-side rendering compatible
-
-## Getting Started
-
-To get started with QRDX, you can do any of the following:
+## Get started
 
 <Cards>
   <Card
-    href="/playground"
-    title="Try the Playground"
-    description="Create QR codes visually with real-time preview"
-  />
-  <Card
+    icon={<Rocket />}
     href="/docs/getting-started"
-    title="Install Package"
-    description="Add QRDX to your React project in minutes"
+    title="Installation"
+    description="Install the qrdx React library and render your first QR code."
   />
   <Card
+    icon={<QrCode />}
     href="/docs/usage"
-    title="Read Usage Guide"
-    description="Learn how to customize QR codes"
+    title="Basic usage"
+    description="Colors, patterns, logos, templates and error correction with the QRCode component."
+  />
+  <Card
+    icon={<MousePointerClick />}
+    href="/playground"
+    title="Playground"
+    description="Design a QR code visually and download it. No code or signup needed."
   />
 </Cards>
 
-## Quick Example
+## Features
+
+<Cards>
+  <Card
+    icon={<Grid3x3 />}
+    href="/docs/features/patterns"
+    title="Patterns"
+    description="Shapes for the data modules, corner eyes and eye dots."
+  />
+  <Card
+    icon={<Palette />}
+    href="/docs/features/colors-gradients"
+    title="Colors & gradients"
+    description="Solid colors, linear and radial gradients, and contrast checks."
+  />
+  <Card
+    icon={<Image />}
+    href="/docs/features/logos"
+    title="Logos"
+    description="Put a logo in the center without breaking scanning."
+  />
+  <Card
+    icon={<LayoutTemplate />}
+    href="/docs/features/templates"
+    title="Templates"
+    description="Pre-designed frame templates, or register your own."
+  />
+  <Card
+    icon={<Frame />}
+    href="/docs/features/frames"
+    title="Frames & print"
+    description="Call-to-action frames, a scan score and print-ready PDF export."
+  />
+  <Card
+    icon={<Download />}
+    href="/docs/features/downloads"
+    title="Downloads"
+    description="PNG, JPG, SVG and PDF export, clipboard and data URLs."
+  />
+</Cards>
+
+## Dynamic QR
+
+<Cards>
+  <Card
+    icon={<QrCode />}
+    href="/docs/dynamic-qr-codes"
+    title="Dynamic QR codes"
+    description="Change where a printed code points and see how often it is scanned. Needs a QRdx account."
+  />
+  <Card
+    icon={<Globe />}
+    href="/docs/custom-domains"
+    title="Custom domains"
+    description="Serve your short links from a domain you own (Pro)."
+  />
+</Cards>
+
+## Developers
+
+<Cards>
+  <Card
+    icon={<ImageDown />}
+    href="/docs/developers/image-api"
+    title="QR code image API"
+    description="Get a QR code image from a URL for READMEs, emails and HTML. No API key."
+  />
+  <Card
+    icon={<Bot />}
+    href="/docs/developers/mcp"
+    title="MCP server"
+    description="Let Claude, Cursor, VS Code and other AI tools generate QR codes."
+  />
+  <Card
+    icon={<Blocks />}
+    href="/docs/developers/shadcn"
+    title="shadcn/ui registry"
+    description="Add a QR code or QR scanner component with one command."
+  />
+  <Card
+    icon={<Code />}
+    href="/docs/api-reference"
+    title="API reference"
+    description="Every component, function and type exported by qrdx."
+  />
+  <Card
+    icon={<Wrench />}
+    href="/docs/utilities"
+    title="Utilities"
+    description="Color, contrast, validation and feature detection helpers."
+  />
+  <Card
+    icon={<Scan />}
+    href="/docs/qr-detection"
+    title="QR detection"
+    description="Read and decode QR codes from images in the browser."
+  />
+</Cards>
+
+## Self-hosting
+
+<Cards>
+  <Card
+    icon={<Server />}
+    href="/docs/self-hosting"
+    title="Self-hosting guide"
+    description="Run your own QRdx web app with Docker Compose or Node.js."
+  />
+</Cards>
+
+## Quick example
 
 ```tsx
 import { QRCode } from 'qrdx';
@@ -60,8 +156,8 @@ export default function App() {
 }
 ```
 
-## Community & Support
+## Community & support
 
-- [GitHub Repository](https://github.com/bucharitesh/qrdx)
+- [GitHub repository](https://github.com/bucharitesh/qrdx)
 - [Issues](https://github.com/bucharitesh/qrdx/issues)
 - [Discussions](https://github.com/bucharitesh/qrdx/discussions)

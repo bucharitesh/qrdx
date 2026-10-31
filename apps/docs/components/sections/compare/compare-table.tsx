@@ -100,8 +100,7 @@ export function CompareTable({
     <section className="flex flex-col items-center justify-center w-full">
       <SectionHeader>
         <h2 className="text-3xl md:text-4xl font-medium tracking-tighter text-center text-balance">
-          QRdx vs {competitor}
-          <br />
+          QRdx vs {competitor} <br />
           at a glance
         </h2>
         <p className="text-muted-foreground text-center text-balance font-medium">

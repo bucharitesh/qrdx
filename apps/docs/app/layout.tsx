@@ -3,6 +3,7 @@ import { fonts } from "@repo/design-system/lib/fonts";
 import { cn } from "@repo/design-system/lib/utils";
 import type { Metadata, Viewport } from "next";
 import FeaturebaseScript from "@/components/featurebase-script";
+import { NotOnCustomerPages } from "@/components/landing/not-on-customer-pages";
 import { PostHogInit } from "@/components/posthog-init";
 import { ThemeScript } from "@/components/theme-script";
 import { baseUrl, siteDescription, siteName, siteTitle } from "@/lib/metadata";
@@ -65,11 +66,14 @@ export default function Layout({ children }: LayoutProps<"/">) {
       </head>
       <body className="antialiased font-sans bg-background relative flex min-h-screen flex-col">
         <Provider>{children}</Provider>
-        {process.env.NODE_ENV === "production" &&
-          Boolean(process.env.NEXT_PUBLIC_FEATUREBASE_APP_ID) && (
-            <FeaturebaseScript />
-          )}
-        {process.env.NODE_ENV === "production" && <PostHogInit />}
+        {/* Never on customer pages (/p, /q gates, /ended; only owner-set pixels load there) or the no-tracking scanner (/scan). */}
+        <NotOnCustomerPages>
+          {process.env.NODE_ENV === "production" &&
+            Boolean(process.env.NEXT_PUBLIC_FEATUREBASE_APP_ID) && (
+              <FeaturebaseScript />
+            )}
+          {process.env.NODE_ENV === "production" && <PostHogInit />}
+        </NotOnCustomerPages>
       </body>
     </html>
   );

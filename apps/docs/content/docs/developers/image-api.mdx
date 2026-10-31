@@ -1,0 +1,119 @@
+---
+title: QR code image API
+description: Turn any URL into a QR code image you can embed in Markdown, HTML or emails. No API key needed.
+icon: ImageDown
+---
+
+`GET https://qrdx.dev/api/v1/qr` returns a QR code as an SVG or PNG image, or as a vector EPS file for print and design tools. Everything is in the query string, so the URL itself is the image: paste it into a README, an `<img>` tag or an email template.
+
+```md
+![QR code](https://qrdx.dev/api/v1/qr?data=https://github.com/you/repo)
+```
+
+No account or API key is required.
+
+## Examples
+
+```html
+<img
+  src="https://qrdx.dev/api/v1/qr?data=https://qrdx.dev&size=256&fg=155dfc"
+  width="256"
+  height="256"
+  alt="QR code for qrdx.dev"
+/>
+```
+
+Download a PNG with curl (quote the URL so your shell keeps the `&`):
+
+```bash
+curl -o qr.png "https://qrdx.dev/api/v1/qr?data=https://qrdx.dev&format=png&size=1024"
+```
+
+Get a vector EPS for Illustrator, InDesign or a print shop (`size` is the width in points, 72 per inch, so `144` is 2 inches):
+
+```bash
+curl -o qr.eps "https://qrdx.dev/api/v1/qr?data=https://qrdx.dev&format=eps&size=144"
+```
+
+Stylised dots with a frame:
+
+```txt
+https://qrdx.dev/api/v1/qr?data=https://qrdx.dev&body=rounded&eye=rounded&dot=rounded&template=Arrow
+```
+
+<Callout>
+  Encode the `data` value when it contains `&`, `#`, `+` or spaces, for example with `encodeURIComponent` in JavaScript. Otherwise the URL is split at those characters.
+</Callout>
+
+## Parameters
+
+| Parameter | Default | Description |
+|-----------|---------|-------------|
+| `data` | required | Text or URL to encode, up to 2048 characters |
+| `format` | `svg` | `svg`, `png` or `eps` (vector PostScript; `size` is then the width in points) |
+| `size` | `512` | Width and height in pixels, `64` to `2048` |
+| `fg` | `000000` | Module color as hex (`155dfc`, `fff`, or 8 digits with alpha) |
+| `bg` | `ffffff` | Background color as hex. `00000000` gives a transparent background |
+| `eyeColor` | `fg` | Color of the three corner eyes |
+| `dotColor` | `fg` | Color of the dot inside each corner eye |
+| `body` | `square` | Shape of the data modules |
+| `eye` | `square` | Shape of the corner eye frames |
+| `dot` | `square` | Shape of the dot inside each corner eye |
+| `level` | `Q` | Error correction: `L` (~7%), `M` (~15%), `Q` (~25%) or `H` (~30%) |
+| `margin` | `4` | Quiet zone around the code in modules, `0` to `16` |
+| `template` | none | Decorative frame template |
+
+Write colors without the `#`, or encode it as `%23`: a bare `#` starts the URL fragment and is never sent. Enum values (`level`, `format`, `template`) are case-insensitive.
+
+### Pattern values
+
+- `body`: `circle`, `circle-large`, `square`, `diamond`, `circle-mixed`, `pacman`, `rounded`, `small-square`, `vertical-line`
+- `eye`: `square`, `rounded`, `gear`, `circle`, `diya`, `extra-rounded`, `message`, `pointy`, `curly`
+- `dot`: `square`, `rounded`, `circle`, `diamond`, `message`, `message-reverse`, `diya`, `diya-reverse`, `rounded-triangle`, `star`, `banner`
+- `template`: `default`, `Arrow`, `StandardBox`, `SquareBorder`, `StrikedBox`, `Halloween`
+
+These are the same styles as the [`qrdx` React library](/docs/features/patterns). The [MCP server](/docs/developers/mcp) can also list them with short descriptions.
+
+## Responses
+
+A successful request returns the image with:
+
+- `Content-Type: image/svg+xml`, `image/png` or `application/postscript` (EPS is sent as a `qr-code.eps` download)
+- `Cache-Control: public, max-age=31536000, immutable`
+- `Access-Control-Allow-Origin: *`, so you can `fetch` it from any website
+
+Rendering is deterministic: the same query string always returns the same bytes, which is why responses can be cached for a year.
+
+Invalid parameters return `400` with a JSON body that names each problem:
+
+```json
+{
+  "code": "VALIDATION_ERROR",
+  "message": "Invalid query parameters",
+  "data": {
+    "details": [
+      { "param": "size", "message": "Too small: expected number to be >=64" }
+    ]
+  },
+  "status": 400
+}
+```
+
+Data that doesn't fit in a QR code at the chosen error correction level also returns `400` with `param: "data"`. Use a lower `level` or shorter data.
+
+## Limits
+
+- **Rate limit:** 300 requests per minute per IP address. Over the limit you get `429` with a `Retry-After` header.
+- **No logos or gradients.** The API renders solid colors only. For logos and gradients, use the [web editor](/playground) or the [React library](/docs/features/logos).
+- **The data is part of the URL.** Like any URL, it can end up in server logs, browser history and caches. Don't put passwords or other secrets in it.
+
+## Scanning tips
+
+- Keep `margin` at `2` or more when the image sits on a dark or busy background, such as a README in GitHub's dark mode.
+- Keep good contrast between `fg` and `bg`. Dark modules on a light background scan most reliably.
+- The defaults (square modules, 4-module margin) scan on every reader. Stylised shapes such as `circle` dots look softer but some older scanners read them less reliably — check with the [scan checker](/tools/scan-checker).
+- Test the code with a few phones before printing it.
+
+## Self-hosting
+
+The endpoint is part of the QRdx web app, so a [self-hosted](/docs/self-hosting) instance serves it at `/api/v1/qr` on your own domain. Rate limiting uses Upstash Redis when it is configured and is off otherwise.

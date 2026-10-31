@@ -48,9 +48,10 @@ export function useDubIntegration(): UseDubIntegrationReturn {
       setIsLoading(true);
       setError(null);
 
-      const response = await apiFetch("/api/integrations/dub/links");
+      // Plain fetch: a 401 here means "not connected", not "sign the user out"
+      const response = await fetch("/api/integrations/dub/links");
 
-      if (response.status === 404) {
+      if (response.status === 404 || response.status === 401) {
         // Dub integration not connected
         setIsConnected(false);
         setLinks([]);

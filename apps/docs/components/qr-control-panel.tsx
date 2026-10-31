@@ -21,8 +21,11 @@ import {
   useControlsTabFromUrl,
 } from "@/lib/hooks/use-controls-tab-from-url";
 import type { QRStyle } from "@/types/theme";
+import { ArtControls } from "./editor/control-sections/art-controls";
 import { ContentControls } from "./editor/control-sections/content-controls";
+import { FrameControls } from "./editor/control-sections/frame-controls";
 import { LogoControls } from "./editor/control-sections/logo-controls";
+import { PaddingControls } from "./editor/control-sections/padding-controls";
 import { CornerEyeDotPatternSelector } from "./playground/corner-eye-dot-pattern-selector";
 import { CornerEyePatternSelector } from "./playground/corner-eye-pattern-selector";
 import { ErrorLevelSelector } from "./playground/error-level-selector";
@@ -133,6 +136,8 @@ const ThemeControlPanel = ({ styles, onChange }: ThemeControlPanelProps) => {
                 />
               </ControlSection>
 
+              <ArtControls styles={styles} onChange={onChange} />
+
               <ControlSection title="Dot Patterns" expanded kbd=",">
                 <PatternSelector />
               </ControlSection>
@@ -147,6 +152,17 @@ const ThemeControlPanel = ({ styles, onChange }: ThemeControlPanelProps) => {
 
               <ControlSection title="Frames" expanded kbd="F">
                 <TemplateSelector />
+              </ControlSection>
+
+              <ControlSection title="Call to action" expanded>
+                <FrameControls />
+              </ControlSection>
+
+              <ControlSection title="Padding" expanded>
+                <PaddingControls
+                  value={currentStyles.margin}
+                  onChange={(margin) => updateStyle("margin", margin)}
+                />
               </ControlSection>
             </ScrollArea>
           </TabsContent>

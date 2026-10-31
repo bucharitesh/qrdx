@@ -1,6 +1,12 @@
 /** biome-ignore-all lint/a11y/noSvgWithoutTitle: false positive */
 import { cn } from "@repo/design-system/lib/utils";
-import { env } from "@/lib/env";
+import { type PaidPlan, PRICING, formatPrice as price } from "@/lib/pricing";
+
+/** "$5/mo or $48/yr" in US dollars, for FAQ answers. */
+const usd = (plan: PaidPlan) =>
+  `${price(PRICING[plan].month.amounts.USD, "USD")}/mo or ${price(PRICING[plan].year.amounts.USD, "USD")}/yr`;
+const inr = (plan: PaidPlan) =>
+  `${price(PRICING[plan].month.amounts.INR, "INR")} a month or ${price(PRICING[plan].year.amounts.INR, "INR")} a year`;
 
 export const Highlight = ({
   children,
@@ -40,12 +46,140 @@ export const siteConfig = {
     github: "https://github.com/bucharitesh/qrdx",
   },
   nav: {
+    // Top-level header entries. `href` is the group's hub (used on mobile);
+    // entries with `items` render as a dropdown on desktop.
     links: [
-      { id: 3, name: "Docs", href: "/docs" },
-      { id: 2, name: "Pricing", href: "/pricing" },
-      { id: 4, name: "Community", href: "/community" },
-      { id: 5, name: "Playground", href: "/playground" },
-      { id: 6, name: "Blog", href: "/blog" },
+      {
+        id: 1,
+        name: "Product",
+        href: "/playground",
+        items: [
+          {
+            name: "Playground",
+            href: "/playground",
+            description: "Design a QR code and download it, no signup",
+          },
+          {
+            name: "Dynamic QR codes",
+            href: "/docs/dynamic-qr-codes",
+            description: "Change where a printed code points and count scans",
+          },
+          {
+            name: "AI themes",
+            href: "/ai",
+            description: "Describe a style and let AI design the theme",
+          },
+          {
+            name: "Art QR",
+            href: "/ai/art",
+            description: "Logos, photos and AI artwork that still scan",
+          },
+          {
+            name: "Community themes",
+            href: "/community",
+            description: "Browse and reuse designs shared by others",
+          },
+        ],
+      },
+      {
+        id: 2,
+        name: "Tools",
+        href: "/tools",
+        items: [
+          {
+            name: "QR code generators",
+            href: "/qr-code-generator",
+            description: "Wi-Fi, vCard, WhatsApp, payments and more",
+          },
+          {
+            name: "Bulk generator",
+            href: "/tools/bulk",
+            description: "Turn a CSV into up to 5,000 styled codes",
+          },
+          {
+            name: "QR code scanner",
+            href: "/scan",
+            description: "Scan codes with a safe-link preview",
+          },
+          {
+            name: "Scan checker",
+            href: "/tools/scan-checker",
+            description: "Test how reliably a QR code scans",
+          },
+          {
+            name: "Print size calculator",
+            href: "/tools/print-size",
+            description: "Find the minimum size for your scan distance",
+          },
+          {
+            name: "All tools",
+            href: "/tools",
+            description: "Every free QR code tool in one place",
+          },
+        ],
+      },
+      {
+        id: 3,
+        name: "Developers",
+        href: "/docs",
+        items: [
+          {
+            name: "Documentation",
+            href: "/docs",
+            description: "Guides for the qrdx library and the platform",
+          },
+          {
+            name: "Image API",
+            href: "/docs/developers/image-api",
+            description: "A QR code image from a URL, no API key",
+          },
+          {
+            name: "MCP server",
+            href: "/mcp",
+            description: "QR codes from Claude, Cursor and VS Code",
+          },
+          {
+            name: "shadcn/ui registry",
+            href: "/docs/developers/shadcn",
+            description: "Add QR code components with one command",
+          },
+          {
+            name: "GitHub",
+            href: "https://github.com/bucharitesh/qrdx",
+            description: "Source code, issues and releases",
+            external: true,
+          },
+        ],
+      },
+      { id: 4, name: "MCP", href: "/mcp" },
+      {
+        id: 5,
+        name: "Resources",
+        href: "/blog",
+        items: [
+          {
+            name: "Blog",
+            href: "/blog",
+            description: "Guides and news about QR codes",
+          },
+          {
+            name: "Compare",
+            href: "/compare",
+            description: "QRdx next to other generators and libraries",
+          },
+          {
+            name: "Changelog",
+            href: "/changelogs",
+            description: "What's new in QRdx",
+          },
+          {
+            name: "Integrations",
+            href: "/integrations",
+            description: "Dub.sh short links and Google Drive",
+          },
+        ],
+      },
+      { id: 6, name: "Pricing", href: "/pricing" },
     ],
   },
   hero: {
@@ -565,52 +699,72 @@ export const siteConfig = {
       },
     ],
   },
+  // Prices: lib/pricing.ts. Limits and card features: lib/plans.ts.
   pricing: {
-    title: "Choose your perfect plan",
+    title: "Simple pricing. Codes that never go hostage.",
     description:
-      "Start creating beautiful QR codes for free. Upgrade to Pro when you're ready.",
-    pricingItems: [
+      "Static QR codes are free forever. Paid plans add unlimited dynamic codes, longer analytics, custom domains and teams.",
+    tiers: {
+      free: {
+        tagline: "For personal projects and trying QRdx out",
+        cta: "Start free",
+      },
+      pro: {
+        tagline: "For creators, shops and small businesses",
+        cta: "Upgrade to Pro",
+      },
+      business: {
+        tagline: "For teams, agencies and brands",
+        cta: "Upgrade to Business",
+      },
+    },
+    selfHost: {
+      title: "Self-host",
+      license: "AGPL-3.0",
+      description:
+        "Run the open-source app on your own server with your own Postgres database. Plan limits live in one file you can change for your instance.",
+    },
+    footnote:
+      "Polar handles checkout as merchant of record; local taxes may be added at checkout. Customers in India are charged in ₹, everyone else in US$.",
+    faq: [
       {
-        name: "Free",
-        href: "/playground",
-        price: "$0",
-        period: "month",
-        yearlyPrice: "$0",
-        polarMonthlyPriceId: null,
-        polarYearlyPriceId: null,
-        features: [
-          "Unlimited QR codes, no signup to create or download",
-          "Every pattern, gradient, logo option and frame template",
-          "Download in PNG, JPG, SVG, and PDF formats",
-          "Save up to 10 QR themes with a free account",
-          "5 AI theme generations with a free account",
-        ],
-        description: "No credit card required",
-        buttonText: "Get Started Free",
-        buttonColor: "bg-background text-secondary-foreground border-2",
-        isPopular: false,
+        question: "What happens if I cancel?",
+        answer:
+          "Nothing breaks. Your plan stays active until the end of the period you paid for, then your account moves to Free. Every dynamic code keeps redirecting and every scan is still counted: that's our Never-Hostage Guarantee. On Free you can't create more than the Free limits allow, and analytics show the last 90 days.",
       },
       {
-        name: "Pro",
-        href: "#",
-        price: "$8",
-        period: "month",
-        yearlyPrice: "$79",
-        polarMonthlyPriceId:
-          env.NEXT_PUBLIC_QRDX_PRO_MONTHLY_PRODUCT_ID ?? null,
-        polarYearlyPriceId: env.NEXT_PUBLIC_QRDX_PRO_YEARLY_PRODUCT_ID ?? null,
-        features: [
-          "Everything in Free",
-          "Unlimited saved QR themes",
-          "Unlimited AI theme generation",
-          "Generate themes from images with AI",
-          "Priority support",
-        ],
-        description: "Billed monthly • Cancel anytime",
-        yearlyDescription: "Billed annually • Cancel anytime",
-        buttonText: "Upgrade to Pro",
-        buttonColor: "bg-primary text-white",
-        isPopular: true,
+        question: "What happens if a payment fails?",
+        answer:
+          "Your codes keep working. If the subscription lapses, your account follows the Free limits, exactly as if you had cancelled. We never pause codes, show ads, or send your scanners to a QRdx page because of billing.",
+      },
+      {
+        question: "Do scans count against a limit?",
+        answer:
+          "No. Scans are unlimited on every plan and we never pause a code because of traffic. The only scan caps are the ones you set yourself on a code (Pro and Business).",
+      },
+      {
+        question: "Why do I see prices in ₹?",
+        answer: `Visitors from India see prices in Indian rupees: Pro is ${inr("pro")}, Business ${inr("business")}. Checkout charges customers in India in ₹ and everyone else in US$, whichever currency you browsed in. Use the switch above the plans to change the display currency.`,
+      },
+      {
+        question: "Can I switch plans or billing periods later?",
+        answer:
+          "Yes. Open Manage subscription in your settings to change or cancel your plan in the Polar billing portal. Moving to a smaller plan never turns off existing codes, pages or domains.",
+      },
+      {
+        question: "How do teams work on each plan?",
+        answer:
+          "Free accounts can't create teams. A Pro team has up to 3 members including the owner; a Business team has no member limit. A team's limits follow the best plan among its owners, and existing members stay if that plan changes.",
+      },
+      {
+        question: "Can I self-host instead?",
+        answer:
+          "Yes. QRdx is open source under the AGPL-3.0. Run it with your own Postgres database by following the self-hosting guide; the plan limits are defined in one file that you can change for your instance.",
+      },
+      {
+        question: "Who handles billing and taxes?",
+        answer:
+          "Payments are processed by Polar (polar.sh), which acts as merchant of record and handles sales tax, VAT and GST. QRdx never sees your card details.",
       },
     ],
   },
@@ -622,20 +776,19 @@ export const siteConfig = {
       {
         id: 1,
         question: "Is QRdx really free? Are there hidden limits?",
-        answer:
-          "Yes. Creating, customizing and downloading QR codes is free and needs no account: unlimited codes, every design option (9 body patterns, 9 corner-eye shapes and 11 eye-dot shapes, gradients, logos and frame templates), and PNG, JPG, SVG and PDF downloads. There are no watermarks and no ads. QRdx makes static QR codes, which store your content in the code itself, so they never expire and have no scan limits. A free account adds up to 10 saved themes and 5 AI theme generations; Pro ($8/mo or $79/year) makes both unlimited.",
+        answer: `Yes. Creating, customizing and downloading QR codes is free and needs no account: unlimited codes, every design option (9 body patterns, 9 corner-eye shapes and 11 eye-dot shapes, gradients, logos and frame templates), and PNG, JPG, SVG and PDF downloads. There are no watermarks and no ads. QRdx makes static QR codes, which store your content in the code itself, so they never expire and have no scan limits. A free account adds 10 dynamic QR codes with scan analytics, 10 saved themes and 5 AI theme generations; Pro (${usd("pro")}) and Business (${usd("business")}) raise those limits.`,
       },
       {
         id: 2,
         question: "Do I need to sign up or create an account?",
         answer:
-          "No. Open the playground, enter your URL or content, customize the design and download it without signing up. A free account lets you save up to 10 themes, publish themes to the community, and try AI theme generation (5 generations). Pro unlocks unlimited saved themes and unlimited AI generations.",
+          "No. Open the playground, enter your URL or content, customize the design and download it without signing up. A free account lets you create up to 10 dynamic QR codes, save up to 10 themes, publish themes to the community, and try AI theme generation (5 generations). Pro and Business make dynamic codes, saved themes and AI theme generations unlimited.",
       },
       {
         id: 3,
         question: "Does QRdx support dynamic QR codes or scan analytics?",
         answer:
-          "Not built in yet. QRdx makes static QR codes, which point straight at your content and cannot be edited after printing. If you need to change the destination later or count clicks, connect the Dub.sh integration and encode a Dub short link: you can then edit where it points and see click analytics in your Dub account.",
+          "Yes. A dynamic code encodes a short link, so you can change where it points after printing, and every scan is counted with country, device and browser analytics. Free accounts get 10 active dynamic codes with 90 days of history; Pro and Business are unlimited with longer history. Codes keep redirecting on every plan, even after you cancel. Static codes from the playground need no account and work forever.",
       },
       {
         id: 4,
@@ -658,9 +811,8 @@ export const siteConfig = {
       },
       {
         id: 7,
-        question: "What do I get when I upgrade to Pro?",
-        answer:
-          "Pro ($8/mo or $79/year) unlocks unlimited saved QR themes, unlimited AI theme generation (including generating themes from images), and priority support. Free accounts get 10 saved themes and 5 AI generations. Creating, customizing and downloading QR codes stays free.",
+        question: "What do I get with Pro or Business?",
+        answer: `Pro (${usd("pro")}) adds unlimited dynamic codes and landing pages, 3 years of analytics, 5 custom domains, teams of up to 3, smart routing, A/B tests, UTM tags, pixels, and link controls such as passwords and expiry dates. Business (${usd("business")}) adds white-label pages, unlimited analytics history, 25 custom domains, unlimited team members, conversion tracking and webhooks. Creating, customizing and downloading static QR codes stays free.`,
       },
     ],
   },
@@ -678,58 +830,65 @@ export const siteConfig = {
       title: "Product",
       links: [
         { id: 1, title: "Playground", url: "/playground" },
-        { id: 2, title: "Community", url: "/community" },
+        { id: 2, title: "Dynamic QR codes", url: "/docs/dynamic-qr-codes" },
+        { id: 3, title: "AI themes", url: "/ai" },
+        { id: 4, title: "Community themes", url: "/community" },
+        { id: 5, title: "Pricing", url: "/pricing" },
+        { id: 6, title: "Never-Hostage Guarantee", url: "/guarantee" },
+      ],
+    },
+    {
+      title: "Tools",
+      links: [
+        { id: 1, title: "QR code generators", url: "/qr-code-generator" },
+        { id: 2, title: "Bulk generator", url: "/tools/bulk" },
+        { id: 3, title: "Scan checker", url: "/tools/scan-checker" },
+        { id: 4, title: "Print size calculator", url: "/tools/print-size" },
+        { id: 6, title: "QR code scanner", url: "/scan" },
+        { id: 5, title: "All tools", url: "/tools" },
+      ],
+    },
+    {
+      title: "Developers",
+      links: [
+        { id: 1, title: "Documentation", url: "/docs" },
+        { id: 2, title: "Image API", url: "/docs/developers/image-api" },
+        { id: 3, title: "MCP server", url: "/mcp" },
+        { id: 4, title: "shadcn/ui registry", url: "/docs/developers/shadcn" },
+        { id: 5, title: "Self-hosting", url: "/docs/self-hosting" },
+        { id: 6, title: "GitHub", url: "https://github.com/bucharitesh/qrdx" },
       ],
     },
     {
       title: "Resources",
       links: [
         { id: 1, title: "Blog", url: "/blog" },
-        { id: 2, title: "Documentation", url: "/docs" },
+        { id: 2, title: "Changelog", url: "/changelogs" },
         { id: 3, title: "Integrations", url: "/integrations" },
-        { id: 4, title: "Changelogs", url: "/changelogs" },
-        { id: 5, title: "Pricing", url: "/pricing" },
-      ],
-    },
-    {
-      title: "Company",
-      links: [
-        { id: 1, title: "Contact", url: "mailto:support@qrdx.dev" },
-        { id: 2, title: "Privacy", url: "/legal/privacy-policy" },
-        {
-          id: 3,
-          title: "Legal",
-          children: [
-            {
-              id: 1,
-              title: "Terms of Service",
-              url: "/legal/terms-of-service",
-            },
-            { id: 2, title: "Subprocessors", url: "/legal/subprocessors" },
-            { id: 3, title: "Report Abuse", url: "/legal/report-abuse" },
-          ],
-        },
+        { id: 5, title: "QR codes by industry", url: "/qr-codes-for" },
+        { id: 6, title: "QR codes by placement", url: "/qr-codes-on" },
+        { id: 4, title: "Contact", url: "mailto:support@qrdx.dev" },
       ],
     },
     {
       title: "Compare",
       links: [
-        { id: 1, title: "All comparisons", url: "/compare" },
-        { id: 2, title: "QR Code Monkey", url: "/compare/qr-code-monkey" },
-        { id: 3, title: "QR Tiger", url: "/compare/qr-tiger" },
-        { id: 4, title: "Canva QR", url: "/compare/canva-qr" },
-        { id: 5, title: "Bitly QR", url: "/compare/bitly-qr" },
-        { id: 6, title: "Flowcode", url: "/compare/flowcode" },
-        { id: 7, title: "QR-Verse", url: "/compare/qr-verse" },
-        { id: 8, title: "Adobe Express", url: "/compare/adobe-express" },
-        { id: 9, title: "QR Code Chimp", url: "/compare/qr-code-chimp" },
-        { id: 10, title: "ME-QR", url: "/compare/me-qr" },
-        { id: 11, title: "Uniqode", url: "/compare/uniqode" },
-        { id: 12, title: "QRStuff", url: "/compare/qrstuff" },
-        { id: 13, title: "QR Code.io", url: "/compare/qr-code-io" },
-        { id: 14, title: "goQR.me", url: "/compare/goqr" },
-        { id: 15, title: "qrcode.react", url: "/compare/qrcode-react" },
-        { id: 16, title: "qr-code-styling", url: "/compare/qr-code-styling" },
+        { id: 1, title: "QR Code Monkey", url: "/compare/qr-code-monkey" },
+        { id: 2, title: "QR Tiger", url: "/compare/qr-tiger" },
+        { id: 3, title: "Canva QR", url: "/compare/canva-qr" },
+        { id: 4, title: "Bitly QR", url: "/compare/bitly-qr" },
+        { id: 5, title: "Flowcode", url: "/compare/flowcode" },
+        { id: 7, title: "QRFY", url: "/compare/qrfy" },
+        { id: 6, title: "All comparisons", url: "/compare" },
+      ],
+    },
+    {
+      title: "Legal",
+      links: [
+        { id: 1, title: "Privacy policy", url: "/legal/privacy-policy" },
+        { id: 2, title: "Terms of service", url: "/legal/terms-of-service" },
+        { id: 3, title: "Subprocessors", url: "/legal/subprocessors" },
+        { id: 4, title: "Report abuse", url: "/report-abuse" },
       ],
     },
   ],
