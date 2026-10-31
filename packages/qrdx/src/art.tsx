@@ -893,6 +893,54 @@ function monoParams(t: number, n: number) {
   };
 }
 
+/** How far the eye plates reach from the code's corners, in modules. */
+const PLATE_REACH = 8.5;
+
+const plateCache = new Map<number, Uint8Array>();
+
+/**
+ * Light "plates" that keep function patterns crisp on a picture: each eye's
+ * finder and separator plus half of the next module ring, and each
+ * alignment pattern plus a half-module halo. Data dots still draw on top.
+ * Returns a test for module-space points (half-module resolution).
+ */
+function plates(version: number): (u: number, v: number) => boolean {
+  const size = version * 4 + 17;
+  let grid = plateCache.get(version);
+  if (!grid) {
+    const side = size * 2;
+    const map = new Uint8Array(side * side);
+    const reach = PLATE_REACH * 2;
+    for (let y = 0; y < side; y++) {
+      for (let x = 0; x < side; x++) {
+        const nearX = x < reach || x >= side - reach;
+        const nearY = y < reach || y >= side - reach;
+        if (nearX && nearY && !(x >= side - reach && y >= side - reach)) {
+          map[y * side + x] = 1;
+        }
+      }
+    }
+    for (const [cx, cy] of alignmentCenters(version, size)) {
+      for (let y = (cy - 2) * 2 - 1; y < (cy + 3) * 2 + 1; y++) {
+        for (let x = (cx - 2) * 2 - 1; x < (cx + 3) * 2 + 1; x++) {
+          if (x >= 0 && y >= 0 && x < side && y < side) {
+            map[y * side + x] = 1;
+          }
+        }
+      }
+    }
+    plateCache.set(version, map);
+    grid = map;
+  }
+  const map = grid;
+  const side = size * 2;
+  return (u, v) => {
+    const x = Math.floor(u * 2);
+    const y = Math.floor(v * 2);
+    return x >= 0 && y >= 0 && x < side && y < side && map[y * side + x] === 1;
+  };
+}
+
 /** Samples the photo into sub-cells (cover fit, soft fade at the edge). */
 function sampleCells(ctx: RenderContext, n: number, frosted = false): Cells {
   const { image, size, kinds, fg, bg } = ctx;
@@ -903,11 +951,12 @@ function sampleCells(ctx: RenderContext, n: number, frosted = false): Cells {
   const footprint = 1 / (n * place.scale);
   const taps = footprint > 1.3 ? 2 : 1;
   const frost = luma(bg) - 0.1 * (luma(bg) - luma(fg));
+  const onPlate = plates(ctx.version);
   for (let y = 0; y < size; y++) {
     for (let x = 0; x < size; x++) {
       const kind = kinds[y * size + x];
-      const plate = kind === KIND_FINDER || kind === KIND_ALIGNMENT;
-      if (plate && !frosted) {
+      const pattern = kind === KIND_FINDER || kind === KIND_ALIGNMENT;
+      if (pattern && !frosted) {
         continue;
       }
       for (let j = 0; j < n; j++) {
@@ -939,7 +988,7 @@ function sampleCells(ctx: RenderContext, n: number, frosted = false): Cells {
           if (edge < 1.5) {
             color = mix(color, bg, 0.35 * (1 - edge / 1.5));
           }
-          if (plate) {
+          if (frosted && (pattern || onPlate(u, v))) {
             // Frosted plate under eyes and alignment patterns
             color = toward(color, bg, frost, false);
           }
@@ -1424,16 +1473,12 @@ function renderMonoHalftone(ctx: RenderContext): JSX.Element[] {
       }
     }
   }
-  // Keep the half of the next module ring that touches each eye's plate
-  // light (cores excepted), so dark dithering can't swallow a separator.
-  const reach = 8.5 * n;
+  // Plates around eyes and alignment patterns stay light (cores excepted).
+  const onPlate = plates(ctx.version);
   for (let cy = 0; cy < count; cy++) {
     for (let cx = 0; cx < count; cx++) {
-      const nearX = cx < reach || cx >= count - reach;
-      const nearY = cy < reach || cy >= count - reach;
-      const corner = cx >= count - reach && cy >= count - reach;
       const c = cy * count + cx;
-      if (nearX && nearY && !corner && forced[c] < 0) {
+      if (forced[c] < 0 && onPlate((cx + 0.5) / n, (cy + 0.5) / n)) {
         forced[c] = 1;
       }
     }
@@ -1586,7 +1631,7 @@ function renderLogoBlend(ctx: RenderContext): JSX.Element[] {
   // ring of modules (their dots still draw on top), so a dark logo next to
   // an eye can't swallow the separator at small sizes. The outer corners
   // round off in the quiet zone.
-  const reach = 8.5;
+  const reach = PLATE_REACH;
   const plate = (x: number, y: number) =>
     roundedRectPath(
       (x + margin) * pixelSize,
@@ -1595,20 +1640,31 @@ function renderLogoBlend(ctx: RenderContext): JSX.Element[] {
       (reach + 0.4) * pixelSize,
       1.2 * pixelSize
     );
+  // Alignment patterns get a half-module halo of background too.
+  const halos = alignmentCenters(ctx.version, size)
+    .map(([cx, cy]) =>
+      roundedRectPath(
+        (cx - 2.5 + margin) * pixelSize,
+        (cy - 2.5 + margin) * pixelSize,
+        6 * pixelSize,
+        6 * pixelSize,
+        pixelSize * 0.8
+      )
+    )
+    .join("");
   layers.push(
     <path
       d={
         plate(-0.4, -0.4) +
         plate(size - reach, -0.4) +
-        plate(-0.4, size - reach)
+        plate(-0.4, size - reach) +
+        halos
       }
       fill={bgHex}
       key="art-plates"
     />
   );
-  const onPlate = (u: number, v: number) =>
-    (u < reach || u > size - reach) && (v < reach || v > size - reach) &&
-    !(u > size - reach && v > size - reach);
+  const onPlate = plates(ctx.version);
 
   // Dot screen: dark dots on dark modules, light dots on light ones, each
   // as small as the scan model allows (see planDots); at higher strength,
@@ -1691,28 +1747,7 @@ function renderLogoBlend(ctx: RenderContext): JSX.Element[] {
     }
   }
   layers.push(...dots.toElements("art-dot"));
-  const centers = alignmentCenters(ctx.version, size);
-  if (centers.length > 0) {
-    // A background plate first, so the pattern stays crisp on the logo.
-    layers.push(
-      <path
-        d={centers
-          .map(([cx, cy]) =>
-            roundedRectPath(
-              (cx - 2 + margin) * pixelSize,
-              (cy - 2 + margin) * pixelSize,
-              5 * pixelSize,
-              5 * pixelSize,
-              pixelSize * 0.35
-            )
-          )
-          .join("")}
-        fill={bgHex}
-        key="art-alignment-plate"
-      />,
-      ...alignmentLayer(ctx, fgHex)
-    );
-  }
+  layers.push(...alignmentLayer(ctx, fgHex));
   return layers;
 }
 

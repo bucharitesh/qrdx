@@ -67,7 +67,7 @@ export const newYearPresets = {
       eyeColor: "#6B4A00",
       dotColor: "#6B4A00",
       bodyPattern: "square",
-      cornerEyePattern: "square",
+      cornerEyePattern: "rounded",
       cornerEyeDotPattern: "diamond",
       level: "Q",
       margin: 2,

@@ -20,7 +20,20 @@ export const SOUND_GROUPS = {
     "low",
   ],
   /** Festive characters: direct clicks only, quieter than UI cues. */
-  seasonal: ["boo", "meow", "bat"],
+  seasonal: [
+    // Halloween
+    "boo",
+    "meow",
+    "bat",
+    // Christmas
+    "seasonal-bauble",
+    "seasonal-gift",
+    "seasonal-snowman",
+    // New Year
+    "seasonal-cork",
+    "seasonal-firework",
+    "seasonal-balloon",
+  ],
 } as const;
 
 export const SOUND_NAMES = [
@@ -207,6 +220,43 @@ export const SOUND_PRESETS: Record<SoundName, SoundPreset> = {
     synthGain: 0.6,
     durationMs: 230,
     use: "Halloween bat clicked.",
+  }),
+  "seasonal-bauble": seasonal("seasonal-bauble", {
+    sample: "/sounds/bauble.mp3",
+    sampleGain: 0.6,
+    synthGain: 0.6,
+    durationMs: 180,
+    use: "Christmas bauble clicked.",
+  }),
+  "seasonal-gift": seasonal("seasonal-gift", {
+    sampleGain: 1,
+    synthGain: 0.6,
+    durationMs: 220,
+    use: "Christmas gift clicked.",
+  }),
+  "seasonal-snowman": seasonal("seasonal-snowman", {
+    sampleGain: 1,
+    synthGain: 0.6,
+    durationMs: 200,
+    use: "Christmas snowman clicked.",
+  }),
+  "seasonal-cork": seasonal("seasonal-cork", {
+    sampleGain: 1,
+    synthGain: 0.6,
+    durationMs: 200,
+    use: "New Year champagne clicked.",
+  }),
+  "seasonal-firework": seasonal("seasonal-firework", {
+    sampleGain: 1,
+    synthGain: 0.5,
+    durationMs: 250,
+    use: "New Year firework / popper clicked.",
+  }),
+  "seasonal-balloon": seasonal("seasonal-balloon", {
+    sampleGain: 1,
+    synthGain: 0.6,
+    durationMs: 180,
+    use: "New Year disco ball / balloon clicked.",
   }),
 };
 

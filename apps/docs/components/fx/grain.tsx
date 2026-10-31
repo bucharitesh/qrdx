@@ -10,7 +10,7 @@ const NOISE = `url("data:image/svg+xml,${encodeURIComponent(
 
 interface GrainProps {
   className?: string;
-  /** Overrides the theme's default strength (0.045 light, 0.06 dark). */
+  /** Overrides the theme default strength (0.035 light, 0.055 dark). */
   opacity?: number;
 }
 
@@ -31,7 +31,7 @@ export function Grain({ className, opacity }: GrainProps) {
       aria-hidden="true"
       className={cn(
         styles.layer,
-        "bg-foreground opacity-[0.045] dark:opacity-[0.06]",
+        "bg-foreground opacity-[0.035] dark:opacity-[0.055]",
         className,
       )}
       style={style}
