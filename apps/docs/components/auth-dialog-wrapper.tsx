@@ -14,6 +14,7 @@ export function AuthDialogWrapper() {
     closeAuthDialog,
     postLoginAction,
     clearPostLoginAction,
+    callbackURL,
   } = useAuthStore();
   const { data: session } = authClient.useSession();
   const posthog = usePostHog();
@@ -47,6 +48,7 @@ export function AuthDialogWrapper() {
 
   return (
     <AuthDialog
+      callbackURL={callbackURL ?? undefined}
       open={isOpen}
       onOpenChange={closeAuthDialog}
       initialMode={mode}

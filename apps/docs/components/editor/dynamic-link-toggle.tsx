@@ -4,6 +4,7 @@ import { authClient } from "@repo/auth/client";
 import { toast } from "@repo/design-system";
 import { Spinner, Tick } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
+import { useIsMobile } from "@repo/design-system/hooks/use-mobile";
 import { cn } from "@repo/design-system/lib/utils";
 import { ArrowRight, Copy, Flash, Global } from "iconsax-reactjs";
 import Link from "next/link";
@@ -120,6 +121,18 @@ async function safely<T>(
       },
     };
   }
+}
+
+/**
+ * On phones, a signed-out visitor gets the dynamic card at the end of the
+ * Content tab (after "Start from a style") instead of under the address
+ * field, so the sign-in prompt doesn't interrupt making a first code.
+ * Signed in, or on larger screens, it stays under the field.
+ */
+export function useDynamicCardAtEnd(): boolean {
+  const isMobile = useIsMobile();
+  const { data: session, isPending } = authClient.useSession();
+  return isMobile && !isPending && !session?.user;
 }
 
 export function DynamicLinkToggle() {

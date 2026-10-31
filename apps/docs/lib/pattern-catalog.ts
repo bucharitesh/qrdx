@@ -19,6 +19,7 @@ import {
   type FrameStyle,
   WEAK_BODY_EYES,
   WEAK_DOT_EYES,
+  WEAK_DOTS,
 } from "qrdx";
 import {
   BODY_PATTERN,
@@ -445,9 +446,13 @@ const FRAMES: Record<FrameStyle, Omit<FrameMeta, "value" | "scanRisk">> = {
 
 // Centres that read at phone distances but fail up close (12+ px per module
 // through the camera model) and in sharp screenshots (the docs catalogue)
-const CLOSE_RANGE_NOTES: Partial<Record<CornerEyeDotPattern, string>> = {
-  star: "Reads at phone distance, but misses up close and in sharp screenshots",
-};
+const CLOSE_RANGE_NOTES: Partial<Record<CornerEyeDotPattern, string>> =
+  Object.fromEntries(
+    WEAK_DOTS.map((dot) => [
+      dot,
+      "Reads at phone distance, but misses up close and in sharp screenshots",
+    ]),
+  );
 
 // A centre that fails in most eyes is "caution" on its own
 const CAUTION_DOT_EYE_COUNT = 6;

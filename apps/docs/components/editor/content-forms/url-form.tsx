@@ -11,7 +11,10 @@ import {
   checkUrl,
   withScheme,
 } from "@/components/editor/content-forms/url-check";
-import { DynamicLinkToggle } from "@/components/editor/dynamic-link-toggle";
+import {
+  DynamicLinkToggle,
+  useDynamicCardAtEnd,
+} from "@/components/editor/dynamic-link-toggle";
 import { useSmartPaste } from "@/lib/hooks/use-smart-paste";
 import { useQREditorStore } from "@/store/editor-store";
 import type { UrlContent } from "@/types/qr-content";
@@ -60,6 +63,7 @@ export function UrlForm() {
   };
 
   const showError = check.status === "error" && touched;
+  const dynamicCardAtEnd = useDynamicCardAtEnd();
 
   return (
     <div className="space-y-4">
@@ -119,7 +123,7 @@ export function UrlForm() {
         contentType="url"
         onPick={(item) => setUrl(item.url)}
       />
-      <DynamicLinkToggle />
+      {!dynamicCardAtEnd && <DynamicLinkToggle />}
     </div>
   );
 }

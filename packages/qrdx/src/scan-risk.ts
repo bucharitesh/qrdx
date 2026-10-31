@@ -45,9 +45,21 @@ export const WEAK_BODY_EYES: Partial<
   "small-square": ["square", "rounded"],
 };
 
+/**
+ * Shapes that are fragile on their own, whatever they are paired with:
+ * circle and curly eyes read only in lenient decoders (scan-score's eye
+ * check), and these centres fail jsQR in sharp renders (screens, PNGs).
+ */
+export const WEAK_EYES: readonly CornerEyePattern[] = ["circle", "curly"];
+export const WEAK_DOTS: readonly CornerEyeDotPattern[] = [
+  "diamond",
+  "banner",
+  "star",
+];
+
 export interface StylePairRisk {
-  /** "dot-eye" or "body-eye" */
-  kind: "dot-eye" | "body-eye";
+  /** A weak pair ("dot-eye", "body-eye") or a weak shape on its own */
+  kind: "dot-eye" | "body-eye" | "eye" | "dot";
   message: string;
   fix: string;
 }
@@ -77,6 +89,20 @@ export function getStylePairRisk(
       kind: "body-eye",
       message: `${body} dots next to ${eye} eyes are missed up close`,
       fix: "Pick a fuller dot shape or another eye shape",
+    };
+  }
+  if (WEAK_DOTS.includes(dot)) {
+    return {
+      kind: "dot",
+      message: `${dot} centres are missed in sharp renders and up close`,
+      fix: "Pick a square, rounded or circle centre",
+    };
+  }
+  if (WEAK_EYES.includes(eye)) {
+    return {
+      kind: "eye",
+      message: `${eye} eyes only read in lenient decoders`,
+      fix: "Pick square, rounded or gear eyes",
     };
   }
   return null;

@@ -2,6 +2,7 @@ import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import { ArrowRight, QuoteDown, Routing2 } from "iconsax-reactjs";
 import Link from "next/link";
+import { SignInLink } from "@/components/auth/sign-in-link";
 import { MockupImage } from "@/components/mockups/mockup-image";
 import { useCaseImages } from "@/components/mockups/visuals";
 import { SectionHeader } from "@/components/sections/section-header";
@@ -121,7 +122,7 @@ export function TopicPage({ topic, collection, other }: TopicPageProps) {
             </Link>
           </Button>
           <Button variant="outline" asChild>
-            <Link href="/dashboard">Create a dynamic code</Link>
+            <SignInLink href="/dashboard">Create a dynamic code</SignInLink>
           </Button>
         </div>
       </ToolHero>
@@ -177,6 +178,7 @@ export function TopicPage({ topic, collection, other }: TopicPageProps) {
             <SpotlightLink
               key={item.title}
               href={item.href}
+              requireSignIn={item.href.startsWith("/dashboard")}
               className={cn(
                 cardClass,
                 interactiveCardClass,
