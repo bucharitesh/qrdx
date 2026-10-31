@@ -1,5 +1,9 @@
+import { ArrowRight } from "lucide-react";
 import type { Metadata } from "next";
+import Link from "next/link";
+import { HairlineFigure } from "@/components/mockups/hairline";
 import { AI_REQUEST_FREE_TIER_LIMIT } from "@/lib/constants";
+import { env } from "@/lib/env";
 import { createMetadata } from "@/lib/metadata";
 import { AIAnnouncement } from "./components/ai-announcement";
 import { AIChatHero } from "./components/ai-chat-hero";
@@ -22,10 +26,26 @@ export default function AiPage() {
   return (
     <div className="relative isolate container mx-auto flex flex-1 flex-col gap-24 overflow-x-hidden overflow-y-auto px-4 md:px-6">
       {/* AI Chat entry point section */}
-      <section className="relative isolate flex flex-col gap-4 py-100">
+      <section className="relative isolate flex flex-col gap-4 pt-32 md:pt-48">
         <AIAnnouncement />
         <AIChatHero />
+        {Boolean(env.FAL_KEY) && (
+          <Link
+            href="/ai/art"
+            className="group text-muted-foreground hover:text-foreground mx-auto flex items-center gap-2 text-sm font-medium transition-colors"
+          >
+            Or turn a link into scannable AI QR art
+            <ArrowRight className="size-4 transition-transform group-hover:translate-x-0.5" />
+          </Link>
+        )}
       </section>
+
+      <div className="flex justify-center pb-24">
+        <HairlineFigure
+          figure="Phosphor"
+          className="aspect-[2/1] w-full max-w-2xl"
+        />
+      </div>
     </div>
   );
 }

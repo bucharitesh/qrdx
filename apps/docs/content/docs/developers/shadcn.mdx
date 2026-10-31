@@ -1,0 +1,102 @@
+---
+title: shadcn/ui registry
+description: Add a QR code component with download buttons, or an image-based QR scanner, to a shadcn/ui project with one command.
+icon: Blocks
+---
+
+QRdx publishes a [shadcn/ui](https://ui.shadcn.com) registry with two components built on the [`qrdx`](https://www.npmjs.com/package/qrdx) library. The shadcn CLI copies the source into your project, so you own the code and can change it.
+
+## QR code
+
+```bash
+npx shadcn@latest add https://qrdx.dev/r/qr-code.json
+```
+
+This adds `components/qr-code.tsx` and installs `qrdx`.
+
+```tsx
+import { QrCode } from "@/components/qr-code";
+
+export function ShareCard() {
+  return (
+    <QrCode
+      value="https://qrdx.dev"
+      size={180}
+      fgColor="#155DFC"
+      bodyPattern="rounded"
+      cornerEyePattern="rounded"
+      caption="Scan to open qrdx.dev"
+    />
+  );
+}
+```
+
+It renders the code as an SVG with an accessible name, plus PNG and SVG download buttons.
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `string` | required | Text or URL to encode |
+| `size` | `number` | `200` | Rendered width and height in pixels |
+| `fgColor`, `bgColor` | `ColorConfig` | `#000000`, `#FFFFFF` | Colors: any CSS color or a qrdx [gradient](/docs/features/colors-gradients) |
+| `eyeColor`, `dotColor` | `ColorConfig` | `fgColor` | Corner eye and eye dot colors |
+| `bodyPattern` | `BodyPattern` | `circle` | Data module shape |
+| `cornerEyePattern` | `CornerEyePattern` | `gear` | Corner eye frame shape |
+| `cornerEyeDotPattern` | `CornerEyeDotPattern` | `circle` | Corner eye dot shape |
+| `level` | `ErrorLevel` | `Q` | Error correction. Use `H` with a logo |
+| `margin` | `number` | `2` | Quiet zone around the code, in modules |
+| `templateId` | `string` | — | Frame [template](/docs/features/templates), e.g. `Arrow` |
+| `logo` | `string` | — | Center logo: a data URL or an image URL served with CORS headers |
+| `label` | `string` | `QR code: <value>` | Accessible name for screen readers |
+| `caption` | `ReactNode` | — | Visible caption under the code |
+| `downloadFormats` | `DownloadFormat[]` | `["png", "svg"]` | Download buttons to show. Pass `[]` to hide them |
+| `downloadSize` | `number` | `1024` | Width and height of downloaded files, `50` to `5000` |
+| `filename` | `string` | `qr-code` | Download file name without extension |
+
+Any other prop is passed to the wrapping `<figure>`. `downloadFormats` also accepts `jpg` and `pdf`; PDF downloads need the optional `jspdf` package (`npm install jspdf`).
+
+## QR code scanner
+
+```bash
+npx shadcn@latest add https://qrdx.dev/r/qr-code-scanner.json
+```
+
+This adds `components/qr-code-scanner.tsx`: a drop zone that reads a QR code from an image the user drops or picks. Decoding runs in the browser, so the image never leaves the device. It reads image files only, not a live camera feed.
+
+```tsx
+"use client";
+
+import { QrCodeScanner } from "@/components/qr-code-scanner";
+
+export function ScanUpload() {
+  return <QrCodeScanner onResult={(value) => console.log(value)} />;
+}
+```
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `onResult` | `(value: string) => void` | — | Called with the decoded text |
+| `label` | `string` | `Scan a QR code from an image` | Heading inside the drop zone |
+
+The result is shown with a copy button, and with an "Open link" button when it is an `http` or `https` URL.
+
+## Using the registry namespace
+
+To install with a short name, add the registry to your `components.json`:
+
+```json
+{
+  "registries": {
+    "@qrdx": "https://qrdx.dev/r/{name}.json"
+  }
+}
+```
+
+```bash
+npx shadcn@latest add @qrdx/qr-code @qrdx/qr-code-scanner
+```
+
+## Styling
+
+Both components use Tailwind classes with the standard shadcn/ui theme tokens (`bg-background`, `border-input`, `text-muted-foreground`, `ring-ring`), so they follow your theme and dark mode. They don't depend on other shadcn components.

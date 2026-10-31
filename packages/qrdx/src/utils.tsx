@@ -12,6 +12,7 @@ import type {
   TemplateConfig,
 } from "../types";
 import { normalizeColorConfig } from "../types/color";
+import { isQRArtActive, renderQRArt } from "./art";
 import qrcodegen from "./codegen";
 import {
   DEFAULT_BGCOLOR,
@@ -24,6 +25,7 @@ import {
 } from "./constants";
 import { generateCornerDotPath } from "./corner-dot";
 import { generateCornerSquarePath } from "./corner-eye";
+import { isFrameActive, wrapWithFrame } from "./frame";
 import { getTemplate } from "./templates";
 import { getSolidColor } from "./utils/color";
 
@@ -630,8 +632,18 @@ export function QRCodeSVG(props: QRPropsSVG) {
     templateId,
     customTemplate,
     customProps,
+    frame,
+    art,
     ...otherProps
   } = props;
+
+  // With a frame, the caller's SVG attributes belong on the outer frame <svg>.
+  const framed = isFrameActive(frame);
+  const rootProps: typeof otherProps = framed ? {} : otherProps;
+  const withFrame = (element: JSX.Element) =>
+    framed
+      ? wrapWithFrame(element, { size, frame, bgColor, svgProps: otherProps })
+      : element;
 
   const shouldUseHigherErrorLevel =
     isOGContext && imageSettings?.excavate && (level === "L" || level === "M");
@@ -640,10 +652,11 @@ export function QRCodeSVG(props: QRPropsSVG) {
   // to ensure the QR code remains scannable despite the removed modules.
   const effectiveLevel = shouldUseHigherErrorLevel ? "Q" : level;
 
-  let cells = qrcodegen.QrCode.encodeText(
+  const qrCode = qrcodegen.QrCode.encodeText(
     value,
     ERROR_LEVEL_MAP[effectiveLevel]
-  ).getModules();
+  );
+  let cells = qrCode.getModules();
 
   const numCells = cells.length + margin * 2;
   const calculatedImageSettings = getImageSettings(
@@ -702,12 +715,27 @@ export function QRCodeSVG(props: QRPropsSVG) {
   const cornerSize = 7 * pixelSize; // Corner patterns are 7x7 modules
   const cornerDotRadius = 1.5 * pixelSize; // Inner dot radius
 
+  // Art modes replace the body pattern; finder eyes keep their own styles.
+  const artLayer = isQRArtActive(art)
+    ? renderQRArt({
+        art,
+        modules: cells,
+        version: qrCode.version,
+        margin,
+        pixelSize,
+        fgColor: getSolidColor(fgColor, DEFAULT_FGCOLOR),
+        bgColor: getSolidColor(bgColor, DEFAULT_BGCOLOR),
+      })
+    : null;
+
   // Generate data circles with selected pattern
-  const dataCircles = generateDataCircles(cells, {
-    margin,
-    pixelSize,
-    pattern: bodyPattern,
-  });
+  const dataCircles = artLayer
+    ? null
+    : generateDataCircles(cells, {
+        margin,
+        pixelSize,
+        pattern: bodyPattern,
+      });
 
   // Normalize bgColor and fgColor first to ensure proper structure
   const normalizedBgColor = normalizeColorConfig(bgColor, DEFAULT_BGCOLOR);
@@ -931,7 +959,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
       <rect fill={bgFillValue} height={size} width={size} x={0} y={0} />
 
       {/* Data module circles */}
-      <g fill={fgFillValue}>{dataCircles}</g>
+      {artLayer ?? <g fill={fgFillValue}>{dataCircles}</g>}
 
       {/* Top-left corner square */}
       <g fill={topLeftEyeFillValue}>
@@ -1029,7 +1057,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
         {/* Scale all QR elements to fit template coordinate system */}
         <g transform={`scale(${templateSize / size})`}>
           {/* Data module circles */}
-          <g fill={fgFillValue}>{dataCircles}</g>
+          {artLayer ?? <g fill={fgFillValue}>{dataCircles}</g>}
 
           {/* Top-left corner square */}
           <g fill={topLeftEyeFillValue}>
@@ -1140,28 +1168,30 @@ export function QRCodeSVG(props: QRPropsSVG) {
       ...originalStyle,
       width: undefined,
       height: undefined,
-      ...otherProps.style,
+      ...rootProps.style,
     };
 
     // Forward the caller's SVG attributes (className, aria-*, etc.) to the
     // root element, same as the non-template path below.
-    // @ts-expect-error
-    return React.cloneElement(wrappedSvg, {
-      ...otherProps,
-      width: size,
-      height: size,
-      style: newStyle,
-    });
+    return withFrame(
+      // @ts-expect-error
+      React.cloneElement(wrappedSvg, {
+        ...rootProps,
+        width: size,
+        height: size,
+        style: newStyle,
+      })
+    );
   }
 
   // Standard QR code without wrapper (backward compatibility)
-  return (
+  return withFrame(
     <svg
       height={size}
       viewBox={`0 0 ${size} ${size}`}
       width={size}
       xmlns="http://www.w3.org/2000/svg"
-      {...otherProps}
+      {...rootProps}
     >
       {qrContent}
     </svg>

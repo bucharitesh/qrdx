@@ -21,6 +21,11 @@ let nextConfig: NextConfig = {
   // Opt-in for Docker / self-hosting: NEXT_OUTPUT=standalone pnpm build
   output: process.env.NEXT_OUTPUT === "standalone" ? "standalone" : undefined,
   reactStrictMode: true,
+  // Logos are sent as data URLs (≤1MB file ≈ 1.37MB base64) through server actions.
+  experimental: {
+    ...config.experimental,
+    serverActions: { bodySizeLimit: "2mb" },
+  },
   serverExternalPackages: [
     "ts-morph",
     "typescript",

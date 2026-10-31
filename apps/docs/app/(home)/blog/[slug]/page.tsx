@@ -7,6 +7,7 @@ import { BlogCard } from "@/components/sections/blog/blog-card";
 import { Contribute } from "@/components/sections/blog/blog-contribute";
 import { BlogToc } from "@/components/sections/blog/blog-toc";
 import { BlogTocMobile } from "@/components/sections/blog/blog-toc-mobile";
+import { Breadcrumbs } from "@/components/sections/breadcrumbs";
 import { SectionHeader } from "@/components/sections/section-header";
 import { type ResolvedAuthor, resolveAuthors } from "@/lib/blog-authors";
 import { blogSource } from "@/lib/source";
@@ -151,6 +152,17 @@ export default async function BlogPostPage({ params }: PageProps) {
         {/* Post header */}
         <header className="w-full border-b p-10 md:p-14">
           <div className="max-w-4xl mx-auto flex flex-col gap-4">
+            <Breadcrumbs
+              align="start"
+              items={[
+                { name: "Home", path: "/" },
+                { name: "Blog", path: "/blog" },
+                ...(categorySlug
+                  ? [{ name: category, path: `/blog/category/${categorySlug}` }]
+                  : []),
+                { name: title, path: `/blog/${slug}` },
+              ]}
+            />
             <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-muted-foreground">
               {categorySlug ? (
                 <Link href={`/blog/category/${categorySlug}`}>

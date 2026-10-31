@@ -1,0 +1,104 @@
+---
+title: Files
+description: Upload PDFs, images, audio and video for your hosted pages, and set up file storage when you self-host.
+icon: FolderOpen
+---
+
+Hosted pages can show files you upload to QRdx: a menu or brochure as a PDF, a photo gallery, music or a podcast, or a video. Uploaded files live in **Dashboard → Files**, belong to your personal workspace or to the active team, and each one has a stable link that keeps working when you replace the file.
+
+## What you can upload
+
+| Kind | Formats |
+| --- | --- |
+| PDF | PDF |
+| Images | JPEG, PNG, WebP, GIF, AVIF |
+| Audio | MP3, M4A, AAC, Ogg, WAV |
+| Video | MP4, WebM, MOV |
+
+MP4 with H.264 video plays in every browser. MOV files from phones usually play too, but convert them to MP4 if a browser can't play one. SVG, HTML, archives and office documents can't be uploaded, so nothing served from storage can run code in a visitor's browser.
+
+Every upload is checked before it's used: its size must match what was announced, and its first bytes must really be a file of its type (an HTML page renamed to `.pdf` is rejected). Rejected uploads are deleted from storage and listed as **Blocked**.
+
+## Limits per plan
+
+| Plan | Storage per workspace | Largest file |
+| --- | --- | --- |
+| Free | 50 MB | 10 MB |
+| Pro | 5 GB | 100 MB |
+| Business | 50 GB | 250 MB |
+
+Team workspaces use the plan of the team's owner. Limits only stop new uploads: after a downgrade, or when a workspace is over its storage, every file you already uploaded keeps being served on every page that uses it. Delete files you no longer need (or upgrade) to upload new ones.
+
+## Use files on a page
+
+Five blocks show files. Each one can use an uploaded file or a link to a file hosted somewhere else:
+
+- **PDF** shows the document inline on tablets and computers, with **Open PDF** (full-screen viewer on phones) and **Download** buttons.
+- **Gallery** shows photos in a grid of 1–3 columns. Tapping a photo opens it full screen; swipe or use the arrow keys to browse.
+- **Audio** plays tracks with cover art and a playlist; the next track starts when one ends. A download button is optional.
+- **Video file** plays an MP4 or WebM you upload, optionally muted on a loop like a GIF. For YouTube, Vimeo or Loom, use the **Video** block instead: it embeds the video without loading anything from YouTube until someone taps play.
+- **Downloads** lists files people can save, each with its own label.
+
+The **PDF**, **Images**, **MP3 / Audio** and **Video** page types in **New code** start you with these blocks already in place.
+
+In a block, choose **Upload** to add a file from your device, **From your files** to reuse one you uploaded before, or paste a link.
+
+## Replace or delete a file
+
+Open **Dashboard → Files** and use the menu next to a file:
+
+- **Copy link** copies the file's own link (`https://qrdx.dev/api/files/<id>`). You can also use it as the destination of a dynamic QR code.
+- **Replace file** uploads new content behind the same link, for example next season's menu. Pages and codes that use the file show the new version within a minute. A file can only be replaced by one of the same kind (a PDF by a PDF).
+- **Delete** removes the file for good. If pages or codes still use it, QRdx lists them first; after deleting, those pages show "File unavailable" where the file was.
+
+In a team, members can replace and delete the files they uploaded; owners and admins can manage every team file.
+
+## Reported files
+
+Every hosted page has a **Report abuse** link. If a file breaks the rules or a copyright owner asks for it to be removed, QRdx can block it. A blocked file stops being served on every page and through its QRdx link within a minute (pages show "File unavailable"), and identical copies of it (up to 25 MB) can't be uploaded again.
+
+## Set up storage (self-hosting)
+
+File uploads use [Cloudflare R2](https://developers.cloudflare.com/r2/). Without it, the Files page says "Storage not configured on this server", the upload API answers `503`, and blocks can still use links to files hosted elsewhere.
+
+1. In the Cloudflare dashboard, open **R2** and create a bucket, for example `qrdx-files`.
+2. Under **R2 → Manage API tokens**, create a token with **Object Read & Write** on that bucket.
+3. Set these environment variables and restart:
+
+   ```bash
+   R2_ACCOUNT_ID=your-cloudflare-account-id
+   R2_ACCESS_KEY_ID=token-access-key-id
+   R2_SECRET_ACCESS_KEY=token-secret-access-key
+   R2_BUCKET=qrdx-files
+   # Optional: serve files from a public bucket URL or custom domain
+   R2_PUBLIC_BASE_URL=https://files.example.com
+   ```
+
+4. Add a CORS policy to the bucket (**Settings → CORS policy**). Browsers upload straight to R2, so the bucket must accept `PUT` requests with a `Content-Type` header from your app's origin:
+
+   ```json
+   [
+     {
+       "AllowedOrigins": ["https://qrdx.example.com", "http://localhost:3000"],
+       "AllowedMethods": ["PUT", "GET", "HEAD"],
+       "AllowedHeaders": ["Content-Type"],
+       "ExposeHeaders": ["ETag"],
+       "MaxAgeSeconds": 3600
+     }
+   ]
+   ```
+
+   Replace `https://qrdx.example.com` with the origin people use to open your dashboard (scheme and host, no trailing slash). Keep `http://localhost:3000` only if you upload from a local development server.
+
+### Public files or presigned links
+
+Visitors always open files through `/api/files/<id>`, which redirects to the stored object:
+
+- With `R2_PUBLIC_BASE_URL` set (a custom domain connected to the bucket, or its `r2.dev` URL, which Cloudflare rate-limits and recommends for testing only), it redirects to the public URL. Object keys contain a random id, so files can't be listed or guessed.
+- Without it, the bucket stays private and every redirect is a presigned link that expires after an hour.
+
+Either way, a replaced, deleted or blocked file stops being served through its QRdx link within a minute.
+
+<Callout type="info">
+  An upload that never finishes stops counting toward storage after two hours and is cleaned up the next time someone uploads to that workspace.
+</Callout>

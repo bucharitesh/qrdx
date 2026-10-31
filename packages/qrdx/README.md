@@ -183,6 +183,26 @@ const Framed: TemplateDefinition<{ label?: string }> = {
 <QRCodeSVG value="https://example.com" customTemplate={Framed} customProps={{ label: "Scan me" }} />;
 ```
 
+## Frames (call to action)
+
+`frame` draws a "Scan me" style frame around any code (`QRCode`, `QRCodeSVG`, `QRCodeCanvas`, `getQRAsSVG`, `getQRData` and the download helpers). The frame is added around the code, so the output grows; the modules and quiet zone are not touched.
+
+```tsx
+<QRCode
+  value="https://example.com/menu"
+  frame={{ style: "banner-bottom", text: "Scan for the menu", color: "#1e3a8a" }}
+/>
+```
+
+| Option | Default | Notes |
+| --- | --- | --- |
+| `style` | — | `none` `banner-bottom` `banner-top` `border` `rounded-border` `speech-bubble` (`FRAME_STYLES`) |
+| `text` | `"Scan me"` | Up to 24 characters; `""` hides the label |
+| `color` | `#000000` | Frame color |
+| `textColor` | white on banners, `color` on borders | Label color |
+
+The label uses a system font stack (nothing is fetched). `getFrameDimensions(size, frame)` returns the output size for a `size`-pixel code, and `frameSchema` (zod) validates frame options.
+
 ## Export and download (browser)
 
 ```tsx
@@ -203,7 +223,45 @@ await copyQRCodeToClipboard(props, { width: 512, height: 512 }); // PNG to the c
 const svgMarkup = await getSVGString(props);
 ```
 
-Sizes must be square and between 50 and 5000 pixels (`validateSize`). PDF export loads `jspdf` on demand and throws a clear error if it is not installed. Lower-level helpers: `getQRAsSVGDataUri(props)` and `getQRAsCanvas(props, mimeType, returnCanvas?)`.
+Sizes must be square and between 50 and 5000 pixels (`validateSize`); with a frame the file is larger by the frame. When `props.size` is set, a logo laid out for that size is scaled with the export (`withQRSize`). PDF export loads `jspdf` on demand and throws a clear error if it is not installed. Lower-level helpers: `getQRAsSVGDataUri(props)` and `getQRAsCanvas(props, mimeType, returnCanvas?)`.
+
+### Print-ready files
+
+`downloadPrintPDF` writes a vector PDF at an exact physical size: modules, eyes and frames are vector paths (a logo stays a raster image), with optional bleed and crop marks. `getQRAsPrintPDF` / `getQRAsPrintPDFBuffer` return the PDF instead of downloading it (they also run in Node).
+
+```ts
+import { downloadPrintPDF, downloadPrintSVG, getPrintLayout } from "qrdx";
+
+const props = { value: "https://example.com", frame: { style: "banner-bottom" } } as const;
+
+// 40 mm wide code, 3 mm bleed, crop marks, CMYK colors
+await downloadPrintPDF(props, { size: 40, unit: "mm", bleed: 3, cropMarks: true, colorMode: "cmyk" });
+await downloadPrintSVG(props, { size: 1.5, unit: "in" }); // SVG with width="…in"
+
+getPrintLayout(props, { size: 40 }).maxScanDistance; // 400 (mm): a code scans from ~10× its width
+```
+
+- `size` is the width of the code itself; a frame adds to the page.
+- `colorMode: "cmyk"` uses a naive conversion (`rgbToCmyk`: K = 1 − max(R, G, B), no ICC profile). Ask your printer for a color-managed conversion when exact brand colors matter.
+- Gradients are flattened to their first color stop in the PDF; use the print SVG to keep them. Frame text uses Helvetica Bold, so characters outside Latin-1 may not render in the PDF.
+- Rule of thumb for size: width ≈ scan distance ÷ 10 (2 cm wide at 20 cm).
+
+## Will it scan? (browser)
+
+`getScanScore(props)` estimates how reliably a design scans. It renders the code at 96, 160 and 320 px, simulates camera blur and contrast loss, decodes each with jsQR, and combines that with contrast, polarity, logo coverage vs. error correction, quiet zone and eye-shape risk (`curly` eyes fail strict decoders; `circle` eyes only read in lenient ones).
+
+```ts
+import { getScanScore, getImageScanScore } from "qrdx";
+
+const { score, grade, checks } = await getScanScore({ value: "https://example.com", bodyPattern: "circle" });
+// score 0–100, grade "great" | "ok" | "risky" | "fails",
+// checks [{ id, passed, message, fix? }]
+
+// Score an existing image (File/Blob or <img>): decoded content plus what can be measured from pixels
+const report = await getImageScanScore(file); // { data, version, score, grade, checks }
+```
+
+It is a heuristic built on one open-source decoder: phone camera apps vary, so treat it as a guide and test-scan important prints.
 
 ## Scanning (browser)
 

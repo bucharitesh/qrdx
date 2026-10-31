@@ -1,11 +1,13 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
+import { getFrameDimensions } from "qrdx";
 import type React from "react";
 import { lazy } from "react";
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
 import { useQREditorStore } from "@/store/editor-store";
 import type { QRStyle } from "@/types/theme";
+import { ScanScoreBadge } from "./editor/scan-score";
 import ExamplesPreviewContainer from "./editor/theme-preview/examples-preview-container";
 import { QrdxLogoAnimation } from "./qrdx-logo-animation";
 
@@ -46,6 +48,10 @@ const QRPreviewPanel: React.FC<QRPreviewPanelProps> = ({ style }) => {
     );
   }
 
+  // Keep a framed code inside the same 512px box as a plain one
+  const framed = getFrameDimensions(512, style.frame);
+  const previewScale = (4 * 512) / Math.max(framed.width, framed.height);
+
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       {/* Preview Content */}
@@ -62,6 +68,7 @@ const QRPreviewPanel: React.FC<QRPreviewPanelProps> = ({ style }) => {
                 className="relative flex size-full items-center justify-center"
               >
                 <QRCode
+                  art={style.art}
                   bgColor={style.bgColor}
                   cornerEyeDotPattern={style.cornerEyeDotPattern}
                   cornerEyePattern={style.cornerEyePattern}
@@ -70,9 +77,11 @@ const QRPreviewPanel: React.FC<QRPreviewPanelProps> = ({ style }) => {
                   level={style.level}
                   eyeColor={style.eyeColor}
                   fgColor={style.fgColor}
+                  frame={style.frame}
                   hideLogo={!style.showLogo}
                   logo={style.customLogo ?? DEFAULT_QR_LOGO}
-                  scale={4}
+                  scale={previewScale}
+                  margin={style.margin}
                   templateId={style.templateId}
                   value={value}
                 />
@@ -80,6 +89,11 @@ const QRPreviewPanel: React.FC<QRPreviewPanelProps> = ({ style }) => {
             </AnimatePresence>
           </ExamplesPreviewContainer>
         </div>
+        <ScanScoreBadge
+          className="absolute bottom-4 left-1/2 z-10 -translate-x-1/2"
+          style={style}
+          value={value}
+        />
       </div>
     </div>
   );

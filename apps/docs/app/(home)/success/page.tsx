@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Icons } from "@/components/icons";
 
 export const metadata: Metadata = {
-  title: "Welcome to Pro",
+  title: "Thanks for upgrading",
   robots: { index: false, follow: false },
 };
 
@@ -16,10 +16,10 @@ export default function SuccessPage() {
           <Icons.CheckCircle className="h-12 w-12 text-green-600 dark:text-green-400" />
         </div>
         <div className="space-y-2">
-          <h1 className="text-3xl font-bold">Welcome to Pro! 🎉</h1>
+          <h1 className="text-3xl font-bold">Thanks for upgrading!</h1>
           <p className="text-muted-foreground">
-            Your subscription is now active. Enjoy unlimited QR themes and all
-            Pro features!
+            Your subscription is active. It can take a minute for your new
+            limits to show up in the dashboard.
           </p>
         </div>
         <div className="flex flex-col gap-3 pt-4">

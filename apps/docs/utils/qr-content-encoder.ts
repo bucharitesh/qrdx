@@ -125,7 +125,7 @@ export function encodeWifi(content: WifiContent): string {
     return `WIFI:T:nopass;S:${escapedSsid};;`;
   }
 
-  return `WIFI:T:${encryption};S:${escapedSsid};P:${escapedPassword};H:${hidden};`;
+  return `WIFI:T:${encryption};S:${escapedSsid};P:${escapedPassword};H:${hidden};;`;
 }
 
 /**
@@ -202,7 +202,7 @@ export function encodeMaps(content: MapsContent): string {
   // Check if it's coordinates (lat,long format)
   const coordsRegex = /^-?\d+\.?\d*,\s*-?\d+\.?\d*$/;
   if (coordsRegex.test(content.location.trim())) {
-    const coords = content.location.trim();
+    const coords = content.location.trim().replace(/\s+/g, "");
     return `https://www.google.com/maps?q=${coords}`;
   }
 
@@ -417,7 +417,11 @@ export function encodeEthereum(content: EthereumContent): string {
 
   const params: string[] = [];
   if (content.amount) {
-    params.push(`value=${content.amount}`);
+    // EIP-681 amounts are in wei: convert plain decimal ETH, leave exponent forms as given
+    const amount = content.amount.trim();
+    params.push(
+      `value=${/^\d*\.?\d+$/.test(amount) ? `${amount}e18` : amount}`,
+    );
   }
   if (content.gas) {
     params.push(`gas=${content.gas}`);

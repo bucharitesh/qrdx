@@ -8,17 +8,27 @@ import type {
   CornerEyeDotPattern,
   CornerEyePattern,
   ErrorLevel,
+  FrameStyle,
+  QRFrame,
 } from "qrdx";
 import {
   BODY_PATTERN,
   CORNER_EYE_DOT_PATTERNS,
   CORNER_EYE_PATTERNS,
   colorConfigSchema,
+  DEFAULT_FRAME_TEXT,
   DEFAULT_MARGIN,
   errorLevelSchema,
+  FRAME_STYLES,
+  FRAME_TEXT_MAX_LENGTH,
+  getFrameDimensions,
   getTemplateIds,
 } from "qrdx";
-import { saveOutput } from "../render/output";
+import {
+  OUTPUT_FORMATS,
+  type OutputFormat,
+  saveOutput,
+} from "../render/output";
 
 const RESET = "\x1b[0m";
 const TEXT = "\x1b[38;5;145m";
@@ -39,9 +49,16 @@ interface GenerateFlags {
   noLogo?: boolean;
   margin?: number;
   output?: string;
+  format?: OutputFormat;
   size?: number;
   template?: string;
+  frame?: FrameStyle;
+  frameText?: string;
+  frameColor?: string;
+  frameTextColor?: string;
 }
+
+const HEX_COLOR = /^#(?:[0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})$/i;
 
 /**
  * Parses a color flag value: accepts a hex string or a JSON ColorConfig object.
@@ -93,6 +110,41 @@ function parseIntegerFlag(
   return parsed;
 }
 
+function assertHexColor(flag: string, value: string | undefined): void {
+  if (value !== undefined && !HEX_COLOR.test(value)) {
+    throw new Error(
+      `Invalid ${flag} "${value}". Expected a hex color like #000000.`
+    );
+  }
+}
+
+function requireValue(flag: string, value: string | undefined): string {
+  if (value === undefined) {
+    throw new Error(`${flag} needs a value. Run qrdx --help to see options.`);
+  }
+  return value;
+}
+
+/** Frame options from flags; frame text/colors alone imply a bottom banner. */
+function frameFromFlags(flags: GenerateFlags): QRFrame | undefined {
+  const style =
+    flags.frame ??
+    (flags.frameText !== undefined ||
+    flags.frameColor !== undefined ||
+    flags.frameTextColor !== undefined
+      ? "banner-bottom"
+      : undefined);
+  if (!style || style === "none") {
+    return undefined;
+  }
+  return {
+    style,
+    ...(flags.frameText !== undefined && { text: flags.frameText }),
+    ...(flags.frameColor && { color: flags.frameColor }),
+    ...(flags.frameTextColor && { textColor: flags.frameTextColor }),
+  };
+}
+
 /** Rejects bad flag values up front instead of failing deep inside rendering. */
 function validateFlags(flags: GenerateFlags): void {
   assertOneOf("--level", flags.level, errorLevelSchema.options);
@@ -104,11 +156,28 @@ function validateFlags(flags: GenerateFlags): void {
     flags.template,
     getTemplateIds().filter((id) => id !== "default")
   );
+  assertOneOf("--frame", flags.frame, FRAME_STYLES);
+  if (
+    flags.frameText !== undefined &&
+    flags.frameText.length > FRAME_TEXT_MAX_LENGTH
+  ) {
+    throw new Error(
+      `Invalid --frame-text "${flags.frameText}". Use ${FRAME_TEXT_MAX_LENGTH} characters or fewer.`
+    );
+  }
+  assertHexColor("--frame-color", flags.frameColor);
+  assertHexColor("--frame-text-color", flags.frameTextColor);
+  assertOneOf("--format", flags.format, OUTPUT_FORMATS);
   if (flags.output !== undefined) {
     const ext = extname(flags.output).toLowerCase();
-    if (!["", ".svg", ".png"].includes(ext)) {
+    if (!["", ".svg", ".png", ".eps"].includes(ext)) {
       throw new Error(
-        `Unsupported output format "${ext}". Use a .svg or .png file name.`
+        `Unsupported output format "${ext}". Use a .svg, .png or .eps file name.`
+      );
+    }
+    if (ext && flags.format && ext !== `.${flags.format}`) {
+      throw new Error(
+        `--format ${flags.format} does not match the output file "${flags.output}". Use a .${flags.format} file name or drop --format.`
       );
     }
   }
@@ -171,6 +240,10 @@ function parseFlags(args: string[]): GenerateFlags {
         flags.output = next;
         i += 2;
         break;
+      case "--format":
+        flags.format = requireValue(arg, next).toLowerCase() as OutputFormat;
+        i += 2;
+        break;
       case "-l":
       case "--level":
         flags.level = next?.toUpperCase() as ErrorLevel;
@@ -224,6 +297,22 @@ function parseFlags(args: string[]): GenerateFlags {
         flags.template = next;
         i += 2;
         break;
+      case "--frame":
+        flags.frame = requireValue(arg, next) as FrameStyle;
+        i += 2;
+        break;
+      case "--frame-text":
+        flags.frameText = requireValue(arg, next);
+        i += 2;
+        break;
+      case "--frame-color":
+        flags.frameColor = requireValue(arg, next);
+        i += 2;
+        break;
+      case "--frame-text-color":
+        flags.frameTextColor = requireValue(arg, next);
+        i += 2;
+        break;
       default:
         throw new Error(
           `Unknown option "${arg}". Run qrdx --help to see all options.`
@@ -247,12 +336,18 @@ function handleCancel(): never {
   process.exit(0);
 }
 
-function inferFormat(outputPath: string): "svg" | "png" {
+function inferFormat(
+  outputPath: string,
+  format: OutputFormat | undefined
+): OutputFormat {
   const ext = extname(outputPath).toLowerCase();
   if (ext === ".png") {
     return "png";
   }
-  return "svg";
+  if (ext === ".eps") {
+    return "eps";
+  }
+  return ext === ".svg" ? "svg" : (format ?? "svg");
 }
 
 export async function runGenerate(args: string[]): Promise<void> {
@@ -271,7 +366,8 @@ export async function runGenerate(args: string[]): Promise<void> {
       flags.logo ||
       flags.level ||
       flags.margin !== undefined ||
-      flags.template
+      flags.template ||
+      frameFromFlags(flags)
   );
 
   p.intro(`${TEXT}qrdx${RESET} ${DIM}— QR Code Generator${RESET}`);
@@ -334,13 +430,14 @@ export async function runGenerate(args: string[]): Promise<void> {
   // ── 2. Output path ────────────────────────────────────────────────────
   let outputPath = flags.output;
   const size = flags.size ?? 512;
+  const defaultOutput = `qr.${flags.format ?? "svg"}`;
 
   if (!outputPath) {
     if (canUseClack) {
       const pathRes = await p.text({
-        message: "Output file (.svg or .png)",
-        placeholder: "qr.svg",
-        defaultValue: "qr.svg",
+        message: "Output file (.svg, .png or .eps)",
+        placeholder: defaultOutput,
+        defaultValue: defaultOutput,
         validate(v) {
           if (!v.trim()) {
             return "Please enter an output path.";
@@ -350,14 +447,14 @@ export async function runGenerate(args: string[]): Promise<void> {
       if (isCancel(pathRes)) {
         handleCancel();
       }
-      outputPath = (pathRes as string) || "qr.svg";
+      outputPath = (pathRes as string) || defaultOutput;
     } else if (process.stdout.isTTY && !isCI) {
       const pathAns = await readLineFromTTY(
-        `Output file ${DIM}(.svg or .png, Enter = qr.svg)${RESET}: `
+        `Output file ${DIM}(.svg, .png or .eps, Enter = ${defaultOutput})${RESET}: `
       );
-      outputPath = pathAns?.trim() || "qr.svg";
+      outputPath = pathAns?.trim() || defaultOutput;
     } else {
-      outputPath = "qr.svg";
+      outputPath = defaultOutput;
     }
   }
 
@@ -386,6 +483,7 @@ export async function runGenerate(args: string[]): Promise<void> {
   let logo = flags.logo;
   let margin = flags.margin ?? DEFAULT_MARGIN;
   let template = flags.template;
+  let frame = frameFromFlags(flags);
 
   if (wantAdvanced && !nonInteractive) {
     // ── Error correction ──────────────────────────────────────────────
@@ -584,6 +682,37 @@ export async function runGenerate(args: string[]): Promise<void> {
       template = (res as string) || undefined;
     }
 
+    // ── Frame ─────────────────────────────────────────────────────────
+    if (flags.frame === undefined && !frame) {
+      const res = await p.select<FrameStyle>({
+        message: `Frame ${DIM}(call-to-action label around the code)${RESET}`,
+        options: FRAME_STYLES.map((style) => ({ value: style, label: style })),
+        initialValue: "none" as FrameStyle,
+      });
+      if (isCancel(res)) {
+        handleCancel();
+      }
+      if (res !== "none") {
+        const text = await p.text({
+          message: `Frame text ${DIM}(up to ${FRAME_TEXT_MAX_LENGTH} characters)${RESET}`,
+          placeholder: DEFAULT_FRAME_TEXT,
+          defaultValue: DEFAULT_FRAME_TEXT,
+          validate(v) {
+            if (v && v.length > FRAME_TEXT_MAX_LENGTH) {
+              return `Use ${FRAME_TEXT_MAX_LENGTH} characters or fewer`;
+            }
+          },
+        });
+        if (isCancel(text)) {
+          handleCancel();
+        }
+        frame = {
+          style: res as FrameStyle,
+          text: (text as string) || DEFAULT_FRAME_TEXT,
+        };
+      }
+    }
+
     // ── Logo ──────────────────────────────────────────────────────────
     if (logo === undefined && !flags.noLogo) {
       const addLogo = await p.confirm({
@@ -655,6 +784,7 @@ export async function runGenerate(args: string[]): Promise<void> {
       margin,
       size,
       ...(template ? { templateId: template } : {}),
+      ...(frame ? { frame } : {}),
       ...(logo
         ? {
             imageSettings: {
@@ -668,10 +798,11 @@ export async function runGenerate(args: string[]): Promise<void> {
     };
 
     if (outputPath) {
-      const format = inferFormat(outputPath);
+      const format = inferFormat(outputPath, flags.format);
       await saveOutput({ ...qrProps, outputPath, format });
+      const dimensions = getFrameDimensions(size, frame);
       spinner.stop(
-        `${GREEN}✔${RESET}  Saved to ${TEXT}${outputPath}${RESET} ${DIM}(${size}×${size})${RESET}`
+        `${GREEN}✔${RESET}  Saved to ${TEXT}${outputPath}${RESET} ${DIM}(${Math.round(dimensions.width)}×${Math.round(dimensions.height)})${RESET}`
       );
     } else {
       spinner.stop("QR code ready");

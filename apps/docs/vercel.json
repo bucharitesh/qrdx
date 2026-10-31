@@ -1,0 +1,14 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "ignoreCommand": "node scripts/skip-ci.js",
+  "crons": [
+    {
+      "path": "/api/cron/webhooks",
+      "schedule": "0 4 * * *"
+    },
+    {
+      "path": "/api/cron/digest?shard=all",
+      "schedule": "0 9 * * 1"
+    }
+  ]
+}

@@ -247,6 +247,7 @@ export function CommunityThemePreviewDialog({
                     hideLogo={!styles.showLogo}
                     logo={styles.customLogo ?? DEFAULT_QR_LOGO}
                     scale={4}
+                    margin={styles.margin}
                     templateId={styles.templateId}
                     value={PREVIEW_VALUE}
                   />

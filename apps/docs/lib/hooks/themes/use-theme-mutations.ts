@@ -3,7 +3,6 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import posthog from "posthog-js";
 import { createTheme, deleteTheme, updateTheme } from "@/actions/qr-themes";
-import { MAX_FREE_THEMES } from "@/lib/constants";
 import { isUnauthorized } from "@/lib/handle-unauthorized";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 import { useThemePresetStore } from "@/store/theme-preset-store";
@@ -65,7 +64,7 @@ export function useCreateTheme() {
       if (!result.success) {
         if (result.error.code === ErrorCode.THEME_LIMIT_REACHED) {
           toast.error("Theme limit reached", {
-            description: `You have reached the limit of ${MAX_FREE_THEMES} themes.`,
+            description: result.error.message,
           });
           openGetProDialog();
         }
@@ -88,6 +87,8 @@ export function useCreateTheme() {
         source: "SAVED",
         createdAt: data.createdAt.toISOString(),
         styles: data.style,
+        scope: "personal",
+        canEdit: true,
       });
 
       toast.success("Theme created", {

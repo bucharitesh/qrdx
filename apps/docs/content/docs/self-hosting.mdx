@@ -1,6 +1,6 @@
 ---
-title: Self-hosting
-description: Run your own QRdx web app with Docker Compose or Node.js
+title: Self-hosting guide
+description: Run your own QRdx web app with Docker Compose or Node.js.
 icon: Server
 ---
 
@@ -150,7 +150,7 @@ Add one OAuth provider (GitHub or Google) so people can sign in.
 | Auth base URL | `BETTER_AUTH_URL` | Inferred from each request, with a warning in the logs |
 | Admin panel | `ADMIN_EMAILS`, `ADMIN_USER_IDS` | Nobody can open `/admin` |
 | AI theme generation | `GOOGLE_API_KEY` | AI requests fail. The editor works normally. |
-| Payments (Polar) | `POLAR_ACCESS_TOKEN`, `POLAR_WEBHOOK_SECRET`, `NEXT_PUBLIC_QRDX_PRO_MONTHLY_PRODUCT_ID`, `NEXT_PUBLIC_QRDX_PRO_YEARLY_PRODUCT_ID` | Upgrading doesn't work, and AI usage stays at the free allowance |
+| Payments (Polar) | `POLAR_ACCESS_TOKEN`, `POLAR_WEBHOOK_SECRET`, `NEXT_PUBLIC_QRDX_PRO_MONTHLY_PRODUCT_ID`, `NEXT_PUBLIC_QRDX_PRO_YEARLY_PRODUCT_ID`, `NEXT_PUBLIC_QRDX_BUSINESS_MONTHLY_PRODUCT_ID`, `NEXT_PUBLIC_QRDX_BUSINESS_YEARLY_PRODUCT_ID` | Upgrading doesn't work (plans without a product id show "Coming soon"), and every account uses the Free limits |
 | Dub short links | `DUB_CLIENT_ID`, `DUB_CLIENT_SECRET`, `DUB_REDIRECT_URI`, `INTEGRATION_ENCRYPTION_KEY` | The Dub integration can't be connected |
 | Google Drive | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_DRIVE_REDIRECT_URI`, `INTEGRATION_ENCRYPTION_KEY` | The Google Drive integration can't be connected |
 | Rate limiting (Upstash) | `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` (or the Vercel KV names `KV_REST_API_URL`, `KV_REST_API_TOKEN`) | No rate limiting. Recommended in production. |

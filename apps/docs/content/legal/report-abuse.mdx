@@ -20,13 +20,21 @@ However, since QR codes are created by individual users, we are unable to contro
 
 ## Report a QR Code
 
-If you believe a QR code created with qrdx is being used for malicious purposes, please report it to us by emailing [support@qrdx.dev](mailto:support@qrdx.dev) with the following information:
+If you believe a QR code created with qrdx is being used for malicious purposes, **[use the report form](/report-abuse)**. It takes a minute, needs no account, and every page a dynamic QRdx code opens (password screens and "campaign ended" pages included) links to it.
+
+You can also email [support@qrdx.dev](mailto:support@qrdx.dev), for example for copyright (DMCA) notices, with the following information:
 
 - **Your Name:** (Optional but helpful)
 - **Your Email:** So we can follow up with you
 - **QR Code Details:** URL or screenshot of the problematic QR code
 - **Type of Abuse:** What kind of malicious content it links to
 - **Reason for Reporting:** Detailed description of why you're reporting this QR code
+
+## How we prevent abuse
+
+- New dynamic codes are checked against [Google Web Risk](https://cloud.google.com/web-risk) where it is enabled; links listed as malware, phishing or unwanted software can't be used.
+- Accounts in their first 7 days can create a limited number of dynamic codes per hour, and their codes that point to URL shorteners, bare IP addresses or lookalike (homoglyph) domains stay switched off until we have reviewed them.
+- Codes we switch off after a report stop working for everyone and can't be turned back on by their owner.
 
 ## Our Response
 
@@ -62,4 +70,4 @@ Automated or mass creation of QR codes for spamming, harassment, or other abusiv
 
 ---
 
-**Last updated:** December 23, 2024
+**Last updated:** October 31, 2026
