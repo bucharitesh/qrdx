@@ -61,6 +61,8 @@ export {
   type StylePairRisk,
   WEAK_BODY_EYES,
   WEAK_DOT_EYES,
+  WEAK_DOTS,
+  WEAK_EYES,
 } from "./scan-risk";
 export * from "./scan-score";
 export * from "./templates";

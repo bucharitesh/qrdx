@@ -5,6 +5,7 @@
   "exports": {
     "./server": "./server.ts",
     "./admin": "./admin.ts",
+    "./email-otp": "./email-otp.ts",
     "./client": "./client.ts",
     "./handlers": "./handlers.ts",
     "./proxy": "./proxy.ts",

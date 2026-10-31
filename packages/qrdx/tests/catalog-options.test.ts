@@ -6,7 +6,11 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { svgToEPS } from "../src/eps";
 import { getQRModuleCount } from "../src/print";
-import { WEAK_BODY_EYES, WEAK_DOT_EYES } from "../src/scan-risk";
+import {
+  getStylePairRisk,
+  WEAK_BODY_EYES,
+  WEAK_DOT_EYES,
+} from "../src/scan-risk";
 import { getScanScore } from "../src/scan-score";
 import { getImageSettings, resolveErrorLevel } from "../src/utils";
 import type { QRProps, RadialGradient } from "../types";
@@ -271,6 +275,20 @@ describe("scan-score", () => {
     expect(pair?.passed).toBe(false);
     expect(pair?.fix).toBeTruthy();
     expect(result.score).toBeLessThan(reference);
+  });
+
+  it("flags fragile shapes on their own, and nothing new", () => {
+    expect(getStylePairRisk({ cornerEyeDotPattern: "star" })?.kind).toBe("dot");
+    expect(getStylePairRisk({ cornerEyePattern: "curly" })?.kind).toBe("eye");
+    for (const bodyPattern of NEW_BODIES) {
+      expect(getStylePairRisk({ ...PLAIN, bodyPattern })).toBeNull();
+    }
+    for (const cornerEyePattern of NEW_EYES) {
+      expect(getStylePairRisk({ ...PLAIN, cornerEyePattern })).toBeNull();
+    }
+    for (const cornerEyeDotPattern of NEW_DOTS) {
+      expect(getStylePairRisk({ ...PLAIN, cornerEyeDotPattern })).toBeNull();
+    }
   });
 
   it("lists the same weak pairs as the tracked decode failures", () => {

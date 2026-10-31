@@ -16,9 +16,9 @@ import {
 } from "@repo/design-system/components/ui/toggle-group";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { GalleryAdd, Lock } from "iconsax-reactjs";
-import Link from "next/link";
 import posthog from "posthog-js";
 import { useRef, useState } from "react";
+import { SignInLink } from "@/components/auth/sign-in-link";
 import { apiFetch } from "@/lib/api-fetch";
 import { useSessionGuard } from "@/lib/hooks/use-gaurds";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
@@ -532,12 +532,12 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
             The content is baked into the image and can't be changed after you
             share it. For a link you can edit later, with scan analytics, create
             a{" "}
-            <Link
+            <SignInLink
               className="font-medium text-foreground underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground"
               href="/dashboard"
             >
               dynamic code
-            </Link>{" "}
+            </SignInLink>{" "}
             and use its short link here.
           </p>
         </div>

@@ -80,8 +80,9 @@ export function generateCornerDotPath(
       );
 
     case "plus": {
-      // Arms two modules wide keep the 3-module center run on most rows
-      const a = 1.0 * m;
+      // Arms 2.3 modules wide keep the 3-module center run on most rows
+      // (2-module arms fail jsQR in sharp renders at 8–14 px per module)
+      const a = 1.15 * m;
       const l = radius;
       return (
         <path
@@ -104,7 +105,7 @@ export function generateCornerDotPath(
     }
 
     case "cross-rounded": {
-      const a = 1.0 * m;
+      const a = 1.15 * m;
       // Rounder ends (radius 0.7+) fail jsQR at close range
       const r = 0.5 * m;
       return (
@@ -165,11 +166,11 @@ export function generateCornerDotPath(
         for (const dx of [-1, 0, 1]) {
           dots.push(
             circlePath(
-              // Slightly closer than one module, so the grid reads as a
-              // solid 3 × 3 center to decoders
-              cx + dx * m * 0.9,
-              cy + dy * m * 0.9,
-              0.52 * m
+              // Closer than one module, so the grid reads as a solid 3 × 3
+              // center to decoders, sharp or blurred
+              cx + dx * m * 0.82,
+              cy + dy * m * 0.82,
+              0.58 * m
             )
           );
         }

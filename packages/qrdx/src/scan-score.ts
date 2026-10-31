@@ -565,8 +565,10 @@ export async function getScanScore(
   penalty += quietZone.penalty;
   const eye = eyeCheck(props);
   penalty += eye.penalty;
-  // Known-weak style pairs (see scan-risk.ts)
-  const pairRisk = getStylePairRisk(props);
+  // Known-weak style pairs and centres (see scan-risk.ts); weak eyes on
+  // their own are already covered by the eye-shape check above.
+  const styleRisk = getStylePairRisk(props);
+  const pairRisk = styleRisk?.kind === "eye" ? null : styleRisk;
   if (pairRisk) {
     penalty += 10;
   }
