@@ -1,0 +1,70 @@
+---
+title: Security
+description: How to report a security vulnerability in QRdx, what is in scope, the rules for good-faith research and our safe-harbour commitment.
+lastUpdated: 2026-11-01
+---
+
+<Callout title="Summary">
+
+- Found a vulnerability? Email [support@qrdx.dev](mailto:support@qrdx.dev) with a subject starting `[security]`. Please don't post it in public GitHub issues.
+- Test only with your own accounts and data, don't disrupt the Service, and give us reasonable time to fix the issue before you publish it.
+- If you follow these rules, we treat your research as authorised and won't take legal action against you.
+- A harmful QR code or page isn't a security bug: [report abuse](/report-abuse) instead.
+
+</Callout>
+
+## How to report
+
+Email **[support@qrdx.dev](mailto:support@qrdx.dev)** with a subject line starting with `[security]`. Include:
+
+- a description of the issue and its impact;
+- steps to reproduce it, or a proof of concept;
+- the affected component (qrdx.dev, a self-hosted instance, the `qrdx` npm package or `@qrdx/cli`) and its version or commit;
+- whether you'd like to be credited, and under what name.
+
+We'll acknowledge your report as soon as we can, keep you updated while we investigate, and let you know when a fix ships. Our [security.txt](/.well-known/security.txt) file has the same contact details in machine-readable form.
+
+## Scope
+
+**In scope**
+
+- The hosted app at qrdx.dev and its API routes, including short links, hosted pages and the MCP server at `https://mcp.qrdx.dev/mcp`
+- Authentication, sessions and team permissions
+- The integrations, such as Dub and Google Drive
+- The [`qrdx`](https://www.npmjs.com/package/qrdx) and [`@qrdx/cli`](https://www.npmjs.com/package/@qrdx/cli) npm packages
+- The Docker setup in the [repository](https://github.com/bucharitesh/qrdx)
+
+Fixes are made to the hosted app, to the `main` branch that self-hosted instances should track, and to the latest published versions of the npm packages.
+
+**Out of scope**
+
+- Vulnerabilities in third-party services QRdx connects to. Please report those to the vendor.
+- Denial of service through traffic volume, and load testing.
+- Self-hosted instances that don't follow the [self-hosting guide](/docs/self-hosting), for example ones missing a required secret or exposed without a reverse proxy.
+- Phishing or malware that customers point their codes at. Use the [report form](/report-abuse).
+- Social engineering of QRdx staff or users, and physical attacks.
+- Reports from automated scanners without a working proof of concept, missing security headers without a demonstrated impact, and self-XSS.
+
+## Rules for good-faith research
+
+- Use only accounts, codes and data you own or have permission to test.
+- If you come across someone else's personal data, stop, don't keep or share it, and tell us.
+- Don't degrade or disrupt the Service, send spam, or run high-volume automated tests.
+- Don't use social engineering or attack physical locations.
+- Give us a reasonable amount of time to fix the issue before you disclose it publicly, and agree the timing with us.
+
+## Safe harbour
+
+If you make a good-faith effort to follow this policy, we consider your research authorised. We won't take legal action against you or report you to law enforcement for it, and if someone else does, we'll make it known that you acted with our permission. This doesn't cover activity that breaks the law or harms our users, and it can't authorise you to test third-party services.
+
+## Recognition
+
+We can't promise a reward, but with your permission we'll credit you when the fix ships.
+
+## How we protect QRdx
+
+The [Privacy Policy](/legal/privacy-policy#how-we-protect-it) and [Annex 2 of the Data Processing Addendum](/legal/dpa#annex-2-security-measures) describe the measures we use, such as hashed access tokens, encrypted integration tokens and not storing scanner IP addresses.
+
+---
+
+**Changes:** 1 November 2026. First version, based on the repository's security policy, with safe-harbour terms and a `security.txt` file.

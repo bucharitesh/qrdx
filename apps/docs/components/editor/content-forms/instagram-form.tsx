@@ -8,6 +8,7 @@ import { instagramSchema } from "@/lib/validations/qr-content";
 import { useQREditorStore } from "@/store/editor-store";
 import type { InstagramContent } from "@/types/qr-content";
 import { encodeInstagram } from "@/utils/qr-content-encoder";
+import { useExternalConfigSync } from "./use-external-config-sync";
 
 export function InstagramForm() {
   const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
@@ -21,15 +22,10 @@ export function InstagramForm() {
   });
   const [errors, setErrors] = React.useState<Record<string, string>>({});
 
-  // Sync with store when config changes (e.g., from smart paste)
-  React.useEffect(() => {
-    if (
-      storedConfig?.username &&
-      storedConfig.username !== instagramData.username
-    ) {
-      setInstagramData({ username: storedConfig.username });
-    }
-  }, [storedConfig, instagramData.username]);
+  // Only external changes (e.g. smart paste) flow back into the form
+  const markWritten = useExternalConfigSync(storedConfig, (config) =>
+    setInstagramData({ username: config.username || "" }),
+  );
 
   React.useEffect(() => {
     // Validate and encode
@@ -39,6 +35,7 @@ export function InstagramForm() {
       const config: InstagramContent = { type: "instagram", ...result.data };
       const encoded = encodeInstagram(config);
       setValue(encoded);
+      markWritten(config);
       setContentConfig("instagram", config);
       setErrors({});
     } else {
@@ -49,7 +46,7 @@ export function InstagramForm() {
       }
       setErrors(fieldErrors);
     }
-  }, [instagramData, setValue, setContentConfig]);
+  }, [instagramData, setValue, setContentConfig, markWritten]);
 
   return (
     <div className="space-y-3">

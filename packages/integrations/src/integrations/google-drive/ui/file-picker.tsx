@@ -1,6 +1,10 @@
 /** biome-ignore-all lint/correctness/useExhaustiveDependencies: false positive */
 "use client";
 
+import {
+  Spinner as Loader2,
+  Close as X,
+} from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   Dialog,
@@ -12,12 +16,10 @@ import {
 import { Input } from "@repo/design-system/components/ui/input";
 import { ScrollArea } from "@repo/design-system/components/ui/scroll-area";
 import {
-  FileImage,
-  Image as ImageIcon,
-  Loader2,
-  Search,
-  X,
-} from "lucide-react";
+  Gallery as FileImage,
+  Gallery as ImageIcon,
+  SearchNormal1 as Search,
+} from "iconsax-reactjs";
 import { useEffect, useState } from "react";
 import type { DriveFile } from "../types";
 

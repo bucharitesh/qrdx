@@ -7,7 +7,7 @@ import {
   CardTitle,
 } from "@repo/design-system/components/ui/card";
 import { and, eq } from "drizzle-orm";
-import { ExternalLink, Pencil } from "lucide-react";
+import { ExportSquare as ExternalLink, Edit2 as Pencil } from "iconsax-reactjs";
 import Link from "next/link";
 import {
   requireDashboardScope,

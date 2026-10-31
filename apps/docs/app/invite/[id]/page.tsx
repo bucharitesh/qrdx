@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@repo/design-system/components/ui/card";
-import { Users } from "lucide-react";
+import { Profile2User as Users } from "iconsax-reactjs";
 import { headers } from "next/headers";
 import Link from "next/link";
 import type { ReactNode } from "react";
@@ -41,8 +41,8 @@ function InviteCard({
   return (
     <Card>
       <CardHeader className="items-center text-center">
-        <div className="bg-primary/10 mx-auto mb-2 w-fit rounded-full p-3">
-          <Users className="text-primary size-6" />
+        <div className="mx-auto mb-2 grid size-12 place-items-center rounded-full border bg-muted/40">
+          <Users className="size-5 text-foreground/80" />
         </div>
         <CardTitle className="text-xl">{title}</CardTitle>
         {description && <CardDescription>{description}</CardDescription>}

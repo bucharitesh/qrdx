@@ -6,6 +6,7 @@ import {
   baseProviderOptions,
   myProvider,
 } from "@/lib/ai/providers";
+import { streamErrorMessage } from "@/lib/ai/stream-error-message";
 import { MAX_AI_REQUEST_BODY_BYTES } from "@/lib/constants";
 import { handleError } from "@/lib/error-response";
 import {
@@ -76,7 +77,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    return result.toUIMessageStreamResponse();
+    return result.toUIMessageStreamResponse({ onError: streamErrorMessage });
   } catch (error) {
     return handleError(error, { route: "/api/enhance-prompt" });
   }

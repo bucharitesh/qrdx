@@ -8,7 +8,12 @@ import {
   DropdownMenuTrigger,
 } from "@repo/design-system/components/ui/dropdown-menu";
 import { cn } from "@repo/design-system/lib/utils";
-import { type LucideIcon, Palette, RefreshCw, Undo2 } from "lucide-react";
+import {
+  type Icon as LucideIcon,
+  ColorSwatch as Palette,
+  Refresh2 as RefreshCw,
+  ArrowRotateLeft as Undo2,
+} from "iconsax-reactjs";
 
 interface MenuItemProps {
   icon: LucideIcon;

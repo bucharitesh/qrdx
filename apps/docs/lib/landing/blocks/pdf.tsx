@@ -1,5 +1,9 @@
 import { cn } from "@repo/design-system/lib/utils";
-import { Download, ExternalLink, FileText } from "lucide-react";
+import {
+  Import as Download,
+  ExportSquare as ExternalLink,
+  DocumentText as FileText,
+} from "iconsax-reactjs";
 import { z } from "zod";
 import {
   buttonClass,

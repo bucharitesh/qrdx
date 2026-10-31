@@ -7,7 +7,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@repo/design-system/components/ui/card";
-import { ExternalLink, Palette, Pencil } from "lucide-react";
+import {
+  ExportSquare as ExternalLink,
+  ColorSwatch as Palette,
+  Edit2 as Pencil,
+} from "iconsax-reactjs";
 import { useState } from "react";
 import type { QrCodeView } from "@/app/dashboard/codes/_lib/qr-codes";
 import { CopyButton } from "@/components/copy-button";

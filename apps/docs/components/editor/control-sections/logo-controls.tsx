@@ -2,13 +2,16 @@
 
 import { toast } from "@repo/design-system";
 import { Button } from "@repo/design-system/components/ui/button";
-import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { Switch } from "@repo/design-system/components/ui/switch";
+import { GalleryAdd, Trash } from "iconsax-reactjs";
 import * as React from "react";
 import ControlSection from "@/components/editor/control-section";
-import { MAX_LOGO_FILE_SIZE } from "@/lib/constants";
+import { DEFAULT_QR_LOGO, MAX_LOGO_FILE_SIZE } from "@/lib/constants";
+import { soundEvent } from "@/lib/sound/emit";
 import type { ThemeStyles } from "@/types/theme";
+import { LogoPresets, logoIconName } from "./logo-presets";
+import { OptionGroupLabel } from "./option-tiles";
 
 const ALLOWED_LOGO_TYPES = [
   "image/png",
@@ -20,12 +23,24 @@ const ALLOWED_LOGO_TYPES = [
 interface LogoControlsProps {
   style: Partial<ThemeStyles>;
   onStyleChange: (styles: Partial<ThemeStyles>) => void;
+  /** Open the section (e.g. when jumping here from the old Settings tab) */
+  expanded?: boolean;
 }
 
-export function LogoControls({ style, onStyleChange }: LogoControlsProps) {
+export function LogoControls({
+  style,
+  onStyleChange,
+  expanded,
+}: LogoControlsProps) {
   const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const showLogo = style.showLogo ?? false;
+  const iconName = logoIconName(style.customLogo);
+  const logoName = iconName
+    ? `${iconName} icon`
+    : style.customLogo
+      ? "Your logo"
+      : "QRdx logo";
 
-  // Handle custom logo file upload
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -50,7 +65,8 @@ export function LogoControls({ style, onStyleChange }: LogoControlsProps) {
     const reader = new FileReader();
     reader.onload = () => {
       if (typeof reader.result === "string") {
-        onStyleChange({ ...style, customLogo: reader.result });
+        onStyleChange({ ...style, customLogo: reader.result, showLogo: true });
+        soundEvent("apply");
       }
     };
     reader.onerror = () => {
@@ -59,7 +75,6 @@ export function LogoControls({ style, onStyleChange }: LogoControlsProps) {
     reader.readAsDataURL(file);
   };
 
-  // Clear custom logo
   const handleClearLogo = () => {
     onStyleChange({ ...style, customLogo: undefined });
     if (fileInputRef.current) {
@@ -68,61 +83,91 @@ export function LogoControls({ style, onStyleChange }: LogoControlsProps) {
   };
 
   return (
-    <ControlSection title="Logo" expanded>
-      <div className="space-y-4">
-        <div className="flex items-center justify-between px-3 py-2 transition-colors hover:bg-muted/50">
-          <Label className="cursor-pointer text-xs" htmlFor="show-logo">
-            Show Logo
+    <ControlSection
+      expanded={expanded}
+      hint="logo"
+      id="section-logo"
+      summary={showLogo ? logoName : "Off"}
+      title="Logo"
+    >
+      <input
+        accept={ALLOWED_LOGO_TYPES.join(",")}
+        aria-label="Upload logo"
+        className="sr-only"
+        id="logo-upload"
+        onChange={handleLogoUpload}
+        ref={fileInputRef}
+        type="file"
+      />
+      <div className="flex items-center justify-between gap-3">
+        <div className="space-y-0.5">
+          <Label className="cursor-pointer text-sm" htmlFor="show-logo">
+            Logo in the center
           </Label>
-          <Switch
-            checked={style.showLogo || false}
-            id="show-logo"
-            onCheckedChange={(value) =>
-              onStyleChange({ ...style, showLogo: value })
-            }
-          />
+          <p className="text-muted-foreground text-xs">
+            Covers a few dots; error correction fills them in.
+          </p>
         </div>
-        {style.showLogo && (
-          <div className="space-y-3">
-            <div>
-              <Label className="mb-2 block text-xs" htmlFor="logo-upload">
-                Upload Custom Logo
-              </Label>
-              <Input
-                accept={ALLOWED_LOGO_TYPES.join(",")}
-                id="logo-upload"
-                onChange={handleLogoUpload}
-                ref={fileInputRef}
-                type="file"
-                className="text-xs"
-              />
-              <p className="mt-1 text-muted-foreground text-xs">
-                Supports PNG, JPG, WebP, SVG (max{" "}
-                {MAX_LOGO_FILE_SIZE / 1024 / 1024}MB)
-              </p>
-            </div>
-            {style.customLogo && (
-              <div className="space-y-2">
-                <div className="relative flex items-center justify-center rounded-lg border bg-muted/30 p-4">
-                  <img
-                    alt="Custom logo preview"
-                    className="max-h-24 max-w-full object-contain"
-                    src={style.customLogo}
-                  />
-                </div>
+        <Switch
+          checked={showLogo}
+          id="show-logo"
+          onCheckedChange={(value) =>
+            onStyleChange({ ...style, showLogo: value })
+          }
+        />
+      </div>
+
+      <div>
+        <OptionGroupLabel>Quick icons</OptionGroupLabel>
+        <LogoPresets
+          active={showLogo}
+          logo={style.customLogo}
+          onPick={(logo) =>
+            onStyleChange({ ...style, customLogo: logo, showLogo: true })
+          }
+          onUpload={() => fileInputRef.current?.click()}
+        />
+      </div>
+
+      {showLogo && (
+        <div className="flex items-center gap-3 rounded-lg border p-3">
+          <span className="grid size-14 shrink-0 place-items-center overflow-hidden rounded-[10px] bg-white p-1.5 ring-1 ring-black/5">
+            <img
+              alt={logoName}
+              className="max-h-full max-w-full object-contain"
+              src={style.customLogo ?? DEFAULT_QR_LOGO}
+            />
+          </span>
+          <div className="min-w-0 flex-1 space-y-2">
+            <p className="text-muted-foreground text-xs">
+              PNG, JPG, WebP or SVG, up to {MAX_LOGO_FILE_SIZE / 1024 / 1024}
+              MB. Square images with some padding look best.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                onClick={() => fileInputRef.current?.click()}
+                size="sm"
+                type="button"
+                variant="outline"
+              >
+                <GalleryAdd />
+                {style.customLogo && !iconName ? "Replace" : "Upload your logo"}
+              </Button>
+              {style.customLogo && (
                 <Button
                   onClick={handleClearLogo}
                   size="sm"
-                  variant="outline"
-                  className="w-full"
+                  type="button"
+                  variant="ghost"
                 >
-                  Clear Logo
+                  <Trash />
+                  Remove
                 </Button>
-              </div>
-            )}
+              )}
+            </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </ControlSection>
   );
 }

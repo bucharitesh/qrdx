@@ -3,7 +3,7 @@ import "server-only";
 import { timingSafeEqual } from "node:crypto";
 import { env } from "@/lib/env";
 
-/** Vercel Cron sends `Authorization: Bearer <CRON_SECRET>` (same as apps/api). */
+/** Vercel Cron sends `Authorization: Bearer <CRON_SECRET>`. */
 export function isAuthorizedCronRequest(request: Request): boolean {
   if (!env.CRON_SECRET) {
     // Fail closed in production so jobs can't be triggered publicly.

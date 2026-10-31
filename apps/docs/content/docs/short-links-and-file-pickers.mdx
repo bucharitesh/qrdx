@@ -1,0 +1,78 @@
+---
+title: Short links and file pickers
+description: Shorten a QR code's link with your own Bitly, Rebrandly or Short.io account, or encode a Dropbox, OneDrive, Box or Notion share link.
+icon: Blocks
+---
+
+Connect an account in [Settings → Integrations](/settings/integrations) and the **Website** type in the QR editor gets two buttons under the address field:
+
+- **Shorten**: creates a link in your Bitly, Rebrandly or Short.io account (or picks one you already have). The QR code encodes that short link, so you can change where it points later in that service, and it counts the clicks.
+- **Pick a file**: browse or search Dropbox, OneDrive, Box or Notion. QRdx creates the item's share link and the QR code encodes it.
+
+Hosted pages can use cloud files too: PDF, audio, video and download blocks get **From Dropbox**, **From OneDrive** or **From Box** next to the upload buttons.
+
+Integrations belong to your user account. Tokens and API keys are stored encrypted, and you can disconnect at any time.
+
+## Short links
+
+| Service | How you connect | Domains | Back-half |
+| --- | --- | --- | --- |
+| Bitly | Sign in with Bitly, or paste a generic access token (Settings → Developer settings → API) | bit.ly and your branded domains | Picked by Bitly |
+| Rebrandly | Paste an API key (Account → API keys) | rebrand.ly and your branded domains | Your own slashtag, or random |
+| Short.io | Paste a secret API key (Integrations & API → API) | Your Short.io domains | Your own path, or random |
+
+Each integration's settings page shows your domains and lets you pick the default one for new links. You can still pick another domain per link.
+
+<Callout type="info" title="Changing a destination later">
+QRdx creates the link; editing where it points happens in Bitly, Rebrandly or Short.io. Bitly only lets paid plans change a link's destination.
+</Callout>
+
+If you'd rather keep the destination editable in QRdx itself, with scan analytics, use a [dynamic QR code](/docs/dynamic-qr-codes) instead.
+
+## File pickers
+
+| Service | Link QRdx encodes | Who can open it |
+| --- | --- | --- |
+| Dropbox | A shared link (created, or the existing one reused) | Anyone with the link, unless your team only allows team links |
+| OneDrive | A view-only sharing link | Anyone with the link; organization-only where your admin turned "Anyone" links off |
+| Box | The item's shared link, set to "People with the link" | Anyone with the link; company-only where your admin requires it |
+| Notion | The page's "Publish to web" link | Anyone, once the page is published |
+
+When the link can't be opened by everyone, QRdx says so right after you pick, so a printed code doesn't send people to a sign-in page.
+
+### Notion pages
+
+QRdx only sees the pages you share with it: Notion asks which ones when you connect. To add more later, open the page in Notion, click **•••** → **Connections** and add QRdx (or reconnect and pick them).
+
+Notion's API can't publish a page. Publish it yourself (**Share** → **Publish** → **Publish to web**), then pick it again so QRdx uses the public link.
+
+### Files on hosted pages
+
+For Dropbox and Box, page blocks get a direct link to the file, so audio and video players and the PDF viewer can load it. OneDrive sharing links open OneDrive's viewer, so a block shows them as a link.
+
+## Disconnecting
+
+Disconnecting deletes the stored token. For Dropbox, Box and Notion, QRdx also revokes it with the service. For Bitly, Rebrandly and Short.io, delete the key in that service too if you no longer use it; for OneDrive, remove QRdx from your Microsoft account's app permissions.
+
+QR codes you already made keep working: they hold the short link or share link, not your token.
+
+## Self-hosting
+
+Rebrandly and Short.io need nothing on the server. The others need an app in each service, with its client ID and secret in the environment; without them the integration shows "Not configured". Bitly still works without them, through pasted access tokens.
+
+| Integration | Variables | Redirect URI |
+| --- | --- | --- |
+| Bitly (sign-in) | `BITLY_CLIENT_ID`, `BITLY_CLIENT_SECRET` | `<app url>/api/integrations/bitly/callback` |
+| Dropbox | `DROPBOX_CLIENT_ID`, `DROPBOX_CLIENT_SECRET` | `<app url>/api/integrations/dropbox/callback` |
+| OneDrive | `MICROSOFT_CLIENT_ID`, `MICROSOFT_CLIENT_SECRET` | `<app url>/api/integrations/onedrive/callback` |
+| Box | `BOX_CLIENT_ID`, `BOX_CLIENT_SECRET` | `<app url>/api/integrations/box/callback` |
+| Notion | `NOTION_CLIENT_ID`, `NOTION_CLIENT_SECRET` | `<app url>/api/integrations/notion/callback` |
+
+`<app url>` is `http://localhost:3000` in development and your production URL otherwise. Every integration also needs `INTEGRATION_ENCRYPTION_KEY` in production, which encrypts stored tokens and keys.
+
+Scopes to request:
+
+- **Dropbox:** `account_info.read`, `files.metadata.read`, `sharing.read`, `sharing.write`
+- **OneDrive:** `offline_access`, `Files.ReadWrite` (Microsoft Graph needs write access to create sharing links)
+- **Box:** Read and write all files and folders (`root_readwrite`)
+- **Bitly, Notion:** no scopes; Notion asks the user which pages to share

@@ -1,9 +1,12 @@
 import type { QRProps } from "../../types";
+import { isGradient } from "../../types/color";
 import { DEFAULT_BGCOLOR, DEFAULT_SIZE } from "../constants";
 import { withQRSize } from "../download";
 import { getFrameLayout, isFrameActive } from "../frame";
 import { getQRAsSVGDataUri } from "../index";
 import { getSolidColor } from "./color";
+import { parseSvgMarkup } from "./svg-geometry";
+import { readStyle } from "./svg-painter";
 
 // Shared by the PDF (print.ts) and EPS (eps.ts) exporters; not public API.
 
@@ -28,4 +31,29 @@ export function getPrintBleedColor(props: QRProps): string | null {
     return frame.squareEdges ? frame.color : null;
   }
   return getSolidColor(props.bgColor, DEFAULT_BGCOLOR);
+}
+
+/**
+ * SVG paint for the bleed area: `getPrintBleedColor`, except that a gradient
+ * background (no frame or template) returns the background's own
+ * `url(#…)` fill from `markup`, so the bleed continues the gradient.
+ */
+export function getPrintBleedFill(
+  props: QRProps,
+  markup: string
+): string | null {
+  const color = getPrintBleedColor(props);
+  if (
+    !(color && isGradient(props.bgColor)) ||
+    isFrameActive(props.frame) ||
+    props.templateId ||
+    props.customTemplate
+  ) {
+    return color;
+  }
+  const background = parseSvgMarkup(markup)?.children.find(
+    (child) => child.name === "rect"
+  );
+  const fill = background && readStyle(background, "fill");
+  return fill?.startsWith("url(") ? fill : color;
 }

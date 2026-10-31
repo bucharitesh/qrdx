@@ -1,12 +1,13 @@
 /** biome-ignore-all lint/a11y/noSvgWithoutTitle: false positive */
 
 import type { BodyPattern } from "qrdx/types";
+import { BodyPatternSwatch } from "./pattern-swatch";
 
 type EyePatternProps = React.HTMLAttributes<SVGElement>;
 
-export const Patterns: Record<
-  BodyPattern,
-  (props: EyePatternProps) => React.ReactNode
+// Hand-drawn icons; patterns without one use a live swatch of the renderer.
+export const Patterns: Partial<
+  Record<BodyPattern, (props: EyePatternProps) => React.ReactNode>
 > = {
   square: (props: EyePatternProps) => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" {...props}>
@@ -44,7 +45,6 @@ export const Patterns: Record<
       ></path>
     </svg>
   ),
-  rounded: () => <p>hello</p>,
   circle: (props: EyePatternProps) => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" {...props}>
       <g clipPath="url(#small-dots)">
@@ -403,7 +403,6 @@ export const Patterns: Record<
       ></path>
     </svg>
   ),
-  pacman: () => <p>hello</p>,
   diamond: (props: EyePatternProps) => (
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 63 64" {...props}>
       <path fill="#fff" d="M1 .34h62v63H1z"></path>
@@ -482,5 +481,9 @@ export const BodyPatterns: React.FC<{ pattern: BodyPattern }> = ({
   ...props
 }) => {
   const PatternIcon = Patterns[pattern];
-  return <PatternIcon {...props} />;
+  return PatternIcon ? (
+    <PatternIcon {...props} />
+  ) : (
+    <BodyPatternSwatch pattern={pattern} />
+  );
 };

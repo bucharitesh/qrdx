@@ -4,10 +4,12 @@ import {
   EmptyContent,
   EmptyDescription,
   EmptyHeader,
-  EmptyMedia,
   EmptyTitle,
 } from "@repo/design-system/components/ui/empty";
-import { ChevronRight, FileUp, QrCode } from "lucide-react";
+import {
+  ArrowRight2 as ChevronRight,
+  DocumentUpload as FileUp,
+} from "iconsax-reactjs";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Fragment } from "react";
@@ -29,11 +31,13 @@ import {
   listCodes,
   requireDashboardScope,
 } from "@/app/dashboard/codes/_lib/qr-codes";
+import { HairlineFigure } from "@/components/mockups/hairline";
 import { getScanSparklines } from "@/lib/scans";
 import { CodesList } from "./codes-list";
 import { CodesSidebar, CodesSidebarSheet } from "./codes-sidebar";
 import { CodesToolbar } from "./codes-toolbar";
 import { formatNumber } from "./format";
+import { ImportDialog } from "./import-dialog";
 import { NewCodeButton, UsageMeter } from "./usage";
 
 export const codesMetadata: Metadata = {
@@ -141,6 +145,7 @@ export async function CodesView({
             Import CSV
           </Link>
         </Button>
+        <ImportDialog />
         <NewCodeButton usage={usage} />
       </PageHeader>
 
@@ -149,9 +154,7 @@ export async function CodesView({
       {isEmpty && folders.length === 0 && trashCount === 0 ? (
         <Empty className="border">
           <EmptyHeader>
-            <EmptyMedia variant="icon">
-              <QrCode />
-            </EmptyMedia>
+            <HairlineFigure className="mx-auto mb-2 h-28 w-40" figure="Relay" />
             <EmptyTitle>No dynamic QR codes yet</EmptyTitle>
             <EmptyDescription>
               A dynamic code encodes a short link. Print it once and change the

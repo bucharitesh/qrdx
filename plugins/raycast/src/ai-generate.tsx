@@ -25,8 +25,8 @@ JSON schema (all fields optional except "url"):
 {
   "url": string,             // required: the URL, email, phone number, or text to encode
   "bodyPattern": string,     // shape of each module: square | circle | circle-large | diamond | circle-mixed | pacman | rounded | small-square | vertical-line
-  "cornerEyePattern": string,// outer corner shape: square | rounded | gear | circle | diya | extra-rounded | message | pointy | curly
-  "cornerEyeDotPattern": string, // inner corner dot: square | rounded | circle | diamond | message | message-reverse | diya | diya-reverse | rounded-triangle | star | banner
+  "cornerEyePattern": string,// outer corner shape: square | rounded | gear | circle | diya | extra-rounded | message | pointy
+  "cornerEyeDotPattern": string, // inner corner dot: square | rounded | circle | message | message-reverse | diya | diya-reverse | rounded-triangle
   "fgColor": string,         // hex foreground color, e.g. "#000000"
   "bgColor": string,         // hex background color, e.g. "#ffffff"
   "eyeColor": string,        // optional hex override for corner eye outlines

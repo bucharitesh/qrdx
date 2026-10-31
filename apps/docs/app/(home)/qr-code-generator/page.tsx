@@ -1,10 +1,11 @@
-import { ArrowRight } from "lucide-react";
+import { Ruler, TableDocument } from "iconsax-reactjs";
 import type { Metadata } from "next";
-import Link from "next/link";
 import { MockupImage } from "@/components/mockups/mockup-image";
 import { qrTypeGroupImages } from "@/components/mockups/visuals";
 import { SectionHeader } from "@/components/sections/section-header";
+import { CardGrid, LinkCard } from "@/components/sections/tools/cards";
 import { ToolHero } from "@/components/sections/tools/tool-hero";
+import { QR_TYPE_ICONS } from "@/components/sections/tools/topic-icons";
 import { createMetadata } from "@/lib/metadata";
 import { QR_TYPE_GROUPS, QR_TYPES } from "@/lib/qr-types-content";
 
@@ -21,6 +22,7 @@ export default function QrTypesHubPage() {
   return (
     <main className="flex flex-col divide-y divide-border min-h-screen w-full">
       <ToolHero
+        pattern="qr"
         crumbs={[
           { name: "Home", path: "/" },
           { name: "QR code generators", path: "/qr-code-generator" },
@@ -59,59 +61,41 @@ export default function QrTypesHubPage() {
                 sizes="(min-width: 1280px) 400px, (min-width: 1024px) 33vw, 100vw"
                 className="aspect-[3/2] object-cover lg:sticky lg:top-24 lg:self-start"
               />
-              <div className="grid gap-3 sm:grid-cols-2 lg:col-span-2 content-start">
+              <CardGrid
+                count={items.length}
+                max={2}
+                className="min-w-0 lg:col-span-2"
+              >
                 {items.map((item) => (
-                  <Link
+                  <LinkCard
                     key={item.type}
                     href={`/qr-code-generator/${item.type}`}
-                    className="group rounded-xl border border-border bg-accent/50 hover:bg-accent transition-colors p-4 flex flex-col gap-1"
-                  >
-                    <span className="flex items-center gap-2 font-medium text-secondary-foreground">
-                      {item.name} QR code generator
-                      <ArrowRight className="ml-auto size-4 text-muted-foreground group-hover:translate-x-0.5 transition-transform" />
-                    </span>
-                    <span className="text-sm text-muted-foreground">
-                      {item.summary}
-                    </span>
-                  </Link>
+                    icon={QR_TYPE_ICONS[item.type]}
+                    title={`${item.name} QR code generator`}
+                    description={item.summary}
+                  />
                 ))}
-              </div>
+              </CardGrid>
             </div>
           </section>
         );
       })}
 
-      <section className="w-full px-6 md:px-10 py-10 grid gap-6 md:grid-cols-2">
-        <div className="flex flex-col gap-2">
-          <h2 className="text-xl font-medium tracking-tighter">
-            Need hundreds of codes?
-          </h2>
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            Upload a CSV to the bulk generator and download every code as PNG or
-            SVG in one ZIP file, generated entirely in your browser.
-          </p>
-          <Link
+      <section aria-label="More tools" className="w-full px-6 md:px-10 py-10">
+        <CardGrid count={2} max={2}>
+          <LinkCard
             href="/tools/bulk"
-            className="text-sm font-medium inline-flex items-center gap-1 hover:underline"
-          >
-            Bulk QR code generator <ArrowRight className="size-3.5" />
-          </Link>
-        </div>
-        <div className="flex flex-col gap-2">
-          <h2 className="text-xl font-medium tracking-tighter">
-            Printing your code?
-          </h2>
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            Work out the minimum printed size from the scanning distance and how
-            much data the code holds.
-          </p>
-          <Link
+            icon={TableDocument}
+            title="Need hundreds of codes? Use the bulk generator"
+            description="Upload a CSV and download every code as PNG or SVG in one ZIP file, generated entirely in your browser."
+          />
+          <LinkCard
             href="/tools/print-size"
-            className="text-sm font-medium inline-flex items-center gap-1 hover:underline"
-          >
-            QR code print size calculator <ArrowRight className="size-3.5" />
-          </Link>
-        </div>
+            icon={Ruler}
+            title="Printing your code? Check the size"
+            description="Work out the minimum printed size from the scanning distance and how much data the code holds."
+          />
+        </CardGrid>
       </section>
     </main>
   );

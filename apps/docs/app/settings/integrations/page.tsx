@@ -8,6 +8,8 @@ import {
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { env } from "@/lib/env";
+import { getIntegrationAvailability } from "@/lib/integration-availability";
+import { isVisible, setupNeeded } from "@/lib/integration-availability-rules";
 import { isIntegrationConfigured } from "@/lib/integration-oauth";
 import { SettingsHeader } from "../components/settings-header";
 import { IntegrationsClient } from "./components/integrations-client";
@@ -22,17 +24,24 @@ export default async function IntegrationsPage() {
 
   if (!session) redirect("/");
 
-  // Get all available integrations from registry
+  // Every registry integration this deployment can offer. Production and
+  // preview builds leave out the ones that need setup; local dev keeps them
+  // with a "Needs setup" badge (env variable names only).
   const registry = getIntegrationRegistry();
-  const availableIntegrations = registry.getAll();
+  const availability = getIntegrationAvailability();
+  const availableIntegrations = registry
+    .getAll()
+    .filter((integration) => isVisible(availability, integration.slug));
 
   // Fetch connection status for each integration
   const integrationStatuses = await Promise.all(
     availableIntegrations.map(async (integration) => {
       try {
+        const needsSetup = setupNeeded(availability, integration.slug);
         if (!isIntegrationConfigured(integration.slug)) {
           return {
             ...integration,
+            needsSetup,
             isConfigured: false,
             isConnected: false,
             status: undefined as
@@ -53,6 +62,7 @@ export default async function IntegrationsPage() {
 
         return {
           ...integration,
+          needsSetup,
           isConfigured: true,
           isConnected: !!connectedIntegration,
           status: connectedIntegration?.status as
@@ -67,6 +77,7 @@ export default async function IntegrationsPage() {
         console.error(`Failed to fetch status for ${integration.slug}:`, error);
         return {
           ...integration,
+          needsSetup: setupNeeded(availability, integration.slug),
           isConfigured: false,
           isConnected: false,
           status: undefined as "active" | "disconnected" | "error" | undefined,
@@ -83,7 +94,12 @@ export default async function IntegrationsPage() {
         title="Integrations"
         description="Connect third-party services to enhance your QR codes"
       />
-      <IntegrationsClient integrations={integrationStatuses} />
+      <IntegrationsClient
+        integrations={integrationStatuses}
+        hiddenSlugs={Object.keys(availability.needsSetup).filter(
+          (slug) => !isVisible(availability, slug),
+        )}
+      />
     </div>
   );
 }

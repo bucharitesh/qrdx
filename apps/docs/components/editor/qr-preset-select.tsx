@@ -1,5 +1,6 @@
 /** biome-ignore-all lint/suspicious/noArrayIndexKey: false positive */
 
+import { Tick as Check } from "@repo/design-system/components/icons";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
@@ -23,20 +24,36 @@ import {
   TooltipTrigger,
 } from "@repo/design-system/components/ui/tooltip";
 import { cn } from "@repo/design-system/lib/utils";
-import { Check, Heart, Settings } from "lucide-react";
+import {
+  ArrowDown2,
+  ArrowLeft,
+  ArrowRight,
+  Element3,
+  Heart,
+  SearchNormal1,
+  Setting2 as Settings,
+  Shuffle,
+} from "iconsax-reactjs";
 import Link from "next/link";
 import { type ColorConfig, getColorString } from "qrdx";
 import type React from "react";
 import { useCallback, useMemo, useState } from "react";
+import { seasonalPresetsFirst } from "@/components/seasonal/preset-order";
 import { useMounted } from "@/lib/hooks/use-mounted";
+import { shuffleNext } from "@/lib/hooks/use-theme-shuffle";
 import { useUserSettings } from "@/lib/hooks/use-user-settings";
+import { soundEvent } from "@/lib/sound/emit";
+import { isShuffleId } from "@/lib/themes/shuffle";
 import { useQREditorStore } from "@/store/editor-store";
 import { useThemePresetStore } from "@/store/theme-preset-store";
 import type { ThemePreset } from "@/types/theme";
-import { getPresetThemeStyles } from "@/utils/qr-presets-helper";
-import { Icons } from "../icons";
+import {
+  getPresetLabel,
+  getPresetThemeStyles,
+} from "@/utils/qr-presets-helper";
 import { ThemeToggle } from "../theme-toggle";
 import { TooltipWrapper } from "../tooltip-wrapper";
+import { ThemeGallery } from "./theme-gallery";
 import { useSavedThemes } from "./use-saved-themes";
 
 interface ThemePresetSelectProps extends React.ComponentProps<typeof Button> {
@@ -80,32 +97,25 @@ const isThemeNew = (preset: ThemePreset) => {
 };
 
 const ThemeControls = () => {
-  const applyThemePreset = useQREditorStore((store) => store.applyThemePreset);
-  const presets = useThemePresetStore((store) => store.getAllPresets());
-
-  const presetNames = useMemo(
-    () => ["default", ...Object.keys(presets)],
-    [presets],
-  );
-
+  // A new theme from the generator's palettes and shape rules, not a preset.
   const randomize = useCallback(() => {
-    const random = Math.floor(Math.random() * presetNames.length);
-    applyThemePreset(presetNames[random]);
-  }, [presetNames, applyThemePreset]);
+    shuffleNext();
+    soundEvent("shuffle");
+  }, []);
 
   return (
     <div className="flex gap-1">
       <ThemeToggle variant="ghost" size="icon" className="size-6 p-1" />
 
-      <TooltipWrapper label="Random theme" kbd="T" asChild>
+      <TooltipWrapper label="Shuffle a new theme" kbd="T" asChild>
         <Button
           variant="ghost"
           size="sm"
-          aria-label="Random theme"
+          aria-label="Shuffle a new theme"
           className="size-6 p-1"
           onClick={randomize}
         >
-          <Icons.Shuffle className="h-3.5 w-3.5" />
+          <Shuffle className="h-3.5 w-3.5" />
         </Button>
       </TooltipWrapper>
     </div>
@@ -137,9 +147,9 @@ const ThemeCycleButton: React.FC<ThemeCycleButtonProps> = ({
           {...props}
         >
           {direction === "prev" ? (
-            <Icons.ArrowLeft className="h-4 w-4" />
+            <ArrowLeft className="h-4 w-4" />
           ) : (
-            <Icons.ArrowRight className="h-4 w-4" />
+            <ArrowRight className="h-4 w-4" />
           )}
         </Button>
       </TooltipTrigger>
@@ -184,6 +194,7 @@ const ThemePresetCycleControls: React.FC<ThemePresetCycleControlsProps> = ({
           : (currentIndex - 1 + filteredPresets.length) %
             filteredPresets.length;
       applyThemePreset(filteredPresets[newIndex]);
+      soundEvent("apply");
     },
     [currentIndex, filteredPresets, applyThemePreset],
   );
@@ -228,6 +239,8 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
   const defaultPresetId = useThemePresetStore((store) => store.defaultPresetId);
 
   const [search, setSearch] = useState("");
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [galleryOpen, setGalleryOpen] = useState(false);
 
   const isMounted = useMounted();
 
@@ -281,7 +294,10 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
     };
 
     // Combine saved themes first, then default themes
-    return [...sortThemes(savedThemesList), ...sortThemes(defaultThemesList)];
+    return [
+      ...sortThemes(savedThemesList),
+      ...seasonalPresetsFirst(sortThemes(defaultThemesList)),
+    ];
   }, [presetNames, search, presets, isSavedTheme]);
 
   const filteredSavedThemes = useMemo(() => {
@@ -316,7 +332,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
   return (
     <div className="flex w-full items-center">
       <div className="flex-1 min-w-0">
-        <Popover>
+        <Popover open={menuOpen} onOpenChange={setMenuOpen}>
           <PopoverTrigger asChild>
             <Button
               variant="ghost"
@@ -346,7 +362,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                   isSavedTheme(currentPresetName) &&
                   !hasUnsavedChanges() && (
                     <div className="bg-muted rounded-full p-1">
-                      <Icons.Heart
+                      <Heart
                         className="size-1"
                         stroke="var(--muted)"
                         fill="var(--muted-foreground)"
@@ -354,20 +370,22 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                     </div>
                   )}
                 <span className="truncate text-left font-medium capitalize">
-                  {presets[currentPresetName || "default"]?.label ||
+                  {(isShuffleId(currentPreset) &&
+                    getPresetLabel(currentPreset)) ||
+                    presets[currentPresetName || "default"]?.label ||
                     currentPresetName ||
                     "default"}
                   {isMounted && hasUnsavedChanges() && "*"}
                 </span>
               </div>
-              <Icons.ChevronDown className="size-4 shrink-0" />
+              <ArrowDown2 className="size-4 shrink-0" />
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-[400px] p-0" align="center">
             <Command className="w-full">
               <div className="flex w-full items-center">
                 <div className="flex w-full items-center border-b px-3 py-1">
-                  <Icons.Search className="size-4 shrink-0 opacity-50" />
+                  <SearchNormal1 className="size-4 shrink-0 opacity-50" />
                   <Input
                     placeholder="Search themes..."
                     className="border-0 shadow-none bg-transparent! focus-visible:ring-0 focus-visible:ring-offset-0"
@@ -381,7 +399,21 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                   {filteredPresets.length} theme
                   {filteredPresets.length !== 1 ? "s" : ""}
                 </div>
-                <ThemeControls />
+                <div className="flex items-center gap-1">
+                  <Button
+                    className="text-muted-foreground hover:text-foreground h-6 gap-1 px-2 text-xs"
+                    onClick={() => {
+                      setMenuOpen(false);
+                      setGalleryOpen(true);
+                    }}
+                    size="sm"
+                    variant="ghost"
+                  >
+                    <Element3 className="size-3.5" />
+                    Browse all
+                  </Button>
+                  <ThemeControls />
+                </div>
               </div>
               <Separator />
               <CommandList className="max-h-[500px]">
@@ -415,6 +447,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                         value={`${presetName}-${index}`}
                         onSelect={() => {
                           applyThemePreset(presetName);
+                          soundEvent("apply");
                           setSearch("");
                         }}
                         className="data-highlighted:bg-secondary/50 flex items-center gap-2 py-2"
@@ -476,6 +509,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                         value={`${presetName}-${index}`}
                         onSelect={() => {
                           applyThemePreset(presetName);
+                          soundEvent("apply");
                           setSearch("");
                         }}
                         className="data-highlighted:bg-secondary/50 flex items-center gap-2 py-2"
@@ -518,6 +552,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
             </Command>
           </PopoverContent>
         </Popover>
+        <ThemeGallery onOpenChange={setGalleryOpen} open={galleryOpen} />
       </div>
 
       {withCycleThemes && (

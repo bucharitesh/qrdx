@@ -2,7 +2,7 @@
 
 import { Button } from "@repo/design-system/components/ui/button";
 import { Progress } from "@repo/design-system/components/ui/progress";
-import { Gem } from "lucide-react";
+import { Diamonds as Gem } from "iconsax-reactjs";
 import { PLAN_NAMES, type Plan } from "@/lib/pricing";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 

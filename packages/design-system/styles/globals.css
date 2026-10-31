@@ -12,8 +12,11 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-mona-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-mona-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  /* Mona Sans display is wide; -0.05em made bold headings collide. */
+  --tracking-tighter: -0.035em;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -237,17 +240,17 @@
   --popover-foreground: oklch(0 0 0);
   --primary: oklch(0.5465 0.2455 262.8657);
   --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.954 0.0063 255.4755);
+  --secondary: oklch(0.962 0.002 270);
   --secondary-foreground: oklch(0.1344 0 0);
   --muted: oklch(0.9702 0 0);
   --muted-foreground: oklch(0.4386 0 0);
-  --accent: oklch(0.9393 0.0288 266.368);
-  --accent-foreground: oklch(0.5445 0.1903 259.4848);
+  --accent: oklch(0.962 0.002 270);
+  --accent-foreground: oklch(0.145 0 0);
   --destructive: oklch(0.629 0.1902 23.0704);
   --destructive-foreground: oklch(1 0 0);
-  --border: oklch(0.93 0.0094 286.2156);
-  --input: oklch(0.9401 0 0);
-  --ring: oklch(0 0 0);
+  --border: oklch(0.92 0.003 270);
+  --input: oklch(0.92 0.003 270);
+  --ring: oklch(0.556 0 0);
   --chart-1: oklch(0.7459 0.1483 156.4499);
   --chart-2: oklch(0.5393 0.2713 286.7462);
   --chart-3: oklch(0.7336 0.1758 50.5517);
@@ -285,38 +288,38 @@
 }
 
 .dark {
-  --background: oklch(0.2223 0.006 271.1393);
+  --background: oklch(0.17 0.005 275);
   --foreground: oklch(0.9551 0 0);
-  --card: oklch(0.2568 0.0076 274.6528);
+  --card: oklch(0.2 0.005 275);
   --card-foreground: oklch(0.9551 0 0);
-  --popover: oklch(0.2568 0.0076 274.6528);
+  --popover: oklch(0.21 0.005 275);
   --popover-foreground: oklch(0.9551 0 0);
   --primary: oklch(0.5465 0.2455 262.8657);
   --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.294 0.013 272.9312);
+  --secondary: oklch(0.245 0.005 275);
   --secondary-foreground: oklch(0.9551 0 0);
-  --muted: oklch(0.294 0.013 272.9312);
-  --muted-foreground: oklch(0.7058 0 0);
-  --accent: oklch(0.2795 0.0368 260.031);
-  --accent-foreground: oklch(0.7857 0.1153 246.6596);
+  --muted: oklch(0.245 0.005 275);
+  --muted-foreground: oklch(0.72 0 0);
+  --accent: oklch(0.26 0.005 275);
+  --accent-foreground: oklch(0.9551 0 0);
   --destructive: oklch(0.7106 0.1661 22.2162);
   --destructive-foreground: oklch(1 0 0);
-  --border: oklch(0.3289 0.0092 268.3843);
-  --input: oklch(0.3289 0.0092 268.3843);
-  --ring: oklch(0.5465 0.2455 262.8657);
+  --border: oklch(1 0 0 / 9%);
+  --input: oklch(1 0 0 / 12%);
+  --ring: oklch(0.65 0 0);
   --chart-1: oklch(0.8003 0.1821 151.711);
   --chart-2: oklch(0.5465 0.2455 262.8657);
   --chart-3: oklch(0.8077 0.1035 19.5706);
   --chart-4: oklch(0.6691 0.1569 260.1063);
   --chart-5: oklch(0.7058 0 0);
-  --sidebar: oklch(0.2011 0.0039 286.0396);
+  --sidebar: oklch(0.155 0.005 275);
   --sidebar-foreground: oklch(0.9551 0 0);
   --sidebar-primary: oklch(0.5465 0.2455 262.8657);
   --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: oklch(0.294 0.013 272.9312);
-  --sidebar-accent-foreground: oklch(0.5465 0.2455 262.8657);
-  --sidebar-border: oklch(0.3289 0.0092 268.3843);
-  --sidebar-ring: oklch(0.5465 0.2455 262.8657);
+  --sidebar-accent: oklch(0.245 0.005 275);
+  --sidebar-accent-foreground: oklch(0.9551 0 0);
+  --sidebar-border: oklch(1 0 0 / 9%);
+  --sidebar-ring: oklch(0.65 0 0);
   --radius: 1.4rem;
   --shadow-x: 0px;
   --shadow-y: 2px;
@@ -378,5 +381,29 @@
   button:not(:disabled),
   [role="button"]:not(:disabled) {
     @apply cursor-pointer;
+  }
+}
+
+/* Display face: Mona Sans at its expanded widths for headings, hero copy and big numbers. */
+@layer base {
+  h1,
+  h2,
+  h3,
+  .font-display {
+    font-family: var(--font-display);
+    font-stretch: 106%;
+    text-wrap: balance;
+  }
+  h1,
+  h2,
+  .font-display {
+    letter-spacing: -0.025em;
+  }
+  @media (width >= 48rem) {
+    h1,
+    h2,
+    .font-display {
+      font-stretch: 112%;
+    }
   }
 }

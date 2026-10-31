@@ -1,11 +1,13 @@
 "use client";
 
 import { toast } from "@repo/design-system";
+import { Tick as Check } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Checkbox } from "@repo/design-system/components/ui/checkbox";
-import { Check, Copy } from "lucide-react";
+import { Copy } from "iconsax-reactjs";
 import { type ComponentProps, useState } from "react";
 import { EVENT_INFO } from "@/lib/events/types";
+import { soundEvent } from "@/lib/sound/emit";
 
 /** Checkbox per event with its label, wire name and description. */
 export function EventCheckboxes<E extends keyof typeof EVENT_INFO>({
@@ -83,6 +85,7 @@ export function CopyButton({
         try {
           await navigator.clipboard.writeText(value);
           setCopied(true);
+          soundEvent("copy");
           setTimeout(() => setCopied(false), 1500);
         } catch {
           toast.error("Couldn't copy. Select the text and copy it instead.");

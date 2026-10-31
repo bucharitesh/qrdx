@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <title>Wave (sample studio mark)</title>
+  <defs>
+    <clipPath id="badge">
+      <circle cx="128" cy="128" r="118"/>
+    </clipPath>
+  </defs>
+  <g clip-path="url(#badge)">
+    <rect width="256" height="256" fill="#d6eefb"/>
+    <path fill="#3d8fe0" d="M0 104q32-30 64 0t64 0 64 0 64 0V256H0z"/>
+    <path fill="#1b5fb8" d="M0 150q32-30 64 0t64 0 64 0 64 0V256H0z"/>
+    <path fill="#0c3473" d="M0 196q32-30 64 0t64 0 64 0 64 0V256H0z"/>
+  </g>
+</svg>

@@ -1,0 +1,16 @@
+{
+  "origin": "https://assets.qrdx.dev",
+  "files": {
+    "/videos/bulk-csv-to-zip.mp4": "static/videos/bulk-csv-to-zip.6c4862ad28.mp4",
+    "/videos/bulk-csv-to-zip.webm": "static/videos/bulk-csv-to-zip.761d55495e.webm",
+    "/videos/demo/flower.mp4": "static/videos/demo/flower.0cd83d944a.mp4",
+    "/videos/help/bulk-csv.mp4": "static/videos/help/bulk-csv.d171dcc464.mp4",
+    "/videos/help/bulk-csv.webm": "static/videos/help/bulk-csv.64150db553.webm",
+    "/videos/help/scan-checker.mp4": "static/videos/help/scan-checker.63abbd81d6.mp4",
+    "/videos/help/scan-checker.webm": "static/videos/help/scan-checker.13bdca5e3d.webm",
+    "/videos/playground-style-export.mp4": "static/videos/playground-style-export.ea27da561e.mp4",
+    "/videos/playground-style-export.webm": "static/videos/playground-style-export.97a13ccf1e.webm",
+    "/videos/scan-checker.mp4": "static/videos/scan-checker.03074fcd83.mp4",
+    "/videos/scan-checker.webm": "static/videos/scan-checker.9046712449.webm"
+  }
+}

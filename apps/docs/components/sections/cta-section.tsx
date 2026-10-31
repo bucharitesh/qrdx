@@ -1,32 +1,35 @@
+import { Button } from "@repo/design-system/components/ui/button";
+import { ArrowRight } from "iconsax-reactjs";
 import Link from "next/link";
+import { AsciiField } from "@/components/fx/ascii-field";
 import { siteConfig } from "@/config/site";
-import { StripedPattern } from "../ui/backgrounds/striped";
 
+/** Closing call to action: a dark stage in both themes, with a live ASCII field. */
 export function CTASection() {
   const { ctaSection } = siteConfig;
 
   return (
-    <section
-      id="cta"
-      className="flex flex-col items-center justify-center w-full"
-    >
-      <div className="w-full">
-        <div className="h-[400px] md:h-[400px] overflow-hidden shadow-xl w-full border border-border rounded-xl bg-primary/90 relative z-10">
-          <StripedPattern className="z-0 text-secondary/40" />
-          <div className="absolute inset-0 -top-32 md:-top-40 flex flex-col items-center justify-center">
-            <h2 className="text-white text-4xl md:text-7xl font-medium tracking-tighter max-w-xs md:max-w-xl text-center">
-              {ctaSection.title}
-            </h2>
-            <div className="absolute bottom-10 flex flex-col items-center justify-center gap-2">
-              <Link
-                href={ctaSection.button.href}
-                className="bg-white text-black font-semibold text-sm h-10 w-fit px-4 rounded-full flex items-center justify-center shadow-md"
-              >
-                {ctaSection.button.text}
-              </Link>
-              <span className="text-white text-sm">{ctaSection.subtext}</span>
-            </div>
-          </div>
+    <section id="cta" className="w-full px-4 py-4 md:px-6 md:py-6">
+      <div className="relative isolate overflow-hidden rounded-xl border border-black/10 bg-neutral-950 text-white shadow-[0_24px_60px_-28px_rgba(0,0,0,0.5)] dark:border-white/10 dark:shadow-none">
+        <AsciiField
+          variant="wave"
+          density={0.9}
+          className="text-white [mask-image:radial-gradient(ellipse_65%_75%_at_50%_50%,rgba(0,0,0,0.22)_10%,black_70%,transparent_100%)]"
+        />
+        <div className="relative flex flex-col items-center gap-6 px-6 py-20 text-center md:gap-7 md:py-28">
+          <h2 className="max-w-2xl text-balance text-4xl font-semibold tracking-tighter md:text-6xl">
+            Make your next QR code in seconds.
+          </h2>
+          <p className="text-pretty text-white/60">{ctaSection.subtext}</p>
+          <Button
+            asChild
+            className="border-white bg-white text-neutral-950 hover:bg-white/90 dark:text-neutral-950"
+          >
+            <Link href={ctaSection.button.href}>
+              {ctaSection.button.text}
+              <ArrowRight className="size-4" />
+            </Link>
+          </Button>
         </div>
       </div>
     </section>

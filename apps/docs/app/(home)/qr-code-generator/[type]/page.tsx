@@ -1,11 +1,15 @@
-import { ArrowRight } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MockupImage } from "@/components/mockups/mockup-image";
 import { qrTypeGroupImages } from "@/components/mockups/visuals";
+import {
+  CardGrid,
+  LinkCard,
+  SectionLink,
+} from "@/components/sections/tools/cards";
 import { FaqList } from "@/components/sections/tools/faq-list";
 import { ToolHero } from "@/components/sections/tools/tool-hero";
+import { QR_TYPE_ICONS } from "@/components/sections/tools/topic-icons";
 import { TypeGenerator } from "@/components/sections/tools/type-generator";
 import { createMetadata } from "@/lib/metadata";
 import {
@@ -51,13 +55,14 @@ export default async function QrTypePage({ params }: PageProps) {
   return (
     <main className="flex flex-col divide-y divide-border min-h-screen w-full">
       <ToolHero
+        pattern="qr"
         crumbs={[
           { name: "Home", path: "/" },
           { name: "QR code generators", path: "/qr-code-generator" },
           { name, path: `/qr-code-generator/${content.type}` },
         ]}
         title={getQrTypeTitle(content)}
-        intro={content.intro}
+        intro={[content.intro[0]]}
       />
 
       <section
@@ -73,10 +78,14 @@ export default async function QrTypePage({ params }: PageProps) {
           <h2 className="text-2xl font-medium tracking-tighter">
             How to create a {name} QR code
           </h2>
+          {/* The hero keeps one paragraph so the generator sits above the fold. */}
+          <p className="text-muted-foreground leading-relaxed text-pretty">
+            {content.intro[1]}
+          </p>
           <ol className="flex flex-col gap-3">
             {content.steps.map((step, index) => (
               <li key={step} className="flex gap-3">
-                <span className="flex size-6 shrink-0 items-center justify-center rounded-full border border-border bg-accent text-xs font-medium">
+                <span className="flex size-6 shrink-0 items-center justify-center rounded-md border border-border bg-muted/40 font-mono text-xs text-foreground/80">
                   {index + 1}
                 </span>
                 <span className="text-muted-foreground leading-relaxed">
@@ -124,34 +133,24 @@ export default async function QrTypePage({ params }: PageProps) {
 
       <section className="w-full px-6 md:px-10 py-10 flex flex-col gap-5">
         <div className="flex flex-wrap items-end justify-between gap-2">
-          <h2 className="text-2xl font-medium tracking-tighter">
+          <h2 className="text-2xl font-semibold tracking-tight">
             Related QR code generators
           </h2>
-          <Link
-            href="/qr-code-generator"
-            className="text-sm text-muted-foreground hover:text-foreground inline-flex items-center gap-1"
-          >
+          <SectionLink href="/qr-code-generator">
             All {QR_TYPE_SLUGS.length} types
-            <ArrowRight className="size-3.5" />
-          </Link>
+          </SectionLink>
         </div>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        <CardGrid count={related.length}>
           {related.map((item) => (
-            <Link
+            <LinkCard
               key={item.type}
               href={`/qr-code-generator/${item.type}`}
-              className="group rounded-xl border border-border bg-accent/50 hover:bg-accent transition-colors p-4 flex flex-col gap-1"
-            >
-              <span className="flex items-center gap-2 font-medium text-secondary-foreground">
-                {item.name} QR code
-                <ArrowRight className="ml-auto size-4 text-muted-foreground group-hover:translate-x-0.5 transition-transform" />
-              </span>
-              <span className="text-sm text-muted-foreground">
-                {item.summary}
-              </span>
-            </Link>
+              icon={QR_TYPE_ICONS[item.type]}
+              title={`${item.name} QR code`}
+              description={item.summary}
+            />
           ))}
-        </div>
+        </CardGrid>
       </section>
     </main>
   );

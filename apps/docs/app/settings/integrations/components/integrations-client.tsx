@@ -1,14 +1,22 @@
 "use client";
 
+import { Button } from "@repo/design-system/components/ui/button";
+import { Card } from "@repo/design-system/components/ui/card";
 import { Input } from "@repo/design-system/components/ui/input";
+import { cn } from "@repo/design-system/lib/utils";
 import { getCapabilityLabel } from "@repo/integration-kit";
-import type {
-  IntegrationCategory,
-  IntegrationDefinition,
-} from "@repo/integrations";
-import { ChevronRight, Search } from "lucide-react";
+import type { IntegrationDefinition } from "@repo/integrations";
+import {
+  getCatalogEntry,
+  type IntegrationCatalogEntry,
+} from "@repo/integrations/src/catalog";
+import { ArrowRight, SearchNormal1 } from "iconsax-reactjs";
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import {
+  IntegrationLogo,
+  logoForIntegration,
+} from "@/components/sections/integrations/integration-logo";
 import { IntegrationCard } from "./integration-card";
 
 export type IntegrationWithStatus = IntegrationDefinition & {
@@ -17,124 +25,143 @@ export type IntegrationWithStatus = IntegrationDefinition & {
   status?: "active" | "disconnected" | "error";
   metadata?: any;
   connectedAt?: Date;
+  /** Local dev only: the env variable names it still needs. */
+  needsSetup?: string[];
 };
 
-const CATEGORY_LABELS: Record<IntegrationCategory, string> = {
-  analytics: "Analytics",
-  storage: "Storage",
-  assets: "Assets",
-  marketing: "Marketing",
-  crm: "CRM",
-  communication: "Communication",
-};
-
-const CATEGORY_ORDER: IntegrationCategory[] = [
-  "analytics",
-  "storage",
-  "assets",
-  "marketing",
-  "crm",
-  "communication",
+/** Built-in integrations are set up where they live in the app. */
+const SHORTCUTS: {
+  title: string;
+  description: string;
+  href: string;
+  slugs: string[];
+}[] = [
+  {
+    title: "Slack, Discord and email alerts",
+    description:
+      "Scan milestones, form responses and code changes, plus a weekly digest.",
+    href: "/settings/notifications",
+    slugs: ["slack", "discord", "email-alerts"],
+  },
+  {
+    title: "Webhooks, Zapier, Make and n8n",
+    description:
+      "Send scans, form responses and code changes to your own tools.",
+    href: "/dashboard/webhooks",
+    slugs: ["webhooks", "zapier", "make", "n8n"],
+  },
+  {
+    title: "Tracking pixels",
+    description:
+      "Google Analytics, Tag Manager, Meta, TikTok and LinkedIn on hosted pages.",
+    href: "/dashboard/codes",
+    slugs: [
+      "google-analytics",
+      "google-tag-manager",
+      "meta-pixel",
+      "tiktok-pixel",
+      "linkedin-insight-tag",
+    ],
+  },
+  {
+    title: "Custom domains",
+    description: "Serve your dynamic codes' short links from your own domain.",
+    href: "/dashboard/domains",
+    slugs: ["custom-domains"],
+  },
+  {
+    title: "AI assistants",
+    description:
+      "Make QR codes from Claude, ChatGPT, Cursor and more over MCP.",
+    href: "/mcp",
+    slugs: ["claude", "chatgpt", "cursor"],
+  },
 ];
 
-function matchesSearch(
-  integration: IntegrationDefinition,
-  query: string,
-): boolean {
-  const q = query.toLowerCase();
-  return (
-    integration.name.toLowerCase().includes(q) ||
-    integration.description.toLowerCase().includes(q) ||
-    integration.features.some((f) => f.toLowerCase().includes(q))
-  );
+function matches(text: string[], query: string): boolean {
+  const q = query.trim().toLowerCase();
+  return !q || text.some((value) => value.toLowerCase().includes(q));
 }
 
 interface IntegrationsClientProps {
   integrations: IntegrationWithStatus[];
+  /** Slugs this deployment hides because they need setup (production). */
+  hiddenSlugs?: string[];
 }
 
-export function IntegrationsClient({ integrations }: IntegrationsClientProps) {
+export function IntegrationsClient({
+  integrations,
+  hiddenSlugs = [],
+}: IntegrationsClientProps) {
   const [search, setSearch] = useState("");
 
-  const filtered = useMemo(() => {
-    if (!search.trim()) return integrations;
-    return integrations.filter((i) => matchesSearch(i, search));
-  }, [integrations, search]);
-
-  const enabledIntegrations = useMemo(
-    () => filtered.filter((i) => i.isConnected),
-    [filtered],
+  const filtered = useMemo(
+    () =>
+      integrations.filter((i) =>
+        matches([i.name, i.description, ...i.features], search),
+      ),
+    [integrations, search],
   );
 
-  // Group integrations by primary category (first category in the array)
-  const byCategory = useMemo(() => {
-    const map = new Map<IntegrationCategory, IntegrationWithStatus[]>();
-    for (const integration of filtered) {
-      const primaryCategory = integration.category[0];
-      if (!primaryCategory) continue;
-      if (!map.has(primaryCategory)) {
-        map.set(primaryCategory, []);
-      }
-      map.get(primaryCategory)?.push(integration);
-    }
-    return map;
-  }, [filtered]);
+  const shortcuts = useMemo(
+    () =>
+      SHORTCUTS.map((shortcut) => ({
+        ...shortcut,
+        entries: shortcut.slugs
+          .filter((slug) => !hiddenSlugs.includes(slug))
+          .map((slug) => getCatalogEntry(slug))
+          .filter((entry): entry is IntegrationCatalogEntry => Boolean(entry)),
+      })).filter(
+        (shortcut) =>
+          shortcut.entries.length > 0 &&
+          matches(
+            [
+              shortcut.title,
+              shortcut.description,
+              ...shortcut.entries.map((entry) => entry.name),
+            ],
+            search,
+          ),
+      ),
+    [search, hiddenSlugs],
+  );
 
-  const orderedCategories = CATEGORY_ORDER.filter((cat) => byCategory.has(cat));
+  const connected = filtered.filter((i) => i.isConnected);
+  const nothing = filtered.length === 0 && shortcuts.length === 0;
 
   return (
     <div className="space-y-8">
-      {/* Search */}
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+        <SearchNormal1
+          aria-hidden
+          className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-muted-foreground"
+        />
         <Input
-          placeholder="Search..."
+          type="search"
+          placeholder="Search integrations"
+          aria-label="Search integrations"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="pl-9"
+          className="pl-10"
         />
       </div>
 
-      <div className="rounded-xl border bg-card p-5">
-        <div className="max-w-2xl space-y-1">
-          <h2 className="text-lg font-semibold">Integration platform</h2>
-          <p className="text-muted-foreground text-sm">
-            Apps expose approved QRDX capabilities like QR sources, asset
-            pickers, manual URL parsing, and short-link actions.
-          </p>
-        </div>
-      </div>
-
-      {/* Enabled integrations */}
-      {enabledIntegrations.length > 0 && (
-        <div className="space-y-3">
-          <div className="flex items-center justify-between">
-            <h3 className="text-sm font-medium text-muted-foreground">
-              Enabled integrations
-            </h3>
-            <span className="text-xs text-muted-foreground">
-              View all ({enabledIntegrations.length})
-            </span>
-          </div>
-          <div className="space-y-1 rounded-lg border bg-card overflow-hidden">
-            {enabledIntegrations.map((integration) => (
+      {connected.length > 0 && (
+        <section className="space-y-3">
+          <h2 className="text-sm font-medium text-muted-foreground">
+            Connected ({connected.length})
+          </h2>
+          <Card className="gap-0 overflow-hidden p-0 shadow-xs dark:shadow-none">
+            {connected.map((integration) => (
               <Link
                 key={integration.slug}
                 href={`/settings/integrations/${integration.slug}`}
-                className="flex items-center gap-3 px-4 py-3 hover:bg-muted/50 transition-colors border-b last:border-b-0"
+                className="group flex items-center gap-3 border-b px-4 py-3 transition-colors last:border-b-0 hover:bg-accent/40"
               >
-                <div className="border border-border flex size-8 items-center justify-center rounded-md bg-background p-1.5 shrink-0">
-                  <img
-                    src={integration.logos.light}
-                    alt={`${integration.name} logo`}
-                    className="size-full object-contain dark:hidden"
-                  />
-                  <img
-                    src={integration.logos.dark}
-                    alt={`${integration.name} logo`}
-                    className="hidden size-full object-contain dark:block"
-                  />
-                </div>
+                <IntegrationLogo
+                  logo={logoForIntegration(integration.slug, integration.logos)}
+                  size="sm"
+                />
                 <div className="min-w-0 flex-1">
                   <span className="text-sm font-medium">
                     {integration.name}
@@ -145,47 +172,98 @@ export function IntegrationsClient({ integrations }: IntegrationsClientProps) {
                       .join(", ")}
                   </p>
                 </div>
-                <ChevronRight className="size-4 text-muted-foreground" />
+                <ArrowRight
+                  aria-hidden
+                  className="size-4 text-muted-foreground transition-transform duration-200 group-hover:translate-x-0.5"
+                />
               </Link>
             ))}
+          </Card>
+        </section>
+      )}
+
+      {filtered.length > 0 && (
+        <section className="space-y-3">
+          <h2 className="text-sm font-medium text-muted-foreground">
+            Connect an account
+          </h2>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {filtered.map((integration) => (
+              <IntegrationCard
+                key={integration.slug}
+                slug={integration.slug}
+                name={integration.name}
+                description={integration.description}
+                logos={integration.logos}
+                capabilities={integration.capabilities}
+                isConnected={integration.isConnected}
+                needsSetup={integration.needsSetup}
+              />
+            ))}
           </div>
-        </div>
+        </section>
       )}
 
-      {/* No results */}
-      {filtered.length === 0 && (
-        <div className="py-12 text-center">
-          <p className="text-sm text-muted-foreground">
-            No integrations found for &ldquo;{search}&rdquo;
-          </p>
-        </div>
-      )}
-
-      {/* Category sections */}
-      {orderedCategories.map((category) => {
-        const items = byCategory.get(category)!;
-        return (
-          <div key={category} className="space-y-3">
-            <h3 className="text-sm font-semibold">
-              {CATEGORY_LABELS[category]}
-            </h3>
-            <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-              {items.map((integration) => (
-                <IntegrationCard
-                  key={integration.slug}
-                  slug={integration.slug}
-                  name={integration.name}
-                  description={integration.description}
-                  logos={integration.logos}
-                  capabilities={integration.capabilities}
-                  isConnected={integration.isConnected}
-                  isConfigured={integration.isConfigured}
+      {shortcuts.length > 0 && (
+        <section className="space-y-3">
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <h2 className="text-sm font-medium text-muted-foreground">
+              Built into QRdx
+            </h2>
+            <Link
+              href="/integrations"
+              className="inline-flex items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
+            >
+              All integrations
+              <ArrowRight aria-hidden className="size-3.5" />
+            </Link>
+          </div>
+          <Card className="gap-0 overflow-hidden p-0 shadow-xs dark:shadow-none">
+            {shortcuts.map((shortcut) => (
+              <Link
+                key={shortcut.title}
+                href={shortcut.href}
+                className="group flex items-center gap-4 border-b px-4 py-3.5 transition-colors last:border-b-0 hover:bg-accent/40"
+              >
+                <span className="flex shrink-0 -space-x-2">
+                  {shortcut.entries.slice(0, 3).map((entry, index) => (
+                    <IntegrationLogo
+                      key={entry.slug}
+                      logo={entry.logo}
+                      size="sm"
+                      className={cn(
+                        "ring-2 ring-card",
+                        index > 0 && "hidden sm:grid",
+                      )}
+                    />
+                  ))}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <span className="text-sm font-medium">{shortcut.title}</span>
+                  <p className="text-muted-foreground text-xs leading-relaxed text-pretty">
+                    {shortcut.description}
+                  </p>
+                </div>
+                <ArrowRight
+                  aria-hidden
+                  className="size-4 shrink-0 text-muted-foreground transition-transform duration-200 group-hover:translate-x-0.5"
                 />
-              ))}
-            </div>
-          </div>
-        );
-      })}
+              </Link>
+            ))}
+          </Card>
+        </section>
+      )}
+
+      {nothing && (
+        <Card className="items-center gap-3 px-6 py-10 text-center shadow-xs dark:shadow-none">
+          <p className="text-sm text-muted-foreground">
+            No integrations match &ldquo;{search.trim()}&rdquo;.
+          </p>
+          <Button variant="outline" size="sm" onClick={() => setSearch("")}>
+            Clear search
+          </Button>
+        </Card>
+      )}
     </div>
   );
 }

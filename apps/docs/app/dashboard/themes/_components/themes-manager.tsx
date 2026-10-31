@@ -10,7 +10,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@repo/design-system/components/ui/select";
-import { ArrowUpDown, Lock, Plus, Search } from "lucide-react";
+import {
+  ArrangeVertical as ArrowUpDown,
+  Lock,
+  Add as Plus,
+  SearchNormal1 as Search,
+} from "iconsax-reactjs";
 import Link from "next/link";
 import { useState } from "react";
 import { HairlineFigure } from "@/components/mockups/hairline";

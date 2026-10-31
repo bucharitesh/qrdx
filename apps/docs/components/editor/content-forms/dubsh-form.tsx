@@ -1,5 +1,6 @@
 "use client";
 
+import { Tick as Check, Spinner } from "@repo/design-system/components/icons";
 import {
   Alert,
   AlertDescription,
@@ -28,11 +29,18 @@ import {
   TabsTrigger,
 } from "@repo/design-system/components/ui/tabs";
 import { cn } from "@repo/design-system/lib/utils";
+import { ArrowSwapVertical, ExportSquare, InfoCircle } from "iconsax-reactjs";
 import * as React from "react";
 import { toast } from "sonner";
-import { Icons } from "@/components/icons";
+import { NeedsSetupNote } from "@/components/needs-setup";
+import {
+  IntegrationLogo,
+  logoForIntegration,
+} from "@/components/sections/integrations/integration-logo";
 import { apiFetch } from "@/lib/api-fetch";
 import { useDubIntegration } from "@/lib/hooks/use-dub-integration";
+import { useIntegrationAvailability } from "@/lib/hooks/use-integration-availability";
+import { isHiddenIn, needsSetupIn } from "@/lib/integration-availability-view";
 import type { DubshFormData } from "@/lib/validations/qr-content";
 import { dubshSchema } from "@/lib/validations/qr-content";
 import { useQREditorStore } from "@/store/editor-store";
@@ -75,6 +83,10 @@ export function DubshForm() {
   const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
   const { links, isLoading, isMutating, isConnected, error, createLink } =
     useDubIntegration();
+  // Offer "Connect Dub" only where Dub is set up (production hides it).
+  const availability = useIntegrationAvailability();
+  const canConnect = Boolean(availability && !isHiddenIn(availability, "dub"));
+  const dubSetup = availability ? needsSetupIn(availability, "dub") : undefined;
 
   // Initialize from stored config or use defaults
   const storedConfig = getContentConfig("dubsh") as DubshContent | undefined;
@@ -173,7 +185,7 @@ export function DubshForm() {
     <div className="space-y-3">
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="dubsh-short-url">
-          Dub.sh Short URL *
+          Dub short link *
         </Label>
         <Input
           id="dubsh-short-url"
@@ -203,24 +215,25 @@ export function DubshForm() {
     </div>
   );
 
-  if (!isConnected && mode !== "manual") {
+  if (!isConnected && mode !== "manual" && canConnect) {
     return (
       <div className="space-y-3">
         <div className="rounded-xl border bg-card p-4">
           <div className="flex items-start gap-3">
-            <div className="flex size-10 shrink-0 items-center justify-center rounded-full border bg-white p-2">
-              <img
-                src="/integrations/dub-icon.svg"
-                alt="Dub logo"
-                className="size-full object-contain"
-              />
-            </div>
+            <IntegrationLogo
+              className="size-10"
+              logo={logoForIntegration("dub", {
+                light: "/integrations/dub-icon.svg",
+              })}
+              size="sm"
+            />
             <div className="min-w-0 flex-1 space-y-3">
               <div className="space-y-1">
                 <p className="text-sm font-medium">Connect Dub</p>
                 <p className="text-muted-foreground text-xs leading-relaxed">
                   Connect Dub to create, select, and track Dub-powered QR codes.
                 </p>
+                <NeedsSetupNote names={dubSetup} />
               </div>
               <div className="flex flex-wrap gap-2">
                 <Button
@@ -230,7 +243,7 @@ export function DubshForm() {
                   disabled={isConnecting}
                 >
                   {isConnecting && (
-                    <Icons.Loader className="mr-1.5 size-3.5 animate-spin" />
+                    <Spinner className="mr-1.5 size-3.5 animate-spin" />
                   )}
                   Connect Dub
                 </Button>
@@ -259,7 +272,7 @@ export function DubshForm() {
     <div className="space-y-3">
       {error && (
         <Alert variant="destructive">
-          <Icons.AlertCircle />
+          <InfoCircle />
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
@@ -366,7 +379,7 @@ export function DubshForm() {
               disabled={isMutating || !createData.url.trim()}
             >
               {isMutating && (
-                <Icons.Loader className="mr-1.5 size-3.5 animate-spin" />
+                <Spinner className="mr-1.5 size-3.5 animate-spin" />
               )}
               Create Dub link
             </Button>
@@ -412,7 +425,7 @@ export function DubshForm() {
                         Select a short link...
                       </span>
                     )}
-                    <Icons.ChevronsUpDown className="ml-2 size-4 shrink-0 opacity-50" />
+                    <ArrowSwapVertical className="ml-2 size-4 shrink-0 opacity-50" />
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-[400px] p-0">
@@ -444,7 +457,7 @@ export function DubshForm() {
                               className="flex items-center justify-between"
                             >
                               <div className="flex items-center gap-2">
-                                <Icons.Check
+                                <Check
                                   className={cn(
                                     "size-4",
                                     isSelected ? "opacity-100" : "opacity-0",
@@ -465,7 +478,7 @@ export function DubshForm() {
                                     {link.clicks}
                                   </span>
                                 )}
-                                <Icons.ExternalLink className="size-3 text-muted-foreground" />
+                                <ExportSquare className="size-3 text-muted-foreground" />
                               </div>
                             </CommandItem>
                           );

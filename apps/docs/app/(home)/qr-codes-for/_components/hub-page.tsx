@@ -1,9 +1,13 @@
-import { ArrowRight } from "lucide-react";
-import Link from "next/link";
 import { SectionHeader } from "@/components/sections/section-header";
+import {
+  CardGrid,
+  type CardIcon,
+  LinkCard,
+} from "@/components/sections/tools/cards";
 import { FaqList } from "@/components/sections/tools/faq-list";
 import { JsonLd } from "@/components/sections/tools/json-ld";
 import { ToolHero } from "@/components/sections/tools/tool-hero";
+import { topicIcon } from "@/components/sections/tools/topic-icons";
 import { baseUrl } from "@/lib/metadata";
 import type { SeoCollection } from "@/lib/seo-content";
 
@@ -13,7 +17,12 @@ interface HubPageProps {
   intro: string[];
   faqs: { question: string; answer: string }[];
   /** Cross-links shown under the groups. */
-  links: { href: string; title: string; description: string; cta: string }[];
+  links: {
+    href: string;
+    title: string;
+    description: string;
+    icon: CardIcon;
+  }[];
 }
 
 export function HubPage({
@@ -64,44 +73,38 @@ export function HubPage({
               {group.description}
             </p>
           </SectionHeader>
-          <div className="w-full px-6 md:px-10 py-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <CardGrid
+            count={group.items.length}
+            className="w-full px-6 md:px-10 py-10"
+          >
             {group.items.map((item) => (
-              <Link
+              <LinkCard
                 key={item.slug}
                 href={collection.path(item.slug)}
-                className="group rounded-xl border border-border bg-accent/50 hover:bg-accent transition-colors p-4 flex flex-col gap-1"
-              >
-                <span className="flex items-center gap-2 font-medium text-secondary-foreground">
-                  {item.title}
-                  <ArrowRight className="ml-auto size-4 shrink-0 text-muted-foreground group-hover:translate-x-0.5 transition-transform" />
-                </span>
-                <span className="text-sm text-muted-foreground">
-                  {item.summary}
-                </span>
-              </Link>
+                icon={topicIcon(item.slug, group.id)}
+                title={item.title}
+                description={item.summary}
+              />
             ))}
-          </div>
+          </CardGrid>
         </section>
       ))}
 
-      <section className="w-full px-6 md:px-10 py-10 grid gap-6 md:grid-cols-3">
-        {links.map((link) => (
-          <div key={link.href} className="flex flex-col gap-2">
-            <h2 className="text-xl font-medium tracking-tighter">
-              {link.title}
-            </h2>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              {link.description}
-            </p>
-            <Link
+      <section
+        aria-label="Related guides and tools"
+        className="w-full px-6 md:px-10 py-10"
+      >
+        <CardGrid count={links.length}>
+          {links.map((link) => (
+            <LinkCard
+              key={link.href}
               href={link.href}
-              className="text-sm font-medium inline-flex items-center gap-1 hover:underline"
-            >
-              {link.cta}
-              <ArrowRight className="size-3.5" />
-            </Link>
-          </div>
-        ))}
+              icon={link.icon}
+              title={link.title}
+              description={link.description}
+            />
+          ))}
+        </CardGrid>
       </section>
 
       <FaqList title={`${collection.hubName}: FAQ`} faqs={faqs} />

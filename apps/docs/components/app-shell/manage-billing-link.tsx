@@ -1,7 +1,10 @@
 "use client";
 
 import { Button } from "@repo/design-system/components/ui/button";
-import { CreditCard, ExternalLink } from "lucide-react";
+import {
+  Card as CreditCard,
+  ExportSquare as ExternalLink,
+} from "iconsax-reactjs";
 import { useSubscription } from "@/lib/hooks/use-subscription";
 
 /** Opens the Polar customer portal; only subscribers have one. */

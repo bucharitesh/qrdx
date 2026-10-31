@@ -15,7 +15,11 @@ import { z } from "zod";
  * QR Code Style Configuration Schema
  */
 export const themeStylePropsSchema = z.object({
-  size: z.number().optional().describe("Size of the QR code in pixels"),
+  size: z
+    .number()
+    .positive()
+    .optional()
+    .describe("Size of the QR code in pixels"),
   bgColor: colorConfigSchema
     .optional()
     .describe(
@@ -48,7 +52,11 @@ export const themeStylePropsSchema = z.object({
   level: errorLevelSchema
     .optional()
     .describe("Error correction level (L, M, Q, H)"),
-  margin: z.number().optional().describe("Margin around the QR code"),
+  margin: z
+    .number()
+    .min(0)
+    .optional()
+    .describe("Margin (quiet zone) around the QR code, in modules"),
   templateId: z.string().optional().describe("Template/frame ID to use"),
   frame: frameSchema
     .optional()
@@ -78,11 +86,28 @@ export interface ThemeEditorControlsProps {
   themePromise: Promise<Theme | null>;
 }
 
+/** Shelf a built-in theme sits on in the theme gallery. */
+export type ThemeCategory =
+  | "essentials"
+  | "brand"
+  | "pastel"
+  | "bold"
+  | "dark"
+  | "gradient"
+  | "elegant"
+  | "playful"
+  | "industry"
+  | "seasonal";
+
 export type ThemePreset = {
   source?: "SAVED" | "BUILT_IN";
   createdAt?: string;
   label?: string;
   styles: ThemeStyles;
+  /** Built-in themes only: gallery shelf */
+  category?: ThemeCategory;
+  /** Built-in themes only: extra search words */
+  tags?: string[];
 };
 
 // Type alias for backward compatibility

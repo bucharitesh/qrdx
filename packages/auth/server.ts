@@ -2,8 +2,15 @@ import * as schema from "@repo/database";
 import { database as db } from "@repo/database";
 import { type BetterAuthOptions, betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { admin, lastLoginMethod, organization } from "better-auth/plugins";
+import { APIError, createAuthMiddleware } from "better-auth/api";
+import {
+  admin,
+  emailOTP,
+  lastLoginMethod,
+  organization,
+} from "better-auth/plugins";
 import { getAdminUserIds } from "./admin";
+import { sendVerificationOTP } from "./email-otp";
 import { keys } from "./keys";
 import {
   ENTITLED_SUBSCRIPTION_STATUSES,
@@ -93,14 +100,75 @@ const socialProviders: BetterAuthOptions["socialProviders"] = {
     : {}),
 };
 
+// Email sign-in codes: request one, then sign in with it. Everything else the
+// emailOTP plugin offers (verification, password reset, email change) is off.
+const SEND_CODE_PATH = "/email-otp/send-verification-otp";
+const SIGN_IN_CODE_PATH = "/sign-in/email-otp";
+const UNUSED_EMAIL_OTP_PATHS = [
+  "/email-otp/check-verification-otp",
+  "/email-otp/verify-email",
+  "/email-otp/request-password-reset",
+  "/forget-password/email-otp",
+  "/email-otp/reset-password",
+  "/email-otp/request-email-change",
+  "/email-otp/change-email",
+];
+
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "pg",
     schema,
   }),
   socialProviders,
+  // Codes live in the core `verification` table. The identifier holds the
+  // address ("sign-in-otp-<email>"), so it is hashed like the code itself.
+  verification: {
+    storeIdentifier: {
+      default: "plain",
+      overrides: { "sign-in-otp-": "hashed" },
+    },
+  },
+  databaseHooks: {
+    user: {
+      create: {
+        // Email-code sign-ups arrive without a name; start with the address's
+        // local part so invites and member lists never show a blank.
+        before: (user) => {
+          if (user.name?.trim()) return Promise.resolve();
+          const name = user.email.split("@")[0] || user.email;
+          return Promise.resolve({ data: { ...user, name } });
+        },
+      },
+    },
+  },
+  hooks: {
+    // Only sign-in codes can be requested (the plugin also accepts
+    // verification and password-reset types, which QRdx doesn't use).
+    before: createAuthMiddleware((ctx) => {
+      if (ctx.path === SEND_CODE_PATH && ctx.body?.type !== "sign-in") {
+        return Promise.reject(
+          new APIError("BAD_REQUEST", { message: "Invalid code type" })
+        );
+      }
+      return Promise.resolve();
+    }),
+  },
   plugins: [
-    lastLoginMethod(),
+    lastLoginMethod({
+      // The plugin doesn't name email-code sign-ins itself; null falls back to
+      // its own detection (Google, GitHub).
+      customResolveMethod: (ctx) =>
+        ctx.path === SIGN_IN_CODE_PATH ? "email-otp" : null,
+    }),
+    // A first sign-in creates the account, like social sign-in.
+    emailOTP({
+      otpLength: 6,
+      expiresIn: 5 * 60,
+      allowedAttempts: 3,
+      storeOTP: "hashed",
+      disableSignUp: false,
+      sendVerificationOTP,
+    }),
     admin({ adminUserIds: getAdminUserIds() }),
     // Teams. Every member can use the team; Pro and Business users can create
     // one (any entitled subscription, see ./plan.ts).
@@ -119,9 +187,20 @@ export const auth = betterAuth({
     }),
   ],
   // The admin panel does not use impersonation or password resets; keep them off the HTTP surface.
-  disabledPaths: ["/admin/impersonate-user", "/admin/set-user-password"],
+  disabledPaths: [
+    "/admin/impersonate-user",
+    "/admin/set-user-password",
+    ...UNUSED_EMAIL_OTP_PATHS,
+  ],
+  // Better Auth enforces these in production only, per IP, in memory.
   rateLimit: {
     window: 10, // time window in seconds
     max: 10, // max requests in the window
+    customRules: {
+      // Each request emails someone: 3 a minute (the dialog waits 30 s between resends).
+      [SEND_CODE_PATH]: { window: 60, max: 3 },
+      // Each code allows 3 tries, so 5 a minute leaves room for one resend.
+      [SIGN_IN_CODE_PATH]: { window: 60, max: 5 },
+    },
   },
 }) as any;

@@ -64,6 +64,8 @@ export interface PlanLimits {
   emailAlerts: boolean;
   /** Webhooks, Zapier and Slack/Discord notifications */
   webhooks: boolean;
+  /** OAuth apps a workspace can register (Settings → Developers) */
+  oauthApps: number;
   /** Form submissions accepted per calendar month across hosted pages */
   formResponsesPerMonth: number;
   /** REST API requests per day */
@@ -103,6 +105,7 @@ export const PLAN_LIMITS: Record<Plan, PlanLimits> = {
     conversions: false,
     emailAlerts: false,
     webhooks: false,
+    oauthApps: 1,
     formResponsesPerMonth: 50,
     apiRequestsPerDay: 1000,
     bulkApi: false,
@@ -133,6 +136,7 @@ export const PLAN_LIMITS: Record<Plan, PlanLimits> = {
     conversions: false,
     emailAlerts: true,
     webhooks: false,
+    oauthApps: 5,
     formResponsesPerMonth: 1000,
     apiRequestsPerDay: 10_000,
     bulkApi: true,
@@ -165,6 +169,7 @@ export const PLAN_LIMITS: Record<Plan, PlanLimits> = {
     conversions: true,
     emailAlerts: true,
     webhooks: true,
+    oauthApps: 25,
     formResponsesPerMonth: 10_000,
     apiRequestsPerDay: 100_000,
     bulkApi: true,

@@ -1,4 +1,9 @@
-import { FileText, ImageIcon, Music, Video } from "lucide-react";
+import {
+  DocumentText as FileText,
+  Gallery as ImageIcon,
+  Music,
+  Video,
+} from "iconsax-reactjs";
 import type { FileKind } from "../types";
 
 const ICONS = {

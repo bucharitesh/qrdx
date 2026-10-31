@@ -3,7 +3,13 @@
   "pages": [
     "privacy-policy",
     "terms-of-service",
+    "acceptable-use-policy",
+    "cookie-policy",
+    "dpa",
     "subprocessors",
+    "ai-features",
+    "refunds",
+    "security",
     "report-abuse"
   ]
 }

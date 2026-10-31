@@ -90,7 +90,7 @@ const pdf = await getQRAsPrintPDF(props, { size: 40, unit: 'mm', colorMode: 'cmy
 const eps = await getQRAsEPS(props, { sizeMm: 40, bleedMm: 3, colorMode: 'cmyk' });
 ```
 
-`getQRAsEPS` writes an EPSF-3.0 file with a `%%BoundingBox` in points and every module, eye and frame as a PostScript path. Like the print PDF it flattens gradients to their first color and has no transparency. PNG and JPEG logos are embedded as images; other logo formats are converted in the browser and left out on the server. Frame text uses Helvetica, so characters outside Latin-1 print as `?`. `svgToEPS(svg, { width })` converts any SVG this library renders.
+`getQRAsEPS` writes an EPSF-3.0 file with a `%%BoundingBox` in points and every module, eye and frame as a PostScript path. Like the print PDF it keeps linear and radial gradients (as PostScript Level 3 shadings) and has no transparency. PNG and JPEG logos are embedded as images; other logo formats are converted in the browser and left out on the server. Frame text uses Helvetica, so characters outside Latin-1 print as `?`. `svgToEPS(svg, { width })` converts any SVG this library renders.
 
 The CLI writes EPS too: `qrdx generate "https://example.com" -o qr.eps`.
 

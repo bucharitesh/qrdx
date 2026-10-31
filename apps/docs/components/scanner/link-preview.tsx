@@ -1,17 +1,17 @@
 "use client";
 
+import { Spinner as LoaderCircle } from "@repo/design-system/components/icons";
 import { cn } from "@repo/design-system/lib/utils";
 import {
-  CircleHelp,
-  ExternalLink,
+  MessageQuestion as CircleHelp,
+  ExportSquare as ExternalLink,
   Flag,
-  Info,
-  LoaderCircle,
-  RotateCw,
-  ShieldAlert,
-  ShieldCheck,
-  TriangleAlert,
-} from "lucide-react";
+  InfoCircle as Info,
+  RotateRight as RotateCw,
+  ShieldCross as ShieldAlert,
+  ShieldTick as ShieldCheck,
+  Warning2 as TriangleAlert,
+} from "iconsax-reactjs";
 import Link from "next/link";
 import { type ReactNode, useEffect, useState } from "react";
 import { OpenButton, type OpenConfirmation } from "./confirm-open";

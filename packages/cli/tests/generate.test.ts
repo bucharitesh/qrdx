@@ -158,7 +158,7 @@ describe("generate command", () => {
         "generate",
         "https://qrdx.dev",
         "--dot",
-        "star",
+        "flower",
         "-o",
         out,
       ]);

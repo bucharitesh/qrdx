@@ -33,7 +33,7 @@ export function AIArtPresetGallery({
     <div className="flex flex-col gap-3">
       <div
         aria-label="Style categories"
-        className="-mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1"
+        className="-mx-1 flex snap-x gap-1.5 overflow-x-auto px-1 pb-1 [mask-image:linear-gradient(to_right,transparent,black_12px,black_calc(100%-24px),transparent)]"
         role="tablist"
       >
         {AI_ART_CATEGORIES.map(({ id, label }) => (
@@ -42,7 +42,7 @@ export function AIArtPresetGallery({
             className={cn(
               "shrink-0 rounded-full border px-3 py-1 text-xs font-medium transition-colors",
               category === id
-                ? "border-primary bg-primary text-primary-foreground"
+                ? "border-foreground bg-foreground text-background"
                 : "bg-background text-muted-foreground hover:text-foreground",
             )}
             disabled={disabled}
@@ -62,8 +62,8 @@ export function AIArtPresetGallery({
             <button
               aria-pressed={isActive}
               className={cn(
-                "bg-background hover:border-primary/50 flex flex-col overflow-hidden rounded-lg border text-left transition-all disabled:pointer-events-none disabled:opacity-50",
-                isActive && "border-primary ring-primary/20 ring-2",
+                "bg-background hover:border-foreground/30 flex flex-col overflow-hidden rounded-lg border text-left transition-all disabled:pointer-events-none disabled:opacity-50",
+                isActive && "border-foreground ring-foreground/15 ring-2",
               )}
               disabled={disabled}
               key={preset.id}

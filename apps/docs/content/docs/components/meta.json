@@ -1,0 +1,15 @@
+{
+  "$schema": "../../../.source/json-schema/docs.meta.json",
+  "title": "Components",
+  "icon": "Blocks",
+  "pages": [
+    "qr-code",
+    "qr-code-card",
+    "qr-code-download",
+    "qr-code-share-dialog",
+    "qr-code-generator",
+    "qr-code-scanner",
+    "wifi-qr-code",
+    "vcard-qr-code"
+  ]
+}

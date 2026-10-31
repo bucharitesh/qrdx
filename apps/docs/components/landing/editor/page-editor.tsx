@@ -1,6 +1,7 @@
 "use client";
 
 import { toast } from "@repo/design-system";
+import { Spinner as Loader2 } from "@repo/design-system/components/icons";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
@@ -12,20 +13,19 @@ import {
 } from "@repo/design-system/components/ui/tabs";
 import { cn } from "@repo/design-system/lib/utils";
 import {
-  AlertCircle,
+  InfoCircle as AlertCircle,
   ArrowDown,
   ArrowLeft,
   ArrowUp,
-  ChevronDown,
+  ArrowDown2 as ChevronDown,
   Copy,
-  ExternalLink,
+  ExportSquare as ExternalLink,
   Eye,
-  EyeOff,
-  GripVertical,
-  Loader2,
-  QrCode,
-  Trash2,
-} from "lucide-react";
+  EyeSlash as EyeOff,
+  Menu as GripVertical,
+  ScanBarcode as QrCode,
+  Trash as Trash2,
+} from "iconsax-reactjs";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {

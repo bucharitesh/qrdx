@@ -1,10 +1,11 @@
 "use client";
 
 import { toast } from "@repo/design-system";
+import { Close as X } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
-import { Plus, X } from "lucide-react";
+import { Add as Plus } from "iconsax-reactjs";
 import Link from "next/link";
 import { Suspense, useId, useState, useTransition } from "react";
 import {
@@ -130,6 +131,7 @@ function UtmEditor({ initial }: { initial: CodeMarketingSettings }) {
           </Link>
         </>
       }
+      hint="utm"
       title="UTM parameters"
     >
       {locked && (

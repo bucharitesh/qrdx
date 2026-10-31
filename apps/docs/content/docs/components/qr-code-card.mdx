@@ -1,0 +1,60 @@
+---
+title: QR Code Card
+description: A card with a QR code in a "Scan me" frame, a title, a description and room for actions.
+icon: Frame
+---
+
+<ComponentLinks name="qr-code-card" />
+
+<ComponentPreview name="qr-code-card-demo" />
+
+## Installation
+
+<InstallationTabs name="qr-code-card" />
+
+## Usage
+
+```tsx
+import { QrCodeCard } from "@/components/qr-code-card";
+```
+
+```tsx
+<QrCodeCard
+  value="https://example.com/menu"
+  title="Our menu"
+  description="Scan to see today's specials."
+/>
+```
+
+Anything you pass as children renders in the card footer, such as a copy button or a [download menu](/docs/components/qr-code-download).
+
+## Examples
+
+### Frames
+
+`frame` puts the call to action under the code (`"bottom"`), above it (`"top"`) or leaves the frame out (`"none"`). `cta` changes the label, and `frameClassName` restyles the frame, for example with your brand color.
+
+<ComponentPreview name="qr-code-card-frames" />
+
+The frame uses your theme's `foreground` and `background` colors by default, so it stays legible in light and dark mode. The code itself keeps a light background, which every scanner reads.
+
+### Styling the code
+
+`qr` takes any qrdx style option: `fgColor`, `bgColor`, gradients, `bodyPattern`, corner patterns, `logo` and `templateId`.
+
+```tsx
+<QrCodeCard
+  value="https://example.com"
+  qr={{
+    fgColor: "#155DFC",
+    bodyPattern: "rounded",
+    cornerEyePattern: "extra-rounded",
+  }}
+/>
+```
+
+## API Reference
+
+<auto-type-table path="../../../registry/qrdx/qr-code-card.tsx" type="{ [K in keyof QrCodeCardProps as K extends Exclude<keyof ComponentProps<'div'>, 'title' | 'children'> ? never : K]: QrCodeCardProps[K] }" />
+
+Any other prop, such as `className`, is passed to the [Card](https://ui.shadcn.com/docs/components/card).

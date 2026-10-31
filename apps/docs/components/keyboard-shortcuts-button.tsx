@@ -18,6 +18,7 @@ export function KeyboardShortcutsButton({
   return (
     <TooltipWrapper label="Keyboard shortcuts" kbd="?" asChild>
       <Button
+        aria-label="Keyboard shortcuts"
         variant="ghost"
         size="icon"
         className={cn("cursor-pointer", className)}

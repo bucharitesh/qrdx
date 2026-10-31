@@ -26,6 +26,10 @@ export interface OAuthConfig {
   pkce?: boolean;
   responseType?: string;
   extraParams?: Record<string, string>;
+  /** How the token endpoint authenticates the client (default: in the body). */
+  tokenAuth?: "body" | "basic";
+  /** Token request encoding (default: form). Notion expects JSON. */
+  tokenFormat?: "form" | "json";
 }
 
 /**
@@ -42,7 +46,8 @@ export interface TokenResponse {
 /**
  * Integration type
  */
-export type IntegrationType = "oauth" | "api_key" | "webhook";
+/** "none": works without connecting (smart link parsers like YouTube). */
+export type IntegrationType = "oauth" | "api_key" | "webhook" | "none";
 
 /**
  * Integration category

@@ -1,9 +1,9 @@
 "use client";
 
 import { authClient } from "@repo/auth/client";
+import { Close as X } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
-import { X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { AI_REQUEST_FREE_TIER_LIMIT } from "@/lib/constants";

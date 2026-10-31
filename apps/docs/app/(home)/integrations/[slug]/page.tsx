@@ -1,264 +1,348 @@
-import type { IntegrationCategory } from "@repo/integrations";
+import { Badge } from "@repo/design-system/components/ui/badge";
+import { Card } from "@repo/design-system/components/ui/card";
+import { cn } from "@repo/design-system/lib/utils";
 import {
-  getCapabilityLabel,
-  getIntegrationRegistry,
-  initializeIntegrations,
-} from "@repo/integrations";
-import { ExternalLink } from "lucide-react";
+  CATALOG_KIND_DESCRIPTIONS,
+  CATALOG_KIND_LABELS,
+  CATALOG_PLAN_LABELS,
+  type CatalogSnippet,
+  getCatalogEntry,
+  getCatalogRedirect,
+  getCategoryLabel,
+  getIntegrationCatalog,
+  getRelatedEntries,
+  withOrigin,
+} from "@repo/integrations/src/catalog";
+import { ArrowRight, InfoCircle } from "iconsax-reactjs";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
+import type { ReactNode } from "react";
+import { GridLines } from "@/components/fx";
+import { NeedsSetupNote } from "@/components/needs-setup";
 import { Breadcrumbs } from "@/components/sections/breadcrumbs";
-import { SectionHeader } from "@/components/sections/section-header";
-import { createMetadata } from "@/lib/metadata";
-import { IntegrationCard } from "../components/integrations-grid";
-
-initializeIntegrations();
-
-const CATEGORY_LABELS: Record<IntegrationCategory, string> = {
-  analytics: "Analytics",
-  storage: "Storage",
-  assets: "Assets",
-  marketing: "Marketing",
-  crm: "CRM",
-  communication: "Communication",
-};
+import { CodeSnippet } from "@/components/sections/integrations/code-snippet";
+import { IntegrationAction } from "@/components/sections/integrations/integration-action";
+import { IntegrationCard } from "@/components/sections/integrations/integration-card";
+import { IntegrationLogo } from "@/components/sections/integrations/integration-logo";
+import { resolveAction } from "@/components/sections/integrations/resolve-action";
+import { breadcrumbSchema, JsonLd } from "@/components/sections/tools/json-ld";
+import { getIntegrationAvailability } from "@/lib/integration-availability";
+import { isVisible, setupNeeded } from "@/lib/integration-availability-rules";
+import { baseUrl, createMetadata } from "@/lib/metadata";
 
 interface IntegrationPageProps {
   params: Promise<{ slug: string }>;
+}
+
+// Every slug, including the ones that moved: those prerender as a 308 to
+// their new page (getCatalogRedirect), so old links and bookmarks keep working.
+export function generateStaticParams() {
+  return getIntegrationCatalog().map((entry) => ({ slug: entry.slug }));
 }
 
 export async function generateMetadata({
   params,
 }: IntegrationPageProps): Promise<Metadata> {
   const { slug } = await params;
-  initializeIntegrations();
-  const registry = getIntegrationRegistry();
-  const integration = registry.get(slug);
-  if (!integration) return {};
+  const entry = getCatalogEntry(slug);
+  if (
+    !entry ||
+    getCatalogRedirect(entry) ||
+    !isVisible(getIntegrationAvailability(), entry.slug)
+  ) {
+    return {};
+  }
   return createMetadata({
-    title: `${integration.name} Integration`,
-    description: integration.description,
-    path: `/integrations/${integration.slug}`,
+    title: `${entry.name} integration`,
+    description: entry.tagline,
+    path: `/integrations/${entry.slug}`,
   });
+}
+
+const ORIGIN = baseUrl.origin;
+
+const linkClass =
+  "font-medium text-foreground underline decoration-foreground/30 underline-offset-4 transition-colors hover:decoration-foreground";
+
+function Section({
+  id,
+  title,
+  description,
+  children,
+}: {
+  id: string;
+  title: string;
+  description?: string;
+  children: ReactNode;
+}) {
+  return (
+    <section aria-labelledby={id} className="flex scroll-mt-24 flex-col gap-5">
+      <div className="flex flex-col gap-1">
+        <h2
+          id={id}
+          className="text-xl font-semibold tracking-tight text-balance md:text-2xl"
+        >
+          {title}
+        </h2>
+        {description && (
+          <p className="text-sm text-muted-foreground text-pretty">
+            {description}
+          </p>
+        )}
+      </div>
+      {children}
+    </section>
+  );
+}
+
+function Snippet({ snippet }: { snippet: CatalogSnippet }) {
+  return (
+    <CodeSnippet
+      code={withOrigin(snippet.code, ORIGIN)}
+      label={snippet.label}
+      wrap={snippet.language === "bash" || snippet.language === "text"}
+    />
+  );
+}
+
+function MetaRow({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <div className="flex flex-col gap-0.5 py-3 first:pt-0 last:pb-0">
+      <dt className="text-xs text-muted-foreground">{label}</dt>
+      <dd className="text-sm font-medium text-foreground">{children}</dd>
+    </div>
+  );
 }
 
 export default async function IntegrationDetailPage({
   params,
 }: IntegrationPageProps) {
   const { slug } = await params;
+  const entry = getCatalogEntry(slug);
+  if (!entry) notFound();
+  // AI assistants, developer tools, plugins and QRdx features have their own
+  // pages now; /integrations only covers third-party connections.
+  const moved = getCatalogRedirect(entry);
+  if (moved) permanentRedirect(moved);
+  // Needs setup on QRdx's side: hidden in production, flagged in local dev.
+  const availability = getIntegrationAvailability();
+  if (!isVisible(availability, entry.slug)) notFound();
 
-  const registry = getIntegrationRegistry();
-  const integration = registry.get(slug);
-
-  if (!integration) notFound();
-
-  const allIntegrations = registry.getAll();
-  const popular = allIntegrations.filter((i) => i.slug !== slug).slice(0, 6);
-
-  const installSteps = [
-    `Click "${integration.configurable ? "Connect" : "Enable"}" to start the OAuth authorization flow`,
-    `You'll be redirected to ${integration.name} to grant QRdx the required permissions`,
-    `Once authorized, you'll be sent back to QRdx and the integration will be active immediately`,
+  const related = getRelatedEntries(entry, 3, (item) =>
+    isVisible(availability, item.slug),
+  );
+  const needsSetup = setupNeeded(availability, entry.slug);
+  const primary = resolveAction(entry.primaryAction, ORIGIN);
+  const secondary = entry.secondaryAction
+    ? resolveAction(entry.secondaryAction, ORIGIN)
+    : null;
+  const crumbs = [
+    { name: "Home", path: "/" },
+    { name: "Integrations", path: "/integrations" },
+    { name: entry.name, path: `/integrations/${entry.slug}` },
   ];
 
   return (
-    <main className="w-full min-h-screen divide-y divide-border mt-20">
-      {/* Breadcrumb bar */}
-      <div className="px-8 md:px-10 py-3">
-        <Breadcrumbs
-          align="start"
-          items={[
-            { name: "Home", path: "/" },
-            { name: "Integrations", path: "/integrations" },
-            { name: integration.name, path: `/integrations/${slug}` },
-          ]}
-        />
-      </div>
+    <main className="flex w-full flex-col">
+      <JsonLd data={breadcrumbSchema(crumbs)} />
 
-      {/* Two-column body */}
-      <div className="flex flex-col lg:flex-row lg:divide-x divide-border px-6">
-        {/* ── Left sidebar ── */}
-        <aside className="w-full md:w-72 shrink-0 flex flex-col gap-8 p-6">
-          {/* Logo */}
-          <div className="bg-background border border-border flex size-20 items-center justify-center rounded-full p-3.5 shadow-sm">
-            {integration.logos.light ? (
-              <>
-                <img
-                  src={integration.logos.light}
-                  alt={`${integration.name} logo`}
-                  className="size-full object-contain dark:hidden"
-                />
-                <img
-                  src={integration.logos.dark}
-                  alt={`${integration.name} logo`}
-                  className="hidden size-full object-contain dark:block"
-                />
-              </>
-            ) : (
-              <ExternalLink className="size-8 text-muted-foreground" />
-            )}
+      <header className="relative isolate overflow-hidden border-b">
+        <GridLines className="-z-10" />
+        <div className="flex flex-col gap-8 px-6 pt-8 pb-10 md:px-10 md:pt-10 md:pb-12">
+          <Breadcrumbs align="start" items={crumbs} />
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+            <div className="flex min-w-0 flex-col gap-5 sm:flex-row sm:items-start">
+              <IntegrationLogo logo={entry.logo} size="lg" />
+              <div className="flex min-w-0 flex-col gap-2.5">
+                <h1 className="text-3xl font-semibold tracking-tighter text-balance text-secondary-foreground md:text-4xl">
+                  {entry.name}
+                </h1>
+                <p className="max-w-2xl text-base leading-relaxed text-muted-foreground text-pretty md:text-lg">
+                  {entry.tagline}
+                </p>
+                <div className="flex flex-wrap gap-1.5 pt-1">
+                  <Badge variant="outline">
+                    {CATALOG_KIND_LABELS[entry.kind]}
+                  </Badge>
+                  {entry.categories.map((category) => (
+                    <Badge
+                      key={category}
+                      variant="outline"
+                      className="text-muted-foreground"
+                    >
+                      {getCategoryLabel(category)}
+                    </Badge>
+                  ))}
+                  <Badge variant="outline" className="text-muted-foreground">
+                    {entry.plan === "no-account"
+                      ? "No account needed"
+                      : `${CATALOG_PLAN_LABELS[entry.plan]} plan`}
+                  </Badge>
+                </div>
+              </div>
+            </div>
+            <div className="flex shrink-0 flex-wrap gap-2.5">
+              <IntegrationAction action={primary} />
+              {secondary && (
+                <IntegrationAction action={secondary} variant="outline" />
+              )}
+            </div>
           </div>
-
-          {/* Name + badge */}
-          <div className="space-y-2">
-            <h1 className="text-2xl font-bold tracking-tight">
-              {integration.name}
-            </h1>
-            {!integration.configurable && (
-              <span className="inline-flex rounded-full border border-yellow-200 bg-yellow-50 px-2.5 py-0.5 text-xs font-semibold text-yellow-700 dark:border-yellow-800 dark:bg-yellow-950 dark:text-yellow-400">
-                Coming Soon
-              </span>
-            )}
-          </div>
-
-          {/* CTA */}
-          {integration.configurable ? (
-            <Link
-              href={`/settings/integrations/${integration.slug}`}
-              className="flex h-10 w-full items-center justify-center rounded-lg bg-foreground text-background text-sm font-semibold transition-colors hover:bg-foreground/90"
-            >
-              Connect to QRdx
-            </Link>
+          {needsSetup ? (
+            <NeedsSetupNote names={needsSetup} className="text-sm" />
           ) : (
-            <span className="flex h-10 w-full items-center justify-center rounded-lg border border-border text-sm font-medium text-muted-foreground cursor-not-allowed select-none">
-              Coming Soon
-            </span>
-          )}
-
-          {/* Meta */}
-          <div className="flex flex-col gap-5 text-sm">
-            {integration.developedBy && (
-              <div className="space-y-1">
-                <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                  Built by
-                </p>
-                <p className="font-medium">{integration.developedBy}</p>
-              </div>
-            )}
-
-            {integration.category.length > 0 && (
-              <div className="space-y-1">
-                <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                  Category
-                </p>
-                <p className="font-medium">
-                  {integration.category
-                    .map((c) => CATEGORY_LABELS[c])
-                    .join(", ")}
-                </p>
-              </div>
-            )}
-
-            {integration.website && (
-              <div className="space-y-1">
-                <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                  Website
-                </p>
-                <a
-                  href={integration.website}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-medium text-foreground hover:underline underline-offset-4"
-                >
-                  {new URL(integration.website).hostname}
-                </a>
-              </div>
-            )}
-          </div>
-        </aside>
-
-        {/* ── Main content ── */}
-        <div className="flex-1 min-w-0 space-y-10 p-6 md:p-10">
-          {/* Description */}
-          <div className="space-y-4">
-            <h2 className="text-xl font-semibold tracking-tight">
-              Description
-            </h2>
-            <p className="text-base text-muted-foreground leading-relaxed">
-              {integration.description}
-            </p>
-          </div>
-
-          {/* Features */}
-          {integration.features.length > 0 && (
-            <div className="space-y-4">
-              <h2 className="text-xl font-semibold tracking-tight">Features</h2>
-              <p className="text-sm text-muted-foreground">
-                The following capabilities are supported.
+            entry.note && (
+              <p className="flex items-center gap-2 text-sm text-muted-foreground">
+                <InfoCircle aria-hidden className="size-4 shrink-0" />
+                {entry.note}
               </p>
-              <ul className="space-y-2.5 mt-2">
-                {integration.features.map((feature) => (
-                  <li
-                    key={feature}
-                    className="flex items-center gap-2.5 text-sm"
-                  >
-                    <span className="size-1.5 rounded-full bg-foreground/40 shrink-0" />
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-            </div>
+            )
           )}
+        </div>
+      </header>
 
-          {integration.capabilities.length > 0 && (
-            <div className="space-y-4">
-              <h2 className="text-xl font-semibold tracking-tight">
-                QRDX capabilities
-              </h2>
-              <div className="grid gap-3 sm:grid-cols-2">
-                {integration.capabilities.map((capability) => (
-                  <div key={capability.id} className="rounded-xl border p-4">
-                    <p className="text-sm font-medium">{capability.label}</p>
-                    <p className="mt-1 text-muted-foreground text-xs">
-                      {getCapabilityLabel(capability.kind)}
-                    </p>
-                    <p className="mt-2 text-muted-foreground text-sm">
-                      {capability.description}
-                    </p>
+      <div className="grid gap-12 px-6 py-12 md:px-10 md:py-14 lg:grid-cols-[minmax(0,1fr)_17rem] lg:gap-14">
+        <div className="flex min-w-0 flex-col gap-14">
+          <Section id="about" title="What it does">
+            <div className="flex max-w-3xl flex-col gap-3 text-base leading-relaxed text-muted-foreground text-pretty">
+              {entry.description.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+            </div>
+          </Section>
+
+          <Section id="setup" title="Set it up">
+            <ol className="flex max-w-3xl flex-col">
+              {entry.steps.map((step, index) => (
+                <li
+                  key={step.title}
+                  className="relative grid grid-cols-[2rem_minmax(0,1fr)] gap-4 pb-8 last:pb-0"
+                >
+                  {index < entry.steps.length - 1 && (
+                    <span
+                      aria-hidden
+                      className="absolute top-10 bottom-2 left-4 w-px bg-border"
+                    />
+                  )}
+                  <span className="grid size-8 place-items-center rounded-full border bg-card text-sm font-medium tabular-nums">
+                    {index + 1}
+                  </span>
+                  <div className="flex min-w-0 flex-col gap-2 pt-1">
+                    <h3 className="font-medium leading-snug">{step.title}</h3>
+                    {step.body && (
+                      <p className="text-sm leading-relaxed text-muted-foreground text-pretty">
+                        {step.body}
+                      </p>
+                    )}
+                    {step.snippet && <Snippet snippet={step.snippet} />}
                   </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* How to install */}
-          <div className="space-y-4">
-            <h2 className="text-xl font-semibold tracking-tight">
-              How to install
-            </h2>
-            <ol className="space-y-3 mt-2">
-              {installSteps.map((step, idx) => (
-                <li key={idx} className="flex items-start gap-3 text-sm">
-                  <span className="mt-px flex size-5 shrink-0 items-center justify-center rounded-full bg-muted text-xs font-semibold text-foreground">
-                    {idx + 1}
-                  </span>
-                  <span className="text-muted-foreground leading-relaxed">
-                    {step}
-                  </span>
                 </li>
               ))}
             </ol>
-          </div>
+          </Section>
+
+          <Section id="capabilities" title="What you get">
+            <ul
+              className={cn(
+                "grid gap-4",
+                entry.capabilities.length === 3
+                  ? "sm:grid-cols-3"
+                  : "sm:grid-cols-2",
+              )}
+            >
+              {entry.capabilities.map((capability, index, all) => (
+                <li
+                  key={capability.title}
+                  className={cn(
+                    all.length !== 3 &&
+                      all.length % 2 === 1 &&
+                      index === all.length - 1 &&
+                      "sm:col-span-2",
+                  )}
+                >
+                  <Card className="h-full gap-1.5 p-5 shadow-xs dark:shadow-none">
+                    <h3 className="font-medium leading-snug">
+                      {capability.title}
+                    </h3>
+                    <p className="text-sm leading-relaxed text-muted-foreground text-pretty">
+                      {capability.description}
+                    </p>
+                  </Card>
+                </li>
+              ))}
+            </ul>
+          </Section>
         </div>
+
+        <aside className="lg:sticky lg:top-24 lg:self-start">
+          <Card className="gap-0 p-5 shadow-xs dark:shadow-none">
+            <dl className="flex flex-col divide-y">
+              <MetaRow label="Type">
+                {CATALOG_KIND_LABELS[entry.kind]}
+                <span className="mt-0.5 block text-xs font-normal leading-relaxed text-muted-foreground">
+                  {CATALOG_KIND_DESCRIPTIONS[entry.kind]}
+                </span>
+              </MetaRow>
+              <MetaRow label="Category">
+                {entry.categories.map(getCategoryLabel).join(", ")}
+              </MetaRow>
+              <MetaRow label="Plan">{CATALOG_PLAN_LABELS[entry.plan]}</MetaRow>
+              <MetaRow label="Built by">{entry.builtBy}</MetaRow>
+              {entry.website && (
+                <MetaRow label="Website">
+                  <a
+                    href={entry.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={linkClass}
+                  >
+                    {new URL(entry.website).hostname.replace(/^www\./, "")}
+                  </a>
+                </MetaRow>
+              )}
+              {entry.docs && (
+                <MetaRow label="Docs">
+                  <Link href={entry.docs} className={linkClass}>
+                    Read the guide
+                  </Link>
+                </MetaRow>
+              )}
+            </dl>
+          </Card>
+        </aside>
       </div>
 
-      {/* Popular integrations */}
-      {popular.length > 0 && (
-        <section className="flex flex-col items-center justify-center gap-10 w-full relative px-6 pb-40">
-          <SectionHeader>
-            <h2 className="text-2xl md:text-3xl font-medium tracking-tighter text-center text-balance">
-              Popular integrations
+      {related.length > 0 && (
+        <section
+          aria-labelledby="related"
+          className="flex flex-col gap-6 border-t px-6 py-12 md:px-10 md:py-14"
+        >
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <h2
+              id="related"
+              className="text-xl font-semibold tracking-tight md:text-2xl"
+            >
+              Related integrations
             </h2>
-            <p className="text-muted-foreground text-center text-balance font-medium text-sm">
-              The most connected tools in the QRdx ecosystem.
-            </p>
-          </SectionHeader>
-          <div className="grid w-full max-w-7xl grid-cols-2 md:grid-cols-3 overflow-hidden border-y border-border items-center justify-center z-20">
-            {popular.map((item) => (
-              <IntegrationCard key={item.slug} integration={item} />
-            ))}
+            <Link
+              href="/integrations"
+              className="inline-flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
+            >
+              All integrations
+              <ArrowRight aria-hidden className="size-4" />
+            </Link>
           </div>
+          <ul className="grid gap-4 md:grid-cols-3">
+            {related.map((item) => (
+              <li key={item.slug}>
+                <IntegrationCard
+                  entry={item}
+                  needsSetup={setupNeeded(availability, item.slug)}
+                />
+              </li>
+            ))}
+          </ul>
         </section>
       )}
     </main>

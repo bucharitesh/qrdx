@@ -36,7 +36,28 @@ function withCors(response: Response): Response {
   });
 }
 
+/**
+ * Someone opened the server URL in a browser: send them to the connect page
+ * instead of a JSON-RPC error. MCP clients never ask for text/html (and the
+ * SSE stream asks for text/event-stream), so they're unaffected.
+ */
+function browserVisit(req: Request): Response | null {
+  if (req.method !== "GET") return null;
+  const accept = req.headers.get("accept") ?? "";
+  if (!accept.includes("text/html") || accept.includes("text/event-stream")) {
+    return null;
+  }
+  // On mcp.qrdx.dev, /mcp is this endpoint, so the page lives on qrdx.dev.
+  const page =
+    new URL(req.url).hostname === "mcp.qrdx.dev"
+      ? "https://qrdx.dev/mcp"
+      : new URL("/mcp", req.url).toString();
+  return Response.redirect(page, 307);
+}
+
 async function handler(req: Request): Promise<Response> {
+  const visit = browserVisit(req);
+  if (visit) return visit;
   try {
     await enforceRateLimits([
       { limiter: ipRateLimiter, key: `mcp:ip:${getClientIp(req)}` },

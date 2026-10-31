@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@repo/design-system/components/ui/button";
-import { Globe } from "lucide-react";
+import { Global as Globe } from "iconsax-reactjs";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 

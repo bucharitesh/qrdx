@@ -1,6 +1,7 @@
 "use client";
 
 import { toast } from "@repo/design-system";
+import { Spinner as Loader2, Star } from "@repo/design-system/components/icons";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -33,18 +34,16 @@ import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import {
   Copy,
-  ExternalLink,
-  Globe,
-  GlobeLock,
-  Loader2,
-  MoreVertical,
-  Pencil,
-  Star,
-  StarOff,
+  ExportSquare as ExternalLink,
+  Global as Globe,
+  Lock as GlobeLock,
+  More as MoreVertical,
+  Edit2 as Pencil,
+  StarSlash as StarOff,
   Tag,
-  Trash2,
-  Users,
-} from "lucide-react";
+  Trash as Trash2,
+  Profile2User as Users,
+} from "iconsax-reactjs";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
@@ -62,6 +61,7 @@ import {
   useUpdateCommunityThemeTags,
 } from "@/lib/hooks/themes/use-community-themes";
 import { useDeleteTheme } from "@/lib/hooks/themes/use-theme-mutations";
+import { soundEvent } from "@/lib/sound/emit";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 import type { SavedTheme, ThemeActionResult } from "../_lib/theme";
 
@@ -150,6 +150,7 @@ export function ThemeCard({ theme, workspace, canCopyToTeam }: ThemeCardProps) {
     try {
       await navigator.clipboard.writeText(url);
       toast.success("Theme link copied");
+      soundEvent("copy");
     } catch {
       toast.error("Could not copy the link");
     }
@@ -241,7 +242,7 @@ export function ThemeCard({ theme, workspace, canCopyToTeam }: ThemeCardProps) {
               {busy ? (
                 <Loader2 className="size-4 animate-spin" />
               ) : (
-                <MoreVertical className="text-muted-foreground size-4" />
+                <MoreVertical className="text-muted-foreground size-4 rotate-90" />
               )}
             </Button>
           </DropdownMenuTrigger>
