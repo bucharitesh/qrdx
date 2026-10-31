@@ -1,6 +1,9 @@
 import { streamObject, tool } from "ai";
 import z from "zod";
-import { themeStylePropsOutputSchema } from "@/lib/ai/generate-qr-theme";
+import {
+  ensureScannable,
+  themeStylePropsOutputSchema,
+} from "@/lib/ai/generate-qr-theme";
 import { GENERATE_QR_THEME_OBJECT_SYSTEM } from "@/lib/ai/prompts";
 import { baseProviderOptions, myProvider } from "@/lib/ai/providers";
 import type { AdditionalAIContext } from "@/types/ai";
@@ -29,12 +32,12 @@ export const QR_THEME_GENERATION_TOOLS = {
         writer.write({
           id: toolCallId,
           type: "data-generated-qr-style",
-          data: { status: "streaming", themeStyles: chunk },
+          data: { status: "streaming", themeStyles: ensureScannable(chunk) },
           transient: true,
         });
       }
 
-      const themeStyles = await object;
+      const themeStyles = ensureScannable(await object);
 
       writer.write({
         id: toolCallId,

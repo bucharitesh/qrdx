@@ -1,12 +1,12 @@
 import { cn } from "@repo/design-system/lib/utils";
 import {
-  Flame,
-  Leaf,
-  MilkOff,
-  Sprout,
-  UtensilsCrossed,
-  WheatOff,
-} from "lucide-react";
+  Flash as Flame,
+  Tree as Leaf,
+  Milk as MilkOff,
+  Tree as Sprout,
+  Reserve as UtensilsCrossed,
+  Forbidden as WheatOff,
+} from "iconsax-reactjs";
 import type { ComponentType } from "react";
 import { mutedTextClass, surfaceClass } from "@/components/landing/block-kit";
 import { type BlockRenderProps, registerBlock } from "../registry";

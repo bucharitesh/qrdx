@@ -1,4 +1,4 @@
-import { ChevronDown } from "lucide-react";
+import { ArrowDown2 } from "iconsax-reactjs";
 import { SectionHeader } from "@/components/sections/section-header";
 import { faqSchema, JsonLd } from "./json-ld";
 
@@ -24,16 +24,16 @@ export function FaqList({ title, faqs }: FaqListProps) {
         {faqs.map((faq) => (
           <details
             key={faq.question}
-            className="group rounded-lg border border-border bg-secondary-muted open:ring open:ring-secondary/20"
+            className="group rounded-xl border border-border bg-card shadow-xs transition-colors open:bg-muted/20 dark:shadow-none"
           >
-            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-4 py-3.5 font-medium [&::-webkit-details-marker]:hidden">
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-xl px-4 py-3.5 font-medium transition-colors hover:bg-accent/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/40 [&::-webkit-details-marker]:hidden">
               {faq.question}
-              <ChevronDown
+              <ArrowDown2
                 aria-hidden
-                className="size-4 shrink-0 text-muted-foreground transition-transform group-open:rotate-180"
+                className="size-4 shrink-0 text-muted-foreground transition-transform duration-200 group-open:rotate-180"
               />
             </summary>
-            <p className="border-t border-border px-4 py-3 text-muted-foreground leading-relaxed">
+            <p className="border-t border-border px-4 py-3 text-muted-foreground leading-relaxed text-pretty">
               {faq.answer}
             </p>
           </details>

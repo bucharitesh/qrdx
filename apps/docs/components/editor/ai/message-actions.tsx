@@ -1,6 +1,6 @@
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
-import { Edit, RefreshCw } from "lucide-react";
+import { Edit2 as Edit, Refresh2 as RefreshCw } from "iconsax-reactjs";
 import { CopyButton } from "@/components/copy-button";
 import { DebugButton } from "@/components/debug-button";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";

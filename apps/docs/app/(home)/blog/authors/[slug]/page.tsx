@@ -1,4 +1,8 @@
-import { Github, Linkedin, Twitter } from "lucide-react";
+import {
+  GithubLogo as Github,
+  LinkedinLogo as Linkedin,
+  XLogo as Twitter,
+} from "@repo/design-system/components/icons";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { BlogList } from "@/components/sections/blog/blog-list";
@@ -110,7 +114,7 @@ export default async function AuthorPage({ params }: PageProps) {
               {hasSocials && (
                 <div className="flex items-center gap-3 shrink-0">
                   <span className="text-sm text-muted-foreground hidden sm:block">
-                    Follow {firstName} on socials &rarr;
+                    Follow {firstName}
                   </span>
                   {twitter && (
                     <a
@@ -118,7 +122,7 @@ export default async function AuthorPage({ params }: PageProps) {
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={`${name} on X`}
-                      className="flex items-center justify-center size-8 rounded-lg bg-secondary hover:bg-secondary/70 transition-colors"
+                      className="grid size-9 place-items-center rounded-lg border bg-muted/40 text-foreground/80 transition-colors hover:bg-accent hover:text-foreground"
                     >
                       <Twitter className="size-4" />
                     </a>
@@ -129,7 +133,7 @@ export default async function AuthorPage({ params }: PageProps) {
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={`${name} on LinkedIn`}
-                      className="flex items-center justify-center size-8 rounded-lg bg-secondary hover:bg-secondary/70 transition-colors"
+                      className="grid size-9 place-items-center rounded-lg border bg-muted/40 text-foreground/80 transition-colors hover:bg-accent hover:text-foreground"
                     >
                       <Linkedin className="size-4" />
                     </a>
@@ -140,7 +144,7 @@ export default async function AuthorPage({ params }: PageProps) {
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={`${name} on GitHub`}
-                      className="flex items-center justify-center size-8 rounded-lg bg-secondary hover:bg-secondary/70 transition-colors"
+                      className="grid size-9 place-items-center rounded-lg border bg-muted/40 text-foreground/80 transition-colors hover:bg-accent hover:text-foreground"
                     >
                       <Github className="size-4" />
                     </a>

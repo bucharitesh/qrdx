@@ -1,72 +1,54 @@
 ---
 title: Subprocessors
-description: List of third-party subprocessors used by qrdx.
+description: The third-party services that process personal data for QRdx, what each one does, what data it handles, where, and how we announce changes.
+lastUpdated: 2026-11-01
 ---
 
-## List of Subprocessors
+<Callout title="Summary">
 
-qrdx uses the following third-party service providers to help deliver our service. We carefully select our subprocessors to ensure they meet our standards for security and data protection.
+- These companies run parts of QRdx for us and may handle personal data while doing it: hosting, the database, email, billing, AI, file storage, spam checks, analytics and the feedback widget.
+- PostHog and Featurebase only receive data from visitors who allow them in **Cookie settings**.
+- Services you connect yourself, such as Dub or Google Drive, are not on this list: data reaches them only because you asked for it.
+- We update this page before a new subprocessor starts handling personal data.
 
-### Vercel
+</Callout>
 
-- **Purpose:** Server hosting and edge infrastructure
-- **Location:** US
-- **Reference:** [DPA](https://vercel.com/legal/dpa)
+**Last updated:** 1 November 2026
 
-### Neon
+## Current subprocessors
 
-- **Purpose:** Relational database (PostgreSQL)
-- **Location:** US
-- **Reference:** [Security](https://neon.tech/docs/security/security-overview)
+| Service | What it does for QRdx | Personal data it handles | Location | Policy |
+| --- | --- | --- | --- | --- |
+| **Vercel** | Hosting, edge network and server functions. Looks up the country and city of each request from its IP address, and registers custom domains and their TLS certificates. | Everything that passes through the Service, including IP addresses of requests | United States, with a global edge network | [DPA](https://vercel.com/legal/dpa) |
+| **Neon** | PostgreSQL database | Account data, Customer Content and End User data (scans, page events, form responses) | United States | [DPA](https://neon.com/dpa) |
+| **Upstash** | Rate limiting | IP addresses and account IDs inside short-lived counters that expire within 2 days | **[[UPSTASH REGION]]** | [Privacy policy](https://upstash.com/trust/privacy.pdf) |
+| **Polar** | Merchant of record: checkout, subscriptions, invoices and sales tax. Card payments go through Stripe. | Name, email address, billing address, payment details, tax ID, subscription history | United States | [Privacy policy](https://polar.sh/legal/privacy) |
+| **Resend** | Sending transactional email | Recipient addresses and email content: invitations, form response notifications (which include answers), alerts and digests | United States | [DPA](https://resend.com/legal/dpa) |
+| **Google (Gemini API)** | AI themes and prompt enhancement | Prompts, the conversation so far and attached images | Global, wherever Google has facilities | [Gemini API terms](https://ai.google.dev/gemini-api/terms) |
+| **Google (Web Risk)** | Checking links against Google's lists of malware and phishing sites | Destination URLs of dynamic codes and links checked with the scan checker | Global | [Google Cloud DPA](https://cloud.google.com/terms/data-processing-addendum) |
+| **fal.ai** | AI QR art and image upscaling, when AI art is turned on | The code's content, prompts, reference images and generated images | United States | [Privacy policy](https://fal.ai/legal/privacy-policy) |
+| **Cloudflare (R2)** | Storage for files you upload, when file storage is turned on | Uploaded files and anything they contain | **[[R2 BUCKET LOCATION]]** | [DPA](https://www.cloudflare.com/cloudflare-customer-dpa/) |
+| **Cloudflare (Turnstile)** | Telling people from bots on the abuse report form and on hosted-page forms | IP address and browser signals | Global | [Turnstile privacy](https://www.cloudflare.com/turnstile-privacy-policy/) |
+| **PostHog** | Product analytics on qrdx.dev, only with consent | Pages viewed, clicks and features used; email address and name when signed in | United States | [DPA](https://posthog.com/dpa) |
+| **Featurebase** | Feedback and support widget on qrdx.dev, only with consent | What you type into the widget, browser details | European Union | [Privacy policy](https://help.featurebase.app/articles/4744036-privacy-policy) |
 
-### Upstash
+How we protect transfers out of the EEA, the UK and Switzerland is described in the [Privacy Policy](/legal/privacy-policy#international-transfers).
 
-- **Purpose:** Redis caching & queuing infrastructure
-- **Location:** US, EU, Singapore
-- **Reference:** [Trust Center](https://trust.upstash.com)
+## Services that aren't subprocessors
 
-### Better Auth
+Data reaches these services only because you, or the owner of a code or page, chose to use them. Their own terms and privacy policies apply.
 
-- **Purpose:** Authentication and session management
-- **Location:** Self-hosted
-- **Reference:** [Documentation](https://www.better-auth.com/)
+- **Sign-in providers:** Google and GitHub, when you sign in with them.
+- **Integrations you connect:** Dub, Google Drive and, as they become available, Bitly, Rebrandly, Short.io, Dropbox, OneDrive, Box, Notion, Stripe, Cal.com, Calendly, Shopify, Google Sheets, Slack, HubSpot, Mailchimp, Spotify and YouTube. See the [integrations directory](/integrations).
+- **Destinations you set up for notifications:** your own webhooks and Slack or Discord channels.
+- **On hosted pages:** maps and videos the owner embeds (Google Maps, YouTube, Vimeo, Loom) and tracking pixels the owner adds (Google Analytics, Google Tag Manager, Meta, TikTok, LinkedIn).
 
-### PostHog
+## Changes to this list
 
-- **Purpose:** Product analytics and feature flags
-- **Location:** US, EU
-- **Reference:** [DPA](https://posthog.com/docs/privacy/dpa)
+When we add or replace a subprocessor, we update this page at least **[[NOTICE PERIOD]]** days before it starts handling personal data, except when we have to act sooner to keep the Service running or secure. Customers covered by the [Data Processing Addendum](/legal/dpa) can object to a change by emailing [support@qrdx.dev](mailto:support@qrdx.dev) during that period.
 
-### Polar
-
-- **Purpose:** Payment processing and subscriptions
-- **Location:** EU
-- **Reference:** [Privacy Policy](https://polar.sh/legal/privacy)
-
-### Cloudflare
-
-- **Purpose:** CDN and image optimization
-- **Location:** Global
-- **Reference:** [DPA](https://www.cloudflare.com/cloudflare-customer-dpa)
-
-### Anthropic
-
-- **Purpose:** AI-powered features and LLM
-- **Location:** US
-- **Reference:** [Trust Center](https://trust.anthropic.com)
-
-### GitHub
-
-- **Purpose:** Source code management and OAuth authentication
-- **Location:** US
-- **Reference:** [DPA](https://docs.github.com/en/site-policy/privacy-policies/github-data-protection-agreement)
-
-### Google
-
-- **Purpose:** OAuth authentication and Google Drive integration
-- **Location:** US
-- **Reference:** [DPA](https://cloud.google.com/terms/data-processing-addendum)
+Related pages: [Privacy Policy](/legal/privacy-policy), [Cookie Policy](/legal/cookie-policy), [Data Processing Addendum](/legal/dpa).
 
 ---
 
-**Last updated:** December 23, 2024
+**Changes:** 1 November 2026. Rebuilt as a table from the services QRdx actually uses. Added Resend, Google Gemini, Google Web Risk, fal.ai, Cloudflare R2 and Turnstile, and Featurebase. Removed Anthropic (not used), Better Auth (a library that runs inside QRdx) and GitHub (a sign-in provider, now listed above). Corrected Polar's location.

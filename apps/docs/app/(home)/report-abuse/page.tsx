@@ -47,7 +47,7 @@ export default async function ReportAbusePage({
   const defaultUrl = defaultTarget(params, requestHeaders.get("referer"));
 
   return (
-    <div className="container mx-auto grid gap-10 px-4 py-12 md:px-6 md:py-20 lg:max-w-6xl lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
+    <div className="container mx-auto grid gap-10 px-6 py-12 md:px-10 md:py-20 lg:max-w-6xl lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
       <div className="space-y-6">
         <div className="space-y-3">
           <h1 className="text-3xl font-bold tracking-tight">
@@ -96,7 +96,7 @@ export default async function ReportAbusePage({
           <p className="text-muted-foreground">
             Email{" "}
             <a
-              className="text-foreground underline"
+              className="font-medium text-foreground underline decoration-foreground/30 underline-offset-4 transition-colors hover:decoration-foreground"
               href="mailto:support@qrdx.dev"
             >
               support@qrdx.dev
@@ -104,7 +104,7 @@ export default async function ReportAbusePage({
             for copyright (DMCA) notices or anything the form doesn't cover.
             Read the{" "}
             <Link
-              className="text-foreground underline"
+              className="font-medium text-foreground underline decoration-foreground/30 underline-offset-4 transition-colors hover:decoration-foreground"
               href="/legal/report-abuse"
             >
               abuse policy

@@ -1,4 +1,5 @@
-import { SectionHeader } from "@/components/sections/section-header";
+import { Card } from "@repo/design-system/components/ui/card";
+import { DocumentText } from "iconsax-reactjs";
 
 interface CompareGuideProps {
   competitor: string;
@@ -24,45 +25,48 @@ export function CompareGuide({
   children,
 }: CompareGuideProps) {
   return (
-    <section className="flex flex-col items-center justify-center w-full">
-      <SectionHeader>
-        <h2 className="text-3xl md:text-4xl font-medium tracking-tighter text-center text-balance">
-          QRdx or {competitor}: which should you use?
-        </h2>
-      </SectionHeader>
+    <section className="w-full px-6 py-14 md:py-16">
+      <h2 className="mx-auto max-w-2xl text-center text-2xl font-semibold tracking-tight text-balance md:text-3xl">
+        QRdx or {competitor}: which should you use?
+      </h2>
 
-      <div className="w-full max-w-3xl mx-auto px-6 py-10">
-        <div className="prose prose-neutral dark:prose-invert max-w-none prose-headings:font-semibold prose-headings:tracking-tight prose-a:text-primary">
+      <div className="mx-auto mt-10 w-full max-w-3xl">
+        <div className="prose prose-neutral max-w-none dark:prose-invert prose-headings:font-semibold prose-headings:tracking-tight prose-a:font-medium prose-a:text-foreground prose-a:decoration-foreground/30 prose-a:underline-offset-4 hover:prose-a:decoration-foreground">
           {children}
         </div>
 
         {sources.length > 0 && (
-          <div className="mt-10 rounded-xl border border-border bg-muted/30 p-6">
-            <h3 className="text-sm font-semibold text-secondary-foreground">
-              Sources
-              {lastVerified
-                ? ` (verified ${formatVerified(lastVerified)})`
-                : ""}
-            </h3>
-            <p className="mt-1 text-xs text-muted-foreground">
-              Competitor prices and limits change often. Check their pages
-              before you decide.
-            </p>
-            <ul className="mt-3 flex flex-col gap-1.5">
-              {sources.map((url) => (
-                <li key={url} className="text-sm break-all">
-                  <a
-                    href={url}
-                    target="_blank"
-                    rel="noopener noreferrer nofollow"
-                    className="text-muted-foreground underline-offset-4 hover:text-secondary-foreground hover:underline"
-                  >
-                    {url}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <Card className="mt-10 flex-row items-start gap-4 bg-muted/40 p-5 shadow-none dark:bg-card">
+            <span className="grid size-9 shrink-0 place-items-center rounded-full border bg-background">
+              <DocumentText aria-hidden className="size-4 text-foreground/80" />
+            </span>
+            <div className="min-w-0">
+              <h3 className="text-sm font-semibold">
+                Sources
+                {lastVerified
+                  ? ` (verified ${formatVerified(lastVerified)})`
+                  : ""}
+              </h3>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Competitor prices and limits change often. Check their pages
+                before you decide.
+              </p>
+              <ul className="mt-3 flex flex-col gap-1.5">
+                {sources.map((url) => (
+                  <li className="text-sm break-all" key={url}>
+                    <a
+                      className="text-muted-foreground underline decoration-foreground/20 underline-offset-4 transition-colors hover:text-foreground hover:decoration-foreground"
+                      href={url}
+                      rel="noopener noreferrer nofollow"
+                      target="_blank"
+                    >
+                      {url}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </Card>
         )}
       </div>
     </section>

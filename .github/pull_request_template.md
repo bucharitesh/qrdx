@@ -21,6 +21,6 @@
 
 ## Checklist
 - [ ] `pnpm typecheck` and `pnpm typecheck:docs` pass
-- [ ] Tests pass for the packages I touched (`pnpm --filter @qrdx/cli test`, `pnpm --filter api test`)
+- [ ] `pnpm prepush` passes (it also runs on `git push`)
 - [ ] `biome check` is clean for the files I changed
 - [ ] Docs or READMEs are updated if behavior or public APIs changed

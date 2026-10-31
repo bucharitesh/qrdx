@@ -1,99 +1,56 @@
 "use client";
 
-import { Button } from "@repo/design-system/components/ui/button";
-import type { LucideIcon } from "lucide-react";
+import { cn } from "@repo/design-system/lib/utils";
+import { ArrowSwapHorizontal } from "iconsax-reactjs";
 import * as React from "react";
+import { TypeIconTile } from "@/components/editor/content-type-icons";
 import { ContentTypeModal } from "@/components/editor/content-type-modal";
-import { getIntegrationByContentType } from "@/lib/integration-catalog";
 import { useQREditorStore } from "@/store/editor-store";
 import { CONTENT_TYPES_METADATA } from "@/types/qr-content";
-import { Icons } from "../icons";
 
-// Map icon names to actual icon components
-const iconMap: Record<string, LucideIcon> = {
-  AtSign: Icons.AtSign,
-  Bitcoin: Icons.Bitcoin,
-  Calendar: Icons.Calendar,
-  Camera: Icons.Camera,
-  ClipboardCheck: Icons.ClipboardCheck,
-  CreditCard: Icons.CreditCard,
-  DollarSign: Icons.DollarSign,
-  FileText: Icons.FileText,
-  Hexagon: Icons.Hexagon,
-  Image: Icons.Image,
-  Instagram: Icons.Instagram,
-  Link: Icons.Link,
-  Link2: Icons.Link2,
-  Linkedin: Icons.Linkedin,
-  Mail: Icons.Mail,
-  MapPin: Icons.MapPin,
-  MessageCircle: Icons.MessageCircle,
-  MessageSquare: Icons.MessageSquare,
-  Music: Icons.Music,
-  Phone: Icons.Phone,
-  Share2: Icons.Share2,
-  ShoppingBag: Icons.ShoppingBag,
-  ShoppingCart: Icons.ShoppingCart,
-  Store: Icons.Store,
-  Star: Icons.Star,
-  Twitter: Icons.Twitter,
-  UserCircle: Icons.UserCircle,
-  Video: Icons.Video,
-  Wifi: Icons.Wifi,
-  Wrench: Icons.Wrench,
-  Youtube: Icons.Youtube,
-};
-
-export function ContentTypeSelector() {
-  const { contentType } = useQREditorStore();
+/** Compact "current QR type" row at the top of the Content tab; opens the type picker. */
+export function ContentTypeSelector({ className }: { className?: string }) {
+  const contentType = useQREditorStore((state) => state.contentType);
   const [modalOpen, setModalOpen] = React.useState(false);
 
   const currentType = CONTENT_TYPES_METADATA.find(
-    (m) => m.type === contentType,
+    (meta) => meta.type === contentType,
   );
-  const Icon =
-    (currentType ? iconMap[currentType.icon] : iconMap.Link) || iconMap.Link;
-  const integration = getIntegrationByContentType(currentType?.type);
 
   return (
     <>
-      <Button
-        variant="outline"
-        className="w-full justify-between h-auto py-3"
+      <button
+        aria-haspopup="dialog"
+        className={cn(
+          "group bg-card flex w-full items-center gap-3 rounded-xl border p-2.5 pr-3 text-left transition-colors outline-none",
+          "hover:border-foreground/15 hover:bg-accent/40 focus-visible:border-foreground/25 focus-visible:ring-ring/40 focus-visible:ring-[3px]",
+          className,
+        )}
         onClick={() => setModalOpen(true)}
+        type="button"
       >
-        <div className="flex items-center gap-3">
-          <div className="flex size-10 items-center justify-center rounded-full bg-primary/10">
-            {integration ? (
-              <>
-                <img
-                  src={integration.logos.light}
-                  alt=""
-                  className="size-5 object-contain dark:hidden"
-                />
-                <img
-                  src={integration.logos.dark}
-                  alt=""
-                  className="hidden size-5 object-contain dark:block"
-                />
-              </>
-            ) : (
-              <Icon className="size-5 text-primary" />
+        <TypeIconTile icon={currentType?.icon} type={currentType?.type} />
+        <span className="min-w-0 flex-1">
+          <span className="text-muted-foreground block text-[11px] leading-4 font-medium tracking-wider uppercase">
+            QR code type
+          </span>
+          <span className="block truncate text-sm leading-5 font-medium">
+            {currentType?.label ?? "Choose a type"}
+            {currentType && (
+              <span className="text-muted-foreground font-normal">
+                {" "}
+                · {currentType.description}
+              </span>
             )}
-          </div>
-          <div className="text-left">
-            <div className="text-sm font-medium">
-              {currentType?.label || "Select Type"}
-            </div>
-            <div className="text-muted-foreground text-xs">
-              {currentType?.description || "Choose a QR code type"}
-            </div>
-          </div>
-        </div>
-        <Icons.ChevronDown className="size-4 text-muted-foreground" />
-      </Button>
+          </span>
+        </span>
+        <span className="text-muted-foreground group-hover:text-foreground flex shrink-0 items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium transition-colors">
+          <ArrowSwapHorizontal className="size-3.5" />
+          Change
+        </span>
+      </button>
 
-      <ContentTypeModal open={modalOpen} onOpenChange={setModalOpen} />
+      <ContentTypeModal onOpenChange={setModalOpen} open={modalOpen} />
     </>
   );
 }

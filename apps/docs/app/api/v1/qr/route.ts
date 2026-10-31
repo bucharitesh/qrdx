@@ -1,5 +1,6 @@
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import type { NextRequest } from "next/server";
+import { cornerEyeDotPatternSchema, cornerEyePatternSchema } from "qrdx/types";
 import { z } from "zod";
 import { handleError } from "@/lib/error-response";
 import {
@@ -33,6 +34,10 @@ const CORS_HEADERS = {
 const IMMUTABLE = "public, max-age=31536000, immutable";
 
 const querySchema = qrOptionsSchema.extend({
+  // Retired shapes are no longer listed, but existing image URLs that use
+  // them keep rendering exactly as before.
+  eye: cornerEyePatternSchema.default(QR_DEFAULTS.eye),
+  dot: cornerEyeDotPatternSchema.default(QR_DEFAULTS.dot),
   format: z.enum(qrImageFormats).default("svg"),
   size: z.coerce
     .number()

@@ -3,13 +3,70 @@ import { colorConfigSchema, getSolidColor } from "qrdx/types";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import { defaultThemeState } from "@/config/qr";
+import { isShuffleId } from "@/lib/themes/shuffle";
 import { isDeepEqual } from "@/lib/utils";
-import type { ThemeEditorState } from "@/types/editor";
+import type { QRStyle, ThemeEditorState } from "@/types/editor";
 import type { ContentType, QRContentConfig } from "@/types/qr-content";
 import { getPresetThemeStyles } from "@/utils/qr-presets-helper";
 
 const MAX_HISTORY_COUNT = 30;
 const HISTORY_OVERRIDE_THRESHOLD_MS = 500; // 0.5 seconds
+
+/**
+ * The look a state's preset stands for: what Reset returns to and what the
+ * unsaved-changes check compares against. A shuffle uses the styles it
+ * resolved to when applied; other presets are looked up by id.
+ */
+export function presetBaseStyles(state: ThemeEditorState): QRStyle {
+  if (state.presetStyles && isShuffleId(state.preset)) {
+    return state.presetStyles;
+  }
+  return getPresetThemeStyles(state.preset ?? "default");
+}
+
+/** `state` showing `preset`, keeping the resolved look only for shuffles. */
+function withPreset(
+  state: ThemeEditorState,
+  preset: string,
+  styles: QRStyle,
+): ThemeEditorState {
+  const { presetStyles: _previous, ...rest } = state;
+  return isShuffleId(preset)
+    ? { ...rest, preset, styles: { ...styles }, presetStyles: styles }
+    : { ...rest, preset, styles };
+}
+
+/**
+ * Drops a resolved look that no longer belongs to the state's preset, as
+ * when a caller spreads the current state and sets another preset id.
+ */
+function withOwnPresetStyles(
+  next: ThemeEditorState,
+  previous: ThemeEditorState,
+): ThemeEditorState {
+  const carriedOver =
+    next.preset !== previous.preset &&
+    next.presetStyles === previous.presetStyles;
+  if (!next.presetStyles || (isShuffleId(next.preset) && !carriedOver)) {
+    return next;
+  }
+  const { presetStyles: _stale, ...rest } = next;
+  return rest;
+}
+
+/**
+ * Gives a persisted shuffle state its resolved look. States saved before
+ * `presetStyles` existed resolve the id once on load (what they did on every
+ * check before) and keep that look from then on.
+ */
+function freezeShuffleStyles(state: unknown) {
+  if (!state || typeof state !== "object") return;
+  const entry = state as Partial<ThemeEditorState>;
+  if (!isShuffleId(entry.preset)) return;
+  if (!entry.presetStyles || typeof entry.presetStyles !== "object") {
+    entry.presetStyles = getPresetThemeStyles(entry.preset as string);
+  }
+}
 
 /**
  * History entry for QR editor state
@@ -80,8 +137,9 @@ export const useQREditorStore = create<QREditorStore>()(
       getContentConfig: (type: ContentType) => {
         return get().contentConfigs[type];
       },
-      setThemeState: (newState: ThemeEditorState) => {
+      setThemeState: (state: ThemeEditorState) => {
         const oldThemeState = get().themeState;
+        const newState = withOwnPresetStyles(state, oldThemeState);
         let currentHistory = get().history;
         let currentFuture = get().future;
 
@@ -135,12 +193,12 @@ export const useQREditorStore = create<QREditorStore>()(
         const oldHistory = get().history;
         const currentTime = Date.now();
 
-        const newStyles = getPresetThemeStyles(preset);
-        const newThemeState: ThemeEditorState = {
-          ...currentThemeState,
+        // A shuffle id is resolved once, here; the state keeps that look.
+        const newThemeState = withPreset(
+          currentThemeState,
           preset,
-          styles: newStyles,
-        };
+          getPresetThemeStyles(preset),
+        );
 
         const newHistoryEntry = {
           state: currentThemeState,
@@ -194,24 +252,13 @@ export const useQREditorStore = create<QREditorStore>()(
       },
       hasUnsavedChanges: () => {
         const themeState = get().themeState;
-        const presetThemeStyles = getPresetThemeStyles(
-          themeState.preset ?? "default",
-        );
-        const stylesChanged = !isDeepEqual(
-          themeState.styles,
-          presetThemeStyles,
-        );
-        return stylesChanged;
+        return !isDeepEqual(themeState.styles, presetBaseStyles(themeState));
       },
       resetToCurrentPreset: () => {
         const currentThemeState = get().themeState;
-
-        const presetThemeStyles = getPresetThemeStyles(
-          currentThemeState.preset ?? "default",
-        );
         const newThemeState: ThemeEditorState = {
           ...currentThemeState,
-          styles: presetThemeStyles,
+          styles: { ...presetBaseStyles(currentThemeState) },
         };
 
         set({
@@ -461,6 +508,21 @@ export const useQREditorStore = create<QREditorStore>()(
               normalizeFgColor(entry.state.styles as Record<string, unknown>);
             }
           });
+        }
+
+        // Shuffle states keep the look they were applied with
+        if (persistedState && typeof persistedState === "object") {
+          const persisted = persistedState as Record<string, unknown>;
+          const entries = [persisted.history, persisted.future].flatMap(
+            (list) => (Array.isArray(list) ? list : []),
+          );
+          for (const state of [
+            persisted.themeState,
+            persisted.themeCheckpoint,
+            ...entries.map((entry) => (entry as { state?: unknown })?.state),
+          ]) {
+            freezeShuffleStyles(state);
+          }
         }
 
         // Merge persisted state with current state, ensuring persisted state takes precedence

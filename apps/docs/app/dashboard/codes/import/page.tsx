@@ -1,5 +1,5 @@
 import { Button } from "@repo/design-system/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft } from "iconsax-reactjs";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHeader } from "@/app/dashboard/_components/page-header";

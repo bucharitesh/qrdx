@@ -164,6 +164,7 @@ describe("helpers", () => {
       "/ended",
       "/scan",
       "/scan/history",
+      "/templates/links/creator",
     ]) {
       assert.ok(isUntrackedPath(path), path);
     }
@@ -173,6 +174,7 @@ describe("helpers", () => {
       "/scanner-tips",
       "/",
       "/dashboard/pages",
+      "/templates",
     ]) {
       assert.equal(isUntrackedPath(path), false, path);
     }

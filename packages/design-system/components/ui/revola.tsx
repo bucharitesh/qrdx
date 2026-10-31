@@ -2,7 +2,7 @@
 
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { cva } from "class-variance-authority";
-import { X } from "lucide-react";
+import { Close as X } from "../icons"
 import * as React from "react";
 import { Drawer as DrawerPrimitive, Content as VaulDrawerContent } from "vaul";
 import useMediaQuery from "@repo/design-system/hooks/use-media-query";

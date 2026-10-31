@@ -1,3 +1,4 @@
+import { Tick as Check } from "@repo/design-system/components/icons";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Card, CardContent } from "@repo/design-system/components/ui/card";
@@ -17,6 +18,7 @@ import {
   TooltipTrigger,
 } from "@repo/design-system/components/ui/tooltip";
 import { cn } from "@repo/design-system/lib/utils";
+import { Moon, Sun1, Warning2 } from "iconsax-reactjs";
 import { useTheme } from "next-themes";
 import type { ColorConfig } from "qrdx/types";
 import { isGradient, normalizeColorConfig } from "qrdx/types";
@@ -216,9 +218,9 @@ const ContrastChecker = ({ currentStyles, disabled }: ContrastCheckerProps) => {
                   onClick={() => setTheme(theme === "light" ? "dark" : "light")}
                 >
                   {theme === "light" ? (
-                    <Icons.Sun className="h-3.5 w-3.5" />
+                    <Sun1 className="h-3.5 w-3.5" />
                   ) : (
-                    <Icons.Moon className="h-3.5 w-3.5" />
+                    <Moon className="h-3.5 w-3.5" />
                   )}
                 </Button>
               </TooltipTrigger>
@@ -239,7 +241,7 @@ const ContrastChecker = ({ currentStyles, disabled }: ContrastCheckerProps) => {
               variant={filter === "issues" ? "default" : "outline"}
               onClick={() => setFilter("issues")}
             >
-              <Icons.AlertTriangle className={cn("mr-1 h-3 w-3")} />
+              <Warning2 className={cn("mr-1 h-3 w-3")} />
               Issues ({totalIssues})
             </Button>
           </div>
@@ -280,7 +282,7 @@ const ContrastChecker = ({ currentStyles, disabled }: ContrastCheckerProps) => {
                             >
                               {pair.label}
                               {!isValid && (
-                                <Icons.AlertTriangle className="ml-1 size-3.5" />
+                                <Warning2 className="ml-1 size-3.5" />
                               )}
                             </h3>
                             <Badge
@@ -294,12 +296,12 @@ const ContrastChecker = ({ currentStyles, disabled }: ContrastCheckerProps) => {
                             >
                               {isValid ? (
                                 <>
-                                  <Icons.Check className="h-3 w-3" />
+                                  <Check className="h-3 w-3" />
                                   {contrastRatio}
                                 </>
                               ) : (
                                 <>
-                                  <Icons.AlertTriangle className="h-3 w-3" />
+                                  <Warning2 className="h-3 w-3" />
                                   {contrastRatio}
                                 </>
                               )}

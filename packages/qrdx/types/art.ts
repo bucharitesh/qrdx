@@ -2,15 +2,30 @@ import { z } from "zod";
 
 /**
  * Art modes blend a picture into the code itself (vector output, no AI):
- * - "logo": modules inside the logo's shape take the logo's colors, the rest
- *   fade to a lighter tone; finder, timing and alignment patterns stay solid.
- * - "halftone": every module shows the photo around a center square that
- *   keeps the module's true dark/light value.
+ * - "logo" (Logo QR): the logo, traced into crisp vector shapes, either fills
+ *   the code under a fine dot screen ("blend") or sits on a rounded plate in
+ *   the middle of a code tinted with its colors ("badge").
+ * - "halftone" (Image QR): the photo shows through every module around a
+ *   small center dot that keeps the module's dark/light value, in full color
+ *   ("color") or as an error-diffused black-and-white halftone ("mono").
+ * Finder, alignment and format patterns always stay crisp.
  */
 export const QR_ART_MODES = ["logo", "halftone"] as const;
 
 export const qrArtModeSchema = z.enum(QR_ART_MODES);
 export type QRArtMode = z.infer<typeof qrArtModeSchema>;
+
+/** Looks within each mode; the first one is the mode's default. */
+export const QR_ART_VARIANTS = {
+  logo: ["blend", "badge"],
+  halftone: ["color", "mono"],
+} as const satisfies Record<QRArtMode, readonly string[]>;
+
+export const qrArtVariantSchema = z.enum([
+  ...QR_ART_VARIANTS.logo,
+  ...QR_ART_VARIANTS.halftone,
+]);
+export type QRArtVariant = z.infer<typeof qrArtVariantSchema>;
 
 /** Largest side of an art sample grid, in pixels. */
 export const QR_ART_MAX_SAMPLE_SIZE = 192;
@@ -44,5 +59,16 @@ export const qrArtSchema = z.object({
   image: qrArtImageSchema,
   /** 0 = plain code, 1 = strongest effect (default 0.6) */
   intensity: z.number().min(0).max(1).optional(),
+  /**
+   * Look within the mode (see QR_ART_VARIANTS). Omitted, or a variant of the
+   * other mode, means the mode's default: "blend" for logo, "color" for
+   * halftone.
+   */
+  variant: qrArtVariantSchema.optional(),
+  /**
+   * Logo mode: color the finder eyes from the logo (default true). Per-eye
+   * `eyeColors` still win.
+   */
+  matchEyes: z.boolean().optional(),
 });
 export type QRArt = z.infer<typeof qrArtSchema>;

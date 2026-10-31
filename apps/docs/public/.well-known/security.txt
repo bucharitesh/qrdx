@@ -1,0 +1,6 @@
+Contact: mailto:support@qrdx.dev
+Expires: 2027-10-31T23:59:59.000Z
+Preferred-Languages: en
+Canonical: https://qrdx.dev/.well-known/security.txt
+Policy: https://qrdx.dev/legal/security
+# Start the email subject with [security]. Please don't report vulnerabilities in public GitHub issues.

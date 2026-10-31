@@ -1,6 +1,9 @@
 // Client-safe settings shared by the /ai/art page and /api/ai/art.
 import { z } from "zod";
 
+/** The playground's Art section (vector Logo QR and Image QR, no AI). */
+export const ART_PLAYGROUND_HREF = "/playground?tab=customisations";
+
 export const ART_TEXT_MAX_LENGTH = 300;
 export const ART_PROMPT_MIN_LENGTH = 3;
 export const ART_PROMPT_MAX_LENGTH = 400;

@@ -9,6 +9,7 @@ import {
 import { useCopyButton } from "fumadocs-ui/utils/use-copy-button";
 import { useMemo, useState } from "react";
 import { Icons } from "@/components/icons";
+import { soundEvent } from "@/lib/sound/emit";
 
 const cache = new Map<string, string>();
 
@@ -23,7 +24,11 @@ export function LLMCopyButton({
   const [isLoading, setLoading] = useState(false);
   const [checked, onClick] = useCopyButton(async () => {
     const cached = cache.get(markdownUrl);
-    if (cached) return navigator.clipboard.writeText(cached);
+    if (cached) {
+      await navigator.clipboard.writeText(cached);
+      soundEvent("copy");
+      return;
+    }
 
     setLoading(true);
 
@@ -38,6 +43,7 @@ export function LLMCopyButton({
           }),
         }),
       ]);
+      soundEvent("copy");
     } finally {
       setLoading(false);
     }

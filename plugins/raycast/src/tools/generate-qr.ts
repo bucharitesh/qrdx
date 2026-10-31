@@ -21,12 +21,12 @@ interface Input {
   bodyPattern?: Settings["bodyPattern"];
   /**
    * Outer shape of the three corner finder squares.
-   * Options: square | rounded | gear | circle | diya | extra-rounded | message | pointy | curly
+   * Options: square | rounded | gear | circle | diya | extra-rounded | message | pointy
    */
   cornerEyePattern?: Settings["cornerEyePattern"];
   /**
    * Inner dot shape inside each corner finder square.
-   * Options: square | rounded | circle | diamond | message | diya | rounded-triangle | star | banner
+   * Options: square | rounded | circle | message | diya | rounded-triangle
    */
   cornerEyeDotPattern?: Settings["cornerEyeDotPattern"];
   /** Hex foreground color for the QR modules, e.g. "#000000". */

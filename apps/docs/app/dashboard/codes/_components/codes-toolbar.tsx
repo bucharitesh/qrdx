@@ -1,5 +1,6 @@
 "use client";
 
+import { Close as X } from "@repo/design-system/components/icons";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -18,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@repo/design-system/components/ui/select";
-import { Search, Trash2, X } from "lucide-react";
+import { SearchNormal1 as Search, Trash as Trash2 } from "iconsax-reactjs";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { type ReactNode, useState } from "react";

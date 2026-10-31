@@ -1,6 +1,7 @@
 "use client";
 
 import { toast } from "@repo/design-system";
+import { Spinner } from "@repo/design-system/components/icons";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -30,13 +31,13 @@ import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { cn } from "@repo/design-system/lib/utils";
 import {
-  CheckCircle2,
+  TickCircle as CheckCircle2,
   Clock,
-  Globe,
-  Plus,
-  RefreshCw,
-  Trash2,
-} from "lucide-react";
+  Global as Globe,
+  Add as Plus,
+  Refresh2 as RefreshCw,
+  Trash as Trash2,
+} from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
 import { type FormEvent, useState, useTransition } from "react";
 import {
@@ -115,7 +116,7 @@ function DomainCard({
                 size="sm"
                 variant={domain.verified ? "outline" : "default"}
               >
-                <RefreshCw className={cn(busy && "animate-spin")} />
+                {busy ? <Spinner /> : <RefreshCw />}
                 {domain.verified ? "Check DNS" : "Verify"}
               </Button>
               <Button

@@ -7,32 +7,134 @@
       "name": "qr-code",
       "type": "registry:component",
       "title": "QR Code",
-      "description": "Styled, accessible QR code with PNG and SVG download buttons, rendered with the qrdx library.",
+      "description": "Styled, accessible QR code with download buttons: colors, gradients, patterns, logos and frame templates.",
       "author": "bucharitesh <https://qrdx.dev>",
-      "dependencies": ["qrdx"],
+      "dependencies": ["qrdx", "lucide-react"],
+      "registryDependencies": ["button"],
       "files": [
         {
-          "path": "public/r/source/qr-code.tsx",
+          "path": "registry/qrdx/qr-code.tsx",
           "type": "registry:component"
         }
       ],
-      "docs": "Import it with `import { QrCode } from \"@/components/qr-code\"`. Props and examples: https://qrdx.dev/docs/developers/shadcn",
+      "docs": "Import it with `import { QrCode } from \"@/components/qr-code\"`. Props and examples: https://qrdx.dev/docs/components/qr-code",
+      "categories": ["qr-code"]
+    },
+    {
+      "name": "qr-code-card",
+      "type": "registry:component",
+      "title": "QR Code Card",
+      "description": "A card with a QR code in a \"Scan me\" frame, a title, a description and room for actions.",
+      "author": "bucharitesh <https://qrdx.dev>",
+      "dependencies": ["qrdx"],
+      "registryDependencies": ["card"],
+      "files": [
+        {
+          "path": "registry/qrdx/qr-code-card.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "docs": "Import it with `import { QrCodeCard } from \"@/components/qr-code-card\"`. Props and examples: https://qrdx.dev/docs/components/qr-code-card",
+      "categories": ["qr-code"]
+    },
+    {
+      "name": "qr-code-download",
+      "type": "registry:component",
+      "title": "QR Code Download",
+      "description": "A download menu that exports a QR code as PNG, SVG, JPG or PDF at the size you pick, or copies it as an image.",
+      "author": "bucharitesh <https://qrdx.dev>",
+      "dependencies": ["qrdx", "lucide-react"],
+      "registryDependencies": ["button", "dropdown-menu"],
+      "files": [
+        {
+          "path": "registry/qrdx/qr-code-download.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "docs": "Import it with `import { QrCodeDownload } from \"@/components/qr-code-download\"`. Props and examples: https://qrdx.dev/docs/components/qr-code-download",
+      "categories": ["qr-code"]
+    },
+    {
+      "name": "qr-code-share-dialog",
+      "type": "registry:component",
+      "title": "QR Code Share Dialog",
+      "description": "A share dialog with a QR code for a link, a copy button, a PNG download and the native share sheet.",
+      "author": "bucharitesh <https://qrdx.dev>",
+      "dependencies": ["qrdx", "lucide-react"],
+      "registryDependencies": ["button", "dialog", "input"],
+      "files": [
+        {
+          "path": "registry/qrdx/qr-code-share-dialog.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "docs": "Import it with `import { QrCodeShareDialog } from \"@/components/qr-code-share-dialog\"`. Props and examples: https://qrdx.dev/docs/components/qr-code-share-dialog",
+      "categories": ["qr-code"]
+    },
+    {
+      "name": "qr-code-generator",
+      "type": "registry:component",
+      "title": "QR Code Generator",
+      "description": "A text input with a live QR code preview, style presets and download buttons.",
+      "author": "bucharitesh <https://qrdx.dev>",
+      "dependencies": ["qrdx", "lucide-react"],
+      "registryDependencies": ["button", "input", "label"],
+      "files": [
+        {
+          "path": "registry/qrdx/qr-code-generator.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "docs": "Import it with `import { QrCodeGenerator } from \"@/components/qr-code-generator\"`. Props and examples: https://qrdx.dev/docs/components/qr-code-generator",
       "categories": ["qr-code"]
     },
     {
       "name": "qr-code-scanner",
       "type": "registry:component",
       "title": "QR Code Scanner",
-      "description": "Drop-zone that decodes a QR code from an uploaded image in the browser, using the qrdx library.",
+      "description": "Drop zone that decodes a QR code from an uploaded image in the browser, using the qrdx library.",
+      "author": "bucharitesh <https://qrdx.dev>",
+      "dependencies": ["qrdx", "lucide-react"],
+      "registryDependencies": ["button"],
+      "files": [
+        {
+          "path": "registry/qrdx/qr-code-scanner.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "docs": "Import it with `import { QrCodeScanner } from \"@/components/qr-code-scanner\"`. Props and examples: https://qrdx.dev/docs/components/qr-code-scanner",
+      "categories": ["qr-code"]
+    },
+    {
+      "name": "wifi-qr-code",
+      "type": "registry:component",
+      "title": "Wi-Fi QR Code",
+      "description": "A QR code that joins a Wi-Fi network when scanned, with a typed, escaped payload builder.",
+      "author": "bucharitesh <https://qrdx.dev>",
+      "dependencies": ["qrdx", "lucide-react"],
+      "files": [
+        {
+          "path": "registry/qrdx/wifi-qr-code.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "docs": "Import it with `import { WifiQrCode } from \"@/components/wifi-qr-code\"`. Props and examples: https://qrdx.dev/docs/components/wifi-qr-code",
+      "categories": ["qr-code"]
+    },
+    {
+      "name": "vcard-qr-code",
+      "type": "registry:component",
+      "title": "vCard QR Code",
+      "description": "A QR code that saves a contact card when scanned, with a typed vCard 3.0 builder.",
       "author": "bucharitesh <https://qrdx.dev>",
       "dependencies": ["qrdx"],
       "files": [
         {
-          "path": "public/r/source/qr-code-scanner.tsx",
+          "path": "registry/qrdx/vcard-qr-code.tsx",
           "type": "registry:component"
         }
       ],
-      "docs": "Import it with `import { QrCodeScanner } from \"@/components/qr-code-scanner\"`. Props and examples: https://qrdx.dev/docs/developers/shadcn",
+      "docs": "Import it with `import { VCardQrCode } from \"@/components/vcard-qr-code\"`. Props and examples: https://qrdx.dev/docs/components/vcard-qr-code",
       "categories": ["qr-code"]
     }
   ]

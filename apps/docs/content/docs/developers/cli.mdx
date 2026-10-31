@@ -1,0 +1,83 @@
+---
+title: CLI
+description: Generate styled QR codes as SVG, PNG or vector EPS from your terminal or CI with the @qrdx/cli command-line tool.
+icon: Terminal
+---
+
+`@qrdx/cli` renders the same QR codes as the playground and the [`qrdx` library](/docs/getting-started) from the command line. It never prompts in scripts and CI, and when you run `qrdx generate` with no arguments in a terminal it asks for the content and options step by step.
+
+```bash
+npx @qrdx/cli generate "https://example.com" -o qr.svg
+```
+
+Install it globally to get the `qrdx` command:
+
+```bash
+npm install -g @qrdx/cli
+qrdx generate "https://example.com" -o qr.png --size 1024
+```
+
+It needs Node.js 18 or later. PNG output uses [sharp](https://sharp.pixelplumbing.com), an optional dependency npm installs where your platform supports it; SVG and EPS work without it. The `qrdx` npm package is the React library: the CLI is only in `@qrdx/cli`.
+
+## Output formats
+
+The file extension picks the format, or use `--format` when the file name has none.
+
+| Format | Use it for | `--size` means |
+| --- | --- | --- |
+| `.svg` | Web pages, design tools, scaling without loss | Width in pixels (default 512) |
+| `.png` | Documents, slides, anywhere that needs an image | Width in pixels |
+| `.eps` | Print shops, Illustrator, InDesign | Width in points (72 per inch, so `144` is 2 inches) |
+
+EPS files are vector PostScript. PNG and JPEG logos are embedded as they are; other logo formats are converted with sharp when it's installed, and otherwise left out with a warning.
+
+## Options
+
+| Flag | Default | Description |
+| --- | --- | --- |
+| `-o`, `--output` | `qr.svg` | Output file |
+| `--format` | from the extension | `svg`, `png` or `eps` |
+| `--size` | `512` | Output size (see above) |
+| `-l`, `--level` | `Q` | Error correction: `L`, `M`, `Q` or `H` |
+| `--body` | `square` | Data module [pattern](/docs/features/patterns) |
+| `--eye` | `square` | Corner eye pattern |
+| `--dot` | `square` | Corner eye dot pattern |
+| `--fg`, `--bg` | `#000000`, `#ffffff` | Foreground and background: a hex color or a JSON gradient |
+| `--eye-color`, `--dot-color` | `--fg` | Corner eye and eye dot colors |
+| `--logo` | | Center logo image URL (use with `--level H`) |
+| `--margin` | `0` | Quiet zone, in modules |
+| `--template` | | `Arrow`, `StandardBox`, `SquareBorder`, `StrikedBox` or `Halloween` |
+| `--frame` | | Call-to-action [frame](/docs/features/frames): any of the 20 frame styles, such as `banner-bottom`, `rounded-border`, `circle`, `sticker` or `phone` (see [all of them](/docs/styles#frames)) |
+| `--frame-text` | `Scan me` | Frame label, up to 24 characters |
+| `--frame-color`, `--frame-text-color` | | Frame and label colors (hex) |
+
+`qrdx --help` lists every pattern name. Invalid values exit with code `1` and a message listing the accepted values.
+
+## Examples
+
+```bash
+# High-resolution PNG for print
+qrdx generate "https://example.com" -o qr.png --size 2048 --level H
+
+# Vector EPS, 2 inches wide, for a print shop
+qrdx generate "https://example.com" -o qr.eps --size 144
+
+# Branded colors and patterns
+qrdx generate "https://example.com" --body circle --eye rounded --fg "#1a1a2e" -o brand.svg
+
+# Gradient foreground
+qrdx generate "https://example.com" -o gradient.svg \
+  --fg '{"type":"linear","stops":[{"color":"#6366f1","offset":0},{"color":"#ec4899","offset":100}],"angle":135}'
+
+# "Scan for the menu" frame
+qrdx generate "https://example.com/menu" --frame banner-bottom --frame-text "Scan for the menu" -o menu.png
+
+# Wi-Fi network
+qrdx generate "WIFI:T:WPA;S:MyNetwork;P:MyPassword;;" -o wifi.svg
+```
+
+To print a [dynamic QR code](/docs/dynamic-qr-codes), pass its short link (`https://qrdx.dev/q/<slug>`) as the data.
+
+## Use it from an AI coding agent
+
+The repository's [`generate-qr` skill](https://github.com/bucharitesh/qrdx/tree/main/skills/generate-qr) teaches agents such as Claude Code to call the CLI. For agents that support MCP, the [MCP server](/docs/developers/mcp) needs no install at all.

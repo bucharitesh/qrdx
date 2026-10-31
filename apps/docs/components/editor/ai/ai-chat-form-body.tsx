@@ -36,6 +36,8 @@ interface AIChatFormBodyProps {
   externalEditorContent?: JSONContent;
   textareaKey?: string | number;
   isStreamingContent?: boolean;
+  /** Rotating placeholder ideas while the prompt is empty */
+  placeholders?: string[];
 }
 
 export function AIChatFormBody({
@@ -51,6 +53,7 @@ export function AIChatFormBody({
   externalEditorContent,
   textareaKey,
   isStreamingContent = false,
+  placeholders,
 }: AIChatFormBodyProps) {
   return (
     <>
@@ -98,6 +101,7 @@ export function AIChatFormBody({
             initialEditorContent={initialEditorContent}
             externalEditorContent={externalEditorContent}
             isStreamingContent={isStreamingContent}
+            placeholders={placeholders}
           />
         </div>
       </div>

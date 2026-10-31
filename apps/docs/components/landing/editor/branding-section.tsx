@@ -1,7 +1,8 @@
 "use client";
 
+import { Tick as Check } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
-import { Check, Gem, Lock } from "lucide-react";
+import { Diamonds as Gem, Lock } from "iconsax-reactjs";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 
 function Row({

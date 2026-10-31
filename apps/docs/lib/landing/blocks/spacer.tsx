@@ -1,4 +1,4 @@
-import { MoveVertical } from "lucide-react";
+import { ArrangeVertical as MoveVertical } from "iconsax-reactjs";
 import { z } from "zod";
 import { type BlockRenderProps, registerBlock } from "../registry";
 import { SpacerEditor } from "./spacer-editor";

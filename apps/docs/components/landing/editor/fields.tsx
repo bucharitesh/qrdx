@@ -18,7 +18,12 @@ import {
   ToggleGroupItem,
 } from "@repo/design-system/components/ui/toggle-group";
 import { cn } from "@repo/design-system/lib/utils";
-import { ArrowDown, ArrowUp, Plus, Trash2 } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowUp,
+  Add as Plus,
+  Trash as Trash2,
+} from "iconsax-reactjs";
 import { type ReactNode, useId } from "react";
 
 // Controlled form fields for landing block editors (any block executor may

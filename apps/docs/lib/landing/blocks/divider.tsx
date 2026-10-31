@@ -1,5 +1,5 @@
 import { cn } from "@repo/design-system/lib/utils";
-import { Minus } from "lucide-react";
+import { Minus } from "iconsax-reactjs";
 import { z } from "zod";
 import { lineText } from "@/components/landing/block-kit";
 import { type BlockRenderProps, registerBlock } from "../registry";

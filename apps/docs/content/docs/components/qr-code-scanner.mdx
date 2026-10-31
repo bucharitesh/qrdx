@@ -1,0 +1,41 @@
+---
+title: QR Code Scanner
+description: A drop zone that reads a QR code from an image in the browser, with copy and open-link actions.
+icon: Scan
+---
+
+<ComponentLinks name="qr-code-scanner" />
+
+<ComponentPreview name="qr-code-scanner-demo" />
+
+## Installation
+
+<InstallationTabs name="qr-code-scanner" />
+
+## Usage
+
+```tsx
+import { QrCodeScanner } from "@/components/qr-code-scanner";
+```
+
+```tsx
+<QrCodeScanner onResult={(value) => console.log(value)} />
+```
+
+People drop an image or click to pick one. Decoding runs in the browser with qrdx's [detection helpers](/docs/qr-detection), so the image never leaves the device. It reads image files, not a live camera feed.
+
+The result appears with a copy button, plus an "Open link" button when it is an `http` or `https` URL.
+
+## Examples
+
+### Checking a result
+
+`onResult` receives the decoded text, so you can act on it, for example to check in a ticket. `label` changes the heading in the drop zone. Download the sample code above and drop it in to see a valid ticket.
+
+<ComponentPreview name="qr-code-scanner-tickets" />
+
+## API Reference
+
+<auto-type-table path="../../../registry/qrdx/qr-code-scanner.tsx" type="{ [K in keyof QrCodeScannerProps as K extends keyof ComponentProps<'div'> ? never : K]: QrCodeScannerProps[K] }" />
+
+Any other prop, such as `className`, is passed to the wrapping `<div>`.

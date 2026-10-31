@@ -57,11 +57,8 @@ jobs:
           pnpm --filter docs exec next typegen
           pnpm typecheck:docs
 
-      - name: Test CLI
-        run: pnpm --filter @qrdx/cli test
-
-      - name: Test API
-        run: pnpm --filter api test
+      # Tests run locally before every push (.husky/pre-push → pnpm prepush),
+      # not here.
 
       # Biome is a devDependency of apps/docs; run it over the whole repo.
       - name: Lint (Biome)

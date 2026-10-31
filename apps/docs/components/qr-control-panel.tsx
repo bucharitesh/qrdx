@@ -5,191 +5,110 @@ import {
   Tabs,
   TabsContent,
   TabsList,
+  TabsTrigger,
 } from "@repo/design-system/components/ui/tabs";
-import { Sparkle } from "lucide-react";
-import React from "react";
+import { Brush2, Edit2 } from "iconsax-reactjs";
+import type * as React from "react";
+import { AnimatedBot } from "@/components/editor/ai/animated-bot";
 import { ChatInterface } from "@/components/editor/ai/chat-interface";
-import ControlSection from "@/components/editor/control-section";
-import { GradientPicker } from "@/components/editor/gradient-picker";
+import { ShineText } from "@/components/editor/ai/shine-border";
+import { ContentControls } from "@/components/editor/control-sections/content-controls";
+import { DesignControls } from "@/components/editor/control-sections/design-controls";
 import QrPresetSelect from "@/components/editor/qr-preset-select";
-import TabsTriggerPill from "@/components/editor/theme-preview/tabs-trigger-pill";
-import { HorizontalScrollArea } from "@/components/horizontal-scroll-area";
-import { defaultThemeState } from "@/config/qr";
 import { useAIQRGenerationCore } from "@/lib/hooks/use-ai-qr-generation-core";
 import {
   type ControlTab,
   useControlsTabFromUrl,
 } from "@/lib/hooks/use-controls-tab-from-url";
 import type { QRStyle } from "@/types/theme";
-import { ArtControls } from "./editor/control-sections/art-controls";
-import { ContentControls } from "./editor/control-sections/content-controls";
-import { FrameControls } from "./editor/control-sections/frame-controls";
-import { LogoControls } from "./editor/control-sections/logo-controls";
-import { PaddingControls } from "./editor/control-sections/padding-controls";
-import { CornerEyeDotPatternSelector } from "./playground/corner-eye-dot-pattern-selector";
-import { CornerEyePatternSelector } from "./playground/corner-eye-pattern-selector";
-import { ErrorLevelSelector } from "./playground/error-level-selector";
-import { PatternSelector } from "./playground/pattern-selector";
-import { TemplateSelector } from "./playground/template-selector";
 
 interface ThemeControlPanelProps {
   styles: QRStyle;
   onChange: (styles: QRStyle) => void;
 }
 
+// Radix renders the viewport child as a table, which lets long rows widen it.
+const scrollAreaClass =
+  "h-full [&_[data-slot=scroll-area-viewport]>div]:!block";
+
+const triggerClass =
+  "h-full gap-1.5 text-[13px] data-[state=active]:text-foreground text-muted-foreground";
+
+function GenerateTrigger({ thinking }: { thinking: boolean }) {
+  // Same tab as its siblings (no coloured border); the only accent is a
+  // colour shine passing through the label every few seconds.
+  return (
+    <TabsTrigger className={triggerClass} value="ai">
+      <AnimatedBot thinking={thinking} />
+      <ShineText className="font-medium" tone="color">
+        Generate
+      </ShineText>
+    </TabsTrigger>
+  );
+}
+
+/**
+ * The editor's left panel: Content (what it opens) → Design (how it looks)
+ * → Generate (AI). The old "Settings" tab URL opens Design at the Logo section.
+ */
 const ThemeControlPanel = ({ styles, onChange }: ThemeControlPanelProps) => {
   const { tab, handleSetTab } = useControlsTabFromUrl();
   const { isGenerating } = useAIQRGenerationCore();
+  const view: ControlTab = tab === "settings" ? "customisations" : tab;
 
-  const currentStyles = React.useMemo(
-    () => ({
-      ...defaultThemeState.styles,
-      ...styles,
-    }),
-    [styles],
+  const panelContent = (value: ControlTab, children: React.ReactNode) => (
+    <TabsContent
+      className="mt-0 min-h-0 overflow-hidden data-[state=inactive]:hidden"
+      value={value}
+    >
+      {children}
+    </TabsContent>
   );
-
-  const updateStyle = React.useCallback(
-    <K extends keyof QRStyle>(key: K, value: QRStyle[K]) => {
-      onChange({
-        ...styles,
-        [key]: value,
-      });
-    },
-    [onChange, styles],
-  );
-
-  // Ensure we have valid styles for the current mode
-  if (!currentStyles) {
-    return null; // Or some fallback UI
-  }
 
   return (
     <>
       <div className="border-b">
         <QrPresetSelect className="h-14 rounded-none" disabled={isGenerating} />
       </div>
-      <div className="flex min-h-0 flex-1 flex-col space-y-4">
-        <Tabs
-          value={tab}
-          onValueChange={(v) => handleSetTab(v as ControlTab)}
-          className="flex min-h-0 w-full flex-1 flex-col"
-        >
-          <HorizontalScrollArea className="mt-2 mb-1 px-4">
-            <TabsList className="bg-background text-muted-foreground inline-flex w-fit items-center justify-center rounded-full px-0">
-              <TabsTriggerPill value="content">Content</TabsTriggerPill>
-              <TabsTriggerPill value="customisations">
-                Customisations
-              </TabsTriggerPill>
-              <TabsTriggerPill value="settings">Settings</TabsTriggerPill>
-              <TabsTriggerPill
-                value="ai"
-                className="data-[state=active]:[--effect:var(--secondary-foreground)] data-[state=active]:[--foreground:var(--muted-foreground)] data-[state=active]:[--muted-foreground:var(--effect)]"
-              >
-                <Sparkle className="size-3.5 text-current" />
-                <span className="animate-text via-foreground from-muted-foreground to-muted-foreground flex items-center gap-1 bg-linear-to-r from-50% via-60% to-100% bg-size-[200%_auto] bg-clip-text text-sm text-transparent">
-                  Generate
-                </span>
-              </TabsTriggerPill>
-            </TabsList>
-          </HorizontalScrollArea>
+      <Tabs
+        className="flex min-h-0 w-full flex-1 flex-col gap-0"
+        onValueChange={(next) => handleSetTab(next as ControlTab)}
+        value={view}
+      >
+        <div className="border-b px-3 py-2.5">
+          <TabsList className="grid h-10 w-full grid-cols-3">
+            <TabsTrigger className={triggerClass} value="content">
+              <Edit2 className="size-4" />
+              Content
+            </TabsTrigger>
+            <TabsTrigger className={triggerClass} value="customisations">
+              <Brush2 className="size-4" />
+              Design
+            </TabsTrigger>
+            <GenerateTrigger thinking={isGenerating} />
+          </TabsList>
+        </div>
 
-          <TabsContent
-            value="content"
-            className="mt-1 size-full overflow-hidden"
-          >
-            <ScrollArea className="h-full px-4">
-              <ContentControls />
-            </ScrollArea>
-          </TabsContent>
+        {panelContent(
+          "content",
+          <ScrollArea className={scrollAreaClass}>
+            <ContentControls onNext={() => handleSetTab("customisations")} />
+          </ScrollArea>,
+        )}
 
-          <TabsContent
-            value="customisations"
-            className="mt-1 size-full overflow-hidden"
-          >
-            <ScrollArea className="h-full px-4">
-              <ControlSection title="Colors" expanded>
-                <GradientPicker
-                  name="bgColor"
-                  value={currentStyles.bgColor}
-                  onChange={(color) => updateStyle("bgColor", color)}
-                  label="Background Color"
-                />
-                <GradientPicker
-                  name="fgColor"
-                  value={currentStyles.fgColor}
-                  onChange={(color) => updateStyle("fgColor", color)}
-                  label="Foreground Color"
-                />
+        {panelContent(
+          "customisations",
+          <ScrollArea className={scrollAreaClass}>
+            <DesignControls
+              focus={tab === "settings" ? "logo" : undefined}
+              onChange={onChange}
+              styles={styles}
+            />
+          </ScrollArea>,
+        )}
 
-                <GradientPicker
-                  name="eyeColor"
-                  value={currentStyles.eyeColor}
-                  onChange={(color) => updateStyle("eyeColor", color)}
-                  label="Eye Color"
-                />
-                <GradientPicker
-                  name="dotColor"
-                  value={currentStyles.dotColor}
-                  onChange={(color) => updateStyle("dotColor", color)}
-                  label="Dot Color"
-                />
-              </ControlSection>
-
-              <ArtControls styles={styles} onChange={onChange} />
-
-              <ControlSection title="Dot Patterns" expanded kbd=",">
-                <PatternSelector />
-              </ControlSection>
-
-              <ControlSection title="Corner Eye Patterns" kbd=".">
-                <CornerEyePatternSelector />
-              </ControlSection>
-
-              <ControlSection title="Internal Eye Patterns" kbd="/">
-                <CornerEyeDotPatternSelector />
-              </ControlSection>
-
-              <ControlSection title="Frames" expanded kbd="F">
-                <TemplateSelector />
-              </ControlSection>
-
-              <ControlSection title="Call to action" expanded>
-                <FrameControls />
-              </ControlSection>
-
-              <ControlSection title="Padding" expanded>
-                <PaddingControls
-                  value={currentStyles.margin}
-                  onChange={(margin) => updateStyle("margin", margin)}
-                />
-              </ControlSection>
-            </ScrollArea>
-          </TabsContent>
-
-          <TabsContent
-            value="settings"
-            className="mt-1 size-full overflow-hidden"
-          >
-            <ScrollArea className="h-full px-4">
-              <LogoControls
-                style={currentStyles}
-                onStyleChange={(styles) => {
-                  updateStyle("customLogo", styles.customLogo);
-                  updateStyle("showLogo", styles.showLogo);
-                }}
-              />
-              <ControlSection title="Error Correction" expanded>
-                <ErrorLevelSelector />
-              </ControlSection>
-            </ScrollArea>
-          </TabsContent>
-
-          <TabsContent value="ai" className="mt-1 size-full overflow-hidden">
-            <ChatInterface />
-          </TabsContent>
-        </Tabs>
-      </div>
+        {panelContent("ai", <ChatInterface />)}
+      </Tabs>
     </>
   );
 };

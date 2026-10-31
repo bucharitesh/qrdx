@@ -1,6 +1,9 @@
+import { Button } from "@repo/design-system/components/ui/button";
+import { Brush2 } from "iconsax-reactjs";
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Suspense } from "react";
-import { SectionHeader } from "@/components/sections/section-header";
+import { AsciiField, Backdrop, MeshGradient } from "@/components/fx";
 import { createMetadata } from "@/lib/metadata";
 import { CommunityThemesContent } from "./components/community-themes-content";
 
@@ -20,36 +23,40 @@ export const metadata: Metadata = createMetadata({
 
 export default function CommunityPage() {
   return (
-    <section className="relative flex flex-col items-center justify-center gap-10 w-full border-b">
-      <div className="absolute inset-0 -z-10 h-[335px] md:h-[370px] w-full [background:radial-gradient(125%_125%_at_50%_10%,var(--background)_40%,var(--primary)_100%)] rounded-b-sm"></div>
-      <div className="w-full">
-        <SectionHeader>
-          <div className="relative z-10 pt-32 max-w-3xl mx-auto h-full w-full flex flex-col gap-10 items-center justify-center">
-            <div className="flex flex-col items-center justify-center gap-5">
-              <h1 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-semibold tracking-tighter text-balance text-center text-secondary-foreground">
-                Community Themes
-              </h1>
-              <p className="text-base md:text-lg text-center text-muted-foreground font-medium text-balance leading-relaxed tracking-tight">
-                Discover and explore beautiful qrdx themes created by the
-                community.
-              </p>
-            </div>
-            {/* <div className="flex items-center gap-2.5 flex-wrap justify-center">
-              <Link href={hero.cta.primary.href}>
-                <Button>{hero.cta.primary.text}</Button>
-              </Link>
-              <Link href={hero.cta.secondary.href}>
-                <Button variant="outline">{hero.cta.secondary.text}</Button>
-              </Link>
-            </div> */}
-          </div>
-        </SectionHeader>
+    <main className="w-full border-b">
+      <section className="relative w-full overflow-hidden border-b">
+        <Backdrop>
+          <MeshGradient tone="warm" />
+          <AsciiField
+            variant="noise"
+            density={0.85}
+            className="[mask-image:radial-gradient(ellipse_75%_90%_at_50%_45%,rgba(0,0,0,0.3)_15%,black_50%,transparent_82%)]"
+          />
+        </Backdrop>
+        <div className="relative mx-auto flex max-w-3xl flex-col items-center gap-4 px-6 pt-16 pb-14 text-center md:pt-24 md:pb-16">
+          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
+            Community
+          </p>
+          <h1 className="text-3xl font-semibold tracking-tight text-balance md:text-5xl">
+            Community themes
+          </h1>
+          <p className="max-w-xl text-pretty text-muted-foreground md:text-lg">
+            QR code styles shared by QRdx users. Preview any theme, then open it
+            in the editor to make it yours.
+          </p>
+          <Button asChild className="mt-3">
+            <Link href="/playground?tab=customisations">
+              <Brush2 aria-hidden />
+              Make your own theme
+            </Link>
+          </Button>
+        </div>
+      </section>
 
-        {/* nuqs reads search params; without a boundary the whole page renders client-side */}
-        <Suspense fallback={<div className="min-h-[50vh] w-full" />}>
-          <CommunityThemesContent />
-        </Suspense>
-      </div>
-    </section>
+      {/* nuqs reads search params; without a boundary the whole page renders client-side */}
+      <Suspense fallback={<div className="min-h-[50vh] w-full" />}>
+        <CommunityThemesContent />
+      </Suspense>
+    </main>
   );
 }

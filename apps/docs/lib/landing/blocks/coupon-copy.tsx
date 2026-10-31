@@ -1,7 +1,8 @@
 "use client";
 
+import { Tick as Check } from "@repo/design-system/components/icons";
 import { cn } from "@repo/design-system/lib/utils";
-import { Check, Copy } from "lucide-react";
+import { Copy } from "iconsax-reactjs";
 import { useEffect, useState } from "react";
 
 async function writeClipboard(value: string): Promise<boolean> {

@@ -19,8 +19,15 @@ export interface EditorPreviewProps {
 }
 
 export interface ThemeEditorState extends BaseEditorState {
+  /** The applied preset's id. For a shuffle it is only a label. */
   preset?: string;
   styles: QRStyle;
+  /**
+   * The look a shuffle preset resolved to when it was applied. Shuffles are
+   * composed from building blocks that change between releases, so Reset,
+   * undo and the unsaved-changes check use this instead of the id.
+   */
+  presetStyles?: QRStyle;
 }
 /**
  * QR Editor Controls Props

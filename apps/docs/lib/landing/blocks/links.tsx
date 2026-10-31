@@ -1,5 +1,5 @@
 import { cn } from "@repo/design-system/lib/utils";
-import { Link2 } from "lucide-react";
+import { Link2 } from "iconsax-reactjs";
 import { z } from "zod";
 import {
   buttonClass,

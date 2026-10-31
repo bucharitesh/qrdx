@@ -1,5 +1,19 @@
 import type { JSX } from "react";
 import type { CornerEyeDotPattern } from "../types/corner-dot";
+import type { EyeCorner } from "./corner-eye";
+import {
+  circlePath,
+  heartPath,
+  polygonPath,
+  regularPolygon,
+  roundedRectPath,
+  superellipsePoints,
+} from "./shapes";
+
+/** Index (top-left, top-right, bottom-right, bottom-left) of the outer corner. */
+function outerCornerIndex(corner: EyeCorner) {
+  return corner === "top-left" ? 0 : corner === "top-right" ? 1 : 3;
+}
 
 /**
  * Generate corner dot pattern based on type
@@ -7,18 +21,163 @@ import type { CornerEyeDotPattern } from "../types/corner-dot";
  * @param cy - Center Y coordinate
  * @param radius - Radius of the dot
  * @param pattern - Pattern type for the corner dot
+ * @param corner - Which finder this is (leaf and drop dots face outward)
  * @returns JSX element representing the pattern
  */
 export function generateCornerDotPath(
   cx: number,
   cy: number,
   radius: number,
-  pattern: CornerEyeDotPattern = "circle"
+  pattern: CornerEyeDotPattern = "circle",
+  corner: EyeCorner = "top-left"
 ): JSX.Element {
   const size = radius * 2;
   const halfSize = radius;
+  // One finder module (the dot is 3 × 3 modules)
+  const m = size / 3;
 
   switch (pattern) {
+    case "leaf":
+    case "leaf-reverse":
+    case "drop":
+    case "drop-reverse": {
+      const outer = outerCornerIndex(corner);
+      const inner = (outer + 2) % 4;
+      const round = 1.3 * m;
+      // The "sharp" corners stay soft, so blur can't join them to wavy eye
+      // frames (fully sharp corners fail inside curly eyes)
+      const sharp = 0.7 * m;
+      const isSharp = (i: number) => {
+        switch (pattern) {
+          case "leaf":
+            return i === outer || i === inner;
+          case "leaf-reverse":
+            return !(i === outer || i === inner);
+          case "drop":
+            return i === outer;
+          default:
+            return i === inner;
+        }
+      };
+      const radii = [0, 1, 2, 3].map((i) => (isSharp(i) ? sharp : round)) as [
+        number,
+        number,
+        number,
+        number,
+      ];
+      return (
+        <path
+          d={roundedRectPath(cx - radius, cy - radius, size, size, radii)}
+        />
+      );
+    }
+
+    case "extra-rounded":
+      return (
+        <path
+          d={roundedRectPath(cx - radius, cy - radius, size, size, 1.15 * m)}
+        />
+      );
+
+    case "plus": {
+      // Arms 2.3 modules wide keep the 3-module center run on most rows
+      // (2-module arms fail jsQR in sharp renders at 8–14 px per module)
+      const a = 1.15 * m;
+      const l = radius;
+      return (
+        <path
+          d={polygonPath([
+            [cx - a, cy - l],
+            [cx + a, cy - l],
+            [cx + a, cy - a],
+            [cx + l, cy - a],
+            [cx + l, cy + a],
+            [cx + a, cy + a],
+            [cx + a, cy + l],
+            [cx - a, cy + l],
+            [cx - a, cy + a],
+            [cx - l, cy + a],
+            [cx - l, cy - a],
+            [cx - a, cy - a],
+          ])}
+        />
+      );
+    }
+
+    case "cross-rounded": {
+      const a = 1.15 * m;
+      // Rounder ends (radius 0.7+) fail jsQR at close range
+      const r = 0.5 * m;
+      return (
+        <path
+          d={
+            roundedRectPath(cx - radius, cy - a, size, 2 * a, r) +
+            roundedRectPath(cx - a, cy - radius, 2 * a, size, r)
+          }
+        />
+      );
+    }
+
+    case "hexagon":
+      // Pointy-top: three modules wide, so rows through it stay wide
+      return <path d={polygonPath(regularPolygon(cx, cy, 1.72 * m, 6))} />;
+
+    case "octagon":
+      return (
+        <path
+          d={polygonPath(
+            regularPolygon(cx, cy, radius / Math.cos(Math.PI / 8), 8, 22.5)
+          )}
+        />
+      );
+
+    case "flower": {
+      // Petals on the diagonals: petals on the axes leave rows near the
+      // top and bottom too narrow for the finder's 3-module center.
+      const d = 0.6 * m;
+      const petal = 0.9 * m;
+      return (
+        <path
+          d={
+            circlePath(cx - d, cy - d, petal) +
+            circlePath(cx + d, cy - d, petal) +
+            circlePath(cx + d, cy + d, petal) +
+            circlePath(cx - d, cy + d, petal) +
+            circlePath(cx, cy, 1.2 * m)
+          }
+        />
+      );
+    }
+
+    case "heart":
+      // A smaller heart's top notch leaves too short a center run
+      return <path d={heartPath(cx, cy + 0.12 * m, 3.5 * m)} />;
+
+    case "squircle":
+      return (
+        <path
+          d={polygonPath(superellipsePoints(cx, cy, radius, radius, 4, 64))}
+        />
+      );
+
+    case "dots": {
+      const dots: string[] = [];
+      for (const dy of [-1, 0, 1]) {
+        for (const dx of [-1, 0, 1]) {
+          dots.push(
+            circlePath(
+              // Closer than one module, so the grid reads as a solid 3 × 3
+              // center to decoders, sharp or blurred
+              cx + dx * m * 0.82,
+              cy + dy * m * 0.82,
+              0.58 * m
+            )
+          );
+        }
+      }
+      return <path d={dots.join("")} />;
+    }
+
     case "square":
       return (
         <rect

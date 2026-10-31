@@ -1,5 +1,5 @@
 import { Button } from "@repo/design-system/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight } from "iconsax-reactjs";
 import type { Metadata } from "next";
 import Link from "next/link";
 import {
@@ -61,6 +61,8 @@ export default function GuaranteePage() {
   return (
     <main className="flex flex-col divide-y divide-border min-h-screen w-full">
       <ToolHero
+        pattern="halo"
+        focus={[0.5, 0.4]}
         crumbs={[
           { name: "Home", path: "/" },
           { name: "Pricing", path: "/pricing" },
@@ -98,11 +100,14 @@ export default function GuaranteePage() {
         <ol className="grid gap-4 md:grid-cols-2">
           {GUARANTEE_PROMISES.map((promise) => (
             <li
-              className="flex gap-4 rounded-xl border border-border bg-card p-5"
+              className="flex gap-4 rounded-xl border border-border bg-card p-5 shadow-sm"
               key={promise.title}
             >
-              <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
-                <promise.icon aria-hidden className="size-5 text-primary" />
+              <span className="grid size-9 shrink-0 place-items-center rounded-lg border bg-muted/40">
+                <promise.icon
+                  aria-hidden
+                  className="size-4 text-foreground/80"
+                />
               </span>
               <div className="flex flex-col gap-1">
                 <h3 className="font-medium text-secondary-foreground">
@@ -157,7 +162,7 @@ export default function GuaranteePage() {
         <p className="leading-relaxed text-muted-foreground">
           We disable a code only when it breaks our{" "}
           <Link
-            className="text-primary underline"
+            className="font-medium text-foreground underline decoration-foreground/30 underline-offset-4 transition-colors hover:decoration-foreground"
             href="/legal/terms-of-service"
           >
             terms of service
@@ -165,7 +170,10 @@ export default function GuaranteePage() {
           , for example by pointing to phishing or malware. That's a safety
           decision made after a report or a review, never a billing one. Anyone
           can{" "}
-          <Link className="text-primary underline" href="/legal/report-abuse">
+          <Link
+            className="font-medium text-foreground underline decoration-foreground/30 underline-offset-4 transition-colors hover:decoration-foreground"
+            href="/report-abuse"
+          >
             report a code
           </Link>
           .
@@ -173,7 +181,7 @@ export default function GuaranteePage() {
         <p className="text-sm text-muted-foreground">
           Questions about the guarantee? Email{" "}
           <a
-            className="text-primary underline"
+            className="font-medium text-foreground underline decoration-foreground/30 underline-offset-4 transition-colors hover:decoration-foreground"
             href={`mailto:${siteConfig.links.email}`}
           >
             {siteConfig.links.email}

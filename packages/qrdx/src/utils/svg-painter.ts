@@ -3,6 +3,7 @@
 // to an output backend (PDF via jsPDF, EPS as PostScript).
 import { parseColor, type RGBAColor } from "./parse-color";
 import {
+  applyMatrix,
   ellipseSegments,
   type Matrix,
   multiply,
@@ -13,6 +14,12 @@ import {
   type Segment,
   type SvgNode,
 } from "./svg-geometry";
+import {
+  invertMatrix,
+  type PlacedGradient,
+  placeGradient,
+  type SvgGradient,
+} from "./svg-gradient";
 
 export interface PaintState {
   matrix: Matrix;
@@ -28,6 +35,11 @@ export interface PaintState {
 }
 
 export type PaintColor = RGBAColor | null;
+
+/** A fill: a solid color, or a gradient placed on the shape being painted. */
+export type FillPaint = { color: RGBAColor } | { gradient: PlacedGradient };
+
+const URL_REFERENCE = /^url\(\s*#([^)\s]+)\s*\)/;
 
 const SKIPPED_ELEMENTS = new Set([
   "defs",
@@ -156,22 +168,118 @@ export async function rasterizeImage(href: string): Promise<string | null> {
 
 export abstract class SvgPainter {
   protected readonly gradients: Map<string, string>;
+  /** Gradients the backend shades natively (see `resolveFill`) */
+  protected readonly shadings: Map<string, SvgGradient> | null;
 
-  constructor(gradients: Map<string, string>) {
+  /**
+   * `gradients` maps gradient ids to the color they flatten to. Pass
+   * `shadings` (from `collectGradients`) when the backend can shade them.
+   */
+  constructor(
+    gradients: Map<string, string>,
+    shadings: Map<string, SvgGradient> | null = null
+  ) {
     this.gradients = gradients;
+    this.shadings = shadings;
   }
 
   resolveColor(value: string | undefined): PaintColor {
     if (!value || value === "none") {
       return null;
     }
-    const reference = /^url\(\s*#([^)\s]+)\s*\)/.exec(value);
+    const reference = URL_REFERENCE.exec(value);
     if (reference) {
       // Gradients are flattened to their first stop; patterns are skipped.
       return this.resolveColor(this.gradients.get(reference[1] as string));
     }
     const color = parseColor(value === "currentColor" ? "#000000" : value);
     return color && color.a > 0 ? color : null;
+  }
+
+  /** The gradient a `url(#id)` paint shades natively, if any. */
+  shadedGradient(value: string | undefined): SvgGradient | undefined {
+    const id = value ? URL_REFERENCE.exec(value)?.[1] : undefined;
+    return id ? this.shadings?.get(id) : undefined;
+  }
+
+  /**
+   * Resolves a fill for these segments: a gradient this painter shades is
+   * placed on the shape (or becomes the solid color SVG paints for a
+   * degenerate gradient); anything else goes through `resolveColor`.
+   */
+  resolveFill(
+    value: string | undefined,
+    segments: Segment[],
+    viewport: [number, number]
+  ): FillPaint | null {
+    const gradient = this.shadedGradient(value);
+    if (gradient) {
+      const placed = placeGradient(gradient, segments, viewport);
+      if (!placed) {
+        return null;
+      }
+      if ("coords" in placed) {
+        return { gradient: placed };
+      }
+      return placed.a > 0 ? { color: placed } : null;
+    }
+    const color = this.resolveColor(value);
+    return color ? { color } : null;
+  }
+
+  /**
+   * Paints the output rectangle `box` ([x0, y0, x1, y1] in output
+   * coordinates) with a gradient `fill`, placed in the user space of `root`
+   * as walked with `state`, so a background gradient continues into the
+   * bleed. Returns false (painting nothing) when `fill` is not a gradient
+   * this painter shades.
+   */
+  paintBleed(
+    root: SvgNode,
+    state: PaintState,
+    fill: string,
+    box: [number, number, number, number]
+  ): boolean {
+    if (!this.shadedGradient(fill)) {
+      return false;
+    }
+    const [matrix, viewport] = this.viewportMatrix(
+      { ...root, attrs: { ...root.attrs, x: "0", y: "0" } },
+      {
+        ...state,
+        matrix: multiply(state.matrix, parseTransform(root.attrs.transform)),
+      }
+    );
+    const inverse = invertMatrix(matrix);
+    if (!inverse) {
+      return false;
+    }
+    const [x0, y0, x1, y1] = box;
+    const corners = [
+      [x0, y0],
+      [x1, y0],
+      [x1, y1],
+      [x0, y1],
+    ].map(([x, y]) => applyMatrix(inverse, x as number, y as number));
+    const segments: Segment[] = corners.map(([x, y], index) => ({
+      op: index === 0 ? "M" : "L",
+      x,
+      y,
+    }));
+    segments.push({ op: "Z" });
+    this.paint(
+      segments,
+      { name: "rect", attrs: {}, children: [], text: "" },
+      {
+        ...state,
+        matrix,
+        viewport,
+        fill,
+        fillRule: "nonzero",
+        stroke: "none",
+      }
+    );
+    return true;
   }
 
   abstract paint(segments: Segment[], node: SvgNode, state: PaintState): void;

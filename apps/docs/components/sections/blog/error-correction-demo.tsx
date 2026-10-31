@@ -4,6 +4,7 @@ import { cn } from "@repo/design-system/lib/utils";
 import { QRCodeSVG } from "qrdx";
 import type { ErrorLevel } from "qrdx/types";
 import { useState } from "react";
+import { easterEggUrl } from "@/lib/easter-eggs";
 
 const LEVELS: { id: ErrorLevel; name: string; recovery: string }[] = [
   { id: "L", name: "Low", recovery: "~7%" },
@@ -12,7 +13,7 @@ const LEVELS: { id: ErrorLevel; name: string; recovery: string }[] = [
   { id: "H", name: "High", recovery: "~30%" },
 ];
 
-const DEMO_VALUE = "https://qrdx.dev/blog/understanding-qr-codes";
+const DEMO_VALUE = easterEggUrl("smudge");
 
 export function ErrorCorrectionDemo() {
   const [level, setLevel] = useState<ErrorLevel>("M");

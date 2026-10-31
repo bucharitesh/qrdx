@@ -1,4 +1,4 @@
-import { Link2 } from "lucide-react";
+import { Link2 } from "iconsax-reactjs";
 import { themePreset } from "@/components/landing/theme";
 import { registerTemplate } from "./registry";
 

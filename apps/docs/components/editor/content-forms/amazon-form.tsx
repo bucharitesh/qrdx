@@ -8,6 +8,7 @@ import { amazonSchema } from "@/lib/validations/qr-content";
 import { useQREditorStore } from "@/store/editor-store";
 import type { AmazonContent } from "@/types/qr-content";
 import { encodeAmazon } from "@/utils/qr-content-encoder";
+import { useExternalConfigSync } from "./use-external-config-sync";
 
 export function AmazonForm() {
   const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
@@ -19,15 +20,10 @@ export function AmazonForm() {
   });
   const [errors, setErrors] = React.useState<Record<string, string>>({});
 
-  // Sync with store when config changes (e.g., from smart paste)
-  React.useEffect(() => {
-    if (
-      storedConfig?.productUrl &&
-      storedConfig.productUrl !== amazonData.productUrl
-    ) {
-      setAmazonData({ productUrl: storedConfig.productUrl });
-    }
-  }, [storedConfig, amazonData.productUrl]);
+  // Only external changes (e.g. smart paste) flow back into the form
+  const markWritten = useExternalConfigSync(storedConfig, (config) =>
+    setAmazonData({ productUrl: config.productUrl || "" }),
+  );
 
   React.useEffect(() => {
     // Validate and encode
@@ -37,6 +33,7 @@ export function AmazonForm() {
       const config: AmazonContent = { type: "amazon", ...result.data };
       const encoded = encodeAmazon(config);
       setValue(encoded);
+      markWritten(config);
       setContentConfig("amazon", config);
       setErrors({});
     } else {
@@ -47,7 +44,7 @@ export function AmazonForm() {
       }
       setErrors(fieldErrors);
     }
-  }, [amazonData, setValue, setContentConfig]);
+  }, [amazonData, setValue, setContentConfig, markWritten]);
 
   return (
     <div className="space-y-3">

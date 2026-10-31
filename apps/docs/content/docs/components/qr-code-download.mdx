@@ -1,0 +1,50 @@
+---
+title: QR Code Download
+description: A download menu that exports a QR code as PNG, SVG, JPG or PDF at the size you pick, or copies it as an image.
+icon: Download
+---
+
+<ComponentLinks name="qr-code-download" />
+
+<ComponentPreview name="qr-code-download-demo" />
+
+## Installation
+
+<InstallationTabs name="qr-code-download" />
+
+## Usage
+
+```tsx
+import { QrCodeDownload } from "@/components/qr-code-download";
+```
+
+```tsx
+<QrCodeDownload value="https://qrdx.dev" />
+```
+
+The menu lists each format with a short hint, a size picker, and "Copy image", which puts a PNG on the clipboard. Files are rendered in the browser; nothing is uploaded.
+
+## Examples
+
+### Styled export
+
+Give `qr` the same style object you render on screen, so every exported file matches the preview. `formats`, `sizes`, `label` and `variant` shape the menu and its button.
+
+<ComponentPreview name="qr-code-download-styled" />
+
+### Formats
+
+| Format | Output |
+|--------|--------|
+| `png` | Image with the code's background |
+| `jpg` | Image with a solid background |
+| `svg` | Vector that scales to any size |
+| `pdf` | Single-page document. Needs the optional `jspdf` package (`npm install jspdf`) |
+
+Raster sizes go from 50 to 5000 pixels. Pass a single entry in `sizes` to hide the size picker.
+
+## API Reference
+
+<auto-type-table path="../../../registry/qrdx/qr-code-download.tsx" type="{ [K in keyof QrCodeDownloadProps as K extends Exclude<keyof ComponentProps<'div'>, 'onError'> ? never : K]: QrCodeDownloadProps[K] }" />
+
+Any other prop, such as `className`, is passed to the wrapping `<div>`.

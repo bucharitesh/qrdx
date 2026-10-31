@@ -34,11 +34,63 @@ let nextConfig: NextConfig = {
     "shiki",
     "@takumi-rs/core",
   ],
+  // The OAuth consent screen must never render inside another site's frame
+  // (clickjacking an "Authorize" click).
+  async headers() {
+    const base = (await config.headers?.()) ?? [];
+    return [
+      ...base,
+      {
+        source: "/oauth/:path*",
+        headers: [
+          { key: "X-Frame-Options", value: "DENY" },
+          { key: "Content-Security-Policy", value: "frame-ancestors 'none'" },
+        ],
+      },
+    ];
+  },
+  // Anything else on the MCP subdomain goes to the connect page, and anything
+  // on the API subdomain outside /v1 goes to the REST API docs.
+  async redirects() {
+    const base = (await config.redirects?.()) ?? [];
+    return [
+      ...base,
+      {
+        source: "/:path((?!mcp$|api/mcp$|_next/).*)",
+        has: [{ type: "host", value: "mcp.qrdx.dev" }],
+        destination: "https://qrdx.dev/mcp",
+        permanent: false,
+      },
+      {
+        source: "/:path((?!v1(?:/|$)|_next/).*)",
+        has: [{ type: "host", value: "api.qrdx.dev" }],
+        destination: "https://qrdx.dev/docs/developers/rest-api",
+        permanent: false,
+      },
+    ];
+  },
   // Keep the shared rewrites (PostHog /ingest proxy) alongside the docs ones.
   async rewrites() {
     const base = toRewritePhases(await config.rewrites?.());
     return {
       ...base,
+      // mcp.qrdx.dev/mcp is the public MCP endpoint (lib/mcp-clients.ts). It
+      // must win over the /mcp marketing page, hence beforeFiles.
+      beforeFiles: [
+        ...base.beforeFiles,
+        {
+          source: "/mcp",
+          has: [{ type: "host", value: "mcp.qrdx.dev" }],
+          destination: "/api/mcp",
+        },
+        // api.qrdx.dev/v1/... is the public REST API (same routes as
+        // qrdx.dev/api/v1/..., which keeps working).
+        {
+          source: "/v1/:path*",
+          has: [{ type: "host", value: "api.qrdx.dev" }],
+          destination: "/api/v1/:path*",
+        },
+      ],
       afterFiles: [
         ...base.afterFiles,
         {

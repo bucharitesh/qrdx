@@ -21,19 +21,19 @@ import {
 } from "@repo/design-system/components/ui/dropdown-menu";
 import { Progress } from "@repo/design-system/components/ui/progress";
 import {
-  ChartNoAxesColumn,
+  Chart as ChartNoAxesColumn,
   Copy,
-  ExternalLink,
-  Gem,
-  Inbox,
-  MoreHorizontal,
-  Plus,
-  QrCode,
-  Trash2,
-} from "lucide-react";
+  ExportSquare as ExternalLink,
+  Diamonds as Gem,
+  DirectInbox as Inbox,
+  More as MoreHorizontal,
+  Add as Plus,
+  ScanBarcode as QrCode,
+  Trash as Trash2,
+} from "iconsax-reactjs";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { type ComponentProps, useState, useTransition } from "react";
+import { type ComponentProps, useEffect, useState, useTransition } from "react";
 import {
   createLandingPageCode,
   deleteLandingPage,
@@ -52,12 +52,37 @@ const isAtLimit = (usage: PageUsage) =>
 export function NewPageButton({
   usage,
   children = "New page",
+  autoOpenType,
+  autoOpenVariant,
   ...props
-}: { usage: PageUsage } & ComponentProps<typeof Button>) {
+}: {
+  usage: PageUsage;
+  /** Open the dialog on this page type right away (`/dashboard/pages?new=menu`) */
+  autoOpenType?: string;
+  /** ...with this template selected (`&template=cafe`, from a template demo) */
+  autoOpenVariant?: string;
+} & ComponentProps<typeof Button>) {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
+  const [initialType, setInitialType] = useState<string | null>(null);
+  const [initialVariant, setInitialVariant] = useState<string | null>(null);
   const openUpgradeDialog = useGetProDialogStore(
     (state) => state.openUpgradeDialog,
   );
+
+  // Arriving from the editor's type picker: open on that type, then drop
+  // `?new=` so a refresh doesn't reopen it.
+  useEffect(() => {
+    if (!autoOpenType) return;
+    router.replace("/dashboard/pages", { scroll: false });
+    if (isAtLimit(usage)) {
+      openUpgradeDialog("pro");
+      return;
+    }
+    setInitialType(autoOpenType);
+    setInitialVariant(autoOpenVariant ?? null);
+    setOpen(true);
+  }, [autoOpenType, autoOpenVariant, usage, router, openUpgradeDialog]);
   return (
     <>
       <Button
@@ -69,6 +94,8 @@ export function NewPageButton({
             openUpgradeDialog("pro");
             return;
           }
+          setInitialType(null);
+          setInitialVariant(null);
           setOpen(true);
         }}
         {...props}
@@ -76,7 +103,13 @@ export function NewPageButton({
         <Plus />
         {children}
       </Button>
-      <NewCodeDialog onOpenChange={setOpen} open={open} pagesOnly />
+      <NewCodeDialog
+        initialType={initialType}
+        initialVariant={initialVariant}
+        onOpenChange={setOpen}
+        open={open}
+        pagesOnly
+      />
     </>
   );
 }

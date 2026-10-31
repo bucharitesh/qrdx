@@ -1,6 +1,9 @@
 "use client";
 
+import { Tick } from "@repo/design-system/components/icons";
+import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
+import { Card } from "@repo/design-system/components/ui/card";
 import {
   ResponsiveDialog,
   ResponsiveDialogContent,
@@ -10,13 +13,13 @@ import {
   ResponsiveDialogTitle,
 } from "@repo/design-system/components/ui/revola";
 import { cn } from "@repo/design-system/lib/utils";
-import { ShieldCheck } from "lucide-react";
+import { ShieldTick } from "iconsax-reactjs";
 import Link from "next/link";
 import { QRCodeSVG } from "qrdx";
-import { Icons } from "@/components/icons";
+import { GridLines } from "@/components/fx";
+import { easterEggUrl } from "@/lib/easter-eggs";
 import { PAID_PLANS, type PaidPlan, PLAN_NAMES } from "@/lib/pricing";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
-import { NoiseEffect } from "./effects/noise-effect";
 
 // Headline features; the pricing page lists every limit (from lib/plans).
 const PLAN_FEATURES: Record<PaidPlan, string[]> = {
@@ -75,38 +78,65 @@ export function GetProDialog({
             </ResponsiveDialogHeader>
 
             <div className="grid gap-3 px-6 sm:grid-cols-2">
-              {PAID_PLANS.map((tier) => (
-                <div
-                  className={cn(
-                    "flex flex-col gap-3 rounded-lg border p-4",
-                    tier === plan
-                      ? "border-primary/40 bg-primary/5 ring-1 ring-primary/30"
-                      : "border-border",
-                  )}
-                  key={tier}
-                >
-                  <p className="font-medium">{PLAN_NAMES[tier]}</p>
-                  <ul className="space-y-2">
-                    {PLAN_FEATURES[tier].map((feature) => (
-                      <li className="flex items-start gap-2" key={feature}>
-                        <span className="mt-0.5 flex shrink-0 items-center justify-center rounded-full bg-primary/15 p-0.5">
-                          <Icons.Check className="size-3 stroke-2 text-primary" />
-                        </span>
-                        <span className="text-sm">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
+              {PAID_PLANS.map((tier) => {
+                const highlighted = tier === plan;
+                return (
+                  <Card
+                    className={cn(
+                      "relative gap-3 p-5",
+                      highlighted
+                        ? "border-foreground/20 dark:border-white/20 dark:bg-accent/60"
+                        : "bg-muted/40 shadow-none dark:bg-card",
+                    )}
+                    key={tier}
+                  >
+                    {highlighted && (
+                      <span
+                        aria-hidden
+                        className="pointer-events-none absolute inset-x-8 -top-px h-px bg-gradient-to-r from-transparent via-foreground/60 to-transparent"
+                      />
+                    )}
+                    <p className="flex items-center justify-between gap-2 font-semibold tracking-tight">
+                      {PLAN_NAMES[tier]}
+                      {highlighted && (
+                        <Badge
+                          className="text-muted-foreground"
+                          variant="outline"
+                        >
+                          Unlocks this
+                        </Badge>
+                      )}
+                    </p>
+                    <ul className="space-y-2">
+                      {PLAN_FEATURES[tier].map((feature) => (
+                        <li className="flex items-start gap-2" key={feature}>
+                          <Tick
+                            aria-hidden
+                            className="mt-0.5 size-4 shrink-0 text-muted-foreground"
+                            strokeWidth={2}
+                          />
+                          <span className="text-sm text-foreground/90">
+                            {feature}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </Card>
+                );
+              })}
             </div>
 
             <p className="flex items-start gap-2 px-6 text-sm text-muted-foreground">
-              <ShieldCheck aria-hidden className="mt-0.5 size-4 shrink-0" />
+              <ShieldTick
+                aria-hidden
+                className="mt-0.5 size-4 shrink-0 text-emerald-700 dark:text-emerald-400"
+                variant="Bold"
+              />
               <span>
                 Static QR codes stay free, and your codes keep working if you
                 ever cancel.{" "}
                 <Link
-                  className="underline"
+                  className="font-medium text-foreground underline decoration-foreground/30 underline-offset-4 transition-colors hover:decoration-foreground"
                   href="/guarantee"
                   onNavigate={onClose}
                 >
@@ -128,26 +158,18 @@ export function GetProDialog({
           </section>
 
           {/* Decorative, md+ only */}
-          <section className="bg-muted/30 relative isolate hidden shrink-0 items-center justify-center overflow-hidden md:block md:w-2/5">
-            <div
-              className={cn(
-                "absolute inset-0 -z-10 bg-[linear-gradient(to_right,rgba(from_var(--primary)_r_g_b_/_0.25)_1px,transparent_1px),linear-gradient(to_bottom,rgba(from_var(--primary)_r_g_b_/_0.25)_1px,transparent_1px)] bg-[size:2rem_2rem]",
-                "mask-r-from-80% mask-b-from-80% mask-radial-from-70% mask-radial-to-85%",
-              )}
-            />
-            <NoiseEffect />
-            <div className="bg-foreground/10 absolute top-0 left-0 -z-10 size-35 -translate-x-1/2 -translate-y-1/2 animate-pulse rounded-full blur-3xl" />
-            <div className="bg-primary/15 absolute right-0 bottom-0 -z-10 size-70 translate-x-1/2 translate-y-1/2 rounded-full blur-3xl" />
-
-            <div className="absolute inset-4 top-4 z-10 flex items-center justify-center overflow-hidden rounded-lg border lg:inset-6">
-              <QRCodeSVG
-                bodyPattern="square"
-                className="rounded-md"
-                cornerEyeDotPattern="square"
-                cornerEyePattern="square"
-                size={224}
-                value="https://qrdx.dev/pricing"
-              />
+          <section className="bg-muted/30 relative isolate hidden shrink-0 overflow-hidden md:block md:w-2/5">
+            <GridLines cell={32} />
+            <div className="absolute inset-0 grid place-items-center p-8">
+              <div className="rounded-2xl border bg-white p-4 shadow-lg shadow-black/10 dark:shadow-black/50">
+                <QRCodeSVG
+                  bodyPattern="circle"
+                  cornerEyeDotPattern="circle"
+                  cornerEyePattern="rounded"
+                  size={176}
+                  value={easterEggUrl("pro")}
+                />
+              </div>
             </div>
           </section>
         </div>

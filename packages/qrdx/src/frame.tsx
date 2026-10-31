@@ -2,8 +2,18 @@
 import type { ReactElement, SVGProps } from "react";
 import React from "react";
 import type { ColorConfig, QRFrame } from "../types";
-import { DEFAULT_FRAME_TEXT, FRAME_TEXT_MAX_LENGTH } from "../types/frame";
+import {
+  DEFAULT_FRAME_TEXT,
+  FRAME_FONT_SCALE_MAX,
+  FRAME_FONT_SCALE_MIN,
+  FRAME_TEXT_MAX_LENGTH,
+} from "../types/frame";
 import { DEFAULT_BGCOLOR } from "./constants";
+import {
+  estimateTextEm,
+  isShapedFrameStyle,
+  SHAPED_FRAMES,
+} from "./frame-styles";
 import { getSolidColor } from "./utils/color";
 
 /** System font stack for frame labels, so rendering never fetches a font. */
@@ -37,7 +47,16 @@ export interface FramePolygon {
   fill: string;
 }
 
-export type FrameShape = FrameRect | FramePolygon;
+/** Any outline, as SVG path data in artwork coordinates. */
+export interface FramePath {
+  type: "path";
+  d: string;
+  fill: string;
+  /** "evenodd" turns inner subpaths into holes */
+  fillRule?: "nonzero" | "evenodd";
+}
+
+export type FrameShape = FrameRect | FramePolygon | FramePath;
 
 export interface FrameLabel {
   text: string;
@@ -49,6 +68,8 @@ export interface FrameLabel {
   /** Width the label must fit in */
   maxWidth: number;
   color: string;
+  /** Clockwise rotation in degrees around (x, y), for text set on a curve */
+  rotate?: number;
 }
 
 export interface FrameLayout {
@@ -63,6 +84,8 @@ export interface FrameLayout {
   /** Shapes painted behind the QR code, in order */
   shapes: FrameShape[];
   label: FrameLabel | null;
+  /** Further labels (a second line, or the letters of curved text) */
+  extraLabels?: FrameLabel[];
   /** True when the frame fills its whole bounding box (no rounded corners) */
   squareEdges: boolean;
   /** Frame color, for print bleed */
@@ -83,24 +106,16 @@ export function getFrameText(frame: QRFrame): string {
     .slice(0, FRAME_TEXT_MAX_LENGTH);
 }
 
-// Rough em widths for a bold sans-serif, used to fit the label without
-// measuring text (measuring needs a DOM).
-function estimateTextEm(text: string): number {
-  let em = 0;
-  for (const char of text) {
-    if (char === " ") {
-      em += 0.3;
-    } else if (/[MWmw@%]/.test(char)) {
-      em += 0.92;
-    } else if (/[A-Z0-9#&]/.test(char)) {
-      em += 0.72;
-    } else if (/[il.,:;!'|1]/.test(char)) {
-      em += 0.32;
-    } else {
-      em += 0.6;
-    }
+/** The second label (no default), trimmed and capped at 24 characters. */
+export function getFrameSecondaryText(frame: QRFrame): string {
+  return (frame.secondaryText ?? "").trim().slice(0, FRAME_TEXT_MAX_LENGTH);
+}
+
+function clampFontScale(scale: number | undefined): number {
+  if (scale === undefined || !Number.isFinite(scale)) {
+    return 1;
   }
-  return Math.max(em, 1);
+  return Math.min(FRAME_FONT_SCALE_MAX, Math.max(FRAME_FONT_SCALE_MIN, scale));
 }
 
 function makeLabel(
@@ -109,12 +124,16 @@ function makeLabel(
   centerY: number,
   rowHeight: number,
   maxWidth: number,
-  color: string
+  color: string,
+  fontScale = 1
 ): FrameLabel | null {
   if (!text) {
     return null;
   }
-  const fontSize = Math.min(rowHeight * 0.52, maxWidth / estimateTextEm(text));
+  const fontSize = Math.min(
+    rowHeight * 0.52 * fontScale,
+    maxWidth / estimateTextEm(text)
+  );
   return {
     text,
     x: centerX,
@@ -146,6 +165,40 @@ export function getFrameLayout(
   const innerWidth = width - 2 * border;
   const labelWidth = innerWidth - 2 * gap;
   const qrX = border + gap;
+  const fontScale = clampFontScale(frame.fontScale);
+  const fitLabel = (
+    label: string,
+    centerX: number,
+    centerY: number,
+    rowHeight: number,
+    maxWidth: number,
+    labelColor: string
+  ) =>
+    makeLabel(
+      label,
+      centerX,
+      centerY,
+      rowHeight,
+      maxWidth,
+      labelColor,
+      fontScale
+    );
+
+  if (isShapedFrameStyle(frame.style)) {
+    return SHAPED_FRAMES[frame.style]({
+      size,
+      frame,
+      color,
+      background,
+      text,
+      secondaryText: getFrameSecondaryText(frame),
+      gap,
+      border,
+      band,
+      fontScale,
+      fitLabel,
+    });
+  }
 
   switch (frame.style) {
     case "banner-top": {
@@ -164,7 +217,7 @@ export function getFrameLayout(
             color
           ),
         ],
-        label: makeLabel(
+        label: fitLabel(
           text,
           width / 2,
           band / 2,
@@ -205,7 +258,7 @@ export function getFrameLayout(
             color
           ),
         ],
-        label: makeLabel(
+        label: fitLabel(
           text,
           width / 2,
           border + gap + size + rowHeight / 2,
@@ -249,7 +302,7 @@ export function getFrameLayout(
           },
           rect(0, bubbleY, width, band, band / 2, color),
         ],
-        label: makeLabel(
+        label: fitLabel(
           text,
           width / 2,
           bubbleY + band / 2,
@@ -279,7 +332,7 @@ export function getFrameLayout(
             color
           ),
         ],
-        label: makeLabel(
+        label: fitLabel(
           text,
           width / 2,
           border + innerHeight + band / 2,
@@ -372,6 +425,16 @@ function renderShape(shape: FrameShape, key: number) {
       />
     );
   }
+  if (shape.type === "path") {
+    return (
+      <path
+        d={shape.d}
+        fill={shape.fill}
+        key={key}
+        {...(shape.fillRule === "evenodd" && { fillRule: "evenodd" })}
+      />
+    );
+  }
   return (
     <rect
       fill={shape.fill}
@@ -403,7 +466,7 @@ export function wrapWithFrame(
 ): ReactElement {
   const { size, frame, bgColor, svgProps } = options;
   const layout = getFrameLayout(size, frame, bgColor);
-  const { label } = layout;
+  const labels = frameLabels(layout);
   const width = round(layout.width);
   const height = round(layout.height);
 
@@ -424,22 +487,34 @@ export function wrapWithFrame(
         width: size,
         height: size,
       })}
-      {label && (
+      {labels.map((label, index) => (
         <text
           data-max-width={round(label.maxWidth)}
           fill={label.color}
           fontFamily={FRAME_FONT_FAMILY}
           fontSize={round(label.fontSize)}
           fontWeight={700}
+          key={index}
           textAnchor="middle"
           x={round(label.x)}
           y={round(label.y)}
+          {...(label.rotate && {
+            transform: `rotate(${round(label.rotate)} ${round(label.x)} ${round(label.y)})`,
+          })}
         >
           {label.text}
         </text>
-      )}
+      ))}
     </svg>
   );
+}
+
+/** Every label of a layout: the main one first, then the extra ones. */
+export function frameLabels(layout: FrameLayout): FrameLabel[] {
+  return [
+    ...(layout.label ? [layout.label] : []),
+    ...(layout.extraLabels ?? []),
+  ];
 }
 
 /** Paints the frame shapes and label on a 2D canvas (QR code not included). */
@@ -462,6 +537,12 @@ export function drawFrameOnCanvas(
       continue;
     }
     ctx.fillStyle = shape.fill;
+    if (shape.type === "path") {
+      if (typeof Path2D !== "undefined") {
+        ctx.fill(new Path2D(shape.d), shape.fillRule ?? "nonzero");
+      }
+      continue;
+    }
     ctx.beginPath();
     if (shape.type === "polygon") {
       shape.points.forEach(([x, y], index) => {
@@ -482,12 +563,19 @@ export function drawFrameOnCanvas(
     }
   }
 
-  const { label } = layout;
-  if (label) {
+  for (const label of frameLabels(layout)) {
     ctx.fillStyle = label.color;
     ctx.font = `700 ${label.fontSize}px ${FRAME_FONT_FAMILY}`;
     ctx.textAlign = "center";
     ctx.textBaseline = "alphabetic";
-    ctx.fillText(label.text, label.x, label.y, label.maxWidth);
+    if (label.rotate) {
+      ctx.save();
+      ctx.translate(label.x, label.y);
+      ctx.rotate((label.rotate * Math.PI) / 180);
+      ctx.fillText(label.text, 0, 0, label.maxWidth);
+      ctx.restore();
+    } else {
+      ctx.fillText(label.text, label.x, label.y, label.maxWidth);
+    }
   }
 }

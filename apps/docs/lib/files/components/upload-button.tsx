@@ -3,7 +3,7 @@
 import { toast } from "@repo/design-system";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Progress } from "@repo/design-system/components/ui/progress";
-import { Upload } from "lucide-react";
+import { Export as Upload } from "iconsax-reactjs";
 import { type ComponentProps, type ReactNode, useRef, useState } from "react";
 import { acceptAttribute, type FileKind, type FileView } from "../types";
 import { uploadFile } from "../upload-client";

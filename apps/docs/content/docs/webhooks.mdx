@@ -149,14 +149,14 @@ Automation tools can subscribe and unsubscribe on their own through the REST Hoo
 
 | Method | Path | Description |
 | --- | --- | --- |
-| `POST` | `/api/v1/hooks` | Subscribe. Body: `target_url` (or Zapier's `hookUrl`) and `event` (or an `events` array). Returns `201` with the subscription `id` and its `secret` |
-| `DELETE` | `/api/v1/hooks/{id}` | Unsubscribe (`204`) |
-| `GET` | `/api/v1/hooks` | List subscriptions and endpoints |
-| `GET` | `/api/v1/hooks/{id}` | One subscription |
-| `GET` | `/api/v1/hooks/sample?event=<event>` | Recent example payloads for `event`, as an array (Zapier's "perform list") |
+| `POST` | `/v1/hooks` | Subscribe. Body: `target_url` (or Zapier's `hookUrl`) and `event` (or an `events` array). Returns `201` with the subscription `id` and its `secret` |
+| `DELETE` | `/v1/hooks/{id}` | Unsubscribe (`204`) |
+| `GET` | `/v1/hooks` | List subscriptions and endpoints |
+| `GET` | `/v1/hooks/{id}` | One subscription |
+| `GET` | `/v1/hooks/sample?event=<event>` | Recent example payloads for `event`, as an array (Zapier's "perform list") |
 
 ```bash
-curl https://qrdx.dev/api/v1/hooks \
+curl https://api.qrdx.dev/v1/hooks \
   -H "Authorization: Bearer $QRDX_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{"target_url": "https://hooks.zapier.com/hooks/standard/123/abc/", "event": "form.submitted"}'

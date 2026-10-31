@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@repo/design-system/components/ui/button";
-import { Icons } from "@/components/icons";
+import { Import } from "iconsax-reactjs";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { DownloadDialog } from "./download-dialog";
 
@@ -18,7 +18,7 @@ export function DownloadButton({
     <>
       <TooltipWrapper label="Download QR code" kbd="D" asChild>
         <Button variant="ghost" size="sm" onClick={() => setDialogOpen(true)}>
-          <Icons.Download className="h-4 w-4" />
+          <Import className="size-4" />
           <span className="hidden text-sm md:block sr-only">Download</span>
         </Button>
       </TooltipWrapper>

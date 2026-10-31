@@ -1,7 +1,12 @@
 "use client";
 
+import { Close as X } from "@repo/design-system/components/icons";
 import { cn } from "@repo/design-system/lib/utils";
-import { ChevronLeft, ChevronRight, ImageOff, X } from "lucide-react";
+import {
+  ArrowLeft2 as ChevronLeft,
+  ArrowRight2 as ChevronRight,
+  GallerySlash as ImageOff,
+} from "iconsax-reactjs";
 import {
   type KeyboardEvent,
   type TouchEvent,

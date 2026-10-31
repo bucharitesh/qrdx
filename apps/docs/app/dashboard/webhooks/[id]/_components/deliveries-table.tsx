@@ -1,6 +1,7 @@
 "use client";
 
 import { toast } from "@repo/design-system";
+import { Spinner } from "@repo/design-system/components/icons";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
@@ -18,7 +19,10 @@ import {
   TableHeader,
   TableRow,
 } from "@repo/design-system/components/ui/table";
-import { FileJson, RotateCw } from "lucide-react";
+import {
+  DocumentCode2 as FileJson,
+  ArrowRotateRight as RotateCw,
+} from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import type { WebhookDeliveryView } from "@/lib/events/endpoints";
@@ -160,11 +164,7 @@ export function DeliveriesTable({
                         }
                         variant="ghost"
                       >
-                        <RotateCw
-                          className={
-                            retrying === delivery.id ? "animate-spin" : ""
-                          }
-                        />
+                        {retrying === delivery.id ? <Spinner /> : <RotateCw />}
                       </Button>
                     )}
                   </div>

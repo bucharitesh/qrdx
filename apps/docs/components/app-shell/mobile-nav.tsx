@@ -9,7 +9,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@repo/design-system/components/ui/sheet";
-import { Menu } from "lucide-react";
+import { HamburgerMenu as Menu } from "iconsax-reactjs";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { AppSidebar } from "./app-sidebar";

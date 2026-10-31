@@ -6,7 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@repo/design-system/components/ui/card";
-import { ArrowLeft, Download, Lock } from "lucide-react";
+import { ArrowLeft, Import as Download, Lock } from "iconsax-reactjs";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -32,6 +32,7 @@ import { LifecyclePanel } from "@/app/dashboard/codes/[id]/_components/lifecycle
 import { PixelsPanel } from "@/app/dashboard/codes/[id]/_components/pixels-panel";
 import { RoutingPanel } from "@/app/dashboard/codes/[id]/_components/routing-panel";
 import { UtmPanel } from "@/app/dashboard/codes/[id]/_components/utm-panel";
+import { SheetsExport } from "@/components/data-connections/sheets-export";
 import { HttpError } from "@/lib/error-response";
 import { getPlanForScope, getPlanLimits } from "@/lib/plans";
 import {
@@ -178,6 +179,7 @@ export default async function CodeDetailPage({
             Export CSV
           </a>
         </Button>
+        <SheetsExport codeId={code.id} />
       </div>
       {lockedRanges && (
         <p className="text-muted-foreground -mt-3 text-xs">

@@ -1,14 +1,14 @@
+import { Close } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
+import { InfoCircle } from "iconsax-reactjs";
 import { useEffect, useMemo, useRef } from "react";
 import {
   Conversation,
   ConversationContent,
   ConversationScrollButton,
 } from "@/components/ai-elements/conversation";
-import { Icons } from "@/components/icons";
 import { Loader } from "@/components/loader";
-import { QrdxLogo } from "@/components/qrdx-logo";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { parseAiSdkTransportError } from "@/lib/ai/parse-ai-sdk-transport-error";
 import { useChatContext } from "@/lib/hooks/use-chat-context";
@@ -19,7 +19,7 @@ import {
   getLastAssistantMessage,
   getUserMessages,
 } from "@/utils/ai/messages";
-import { LoadingLogo } from "./loading-logo";
+import { AnimatedBot } from "./animated-bot";
 import Message from "./message";
 
 type ChatMessagesProps = {
@@ -130,36 +130,23 @@ export function Messages({
 
             {/* Loading message when AI is generating */}
             {showLoadingMessage && (
-              <div className="flex items-center gap-1.5">
-                <div className="relative flex size-6 items-center justify-center">
-                  <LoadingLogo />
+              <div className="flex items-center gap-3">
+                <div className="bg-background/70 grid size-8 place-items-center rounded-full border shadow-xs">
+                  <AnimatedBot className="size-5" thinking />
                 </div>
-
                 <Loader variant="dots" size="sm" />
               </div>
             )}
 
             {/* Error message when generating theme fails */}
             {status === "error" && error && (
-              <div className="flex w-[90%] items-start gap-1.5">
-                <div
-                  className={cn(
-                    "border-border/50! bg-destructive relative flex size-6 shrink-0 items-center justify-center rounded-full border select-none",
-                  )}
-                >
-                  <QrdxLogo
-                    className={cn(
-                      "text-destructive-foreground size-full p-0.5",
-                    )}
-                  />
+              <div className="flex w-[90%] items-start gap-3">
+                <div className="bg-destructive/10 text-destructive grid size-8 shrink-0 place-items-center rounded-full border border-destructive/20">
+                  <InfoCircle className="size-4" />
                 </div>
 
-                <div
-                  className={cn(
-                    "bg-destructive/50 text-foreground group/error-banner relative flex w-full gap-2 rounded-lg p-3",
-                  )}
-                >
-                  <p className="text-xs">{errorText}</p>
+                <div className="bg-card group/error-banner relative flex w-full items-start gap-2 rounded-lg border p-3">
+                  <p className="text-foreground/90 text-sm">{errorText}</p>
 
                   <TooltipWrapper label="Clear error" asChild>
                     <Button
@@ -168,7 +155,7 @@ export function Messages({
                       className="invisible ml-auto size-4 shrink-0 group-hover/error-banner:visible [&>svg]:size-3"
                       onClick={clearError}
                     >
-                      <Icons.X />
+                      <Close />
                     </Button>
                   </TooltipWrapper>
                 </div>

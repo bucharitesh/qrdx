@@ -32,14 +32,14 @@ import { Label } from "@repo/design-system/components/ui/label";
 import { Separator } from "@repo/design-system/components/ui/separator";
 import { Switch } from "@repo/design-system/components/ui/switch";
 import {
-  Hash,
-  Mail,
+  Sms as Mail,
   MessageSquare,
-  Pencil,
-  Plus,
-  Send,
-  Trash2,
-} from "lucide-react";
+  Edit2 as Pencil,
+  Add as Plus,
+  Send2 as Send,
+  Slack,
+  Trash as Trash2,
+} from "iconsax-reactjs";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { type FormEvent, useState, useTransition } from "react";
@@ -81,7 +81,7 @@ const CHANNEL_HELP = {
 } as const;
 
 function ChatIcon({ channel }: { channel: "slack" | "discord" }) {
-  const Icon = channel === "slack" ? Hash : MessageSquare;
+  const Icon = channel === "slack" ? Slack : MessageSquare;
   return <Icon aria-hidden className="text-muted-foreground size-4 shrink-0" />;
 }
 

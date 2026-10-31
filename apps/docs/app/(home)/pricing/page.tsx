@@ -7,9 +7,9 @@ import {
   buildComparison,
   buildHighlights,
 } from "@/components/sections/pricing/plan-content";
+import { PricingFaq } from "@/components/sections/pricing/pricing-faq";
 import { pricingSchema } from "@/components/sections/pricing/pricing-schema";
 import { PricingSection } from "@/components/sections/pricing-section";
-import { FaqList } from "@/components/sections/tools/faq-list";
 import { JsonLd } from "@/components/sections/tools/json-ld";
 import { siteConfig } from "@/config/site";
 import { createMetadata } from "@/lib/metadata";
@@ -76,7 +76,7 @@ export default async function PricingPage({
       />
       <GuaranteeBlock />
       <ComparisonTable groups={buildComparison(PLAN_LIMITS, currency)} />
-      <FaqList faqs={siteConfig.pricing.faq} title="Pricing questions" />
+      <PricingFaq faqs={siteConfig.pricing.faq} />
     </main>
   );
 }

@@ -42,15 +42,15 @@ import {
 } from "@repo/design-system/components/ui/tabs";
 import { cn } from "@repo/design-system/lib/utils";
 import {
-  Ban,
+  Forbidden2 as Ban,
   Copy,
-  ExternalLink,
+  ExportSquare as ExternalLink,
   FolderOpen,
-  MoreHorizontal,
-  RefreshCw,
-  Trash2,
-  Upload,
-} from "lucide-react";
+  More as MoreHorizontal,
+  Refresh2 as RefreshCw,
+  Trash as Trash2,
+  Export as Upload,
+} from "iconsax-reactjs";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { type DragEvent, useRef, useState, useTransition } from "react";
@@ -73,6 +73,7 @@ import {
   formatsForKinds,
 } from "@/lib/files/types";
 import { uploadFile } from "@/lib/files/upload-client";
+import { soundEvent } from "@/lib/sound/emit";
 
 export interface FileRow extends FileView {
   pages: { id: string; title: string | null }[];
@@ -230,6 +231,7 @@ export function FilesManager({
     try {
       await navigator.clipboard.writeText(file.url);
       toast.success("Link copied");
+      soundEvent("copy");
     } catch {
       toast.error("Couldn't copy the link.");
     }

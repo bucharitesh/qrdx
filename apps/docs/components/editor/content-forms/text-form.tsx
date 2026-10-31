@@ -9,6 +9,7 @@ import { textSchema } from "@/lib/validations/qr-content";
 import { useQREditorStore } from "@/store/editor-store";
 import type { TextContent } from "@/types/qr-content";
 import { encodeText } from "@/utils/qr-content-encoder";
+import { useExternalConfigSync } from "./use-external-config-sync";
 
 export function TextForm() {
   const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
@@ -21,12 +22,10 @@ export function TextForm() {
   });
   const [errors, setErrors] = React.useState<Record<string, string>>({});
 
-  // Sync with store when config changes (e.g., from smart paste)
-  React.useEffect(() => {
-    if (storedConfig?.text && storedConfig.text !== textData.text) {
-      setTextData({ text: storedConfig.text });
-    }
-  }, [storedConfig, textData.text]);
+  // Only external changes (e.g. smart paste) flow back into the form
+  const markWritten = useExternalConfigSync(storedConfig, (config) =>
+    setTextData({ text: config.text || "" }),
+  );
 
   React.useEffect(() => {
     // Validate and encode
@@ -36,6 +35,7 @@ export function TextForm() {
       const config: TextContent = { type: "text", ...result.data };
       const encoded = encodeText(config);
       setValue(encoded);
+      markWritten(config);
       setContentConfig("text", config);
       setErrors({});
     } else {
@@ -46,7 +46,7 @@ export function TextForm() {
       }
       setErrors(fieldErrors);
     }
-  }, [textData, setValue, setContentConfig]);
+  }, [textData, setValue, setContentConfig, markWritten]);
 
   return (
     <div className="space-y-3">

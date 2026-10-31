@@ -10,6 +10,7 @@ import {
 } from "@/lib/hooks/themes/use-theme-mutations";
 import { useAIQRGenerationCore } from "@/lib/hooks/use-ai-qr-generation-core";
 import { usePostLoginAction } from "@/lib/hooks/use-post-login-action";
+import { soundEvent } from "@/lib/sound/emit";
 import { useAuthStore } from "@/store/auth-store";
 import { useQREditorStore } from "@/store/editor-store";
 import { useThemePresetStore } from "@/store/theme-preset-store";
@@ -125,6 +126,7 @@ function useDialogActionsStore(): DialogActionsContextType {
       });
       if (!theme) return;
       applyThemePreset(theme?.id || themeState.preset || "default");
+      soundEvent("success");
       if (pendingAction === "share") {
         handleShareClick(theme?.id);
         setPendingAction(null);
@@ -224,6 +226,7 @@ function useDialogActionsStore(): DialogActionsContextType {
       });
       if (result) {
         applyThemePreset(result.id || themeState.preset);
+        soundEvent("apply");
         setSaveDialogOpen(false);
       }
     } catch (error) {

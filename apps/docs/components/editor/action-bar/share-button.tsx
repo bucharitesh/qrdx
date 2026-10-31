@@ -1,6 +1,7 @@
+import { Spinner } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
-import { Icons } from "@/components/icons";
+import { Share } from "iconsax-reactjs";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 
 interface ShareButtonProps extends React.ComponentProps<typeof Button> {
@@ -15,7 +16,7 @@ export function ShareButton({
   ...props
 }: ShareButtonProps) {
   return (
-    <TooltipWrapper label="Share QR code" kbd="X" asChild>
+    <TooltipWrapper label="Share design" kbd="X" asChild>
       <Button
         variant="ghost"
         size="sm"
@@ -25,9 +26,9 @@ export function ShareButton({
         {...props}
       >
         {isSharing ? (
-          <Icons.Loader className="size-3.5 animate-spin" />
+          <Spinner className="size-4" />
         ) : (
-          <Icons.Share2 className="size-3.5" />
+          <Share className="size-4" />
         )}
         <span className="hidden text-sm md:block sr-only">Share</span>
       </Button>

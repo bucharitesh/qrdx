@@ -1,17 +1,17 @@
 "use client";
 
+import { Bot } from "@repo/design-system/components/icons";
 import { cn } from "@repo/design-system/lib/utils";
 import {
-  ChartNoAxesCombined,
-  CreditCard,
-  LayoutDashboard,
-  Palette,
-  Plug,
-  QrCode,
-  ScrollText,
-  ShieldAlert,
-  Users,
-} from "lucide-react";
+  Card as CreditCard,
+  Element3 as LayoutDashboard,
+  ColorSwatch as Palette,
+  Electricity as Plug,
+  ScanBarcode as QrCode,
+  DocumentText as ScrollText,
+  ShieldCross as ShieldAlert,
+  Profile2User as Users,
+} from "iconsax-reactjs";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -21,7 +21,7 @@ const NAV_ITEMS = [
   { href: "/admin/themes", label: "Themes", icon: Palette },
   { href: "/admin/codes", label: "QR Codes", icon: QrCode },
   { href: "/admin/abuse", label: "Abuse", icon: ShieldAlert },
-  { href: "/admin/ai-usage", label: "AI Usage", icon: ChartNoAxesCombined },
+  { href: "/admin/ai-usage", label: "AI Usage", icon: Bot },
   { href: "/admin/subscriptions", label: "Subscriptions", icon: CreditCard },
   { href: "/admin/integrations", label: "Integrations", icon: Plug },
   { href: "/admin/audit-log", label: "Audit Log", icon: ScrollText },

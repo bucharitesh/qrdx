@@ -9,18 +9,60 @@ import {
   NavigationMenuTrigger,
 } from "@repo/design-system/components/ui/navigation-menu";
 import { cn } from "@repo/design-system/lib/utils";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowRight, ExportSquare } from "iconsax-reactjs";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import type { ComponentType } from "react";
+import { AsciiField } from "@/components/fx";
 import { siteConfig } from "@/config/site";
 
-export type HeaderNavEntry = (typeof siteConfig.nav.links)[number];
-export type HeaderNavItem = NonNullable<HeaderNavEntry["items"]>[number];
+export interface HeaderNavItem {
+  name: string;
+  href: string;
+  description: string;
+  icon: ComponentType<{ className?: string; "aria-hidden"?: boolean }>;
+  external?: boolean;
+  /** Shown as the large panel on the left of the dropdown. */
+  featured?: boolean;
+  /** The group's hub page: the footer link of the dropdown. */
+  hub?: boolean;
+}
+
+export interface HeaderNavEntry {
+  id: number;
+  name: string;
+  href: string;
+  items?: HeaderNavItem[];
+}
 
 export const headerNavEntries: HeaderNavEntry[] = siteConfig.nav.links;
 
-const isExternal = (item: HeaderNavItem) =>
-  "external" in item && Boolean(item.external);
+const isExternal = (item: HeaderNavItem) => Boolean(item.external);
+
+const externalProps = {
+  target: "_blank",
+  rel: "noopener noreferrer",
+} as const;
+
+/** R4 icon tile; lifts to the card background when its row is hovered. */
+export function NavIconTile({
+  icon: Icon,
+  className,
+}: {
+  icon: HeaderNavItem["icon"];
+  className?: string;
+}) {
+  return (
+    <span
+      className={cn(
+        "grid size-9 shrink-0 place-items-center rounded-lg border bg-muted/40 transition-colors duration-150 group-hover/nav-item:bg-background group-focus-visible/nav-item:bg-background",
+        className,
+      )}
+    >
+      <Icon aria-hidden className="size-4 text-foreground/80" />
+    </span>
+  );
+}
 
 /** True when `pathname` is `href` or a page below it. */
 export function matchesPath(pathname: string, href: string) {
@@ -30,24 +72,45 @@ export function matchesPath(pathname: string, href: string) {
 
 /** The top-level entry the current page belongs to, if any. */
 export function getActiveEntryId(pathname: string): number | undefined {
-  const direct = headerNavEntries.find(
-    (entry) => !entry.items && matchesPath(pathname, entry.href),
-  );
-  if (direct) return direct.id;
-  return headerNavEntries.find((entry) =>
-    entry.items?.some(
-      (item) => !isExternal(item) && matchesPath(pathname, item.href),
-    ),
-  )?.id;
+  // The most specific link wins (longest matching href), so a page is active
+  // under at most one entry; on a tie a top-level link beats a menu item.
+  let best: { id: number; length: number; direct: boolean } | undefined;
+  for (const entry of headerNavEntries) {
+    const hrefs = entry.items
+      ? entry.items.filter((item) => !isExternal(item)).map((i) => i.href)
+      : [entry.href];
+    for (const href of hrefs) {
+      if (!matchesPath(pathname, href)) continue;
+      const candidate = {
+        id: entry.id,
+        length: href.length,
+        direct: !entry.items,
+      };
+      if (
+        !best ||
+        candidate.length > best.length ||
+        (candidate.length === best.length && candidate.direct && !best.direct)
+      ) {
+        best = candidate;
+      }
+    }
+  }
+  return best?.id;
 }
 
 const topLevelClass =
-  "h-9 rounded-full bg-transparent px-3 text-sm font-medium tracking-tight text-secondary-foreground/60 hover:bg-secondary/60 hover:text-secondary-foreground focus:bg-secondary/60 focus:text-secondary-foreground data-[state=open]:bg-secondary/60 data-[state=open]:text-secondary-foreground data-[state=open]:hover:bg-secondary/60 data-[state=open]:focus:bg-secondary/60";
-const activeClass = "bg-secondary/60 text-secondary-foreground";
+  "h-9 rounded-full bg-transparent px-3 text-sm font-medium tracking-tight text-secondary-foreground/60 hover:bg-secondary/60 hover:text-secondary-foreground focus:bg-transparent focus:text-secondary-foreground/60 focus-visible:bg-secondary/60 focus-visible:text-secondary-foreground data-[state=open]:bg-secondary/60 data-[state=open]:text-secondary-foreground data-[state=open]:hover:bg-secondary/60 data-[state=open]:focus:bg-secondary/60";
+const activeClass =
+  "bg-secondary/60 text-secondary-foreground focus:bg-secondary/60 focus:text-secondary-foreground";
 
 export function HeaderNav({ className }: { className?: string }) {
   const pathname = usePathname() ?? "/";
   const activeId = getActiveEntryId(pathname);
+  // The last dropdown opens leftwards from its trigger so it never runs past
+  // the right edge on narrow desktops.
+  const lastGroupId = headerNavEntries
+    .filter((entry) => entry.items)
+    .at(-1)?.id;
 
   return (
     <NavigationMenu
@@ -89,45 +152,161 @@ export function HeaderNav({ className }: { className?: string }) {
               >
                 {entry.name}
               </NavigationMenuTrigger>
-              <NavigationMenuContent className="z-50">
-                <ul className="grid w-80 gap-0.5">
-                  {entry.items.map((item) => {
-                    const external = isExternal(item);
-                    const current = !external && pathname === item.href;
-                    return (
-                      <li key={item.href}>
-                        <NavigationMenuLink asChild active={current}>
-                          <Link
-                            href={item.href}
-                            aria-current={current ? "page" : undefined}
-                            {...(external && {
-                              target: "_blank",
-                              rel: "noopener noreferrer",
-                            })}
-                          >
-                            <span className="flex items-center gap-1 font-medium text-secondary-foreground">
-                              {item.name}
-                              {external && (
-                                <ArrowUpRight
-                                  aria-hidden
-                                  className="size-3.5"
-                                />
-                              )}
-                            </span>
-                            <span className="text-xs text-muted-foreground leading-snug">
-                              {item.description}
-                            </span>
-                          </Link>
-                        </NavigationMenuLink>
-                      </li>
-                    );
-                  })}
-                </ul>
+              <NavigationMenuContent
+                className={cn(
+                  // Panels sit under their own trigger, so switching menus
+                  // fades and scales in place instead of sliding sideways.
+                  "z-50 ease-[cubic-bezier(.32,.72,0,1)] data-[motion^=from-]:[--tw-enter-translate-x:0]! data-[motion^=to-]:[--tw-exit-translate-x:0]!",
+                  entry.id === lastGroupId &&
+                    "md:right-0 md:left-auto group-data-[viewport=false]/navigation-menu:origin-top-right",
+                )}
+              >
+                <NavPanel items={entry.items} pathname={pathname} />
               </NavigationMenuContent>
             </NavigationMenuItem>
           );
         })}
       </NavigationMenuList>
     </NavigationMenu>
+  );
+}
+
+/**
+ * One dropdown: an optional featured panel on the left, the other items as
+ * icon rows (two columns when there is no featured panel) and an optional
+ * footer link to the group's hub.
+ */
+function NavPanel({
+  items,
+  pathname,
+}: {
+  items: HeaderNavItem[];
+  pathname: string;
+}) {
+  const featured = items.find((item) => item.featured);
+  const hub = items.find((item) => item.hub);
+  const rows = items.filter((item) => !item.featured && !item.hub);
+
+  return (
+    <div className={cn("flex flex-col", featured ? "w-[38rem]" : "w-[32rem]")}>
+      <ul
+        className={cn(
+          "grid gap-1",
+          featured ? "grid-cols-[15rem_minmax(0,1fr)]" : "grid-cols-2",
+        )}
+      >
+        {featured && (
+          <li className="flex" style={{ gridRow: `span ${rows.length}` }}>
+            <FeaturedLink item={featured} pathname={pathname} />
+          </li>
+        )}
+        {rows.map((item) => (
+          <li key={item.href} className={cn(featured && "col-start-2")}>
+            <NavRow item={item} pathname={pathname} />
+          </li>
+        ))}
+      </ul>
+      {hub && (
+        <div className="mt-1 border-t pt-1">
+          <NavigationMenuLink
+            asChild
+            active={pathname === hub.href}
+            className="group/nav-item flex-row items-center gap-2 px-3 py-2.5"
+          >
+            <Link href={hub.href}>
+              <span className="text-sm font-medium text-foreground">
+                {hub.name}
+              </span>
+              <span className="truncate text-sm text-muted-foreground">
+                {hub.description}
+              </span>
+              <ArrowRight
+                aria-hidden
+                className="ml-auto size-3.5 shrink-0 text-muted-foreground transition-transform duration-150 group-hover/nav-item:translate-x-0.5"
+              />
+            </Link>
+          </NavigationMenuLink>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function NavRow({ item, pathname }: { item: HeaderNavItem; pathname: string }) {
+  const external = isExternal(item);
+  const current = !external && pathname === item.href;
+
+  return (
+    <NavigationMenuLink
+      asChild
+      active={current}
+      className="group/nav-item flex-row items-start gap-3 p-2.5"
+    >
+      <Link
+        href={item.href}
+        aria-current={current ? "page" : undefined}
+        {...(external && externalProps)}
+      >
+        <NavIconTile icon={item.icon} />
+        <span className="flex min-w-0 flex-col gap-0.5">
+          <span className="flex items-center gap-1 text-sm font-medium text-foreground">
+            {item.name}
+            {external && (
+              <ExportSquare
+                aria-hidden
+                className="size-3 text-muted-foreground"
+              />
+            )}
+          </span>
+          <span className="text-xs leading-snug text-muted-foreground text-pretty">
+            {item.description}
+          </span>
+        </span>
+      </Link>
+    </NavigationMenuLink>
+  );
+}
+
+function FeaturedLink({
+  item,
+  pathname,
+}: {
+  item: HeaderNavItem;
+  pathname: string;
+}) {
+  const current = pathname === item.href;
+
+  return (
+    <NavigationMenuLink
+      asChild
+      active={current}
+      className="group/nav-item relative w-full justify-end gap-2 overflow-hidden border bg-muted/30 p-4 hover:bg-accent/50"
+    >
+      <Link href={item.href} aria-current={current ? "page" : undefined}>
+        <AsciiField
+          variant="qr"
+          density={0.8}
+          radius={110}
+          className="opacity-70 [mask-image:linear-gradient(to_bottom,black_10%,transparent_72%)]"
+        />
+        <NavIconTile
+          icon={item.icon}
+          className="relative mb-auto bg-background"
+        />
+        <span className="relative text-sm font-medium text-foreground">
+          {item.name}
+        </span>
+        <span className="relative text-xs leading-relaxed text-muted-foreground text-pretty">
+          {item.description}
+        </span>
+        <span className="relative mt-1 inline-flex items-center gap-1 text-xs font-medium text-foreground">
+          Open
+          <ArrowRight
+            aria-hidden
+            className="size-3 transition-transform duration-150 group-hover/nav-item:translate-x-0.5"
+          />
+        </span>
+      </Link>
+    </NavigationMenuLink>
   );
 }

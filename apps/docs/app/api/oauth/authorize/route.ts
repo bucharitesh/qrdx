@@ -1,120 +1,118 @@
 import { auth } from "@repo/auth/server";
-import {
-  database as db,
-  oauthApp,
-  oauthAuthorizationCode,
-} from "@repo/database";
-import cuid from "cuid";
-import { and, eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import type { NextRequest } from "next/server";
-import { OAUTH_AUTHORIZATION_CODE_EXPIRY_SECONDS } from "@/lib/constants";
+import { baseUrl } from "@/lib/metadata";
+import { oauthError } from "@/lib/oauth";
 import {
-  generateSecureToken,
-  hashToken,
-  isValidPkceValue,
-  oauthError,
-  PKCE_METHODS,
-  parseScopes,
-  validateRedirectUri,
-  validateScopes,
-} from "@/lib/oauth";
+  authorizeParamEntries,
+  checkAuthorizeRequest,
+  hasPriorConsent,
+  issueAuthorizationCode,
+  readAuthorizeParams,
+  redirectWith,
+} from "@/lib/oauth-apps/authorize";
+
+// GET: the URL apps send people to. Invalid requests get a JSON error and never
+// a redirect (the redirect_uri can't be trusted until it has been checked).
+// People who are signed out, or haven't approved this app for these scopes
+// yet, continue on the consent page (/oauth/authorize), which POSTs back here.
+
+function consentPage(req: NextRequest, entries: [string, string][]) {
+  const url = new URL("/oauth/authorize", req.nextUrl.origin);
+  for (const [key, value] of entries) url.searchParams.set(key, value);
+  return url;
+}
 
 export async function GET(req: NextRequest) {
-  const params = req.nextUrl.searchParams;
-
-  const clientId = params.get("client_id");
-  const redirectUri = params.get("redirect_uri");
-  const responseType = params.get("response_type");
-  const scopeParam = params.get("scope");
-  const state = params.get("state");
-  const codeChallenge = params.get("code_challenge");
-  const codeChallengeMethod = params.get("code_challenge_method") ?? "S256";
-
-  if (!clientId || !redirectUri || !responseType || !scopeParam) {
-    return oauthError(
-      "invalid_request",
-      "Missing required parameters: client_id, redirect_uri, response_type, scope",
-    );
-  }
-
-  if (responseType !== "code") {
-    return oauthError(
-      "unsupported_response_type",
-      "Only response_type=code is supported",
-    );
-  }
-
-  if (codeChallenge) {
-    if (
-      !PKCE_METHODS.includes(
-        codeChallengeMethod as (typeof PKCE_METHODS)[number],
-      )
-    ) {
-      return oauthError(
-        "invalid_request",
-        "Unsupported code_challenge_method (use S256)",
-      );
-    }
-    if (!isValidPkceValue(codeChallenge)) {
-      return oauthError("invalid_request", "Malformed code_challenge");
-    }
-  }
-
-  const [app] = await db
-    .select({
-      id: oauthApp.id,
-      redirectUris: oauthApp.redirectUris,
-      scopes: oauthApp.scopes,
-    })
-    .from(oauthApp)
-    .where(and(eq(oauthApp.clientId, clientId), eq(oauthApp.isActive, true)))
-    .limit(1);
-
-  if (!app) {
-    return oauthError("invalid_client", "Unknown client_id");
-  }
-
-  if (!validateRedirectUri(redirectUri, app.redirectUris)) {
-    return oauthError("invalid_request", "redirect_uri not registered");
-  }
-
-  const scopes = parseScopes(scopeParam);
-  if (!validateScopes(scopes, app.scopes)) {
-    return oauthError("invalid_scope", "Invalid or unsupported scope");
-  }
+  const params = readAuthorizeParams((key) =>
+    req.nextUrl.searchParams.get(key),
+  );
+  const check = await checkAuthorizeRequest(params);
+  if (!check.ok) return oauthError(check.error, check.description);
 
   const session = await auth.api.getSession({ headers: await headers() });
-  if (!session?.user?.id) {
-    const pageUrl = new URL("/oauth/authorize", req.nextUrl.origin);
-    req.nextUrl.searchParams.forEach((value, key) => {
-      pageUrl.searchParams.set(key, value);
-    });
-    return Response.redirect(pageUrl.toString(), 302);
+  const userId = session?.user?.id;
+  if (
+    userId &&
+    params.prompt !== "consent" &&
+    (await hasPriorConsent(check.app.id, userId, check.scopes))
+  ) {
+    const location = await issueAuthorizationCode(
+      check.app.id,
+      userId,
+      params,
+      check.scopes,
+    );
+    return Response.redirect(location, 302);
   }
 
-  const code = generateSecureToken();
-  const now = new Date();
+  return Response.redirect(
+    consentPage(req, authorizeParamEntries(params)).toString(),
+    302,
+  );
+}
 
-  await db.insert(oauthAuthorizationCode).values({
-    id: cuid(),
-    // Only the hash is stored; the plaintext code goes to the client once.
-    code: hashToken(code),
-    appId: app.id,
-    userId: session.user.id,
-    scopes,
-    redirectUri,
-    codeChallenge: codeChallenge ?? null,
-    codeChallengeMethod: codeChallenge ? codeChallengeMethod : null,
-    expiresAt: new Date(
-      now.getTime() + OAUTH_AUTHORIZATION_CODE_EXPIRY_SECONDS * 1000,
-    ),
-    createdAt: now,
-  });
+/**
+ * Same-origin form posts only: the consent page's own form. Session cookies
+ * are SameSite=Lax as well, so a cross-site post would arrive signed out.
+ */
+function isSameOrigin(req: NextRequest): boolean {
+  const origin = req.headers.get("origin");
+  if (origin && origin !== "null") {
+    // The public origin too, for proxies that terminate TLS in front of Next.
+    return origin === req.nextUrl.origin || origin === baseUrl.origin;
+  }
+  return req.headers.get("sec-fetch-site") === "same-origin";
+}
 
-  const redirectUrl = new URL(redirectUri);
-  redirectUrl.searchParams.set("code", code);
-  if (state) redirectUrl.searchParams.set("state", state);
+// POST: the consent page's Allow / Deny buttons.
+export async function POST(req: NextRequest) {
+  if (!isSameOrigin(req)) {
+    return oauthError(
+      "invalid_request",
+      "Authorization must be approved on the QRdx consent page",
+      403,
+    );
+  }
+  const form = await req.formData().catch(() => null);
+  if (!form) {
+    return oauthError("invalid_request", "Request body must be form-encoded");
+  }
+  const field = (key: string) => {
+    const value = form.get(key);
+    return typeof value === "string" ? value : null;
+  };
 
-  return Response.redirect(redirectUrl.toString(), 302);
+  const params = readAuthorizeParams(field);
+  const check = await checkAuthorizeRequest(params);
+  if (!check.ok) return oauthError(check.error, check.description);
+
+  const session = await auth.api.getSession({ headers: await headers() });
+  const userId = session?.user?.id;
+  if (!userId) {
+    // Signed out in another tab: sign in again on the consent page.
+    return Response.redirect(
+      consentPage(req, authorizeParamEntries(params)).toString(),
+      303,
+    );
+  }
+
+  if (field("decision") !== "allow") {
+    // RFC 6749 §4.1.2.1
+    return Response.redirect(
+      redirectWith(params, {
+        error: "access_denied",
+        error_description: "The user denied the request",
+      }),
+      303,
+    );
+  }
+
+  const location = await issueAuthorizationCode(
+    check.app.id,
+    userId,
+    params,
+    check.scopes,
+  );
+  return Response.redirect(location, 303);
 }

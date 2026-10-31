@@ -51,7 +51,7 @@ Domains added while a team is active belong to the team. Owners and admins add, 
 
 ## REST API
 
-The [codes API](/docs/dynamic-qr-codes#rest-api) accepts `domainId` (the id of a verified domain in the same workspace) on `POST /api/v1/codes` and `PATCH /api/v1/codes/{id}`. Send `"domainId": null` in a `PATCH` to switch back to the default link. Moving a code onto a domain needs Pro and returns `402 PLAN_REQUIRED` otherwise.
+The [codes API](/docs/dynamic-qr-codes#rest-api) accepts `domainId` (the id of a verified domain in the same workspace) on `POST /v1/codes` and `PATCH /v1/codes/{id}`. Send `"domainId": null` in a `PATCH` to switch back to the default link. Moving a code onto a domain needs Pro and returns `402 PLAN_REQUIRED` otherwise.
 
 Each code in a response includes:
 

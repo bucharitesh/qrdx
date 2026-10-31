@@ -1,3 +1,4 @@
+import { Category, Routing2, Signpost } from "iconsax-reactjs";
 import type { Metadata } from "next";
 import { createMetadata } from "@/lib/metadata";
 import { industries, placements } from "@/lib/seo-content";
@@ -23,21 +24,21 @@ export default function IndustriesHubPage() {
           href: "/qr-codes-on",
           title: "Browse by placement",
           description: `Business cards, packaging, billboards, receipts and ${placements.items.length - 4} more surfaces, with sizes for each.`,
-          cta: "QR codes by placement",
+          icon: Signpost,
         },
         {
           href: "/qr-code-generator",
           title: "Free generators by type",
           description:
             "Wi-Fi, vCard, UPI, WhatsApp, Google review and more, each with the exact format it encodes.",
-          cta: "All QR code generators",
+          icon: Category,
         },
         {
           href: "/docs/dynamic-qr-codes",
           title: "How dynamic codes work",
           description:
             "Short links you can repoint after printing, with scan analytics and no scan limits.",
-          cta: "Read the dynamic QR guide",
+          icon: Routing2,
         },
       ]}
       faqs={[
