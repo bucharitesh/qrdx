@@ -101,6 +101,7 @@ export const analytics: IntegrationCatalogEntry[] = PIXELS.map((pixel) => ({
     `Paste your ${pixel.idName} (${pixel.idFormat}) on a dynamic code that opens a hosted page. The tag only loads after the visitor agrees where consent is required.`,
   ],
   kind: "native",
+  surface: "integrations",
   categories: ["analytics"],
   logo: pixel.logo,
   plan: "pro",

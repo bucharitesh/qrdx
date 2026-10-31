@@ -43,7 +43,11 @@ export interface PlacedGradient {
 
 export type ShadingColorSpace = "rgb" | "cmyk";
 
-const SHARED_ATTRIBUTES = ["gradientUnits", "gradientTransform", "spreadMethod"];
+const SHARED_ATTRIBUTES = [
+  "gradientUnits",
+  "gradientTransform",
+  "spreadMethod",
+];
 const GEOMETRY_ATTRIBUTES = {
   linear: ["x1", "y1", "x2", "y2"],
   radial: ["cx", "cy", "r", "fx", "fy", "fr"],
@@ -167,7 +171,9 @@ function boundingBox(segments: Segment[]) {
   };
   const at = (t: number, p0: number, p1: number, p2: number, p3: number) => {
     const u = 1 - t;
-    return u * u * u * p0 + 3 * u * u * t * p1 + 3 * u * t * t * p2 + t ** 3 * p3;
+    return (
+      u * u * u * p0 + 3 * u * u * t * p1 + 3 * u * t * t * p2 + t ** 3 * p3
+    );
   };
   let x = 0;
   let y = 0;
@@ -276,7 +282,9 @@ export function placeGradient(
       : number;
   };
   const length = (name: string, fallback: string, reference: number) =>
-    parse(attrs[name] ?? fallback, reference) ?? parse(fallback, reference) ?? 0;
+    parse(attrs[name] ?? fallback, reference) ??
+    parse(fallback, reference) ??
+    0;
 
   if (kind === "linear") {
     const coords = [

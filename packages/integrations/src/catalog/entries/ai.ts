@@ -134,6 +134,7 @@ const ASK_STEP = (where: string) => ({
 
 const base = {
   kind: "guide",
+  surface: "mcp",
   categories: ["ai"],
   plan: "no-account",
   builtBy: "QRdx",
@@ -145,6 +146,7 @@ export const ai: IntegrationCatalogEntry[] = [
   {
     ...base,
     slug: "claude",
+    canonicalPath: "/mcp?tab=claude",
     name: "Claude",
     tagline:
       "Add QRdx as a custom connector and ask Claude for styled QR codes and Wi-Fi or contact payloads.",
@@ -188,6 +190,7 @@ export const ai: IntegrationCatalogEntry[] = [
   {
     ...base,
     slug: "chatgpt",
+    canonicalPath: "/mcp?tab=chatgpt",
     name: "ChatGPT",
     tagline:
       "Add the QRdx MCP server as an app in ChatGPT developer mode and generate QR codes in chat.",
@@ -238,6 +241,7 @@ export const ai: IntegrationCatalogEntry[] = [
   {
     ...base,
     slug: "claude-code",
+    canonicalPath: "/mcp?tab=claude-code",
     name: "Claude Code",
     tagline:
       "One command adds the QRdx MCP server, so Claude Code can drop QR codes into your README or app.",
@@ -275,6 +279,7 @@ export const ai: IntegrationCatalogEntry[] = [
   {
     ...base,
     slug: "cursor",
+    canonicalPath: "/mcp?tab=cursor",
     name: "Cursor",
     tagline:
       "Install the QRdx MCP server in Cursor with one click and generate QR codes from the agent.",
@@ -311,6 +316,7 @@ export const ai: IntegrationCatalogEntry[] = [
   {
     ...base,
     slug: "vscode",
+    canonicalPath: "/mcp?tab=vscode",
     name: "VS Code",
     tagline:
       "Install the QRdx MCP server in VS Code and use it from Copilot agent mode.",
@@ -354,6 +360,7 @@ export const ai: IntegrationCatalogEntry[] = [
   {
     ...base,
     slug: "windsurf",
+    canonicalPath: "/mcp?tab=windsurf",
     name: "Windsurf",
     tagline:
       "Add the QRdx MCP server to Windsurf's Cascade with a three-line config.",
@@ -391,6 +398,7 @@ export const ai: IntegrationCatalogEntry[] = [
   {
     ...base,
     slug: "gemini-cli",
+    canonicalPath: "/mcp?tab=gemini",
     name: "Gemini CLI",
     tagline:
       "Add the QRdx MCP server to Gemini CLI with one command and make QR codes from the terminal.",
@@ -429,6 +437,7 @@ export const ai: IntegrationCatalogEntry[] = [
   {
     ...base,
     slug: "codex",
+    canonicalPath: "/mcp?tab=codex",
     name: "Codex",
     tagline:
       "Add the QRdx MCP server to OpenAI's Codex with one command and generate QR codes while it codes.",

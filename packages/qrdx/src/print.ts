@@ -226,7 +226,10 @@ class PdfPainter extends SvgPainter {
     pdf: JsPDF,
     cmyk: boolean,
     gradients: Map<string, string>,
-    shadings: { gradients: Map<string, SvgGradient>; resources: PdfShadings } | null,
+    shadings: {
+      gradients: Map<string, SvgGradient>;
+      resources: PdfShadings;
+    } | null,
     images: Map<string, string>
   ) {
     super(gradients, shadings?.gradients ?? null);
@@ -575,8 +578,7 @@ async function createPrintPDF(
 
   // Extend the edge color into the bleed so trimming leaves no white sliver;
   // a gradient background continues into it.
-  const bleedFill =
-    layout.bleed > 0 ? getPrintBleedFill(props, markup) : null;
+  const bleedFill = layout.bleed > 0 ? getPrintBleedFill(props, markup) : null;
   const bleedBox: [number, number, number, number] = [
     layout.trimX - layout.bleed,
     layout.trimY - layout.bleed,

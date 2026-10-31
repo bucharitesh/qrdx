@@ -292,11 +292,11 @@ await downloadPrintEPS(props, { sizeMm: 40, filename: "qr.eps" });
 const fromSvg = await svgToEPS(svgMarkup, { width: 144 }); // any SVG this library renders, 144 pt wide
 ```
 
-EPS has no transparency or crop marks, gradients print as their first color, and PNG and JPEG logos are embedded as images.
+EPS has no transparency or crop marks, and PNG and JPEG logos are embedded as images. Linear and radial gradients stay smooth: the PDF paints them as native shadings and the EPS with `shfill` (the file then declares PostScript LanguageLevel 3), clipped to each module, eye and eye centre, in the same color mode as the solid colors.
 
 - `size` is the width of the code itself; a frame adds to the page.
 - `colorMode: "cmyk"` uses a naive conversion (`rgbToCmyk`: K = 1 − max(R, G, B), no ICC profile). Ask your printer for a color-managed conversion when exact brand colors matter.
-- Gradients are flattened to their first color stop in the PDF; use the print SVG to keep them. Frame text uses Helvetica Bold, so characters outside Latin-1 may not render in the PDF.
+- Gradients stay gradients in the PDF (native shadings). In CMYK mode the blend runs between the converted stop colors. Frame text uses Helvetica Bold, so characters outside Latin-1 may not render in the PDF.
 - Rule of thumb for size: width ≈ scan distance ÷ 10 (2 cm wide at 20 cm).
 
 ## Will it scan? (browser)

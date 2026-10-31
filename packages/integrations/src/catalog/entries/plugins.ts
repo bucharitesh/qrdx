@@ -14,6 +14,8 @@ export const plugins: IntegrationCatalogEntry[] = [
       "Right-click a link, an image or selected text to get its QR code. Everything runs in your browser; nothing is sent anywhere.",
     ],
     kind: "guide",
+    surface: "plugins",
+    canonicalPath: "/plugins#chrome",
     categories: ["plugins"],
     logo: { type: "brand", icon: "Chrome", color: "#1A73E8" },
     plan: "no-account",
@@ -77,6 +79,8 @@ export const plugins: IntegrationCatalogEntry[] = [
       "Select a code you inserted earlier to replace it while keeping its size, position and rotation, or reopen it with the Edit QR code button in Figma's right panel. The plugin has no network access.",
     ],
     kind: "guide",
+    surface: "plugins",
+    canonicalPath: "/plugins#figma",
     categories: ["plugins"],
     logo: { type: "brand", icon: "Figma", color: "#F24E1E" },
     plan: "no-account",
@@ -139,6 +143,8 @@ export const plugins: IntegrationCatalogEntry[] = [
       "Generate QR with AI turns a plain-English description into settings, and Raycast AI can call the extension's tools directly.",
     ],
     kind: "guide",
+    surface: "plugins",
+    canonicalPath: "/plugins#raycast",
     categories: ["plugins"],
     logo: { type: "image", src: "/integrations/raycast.svg" },
     plan: "no-account",
@@ -183,5 +189,70 @@ export const plugins: IntegrationCatalogEntry[] = [
     ],
     keywords: ["launcher", "mac", "productivity", "ai", "extension"],
     related: ["chrome", "figma", "claude-code"],
+  },
+  {
+    slug: "canva",
+    name: "Canva app",
+    tagline:
+      "Style a QR code in a Canva side panel and add it to your design in one click.",
+    description: [
+      "Enter a URL or text, then pick a template, dot, eye and eye-dot patterns, colors from Canva's color picker, error correction and an optional logo. The preview updates as you go.",
+      "Add to Design places the code on your page as a 1024 px PNG with alt text.",
+    ],
+    kind: "guide",
+    surface: "plugins",
+    canonicalPath: "/plugins#canva",
+    categories: ["plugins"],
+    logo: { type: "image", src: "/compare/canva-qr.svg" },
+    plan: "no-account",
+    builtBy: "QRdx",
+    website: "https://www.canva.com",
+    note: "Not in the Canva Apps Marketplace yet. Run it from source.",
+    primaryAction: {
+      type: "link",
+      label: "View source",
+      href: `${REPO}/tree/main/plugins/canva`,
+    },
+    steps: [
+      {
+        title: "Start the app",
+        body: "This serves the app at http://localhost:8080.",
+        snippet: {
+          label: "Terminal",
+          language: "bash",
+          code: `${CLONE}\npnpm --filter @qrdx/canva-plugin start`,
+        },
+      },
+      {
+        title: "Create an app in the Canva Developer Portal",
+        body: "At canva.com/developers/apps, create an app and set its Development URL to http://localhost:8080.",
+      },
+      {
+        title: "Preview it",
+        body: "Click Preview: the Canva editor opens with QRdx in the side panel.",
+      },
+    ],
+    capabilities: [
+      {
+        title: "Live preview",
+        description: "The code redraws as you change its content or style.",
+      },
+      {
+        title: "Templates and patterns",
+        description:
+          "Frame templates and body, eye and eye-dot shapes, each shown as a thumbnail.",
+      },
+      {
+        title: "Canva colors",
+        description:
+          "Foreground, background, eye and dot colors from Canva's color picker.",
+      },
+      {
+        title: "Add to Design",
+        description: "A 1024 px PNG with alt text, placed on your page.",
+      },
+    ],
+    keywords: ["design", "canva", "app", "print", "poster", "social"],
+    related: ["figma", "chrome", "raycast"],
   },
 ];

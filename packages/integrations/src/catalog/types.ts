@@ -21,6 +21,24 @@ export type CatalogCategory =
 /** Lowest plan the integration needs. */
 export type CatalogPlan = "no-account" | "free" | "pro" | "business";
 
+/**
+ * Where an entry is presented on the site.
+ * - "integrations": a third-party connection, listed on /integrations with
+ *   its own /integrations/<slug> page.
+ * - "mcp": an AI assistant that uses the MCP server, covered by /mcp.
+ * - "developers": an API, library or tool, covered by its docs page.
+ * - "plugins": a QRdx plugin for another app, covered by /plugins.
+ * - "feature": a QRdx feature, covered by its docs page.
+ * Entries that aren't "integrations" set `canonicalPath`, and their
+ * /integrations/<slug> URL redirects there.
+ */
+export type CatalogSurface =
+  | "integrations"
+  | "mcp"
+  | "developers"
+  | "plugins"
+  | "feature";
+
 /** iconsax brand icons used as logos (drawn in `color` on a white tile). */
 export type CatalogBrandIcon = "Slack" | "Figma" | "Chrome";
 
@@ -94,6 +112,14 @@ export interface IntegrationCatalogEntry {
   /** "What it does" paragraphs. */
   description: string[];
   kind: CatalogKind;
+  /** Where it is presented; only "integrations" entries are on /integrations. */
+  surface: CatalogSurface;
+  /**
+   * The page that covers an entry that isn't on /integrations, like
+   * "/mcp?tab=cursor", "/plugins#figma" or "/docs/webhooks". Its old
+   * /integrations/<slug> URL redirects here (308).
+   */
+  canonicalPath?: string;
   categories: CatalogCategory[];
   logo: CatalogLogo;
   plan: CatalogPlan;

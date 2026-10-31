@@ -3,12 +3,6 @@
 // to an output backend (PDF via jsPDF, EPS as PostScript).
 import { parseColor, type RGBAColor } from "./parse-color";
 import {
-  invertMatrix,
-  type PlacedGradient,
-  placeGradient,
-  type SvgGradient,
-} from "./svg-gradient";
-import {
   applyMatrix,
   ellipseSegments,
   type Matrix,
@@ -20,6 +14,12 @@ import {
   type Segment,
   type SvgNode,
 } from "./svg-geometry";
+import {
+  invertMatrix,
+  type PlacedGradient,
+  placeGradient,
+  type SvgGradient,
+} from "./svg-gradient";
 
 export interface PaintState {
   matrix: Matrix;
