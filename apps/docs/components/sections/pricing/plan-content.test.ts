@@ -39,6 +39,7 @@ const base: PlanLimits = {
   conversions: false,
   emailAlerts: false,
   webhooks: false,
+  oauthApps: 1,
   formResponsesPerMonth: 50,
   apiRequestsPerDay: 1000,
   bulkApi: false,

@@ -34,6 +34,21 @@ let nextConfig: NextConfig = {
     "shiki",
     "@takumi-rs/core",
   ],
+  // The OAuth consent screen must never render inside another site's frame
+  // (clickjacking an "Authorize" click).
+  async headers() {
+    const base = (await config.headers?.()) ?? [];
+    return [
+      ...base,
+      {
+        source: "/oauth/:path*",
+        headers: [
+          { key: "X-Frame-Options", value: "DENY" },
+          { key: "Content-Security-Policy", value: "frame-ancestors 'none'" },
+        ],
+      },
+    ];
+  },
   // Anything else on the MCP subdomain goes to the connect page, and anything
   // on the API subdomain outside /v1 goes to the REST API docs.
   async redirects() {

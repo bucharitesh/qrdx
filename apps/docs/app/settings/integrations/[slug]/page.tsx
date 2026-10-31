@@ -8,6 +8,8 @@ import {
 import { headers } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import { env } from "@/lib/env";
+import { getIntegrationAvailability } from "@/lib/integration-availability";
+import { isVisible, setupNeeded } from "@/lib/integration-availability-rules";
 import {
   isIntegrationConfigured,
   isOAuthConfigured,
@@ -35,6 +37,11 @@ export default async function IntegrationPage({
   const integration = registry.get(slug);
 
   if (!integration) notFound();
+
+  // Production and preview: an integration that needs setup doesn't exist
+  // for users. Local dev shows it with the env variable names it needs.
+  const availability = getIntegrationAvailability();
+  if (!isVisible(availability, slug)) notFound();
 
   const isConfigured = isIntegrationConfigured(slug);
 
@@ -71,6 +78,7 @@ export default async function IntegrationPage({
       website={integration.website}
       category={integration.category}
       isConfigured={isConfigured}
+      needsSetup={setupNeeded(availability, slug)}
       oauthConfigured={isOAuthConfigured(slug)}
       apiKey={integration.apiKey}
       isConnected={isConnected}

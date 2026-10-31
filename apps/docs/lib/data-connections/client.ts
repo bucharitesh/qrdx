@@ -26,6 +26,8 @@ export interface SourceStatusView {
   needsQuery: boolean;
   connected: boolean;
   status: "active" | "disconnected" | "error" | null;
+  /** Local dev only: env variable names it still needs. */
+  needsSetup?: string[];
 }
 
 export class DataConnectionError extends Error {

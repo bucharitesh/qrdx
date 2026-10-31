@@ -7,6 +7,8 @@ import {
   initializeIntegrations,
 } from "@repo/integrations";
 import { getConnection } from "@/lib/connected-accounts/server";
+import { getIntegrationAvailability } from "@/lib/integration-availability";
+import { isVisible, setupNeeded } from "@/lib/integration-availability-rules";
 import { isIntegrationConfigured } from "@/lib/integration-oauth";
 import { dubSource, shortLinkSource } from "../adapters";
 import { ImportError } from "../importer";
@@ -23,11 +25,13 @@ export async function providerStatuses(
   userId: string,
 ): Promise<ProviderStatus[]> {
   const registry = getIntegrationRegistry();
+  const availability = getIntegrationAvailability();
   return Promise.all(
     API_PROVIDER_IDS.map(async (id): Promise<ProviderStatus> => {
       const slug = API_PROVIDERS[id].integration;
       const definition = registry.get(slug);
-      if (!definition) {
+      // Production and preview: providers that need setup aren't offered.
+      if (!(definition && isVisible(availability, slug))) {
         return {
           id,
           connection: "none",
@@ -54,6 +58,7 @@ export async function providerStatuses(
             }
           : null,
         available: true,
+        needsSetup: setupNeeded(availability, slug),
       };
     }),
   );

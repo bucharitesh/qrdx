@@ -123,7 +123,7 @@ Each gradient needs at least 2 stops; `offset` is a percentage from 0 to 100.
 
 ## EPS
 
-`.eps` files are vector PostScript (EPSF-3.0) for print shops and design tools. `--size` is the width in points, so `--size 144` is 2 inches. Gradients print as their first color and there is no transparency. PNG and JPEG logos are embedded; other logo formats are converted with sharp when it is installed, and otherwise left out with a warning.
+`.eps` files are vector PostScript (EPSF-3.0) for print shops and design tools. `--size` is the width in points, so `--size 144` is 2 inches. Linear and radial gradients print as smooth PostScript Level 3 shadings, and there is no transparency. PNG and JPEG logos are embedded; other logo formats are converted with sharp when it is installed, and otherwise left out with a warning.
 
 ## Interactive mode
 

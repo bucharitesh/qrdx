@@ -31,6 +31,7 @@ import {
 import Link from "next/link";
 import { type FormEvent, useCallback, useEffect, useId, useState } from "react";
 import { emitSound } from "@/components/editor/sound";
+import { NeedsSetupBadge } from "@/components/needs-setup";
 import { IntegrationLogo } from "@/components/sections/integrations/integration-logo";
 import {
   DataConnectionError,
@@ -356,17 +357,35 @@ export function AccountSourcePicker({
       source.connected && (source.needsQuery || source.status === "active"),
   );
   const accountSources = configured.filter((source) => !source.needsQuery);
+  // Local dev only: sources whose credentials aren't set (production omits them).
+  const needsSetup = state.sources.filter(
+    (source) => !source.configured && source.needsSetup?.length,
+  );
+  const setupNote =
+    needsSetup.length > 0 ? (
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-muted-foreground text-xs">
+        {needsSetup.map((source) => (
+          <span key={source.slug} className="inline-flex items-center gap-1.5">
+            {source.name}
+            <NeedsSetupBadge names={source.needsSetup} />
+          </span>
+        ))}
+      </div>
+    ) : null;
 
   if (ready.length === 0) {
-    if (accountSources.length === 0) return null;
+    if (accountSources.length === 0) return setupNote;
     return (
-      <p className="text-muted-foreground text-xs text-pretty">
-        Pick from {listNames(accountSources)}:{" "}
-        <Link className={linkClass} href="/integrations?category=sources">
-          connect an account
-        </Link>
-        .
-      </p>
+      <>
+        <p className="text-muted-foreground text-xs text-pretty">
+          Pick from {listNames(accountSources)}:{" "}
+          <Link className={linkClass} href="/integrations?category=sources">
+            connect an account
+          </Link>
+          .
+        </p>
+        {setupNote}
+      </>
     );
   }
 
@@ -426,6 +445,7 @@ export function AccountSourcePicker({
           source={open}
         />
       )}
+      {setupNote}
     </>
   );
 }

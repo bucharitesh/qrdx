@@ -845,8 +845,8 @@ function PrintOptions({
             </p>
           )}
           <p>
-            PDF and EPS draw every dot as a vector shape. Gradients print as
-            their first colour; the SVG keeps them.
+            PDF and EPS draw every dot as a vector shape and keep linear and
+            radial gradients as smooth vector shadings.
           </p>
         </section>
       ) : (

@@ -91,7 +91,9 @@ export type RedirectUrisCheck =
   | { ok: false; message: string };
 
 /** Blank lines are ignored and duplicates dropped; 1–10 URIs. */
-export function checkRedirectUris(inputs: readonly string[]): RedirectUrisCheck {
+export function checkRedirectUris(
+  inputs: readonly string[],
+): RedirectUrisCheck {
   const uris: string[] = [];
   for (const input of inputs) {
     if (!input.trim()) continue;
@@ -145,7 +147,8 @@ export function checkOptionalUrl(input: string, label: string): UrlCheck {
     return fail(`${label} can't contain spaces or control characters.`);
   }
   const url = parseUrl(value);
-  if (!url) return fail(`${label} must be a full URL, like https://example.com.`);
+  if (!url)
+    return fail(`${label} must be a full URL, like https://example.com.`);
   return checkWebUrl(url, label) ?? { ok: true, url: url.toString() };
 }
 

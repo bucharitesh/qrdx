@@ -5,12 +5,15 @@ import { Card } from "@repo/design-system/components/ui/card";
 import { Input } from "@repo/design-system/components/ui/input";
 import { cn } from "@repo/design-system/lib/utils";
 import {
-  CATALOG_CATEGORIES,
   type CatalogCategory,
+  getCatalogEntry,
   getIntegrationCatalog,
+  getUsedCategories,
+  type IntegrationCatalogEntry,
+  isListedIntegration,
   matchesCatalogQuery,
 } from "@repo/integrations/src/catalog";
-import { SearchNormal1 } from "iconsax-reactjs";
+import { ArrowRight, SearchNormal1 } from "iconsax-reactjs";
 import { motion, useReducedMotion } from "motion/react";
 import Link from "next/link";
 import { parseAsString, parseAsStringLiteral, useQueryState } from "nuqs";
@@ -18,30 +21,21 @@ import { useMemo } from "react";
 import { HairlineFigure } from "@/components/mockups/hairline";
 import { LAYOUT_TRANSITION } from "@/components/mockups/motion";
 import { IntegrationCard } from "@/components/sections/integrations/integration-card";
+import { IntegrationLogo } from "@/components/sections/integrations/integration-logo";
 
 type Filter = "all" | CatalogCategory;
 
-const FILTERS = [
-  "all",
-  ...CATALOG_CATEGORIES.map((category) => category.id),
-] as const satisfies readonly Filter[];
+/** AI assistants, plugins, developer tools and features: on other pages. */
+const ELSEWHERE = getIntegrationCatalog().filter(
+  (entry) => !isListedIntegration(entry) && entry.canonicalPath,
+);
 
-const ENTRIES = getIntegrationCatalog();
-
-const COUNTS = Object.fromEntries(
-  FILTERS.map((filter) => [
-    filter,
-    filter === "all"
-      ? ENTRIES.length
-      : ENTRIES.filter((entry) => entry.categories.includes(filter)).length,
-  ]),
-) as Record<Filter, number>;
-
-const labelOf = (filter: Filter) =>
-  filter === "all"
-    ? "All"
-    : (CATALOG_CATEGORIES.find((category) => category.id === filter)?.label ??
-      "");
+/** Where the sidebar sends people looking for what isn't listed here. */
+const MORE_LINKS = [
+  { label: "AI assistants", href: "/mcp" },
+  { label: "Plugins", href: "/plugins" },
+  { label: "Build with QRdx", href: "#build" },
+];
 
 /**
  * Spans that keep the last row full: 2 columns from sm, 3 (on a 6-track
@@ -57,15 +51,17 @@ function spanFor(index: number, total: number): string {
 }
 
 function FilterButton({
-  filter,
+  label,
+  count,
   active,
   onSelect,
   layoutId,
   className,
 }: {
-  filter: Filter;
+  label: string;
+  count: number;
   active: boolean;
-  onSelect: (filter: Filter) => void;
+  onSelect: () => void;
   layoutId: string;
   className?: string;
 }) {
@@ -77,7 +73,7 @@ function FilterButton({
       variant="ghost"
       size="sm"
       aria-pressed={active}
-      onClick={() => onSelect(filter)}
+      onClick={onSelect}
       className={cn(
         "relative shrink-0 justify-between gap-3 text-muted-foreground hover:text-foreground",
         active &&
@@ -93,24 +89,90 @@ function FilterButton({
           transition={reduce ? { duration: 0 } : LAYOUT_TRANSITION}
         />
       )}
-      <span className="relative">{labelOf(filter)}</span>
+      <span className="relative">{label}</span>
       <span className="relative text-xs font-normal tabular-nums text-muted-foreground">
-        {COUNTS[filter]}
+        {count}
       </span>
     </Button>
   );
 }
 
-/** Category filter (sidebar on desktop, chips on mobile) and search, both in the URL. */
+/** Links to the pages that cover what a search found outside this list. */
+function ElsewhereList({ entries }: { entries: IntegrationCatalogEntry[] }) {
+  return (
+    <ul className="flex w-full max-w-md flex-col divide-y rounded-xl border text-left">
+      {entries.map((entry) => (
+        <li key={entry.slug}>
+          <Link
+            href={entry.canonicalPath ?? "/integrations"}
+            className="group flex items-center gap-3 px-3.5 py-2.5 transition-colors first:rounded-t-xl last:rounded-b-xl hover:bg-accent/40"
+          >
+            <IntegrationLogo logo={entry.logo} size="sm" />
+            <span className="min-w-0 flex-1">
+              <span className="block truncate text-sm font-medium">
+                {entry.name}
+              </span>
+              <span className="block truncate text-xs text-muted-foreground">
+                {entry.canonicalPath?.startsWith("/mcp")
+                  ? "On the MCP server page"
+                  : entry.canonicalPath?.startsWith("/plugins")
+                    ? "On the plugins page"
+                    : "In the docs"}
+              </span>
+            </span>
+            <ArrowRight
+              aria-hidden
+              className="size-4 shrink-0 text-muted-foreground transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-foreground"
+            />
+          </Link>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/**
+ * Category filter (sidebar on desktop, chips on mobile) and search, both in
+ * the URL. Lists the third-party integrations this server can offer.
+ */
 export function IntegrationsDirectory({
-  unconfigured = [],
+  slugs,
+  needsSetup = {},
 }: {
-  /** Slugs of integrations this server can't connect yet. */
-  unconfigured?: string[];
+  /** Listed integrations to show, in display order (decided on the server). */
+  slugs: string[];
+  /** Local dev only: slug → env variable names it still needs. */
+  needsSetup?: Record<string, string[]>;
 }) {
+  const entries = useMemo(
+    () =>
+      slugs
+        .map((slug) => getCatalogEntry(slug))
+        .filter((entry): entry is IntegrationCatalogEntry => Boolean(entry)),
+    [slugs],
+  );
+  const categories = useMemo(() => getUsedCategories(entries), [entries]);
+  const filters = useMemo(
+    () => ["all", ...categories.map((category) => category.id)] as Filter[],
+    [categories],
+  );
+  const counts = useMemo(
+    () =>
+      Object.fromEntries(
+        filters.map((filter) => [
+          filter,
+          filter === "all"
+            ? entries.length
+            : entries.filter((entry) => entry.categories.includes(filter))
+                .length,
+        ]),
+      ) as Record<Filter, number>,
+    [filters, entries],
+  );
+
   const [filter, setFilter] = useQueryState(
     "category",
-    parseAsStringLiteral(FILTERS).withDefault("all"),
+    parseAsStringLiteral(filters).withDefault("all"),
   );
   const [query, setQuery] = useQueryState(
     "q",
@@ -119,18 +181,32 @@ export function IntegrationsDirectory({
 
   const results = useMemo(
     () =>
-      ENTRIES.filter(
+      entries.filter(
         (entry) =>
           (filter === "all" || entry.categories.includes(filter)) &&
           matchesCatalogQuery(entry, query),
       ),
-    [filter, query],
+    [entries, filter, query],
+  );
+  const elsewhere = useMemo(
+    () =>
+      query.trim()
+        ? ELSEWHERE.filter((entry) => matchesCatalogQuery(entry, query)).slice(
+            0,
+            4,
+          )
+        : [],
+    [query],
   );
 
   const select = (next: Filter) => {
     void setFilter(next === "all" ? null : next);
   };
-  const category = CATALOG_CATEGORIES.find((item) => item.id === filter);
+  const category = categories.find((item) => item.id === filter);
+  const labelOf = (item: Filter) =>
+    item === "all"
+      ? "All"
+      : (categories.find((entry) => entry.id === item)?.label ?? "");
 
   return (
     <div className="grid gap-8 lg:grid-cols-[13rem_minmax(0,1fr)] lg:gap-10">
@@ -139,15 +215,32 @@ export function IntegrationsDirectory({
           <p className="px-3 pb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
             Categories
           </p>
-          {FILTERS.map((item) => (
+          {filters.map((item) => (
             <FilterButton
               key={item}
-              filter={item}
+              label={labelOf(item)}
+              count={counts[item]}
               active={filter === item}
-              onSelect={select}
+              onSelect={() => select(item)}
               layoutId="integrations-filter-side"
               className="w-full"
             />
+          ))}
+          <p className="mt-6 border-t px-3 pt-5 pb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+            Also on QRdx
+          </p>
+          {MORE_LINKS.map((link) => (
+            <Link
+              key={link.href}
+              href={link.href}
+              className="group flex h-8 items-center justify-between rounded-full px-3 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground dark:hover:bg-accent/50"
+            >
+              {link.label}
+              <ArrowRight
+                aria-hidden
+                className="size-3.5 transition-transform duration-200 group-hover:translate-x-0.5"
+              />
+            </Link>
           ))}
         </div>
       </nav>
@@ -165,7 +258,7 @@ export function IntegrationsDirectory({
               onChange={(event) => {
                 void setQuery(event.target.value || null);
               }}
-              placeholder="Search Slack, Zapier, Claude, webhooks…"
+              placeholder="Search Zapier, Discord, Stripe, pixels…"
               aria-label="Search integrations"
               className="h-11 pl-10"
             />
@@ -175,12 +268,13 @@ export function IntegrationsDirectory({
             aria-label="Integration categories"
             className="-mx-6 flex snap-x gap-1 overflow-x-auto px-6 [mask-image:linear-gradient(to_right,transparent,black_24px,black_calc(100%-24px),transparent)] [scrollbar-width:none] md:-mx-10 md:px-10 lg:hidden"
           >
-            {FILTERS.map((item) => (
+            {filters.map((item) => (
               <FilterButton
                 key={item}
-                filter={item}
+                label={labelOf(item)}
+                count={counts[item]}
                 active={filter === item}
-                onSelect={select}
+                onSelect={() => select(item)}
                 layoutId="integrations-filter-chips"
                 className="snap-start"
               />
@@ -212,28 +306,33 @@ export function IntegrationsDirectory({
               >
                 <IntegrationCard
                   entry={entry}
-                  notConfigured={unconfigured.includes(entry.slug)}
+                  needsSetup={needsSetup[entry.slug]}
                 />
               </li>
             ))}
           </ul>
         ) : (
           <Card className="items-center gap-4 px-6 py-10 text-center shadow-xs dark:shadow-none">
-            <HairlineFigure
-              figure="Loupe"
-              surface="card"
-              className="aspect-square w-28"
-            />
+            {elsewhere.length === 0 && (
+              <HairlineFigure
+                figure="Loupe"
+                surface="card"
+                className="aspect-square w-28"
+              />
+            )}
             <div className="flex flex-col gap-1">
               <p className="font-medium">
-                Nothing matches &ldquo;{query.trim()}&rdquo;
-                {category && ` in ${category.label}`}
+                {elsewhere.length > 0
+                  ? `“${query.trim()}” is on another page`
+                  : `Nothing matches “${query.trim()}”${category ? ` in ${category.label}` : ""}`}
               </p>
               <p className="max-w-sm text-sm text-muted-foreground text-pretty">
-                Anything that accepts a webhook or calls a REST API can still
-                connect to QRdx.
+                {elsewhere.length > 0
+                  ? "This list covers third-party tools. AI assistants, plugins and developer tools have their own pages."
+                  : "Anything that accepts a webhook or calls a REST API can still connect to QRdx."}
               </p>
             </div>
+            {elsewhere.length > 0 && <ElsewhereList entries={elsewhere} />}
             <div className="flex flex-wrap justify-center gap-2">
               <Button
                 variant="outline"
@@ -244,9 +343,11 @@ export function IntegrationsDirectory({
               >
                 Clear search
               </Button>
-              <Button variant="ghost" asChild>
-                <Link href="/integrations/webhooks">See webhooks</Link>
-              </Button>
+              {elsewhere.length === 0 && (
+                <Button variant="ghost" asChild>
+                  <Link href="/docs/webhooks">See webhooks</Link>
+                </Button>
+              )}
             </div>
           </Card>
         )}

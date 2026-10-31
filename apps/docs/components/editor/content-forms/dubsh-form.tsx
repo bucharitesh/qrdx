@@ -32,12 +32,15 @@ import { cn } from "@repo/design-system/lib/utils";
 import { ArrowSwapVertical, ExportSquare, InfoCircle } from "iconsax-reactjs";
 import * as React from "react";
 import { toast } from "sonner";
+import { NeedsSetupNote } from "@/components/needs-setup";
 import {
   IntegrationLogo,
   logoForIntegration,
 } from "@/components/sections/integrations/integration-logo";
 import { apiFetch } from "@/lib/api-fetch";
 import { useDubIntegration } from "@/lib/hooks/use-dub-integration";
+import { useIntegrationAvailability } from "@/lib/hooks/use-integration-availability";
+import { isHiddenIn, needsSetupIn } from "@/lib/integration-availability-view";
 import type { DubshFormData } from "@/lib/validations/qr-content";
 import { dubshSchema } from "@/lib/validations/qr-content";
 import { useQREditorStore } from "@/store/editor-store";
@@ -80,6 +83,10 @@ export function DubshForm() {
   const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
   const { links, isLoading, isMutating, isConnected, error, createLink } =
     useDubIntegration();
+  // Offer "Connect Dub" only where Dub is set up (production hides it).
+  const availability = useIntegrationAvailability();
+  const canConnect = Boolean(availability && !isHiddenIn(availability, "dub"));
+  const dubSetup = availability ? needsSetupIn(availability, "dub") : undefined;
 
   // Initialize from stored config or use defaults
   const storedConfig = getContentConfig("dubsh") as DubshContent | undefined;
@@ -208,7 +215,7 @@ export function DubshForm() {
     </div>
   );
 
-  if (!isConnected && mode !== "manual") {
+  if (!isConnected && mode !== "manual" && canConnect) {
     return (
       <div className="space-y-3">
         <div className="rounded-xl border bg-card p-4">
@@ -226,6 +233,7 @@ export function DubshForm() {
                 <p className="text-muted-foreground text-xs leading-relaxed">
                   Connect Dub to create, select, and track Dub-powered QR codes.
                 </p>
+                <NeedsSetupNote names={dubSetup} />
               </div>
               <div className="flex flex-wrap gap-2">
                 <Button

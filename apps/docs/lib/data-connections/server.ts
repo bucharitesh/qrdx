@@ -36,6 +36,8 @@ import { env } from "@/lib/env";
 import { HttpError } from "@/lib/error-response";
 import { addChatTarget } from "@/lib/events/notification-settings";
 import { invalidateSubscribers } from "@/lib/events/subscribers";
+import { getIntegrationAvailability } from "@/lib/integration-availability";
+import { isVisible, setupNeeded } from "@/lib/integration-availability-rules";
 import {
   isIntegrationConfigured,
   isOAuthConfigured,
@@ -111,9 +113,14 @@ export interface SourceStatus {
   needsQuery: boolean;
   connected: boolean;
   status: "active" | "disconnected" | "error" | null;
+  /** Local dev only: env variable names it still needs (production omits the source). */
+  needsSetup?: string[];
 }
 
-/** Sources for an editor content type with their state for this person. */
+/**
+ * Sources for an editor content type with their state for this person.
+ * Production and preview leave out sources that need setup.
+ */
 export async function getSourceStatuses(
   userId: string | null,
   contentType: string,
@@ -137,9 +144,11 @@ export async function getSourceStatuses(
   const status = new Map(rows.map((row) => [row.provider, row.status]));
   const registry = getIntegrationRegistry();
   const media = mediaSourceEnv();
+  const availability = getIntegrationAvailability();
   return slugs.flatMap((slug) => {
     const definition = registry.get(slug);
-    if (!definition) return [];
+    if (!(definition && isVisible(availability, slug))) return [];
+    const needsSetup = setupNeeded(availability, slug);
     const needsQuery = slug === "youtube" || slug === "spotify";
     const configured = needsQuery
       ? isMediaSourceConfigured(slug, media)
@@ -157,6 +166,7 @@ export async function getSourceStatuses(
         status: needsQuery
           ? null
           : ((status.get(slug) as SourceStatus["status"]) ?? null),
+        ...(needsSetup && { needsSetup }),
       },
     ];
   });

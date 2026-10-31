@@ -5,6 +5,7 @@ import { Button } from "@repo/design-system/components/ui/button";
 import { useState } from "react";
 import { toast } from "sonner";
 import { emitSound } from "@/components/editor/sound";
+import { NeedsSetupBadge } from "@/components/needs-setup";
 import {
   DataConnectionError,
   exportToSheet,
@@ -15,10 +16,15 @@ type ExportTarget = { codeId: string | null } | { pageId: string };
 /**
  * "Export to Google Sheets": a new spreadsheet with a code's scans (or all
  * codes'), or a page's form responses. Points to settings when Google Sheets
- * isn't connected.
+ * isn't connected. Pages render it through SheetsExport, which leaves it out
+ * where Google Sheets needs setup (production) or passes `needsSetup` (dev).
  */
 export function SheetsExportButton(
-  props: ExportTarget & { size?: "sm" | "default" },
+  props: ExportTarget & {
+    size?: "sm" | "default";
+    /** Local dev only: env variable names Google Sheets still needs. */
+    needsSetup?: string[];
+  },
 ) {
   const [pending, setPending] = useState(false);
 
@@ -65,7 +71,7 @@ export function SheetsExportButton(
     }
   };
 
-  return (
+  const button = (
     <Button
       disabled={pending}
       onClick={run}
@@ -80,5 +86,12 @@ export function SheetsExportButton(
       )}
       {pending ? "Exporting…" : "Export to Google Sheets"}
     </Button>
+  );
+  if (!props.needsSetup?.length) return button;
+  return (
+    <span className="inline-flex items-center gap-2">
+      {button}
+      <NeedsSetupBadge names={props.needsSetup} />
+    </span>
   );
 }

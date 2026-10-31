@@ -19,6 +19,7 @@ import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
 import type { ReactNode } from "react";
 import { GridLines } from "@/components/fx";
+import { NeedsSetupNote } from "@/components/needs-setup";
 import { Breadcrumbs } from "@/components/sections/breadcrumbs";
 import { CodeSnippet } from "@/components/sections/integrations/code-snippet";
 import { IntegrationAction } from "@/components/sections/integrations/integration-action";
@@ -26,7 +27,8 @@ import { IntegrationCard } from "@/components/sections/integrations/integration-
 import { IntegrationLogo } from "@/components/sections/integrations/integration-logo";
 import { resolveAction } from "@/components/sections/integrations/resolve-action";
 import { breadcrumbSchema, JsonLd } from "@/components/sections/tools/json-ld";
-import { isIntegrationUnconfigured } from "@/lib/integration-availability";
+import { getIntegrationAvailability } from "@/lib/integration-availability";
+import { isVisible, setupNeeded } from "@/lib/integration-availability-rules";
 import { baseUrl, createMetadata } from "@/lib/metadata";
 
 interface IntegrationPageProps {
@@ -44,7 +46,13 @@ export async function generateMetadata({
 }: IntegrationPageProps): Promise<Metadata> {
   const { slug } = await params;
   const entry = getCatalogEntry(slug);
-  if (!entry || getCatalogRedirect(entry)) return {};
+  if (
+    !entry ||
+    getCatalogRedirect(entry) ||
+    !isVisible(getIntegrationAvailability(), entry.slug)
+  ) {
+    return {};
+  }
   return createMetadata({
     title: `${entry.name} integration`,
     description: entry.tagline,
@@ -117,9 +125,14 @@ export default async function IntegrationDetailPage({
   // pages now; /integrations only covers third-party connections.
   const moved = getCatalogRedirect(entry);
   if (moved) permanentRedirect(moved);
+  // Needs setup on QRdx's side: hidden in production, flagged in local dev.
+  const availability = getIntegrationAvailability();
+  if (!isVisible(availability, entry.slug)) notFound();
 
-  const related = getRelatedEntries(entry, 3);
-  const notConfigured = isIntegrationUnconfigured(entry.slug);
+  const related = getRelatedEntries(entry, 3, (item) =>
+    isVisible(availability, item.slug),
+  );
+  const needsSetup = setupNeeded(availability, entry.slug);
   const primary = resolveAction(entry.primaryAction, ORIGIN);
   const secondary = entry.secondaryAction
     ? resolveAction(entry.secondaryAction, ORIGIN)
@@ -176,12 +189,8 @@ export default async function IntegrationDetailPage({
               )}
             </div>
           </div>
-          {notConfigured ? (
-            <p className="flex items-center gap-2 text-sm text-amber-700 dark:text-amber-400">
-              <InfoCircle aria-hidden className="size-4 shrink-0" />
-              Not configured on this server yet, so it can&rsquo;t be connected
-              here.
-            </p>
+          {needsSetup ? (
+            <NeedsSetupNote names={needsSetup} className="text-sm" />
           ) : (
             entry.note && (
               <p className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -327,7 +336,10 @@ export default async function IntegrationDetailPage({
           <ul className="grid gap-4 md:grid-cols-3">
             {related.map((item) => (
               <li key={item.slug}>
-                <IntegrationCard entry={item} />
+                <IntegrationCard
+                  entry={item}
+                  needsSetup={setupNeeded(availability, item.slug)}
+                />
               </li>
             ))}
           </ul>

@@ -12,16 +12,16 @@
     "@repo/database": "workspace:*",
     "@repo/design-system": "workspace:*",
     "@repo/integration-kit": "workspace:*",
-    "drizzle-orm": "^0.45.1",
+    "drizzle-orm": "^0.45.4",
     "iconsax-reactjs": "0.0.8",
     "react": "19.2.3",
-    "zod": "^4.3.5"
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
     "@types/node": "^25.1.0",
     "@types/react": "^19.2.7",
     "typescript": "^5.9.3",
-    "vitest": "^4.0.18"
+    "vitest": "^4.1.12"
   }
 }

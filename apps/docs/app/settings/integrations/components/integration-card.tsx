@@ -8,6 +8,7 @@ import type {
 import { ArrowRight } from "iconsax-reactjs";
 import Link from "next/link";
 import { PRESSABLE } from "@/components/mockups/motion";
+import { NeedsSetupBadge } from "@/components/needs-setup";
 import {
   IntegrationLogo,
   logoForIntegration,
@@ -20,7 +21,8 @@ interface IntegrationCardProps {
   logos: IntegrationLogoSet;
   capabilities: IntegrationCapability[];
   isConnected: boolean;
-  isConfigured?: boolean;
+  /** Local dev only: env variable names it still needs (shown as a badge). */
+  needsSetup?: string[];
 }
 
 export function IntegrationCard({
@@ -30,7 +32,7 @@ export function IntegrationCard({
   logos,
   capabilities,
   isConnected,
-  isConfigured = true,
+  needsSetup,
 }: IntegrationCardProps) {
   return (
     <Link
@@ -50,14 +52,7 @@ export function IntegrationCard({
             Connected
           </Badge>
         )}
-        {!isConfigured && (
-          <Badge
-            variant="outline"
-            className="border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-400"
-          >
-            Not configured
-          </Badge>
-        )}
+        <NeedsSetupBadge names={needsSetup} />
       </div>
 
       {/* Logo */}

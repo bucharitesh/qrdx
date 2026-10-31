@@ -1,7 +1,9 @@
-import { getIntegrationCatalog } from "@repo/integrations/src/catalog";
+import { getCatalogBySurface } from "@repo/integrations/src/catalog";
 import type { MetadataRoute } from "next";
 import { SLUG_TO_CATEGORY } from "@/lib/blog-constants";
 import { env } from "@/lib/env";
+import { getIntegrationAvailability } from "@/lib/integration-availability";
+import { filterVisible } from "@/lib/integration-availability-rules";
 import { baseUrl } from "@/lib/metadata";
 import { QR_TYPE_SLUGS } from "@/lib/qr-types-content";
 import { industries, placements } from "@/lib/seo-content";
@@ -107,7 +109,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.8,
     },
-    ...getIntegrationCatalog().map(
+    // Third-party integrations only, and none that need setup here: AI
+    // assistants, developer tools and plugins redirect to their own pages.
+    ...filterVisible(
+      getIntegrationAvailability(),
+      getCatalogBySurface("integrations"),
+      (integration) => integration.slug,
+    ).map(
       (integration) =>
         ({
           url: url(`/integrations/${integration.slug}`),
@@ -117,6 +125,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ),
     {
       url: url("/mcp"),
+      changeFrequency: "monthly",
+      priority: 0.7,
+    },
+    {
+      url: url("/plugins"),
       changeFrequency: "monthly",
       priority: 0.7,
     },

@@ -41,7 +41,9 @@ QRdx is an OAuth 2.0 provider. Your app sends people to QRdx to sign in, and get
 
 ### 1. Register an app
 
-On qrdx.dev, OAuth apps are registered by the QRdx team: email [support@qrdx.dev](mailto:support@qrdx.dev) with your app's name, its redirect URLs and the scopes it needs. You receive a client ID and a client secret. On a [self-hosted](/docs/self-hosting) instance, create one yourself from `apps/docs`:
+Create an OAuth app yourself in [Settings → Developers](/settings/developers): give it a name, its redirect URIs and the scopes it needs, and you get a client ID and a client secret. The secret is shown once; keep it on your server. Free workspaces can have 1 app, Pro 5 and Business 25. [Build an integration](/docs/developers/build-an-integration) walks through the whole flow, from creating the app to getting it listed in the integrations directory.
+
+On a [self-hosted](/docs/self-hosting) instance you can also create a first-party app from `apps/docs`:
 
 ```bash
 pnpm exec tsx scripts/create-oauth-app.ts \
@@ -49,8 +51,6 @@ pnpm exec tsx scripts/create-oauth-app.ts \
   --redirect-uris "https://myapp.example/callback" \
   --scopes "codes:read,codes:write"
 ```
-
-The client secret is shown once. Keep it on your server.
 
 ### 2. Send the user to QRdx
 
@@ -65,7 +65,7 @@ https://qrdx.dev/api/oauth/authorize
   &code_challenge_method=S256
 ```
 
-`redirect_uri` must exactly match a registered URL, and `scope` (space or comma separated) may only ask for the app's scopes. PKCE is optional but recommended; `S256` is the default method. People who aren't signed in see a QRdx sign-in page with your app's name and the requested permissions. QRdx then redirects to `redirect_uri` with `code` and your `state`. The code is valid for 10 minutes and can be used once.
+`redirect_uri` must exactly match a registered URL, and `scope` (space or comma separated) may only ask for the app's scopes. PKCE is recommended, and required for apps that turn on **Require PKCE**; `S256` is the default method. People sign in if needed, then approve your app on the QRdx consent screen, which shows its name, logo, website, who built it and the requested permissions. QRdx then redirects to `redirect_uri` with `code` and your `state`, or with `error=access_denied` if they cancel. The code is valid for 10 minutes and can be used once.
 
 ### 3. Exchange the code for tokens
 

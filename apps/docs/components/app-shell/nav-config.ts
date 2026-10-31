@@ -2,6 +2,7 @@ import {
   Notification as Bell,
   Chart as ChartNoAxesColumn,
   ProfileCircle as CircleUser,
+  Code1 as CodeXml,
   FolderOpen,
   Speedometer as Gauge,
   Global as Globe,
@@ -66,6 +67,8 @@ export const APP_NAV: AppNavGroup[] = [
     label: "Account",
     items: [
       { href: "/settings/integrations", label: "Integrations", icon: Plug },
+      // OAuth apps of the active workspace (personal or the open team).
+      { href: "/settings/developers", label: "Developers", icon: CodeXml },
       {
         href: "/settings/notifications",
         label: "Notifications",

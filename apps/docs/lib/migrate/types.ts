@@ -79,8 +79,13 @@ export interface ProviderStatus {
     helpUrl?: string;
     helpText?: string;
   } | null;
-  /** The integration exists in this build */
+  /**
+   * Can be offered here: the integration exists and, in production and
+   * preview, needs no setup. False hides it from the dialog.
+   */
   available: boolean;
+  /** Local dev only: the env variable names it still needs. */
+  needsSetup?: string[];
 }
 
 /** GET /api/migrate/providers */
