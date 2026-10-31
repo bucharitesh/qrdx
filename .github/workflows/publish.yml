@@ -56,14 +56,25 @@ jobs:
           cache: pnpm
           registry-url: https://registry.npmjs.org
 
+      # Only a 404 from npm means "not published yet"; any other npm error
+      # (network, auth) stops the run instead of guessing.
       - name: Find unpublished versions
         id: versions
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           any=false
           for dir in qrdx cli; do
             name="$(node -p "require('./packages/$dir/package.json').name")"
             version="$(node -p "require('./packages/$dir/package.json').version")"
-            published="$(npm view "$name@$version" version 2>/dev/null || true)"
+            if output="$(npm view "$name@$version" version 2>&1)"; then
+              published="$output"
+            elif printf '%s' "$output" | grep -q E404; then
+              published=""
+            else
+              echo "::error::Could not check $name@$version on npm: $output"
+              exit 1
+            fi
             if [ "$published" = "$version" ]; then
               echo "$name@$version is already on npm, skipping." | tee -a "$GITHUB_STEP_SUMMARY"
               echo "$dir=false" >> "$GITHUB_OUTPUT"

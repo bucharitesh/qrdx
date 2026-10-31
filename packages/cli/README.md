@@ -48,7 +48,7 @@ qrdx generate <data> [options]
 | `--no-logo` | | — | Skip the logo prompt in interactive mode |
 | `--margin` | | `0` | Quiet zone margin (modules) |
 | `--template` | | — | Decorative template: `Arrow` `StandardBox` `SquareBorder` `StrikedBox` `Halloween` |
-| `--frame` | | — | Call-to-action frame: `none` `banner-bottom` `banner-top` `border` `rounded-border` `speech-bubble` |
+| `--frame` | | — | Call-to-action frame: <!-- catalogue:FRAME_STYLES -->`none`, `banner-bottom`, `banner-top`, `border`, `rounded-border`, `speech-bubble`, `banner-top-bottom`, `speech-bubble-top`, `chat-bubble`, `circle`, `polaroid`, `phone`, `ticket`, `badge`, `envelope`, `tag`, `menu-card`, `sticker`, `gradient-border`, `focus`<!-- /catalogue --> |
 | `--frame-text` | | `Scan me` | Frame label, up to 24 characters (`""` hides it) |
 | `--frame-color` | | `#000000` | Frame color (hex) |
 | `--frame-text-color` | | white on banners | Frame label color (hex) |
@@ -99,11 +99,11 @@ qrdx generate
 
 ## Patterns
 
-**Body** (`--body`): `square` `circle` `circle-large` `diamond` `circle-mixed` `pacman` `rounded` `small-square` `vertical-line` `horizontal-line` `liquid` `liquid-horizontal` `liquid-vertical` `classy` `classy-rounded` `leaf` `plus` `hexagon` `star` `heart` `random-dots` `mosaic` `octagon`
+**Body** (`--body`): <!-- catalogue:BODY_PATTERN -->`circle`, `circle-large`, `square`, `diamond`, `circle-mixed`, `pacman`, `rounded`, `small-square`, `vertical-line`, `horizontal-line`, `liquid`, `liquid-horizontal`, `liquid-vertical`, `classy`, `classy-rounded`, `leaf`, `plus`, `hexagon`, `star`, `heart`, `random-dots`, `mosaic`, `octagon`<!-- /catalogue -->
 
-**Eye** (`--eye`): `square` `rounded` `gear` `circle` `diya` `extra-rounded` `message` `pointy` `leaf` `drop` `octagon` `bevel` `squircle` `cushion` `shield` `petal` `leaf-reverse`
+**Eye** (`--eye`): <!-- catalogue:CORNER_EYE_PATTERNS -->`square`, `rounded`, `gear`, `circle`, `diya`, `extra-rounded`, `message`, `pointy`, `leaf`, `drop`, `octagon`, `bevel`, `squircle`, `cushion`, `shield`, `petal`, `leaf-reverse`<!-- /catalogue -->
 
-**Dot** (`--dot`): `square` `rounded` `circle` `message` `message-reverse` `diya` `diya-reverse` `rounded-triangle` `leaf` `drop` `plus` `cross-rounded` `hexagon` `octagon` `flower` `heart` `squircle` `dots` `extra-rounded` `leaf-reverse` `drop-reverse`
+**Dot** (`--dot`): <!-- catalogue:CORNER_EYE_DOT_PATTERNS -->`square`, `rounded`, `circle`, `message`, `message-reverse`, `diya`, `diya-reverse`, `rounded-triangle`, `leaf`, `drop`, `plus`, `cross-rounded`, `hexagon`, `octagon`, `flower`, `heart`, `squircle`, `dots`, `extra-rounded`, `leaf-reverse`, `drop-reverse`<!-- /catalogue -->
 
 See them all at [qrdx.dev/docs/styles](https://qrdx.dev/docs/styles). Every option decodes in our tests; `square` and `rounded` eyes scan most reliably, and `circle` eyes may be missed by strict scanners. Curly eyes and diamond, star and banner dots were retired because they don't scan reliably.
 
