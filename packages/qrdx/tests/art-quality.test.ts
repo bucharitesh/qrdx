@@ -170,8 +170,10 @@ function decodeAtSizes(svg: string, props: QRProps) {
   const root = parseSvgMarkup(svg);
   if (!root) throw new Error("render is not SVG");
   const modules = modulesAcross(props);
-  const throughCamera = (width: number, image = rasterizeSvg(root, { width })) =>
-    decodeQR(simulateCamera(image, width / modules)) === VALUE;
+  const throughCamera = (
+    width: number,
+    image = rasterizeSvg(root, { width })
+  ) => decodeQR(simulateCamera(image, width / modules)) === VALUE;
   return SIZES.map((width) => {
     const image = rasterizeSvg(root, { width });
     let camera = true;
@@ -185,7 +187,10 @@ function decodeAtSizes(svg: string, props: QRProps) {
   });
 }
 
-type Op = { op: string; args: number[] };
+interface Op {
+  op: string;
+  args: number[];
+}
 
 /** Tokenizes PostScript / PDF content into operators with numeric operands. */
 function operators(source: string): Op[] {
@@ -276,7 +281,12 @@ function paintOperators(
       }
       case "re": {
         flush();
-        current = [toPx(a, b), toPx(a + c, b), toPx(a + c, b + d), toPx(a, b + d)];
+        current = [
+          toPx(a, b),
+          toPx(a + c, b),
+          toPx(a + c, b + d),
+          toPx(a, b + d),
+        ];
         flush();
         break;
       }
@@ -354,23 +364,22 @@ describe("art samples", () => {
 });
 
 describe.each(CASES)("$mode $variant: $name", (c) => {
-  it.each(STRENGTHS)(
-    "decodes at 160, 320 and 640 px and through the camera at strength %s",
-    (intensity) => {
-      const props = propsFor(c, intensity);
-      const svg = renderSvg(props);
-      expect(svg).toContain(`data-qrdx-art-variant="${c.variant}"`);
-      const results = decodeAtSizes(svg, props);
-      expect(
-        results.filter((r) => r.plain !== VALUE).map((r) => r.width),
-        "sizes that fail to decode as rendered"
-      ).toEqual([]);
-      expect(
-        results.filter((r) => !r.camera).map((r) => r.width),
-        "sizes that fail through the camera model"
-      ).toEqual([]);
-    }
-  );
+  it.each(
+    STRENGTHS
+  )("decodes at 160, 320 and 640 px and through the camera at strength %s", (intensity) => {
+    const props = propsFor(c, intensity);
+    const svg = renderSvg(props);
+    expect(svg).toContain(`data-qrdx-art-variant="${c.variant}"`);
+    const results = decodeAtSizes(svg, props);
+    expect(
+      results.filter((r) => r.plain !== VALUE).map((r) => r.width),
+      "sizes that fail to decode as rendered"
+    ).toEqual([]);
+    expect(
+      results.filter((r) => !r.camera).map((r) => r.width),
+      "sizes that fail through the camera model"
+    ).toEqual([]);
+  });
 });
 
 describe("scan score at the default strength", () => {
@@ -490,7 +499,10 @@ describe("performance", () => {
     const times: number[] = [];
     for (let i = 0; i < 5; i++) {
       const start = performance.now();
-      renderSvg({ ...props, art: { ...(props.art as QRArt), intensity: 0.5 + i / 20 } });
+      renderSvg({
+        ...props,
+        art: { ...(props.art as QRArt), intensity: 0.5 + i / 20 },
+      });
       times.push(performance.now() - start);
     }
     times.sort((a, b) => a - b);

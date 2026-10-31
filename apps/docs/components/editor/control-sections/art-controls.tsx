@@ -12,7 +12,9 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@repo/design-system/components/ui/collapsible";
+import { Label } from "@repo/design-system/components/ui/label";
 import { Slider } from "@repo/design-system/components/ui/slider";
+import { Switch } from "@repo/design-system/components/ui/switch";
 import {
   ToggleGroup,
   ToggleGroupItem,
@@ -28,7 +30,7 @@ import {
   type ScanScoreResult,
   withQRSize,
 } from "qrdx";
-import type { QRArt, QRArtMode } from "qrdx/types";
+import type { QRArt, QRArtMode, QRArtVariant } from "qrdx/types";
 import * as React from "react";
 import ControlSection from "@/components/editor/control-section";
 import {
@@ -44,6 +46,7 @@ import {
   ART_RECOMMENDED,
   ART_SAMPLES,
   ART_STRENGTHS,
+  ART_VARIANT_OPTIONS,
   type ArtSample,
   DEFAULT_ART_STRENGTH,
 } from "./art-presets";
@@ -60,23 +63,25 @@ const ALLOWED_ART_TYPES = [
 type ArtChoice = "classic" | QRArtMode;
 type StyleWithArt = QRStyle & { art?: QRArt };
 
-const MODE_COPY: Record<
-  QRArtMode,
-  { upload: string; hint: string; samples: string }
-> = {
+const MODE_COPY: Record<QRArtMode, { upload: string; samples: string }> = {
   logo: {
     upload: "Transparent PNG or SVG logos work best",
-    hint: "Modules inside your logo take its colors; the rest fade to a lighter tone. Finder, timing and alignment patterns stay solid.",
     samples: "Try a sample logo",
   },
   halftone: {
     upload: "Photos with one clear subject work best",
-    hint: "Every module shows your photo around a small center square that keeps the true dark/light value, so scanners still read it.",
     samples: "Try a sample photo",
   },
 };
 
 const SCORE_DEBOUNCE_MS = 700;
+
+/** The look `art` renders with in `mode` (the mode's default when unset). */
+function variantOption(mode: QRArtMode, art: QRArt | undefined) {
+  const options = ART_VARIANT_OPTIONS[mode];
+  const id = art?.mode === mode ? art.variant : undefined;
+  return options.find((option) => option.id === id) ?? options[0]!;
+}
 
 /**
  * Which sample produced a sampled image, so the grid keeps its selection when
@@ -250,7 +255,8 @@ export function ArtControls({ styles, onChange }: ArtControlsProps) {
         {choice === "classic" ? null : (
           <>
             <p className="text-muted-foreground text-xs">
-              {MODE_COPY[choice].hint}
+              {variantOption(choice, art).hint} Finder, alignment and format
+              patterns stay crisp.
             </p>
             <ArtSampleGrid
               key={choice}
@@ -301,6 +307,46 @@ export function ArtControls({ styles, onChange }: ArtControlsProps) {
 
             {art && (
               <>
+                <div>
+                  <OptionGroupLabel>Look</OptionGroupLabel>
+                  <ToggleGroup
+                    aria-label="Art look"
+                    className="w-full"
+                    onValueChange={(id) => {
+                      if (id) update({ ...art, variant: id as QRArtVariant });
+                    }}
+                    type="single"
+                    value={variantOption(art.mode, art).id}
+                    variant="outline"
+                  >
+                    {ART_VARIANT_OPTIONS[art.mode].map((option) => (
+                      <ToggleGroupItem
+                        className="flex-1 text-xs"
+                        key={option.id}
+                        value={option.id}
+                      >
+                        {option.name}
+                      </ToggleGroupItem>
+                    ))}
+                  </ToggleGroup>
+                </div>
+                {art.mode === "logo" && (
+                  <div className="flex items-center justify-between gap-3">
+                    <Label
+                      className="cursor-pointer text-xs"
+                      htmlFor="art-match-eyes"
+                    >
+                      Eyes match the logo
+                    </Label>
+                    <Switch
+                      checked={art.matchEyes !== false}
+                      id="art-match-eyes"
+                      onCheckedChange={(checked) =>
+                        update({ ...art, matchEyes: checked })
+                      }
+                    />
+                  </div>
+                )}
                 <ArtStrength
                   onChange={(intensity) => update({ ...art, intensity })}
                   value={art.intensity ?? DEFAULT_ART_INTENSITY}

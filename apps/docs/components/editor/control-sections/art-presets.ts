@@ -1,4 +1,35 @@
-import type { QRArtMode } from "qrdx/types";
+import type { QRArtMode, QRArtVariant } from "qrdx/types";
+
+/** Looks within each art mode (first = the renderer's default). */
+export const ART_VARIANT_OPTIONS: Record<
+  QRArtMode,
+  { id: QRArtVariant; name: string; hint: string }[]
+> = {
+  logo: [
+    {
+      id: "blend",
+      name: "Traced",
+      hint: "Your logo is traced into crisp shapes that fill the code under a fine dot screen.",
+    },
+    {
+      id: "badge",
+      name: "Badge",
+      hint: "Your logo sits on a rounded plate in the middle, and the dots take its colors.",
+    },
+  ],
+  halftone: [
+    {
+      id: "color",
+      name: "Color",
+      hint: "Your photo shows in full color, with a small dot in each module that keeps it scannable.",
+    },
+    {
+      id: "mono",
+      name: "Mono",
+      hint: "A black-and-white halftone of your photo, with each module's center kept true so it scans.",
+    },
+  ],
+};
 
 /** A ready-made image for Logo QR or Image QR, served from /public. */
 export interface ArtSample {

@@ -16,6 +16,7 @@ import type {
   HintVisual as HintVisualSpec,
   LiveExample,
 } from "@/lib/help/hints";
+import { mediaUrl } from "@/lib/media";
 
 // ─── Shared bits ────────────────────────────────────────────────────────────
 
@@ -865,6 +866,40 @@ function ShareStyle() {
   );
 }
 
+// An illustration of prompt → design; dark dots on a light background so the
+// example itself scans.
+function AiPrompt() {
+  return (
+    <Stage className="gap-3">
+      <div className="flex max-w-[7.5rem] flex-col items-start gap-1.5">
+        <span className="bg-background rounded-2xl rounded-br-sm border px-2.5 py-1.5 text-[11px] leading-4 shadow-xs">
+          Cozy autumn café
+        </span>
+        <Caption>Your prompt</Caption>
+      </div>
+      <ArrowRight className="text-muted-foreground size-4 shrink-0" />
+      <Column>
+        <Tile className="bg-[#fbf3e6]">
+          <QRCode
+            bgColor="#fbf3e6"
+            bodyPattern="circle"
+            cornerEyeDotPattern="rounded"
+            cornerEyePattern="rounded"
+            dotColor="#4a2c17"
+            eyeColor="#9a4a1c"
+            fgColor="#4a2c17"
+            level="M"
+            margin={0}
+            size={88}
+            value={SAMPLE_URL}
+          />
+        </Tile>
+        <Caption>Example result</Caption>
+      </Column>
+    </Stage>
+  );
+}
+
 function ReactComponent() {
   return (
     <Stage className="gap-3">
@@ -1072,6 +1107,7 @@ function ScanAnalytics() {
 }
 
 const LIVE: Record<LiveExample, () => ReactNode> = {
+  "ai-prompt": AiPrompt,
   "art-modes": ArtModes,
   "colors-contrast": ColorsContrast,
   "custom-domain": CustomDomain,
@@ -1131,8 +1167,8 @@ function HintVideo({ name, label }: { name: string; label: string }) {
       preload="none"
       ref={ref}
     >
-      <source src={`/videos/help/${name}.webm`} type="video/webm" />
-      <source src={`/videos/help/${name}.mp4`} type="video/mp4" />
+      <source src={mediaUrl(`/videos/help/${name}.webm`)} type="video/webm" />
+      <source src={mediaUrl(`/videos/help/${name}.mp4`)} type="video/mp4" />
     </video>
   );
 }

@@ -6,6 +6,7 @@
     "build": "next build",
     "dev": "next dev",
     "start": "next start",
+    "media:upload": "node --env-file-if-exists=../../.env.local --env-file-if-exists=.env.local scripts/media/upload.mjs",
     "lint": "biome check",
     "test": "vitest run && node scripts/run-node-tests.mjs",
     "test:unit": "vitest run",

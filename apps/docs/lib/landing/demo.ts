@@ -6,6 +6,7 @@ import {
   type PageTemplate,
   type PageTemplateVariant,
 } from "@/lib/landing/templates";
+import { mediaUrl } from "@/lib/media";
 import { baseUrl } from "@/lib/metadata";
 import type { LandingPageContent } from "@/types/landing";
 import { demoPath } from "./demo-paths";
@@ -34,10 +35,10 @@ const sampleFile = (name: string) => ({
   url: new URL(`/samples/${name}`, baseUrl).toString(),
 });
 
-/** CC0 clip from MDN's media examples. */
+/** CC0 clip from MDN's media examples, served from our R2 bucket. */
 const SAMPLE_VIDEO = {
   type: "url" as const,
-  url: "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
+  url: mediaUrl("/videos/demo/flower.mp4"),
 };
 
 /** Stand-in for the owner's own review link (like the templates' other links). */
