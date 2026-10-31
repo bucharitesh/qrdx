@@ -1,6 +1,11 @@
 // Date-gated seasonal layers. Pure helpers, safe on server and client.
 
-export const SEASONS = ["halloween", "christmas", "new-year", "winter"] as const;
+export const SEASONS = [
+  "halloween",
+  "christmas",
+  "new-year",
+  "winter",
+] as const;
 export type Season = (typeof SEASONS)[number];
 
 /** Query param that previews a season (`?season=christmas`) or hides it (`?season=off`). */

@@ -113,8 +113,11 @@ const STYLE = `
 
 const track = trackGeometry();
 
-/** The drawing's own bounds within the 1600 × 900 canvas (~10% zoom). */
-const VIEWBOX = "70 18 1460 862";
+/**
+ * The drawing's own bounds within the 1600 × 900 canvas (~10% zoom). The top
+ * edge sits above the plant's tallest leaf (y ≈ -20) so nothing is clipped.
+ */
+const VIEWBOX = "70 -30 1460 910";
 
 /** Ground cables, drawn under the track. */
 const CABLES = [

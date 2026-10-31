@@ -3,6 +3,10 @@
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import * as React from "react";
+import {
+  MediaLinkAssist,
+  youTubeFields,
+} from "@/components/data-connections/media-link-assist";
 import { useQREditorStore } from "@/store/editor-store";
 import type { YouTubeContent } from "@/types/qr-content";
 import { encodeYouTube } from "@/utils/qr-content-encoder";
@@ -72,6 +76,11 @@ export function YouTubeForm() {
           Enter a video URL or channel URL (video takes priority)
         </p>
       </div>
+      <MediaLinkAssist
+        kind="youtube"
+        onApply={(link) => setYoutubeData(youTubeFields(link))}
+        value={youtubeData.videoUrl || youtubeData.channelUrl || ""}
+      />
 
       <p className="text-muted-foreground text-xs">
         Scanning will open the YouTube video or channel

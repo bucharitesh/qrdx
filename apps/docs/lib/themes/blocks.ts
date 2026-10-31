@@ -86,7 +86,7 @@ export const PALETTES: readonly Palette[] = [
     fg: "#0B2E6B",
     eye: "#1D4ED8",
     dot: "#1D4ED8",
-    gradient: ["#0B2E6B", "#2563EB"],
+    gradient: ["#0B2E6B", "#1D4ED8"],
   },
   {
     id: "harbor",
@@ -96,7 +96,7 @@ export const PALETTES: readonly Palette[] = [
     fg: "#0C3B5E",
     eye: "#0E6BA8",
     dot: "#0E6BA8",
-    gradient: ["#0C3B5E", "#0E7490"],
+    gradient: ["#0C3B5E", "#155E75"],
   },
   {
     id: "forest",
@@ -106,7 +106,7 @@ export const PALETTES: readonly Palette[] = [
     fg: "#173A2A",
     eye: "#1F6B45",
     dot: "#1F6B45",
-    gradient: ["#14532D", "#0F766E"],
+    gradient: ["#14532D", "#115E59"],
   },
   {
     id: "lagoon",
@@ -126,7 +126,7 @@ export const PALETTES: readonly Palette[] = [
     fg: "#4A0E12",
     eye: "#B42318",
     dot: "#B42318",
-    gradient: ["#9F1239", "#B45309"],
+    gradient: ["#9F1239", "#92400E"],
   },
   {
     id: "ember",
@@ -136,7 +136,7 @@ export const PALETTES: readonly Palette[] = [
     fg: "#5A2408",
     eye: "#B8400B",
     dot: "#B8400B",
-    gradient: ["#9A3412", "#BE123C"],
+    gradient: ["#9A3412", "#9F1239"],
   },
   {
     id: "violet",
@@ -165,7 +165,7 @@ export const PALETTES: readonly Palette[] = [
     fg: "#5A2617",
     eye: "#A2431F",
     dot: "#A2431F",
-    gradient: ["#7A2E16", "#A2431F"],
+    gradient: ["#7A2E16", "#8A3716"],
   },
   {
     id: "sage",
@@ -222,7 +222,7 @@ export const PALETTES: readonly Palette[] = [
     fg: "#18355A",
     eye: "#2B63B5",
     dot: "#2B63B5",
-    gradient: ["#1E3A8A", "#0E7490"],
+    gradient: ["#1E3A8A", "#155E75"],
   },
   {
     id: "lilac",
@@ -290,7 +290,7 @@ export const PALETTES: readonly Palette[] = [
     fg: "#1A2E05",
     eye: "#3F6212",
     dot: "#3F6212",
-    gradient: ["#14532D", "#4D7C0F"],
+    gradient: ["#14532D", "#3F6212"],
   },
   {
     id: "tangerine",
@@ -367,7 +367,7 @@ export const PALETTES: readonly Palette[] = [
     fg: "#5B1650",
     eye: "#C2255C",
     dot: "#7C3AED",
-    gradient: ["#7C2D92", "#C2255C"],
+    gradient: ["#7C2D92", "#A21B4F"],
   },
   {
     id: "diner",
@@ -395,7 +395,7 @@ export const PALETTES: readonly Palette[] = [
     fg: "#3B0A75",
     eye: "#C0126E",
     dot: "#C0126E",
-    gradient: ["#3B0A75", "#C0126E"],
+    gradient: ["#3B0A75", "#A10E5E"],
   },
   // Dark: light modules on a dark ground (some older scanner apps miss these)
   {
@@ -535,16 +535,16 @@ export const CONTRAST_MIXES: readonly {
 export const EYE_DOTS: Readonly<
   Partial<Record<CornerEyePattern, readonly CornerEyeDotPattern[]>>
 > = {
-  square: ["square", "rounded"],
+  square: ["square"],
   rounded: ["rounded", "squircle"],
   "extra-rounded": ["extra-rounded", "rounded"],
   squircle: ["squircle", "rounded"],
-  gear: ["circle", "flower"],
-  bevel: ["octagon", "square"],
+  gear: ["circle"],
+  bevel: ["square"],
   octagon: ["octagon", "hexagon"],
   shield: ["rounded", "square"],
   leaf: ["leaf", "drop"],
-  "leaf-reverse": ["leaf-reverse", "drop-reverse"],
+  "leaf-reverse": ["leaf-reverse"],
   drop: ["drop", "leaf"],
   petal: ["flower"],
 };
@@ -593,7 +593,15 @@ export const FRAME_CTAS: readonly string[] = [
 ];
 
 /** Quiet zone, in modules: 3–5, mostly 4. */
-export const MARGINS: readonly number[] = [3, 4, 4, 4, 5];
+export const MARGINS: readonly number[] = [3, 4, 4, 4, 4, 5];
+
+/**
+ * Gradient themes use level H (a denser code), so each stop needs more
+ * contrast than solid modules, and the octagon body reads poorly that dense
+ * at 160 px.
+ */
+export const GRADIENT_STOP_CONTRAST = 6;
+export const GRADIENT_BODY_EXCLUDE: readonly BodyPattern[] = ["octagon"];
 
 /** Share of themes with a module gradient and with a frame. */
 export const GRADIENT_RATE = 0.2;

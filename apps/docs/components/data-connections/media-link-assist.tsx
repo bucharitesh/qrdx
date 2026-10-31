@@ -14,7 +14,10 @@ import {
   youTubeOEmbedUrl,
   youTubeThumbnailUrl,
 } from "@repo/integrations/src/integrations/youtube/parser";
-import { fetchOEmbedPreview, type OEmbedPreview } from "@repo/integrations/src/sources/oembed";
+import {
+  fetchOEmbedPreview,
+  type OEmbedPreview,
+} from "@repo/integrations/src/sources/oembed";
 import { InfoCircle, MagicStar } from "iconsax-reactjs";
 import { useEffect, useMemo, useState } from "react";
 import { emitSound } from "@/components/editor/sound";
@@ -76,10 +79,19 @@ interface MediaLinkAssistProps {
  * playlist, channel, song…), its title and thumbnail, a one-click clean link
  * without tracking, and "From your channel / playlists" when configured.
  */
-export function MediaLinkAssist({ kind, value, onApply }: MediaLinkAssistProps) {
+export function MediaLinkAssist({
+  kind,
+  value,
+  onApply,
+}: MediaLinkAssistProps) {
   const text = value.trim();
   const parsed: ParsedMediaLink | null = useMemo(
-    () => (text ? (kind === "youtube" ? parseYouTubeUrl(text) : parseSpotifyUrl(text)) : null),
+    () =>
+      text
+        ? kind === "youtube"
+          ? parseYouTubeUrl(text)
+          : parseSpotifyUrl(text)
+        : null,
     [kind, text],
   );
   const oembed = parsed
@@ -106,7 +118,13 @@ export function MediaLinkAssist({ kind, value, onApply }: MediaLinkAssistProps) 
   const picker = (
     <AccountSourcePicker
       contentType={kind}
-      onPick={(item) => onApply(kind === "youtube" ? { url: item.url, field: "videoUrl" } : { url: item.url })}
+      onPick={(item) =>
+        onApply(
+          kind === "youtube"
+            ? { url: item.url, field: "videoUrl" }
+            : { url: item.url },
+        )
+      }
     />
   );
 

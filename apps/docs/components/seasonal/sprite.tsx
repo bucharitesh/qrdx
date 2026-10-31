@@ -8,6 +8,13 @@ const SPRITES = {
   spider: "/images/seasonal/halloween/spider.webp",
   ghost: "/images/seasonal/halloween/ghost.webp",
   cat: "/images/seasonal/halloween/cat.webp",
+  bauble: "/images/seasonal/christmas/bauble.webp",
+  gift: "/images/seasonal/christmas/gift.webp",
+  snowman: "/images/seasonal/christmas/snowman.webp",
+  tree: "/images/seasonal/christmas/tree.webp",
+  champagne: "/images/seasonal/new-year/champagne.webp",
+  balloons: "/images/seasonal/new-year/2027.webp",
+  discoball: "/images/seasonal/new-year/discoball.webp",
 } as const;
 
 export type SpriteName = keyof typeof SPRITES;

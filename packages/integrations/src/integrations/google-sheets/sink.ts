@@ -34,7 +34,12 @@ export async function appendScansToSheet(
     id: scan.id,
   }));
   if (unique.length === 0) {
-    return { delivered: 0, skipped: 0, cursor, rowsWritten: target.rowsWritten };
+    return {
+      delivered: 0,
+      skipped: 0,
+      cursor,
+      rowsWritten: target.rowsWritten,
+    };
   }
 
   let pending = unique;
@@ -46,7 +51,10 @@ export async function appendScansToSheet(
       (
         await client.getValues(
           target.spreadsheetId,
-          sheetRange(target.sheetTitle, `${SCAN_ID_COLUMN}${from}:${SCAN_ID_COLUMN}${to}`)
+          sheetRange(
+            target.sheetTitle,
+            `${SCAN_ID_COLUMN}${from}:${SCAN_ID_COLUMN}${to}`
+          )
         )
       )
         .map((row) => row[0])

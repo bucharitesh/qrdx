@@ -51,8 +51,11 @@ export function mailchimpTargets(
     targets.push({
       id: field.tag,
       label: field.name || field.tag,
-      hints: HINTS[field.tag] ?? new RegExp(`^${field.name.replace(/[^\w ]/g, "")}$`, "i"),
-      types: field.type === "phone" || field.tag === "PHONE" ? ["phone"] : undefined,
+      hints:
+        HINTS[field.tag] ??
+        new RegExp(`^${field.name.replace(/[^\w ]/g, "")}$`, "i"),
+      types:
+        field.type === "phone" || field.tag === "PHONE" ? ["phone"] : undefined,
     });
   }
   return targets;

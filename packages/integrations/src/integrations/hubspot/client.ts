@@ -1,7 +1,8 @@
 import { providerRequest } from "../../core/http-client";
 
 const BASE_URL = "https://api.hubapi.com";
-export const HUBSPOT_REVOKE_URL = "https://api.hubapi.com/oauth/2026-09/token/revoke";
+export const HUBSPOT_REVOKE_URL =
+  "https://api.hubapi.com/oauth/2026-09/token/revoke";
 const PROVIDER = { slug: "hubspot", name: "HubSpot" };
 /** HubSpot's batch limit. */
 export const HUBSPOT_BATCH_SIZE = 100;

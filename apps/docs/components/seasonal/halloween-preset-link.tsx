@@ -3,24 +3,24 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { ComponentProps, MouseEvent } from "react";
-import type { HalloweenPresetId } from "./halloween-presets";
 
 const PLAYGROUND_PATH = "/playground";
 
 // The editor store is loaded on demand so marketing pages don't ship it.
 const loadEditorStore = () => import("@/store/editor-store");
 
-async function applyPreset(preset: HalloweenPresetId) {
+async function applyPreset(preset: string) {
   const { useQREditorStore } = await loadEditorStore();
   // Persisted to localStorage, so the playground (and a new tab) opens with it.
   useQREditorStore.getState().applyThemePreset(preset);
 }
 
 type HalloweenPresetLinkProps = Omit<ComponentProps<typeof Link>, "href"> & {
-  preset?: HalloweenPresetId;
+  /** Built-in preset id (Halloween, Christmas or New Year) */
+  preset?: string;
 };
 
-/** Opens the playground with a Halloween preset applied. */
+/** Opens the playground with a seasonal preset applied. */
 export function HalloweenPresetLink({
   preset = "halloweenPumpkin",
   onClick,

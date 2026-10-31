@@ -6,6 +6,7 @@ import { cn } from "@repo/design-system/lib/utils";
 import { Global, InfoCircle, Warning2 } from "iconsax-reactjs";
 import * as React from "react";
 import { UrlLinkSources } from "@/components/connected-accounts/url-link-sources";
+import { AccountSourcePicker } from "@/components/data-connections/source-picker";
 import {
   checkUrl,
   withScheme,
@@ -114,6 +115,10 @@ export function UrlForm() {
         </p>
       </div>
       <UrlLinkSources />
+      <AccountSourcePicker
+        contentType="url"
+        onPick={(item) => setUrl(item.url)}
+      />
       <DynamicLinkToggle />
     </div>
   );

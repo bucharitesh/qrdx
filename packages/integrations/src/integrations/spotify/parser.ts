@@ -59,7 +59,10 @@ function link(kind: SpotifyLinkKind, id: string): ParsedSpotifyLink | null {
 function fromSegments(segments: string[]): ParsedSpotifyLink | null {
   const parts = [...segments];
   // /intl-de/track/…, /embed/track/…, /embed-podcast/episode/…
-  while (parts[0] && /^(intl-[a-z]{2}(-[a-z]{2,4})?|embed|embed-podcast)$/i.test(parts[0])) {
+  while (
+    parts[0] &&
+    /^(intl-[a-z]{2}(-[a-z]{2,4})?|embed|embed-podcast)$/i.test(parts[0])
+  ) {
     parts.shift();
   }
   const [kind = "", id = "", third = "", fourth = ""] = parts;
@@ -90,7 +93,9 @@ export function parseSpotifyUrl(input: string): ParsedSpotifyLink | null {
 
   let url: URL;
   try {
-    url = new URL(/^[a-z][a-z0-9+.-]*:\/\//i.test(text) ? text : `https://${text}`);
+    url = new URL(
+      /^[a-z][a-z0-9+.-]*:\/\//i.test(text) ? text : `https://${text}`
+    );
   } catch {
     return null;
   }

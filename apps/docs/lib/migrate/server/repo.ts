@@ -75,7 +75,11 @@ async function toRefs(rows: CodeRow[]): Promise<Map<string, CodeRef>> {
             row.slug,
             domain?.verified ? domain.hostname : null,
           ),
-          state: row.deletedAt ? "trash" : row.archivedAt ? "archived" : "active",
+          state: row.deletedAt
+            ? "trash"
+            : row.archivedAt
+              ? "archived"
+              : "active",
         },
       ];
     }),
@@ -356,7 +360,8 @@ export const dbRepo: MigrateRepo = {
         error instanceof HttpError || error instanceof Error
           ? error.message
           : "Folder and tags weren't applied";
-      for (const row of rows) warnings.set(row.codeId, `Created, but ${message}`);
+      for (const row of rows)
+        warnings.set(row.codeId, `Created, but ${message}`);
     }
 
     // Kept back-halves; a slug taken in the meantime keeps the random one.

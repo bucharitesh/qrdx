@@ -103,7 +103,10 @@ export async function GET(request: Request, context: RouteContext) {
     );
     if (dataConnect.handled && "error" in dataConnect) {
       return NextResponse.redirect(
-        new URL(`${dataConnect.redirect}?error=${dataConnect.error}`, request.url),
+        new URL(
+          `${dataConnect.redirect}?error=${dataConnect.error}`,
+          request.url,
+        ),
       );
     }
 
@@ -126,7 +129,7 @@ export async function GET(request: Request, context: RouteContext) {
       metadata =
         "metadata" in dataConnect
           ? dataConnect.metadata
-        : await fetchProviderMetadata(provider, access_token, tokenData);
+          : await fetchProviderMetadata(provider, access_token, tokenData);
     } catch (error) {
       console.error(`Failed to fetch ${provider} metadata:`, error);
     }

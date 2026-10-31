@@ -16,8 +16,8 @@ import {
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-  type MigrateClient,
   MigrateApiError,
+  type MigrateClient,
   withRetry,
 } from "@/lib/migrate/client";
 import { mappingCsv, mappingText } from "@/lib/migrate/mapping";
@@ -29,7 +29,7 @@ import {
 } from "@/lib/migrate/providers";
 import type { JobItem, JobSummary } from "@/lib/migrate/types";
 import { soundEvent } from "@/lib/sound";
-import { Note, plural, StepLayout, Stat, saveText } from "./import-shared";
+import { Note, plural, Stat, StepLayout, saveText } from "./import-shared";
 
 function reasonsOf(items: JobItem[], status: JobItem["status"]) {
   const counts = new Map<string, number>();
@@ -60,7 +60,9 @@ export function RunStep({
   const [error, setError] = useState<string | null>(null);
   const [waiting, setWaiting] = useState<number | null>(null);
   const [attach, setAttach] = useState<
-    { state: "idle" | "busy" } | { state: "done"; count: number } | { state: "error"; message: string }
+    | { state: "idle" | "busy" }
+    | { state: "done"; count: number }
+    | { state: "error"; message: string }
   >({ state: "idle" });
   const finishedOnce = useRef(false);
 
@@ -160,7 +162,9 @@ export function RunStep({
     );
   }
 
-  const percent = job.total ? Math.round((job.processed / job.total) * 100) : 100;
+  const percent = job.total
+    ? Math.round((job.processed / job.total) * 100)
+    : 100;
   const name = providerName(provider);
   const api = isApiProviderId(provider) ? API_PROVIDERS[provider] : null;
   const file = isApiProviderId(provider) ? null : FILE_PROVIDERS[provider];
@@ -277,7 +281,10 @@ export function RunStep({
               </li>
             ))}
             {skipped.map(([reason, count]) => (
-              <li className="text-muted-foreground flex gap-2" key={`s-${reason}`}>
+              <li
+                className="text-muted-foreground flex gap-2"
+                key={`s-${reason}`}
+              >
                 <span className="tabular-nums">{count}</span>
                 <span>skipped: {reason}</span>
               </li>
@@ -310,7 +317,9 @@ export function RunStep({
               <Link21 aria-hidden className="size-4 text-foreground/80" />
             </span>
             <div className="min-w-0 flex-1">
-              <h3 className="text-sm font-semibold">Keep my printed codes working</h3>
+              <h3 className="text-sm font-semibold">
+                Keep my printed codes working
+              </h3>
               <p className="text-muted-foreground text-xs">
                 Optional. Point each old {name} link at its new QRdx code, so
                 codes already printed keep working and their scans show up in
@@ -326,17 +335,21 @@ export function RunStep({
 
         {file && withLinks.length > 0 && (
           <div className="space-y-2 rounded-xl border p-4">
-            <h3 className="text-sm font-semibold">Point your old codes at QRdx</h3>
+            <h3 className="text-sm font-semibold">
+              Point your old codes at QRdx
+            </h3>
             <p className="text-muted-foreground text-xs">
-              {name === "CSV" ? "Your old provider's" : `${name}'s`} codes live on
-              its own domain, so QRdx can't change them. For each old code:
+              {name === "CSV" ? "Your old provider's" : `${name}'s`} codes live
+              on its own domain, so QRdx can't change them. For each old code:
             </p>
             <ol className="list-decimal space-y-1 pl-5 text-sm">
               {file.repointSteps.map((step) => (
                 <li key={step}>{step}</li>
               ))}
             </ol>
-            <p className="text-muted-foreground text-xs">{file.keepWorkingNote}</p>
+            <p className="text-muted-foreground text-xs">
+              {file.keepWorkingNote}
+            </p>
           </div>
         )}
 
@@ -355,7 +368,9 @@ export function RunStep({
                   : `After ${job.backHalfDomain} points to QRdx and is verified on the Domains page, attach the codes so ${job.backHalfDomain}/<back-half> opens them.`}
               </p>
               {attach.state === "error" && (
-                <p className="text-destructive mt-1 text-xs">{attach.message}</p>
+                <p className="text-destructive mt-1 text-xs">
+                  {attach.message}
+                </p>
               )}
             </div>
             {!(job.domainAttachedAt || attach.state === "done") && (
@@ -365,7 +380,9 @@ export function RunStep({
                 size="sm"
                 variant="outline"
               >
-                {attach.state === "busy" && <Spinner className="animate-spin" />}
+                {attach.state === "busy" && (
+                  <Spinner className="animate-spin" />
+                )}
                 Attach codes
               </Button>
             )}

@@ -30,11 +30,11 @@
   transform-origin: 50% 20%;
 }
 
-.spider:hover .spiderBody {
+.wiggle:hover .spiderBody {
   animation: jiggle 110ms linear infinite alternate;
 }
 
-.spider[data-spin="true"] .spiderBody {
+[data-spin="true"] > .spiderBody {
   animation: spin 620ms cubic-bezier(0.32, 0.72, 0, 1);
 }
 
@@ -331,21 +331,313 @@
   }
 }
 
+/* Christmas & New Year: standing characters sit on a little snow mound */
+.mound {
+  position: absolute;
+  left: -18%;
+  right: -18%;
+  bottom: -5px;
+  height: 11px;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse at 50% 35%,
+    rgb(255 255 255 / 0.95),
+    rgb(226 232 240 / 0.85) 55%,
+    transparent 72%
+  );
+  filter: drop-shadow(0 1px 1px rgb(15 23 42 / 0.12));
+  pointer-events: none;
+}
+
+.tree,
+.snowman,
+.gift,
+.bottle,
+.balloons {
+  position: absolute;
+  pointer-events: auto;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.light {
+  position: absolute;
+  width: 11%;
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle,
+    rgb(255 240 170 / 0.95),
+    rgb(255 196 80 / 0.35) 45%,
+    transparent 70%
+  );
+  mix-blend-mode: screen;
+  animation: twinkle 2.6s ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+  pointer-events: none;
+}
+
+.tree[data-sparkle="true"] .light {
+  animation-duration: 0.55s;
+}
+
+.snowmanBody {
+  position: relative;
+  transform-origin: 50% 100%;
+}
+
+.snowman[data-hop="true"] .snowmanBody {
+  animation: hop 640ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.giftLid,
+.giftCard,
+.giftGlow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.giftLid {
+  transform-origin: 8% 41%;
+  transition: transform 420ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.gift[data-open="true"] .giftLid {
+  transform: translateY(-4px) rotate(-26deg);
+}
+
+.giftCard {
+  inset: auto 22% 52% 22%;
+  aspect-ratio: 1;
+  opacity: 0;
+  transform: translateY(70%) scale(0.5);
+  transition:
+    transform 460ms cubic-bezier(0.32, 0.72, 0, 1),
+    opacity 200ms ease;
+}
+
+.gift[data-open="true"] .giftCard {
+  opacity: 1;
+  transform: translateY(-38%) scale(1);
+}
+
+.giftGlow {
+  inset: -30%;
+  border-radius: 9999px;
+  background: radial-gradient(
+    circle at 50% 40%,
+    rgb(255 214 120 / 0.45),
+    transparent 62%
+  );
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+
+.gift[data-open="true"] .giftGlow {
+  opacity: 1;
+}
+
+/* New Year */
+.discoSheen {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 30%,
+    rgb(255 255 255 / 0.55) 45%,
+    transparent 60%
+  );
+  background-size: 300% 100%;
+  mask-image: var(--sprite);
+  mask-size: 100% 100%;
+  mix-blend-mode: screen;
+  animation: sheen 7s linear infinite;
+  pointer-events: none;
+}
+
+.fleck {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 9999px;
+  background: rgb(255 255 255 / 0.9);
+  box-shadow: 0 0 6px rgb(255 255 255 / 0.8);
+  opacity: 0;
+  animation: fleck 5.5s ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+  pointer-events: none;
+}
+
+.cork {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 6px;
+  height: 5px;
+  margin-left: -3px;
+  border-radius: 2px;
+  background: #b08a5a;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.bottle[data-pop="true"] .cork {
+  animation: cork 760ms cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
+}
+
+.fizz {
+  position: absolute;
+  left: 50%;
+  top: 4%;
+  width: var(--size, 3px);
+  height: var(--size, 3px);
+  border-radius: 9999px;
+  border: 1px solid rgb(255 236 180 / 0.9);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.bottle[data-pop="true"] .fizz {
+  animation: fizz 900ms ease-out forwards;
+  animation-delay: var(--delay, 0s);
+}
+
+.balloonsBody {
+  animation: bob 4.2s ease-in-out infinite;
+  transform-origin: 50% 100%;
+}
+
+.balloons[data-bounce="true"] .balloonsBody {
+  animation: bounce 700ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes hop {
+  0% {
+    transform: scale(1.06, 0.92);
+  }
+  35% {
+    transform: translateY(-12px) scale(0.96, 1.05);
+  }
+  70% {
+    transform: translateY(0) scale(1.06, 0.94);
+  }
+  100% {
+    transform: scale(1, 1);
+  }
+}
+
+@keyframes sheen {
+  from {
+    background-position: 150% 0;
+  }
+  to {
+    background-position: -150% 0;
+  }
+}
+
+@keyframes fleck {
+  0%,
+  100% {
+    opacity: 0;
+    transform: translate(0, 0);
+  }
+  40% {
+    opacity: 0.7;
+  }
+  70% {
+    opacity: 0;
+    transform: translate(var(--dx, 10px), var(--dy, 12px));
+  }
+}
+
+@keyframes cork {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) rotate(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(14px, -46px) rotate(220deg);
+  }
+}
+
+@keyframes fizz {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0);
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--dx, 0px), -34px);
+  }
+}
+
+@keyframes bob {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-2deg);
+  }
+  50% {
+    transform: translateY(-5px) rotate(2deg);
+  }
+}
+
+@keyframes bounce {
+  0% {
+    transform: scale(1);
+  }
+  30% {
+    transform: translateY(-10px) scale(1.05);
+  }
+  65% {
+    transform: translateY(2px) scale(0.98);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .spider:hover .spiderBody,
-  .spider[data-spin="true"] .spiderBody,
+  .wiggle:hover .spiderBody,
+  [data-spin="true"] > .spiderBody,
   .pumpkinFlicker,
   .pumpkin[data-squash="true"] .pumpkinBody,
   .fig8x,
   .fig8y,
   .cat[data-mood] .catBody,
   .bat .batWings,
-  .fog {
+  .fog,
+  .light,
+  .snowman[data-hop="true"] .snowmanBody,
+  .discoSheen,
+  .fleck,
+  .bottle[data-pop="true"] .cork,
+  .bottle[data-pop="true"] .fizz,
+  .balloonsBody,
+  .balloons[data-bounce="true"] .balloonsBody {
     animation: none;
   }
 
   .bubble,
-  .lid {
+  .lid,
+  .giftLid,
+  .giftCard {
     transition: none;
   }
 }

@@ -24,7 +24,12 @@ export async function GET(request: Request) {
   // Data-out streams (Google Sheets, HubSpot, Mailchimp) ride the same cron.
   const integrations = await runIntegrationSyncs({ budgetMs: 12_000 });
   console.info(
-    JSON.stringify({ event: "cron.webhooks", ...summary, pruned, integrations }),
+    JSON.stringify({
+      event: "cron.webhooks",
+      ...summary,
+      pruned,
+      integrations,
+    }),
   );
   return Response.json(
     { ...summary, pruned },

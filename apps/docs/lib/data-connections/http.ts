@@ -1,18 +1,23 @@
 import "server-only";
 
 import { isIntegrationApiError } from "@repo/integrations";
+import type { RateLimiter } from "@repo/rate-limit";
 import { NextResponse } from "next/server";
 import {
-  providerErrorResponse,
   getSessionUserId,
+  providerErrorResponse,
 } from "@/lib/connected-accounts/server";
 import { HttpError } from "@/lib/error-response";
-import { type RateLimiter } from "@repo/rate-limit";
 import { enforceRateLimits } from "@/lib/request-guards";
 import { ValidationError } from "@/types/errors";
 
 /** JSON error the pickers and panels show as is (never 401 for provider errors). */
-export function jsonError(status: number, code: string, message: string, headers?: Record<string, string>) {
+export function jsonError(
+  status: number,
+  code: string,
+  message: string,
+  headers?: Record<string, string>,
+) {
   return NextResponse.json({ error: message, code }, { status, headers });
 }
 
@@ -22,12 +27,15 @@ export async function requireUser(
   key: string,
 ): Promise<{ userId: string } | { response: Response }> {
   const userId = await getSessionUserId();
-  if (!userId) return { response: jsonError(401, "UNAUTHORIZED", "Unauthorized") };
+  if (!userId)
+    return { response: jsonError(401, "UNAUTHORIZED", "Unauthorized") };
   try {
     await enforceRateLimits([{ limiter, key: `${key}:${userId}` }]);
   } catch (error) {
     if (error instanceof HttpError) {
-      return { response: jsonError(429, "RATE_LIMITED", error.message, error.headers) };
+      return {
+        response: jsonError(429, "RATE_LIMITED", error.message, error.headers),
+      };
     }
     throw error;
   }

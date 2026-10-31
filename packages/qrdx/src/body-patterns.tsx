@@ -111,9 +111,7 @@ function alignmentPositions(version: number, size: number): number[] {
 }
 
 /** True for modules inside an alignment pattern (5×5, off the finders). */
-export function alignmentMask(
-  size: number
-): (x: number, y: number) => boolean {
+export function alignmentMask(size: number): (x: number, y: number) => boolean {
   const version = (size - 17) / 4;
   const positions = Number.isInteger(version)
     ? alignmentPositions(version, size)

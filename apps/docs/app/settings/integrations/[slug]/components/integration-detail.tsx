@@ -31,6 +31,11 @@ import {
 } from "../../actions";
 import { ApiKeyConnect } from "./api-key-connect";
 import { ConnectedAccountPanel } from "./connected-account-panel";
+import {
+  DataConnectionPanel,
+  isNoAccountIntegration,
+  usesDataKeyForm,
+} from "./data-connection-panel";
 import { DubManagement } from "./dub-management";
 
 const CATEGORY_LABELS: Record<IntegrationCategory, string> = {
@@ -106,6 +111,13 @@ export function IntegrationDetail({
         missing_verifier: "Security verification failed",
         token_exchange_failed: "Failed to exchange authorization code",
         unexpected_error: "An unexpected error occurred",
+        plan_required: "Slack alerts are part of the Business plan.",
+        limit_reached:
+          "That workspace already has 10 Slack or Discord channels.",
+        not_configured: `${name} isn't configured on this server.`,
+        dev_disabled: "Calls to connected tools are off outside production.",
+        provider_rejected: `${name} didn't finish the connection. Try again.`,
+        rate_limited: "Too many attempts. Wait a minute and try again.",
       };
       toast.error(errorMessages[error] || `Failed to connect ${name}`);
       router.replace(`/settings/integrations/${slug}`);
@@ -252,7 +264,8 @@ export function IntegrationDetail({
                   Disconnect
                 </Button>
               </>
-            ) : canOAuth || !(apiKey && isConfigured) ? (
+            ) : isNoAccountIntegration(slug) ? null : canOAuth ||
+              !(apiKey && isConfigured) ? (
               <Button
                 onClick={handleConnect}
                 disabled={isLoading || !canOAuth}
@@ -341,15 +354,28 @@ export function IntegrationDetail({
         />
       )}
 
-      {apiKey && isConfigured && (!isConnected || status === "error") && (
-        <ApiKeyConnect
-          apiKey={apiKey}
-          asAlternative={canOAuth && !isConnected}
-          name={name}
-          reconnect={isConnected}
-          slug={slug}
-        />
-      )}
+      {apiKey &&
+        isConfigured &&
+        !usesDataKeyForm(slug) &&
+        (!isConnected || status === "error") && (
+          <ApiKeyConnect
+            apiKey={apiKey}
+            asAlternative={canOAuth && !isConnected}
+            name={name}
+            reconnect={isConnected}
+            slug={slug}
+          />
+        )}
+
+      <DataConnectionPanel
+        apiKey={apiKey}
+        isConfigured={isConfigured}
+        isConnected={isConnected}
+        metadata={metadata}
+        name={name}
+        slug={slug}
+        status={status}
+      />
 
       {capabilities.length > 0 && (
         <div className="rounded-xl border bg-card p-6 space-y-4">
@@ -393,30 +419,32 @@ export function IntegrationDetail({
       )}
 
       {/* How to install */}
-      <div className="rounded-xl border bg-card p-6 space-y-4">
-        <h2 className="text-base font-semibold">How to connect</h2>
-        <ol className="space-y-3">
-          {(apiKey && !canOAuth
-            ? [
-                `Create ${apiKey.label === "API key" ? "an" : "a"} ${apiKey.label.toLowerCase()} in ${name} (link above).`,
-                "Paste it here. QRdx checks it with the provider and stores it encrypted.",
-                "Disconnect at any time; delete the key in the provider too if you no longer use it.",
-              ]
-            : [
-                `Click Enable to start a secure sign-in with ${name}.`,
-                `Approve the access QRdx asks for. Tokens are stored encrypted.`,
-                "You come back here connected, and you can disconnect at any time.",
-              ]
-          ).map((step, idx) => (
-            <li key={idx} className="flex items-start gap-3 text-sm">
-              <span className="flex size-6 shrink-0 items-center justify-center rounded-full border bg-background text-xs font-medium tabular-nums">
-                {idx + 1}
-              </span>
-              <span className="text-muted-foreground">{step}</span>
-            </li>
-          ))}
-        </ol>
-      </div>
+      {!isNoAccountIntegration(slug) && (
+        <div className="rounded-xl border bg-card p-6 space-y-4">
+          <h2 className="text-base font-semibold">How to connect</h2>
+          <ol className="space-y-3">
+            {(apiKey && !canOAuth
+              ? [
+                  `Create ${apiKey.label === "API key" ? "an" : "a"} ${apiKey.label.toLowerCase()} in ${name} (link above).`,
+                  "Paste it here. QRdx checks it with the provider and stores it encrypted.",
+                  "Disconnect at any time; delete the key in the provider too if you no longer use it.",
+                ]
+              : [
+                  `Click Enable to start a secure sign-in with ${name}.`,
+                  `Approve the access QRdx asks for. Tokens are stored encrypted.`,
+                  "You come back here connected, and you can disconnect at any time.",
+                ]
+            ).map((step, idx) => (
+              <li key={idx} className="flex items-start gap-3 text-sm">
+                <span className="flex size-6 shrink-0 items-center justify-center rounded-full border bg-background text-xs font-medium tabular-nums">
+                  {idx + 1}
+                </span>
+                <span className="text-muted-foreground">{step}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      )}
 
       {/* Not configured warning */}
       {!isConfigured && (

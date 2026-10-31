@@ -29,7 +29,13 @@ export function mappingRows(items: JobItem[]) {
 
 /** CSV for re-pointing old codes: old link, new QRdx link, destination. */
 export function mappingCsv(items: JobItem[]): string {
-  const header = ["old_link", "old_id", "new_qrdx_link", "destination", "status"];
+  const header = [
+    "old_link",
+    "old_id",
+    "new_qrdx_link",
+    "destination",
+    "status",
+  ];
   const lines = mappingRows(items).map((row) =>
     [row.oldLink, row.oldId, row.newLink, row.destination, row.status]
       .map(safeCell)

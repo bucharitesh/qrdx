@@ -123,7 +123,11 @@ function playlistLink(id: string, music: boolean): ParsedYouTubeLink | null {
   };
 }
 
-function channelLink(id: string, path: string, music = false): ParsedYouTubeLink {
+function channelLink(
+  id: string,
+  path: string,
+  music = false
+): ParsedYouTubeLink {
   const host = music ? "music.youtube.com" : "www.youtube.com";
   return {
     provider: "youtube",

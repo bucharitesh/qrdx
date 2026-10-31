@@ -1,6 +1,10 @@
 import { MAX_IMPORT_ROWS } from "@/app/dashboard/codes/import/_lib/csv";
 import { providerWriteLimiter } from "@/lib/connected-accounts/server";
-import { dataErrorResponse, jsonError, requireUser } from "@/lib/data-connections/http";
+import {
+  dataErrorResponse,
+  jsonError,
+  requireUser,
+} from "@/lib/data-connections/http";
 import { listSourceItems } from "@/lib/data-connections/server";
 
 type RouteContext = { params: Promise<{ provider: string }> };
@@ -21,7 +25,10 @@ export async function GET(_request: Request, context: RouteContext) {
   if (provider !== "shopify") {
     return jsonError(404, "NOT_FOUND", "Bulk export is available for Shopify.");
   }
-  const user = await requireUser(providerWriteLimiter, "integrations:shopify-export");
+  const user = await requireUser(
+    providerWriteLimiter,
+    "integrations:shopify-export",
+  );
   if ("response" in user) return user.response;
 
   try {

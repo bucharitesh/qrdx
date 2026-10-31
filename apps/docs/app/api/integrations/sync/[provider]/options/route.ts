@@ -1,6 +1,10 @@
 import { z } from "zod";
 import { providerReadLimiter } from "@/lib/connected-accounts/server";
-import { dataErrorResponse, jsonError, requireUser } from "@/lib/data-connections/http";
+import {
+  dataErrorResponse,
+  jsonError,
+  requireUser,
+} from "@/lib/data-connections/http";
 import {
   listMailchimpAudiences,
   listMailchimpMergeFields,
@@ -19,7 +23,10 @@ export async function GET(request: Request, context: RouteContext) {
   if (provider !== "mailchimp") {
     return jsonError(404, "NOT_FOUND", "No options for this integration.");
   }
-  const user = await requireUser(providerReadLimiter, "integrations:mailchimp-options");
+  const user = await requireUser(
+    providerReadLimiter,
+    "integrations:mailchimp-options",
+  );
   if ("response" in user) return user.response;
   const audience = new URL(request.url).searchParams.get("audience");
   try {
@@ -32,7 +39,9 @@ export async function GET(request: Request, context: RouteContext) {
         mergeFields: await listMailchimpMergeFields(user.userId, parsed.data),
       });
     }
-    return Response.json({ audiences: await listMailchimpAudiences(user.userId) });
+    return Response.json({
+      audiences: await listMailchimpAudiences(user.userId),
+    });
   } catch (error) {
     return dataErrorResponse(error, {
       userId: user.userId,

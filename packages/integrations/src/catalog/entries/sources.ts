@@ -310,7 +310,8 @@ export const sources: IntegrationCatalogEntry[] = [
       },
       {
         title: "Clean links",
-        description: "Tracking parameters removed, the app opens when installed.",
+        description:
+          "Tracking parameters removed, the app opens when installed.",
       },
       {
         title: "Preview",

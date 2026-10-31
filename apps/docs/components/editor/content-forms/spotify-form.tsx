@@ -3,6 +3,7 @@
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import * as React from "react";
+import { MediaLinkAssist } from "@/components/data-connections/media-link-assist";
 import type { SpotifyFormData } from "@/lib/validations/qr-content";
 import { spotifySchema } from "@/lib/validations/qr-content";
 import { useQREditorStore } from "@/store/editor-store";
@@ -71,6 +72,11 @@ export function SpotifyForm() {
           </p>
         )}
       </div>
+      <MediaLinkAssist
+        kind="spotify"
+        onApply={(link) => setSpotifyData({ uri: link.url })}
+        value={spotifyData.uri}
+      />
 
       <p className="text-muted-foreground text-xs">
         Scanning will open the content in Spotify

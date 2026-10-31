@@ -158,7 +158,8 @@ const GENERIC: Record<FileField, RegExp> = {
     /^(short[ _-]?(url|link)|tiny[ _-]?url|qr[ _-]?(code[ _-]?)?(url|link)|tracking[ _-]?(url|link)|bitlink)$/i,
   id: /^(id|code[ _-]?id|qr[ _-]?(code[ _-]?)?id|alias|slug|back[ _-]?half|key)$/i,
   tags: /^(tags?|labels?|folder|group)$/i,
-  createdAt: /^(created|created[ _-]?(at|on|date)|date[ _-]?created|creation[ _-]?date|date)$/i,
+  createdAt:
+    /^(created|created[ _-]?(at|on|date)|date[ _-]?created|creation[ _-]?date|date)$/i,
   clicks: /^(clicks?|scans?|hits|visits|total[ _-]?(scans|clicks))$/i,
 };
 

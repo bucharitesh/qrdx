@@ -13,7 +13,17 @@ import type {
   SinkScan,
   SyncCursor,
 } from "@repo/integrations";
-import { and, asc, desc, eq, gt, inArray, isNull, or, type SQL } from "drizzle-orm";
+import {
+  and,
+  asc,
+  desc,
+  eq,
+  gt,
+  inArray,
+  isNull,
+  or,
+  type SQL,
+} from "drizzle-orm";
 import { parseLandingPageContent } from "@/lib/landing/blocks";
 import {
   type FormField,
@@ -49,7 +59,10 @@ export async function isScopeMember(scope: SyncScope): Promise<boolean> {
 function codeScopeWhere(scope: SyncScope): SQL {
   return scope.organizationId
     ? eq(qrCode.organizationId, scope.organizationId)
-    : (and(eq(qrCode.userId, scope.userId), isNull(qrCode.organizationId)) as SQL);
+    : (and(
+        eq(qrCode.userId, scope.userId),
+        isNull(qrCode.organizationId),
+      ) as SQL);
 }
 
 function pageScopeWhere(scope: SyncScope): SQL {
@@ -62,7 +75,11 @@ function pageScopeWhere(scope: SyncScope): SQL {
 }
 
 /** (time, id) > cursor */
-function after(column: typeof qrScan.scannedAt | typeof formResponse.createdAt, idColumn: typeof qrScan.id | typeof formResponse.id, cursor: SyncCursor | null) {
+function after(
+  column: typeof qrScan.scannedAt | typeof formResponse.createdAt,
+  idColumn: typeof qrScan.id | typeof formResponse.id,
+  cursor: SyncCursor | null,
+) {
   if (!cursor) return undefined;
   const at = new Date(cursor.at);
   return or(gt(column, at), and(eq(column, at), gt(idColumn, cursor.id)));
@@ -136,7 +153,9 @@ export interface ScopedFormPage {
 const MAX_PAGES = 200;
 
 /** The scope's pages that have at least one form block (newest first). */
-export async function listFormPages(scope: SyncScope): Promise<ScopedFormPage[]> {
+export async function listFormPages(
+  scope: SyncScope,
+): Promise<ScopedFormPage[]> {
   const rows = await db
     .select({
       id: landingPage.id,

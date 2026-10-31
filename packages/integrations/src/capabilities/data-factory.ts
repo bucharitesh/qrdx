@@ -4,9 +4,9 @@
  * HubSpot, Mailchimp): build a client from a stored integration, verify
  * pasted keys, read account details after OAuth, revoke on disconnect.
  */
-import {
-  createCalcomClient,
-} from "../integrations/calcom/client";
+
+import { IntegrationApiError } from "../core/http-client";
+import { createCalcomClient } from "../integrations/calcom/client";
 import {
   createCalendlyClient,
   revokeCalendlyToken,
@@ -19,16 +19,13 @@ import {
   mintShopifyToken,
   normalizeShopDomain,
 } from "../integrations/shopify/client";
-import { readSlackInstall, revokeSlackToken } from "../integrations/slack/client";
 import {
-  createSpotifyPlaylistsClient,
-} from "../integrations/spotify/client";
-import {
-  createStripeClient,
-  isStripeTestKey,
-} from "../integrations/stripe/client";
+  readSlackInstall,
+  revokeSlackToken,
+} from "../integrations/slack/client";
+import { createSpotifyPlaylistsClient } from "../integrations/spotify/client";
+import { createStripeClient } from "../integrations/stripe/client";
 import { createYouTubeChannelClient } from "../integrations/youtube/client";
-import { IntegrationApiError } from "../core/http-client";
 import type { ContentSourceClient, ContentSourceSlug } from "../sources/types";
 
 type Metadata = Record<string, unknown> | null | undefined;
@@ -109,6 +106,8 @@ export function createContentSourceClient(
         options.query ?? ""
       );
     }
+    default:
+      throw notConfigured(provider);
   }
 }
 
@@ -195,7 +194,8 @@ export async function verifyContentSourceCredentials(
             provider: "shopify",
             status: 400,
             code: "bad_request",
-            message: "Paste an access token, or the app's client ID and secret.",
+            message:
+              "Paste an access token, or the app's client ID and secret.",
           });
         }
         const minted = await mintShopifyToken({
@@ -230,11 +230,18 @@ export async function verifyContentSourceCredentials(
         },
       };
     }
+    default:
+      throw new IntegrationApiError({
+        provider: "unknown",
+        status: 400,
+        code: "bad_request",
+        message: "This integration doesn't use pasted keys.",
+      });
   }
 }
 
 /** A fresh Shopify token for client-credentials connections. */
-export async function renewShopifyToken(
+export function renewShopifyToken(
   shop: string,
   storedCredentials: string
 ): Promise<{ accessToken: string; expiresAt: Date | null }> {
@@ -285,7 +292,8 @@ export async function fetchDataAccountMetadata(
       const hubId = tokenResponse?.hub_id;
       return {
         name: hubId ? `HubSpot account ${hubId}` : "HubSpot",
-        hubId: typeof hubId === "number" || typeof hubId === "string" ? hubId : null,
+        hubId:
+          typeof hubId === "number" || typeof hubId === "string" ? hubId : null,
       };
     }
     case "mailchimp": {
@@ -347,5 +355,3 @@ export async function revokeDataProviderToken(
       return false;
   }
 }
-
-export { isStripeTestKey };

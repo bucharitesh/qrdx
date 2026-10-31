@@ -1,11 +1,18 @@
 import { getClientSeason } from "@/lib/seasonal";
+import { CHRISTMAS_PRESET_IDS } from "./christmas-presets";
 import { HALLOWEEN_PRESET_IDS } from "./halloween-presets";
+import { NEW_YEAR_PRESET_IDS } from "./new-year-presets";
 
-/** Moves the Halloween presets to the front while Halloween runs (client-side). */
+const SEASON_PRESETS: Record<string, readonly string[]> = {
+  halloween: HALLOWEEN_PRESET_IDS,
+  christmas: CHRISTMAS_PRESET_IDS,
+  "new-year": NEW_YEAR_PRESET_IDS,
+};
+
+/** Moves the running season's presets to the front (client-side). */
 export function seasonalPresetsFirst(names: string[]): string[] {
-  if (getClientSeason() !== "halloween") return names;
-  const seasonal: string[] = HALLOWEEN_PRESET_IDS.filter((id) =>
-    names.includes(id),
-  );
+  const ids = SEASON_PRESETS[getClientSeason() ?? ""];
+  if (!ids) return names;
+  const seasonal = ids.filter((id) => names.includes(id));
   return [...seasonal, ...names.filter((name) => !seasonal.includes(name))];
 }

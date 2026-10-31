@@ -1,7 +1,4 @@
-import {
-  IntegrationApiError,
-  providerRequest,
-} from "../../core/http-client";
+import { IntegrationApiError, providerRequest } from "../../core/http-client";
 
 const BASE_URL = "https://sheets.googleapis.com/v4/spreadsheets";
 export const GOOGLE_REVOKE_URL = "https://oauth2.googleapis.com/revoke";

@@ -1,7 +1,10 @@
 "use client";
 
 import type { SourcePage, SyncState } from "@repo/integrations";
-import type { MailchimpAudience, MailchimpMergeField } from "@repo/integrations/src/integrations/mailchimp/types";
+import type {
+  MailchimpAudience,
+  MailchimpMergeField,
+} from "@repo/integrations/src/integrations/mailchimp/types";
 import type { FormMapping } from "@repo/integrations/src/sinks/mapping";
 import type { ScopedFormPage } from "./data";
 import {
@@ -62,18 +65,66 @@ const json = (body: unknown, method = "POST"): RequestInit => ({
 
 const MOCK_SOURCES: Record<string, SourceStatusView[]> = {
   url: [
-    { slug: "stripe", name: "Stripe", logo: "/integrations/stripe.svg", configured: true, needsQuery: false, connected: true, status: "active" },
-    { slug: "calendly", name: "Calendly", logo: "/integrations/calendly.svg", configured: true, needsQuery: false, connected: true, status: "active" },
-    { slug: "shopify", name: "Shopify", logo: "/integrations/shopify.svg", configured: true, needsQuery: false, connected: true, status: "active" },
+    {
+      slug: "stripe",
+      name: "Stripe",
+      logo: "/integrations/stripe.svg",
+      configured: true,
+      needsQuery: false,
+      connected: true,
+      status: "active",
+    },
+    {
+      slug: "calendly",
+      name: "Calendly",
+      logo: "/integrations/calendly.svg",
+      configured: true,
+      needsQuery: false,
+      connected: true,
+      status: "active",
+    },
+    {
+      slug: "shopify",
+      name: "Shopify",
+      logo: "/integrations/shopify.svg",
+      configured: true,
+      needsQuery: false,
+      connected: true,
+      status: "active",
+    },
   ],
   calcom: [
-    { slug: "calcom", name: "Cal.com", logo: "/integrations/calcom.svg", configured: true, needsQuery: false, connected: true, status: "active" },
+    {
+      slug: "calcom",
+      name: "Cal.com",
+      logo: "/integrations/calcom.svg",
+      configured: true,
+      needsQuery: false,
+      connected: true,
+      status: "active",
+    },
   ],
   youtube: [
-    { slug: "youtube", name: "YouTube", logo: "/integrations/youtube.svg", configured: true, needsQuery: true, connected: true, status: null },
+    {
+      slug: "youtube",
+      name: "YouTube",
+      logo: "/integrations/youtube.svg",
+      configured: true,
+      needsQuery: true,
+      connected: true,
+      status: null,
+    },
   ],
   spotify: [
-    { slug: "spotify", name: "Spotify", logo: "/integrations/spotify.svg", configured: true, needsQuery: true, connected: true, status: null },
+    {
+      slug: "spotify",
+      name: "Spotify",
+      logo: "/integrations/spotify.svg",
+      configured: true,
+      needsQuery: true,
+      connected: true,
+      status: null,
+    },
   ],
 };
 
@@ -106,11 +157,17 @@ export async function loadSourcePage(
 }
 
 export async function exportToSheet(
-  body: { kind: "scans"; codeId: string | null } | { kind: "responses"; pageId: string },
+  body:
+    | { kind: "scans"; codeId: string | null }
+    | { kind: "responses"; pageId: string },
 ): Promise<{ url: string; rows: number; truncated: boolean }> {
   if (isIntegrationsMock()) {
     await new Promise((resolve) => setTimeout(resolve, 600));
-    return { url: "https://docs.google.com/spreadsheets/d/mock", rows: 1284, truncated: false };
+    return {
+      url: "https://docs.google.com/spreadsheets/d/mock",
+      rows: 1284,
+      truncated: false,
+    };
   }
   return request("/api/integrations/google-sheets/export", json(body));
 }
@@ -133,7 +190,9 @@ function mockView(provider: string): SinkViewData {
           rowsWritten: 1284,
           createdAt: new Date(Date.now() - 86_400_000).toISOString(),
         },
-        syncTarget: { spreadsheetUrl: "https://docs.google.com/spreadsheets/d/mock" },
+        syncTarget: {
+          spreadsheetUrl: "https://docs.google.com/spreadsheets/d/mock",
+        },
         syncLabel: "All codes",
       },
       pages: [],
@@ -189,7 +248,11 @@ export async function saveSink(
     const view = mockView(provider);
     return {
       ...view,
-      sync: view.sync && { ...view.sync, enabled: body.enabled, status: body.enabled ? "ok" : "paused" },
+      sync: view.sync && {
+        ...view.sync,
+        enabled: body.enabled,
+        status: body.enabled ? "ok" : "paused",
+      },
     };
   }
   return request(`/api/integrations/sync/${provider}`, json(body, "PUT"));

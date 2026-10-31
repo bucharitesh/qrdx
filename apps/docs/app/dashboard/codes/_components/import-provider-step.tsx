@@ -14,12 +14,7 @@ import {
   providerName,
 } from "@/lib/migrate/providers";
 import type { JobSummary, ProviderStatus } from "@/lib/migrate/types";
-import {
-  formatDay,
-  plural,
-  ProviderLogo,
-  StepLayout,
-} from "./import-shared";
+import { formatDay, ProviderLogo, plural, StepLayout } from "./import-shared";
 
 function metaFor(
   id: ApiProviderId,
@@ -92,8 +87,8 @@ export function ProviderStep({
           <div>
             <h3 className="text-sm font-semibold">From a connected account</h3>
             <p className="text-muted-foreground text-xs">
-              Pick links from the account, preview, import. Where the API
-              allows it, old links can then point to their new QRdx codes.
+              Pick links from the account, preview, import. Where the API allows
+              it, old links can then point to their new QRdx codes.
             </p>
           </div>
           <div className="grid gap-2 sm:grid-cols-2">
@@ -115,8 +110,8 @@ export function ProviderStep({
           <div>
             <h3 className="text-sm font-semibold">From an export file</h3>
             <p className="text-muted-foreground text-xs">
-              For providers without API access. Upload a CSV, check the
-              columns, then preview and import.
+              For providers without API access. Upload a CSV, check the columns,
+              then preview and import.
             </p>
           </div>
           <div className="grid gap-2 sm:grid-cols-2">

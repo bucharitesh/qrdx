@@ -29,13 +29,10 @@ import {
   SearchNormal1,
   Warning2,
 } from "iconsax-reactjs";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { type MigrateClient, MigrateApiError } from "@/lib/migrate/client";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { MigrateApiError, type MigrateClient } from "@/lib/migrate/client";
 import { displayLink } from "@/lib/migrate/normalize";
-import {
-  API_PROVIDERS,
-  type ApiProviderId,
-} from "@/lib/migrate/providers";
+import { API_PROVIDERS, type ApiProviderId } from "@/lib/migrate/providers";
 import {
   MAX_JOB_LINKS,
   type ProviderStatus,
@@ -45,8 +42,8 @@ import {
   formatCount,
   formatDay,
   Note,
-  plural,
   ProviderLogo,
+  plural,
   StepLayout,
 } from "./import-shared";
 
@@ -103,9 +100,10 @@ function ConnectPanel({
     event.preventDefault();
     setBusy("key");
     setError(null);
-    const result = await client
-      .connectKey(provider, key)
-      .catch(() => ({ ok: false as const, error: "Couldn't connect. Try again." }));
+    const result = await client.connectKey(provider, key).catch(() => ({
+      ok: false as const,
+      error: "Couldn't connect. Try again.",
+    }));
     setBusy(null);
     if (result.ok) {
       setKey("");
@@ -124,25 +122,21 @@ function ConnectPanel({
             {status?.connection === "error" ? "Reconnect" : "Connect"} {name}
           </h3>
           <p className="text-muted-foreground text-sm">
-            QRdx reads your links to import them. The token is stored
-            encrypted; disconnect any time in Settings.
+            QRdx reads your links to import them. The token is stored encrypted;
+            disconnect any time in Settings.
           </p>
         </div>
       </div>
 
       {status?.oauth && (
         <div className="space-y-1.5">
-          <Button
-            className="w-full"
-            disabled={busy !== null}
-            onClick={signIn}
-          >
+          <Button className="w-full" disabled={busy !== null} onClick={signIn}>
             {busy === "oauth" ? <Spinner className="animate-spin" /> : null}
             Sign in with {name}
           </Button>
           <p className="text-muted-foreground text-xs">
-            After signing in you land in Settings → Integrations. Come back
-            here and open Import again to pick your links.
+            After signing in you land in Settings → Integrations. Come back here
+            and open Import again to pick your links.
           </p>
         </div>
       )}
@@ -243,7 +237,6 @@ export function LinksStep({
   const [tag, setTag] = useState<string>(ALL);
   const [domains, setDomains] = useState<string[]>([]);
   const [pages, setPages] = useState<PageState[]>([]);
-  const [cursors, setCursors] = useState<(string | null)[]>([null]);
   const [pageIndex, setPageIndex] = useState(0);
   const [imported, setImported] = useState<Record<string, string>>({});
   const [selected, setSelected] = useState<Map<string, SourceLink>>(new Map());
@@ -281,11 +274,6 @@ export function LinksStep({
           next[index] = { links: page.links, next: page.nextCursor };
           return next;
         });
-        setCursors((current) => {
-          const next = current.slice(0, index + 1);
-          next[index + 1] = page.nextCursor;
-          return next;
-        });
         setPageIndex(index);
       } catch (failure) {
         setError(
@@ -301,18 +289,20 @@ export function LinksStep({
   );
 
   // First page whenever the filters change (domains on the very first load).
-  const [loadedOnce, setLoadedOnce] = useState(false);
+  // (loadPage changes with the filters.)
+  const loadedOnce = useRef(false);
   useEffect(() => {
     if (!connected) return;
     setPages([]);
-    setCursors([null]);
-    void loadPage(0, null, !loadedOnce);
-    setLoadedOnce(true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- reload on filters only
-  }, [connected, filters]);
+    void loadPage(0, null, !loadedOnce.current);
+    loadedOnce.current = true;
+  }, [connected, loadPage]);
 
   const page = pages[pageIndex];
-  const loadedLinks = useMemo(() => pages.flatMap((entry) => entry?.links ?? []), [pages]);
+  const loadedLinks = useMemo(
+    () => pages.flatMap((entry) => entry?.links ?? []),
+    [pages],
+  );
   const domainOptions = useMemo(() => {
     const seen = new Set(domains);
     for (const link of loadedLinks) if (link.domain) seen.add(link.domain);
@@ -489,19 +479,22 @@ export function LinksStep({
                   />
                 </TableHead>
                 <TableHead>Link</TableHead>
-                <TableHead className="hidden md:table-cell">Destination</TableHead>
+                <TableHead className="hidden md:table-cell">
+                  Destination
+                </TableHead>
                 {showClicks && (
                   <TableHead className="hidden w-20 text-right sm:table-cell">
                     Clicks
                   </TableHead>
                 )}
-                <TableHead className="hidden w-28 sm:table-cell">Created</TableHead>
+                <TableHead className="hidden w-28 sm:table-cell">
+                  Created
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {loading && !page ? (
                 Array.from({ length: 6 }, (_, index) => (
-                  // biome-ignore lint/suspicious/noArrayIndexKey: placeholders
                   <TableRow key={index}>
                     <TableCell colSpan={5}>
                       <div className="h-8 animate-pulse rounded-md bg-muted/60" />
@@ -524,7 +517,9 @@ export function LinksStep({
                   const done = imported[link.id];
                   return (
                     <TableRow
-                      data-state={selected.has(link.id) ? "selected" : undefined}
+                      data-state={
+                        selected.has(link.id) ? "selected" : undefined
+                      }
                       key={link.id}
                     >
                       <TableCell>
@@ -532,7 +527,9 @@ export function LinksStep({
                           aria-label={`Select ${link.title ?? link.shortLink ?? link.id}`}
                           checked={selected.has(link.id)}
                           disabled={Boolean(done)}
-                          onCheckedChange={(value) => toggle(link, value === true)}
+                          onCheckedChange={(value) =>
+                            toggle(link, value === true)
+                          }
                         />
                       </TableCell>
                       <TableCell className="min-w-0">
@@ -555,7 +552,9 @@ export function LinksStep({
                       </TableCell>
                       {showClicks && (
                         <TableCell className="text-muted-foreground hidden text-right tabular-nums sm:table-cell">
-                          {link.clicks === null ? "—" : formatCount(link.clicks)}
+                          {link.clicks === null
+                            ? "—"
+                            : formatCount(link.clicks)}
                         </TableCell>
                       )}
                       <TableCell className="text-muted-foreground hidden text-xs sm:table-cell">
@@ -599,7 +598,9 @@ export function LinksStep({
             )}
           </div>
           <div className="flex items-center gap-2">
-            {loading && page && <Spinner className="text-muted-foreground size-4 animate-spin" />}
+            {loading && page && (
+              <Spinner className="text-muted-foreground size-4 animate-spin" />
+            )}
             <Button
               disabled={loading || pageIndex === 0}
               onClick={() => setPageIndex((index) => Math.max(0, index - 1))}

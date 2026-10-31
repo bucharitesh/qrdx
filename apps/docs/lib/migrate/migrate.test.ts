@@ -3,6 +3,7 @@
 // provider clients instead of HTTP. Nothing connects anywhere.
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
+import type { DubClient, ShortLinkClient } from "@repo/integrations";
 import { IntegrationApiError } from "@repo/integrations/src/core/http-client";
 import {
   dubSource,
@@ -13,11 +14,7 @@ import {
   shortLinkSource,
 } from "./adapters";
 import { backHalfCandidates, backHalfShapeProblem } from "./back-halves";
-import {
-  detectFileProvider,
-  guessFileMapping,
-  linksFromRows,
-} from "./files";
+import { detectFileProvider, guessFileMapping, linksFromRows } from "./files";
 import {
   type CreateInput,
   type FinishInput,
@@ -33,10 +30,10 @@ import {
 import {
   applyChunk,
   createJob,
+  MAX_JOBS,
   nextChunk,
   readJobs,
   upsertJob,
-  MAX_JOBS,
 } from "./jobs";
 import { fitToLimit, mappingCsv, mappingText } from "./mapping";
 import {
@@ -48,7 +45,7 @@ import {
   parseImportMarkers,
   splitShortLink,
 } from "./normalize";
-import { planImport, type PlanContext, slugCandidates } from "./plan";
+import { type PlanContext, planImport, slugCandidates } from "./plan";
 import { parseProviderParam } from "./providers";
 import type {
   CodeRef,
@@ -399,11 +396,12 @@ describe("adapters", () => {
     const client = {
       getLinks: async (params: unknown) => {
         calls.push(params);
-        return [{ id: "link_1", url: "https://a.com", domain: "dub.sh", key: "x" }];
+        return [
+          { id: "link_1", url: "https://a.com", domain: "dub.sh", key: "x" },
+        ];
       },
     };
-    // biome-ignore lint/suspicious/noExplicitAny: a fake client
-    const source = dubSource(client as any);
+    const source = dubSource(client as unknown as DubClient);
     const page = await source.listLinks("3", { search: "a" });
     assert.equal(page.nextCursor, null);
     assert.equal(page.links[0]?.shortLink, "https://dub.sh/x");
@@ -428,8 +426,10 @@ describe("adapters", () => {
       },
       updateLinkDestination: async () => ({}),
     };
-    // biome-ignore lint/suspicious/noExplicitAny: a fake client
-    const source = shortLinkSource("short-io", client as any);
+    const source = shortLinkSource(
+      "short-io",
+      client as unknown as ShortLinkClient,
+    );
     const page = await source.listLinks(null, { domain: "go.brand.com" });
     assert.equal(page.nextCursor, "tok");
     assert.equal((seen[0] as { domainId: string }).domainId, "42");
@@ -447,12 +447,15 @@ describe("dedupe", () => {
       shortLink: "https://qrdx.dev/q/Exist01",
       state: "active",
     };
-    const { preview } = planImport([link(1), link(2), link(3)], context({
-      imported: new Map([[link(1).id, existing]]),
-      byDestination: new Map([
-        [destinationKey("https://example.com/page-2/") ?? "", existing],
-      ]),
-    }));
+    const { preview } = planImport(
+      [link(1), link(2), link(3)],
+      context({
+        imported: new Map([[link(1).id, existing]]),
+        byDestination: new Map([
+          [destinationKey("https://example.com/page-2/") ?? "", existing],
+        ]),
+      }),
+    );
     assert.equal(preview.creates, 1);
     assert.equal(preview.alreadyImported, 1);
     assert.equal(preview.duplicates, 1);
@@ -460,15 +463,18 @@ describe("dedupe", () => {
   });
 
   it("imports duplicates when asked, but never the same link twice", () => {
-    const { preview } = planImport([link(1), link(1), link(2)], context({
-      options: { ...OPTIONS, includeDuplicates: true },
-      byDestination: new Map([
-        [
-          destinationKey(link(2).destinationUrl) ?? "",
-          { id: "c", shortLink: "x", state: "active" },
-        ],
-      ]),
-    }));
+    const { preview } = planImport(
+      [link(1), link(1), link(2)],
+      context({
+        options: { ...OPTIONS, includeDuplicates: true },
+        byDestination: new Map([
+          [
+            destinationKey(link(2).destinationUrl) ?? "",
+            { id: "c", shortLink: "x", state: "active" },
+          ],
+        ]),
+      }),
+    );
     assert.equal(preview.creates, 2);
     assert.equal(preview.items[1]?.reason, "Selected twice");
   });
@@ -483,7 +489,10 @@ describe("dedupe", () => {
       context(),
     );
     assert.equal(preview.invalid, 3);
-    assert.equal(preview.items[1]?.reason, "Already points to a QRdx short link");
+    assert.equal(
+      preview.items[1]?.reason,
+      "Already points to a QRdx short link",
+    );
   });
 
   it("reports branded domains and new versus existing tags", () => {
@@ -574,7 +583,10 @@ describe("chunking and resume", () => {
     assert.equal(fake.codes.length, 120);
     assert.equal(fake.calls.create, 3);
     const code = fake.codes[0] as Code;
-    assert.match(code.notes ?? "", /^Imported from Bitly bit\.ly\/Ab00000 on 2026-11-01\./);
+    assert.match(
+      code.notes ?? "",
+      /^Imported from Bitly bit\.ly\/Ab00000 on 2026-11-01\./,
+    );
     assert.equal(code.folder, "Imported from Bitly");
     assert.deepEqual(code.tags, ["print"]);
   });
@@ -582,7 +594,11 @@ describe("chunking and resume", () => {
   it("is idempotent: a re-import of the same links creates nothing", async () => {
     const fake = fakeRepo();
     const deps = depsFor(fake.repo);
-    const request = { provider: "bitly" as const, links: [link(1), link(2)], options: OPTIONS };
+    const request = {
+      provider: "bitly" as const,
+      links: [link(1), link(2)],
+      options: OPTIONS,
+    };
     const first = await startJob(deps, SCOPE, request);
     await runToEnd(deps, first.job.id);
     const again = await startJob(deps, SCOPE, request);
@@ -691,12 +707,25 @@ describe("chunking and resume", () => {
       now: new Date(),
     });
     assert.deepEqual(nextChunk(job, 1), [0]);
-    job = applyChunk(job, new Map([[items[0]?.key ?? "", { status: "created" }]]), new Date());
+    job = applyChunk(
+      job,
+      new Map([[items[0]?.key ?? "", { status: "created" }]]),
+      new Date(),
+    );
     assert.equal(job.cursor, 1);
-    const many = Array.from({ length: MAX_JOBS + 5 }, (_, i) => ({ ...job, id: `j${i}` }));
-    const stored = many.reduce<ImportJob[]>((all, entry) => upsertJob(all, entry), []);
+    const many = Array.from({ length: MAX_JOBS + 5 }, (_, i) => ({
+      ...job,
+      id: `j${i}`,
+    }));
+    const stored = many.reduce<ImportJob[]>(
+      (all, entry) => upsertJob(all, entry),
+      [],
+    );
     assert.equal(stored.length, MAX_JOBS);
-    assert.equal(readJobs({ v: 1, jobs: [...stored, { broken: true }] }).length, MAX_JOBS);
+    assert.equal(
+      readJobs({ v: 1, jobs: [...stored, { broken: true }] }).length,
+      MAX_JOBS,
+    );
     assert.deepEqual(readJobs(null), []);
   });
 });
@@ -772,7 +801,10 @@ describe("keep printed codes working", () => {
     assert.equal(undo.job.undone, 25);
     assert.equal(undo.job.redirected, 0);
     // The destination at the moment of the update, not the import.
-    assert.equal(destinations.get(link(0).id), "https://example.com/changed-since");
+    assert.equal(
+      destinations.get(link(0).id),
+      "https://example.com/changed-since",
+    );
   });
 
   it("stops with a plain message when the plan has no redirects left", async () => {
@@ -804,10 +836,19 @@ describe("keep printed codes working", () => {
       }),
     );
     assert.equal(quota.kind, "quota");
-    assert.equal(explainProviderError("dub", new Error("Dub API error: 401 - no")).kind, "auth");
-    const missing = explainProviderError("rebrandly", new IntegrationApiError({
-      provider: "rebrandly", status: 404, code: "not_found", message: "x",
-    }));
+    assert.equal(
+      explainProviderError("dub", new Error("Dub API error: 401 - no")).kind,
+      "auth",
+    );
+    const missing = explainProviderError(
+      "rebrandly",
+      new IntegrationApiError({
+        provider: "rebrandly",
+        status: 404,
+        code: "not_found",
+        message: "x",
+      }),
+    );
     assert.equal(missing.stop, false);
   });
 
@@ -821,7 +862,8 @@ describe("keep printed codes working", () => {
     });
     await assert.rejects(
       runRedirects(deps, SCOPE, job.id, "apply", fakeSource().source),
-      (error: unknown) => error instanceof ImportError && error.code === "NOT_SUPPORTED",
+      (error: unknown) =>
+        error instanceof ImportError && error.code === "NOT_SUPPORTED",
     );
   });
 
@@ -835,7 +877,9 @@ describe("keep printed codes working", () => {
     assert.match(mappingText(items), /bit\.ly\/Ab00000 → https:\/\/qrdx\.dev/);
     assert.ok(deps);
     assert.equal(
-      mappingCsv([{ ...(items[0] as ImportJob["items"][number]), url: "=HYPERLINK(1)" }]).includes("'=HYPERLINK"),
+      mappingCsv([
+        { ...(items[0] as ImportJob["items"][number]), url: "=HYPERLINK(1)" },
+      ]).includes("'=HYPERLINK"),
       true,
     );
   });
@@ -890,14 +934,20 @@ describe("original back-halves", () => {
   });
 
   it("flags back-halves repeated in the selection", () => {
-    const links = [branded(1, "Spring1"), { ...branded(2, "Spring1"), id: "other" }];
+    const links = [
+      branded(1, "Spring1"),
+      { ...branded(2, "Spring1"), id: "other" },
+    ];
     const options = { ...OPTIONS, backHalfDomain: "go.brand.com" };
     const { candidates } = slugCandidates(links, options);
-    const { preview } = planImport(links, context({
-      options,
-      candidates,
-      backHalfDomain: { qrdx: "verified", canUse: true },
-    }));
+    const { preview } = planImport(
+      links,
+      context({
+        options,
+        candidates,
+        backHalfDomain: { qrdx: "verified", canUse: true },
+      }),
+    );
     assert.equal(preview.items[1]?.backHalf?.status, "repeated");
   });
 
@@ -918,14 +968,51 @@ describe("export file auto-detection", () => {
   const cases: [string, string[], string][] = [
     [
       "uniqode",
-      ["QR Code ID", "QR Code Name", "Organization name", "QR Code URL", "Destination URL", "QR Code Type", "Owner", "Creation Date & Timestamp", "Labels", "Frame Text details"],
+      [
+        "QR Code ID",
+        "QR Code Name",
+        "Organization name",
+        "QR Code URL",
+        "Destination URL",
+        "QR Code Type",
+        "Owner",
+        "Creation Date & Timestamp",
+        "Labels",
+        "Frame Text details",
+      ],
       "Destination URL",
     ],
-    ["qr-tiger", ["ID", "Campaign Name", "Category", "Scan Count", "URL"], "URL"],
+    [
+      "qr-tiger",
+      ["ID", "Campaign Name", "Category", "Scan Count", "URL"],
+      "URL",
+    ],
     ["flowcode", ["Flowcode Name", "Flowcode Scan URL"], "Flowcode Scan URL"],
-    ["tinyurl", ["Alias", "TinyURL", "Long URL", "Created", "Clicks"], "Long URL"],
-    ["scanova", ["QR ID", "Name", "Category", "Type", "Status", "Tags", "Short URL", "Creator", "Destination URL"], "Destination URL"],
-    ["hovercode", ["Display name", "Hovercode link", "Destination", "Scans"], "Destination"],
+    [
+      "tinyurl",
+      ["Alias", "TinyURL", "Long URL", "Created", "Clicks"],
+      "Long URL",
+    ],
+    [
+      "scanova",
+      [
+        "QR ID",
+        "Name",
+        "Category",
+        "Type",
+        "Status",
+        "Tags",
+        "Short URL",
+        "Creator",
+        "Destination URL",
+      ],
+      "Destination URL",
+    ],
+    [
+      "hovercode",
+      ["Display name", "Hovercode link", "Destination", "Scans"],
+      "Destination",
+    ],
   ];
   for (const [provider, headers, destination] of cases) {
     it(`detects ${provider} and maps its destination column`, () => {
@@ -967,9 +1054,19 @@ describe("export file auto-detection", () => {
   });
 
   it("turns rows into links with stable keys", () => {
-    const mapping = guessFileMapping(["Name", "Short URL", "Destination", "Tags", "Created", "Scans"], "csv");
+    const mapping = guessFileMapping(
+      ["Name", "Short URL", "Destination", "Tags", "Created", "Scans"],
+      "csv",
+    );
     const rows = [
-      ["Menu", "qr1.be/AB12", "https://example.com/menu", "print; table", "2024-01-02", "1,204"],
+      [
+        "Menu",
+        "qr1.be/AB12",
+        "https://example.com/menu",
+        "print; table",
+        "2024-01-02",
+        "1,204",
+      ],
       ["", "", "", "", "", ""],
       ["Wi-Fi", "", "https://example.com/wifi", "", "not a date", "n/a"],
     ];

@@ -350,25 +350,6 @@ export const SYNTH: Record<SoundName, SynthRecipe> = {
       gain: 0.08,
     });
   },
-  // Rising whistle into a quiet crackle.
-  "seasonal-firework": (ctx, out, t) => {
-    tone(ctx, out, t, {
-      freq: 900,
-      to: 1900,
-      attack: 0.01,
-      decay: 0.1,
-      gain: 0.08,
-    });
-    for (let i = 0; i < 4; i++) {
-      noise(ctx, out, t + 0.11 + i * 0.03, {
-        filter: "bandpass",
-        freq: 2600 + i * 300,
-        q: 1.2,
-        decay: 0.02,
-        gain: 0.16 * (1 - i * 0.15),
-      });
-    }
-  },
   // A light upward boop.
   "seasonal-balloon": (ctx, out, t) => {
     tone(ctx, out, t, {

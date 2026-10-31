@@ -1,0 +1,163 @@
+---
+title: Move from Bitly, Dub, Rebrandly and others
+description: Import your short links and dynamic QR codes into QRdx, keep printed codes working, and keep your branded back-halves.
+icon: Download
+---
+
+QRdx imports links and dynamic codes from other providers in one go. Open [Dashboard → Codes](/dashboard/codes) and click **Import**. Every import has the same three steps: pick what to bring, preview it, import it.
+
+- **Connected accounts:** Dub, Bitly, Rebrandly and Short.io. QRdx lists your links through the provider's API.
+- **Export files:** QR Code Generator PRO, Uniqode (Beaconstac), Flowcode, QR TIGER, ME-QR, TinyURL, Hovercode, Scanova, or any CSV with destination URLs.
+
+Nothing changes in your old account during the import itself.
+
+## What an import creates
+
+Each link or code becomes a [dynamic QR code](/docs/dynamic-qr-codes) with:
+
+- its destination and title;
+- its tags (optional), and a folder such as "Imported from Bitly" (you can rename it or turn it off);
+- notes like `Imported from Bitly bit.ly/3AbCdEf on 2026-11-01.` plus the link's original creation date. QRdx sets its own creation date for the new code.
+
+The preview shows how many codes will be created, which tags are new, and what is skipped:
+
+- **Already imported:** links imported before (from any earlier run) are always skipped, so running an import twice never creates duplicates.
+- **Same destination:** links whose destination already has a QRdx code are skipped by default. Tick the option to import them anyway.
+- **Can't import:** missing or invalid destinations, and links that already point to a QRdx short link.
+
+Imports run in batches of 50 with a progress bar. Closing the dialog is safe: open **Import** again and the import continues from **Recent imports**. The summary lists created, skipped and failed codes with the reasons.
+
+<Callout type="info">
+Plan limits apply as for any new code. Free includes 10 active dynamic codes; if an import needs more, the preview says how many fit and offers to import the first ones, or to upgrade. Pro and Business have no limit.
+</Callout>
+
+## From a connected account
+
+1. Click **Import** and pick the provider. If it isn't connected yet, connect it right there (sign in, or paste an API key or token). Tokens are stored encrypted, and you can disconnect in Settings → Integrations.
+2. Search, filter by domain or tag, and select links. **Select all matching links** takes up to 1,000 links per import; run it again for the rest.
+3. Check the preview and click **Import**.
+
+| Provider | Connect with | List links | Keep printed codes working |
+|---|---|---|---|
+| Dub | Sign in (OAuth) | Yes | Yes, on every Dub plan |
+| Bitly | Sign in, or a generic access token | Yes | Paid Bitly plans only: 5 link redirects a month on Core, 20 on Growth, 110 on Premium |
+| Rebrandly | API key | Yes | Within Rebrandly's monthly destination edits: 10 on Essentials, 50 on Professional, 150 on Growth (none on Free) |
+| Short.io | API key | Yes, one domain at a time | Yes, on every plan |
+
+Plan limits are the providers' own and change over time. Check their pricing pages.
+
+## Keep printed codes working
+
+QR codes you printed with another provider encode that provider's short link. After a connected-account import, the summary offers **Keep my printed codes working**:
+
+1. A **dry run** lists every old link and the QRdx link it would point to. Nothing changes yet.
+2. Confirm, and QRdx changes each old link's destination to its new QRdx code. Visitors still end up on the same page, and every scan now shows in QRdx analytics. The old provider still sees a click first.
+3. **Undo** puts back the original destinations, which QRdx saved with the import.
+
+If the provider refuses (for example a Bitly plan without link redirects left), QRdx stops, says why, and leaves the remaining links unchanged. Links skipped because their destination already had a QRdx code point at that existing code.
+
+<Callout type="warn">
+Keep the provider connected until you're sure: undo needs the connection. The old account also has to stay active for its links to keep redirecting.
+</Callout>
+
+## Your own domain (go.yourbrand.com)
+
+If your links use your own domain, you can move that domain to QRdx and keep the back-halves, so `go.yourbrand.com/Spring1` keeps working after the DNS switch.
+
+1. In the import preview, tick **Keep the original back-halves on my domain**. The preview shows which back-halves can be kept.
+2. Import. The codes claim their back-halves right away.
+3. Add the domain on [Dashboard → Domains](/dashboard/domains), point its DNS to QRdx and verify it (see [Custom domains](/docs/custom-domains)). Do this at a quiet time: links on the domain stop working at the old provider as soon as DNS moves.
+4. In the import summary, click **Attach codes**. The codes now answer on your domain. If the domain was verified before the import, this happens during the import.
+
+QRdx short links are exactly 7 letters or digits and unique across all of QRdx, so some back-halves can't move: readable ones like `spring-menu`, reserved words, or back-halves another QRdx code already uses. The preview lists them with a suggested alternative; those links need a reprint or a redirect at the old provider. Custom domains are part of Pro and Business.
+
+## From an export file
+
+1. Get the file (steps below). QRdx reads CSV; for an Excel file, save or download it as CSV first.
+2. Click **Import**, pick the provider and upload the file. QRdx recognizes the provider's columns where it can, and you can change the mapping. Only the destination is required; the old short link (or code ID) lets a re-upload skip codes already imported.
+3. Preview and import, then use **Copy all new links** or **Download mapping CSV** (old link → new QRdx link).
+
+Codes from these providers live on the provider's domain, so QRdx can't change them. To keep printed codes working, open each old dynamic code in the old provider and set its destination to the new QRdx link from the mapping. The old account has to stay active for those codes to redirect; reprint with the QRdx codes before you cancel.
+
+### QR Code Generator PRO
+
+There's no documented export of the code list. Make a spreadsheet with **Name**, **Short URL** and **Destination URL** for each code. To re-point codes: open the code → **Details** → **Edit**, replace the URL and save. For many codes, its bulk update takes a CSV of new URLs for up to 500 codes.
+
+### Uniqode (Beaconstac)
+
+**QR Codes → Dynamic**, select all, **⋯ → Export**, per organization or folder. The export's columns (QR Code Name, QR Code URL, Destination URL, Labels, …) are recognized. To re-point: open the code → **Edit** → new URL → **Next** → **Save**.
+
+### Flowcode
+
+There's no documented export of the code list. Reuse your bulk-create sheet (Flowcode Name, Flowcode Scan URL) or list Name, Scan URL and Destination. To re-point: **Assets** → the code → **Overview** → **Destination** → **Save**.
+
+### QR TIGER
+
+**My Account** → pick a category (for example URL) → **Download QR List**, once per category. To re-point: **My Account → Dashboard → URL** → the campaign → **Edit** → **Save**.
+
+### ME-QR
+
+There's no export. List Name, QR link and Destination URL for each code. To re-point: edit the code in your ME-QR codes list.
+
+### TinyURL
+
+TinyURL lists CSV export on its paid plans. Export your links as CSV, or list Alias and Long URL. Editing a TinyURL destination needs a paid TinyURL plan.
+
+### Hovercode, Scanova and others
+
+Export your codes as CSV from the provider (Hovercode lists CSV exports on its Business plans; Scanova emails a download link), then check the column mapping. Any CSV with a destination column works with **Another provider (CSV)**.
+
+Static QR codes (from goQR.me, QR Code Monkey, Adobe Express and similar tools) encode the destination itself, so they keep working without the tool. Import their destinations from a CSV only if you want editable, tracked codes for new prints.
+
+## From a QR code library
+
+Libraries render static codes, so nothing needs migrating: codes already printed keep working. To switch the rendering in your app, install `qrdx` and swap the component.
+
+### From qrcode.react [#from-qrcode-react]
+
+```tsx
+// Before
+import { QRCodeSVG } from "qrcode.react";
+
+<QRCodeSVG value="https://example.com" size={256} fgColor="#111827" />;
+
+// After
+import { QRCodeSVG } from "qrdx";
+
+<QRCodeSVG
+  value="https://example.com"
+  size={256}
+  fgColor="#111827"
+  bodyPattern="rounded"
+/>;
+```
+
+`value`, `size`, `level`, `fgColor`, `bgColor`, `marginSize` (as `margin`) and `imageSettings` carry over; qrdx adds patterns, gradients and templates. See the [API reference](/docs/api-reference).
+
+### From qr-code-styling [#from-qr-code-styling]
+
+```tsx
+// Before
+import QRCodeStyling from "qr-code-styling";
+
+const qr = new QRCodeStyling({
+  data: "https://example.com",
+  width: 256,
+  dotsOptions: { type: "rounded", color: "#111827" },
+  image: "/logo.png",
+});
+qr.append(ref.current);
+
+// After
+import { QRCodeSVG } from "qrdx";
+
+<QRCodeSVG
+  value="https://example.com"
+  size={256}
+  bodyPattern="rounded"
+  fgColor="#111827"
+  imageSettings={{ src: "/logo.png", width: 64, height: 64, excavate: true }}
+/>;
+```
+
+qrdx is a React component, so there's no instance to append: render it like any element. Downloads use the helpers in the [API reference](/docs/api-reference).

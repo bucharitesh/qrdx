@@ -31,7 +31,6 @@ export const SOUND_GROUPS = {
     "seasonal-snowman",
     // New Year
     "seasonal-cork",
-    "seasonal-firework",
     "seasonal-balloon",
   ],
 } as const;
@@ -245,12 +244,6 @@ export const SOUND_PRESETS: Record<SoundName, SoundPreset> = {
     synthGain: 0.6,
     durationMs: 200,
     use: "New Year champagne clicked.",
-  }),
-  "seasonal-firework": seasonal("seasonal-firework", {
-    sampleGain: 1,
-    synthGain: 0.5,
-    durationMs: 250,
-    use: "New Year firework / popper clicked.",
   }),
   "seasonal-balloon": seasonal("seasonal-balloon", {
     sampleGain: 1,

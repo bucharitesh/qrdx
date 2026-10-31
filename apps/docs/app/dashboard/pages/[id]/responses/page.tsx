@@ -33,6 +33,7 @@ import {
 } from "@/app/api/forms/_lib/responses";
 import { PageHeader } from "@/app/dashboard/_components/page-header";
 import { requireDashboardScope } from "@/app/dashboard/codes/_lib/qr-codes";
+import { SheetsExportButton } from "@/components/data-connections/sheets-export-button";
 import { HairlineFigure } from "@/components/mockups/hairline";
 import { HttpError } from "@/lib/error-response";
 import { ResponseUsage } from "./_components/response-usage";
@@ -146,6 +147,7 @@ export default async function FormResponsesPage({
             </a>
           </Button>
         )}
+        {total > 0 && <SheetsExportButton pageId={page.id} />}
       </PageHeader>
 
       <ResponseUsage

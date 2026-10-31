@@ -1,7 +1,4 @@
-import {
-  IntegrationApiError,
-  providerRequest,
-} from "../../core/http-client";
+import { IntegrationApiError, providerRequest } from "../../core/http-client";
 import type {
   ContentSourceClient,
   ListSourceOptions,
@@ -35,9 +32,8 @@ interface PlaylistItemsResponse {
 
 /** Google's message names the key's project; keep ours. */
 const describeYouTubeError = (body: unknown) => {
-  const reason = (
-    body as { error?: { errors?: Array<{ reason?: string }> } }
-  )?.error?.errors?.[0]?.reason;
+  const reason = (body as { error?: { errors?: Array<{ reason?: string }> } })
+    ?.error?.errors?.[0]?.reason;
   if (reason === "quotaExceeded") return "the daily API quota is used up.";
   return reason ? `request failed (${reason}).` : undefined;
 };
@@ -123,9 +119,7 @@ export class YouTubeChannelClient implements ContentSourceClient {
           title: item.snippet?.title?.trim() || "Video",
           subtitle: item.contentDetails?.videoPublishedAt?.slice(0, 10),
           url: `https://www.youtube.com/watch?v=${videoId}`,
-          image: httpsOrUndefined(
-            thumbs.medium?.url ?? thumbs.default?.url
-          ),
+          image: httpsOrUndefined(thumbs.medium?.url ?? thumbs.default?.url),
         },
       ];
     });
