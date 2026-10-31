@@ -20,6 +20,16 @@ export async function getQRAsSVG(props: QRPropsSVG) {
     fgColor = DEFAULT_FGCOLOR,
     margin = DEFAULT_MARGIN,
     imageSettings,
+    // Styling props this plain renderer does not support; keep them off <svg>.
+    eyeColor: _eyeColor,
+    dotColor: _dotColor,
+    bodyPattern: _bodyPattern,
+    cornerEyePattern: _cornerEyePattern,
+    cornerEyeDotPattern: _cornerEyeDotPattern,
+    isOGContext: _isOGContext,
+    templateId: _templateId,
+    customTemplate: _customTemplate,
+    customProps: _customProps,
     ...otherProps
   } = props;
 
@@ -42,9 +52,18 @@ export async function getQRAsSVG(props: QRPropsSVG) {
       cells = excavateModules(cells, calculatedImageSettings.excavation);
     }
 
-    const base64Image = await fetch(
-      `https://wsrv.nl/?url=${imageSettings.src}&w=100&h=100&encoding=base64`
-    ).then((res) => res.text());
+    const base64Image = imageSettings.src.startsWith("data:")
+      ? imageSettings.src
+      : await fetch(
+          `https://wsrv.nl/?url=${encodeURIComponent(imageSettings.src)}&w=100&h=100&encoding=base64`
+        ).then((res) => {
+          if (!res.ok) {
+            throw new Error(
+              `Failed to load QR logo (${res.status}): ${imageSettings.src}`
+            );
+          }
+          return res.text();
+        });
 
     image = (
       <image

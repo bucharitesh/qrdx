@@ -19,6 +19,7 @@ export function UndoRedoButtons({
         <Button
           variant="ghost"
           size="icon"
+          aria-label="Undo"
           disabled={disabled || !canUndo()}
           {...props}
           onClick={undo}
@@ -31,6 +32,7 @@ export function UndoRedoButtons({
         <Button
           variant="ghost"
           size="icon"
+          aria-label="Redo"
           disabled={disabled || !canRedo()}
           {...props}
           onClick={redo}

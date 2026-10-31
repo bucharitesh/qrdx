@@ -2,6 +2,25 @@
   "name": "@qrdx/cli",
   "version": "0.0.4",
   "description": "QR code generator CLI for developers",
+  "keywords": [
+    "qr-code",
+    "qrcode",
+    "qr-code-generator",
+    "cli",
+    "svg",
+    "png"
+  ],
+  "homepage": "https://qrdx.dev/docs",
+  "bugs": {
+    "url": "https://github.com/bucharitesh/qrdx/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bucharitesh/qrdx.git",
+    "directory": "packages/cli"
+  },
+  "license": "AGPL-3.0-or-later",
+  "author": "Ritesh Bucha",
   "bin": {
     "qrdx": "./dist/index.js"
   },
@@ -25,20 +44,14 @@
     "react": "19.2.4",
     "react-dom": "19.2.4"
   },
-  "peerDependencies": {
+  "optionalDependencies": {
     "sharp": "^0.34.2"
-  },
-  "peerDependenciesMeta": {
-    "sharp": {
-      "optional": true
-    }
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
     "@types/node": "^25.1.0",
     "@types/react": "19.2.7",
     "@types/react-dom": "19.2.3",
-    "sharp": "^0.34.2",
     "tsup": "^8.5.1",
     "typescript": "5.9.3",
     "vitest": "^4.0.18"

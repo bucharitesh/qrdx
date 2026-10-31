@@ -225,6 +225,53 @@ describe("generate command", () => {
     });
   });
 
+  describe("flag validation", () => {
+    const invalid: [string, string[], string][] = [
+      ["--level", ["--level", "X"], 'Invalid --level "X"'],
+      ["--body", ["--body", "blob"], 'Invalid --body "blob"'],
+      ["--eye", ["--eye", "blob"], 'Invalid --eye "blob"'],
+      ["--dot", ["--dot", "blob"], 'Invalid --dot "blob"'],
+      ["--template", ["--template", "arrow"], 'Invalid --template "arrow"'],
+      ["--size", ["--size", "abc"], 'Invalid --size "abc"'],
+      ["--margin", ["--margin", "-1"], 'Invalid --margin "-1"'],
+      ["--fg", ["--fg", '{"type":"linear"'], "Invalid gradient JSON"],
+      ["--bg", ["--bg", '{"type":"linear","stops":[]}'], "Invalid gradient"],
+      ["-o", ["-o", "qr.jpg"], 'Unsupported output format ".jpg"'],
+      ["unknown", ["--colour", "red"], 'Unknown option "--colour"'],
+    ];
+
+    for (const [name, flags, message] of invalid) {
+      it(`rejects a bad ${name} value`, () => {
+        const out = tmp(`invalid-${name.replace(/-/g, "")}.svg`);
+        cleanups.push(out);
+        const { exitCode, stdout, stderr } = runCli([
+          "generate",
+          "https://qrdx.dev",
+          "-o",
+          out,
+          ...flags,
+        ]);
+        expect(exitCode).toBe(1);
+        expect(stdout + stderr).toContain(message);
+        expect(existsSync(out)).toBe(false);
+      });
+    }
+
+    it("accepts a lowercase --level", () => {
+      const out = tmp("level-lower.svg");
+      cleanups.push(out);
+      const { exitCode } = runCli([
+        "generate",
+        "https://qrdx.dev",
+        "-l",
+        "h",
+        "-o",
+        out,
+      ]);
+      expect(exitCode).toBe(0);
+    });
+  });
+
   describe("success output", () => {
     it("prints saved path and size when -o is provided", () => {
       const out = tmp("success-msg.svg");

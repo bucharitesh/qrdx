@@ -1,21 +1,22 @@
 import type { Metadata } from "next";
+import { AI_REQUEST_FREE_TIER_LIMIT } from "@/lib/constants";
+import { createMetadata } from "@/lib/metadata";
 import { AIAnnouncement } from "./components/ai-announcement";
 import { AIChatHero } from "./components/ai-chat-hero";
 
-export const metadata: Metadata = {
-  title: "AI QR Code Generator — Free, Instant, No Signup | QRdx",
-  description:
-    "Generate stunning AI-designed QR codes for free. Describe your vision and our AI creates custom QR code styles with real-time preview. Beautiful, branded QR codes in seconds — no signup required.",
-  keywords:
-    "ai qr code generator, free ai qr code, qr code ai design, ai qr code maker, branded qr codes, qr code style generator, ai custom qr code",
-  robots: "index, follow",
-  openGraph: {
-    title: "AI QR Code Generator — Free, Instant, No Signup | QRdx",
-    description:
-      "Generate beautiful AI-designed QR codes for free. Describe your brand vision and get a custom QR code in seconds.",
-    url: "https://qrdx.dev/ai",
-  },
-};
+export const metadata: Metadata = createMetadata({
+  title: "AI QR Code Generator — Design QR Codes From a Prompt",
+  description: `Describe your brand or style and QRdx's AI designs a custom QR code theme with live preview. Free accounts include ${AI_REQUEST_FREE_TIER_LIMIT} AI generations; Pro unlocks unlimited.`,
+  keywords: [
+    "ai qr code generator",
+    "ai qr code design",
+    "ai qr code maker",
+    "branded qr codes",
+    "qr code style generator",
+    "custom qr code ai",
+  ],
+  path: "/ai",
+});
 
 export default function AiPage() {
   return (

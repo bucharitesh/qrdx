@@ -11,10 +11,10 @@
 
 import { randomBytes } from "node:crypto";
 import { neon } from "@neondatabase/serverless";
-import { oauthApp } from "../../../packages/database/schema";
 import cuid from "cuid";
-import { drizzle } from "drizzle-orm/neon-http";
 import { config } from "dotenv";
+import { drizzle } from "drizzle-orm/neon-http";
+import { oauthApp } from "../../../packages/database/schema";
 import { generateSecureToken, hashSecret } from "../lib/oauth";
 
 config({ path: ".env.local" });

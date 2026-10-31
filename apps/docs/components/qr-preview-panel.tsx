@@ -3,6 +3,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import type React from "react";
 import { lazy } from "react";
+import { DEFAULT_QR_LOGO } from "@/lib/constants";
 import { useQREditorStore } from "@/store/editor-store";
 import type { QRStyle } from "@/types/theme";
 import ExamplesPreviewContainer from "./editor/theme-preview/examples-preview-container";
@@ -70,7 +71,7 @@ const QRPreviewPanel: React.FC<QRPreviewPanelProps> = ({ style }) => {
                   eyeColor={style.eyeColor}
                   fgColor={style.fgColor}
                   hideLogo={!style.showLogo}
-                  logo={style.customLogo}
+                  logo={style.customLogo ?? DEFAULT_QR_LOGO}
                   scale={4}
                   templateId={style.templateId}
                   value={value}

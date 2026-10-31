@@ -1,0 +1,84 @@
+# Self-hosted QRdx: Postgres, a Neon-compatible HTTP proxy, a one-shot
+# schema sync job and the web app. Untested reference setup.
+#
+#   cp .env.example .env    # set BETTER_AUTH_SECRET and an OAuth provider
+#   docker compose up -d --build
+#
+# Guide: apps/docs/content/docs/self-hosting.mdx (https://qrdx.dev/docs/self-hosting)
+
+name: qrdx
+
+x-database-env: &database-env
+  DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD:-postgres}@db:5432/qrdx
+  # The app queries Postgres through Neon's serverless HTTP driver; this routes
+  # those queries to the proxy below instead of Neon's cloud endpoint.
+  DATABASE_HTTP_ENDPOINT: http://db-proxy:4444/sql
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: qrdx
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d qrdx"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  # Speaks Neon's HTTP query protocol in front of plain Postgres.
+  # Bound to localhost so `pnpm dev` on the host can use it as well.
+  db-proxy:
+    image: ghcr.io/timowilhelm/local-neon-http-proxy:main
+    restart: unless-stopped
+    environment:
+      PG_CONNECTION_STRING: postgresql://postgres:${POSTGRES_PASSWORD:-postgres}@db:5432/qrdx
+    ports:
+      - "127.0.0.1:4444:4444"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # Syncs the schema (drizzle-kit push over a direct Postgres connection), then exits.
+  migrate:
+    build:
+      context: .
+      target: migrator
+    environment:
+      DATABASE_URL: postgresql://postgres:${POSTGRES_PASSWORD:-postgres}@db:5432/qrdx
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+
+  app:
+    build:
+      context: .
+      target: runner
+      args:
+        NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-}
+        NEXT_PUBLIC_POSTHOG_KEY: ${NEXT_PUBLIC_POSTHOG_KEY:-}
+        NEXT_PUBLIC_POSTHOG_HOST: ${NEXT_PUBLIC_POSTHOG_HOST:-}
+        NEXT_PUBLIC_FEATUREBASE_APP_ID: ${NEXT_PUBLIC_FEATUREBASE_APP_ID:-}
+        NEXT_PUBLIC_QRDX_PRO_MONTHLY_PRODUCT_ID: ${NEXT_PUBLIC_QRDX_PRO_MONTHLY_PRODUCT_ID:-}
+        NEXT_PUBLIC_QRDX_PRO_YEARLY_PRODUCT_ID: ${NEXT_PUBLIC_QRDX_PRO_YEARLY_PRODUCT_ID:-}
+    image: qrdx:latest
+    restart: unless-stopped
+    env_file: .env
+    # Overrides any DATABASE_URL in .env so the app always uses the db service.
+    environment: *database-env
+    ports:
+      - "3000:3000"
+    depends_on:
+      db-proxy:
+        condition: service_started
+      migrate:
+        condition: service_completed_successfully
+
+volumes:
+  db-data:

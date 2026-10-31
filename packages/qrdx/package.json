@@ -1,6 +1,29 @@
 {
   "name": "qrdx",
   "version": "0.0.46",
+  "description": "Customizable QR code generator for React: SVG and canvas rendering, dot and eye patterns, gradients, logos, templates, PNG/SVG/PDF export and QR scanning.",
+  "keywords": [
+    "qr-code",
+    "qrcode",
+    "qr-code-generator",
+    "react-qr-code",
+    "react",
+    "svg",
+    "typescript",
+    "qr-scanner"
+  ],
+  "homepage": "https://qrdx.dev/docs",
+  "bugs": {
+    "url": "https://github.com/bucharitesh/qrdx/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bucharitesh/qrdx.git",
+    "directory": "packages/qrdx"
+  },
+  "license": "AGPL-3.0-or-later",
+  "author": "Ritesh Bucha",
+  "sideEffects": false,
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/src/index.d.ts",
@@ -16,13 +39,16 @@
       }
     },
     "./types": {
-      "types": "./dist/types/index.d.ts",
-      "import": "./types/index.ts",
-      "require": "./types/index.ts"
-    }
-  },
-  "bin": {
-    "qrdx": "./dist/cli.js"
+      "import": {
+        "types": "./dist/types/index.d.ts",
+        "default": "./dist/types/index.mjs"
+      },
+      "require": {
+        "types": "./dist/types/index.d.ts",
+        "default": "./dist/types/index.js"
+      }
+    },
+    "./package.json": "./package.json"
   },
   "files": [
     "dist",
@@ -30,29 +56,33 @@
     "src"
   ],
   "scripts": {
-    "build": "tsup && tsc --project tsconfig.build.json --emitDeclarationOnly",
+    "build": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\" && tsup && tsc --project tsconfig.build.json --emitDeclarationOnly",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "jspdf": "^3.0.4",
     "jsqr": "^1.4.0",
-    "react": "^19.0.0",
     "zod": "^4.3.5"
-  },
-  "optionalDependencies": {
-    "sharp": "^0.34.2"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
     "@types/node": "25.1.0",
     "@types/react": "19.2.7",
     "@types/react-dom": "19.2.3",
+    "jspdf": "^3.0.4",
     "next": "16.1.1",
+    "react": "^19.0.0",
     "tsup": "^8.5.1",
     "typescript": "5.9.3"
   },
   "peerDependencies": {
+    "jspdf": "^2.5.0 || ^3.0.0",
+    "react": ">=18.0.0",
     "react-dom": ">=18.0.0"
+  },
+  "peerDependenciesMeta": {
+    "jspdf": {
+      "optional": true
+    }
   }
 }

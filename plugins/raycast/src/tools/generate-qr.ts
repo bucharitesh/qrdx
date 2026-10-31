@@ -49,6 +49,7 @@ interface Input {
   size?: number;
 }
 
+// biome-ignore lint/suspicious/useAwait: Tool.Confirmation must return a Promise
 export const confirmation: Tool.Confirmation<Input> = async (input) => {
   return {
     message: `Save QR code for "${input.url}" to Downloads?`,
@@ -89,7 +90,7 @@ export default function generateQR(input: Input): string {
       : {}),
     ...(input.fgColor ? { fgColor: input.fgColor } : {}),
     ...(input.bgColor ? { bgColor: input.bgColor } : {}),
-    ...(input.templateId !== undefined ? { templateId: input.templateId } : {}),
+    ...(input.templateId === undefined ? {} : { templateId: input.templateId }),
     ...(input.level ? { level: input.level } : {}),
     ...(input.logo ? { logo: input.logo } : {}),
     size: String(input.size ?? 512),

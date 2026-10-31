@@ -5,9 +5,11 @@ import {
   initializeIntegrations,
 } from "@repo/integrations";
 import { ChevronLeft, ExternalLink } from "lucide-react";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SectionHeader } from "@/components/sections/section-header";
+import { createMetadata } from "@/lib/metadata";
 import { IntegrationCard } from "../components/integrations-grid";
 
 initializeIntegrations();
@@ -25,16 +27,19 @@ interface IntegrationPageProps {
   params: Promise<{ slug: string }>;
 }
 
-export async function generateMetadata({ params }: IntegrationPageProps) {
+export async function generateMetadata({
+  params,
+}: IntegrationPageProps): Promise<Metadata> {
   const { slug } = await params;
   initializeIntegrations();
   const registry = getIntegrationRegistry();
   const integration = registry.get(slug);
   if (!integration) return {};
-  return {
-    title: `${integration.name} Integration | QRdx`,
+  return createMetadata({
+    title: `${integration.name} Integration`,
     description: integration.description,
-  };
+    path: `/integrations/${integration.slug}`,
+  });
 }
 
 export default async function IntegrationDetailPage({

@@ -61,9 +61,9 @@ export async function getIntegration(
       };
     } catch (error) {
       console.error(`Failed to auto-refresh token for ${provider}:`, error);
-      // Return the integration anyway, but it might be expired
-      // The calling code can handle the error
-      return decryptedIntegration;
+      // Mirror the "error" status persisted by the refresh so callers treat the
+      // integration as disconnected instead of using an expired token.
+      return { ...decryptedIntegration, status: "error" };
     }
   }
 

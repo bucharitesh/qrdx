@@ -18,6 +18,10 @@
     "test": {
       "dependsOn": ["^test"]
     },
+    "typecheck": {
+      "dependsOn": ["^build"],
+      "outputs": []
+    },
     "analyze": {
       "dependsOn": ["^analyze"]
     },

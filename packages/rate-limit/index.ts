@@ -18,22 +18,30 @@ const noopRateLimiter: RateLimiter = {
   }),
 };
 
-function isUpstashConfigured() {
-  const { UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN } = keys();
-  return Boolean(UPSTASH_REDIS_REST_URL && UPSTASH_REDIS_REST_TOKEN);
+// Accepts the Upstash names and the Vercel KV names (KV_REST_API_*).
+function getUpstashCredentials(): { url: string; token: string } | null {
+  const env = keys();
+  const url = env.UPSTASH_REDIS_REST_URL ?? env.KV_REST_API_URL;
+  const token = env.UPSTASH_REDIS_REST_TOKEN ?? env.KV_REST_API_TOKEN;
+  return url && token ? { url, token } : null;
 }
 
-export const redis = isUpstashConfigured()
-  ? new Redis({
-      url: keys().UPSTASH_REDIS_REST_URL!,
-      token: keys().UPSTASH_REDIS_REST_TOKEN!,
-    })
-  : null;
+const credentials = getUpstashCredentials();
+
+export const redis = credentials ? new Redis(credentials) : null;
+
+let warnedNoopInProduction = false;
 
 export const createRateLimiter = (
-  props: Omit<RatelimitConfig, "redis">,
+  props: Omit<RatelimitConfig, "redis">
 ): RateLimiter => {
   if (!redis) {
+    if (process.env.NODE_ENV === "production" && !warnedNoopInProduction) {
+      warnedNoopInProduction = true;
+      console.warn(
+        "[rate-limit] UPSTASH_REDIS_REST_URL/TOKEN (or KV_REST_API_URL/TOKEN) not set: rate limiting is disabled."
+      );
+    }
     return noopRateLimiter;
   }
 
@@ -51,7 +59,7 @@ export const createRateLimiter = (
         if (process.env.NODE_ENV === "development") {
           console.warn(
             "[rate-limit] Upstash unavailable, allowing request in development:",
-            error instanceof Error ? error.message : error,
+            error instanceof Error ? error.message : error
           );
           return noopRateLimiter.limit(identifier);
         }

@@ -13,7 +13,9 @@ import {
   BODY_PATTERN,
   CORNER_EYE_DOT_PATTERNS,
   CORNER_EYE_PATTERNS,
+  colorConfigSchema,
   DEFAULT_MARGIN,
+  errorLevelSchema,
   getTemplateIds,
 } from "qrdx";
 import { saveOutput } from "../render/output";
@@ -47,14 +49,69 @@ interface GenerateFlags {
  */
 function parseColorFlag(value: string): ColorConfig {
   const trimmed = value.trim();
-  if (trimmed.startsWith("{")) {
-    try {
-      return JSON.parse(trimmed) as ColorConfig;
-    } catch {
-      // fall through to raw string
+  if (!trimmed.startsWith("{")) {
+    return trimmed;
+  }
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(trimmed);
+  } catch {
+    throw new Error(`Invalid gradient JSON: ${trimmed}`);
+  }
+  const result = colorConfigSchema.safeParse(parsed);
+  if (!result.success) {
+    throw new Error(
+      `Invalid gradient: ${trimmed}\nExpected {"type":"linear"|"radial","stops":[{"color":"#hex","offset":0-100}, ...]} with at least 2 stops.`
+    );
+  }
+  return result.data;
+}
+
+function assertOneOf(
+  flag: string,
+  value: string | undefined,
+  allowed: readonly string[]
+): void {
+  if (value !== undefined && !allowed.includes(value)) {
+    throw new Error(
+      `Invalid ${flag} "${value}". Expected one of: ${allowed.join(", ")}`
+    );
+  }
+}
+
+function parseIntegerFlag(
+  flag: string,
+  value: string | undefined,
+  min: number
+) {
+  const parsed = Number(value);
+  if (!(value && Number.isInteger(parsed) && parsed >= min)) {
+    throw new Error(
+      `Invalid ${flag} "${value ?? ""}". Expected a whole number ≥ ${min}.`
+    );
+  }
+  return parsed;
+}
+
+/** Rejects bad flag values up front instead of failing deep inside rendering. */
+function validateFlags(flags: GenerateFlags): void {
+  assertOneOf("--level", flags.level, errorLevelSchema.options);
+  assertOneOf("--body", flags.body, BODY_PATTERN);
+  assertOneOf("--eye", flags.eye, CORNER_EYE_PATTERNS);
+  assertOneOf("--dot", flags.dot, CORNER_EYE_DOT_PATTERNS);
+  assertOneOf(
+    "--template",
+    flags.template,
+    getTemplateIds().filter((id) => id !== "default")
+  );
+  if (flags.output !== undefined) {
+    const ext = extname(flags.output).toLowerCase();
+    if (!["", ".svg", ".png"].includes(ext)) {
+      throw new Error(
+        `Unsupported output format "${ext}". Use a .svg or .png file name.`
+      );
     }
   }
-  return trimmed;
 }
 
 const isCI = process.env.CI === "true";
@@ -108,12 +165,15 @@ function parseFlags(args: string[]): GenerateFlags {
     switch (arg) {
       case "-o":
       case "--output":
+        if (!next) {
+          throw new Error(`${arg} needs a file path, e.g. ${arg} qr.svg`);
+        }
         flags.output = next;
         i += 2;
         break;
       case "-l":
       case "--level":
-        flags.level = next as ErrorLevel;
+        flags.level = next?.toUpperCase() as ErrorLevel;
         i += 2;
         break;
       case "--body":
@@ -149,11 +209,11 @@ function parseFlags(args: string[]): GenerateFlags {
         i += 2;
         break;
       case "--margin":
-        flags.margin = next ? Number.parseInt(next, 10) : DEFAULT_MARGIN;
+        flags.margin = parseIntegerFlag(arg, next, 0);
         i += 2;
         break;
       case "--size":
-        flags.size = next ? Number.parseInt(next, 10) : 512;
+        flags.size = parseIntegerFlag(arg, next, 1);
         i += 2;
         break;
       case "--no-logo":
@@ -165,10 +225,13 @@ function parseFlags(args: string[]): GenerateFlags {
         i += 2;
         break;
       default:
-        i++;
+        throw new Error(
+          `Unknown option "${arg}". Run qrdx --help to see all options.`
+        );
     }
   }
 
+  validateFlags(flags);
   return flags;
 }
 

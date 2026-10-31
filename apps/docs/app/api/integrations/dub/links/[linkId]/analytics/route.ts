@@ -10,7 +10,7 @@ const analyticsQuerySchema = z.object({
     .enum(["timeseries", "countries", "devices", "browsers", "os"])
     .default("timeseries"),
   interval: z.enum(["24h", "7d", "30d", "90d"]).default("7d"),
-  timezone: z.string().min(1).default("UTC"),
+  timezone: z.string().min(1).max(64).default("UTC"),
 });
 
 type RouteContext = {
@@ -35,7 +35,7 @@ export async function GET(request: Request, context: RouteContext) {
     }
 
     const { linkId } = await context.params;
-    if (!linkId) {
+    if (!linkId || linkId.length > 200) {
       return NextResponse.json(
         { error: "Dub link ID is required" },
         { status: 400 },
@@ -70,10 +70,7 @@ export async function GET(request: Request, context: RouteContext) {
   } catch (error) {
     console.error("Error fetching Dub analytics:", error);
     return NextResponse.json(
-      {
-        error: "Failed to fetch Dub analytics",
-        details: error instanceof Error ? error.message : "Unknown error",
-      },
+      { error: "Failed to fetch Dub analytics" },
       { status: 500 },
     );
   }

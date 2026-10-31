@@ -1,5 +1,3 @@
-import jsQR from "jsqr";
-
 /**
  * Downloads the processed image data as a PNG file
  */
@@ -36,18 +34,22 @@ export const downloadImageData = (
   document.body.removeChild(downloadLink);
 };
 
-const decodeQRCode = (
+const decodeQRCode = async (
   imgElement: HTMLImageElement,
   ratio: number,
   dx: number,
   dy: number
 ) => {
+  // Loaded on demand so jsqr stays out of bundles that never scan.
+  const { default: jsQR } = await import("jsqr");
+
   return new Promise((resolve) => {
     // Ensure image is fully loaded
     if (imgElement.complete) {
       performDecode();
     } else {
       imgElement.onload = () => performDecode();
+      imgElement.onerror = () => resolve(null);
     }
 
     function performDecode() {
@@ -122,13 +124,6 @@ const decodeQRCode = (
 
             const imageData = ctx.getImageData(0, 0, width, height);
 
-            downloadImageData(
-              imageData,
-              width,
-              height,
-              `qr_processed_${width}x${height}_scale${scaleRatio}_${Date.now()}.png`
-            );
-
             // Add error handling for QR detection
             try {
               const qrCode = jsQR(imageData.data, width, height);
@@ -142,7 +137,6 @@ const decodeQRCode = (
           } catch (drawError) {
             console.error("Canvas drawing error:", drawError);
           }
-          resolve(null);
         }
 
         // If no QR code found at any scale

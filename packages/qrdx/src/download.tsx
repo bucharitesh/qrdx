@@ -102,7 +102,15 @@ function getFileExtension(format: DownloadFormat): string {
  * Convert QR code to PDF format
  */
 async function getQRAsPDF(qrProps: QRProps): Promise<string> {
-  const { jsPDF } = await import("jspdf");
+  // jspdf is an optional peer dependency, loaded only when a PDF is requested.
+  let jsPDF: typeof import("jspdf").jsPDF;
+  try {
+    ({ jsPDF } = await import("jspdf"));
+  } catch (error) {
+    throw new Error(
+      `PDF export needs the optional "jspdf" package. Install it with \`npm install jspdf\`. (${error})`
+    );
+  }
 
   // Get the SVG as a data URI
   const svgDataUri = await getQRAsSVGDataUri(qrProps);
@@ -294,32 +302,28 @@ export async function copyQRCodeToClipboard(
       size: size.width,
     };
 
-    // Get canvas
-    const canvas = (await getQRAsCanvas(
-      propsWithSize,
-      "image/png",
-      true
-    )) as HTMLCanvasElement;
+    // Render inside a promise handed straight to ClipboardItem: Safari rejects
+    // clipboard writes that start after an await (outside the user gesture).
+    const imageBlob = getQRAsCanvas(propsWithSize, "image/png", true).then(
+      (result) =>
+        new Promise<Blob>((resolve, reject) => {
+          const canvas = result as HTMLCanvasElement;
+          canvas.toBlob((canvasBlob) => {
+            canvas.remove();
+            if (canvasBlob) {
+              resolve(canvasBlob);
+            } else {
+              reject(new Error("Failed to create blob from canvas"));
+            }
+          }, "image/png");
+        })
+    );
 
-    // Convert canvas to blob
-    const imageBlob = await new Promise<Blob>((resolve, reject) => {
-      canvas.toBlob((canvasBlob) => {
-        if (canvasBlob) {
-          resolve(canvasBlob);
-        } else {
-          reject(new Error("Failed to create blob from canvas"));
-        }
-      }, "image/png");
-    });
-
-    // Copy to clipboard
     await navigator.clipboard.write([
       new ClipboardItem({
         "image/png": imageBlob,
       }),
     ]);
-
-    canvas.remove();
   } catch (error) {
     console.error("Error copying to clipboard:", error);
     throw error;

@@ -128,6 +128,7 @@ export function useKeyboardShortcut(
   }, [onKeyDown]);
 
   // Register/unregister the listener
+  // biome-ignore lint/correctness/useExhaustiveDependencies: keyed on the individual option fields so a new options object each render does not re-register
   useEffect(() => {
     setListeners((prev) => [
       ...prev.filter((listener) => listener.id !== id),

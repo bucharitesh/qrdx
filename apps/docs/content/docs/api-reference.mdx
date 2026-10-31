@@ -35,11 +35,11 @@ import { QRCode } from 'qrdx';
 | `fgColor` | `ColorConfig` | `#000000` | QR code color |
 | `bgColor` | `ColorConfig` | `#ffffff` | Background color |
 | `eyeColor` | `ColorConfig` | `fgColor` | Corner marker color |
-| `dotColor` | `ColorConfig` | `fgColor` | Data dot color |
+| `dotColor` | `ColorConfig` | `fgColor` | Color of the dot inside each corner eye |
 | `bodyPattern` | `BodyPattern` | `'circle'` | Data dot pattern |
 | `cornerEyePattern` | `CornerEyePattern` | `'square'` | Corner marker pattern |
 | `cornerEyeDotPattern` | `CornerEyeDotPattern` | `'square'` | Corner dot pattern |
-| `hideLogo` | `boolean` | `true` | Hide/show logo |
+| `hideLogo` | `boolean` | `false` | Hide the logo. No logo is drawn unless `logo` is set |
 | `logo` | `string` | Default | Logo URL |
 | `templateId` | `string` | `'default'` | Template ID |
 | `customTemplate` | `TemplateDefinition` | — | Custom template |
@@ -231,15 +231,38 @@ type ErrorLevel = 'L' | 'M' | 'Q' | 'H';
 ```tsx
 type BodyPattern =
   | 'circle'
+  | 'circle-large'
   | 'square'
   | 'diamond'
   | 'circle-mixed'
   | 'pacman'
   | 'rounded'
-  | 'clean-square';
+  | 'small-square'
+  | 'vertical-line';
 
-type CornerEyePattern = 'square' | 'rounded' | 'circle';
-type CornerEyeDotPattern = 'square' | 'rounded' | 'circle';
+type CornerEyePattern =
+  | 'square'
+  | 'rounded'
+  | 'gear'
+  | 'circle'
+  | 'diya'
+  | 'extra-rounded'
+  | 'message'
+  | 'pointy'
+  | 'curly';
+
+type CornerEyeDotPattern =
+  | 'square'
+  | 'rounded'
+  | 'circle'
+  | 'diamond'
+  | 'message'
+  | 'message-reverse'
+  | 'diya'
+  | 'diya-reverse'
+  | 'rounded-triangle'
+  | 'star'
+  | 'banner';
 ```
 
 ### Download Types

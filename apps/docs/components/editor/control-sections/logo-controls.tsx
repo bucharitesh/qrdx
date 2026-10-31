@@ -1,12 +1,21 @@
 "use client";
 
+import { toast } from "@repo/design-system";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { Switch } from "@repo/design-system/components/ui/switch";
 import * as React from "react";
 import ControlSection from "@/components/editor/control-section";
+import { MAX_LOGO_FILE_SIZE } from "@/lib/constants";
 import type { ThemeStyles } from "@/types/theme";
+
+const ALLOWED_LOGO_TYPES = [
+  "image/png",
+  "image/jpeg",
+  "image/webp",
+  "image/svg+xml",
+];
 
 interface LogoControlsProps {
   style: Partial<ThemeStyles>;
@@ -19,14 +28,35 @@ export function LogoControls({ style, onStyleChange }: LogoControlsProps) {
   // Handle custom logo file upload
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const result = reader.result as string;
-        onStyleChange({ ...style, customLogo: result });
-      };
-      reader.readAsDataURL(file);
+    if (!file) return;
+
+    // Logos are inlined as data URLs into the saved theme and local storage
+    if (!ALLOWED_LOGO_TYPES.includes(file.type)) {
+      toast.error("Unsupported logo format", {
+        description: "Use a PNG, JPG, WebP or SVG image.",
+      });
+      e.target.value = "";
+      return;
     }
+
+    if (file.size > MAX_LOGO_FILE_SIZE) {
+      toast.error("Logo is too large", {
+        description: `Logos must be ${MAX_LOGO_FILE_SIZE / 1024 / 1024}MB or smaller.`,
+      });
+      e.target.value = "";
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === "string") {
+        onStyleChange({ ...style, customLogo: reader.result });
+      }
+    };
+    reader.onerror = () => {
+      toast.error("Failed to read logo file");
+    };
+    reader.readAsDataURL(file);
   };
 
   // Clear custom logo
@@ -59,7 +89,7 @@ export function LogoControls({ style, onStyleChange }: LogoControlsProps) {
                 Upload Custom Logo
               </Label>
               <Input
-                accept="image/*"
+                accept={ALLOWED_LOGO_TYPES.join(",")}
                 id="logo-upload"
                 onChange={handleLogoUpload}
                 ref={fileInputRef}
@@ -67,7 +97,8 @@ export function LogoControls({ style, onStyleChange }: LogoControlsProps) {
                 className="text-xs"
               />
               <p className="mt-1 text-muted-foreground text-xs">
-                Supports PNG, JPG, SVG
+                Supports PNG, JPG, WebP, SVG (max{" "}
+                {MAX_LOGO_FILE_SIZE / 1024 / 1024}MB)
               </p>
             </div>
             {style.customLogo && (

@@ -1,0 +1,68 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - staging
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  # Placeholders so env validation passes during type generation and tests.
+  # Nothing in this workflow connects to a database or any external service.
+  DATABASE_URL: postgresql://ci:ci@localhost:5432/ci
+  NEXT_PUBLIC_APP_URL: http://localhost:3000
+  BETTER_AUTH_SECRET: ci-placeholder-secret-not-used-for-anything-real
+  NEXT_TELEMETRY_DISABLED: 1
+  TURBO_TELEMETRY_DISABLED: 1
+
+jobs:
+  check:
+    name: Typecheck, test, lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      # Uses the version pinned in package.json "packageManager".
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # The docs app, CLI and CLI tests consume qrdx from its dist/ output.
+      - name: Build qrdx
+        run: pnpm turbo build --filter=qrdx
+
+      - name: Typecheck packages
+        run: pnpm typecheck
+
+      - name: Typecheck docs app
+        run: |
+          pnpm --filter docs exec next typegen
+          pnpm typecheck:docs
+
+      - name: Test CLI
+        run: pnpm --filter @qrdx/cli test
+
+      - name: Test API
+        run: pnpm --filter api test
+
+      # Biome is a devDependency of apps/docs; run it over the whole repo.
+      - name: Lint (Biome)
+        run: ./apps/docs/node_modules/.bin/biome ci .

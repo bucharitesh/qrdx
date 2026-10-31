@@ -1,178 +1,20 @@
 /** biome-ignore-all lint/performance/noBarrelFile: false positive */
 /** biome-ignore-all lint/style/noMagicNumbers: false positive */
-/** biome-ignore-all lint/correctness/useImageSize: false positive */
-/** biome-ignore-all lint/a11y/noNoninteractiveElementInteractions: false positive */
-/** biome-ignore-all lint/performance/noImgElement: false positive */
-/** biome-ignore-all lint/complexity/noExcessiveCognitiveComplexity: false positive */
 
-/**
- * @license qrcode.react
- * Copyright (c) Paul O'Shannessy
- * SPDX-License-Identifier: ISC
- */
-import { type JSX, useEffect, useRef, useState } from "react";
-import type { QRProps, QRPropsCanvas } from "../types";
-import { normalizeColorConfig } from "../types/color";
-import qrcodegen from "./codegen";
-import {
-  DEFAULT_BGCOLOR,
-  DEFAULT_FGCOLOR,
-  DEFAULT_LEVEL,
-  DEFAULT_MARGIN,
-  DEFAULT_SIZE,
-  ERROR_LEVEL_MAP,
-} from "./constants";
-import {
-  excavateModules,
-  generatePath,
-  getImageSettings,
-  SUPPORTS_PATH2D,
-} from "./utils";
+import type { QRProps } from "../types";
+import { DEFAULT_SIZE } from "./constants";
 
 export * from "../types";
 export * from "./api";
 export * from "./detection";
 export * from "./download";
 export * from "./qr-code";
+// QRCodeCanvas is the only export that needs client-only hooks. It lives in
+// its own "use client" module (built as a separate entry) so the rest of the
+// package stays usable from React Server Components.
+export { QRCodeCanvas } from "./qr-code-canvas";
 export * from "./templates";
 export * from "./utils";
-
-export function QRCodeCanvas(props: QRPropsCanvas) {
-  const {
-    value,
-    size = DEFAULT_SIZE,
-    level = DEFAULT_LEVEL,
-    bgColor = DEFAULT_BGCOLOR,
-    fgColor = DEFAULT_FGCOLOR,
-    margin = DEFAULT_MARGIN,
-    style,
-    imageSettings,
-    ...otherProps
-  } = props;
-  const imgSrc = imageSettings?.src;
-  const _canvas = useRef<HTMLCanvasElement>(null);
-  const _image = useRef<HTMLImageElement>(null);
-
-  // We're just using this state to trigger rerenders when images load. We
-  // Don't actually read the value anywhere. A smarter use of useEffect would
-  // depend on this value.
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_isImgLoaded, setIsImageLoaded] = useState(false);
-
-  useEffect(() => {
-    // Always update the canvas. It's cheap enough and we want to be correct
-    // with the current state.
-    if (_canvas.current != null) {
-      const canvas = _canvas.current;
-
-      const ctx = canvas.getContext("2d");
-      if (!ctx) {
-        return;
-      }
-
-      let cells = qrcodegen.QrCode.encodeText(
-        value,
-        ERROR_LEVEL_MAP[level]
-      ).getModules();
-
-      const numCells = cells.length + margin * 2;
-      const calculatedImageSettings = getImageSettings(
-        cells,
-        size,
-        margin,
-        imageSettings
-      );
-
-      const image = _image.current;
-      const haveImageToRender =
-        calculatedImageSettings != null &&
-        image !== null &&
-        image.complete &&
-        image.naturalHeight !== 0 &&
-        image.naturalWidth !== 0;
-
-      if (haveImageToRender && calculatedImageSettings.excavation != null) {
-        cells = excavateModules(cells, calculatedImageSettings.excavation);
-      }
-
-      // We're going to scale this so that the number of drawable units
-      // matches the number of cells. This avoids rounding issues, but does
-      // result in some potentially unwanted single pixel issues between
-      // blocks, only in environments that don't support Path2D.
-      const pixelRatio = window.devicePixelRatio || 1;
-      canvas.height = canvas.width = size * pixelRatio;
-      const scale = (size / numCells) * pixelRatio;
-      ctx.scale(scale, scale);
-
-      // Draw solid background, only paint dark modules.
-      // Extract solid color from bgColor (canvas doesn't support gradient objects)
-      const bgColorNormalized = normalizeColorConfig(bgColor, DEFAULT_BGCOLOR);
-      ctx.fillStyle =
-        bgColorNormalized.type === "solid"
-          ? bgColorNormalized.color
-          : bgColorNormalized.stops[0]?.color || DEFAULT_BGCOLOR;
-      ctx.fillRect(0, 0, numCells, numCells);
-
-      // Extract solid color from fgColor (canvas doesn't support gradient objects)
-      const fgColorNormalized = normalizeColorConfig(fgColor, DEFAULT_FGCOLOR);
-      ctx.fillStyle =
-        fgColorNormalized.type === "solid"
-          ? fgColorNormalized.color
-          : fgColorNormalized.stops[0]?.color || DEFAULT_FGCOLOR;
-      if (SUPPORTS_PATH2D) {
-        // $FlowFixMe: Path2D c'tor doesn't support args yet.
-        ctx.fill(new Path2D(generatePath(cells, margin)));
-      } else {
-        cells.forEach((row, rdx) => {
-          row.forEach((cell, cdx) => {
-            if (cell) {
-              ctx.fillRect(cdx + margin, rdx + margin, 1, 1);
-            }
-          });
-        });
-      }
-
-      if (haveImageToRender) {
-        ctx.drawImage(
-          image,
-          calculatedImageSettings.x + margin,
-          calculatedImageSettings.y + margin,
-          calculatedImageSettings.w,
-          calculatedImageSettings.h
-        );
-      }
-    }
-  });
-
-  const canvasStyle = { height: size, width: size, ...style };
-  let img: JSX.Element | null = null;
-  if (imgSrc != null) {
-    img = (
-      <img
-        alt="QR code"
-        key={imgSrc}
-        onLoad={() => {
-          setIsImageLoaded(true);
-        }}
-        ref={_image}
-        src={imgSrc}
-        style={{ display: "none" }}
-      />
-    );
-  }
-  return (
-    <>
-      <canvas
-        height={size}
-        ref={_canvas}
-        style={canvasStyle}
-        width={size}
-        {...otherProps}
-      />
-      {img}
-    </>
-  );
-}
 
 export async function getQRAsSVGDataUri(props: QRProps) {
   // Import QRCodeSVG and render it to string
@@ -260,7 +102,7 @@ const getBase64Image = (imgUrl: string) =>
     img.onerror = () => {
       reject(
         new Error(
-          `Could not load image from ${imgUrl.substring(0, 100)}... Check CORS settings or use a data URL.`
+          `Could not load image from ${imgUrl.slice(0, 100)}... Check CORS settings or use a data URL.`
         )
       );
     };

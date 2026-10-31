@@ -1,7 +1,7 @@
-export type IntegrationLogoSet = {
+export interface IntegrationLogoSet {
   light: string;
   dark: string;
-};
+}
 
 export type IntegrationCapabilityKind =
   | "manual-url-parser"
@@ -14,23 +14,23 @@ export type IntegrationUiSurface =
   | "editor-content-form"
   | "settings-detail";
 
-export type IntegrationManualPattern = {
+export interface IntegrationManualPattern {
   id: string;
   label: string;
   pattern: string;
   example: string;
   contentType: string;
   targetField: string;
-};
+}
 
-export type IntegrationCapabilityBase = {
+export interface IntegrationCapabilityBase {
   kind: IntegrationCapabilityKind;
   id: string;
   label: string;
   description: string;
   surfaces: IntegrationUiSurface[];
   requiresConnection: boolean;
-};
+}
 
 export type ManualUrlParserCapability = IntegrationCapabilityBase & {
   kind: "manual-url-parser";

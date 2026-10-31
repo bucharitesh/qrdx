@@ -101,6 +101,7 @@ const ThemeControls = () => {
         <Button
           variant="ghost"
           size="sm"
+          aria-label="Random theme"
           className="size-6 p-1"
           onClick={randomize}
         >
@@ -130,6 +131,7 @@ const ThemeCycleButton: React.FC<ThemeCycleButtonProps> = ({
         <Button
           variant="ghost"
           size="icon"
+          aria-label={direction === "prev" ? "Previous theme" : "Next theme"}
           className={cn("aspect-square h-full shrink-0", className)}
           onClick={onClick}
           {...props}
