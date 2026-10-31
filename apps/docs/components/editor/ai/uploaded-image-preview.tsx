@@ -51,6 +51,7 @@ export function UploadedImagePreview({
             <Button
               variant="destructive"
               size="icon"
+              aria-label="Remove image"
               className={cn(
                 "absolute top-1 right-1 size-4 rounded-full transition-all",
               )}

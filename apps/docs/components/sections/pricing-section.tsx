@@ -112,7 +112,7 @@ export function PricingSection() {
           : proTier.polarMonthlyPriceId;
 
       if (!productId) {
-        toast.error("Product ID not found");
+        toast.error("Billing is not configured");
         setPendingTier(null);
         return;
       }

@@ -2,12 +2,12 @@ import { auth } from "@repo/auth/server";
 import { cn } from "@repo/design-system/lib/utils";
 import { headers } from "next/headers";
 import Link from "next/link";
-import { polar } from "@/lib/polar";
+import { isBillingConfigured, polar } from "@/lib/polar";
 
 export async function CustomerPortalLink() {
   const session = await auth.api.getSession({ headers: await headers() });
 
-  if (!session?.user.id) {
+  if (!(isBillingConfigured && session?.user.id)) {
     return null;
   }
 

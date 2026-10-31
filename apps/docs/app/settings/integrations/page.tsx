@@ -8,6 +8,7 @@ import {
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { env } from "@/lib/env";
+import { isIntegrationConfigured } from "@/lib/integration-oauth";
 import { SettingsHeader } from "../components/settings-header";
 import { IntegrationsClient } from "./components/integrations-client";
 
@@ -29,16 +30,7 @@ export default async function IntegrationsPage() {
   const integrationStatuses = await Promise.all(
     availableIntegrations.map(async (integration) => {
       try {
-        const isConfigured = (() => {
-          try {
-            getIntegrationConfigWithEnv(integration.slug, env);
-            return true;
-          } catch {
-            return false;
-          }
-        })();
-
-        if (!isConfigured) {
+        if (!isIntegrationConfigured(integration.slug)) {
           return {
             ...integration,
             isConfigured: false,

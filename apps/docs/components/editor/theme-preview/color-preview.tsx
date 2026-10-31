@@ -50,6 +50,7 @@ function ColorPreviewItem({
           <Button
             variant="ghost"
             size="icon"
+            aria-label="Edit color"
             onClick={() => focusColor(name as FocusColorId)}
             className="size-7 @max-3xl:size-6 [&>svg]:size-3.5"
           >

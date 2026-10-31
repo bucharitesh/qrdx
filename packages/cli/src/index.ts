@@ -99,7 +99,8 @@ ${BOLD}Generate Options:${RESET}
   --bg                Background color — hex or JSON gradient  ${DIM}(default: #ffffff)${RESET}
   --eye-color         Corner eye color — hex or JSON gradient  ${DIM}(default: matches --fg)${RESET}
   --dot-color         Corner dot color — hex or JSON gradient  ${DIM}(default: matches --fg)${RESET}
-  --logo              Logo URL for center image
+  --logo              Logo URL for center image (use with --level H)
+  --no-logo           Skip the logo prompt in interactive mode
   --margin            Quiet zone margin in modules  ${DIM}(default: 0)${RESET}
   --size              Output pixel size for SVG/PNG  ${DIM}(default: 512)${RESET}
   --template          Decorative template wrapper:
@@ -164,8 +165,9 @@ async function main(): Promise<void> {
     default:
       // If it looks like a URL or plain text, treat as implicit generate
       if (command.startsWith("-")) {
-        console.log(`Unknown command: ${command}`);
-        console.log(`Run ${BOLD}qrdx --help${RESET} for usage.`);
+        console.error(`Unknown command: ${command}`);
+        console.error(`Run ${BOLD}qrdx --help${RESET} for usage.`);
+        process.exitCode = 1;
       } else {
         showLogo();
         console.log();

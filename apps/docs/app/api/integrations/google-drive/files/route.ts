@@ -93,9 +93,9 @@ export async function GET(request: Request) {
 
     const result = await clientResult.driveClient.listFiles({
       pageSize,
-      pageToken: searchParams.get("pageToken") || undefined,
+      pageToken: searchParams.get("pageToken")?.slice(0, 1024) || undefined,
       query: getDriveQuery(
-        searchParams.get("search"),
+        searchParams.get("search")?.slice(0, 200) ?? null,
         searchParams.get("sourceType"),
       ),
       orderBy: "modifiedTime desc",
@@ -105,10 +105,7 @@ export async function GET(request: Request) {
   } catch (error) {
     console.error("Error fetching Google Drive files:", error);
     return NextResponse.json(
-      {
-        error: "Failed to fetch Google Drive files",
-        details: error instanceof Error ? error.message : "Unknown error",
-      },
+      { error: "Failed to fetch Google Drive files" },
       { status: 500 },
     );
   }

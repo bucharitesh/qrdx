@@ -11,7 +11,10 @@ import type { NextRequest } from "next/server";
 import { OAUTH_AUTHORIZATION_CODE_EXPIRY_SECONDS } from "@/lib/constants";
 import {
   generateSecureToken,
+  hashToken,
+  isValidPkceValue,
   oauthError,
+  PKCE_METHODS,
   parseScopes,
   validateRedirectUri,
   validateScopes,
@@ -42,8 +45,28 @@ export async function GET(req: NextRequest) {
     );
   }
 
+  if (codeChallenge) {
+    if (
+      !PKCE_METHODS.includes(
+        codeChallengeMethod as (typeof PKCE_METHODS)[number],
+      )
+    ) {
+      return oauthError(
+        "invalid_request",
+        "Unsupported code_challenge_method (use S256)",
+      );
+    }
+    if (!isValidPkceValue(codeChallenge)) {
+      return oauthError("invalid_request", "Malformed code_challenge");
+    }
+  }
+
   const [app] = await db
-    .select({ id: oauthApp.id, redirectUris: oauthApp.redirectUris })
+    .select({
+      id: oauthApp.id,
+      redirectUris: oauthApp.redirectUris,
+      scopes: oauthApp.scopes,
+    })
     .from(oauthApp)
     .where(and(eq(oauthApp.clientId, clientId), eq(oauthApp.isActive, true)))
     .limit(1);
@@ -57,7 +80,7 @@ export async function GET(req: NextRequest) {
   }
 
   const scopes = parseScopes(scopeParam);
-  if (!validateScopes(scopes)) {
+  if (!validateScopes(scopes, app.scopes)) {
     return oauthError("invalid_scope", "Invalid or unsupported scope");
   }
 
@@ -75,7 +98,8 @@ export async function GET(req: NextRequest) {
 
   await db.insert(oauthAuthorizationCode).values({
     id: cuid(),
-    code,
+    // Only the hash is stored; the plaintext code goes to the client once.
+    code: hashToken(code),
     appId: app.id,
     userId: session.user.id,
     scopes,

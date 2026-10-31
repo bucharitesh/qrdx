@@ -1,61 +1,86 @@
 ---
 title: QRStuff
+description: "QRdx vs QRStuff: a free open-source QR code generator with full styling compared with QRStuff's suites, where colors, logos and SVG start on Full Suite."
+seoTitle: "QRdx vs QRStuff: Free Styled QR Codes vs Paid Customization"
+seoDescription: "QRStuff's free plan has 50 scans a month, dynamic codes that expire after 30 days, and no colors or logo. QRdx includes full styling and SVG export free and is open source."
 competitor: QRStuff
 competitorUrl: https://www.qrstuff.com
 competitorLogo: https://assets.qrdx.dev/compare/qrstuff.svg
-tagline: No expiry, no scan caps, completely free — the open-source QRStuff alternative.
+tagline: "QRStuff keeps colors, logos and SVG for its paid Full Suite. QRdx includes all of them free, and is open source."
 qrdxPlan: "Free · Open Source"
-competitorPlan: Full Suite ($25/mo)
+competitorPlan: "Free / from $10"
+lastVerified: "2026-10-31"
+sources:
+  - https://www.qrstuff.com/pricing
 tableRows:
-  - feature: Monthly pricing
+  - feature: Price
     qrdx: "Free"
-    competitor: "$10–$250/mo"
-  - feature: Free tier
-    qrdx: "Full features, no expiry"
-    competitor: "30-day expiry, 50 scans/mo"
-  - feature: Open source
+    competitor: "$10–$250/mo ($100–$2,700/yr)"
+  - feature: Free plan
+    qrdx: "Unlimited static codes"
+    competitor: "5 static + 10 dynamic"
+  - feature: Free dynamic code expiry
+    qrdx: "No expiry (static)"
+    competitor: "30 days"
+  - feature: Scan limit on free plan
+    qrdx: "None"
+    competitor: "50 scans/mo"
+  - feature: Colors, gradients, shapes, frames, logo
+    qrdx: "Free"
+    competitor: "Full Suite ($25/mo) and up"
+  - feature: SVG export
     qrdx: true
-    competitor: false
-  - feature: React component
-    qrdx: true
-    competitor: false
-  - feature: TypeScript support
-    qrdx: true
-    competitor: false
-  - feature: Dot patterns
-    qrdx: "29 combinations"
-    competitor: "Shapes (Full+ plan)"
-  - feature: Gradient colors
-    qrdx: "Linear + Radial"
-    competitor: "Full+ plan"
-  - feature: Logo overlay
-    qrdx: true
-    competitor: true
-  - feature: Frame templates
-    qrdx: "6 free"
-    competitor: "Full+ plan"
+    competitor: "Full Suite and up"
+  - feature: EPS export
+    qrdx: false
+    competitor: "Full Suite and up"
   - feature: AI styling
-    qrdx: "Pro ($8/mo)"
-    competitor: "Full+ plan"
-  - feature: Analytics
-    qrdx: true
-    competitor: "Full+ plan"
-  - feature: SVG/EPS export
-    qrdx: true
-    competitor: true
+    qrdx: "5 free, unlimited on Pro"
+    competitor: "Full Suite and up"
+  - feature: Scan analytics
+    qrdx: "Link clicks via Dub"
+    competitor: "Lite Suite and up"
+  - feature: Open source
+    qrdx: "AGPL-3.0"
+    competitor: false
   - feature: Self-hostable
     qrdx: true
     competitor: false
-  - feature: Scan limit (free tier)
-    qrdx: "Unlimited"
-    competitor: "50 scans/mo"
 featureHighlights:
-  - title: Free tier with no expiry or scan caps
-    description: QRdx's free tier never expires and has no scan limits. QRStuff's free codes expire after 30 days and are capped at 50 scans per month.
+  - title: Full styling without a suite
+    description: "QRStuff's pricing table lists custom colors, gradients, shapes, frames, logos and AI styling on Full Suite ($25/mo) and above. QRdx includes all of these on the free tier."
+  - title: No expiry, no scan caps
+    description: "QRStuff's free dynamic codes expire 30 days after creation and the free plan is limited to 50 scans a month. Static QRdx codes never expire and have no scan limits."
   - title: Developer-first React component
-    description: QRdx is a npm package you embed in your app. QRStuff is a SaaS dashboard — no code integration, no component library.
-  - title: Open source — audit, fork, self-host
-    description: QRdx is MIT-licensed. Full transparency, full control. QRStuff is a proprietary platform with no source code access.
-  - title: Free vs $25/mo for comparable features
-    description: QRdx includes patterns, gradients, analytics, and more at no cost. QRStuff requires the $25/mo Full Suite for similar capabilities. Only AI generation is a paid add-on via QRdx Pro.
+    description: "QRdx is an npm package you embed in your app with TypeScript types. QRStuff is a hosted dashboard."
+  - title: Open source
+    description: "QRdx is AGPL-3.0 licensed and self-hostable. QRStuff is a proprietary platform."
 ---
+
+QRStuff is a QR platform that splits its features into suites. The free suite gets you a handful of codes; styling, vector export and analytics unlock as you move up through Lite, Full and Enterprise. QRdx puts every design and export feature on its free tier and makes static codes that never expire.
+
+## Who each tool is for
+
+QRStuff fits teams that want hosted dynamic codes, many content types and analytics, and are happy to pay for a suite. Plans are Free, Lite Suite ($10/mo or $100/yr, with basic analytics), Full Suite ($25/mo or $270/yr, adding colors, gradients, shapes, frames, logos, AI styling and SVG/EPS export) and Enterprise ($250/mo or $2,700/yr, adding GPS-level and Google Analytics reporting).
+
+QRdx fits anyone who wants a styled code with a logo for free, and developers who want to render codes in their own app.
+
+## Where QRStuff is the better choice
+
+- You need **EPS** output. QRdx exports PNG, JPG, SVG and PDF, not EPS.
+- You need editable codes with **scan analytics**, including GPS coordinates on Enterprise.
+- You want hosted landing pages ("published pages") with your codes.
+
+## Key differences
+
+- **Free tier:** QRStuff's free plan has 5 static codes and 10 dynamic codes that expire after 30 days, 50 scans a month, and no custom colors or logo. QRdx's free tier is unlimited and fully styled.
+- **Design:** QRdx offers 9 body patterns, 9 eye shapes, 11 eye-dot shapes, gradients, logos and six templates, all free.
+- **Editable codes:** QRStuff hosts them. QRdx can encode a [Dub](/integrations/dub) short link and leave redirects and click analytics to Dub.
+- **Openness:** QRdx is open source (AGPL-3.0) with an npm package and CLI.
+
+## Switching from QRStuff
+
+1. Check which printed codes are dynamic; those depend on your QRStuff plan, and free dynamic codes expire after 30 days anyway.
+2. Recreate your style in the [QRdx playground](/playground) and save it as a theme.
+3. Point new codes straight at the destination, or at a Dub link if it may change.
+4. Export SVG for print and test on a few phones.

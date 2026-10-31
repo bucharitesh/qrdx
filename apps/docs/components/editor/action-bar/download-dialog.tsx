@@ -34,6 +34,7 @@ import {
 } from "qrdx";
 import React from "react";
 import { Icons } from "@/components/icons";
+import { DEFAULT_QR_LOGO } from "@/lib/constants";
 import { useQREditorStore } from "@/store/editor-store";
 import { usePreferencesStore } from "@/store/preferences-store";
 import type { DownloadOptions as DownloadOptionsType } from "@/types/theme";
@@ -62,7 +63,7 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
         dotColor: themeState.styles.dotColor,
         bodyPattern: themeState.styles.bodyPattern,
         hideLogo: !themeState.styles.showLogo,
-        logo: themeState.styles.customLogo,
+        logo: themeState.styles.customLogo ?? DEFAULT_QR_LOGO,
       }),
       level: themeState.styles.level,
       cornerEyePattern: themeState.styles.cornerEyePattern,

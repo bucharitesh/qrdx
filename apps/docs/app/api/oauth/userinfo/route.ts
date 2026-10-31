@@ -21,7 +21,11 @@ export async function GET(req: NextRequest) {
   }
 
   if (!tokenData.scopes.includes("profile:read")) {
-    return oauthError("insufficient_scope", "Scope 'profile:read' required", 403);
+    return oauthError(
+      "insufficient_scope",
+      "Scope 'profile:read' required",
+      403,
+    );
   }
 
   const [profile] = await db

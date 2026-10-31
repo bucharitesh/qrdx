@@ -59,7 +59,7 @@ function parseAIResponse(raw: string): Partial<Settings> & { url?: string } {
 
 function mergeSettings(
   base: Settings,
-  ai: Partial<Settings> & { url?: string },
+  ai: Partial<Settings> & { url?: string }
 ): Settings {
   return {
     ...base,
@@ -81,7 +81,7 @@ function mergeSettings(
     ...(ai.bgColor ? { bgColor: ai.bgColor } : {}),
     ...(ai.eyeColor ? { eyeColor: ai.eyeColor } : {}),
     ...(ai.dotColor ? { dotColor: ai.dotColor } : {}),
-    ...(ai.templateId !== undefined ? { templateId: ai.templateId } : {}),
+    ...(ai.templateId === undefined ? {} : { templateId: ai.templateId }),
     ...(ai.level ? { level: ai.level as Settings["level"] } : {}),
     ...(ai.logo ? { logo: ai.logo } : {}),
   };

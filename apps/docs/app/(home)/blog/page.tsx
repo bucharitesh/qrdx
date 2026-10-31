@@ -1,32 +1,22 @@
 import type { Metadata } from "next";
 import { BlogList } from "@/components/sections/blog/blog-list";
 import { SectionHeader } from "@/components/sections/section-header";
-import { resolveAuthors } from "@/lib/blog-authors";
-import { blogSource } from "@/lib/source";
+import { createMetadata } from "@/lib/metadata";
+import { getPublishedPosts, rssAlternateTypes, toPostCard } from "./_lib/posts";
 
-export const metadata: Metadata = {
-  title: "Blog",
-  description: "Latest news and updates from QRdx",
-};
+const title = "Blog: QR Code Guides, Engineering and Product News";
+const description =
+  "QR code guides, how QR codes work, honest generator comparisons and product news from the team behind QRdx, the open-source QR code generator.";
+
+export const metadata: Metadata = createMetadata({
+  title,
+  description,
+  path: "/blog",
+  alternates: { types: rssAlternateTypes },
+});
 
 export default function BlogPage() {
-  const allPages = blogSource.getPages().filter((p) => p.data.published);
-
-  const sortedPosts = allPages
-    .sort((a, b) => {
-      const dateA = new Date(a.data.date).getTime();
-      const dateB = new Date(b.data.date).getTime();
-      return dateB - dateA;
-    })
-    .map((page) => ({
-      slug: page.slugs[0] ?? "",
-      title: page.data.title,
-      description: page.data.description ?? "",
-      date: page.data.date,
-      author: resolveAuthors(page.data.author),
-      category: page.data.category,
-      image: page.data.image,
-    }));
+  const posts = getPublishedPosts().map(toPostCard);
 
   return (
     <section className="flex flex-col items-center justify-center w-full min-h-screen">
@@ -36,11 +26,11 @@ export default function BlogPage() {
             Blog
           </h1>
           <p className="text-muted-foreground text-center text-balance font-medium">
-            Latest news and updates from QRdx
+            QR code guides, engineering deep dives and product news from QRdx
           </p>
         </SectionHeader>
 
-        <BlogList posts={sortedPosts} />
+        <BlogList posts={posts} featureFirst />
       </div>
     </section>
   );

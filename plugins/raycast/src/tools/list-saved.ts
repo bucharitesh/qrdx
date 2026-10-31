@@ -18,7 +18,7 @@ export default async function listSaved(input: Input): Promise<string> {
     ? allSaved.filter(
         (q) =>
           q.name.toLowerCase().includes(input.query!.toLowerCase()) ||
-          q.url.toLowerCase().includes(input.query!.toLowerCase()),
+          q.url.toLowerCase().includes(input.query!.toLowerCase())
       )
     : allSaved;
 
@@ -36,9 +36,9 @@ export default async function listSaved(input: Input): Promise<string> {
       ...(q.settings.templateId
         ? [`Template: ${toLabel(q.settings.templateId)}`]
         : []),
-      ...(q.settings.fgColor !== "#000000"
-        ? [`Color: ${q.settings.fgColor}`]
-        : []),
+      ...(q.settings.fgColor === "#000000"
+        ? []
+        : [`Color: ${q.settings.fgColor}`]),
       `Saved: ${new Date(q.savedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`,
     ];
     return parts.join(" · ");

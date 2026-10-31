@@ -1,0 +1,55 @@
+name: Feature request
+description: Suggest a new feature or an improvement for QRdx
+title: "[feat]: "
+labels: ["area: request"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the suggestion. Please search [open and closed issues](https://github.com/bucharitesh/qrdx/issues?q=is%3Aissue) first. For open-ended ideas, a [discussion](https://github.com/bucharitesh/qrdx/discussions/new?category=general) is often a better start.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Web app (qrdx.dev editor, accounts, themes)
+        - React library (qrdx)
+        - CLI (@qrdx/cli)
+        - Self-hosting / Docker
+        - Integrations (Dub, Google Drive, Raycast, Canva)
+        - Documentation
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What are you trying to do, and what makes it hard today?
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: How should it work? Include API sketches, CLI flags or mockups if you have them.
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Alternatives you considered, screenshots or links.
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Before submitting
+      description: By submitting this issue, you agree to follow our [contributing guidelines](https://github.com/bucharitesh/qrdx/blob/main/CONTRIBUTING.md).
+      options:
+        - label: I searched existing issues and pull requests
+          required: true

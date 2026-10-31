@@ -6,32 +6,36 @@ export const env = createEnv({
     // Database
     DATABASE_URL: z.url().min(1),
 
-    // Auth - GitHub
-    GITHUB_APP_ID: z.string(),
-    GITHUB_CLIENT_ID: z.string().min(1),
-    GITHUB_CLIENT_SECRET: z.string().min(1),
+    // Optional services: a missing value disables only that feature.
 
-    // Auth - Google
-    GOOGLE_CLIENT_ID: z.string().min(1),
-    GOOGLE_CLIENT_SECRET: z.string().min(1),
+    // Docs feedback GitHub App
+    GITHUB_APP_ID: z.string().optional(),
+
+    // Auth - GitHub
+    GITHUB_CLIENT_ID: z.string().min(1).optional(),
+    GITHUB_CLIENT_SECRET: z.string().min(1).optional(),
+
+    // Auth - Google (also used by the Google Drive integration)
+    GOOGLE_CLIENT_ID: z.string().min(1).optional(),
+    GOOGLE_CLIENT_SECRET: z.string().min(1).optional(),
 
     // AI Provider - Google
-    GOOGLE_API_KEY: z.string().min(1),
+    GOOGLE_API_KEY: z.string().min(1).optional(),
 
     // Payments - Polar
-    POLAR_ACCESS_TOKEN: z.string().min(1),
-    POLAR_WEBHOOK_SECRET: z.string().min(1),
+    POLAR_ACCESS_TOKEN: z.string().min(1).optional(),
+    POLAR_WEBHOOK_SECRET: z.string().min(1).optional(),
 
     // Integrations - Dub
-    DUB_CLIENT_ID: z.string().min(1),
-    DUB_CLIENT_SECRET: z.string().min(1),
-    DUB_REDIRECT_URI: z.url().min(1),
+    DUB_CLIENT_ID: z.string().min(1).optional(),
+    DUB_CLIENT_SECRET: z.string().min(1).optional(),
+    DUB_REDIRECT_URI: z.url().min(1).optional(),
 
     // Integrations - Google Drive
     GOOGLE_DRIVE_REDIRECT_URI: z.url().optional(),
 
     // Integration encryption
-    INTEGRATION_ENCRYPTION_KEY: z.string().min(32),
+    INTEGRATION_ENCRYPTION_KEY: z.string().min(32).optional(),
 
     // Standard Node.js environment
     NODE_ENV: z
@@ -39,11 +43,11 @@ export const env = createEnv({
       .default("development"),
   },
   client: {
-    NEXT_PUBLIC_FEATUREBASE_APP_ID: z.string().min(1),
-    NEXT_PUBLIC_POSTHOG_KEY: z.string().min(1),
-    NEXT_PUBLIC_POSTHOG_HOST: z.url().min(1),
-    NEXT_PUBLIC_QRDX_PRO_MONTHLY_PRODUCT_ID: z.string().min(1),
-    NEXT_PUBLIC_QRDX_PRO_YEARLY_PRODUCT_ID: z.string().min(1),
+    NEXT_PUBLIC_FEATUREBASE_APP_ID: z.string().min(1).optional(),
+    NEXT_PUBLIC_POSTHOG_KEY: z.string().min(1).optional(),
+    NEXT_PUBLIC_POSTHOG_HOST: z.url().min(1).optional(),
+    NEXT_PUBLIC_QRDX_PRO_MONTHLY_PRODUCT_ID: z.string().min(1).optional(),
+    NEXT_PUBLIC_QRDX_PRO_YEARLY_PRODUCT_ID: z.string().min(1).optional(),
   },
   runtimeEnv: {
     DATABASE_URL: process.env.DATABASE_URL,
@@ -69,4 +73,5 @@ export const env = createEnv({
     NEXT_PUBLIC_QRDX_PRO_YEARLY_PRODUCT_ID:
       process.env.NEXT_PUBLIC_QRDX_PRO_YEARLY_PRODUCT_ID,
   },
+  emptyStringAsUndefined: true,
 });

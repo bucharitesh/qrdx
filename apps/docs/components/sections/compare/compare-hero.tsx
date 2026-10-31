@@ -7,7 +7,7 @@ import { CompareHeroLogos } from "@/components/sections/compare/compare-hero-log
 interface CompareHeroProps {
   competitor: string;
   tagline: string;
-  competitorLogo: string;
+  competitorLogo?: string;
 }
 
 export function CompareHero({
@@ -23,7 +23,7 @@ export function CompareHero({
           <div className="relative hidden h-[242px] w-full overflow-hidden md:block">
             <div className="mx-auto h-full">
               <svg
-                aria-label="QRdx vs {competitor} comparison"
+                aria-label={`QRdx vs ${competitor} comparison`}
                 width="562"
                 height="242"
                 viewBox="0 0 562 242"

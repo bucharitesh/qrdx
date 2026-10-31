@@ -6,16 +6,39 @@ import {
 } from "@/types/errors";
 import { logError } from "./shared";
 
+/**
+ * Error with an explicit HTTP status (e.g. 413, 429) that is safe to expose.
+ */
+export class HttpError extends Error {
+  readonly status: number;
+  readonly code: string;
+  readonly headers?: Record<string, string>;
+
+  constructor(
+    status: number,
+    code: string,
+    message: string,
+    headers?: Record<string, string>,
+  ) {
+    super(message);
+    this.name = "HttpError";
+    this.status = status;
+    this.code = code;
+    this.headers = headers;
+  }
+}
+
 function jsonError(
   code: MyErrorResponseType["code"],
   message: MyErrorResponseType["message"],
   data: MyErrorResponseType["data"],
   status: MyErrorResponseType["status"],
+  headers?: Record<string, string>,
 ): Response {
   const response: MyErrorResponseType = { code, message, data, status };
   return new Response(JSON.stringify(response), {
     status,
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", ...headers },
   });
 }
 
@@ -38,6 +61,16 @@ export function handleError(
 
   if (error instanceof UnauthorizedError) {
     return jsonError("UNAUTHORIZED", error.message, undefined, 401);
+  }
+
+  if (error instanceof HttpError) {
+    return jsonError(
+      error.code,
+      error.message,
+      undefined,
+      error.status,
+      error.headers,
+    );
   }
 
   logError(error as Error, context);

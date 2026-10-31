@@ -6,18 +6,21 @@ import { getDubClient, getDubIntegration } from "@/lib/integrations";
 
 const MAX_PAGE_SIZE = 100;
 
+const httpUrlSchema = z.url({ protocol: /^https?$/ }).max(2048);
+const linkIdSchema = z.string().min(1).max(200);
+
 const createLinkSchema = z.object({
-  url: z.string().url(),
-  domain: z.string().min(1).optional(),
-  key: z.string().min(1).optional(),
-  expiresAt: z.string().optional(),
-  title: z.string().min(1).optional(),
-  description: z.string().min(1).optional(),
-  image: z.string().url().optional(),
+  url: httpUrlSchema,
+  domain: z.string().min(1).max(253).optional(),
+  key: z.string().min(1).max(190).optional(),
+  expiresAt: z.string().max(64).optional(),
+  title: z.string().min(1).max(500).optional(),
+  description: z.string().min(1).max(2000).optional(),
+  image: httpUrlSchema.optional(),
 });
 
 const updateLinkSchema = createLinkSchema.partial().extend({
-  linkId: z.string().min(1),
+  linkId: linkIdSchema,
 });
 
 function getBoundedInteger(
@@ -73,8 +76,8 @@ export async function GET(request: Request) {
 
     // Parse query params
     const { searchParams } = new URL(request.url);
-    const search = searchParams.get("search") || undefined;
-    const domain = searchParams.get("domain") || undefined;
+    const search = searchParams.get("search")?.slice(0, 200) || undefined;
+    const domain = searchParams.get("domain")?.slice(0, 253) || undefined;
     const page = getBoundedInteger(searchParams.get("page"), 1, 10_000);
     const pageSize = getBoundedInteger(
       searchParams.get("pageSize"),
@@ -101,10 +104,7 @@ export async function GET(request: Request) {
   } catch (error) {
     console.error("Error fetching Dub links:", error);
     return NextResponse.json(
-      {
-        error: "Failed to fetch Dub links",
-        details: error instanceof Error ? error.message : "Unknown error",
-      },
+      { error: "Failed to fetch Dub links" },
       { status: 500 },
     );
   }
@@ -115,7 +115,7 @@ export async function POST(request: Request) {
     const clientResult = await getActiveDubClient();
     if ("error" in clientResult) return clientResult.error;
 
-    const body = await request.json();
+    const body = await request.json().catch(() => null);
     const validation = createLinkSchema.safeParse(body);
 
     if (!validation.success) {
@@ -130,10 +130,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("Error creating Dub link:", error);
     return NextResponse.json(
-      {
-        error: "Failed to create Dub link",
-        details: error instanceof Error ? error.message : "Unknown error",
-      },
+      { error: "Failed to create Dub link" },
       { status: 500 },
     );
   }
@@ -144,7 +141,7 @@ export async function PATCH(request: Request) {
     const clientResult = await getActiveDubClient();
     if ("error" in clientResult) return clientResult.error;
 
-    const body = await request.json();
+    const body = await request.json().catch(() => null);
     const validation = updateLinkSchema.safeParse(body);
 
     if (!validation.success) {
@@ -160,10 +157,7 @@ export async function PATCH(request: Request) {
   } catch (error) {
     console.error("Error updating Dub link:", error);
     return NextResponse.json(
-      {
-        error: "Failed to update Dub link",
-        details: error instanceof Error ? error.message : "Unknown error",
-      },
+      { error: "Failed to update Dub link" },
       { status: 500 },
     );
   }
@@ -175,7 +169,7 @@ export async function DELETE(request: Request) {
     if ("error" in clientResult) return clientResult.error;
 
     const { searchParams } = new URL(request.url);
-    const linkId = searchParams.get("linkId");
+    const linkId = linkIdSchema.safeParse(searchParams.get("linkId")).data;
 
     if (!linkId) {
       return NextResponse.json(
@@ -191,10 +185,7 @@ export async function DELETE(request: Request) {
   } catch (error) {
     console.error("Error archiving Dub link:", error);
     return NextResponse.json(
-      {
-        error: "Failed to archive Dub link",
-        details: error instanceof Error ? error.message : "Unknown error",
-      },
+      { error: "Failed to archive Dub link" },
       { status: 500 },
     );
   }
