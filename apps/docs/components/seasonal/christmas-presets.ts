@@ -45,7 +45,7 @@ export const christmasPresets = {
       dotColor: "#0F2440",
       bodyPattern: "circle",
       cornerEyePattern: "rounded",
-      cornerEyeDotPattern: "star",
+      cornerEyeDotPattern: "rounded",
       level: "Q",
       margin: 2,
       frame: {
@@ -65,7 +65,8 @@ export const christmasPresets = {
       dotColor: "#8A6100",
       bodyPattern: "square",
       cornerEyePattern: "rounded",
-      cornerEyeDotPattern: "star",
+      // Star centres read only some of the time on gold; rounded ones always do.
+      cornerEyeDotPattern: "rounded",
       level: "Q",
       margin: 2,
     },

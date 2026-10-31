@@ -1,11 +1,11 @@
 import { z } from "zod";
 import { HttpError } from "@/lib/error-response";
+import { explainProviderError } from "@/lib/migrate/adapters";
+import { ImportError } from "@/lib/migrate/importer";
+import { isApiProviderId } from "@/lib/migrate/providers";
 import { deps, migrateScope, respond } from "@/lib/migrate/server/http";
 import { getSource } from "@/lib/migrate/server/sources";
-import { isApiProviderId } from "@/lib/migrate/providers";
 import { parseWithSchema } from "@/lib/request-guards";
-import { ImportError } from "@/lib/migrate/importer";
-import { explainProviderError } from "@/lib/migrate/adapters";
 
 export const dynamic = "force-dynamic";
 
@@ -57,7 +57,8 @@ export function GET(req: Request, context: Context) {
         ),
       };
     } catch (error) {
-      if (error instanceof ImportError || error instanceof HttpError) throw error;
+      if (error instanceof ImportError || error instanceof HttpError)
+        throw error;
       const explained = explainProviderError(provider, error);
       throw new ImportError(
         explained.kind === "auth" ? 409 : 502,

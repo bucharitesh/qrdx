@@ -16,6 +16,21 @@ export {
   hasCapability,
   INTEGRATION_CAPABILITY_LABELS,
 } from "@repo/integration-kit";
+// Content sources (Stripe, Cal.com, Calendly, Shopify, YouTube, Spotify) and
+// data out (Google Sheets, Slack, HubSpot, Mailchimp)
+export {
+  createContentSourceClient,
+  DATA_REVOCABLE_PROVIDERS,
+  fetchDataAccountMetadata,
+  isMediaSourceConfigured,
+  type MediaSourceEnv,
+  renewShopifyToken,
+  revokeDataProviderToken,
+  type SourceKeyInput,
+  shopifyTokenNeedsRenewal,
+  type VerifiedCredentials,
+  verifyContentSourceCredentials,
+} from "./capabilities/data-factory";
 // Short-link providers and file pickers (Bitly, Rebrandly, Short.io,
 // Dropbox, OneDrive, Box, Notion)
 export {
@@ -105,6 +120,15 @@ export {
   IMAGE_MIME_TYPES,
   IMAGE_QUERY,
 } from "./integrations/google-drive/types";
+export {
+  createGoogleSheetsClient,
+  GoogleSheetsClient,
+} from "./integrations/google-sheets";
+export { createHubSpotClient, HubSpotClient } from "./integrations/hubspot";
+export {
+  createMailchimpClient,
+  MailchimpClient,
+} from "./integrations/mailchimp";
 export { createNotionClient, NotionClient } from "./integrations/notion";
 export { createOneDriveClient, OneDriveClient } from "./integrations/onedrive";
 export {
@@ -112,6 +136,7 @@ export {
   RebrandlyClient,
 } from "./integrations/rebrandly";
 export { createShortIoClient, ShortIoClient } from "./integrations/short-io";
+export { readSlackInstall, type SlackInstall } from "./integrations/slack";
 // Registry
 export {
   getIntegrationRegistry,
@@ -130,6 +155,8 @@ export type {
   IntegrationConfig,
   IntegrationDefinition,
 } from "./registry/types";
+export * from "./sinks/types";
+export * from "./sources/types";
 // Types
 export type {
   Integration,
@@ -144,30 +171,3 @@ export {
   generateCodeVerifier,
   generatePKCE,
 } from "./utils/pkce";
-// Content sources (Stripe, Cal.com, Calendly, Shopify, YouTube, Spotify) and
-// data out (Google Sheets, Slack, HubSpot, Mailchimp)
-export {
-  createContentSourceClient,
-  DATA_REVOCABLE_PROVIDERS,
-  fetchDataAccountMetadata,
-  isMediaSourceConfigured,
-  type MediaSourceEnv,
-  renewShopifyToken,
-  revokeDataProviderToken,
-  type SourceKeyInput,
-  shopifyTokenNeedsRenewal,
-  type VerifiedCredentials,
-  verifyContentSourceCredentials,
-} from "./capabilities/data-factory";
-export {
-  createGoogleSheetsClient,
-  GoogleSheetsClient,
-} from "./integrations/google-sheets";
-export { createHubSpotClient, HubSpotClient } from "./integrations/hubspot";
-export {
-  createMailchimpClient,
-  MailchimpClient,
-} from "./integrations/mailchimp";
-export { readSlackInstall, type SlackInstall } from "./integrations/slack";
-export * from "./sinks/types";
-export * from "./sources/types";

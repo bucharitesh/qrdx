@@ -15,8 +15,8 @@ export {
   responsesTable,
   SCAN_HEADER,
   SCAN_SHEET_TITLE,
-  scanRow,
   type SheetForm,
+  scanRow,
   sheetTime,
 } from "./rows";
 export { appendScansToSheet, type SheetSyncTarget } from "./sink";

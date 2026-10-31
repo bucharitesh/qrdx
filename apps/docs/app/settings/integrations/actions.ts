@@ -7,11 +7,11 @@ import {
   initializeIntegrations,
 } from "@repo/integrations";
 import { headers } from "next/headers";
-import { cleanupDataConnection } from "@/lib/data-connections/server";
 import {
   connectLimiter,
   revokeStoredToken,
 } from "@/lib/connected-accounts/server";
+import { cleanupDataConnection } from "@/lib/data-connections/server";
 import {
   createIntegrationAuthUrl,
   isOAuthConfigured,

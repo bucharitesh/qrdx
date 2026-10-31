@@ -32,6 +32,7 @@ import { LifecyclePanel } from "@/app/dashboard/codes/[id]/_components/lifecycle
 import { PixelsPanel } from "@/app/dashboard/codes/[id]/_components/pixels-panel";
 import { RoutingPanel } from "@/app/dashboard/codes/[id]/_components/routing-panel";
 import { UtmPanel } from "@/app/dashboard/codes/[id]/_components/utm-panel";
+import { SheetsExportButton } from "@/components/data-connections/sheets-export-button";
 import { HttpError } from "@/lib/error-response";
 import { getPlanForScope, getPlanLimits } from "@/lib/plans";
 import {
@@ -178,6 +179,7 @@ export default async function CodeDetailPage({
             Export CSV
           </a>
         </Button>
+        <SheetsExportButton codeId={code.id} />
       </div>
       {lockedRanges && (
         <p className="text-muted-foreground -mt-3 text-xs">

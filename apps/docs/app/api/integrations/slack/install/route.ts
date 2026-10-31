@@ -30,7 +30,9 @@ export async function GET(request: Request) {
   const user = await requireUser(connectLimiter, "integrations:slack-install");
   if ("response" in user) {
     return user.response.status === 401
-      ? NextResponse.redirect(new URL("/settings/integrations/slack", request.url))
+      ? NextResponse.redirect(
+          new URL("/settings/integrations/slack", request.url),
+        )
       : back(request, "rate_limited");
   }
   if (!isOAuthConfigured("slack")) return back(request, "not_configured");

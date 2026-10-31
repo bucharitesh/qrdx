@@ -51,6 +51,11 @@ export const linksAndStorage: IntegrationCatalogEntry[] = [
         description:
           "Paste any Dub short link into the Dub content type without connecting an account.",
       },
+      {
+        title: "Migrate to QRdx",
+        description:
+          "Import Dub links as dynamic codes in one click, then point the old links at them so printed codes keep working (with undo).",
+      },
     ],
     keywords: ["dub.sh", "short link", "shortener", "url", "oauth"],
     related: ["custom-domains", "google-drive", "rest-api"],
@@ -172,6 +177,11 @@ export const linksAndStorage: IntegrationCatalogEntry[] = [
         title: "API support",
         description:
           "Set domainId when you create or update codes with the REST API.",
+      },
+      {
+        title: "Migrate a branded domain",
+        description:
+          "Importing from Dub, Bitly, Rebrandly or Short.io can keep your links' back-halves, so they work on QRdx after the DNS switch.",
       },
     ],
     keywords: ["dns", "cname", "branded", "short link", "subdomain"],

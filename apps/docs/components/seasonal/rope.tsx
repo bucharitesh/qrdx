@@ -181,7 +181,9 @@ export function HangingCharacter({
         event.clientY - box.top - (y[SEGMENTS] + shown / 2),
       );
       const now = performance.now();
-      const speed = last ? (event.clientX - last.x) / Math.max(1, now - last.t) : 0;
+      const speed = last
+        ? (event.clientX - last.x) / Math.max(1, now - last.t)
+        : 0;
       last = { x: event.clientX, t: now };
       if (distance >= 90) return;
       if (onNear === "drop" && !dropped) {
@@ -262,14 +264,15 @@ export function HangingCharacter({
       <div
         ref={bodyRef}
         className={cn(
-          styles.spider,
           "pointer-events-auto absolute top-0 left-0 origin-top cursor-pointer select-none",
           className,
         )}
         data-spin="false"
         style={{ width, height: shown }}
       >
-        <div className={cn(styles.spiderBody, "overflow-hidden")}>
+        <div
+          className={cn(styles.spiderBody, visible < 1 && "overflow-hidden")}
+        >
           <Sprite
             name={sprite}
             width={width}

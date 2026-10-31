@@ -1,9 +1,5 @@
 import { isIntegrationApiError } from "../core/http-client";
-import type {
-  SinkDeliveryResult,
-  SyncCursor,
-  SyncState,
-} from "./types";
+import type { SinkDeliveryResult, SyncCursor, SyncState } from "./types";
 
 // Same schedule as webhook deliveries (apps/docs lib/events/deliveries.ts):
 // 8 tries over about two days, then the stream stops until "Retry now".
@@ -86,13 +82,19 @@ export function readSyncState(value: unknown): SyncState | null {
 
 /** Enabled, not failed for good, not leased, and its retry time has come. */
 export function isSyncDue(state: SyncState, now: Date = new Date()): boolean {
-  if (!state.enabled || state.status === "failed" || state.status === "paused") {
+  if (
+    !state.enabled ||
+    state.status === "failed" ||
+    state.status === "paused"
+  ) {
     return false;
   }
   if (state.leaseUntil && Date.parse(state.leaseUntil) > now.getTime()) {
     return false;
   }
-  return !state.nextAttemptAt || Date.parse(state.nextAttemptAt) <= now.getTime();
+  return (
+    !state.nextAttemptAt || Date.parse(state.nextAttemptAt) <= now.getTime()
+  );
 }
 
 /**
@@ -131,7 +133,9 @@ export function describeSyncError(error: unknown): string {
 /** State after a delivery attempt; `now` is when the attempt finished. */
 export function nextSyncState(
   state: SyncState,
-  outcome: { ok: true; result: SinkDeliveryResult } | { ok: false; error: unknown },
+  outcome:
+    | { ok: true; result: SinkDeliveryResult }
+    | { ok: false; error: unknown },
   now: Date = new Date(),
   random: () => number = Math.random
 ): SyncState {
@@ -159,7 +163,9 @@ export function nextSyncState(
     status: retry ? "retrying" : "failed",
     lastError: describeSyncError(outcome.error),
     nextAttemptAt: retry
-      ? new Date(now.getTime() + syncRetryDelayMs(attempts, random)).toISOString()
+      ? new Date(
+          now.getTime() + syncRetryDelayMs(attempts, random)
+        ).toISOString()
       : null,
   };
 }
@@ -172,7 +178,10 @@ export function resumeSyncState(state: SyncState): SyncState {
     attempts: 0,
     nextAttemptAt: null,
     leaseUntil: null,
-    status: state.status === "failed" || state.status === "paused" ? "idle" : state.status,
+    status:
+      state.status === "failed" || state.status === "paused"
+        ? "idle"
+        : state.status,
     lastError: null,
   };
 }

@@ -55,12 +55,16 @@ function heading(step: Step): { title: string; description: string } {
     case "links":
       return {
         title: `Import from ${providerName(step.provider)}`,
-        description: "Choose the links to bring over. Nothing changes in your old account.",
+        description:
+          "Choose the links to bring over. Nothing changes in your old account.",
       };
     case "file": {
       const name = getProvider(step.provider).name;
       return {
-        title: step.provider === "csv" ? "Import from a file" : `Import from ${name}`,
+        title:
+          step.provider === "csv"
+            ? "Import from a file"
+            : `Import from ${name}`,
         description: "Upload the export, check the columns, then preview.",
       };
     }
@@ -156,7 +160,9 @@ function ImportDialogInner({
       const params = new URLSearchParams(searchParams);
       params.delete(IMPORT_PARAM);
       const query = params.toString();
-      router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
+      router.replace(query ? `${pathname}?${query}` : pathname, {
+        scroll: false,
+      });
       handled.current = null;
     }
     // New codes show up in the list behind the dialog.
@@ -177,7 +183,8 @@ function ImportDialogInner({
         className="flex max-h-[min(90dvh,48rem)] flex-col gap-0 overflow-hidden p-0 sm:max-w-3xl"
         onInteractOutside={(event) => {
           // Don't lose a running import to a stray click.
-          if (step.name === "run" || step.name === "redirects") event.preventDefault();
+          if (step.name === "run" || step.name === "redirects")
+            event.preventDefault();
         }}
       >
         <DialogHeader className="border-b px-6 pt-5 pb-4 text-left">
@@ -206,7 +213,12 @@ function ImportDialogInner({
             onBack={() => setStep({ name: "pick" })}
             onConnected={reload}
             onContinue={(links) =>
-              setStep({ name: "preview", provider: step.provider, links, from: step })
+              setStep({
+                name: "preview",
+                provider: step.provider,
+                links,
+                from: step,
+              })
             }
             provider={step.provider}
             status={status(step.provider)}
@@ -215,7 +227,12 @@ function ImportDialogInner({
           <FileStep
             onBack={() => setStep({ name: "pick" })}
             onContinue={(links) =>
-              setStep({ name: "preview", provider: step.provider, links, from: step })
+              setStep({
+                name: "preview",
+                provider: step.provider,
+                links,
+                from: step,
+              })
             }
             onProvider={(provider) => setStep({ name: "file", provider })}
             provider={step.provider}
@@ -256,7 +273,11 @@ function ImportDialogInner({
             client={client}
             jobId={step.jobId}
             onBack={() =>
-              setStep({ name: "run", provider: step.provider, jobId: step.jobId })
+              setStep({
+                name: "run",
+                provider: step.provider,
+                jobId: step.jobId,
+              })
             }
             provider={step.provider}
           />

@@ -5,7 +5,10 @@ import { Button } from "@repo/design-system/components/ui/button";
 import { useState } from "react";
 import { toast } from "sonner";
 import { emitSound } from "@/components/editor/sound";
-import { DataConnectionError, exportToSheet } from "@/lib/data-connections/client";
+import {
+  DataConnectionError,
+  exportToSheet,
+} from "@/lib/data-connections/client";
 
 type ExportTarget = { codeId: string | null } | { pageId: string };
 
@@ -14,7 +17,9 @@ type ExportTarget = { codeId: string | null } | { pageId: string };
  * codes'), or a page's form responses. Points to settings when Google Sheets
  * isn't connected.
  */
-export function SheetsExportButton(props: ExportTarget & { size?: "sm" | "default" }) {
+export function SheetsExportButton(
+  props: ExportTarget & { size?: "sm" | "default" },
+) {
   const [pending, setPending] = useState(false);
 
   const run = async () => {
@@ -31,13 +36,19 @@ export function SheetsExportButton(props: ExportTarget & { size?: "sm" | "defaul
         {
           action: {
             label: "Open sheet",
-            onClick: () => window.open(result.url, "_blank", "noopener,noreferrer"),
+            onClick: () =>
+              window.open(result.url, "_blank", "noopener,noreferrer"),
           },
         },
       );
     } catch (error) {
-      const code = error instanceof DataConnectionError ? error.code : undefined;
-      if (code === "NOT_CONNECTED" || code === "RECONNECT" || code === "reconnect") {
+      const code =
+        error instanceof DataConnectionError ? error.code : undefined;
+      if (
+        code === "NOT_CONNECTED" ||
+        code === "RECONNECT" ||
+        code === "reconnect"
+      ) {
         toast.error("Connect Google Sheets first", {
           action: {
             label: "Connect",

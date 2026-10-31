@@ -9,13 +9,13 @@ import {
 import { getConnection } from "@/lib/connected-accounts/server";
 import { isIntegrationConfigured } from "@/lib/integration-oauth";
 import { dubSource, shortLinkSource } from "../adapters";
+import { ImportError } from "../importer";
 import {
   API_PROVIDER_IDS,
   API_PROVIDERS,
   type ApiProviderId,
 } from "../providers";
 import type { MigrationSource, ProviderStatus } from "../types";
-import { ImportError } from "../importer";
 
 initializeIntegrations();
 
@@ -28,7 +28,13 @@ export async function providerStatuses(
       const slug = API_PROVIDERS[id].integration;
       const definition = registry.get(slug);
       if (!definition) {
-        return { id, connection: "none", oauth: false, apiKey: null, available: false };
+        return {
+          id,
+          connection: "none",
+          oauth: false,
+          apiKey: null,
+          available: false,
+        };
       }
       const connection = await getConnection(userId, slug).catch(() => null);
       return {
@@ -70,7 +76,8 @@ export async function getSource(
       `Reconnect ${name}: it rejected the saved connection.`,
     );
   }
-  if (provider === "dub") return dubSource(createDubClient(connection.accessToken));
+  if (provider === "dub")
+    return dubSource(createDubClient(connection.accessToken));
   return shortLinkSource(
     provider,
     createShortLinkClient(provider, {

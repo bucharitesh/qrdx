@@ -76,7 +76,7 @@ export const halloweenPresets = {
       dotColor: "#D8B4FE",
       bodyPattern: "circle-large",
       cornerEyePattern: "rounded",
-      cornerEyeDotPattern: "star",
+      cornerEyeDotPattern: "rounded",
       level: "Q",
       margin: 4,
       frame: {

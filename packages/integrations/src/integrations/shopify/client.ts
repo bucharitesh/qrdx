@@ -1,7 +1,4 @@
-import {
-  IntegrationApiError,
-  providerRequest,
-} from "../../core/http-client";
+import { IntegrationApiError, providerRequest } from "../../core/http-client";
 import type {
   ContentSourceClient,
   ListSourceOptions,
@@ -54,7 +51,8 @@ const PRODUCTS_QUERY = `query QrdxProducts($first: Int!, $after: String, $query:
   }
 }`;
 
-const SHOP_QUERY = `query QrdxShop { shop { name primaryDomain { url host } } }`;
+const SHOP_QUERY =
+  "query QrdxShop { shop { name primaryDomain { url host } } }";
 
 /** Search syntax: escape the merchant's words so they stay a title filter. */
 function productQuery(search: string | undefined): string {

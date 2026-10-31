@@ -4,7 +4,9 @@ import Link from "next/link";
 import { AsciiField } from "@/components/fx";
 import { Breadcrumbs } from "@/components/sections/breadcrumbs";
 import { CompareHeroLogos } from "@/components/sections/compare/compare-hero-logos";
+import { CompareMigrateButton } from "@/components/sections/compare/compare-migrate-button";
 import { breadcrumbSchema, JsonLd } from "@/components/sections/tools/json-ld";
+import { compareMigration } from "@/lib/migrate/compare";
 
 interface CompareHeroProps {
   slug: string;
@@ -18,6 +20,7 @@ export function CompareHero({ slug, competitor, tagline }: CompareHeroProps) {
     { name: "Compare", path: "/compare" },
     { name: `QRdx vs ${competitor}`, path: `/compare/${slug}` },
   ];
+  const migration = compareMigration(slug, competitor);
 
   return (
     <section className="relative w-full overflow-hidden">
@@ -51,6 +54,11 @@ export function CompareHero({ slug, competitor, tagline }: CompareHeroProps) {
               <ArrowDown aria-hidden />
             </a>
           </Button>
+          <CompareMigrateButton
+            docs={migration.kind === "library"}
+            href={migration.href}
+            label={migration.label}
+          />
         </div>
       </div>
     </section>

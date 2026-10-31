@@ -3,7 +3,6 @@
 // lib/migrate/server/records.ts stores them.
 
 import { z } from "zod";
-import { importOptionsSchema, providerIdSchema } from "./types";
 import type {
   ImportJob,
   ImportOptions,
@@ -12,7 +11,12 @@ import type {
   RedirectMode,
   RedirectPlanItem,
 } from "./types";
-import { IMPORT_CHUNK_SIZE, REDIRECT_CHUNK_SIZE } from "./types";
+import {
+  IMPORT_CHUNK_SIZE,
+  importOptionsSchema,
+  providerIdSchema,
+  REDIRECT_CHUNK_SIZE,
+} from "./types";
 
 /** Jobs kept per user; older ones go, except those with live redirects. */
 export const MAX_JOBS = 10;
@@ -144,7 +148,9 @@ export function summarizeJob(job: ImportJob): JobSummary {
     created: count((item) => item.status === "created"),
     skipped: count((item) => item.status === "skipped"),
     failed: count((item) => item.status === "failed"),
-    redirected: count((item) => Boolean(item.redirect && !item.redirect.undoneAt)),
+    redirected: count((item) =>
+      Boolean(item.redirect && !item.redirect.undoneAt),
+    ),
     undone: count((item) => Boolean(item.redirect?.undoneAt)),
     backHalfDomain: job.options.backHalfDomain,
     domainAttachedAt: job.domainAttachedAt ?? null,
@@ -173,7 +179,10 @@ export function upsertJob(jobs: ImportJob[], job: ImportJob): ImportJob[] {
   const ordered = [compactJob(job), ...others.map(compactJob)];
   const kept: ImportJob[] = [];
   for (const [index, entry] of ordered.entries()) {
-    if (index < MAX_JOBS || (hasLiveRedirects(entry) && kept.length < MAX_JOBS_HARD)) {
+    if (
+      index < MAX_JOBS ||
+      (hasLiveRedirects(entry) && kept.length < MAX_JOBS_HARD)
+    ) {
       kept.push(entry);
     }
   }

@@ -7,11 +7,11 @@ import {
 import { and, eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
-import { cleanupDataConnection } from "@/lib/data-connections/server";
 import {
   connectLimiter,
   revokeStoredToken,
 } from "@/lib/connected-accounts/server";
+import { cleanupDataConnection } from "@/lib/data-connections/server";
 import { HttpError } from "@/lib/error-response";
 import {
   createIntegrationAuthUrl,

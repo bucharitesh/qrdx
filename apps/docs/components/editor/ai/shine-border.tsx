@@ -13,6 +13,7 @@ const SHINE_CSS = `
 @keyframes qx-turn { to { --qx-angle: 360deg; } }
 @keyframes qx-sweep { 0%,78% { transform: translateX(-140%) skewX(-20deg); } 100% { transform: translateX(320%) skewX(-20deg); } }
 @keyframes qx-gleam { 0%,70% { background-position: 150% 0; } 100% { background-position: -50% 0; } }
+@keyframes qx-glide { from { background-position: 92% 0; } to { background-position: 8% 0; } }
 .qx-shine { --qx-ring: .7; --qx-bloom: 0; animation: qx-turn 10s linear infinite; }
 .dark .qx-shine { --qx-ring: .6; }
 .qx-shine[data-idle="true"] { --qx-ring: .5; }
@@ -29,10 +30,12 @@ const SHINE_CSS = `
 .qx-sweep { animation: qx-sweep 6s cubic-bezier(.32,.72,0,1) infinite; }
 .qx-gleam { --qx-gleam: #8b8b94; animation: qx-gleam 6s cubic-bezier(.32,.72,0,1) infinite; }
 .dark .qx-gleam { --qx-gleam: #ffffff; }
+.qx-glide { animation: qx-glide 3.6s cubic-bezier(.45,0,.55,1) infinite alternate; }
 @media (prefers-reduced-motion: reduce) {
-  .qx-shine, .qx-sweep, .qx-gleam { animation: none !important; }
+  .qx-shine, .qx-sweep, .qx-gleam, .qx-glide { animation: none !important; }
   .qx-sweep { opacity: 0 !important; }
   .qx-gleam { background-position: 150% 0 !important; }
+  .qx-glide { background-position: 150% 0 !important; }
 }
 `;
 
@@ -119,28 +122,40 @@ export function ShineBorder({
   );
 }
 
+const GLEAM = {
+  // A soft light sweep: white in dark mode, grey in light.
+  light:
+    "linear-gradient(100deg, currentColor 0%, currentColor 40%, var(--qx-gleam) 50%, currentColor 60%, currentColor 100%)",
+  // The brand blue → violet → cyan passing through the letters.
+  color:
+    "linear-gradient(100deg, currentColor 0%, currentColor 34%, #155dfc 42%, #7c6cf6 50%, #2fc4e8 58%, currentColor 66%, currentColor 100%)",
+} as const;
+
 /**
- * Plain label (white in dark mode, ink in light) with one soft light sweep
- * across the letters every 6 s.
+ * Plain label (white in dark mode, ink in light) with a soft sweep across the
+ * letters: by default a light pass every 6 s; with `tone="color"` the brand
+ * colours glide slowly left and right, back and forth, without a pause.
  */
 export function ShineText({
   children,
   className,
+  tone = "light",
 }: {
   children: React.ReactNode;
   className?: string;
+  tone?: keyof typeof GLEAM;
 }) {
   return (
     <>
       <ShineStyles />
       <span
         className={cn(
-          "qx-gleam bg-clip-text [-webkit-background-clip:text]",
+          tone === "color" ? "qx-glide" : "qx-gleam",
+          "bg-clip-text [-webkit-background-clip:text]",
           className,
         )}
         style={{
-          backgroundImage:
-            "linear-gradient(100deg, currentColor 0%, currentColor 40%, var(--qx-gleam) 50%, currentColor 60%, currentColor 100%)",
+          backgroundImage: GLEAM[tone],
           backgroundSize: "250% 100%",
           WebkitTextFillColor: "transparent",
         }}

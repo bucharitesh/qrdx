@@ -13,8 +13,8 @@ import {
 } from "iconsax-reactjs";
 import { useCallback, useEffect, useState } from "react";
 import {
-  type MigrateClient,
   MigrateApiError,
+  type MigrateClient,
   withRetry,
 } from "@/lib/migrate/client";
 import { displayLink } from "@/lib/migrate/normalize";
@@ -74,8 +74,16 @@ export function RedirectsStep({
   }, [loadPlan]);
 
   const execute = async (mode: Run["mode"]) => {
-    const total = mode === "undo" ? (job?.redirected ?? 0) : (plan?.length ?? 0);
-    let state: Run = { mode, done: 0, total, failed: [], stopped: null, finished: false };
+    const total =
+      mode === "undo" ? (job?.redirected ?? 0) : (plan?.length ?? 0);
+    let state: Run = {
+      mode,
+      done: 0,
+      total,
+      failed: [],
+      stopped: null,
+      finished: false,
+    };
     setRun(state);
     setError(null);
     try {
@@ -91,12 +99,18 @@ export function RedirectsStep({
           stopped: result.stopped,
         };
         setRun(state);
-        if (result.stopped || result.remaining === 0 || result.items.length === 0) {
+        if (
+          result.stopped ||
+          result.remaining === 0 ||
+          result.items.length === 0
+        ) {
           break;
         }
       }
       setRun({ ...state, finished: true });
-      soundEvent(state.stopped || state.failed.length > 0 ? "error" : "success");
+      soundEvent(
+        state.stopped || state.failed.length > 0 ? "error" : "success",
+      );
       if (mode === "undo") await loadPlan();
     } catch (failure) {
       setRun({ ...state, finished: true });
@@ -123,7 +137,11 @@ export function RedirectsStep({
           </Button>
           <div className="flex items-center gap-2">
             {live > 0 && (
-              <Button disabled={busy} onClick={() => execute("undo")} variant="outline">
+              <Button
+                disabled={busy}
+                onClick={() => execute("undo")}
+                variant="outline"
+              >
                 <RotateLeft />
                 Undo {plural(live, "link")}
               </Button>
@@ -133,7 +151,9 @@ export function RedirectsStep({
                 disabled={!agreed || busy}
                 onClick={() => execute("apply")}
               >
-                {busy && run?.mode === "apply" && <Spinner className="animate-spin" />}
+                {busy && run?.mode === "apply" && (
+                  <Spinner className="animate-spin" />
+                )}
                 Update {plural(pending, "link")} in {name}
               </Button>
             )}
@@ -143,7 +163,9 @@ export function RedirectsStep({
     >
       <div className="space-y-4">
         <Note icon={<Warning2 />} tone="warning">
-          <p className="font-medium">This changes links in your {name} account.</p>
+          <p className="font-medium">
+            This changes links in your {name} account.
+          </p>
           <p>
             Each old link will open its new QRdx code, which sends visitors to
             the same destination, so printed codes keep working and their scans
@@ -228,9 +250,13 @@ export function RedirectsStep({
                 </li>
               ))}
             </ul>
-            <label className="flex items-start gap-2.5 text-sm">
+            <label
+              className="flex items-start gap-2.5 text-sm"
+              htmlFor="migrate-agree"
+            >
               <Checkbox
                 checked={agreed}
+                id="migrate-agree"
                 className="mt-0.5"
                 disabled={busy}
                 onCheckedChange={(value) => setAgreed(value === true)}

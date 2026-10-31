@@ -1,6 +1,7 @@
 import "server-only";
 
 import { database as db, integration } from "@repo/database";
+import type { SyncCursor, SyncState } from "@repo/integrations";
 import {
   codeLabel,
   createGoogleSheetsClient,
@@ -8,8 +9,8 @@ import {
   responsesTable,
   SCAN_HEADER,
   SCAN_SHEET_TITLE,
-  scanRow,
   type SheetSyncTarget,
+  scanRow,
   sheetRange,
 } from "@repo/integrations/src/integrations/google-sheets";
 import {
@@ -23,7 +24,6 @@ import {
   readSyncState,
   resumeSyncState,
 } from "@repo/integrations/src/sinks/state";
-import type { SyncCursor, SyncState } from "@repo/integrations";
 import { and, eq, sql } from "drizzle-orm";
 import { getInboxPage } from "@/app/api/forms/_lib/responses";
 import { HttpError } from "@/lib/error-response";
@@ -169,7 +169,10 @@ export async function exportResponsesToSheet(
     page.forms.map((form) => ({
       id: form.id,
       title: form.title,
-      fields: form.fields.map((field) => ({ id: field.id, label: field.label })),
+      fields: form.fields.map((field) => ({
+        id: field.id,
+        label: field.label,
+      })),
     })),
   );
   const client = createGoogleSheetsClient(connection.accessToken);
@@ -202,11 +205,20 @@ export async function setSheetSync(
   const current = readSyncState(metadata.sync);
   if (!enabled) {
     if (current) {
-      await patchSettings(connection.id, metadata, {}, { ...current, enabled: false, status: "paused" });
+      await patchSettings(
+        connection.id,
+        metadata,
+        {},
+        { ...current, enabled: false, status: "paused" },
+      );
     }
     return;
   }
-  const lastExport = (metadata.settings as { lastExport?: SheetExport & { organizationId: string | null } } | undefined)?.lastExport;
+  const lastExport = (
+    metadata.settings as
+      | { lastExport?: SheetExport & { organizationId: string | null } }
+      | undefined
+  )?.lastExport;
   if (!lastExport) {
     throw new HttpError(400, "NO_EXPORT", "Export scans to a sheet first.");
   }
@@ -224,18 +236,29 @@ export async function setSheetSync(
     codeId: lastExport.codeId,
     rowsWritten: lastExport.rowsWritten,
   };
-  const sameTarget = readSheetTarget(metadata)?.spreadsheetId === target.spreadsheetId;
+  const sameTarget =
+    readSheetTarget(metadata)?.spreadsheetId === target.spreadsheetId;
   const sync =
     current && sameTarget
       ? resumeSyncState(current)
-      : initialSyncState(scope.organizationId, new Date(lastExport.createdAt), lastExport.cursor);
+      : initialSyncState(
+          scope.organizationId,
+          new Date(lastExport.createdAt),
+          lastExport.cursor,
+        );
   await patchSettings(
     connection.id,
     metadata,
-    { syncTarget: sameTarget ? readSheetTarget(metadata) : target, syncLabel: lastExport.label },
+    {
+      syncTarget: sameTarget ? readSheetTarget(metadata) : target,
+      syncLabel: lastExport.label,
+    },
     sync,
   );
-  void runIntegrationSyncs({ integrationIds: [connection.id], budgetMs: 10_000 });
+  void runIntegrationSyncs({
+    integrationIds: [connection.id],
+    budgetMs: 10_000,
+  });
 }
 
 export interface ResponseSinkInput {
@@ -256,7 +279,9 @@ export async function saveResponseSink(
 ): Promise<void> {
   const connection = await requireConnection(scope.userId, provider);
   const metadata = connection.metadata ?? {};
-  const pageIds = input.pageIds ? await scopedPageIds(scope, input.pageIds) : null;
+  const pageIds = input.pageIds
+    ? await scopedPageIds(scope, input.pageIds)
+    : null;
   const patch: Record<string, unknown> = { pageIds, forms: input.forms };
   if (provider === "mailchimp") {
     if (!input.audienceId) {
@@ -266,7 +291,10 @@ export async function saveResponseSink(
     patch.tags = input.tags ?? [];
     patch.withoutConsent = input.withoutConsent ?? "pending";
     if (dataCallsAllowed()) {
-      const client = createMailchimpClient(connection.accessToken, String(metadata.dc ?? ""));
+      const client = createMailchimpClient(
+        connection.accessToken,
+        String(metadata.dc ?? ""),
+      );
       // Merge fields are cached so the worker maps without an extra call.
       patch.mergeFields = await client.listMergeFields(input.audienceId);
     }
@@ -278,7 +306,11 @@ export async function saveResponseSink(
   if (input.enabled) {
     if (!(current && sameWorkspace)) {
       sync = initialSyncState(scope.organizationId);
-    } else if (!current.enabled || current.status === "failed" || current.status === "paused") {
+    } else if (
+      !current.enabled ||
+      current.status === "failed" ||
+      current.status === "paused"
+    ) {
       sync = resumeSyncState(current);
     }
   } else if (current?.enabled) {
@@ -294,7 +326,10 @@ export async function retrySync(userId: string, provider: string) {
   if (!state) throw new HttpError(400, "NOT_ENABLED", "The sync isn't on.");
   await writeSyncState(connection.id, resumeSyncState(state));
   invalidateStreamIndex();
-  return runIntegrationSyncs({ integrationIds: [connection.id], budgetMs: 20_000 });
+  return runIntegrationSyncs({
+    integrationIds: [connection.id],
+    budgetMs: 20_000,
+  });
 }
 
 export async function listMailchimpAudiences(
@@ -302,7 +337,10 @@ export async function listMailchimpAudiences(
 ): Promise<MailchimpAudience[]> {
   if (!dataCallsAllowed()) throw devDisabled();
   const connection = await requireConnection(userId, "mailchimp");
-  const client = createMailchimpClient(connection.accessToken, String(connection.metadata?.dc ?? ""));
+  const client = createMailchimpClient(
+    connection.accessToken,
+    String(connection.metadata?.dc ?? ""),
+  );
   return (await client.listAudiences({ count: 100 })).audiences;
 }
 
@@ -312,7 +350,10 @@ export async function listMailchimpMergeFields(
 ): Promise<MailchimpMergeField[]> {
   if (!dataCallsAllowed()) throw devDisabled();
   const connection = await requireConnection(userId, "mailchimp");
-  const client = createMailchimpClient(connection.accessToken, String(connection.metadata?.dc ?? ""));
+  const client = createMailchimpClient(
+    connection.accessToken,
+    String(connection.metadata?.dc ?? ""),
+  );
   return client.listMergeFields(audienceId);
 }
 
@@ -331,7 +372,12 @@ export async function getSinkView(
   const [row] = await db
     .select({ metadata: integration.metadata, status: integration.status })
     .from(integration)
-    .where(and(eq(integration.userId, scope.userId), eq(integration.provider, provider)))
+    .where(
+      and(
+        eq(integration.userId, scope.userId),
+        eq(integration.provider, provider),
+      ),
+    )
     .limit(1);
   if (!row) return null;
   const metadata = (row.metadata ?? {}) as Record<string, unknown>;

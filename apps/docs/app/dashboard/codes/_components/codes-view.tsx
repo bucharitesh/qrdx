@@ -37,6 +37,7 @@ import { CodesList } from "./codes-list";
 import { CodesSidebar, CodesSidebarSheet } from "./codes-sidebar";
 import { CodesToolbar } from "./codes-toolbar";
 import { formatNumber } from "./format";
+import { ImportDialog } from "./import-dialog";
 import { NewCodeButton, UsageMeter } from "./usage";
 
 export const codesMetadata: Metadata = {
@@ -144,6 +145,7 @@ export async function CodesView({
             Import CSV
           </Link>
         </Button>
+        <ImportDialog />
         <NewCodeButton usage={usage} />
       </PageHeader>
 

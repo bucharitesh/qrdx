@@ -6,6 +6,7 @@
 // no provider calls. All names, domains and URLs are made up.
 
 import { IntegrationApiError } from "@repo/integrations/src/core/http-client";
+import { filterPage } from "./adapters";
 import type { MigrateClient } from "./client";
 import { MigrateApiError } from "./client";
 import {
@@ -16,9 +17,9 @@ import {
   listJobs,
   type MigrateRepo,
   previewImport,
+  resetRedirectErrors,
   runJobChunk,
   runRedirects,
-  resetRedirectErrors,
   startJob,
 } from "./importer";
 import {
@@ -26,7 +27,6 @@ import {
   destinationKey,
   parseImportMarkers,
 } from "./normalize";
-import { filterPage } from "./adapters";
 import { API_PROVIDER_IDS, type ApiProviderId } from "./providers";
 import type {
   CodeRef,
@@ -53,7 +53,10 @@ const PAGES = [
 
 const BASE62 = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 const fakeKey = (seed: number) =>
-  Array.from({ length: 7 }, (_, i) => BASE62[(seed * 7919 + i * 104729) % 62]).join("");
+  Array.from(
+    { length: 7 },
+    (_, i) => BASE62[(seed * 7919 + i * 104729) % 62],
+  ).join("");
 
 const SHARED: Record<ApiProviderId, string> = {
   dub: "dub.sh",
@@ -66,13 +69,17 @@ const BRANDED = "go.example.com";
 function mockLinks(provider: ApiProviderId): SourceLink[] {
   const count = provider === "dub" ? 64 : 38;
   return Array.from({ length: count }, (_, index) => {
-    const [title, path, tags] = PAGES[index % PAGES.length] as (typeof PAGES)[number];
+    const [title, path, tags] = PAGES[
+      index % PAGES.length
+    ] as (typeof PAGES)[number];
     const round = Math.floor(index / PAGES.length);
     const branded = index % 3 === 0;
     const domain = branded ? BRANDED : SHARED[provider];
     // Branded links: mostly 7-character back-halves, a few readable ones.
     const backHalf =
-      branded && index % 9 === 0 ? `${path.split("/").pop()}${round || ""}` : fakeKey(index + provider.length * 100);
+      branded && index % 9 === 0
+        ? `${path.split("/").pop()}${round || ""}`
+        : fakeKey(index + provider.length * 100);
     const shortLink = `https://${domain}/${backHalf}`;
     const id =
       provider === "bitly"
@@ -80,7 +87,9 @@ function mockLinks(provider: ApiProviderId): SourceLink[] {
         : provider === "dub"
           ? `link_${fakeKey(index + 5)}`
           : `lnk_${fakeKey(index + 9)}`;
-    const created = new Date(Date.UTC(2023, (index * 5) % 12, 1 + (index % 27)));
+    const created = new Date(
+      Date.UTC(2023, (index * 5) % 12, 1 + (index % 27)),
+    );
     return {
       id,
       shortLink,
@@ -178,7 +187,9 @@ function mockWorld(plan: "pro" | "free") {
     async findTakenSlugs(slugs) {
       // "events1"-style back-halves pretend to belong to someone else.
       const used = new Set(codes.map((code) => code.slug));
-      return new Set(slugs.filter((slug) => used.has(slug) || slug.startsWith("review")));
+      return new Set(
+        slugs.filter((slug) => used.has(slug) || slug.startsWith("review")),
+      );
     },
     async existingTagNames() {
       return new Set(["print", "menu"]);
@@ -197,15 +208,25 @@ function mockWorld(plan: "pro" | "free") {
         if (parsed.protocol === "https:" || parsed.protocol === "http:") {
           return { ok: true, url: parsed.href };
         }
-        return { ok: false, message: "Only http:// and https:// links can be used" };
+        return {
+          ok: false,
+          message: "Only http:// and https:// links can be used",
+        };
       } catch {
-        return { ok: false, message: "Enter a full URL, starting with https://" };
+        return {
+          ok: false,
+          message: "Enter a full URL, starting with https://",
+        };
       }
     },
     async createCodes(_scope, inputs) {
       const left = remaining();
       if (left !== null && inputs.length > left) {
-        throw new ImportError(402, "LIMIT_REACHED", "Your plan includes 10 active dynamic QR codes.");
+        throw new ImportError(
+          402,
+          "LIMIT_REACHED",
+          "Your plan includes 10 active dynamic QR codes.",
+        );
       }
       return inputs.map((input) => {
         const code = addCode(input.destinationUrl, null);
@@ -252,7 +273,9 @@ function mockWorld(plan: "pro" | "free") {
 
 function mockSource(provider: ApiProviderId): MigrationSource {
   const all = mockLinks(provider);
-  const destinations = new Map(all.map((link) => [link.id, link.destinationUrl]));
+  const destinations = new Map(
+    all.map((link) => [link.id, link.destinationUrl]),
+  );
   let edits = 0;
   return {
     provider,
@@ -275,7 +298,10 @@ function mockSource(provider: ApiProviderId): MigrationSource {
     async getLink(id) {
       const link = all.find((entry) => entry.id === id);
       return link
-        ? { ...link, destinationUrl: destinations.get(id) ?? link.destinationUrl }
+        ? {
+            ...link,
+            destinationUrl: destinations.get(id) ?? link.destinationUrl,
+          }
         : null;
     },
     async updateDestination(id, url) {
@@ -319,7 +345,8 @@ export function createMockClient(plan: "pro" | "free" = "pro"): MigrateClient {
   const scope = { userId: "mock-user", organizationId: null };
   const sources = new Map(API_PROVIDER_IDS.map((p) => [p, mockSource(p)]));
   const connected = new Set<ApiProviderId>(["dub", "bitly", "short-io"]);
-  const source = (provider: ApiProviderId) => sources.get(provider) as MigrationSource;
+  const source = (provider: ApiProviderId) =>
+    sources.get(provider) as MigrationSource;
 
   return {
     mock: true,
@@ -337,7 +364,8 @@ export function createMockClient(plan: "pro" | "free" = "pro"): MigrateClient {
                 : {
                     label: p === "bitly" ? "Generic access token" : "API key",
                     placeholder: "Paste your key",
-                    helpText: "Create a key in the provider's account settings and paste it here.",
+                    helpText:
+                      "Create a key in the provider's account settings and paste it here.",
                   },
             available: true,
           })),
@@ -372,7 +400,8 @@ export function createMockClient(plan: "pro" | "free" = "pro"): MigrateClient {
           ),
         };
       }, 400),
-    preview: (request) => mapErrors(() => previewImport(deps, scope, request), 450),
+    preview: (request) =>
+      mapErrors(() => previewImport(deps, scope, request), 450),
     start: (request) => mapErrors(() => startJob(deps, scope, request)),
     run: (jobId) => mapErrors(() => runJobChunk(deps, scope, jobId), 700),
     job: (jobId) => mapErrors(() => getJob(deps, scope, jobId), 100),
@@ -384,7 +413,8 @@ export function createMockClient(plan: "pro" | "free" = "pro"): MigrateClient {
         const provider = job.provider as ApiProviderId;
         return runRedirects(deps, scope, jobId, mode, source(provider));
       }, 600),
-    attachDomain: (jobId) => mapErrors(() => attachJobDomain(deps, scope, jobId)),
+    attachDomain: (jobId) =>
+      mapErrors(() => attachJobDomain(deps, scope, jobId)),
     connectOAuth: async (provider) => {
       await wait(300);
       connected.add(provider);
@@ -392,7 +422,8 @@ export function createMockClient(plan: "pro" | "free" = "pro"): MigrateClient {
     },
     connectKey: async (provider, key) => {
       await wait(400);
-      if (key.trim().length < 8) return { ok: false, error: "That key looks too short" };
+      if (key.trim().length < 8)
+        return { ok: false, error: "That key looks too short" };
       connected.add(provider);
       return { ok: true };
     },

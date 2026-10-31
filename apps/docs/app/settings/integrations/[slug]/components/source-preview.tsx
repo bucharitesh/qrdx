@@ -36,7 +36,9 @@ export function SourcePreview({ slug, name }: { slug: string; name: string }) {
       })
       .catch((err) => {
         if (cancelled) return;
-        setError(err instanceof DataConnectionError ? err.message : "Couldn't load.");
+        setError(
+          err instanceof DataConnectionError ? err.message : "Couldn't load.",
+        );
         setItems([]);
       });
     return () => {
@@ -50,7 +52,9 @@ export function SourcePreview({ slug, name }: { slug: string; name: string }) {
         <div className="space-y-1">
           <h2 className="text-base font-semibold">Ready to pick</h2>
           <p className="text-muted-foreground text-sm text-pretty">
-            Choose <span className="text-foreground">From your account → {name}</span> in {WHERE[slug]}.
+            Choose{" "}
+            <span className="text-foreground">From your account → {name}</span>{" "}
+            in {WHERE[slug]}.
           </p>
         </div>
         {slug === "shopify" && (
@@ -59,7 +63,9 @@ export function SourcePreview({ slug, name }: { slug: string; name: string }) {
               <a
                 download
                 href={
-                  isIntegrationsMock() ? "#" : "/api/integrations/sources/shopify/export"
+                  isIntegrationsMock()
+                    ? "#"
+                    : "/api/integrations/sources/shopify/export"
                 }
               >
                 <ImportCurve aria-hidden className="size-4" />
@@ -78,7 +84,9 @@ export function SourcePreview({ slug, name }: { slug: string; name: string }) {
           <Spinner className="size-5 text-muted-foreground" />
         </div>
       ) : error ? (
-        <p className="rounded-md bg-muted p-3 text-muted-foreground text-sm text-pretty">{error}</p>
+        <p className="rounded-md bg-muted p-3 text-muted-foreground text-sm text-pretty">
+          {error}
+        </p>
       ) : items.length === 0 ? (
         <p className="text-muted-foreground text-sm">Nothing to pick yet.</p>
       ) : (
@@ -86,12 +94,18 @@ export function SourcePreview({ slug, name }: { slug: string; name: string }) {
           {items.map((item) => (
             <li className="flex items-center gap-3 px-4 py-2.5" key={item.id}>
               {item.image && (
-                <img alt="" className="size-9 shrink-0 rounded-md bg-muted object-cover" src={item.image} />
+                <img
+                  alt=""
+                  className="size-9 shrink-0 rounded-md bg-muted object-cover"
+                  src={item.image}
+                />
               )}
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm">{item.title}</p>
                 <p className="truncate text-muted-foreground text-xs">
-                  {[item.subtitle, item.url.replace(/^https?:\/\//, "")].filter(Boolean).join(" · ")}
+                  {[item.subtitle, item.url.replace(/^https?:\/\//, "")]
+                    .filter(Boolean)
+                    .join(" · ")}
                 </p>
               </div>
               {item.badge && (
@@ -112,12 +126,14 @@ export function SourcePreview({ slug, name }: { slug: string; name: string }) {
           ))}
         </ul>
       )}
-      {more && <p className="text-muted-foreground text-xs">And more in the picker.</p>}
+      {more && (
+        <p className="text-muted-foreground text-xs">And more in the picker.</p>
+      )}
       {slug === "shopify" && (
         <p className="text-muted-foreground text-xs text-pretty">
           The CSV has one row per active product (up to 1,000) in the importer's
-          format: destination, title, folder and tags. Import it to make a dynamic
-          code for each product.
+          format: destination, title, folder and tags. Import it to make a
+          dynamic code for each product.
         </p>
       )}
     </div>

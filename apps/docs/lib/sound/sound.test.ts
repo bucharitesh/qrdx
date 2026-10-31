@@ -206,7 +206,16 @@ describe("cue allowlist", () => {
       "error",
       "ai-done",
     ]);
-    assert.deepEqual(SOUND_GROUPS.seasonal, ["boo", "meow", "bat"]);
+    assert.deepEqual(SOUND_GROUPS.seasonal, [
+      "boo",
+      "meow",
+      "bat",
+      "seasonal-bauble",
+      "seasonal-gift",
+      "seasonal-snowman",
+      "seasonal-cork",
+      "seasonal-balloon",
+    ]);
     assert.equal(new Set(SOUND_NAMES).size, SOUND_NAMES.length);
     for (const group of Object.keys(
       SOUND_GROUPS,

@@ -7,12 +7,11 @@ import {
   TabsList,
   TabsTrigger,
 } from "@repo/design-system/components/ui/tabs";
-import { cn } from "@repo/design-system/lib/utils";
 import { Brush2, Edit2 } from "iconsax-reactjs";
 import type * as React from "react";
 import { AnimatedBot } from "@/components/editor/ai/animated-bot";
 import { ChatInterface } from "@/components/editor/ai/chat-interface";
-import { ShineBorder, ShineText } from "@/components/editor/ai/shine-border";
+import { ShineText } from "@/components/editor/ai/shine-border";
 import { ContentControls } from "@/components/editor/control-sections/content-controls";
 import { DesignControls } from "@/components/editor/control-sections/design-controls";
 import QrPresetSelect from "@/components/editor/qr-preset-select";
@@ -35,27 +34,15 @@ const scrollAreaClass =
 const triggerClass =
   "h-full gap-1.5 text-[13px] data-[state=active]:text-foreground text-muted-foreground";
 
-function GenerateTrigger({
-  active,
-  thinking,
-}: {
-  active: boolean;
-  thinking: boolean;
-}) {
+function GenerateTrigger({ thinking }: { thinking: boolean }) {
+  // Same tab as its siblings (no coloured border); the only accent is a
+  // colour shine passing through the label every few seconds.
   return (
-    <TabsTrigger
-      className={cn(
-        triggerClass,
-        // Same box as the sibling tabs: the border is painted inside it, so
-        // nothing grows or shifts. Only the open tab gets the glass fill.
-        "group text-foreground/80 hover:text-foreground relative isolate border-transparent bg-transparent shadow-none",
-        "data-[state=active]:text-foreground data-[state=active]:bg-transparent data-[state=active]:shadow-none dark:data-[state=active]:border-transparent dark:data-[state=active]:bg-transparent",
-      )}
-      value="ai"
-    >
-      <ShineBorder active={active} glow idle={!active} surface={active} />
+    <TabsTrigger className={triggerClass} value="ai">
       <AnimatedBot thinking={thinking} />
-      <ShineText className="font-medium">Generate</ShineText>
+      <ShineText className="font-medium" tone="color">
+        Generate
+      </ShineText>
     </TabsTrigger>
   );
 }
@@ -98,7 +85,7 @@ const ThemeControlPanel = ({ styles, onChange }: ThemeControlPanelProps) => {
               <Brush2 className="size-4" />
               Design
             </TabsTrigger>
-            <GenerateTrigger active={view === "ai"} thinking={isGenerating} />
+            <GenerateTrigger thinking={isGenerating} />
           </TabsList>
         </div>
 

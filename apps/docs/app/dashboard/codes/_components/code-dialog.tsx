@@ -19,6 +19,7 @@ import { type FormEvent, useEffect, useState, useTransition } from "react";
 import { createQrCode, updateQrCode } from "@/actions/qr-codes";
 import type { QrCodeView } from "@/app/dashboard/codes/_lib/qr-codes";
 import { CopyButton } from "@/components/copy-button";
+import { AccountSourcePicker } from "@/components/data-connections/source-picker";
 import { normalizeDestination } from "@/components/editor/dynamic-link-toggle";
 import { InfoHint } from "@/components/help/info-hint";
 import { soundEvent } from "@/lib/sound/emit";
@@ -186,6 +187,10 @@ export function CodeDialog({ open, onOpenChange, code }: CodeDialogProps) {
                     placeholder="https://example.com/menu"
                     required
                     value={destination}
+                  />
+                  <AccountSourcePicker
+                    contentType="url"
+                    onPick={(item) => setDestination(item.url)}
                   />
                 </div>
               )}

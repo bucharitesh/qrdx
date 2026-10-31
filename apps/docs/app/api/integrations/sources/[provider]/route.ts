@@ -16,7 +16,10 @@ const querySchema = z.object({
 /** GET /api/integrations/sources/<provider> — one page of pickable items. */
 export async function GET(request: Request, context: RouteContext) {
   const { provider } = await context.params;
-  const user = await requireUser(providerReadLimiter, `integrations:sources:${provider}`);
+  const user = await requireUser(
+    providerReadLimiter,
+    `integrations:sources:${provider}`,
+  );
   if ("response" in user) return user.response;
 
   const params = Object.fromEntries(new URL(request.url).searchParams);
@@ -33,7 +36,9 @@ export async function GET(request: Request, context: RouteContext) {
       search: query.data.search || undefined,
       query: query.data.query || undefined,
     });
-    return NextResponse.json(page, { headers: { "Cache-Control": "no-store" } });
+    return NextResponse.json(page, {
+      headers: { "Cache-Control": "no-store" },
+    });
   } catch (error) {
     return dataErrorResponse(error, {
       userId: user.userId,

@@ -25,25 +25,30 @@ export function TemplateCard({ demo }: { demo: TemplateDemo }) {
       aria-labelledby={headingId}
       className="flex min-w-0 flex-col gap-3"
     >
-      <Link
-        aria-label={`View the ${variant.name} demo`}
-        className="block rounded-[1.75rem] border bg-muted/40 p-1.5 shadow-xs transition-colors hover:border-foreground/20 focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:outline-none dark:shadow-none"
-        href={path}
-      >
-        <ScaledPreview className="aspect-[9/16] rounded-[1.375rem] bg-muted">
-          <LandingRender
-            content={content}
-            context={{
-              theme: content.theme,
-              mode: "live",
-              demo: true,
-              pageId: null,
-              qrCodeId: null,
-            }}
-            fill="container"
-          />
-        </ScaledPreview>
-      </Link>
+      {/* The preview has its own links, so it sits under a stretched link
+          instead of inside one (nested <a> is invalid HTML). */}
+      <div className="relative rounded-[1.75rem] border bg-muted/40 p-1.5 shadow-xs transition-colors has-[a:hover]:border-foreground/20 dark:shadow-none">
+        <div aria-hidden inert>
+          <ScaledPreview className="aspect-[9/16] rounded-[1.375rem] bg-muted">
+            <LandingRender
+              content={content}
+              context={{
+                theme: content.theme,
+                mode: "live",
+                demo: true,
+                pageId: null,
+                qrCodeId: null,
+              }}
+              fill="container"
+            />
+          </ScaledPreview>
+        </div>
+        <Link
+          aria-label={`View the ${variant.name} demo`}
+          className="absolute inset-0 rounded-[1.75rem] focus-visible:ring-2 focus-visible:ring-ring/40 focus-visible:outline-none"
+          href={path}
+        />
+      </div>
       <div className="flex items-start gap-3 px-0.5">
         <div className="min-w-0 flex-1 space-y-1">
           <h3 className="text-sm font-medium" id={headingId}>

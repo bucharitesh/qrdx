@@ -43,18 +43,32 @@ interface SyncStatusProps {
 }
 
 /** Last sync, totals and the last error (never personal data). */
-export function SyncStatus({ state, noun, onRetry, retrying }: SyncStatusProps) {
+export function SyncStatus({
+  state,
+  noun,
+  onRetry,
+  retrying,
+}: SyncStatusProps) {
   if (!state) return null;
   const status = state.enabled ? state.status : "paused";
   return (
     <div className="space-y-2 rounded-lg border p-4" aria-live="polite">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="flex items-center gap-2 text-sm font-medium">
-          <span aria-hidden className={cn("size-2 rounded-full", DOTS[status])} />
+          <span
+            aria-hidden
+            className={cn("size-2 rounded-full", DOTS[status])}
+          />
           {LABELS[status]}
         </p>
         {onRetry && (status === "failed" || status === "retrying") && (
-          <Button disabled={retrying} onClick={onRetry} size="sm" type="button" variant="outline">
+          <Button
+            disabled={retrying}
+            onClick={onRetry}
+            size="sm"
+            type="button"
+            variant="outline"
+          >
             {retrying && <Spinner className="size-3.5" />}
             Retry now
           </Button>
@@ -73,7 +87,9 @@ export function SyncStatus({ state, noun, onRetry, retrying }: SyncStatusProps) 
         </div>
         <div>
           <dt className="text-muted-foreground">Skipped</dt>
-          <dd className="font-medium tabular-nums">{state.skipped.toLocaleString()}</dd>
+          <dd className="font-medium tabular-nums">
+            {state.skipped.toLocaleString()}
+          </dd>
         </div>
         <div>
           <dt className="text-muted-foreground">

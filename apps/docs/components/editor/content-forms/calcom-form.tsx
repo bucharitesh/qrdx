@@ -3,6 +3,7 @@
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import * as React from "react";
+import { AccountSourcePicker } from "@/components/data-connections/source-picker";
 import type { CalcomFormData } from "@/lib/validations/qr-content";
 import { calcomSchema } from "@/lib/validations/qr-content";
 import { useQREditorStore } from "@/store/editor-store";
@@ -62,6 +63,10 @@ export function CalcomForm() {
           </p>
         )}
       </div>
+      <AccountSourcePicker
+        contentType="calcom"
+        onPick={(item) => setCalcomData({ bookingUrl: item.url })}
+      />
 
       <p className="text-muted-foreground text-xs">
         Scanning will open your Cal.com booking page

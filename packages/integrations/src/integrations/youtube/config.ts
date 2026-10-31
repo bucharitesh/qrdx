@@ -38,7 +38,8 @@ export const youtubeIntegration: IntegrationDefinition = {
           id: "youtube-playlist",
           label: "YouTube playlist",
           pattern: "^https?://((www|m|music)\\.)?youtube\\.com/playlist\\?",
-          example: "https://www.youtube.com/playlist?list=PL590L5WQmH8fJ54F369BLDSqIwcs-TCfs",
+          example:
+            "https://www.youtube.com/playlist?list=PL590L5WQmH8fJ54F369BLDSqIwcs-TCfs",
           contentType: "youtube",
           targetField: "videoUrl",
         },

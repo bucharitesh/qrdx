@@ -69,9 +69,8 @@ export function shortLinkSource(
     domains ??= client.listDomains();
     return domains;
   };
-  // Bitly searches server-side and lists every domain at once; Rebrandly and
-  // Short.io take a domain id (Short.io lists one domain at a time).
-  const nativeSearch = provider === "bitly";
+  // Bitly lists every domain at once; Rebrandly and Short.io take a domain
+  // id (Short.io lists one domain at a time).
   const nativeDomain = provider !== "bitly";
 
   return {
@@ -131,7 +130,8 @@ export function fromDubLink(raw: unknown): SourceLink | null {
     return null;
   }
   const shortLink = absoluteShortLink(
-    link.shortLink ?? (link.domain && link.key ? `${link.domain}/${link.key}` : null),
+    link.shortLink ??
+      (link.domain && link.key ? `${link.domain}/${link.key}` : null),
   );
   const parts = splitShortLink(shortLink);
   return {

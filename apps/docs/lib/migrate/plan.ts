@@ -69,7 +69,11 @@ export interface PreparedLink {
 export interface ImportPlan {
   preview: ImportPreview;
   /** Same order as the input; `prepared` is set for every valid link */
-  rows: { link: SourceLink; item: PlannedItem; prepared: PreparedLink | null }[];
+  rows: {
+    link: SourceLink;
+    item: PlannedItem;
+    prepared: PreparedLink | null;
+  }[];
 }
 
 /** Links whose back-half the import would try to keep. */

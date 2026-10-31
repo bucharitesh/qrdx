@@ -27,13 +27,19 @@ import {
 } from "@repo/integrations";
 import { and, eq, inArray } from "drizzle-orm";
 import { cookies } from "next/headers";
+import {
+  getConnection,
+  getIntegrationConfig,
+} from "@/lib/connected-accounts/server";
 import { isOutboundDeliveryAllowed } from "@/lib/delivery-guard";
-import { getConnection, getIntegrationConfig } from "@/lib/connected-accounts/server";
 import { env } from "@/lib/env";
 import { HttpError } from "@/lib/error-response";
 import { addChatTarget } from "@/lib/events/notification-settings";
 import { invalidateSubscribers } from "@/lib/events/subscribers";
-import { isIntegrationConfigured, isOAuthConfigured } from "@/lib/integration-oauth";
+import {
+  isIntegrationConfigured,
+  isOAuthConfigured,
+} from "@/lib/integration-oauth";
 import { getActiveScope } from "@/lib/scope";
 
 // Content sources and data out, app side: fresh connections, source
@@ -116,7 +122,10 @@ export async function getSourceStatuses(
   const rows =
     userId && slugs.length > 0
       ? await db
-          .select({ provider: integration.provider, status: integration.status })
+          .select({
+            provider: integration.provider,
+            status: integration.status,
+          })
           .from(integration)
           .where(
             and(
@@ -166,7 +175,11 @@ export async function listSourceItems(
   const needsQuery = provider === "youtube" || provider === "spotify";
   if (needsQuery) {
     if (!isMediaSourceConfigured(provider, mediaSourceEnv())) {
-      throw new HttpError(503, "NOT_CONFIGURED", "Not configured on this server.");
+      throw new HttpError(
+        503,
+        "NOT_CONFIGURED",
+        "Not configured on this server.",
+      );
     }
     return createContentSourceClient(provider, {
       query: options.query,
@@ -213,11 +226,17 @@ export async function saveKeyConnection(
     .select({ id: integration.id })
     .from(integration)
     .where(
-      and(eq(integration.userId, userId), eq(integration.provider, input.provider)),
+      and(
+        eq(integration.userId, userId),
+        eq(integration.provider, input.provider),
+      ),
     )
     .limit(1);
   if (existing) {
-    await db.update(integration).set(values).where(eq(integration.id, existing.id));
+    await db
+      .update(integration)
+      .set(values)
+      .where(eq(integration.id, existing.id));
   } else {
     await db.insert(integration).values({
       id: crypto.randomUUID(),
@@ -267,7 +286,8 @@ export function readSlackChannels(metadata: unknown): SlackChannelRecord[] {
   return Array.isArray(list)
     ? list.filter(
         (item): item is SlackChannelRecord =>
-          typeof item?.targetId === "string" && typeof item?.channel === "string",
+          typeof item?.targetId === "string" &&
+          typeof item?.channel === "string",
       )
     : [];
 }
@@ -314,7 +334,12 @@ export async function prepareDataConnect(
       const [existing] = await db
         .select({ metadata: integration.metadata })
         .from(integration)
-        .where(and(eq(integration.userId, userId), eq(integration.provider, "slack")))
+        .where(
+          and(
+            eq(integration.userId, userId),
+            eq(integration.provider, "slack"),
+          ),
+        )
         .limit(1);
       const channels: SlackChannelRecord[] = [
         ...readSlackChannels(existing?.metadata),
@@ -340,7 +365,11 @@ export async function prepareDataConnect(
     const accessToken = String(tokenData.access_token ?? "");
     let metadata: Record<string, unknown> | null = null;
     if (dataCallsAllowed()) {
-      metadata = await fetchDataAccountMetadata(provider, accessToken, tokenData);
+      metadata = await fetchDataAccountMetadata(
+        provider,
+        accessToken,
+        tokenData,
+      );
     } else if (provider === "mailchimp") {
       // The data center is needed for every Mailchimp call.
       return { handled: true, error: "dev_disabled", redirect: detail };
@@ -379,7 +408,9 @@ export async function cleanupDataConnection(
   userId: string,
   provider: string,
 ): Promise<boolean> {
-  if (!(DATA_OAUTH_PROVIDERS.has(provider) || isContentSourceProvider(provider))) {
+  if (
+    !(DATA_OAUTH_PROVIDERS.has(provider) || isContentSourceProvider(provider))
+  ) {
     return false;
   }
   let revoked = false;
@@ -398,7 +429,9 @@ export async function cleanupDataConnection(
               inArray(notificationSetting.id, ids),
             ),
           );
-        for (const organizationId of new Set(channels.map((c) => c.organizationId))) {
+        for (const organizationId of new Set(
+          channels.map((c) => c.organizationId),
+        )) {
           invalidateSubscribers({ userId, organizationId });
         }
       }
@@ -415,7 +448,10 @@ export async function cleanupDataConnection(
     }
     revoked = await revokeDataProviderToken(
       provider,
-      { accessToken: connection.accessToken, refreshToken: connection.refreshToken },
+      {
+        accessToken: connection.accessToken,
+        refreshToken: connection.refreshToken,
+      },
       client,
     );
   } catch (error) {

@@ -45,7 +45,12 @@ interface SourceKeyFormProps {
 }
 
 /** Paste-a-key connection for content sources, checked then stored encrypted. */
-export function SourceKeyForm({ slug, name, apiKey, reconnect = false }: SourceKeyFormProps) {
+export function SourceKeyForm({
+  slug,
+  name,
+  apiKey,
+  reconnect = false,
+}: SourceKeyFormProps) {
   const router = useRouter();
   const id = useId();
   const [key, setKey] = useState("");
@@ -59,7 +64,9 @@ export function SourceKeyForm({ slug, name, apiKey, reconnect = false }: SourceK
   const ready =
     slug === "shopify"
       ? shop.trim().length > 2 &&
-        (mode === "token" ? key.trim().length >= 8 : clientId.trim() && clientSecret.trim())
+        (mode === "token"
+          ? key.trim().length >= 8
+          : clientId.trim() && clientSecret.trim())
       : key.trim().length >= 8;
 
   const submit = async (event: FormEvent) => {
@@ -106,7 +113,12 @@ export function SourceKeyForm({ slug, name, apiKey, reconnect = false }: SourceK
           ))}
         </ol>
         {apiKey?.helpUrl && (
-          <a className={linkClass} href={apiKey.helpUrl} rel="noopener noreferrer" target="_blank">
+          <a
+            className={linkClass}
+            href={apiKey.helpUrl}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
             Open {name}
             <ExportSquare aria-hidden className="size-3.5" />
           </a>
@@ -129,13 +141,19 @@ export function SourceKeyForm({ slug, name, apiKey, reconnect = false }: SourceK
           <ToggleGroup
             aria-label="How the app connects"
             className="justify-start"
-            onValueChange={(value) => value && setMode(value as "client" | "token")}
+            onValueChange={(value) =>
+              value && setMode(value as "client" | "token")
+            }
             type="single"
             value={mode}
             variant="outline"
           >
-            <ToggleGroupItem value="client">Client ID and secret</ToggleGroupItem>
-            <ToggleGroupItem value="token">Admin API access token</ToggleGroupItem>
+            <ToggleGroupItem value="client">
+              Client ID and secret
+            </ToggleGroupItem>
+            <ToggleGroupItem value="token">
+              Admin API access token
+            </ToggleGroupItem>
           </ToggleGroup>
         </>
       )}
@@ -169,7 +187,9 @@ export function SourceKeyForm({ slug, name, apiKey, reconnect = false }: SourceK
       ) : (
         <div className="space-y-2">
           <Label htmlFor={`${id}-key`}>
-            {slug === "shopify" ? "Admin API access token" : (apiKey?.label ?? "API key")}
+            {slug === "shopify"
+              ? "Admin API access token"
+              : (apiKey?.label ?? "API key")}
           </Label>
           <Input
             autoComplete="off"
@@ -192,7 +212,8 @@ export function SourceKeyForm({ slug, name, apiKey, reconnect = false }: SourceK
         ) : (
           <p className="flex items-center gap-1.5 text-muted-foreground text-xs text-pretty">
             <Lock1 aria-hidden className="size-3.5 shrink-0" />
-            Checked with one read call, then stored encrypted. Never shown again.
+            Checked with one read call, then stored encrypted. Never shown
+            again.
           </p>
         )}
         <Button disabled={pending || !ready} type="submit">

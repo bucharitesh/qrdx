@@ -89,8 +89,10 @@ export function formatMoney(
   let digits = 2;
   try {
     digits =
-      new Intl.NumberFormat(locale, { style: "currency", currency: code })
-        .resolvedOptions().maximumFractionDigits ?? 2;
+      new Intl.NumberFormat(locale, {
+        style: "currency",
+        currency: code,
+      }).resolvedOptions().maximumFractionDigits ?? 2;
   } catch {
     return `${(amountMinor / 100).toFixed(2)} ${code}`;
   }

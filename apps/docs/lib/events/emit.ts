@@ -4,7 +4,6 @@ import { database as db, webhookDelivery } from "@repo/database";
 import cuid from "cuid";
 import { and, asc, eq, gt, inArray, sql } from "drizzle-orm";
 import { after } from "next/server";
-import { triggerIntegrationSyncs } from "@/lib/data-connections/sync";
 import { getPlanLimits } from "@/lib/plans";
 import { shortLinkUrl } from "@/lib/short-links";
 import { claimDueDeliveries, deliverNow, processClaimed } from "./deliveries";
@@ -329,6 +328,21 @@ export function emitFormSubmitted(
   emitEventInBackground("form.submitted", data, scope);
   // HubSpot / Mailchimp streams (lib/data-connections): sent right away
   triggerIntegrationSyncs(scope, "responses");
+}
+
+/**
+ * Starts the lib/data-connections streams without loading that module (and
+ * the provider clients it pulls in) on every import of this one.
+ */
+function triggerIntegrationSyncs(
+  scope: { userId: string; organizationId: string | null },
+  stream: "scans" | "responses",
+): void {
+  import("@/lib/data-connections/sync")
+    .then((sync) => sync.triggerIntegrationSyncs(scope, stream))
+    .catch((error: unknown) => {
+      console.error("[events] integration sync failed to start", error);
+    });
 }
 
 // ─── Scans (called by lib/scans.ts recordScan) ───────────────────────────────

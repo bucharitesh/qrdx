@@ -2,7 +2,8 @@ import { IntegrationApiError, providerRequest } from "../../core/http-client";
 
 const PROVIDER = { slug: "slack", name: "Slack" };
 export const SLACK_REVOKE_URL = "https://slack.com/api/auth.revoke";
-const WEBHOOK = /^https:\/\/hooks\.slack\.com\/services\/[A-Za-z0-9/_-]{10,200}$/;
+const WEBHOOK =
+  /^https:\/\/hooks\.slack\.com\/services\/[A-Za-z0-9/_-]{10,200}$/;
 
 /** The part of oauth.v2.access QRdx keeps (the webhook, not a bot token). */
 export interface SlackInstall {
@@ -45,7 +46,8 @@ export function readSlackInstall(tokenResponse: unknown): SlackInstall {
       provider: PROVIDER.slug,
       status: 400,
       code: "bad_request",
-      message: "Slack did not return a channel webhook. Pick a channel and try again.",
+      message:
+        "Slack did not return a channel webhook. Pick a channel and try again.",
     });
   }
   const configurationUrl = hook.configuration_url?.startsWith("https://")
@@ -75,7 +77,11 @@ export async function revokeSlackToken(token: string): Promise<void> {
       body: "",
     }
   );
-  if (!result.ok && result.error !== "invalid_auth" && result.error !== "token_revoked") {
+  if (
+    !result.ok &&
+    result.error !== "invalid_auth" &&
+    result.error !== "token_revoked"
+  ) {
     throw new IntegrationApiError({
       provider: PROVIDER.slug,
       status: 400,

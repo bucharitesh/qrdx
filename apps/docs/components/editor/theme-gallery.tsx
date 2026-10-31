@@ -111,7 +111,12 @@ function LazyThumb({ styles, size }: { styles: ThemeStyles; size: number }) {
           level={styles.level}
           margin={Math.min(styles.margin ?? 0, 3)}
           size={size}
-          style={{ maxWidth: size, maxHeight: size, width: "auto", height: "auto" }}
+          style={{
+            maxWidth: size,
+            maxHeight: size,
+            width: "auto",
+            height: "auto",
+          }}
           value={THUMB_VALUE}
         />
       )}
@@ -237,9 +242,7 @@ export function ThemeGallery({ open, onOpenChange }: ThemeGalleryProps) {
   const applyThemePreset = useQREditorStore((state) => state.applyThemePreset);
   const { shuffle } = useThemeShuffle();
   const [query, setQuery] = React.useState("");
-  const [category, setCategory] = React.useState<ThemeCategory | "all">(
-    "all",
-  );
+  const [category, setCategory] = React.useState<ThemeCategory | "all">("all");
   const inputRef = React.useRef<HTMLInputElement>(null);
   const listRef = React.useRef<HTMLDivElement>(null);
 
@@ -263,7 +266,9 @@ export function ThemeGallery({ open, onOpenChange }: ThemeGalleryProps) {
     () =>
       ITEMS.filter(
         (item) =>
-          (tokens.length > 0 || category === "all" || item.category === category) &&
+          (tokens.length > 0 ||
+            category === "all" ||
+            item.category === category) &&
           tokens.every((token) => item.search.includes(token)),
       ),
     [tokens, category],
@@ -293,9 +298,14 @@ export function ThemeGallery({ open, onOpenChange }: ThemeGalleryProps) {
       return;
     }
     if (
-      !["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown", "Home", "End"].includes(
-        event.key,
-      )
+      ![
+        "ArrowLeft",
+        "ArrowRight",
+        "ArrowUp",
+        "ArrowDown",
+        "Home",
+        "End",
+      ].includes(event.key)
     ) {
       return;
     }
@@ -340,8 +350,8 @@ export function ThemeGallery({ open, onOpenChange }: ThemeGalleryProps) {
                 Themes
               </ResponsiveDialogTitle>
               <ResponsiveDialogDescription className="mt-1 text-xs">
-                {ITEMS.length} built-in looks, each tested to scan. Or shuffle
-                a new one.
+                {ITEMS.length} built-in looks, each tested to scan. Or shuffle a
+                new one.
               </ResponsiveDialogDescription>
             </div>
             <DialogCloseButton className="-mt-1 -mr-1 hidden sm:inline-flex" />

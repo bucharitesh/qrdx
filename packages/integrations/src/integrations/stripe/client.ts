@@ -1,7 +1,4 @@
-import {
-  IntegrationApiError,
-  providerRequest,
-} from "../../core/http-client";
+import { IntegrationApiError, providerRequest } from "../../core/http-client";
 import type {
   ContentSourceClient,
   ListSourceOptions,
@@ -30,8 +27,7 @@ export function isStripeTestKey(key: string): boolean {
 
 /** Never echo Stripe's message: it can quote the key prefix. */
 function describeStripeError(body: unknown): string | undefined {
-  const error = (body as { error?: { code?: unknown; type?: unknown } })
-    ?.error;
+  const error = (body as { error?: { code?: unknown; type?: unknown } })?.error;
   const code = typeof error?.code === "string" ? error.code : undefined;
   if (code === "secret_key_required") {
     return "this needs a key with more permissions.";
@@ -82,10 +78,9 @@ export class StripeClient implements ContentSourceClient {
     });
   }
 
-  listPaymentLinks(params: {
-    startingAfter?: string;
-    limit?: number;
-  } = {}): Promise<StripeList<StripePaymentLink>> {
+  listPaymentLinks(
+    params: { startingAfter?: string; limit?: number } = {}
+  ): Promise<StripeList<StripePaymentLink>> {
     const search = new URLSearchParams({
       active: "true",
       limit: String(Math.min(Math.max(params.limit ?? PAGE_SIZE, 1), 100)),

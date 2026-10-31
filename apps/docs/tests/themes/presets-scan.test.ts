@@ -27,7 +27,10 @@ describe("the built-in library", () => {
     for (const [id, preset] of entries) {
       expect(preset.label, id).toBeTruthy();
       expect(preset.label, id).not.toMatch(/\d/);
-      expect(labels.has(preset.label as string), `duplicate ${preset.label}`).toBe(false);
+      expect(
+        labels.has(preset.label as string),
+        `duplicate ${preset.label}`,
+      ).toBe(false);
       labels.add(preset.label as string);
       expect(CATEGORY_ORDER, id).toContain(preset.category);
       expect(preset.tags?.length ?? 0, id).toBeGreaterThanOrEqual(3);

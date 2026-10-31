@@ -3,14 +3,18 @@ import {
   connectLimiter,
   providerReadLimiter,
 } from "@/lib/connected-accounts/server";
-import { dataErrorResponse, jsonError, requireUser } from "@/lib/data-connections/http";
+import {
+  dataErrorResponse,
+  jsonError,
+  requireUser,
+} from "@/lib/data-connections/http";
 import {
   getSinkView,
   retrySync,
   saveResponseSink,
   setSheetSync,
 } from "@/lib/data-connections/settings";
-import { readJsonBody, parseWithSchema } from "@/lib/request-guards";
+import { parseWithSchema, readJsonBody } from "@/lib/request-guards";
 import { getActiveScope } from "@/lib/scope";
 
 export const runtime = "nodejs";
@@ -38,11 +42,11 @@ const responseSinkSchema = z.object({
   enabled: z.boolean(),
   pageIds: z.array(id).max(200).nullable(),
   forms: formsSchema,
-  audienceId: z.string().regex(/^[A-Za-z0-9]{1,32}$/).optional(),
-  tags: z
-    .array(z.string().trim().min(1).max(100))
-    .max(10)
+  audienceId: z
+    .string()
+    .regex(/^[A-Za-z0-9]{1,32}$/)
     .optional(),
+  tags: z.array(z.string().trim().min(1).max(100)).max(10).optional(),
   withoutConsent: z.enum(["pending", "skip"]).optional(),
 });
 
@@ -51,7 +55,9 @@ const actionSchema = z.object({ action: z.literal("retry") });
 
 async function guard(provider: string, write: boolean) {
   if (!SINKS.has(provider)) {
-    return { response: jsonError(404, "NOT_FOUND", "Not a data-out integration.") };
+    return {
+      response: jsonError(404, "NOT_FOUND", "Not a data-out integration."),
+    };
   }
   return requireUser(
     write ? connectLimiter : providerReadLimiter,
@@ -67,10 +73,15 @@ export async function GET(request: Request, context: RouteContext) {
   try {
     const scope = await getActiveScope(request.headers);
     const view = await getSinkView(scope, provider);
-    if (!view) return jsonError(404, "NOT_CONNECTED", "Connect the account first.");
+    if (!view)
+      return jsonError(404, "NOT_CONNECTED", "Connect the account first.");
     return Response.json(view, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
-    return dataErrorResponse(error, { userId: user.userId, provider, action: "view" });
+    return dataErrorResponse(error, {
+      userId: user.userId,
+      provider,
+      action: "view",
+    });
   }
 }
 
@@ -93,7 +104,11 @@ export async function PUT(request: Request, context: RouteContext) {
     }
     return Response.json(await getSinkView(scope, provider));
   } catch (error) {
-    return dataErrorResponse(error, { userId: user.userId, provider, action: "save" });
+    return dataErrorResponse(error, {
+      userId: user.userId,
+      provider,
+      action: "save",
+    });
   }
 }
 
@@ -108,6 +123,10 @@ export async function POST(request: Request, context: RouteContext) {
     const scope = await getActiveScope(request.headers);
     return Response.json({ summary, view: await getSinkView(scope, provider) });
   } catch (error) {
-    return dataErrorResponse(error, { userId: user.userId, provider, action: "retry" });
+    return dataErrorResponse(error, {
+      userId: user.userId,
+      provider,
+      action: "retry",
+    });
   }
 }

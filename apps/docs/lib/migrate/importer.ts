@@ -86,7 +86,10 @@ export interface MigrateRepo {
     keys?: string[],
   ): Promise<Map<string, CodeRef>>;
   /** Workspace codes by destinationKey() of the given URLs */
-  findByDestinations(scope: Scope, urls: string[]): Promise<Map<string, CodeRef>>;
+  findByDestinations(
+    scope: Scope,
+    urls: string[],
+  ): Promise<Map<string, CodeRef>>;
   findTakenSlugs(slugs: string[]): Promise<Set<string>>;
   existingTagNames(scope: Scope): Promise<Set<string>>;
   /** The workspace's QRdx custom domain with this hostname */
@@ -133,19 +136,26 @@ async function buildPlan(
   const { links, options, provider } = request;
   const backHalfDomain = options.backHalfDomain;
   const { slugs, candidates } = slugCandidates(links, options);
-  const [usage, imported, byDestination, takenSlugs, existingTags, domain, hosts] =
-    await Promise.all([
-      repo.usage(scope),
-      repo.findImported(scope, provider),
-      repo.findByDestinations(
-        scope,
-        links.map((link) => link.destinationUrl),
-      ),
-      repo.findTakenSlugs(slugs),
-      repo.existingTagNames(scope),
-      backHalfDomain ? repo.domainFor(scope, backHalfDomain) : null,
-      repo.qrdxHosts(scope),
-    ]);
+  const [
+    usage,
+    imported,
+    byDestination,
+    takenSlugs,
+    existingTags,
+    domain,
+    hosts,
+  ] = await Promise.all([
+    repo.usage(scope),
+    repo.findImported(scope, provider),
+    repo.findByDestinations(
+      scope,
+      links.map((link) => link.destinationUrl),
+    ),
+    repo.findTakenSlugs(slugs),
+    repo.existingTagNames(scope),
+    backHalfDomain ? repo.domainFor(scope, backHalfDomain) : null,
+    repo.qrdxHosts(scope),
+  ]);
 
   return planImport(links, {
     provider,
@@ -493,7 +503,10 @@ export async function runRedirects(
     const { items } = redirectBatch(clearRedirectErrors(job), mode);
     return {
       mode,
-      items: items.map((item) => ({ ...redirectPlanItem(item, mode), ok: true })),
+      items: items.map((item) => ({
+        ...redirectPlanItem(item, mode),
+        ok: true,
+      })),
       remaining: 0,
       job: summarizeJob(job),
       stopped: null,
@@ -594,11 +607,7 @@ export async function resetRedirectErrors(
 }
 
 /** Old link → new QRdx link for every item that has one (mapping CSV). */
-export async function jobMapping(
-  deps: ImporterDeps,
-  scope: Scope,
-  id: string,
-) {
+export async function jobMapping(deps: ImporterDeps, scope: Scope, id: string) {
   const { job } = await loadJob(deps, scope, id);
   return redirectTargets(job);
 }

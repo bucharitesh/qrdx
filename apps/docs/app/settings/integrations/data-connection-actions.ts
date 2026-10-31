@@ -1,19 +1,19 @@
 "use server";
 
+import { isIntegrationApiError, type SourceKeyInput } from "@repo/integrations";
 import { CALCOM_API_KEY } from "@repo/integrations/src/integrations/calcom/client";
 import {
   isStripeSecretKey,
   STRIPE_RESTRICTED_KEY,
 } from "@repo/integrations/src/integrations/stripe/client";
-import { isIntegrationApiError, type SourceKeyInput } from "@repo/integrations";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import {
   connectLimiter,
   getSessionUserId,
 } from "@/lib/connected-accounts/server";
-import { HttpError } from "@/lib/error-response";
 import { saveKeyConnection } from "@/lib/data-connections/server";
+import { HttpError } from "@/lib/error-response";
 import { enforceRateLimits } from "@/lib/request-guards";
 
 export type DataConnectionResult = { ok: true } | { ok: false; error: string };
@@ -76,7 +76,8 @@ export async function connectDataSourceAction(
   if (!parsed.success) {
     return {
       ok: false,
-      error: parsed.error.issues[0]?.message ?? "Check the details and try again.",
+      error:
+        parsed.error.issues[0]?.message ?? "Check the details and try again.",
     };
   }
   const input = parsed.data as SourceKeyInput;
@@ -93,7 +94,10 @@ export async function connectDataSourceAction(
     if (error instanceof HttpError) return { ok: false, error: error.message };
     if (isIntegrationApiError(error)) {
       if (error.code === "unauthorized") {
-        return { ok: false, error: `${name} didn't accept that. Check it and try again.` };
+        return {
+          ok: false,
+          error: `${name} didn't accept that. Check it and try again.`,
+        };
       }
       if (error.code === "forbidden") {
         return {

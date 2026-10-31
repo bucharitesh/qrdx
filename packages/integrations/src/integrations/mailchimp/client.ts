@@ -1,8 +1,5 @@
 import crypto from "node:crypto";
-import {
-  IntegrationApiError,
-  providerRequest,
-} from "../../core/http-client";
+import { IntegrationApiError, providerRequest } from "../../core/http-client";
 import type {
   MailchimpAudience,
   MailchimpMergeField,
@@ -25,7 +22,10 @@ const describeMailchimpError = (body: unknown) => {
 
 /** md5 of the lowercased email (Mailchimp's member id). */
 export function subscriberHash(email: string): string {
-  return crypto.createHash("md5").update(email.trim().toLowerCase()).digest("hex");
+  return crypto
+    .createHash("md5")
+    .update(email.trim().toLowerCase())
+    .digest("hex");
 }
 
 /** Reads the account's data center after OAuth (tokens never expire). */
@@ -98,7 +98,11 @@ export class MailchimpClient {
       fields: "lists.id,lists.name,lists.stats.member_count,total_items",
     });
     const data = await this.request<{
-      lists: Array<{ id: string; name: string; stats?: { member_count?: number } }>;
+      lists: Array<{
+        id: string;
+        name: string;
+        stats?: { member_count?: number };
+      }>;
       total_items: number;
     }>(`/lists?${search}`);
     return {

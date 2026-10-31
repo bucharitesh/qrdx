@@ -2,11 +2,22 @@ import "server-only";
 
 import { database as db, integration } from "@repo/database";
 import {
+  isIntegrationApiError,
+  isSinkProvider,
+  SINK_PROVIDERS,
+  type SinkDeliveryResult,
+  type SinkProviderSlug,
+  type SyncState,
+} from "@repo/integrations";
+import {
   appendScansToSheet,
   createGoogleSheetsClient,
   type SheetSyncTarget,
 } from "@repo/integrations/src/integrations/google-sheets";
-import { createHubSpotClient, upsertResponsesToHubSpot } from "@repo/integrations/src/integrations/hubspot";
+import {
+  createHubSpotClient,
+  upsertResponsesToHubSpot,
+} from "@repo/integrations/src/integrations/hubspot";
 import {
   createMailchimpClient,
   type MailchimpSettings,
@@ -21,14 +32,6 @@ import {
   SYNC_BATCH_SIZE,
   SYNC_LEASE_MS,
 } from "@repo/integrations/src/sinks/state";
-import {
-  isIntegrationApiError,
-  isSinkProvider,
-  SINK_PROVIDERS,
-  type SinkDeliveryResult,
-  type SinkProviderSlug,
-  type SyncState,
-} from "@repo/integrations";
 import { and, eq, inArray, sql } from "drizzle-orm";
 import { after } from "next/server";
 import { getConnection } from "@/lib/connected-accounts/server";
@@ -138,7 +141,9 @@ async function deliverBatch(
     return {
       result,
       read: scans.length,
-      settingsPatch: { syncTarget: { ...target, rowsWritten: result.rowsWritten } },
+      settingsPatch: {
+        syncTarget: { ...target, rowsWritten: result.rowsWritten },
+      },
     };
   }
 
@@ -155,7 +160,10 @@ async function deliverBatch(
     return {
       result: await upsertResponsesToHubSpot(
         createHubSpotClient(accessToken),
-        { pageIds: responseSettings.pageIds ?? null, forms: responseSettings.forms ?? {} },
+        {
+          pageIds: responseSettings.pageIds ?? null,
+          forms: responseSettings.forms ?? {},
+        },
         responses,
       ),
       read: responses.length,
@@ -185,17 +193,24 @@ async function deliverBatch(
 const MAX_BATCHES_PER_RUN = 10;
 
 /** Runs one stream until it is caught up, fails or the budget is used. */
-async function syncOne(row: SinkRow, deadline: number): Promise<"ok" | "failed" | "skipped"> {
+async function syncOne(
+  row: SinkRow,
+  deadline: number,
+): Promise<"ok" | "failed" | "skipped"> {
   const now = new Date();
   let state = readSyncState(row.metadata.sync);
   if (!(state && isSyncDue(state, now))) return "skipped";
   if (!(await claim(row.id, now))) return "skipped";
 
-  const release = (next: SyncState) => writeSyncState(row.id, { ...next, leaseUntil: null });
+  const release = (next: SyncState) =>
+    writeSyncState(row.id, { ...next, leaseUntil: null });
 
   try {
     if (!dataCallsAllowed()) {
-      await release({ ...state, lastError: "Not sent: delivery is off outside production" });
+      await release({
+        ...state,
+        lastError: "Not sent: delivery is off outside production",
+      });
       return "skipped";
     }
     const scope = { userId: row.userId, organizationId: state.organizationId };
@@ -246,7 +261,10 @@ async function syncOne(row: SinkRow, deadline: number): Promise<"ok" | "failed" 
       // Keep the lease while more batches follow.
       await writeSyncState(
         row.id,
-        { ...state, leaseUntil: new Date(Date.now() + SYNC_LEASE_MS).toISOString() },
+        {
+          ...state,
+          leaseUntil: new Date(Date.now() + SYNC_LEASE_MS).toISOString(),
+        },
         outcome.settingsPatch,
       );
       if (outcome.settingsPatch) {
@@ -312,7 +330,10 @@ export interface SyncRunSummary {
 export async function runIntegrationSyncs({
   budgetMs = 15_000,
   integrationIds,
-}: { budgetMs?: number; integrationIds?: string[] } = {}): Promise<SyncRunSummary> {
+}: {
+  budgetMs?: number;
+  integrationIds?: string[];
+} = {}): Promise<SyncRunSummary> {
   const deadline = Date.now() + budgetMs;
   const summary: SyncRunSummary = { streams: 0, ok: 0, failed: 0, skipped: 0 };
   try {

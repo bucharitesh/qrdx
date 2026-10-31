@@ -1,6 +1,9 @@
 import type { ColorConfig } from "qrdx/types";
+import { christmasPresets } from "@/components/seasonal/christmas-presets";
 import { halloweenPresets } from "@/components/seasonal/halloween-presets";
-import type { ThemePreset } from "@/types/theme";
+import { newYearPresets } from "@/components/seasonal/new-year-presets";
+import { EYE_DOTS, UNSCANNABLE } from "@/lib/themes/blocks";
+import type { ThemePreset, ThemeStyles } from "@/types/theme";
 
 // The built-in library, hand-picked from scripts/themes/generate.ts contact
 // sheets. Every theme passes the generator's hard filters (contrast, decoded
@@ -874,9 +877,10 @@ const library: Record<string, ThemePreset> = {
     tags: ["red", "black", "movie", "streaming"],
     styles: {
       bgColor: "#141414",
-      fgColor: "#FF4D4F",
-      eyeColor: "#FF4D4F",
-      dotColor: "#FF4D4F",
+      // Red modules, white eyes: red finder patterns on near-black fail jsQR.
+      fgColor: "#FF6B6B",
+      eyeColor: "#F5F5F5",
+      dotColor: "#F5F5F5",
       bodyPattern: "square",
       cornerEyePattern: "square",
       cornerEyeDotPattern: "square",
@@ -1044,24 +1048,60 @@ const HALLOWEEN_TAGS: Record<keyof typeof halloweenPresets, string[]> = {
   halloweenBatNight: ["halloween", "bat", "orange", "spooky"],
 };
 
+/**
+ * Seasonal themes keep their look, except an eye centre the generator rejects
+ * (star centres read only at some sizes): it becomes the eye frame's own
+ * matching centre, which always reads.
+ */
+function scannableCentres(styles: ThemeStyles): ThemeStyles {
+  const dot = styles.cornerEyeDotPattern;
+  if (!(dot && (UNSCANNABLE.dots as readonly string[]).includes(dot))) {
+    return styles;
+  }
+  return {
+    ...styles,
+    cornerEyeDotPattern:
+      EYE_DOTS[styles.cornerEyePattern ?? "rounded"]?.[0] ?? "rounded",
+  };
+}
+
 /** Halloween themes, on the Seasonal shelf (listed first while it runs). */
 const seasonal: Record<string, ThemePreset> = Object.fromEntries(
-  Object.entries(halloweenPresets).map(([id, preset]) => {
-    const styles =
-      id === "halloweenPotion"
-        ? // Star eye centres read only at some sizes; rounded ones always do.
-          { ...preset.styles, cornerEyeDotPattern: "rounded" as const }
-        : preset.styles;
-    return [
+  Object.entries(halloweenPresets).map(([id, preset]) => [
+    id,
+    {
+      ...preset,
+      styles: scannableCentres(preset.styles),
+      category: "seasonal",
+      tags: HALLOWEEN_TAGS[id as keyof typeof halloweenPresets],
+    },
+  ]),
+);
+
+const FESTIVE_TAGS: Record<string, string[]> = {
+  christmasCandyCane: ["christmas", "candy cane", "red", "festive"],
+  christmasPine: ["christmas", "pine", "green", "festive"],
+  christmasSnowfall: ["christmas", "snow", "blue", "festive"],
+  christmasGoldStar: ["christmas", "star", "gold", "festive"],
+  newYearChampagne: ["new year", "champagne", "gold", "party"],
+  newYearMidnight: ["new year", "midnight", "navy", "party"],
+  newYearStarlight: ["new year", "star", "plum", "party"],
+  newYearSparklerGold: ["new year", "sparkler", "gold", "party"],
+};
+
+/** Christmas and New Year themes, on the Seasonal shelf (first while each runs). */
+const festive: Record<string, ThemePreset> = Object.fromEntries(
+  Object.entries({ ...christmasPresets, ...newYearPresets }).map(
+    ([id, preset]) => [
       id,
       {
         ...preset,
-        styles,
+        styles: scannableCentres(preset.styles),
         category: "seasonal",
-        tags: HALLOWEEN_TAGS[id as keyof typeof halloweenPresets],
+        tags: FESTIVE_TAGS[id],
       },
-    ];
-  }),
+    ],
+  ),
 );
 
 /**
@@ -1070,4 +1110,5 @@ const seasonal: Record<string, ThemePreset> = Object.fromEntries(
 export const defaultPresets: Record<string, ThemePreset> = {
   ...library,
   ...seasonal,
+  ...festive,
 };

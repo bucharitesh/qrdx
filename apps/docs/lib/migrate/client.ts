@@ -69,7 +69,11 @@ async function call<T>(path: string, init?: RequestInit): Promise<T> {
       headers: init?.body ? { "Content-Type": "application/json" } : undefined,
     });
   } catch {
-    throw new MigrateApiError(0, "NETWORK", "You seem to be offline. Try again.");
+    throw new MigrateApiError(
+      0,
+      "NETWORK",
+      "You seem to be offline. Try again.",
+    );
   }
   const body = (await response.json().catch(() => null)) as {
     data?: T;
@@ -109,7 +113,8 @@ export const httpClient: MigrateClient = {
   },
   preview: (request) => call("/api/migrate/preview", post(request)),
   start: (request) => call("/api/migrate/jobs", post(request)),
-  run: (id) => call(`/api/migrate/jobs/${encodeURIComponent(id)}/run`, post({})),
+  run: (id) =>
+    call(`/api/migrate/jobs/${encodeURIComponent(id)}/run`, post({})),
   job: (id) => call(`/api/migrate/jobs/${encodeURIComponent(id)}`),
   jobs: () => call("/api/migrate/jobs"),
   redirects: (id, mode, retry) =>
@@ -141,7 +146,10 @@ export const httpClient: MigrateClient = {
 /** Waits out a 429/409 (Retry-After) and tries again, up to `attempts`. */
 export async function withRetry<T>(
   fn: () => Promise<T>,
-  { attempts = 4, onWait }: { attempts?: number; onWait?: (s: number) => void } = {},
+  {
+    attempts = 4,
+    onWait,
+  }: { attempts?: number; onWait?: (s: number) => void } = {},
 ): Promise<T> {
   for (let attempt = 1; ; attempt++) {
     try {

@@ -12,8 +12,8 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { getQRAsSVGDataUri } from "qrdx";
-import { CATEGORY_LABELS, CATEGORY_ORDER } from "../../lib/themes/categories";
 import { EYE_DOTS } from "../../lib/themes/blocks";
+import { CATEGORY_LABELS, CATEGORY_ORDER } from "../../lib/themes/categories";
 import { colorStops } from "../../lib/themes/color";
 import {
   type ComposedTheme,
@@ -63,7 +63,8 @@ function toLab(color: string): [number, number, number] {
   const x = (0.4124 * r + 0.3576 * g + 0.1805 * b) / 0.950_47;
   const y = 0.2126 * r + 0.7152 * g + 0.0722 * b;
   const z = (0.0193 * r + 0.1192 * g + 0.9505 * b) / 1.088_83;
-  const f = (t: number) => (t > 0.008_856 ? Math.cbrt(t) : 7.787 * t + 16 / 116);
+  const f = (t: number) =>
+    t > 0.008_856 ? Math.cbrt(t) : 7.787 * t + 16 / 116;
   return [116 * f(y) - 16, 500 * (f(x) - f(y)), 200 * (f(y) - f(z))];
 }
 
@@ -188,7 +189,7 @@ function selectVaried(pool: Candidate[], keep: number): Candidate[] {
 
 // ── Contact sheets ──────────────────────────────────────────────────────────
 
-const escape = (text: string) =>
+const escapeHtml = (text: string) =>
   text.replace(/[&<>"]/g, (c) => `&#${c.charCodeAt(0)};`);
 
 async function tile(
@@ -201,8 +202,8 @@ async function tile(
     size: 150,
   });
   const svg = decodeURIComponent(uri.slice(uri.indexOf(",") + 1));
-  return `<figure><div class="qr">${svg}</div><figcaption><b>${escape(label)}</b>${lines
-    .map((line) => `<span>${escape(line)}</span>`)
+  return `<figure><div class="qr">${svg}</div><figcaption><b>${escapeHtml(label)}</b>${lines
+    .map((line) => `<span>${escapeHtml(line)}</span>`)
     .join("")}</figcaption></figure>`;
 }
 
@@ -218,12 +219,11 @@ function sheetHtml(title: string, sections: string, dark: boolean): string {
   .qr svg{max-width:150px;max-height:164px;width:auto;height:auto}
   figcaption{margin-top:6px;display:flex;flex-direction:column;gap:1px}
   figcaption b{font-size:12px;font-weight:600} figcaption span{color:${muted};font-size:10.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  </style></head><body><h1>${escape(title)}</h1>${sections}</body></html>`;
+  </style></head><body><h1>${escapeHtml(title)}</h1>${sections}</body></html>`;
 }
 
 async function screenshot(htmlFiles: { html: string; png: string }[]) {
-  // biome-ignore lint/suspicious/noExplicitAny: plain JS helper
-  const { launch } = (await import("../../e2e/cdp.mjs")) as any;
+  const { launch } = await import("../../e2e/cdp.mjs");
   const page = await launch({ width: 1440, height: 900 });
   try {
     for (const { html, png } of htmlFiles) {
@@ -343,7 +343,12 @@ async function judgeLibrary() {
     `${ids.length} presets, ${ids.length - failures.length} pass, ${failures.length} fail`,
   );
   for (const failure of failures) console.log(`  ✕ ${failure}`);
-  await writeSheets("library", `Built-in library · ${ids.length} themes`, entries, 200);
+  await writeSheets(
+    "library",
+    `Built-in library · ${ids.length} themes`,
+    entries,
+    200,
+  );
   return failures.length;
 }
 
@@ -387,7 +392,10 @@ async function generate() {
     candidate.verdict = verdict;
     if (verdict.pass) candidate.score = softScore(candidate, verdict);
     for (const reason of verdict.reasons) {
-      const kind = reason.replace(/[\d.]+/g, "#").replace(/\(.*\)/, "").trim();
+      const kind = reason
+        .replace(/[\d.]+/g, "#")
+        .replace(/\(.*\)/, "")
+        .trim();
       reasons.set(kind, (reasons.get(kind) ?? 0) + 1);
     }
     const { styles } = candidate;
@@ -397,7 +405,9 @@ async function generate() {
     bump(`pair ${styles.bodyPattern}/${styles.cornerEyePattern}`, verdict.pass);
     bump(`palette ${candidate.palette}`, verdict.pass);
     if ((index + 1) % 50 === 0) {
-      const passed = candidates.slice(0, index + 1).filter((c) => c.verdict?.pass).length;
+      const passed = candidates
+        .slice(0, index + 1)
+        .filter((c) => c.verdict?.pass).length;
       console.log(
         `  judged ${index + 1}/${candidates.length} (${passed} pass, ${Math.round((Date.now() - started) / 1000)}s)`,
       );
@@ -410,22 +420,33 @@ async function generate() {
   const invertedPassed = passed.filter((c) => c.verdict?.inverted).length;
   const kept = selectVaried(passed, keep);
 
-  console.log(`\nGenerated ${candidates.length} · passed ${passed.length} (${invertedPassed} inverted) · kept ${kept.length}`);
+  console.log(
+    `\nGenerated ${candidates.length} · passed ${passed.length} (${invertedPassed} inverted) · kept ${kept.length}`,
+  );
   console.log("Rejections by reason:");
   for (const [reason, n] of [...reasons].sort((a, b) => b[1] - a[1])) {
     console.log(`  ${n}\t${reason}`);
   }
   const weak = [...patternStats]
-    .filter(([key, stat]) => !key.startsWith("pair") && stat.total >= 4 && stat.pass / stat.total < 0.8)
+    .filter(
+      ([key, stat]) =>
+        !key.startsWith("pair") &&
+        stat.total >= 4 &&
+        stat.pass / stat.total < 0.8,
+    )
     .sort((a, b) => a[1].pass / a[1].total - b[1].pass / b[1].total);
   console.log("Weak building blocks (pass rate < 80%):");
   for (const [key, stat] of weak) {
     console.log(`  ${key}: ${stat.pass}/${stat.total}`);
   }
   const failingPairs = [...patternStats]
-    .filter(([key, stat]) => key.startsWith("pair") && stat.pass === 0 && stat.total >= 2)
+    .filter(
+      ([key, stat]) =>
+        key.startsWith("pair") && stat.pass === 0 && stat.total >= 2,
+    )
     .map(([key, stat]) => `${key.slice(5)} (${stat.total})`);
-  if (failingPairs.length) console.log(`Pairs that never passed: ${failingPairs.join(", ")}`);
+  if (failingPairs.length)
+    console.log(`Pairs that never passed: ${failingPairs.join(", ")}`);
 
   writeFileSync(
     join(OUT, "candidates.json"),

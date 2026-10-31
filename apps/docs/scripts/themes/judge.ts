@@ -18,8 +18,8 @@ import {
   simulateCamera,
   svgFromDataUri,
 } from "../../../../packages/qrdx/tests/support/raster";
-import { contrastProblems } from "../../lib/themes/compose";
 import { isInverted } from "../../lib/themes/color";
+import { contrastProblems } from "../../lib/themes/compose";
 import type { ThemeStyles } from "../../types/theme";
 
 /** What the playground's e2e suite and the scan-score tests encode. */

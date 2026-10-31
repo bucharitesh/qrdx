@@ -1,10 +1,11 @@
 "use client";
 
 import { Button } from "@repo/design-system/components/ui/button";
-import { Ghost } from "iconsax-reactjs";
+import { Ghost, MagicStar, Tree } from "iconsax-reactjs";
 import type { ColorConfig } from "qrdx/types";
 import {
   type CSSProperties,
+  type ReactNode,
   type Ref,
   useCallback,
   useEffect,
@@ -13,27 +14,70 @@ import {
   useState,
 } from "react";
 import { createPortal } from "react-dom";
+import type { Season } from "@/lib/seasonal";
 import { useQREditorStore } from "@/store/editor-store";
+import type { ThemePreset } from "@/types/theme";
 import { type AvoidRects, SittingCat } from "./cat";
+import { Snowman } from "./christmas";
+import { christmasPresets } from "./christmas-presets";
 import { FloatGhost, type GhostPlacement } from "./ghost";
 import { SpiderWeb } from "./glyphs";
-import {
-  HALLOWEEN_PUMPKIN,
-  type HalloweenPresetId,
-  halloweenPresets,
-} from "./halloween-presets";
+import { HALLOWEEN_PUMPKIN, halloweenPresets } from "./halloween-presets";
 import { HalloweenHeaderChrome } from "./header-chrome";
+import { Champagne } from "./new-year";
+import { newYearPresets } from "./new-year-presets";
 import styles from "./seasonal.module.css";
-import { useHalloweenOn } from "./use-halloween";
+import { useActiveSeason } from "./use-season";
 
 const GHOST_RATIO = 512 / 431;
 
-const CHIPS: { id: HalloweenPresetId; label: string }[] = [
-  { id: "halloweenPumpkin", label: "Pumpkin" },
-  { id: "halloweenGhost", label: "Ghost" },
-  { id: "halloweenPotion", label: "Potion" },
-  { id: "halloweenBatNight", label: "Bat night" },
-];
+type CanvasSeason = "halloween" | "christmas" | "new-year";
+
+const CHIPS: Record<
+  CanvasSeason,
+  {
+    title: string;
+    icon: ReactNode;
+    presets: Record<string, ThemePreset>;
+    chips: { id: string; label: string }[];
+  }
+> = {
+  halloween: {
+    title: "Try a spooky style",
+    icon: (
+      <Ghost size={14} variant="Bulk" color={HALLOWEEN_PUMPKIN} aria-hidden />
+    ),
+    presets: halloweenPresets,
+    chips: [
+      { id: "halloweenPumpkin", label: "Pumpkin" },
+      { id: "halloweenGhost", label: "Ghost" },
+      { id: "halloweenPotion", label: "Potion" },
+      { id: "halloweenBatNight", label: "Bat night" },
+    ],
+  },
+  christmas: {
+    title: "Try a festive style",
+    icon: <Tree size={14} variant="Bulk" color="#1F7A4D" aria-hidden />,
+    presets: christmasPresets,
+    chips: [
+      { id: "christmasCandyCane", label: "Candy Cane" },
+      { id: "christmasPine", label: "Pine" },
+      { id: "christmasSnowfall", label: "Snowfall" },
+      { id: "christmasGoldStar", label: "Gold Star" },
+    ],
+  },
+  "new-year": {
+    title: "Try a New Year style",
+    icon: <MagicStar size={14} variant="Bulk" color="#C9A227" aria-hidden />,
+    presets: newYearPresets,
+    chips: [
+      { id: "newYearChampagne", label: "Champagne" },
+      { id: "newYearMidnight", label: "Midnight" },
+      { id: "newYearStarlight", label: "Starlight" },
+      { id: "newYearSparklerGold", label: "Sparkler Gold" },
+    ],
+  },
+};
 
 function solid(color: ColorConfig | string | undefined, fallback: string) {
   if (!color) return fallback;
@@ -75,9 +119,16 @@ function useLayerIn(
   return layer;
 }
 
-function SpookyStyles({ chipsRef }: { chipsRef: Ref<HTMLDivElement> }) {
+function SeasonChips({
+  season,
+  chipsRef,
+}: {
+  season: CanvasSeason;
+  chipsRef: Ref<HTMLDivElement>;
+}) {
   const preset = useQREditorStore((state) => state.themeState.preset);
   const applyThemePreset = useQREditorStore((state) => state.applyThemePreset);
+  const config = CHIPS[season];
 
   return (
     <div
@@ -85,11 +136,11 @@ function SpookyStyles({ chipsRef }: { chipsRef: Ref<HTMLDivElement> }) {
       className="pointer-events-auto absolute top-2 left-2 flex max-w-[calc(100%-1rem)] items-center gap-1.5 overflow-x-auto [mask-image:linear-gradient(to_right,black_calc(100%-24px),transparent)] [scrollbar-width:none]"
     >
       <span className="flex shrink-0 items-center gap-1.5 pr-1 pl-1 text-xs text-muted-foreground">
-        <Ghost size={14} variant="Bulk" color={HALLOWEEN_PUMPKIN} aria-hidden />
-        <span className="hidden sm:inline">Try a spooky style</span>
+        {config.icon}
+        <span className="hidden sm:inline">{config.title}</span>
       </span>
-      {CHIPS.map((chip) => {
-        const look = halloweenPresets[chip.id].styles;
+      {config.chips.map((chip) => {
+        const look = config.presets[chip.id].styles;
         const active = preset === chip.id;
         return (
           <Button
@@ -114,7 +165,13 @@ function SpookyStyles({ chipsRef }: { chipsRef: Ref<HTMLDivElement> }) {
   );
 }
 
-function CanvasLayers({ canvas }: { canvas: HTMLElement }) {
+function CanvasLayers({
+  canvas,
+  season,
+}: {
+  canvas: HTMLElement;
+  season: CanvasSeason;
+}) {
   const back = useLayerIn(
     canvas,
     "first",
@@ -191,22 +248,41 @@ function CanvasLayers({ canvas }: { canvas: HTMLElement }) {
 
   return (
     <>
+      {season === "halloween" &&
+        createPortal(
+          <>
+            <div className={styles.fog} style={{ left: "-10%" }} />
+            <div
+              className={styles.fog}
+              style={{ left: "35%", "--delay": "-9s" } as CSSProperties}
+            />
+          </>,
+          back,
+        )}
       {createPortal(
         <>
-          <div className={styles.fog} style={{ left: "-10%" }} />
-          <div
-            className={styles.fog}
-            style={{ left: "35%", "--delay": "-9s" } as CSSProperties}
-          />
-        </>,
-        back,
-      )}
-      {createPortal(
-        <>
-          <SpiderWeb className="absolute top-0 right-0 size-11 -scale-x-100 text-foreground/15" />
-          <SpookyStyles chipsRef={chipsRef} />
-          <FloatGhost placement={ghostPlacement} size={40} />
-          <SittingCat stage={front} avoid={avoid} right={14} size={44} />
+          <SeasonChips season={season} chipsRef={chipsRef} />
+          {season === "halloween" && (
+            <>
+              <SpiderWeb className="absolute top-0 right-0 size-11 -scale-x-100 text-foreground/15" />
+              <FloatGhost placement={ghostPlacement} size={40} />
+              <SittingCat stage={front} avoid={avoid} right={14} size={44} />
+            </>
+          )}
+          {season === "christmas" && (
+            <Snowman
+              style={{ right: 18, bottom: 8 }}
+              width={34}
+              avoid={avoid}
+            />
+          )}
+          {season === "new-year" && (
+            <Champagne
+              style={{ right: 20, bottom: 8 }}
+              width={20}
+              avoid={avoid}
+            />
+          )}
         </>,
         front,
       )}
@@ -214,16 +290,12 @@ function CanvasLayers({ canvas }: { canvas: HTMLElement }) {
   );
 }
 
-function HalloweenCanvas() {
-  const on = useHalloweenOn();
+function SeasonCanvas({ season }: { season: CanvasSeason }) {
   const [canvas, setCanvas] = useState<HTMLElement | null>(null);
 
   useEffect(() => {
     const main = document.querySelector("main");
-    if (!on || !main) {
-      setCanvas(null);
-      return;
-    }
+    if (!main) return;
     // The editor swaps panels (desktop/mobile, tabs); follow the live canvas.
     let frame = 0;
     const update = () => {
@@ -244,18 +316,27 @@ function HalloweenCanvas() {
       observer.disconnect();
       cancelAnimationFrame(frame);
     };
-  }, [on]);
+  }, []);
 
-  if (!on || !canvas) return null;
-  return <CanvasLayers canvas={canvas} />;
+  if (!canvas) return null;
+  return <CanvasLayers canvas={canvas} season={season} />;
 }
 
-/** Playground: header chrome plus fog, a ghost, a cat and spooky preset chips on the preview canvas. */
-export function HalloweenPlayground() {
+const isCanvasSeason = (season: Season | null): season is CanvasSeason =>
+  season === "halloween" || season === "christmas" || season === "new-year";
+
+/**
+ * Playground: the season's preset chips and a character or two at the edges
+ * of the preview canvas (Halloween also gets its header spider and fog).
+ * Winter adds nothing here.
+ */
+export function SeasonalPlayground() {
+  const season = useActiveSeason();
+  if (!isCanvasSeason(season)) return null;
   return (
     <>
-      <HalloweenHeaderChrome spider />
-      <HalloweenCanvas />
+      {season === "halloween" && <HalloweenHeaderChrome spider />}
+      <SeasonCanvas season={season} />
     </>
   );
 }

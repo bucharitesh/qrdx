@@ -1,7 +1,12 @@
 // Providers QRdx can import dynamic codes and short links from. Client-safe:
 // the import dialog, the API routes, the docs and the compare pages read it.
 
-export const API_PROVIDER_IDS = ["dub", "bitly", "rebrandly", "short-io"] as const;
+export const API_PROVIDER_IDS = [
+  "dub",
+  "bitly",
+  "rebrandly",
+  "short-io",
+] as const;
 export type ApiProviderId = (typeof API_PROVIDER_IDS)[number];
 
 export const FILE_PROVIDER_IDS = [

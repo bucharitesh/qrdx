@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { CompareFeatures } from "@/components/sections/compare/compare-features";
 import { CompareGuide } from "@/components/sections/compare/compare-guide";
 import { CompareHero } from "@/components/sections/compare/compare-hero";
+import { CompareMigrate } from "@/components/sections/compare/compare-migrate";
 import { CompareOthers } from "@/components/sections/compare/compare-others";
 import { CompareTable } from "@/components/sections/compare/compare-table";
 import { createMetadata } from "@/lib/metadata";
@@ -51,6 +52,7 @@ export default async function ComparePage({ params }: PageProps) {
       >
         <Mdx components={getMDXComponents()} />
       </CompareGuide>
+      <CompareMigrate competitor={competitor} slug={slug} />
       <CompareOthers currentSlug={slug} />
     </main>
   );

@@ -1,6 +1,9 @@
 "use client";
 
-import { Spinner as Loader2, Close as X } from "@repo/design-system/components/icons";
+import {
+  Spinner as Loader2,
+  Close as X,
+} from "@repo/design-system/components/icons";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
@@ -19,9 +22,12 @@ import {
 } from "@repo/design-system/components/ui/dropdown-menu";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
-import { ScrollArea } from "@repo/design-system/components/ui/scroll-area";
 import type { SourceItem } from "@repo/integrations";
-import { ArrowDown2, SearchNormal1 as Search, UserSquare } from "iconsax-reactjs";
+import {
+  ArrowDown2,
+  SearchNormal1 as Search,
+  UserSquare,
+} from "iconsax-reactjs";
 import Link from "next/link";
 import { type FormEvent, useCallback, useEffect, useId, useState } from "react";
 import { emitSound } from "@/components/editor/sound";
@@ -46,8 +52,14 @@ const DESCRIPTIONS: Record<string, string> = {
 };
 
 const QUERY_LABELS: Record<string, { label: string; placeholder: string }> = {
-  youtube: { label: "Your channel", placeholder: "@yourchannel or channel link" },
-  spotify: { label: "Your Spotify profile", placeholder: "https://open.spotify.com/user/…" },
+  youtube: {
+    label: "Your channel",
+    placeholder: "@yourchannel or channel link",
+  },
+  spotify: {
+    label: "Your Spotify profile",
+    placeholder: "https://open.spotify.com/user/…",
+  },
 };
 
 const listNames = (sources: SourceStatusView[]) => {
@@ -81,7 +93,12 @@ interface PickerDialogProps {
   onPick: (item: SourceItem) => void;
 }
 
-function SourcePickerDialog({ source, open, onOpenChange, onPick }: PickerDialogProps) {
+function SourcePickerDialog({
+  source,
+  open,
+  onOpenChange,
+  onPick,
+}: PickerDialogProps) {
   const queryId = useId();
   const [items, setItems] = useState<SourceItem[]>([]);
   const [cursor, setCursor] = useState<string | undefined>();
@@ -95,16 +112,23 @@ function SourcePickerDialog({ source, open, onOpenChange, onPick }: PickerDialog
   const queryCopy = QUERY_LABELS[source.slug];
 
   const fetchPage = useCallback(
-    async (options: { cursor?: string; search?: string; query?: string }, append = false) => {
+    async (
+      options: { cursor?: string; search?: string; query?: string },
+      append = false,
+    ) => {
       setLoading(true);
       setError(null);
       try {
         const page = await loadSourcePage(source.slug, options);
-        setItems((current) => (append ? [...current, ...page.items] : page.items));
+        setItems((current) =>
+          append ? [...current, ...page.items] : page.items,
+        );
         setCursor(page.nextCursor);
       } catch (err) {
         setError(
-          err instanceof DataConnectionError ? err.message : "Couldn't load. Try again.",
+          err instanceof DataConnectionError
+            ? err.message
+            : "Couldn't load. Try again.",
         );
         if (!append) setItems([]);
       } finally {
@@ -121,7 +145,10 @@ function SourcePickerDialog({ source, open, onOpenChange, onPick }: PickerDialog
   const submitSearch = (event: FormEvent) => {
     event.preventDefault();
     setActiveSearch(search.trim());
-    fetchPage({ search: search.trim() || undefined, query: activeQuery || undefined });
+    fetchPage({
+      search: search.trim() || undefined,
+      query: activeQuery || undefined,
+    });
   };
 
   const submitQuery = (event: FormEvent) => {
@@ -141,7 +168,10 @@ function SourcePickerDialog({ source, open, onOpenChange, onPick }: PickerDialog
       <DialogContent className="max-h-[85vh] gap-4 sm:max-w-xl">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2.5">
-            <IntegrationLogo logo={{ type: "image", src: source.logo }} size="sm" />
+            <IntegrationLogo
+              logo={{ type: "image", src: source.logo }}
+              size="sm"
+            />
             Pick from {source.name}
           </DialogTitle>
           <DialogDescription>{DESCRIPTIONS[source.slug]}</DialogDescription>
@@ -159,7 +189,11 @@ function SourcePickerDialog({ source, open, onOpenChange, onPick }: PickerDialog
                 spellCheck={false}
                 value={query}
               />
-              <Button disabled={!query.trim() || loading} type="submit" variant="outline">
+              <Button
+                disabled={!query.trim() || loading}
+                type="submit"
+                variant="outline"
+              >
                 Show
               </Button>
             </div>
@@ -167,7 +201,7 @@ function SourcePickerDialog({ source, open, onOpenChange, onPick }: PickerDialog
         )}
 
         {ready && (
-          <form className="relative" onSubmit={submitSearch} role="search">
+          <form className="relative" onSubmit={submitSearch}>
             <Search
               aria-hidden
               className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
@@ -198,12 +232,15 @@ function SourcePickerDialog({ source, open, onOpenChange, onPick }: PickerDialog
         )}
 
         {error && (
-          <p className="rounded-md bg-destructive/10 p-3 text-destructive text-sm" role="alert">
+          <p
+            className="rounded-md bg-destructive/10 p-3 text-destructive text-sm"
+            role="alert"
+          >
             {error}
           </p>
         )}
 
-        <ScrollArea className="h-[340px] rounded-md border">
+        <div className="h-[340px] overflow-y-auto overscroll-contain rounded-md border">
           {loading && items.length === 0 ? (
             <div className="flex items-center justify-center p-8">
               <Loader2 className="size-6 animate-spin text-muted-foreground" />
@@ -242,7 +279,9 @@ function SourcePickerDialog({ source, open, onOpenChange, onPick }: PickerDialog
                       />
                     )}
                     <span className="min-w-0 flex-1">
-                      <span className="block truncate text-sm">{item.title}</span>
+                      <span className="block truncate text-sm">
+                        {item.title}
+                      </span>
                       <span className="block truncate text-muted-foreground text-xs">
                         {[item.subtitle, item.url.replace(/^https?:\/\//, "")]
                           .filter(Boolean)
@@ -282,7 +321,7 @@ function SourcePickerDialog({ source, open, onOpenChange, onPick }: PickerDialog
               </Button>
             </div>
           )}
-        </ScrollArea>
+        </div>
       </DialogContent>
     </Dialog>
   );
@@ -313,7 +352,8 @@ export function AccountSourcePicker({
 
   const configured = state.sources.filter((source) => source.configured);
   const ready = configured.filter(
-    (source) => source.connected && (source.needsQuery || source.status === "active"),
+    (source) =>
+      source.connected && (source.needsQuery || source.status === "active"),
   );
   const accountSources = configured.filter((source) => !source.needsQuery);
 
@@ -363,7 +403,10 @@ export function AccountSourcePicker({
               Your accounts
             </DropdownMenuLabel>
             {ready.map((source) => (
-              <DropdownMenuItem key={source.slug} onSelect={() => setOpen(source)}>
+              <DropdownMenuItem
+                key={source.slug}
+                onSelect={() => setOpen(source)}
+              >
                 <IntegrationLogo
                   className="size-5 p-0.5"
                   logo={{ type: "image", src: source.logo }}

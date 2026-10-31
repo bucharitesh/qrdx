@@ -1,7 +1,4 @@
-import {
-  IntegrationApiError,
-  providerRequest,
-} from "../../core/http-client";
+import { IntegrationApiError, providerRequest } from "../../core/http-client";
 import type {
   ContentSourceClient,
   ListSourceOptions,
@@ -80,7 +77,9 @@ export class SpotifyPlaylistsClient implements ContentSourceClient {
     credentials: { clientId: string; clientSecret: string },
     profile: string
   ) {
-    const parsed = parseSpotifyUrl(profile) ?? parseSpotifyUrl(`spotify:user:${profile.trim()}`);
+    const parsed =
+      parseSpotifyUrl(profile) ??
+      parseSpotifyUrl(`spotify:user:${profile.trim()}`);
     if (parsed?.kind !== "user") {
       throw new IntegrationApiError({
         provider: PROVIDER.slug,

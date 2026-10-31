@@ -86,12 +86,15 @@ export function FileStep({
         complete: (results) => {
           const [header, ...body] = results.data;
           if (!header || body.length === 0) {
-            setError("The file needs a header row and at least one row of codes.");
+            setError(
+              "The file needs a header row and at least one row of codes.",
+            );
             setFile(null);
             return;
           }
           const headers = header.map(
-            (name, index) => name.replace(/^﻿/, "").trim() || `Column ${index + 1}`,
+            (name, index) =>
+              name.replace(/^﻿/, "").trim() || `Column ${index + 1}`,
           );
           const detection = detectFileProvider(headers, body);
           const use =
@@ -99,7 +102,9 @@ export function FileStep({
               ? detection.provider
               : provider;
           if (use !== provider) onProvider(use);
-          setDetected(detection.confidence === "low" ? null : detection.provider);
+          setDetected(
+            detection.confidence === "low" ? null : detection.provider,
+          );
           setFile({
             name: picked.name,
             headers,
@@ -122,7 +127,9 @@ export function FileStep({
       "text/csv": [".csv"],
       "text/plain": [".txt"],
       "application/vnd.ms-excel": [".csv", ".xls"],
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [".xlsx"],
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [
+        ".xlsx",
+      ],
     },
   });
 
@@ -135,7 +142,9 @@ export function FileStep({
 
   const setField = (field: FileField, value: string) =>
     setMapping((current) =>
-      current ? { ...current, [field]: value === NONE ? -1 : Number(value) } : current,
+      current
+        ? { ...current, [field]: value === NONE ? -1 : Number(value) }
+        : current,
     );
 
   return (
@@ -160,12 +169,18 @@ export function FileStep({
         <div className="space-y-2">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <h3 className="text-sm font-semibold">
-              Get the file from {info.name === FILE_PROVIDERS.csv.name ? "your provider" : info.name}
+              Get the file from{" "}
+              {info.name === FILE_PROVIDERS.csv.name
+                ? "your provider"
+                : info.name}
             </h3>
             <Select
               onValueChange={(value) => {
                 onProvider(value as FileProviderId);
-                if (file) setMapping(guessFileMapping(file.headers, value as FileProviderId));
+                if (file)
+                  setMapping(
+                    guessFileMapping(file.headers, value as FileProviderId),
+                  );
               }}
               value={provider}
             >
@@ -195,12 +210,22 @@ export function FileStep({
             isDragActive ? "border-foreground/40 bg-accent/40" : "bg-muted/20",
           )}
         >
-          <input {...getInputProps()} aria-label="Export file" data-testid="migrate-file" />
+          <input
+            {...getInputProps()}
+            aria-label="Export file"
+            data-testid="migrate-file"
+          />
           <span className="grid size-9 place-items-center rounded-lg border bg-background">
             {file ? (
-              <TableDocument aria-hidden className="size-4 text-foreground/80" />
+              <TableDocument
+                aria-hidden
+                className="size-4 text-foreground/80"
+              />
             ) : (
-              <DocumentUpload aria-hidden className="size-4 text-foreground/80" />
+              <DocumentUpload
+                aria-hidden
+                className="size-4 text-foreground/80"
+              />
             )}
           </span>
           {file ? (
@@ -258,7 +283,6 @@ export function FileStep({
                     <SelectContent>
                       <SelectItem value={NONE}>Not in the file</SelectItem>
                       {file.headers.map((header, index) => (
-                        // biome-ignore lint/suspicious/noArrayIndexKey: headers can repeat
                         <SelectItem key={index} value={String(index)}>
                           {header}
                           {sample[0]?.[index] ? (
@@ -281,8 +305,8 @@ export function FileStep({
               <Note icon={<InfoCircle />}>
                 <p>
                   The old short link (or code ID) is what makes a re-upload of
-                  the same file skip codes it already imported, and it goes
-                  into the mapping of old to new links.
+                  the same file skip codes it already imported, and it goes into
+                  the mapping of old to new links.
                 </p>
               </Note>
             )}

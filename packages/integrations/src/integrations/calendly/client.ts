@@ -1,7 +1,4 @@
-import {
-  IntegrationApiError,
-  providerRequest,
-} from "../../core/http-client";
+import { IntegrationApiError, providerRequest } from "../../core/http-client";
 import type {
   ContentSourceClient,
   ListSourceOptions,
@@ -79,7 +76,9 @@ export class CalendlyClient implements ContentSourceClient {
         {
           id: eventType.uri.split("/").at(-1) ?? eventType.uri,
           title: eventType.name?.trim() || eventType.slug || "Event type",
-          subtitle: eventType.duration ? `${eventType.duration} min` : undefined,
+          subtitle: eventType.duration
+            ? `${eventType.duration} min`
+            : undefined,
           url,
           badge: eventType.secret ? "Secret link" : undefined,
         },

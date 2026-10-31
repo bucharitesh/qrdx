@@ -30,7 +30,8 @@ export const spotifyIntegration: IntegrationDefinition = {
           label: "Spotify link",
           pattern:
             "^https?://(open|play)\\.spotify\\.com/(intl-[a-z-]+/|embed/)?(track|album|artist|playlist|show|episode|audiobook|user)/",
-          example: "https://open.spotify.com/intl-de/track/4cOdK2wGLETKBW3PvgPWqT",
+          example:
+            "https://open.spotify.com/intl-de/track/4cOdK2wGLETKBW3PvgPWqT",
           contentType: "spotify",
           targetField: "uri",
         },

@@ -12,17 +12,19 @@ import {
   FRAME_CHOICES,
   FRAME_CTAS,
   FRAME_RATE,
+  GRADIENT_BODY_EXCLUDE,
   GRADIENT_RATE,
+  GRADIENT_STOP_CONTRAST,
   MARGINS,
   MIX_RATE,
   PALETTES,
-  PLAYFUL_DOTS,
   type Palette,
+  PLAYFUL_DOTS,
   STYLE_FAMILIES,
   type StyleFamily,
   UNSCANNABLE,
 } from "./blocks";
-import { worstContrast } from "./color";
+import { contrastRatio, worstContrast } from "./color";
 
 /** Seeded pseudo-random numbers (mulberry32). */
 export function createRandom(seed: number) {
@@ -110,8 +112,14 @@ export function composeTheme(random: Random): ComposedTheme {
   const palette = random.pick(WEIGHTED_PALETTES);
   const { family, mixed, body, eye, dot } = pickPatterns(random);
   const margin = random.pick(MARGINS);
+  const wantsGradient = random.chance(GRADIENT_RATE / GRADIENT_PALETTE_SHARE);
   const gradientStops =
-    palette.gradient && random.chance(GRADIENT_RATE / GRADIENT_PALETTE_SHARE)
+    wantsGradient &&
+    palette.gradient &&
+    !GRADIENT_BODY_EXCLUDE.includes(body) &&
+    palette.gradient.every(
+      (stop) => contrastRatio(stop, palette.bg) >= GRADIENT_STOP_CONTRAST,
+    )
       ? palette.gradient
       : null;
   const angle = random.pick([45, 135]);
