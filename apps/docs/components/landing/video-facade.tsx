@@ -1,6 +1,6 @@
 "use client";
 
-import { Play } from "lucide-react";
+import { Play } from "iconsax-reactjs";
 import { useState } from "react";
 
 /**
@@ -48,7 +48,8 @@ export function VideoFacade({
       <span className="flex size-16 items-center justify-center rounded-full bg-white/15 backdrop-blur transition-transform group-hover:scale-105">
         <Play
           aria-hidden="true"
-          className="size-7 translate-x-0.5 fill-current"
+          className="size-7 translate-x-0.5"
+          variant="Bold"
         />
       </span>
       <span className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent px-4 pt-8 pb-3 text-left text-sm">

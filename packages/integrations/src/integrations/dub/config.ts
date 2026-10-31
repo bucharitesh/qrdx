@@ -5,11 +5,11 @@ import type { IntegrationDefinition } from "../../registry/types";
  */
 export const dubIntegration: IntegrationDefinition = {
   slug: "dub",
-  name: "Dub.sh",
-  description: "Create and track short links with advanced analytics",
+  name: "Dub",
+  description: "Create or pick Dub short links and track their clicks",
   logos: {
     light: "/integrations/dub-icon.svg",
-    dark: "/integrations/dub-icon.svg",
+    dark: "/integrations/dub-icon-dark.svg",
   },
   category: ["analytics"],
   type: "oauth",
@@ -68,6 +68,6 @@ export const dubIntegration: IntegrationDefinition = {
     "Link expiration",
   ],
   configurable: true,
-  developedBy: "Dub.sh",
+  developedBy: "QRdx",
   website: "https://dub.co",
 };

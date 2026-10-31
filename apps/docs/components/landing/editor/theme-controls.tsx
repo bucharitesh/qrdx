@@ -1,9 +1,10 @@
 "use client";
 
+import { Tick as Check } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
 import { cn } from "@repo/design-system/lib/utils";
-import { AlertTriangle, Check, Wand2 } from "lucide-react";
+import { Warning2 as AlertTriangle, Magicpen as Wand2 } from "iconsax-reactjs";
 import Link from "next/link";
 import { useId } from "react";
 import type { LandingTheme } from "@/types/landing";

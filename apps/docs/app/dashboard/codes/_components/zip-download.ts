@@ -9,6 +9,7 @@ import {
 } from "@/components/sections/tools/bulk-utils";
 import { defaultThemeState } from "@/config/qr";
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
+import { soundEvent } from "@/lib/sound/emit";
 import type { ThemeStyles } from "@/types/theme";
 
 const SIZE = 1024;
@@ -30,6 +31,7 @@ function saveBlob(blob: Blob, filename: string) {
   document.body.appendChild(link);
   link.click();
   link.remove();
+  soundEvent("download");
   setTimeout(() => URL.revokeObjectURL(url), 10_000);
 }
 

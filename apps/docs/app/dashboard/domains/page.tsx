@@ -8,12 +8,14 @@ import {
   EmptyMedia,
   EmptyTitle,
 } from "@repo/design-system/components/ui/empty";
-import { Globe, ServerCog } from "lucide-react";
+import { CpuSetting as ServerCog } from "iconsax-reactjs";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHeader } from "@/app/dashboard/_components/page-header";
 import { requireDashboardScope } from "@/app/dashboard/codes/_lib/qr-codes";
 import { UpgradeButton } from "@/app/dashboard/team/_components/small-actions";
+import { InfoHint } from "@/components/help/info-hint";
+import { HairlineFigure } from "@/components/mockups/hairline";
 import { PLAN_LIMITS } from "@/lib/plans";
 import { PLAN_NAMES } from "@/lib/pricing";
 import { SHORT_LINK_BASE } from "@/lib/short-links";
@@ -37,7 +39,12 @@ export default async function DomainsPage() {
   const header = (
     <PageHeader
       description="Serve your dynamic QR codes from a domain you own, like go.yourbrand.com/aB3dE5f."
-      title="Custom domains"
+      title={
+        <>
+          Custom domains{" "}
+          <InfoHint align="start" id="custom-domains" side="bottom" />
+        </>
+      }
     >
       {mode !== "disabled" && limit > 0 && (
         <Badge variant="outline">
@@ -59,14 +66,11 @@ export default async function DomainsPage() {
             <EmptyMedia variant="icon">
               <ServerCog />
             </EmptyMedia>
-            <EmptyTitle>
-              Custom domains aren't set up on this deployment
-            </EmptyTitle>
+            <EmptyTitle>Custom domains aren't available right now</EmptyTitle>
             <EmptyDescription>
-              Connecting domains here needs access to the Vercel Domains API.
-              The operator can enable it by setting VERCEL_API_TOKEN and
-              VERCEL_PROJECT_ID. Your existing codes and short links keep
-              working.
+              You can't connect a new domain at the moment. Your existing codes
+              and short links keep working. Self-hosting? The docs cover the
+              setup.
             </EmptyDescription>
           </EmptyHeader>
           <EmptyContent>
@@ -85,9 +89,7 @@ export default async function DomainsPage() {
         {header}
         <Empty className="border">
           <EmptyHeader>
-            <EmptyMedia variant="icon">
-              <Globe />
-            </EmptyMedia>
+            <HairlineFigure className="mx-auto mb-2 h-28 w-40" figure="Hub" />
             <EmptyTitle>Use your own domain for QR codes</EmptyTitle>
             <EmptyDescription>
               With Pro, your dynamic codes can open short links on your own

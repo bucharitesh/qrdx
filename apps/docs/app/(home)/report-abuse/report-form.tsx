@@ -3,8 +3,15 @@
 import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@repo/design-system/components/ui/select";
 import { Textarea } from "@repo/design-system/components/ui/textarea";
-import { CheckCircle2 } from "lucide-react";
+import { TickCircle } from "iconsax-reactjs";
 import { useActionState, useEffect, useState } from "react";
 import { ABUSE_REASONS } from "@/lib/safety/abuse-reasons";
 import { type ReportFormState, submitAbuseReport } from "./actions";
@@ -41,7 +48,11 @@ export function ReportForm({
         aria-live="polite"
         className="bg-card flex flex-col items-center gap-3 rounded-xl border p-8 text-center"
       >
-        <CheckCircle2 className="size-8 text-green-600" />
+        <TickCircle
+          aria-hidden
+          variant="Bulk"
+          className="size-8 text-emerald-600 dark:text-emerald-400"
+        />
         <h2 className="text-xl font-semibold">Thanks, we got your report</h2>
         <p className="text-muted-foreground max-w-md text-sm">
           We review reports within 24–48 hours. If the code breaks our terms we
@@ -82,25 +93,23 @@ export function ReportForm({
 
       <div className="space-y-2">
         <Label htmlFor="report-reason">What's wrong?</Label>
-        <select
-          aria-describedby={describedBy("reason")}
-          aria-invalid={error?.field === "reason" || undefined}
-          className="border-input bg-background focus-visible:ring-ring/50 h-9 w-full rounded-md border px-3 text-sm shadow-xs outline-none focus-visible:ring-[3px]"
-          id="report-reason"
-          name="reason"
-          onChange={(event) => setReason(event.target.value)}
-          required
-          value={reason}
-        >
-          <option disabled value="">
-            Choose a reason
-          </option>
-          {ABUSE_REASONS.map((reason) => (
-            <option key={reason.value} value={reason.value}>
-              {reason.label}
-            </option>
-          ))}
-        </select>
+        <Select name="reason" onValueChange={setReason} required value={reason}>
+          <SelectTrigger
+            aria-describedby={describedBy("reason")}
+            aria-invalid={error?.field === "reason" || undefined}
+            className="w-full"
+            id="report-reason"
+          >
+            <SelectValue placeholder="Choose a reason" />
+          </SelectTrigger>
+          <SelectContent>
+            {ABUSE_REASONS.map((reason) => (
+              <SelectItem key={reason.value} value={reason.value}>
+                {reason.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="space-y-2">

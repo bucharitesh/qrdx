@@ -4,7 +4,11 @@ import { authClient } from "@repo/auth/client";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Separator } from "@repo/design-system/components/ui/separator";
 import { cn } from "@repo/design-system/lib/utils";
-import { BookOpen, ShieldCheck, SquareTerminal } from "lucide-react";
+import {
+  Book1 as BookOpen,
+  ShieldTick as ShieldCheck,
+  Magicpen as SquareTerminal,
+} from "iconsax-reactjs";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useId } from "react";

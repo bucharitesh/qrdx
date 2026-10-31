@@ -1,65 +1,77 @@
-import { ArrowRight } from "lucide-react";
+import { ArrowRight } from "iconsax-reactjs";
 import Link from "next/link";
-import { QrdxLogo } from "@/components/qrdx-logo";
-import { CompetitorLogo } from "@/components/sections/compare/competitor-logo";
-import { SectionHeader } from "@/components/sections/section-header";
+import { CompareCard } from "@/components/sections/compare/compare-card";
 import { compareSource } from "@/lib/source";
+
+/** Six cards fill two rows of three (or three of two) with no orphans. */
+const SHOWN = 6;
 
 interface CompareOthersProps {
   currentSlug: string;
 }
 
 export function CompareOthers({ currentSlug }: CompareOthersProps) {
-  const allPages = compareSource.getPages();
-  const others = allPages.filter((p) => (p.slugs[0] ?? "") !== currentSlug);
+  const pages = compareSource.getPages();
+  const current = pages.find((p) => (p.slugs[0] ?? "") === currentSlug);
+  // Same kind of tool first (generator or library), then alphabetical.
+  const others = pages
+    .filter((p) => p !== current)
+    .sort(
+      (a, b) =>
+        Number(b.data.category === current?.data.category) -
+          Number(a.data.category === current?.data.category) ||
+        a.data.competitor.localeCompare(b.data.competitor),
+    )
+    .slice(0, SHOWN);
 
   if (others.length === 0) return null;
 
   return (
-    <section className="flex flex-col items-center justify-center w-full">
-      <SectionHeader>
-        <h2 className="text-3xl md:text-4xl font-medium tracking-tighter text-center text-balance">
-          QRdx vs. others
-        </h2>
-        <p className="text-muted-foreground text-center text-balance font-medium">
-          See how QRdx stacks up against other QR code generators and React QR
-          code libraries.
-        </p>
-      </SectionHeader>
-
-      <div className="w-full px-10 py-10">
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    <section
+      aria-labelledby="compare-others"
+      className="w-full px-6 py-14 md:px-10 md:py-16"
+    >
+      <div className="mx-auto max-w-6xl">
+        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div className="flex max-w-2xl flex-col gap-2">
+            <h2
+              className="text-2xl font-semibold tracking-tight text-balance md:text-3xl"
+              id="compare-others"
+            >
+              More comparisons
+            </h2>
+            <p className="text-pretty text-muted-foreground">
+              How QRdx stacks up against other QR code generators and React QR
+              code libraries.
+            </p>
+          </div>
+          <Link
+            className="group inline-flex shrink-0 items-center gap-1.5 text-sm font-medium text-foreground underline decoration-foreground/30 underline-offset-4 transition-colors hover:decoration-foreground"
+            href="/compare"
+          >
+            All {pages.length} comparisons
+            <ArrowRight
+              aria-hidden
+              className="size-4 transition-transform group-hover:translate-x-0.5"
+            />
+          </Link>
+        </div>
+        <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {others.map((page) => {
             const slug = page.slugs[0] ?? "";
-            const { competitor, competitorLogo } = page.data;
-
+            const { competitor, tagline, competitorPlan } = page.data;
             return (
-              <Link
-                key={slug}
-                href={`/compare/${slug}`}
-                className="group rounded-xl border border-border bg-accent/50 hover:bg-accent transition-colors overflow-hidden flex flex-col"
-              >
-                <div className="flex items-center gap-1.5 px-5 pt-5 pb-3">
-                  <span className="text-base font-bold text-secondary-foreground">
-                    Compare with {competitor}
-                  </span>
-                  <ArrowRight className="size-3.5 text-muted-foreground group-hover:translate-x-0.5 transition-transform" />
-                </div>
-
-                <div className="relative flex items-end justify-center px-5 pb-5 pt-2 h-36">
-                  <QrdxLogo className="size-30 absolute opacity-10 -bottom-10 -left-10" />
-                  <div className="absolute bottom-4 right-8 size-20 flex items-center justify-center p-1.5">
-                    <CompetitorLogo
-                      name={competitor}
-                      src={competitorLogo}
-                      className="size-full text-lg"
-                    />
-                  </div>
-                </div>
-              </Link>
+              <li key={slug}>
+                <CompareCard
+                  competitor={competitor}
+                  competitorPlan={competitorPlan}
+                  slug={slug}
+                  tagline={tagline}
+                />
+              </li>
             );
           })}
-        </div>
+        </ul>
       </div>
     </section>
   );

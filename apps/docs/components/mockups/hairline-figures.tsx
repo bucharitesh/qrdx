@@ -1,32 +1,38 @@
-"use client";
-
 // The only file that imports @lucasmarkes/hairline (MIT): isometric SVG line
-// figures that react to the pointer. Not imported yet: the package is not
-// installed, and an unresolvable import breaks every page that reaches it.
-// After installing, enable it with the one-line switch in ./hairline.tsx.
+// figures that react to the pointer. The package is fetched on demand, the
+// first time a figure mounts, so pages without one never load it.
 
-import dynamic from "next/dynamic";
-import type { ComponentType } from "react";
+import type { Figure, HairlineOptions } from "@lucasmarkes/hairline";
 
-export type FigureProps = {
-  className?: string;
-  intensity?: number;
-  theme?: "auto" | "light" | "dark";
-};
+export type { Figure };
 
-const load = (name: "Hub" | "Loupe" | "Phosphor" | "Plug" | "Stack") =>
-  dynamic<FigureProps>(
-    () =>
-      import("@lucasmarkes/hairline/react").then(
-        (mod) => mod[name] as ComponentType<FigureProps>,
-      ),
-    { ssr: false },
-  );
+/** The figures QRdx uses. Add a name here to use another one. */
+export const FIGURE_NAMES = [
+  "Cabinet",
+  "Exploded",
+  "Hub",
+  "Laptop",
+  "Loupe",
+  "Phone",
+  "Phosphor",
+  "Plot",
+  "Plug",
+  "Query",
+  "Relay",
+  "Settle",
+  "Stack",
+  "Terminal",
+  "Terrain",
+] as const;
 
-export const FIGURES = {
-  Hub: load("Hub"),
-  Loupe: load("Loupe"),
-  Phosphor: load("Phosphor"),
-  Plug: load("Plug"),
-  Stack: load("Stack"),
-};
+export type HairlineFigureName = (typeof FIGURE_NAMES)[number];
+
+type MountFigure = (el: HTMLElement, options?: HairlineOptions) => Figure;
+
+/** Resolves to the imperative mount function for `name`. */
+export async function loadFigure(
+  name: HairlineFigureName,
+): Promise<MountFigure> {
+  const mod = await import("@lucasmarkes/hairline");
+  return mod[name.toLowerCase() as Lowercase<HairlineFigureName>];
+}

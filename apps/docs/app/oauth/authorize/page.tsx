@@ -1,4 +1,4 @@
-import { Loader2 } from "lucide-react";
+import { Spinner as Loader2 } from "@repo/design-system/components/icons";
 import { Suspense } from "react";
 import { OAuthAuthorizeContent } from "./oauth-authorize-content";
 

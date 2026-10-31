@@ -1,10 +1,10 @@
 ---
 title: Self-hosting guide
-description: Run your own QRdx web app with Docker Compose or Node.js.
+description: Run your own QRdx web app, dynamic QR codes and hosted pages included, with Docker Compose or Node.js.
 icon: Server
 ---
 
-QRdx is AGPL-3.0 licensed, and you can run the whole web app (QR editor, accounts, saved themes, community gallery and these docs) on your own server. You don't need any of this to use the [`qrdx` React library](/docs/getting-started) or the CLI. Those run anywhere without a backend.
+QRdx is AGPL-3.0 licensed, and you can run the whole web app (QR editor, accounts, dynamic codes and hosted pages, teams, saved themes, community gallery and these docs) on your own server. You don't need any of this to use the [`qrdx` React library](/docs/getting-started) or the CLI. Those run anywhere without a backend.
 
 <Callout type="warn">
   The Docker setup is new. If something doesn't work, please [open an issue](https://github.com/bucharitesh/qrdx/issues).
@@ -150,9 +150,19 @@ Add one OAuth provider (GitHub or Google) so people can sign in.
 | Auth base URL | `BETTER_AUTH_URL` | Inferred from each request, with a warning in the logs |
 | Admin panel | `ADMIN_EMAILS`, `ADMIN_USER_IDS` | Nobody can open `/admin` |
 | AI theme generation | `GOOGLE_API_KEY` | AI requests fail. The editor works normally. |
+| AI QR art ([fal.ai](https://fal.ai)) | `FAL_KEY` | The AI art page can't generate images and is hidden from search engines |
+| Short-link origin | `NEXT_PUBLIC_SHORT_LINK_BASE_URL` | [Dynamic codes](/docs/dynamic-qr-codes#self-hosting) use `NEXT_PUBLIC_APP_URL` |
+| Scan privacy salt | `SCAN_HASH_SALT` | Derived from `BETTER_AUTH_SECRET` |
+| File storage (Cloudflare R2) | `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`, `R2_PUBLIC_BASE_URL` | Uploads are off; pages can still link to files hosted elsewhere. See [Files](/docs/files#set-up-storage-self-hosting) |
+| Email (Resend) | `RESEND_API_KEY`, `EMAIL_FROM` | Emails are skipped and logged; team invites use copyable links. See [Notifications](/docs/notifications#self-hosting) |
+| Custom domains on Vercel | `VERCEL_API_TOKEN`, `VERCEL_PROJECT_ID`, `VERCEL_TEAM_ID` | Leave unset off Vercel: domains are then verified with a DNS `TXT` record. See [Custom domains](/docs/custom-domains#self-hosting) |
+| Scheduled jobs | `CRON_SECRET` | In production the weekly digest and webhook retry jobs refuse to run |
+| Link safety (Google Web Risk) | `WEB_RISK_API_KEY` | Destinations are checked by the offline rules only. See [Code controls](/docs/code-controls) |
+| Form spam check (Cloudflare Turnstile) | `NEXT_PUBLIC_TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY` | Forms rely on the built-in honeypot and rate limits |
 | Payments (Polar) | `POLAR_ACCESS_TOKEN`, `POLAR_WEBHOOK_SECRET`, `NEXT_PUBLIC_QRDX_PRO_MONTHLY_PRODUCT_ID`, `NEXT_PUBLIC_QRDX_PRO_YEARLY_PRODUCT_ID`, `NEXT_PUBLIC_QRDX_BUSINESS_MONTHLY_PRODUCT_ID`, `NEXT_PUBLIC_QRDX_BUSINESS_YEARLY_PRODUCT_ID` | Upgrading doesn't work (plans without a product id show "Coming soon"), and every account uses the Free limits |
 | Dub short links | `DUB_CLIENT_ID`, `DUB_CLIENT_SECRET`, `DUB_REDIRECT_URI`, `INTEGRATION_ENCRYPTION_KEY` | The Dub integration can't be connected |
 | Google Drive | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_DRIVE_REDIRECT_URI`, `INTEGRATION_ENCRYPTION_KEY` | The Google Drive integration can't be connected |
+| Bitly, Dropbox, OneDrive, Box, Notion | `BITLY_CLIENT_ID`/`_SECRET`, `DROPBOX_CLIENT_ID`/`_SECRET`, `MICROSOFT_CLIENT_ID`/`_SECRET`, `BOX_CLIENT_ID`/`_SECRET`, `NOTION_CLIENT_ID`/`_SECRET`, `INTEGRATION_ENCRYPTION_KEY` | That integration shows "Not configured" (Bitly still connects with pasted access tokens). Rebrandly and Short.io need no variables. See [Short links and file pickers](/docs/short-links-and-file-pickers#self-hosting) |
 | Rate limiting (Upstash) | `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` (or the Vercel KV names `KV_REST_API_URL`, `KV_REST_API_TOKEN`) | No rate limiting. Recommended in production. |
 | Analytics (PostHog) | `NEXT_PUBLIC_POSTHOG_KEY`, `NEXT_PUBLIC_POSTHOG_HOST` | No analytics |
 | Feedback widget | `NEXT_PUBLIC_FEATUREBASE_APP_ID` | The widget doesn't load |

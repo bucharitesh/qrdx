@@ -1,6 +1,7 @@
 "use client";
 
 import { toast } from "@repo/design-system";
+import { Star, Close as X } from "@repo/design-system/components/icons";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -19,19 +20,17 @@ import {
   DropdownMenuTrigger,
 } from "@repo/design-system/components/ui/dropdown-menu";
 import {
-  Archive,
-  ArchiveRestore,
-  Download,
-  FolderInput,
-  MoreHorizontal,
+  ArchiveBox as Archive,
+  DirectboxSend as ArchiveRestore,
+  Import as Download,
+  FolderAdd as FolderInput,
+  More as MoreHorizontal,
   Pause,
   Play,
-  RotateCcw,
-  Star,
-  Tags,
-  Trash2,
-  X,
-} from "lucide-react";
+  ArrowRotateLeft as RotateCcw,
+  Tag2 as Tags,
+  Trash as Trash2,
+} from "iconsax-reactjs";
 import { useEffect, useMemo, useState } from "react";
 import {
   purgeQrCodes,

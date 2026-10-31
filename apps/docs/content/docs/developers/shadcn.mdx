@@ -1,85 +1,49 @@
 ---
 title: shadcn/ui registry
-description: Add a QR code component with download buttons, or an image-based QR scanner, to a shadcn/ui project with one command.
+description: Eight QR code components for shadcn/ui projects, built on the qrdx library. Install one with a single command and own the code.
 icon: Blocks
 ---
 
-QRdx publishes a [shadcn/ui](https://ui.shadcn.com) registry with two components built on the [`qrdx`](https://www.npmjs.com/package/qrdx) library. The shadcn CLI copies the source into your project, so you own the code and can change it.
+QRdx publishes a [shadcn/ui](https://ui.shadcn.com) registry of QR code components built on the [`qrdx`](https://www.npmjs.com/package/qrdx) library. The shadcn CLI copies the source into your project, so you own the code and can change it.
 
-## QR code
+<PackageManagerTabs command="npx shadcn@latest add https://qrdx.dev/r/qr-code.json" />
 
-```bash
-npx shadcn@latest add https://qrdx.dev/r/qr-code.json
-```
+Each component has its own page with a live preview, the source, installation steps, examples and an API reference.
 
-This adds `components/qr-code.tsx` and installs `qrdx`.
+## Components
 
-```tsx
-import { QrCode } from "@/components/qr-code";
+<Cards>
+  <Card title="QR Code" href="/docs/components/qr-code" icon={<QrCode />}>
+    Styled, accessible QR code with download buttons, colors, gradients, patterns, logos and frame templates.
+  </Card>
+  <Card title="QR Code Card" href="/docs/components/qr-code-card" icon={<Frame />}>
+    A card with the code in a "Scan me" frame, a title, a description and room for actions.
+  </Card>
+  <Card title="QR Code Download" href="/docs/components/qr-code-download" icon={<Download />}>
+    A menu that exports PNG, SVG, JPG or PDF at the size you pick, or copies the image.
+  </Card>
+  <Card title="QR Code Share Dialog" href="/docs/components/qr-code-share-dialog" icon={<Webhook />}>
+    A dialog with the code for a link, a copy button, a PNG download and the native share sheet.
+  </Card>
+  <Card title="QR Code Generator" href="/docs/components/qr-code-generator" icon={<Sparkles />}>
+    A text input with a live preview, style presets and download buttons.
+  </Card>
+  <Card title="QR Code Scanner" href="/docs/components/qr-code-scanner" icon={<Scan />}>
+    A drop zone that reads a QR code from an image in the browser.
+  </Card>
+  <Card title="Wi-Fi QR Code" href="/docs/components/wifi-qr-code" icon={<Globe />}>
+    A code that joins a Wi-Fi network, with an escaped payload builder.
+  </Card>
+  <Card title="vCard QR Code" href="/docs/components/vcard-qr-code" icon={<Users />}>
+    A code that saves a contact card, with a vCard 3.0 builder.
+  </Card>
+</Cards>
 
-export function ShareCard() {
-  return (
-    <QrCode
-      value="https://qrdx.dev"
-      size={180}
-      fgColor="#155DFC"
-      bodyPattern="rounded"
-      cornerEyePattern="rounded"
-      caption="Scan to open qrdx.dev"
-    />
-  );
-}
-```
+## What gets installed
 
-It renders the code as an SVG with an accessible name, plus PNG and SVG download buttons.
+Each component is a single file in `components/`. The CLI also installs `qrdx` (plus `lucide-react` for the icons some components use) and adds the shadcn/ui components it builds on, such as `button`, `card`, `dialog`, `dropdown-menu` or `input`.
 
-### Props
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `value` | `string` | required | Text or URL to encode |
-| `size` | `number` | `200` | Rendered width and height in pixels |
-| `fgColor`, `bgColor` | `ColorConfig` | `#000000`, `#FFFFFF` | Colors: any CSS color or a qrdx [gradient](/docs/features/colors-gradients) |
-| `eyeColor`, `dotColor` | `ColorConfig` | `fgColor` | Corner eye and eye dot colors |
-| `bodyPattern` | `BodyPattern` | `circle` | Data module shape |
-| `cornerEyePattern` | `CornerEyePattern` | `gear` | Corner eye frame shape |
-| `cornerEyeDotPattern` | `CornerEyeDotPattern` | `circle` | Corner eye dot shape |
-| `level` | `ErrorLevel` | `Q` | Error correction. Use `H` with a logo |
-| `margin` | `number` | `2` | Quiet zone around the code, in modules |
-| `templateId` | `string` | — | Frame [template](/docs/features/templates), e.g. `Arrow` |
-| `logo` | `string` | — | Center logo: a data URL or an image URL served with CORS headers |
-| `label` | `string` | `QR code: <value>` | Accessible name for screen readers |
-| `caption` | `ReactNode` | — | Visible caption under the code |
-| `downloadFormats` | `DownloadFormat[]` | `["png", "svg"]` | Download buttons to show. Pass `[]` to hide them |
-| `downloadSize` | `number` | `1024` | Width and height of downloaded files, `50` to `5000` |
-| `filename` | `string` | `qr-code` | Download file name without extension |
-
-Any other prop is passed to the wrapping `<figure>`. `downloadFormats` also accepts `jpg` and `pdf`; PDF downloads need the optional `jspdf` package (`npm install jspdf`).
-
-## QR code scanner
-
-```bash
-npx shadcn@latest add https://qrdx.dev/r/qr-code-scanner.json
-```
-
-This adds `components/qr-code-scanner.tsx`: a drop zone that reads a QR code from an image the user drops or picks. Decoding runs in the browser, so the image never leaves the device. It reads image files only, not a live camera feed.
-
-```tsx
-"use client";
-
-import { QrCodeScanner } from "@/components/qr-code-scanner";
-
-export function ScanUpload() {
-  return <QrCodeScanner onResult={(value) => console.log(value)} />;
-}
-```
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `onResult` | `(value: string) => void` | — | Called with the decoded text |
-| `label` | `string` | `Scan a QR code from an image` | Heading inside the drop zone |
-
-The result is shown with a copy button, and with an "Open link" button when it is an `http` or `https` URL.
+The full index is at [`https://qrdx.dev/r/registry.json`](https://qrdx.dev/r/registry.json).
 
 ## Using the registry namespace
 
@@ -93,10 +57,12 @@ To install with a short name, add the registry to your `components.json`:
 }
 ```
 
-```bash
-npx shadcn@latest add @qrdx/qr-code @qrdx/qr-code-scanner
-```
+Then add one or several components by name:
+
+<PackageManagerTabs command="npx shadcn@latest add @qrdx/qr-code @qrdx/qr-code-download @qrdx/qr-code-share-dialog" />
 
 ## Styling
 
-Both components use Tailwind classes with the standard shadcn/ui theme tokens (`bg-background`, `border-input`, `text-muted-foreground`, `ring-ring`), so they follow your theme and dark mode. They don't depend on other shadcn components.
+The components use Tailwind classes with the standard shadcn/ui theme tokens (`bg-card`, `border`, `text-muted-foreground`, `ring-ring`) and your own Button, Card, Dialog and Input, so they follow your theme and dark mode. QR codes keep a light background by default, because dark modules on a light tile scan with every reader.
+
+PDF downloads need the optional `jspdf` package (`npm install jspdf`).

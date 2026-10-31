@@ -12,6 +12,11 @@ import { usePostLoginAction } from "@/lib/hooks/use-post-login-action";
 import type { AIPromptData } from "@/types/ai";
 import { ChatInput } from "./chat-input";
 import { ClosableSuggestedPillActions } from "./closeable-suggested-pill-actions";
+import { getAIMockMode } from "./dev-mock-mode";
+import {
+  type RecentGeneration,
+  rememberGenerations,
+} from "./recent-generations";
 
 const Messages = dynamic(
   () => import("./messages").then((mod) => mod.Messages),
@@ -35,7 +40,13 @@ export function ChatInterface() {
   const { isGenerating, generateQRCore, cancelGeneration } =
     useAIQRGenerationCore();
 
-  const { checkValidSession, checkValidSubscription } = useGuards();
+  const guards = useGuards();
+  // Dev-only `?ai-mock=` replays a response without signing in.
+  const isMock = getAIMockMode() !== null;
+  const checkValidSession: typeof guards.checkValidSession = (...args) =>
+    isMock || guards.checkValidSession(...args);
+  const checkValidSubscription = () =>
+    isMock || guards.checkValidSubscription();
 
   const isMounted = useMounted();
 
@@ -114,13 +125,31 @@ export function ChatInterface() {
     handleEditSubmit(messageIndex, promptData);
   });
 
+  // Keep finished generations reachable after "New chat".
+  React.useEffect(() => {
+    if (isGenerating) return;
+    const found: RecentGeneration[] = [];
+    for (const message of messages) {
+      if (message.role !== "assistant") continue;
+      message.parts.forEach((part, index) => {
+        if (
+          part.type === "tool-generateQRTheme" &&
+          part.state === "output-available" &&
+          part.output
+        ) {
+          found.push({
+            id: `${message.id}-${index}`,
+            styles: part.output as RecentGeneration["styles"],
+          });
+        }
+      });
+    }
+    rememberGenerations(found);
+  }, [messages, isGenerating]);
+
   return (
-    <section className="@container relative isolate z-1 mx-auto flex size-full max-w-196 flex-1 flex-col justify-center">
-      <div
-        className={cn(
-          "relative flex size-full flex-1 flex-col overflow-hidden transition-all duration-300 ease-out",
-        )}
-      >
+    <section className="@container relative isolate z-1 mx-auto flex size-full max-w-196 flex-1 flex-col">
+      <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
         {isMounted && hasMessages ? (
           <Messages
             messages={messages}
@@ -132,7 +161,7 @@ export function ChatInterface() {
             isGeneratingTheme={isGenerating}
           />
         ) : (
-          <div className="animate-in fade-in-50 zoom-in-95 relative isolate px-4 pt-8 duration-300 ease-out sm:pt-16 md:pt-24">
+          <div className="animate-in fade-in-50 size-full overflow-y-auto overscroll-contain px-4 pt-6 pb-10 duration-300 ease-out">
             <NoMessagesPlaceholder
               onGenerateTheme={handleGenerateFromSuggestion}
               isGeneratingTheme={isGenerating}
@@ -141,8 +170,12 @@ export function ChatInterface() {
         )}
       </div>
 
-      {/* Chat form input and suggestions */}
+      {/* Composer pinned to the bottom, with a soft fade over the list above */}
       <div className="relative z-1 mx-auto w-full px-4 pb-4">
+        <div
+          aria-hidden
+          className="from-background pointer-events-none absolute inset-x-0 -top-8 h-8 bg-linear-to-t to-transparent"
+        />
         <div
           className={cn(
             "transition-all ease-out",

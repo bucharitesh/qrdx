@@ -6,6 +6,7 @@ import * as React from "react";
 import { useQREditorStore } from "@/store/editor-store";
 import type { TwitterContent } from "@/types/qr-content";
 import { encodeTwitter } from "@/utils/qr-content-encoder";
+import { useExternalConfigSync } from "./use-external-config-sync";
 
 export function TwitterForm() {
   const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
@@ -20,22 +21,18 @@ export function TwitterForm() {
     username: storedConfig?.username || "",
   });
 
-  // Sync with store when config changes (e.g., from smart paste)
-  React.useEffect(() => {
-    if (
-      storedConfig?.username &&
-      storedConfig.username !== twitterData.username
-    ) {
-      setTwitterData({ username: storedConfig.username });
-    }
-  }, [storedConfig, twitterData.username]);
+  // Only external changes (e.g. smart paste) flow back into the form
+  const markWritten = useExternalConfigSync(storedConfig, (config) =>
+    setTwitterData({ username: config.username || "" }),
+  );
 
   React.useEffect(() => {
     const config: TwitterContent = { type: "twitter", ...twitterData };
     const encoded = encodeTwitter(config);
     setValue(encoded);
+    markWritten(config);
     setContentConfig("twitter", config);
-  }, [twitterData, setValue, setContentConfig]);
+  }, [twitterData, setValue, setContentConfig, markWritten]);
 
   return (
     <div className="space-y-3">

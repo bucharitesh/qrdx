@@ -8,15 +8,11 @@ import {
   SheetTrigger,
 } from "@repo/design-system/components/ui/sheet";
 import { cn } from "@repo/design-system/lib/utils";
-import { ArrowUpRight } from "lucide-react";
+import { ExportSquare, HamburgerMenu } from "iconsax-reactjs";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { Icons } from "@/components/icons";
 import { headerNavEntries } from "./header-nav";
-
-const linkClass =
-  "flex items-center gap-1 py-1.5 text-sm text-secondary-foreground/70 hover:text-secondary-foreground transition-colors";
 
 /** Every header destination, grouped like the desktop dropdowns. */
 export function HeaderMobileNavList({
@@ -35,43 +31,50 @@ export function HeaderMobileNavList({
       aria-label="Main"
       className={cn("flex flex-col gap-5 overflow-y-auto", className)}
     >
-      <div className="grid grid-cols-2 gap-x-4 gap-y-5">
-        {groups.map((group) => (
-          <div key={group.id} className="flex flex-col">
-            <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              {group.name}
-            </p>
-            <ul>
-              {group.items?.map((item) => {
-                const external = "external" in item && Boolean(item.external);
-                const current = !external && pathname === item.href;
-                return (
-                  <li key={item.href}>
-                    <Link
-                      href={item.href}
-                      onClick={onNavigate}
-                      aria-current={current ? "page" : undefined}
-                      className={cn(
-                        linkClass,
-                        current && "font-medium text-secondary-foreground",
-                      )}
-                      {...(external && {
-                        target: "_blank",
-                        rel: "noopener noreferrer",
-                      })}
-                    >
+      {groups.map((group) => (
+        <div key={group.id} className="flex flex-col gap-1.5">
+          <p className="px-1.5 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+            {group.name}
+          </p>
+          <ul className="grid grid-cols-2 gap-1 [&>li:last-child:nth-child(odd)]:col-span-2">
+            {group.items?.map((item) => {
+              const external = Boolean(item.external);
+              const current = !external && pathname === item.href;
+              const Icon = item.icon;
+              return (
+                <li key={item.href} className="min-w-0">
+                  <Link
+                    href={item.href}
+                    onClick={onNavigate}
+                    aria-current={current ? "page" : undefined}
+                    className={cn(
+                      "group/nav-item flex min-h-11 items-center gap-2.5 rounded-lg p-1.5 text-sm leading-tight text-foreground/80 transition-colors hover:bg-accent/70 hover:text-foreground active:bg-accent",
+                      current && "bg-accent/60 font-medium text-foreground",
+                    )}
+                    {...(external && {
+                      target: "_blank",
+                      rel: "noopener noreferrer",
+                    })}
+                  >
+                    <span className="grid size-8 shrink-0 place-items-center rounded-md border bg-muted/40 transition-colors group-hover/nav-item:bg-background">
+                      <Icon aria-hidden className="size-4 text-foreground/80" />
+                    </span>
+                    <span className="min-w-0 text-pretty">
                       {item.name}
                       {external && (
-                        <ArrowUpRight aria-hidden className="size-3.5" />
+                        <ExportSquare
+                          aria-hidden
+                          className="ml-1 inline size-3 align-[-1px] text-muted-foreground"
+                        />
                       )}
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        ))}
-      </div>
+                    </span>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      ))}
       <ul className="flex flex-wrap gap-2 border-t border-border pt-4">
         {singles.map((entry) => {
           const current = pathname === entry.href;
@@ -109,12 +112,12 @@ export function HeaderMobileMenu({ className }: { className?: string }) {
           className={cn("size-8 lg:hidden", className)}
           aria-label="Open menu"
         >
-          <Icons.Menu className="size-5" />
+          <HamburgerMenu aria-hidden className="size-5" />
         </Button>
       </SheetTrigger>
       <SheetContent
         side="left"
-        className="w-80 gap-6 p-6"
+        className="w-[22rem] max-w-[90vw] gap-5 p-5 sm:max-w-[22rem]"
         aria-describedby={undefined}
       >
         <SheetTitle className="text-base">Menu</SheetTitle>

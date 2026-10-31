@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <title>Summit (sample outdoor mark)</title>
+  <defs>
+    <clipPath id="badge">
+      <circle cx="128" cy="128" r="118"/>
+    </clipPath>
+  </defs>
+  <g clip-path="url(#badge)">
+    <rect width="256" height="256" fill="#fbd9a6"/>
+    <circle cx="170" cy="92" r="40" fill="#ef6c1f"/>
+    <path fill="#1d3a5c" d="M-10 256V200l82-112 52 70 30-36 112 134v0z"/>
+    <path fill="#e9eff6" d="M72 88l26 35-14-8-12 16-12-16-14 8z"/>
+    <path fill="#2f5d86" d="M154 122l30 36-14-6-16 14z"/>
+  </g>
+</svg>

@@ -44,7 +44,7 @@ export function BreakdownCard({
                 >
                   <span
                     aria-hidden="true"
-                    className="bg-primary/10 absolute inset-y-0 left-0 rounded-md"
+                    className="absolute inset-y-0 left-0 rounded-md bg-foreground/[0.07]"
                     style={{ width: `${share}%` }}
                   />
                   <span className="relative min-w-0 truncate">

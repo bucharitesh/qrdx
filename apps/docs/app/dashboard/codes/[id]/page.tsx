@@ -6,7 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@repo/design-system/components/ui/card";
-import { ArrowLeft, Download, Lock } from "lucide-react";
+import { ArrowLeft, Import as Download, Lock } from "iconsax-reactjs";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";

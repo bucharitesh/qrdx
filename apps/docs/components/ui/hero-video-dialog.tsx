@@ -106,11 +106,12 @@ export function HeroVideoDialog({
               className={`relative flex size-20 scale-100 items-center justify-center rounded-full bg-linear-to-t from-primary to-white/10 shadow-md transition-all duration-200 ease-out group-hover:scale-[1.2]`}
             >
               <Icons.Play
-                className="size-8 scale-100 fill-white text-white transition-transform duration-200 ease-out group-hover:scale-105"
+                className="size-8 scale-100 text-white transition-transform duration-200 ease-out group-hover:scale-105"
                 style={{
                   filter:
                     "drop-shadow(0 4px 3px rgb(0 0 0 / 0.07)) drop-shadow(0 2px 2px rgb(0 0 0 / 0.06))",
                 }}
+                variant="Bold"
               />
             </div>
           </div>

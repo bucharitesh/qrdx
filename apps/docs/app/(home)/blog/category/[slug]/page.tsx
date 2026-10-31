@@ -49,7 +49,7 @@ export default async function BlogCategoryPage({ params }: PageProps) {
   return (
     <section className="flex flex-col items-center justify-center w-full min-h-screen">
       <div className="w-full">
-        <SectionHeader>
+        <SectionHeader pattern="noise">
           <Breadcrumbs
             className="mb-2"
             items={[

@@ -11,18 +11,31 @@ export const baseUrl =
 
 export const siteName = "QRdx";
 
-export const siteTitle =
-  "Free QR Code Generator | QRdx — Unlimited, Open Source, No Signup";
+export const siteTitle = "Free QR Code Generator & Dynamic QR Codes | QRdx";
 
 export const siteDescription =
-  "Create unlimited free QR codes with custom colors, gradients, logos and dot patterns — no signup, no watermark. Open-source (AGPL-3.0) with AI-designed styles and a React library for developers.";
+  "Unlimited free QR codes with logos, colors and patterns, no signup or watermark. Plus editable dynamic codes, hosted pages and scan analytics. Open source.";
+
+/** Root-layout `keywords`; search engines mostly ignore them, so keep them few and accurate. */
+export const siteKeywords = [
+  "free qr code generator",
+  "dynamic qr code generator",
+  "qr code with logo",
+  "qr code generator no signup",
+  "qr code landing page",
+  "qr code analytics",
+  "open source qr code generator",
+  "qr code api",
+  "react qr code library",
+  "eps qr code",
+];
 
 /** Served by app/opengraph-image.tsx */
 export const defaultOgImage = {
   url: "/opengraph-image",
   width: 1200,
   height: 630,
-  alt: "QRdx — Free, open-source QR code generator",
+  alt: "QRdx: free QR code generator with dynamic QR codes, hosted pages and scan analytics",
 };
 
 function plainTitle(title: Metadata["title"]): string | undefined {

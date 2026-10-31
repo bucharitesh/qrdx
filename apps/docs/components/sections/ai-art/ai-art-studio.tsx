@@ -2,6 +2,7 @@
 
 import { authClient } from "@repo/auth/client";
 import { toast } from "@repo/design-system";
+import { Bot, Close } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
@@ -14,7 +15,7 @@ import {
   ToggleGroupItem,
 } from "@repo/design-system/components/ui/toggle-group";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ImageUp, Lock, ServerOff, Sparkles, X } from "lucide-react";
+import { GalleryAdd, Lock } from "iconsax-reactjs";
 import Link from "next/link";
 import posthog from "posthog-js";
 import { useRef, useState } from "react";
@@ -22,6 +23,7 @@ import { apiFetch } from "@/lib/api-fetch";
 import { useSessionGuard } from "@/lib/hooks/use-gaurds";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 import { MyErrorResponseSchema, UnauthorizedError } from "@/types/errors";
+import { AIArtComingSoon } from "./ai-art-coming-soon";
 import { AIArtPresetGallery } from "./ai-art-preset-gallery";
 import { AIArtResultPanel } from "./ai-art-result";
 import {
@@ -102,7 +104,7 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
   const credits = creditsResponse?.credits ?? null;
 
   if (!isConfigured) {
-    return <AIArtUnavailable />;
+    return <AIArtComingSoon />;
   }
 
   const lockedSeed =
@@ -463,7 +465,7 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
                     type="button"
                     variant="ghost"
                   >
-                    <X />
+                    <Close />
                     Remove
                   </Button>
                 </div>
@@ -476,7 +478,7 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
                   type="button"
                   variant="outline"
                 >
-                  <ImageUp />
+                  <GalleryAdd />
                   Upload reference
                 </Button>
               )}
@@ -497,7 +499,7 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
               disabled={!canSubmit || notEnoughCredits}
               type="submit"
             >
-              {isGenerating ? <Spinner /> : <Sparkles />}
+              {isGenerating ? <Spinner /> : <Bot />}
               {isGenerating
                 ? "Generating…"
                 : `Generate ${variations > 1 ? `${variations} variations` : "QR art"}`}
@@ -508,7 +510,7 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
                 type="button"
                 variant="outline"
               >
-                <X />
+                <Close />
                 Cancel
               </Button>
             )}
@@ -530,7 +532,10 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
             The content is baked into the image and can't be changed after you
             share it. For a link you can edit later, with scan analytics, create
             a{" "}
-            <Link className="text-primary hover:underline" href="/dashboard">
+            <Link
+              className="font-medium text-foreground underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground"
+              href="/dashboard"
+            >
               dynamic code
             </Link>{" "}
             and use its short link here.
@@ -671,35 +676,5 @@ function CreditsNote({
         </span>
       )}
     </p>
-  );
-}
-
-function AIArtUnavailable() {
-  return (
-    <div className="bg-muted/40 mx-auto flex max-w-xl flex-col items-center gap-4 rounded-xl border p-8 text-center">
-      <ServerOff className="text-muted-foreground size-8" />
-      <div className="flex flex-col gap-1">
-        <h2 className="text-lg font-medium">
-          AI QR art isn't available on this server
-        </h2>
-        <p className="text-muted-foreground text-sm">
-          This deployment hasn't configured an image model (the{" "}
-          <code>FAL_KEY</code> setting), so artwork can't be generated here.
-          Everything else in QRdx works as usual, including vector{" "}
-          <Link className="text-primary hover:underline" href="/playground">
-            Logo QR and Image QR art
-          </Link>{" "}
-          in the playground.
-        </p>
-      </div>
-      <div className="flex flex-wrap justify-center gap-2">
-        <Button asChild>
-          <Link href="/playground">Open the QR playground</Link>
-        </Button>
-        <Button asChild variant="outline">
-          <Link href="/ai">Try AI themes</Link>
-        </Button>
-      </div>
-    </div>
   );
 }

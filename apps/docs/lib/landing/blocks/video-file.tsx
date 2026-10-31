@@ -1,4 +1,4 @@
-import { Film } from "lucide-react";
+import { VideoHorizontal as Film } from "iconsax-reactjs";
 import { z } from "zod";
 import { lineText, longText } from "@/components/landing/block-kit";
 import { BlockHeading, PreviewPlaceholder } from "@/lib/files/block-ui";

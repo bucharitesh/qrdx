@@ -12,6 +12,20 @@ export const CORNER_EYE_DOT_PATTERNS = [
   "rounded-triangle",
   "star",
   "banner",
+  // Added after 0.0.46
+  "leaf",
+  "drop",
+  "plus",
+  "cross-rounded",
+  "hexagon",
+  "octagon",
+  "flower",
+  "heart",
+  "squircle",
+  "dots",
+  "extra-rounded",
+  "leaf-reverse",
+  "drop-reverse",
 ] as const;
 
 // Zod schema

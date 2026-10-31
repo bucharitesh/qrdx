@@ -17,6 +17,7 @@ import {
 } from "@repo/design-system/components/ui/tabs";
 import { Textarea } from "@repo/design-system/components/ui/textarea";
 import { useState } from "react";
+import { InfoHint } from "@/components/help/info-hint";
 import {
   calculatePrintSize,
   type DistanceUnit,
@@ -128,7 +129,10 @@ export function PrintSizeCalculator() {
     <div className="grid gap-6 lg:grid-cols-2">
       <div className="flex flex-col gap-5 rounded-xl border border-border bg-card p-5">
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="scan-distance">Scanning distance</Label>
+          <div className="flex items-center gap-1.5">
+            <Label htmlFor="scan-distance">Scanning distance</Label>
+            <InfoHint align="start" id="print-size" />
+          </div>
           <div className="flex gap-2">
             <Input
               id="scan-distance"
@@ -163,7 +167,10 @@ export function PrintSizeCalculator() {
         </div>
 
         <div className="flex flex-col gap-1.5">
-          <Label htmlFor="ecc-level">Error correction</Label>
+          <div className="flex items-center gap-1.5">
+            <Label htmlFor="ecc-level">Error correction</Label>
+            <InfoHint align="start" id="error-correction" />
+          </div>
           <Select
             value={ecc}
             onValueChange={(value) => setEcc(value as EccLevel)}

@@ -1,14 +1,15 @@
 import { cn } from "@repo/design-system/lib/utils";
 import {
-  Contact,
-  Globe,
-  Mail,
-  MapPin,
+  Personalcard as Contact,
+  Global as Globe,
+  Sms as Mail,
+  Location as MapPin,
   MessageCircle,
-  Phone,
-  UserPlus,
-} from "lucide-react";
+  Call as Phone,
+  UserAdd as UserPlus,
+} from "iconsax-reactjs";
 import { z } from "zod";
+import { buildVCard, vcardFilename } from "@/app/api/vcard/[slug]/vcard";
 import {
   addressSchema,
   buttonClass,
@@ -166,9 +167,23 @@ function ContactBlock({ id, props, context }: BlockRenderProps<ContactProps>) {
   const [phone] = props.phones;
   const [email] = props.emails;
   const whatsapp = props.phones.find((item) => item.whatsapp);
-  const vcardHref = context.pageId
-    ? `/api/vcard/${encodeURIComponent(context.pageId)}?b=${encodeURIComponent(id)}`
-    : "#";
+  // Template demos have no saved page: the .vcf is built into the link.
+  const demoVCard = context.demo
+    ? {
+        href: `data:text/vcard;charset=utf-8,${encodeURIComponent(
+          buildVCard({
+            contact: props,
+            photo: props.photo ? { kind: "uri", uri: props.photo.url } : null,
+          }),
+        )}`,
+        filename: vcardFilename(props),
+      }
+    : null;
+  const vcardHref =
+    demoVCard?.href ??
+    (context.pageId
+      ? `/api/vcard/${encodeURIComponent(context.pageId)}?b=${encodeURIComponent(id)}`
+      : "#");
 
   return (
     <section aria-label={name || "Contact"} className="space-y-5">
@@ -255,6 +270,7 @@ function ContactBlock({ id, props, context }: BlockRenderProps<ContactProps>) {
               className={buttonClass("filled")}
               data-lp-block={id}
               data-lp-target="save-contact"
+              download={demoVCard?.filename}
               href={vcardHref}
               rel="nofollow"
             >

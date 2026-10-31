@@ -1,0 +1,112 @@
+---
+title: REST API and OAuth
+description: Manage dynamic QR codes, read scan analytics, report conversions and subscribe to webhooks over HTTP with OAuth 2.0 access tokens.
+icon: Code
+---
+
+The QRdx REST API lives under `https://qrdx.dev/api/v1`. It uses JSON and, apart from the keyless [image API](/docs/developers/image-api), authenticates requests with an OAuth 2.0 access token:
+
+```bash
+curl https://qrdx.dev/api/v1/codes -H "Authorization: Bearer $QRDX_TOKEN"
+```
+
+Requests made with a token act on the token owner's personal workspace. The codes, conversions and hooks endpoints also accept the browser session of someone signed in to QRdx; those requests act on the open [team](/docs/teams).
+
+## Endpoints
+
+| Endpoint | Scope | What it does |
+| --- | --- | --- |
+| `GET /api/v1/qr` | None | QR code image as SVG, PNG or EPS. See [Image API](/docs/developers/image-api) |
+| `/api/v1/codes` | `codes:read`, `codes:write` | List, create (one or up to 100 at a time), update and delete dynamic codes. See [Dynamic QR codes](/docs/dynamic-qr-codes#rest-api) |
+| `GET /api/v1/codes/{id}/scans` | `codes:read` | Scan analytics for a code, or individual scans page by page |
+| `POST /api/v1/conversions` | `codes:write` | Attribute a sale or sign-up to the scan that led to it (Business). See [Tracking and conversions](/docs/tracking-and-conversions) |
+| `/api/v1/hooks` | `codes:read`, `codes:write` | Subscribe a URL to events, REST Hooks style, for Zapier, Make and n8n. See [Webhooks](/docs/webhooks) |
+| `GET /api/v1/themes`, `GET /api/v1/themes/{id}` | `themes:read` | Your saved QR themes (name and style) |
+| `GET /api/v1/me` | `profile:read` | The signed-in user's id, name, email and avatar |
+
+`codes:write` also allows everything `codes:read` does.
+
+## Get an access token
+
+QRdx is an OAuth 2.0 provider. Your app sends people to QRdx to sign in, and gets back an access token that can only do what the granted scopes allow.
+
+| Scope | Allows |
+| --- | --- |
+| `profile:read` | Read the user's name, email and avatar |
+| `themes:read` | Read the user's saved QR themes |
+| `codes:read` | Read dynamic codes and their scan analytics |
+| `codes:write` | Create, edit and delete dynamic codes, report conversions, manage webhook subscriptions |
+
+### 1. Register an app
+
+On qrdx.dev, OAuth apps are registered by the QRdx team: email [support@qrdx.dev](mailto:support@qrdx.dev) with your app's name, its redirect URLs and the scopes it needs. You receive a client ID and a client secret. On a [self-hosted](/docs/self-hosting) instance, create one yourself from `apps/docs`:
+
+```bash
+pnpm exec tsx scripts/create-oauth-app.ts \
+  --name "My app" \
+  --redirect-uris "https://myapp.example/callback" \
+  --scopes "codes:read,codes:write"
+```
+
+The client secret is shown once. Keep it on your server.
+
+### 2. Send the user to QRdx
+
+```txt
+https://qrdx.dev/api/oauth/authorize
+  ?response_type=code
+  &client_id=<client id>
+  &redirect_uri=https://myapp.example/callback
+  &scope=codes:read codes:write
+  &state=<random value>
+  &code_challenge=<PKCE challenge>
+  &code_challenge_method=S256
+```
+
+`redirect_uri` must exactly match a registered URL, and `scope` (space or comma separated) may only ask for the app's scopes. PKCE is optional but recommended; `S256` is the default method. People who aren't signed in see a QRdx sign-in page with your app's name and the requested permissions. QRdx then redirects to `redirect_uri` with `code` and your `state`. The code is valid for 10 minutes and can be used once.
+
+### 3. Exchange the code for tokens
+
+```bash
+curl -X POST https://qrdx.dev/api/oauth/token \
+  -d grant_type=authorization_code \
+  -d client_id=$CLIENT_ID \
+  -d client_secret=$CLIENT_SECRET \
+  -d code=$CODE \
+  -d redirect_uri=https://myapp.example/callback \
+  -d code_verifier=$CODE_VERIFIER
+```
+
+```json
+{
+  "access_token": "...",
+  "token_type": "Bearer",
+  "expires_in": 3600,
+  "refresh_token": "...",
+  "scope": "codes:read codes:write"
+}
+```
+
+The token endpoint takes a form-encoded body. Access tokens last 1 hour and refresh tokens 30 days.
+
+### 4. Refresh and revoke
+
+```bash
+# New access and refresh tokens; the old refresh token stops working
+curl -X POST https://qrdx.dev/api/oauth/token \
+  -d grant_type=refresh_token \
+  -d client_id=$CLIENT_ID \
+  -d client_secret=$CLIENT_SECRET \
+  -d refresh_token=$REFRESH_TOKEN
+
+# Revoke an access or refresh token
+curl -X POST https://qrdx.dev/api/oauth/revoke -d token=$TOKEN
+```
+
+`GET /api/oauth/userinfo` returns the user as `sub`, `name`, `email` and `picture` for tokens with `profile:read`.
+
+## Errors and limits
+
+The codes, conversions and hooks endpoints return errors as `{ "code": "...", "message": "...", "status": 400 }`; the status codes are listed under [Dynamic QR codes](/docs/dynamic-qr-codes#rest-api). The OAuth, themes and profile endpoints use the OAuth shape, `{ "error": "invalid_token", "error_description": "..." }`.
+
+Requests are rate limited, and a `429` response tells you when to retry. The codes API allows 120 reads and 30 writes a minute per user. Creating several codes in one request and moving codes onto a custom domain need Pro or Business (`402 PLAN_REQUIRED` otherwise). Scans are never limited.

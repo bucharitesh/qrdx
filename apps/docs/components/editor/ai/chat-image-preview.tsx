@@ -6,7 +6,7 @@ import {
   ResponsiveDialogTrigger,
 } from "@repo/design-system/components/ui/revola";
 import { cn } from "@repo/design-system/lib/utils";
-import { ImageIcon } from "lucide-react";
+import { Gallery as ImageIcon } from "iconsax-reactjs";
 import Image from "next/image";
 import type { ComponentProps } from "react";
 

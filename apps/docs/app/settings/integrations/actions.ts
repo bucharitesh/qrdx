@@ -7,10 +7,16 @@ import {
   initializeIntegrations,
 } from "@repo/integrations";
 import { headers } from "next/headers";
+import { cleanupDataConnection } from "@/lib/data-connections/server";
+import {
+  connectLimiter,
+  revokeStoredToken,
+} from "@/lib/connected-accounts/server";
 import {
   createIntegrationAuthUrl,
-  isIntegrationConfigured,
+  isOAuthConfigured,
 } from "@/lib/integration-oauth";
+import { enforceRateLimits } from "@/lib/request-guards";
 
 // Initialize integrations on module load
 initializeIntegrations();
@@ -29,9 +35,17 @@ export async function connectIntegrationAction(provider: string) {
     throw new Error(`Unknown integration: ${provider}`);
   }
 
-  if (!isIntegrationConfigured(provider)) {
+  // OAuth needs app credentials; API-key-only providers never start a flow
+  if (!isOAuthConfigured(provider)) {
     throw new Error(`${definition.name} is not configured on this server`);
   }
+
+  await enforceRateLimits([
+    {
+      limiter: connectLimiter,
+      key: `integrations:oauth:${session.user.id}`,
+    },
+  ]);
 
   const authUrl = await createIntegrationAuthUrl(provider);
 
@@ -47,7 +61,18 @@ export async function disconnectIntegrationAction(provider: string) {
     throw new Error("Unauthorized");
   }
 
+  await enforceRateLimits([
+    {
+      limiter: connectLimiter,
+      key: `integrations:disconnect:${session.user.id}`,
+    },
+  ]);
+
+  // Revoke at the provider where its API allows it, then delete the row
+  const revoked =
+    (await revokeStoredToken(session.user.id, provider)) ||
+    (await cleanupDataConnection(session.user.id, provider));
   await disconnectIntegration(session.user.id, provider);
 
-  return { success: true };
+  return { success: true, revoked };
 }

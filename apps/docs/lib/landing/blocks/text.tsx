@@ -1,5 +1,5 @@
 import { cn } from "@repo/design-system/lib/utils";
-import { Type } from "lucide-react";
+import { Text as Type } from "iconsax-reactjs";
 import { z } from "zod";
 import { lineText, longText } from "@/components/landing/block-kit";
 import { type BlockRenderProps, registerBlock } from "../registry";

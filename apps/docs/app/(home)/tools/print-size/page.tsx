@@ -50,6 +50,7 @@ export default function PrintSizePage() {
   return (
     <main className="flex flex-col divide-y divide-border min-h-screen w-full">
       <ToolHero
+        pattern="ramp"
         crumbs={[
           { name: "Home", path: "/" },
           { name: "Tools", path: "/tools" },
@@ -115,11 +116,17 @@ export default function PrintSizePage() {
             </li>
             <li>
               Need a code first? Use the{" "}
-              <Link href="/qr-code-generator" className="underline">
+              <Link
+                href="/qr-code-generator"
+                className="font-medium text-foreground underline decoration-foreground/30 underline-offset-4 transition-colors hover:decoration-foreground"
+              >
                 QR code generators
               </Link>{" "}
               or the{" "}
-              <Link href="/playground" className="underline">
+              <Link
+                href="/playground"
+                className="font-medium text-foreground underline decoration-foreground/30 underline-offset-4 transition-colors hover:decoration-foreground"
+              >
                 full editor
               </Link>
               , then export as SVG for print.

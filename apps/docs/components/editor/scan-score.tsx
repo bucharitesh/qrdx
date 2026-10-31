@@ -1,12 +1,17 @@
 "use client";
 
+import { Spinner } from "@repo/design-system/components/icons";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@repo/design-system/components/ui/popover";
 import { cn } from "@repo/design-system/lib/utils";
-import { CircleCheck, CircleX, LoaderCircle } from "lucide-react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import {
+  TickCircle as CircleCheck,
+  CloseCircle as CircleX,
+} from "iconsax-reactjs";
 import Link from "next/link";
 import {
   getQRData,
@@ -15,8 +20,10 @@ import {
   type ScanGrade,
   type ScanScoreResult,
 } from "qrdx";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { InfoHint } from "@/components/help/info-hint";
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
+import { soundEvent } from "@/lib/sound/emit";
 import type { QRStyle } from "@/types/theme";
 
 const SCORE_DEBOUNCE_MS = 700;
@@ -45,9 +52,15 @@ export function ScanCheckList({ checks }: { checks: ScanCheck[] }) {
       {sorted.map((check) => (
         <li className="flex gap-2 text-sm" key={check.id}>
           {check.passed ? (
-            <CircleCheck className="mt-0.5 size-4 shrink-0 text-emerald-500" />
+            <CircleCheck
+              className="mt-0.5 size-4 shrink-0 text-emerald-500"
+              variant="Bold"
+            />
           ) : (
-            <CircleX className="mt-0.5 size-4 shrink-0 text-red-500" />
+            <CircleX
+              className="mt-0.5 size-4 shrink-0 text-red-500"
+              variant="Bold"
+            />
           )}
           <div className="min-w-0">
             <p className="leading-snug">{check.message}</p>
@@ -69,15 +82,25 @@ interface ScanScoreBadgeProps {
   className?: string;
 }
 
-/** "Scan score 92 · Great" badge for the editor preview. */
+/**
+ * "Scan score 92 · Great" badge for the editor preview. Shows a spinner until
+ * the first score for the current content is ready; while a style change is
+ * re-checked, the previous score stays visible (dimmed) next to a spinner.
+ */
 export function ScanScoreBadge({
   style,
   value,
   className,
 }: ScanScoreBadgeProps) {
-  const [result, setResult] = useState<ScanScoreResult | null>(null);
-  const [checking, setChecking] = useState(false);
+  const [scored, setScored] = useState<{
+    key: string;
+    value: string;
+    result: ScanScoreResult;
+  } | null>(null);
   const [failed, setFailed] = useState(false);
+  // Last pass/fail (score >= 75); a cue plays only when a change crosses it.
+  const passed = useRef<boolean | null>(null);
+  const reduceMotion = useReducedMotion();
 
   // Same props the preview renders
   const qrProps = useMemo(
@@ -109,22 +132,23 @@ export function ScanScoreBadge({
       return;
     }
     const controller = new AbortController();
-    setChecking(true);
+    setFailed(false);
     const timer = setTimeout(() => {
       getScanScore(JSON.parse(propsKey), { signal: controller.signal })
         .then((score) => {
-          setResult(score);
-          setFailed(false);
+          if (!controller.signal.aborted) {
+            setScored({ key: propsKey, value, result: score });
+            const pass = score.score >= 75;
+            if (passed.current !== null && passed.current !== pass) {
+              soundEvent(pass ? "good" : "low");
+            }
+            passed.current = pass;
+          }
         })
         .catch((error: unknown) => {
           if (!controller.signal.aborted) {
             console.error("Scan score failed:", error);
             setFailed(true);
-          }
-        })
-        .finally(() => {
-          if (!controller.signal.aborted) {
-            setChecking(false);
           }
         });
     }, SCORE_DEBOUNCE_MS);
@@ -134,49 +158,77 @@ export function ScanScoreBadge({
     };
   }, [propsKey, value]);
 
+  // A score for different content is never shown; a style change keeps the
+  // last score (dimmed) until the new one lands.
+  const result = scored && scored.value === value ? scored.result : null;
+  const checking = !failed && scored?.key !== propsKey;
+
   if (failed && !result) {
     return null;
   }
 
+  const state = result ? `${result.score}-${result.grade}` : "checking";
+  const fade = reduceMotion
+    ? { initial: false as const, animate: { opacity: 1 }, exit: { opacity: 0 } }
+    : {
+        initial: { opacity: 0, y: 4, filter: "blur(2px)" },
+        animate: { opacity: 1, y: 0, filter: "blur(0px)" },
+        exit: { opacity: 0, y: -4, filter: "blur(2px)" },
+      };
+
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <button
+        <motion.button
+          aria-busy={checking}
           aria-label={
             result
               ? `Scan score ${result.score}, ${GRADE_LABELS[result.grade]}. Show checks`
               : "Checking scan score"
           }
           className={cn(
-            "bg-background/90 hover:bg-muted inline-flex h-8 items-center gap-2 rounded-full border px-3 text-xs font-medium shadow-sm backdrop-blur transition-colors",
+            "bg-background/90 hover:bg-muted inline-flex h-8 items-center gap-2 overflow-hidden rounded-full border px-3 text-xs font-medium whitespace-nowrap shadow-sm backdrop-blur transition-colors",
             className,
           )}
+          layout={!reduceMotion}
+          transition={{ duration: 0.25, ease: [0.32, 0.72, 0, 1] }}
           type="button"
         >
-          {result ? (
-            <span
+          <span className="relative grid size-3.5 shrink-0 place-items-center">
+            {checking ? (
+              <Spinner className="text-muted-foreground size-3.5" />
+            ) : result ? (
+              <span
+                className={cn(
+                  "size-2 rounded-full",
+                  GRADE_COLORS[result.grade],
+                )}
+              />
+            ) : null}
+          </span>
+          <AnimatePresence initial={false} mode="popLayout">
+            <motion.span
               className={cn(
-                "size-2 rounded-full",
-                GRADE_COLORS[result.grade],
-                checking && "animate-pulse",
+                "tabular-nums transition-opacity",
+                checking && result && "opacity-60",
               )}
-            />
-          ) : (
-            <LoaderCircle className="size-3.5 animate-spin" />
-          )}
-          {result ? (
-            <span className="tabular-nums">
-              Scan score {result.score} · {GRADE_LABELS[result.grade]}
-            </span>
-          ) : (
-            <span>Checking scan score…</span>
-          )}
-        </button>
+              key={state}
+              transition={{ duration: 0.2, ease: [0.32, 0.72, 0, 1] }}
+              {...fade}
+            >
+              {result
+                ? `Scan score ${result.score} · ${GRADE_LABELS[result.grade]}`
+                : "Checking scan…"}
+            </motion.span>
+          </AnimatePresence>
+        </motion.button>
       </PopoverTrigger>
       <PopoverContent align="center" className="w-80" side="top">
         <div className="space-y-3">
           <div className="flex items-baseline justify-between">
-            <h3 className="text-sm font-semibold">Will it scan?</h3>
+            <h3 className="text-sm font-semibold">
+              Will it scan? <InfoHint id="scan-score" side="right" />
+            </h3>
             {result && (
               <span className="text-muted-foreground text-xs tabular-nums">
                 {result.score}/100 · {GRADE_LABELS[result.grade]}
@@ -186,13 +238,19 @@ export function ScanScoreBadge({
           {result ? (
             <ScanCheckList checks={result.checks} />
           ) : (
-            <p className="text-muted-foreground text-sm">Checking…</p>
+            <p className="text-muted-foreground flex items-center gap-2 text-sm">
+              <Spinner className="size-4" />
+              Decoding your design at a few sizes…
+            </p>
           )}
           <p className="text-muted-foreground border-t pt-3 text-xs leading-relaxed">
             Simulated in your browser with the open-source jsQR decoder at a few
             sizes with camera blur. Phone apps vary, so test-scan before you
             print.{" "}
-            <Link className="underline" href="/tools/scan-checker">
+            <Link
+              className="text-foreground font-medium underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground"
+              href="/tools/scan-checker"
+            >
               Check a printed code
             </Link>
           </p>

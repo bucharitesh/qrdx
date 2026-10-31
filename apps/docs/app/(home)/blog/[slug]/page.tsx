@@ -221,8 +221,8 @@ export default async function BlogPostPage({ params }: PageProps) {
 
         <div className="px-5 md:px-10 w-full border-b">
           <div className="md:border-x md:mx-10 relative">
-            <div className="absolute hidden lg:block top-0 -left-4 md:-left-14 h-full w-4 md:w-14 text-primary/5 bg-size-[10px_10px] bg-[repeating-linear-gradient(315deg,currentColor_0_1px,#0000_0_50%)]" />
-            <div className="absolute hidden lg:block top-0 -right-4 md:-right-14 h-full w-4 md:w-14 text-primary/5 bg-size-[10px_10px] bg-[repeating-linear-gradient(315deg,currentColor_0_1px,#0000_0_50%)]" />
+            <div className="absolute hidden lg:block top-0 -left-4 md:-left-14 h-full w-4 md:w-14 text-foreground/5 bg-size-[10px_10px] bg-[repeating-linear-gradient(315deg,currentColor_0_1px,#0000_0_50%)]" />
+            <div className="absolute hidden lg:block top-0 -right-4 md:-right-14 h-full w-4 md:w-14 text-foreground/5 bg-size-[10px_10px] bg-[repeating-linear-gradient(315deg,currentColor_0_1px,#0000_0_50%)]" />
 
             <div className="flex flex-col lg:flex-row">
               {/* MDX Body */}
@@ -267,7 +267,7 @@ export default async function BlogPostPage({ params }: PageProps) {
             <SectionHeader>
               <h2
                 id="read-more-heading"
-                className="text-4xl md:text-5xl font-medium tracking-tighter text-center"
+                className="text-2xl md:text-3xl font-semibold tracking-tight text-center text-balance"
               >
                 Read more
               </h2>

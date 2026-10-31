@@ -1,4 +1,4 @@
-import { QrCode } from "lucide-react";
+import { ScanBarcode as QrCode } from "iconsax-reactjs";
 
 /**
  * Hosted page footer: the plan's "Made with QRdx" badge (Free) and the

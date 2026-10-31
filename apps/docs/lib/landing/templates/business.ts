@@ -1,4 +1,4 @@
-import { Store } from "lucide-react";
+import { Shop as Store } from "iconsax-reactjs";
 import { themePreset } from "@/components/landing/theme";
 import { registerTemplate } from "./registry";
 

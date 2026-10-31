@@ -1,6 +1,7 @@
 "use client";
 
 import { toast } from "@repo/design-system";
+import { Tick as Check } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   Dialog,
@@ -12,7 +13,7 @@ import {
 } from "@repo/design-system/components/ui/dialog";
 import { Spinner } from "@repo/design-system/components/ui/spinner";
 import { cn } from "@repo/design-system/lib/utils";
-import { Check, FolderOpen } from "lucide-react";
+import { FolderOpen } from "iconsax-reactjs";
 import { useState } from "react";
 import {
   FILE_KIND_LABELS,

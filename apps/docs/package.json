@@ -7,6 +7,11 @@
     "dev": "next dev",
     "start": "next start",
     "lint": "biome check",
+    "test": "vitest run && node scripts/run-node-tests.mjs",
+    "test:unit": "vitest run",
+    "test:node": "node scripts/run-node-tests.mjs",
+    "test:e2e": "tsx e2e/playground.e2e.ts",
+    "registry:build": "tsx registry/build.ts",
     "postinstall": "fumadocs-mdx",
     "format": "biome format --write"
   },
@@ -15,6 +20,7 @@
     "@ai-sdk/react": "^2.0.115",
     "@aws-sdk/client-s3": "^3.1161.0",
     "@aws-sdk/s3-request-presigner": "^3.1161.0",
+    "@c15t/nextjs": "3.1.0",
     "@fal-ai/client": "^1.10.1",
     "@hookform/resolvers": "^5.2.2",
     "@lucasmarkes/hairline": "0.5.1",
@@ -60,6 +66,7 @@
     "fumadocs-typescript": "4.0.14",
     "fumadocs-ui": "16.2.5",
     "hast-util-to-jsx-runtime": "^2.3.6",
+    "iconsax-reactjs": "0.0.8",
     "idb-keyval": "^6.2.2",
     "isbot": "^5.2.2",
     "katex": "^0.16.27",
@@ -118,7 +125,9 @@
     "browserslist-config-baseline": "^0.5.0",
     "dotenv": "^17.2.3",
     "ts-morph": "^27.0.2",
-    "typescript": "^5.9.3"
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.18"
   },
   "browserslist": [
     "defaults",

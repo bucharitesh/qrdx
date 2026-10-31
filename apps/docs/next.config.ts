@@ -34,11 +34,34 @@ let nextConfig: NextConfig = {
     "shiki",
     "@takumi-rs/core",
   ],
+  // Anything else on the MCP subdomain goes to the connect page.
+  async redirects() {
+    const base = (await config.redirects?.()) ?? [];
+    return [
+      ...base,
+      {
+        source: "/:path((?!mcp$|api/mcp$|_next/).*)",
+        has: [{ type: "host", value: "mcp.qrdx.dev" }],
+        destination: "https://qrdx.dev/mcp",
+        permanent: false,
+      },
+    ];
+  },
   // Keep the shared rewrites (PostHog /ingest proxy) alongside the docs ones.
   async rewrites() {
     const base = toRewritePhases(await config.rewrites?.());
     return {
       ...base,
+      // mcp.qrdx.dev/mcp is the public MCP endpoint (lib/mcp-clients.ts). It
+      // must win over the /mcp marketing page, hence beforeFiles.
+      beforeFiles: [
+        ...base.beforeFiles,
+        {
+          source: "/mcp",
+          has: [{ type: "host", value: "mcp.qrdx.dev" }],
+          destination: "/api/mcp",
+        },
+      ],
       afterFiles: [
         ...base.afterFiles,
         {

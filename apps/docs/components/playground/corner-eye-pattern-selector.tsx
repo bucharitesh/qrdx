@@ -5,15 +5,25 @@ import type React from "react";
 import { useQREditorStore } from "@/store/editor-store";
 import { EyePatterns } from "../icons/eye-patterns";
 
+// Every eye frame (18: no lone tile in 3 or 4 columns)
 export const patterns: Array<{ id: CornerEyePattern; name: string }> = [
   { id: "square", name: "Square" },
   { id: "rounded", name: "Rounded" },
-  { id: "circle", name: "Circle" },
-  { id: "gear", name: "Gear" },
-  { id: "diya", name: "Diya" },
   { id: "extra-rounded", name: "Extra Rounded" },
+  { id: "squircle", name: "Squircle" },
+  { id: "cushion", name: "Cushion" },
+  { id: "bevel", name: "Bevel" },
+  { id: "octagon", name: "Octagon" },
+  { id: "leaf", name: "Leaf" },
+  { id: "leaf-reverse", name: "Leaf Reverse" },
+  { id: "drop", name: "Drop" },
+  { id: "petal", name: "Petal" },
+  { id: "shield", name: "Shield" },
+  { id: "diya", name: "Diya" },
   { id: "message", name: "Message" },
   { id: "pointy", name: "Pointy" },
+  { id: "gear", name: "Gear" },
+  { id: "circle", name: "Circle" },
   { id: "curly", name: "Curly" },
 ] as const;
 

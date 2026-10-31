@@ -23,6 +23,12 @@ import { QRCode } from 'qrdx';
 
 Supported formats: `#hex`, `rgb()`, `rgba()`, `hsl()`, `hsla()`, named colors
 
+`eyeColors` sets each eye on its own (`topLeft`, `topRight`, `bottomLeft`, each with an `outer` and `inner` color or gradient); see [Patterns](/docs/features/patterns#per-eye-colors).
+
+### Transparent background
+
+`bgColor="transparent"` paints no background, so PNG and SVG downloads are see-through and PDF and EPS files have no background fill. Place the code on a light, plain surface: decoders need the light gaps between modules.
+
 ## Linear Gradients
 
 ```tsx

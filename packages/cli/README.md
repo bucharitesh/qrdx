@@ -1,6 +1,6 @@
 # @qrdx/cli
 
-QR code generator CLI for developers. Generate styled, scannable QR codes as SVG or PNG — fully non-interactive and CI-friendly, with a guided prompt flow when run in a terminal.
+QR code generator CLI for developers. Generate styled, scannable QR codes as SVG, PNG or vector EPS — fully non-interactive and CI-friendly, with a guided prompt flow when run in a terminal. It renders with the same [`qrdx`](https://www.npmjs.com/package/qrdx) library as the [QRdx](https://qrdx.dev) web app.
 
 ## Install
 
@@ -17,7 +17,7 @@ npm install -g @qrdx/cli
 qrdx generate "https://example.com" -o qr.svg
 ```
 
-PNG output uses [sharp](https://sharp.pixelplumbing.com). It is an optional dependency that npm installs automatically when your platform supports it; if it is missing, SVG output still works and the CLI tells you how to fix PNG.
+PNG output uses [sharp](https://sharp.pixelplumbing.com). It is an optional dependency that npm installs automatically when your platform supports it; if it is missing, SVG and EPS output still work and the CLI tells you how to fix PNG.
 
 > The `qrdx` npm package is the React library. The CLI lives only in `@qrdx/cli`.
 
@@ -33,8 +33,9 @@ qrdx generate <data> [options]
 
 | Flag | Short | Default | Description |
 |------|-------|---------|-------------|
-| `--output` | `-o` | `qr.svg` | Output path — extension sets format (`.svg` or `.png`) |
-| `--size` | | `512` | Output pixel size |
+| `--output` | `-o` | `qr.svg` | Output path — extension sets format (`.svg`, `.png` or `.eps`) |
+| `--format` | | from the extension | `svg`, `png` or `eps`, for a file name without an extension |
+| `--size` | | `512` | Output size: pixels for SVG and PNG, points (72 per inch) for EPS |
 | `--level` | `-l` | `Q` | Error correction: `L` `M` `Q` `H` |
 | `--body` | | `square` | Body dot pattern |
 | `--eye` | | `square` | Corner eye pattern |
@@ -64,6 +65,9 @@ qrdx generate "https://qrdx.dev" -o qr.svg
 
 # High-res PNG for print
 qrdx generate "https://qrdx.dev" -o qr.png --size 2048 --level H
+
+# Vector EPS for a print shop or Illustrator, 2 inches wide
+qrdx generate "https://qrdx.dev" -o qr.eps --size 144
 
 # Branded style
 qrdx generate "https://qrdx.dev" \
@@ -117,6 +121,10 @@ Pass a JSON object to `--fg`, `--bg`, `--eye-color` or `--dot-color`:
 
 Each gradient needs at least 2 stops; `offset` is a percentage from 0 to 100.
 
+## EPS
+
+`.eps` files are vector PostScript (EPSF-3.0) for print shops and design tools. `--size` is the width in points, so `--size 144` is 2 inches. Gradients print as their first color and there is no transparency. PNG and JPEG logos are embedded; other logo formats are converted with sharp when it is installed, and otherwise left out with a warning.
+
 ## Interactive mode
 
 When run in a TTY without an output path or data, `qrdx generate` starts a guided prompt flow — data, output path, then optionally advanced customizations (patterns, colors, template, logo, margin). In CI (`CI=true`) or when stdin/stdout is not a TTY it never prompts.
@@ -127,7 +135,9 @@ Node.js ≥ 18
 
 ## Links
 
-- [qrdx.dev](https://qrdx.dev) — web app and docs
+- [CLI docs](https://qrdx.dev/docs/developers/cli)
+- [qrdx.dev](https://qrdx.dev) — web app: static and dynamic QR codes, hosted pages and scan analytics
+- [Image API](https://qrdx.dev/docs/developers/image-api) and [MCP server](https://qrdx.dev/docs/developers/mcp) — QR codes over HTTP or from AI assistants, no install
 - [github.com/bucharitesh/qrdx](https://github.com/bucharitesh/qrdx) — source
 
 ## License

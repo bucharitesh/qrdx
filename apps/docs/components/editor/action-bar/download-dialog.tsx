@@ -1,8 +1,8 @@
 "use client";
 
 import { toast } from "@repo/design-system";
+import { Spinner, Tick } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
-import { Input } from "@repo/design-system/components/ui/input";
 import {
   InputGroup,
   InputGroupAddon,
@@ -17,14 +17,6 @@ import {
   ResponsiveDialogHeader,
   ResponsiveDialogTitle,
 } from "@repo/design-system/components/ui/revola";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@repo/design-system/components/ui/select";
-import { Slider } from "@repo/design-system/components/ui/slider";
 import { Switch } from "@repo/design-system/components/ui/switch";
 import {
   Tabs,
@@ -32,6 +24,21 @@ import {
   TabsList,
   TabsTrigger,
 } from "@repo/design-system/components/ui/tabs";
+import {
+  ToggleGroup,
+  ToggleGroupItem,
+} from "@repo/design-system/components/ui/toggle-group";
+import {
+  Bezier,
+  Copy,
+  DocumentText,
+  Gallery,
+  type Icon,
+  Image,
+  Import,
+  InfoCircle,
+  Printer,
+} from "iconsax-reactjs";
 import {
   type DownloadSize,
   downloadPrintEPS,
@@ -41,15 +48,19 @@ import {
   getFrameDimensions,
   getPrintLayout,
   getQRData,
+  getSVGString,
   PRESET_SIZES,
   type PrintColorMode,
   type PrintLayout,
   type PrintUnit,
+  QRCodeSVG,
   validateSize,
 } from "qrdx";
 import type { QRArt } from "qrdx/types";
 import React from "react";
-import { Icons } from "@/components/icons";
+import { DialogCloseButton } from "@/components/editor/dialog-close-button";
+import { emitSound } from "@/components/editor/sound";
+import { InfoHint } from "@/components/help/info-hint";
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
 import { useQREditorStore } from "@/store/editor-store";
 import { usePreferencesStore } from "@/store/preferences-store";
@@ -86,11 +97,71 @@ function formatDistance(mm: number, unit: PrintUnit): string {
     : `${Math.round(mm / 10)} cm`;
 }
 
+type ImageFormat = DownloadOptionsType["format"];
+type SizePreset = DownloadOptionsType["sizePreset"];
+
+const FORMATS: {
+  id: ImageFormat;
+  label: string;
+  bestFor: string;
+  Icon: Icon;
+  vector?: boolean;
+}[] = [
+  { id: "png", label: "PNG", bestFor: "Web, docs and slides", Icon: Gallery },
+  { id: "jpg", label: "JPG", bestFor: "Email and small files", Icon: Image },
+  {
+    id: "svg",
+    label: "SVG",
+    bestFor: "Figma, Illustrator, websites",
+    Icon: Bezier,
+    vector: true,
+  },
+  {
+    id: "pdf",
+    label: "PDF",
+    bestFor: "Documents and quick prints",
+    Icon: DocumentText,
+    vector: true,
+  },
+  {
+    id: "eps",
+    label: "EPS",
+    bestFor: "Print shops and vector apps",
+    Icon: Printer,
+    vector: true,
+  },
+];
+
+const SIZE_PRESETS: { id: Exclude<SizePreset, "custom">; label: string }[] = [
+  { id: "small", label: "Email" },
+  { id: "medium", label: "Web" },
+  { id: "large", label: "Social" },
+  { id: "xlarge", label: "Print" },
+  { id: "3xl", label: "Poster" },
+];
+
+const SCALES = [1, 2, 3, 4];
+const PRINT_DPI = 300;
+
+/** Physical width of `px` printed at 300 dpi. */
+function physicalSize(px: number): string {
+  const cm = (px / PRINT_DPI) * 2.54;
+  const inches = px / PRINT_DPI;
+  return `${cm < 10 ? cm.toFixed(1) : Math.round(cm)} cm · ${inches < 10 ? inches.toFixed(1) : Math.round(inches)} in`;
+}
+
+const CHECKERBOARD: React.CSSProperties = {
+  backgroundColor: "#ffffff",
+  backgroundImage:
+    "conic-gradient(#e4e4e7 25%, transparent 0 50%, #e4e4e7 0 75%, transparent 0)",
+  backgroundSize: "16px 16px",
+};
+
 export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
   const { value, themeState } = useQREditorStore();
   const { downloadOptions, updateDownloadOption } = usePreferencesStore();
-  const [sizeError, setSizeError] = React.useState<string>("");
   const [isDownloading, setIsDownloading] = React.useState(false);
+  const [svgCopied, setSvgCopied] = React.useState(false);
   const [tab, setTab] = React.useState<"image" | "print">("image");
   const [printUnit, setPrintUnit] = React.useState<PrintUnit>("mm");
   const [printSize, setPrintSize] = React.useState(40);
@@ -98,15 +169,17 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
   const [cropMarks, setCropMarks] = React.useState(false);
   const [colorMode, setColorMode] = React.useState<PrintColorMode>("rgb");
 
+  const format = downloadOptions.format;
+  const formatInfo = FORMATS.find((item) => item.id === format) ?? FORMATS[0];
+  const canBeTransparent = format !== "jpg";
+  const transparent = downloadOptions.transparent && canBeTransparent;
+
   const qrProps = React.useMemo(
     () => ({
       ...getQRData({
         value,
         fgColor: themeState.styles.fgColor,
-        bgColor:
-          downloadOptions.transparent && downloadOptions.format !== "jpg"
-            ? "transparent"
-            : themeState.styles.bgColor,
+        bgColor: transparent ? "transparent" : themeState.styles.bgColor,
         eyeColor: themeState.styles.eyeColor,
         dotColor: themeState.styles.dotColor,
         bodyPattern: themeState.styles.bodyPattern,
@@ -121,7 +194,7 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
       frame: themeState.styles.frame,
       art: (themeState.styles as { art?: QRArt }).art,
     }),
-    [value, themeState, downloadOptions.transparent, downloadOptions.format],
+    [value, themeState, transparent],
   );
 
   // Print files always use the real background color.
@@ -163,116 +236,82 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
     }
   }, [printProps, printSize, printUnit, printBleed, cropMarks]);
 
-  // Get the current size based on selection
-  const getCurrentSize = (): DownloadSize => {
-    if (downloadOptions.sizePreset === "custom") {
-      return {
-        width: downloadOptions.width,
-        height: downloadOptions.height,
-      };
-    }
-    return PRESET_SIZES[downloadOptions.sizePreset] || PRESET_SIZES.medium;
+  const baseSize: DownloadSize =
+    downloadOptions.sizePreset === "custom"
+      ? { width: downloadOptions.width, height: downloadOptions.height }
+      : (PRESET_SIZES[downloadOptions.sizePreset] ?? PRESET_SIZES.medium);
+  const multiplier = downloadOptions.multiplier || 1;
+  const exportSize = {
+    width: baseSize.width * multiplier,
+    height: baseSize.height * multiplier,
   };
-
-  // Validate custom size when it changes
-  React.useEffect(() => {
-    if (downloadOptions.sizePreset === "custom") {
-      const width = downloadOptions.width;
-      const height = downloadOptions.height;
-
-      if (Number.isNaN(width) || Number.isNaN(height)) {
-        setSizeError("Please enter valid numbers");
-        return;
-      }
-
-      const validation = validateSize(width, height);
-      if (!validation.isValid) {
-        setSizeError(validation.error || "Invalid size");
-      } else {
-        setSizeError("");
-      }
-    } else {
-      setSizeError("");
-    }
-  }, [
-    downloadOptions.sizePreset,
-    downloadOptions.width,
-    downloadOptions.height,
-  ]);
+  const output = getFrameDimensions(exportSize.width, themeState.styles.frame);
+  const outputWidth = Math.round(output.width);
+  const outputHeight = Math.round(output.height);
+  const validation =
+    Number.isNaN(exportSize.width) || Number.isNaN(exportSize.height)
+      ? { isValid: false, error: "Enter a width and height in pixels." }
+      : validateSize(exportSize.width, exportSize.height);
+  const sizeError = validation.isValid ? "" : (validation.error ?? "");
+  const filename =
+    downloadOptions.filename ||
+    `qr-code-${exportSize.width}x${exportSize.height}.${format}`;
 
   const handleDownload = async () => {
-    //1. Get size based on current selection
-    const size = getCurrentSize();
-    //2. apply the multiplier only for the export
-    const finalExportSize = {
-      width: size.width * downloadOptions.multiplier,
-      height: size.height * downloadOptions.multiplier,
-    };
-    // 3. Validate FINAL size
-    const validation = validateSize(
-      finalExportSize.width,
-      finalExportSize.height,
-    );
-    if (!validation.isValid) {
-      setSizeError(validation.error || "Invalid size");
-      return;
-    }
+    if (sizeError) return;
     setIsDownloading(true);
-    setSizeError("");
-
     try {
       await downloadQRCode(qrProps, {
-        format: downloadOptions.format,
-        size: finalExportSize,
+        format,
+        size: exportSize,
         filename: downloadOptions.filename,
       });
-      toast.success(
-        `QR code downloaded as ${downloadOptions.format.toUpperCase()}`,
-      );
+      emitSound("download");
+      toast.success(`Downloaded ${filename}`);
       onOpenChange(false);
     } catch (error) {
       console.error("Error downloading QR code:", error);
-      const errorMessage =
-        error instanceof Error ? error.message : "Failed to download QR code";
-      setSizeError(errorMessage);
-      toast.error(errorMessage);
+      toast.error(
+        error instanceof Error ? error.message : "Failed to download QR code",
+      );
     } finally {
       setIsDownloading(false);
     }
   };
 
-  const handlePrintDownload = async (format: PrintFormat) => {
+  const handlePrintDownload = async (printFormat: PrintFormat) => {
     const { layout } = printLayout;
     if (!layout) {
       return;
     }
     setIsDownloading(true);
-    const filename = `qr-code-print-${printSize}${printUnit}.${format}`;
+    const printFilename = `qr-code-print-${printSize}${printUnit}.${printFormat}`;
     try {
-      if (format === "eps") {
+      if (printFormat === "eps") {
         await downloadPrintEPS(printProps, {
           sizeMm: printUnit === "in" ? printSize * 25.4 : printSize,
           bleedMm: printBleed,
           colorMode,
-          filename,
+          filename: printFilename,
         });
-      } else if (format === "pdf") {
+      } else if (printFormat === "pdf") {
         await downloadPrintPDF(printProps, {
           size: printSize,
           unit: printUnit,
           bleed: printBleed,
           cropMarks,
           colorMode,
-          filename,
+          filename: printFilename,
         });
       } else {
         await downloadPrintSVG(printProps, {
           size: printSize,
           unit: printUnit,
-          filename,
+          filename: printFilename,
         });
       }
-      toast.success(`Print-ready ${format.toUpperCase()} downloaded`);
+      emitSound("download");
+      toast.success(`Downloaded ${printFilename}`);
       onOpenChange(false);
     } catch (error) {
       console.error("Error creating print file:", error);
@@ -284,268 +323,352 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
     }
   };
 
-  return (
-    <ResponsiveDialog open={open} onOpenChange={onOpenChange}>
-      <ResponsiveDialogContent
-        className="p-6 sm:max-w-md"
-        showCloseButton={true}
+  const copySvg = async () => {
+    try {
+      await navigator.clipboard.writeText(await getSVGString(qrProps));
+      setSvgCopied(true);
+      emitSound("copy");
+      setTimeout(() => setSvgCopied(false), 2000);
+    } catch {
+      toast.error("Couldn't copy the SVG");
+    }
+  };
+
+  const preview = (
+    <div className="flex flex-col gap-4 sm:sticky sm:top-0">
+      <div
+        className="mx-auto grid aspect-square w-full max-w-36 place-items-center overflow-hidden rounded-[14px] border p-3 sm:max-w-none [&_svg]:h-auto [&_svg]:max-h-full [&_svg]:max-w-full"
+        style={
+          tab === "image" && transparent
+            ? CHECKERBOARD
+            : { backgroundColor: "#ffffff" }
+        }
       >
-        <ResponsiveDialogHeader>
-          <ResponsiveDialogTitle>Download QR Code</ResponsiveDialogTitle>
-          <ResponsiveDialogDescription>
-            {tab === "print"
-              ? "Vector PDF or EPS at an exact physical size, ready for a print shop."
-              : "Choose the size and format for your QR code download."}
-          </ResponsiveDialogDescription>
-        </ResponsiveDialogHeader>
-        <Tabs
-          className="pt-2"
-          onValueChange={(next) => setTab(next as "image" | "print")}
-          value={tab}
-        >
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="image">Image</TabsTrigger>
-            <TabsTrigger value="print">Print</TabsTrigger>
-          </TabsList>
-          <TabsContent value="image">
-            <div className="space-y-4 py-4">
-              <div className="grid gap-4 grid-cols-2">
-                {/* Size Selection */}
-                <div className="space-y-2">
-                  <Label htmlFor="size-select">Size</Label>
-                  <Select
-                    defaultValue={downloadOptions.sizePreset}
+        {value ? (
+          <QRCodeSVG {...(tab === "print" ? printProps : qrProps)} size={220} />
+        ) : (
+          <p className="text-muted-foreground px-4 text-center text-xs">
+            Add content to see your code.
+          </p>
+        )}
+      </div>
+      <dl className="text-muted-foreground grid grid-cols-[auto_1fr] gap-x-3 gap-y-1.5 text-xs">
+        {tab === "image" ? (
+          <>
+            <dt>Format</dt>
+            <dd className="text-foreground text-right">
+              {formatInfo?.label}
+              {formatInfo?.vector ? " · vector" : ""}
+            </dd>
+            <dt>Pixels</dt>
+            <dd className="text-foreground text-right tabular-nums">
+              {outputWidth} × {outputHeight}
+            </dd>
+            <dt>At 300 dpi</dt>
+            <dd className="text-foreground text-right tabular-nums">
+              {formatInfo?.vector ? "Any size" : physicalSize(outputWidth)}
+            </dd>
+          </>
+        ) : (
+          <>
+            <dt>Width</dt>
+            <dd className="text-foreground text-right tabular-nums">
+              {printSize} {printUnit}
+            </dd>
+            <dt>Colour</dt>
+            <dd className="text-foreground text-right uppercase">
+              {colorMode}
+            </dd>
+            <dt>Bleed</dt>
+            <dd className="text-foreground text-right">
+              {printBleed ? `${printBleed} mm` : "None"}
+            </dd>
+          </>
+        )}
+      </dl>
+    </div>
+  );
+
+  const sectionLabel = "text-muted-foreground mb-2.5 block text-xs font-medium";
+
+  return (
+    <ResponsiveDialog onOpenChange={onOpenChange} open={open}>
+      <ResponsiveDialogContent className="max-h-[92dvh] gap-0 overflow-hidden p-0 sm:max-w-[46rem] dark:!border-border">
+        <div className="flex max-h-[inherit] min-h-0 flex-col">
+          <ResponsiveDialogHeader className="flex-row items-start gap-3 px-6 pt-1 pb-0 text-left sm:pt-6">
+            <div className="min-w-0 flex-1 space-y-1">
+              <ResponsiveDialogTitle>Download QR code</ResponsiveDialogTitle>
+              <ResponsiveDialogDescription>
+                {tab === "print"
+                  ? "Vector PDF or EPS at an exact physical size, ready for a print shop."
+                  : "Pick a format and size. The preview shows what you get."}
+              </ResponsiveDialogDescription>
+            </div>
+            <DialogCloseButton className="-mt-1 -mr-2 hidden sm:inline-flex" />
+          </ResponsiveDialogHeader>
+
+          <Tabs
+            className="flex min-h-0 flex-1 flex-col gap-0"
+            onValueChange={(next) => setTab(next as "image" | "print")}
+            value={tab}
+          >
+            <div className="px-6 pt-5">
+              <TabsList className="grid w-full grid-cols-2 sm:w-72">
+                <TabsTrigger value="image">
+                  <Gallery className="size-4" />
+                  Image file
+                </TabsTrigger>
+                <TabsTrigger value="print">
+                  <Printer className="size-4" />
+                  Print-ready
+                </TabsTrigger>
+              </TabsList>
+            </div>
+
+            <div className="grid min-h-0 flex-1 gap-6 overflow-y-auto px-6 py-6 sm:grid-cols-[12.5rem_1fr]">
+              {preview}
+
+              <TabsContent className="mt-0 min-w-0 space-y-6" value="image">
+                <section>
+                  <span className={sectionLabel}>
+                    <span id="dl-format">Format</span>{" "}
+                    <InfoHint align="start" id="download-formats" />
+                  </span>
+                  <ToggleGroup
+                    aria-labelledby="dl-format"
+                    className="grid w-full grid-cols-5"
+                    onValueChange={(next) => {
+                      if (next)
+                        updateDownloadOption("format", next as ImageFormat);
+                    }}
+                    type="single"
+                    value={format}
+                    variant="outline"
+                  >
+                    {FORMATS.map((item) => (
+                      <ToggleGroupItem
+                        className="h-14 flex-col gap-1 px-1 text-xs font-medium"
+                        key={item.id}
+                        value={item.id}
+                      >
+                        <item.Icon className="size-4" />
+                        {item.label}
+                      </ToggleGroupItem>
+                    ))}
+                  </ToggleGroup>
+                  <p className="text-muted-foreground mt-2 text-xs">
+                    Best for {formatInfo?.bestFor.toLowerCase()}
+                    {formatInfo?.vector ? " · stays sharp at any size" : ""}.
+                  </p>
+                </section>
+
+                <section>
+                  <span className={sectionLabel} id="dl-size">
+                    Size
+                  </span>
+                  <ToggleGroup
+                    aria-labelledby="dl-size"
+                    className="grid w-full grid-cols-3 sm:grid-cols-6"
+                    onValueChange={(next) => {
+                      if (next)
+                        updateDownloadOption("sizePreset", next as SizePreset);
+                    }}
+                    type="single"
                     value={downloadOptions.sizePreset}
-                    onValueChange={(value) =>
-                      updateDownloadOption(
-                        "sizePreset",
-                        value as DownloadOptionsType["sizePreset"],
-                      )
-                    }
+                    variant="outline"
                   >
-                    <SelectTrigger id="size-select" className="w-full">
-                      <SelectValue placeholder="Select size" />
-                    </SelectTrigger>
-                    <SelectContent className="w-full z-100">
-                      <SelectItem value="small">200 × 200</SelectItem>
-                      <SelectItem value="medium">400 × 400</SelectItem>
-                      <SelectItem value="large">800 × 800</SelectItem>
-                      <SelectItem value="xlarge">1200 × 1200</SelectItem>
-                      <SelectItem value="2xl">1600 × 1600</SelectItem>
-                      <SelectItem value="3xl">2000 × 2000</SelectItem>
-                      <SelectItem value="custom">Custom Size</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                    {SIZE_PRESETS.map((preset) => (
+                      <ToggleGroupItem
+                        className="h-14 flex-col gap-0.5 px-1"
+                        key={preset.id}
+                        value={preset.id}
+                      >
+                        <span className="text-xs font-medium">
+                          {preset.label}
+                        </span>
+                        <span className="text-muted-foreground text-[11px] tabular-nums">
+                          {PRESET_SIZES[preset.id]?.width}
+                        </span>
+                      </ToggleGroupItem>
+                    ))}
+                    <ToggleGroupItem
+                      className="h-14 flex-col gap-0.5 px-1"
+                      value="custom"
+                    >
+                      <span className="text-xs font-medium">Custom</span>
+                      <span className="text-muted-foreground text-[11px]">
+                        px
+                      </span>
+                    </ToggleGroupItem>
+                  </ToggleGroup>
+                  {downloadOptions.sizePreset === "custom" && (
+                    <div className="mt-2.5 flex items-center gap-2">
+                      <Label className="text-xs" htmlFor="custom-size">
+                        Width and height
+                      </Label>
+                      <InputGroup className="w-36">
+                        <InputGroupInput
+                          id="custom-size"
+                          inputMode="numeric"
+                          max={5000}
+                          min={50}
+                          onChange={(event) => {
+                            const next = Number(event.target.value);
+                            updateDownloadOption("width", next);
+                            updateDownloadOption("height", next);
+                          }}
+                          type="number"
+                          value={downloadOptions.width}
+                        />
+                        <InputGroupAddon align="inline-end">
+                          <InputGroupText>px</InputGroupText>
+                        </InputGroupAddon>
+                      </InputGroup>
+                    </div>
+                  )}
+                </section>
 
-                {/* Format Selection */}
-                <div className="space-y-2">
-                  <Label htmlFor="format-select">Format</Label>
-                  <Select
-                    defaultValue={downloadOptions.format}
-                    value={downloadOptions.format}
-                    onValueChange={(value) =>
-                      updateDownloadOption(
-                        "format",
-                        value as DownloadOptionsType["format"],
-                      )
-                    }
-                  >
-                    <SelectTrigger id="format-select" className="w-full">
-                      <SelectValue placeholder="Select format" />
-                    </SelectTrigger>
-                    <SelectContent className="w-full z-100">
-                      <SelectItem value="png">PNG</SelectItem>
-                      <SelectItem value="jpg">JPG</SelectItem>
-                      <SelectItem value="svg">SVG</SelectItem>
-                      <SelectItem value="pdf">PDF</SelectItem>
-                      <SelectItem value="eps">EPS (vector)</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              {/* Size Multiplier Slider Implementation */}
-              <div className="space-y-2 py-2">
-                <div className="flex justify-between items-center">
-                  <Label
-                    htmlFor="multiplier-slider"
-                    className="text-sm text-gray-400"
-                  >
-                    Scale{" "}
-                    <span className="text-[0.6rem] text-muted-foreground">
-                      X
+                <section className="flex flex-wrap items-center justify-between gap-x-6 gap-y-3">
+                  <div className="flex items-center gap-2.5">
+                    <span
+                      className="text-muted-foreground text-xs font-medium"
+                      id="dl-scale"
+                    >
+                      Scale
                     </span>
-                  </Label>
-                </div>
-                <div className="flex items-center gap-4">
-                  <Slider
-                    id="multiplier-slider"
-                    min={1}
-                    max={10}
-                    step={1}
-                    value={[downloadOptions.multiplier]}
-                    onValueChange={(value) =>
-                      updateDownloadOption("multiplier", value[0])
-                    }
-                  />
-                  <InputGroup className="w-24">
-                    <InputGroupInput
-                      type="number"
-                      min={1}
-                      max={10}
-                      value={downloadOptions.multiplier}
-                      onBlur={(e) => {
-                        const value = Number(e.target.value);
-                        // If empty, NaN, or out of range, restore to current valid value
-                        if (
-                          !e.target.value ||
-                          Number.isNaN(value) ||
-                          value < 1 ||
-                          value > 10
-                        ) {
-                          e.target.value = String(downloadOptions.multiplier);
-                        } else {
-                          updateDownloadOption("multiplier", value);
-                        }
+                    <ToggleGroup
+                      aria-labelledby="dl-scale"
+                      onValueChange={(next) => {
+                        if (next)
+                          updateDownloadOption("multiplier", Number(next));
                       }}
-                      onChange={(e) => {
-                        const value = Number(e.target.value);
-                        // Only update if valid
-                        if (
-                          e.target.value &&
-                          !Number.isNaN(value) &&
-                          value >= 1 &&
-                          value <= 10
-                        ) {
-                          updateDownloadOption("multiplier", value);
-                        }
-                      }}
-                      className="text-sm font-bold text-center [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                      size="sm"
+                      type="single"
+                      value={String(multiplier)}
+                      variant="outline"
+                    >
+                      {SCALES.map((scale) => (
+                        <ToggleGroupItem
+                          aria-label={`${scale}×`}
+                          className="px-2.5 text-xs tabular-nums"
+                          key={scale}
+                          value={String(scale)}
+                        >
+                          {scale}×
+                        </ToggleGroupItem>
+                      ))}
+                    </ToggleGroup>
+                  </div>
+                  <div className="flex items-center gap-2.5">
+                    <Switch
+                      checked={transparent}
+                      disabled={!canBeTransparent}
+                      id="transparent-bg"
+                      onCheckedChange={(checked) =>
+                        updateDownloadOption("transparent", checked)
+                      }
                     />
-                    <InputGroupAddon align="inline-end">
-                      <InputGroupText>x</InputGroupText>
-                    </InputGroupAddon>
-                  </InputGroup>
-                </div>
-                <p className="text-xs italic pt-2 text-gray-500">
-                  {(() => {
-                    const output = getFrameDimensions(
-                      getCurrentSize().width * downloadOptions.multiplier,
-                      themeState.styles.frame,
-                    );
-                    return `${Math.round(output.width)} x ${Math.round(output.height)} px`;
-                  })()}
-                </p>
-              </div>
+                    <Label
+                      className="cursor-pointer text-xs"
+                      htmlFor="transparent-bg"
+                      title={
+                        canBeTransparent
+                          ? undefined
+                          : "JPG can't be transparent"
+                      }
+                    >
+                      Transparent background
+                    </Label>
+                  </div>
+                </section>
 
-              {/* Transparency toggle */}
-              <div className="flex items-center space-x-3 py-2">
-                <div className="relative inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    id="transparent-bg"
-                    aria-label="Transparent Background"
-                    className="h-5 w-5 rounded border-gray-700 bg-gray-800  accent-primary text-[#10b981] focus:ring-[#10b981]"
-                    checked={downloadOptions.transparent}
-                    onChange={(e) =>
-                      updateDownloadOption("transparent", e.target.checked)
-                    }
-                  />
-                </div>
-                <Label
-                  htmlFor="transparent-bg"
-                  className="text-sm font-medium cursor-pointer"
-                >
-                  Transparent Background
-                </Label>
-              </div>
-
-              {downloadOptions.format === "jpg" &&
-                downloadOptions.transparent && (
-                  <p className="text-[10px] text-amber-500 mt-1 italic">
-                    Note: JPG format does not support transparency. Background
-                    will be solid.
+                {sizeError && (
+                  <p className="text-destructive flex items-center gap-1.5 text-sm">
+                    <InfoCircle className="size-4 shrink-0" />
+                    {sizeError}
                   </p>
                 )}
+              </TabsContent>
 
-              {/* Custom Size Inputs */}
-              {downloadOptions.sizePreset === "custom" && (
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label htmlFor="custom-width">Width (px)</Label>
-                    <Input
-                      id="custom-width"
-                      type="number"
-                      min="50"
-                      max="5000"
-                      value={downloadOptions.width}
-                      onChange={(e) =>
-                        updateDownloadOption("width", Number(e.target.value))
-                      }
-                      placeholder="600"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="custom-height">Height (px)</Label>
-                    <Input
-                      id="custom-height"
-                      type="number"
-                      min="50"
-                      max="5000"
-                      value={downloadOptions.height}
-                      onChange={(e) =>
-                        updateDownloadOption("height", Number(e.target.value))
-                      }
-                      placeholder="600"
-                    />
-                  </div>
-                </div>
-              )}
-
-              {/* Error Message */}
-              {sizeError && (
-                <div className="rounded-md bg-red-50 p-3 text-sm text-red-800 dark:bg-red-950/50 dark:text-red-200">
-                  {sizeError}
-                </div>
-              )}
-
-              {/* Download Button */}
-              <Button
-                variant="default"
-                onClick={handleDownload}
-                disabled={isDownloading || !!sizeError}
-                className="w-full"
-              >
-                <Icons.DownloadIcon className="h-4 w-4" />
-                {isDownloading
-                  ? "Downloading..."
-                  : `Download ${downloadOptions.format.toUpperCase()}`}
-              </Button>
+              <TabsContent className="mt-0 min-w-0" value="print">
+                <PrintOptions
+                  bleed={printBleed}
+                  colorMode={colorMode}
+                  cropMarks={cropMarks}
+                  layout={printLayout.layout}
+                  layoutError={printLayout.error}
+                  onBleedChange={setPrintBleed}
+                  onColorModeChange={setColorMode}
+                  onCropMarksChange={setCropMarks}
+                  onSizeChange={setPrintSize}
+                  onUnitChange={(unit) => {
+                    setPrintUnit(unit);
+                    setPrintSize(unit === "in" ? 1.5 : 40);
+                  }}
+                  size={printSize}
+                  unit={printUnit}
+                />
+              </TabsContent>
             </div>
-          </TabsContent>
-          <TabsContent value="print">
-            <PrintOptions
-              bleed={printBleed}
-              colorMode={colorMode}
-              cropMarks={cropMarks}
-              isDownloading={isDownloading}
-              layout={printLayout.layout}
-              layoutError={printLayout.error}
-              onBleedChange={setPrintBleed}
-              onColorModeChange={setColorMode}
-              onCropMarksChange={setCropMarks}
-              onDownload={handlePrintDownload}
-              onSizeChange={setPrintSize}
-              onUnitChange={(unit) => {
-                setPrintUnit(unit);
-                setPrintSize(unit === "in" ? 1.5 : 40);
-              }}
-              size={printSize}
-              unit={printUnit}
-            />
-          </TabsContent>
-        </Tabs>
+
+            <div className="flex flex-col-reverse gap-2 border-t px-6 py-4 sm:flex-row sm:items-center">
+              {tab === "image" ? (
+                <>
+                  <Button
+                    disabled={!value}
+                    onClick={copySvg}
+                    type="button"
+                    variant="ghost"
+                  >
+                    {svgCopied ? <Tick /> : <Copy />}
+                    {svgCopied ? "SVG copied" : "Copy SVG"}
+                  </Button>
+                  <Button
+                    className="min-w-0 sm:flex-1"
+                    disabled={isDownloading || !!sizeError || !value}
+                    onClick={handleDownload}
+                  >
+                    {isDownloading ? <Spinner /> : <Import />}
+                    <span className="truncate">
+                      {isDownloading ? "Preparing…" : `Download ${filename}`}
+                    </span>
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <div className="flex gap-2">
+                    <Button
+                      disabled={isDownloading || !printLayout.layout}
+                      onClick={() => handlePrintDownload("svg")}
+                      variant="ghost"
+                    >
+                      SVG
+                    </Button>
+                    <Button
+                      disabled={isDownloading || !printLayout.layout}
+                      onClick={() => handlePrintDownload("eps")}
+                      variant="ghost"
+                    >
+                      EPS
+                    </Button>
+                  </div>
+                  <Button
+                    className="min-w-0 sm:flex-1"
+                    disabled={isDownloading || !printLayout.layout}
+                    onClick={() => handlePrintDownload("pdf")}
+                  >
+                    {isDownloading ? <Spinner /> : <Import />}
+                    <span className="truncate">
+                      {isDownloading
+                        ? "Preparing…"
+                        : `Download qr-code-print-${printSize}${printUnit}.pdf`}
+                    </span>
+                  </Button>
+                </>
+              )}
+            </div>
+          </Tabs>
+        </div>
       </ResponsiveDialogContent>
     </ResponsiveDialog>
   );
@@ -561,13 +684,11 @@ interface PrintOptionsProps {
   colorMode: PrintColorMode;
   layout: PrintLayout | null;
   layoutError: string;
-  isDownloading: boolean;
   onSizeChange: (size: number) => void;
   onUnitChange: (unit: PrintUnit) => void;
   onBleedChange: (bleed: number) => void;
   onCropMarksChange: (cropMarks: boolean) => void;
   onColorModeChange: (colorMode: PrintColorMode) => void;
-  onDownload: (format: PrintFormat) => void;
 }
 
 function PrintOptions({
@@ -578,21 +699,22 @@ function PrintOptions({
   colorMode,
   layout,
   layoutError,
-  isDownloading,
   onSizeChange,
   onUnitChange,
   onBleedChange,
   onCropMarksChange,
   onColorModeChange,
-  onDownload,
 }: PrintOptionsProps) {
   const limits = PRINT_SIZE_LIMITS[unit];
+  const label = "text-muted-foreground mb-2.5 block text-xs font-medium";
 
   return (
-    <div className="space-y-4 py-4">
-      <div className="grid grid-cols-2 gap-4">
-        <div className="space-y-2">
-          <Label htmlFor="print-size">Code width</Label>
+    <div className="space-y-6">
+      <section className="grid grid-cols-2 gap-2">
+        <div>
+          <Label className={label} htmlFor="print-size">
+            Code width
+          </Label>
           <InputGroup>
             <InputGroupInput
               id="print-size"
@@ -608,130 +730,131 @@ function PrintOptions({
             </InputGroupAddon>
           </InputGroup>
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="print-unit">Unit</Label>
-          <Select
-            onValueChange={(next) => onUnitChange(next as PrintUnit)}
+        <div>
+          <span className={label} id="print-unit">
+            Unit
+          </span>
+          <ToggleGroup
+            aria-labelledby="print-unit"
+            className="grid w-full grid-cols-2"
+            onValueChange={(next) => {
+              if (next) onUnitChange(next as PrintUnit);
+            }}
+            type="single"
             value={unit}
+            variant="outline"
           >
-            <SelectTrigger className="w-full" id="print-unit">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent className="z-100 w-full">
-              <SelectItem value="mm">Millimetres</SelectItem>
-              <SelectItem value="in">Inches</SelectItem>
-            </SelectContent>
-          </Select>
+            <ToggleGroupItem className="text-xs" value="mm">
+              mm
+            </ToggleGroupItem>
+            <ToggleGroupItem className="text-xs" value="in">
+              inches
+            </ToggleGroupItem>
+          </ToggleGroup>
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="print-bleed">Bleed</Label>
-          <Select
-            onValueChange={(next) => onBleedChange(Number(next))}
-            value={String(bleed)}
-          >
-            <SelectTrigger className="w-full" id="print-bleed">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent className="z-100 w-full">
-              <SelectItem value="0">None</SelectItem>
-              <SelectItem value="3">3 mm</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="print-color-mode">Color mode</Label>
-          <Select
-            onValueChange={(next) => onColorModeChange(next as PrintColorMode)}
-            value={colorMode}
-          >
-            <SelectTrigger className="w-full" id="print-color-mode">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent className="z-100 w-full">
-              <SelectItem value="rgb">RGB</SelectItem>
-              <SelectItem value="cmyk">CMYK</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </div>
+      </section>
 
-      <div className="flex items-center justify-between">
-        <Label className="cursor-pointer" htmlFor="print-crop-marks">
-          Crop marks
-        </Label>
+      <section className="grid grid-cols-2 gap-2">
+        <div>
+          <span className={label} id="print-color-mode">
+            Colour mode
+          </span>
+          <ToggleGroup
+            aria-labelledby="print-color-mode"
+            className="grid w-full grid-cols-2"
+            onValueChange={(next) => {
+              if (next) onColorModeChange(next as PrintColorMode);
+            }}
+            type="single"
+            value={colorMode}
+            variant="outline"
+          >
+            <ToggleGroupItem className="text-xs" value="rgb">
+              RGB
+            </ToggleGroupItem>
+            <ToggleGroupItem className="text-xs" value="cmyk">
+              CMYK
+            </ToggleGroupItem>
+          </ToggleGroup>
+        </div>
+        <div>
+          <span className={label}>
+            <span id="print-bleed">Bleed</span>{" "}
+            <InfoHint align="end" id="print-ready" />
+          </span>
+          <ToggleGroup
+            aria-labelledby="print-bleed"
+            className="grid w-full grid-cols-2"
+            onValueChange={(next) => {
+              if (next) onBleedChange(Number(next));
+            }}
+            type="single"
+            value={String(bleed)}
+            variant="outline"
+          >
+            <ToggleGroupItem className="text-xs" value="0">
+              None
+            </ToggleGroupItem>
+            <ToggleGroupItem className="text-xs" value="3">
+              3 mm
+            </ToggleGroupItem>
+          </ToggleGroup>
+        </div>
+      </section>
+
+      <section className="flex items-center gap-2.5">
         <Switch
           checked={cropMarks}
           id="print-crop-marks"
           onCheckedChange={onCropMarksChange}
         />
-      </div>
+        <Label className="cursor-pointer text-xs" htmlFor="print-crop-marks">
+          Crop marks (PDF)
+        </Label>
+      </section>
 
       {layout ? (
-        <div className="bg-muted/50 space-y-1.5 rounded-md p-3 text-xs">
-          <p>
+        <section className="text-muted-foreground space-y-1.5 text-xs">
+          <p className="text-foreground">
             Finished size {formatLength(layout.trimWidth, unit)} ×{" "}
             {formatLength(layout.trimHeight, unit)}
             {layout.pageWidth !== layout.trimWidth &&
               ` (page ${formatLength(layout.pageWidth, unit)} × ${formatLength(layout.pageHeight, unit)})`}
           </p>
-          <p className="text-muted-foreground">
+          <p>
             Scans from up to about{" "}
-            {formatDistance(layout.maxScanDistance, unit)} away. Rule of thumb:
-            code width ≈ scan distance ÷ 10 (2 cm wide at 20 cm).
+            {formatDistance(layout.maxScanDistance, unit)} away (code width ≈
+            scan distance ÷ 10).
           </p>
           {layout.codeWidth < 20 && (
-            <p className="text-amber-600 dark:text-amber-400">
+            <p className="text-amber-700 dark:text-amber-400">
               Under 2 cm is hard for phones to scan; go bigger if you can.
             </p>
           )}
           {layout.moduleSize < MIN_PRINT_MODULE_MM && (
-            <p className="text-amber-600 dark:text-amber-400">
+            <p className="text-amber-700 dark:text-amber-400">
               Each dot is only {Math.round(layout.moduleSize * 100) / 100} mm
               and may smear in print. Make the code bigger or shorten its
               content.
             </p>
           )}
           {colorMode === "cmyk" && (
-            <p className="text-muted-foreground">
-              CMYK uses a simple conversion without a color profile; ask your
-              printer if exact brand colors matter.
+            <p>
+              CMYK uses a simple conversion without a colour profile; ask your
+              printer if exact brand colours matter.
             </p>
           )}
-        </div>
+          <p>
+            PDF and EPS draw every dot as a vector shape. Gradients print as
+            their first colour; the SVG keeps them.
+          </p>
+        </section>
       ) : (
-        <div className="rounded-md bg-red-50 p-3 text-sm text-red-800 dark:bg-red-950/50 dark:text-red-200">
+        <p className="text-destructive flex items-center gap-1.5 text-sm">
+          <InfoCircle className="size-4 shrink-0" />
           {layoutError}
-        </div>
+        </p>
       )}
-
-      <div className="grid grid-cols-[1fr_auto_auto] gap-2">
-        <Button
-          disabled={isDownloading || !layout}
-          onClick={() => onDownload("pdf")}
-        >
-          <Icons.DownloadIcon className="h-4 w-4" />
-          {isDownloading ? "Preparing..." : "Download print PDF"}
-        </Button>
-        <Button
-          disabled={isDownloading || !layout}
-          onClick={() => onDownload("svg")}
-          variant="outline"
-        >
-          Print SVG
-        </Button>
-        <Button
-          disabled={isDownloading || !layout}
-          onClick={() => onDownload("eps")}
-          variant="outline"
-        >
-          EPS
-        </Button>
-      </div>
-      <p className="text-muted-foreground text-xs">
-        PDF and EPS draw every dot as a vector shape (logos stay images).
-        Gradients print as their first color; Print SVG keeps them and uses RGB.
-        EPS has no crop marks.
-      </p>
     </div>
   );
 }

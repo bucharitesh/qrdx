@@ -1,5 +1,9 @@
 "use client";
 
+import {
+  Spinner as Loader2,
+  Close as X,
+} from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Checkbox } from "@repo/design-system/components/ui/checkbox";
 import { Label } from "@repo/design-system/components/ui/label";
@@ -16,16 +20,22 @@ import {
 import { Switch } from "@repo/design-system/components/ui/switch";
 import { cn } from "@repo/design-system/lib/utils";
 import { strToU8, Zip, ZipDeflate, ZipPassThrough } from "fflate";
-import { Download, FileSpreadsheet, Loader2, Upload, X } from "lucide-react";
+import {
+  Import as Download,
+  TableDocument as FileSpreadsheet,
+  Export as Upload,
+} from "iconsax-reactjs";
 import Papa from "papaparse";
 import { getQRCodeDataUrl, QRCode } from "qrdx";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDropzone } from "react-dropzone";
+import { InfoHint } from "@/components/help/info-hint";
 import { HairlineFigure } from "@/components/mockups/hairline";
 import { defaultThemeState } from "@/config/qr";
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
 import { useMounted } from "@/lib/hooks/use-mounted";
 import { useQRThemes } from "@/lib/hooks/use-themes";
+import { soundEvent } from "@/lib/sound/emit";
 import { useQREditorStore } from "@/store/editor-store";
 import type { ThemeStyles } from "@/types/theme";
 import { defaultPresets } from "@/utils/qr-presets";
@@ -88,6 +98,7 @@ function saveBlob(url: string, filename: string) {
   document.body.appendChild(link);
   link.click();
   link.remove();
+  soundEvent("download");
 }
 
 function downloadSampleCsv() {
@@ -382,7 +393,9 @@ export function BulkGenerator() {
       <div className="flex flex-col gap-6 rounded-xl border border-border bg-card p-5">
         <div className="flex flex-col gap-3">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <h2 className="font-medium">1. Upload a CSV</h2>
+            <h2 className="font-medium">
+              1. Upload a CSV <InfoHint align="start" id="bulk-csv" />
+            </h2>
             <Button size="sm" variant="ghost" onClick={downloadSampleCsv}>
               <FileSpreadsheet className="size-4" />
               Sample CSV
@@ -540,7 +553,9 @@ export function BulkGenerator() {
               </Select>
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label className="text-xs">Error correction</Label>
+              <Label className="text-xs">
+                Error correction <InfoHint id="error-correction" />
+              </Label>
               <Select
                 value={level}
                 onValueChange={(value) => setLevel(value as LevelChoice)}

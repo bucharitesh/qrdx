@@ -1,8 +1,8 @@
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
+import { Edit2 } from "iconsax-reactjs";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
-import { Icons } from "@/components/icons";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 
 interface EditButtonProps extends React.ComponentProps<typeof Button> {
@@ -32,7 +32,7 @@ export function EditButton({
           disabled={disabled || isEditing}
           {...props}
         >
-          <Icons.PenLine className="size-3.5" />
+          <Edit2 className="size-4" />
           <span className="hidden text-sm md:block">Edit</span>
         </Button>
       </Link>

@@ -1,19 +1,19 @@
 import {
-  Bell,
-  ChartNoAxesColumn,
-  CircleUser,
+  Notification as Bell,
+  Chart as ChartNoAxesColumn,
+  ProfileCircle as CircleUser,
   FolderOpen,
-  Gauge,
-  Globe,
-  type LucideIcon,
-  PanelsTopLeft,
-  Plug,
-  QrCode,
-  SlidersHorizontal,
-  SwatchBook,
-  Users,
-  Webhook,
-} from "lucide-react";
+  Speedometer as Gauge,
+  Global as Globe,
+  type Icon as LucideIcon,
+  Element2 as PanelsTopLeft,
+  Electricity as Plug,
+  ScanBarcode as QrCode,
+  Setting4 as SlidersHorizontal,
+  ColorsSquare as SwatchBook,
+  Profile2User as Users,
+  Share as Webhook,
+} from "iconsax-reactjs";
 
 export interface AppNavItem {
   href: string;

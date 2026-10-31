@@ -5,8 +5,13 @@ import type {
   IntegrationCapability,
   IntegrationLogoSet,
 } from "@repo/integrations";
-import { ExternalLink } from "lucide-react";
+import { ArrowRight } from "iconsax-reactjs";
 import Link from "next/link";
+import { PRESSABLE } from "@/components/mockups/motion";
+import {
+  IntegrationLogo,
+  logoForIntegration,
+} from "@/components/sections/integrations/integration-logo";
 
 interface IntegrationCardProps {
   slug: string;
@@ -31,55 +36,51 @@ export function IntegrationCard({
     <Link
       href={`/settings/integrations/${slug}`}
       className={cn(
-        "group relative flex flex-col gap-3 rounded-xl border bg-card p-4 transition-all hover:border-foreground/20 hover:shadow-sm",
+        "group relative flex h-full flex-col gap-3 rounded-xl border bg-card p-5 shadow-xs hover:border-foreground/15 hover:bg-accent/40 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:shadow-none",
+        PRESSABLE,
       )}
     >
       {/* Status badges */}
-      <div className="absolute right-3 top-3 flex items-center gap-1.5">
+      <div className="absolute top-5 right-5 flex items-center gap-1.5">
         {isConnected && (
-          <span className="rounded-full border border-emerald-200 bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950 dark:text-emerald-400">
-            Enabled
-          </span>
+          <Badge
+            variant="outline"
+            className="border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"
+          >
+            Connected
+          </Badge>
         )}
         {!isConfigured && (
-          <span className="rounded-full border border-yellow-200 bg-yellow-50 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-yellow-700 dark:border-yellow-800 dark:bg-yellow-950 dark:text-yellow-400">
-            Coming Soon
-          </span>
+          <Badge
+            variant="outline"
+            className="border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-400"
+          >
+            Not configured
+          </Badge>
         )}
       </div>
 
       {/* Logo */}
-      <div className="border border-border flex size-10 items-center justify-center rounded-lg bg-background p-2 shrink-0">
-        {logos.light ? (
-          <>
-            <img
-              src={logos.light}
-              alt={`${name} logo`}
-              className="size-full object-contain dark:hidden"
-            />
-            <img
-              src={logos.dark}
-              alt={`${name} logo`}
-              className="hidden size-full object-contain dark:block"
-            />
-          </>
-        ) : (
-          <ExternalLink className="size-4 text-muted-foreground" />
-        )}
-      </div>
+      <IntegrationLogo logo={logoForIntegration(slug, logos)} />
 
       {/* Content */}
-      <div className="flex flex-col gap-1 pr-16">
-        <span className="text-sm font-semibold leading-tight">{name}</span>
-        <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
+      <div className="flex flex-1 flex-col gap-1">
+        <span className="flex items-center gap-2 font-medium leading-snug">
+          {name}
+          <ArrowRight
+            aria-hidden
+            className="size-4 text-muted-foreground transition-[transform,color] duration-200 group-hover:translate-x-0.5 group-hover:text-foreground"
+          />
+        </span>
+        <p className="line-clamp-2 text-sm leading-relaxed text-muted-foreground">
           {description}
         </p>
-        <div className="mt-2 flex flex-wrap gap-1">
+        <div className="mt-auto flex flex-wrap gap-1 pt-2">
           {capabilities.slice(0, 2).map((capability) => (
             <Badge
               key={capability.id}
-              variant="secondary"
-              className="px-1.5 py-0 text-[10px]"
+              variant="outline"
+              className="font-normal text-muted-foreground"
             >
               {getCapabilityLabel(capability.kind)}
             </Badge>

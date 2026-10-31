@@ -5,17 +5,31 @@ import type React from "react";
 import { useQREditorStore } from "@/store/editor-store";
 import { EyeDotPatterns } from "../icons/internal-eye-patterns";
 
+// Every eye dot (24: no lone tile in 3 or 4 columns)
 export const patterns: Array<{ id: CornerEyeDotPattern; name: string }> = [
   { id: "square", name: "Square" },
   { id: "rounded", name: "Rounded" },
+  { id: "extra-rounded", name: "Extra Rounded" },
   { id: "circle", name: "Circle" },
+  { id: "squircle", name: "Squircle" },
+  { id: "octagon", name: "Octagon" },
+  { id: "hexagon", name: "Hexagon" },
+  { id: "dots", name: "Dots" },
+  { id: "leaf", name: "Leaf" },
+  { id: "leaf-reverse", name: "Leaf Reverse" },
+  { id: "drop", name: "Drop" },
+  { id: "drop-reverse", name: "Drop Reverse" },
+  { id: "plus", name: "Plus" },
+  { id: "cross-rounded", name: "Rounded Cross" },
+  { id: "flower", name: "Flower" },
+  { id: "heart", name: "Heart" },
+  { id: "star", name: "Star" },
   { id: "diamond", name: "Diamond" },
   { id: "message", name: "Message" },
   { id: "message-reverse", name: "Message Reverse" },
   { id: "diya", name: "Diya" },
   { id: "diya-reverse", name: "Diya Reverse" },
   { id: "rounded-triangle", name: "Rounded Triangle" },
-  { id: "star", name: "Star" },
   { id: "banner", name: "Banner" },
 ] as const;
 

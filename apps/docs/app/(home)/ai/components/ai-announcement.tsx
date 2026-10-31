@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRight } from "lucide-react";
+import { ArrowRight } from "iconsax-reactjs";
 import Link from "next/link";
 import { useSubscription } from "@/lib/hooks/use-subscription";
 

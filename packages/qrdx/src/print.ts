@@ -2,9 +2,10 @@
 import type { jsPDF as JsPDF } from "jspdf";
 import type { QRProps } from "../types";
 import qrcodegen from "./codegen";
-import { DEFAULT_LEVEL, DEFAULT_MARGIN, ERROR_LEVEL_MAP } from "./constants";
+import { DEFAULT_MARGIN, ERROR_LEVEL_MAP } from "./constants";
 import { downloadFile } from "./download";
 import { getFrameLayout, isFrameActive } from "./frame";
+import { resolveErrorLevel } from "./utils";
 import { type RGBAColor, rgbToCmyk } from "./utils/parse-color";
 import {
   getPrintBleedColor,
@@ -86,7 +87,7 @@ function toMillimetres(value: number, unit: PrintUnit = "mm"): number {
 
 /** Modules across the code for these props, margin included. */
 export function getQRModuleCount(props: QRProps): number {
-  const level = props.level ?? DEFAULT_LEVEL;
+  const level = resolveErrorLevel(props);
   const margin = props.margin ?? DEFAULT_MARGIN;
   return (
     qrcodegen.QrCode.encodeText(props.value, ERROR_LEVEL_MAP[level]).size +
@@ -280,6 +281,24 @@ class PdfPainter extends SvgPainter {
       }
     }
     this.setColor("text", color);
+    // Rotated text (letters set on a curve): jsPDF turns counter-clockwise,
+    // SVG clockwise. Anchor along the rotated baseline ourselves.
+    const angle = Math.atan2(state.matrix[1], state.matrix[0]);
+    if (Math.abs(angle) > 0.0002) {
+      const shift =
+        state.textAnchor === "middle"
+          ? this.pdf.getTextWidth(content) / 2
+          : state.textAnchor === "end"
+            ? this.pdf.getTextWidth(content)
+            : 0;
+      this.pdf.text(
+        content,
+        x - shift * Math.cos(angle),
+        y - shift * Math.sin(angle),
+        { angle: (-angle * 180) / Math.PI, baseline: "alphabetic" }
+      );
+      return;
+    }
     const align =
       state.textAnchor === "middle"
         ? "center"

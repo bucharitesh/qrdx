@@ -5,6 +5,7 @@
   "types": "./src/index.ts",
   "scripts": {
     "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "test": "vitest run",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
@@ -12,14 +13,15 @@
     "@repo/design-system": "workspace:*",
     "@repo/integration-kit": "workspace:*",
     "drizzle-orm": "^0.45.1",
-    "zod": "^4.3.5",
+    "iconsax-reactjs": "0.0.8",
     "react": "19.2.3",
-    "lucide-react": "^0.562.0"
+    "zod": "^4.3.5"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
     "@types/node": "^25.1.0",
     "@types/react": "^19.2.7",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.18"
   }
 }

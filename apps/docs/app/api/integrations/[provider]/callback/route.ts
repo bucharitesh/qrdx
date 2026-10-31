@@ -4,6 +4,7 @@ import { database as db, integration } from "@repo/database";
 import {
   createOAuthHandler,
   encryptApiKey,
+  fetchConnectedAccountMetadata,
   getIntegrationConfigWithEnv,
   getIntegrationRegistry,
   initializeIntegrations,
@@ -11,6 +12,7 @@ import {
 import { and, eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
+import { prepareDataConnect } from "@/lib/data-connections/server";
 import { env } from "@/lib/env";
 import { consumeIntegrationOAuthState } from "@/lib/integration-oauth";
 
@@ -93,6 +95,18 @@ export async function GET(request: Request, context: RouteContext) {
       codeVerifier,
     );
 
+    // Content sources / data out: Slack's channel webhook, account details
+    const dataConnect = await prepareDataConnect(
+      provider,
+      tokenData as unknown as Record<string, unknown>,
+      session.user.id,
+    );
+    if (dataConnect.handled && "error" in dataConnect) {
+      return NextResponse.redirect(
+        new URL(`${dataConnect.redirect}?error=${dataConnect.error}`, request.url),
+      );
+    }
+
     const { access_token, refresh_token, expires_in } = tokenData;
 
     // Calculate expiration timestamp
@@ -109,7 +123,10 @@ export async function GET(request: Request, context: RouteContext) {
     // Fetch provider-specific metadata
     let metadata = null;
     try {
-      metadata = await fetchProviderMetadata(provider, access_token);
+      metadata =
+        "metadata" in dataConnect
+          ? dataConnect.metadata
+        : await fetchProviderMetadata(provider, access_token, tokenData);
     } catch (error) {
       console.error(`Failed to fetch ${provider} metadata:`, error);
     }
@@ -160,6 +177,10 @@ export async function GET(request: Request, context: RouteContext) {
       });
     }
 
+    if (dataConnect.handled) {
+      return NextResponse.redirect(new URL(dataConnect.redirect, request.url));
+    }
+
     // Redirect back to integrations page with success
     return NextResponse.redirect(
       new URL(
@@ -181,6 +202,7 @@ export async function GET(request: Request, context: RouteContext) {
 async function fetchProviderMetadata(
   provider: string,
   accessToken: string,
+  tokenData?: object,
 ): Promise<any> {
   switch (provider) {
     case "dub": {
@@ -210,6 +232,18 @@ async function fetchProviderMetadata(
       }
       return null;
     }
+
+    // Short links and file pickers: account name/email (Notion: from the token response)
+    case "bitly":
+    case "dropbox":
+    case "onedrive":
+    case "box":
+    case "notion":
+      return fetchConnectedAccountMetadata(
+        provider,
+        accessToken,
+        tokenData as Record<string, unknown> | undefined,
+      );
 
     default:
       return null;

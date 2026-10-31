@@ -1,4 +1,4 @@
-import { Music } from "lucide-react";
+import { Music } from "iconsax-reactjs";
 import { themePreset } from "@/components/landing/theme";
 import { registerTemplate } from "./registry";
 

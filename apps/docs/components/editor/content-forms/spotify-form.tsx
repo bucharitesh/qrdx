@@ -8,6 +8,7 @@ import { spotifySchema } from "@/lib/validations/qr-content";
 import { useQREditorStore } from "@/store/editor-store";
 import type { SpotifyContent } from "@/types/qr-content";
 import { encodeSpotify } from "@/utils/qr-content-encoder";
+import { useExternalConfigSync } from "./use-external-config-sync";
 
 export function SpotifyForm() {
   const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
@@ -21,12 +22,10 @@ export function SpotifyForm() {
   });
   const [errors, setErrors] = React.useState<Record<string, string>>({});
 
-  // Sync with store when config changes (e.g., from smart paste)
-  React.useEffect(() => {
-    if (storedConfig?.uri && storedConfig.uri !== spotifyData.uri) {
-      setSpotifyData({ uri: storedConfig.uri });
-    }
-  }, [storedConfig, spotifyData.uri]);
+  // Only external changes (e.g. smart paste) flow back into the form
+  const markWritten = useExternalConfigSync(storedConfig, (config) =>
+    setSpotifyData({ uri: config.uri || "" }),
+  );
 
   React.useEffect(() => {
     // Validate and encode
@@ -36,6 +35,7 @@ export function SpotifyForm() {
       const config: SpotifyContent = { type: "spotify", ...result.data };
       const encoded = encodeSpotify(config);
       setValue(encoded);
+      markWritten(config);
       setContentConfig("spotify", config);
       setErrors({});
     } else {
@@ -46,7 +46,7 @@ export function SpotifyForm() {
       }
       setErrors(fieldErrors);
     }
-  }, [spotifyData, setValue, setContentConfig]);
+  }, [spotifyData, setValue, setContentConfig, markWritten]);
 
   return (
     <div className="space-y-3">

@@ -1,83 +1,56 @@
 "use client";
 
 import { Button } from "@repo/design-system/components/ui/button";
+import { Card } from "@repo/design-system/components/ui/card";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight } from "iconsax-reactjs";
 import { motion, useReducedMotion } from "motion/react";
 import Link from "next/link";
 import { QRCode } from "qrdx";
 import { useState } from "react";
 import { ScanScoreBadge } from "@/components/editor/scan-score";
+import { AsciiField } from "@/components/fx";
 import { DURATION, EASE } from "@/components/mockups/motion";
 import { SegmentedControl } from "@/components/mockups/segmented-control";
 import type { QRStyle } from "@/types/theme";
+import { FAMILY, FAMILY_GRADIENT, INK } from "./demos/qr-family";
 
+// The same style family as the hero code above: ink on white, brand blue
+// only as an accent.
 const STYLES = {
   classic: {
     label: "Classic",
     style: {
-      bgColor: "#ffffff",
-      fgColor: "#0a0a0a",
+      ...FAMILY,
+      dotColor: INK,
       bodyPattern: "square",
       cornerEyePattern: "square",
       cornerEyeDotPattern: "square",
     },
   },
-  rounded: {
-    label: "Rounded",
-    style: {
-      bgColor: "#ffffff",
-      fgColor: "#0f172a",
-      eyeColor: "#155dfc",
-      dotColor: "#155dfc",
-      bodyPattern: "rounded",
-      cornerEyePattern: "extra-rounded",
-      cornerEyeDotPattern: "rounded",
-    },
-  },
+  rounded: { label: "Rounded", style: FAMILY },
   dots: {
     label: "Dots",
     style: {
-      bgColor: "#ffffff",
-      fgColor: "#1e3a8a",
-      eyeColor: "#1e3a8a",
-      dotColor: "#155dfc",
+      ...FAMILY,
       bodyPattern: "circle",
       cornerEyePattern: "circle",
       cornerEyeDotPattern: "circle",
     },
   },
-  gradient: {
-    label: "Gradient",
-    style: {
-      bgColor: "#ffffff",
-      fgColor: {
-        type: "linear",
-        angle: 45,
-        stops: [
-          { color: "#155dfc", offset: 0 },
-          { color: "#7c3aed", offset: 100 },
-        ],
-      },
-      eyeColor: "#155dfc",
-      dotColor: "#7c3aed",
-      bodyPattern: "rounded",
-      cornerEyePattern: "rounded",
-      cornerEyeDotPattern: "rounded",
-    },
-  },
+  gradient: { label: "Gradient", style: FAMILY_GRADIENT },
 } satisfies Record<string, { label: string; style: QRStyle }>;
 
 const FRAMES = {
   none: { label: "No frame", frame: undefined },
   banner: {
     label: "Scan me",
-    frame: { style: "banner-bottom", text: "Scan me", color: "#155dfc" },
+    frame: { style: "banner-bottom", text: "Scan me", color: INK },
   },
   border: {
     label: "Border",
-    frame: { style: "rounded-border", text: "", color: "#0f172a" },
+    frame: { style: "rounded-border", text: "", color: INK },
   },
 } satisfies Record<string, { label: string; frame: QRStyle["frame"] }>;
 
@@ -108,8 +81,16 @@ export function HeroEditor() {
   const trimmed = value.trim();
 
   return (
-    <div className="grid overflow-hidden rounded-2xl border border-border bg-background/80 shadow-xl shadow-black/5 backdrop-blur md:grid-cols-[1fr_minmax(0,22rem)] dark:shadow-black/40">
-      <div className="order-last flex flex-col gap-5 border-t border-border p-5 md:order-first md:border-t-0 md:border-r md:p-8">
+    <Card className="grid gap-0 overflow-hidden py-0 md:grid-cols-[1fr_minmax(0,22rem)]">
+      <div className="order-last flex flex-col gap-5 border-t p-5 md:order-first md:border-t-0 md:border-r md:p-8">
+        <div className="flex flex-col gap-1">
+          <p className="text-xs font-medium tracking-wider text-muted-foreground uppercase">
+            Try it with your link
+          </p>
+          <p className="text-sm text-muted-foreground">
+            Same renderer as the playground, live as you type.
+          </p>
+        </div>
         <div className="flex flex-col gap-2">
           <Label htmlFor="hero-qr-value">Your link or text</Label>
           <Input
@@ -153,10 +134,16 @@ export function HeroEditor() {
           </Link>
         </Button>
       </div>
-      <div className="flex flex-col items-center justify-center gap-4 bg-muted/40 p-6 md:p-8">
+      <div className="relative flex flex-col items-center justify-center gap-4 bg-muted/40 p-6 md:p-8">
+        <AsciiField
+          variant="qr"
+          density={1.1}
+          radius={120}
+          className="opacity-70 [mask-image:radial-gradient(ellipse_at_center,transparent_30%,black_75%)]"
+        />
         <div
           aria-live="polite"
-          className="flex aspect-square w-full max-w-64 items-center justify-center [&_svg]:size-full"
+          className="relative flex aspect-square w-full max-w-64 items-center justify-center [&_svg]:size-full"
         >
           {trimmed ? (
             <motion.div
@@ -164,7 +151,7 @@ export function HeroEditor() {
               initial={reduce ? false : { opacity: 0.4, scale: 0.97 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: DURATION.base, ease: EASE }}
-              className="size-full rounded-xl bg-white p-1 shadow-sm ring-1 ring-black/5"
+              className="size-full rounded-2xl bg-white p-2 shadow-[0_1px_2px_rgba(0,0,0,0.06),0_16px_32px_-16px_rgba(0,0,0,0.3)] ring-1 ring-black/5"
               role="img"
               aria-label={`QR code for ${trimmed}`}
             >
@@ -189,8 +176,10 @@ export function HeroEditor() {
             </p>
           )}
         </div>
-        {trimmed && <ScanScoreBadge style={style} value={trimmed} />}
+        {trimmed && (
+          <ScanScoreBadge className="relative" style={style} value={trimmed} />
+        )}
       </div>
-    </div>
+    </Card>
   );
 }

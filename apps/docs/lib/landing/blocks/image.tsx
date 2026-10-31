@@ -1,5 +1,5 @@
 import { cn } from "@repo/design-system/lib/utils";
-import { ImageIcon } from "lucide-react";
+import { Gallery as ImageIcon } from "iconsax-reactjs";
 import { z } from "zod";
 import {
   imageSchema,

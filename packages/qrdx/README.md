@@ -1,8 +1,8 @@
 # qrdx
 
-Customizable QR codes for React: SVG and canvas rendering, dot and eye patterns, gradients, logos, decorative templates, PNG/JPG/SVG/PDF export and QR scanning.
+Customizable QR codes for React: SVG and canvas rendering, dot and eye patterns, gradients, logos, call-to-action frames, Logo QR and Image QR art, PNG/JPG/SVG/PDF/EPS export, print-ready files, a scan score and QR scanning.
 
-Docs: [qrdx.dev/docs](https://qrdx.dev/docs) · CLI: [`@qrdx/cli`](https://www.npmjs.com/package/@qrdx/cli)
+It powers the [QRdx](https://qrdx.dev) QR code generator. Docs: [qrdx.dev/docs](https://qrdx.dev/docs) · CLI: [`@qrdx/cli`](https://www.npmjs.com/package/@qrdx/cli) · No-code: [image API](https://qrdx.dev/docs/developers/image-api) and [MCP server](https://qrdx.dev/docs/developers/mcp)
 
 ## Installation
 
@@ -77,6 +77,8 @@ import { QRCodeSVG } from "qrdx";
 | `customTemplate` | `TemplateDefinition` | — | Your own template (takes precedence over `templateId`) |
 | `customProps` | `Record<string, any>` | — | Extra props passed to the template wrapper |
 | `isOGContext` | `boolean` | `false` | Render the logo as an absolutely positioned `<img>` for OG image renderers |
+| `frame` | `QRFrame` | — | "Scan me" style frame; see [Frames](#frames-call-to-action) |
+| `art` | `QRArt` | — | Blend a logo or photo into the modules; see [Art QR](#art-qr-logo-qr-and-image-qr) |
 
 Any other SVG attribute (`className`, `style`, `aria-label`, …) is forwarded to the root `<svg>`.
 
@@ -123,13 +125,23 @@ import { QRCodeCanvas } from "qrdx";
 
 ## Patterns
 
-**Body** (`bodyPattern`, 9): `circle` (default), `circle-large`, `square`, `diamond`, `circle-mixed`, `pacman`, `rounded`, `small-square`, `vertical-line`
+See every option drawn live at [qrdx.dev/docs/styles](https://qrdx.dev/docs/styles).
 
-**Corner eye** (`cornerEyePattern`, 9): `square`, `rounded`, `gear` (default), `circle`, `diya`, `extra-rounded`, `message`, `pointy`, `curly`
+**Body** (`bodyPattern`, 23): `circle` (default), `circle-large`, `square`, `diamond`, `circle-mixed`, `pacman`, `rounded`, `small-square`, `vertical-line`, `horizontal-line`, `liquid`, `liquid-horizontal`, `liquid-vertical`, `classy`, `classy-rounded`, `leaf`, `plus`, `hexagon`, `star`, `heart`, `random-dots`, `mosaic`, `octagon`
 
-**Corner eye dot** (`cornerEyeDotPattern`, 11): `square`, `rounded`, `circle` (default), `diamond`, `message`, `message-reverse`, `diya`, `diya-reverse`, `rounded-triangle`, `star`, `banner`
+**Corner eye** (`cornerEyePattern`, 18): `square`, `rounded`, `gear` (default), `circle`, `diya`, `extra-rounded`, `message`, `pointy`, `curly`, `leaf`, `drop`, `octagon`, `bevel`, `squircle`, `cushion`, `shield`, `petal`, `leaf-reverse`
 
-The same lists are exported as `BODY_PATTERN`, `CORNER_EYE_PATTERNS` and `CORNER_EYE_DOT_PATTERNS`. Decorative shapes trade some scan tolerance for style: `square` and `rounded` eyes scan most reliably, so test `circle` and `curly` eyes with the scanners your audience uses.
+**Corner eye dot** (`cornerEyeDotPattern`, 24): `square`, `rounded`, `circle` (default), `diamond`, `message`, `message-reverse`, `diya`, `diya-reverse`, `rounded-triangle`, `star`, `banner`, `leaf`, `drop`, `plus`, `cross-rounded`, `hexagon`, `octagon`, `flower`, `heart`, `squircle`, `dots`, `extra-rounded`, `leaf-reverse`, `drop-reverse`
+
+The same lists are exported as `BODY_PATTERN`, `CORNER_EYE_PATTERNS` and `CORNER_EYE_DOT_PATTERNS`. `liquid` and `classy` join neighbouring modules into one outline; `leaf`, `drop` and `petal` eyes turn to face their corner of the code. Alignment patterns are always drawn as solid squares. Every value is tested to decode with jsQR through a phone-camera model next to every other value; `square` and `rounded` eyes scan most reliably, `circle` and `curly` eyes only in lenient decoders, and a few pairs (for example `diamond` centres in square eyes) are weak: they are exported as `WEAK_DOT_EYES` / `WEAK_BODY_EYES`, and `getStylePairRisk(props)` returns the warning `getScanScore` shows.
+
+| Option | Notes |
+| --- | --- |
+| `eyeColors` | Per-eye `{ outer, inner }` colors (or gradients) for `topLeft`, `topRight`, `bottomLeft`; each overrides `eyeColor` / `dotColor` |
+| `moduleScale` | 0.5–1 (default 1): smaller modules for a spaced look; each pattern stops at the smallest size that still scans (`MODULE_SCALE_FLOOR`) |
+| `autoLevel` | Raise `level` to H when a logo covers more than 7% of the code (off by default) |
+| `imageSettings.padding` | Extra clear space around an excavated logo, in pixels |
+| `bgColor="transparent"` | No background paint (transparent PNG/SVG, no fill in PDF/EPS) |
 
 ## Colors and gradients
 
@@ -196,12 +208,32 @@ const Framed: TemplateDefinition<{ label?: string }> = {
 
 | Option | Default | Notes |
 | --- | --- | --- |
-| `style` | — | `none` `banner-bottom` `banner-top` `border` `rounded-border` `speech-bubble` (`FRAME_STYLES`) |
+| `style` | — | 20 styles (`FRAME_STYLES`): `none` `banner-bottom` `banner-top` `banner-top-bottom` `border` `rounded-border` `gradient-border` `focus` `speech-bubble` `speech-bubble-top` `chat-bubble` `circle` `badge` `sticker` `polaroid` `phone` `ticket` `tag` `envelope` `menu-card` |
 | `text` | `"Scan me"` | Up to 24 characters; `""` hides the label |
-| `color` | `#000000` | Frame color |
-| `textColor` | white on banners, `color` on borders | Label color |
+| `color` | `#000000` | Frame color (`gradient-border`: start color) |
+| `textColor` | white on the frame, `color` on light areas | Label color |
+| `secondaryText` | — | Second label (`banner-top-bottom`, `circle`, `menu-card`), up to 24 characters |
+| `secondaryColor` | `#db2777` | End color of `gradient-border` |
+| `fontScale` | `1` | Label size, 0.5–1.5 (labels still shrink to fit) |
+
+Frames are plain shapes and text with opaque colors, so SVG, PNG, PDF and EPS match: the gradient border is drawn as fine solid color steps, and `circle` sets its letters as rotated text in every format.
 
 The label uses a system font stack (nothing is fetched). `getFrameDimensions(size, frame)` returns the output size for a `size`-pixel code, and `frameSchema` (zod) validates frame options.
+
+## Art QR (Logo QR and Image QR)
+
+`art` blends a logo or photo into the modules while keeping a real, scannable code: finder, timing and alignment patterns are always drawn solid. It is vector output with no AI, so it renders on the server and exports to SVG, PDF and EPS.
+
+```tsx
+import { QRCodeSVG, loadQRArtImage } from "qrdx";
+
+// Browser: sample an uploaded file, a data URL or an <img>
+const image = await loadQRArtImage(file, { mode: "logo" });
+
+<QRCodeSVG value="https://example.com" size={512} level="H" art={{ mode: "logo", image, intensity: 0.7 }} />;
+```
+
+`mode` is `logo` (modules inside the logo take its colors) or `halftone` (every module shows the photo around a center that keeps the true value). `intensity` goes from `0` (plain) to `1` (default `0.6`). In Node, pass decoded RGBA pixels to `createQRArtImage` instead of `loadQRArtImage`. `art.image` is plain JSON, so you can store it with a design. Use level `H` and check the result with `getScanScore`. See the [Art QR docs](https://qrdx.dev/docs/features/art-qr).
 
 ## Export and download (browser)
 
@@ -216,14 +248,14 @@ import {
 
 const props = { value: "https://example.com", bodyPattern: "rounded" as const };
 
-await downloadQRCode(props, { format: "png", size: PRESET_SIZES.large }); // png | jpg | svg | pdf
+await downloadQRCode(props, { format: "png", size: PRESET_SIZES.large }); // png | jpg | svg | pdf | eps
 await downloadQRCode(props, { format: "pdf", size: { width: 1200, height: 1200 }, filename: "qr.pdf" });
 const dataUrl = await getQRCodeDataUrl(props, "svg", { width: 512, height: 512 });
 await copyQRCodeToClipboard(props, { width: 512, height: 512 }); // PNG to the clipboard
 const svgMarkup = await getSVGString(props);
 ```
 
-Sizes must be square and between 50 and 5000 pixels (`validateSize`); with a frame the file is larger by the frame. When `props.size` is set, a logo laid out for that size is scaled with the export (`withQRSize`). PDF export loads `jspdf` on demand and throws a clear error if it is not installed. Lower-level helpers: `getQRAsSVGDataUri(props)` and `getQRAsCanvas(props, mimeType, returnCanvas?)`.
+Sizes must be square and between 50 and 5000 pixels (`validateSize`); with a frame the file is larger by the frame. For `eps`, `size.width` is in PostScript points (72 per inch). When `props.size` is set, a logo laid out for that size is scaled with the export (`withQRSize`). PDF export loads `jspdf` on demand and throws a clear error if it is not installed; EPS needs no extra package. Lower-level helpers: `getQRAsSVGDataUri(props)` and `getQRAsCanvas(props, mimeType, returnCanvas?)`.
 
 ### Print-ready files
 
@@ -240,6 +272,18 @@ await downloadPrintSVG(props, { size: 1.5, unit: "in" }); // SVG with width="…
 
 getPrintLayout(props, { size: 40 }).maxScanDistance; // 400 (mm): a code scans from ~10× its width
 ```
+
+Vector EPS for print shops and design tools (Illustrator, InDesign, CorelDRAW) works the same way, in the browser or in Node:
+
+```ts
+import { downloadPrintEPS, getQRAsEPS, svgToEPS } from "qrdx";
+
+const eps = await getQRAsEPS(props, { sizeMm: 40, bleedMm: 3, colorMode: "cmyk" }); // EPSF-3.0 string
+await downloadPrintEPS(props, { sizeMm: 40, filename: "qr.eps" });
+const fromSvg = await svgToEPS(svgMarkup, { width: 144 }); // any SVG this library renders, 144 pt wide
+```
+
+EPS has no transparency or crop marks, gradients print as their first color, and PNG and JPEG logos are embedded as images.
 
 - `size` is the width of the code itself; a frame adds to the page.
 - `colorMode: "cmyk"` uses a naive conversion (`rgbToCmyk`: K = 1 − max(R, G, B), no ICC profile). Ask your printer for a color-managed conversion when exact brand colors matter.

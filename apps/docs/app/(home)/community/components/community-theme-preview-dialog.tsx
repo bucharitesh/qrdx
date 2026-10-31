@@ -12,12 +12,12 @@ import { ScrollArea } from "@repo/design-system/components/ui/scroll-area";
 import { cn } from "@repo/design-system/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "facehash";
 import {
-  ArrowUpRight,
-  ChevronLeft,
-  ChevronRight,
+  ArrowLeft2,
+  ArrowRight,
+  ArrowRight2,
   Heart,
-  Share2,
-} from "lucide-react";
+  Share,
+} from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
 import { lazy, useCallback, useEffect } from "react";
 import ExamplesPreviewContainer from "@/components/editor/theme-preview/examples-preview-container";
@@ -26,6 +26,7 @@ import { DEFAULT_QR_LOGO } from "@/lib/constants";
 import { useToggleLike } from "@/lib/hooks/themes";
 import { useSessionGuard } from "@/lib/hooks/use-gaurds";
 import { usePostLoginAction } from "@/lib/hooks/use-post-login-action";
+import { soundEvent } from "@/lib/sound/emit";
 import type { CommunityTheme } from "@/types/community";
 
 const QRCode = lazy(() =>
@@ -115,6 +116,7 @@ export function CommunityThemePreviewDialog({
     try {
       await navigator.clipboard.writeText(url);
       toast.success("Theme URL copied to clipboard!");
+      soundEvent("copy");
     } catch {
       toast.error("Failed to copy URL");
     }
@@ -149,7 +151,7 @@ export function CommunityThemePreviewDialog({
             className="absolute -left-14 top-1/2 -translate-y-1/2 rounded-full border bg-background/80 p-2 text-foreground shadow-lg backdrop-blur-sm transition-all hover:scale-110 hover:bg-background"
             aria-label="Previous theme"
           >
-            <ChevronLeft className="size-5" />
+            <ArrowLeft2 className="size-5" />
           </button>
         )}
         {hasNext && (
@@ -159,7 +161,7 @@ export function CommunityThemePreviewDialog({
             className="absolute -right-14 top-1/2 -translate-y-1/2 rounded-full border bg-background/80 p-2 text-foreground shadow-lg backdrop-blur-sm transition-all hover:scale-110 hover:bg-background"
             aria-label="Next theme"
           >
-            <ChevronRight className="size-5" />
+            <ArrowRight2 className="size-5" />
           </button>
         )}
 
@@ -175,6 +177,7 @@ export function CommunityThemePreviewDialog({
                   <AvatarImage
                     src={displayTheme.author.image}
                     alt={displayTheme.author.name}
+                    referrerPolicy="no-referrer"
                   />
                   <AvatarFallback className="text-[9px]">
                     {authorInitials}
@@ -194,18 +197,16 @@ export function CommunityThemePreviewDialog({
                 type="button"
                 onClick={handleLike}
                 className={cn(
-                  "flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-all",
+                  "flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium tabular-nums transition-colors",
                   displayTheme.isLikedByMe
-                    ? "bg-red-500/10 text-red-500 hover:bg-red-500/20"
+                    ? "bg-rose-500/10 text-rose-600 hover:bg-rose-500/15 dark:text-rose-400"
                     : "text-muted-foreground hover:bg-accent hover:text-foreground",
                 )}
                 title={displayTheme.isLikedByMe ? "Unlike theme" : "Like theme"}
               >
                 <Heart
-                  className={cn(
-                    "size-4",
-                    displayTheme.isLikedByMe && "fill-current",
-                  )}
+                  className="size-4"
+                  variant={displayTheme.isLikedByMe ? "Bold" : "Linear"}
                 />
                 {displayTheme.likeCount > 0 && (
                   <span>{displayTheme.likeCount}</span>
@@ -214,19 +215,16 @@ export function CommunityThemePreviewDialog({
               <button
                 type="button"
                 onClick={handleShare}
-                className="rounded-md p-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                aria-label="Share theme"
+                className="rounded-full p-2 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
                 title="Share theme"
               >
-                <Share2 className="size-4" />
+                <Share className="size-4" />
               </button>
               <div className="mr-2 h-4 w-px bg-border" />
-              <Button
-                variant="link"
-                className="p-0 font-semibold text-foreground"
-                onClick={handleViewDetails}
-              >
+              <Button onClick={handleViewDetails} size="sm">
                 Open in Playground
-                <ArrowUpRight className="size-4" />
+                <ArrowRight aria-hidden />
               </Button>
             </div>
           </div>

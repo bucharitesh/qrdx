@@ -27,17 +27,17 @@ import {
 } from "@repo/design-system/components/ui/dropdown-menu";
 import { Switch } from "@repo/design-system/components/ui/switch";
 import {
-  CheckCircle2,
-  CircleAlert,
+  TickCircle as CheckCircle2,
+  InfoCircle as CircleAlert,
   Clock,
-  KeyRound,
-  ListTree,
-  MoreHorizontal,
-  Pencil,
-  Plus,
-  Send,
-  Trash2,
-} from "lucide-react";
+  Key as KeyRound,
+  Hierarchy2 as ListTree,
+  More as MoreHorizontal,
+  Edit2 as Pencil,
+  Add as Plus,
+  Send2 as Send,
+  Trash as Trash2,
+} from "iconsax-reactjs";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";

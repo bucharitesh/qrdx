@@ -1,0 +1,85 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [6 0 R 8 0 R] /Count 2 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>
+endobj
+5 0 obj
+<< /Length 964 >>
+stream
+BT /F2 20 Tf 40 531 Td (Product guide) Tj ET
+BT /F1 10 Tf 0.4 g 40 509 Td (Everything in the box, and how to get started.) Tj ET
+0.85 G 0.6 w 40 491 m 380 491 l S
+BT /F2 11 Tf 0 g 40 463 Td (In the box) Tj ET
+BT /F1 10 Tf 0.15 g 40 446 Td (1 x Desk lamp) Tj ET
+BT /F1 10 Tf 0.15 g 40 431 Td (1 x USB-C cable \(1.5 m\)) Tj ET
+BT /F1 10 Tf 0.15 g 40 416 Td (1 x Quick start card) Tj ET
+BT /F2 11 Tf 0 g 40 387 Td (Getting started) Tj ET
+BT /F1 10 Tf 0.15 g 40 370 Td (1. Connect the cable to the base.) Tj ET
+BT /F1 10 Tf 0.15 g 40 355 Td (2. Tap the top once to turn the lamp on.) Tj ET
+BT /F1 10 Tf 0.15 g 40 340 Td (3. Hold to dim. Tap twice for warm light.) Tj ET
+BT /F2 11 Tf 0 g 40 311 Td (Care) Tj ET
+BT /F1 10 Tf 0.15 g 40 294 Td (Wipe with a dry cloth. Keep away from water.) Tj ET
+BT /F1 10 Tf 0.15 g 40 279 Td (Questions? hello@example.com) Tj ET
+0.85 G 0.6 w 40 56 m 380 56 l S
+BT /F1 8 Tf 0.5 g 40 40 Td (Sample document for a QRdx template demo.) Tj ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 420 595] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 5 0 R >>
+endobj
+7 0 obj
+<< /Length 948 >>
+stream
+BT /F2 20 Tf 40 531 Td (Specifications) Tj ET
+BT /F1 10 Tf 0.4 g 40 509 Td (Product guide, page 2) Tj ET
+0.85 G 0.6 w 40 491 m 380 491 l S
+BT /F2 11 Tf 0 g 40 463 Td (Light) Tj ET
+BT /F1 10 Tf 0.15 g 40 446 Td (Brightness) Tj ET
+BT /F1 10 Tf 0.15 g 348.8 446 Td (450 lm) Tj ET
+BT /F1 10 Tf 0.15 g 40 431 Td (Colour temperature) Tj ET
+BT /F1 10 Tf 0.15 g 322.8 431 Td (2700-5000 K) Tj ET
+BT /F1 10 Tf 0.15 g 40 416 Td (Dimming) Tj ET
+BT /F1 10 Tf 0.15 g 338.4 416 Td (Stepless) Tj ET
+BT /F2 11 Tf 0 g 40 387 Td (Power) Tj ET
+BT /F1 10 Tf 0.15 g 40 370 Td (Input) Tj ET
+BT /F1 10 Tf 0.15 g 296.8 370 Td (USB-C, 5 V / 2 A) Tj ET
+BT /F1 10 Tf 0.15 g 40 355 Td (Standby) Tj ET
+BT /F1 10 Tf 0.15 g 343.6 355 Td (< 0.3 W) Tj ET
+BT /F2 11 Tf 0 g 40 326 Td (Warranty) Tj ET
+BT /F1 10 Tf 0.15 g 40 309 Td (Two years from the date of purchase.) Tj ET
+0.85 G 0.6 w 40 56 m 380 56 l S
+BT /F1 8 Tf 0.5 g 40 40 Td (Sample document for a QRdx template demo.) Tj ET
+endstream
+endobj
+8 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 420 595] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 7 0 R >>
+endobj
+9 0 obj
+<< /Title (Product guide) /Producer (QRdx template demo) >>
+endobj
+xref
+0 10
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000127 00000 n 
+0000000224 00000 n 
+0000000326 00000 n 
+0000001341 00000 n 
+0000001477 00000 n 
+0000002476 00000 n 
+0000002612 00000 n 
+trailer
+<< /Size 10 /Root 1 0 R /Info 9 0 R >>
+startxref
+2687
+%%EOF

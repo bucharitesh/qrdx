@@ -1,6 +1,10 @@
 "use client";
 
 import {
+  Spinner as Loader2,
+  Close as X,
+} from "@repo/design-system/components/icons";
+import {
   Alert,
   AlertDescription,
   AlertTitle,
@@ -26,15 +30,13 @@ import {
 } from "@repo/design-system/components/ui/table";
 import { cn } from "@repo/design-system/lib/utils";
 import {
-  CircleAlert,
-  CircleCheck,
-  Download,
-  FileSpreadsheet,
-  Gem,
-  Loader2,
-  Upload,
-  X,
-} from "lucide-react";
+  InfoCircle as CircleAlert,
+  TickCircle as CircleCheck,
+  Import as Download,
+  TableDocument as FileSpreadsheet,
+  Diamonds as Gem,
+  Export as Upload,
+} from "iconsax-reactjs";
 import Link from "next/link";
 import Papa from "papaparse";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -49,6 +51,7 @@ import type {
   ImportPreview,
   ImportRowResult,
 } from "@/app/dashboard/codes/import/_lib/import";
+import { soundEvent } from "@/lib/sound/emit";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 import {
   type ColumnMapping,
@@ -90,6 +93,7 @@ function saveText(text: string, filename: string) {
   document.body.appendChild(link);
   link.click();
   link.remove();
+  soundEvent("download");
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
@@ -251,6 +255,7 @@ export function ImportWizard({
       });
     }
     setPhase({ type: "done", results, stopped });
+    soundEvent(stopped ? "error" : "success");
   };
 
   const downloadSample = () =>

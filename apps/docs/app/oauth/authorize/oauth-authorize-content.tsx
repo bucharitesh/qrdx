@@ -1,8 +1,8 @@
 "use client";
 
 import { authClient } from "@repo/auth/client";
+import { Spinner as Loader2 } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
-import { Loader2 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Icons } from "@/components/icons";

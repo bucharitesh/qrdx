@@ -1,5 +1,5 @@
 import { cn } from "@repo/design-system/lib/utils";
-import { UserRound } from "lucide-react";
+import { Profile as UserRound } from "iconsax-reactjs";
 import { z } from "zod";
 import {
   alignSchema,

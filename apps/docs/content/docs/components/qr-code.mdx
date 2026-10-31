@@ -1,0 +1,83 @@
+---
+title: QR Code
+description: A styled, accessible QR code with download buttons. Colors, gradients, patterns, logos and frame templates come from the qrdx library.
+icon: QrCode
+---
+
+<ComponentLinks name="qr-code" />
+
+<ComponentPreview name="qr-code-demo" />
+
+## Installation
+
+<InstallationTabs name="qr-code" />
+
+## Usage
+
+```tsx
+import { QrCode } from "@/components/qr-code";
+```
+
+```tsx
+<QrCode value="https://qrdx.dev" />
+```
+
+The code renders as an SVG with an accessible name, so it stays sharp at any size and screen readers announce what it links to.
+
+## Examples
+
+### Sizes
+
+`size` sets the on-screen width and height in pixels. Downloads use `downloadSize`, so a small code on the page still exports a print-ready file.
+
+<ComponentPreview name="qr-code-sizes" />
+
+### Colors
+
+`fgColor` and `bgColor` take any CSS color. `eyeColor` and `dotColor` color the three corner eyes separately. Keep the modules darker than the background so every scanner can read the code.
+
+<ComponentPreview name="qr-code-colors" />
+
+### Gradients
+
+Pass a qrdx gradient instead of a color: `linear` with an `angle`, or `radial`. Gradients carry over into PNG, SVG and PDF downloads.
+
+<ComponentPreview name="qr-code-gradient" />
+
+### Patterns
+
+`bodyPattern` shapes the data modules, `cornerEyePattern` the corner frames and `cornerEyeDotPattern` the dots inside them. See [patterns](/docs/features/patterns) for every shape.
+
+<ComponentPreview name="qr-code-patterns" />
+
+### Logo
+
+`logo` places an image in the center and clears the modules behind it. Use error correction level `H` so the code still scans with part of it covered. A data URL keeps the logo in downloads; a remote image needs CORS headers.
+
+<ComponentPreview name="qr-code-logo" />
+
+### Frame templates
+
+`templateId` draws a qrdx [template](/docs/features/templates) around the code. Pair it with `caption` for a call to action under the frame.
+
+<ComponentPreview name="qr-code-template" />
+
+### Download formats
+
+`downloadFormats` picks the buttons: `png`, `jpg`, `svg` and `pdf`. PDF export needs the optional `jspdf` package (`npm install jspdf`). Pass `[]` to hide the buttons.
+
+<ComponentPreview name="qr-code-downloads" />
+
+For a single menu with formats and sizes, use [QR Code Download](/docs/components/qr-code-download).
+
+### Dark mode
+
+The default white background is the safest choice in dark themes: dark modules on a light tile scan with every reader. To follow the theme instead, set `fgColor="currentColor"` and a transparent background. The code then inverts in dark mode, which phone cameras read but some older scanners don't.
+
+<ComponentPreview name="qr-code-dark-mode" />
+
+## API Reference
+
+<auto-type-table path="../../../registry/qrdx/qr-code.tsx" type="{ [K in keyof QrCodeProps as K extends keyof ComponentProps<'figure'> ? never : K]: QrCodeProps[K] }" />
+
+Any other prop, such as `className`, is passed to the wrapping `<figure>`.

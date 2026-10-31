@@ -1,0 +1,24 @@
+---
+title: "QR codes from the command line"
+description: "The @qrdx/cli package generates styled QR codes in your terminal and in CI, plus an agent skill for AI coding assistants."
+date: "2026-03-26"
+tags: ["CLI", "Developers"]
+version: "0.0.3"
+---
+
+## @qrdx/cli
+
+Generate a styled QR code without opening a browser:
+
+```bash
+npx @qrdx/cli generate "https://example.com" -o qr.svg
+```
+
+- **SVG or PNG** — the file extension picks the format.
+- **The same styles as the editor** — body, corner eye and corner dot patterns, solid colors or gradients, a center logo and decorative templates.
+- **Made for scripts and CI** — every option is a flag, so it runs without prompts. Run it in a terminal without options and it walks you through the choices instead.
+- Install it globally with `npm install -g @qrdx/cli` to get the `qrdx` command.
+
+## An agent skill for AI coding assistants
+
+The `generate-qr` skill teaches AI coding agents to make QR codes with the CLI: links, plain text, Wi-Fi logins and contact cards, in your colors and with your logo. It follows the open [Agent Skills](https://agentskills.io/) format.

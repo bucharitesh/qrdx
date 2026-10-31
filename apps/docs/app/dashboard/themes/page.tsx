@@ -1,6 +1,6 @@
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
-import { Plus } from "lucide-react";
+import { Add as Plus } from "iconsax-reactjs";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";

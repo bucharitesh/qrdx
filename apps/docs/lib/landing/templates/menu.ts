@@ -1,4 +1,4 @@
-import { UtensilsCrossed } from "lucide-react";
+import { Reserve as UtensilsCrossed } from "iconsax-reactjs";
 import { themePreset } from "@/components/landing/theme";
 import { registerTemplate } from "./registry";
 

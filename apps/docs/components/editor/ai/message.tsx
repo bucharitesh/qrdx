@@ -1,14 +1,14 @@
 /** biome-ignore-all lint/suspicious/noArrayIndexKey: false positive */
 /** biome-ignore-all lint/suspicious/useIterableCallbackReturn: false positive */
+
 import { ScrollArea } from "@repo/design-system/components/ui/scroll-area";
 import { cn } from "@repo/design-system/lib/utils";
-import { QrdxLogo } from "@/components/qrdx-logo";
+import { AnimatedBot } from "@/components/editor/ai/animated-bot";
 import type { AIPromptData, ChatMessage } from "@/types/ai";
 import { buildAIPromptRender } from "@/utils/ai/ai-prompt";
 import ColorPreview from "../theme-preview/color-preview";
 import { ChatImagePreview } from "./chat-image-preview";
 import { ChatThemePreview } from "./chat-theme-preview";
-import { LoadingLogo } from "./loading-logo";
 import { MessageActions } from "./message-actions";
 import { MessageEditForm } from "./message-edit-form";
 import { StreamText } from "./stream-text";
@@ -102,19 +102,13 @@ function AssistantMessage({
 }: AssistantMessageProps) {
   return (
     <div className="flex items-start gap-3">
-      {isLastMessageStreaming ? (
-        <div className="relative flex size-8 shrink-0 items-center justify-center">
-          <LoadingLogo />
-        </div>
-      ) : (
-        <div
-          className={cn(
-            "border-border/40 bg-background shadow-sm relative flex size-8 shrink-0 items-center justify-center rounded-full border select-none",
-          )}
-        >
-          <QrdxLogo className={cn("text-foreground size-5")} />
-        </div>
-      )}
+      <div className="bg-background/70 relative grid size-8 shrink-0 place-items-center rounded-full border shadow-xs backdrop-blur-sm select-none">
+        <AnimatedBot
+          className="size-5"
+          thinking={isLastMessageStreaming}
+          title="QRdx AI"
+        />
+      </div>
 
       <div className="relative flex w-full flex-col gap-3 mt-1.5">
         {message.parts.map((part, idx) => {
@@ -160,8 +154,14 @@ function AssistantMessage({
               );
             }
 
+            // Still generating only while this request runs; a call left
+            // unfinished by a stopped or failed request reads as stopped.
             return (
-              <ChatThemePreview key={key} status="loading" className="p-0" />
+              <ChatThemePreview
+                key={key}
+                status={isLastMessageStreaming ? "loading" : "error"}
+                className="p-0"
+              />
             );
           }
         })}
@@ -255,7 +255,7 @@ function UserMessage({
       {shouldDisplayMsgContent && (
         <div
           className={cn(
-            "bg-primary text-primary-foreground w-fit self-end rounded-2xl rounded-tr-sm px-4 py-2.5 text-sm shadow-sm leading-relaxed",
+            "bg-secondary text-secondary-foreground w-fit max-w-[85%] self-end rounded-lg px-3.5 py-2 text-sm leading-relaxed",
           )}
         >
           {msgContent}

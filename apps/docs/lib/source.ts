@@ -3,7 +3,6 @@ import {
   type InferPageType,
   loader,
 } from "fumadocs-core/source";
-import { lucideIconsPlugin } from "fumadocs-core/source/lucide-icons";
 import {
   blog,
   blogAuthors,
@@ -13,11 +12,12 @@ import {
   docs,
   legal,
 } from "@/.source/server";
+import { resolveDocsIcon } from "@/lib/docs-icons";
 
 export const source = loader({
   baseUrl: "/docs",
   source: docs.toFumadocsSource(),
-  plugins: [lucideIconsPlugin()],
+  icon: resolveDocsIcon,
 });
 
 export const legalSource = loader({

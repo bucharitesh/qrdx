@@ -12,7 +12,7 @@ import {
   ResponsiveDialogHeader,
   ResponsiveDialogTitle,
 } from "@repo/design-system/components/ui/revola";
-import { Palette } from "lucide-react";
+import { ColorSwatch as Palette } from "iconsax-reactjs";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { type FormEvent, useEffect, useState, useTransition } from "react";
@@ -20,6 +20,8 @@ import { createQrCode, updateQrCode } from "@/actions/qr-codes";
 import type { QrCodeView } from "@/app/dashboard/codes/_lib/qr-codes";
 import { CopyButton } from "@/components/copy-button";
 import { normalizeDestination } from "@/components/editor/dynamic-link-toggle";
+import { InfoHint } from "@/components/help/info-hint";
+import { soundEvent } from "@/lib/sound/emit";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 import { CodeDownloadButtons, CodeQr } from "./code-qr";
 import { DomainPicker, useDomainOptions } from "./domain-picker";
@@ -91,9 +93,11 @@ export function CodeDialog({ open, onOpenChange, code }: CodeDialogProps) {
         : await createQrCode({ destinationUrl, title, domainId });
       if (!result.success) {
         setError(result.error);
+        soundEvent("error");
         return;
       }
       router.refresh();
+      soundEvent(code ? "apply" : "success");
       if (code) {
         toast.success(
           "Changes saved",
@@ -169,7 +173,10 @@ export function CodeDialog({ open, onOpenChange, code }: CodeDialogProps) {
                 </div>
               ) : (
                 <div className="space-y-1.5">
-                  <Label htmlFor="code-destination">Destination URL</Label>
+                  <div className="flex items-center gap-1.5">
+                    <Label htmlFor="code-destination">Destination URL</Label>
+                    <InfoHint align="start" id="dynamic-destination" />
+                  </div>
                   <Input
                     autoFocus
                     id="code-destination"

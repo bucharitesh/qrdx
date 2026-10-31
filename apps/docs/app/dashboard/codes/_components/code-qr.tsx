@@ -3,11 +3,12 @@
 import { toast } from "@repo/design-system";
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
-import { Download } from "lucide-react";
+import { Import as Download } from "iconsax-reactjs";
 import { downloadQRCode, getQRData, QRCode } from "qrdx";
 import { useState } from "react";
 import { defaultThemeState } from "@/config/qr";
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
+import { soundEvent } from "@/lib/sound/emit";
 import type { ThemeStyles } from "@/types/theme";
 
 const DOWNLOAD_SIZE = 1024;
@@ -83,6 +84,7 @@ export async function downloadCodeQr(
       filename: `qrdx-${code.slug}.${format}`,
     },
   );
+  soundEvent("download");
 }
 
 export function CodeDownloadButtons({

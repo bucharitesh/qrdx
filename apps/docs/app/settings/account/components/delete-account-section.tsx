@@ -2,6 +2,7 @@
 
 import { authClient } from "@repo/auth/client";
 import { toast } from "@repo/design-system";
+import { Spinner as Loader2 } from "@repo/design-system/components/icons";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -13,7 +14,7 @@ import {
 } from "@repo/design-system/components/ui/alert-dialog";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
-import { AlertTriangle, Loader2 } from "lucide-react";
+import { Warning2 as AlertTriangle } from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
 import { useState } from "react";

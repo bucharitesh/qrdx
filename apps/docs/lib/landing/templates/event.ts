@@ -1,4 +1,4 @@
-import { CalendarDays } from "lucide-react";
+import { Calendar1 as CalendarDays } from "iconsax-reactjs";
 import { themePreset } from "@/components/landing/theme";
 import { registerTemplate } from "./registry";
 

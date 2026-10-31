@@ -24,7 +24,6 @@ export default async function ComparePage({ params }: PageProps) {
   const {
     competitor,
     tagline,
-    competitorLogo,
     qrdxPlan,
     competitorPlan,
     tableRows,
@@ -35,19 +34,14 @@ export default async function ComparePage({ params }: PageProps) {
   } = page.data;
 
   return (
-    <main className="flex flex-col items-center justify-center divide-y divide-border min-h-screen w-full">
-      <CompareHero
-        slug={slug}
-        competitor={competitor}
-        tagline={tagline}
-        competitorLogo={competitorLogo}
-      />
+    <main className="flex min-h-screen w-full flex-col items-center justify-center divide-y divide-border">
+      <CompareHero competitor={competitor} slug={slug} tagline={tagline} />
       <CompareTable
         competitor={competitor}
-        qrdxPlan={qrdxPlan}
         competitorPlan={competitorPlan}
-        competitorLogo={competitorLogo}
+        qrdxPlan={qrdxPlan}
         rows={tableRows}
+        slug={slug}
       />
       <CompareFeatures competitor={competitor} highlights={featureHighlights} />
       <CompareGuide

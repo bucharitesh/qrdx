@@ -70,6 +70,21 @@ Excavation removes QR modules under the logo for better scanning.
 />
 ```
 
+### Clear space and error correction
+
+`padding` (in the same pixels as `width` and `height`) clears extra modules around the logo, so its edges never touch the code. `autoLevel` raises error correction to H whenever the cleared area covers more than 7% of the code, so a bigger logo stays readable; it is off by default, so existing codes keep their level.
+
+```tsx
+<QRCodeSVG
+  value="https://example.com"
+  size={512}
+  autoLevel
+  imageSettings={{ src: "/logo.png", height: 110, width: 110, excavate: true, padding: 8 }}
+/>
+```
+
+The logo keeps its pixel size whatever the `margin` (releases up to 0.0.46 shrank it as the margin grew).
+
 ### When to Use
 
 - ✅ Logos with solid backgrounds

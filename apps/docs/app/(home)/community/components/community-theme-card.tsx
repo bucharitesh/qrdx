@@ -1,9 +1,12 @@
 "use client";
 
 import { Badge } from "@repo/design-system/components/ui/badge";
+import { Card } from "@repo/design-system/components/ui/card";
 import { cn } from "@repo/design-system/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "facehash";
-import { Heart } from "lucide-react";
+import { Heart } from "iconsax-reactjs";
+import { SpotlightCard } from "@/components/fx";
+import { PRESSABLE } from "@/components/mockups/motion";
 import { ThemePreview } from "@/components/theme-preview";
 import { useToggleLike } from "@/lib/hooks/themes";
 import { useSessionGuard } from "@/lib/hooks/use-gaurds";
@@ -56,37 +59,43 @@ export function CommunityThemeCard({
   );
 
   return (
-    // biome-ignore lint/a11y/useSemanticElements: the card contains the like <button>, which a <button> wrapper cannot nest
-    <div
-      role="button"
-      tabIndex={0}
+    <SpotlightCard
+      aria-label={`Preview ${theme.name}`}
+      as={Card}
+      className={cn(
+        "group h-full cursor-pointer gap-0 overflow-hidden py-0 shadow-xs outline-none hover:border-foreground/15 focus-visible:ring-[3px] focus-visible:ring-ring/50",
+        PRESSABLE,
+      )}
       onClick={() => onPreview(theme)}
-      onKeyDown={(e) => {
+      onKeyDown={(e: React.KeyboardEvent) => {
+        if (e.target !== e.currentTarget) return;
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
           onPreview(theme);
         }
       }}
-      className="group cursor-pointer"
+      // The card holds the like <button>, which a <button> wrapper can't nest.
+      role="button"
+      tabIndex={0}
     >
-      <div className="relative h-44 w-full overflow-hidden rounded-xl border shadow-sm transition-all duration-200 group-hover:border-foreground/20 group-hover:shadow-md">
+      <div className="relative h-44 w-full overflow-hidden border-b">
         <ThemePreview
-          styles={theme.styles}
+          className="transition-transform duration-300 group-hover:scale-[1.02]"
           name={theme.name}
-          className="transition-transform duration-300 group-hover:scale-102"
+          styles={theme.styles}
         />
         {theme.tags.length > 0 && (
           <div className="pointer-events-none absolute top-2 left-2 flex items-center gap-1">
             {theme.tags.slice(0, 2).map((tag) => (
               <Badge
+                className="border-0 bg-background/85 px-1.5 py-0 text-[10px] text-foreground shadow-sm backdrop-blur-sm"
                 key={tag}
-                className="border-0 bg-background/80 px-1.5 py-0 text-[10px] text-foreground shadow-sm backdrop-blur-sm"
               >
                 {tag}
               </Badge>
             ))}
             {theme.tags.length > 2 && (
-              <Badge className="border-0 bg-background/80 px-1.5 py-0 text-[10px] text-foreground shadow-sm backdrop-blur-sm">
+              <Badge className="border-0 bg-background/85 px-1.5 py-0 text-[10px] text-foreground shadow-sm backdrop-blur-sm">
                 +{theme.tags.length - 2}
               </Badge>
             )}
@@ -94,41 +103,44 @@ export function CommunityThemeCard({
         )}
       </div>
 
-      <div className="flex items-start justify-between gap-2 px-1 pt-2">
-        <div className="min-w-0 flex-1">
-          <div className="mt-1 flex items-center gap-3">
-            <div className="flex min-w-0 max-w-[120px] items-center gap-1.5">
-              <Avatar className="h-4 w-4 shrink-0">
-                <AvatarImage src={theme.author.image} alt={theme.author.name} />
-                <AvatarFallback className="text-[8px]">
-                  {authorInitials}
-                </AvatarFallback>
-              </Avatar>
-              <span className="truncate text-xs text-muted-foreground">
-                {theme.author.name}
-              </span>
-            </div>
-            <span className="text-xs text-muted-foreground/60">
-              {publishedDate}
-            </span>
-          </div>
+      <div className="flex items-center justify-between gap-2 py-2.5 pr-2.5 pl-4">
+        <div className="flex min-w-0 items-center gap-2">
+          <Avatar className="size-5 shrink-0">
+            <AvatarImage
+              alt={theme.author.name}
+              src={theme.author.image}
+              referrerPolicy="no-referrer"
+            />
+            <AvatarFallback className="text-[9px]">
+              {authorInitials}
+            </AvatarFallback>
+          </Avatar>
+          <span className="truncate text-xs font-medium">
+            {theme.author.name}
+          </span>
+          <span className="shrink-0 text-xs text-muted-foreground">
+            {publishedDate}
+          </span>
         </div>
         <button
-          type="button"
-          onClick={handleLike}
+          aria-label={theme.isLikedByMe ? "Unlike theme" : "Like theme"}
+          aria-pressed={theme.isLikedByMe}
           className={cn(
-            "flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium transition-colors",
+            "flex shrink-0 items-center gap-1 rounded-full px-2.5 py-1 text-xs font-medium tabular-nums transition-colors",
             theme.isLikedByMe
-              ? "bg-red-500/10 text-red-500"
+              ? "bg-rose-500/10 text-rose-600 dark:text-rose-400"
               : "text-muted-foreground hover:bg-accent hover:text-foreground",
           )}
+          onClick={handleLike}
+          type="button"
         >
           <Heart
-            className={cn("h-3.5 w-3.5", theme.isLikedByMe && "fill-current")}
+            className="size-3.5"
+            variant={theme.isLikedByMe ? "Bold" : "Linear"}
           />
           {theme.likeCount > 0 && <span>{theme.likeCount}</span>}
         </button>
       </div>
-    </div>
+    </SpotlightCard>
   );
 }

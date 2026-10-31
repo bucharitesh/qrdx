@@ -14,7 +14,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@repo/design-system/components/ui/popover";
-import { Plus } from "lucide-react";
+import { Add as Plus } from "iconsax-reactjs";
 import { useState } from "react";
 import { BLOCK_CATEGORIES, listBlocks } from "@/lib/landing/blocks";
 import { PAGE_SETTINGS_TYPE } from "../page-settings-block";

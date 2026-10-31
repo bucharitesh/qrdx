@@ -1,4 +1,238 @@
 import type { CornerEyePattern } from "../types/corner-eye";
+import {
+  type Point,
+  polygonPath,
+  roundedRectPath,
+  superellipsePoints,
+} from "./shapes";
+
+/** Which finder an eye is drawn for (some shapes face the code's corners). */
+export type EyeCorner = "top-left" | "top-right" | "bottom-left";
+
+type Radii = [number, number, number, number];
+
+/**
+ * Corner radii (top-left, top-right, bottom-right, bottom-left) with `sharp`
+ * on the finder's outer corner (and, when `inner` is set, the corner facing
+ * the code's center) and `round` elsewhere.
+ */
+function facingRadii(
+  corner: EyeCorner,
+  round: number,
+  sharp: number,
+  inner: boolean
+): Radii {
+  // Index of the corner that points away from the code
+  const outer = corner === "top-left" ? 0 : corner === "top-right" ? 1 : 3;
+  const opposite = (outer + 2) % 4;
+  return [0, 1, 2, 3].map((i) =>
+    i === outer || (inner && i === opposite) ? sharp : round
+  ) as Radii;
+}
+
+function octagonPoints(
+  x: number,
+  y: number,
+  size: number,
+  cut: number
+): Point[] {
+  return [
+    [x + cut, y],
+    [x + size - cut, y],
+    [x + size, y + cut],
+    [x + size, y + size - cut],
+    [x + size - cut, y + size],
+    [x + cut, y + size],
+    [x, y + size - cut],
+    [x, y + cut],
+  ];
+}
+
+/**
+ * Chamfered ring: `cut` modules off each outer corner, the hole cut so the
+ * ring stays one module thick across the chamfer too.
+ */
+function generateCornerChamferPattern(
+  offsetX: number,
+  offsetY: number,
+  size: number,
+  cut: number
+): string {
+  const m = size / 7;
+  const innerCut = Math.max(0, (cut + Math.SQRT2 - 2) * m);
+  return (
+    polygonPath(octagonPoints(offsetX, offsetY, size, cut * m)) +
+    polygonPath(octagonPoints(offsetX + m, offsetY + m, 5 * m, innerCut))
+  );
+}
+
+/**
+ * Leaf: the outer corner and the one facing the code stay sharp, the other
+ * two are round. `reverse` swaps them (round outer and inner corners).
+ */
+function generateCornerLeafPattern(
+  offsetX: number,
+  offsetY: number,
+  size: number,
+  corner: EyeCorner,
+  reverse = false
+): string {
+  const m = size / 7;
+  const radii = (round: number) =>
+    reverse
+      ? facingRadii(corner, 0, round, true)
+      : facingRadii(corner, round, 0, true);
+  return (
+    roundedRectPath(offsetX, offsetY, size, size, radii(2.5 * m)) +
+    roundedRectPath(offsetX + m, offsetY + m, 5 * m, 5 * m, radii(1.5 * m))
+  );
+}
+
+/** Drop: round everywhere except the corner pointing away from the code. */
+function generateCornerDropPattern(
+  offsetX: number,
+  offsetY: number,
+  size: number,
+  corner: EyeCorner
+): string {
+  const m = size / 7;
+  return (
+    roundedRectPath(
+      offsetX,
+      offsetY,
+      size,
+      size,
+      facingRadii(corner, 2.6 * m, 0, false)
+    ) +
+    roundedRectPath(
+      offsetX + m,
+      offsetY + m,
+      5 * m,
+      5 * m,
+      facingRadii(corner, 1.6 * m, 0, false)
+    )
+  );
+}
+
+function generateCornerSquirclePattern(
+  offsetX: number,
+  offsetY: number,
+  size: number
+): string {
+  const m = size / 7;
+  const cx = offsetX + size / 2;
+  const cy = offsetY + size / 2;
+  return (
+    polygonPath(superellipsePoints(cx, cy, 3.5 * m, 3.5 * m, 4, 96)) +
+    polygonPath(superellipsePoints(cx, cy, 2.5 * m, 2.5 * m, 4, 96))
+  );
+}
+
+/**
+ * Rounded square whose sides pinch in slightly, like a cushion. Sides meet
+ * the corners tangentially, so the outline has no kinks.
+ */
+function cushionPath(
+  x: number,
+  y: number,
+  size: number,
+  radius: number,
+  pinch: number
+): string {
+  const r = radius;
+  const mid = size / 2;
+  const pull = (mid - r) * 0.55;
+  const P = (px: number, py: number) => `${x + px} ${y + py}`;
+  return (
+    `M${P(r, 0)}` +
+    `C${P(r + pull, 0)} ${P(mid - pull, pinch)} ${P(mid, pinch)}` +
+    `C${P(mid + pull, pinch)} ${P(size - r - pull, 0)} ${P(size - r, 0)}` +
+    `A${r} ${r} 0 0 1 ${P(size, r)}` +
+    `C${P(size, r + pull)} ${P(size - pinch, mid - pull)} ${P(size - pinch, mid)}` +
+    `C${P(size - pinch, mid + pull)} ${P(size, size - r - pull)} ${P(size, size - r)}` +
+    `A${r} ${r} 0 0 1 ${P(size - r, size)}` +
+    `C${P(size - r - pull, size)} ${P(mid + pull, size - pinch)} ${P(mid, size - pinch)}` +
+    `C${P(mid - pull, size - pinch)} ${P(r + pull, size)} ${P(r, size)}` +
+    `A${r} ${r} 0 0 1 ${P(0, size - r)}` +
+    `C${P(0, size - r - pull)} ${P(pinch, mid + pull)} ${P(pinch, mid)}` +
+    `C${P(pinch, mid - pull)} ${P(0, r + pull)} ${P(0, r)}` +
+    `A${r} ${r} 0 0 1 ${P(r, 0)}Z`
+  );
+}
+
+function generateCornerCushionPattern(
+  offsetX: number,
+  offsetY: number,
+  size: number
+): string {
+  const m = size / 7;
+  // A deeper pinch (0.25 module) breaks the finder's 1:1:3:1:1 rows
+  const pinch = 0.12 * m;
+  return (
+    cushionPath(offsetX, offsetY, size, 1.4 * m, pinch) +
+    cushionPath(offsetX + m, offsetY + m, 5 * m, 0.7 * m, pinch)
+  );
+}
+
+/** Shield: flat top, straight sides, curving to a point at the bottom. */
+function shieldPath(
+  x: number,
+  y: number,
+  size: number,
+  radius: number,
+  shoulder: number,
+  m: number
+): string {
+  const mid = size / 2;
+  const P = (px: number, py: number) => `${x + px} ${y + py}`;
+  return (
+    `M${P(radius, 0)}H${x + size - radius}` +
+    `A${radius} ${radius} 0 0 1 ${P(size, radius)}` +
+    `V${y + shoulder}` +
+    `C${P(size, shoulder + 1.55 * m)} ${P(mid + 1.6 * m, size)} ${P(mid, size)}` +
+    `C${P(mid - 1.6 * m, size)} ${P(0, shoulder + 1.55 * m)} ${P(0, shoulder)}` +
+    `V${y + radius}A${radius} ${radius} 0 0 1 ${P(radius, 0)}Z`
+  );
+}
+
+function generateCornerShieldPattern(
+  offsetX: number,
+  offsetY: number,
+  size: number
+): string {
+  const m = size / 7;
+  return (
+    shieldPath(offsetX, offsetY, size, 0.7 * m, 3.9 * m, m) +
+    shieldPath(offsetX + m, offsetY + m, 5 * m, 0.35 * m, 2.7 * m, 0.8 * m)
+  );
+}
+
+/** Petal: a large round outer corner, the other three barely rounded. */
+function generateCornerPetalPattern(
+  offsetX: number,
+  offsetY: number,
+  size: number,
+  corner: EyeCorner
+): string {
+  const m = size / 7;
+  // facingRadii puts `sharp` on the outer corner; here that one is round.
+  return (
+    roundedRectPath(
+      offsetX,
+      offsetY,
+      size,
+      size,
+      facingRadii(corner, 0.5 * m, 2.5 * m, false)
+    ) +
+    roundedRectPath(
+      offsetX + m,
+      offsetY + m,
+      5 * m,
+      5 * m,
+      facingRadii(corner, 0.25 * m, 1.5 * m, false)
+    )
+  );
+}
 
 /**
  * Pattern 1: Basic square corners
@@ -225,15 +459,36 @@ function generateCornerCurlyPattern(
  * @param offsetY - Y offset for the corner
  * @param size - Size of the corner pattern
  * @param pattern - Pattern type for the corner eye
- * @returns SVG path string for the pattern
+ * @param corner - Which finder this is (leaf and drop eyes face outward)
+ * @returns SVG path string for the pattern (drawn with fill-rule evenodd)
  */
 export function generateCornerSquarePath(
   offsetX: number,
   offsetY: number,
   size: number,
-  pattern: CornerEyePattern
+  pattern: CornerEyePattern,
+  corner: EyeCorner = "top-left"
 ): string {
   switch (pattern) {
+    case "leaf":
+      return generateCornerLeafPattern(offsetX, offsetY, size, corner);
+    case "leaf-reverse":
+      return generateCornerLeafPattern(offsetX, offsetY, size, corner, true);
+    case "drop":
+      return generateCornerDropPattern(offsetX, offsetY, size, corner);
+    case "octagon":
+      // A regular octagon (2.05-module cut) fails light-on-dark codes
+      return generateCornerChamferPattern(offsetX, offsetY, size, 1.6);
+    case "bevel":
+      return generateCornerChamferPattern(offsetX, offsetY, size, 1.1);
+    case "squircle":
+      return generateCornerSquirclePattern(offsetX, offsetY, size);
+    case "cushion":
+      return generateCornerCushionPattern(offsetX, offsetY, size);
+    case "shield":
+      return generateCornerShieldPattern(offsetX, offsetY, size);
+    case "petal":
+      return generateCornerPetalPattern(offsetX, offsetY, size, corner);
     case "gear":
       return generateCornerGearPattern(offsetX, offsetY, size);
     case "rounded":

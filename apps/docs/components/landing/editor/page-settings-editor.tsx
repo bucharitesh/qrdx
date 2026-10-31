@@ -3,7 +3,7 @@
 import { Button } from "@repo/design-system/components/ui/button";
 import { Label } from "@repo/design-system/components/ui/label";
 import { Textarea } from "@repo/design-system/components/ui/textarea";
-import { Gem, Lock } from "lucide-react";
+import { Diamonds as Gem, Lock } from "iconsax-reactjs";
 import { useId } from "react";
 import type { BlockEditorProps } from "@/lib/landing/registry";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
