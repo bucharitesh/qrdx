@@ -102,6 +102,13 @@ export function UserProfileDropdown() {
                   <Icons.Settings /> Settings
                 </Link>
               </DropdownMenuItem>
+              {session.user.role?.split(",").includes("admin") && (
+                <DropdownMenuItem asChild>
+                  <Link href="/admin">
+                    <Icons.Lock /> Admin
+                  </Link>
+                </DropdownMenuItem>
+              )}
               <DropdownMenuSeparator className="bg-border opacity-80" />
               <DropdownMenuItem asChild>
                 <Link href="/legal/privacy-policy">
