@@ -49,7 +49,8 @@ jobs:
         run: |
           title="$(cat pr-title.txt)"
           head="${{ github.repository_owner }}:staging"
-          existing_pr="$(gh pr list --base main --head "$head" --state open --json number --jq '.[0].number // empty')"
+          # `gh pr list --head` takes the bare branch name (no owner: prefix).
+          existing_pr="$(gh pr list --base main --head staging --state open --json number --jq '.[0].number // empty')"
           if [ -n "$existing_pr" ]; then
             gh pr edit "$existing_pr" --title "$title" --body-file pr-body.md
             echo "Updated PR #$existing_pr" >> "$GITHUB_STEP_SUMMARY"
