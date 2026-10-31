@@ -426,7 +426,7 @@ export function ImageLightbox({
           transition: "opacity 300ms ease-out, transform 300ms ease-out",
         }}
       >
-        <Icons.X className="w-4 h-4" strokeWidth={2.5} />
+        <Icons.X className="w-4 h-4" />
       </button>
 
       <button
@@ -456,7 +456,7 @@ export function ImageLightbox({
             "opacity 300ms ease-out 150ms, transform 300ms ease-out 150ms",
         }}
       >
-        <Icons.ChevronLeft className="w-5 h-5" strokeWidth={2.5} />
+        <Icons.ChevronLeft className="w-5 h-5" />
       </button>
 
       <button
@@ -486,7 +486,7 @@ export function ImageLightbox({
             "opacity 300ms ease-out 150ms, transform 300ms ease-out 150ms",
         }}
       >
-        <Icons.ChevronRight className="w-5 h-5" strokeWidth={2.5} />
+        <Icons.ChevronRight className="w-5 h-5" />
       </button>
 
       <div

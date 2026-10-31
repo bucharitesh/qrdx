@@ -1,0 +1,134 @@
+---
+title: Data Processing Addendum
+description: The terms under which QRdx processes personal data for customers whose codes, hosted pages, forms and analytics collect data from their own visitors. Covers GDPR Article 28, the Standard Contractual Clauses, India's DPDP Act and the CCPA.
+lastUpdated: 2026-11-01
+---
+
+<Callout title="Summary">
+
+- When your codes, hosted pages and forms collect personal data from your visitors (scans, page events, form responses, conversions), you decide what happens to it. You are the controller and QRdx is your processor.
+- We use that data only to run the Service for you, keep it secure, use only the subprocessors on our [list](/legal/subprocessors), help you answer your visitors' requests, and delete it when you delete it or your account.
+- Data leaving the EEA, the UK or Switzerland is covered by the Standard Contractual Clauses, which this addendum includes.
+- It applies automatically as part of the [Terms of Service](/legal/terms-of-service). There's nothing to sign.
+
+</Callout>
+
+## 1. Scope and how it applies
+
+This Data Processing Addendum ("DPA") is part of the agreement between you ("Customer") and **[[LEGAL ENTITY NAME]]** ("QRdx") under the [Terms of Service](/legal/terms-of-service). It applies whenever QRdx processes Customer Personal Data while providing the Service. It takes effect when you accept the Terms and lasts as long as QRdx processes Customer Personal Data. If you need a signed copy for your records, email [support@qrdx.dev](mailto:support@qrdx.dev).
+
+If this DPA conflicts with the Terms, this DPA wins for matters of personal data. If it conflicts with the Standard Contractual Clauses, the Clauses win.
+
+## 2. Definitions
+
+- **"Data Protection Law"** means every data protection law that applies to the processing, including the EU GDPR, the UK GDPR and Data Protection Act 2018, the Swiss Federal Act on Data Protection, India's Digital Personal Data Protection Act 2023 ("DPDP Act") and the California Consumer Privacy Act as amended by the CPRA ("CCPA").
+- **"Customer Personal Data"** means personal data that QRdx processes for Customer as part of the Service, mainly End User data.
+- **"End Users"** means the people who scan Customer's codes, open Customer's hosted pages or fill in Customer's forms.
+- **"Subprocessor"** means a third party QRdx engages to process Customer Personal Data.
+- **"SCCs"** means the standard contractual clauses approved by the European Commission in Decision (EU) 2021/914.
+- **"Security Incident"** means a breach of security leading to the accidental or unlawful destruction, loss, alteration, unauthorised disclosure of, or access to, Customer Personal Data.
+- "Controller", "processor", "data subject", "personal data" and "processing" have the meanings given in the GDPR. "Data Fiduciary" and "Data Processor" have the meanings given in the DPDP Act.
+
+## 3. Roles
+
+- Customer is the controller (a Data Fiduciary under the DPDP Act), or a processor acting for its own client. QRdx is the processor (a Data Processor), or a subprocessor.
+- QRdx is a separate controller for its own account, billing, security and abuse-prevention data, as described in the [Privacy Policy](/legal/privacy-policy). This DPA doesn't cover that data.
+
+## 4. Details of the processing
+
+| Item | Details |
+| --- | --- |
+| **Subject matter** | Providing the QRdx Service: dynamic codes, short links, hosted pages, forms, analytics, notifications and integrations |
+| **Duration** | For as long as Customer uses the Service, then until deletion under section 11 |
+| **Nature and purpose** | Recording scans and page events, storing and displaying form responses, sending notifications and webhooks Customer configures, hosting files, and producing the analytics and exports shown to Customer |
+| **Data subjects** | End Users; people whose details Customer publishes on hosted pages (for example on a vCard); Customer's team members |
+| **Categories of data** | Scan data: time, country, region and city, device type, operating system, browser, referrer host, preferred language, A/B variant and a daily-rotating visitor hash (IP addresses are not stored). Page events: event type, block or link, time, visitor hash. Form responses: whatever Customer's forms ask for, such as names, email addresses, phone numbers, ratings and choices. Conversions Customer reports. Contents of files Customer uploads. |
+| **Special categories** | None intended. Customer must not use the Service to collect special category data, government ID numbers, full payment card numbers or passwords from End Users. |
+| **Frequency** | Continuous, whenever End Users interact with Customer's codes and pages |
+
+## 5. QRdx's obligations
+
+QRdx will:
+
+1. **Follow instructions.** Process Customer Personal Data only on Customer's documented instructions, which are the Terms, this DPA and Customer's use and settings of the Service, unless the law requires otherwise. If the law requires otherwise, QRdx will tell Customer first unless the law forbids it. QRdx will tell Customer if it believes an instruction breaks Data Protection Law.
+2. **Keep it confidential.** Make sure everyone authorised to process Customer Personal Data is bound by confidentiality.
+3. **Keep it secure.** Apply the technical and organisational measures in [Annex 2](#annex-2-security-measures).
+4. **Use approved subprocessors only.** See section 6.
+5. **Help with data subject requests.** Give Customer tools to find, export and delete End User data in the dashboard and the API. If QRdx receives a request directly from an End User, it will pass it to Customer where it can identify Customer and won't answer it itself unless Customer asks.
+6. **Help with compliance.** Give Customer reasonable help, taking into account the information available to QRdx, with security, Security Incident notifications, data protection impact assessments and consultations with authorities.
+7. **Report Security Incidents.** Notify Customer without undue delay after becoming aware of a Security Incident affecting Customer Personal Data, with the information Customer needs to meet its own obligations, and keep Customer updated as more becomes known.
+8. **Delete data at the end.** See section 11.
+9. **Show compliance.** Make available the information needed to show compliance with this DPA, and allow audits as set out in section 10.
+
+## 6. Subprocessors
+
+Customer gives general authorisation for QRdx to use the subprocessors on the [Subprocessors](/legal/subprocessors) page. QRdx will:
+
+- bind each subprocessor to data protection terms at least as protective as this DPA;
+- update the Subprocessors page at least **[[NOTICE PERIOD]]** days before a new subprocessor starts processing Customer Personal Data, except when it has to act sooner to keep the Service running or secure;
+- remain responsible for its subprocessors' performance.
+
+Customer can object to a new subprocessor on reasonable data protection grounds by emailing [support@qrdx.dev](mailto:support@qrdx.dev) within that period. The parties will discuss it in good faith. If they can't resolve it, Customer may stop using the affected feature, or end the Terms and delete its account, and QRdx will refund any prepaid fees for the unused period.
+
+## 7. Customer's obligations
+
+Customer will:
+
+- have a legal basis for collecting and processing End User data, and give End Users the notices the law requires, for example a privacy notice on its hosted pages and forms;
+- get consent where the law requires it, including for tracking pixels it adds to hosted pages;
+- not use the Service to collect the data excluded in section 4;
+- make sure its instructions follow Data Protection Law;
+- keep its account and access tokens secure, and configure the Service (forms, webhooks, integrations, notification targets) appropriately for the data involved.
+
+Data that Customer sends from QRdx to its own webhooks, Slack or Discord, or to integrations it connects, leaves QRdx's control at Customer's request. Those destinations are not QRdx subprocessors.
+
+## 8. International transfers
+
+QRdx and its main subprocessors process data in the United States and other countries listed on the [Subprocessors](/legal/subprocessors) page.
+
+- **EEA.** Where Customer Personal Data from the EEA is transferred to QRdx in a country without an adequacy decision, the SCCs are incorporated into this DPA: Module 2 where Customer is a controller, and Module 3 where Customer is a processor. For the SCCs: the optional docking clause (Clause 7) applies; Clause 9(a) Option 2 (general authorisation, with the notice period in section 6) applies; the optional wording in Clause 11 doesn't apply; Clause 13 is the supervisory authority that applies to Customer; Clauses 17 and 18 are governed by the law and courts of **[[SCC MEMBER STATE]]**; Annex I is section 4 and section 1 of this DPA, Annex II is [Annex 2](#annex-2-security-measures), and Annex III is the Subprocessors page.
+- **UK.** For transfers from the UK, the UK International Data Transfer Addendum to the SCCs applies, with the same details.
+- **Switzerland.** For transfers from Switzerland, the SCCs apply with references to the GDPR read as references to the Swiss FADP, and the Swiss Federal Data Protection and Information Commissioner as the competent authority where the FADP applies.
+- **Onward transfers.** QRdx transfers Customer Personal Data to subprocessors outside the EEA, the UK or Switzerland only under adequate safeguards, such as the SCCs or the EU-US Data Privacy Framework.
+- **India.** QRdx transfers personal data covered by the DPDP Act outside India only to countries the Government of India hasn't restricted.
+
+## 9. California (CCPA)
+
+For personal information covered by the CCPA, QRdx is Customer's service provider. QRdx will not:
+
+- sell or share the personal information;
+- keep, use or disclose it for any purpose other than providing the Service, or outside the direct business relationship with Customer;
+- combine it with personal information it receives from other sources, except as the CCPA allows.
+
+QRdx will comply with the CCPA's obligations for service providers and tell Customer if it can no longer meet them. Customer may take reasonable steps to stop and fix unauthorised use.
+
+## 10. Audits
+
+QRdx will answer Customer's reasonable written questions about its data protection and security practices. If those answers aren't enough to show compliance, or a supervisory authority requires it, Customer may audit QRdx once a year, at Customer's cost, with at least 30 days' notice, during business hours, without disrupting the Service and under confidentiality. Audits don't cover other customers' data or the internal systems of QRdx's subprocessors, which QRdx can cover with the subprocessors' own reports where available.
+
+## 11. Deletion at the end
+
+Customer can export and delete Customer Personal Data at any time with the tools in the Service: deleting codes, pages, form responses and files, and exporting scans and responses as CSV. When Customer deletes its account, QRdx deletes the Customer Personal Data in that account's personal workspace. Data in a team workspace stays with the team for its remaining members. Deleted data can remain in the database provider's short point-in-time recovery history until it rolls over. QRdx may keep data the law requires it to keep, protected under this DPA, for as long as the law requires.
+
+## 12. Liability
+
+Each party's liability under this DPA is subject to the limits in the [Terms of Service](/legal/terms-of-service), except where Data Protection Law or the SCCs don't allow liability to be limited.
+
+## Annex 2: Security measures
+
+QRdx applies these measures to Customer Personal Data:
+
+- **Encryption in transit.** Every connection to the Service, and between QRdx and its subprocessors, uses TLS.
+- **Data minimisation.** Scanner IP addresses are never stored. Unique visitors are counted with a salted hash of IP address, user agent and date that changes every day. Only the host of a referring site is kept, not the full address. Rate-limit counters that may contain an IP address expire within 2 days.
+- **Access control.** Customers sign in through Google or GitHub, and QRdx stores no passwords. Team access follows owner, admin and member roles. Only staff accounts can open the admin tools, and every staff action there is recorded in an audit log.
+- **Credentials.** OAuth and API access tokens are stored only as SHA-256 hashes. Integration tokens are encrypted with AES-256-GCM. Passwords on protected codes are stored as hashes. Webhook payloads are signed with a per-endpoint secret.
+- **Abuse and bot protection.** Rate limits, bot filtering, honeypot fields and Cloudflare Turnstile protect forms and public endpoints.
+- **Infrastructure.** The Service runs on managed providers (Vercel and Neon) that maintain their own security certifications, with backups and point-in-time recovery for the database.
+- **Isolation of hosted pages.** QRdx's own analytics and feedback tools don't load on Customer's hosted pages. Third-party pixels load only when Customer adds them, and wait for consent where the law requires.
+- **Vulnerability handling.** Vulnerabilities can be reported under the [Security](/legal/security) policy, and fixes are made to the hosted Service and the `main` branch.
+
+Related pages: [Privacy Policy](/legal/privacy-policy), [Subprocessors](/legal/subprocessors), [Cookie Policy](/legal/cookie-policy), [Acceptable Use Policy](/legal/acceptable-use-policy).
+
+---
+
+**Changes:** 1 November 2026. First version, for customers whose hosted pages, forms and analytics process their own visitors' data.

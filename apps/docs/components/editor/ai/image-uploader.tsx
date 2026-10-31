@@ -1,6 +1,6 @@
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
-import { ImagePlus } from "lucide-react";
+import { GalleryAdd as ImagePlus } from "iconsax-reactjs";
 import type { ComponentProps } from "react";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { MAX_IMAGE_FILE_SIZE, MAX_IMAGE_FILES } from "@/lib/constants";
@@ -42,10 +42,10 @@ export function ImageUploader({
       />
       <TooltipWrapper label="Attach image" asChild>
         <Button
-          variant="outline"
+          variant="ghost"
           size="sm"
           className={cn(
-            "flex items-center gap-1.5 shadow-none",
+            "text-muted-foreground hover:text-foreground flex items-center gap-1.5 shadow-none",
             "@max-[350px]/form:w-8",
             className,
           )}

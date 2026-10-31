@@ -1,95 +1,115 @@
-import { Button } from "@repo/design-system/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { Card } from "@repo/design-system/components/ui/card";
+import { cn } from "@repo/design-system/lib/utils";
+import {
+  ArrowRight2,
+  ColorSwatch,
+  Location,
+  MessageText,
+  Personalcard,
+  ScanBarcode,
+  Sms,
+  TickCircle,
+  Wifi,
+} from "iconsax-reactjs";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { HairlineFigure } from "@/components/mockups/hairline";
+import { Suspense } from "react";
 import { McpTerminal } from "@/components/mockups/mcp-terminal";
+import {
+  type CardIcon,
+  IconTile,
+  SectionHeading,
+  textLinkClass,
+} from "@/components/sections/tools/cards";
 import { FaqList } from "@/components/sections/tools/faq-list";
 import { ToolHero } from "@/components/sections/tools/tool-hero";
+import { mcpServerUrl } from "@/lib/mcp-clients";
 import { baseUrl, createMetadata } from "@/lib/metadata";
-import { CopySnippetButton } from "./copy-snippet";
+import {
+  McpConnect,
+  McpConnectView,
+  McpPromptGallery,
+  McpPromptGalleryView,
+} from "./mcp-connect";
 
 export const metadata: Metadata = createMetadata({
-  title: "QR Code MCP Server for Claude, Cursor and VS Code",
+  title: "QR Code MCP Server for Claude, ChatGPT, Cursor and VS Code",
   description:
-    "Connect Claude, Cursor, VS Code or any MCP client to the free QRdx MCP server to generate styled QR codes and Wi-Fi, vCard, email, SMS and location payloads. No account or API key.",
+    "Connect Claude, ChatGPT, Cursor, VS Code or any MCP app to the free QRdx MCP server in one click, then generate styled QR codes and Wi-Fi, vCard, email, SMS and location payloads. No account or API key.",
   path: "/mcp",
 });
 
-const MCP_URL = new URL("/api/mcp", baseUrl).toString();
+const MCP_URL = mcpServerUrl(baseUrl);
+const PAGE_URL = new URL("/mcp", baseUrl).toString();
 
-const json = (value: unknown) => JSON.stringify(value, null, 2);
-
-const clients = [
+const steps: { title: string; body: string }[] = [
   {
-    name: "Claude Code",
-    where: "Run this in your terminal:",
-    code: `claude mcp add --transport http qrdx ${MCP_URL}`,
+    title: "Add the server",
+    body: "One command or a few lines of config in Claude, Cursor, VS Code or any other MCP app. No account or API key.",
   },
   {
-    name: "Cursor",
-    where:
-      "Add the server to ~/.cursor/mcp.json (all projects) or .cursor/mcp.json (one project):",
-    code: json({ mcpServers: { qrdx: { url: MCP_URL } } }),
+    title: "Ask your assistant",
+    body: "In plain words: the link or details to encode, colors and shape. It picks the right QRdx tool.",
   },
   {
-    name: "VS Code",
-    where: "Add the server to .vscode/mcp.json in your workspace:",
-    code: json({ servers: { qrdx: { type: "http", url: MCP_URL } } }),
-  },
-  {
-    name: "Other clients",
-    where: `Clients that support remote (Streamable HTTP) servers only need the URL ${MCP_URL}. For clients that only run local stdio servers, bridge it with mcp-remote:`,
-    code: json({
-      mcpServers: {
-        qrdx: { command: "npx", args: ["-y", "mcp-remote", MCP_URL] },
-      },
-    }),
+    title: "Get a QR code back",
+    body: "A PNG image in the chat, plus SVG, PNG and EPS links ready for Markdown, HTML or print.",
   },
 ];
 
-const tools = [
+const tools: {
+  name: string;
+  title: string;
+  description: string;
+  icon: CardIcon;
+}[] = [
   {
     name: "generate_qr_code",
+    title: "Generate a QR code",
     description:
-      "Renders a QR code. Returns a PNG image and public image API URLs (SVG and PNG) ready for Markdown or HTML, plus the SVG markup on request.",
+      "Renders the code and returns a PNG image plus public SVG, PNG and EPS image URLs ready for Markdown or HTML. Takes the image API options: colors, body, eye and dot shapes, error correction, margin and frame. Set include_svg for the SVG markup.",
+    icon: ScanBarcode,
   },
   {
     name: "list_qr_styles",
+    title: "List styles",
     description:
-      "Lists body patterns, corner eye and eye dot shapes, frame templates, error correction levels, defaults and limits.",
+      "Body patterns, corner eye and eye dot shapes, frame templates, error correction levels, defaults and limits.",
+    icon: ColorSwatch,
   },
   {
     name: "qr_payload_wifi",
+    title: "Wi-Fi network",
     description:
-      "Builds a WIFI: network payload (WPA, WEP or open, optionally hidden) with special characters escaped.",
+      "A WIFI: payload (WPA, WEP or open, optionally hidden) with special characters escaped.",
+    icon: Wifi,
   },
   {
     name: "qr_payload_vcard",
+    title: "Contact card",
     description:
-      "Builds a vCard 3.0 contact (RFC 2426): name, organization, title, phones, email, website, address and note.",
+      "A vCard 3.0 contact: name, organization, title, phones, email, website, address and note.",
+    icon: Personalcard,
   },
   {
     name: "qr_payload_email",
-    description:
-      "Builds a mailto: link (RFC 6068) with optional cc, bcc, subject and body.",
+    title: "Email",
+    description: "A mailto: link with optional cc, bcc, subject and body.",
+    icon: Sms,
   },
   {
     name: "qr_payload_sms",
+    title: "Text message",
     description:
-      "Builds an sms: link (RFC 5724) with an optional message, or the older SMSTO: form.",
+      "An sms: link with an optional message, or the older SMSTO: form.",
+    icon: MessageText,
   },
   {
     name: "qr_payload_geo",
-    description:
-      "Builds a geo: location (RFC 5870) from latitude and longitude.",
+    title: "Map location",
+    description: "A geo: location from latitude and longitude.",
+    icon: Location,
   },
-];
-
-const prompts = [
-  "Make a QR code for https://example.com in our brand blue, #155dfc, with rounded modules.",
-  "Create a Wi-Fi QR code for the network Office Guest with password correct-horse-battery.",
-  "Generate a contact QR code for Ada Lovelace, ada@example.com, and add it to the README.",
 ];
 
 const faqs = [
@@ -101,7 +121,7 @@ const faqs = [
   {
     question: "Which AI tools does it work with?",
     answer:
-      "Any MCP client that supports remote servers over Streamable HTTP, such as Claude Code, Cursor and VS Code. Clients that only run local stdio servers can connect through the mcp-remote bridge.",
+      "Any MCP app that supports remote servers over Streamable HTTP, such as Claude, ChatGPT (in developer mode), Claude Code, Cursor, VS Code, Windsurf, Gemini CLI and Codex. Apps that only run local stdio servers can connect through the mcp-remote bridge.",
   },
   {
     question: "Can it add logos or gradients?",
@@ -134,168 +154,154 @@ export default function McpPage() {
   return (
     <main className="flex flex-col divide-y divide-border min-h-screen w-full">
       <ToolHero
+        pattern="qr"
         crumbs={[
           { name: "Home", path: "/" },
           { name: "MCP server", path: "/mcp" },
         ]}
-        title="QRdx MCP server"
+        title="Make QR codes from your AI assistant"
         intro={[
-          "Generate styled QR codes and Wi-Fi, vCard, email, SMS and geo payloads from Claude, Cursor, VS Code and any other MCP client. Ask in plain language and your assistant gets back a PNG image plus SVG and PNG links you can drop into Markdown or HTML. The server is free, public and needs no API key.",
+          "MCP (Model Context Protocol) is the open standard that lets AI assistants use outside tools. Connect QRdx once, ask for a QR code in plain words, and get the image back in the chat.",
         ]}
       >
-        <div className="flex flex-wrap items-center justify-center gap-2.5">
-          <Button asChild>
-            <Link href="/docs/developers/mcp">
-              Read the setup guide
-              <ArrowRight className="size-4" />
-            </Link>
-          </Button>
-          <Button variant="outline" asChild>
-            <Link href="/docs/developers/image-api">Image API</Link>
-          </Button>
+        <Suspense fallback={<McpConnectView url={MCP_URL} tab="claude" />}>
+          <McpConnect url={MCP_URL} />
+        </Suspense>
+        <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-muted-foreground">
+          <ul className="contents">
+            {["Free", "No account or API key", "Read-only tools"].map(
+              (fact) => (
+                <li key={fact} className="inline-flex items-center gap-1.5">
+                  <TickCircle aria-hidden className="size-3.5" />
+                  {fact}
+                </li>
+              ),
+            )}
+          </ul>
+          <Link
+            href="/docs/developers/mcp"
+            className="inline-flex items-center gap-1 font-medium text-foreground/80 underline-offset-4 transition-colors hover:text-foreground hover:underline"
+          >
+            MCP docs
+            <ArrowRight2 aria-hidden className="size-3.5" />
+          </Link>
         </div>
       </ToolHero>
 
       <section
-        aria-label="Example MCP session"
-        className="w-full px-6 md:px-10 py-10"
+        aria-labelledby="prompts"
+        className="flex w-full flex-col gap-8 px-6 py-12 md:px-10 md:py-16"
       >
-        <div className="grid items-center gap-8 rounded-2xl border border-border bg-muted/40 px-3 py-8 sm:px-8 md:px-12 md:py-12 lg:grid-cols-[minmax(0,1fr)_13rem]">
-          <McpTerminal mcpUrl={MCP_URL} />
-          <HairlineFigure
-            figure="Plug"
-            className="hidden aspect-square w-full lg:block"
-          />
-        </div>
-      </section>
-
-      <section
-        aria-labelledby="install"
-        className="w-full px-6 md:px-10 py-10 flex flex-col gap-6"
-      >
-        <div className="flex flex-col gap-2">
-          <h2
-            id="install"
-            className="text-2xl font-medium tracking-tighter text-secondary-foreground"
-          >
-            Install
-          </h2>
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            The server runs at{" "}
-            <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-xs text-foreground">
-              {MCP_URL}
-            </code>{" "}
-            over the Streamable HTTP transport. Pick your client:
-          </p>
-        </div>
-        <div className="grid gap-4 md:grid-cols-2">
-          {clients.map((client) => (
-            <div
-              key={client.name}
-              className="flex min-w-0 flex-col gap-3 rounded-xl border border-border bg-card p-4"
-            >
-              <div className="flex items-center justify-between gap-2">
-                <h3 className="font-medium text-secondary-foreground">
-                  {client.name}
-                </h3>
-                <CopySnippetButton
-                  text={client.code}
-                  label={`${client.name} config`}
-                />
-              </div>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                {client.where}
-              </p>
-              <pre className="overflow-x-auto rounded-md border border-border bg-muted/50 p-3 font-mono text-xs leading-relaxed">
-                <code>{client.code}</code>
-              </pre>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section
-        aria-labelledby="ask"
-        className="w-full px-6 md:px-10 py-10 flex flex-col gap-4"
-      >
-        <h2
-          id="ask"
-          className="text-2xl font-medium tracking-tighter text-secondary-foreground"
+        <SectionHeading
+          id="prompts"
+          eyebrow="Try it"
+          title="Prompts to start with"
+          description="Each one uses what the QRdx tools really do: colors and shapes, Wi-Fi, contacts, email, SMS and map payloads, and SVG, PNG or EPS links. Open it in your assistant or copy it."
+        />
+        <Suspense
+          fallback={
+            <McpPromptGalleryView
+              url={MCP_URL}
+              pageUrl={PAGE_URL}
+              tab="claude"
+            />
+          }
         >
-          Then just ask
-        </h2>
-        <ul className="grid gap-3 md:grid-cols-3">
-          {prompts.map((prompt) => (
-            <li
-              key={prompt}
-              className="rounded-xl border border-border bg-accent/50 p-4 text-sm text-muted-foreground leading-relaxed"
-            >
-              “{prompt}”
-            </li>
-          ))}
-        </ul>
-        <p className="text-sm text-muted-foreground leading-relaxed">
-          For Wi-Fi, contacts, email, SMS and locations, the assistant first
-          builds the payload with the matching tool, then passes it to{" "}
-          <code className="font-mono text-xs">generate_qr_code</code>.
-        </p>
+          <McpPromptGallery url={MCP_URL} pageUrl={PAGE_URL} />
+        </Suspense>
+      </section>
+
+      <section
+        aria-labelledby="how"
+        className="grid w-full gap-10 px-6 py-12 md:px-10 md:py-16 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:items-center"
+      >
+        <div className="flex min-w-0 flex-col gap-8">
+          <SectionHeading
+            id="how"
+            eyebrow="How it works"
+            title="Three steps, then just ask"
+            description="Your assistant calls the QRdx tools for you. You never touch an API."
+          />
+          <ol className="flex flex-col gap-3">
+            {steps.map((step, index) => (
+              <li key={step.title}>
+                <Card className="flex-row gap-4 p-4">
+                  <span className="grid size-9 shrink-0 place-items-center rounded-full border bg-muted/40 font-mono text-sm text-foreground/80">
+                    {index + 1}
+                  </span>
+                  <div className="flex min-w-0 flex-col gap-1">
+                    <h3 className="font-medium text-foreground">
+                      {step.title}
+                    </h3>
+                    <p className="text-sm leading-relaxed text-muted-foreground text-pretty">
+                      {step.body}
+                    </p>
+                  </div>
+                </Card>
+              </li>
+            ))}
+          </ol>
+        </div>
+        <McpTerminal mcpUrl={MCP_URL} />
       </section>
 
       <section
         aria-labelledby="tools"
-        className="w-full px-6 md:px-10 py-10 flex flex-col gap-4"
+        className="flex w-full flex-col gap-8 px-6 py-12 md:px-10 md:py-16"
       >
-        <h2
+        <SectionHeading
           id="tools"
-          className="text-2xl font-medium tracking-tighter text-secondary-foreground"
-        >
-          Tools
-        </h2>
-        <div className="overflow-x-auto rounded-xl border border-border">
-          <table className="w-full text-sm">
-            <thead className="bg-muted/50 text-left">
-              <tr>
-                <th scope="col" className="px-4 py-3 font-medium">
-                  Tool
-                </th>
-                <th scope="col" className="px-4 py-3 font-medium">
-                  What it does
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {tools.map((tool) => (
-                <tr key={tool.name}>
-                  <td className="px-4 py-3 align-top">
-                    <code className="font-mono text-xs whitespace-nowrap">
+          eyebrow="Tools"
+          title="What your assistant can call"
+          description={
+            <>
+              Seven read-only tools. They render images and format text, and
+              never read or change QRdx account data. Full parameters are in the{" "}
+              <Link href="/docs/developers/mcp" className={textLinkClass}>
+                MCP server docs
+              </Link>
+              .
+            </>
+          }
+        />
+        <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {tools.map((tool, index) => (
+            <li
+              key={tool.name}
+              className={cn(
+                "min-w-0",
+                index === 0 && "sm:col-span-2 lg:col-span-3",
+              )}
+            >
+              <Card
+                className={cn(
+                  "h-full gap-3 p-5",
+                  index === 0 && "lg:flex-row lg:items-start lg:gap-5",
+                )}
+              >
+                <IconTile icon={tool.icon} />
+                <div className="flex min-w-0 flex-col gap-1.5">
+                  <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+                    <h3 className="font-medium text-foreground">
+                      {tool.title}
+                    </h3>
+                    <code className="rounded-full border bg-muted/40 px-2 py-0.5 font-mono text-xs text-muted-foreground">
                       {tool.name}
                     </code>
-                  </td>
-                  <td className="px-4 py-3 text-muted-foreground leading-relaxed">
+                  </div>
+                  <p
+                    className={cn(
+                      "text-sm leading-relaxed text-muted-foreground text-pretty",
+                      index === 0 && "max-w-3xl",
+                    )}
+                  >
                     {tool.description}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <p className="text-sm text-muted-foreground leading-relaxed">
-          <code className="font-mono text-xs">generate_qr_code</code> takes the
-          same options as the{" "}
-          <Link
-            href="/docs/developers/image-api#parameters"
-            className="underline"
-          >
-            image API
-          </Link>
-          : <code className="font-mono text-xs">data</code> (required), size,
-          colors, body, eye and dot patterns, error correction level, margin and
-          frame template. All tools are read-only. Full details are in the{" "}
-          <Link href="/docs/developers/mcp" className="underline">
-            MCP server docs
-          </Link>
-          .
-        </p>
+                  </p>
+                </div>
+              </Card>
+            </li>
+          ))}
+        </ul>
       </section>
 
       <FaqList title="MCP server FAQ" faqs={faqs} />

@@ -45,7 +45,10 @@
       "!packages/design-system/components/ui",
       "!packages/design-system/lib",
       "!packages/design-system/hooks",
-      "!plugins/raycast/raycast-env.d.ts"
+      "!plugins/raycast/raycast-env.d.ts",
+      // Generated screenshots, E2E results and agent worktrees
+      "!.claude/build/shots",
+      "!.claude/worktrees"
     ]
   }
 }

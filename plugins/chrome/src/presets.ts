@@ -193,7 +193,7 @@ export const PRESETS: readonly StylePreset[] = [
     dotColor: "#ec4899",
     bodyPattern: "pacman",
     cornerEyePattern: "pointy",
-    cornerEyeDotPattern: "star",
+    cornerEyeDotPattern: "flower",
   },
 ];
 

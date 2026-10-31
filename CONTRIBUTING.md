@@ -67,14 +67,13 @@ You don't need a database or any environment variables to work on the React libr
    pnpm --filter docs dev
    ```
 
-   Open http://localhost:3000. `pnpm dev` starts every app in the monorepo, including `apps/api` on port 3001.
+   Open http://localhost:3000.
 
 ## Project structure
 
 | Path | What it is |
 | --- | --- |
 | `apps/docs` | The Next.js app behind qrdx.dev: landing pages, the QR editor (`/playground`), docs (`content/docs`), blog, settings, admin and API routes (`app/api`) |
-| `apps/api` | A small Next.js service with a health check and a keep-alive cron |
 | `packages/qrdx` | The React QR code library, published to npm as `qrdx` |
 | `packages/cli` | The command-line tool, published to npm as `@qrdx/cli` |
 | `packages/auth` | Better Auth server and client configuration |
@@ -94,10 +93,10 @@ CI (`.github/workflows/ci.yml`) runs these on every pull request:
 pnpm turbo build --filter=qrdx      # the docs app and CLI use qrdx's build output
 pnpm typecheck                      # all packages with a typecheck script
 pnpm --filter docs exec next typegen && pnpm typecheck:docs
-pnpm --filter @qrdx/cli test
-pnpm --filter api test
 ./apps/docs/node_modules/.bin/biome ci .
 ```
+
+The test suites run before every `git push` instead: the Husky `pre-push` hook runs `pnpm prepush` (engine build, both typechecks, Biome and `pnpm test` across the monorepo). Run it yourself with `pnpm prepush`.
 
 To auto-fix formatting and import order in the files you changed:
 

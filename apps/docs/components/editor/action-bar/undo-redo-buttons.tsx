@@ -1,8 +1,9 @@
 "use client";
 
 import { Button } from "@repo/design-system/components/ui/button";
-import { Icons } from "@/components/icons";
+import { Back } from "iconsax-reactjs";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
+import { soundEvent } from "@/lib/sound/emit";
 import { useQREditorStore } from "@/store/editor-store";
 
 interface UndoRedoButtonsProps extends React.ComponentProps<typeof Button> {}
@@ -22,9 +23,12 @@ export function UndoRedoButtons({
           aria-label="Undo"
           disabled={disabled || !canUndo()}
           {...props}
-          onClick={undo}
+          onClick={() => {
+            undo();
+            soundEvent("back");
+          }}
         >
-          <Icons.Undo className="h-4 w-4" />
+          <Back className="size-4" />
         </Button>
       </TooltipWrapper>
 
@@ -35,9 +39,12 @@ export function UndoRedoButtons({
           aria-label="Redo"
           disabled={disabled || !canRedo()}
           {...props}
-          onClick={redo}
+          onClick={() => {
+            redo();
+            soundEvent("forward");
+          }}
         >
-          <Icons.Redo className="h-4 w-4" />
+          <Back className="size-4 -scale-x-100" />
         </Button>
       </TooltipWrapper>
     </div>

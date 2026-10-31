@@ -80,7 +80,12 @@ export const compare = defineDocs({
         z.object({
           feature: z.string(),
           tooltip: z.string().optional(),
-          qrdx: z.union([z.string(), z.boolean()]),
+          /** `{ npmVersion: qrdx }` shows the version npm installs today */
+          qrdx: z.union([
+            z.string(),
+            z.boolean(),
+            z.object({ npmVersion: z.enum(["qrdx", "@qrdx/cli"]) }),
+          ]),
           competitor: z.union([z.string(), z.boolean()]),
         }),
       ),
@@ -187,7 +192,8 @@ export default defineConfig({
     },
     remarkPlugins: [
       remarkSteps,
-      remarkMath,
+      // "$12 vs $15" in prose is prices, not inline math; use $$…$$ for math.
+      [remarkMath, { singleDollarTextMath: false }],
       remarkAutoTypeTable,
       remarkTypeScriptToJavaScript,
     ],

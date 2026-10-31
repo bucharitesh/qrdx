@@ -11,6 +11,7 @@ import {
   oneLight,
 } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { Icons } from "@/components/icons";
+import { soundEvent } from "@/lib/sound/emit";
 
 type CodeBlockContextType = {
   code: string;
@@ -106,6 +107,7 @@ export const CodeBlockCopyButton = ({
     try {
       await navigator.clipboard.writeText(code);
       setIsCopied(true);
+      soundEvent("copy");
       onCopy?.();
       setTimeout(() => setIsCopied(false), timeout);
     } catch (error) {

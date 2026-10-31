@@ -59,6 +59,8 @@ interface GenerateFlags {
 }
 
 const HEX_COLOR = /^#(?:[0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})$/i;
+/** Largest PNG side: beyond this sharp hits its pixel limit (and RAM). */
+const MAX_PNG_SIZE = 10_000;
 
 /**
  * Parses a color flag value: accepts a hex string or a JSON ColorConfig object.
@@ -119,7 +121,8 @@ function assertHexColor(flag: string, value: string | undefined): void {
 }
 
 function requireValue(flag: string, value: string | undefined): string {
-  if (value === undefined) {
+  // "--level --body circle": the next option is not this option's value.
+  if (value === undefined || /^--?[a-z]/i.test(value)) {
     throw new Error(`${flag} needs a value. Run qrdx --help to see options.`);
   }
   return value;
@@ -181,6 +184,14 @@ function validateFlags(flags: GenerateFlags): void {
       );
     }
   }
+  const isPng =
+    extname(flags.output ?? "").toLowerCase() === ".png" ||
+    flags.format === "png";
+  if (isPng && flags.size !== undefined && flags.size > MAX_PNG_SIZE) {
+    throw new Error(
+      `Invalid --size "${flags.size}". PNG output is at most ${MAX_PNG_SIZE} px; use .svg or .eps for larger prints.`
+    );
+  }
 }
 
 const isCI = process.env.CI === "true";
@@ -222,9 +233,13 @@ function parseFlags(args: string[]): GenerateFlags {
     const arg = args[i] as string;
 
     if (!arg.startsWith("-")) {
-      if (!flags.value) {
-        flags.value = arg;
+      if (flags.value !== undefined) {
+        // An unquoted value with spaces would silently encode only its first word.
+        throw new Error(
+          `Unexpected argument "${arg}". Quote text with spaces: qrdx generate "${flags.value} ${arg}"`
+        );
       }
+      flags.value = arg;
       i++;
       continue;
     }
@@ -234,7 +249,7 @@ function parseFlags(args: string[]): GenerateFlags {
     switch (arg) {
       case "-o":
       case "--output":
-        if (!next) {
+        if (!next || /^--?[a-z]/i.test(next)) {
           throw new Error(`${arg} needs a file path, e.g. ${arg} qr.svg`);
         }
         flags.output = next;
@@ -246,39 +261,39 @@ function parseFlags(args: string[]): GenerateFlags {
         break;
       case "-l":
       case "--level":
-        flags.level = next?.toUpperCase() as ErrorLevel;
+        flags.level = requireValue(arg, next).toUpperCase() as ErrorLevel;
         i += 2;
         break;
       case "--body":
-        flags.body = next as BodyPattern;
+        flags.body = requireValue(arg, next) as BodyPattern;
         i += 2;
         break;
       case "--eye":
-        flags.eye = next as CornerEyePattern;
+        flags.eye = requireValue(arg, next) as CornerEyePattern;
         i += 2;
         break;
       case "--dot":
-        flags.dot = next as CornerEyeDotPattern;
+        flags.dot = requireValue(arg, next) as CornerEyeDotPattern;
         i += 2;
         break;
       case "--fg":
-        flags.fg = next ? parseColorFlag(next) : undefined;
+        flags.fg = parseColorFlag(requireValue(arg, next));
         i += 2;
         break;
       case "--bg":
-        flags.bg = next ? parseColorFlag(next) : undefined;
+        flags.bg = parseColorFlag(requireValue(arg, next));
         i += 2;
         break;
       case "--eye-color":
-        flags.eyeColor = next ? parseColorFlag(next) : undefined;
+        flags.eyeColor = parseColorFlag(requireValue(arg, next));
         i += 2;
         break;
       case "--dot-color":
-        flags.dotColor = next ? parseColorFlag(next) : undefined;
+        flags.dotColor = parseColorFlag(requireValue(arg, next));
         i += 2;
         break;
       case "--logo":
-        flags.logo = next;
+        flags.logo = requireValue(arg, next);
         i += 2;
         break;
       case "--margin":
@@ -294,7 +309,7 @@ function parseFlags(args: string[]): GenerateFlags {
         i++;
         break;
       case "--template":
-        flags.template = next;
+        flags.template = requireValue(arg, next);
         i += 2;
         break;
       case "--frame":

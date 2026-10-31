@@ -118,6 +118,26 @@ const escapeVcard = (value: string) =>
 
 const singleLine = (value: string) => value.replace(/[\r\n]+/g, " ");
 
+/** RFC 6350 §3.2: folds at 75 octets without splitting UTF-8 characters. */
+function foldLine(line: string): string {
+  const parts: string[] = [];
+  let current = "";
+  let bytes = 0;
+  for (const char of line) {
+    const size = utf8Length(char);
+    // Continuation lines start with a space, so they hold 74 octets of content.
+    if (bytes + size > (parts.length === 0 ? 75 : 74)) {
+      parts.push(current);
+      current = "";
+      bytes = 0;
+    }
+    current += char;
+    bytes += size;
+  }
+  parts.push(current);
+  return parts.join("\r\n ");
+}
+
 export function buildVcardPayload(
   input: z.output<typeof vcardPayloadSchema>,
 ): string {
@@ -157,7 +177,7 @@ export function buildVcardPayload(
   }
   if (input.note) lines.push(`NOTE:${escapeVcard(input.note)}`);
   lines.push("END:VCARD");
-  return `${lines.join("\r\n")}\r\n`;
+  return `${lines.map(foldLine).join("\r\n")}\r\n`;
 }
 
 // ── Email (mailto:) ────────────────────────────────────────────────────────

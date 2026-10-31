@@ -1,6 +1,7 @@
+import { Spinner } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
-import { Icons } from "@/components/icons";
+import { Heart } from "iconsax-reactjs";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 
 interface SaveButtonProps extends React.ComponentProps<typeof Button> {
@@ -14,7 +15,7 @@ export function SaveButton({
   ...props
 }: SaveButtonProps) {
   return (
-    <TooltipWrapper label="Save QR theme" kbd="S" asChild>
+    <TooltipWrapper label="Save design" kbd="S" asChild>
       <Button
         variant="ghost"
         size="sm"
@@ -23,9 +24,9 @@ export function SaveButton({
         {...props}
       >
         {isSaving ? (
-          <Icons.Loader className="size-3.5 animate-spin" />
+          <Spinner className="size-4" />
         ) : (
-          <Icons.Heart className="size-3.5" />
+          <Heart className="size-4" />
         )}
         <span className="hidden text-sm md:block sr-only">Save</span>
       </Button>

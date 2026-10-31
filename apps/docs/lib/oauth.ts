@@ -8,14 +8,10 @@ import {
   OAUTH_ACCESS_TOKEN_EXPIRY_SECONDS,
   OAUTH_REFRESH_TOKEN_EXPIRY_SECONDS,
 } from "@/lib/constants";
+import { isAllowedRedirectUri } from "@/lib/oauth-apps/validation";
+import { OAUTH_SCOPES, type OAuthScope } from "@/lib/oauth-scopes";
 
-export const OAUTH_SCOPES = [
-  "themes:read",
-  "profile:read",
-  "codes:read",
-  "codes:write",
-] as const;
-export type OAuthScope = (typeof OAUTH_SCOPES)[number];
+export { OAUTH_SCOPES, type OAuthScope };
 
 export const PKCE_METHODS = ["S256", "plain"] as const;
 // RFC 7636 §4.1/4.2: 43-128 chars from the unreserved set
@@ -54,11 +50,12 @@ export async function verifySecret(
   return bcrypt.compare(secret, hash);
 }
 
+/** Exact match against the registered URIs (see lib/oauth-apps/validation.ts). */
 export function validateRedirectUri(
   uri: string,
   registeredUris: string[],
 ): boolean {
-  return registeredUris.includes(uri);
+  return isAllowedRedirectUri(uri, registeredUris);
 }
 
 export function parseScopes(scopeParam: string): string[] {

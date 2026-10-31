@@ -1,5 +1,6 @@
 "use client";
 
+import { Spinner as Loader2 } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
@@ -13,7 +14,13 @@ import {
 } from "@repo/design-system/components/ui/revola";
 import { Skeleton } from "@repo/design-system/components/ui/skeleton";
 import { cn } from "@repo/design-system/lib/utils";
-import { ArrowLeft, Gem, Link2, Loader2, Lock } from "lucide-react";
+import {
+  ArrowLeft,
+  ExportSquare,
+  Diamonds as Gem,
+  Link2,
+  Lock,
+} from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
 import {
   type FormEvent,
@@ -29,6 +36,7 @@ import {
 import type { PageUsage } from "@/app/dashboard/pages/_lib/landing-pages";
 import { LandingRender } from "@/components/landing/render";
 import { ScaledPreview } from "@/components/landing/scaled-preview";
+import { demoPath } from "@/lib/landing/demo-paths";
 import type { PageTemplate } from "@/lib/landing/templates";
 import { PLAN_NAMES } from "@/lib/pricing";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
@@ -86,7 +94,7 @@ function TypeCard({
       onClick={onClick}
       type="button"
     >
-      <span className="bg-primary/10 text-primary flex size-9 shrink-0 items-center justify-center rounded-md">
+      <span className="flex size-9 shrink-0 items-center justify-center rounded-md border bg-muted/40 text-foreground/80">
         <Icon className="size-4.5" />
       </span>
       <span className="min-w-0 flex-1">
@@ -110,11 +118,17 @@ export function NewCodeDialog({
   open,
   onOpenChange,
   pagesOnly = false,
+  initialType = null,
+  initialVariant = null,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   /** Hide the website link option (the Pages screen) */
   pagesOnly?: boolean;
+  /** Page type to start on (e.g. from the editor's type picker) */
+  initialType?: string | null;
+  /** Template to preselect in `initialType`'s gallery (from a template demo) */
+  initialVariant?: string | null;
 }) {
   const router = useRouter();
   const templates = useTemplates(open);
@@ -133,12 +147,12 @@ export function NewCodeDialog({
 
   useEffect(() => {
     if (open) {
-      setType(null);
-      setVariantId(null);
+      setType(initialType);
+      setVariantId(initialType ? initialVariant : null);
       setTitle("");
       setError(null);
     }
-  }, [open]);
+  }, [open, initialType, initialVariant]);
 
   const atPageLimit =
     usage !== null && usage.limit !== null && usage.used >= usage.limit;
@@ -285,44 +299,58 @@ export function NewCodeDialog({
                   {previews.map(({ variant: item, content }) => {
                     const active = item.id === variant?.id;
                     return (
-                      <button
-                        aria-pressed={active}
-                        className={cn(
-                          "group space-y-1.5 rounded-lg p-1.5 text-left outline-none",
-                          active ? "bg-primary/10" : "hover:bg-muted",
-                          "focus-visible:ring-ring/50 focus-visible:ring-[3px]",
-                        )}
-                        key={item.id}
-                        onClick={() => setVariantId(item.id)}
-                        type="button"
-                      >
-                        <ScaledPreview
+                      <div className="relative" key={item.id}>
+                        <button
+                          aria-pressed={active}
                           className={cn(
-                            "bg-muted aspect-[9/16] rounded-md border",
-                            active && "ring-primary ring-2",
+                            "group w-full space-y-1.5 rounded-lg p-1.5 text-left outline-none",
+                            active
+                              ? "bg-accent ring-1 ring-foreground/15"
+                              : "hover:bg-muted",
+                            "focus-visible:ring-ring/50 focus-visible:ring-[3px]",
                           )}
+                          onClick={() => setVariantId(item.id)}
+                          type="button"
                         >
-                          {content && (
-                            <LandingRender
-                              content={content}
-                              context={{
-                                theme: content.theme,
-                                mode: "preview",
-                                pageId: null,
-                                qrCodeId: null,
-                              }}
-                            />
-                          )}
-                        </ScaledPreview>
-                        <span className="block px-0.5 text-sm font-medium">
-                          {item.name}
-                        </span>
-                        {item.description && (
-                          <span className="text-muted-foreground block px-0.5 text-xs leading-snug">
-                            {item.description}
+                          <ScaledPreview
+                            className={cn(
+                              "bg-muted aspect-[9/16] rounded-md border",
+                              active && "ring-primary ring-2",
+                            )}
+                          >
+                            {content && (
+                              <LandingRender
+                                content={content}
+                                context={{
+                                  theme: content.theme,
+                                  mode: "preview",
+                                  pageId: null,
+                                  qrCodeId: null,
+                                }}
+                              />
+                            )}
+                          </ScaledPreview>
+                          <span className="block px-0.5 text-sm font-medium">
+                            {item.name}
                           </span>
-                        )}
-                      </button>
+                          {item.description && (
+                            <span className="text-muted-foreground block px-0.5 text-xs leading-snug">
+                              {item.description}
+                            </span>
+                          )}
+                        </button>
+                        {/* Outside the card button, so opening it never selects the card. */}
+                        <a
+                          aria-label={`Preview the ${item.name} template in a new tab`}
+                          className="bg-background/90 text-foreground hover:bg-background focus-visible:ring-ring/50 absolute top-3 right-3 inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium shadow-xs backdrop-blur-sm transition-colors outline-none focus-visible:ring-[3px]"
+                          href={demoPath(template.type, item.id)}
+                          rel="noopener"
+                          target="_blank"
+                        >
+                          <ExportSquare aria-hidden className="size-3" />
+                          Preview
+                        </a>
+                      </div>
                     );
                   })}
                 </div>

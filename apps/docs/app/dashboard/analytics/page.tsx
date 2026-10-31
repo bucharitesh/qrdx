@@ -11,10 +11,9 @@ import {
   EmptyContent,
   EmptyDescription,
   EmptyHeader,
-  EmptyMedia,
   EmptyTitle,
 } from "@repo/design-system/components/ui/empty";
-import { ChartNoAxesColumn, Lock } from "lucide-react";
+import { Lock } from "iconsax-reactjs";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHeader } from "@/app/dashboard/_components/page-header";
@@ -29,6 +28,8 @@ import {
   LanguagesCard,
   TimeCard,
 } from "@/app/dashboard/codes/[id]/_components/analytics-extra";
+import { InfoHint } from "@/components/help/info-hint";
+import { HairlineFigure } from "@/components/mockups/hairline";
 import { getPlanForScope, getPlanLimits } from "@/lib/plans";
 import {
   getLanguageBreakdown,
@@ -234,7 +235,11 @@ export default async function AnalyticsPage({
   const header = (
     <PageHeader
       description="Scans across every dynamic code in this workspace."
-      title="Analytics"
+      title={
+        <>
+          Analytics <InfoHint align="start" id="scan-analytics" side="bottom" />
+        </>
+      }
     />
   );
 
@@ -244,9 +249,7 @@ export default async function AnalyticsPage({
         {header}
         <Empty className="border">
           <EmptyHeader>
-            <EmptyMedia variant="icon">
-              <ChartNoAxesColumn />
-            </EmptyMedia>
+            <HairlineFigure className="mx-auto mb-2 h-28 w-40" figure="Plot" />
             <EmptyTitle>No dynamic codes yet</EmptyTitle>
             <EmptyDescription>
               Create a dynamic QR code and its scans show up here, next to every

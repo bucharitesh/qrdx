@@ -2,6 +2,7 @@ import { auth } from "@repo/auth/server";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { getUserSettings } from "@/actions/user-settings";
+import { SoundSetting } from "@/components/sound/sound-setting";
 import { SettingsHeader } from "../components/settings-header";
 import { AppearanceForm } from "./components/appearance-form";
 import { GeneralSettingsForm } from "./components/general-settings-form";
@@ -27,6 +28,7 @@ export default async function GeneralSettingsPage() {
       <AppearanceForm />
 
       <GeneralSettingsForm initialSettings={userSettings} />
+      <SoundSetting />
     </div>
   );
 }

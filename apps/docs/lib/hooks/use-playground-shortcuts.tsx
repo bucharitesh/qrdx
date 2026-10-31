@@ -9,7 +9,9 @@ import { patterns as bodyPatterns } from "@/components/playground/pattern-select
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
 import { useControlsTabFromUrl } from "@/lib/hooks/use-controls-tab-from-url";
 import { useKeyboardShortcut } from "@/lib/hooks/use-keyboard-shortcuts";
+import { shuffleNext } from "@/lib/hooks/use-theme-shuffle";
 import { useUserSettings } from "@/lib/hooks/use-user-settings";
+import { soundEvent } from "@/lib/sound/emit";
 import { useQREditorStore } from "@/store/editor-store";
 import { useThemePresetStore } from "@/store/theme-preset-store";
 
@@ -47,14 +49,12 @@ export function usePlaygroundShortcuts({
     { enabled: shortcutsEnabled },
   );
 
-  // Random theme (T)
+  // Shuffle a new theme from the generator (T)
   useKeyboardShortcut(
     "t",
     () => {
-      const presets = getAllPresets();
-      const presetNames = ["default", ...Object.keys(presets)];
-      const random = Math.floor(Math.random() * presetNames.length);
-      applyThemePreset(presetNames[random]);
+      shuffleNext();
+      soundEvent("shuffle");
     },
     { enabled: shortcutsEnabled },
   );
@@ -78,6 +78,7 @@ export function usePlaygroundShortcuts({
       const prevIndex =
         (currentIndex - 1 + presetNames.length) % presetNames.length;
       applyThemePreset(presetNames[prevIndex]);
+      soundEvent("apply");
     },
     { enabled: shortcutsEnabled },
   );
@@ -91,6 +92,7 @@ export function usePlaygroundShortcuts({
       const currentIndex = presetNames.indexOf(themeState.preset || "default");
       const nextIndex = (currentIndex + 1) % presetNames.length;
       applyThemePreset(presetNames[nextIndex]);
+      soundEvent("apply");
     },
     { enabled: shortcutsEnabled },
   );
@@ -140,6 +142,7 @@ export function usePlaygroundShortcuts({
         const svgContent = await getSVGString(qrProps);
         await navigator.clipboard.writeText(svgContent);
         toast.success("SVG copied to clipboard");
+        soundEvent("copy");
       } catch (error) {
         console.error("Error copying SVG:", error);
         toast.error("Failed to copy SVG");
@@ -182,6 +185,7 @@ export function usePlaygroundShortcuts({
           bodyPattern: bodyPatterns[nextIndex].id,
         },
       });
+      soundEvent("tick");
     },
     { enabled: shortcutsEnabled },
   );
@@ -202,6 +206,7 @@ export function usePlaygroundShortcuts({
           cornerEyePattern: cornerEyePatterns[nextIndex].id,
         },
       });
+      soundEvent("tick");
     },
     { enabled: shortcutsEnabled },
   );
@@ -222,6 +227,7 @@ export function usePlaygroundShortcuts({
           cornerEyeDotPattern: cornerEyeDotPatterns[nextIndex].id,
         },
       });
+      soundEvent("tick");
     },
     { enabled: shortcutsEnabled },
   );
@@ -241,23 +247,19 @@ export function usePlaygroundShortcuts({
           templateId: templates[nextIndex].id,
         },
       });
+      soundEvent("tick");
     },
     { enabled: shortcutsEnabled },
   );
 
-  // Tab switching (1-6)
-  const tabs = ["content", "customisations", "settings", "ai"];
-
-  useKeyboardShortcut("1", () => handleSetTab(tabs[0] as any), {
+  // Tab switching: 1 Content, 2 Design, 3 Generate (AI)
+  useKeyboardShortcut("1", () => handleSetTab("content"), {
     enabled: shortcutsEnabled,
   });
-  useKeyboardShortcut("2", () => handleSetTab(tabs[1] as any), {
+  useKeyboardShortcut("2", () => handleSetTab("customisations"), {
     enabled: shortcutsEnabled,
   });
-  useKeyboardShortcut("3", () => handleSetTab(tabs[2] as any), {
-    enabled: shortcutsEnabled,
-  });
-  useKeyboardShortcut("4", () => handleSetTab(tabs[3] as any), {
+  useKeyboardShortcut("3", () => handleSetTab("ai"), {
     enabled: shortcutsEnabled,
   });
 }

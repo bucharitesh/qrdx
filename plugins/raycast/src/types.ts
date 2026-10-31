@@ -56,21 +56,19 @@ export const CORNER_EYE_PATTERNS: CornerEyePattern[] = [
   "extra-rounded",
   "message",
   "pointy",
-  "curly",
 ];
 
+// Diamond, star and banner centres and curly eyes were retired (they don't
+// scan reliably); qrdx still renders them for saved designs.
 export const CORNER_DOT_PATTERNS: CornerEyeDotPattern[] = [
   "square",
   "rounded",
   "circle",
-  "diamond",
   "message",
   "message-reverse",
   "diya",
   "diya-reverse",
   "rounded-triangle",
-  "star",
-  "banner",
 ];
 
 export const ERROR_LEVELS: { value: ErrorLevel; label: string }[] = [

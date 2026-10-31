@@ -125,8 +125,8 @@ export function BrandOgImage({
 export async function renderSiteOgImage() {
   return new ImageResponse(
     <BrandOgImage
-      title="Free, open-source QR code generator"
-      description="Custom colors, gradients, logos and dot patterns. Download PNG, SVG or JPG."
+      title="Free QR codes, plus dynamic codes that keep working"
+      description="Logos, gradients and patterns. PNG, SVG, PDF or EPS. Editable short links, hosted pages and scan analytics."
     />,
     { ...ogSize, fonts: await loadOgFonts() },
   );

@@ -1,12 +1,29 @@
-import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
-import { ArrowRight, Quote } from "lucide-react";
+import { cn } from "@repo/design-system/lib/utils";
+import { ArrowRight, QuoteDown, Routing2 } from "iconsax-reactjs";
 import Link from "next/link";
+import { SignInLink } from "@/components/auth/sign-in-link";
 import { MockupImage } from "@/components/mockups/mockup-image";
 import { useCaseImages } from "@/components/mockups/visuals";
 import { SectionHeader } from "@/components/sections/section-header";
+import {
+  CardGrid,
+  type CardIcon,
+  cardClass,
+  IconTile,
+  interactiveCardClass,
+  LinkCard,
+  SectionLink,
+  textLinkClass,
+} from "@/components/sections/tools/cards";
 import { FaqList } from "@/components/sections/tools/faq-list";
+import { SpotlightLink } from "@/components/sections/tools/spotlight-link";
 import { ToolHero } from "@/components/sections/tools/tool-hero";
+import {
+  PAGE_TYPE_ICONS,
+  QR_TYPE_ICONS,
+  topicIcon,
+} from "@/components/sections/tools/topic-icons";
 import { getQrType } from "@/lib/qr-types-content";
 import {
   PAGE_TYPES,
@@ -30,6 +47,7 @@ interface RecommendationView {
   why: string;
   href: string;
   linkText: string;
+  icon: CardIcon;
 }
 
 function viewRecommendation(item: Recommendation): RecommendationView | null {
@@ -43,6 +61,7 @@ function viewRecommendation(item: Recommendation): RecommendationView | null {
         why: item.why,
         href: `/qr-code-generator/${type.type}`,
         linkText: `Open the ${type.name} generator`,
+        icon: QR_TYPE_ICONS[type.type],
       };
     }
     case "dynamic":
@@ -52,6 +71,7 @@ function viewRecommendation(item: Recommendation): RecommendationView | null {
         why: item.why,
         href: "/dashboard",
         linkText: "Create a dynamic code",
+        icon: Routing2,
       };
     case "page": {
       const page = PAGE_TYPES[item.page];
@@ -60,8 +80,9 @@ function viewRecommendation(item: Recommendation): RecommendationView | null {
         title: page.name,
         description: page.description,
         why: item.why,
-        href: "/dashboard",
-        linkText: "Build it in the dashboard",
+        href: `/templates#${item.page}`,
+        linkText: "See live templates",
+        icon: PAGE_TYPE_ICONS[item.page],
       };
     }
   }
@@ -101,7 +122,7 @@ export function TopicPage({ topic, collection, other }: TopicPageProps) {
             </Link>
           </Button>
           <Button variant="outline" asChild>
-            <Link href="/dashboard">Create a dynamic code</Link>
+            <SignInLink href="/dashboard">Create a dynamic code</SignInLink>
           </Button>
         </div>
       </ToolHero>
@@ -115,21 +136,22 @@ export function TopicPage({ topic, collection, other }: TopicPageProps) {
             {collection.ideasHeading(topic)}
           </h2>
         </SectionHeader>
-        <div className="grid gap-3 px-6 md:px-10 py-10 sm:grid-cols-2">
-          {topic.useCases.map((useCase) => (
+        <CardGrid count={topic.useCases.length} className="px-6 md:px-10 py-10">
+          {topic.useCases.map((useCase, index) => (
             <div
               key={useCase.title}
-              className="rounded-xl border border-border bg-accent/50 p-5 flex flex-col gap-2"
+              className={cn(cardClass, "flex min-w-0 flex-col gap-2 p-5")}
             >
-              <h3 className="font-medium text-secondary-foreground">
-                {useCase.title}
-              </h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
+              <span className="font-mono text-xs text-muted-foreground">
+                {String(index + 1).padStart(2, "0")}
+              </span>
+              <h3 className="font-medium text-foreground">{useCase.title}</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed text-pretty">
                 {useCase.description}
               </p>
             </div>
           ))}
-        </div>
+        </CardGrid>
       </section>
 
       <section aria-labelledby="types" className="flex flex-col w-full">
@@ -147,34 +169,49 @@ export function TopicPage({ topic, collection, other }: TopicPageProps) {
             cancel.
           </p>
         </SectionHeader>
-        <div className="grid gap-3 px-6 md:px-10 py-10 md:grid-cols-2">
+        <CardGrid
+          count={recommendations.length}
+          max={2}
+          className="px-6 md:px-10 py-10"
+        >
           {recommendations.map((item) => (
-            <div
+            <SpotlightLink
               key={item.title}
-              className="rounded-xl border border-border p-5 flex flex-col gap-3"
+              href={item.href}
+              requireSignIn={item.href.startsWith("/dashboard")}
+              className={cn(
+                cardClass,
+                interactiveCardClass,
+                "flex h-full min-w-0 flex-col gap-3 p-5",
+              )}
             >
-              <Badge variant="outline">{item.badge}</Badge>
-              <h3 className="font-medium text-secondary-foreground">
-                {item.title}
-              </h3>
+              <div className="flex items-start gap-3.5">
+                <IconTile icon={item.icon} />
+                <div className="flex min-w-0 flex-col gap-1.5">
+                  <span className="w-fit rounded-full border px-2 py-0.5 text-xs text-muted-foreground">
+                    {item.badge}
+                  </span>
+                  <h3 className="font-medium text-foreground">{item.title}</h3>
+                </div>
+              </div>
               {item.description && (
-                <p className="text-sm text-secondary-foreground/80 leading-relaxed">
+                <p className="text-sm text-foreground/80 leading-relaxed text-pretty">
                   {item.description}
                 </p>
               )}
-              <p className="text-sm text-muted-foreground leading-relaxed">
+              <p className="text-sm text-muted-foreground leading-relaxed text-pretty">
                 {item.why}
               </p>
-              <Link
-                href={item.href}
-                className="mt-auto text-sm font-medium inline-flex items-center gap-1 hover:underline"
-              >
+              <span className="mt-auto inline-flex items-center gap-1 pt-1 text-sm font-medium text-foreground">
                 {item.linkText}
-                <ArrowRight className="size-3.5" />
-              </Link>
-            </div>
+                <ArrowRight
+                  aria-hidden
+                  className="size-3.5 transition-transform duration-200 group-hover:translate-x-0.5"
+                />
+              </span>
+            </SpotlightLink>
           ))}
-        </div>
+        </CardGrid>
       </section>
 
       <section
@@ -228,11 +265,11 @@ export function TopicPage({ topic, collection, other }: TopicPageProps) {
             <code className="font-mono">{SAMPLE_SHORT_LINK}</code> at error
             correction Q, without the blank margin. Static Wi-Fi, vCard or long
             URL codes hold more data and need to be larger. Check yours with the{" "}
-            <Link href="/tools/print-size" className="underline">
+            <Link href="/tools/print-size" className={textLinkClass}>
               print size calculator
             </Link>{" "}
             and the{" "}
-            <Link href="/tools/scan-checker" className="underline">
+            <Link href="/tools/scan-checker" className={textLinkClass}>
               scan checker
             </Link>
             .
@@ -265,9 +302,9 @@ export function TopicPage({ topic, collection, other }: TopicPageProps) {
             {topic.ctas.map((cta) => (
               <li
                 key={cta}
-                className="flex items-start gap-2 rounded-lg border border-border bg-accent/50 px-3 py-2 text-sm text-secondary-foreground"
+                className="flex items-start gap-2.5 rounded-lg border border-border bg-muted/30 px-3 py-2.5 text-sm text-foreground"
               >
-                <Quote
+                <QuoteDown
                   aria-hidden
                   className="mt-0.5 size-3.5 shrink-0 text-muted-foreground"
                 />
@@ -280,7 +317,15 @@ export function TopicPage({ topic, collection, other }: TopicPageProps) {
 
       <FaqList title={collection.faqTitle(topic)} faqs={topic.faqs} />
 
-      <section className="w-full px-6 md:px-10 py-10 grid gap-10 lg:grid-cols-2">
+      <section
+        className={cn(
+          "w-full px-6 md:px-10 py-12 grid gap-12",
+          related.length > 0 &&
+            group &&
+            siblings.length > 0 &&
+            "xl:grid-cols-2 xl:gap-10",
+        )}
+      >
         {related.length > 0 && (
           <RelatedLinks
             heading={other.hubName}
@@ -289,6 +334,7 @@ export function TopicPage({ topic, collection, other }: TopicPageProps) {
               href: other.path(item.slug),
               title: item.title,
               summary: item.summary,
+              icon: topicIcon(item.slug, other.groupOf(item.slug)?.id),
             }))}
           />
         )}
@@ -300,6 +346,7 @@ export function TopicPage({ topic, collection, other }: TopicPageProps) {
               href: collection.path(item.slug),
               title: item.title,
               summary: item.summary,
+              icon: topicIcon(item.slug, group.id),
             }))}
           />
         )}
@@ -315,37 +362,25 @@ function RelatedLinks({
 }: {
   heading: string;
   hubHref: string;
-  items: { href: string; title: string; summary: string }[];
+  items: { href: string; title: string; summary: string; icon: CardIcon }[];
 }) {
   return (
-    <div className="flex flex-col gap-4 min-w-0">
+    <div className="flex min-w-0 flex-col gap-5">
       <div className="flex flex-wrap items-end justify-between gap-2">
-        <h2 className="text-xl font-medium tracking-tighter">{heading}</h2>
-        <Link
-          href={hubHref}
-          className="text-sm text-muted-foreground hover:text-foreground inline-flex items-center gap-1"
-        >
-          See all
-          <ArrowRight className="size-3.5" />
-        </Link>
+        <h2 className="text-xl font-semibold tracking-tight">{heading}</h2>
+        <SectionLink href={hubHref}>See all</SectionLink>
       </div>
-      <div className="grid gap-3 sm:grid-cols-2">
+      <CardGrid count={items.length} max={2}>
         {items.map((item) => (
-          <Link
+          <LinkCard
             key={item.href}
             href={item.href}
-            className="group rounded-xl border border-border bg-accent/50 hover:bg-accent transition-colors p-4 flex flex-col gap-1"
-          >
-            <span className="flex items-center gap-2 font-medium text-secondary-foreground">
-              {item.title}
-              <ArrowRight className="ml-auto size-4 shrink-0 text-muted-foreground group-hover:translate-x-0.5 transition-transform" />
-            </span>
-            <span className="text-sm text-muted-foreground">
-              {item.summary}
-            </span>
-          </Link>
+            icon={item.icon}
+            title={item.title}
+            description={item.summary}
+          />
         ))}
-      </div>
+      </CardGrid>
     </div>
   );
 }

@@ -24,7 +24,10 @@ export class OAuthHandler {
       "response_type",
       this.config.oauth.responseType || "code"
     );
-    url.searchParams.append("scope", this.config.oauth.scopes.join(" "));
+    // Some providers (Bitly, Notion) have no scopes and reject an empty one
+    if (this.config.oauth.scopes.length > 0) {
+      url.searchParams.append("scope", this.config.oauth.scopes.join(" "));
+    }
 
     // Add PKCE if supported
     if (this.config.oauth.pkce) {
@@ -71,15 +74,7 @@ export class OAuthHandler {
       body.code_verifier = codeVerifier;
     }
 
-    // Use form-encoded format (most OAuth providers expect this)
-    const response = await fetch(this.config.oauth.tokenUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        Accept: "application/json",
-      },
-      body: new URLSearchParams(body).toString(),
-    });
+    const response = await this.postTokenRequest(body);
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
@@ -110,15 +105,7 @@ export class OAuthHandler {
       refresh_token: refreshToken,
     };
 
-    // Use form-encoded format (most OAuth providers expect this)
-    const response = await fetch(this.config.oauth.tokenUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        Accept: "application/json",
-      },
-      body: new URLSearchParams(body).toString(),
-    });
+    const response = await this.postTokenRequest(body);
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
@@ -128,6 +115,46 @@ export class OAuthHandler {
     }
 
     return (await response.json()) as TokenResponse;
+  }
+
+  /**
+   * POST to the token endpoint. Defaults to a form body with the client
+   * credentials in it; `tokenAuth: "basic"` moves them to an Authorization
+   * header and `tokenFormat: "json"` sends JSON (Notion).
+   */
+  private postTokenRequest(body: Record<string, string>): Promise<Response> {
+    const oauth = this.config.oauth;
+    if (!oauth?.tokenUrl) {
+      throw new Error(`OAuth not supported for ${this.config.slug}`);
+    }
+
+    const headers: Record<string, string> = { Accept: "application/json" };
+    let payload = body;
+
+    if (oauth.tokenAuth === "basic") {
+      headers.Authorization = `Basic ${Buffer.from(
+        `${this.config.clientId}:${this.config.clientSecret}`
+      ).toString("base64")}`;
+      const {
+        client_id: _clientId,
+        client_secret: _clientSecret,
+        ...rest
+      } = body;
+      payload = rest;
+    }
+
+    const json = oauth.tokenFormat === "json";
+    headers["Content-Type"] = json
+      ? "application/json"
+      : "application/x-www-form-urlencoded";
+
+    return fetch(oauth.tokenUrl, {
+      method: "POST",
+      headers,
+      body: json
+        ? JSON.stringify(payload)
+        : new URLSearchParams(payload).toString(),
+    });
   }
 
   /**

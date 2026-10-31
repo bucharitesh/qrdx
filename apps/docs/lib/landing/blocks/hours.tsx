@@ -1,5 +1,5 @@
 import { cn } from "@repo/design-system/lib/utils";
-import { Clock } from "lucide-react";
+import { Clock } from "iconsax-reactjs";
 import { z } from "zod";
 import { lineText, mutedTextClass } from "@/components/landing/block-kit";
 import { OpenNowBadge } from "@/components/landing/open-now-badge";

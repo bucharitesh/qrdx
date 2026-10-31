@@ -1,5 +1,6 @@
-import { Check } from "lucide-react";
-import { SectionHeader } from "@/components/sections/section-header";
+import { Tick } from "@repo/design-system/components/icons";
+import { Card } from "@repo/design-system/components/ui/card";
+import { cn } from "@repo/design-system/lib/utils";
 
 export interface FeatureHighlight {
   title: string;
@@ -16,39 +17,45 @@ export function CompareFeatures({
   highlights,
 }: CompareFeaturesProps) {
   return (
-    <section className="flex flex-col items-center justify-center w-full">
-      <SectionHeader>
-        <h2 className="text-3xl md:text-4xl font-medium tracking-tighter text-center text-balance">
+    <section className="w-full px-6 py-14 md:py-16">
+      <div className="mx-auto flex max-w-2xl flex-col items-center gap-2 text-center">
+        <h2 className="text-2xl font-semibold tracking-tight text-balance md:text-3xl">
           Why choose QRdx over {competitor}?
         </h2>
-        <p className="text-muted-foreground text-center text-balance font-medium">
+        <p className="text-pretty text-muted-foreground">
           The areas where QRdx is the stronger pick. The guide below also covers
           where {competitor} is the better choice.
         </p>
-      </SectionHeader>
+      </div>
 
-      <div className="w-full max-w-4xl mx-auto px-6 py-10">
-        <div className="grid md:grid-cols-2 gap-4">
-          {highlights.map((highlight) => (
-            <div
-              key={highlight.title}
-              className="rounded-xl border border-border bg-card/30 p-6 flex flex-col gap-3 hover:bg-muted/30 transition-colors"
-            >
-              <div className="flex items-center gap-3">
-                <div className="size-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0">
-                  <Check className="size-4 text-primary" strokeWidth={2.5} />
-                </div>
-                <h3 className="text-base font-semibold text-secondary-foreground tracking-tight">
+      <ul
+        className={cn(
+          "mx-auto mt-10 grid max-w-4xl gap-4",
+          highlights.length % 2 === 0 && "md:grid-cols-2",
+        )}
+      >
+        {highlights.map((highlight) => (
+          <li key={highlight.title}>
+            <Card className="h-full flex-row items-start gap-4 p-6 shadow-xs">
+              <span className="grid size-9 shrink-0 place-items-center rounded-full border bg-muted/40">
+                <Tick
+                  aria-hidden
+                  className="size-4 text-foreground/80"
+                  strokeWidth={2}
+                />
+              </span>
+              <div className="flex flex-col gap-1.5">
+                <h3 className="font-semibold tracking-tight">
                   {highlight.title}
                 </h3>
+                <p className="text-sm leading-relaxed text-pretty text-muted-foreground">
+                  {highlight.description}
+                </p>
               </div>
-              <p className="text-sm text-muted-foreground leading-relaxed pl-11">
-                {highlight.description}
-              </p>
-            </div>
-          ))}
-        </div>
-      </div>
+            </Card>
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }

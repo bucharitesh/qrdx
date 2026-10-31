@@ -10,6 +10,21 @@ export const BODY_PATTERN = [
   "rounded",
   "small-square",
   "vertical-line",
+  // Added after 0.0.46 (drawn by src/body-patterns.tsx)
+  "horizontal-line",
+  "liquid",
+  "liquid-horizontal",
+  "liquid-vertical",
+  "classy",
+  "classy-rounded",
+  "leaf",
+  "plus",
+  "hexagon",
+  "star",
+  "heart",
+  "random-dots",
+  "mosaic",
+  "octagon",
 ] as const;
 
 // Zod schema

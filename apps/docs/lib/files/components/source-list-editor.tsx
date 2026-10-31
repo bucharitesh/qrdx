@@ -4,11 +4,12 @@ import { Button } from "@repo/design-system/components/ui/button";
 import {
   ArrowDown,
   ArrowUp,
-  File as FileIcon,
+  Document as FileIcon,
   Link2,
-  Trash2,
-} from "lucide-react";
+  Trash as Trash2,
+} from "iconsax-reactjs";
 import type { ReactNode } from "react";
+import { CloudFileButton } from "@/components/connected-accounts/cloud-file-button";
 import { type FileSource, sourceName } from "../source";
 import { FILE_KIND_LABELS, type FileKind, type FileView } from "../types";
 import { FileKindIcon } from "./file-kind-icon";
@@ -180,6 +181,9 @@ export function SourceListEditor<T extends SourceItem>({
               {STORAGE_OFF_MESSAGE} Add files by link instead.
             </p>
           )}
+          <CloudFileButton
+            onPick={(url) => add([createItem({ type: "url", url })])}
+          />
           <LinkInput
             buttonLabel="Add link"
             onSubmit={(url) => add([createItem({ type: "url", url })])}

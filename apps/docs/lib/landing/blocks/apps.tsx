@@ -1,5 +1,5 @@
 import { cn } from "@repo/design-system/lib/utils";
-import { Smartphone } from "lucide-react";
+import { Mobile as Smartphone } from "iconsax-reactjs";
 import { z } from "zod";
 import {
   imageSchema,

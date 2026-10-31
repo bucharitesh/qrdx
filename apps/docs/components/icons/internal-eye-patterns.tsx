@@ -1,12 +1,16 @@
 /** biome-ignore-all lint/a11y/noSvgWithoutTitle: false positive */
 
 import type { CornerEyeDotPattern } from "qrdx/types";
+import { EyeDotPatternSwatch } from "./pattern-swatch";
 
 type InternalEyePatternProps = React.HTMLAttributes<SVGElement>;
 
-export const Patterns: Record<
-  CornerEyeDotPattern,
-  (props: InternalEyePatternProps) => React.ReactNode
+// Hand-drawn icons; patterns without one use a live swatch of the renderer.
+export const Patterns: Partial<
+  Record<
+    CornerEyeDotPattern,
+    (props: InternalEyePatternProps) => React.ReactNode
+  >
 > = {
   square: (props: InternalEyePatternProps) => (
     <svg
@@ -174,5 +178,9 @@ export const EyeDotPatterns: React.FC<{ pattern: CornerEyeDotPattern }> = ({
   ...props
 }) => {
   const PatternIcon = Patterns[pattern];
-  return <PatternIcon {...props} />;
+  return PatternIcon ? (
+    <PatternIcon {...props} />
+  ) : (
+    <EyeDotPatternSwatch pattern={pattern} />
+  );
 };

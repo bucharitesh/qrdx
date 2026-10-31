@@ -1,8 +1,9 @@
 "use client";
 
-import { ImageIcon, Sparkles } from "lucide-react";
+import { Gallery as ImageIcon } from "iconsax-reactjs";
 import { useEffect, useReducer } from "react";
 import { PillActionButton } from "@/components/editor/ai/pill-action-button";
+import { PromptSwatch } from "@/components/editor/ai/prompt-swatch";
 import { MAX_IMAGE_FILE_SIZE } from "@/lib/constants";
 import { useImageUpload } from "@/lib/hooks/use-image-upload";
 import { imageUploadReducer } from "@/lib/hooks/use-image-upload-reducer";
@@ -81,13 +82,13 @@ export function SuggestedPillActions({
         <ImageIcon /> From an Image
       </PillActionButton>
 
-      {Object.entries(PROMPTS).map(([key, { label, prompt }]) => (
+      {Object.entries(PROMPTS).map(([key, { label, prompt, swatch }]) => (
         <PillActionButton
           key={key}
           onClick={() => handleSetPrompt(prompt)}
           disabled={isGeneratingTheme}
         >
-          <Sparkles /> {label}
+          <PromptSwatch swatch={swatch} /> {label}
         </PillActionButton>
       ))}
     </>

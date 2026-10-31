@@ -1,13 +1,14 @@
 /** biome-ignore-all lint/style/noMagicNumbers: print measurements */
-import type { jsPDF as JsPDF } from "jspdf";
+import type { jsPDF as JsPDF, ShadingPattern } from "jspdf";
 import type { QRProps } from "../types";
 import qrcodegen from "./codegen";
-import { DEFAULT_LEVEL, DEFAULT_MARGIN, ERROR_LEVEL_MAP } from "./constants";
+import { DEFAULT_MARGIN, ERROR_LEVEL_MAP } from "./constants";
 import { downloadFile } from "./download";
 import { getFrameLayout, isFrameActive } from "./frame";
+import { resolveErrorLevel } from "./utils";
 import { type RGBAColor, rgbToCmyk } from "./utils/parse-color";
 import {
-  getPrintBleedColor,
+  getPrintBleedFill,
   PRINT_RENDER_SIZE,
   renderPrintSVG,
 } from "./utils/print-shared";
@@ -20,6 +21,14 @@ import {
   type Segment,
   type SvgNode,
 } from "./utils/svg-geometry";
+import {
+  collectGradients,
+  formatMatrix,
+  invertMatrix,
+  type PlacedGradient,
+  type SvgGradient,
+  shadingDictionary,
+} from "./utils/svg-gradient";
 import {
   collectGradientColors,
   collectImageHrefs,
@@ -86,7 +95,7 @@ function toMillimetres(value: number, unit: PrintUnit = "mm"): number {
 
 /** Modules across the code for these props, margin included. */
 export function getQRModuleCount(props: QRProps): number {
-  const level = props.level ?? DEFAULT_LEVEL;
+  const level = resolveErrorLevel(props);
   const margin = props.margin ?? DEFAULT_MARGIN;
   return (
     qrcodegen.QrCode.encodeText(props.value, ERROR_LEVEL_MAP[level]).size +
@@ -141,21 +150,93 @@ export function getPrintLayout(
 
 // ── SVG → jsPDF ────────────────────────────────────────────────────────────
 
+/** jsPDF internals the shading code uses (left out of jsPDF's typings). */
+interface JsPDFInternals {
+  write(...parts: string[]): void;
+  events: { subscribe(topic: string, callback: () => void): string };
+  scaleFactor: number;
+  pageSize: { getHeight(): number };
+}
+
+/**
+ * Smooth shadings in the page's /Shading resources, painted with `sh`.
+ * jsPDF writes that dictionary only while it holds a pattern of its own, and
+ * lets plugins add entries on "putShadingPatternDict". A placeholder pattern
+ * (neither a ShadingPattern nor a TilingPattern, so jsPDF writes no object
+ * for it) makes it write the dictionary; the entries are ours.
+ */
+class PdfShadings {
+  private readonly pdf: JsPDF;
+  private readonly internals: JsPDFInternals;
+  /** Shading dictionary → resource name */
+  private readonly names = new Map<string, string>();
+
+  private constructor(pdf: JsPDF, internals: JsPDFInternals) {
+    this.pdf = pdf;
+    this.internals = internals;
+  }
+
+  /** Null when this jsPDF build offers no way to add shading resources. */
+  static attach(pdf: JsPDF): PdfShadings | null {
+    const internals = pdf.internal as unknown as Partial<JsPDFInternals>;
+    if (
+      typeof pdf.advancedAPI !== "function" ||
+      typeof pdf.addShadingPattern !== "function" ||
+      typeof internals.write !== "function" ||
+      typeof internals.events?.subscribe !== "function"
+    ) {
+      return null;
+    }
+    return new PdfShadings(pdf, internals as JsPDFInternals);
+  }
+
+  /** Resource name of a shading dictionary, added on first use. */
+  name(dictionary: string): string {
+    let name = this.names.get(dictionary);
+    if (!name) {
+      if (this.names.size === 0) {
+        this.install();
+      }
+      name = `Sh${this.names.size}`;
+      this.names.set(dictionary, name);
+    }
+    return name;
+  }
+
+  private install() {
+    // Patterns need jsPDF's "advanced" mode, which wraps this in "q … cm Q".
+    this.pdf.advancedAPI((doc) => {
+      doc.addShadingPattern("qrdx-shadings", {} as ShadingPattern);
+    });
+    this.internals.events.subscribe("putShadingPatternDict", () => {
+      for (const [dictionary, name] of this.names) {
+        this.internals.write(`/${name} ${dictionary}`);
+      }
+    });
+  }
+}
+
 class PdfPainter extends SvgPainter {
   private readonly pdf: JsPDF;
   private readonly cmyk: boolean;
   private readonly images: Map<string, string>;
+  private readonly shadingResources: PdfShadings | null;
 
   constructor(
     pdf: JsPDF,
     cmyk: boolean,
     gradients: Map<string, string>,
+    shadings: {
+      gradients: Map<string, SvgGradient>;
+      resources: PdfShadings;
+    } | null,
     images: Map<string, string>
   ) {
-    super(gradients);
+    super(gradients, shadings?.gradients ?? null);
     this.pdf = pdf;
     this.cmyk = cmyk;
     this.images = images;
+    this.shadingResources = shadings?.resources ?? null;
   }
 
   setColor(kind: "fill" | "draw" | "text", color: RGBAColor) {
@@ -207,6 +288,31 @@ class PdfPainter extends SvgPainter {
     }
   }
 
+  /**
+   * Fills the shape with a gradient: `q <path> W n <matrix> cm /ShN sh Q`,
+   * i.e. clip to its exact outline, then shade in gradient space.
+   */
+  shade(segments: Segment[], state: PaintState, gradient: PlacedGradient) {
+    const internals = this.pdf.internal as unknown as JsPDFInternals;
+    const k = internals.scaleFactor;
+    // jsPDF takes millimetres from the top-left corner; the content stream
+    // is in points from the bottom-left.
+    const toPage: Matrix = [k, 0, 0, -k, 0, internals.pageSize.getHeight() * k];
+    const matrix = multiply(toPage, multiply(state.matrix, gradient.matrix));
+    if (!(this.shadingResources && invertMatrix(matrix))) {
+      return;
+    }
+    const name = this.shadingResources.name(
+      shadingDictionary(gradient, this.cmyk ? "cmyk" : "rgb")
+    );
+    this.pdf.saveGraphicsState();
+    this.tracePath(segments, state.matrix);
+    this.pdf.clip(state.fillRule === "evenodd" ? "evenodd" : undefined);
+    this.pdf.discardPath();
+    internals.write(`${formatMatrix(matrix)} cm /${name} sh`);
+    this.pdf.restoreGraphicsState();
+  }
+
   paint(segments: Segment[], node: SvgNode, state: PaintState) {
     if (segments.length === 0) {
       return;
@@ -218,7 +324,14 @@ class PdfPainter extends SvgPainter {
     if (opacity === 0) {
       return;
     }
-    const fill = fillOpacity === 0 ? null : this.resolveColor(state.fill);
+    const paint =
+      fillOpacity === 0
+        ? null
+        : this.resolveFill(state.fill, segments, state.viewport);
+    if (paint && "gradient" in paint) {
+      this.shade(segments, state, paint.gradient);
+    }
+    const fill = paint && "color" in paint ? paint.color : null;
     const stroke =
       state.strokeWidth > 0 ? this.resolveColor(state.stroke) : null;
     if (!(fill || stroke)) {
@@ -280,6 +393,24 @@ class PdfPainter extends SvgPainter {
       }
     }
     this.setColor("text", color);
+    // Rotated text (letters set on a curve): jsPDF turns counter-clockwise,
+    // SVG clockwise. Anchor along the rotated baseline ourselves.
+    const angle = Math.atan2(state.matrix[1], state.matrix[0]);
+    if (Math.abs(angle) > 0.0002) {
+      const shift =
+        state.textAnchor === "middle"
+          ? this.pdf.getTextWidth(content) / 2
+          : state.textAnchor === "end"
+            ? this.pdf.getTextWidth(content)
+            : 0;
+      this.pdf.text(
+        content,
+        x - shift * Math.cos(angle),
+        y - shift * Math.sin(angle),
+        { angle: (-angle * 180) / Math.PI, baseline: "alphabetic" }
+      );
+      return;
+    }
     const align =
       state.textAnchor === "middle"
         ? "center"
@@ -353,8 +484,10 @@ function drawCropMarks(pdf: JsPDF, painter: PdfPainter, layout: PrintLayout) {
  * Renders a print-ready vector PDF: modules, eyes and frame are vector paths
  * (logos stay raster images) at the exact physical size, with optional bleed
  * and crop marks. In "cmyk" mode colors are converted with `rgbToCmyk`.
- * Gradients are flattened to their first color stop. Frame text uses
- * Helvetica Bold, so characters outside Latin-1 may not render.
+ * Linear and radial gradient fills are native PDF shadings clipped to each
+ * shape (in "cmyk" mode they blend between the converted stops); gradient
+ * strokes and text use their first color. Frame text uses Helvetica Bold, so
+ * characters outside Latin-1 may not render.
  *
  * Returns a `data:application/pdf` URL. Needs the optional `jspdf` package.
  */
@@ -415,50 +548,58 @@ async function createPrintPDF(
   });
   pdf.setProperties({ title: "QR code", creator: "qrdx" });
 
+  const gradients = collectGradients(root);
+  const resources = gradients.size > 0 ? PdfShadings.attach(pdf) : null;
   const painter = new PdfPainter(
     pdf,
     options.colorMode === "cmyk",
     collectGradientColors(root, new Map()),
+    resources ? { gradients, resources } : null,
     images
   );
-
-  // Extend the edge color into the bleed so trimming leaves no white sliver.
-  const bleedColor =
-    layout.bleed > 0
-      ? painter.resolveColor(getPrintBleedColor(props) ?? undefined)
-      : null;
-  if (bleedColor) {
-    painter.setColor("fill", bleedColor);
-    pdf.rect(
-      layout.trimX - layout.bleed,
-      layout.trimY - layout.bleed,
-      layout.trimWidth + 2 * layout.bleed,
-      layout.trimHeight + 2 * layout.bleed,
-      "F"
-    );
-  }
 
   const scale = layout.codeWidth / RENDER_SIZE;
   const rootWidth = length(root.attrs.width, RENDER_SIZE, RENDER_SIZE);
   const rootHeight = length(root.attrs.height, RENDER_SIZE, RENDER_SIZE);
-  painter.walk(
-    root,
-    {
-      matrix: multiply(
-        [1, 0, 0, 1, layout.trimX, layout.trimY],
-        [scale, 0, 0, scale, 0, 0]
-      ),
-      viewport: [rootWidth, rootHeight],
-      fill: "#000000",
-      fillRule: "nonzero",
-      stroke: "none",
-      strokeWidth: 1,
-      fontSize: 16,
-      fontWeight: "normal",
-      textAnchor: "start",
-    },
-    true
-  );
+  const state: PaintState = {
+    matrix: multiply(
+      [1, 0, 0, 1, layout.trimX, layout.trimY],
+      [scale, 0, 0, scale, 0, 0]
+    ),
+    viewport: [rootWidth, rootHeight],
+    fill: "#000000",
+    fillRule: "nonzero",
+    stroke: "none",
+    strokeWidth: 1,
+    fontSize: 16,
+    fontWeight: "normal",
+    textAnchor: "start",
+  };
+
+  // Extend the edge color into the bleed so trimming leaves no white sliver;
+  // a gradient background continues into it.
+  const bleedFill = layout.bleed > 0 ? getPrintBleedFill(props, markup) : null;
+  const bleedBox: [number, number, number, number] = [
+    layout.trimX - layout.bleed,
+    layout.trimY - layout.bleed,
+    layout.trimX + layout.trimWidth + layout.bleed,
+    layout.trimY + layout.trimHeight + layout.bleed,
+  ];
+  if (!(bleedFill && painter.paintBleed(root, state, bleedFill, bleedBox))) {
+    const bleedColor = bleedFill ? painter.resolveColor(bleedFill) : null;
+    if (bleedColor) {
+      painter.setColor("fill", bleedColor);
+      pdf.rect(
+        layout.trimX - layout.bleed,
+        layout.trimY - layout.bleed,
+        layout.trimWidth + 2 * layout.bleed,
+        layout.trimHeight + 2 * layout.bleed,
+        "F"
+      );
+    }
+  }
+
+  painter.walk(root, state, true);
 
   if (options.cropMarks) {
     drawCropMarks(pdf, painter, layout);

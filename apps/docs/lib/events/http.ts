@@ -102,7 +102,9 @@ export async function postJson(
   if (!checked.ok) {
     return { ok: false, status: null, error: checked.message, durationMs: 0 };
   }
-  if (!isOutboundDeliveryAllowed()) {
+  // The guard protects the real network; a transport injected by tests never
+  // leaves the process.
+  if (transport === httpsTransport && !isOutboundDeliveryAllowed()) {
     return {
       ok: false,
       status: null,

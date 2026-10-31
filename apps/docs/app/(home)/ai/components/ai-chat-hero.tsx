@@ -1,7 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { HorizontalScrollArea } from "@/components/horizontal-scroll-area";
+import { AIBotBadge } from "@/components/editor/ai/ai-bot-badge";
+import { AIWorkingGlow } from "@/components/editor/ai/ai-working-glow";
 import { useAIQRGenerationCore } from "@/lib/hooks/use-ai-qr-generation-core";
 import { useChatContext } from "@/lib/hooks/use-chat-context";
 import { useGuards } from "@/lib/hooks/use-gaurds";
@@ -30,7 +31,7 @@ export function AIChatHero() {
     setChatSuggestionsOpen(true);
 
     generateQRCore(promptData);
-    router.push("/editor/theme?tab=ai");
+    router.push("/playground?tab=ai");
   };
 
   usePostLoginAction("AI_GENERATE_FROM_PAGE", ({ promptData }) => {
@@ -39,7 +40,9 @@ export function AIChatHero() {
 
   return (
     <div className="relative isolate flex w-full flex-1">
+      <AIWorkingGlow scope="viewport" />
       <div className="@container relative isolate z-1 mx-auto flex max-w-196 flex-1 flex-col justify-center px-4">
+        <AIBotBadge className="mx-auto mb-5" thinking={isGenerating} />
         <ChatHeading isGeneratingTheme={isGenerating} />
 
         {/* Chat form input and suggestions */}
@@ -52,13 +55,13 @@ export function AIChatHero() {
             />
           </div>
 
-          {/* Quick suggestions */}
-          <HorizontalScrollArea className="mx-auto py-2">
+          {/* Quick suggestions wrap instead of hiding behind the edge */}
+          <div className="flex flex-wrap justify-center gap-2 py-2">
             <SuggestedPillActions
               onThemeGeneration={handleRedirectAndThemeGeneration}
               isGeneratingTheme={isGenerating}
             />
-          </HorizontalScrollArea>
+          </div>
         </div>
       </div>
     </div>

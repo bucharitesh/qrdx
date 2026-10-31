@@ -326,6 +326,23 @@ export function emitFormSubmitted(
     submitted_at: (input.submittedAt ?? new Date()).toISOString(),
   };
   emitEventInBackground("form.submitted", data, scope);
+  // HubSpot / Mailchimp streams (lib/data-connections): sent right away
+  triggerIntegrationSyncs(scope, "responses");
+}
+
+/**
+ * Starts the lib/data-connections streams without loading that module (and
+ * the provider clients it pulls in) on every import of this one.
+ */
+function triggerIntegrationSyncs(
+  scope: { userId: string; organizationId: string | null },
+  stream: "scans" | "responses",
+): void {
+  import("@/lib/data-connections/sync")
+    .then((sync) => sync.triggerIntegrationSyncs(scope, stream))
+    .catch((error: unknown) => {
+      console.error("[events] integration sync failed to start", error);
+    });
 }
 
 // ─── Scans (called by lib/scans.ts recordScan) ───────────────────────────────
@@ -380,6 +397,8 @@ export async function emitScanRecorded(
 ): Promise<void> {
   try {
     const scope = { userId: code.userId, organizationId: code.organizationId };
+    // Google Sheets "keep in sync": batched, at most every 5 min per sheet
+    triggerIntegrationSyncs(scope, "scans");
     const subscribers = await loadSubscribers(scope, { cached: true });
     if (!subscribers) return;
     const summary = scanSummary(scan, code);

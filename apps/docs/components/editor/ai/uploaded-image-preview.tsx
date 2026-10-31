@@ -1,5 +1,6 @@
 "use client";
 
+import { Close, Spinner } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   HoverCard,
@@ -7,7 +8,6 @@ import {
   HoverCardTrigger,
 } from "@repo/design-system/components/ui/hover-card";
 import { cn } from "@repo/design-system/lib/utils";
-import { Icons } from "@/components/icons";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 
 interface ImagePreviewProps {
@@ -26,7 +26,7 @@ export function UploadedImagePreview({
   if (isImageLoading) {
     return (
       <div className="bg-muted flex size-14 items-center justify-center rounded-md border">
-        <Icons.Loader className="text-muted-foreground size-4 animate-spin" />
+        <Spinner className="text-muted-foreground size-4 animate-spin" />
       </div>
     );
   }
@@ -57,7 +57,7 @@ export function UploadedImagePreview({
               )}
               onClick={handleImageRemove}
             >
-              <Icons.X className="size-3!" />
+              <Close className="size-3!" />
             </Button>
           </TooltipWrapper>
         </div>

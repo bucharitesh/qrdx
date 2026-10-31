@@ -24,6 +24,21 @@ export interface IntegrationDefinition {
   configurable: boolean;
   developedBy?: string;
   website?: string;
+  /** Connect by pasting an API key or personal token (alone or next to OAuth). */
+  apiKey?: IntegrationApiKeyConfig;
+}
+
+/**
+ * How a user connects with an API key or personal token.
+ */
+export interface IntegrationApiKeyConfig {
+  /** Field label, e.g. "API key" or "Generic access token". */
+  label: string;
+  placeholder?: string;
+  /** Where in the provider's app the user creates the key. */
+  helpUrl: string;
+  /** One sentence on where to find it. */
+  helpText: string;
 }
 
 /**

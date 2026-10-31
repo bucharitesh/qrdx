@@ -1,9 +1,12 @@
 /** biome-ignore-all lint/suspicious/noArrayIndexKey: false positive */
 
+import {
+  Tick as Check,
+  Close as X,
+} from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import type { JSONContent } from "@tiptap/react";
-import { Check, X } from "lucide-react";
 import { useMemo, useReducer, useState } from "react";
 import { HorizontalScrollArea } from "@/components/horizontal-scroll-area";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";

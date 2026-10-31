@@ -1,9 +1,10 @@
 "use client";
 
 import { toast } from "@repo/design-system";
+import { Tick as Check } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
-import { Check, Copy } from "lucide-react";
+import { Copy } from "iconsax-reactjs";
 import { type ReactNode, useState } from "react";
 
 export function CopyButton({

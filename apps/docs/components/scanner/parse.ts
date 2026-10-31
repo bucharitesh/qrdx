@@ -310,6 +310,26 @@ function unescapeText(value: string): string {
   );
 }
 
+/** Components of a structured value (N, ADR, ORG): split on unescaped `;`. */
+function components(value: string): string[] {
+  const parts: string[] = [];
+  let current = "";
+  for (let i = 0; i < value.length; i++) {
+    const char = value[i] as string;
+    if (char === "\\" && i + 1 < value.length) {
+      current += char + value[i + 1];
+      i++;
+    } else if (char === ";") {
+      parts.push(current);
+      current = "";
+    } else {
+      current += char;
+    }
+  }
+  parts.push(current);
+  return parts.map((part) => unescapeText(part).trim());
+}
+
 function parseVcard(value: string): ParsedScan | null {
   const lines = contentLines(value);
   const first = (name: string) => lines.find((line) => line.name === name);
@@ -319,10 +339,8 @@ function parseVcard(value: string): ParsedScan | null {
       .map((line) => unescapeText(line.value).trim())
       .filter(Boolean);
 
-  const structuredName = first("N")
-    ?.value.split(";")
-    .map(unescapeText)
-    .map((part) => part.trim());
+  const nameLine = first("N");
+  const structuredName = nameLine ? components(nameLine.value) : undefined;
   const name =
     unescapeText(first("FN")?.value ?? "").trim() ||
     [
@@ -333,19 +351,17 @@ function parseVcard(value: string): ParsedScan | null {
     ]
       .filter(Boolean)
       .join(" ");
-  const address = first("ADR")
-    ?.value.split(";")
-    .map(unescapeText)
-    .map((part) => part.trim())
-    .filter(Boolean)
-    .join(", ");
+  const addressLine = first("ADR");
+  const address = addressLine
+    ? components(addressLine.value).filter(Boolean).join(", ")
+    : undefined;
 
   const contact: Contact = {
     name: name || "Unnamed contact",
     organization:
-      unescapeText(first("ORG")?.value ?? "")
-        .replace(/;/g, ", ")
-        .trim() || undefined,
+      components(first("ORG")?.value ?? "")
+        .filter(Boolean)
+        .join(", ") || undefined,
     title: unescapeText(first("TITLE")?.value ?? "").trim() || undefined,
     phones: all("TEL").map((tel) => tel.replace(/^tel:/i, "")),
     emails: all("EMAIL"),

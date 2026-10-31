@@ -1,6 +1,7 @@
 "use client";
 
 import { toast } from "@repo/design-system";
+import { Star } from "@repo/design-system/components/icons";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -19,24 +20,23 @@ import {
   DropdownMenuTrigger,
 } from "@repo/design-system/components/ui/dropdown-menu";
 import {
-  Archive,
-  ArchiveRestore,
-  ChartNoAxesCombined,
+  ArchiveBox as Archive,
+  DirectboxSend as ArchiveRestore,
+  Chart as ChartNoAxesCombined,
   Copy,
-  Download,
-  FolderInput,
-  MoreHorizontal,
-  NotebookPen,
-  Palette,
+  Import as Download,
+  FolderAdd as FolderInput,
+  More as MoreHorizontal,
+  Notepad2 as NotebookPen,
+  ColorSwatch as Palette,
   Pause,
-  Pencil,
+  Edit2 as Pencil,
   Play,
-  RotateCcw,
-  Star,
-  StarOff,
-  Tags,
-  Trash2,
-} from "lucide-react";
+  ArrowRotateLeft as RotateCcw,
+  StarSlash as StarOff,
+  Tag2 as Tags,
+  Trash as Trash2,
+} from "iconsax-reactjs";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";

@@ -1,5 +1,6 @@
 "use client";
 
+import { Tick as Check } from "@repo/design-system/components/icons";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -22,7 +23,7 @@ import {
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { cn } from "@repo/design-system/lib/utils";
-import { Check, Plus } from "lucide-react";
+import { Add as Plus } from "iconsax-reactjs";
 import { type FormEvent, useEffect, useMemo, useState } from "react";
 import {
   createCodeTag,

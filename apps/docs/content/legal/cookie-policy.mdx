@@ -1,0 +1,93 @@
+---
+title: Cookie Policy
+description: Every cookie and browser storage item QRdx uses, what it is for, how long it lasts, and how to change your choices.
+lastUpdated: 2026-11-01
+---
+
+import { CookieSettingsButton } from "@/components/consent/cookie-settings-button";
+
+<Callout title="Summary">
+
+- QRdx uses a few necessary cookies to keep you signed in and secure, and browser storage to remember settings like your theme and editor state.
+- Two optional tools load only if you allow them: **PostHog** for product analytics and **Featurebase** for the feedback widget.
+- We use no advertising cookies.
+- Your choice is stored in your browser only. Change it any time with **Cookie settings** in the footer or the button below.
+
+</Callout>
+
+<CookieSettingsButton className="font-medium text-foreground underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground" />
+
+## How consent works
+
+On your first visit to qrdx.dev we ask which optional categories you allow. Nothing optional loads until you choose, and **Reject all** is as easy as **Accept all**.
+
+| Category | What it does | Tools | Default |
+| --- | --- | --- | --- |
+| **Necessary** | Keeps you signed in, blocks form spam and remembers settings such as your theme and your cookie choice | QRdx, Cloudflare Turnstile | Always on |
+| **Functionality** | Shows the feedback and support widget | Featurebase | Off until you allow it |
+| **Analytics** | Measures which pages and features get used, so we know what to improve | PostHog | Off until you allow it |
+
+- Your choice is saved in your browser in a first-party `c15t` cookie and localStorage entry for up to 12 months. We don't keep a copy on our servers, so you'll be asked again on a new browser or device.
+- If you turn a category off, the page reloads without that tool, and the PostHog cookies and storage are deleted.
+
+## Cookies
+
+| Cookie | Set by | Purpose | Lifetime | Category |
+| --- | --- | --- | --- | --- |
+| `better-auth.session_token` (named `__Secure-better-auth.session_token` over HTTPS) | QRdx | Keeps you signed in | 7 days, renewed while you use QRdx | Necessary |
+| `better-auth.state` | QRdx | Protects signing in with Google or GitHub against forged requests | 5 minutes | Necessary |
+| `better-auth.last_used_login_method` | QRdx | Remembers whether you last signed in with Google or GitHub | 30 days | Necessary |
+| `<integration>_oauth_state` and `<integration>_code_verifier` | QRdx | Secure the step where you connect an integration such as Dub or Google Drive | 10 minutes | Necessary |
+| `qrdx_currency` | QRdx | Remembers the currency you chose on the pricing page | 1 year | Necessary |
+| `c15t` | QRdx | Remembers your cookie choices | Up to 12 months | Necessary |
+| `ph_<project key>_posthog` | PostHog | Recognises your browser across visits for analytics | 1 year | Analytics |
+| Featurebase cookies | Featurebase | Keep the feedback widget's conversation going | Set by Featurebase | Functionality |
+
+Cloudflare Turnstile runs in a Cloudflare frame on the abuse report form and on hosted-page forms. Cloudflare may use its own storage there to tell people from bots, as described in its [Turnstile privacy policy](https://www.cloudflare.com/turnstile-privacy-policy/).
+
+## Browser storage
+
+These items stay in your browser (localStorage, sessionStorage or IndexedDB). They aren't sent to our servers unless the table says so, and they last until you clear them.
+
+| Item | Purpose |
+| --- | --- |
+| `theme` | Light or dark mode |
+| `editor-storage` | The design and settings in the QR editor, so your work is there when you come back |
+| `preferences-storage` | Your download options and whether chat suggestions are open |
+| `auth-storage` | An action to finish after you sign in, such as saving a code |
+| `qrdx:recent-qr-types` | The QR types you used recently |
+| `qrdx:ai-recent-themes` | AI themes you generated recently |
+| `ai-chat-storage` (IndexedDB) | Your AI theme chat history. It goes to Google only when you send a new message in that chat. |
+| `ai-local-draft-store` (IndexedDB) | An AI prompt you haven't sent yet, with its images |
+| `qrdx:page-draft:<page>` | Unsaved changes to a hosted page you're editing |
+| `qrdx-scanner` (IndexedDB) and `qrdx-scan-history` | The QR scanner's history (up to 500 entries) and whether it's on |
+| `qrdx:mcp-client` | Which MCP client you picked on the MCP page |
+| `qrdx:sound` | Whether interface sounds are muted. Sounds are on by default. |
+| `qrdx:halloween-2026:hidden` | That you closed the seasonal banner |
+| `qrdx:season-override` (sessionStorage) | A seasonal theme preview, for this tab only |
+| `qrdx:default-theme-applied:<workspace>` (sessionStorage) | That your default theme was already applied in this tab |
+| `ph_*` items | PostHog's analytics storage, only if you allow Analytics |
+
+## On codes and hosted pages
+
+QRdx's own banner, analytics and feedback widget never load on the pages your codes open. Visitors there may get these, set on behalf of the code's owner:
+
+| Item | Purpose | Lifetime |
+| --- | --- | --- |
+| `qrdx_unlock_<code>` (cookie) | Remembers that the visitor entered the right password for a protected code | 6 hours |
+| `qrdx_consent:<page>` (localStorage) | The visitor's choice about the owner's tracking pixels | Until cleared |
+| `qrdx:coupon:<page>:<coupon>` (localStorage) | Remembers that a coupon was already redeemed on this device | Until cleared |
+
+Page views and clicks on hosted pages are counted with a cookieless beacon. If the owner adds tracking pixels (Google Analytics, Google Tag Manager, Meta, TikTok or LinkedIn), those set their own cookies. In the EEA, the UK, Switzerland and wherever a visitor's country is unknown, they wait for the visitor's consent; elsewhere they respect Global Privacy Control. Maps and videos the owner embeds are loaded from their providers.
+
+Short links that only redirect set no cookies unless the code is password protected, and the `/m/` Easter-egg links set none and track nothing.
+
+## Managing cookies in your browser
+
+You can also block or delete cookies and site data in your browser settings. If you block necessary cookies, you won't be able to sign in.
+
+Related pages: [Privacy Policy](/legal/privacy-policy), [Subprocessors](/legal/subprocessors), [Data Processing Addendum](/legal/dpa).
+
+---
+
+**Changes:** 1 November 2026. First version, listing every cookie and storage item in the current app.

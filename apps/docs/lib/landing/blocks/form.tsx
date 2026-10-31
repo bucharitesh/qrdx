@@ -1,5 +1,5 @@
 import { cn } from "@repo/design-system/lib/utils";
-import { ClipboardList } from "lucide-react";
+import { ClipboardText as ClipboardList } from "iconsax-reactjs";
 import { z } from "zod";
 import {
   lineText,
@@ -48,6 +48,7 @@ export function FormBlock({ id, props, context }: BlockRenderProps<FormProps>) {
       )}
       <FormClient
         blockId={id}
+        demo={context.demo}
         fields={props.fields}
         live={context.mode === "live"}
         pageId={context.pageId}

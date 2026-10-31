@@ -80,6 +80,6 @@ export const googleDriveIntegration: IntegrationDefinition = {
     "Preview thumbnails",
   ],
   configurable: true,
-  developedBy: "Google",
+  developedBy: "QRdx",
   website: "https://www.google.com/drive/",
 };

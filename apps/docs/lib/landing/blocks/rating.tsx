@@ -1,5 +1,5 @@
+import { Star } from "@repo/design-system/components/icons";
 import { cn } from "@repo/design-system/lib/utils";
-import { Star } from "lucide-react";
 import { z } from "zod";
 import {
   buttonClass,
@@ -92,8 +92,9 @@ export function ReviewLinksBlock({
       <div aria-hidden="true" className="flex justify-center gap-1">
         {[0, 1, 2, 3, 4].map((index) => (
           <Star
-            className="size-5 fill-(--lp-primary) text-(--lp-primary)"
+            className="size-5 text-(--lp-primary)"
             key={index}
+            variant="Bold"
           />
         ))}
       </div>

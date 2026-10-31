@@ -4,39 +4,79 @@ description: Change the shape of the data modules, corner eyes and eye dots.
 icon: Grid3x3
 ---
 
-Change the shape of QR code elements for unique designs.
+Change the shape of QR code elements for unique designs. See every option drawn live (and decoded in your browser) in [Shapes, eyes and frames](/docs/styles).
 
 ## Body Patterns
 
-Control the shape of data dots. There are 9 body patterns: `circle` (default), `circle-large`, `square`, `diamond`, `circle-mixed`, `pacman`, `rounded`, `small-square` and `vertical-line`.
+Control the shape of data dots. There are 23 body patterns:
+
+- Classic: `square`, `small-square`, `horizontal-line`, `vertical-line`, `octagon`
+- Rounded: `circle` (default), `circle-large`, `rounded`, `liquid`, `liquid-horizontal`, `liquid-vertical`, `random-dots`
+- Decorative: `classy`, `classy-rounded`, `leaf`, `diamond`, `hexagon`
+- Playful: `mosaic`, `plus`, `star`, `heart`, `pacman`, `circle-mixed`
+
+`liquid`, `classy` and `classy-rounded` join neighbouring modules into one smooth outline (`liquid-horizontal` and `liquid-vertical` join them in rows or columns only). `random-dots` and `mosaic` vary per module but always draw the same code for the same value. Alignment patterns are always drawn as solid squares, whatever the pattern, so decoders find them reliably.
 
 ```tsx
 import { QRCode } from 'qrdx';
 
 <QRCode value="https://example.com" bodyPattern="circle" size={256} />
-<QRCode value="https://example.com" bodyPattern="diamond" size={256} />
-<QRCode value="https://example.com" bodyPattern="vertical-line" size={256} />
+<QRCode value="https://example.com" bodyPattern="liquid" size={256} />
+<QRCode value="https://example.com" bodyPattern="classy-rounded" size={256} />
+```
+
+### Module scale
+
+`moduleScale` (0.5 to 1, default 1) shrinks each data module around its centre for a lighter, more spaced look; connected patterns get thinner lines instead. Each pattern stops shrinking at the smallest size that still decodes in our tests (for example 0.95 for `circle`, 0.7 for `classy`; see `MODULE_SCALE_FLOOR`), and alignment patterns keep full size.
+
+```tsx
+<QRCode value="https://example.com" bodyPattern="liquid" moduleScale={0.8} />
 ```
 
 ## Corner Eye Patterns
 
-Control the shape of corner markers. There are 9 corner eye patterns (the React component defaults to `gear`; the CLI defaults to `square`): `square`, `rounded`, `gear`, `circle`, `diya`, `extra-rounded`, `message`, `pointy` and `curly`.
+Control the shape of corner markers. There are 17 corner eye patterns (the React component defaults to `gear`; the CLI defaults to `square`): `square`, `rounded`, `extra-rounded`, `squircle`, `cushion`, `bevel`, `octagon`, `leaf`, `leaf-reverse`, `drop`, `petal`, `shield`, `gear`, `circle`, `diya`, `message` and `pointy`.
+
+`leaf`, `leaf-reverse`, `drop` and `petal` turn each of the three eyes to face its corner of the code. `circle` eyes may be missed by some scanner apps; the [scan score](/docs/utilities) warns about them.
 
 ```tsx
 <QRCode value="https://example.com" cornerEyePattern="square" />
-<QRCode value="https://example.com" cornerEyePattern="gear" />
-<QRCode value="https://example.com" cornerEyePattern="extra-rounded" />
+<QRCode value="https://example.com" cornerEyePattern="leaf" />
+<QRCode value="https://example.com" cornerEyePattern="squircle" />
 ```
 
 ## Corner Eye Dot Patterns
 
-Control the dot inside each corner marker. There are 11 corner eye dot patterns (the React component defaults to `circle`; the CLI defaults to `square`): `square`, `rounded`, `circle`, `diamond`, `message`, `message-reverse`, `diya`, `diya-reverse`, `rounded-triangle`, `star` and `banner`.
+Control the dot inside each corner marker. There are 21 corner eye dot patterns (the React component defaults to `circle`; the CLI defaults to `square`): `square`, `rounded`, `extra-rounded`, `circle`, `squircle`, `octagon`, `hexagon`, `dots`, `leaf`, `leaf-reverse`, `drop`, `drop-reverse`, `plus`, `cross-rounded`, `flower`, `heart`, `message`, `message-reverse`, `diya`, `diya-reverse` and `rounded-triangle`.
 
 ```tsx
 <QRCode value="https://example.com" cornerEyeDotPattern="square" />
-<QRCode value="https://example.com" cornerEyeDotPattern="star" />
-<QRCode value="https://example.com" cornerEyeDotPattern="rounded-triangle" />
+<QRCode value="https://example.com" cornerEyeDotPattern="flower" />
+<QRCode value="https://example.com" cornerEyeDotPattern="heart" />
 ```
+
+### Pairs to avoid and retired shapes
+
+`diamond` bodies next to `square` eyes, `pacman` next to `rounded` and `small-square` next to `square` or `rounded` eyes are missed up close; the playground won't combine them, they ship as `WEAK_BODY_EYES`, and `getStylePairRisk(props)` returns the warning the scan score shows.
+
+`curly` eyes and `diamond`, `star` and `banner` centres were retired because they don't scan reliably. Designs saved with them still render, but they are no longer offered or listed (see [Retired shapes](/docs/styles#retired-shapes)).
+
+## Per-eye colors
+
+`eyeColor` and `dotColor` color all three eyes. `eyeColors` overrides them per eye (`topLeft`, `topRight`, `bottomLeft`), each with an `outer` (frame) and `inner` (dot) color or gradient:
+
+```tsx
+<QRCode
+  value="https://example.com"
+  eyeColor="#111827"
+  eyeColors={{
+    topLeft: { outer: "#dc2626", inner: "#1d4ed8" },
+    topRight: { outer: "#16a34a" },
+  }}
+/>
+```
+
+Keep every eye dark against the background: decoders find the code by its three eyes.
 
 ## Combine Patterns
 
@@ -90,8 +130,9 @@ Mix different patterns for unique designs:
 // Eye-catching
 <QRCode
   value="https://example.com"
-  bodyPattern="pacman"
-  cornerEyePattern="circle"
+  bodyPattern="liquid"
+  cornerEyePattern="leaf"
+  cornerEyeDotPattern="leaf"
 />
 
 // Elegant

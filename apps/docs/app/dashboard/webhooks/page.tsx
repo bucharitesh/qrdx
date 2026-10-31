@@ -11,6 +11,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHeader } from "@/app/dashboard/_components/page-header";
 import { requireDashboardScope } from "@/app/dashboard/codes/_lib/qr-codes";
+import { InfoHint } from "@/components/help/info-hint";
 import { HairlineFigure } from "@/components/mockups/hairline";
 import {
   canManageWebhooks,
@@ -41,7 +42,11 @@ export default async function WebhooksPage() {
   const header = (
     <PageHeader
       description="Send scans, new and changed codes, and form responses to your own server, Zapier or Make."
-      title="Webhooks"
+      title={
+        <>
+          Webhooks <InfoHint align="start" id="webhooks" side="bottom" />
+        </>
+      }
     >
       {allowed && (
         <Badge variant="outline">

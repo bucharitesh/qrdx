@@ -13,7 +13,7 @@ import {
 } from "@repo/design-system/components/ui/dialog";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
-import { Plus } from "lucide-react";
+import { Add as Plus } from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { createTeam } from "@/actions/organizations";

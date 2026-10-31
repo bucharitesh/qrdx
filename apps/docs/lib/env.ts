@@ -34,6 +34,35 @@ export const env = createEnv({
     // Integrations - Google Drive
     GOOGLE_DRIVE_REDIRECT_URI: z.url().optional(),
 
+    // Integrations - short links and file pickers (callbacks are built from the
+    // app URL; Rebrandly and Short.io use per-user API keys, no app needed)
+    BITLY_CLIENT_ID: z.string().min(1).optional(),
+    BITLY_CLIENT_SECRET: z.string().min(1).optional(),
+    DROPBOX_CLIENT_ID: z.string().min(1).optional(),
+    DROPBOX_CLIENT_SECRET: z.string().min(1).optional(),
+    MICROSOFT_CLIENT_ID: z.string().min(1).optional(),
+    MICROSOFT_CLIENT_SECRET: z.string().min(1).optional(),
+    BOX_CLIENT_ID: z.string().min(1).optional(),
+    BOX_CLIENT_SECRET: z.string().min(1).optional(),
+    NOTION_CLIENT_ID: z.string().min(1).optional(),
+    NOTION_CLIENT_SECRET: z.string().min(1).optional(),
+
+    // Integrations - content sources and data out (callbacks are built from
+    // the app URL; Google Sheets reuses GOOGLE_CLIENT_ID/SECRET; Stripe,
+    // Cal.com and Shopify use per-user keys, no app needed)
+    CALENDLY_CLIENT_ID: z.string().min(1).optional(),
+    CALENDLY_CLIENT_SECRET: z.string().min(1).optional(),
+    SLACK_CLIENT_ID: z.string().min(1).optional(),
+    SLACK_CLIENT_SECRET: z.string().min(1).optional(),
+    HUBSPOT_CLIENT_ID: z.string().min(1).optional(),
+    HUBSPOT_CLIENT_SECRET: z.string().min(1).optional(),
+    MAILCHIMP_CLIENT_ID: z.string().min(1).optional(),
+    MAILCHIMP_CLIENT_SECRET: z.string().min(1).optional(),
+    // Optional "your channel's videos" / "your playlists" pickers
+    YOUTUBE_API_KEY: z.string().min(1).optional(),
+    SPOTIFY_CLIENT_ID: z.string().min(1).optional(),
+    SPOTIFY_CLIENT_SECRET: z.string().min(1).optional(),
+
     // Integration encryption
     INTEGRATION_ENCRYPTION_KEY: z.string().min(32).optional(),
 
@@ -102,6 +131,27 @@ export const env = createEnv({
     DUB_CLIENT_SECRET: process.env.DUB_CLIENT_SECRET,
     DUB_REDIRECT_URI: process.env.DUB_REDIRECT_URI,
     GOOGLE_DRIVE_REDIRECT_URI: process.env.GOOGLE_DRIVE_REDIRECT_URI,
+    BITLY_CLIENT_ID: process.env.BITLY_CLIENT_ID,
+    BITLY_CLIENT_SECRET: process.env.BITLY_CLIENT_SECRET,
+    DROPBOX_CLIENT_ID: process.env.DROPBOX_CLIENT_ID,
+    DROPBOX_CLIENT_SECRET: process.env.DROPBOX_CLIENT_SECRET,
+    MICROSOFT_CLIENT_ID: process.env.MICROSOFT_CLIENT_ID,
+    MICROSOFT_CLIENT_SECRET: process.env.MICROSOFT_CLIENT_SECRET,
+    BOX_CLIENT_ID: process.env.BOX_CLIENT_ID,
+    BOX_CLIENT_SECRET: process.env.BOX_CLIENT_SECRET,
+    NOTION_CLIENT_ID: process.env.NOTION_CLIENT_ID,
+    NOTION_CLIENT_SECRET: process.env.NOTION_CLIENT_SECRET,
+    CALENDLY_CLIENT_ID: process.env.CALENDLY_CLIENT_ID,
+    CALENDLY_CLIENT_SECRET: process.env.CALENDLY_CLIENT_SECRET,
+    SLACK_CLIENT_ID: process.env.SLACK_CLIENT_ID,
+    SLACK_CLIENT_SECRET: process.env.SLACK_CLIENT_SECRET,
+    HUBSPOT_CLIENT_ID: process.env.HUBSPOT_CLIENT_ID,
+    HUBSPOT_CLIENT_SECRET: process.env.HUBSPOT_CLIENT_SECRET,
+    MAILCHIMP_CLIENT_ID: process.env.MAILCHIMP_CLIENT_ID,
+    MAILCHIMP_CLIENT_SECRET: process.env.MAILCHIMP_CLIENT_SECRET,
+    YOUTUBE_API_KEY: process.env.YOUTUBE_API_KEY,
+    SPOTIFY_CLIENT_ID: process.env.SPOTIFY_CLIENT_ID,
+    SPOTIFY_CLIENT_SECRET: process.env.SPOTIFY_CLIENT_SECRET,
     INTEGRATION_ENCRYPTION_KEY: process.env.INTEGRATION_ENCRYPTION_KEY,
     SCAN_HASH_SALT: process.env.SCAN_HASH_SALT,
     VERCEL_API_TOKEN: process.env.VERCEL_API_TOKEN,

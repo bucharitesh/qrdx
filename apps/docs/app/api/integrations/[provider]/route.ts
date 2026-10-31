@@ -8,9 +8,16 @@ import { and, eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import {
+  connectLimiter,
+  revokeStoredToken,
+} from "@/lib/connected-accounts/server";
+import { cleanupDataConnection } from "@/lib/data-connections/server";
+import { HttpError } from "@/lib/error-response";
+import {
   createIntegrationAuthUrl,
-  isIntegrationConfigured,
+  isOAuthConfigured,
 } from "@/lib/integration-oauth";
+import { enforceRateLimits } from "@/lib/request-guards";
 
 // Initialize integrations on module load
 initializeIntegrations();
@@ -47,7 +54,7 @@ export async function GET(request: Request, context: RouteContext) {
 
     // If action is "connect", initiate OAuth flow
     if (action === "connect") {
-      if (!isIntegrationConfigured(provider)) {
+      if (!isOAuthConfigured(provider)) {
         return NextResponse.json(
           { error: `${integrationDef.name} is not configured on this server` },
           { status: 503 },
@@ -55,7 +62,27 @@ export async function GET(request: Request, context: RouteContext) {
       }
 
       try {
-        const authUrl = await createIntegrationAuthUrl(provider);
+        await enforceRateLimits([
+          {
+            limiter: connectLimiter,
+            key: `integrations:oauth:${session.user.id}`,
+          },
+        ]);
+      } catch (error) {
+        if (error instanceof HttpError) {
+          return NextResponse.json(
+            { error: error.message },
+            { status: 429, headers: error.headers },
+          );
+        }
+        throw error;
+      }
+
+      try {
+        // Optional same-site path to come back to (validated when stored)
+        const authUrl = await createIntegrationAuthUrl(provider, {
+          returnTo: searchParams.get("returnTo"),
+        });
         return NextResponse.json({ url: authUrl });
       } catch (error) {
         console.error(`Failed to initiate OAuth for ${provider}:`, error);
@@ -117,6 +144,9 @@ export async function DELETE(_request: Request, context: RouteContext) {
       );
     }
 
+    // Revoke at the provider where its API allows it, then delete the row
+    await revokeStoredToken(session.user.id, provider);
+    await cleanupDataConnection(session.user.id, provider);
     await db
       .delete(integration)
       .where(

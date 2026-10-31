@@ -5,7 +5,11 @@ import { downloadFile } from "./download";
 import { getPrintLayout, type PrintColorMode } from "./print";
 import { type RGBAColor, rgbToCmyk } from "./utils/parse-color";
 import { decodePng, deflate } from "./utils/png";
-import { getPrintBleedColor, renderPrintSVG } from "./utils/print-shared";
+import {
+  getPrintBleedColor,
+  getPrintBleedFill,
+  renderPrintSVG,
+} from "./utils/print-shared";
 import {
   applyMatrix,
   type Matrix,
@@ -15,6 +19,14 @@ import {
   type Segment,
   type SvgNode,
 } from "./utils/svg-geometry";
+import {
+  collectGradients,
+  formatMatrix,
+  invertMatrix,
+  type PlacedGradient,
+  type SvgGradient,
+  shadingDictionary,
+} from "./utils/svg-gradient";
 import {
   collectGradientColors,
   collectImageHrefs,
@@ -47,7 +59,10 @@ export interface SVGToEPSOptions {
   colorMode?: PrintColorMode;
   /** Bleed on every side, in points (default 0) */
   bleed?: number;
-  /** CSS color that fills the bleed area (default: none) */
+  /**
+   * CSS color that fills the bleed area, or `url(#id)` of a gradient in the
+   * SVG to continue it as the root's user space places it (default: none)
+   */
   bleedColor?: string | null;
   title?: string;
 }
@@ -274,6 +289,8 @@ function psString(text: string): string {
 
 class EpsPainter extends SvgPainter {
   readonly out: string[] = [];
+  /** Shading dictionary → the name it is defined under in qrdxdict */
+  readonly shadingNames = new Map<string, string>();
   private readonly cmyk: boolean;
   private readonly images: Map<string, EpsImage>;
   usesLevel3 = false;
@@ -281,9 +298,10 @@ class EpsPainter extends SvgPainter {
   constructor(
     cmyk: boolean,
     gradients: Map<string, string>,
+    shadings: Map<string, SvgGradient>,
     images: Map<string, EpsImage>
   ) {
-    super(gradients);
+    super(gradients, shadings);
     this.cmyk = cmyk;
     this.images = images;
   }
@@ -330,6 +348,28 @@ class EpsPainter extends SvgPainter {
     );
   }
 
+  /**
+   * Fills the shape with a gradient: clip to its exact outline, then
+   * `shfill` (LanguageLevel 3) with the gradient space concatenated.
+   */
+  shade(segments: Segment[], state: PaintState, gradient: PlacedGradient) {
+    const matrix = multiply(state.matrix, gradient.matrix);
+    if (!invertMatrix(matrix)) {
+      return;
+    }
+    const dictionary = shadingDictionary(gradient, this.cmyk ? "cmyk" : "rgb");
+    let name = this.shadingNames.get(dictionary);
+    if (!name) {
+      name = `Sh${this.shadingNames.size}`;
+      this.shadingNames.set(dictionary, name);
+    }
+    this.usesLevel3 = true;
+    const clip = state.fillRule === "evenodd" ? "eoclip" : "clip";
+    this.out.push(
+      `gsave ${this.tracePath(segments, state.matrix)} ${clip} n [${formatMatrix(matrix)}] concat ${name} shfill grestore`
+    );
+  }
+
   paint(segments: Segment[], node: SvgNode, state: PaintState) {
     if (segments.length === 0) {
       return;
@@ -342,7 +382,14 @@ class EpsPainter extends SvgPainter {
       return;
     }
     // PostScript has no transparency: partly transparent shapes paint opaque.
-    const fill = fillOpacity === 0 ? null : this.resolveColor(state.fill);
+    const paint =
+      fillOpacity === 0
+        ? null
+        : this.resolveFill(state.fill, segments, state.viewport);
+    if (paint && "gradient" in paint) {
+      this.shade(segments, state, paint.gradient);
+    }
+    const fill = paint && "color" in paint ? paint.color : null;
     const stroke =
       state.strokeWidth > 0 ? this.resolveColor(state.stroke) : null;
     if (!(fill || stroke)) {
@@ -390,6 +437,16 @@ class EpsPainter extends SvgPainter {
         : state.textAnchor === "end"
           ? " dup stringwidth pop neg 0 rmoveto"
           : "";
+    // Rotated text (letters set on a curve): turn the baseline with the
+    // matrix. The matrix already flips y, so its x axis gives the PS angle.
+    const angle =
+      (Math.atan2(state.matrix[1], state.matrix[0]) * 180) / Math.PI;
+    if (Math.abs(angle) > 0.01) {
+      this.out.push(
+        `gsave ${this.color(color)} ${font} findfont ${fontSize} scalefont setfont ${fmt(x)} ${fmt(y)} translate ${fmt(angle)} rotate ${psString(content)}${fit} 0 0 moveto${align} show grestore`
+      );
+      return;
+    }
     this.out.push(
       `gsave ${this.color(color)} ${font} findfont ${fontSize} scalefont setfont ${psString(content)}${fit} ${fmt(x)} ${fmt(y)} moveto${align} show grestore`
     );
@@ -444,9 +501,11 @@ class EpsPainter extends SvgPainter {
 /**
  * Converts SVG markup (as this library renders it) to an Encapsulated
  * PostScript file: vector paths for modules, eyes and frames, Helvetica for
- * frame text (Latin-1 only), gradients flattened to their first color, no
- * transparency. PNG and JPEG logos are embedded; other logo formats are
- * redrawn as PNG in the browser and left out elsewhere.
+ * frame text (Latin-1 only), no transparency. Linear and radial gradient
+ * fills become smooth shadings clipped to each shape (`shfill`, which makes
+ * the file LanguageLevel 3); gradient strokes and text use their first color.
+ * PNG and JPEG logos are embedded; other logo formats are redrawn as PNG in
+ * the browser and left out elsewhere.
  */
 export async function svgToEPS(
   svg: string,
@@ -480,36 +539,43 @@ export async function svgToEPS(
   const painter = new EpsPainter(
     cmyk,
     collectGradientColors(root, new Map()),
+    collectGradients(root),
     images
   );
-
-  // Extend the edge color into the bleed so trimming leaves no white sliver.
-  const bleedColor =
-    bleed > 0 ? painter.resolveColor(options.bleedColor ?? undefined) : null;
-  if (bleedColor) {
-    painter.rect(bleedColor, 0, 0, pageWidth, pageHeight);
-  }
 
   // SVG's y axis points down, PostScript's up.
   const matrix: Matrix = multiply(
     [1, 0, 0, -1, bleed, pageHeight - bleed],
     [scale, 0, 0, scale, 0, 0]
   );
-  painter.walk(
-    root,
-    {
-      matrix,
-      viewport: [rootWidth, rootHeight],
-      fill: "#000000",
-      fillRule: "nonzero",
-      stroke: "none",
-      strokeWidth: 1,
-      fontSize: 16,
-      fontWeight: "normal",
-      textAnchor: "start",
-    },
-    true
-  );
+  const state: PaintState = {
+    matrix,
+    viewport: [rootWidth, rootHeight],
+    fill: "#000000",
+    fillRule: "nonzero",
+    stroke: "none",
+    strokeWidth: 1,
+    fontSize: 16,
+    fontWeight: "normal",
+    textAnchor: "start",
+  };
+
+  // Extend the edge color into the bleed so trimming leaves no white sliver;
+  // a gradient background continues into it.
+  const bleedFill = bleed > 0 ? (options.bleedColor ?? undefined) : undefined;
+  if (
+    !(
+      bleedFill &&
+      painter.paintBleed(root, state, bleedFill, [0, 0, pageWidth, pageHeight])
+    )
+  ) {
+    const bleedColor = bleedFill ? painter.resolveColor(bleedFill) : null;
+    if (bleedColor) {
+      painter.rect(bleedColor, 0, 0, pageWidth, pageHeight);
+    }
+  }
+
+  painter.walk(root, state, true);
 
   const title = (options.title ?? "QR code").replace(/[^\x20-\x7e]/g, "?");
   return [
@@ -525,6 +591,10 @@ export async function svgToEPS(
     PROLOG,
     "%%EndProlog",
     "qrdxdict begin",
+    ...Array.from(
+      painter.shadingNames,
+      ([dictionary, name]) => `/${name} ${dictionary} def`
+    ),
     "gsave",
     ...painter.out,
     "grestore",
@@ -554,7 +624,10 @@ export async function getQRAsEPS(
   return await svgToEPS(markup, {
     width: layout.trimWidth * POINTS_PER_MM,
     bleed: layout.bleed * POINTS_PER_MM,
-    bleedColor: getPrintBleedColor(props),
+    bleedColor:
+      layout.bleed > 0
+        ? getPrintBleedFill(props, markup)
+        : getPrintBleedColor(props),
     colorMode: options.colorMode,
   });
 }

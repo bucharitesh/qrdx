@@ -1,6 +1,7 @@
 "use client";
 
 import { toast } from "@repo/design-system";
+import { Tick } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   ResponsiveDialog,
@@ -9,15 +10,15 @@ import {
   ResponsiveDialogHeader,
   ResponsiveDialogTitle,
 } from "@repo/design-system/components/ui/revola";
-import {
-  ScrollArea,
-  ScrollBar,
-} from "@repo/design-system/components/ui/scroll-area";
 import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock";
+import { Book1, Copy } from "iconsax-reactjs";
+import Link from "next/link";
 import type { ColorConfig } from "qrdx/types";
 import { normalizeColorConfig } from "qrdx/types";
 import { useMemo, useState } from "react";
-import { Icons } from "@/components/icons";
+import { DialogCloseButton } from "@/components/editor/dialog-close-button";
+import { emitSound } from "@/components/editor/sound";
+import { InfoHint } from "@/components/help/info-hint";
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
 import { useQREditorStore } from "@/store/editor-store";
 
@@ -92,7 +93,7 @@ function serializeColorConfig(
 
 export function QRCodeDialog({ open, onOpenChange }: QRCodeDialogProps) {
   const { value, themeState } = useQREditorStore();
-  const [copied, setCopied] = useState(false);
+  const [copied, setCopied] = useState<"code" | "install" | null>(null);
 
   const style = themeState.styles;
 
@@ -179,69 +180,100 @@ ${props.join("\n")}
 }`;
   }, [value, style]);
 
-  const handleCopy = async () => {
+  const copy = async (text: string, what: "code" | "install") => {
     try {
-      await navigator.clipboard.writeText(fullComponentCode);
-      setCopied(true);
-      toast.success("Code copied to clipboard");
-      setTimeout(() => setCopied(false), 2000);
+      await navigator.clipboard.writeText(text);
+      setCopied(what);
+      emitSound("copy");
+      setTimeout(() => setCopied(null), 2000);
     } catch {
-      toast.error("Failed to copy code");
+      toast.error("Couldn't copy to the clipboard");
     }
   };
 
+  const lineCount = fullComponentCode.split("\n").length;
+
   return (
-    <ResponsiveDialog open={open} onOpenChange={onOpenChange}>
-      <ResponsiveDialogContent
-        className="h-[90dvh] max-h-[90dvh] overflow-hidden p-6 shadow-lg sm:h-[80dvh] sm:max-h-[min(700px,90dvh)] sm:w-[calc(100%-2rem)] sm:max-w-4xl"
-        showCloseButton={true}
-      >
-        <ResponsiveDialogHeader>
-          <ResponsiveDialogTitle>QR Code Component</ResponsiveDialogTitle>
-          <ResponsiveDialogDescription className="sr-only">
-            View and copy the code for your QR code component.
-          </ResponsiveDialogDescription>
-        </ResponsiveDialogHeader>
-        <div className="flex h-full flex-col">
-          {/* Code container with file tab header like tweakcn */}
-          <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border">
-            {/* File tab header */}
-            <div className="bg-muted/50 flex flex-none items-center justify-between border-b px-4 py-2">
-              <div className="flex h-8 items-center">
-                <span className="bg-background rounded-sm px-3 py-1 text-sm font-medium">
-                  component.tsx
-                </span>
-              </div>
+    <ResponsiveDialog onOpenChange={onOpenChange} open={open}>
+      <ResponsiveDialogContent className="max-h-[92dvh] gap-0 overflow-hidden p-0 sm:max-w-3xl dark:!border-border">
+        <div className="flex max-h-[inherit] min-h-0 flex-col">
+          <ResponsiveDialogHeader className="flex-row items-start gap-3 px-6 pt-1 pb-0 text-left sm:pt-6">
+            <div className="min-w-0 flex-1 space-y-1">
+              <ResponsiveDialogTitle>
+                Use this design in React
+              </ResponsiveDialogTitle>
+              <ResponsiveDialogDescription>
+                Install the open-source{" "}
+                <code className="font-mono text-xs">qrdx</code> package and drop
+                in this component. It renders exactly what you see in the
+                editor.
+              </ResponsiveDialogDescription>
+            </div>
+            <DialogCloseButton className="-mt-1 -mr-2 hidden sm:inline-flex" />
+          </ResponsiveDialogHeader>
+
+          <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-6 pt-5 pb-6">
+            <div className="bg-muted/40 flex h-10 items-center gap-2 rounded-full border pr-1 pl-4">
+              <span className="text-muted-foreground font-mono text-xs select-none">
+                $
+              </span>
+              <code className="min-w-0 flex-1 truncate font-mono text-xs">
+                npm install qrdx
+              </code>
               <Button
-                variant="outline"
-                size="sm"
-                onClick={handleCopy}
-                className="h-8"
                 aria-label={
-                  copied ? "Copied to clipboard" : "Copy to clipboard"
+                  copied === "install"
+                    ? "Install command copied"
+                    : "Copy install command"
                 }
+                className="text-muted-foreground hover:text-foreground"
+                onClick={() => copy("npm install qrdx", "install")}
+                size="icon-sm"
+                variant="ghost"
               >
-                {copied ? (
-                  <>
-                    <Icons.Check className="size-4" />
-                    <span className="sr-only md:not-sr-only">Copied</span>
-                  </>
-                ) : (
-                  <>
-                    <Icons.Copy className="size-4" />
-                    <span className="sr-only md:not-sr-only">Copy</span>
-                  </>
-                )}
+                {copied === "install" ? <Tick /> : <Copy />}
               </Button>
             </div>
-            {/* Code content */}
-            <ScrollArea className="relative flex-1">
-              <div className="h-full w-full rounded-none border-0 bg-background [&_button[aria-label*='copy']]:hidden [&_button[aria-label*='Copy']]:hidden [&_pre]:m-0 [&_pre]:h-full [&_figure]:bg-transparent [&_figure]:border-0 [&_figure]:shadow-none [&_figure]:rounded-none">
-                <DynamicCodeBlock lang="tsx" code={fullComponentCode} />
+
+            <div className="flex min-h-0 flex-col overflow-hidden rounded-lg border">
+              <div className="bg-muted/40 flex items-center justify-between gap-2 border-b py-1.5 pr-1.5 pl-4">
+                <span className="text-muted-foreground font-mono text-xs">
+                  my-qr-code.tsx
+                  <span className="text-muted-foreground/60">
+                    {" "}
+                    · {lineCount} lines
+                  </span>{" "}
+                  <InfoHint align="start" id="react-component" />
+                </span>
+                <Button
+                  aria-live="polite"
+                  onClick={() => copy(fullComponentCode, "code")}
+                  size="sm"
+                  variant={copied === "code" ? "secondary" : "outline"}
+                >
+                  {copied === "code" ? <Tick /> : <Copy />}
+                  {copied === "code" ? "Copied" : "Copy code"}
+                </Button>
               </div>
-              <ScrollBar orientation="horizontal" />
-              <ScrollBar orientation="vertical" />
-            </ScrollArea>
+              <div className="max-h-[min(52dvh,460px)] overflow-auto [&_button]:hidden [&_figure]:my-0 [&_figure]:rounded-none [&_figure]:border-0 [&_figure]:bg-transparent [&_figure]:shadow-none [&_figure>div]:max-h-none [&_pre]:py-3 [&_pre]:text-[13px]">
+                <DynamicCodeBlock code={fullComponentCode} lang="tsx" />
+              </div>
+            </div>
+
+            <p className="text-muted-foreground flex items-center gap-1.5 text-xs">
+              <Book1 className="size-3.5 shrink-0" />
+              <span>
+                Props, frames and downloads are covered in the{" "}
+                <Link
+                  className="text-foreground font-medium underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground"
+                  href="/docs"
+                  onClick={() => onOpenChange(false)}
+                >
+                  docs
+                </Link>
+                .
+              </span>
+            </p>
           </div>
         </div>
       </ResponsiveDialogContent>

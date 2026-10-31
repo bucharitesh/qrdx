@@ -2,9 +2,11 @@
 
 import { authClient } from "@repo/auth/client";
 import { toast } from "@repo/design-system";
+import { Spinner, Tick } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
-import { Label } from "@repo/design-system/components/ui/label";
-import { Switch } from "@repo/design-system/components/ui/switch";
+import { useIsMobile } from "@repo/design-system/hooks/use-mobile";
+import { cn } from "@repo/design-system/lib/utils";
+import { ArrowRight, Copy, Flash, Global } from "iconsax-reactjs";
 import Link from "next/link";
 import { useEffect, useLayoutEffect, useState, useTransition } from "react";
 import { create } from "zustand";
@@ -14,7 +16,8 @@ import {
   type QrCodeActionResult,
   updateQrCode,
 } from "@/actions/qr-codes";
-import { CopyButton } from "@/components/copy-button";
+import { emitSound } from "@/components/editor/sound";
+import { InfoHint } from "@/components/help/info-hint";
 import { useMounted } from "@/lib/hooks/use-mounted";
 import { useAuthStore } from "@/store/auth-store";
 import { useQREditorStore } from "@/store/editor-store";
@@ -120,6 +123,18 @@ async function safely<T>(
   }
 }
 
+/**
+ * On phones, a signed-out visitor gets the dynamic card at the end of the
+ * Content tab (after "Start from a style") instead of under the address
+ * field, so the sign-in prompt doesn't interrupt making a first code.
+ * Signed in, or on larger screens, it stays under the field.
+ */
+export function useDynamicCardAtEnd(): boolean {
+  const isMobile = useIsMobile();
+  const { data: session, isPending } = authClient.useSession();
+  return isMobile && !isPending && !session?.user;
+}
+
 export function DynamicLinkToggle() {
   const isMounted = useMounted();
   const { data: session, isPending: isSessionPending } =
@@ -141,6 +156,8 @@ export function DynamicLinkToggle() {
 
   const [isPending, startTransition] = useTransition();
   const [limitMessage, setLimitMessage] = useState<string | null>(null);
+  const [designSaved, setDesignSaved] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   const linked = code && userId && code.userId === userId ? code : null;
   const destination = normalizeDestination(url);
@@ -208,6 +225,7 @@ export function DynamicLinkToggle() {
         userId,
       });
       setValue(result.data.shortLink);
+      emitSound("success");
       toast.success("Your QR code is now dynamic", {
         description: trimmed
           ? "Change where it points at any time. Your logo was too large to save with the code."
@@ -236,6 +254,7 @@ export function DynamicLinkToggle() {
         return;
       }
       link({ ...linked, destinationUrl: result.data.destinationUrl });
+      emitSound("apply");
       toast.success("Destination updated", {
         description: "Printed copies of this code now open the new URL.",
       });
@@ -254,6 +273,9 @@ export function DynamicLinkToggle() {
         else toast.error(result.error.message);
         return;
       }
+      setDesignSaved(true);
+      emitSound("apply");
+      setTimeout(() => setDesignSaved(false), 2500);
       toast.success("Design saved to the code", {
         description: trimmed
           ? "Your logo was too large to save and was left out."
@@ -262,31 +284,99 @@ export function DynamicLinkToggle() {
     });
   };
 
-  if (!isMounted) return null;
+  const copyShortLink = async () => {
+    if (!linked) return;
+    try {
+      await navigator.clipboard.writeText(linked.shortLink);
+      setCopied(true);
+      emitSound("copy");
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toast.error("Couldn't copy the short link");
+    }
+  };
+
+  if (!isMounted) {
+    return <div aria-hidden className="h-[7.5rem] rounded-xl border" />;
+  }
+
+  const destinationHost = (() => {
+    try {
+      return linked ? new URL(linked.destinationUrl).host : null;
+    } catch {
+      return null;
+    }
+  })();
 
   return (
-    <div className="space-y-3 rounded-lg border p-3">
-      <div className="flex items-start justify-between gap-3">
-        <div className="space-y-0.5">
-          <Label className="text-xs" htmlFor="dynamic-link-switch">
-            Make it dynamic
-          </Label>
-          <p className="text-muted-foreground text-xs">
-            Edit the link after printing and count every scan.
+    <section
+      aria-labelledby="dynamic-code-title"
+      className={cn(
+        "space-y-3 rounded-xl border p-4 transition-colors",
+        linked && "bg-accent/30",
+      )}
+    >
+      <div className="flex items-start gap-3">
+        <span className="bg-muted/40 text-foreground/80 grid size-9 shrink-0 place-items-center rounded-full border">
+          <Flash className="size-4" variant={linked ? "Bold" : "Linear"} />
+        </span>
+        <div className="min-w-0 flex-1 space-y-0.5">
+          <h3
+            className="flex items-center gap-2 text-sm font-medium"
+            id="dynamic-code-title"
+          >
+            Dynamic QR code
+            <InfoHint align="start" id="dynamic-qr" />
+            {linked && (
+              <span className="flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[11px] font-medium text-emerald-700 dark:text-emerald-400">
+                <span className="size-1.5 rounded-full bg-current" />
+                On
+              </span>
+            )}
+          </h3>
+          <p className="text-muted-foreground text-xs text-pretty">
+            {linked
+              ? "The code points to a short link, so you can change the destination after printing."
+              : "Change where it points after printing, and count every scan."}
           </p>
         </div>
-        <Switch
-          checked={linked !== null}
-          disabled={isPending || isSessionPending}
-          id="dynamic-link-switch"
-          onCheckedChange={(checked) => (checked ? enable() : disable())}
-        />
       </div>
 
+      {!linked && !userId && !isSessionPending && (
+        <Button
+          className="w-full"
+          onClick={() => openAuthDialog("signin")}
+          size="sm"
+          variant="outline"
+        >
+          Sign in to make it dynamic
+        </Button>
+      )}
+
+      {!linked && (userId || isSessionPending) && (
+        <div className="space-y-2">
+          <Button
+            className="w-full"
+            disabled={isPending || isSessionPending || !destination}
+            onClick={enable}
+            size="sm"
+            variant="outline"
+          >
+            {isPending ? <Spinner /> : <Flash />}
+            Make it dynamic
+          </Button>
+          {!destination && (
+            <p className="text-muted-foreground text-center text-xs">
+              Enter a website address first.
+            </p>
+          )}
+        </div>
+      )}
+
       {limitMessage && !linked && (
-        <div className="bg-muted/50 space-y-2 rounded-md p-2 text-xs">
+        <div className="bg-muted/50 space-y-2 rounded-lg p-3 text-xs">
           <p>{limitMessage}</p>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <Button onClick={openGetProDialog} size="sm">
               Upgrade to Pro
             </Button>
@@ -298,22 +388,40 @@ export function DynamicLinkToggle() {
       )}
 
       {linked && (
-        <div className="space-y-2 text-xs">
-          <div className="flex min-w-0 items-center gap-1">
-            <span className="text-muted-foreground shrink-0">Short link</span>
-            <code className="bg-muted min-w-0 truncate rounded px-1.5 py-0.5">
-              {linked.shortLink}
+        <div className="space-y-3">
+          <div className="bg-background flex h-9 min-w-0 items-center gap-2 rounded-full border pr-1 pl-3.5 shadow-xs">
+            <code className="min-w-0 flex-1 truncate font-mono text-xs">
+              {linked.shortLink.replace(/^https?:\/\//, "")}
             </code>
-            <CopyButton
-              successMessage={{ title: "Short link copied" }}
-              textToCopy={linked.shortLink}
-            />
+            <Button
+              aria-label={copied ? "Short link copied" : "Copy short link"}
+              className="text-muted-foreground hover:text-foreground"
+              onClick={copyShortLink}
+              size="icon-sm"
+              variant="ghost"
+            >
+              {copied ? (
+                <Tick className="size-4" />
+              ) : (
+                <Copy className="size-4" />
+              )}
+            </Button>
           </div>
 
+          {destinationHost && !destinationChanged && (
+            <p className="text-muted-foreground flex items-center gap-1.5 text-xs">
+              <Global className="size-3.5 shrink-0" />
+              <span className="min-w-0 truncate">
+                Scans go to{" "}
+                <span className="text-foreground">{destinationHost}</span>
+              </span>
+            </p>
+          )}
+
           {destinationChanged && (
-            <div className="bg-muted/50 space-y-2 rounded-md p-2">
-              <p>
-                The QR code still opens{" "}
+            <div className="space-y-2 rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-xs">
+              <p className="text-pretty">
+                Printed codes still open{" "}
                 <span className="font-medium break-all">
                   {linked.destinationUrl}
                 </span>
@@ -323,29 +431,42 @@ export function DynamicLinkToggle() {
                 disabled={isPending}
                 onClick={updateDestination}
                 size="sm"
+                variant="outline"
               >
-                Point it to the new URL
+                {isPending && <Spinner />}
+                Point it to the new address
               </Button>
             </div>
           )}
 
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <Button
               disabled={isPending}
               onClick={saveDesign}
               size="sm"
               variant="outline"
             >
-              Save design to code
+              {designSaved ? <Tick /> : isPending ? <Spinner /> : null}
+              {designSaved ? "Design saved" : "Save design to code"}
             </Button>
             <Button asChild size="sm" variant="ghost">
               <Link href={`/dashboard/codes/${encodeURIComponent(linked.id)}`}>
-                Manage in dashboard
+                Scans & settings
+                <ArrowRight />
               </Link>
+            </Button>
+            <Button
+              className="text-muted-foreground ml-auto"
+              disabled={isPending}
+              onClick={disable}
+              size="sm"
+              variant="ghost"
+            >
+              Turn off
             </Button>
           </div>
         </div>
       )}
-    </div>
+    </section>
   );
 }

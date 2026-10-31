@@ -1,4 +1,4 @@
-import { LayoutTemplate } from "lucide-react";
+import { Element4 as LayoutTemplate } from "iconsax-reactjs";
 import { themePreset } from "@/components/landing/theme";
 import { registerTemplate } from "./registry";
 

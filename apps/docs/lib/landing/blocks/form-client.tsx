@@ -1,7 +1,11 @@
 "use client";
 
+import { Star } from "@repo/design-system/components/icons";
 import { cn } from "@repo/design-system/lib/utils";
-import { CircleAlert, CircleCheck, Star } from "lucide-react";
+import {
+  InfoCircle as CircleAlert,
+  TickCircle as CircleCheck,
+} from "iconsax-reactjs";
 import {
   type FormEvent,
   type ReactNode,
@@ -291,9 +295,10 @@ function FieldInput({
                     className={cn(
                       "size-8 transition-colors",
                       score <= current
-                        ? "fill-(--lp-primary) text-(--lp-primary)"
+                        ? "text-(--lp-primary)"
                         : "text-(--lp-fg)/30",
                     )}
+                    variant={score <= current ? "Bold" : "Linear"}
                   />
                   <span className="sr-only">
                     {score} of {field.max} stars
@@ -433,6 +438,7 @@ export function FormClient({
   pageId,
   qrCodeId,
   live,
+  demo = false,
 }: {
   blockId: string;
   fields: FormField[];
@@ -442,6 +448,8 @@ export function FormClient({
   qrCodeId: string | null;
   /** false in the editor preview: nothing is sent */
   live: boolean;
+  /** Template demo: validates, then shows the thank-you state; never sends */
+  demo?: boolean;
 }) {
   const [values, setValues] = useState<Record<string, unknown>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -449,13 +457,15 @@ export function FormClient({
   const honeypotRef = useRef<HTMLInputElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const checkedRef = useRef(false);
-  const turnstile = useTurnstile(live ? TURNSTILE_SITE_KEY : undefined);
+  const turnstile = useTurnstile(
+    live && !demo ? TURNSTILE_SITE_KEY : undefined,
+  );
   const endpoint = pageId ? `/api/forms/${encodeURIComponent(pageId)}` : null;
 
   // First interaction: load the spam check and ask whether the form is open,
   // so visitors learn it's closed before typing a long answer.
   const onFirstInteraction = () => {
-    if (!live || !endpoint || checkedRef.current) return;
+    if (!live || demo || !endpoint || checkedRef.current) return;
     checkedRef.current = true;
     turnstile.load();
     fetch(`${endpoint}?block=${encodeURIComponent(blockId)}`)
@@ -498,6 +508,10 @@ export function FormClient({
         kind: "notice",
         message: "Answer at least one question before sending.",
       });
+      return;
+    }
+    if (demo) {
+      setStatus({ kind: "sent" });
       return;
     }
     if (!live || !endpoint) {
@@ -576,6 +590,11 @@ export function FormClient({
         <span className="text-[15px] font-medium whitespace-pre-line">
           {successMessage}
         </span>
+        {demo && (
+          <span className={cn(mutedTextClass, "text-sm")}>
+            Demo: nothing is sent.
+          </span>
+        )}
       </output>
     );
   }

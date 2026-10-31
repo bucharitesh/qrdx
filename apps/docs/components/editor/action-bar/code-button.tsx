@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@repo/design-system/components/ui/button";
-import { Icons } from "@/components/icons";
+import { Code } from "iconsax-reactjs";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { QRCodeDialog } from "./qr-code-dialog";
 
@@ -13,9 +13,9 @@ interface CodeButtonProps {
 export function CodeButton({ dialogOpen, setDialogOpen }: CodeButtonProps) {
   return (
     <>
-      <TooltipWrapper label="View QR code" kbd="V" asChild>
+      <TooltipWrapper label="Get React code" kbd="V" asChild>
         <Button variant="ghost" size="sm" onClick={() => setDialogOpen(true)}>
-          <Icons.Braces className="h-4 w-4" />
+          <Code className="size-4" />
           <span className="hidden text-sm md:block sr-only">Code</span>
         </Button>
       </TooltipWrapper>

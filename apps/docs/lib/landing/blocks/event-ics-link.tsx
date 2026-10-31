@@ -12,16 +12,33 @@ import type { ReactNode } from "react";
 export function EventIcsLink({
   blockId,
   live,
+  demoFile,
   className,
   children,
 }: {
   blockId: string;
   live: boolean;
+  /** Template demos: the .ics built into the link (data: URL) */
+  demoFile?: { href: string; filename: string };
   className?: string;
   children: ReactNode;
 }) {
   const pathname = usePathname();
   const slug = /^\/p\/([^/]+)\/?$/.exec(pathname ?? "")?.[1];
+
+  if (demoFile) {
+    return (
+      <a
+        className={className}
+        data-lp-block={blockId}
+        data-lp-target="ics"
+        download={demoFile.filename}
+        href={demoFile.href}
+      >
+        {children}
+      </a>
+    );
+  }
 
   if (!live || !slug) {
     return (

@@ -1,7 +1,8 @@
 "use client";
 
+import { Close as X } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
-import { ChevronRight, X } from "lucide-react";
+import { ArrowRight2 as ChevronRight } from "iconsax-reactjs";
 import { toCsv } from "./csv";
 import { formatLabel } from "./detector";
 import { downloadText } from "./download";

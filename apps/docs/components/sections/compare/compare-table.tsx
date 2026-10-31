@@ -1,9 +1,9 @@
+import { Close, Tick } from "@repo/design-system/components/icons";
+import { Card } from "@repo/design-system/components/ui/card";
 import { cn } from "@repo/design-system/lib/utils";
-import { Check, Minus, X } from "lucide-react";
-import Image from "next/image";
+import { Minus } from "iconsax-reactjs";
 import { QrdxLogo } from "@/components/qrdx-logo";
 import { CompetitorLogo } from "@/components/sections/compare/competitor-logo";
-import { SectionHeader } from "@/components/sections/section-header";
 
 export interface TableRow {
   feature: string;
@@ -13,153 +13,105 @@ export interface TableRow {
 }
 
 interface CompareTableProps {
+  slug: string;
   competitor: string;
   qrdxPlan: string;
   competitorPlan: string;
-  competitorLogo?: string;
   rows: TableRow[];
-}
-
-function HeaderLogo({
-  src,
-  name,
-  className,
-}: {
-  src?: string;
-  name: string;
-  className?: string;
-}) {
-  const alt = `${name} logo`;
-  if (!src) {
-    return (
-      <CompetitorLogo
-        name={name}
-        className={cn("size-6 text-[10px]", className)}
-      />
-    );
-  }
-  const isSvg = src.endsWith(".svg") || src.includes(".svg?");
-  if (isSvg) {
-    return (
-      <img
-        src={src}
-        alt={alt}
-        className={cn("size-6 object-contain", className)}
-        width={24}
-        height={24}
-      />
-    );
-  }
-  return (
-    <Image
-      src={src}
-      alt={alt}
-      width={24}
-      height={24}
-      className={cn("size-6 object-contain", className)}
-    />
-  );
 }
 
 function CellValue({ value }: { value: string | boolean }) {
   if (typeof value === "boolean") {
     return value ? (
-      <div className="size-6 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center">
-        <Check className="size-3.5 text-primary" strokeWidth={2.5} />
-      </div>
+      <>
+        <Tick aria-hidden className="size-4 text-foreground" strokeWidth={2} />
+        <span className="sr-only">Yes</span>
+      </>
     ) : (
-      <div className="size-6 rounded-full bg-muted border border-border flex items-center justify-center">
-        <X className="size-3.5 text-muted-foreground" strokeWidth={2.5} />
-      </div>
+      <>
+        <Close aria-hidden className="size-4 text-muted-foreground/70" />
+        <span className="sr-only">No</span>
+      </>
     );
   }
 
   if (value === "—") {
     return (
-      <div className="size-6 flex items-center justify-center">
-        <Minus className="size-3.5 text-muted-foreground" />
-      </div>
+      <>
+        <Minus aria-hidden className="size-4 text-muted-foreground/60" />
+        <span className="sr-only">Not applicable</span>
+      </>
     );
   }
 
-  return (
-    <span className="text-sm font-medium text-secondary-foreground">
-      {value}
-    </span>
-  );
+  return <span className="text-sm text-foreground/90">{value}</span>;
 }
 
+const GRID =
+  "grid grid-cols-2 md:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_minmax(0,1fr)]";
+
 export function CompareTable({
+  slug,
   competitor,
   qrdxPlan,
   competitorPlan,
-  competitorLogo,
   rows,
 }: CompareTableProps) {
   return (
-    <section className="flex flex-col items-center justify-center w-full">
-      <SectionHeader>
-        <h2 className="text-3xl md:text-4xl font-medium tracking-tighter text-center text-balance">
-          QRdx vs {competitor} <br />
-          at a glance
+    <section
+      aria-labelledby="at-a-glance"
+      className="w-full scroll-mt-20 px-6 py-14 md:py-16"
+      id="at-a-glance"
+    >
+      <div className="mx-auto flex max-w-2xl flex-col items-center gap-2 text-center">
+        <h2 className="text-2xl font-semibold tracking-tight text-balance md:text-3xl">
+          QRdx vs {competitor} at a glance
         </h2>
-        <p className="text-muted-foreground text-center text-balance font-medium">
+        <p className="text-pretty text-muted-foreground">
           Pricing, design options and developer tooling side by side. Where{" "}
           {competitor} is ahead, the table says so.
         </p>
-      </SectionHeader>
+      </div>
 
-      <div className="w-full max-w-5xl mx-auto px-6 py-10">
-        <div className="rounded-xl border border-border overflow-hidden">
-          {/* Header */}
-          <div className="grid grid-cols-[1fr_120px_120px] md:grid-cols-[1fr_200px_200px] bg-muted/50">
-            <div className="p-4 text-sm font-medium text-muted-foreground">
-              Compare
+      <Card className="mx-auto mt-10 max-w-4xl gap-0 overflow-hidden py-0 shadow-xs">
+        <div className={cn(GRID, "items-end bg-muted/40")}>
+          <div className="p-4 text-sm font-medium text-muted-foreground max-md:hidden">
+            Feature
+          </div>
+          <div className="flex flex-col items-start gap-2 p-4">
+            <span className="flex items-center gap-2 text-sm font-semibold">
+              <span className="grid size-8 place-items-center rounded-full bg-white p-1.5 text-neutral-950 ring-1 ring-black/5 dark:ring-white/10">
+                <QrdxLogo className="size-full" />
+              </span>
+              QRdx
+            </span>
+            <span className="text-xs text-muted-foreground">{qrdxPlan}</span>
+          </div>
+          <div className="flex flex-col items-start gap-2 p-4">
+            <span className="flex min-w-0 items-center gap-2 text-sm font-semibold">
+              <CompetitorLogo name={competitor} size="sm" slug={slug} />
+              <span className="truncate">{competitor}</span>
+            </span>
+            <span className="text-xs text-muted-foreground">
+              {competitorPlan}
+            </span>
+          </div>
+        </div>
+
+        {rows.map((row) => (
+          <div className={cn(GRID, "border-t")} key={row.feature}>
+            <div className="p-4 text-sm font-medium max-md:col-span-2 max-md:pb-0">
+              {row.feature}
             </div>
-            <div className="p-4 text-center">
-              <div className="flex items-center justify-center gap-2 mb-1">
-                <span className="size-6 flex items-center justify-center text-primary shrink-0">
-                  <QrdxLogo className="size-5" />
-                </span>
-              </div>
-              <p className="text-xs text-muted-foreground">{qrdxPlan}</p>
+            <div className="flex items-start p-4">
+              <CellValue value={row.qrdx} />
             </div>
-            <div className="p-4 text-center">
-              <div className="flex items-center justify-center gap-2 mb-1">
-                <HeaderLogo
-                  src={competitorLogo}
-                  name={competitor}
-                  className="shrink-0"
-                />
-              </div>
-              <p className="text-xs text-muted-foreground">{competitorPlan}</p>
+            <div className="flex items-start p-4">
+              <CellValue value={row.competitor} />
             </div>
           </div>
-
-          {/* Rows */}
-          {rows.map((row, i) => (
-            <div
-              key={row.feature}
-              className={cn(
-                "grid grid-cols-[1fr_120px_120px] md:grid-cols-[1fr_200px_200px] border-t border-border",
-                i % 2 === 0 ? "bg-background" : "bg-muted/20",
-              )}
-            >
-              <div className="p-4 flex items-center">
-                <span className="text-sm text-secondary-foreground">
-                  {row.feature}
-                </span>
-              </div>
-              <div className="p-4 flex items-center justify-center">
-                <CellValue value={row.qrdx} />
-              </div>
-              <div className="p-4 flex items-center justify-center">
-                <CellValue value={row.competitor} />
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+        ))}
+      </Card>
     </section>
   );
 }

@@ -1,4 +1,4 @@
-import type { LucideProps } from "lucide-react";
+import type { IconProps as LucideProps } from "iconsax-reactjs";
 
 export const LightTheme = (props: LucideProps) => {
   return (

@@ -2,5 +2,12 @@
   "$schema": "../../../.source/json-schema/docs.meta.json",
   "title": "Developers",
   "icon": "Terminal",
-  "pages": ["image-api", "mcp", "shadcn"]
+  "pages": [
+    "image-api",
+    "rest-api",
+    "build-an-integration",
+    "mcp",
+    "cli",
+    "shadcn"
+  ]
 }

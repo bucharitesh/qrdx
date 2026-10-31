@@ -55,6 +55,12 @@ export interface BlockRenderContext {
   qrCodeId: string | null;
   /** Visitor's user agent on live pages (device-aware blocks such as app links) */
   userAgent?: string | null;
+  /**
+   * Public template demo (/templates/<type>/<id>): mode is "live" so it looks
+   * published, but nothing is sent or recorded (forms confirm locally,
+   * downloads are built in the page).
+   */
+  demo?: boolean;
 }
 
 export interface BlockRenderProps<P extends BlockProps = BlockProps> {

@@ -27,14 +27,14 @@ import {
 } from "@repo/design-system/components/ui/tabs";
 import {
   Camera,
-  Download,
-  History,
-  ImageUp,
-  Layers,
-  ScanLine,
-  ShieldCheck,
-  Trash2,
-} from "lucide-react";
+  Import as Download,
+  Clock as History,
+  GalleryExport as ImageUp,
+  Layer as Layers,
+  Scan as ScanLine,
+  ShieldTick as ShieldCheck,
+  Trash as Trash2,
+} from "iconsax-reactjs";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { HairlineFigure } from "@/components/mockups/hairline";
 import { CameraView } from "./camera-view";

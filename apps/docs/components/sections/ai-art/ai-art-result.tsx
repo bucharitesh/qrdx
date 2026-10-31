@@ -4,16 +4,16 @@ import { Button } from "@repo/design-system/components/ui/button";
 import { Spinner } from "@repo/design-system/components/ui/spinner";
 import { cn } from "@repo/design-system/lib/utils";
 import {
-  AlertTriangle,
-  CheckCircle2,
-  Download,
-  ImageIcon,
-  Info,
+  Gallery,
+  Import,
+  InfoCircle,
   Lock,
-  ScanLine,
-  Sparkles,
-  ZoomIn,
-} from "lucide-react";
+  MedalStar,
+  ScanBarcode,
+  SearchZoomIn,
+  TickCircle,
+  Warning2,
+} from "iconsax-reactjs";
 import { type ReactNode, useEffect, useState } from "react";
 import {
   type AIArtResult,
@@ -112,7 +112,7 @@ export function AIArtResultPanel({
           />
         ) : (
           <div className="text-muted-foreground flex size-full flex-col items-center justify-center gap-2 p-6 text-center text-sm">
-            <ImageIcon className="size-8" />
+            <Gallery className="size-8" />
             Your QR art will appear here
           </div>
         )}
@@ -147,8 +147,8 @@ export function AIArtResultPanel({
               className={cn(
                 "relative aspect-square overflow-hidden rounded-lg border transition-all",
                 index === selected
-                  ? "border-primary ring-primary/25 ring-2"
-                  : "hover:border-primary/50",
+                  ? "border-foreground ring-foreground/15 ring-2"
+                  : "hover:border-foreground/30",
               )}
               key={item.imageUrl}
               onClick={() => setSelected(index)}
@@ -163,7 +163,7 @@ export function AIArtResultPanel({
               />
               <StatusDot status={checks[index]?.status ?? "checking"} />
               {index === best && (
-                <span className="bg-primary text-primary-foreground absolute right-1 bottom-1 left-1 rounded px-1 py-0.5 text-center text-[10px] font-medium">
+                <span className="absolute right-1 bottom-1 left-1 rounded-full bg-emerald-600 px-1 py-0.5 text-center text-[10px] font-medium text-white">
                   Best scannable
                 </span>
               )}
@@ -182,7 +182,7 @@ export function AIArtResultPanel({
 
           <div className="flex flex-wrap gap-2">
             <Button disabled={downloading} onClick={handleDownload}>
-              {downloading ? <Spinner /> : <Download />}
+              {downloading ? <Spinner /> : <Import />}
               {big ? "Download 2× (print)" : "Download"}
             </Button>
             {!big && isFalResultUrl(variant.imageUrl) && (
@@ -191,13 +191,17 @@ export function AIArtResultPanel({
                 onClick={() => onUpscale(variant)}
                 variant="outline"
               >
-                {upscalingUrl === variant.imageUrl ? <Spinner /> : <ZoomIn />}
+                {upscalingUrl === variant.imageUrl ? (
+                  <Spinner />
+                ) : (
+                  <SearchZoomIn />
+                )}
                 Upscale 2× for print
               </Button>
             )}
             {result.visibility < ART_QR_VISIBILITY.max && (
               <Button onClick={() => onRetryClearer(variant)} variant="outline">
-                <ScanLine />
+                <ScanBarcode />
                 Retry with a clearer code
               </Button>
             )}
@@ -252,25 +256,27 @@ const SCAN_STATUS: Record<
     description: "Decoding the image in your browser.",
   },
   scannable: {
-    icon: <CheckCircle2 className="size-4 text-emerald-600" />,
+    icon: (
+      <TickCircle className="size-4 text-emerald-600 dark:text-emerald-400" />
+    ),
     title: "Scannable ✓",
     description:
       "Our in-browser check decoded it to your content. Still test it with a phone camera before printing.",
   },
   unreadable: {
-    icon: <AlertTriangle className="size-4 text-amber-600" />,
+    icon: <Warning2 className="size-4 text-amber-600 dark:text-amber-400" />,
     title: "May not scan — try a clearer code",
     description:
       "Our in-browser check couldn't read it. Raise QR visibility, or test with a phone camera, which is often more forgiving.",
   },
   mismatch: {
-    icon: <AlertTriangle className="size-4 text-amber-600" />,
+    icon: <Warning2 className="size-4 text-amber-600 dark:text-amber-400" />,
     title: "Scans to different content — try a clearer code",
     description:
       "The decoded text doesn't match what you entered. Don't use this image.",
   },
   unverified: {
-    icon: <Info className="text-muted-foreground size-4" />,
+    icon: <InfoCircle className="text-muted-foreground size-4" />,
     title: "Couldn't run the scan check",
     description: "Test it with a phone camera before printing or sharing it.",
   },
@@ -301,8 +307,8 @@ function ScanStatusCard({
             </span>
           )}
           {isBest && (
-            <span className="bg-primary/10 text-primary inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs">
-              <Sparkles className="size-3" />
+            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-xs text-emerald-700 dark:text-emerald-400">
+              <MedalStar className="size-3" />
               Best of this run
             </span>
           )}
