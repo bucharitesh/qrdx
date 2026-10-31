@@ -57,7 +57,7 @@ export function RedditForm() {
           }
         />
         <p className="text-muted-foreground text-[11px]">
-          Enter either a username or subreddit (username takes priority)
+          Enter either a username or subreddit (subreddit takes priority)
         </p>
       </div>
 

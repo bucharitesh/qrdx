@@ -133,6 +133,7 @@ export function usePlaygroundShortcuts({
           cornerEyePattern: themeState.styles.cornerEyePattern,
           cornerEyeDotPattern: themeState.styles.cornerEyeDotPattern,
           templateId: themeState.styles.templateId,
+          frame: themeState.styles.frame,
         };
 
         const svgContent = await getSVGString(qrProps);

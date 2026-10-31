@@ -6,6 +6,7 @@ import {
   cornerEyeDotPatternSchema,
   cornerEyePatternSchema,
   errorLevelSchema,
+  frameSchema,
 } from "qrdx/types";
 import { z } from "zod";
 
@@ -48,6 +49,11 @@ export const themeStylePropsSchema = z.object({
     .describe("Error correction level (L, M, Q, H)"),
   margin: z.number().optional().describe("Margin around the QR code"),
   templateId: z.string().optional().describe("Template/frame ID to use"),
+  frame: frameSchema
+    .optional()
+    .describe(
+      "Call-to-action frame around the QR code, e.g. a 'Scan me' banner (text up to 24 characters)",
+    ),
   showLogo: z.boolean().optional().describe("Whether to show a logo in center"),
   customLogo: z
     .string()

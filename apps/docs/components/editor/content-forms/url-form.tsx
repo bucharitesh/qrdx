@@ -3,6 +3,7 @@
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import * as React from "react";
+import { DynamicLinkToggle } from "@/components/editor/dynamic-link-toggle";
 import { useSmartPaste } from "@/lib/hooks/use-smart-paste";
 import { useQREditorStore } from "@/store/editor-store";
 import type { UrlContent } from "@/types/qr-content";
@@ -53,6 +54,7 @@ export function UrlForm() {
       <p className="text-muted-foreground text-xs">
         Enter a website URL (paste any URL to auto-detect type)
       </p>
+      <DynamicLinkToggle />
     </div>
   );
 }

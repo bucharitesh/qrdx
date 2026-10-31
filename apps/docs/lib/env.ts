@@ -37,6 +37,17 @@ export const env = createEnv({
     // Integration encryption
     INTEGRATION_ENCRYPTION_KEY: z.string().min(32).optional(),
 
+    // Dynamic QR scans: salt for visitor_hash (falls back to one derived from BETTER_AUTH_SECRET)
+    SCAN_HASH_SALT: z.string().min(16).optional(),
+
+    // Custom domains via the Vercel Domains API (feature off without token + project id)
+    VERCEL_API_TOKEN: z.string().min(1).optional(),
+    VERCEL_PROJECT_ID: z.string().min(1).optional(),
+    VERCEL_TEAM_ID: z.string().min(1).optional(),
+
+    // AI QR art (fal.ai)
+    FAL_KEY: z.string().min(1).optional(),
+
     // Standard Node.js environment
     NODE_ENV: z
       .enum(["development", "test", "production"])
@@ -48,6 +59,8 @@ export const env = createEnv({
     NEXT_PUBLIC_POSTHOG_HOST: z.url().min(1).optional(),
     NEXT_PUBLIC_QRDX_PRO_MONTHLY_PRODUCT_ID: z.string().min(1).optional(),
     NEXT_PUBLIC_QRDX_PRO_YEARLY_PRODUCT_ID: z.string().min(1).optional(),
+    // Origin for default short links (falls back to the site URL)
+    NEXT_PUBLIC_SHORT_LINK_BASE_URL: z.url().optional(),
   },
   runtimeEnv: {
     DATABASE_URL: process.env.DATABASE_URL,
@@ -64,6 +77,11 @@ export const env = createEnv({
     DUB_REDIRECT_URI: process.env.DUB_REDIRECT_URI,
     GOOGLE_DRIVE_REDIRECT_URI: process.env.GOOGLE_DRIVE_REDIRECT_URI,
     INTEGRATION_ENCRYPTION_KEY: process.env.INTEGRATION_ENCRYPTION_KEY,
+    SCAN_HASH_SALT: process.env.SCAN_HASH_SALT,
+    VERCEL_API_TOKEN: process.env.VERCEL_API_TOKEN,
+    VERCEL_PROJECT_ID: process.env.VERCEL_PROJECT_ID,
+    VERCEL_TEAM_ID: process.env.VERCEL_TEAM_ID,
+    FAL_KEY: process.env.FAL_KEY,
     NODE_ENV: process.env.NODE_ENV,
     NEXT_PUBLIC_FEATUREBASE_APP_ID: process.env.NEXT_PUBLIC_FEATUREBASE_APP_ID,
     NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY,
@@ -72,6 +90,8 @@ export const env = createEnv({
       process.env.NEXT_PUBLIC_QRDX_PRO_MONTHLY_PRODUCT_ID,
     NEXT_PUBLIC_QRDX_PRO_YEARLY_PRODUCT_ID:
       process.env.NEXT_PUBLIC_QRDX_PRO_YEARLY_PRODUCT_ID,
+    NEXT_PUBLIC_SHORT_LINK_BASE_URL:
+      process.env.NEXT_PUBLIC_SHORT_LINK_BASE_URL,
   },
   emptyStringAsUndefined: true,
 });

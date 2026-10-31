@@ -2,9 +2,10 @@ import * as schema from "@repo/database";
 import { database as db } from "@repo/database";
 import { type BetterAuthOptions, betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { admin, lastLoginMethod } from "better-auth/plugins";
+import { admin, lastLoginMethod, organization } from "better-auth/plugins";
 import { getAdminUserIds } from "./admin";
 import { keys } from "./keys";
+import { hasEntitledSubscription } from "./plan";
 
 const {
   GITHUB_CLIENT_ID,
@@ -39,7 +40,19 @@ export const auth = betterAuth({
     schema,
   }),
   socialProviders,
-  plugins: [lastLoginMethod(), admin({ adminUserIds: getAdminUserIds() })],
+  plugins: [
+    lastLoginMethod(),
+    admin({ adminUserIds: getAdminUserIds() }),
+    // Teams. Every member can use the team; only Pro users can create one.
+    organization({
+      creatorRole: "owner",
+      allowUserToCreateOrganization: (user) => hasEntitledSubscription(user.id),
+      // No email service: the dashboard shows a copyable /invite/<id> link.
+      sendInvitationEmail: () => Promise.resolve(),
+      // Invite links can be forwarded, so only the verified invitee may accept.
+      requireEmailVerificationOnInvitation: true,
+    }),
+  ],
   // The admin panel does not use impersonation or password resets; keep them off the HTTP surface.
   disabledPaths: ["/admin/impersonate-user", "/admin/set-user-password"],
   rateLimit: {

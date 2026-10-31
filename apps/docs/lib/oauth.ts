@@ -9,7 +9,12 @@ import {
   OAUTH_REFRESH_TOKEN_EXPIRY_SECONDS,
 } from "@/lib/constants";
 
-export const OAUTH_SCOPES = ["themes:read", "profile:read"] as const;
+export const OAUTH_SCOPES = [
+  "themes:read",
+  "profile:read",
+  "codes:read",
+  "codes:write",
+] as const;
 export type OAuthScope = (typeof OAUTH_SCOPES)[number];
 
 export const PKCE_METHODS = ["S256", "plain"] as const;

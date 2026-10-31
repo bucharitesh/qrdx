@@ -94,6 +94,31 @@ cp -r skills/generate-qr ~/.claude/skills/
 
 See [`skills/README.md`](skills/README.md) for other agents.
 
+## Developer API, MCP & shadcn
+
+**Image API.** Any URL becomes a QR code image, with no API key. Use it in a README, an `<img>` tag or an email:
+
+```md
+![QR](https://qrdx.dev/api/v1/qr?data=https://github.com/you/repo&format=svg)
+```
+
+Add `format=png`, `size`, colors (`fg`, `bg`), patterns (`body`, `eye`, `dot`), `level`, `margin` or a frame `template`. See the [image API docs](https://qrdx.dev/docs/developers/image-api).
+
+**MCP server.** Let AI assistants generate QR codes and build Wi-Fi, vCard, email, SMS and location payloads. For Claude Code:
+
+```bash
+claude mcp add --transport http qrdx https://qrdx.dev/api/mcp
+```
+
+Cursor, VS Code and other clients: see the [MCP docs](https://qrdx.dev/docs/developers/mcp).
+
+**shadcn/ui.** Add a QR code component with PNG and SVG download buttons, or an image QR scanner:
+
+```bash
+npx shadcn@latest add https://qrdx.dev/r/qr-code.json
+npx shadcn@latest add https://qrdx.dev/r/qr-code-scanner.json
+```
+
 ## Integrations
 
 - **[Dub](https://dub.co):** create or pick Dub short links for your QR codes. Click analytics for those links come from Dub; QRdx doesn't track scans itself.

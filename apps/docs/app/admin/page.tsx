@@ -5,13 +5,16 @@ import { DailyChart } from "./_components/daily-chart";
 import { EmptyRow, Section, StatCard } from "./_components/stat-card";
 import { formatNumber } from "./_lib/format";
 import { requireAdmin } from "./_lib/guard";
-import { getOverviewStats } from "./_lib/queries";
+import { getDynamicCodeStats, getOverviewStats } from "./_lib/queries";
 
 export const metadata: Metadata = { title: "Admin · Overview" };
 
 export default async function AdminOverviewPage() {
   await requireAdmin();
-  const stats = await getOverviewStats();
+  const [stats, codeStats] = await Promise.all([
+    getOverviewStats(),
+    getDynamicCodeStats(),
+  ]);
 
   const providers = new Map<string, { active: number; total: number }>();
   for (const row of stats.integrationsByProvider) {
@@ -52,6 +55,16 @@ export default async function AdminOverviewPage() {
         <StatCard
           label="Community themes"
           value={formatNumber(stats.communityThemes)}
+        />
+        <StatCard
+          label="Dynamic QR codes"
+          value={formatNumber(codeStats.total)}
+          hint={`${formatNumber(codeStats.active)} active · ${formatNumber(codeStats.disabled)} disabled`}
+        />
+        <StatCard
+          label="QR scans"
+          value={formatNumber(codeStats.scans)}
+          hint={`${formatNumber(codeStats.scansLast7d)} in the last 7d`}
         />
         <StatCard
           label="OAuth apps"

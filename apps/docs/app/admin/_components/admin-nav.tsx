@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   Palette,
   Plug,
+  QrCode,
   ScrollText,
   Users,
 } from "lucide-react";
@@ -17,6 +18,7 @@ const NAV_ITEMS = [
   { href: "/admin", label: "Overview", icon: LayoutDashboard },
   { href: "/admin/users", label: "Users", icon: Users },
   { href: "/admin/themes", label: "Themes", icon: Palette },
+  { href: "/admin/codes", label: "QR Codes", icon: QrCode },
   { href: "/admin/ai-usage", label: "AI Usage", icon: ChartNoAxesCombined },
   { href: "/admin/subscriptions", label: "Subscriptions", icon: CreditCard },
   { href: "/admin/integrations", label: "Integrations", icon: Plug },

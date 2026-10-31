@@ -1,0 +1,39 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "qrdx",
+  "homepage": "https://qrdx.dev",
+  "items": [
+    {
+      "name": "qr-code",
+      "type": "registry:component",
+      "title": "QR Code",
+      "description": "Styled, accessible QR code with PNG and SVG download buttons, rendered with the qrdx library.",
+      "author": "bucharitesh <https://qrdx.dev>",
+      "dependencies": ["qrdx"],
+      "files": [
+        {
+          "path": "public/r/source/qr-code.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "docs": "Import it with `import { QrCode } from \"@/components/qr-code\"`. Props and examples: https://qrdx.dev/docs/developers/shadcn",
+      "categories": ["qr-code"]
+    },
+    {
+      "name": "qr-code-scanner",
+      "type": "registry:component",
+      "title": "QR Code Scanner",
+      "description": "Drop-zone that decodes a QR code from an uploaded image in the browser, using the qrdx library.",
+      "author": "bucharitesh <https://qrdx.dev>",
+      "dependencies": ["qrdx"],
+      "files": [
+        {
+          "path": "public/r/source/qr-code-scanner.tsx",
+          "type": "registry:component"
+        }
+      ],
+      "docs": "Import it with `import { QrCodeScanner } from \"@/components/qr-code-scanner\"`. Props and examples: https://qrdx.dev/docs/developers/shadcn",
+      "categories": ["qr-code"]
+    }
+  ]
+}

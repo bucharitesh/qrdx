@@ -6,6 +6,7 @@ import {
   cornerEyeDotPatternSchema,
 } from "./corner-dot";
 import { type CornerEyePattern, cornerEyePatternSchema } from "./corner-eye";
+import { frameSchema, type QRFrame } from "./frame";
 import { type BodyPattern, bodyPatternSchema } from "./image-pattern";
 import type { TemplateDefinition } from "./template";
 
@@ -37,6 +38,7 @@ export const qrPropsSchema = z.object({
   isOGContext: z.boolean().optional(),
   templateId: z.string().optional(),
   customProps: z.record(z.string(), z.any()).optional(),
+  frame: frameSchema.optional(),
 });
 
 // Inferred types
@@ -64,6 +66,8 @@ export interface QRProps {
   // Generic custom props that can be used by any template
   // Each template can define its own custom props type (e.g., FlamQRProps)
   customProps?: Record<string, any>;
+  // Call-to-action frame around the code; the rendered output grows to fit it
+  frame?: QRFrame;
 }
 
 export type QRPropsCanvas = QRProps &

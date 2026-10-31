@@ -105,6 +105,13 @@ ${BOLD}Generate Options:${RESET}
   --size              Output pixel size for SVG/PNG  ${DIM}(default: 512)${RESET}
   --template          Decorative template wrapper:
                         ${DIM}Arrow, StandardBox, SquareBorder, StrikedBox, Halloween${RESET}
+  --frame             Call-to-action frame (adds space around the code):
+                        ${DIM}none, banner-bottom, banner-top, border,${RESET}
+                        ${DIM}rounded-border, speech-bubble${RESET}
+  --frame-text        Frame label, up to 24 characters  ${DIM}(default: Scan me; "" hides it)${RESET}
+  --frame-color       Frame color — hex  ${DIM}(default: #000000)${RESET}
+  --frame-text-color  Frame label color — hex  ${DIM}(default: white on banners)${RESET}
+                        ${DIM}Frame text/colors without --frame use banner-bottom${RESET}
 
 ${BOLD}Gradient Colors:${RESET}
   Pass a JSON object to --fg / --bg / --eye-color / --dot-color for gradients:
@@ -124,6 +131,7 @@ ${BOLD}Examples:${RESET}
   ${DIM}$${RESET} qrdx generate "https://qrdx.dev" --logo "https://qrdx.dev/logo.png" --level H -o branded.svg
   ${DIM}$${RESET} qrdx generate "https://qrdx.dev" --template Arrow -o arrow.svg
   ${DIM}$${RESET} qrdx generate "https://qrdx.dev" --template Halloween --body circle --eye gear -o halloween.svg
+  ${DIM}$${RESET} qrdx generate "https://qrdx.dev" --frame banner-bottom --frame-text "Scan for the menu" -o menu.png
   ${DIM}$${RESET} qrdx generate "https://qrdx.dev" --fg '{"type":"linear","stops":[{"color":"#6366f1","offset":0},{"color":"#ec4899","offset":100}],"angle":135}' -o gradient.svg
 
   Visit ${TEXT}https://qrdx.dev${RESET} for more.

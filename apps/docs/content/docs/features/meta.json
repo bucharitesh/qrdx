@@ -1,4 +1,11 @@
 {
   "title": "Customization",
-  "pages": ["colors-gradients", "patterns", "logos", "templates", "downloads"]
+  "pages": [
+    "colors-gradients",
+    "patterns",
+    "logos",
+    "templates",
+    "frames",
+    "downloads"
+  ]
 }

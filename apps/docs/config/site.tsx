@@ -679,6 +679,8 @@ export const siteConfig = {
       links: [
         { id: 1, title: "Playground", url: "/playground" },
         { id: 2, title: "Community", url: "/community" },
+        { id: 10, title: "QR code generators", url: "/qr-code-generator" },
+        { id: 11, title: "Free tools", url: "/tools" },
       ],
     },
     {

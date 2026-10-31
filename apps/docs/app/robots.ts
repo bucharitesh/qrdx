@@ -15,7 +15,15 @@ const crawlers = [
 ];
 
 // Crawlers obey only their most specific group, so every group repeats the disallow list.
-const disallow = ["/api/", "/admin", "/settings", "/oauth"];
+const disallow = [
+  "/api/",
+  "/admin",
+  "/settings",
+  "/oauth",
+  "/dashboard",
+  "/invite",
+  "/q/",
+];
 
 export default function robots(): MetadataRoute.Robots {
   return {
