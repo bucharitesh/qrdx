@@ -1,10 +1,8 @@
 ---
 title: Downloads
-description: Export QR codes in multiple formats
+description: Export QR codes as PNG, JPG, SVG or PDF, copy them to the clipboard or get a data URL.
 icon: Download
 ---
-
-# Downloads
 
 Export QR codes as PNG, JPG, SVG, or PDF.
 
@@ -65,7 +63,7 @@ await downloadQRCode(
 ```
 
 ### PDF
-Ideal for professional documents.
+Ideal for professional documents. PDF export needs the optional `jspdf` package (`npm i jspdf`); without it, PDF downloads throw a clear error.
 
 ```tsx
 await downloadQRCode(
@@ -73,6 +71,29 @@ await downloadQRCode(
   { format: "pdf", size: { width: 1024, height: 1024 }, filename: "qrcode.pdf" }
 );
 ```
+
+### EPS
+Vector PostScript for print shops and design tools (Illustrator, CorelDRAW, InDesign). No extra package is needed. Here `size.width` is in points (72 per inch), so this file is 512 pt wide:
+
+```tsx
+await downloadQRCode(
+  { value: "https://example.com", size: 512 },
+  { format: "eps", size: { width: 512, height: 512 }, filename: "qrcode.eps" }
+);
+```
+
+For an exact physical size, use `getQRAsEPS`. It returns the EPS as a string: the code is `sizeMm` wide (default 50 mm), and a frame adds to that.
+
+```tsx
+import { getQRAsEPS } from "qrdx";
+
+const eps = await getQRAsEPS(
+  { value: "https://example.com" },
+  { sizeMm: 40, bleedMm: 3, colorMode: "cmyk" }
+);
+```
+
+EPS has no transparency, gradients print as their first color, and there are no crop marks. PNG and JPEG logos are embedded.
 
 ## Preset Sizes
 
@@ -172,6 +193,7 @@ try {
 - **JPG** — Smaller files, no transparency
 - **SVG** — Scalable, small files, web/print
 - **PDF** — Professional documents, larger files
+- **EPS** — Vector print files for print shops and design tools
 
 ## Size Optimization
 

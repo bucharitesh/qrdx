@@ -1,10 +1,8 @@
 ---
 title: Utilities
-description: Helper functions for QR codes
+description: Color, contrast, size validation and feature detection helpers exported by qrdx.
 icon: Wrench
 ---
-
-# Utilities
 
 Helper functions for colors, contrast, and QR code processing.
 
@@ -60,14 +58,14 @@ Get contrast assessment:
 import { getContrastLevel } from 'qrdx';
 
 const level = getContrastLevel(4.5);
-// Returns: { level: 'medium', warning: false, message: '...' }
+// Returns: { level: 'AA', warning: false, message: 'Good contrast' }
 ```
 
 **Contrast Guidelines:**
-- **Poor (< 3.0)** — Not recommended
-- **Medium (3.0 - 4.5)** — Acceptable
-- **Good (4.5 - 7.0)** — Excellent
-- **Excellent (> 7.0)** — Maximum scanability
+- **`AAA` (7.0 and above)** — Excellent contrast
+- **`AA` (4.5 – 7.0)** — Good contrast
+- **`AA Large` (3.0 – 4.5)** — Low contrast, `warning: true`, may be hard to scan
+- **`Fail` (below 3.0)** — Not recommended, `warning: true`
 
 ### getLuminance
 

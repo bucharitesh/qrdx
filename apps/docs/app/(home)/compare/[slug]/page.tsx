@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { CompareFeatures } from "@/components/sections/compare/compare-features";
+import { CompareGuide } from "@/components/sections/compare/compare-guide";
 import { CompareHero } from "@/components/sections/compare/compare-hero";
 import { CompareOthers } from "@/components/sections/compare/compare-others";
 import { CompareTable } from "@/components/sections/compare/compare-table";
+import { createMetadata } from "@/lib/metadata";
 import { compareSource } from "@/lib/source";
+import { getMDXComponents } from "@/mdx-components";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -26,11 +29,15 @@ export default async function ComparePage({ params }: PageProps) {
     competitorPlan,
     tableRows,
     featureHighlights,
+    sources,
+    lastVerified,
+    body: Mdx,
   } = page.data;
 
   return (
     <main className="flex flex-col items-center justify-center divide-y divide-border min-h-screen w-full">
       <CompareHero
+        slug={slug}
         competitor={competitor}
         tagline={tagline}
         competitorLogo={competitorLogo}
@@ -43,6 +50,13 @@ export default async function ComparePage({ params }: PageProps) {
         rows={tableRows}
       />
       <CompareFeatures competitor={competitor} highlights={featureHighlights} />
+      <CompareGuide
+        competitor={competitor}
+        sources={sources}
+        lastVerified={lastVerified}
+      >
+        <Mdx components={getMDXComponents()} />
+      </CompareGuide>
       <CompareOthers currentSlug={slug} />
     </main>
   );
@@ -64,8 +78,12 @@ export async function generateMetadata({
     notFound();
   }
 
-  return {
-    title: `${page.data.title} vs. Qrdx | The #1 ${page.data.title} Alternative`,
-    description: `Learn how QRdx compares to ${page.data.title} and why QRdx is the best ${page.data.title} alternative.`,
-  };
+  const { competitor, seoTitle, seoDescription, description, tagline } =
+    page.data;
+
+  return createMetadata({
+    title: seoTitle ?? `QRdx vs ${competitor}`,
+    description: seoDescription ?? description ?? tagline,
+    path: `/compare/${slug}`,
+  });
 }

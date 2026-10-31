@@ -17,6 +17,11 @@ import * as React from "react";
 import { Carousel, CarouselItem } from "@/components/carousel";
 import { ContentTypeCard } from "@/components/editor/content-type-card";
 import { Icons } from "@/components/icons";
+import {
+  EDITOR_INTEGRATIONS,
+  getIntegrationCapabilityLabels,
+  getIntegrationContentType,
+} from "@/lib/integration-catalog";
 import { useQREditorStore } from "@/store/editor-store";
 import type { ContentType } from "@/types/qr-content";
 import {
@@ -61,6 +66,20 @@ const iconMap: Record<string, LucideIcon> = {
   Youtube: Icons.Youtube,
 };
 
+const integrationContentTypes = new Set(
+  EDITOR_INTEGRATIONS.map(getIntegrationContentType).filter(Boolean),
+);
+
+const modalCategories = [
+  ...CONTENT_CATEGORIES,
+  {
+    id: "apps",
+    label: "Apps",
+    icon: "Sparkles",
+    types: [] as ContentType[],
+  },
+];
+
 interface ContentTypeModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -79,15 +98,36 @@ export function ContentTypeModal({
     onOpenChange(false);
   };
 
+  const handleSelectIntegration = (type: ContentType | null) => {
+    if (!type) {
+      return;
+    }
+
+    handleSelectType(type);
+  };
+
   const filteredContent = CONTENT_TYPES_METADATA.filter(
     (meta) =>
-      meta.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      meta.description.toLowerCase().includes(searchQuery.toLowerCase()),
+      !integrationContentTypes.has(meta.type) &&
+      (meta.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        meta.description.toLowerCase().includes(searchQuery.toLowerCase())),
   );
 
+  const filteredIntegrations = EDITOR_INTEGRATIONS.filter((integration) => {
+    const query = searchQuery.toLowerCase();
+    return (
+      integration.name.toLowerCase().includes(query) ||
+      integration.description.toLowerCase().includes(query) ||
+      integration.features.some((feature) =>
+        feature.toLowerCase().includes(query),
+      )
+    );
+  });
+
   const getContentByCategory = (category: ContentType[]) => {
-    return CONTENT_TYPES_METADATA.filter((meta) =>
-      category.includes(meta.type),
+    return CONTENT_TYPES_METADATA.filter(
+      (meta) =>
+        !integrationContentTypes.has(meta.type) && category.includes(meta.type),
     );
   };
 
@@ -138,7 +178,7 @@ export function ContentTypeModal({
           {/* Category Pills - Mobile horizontal scroll */}
           <div className="md:hidden">
             <div className="flex gap-2 overflow-x-auto px-4 py-3 scrollbar-hide">
-              {CONTENT_CATEGORIES.map((category) => {
+              {modalCategories.map((category) => {
                 const Icon = category.icon
                   ? iconMap[category.icon as keyof typeof iconMap]
                   : null;
@@ -171,7 +211,7 @@ export function ContentTypeModal({
             <div className="hidden w-64 shrink-0 md:block">
               <ScrollArea className="h-full">
                 <div className="space-y-1 p-4">
-                  {CONTENT_CATEGORIES.map((category) => {
+                  {modalCategories.map((category) => {
                     const Icon = category.icon
                       ? iconMap[category.icon as keyof typeof iconMap]
                       : null;
@@ -262,25 +302,33 @@ export function ContentTypeModal({
                         })}
 
                       {/* Other categories - show only relevant content */}
-                      {activeCategory !== "for-you" && (
+                      {activeCategory === "apps" && (
                         <section>
                           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
-                            {getContentByCategory(
-                              CONTENT_CATEGORIES.find(
-                                (cat) => cat.id === activeCategory,
-                              )?.types || [],
-                            ).map((meta, index) => {
-                              const Icon = iconMap[meta.icon] as LucideIcon;
-                              const isActive = contentType === meta.type;
+                            {EDITOR_INTEGRATIONS.map((integration) => {
+                              const integrationContentType =
+                                getIntegrationContentType(integration);
+                              const description =
+                                getIntegrationCapabilityLabels(
+                                  integration.capabilities,
+                                ).join(", ") || integration.description;
 
                               return (
                                 <ContentTypeCard
-                                  key={index}
-                                  label={meta.label}
-                                  description={meta.description}
-                                  icon={Icon}
-                                  isActive={isActive}
-                                  onClick={() => handleSelectType(meta.type)}
+                                  key={integration.slug}
+                                  label={integration.name}
+                                  description={description}
+                                  icon={Icons.Link}
+                                  logoSrc={integration.logos.light}
+                                  logoDarkSrc={integration.logos.dark}
+                                  isActive={
+                                    contentType === integrationContentType
+                                  }
+                                  onClick={() =>
+                                    handleSelectIntegration(
+                                      integrationContentType,
+                                    )
+                                  }
                                   variant="default"
                                 />
                               );
@@ -288,13 +336,46 @@ export function ContentTypeModal({
                           </div>
                         </section>
                       )}
+
+                      {activeCategory !== "for-you" &&
+                        activeCategory !== "apps" && (
+                          <section>
+                            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+                              {getContentByCategory(
+                                CONTENT_CATEGORIES.find(
+                                  (cat) => cat.id === activeCategory,
+                                )?.types || [],
+                              ).map((meta, index) => {
+                                const Icon = iconMap[meta.icon] as LucideIcon;
+                                const isActive = contentType === meta.type;
+
+                                return (
+                                  <ContentTypeCard
+                                    key={index}
+                                    label={meta.label}
+                                    description={meta.description}
+                                    icon={Icon}
+                                    isActive={isActive}
+                                    onClick={() => handleSelectType(meta.type)}
+                                    variant="default"
+                                  />
+                                );
+                              })}
+                            </div>
+                          </section>
+                        )}
                     </>
                   ) : (
                     // Search results
                     <div className="space-y-4">
                       <h3 className="text-sm font-semibold">
-                        {filteredContent.length} result
-                        {filteredContent.length !== 1 ? "s" : ""}
+                        {filteredContent.length + filteredIntegrations.length}{" "}
+                        result
+                        {filteredContent.length +
+                          filteredIntegrations.length !==
+                        1
+                          ? "s"
+                          : ""}
                       </h3>
                       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
                         {filteredContent.map((meta, index) => {
@@ -309,6 +390,28 @@ export function ContentTypeModal({
                               icon={Icon}
                               isActive={isActive}
                               onClick={() => handleSelectType(meta.type)}
+                              variant="default"
+                            />
+                          );
+                        })}
+                        {filteredIntegrations.map((integration) => {
+                          const integrationContentType =
+                            getIntegrationContentType(integration);
+                          const isActive =
+                            contentType === integrationContentType;
+
+                          return (
+                            <ContentTypeCard
+                              key={integration.slug}
+                              label={integration.name}
+                              description={integration.description}
+                              icon={Icons.Link}
+                              logoSrc={integration.logos.light}
+                              logoDarkSrc={integration.logos.dark}
+                              isActive={isActive}
+                              onClick={() =>
+                                handleSelectIntegration(integrationContentType)
+                              }
                               variant="default"
                             />
                           );

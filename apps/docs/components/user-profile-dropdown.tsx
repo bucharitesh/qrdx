@@ -15,6 +15,7 @@ import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { usePostHog } from "posthog-js/react";
+import { hasAdminRole } from "@/components/app-shell/nav-config";
 import { Icons } from "@/components/icons";
 import { useAuthStore } from "@/store/auth-store";
 
@@ -52,7 +53,7 @@ export function UserProfileDropdown() {
           transition={{ duration: 0.2 }}
           className="flex gap-3.5"
         >
-          <Link href="/playground">
+          <Link className="hidden sm:block" href="/playground">
             <Button>Try the Playground</Button>
           </Link>
           <Button variant="outline" onClick={() => openAuthDialog("signin")}>
@@ -98,10 +99,22 @@ export function UserProfileDropdown() {
               </DropdownMenuLabel>
               <DropdownMenuSeparator className="bg-border opacity-80" />
               <DropdownMenuItem asChild>
-                <Link href="/settings">
+                <Link href="/dashboard">
+                  <Icons.Link2 /> Dashboard
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/settings/account">
                   <Icons.Settings /> Settings
                 </Link>
               </DropdownMenuItem>
+              {hasAdminRole(session.user.role) && (
+                <DropdownMenuItem asChild>
+                  <Link href="/admin">
+                    <Icons.Lock /> Admin
+                  </Link>
+                </DropdownMenuItem>
+              )}
               <DropdownMenuSeparator className="bg-border opacity-80" />
               <DropdownMenuItem asChild>
                 <Link href="/legal/privacy-policy">

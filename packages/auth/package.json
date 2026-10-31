@@ -4,6 +4,7 @@
   "private": true,
   "exports": {
     "./server": "./server.ts",
+    "./admin": "./admin.ts",
     "./client": "./client.ts",
     "./handlers": "./handlers.ts",
     "./proxy": "./proxy.ts",

@@ -1,47 +1,41 @@
 ---
 title: Patterns
-description: Customize QR code patterns
+description: Change the shape of the data modules, corner eyes and eye dots.
 icon: Grid3x3
 ---
-
-# Patterns
 
 Change the shape of QR code elements for unique designs.
 
 ## Body Patterns
 
-Control the shape of data dots:
+Control the shape of data dots. There are 9 body patterns: `circle` (default), `circle-large`, `square`, `diamond`, `circle-mixed`, `pacman`, `rounded`, `small-square` and `vertical-line`.
 
 ```tsx
 import { QRCode } from 'qrdx';
 
 <QRCode value="https://example.com" bodyPattern="circle" size={256} />
-<QRCode value="https://example.com" bodyPattern="square" size={256} />
 <QRCode value="https://example.com" bodyPattern="diamond" size={256} />
-<QRCode value="https://example.com" bodyPattern="rounded" size={256} />
-<QRCode value="https://example.com" bodyPattern="pacman" size={256} />
-<QRCode value="https://example.com" bodyPattern="circle-mixed" size={256} />
-<QRCode value="https://example.com" bodyPattern="clean-square" size={256} />
+<QRCode value="https://example.com" bodyPattern="vertical-line" size={256} />
 ```
 
 ## Corner Eye Patterns
 
-Control the shape of corner markers:
+Control the shape of corner markers. There are 9 corner eye patterns (the React component defaults to `gear`; the CLI defaults to `square`): `square`, `rounded`, `gear`, `circle`, `diya`, `extra-rounded`, `message`, `pointy` and `curly`.
 
 ```tsx
 <QRCode value="https://example.com" cornerEyePattern="square" />
-<QRCode value="https://example.com" cornerEyePattern="rounded" />
-<QRCode value="https://example.com" cornerEyePattern="circle" />
+<QRCode value="https://example.com" cornerEyePattern="gear" />
+<QRCode value="https://example.com" cornerEyePattern="extra-rounded" />
 ```
 
 ## Corner Eye Dot Patterns
 
-Control individual dots in corner markers:
+Control the dot inside each corner marker. There are 11 corner eye dot patterns (the React component defaults to `circle`; the CLI defaults to `square`): `square`, `rounded`, `circle`, `diamond`, `message`, `message-reverse`, `diya`, `diya-reverse`, `rounded-triangle`, `star` and `banner`.
 
 ```tsx
 <QRCode value="https://example.com" cornerEyeDotPattern="square" />
-<QRCode value="https://example.com" cornerEyeDotPattern="rounded" />
-<QRCode value="https://example.com" cornerEyeDotPattern="circle" />
+<QRCode value="https://example.com" cornerEyeDotPattern="star" />
+<QRCode value="https://example.com" cornerEyeDotPattern="rounded-triangle" />
 ```
 
 ## Combine Patterns
@@ -63,7 +57,6 @@ Mix different patterns for unique designs:
 ### Fast Patterns
 - `circle` — Excellent performance
 - `square` — Very fast
-- `clean-square` — Fast
 
 ### Medium Patterns
 - `rounded` — Good balance

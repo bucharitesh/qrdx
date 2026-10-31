@@ -1,11 +1,13 @@
 import type { CSSProperties } from "react";
 import { z } from "zod";
+import { type QRArt, qrArtSchema } from "./art";
 import { type ColorConfig, colorConfigSchema } from "./color";
 import {
   type CornerEyeDotPattern,
   cornerEyeDotPatternSchema,
 } from "./corner-dot";
 import { type CornerEyePattern, cornerEyePatternSchema } from "./corner-eye";
+import { frameSchema, type QRFrame } from "./frame";
 import { type BodyPattern, bodyPatternSchema } from "./image-pattern";
 import type { TemplateDefinition } from "./template";
 
@@ -37,6 +39,8 @@ export const qrPropsSchema = z.object({
   isOGContext: z.boolean().optional(),
   templateId: z.string().optional(),
   customProps: z.record(z.string(), z.any()).optional(),
+  frame: frameSchema.optional(),
+  art: qrArtSchema.optional(),
 });
 
 // Inferred types
@@ -64,6 +68,10 @@ export interface QRProps {
   // Generic custom props that can be used by any template
   // Each template can define its own custom props type (e.g., FlamQRProps)
   customProps?: Record<string, any>;
+  // Call-to-action frame around the code; the rendered output grows to fit it
+  frame?: QRFrame;
+  // Blend a logo or photo into the modules (vector, no AI); see types/art.ts
+  art?: QRArt;
 }
 
 export type QRPropsCanvas = QRProps &

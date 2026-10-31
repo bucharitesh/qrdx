@@ -18,22 +18,37 @@ const noopRateLimiter: RateLimiter = {
   }),
 };
 
-function isUpstashConfigured() {
-  const { UPSTASH_REDIS_REST_URL, UPSTASH_REDIS_REST_TOKEN } = keys();
-  return Boolean(UPSTASH_REDIS_REST_URL && UPSTASH_REDIS_REST_TOKEN);
+// Accepts the Upstash names and the Vercel KV names (KV_REST_API_*).
+function getUpstashCredentials(): { url: string; token: string } | null {
+  const env = keys();
+  const url = env.UPSTASH_REDIS_REST_URL ?? env.KV_REST_API_URL;
+  const token = env.UPSTASH_REDIS_REST_TOKEN ?? env.KV_REST_API_TOKEN;
+  return url && token ? { url, token } : null;
 }
 
-export const redis = isUpstashConfigured()
-  ? new Redis({
-      url: keys().UPSTASH_REDIS_REST_URL!,
-      token: keys().UPSTASH_REDIS_REST_TOKEN!,
-    })
+const credentials = getUpstashCredentials();
+
+// One quick retry at most: a dead Upstash should fail fast (the limiter fails open).
+export const redis = credentials
+  ? new Redis({ ...credentials, retry: { retries: 1, backoff: () => 50 } })
   : null;
 
+let warnedNoopInProduction = false;
+
+// After a failed call, skip Upstash for a while so every request doesn't pay for it.
+const UPSTASH_FAILURE_COOLDOWN_MS = 5 * 60_000;
+let upstashUnavailableUntil = 0;
+
 export const createRateLimiter = (
-  props: Omit<RatelimitConfig, "redis">,
+  props: Omit<RatelimitConfig, "redis">
 ): RateLimiter => {
   if (!redis) {
+    if (process.env.NODE_ENV === "production" && !warnedNoopInProduction) {
+      warnedNoopInProduction = true;
+      console.warn(
+        "[rate-limit] UPSTASH_REDIS_REST_URL/TOKEN (or KV_REST_API_URL/TOKEN) not set: rate limiting is disabled."
+      );
+    }
     return noopRateLimiter;
   }
 
@@ -41,21 +56,34 @@ export const createRateLimiter = (
     redis,
     limiter: props.limiter ?? Ratelimit.slidingWindow(10, "10 s"),
     prefix: props.prefix ?? "qrdx",
+    // Upstash allows the request itself when a check takes longer than this.
+    timeout: 1000,
   });
 
   return {
     limit: async (identifier: string) => {
+      if (Date.now() < upstashUnavailableUntil) {
+        return noopRateLimiter.limit(identifier);
+      }
       try {
-        return await ratelimit.limit(identifier);
-      } catch (error) {
-        if (process.env.NODE_ENV === "development") {
-          console.warn(
-            "[rate-limit] Upstash unavailable, allowing request in development:",
-            error instanceof Error ? error.message : error,
+        const result = await ratelimit.limit(identifier);
+        if (result.reason === "timeout") {
+          // Upstash already allowed this request; back off like a failure.
+          upstashUnavailableUntil = Date.now() + UPSTASH_FAILURE_COOLDOWN_MS;
+          console.error(
+            "[rate-limit] Upstash timed out; allowing requests without rate limiting for 5 minutes."
           );
-          return noopRateLimiter.limit(identifier);
         }
-        throw error;
+        return result;
+      } catch (error) {
+        // Fail open: an unreachable Upstash must never take routes (or QR
+        // redirects) down. Cost-sensitive quotas are enforced in the database.
+        upstashUnavailableUntil = Date.now() + UPSTASH_FAILURE_COOLDOWN_MS;
+        console.error(
+          "[rate-limit] Upstash unavailable; allowing requests without rate limiting for 5 minutes:",
+          error instanceof Error ? error.message : error
+        );
+        return noopRateLimiter.limit(identifier);
       }
     },
   };

@@ -14,6 +14,7 @@ import type {
   EtsyContent,
   FacebookContent,
   FlipkartContent,
+  GoogleDriveContent,
   GoogleReviewContent,
   InstagramContent,
   LinkedInContent,
@@ -124,7 +125,7 @@ export function encodeWifi(content: WifiContent): string {
     return `WIFI:T:nopass;S:${escapedSsid};;`;
   }
 
-  return `WIFI:T:${encryption};S:${escapedSsid};P:${escapedPassword};H:${hidden};`;
+  return `WIFI:T:${encryption};S:${escapedSsid};P:${escapedPassword};H:${hidden};;`;
 }
 
 /**
@@ -201,7 +202,7 @@ export function encodeMaps(content: MapsContent): string {
   // Check if it's coordinates (lat,long format)
   const coordsRegex = /^-?\d+\.?\d*,\s*-?\d+\.?\d*$/;
   if (coordsRegex.test(content.location.trim())) {
-    const coords = content.location.trim();
+    const coords = content.location.trim().replace(/\s+/g, "");
     return `https://www.google.com/maps?q=${coords}`;
   }
 
@@ -416,7 +417,11 @@ export function encodeEthereum(content: EthereumContent): string {
 
   const params: string[] = [];
   if (content.amount) {
-    params.push(`value=${content.amount}`);
+    // EIP-681 amounts are in wei: convert plain decimal ETH, leave exponent forms as given
+    const amount = content.amount.trim();
+    params.push(
+      `value=${/^\d*\.?\d+$/.test(amount) ? `${amount}e18` : amount}`,
+    );
   }
   if (content.gas) {
     params.push(`gas=${content.gas}`);
@@ -472,6 +477,14 @@ export function encodeFlipkart(content: FlipkartContent): string {
 export function encodeCalcom(content: CalcomContent): string {
   if (!content.bookingUrl) return "";
   return content.bookingUrl;
+}
+
+/**
+ * Encode Google Drive content
+ */
+export function encodeGoogleDrive(content: GoogleDriveContent): string {
+  if (!content.url) return "";
+  return content.url;
 }
 
 /**
@@ -545,6 +558,8 @@ export function encodeQRContent(content: QRContentConfig | null): string {
       return encodeFlipkart(content);
     case "calcom":
       return encodeCalcom(content);
+    case "google-drive":
+      return encodeGoogleDrive(content);
     default:
       return "";
   }
@@ -773,6 +788,12 @@ export function validateContent(content: QRContentConfig): {
     case "calcom":
       if (!content.bookingUrl || content.bookingUrl.trim() === "") {
         return { valid: false, error: "Cal.com booking URL is required" };
+      }
+      return { valid: true };
+
+    case "google-drive":
+      if (!content.url || content.url.trim() === "") {
+        return { valid: false, error: "Google Drive URL is required" };
       }
       return { valid: true };
 

@@ -1,12 +1,14 @@
 ---
 title: Understanding QR Codes — How They Actually Work
 description: A clear, technical tour of QR code structure, data modes, error correction, and what scanners do when you point a camera at those little squares.
-date: "2026-03-23"
+date: "2026-10-31"
 author: ["ritesh-bucha"]
 category: Education
-image: https://assets.qrdx.dev/hero.webp
-related: ["introducing-qrdx"]
-published: false
+tags: ["how qr codes work", "qr code structure", "error correction", "reed-solomon"]
+image: /blog/understanding-qr-codes/hero.webp
+imageAlt: Close-up of a 3D QR code with its three corner finder patterns glowing blue under a scan line
+related: ["best-free-qr-code-generators-2026", "introducing-qrdx"]
+published: true
 ---
 
 QR codes feel like magic: aim a camera, tap a link, done. Under the hood they are a carefully standardized **binary barcode** — a tiny grid of black and white modules that encodes bits, protects them with math, and arranges them so decoders can read them from almost any angle.
@@ -23,6 +25,14 @@ That orientation trick is why you see the same “bullseye” squares in every Q
 
 ## The physical grid
 
+<Figure
+  src="/blog/understanding-qr-codes/versions.webp"
+  alt="Real QR codes for the same URL at versions 1, 2 and 10 (21×21, 25×25 and 57×57 modules), finder patterns highlighted in blue"
+  width={1800}
+  height={600}
+  caption="Real, scannable codes for qrdx.dev at Versions 1, 2 and 10 (21×21, 25×25 and 57×57 modules), with the three finder patterns in blue. Each version adds four modules per side."
+/>
+
 A QR symbol is a square of **modules** (think pixels, but printed). The smallest standard version is **Version 1**: **21×21** modules. Each step up adds **4 modules per side**:
 
 - Version 1 → 21×21  
@@ -33,7 +43,7 @@ Bigger versions exist to carry **more data** and **more error correction redunda
 
 ### Finder patterns
 
-Three **finder patterns** sit in the **top-left**, **top-right**, and **bottom-left** corners. Each is a 7×7 module square: a 3×3 black core, a one-module white ring, and a 7×7 black outer border.
+Three **finder patterns** sit in the **top-left**, **top-right**, and **bottom-left** corners. Each is 7×7 modules: a 3×3 dark core, wrapped in a one-module light ring, wrapped in a one-module dark ring. A one-module light separator keeps each finder apart from the data around it.
 
 Scanners hunt for these shapes first. Because there are **three** of them, software can infer **scale**, **rotation**, and **perspective** — that is how your phone still works when the sticker is skewed on a curved cup.
 
@@ -85,11 +95,23 @@ Rough intuition:
 
 Marketing QRs on outdoor signage often use **M or Q**. Tiny codes on screens can sometimes use **L** if the environment is clean.
 
+Switch levels below to see the trade-off on a real code. The URL stays the same; only the redundancy changes.
+
+<ErrorCorrectionDemo />
+
 ## Error correction: why a torn code still scans
+
+<Figure
+  src="/blog/understanding-qr-codes/error-correction.webp"
+  alt="A damaged QR code whose missing pieces are rebuilt in blue glass, illustrating error correction"
+  width={1500}
+  height={1000}
+  caption="Reed–Solomon parity lets the decoder rebuild missing or misread codewords, up to the level's limit."
+/>
 
 QR codes use **Reed–Solomon** codes over GF(256). In plain language: extra **parity-like** bytes are computed from your message so the decoder can **reconstruct missing or wrong modules** up to a limit.
 
-That is why a corner can be covered by a finger or a logo (if you respect the standard’s limits) and the payload still recovers — you are not “guessing the URL,” the math is **reconstructing the bit stream**.
+That is why a scuffed edge, a fingertip over part of the data area, or a logo (if you respect the standard’s limits) still leaves a readable payload — you are not “guessing the URL,” the math is **reconstructing the bit stream**. The one thing error correction cannot fix is a hidden **finder pattern**: if the decoder cannot locate the code, it never gets as far as the math.
 
 This is also why **central logos** are safe only when you treat them as **occlusion**: you must **lower effective data** or **raise version / EC level** so redundancy covers the blocked modules.
 
@@ -103,13 +125,21 @@ You do not choose masks by hand in normal tools; the generator does it for you.
 
 ## What happens when you scan
 
+<Figure
+  src="/blog/understanding-qr-codes/scan-pipeline.webp"
+  alt="Isometric sequence from a tilted QR code to finder detection, flattening, sampling and decoded data"
+  width={2100}
+  height={900}
+  caption="From camera frame to URL: find the finders, flatten the grid, sample each module, then decode."
+/>
+
 A modern pipeline looks roughly like:
 
 1. **Image capture** — camera frame, possibly HDR  
 2. **Find finder patterns** — locate the three squares  
 3. **Homography / perspective warp** — flatten the grid  
 4. **Sample modules** — decide black vs. white per cell (thresholding adapts to lighting)  
-5. **Read format info** — mask, EC level, and data mask applied  
+5. **Read format info** — error correction level and mask pattern (plus version info from Version 7 up)  
 6. **Extract & correct codewords** — Reed–Solomon recovery  
 7. **Parse segments** — modes and payload  
 8. **Hand off** — URL, Wi‑Fi config, vCard, etc.
@@ -121,7 +151,7 @@ Different apps implement steps with different heuristics, which is why **contras
 None of this replaces taste — but it bounds what is safe:
 
 - **Quiet zone** is part of the spec, not optional trim.  
-- **Contrast** along the red channel matters for many cameras (avoid light gray on white).  
+- **Contrast** is what decoders measure: they threshold brightness, so keep dark modules on a light background and avoid light gray on white. Inverted (light-on-dark) codes are allowed by the current standard, but some older scanners still fail on them.  
 - **Logos** trade **payload capacity** for **style**; generators should validate **readability**, not just aesthetics.  
 
 Tools like **QRdx** exist to keep that balance: full customization **with** a live preview so you see when you have pushed contrast, patterns, or logos too far.
@@ -130,6 +160,6 @@ Tools like **QRdx** exist to keep that balance: full customization **with** a li
 
 The widely implemented specification is **ISO/IEC 18004** (QR Code model 2). Open-source encoders and decoders (ZXing, qrcode, etc.) implement the same rules — if you read one library’s “QR format” docs, you are reading a friendly version of the same standard.
 
-If you want to **generate** beautiful, standards-aware codes with AI-assisted themes and deep control over modules, eyes, and export formats, start here:
+If you want to **generate** beautiful, standards-aware codes with AI-assisted themes and deep control over modules, eyes, and export formats, start in the [QRdx playground](/playground). And if this explainer helped, a star on GitHub helps other people find QRdx:
 
 <GithubCard repo="bucharitesh/qrdx" />

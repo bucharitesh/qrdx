@@ -19,6 +19,7 @@ import { NotFound } from "@/components/not-found";
 import * as Preview from "@/components/preview";
 import { Wrapper } from "@/components/preview/wrapper";
 import { owner, repo } from "@/lib/github";
+import { createMetadata } from "@/lib/metadata";
 import { getPageImage, source } from "@/lib/source";
 import { getMDXComponents } from "@/mdx-components";
 
@@ -122,11 +123,12 @@ export async function generateMetadata(
     notFound();
   }
 
-  return {
+  return createMetadata({
     title: page.data.title,
     description: page.data.description,
+    path: page.url,
     openGraph: {
       images: getPageImage(page).url,
     },
-  };
+  });
 }

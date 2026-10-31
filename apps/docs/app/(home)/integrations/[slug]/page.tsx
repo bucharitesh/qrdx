@@ -1,12 +1,16 @@
 import type { IntegrationCategory } from "@repo/integrations";
 import {
+  getCapabilityLabel,
   getIntegrationRegistry,
   initializeIntegrations,
 } from "@repo/integrations";
-import { ChevronLeft, ExternalLink } from "lucide-react";
+import { ExternalLink } from "lucide-react";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Breadcrumbs } from "@/components/sections/breadcrumbs";
 import { SectionHeader } from "@/components/sections/section-header";
+import { createMetadata } from "@/lib/metadata";
 import { IntegrationCard } from "../components/integrations-grid";
 
 initializeIntegrations();
@@ -24,16 +28,19 @@ interface IntegrationPageProps {
   params: Promise<{ slug: string }>;
 }
 
-export async function generateMetadata({ params }: IntegrationPageProps) {
+export async function generateMetadata({
+  params,
+}: IntegrationPageProps): Promise<Metadata> {
   const { slug } = await params;
   initializeIntegrations();
   const registry = getIntegrationRegistry();
   const integration = registry.get(slug);
   if (!integration) return {};
-  return {
-    title: `${integration.name} Integration | QRdx`,
+  return createMetadata({
+    title: `${integration.name} Integration`,
     description: integration.description,
-  };
+    path: `/integrations/${integration.slug}`,
+  });
 }
 
 export default async function IntegrationDetailPage({
@@ -59,13 +66,14 @@ export default async function IntegrationDetailPage({
     <main className="w-full min-h-screen divide-y divide-border mt-20">
       {/* Breadcrumb bar */}
       <div className="px-8 md:px-10 py-3">
-        <Link
-          href="/integrations"
-          className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground transition-colors"
-        >
-          <ChevronLeft className="size-4" />
-          Browse all
-        </Link>
+        <Breadcrumbs
+          align="start"
+          items={[
+            { name: "Home", path: "/" },
+            { name: "Integrations", path: "/integrations" },
+            { name: integration.name, path: `/integrations/${slug}` },
+          ]}
+        />
       </div>
 
       {/* Two-column body */}
@@ -73,13 +81,20 @@ export default async function IntegrationDetailPage({
         {/* ── Left sidebar ── */}
         <aside className="w-full md:w-72 shrink-0 flex flex-col gap-8 p-6">
           {/* Logo */}
-          <div className="bg-white border border-border flex size-20 items-center justify-center rounded-full p-3.5 shadow-sm">
-            {integration.logo ? (
-              <img
-                src={integration.logo}
-                alt={`${integration.name} logo`}
-                className="size-full object-contain"
-              />
+          <div className="bg-background border border-border flex size-20 items-center justify-center rounded-full p-3.5 shadow-sm">
+            {integration.logos.light ? (
+              <>
+                <img
+                  src={integration.logos.light}
+                  alt={`${integration.name} logo`}
+                  className="size-full object-contain dark:hidden"
+                />
+                <img
+                  src={integration.logos.dark}
+                  alt={`${integration.name} logo`}
+                  className="hidden size-full object-contain dark:block"
+                />
+              </>
             ) : (
               <ExternalLink className="size-8 text-muted-foreground" />
             )}
@@ -183,6 +198,27 @@ export default async function IntegrationDetailPage({
                   </li>
                 ))}
               </ul>
+            </div>
+          )}
+
+          {integration.capabilities.length > 0 && (
+            <div className="space-y-4">
+              <h2 className="text-xl font-semibold tracking-tight">
+                QRDX capabilities
+              </h2>
+              <div className="grid gap-3 sm:grid-cols-2">
+                {integration.capabilities.map((capability) => (
+                  <div key={capability.id} className="rounded-xl border p-4">
+                    <p className="text-sm font-medium">{capability.label}</p>
+                    <p className="mt-1 text-muted-foreground text-xs">
+                      {getCapabilityLabel(capability.kind)}
+                    </p>
+                    <p className="mt-2 text-muted-foreground text-sm">
+                      {capability.description}
+                    </p>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
 

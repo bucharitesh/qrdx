@@ -18,6 +18,7 @@ import type { ColorConfig } from "qrdx/types";
 import { normalizeColorConfig } from "qrdx/types";
 import { useMemo, useState } from "react";
 import { Icons } from "@/components/icons";
+import { DEFAULT_QR_LOGO } from "@/lib/constants";
 import { useQREditorStore } from "@/store/editor-store";
 
 interface QRCodeDialogProps {
@@ -151,11 +152,17 @@ export function QRCodeDialog({ open, onOpenChange }: QRCodeDialogProps) {
     if (style.templateId) {
       props.push(`${indent}templateId="${style.templateId}"`);
     }
+    if (style.margin) {
+      props.push(`${indent}margin={${style.margin}}`);
+    }
+    if (style.frame && style.frame.style !== "none") {
+      props.push(`${indent}frame={${JSON.stringify(style.frame)}}`);
+    }
     if (style.showLogo !== undefined) {
       props.push(`${indent}hideLogo={${!style.showLogo}}`);
     }
-    if (style.customLogo) {
-      props.push(`${indent}logo="${style.customLogo}"`);
+    if (style.showLogo) {
+      props.push(`${indent}logo="${style.customLogo ?? DEFAULT_QR_LOGO}"`);
     }
     if (style.size) {
       props.push(`${indent}size={${style.size}}`);

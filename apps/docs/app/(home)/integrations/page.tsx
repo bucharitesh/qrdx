@@ -2,17 +2,20 @@ import {
   getIntegrationRegistry,
   initializeIntegrations,
 } from "@repo/integrations";
+import type { Metadata } from "next";
 import { SectionHeader } from "@/components/sections/section-header";
+import { createMetadata } from "@/lib/metadata";
 import { IntegrationsGrid } from "./components/integrations-grid";
 import { IntegrationsHero } from "./components/integrations-hero";
 
 initializeIntegrations();
 
-export const metadata = {
-  title: "Integrations | QRdx",
+export const metadata: Metadata = createMetadata({
+  title: "Integrations",
   description:
-    "Connect your favourite tools with QRdx. Browse analytics, storage, marketing, and more integrations.",
-};
+    "Connect QRdx to the tools you already use: Dub.sh short links with click analytics and Google Drive images and share links.",
+  path: "/integrations",
+});
 
 export default function IntegrationsPage() {
   const registry = getIntegrationRegistry();

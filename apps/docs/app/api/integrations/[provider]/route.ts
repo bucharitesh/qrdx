@@ -1,16 +1,16 @@
 import { auth } from "@repo/auth/server";
 import { database as db, integration } from "@repo/database";
 import {
-  createOAuthHandler,
-  generatePKCE,
-  getIntegrationConfigWithEnv,
   getIntegrationRegistry,
   initializeIntegrations,
 } from "@repo/integrations";
 import { and, eq } from "drizzle-orm";
-import { cookies, headers } from "next/headers";
+import { headers } from "next/headers";
 import { NextResponse } from "next/server";
-import { env } from "@/lib/env";
+import {
+  createIntegrationAuthUrl,
+  isIntegrationConfigured,
+} from "@/lib/integration-oauth";
 
 // Initialize integrations on module load
 initializeIntegrations();
@@ -47,36 +47,20 @@ export async function GET(request: Request, context: RouteContext) {
 
     // If action is "connect", initiate OAuth flow
     if (action === "connect") {
+      if (!isIntegrationConfigured(provider)) {
+        return NextResponse.json(
+          { error: `${integrationDef.name} is not configured on this server` },
+          { status: 503 },
+        );
+      }
+
       try {
-        const config = getIntegrationConfigWithEnv(provider, env);
-
-        // Generate PKCE parameters
-        const { codeVerifier } = generatePKCE();
-
-        // Store code verifier in a secure cookie
-        const cookieStore = await cookies();
-        cookieStore.set(`${provider}_code_verifier`, codeVerifier, {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === "production",
-          sameSite: "lax",
-          maxAge: 600, // 10 minutes
-          path: "/",
-        });
-
-        // Create OAuth handler and generate auth URL
-        const oauthHandler = createOAuthHandler(config);
-        const authUrl = oauthHandler.generateAuthUrl(codeVerifier);
-
+        const authUrl = await createIntegrationAuthUrl(provider);
         return NextResponse.json({ url: authUrl });
       } catch (error) {
         console.error(`Failed to initiate OAuth for ${provider}:`, error);
         return NextResponse.json(
-          {
-            error:
-              error instanceof Error
-                ? error.message
-                : `Failed to initiate ${integrationDef.name} connection`,
-          },
+          { error: `Failed to initiate ${integrationDef.name} connection` },
           { status: 500 },
         );
       }

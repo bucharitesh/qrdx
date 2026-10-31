@@ -24,7 +24,7 @@ function escapeMarkdown(text) {
 }
 
 const commitLines = runGit(
-  `git log origin/${BASE_BRANCH}..origin/${HEAD_BRANCH} --pretty=format:"%H|%s|%an" --reverse -n ${MAX_COMMITS}`,
+  `git log origin/${BASE_BRANCH}..origin/${HEAD_BRANCH} --pretty=format:"%H|%s|%an" --reverse -n ${MAX_COMMITS}`
 );
 
 if (commitLines.length === 0) {
@@ -48,9 +48,13 @@ const changeList = commits.map((line) => {
   return `- ${escapeMarkdown(subject)} (\`${hash.slice(0, 7)}\`, ${escapeMarkdown(author ?? "unknown")})`;
 });
 
-const diffStat = runGit(`git diff --shortstat origin/${BASE_BRANCH}..origin/${HEAD_BRANCH}`);
+const diffStat = runGit(
+  `git diff --shortstat origin/${BASE_BRANCH}..origin/${HEAD_BRANCH}`
+);
 const latestSubject = commits.at(-1)?.split("|")[1] ?? "Staging updates";
-const hasBreaking = commits.some((line) => /BREAKING CHANGE|!:|\bbreaking\b/i.test(line));
+const hasBreaking = commits.some((line) =>
+  /BREAKING CHANGE|!:|\bbreaking\b/i.test(line)
+);
 
 const compareUrl = `https://github.com/${REPOSITORY}/compare/${BASE_BRANCH}...${HEAD_BRANCH}`;
 const commitCount = commits.length;

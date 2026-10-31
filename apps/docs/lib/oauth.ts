@@ -1,21 +1,31 @@
-import {
-  database as db,
-  oauthApp,
-  oauthAuthorizationCode,
-  oauthToken,
-} from "@repo/database";
+import { createHash, randomBytes, timingSafeEqual } from "node:crypto";
+import { database as db, oauthApp, oauthToken } from "@repo/database";
 import bcrypt from "bcryptjs";
-import { createHash, randomBytes } from "node:crypto";
+import cuid from "cuid";
 import { and, eq, isNull } from "drizzle-orm";
 import type { NextRequest } from "next/server";
-import cuid from "cuid";
 import {
   OAUTH_ACCESS_TOKEN_EXPIRY_SECONDS,
   OAUTH_REFRESH_TOKEN_EXPIRY_SECONDS,
 } from "@/lib/constants";
 
-export const OAUTH_SCOPES = ["themes:read", "profile:read"] as const;
+export const OAUTH_SCOPES = [
+  "themes:read",
+  "profile:read",
+  "codes:read",
+  "codes:write",
+] as const;
 export type OAuthScope = (typeof OAUTH_SCOPES)[number];
+
+export const PKCE_METHODS = ["S256", "plain"] as const;
+// RFC 7636 §4.1/4.2: 43-128 chars from the unreserved set
+const PKCE_VALUE_REGEX = /^[A-Za-z0-9._~-]{43,128}$/;
+
+// RFC 6749 §5.1: token responses must not be cached
+export const NO_STORE_HEADERS = {
+  "Cache-Control": "no-store",
+  Pragma: "no-cache",
+};
 
 export function oauthError(
   error: string,
@@ -55,11 +65,27 @@ export function parseScopes(scopeParam: string): string[] {
   return scopeParam.split(/[\s,]+/).filter(Boolean);
 }
 
-export function validateScopes(scopes: string[]): boolean {
+export function validateScopes(
+  scopes: string[],
+  allowedScopes: readonly string[] = OAUTH_SCOPES,
+): boolean {
   return (
     scopes.length > 0 &&
-    scopes.every((s) => OAUTH_SCOPES.includes(s as OAuthScope))
+    scopes.every(
+      (s) =>
+        OAUTH_SCOPES.includes(s as OAuthScope) && allowedScopes.includes(s),
+    )
   );
+}
+
+export function isValidPkceValue(value: string): boolean {
+  return PKCE_VALUE_REGEX.test(value);
+}
+
+function safeEqual(a: string, b: string): boolean {
+  const aBuffer = Buffer.from(a);
+  const bBuffer = Buffer.from(b);
+  return aBuffer.length === bBuffer.length && timingSafeEqual(aBuffer, bBuffer);
 }
 
 export function verifyCodeChallenge(
@@ -67,12 +93,15 @@ export function verifyCodeChallenge(
   challenge: string,
   method: string,
 ): boolean {
+  if (!isValidPkceValue(verifier)) {
+    return false;
+  }
   if (method === "S256") {
     const hash = createHash("sha256").update(verifier).digest("base64url");
-    return hash === challenge;
+    return safeEqual(hash, challenge);
   }
   if (method === "plain") {
-    return verifier === challenge;
+    return safeEqual(verifier, challenge);
   }
   return false;
 }
@@ -141,10 +170,12 @@ export async function validateAccessToken(token: string) {
       accessTokenExpiresAt: oauthToken.accessTokenExpiresAt,
     })
     .from(oauthToken)
+    .innerJoin(oauthApp, eq(oauthApp.id, oauthToken.appId))
     .where(
       and(
         eq(oauthToken.accessTokenHash, tokenHash),
         isNull(oauthToken.revokedAt),
+        eq(oauthApp.isActive, true),
       ),
     )
     .limit(1);
@@ -171,7 +202,9 @@ export async function requireAuth(req: NextRequest, requiredScope: OAuthScope) {
   const tokenData = await validateAccessToken(token);
 
   if (!tokenData) {
-    return { error: oauthError("invalid_token", "Invalid or expired token", 401) };
+    return {
+      error: oauthError("invalid_token", "Invalid or expired token", 401),
+    };
   }
 
   if (!tokenData.scopes.includes(requiredScope)) {

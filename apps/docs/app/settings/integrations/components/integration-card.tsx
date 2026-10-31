@@ -1,4 +1,10 @@
+import { Badge } from "@repo/design-system/components/ui/badge";
 import { cn } from "@repo/design-system/lib/utils";
+import { getCapabilityLabel } from "@repo/integration-kit";
+import type {
+  IntegrationCapability,
+  IntegrationLogoSet,
+} from "@repo/integrations";
 import { ExternalLink } from "lucide-react";
 import Link from "next/link";
 
@@ -6,7 +12,8 @@ interface IntegrationCardProps {
   slug: string;
   name: string;
   description: string;
-  logo: string;
+  logos: IntegrationLogoSet;
+  capabilities: IntegrationCapability[];
   isConnected: boolean;
   isConfigured?: boolean;
 }
@@ -15,7 +22,8 @@ export function IntegrationCard({
   slug,
   name,
   description,
-  logo,
+  logos,
+  capabilities,
   isConnected,
   isConfigured = true,
 }: IntegrationCardProps) {
@@ -41,13 +49,20 @@ export function IntegrationCard({
       </div>
 
       {/* Logo */}
-      <div className="bg-white border border-border flex size-10 items-center justify-center rounded-lg p-2 shrink-0">
-        {logo ? (
-          <img
-            src={logo}
-            alt={`${name} logo`}
-            className="size-full object-contain"
-          />
+      <div className="border border-border flex size-10 items-center justify-center rounded-lg bg-background p-2 shrink-0">
+        {logos.light ? (
+          <>
+            <img
+              src={logos.light}
+              alt={`${name} logo`}
+              className="size-full object-contain dark:hidden"
+            />
+            <img
+              src={logos.dark}
+              alt={`${name} logo`}
+              className="hidden size-full object-contain dark:block"
+            />
+          </>
         ) : (
           <ExternalLink className="size-4 text-muted-foreground" />
         )}
@@ -59,6 +74,17 @@ export function IntegrationCard({
         <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
           {description}
         </p>
+        <div className="mt-2 flex flex-wrap gap-1">
+          {capabilities.slice(0, 2).map((capability) => (
+            <Badge
+              key={capability.id}
+              variant="secondary"
+              className="px-1.5 py-0 text-[10px]"
+            >
+              {getCapabilityLabel(capability.kind)}
+            </Badge>
+          ))}
+        </div>
       </div>
     </Link>
   );

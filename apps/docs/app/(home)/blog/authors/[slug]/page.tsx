@@ -1,14 +1,22 @@
 import { Github, Linkedin, Twitter } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BlogList } from "@/components/sections/blog/blog-list";
-import { resolveAuthors } from "@/lib/blog-authors";
-import { blogAuthorsSource, blogSource } from "@/lib/source";
+import { Breadcrumbs } from "@/components/sections/breadcrumbs";
+import { blogAuthorsSource } from "@/lib/source";
+import { getMDXComponents } from "@/mdx-components";
+import {
+  absoluteUrl,
+  getPublishedPosts,
+  rssAlternateTypes,
+  toPostCard,
+} from "../../_lib/posts";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
 }
+
+export const dynamicParams = false;
 
 export default async function AuthorPage({ params }: PageProps) {
   const { slug } = await params;
@@ -29,38 +37,55 @@ export default async function AuthorPage({ params }: PageProps) {
 
   const firstName = name.split(" ")[0];
   const hasSocials = twitter || linkedin || github;
+  const Bio = authorPage.data.body;
 
-  const allPages = blogSource.getPages().filter((p) => p.data.published);
-  const authorPosts = allPages
+  const authorPosts = getPublishedPosts()
     .filter((page) => page.data.author.includes(slug))
-    .sort(
-      (a, b) =>
-        new Date(b.data.date).getTime() - new Date(a.data.date).getTime(),
-    )
-    .map((page) => ({
-      slug: page.slugs[0] ?? "",
-      title: page.data.title,
-      description: page.data.description ?? "",
-      date: page.data.date,
-      author: resolveAuthors(page.data.author),
-      category: page.data.category,
-      image: page.data.image,
-    }));
+    .map(toPostCard);
+
+  const sameAs = [
+    twitter && `https://x.com/${twitter}`,
+    github && `https://github.com/${github}`,
+    linkedin && `https://www.linkedin.com/in/${linkedin}`,
+  ].filter(Boolean);
+
+  const profileJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ProfilePage",
+    url: absoluteUrl(`/blog/authors/${slug}`),
+    mainEntity: {
+      "@type": "Person",
+      name,
+      jobTitle: role,
+      image: avatar,
+      url: absoluteUrl(`/blog/authors/${slug}`),
+      ...(sameAs.length > 0 && { sameAs }),
+    },
+  };
 
   return (
     <section className="flex flex-col w-full min-h-screen">
+      <script
+        type="application/ld+json"
+        // biome-ignore lint/security/noDangerouslySetInnerHtml: schema markup requires raw JSON
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(profileJsonLd).replace(/</g, "\\u003c"),
+        }}
+      />
       <div className="w-full">
         {/* Author profile header */}
         <div className="border-b w-full p-10 md:p-14">
           <div className="max-w-6xl mx-auto flex flex-col gap-6">
-            <Link
-              href="/blog"
-              className="text-sm text-muted-foreground hover:text-secondary-foreground transition-colors w-fit"
-            >
-              &larr; Back to Blog
-            </Link>
+            <Breadcrumbs
+              align="start"
+              items={[
+                { name: "Home", path: "/" },
+                { name: "Blog", path: "/blog" },
+                { name, path: `/blog/authors/${slug}` },
+              ]}
+            />
 
-            <div className="flex items-end justify-between gap-6">
+            <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
               {/* Left: avatar + name + role */}
               <div className="flex flex-col gap-4">
                 <img
@@ -75,6 +100,9 @@ export default async function AuthorPage({ params }: PageProps) {
                     {name}
                   </h1>
                   <p className="text-muted-foreground">{role}</p>
+                </div>
+                <div className="prose prose-neutral max-w-2xl text-muted-foreground">
+                  <Bio components={getMDXComponents()} />
                 </div>
               </div>
 
@@ -145,8 +173,33 @@ export async function generateMetadata({
     notFound();
   }
 
+  const { title: name, role, avatar } = authorPage.data;
+  const title = `Posts by ${name}`;
+  const description =
+    authorPage.data.description ?? `${role}. Read blog posts by ${name}.`;
+  const url = absoluteUrl(`/blog/authors/${slug}`);
+
   return {
-    title: `${authorPage.data.title} | QRdx Blog`,
-    description: `${authorPage.data.role} — Read blog posts by ${authorPage.data.title}`,
+    title,
+    description,
+    alternates: {
+      canonical: url,
+      types: rssAlternateTypes,
+    },
+    openGraph: {
+      type: "profile",
+      title,
+      description,
+      url,
+      siteName: "QRdx",
+      locale: "en_US",
+      images: [{ url: absoluteUrl(avatar), alt: name }],
+    },
+    twitter: {
+      card: "summary",
+      title,
+      description,
+      images: [absoluteUrl(avatar)],
+    },
   };
 }

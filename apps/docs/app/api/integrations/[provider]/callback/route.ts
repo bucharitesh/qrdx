@@ -9,9 +9,10 @@ import {
   initializeIntegrations,
 } from "@repo/integrations";
 import { and, eq } from "drizzle-orm";
-import { cookies, headers } from "next/headers";
+import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import { env } from "@/lib/env";
+import { consumeIntegrationOAuthState } from "@/lib/integration-oauth";
 
 // Initialize integrations on module load
 initializeIntegrations();
@@ -28,6 +29,7 @@ export async function GET(request: Request, context: RouteContext) {
   const { provider } = await context.params;
   const { searchParams } = new URL(request.url);
   const code = searchParams.get("code");
+  const state = searchParams.get("state");
   const error = searchParams.get("error");
 
   // Check for OAuth errors
@@ -67,18 +69,16 @@ export async function GET(request: Request, context: RouteContext) {
     );
   }
 
-  // Retrieve code verifier from cookie
-  const cookieStore = await cookies();
-  const codeVerifier = cookieStore.get(`${provider}_code_verifier`)?.value;
+  // Verify state (CSRF) and retrieve the PKCE verifier; both cookies are cleared
+  const oauthState = await consumeIntegrationOAuthState(provider, state);
 
-  if (!codeVerifier) {
+  if ("error" in oauthState) {
     return NextResponse.redirect(
-      new URL("/settings/integrations?error=missing_verifier", request.url),
+      new URL(`/settings/integrations?error=${oauthState.error}`, request.url),
     );
   }
 
-  // Delete the code verifier cookie
-  cookieStore.delete(`${provider}_code_verifier`);
+  const { codeVerifier } = oauthState;
 
   try {
     // Get integration config with environment credentials

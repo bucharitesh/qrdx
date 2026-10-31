@@ -63,9 +63,17 @@ export const compare = defineDocs({
     schema: frontmatterSchema.extend({
       competitor: z.string(),
       competitorUrl: z.string(),
-      /** Full URL to competitor logo (SVG or PNG) for compare UI */
-      competitorLogo: z.url(),
+      /** Full URL to competitor logo (SVG or PNG); a monogram is shown when omitted */
+      competitorLogo: z.url().optional(),
+      /** "generator" = hosted QR tools, "library" = developer packages */
+      category: z.enum(["generator", "library"]).default("generator"),
       tagline: z.string(),
+      seoTitle: z.string().optional(),
+      seoDescription: z.string().optional(),
+      /** Competitor pages the facts on this page were checked against */
+      sources: z.array(z.url()).default([]),
+      /** ISO date the competitor facts were last checked */
+      lastVerified: z.string().optional(),
       qrdxPlan: z.string().default("Free · Open Source"),
       competitorPlan: z.string().default("Paid"),
       tableRows: z.array(
@@ -111,11 +119,16 @@ export const blog = defineDocs({
   docs: {
     schema: frontmatterSchema.extend({
       date: z.string(),
+      /** Last substantive update (YYYY-MM-DD) */
+      updated: z.string().optional(),
       author: z.array(z.string()),
       category: z
         .enum(["Company News", "Engineering", "Education", "Changelog"])
         .default("Company News"),
+      tags: z.array(z.string()).optional(),
+      /** Absolute URL or site-relative path (e.g. /blog/<slug>/hero.webp) */
       image: z.string(),
+      imageAlt: z.string().optional(),
       related: z.array(z.string()).optional(),
       published: z.boolean().default(false),
     }),

@@ -28,6 +28,8 @@ import {
 import { useRef, useState } from "react";
 import * as styles from "styles/components.css";
 
+const QRDX_LOGO = "https://qrdx.dev/logo.png";
+
 const TEMPLATE_IDS = [
   "default",
   ...getTemplateIds().filter((id) => id !== "default"),
@@ -133,7 +135,7 @@ export const App = () => {
         level: errorLevel,
         templateId,
         hideLogo: !showLogo,
-        logo: logoUrl || undefined,
+        logo: logoUrl || QRDX_LOGO,
       });
 
       const dataUrl = (await getQRAsCanvas(qrData, "image/png")) as string;
@@ -213,7 +215,7 @@ export const App = () => {
               fgColor={fgColor}
               hideLogo={!showLogo}
               level={errorLevel}
-              logo={logoUrl || undefined}
+              logo={logoUrl || QRDX_LOGO}
               size={220}
               templateId={templateId}
               value={url}

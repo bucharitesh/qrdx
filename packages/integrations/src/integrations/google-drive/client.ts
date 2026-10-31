@@ -88,7 +88,8 @@ export class GoogleDriveClient {
       imagesOnly?: boolean;
     }
   ): Promise<DriveFileList> {
-    let query = `name contains '${searchTerm}'`;
+    const escapedTerm = searchTerm.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+    let query = `name contains '${escapedTerm}'`;
 
     if (params?.imagesOnly) {
       query = `(${query}) and (${IMAGE_QUERY})`;
@@ -111,7 +112,7 @@ export class GoogleDriveClient {
     });
 
     return this.request<DriveFile>(
-      `/files/${fileId}?${searchParams.toString()}`
+      `/files/${encodeURIComponent(fileId)}?${searchParams.toString()}`
     );
   }
 
@@ -119,7 +120,7 @@ export class GoogleDriveClient {
    * Download file content
    */
   async downloadFile(fileId: string): Promise<Blob> {
-    const url = `${this.baseUrl}/files/${fileId}?alt=media`;
+    const url = `${this.baseUrl}/files/${encodeURIComponent(fileId)}?alt=media`;
     const response = await fetch(url, {
       headers: {
         Authorization: `Bearer ${this.accessToken}`,
@@ -137,7 +138,7 @@ export class GoogleDriveClient {
    * Get file download URL
    */
   getDownloadUrl(fileId: string): string {
-    return `${this.baseUrl}/files/${fileId}?alt=media`;
+    return `${this.baseUrl}/files/${encodeURIComponent(fileId)}?alt=media`;
   }
 
   /**

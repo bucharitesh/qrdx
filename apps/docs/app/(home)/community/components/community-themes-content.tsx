@@ -277,10 +277,10 @@ export function CommunityThemesContent() {
                   <p className="text-muted-foreground text-xs leading-relaxed">
                     You can also manage all your saved themes from{" "}
                     <Link
-                      href="/settings/themes"
+                      href="/dashboard/themes"
                       className="text-foreground font-medium underline underline-offset-2"
                     >
-                      Settings
+                      Themes
                     </Link>
                     .
                   </p>

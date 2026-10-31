@@ -10,6 +10,8 @@ import { Icons } from "@/components/icons";
 const SCOPE_LABELS: Record<string, string> = {
   "themes:read": "Read your saved QR themes",
   "profile:read": "Read your profile (name, email)",
+  "codes:read": "Read your dynamic QR codes and their scan analytics",
+  "codes:write": "Create, edit and delete your dynamic QR codes",
 };
 
 export function OAuthAuthorizeContent() {
@@ -59,7 +61,12 @@ export function OAuthAuthorizeContent() {
   const handleSignIn = async (provider: "google" | "github") => {
     setLoadingProvider(provider);
     try {
-      await authClient.signIn.social({ provider, callbackURL });
+      const { error } = await authClient.signIn.social({
+        provider,
+        callbackURL,
+      });
+      // e.g. the provider is not configured on this server
+      if (error) setLoadingProvider(null);
     } catch {
       setLoadingProvider(null);
     }

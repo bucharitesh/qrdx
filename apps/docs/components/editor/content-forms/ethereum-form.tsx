@@ -52,7 +52,7 @@ export function EthereumForm() {
         <Input
           id="ethereum-address"
           type="text"
-          placeholder="0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb"
+          placeholder="0xfb6916095ca1df60bb79Ce92ce3ea74c37c5d359"
           value={ethereumData.address}
           onChange={(e) =>
             setEthereumData({ ...ethereumData, address: e.target.value })

@@ -1,0 +1,200 @@
+---
+title: Self-hosting guide
+description: Run your own QRdx web app with Docker Compose or Node.js.
+icon: Server
+---
+
+QRdx is AGPL-3.0 licensed, and you can run the whole web app (QR editor, accounts, saved themes, community gallery and these docs) on your own server. You don't need any of this to use the [`qrdx` React library](/docs/getting-started) or the CLI. Those run anywhere without a backend.
+
+<Callout type="warn">
+  The Docker setup is new. If something doesn't work, please [open an issue](https://github.com/bucharitesh/qrdx/issues).
+</Callout>
+
+## Requirements
+
+- Docker with Compose v2, or Node.js 20+ and pnpm 10 for the manual setup
+- A GitHub or Google OAuth app. Sign-in is OAuth-only, so you need at least one provider to create accounts.
+- Postgres: the container bundled in `docker-compose.yml`, or a [Neon](https://neon.tech) database
+
+### How the database connection works
+
+The app talks to Postgres through Neon's serverless HTTP driver.
+
+- **Neon:** works directly. Set `DATABASE_URL` to your Neon connection string.
+- **Plain Postgres:** needs a Neon-compatible HTTP proxy in front of it. `docker-compose.yml` runs one ([local-neon-http-proxy](https://github.com/TimoWilhelm/local-neon-http-proxy)) and sets `DATABASE_HTTP_ENDPOINT` so the app sends its queries there.
+
+The schema comes from `packages/database/schema.ts` and is applied with `drizzle-kit push`.
+
+## Quick start with Docker Compose
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/bucharitesh/qrdx.git
+cd qrdx
+```
+
+### 2. Configure the environment
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env`:
+
+- `BETTER_AUTH_SECRET`: generate one with `openssl rand -base64 32`
+- `NEXT_PUBLIC_APP_URL`: the public URL of your instance, for example `https://qr.example.com`. Keep `http://localhost:3000` for a local test.
+- `BETTER_AUTH_URL`: uncomment it and use the same value
+- `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET`: from a [GitHub OAuth app](https://github.com/settings/developers) with the callback URL `<your url>/api/auth/callback/github`
+- or `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET`: from a [Google OAuth client](https://console.cloud.google.com/apis/credentials) with the redirect URI `<your url>/api/auth/callback/google`
+
+You don't need to set `DATABASE_URL`. Compose points the app at its own Postgres container. To change the database password, set `POSTGRES_PASSWORD` before the first start.
+
+### 3. Start the stack
+
+```bash
+docker compose up -d --build
+```
+
+This builds the image, starts Postgres and the proxy, runs the one-shot `migrate` service (`drizzle-kit push`) and then starts the app on port 3000. The first build takes several minutes.
+
+```bash
+docker compose ps                    # migrate should show "exited (0)"
+docker compose logs -f migrate app   # follow the schema sync and the app
+```
+
+### 4. Create your first user
+
+Open `NEXT_PUBLIC_APP_URL` in a browser and sign in with GitHub or Google. Your account is created on first sign-in.
+
+### 5. Create your first admin
+
+Add the email address of the account you just created to `.env`:
+
+```bash
+ADMIN_EMAILS=you@example.com
+```
+
+Recreate the app container so it picks up the change, then sign in and open `/admin`:
+
+```bash
+docker compose up -d app
+```
+
+`ADMIN_USER_IDS` works the same way with user ids.
+
+## Using Neon or another managed database
+
+You can skip the bundled Postgres and run only the app image:
+
+```bash
+docker build -t qrdx --build-arg NEXT_PUBLIC_APP_URL=https://qr.example.com .
+docker run -d --env-file .env -p 3000:3000 qrdx
+```
+
+Set `DATABASE_URL` in `.env` to your Neon connection string and leave `DATABASE_HTTP_ENDPOINT` unset. Apply the schema once (and again after each update) with the migrator image:
+
+```bash
+docker build --target migrator -t qrdx-migrate .
+docker run --rm -e DATABASE_URL="<your connection string>" qrdx-migrate
+```
+
+## Manual setup (Node.js)
+
+```bash
+git clone https://github.com/bucharitesh/qrdx.git
+cd qrdx
+pnpm install
+
+cp .env.example apps/docs/.env.local                    # then edit it
+echo 'DATABASE_URL=<your connection string>' > packages/database/.env
+
+pnpm db:push                                             # apply the schema
+pnpm --filter docs dev                                   # http://localhost:3000
+```
+
+For production, build and start the app:
+
+```bash
+pnpm turbo build --filter=docs
+pnpm --filter docs start
+```
+
+`pnpm db:push` connects with Neon's driver, so it needs a Neon database. To use the Docker Postgres for local development instead, start it with `docker compose up -d db db-proxy`, apply the schema with `docker compose run --rm migrate`, and set these in `apps/docs/.env.local`:
+
+```bash
+DATABASE_URL=postgresql://postgres:postgres@localhost:5432/qrdx
+DATABASE_HTTP_ENDPOINT=http://localhost:4444/sql
+```
+
+## Environment variables
+
+[`.env.example`](https://github.com/bucharitesh/qrdx/blob/main/.env.example) lists every variable with a short note on where to get it.
+
+### Minimum
+
+| Variable | Purpose |
+| --- | --- |
+| `NEXT_PUBLIC_APP_URL` | Public URL of your instance |
+| `DATABASE_URL` | Postgres connection string (set by Compose) |
+| `BETTER_AUTH_SECRET` | Signs sessions and cookies |
+
+Add one OAuth provider (GitHub or Google) so people can sign in.
+
+### Optional services
+
+| Service | Variables | Without it |
+| --- | --- | --- |
+| GitHub sign-in | `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET` | GitHub sign-in is unavailable |
+| Google sign-in | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | Google sign-in is unavailable |
+| Auth base URL | `BETTER_AUTH_URL` | Inferred from each request, with a warning in the logs |
+| Admin panel | `ADMIN_EMAILS`, `ADMIN_USER_IDS` | Nobody can open `/admin` |
+| AI theme generation | `GOOGLE_API_KEY` | AI requests fail. The editor works normally. |
+| Payments (Polar) | `POLAR_ACCESS_TOKEN`, `POLAR_WEBHOOK_SECRET`, `NEXT_PUBLIC_QRDX_PRO_MONTHLY_PRODUCT_ID`, `NEXT_PUBLIC_QRDX_PRO_YEARLY_PRODUCT_ID`, `NEXT_PUBLIC_QRDX_BUSINESS_MONTHLY_PRODUCT_ID`, `NEXT_PUBLIC_QRDX_BUSINESS_YEARLY_PRODUCT_ID` | Upgrading doesn't work (plans without a product id show "Coming soon"), and every account uses the Free limits |
+| Dub short links | `DUB_CLIENT_ID`, `DUB_CLIENT_SECRET`, `DUB_REDIRECT_URI`, `INTEGRATION_ENCRYPTION_KEY` | The Dub integration can't be connected |
+| Google Drive | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_DRIVE_REDIRECT_URI`, `INTEGRATION_ENCRYPTION_KEY` | The Google Drive integration can't be connected |
+| Rate limiting (Upstash) | `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN` (or the Vercel KV names `KV_REST_API_URL`, `KV_REST_API_TOKEN`) | No rate limiting. Recommended in production. |
+| Analytics (PostHog) | `NEXT_PUBLIC_POSTHOG_KEY`, `NEXT_PUBLIC_POSTHOG_HOST` | No analytics |
+| Feedback widget | `NEXT_PUBLIC_FEATUREBASE_APP_ID` | The widget doesn't load |
+| Docs extras | `GITHUB_TOKEN`, `GITHUB_APP_ID` | Star counts may hit GitHub rate limits, and docs feedback isn't forwarded |
+
+`INTEGRATION_ENCRYPTION_KEY` must be set in production as soon as you enable an integration, because it encrypts the stored tokens.
+
+<Callout>
+  `NEXT_PUBLIC_*` values are inlined into the browser bundle at build time. After changing one, rebuild with `docker compose up -d --build`.
+</Callout>
+
+## Reverse proxy and HTTPS
+
+Put the app behind a reverse proxy such as Caddy, nginx or Traefik that terminates TLS, and don't expose port 3000 to the internet directly. Rate limiting reads the client IP from `X-Real-IP` and then `X-Forwarded-For`, so the proxy must set these headers and the app must only be reachable through it.
+
+Once HTTPS is set up, change `NEXT_PUBLIC_APP_URL` and `BETTER_AUTH_URL` to the `https://` URL, update the OAuth callback URLs, and rebuild.
+
+## Updating
+
+Back up the database first:
+
+```bash
+docker compose exec db pg_dump -U postgres qrdx > qrdx-backup.sql
+```
+
+Then pull and rebuild. The `migrate` service syncs the schema again before the app starts.
+
+```bash
+git pull
+docker compose up -d --build
+```
+
+For the manual setup, run `git pull`, `pnpm install` and `pnpm db:push`, then rebuild.
+
+If a schema change would drop data, `drizzle-kit push` asks for confirmation. In that case, run `docker compose run --rm migrate` in a terminal to review and confirm the changes.
+
+## Troubleshooting
+
+- **"Invalid environment variables" on startup:** the log names each missing or invalid variable. Optional variables must be commented out, not set to an empty value.
+- **"BETTER_AUTH_SECRET is missing" or "You are using the default secret":** set `BETTER_AUTH_SECRET` and recreate the container.
+- **OAuth `redirect_uri` mismatch:** the callback URL in your OAuth app must be exactly `<NEXT_PUBLIC_APP_URL>/api/auth/callback/<github|google>`. Set `BETTER_AUTH_URL` to the same base URL.
+- **App can't reach the database (`fetch failed`):** with plain Postgres, `DATABASE_HTTP_ENDPOINT` must point at the running proxy. Check `docker compose ps db-proxy`.
+- **`migrate` never finishes:** `drizzle-kit push` is waiting for a confirmation. See [Updating](#updating).
+- **A changed `NEXT_PUBLIC_*` value has no effect:** rebuild the image.
+- **Port 4444 is already in use:** change the `db-proxy` port mapping in `docker-compose.yml`. Only local development on the host uses it.

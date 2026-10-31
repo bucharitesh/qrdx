@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { QrdxLogo } from "@/components/qrdx-logo";
+import { CompetitorLogo } from "@/components/sections/compare/competitor-logo";
 
 const transition = {
   duration: 0.5,
@@ -10,7 +11,7 @@ const transition = {
 
 interface CompareHeroLogosProps {
   competitor: string;
-  competitorLogo: string;
+  competitorLogo?: string;
 }
 
 export function CompareHeroLogos({
@@ -33,10 +34,10 @@ export function CompareHeroLogos({
         animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
         transition={transition}
       >
-        <img
+        <CompetitorLogo
+          name={competitor}
           src={competitorLogo}
-          alt={`${competitor} logo`}
-          className="h-full w-full object-contain"
+          className="h-full w-full text-3xl"
         />
       </motion.div>
     </div>

@@ -101,13 +101,25 @@ function generateCornerGearPattern(
   return path;
 }
 
+/**
+ * The diya, message and pointy paths are drawn in an 80-unit box but only span
+ * 5..75 (ring 5..15, hole 15..65). Map that 70-unit span onto the full 7×7
+ * finder so the ring is exactly 1 module and the hole 5 modules; scaling by
+ * size / 80 shrank the finder off the module grid and broke scanning.
+ */
+function legacyEyeTransform(size: number) {
+  const scale = size / 70;
+  const transform = (coord: number, offset: number) =>
+    (coord - 5) * scale + offset;
+  return { scale, transform };
+}
+
 function generateCornerDiyaPattern(
   offsetX: number,
   offsetY: number,
   size: number
 ): string {
-  const scale = size / 80;
-  const transform = (coord: number, offset: number) => coord * scale + offset;
+  const { scale, transform } = legacyEyeTransform(size);
 
   // Diya pattern path - designed for 80x80 coordinate system
   const path = `M ${transform(5, offsetX)} ${transform(30, offsetY)}v ${20 * scale}a ${25 * scale} ${25 * scale}, 0, 0, 0, ${25 * scale} ${25 * scale}h ${45 * scale}v -${45 * scale}a ${25 * scale} ${25 * scale}, 0, 0, 0, -${25 * scale} -${25 * scale}h -${20 * scale}H ${transform(5, offsetX)}zM ${transform(30, offsetX)} ${transform(15, offsetY)}h ${20 * scale}a ${15 * scale} ${15 * scale}, 0, 0, 1, ${15 * scale} ${15 * scale}v ${35 * scale}h -${35 * scale}a ${15 * scale} ${15 * scale}, 0, 0, 1, -${15 * scale} -${15 * scale}v -${35 * scale}z`;
@@ -163,8 +175,7 @@ function generateCornerMessagePattern(
   offsetY: number,
   size: number
 ): string {
-  const scale = size / 80;
-  const transform = (coord: number, offset: number) => coord * scale + offset;
+  const { scale, transform } = legacyEyeTransform(size);
 
   const path = `M ${transform(5, offsetX)} ${transform(40, offsetY)}a ${35 * scale} ${35 * scale}, 0, 0, 0, ${35 * scale} ${35 * scale}h ${30 * scale}a ${5 * scale} ${5 * scale}, 0, 0, 0, ${5 * scale} -${5 * scale}v -${30 * scale}a ${35 * scale} ${35 * scale}, 0, 0, 0, -${35 * scale} -${35 * scale}a ${35 * scale} ${35 * scale}, 0, 0, 0, -${35 * scale} ${35 * scale}zM ${transform(40, offsetX)} ${transform(15, offsetY)}a ${25 * scale} ${25 * scale}, 0, 0, 1, ${25 * scale} ${25 * scale}v ${25 * scale}h -${25 * scale}a ${25 * scale} ${25 * scale}, 0, 0, 1, -${25 * scale} -${25 * scale}a ${25 * scale} ${25 * scale}, 0, 0, 1, ${25 * scale} -${25 * scale}z`;
 
@@ -179,8 +190,7 @@ function generateCornerPointyPattern(
   offsetY: number,
   size: number
 ): string {
-  const scale = size / 80;
-  const transform = (coord: number, offset: number) => coord * scale + offset;
+  const { scale, transform } = legacyEyeTransform(size);
 
   const path = `M ${transform(5, offsetX)} ${transform(30, offsetY)}v ${20 * scale}a ${25 * scale} ${25 * scale}, 0, 0, 0, ${25 * scale} ${25 * scale}h ${45 * scale}v -${45 * scale}a ${25 * scale} ${25 * scale}, 0, 0, 0, -${25 * scale} -${25 * scale}h -${20 * scale}a ${25 * scale} ${25 * scale}, 0, 0, 0, -${25 * scale} ${25 * scale}M ${transform(30, offsetX)} ${transform(15, offsetY)}h ${20 * scale}a ${15 * scale} ${15 * scale}, 0, 0, 1, ${15 * scale} ${15 * scale}v ${35 * scale}h -${35 * scale}a ${15 * scale} ${15 * scale}, 0, 0, 1, -${15 * scale} -${15 * scale}v -${20 * scale}a ${15 * scale} ${15 * scale}, 0, 0, 1, ${15 * scale} -${15 * scale}z`;
 

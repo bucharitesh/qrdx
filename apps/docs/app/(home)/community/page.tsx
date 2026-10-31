@@ -1,26 +1,22 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { SectionHeader } from "@/components/sections/section-header";
-import { COMMUNITY_THEME_TAGS } from "@/lib/constants";
+import { createMetadata } from "@/lib/metadata";
 import { CommunityThemesContent } from "./components/community-themes-content";
 
-export const metadata: Metadata = {
-  title: "Community Themes - qrdx",
+export const metadata: Metadata = createMetadata({
+  title: "Community QR Code Designs & Themes",
   description:
-    "Discover and explore beautiful shadcn/ui themes created by the community.",
-  keywords: [...COMMUNITY_THEME_TAGS, "shadcn", "theme", "ui"],
-  openGraph: {
-    title: "Community Themes - qrdx",
-    description:
-      "Discover and explore beautiful shadcn/ui themes created by the community.",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Community Themes - qrdx",
-    description:
-      "Discover and explore beautiful shadcn/ui themes created by the community.",
-  },
-};
+    "Browse free QR code designs and color themes shared by the QRdx community. Preview any style, then open it in the QR code generator to customize and download.",
+  keywords: [
+    "qr code designs",
+    "qr code themes",
+    "custom qr code styles",
+    "community qr codes",
+    "qr code color schemes",
+  ],
+  path: "/community",
+});
 
 export default function CommunityPage() {
   return (
@@ -49,7 +45,10 @@ export default function CommunityPage() {
           </div>
         </SectionHeader>
 
-        <CommunityThemesContent />
+        {/* nuqs reads search params; without a boundary the whole page renders client-side */}
+        <Suspense fallback={<div className="min-h-[50vh] w-full" />}>
+          <CommunityThemesContent />
+        </Suspense>
       </div>
     </section>
   );

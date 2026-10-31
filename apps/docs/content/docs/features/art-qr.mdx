@@ -1,0 +1,101 @@
+---
+title: Art QR codes
+description: Blend a logo or photo into the modules of a scannable QR code (vector, no AI), or generate AI artwork around one.
+icon: Sparkles
+---
+
+QRdx has three ways to turn a QR code into artwork:
+
+| | How it works | Output | Cost |
+|---|---|---|---|
+| **Logo QR** | Modules inside your logo's shape take its colors; the rest fade to a lighter tone | Vector (SVG, PDF, EPS, PNG) | Free |
+| **Image QR** | Every module shows your photo around a center square that keeps the true value (halftone) | Vector (SVG, PDF, EPS, PNG) | Free |
+| **AI art** | An image model paints a scene that follows the code's light and dark modules | 1024 px image, 2× upscale for print | AI art credits |
+
+Logo QR and Image QR are drawn by the `qrdx` library itself, so they work offline, in the editor, on the server and in Node, and the result is always a real QR code: the finder, timing and alignment patterns are never touched.
+
+## In the editor
+
+Open the [playground](/playground), go to **Customisations → Art** and pick **Logo QR** or **Image QR**:
+
+1. Upload a logo or photo (PNG, JPG, WebP or SVG, up to 1 MB). A transparent PNG or SVG gives the cleanest Logo QR.
+2. Set the **intensity**: low keeps a plain-looking code, high shows more of the picture.
+3. Watch the **scan check** next to the slider. It decodes the art code in your browser at three sizes, like the [scan score](/docs/qr-detection) in the preview.
+
+Uploading an art image sets error correction to `H`, which gives the art the most room. The image never leaves your browser: only a small color grid (64 or 96 pixels across) is saved with the design.
+
+## In code
+
+Pass an `art` prop with a mode, a sampled image and an optional intensity (0 to 1, default 0.6):
+
+```tsx
+import { QRCodeSVG, loadQRArtImage } from 'qrdx';
+
+// Browser: sample an uploaded file, a data URL or an <img>
+const image = await loadQRArtImage(file, { mode: 'logo' });
+
+<QRCodeSVG
+  value="https://example.com"
+  size={512}
+  level="H"
+  art={{ mode: 'logo', image, intensity: 0.7 }}
+/>;
+```
+
+On the server or in Node, decode the image yourself and pass the RGBA pixels to `createQRArtImage`:
+
+```ts
+import sharp from 'sharp';
+import { createQRArtImage } from 'qrdx';
+
+const { data, info } = await sharp('photo.jpg')
+  .ensureAlpha()
+  .raw()
+  .toBuffer({ resolveWithObject: true });
+
+const image = createQRArtImage(
+  { data, width: info.width, height: info.height },
+  { maxSize: 96 }
+);
+// art={{ mode: 'halftone', image, intensity: 0.8 }}
+```
+
+`art.image` is plain JSON (`{ width, height, data }` with base64 RGBA), so you can store it with a saved design and render the same code anywhere, synchronously, without fetching the picture again.
+
+| Option | Values | Notes |
+|---|---|---|
+| `mode` | `logo`, `halftone` | `halftone` is "Image QR" in the editor |
+| `image` | from `loadQRArtImage` or `createQRArtImage` | at most 192 × 192 samples |
+| `intensity` | `0` to `1` | default `0.6`; `0` looks like a plain code |
+
+Art replaces the body pattern; the corner eyes keep their `cornerEyePattern`, `cornerEyeDotPattern` and colors. Art uses the first color of a gradient `fgColor`/`bgColor`, and needs a dark foreground on a light background (with inverted colors it falls back to a plain look).
+
+### How scannability is kept
+
+- **Logo QR**: dark modules inside the logo are recolored, but only ever darkened to a luminance a scanner still reads as dark; light modules inside the logo get a pale tint that stays above the light threshold. Dark modules outside the logo fade to grey, never lighter than the dark threshold.
+- **Image QR**: each module is split into a 3 × 3 grid. The outer cells show the photo, pushed darker or lighter to match the module's value, and the center keeps the exact foreground or background color, which is where scanners sample.
+- Finder, timing, alignment, format and version modules are always drawn solid.
+
+Check any design with `getScanScore(props)` before printing, and test it with a real phone camera.
+
+## Exporting art codes
+
+Art codes are vector shapes, so every export keeps them sharp:
+
+```ts
+import { downloadQRCode, getQRAsEPS, getQRAsPrintPDF } from 'qrdx';
+
+await downloadQRCode(props, { format: 'svg', size: { width: 1024, height: 1024 } });
+const pdf = await getQRAsPrintPDF(props, { size: 40, unit: 'mm', colorMode: 'cmyk' });
+const eps = await getQRAsEPS(props, { sizeMm: 40, bleedMm: 3, colorMode: 'cmyk' });
+```
+
+`getQRAsEPS` writes an EPSF-3.0 file with a `%%BoundingBox` in points and every module, eye and frame as a PostScript path. Like the print PDF it flattens gradients to their first color and has no transparency. PNG and JPEG logos are embedded as images; other logo formats are converted in the browser and left out on the server. Frame text uses Helvetica, so characters outside Latin-1 print as `?`. `svgToEPS(svg, { width })` converts any SVG this library renders.
+
+The CLI writes EPS too: `qrdx generate "https://example.com" -o qr.eps`.
+
+## AI art
+
+[AI QR art](/ai/art) generates a scene around your code with an image model (Illusion Diffusion on fal.ai). You get 30+ style presets, a negative prompt, a **QR visibility** slider (how strictly the model follows the modules) and a **creativity** slider (how freely it reads your prompt), seed locking, 1 to 4 variations per run and an optional reference image whose light and dark shapes steer the composition. Every variation is decoded in your browser and the best scannable one is picked for you; upscale it 2× for print.
+
+Each image and each upscale uses one AI art credit: Free accounts get 3 a month, Pro 30, and Business 150 shared by the whole team. Failed generations are refunded. AI art is a raster image and its content is fixed, so for an editable link put a [dynamic code](/docs/dynamic-qr-codes)'s short link in it.
