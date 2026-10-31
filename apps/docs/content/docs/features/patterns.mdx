@@ -35,9 +35,9 @@ import { QRCode } from 'qrdx';
 
 ## Corner Eye Patterns
 
-Control the shape of corner markers. There are 18 corner eye patterns (the React component defaults to `gear`; the CLI defaults to `square`): `square`, `rounded`, `extra-rounded`, `squircle`, `cushion`, `bevel`, `octagon`, `leaf`, `leaf-reverse`, `drop`, `petal`, `shield`, `gear`, `circle`, `diya`, `message`, `pointy` and `curly`.
+Control the shape of corner markers. There are 17 corner eye patterns (the React component defaults to `gear`; the CLI defaults to `square`): `square`, `rounded`, `extra-rounded`, `squircle`, `cushion`, `bevel`, `octagon`, `leaf`, `leaf-reverse`, `drop`, `petal`, `shield`, `gear`, `circle`, `diya`, `message` and `pointy`.
 
-`leaf`, `leaf-reverse`, `drop` and `petal` turn each of the three eyes to face its corner of the code. `circle` and `curly` eyes read in lenient decoders only; the [scan score](/docs/utilities) warns about them.
+`leaf`, `leaf-reverse`, `drop` and `petal` turn each of the three eyes to face its corner of the code. `circle` eyes may be missed by some scanner apps; the [scan score](/docs/utilities) warns about them.
 
 ```tsx
 <QRCode value="https://example.com" cornerEyePattern="square" />
@@ -47,7 +47,7 @@ Control the shape of corner markers. There are 18 corner eye patterns (the React
 
 ## Corner Eye Dot Patterns
 
-Control the dot inside each corner marker. There are 24 corner eye dot patterns (the React component defaults to `circle`; the CLI defaults to `square`): `square`, `rounded`, `extra-rounded`, `circle`, `squircle`, `octagon`, `hexagon`, `dots`, `leaf`, `leaf-reverse`, `drop`, `drop-reverse`, `plus`, `cross-rounded`, `flower`, `heart`, `star`, `diamond`, `message`, `message-reverse`, `diya`, `diya-reverse`, `rounded-triangle` and `banner`.
+Control the dot inside each corner marker. There are 21 corner eye dot patterns (the React component defaults to `circle`; the CLI defaults to `square`): `square`, `rounded`, `extra-rounded`, `circle`, `squircle`, `octagon`, `hexagon`, `dots`, `leaf`, `leaf-reverse`, `drop`, `drop-reverse`, `plus`, `cross-rounded`, `flower`, `heart`, `message`, `message-reverse`, `diya`, `diya-reverse` and `rounded-triangle`.
 
 ```tsx
 <QRCode value="https://example.com" cornerEyeDotPattern="square" />
@@ -55,9 +55,11 @@ Control the dot inside each corner marker. There are 24 corner eye dot patterns 
 <QRCode value="https://example.com" cornerEyeDotPattern="heart" />
 ```
 
-### Pairs to avoid
+### Pairs to avoid and retired shapes
 
-`diamond` centres in most eyes, `banner` centres in `square`, `rounded`, `diya` and `leaf` eyes, and `curly` eyes with `square`, `diya` or `message` centres fail strict decoders. These pairs ship as `WEAK_DOT_EYES` and `WEAK_BODY_EYES`, and `getStylePairRisk(props)` returns the warning the scan score shows.
+`diamond` bodies next to `square` eyes, `pacman` next to `rounded` and `small-square` next to `square` or `rounded` eyes are missed up close; the playground won't combine them, they ship as `WEAK_BODY_EYES`, and `getStylePairRisk(props)` returns the warning the scan score shows.
+
+`curly` eyes and `diamond`, `star` and `banner` centres were retired because they don't scan reliably. Designs saved with them still render, but they are no longer offered or listed (see [Retired shapes](/docs/styles#retired-shapes)).
 
 ## Per-eye colors
 

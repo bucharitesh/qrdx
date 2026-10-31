@@ -36,13 +36,23 @@ export {
 } from "./color";
 export type { Excavation, Modules } from "./common";
 export { excavationSchema } from "./common";
-export type { CornerEyeDotPattern } from "./corner-dot";
+export type {
+  CornerEyeDotPattern,
+  PickableCornerEyeDotPattern,
+} from "./corner-dot";
 export {
   CORNER_EYE_DOT_PATTERNS,
   cornerEyeDotPatternSchema,
+  pickableCornerEyeDotPatternSchema,
+  RETIRED_CORNER_EYE_DOT_PATTERNS,
 } from "./corner-dot";
-export type { CornerEyePattern } from "./corner-eye";
-export { CORNER_EYE_PATTERNS, cornerEyePatternSchema } from "./corner-eye";
+export type { CornerEyePattern, PickableCornerEyePattern } from "./corner-eye";
+export {
+  CORNER_EYE_PATTERNS,
+  cornerEyePatternSchema,
+  pickableCornerEyePatternSchema,
+  RETIRED_CORNER_EYE_PATTERNS,
+} from "./corner-eye";
 export type { FrameStyle, QRFrame } from "./frame";
 export {
   DEFAULT_FRAME_TEXT,

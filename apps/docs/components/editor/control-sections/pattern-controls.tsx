@@ -47,6 +47,20 @@ function pairRisk(style: QRStyle, change: Partial<QRStyle>) {
   return risk ? `${risk.message}. ${risk.fix}.` : null;
 }
 
+/**
+ * Pairs that fail our decode tests (body × eye, centre × eye) can't be
+ * picked together: the tile is disabled instead of hiding either shape.
+ */
+function pairBlocked(style: QRStyle, change: Partial<QRStyle>) {
+  const next = { ...style, ...change };
+  const kind = getStylePairRisk({
+    bodyPattern: next.bodyPattern,
+    cornerEyePattern: next.cornerEyePattern,
+    cornerEyeDotPattern: next.cornerEyeDotPattern,
+  })?.kind;
+  return kind === "body-eye" || kind === "dot-eye";
+}
+
 /** The top-left finder drawn by the real renderer: outer and centre together. */
 function EyePairSwatch({
   outer,
@@ -143,6 +157,7 @@ export function DotPatternControl() {
           <BodyPatterns pattern={id} />
         </span>
       )}
+      blockedOf={(id) => pairBlocked(style, { bodyPattern: id })}
       riskOf={(id) => pairRisk(style, { bodyPattern: id })}
       value={selected}
     />
@@ -195,6 +210,15 @@ export function EyeControls() {
             <EyePairSwatch centre={item.centre} outer={item.outer} />
           ) : null;
         }}
+        blockedOf={(id) => {
+          const item = EYE_PRESETS.find((entry) => entry.id === id);
+          return item
+            ? pairBlocked(style, {
+                cornerEyePattern: item.outer,
+                cornerEyeDotPattern: item.centre,
+              })
+            : false;
+        }}
         riskOf={(id) => {
           const item = EYE_PRESETS.find((entry) => entry.id === id);
           return item
@@ -246,6 +270,7 @@ export function EyeControls() {
                   <EyePatterns pattern={id} />
                 </span>
               )}
+              blockedOf={(id) => pairBlocked(style, { cornerEyePattern: id })}
               riskOf={(id) => pairRisk(style, { cornerEyePattern: id })}
               value={outer}
             />
@@ -261,6 +286,9 @@ export function EyeControls() {
                   <EyeDotPatterns pattern={id} />
                 </span>
               )}
+              blockedOf={(id) =>
+                pairBlocked(style, { cornerEyeDotPattern: id })
+              }
               riskOf={(id) => pairRisk(style, { cornerEyeDotPattern: id })}
               value={centre}
             />

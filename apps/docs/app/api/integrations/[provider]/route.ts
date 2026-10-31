@@ -79,7 +79,10 @@ export async function GET(request: Request, context: RouteContext) {
       }
 
       try {
-        const authUrl = await createIntegrationAuthUrl(provider);
+        // Optional same-site path to come back to (validated when stored)
+        const authUrl = await createIntegrationAuthUrl(provider, {
+          returnTo: searchParams.get("returnTo"),
+        });
         return NextResponse.json({ url: authUrl });
       } catch (error) {
         console.error(`Failed to initiate OAuth for ${provider}:`, error);

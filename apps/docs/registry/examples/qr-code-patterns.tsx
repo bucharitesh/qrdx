@@ -9,7 +9,7 @@ const patterns: {
   { body: "square", eye: "square", dot: "square" },
   { body: "circle", eye: "circle", dot: "circle" },
   { body: "rounded", eye: "extra-rounded", dot: "rounded" },
-  { body: "diamond", eye: "pointy", dot: "diamond" },
+  { body: "diamond", eye: "pointy", dot: "octagon" },
 ];
 
 export default function QrCodePatterns() {

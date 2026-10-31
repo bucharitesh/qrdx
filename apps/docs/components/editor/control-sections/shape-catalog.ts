@@ -78,7 +78,6 @@ export const EYE_CATEGORY: Partial<Record<CornerEyePattern, ShapeCategory>> = {
   message: "decorative",
   pointy: "decorative",
   gear: "playful",
-  curly: "playful",
 };
 
 export const EYE_DOT_FEATURED: CornerEyeDotPattern[] = [
@@ -107,15 +106,12 @@ export const EYE_DOT_CATEGORY: Partial<
   flower: "rounded",
   plus: "decorative",
   "cross-rounded": "decorative",
-  diamond: "decorative",
-  banner: "decorative",
   "rounded-triangle": "decorative",
   message: "decorative",
   "message-reverse": "decorative",
   diya: "decorative",
   "diya-reverse": "decorative",
   heart: "playful",
-  star: "playful",
 };
 
 /** Matching outer + centre pairs: one per outer shape, so every eye is one tap. */
@@ -149,7 +145,6 @@ export const EYE_PRESETS: EyePreset[] = [
   { id: "message", name: "Message", outer: "message", centre: "rounded" },
   { id: "pointy", name: "Pointy", outer: "pointy", centre: "square" },
   { id: "gear", name: "Gear", outer: "gear", centre: "circle" },
-  { id: "curly", name: "Curly", outer: "curly", centre: "circle" },
 ];
 
 export const EYE_PRESET_FEATURED = [

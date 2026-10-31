@@ -245,15 +245,17 @@ type BodyPattern =
 
 type CornerEyePattern =
   | 'square' | 'rounded' | 'gear' | 'circle' | 'diya' | 'extra-rounded'
-  | 'message' | 'pointy' | 'curly' | 'leaf' | 'drop' | 'octagon' | 'bevel'
+  | 'message' | 'pointy' | 'leaf' | 'drop' | 'octagon' | 'bevel'
   | 'squircle' | 'cushion' | 'shield' | 'petal' | 'leaf-reverse';
 
 type CornerEyeDotPattern =
-  | 'square' | 'rounded' | 'circle' | 'diamond' | 'message'
-  | 'message-reverse' | 'diya' | 'diya-reverse' | 'rounded-triangle' | 'star'
-  | 'banner' | 'leaf' | 'drop' | 'plus' | 'cross-rounded' | 'hexagon'
-  | 'octagon' | 'flower' | 'heart' | 'squircle' | 'dots' | 'extra-rounded'
-  | 'leaf-reverse' | 'drop-reverse';
+  | 'square' | 'rounded' | 'circle' | 'message' | 'message-reverse'
+  | 'diya' | 'diya-reverse' | 'rounded-triangle' | 'leaf' | 'drop' | 'plus'
+  | 'cross-rounded' | 'hexagon' | 'octagon' | 'flower' | 'heart'
+  | 'squircle' | 'dots' | 'extra-rounded' | 'leaf-reverse' | 'drop-reverse';
+
+// Retired (deprecated) values still render for saved designs but are not
+// offered: RETIRED_CORNER_EYE_PATTERNS, RETIRED_CORNER_EYE_DOT_PATTERNS.
 
 type EyeColors = {
   topLeft?: { outer?: ColorConfig; inner?: ColorConfig };

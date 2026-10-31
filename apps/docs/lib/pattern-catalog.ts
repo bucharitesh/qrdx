@@ -5,11 +5,11 @@
 // - category groups the pickers: Classic, Rounded, Decorative, Playful.
 // - popularity ranks the 6–8 options to show first (1 = most picked);
 //   unranked options are null.
-// - scanRisk is "caution" when a style is fragile on its own (scan-score
-//   flags circle and curly eyes; diamond and banner centres fail in most
-//   eyes); "ok" otherwise. failsWith lists the exact partner values that
-//   decoders miss (from qrdx's WEAK_DOT_EYES / WEAK_BODY_EYES, measured with
-//   jsQR through the camera model; see packages/qrdx/src/scan-risk.ts).
+// - scanRisk is "caution" when a style may be missed by strict scanners
+//   (circle eyes; scan-score warns); "ok" otherwise. failsWith lists the
+//   partner values it doesn't scan with (qrdx's WEAK_BODY_EYES), which the
+//   picker blocks. Shapes that don't scan at all (curly eyes; diamond, star
+//   and banner centres) were retired and are not listed.
 // - recommendedDot pairs each eye with a centre that reads well in it.
 
 import {
@@ -17,9 +17,10 @@ import {
   type CornerEyeDotPattern,
   type CornerEyePattern,
   type FrameStyle,
+  type PickableCornerEyeDotPattern,
+  type PickableCornerEyePattern,
   WEAK_BODY_EYES,
   WEAK_DOT_EYES,
-  WEAK_DOTS,
 } from "qrdx";
 import {
   BODY_PATTERN,
@@ -129,8 +130,12 @@ const BODIES: Record<BodyPattern, Base> = {
 };
 
 const EYES: Record<
-  CornerEyePattern,
-  Base & { recommendedDot: CornerEyeDotPattern; note?: string; caution?: true }
+  PickableCornerEyePattern,
+  Base & {
+    recommendedDot: PickableCornerEyeDotPattern;
+    note?: string;
+    caution?: true;
+  }
 > = {
   square: {
     label: "Square",
@@ -236,17 +241,9 @@ const EYES: Record<
     caution: true,
     note: "Only lenient decoders read circle eyes; many apps miss them",
   },
-  curly: {
-    label: "Curly",
-    category: "Playful",
-    popularity: null,
-    recommendedDot: "circle",
-    caution: true,
-    note: "Curly eyes fail strict decoders such as ZXing-based apps",
-  },
 };
 
-const DOTS: Record<CornerEyeDotPattern, Base> = {
+const DOTS: Record<PickableCornerEyeDotPattern, Base> = {
   square: { label: "Square", category: "Classic", popularity: 1 },
   rounded: { label: "Rounded", category: "Rounded", popularity: 2 },
   circle: { label: "Circle", category: "Rounded", popularity: 3 },
@@ -254,7 +251,6 @@ const DOTS: Record<CornerEyeDotPattern, Base> = {
   heart: { label: "Heart", category: "Playful", popularity: 5 },
   squircle: { label: "Squircle", category: "Rounded", popularity: 6 },
   flower: { label: "Flower", category: "Playful", popularity: 7 },
-  star: { label: "Star", category: "Playful", popularity: 8 },
   "extra-rounded": {
     label: "Extra Rounded",
     category: "Rounded",
@@ -262,7 +258,7 @@ const DOTS: Record<CornerEyeDotPattern, Base> = {
   },
   octagon: { label: "Octagon", category: "Classic", popularity: null },
   hexagon: { label: "Hexagon", category: "Decorative", popularity: null },
-  dots: { label: "Dots", category: "Playful", popularity: null },
+  dots: { label: "Dots", category: "Playful", popularity: 8 },
   "leaf-reverse": {
     label: "Leaf Reverse",
     category: "Decorative",
@@ -280,7 +276,6 @@ const DOTS: Record<CornerEyeDotPattern, Base> = {
     category: "Playful",
     popularity: null,
   },
-  diamond: { label: "Diamond", category: "Decorative", popularity: null },
   message: { label: "Message", category: "Playful", popularity: null },
   "message-reverse": {
     label: "Message Reverse",
@@ -298,7 +293,6 @@ const DOTS: Record<CornerEyeDotPattern, Base> = {
     category: "Playful",
     popularity: null,
   },
-  banner: { label: "Banner", category: "Decorative", popularity: null },
 };
 
 const FRAMES: Record<FrameStyle, Omit<FrameMeta, "value" | "scanRisk">> = {
@@ -444,19 +438,6 @@ const FRAMES: Record<FrameStyle, Omit<FrameMeta, "value" | "scanRisk">> = {
   },
 };
 
-// Centres that read at phone distances but fail up close (12+ px per module
-// through the camera model) and in sharp screenshots (the docs catalogue)
-const CLOSE_RANGE_NOTES: Partial<Record<CornerEyeDotPattern, string>> =
-  Object.fromEntries(
-    WEAK_DOTS.map((dot) => [
-      dot,
-      "Reads at phone distance, but misses up close and in sharp screenshots",
-    ]),
-  );
-
-// A centre that fails in most eyes is "caution" on its own
-const CAUTION_DOT_EYE_COUNT = 6;
-
 const compact = (failsWith: FailsWith): FailsWith =>
   Object.fromEntries(
     Object.entries(failsWith).filter(([, list]) => list && list.length > 0),
@@ -489,20 +470,12 @@ export const EYE_CATALOG: EyeMeta[] = CORNER_EYE_PATTERNS.map((value) => {
 });
 
 export const DOT_CATALOG: PatternMeta<CornerEyeDotPattern>[] =
-  CORNER_EYE_DOT_PATTERNS.map((value) => {
-    const eye = [...(WEAK_DOT_EYES[value] ?? [])];
-    const caution = eye.length >= CAUTION_DOT_EYE_COUNT;
-    const note = caution
-      ? "Not a solid 3×3 centre, so strict decoders miss it in most eyes"
-      : CLOSE_RANGE_NOTES[value];
-    return {
-      value,
-      ...DOTS[value],
-      scanRisk: note ? "caution" : "ok",
-      failsWith: compact({ eye }),
-      ...(note && { note }),
-    };
-  });
+  CORNER_EYE_DOT_PATTERNS.map((value) => ({
+    value,
+    ...DOTS[value],
+    scanRisk: "ok",
+    failsWith: compact({ eye: [...(WEAK_DOT_EYES[value] ?? [])] }),
+  }));
 
 export const FRAME_CATALOG: FrameMeta[] = FRAME_STYLES.map((value) => ({
   value,

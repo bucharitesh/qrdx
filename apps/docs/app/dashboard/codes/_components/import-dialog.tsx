@@ -42,6 +42,8 @@ type Step =
   | { name: "redirects"; provider: ApiProviderId; jobId: string };
 
 const IMPORT_PARAM = "import";
+// Set by the integration OAuth callback when a sign-in came back unconnected.
+const CONNECT_ERROR_PARAM = "connect_error";
 
 function stepFor(provider: ProviderId | null): Step {
   if (!provider) return { name: "pick" };
@@ -116,6 +118,18 @@ function ImportDialogInner({
   const [info, setInfo] = useState<ProvidersInfo | null>(null);
   const [jobs, setJobs] = useState<JobSummary[]>([]);
   const handled = useRef(param);
+  // Shown once on the provider the sign-in was for, until left or closed.
+  const [connectError, setConnectError] = useState(() =>
+    param ? searchParams.get(CONNECT_ERROR_PARAM) : null,
+  );
+
+  // The OAuth sign-in comes back to this page with the dialog open on `provider`.
+  const returnTo = (provider: ApiProviderId) => {
+    const params = new URLSearchParams(searchParams);
+    params.delete(CONNECT_ERROR_PARAM);
+    params.set(IMPORT_PARAM, provider);
+    return `${pathname}?${params}`;
+  };
 
   // Dev-only mock: never bundled into production (the condition is static).
   useEffect(() => {
@@ -156,9 +170,14 @@ function ImportDialogInner({
     setOpen(next);
     if (next) return;
     setStep({ name: "pick" });
-    if (searchParams.has(IMPORT_PARAM)) {
+    setConnectError(null);
+    if (
+      searchParams.has(IMPORT_PARAM) ||
+      searchParams.has(CONNECT_ERROR_PARAM)
+    ) {
       const params = new URLSearchParams(searchParams);
       params.delete(IMPORT_PARAM);
+      params.delete(CONNECT_ERROR_PARAM);
       const query = params.toString();
       router.replace(query ? `${pathname}?${query}` : pathname, {
         scroll: false,
@@ -209,8 +228,12 @@ function ImportDialogInner({
         ) : step.name === "links" ? (
           <LinksStep
             client={client}
+            connectError={step.provider === param ? connectError : null}
             key={step.provider}
-            onBack={() => setStep({ name: "pick" })}
+            onBack={() => {
+              setConnectError(null);
+              setStep({ name: "pick" });
+            }}
             onConnected={reload}
             onContinue={(links) =>
               setStep({
@@ -221,6 +244,7 @@ function ImportDialogInner({
               })
             }
             provider={step.provider}
+            returnTo={returnTo(step.provider)}
             status={status(step.provider)}
           />
         ) : step.name === "file" ? (

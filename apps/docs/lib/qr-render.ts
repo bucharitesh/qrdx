@@ -10,6 +10,8 @@ import {
   type CornerEyeDotPattern,
   type CornerEyePattern,
   errorLevelSchema,
+  type PickableCornerEyeDotPattern,
+  type PickableCornerEyePattern,
 } from "qrdx/types";
 import { createElement, Fragment, isValidElement, type ReactNode } from "react";
 import { z } from "zod";
@@ -108,7 +110,15 @@ export const qrOptionsSchema = z.object({
     .describe("Decorative frame template"),
 });
 
-export type QrOptions = z.output<typeof qrOptionsSchema>;
+// Retired eye shapes (curly; diamond, star and banner centres) are not
+// offered, but the image API still renders them for existing URLs.
+export type QrOptions = Omit<
+  z.output<typeof qrOptionsSchema>,
+  "eye" | "dot"
+> & {
+  eye: CornerEyePattern;
+  dot: CornerEyeDotPattern;
+};
 
 export const qrImageFormats = ["svg", "png", "eps"] as const;
 export type QrImageFormat = (typeof qrImageFormats)[number];
@@ -149,7 +159,8 @@ const BODY_DESCRIPTIONS: Partial<Record<BodyPattern, string>> = {
   octagon: "Octagons",
 };
 
-const EYE_DESCRIPTIONS: Partial<Record<CornerEyePattern, string>> = {
+// Complete over the offered values (retired shapes are never listed)
+const EYE_DESCRIPTIONS: Record<PickableCornerEyePattern, string> = {
   square: "Square frame",
   rounded: "Square frame with rounded corners",
   gear: "Decorative gear-like frame",
@@ -158,7 +169,6 @@ const EYE_DESCRIPTIONS: Partial<Record<CornerEyePattern, string>> = {
   "extra-rounded": "Square frame with very round corners",
   message: "Speech-bubble frame",
   pointy: "Frame with one pointed corner",
-  curly: "Curly ornamental frame",
   leaf: "Leaf frame facing each corner (sharp outer and inner corners)",
   "leaf-reverse": "Leaf frame with round outer and inner corners",
   drop: "Teardrop frame with a sharp outer corner",
@@ -170,18 +180,15 @@ const EYE_DESCRIPTIONS: Partial<Record<CornerEyePattern, string>> = {
   shield: "Shield-shaped frame",
 };
 
-const DOT_DESCRIPTIONS: Partial<Record<CornerEyeDotPattern, string>> = {
+const DOT_DESCRIPTIONS: Record<PickableCornerEyeDotPattern, string> = {
   square: "Square dot",
   rounded: "Square dot with rounded corners",
   circle: "Round dot",
-  diamond: "Diamond dot",
   message: "Speech-bubble dot",
   "message-reverse": "Mirrored speech-bubble dot",
   diya: "Leaf-shaped dot",
   "diya-reverse": "Mirrored leaf-shaped dot",
   "rounded-triangle": "Rounded triangle dot",
-  star: "Star dot",
-  banner: "Banner dot",
   leaf: "Leaf-shaped dot facing each corner",
   "leaf-reverse": "Mirrored leaf-shaped dot",
   drop: "Teardrop dot with a sharp outer corner",

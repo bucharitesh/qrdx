@@ -1,14 +1,16 @@
 {
   "name": "@qrdx/cli",
-  "version": "0.0.4",
-  "description": "QR code generator CLI for developers",
+  "version": "0.0.5",
+  "description": "QR code generator CLI for developers: styled SVG, PNG and vector EPS QR codes from the command line",
   "keywords": [
     "qr-code",
     "qrcode",
     "qr-code-generator",
     "cli",
     "svg",
-    "png"
+    "png",
+    "eps",
+    "qr-code-cli"
   ],
   "homepage": "https://qrdx.dev/docs",
   "bugs": {
@@ -35,7 +37,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "node -e \"if(!(process.env.npm_config_user_agent||'').startsWith('pnpm/')){console.error('Publish with pnpm publish: it turns workspace: ranges into real versions.');process.exit(1)}\" && pnpm run build && pnpm run test && node ../qrdx/scripts/readme-catalogue.mjs --check"
   },
   "dependencies": {
     "@clack/prompts": "^0.10.0",

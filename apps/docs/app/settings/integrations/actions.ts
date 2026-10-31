@@ -21,7 +21,15 @@ import { enforceRateLimits } from "@/lib/request-guards";
 // Initialize integrations on module load
 initializeIntegrations();
 
-export async function connectIntegrationAction(provider: string) {
+/**
+ * Starts an integration's OAuth sign-in. `returnTo` is a same-site path to
+ * come back to afterwards (the Import dialog passes its own); anything else is
+ * ignored and the callback lands on Settings → Integrations.
+ */
+export async function connectIntegrationAction(
+  provider: string,
+  returnTo?: string,
+) {
   const session = await auth.api.getSession({
     headers: await headers(),
   });
@@ -47,7 +55,7 @@ export async function connectIntegrationAction(provider: string) {
     },
   ]);
 
-  const authUrl = await createIntegrationAuthUrl(provider);
+  const authUrl = await createIntegrationAuthUrl(provider, { returnTo });
 
   return { url: authUrl };
 }

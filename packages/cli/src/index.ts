@@ -87,16 +87,16 @@ ${BOLD}Generate Options:${RESET}
   --format            Output format when the file name has no extension:
                         ${DIM}svg, png, eps${RESET}  ${DIM}(EPS is vector; --size = width in points)${RESET}
   -l, --level         Error correction: L, M, Q, H  ${DIM}(default: Q)${RESET}
-  --body              Body dot pattern:
-                        ${DIM}square, circle, circle-large, diamond,${RESET}
-                        ${DIM}circle-mixed, pacman, rounded, small-square, vertical-line${RESET}
-  --eye               Corner eye pattern:
-                        ${DIM}square, rounded, gear, circle, diya,${RESET}
-                        ${DIM}extra-rounded, message, pointy, curly${RESET}
-  --dot               Corner dot pattern:
-                        ${DIM}square, rounded, circle, diamond, message,${RESET}
-                        ${DIM}message-reverse, diya, diya-reverse,${RESET}
-                        ${DIM}rounded-triangle, star, banner${RESET}
+  --body              Body dot pattern, e.g.:
+                        ${DIM}square, rounded, circle, circle-large, liquid,${RESET}
+                        ${DIM}classy, classy-rounded, leaf, hexagon, star, heart${RESET}
+  --eye               Corner eye pattern, e.g.:
+                        ${DIM}square, rounded, extra-rounded, gear, leaf, drop,${RESET}
+                        ${DIM}squircle, octagon, shield, petal${RESET}
+  --dot               Corner dot pattern, e.g.:
+                        ${DIM}square, rounded, circle, leaf, drop, squircle,${RESET}
+                        ${DIM}octagon, flower, heart, plus, dots${RESET}
+                        ${DIM}All options: https://qrdx.dev/docs/styles${RESET}
   --fg                Foreground color — hex or JSON gradient  ${DIM}(default: #000000)${RESET}
   --bg                Background color — hex or JSON gradient  ${DIM}(default: #ffffff)${RESET}
   --eye-color         Corner eye color — hex or JSON gradient  ${DIM}(default: matches --fg)${RESET}

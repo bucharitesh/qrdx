@@ -53,8 +53,11 @@ export interface MigrateClient {
     retry?: boolean,
   ): Promise<RedirectResult>;
   attachDomain(jobId: string): Promise<{ attached: number; job: JobSummary }>;
-  /** OAuth URL to send the browser to */
-  connectOAuth(provider: ApiProviderId): Promise<string>;
+  /**
+   * OAuth URL to send the browser to. `returnTo` is the same-site path the
+   * callback brings the browser back to (the server ignores anything else).
+   */
+  connectOAuth(provider: ApiProviderId, returnTo?: string): Promise<string>;
   connectKey(
     provider: ApiProviderId,
     key: string,
@@ -124,10 +127,11 @@ export const httpClient: MigrateClient = {
     ),
   attachDomain: (id) =>
     call(`/api/migrate/jobs/${encodeURIComponent(id)}/domain`, post({})),
-  async connectOAuth(provider) {
+  async connectOAuth(provider, returnTo) {
     try {
       const { url } = await connectIntegrationAction(
         API_PROVIDERS[provider].integration,
+        returnTo,
       );
       if (url) return url;
     } catch {

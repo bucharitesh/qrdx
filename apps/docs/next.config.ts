@@ -34,7 +34,8 @@ let nextConfig: NextConfig = {
     "shiki",
     "@takumi-rs/core",
   ],
-  // Anything else on the MCP subdomain goes to the connect page.
+  // Anything else on the MCP subdomain goes to the connect page, and anything
+  // on the API subdomain outside /v1 goes to the REST API docs.
   async redirects() {
     const base = (await config.redirects?.()) ?? [];
     return [
@@ -43,6 +44,12 @@ let nextConfig: NextConfig = {
         source: "/:path((?!mcp$|api/mcp$|_next/).*)",
         has: [{ type: "host", value: "mcp.qrdx.dev" }],
         destination: "https://qrdx.dev/mcp",
+        permanent: false,
+      },
+      {
+        source: "/:path((?!v1(?:/|$)|_next/).*)",
+        has: [{ type: "host", value: "api.qrdx.dev" }],
+        destination: "https://qrdx.dev/docs/developers/rest-api",
         permanent: false,
       },
     ];
@@ -60,6 +67,13 @@ let nextConfig: NextConfig = {
           source: "/mcp",
           has: [{ type: "host", value: "mcp.qrdx.dev" }],
           destination: "/api/mcp",
+        },
+        // api.qrdx.dev/v1/... is the public REST API (same routes as
+        // qrdx.dev/api/v1/..., which keeps working).
+        {
+          source: "/v1/:path*",
+          has: [{ type: "host", value: "api.qrdx.dev" }],
+          destination: "/api/v1/:path*",
         },
       ],
       afterFiles: [

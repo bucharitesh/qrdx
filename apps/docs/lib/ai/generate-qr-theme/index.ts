@@ -1,3 +1,7 @@
+import {
+  pickableCornerEyeDotPatternSchema,
+  pickableCornerEyePatternSchema,
+} from "qrdx/types";
 import z from "zod";
 import { themeStylePropsSchema } from "@/types/theme";
 
@@ -26,6 +30,14 @@ export const themeStylePropsOutputSchema = themeStylePropsSchema
     cornerEyeDotPattern: true,
   })
   .extend({
+    // Offered shapes only: retired ones (curly eyes; diamond, star and
+    // banner centres) don't scan reliably, so the model can't choose them.
+    cornerEyePattern: pickableCornerEyePatternSchema.describe(
+      "Pattern style for the corner eyes",
+    ),
+    cornerEyeDotPattern: pickableCornerEyeDotPatternSchema.describe(
+      "Pattern style for the corner eye dots",
+    ),
     bgColor: hex.describe("Background colour, #RRGGBB"),
     fgColor: hex.describe("Colour of the QR modules (dots), #RRGGBB"),
     eyeColor: hex.describe("Colour of the three corner eye frames, #RRGGBB"),

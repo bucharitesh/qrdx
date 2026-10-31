@@ -121,7 +121,7 @@ See [`skills/README.md`](skills/README.md) for other agents.
 **Image API.** Any URL becomes a QR code image, with no API key. Use it in a README, an `<img>` tag or an email:
 
 ```md
-![QR](https://qrdx.dev/api/v1/qr?data=https://github.com/you/repo&format=svg)
+![QR](https://api.qrdx.dev/v1/qr?data=https://github.com/you/repo&format=svg)
 ```
 
 Add `format=png` or `format=eps`, `size`, colors (`fg`, `bg`), patterns (`body`, `eye`, `dot`), `level`, `margin` or a frame `template`. See the [image API docs](https://qrdx.dev/docs/developers/image-api).

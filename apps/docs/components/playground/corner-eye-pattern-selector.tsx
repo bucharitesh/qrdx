@@ -1,12 +1,13 @@
 "use client";
 
-import type { CornerEyePattern } from "qrdx/types";
+import type { PickableCornerEyePattern } from "qrdx/types";
 import type React from "react";
 import { useQREditorStore } from "@/store/editor-store";
 import { EyePatterns } from "../icons/eye-patterns";
 
-// Every eye frame (18: no lone tile in 3 or 4 columns)
-export const patterns: Array<{ id: CornerEyePattern; name: string }> = [
+// Every offered eye frame (curly was retired: it doesn't scan reliably;
+// saved designs that use it still render)
+export const patterns: Array<{ id: PickableCornerEyePattern; name: string }> = [
   { id: "square", name: "Square" },
   { id: "rounded", name: "Rounded" },
   { id: "extra-rounded", name: "Extra Rounded" },
@@ -24,7 +25,6 @@ export const patterns: Array<{ id: CornerEyePattern; name: string }> = [
   { id: "pointy", name: "Pointy" },
   { id: "gear", name: "Gear" },
   { id: "circle", name: "Circle" },
-  { id: "curly", name: "Curly" },
 ] as const;
 
 export const CornerEyePatternSelector: React.FC = () => {

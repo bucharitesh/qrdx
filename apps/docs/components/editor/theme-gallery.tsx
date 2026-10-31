@@ -15,6 +15,7 @@ import { ArrowRotateLeft, SearchNormal1, Shuffle } from "iconsax-reactjs";
 import { QRCodeSVG } from "qrdx";
 import * as React from "react";
 import { DialogCloseButton } from "@/components/editor/dialog-close-button";
+import { emitSound } from "@/components/editor/sound";
 import { seasonalPresetsFirst } from "@/components/seasonal/preset-order";
 import { useThemeShuffle } from "@/lib/hooks/use-theme-shuffle";
 import {
@@ -205,6 +206,10 @@ function nextTile(tiles: HTMLElement[], from: HTMLElement, key: string) {
 function ShuffleCard({ seed }: { seed: number }) {
   const theme = shuffleTheme(seed);
   const { back, canGoBack } = useThemeShuffle();
+  const goBack = () => {
+    back();
+    emitSound("back");
+  };
   return (
     <div className="bg-muted/30 flex items-center gap-3 rounded-xl border p-2 pr-3">
       <span className="grid size-14 shrink-0 place-items-center overflow-hidden rounded-[10px] ring-1 ring-black/5 dark:ring-white/10">
@@ -219,7 +224,7 @@ function ShuffleCard({ seed }: { seed: number }) {
       </span>
       <Button
         disabled={!canGoBack}
-        onClick={back}
+        onClick={goBack}
         size="sm"
         type="button"
         variant="ghost"
@@ -240,7 +245,7 @@ interface ThemeGalleryProps {
 export function ThemeGallery({ open, onOpenChange }: ThemeGalleryProps) {
   const currentId = useQREditorStore((state) => state.themeState.preset);
   const applyThemePreset = useQREditorStore((state) => state.applyThemePreset);
-  const { shuffle } = useThemeShuffle();
+  const { shuffle: shuffleNext } = useThemeShuffle();
   const [query, setQuery] = React.useState("");
   const [category, setCategory] = React.useState<ThemeCategory | "all">("all");
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -274,13 +279,20 @@ export function ThemeGallery({ open, onOpenChange }: ThemeGalleryProps) {
     [tokens, category],
   );
 
+  // Sounds only for direct actions (click, Enter, T), like the playground's.
   const apply = React.useCallback(
     (id: string) => {
       applyThemePreset(id);
+      emitSound("apply");
       onOpenChange(false);
     },
     [applyThemePreset, onOpenChange],
   );
+
+  const shuffle = React.useCallback(() => {
+    shuffleNext();
+    emitSound("shuffle");
+  }, [shuffleNext]);
 
   const shuffled = shuffleSeed(currentId);
 
