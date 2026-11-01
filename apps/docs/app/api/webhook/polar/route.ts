@@ -2,7 +2,9 @@ import { Webhooks } from "@polar-sh/nextjs";
 import { database as db, subscription } from "@repo/database";
 import { sql } from "drizzle-orm";
 import { type NextRequest, NextResponse } from "next/server";
+import { trackServer } from "@/lib/analytics/server";
 import { env } from "@/lib/env";
+import { planForProductId } from "@/lib/pricing";
 
 function safeParseDate(value: string | Date | null | undefined): Date | null {
   if (!value) return null;
@@ -87,6 +89,23 @@ const onPayload: WebhooksConfig["onPayload"] = async ({ data, type }) => {
             userId: sql`coalesce(excluded.user_id, ${subscription.userId})`,
           },
         });
+
+      if (type === "subscription.active") {
+        trackServer(
+          "subscription_activated",
+          {
+            plan: planForProductId(data.productId) ?? "pro",
+            interval: data.recurringInterval ?? undefined,
+          },
+          {
+            // Named only if the buyer allowed analytics (set at checkout).
+            distinctId:
+              data.metadata?.analytics_consent === "1" ? userId : null,
+            dedupeKey: data.id,
+            timestamp: subscriptionData.startedAt,
+          },
+        );
+      }
 
       console.log("Processed Polar webhook:", {
         type,

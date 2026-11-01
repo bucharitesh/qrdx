@@ -13,6 +13,7 @@ import { buildVCard, vcardFilename } from "@/app/api/vcard/[slug]/vcard";
 import {
   addressSchema,
   buttonClass,
+  buttonShapeClass,
   emailSchema,
   formatAddress,
   imageSchema,
@@ -27,6 +28,7 @@ import {
   telHref,
   whatsAppHref,
 } from "@/components/landing/block-kit";
+import { LpHeading } from "@/components/landing/heading";
 import { ShareButton } from "@/components/landing/share-button";
 import { landingUrlSchema } from "@/types/landing";
 import { type BlockRenderProps, registerBlock } from "../registry";
@@ -50,6 +52,8 @@ export const EMAIL_TYPE_LABELS: Record<(typeof EMAIL_TYPES)[number], string> = {
 
 export const contactSchema = z.object({
   photo: imageSchema.optional(),
+  /** Wide photo across the top of the card, the photo overlapping it */
+  cover: imageSchema.optional(),
   firstName: lineText(60).default(""),
   lastName: lineText(60).default(""),
   jobTitle: lineText(100).default(""),
@@ -187,22 +191,46 @@ function ContactBlock({ id, props, context }: BlockRenderProps<ContactProps>) {
 
   return (
     <section aria-label={name || "Contact"} className="space-y-5">
+      {props.cover && (
+        <div className="relative -mx-5 [.lp-block:first-child>section>&]:-mt-10">
+          <img
+            alt={props.cover.alt}
+            className="aspect-[16/10] w-full object-cover"
+            decoding="async"
+            fetchPriority={context.leadImage ? "high" : undefined}
+            loading={context.thumbnail ? "lazy" : undefined}
+            src={props.cover.url}
+          />
+          <div
+            aria-hidden="true"
+            className="absolute inset-x-0 bottom-0 h-2/5 bg-linear-to-b from-transparent to-(--lp-bg)"
+          />
+        </div>
+      )}
       {(props.photo || name || role || props.bio) && (
         <div className="flex flex-col items-center gap-3 text-center">
           {props.photo && (
             <img
               alt={props.photo.alt || name}
-              className="size-28 rounded-full object-cover shadow-sm ring-4 ring-(--lp-bg)"
+              className={cn(
+                "size-28 rounded-full object-cover shadow-sm ring-4 ring-(--lp-bg)",
+                props.cover && "relative -mt-24",
+              )}
               decoding="async"
               height={112}
+              loading={context.thumbnail ? "lazy" : undefined}
               src={props.photo.url}
               width={112}
             />
           )}
           {name && (
-            <h1 className="text-2xl leading-tight font-bold tracking-tight text-balance">
+            <LpHeading
+              as="h1"
+              className="text-2xl leading-tight font-bold tracking-tight text-balance"
+              preview={context.thumbnail}
+            >
               {name}
-            </h1>
+            </LpHeading>
           )}
           {role && <p className={cn("text-[15px]", mutedTextClass)}>{role}</p>}
           {props.bio && (
@@ -267,7 +295,7 @@ function ContactBlock({ id, props, context }: BlockRenderProps<ContactProps>) {
         <div className="grid gap-2">
           {props.showSave && (
             <a
-              className={buttonClass("filled")}
+              className={buttonClass("filled", buttonShapeClass(context.theme))}
               data-lp-block={id}
               data-lp-target="save-contact"
               download={demoVCard?.filename}
@@ -281,6 +309,7 @@ function ContactBlock({ id, props, context }: BlockRenderProps<ContactProps>) {
           {props.showShare && (
             <ShareButton
               blockId={id}
+              shapeClassName={buttonShapeClass(context.theme)}
               title={name || props.company || "Contact"}
             />
           )}
@@ -357,4 +386,5 @@ export const contactBlock = registerBlock({
   },
   Render: ContactBlock,
   Editor: ContactEditor,
+  leadImage: (props) => Boolean(props.cover),
 });

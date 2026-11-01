@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";
-import { CUSTOM_DOMAIN_HEADER } from "@/app/dashboard/domains/_lib/hostname";
+import {
+  CUSTOM_DOMAIN_HEADER,
+  isCustomDomainRequest,
+} from "@/app/dashboard/domains/_lib/hostname";
 import { scopeCustomCss } from "@/components/landing/custom-css";
 import { LandingPageFooter } from "@/components/landing/page-footer";
 import { Pixels } from "@/components/landing/pixels";
@@ -77,12 +80,13 @@ export default async function LandingPage({ params }: Props) {
   // Password gate, schedule, scan limit and pause apply to direct visits too.
   await enforcePageLifecycle(page.code);
 
+  const requestHeaders = await headers();
   const context: BlockRenderContext = {
     theme: page.content.theme,
     mode: "live",
     pageId: page.page.id,
     qrCodeId: page.code.id,
-    userAgent: (await headers()).get("user-agent"),
+    userAgent: requestHeaders.get("user-agent"),
   };
 
   // Business only; on a downgrade the page keeps rendering without it.
@@ -112,6 +116,7 @@ export default async function LandingPage({ params }: Props) {
         }
       />
       <Pixels
+        customDomain={isCustomDomainRequest(requestHeaders)}
         pageId={page.page.id}
         pixels={page.code.pixels}
         qrCodeId={page.code.id}

@@ -8,6 +8,7 @@ import {
 } from "@repo/design-system/components/ui/resizable";
 import { useIsMobile } from "@repo/design-system/hooks/use-mobile";
 import React, { use, useEffect } from "react";
+import { useTrackQrGenerated } from "@/lib/analytics/react";
 import { DialogActionsProvider } from "@/lib/hooks/use-dialog-actions";
 import { useMounted } from "@/lib/hooks/use-mounted";
 import { useQREditorStore } from "@/store/editor-store";
@@ -17,7 +18,8 @@ import { AIWorkingGlow } from "./editor/ai/ai-working-glow";
 import ThemeControlPanel from "./qr-control-panel";
 import QRPreviewPanel from "./qr-preview-panel";
 
-interface EditorProps {
+// Exported so components/lazy-editor.tsx's inferred type can name it (TS4023).
+export interface EditorProps {
   themePromise: Promise<Theme | null>;
 }
 
@@ -40,6 +42,14 @@ function EditorShell() {
       <span className="sr-only">Loading the editor…</span>
     </div>
   );
+}
+
+/** qr_generated, in its own component so typing doesn't re-render the editor. */
+function TrackQrGenerated() {
+  const value = useQREditorStore((state) => state.value);
+  const contentType = useQREditorStore((state) => state.contentType);
+  useTrackQrGenerated("playground", contentType, value);
+  return null;
 }
 
 const Editor: React.FC<EditorProps> = ({ themePromise }) => {
@@ -96,6 +106,7 @@ const Editor: React.FC<EditorProps> = ({ themePromise }) => {
           <div className="relative flex h-[32svh] min-h-52 shrink-0 flex-col overflow-hidden">
             <QRPreviewPanel style={styles} />
             <AIWorkingGlow />
+            <TrackQrGenerated />
           </div>
           <div className="bg-background relative z-10 -mt-3 flex min-h-0 flex-1 flex-col overflow-hidden rounded-t-[calc(var(--radius)+0.25rem)] border-t shadow-[0_-8px_24px_-12px_rgba(0,0,0,0.25)]">
             <div
@@ -136,6 +147,7 @@ const Editor: React.FC<EditorProps> = ({ themePromise }) => {
                   <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
                     <QRPreviewPanel style={styles} />
                     <AIWorkingGlow />
+                    <TrackQrGenerated />
                   </div>
                 </div>
               </div>

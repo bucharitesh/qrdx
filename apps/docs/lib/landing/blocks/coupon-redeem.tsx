@@ -56,6 +56,7 @@ export function CouponRedeem({
   qrCodeId,
   live,
   unavailable,
+  shapeClassName,
 }: {
   blockId: string;
   pageId: string | null;
@@ -64,6 +65,8 @@ export function CouponRedeem({
   live: boolean;
   /** Why it can't be redeemed right now ("This coupon has expired") */
   unavailable?: string;
+  /** buttonShapeClass(theme) */
+  shapeClassName?: string;
 }) {
   const storageKey = `qrdx:coupon:${pageId ?? "preview"}:${blockId}`;
   const [redeemedAt, setRedeemedAt] = useState<string | null>(null);
@@ -123,14 +126,14 @@ export function CouponRedeem({
         </p>
         <div className="grid grid-cols-2 gap-2">
           <button
-            className={buttonClass("soft")}
+            className={buttonClass("soft", shapeClassName)}
             onClick={() => setConfirming(false)}
             type="button"
           >
             Cancel
           </button>
           <button
-            className={buttonClass("filled")}
+            className={buttonClass("filled", shapeClassName)}
             onClick={redeem}
             type="button"
           >
@@ -143,7 +146,7 @@ export function CouponRedeem({
 
   return (
     <button
-      className={buttonClass("filled")}
+      className={buttonClass("filled", shapeClassName)}
       onClick={() => setConfirming(true)}
       type="button"
     >

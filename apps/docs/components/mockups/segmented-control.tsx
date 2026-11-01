@@ -1,9 +1,8 @@
 "use client";
 
 import { cn } from "@repo/design-system/lib/utils";
-import { LayoutGroup, motion, useReducedMotion } from "motion/react";
-import { type KeyboardEvent, useId } from "react";
-import { LAYOUT_TRANSITION } from "./motion";
+import type { KeyboardEvent } from "react";
+import { useSlidingPill } from "./sliding-pill";
 
 interface SegmentedControlProps<T extends string> {
   /** Accessible name of the group. */
@@ -24,8 +23,7 @@ export function SegmentedControl<T extends string>({
   className,
   size = "md",
 }: SegmentedControlProps<T>) {
-  const id = useId();
-  const reduce = useReducedMotion();
+  const { pill, capture } = useSlidingPill();
 
   // Arrow keys move the selection, as in a native radio group.
   const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
@@ -40,6 +38,7 @@ export function SegmentedControl<T extends string>({
     const index = options.findIndex((option) => option.value === value);
     const next = options[(index + step + options.length) % options.length];
     if (!next) return;
+    capture();
     onChange(next.value);
     const buttons =
       event.currentTarget.querySelectorAll<HTMLButtonElement>("[role=radio]");
@@ -47,49 +46,49 @@ export function SegmentedControl<T extends string>({
   };
 
   return (
-    <LayoutGroup id={id}>
-      <div
-        role="radiogroup"
-        aria-label={label}
-        onKeyDown={onKeyDown}
-        className={cn(
-          "inline-flex flex-wrap gap-1 rounded-[1.1rem] border border-border bg-muted/60 p-1",
-          className,
-        )}
-      >
-        {options.map((option) => {
-          const selected = option.value === value;
-          return (
-            // biome-ignore lint/a11y/useSemanticElements: styled pill radios; role and aria-checked keep radio semantics
-            <button
-              key={option.value}
-              type="button"
-              role="radio"
-              aria-checked={selected}
-              tabIndex={selected ? 0 : -1}
-              onClick={() => onChange(option.value)}
-              className={cn(
-                "relative rounded-full font-medium transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
-                size === "sm"
-                  ? "h-7 px-2.5 text-xs"
-                  : "h-8 px-2.5 text-sm sm:px-3",
-                selected
-                  ? "text-foreground"
-                  : "text-muted-foreground hover:text-foreground",
-              )}
-            >
-              {selected && (
-                <motion.span
-                  layoutId="pill"
-                  transition={reduce ? { duration: 0 } : LAYOUT_TRANSITION}
-                  className="absolute inset-0 rounded-full border border-border bg-background shadow-sm"
-                />
-              )}
-              <span className="relative">{option.label}</span>
-            </button>
-          );
-        })}
-      </div>
-    </LayoutGroup>
+    <div
+      role="radiogroup"
+      aria-label={label}
+      onKeyDown={onKeyDown}
+      className={cn(
+        "inline-flex flex-wrap gap-1 rounded-[1.1rem] border border-border bg-muted/60 p-1",
+        className,
+      )}
+    >
+      {options.map((option) => {
+        const selected = option.value === value;
+        return (
+          // biome-ignore lint/a11y/useSemanticElements: styled pill radios; role and aria-checked keep radio semantics
+          <button
+            key={option.value}
+            type="button"
+            role="radio"
+            aria-checked={selected}
+            tabIndex={selected ? 0 : -1}
+            onClick={() => {
+              if (!selected) capture();
+              onChange(option.value);
+            }}
+            className={cn(
+              "relative rounded-full font-medium transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring",
+              size === "sm"
+                ? "h-7 px-2.5 text-xs"
+                : "h-8 px-2.5 text-sm sm:px-3",
+              selected
+                ? "text-foreground"
+                : "text-muted-foreground hover:text-foreground",
+            )}
+          >
+            {selected && (
+              <span
+                ref={pill}
+                className="absolute inset-0 rounded-full border border-border bg-background shadow-sm"
+              />
+            )}
+            <span className="relative">{option.label}</span>
+          </button>
+        );
+      })}
+    </div>
   );
 }

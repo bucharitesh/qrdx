@@ -41,15 +41,64 @@ export const LANDING_FONTS = [
     stack:
       'var(--font-geist-mono), ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas, monospace',
   },
+  // Web fonts (components/landing/fonts.ts): loaded only by pages that use them.
+  // `heading` tunes weight and tracking when the font sets headings.
+  {
+    id: "dm-sans",
+    label: "DM Sans",
+    stack: "var(--font-lp-dm-sans), ui-sans-serif, system-ui, sans-serif",
+    heading: { weight: 700, tracking: "-0.03em" },
+  },
+  {
+    id: "space-grotesk",
+    label: "Space Grotesk",
+    stack: "var(--font-lp-space-grotesk), ui-sans-serif, system-ui, sans-serif",
+    heading: { weight: 600, tracking: "-0.035em" },
+  },
+  {
+    id: "bricolage",
+    label: "Bricolage Grotesque",
+    stack: "var(--font-lp-bricolage), ui-sans-serif, system-ui, sans-serif",
+    heading: { weight: 700, tracking: "-0.04em" },
+  },
+  {
+    id: "fraunces",
+    label: "Fraunces",
+    stack: "var(--font-lp-fraunces), ui-serif, Georgia, serif",
+    heading: { weight: 600, tracking: "-0.02em" },
+  },
+  {
+    id: "instrument-serif",
+    label: "Instrument Serif",
+    stack: "var(--font-lp-instrument-serif), ui-serif, Georgia, serif",
+    heading: { weight: 400, tracking: "-0.01em" },
+  },
+  {
+    id: "cormorant",
+    label: "Cormorant",
+    stack: "var(--font-lp-cormorant), ui-serif, Georgia, serif",
+    heading: { weight: 600, tracking: "0em" },
+  },
 ] as const;
 
 export type LandingFontId = (typeof LANDING_FONTS)[number]["id"];
 
+type LandingFont = (typeof LANDING_FONTS)[number];
+
+function findFont(id: string): LandingFont | undefined {
+  return LANDING_FONTS.find((font) => font.id === id);
+}
+
 export function fontStack(id: string): string {
-  return (
-    LANDING_FONTS.find((font) => font.id === id)?.stack ??
-    LANDING_FONTS[0].stack
-  );
+  return findFont(id)?.stack ?? LANDING_FONTS[0].stack;
+}
+
+/** Weight and tracking for headings set in `id` (bold and tight by default). */
+export function headingStyle(id: string): { weight: number; tracking: string } {
+  const font = findFont(id);
+  return font && "heading" in font
+    ? font.heading
+    : { weight: 700, tracking: "-0.025em" };
 }
 
 /** `url("…")` for a validated http(s) URL (quotes and backslashes escaped). */
@@ -63,13 +112,16 @@ export function cssUrl(value: string): string {
   return `url("${href.replace(/["\\\n\r]/g, (char) => encodeURIComponent(char))}")`;
 }
 
-export function backgroundStyle(theme: LandingTheme): CSSProperties {
+function baseBackground(theme: LandingTheme): CSSProperties {
   const { background, colors } = theme;
   switch (background.type) {
     case "gradient":
       return {
         backgroundColor: colors.background,
-        backgroundImage: `linear-gradient(${background.angle}deg, ${background.from}, ${background.to})`,
+        backgroundImage:
+          background.shape === "radial"
+            ? `radial-gradient(130% 75% at 50% 0%, ${background.from}, ${background.to})`
+            : `linear-gradient(${background.angle}deg, ${background.from}, ${background.to})`,
       };
     case "image": {
       const shade = `rgba(0, 0, 0, ${background.overlay})`;
@@ -86,6 +138,76 @@ export function backgroundStyle(theme: LandingTheme): CSSProperties {
   }
 }
 
+const svgUrl = (svg: string) =>
+  `url("data:image/svg+xml,${encodeURIComponent(svg).replace(/'/g, "%27")}")`;
+
+/** A repeating pattern tile in the text color: [image, tile size]. */
+function textureLayer(
+  texture: NonNullable<LandingTheme["texture"]>,
+  foreground: string,
+  dark: boolean,
+): [string, string] {
+  const ink = rgbToHex(hexToRgb(foreground));
+  switch (texture) {
+    case "dots":
+      return [
+        svgUrl(
+          `<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22'><circle cx='2' cy='2' r='1' fill='${ink}' fill-opacity='${dark ? 0.22 : 0.16}'/></svg>`,
+        ),
+        "22px 22px",
+      ];
+    case "grid":
+      return [
+        svgUrl(
+          `<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32'><path d='M32 .5H.5V32' fill='none' stroke='${ink}' stroke-opacity='${dark ? 0.09 : 0.07}'/></svg>`,
+        ),
+        "32px 32px",
+      ];
+    default:
+      return [
+        svgUrl(
+          `<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%' height='100%' filter='url(#n)' opacity='${dark ? 0.09 : 0.06}'/></svg>`,
+        ),
+        "180px 180px",
+      ];
+  }
+}
+
+export function backgroundStyle(theme: LandingTheme): CSSProperties {
+  const style = baseBackground(theme);
+  if (!theme.texture) return style;
+  // The pattern is the top layer; the background's own layers keep their sizing.
+  const [image, size] = textureLayer(
+    theme.texture,
+    theme.colors.foreground,
+    luminance(theme.colors.background) < 0.35,
+  );
+  const layers = style.backgroundImage
+    ? String(style.backgroundImage).split(/,(?![^(]*\))/).length
+    : 0;
+  const repeat = (value: string | undefined, fallback: string) =>
+    Array(layers).fill(value ?? fallback);
+  return {
+    ...style,
+    backgroundImage: [image, style.backgroundImage].filter(Boolean).join(", "),
+    backgroundSize: [
+      size,
+      ...repeat(style.backgroundSize as string, "auto"),
+    ].join(", "),
+    backgroundPosition: [
+      "0 0",
+      ...repeat(style.backgroundPosition as string, "0 0"),
+    ].join(", "),
+    backgroundRepeat: [
+      "repeat",
+      ...repeat(
+        undefined,
+        layers && style.backgroundSize ? "no-repeat" : "repeat",
+      ),
+    ].join(", "),
+  };
+}
+
 /** Custom properties every block reads (`var(--lp-primary)`, ...). */
 export function themeVariables(theme: LandingTheme): CSSProperties {
   const { colors } = theme;
@@ -100,7 +222,17 @@ export function themeVariables(theme: LandingTheme): CSSProperties {
     "--lp-font": fontStack(theme.font),
     color: colors.foreground,
     fontFamily: fontStack(theme.font),
+    ...(theme.headingFont && headingVariables(theme.headingFont)),
   } as CSSProperties;
+}
+
+function headingVariables(id: string) {
+  const { weight, tracking } = headingStyle(id);
+  return {
+    "--lp-heading-font": fontStack(id),
+    "--lp-heading-weight": String(weight),
+    "--lp-heading-tracking": tracking,
+  };
 }
 
 // ─── Colors ──────────────────────────────────────────────────────────────────

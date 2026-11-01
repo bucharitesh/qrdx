@@ -1,0 +1,24 @@
+/*
+ * The light sweep across the GitHub pill (components/github-stars.tsx): 1.1 s
+ * across, then 5.5 s off to the right, starting 1.2 s after load. The
+ * pill's overflow hides the jump back to the start.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  .sweep {
+    animation: sweep 6.6s cubic-bezier(0.32, 0.72, 0, 1) 1.2s infinite backwards;
+  }
+}
+
+@keyframes sweep {
+  0% {
+    transform: translateX(0%) skewX(-12deg);
+  }
+  16.67%,
+  100% {
+    transform: translateX(400%) skewX(-12deg);
+  }
+}
+
+.sweep {
+  transform: skewX(-12deg);
+}

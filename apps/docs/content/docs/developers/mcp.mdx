@@ -10,7 +10,7 @@ QRdx runs a public [Model Context Protocol](https://modelcontextprotocol.io) ser
 https://mcp.qrdx.dev/mcp
 ```
 
-The same server also answers at `https://qrdx.dev/api/mcp`, and a self-hosted QRdx serves it at `/api/mcp` on your own domain.
+Use this URL in every client. The same server also answers at `https://qrdx.dev/api/mcp`, and the [connect page](/mcp) shows the public URL on qrdx.dev, on preview deployments and in local development.
 
 It uses the Streamable HTTP transport, needs no account or API key, and keeps no session state. Your AI assistant can call it to render QR codes, list the available styles, and build correctly formatted payloads for Wi-Fi, contacts, email, SMS and map locations.
 
@@ -96,3 +96,12 @@ Like the image API, the MCP server renders solid colors only. It doesn't support
 - The tools only render images and format text. They don't read or change any QRdx account data, and the server doesn't save the codes you generate.
 - The image URLs that `generate_qr_code` returns contain the encoded data. Don't share them if the data is private, such as a Wi-Fi password.
 - Requests are limited to 120 per minute per IP address.
+
+## Self-hosting and local development
+
+The MCP server is part of the QRdx web app, so every instance serves it at `/api/mcp`:
+
+- **Self-hosted.** When `NEXT_PUBLIC_APP_URL` is your own domain, the connect page, snippets and install links use `https://<your-domain>/api/mcp`.
+- **Local development.** `pnpm dev` serves it at `http://localhost:3000/api/mcp`. The connect page still shows the public URL and offers the local one as a hint, so you can point a client at your machine to test changes to the server before they ship.
+
+Opening `/api/mcp` in a browser redirects to the connect page. MCP clients never ask for HTML, so they reach the server as usual.

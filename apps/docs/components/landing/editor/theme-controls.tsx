@@ -124,6 +124,9 @@ function Swatch({
   );
 }
 
+/** Heading font option meaning "use the body font" (no headingFont). */
+const SAME_FONT = "same";
+
 const sameColors = (a: Colors, b: Colors) =>
   (Object.keys(a) as (keyof Colors)[]).every(
     (key) => a[key].toLowerCase() === b[key].toLowerCase(),
@@ -259,6 +262,20 @@ export function ThemeControls({
           }))}
           value={theme.font}
         />
+        <SelectField
+          label="Heading font"
+          onChange={(id) =>
+            set({ headingFont: id === SAME_FONT ? undefined : id })
+          }
+          options={[
+            { value: SAME_FONT, label: "Same as text" },
+            ...LANDING_FONTS.map((font) => ({
+              value: font.id,
+              label: font.label,
+            })),
+          ]}
+          value={theme.headingFont ?? SAME_FONT}
+        />
         <SliderField
           label="Corner radius"
           max={32}
@@ -266,6 +283,30 @@ export function ThemeControls({
           onChange={(radius) => set({ radius })}
           unit="px"
           value={theme.radius}
+        />
+        <ChoiceField
+          label="Buttons"
+          onChange={(shape) =>
+            set({ buttonShape: shape === "radius" ? undefined : shape })
+          }
+          options={[
+            { value: "radius", label: "Corner radius" },
+            { value: "pill", label: "Pill" },
+            { value: "sharp", label: "Square" },
+          ]}
+          value={theme.buttonShape ?? "radius"}
+        />
+        <ChoiceField
+          label="Spacing"
+          onChange={(spacing) =>
+            set({ spacing: spacing === "normal" ? undefined : spacing })
+          }
+          options={[
+            { value: "compact", label: "Compact" },
+            { value: "normal", label: "Normal" },
+            { value: "relaxed", label: "Relaxed" },
+          ]}
+          value={theme.spacing ?? "normal"}
         />
       </section>
 
@@ -299,6 +340,22 @@ export function ThemeControls({
         />
         {background.type === "gradient" && (
           <>
+            <ChoiceField
+              label="Shape"
+              onChange={(shape) =>
+                set({
+                  background: {
+                    ...background,
+                    shape: shape === "radial" ? shape : undefined,
+                  },
+                })
+              }
+              options={[
+                { value: "linear", label: "Linear" },
+                { value: "radial", label: "Glow from the top" },
+              ]}
+              value={background.shape ?? "linear"}
+            />
             <div className="grid grid-cols-2 gap-3">
               <ColorInput
                 label="From"
@@ -313,17 +370,19 @@ export function ThemeControls({
                 value={background.to}
               />
             </div>
-            <SliderField
-              label="Angle"
-              max={360}
-              min={0}
-              onChange={(angle) =>
-                set({ background: { ...background, angle } })
-              }
-              step={15}
-              unit="°"
-              value={background.angle}
-            />
+            {background.shape !== "radial" && (
+              <SliderField
+                label="Angle"
+                max={360}
+                min={0}
+                onChange={(angle) =>
+                  set({ background: { ...background, angle } })
+                }
+                step={15}
+                unit="°"
+                value={background.angle}
+              />
+            )}
           </>
         )}
         {background.type === "image" && (
@@ -348,6 +407,22 @@ export function ThemeControls({
             />
           </>
         )}
+      </section>
+
+      <section className="space-y-2">
+        <ChoiceField
+          label="Texture"
+          onChange={(texture) =>
+            set({ texture: texture === "none" ? undefined : texture })
+          }
+          options={[
+            { value: "none", label: "None" },
+            { value: "grain", label: "Grain" },
+            { value: "dots", label: "Dots" },
+            { value: "grid", label: "Grid" },
+          ]}
+          value={theme.texture ?? "none"}
+        />
       </section>
 
       <section className="space-y-2">

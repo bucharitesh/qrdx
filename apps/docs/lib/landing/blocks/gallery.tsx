@@ -52,11 +52,16 @@ function GalleryBlock({
   }
   return (
     <section aria-label={props.title || "Photo gallery"} className="space-y-3">
-      <BlockHeading description={props.description} title={props.title} />
+      <BlockHeading
+        description={props.description}
+        preview={context.thumbnail}
+        title={props.title}
+      />
       <GalleryGrid
         blockId={id}
         columns={Number(props.columns) as 1 | 2 | 3}
         images={images}
+        leadImage={context.leadImage}
         shape={props.shape}
       />
     </section>
@@ -73,4 +78,5 @@ export const galleryBlock = registerBlock({
   defaults: {},
   Render: GalleryBlock,
   Editor: GalleryEditor,
+  leadImage: (props) => props.images.length > 0,
 });

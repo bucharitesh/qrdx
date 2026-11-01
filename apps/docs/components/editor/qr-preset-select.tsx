@@ -39,6 +39,7 @@ import { type ColorConfig, getColorString } from "qrdx";
 import type React from "react";
 import { useCallback, useMemo, useState } from "react";
 import { seasonalPresetsFirst } from "@/components/seasonal/preset-order";
+import { track } from "@/lib/analytics";
 import { useMounted } from "@/lib/hooks/use-mounted";
 import { shuffleNext } from "@/lib/hooks/use-theme-shuffle";
 import { useUserSettings } from "@/lib/hooks/use-user-settings";
@@ -194,6 +195,10 @@ const ThemePresetCycleControls: React.FC<ThemePresetCycleControlsProps> = ({
           : (currentIndex - 1 + filteredPresets.length) %
             filteredPresets.length;
       applyThemePreset(filteredPresets[newIndex]);
+      track("theme_applied", {
+        method: "preset",
+        preset: filteredPresets[newIndex],
+      });
       soundEvent("apply");
     },
     [currentIndex, filteredPresets, applyThemePreset],
@@ -447,6 +452,10 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                         value={`${presetName}-${index}`}
                         onSelect={() => {
                           applyThemePreset(presetName);
+                          track("theme_applied", {
+                            method: "preset",
+                            preset: presetName,
+                          });
                           soundEvent("apply");
                           setSearch("");
                         }}
@@ -509,6 +518,10 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                         value={`${presetName}-${index}`}
                         onSelect={() => {
                           applyThemePreset(presetName);
+                          track("theme_applied", {
+                            method: "preset",
+                            preset: presetName,
+                          });
                           soundEvent("apply");
                           setSearch("");
                         }}

@@ -1,5 +1,5 @@
 import { createHash, randomBytes, timingSafeEqual } from "node:crypto";
-import { database as db, oauthApp, oauthToken } from "@repo/database";
+import { database as db, oauthApp, oauthToken, user } from "@repo/database";
 import bcrypt from "bcryptjs";
 import cuid from "cuid";
 import { and, eq, isNull } from "drizzle-orm";
@@ -156,6 +156,29 @@ export async function createTokenPair(
   };
 }
 
+/**
+ * A Better Auth admin ban is in force: `banned` until `banExpires` (none =
+ * permanent). Banning ends sessions only, so OAuth grants check it too.
+ */
+export function isBanActive(
+  account: { banned: boolean | null; banExpires: Date | null },
+  now: Date = new Date(),
+): boolean {
+  return (
+    Boolean(account.banned) && (!account.banExpires || account.banExpires > now)
+  );
+}
+
+/** True for a banned (or deleted) user: no OAuth tokens may be issued. */
+export async function isUserBanned(userId: string): Promise<boolean> {
+  const [account] = await db
+    .select({ banned: user.banned, banExpires: user.banExpires })
+    .from(user)
+    .where(eq(user.id, userId))
+    .limit(1);
+  return !account || isBanActive(account);
+}
+
 export async function validateAccessToken(token: string) {
   const tokenHash = hashToken(token);
   const now = new Date();
@@ -165,9 +188,12 @@ export async function validateAccessToken(token: string) {
       userId: oauthToken.userId,
       scopes: oauthToken.scopes,
       accessTokenExpiresAt: oauthToken.accessTokenExpiresAt,
+      banned: user.banned,
+      banExpires: user.banExpires,
     })
     .from(oauthToken)
     .innerJoin(oauthApp, eq(oauthApp.id, oauthToken.appId))
+    .innerJoin(user, eq(user.id, oauthToken.userId))
     .where(
       and(
         eq(oauthToken.accessTokenHash, tokenHash),
@@ -179,8 +205,13 @@ export async function validateAccessToken(token: string) {
 
   if (!record) return null;
   if (now > record.accessTokenExpiresAt) return null;
+  if (isBanActive(record, now)) return null;
 
-  return record;
+  return {
+    userId: record.userId,
+    scopes: record.scopes,
+    accessTokenExpiresAt: record.accessTokenExpiresAt,
+  };
 }
 
 export async function requireAuth(req: NextRequest, requiredScope: OAuthScope) {

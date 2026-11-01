@@ -1,5 +1,6 @@
 "use client";
 
+import { Tick } from "@repo/design-system/components/icons";
 import {
   Card,
   CardContent,
@@ -11,7 +12,6 @@ import { Label } from "@repo/design-system/components/ui/label";
 import { cn } from "@repo/design-system/lib/utils";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
-import { Icons } from "@/components/icons";
 import { DarkTheme } from "./dark-theme";
 import { LightTheme } from "./light-theme";
 import { SystemTheme } from "./system-theme";
@@ -56,11 +56,11 @@ export function AppearanceForm() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-4 sm:grid-cols-3">
+          <div className="grid grid-cols-3 gap-2 sm:gap-4">
             {themes.map((themeOption) => (
               <div
                 key={themeOption.id}
-                className="relative flex flex-col gap-3 rounded-lg border border-border p-4 bg-card"
+                className="relative flex flex-col gap-2 rounded-lg border border-border bg-card p-2 sm:gap-3 sm:p-4"
               >
                 <div className="aspect-video overflow-hidden rounded-md border border-border bg-muted">
                   <div className="h-full w-full animate-pulse bg-muted" />
@@ -68,7 +68,7 @@ export function AppearanceForm() {
                 <div className="flex items-center gap-2">
                   <Label className="font-medium">{themeOption.name}</Label>
                 </div>
-                <p className="text-xs text-muted-foreground">
+                <p className="hidden text-xs text-muted-foreground sm:block">
                   {themeOption.description}
                 </p>
               </div>
@@ -89,7 +89,7 @@ export function AppearanceForm() {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          <div className="grid gap-4 sm:grid-cols-3">
+          <div className="grid grid-cols-3 gap-2 sm:gap-4">
             {themes.map((themeOption) => {
               const Icon = themeOption.icon;
               const isSelected = theme === themeOption.id;
@@ -100,7 +100,7 @@ export function AppearanceForm() {
                   key={themeOption.id}
                   onClick={() => setTheme(themeOption.id)}
                   className={cn(
-                    "relative flex flex-col gap-3 rounded-lg border p-4 transition-all hover:bg-accent/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+                    "relative flex flex-col gap-2 rounded-lg border p-2 transition-all sm:gap-3 sm:p-4 hover:bg-accent/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
                     isSelected
                       ? "border-primary bg-accent shadow-sm"
                       : "border-border bg-card",
@@ -108,8 +108,8 @@ export function AppearanceForm() {
                 >
                   {/* Selected indicator */}
                   {isSelected && (
-                    <div className="absolute right-3 top-3 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
-                      <Icons.Check className="h-3 w-3 text-primary-foreground" />
+                    <div className="absolute right-1.5 top-1.5 flex h-5 w-5 sm:right-3 sm:top-3 items-center justify-center rounded-full bg-primary">
+                      <Tick className="h-3 w-3 text-primary-foreground" />
                     </div>
                   )}
 
@@ -128,7 +128,7 @@ export function AppearanceForm() {
                     >
                       {themeOption.name}
                     </Label>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="hidden text-xs text-muted-foreground sm:block">
                       {themeOption.description}
                     </p>
                   </div>

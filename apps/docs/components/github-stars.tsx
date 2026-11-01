@@ -9,12 +9,10 @@ import {
 } from "@repo/design-system/components/ui/tooltip";
 import { cn } from "@repo/design-system/lib/utils";
 import { useQuery } from "@tanstack/react-query";
-import { motion, useReducedMotion } from "motion/react";
-import { useEffect, useState } from "react";
-import { EASE } from "@/components/mockups/motion";
+import { useLayoutEffect, useState } from "react";
 import { siteConfig } from "@/config/site";
-import { useMounted } from "@/lib/hooks/use-mounted";
 import { formatCompactNumber } from "@/utils/format";
+import styles from "./github-stars.module.css";
 
 /** From our cached route (app/api/github-stars), not GitHub directly. */
 function useStars() {
@@ -36,27 +34,23 @@ function useStars() {
 
 const DIGITS = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
 
-/** One odometer wheel that rolls from 0 to `digit`. */
+/** One odometer wheel that rolls from 0 to `digit` (no roll with reduced motion). */
 function Wheel({
   digit,
   index,
   rolled,
-  reduce,
 }: {
   digit: number;
   index: number;
   rolled: boolean;
-  reduce: boolean;
 }) {
   return (
     <span className="relative inline-block h-[1lh] w-[1ch] overflow-hidden">
       <span
-        className="absolute inset-x-0 top-0 flex flex-col"
+        className="absolute inset-x-0 top-0 flex flex-col transition-transform duration-600 ease-[cubic-bezier(.32,.72,0,1)] motion-reduce:transition-none"
         style={{
-          transform: `translateY(${rolled || reduce ? -digit : 0}lh)`,
-          transition: reduce
-            ? "none"
-            : `transform 600ms cubic-bezier(.32,.72,0,1) ${index * 70}ms`,
+          transform: `translateY(${rolled ? -digit : 0}lh)`,
+          transitionDelay: `${index * 70}ms`,
         }}
       >
         {DIGITS.map((d) => (
@@ -70,9 +64,15 @@ function Wheel({
 }
 
 /** "1.2k" with each digit rolling up on first show. */
-function Odometer({ value, reduce }: { value: string; reduce: boolean }) {
+function Odometer({ value }: { value: string }) {
   const [rolled, setRolled] = useState(false);
-  useEffect(() => {
+  // Only ever rendered on the client (the count is fetched after mount).
+  // Reduced motion: show the digits before the first paint, no roll.
+  useLayoutEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setRolled(true);
+      return;
+    }
     const id = requestAnimationFrame(() => setRolled(true));
     return () => cancelAnimationFrame(id);
   }, []);
@@ -86,15 +86,7 @@ function Odometer({ value, reduce }: { value: string; reduce: boolean }) {
           return <span key={i}>{char}</span>;
         }
         const index = wheel++;
-        return (
-          <Wheel
-            key={i}
-            digit={digit}
-            index={index}
-            rolled={rolled}
-            reduce={reduce}
-          />
-        );
+        return <Wheel key={i} digit={digit} index={index} rolled={rolled} />;
       })}
     </span>
   );
@@ -114,12 +106,6 @@ export function GithubStars({
   full?: boolean;
 }) {
   const { data: stars = 0, isPending } = useStars();
-  // The server can't know the visitor's motion preference, so treat the first
-  // render as "reduced" on both sides (no sweep) and decide after mount;
-  // otherwise the markup differs and hydration fails.
-  const mounted = useMounted();
-  const prefersReduced = useReducedMotion() ?? false;
-  const reduce = !mounted || prefersReduced;
   const label = stars > 0 ? formatCompactNumber(stars) : null;
 
   return (
@@ -145,21 +131,14 @@ export function GithubStars({
                 : "Star QRdx on GitHub"
             }
           >
-            {!reduce && (
-              <motion.span
-                aria-hidden
-                className="pointer-events-none absolute inset-y-0 -left-1/2 w-1/2 -skew-x-12 bg-gradient-to-r from-transparent via-foreground/10 to-transparent"
-                initial={{ x: "0%" }}
-                animate={{ x: ["0%", "400%"] }}
-                transition={{
-                  duration: 1.1,
-                  ease: EASE,
-                  repeat: Number.POSITIVE_INFINITY,
-                  repeatDelay: 5.5,
-                  delay: 1.2,
-                }}
-              />
-            )}
+            {/* The sweep is CSS only (github-stars.module.css): none with reduced motion. */}
+            <span
+              aria-hidden
+              className={cn(
+                "pointer-events-none absolute inset-y-0 -left-1/2 w-1/2 bg-gradient-to-r from-transparent via-foreground/10 to-transparent motion-reduce:hidden",
+                styles.sweep,
+              )}
+            />
             <GithubLogo aria-hidden className="size-4 shrink-0" />
             <span
               className={cn(
@@ -173,7 +152,7 @@ export function GithubStars({
                   className="h-3.5 w-[3ch] animate-pulse rounded-full bg-muted-foreground/20"
                 />
               ) : label ? (
-                <Odometer value={label} reduce={reduce} />
+                <Odometer value={label} />
               ) : (
                 <span aria-hidden>Star</span>
               )}

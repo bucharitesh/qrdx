@@ -1,6 +1,7 @@
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import type { NextRequest } from "next/server";
 import { CUSTOM_DOMAIN_HEADER } from "@/app/dashboard/domains/_lib/hostname";
+import { trackServer } from "@/lib/analytics/server";
 import { env } from "@/lib/env";
 import { HttpError, handleError } from "@/lib/error-response";
 import { emitFormSubmitted } from "@/lib/events";
@@ -168,6 +169,8 @@ export async function POST(request: NextRequest, { params }: Context) {
       fields: answersToEventFields(result.answers),
       submittedAt: now,
     });
+    // A count only: nothing about the visitor, the page or the answers.
+    trackServer("form_submitted", {});
 
     return json({ ok: true }, 201);
   } catch (error) {

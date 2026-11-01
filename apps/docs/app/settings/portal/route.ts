@@ -1,30 +1,22 @@
-import { CustomerPortal } from "@polar-sh/nextjs";
 import { type NextRequest, NextResponse } from "next/server";
 import { env } from "@/lib/env";
-import { BILLING_NOT_CONFIGURED_MESSAGE, polar } from "@/lib/polar";
+import { isBillingConfigured, polar } from "@/lib/polar";
 import { getCurrentUserId } from "@/lib/shared";
+import { PORTAL_RETURN_PATH, resolvePortalRedirect } from "./_lib/portal";
 
-const handlePortal = env.POLAR_ACCESS_TOKEN
-  ? CustomerPortal({
-      accessToken: env.POLAR_ACCESS_TOKEN,
-      server: process.env.NODE_ENV === "production" ? "production" : "sandbox",
-      getCustomerId: async (req) => {
-        const userId = await getCurrentUserId(req);
-        const customer = await polar.customers.getExternal({
-          externalId: userId,
-        });
-        return customer.id;
-      },
-    })
-  : null;
-
+// Opens the Polar customer portal. Every failure ends on a page of this site
+// (pricing, or the usage page with a notice), never a raw error response.
 export async function GET(request: NextRequest) {
-  if (!handlePortal) {
-    return NextResponse.json(
-      { error: BILLING_NOT_CONFIGURED_MESSAGE },
-      { status: 503 },
-    );
-  }
+  const destination = await resolvePortalRedirect({
+    client: isBillingConfigured ? polar : null,
+    getUserId: () => getCurrentUserId(request),
+    returnUrl: new URL(PORTAL_RETURN_PATH, request.nextUrl.origin).toString(),
+    onFailure: (failure) =>
+      console.error("[settings/portal] Billing portal unavailable", {
+        ...failure,
+        server: env.NODE_ENV === "production" ? "production" : "sandbox",
+      }),
+  });
 
-  return handlePortal(request);
+  return NextResponse.redirect(new URL(destination, request.url));
 }

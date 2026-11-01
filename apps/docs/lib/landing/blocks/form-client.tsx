@@ -439,6 +439,7 @@ export function FormClient({
   qrCodeId,
   live,
   demo = false,
+  shapeClassName,
 }: {
   blockId: string;
   fields: FormField[];
@@ -450,6 +451,8 @@ export function FormClient({
   live: boolean;
   /** Template demo: validates, then shows the thank-you state; never sends */
   demo?: boolean;
+  /** buttonShapeClass(theme) */
+  shapeClassName?: string;
 }) {
   const [values, setValues] = useState<Record<string, unknown>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -660,7 +663,10 @@ export function FormClient({
       </output>
 
       <button
-        className={cn(buttonClass("filled"), "disabled:opacity-60")}
+        className={cn(
+          buttonClass("filled", shapeClassName),
+          "disabled:opacity-60",
+        )}
         disabled={status.kind === "submitting" || closed}
         type="submit"
       >

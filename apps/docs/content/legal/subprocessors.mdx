@@ -7,7 +7,7 @@ lastUpdated: 2026-11-01
 <Callout title="Summary">
 
 - These companies run parts of QRdx for us and may handle personal data while doing it: hosting, the database, email, billing, AI, file storage, spam checks, analytics and the feedback widget.
-- PostHog and Featurebase only receive data from visitors who allow them in **Cookie settings**.
+- PostHog and Featurebase only receive data about you if you allow them in **Cookie settings**; without that, PostHog gets only anonymous counts from our servers. Umami counts visits without cookies and keeps no profile of anyone.
 - Services you connect yourself, such as Dub or Google Drive, are not on this list: data reaches them only because you asked for it.
 - We update this page before a new subprocessor starts handling personal data.
 
@@ -29,7 +29,8 @@ lastUpdated: 2026-11-01
 | **fal.ai** | AI QR art and image upscaling, when AI art is turned on | The code's content, prompts, reference images and generated images | United States | [Privacy policy](https://fal.ai/legal/privacy-policy) |
 | **Cloudflare (R2)** | Storage for files you upload, when file storage is turned on | Uploaded files and anything they contain | **[[R2 BUCKET LOCATION]]** | [DPA](https://www.cloudflare.com/cloudflare-customer-dpa/) |
 | **Cloudflare (Turnstile)** | Telling people from bots on the abuse report form and on hosted-page forms | IP address and browser signals | Global | [Turnstile privacy](https://www.cloudflare.com/turnstile-privacy-policy/) |
-| **PostHog** | Product analytics on qrdx.dev, only with consent | Pages viewed, clicks and features used; email address and name when signed in | United States | [DPA](https://posthog.com/dpa) |
+| **Umami** | Cookieless visit counts on qrdx.dev; off when the browser sends Do Not Track or Global Privacy Control | Pages viewed (without query strings) and product actions with coarse details such as a download format. The request's IP address and browser details, used to count unique visitors without storing them; no cookies or identifiers | **[[UMAMI REGION]]** | [DPA](https://umami.is/dpa) |
+| **PostHog** | Product analytics on qrdx.dev, only with consent | Pages viewed and features used, with coarse details; your account ID, plan, sign-up date and team ID when signed in. Never email addresses, names, code contents or destinations. Without consent, only anonymous counts from our servers (a subscription started, a form submitted) | United States | [DPA](https://posthog.com/dpa) |
 | **Featurebase** | Feedback and support widget on qrdx.dev, only with consent | What you type into the widget, browser details | European Union | [Privacy policy](https://help.featurebase.app/articles/4744036-privacy-policy) |
 
 How we protect transfers out of the EEA, the UK and Switzerland is described in the [Privacy Policy](/legal/privacy-policy#international-transfers).
@@ -51,4 +52,4 @@ Related pages: [Privacy Policy](/legal/privacy-policy), [Cookie Policy](/legal/c
 
 ---
 
-**Changes:** 1 November 2026. Rebuilt as a table from the services QRdx actually uses. Added Resend, Google Gemini, Google Web Risk, fal.ai, Cloudflare R2 and Turnstile, and Featurebase. Removed Anthropic (not used), Better Auth (a library that runs inside QRdx) and GitHub (a sign-in provider, now listed above). Corrected Polar's location.
+**Changes:** 1 November 2026. Rebuilt as a table from the services QRdx actually uses. Added Resend, Google Gemini, Google Web Risk, fal.ai, Cloudflare R2 and Turnstile, and Featurebase. Removed Anthropic (not used), Better Auth (a library that runs inside QRdx) and GitHub (a sign-in provider, now listed above). Corrected Polar's location. Added Umami, and updated what PostHog receives.

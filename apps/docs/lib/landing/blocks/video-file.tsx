@@ -36,7 +36,11 @@ function VideoFileBlock({
   }
   return (
     <section aria-label={props.title || "Video"} className="space-y-3">
-      <BlockHeading description={props.description} title={props.title} />
+      <BlockHeading
+        description={props.description}
+        preview={context.thumbnail}
+        title={props.title}
+      />
       <VideoFilePlayer
         aspect={props.aspect}
         autoplay={props.autoplay}

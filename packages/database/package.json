@@ -12,8 +12,8 @@
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
-    "@neondatabase/serverless": "^1.0.2",
-    "@t3-oss/env-nextjs": "^0.13.10",
+    "@neondatabase/serverless": "^1.2.0",
+    "@t3-oss/env-nextjs": "^0.13.11",
     "drizzle-orm": "^0.45.4",
     "server-only": "^0.0.1",
     "undici": "^7.30.1",
@@ -22,10 +22,10 @@
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
-    "@types/node": "25.1.0",
-    "@types/ws": "^8.18.1",
-    "bufferutil": "^4.0.9",
-    "drizzle-kit": "^0.31.8",
-    "typescript": "^5.9.3"
+    "@types/node": "26.6.6",
+    "@types/ws": "^8.18.2",
+    "bufferutil": "^4.1.0",
+    "drizzle-kit": "^0.31.11",
+    "typescript": "^6.0.3"
   }
 }

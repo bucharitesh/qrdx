@@ -1,7 +1,7 @@
 "use client";
 
 import { toast } from "@repo/design-system";
-import { Star, Close as X } from "@repo/design-system/components/icons";
+import { Play, Star, Close as X } from "@repo/design-system/components/icons";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -26,7 +26,6 @@ import {
   FolderAdd as FolderInput,
   More as MoreHorizontal,
   Pause,
-  Play,
   ArrowRotateLeft as RotateCcw,
   Tag2 as Tags,
   Trash as Trash2,
@@ -358,7 +357,7 @@ export function CodesList({
             </AlertDialogTitle>
             <AlertDialogDescription>
               Their scan and version history are deleted, and printed copies
-              keep showing a "no longer active" page. This can't be undone.
+              show a "QR code not found" page. This can't be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

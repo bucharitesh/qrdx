@@ -5,9 +5,11 @@ import {
 } from "iconsax-reactjs";
 import {
   buttonClass,
+  buttonShapeClass,
   linkProps,
   mutedTextClass,
 } from "@/components/landing/block-kit";
+import { LpHeading } from "@/components/landing/heading";
 import { type BlockRenderProps, registerBlock } from "../registry";
 import { Barcode } from "./coupon-barcode";
 import { CopyButton } from "./coupon-copy";
@@ -34,12 +36,14 @@ export function CouponBlock({
           <TicketPercent aria-hidden="true" className="size-3.5" />
           Coupon
         </p>
-        <h2
+        <LpHeading
+          as="h2"
+          preview={context.thumbnail}
           className="text-2xl leading-tight font-bold text-balance"
           id={titleId}
         >
           {props.headline}
-        </h2>
+        </LpHeading>
         {props.description && (
           <p className="text-sm whitespace-pre-line opacity-90">
             {props.description}
@@ -89,6 +93,7 @@ export function CouponBlock({
             live={context.mode === "live"}
             pageId={context.pageId}
             qrCodeId={context.qrCodeId}
+            shapeClassName={buttonShapeClass(context.theme)}
             unavailable={
               status.state === "expired"
                 ? "This coupon has expired."
@@ -101,7 +106,7 @@ export function CouponBlock({
 
         {props.cta && (
           <a
-            className={buttonClass("outline")}
+            className={buttonClass("outline", buttonShapeClass(context.theme))}
             {...linkProps(props.cta.url, id)}
           >
             {props.cta.label}

@@ -59,7 +59,11 @@ function FileDownloadBlock({
   }
   return (
     <section aria-label={props.title || "Downloads"} className="space-y-3">
-      <BlockHeading description={props.description} title={props.title} />
+      <BlockHeading
+        description={props.description}
+        preview={context.thumbnail}
+        title={props.title}
+      />
       <ul className="space-y-2">
         {files.map((item, index) => {
           const name =

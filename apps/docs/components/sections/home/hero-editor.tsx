@@ -4,14 +4,19 @@ import { Button } from "@repo/design-system/components/ui/button";
 import { Card } from "@repo/design-system/components/ui/card";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
+import { cn } from "@repo/design-system/lib/utils";
 import { ArrowRight } from "iconsax-reactjs";
-import { motion, useReducedMotion } from "motion/react";
 import Link from "next/link";
 import { QRCode } from "qrdx";
+import {
+  BODY_PATTERN,
+  CORNER_EYE_DOT_PATTERNS,
+  CORNER_EYE_PATTERNS,
+} from "qrdx/types";
 import { useState } from "react";
 import { ScanScoreBadge } from "@/components/editor/scan-score";
 import { AsciiField } from "@/components/fx";
-import { DURATION, EASE } from "@/components/mockups/motion";
+import { EASE_CLASS } from "@/components/mockups/motion";
 import { SegmentedControl } from "@/components/mockups/segmented-control";
 import type { QRStyle } from "@/types/theme";
 import { FAMILY, FAMILY_GRADIENT, INK } from "./demos/qr-family";
@@ -71,7 +76,6 @@ export function HeroEditor() {
   const [value, setValue] = useState("https://qrdx.dev");
   const [styleKey, setStyleKey] = useState<StyleKey>("rounded");
   const [frameKey, setFrameKey] = useState<FrameKey>("banner");
-  const reduce = useReducedMotion();
 
   const style: QRStyle = {
     ...STYLES[styleKey].style,
@@ -124,8 +128,10 @@ export function HeroEditor() {
           />
         </div>
         <p className="text-sm text-muted-foreground leading-relaxed">
-          The full playground adds 29 shapes, any colors and gradients, logos,
-          templates and PNG, SVG, JPG or PDF downloads.
+          The full playground adds {BODY_PATTERN.length} dot patterns,{" "}
+          {CORNER_EYE_PATTERNS.length + CORNER_EYE_DOT_PATTERNS.length} eye
+          shapes, any colors and gradients, logos, templates and PNG, SVG, PDF
+          or EPS downloads.
         </p>
         <Button asChild className="w-fit">
           <Link href="/playground">
@@ -146,14 +152,14 @@ export function HeroEditor() {
           className="relative flex aspect-square w-full max-w-64 items-center justify-center [&_svg]:size-full"
         >
           {trimmed ? (
-            <motion.div
+            <div
               key={`${styleKey}-${frameKey}`}
-              // Same initial on server and client (useReducedMotion is null
-              // during SSR); reduced motion only skips the transition.
-              initial={{ opacity: 0.4, scale: 0.97 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: reduce ? 0 : DURATION.base, ease: EASE }}
-              className="size-full rounded-2xl bg-white p-2 shadow-[0_1px_2px_rgba(0,0,0,0.06),0_16px_32px_-16px_rgba(0,0,0,0.3)] ring-1 ring-black/5"
+              // Each new style settles in (CSS, so it plays before hydration
+              // too); none with reduced motion.
+              className={cn(
+                "size-full rounded-2xl bg-white p-2 shadow-[0_1px_2px_rgba(0,0,0,0.06),0_16px_32px_-16px_rgba(0,0,0,0.3)] ring-1 ring-black/5 animate-in fade-in-40 zoom-in-97 duration-220 motion-reduce:animate-none",
+                EASE_CLASS,
+              )}
               role="img"
               aria-label={`QR code for ${trimmed}`}
             >
@@ -171,7 +177,7 @@ export function HeroEditor() {
                 cornerEyeDotPattern={style.cornerEyeDotPattern}
                 frame={style.frame}
               />
-            </motion.div>
+            </div>
           ) : (
             <p className="px-6 text-center text-sm text-muted-foreground">
               Type a link to see your QR code.

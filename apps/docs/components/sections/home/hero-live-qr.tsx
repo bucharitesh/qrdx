@@ -1,9 +1,9 @@
 "use client";
 
-import { Tick } from "@repo/design-system/components/icons";
+import { Play, Tick } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
-import { Pause, Play } from "iconsax-reactjs";
+import { Pause } from "iconsax-reactjs";
 import { type CSSProperties, useEffect, useRef, useState } from "react";
 import { QRDX_QR_H } from "@/components/fx";
 import { QrdxLogo } from "@/components/qrdx-logo";

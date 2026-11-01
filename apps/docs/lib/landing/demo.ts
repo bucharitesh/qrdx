@@ -10,6 +10,7 @@ import { mediaUrl } from "@/lib/media";
 import { baseUrl } from "@/lib/metadata";
 import type { LandingPageContent } from "@/types/landing";
 import { demoPath } from "./demo-paths";
+import { smallTemplatePhoto, templateMediaUrl } from "./templates/media";
 
 // Public template demos (/templates and /templates/<type>/<id>): each
 // template's own content, plus sample media wherever the template leaves a
@@ -20,13 +21,10 @@ import { demoPath } from "./demo-paths";
 
 type Props = Record<string, unknown>;
 
-/**
- * Unsplash photos via Lorem Picsum (fixed ids, so demos never change),
- * `scale` times the given size (gallery thumbnails ask for smaller files).
- */
-const photo = (id: number, width: number, height: number, scale: number) => ({
+/** A sample photo from public/images/templates (half size in thumbnails). */
+const photo = (name: string, thumbnail: boolean) => ({
   type: "url" as const,
-  url: `https://picsum.photos/id/${id}/${Math.round(width * scale)}/${Math.round(height * scale)}`,
+  url: templateMediaUrl(`${name}${thumbnail ? ".sm" : ""}.webp`),
 });
 
 /** Files in public/samples (sample PDFs and short synthesized clips). */
@@ -45,57 +43,54 @@ const SAMPLE_VIDEO = {
 const SAMPLE_REVIEW_URL = "https://example.com/review";
 
 interface SamplePhoto {
-  id: number;
+  name: string;
   alt: string;
 }
 
 const SUMMER: SamplePhoto[] = [
-  { id: 64, alt: "Sunglasses and wildflowers" },
-  { id: 1011, alt: "Canoe on a mountain lake" },
-  { id: 1080, alt: "Fresh strawberries" },
-  { id: 1050, alt: "Sea cliffs on a sunny day" },
+  { name: "photo-sunglasses", alt: "Sunglasses and wildflowers" },
+  { name: "photo-meadow", alt: "Walking through a sunny meadow" },
+  { name: "photo-raspberries", alt: "Raspberries in warm light" },
+  { name: "photo-orange-tree", alt: "Oranges on the tree" },
 ];
 
 /** Gallery photos by "<type>/<template id>"; others use SUMMER. */
-const GALLERIES: Record<
-  string,
-  { photos: SamplePhoto[]; size: [number, number] }
-> = {
-  "images/gallery": { photos: SUMMER, size: [800, 800] },
-  "images/portfolio": {
-    photos: [
-      { id: 1027, alt: "Portrait in soft light" },
-      { id: 1015, alt: "Fjord from a cliff top" },
-      { id: 250, alt: "Vintage camera" },
-      { id: 1043, alt: "Valley with tall pines" },
-      { id: 1018, alt: "Green hills and a winding road" },
-      { id: 1067, alt: "City skyline at sunset" },
-    ],
-    size: [600, 600],
-  },
-  "images/event-photos": {
-    photos: [
-      { id: 453, alt: "Band on stage" },
-      { id: 513, alt: "Guests at the bar" },
-      { id: 42, alt: "Coffee on a long table" },
-    ],
-    size: [1200, 800],
-  },
+const GALLERIES: Record<string, SamplePhoto[]> = {
+  "images/gallery": SUMMER,
+  "images/portfolio": [
+    { name: "photo-towers", alt: "Two towers from below" },
+    { name: "photo-facade", alt: "A grid of windows" },
+    { name: "photo-tower-lines", alt: "A tower's ribbed facade" },
+    { name: "photo-angles", alt: "A sharp building corner" },
+    { name: "photo-flatiron", alt: "A narrow corner building" },
+    { name: "photo-glass-tower", alt: "A glass tower in the mist" },
+  ],
+  "images/event-photos": [
+    { name: "photo-band", alt: "The band on stage" },
+    { name: "photo-lights", alt: "Stage lights over the crowd" },
+    { name: "photo-crowd", alt: "Hands up in the crowd" },
+  ],
 };
 
 interface SampleAudio {
-  cover?: number;
+  cover?: string;
   tracks: string[];
 }
 
 /** Audio by "<type>/<template id>"; others get one sample track. */
 const AUDIO: Record<string, SampleAudio> = {
-  "mp3/album": { cover: 184, tracks: ["Headlights", "Neon rain", "Last exit"] },
+  "mp3/album": {
+    cover: "cover-city-dusk",
+    tracks: ["Headlights", "Neon rain", "Last exit"],
+  },
   "mp3/podcast": {
-    cover: 42,
+    cover: "cover-shop",
     tracks: ["Ep. 12: Opening a second shop", "Ep. 11: Pricing for regulars"],
   },
-  "mp3/voice-message": { tracks: ["Happy birthday from all of us"] },
+  "mp3/voice-message": {
+    cover: "cover-water-lily",
+    tracks: ["From all of us at home"],
+  },
 };
 
 /** Sample PDF by "<type>/<template id>". */
@@ -110,31 +105,27 @@ const isEmpty = (value: unknown) => !Array.isArray(value) || value.length === 0;
 /** Props to merge over a block that needs owner media, or null to keep it. */
 const SAMPLES: Record<
   string,
-  (props: Props, key: string, scale: number) => Props | null
+  (props: Props, key: string, thumbnail: boolean) => Props | null
 > = {
   pdf: (props, key) =>
     props.source
       ? null
       : { source: sampleFile(PDFS[key] ?? "product-guide.pdf") },
-  gallery: (props, key, scale) => {
+  gallery: (props, key, thumbnail) => {
     if (!isEmpty(props.images)) return null;
-    const {
-      photos,
-      size: [width, height],
-    } = GALLERIES[key] ?? { photos: SUMMER, size: [800, 800] };
     return {
-      images: photos.map(({ id, alt }) => ({
-        source: photo(id, width, height, scale),
+      images: (GALLERIES[key] ?? SUMMER).map(({ name, alt }) => ({
+        source: photo(name, thumbnail),
         alt,
       })),
     };
   },
-  audio: (props, key, scale) => {
+  audio: (props, key, thumbnail) => {
     if (!isEmpty(props.tracks)) return null;
     const audio = AUDIO[key] ?? { tracks: ["Sample track"] };
     return {
       ...(audio.cover &&
-        !props.cover && { cover: photo(audio.cover, 600, 600, scale) }),
+        !props.cover && { cover: photo(audio.cover, thumbnail) }),
       tracks: audio.tracks.map((title, index) => ({
         source: sampleFile(`demo-track-${(index % 3) + 1}.mp3`),
         title,
@@ -147,8 +138,8 @@ const SAMPLES: Record<
     const gallery = GALLERIES[key];
     if (gallery) {
       return {
-        files: gallery.photos.slice(0, 2).map(({ id, alt }) => ({
-          source: photo(id, 2400, 1600, 1),
+        files: gallery.slice(0, 2).map(({ name, alt }) => ({
+          source: photo(name, false),
           label: `${alt} (full size)`,
           kind: "image",
         })),
@@ -174,6 +165,33 @@ const SAMPLES: Record<
     };
   },
 };
+
+/** Blocks a thumbnail renders (it shows about one phone screen). */
+const THUMBNAIL_BLOCKS = 4;
+
+/** A long menu cut to what fits on one screen, for thumbnails. */
+function firstScreen(type: string, props: Props): Props {
+  if (type !== "menu" || !Array.isArray(props.sections)) return props;
+  return {
+    ...props,
+    sections: (props.sections as Props[]).slice(0, 2).map((section) => ({
+      ...section,
+      items: Array.isArray(section.items) ? section.items.slice(0, 4) : [],
+    })),
+  };
+}
+
+/** Every template photo in `value` swapped for its half-size copy. */
+function withSmallPhotos<T>(value: T): T {
+  if (typeof value === "string") return smallTemplatePhoto(value) as T;
+  if (Array.isArray(value)) return value.map(withSmallPhotos) as T;
+  if (value && typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value).map(([key, item]) => [key, withSmallPhotos(item)]),
+    ) as T;
+  }
+  return value;
+}
 
 export interface TemplateDemo {
   template: PageTemplate;
@@ -213,22 +231,31 @@ export function buildDemoContent(
   variantId: string,
   { thumbnail = false }: { thumbnail?: boolean } = {},
 ): LandingPageContent {
-  const scale = thumbnail ? 0.4 : 1;
   const content = buildTemplateContent(type, variantId);
   const key = `${type}/${variantId}`;
   const blocks = content.blocks.map((block, index) => {
     // Unique within the page and across gallery thumbnails (DOM ids derive from it).
     const id = `b${index + 1}-${type}-${variantId}`.slice(0, 64);
-    const patch = SAMPLES[block.type]?.(block.props, key, scale);
+    const patch = SAMPLES[block.type]?.(block.props, key, thumbnail);
     const definition = getBlock(block.type);
-    if (!(patch && definition)) return { ...block, id };
+    const props =
+      patch && definition
+        ? (definition.schema.parse({ ...block.props, ...patch }) as Props)
+        : block.props;
     return {
       ...block,
       id,
-      props: definition.schema.parse({ ...block.props, ...patch }) as Props,
+      props: thumbnail
+        ? withSmallPhotos(firstScreen(block.type, props))
+        : props,
     };
   });
-  const parsed = parseLandingPageContent({ ...content, blocks });
+  const parsed = parseLandingPageContent({
+    ...content,
+    theme: thumbnail ? withSmallPhotos(content.theme) : content.theme,
+    // A thumbnail shows about one phone screen: skip what can't be seen.
+    blocks: thumbnail ? blocks.slice(0, THUMBNAIL_BLOCKS) : blocks,
+  });
   if (!parsed.success) {
     throw new Error(
       `Template demo "${key}" is invalid: ${parsed.error.issues[0]?.message}`,

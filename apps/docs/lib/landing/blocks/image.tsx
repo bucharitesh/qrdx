@@ -49,7 +49,9 @@ function ImageBlock({ id, props, context }: BlockRenderProps<ImageBlockProps>) {
         props.rounded && "rounded-(--lp-radius)",
       )}
       decoding="async"
-      loading="lazy"
+      // The page's lead photo (LandingRender) loads first; the rest lazily.
+      fetchPriority={context.leadImage ? "high" : undefined}
+      loading={context.leadImage ? undefined : "lazy"}
       src={props.image.url}
     />
   );
@@ -81,4 +83,5 @@ export const imageBlock = registerBlock({
   defaults: {},
   Render: ImageBlock,
   Editor: ImageEditor,
+  leadImage: (props) => Boolean(props.image),
 });

@@ -25,6 +25,11 @@ let nextConfig: NextConfig = {
   experimental: {
     ...config.experimental,
     serverActions: { bodySizeLimit: "2mb" },
+    // Per-icon imports from the iconsax barrel (thousands of modules) in dev.
+    optimizePackageImports: [
+      ...(config.experimental?.optimizePackageImports ?? []),
+      "iconsax-reactjs",
+    ],
   },
   serverExternalPackages: [
     "ts-morph",
@@ -34,12 +39,34 @@ let nextConfig: NextConfig = {
     "shiki",
     "@takumi-rs/core",
   ],
-  // The OAuth consent screen must never render inside another site's frame
-  // (clickjacking an "Authorize" click).
+  // When rules set the same header, the later one wins.
   async headers() {
     const base = (await config.headers?.()) ?? [];
     return [
       ...base,
+      {
+        source: "/:path*",
+        headers: [
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          { key: "Strict-Transport-Security", value: "max-age=63072000" },
+        ],
+      },
+      // App pages can't be framed by other sites (clickjacking), except by
+      // PostHog's heatmap viewer. Hosted pages (/p), short links (/q) and the
+      // API stay frameable: owners may embed them.
+      {
+        source: "/:path((?!p/|q/|api/).*)",
+        headers: [
+          { key: "X-Frame-Options", value: "SAMEORIGIN" },
+          {
+            key: "Content-Security-Policy",
+            value: "frame-ancestors 'self' https://us.posthog.com",
+          },
+        ],
+      },
+      // The OAuth consent screen must never render inside another site's frame
+      // (clickjacking an "Authorize" click).
       {
         source: "/oauth/:path*",
         headers: [
@@ -47,6 +74,22 @@ let nextConfig: NextConfig = {
           { key: "Content-Security-Policy", value: "frame-ancestors 'none'" },
         ],
       },
+      // The API and MCP hosts serve machine endpoints, never pages to index.
+      ...["api.qrdx.dev", "mcp.qrdx.dev"].map((host) => ({
+        source: "/:path*",
+        has: [{ type: "host" as const, value: host }],
+        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
+      })),
+      // Unhashed public media: browsers reuse it for a day, then revalidate.
+      ...["images", "samples", "sounds"].map((dir) => ({
+        source: `/${dir}/:path*`,
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=86400, stale-while-revalidate=604800",
+          },
+        ],
+      })),
     ];
   },
   // Anything else on the MCP subdomain goes to the connect page, and anything
@@ -55,6 +98,21 @@ let nextConfig: NextConfig = {
     const base = (await config.redirects?.()) ?? [];
     return [
       ...base,
+      // One host for search engines: www goes to the apex.
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "www.qrdx.dev" }],
+        destination: "https://qrdx.dev/:path*",
+        permanent: true,
+      },
+      // skipTrailingSlashRedirect (for the PostHog proxy) leaves "/pricing/"
+      // serving a copy of "/pricing"; send pages to the slash-less URL. The
+      // proxy, API routes and the REST host keep their exact paths.
+      {
+        source: "/:path((?!ingest/|api/|v1/).+)/",
+        destination: "/:path",
+        permanent: true,
+      },
       {
         source: "/:path((?!mcp$|api/mcp$|_next/).*)",
         has: [{ type: "host", value: "mcp.qrdx.dev" }],
@@ -93,6 +151,10 @@ let nextConfig: NextConfig = {
       ],
       afterFiles: [
         ...base.afterFiles,
+        {
+          source: "/docs.mdx",
+          destination: "/llms.mdx",
+        },
         {
           source: "/docs/:path*.mdx",
           destination: "/llms.mdx/:path*",

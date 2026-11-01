@@ -17,6 +17,7 @@ export function DividerEditor({
           { value: "solid", label: "Solid" },
           { value: "dashed", label: "Dashed" },
           { value: "dotted", label: "Dotted" },
+          { value: "ornament", label: "Ornament" },
         ]}
         value={value.style}
       />

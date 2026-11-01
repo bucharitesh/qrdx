@@ -1,230 +1,142 @@
 "use server";
 
 import { auth } from "@repo/auth/server";
-import {
-  brandKit,
-  customDomain,
-  database as db,
-  member,
-  qrCode,
-  qrPreset,
-  subscription,
-  user as userTable,
-} from "@repo/database";
-import { and, eq, isNotNull, isNull, ne } from "drizzle-orm";
+import { database as db, session as sessionTable } from "@repo/database";
+import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
+import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
+import { z } from "zod";
 import {
-  getCustomDomainMode,
-  removeVercelProjectDomain,
-} from "@/lib/custom-domains";
-import { isBillingConfigured, polar } from "@/lib/polar";
-import { getCurrentUserId, logError } from "@/lib/shared";
+  isDeleteConfirmed,
+  isRecentSignIn,
+  planAccountDeletion,
+} from "@/lib/account/deletion";
 import {
-  type ActionResult,
-  actionError,
-  actionSuccess,
-  ErrorCode,
-} from "@/types/errors";
+  AccountDeletionError,
+  executeAccountDeletion,
+  loadDeletionFacts,
+} from "@/lib/account/deletion-server";
+import { signInCodesAvailable } from "@/lib/account/reauth";
+import { logError } from "@/lib/shared";
 
-const ROLE_RANK: Record<string, number> = { owner: 0, admin: 1, member: 2 };
-const roleRank = (role: string) =>
-  Math.min(...role.split(",").map((r) => ROLE_RANK[r.trim()] ?? 3));
+export type DeleteAccountResult =
+  | { ok: true }
+  | {
+      ok: false;
+      error: string;
+      /** The emailed code can't be used again: ask for a new one */
+      codeExpired?: boolean;
+    };
 
-/**
- * Codes never die for teams: qr_code / brand_kit / custom_domain rows cascade
- * with their user, so team-owned rows are first handed to another member of
- * that team (owners, then admins, then the longest-standing member). When the
- * user is a team's only owner, that member is promoted so the team stays
- * manageable. Personal rows go with the account; teams without other members
- * are left as they are.
- */
-async function handOverTeamResources(userId: string) {
-  const [codeTeams, kitTeams, themeTeams, domainTeams, memberships] =
-    await Promise.all([
-      db
-        .selectDistinct({ organizationId: qrCode.organizationId })
-        .from(qrCode)
-        .where(
-          and(eq(qrCode.userId, userId), isNotNull(qrCode.organizationId)),
-        ),
-      db
-        .selectDistinct({ organizationId: brandKit.organizationId })
-        .from(brandKit)
-        .where(
-          and(eq(brandKit.userId, userId), isNotNull(brandKit.organizationId)),
-        ),
-      db
-        .selectDistinct({ organizationId: qrPreset.organizationId })
-        .from(qrPreset)
-        .where(
-          and(eq(qrPreset.userId, userId), isNotNull(qrPreset.organizationId)),
-        ),
-      db
-        .selectDistinct({ organizationId: customDomain.organizationId })
-        .from(customDomain)
-        .where(
-          and(
-            eq(customDomain.userId, userId),
-            isNotNull(customDomain.organizationId),
-          ),
-        ),
-      db
-        .select({ organizationId: member.organizationId, role: member.role })
-        .from(member)
-        .where(eq(member.userId, userId)),
-    ]);
+// Each attempt may burn an emailed code; codes allow 3 tries each.
+const deleteLimiter = createRateLimiter({
+  prefix: "qrdx:account-delete",
+  limiter: slidingWindow(5, "15 m"),
+});
 
-  const organizationIds = new Set<string>(
-    memberships.map((m) => m.organizationId),
-  );
-  for (const row of [
-    ...codeTeams,
-    ...kitTeams,
-    ...themeTeams,
-    ...domainTeams,
-  ]) {
-    if (row.organizationId) organizationIds.add(row.organizationId);
+const inputSchema = z.object({
+  confirmation: z.string().max(64),
+  code: z
+    .string()
+    .trim()
+    .regex(/^\d{6}$/)
+    .optional(),
+});
+
+const fail = (error: string, codeExpired?: boolean): DeleteAccountResult =>
+  codeExpired ? { ok: false, error, codeExpired } : { ok: false, error };
+
+/** Better Auth email-OTP errors, worded for this dialog. */
+function codeError(error: unknown): DeleteAccountResult {
+  const { body, statusCode } = error as {
+    body?: { code?: string };
+    statusCode?: number;
+  };
+  switch (body?.code) {
+    case "INVALID_OTP":
+      return fail("That code isn't right. Check the email and try again.");
+    case "OTP_EXPIRED":
+      return fail("That code has expired. Send a new one.", true);
+    case "TOO_MANY_ATTEMPTS":
+      return fail("Too many wrong tries. Send a new code.", true);
   }
-
-  const requestHeaders = await headers();
-
-  await Promise.all(
-    [...organizationIds].map(async (organizationId) => {
-      const others = await db
-        .select({
-          id: member.id,
-          userId: member.userId,
-          role: member.role,
-          createdAt: member.createdAt,
-        })
-        .from(member)
-        .where(
-          and(
-            eq(member.organizationId, organizationId),
-            ne(member.userId, userId),
-          ),
-        );
-      if (others.length === 0) return;
-
-      const [successor] = others.sort(
-        (a, b) =>
-          roleRank(a.role) - roleRank(b.role) ||
-          a.createdAt.getTime() - b.createdAt.getTime(),
-      );
-
-      const membership = memberships.find(
-        (m) => m.organizationId === organizationId,
-      );
-      if (
-        membership &&
-        roleRank(membership.role) === 0 &&
-        roleRank(successor.role) !== 0
-      ) {
-        try {
-          // Through the organization plugin, acting as the (still existing) owner.
-          await auth.api.updateMemberRole({
-            headers: requestHeaders,
-            body: { memberId: successor.id, role: "owner", organizationId },
-          });
-        } catch (error) {
-          logError(error as Error, {
-            action: "deleteAccount.promoteOwner",
-            organizationId,
-          });
-        }
-      }
-
-      const handOver = { userId: successor.userId };
-      await Promise.all([
-        db
-          .update(qrCode)
-          .set(handOver)
-          .where(
-            and(
-              eq(qrCode.userId, userId),
-              eq(qrCode.organizationId, organizationId),
-            ),
-          ),
-        db
-          .update(brandKit)
-          .set(handOver)
-          .where(
-            and(
-              eq(brandKit.userId, userId),
-              eq(brandKit.organizationId, organizationId),
-            ),
-          ),
-        db
-          .update(qrPreset)
-          .set(handOver)
-          .where(
-            and(
-              eq(qrPreset.userId, userId),
-              eq(qrPreset.organizationId, organizationId),
-            ),
-          ),
-        db
-          .update(customDomain)
-          .set(handOver)
-          .where(
-            and(
-              eq(customDomain.userId, userId),
-              eq(customDomain.organizationId, organizationId),
-            ),
-          ),
-      ]);
-    }),
-  );
+  if (statusCode === 429) {
+    return fail("Too many tries. Wait a minute, then try again.");
+  }
+  throw error;
 }
 
-export async function deleteAccount(): Promise<ActionResult<boolean>> {
+/**
+ * Settings → Account → Delete account. Confirmed three ways: typing
+ * "delete", a fresh sign-in code emailed to the account's address (or, where
+ * this deployment can't send codes, a sign-in within the last 10 minutes),
+ * and the deletion plan the page showed, rebuilt here from current data.
+ */
+export async function deleteAccount(
+  input: unknown,
+): Promise<DeleteAccountResult> {
+  const parsed = inputSchema.safeParse(input);
+  if (!parsed.success) return fail("Enter the 6-digit code from the email.");
+  if (!isDeleteConfirmed(parsed.data.confirmation)) {
+    return fail('Type "delete" to confirm.');
+  }
+
+  let verificationToken: string | null = null;
   try {
-    const userId = await getCurrentUserId();
+    const requestHeaders = await headers();
+    const session = await auth.api.getSession({ headers: requestHeaders });
+    const userId: string | undefined = session?.user?.id;
+    if (!userId) return fail("Sign in to delete your account.");
 
-    // Must succeed before anything is deleted, or team codes would cascade away.
-    await handOverTeamResources(userId);
+    if (!(await deleteLimiter.limit(userId)).success) {
+      return fail("Too many attempts. Wait 15 minutes and try again.");
+    }
 
-    // Personal domains are deleted with the account; free their hostnames on Vercel too.
-    if (getCustomDomainMode() === "vercel") {
-      const personalDomains = await db
-        .select({ hostname: customDomain.hostname })
-        .from(customDomain)
-        .where(
-          and(
-            eq(customDomain.userId, userId),
-            isNull(customDomain.organizationId),
-          ),
-        );
-      await Promise.all(
-        personalDomains.map(({ hostname }) =>
-          removeVercelProjectDomain(hostname).catch((error) =>
-            logError(error as Error, {
-              action: "deleteAccount.removeDomain",
-              hostname,
-            }),
-          ),
-        ),
+    // Blockers first: they must not cost the user their code.
+    const plan = planAccountDeletion(await loadDeletionFacts(userId));
+    if (plan.blockers.length > 0) return fail(plan.blockers[0]);
+
+    if (signInCodesAvailable()) {
+      if (!parsed.data.code)
+        return fail("Enter the 6-digit code from the email.");
+      try {
+        // Verifies and uses up the code. Signing in this way also makes a
+        // session, which is removed below (or with the account).
+        const result = await auth.api.signInEmailOTP({
+          headers: requestHeaders,
+          body: { email: session.user.email, otp: parsed.data.code },
+        });
+        verificationToken = result?.token ?? null;
+        if (result?.user?.id !== userId) {
+          throw new Error("Sign-in code verified a different user");
+        }
+      } catch (error) {
+        return codeError(error);
+      }
+    } else if (
+      !isRecentSignIn(new Date(session.session.createdAt), new Date())
+    ) {
+      return fail(
+        "For your security, sign out and sign in again, then delete your account within 10 minutes.",
       );
     }
 
-    if (isBillingConfigured) {
-      try {
-        await polar.customers.deleteExternal({ externalId: userId });
-      } catch (_e) {
-        // Expected for free users — no Polar customer exists
-      }
-    }
-
-    await db.delete(subscription).where(eq(subscription.userId, userId));
-
-    await db.delete(userTable).where(eq(userTable.id, userId));
-
-    return actionSuccess(true);
+    await executeAccountDeletion({ userId, plan, requestHeaders });
+    verificationToken = null;
+    return { ok: true };
   } catch (error) {
+    if (error instanceof AccountDeletionError) return fail(error.message);
     logError(error as Error, { action: "deleteAccount" });
-    return actionError(
-      ErrorCode.UNKNOWN_ERROR,
-      "Failed to delete account. Please try again.",
-    );
+    return fail("We couldn't delete your account. Please try again.");
+  } finally {
+    // Deletion stopped after the code was used: drop the session it made.
+    if (verificationToken) {
+      await db
+        .delete(sessionTable)
+        .where(eq(sessionTable.token, verificationToken))
+        .catch((error: unknown) =>
+          logError(error as Error, { action: "deleteAccount.cleanupSession" }),
+        );
+    }
   }
 }

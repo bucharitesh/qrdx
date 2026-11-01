@@ -1,4 +1,4 @@
-import { InfoCircle } from "iconsax-reactjs";
+import { Info } from "@repo/design-system/components/icons";
 import { compareMigration } from "@/lib/migrate/compare";
 import { CompareMigrateButton } from "./compare-migrate-button";
 
@@ -37,7 +37,7 @@ export function CompareMigrate({ slug, competitor }: CompareMigrateProps) {
         </ol>
 
         <div className="flex gap-3 rounded-xl border bg-muted/40 p-5 text-sm dark:bg-card">
-          <InfoCircle
+          <Info
             aria-hidden
             className="mt-0.5 size-4 shrink-0 text-foreground/70"
           />

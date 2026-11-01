@@ -73,6 +73,8 @@ export const landingThemeSchema = z.object({
         from: hexColorSchema,
         to: hexColorSchema,
         angle: z.number().min(0).max(360).default(180),
+        /** "radial": a soft glow from the top centre (angle is ignored); default linear */
+        shape: z.enum(["linear", "radial"]).optional(),
       }),
       z.object({
         type: z.literal("image"),
@@ -88,6 +90,19 @@ export const landingThemeSchema = z.object({
       alt: z.string().trim().max(200).optional(),
     })
     .optional(),
+  // Opt-in style options below have no defaults: a page saved without them
+  // renders exactly as it did before they existed (tests/lib/landing-render-compat).
+  /** Font id for headings (h1–h3); body text keeps `font` */
+  headingFont: z
+    .string()
+    .regex(/^[a-z0-9-]{1,40}$/)
+    .optional(),
+  /** Subtle pattern over the background */
+  texture: z.enum(["grain", "dots", "grid"]).optional(),
+  /** Space between blocks (default: normal) */
+  spacing: z.enum(["compact", "relaxed"]).optional(),
+  /** Button corners: fully round or square, instead of the corner radius */
+  buttonShape: z.enum(["pill", "sharp"]).optional(),
 });
 
 export type LandingTheme = z.output<typeof landingThemeSchema>;

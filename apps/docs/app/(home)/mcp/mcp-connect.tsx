@@ -43,6 +43,7 @@ import {
 } from "iconsax-reactjs";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { type ReactNode, useEffect, useRef, useState } from "react";
+import { track } from "@/lib/analytics";
 import {
   CHATGPT_CONNECTORS_URL,
   chatgptChatUrl,
@@ -186,7 +187,12 @@ export function ClientLogo({
   const img = "size-full object-contain";
 
   return (
-    <span className={cn("grid size-5 shrink-0 place-items-center", className)}>
+    <span
+      className={cn(
+        "grid size-5 shrink-0 grid-cols-1 grid-rows-1 place-items-center",
+        className,
+      )}
+    >
       {!src ? (
         <Element3 aria-hidden className="size-full text-muted-foreground" />
       ) : dark ? (
@@ -329,6 +335,10 @@ function BrandConnectButton({
   children: ReactNode;
 }) {
   const { className, logo } = BRANDS[brand];
+  const handleClick = () => {
+    track("mcp_connect_clicked", { client: brand });
+    onClick?.();
+  };
   const content = (
     <>
       <BrandMark logo={logo} />
@@ -343,7 +353,7 @@ function BrandConnectButton({
       <Button asChild className={cn(className, brandMotion)}>
         <a
           href={href}
-          onClick={onClick}
+          onClick={handleClick}
           {...(external && { target: "_blank", rel: "noopener noreferrer" })}
         >
           {content}
@@ -354,7 +364,7 @@ function BrandConnectButton({
   return (
     <Button
       type="button"
-      onClick={onClick}
+      onClick={handleClick}
       className={cn(className, brandMotion)}
     >
       {content}
@@ -543,13 +553,47 @@ function setups(url: string): Record<McpClientId, ClientSetup> {
   };
 }
 
+/**
+ * The server URL with a copy button. In local dev it also points to this
+ * instance's own endpoint, for trying server changes before they ship.
+ */
+function ServerUrlField({
+  url,
+  localUrl,
+}: {
+  url: string;
+  localUrl?: string | null;
+}) {
+  return (
+    <div className="flex min-w-0 flex-col gap-1.5">
+      <div className="flex min-w-0 items-center gap-2 rounded-full border bg-muted/30 py-1 pr-1 pl-4">
+        <span className="sr-only">Server URL:</span>
+        <code className="min-w-0 flex-1 truncate font-mono text-sm text-foreground">
+          {url}
+        </code>
+        <CopyButton text={url} label="server URL" message="URL copied." />
+      </div>
+      {localUrl && localUrl !== url && (
+        <p className="px-4 text-xs text-muted-foreground text-pretty">
+          Testing locally? Use{" "}
+          <code className="font-mono whitespace-nowrap text-foreground/80 select-all">
+            {localUrl}
+          </code>
+        </p>
+      )}
+    </div>
+  );
+}
+
 function ConnectPanel({
   client,
   url,
+  localUrl,
   setup,
 }: {
   client: McpClientId;
   url: string;
+  localUrl?: string | null;
   setup: ClientSetup;
 }) {
   return (
@@ -572,13 +616,7 @@ function ConnectPanel({
         <div className="flex flex-wrap items-center gap-2">{setup.action}</div>
       )}
 
-      <div className="flex min-w-0 items-center gap-2 rounded-full border bg-muted/30 py-1 pr-1 pl-4">
-        <span className="sr-only">Server URL:</span>
-        <code className="min-w-0 flex-1 truncate font-mono text-sm text-foreground">
-          {url}
-        </code>
-        <CopyButton text={url} label="server URL" message="URL copied." />
-      </div>
+      <ServerUrlField url={url} localUrl={localUrl} />
 
       {setup.extra}
 
@@ -608,7 +646,14 @@ function ConnectPanel({
 }
 
 /** Client tabs with a one-click connect action for each AI app. */
-export function McpConnect({ url }: { url: string }) {
+export function McpConnect({
+  url,
+  localUrl,
+}: {
+  url: string;
+  /** This instance's own endpoint in local dev (see mcpLocalUrl). */
+  localUrl?: string | null;
+}) {
   const [tab, select] = useMcpTab();
   // The main panel keeps showing the last main tab while the picker is open.
   const [lastMain, setLastMain] = useState<McpClientId>("claude");
@@ -636,11 +681,13 @@ export function McpConnect({ url }: { url: string }) {
   return (
     <McpConnectView
       url={url}
+      localUrl={localUrl}
       tab={current}
       onTabChange={select}
       more={
         <MoreClients
           url={url}
+          localUrl={localUrl}
           open={pickerOpen}
           selected={picked}
           lastUsed={lastMore}
@@ -661,11 +708,13 @@ export function McpConnect({ url }: { url: string }) {
  */
 export function McpConnectView({
   url,
+  localUrl,
   tab,
   onTabChange,
   more,
 }: {
   url: string;
+  localUrl?: string | null;
   tab: McpClientId;
   onTabChange?: (tab: McpClientId) => void;
   /** The "More clients" trigger and picker (client only). */
@@ -728,7 +777,12 @@ export function McpConnectView({
             forceMount
             className="data-[state=inactive]:hidden"
           >
-            <ConnectPanel client={id} url={url} setup={all[id]} />
+            <ConnectPanel
+              client={id}
+              url={url}
+              localUrl={localUrl}
+              setup={all[id]}
+            />
           </TabsContent>
         ))}
       </Tabs>
@@ -746,7 +800,12 @@ function MoreLogo({
 }) {
   const img = "size-full object-contain";
   return (
-    <span className={cn("grid size-5 shrink-0 place-items-center", className)}>
+    <span
+      className={cn(
+        "grid size-5 shrink-0 grid-cols-1 grid-rows-1 place-items-center",
+        className,
+      )}
+    >
       {!client.logo ? (
         <Code1 aria-hidden className="size-full text-muted-foreground" />
       ) : client.logoDark ? (
@@ -768,6 +827,7 @@ function MoreLogo({
 /** "More" button plus the picker dialog with every other client's setup. */
 function MoreClients({
   url,
+  localUrl,
   open,
   selected,
   lastUsed,
@@ -775,6 +835,7 @@ function MoreClients({
   onSelect,
 }: {
   url: string;
+  localUrl?: string | null;
   open: boolean;
   selected: McpMoreClientId | null;
   lastUsed: McpMoreClientId | null;
@@ -833,7 +894,12 @@ function MoreClients({
               {detail.install && (
                 <div>
                   <Button asChild>
-                    <a href={detail.install.href}>
+                    <a
+                      href={detail.install.href}
+                      onClick={() =>
+                        track("mcp_connect_clicked", { client: detail.id })
+                      }
+                    >
                       {detail.install.label}
                       <ArrowRight aria-hidden className="size-4" />
                     </a>
@@ -859,17 +925,7 @@ function MoreClients({
                   </li>
                 ))}
               </ol>
-              <div className="flex min-w-0 items-center gap-2 rounded-full border bg-muted/30 py-1 pr-1 pl-4">
-                <span className="sr-only">Server URL:</span>
-                <code className="min-w-0 flex-1 truncate font-mono text-sm text-foreground">
-                  {url}
-                </code>
-                <CopyButton
-                  text={url}
-                  label="server URL"
-                  message="URL copied."
-                />
-              </div>
+              <ServerUrlField url={url} localUrl={localUrl} />
             </div>
           </>
         ) : (

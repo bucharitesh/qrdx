@@ -41,17 +41,23 @@ function assertSameOrigin(req: NextRequest) {
   }
 }
 
+export interface ApiCaller {
+  scope: ActiveScope;
+  /** A session, or a token with codes:write (not only codes:read) */
+  canWrite: boolean;
+}
+
 /**
  * Resolves who is calling: an OAuth bearer token (acts on the user's personal
  * workspace) or the browser session (acts on the active team or personal
  * workspace). Applies per-user and per-IP rate limits.
  */
-export async function resolveApiScope(
+export async function resolveApiCaller(
   req: NextRequest,
   access: ApiAccess,
-): Promise<ActiveScope> {
+): Promise<ApiCaller> {
   const authorization = req.headers.get("authorization");
-  let scope: ActiveScope;
+  let caller: ApiCaller;
 
   if (authorization?.startsWith("Bearer ")) {
     const token = await validateAccessToken(authorization.slice(7).trim());
@@ -65,20 +71,31 @@ export async function resolveApiScope(
         `This token needs the 'codes:${access}' scope.`,
       );
     }
-    scope = { userId: token.userId, organizationId: null, role: "owner" };
+    caller = {
+      scope: { userId: token.userId, organizationId: null, role: "owner" },
+      canWrite: SCOPES_FOR.write.some((s) => token.scopes.includes(s)),
+    };
   } else {
     if (access === "write") assertSameOrigin(req);
-    scope = await getActiveScope(req.headers);
+    caller = { scope: await getActiveScope(req.headers), canWrite: true };
   }
 
   await enforceRateLimits([
     {
       limiter: access === "write" ? writeLimiter : readLimiter,
-      key: `api:codes:${access}:user:${scope.userId}`,
+      key: `api:codes:${access}:user:${caller.scope.userId}`,
     },
     { limiter: ipLimiter, key: `api:codes:ip:${getClientIp(req)}` },
   ]);
-  return scope;
+  return caller;
+}
+
+/** resolveApiCaller's scope. */
+export async function resolveApiScope(
+  req: NextRequest,
+  access: ApiAccess,
+): Promise<ActiveScope> {
+  return (await resolveApiCaller(req, access)).scope;
 }
 
 /** Mutations take JSON only (also keeps simple cross-site form posts out). */

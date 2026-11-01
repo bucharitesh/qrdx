@@ -63,7 +63,7 @@ function FooterDisclosure({
         <ul className="flex min-h-0 flex-col gap-y-2 overflow-hidden border-l border-border pt-2.5 pl-3 ml-0.5">
           {links.map((link) => (
             <li key={link.id}>
-              <Link href={link.url} className={LINK}>
+              <Link href={link.url} className={LINK} prefetch={false}>
                 {link.title}
               </Link>
             </li>
@@ -117,7 +117,11 @@ export function FooterSection() {
                       />
                     ) : (
                       <li key={link.id}>
-                        <Link href={link.url ?? "/"} className={LINK}>
+                        <Link
+                          href={link.url ?? "/"}
+                          className={LINK}
+                          prefetch={false}
+                        >
                           {link.title}
                         </Link>
                       </li>

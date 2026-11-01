@@ -2,6 +2,7 @@
 
 import { QRCodeSVG } from "qrdx";
 import type React from "react";
+import { track } from "@/lib/analytics";
 import { useQREditorStore } from "@/store/editor-store";
 import { defaultPresets } from "@/utils/qr-presets";
 
@@ -30,7 +31,10 @@ export const PresetSelector: React.FC = () => {
                   ? "border-blue-500 bg-blue-50/50 ring-2 ring-blue-200 dark:bg-blue-950/20"
                   : "border-gray-200 bg-white hover:border-gray-300 dark:border-gray-700 dark:bg-gray-900"
               }`}
-              onClick={() => applyThemePreset(preset.id)}
+              onClick={() => {
+                applyThemePreset(preset.id);
+                track("theme_applied", { method: "preset", preset: preset.id });
+              }}
             >
               {/* Preview */}
               <div className="mb-3 flex items-center justify-center rounded-md bg-gray-50 p-4 dark:bg-gray-800">

@@ -29,34 +29,40 @@ import {
   PlanLock,
 } from "./routing-panel";
 
-const PROVIDERS: { key: PixelProvider; label: string; placeholder: string }[] =
-  [
-    {
-      key: "ga4",
-      label: "Google Analytics 4 measurement ID",
-      placeholder: "G-XXXXXXXXXX",
-    },
-    {
-      key: "gtm",
-      label: "Google Tag Manager container ID",
-      placeholder: "GTM-XXXXXXX",
-    },
-    {
-      key: "meta",
-      label: "Meta (Facebook) pixel ID",
-      placeholder: "123456789012345",
-    },
-    {
-      key: "tiktok",
-      label: "TikTok pixel ID",
-      placeholder: "CXXXXXXXXXXXXXXXXXXX",
-    },
-    {
-      key: "linkedin",
-      label: "LinkedIn Insight Tag partner ID",
-      placeholder: "1234567",
-    },
-  ];
+const PROVIDERS: {
+  key: PixelProvider;
+  label: string;
+  placeholder: string;
+  hint?: string;
+}[] = [
+  {
+    key: "ga4",
+    label: "Google Analytics 4 measurement ID",
+    placeholder: "G-XXXXXXXXXX",
+  },
+  {
+    key: "gtm",
+    label: "Google Tag Manager container ID",
+    placeholder: "GTM-XXXXXXX",
+    // Containers run any script, so they stay off QRdx's own domain.
+    hint: "Loads only when the page opens on one of your custom domains.",
+  },
+  {
+    key: "meta",
+    label: "Meta (Facebook) pixel ID",
+    placeholder: "123456789012345",
+  },
+  {
+    key: "tiktok",
+    label: "TikTok pixel ID",
+    placeholder: "CXXXXXXXXXXXXXXXXXXX",
+  },
+  {
+    key: "linkedin",
+    label: "LinkedIn Insight Tag partner ID",
+    placeholder: "1234567",
+  },
+];
 
 type Draft = Record<PixelProvider, string> & {
   consent: "auto" | "always";
@@ -247,6 +253,11 @@ function PixelsEditor({ initial }: { initial: CodeMarketingSettings }) {
                   spellCheck={false}
                   value={draft[provider.key]}
                 />
+                {provider.hint && (
+                  <p className="text-muted-foreground text-xs">
+                    {provider.hint}
+                  </p>
+                )}
               </div>
             ))}
           </div>

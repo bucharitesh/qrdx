@@ -1,7 +1,7 @@
 {
   "extends": "@repo/typescript-config/react-library.json",
   "compilerOptions": {
-    "baseUrl": ".",
+    "types": ["node"],
     "paths": {
       "@/*": ["./src/*"],
       "@repo/design-system/*": ["../design-system/*"],

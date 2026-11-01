@@ -11,9 +11,6 @@ import { SeasonStage } from "./site-characters";
 import { type SlotSizes, useSiteSlots } from "./site-slots";
 import { Sprite } from "./sprite";
 
-/** Fired by the countdown when midnight passes while the page is open. */
-export const MIDNIGHT_EVENT = "qrdx:new-year-midnight";
-
 const DISCO_WIDTH = 30;
 const DISCO_RATIO = 512 / 433;
 export const BOTTLE_WIDTH = 22;

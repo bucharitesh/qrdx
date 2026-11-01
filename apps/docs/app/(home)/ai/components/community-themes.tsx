@@ -1,5 +1,5 @@
 import { Button } from "@repo/design-system/components/ui/button";
-import { ChevronRight } from "lucide-react";
+import { ArrowRight2 as ChevronRight } from "iconsax-reactjs";
 import { Suspense } from "react";
 import type { ThemePreset } from "@/types/theme";
 import { defaultPresets } from "@/utils/qr-presets";

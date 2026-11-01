@@ -108,6 +108,8 @@ export const menuSchema = z
     sections: z.array(menuSectionSchema).max(MAX_MENU_SECTIONS).default([]),
     /** Allergen notice, service charge, ... */
     footnote: longText(500).default(""),
+    /** cards: each section on a card; classic: printed-menu rows with dotted leaders */
+    style: z.enum(["cards", "classic"]).default("cards"),
   })
   .refine(
     (menu) =>

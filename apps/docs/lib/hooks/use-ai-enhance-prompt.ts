@@ -3,9 +3,9 @@
 import { useCompletion } from "@ai-sdk/react";
 import { toast } from "@repo/design-system";
 import type { JSONContent } from "@tiptap/react";
-import posthog from "posthog-js";
 import { useCallback, useMemo, useRef } from "react";
 import { parseAiSdkTransportError } from "@/lib/ai/parse-ai-sdk-transport-error";
+import { track } from "@/lib/analytics";
 import { useAILocalDraftStore } from "@/store/ai-local-draft-store";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 import type { AIPromptData } from "@/types/ai";
@@ -21,13 +21,10 @@ export function useAIEnhancePrompt() {
         const defaultMessage = "Failed to enhance prompt. Please try again.";
         const normalized = parseAiSdkTransportError(error, defaultMessage);
 
-        try {
-          posthog.capture("ENHANCE_PROMPT_ERROR", {
-            message: normalized.message,
-            code: normalized.code,
-            status: normalized.status,
-          });
-        } catch {}
+        track("prompt_enhance_failed", {
+          code: normalized.code,
+          status: normalized.status,
+        });
 
         if (normalized.code === "SUBSCRIPTION_REQUIRED") {
           openGetProDialog();
@@ -38,15 +35,12 @@ export function useAIEnhancePrompt() {
         });
       },
       onFinish: (_prompt, finalCompletion) => {
-        try {
-          const durationMs = startTimeRef.current
+        track("prompt_enhance_finished", {
+          duration_ms: startTimeRef.current
             ? Date.now() - startTimeRef.current
-            : undefined;
-          posthog.capture("ENHANCE_PROMPT_FINISH", {
-            durationMs,
-            finalLength: finalCompletion?.length ?? 0,
-          });
-        } catch {}
+            : undefined,
+          length: finalCompletion?.length ?? 0,
+        });
 
         const promptData: AIPromptData = {
           content: finalCompletion,
@@ -82,13 +76,11 @@ export function useAIEnhancePrompt() {
       startTimeRef.current = Date.now();
       activeMentionsRef.current = promptData?.mentions ?? [];
 
-      try {
-        posthog.capture("ENHANCE_PROMPT_START", {
-          contentLength: prompt.length,
-          mentionCount: promptData?.mentions?.length ?? 0,
-          imageCount: promptData?.images?.length ?? 0,
-        });
-      } catch {}
+      track("prompt_enhance_started", {
+        length: prompt.length,
+        mention_count: promptData?.mentions?.length ?? 0,
+        image_count: promptData?.images?.length ?? 0,
+      });
 
       await complete(prompt, { body: { promptData } });
     },
@@ -104,12 +96,11 @@ export function useAIEnhancePrompt() {
         .setEditorContentDraft(enhancedPromptAsJsonContent);
     }
 
-    try {
-      const durationMs = startTimeRef.current
+    track("prompt_enhance_canceled", {
+      duration_ms: startTimeRef.current
         ? Date.now() - startTimeRef.current
-        : undefined;
-      posthog.capture("ENHANCE_PROMPT_CANCEL", { durationMs });
-    } catch {}
+        : undefined,
+    });
   }, [stop, enhancedPromptAsJsonContent]);
 
   return {
