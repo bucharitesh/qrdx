@@ -22,6 +22,7 @@
 // its first hit, so the first run is slow; later runs take a few minutes.
 import { readdirSync, readFileSync } from "node:fs";
 import { request as httpRequest } from "node:http";
+import { request as httpsRequest } from "node:https";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { decodePng } from "../../../packages/qrdx/src/utils/png";
@@ -111,8 +112,10 @@ interface RawResponse {
 }
 
 /**
- * A request with an explicit Host header (fetch always sends the URL's own
- * host), to reach the api.qrdx.dev and mcp.qrdx.dev routing locally.
+ * A request to the api.qrdx.dev or mcp.qrdx.dev routing. Locally it sends an
+ * explicit Host header (fetch always sends the URL's own host); against a
+ * deployed HTTPS site it calls the real subdomain, since a mismatched Host is
+ * redirected there by the edge.
  */
 function requestWithHost(
   path: string,
@@ -123,14 +126,16 @@ function requestWithHost(
     body,
   }: { method?: string; headers?: Record<string, string>; body?: string } = {},
 ): Promise<RawResponse> {
+  const deployed = BASE.protocol === "https:";
+  const send = deployed ? httpsRequest : httpRequest;
   return new Promise((resolve, reject) => {
-    const req = httpRequest(
+    const req = send(
       {
-        hostname: BASE.hostname,
-        port: BASE.port || 80,
+        hostname: deployed ? host : BASE.hostname,
+        port: deployed ? 443 : BASE.port || 80,
         path,
         method,
-        headers: { ...headers, host },
+        headers: deployed ? headers : { ...headers, host },
         timeout: HTTP_TIMEOUT_MS,
       },
       (res) => {
