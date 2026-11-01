@@ -16,9 +16,9 @@ import {
 } from "@repo/design-system/components/ui/toggle-group";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { GalleryAdd, Lock } from "iconsax-reactjs";
-import posthog from "posthog-js";
 import { useRef, useState } from "react";
 import { SignInLink } from "@/components/auth/sign-in-link";
+import { track } from "@/lib/analytics";
 import { apiFetch } from "@/lib/api-fetch";
 import { useSessionGuard } from "@/lib/hooks/use-gaurds";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
@@ -190,16 +190,14 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
           { description: "Those credits were refunded." },
         );
       }
-      try {
-        posthog.capture("AI_ART_GENERATED", {
-          visibility: request.visibility,
-          creativity: request.creativity,
-          variations: request.variations,
-          lockedSeed: request.seed !== undefined,
-          reference: Boolean(request.reference),
-          preset: presetId,
-        });
-      } catch {}
+      track("ai_art_generated", {
+        visibility: request.visibility,
+        creativity: request.creativity,
+        variations: request.variations,
+        locked_seed: request.seed !== undefined,
+        reference: Boolean(request.reference),
+        preset: presetId ?? undefined,
+      });
     } catch (error) {
       if (controller.signal.aborted || error instanceof UnauthorizedError) {
         return;

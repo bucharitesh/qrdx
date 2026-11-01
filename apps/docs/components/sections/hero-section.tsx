@@ -41,7 +41,8 @@ export function HeroSection() {
               </Link>
             </Button>
             <Button asChild variant="outline">
-              <Link href={hero.cta.secondary.href}>
+              {/* Only the primary CTA prefetches: the docs bundle is large. */}
+              <Link href={hero.cta.secondary.href} prefetch={false}>
                 {hero.cta.secondary.text}
               </Link>
             </Button>

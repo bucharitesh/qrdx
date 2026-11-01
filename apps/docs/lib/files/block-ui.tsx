@@ -1,6 +1,7 @@
 import { cn } from "@repo/design-system/lib/utils";
 import type { ReactNode } from "react";
 import { mutedTextClass, surfaceClass } from "@/components/landing/block-kit";
+import { LpHeading } from "@/components/landing/heading";
 
 // Presentational pieces shared by the file-backed landing blocks (PDF,
 // gallery, audio, video, downloads). Pure and server-renderable; colors and
@@ -10,14 +11,25 @@ import { mutedTextClass, surfaceClass } from "@/components/landing/block-kit";
 export function BlockHeading({
   title,
   description,
+  preview,
 }: {
   title?: string;
   description?: string;
+  /** `context.thumbnail`: the title is a div, not a heading. */
+  preview?: boolean;
 }) {
   if (!(title || description)) return null;
   return (
     <div className="space-y-1">
-      {title && <h2 className="font-semibold text-lg leading-snug">{title}</h2>}
+      {title && (
+        <LpHeading
+          as="h2"
+          className="font-semibold text-lg leading-snug"
+          preview={preview}
+        >
+          {title}
+        </LpHeading>
+      )}
       {description && (
         <p
           className={cn(

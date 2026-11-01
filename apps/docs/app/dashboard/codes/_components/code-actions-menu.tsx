@@ -1,7 +1,7 @@
 "use client";
 
 import { toast } from "@repo/design-system";
-import { Star } from "@repo/design-system/components/icons";
+import { Play, Star } from "@repo/design-system/components/icons";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -31,7 +31,6 @@ import {
   ColorSwatch as Palette,
   Pause,
   Edit2 as Pencil,
-  Play,
   ArrowRotateLeft as RotateCcw,
   StarSlash as StarOff,
   Tag2 as Tags,
@@ -208,9 +207,8 @@ export function CodeActionsMenu({
             <AlertDialogHeader>
               <AlertDialogTitle>Delete this code forever?</AlertDialogTitle>
               <AlertDialogDescription>
-                Its scan history and version history are deleted and printed
-                copies keep showing a "no longer active" page. This can't be
-                undone.
+                Its scan and version history are deleted, and printed copies
+                show a "QR code not found" page. This can't be undone.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>

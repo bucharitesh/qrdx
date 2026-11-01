@@ -4,12 +4,14 @@ import { z } from "zod";
 import {
   addressSchema,
   buttonClass,
+  buttonShapeClass,
   formatAddress,
   lineText,
   linkProps,
   mapLinks,
   mutedTextClass,
 } from "@/components/landing/block-kit";
+import { LpHeading } from "@/components/landing/heading";
 import { type BlockRenderProps, registerBlock } from "../registry";
 import { AddressMapEditor } from "./address-map-editor";
 
@@ -40,12 +42,21 @@ function AddressMapBlock({
   }
   const query = [props.name, ...lines].filter(Boolean).join(", ");
   const maps = mapLinks(query);
+  const shape = buttonShapeClass(context.theme);
   return (
     <section
       aria-label={props.title || "Location"}
       className="space-y-3 overflow-hidden rounded-(--lp-radius) bg-(--lp-muted) p-4"
     >
-      {props.title && <h2 className="text-lg font-semibold">{props.title}</h2>}
+      {props.title && (
+        <LpHeading
+          as="h2"
+          preview={context.thumbnail}
+          className="text-lg font-semibold"
+        >
+          {props.title}
+        </LpHeading>
+      )}
       <div className="flex gap-3">
         <MapPin
           aria-hidden="true"
@@ -78,14 +89,14 @@ function AddressMapBlock({
       )}
       <div className="grid grid-cols-2 gap-2">
         <a
-          className={buttonClass("filled", "min-h-11 text-sm")}
+          className={buttonClass("filled", cn("min-h-11 text-sm", shape))}
           {...linkProps(maps.google, id, "google-maps")}
         >
           <Navigation aria-hidden="true" className="size-4" />
           Google Maps
         </a>
         <a
-          className={buttonClass("outline", "min-h-11 text-sm")}
+          className={buttonClass("outline", cn("min-h-11 text-sm", shape))}
           {...linkProps(maps.apple, id, "apple-maps")}
         >
           Apple Maps

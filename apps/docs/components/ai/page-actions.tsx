@@ -1,4 +1,5 @@
 "use client";
+import { Tick } from "@repo/design-system/components/icons";
 import { cn, cva } from "@repo/design-system/lib/utils";
 import { buttonVariants } from "fumadocs-ui/components/ui/button";
 import {
@@ -7,8 +8,8 @@ import {
   PopoverTrigger,
 } from "fumadocs-ui/components/ui/popover";
 import { useCopyButton } from "fumadocs-ui/utils/use-copy-button";
+import { ArrowDown2, Copy, ExportSquare, MessageCircle } from "iconsax-reactjs";
 import { useMemo, useState } from "react";
-import { Icons } from "@/components/icons";
 import { soundEvent } from "@/lib/sound/emit";
 
 const cache = new Map<string, string>();
@@ -62,7 +63,7 @@ export function LLMCopyButton({
       )}
       onClick={onClick}
     >
-      {checked ? <Icons.Check /> : <Icons.Copy />}
+      {checked ? <Tick /> : <Copy />}
       Copy Markdown
     </button>
   );
@@ -208,7 +209,7 @@ export function ViewOptions({
         href: `https://t3.chat/new?${new URLSearchParams({
           q,
         })}`,
-        icon: <Icons.MessageCircle />,
+        icon: <MessageCircle />,
       },
     ];
   }, [githubUrl, markdownUrl]);
@@ -225,7 +226,7 @@ export function ViewOptions({
         )}
       >
         Open
-        <Icons.ChevronDown className="size-3.5 text-fd-muted-foreground" />
+        <ArrowDown2 className="size-3.5 text-fd-muted-foreground" />
       </PopoverTrigger>
       <PopoverContent className="flex flex-col">
         {items.map((item) => (
@@ -238,7 +239,7 @@ export function ViewOptions({
           >
             {item.icon}
             {item.title}
-            <Icons.ExternalLink className="text-fd-muted-foreground size-3.5 ms-auto" />
+            <ExportSquare className="text-fd-muted-foreground size-3.5 ms-auto" />
           </a>
         ))}
       </PopoverContent>

@@ -73,16 +73,16 @@
     "publish": "npx @raycast/api@latest publish"
   },
   "dependencies": {
-    "@raycast/api": "^1.93.2",
-    "@raycast/utils": "^1.19.1",
+    "@raycast/api": "^1.104.25",
+    "@raycast/utils": "^2.3.3",
     "qrdx": "^0.0.46",
     "react": "19.0.0",
     "react-dom": "19.0.0"
   },
   "devDependencies": {
-    "@raycast/eslint-config": "^2.1.1",
+    "@raycast/eslint-config": "^2.2.0",
     "@repo/typescript-config": "workspace:*",
-    "@types/node": "^20.8.10",
+    "@types/node": "22.19.17",
     "@types/react": "19.0.10",
     "@types/react-dom": "19.0.4",
     "typescript": "^5.4.5"

@@ -15,6 +15,7 @@ import {
   Warning2,
 } from "iconsax-reactjs";
 import { type ReactNode, useEffect, useState } from "react";
+import { track } from "@/lib/analytics";
 import {
   type AIArtResult,
   type AIArtUpscaleResult,
@@ -95,6 +96,10 @@ export function AIArtResultPanel({
       big?.imageUrl ?? variant.imageUrl,
       `qrdx-ai-art-${variant.seed}${big ? "-2x" : ""}`,
     );
+    track("qr_downloaded", {
+      format: big ? "ai-art-2x" : "ai-art",
+      source: "ai_art",
+    });
     setDownloading(false);
   };
 

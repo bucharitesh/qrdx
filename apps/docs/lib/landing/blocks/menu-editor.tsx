@@ -4,6 +4,7 @@ import { Input } from "@repo/design-system/components/ui/input";
 import { cn } from "@repo/design-system/lib/utils";
 import { useEffect, useId, useState } from "react";
 import {
+  ChoiceField,
   FieldRow,
   ImageField,
   ListEditor,
@@ -287,6 +288,19 @@ export function MenuEditor({ value, onChange }: BlockEditorProps<MenuProps>) {
         onChange={(currency) => set({ currency })}
         options={currencies.map((code) => ({ value: code, label: code }))}
         value={value.currency}
+      />
+      <ChoiceField
+        label="Style"
+        onChange={(style) => set({ style })}
+        options={[
+          { value: "cards", label: "Cards" },
+          {
+            value: "classic",
+            label: "Classic",
+            title: "Like a printed menu, with dotted lines to the price",
+          },
+        ]}
+        value={value.style}
       />
       <SwitchField
         checked={value.showNav}

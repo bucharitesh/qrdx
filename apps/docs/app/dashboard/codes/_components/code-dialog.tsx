@@ -22,6 +22,7 @@ import { CopyButton } from "@/components/copy-button";
 import { AccountSourcePicker } from "@/components/data-connections/source-picker";
 import { normalizeDestination } from "@/components/editor/dynamic-link-toggle";
 import { InfoHint } from "@/components/help/info-hint";
+import { track } from "@/lib/analytics";
 import { soundEvent } from "@/lib/sound/emit";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 import { CodeDownloadButtons, CodeQr } from "./code-qr";
@@ -111,6 +112,7 @@ export function CodeDialog({ open, onOpenChange, code }: CodeDialogProps) {
         onOpenChange(false);
       } else {
         setCreated(result.data);
+        track("dynamic_code_created", { source: "dashboard" });
       }
     });
   };

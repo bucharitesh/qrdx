@@ -39,6 +39,7 @@ import {
 } from "react";
 import { publishLandingPage } from "@/actions/landing-pages";
 import { PhoneFrame } from "@/components/mockups/phone-frame";
+import { track } from "@/lib/analytics";
 import {
   type BlockEditorContext,
   createBlock,
@@ -331,6 +332,7 @@ export function PageEditor({
       setPublished(snapshot(title, content));
       writeDraft(page.id, null);
       setDraft(null);
+      track("page_published", { page_type: page.typeLabel });
       toast.success("Published", {
         description: code
           ? "Scans now open the updated page."
@@ -341,6 +343,7 @@ export function PageEditor({
   }, [
     issueCount,
     page.id,
+    page.typeLabel,
     title,
     content,
     version,

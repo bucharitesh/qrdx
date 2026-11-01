@@ -73,10 +73,34 @@ export const subscribeSchema = z
     return { url: url.data, events };
   });
 
-export function serializeHook(endpoint: WebhookEndpointView) {
+/**
+ * Target URLs are often secret (Zapier and Make hook URLs accept anything
+ * posted to them), so only callers who manage subscriptions see them in full:
+ * tokens with codes:write, and team owners and admins.
+ */
+export function canSeeHookUrls(caller: {
+  scope: Pick<ActiveScope, "role">;
+  canWrite: boolean;
+}): boolean {
+  return caller.canWrite && caller.scope.role !== "member";
+}
+
+/** `https://hooks.zapier.com/…`: the host, without the secret path. */
+export function maskHookUrl(value: string): string {
+  try {
+    return `${new URL(value).origin}/…`;
+  } catch {
+    return "…";
+  }
+}
+
+export function serializeHook(
+  endpoint: WebhookEndpointView,
+  { revealUrl = true }: { revealUrl?: boolean } = {},
+) {
   return {
     id: endpoint.id,
-    target_url: endpoint.url,
+    target_url: revealUrl ? endpoint.url : maskHookUrl(endpoint.url),
     events: endpoint.events,
     // Zapier/Make expect a single event per subscription
     event: endpoint.events.length === 1 ? endpoint.events[0] : null,

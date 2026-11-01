@@ -19,10 +19,11 @@ import { McpTerminal } from "@/components/mockups/mcp-terminal";
 import { Reveal } from "@/components/mockups/reveal";
 import { loopVideos } from "@/components/mockups/visuals";
 import { SectionHeader } from "@/components/sections/section-header";
+import { mcpServerUrl } from "@/lib/mcp-clients";
 import { baseUrl } from "@/lib/metadata";
 import { LiveDemo, type LiveDemoName } from "./live-demos";
 
-const MCP_URL = new URL("/api/mcp", baseUrl).toString();
+const MCP_URL = mcpServerUrl(baseUrl);
 
 function MoreLink({ href, children }: { href: string; children: ReactNode }) {
   return (

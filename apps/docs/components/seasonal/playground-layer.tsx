@@ -14,6 +14,7 @@ import {
   useState,
 } from "react";
 import { createPortal } from "react-dom";
+import { track } from "@/lib/analytics";
 import type { Season } from "@/lib/seasonal";
 import { useQREditorStore } from "@/store/editor-store";
 import type { ThemePreset } from "@/types/theme";
@@ -148,7 +149,10 @@ function SeasonChips({
             size="sm"
             variant={active ? "secondary" : "outline"}
             aria-pressed={active}
-            onClick={() => applyThemePreset(chip.id)}
+            onClick={() => {
+              applyThemePreset(chip.id);
+              track("theme_applied", { method: "preset", preset: chip.id });
+            }}
           >
             <span
               aria-hidden

@@ -1,7 +1,7 @@
 /** biome-ignore-all lint/suspicious/noArrayIndexKey: false positive */
 "use client";
 
-import { Spinner, Tick } from "@repo/design-system/components/icons";
+import { Info, Spinner, Tick } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Card } from "@repo/design-system/components/ui/card";
 import {
@@ -27,7 +27,7 @@ import {
 } from "@repo/design-system/components/ui/sheet";
 import { Skeleton } from "@repo/design-system/components/ui/skeleton";
 import { cn } from "@repo/design-system/lib/utils";
-import { ArrowDown2, Brush2, Filter, InfoCircle } from "iconsax-reactjs";
+import { ArrowDown2, Brush2, Filter } from "iconsax-reactjs";
 import Link from "next/link";
 import {
   parseAsArrayOf,
@@ -257,7 +257,7 @@ export function CommunityThemesContent() {
                   size="sm"
                   className="text-muted-foreground gap-1.5 text-xs"
                 >
-                  <InfoCircle className="size-3.5" />
+                  <Info className="size-3.5" />
                   <span className="hidden sm:inline">How to publish</span>
                 </Button>
               </PopoverTrigger>

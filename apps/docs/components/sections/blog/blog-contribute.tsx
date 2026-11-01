@@ -1,5 +1,5 @@
 /** biome-ignore-all lint/suspicious/noArrayIndexKey: false positive */
-import type { Page, PageData } from "fumadocs-core/source";
+import type { Page } from "fumadocs-core/source";
 import {
   Danger as BugIcon,
   LampOn as LightbulbIcon,
@@ -9,7 +9,7 @@ import Link from "next/link";
 
 import { getGitHubIssueUrl, getGithubFileUrl } from "@/lib/github";
 
-export function Contribute({ page }: { page: Page<PageData> }) {
+export function Contribute({ page }: { page: Page }) {
   const contributeLinks = [
     {
       text: "Report an issue",

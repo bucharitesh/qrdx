@@ -125,6 +125,20 @@ export function parseCustomHostname(input: string): HostnameResult {
 }
 
 /**
+ * True when proxy.ts routed this request from a verified custom domain: it
+ * tags those with CUSTOM_DOMAIN_HEADER, and the host must not be one of
+ * QRdx's own (a browser can't add the header to a plain visit).
+ */
+export function isCustomDomainRequest(headers: Headers): boolean {
+  const hostname = requestHostname(headers.get("host"));
+  return Boolean(
+    headers.get(CUSTOM_DOMAIN_HEADER) &&
+      hostname &&
+      !isPlatformHostname(hostname),
+  );
+}
+
+/**
  * Hostname a request was sent to, from the Host header (lowercase, no port).
  * null for IP literals and anything that isn't a DNS name.
  */

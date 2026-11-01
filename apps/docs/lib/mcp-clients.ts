@@ -10,15 +10,73 @@ export const MCP_PATH = "/api/mcp";
 /** The hosted service's public endpoint (mcp.qrdx.dev/mcp → /api/mcp, see next.config.ts). */
 export const MCP_PUBLIC_URL = "https://mcp.qrdx.dev/mcp";
 
-const HOSTED_HOSTS = new Set(["qrdx.dev", "www.qrdx.dev", "mcp.qrdx.dev"]);
+/** qrdx.dev and its subdomains (www, mcp, api). */
+const isQrdxHost = (host: string) =>
+  host === "qrdx.dev" || host.endsWith(".qrdx.dev");
+
+/** This machine: `next dev` or a production build started locally. */
+export function isLocalHost(host: string): boolean {
+  return (
+    host === "localhost" ||
+    host.endsWith(".localhost") ||
+    host === "127.0.0.1" ||
+    host === "0.0.0.0" ||
+    host === "[::1]"
+  );
+}
+
+function hostOf(value: string | undefined): string | null {
+  if (!value) return null;
+  try {
+    return new URL(value.includes("://") ? value : `https://${value}`).hostname;
+  } catch {
+    return null;
+  }
+}
+
+/** Where a deployment says it lives. */
+export interface McpDeployment {
+  /** NEXT_PUBLIC_APP_URL. */
+  appUrl?: string;
+  /** VERCEL_PROJECT_PRODUCTION_URL: set on every Vercel deployment, previews included. */
+  productionUrl?: string;
+}
+
+const currentDeployment = (): McpDeployment => ({
+  appUrl: process.env.NEXT_PUBLIC_APP_URL,
+  productionUrl: process.env.VERCEL_PROJECT_PRODUCTION_URL,
+});
 
 /**
- * Absolute MCP endpoint for an origin: MCP_PUBLIC_URL on qrdx.dev, otherwise
- * "<origin>/api/mcp" (local dev, previews and self-hosted instances).
+ * The MCP server URL to show people: MCP_PUBLIC_URL wherever QRdx itself runs
+ * (qrdx.dev and its subdomains, Vercel previews of this project, local dev),
+ * so connect buttons, snippets and prefilled chat links never carry a
+ * localhost or preview address. Only a self-hosted copy on its own domain
+ * (app URL neither on qrdx.dev nor local) gets "<origin>/api/mcp".
  */
-export function mcpServerUrl(origin: string | URL): string {
+export function mcpServerUrl(
+  origin: string | URL,
+  deployment: McpDeployment = currentDeployment(),
+): string {
   const url = new URL(MCP_PATH, origin);
-  return HOSTED_HOSTS.has(url.hostname) ? MCP_PUBLIC_URL : url.toString();
+  const appHost = hostOf(deployment.appUrl);
+  const productionHost = hostOf(deployment.productionUrl);
+  const official =
+    isQrdxHost(url.hostname) ||
+    isLocalHost(url.hostname) ||
+    (appHost !== null && (isQrdxHost(appHost) || isLocalHost(appHost))) ||
+    // A preview has its own *.vercel.app host; its project is still qrdx.dev.
+    (productionHost !== null && isQrdxHost(productionHost));
+  return official ? MCP_PUBLIC_URL : url.toString();
+}
+
+/**
+ * This instance's own endpoint when it runs locally ("Testing locally?" on
+ * /mcp, to try server changes before they ship), otherwise null.
+ */
+export function mcpLocalUrl(origin: string | URL): string | null {
+  const url = new URL(MCP_PATH, origin);
+  return isLocalHost(url.hostname) ? url.toString() : null;
 }
 
 /** The clients shown as tabs on /mcp. */
@@ -296,6 +354,8 @@ export function mcpMoreClients(url: string): McpMoreClient[] {
       id: "continue",
       name: "Continue",
       hint: "mcpServers in config.yaml",
+      logo: "/mcp/continue.svg",
+      logoDark: "/mcp/continue-white.svg",
       snippet: {
         id: "continue",
         name: "Continue",
@@ -344,6 +404,8 @@ export function mcpMoreClients(url: string): McpMoreClient[] {
       id: "goose",
       name: "Goose",
       hint: "One-click install link",
+      logo: "/mcp/goose.svg",
+      logoDark: "/mcp/goose-white.svg",
       install: { href: gooseInstallUrl(url), label: "Add to Goose" },
       steps: [
         "Click Add to Goose and allow the browser to open Goose Desktop.",
@@ -447,6 +509,7 @@ export function mcpMoreClients(url: string): McpMoreClient[] {
       id: "copilot-studio",
       name: "Copilot Studio",
       hint: "Microsoft: add an MCP tool",
+      logo: "/mcp/copilot-studio.svg",
       steps: [
         "In your agent, open Tools → Add a tool → New tool → Model Context Protocol.",
         `Enter the server URL ${url} and choose no authentication.`,

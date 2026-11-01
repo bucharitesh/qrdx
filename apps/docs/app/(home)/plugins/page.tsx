@@ -1,11 +1,11 @@
-import { GithubLogo } from "@repo/design-system/components/icons";
+import { GithubLogo, Info } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import {
   getCatalogEntry,
   type IntegrationCatalogEntry,
 } from "@repo/integrations/src/catalog";
-import { ExportSquare, InfoCircle } from "iconsax-reactjs";
+import { ExportSquare } from "iconsax-reactjs";
 import type { Metadata } from "next";
 import Link from "next/link";
 import type { ComponentType } from "react";
@@ -19,6 +19,7 @@ import {
 } from "@/components/sections/tools/cards";
 import { FaqList } from "@/components/sections/tools/faq-list";
 import { ToolHero } from "@/components/sections/tools/tool-hero";
+import { TrackedLink } from "@/lib/analytics/react";
 import { createMetadata } from "@/lib/metadata";
 import { PLUGINS, type PluginInfo, REQUEST_PLUGIN_URL } from "./plugin-data";
 import {
@@ -158,25 +159,29 @@ function PluginSection({ plugin, index }: { plugin: Plugin; index: number }) {
             <div className="flex flex-wrap gap-2.5">
               {plugin.storeUrl ? (
                 <Button asChild className={inkButtonClass}>
-                  <a
+                  <TrackedLink
+                    event="plugin_install_clicked"
+                    props={{ plugin: plugin.slug, target: "store" }}
                     href={plugin.storeUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
                     Get it on the {plugin.store}
                     <ExportSquare aria-hidden className="size-4 opacity-70" />
-                  </a>
+                  </TrackedLink>
                 </Button>
               ) : (
                 <Button asChild className={inkButtonClass}>
-                  <a
+                  <TrackedLink
+                    event="plugin_install_clicked"
+                    props={{ plugin: plugin.slug, target: "source" }}
                     href={plugin.installUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
                     <GithubLogo aria-hidden className="size-4" />
                     Install from source
-                  </a>
+                  </TrackedLink>
                 </Button>
               )}
               <Button asChild variant="outline">
@@ -185,7 +190,7 @@ function PluginSection({ plugin, index }: { plugin: Plugin; index: number }) {
             </div>
             {!plugin.storeUrl && (
               <p className="flex items-center gap-2 text-sm text-muted-foreground">
-                <InfoCircle aria-hidden className="size-4 shrink-0" />
+                <Info aria-hidden className="size-4 shrink-0" />
                 Not in the {plugin.store} yet.
               </p>
             )}

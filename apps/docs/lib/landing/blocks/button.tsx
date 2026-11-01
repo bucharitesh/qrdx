@@ -2,6 +2,7 @@ import { MouseCircle as MousePointerClick } from "iconsax-reactjs";
 import { z } from "zod";
 import {
   buttonClass,
+  buttonShapeClass,
   lineText,
   linkProps,
   linkUrlSchema,
@@ -22,10 +23,13 @@ export const buttonSchema = z.object({
 
 export type ButtonProps = z.output<typeof buttonSchema>;
 
-function ButtonBlock({ id, props }: BlockRenderProps<ButtonProps>) {
+function ButtonBlock({ id, props, context }: BlockRenderProps<ButtonProps>) {
   return (
     <div className="space-y-1.5">
-      <a className={buttonClass(props.style)} {...linkProps(props.url, id)}>
+      <a
+        className={buttonClass(props.style, buttonShapeClass(context.theme))}
+        {...linkProps(props.url, id)}
+      >
         {props.label}
       </a>
       {props.note && (

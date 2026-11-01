@@ -41,6 +41,7 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
+import { track } from "@/lib/analytics";
 import type { WebhookEndpointView } from "@/lib/events/endpoints";
 import { EVENT_INFO } from "@/lib/events/types";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
@@ -275,6 +276,7 @@ export function WebhooksManager({
         return;
       }
       setDialog(null);
+      track("webhook_created", { event_count: values.events.length });
       setSecret({ value: result.data.secret, created: true });
       router.refresh();
     });

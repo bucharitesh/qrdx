@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { type FormEvent, useId, useState } from "react";
 import { toast } from "sonner";
 import { emitSound } from "@/components/editor/sound";
+import { track } from "@/lib/analytics";
 import { connectWithApiKeyAction } from "../../connected-account-actions";
 
 interface ApiKeyConnectProps {
@@ -44,6 +45,7 @@ export function ApiKeyConnect({
       if (result.ok) {
         setValue("");
         emitSound("success");
+        track("integration_connected", { provider: slug });
         toast.success(`${name} connected`);
         router.refresh();
       } else {

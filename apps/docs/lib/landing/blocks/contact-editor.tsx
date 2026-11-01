@@ -45,6 +45,12 @@ export function ContactEditor({
         onChange={(photo) => set({ photo })}
         value={value.photo}
       />
+      <ImageField
+        hint="Optional wide photo across the top of the card, like your office or work."
+        label="Cover image"
+        onChange={(cover) => set({ cover })}
+        value={value.cover}
+      />
       <div className="grid grid-cols-2 gap-3">
         <TextField
           autoComplete="given-name"

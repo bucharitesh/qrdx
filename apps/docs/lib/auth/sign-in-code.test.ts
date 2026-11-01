@@ -9,6 +9,7 @@ import {
   signInCodeRateLimited,
 } from "@repo/auth/email-otp";
 import {
+  addressMayRequestCode,
   deliverSignInCode,
   type SignInCodeDeliveryDeps,
 } from "./sign-in-code-delivery";
@@ -119,5 +120,28 @@ describe("@repo/auth sendVerificationOTP", () => {
         return true;
       },
     );
+  });
+});
+
+describe("addressMayRequestCode", () => {
+  const limiter = (remaining: number) => {
+    const seen: string[] = [];
+    return {
+      seen,
+      limit: async (key: string) => {
+        seen.push(key);
+        remaining -= 1;
+        return { success: remaining >= 0 };
+      },
+    };
+  };
+
+  it("allows a request only while every window has room", async () => {
+    const burst = limiter(5);
+    const daily = limiter(1);
+    assert.equal(await addressMayRequestCode("hash", [burst, daily]), true);
+    assert.equal(await addressMayRequestCode("hash", [burst, daily]), false);
+    assert.deepEqual(burst.seen, ["hash", "hash"]);
+    assert.deepEqual(daily.seen, ["hash", "hash"]);
   });
 });

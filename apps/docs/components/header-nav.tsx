@@ -12,9 +12,16 @@ import { cn } from "@repo/design-system/lib/utils";
 import { ArrowRight, ExportSquare } from "iconsax-reactjs";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import type { ComponentType } from "react";
+import {
+  type ComponentType,
+  type CSSProperties,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { AsciiField } from "@/components/fx";
 import { siteConfig } from "@/config/site";
+import styles from "./header-nav.module.css";
 
 export interface HeaderNavItem {
   name: string;
@@ -103,24 +110,130 @@ const topLevelClass =
 const activeClass =
   "bg-secondary/60 text-secondary-foreground focus:bg-secondary/60 focus:text-secondary-foreground";
 
+/**
+ * Hover intent. A closed menu opens once the pointer rests on a trigger this
+ * long (Radix's delayDuration), and an open one switches to another trigger
+ * only after SWITCH_INTENT_MS on it, so sweeping across the bar on the way
+ * somewhere else neither opens nor flips through the menus.
+ */
+const HOVER_INTENT_MS = 200;
+const SWITCH_INTENT_MS = 90;
+/** The panel's close fade (header-nav.module.css): reopening within it morphs. */
+const CLOSE_FADE_MS = 150;
+/** Space the panel keeps from the window edges. */
+const EDGE_GUTTER = 16;
+
+/** Where the shared panel goes for a trigger, in the menu root's coordinates. */
+interface PanelAnchor {
+  x: number;
+  center: number;
+  min: number;
+  max: number;
+}
+
+function measureAnchor(root: HTMLElement, trigger: HTMLElement): PanelAnchor {
+  const box = root.getBoundingClientRect();
+  const rect = trigger.getBoundingClientRect();
+  const page = document.documentElement.clientWidth;
+  return {
+    x: rect.left - box.left,
+    center: rect.left + rect.width / 2 - box.left,
+    min: EDGE_GUTTER - box.left,
+    max: page - EDGE_GUTTER - box.left,
+  };
+}
+
+const anchorStyle = (anchor: PanelAnchor | undefined) =>
+  anchor &&
+  ({
+    "--nav-x": `${anchor.x}px`,
+    "--nav-center": `${anchor.center}px`,
+    "--nav-min": `${anchor.min}px`,
+    "--nav-max": `${anchor.max}px`,
+  } as CSSProperties);
+
+interface MenuState {
+  /** The open entry's id as a string, or "" when closed. */
+  value: string;
+  /** Moving between menus: the panel glides and resizes (see the CSS). */
+  morph: boolean;
+  anchor?: PanelAnchor;
+}
+
 export function HeaderNav({ className }: { className?: string }) {
   const pathname = usePathname() ?? "/";
   const activeId = getActiveEntryId(pathname);
-  // The last dropdown opens leftwards from its trigger so it never runs past
-  // the right edge on narrow desktops.
-  const lastGroupId = headerNavEntries
-    .filter((entry) => entry.items)
-    .at(-1)?.id;
+  const rootRef = useRef<HTMLElement>(null);
+  const triggers = useRef(new Map<string, HTMLButtonElement>());
+  const closedAt = useRef(0);
+  /** The committed value, for handlers that run between renders. */
+  const current = useRef("");
+  /** The trigger under the pointer, if any. */
+  const hovered = useRef<string | null>(null);
+  const pendingSwitch = useRef(0);
+  const [menu, setMenu] = useState<MenuState>({ value: "", morph: false });
+
+  // Measured here rather than after render, so the panel's first frame
+  // already sits under the new trigger.
+  const commit = (value: string) => {
+    const root = rootRef.current;
+    const trigger = triggers.current.get(value);
+    const anchor = root && trigger ? measureAnchor(root, trigger) : undefined;
+    const now = performance.now();
+    const fadingOut = now - closedAt.current < CLOSE_FADE_MS;
+    if (!value) closedAt.current = now;
+    const morph = value !== "" && (current.current !== "" || fadingOut);
+    current.current = value;
+    setMenu((prev) => ({ value, morph, anchor: anchor ?? prev.anchor }));
+  };
+
+  const onValueChange = (value: string) => {
+    window.clearTimeout(pendingSwitch.current);
+    const switching =
+      current.current !== "" && value !== "" && value !== current.current;
+    // Pointer moves between open menus wait for intent; keys and clicks don't.
+    if (switching && hovered.current === value) {
+      pendingSwitch.current = window.setTimeout(
+        () => commit(value),
+        SWITCH_INTENT_MS,
+      );
+      return;
+    }
+    commit(value);
+  };
+
+  useEffect(() => () => window.clearTimeout(pendingSwitch.current), []);
+
+  // Keep the panel inside the window if it resizes while a menu is open.
+  useEffect(() => {
+    const value = menu.value;
+    if (!value) return;
+    const onResize = () => {
+      const root = rootRef.current;
+      const trigger = triggers.current.get(value);
+      if (!root || !trigger) return;
+      const anchor = measureAnchor(root, trigger);
+      setMenu((prev) => (prev.value === value ? { ...prev, anchor } : prev));
+    };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [menu.value]);
 
   return (
     <NavigationMenu
-      viewport={false}
+      ref={rootRef}
+      value={menu.value}
+      onValueChange={onValueChange}
+      delayDuration={HOVER_INTENT_MS}
       aria-label="Main"
-      className={cn("hidden lg:flex", className)}
+      data-morph={menu.morph ? "" : undefined}
+      style={anchorStyle(menu.anchor)}
+      className={cn(styles.nav, "hidden lg:flex", className)}
     >
       <NavigationMenuList className="gap-0.5">
         {headerNavEntries.map((entry) => {
           const active = entry.id === activeId;
+          const value = String(entry.id);
 
           if (!entry.items) {
             return (
@@ -146,21 +259,25 @@ export function HeaderNav({ className }: { className?: string }) {
           }
 
           return (
-            <NavigationMenuItem key={entry.id}>
+            <NavigationMenuItem key={entry.id} value={value}>
               <NavigationMenuTrigger
+                ref={(node) => {
+                  if (node) triggers.current.set(value, node);
+                  else triggers.current.delete(value);
+                }}
+                onPointerEnter={(event) => {
+                  // Radix opens on mouse hover only (touch taps click).
+                  if (event.pointerType === "mouse") hovered.current = value;
+                }}
+                onPointerLeave={() => {
+                  hovered.current = null;
+                  window.clearTimeout(pendingSwitch.current);
+                }}
                 className={cn(topLevelClass, active && activeClass)}
               >
                 {entry.name}
               </NavigationMenuTrigger>
-              <NavigationMenuContent
-                className={cn(
-                  // Panels sit under their own trigger, so switching menus
-                  // fades and scales in place instead of sliding sideways.
-                  "z-50 ease-[cubic-bezier(.32,.72,0,1)] data-[motion^=from-]:[--tw-enter-translate-x:0]! data-[motion^=to-]:[--tw-exit-translate-x:0]!",
-                  entry.id === lastGroupId &&
-                    "md:right-0 md:left-auto group-data-[viewport=false]/navigation-menu:origin-top-right",
-                )}
-              >
+              <NavigationMenuContent>
                 <NavPanel items={entry.items} pathname={pathname} />
               </NavigationMenuContent>
             </NavigationMenuItem>
@@ -174,7 +291,8 @@ export function HeaderNav({ className }: { className?: string }) {
 /**
  * One dropdown: an optional featured panel on the left, the other items as
  * icon rows (two columns when there is no featured panel) and an optional
- * footer link to the group's hub.
+ * footer link to the group's hub. Its links don't prefetch: opening a menu
+ * would fetch every destination's code at once.
  */
 function NavPanel({
   items,
@@ -213,7 +331,7 @@ function NavPanel({
             active={pathname === hub.href}
             className="group/nav-item flex-row items-center gap-2 px-3 py-2.5"
           >
-            <Link href={hub.href}>
+            <Link href={hub.href} prefetch={false}>
               <span className="text-sm font-medium text-foreground">
                 {hub.name}
               </span>
@@ -222,7 +340,7 @@ function NavPanel({
               </span>
               <ArrowRight
                 aria-hidden
-                className="ml-auto size-3.5 shrink-0 text-muted-foreground transition-transform duration-150 group-hover/nav-item:translate-x-0.5"
+                className="ml-auto size-3.5 shrink-0 text-muted-foreground transition-transform duration-150 group-hover/nav-item:translate-x-0.5 motion-reduce:transition-none"
               />
             </Link>
           </NavigationMenuLink>
@@ -245,6 +363,7 @@ function NavRow({ item, pathname }: { item: HeaderNavItem; pathname: string }) {
       <Link
         href={item.href}
         aria-current={current ? "page" : undefined}
+        prefetch={false}
         {...(external && externalProps)}
       >
         <NavIconTile icon={item.icon} />
@@ -282,7 +401,11 @@ function FeaturedLink({
       active={current}
       className="group/nav-item relative w-full justify-end gap-2 overflow-hidden border bg-muted/30 p-4 hover:bg-accent/50"
     >
-      <Link href={item.href} aria-current={current ? "page" : undefined}>
+      <Link
+        href={item.href}
+        aria-current={current ? "page" : undefined}
+        prefetch={false}
+      >
         <AsciiField
           variant="qr"
           density={0.8}
@@ -303,7 +426,7 @@ function FeaturedLink({
           Open
           <ArrowRight
             aria-hidden
-            className="size-3 transition-transform duration-150 group-hover/nav-item:translate-x-0.5"
+            className="size-3 transition-transform duration-150 group-hover/nav-item:translate-x-0.5 motion-reduce:transition-none"
           />
         </span>
       </Link>

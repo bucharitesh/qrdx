@@ -5,19 +5,33 @@ import {
   CardHeader,
   CardTitle,
 } from "@repo/design-system/components/ui/card";
+import { cn } from "@repo/design-system/lib/utils";
+import Link from "next/link";
 import type { ReactNode } from "react";
 
 export function StatCard({
   label,
   value,
   hint,
+  href,
+  alert = false,
 }: {
   label: string;
   value: ReactNode;
   hint?: ReactNode;
+  /** The list behind the number */
+  href?: string;
+  /** Draws attention (something needs a look) */
+  alert?: boolean;
 }) {
-  return (
-    <Card className="gap-2 py-4">
+  const card = (
+    <Card
+      className={cn(
+        "h-full gap-2 py-4",
+        href && "hover:bg-muted/50 transition-colors",
+        alert && "border-foreground/40",
+      )}
+    >
       <CardHeader className="px-4">
         <CardDescription>{label}</CardDescription>
         <CardTitle className="text-2xl font-bold tracking-tight tabular-nums">
@@ -31,6 +45,13 @@ export function StatCard({
       )}
     </Card>
   );
+  return href ? (
+    <Link className="block rounded-xl focus-visible:outline-2" href={href}>
+      {card}
+    </Link>
+  ) : (
+    card
+  );
 }
 
 export function Section({
@@ -43,12 +64,12 @@ export function Section({
   children: ReactNode;
 }) {
   return (
-    <Card className="gap-4 py-4">
+    <Card className="min-w-0 gap-4 py-4">
       <CardHeader className="px-4">
         <CardTitle>{title}</CardTitle>
         {description && <CardDescription>{description}</CardDescription>}
       </CardHeader>
-      <CardContent className="px-4">{children}</CardContent>
+      <CardContent className="min-w-0 px-4">{children}</CardContent>
     </Card>
   );
 }

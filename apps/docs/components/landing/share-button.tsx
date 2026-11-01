@@ -10,10 +10,13 @@ export function ShareButton({
   title,
   label = "Share",
   blockId,
+  shapeClassName,
 }: {
   title: string;
   label?: string;
   blockId: string;
+  /** buttonShapeClass(theme) */
+  shapeClassName?: string;
 }) {
   const [copied, setCopied] = useState(false);
 
@@ -38,7 +41,7 @@ export function ShareButton({
 
   return (
     <button
-      className={buttonClass("outline")}
+      className={buttonClass("outline", shapeClassName)}
       data-lp-block={blockId}
       data-lp-target="share"
       data-qrdx-event="share"
