@@ -62,17 +62,18 @@ describe("mixed combinations", () => {
   // miss at a single distance, old shapes as often as new ones (vertical-
   // line misses 6 of ~400), so here each combination must read at two of
   // the three distances.
-  it.each(
-    combos
-  )("%s body, %s eyes, %s dots", (bodyPattern, cornerEyePattern, cornerEyeDotPattern) => {
-    const missed = unreadable({
-      bodyPattern: bodyPattern as QRProps["bodyPattern"],
-      cornerEyePattern: cornerEyePattern as QRProps["cornerEyePattern"],
-      cornerEyeDotPattern:
-        cornerEyeDotPattern as QRProps["cornerEyeDotPattern"],
-    });
-    expect(missed.length).toBeLessThanOrEqual(1);
-  });
+  it.each(combos)(
+    "%s body, %s eyes, %s dots",
+    (bodyPattern, cornerEyePattern, cornerEyeDotPattern) => {
+      const missed = unreadable({
+        bodyPattern: bodyPattern as QRProps["bodyPattern"],
+        cornerEyePattern: cornerEyePattern as QRProps["cornerEyePattern"],
+        cornerEyeDotPattern:
+          cornerEyeDotPattern as QRProps["cornerEyeDotPattern"],
+      });
+      expect(missed.length).toBeLessThanOrEqual(1);
+    }
+  );
 });
 
 describe("moduleScale", () => {
@@ -86,19 +87,22 @@ describe("moduleScale", () => {
   });
 
   // Each pattern stops shrinking at the smallest size that still scans
-  it.each(
-    BODY_PATTERN.filter((body) => !WEAK_BODIES.has(body))
-  )("%s still decodes at the smallest moduleScale", (bodyPattern) => {
-    expect(unreadable({ ...PLAIN, bodyPattern, moduleScale: 0.5 })).toEqual([]);
-    expect(unreadable({ bodyPattern, moduleScale: 0.5 })).toEqual([]);
-    expect(
-      unreadable(
-        { ...PLAIN, ...INVERTED, bodyPattern, moduleScale: 0.5 },
-        PHONE_MODULE_SIZES,
-        INVERTED.bgColor
-      )
-    ).toEqual([]);
-  });
+  it.each(BODY_PATTERN.filter((body) => !WEAK_BODIES.has(body)))(
+    "%s still decodes at the smallest moduleScale",
+    (bodyPattern) => {
+      expect(unreadable({ ...PLAIN, bodyPattern, moduleScale: 0.5 })).toEqual(
+        []
+      );
+      expect(unreadable({ bodyPattern, moduleScale: 0.5 })).toEqual([]);
+      expect(
+        unreadable(
+          { ...PLAIN, ...INVERTED, bodyPattern, moduleScale: 0.5 },
+          PHONE_MODULE_SIZES,
+          INVERTED.bgColor
+        )
+      ).toEqual([]);
+    }
+  );
 
   it("shrinks modules but keeps alignment patterns full size", () => {
     const full = renderSvg({ value: VALUE, size: 256, bodyPattern: "star" });

@@ -29,12 +29,13 @@ export function probePolar(): Promise<PolarProbe> {
         organizationSlug: null,
       };
     }
-    const options = { timeoutMs: 4000, retries: { strategy: "none" as const } };
+    // Seconds; SDK 1.0 has no automatic retries.
+    const options = { timeout: 4 };
     try {
       const page = await withTimeout(4500, () =>
-        polar.organizations.listOrganizations({ limit: 1 }, options),
+        polar.organizations.list({ limit: 1 }, options),
       );
-      const organization = page.result.items[0];
+      const organization = page.items[0];
       return {
         ok: true,
         detail: organization

@@ -19,8 +19,8 @@
     "format": "biome format --write"
   },
   "dependencies": {
-    "@ai-sdk/google": "^3.0.140",
-    "@ai-sdk/react": "^3.0.323",
+    "@ai-sdk/google": "^4.0.109",
+    "@ai-sdk/react": "^4.0.163",
     "@aws-sdk/client-s3": "^3.1161.0",
     "@aws-sdk/s3-request-presigner": "^3.1161.0",
     "@c15t/nextjs": "3.2.1",
@@ -30,8 +30,8 @@
     "@modelcontextprotocol/server": "^2.4.0",
     "@neondatabase/serverless": "^1.2.0",
     "@ngard/tiny-isequal": "^1.1.0",
-    "@polar-sh/nextjs": "^0.9.6",
-    "@polar-sh/sdk": "^0.49.0",
+    "@polar-sh/nextjs": "^1.1.0",
+    "@polar-sh/sdk": "^1.0.2",
     "@radix-ui/react-hover-card": "^1.2.1",
     "@react-email/render": "^2.2.0",
     "@repo/auth": "workspace:*",
@@ -52,7 +52,7 @@
     "@tiptap/starter-kit": "^3.32.2",
     "@tiptap/suggestion": "^3.32.2",
     "@upstash/ratelimit": "^2.2.0",
-    "ai": "^6.0.320",
+    "ai": "^7.0.159",
     "barcode-detector": "^3.2.3",
     "bcryptjs": "^3.0.2",
     "class-variance-authority": "^0.7.1",
@@ -72,11 +72,11 @@
     "iconsax-reactjs": "0.0.8",
     "idb-keyval": "^6.3.0",
     "isbot": "^5.2.2",
-    "katex": "^0.16.47",
+    "katex": "^0.19.1",
     "lottie-web": "^5.13.0",
     "lucide-react": "^1.66.0",
     "mcp-handler": "^2.3.0",
-    "mermaid": "^11.17.2",
+    "mermaid": "^12.2.0",
     "motion": "^14.9.0",
     "next": "16.4.3",
     "next-themes": "^0.4.6",
@@ -88,7 +88,7 @@
     "react": "19.3.1",
     "react-colorful": "^5.8.1",
     "react-dom": "19.3.1",
-    "react-dropzone": "^19.3.0",
+    "react-dropzone": "^20.1.4",
     "react-email": "^6.11.6",
     "react-hook-form": "^7.91.0",
     "react-remove-scroll": "^2.7.2",
@@ -114,7 +114,7 @@
     "zustand": "^5.0.16"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.4.4",
+    "@biomejs/biome": "2.6.4",
     "@svgr/webpack": "^8.1.0",
     "@types/estree": "^1.0.10",
     "@types/hast": "^3.0.5",
@@ -130,11 +130,14 @@
     "ts-morph": "^28.0.0",
     "tsx": "^4.23.15",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.12"
+    "vitest": "^5.0.5"
   },
   "browserslist": [
     "defaults",
     "not IE 11",
     "not dead"
-  ]
+  ],
+  "engines": {
+    "node": "^22.22.3"
+  }
 }

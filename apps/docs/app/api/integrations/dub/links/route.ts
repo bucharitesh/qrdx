@@ -51,7 +51,7 @@ async function getActiveDubClient() {
 
   const integration = await getDubIntegration(session.user.id);
 
-  if (!integration || integration.status !== "active") {
+  if (integration?.status !== "active") {
     return {
       error: NextResponse.json(
         { error: "Dub integration not connected" },

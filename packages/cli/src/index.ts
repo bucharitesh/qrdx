@@ -30,7 +30,7 @@ const LOGO_LINES = [
 // ─── Version ──────────────────────────────────────────────────────────────────
 function getVersion(): string {
   try {
-    const pkgPath = join(__dirname, "..", "package.json");
+    const pkgPath = join(import.meta.dirname, "..", "package.json");
     const pkg = JSON.parse(readFileSync(pkgPath, "utf-8")) as {
       version: string;
     };

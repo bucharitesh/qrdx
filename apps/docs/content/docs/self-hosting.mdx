@@ -12,7 +12,7 @@ QRdx is AGPL-3.0 licensed, and you can run the whole web app (QR editor, account
 
 ## Requirements
 
-- Docker with Compose v2, or Node.js 20+ and pnpm 10 for the manual setup
+- Docker with Compose v2, or Node.js 22 (22.22.3 or later) and pnpm 10 for the manual setup
 - A way to sign in, so accounts can be created: a GitHub or Google OAuth app, or [Resend](https://resend.com) for email sign-in codes. Codes are emailed only when `NEXT_PUBLIC_APP_URL` isn't `localhost`; `pnpm dev` prints them in the terminal instead.
 - Postgres: the container bundled in `docker-compose.yml`, or a [Neon](https://neon.tech) database
 

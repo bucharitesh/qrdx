@@ -64,7 +64,7 @@ const HALF_TOP = RAMP.length; // ▀
 const HALF_BOTTOM = RAMP.length + 1; // ▄
 const FULL = RAMP.length + 2; // █
 
-const clamp01 = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v);
+const clamp01 = (v: number) => (v < 0 ? 0 : Math.min(v, 1));
 
 function makeSpec(
   variant: AsciiVariant,

@@ -1,8 +1,9 @@
 import {
   createUIMessageStream,
   createUIMessageStreamResponse,
-  stepCountIs,
+  isStepCount,
   streamText,
+  toUIMessageStream,
 } from "ai";
 import type { NextRequest } from "next/server";
 import { QR_THEME_GENERATION_TOOLS } from "@/lib/ai/generate-qr-theme/tools";
@@ -27,7 +28,7 @@ import {
   reserveAIRequest,
 } from "@/lib/subscription";
 import { generateQRThemeRequestSchema } from "@/lib/validations/ai";
-import type { AdditionalAIContext, ChatMessage } from "@/types/ai";
+import type { ChatMessage } from "@/types/ai";
 import { convertMessagesToModelMessages } from "@/utils/ai/message-converter";
 
 export async function POST(req: NextRequest) {
@@ -53,38 +54,38 @@ export async function POST(req: NextRequest) {
     const stream = createUIMessageStream<ChatMessage>({
       onError: streamErrorMessage,
       execute: ({ writer }) => {
-        const context: AdditionalAIContext = { writer };
-
         const result = streamText({
           abortSignal: req.signal,
           model: model,
           providerOptions: baseProviderOptions,
-          system: GENERATE_QR_THEME_SYSTEM,
+          instructions: GENERATE_QR_THEME_SYSTEM,
           messages: modelMessages,
           tools: QR_THEME_GENERATION_TOOLS,
-          stopWhen: stepCountIs(5),
+          stopWhen: isStepCount(5),
           onError: async ({ error }) => {
             logError(error as Error, { route: "/api/generate-qr-theme" });
             await releaseAIRequest(usageId).catch((releaseError) =>
               logError(releaseError as Error, { action: "releaseAIRequest" }),
             );
           },
-          onFinish: async (result) => {
-            const { totalUsage } = result;
+          // `usage` covers every step (v6's `totalUsage`).
+          onEnd: async ({ usage }) => {
             try {
-              await finalizeAIRequest(usageId, totalUsage);
+              await finalizeAIRequest(usageId, usage);
             } catch (error) {
               logError(error as Error, {
                 action: "finalizeAIRequest",
-                totalUsage,
+                totalUsage: usage,
               });
             }
           },
-          experimental_context: context,
+          toolsContext: { generateQRTheme: { writer } },
         });
 
         writer.merge(
-          result.toUIMessageStream({
+          toUIMessageStream<typeof QR_THEME_GENERATION_TOOLS, ChatMessage>({
+            stream: result.stream,
+            tools: QR_THEME_GENERATION_TOOLS,
             onError: streamErrorMessage,
             messageMetadata: ({ part }) => {
               // `toolName` is not typed for some reason, must be kept in sync with the actual tool names

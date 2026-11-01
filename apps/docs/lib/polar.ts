@@ -1,9 +1,11 @@
-import { Polar } from "@polar-sh/sdk";
+import { createPolar, type Polar } from "@polar-sh/sdk/2026-10";
 import { env } from "@/lib/env";
 
-export const polar = new Polar({
-  accessToken: env.POLAR_ACCESS_TOKEN,
-  server: env.NODE_ENV === "production" ? "production" : "sandbox",
+// Every call is gated on isBillingConfigured, so the empty fallback token is
+// never sent. Request and response fields are snake_case since SDK 1.0.
+export const polar: Polar = createPolar({
+  accessToken: env.POLAR_ACCESS_TOKEN ?? "",
+  environment: env.NODE_ENV === "production" ? "production" : "sandbox",
 });
 
 /** Billing needs a Polar access token; checkout also needs a product id. */

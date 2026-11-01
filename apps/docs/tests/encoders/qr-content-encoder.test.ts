@@ -47,15 +47,16 @@ describe("type catalog", () => {
     expect(validateContent(config)).toEqual({ valid: true });
   });
 
-  it.each(
-    ALL_TYPES,
-  )("%s: an empty config encodes to nothing and fails validation", (type) => {
-    const empty = { type } as QRContentConfig;
-    expect(enc(empty)).toBe("");
-    const result = validateContent(empty);
-    expect(result.valid).toBe(false);
-    expect(result.error).toMatch(/required/i);
-  });
+  it.each(ALL_TYPES)(
+    "%s: an empty config encodes to nothing and fails validation",
+    (type) => {
+      const empty = { type } as QRContentConfig;
+      expect(enc(empty)).toBe("");
+      const result = validateContent(empty);
+      expect(result.valid).toBe(false);
+      expect(result.error).toMatch(/required/i);
+    },
+  );
 
   it("returns an empty payload for no config", () => {
     expect(encodeQRContent(null)).toBe("");
@@ -291,13 +292,12 @@ describe("wifi (ZXing WIFI: format)", () => {
     expect(payload.endsWith(";;")).toBe(true);
   });
 
-  it.each([
-    "WPA",
-    "WEP",
-    "nopass",
-  ] as const)("marks a hidden %s network with H:true", (encryption) => {
-    expect(wifi({ encryption, hidden: true })).toContain("H:true;");
-  });
+  it.each(["WPA", "WEP", "nopass"] as const)(
+    "marks a hidden %s network with H:true",
+    (encryption) => {
+      expect(wifi({ encryption, hidden: true })).toContain("H:true;");
+    },
+  );
 
   it('escapes \\ ; , : and " in the SSID and password', () => {
     const payload = wifi({ ssid: 'My;Net,"1":\\', password: 'p;a,s"s:\\' });
@@ -449,14 +449,14 @@ describe("maps", () => {
     expect(enc({ type: "maps", location })).toBe(expected);
   });
 
-  it.each([
-    "91, 10",
-    "45, 181",
-  ])("treats out-of-range %j as a search, not coordinates (RFC 5870 ranges)", (location) => {
-    expect(enc({ type: "maps", location })).toBe(
-      `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location)}`,
-    );
-  });
+  it.each(["91, 10", "45, 181"])(
+    "treats out-of-range %j as a search, not coordinates (RFC 5870 ranges)",
+    (location) => {
+      expect(enc({ type: "maps", location })).toBe(
+        `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location)}`,
+      );
+    },
+  );
 
   it("percent-encodes a trimmed address search", () => {
     expect(

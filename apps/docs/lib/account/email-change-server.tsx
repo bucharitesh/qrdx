@@ -34,10 +34,7 @@ async function updatePolarCustomerEmail(
 ): Promise<"updated" | "no-customer" | "not-configured" | "failed"> {
   if (!isBillingConfigured) return "not-configured";
   try {
-    await polar.customers.updateExternal({
-      externalId: userId,
-      customerUpdateExternalID: { email },
-    });
+    await polar.customers.updateExternal(userId, { email });
     return "updated";
   } catch (error) {
     if (isNotFound(error)) return "no-customer";

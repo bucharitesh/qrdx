@@ -35,18 +35,19 @@ describe("capacity (ISO/IEC 18004 Table 7)", () => {
     ["H", 40, 3057, 1852, 1273],
   ];
 
-  it.each(
-    table
-  )("%s-level version %i holds %i digits, %i alphanumerics, %i bytes exactly", (level, version, numeric, alnum, bytes) => {
-    expect(versionFor("1".repeat(numeric), level)).toBe(version);
-    expect(versionFor("A".repeat(alnum), level)).toBe(version);
-    expect(versionFor("a".repeat(bytes), level)).toBe(version);
-    if (version < 40) {
-      expect(versionFor("1".repeat(numeric + 1), level)).toBe(version + 1);
-      expect(versionFor("A".repeat(alnum + 1), level)).toBe(version + 1);
-      expect(versionFor("a".repeat(bytes + 1), level)).toBe(version + 1);
+  it.each(table)(
+    "%s-level version %i holds %i digits, %i alphanumerics, %i bytes exactly",
+    (level, version, numeric, alnum, bytes) => {
+      expect(versionFor("1".repeat(numeric), level)).toBe(version);
+      expect(versionFor("A".repeat(alnum), level)).toBe(version);
+      expect(versionFor("a".repeat(bytes), level)).toBe(version);
+      if (version < 40) {
+        expect(versionFor("1".repeat(numeric + 1), level)).toBe(version + 1);
+        expect(versionFor("A".repeat(alnum + 1), level)).toBe(version + 1);
+        expect(versionFor("a".repeat(bytes + 1), level)).toBe(version + 1);
+      }
     }
-  });
+  );
 
   it("rejects data beyond version 40 with a 'Data too long' error", () => {
     expect(() => QrCode.encodeText("a".repeat(2954), QrCode.Ecc.LOW)).toThrow(

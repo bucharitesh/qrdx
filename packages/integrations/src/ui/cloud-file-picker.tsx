@@ -317,7 +317,7 @@ export function CloudFilePicker({
 
         <nav
           aria-label="Folder"
-          className="flex min-h-6 flex-wrap items-center gap-1 text-muted-foreground text-xs"
+          className="flex min-h-6 flex-wrap items-center gap-1 text-xs text-muted-foreground"
         >
           {searching ? (
             <span>
@@ -356,7 +356,7 @@ export function CloudFilePicker({
 
         {error && (
           <div
-            className="rounded-md bg-destructive/10 p-3 text-destructive text-sm"
+            className="rounded-md bg-destructive/10 p-3 text-sm text-destructive"
             role="alert"
           >
             {error}
@@ -375,10 +375,10 @@ export function CloudFilePicker({
                 className="mb-3 size-10 text-muted-foreground"
                 variant="Bulk"
               />
-              <p className="font-medium text-sm">
+              <p className="text-sm font-medium">
                 {searching ? "Nothing matches" : "Nothing here yet"}
               </p>
-              <p className="max-w-sm text-pretty text-muted-foreground text-xs">
+              <p className="max-w-sm text-xs text-pretty text-muted-foreground">
                 {searching
                   ? "Try a different search term."
                   : (emptyHint ?? `This ${providerName} folder is empty.`)}
@@ -393,7 +393,7 @@ export function CloudFilePicker({
               {!searching && trail.length > 1 && (
                 <li>
                   <button
-                    className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-left text-muted-foreground text-sm hover:bg-accent focus-visible:bg-accent focus-visible:outline-none"
+                    className="flex w-full items-center gap-3 rounded-md px-3 py-2 text-left text-sm text-muted-foreground hover:bg-accent focus-visible:bg-accent focus-visible:outline-none"
                     data-picker-row
                     onClick={() => goTo(trail.length - 2)}
                     onKeyDown={onRowKeyDown}
@@ -435,7 +435,7 @@ export function CloudFilePicker({
                           {item.name}
                         </span>
                         {meta.length > 0 && (
-                          <span className="block truncate text-muted-foreground text-xs">
+                          <span className="block truncate text-xs text-muted-foreground">
                             {meta.join(" · ")}
                           </span>
                         )}
@@ -492,7 +492,7 @@ export function CloudFilePicker({
           )}
         </ScrollArea>
 
-        <p className="text-muted-foreground text-xs">
+        <p className="text-xs text-muted-foreground">
           Use ↑ ↓ to move, Enter to open or pick
           {trail.length > 1 && !searching ? ", Backspace to go back" : ""}.
         </p>

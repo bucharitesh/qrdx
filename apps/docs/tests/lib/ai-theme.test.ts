@@ -47,19 +47,15 @@ describe("themeStylePropsOutputSchema", () => {
     expect(themeStylePropsOutputSchema.safeParse(rest).success).toBe(false);
   });
 
-  it.each([
-    "#fff",
-    "#FFFFFF80",
-    "white",
-    "rgb(0,0,0)",
-    "FFFFFF",
-    "#GGGGGG",
-  ])("rejects the color %j (only #RRGGBB)", (color) => {
-    expect(
-      themeStylePropsOutputSchema.safeParse({ ...theme, fgColor: color })
-        .success,
-    ).toBe(false);
-  });
+  it.each(["#fff", "#FFFFFF80", "white", "rgb(0,0,0)", "FFFFFF", "#GGGGGG"])(
+    "rejects the color %j (only #RRGGBB)",
+    (color) => {
+      expect(
+        themeStylePropsOutputSchema.safeParse({ ...theme, fgColor: color })
+          .success,
+      ).toBe(false);
+    },
+  );
 
   it("rejects gradients", () => {
     expect(

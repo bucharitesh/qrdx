@@ -204,16 +204,14 @@ describe("print layout", () => {
     ).toBe(20);
   });
 
-  it.each([
-    4.9,
-    2001,
-    Number.NaN,
-    Number.POSITIVE_INFINITY,
-  ])("rejects a %s mm code", (size) => {
-    expect(() => getPrintLayout({ value: VALUE }, { size })).toThrow(
-      /between 5 mm and 2 m/
-    );
-  });
+  it.each([4.9, 2001, Number.NaN, Number.POSITIVE_INFINITY])(
+    "rejects a %s mm code",
+    (size) => {
+      expect(() => getPrintLayout({ value: VALUE }, { size })).toThrow(
+        /between 5 mm and 2 m/
+      );
+    }
+  );
 
   it("makes the frame part of the trim size", () => {
     const plain = getPrintLayout({ value: VALUE }, { size: 40 });

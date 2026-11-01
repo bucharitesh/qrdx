@@ -52,12 +52,6 @@ body {
   overflow-wrap: anywhere;
 }
 
-.selected .button {
-  justify-self: start;
-  min-height: 28px;
-  padding: 4px 10px;
-}
-
 .field {
   display: grid;
   gap: 6px;
@@ -213,6 +207,12 @@ textarea {
   font: inherit;
   font-weight: 500;
   cursor: pointer;
+}
+
+.selected .button {
+  justify-self: start;
+  min-height: 28px;
+  padding: 4px 10px;
 }
 
 .button:hover:not(:disabled) {
