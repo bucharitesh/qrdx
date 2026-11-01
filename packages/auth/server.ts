@@ -197,6 +197,10 @@ export const auth = betterAuth({
     window: 10, // time window in seconds
     max: 10, // max requests in the window
     customRules: {
+      // Every page load and tab focus reads the session; a strict limit made
+      // fast browsing (several tabs, quick navigation) look signed out with
+      // 429s. It's a cheap read of the visitor's own cookie, so allow plenty.
+      "/get-session": { window: 10, max: 100 },
       // Each request emails someone: 3 a minute (the dialog waits 30 s between resends).
       [SEND_CODE_PATH]: { window: 60, max: 3 },
       // Each code allows 3 tries, so 5 a minute leaves room for one resend.
