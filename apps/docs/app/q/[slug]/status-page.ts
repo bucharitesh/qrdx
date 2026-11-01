@@ -19,7 +19,7 @@ const PAGES: Record<
     status: 404,
     title: "QR code not found",
     message:
-      "This link does not belong to any QR code. Check that it was typed correctly.",
+      "This link doesn't lead to a QR code. Its owner may have removed it, or the link was mistyped.",
   },
   "rate-limited": {
     status: 429,

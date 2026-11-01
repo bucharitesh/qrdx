@@ -1,12 +1,14 @@
 "use client";
 
-import { Spinner as LoaderCircle } from "@repo/design-system/components/icons";
+import {
+  Info,
+  Spinner as LoaderCircle,
+} from "@repo/design-system/components/icons";
 import { cn } from "@repo/design-system/lib/utils";
 import {
   MessageQuestion as CircleHelp,
   ExportSquare as ExternalLink,
   Flag,
-  InfoCircle as Info,
   RotateRight as RotateCw,
   ShieldCross as ShieldAlert,
   ShieldTick as ShieldCheck,

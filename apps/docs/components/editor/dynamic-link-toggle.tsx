@@ -18,6 +18,7 @@ import {
 } from "@/actions/qr-codes";
 import { emitSound } from "@/components/editor/sound";
 import { InfoHint } from "@/components/help/info-hint";
+import { track } from "@/lib/analytics";
 import { useMounted } from "@/lib/hooks/use-mounted";
 import { useAuthStore } from "@/store/auth-store";
 import { useQREditorStore } from "@/store/editor-store";
@@ -226,6 +227,7 @@ export function DynamicLinkToggle() {
       });
       setValue(result.data.shortLink);
       emitSound("success");
+      track("dynamic_code_created", { source: "playground" });
       toast.success("Your QR code is now dynamic", {
         description: trimmed
           ? "Change where it points at any time. Your logo was too large to save with the code."

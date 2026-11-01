@@ -1,13 +1,15 @@
 import { cn } from "@repo/design-system/lib/utils";
+import { Code1 } from "iconsax-reactjs";
 
 /**
- * Local logo files in public/compare, keyed by compare slug. Brand logos are
- * drawn for light backgrounds, so they always sit on a white tile (legible in
- * light and dark mode). Entries without a file get a neutral monogram.
+ * Local logo files in public, keyed by compare slug. Brand logos are drawn for
+ * light backgrounds, so they always sit on a white tile (legible in light and
+ * dark mode). The tile is round, so brands with a compact mark use it rather
+ * than their wordmark. Open-source libraries without a logo get a code icon.
  */
 const LOGOS: Partial<Record<string, string>> = {
   "adobe-express": "/compare/adobe-express.svg",
-  "bitly-qr": "/compare/bitly-qr.svg",
+  "bitly-qr": "/integrations/bitly.svg",
   "canva-qr": "/compare/canva-qr.svg",
   dub: "/compare/dub.png",
   flowcode: "/compare/flowcode.svg",
@@ -27,9 +29,9 @@ const LOGOS: Partial<Record<string, string>> = {
 };
 
 const SIZES = {
-  sm: "size-8 p-1 text-xs",
-  md: "size-10 p-1.5 text-sm",
-  lg: "size-20 p-4 text-2xl md:size-24 md:p-5 md:text-3xl",
+  sm: { tile: "size-8 p-1", icon: "size-4" },
+  md: { tile: "size-10 p-1.5", icon: "size-5" },
+  lg: { tile: "size-20 p-4 md:size-24 md:p-5", icon: "size-9 md:size-11" },
 } as const;
 
 interface CompetitorLogoProps {
@@ -39,7 +41,7 @@ interface CompetitorLogoProps {
   className?: string;
 }
 
-/** A competitor's logo on a white tile, or a monogram when there's no file. */
+/** A competitor's logo on a white tile, or a code icon when there's no file. */
 export function CompetitorLogo({
   slug,
   name,
@@ -51,8 +53,8 @@ export function CompetitorLogo({
   return (
     <span
       className={cn(
-        "grid shrink-0 place-items-center overflow-hidden rounded-full bg-white ring-1 ring-black/10 dark:ring-white/10",
-        SIZES[size],
+        "grid shrink-0 grid-cols-1 grid-rows-1 place-items-center overflow-hidden rounded-full bg-white ring-1 ring-black/10 dark:ring-white/10",
+        SIZES[size].tile,
         className,
       )}
     >
@@ -64,13 +66,11 @@ export function CompetitorLogo({
           src={src}
         />
       ) : (
-        <span
-          aria-label={`${name} logo`}
-          className="font-semibold leading-none text-neutral-700"
+        <Code1
+          aria-label={name}
+          className={cn("text-neutral-700", SIZES[size].icon)}
           role="img"
-        >
-          {name.charAt(0).toUpperCase()}
-        </span>
+        />
       )}
     </span>
   );

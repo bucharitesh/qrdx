@@ -1,10 +1,8 @@
 /** biome-ignore-all lint/a11y/noSvgWithoutTitle: false positive */
-"use client";
-
 import { cn } from "@repo/design-system/lib/utils";
-import { AnimatePresence, motion } from "motion/react";
-import React from "react";
-import { Icons } from "./icons";
+import type React from "react";
+import { SantaHatMark } from "./brand-marks";
+import styles from "./qrdx-logo-animation.module.css";
 
 interface QrdxLogoAnimationProps {
   size?: number;
@@ -49,28 +47,32 @@ const bottomRightShapes = [
   "M177.5 156 L196 167.5 L196 188.5 L177.5 199 L159 188.5 L159 167.5 Z", // Hexagon
 ];
 
+/** Each inner square's four shapes and its centre (the zoom origin). */
+const SLOTS = [
+  { shapes: topLeftShapes, origin: "78.5px 78.5px" },
+  { shapes: topRightShapes, origin: "177.5px 78.5px" },
+  { shapes: centerShapes, origin: "128px 128px" },
+  { shapes: bottomLeftShapes, origin: "78.5px 177.5px" },
+  { shapes: bottomRightShapes, origin: "177.5px 177.5px" },
+];
+
+/**
+ * The QRdx mark with its inner squares morphing through square, triangle,
+ * circle and hexagon every 2 s while the corners turn a quarter. Pure CSS
+ * (qrdx-logo-animation.module.css): no script, no re-renders, and a still
+ * mark with reduced motion.
+ */
 export const QrdxLogoAnimation: React.FC<QrdxLogoAnimationProps> = ({
   season = "default",
   size = 256,
   color = "var(--secondary-foreground)",
   className = "",
 }) => {
-  const [currentShape, setCurrentShape] = React.useState(0);
-  const [rotationCount, setRotationCount] = React.useState(0);
-
-  React.useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentShape((prev) => (prev + 1) % centerShapes.length);
-      setRotationCount((prev) => prev + 1);
-    }, 2000);
-    return () => clearInterval(interval);
-  }, []);
-
   return (
     <div className={cn("relative mr-2", className)}>
       {season === "christmas" && (
         <div className="z-1 relative">
-          <Icons.santa
+          <SantaHatMark
             className="absolute"
             style={{
               top: size * -0.3,
@@ -82,27 +84,17 @@ export const QrdxLogoAnimation: React.FC<QrdxLogoAnimationProps> = ({
           />
         </div>
       )}
-      <motion.svg
+      <svg
+        aria-hidden="true"
+        className={styles.logo}
         width={size}
         height={size}
         viewBox="0 0 300 300"
         fill="none"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ opacity: { duration: 0.5 } }}
         style={{ overflow: "visible" }}
       >
         {/* Corners - with rotation */}
-        <motion.g
-          initial={{ rotate: 0 }}
-          animate={{ rotate: rotationCount * 90 }}
-          transition={{
-            duration: 0.5,
-            ease: "easeInOut",
-          }}
-          style={{ transformOrigin: "128px 128px" }}
-        >
+        <g className={styles.corners}>
           {/* Top-left corner */}
           <path
             d="M0 50.055C0 22.4081 22.4069 0 50.0523 0H76.7022C84.6002 0 91 6.40519 91 14.2986C91 22.1919 84.5952 28.5971 76.7022 28.5971H50.0523C38.2078 28.5971 28.6006 38.1999 28.6006 50.05V76.7014C28.6006 84.5998 22.1957 91 14.3028 91C6.40987 91 0 84.6049 0 76.7065V50.055Z"
@@ -123,78 +115,27 @@ export const QrdxLogoAnimation: React.FC<QrdxLogoAnimationProps> = ({
             d="M241.702 165C249.6 165 256 171.4 256 179.298V205.948C256 233.588 233.593 256 205.948 256H179.298C171.4 256 165 249.6 165 241.702C165 233.804 171.405 227.404 179.298 227.404H205.948C217.792 227.404 227.399 217.802 227.399 205.953V179.303C227.399 171.405 233.804 165 241.702 165Z"
             fill={color}
           />
-        </motion.g>
+        </g>
 
-        {/* Top-left inner square - animated */}
-        <AnimatePresence mode="wait">
-          <motion.path
-            key={`top-left-${currentShape}`}
-            d={topLeftShapes[currentShape]}
-            fill={color}
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-            transition={{ duration: 0.5 }}
-            style={{ transformOrigin: "78.5px 78.5px" }}
-          />
-        </AnimatePresence>
-
-        {/* Top-right inner square - animated */}
-        <AnimatePresence mode="wait">
-          <motion.path
-            key={`top-right-${currentShape}`}
-            d={topRightShapes[currentShape]}
-            fill={color}
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-            transition={{ duration: 0.5 }}
-            style={{ transformOrigin: "177.5px 78.5px" }}
-          />
-        </AnimatePresence>
-
-        {/* Center square - animated */}
-        <AnimatePresence mode="wait">
-          <motion.path
-            key={`center-${currentShape}`}
-            d={centerShapes[currentShape]}
-            fill={color}
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-            transition={{ duration: 0.5 }}
-            style={{ transformOrigin: "128px 128px" }}
-          />
-        </AnimatePresence>
-
-        {/* Bottom-left inner square - animated */}
-        <AnimatePresence mode="wait">
-          <motion.path
-            key={`bottom-left-${currentShape}`}
-            d={bottomLeftShapes[currentShape]}
-            fill={color}
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-            transition={{ duration: 0.5 }}
-            style={{ transformOrigin: "78.5px 177.5px" }}
-          />
-        </AnimatePresence>
-
-        {/* Bottom-right inner square - animated */}
-        <AnimatePresence mode="wait">
-          <motion.path
-            key={`bottom-right-${currentShape}`}
-            d={bottomRightShapes[currentShape]}
-            fill={color}
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-            transition={{ duration: 0.5 }}
-            style={{ transformOrigin: "177.5px 177.5px" }}
-          />
-        </AnimatePresence>
-      </motion.svg>
+        {/* Inner squares: all four shapes stacked, each shown in its turn. */}
+        {SLOTS.map((slot) =>
+          slot.shapes.map((d, index) => (
+            <path
+              key={d}
+              className={styles.shape}
+              d={d}
+              fill={color}
+              style={
+                {
+                  transformOrigin: slot.origin,
+                  "--shape-delay": `${0.5 + index * 2}s`,
+                  opacity: index === 0 ? 1 : 0,
+                } as React.CSSProperties
+              }
+            />
+          )),
+        )}
+      </svg>
     </div>
   );
 };

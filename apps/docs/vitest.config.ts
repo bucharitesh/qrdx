@@ -17,6 +17,12 @@ const config: ViteUserConfig = {
       { find: /^qrdx\/types$/, replacement: `${qrdx}/types/index.ts` },
       // Server-only modules are imported directly by these tests.
       { find: /^server-only$/, replacement: `${root}/tests/support/empty.ts` },
+      // The design system imports itself by package name (its tsconfig path),
+      // which pnpm doesn't link inside the package.
+      {
+        find: /^@repo\/design-system\//,
+        replacement: `${path.resolve(root, "../../packages/design-system")}/`,
+      },
     ],
   },
   test: {

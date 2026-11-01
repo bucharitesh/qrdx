@@ -1,15 +1,16 @@
 "use client";
 
+import { Star } from "@repo/design-system/components/icons";
+import { Crown, Flash, Heart, MagicStar } from "iconsax-reactjs";
 import { QRCodeSVG } from "qrdx";
 import { useEffect, useState } from "react";
-import { Icons } from "@/components/icons";
 
 const logos = [
-  { icon: Icons.Sparkles, color: "#FFD700" },
-  { icon: Icons.Heart, color: "#FF1493" },
-  { icon: Icons.Zap, color: "#FF6B35" },
-  { icon: Icons.Star, color: "#4169E1" },
-  { icon: Icons.Crown, color: "#9333EA" },
+  { icon: MagicStar, color: "#FFD700" },
+  { icon: Heart, color: "#FF1493" },
+  { icon: Flash, color: "#FF6B35" },
+  { icon: Star, color: "#4169E1" },
+  { icon: Crown, color: "#9333EA" },
 ];
 
 export function LogoShowcase() {

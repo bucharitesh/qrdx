@@ -21,10 +21,13 @@ export function AppsLinks({
   blockId,
   links,
   platform,
+  shapeClassName,
 }: {
   blockId: string;
   links: AppLink[];
   platform?: AppPlatform;
+  /** buttonShapeClass(theme) */
+  shapeClassName?: string;
 }) {
   const [detected, setDetected] = useState<AppPlatform>(platform ?? "other");
 
@@ -44,7 +47,7 @@ export function AppsLinks({
   return (
     <div className="space-y-2">
       <a
-        className={buttonClass("filled")}
+        className={buttonClass("filled", shapeClassName)}
         {...linkProps(primary.href, blockId, primary.kind)}
       >
         <PrimaryIcon aria-hidden="true" className="size-4" />
@@ -56,7 +59,7 @@ export function AppsLinks({
             const Icon = ICONS[link.kind];
             return (
               <a
-                className={buttonClass("outline")}
+                className={buttonClass("outline", shapeClassName)}
                 key={link.kind}
                 {...linkProps(link.href, blockId, link.kind)}
               >

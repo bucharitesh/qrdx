@@ -145,7 +145,7 @@ Disabling an endpoint stops new deliveries; deleting it also deletes its log. If
 
 ## Zapier, Make and n8n (REST Hooks)
 
-Automation tools can subscribe and unsubscribe on their own through the REST Hooks API. Authenticate with an OAuth access token, like the [codes API](/docs/dynamic-qr-codes#rest-api): `codes:write` to subscribe or unsubscribe, `codes:read` to list. Token requests act on your personal workspace. Subscriptions are ordinary endpoints: they appear in Dashboard → Webhooks, where you can also remove them.
+Automation tools can subscribe and unsubscribe on their own through the REST Hooks API. Authenticate with an OAuth access token, like the [codes API](/docs/dynamic-qr-codes#rest-api): `codes:write` to subscribe or unsubscribe, `codes:read` to list. Hook URLs are often secret, so with `codes:read` alone `target_url` shows only the host (`https://hooks.zapier.com/…`). Token requests act on your personal workspace. Subscriptions are ordinary endpoints: they appear in Dashboard → Webhooks, where you can also remove them.
 
 | Method | Path | Description |
 | --- | --- | --- |

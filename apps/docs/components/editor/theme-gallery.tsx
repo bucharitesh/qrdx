@@ -17,6 +17,7 @@ import * as React from "react";
 import { DialogCloseButton } from "@/components/editor/dialog-close-button";
 import { emitSound } from "@/components/editor/sound";
 import { seasonalPresetsFirst } from "@/components/seasonal/preset-order";
+import { track } from "@/lib/analytics";
 import { useThemeShuffle } from "@/lib/hooks/use-theme-shuffle";
 import {
   CATEGORY_LABELS,
@@ -283,6 +284,7 @@ export function ThemeGallery({ open, onOpenChange }: ThemeGalleryProps) {
   const apply = React.useCallback(
     (id: string) => {
       applyThemePreset(id);
+      track("theme_applied", { method: "preset", preset: id });
       emitSound("apply");
       onOpenChange(false);
     },

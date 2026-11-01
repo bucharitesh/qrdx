@@ -32,6 +32,7 @@ import { useDropzone } from "react-dropzone";
 import { InfoHint } from "@/components/help/info-hint";
 import { HairlineFigure } from "@/components/mockups/hairline";
 import { defaultThemeState } from "@/config/qr";
+import { track } from "@/lib/analytics";
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
 import { useMounted } from "@/lib/hooks/use-mounted";
 import { useQRThemes } from "@/lib/hooks/use-themes";
@@ -368,6 +369,12 @@ export function BulkGenerator() {
       const url = URL.createObjectURL(blob);
       const filename = `${sanitizeFilename(fileName?.replace(/\.[^.]+$/, "") ?? "") || "qr-codes"}-qr-codes.zip`;
       saveBlob(url, filename);
+      track("qr_generated", {
+        content_type: "bulk",
+        source: "bulk_tool",
+        count: generated,
+      });
+      track("qr_downloaded", { format: `zip-${format}`, source: "bulk_tool" });
       setStatus({
         phase: "done",
         url,
@@ -468,13 +475,15 @@ export function BulkGenerator() {
             <h2 className="font-medium">2. Map columns</h2>
             <div className="grid gap-3 sm:grid-cols-2">
               <div className="flex flex-col gap-1.5">
-                <Label className="text-xs">QR code content</Label>
+                <Label className="text-xs" htmlFor="bulk-value-column">
+                  QR code content
+                </Label>
                 <Select
                   value={String(valueColumn)}
                   onValueChange={(value) => setValueColumn(Number(value))}
                   disabled={running}
                 >
-                  <SelectTrigger className="w-full">
+                  <SelectTrigger className="w-full" id="bulk-value-column">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -490,13 +499,15 @@ export function BulkGenerator() {
                 </Select>
               </div>
               <div className="flex flex-col gap-1.5">
-                <Label className="text-xs">File name (optional)</Label>
+                <Label className="text-xs" htmlFor="bulk-filename-column">
+                  File name (optional)
+                </Label>
                 <Select
                   value={String(filenameColumn)}
                   onValueChange={(value) => setFilenameColumn(Number(value))}
                   disabled={running}
                 >
-                  <SelectTrigger className="w-full">
+                  <SelectTrigger className="w-full" id="bulk-filename-column">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -520,13 +531,15 @@ export function BulkGenerator() {
           <h2 className="font-medium">{table ? "3." : "2."} Choose a style</h2>
           <div className="grid gap-3 sm:grid-cols-2">
             <div className="flex flex-col gap-1.5">
-              <Label className="text-xs">Style</Label>
+              <Label className="text-xs" htmlFor="bulk-style">
+                Style
+              </Label>
               <Select
                 value={styleOptions.has(styleId) ? styleId : DEFAULT_STYLE_ID}
                 onValueChange={setStyleId}
                 disabled={running}
               >
-                <SelectTrigger className="w-full">
+                <SelectTrigger className="w-full" id="bulk-style">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -561,7 +574,7 @@ export function BulkGenerator() {
                 onValueChange={(value) => setLevel(value as LevelChoice)}
                 disabled={running}
               >
-                <SelectTrigger className="w-full">
+                <SelectTrigger aria-label="Error correction" className="w-full">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -574,13 +587,15 @@ export function BulkGenerator() {
               </Select>
             </div>
             <div className="flex flex-col gap-1.5">
-              <Label className="text-xs">Format</Label>
+              <Label className="text-xs" htmlFor="bulk-format">
+                Format
+              </Label>
               <Select
                 value={format}
                 onValueChange={(value) => setFormat(value as Format)}
                 disabled={running}
               >
-                <SelectTrigger className="w-full">
+                <SelectTrigger className="w-full" id="bulk-format">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -591,13 +606,15 @@ export function BulkGenerator() {
             </div>
             {format === "png" && (
               <div className="flex flex-col gap-1.5">
-                <Label className="text-xs">PNG size</Label>
+                <Label className="text-xs" htmlFor="bulk-png-size">
+                  PNG size
+                </Label>
                 <Select
                   value={String(pngSize)}
                   onValueChange={(value) => setPngSize(Number(value))}
                   disabled={running}
                 >
-                  <SelectTrigger className="w-full">
+                  <SelectTrigger className="w-full" id="bulk-png-size">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>

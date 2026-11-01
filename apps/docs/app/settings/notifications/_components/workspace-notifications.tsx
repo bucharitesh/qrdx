@@ -37,7 +37,6 @@ import {
   Edit2 as Pencil,
   Add as Plus,
   Send2 as Send,
-  Slack,
   Trash as Trash2,
 } from "iconsax-reactjs";
 import Link from "next/link";
@@ -80,9 +79,16 @@ const CHANNEL_HELP = {
   },
 } as const;
 
+/** The app's own logo mark (both read on light and dark backgrounds). */
 function ChatIcon({ channel }: { channel: "slack" | "discord" }) {
-  const Icon = channel === "slack" ? Slack : MessageSquare;
-  return <Icon aria-hidden className="text-muted-foreground size-4 shrink-0" />;
+  return (
+    <img
+      alt=""
+      aria-hidden
+      className="size-4 shrink-0 object-contain"
+      src={`/integrations/${channel}.svg`}
+    />
+  );
 }
 
 export function WorkspaceNotifications({

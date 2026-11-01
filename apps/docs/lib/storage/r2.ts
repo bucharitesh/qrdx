@@ -182,6 +182,29 @@ export async function headObject(key: string): Promise<StoredObject | null> {
   }
 }
 
+/**
+ * Stores a small object sent through the server (a profile picture). Check
+ * the bytes before calling; large files go through presignUpload instead.
+ */
+export async function putObject(
+  key: string,
+  body: Uint8Array,
+  { mime, cacheControl }: { mime: string; cacheControl?: string },
+): Promise<void> {
+  assertKey(key);
+  const { client, bucket } = storage();
+  await client.send(
+    new PutObjectCommand({
+      Bucket: bucket,
+      Key: key,
+      Body: body,
+      ContentType: mime,
+      ContentLength: body.byteLength,
+      ...(cacheControl && { CacheControl: cacheControl }),
+    }),
+  );
+}
+
 /** Deletes an object; deleting a missing key succeeds. */
 export async function deleteObject(key: string): Promise<void> {
   assertKey(key);

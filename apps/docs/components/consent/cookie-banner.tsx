@@ -13,7 +13,13 @@ import { Setting4, ShieldTick } from "iconsax-reactjs";
 import Link from "next/link";
 import { ACTION_LABELS, PRIVACY_POLICY_URL, TEXT_LINK } from "./consent-copy";
 
-/** First-visit prompt: a floating card (overlay, so no layout shift). */
+/**
+ * First-visit prompt: a floating card (overlay, so no layout shift).
+ *
+ * It appears after hydration, seconds after the page's own content on a slow
+ * phone, so its text must stay smaller than a page's hero copy or it becomes
+ * the page's LCP element: one short sentence, no icon on phones.
+ */
 export function CookieBanner() {
   const { banner, dialog, performBannerAction } = useHeadlessConsentUI();
   const prompt = usePromptRequirement();
@@ -34,7 +40,7 @@ export function CookieBanner() {
         <CardContent className="flex gap-3 px-5">
           <span
             aria-hidden="true"
-            className="grid size-9 shrink-0 place-items-center rounded-full border bg-muted/40"
+            className="grid size-9 shrink-0 place-items-center rounded-full border bg-muted/40 max-sm:hidden"
           >
             <ShieldTick variant="Bulk" className="size-4 text-foreground/80" />
           </span>
@@ -49,10 +55,13 @@ export function CookieBanner() {
               id="cookie-banner-description"
               className="text-pretty text-sm text-muted-foreground"
             >
-              Necessary cookies keep you signed in. With your OK, we also use
-              PostHog to see which features get used and Featurebase for the
-              feedback widget.{" "}
-              <Link href={PRIVACY_POLICY_URL} className={TEXT_LINK}>
+              We count visits without cookies; PostHog and the feedback widget
+              wait for your OK.{" "}
+              <Link
+                href={PRIVACY_POLICY_URL}
+                className={TEXT_LINK}
+                prefetch={false}
+              >
                 Privacy policy
               </Link>
             </p>

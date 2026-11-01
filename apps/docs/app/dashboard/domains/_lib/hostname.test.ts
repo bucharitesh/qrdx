@@ -2,6 +2,8 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
+  CUSTOM_DOMAIN_HEADER,
+  isCustomDomainRequest,
   isDnsHostname,
   isPlatformHostname,
   parseCustomHostname,
@@ -108,6 +110,30 @@ describe("requestHostname", () => {
     assert.equal(requestHostname("127.0.0.1:3000"), null);
     assert.equal(requestHostname("[::1]:3000"), null);
     assert.equal(requestHostname("bad host.com"), null);
+  });
+});
+
+describe("isCustomDomainRequest", () => {
+  const request = (host: string, tagged: boolean) =>
+    isCustomDomainRequest(
+      new Headers({
+        host,
+        ...(tagged ? { [CUSTOM_DOMAIN_HEADER]: "dom_123" } : {}),
+      }),
+    );
+
+  it("is true only for tagged requests on a customer's host", () => {
+    assert.equal(request("go.brand.com", true), true);
+    assert.equal(request("go.brand.com:443", true), true);
+    assert.equal(request("go.brand.com", false), false);
+  });
+
+  it("ignores the tag on QRdx's own hosts", () => {
+    assert.equal(request("qrdx.dev", true), false);
+    assert.equal(request("www.qrdx.dev", true), false);
+    assert.equal(request("qrdx-git-main.vercel.app", true), false);
+    assert.equal(request("localhost:3000", true), false);
+    assert.equal(request("127.0.0.1", true), false);
   });
 });
 

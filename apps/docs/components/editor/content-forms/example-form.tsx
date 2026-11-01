@@ -1,7 +1,7 @@
 "use client";
 
+import { Info } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
-import { InfoCircle } from "iconsax-reactjs";
 import * as React from "react";
 import { useQREditorStore } from "@/store/editor-store";
 import type { ContentType, QRContentConfig } from "@/types/qr-content";
@@ -44,7 +44,7 @@ export function ExampleForm({ type, Form }: ExampleFormProps) {
           {showingExample ? (
             <>
               <span className="text-muted-foreground inline-flex items-center gap-1.5">
-                <InfoCircle className="size-3.5 shrink-0" />
+                <Info className="size-3.5 shrink-0" />
                 Example data. Replace it with your own.
               </span>
               <Button

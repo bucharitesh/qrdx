@@ -34,6 +34,8 @@ For codes that open a hosted page, the **Tracking pixels** panel loads your own 
 
 Pixels only ever load when you set them up; QRdx adds no third-party scripts of its own to hosted pages.
 
+Google Tag Manager loads only when the page opens on one of your [custom domains](/docs/custom-domains). A container can run any script, so it never runs on qrdx.dev, where visitors may be signed in to QRdx.
+
 **Consent.** Pixels never load before the visitor agrees:
 
 - **Where required** (default): visitors in the EU/EEA, the UK and Switzerland, and visitors whose location is unknown, see a short banner naming your providers and choose **Accept** or **Decline**. The choice is remembered for that page, and **Cookie settings** lets them change it. Elsewhere pixels load right away, except for browsers that send the Global Privacy Control signal.

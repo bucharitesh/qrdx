@@ -14,6 +14,7 @@ import { useRouter } from "next/navigation";
 import { type FormEvent, useId, useState } from "react";
 import { toast } from "sonner";
 import { emitSound } from "@/components/editor/sound";
+import { track } from "@/lib/analytics";
 import { connectDataSourceAction } from "../../data-connection-actions";
 
 const linkClass =
@@ -89,6 +90,7 @@ export function SourceKeyForm({
         setKey("");
         setClientSecret("");
         emitSound("success");
+        track("integration_connected", { provider: slug });
         toast.success(`${name} connected`);
         router.refresh();
       } else {

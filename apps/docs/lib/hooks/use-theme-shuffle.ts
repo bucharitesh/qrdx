@@ -1,6 +1,7 @@
 "use client";
 
 import { create } from "zustand";
+import { track } from "@/lib/analytics";
 import { newShuffleSeed, shuffleId } from "@/lib/themes/shuffle";
 import { useQREditorStore } from "@/store/editor-store";
 import type { ThemeEditorState } from "@/types/editor";
@@ -33,6 +34,7 @@ export function shuffleNext() {
     origin: continuing ? origin : editor.themeState,
   });
   editor.applyThemePreset(shuffleId(seed));
+  track("theme_applied", { method: "shuffle" });
 }
 
 /** Returns to the previous shuffle, or to the look before the first one. */

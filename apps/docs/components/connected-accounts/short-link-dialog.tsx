@@ -195,7 +195,7 @@ export function ShortLinkDialog({
       <DialogContent className="gap-4 sm:max-w-lg">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2.5">
-            <span className="grid size-7 shrink-0 place-items-center rounded-full bg-white p-1 ring-1 ring-black/5 dark:ring-white/10">
+            <span className="grid size-7 shrink-0 grid-cols-1 grid-rows-1 place-items-center rounded-full bg-white p-1 ring-1 ring-black/5 dark:ring-white/10">
               <img
                 alt=""
                 className="size-full object-contain"

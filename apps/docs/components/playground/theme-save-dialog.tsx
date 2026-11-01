@@ -1,6 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Spinner } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   Form,
@@ -22,7 +23,6 @@ import {
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { Icons } from "@/components/icons";
 
 const formSchema = z.object({
   themeName: z.string().min(1, "Theme name cannot be empty."),
@@ -118,7 +118,7 @@ export function ThemeSaveDialog({
           >
             {isSaving || form.formState.isSubmitting ? (
               <>
-                <Icons.Loader className="mr-1 size-4 animate-spin" />
+                <Spinner className="mr-1 size-4 animate-spin" />
                 Saving
               </>
             ) : (

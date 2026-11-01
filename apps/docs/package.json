@@ -12,6 +12,8 @@
     "test:unit": "vitest run",
     "test:node": "node scripts/run-node-tests.mjs",
     "test:e2e": "tsx e2e/playground.e2e.ts",
+    "test:e2e:app": "tsx e2e/app.e2e.ts",
+    "test:e2e:site": "tsx e2e/site.e2e.ts",
     "registry:build": "tsx registry/build.ts",
     "postinstall": "fumadocs-mdx",
     "format": "biome format --write"

@@ -1,30 +1,30 @@
 "use client";
 
 import { AnimatePresence, motion } from "framer-motion";
+import { Code1, DocumentCode, Gallery, Import } from "iconsax-reactjs";
 import { useEffect, useState } from "react";
-import { Icons } from "@/components/icons";
 
 const formats = [
   {
-    icon: Icons.FileCode,
+    icon: DocumentCode,
     name: "SVG",
     color: "#FF6B35",
     description: "Vector",
   },
   {
-    icon: Icons.Image,
+    icon: Gallery,
     name: "PNG",
     color: "#4169E1",
     description: "Raster",
   },
   {
-    icon: Icons.Code2,
+    icon: Code1,
     name: "React",
     color: "#61DAFB",
     description: "Component",
   },
   {
-    icon: Icons.Download,
+    icon: Import,
     name: "Export",
     color: "#10B981",
     description: "Download",

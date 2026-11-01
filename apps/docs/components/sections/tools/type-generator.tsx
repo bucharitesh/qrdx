@@ -45,6 +45,8 @@ import { WifiForm } from "@/components/editor/content-forms/wifi-form";
 import { YouTubeForm } from "@/components/editor/content-forms/youtube-form";
 import { InfoHint } from "@/components/help/info-hint";
 import { HairlineFigure } from "@/components/mockups/hairline";
+import { track } from "@/lib/analytics";
+import { useTrackQrGenerated } from "@/lib/analytics/react";
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
 import { soundEvent } from "@/lib/sound/emit";
 import { dubshSchema, googleDriveSchema } from "@/lib/validations/qr-content";
@@ -209,6 +211,12 @@ export function TypeGenerator({ type }: { type: ContentType }) {
     });
   }, [type]);
 
+  useTrackQrGenerated(
+    "type_tool",
+    activeType,
+    activeType === "url" ? value : toPayload(activeType, config),
+  );
+
   if (!ready) return <GeneratorSkeleton />;
 
   // URL codes can be bound to a dynamic short link, which lives in `value`.
@@ -227,6 +235,11 @@ export function TypeGenerator({ type }: { type: ContentType }) {
         filename: `${activeType}-qr-code.${format}`,
       });
       soundEvent("download");
+      track("qr_downloaded", {
+        format,
+        source: "type_tool",
+        content_type: activeType,
+      });
     } catch (error) {
       toast.error("Download failed", {
         description: error instanceof Error ? error.message : undefined,

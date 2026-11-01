@@ -34,9 +34,12 @@ const SWIPE_PX = 40;
 function Thumbnail({
   image,
   shape,
+  lead,
 }: {
   image: GalleryGridImage;
   shape: "square" | "original";
+  /** In the page's lead row: "high" loads eagerly and first, "eager" eagerly. */
+  lead?: "high" | "eager";
 }) {
   const ref = useRef<HTMLImageElement>(null);
   const [failed, setFailed] = useState(false);
@@ -63,7 +66,8 @@ function Thumbnail({
         shape === "square" ? "aspect-square object-cover" : "h-auto",
       )}
       decoding="async"
-      loading="lazy"
+      fetchPriority={lead === "high" ? "high" : undefined}
+      loading={lead ? undefined : "lazy"}
       onError={() => setFailed(true)}
       ref={ref}
       src={image.src}
@@ -81,11 +85,17 @@ export function GalleryGrid({
   columns,
   shape,
   blockId,
+  leadImage = false,
 }: {
   images: GalleryGridImage[];
   columns: 1 | 2 | 3;
   shape: "square" | "original";
   blockId: string;
+  /**
+   * The first row is the page's lead photo (BlockRenderContext.leadImage):
+   * same-size row-mates loading later would take over as LCP.
+   */
+  leadImage?: boolean;
 }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const triggers = useRef<(HTMLButtonElement | null)[]>([]);
@@ -162,7 +172,17 @@ export function GalleryGrid({
               }}
               type="button"
             >
-              <Thumbnail image={image} shape={shape} />
+              <Thumbnail
+                image={image}
+                lead={
+                  !leadImage || i >= columns
+                    ? undefined
+                    : i === 0
+                      ? "high"
+                      : "eager"
+                }
+                shape={shape}
+              />
             </button>
             {image.caption && columns === 1 && (
               <p className="mt-1.5 text-center text-(--lp-muted-fg) text-sm">

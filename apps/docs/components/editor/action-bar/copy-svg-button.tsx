@@ -8,6 +8,7 @@ import { getQRData, getSVGString } from "qrdx";
 import { useState } from "react";
 import { emitSound } from "@/components/editor/sound";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
+import { track } from "@/lib/analytics";
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
 import { useQREditorStore } from "@/store/editor-store";
 
@@ -40,6 +41,7 @@ export function CopySVGButton() {
       await navigator.clipboard.writeText(svgContent);
       setCopied(true);
       emitSound("copy");
+      track("qr_copied", { format: "svg", source: "playground" });
       toast.success("SVG copied to clipboard");
       setTimeout(() => setCopied(false), 2000);
     } catch (error) {

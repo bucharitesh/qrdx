@@ -42,9 +42,6 @@ export type CatalogSurface =
   | "plugins"
   | "feature";
 
-/** iconsax brand icons used as logos (drawn in `color` on a white tile). */
-export type CatalogBrandIcon = "Slack" | "Figma" | "Chrome";
-
 /** iconsax icons used for QRdx's own features (neutral tile). */
 export type CatalogFeatureIcon =
   | "Code1"
@@ -55,9 +52,11 @@ export type CatalogFeatureIcon =
   | "Sms";
 
 export type CatalogLogo =
-  /** Third-party logo file in apps/docs/public, shown on a white tile. */
+  /**
+   * The brand's official logo file in apps/docs/public, shown on a white
+   * tile. Every third-party entry uses one; never an icon or an initial.
+   */
   | { type: "image"; src: string }
-  | { type: "brand"; icon: CatalogBrandIcon; color: string }
   | { type: "feature"; icon: CatalogFeatureIcon };
 
 export type CatalogSnippetLanguage =

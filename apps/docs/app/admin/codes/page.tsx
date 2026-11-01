@@ -47,14 +47,22 @@ export default async function AdminCodesPage({
   const status: AdminCodeStatus = isStatus(params.status)
     ? params.status
     : "all";
+  const kind =
+    params.kind === "page" || params.kind === "redirect"
+      ? params.kind
+      : undefined;
   const page = parsePage(params.page);
-  const { codes, total } = await listDynamicCodes({ q, status, page });
+  const { codes, total } = await listDynamicCodes({ q, status, kind, page });
 
   return (
     <div className="space-y-4">
       <SettingsHeader
         title="QR Codes"
-        description="Dynamic codes and their short links. Disabling a code stops its redirect (for phishing or abuse); the owner cannot re-enable it. Every change is written to the audit log."
+        description={
+          kind === "page"
+            ? "Hosted pages (codes of kind page, served at /p/<slug>). Disabling one takes the page down; the owner cannot re-enable it."
+            : "Dynamic codes and their short links. Disabling a code stops its redirect (for phishing or abuse); the owner cannot re-enable it. Every change is written to the audit log."
+        }
       />
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -70,6 +78,7 @@ export default async function AdminCodesPage({
                 href={`/admin/codes?${new URLSearchParams({
                   status: item.value,
                   ...(q && { q }),
+                  ...(kind && { kind }),
                 })}`}
               >
                 {item.label}
@@ -79,12 +88,13 @@ export default async function AdminCodesPage({
         </div>
         <form action="/admin/codes" className="flex gap-2" method="get">
           <input name="status" type="hidden" value={status} />
+          {kind && <input name="kind" type="hidden" value={kind} />}
           <Input
             aria-label="Search codes"
             className="max-w-sm"
             defaultValue={q}
             name="q"
-            placeholder="Slug, destination, title or owner email"
+            placeholder="Slug, destination, title, owner email or id"
             type="search"
           />
           <Button type="submit" variant="outline">
@@ -112,7 +122,8 @@ export default async function AdminCodesPage({
             {codes.map((row) => (
               <TableRow key={row.id}>
                 <TableCell className="font-mono text-xs">
-                  /q/{row.slug}
+                  {row.kind === "page" ? "/p/" : "/q/"}
+                  {row.slug}
                   {row.title && (
                     <span className="text-muted-foreground block max-w-[180px] truncate font-sans">
                       {row.title}
@@ -148,6 +159,8 @@ export default async function AdminCodesPage({
                 <TableCell>
                   {!row.isActive ? (
                     <Badge variant="destructive">Disabled</Badge>
+                  ) : row.pausedAt ? (
+                    <Badge variant="outline">Paused</Badge>
                   ) : row.archivedAt ? (
                     <Badge variant="outline">Archived</Badge>
                   ) : (
@@ -170,7 +183,7 @@ export default async function AdminCodesPage({
       <Pager
         basePath="/admin/codes"
         page={page}
-        params={{ q, status: status === "all" ? undefined : status }}
+        params={{ q, kind, status: status === "all" ? undefined : status }}
         total={total}
       />
       <p className="text-muted-foreground text-xs">

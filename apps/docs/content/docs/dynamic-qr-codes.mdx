@@ -22,7 +22,7 @@ From the dashboard you can:
 - **Edit link:** change the destination or title. The printed code keeps working and opens the new destination on the next scan.
 - **Edit design in playground:** opens the code in the editor, still bound to its short link.
 - **Archive:** the short link shows a "no longer active" page until you restore the code. Archived codes don't count toward your plan limit.
-- **Move to trash:** the short link shows a "no longer active" page (HTTP 410) and the code stops counting toward your plan. Restore it from **Trash**, or delete it forever there, which also removes its scan history. Deleting through the API (`DELETE /v1/codes/{id}`) is permanent immediately.
+- **Move to trash:** the short link shows a "no longer active" page (HTTP 410) and the code stops counting toward your plan. Restore it from **Trash**, or delete it forever there, which also removes its scan history; the short link then shows a "QR code not found" page. Deleting through the API (`DELETE /v1/codes/{id}`) is permanent immediately.
 - **Duplicate:** copies the destination, design, folder, tags and notes into a new code with a new short link and no scans.
 - **Version history:** every change is recorded on the code's page; restoring a version saves the current settings first, so a restore can be undone.
 

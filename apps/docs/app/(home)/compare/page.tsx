@@ -2,7 +2,8 @@ import { cn } from "@repo/design-system/lib/utils";
 import type { Metadata } from "next";
 import { AsciiField } from "@/components/fx";
 import { CompareCard } from "@/components/sections/compare/compare-card";
-import { createMetadata } from "@/lib/metadata";
+import { breadcrumbSchema, JsonLd } from "@/components/sections/tools/json-ld";
+import { baseUrl, createMetadata } from "@/lib/metadata";
 import { compareSource } from "@/lib/source";
 
 const title = "QRdx vs Other QR Code Generators and React QR Libraries";
@@ -39,6 +40,25 @@ export default function CompareHubPage() {
 
   return (
     <main className="flex min-h-screen w-full flex-col items-center justify-center divide-y divide-border">
+      <JsonLd
+        data={breadcrumbSchema([
+          { name: "Home", path: "/" },
+          { name: "Compare", path: "/compare" },
+        ])}
+      />
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "ItemList",
+          name: title,
+          itemListElement: pages.map((page, index) => ({
+            "@type": "ListItem",
+            position: index + 1,
+            name: `QRdx vs ${page.data.competitor}`,
+            url: new URL(page.url, baseUrl).toString(),
+          })),
+        }}
+      />
       <section className="relative w-full overflow-hidden">
         <AsciiField
           variant="topo"

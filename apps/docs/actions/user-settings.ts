@@ -5,6 +5,13 @@ import { database as db } from "@repo/database";
 import { type UserSettings, user } from "@repo/database/schema";
 import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
+import { z } from "zod";
+
+// Server actions take any JSON, so only known settings may be stored.
+const settingsUpdateSchema = z
+  .object({ keyboardShortcuts: z.boolean() })
+  .partial()
+  .strict();
 
 export async function getUserSettings(): Promise<UserSettings | null> {
   const session = await auth.api.getSession({
@@ -44,6 +51,11 @@ export async function updateUserSettings(
     throw new Error("Unauthorized");
   }
 
+  const parsed = settingsUpdateSchema.safeParse(settings);
+  if (!parsed.success) {
+    return { success: false };
+  }
+
   try {
     // Get current user settings
     const existing = await db
@@ -63,7 +75,7 @@ export async function updateUserSettings(
 
     const updatedSettings: UserSettings = {
       ...currentSettings,
-      ...settings,
+      ...parsed.data,
     };
 
     // Update user settings

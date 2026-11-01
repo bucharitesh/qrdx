@@ -1,7 +1,8 @@
 "use client";
 
+import { Play } from "@repo/design-system/components/icons";
 import { cn } from "@repo/design-system/lib/utils";
-import { Pause, Play } from "iconsax-reactjs";
+import { Pause } from "iconsax-reactjs";
 import { useEffect, useRef, useState } from "react";
 
 export interface LoopVideoProps {

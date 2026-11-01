@@ -64,7 +64,11 @@ function AudioBlock({ id, props, context }: BlockRenderProps<AudioBlockProps>) {
   }
   return (
     <section aria-label={props.title || "Audio"} className="space-y-3">
-      <BlockHeading description={props.description} title={props.title} />
+      <BlockHeading
+        description={props.description}
+        preview={context.thumbnail}
+        title={props.title}
+      />
       <AudioPlaylist
         allowDownload={props.allowDownload}
         blockId={id}

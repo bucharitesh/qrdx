@@ -1,6 +1,6 @@
 "use client";
 
-import { Spinner } from "@repo/design-system/components/icons";
+import { Info, Spinner } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Checkbox } from "@repo/design-system/components/ui/checkbox";
 import { Input } from "@repo/design-system/components/ui/input";
@@ -17,12 +17,12 @@ import {
   Diamonds,
   Folder2,
   Global,
-  InfoCircle,
   Tag,
   Warning2,
 } from "iconsax-reactjs";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { track } from "@/lib/analytics";
 import { MigrateApiError, type MigrateClient } from "@/lib/migrate/client";
 import { FILE_PRESETS } from "@/lib/migrate/files";
 import { displayLink } from "@/lib/migrate/normalize";
@@ -155,6 +155,7 @@ export function PreviewStep({
           folderName: useFolder ? folderName.trim() || null : null,
         },
       });
+      track("import_started", { provider, count: links.length });
       onStarted(job);
     } catch (failure) {
       setError(
@@ -381,7 +382,7 @@ export function PreviewStep({
               {preview?.backHalves && options.backHalfDomain && (
                 <div className="space-y-2 pl-6">
                   {preview.backHalves.canUse ? (
-                    <Note icon={<InfoCircle />}>
+                    <Note icon={<Info />}>
                       <p>
                         <span className="text-foreground font-medium">
                           {plural(

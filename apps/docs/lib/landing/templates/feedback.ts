@@ -1,5 +1,5 @@
 import { MessageFavorite as MessageSquareHeart } from "iconsax-reactjs";
-import { themePreset } from "@/components/landing/theme";
+import { templatePhoto } from "./media";
 import { registerTemplate } from "./registry";
 
 // Review links are shown to everyone: never only to visitors who rated well.
@@ -15,13 +15,33 @@ registerTemplate({
       id: "guest-feedback",
       name: "Guest feedback",
       description: "Star rating, comments and review links",
-      theme: { colors: themePreset("forest"), radius: 16 },
+      theme: {
+        colors: {
+          background: "#f7f3ec",
+          foreground: "#22201b",
+          primary: "#3f4a2c",
+          primaryForeground: "#ffffff",
+          muted: "#ece6da",
+          mutedForeground: "#625c4c",
+        },
+        font: "dm-sans",
+        headingFont: "fraunces",
+        radius: 14,
+        buttonShape: "pill",
+      },
       blocks: [
         {
           type: "header",
           props: {
-            title: "How did we do?",
-            subtitle: "It takes 30 seconds and helps us get better.",
+            layout: "banner",
+            cover: templatePhoto(
+              "banner-cafe-tables",
+              "Long wooden tables in a café",
+            ),
+            eyebrow: "Olive & Rye",
+            title: "How was your visit?",
+            size: "lg",
+            subtitle: "Two minutes, and it goes straight to the kitchen.",
           },
         },
         {
@@ -32,7 +52,7 @@ registerTemplate({
               {
                 id: "rating",
                 type: "stars",
-                label: "How was your visit?",
+                label: "Overall, how was it?",
                 required: true,
               },
               {
@@ -53,7 +73,7 @@ registerTemplate({
                 id: "email",
                 type: "email",
                 label: "Email",
-                help: "Only if you'd like us to reply.",
+                help: "Only if you'd like a reply.",
               },
             ],
             submitLabel: "Send feedback",
@@ -66,14 +86,30 @@ registerTemplate({
     {
       id: "nps-survey",
       name: "NPS survey",
-      description: "0–10 recommendation score and a follow-up question",
-      theme: { colors: themePreset("classic"), radius: 12 },
+      description: "Clean 0–10 score with one follow-up question",
+      theme: {
+        colors: {
+          background: "#ffffff",
+          foreground: "#0a0a0a",
+          primary: "#0a0a0a",
+          primaryForeground: "#ffffff",
+          muted: "#f4f4f5",
+          mutedForeground: "#5d5d63",
+        },
+        font: "dm-sans",
+        headingFont: "dm-sans",
+        radius: 10,
+        texture: "grid",
+      },
       blocks: [
         {
           type: "header",
           props: {
-            title: "Quick question",
-            subtitle: "Your answer goes straight to our team.",
+            align: "left",
+            eyebrow: "Ledgerly · 30-second survey",
+            title: "One quick question",
+            size: "lg",
+            subtitle: "Your answer goes straight to the product team.",
           },
         },
         {
@@ -84,7 +120,7 @@ registerTemplate({
               {
                 id: "nps",
                 type: "nps",
-                label: "How likely are you to recommend us to a friend?",
+                label: "How likely are you to recommend Ledgerly to a friend?",
                 required: true,
               },
               {
@@ -103,14 +139,32 @@ registerTemplate({
     {
       id: "sign-up",
       name: "Sign-up form",
-      description: "Name, email, interests and consent",
-      theme: { colors: themePreset("ocean"), radius: 14 },
+      description: "Dark newsletter sign-up with interests and consent",
+      theme: {
+        colors: {
+          background: "#111110",
+          foreground: "#f5f4ef",
+          primary: "#f5f4ef",
+          primaryForeground: "#111110",
+          muted: "#1f1f1d",
+          mutedForeground: "#a9a79f",
+        },
+        font: "dm-sans",
+        headingFont: "instrument-serif",
+        radius: 12,
+        buttonShape: "pill",
+        texture: "grain",
+      },
       blocks: [
         {
           type: "header",
           props: {
+            align: "left",
+            eyebrow: "The Sunday Letter",
             title: "Stay in the loop",
-            subtitle: "News, events and offers. No spam, unsubscribe any time.",
+            size: "xl",
+            subtitle:
+              "One email a week: new arrivals, events and the odd offer. Unsubscribe any time.",
           },
         },
         {
@@ -121,18 +175,17 @@ registerTemplate({
               {
                 id: "name",
                 type: "text",
-                label: "Name",
+                label: "First name",
                 required: true,
                 maxLength: 120,
               },
               { id: "email", type: "email", label: "Email", required: true },
-              { id: "phone", type: "phone", label: "Phone" },
               {
                 id: "interests",
                 type: "choice",
                 label: "I'm interested in",
                 multiple: true,
-                options: ["Events", "Offers", "Product news"],
+                options: ["New arrivals", "Events", "Offers"],
               },
               {
                 id: "consent",
@@ -143,7 +196,7 @@ registerTemplate({
               },
             ],
             submitLabel: "Sign me up",
-            successMessage: "You're on the list. See you soon!",
+            successMessage: "You're on the list. See you on Sunday.",
           },
         },
       ],

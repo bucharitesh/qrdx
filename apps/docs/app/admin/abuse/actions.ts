@@ -2,27 +2,26 @@
 
 import { abuseReport, database as db, qrCode } from "@repo/database";
 import { and, eq } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { HttpError } from "@/lib/error-response";
 import { setFileBlocked } from "@/lib/files/admin";
 import { ABUSE_REPORT_STATUSES } from "@/lib/safety/abuse-reasons";
-import { writeAuditLog } from "../_lib/audit";
-import { type AdminUser, assertAdmin } from "../_lib/guard";
-import type { AdminActionResult } from "../actions";
-
-const idSchema = z.string().trim().min(1).max(128);
-const reasonSchema = z.string().trim().max(500).optional();
+import {
+  type AdminActionResult,
+  adminError,
+  runAdminAction,
+} from "../_lib/action";
+import { adminId, optionalReason } from "../_lib/rules";
 
 const statusSchema = z.object({
-  reportId: idSchema,
+  reportId: adminId,
   status: z.enum(ABUSE_REPORT_STATUSES),
+  reason: optionalReason,
 });
-const codeSchema = z.object({ reportId: idSchema, reason: reasonSchema });
+const codeSchema = z.object({ reportId: adminId, reason: optionalReason });
 const fileSchema = z.object({
-  reportId: idSchema,
-  fileId: idSchema,
-  reason: reasonSchema,
+  reportId: adminId,
+  fileId: adminId,
+  reason: optionalReason,
 });
 
 async function findReport(reportId: string) {
@@ -31,47 +30,37 @@ async function findReport(reportId: string) {
     .from(abuseReport)
     .where(eq(abuseReport.id, reportId))
     .limit(1);
-  if (!report) throw new HttpError(404, "NOT_FOUND", "Report not found");
+  if (!report) throw adminError("Report not found", 404);
   return report;
-}
-
-async function run(
-  fn: (admin: AdminUser) => Promise<void>,
-): Promise<AdminActionResult> {
-  try {
-    await fn(await assertAdmin());
-  } catch (error) {
-    if (error instanceof HttpError) return { ok: false, error: error.message };
-    console.error("Admin abuse action failed:", error);
-    return { ok: false, error: "Action failed" };
-  }
-  revalidatePath("/admin", "layout");
-  return { ok: true };
 }
 
 /** Marks a report actioned, dismissed or open again. */
 export async function setAbuseReportStatusAction(
   input: z.input<typeof statusSchema>,
 ): Promise<AdminActionResult> {
-  const parsed = statusSchema.safeParse(input);
-  if (!parsed.success) return { ok: false, error: "Invalid input" };
-  const { reportId, status } = parsed.data;
-
-  return run(async (admin) => {
-    const report = await findReport(reportId);
-    if (report.status === status) return;
-    await db
-      .update(abuseReport)
-      .set({ status })
-      .where(eq(abuseReport.id, reportId));
-    await writeAuditLog({
-      actor: admin,
-      action: "abuse_report.status",
-      targetType: "abuse_report",
-      targetId: reportId,
-      metadata: { from: report.status, to: status, qrCodeId: report.qrCodeId },
-    });
-  });
+  return runAdminAction(
+    { action: "abuse_report.status", schema: statusSchema },
+    input,
+    async (_admin, { reportId, status }) => {
+      const report = await findReport(reportId);
+      if (report.status === status) return null;
+      await db
+        .update(abuseReport)
+        .set({ status })
+        .where(eq(abuseReport.id, reportId));
+      return {
+        audit: {
+          targetType: "abuse_report",
+          targetId: reportId,
+          metadata: {
+            from: report.status,
+            to: status,
+            qrCodeId: report.qrCodeId,
+          },
+        },
+      };
+    },
+  );
 }
 
 /**
@@ -81,49 +70,49 @@ export async function setAbuseReportStatusAction(
 export async function disableReportedCodeAction(
   input: z.input<typeof codeSchema>,
 ): Promise<AdminActionResult> {
-  const parsed = codeSchema.safeParse(input);
-  if (!parsed.success) return { ok: false, error: "Invalid input" };
-  const { reportId, reason } = parsed.data;
+  return runAdminAction(
+    { action: "qr_code.disable", schema: codeSchema },
+    input,
+    async (_admin, { reportId }) => {
+      const report = await findReport(reportId);
+      if (!report.qrCodeId) {
+        throw adminError("This report isn't linked to a code");
+      }
+      const [code] = await db
+        .update(qrCode)
+        .set({ isActive: false })
+        .where(eq(qrCode.id, report.qrCodeId))
+        .returning({
+          slug: qrCode.slug,
+          destinationUrl: qrCode.destinationUrl,
+          userId: qrCode.userId,
+        });
+      if (!code) throw adminError("QR code not found", 404);
 
-  return run(async (admin) => {
-    const report = await findReport(reportId);
-    if (!report.qrCodeId) {
-      throw new HttpError(400, "NO_CODE", "This report isn't linked to a code");
-    }
-    const [code] = await db
-      .update(qrCode)
-      .set({ isActive: false })
-      .where(eq(qrCode.id, report.qrCodeId))
-      .returning({
-        slug: qrCode.slug,
-        destinationUrl: qrCode.destinationUrl,
-        userId: qrCode.userId,
-      });
-    if (!code) throw new HttpError(404, "NOT_FOUND", "QR code not found");
-
-    await db
-      .update(abuseReport)
-      .set({ status: "actioned" })
-      .where(
-        and(
-          eq(abuseReport.qrCodeId, report.qrCodeId),
-          eq(abuseReport.status, "open"),
-        ),
-      );
-    await writeAuditLog({
-      actor: admin,
-      action: "qr_code.disable",
-      targetType: "qr_code",
-      targetId: report.qrCodeId,
-      metadata: {
-        slug: code.slug,
-        destinationUrl: code.destinationUrl,
-        ownerId: code.userId,
-        abuseReportId: reportId,
-        reason: reason || null,
-      },
-    });
-  });
+      await db
+        .update(abuseReport)
+        .set({ status: "actioned" })
+        .where(
+          and(
+            eq(abuseReport.qrCodeId, report.qrCodeId),
+            eq(abuseReport.status, "open"),
+          ),
+        );
+      return {
+        audit: {
+          targetType: "qr_code",
+          targetId: report.qrCodeId,
+          subjectUserId: code.userId,
+          metadata: {
+            slug: code.slug,
+            destinationUrl: code.destinationUrl,
+            ownerId: code.userId,
+            abuseReportId: reportId,
+          },
+        },
+      };
+    },
+  );
 }
 
 /**
@@ -133,57 +122,73 @@ export async function disableReportedCodeAction(
 export async function restoreReportedCodeAction(
   input: z.input<typeof codeSchema>,
 ): Promise<AdminActionResult> {
-  const parsed = codeSchema.safeParse(input);
-  if (!parsed.success) return { ok: false, error: "Invalid input" };
-  const { reportId, reason } = parsed.data;
+  return runAdminAction(
+    { action: "qr_code.enable", schema: codeSchema },
+    input,
+    async (_admin, { reportId }) => {
+      const report = await findReport(reportId);
+      if (!report.qrCodeId) {
+        throw adminError("This report isn't linked to a code");
+      }
+      const [code] = await db
+        .update(qrCode)
+        .set({ isActive: true })
+        .where(eq(qrCode.id, report.qrCodeId))
+        .returning({
+          slug: qrCode.slug,
+          destinationUrl: qrCode.destinationUrl,
+          userId: qrCode.userId,
+        });
+      if (!code) throw adminError("QR code not found", 404);
 
-  return run(async (admin) => {
-    const report = await findReport(reportId);
-    if (!report.qrCodeId) {
-      throw new HttpError(400, "NO_CODE", "This report isn't linked to a code");
-    }
-    const [code] = await db
-      .update(qrCode)
-      .set({ isActive: true })
-      .where(eq(qrCode.id, report.qrCodeId))
-      .returning({ slug: qrCode.slug, destinationUrl: qrCode.destinationUrl });
-    if (!code) throw new HttpError(404, "NOT_FOUND", "QR code not found");
-
-    await db
-      .update(abuseReport)
-      .set({ status: "dismissed" })
-      .where(eq(abuseReport.id, reportId));
-    await writeAuditLog({
-      actor: admin,
-      action: "qr_code.enable",
-      targetType: "qr_code",
-      targetId: report.qrCodeId,
-      metadata: {
-        slug: code.slug,
-        destinationUrl: code.destinationUrl,
-        abuseReportId: reportId,
-        reason: reason || null,
-      },
-    });
-  });
+      await db
+        .update(abuseReport)
+        .set({ status: "dismissed" })
+        .where(eq(abuseReport.id, reportId));
+      return {
+        audit: {
+          targetType: "qr_code",
+          targetId: report.qrCodeId,
+          subjectUserId: code.userId,
+          metadata: {
+            slug: code.slug,
+            destinationUrl: code.destinationUrl,
+            ownerId: code.userId,
+            abuseReportId: reportId,
+          },
+        },
+      };
+    },
+  );
 }
 
-/** Blocks a file named by the report (takedown); the report is actioned. */
+/**
+ * Blocks a file named by the report (takedown); the report is actioned.
+ * setFileBlocked writes its own "file.block" audit entry; this one records
+ * the report it came from.
+ */
 export async function blockReportedFileAction(
   input: z.input<typeof fileSchema>,
 ): Promise<AdminActionResult> {
-  const parsed = fileSchema.safeParse(input);
-  if (!parsed.success) return { ok: false, error: "Invalid input" };
-  const { reportId, fileId, reason } = parsed.data;
-
-  return run(async (admin) => {
-    await findReport(reportId);
-    await setFileBlocked(admin, fileId, true, {
-      reason: reason || `Abuse report ${reportId}`,
-    });
-    await db
-      .update(abuseReport)
-      .set({ status: "actioned" })
-      .where(eq(abuseReport.id, reportId));
-  });
+  return runAdminAction(
+    { action: "abuse_report.block_file", schema: fileSchema },
+    input,
+    async (admin, { reportId, fileId, reason }) => {
+      await findReport(reportId);
+      await setFileBlocked(admin, fileId, true, {
+        reason: reason || `Abuse report ${reportId}`,
+      });
+      await db
+        .update(abuseReport)
+        .set({ status: "actioned" })
+        .where(eq(abuseReport.id, reportId));
+      return {
+        audit: {
+          targetType: "abuse_report",
+          targetId: reportId,
+          metadata: { fileId },
+        },
+      };
+    },
+  );
 }
