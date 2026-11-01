@@ -13,6 +13,7 @@ import {
 } from "@/components/landing/block-kit";
 import { LpHeading } from "@/components/landing/heading";
 import { networkForUrl } from "@/components/landing/social-networks";
+import { smallTemplatePhoto } from "@/lib/landing/templates/media";
 import {
   type BlockRenderContext,
   type BlockRenderProps,
@@ -70,7 +71,9 @@ function Thumbnail({
       decoding="async"
       fetchPriority={lead === "high" ? "high" : undefined}
       loading={lead ? undefined : "lazy"}
-      src={item.thumbnail.url}
+      // Tiles are a few hundred pixels at most: template photos come with a
+      // half-size copy that is still sharp there (other URLs are unchanged).
+      src={smallTemplatePhoto(item.thumbnail.url)}
     />
   );
 }
@@ -253,7 +256,7 @@ function LinksBlock({ id, props, context }: BlockRenderProps<LinksProps>) {
                 decoding="async"
                 height={40}
                 loading="lazy"
-                src={item.thumbnail.url}
+                src={smallTemplatePhoto(item.thumbnail.url)}
                 width={40}
               />
             ) : Icon ? (

@@ -151,7 +151,13 @@ export async function CodesView({
 
       <UsageMeter usage={usage} />
 
-      {isEmpty && folders.length === 0 && trashCount === 0 ? (
+      {/* The full empty state only when there's nothing to organise either:
+          leftover folders, tags or trash keep the sidebar, so they can still
+          be managed. */}
+      {isEmpty &&
+      folders.length === 0 &&
+      tags.length === 0 &&
+      trashCount === 0 ? (
         <Empty className="border">
           <EmptyHeader>
             <HairlineFigure className="mx-auto mb-2 h-28 w-40" figure="Relay" />
