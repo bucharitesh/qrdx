@@ -36,7 +36,10 @@ function UmamiScript() {
   if (!config) return null;
   return (
     <Script
-      id="umami"
+      // Not "umami": an element id becomes a window global, so window.umami
+      // would be this <script> and Umami's tracker would skip installing
+      // its API (nothing was ever sent).
+      id="umami-loader"
       src={config.scriptUrl}
       strategy="lazyOnload"
       data-website-id={config.websiteId}
