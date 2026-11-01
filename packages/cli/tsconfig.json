@@ -1,11 +1,10 @@
 {
   "extends": "@repo/typescript-config/base.json",
   "compilerOptions": {
-    "baseUrl": ".",
     "outDir": "./dist",
     "rootDir": "./src",
-    "module": "CommonJS",
-    "moduleResolution": "Node",
+    "module": "Preserve",
+    "moduleResolution": "Bundler",
     "lib": ["es2022"],
     "jsx": "react-jsx",
     "jsxImportSource": "react",

@@ -32,7 +32,7 @@ export function probePolar(): Promise<PolarProbe> {
     const options = { timeoutMs: 4000, retries: { strategy: "none" as const } };
     try {
       const page = await withTimeout(4500, () =>
-        polar.organizations.list({ limit: 1 }, options),
+        polar.organizations.listOrganizations({ limit: 1 }, options),
       );
       const organization = page.result.items[0];
       return {
