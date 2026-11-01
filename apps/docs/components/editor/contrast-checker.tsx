@@ -1,4 +1,4 @@
-import { Tick as Check } from "@repo/design-system/components/icons";
+import { Tick as Check, Contrast } from "@repo/design-system/components/icons";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Card, CardContent } from "@repo/design-system/components/ui/card";
@@ -23,7 +23,6 @@ import { useTheme } from "next-themes";
 import type { ColorConfig } from "qrdx/types";
 import { isGradient, normalizeColorConfig } from "qrdx/types";
 import { useMemo, useState } from "react";
-import { Icons } from "@/components/icons";
 import { useContrastChecker } from "@/lib/hooks/use-contrast-checker";
 import type { ThemeStyles } from "@/types/theme";
 import { TooltipWrapper } from "../tooltip-wrapper";
@@ -185,7 +184,7 @@ const ContrastChecker = ({ currentStyles, disabled }: ContrastCheckerProps) => {
             className="justify-start px-2"
             disabled={disabled}
           >
-            <Icons.contrast className="h-4 w-4" />
+            <Contrast className="h-4 w-4" />
           </Button>
         </ResponsiveDialogTrigger>
       </TooltipWrapper>

@@ -296,6 +296,19 @@ export async function setOAuthAppActive(
 ): Promise<{ id: string; active: boolean }> {
   assertManager(scope);
   await findInScope(scope, id);
+  if (active) {
+    // An app the QRdx team suspended stays off until the team lifts it.
+    const { isOAuthAppSuspended } = await import(
+      "@/app/admin/_lib/suspensions"
+    );
+    if (await isOAuthAppSuspended(id)) {
+      throw new HttpError(
+        403,
+        "APP_SUSPENDED",
+        "QRdx suspended this app. Contact support to turn it back on.",
+      );
+    }
+  }
   const [row] = await db
     .update(oauthApp)
     .set({ isActive: active, updatedAt: new Date() })

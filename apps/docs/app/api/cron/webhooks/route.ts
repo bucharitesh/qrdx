@@ -1,3 +1,4 @@
+import { recordCronRun } from "@/lib/cron-runs";
 import { runIntegrationSyncs } from "@/lib/data-connections/sync";
 import { pruneDeliveries, runDeliveryWorker } from "@/lib/events/deliveries";
 import { isAuthorizedCronRequest, unauthorized } from "../_lib/auth";
@@ -13,6 +14,7 @@ export const maxDuration = 60;
  */
 export async function GET(request: Request) {
   if (!isAuthorizedCronRequest(request)) return unauthorized();
+  const startedAt = Date.now();
 
   const summary = await runDeliveryWorker({ budgetMs: 40_000 });
   let pruned = 0;
@@ -31,6 +33,7 @@ export async function GET(request: Request) {
       integrations,
     }),
   );
+  await recordCronRun("webhooks", startedAt);
   return Response.json(
     { ...summary, pruned },
     { headers: { "Cache-Control": "no-store" } },

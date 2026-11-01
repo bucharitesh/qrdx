@@ -2,7 +2,7 @@
 
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
-import { Icons } from "@/components/icons";
+import { Keyboard } from "iconsax-reactjs";
 import { TooltipWrapper } from "./tooltip-wrapper";
 
 interface KeyboardShortcutsButtonProps
@@ -25,7 +25,7 @@ export function KeyboardShortcutsButton({
         onClick={onClick}
         {...props}
       >
-        <Icons.Keyboard className="h-4 w-4" />
+        <Keyboard className="h-4 w-4" />
       </Button>
     </TooltipWrapper>
   );

@@ -3,7 +3,9 @@
 /** biome-ignore-all lint/correctness/useExhaustiveDependencies: false positive */
 "use client";
 
+import { Close } from "@repo/design-system/components/icons";
 import { cn } from "@repo/design-system/lib/utils";
+import { ArrowLeft2, ArrowRight2, ExportSquare } from "iconsax-reactjs";
 import { useRef, useState } from "react";
 
 interface Project {
@@ -218,7 +220,6 @@ export function AnimatedFolder({
 
 import type React from "react";
 import { useCallback, useEffect, useLayoutEffect } from "react";
-import { Icons } from "@/components/icons";
 
 interface Project {
   id: string;
@@ -426,7 +427,7 @@ export function ImageLightbox({
           transition: "opacity 300ms ease-out, transform 300ms ease-out",
         }}
       >
-        <Icons.X className="w-4 h-4" />
+        <Close className="w-4 h-4" />
       </button>
 
       <button
@@ -456,7 +457,7 @@ export function ImageLightbox({
             "opacity 300ms ease-out 150ms, transform 300ms ease-out 150ms",
         }}
       >
-        <Icons.ChevronLeft className="w-5 h-5" />
+        <ArrowLeft2 className="w-5 h-5" />
       </button>
 
       <button
@@ -486,7 +487,7 @@ export function ImageLightbox({
             "opacity 300ms ease-out 150ms, transform 300ms ease-out 150ms",
         }}
       >
-        <Icons.ChevronRight className="w-5 h-5" />
+        <ArrowRight2 className="w-5 h-5" />
       </button>
 
       <div
@@ -601,7 +602,7 @@ export function ImageLightbox({
                 )}
               >
                 <span>View</span>
-                <Icons.ExternalLink className="w-3.5 h-3.5" />
+                <ExportSquare className="w-3.5 h-3.5" />
               </button>
             </div>
           </div>

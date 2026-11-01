@@ -139,8 +139,10 @@ web_modules/
 # Yarn Integrity file
 .yarn-integrity
 
-# dotenv environment variable files
+# dotenv environment variable files (every variant; only examples are tracked)
 .env
+.env.*
+!.env.example
 .env.development.local
 .env.test.local
 .env.production.local

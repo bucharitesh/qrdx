@@ -1,3 +1,4 @@
+import { Info } from "@repo/design-system/components/icons";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Card } from "@repo/design-system/components/ui/card";
 import { cn } from "@repo/design-system/lib/utils";
@@ -13,7 +14,7 @@ import {
   getRelatedEntries,
   withOrigin,
 } from "@repo/integrations/src/catalog";
-import { ArrowRight, InfoCircle } from "iconsax-reactjs";
+import { ArrowRight } from "iconsax-reactjs";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound, permanentRedirect } from "next/navigation";
@@ -194,7 +195,7 @@ export default async function IntegrationDetailPage({
           ) : (
             entry.note && (
               <p className="flex items-center gap-2 text-sm text-muted-foreground">
-                <InfoCircle aria-hidden className="size-4 shrink-0" />
+                <Info aria-hidden className="size-4 shrink-0" />
                 {entry.note}
               </p>
             )

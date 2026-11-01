@@ -172,7 +172,7 @@ Read the full [self-hosting guide](https://qrdx.dev/docs/self-hosting) before ru
 - [Drizzle ORM](https://orm.drizzle.team/) on Postgres ([Neon](https://neon.tech/))
 - [Better Auth](https://www.better-auth.com/) for authentication
 - [Vercel AI SDK](https://ai-sdk.dev/) with Google Gemini for AI themes, [fal.ai](https://fal.ai/) for AI QR art
-- [Polar](https://polar.sh/) for payments, [PostHog](https://posthog.com/) for analytics, [Upstash](https://upstash.com/) for rate limiting
+- [Polar](https://polar.sh/) for payments, [PostHog](https://posthog.com/) (with consent) and [Umami](https://umami.is/) (cookieless) for analytics, [Upstash](https://upstash.com/) for rate limiting
 - [Cloudflare R2](https://developers.cloudflare.com/r2/) for file storage and [Resend](https://resend.com/) for email
 - [Fumadocs](https://fumadocs.dev/) for documentation
 - [Turborepo](https://turborepo.com/) and [pnpm](https://pnpm.io/) for the monorepo, [Biome](https://biomejs.dev/) for linting

@@ -12,14 +12,22 @@ import {
   SIGN_IN_CODE_SUBJECT,
   SignInCodeEmail,
 } from "@/lib/email/templates/sign-in-code";
-import { deliverSignInCode } from "./sign-in-code-delivery";
+import {
+  addressMayRequestCode,
+  deliverSignInCode,
+} from "./sign-in-code-delivery";
 
 // Per address, shared across server instances (Upstash). Better Auth's own
-// per-IP limit is in memory per instance, so this is what stops one inbox
-// being flooded with codes. Fails open when Upstash isn't configured.
+// per-IP limit is in memory per instance, so these are what stop one inbox
+// being flooded with codes and bound guessing over a day (3 tries per code).
+// Fail open when Upstash isn't configured.
 const perAddressLimiter = createRateLimiter({
   prefix: "qrdx:sign-in-code",
   limiter: slidingWindow(5, "15 m"),
+});
+const perAddressDailyLimiter = createRateLimiter({
+  prefix: "qrdx:sign-in-code-day",
+  limiter: slidingWindow(30, "1 d"),
 });
 
 /** Registered with @repo/auth in app/api/auth/[...all]/route.ts. */
@@ -28,8 +36,11 @@ export const sendSignInCode: SignInCodeSender = async ({ email, otp }) => {
   const key = createHash("sha256")
     .update(email.trim().toLowerCase())
     .digest("hex");
-  const { success } = await perAddressLimiter.limit(key);
-  if (!success) throw signInCodeRateLimited();
+  const allowed = await addressMayRequestCode(key, [
+    perAddressLimiter,
+    perAddressDailyLimiter,
+  ]);
+  if (!allowed) throw signInCodeRateLimited();
   await deliverSignInCode(
     { email, otp },
     {

@@ -2,8 +2,9 @@
 
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
+import { Diamonds } from "iconsax-reactjs";
 import Link from "next/link";
-import { Icons } from "@/components/icons";
+import { track } from "@/lib/analytics";
 import { useSubscription } from "@/lib/hooks/use-subscription";
 
 interface GetProCTAProps extends React.ComponentProps<typeof Button> {}
@@ -26,8 +27,11 @@ export function GetProCTA({ className, ...props }: GetProCTAProps) {
       asChild
       {...props}
     >
-      <Link href="/pricing">
-        <Icons.Gem className="h-4 w-4" />
+      <Link
+        href="/pricing"
+        onClick={() => track("upgrade_clicked", { source: "header" })}
+      >
+        <Diamonds className="h-4 w-4" />
         Get Pro
       </Link>
     </Button>

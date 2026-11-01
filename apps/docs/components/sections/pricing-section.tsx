@@ -12,14 +12,15 @@ import { Button } from "@repo/design-system/components/ui/button";
 import { Card } from "@repo/design-system/components/ui/card";
 import { cn } from "@repo/design-system/lib/utils";
 import { Book1, Driver } from "iconsax-reactjs";
-import { motion } from "motion/react";
 import Link from "next/link";
 import { useState, useTransition } from "react";
 import { createCheckout } from "@/actions/checkout";
 import { AsciiField, RadialHalo } from "@/components/fx";
-import { LAYOUT_TRANSITION } from "@/components/mockups/motion";
+import { EASE_CLASS } from "@/components/mockups/motion";
+import { useSlidingPill } from "@/components/mockups/sliding-pill";
 import { maxYearlySavingsPercent } from "@/components/sections/pricing/plan-content";
 import { siteConfig } from "@/config/site";
+import { track } from "@/lib/analytics";
 import { usePostLoginAction } from "@/lib/hooks/use-post-login-action";
 import {
   BILLING_INTERVALS,
@@ -73,6 +74,7 @@ function BillingToggle({
   onChange: (interval: BillingInterval) => void;
   savings: number;
 }) {
+  const { pill, capture } = useSlidingPill();
   return (
     <fieldset className="flex h-10 w-fit items-center rounded-full border bg-muted/60 p-1">
       <legend className="sr-only">Billing period</legend>
@@ -81,14 +83,16 @@ function BillingToggle({
           aria-pressed={interval === option}
           className="relative flex h-8 cursor-pointer items-center rounded-full px-4 outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
           key={option}
-          onClick={() => onChange(option)}
+          onClick={() => {
+            if (interval !== option) capture();
+            onChange(option);
+          }}
           type="button"
         >
           {interval === option && (
-            <motion.span
+            <span
               className="absolute inset-0 rounded-full bg-background shadow-xs ring-1 ring-border dark:bg-accent"
-              layoutId="billing-interval"
-              transition={LAYOUT_TRANSITION}
+              ref={pill}
             />
           )}
           <span
@@ -201,16 +205,18 @@ function PriceLine({
   return (
     <div className="flex flex-col gap-1.5">
       <p className="flex flex-wrap items-baseline gap-x-1.5 gap-y-1">
-        <motion.span
-          animate={{ opacity: 1, y: 0 }}
-          className="text-4xl font-semibold tracking-tight tabular-nums"
-          // Server HTML shows the price; only later changes animate in.
-          initial={toggled ? { opacity: 0, y: 4 } : false}
+        <span
+          className={cn(
+            "text-4xl font-semibold tracking-tight tabular-nums",
+            // Server HTML shows the price; only later changes animate in.
+            toggled &&
+              "animate-in fade-in-0 slide-in-from-bottom-1 duration-220 motion-reduce:animate-none",
+            toggled && EASE_CLASS,
+          )}
           key={`${interval}-${currency}`}
-          transition={LAYOUT_TRANSITION}
         >
           {formatPrice(amount, currency)}
-        </motion.span>
+        </span>
         <span className="text-sm text-muted-foreground">
           /{interval === "year" ? "year" : "month"}
         </span>
@@ -252,6 +258,7 @@ export function PricingSection({
     startTransition(async () => {
       const result = await createCheckout({ plan, interval: billing });
       if ("url" in result) {
+        track("checkout_started", { plan, interval: billing });
         window.location.assign(result.url);
         return;
       }
@@ -284,6 +291,7 @@ export function PricingSection({
   );
 
   const onUpgrade = (plan: PaidPlan) => {
+    track("upgrade_clicked", { source: "pricing", plan });
     if (!isSignedIn) {
       openAuthDialog("signup", "CHECKOUT", { plan, interval });
       return;

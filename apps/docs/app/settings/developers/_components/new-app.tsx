@@ -3,6 +3,7 @@
 import { toast } from "@repo/design-system";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { track } from "@/lib/analytics";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 import { createOAuthAppAction } from "../_lib/actions";
 import { EMPTY_APP_VALUES, OAuthAppForm } from "./oauth-app-form";
@@ -41,6 +42,7 @@ export function NewOAuthApp({
             }
             return result.error;
           }
+          track("oauth_app_created");
           setCreated({
             id: result.data.app.id,
             clientId: result.data.app.clientId,

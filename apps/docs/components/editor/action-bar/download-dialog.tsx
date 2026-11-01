@@ -61,6 +61,7 @@ import React from "react";
 import { DialogCloseButton } from "@/components/editor/dialog-close-button";
 import { emitSound } from "@/components/editor/sound";
 import { InfoHint } from "@/components/help/info-hint";
+import { track } from "@/lib/analytics";
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
 import { useQREditorStore } from "@/store/editor-store";
 import { usePreferencesStore } from "@/store/preferences-store";
@@ -267,6 +268,11 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
         filename: downloadOptions.filename,
       });
       emitSound("download");
+      track("qr_downloaded", {
+        format,
+        source: "playground",
+        content_type: useQREditorStore.getState().contentType,
+      });
       toast.success(`Downloaded ${filename}`);
       onOpenChange(false);
     } catch (error) {
@@ -311,6 +317,11 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
         });
       }
       emitSound("download");
+      track("qr_downloaded", {
+        format: `print-${printFormat}`,
+        source: "playground",
+        content_type: useQREditorStore.getState().contentType,
+      });
       toast.success(`Downloaded ${printFilename}`);
       onOpenChange(false);
     } catch (error) {
@@ -328,6 +339,7 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
       await navigator.clipboard.writeText(await getSVGString(qrProps));
       setSvgCopied(true);
       emitSound("copy");
+      track("qr_copied", { format: "svg", source: "playground" });
       setTimeout(() => setSvgCopied(false), 2000);
     } catch {
       toast.error("Couldn't copy the SVG");

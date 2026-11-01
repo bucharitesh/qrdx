@@ -1,5 +1,5 @@
 import { TicketDiscount as TicketPercent } from "iconsax-reactjs";
-import { themePreset } from "@/components/landing/theme";
+import { templatePhoto } from "./media";
 import { registerTemplate } from "./registry";
 
 registerTemplate({
@@ -13,14 +13,31 @@ registerTemplate({
     {
       id: "store-discount",
       name: "Store discount",
-      description: "Percentage off, scannable at the till or online",
-      theme: { colors: themePreset("sunset"), radius: 16 },
+      description: "Bold black ticket, scannable at the till or online",
+      theme: {
+        colors: {
+          background: "#111111",
+          foreground: "#fafafa",
+          primary: "#fafafa",
+          primaryForeground: "#111111",
+          muted: "#1c1c1c",
+          mutedForeground: "#a3a3a3",
+        },
+        font: "dm-sans",
+        headingFont: "bricolage",
+        radius: 6,
+        buttonShape: "sharp",
+        texture: "grain",
+      },
       blocks: [
         {
           type: "header",
           props: {
-            title: "Thanks for shopping with us",
-            subtitle: "Here's a little something for your next visit.",
+            align: "left",
+            eyebrow: "Northfield Supply Co.",
+            title: "Thanks for shopping with us.",
+            size: "xl",
+            subtitle: "Here's something for your next visit.",
           },
         },
         {
@@ -38,7 +55,10 @@ registerTemplate({
         {
           type: "socials",
           props: {
-            items: [{ network: "instagram", url: "https://instagram.com/" }],
+            items: [
+              { network: "instagram", url: "https://instagram.com/" },
+              { network: "tiktok", url: "https://tiktok.com/" },
+            ],
           },
         },
       ],
@@ -46,14 +66,34 @@ registerTemplate({
     {
       id: "free-item",
       name: "Free item",
-      description: "Show at the counter and tap Redeem",
-      theme: { colors: themePreset("berry"), font: "rounded", radius: 20 },
+      description: "Photo header; show at the counter and tap Redeem",
+      theme: {
+        colors: {
+          background: "#fbf3ea",
+          foreground: "#2b1d14",
+          primary: "#a84a24",
+          primaryForeground: "#ffffff",
+          muted: "#f3e6d6",
+          mutedForeground: "#6a5444",
+        },
+        font: "dm-sans",
+        headingFont: "fraunces",
+        radius: 20,
+        buttonShape: "pill",
+      },
       blocks: [
         {
           type: "header",
           props: {
-            title: "Sweet Spot Bakery",
-            subtitle: "Your free treat is waiting.",
+            layout: "hero",
+            cover: templatePhoto(
+              "hero-cookies",
+              "Cookies and lemons on a dark table",
+            ),
+            eyebrow: "Sweet Spot Bakery",
+            title: "A cookie, on us",
+            size: "xl",
+            subtitle: "With any coffee, this week only.",
           },
         },
         {
@@ -63,19 +103,22 @@ registerTemplate({
             code: "COOKIE",
             barcode: "none",
             redeemable: true,
-            terms: "Valid once per visit while stocks last.",
+            terms: "Once per visit while stocks last.",
           },
         },
-        { type: "hours", props: { timezone: "" } },
+        {
+          type: "hours",
+          props: { timezone: "" },
+        },
         {
           type: "address-map",
           props: {
-            title: "Visit us",
+            title: "Find us",
             name: "Sweet Spot Bakery",
             address: {
-              street: "5 Baker Street",
+              street: "5 Exmouth Market",
               city: "London",
-              postalCode: "NW1 6XE",
+              postalCode: "EC1R 4QL",
               country: "United Kingdom",
             },
           },
@@ -85,20 +128,42 @@ registerTemplate({
     {
       id: "member-offer",
       name: "Member offer",
-      description: "EAN-13 barcode your point of sale can scan",
-      theme: { colors: themePreset("ocean"), radius: 12 },
+      description: "Navy and gold, with an EAN-13 your till can scan",
+      theme: {
+        colors: {
+          background: "#0d1b2a",
+          foreground: "#f1f5f9",
+          primary: "#e9c46a",
+          primaryForeground: "#0d1b2a",
+          muted: "#172739",
+          mutedForeground: "#a9b6c6",
+        },
+        font: "dm-sans",
+        headingFont: "dm-sans",
+        radius: 14,
+        background: {
+          type: "gradient",
+          from: "#1c3352",
+          to: "#0d1b2a",
+          angle: 180,
+          shape: "radial",
+        },
+        texture: "dots",
+      },
       blocks: [
         {
           type: "header",
           props: {
+            eyebrow: "Harbor Outfitters members",
             title: "Members' weekend",
-            subtitle: "Exclusive savings for our loyalty members.",
+            size: "lg",
+            subtitle: "Saturday and Sunday only. Thank you for being with us.",
           },
         },
         {
           type: "coupon",
           props: {
-            headline: "$10 off $50",
+            headline: "$10 off when you spend $50",
             description: "Scan at checkout. Valid on one purchase.",
             code: "MEMBER10",
             barcode: "ean13",
@@ -106,6 +171,23 @@ registerTemplate({
             barcodeValue: "200000000010",
             redeemable: true,
             terms: "Excludes gift cards. Limit one per member.",
+          },
+        },
+        {
+          type: "links",
+          props: {
+            style: "rows",
+            icons: false,
+            items: [
+              {
+                label: "Find a store",
+                url: "https://example.com/stores",
+              },
+              {
+                label: "Your points balance",
+                url: "https://example.com/account",
+              },
+            ],
           },
         },
       ],

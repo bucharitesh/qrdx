@@ -12,6 +12,7 @@ import {
 import { and, eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
+import { hasAnalyticsConsent, trackServer } from "@/lib/analytics/server";
 import { prepareDataConnect } from "@/lib/data-connections/server";
 import { env } from "@/lib/env";
 import {
@@ -186,6 +187,11 @@ export async function GET(request: Request, context: RouteContext) {
         updatedAt: new Date(),
       });
     }
+    trackServer(
+      "integration_connected",
+      { provider },
+      { distinctId: (await hasAnalyticsConsent()) ? session.user.id : null },
+    );
 
     if (dataConnect.handled) {
       return NextResponse.redirect(new URL(dataConnect.redirect, request.url));

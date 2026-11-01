@@ -1,4 +1,5 @@
 import type { NextRequest } from "next/server";
+import { recordCronRun } from "@/lib/cron-runs";
 import { DIGEST_SHARDS, runWeeklyDigest } from "@/lib/events/digest";
 import { isAuthorizedCronRequest, unauthorized } from "../_lib/auth";
 
@@ -15,6 +16,7 @@ export const maxDuration = 60;
  */
 export async function GET(request: NextRequest) {
   if (!isAuthorizedCronRequest(request)) return unauthorized();
+  const startedAt = Date.now();
 
   const param = request.nextUrl.searchParams.get("shard");
   const shard =
@@ -28,6 +30,7 @@ export async function GET(request: NextRequest) {
       shards.push(await runWeeklyDigest({ shard: index }));
     }
     console.info(JSON.stringify({ event: "cron.digest", shards }));
+    await recordCronRun("digest", startedAt);
     return Response.json(
       { shards },
       { headers: { "Cache-Control": "no-store" } },
@@ -36,5 +39,6 @@ export async function GET(request: NextRequest) {
 
   const summary = await runWeeklyDigest({ shard });
   console.info(JSON.stringify({ event: "cron.digest", ...summary }));
+  await recordCronRun("digest", startedAt);
   return Response.json(summary, { headers: { "Cache-Control": "no-store" } });
 }

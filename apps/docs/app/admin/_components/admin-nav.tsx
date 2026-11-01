@@ -4,6 +4,7 @@ import { Bot } from "@repo/design-system/components/icons";
 import { cn } from "@repo/design-system/lib/utils";
 import {
   Card as CreditCard,
+  Health as HeartPulse,
   Element3 as LayoutDashboard,
   ColorSwatch as Palette,
   Electricity as Plug,
@@ -25,13 +26,14 @@ const NAV_ITEMS = [
   { href: "/admin/subscriptions", label: "Subscriptions", icon: CreditCard },
   { href: "/admin/integrations", label: "Integrations", icon: Plug },
   { href: "/admin/audit-log", label: "Audit Log", icon: ScrollText },
+  { href: "/admin/health", label: "Health", icon: HeartPulse },
 ];
 
 export function AdminNav() {
   const pathname = usePathname();
 
   return (
-    <aside className="w-full shrink-0 md:w-56">
+    <aside className="w-full min-w-0 shrink-0 md:w-56">
       <nav className="flex gap-1 overflow-x-auto md:flex-col">
         {NAV_ITEMS.map((item) => {
           const isActive =
@@ -43,11 +45,11 @@ export function AdminNav() {
               key={item.href}
               href={item.href}
               className={cn(
-                "hover:bg-muted flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium whitespace-nowrap transition-colors",
+                "hover:bg-muted flex shrink-0 items-center gap-2 rounded-md px-3 py-2 text-sm font-medium whitespace-nowrap transition-colors",
                 isActive && "bg-muted",
               )}
             >
-              <item.icon className="size-4" />
+              <item.icon className="size-4 shrink-0" />
               {item.label}
             </Link>
           );

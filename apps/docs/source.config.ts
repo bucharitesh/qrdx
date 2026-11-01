@@ -63,7 +63,7 @@ export const compare = defineDocs({
     schema: frontmatterSchema.extend({
       competitor: z.string(),
       competitorUrl: z.string(),
-      /** Full URL to competitor logo (SVG or PNG); a monogram is shown when omitted */
+      /** Full URL to competitor logo (SVG or PNG); a neutral icon is shown when omitted */
       competitorLogo: z.url().optional(),
       /** "generator" = hosted QR tools, "library" = developer packages */
       category: z.enum(["generator", "library"]).default("generator"),

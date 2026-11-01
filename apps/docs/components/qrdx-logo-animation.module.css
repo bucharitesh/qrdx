@@ -1,0 +1,73 @@
+/*
+ * The QRdx mark's loop (components/qrdx-logo-animation.tsx), on an 8 s cycle
+ * of four 2 s steps. At each step the corners turn a quarter while the inner
+ * squares' current shape shrinks away (0.5 s), then the next shape grows in
+ * (0.5 s). Each shape runs the same keyframes, offset by its step
+ * (--shape-delay), so the morph needs no script. Lengths in transform-origin
+ * are SVG user units (transform-box: view-box).
+ */
+
+@media (prefers-reduced-motion: no-preference) {
+  .logo {
+    animation: logo-in 0.5s ease-out;
+  }
+
+  .corners {
+    transform-box: view-box;
+    transform-origin: 128px 128px;
+    /* The first turn comes with the first shape change, at 2 s. */
+    animation: corners-turn 8s ease-in-out 0.5s infinite backwards;
+  }
+
+  .shape {
+    transform-box: view-box;
+    animation: shape-step 8s ease-in-out var(--shape-delay, 0s) infinite
+      backwards;
+  }
+}
+
+@keyframes logo-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes corners-turn {
+  0%,
+  18.75% {
+    transform: rotate(0deg);
+  }
+  25%,
+  43.75% {
+    transform: rotate(90deg);
+  }
+  50%,
+  68.75% {
+    transform: rotate(180deg);
+  }
+  75%,
+  93.75% {
+    transform: rotate(270deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* In for 0.5 s, held, out for 0.5 s, then hidden for the other three steps. */
+@keyframes shape-step {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  6.25%,
+  18.75% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  25%,
+  100% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+}

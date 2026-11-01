@@ -7,7 +7,13 @@
 import assert from "node:assert/strict";
 import { after, describe, it } from "node:test";
 
-import { staticSample, subscribeSchema } from "@/app/api/v1/hooks/_lib/hooks";
+import {
+  canSeeHookUrls,
+  maskHookUrl,
+  serializeHook,
+  staticSample,
+  subscribeSchema,
+} from "@/app/api/v1/hooks/_lib/hooks";
 import { outcomeValues, retryDelayMs, sendDelivery } from "./deliveries";
 import {
   DIGEST_SHARDS,
@@ -148,11 +154,22 @@ describe("URL safety", () => {
       "::ffff:127.0.0.1",
       "::ffff:7f00:1",
       "64:ff9b::a9fe:a9fe",
+      // IPv4-compatible, 6to4, Teredo and local-use NAT64 forms of 127.0.0.1
+      "::7f00:1",
+      "2002:7f00:1::",
+      "2001:0:4136:e378:8000:63bf:80ff:fffe",
+      "64:ff9b:1::7f00:1",
       "garbage",
     ]) {
       assert.ok(isBlockedAddress(address), address);
     }
-    for (const address of ["8.8.8.8", "1.1.1.1", "2606:4700:4700::1111"]) {
+    for (const address of [
+      "8.8.8.8",
+      "1.1.1.1",
+      "::ffff:8.8.8.8",
+      "2606:4700:4700::1111",
+      "2001:4860:4860::8888",
+    ]) {
       assert.ok(!isBlockedAddress(address), address);
     }
   });
@@ -426,6 +443,34 @@ describe("REST hooks", () => {
     assert.ok(
       !subscribeSchema.safeParse({ hookUrl: "https://x.com/h", event: "nope" })
         .success,
+    );
+  });
+
+  it("shows hook URLs in full only to callers who manage subscriptions", () => {
+    const hook = {
+      id: "wh_1",
+      url: "https://hooks.zapier.com/hooks/standard/123/secret/",
+      events: ["scan.created"],
+      active: true,
+      createdAt: new Date("2026-01-05T09:30:00.000Z"),
+    } as unknown as Parameters<typeof serializeHook>[0];
+    assert.equal(serializeHook(hook).target_url, hook.url);
+    assert.equal(
+      serializeHook(hook, { revealUrl: false }).target_url,
+      "https://hooks.zapier.com/…",
+    );
+    assert.equal(maskHookUrl("not a url"), "…");
+
+    const owner = { role: "owner" } as const;
+    assert.equal(canSeeHookUrls({ scope: owner, canWrite: true }), true);
+    assert.equal(canSeeHookUrls({ scope: owner, canWrite: false }), false);
+    assert.equal(
+      canSeeHookUrls({ scope: { role: "admin" }, canWrite: true }),
+      true,
+    );
+    assert.equal(
+      canSeeHookUrls({ scope: { role: "member" }, canWrite: true }),
+      false,
     );
   });
 

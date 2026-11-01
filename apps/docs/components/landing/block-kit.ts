@@ -1,6 +1,6 @@
 import { cn } from "@repo/design-system/lib/utils";
 import { z } from "zod";
-import { landingUrlSchema } from "@/types/landing";
+import { type LandingTheme, landingUrlSchema } from "@/types/landing";
 
 // Shared props schemas, link helpers and class names for landing blocks.
 // Server-safe: imported by block Render components and their editors.
@@ -140,6 +140,18 @@ export function buttonClass(
     variant === "soft" && "bg-(--lp-muted) text-(--lp-fg)",
     className,
   );
+}
+
+/**
+ * Corner override for `theme.buttonShape`, passed as buttonClass()'s
+ * className; undefined (no override) when the theme doesn't set one.
+ */
+export function buttonShapeClass(
+  theme: Pick<LandingTheme, "buttonShape">,
+): string | undefined {
+  if (theme.buttonShape === "pill") return "rounded-full";
+  if (theme.buttonShape === "sharp") return "rounded-none";
+  return undefined;
 }
 
 export const mutedTextClass = "text-(--lp-muted-fg)";

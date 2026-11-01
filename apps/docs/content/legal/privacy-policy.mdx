@@ -9,7 +9,7 @@ lastUpdated: 2026-11-01
 - We collect what we need to run your account and your codes: your email address (with your name and profile picture if you sign in with Google or GitHub), the codes, pages and files you create, and your plan status from Polar.
 - When someone scans a dynamic code, we record coarse facts about the scan: country and city, device, browser, language and time. We never store the scanner's IP address. We keep a salted hash that changes every day, so unique visitors can be counted.
 - Your hosted pages and forms collect data from your own visitors. For that data you are in charge (the controller) and we process it for you under the [Data Processing Addendum](/legal/dpa).
-- Product analytics (PostHog) and the feedback widget (Featurebase) load only if you allow them in **Cookie settings**. We use no advertising cookies and we don't sell personal data.
+- We count visits with Umami, which sets no cookies and keeps no profile of you. Product analytics (PostHog) and the feedback widget (Featurebase) load only if you allow them in **Cookie settings**. We use no advertising cookies and we don't sell personal data.
 - You can delete codes, pages, responses, files and your whole account yourself. For anything else, email [support@qrdx.dev](mailto:support@qrdx.dev).
 
 </Callout>
@@ -39,7 +39,9 @@ In this policy:
 
 - **Request data.** Your browser sends your IP address, user agent and the page requested. Our host, Vercel, processes these to deliver the page and protect the Service. We read the country from Vercel's IP-country header to show prices in Indian rupees or US dollars. We don't store your IP address with your visit.
 - **Browser storage.** Settings such as your theme, editor state and chosen currency are saved in your browser. The [Cookie Policy](/legal/cookie-policy) lists every item.
-- **Product analytics, only if you allow it.** PostHog records the pages you view, the clicks you make and the features you use. If you are signed in, these events are linked to your email address and name.
+- **Visit counts, without cookies.** Umami counts the pages you view and a few actions, such as downloading a QR code (with its format) or starting a checkout (with the plan). It sets no cookies, stores nothing in your browser and keeps no profile of you. Page addresses reach it without their query strings. It doesn't run if your browser sends Do Not Track or Global Privacy Control.
+- **Product analytics, only if you allow it.** PostHog records the pages you view and the features you use, with coarse details such as a QR type, a download format or a plan. It never receives what you type, your codes' contents or destinations, or search text, and session recording is off. It loads only after you allow **Analytics** in Cookie settings and stops as soon as you withdraw it. If you're signed in, events are linked to your account ID, with your plan, sign-up date and team ID, never your email address or name.
+- **Events from our servers.** A few events are sent by our servers instead: a subscription starting, an integration connected, and a form submitted on a hosted page (a count only). They're linked to your account ID only if you allowed Analytics; otherwise they go to PostHog as anonymous counts with no identifier.
 - **Feedback widget, only if you allow it.** Featurebase loads its widget, and what you type into it goes to Featurebase.
 
 ### Static codes and free tools
@@ -90,7 +92,7 @@ The **visitor hash** is a salted SHA-256 hash of the IP address, the user agent 
 - **Owner's tracking pixels.** An owner can add Google Analytics 4, Google Tag Manager, Meta, TikTok or LinkedIn pixels to their pages. In the EEA, the UK, Switzerland and wherever a visitor's country is unknown, these wait for the visitor's consent. Elsewhere they respect Global Privacy Control. The visitor's choice is stored in their browser. The owner is responsible for their pixels.
 - **Embedded content.** If the owner adds a map or a video, it is loaded from Google Maps, YouTube (in its privacy-enhanced mode), Vimeo or Loom, and those providers receive the visitor's request.
 
-QRdx's own analytics and feedback widget never load on hosted pages.
+QRdx's own analytics and feedback widget never load on hosted pages. Our server counts form submissions for our own statistics, as a number with nothing about the visitor, the page or the answers.
 
 ### AI features
 
@@ -132,7 +134,8 @@ For people in the EEA, the UK and Switzerland, these are our legal bases under t
 | Scan, page and form data for code owners | End User data | Processed on the owner's instructions under the [DPA](/legal/dpa); the owner needs their own legal basis |
 | Transactional email, alerts and digests you choose | Email address, event details | Contract |
 | Prices in your currency | Country from the IP-country header | Legitimate interests |
-| Product analytics | PostHog events | Consent |
+| Visit counts | Umami page views and actions, with no cookies, identifiers or profile | Legitimate interests: knowing which pages and features get used |
+| Product analytics | PostHog events, and server events linked to your account | Consent |
 | Feedback widget | What you send through Featurebase | Consent |
 | Answering lawful requests and defending claims | What the request concerns | Legal obligation and legitimate interests |
 
@@ -161,7 +164,7 @@ We don't sell personal data, and we don't share it for cross-context behavioural
 | Scans, page events and conversions | As long as the code or page exists. Your plan decides how far back you can view them: 90 days on Free, 3 years on Pro, everything on Business. Older scans may be combined into daily totals. |
 | Form responses | Until the page owner deletes them, the page, or their account |
 | Webhook delivery logs | 30 days |
-| Files | Until you delete them, which removes them from storage straight away. When an account is deleted, its file records are deleted and the files stop being served. |
+| Files | Until you delete them, which removes them from storage straight away. Deleting your account deletes your files from storage too. |
 | AI usage records | Until you delete your account |
 | Our billing records | Until you delete your account. Polar keeps invoices and tax records for as long as the law requires. |
 | Abuse reports and the staff audit log | As long as needed to handle the report, keep the platform safe and deal with legal claims |
@@ -169,7 +172,7 @@ We don't sell personal data, and we don't share it for cross-context behavioural
 | Support emails | As long as needed to resolve your request and keep a record of it |
 | Browser storage | In your browser until you clear it, or for the lifetime listed in the [Cookie Policy](/legal/cookie-policy) |
 
-**Deleting your account** (Settings → Account) deletes your personal workspace: your codes and their scans, pages, responses, files, themes, domains, integrations and sessions. Codes and other content you created inside a team are handed to another team member, so printed team codes keep working. We also ask Polar to delete your customer record. Deleted data can stay in our database provider's short point-in-time recovery history until it rolls over.
+**Deleting your account** (Settings → Account) deletes your personal workspace: your codes and their scans, pages, responses, files, themes, domains, integrations and sessions. Codes and other content you created inside a team are handed to another team member, so printed team codes keep working; teams where you are the only member are deleted. We also ask Polar to delete your customer record, which cancels any active subscription. Deleted data can stay in our database provider's short point-in-time recovery history until it rolls over.
 
 ## International transfers
 
@@ -194,7 +197,7 @@ No system is perfectly secure. If we learn of a breach that affects your persona
 You can see, correct, export or delete your data. Most of it you can handle yourself:
 
 - **Delete** codes, pages, form responses and files in the dashboard, or your whole account in **Settings → Account**.
-- **Export** a code as SVG or PNG, its scans as CSV, and form responses as CSV. Read your codes through the [REST API](/docs/developers/rest-api).
+- **Export** a copy of all your account data (a ZIP of JSON and CSV files) in **Settings → Account**, a code as SVG or PNG, its scans as CSV, and form responses as CSV. Read your codes through the [REST API](/docs/developers/rest-api).
 - **Change your cookie choices** at any time with **Cookie settings** in the footer.
 - **Stop alerts and digests** with the unsubscribe link in any of them, or in your notification settings.
 
@@ -230,5 +233,5 @@ Questions or requests about privacy: [support@qrdx.dev](mailto:support@qrdx.dev)
 
 ---
 
-**Changes:** 1 November 2026. Rewritten to match how QRdx works today: scan analytics without stored IP addresses, hosted pages and forms, teams, integrations, AI features, the API and MCP server, retention periods, and DPDP Act and CCPA sections.
+**Changes:** 1 November 2026. Rewritten to match how QRdx works today: scan analytics without stored IP addresses, hosted pages and forms, teams, integrations, AI features, the API and MCP server, retention periods, and DPDP Act and CCPA sections. Added Umami's cookieless visit counts; PostHog now links events to your account ID instead of your email address and name, and never records sessions.
 

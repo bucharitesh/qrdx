@@ -14,12 +14,11 @@ import {
   matchesCatalogQuery,
 } from "@repo/integrations/src/catalog";
 import { ArrowRight, SearchNormal1 } from "iconsax-reactjs";
-import { motion, useReducedMotion } from "motion/react";
 import Link from "next/link";
 import { parseAsString, parseAsStringLiteral, useQueryState } from "nuqs";
 import { useMemo } from "react";
 import { HairlineFigure } from "@/components/mockups/hairline";
-import { LAYOUT_TRANSITION } from "@/components/mockups/motion";
+import { useSlidingPill } from "@/components/mockups/sliding-pill";
 import { IntegrationCard } from "@/components/sections/integrations/integration-card";
 import { IntegrationLogo } from "@/components/sections/integrations/integration-logo";
 
@@ -55,18 +54,17 @@ function FilterButton({
   count,
   active,
   onSelect,
-  layoutId,
+  pill,
   className,
 }: {
   label: string;
   count: number;
   active: boolean;
   onSelect: () => void;
-  layoutId: string;
+  /** The group's sliding highlight (useSlidingPill), shown on the active filter. */
+  pill: (node: HTMLSpanElement | null) => void;
   className?: string;
 }) {
-  const reduce = useReducedMotion();
-
   return (
     <Button
       type="button"
@@ -82,11 +80,10 @@ function FilterButton({
       )}
     >
       {active && (
-        <motion.span
-          layoutId={layoutId}
+        <span
+          ref={pill}
           aria-hidden
           className="absolute inset-0 rounded-full border bg-card shadow-xs dark:bg-accent dark:shadow-none"
-          transition={reduce ? { duration: 0 } : LAYOUT_TRANSITION}
         />
       )}
       <span className="relative">{label}</span>
@@ -199,7 +196,13 @@ export function IntegrationsDirectory({
     [query],
   );
 
+  const sidePill = useSlidingPill();
+  const chipsPill = useSlidingPill();
   const select = (next: Filter) => {
+    if (next !== filter) {
+      sidePill.capture();
+      chipsPill.capture();
+    }
     void setFilter(next === "all" ? null : next);
   };
   const category = categories.find((item) => item.id === filter);
@@ -222,7 +225,7 @@ export function IntegrationsDirectory({
               count={counts[item]}
               active={filter === item}
               onSelect={() => select(item)}
-              layoutId="integrations-filter-side"
+              pill={sidePill.pill}
               className="w-full"
             />
           ))}
@@ -275,7 +278,7 @@ export function IntegrationsDirectory({
                 count={counts[item]}
                 active={filter === item}
                 onSelect={() => select(item)}
-                layoutId="integrations-filter-chips"
+                pill={chipsPill.pill}
                 className="snap-start"
               />
             ))}

@@ -1,22 +1,25 @@
 import "server-only";
 import {
-  account,
+  abuseReport,
   adminAuditLog,
   aiUsage,
   communityTheme,
   database as db,
+  formResponse,
   integration,
-  oauthApp,
+  landingPage,
   qrCode,
   qrPreset,
   qrScan,
   session,
   subscription,
   user,
+  webhookDelivery,
 } from "@repo/database";
 import {
   and,
   count,
+  countDistinct,
   desc,
   eq,
   gt,
@@ -24,13 +27,19 @@ import {
   ilike,
   inArray,
   isNotNull,
+  lte,
+  ne,
   or,
   type SQL,
   sql,
 } from "drizzle-orm";
 import type { PgColumn, PgTable } from "drizzle-orm/pg-core";
+import { JOB_STORE_PROVIDER } from "@/lib/migrate/server/repo";
+import { type Plan, planForSubscriptionProduct } from "@/lib/plans";
 
 export const PAGE_SIZE = 25;
+// Same as lib/subscription.ts: these statuses grant a paid plan.
+const ENTITLED = ["active", "trialing"];
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 export interface DailyPoint {
@@ -89,25 +98,13 @@ export async function getOverviewStats() {
   const last30d = daysAgo(30);
 
   const [
-    [users],
     [sessions],
-    [presets],
-    [community],
     [ai],
     integrationsByProvider,
     subscriptionsByStatus,
-    [oauthApps],
     signupSeries,
     aiSeries,
   ] = await Promise.all([
-    db
-      .select({
-        total: count(),
-        today: countSince(user.createdAt, today),
-        last7d: countSince(user.createdAt, last7d),
-        last30d: countSince(user.createdAt, last30d),
-      })
-      .from(user),
     db
       .select({
         activeUsers: sql<number>`count(distinct ${session.userId})`.mapWith(
@@ -119,8 +116,6 @@ export async function getOverviewStats() {
       .where(
         and(gte(session.updatedAt, last7d), gt(session.expiresAt, new Date())),
       ),
-    db.select({ total: count() }).from(qrPreset),
-    db.select({ total: count() }).from(communityTheme),
     db
       .select({
         total: count(),
@@ -131,28 +126,15 @@ export async function getOverviewStats() {
       .from(aiUsage),
     getIntegrationCounts(),
     getSubscriptionStatusCounts(),
-    db
-      .select({
-        total: count(),
-        active:
-          sql<number>`count(*) filter (where ${eq(oauthApp.isActive, true)})`.mapWith(
-            Number,
-          ),
-      })
-      .from(oauthApp),
     dailySeries(user, user.createdAt, 30),
     dailySeries(aiUsage, aiUsage.createdAt, 30),
   ]);
 
   return {
-    users,
     sessions,
-    presets: presets.total,
-    communityThemes: community.total,
     ai,
     integrationsByProvider,
     subscriptionsByStatus,
-    oauthApps,
     signupSeries,
     aiSeries,
   };
@@ -200,6 +182,7 @@ export async function listUsers({ q, page }: { q?: string; page: number }) {
           .selectDistinctOn([subscription.userId], {
             userId: subscription.userId,
             status: subscription.status,
+            productId: subscription.productId,
           })
           .from(subscription)
           .where(inArray(subscription.userId, ids))
@@ -208,146 +191,25 @@ export async function listUsers({ q, page }: { q?: string; page: number }) {
     : [[], []];
 
   const usageByUser = new Map(usage.map((row) => [row.userId, row.total]));
-  const statusByUser = new Map(
-    subscriptions.map((row) => [row.userId, row.status]),
+  const subscriptionByUser = new Map(
+    subscriptions.map((row) => [row.userId, row]),
   );
 
   return {
     total,
-    users: rows.map((row) => ({
-      ...row,
-      aiUsageCount: usageByUser.get(row.id) ?? 0,
-      subscriptionStatus: statusByUser.get(row.id) ?? null,
-    })),
-  };
-}
-
-export async function getUserDetail(userId: string) {
-  const [found] = await db
-    .select({
-      id: user.id,
-      email: user.email,
-      name: user.name,
-      image: user.image,
-      emailVerified: user.emailVerified,
-      role: user.role,
-      banned: user.banned,
-      banReason: user.banReason,
-      banExpires: user.banExpires,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
-    })
-    .from(user)
-    .where(eq(user.id, userId))
-    .limit(1);
-
-  if (!found) {
-    return null;
-  }
-
-  const now = new Date();
-  const [
-    themes,
-    integrations,
-    subscriptions,
-    [usage],
-    recentUsage,
-    [sessions],
-    providers,
-    auditEntries,
-  ] = await Promise.all([
-    db
-      .select({
-        id: qrPreset.id,
-        name: qrPreset.name,
-        createdAt: qrPreset.createdAt,
-        communityThemeId: communityTheme.id,
-        likeCount: communityTheme.likeCount,
-      })
-      .from(qrPreset)
-      .leftJoin(communityTheme, eq(communityTheme.themeId, qrPreset.id))
-      .where(eq(qrPreset.userId, userId))
-      .orderBy(desc(qrPreset.createdAt)),
-    // Never select tokens.
-    db
-      .select({
-        id: integration.id,
-        provider: integration.provider,
-        status: integration.status,
-        scopes: integration.scopes,
-        lastSyncAt: integration.lastSyncAt,
-        createdAt: integration.createdAt,
-      })
-      .from(integration)
-      .where(eq(integration.userId, userId))
-      .orderBy(desc(integration.createdAt)),
-    db
-      .select({
-        id: subscription.id,
-        status: subscription.status,
-        amount: subscription.amount,
-        currency: subscription.currency,
-        recurringInterval: subscription.recurringInterval,
-        currentPeriodEnd: subscription.currentPeriodEnd,
-        cancelAtPeriodEnd: subscription.cancelAtPeriodEnd,
-        createdAt: subscription.createdAt,
-      })
-      .from(subscription)
-      .where(eq(subscription.userId, userId))
-      .orderBy(desc(subscription.createdAt)),
-    db
-      .select({
-        total: count(),
-        last30d: countSince(aiUsage.createdAt, daysAgo(30)),
-      })
-      .from(aiUsage)
-      .where(eq(aiUsage.userId, userId)),
-    db
-      .select({
-        id: aiUsage.id,
-        modelId: aiUsage.modelId,
-        createdAt: aiUsage.createdAt,
-      })
-      .from(aiUsage)
-      .where(eq(aiUsage.userId, userId))
-      .orderBy(desc(aiUsage.createdAt))
-      .limit(10),
-    db
-      .select({
-        active: count(),
-        lastSeenAt: sql<Date | null>`max(${session.updatedAt})`.mapWith(
-          session.updatedAt,
-        ),
-      })
-      .from(session)
-      .where(and(eq(session.userId, userId), gt(session.expiresAt, now))),
-    db
-      .select({ providerId: account.providerId })
-      .from(account)
-      .where(eq(account.userId, userId)),
-    db
-      .select()
-      .from(adminAuditLog)
-      .where(
-        and(
-          eq(adminAuditLog.targetType, "user"),
-          eq(adminAuditLog.targetId, userId),
-        ),
-      )
-      .orderBy(desc(adminAuditLog.createdAt))
-      .limit(20),
-  ]);
-
-  return {
-    user: found,
-    themes,
-    integrations,
-    subscriptions,
-    usage,
-    recentUsage,
-    sessions,
-    providers: providers.map((row) => row.providerId),
-    auditEntries,
+    users: rows.map((row) => {
+      const latest = subscriptionByUser.get(row.id);
+      const plan: Plan =
+        latest && ENTITLED.includes(latest.status)
+          ? planForSubscriptionProduct(latest.productId)
+          : "free";
+      return {
+        ...row,
+        aiUsageCount: usageByUser.get(row.id) ?? 0,
+        subscriptionStatus: latest?.status ?? null,
+        plan,
+      };
+    }),
   };
 }
 
@@ -511,6 +373,9 @@ export async function listSubscriptions({
 
 // Integrations
 
+// The importer keeps its job history in an integration row; it isn't a connection.
+const realIntegration = ne(integration.provider, JOB_STORE_PROVIDER);
+
 export function getIntegrationCounts() {
   return db
     .select({
@@ -519,31 +384,67 @@ export function getIntegrationCounts() {
       total: count(),
     })
     .from(integration)
+    .where(realIntegration)
     .groupBy(integration.provider, integration.status)
     .orderBy(integration.provider, integration.status);
 }
 
-export function listRecentIntegrations() {
-  // Never select tokens.
-  return db
-    .select({
-      id: integration.id,
-      provider: integration.provider,
-      status: integration.status,
-      lastSyncAt: integration.lastSyncAt,
-      createdAt: integration.createdAt,
-      userId: user.id,
-      email: user.email,
-    })
-    .from(integration)
-    .innerJoin(user, eq(user.id, integration.userId))
-    .orderBy(desc(integration.createdAt))
-    .limit(50);
+export async function listIntegrations({
+  provider,
+  status,
+  page,
+}: {
+  provider?: string;
+  status?: string;
+  page: number;
+}) {
+  const where = and(
+    realIntegration,
+    provider ? eq(integration.provider, provider) : undefined,
+    status ? eq(integration.status, status) : undefined,
+  );
+  const [rows, [{ total }]] = await Promise.all([
+    // Never select tokens.
+    db
+      .select({
+        id: integration.id,
+        provider: integration.provider,
+        status: integration.status,
+        lastSyncAt: integration.lastSyncAt,
+        createdAt: integration.createdAt,
+        userId: user.id,
+        email: user.email,
+      })
+      .from(integration)
+      .innerJoin(user, eq(user.id, integration.userId))
+      .where(where)
+      .orderBy(desc(integration.createdAt))
+      .limit(PAGE_SIZE)
+      .offset((page - 1) * PAGE_SIZE),
+    db.select({ total: count() }).from(integration).where(where),
+  ]);
+  return { total, integrations: rows };
 }
 
 // Audit log
 
-export async function listAuditLog({ page }: { page: number }) {
+export async function listAuditLog({
+  page,
+  q,
+}: {
+  page: number;
+  /** An action ("user.ban", or a prefix like "user."), or a target / actor id */
+  q?: string;
+}) {
+  const term = q?.trim();
+  const where = term
+    ? or(
+        ilike(adminAuditLog.action, `${escapeLike(term)}%`),
+        eq(adminAuditLog.targetId, term),
+        eq(adminAuditLog.actorUserId, term),
+        sql`${adminAuditLog.metadata}::jsonb ->> 'subjectUserId' = ${term}`,
+      )
+    : undefined;
   const [rows, [{ total }]] = await Promise.all([
     db
       .select({
@@ -558,10 +459,11 @@ export async function listAuditLog({ page }: { page: number }) {
       })
       .from(adminAuditLog)
       .leftJoin(user, eq(user.id, adminAuditLog.actorUserId))
+      .where(where)
       .orderBy(desc(adminAuditLog.createdAt))
       .limit(PAGE_SIZE)
       .offset((page - 1) * PAGE_SIZE),
-    db.select({ total: count() }).from(adminAuditLog),
+    db.select({ total: count() }).from(adminAuditLog).where(where),
   ]);
 
   return { total, entries: rows };
@@ -581,20 +483,24 @@ const codeStatusWhere: Record<AdminCodeStatus, SQL | undefined> = {
 export async function listDynamicCodes({
   q,
   status,
+  kind,
   page,
 }: {
   q?: string;
   status: AdminCodeStatus;
+  kind?: "redirect" | "page";
   page: number;
 }) {
   const term = q?.trim();
   const pattern = term ? `%${escapeLike(term)}%` : null;
   const where = and(
     codeStatusWhere[status],
+    kind ? eq(qrCode.kind, kind) : undefined,
     term && pattern
       ? or(
           eq(qrCode.slug, term),
           eq(qrCode.id, term),
+          eq(qrCode.userId, term),
           ilike(qrCode.destinationUrl, pattern),
           ilike(qrCode.title, pattern),
           ilike(user.email, pattern),
@@ -607,9 +513,11 @@ export async function listDynamicCodes({
       .select({
         id: qrCode.id,
         slug: qrCode.slug,
+        kind: qrCode.kind,
         title: qrCode.title,
         destinationUrl: qrCode.destinationUrl,
         isActive: qrCode.isActive,
+        pausedAt: qrCode.pausedAt,
         archivedAt: qrCode.archivedAt,
         scanCount: qrCode.scanCount,
         lastScannedAt: qrCode.lastScannedAt,
@@ -634,29 +542,85 @@ export async function listDynamicCodes({
   return { total, codes: rows };
 }
 
-export async function getDynamicCodeStats() {
-  const [[codes], [scans]] = await Promise.all([
+// Dashboard
+
+/** The numbers on /admin, each linking to the list behind it. */
+export async function getDashboardStats() {
+  const today = startOfUtcDay();
+  const last7d = daysAgo(7);
+
+  const [
+    [users],
+    [paid],
+    [codes],
+    [scans],
+    [pages],
+    [responses],
+    [reports],
+    [deliveries],
+    [integrationErrors],
+  ] = await Promise.all([
+    db
+      .select({ total: count(), last7d: countSince(user.createdAt, last7d) })
+      .from(user),
+    db
+      .select({ total: countDistinct(subscription.userId) })
+      .from(subscription)
+      .where(inArray(subscription.status, ENTITLED)),
     db
       .select({
         total: count(),
-        active:
-          sql<number>`count(*) filter (where ${codeStatusWhere.active})`.mapWith(
-            Number,
-          ),
-        disabled:
-          sql<number>`count(*) filter (where ${codeStatusWhere.disabled})`.mapWith(
-            Number,
-          ),
-        scans: sql<number>`coalesce(sum(${qrCode.scanCount}), 0)`.mapWith(
+        live: sql<number>`count(*) filter (where ${codeStatusWhere.active})`.mapWith(
           Number,
         ),
       })
       .from(qrCode),
     db
-      .select({ last7d: count() })
+      .select({ last7d: count(), today: countSince(qrScan.scannedAt, today) })
       .from(qrScan)
-      .where(gte(qrScan.scannedAt, daysAgo(7))),
+      .where(gte(qrScan.scannedAt, last7d)),
+    db.select({ total: count() }).from(landingPage),
+    db
+      .select({
+        total: count(),
+        last7d: countSince(formResponse.createdAt, last7d),
+      })
+      .from(formResponse),
+    db
+      .select({ open: count() })
+      .from(abuseReport)
+      .where(eq(abuseReport.status, "open")),
+    db
+      .select({
+        failed7d:
+          sql<number>`count(*) filter (where ${and(eq(webhookDelivery.status, "failed"), gte(webhookDelivery.createdAt, last7d))})`.mapWith(
+            Number,
+          ),
+        overdue:
+          sql<number>`count(*) filter (where ${and(eq(webhookDelivery.status, "pending"), lte(webhookDelivery.nextAttemptAt, new Date(Date.now() - 60 * 60 * 1000)))})`.mapWith(
+            Number,
+          ),
+      })
+      .from(webhookDelivery)
+      .where(inArray(webhookDelivery.status, ["failed", "pending"])),
+    db
+      .select({ total: count() })
+      .from(integration)
+      .where(and(realIntegration, eq(integration.status, "error"))),
   ]);
 
-  return { ...codes, scansLast7d: scans.last7d };
+  return {
+    users: users ?? { total: 0, last7d: 0 },
+    paidUsers: paid?.total ?? 0,
+    codes: codes ?? { total: 0, live: 0 },
+    scans: scans ?? { last7d: 0, today: 0 },
+    pages: pages?.total ?? 0,
+    responses: responses ?? { total: 0, last7d: 0 },
+    attention: {
+      openReports: reports?.open ?? 0,
+      failedDeliveries7d: deliveries?.failed7d ?? 0,
+      overdueDeliveries: deliveries?.overdue ?? 0,
+      integrationErrors: integrationErrors?.total ?? 0,
+    },
+  };
 }

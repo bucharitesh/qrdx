@@ -61,6 +61,19 @@ export interface BlockRenderContext {
    * downloads are built in the page).
    */
   demo?: boolean;
+  /**
+   * Scaled-down template preview (gallery, template picker): every image
+   * loads lazily, so a grid of previews doesn't fetch photos off screen, and
+   * headings render as divs (components/landing/heading), so previews add no
+   * headings to the page around them.
+   */
+  thumbnail?: boolean;
+  /**
+   * Set by LandingRender (never in thumbnails) on the first block of the
+   * first screen whose definition has a `leadImage`: that photo, the likely
+   * LCP, loads eagerly with fetchpriority="high".
+   */
+  leadImage?: boolean;
 }
 
 export interface BlockRenderProps<P extends BlockProps = BlockProps> {
@@ -98,6 +111,12 @@ export interface BlockDefinition<
   defaults: z.input<S>;
   Render: ComponentType<BlockRenderProps<z.output<S>>>;
   Editor: ComponentType<BlockEditorProps<z.output<S>>>;
+  /**
+   * True when the block shows a large photo (a cover, a gallery, a tile
+   * grid). On a page's first screen the first such block gets
+   * `context.leadImage` and loads that photo first.
+   */
+  leadImage?: (props: z.output<S>) => boolean;
 }
 
 /** A definition with its props type erased (registry storage). */

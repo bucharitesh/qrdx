@@ -1,7 +1,9 @@
 "use client";
 
+import { Tick } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
+import { Copy } from "iconsax-reactjs";
 import { useTheme } from "next-themes";
 import type { ComponentProps, HTMLAttributes, ReactNode } from "react";
 import { createContext, useContext, useState } from "react";
@@ -10,7 +12,6 @@ import {
   oneDark,
   oneLight,
 } from "react-syntax-highlighter/dist/esm/styles/prism";
-import { Icons } from "@/components/icons";
 import { soundEvent } from "@/lib/sound/emit";
 
 type CodeBlockContextType = {
@@ -115,7 +116,7 @@ export const CodeBlockCopyButton = ({
     }
   };
 
-  const Icon = isCopied ? Icons.Check : Icons.Copy;
+  const Icon = isCopied ? Tick : Copy;
 
   return (
     <Button

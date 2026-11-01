@@ -5,16 +5,22 @@ import { DailyChart } from "./_components/daily-chart";
 import { EmptyRow, Section, StatCard } from "./_components/stat-card";
 import { formatNumber } from "./_lib/format";
 import { requireAdmin } from "./_lib/guard";
-import { getDynamicCodeStats, getOverviewStats } from "./_lib/queries";
+import { getDashboardStats, getOverviewStats } from "./_lib/queries";
 
 export const metadata: Metadata = { title: "Admin · Overview" };
 
 export default async function AdminOverviewPage() {
   await requireAdmin();
-  const [stats, codeStats] = await Promise.all([
+  const [dashboard, stats] = await Promise.all([
+    getDashboardStats(),
     getOverviewStats(),
-    getDynamicCodeStats(),
   ]);
+  const { attention } = dashboard;
+  const needsAttention =
+    attention.openReports +
+    attention.failedDeliveries7d +
+    attention.overdueDeliveries +
+    attention.integrationErrors;
 
   const providers = new Map<string, { active: number; total: number }>();
   for (const row of stats.integrationsByProvider) {
@@ -28,60 +34,96 @@ export default async function AdminOverviewPage() {
     <div className="space-y-4">
       <SettingsHeader
         title="Overview"
-        description="Live counts from the database. Times are UTC."
+        description="Live counts from the database. Times are UTC. Every number opens the list behind it."
       />
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatCard
-          label="Total users"
-          value={formatNumber(stats.users.total)}
-          hint={`${formatNumber(stats.users.today)} today`}
+          href="/admin/users"
+          label="Users"
+          value={formatNumber(dashboard.users.total)}
+          hint={`${formatNumber(dashboard.users.last7d)} new this week`}
         />
         <StatCard
-          label="Signups (7d / 30d)"
-          value={`${formatNumber(stats.users.last7d)} / ${formatNumber(stats.users.last30d)}`}
+          href="/admin/subscriptions?status=active"
+          label="Paying users"
+          value={formatNumber(dashboard.paidUsers)}
+          hint="Active or trialing subscription"
+        />
+        <StatCard
+          href="/admin/codes"
+          label="Dynamic codes"
+          value={formatNumber(dashboard.codes.total)}
+          hint={`${formatNumber(dashboard.codes.live)} live`}
+        />
+        <StatCard
+          href="/admin/codes"
+          label="Scans this week"
+          value={formatNumber(dashboard.scans.last7d)}
+          hint={`${formatNumber(dashboard.scans.today)} today (UTC)`}
+        />
+        <StatCard
+          href="/admin/codes?kind=page"
+          label="Hosted pages"
+          value={formatNumber(dashboard.pages)}
+        />
+        <StatCard
+          href="/admin/codes?kind=page"
+          label="Form responses"
+          value={formatNumber(dashboard.responses.total)}
+          hint={`${formatNumber(dashboard.responses.last7d)} this week`}
+        />
+        <StatCard
+          href="/admin/ai-usage"
+          label="AI generations (30d)"
+          value={formatNumber(stats.ai.last30d)}
+          hint={`${formatNumber(stats.ai.today)} today · ${formatNumber(stats.ai.total)} all time`}
         />
         <StatCard
           label="Active users (7d)"
           value={formatNumber(stats.sessions.activeUsers)}
-          hint={`${formatNumber(stats.sessions.sessions)} live sessions used in 7d`}
-        />
-        <StatCard
-          label="AI generations (30d)"
-          value={formatNumber(stats.ai.last30d)}
-          hint={`${formatNumber(stats.ai.today)} today · ${formatNumber(stats.ai.last7d)} in 7d · ${formatNumber(stats.ai.total)} all time`}
-        />
-        <StatCard label="Saved QR themes" value={formatNumber(stats.presets)} />
-        <StatCard
-          label="Community themes"
-          value={formatNumber(stats.communityThemes)}
-        />
-        <StatCard
-          label="Dynamic QR codes"
-          value={formatNumber(codeStats.total)}
-          hint={`${formatNumber(codeStats.active)} active · ${formatNumber(codeStats.disabled)} disabled`}
-        />
-        <StatCard
-          label="QR scans"
-          value={formatNumber(codeStats.scans)}
-          hint={`${formatNumber(codeStats.scansLast7d)} in the last 7d`}
-        />
-        <StatCard
-          label="OAuth apps"
-          value={formatNumber(stats.oauthApps.total)}
-          hint={`${formatNumber(stats.oauthApps.active)} active`}
-        />
-        <StatCard
-          label="Integrations"
-          value={formatNumber(
-            Array.from(providers.values()).reduce(
-              (sum, p) => sum + p.active,
-              0,
-            ),
-          )}
-          hint="active connections"
+          hint={`${formatNumber(stats.sessions.sessions)} live sessions used`}
         />
       </div>
+
+      <Section
+        title="Needs attention"
+        description={
+          needsAttention === 0
+            ? "Nothing waiting."
+            : "Open each to see what's wrong."
+        }
+      >
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+          <StatCard
+            alert={attention.openReports > 0}
+            href="/admin/abuse"
+            label="Open abuse reports"
+            value={formatNumber(attention.openReports)}
+          />
+          <StatCard
+            alert={attention.failedDeliveries7d > 0}
+            href="/admin/health#webhooks"
+            label="Failed webhooks (7d)"
+            value={formatNumber(attention.failedDeliveries7d)}
+            hint="Gave up after every retry"
+          />
+          <StatCard
+            alert={attention.overdueDeliveries > 0}
+            href="/admin/health#webhooks"
+            label="Webhooks overdue"
+            value={formatNumber(attention.overdueDeliveries)}
+            hint="Due over an hour ago: is the cron running?"
+          />
+          <StatCard
+            alert={attention.integrationErrors > 0}
+            href="/admin/integrations?status=error"
+            label="Broken integrations"
+            value={formatNumber(attention.integrationErrors)}
+            hint="Need the user to reconnect"
+          />
+        </div>
+      </Section>
 
       <div className="grid gap-4 lg:grid-cols-2">
         <Section title="Signups" description="New users per day, last 30 days">

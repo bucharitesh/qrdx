@@ -47,6 +47,41 @@ export function Tick({
  * Whole star, the iconsax Star1 outline. iconsax's filled stars are split in
  * two halves (Star1 Bold/Bulk), so `variant="Bold"` fills this outline instead.
  */
+/**
+ * A plain play triangle with rounded corners. iconsax's Play draws a split
+ * glyph; `variant="Bold"` (or "Bulk") fills this one, Linear outlines it.
+ */
+export function Play({
+  className,
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 1.5,
+  variant = "Linear",
+  ...props
+}: IconProps) {
+  const filled = variant === "Bold" || variant === "Bulk";
+  return (
+    <svg
+      aria-hidden="true"
+      className={className}
+      fill="none"
+      height={size}
+      viewBox="0 0 24 24"
+      width={size}
+      {...props}
+    >
+      <path
+        d="M7.5 5.6v12.8c0 1.1 1.2 1.78 2.14 1.2l10.24-6.4a1.42 1.42 0 0 0 0-2.4L9.64 4.4c-.94-.58-2.14.1-2.14 1.2Z"
+        fill={filled ? color : "none"}
+        stroke={color}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={strokeWidth}
+      />
+    </svg>
+  );
+}
+
 export function Star({
   className,
   size = 24,
@@ -216,3 +251,30 @@ export const LinkedinLogo = logo(
 export const XLogo = logo(
   "M18.9 1.15h3.68l-8.04 9.19L24 22.85h-7.4l-5.8-7.58-6.63 7.58H.48l8.6-9.83L0 1.15h7.59l5.24 6.93 6.07-6.93Zm-1.29 19.5h2.04L6.48 3.24H4.3l13.31 17.41Z"
 );
+export const GoogleLogo = logo(
+  "M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z"
+);
+
+/** Contrast: a circle split down the middle, the right half hatched. */
+export function Contrast({ size = 24, ...props }: LogoProps) {
+  return (
+    <svg
+      aria-hidden="true"
+      fill="none"
+      height={size}
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth={2}
+      viewBox="0 0 24 24"
+      width={size}
+      {...props}
+    >
+      <path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
+      <path d="M12 3l0 18" />
+      <path d="M12 9l4.65 -4.65" />
+      <path d="M12 14.3l7.37 -7.37" />
+      <path d="M12 19.6l8.85 -8.85" />
+    </svg>
+  );
+}

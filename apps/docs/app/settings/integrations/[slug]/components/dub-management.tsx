@@ -9,9 +9,17 @@ import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Skeleton } from "@repo/design-system/components/ui/skeleton";
+import {
+  Chart,
+  Copy,
+  Edit2,
+  ExportSquare,
+  InfoCircle,
+  Refresh2,
+  Trash,
+} from "iconsax-reactjs";
 import * as React from "react";
 import { toast } from "sonner";
-import { Icons } from "@/components/icons";
 import { apiFetch } from "@/lib/api-fetch";
 import { soundEvent } from "@/lib/sound/emit";
 
@@ -219,7 +227,7 @@ export function DubManagement({ metadata }: DubManagementProps) {
           </p>
         </div>
         <Button type="button" variant="outline" size="sm" onClick={fetchLinks}>
-          <Icons.RefreshCw className="mr-1.5 size-3.5" />
+          <Refresh2 className="mr-1.5 size-3.5" />
           Refresh
         </Button>
       </div>
@@ -237,7 +245,7 @@ export function DubManagement({ metadata }: DubManagementProps) {
 
       {error && (
         <Alert variant="destructive">
-          <Icons.AlertCircle />
+          <InfoCircle />
           <AlertTitle>Dub unavailable</AlertTitle>
           <AlertDescription>{error}</AlertDescription>
         </Alert>
@@ -311,7 +319,7 @@ export function DubManagement({ metadata }: DubManagementProps) {
                       size="sm"
                       onClick={() => handleCopy(link)}
                     >
-                      <Icons.Copy className="mr-1.5 size-3.5" />
+                      <Copy className="mr-1.5 size-3.5" />
                       Copy
                     </Button>
                     <Button
@@ -320,7 +328,7 @@ export function DubManagement({ metadata }: DubManagementProps) {
                       size="sm"
                       onClick={() => window.open(getShortUrl(link), "_blank")}
                     >
-                      <Icons.ExternalLink className="mr-1.5 size-3.5" />
+                      <ExportSquare className="mr-1.5 size-3.5" />
                       Open
                     </Button>
                     <Button
@@ -332,7 +340,7 @@ export function DubManagement({ metadata }: DubManagementProps) {
                         setEditUrl(link.url);
                       }}
                     >
-                      <Icons.Edit className="mr-1.5 size-3.5" />
+                      <Edit2 className="mr-1.5 size-3.5" />
                       Edit
                     </Button>
                     <Button
@@ -341,7 +349,7 @@ export function DubManagement({ metadata }: DubManagementProps) {
                       size="sm"
                       onClick={() => fetchAnalytics(link)}
                     >
-                      <Icons.ChartNoAxesCombined className="mr-1.5 size-3.5" />
+                      <Chart className="mr-1.5 size-3.5" />
                       Analytics
                     </Button>
                     <Button
@@ -350,7 +358,7 @@ export function DubManagement({ metadata }: DubManagementProps) {
                       size="sm"
                       onClick={() => handleArchive(link)}
                     >
-                      <Icons.Trash className="mr-1.5 size-3.5" />
+                      <Trash className="mr-1.5 size-3.5" />
                       Archive
                     </Button>
                   </>

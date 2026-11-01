@@ -1,6 +1,8 @@
 import { Music } from "iconsax-reactjs";
-import { themePreset } from "@/components/landing/theme";
 import { registerTemplate } from "./registry";
+
+// Tracks and cover art are the owner's own files; the public demos use sample
+// clips and artwork (lib/landing/demo.ts).
 
 registerTemplate({
   type: "mp3",
@@ -13,22 +15,54 @@ registerTemplate({
       id: "album",
       name: "Album",
       description: "Cover art, a playlist and your profiles",
-      theme: { colors: themePreset("midnight"), font: "geist", radius: 14 },
+      theme: {
+        colors: {
+          background: "#0c0d12",
+          foreground: "#f3f4f6",
+          primary: "#f3f4f6",
+          primaryForeground: "#0c0d12",
+          muted: "#171922",
+          mutedForeground: "#9ca3af",
+        },
+        font: "dm-sans",
+        headingFont: "space-grotesk",
+        radius: 14,
+        background: {
+          type: "gradient",
+          from: "#2a2440",
+          to: "#0c0d12",
+          angle: 180,
+          shape: "radial",
+        },
+      },
       blocks: [
         {
           type: "header",
           props: {
+            eyebrow: "New EP",
             title: "Night Drive",
-            subtitle: "The new EP. Listen to every track here.",
+            size: "xl",
+            subtitle: "Mara Vale · 3 tracks · 11 min",
           },
         },
         { type: "audio", props: { title: "" } },
+        {
+          type: "links",
+          props: {
+            style: "outline",
+            items: [
+              { label: "Spotify", url: "https://open.spotify.com/" },
+              { label: "Apple Music", url: "https://music.apple.com/" },
+            ],
+          },
+        },
         {
           type: "socials",
           props: {
             items: [
               { network: "instagram", url: "https://instagram.com/" },
               { network: "youtube", url: "https://youtube.com/" },
+              { network: "soundcloud", url: "https://soundcloud.com/" },
             ],
           },
         },
@@ -38,13 +72,29 @@ registerTemplate({
       id: "podcast",
       name: "Podcast",
       description: "Latest episodes with show notes",
-      theme: { colors: themePreset("sunset"), radius: 16 },
+      theme: {
+        colors: {
+          background: "#f6efe6",
+          foreground: "#22180f",
+          primary: "#b43d0b",
+          primaryForeground: "#ffffff",
+          muted: "#ecdfd0",
+          mutedForeground: "#665242",
+        },
+        font: "dm-sans",
+        headingFont: "fraunces",
+        radius: 16,
+      },
       blocks: [
         {
           type: "header",
           props: {
-            title: "The Corner Shop Podcast",
-            subtitle: "Weekly chats with local business owners.",
+            align: "left",
+            eyebrow: "A weekly podcast",
+            title: "The Corner Shop",
+            size: "xl",
+            subtitle:
+              "Conversations with the people behind your favourite local shops.",
           },
         },
         {
@@ -55,7 +105,17 @@ registerTemplate({
           type: "text",
           props: {
             heading: "About the show",
-            body: "New episodes every Monday.",
+            body: "Hosted by Dana Brooks. New episodes every Monday, about 30 minutes each.",
+          },
+        },
+        {
+          type: "links",
+          props: {
+            style: "rows",
+            items: [
+              { label: "Apple Podcasts", url: "https://podcasts.apple.com/" },
+              { label: "Spotify", url: "https://open.spotify.com/" },
+            ],
           },
         },
       ],
@@ -63,14 +123,30 @@ registerTemplate({
     {
       id: "voice-message",
       name: "Voice message",
-      description: "One recording, for a card, gift or tour stop",
-      theme: { colors: themePreset("forest"), font: "rounded", radius: 24 },
+      description: "One recording for a card, a gift or a tour stop",
+      theme: {
+        colors: {
+          background: "#eef2ec",
+          foreground: "#1b241d",
+          primary: "#2f4a36",
+          primaryForeground: "#ffffff",
+          muted: "#dfe7dc",
+          mutedForeground: "#526056",
+        },
+        font: "dm-sans",
+        headingFont: "instrument-serif",
+        radius: 24,
+        spacing: "relaxed",
+        texture: "grain",
+      },
       blocks: [
         {
           type: "header",
           props: {
-            title: "A message for you",
-            subtitle: "Press play to listen.",
+            eyebrow: "A message for you",
+            title: "Happy birthday, Lily",
+            size: "xl",
+            subtitle: "Turn the sound up and press play.",
           },
         },
         { type: "audio", props: {} },

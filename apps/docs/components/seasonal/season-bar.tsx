@@ -16,9 +16,9 @@ import {
   SEASON_PARAM,
   type Season,
 } from "@/lib/seasonal";
+import { MIDNIGHT_EVENT } from "./events";
 import { HalloweenPresetLink as PresetLink } from "./halloween-preset-link";
 import { HALLOWEEN_PUMPKIN } from "./halloween-presets";
-import { MIDNIGHT_EVENT } from "./new-year";
 
 // Runs while the HTML streams in, before the bar paints, so a `?season=off`
 // preview never flashes the bar in on a full page load.

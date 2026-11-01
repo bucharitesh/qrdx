@@ -1,0 +1,98 @@
+/*
+ * The morphing mega menu in components/header-nav.tsx. Radix renders every
+ * dropdown into one shared viewport (the data-slot hooks come from the
+ * design-system NavigationMenu, which stays untouched), so moving from one
+ * menu to the next keeps the panel open: it glides under the new trigger and
+ * resizes to the new content while the content cross-fades.
+ *
+ * HeaderNav sets, in the menu root's coordinates:
+ *   --nav-x       the open trigger's left edge, where the panel starts
+ *   --nav-center  the trigger's centre, the zoom origin
+ *   --nav-min/max the window edges less a gutter, which the panel stays inside
+ * and [data-morph] while moving between menus (a fresh open just appears).
+ *
+ * This CSS is unlayered, so it beats the Tailwind utilities on the same
+ * elements without !important.
+ */
+
+.nav {
+  --nav-ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --nav-morph: 240ms;
+  /* How far content slides in the direction of travel. */
+  --nav-shift: 1rem;
+}
+
+.nav [data-slot="navigation-menu-viewport"] {
+  --nav-left: max(
+    var(--nav-min, 0px),
+    min(
+      var(--nav-x, 0px),
+      calc(
+        var(--nav-max, 100vw) -
+        var(--radix-navigation-menu-viewport-width, 0px)
+      )
+    )
+  );
+  translate: var(--nav-left) 0;
+  transform-origin: calc(var(--nav-center, 0px) - var(--nav-left)) top;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Open and close: a short fade with a slight zoom from the trigger. */
+  .nav [data-slot="navigation-menu-viewport"] {
+    --tw-ease: var(--nav-ease);
+    --tw-duration: 200ms;
+    --tw-enter-opacity: 0;
+    --tw-enter-scale: 0.97;
+    --tw-exit-opacity: 0;
+    --tw-exit-scale: 0.97;
+  }
+  .nav [data-slot="navigation-menu-viewport"][data-state="closed"] {
+    --tw-duration: 150ms;
+  }
+
+  .nav[data-morph] [data-slot="navigation-menu-viewport"] {
+    transition:
+      translate var(--nav-morph) var(--nav-ease),
+      width var(--nav-morph) var(--nav-ease),
+      height var(--nav-morph) var(--nav-ease);
+  }
+  /* Reopened while fading out: stay solid instead of replaying the entrance. */
+  .nav[data-morph] [data-slot="navigation-menu-viewport"][data-state="open"] {
+    animation: none;
+  }
+
+  /* The old menu leaves quickly towards the side being moved away from while
+     the new one comes in from the side being moved to, so the two cross-fade
+     without reading as a double image. */
+  .nav [data-slot="navigation-menu-content"] {
+    --tw-ease: var(--nav-ease);
+  }
+  .nav [data-slot="navigation-menu-content"][data-motion^="from-"] {
+    --tw-duration: 220ms;
+  }
+  .nav [data-slot="navigation-menu-content"][data-motion^="to-"] {
+    --tw-duration: 120ms;
+  }
+  .nav [data-slot="navigation-menu-content"][data-motion="from-end"] {
+    --tw-enter-translate-x: var(--nav-shift);
+  }
+  .nav [data-slot="navigation-menu-content"][data-motion="from-start"] {
+    --tw-enter-translate-x: calc(var(--nav-shift) * -1);
+  }
+  .nav [data-slot="navigation-menu-content"][data-motion="to-start"] {
+    --tw-exit-translate-x: calc(var(--nav-shift) * -1);
+  }
+  .nav [data-slot="navigation-menu-content"][data-motion="to-end"] {
+    --tw-exit-translate-x: var(--nav-shift);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav [data-slot="navigation-menu-viewport"],
+  .nav [data-slot="navigation-menu-content"],
+  .nav [data-slot="navigation-menu-trigger"] svg {
+    animation: none;
+    transition: none;
+  }
+}

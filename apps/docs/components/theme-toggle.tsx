@@ -2,9 +2,9 @@
 
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
+import { Moon, Sun1 } from "iconsax-reactjs";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
-import { Icons } from "@/components/icons";
 import { TooltipWrapper } from "./tooltip-wrapper";
 
 interface ThemeToggleProps extends React.ComponentProps<typeof Button> {}
@@ -32,9 +32,9 @@ export function ThemeToggle({ className, ...props }: ThemeToggleProps) {
         onClick={handleThemeToggle}
       >
         {mounted && theme === "light" ? (
-          <Icons.Sun className="h-4 w-4" />
+          <Sun1 className="h-4 w-4" />
         ) : (
-          <Icons.Moon className="h-4 w-4" />
+          <Moon className="h-4 w-4" />
         )}
       </Button>
     </TooltipWrapper>

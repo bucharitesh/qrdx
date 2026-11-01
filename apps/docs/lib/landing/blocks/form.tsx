@@ -2,11 +2,13 @@ import { cn } from "@repo/design-system/lib/utils";
 import { ClipboardText as ClipboardList } from "iconsax-reactjs";
 import { z } from "zod";
 import {
+  buttonShapeClass,
   lineText,
   longText,
   mutedTextClass,
   surfaceClass,
 } from "@/components/landing/block-kit";
+import { LpHeading } from "@/components/landing/heading";
 import { type BlockRenderProps, registerBlock } from "../registry";
 import { FormClient } from "./form-client";
 import { FormEditor } from "./form-editor";
@@ -35,9 +37,14 @@ export function FormBlock({ id, props, context }: BlockRenderProps<FormProps>) {
       {(props.title || props.description) && (
         <div className="space-y-1">
           {props.title && (
-            <h2 className="text-lg leading-tight font-semibold" id={titleId}>
+            <LpHeading
+              as="h2"
+              preview={context.thumbnail}
+              className="text-lg leading-tight font-semibold"
+              id={titleId}
+            >
               {props.title}
-            </h2>
+            </LpHeading>
           )}
           {props.description && (
             <p className={cn(mutedTextClass, "text-sm whitespace-pre-line")}>
@@ -53,6 +60,7 @@ export function FormBlock({ id, props, context }: BlockRenderProps<FormProps>) {
         live={context.mode === "live"}
         pageId={context.pageId}
         qrCodeId={context.qrCodeId}
+        shapeClassName={buttonShapeClass(context.theme)}
         submitLabel={props.submitLabel}
         successMessage={props.successMessage}
       />

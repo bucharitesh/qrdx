@@ -2,6 +2,7 @@ import { cn } from "@repo/design-system/lib/utils";
 import { Clock } from "iconsax-reactjs";
 import { z } from "zod";
 import { lineText, mutedTextClass } from "@/components/landing/block-kit";
+import { LpHeading } from "@/components/landing/heading";
 import { OpenNowBadge } from "@/components/landing/open-now-badge";
 import { isValidTimeZone, WEEKDAYS } from "@/components/landing/opening-hours";
 import { type BlockRenderProps, registerBlock } from "../registry";
@@ -51,7 +52,7 @@ export const hoursSchema = z.object({
 
 export type HoursProps = z.output<typeof hoursSchema>;
 
-function HoursBlock({ props }: BlockRenderProps<HoursProps>) {
+function HoursBlock({ props, context }: BlockRenderProps<HoursProps>) {
   return (
     <section
       aria-label={props.title || "Opening hours"}
@@ -59,10 +60,14 @@ function HoursBlock({ props }: BlockRenderProps<HoursProps>) {
     >
       <div className="flex flex-wrap items-center justify-between gap-2">
         {props.title && (
-          <h2 className="flex items-center gap-2 text-lg font-semibold">
+          <LpHeading
+            as="h2"
+            preview={context.thumbnail}
+            className="flex items-center gap-2 text-lg font-semibold"
+          >
             <Clock aria-hidden="true" className="size-4 opacity-70" />
             {props.title}
-          </h2>
+          </LpHeading>
         )}
         {props.timezone && (
           <OpenNowBadge timeZone={props.timezone} week={props.days} />

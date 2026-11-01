@@ -3,6 +3,7 @@ import { AI_REQUEST_FREE_TIER_LIMIT, MAX_FREE_THEMES } from "@/lib/constants";
 import { env } from "@/lib/env";
 import { getIntegrationAvailability } from "@/lib/integration-availability";
 import { filterVisible } from "@/lib/integration-availability-rules";
+import { mcpServerUrl } from "@/lib/mcp-clients";
 import { baseUrl } from "@/lib/metadata";
 import { PLAN_LIMITS } from "@/lib/plans";
 import { formatPrice, type PaidPlan, PRICING } from "@/lib/pricing";
@@ -276,7 +277,7 @@ export function GET() {
     link(
       "MCP server",
       "/docs/developers/mcp",
-      "Remote MCP endpoint at /api/mcp (Streamable HTTP, no auth) with QR generation and Wi-Fi/vCard/email/SMS/geo payload tools",
+      `Remote MCP endpoint at ${mcpServerUrl(baseUrl)} (Streamable HTTP, no auth) with QR generation and Wi-Fi/vCard/email/SMS/geo payload tools`,
     ),
     link(
       "shadcn/ui registry",

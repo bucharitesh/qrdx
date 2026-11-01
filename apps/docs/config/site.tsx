@@ -11,7 +11,6 @@ import {
   ElementPlus,
   Link21,
   MagicStar,
-  MessageProgramming,
   Mobile,
   Notepad2,
   PenTool2,
@@ -71,6 +70,8 @@ export const siteConfig = {
     // Top-level header entries. `href` is the group's hub (used on mobile);
     // entries with `items` render as a dropdown on desktop. A `featured` item
     // gets the large panel on the left; a `hub` item becomes the footer link.
+    // Each page appears once: /mcp is the top-level "MCP" link, so it isn't
+    // repeated under Developers (desktop and mobile both read this list).
     links: [
       {
         id: 1,
@@ -181,12 +182,6 @@ export const siteConfig = {
             href: "/docs/developers/image-api",
             description: "A QR code image from a URL, no API key",
             icon: Code1,
-          },
-          {
-            name: "MCP server",
-            href: "/mcp",
-            description: "QR codes from Claude, Cursor and VS Code",
-            icon: MessageProgramming,
           },
           {
             name: "shadcn/ui registry",

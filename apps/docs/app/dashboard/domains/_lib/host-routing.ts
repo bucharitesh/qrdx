@@ -178,6 +178,6 @@ export async function routeCustomDomain(
   return hostPage(
     404,
     "QR code not found",
-    "This link does not belong to any QR code. Check that it was typed correctly.",
+    "This link doesn't lead to a QR code. Its owner may have removed it, or the link was mistyped.",
   );
 }

@@ -1,5 +1,4 @@
 import { Element4 as LayoutTemplate } from "iconsax-reactjs";
-import { themePreset } from "@/components/landing/theme";
 import { registerTemplate } from "./registry";
 
 registerTemplate({
@@ -14,6 +13,16 @@ registerTemplate({
       id: "blank",
       name: "Blank",
       description: "A title to start from",
+      theme: {
+        colors: {
+          background: "#ffffff",
+          foreground: "#0a0a0a",
+          primary: "#0a0a0a",
+          primaryForeground: "#ffffff",
+          muted: "#f4f4f5",
+          mutedForeground: "#5d5d63",
+        },
+      },
       blocks: [
         {
           type: "header",
@@ -26,28 +35,43 @@ registerTemplate({
       name: "Announcement",
       description: "Headline, details and one call to action",
       theme: {
-        colors: themePreset("classic"),
+        colors: {
+          background: "#fafaf9",
+          foreground: "#171717",
+          primary: "#171717",
+          primaryForeground: "#fafaf9",
+          muted: "#efeeec",
+          mutedForeground: "#5c5b57",
+        },
+        font: "dm-sans",
+        headingFont: "instrument-serif",
+        radius: 16,
+        buttonShape: "pill",
         background: {
           type: "gradient",
-          from: "#eef4ff",
-          to: "#ffffff",
+          from: "#e8e4dc",
+          to: "#fafaf9",
           angle: 180,
+          shape: "radial",
         },
-        radius: 16,
+        texture: "grain",
       },
       blocks: [
         {
           type: "header",
           props: {
-            title: "Spring launch event",
-            subtitle: "Join us for live demos, food and music.",
+            eyebrow: "Saturday · 10 am to 4 pm",
+            title: "Spring open day",
+            size: "xl",
+            subtitle:
+              "Live demos, food from local vendors and music all afternoon.",
           },
         },
         {
           type: "text",
           props: {
             heading: "What to expect",
-            body: "Saturday, 10am to 4pm\nFree entry, families welcome\nPrize draw every hour",
+            body: "Free entry, families welcome\nWorkshops every hour, first come first served\nA prize draw at 3 pm",
             card: true,
           },
         },
@@ -58,7 +82,7 @@ registerTemplate({
             url: "https://example.com/rsvp",
           },
         },
-        { type: "divider", props: { label: "Follow us" } },
+        { type: "divider", props: { style: "ornament", label: "Follow us" } },
         {
           type: "socials",
           props: {
@@ -66,6 +90,63 @@ registerTemplate({
               { network: "instagram", url: "https://instagram.com/" },
               { network: "facebook", url: "https://facebook.com/" },
             ],
+          },
+        },
+      ],
+    },
+    {
+      id: "coming-soon",
+      name: "Coming soon",
+      description: "A teaser with an email sign-up for opening day",
+      theme: {
+        colors: {
+          background: "#0e0e0e",
+          foreground: "#f5f5f5",
+          primary: "#f5f5f5",
+          primaryForeground: "#0e0e0e",
+          muted: "#1b1b1b",
+          mutedForeground: "#a3a3a3",
+        },
+        font: "dm-sans",
+        headingFont: "instrument-serif",
+        radius: 12,
+        buttonShape: "pill",
+        background: {
+          type: "gradient",
+          from: "#2b2b2b",
+          to: "#0e0e0e",
+          angle: 180,
+          shape: "radial",
+        },
+        texture: "grain",
+        spacing: "relaxed",
+      },
+      blocks: [
+        {
+          type: "header",
+          props: {
+            eyebrow: "Opening this spring",
+            title: "Something good is coming to Elm Street",
+            size: "xl",
+            subtitle:
+              "A neighbourhood bakery and coffee bar. Be the first to know when we open.",
+          },
+        },
+        {
+          type: "form",
+          props: {
+            title: "",
+            fields: [
+              { id: "email", type: "email", label: "Email", required: true },
+            ],
+            submitLabel: "Tell me when you open",
+            successMessage: "You're on the list. See you on opening day.",
+          },
+        },
+        {
+          type: "socials",
+          props: {
+            items: [{ network: "instagram", url: "https://instagram.com/" }],
           },
         },
       ],

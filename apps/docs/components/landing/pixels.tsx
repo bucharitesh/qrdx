@@ -8,6 +8,7 @@ import {
   type PixelConfig,
   type PixelProvider,
   parsePixelConfig,
+  pixelsForOrigin,
 } from "@/lib/redirect/routing";
 import { scanGeo } from "@/lib/scans";
 
@@ -18,6 +19,8 @@ import { scanGeo } from "@/lib/scans";
  * in the EEA, UK, Switzerland and wherever the visitor's country is unknown
  * (or everywhere, if the owner chose so) and respect Global Privacy Control
  * elsewhere. Nothing third-party ever loads unless the owner set it up.
+ * Google Tag Manager only loads on the owner's custom domains (see
+ * pixelsForOrigin).
  *
  * Plain inline scripts (no client bundle) keep scanner pages fast.
  */
@@ -127,17 +130,23 @@ export async function Pixels({
   qrCodeId,
   pageId,
   pixels,
+  customDomain,
 }: {
   qrCodeId: string;
   pageId: string;
   /** The code's `pixels` column when already loaded (else it is fetched) */
   pixels?: unknown;
+  /** Served on the owner's custom domain (isCustomDomainRequest) */
+  customDomain: boolean;
 }) {
   const requestHeaders = await headers();
   // Same-origin: custom domains pass /api/events through (host-routing.ts).
   const endpoint = "/api/events";
-  const config = parsePixelConfig(
-    pixels === undefined ? await loadPixels(qrCodeId) : pixels,
+  const config = pixelsForOrigin(
+    parsePixelConfig(
+      pixels === undefined ? await loadPixels(qrCodeId) : pixels,
+    ),
+    { customDomain },
   );
 
   const tracker = (

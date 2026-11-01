@@ -7,6 +7,7 @@ import {
 import { z } from "zod";
 import {
   buttonClass,
+  buttonShapeClass,
   lineText,
   longText,
   mutedTextClass,
@@ -49,7 +50,11 @@ function PdfBlock({ id, props, context }: BlockRenderProps<PdfBlockProps>) {
 
   return (
     <section aria-label={label} className="space-y-3">
-      <BlockHeading description={props.description} title={props.title} />
+      <BlockHeading
+        description={props.description}
+        preview={context.thumbnail}
+        title={props.title}
+      />
       {props.inline && <PdfInlineViewer src={src} title={label} />}
       <div className={cn(surfaceClass, "flex items-center gap-3 p-3")}>
         <span className="flex size-10 shrink-0 items-center justify-center rounded-(--lp-radius) bg-(--lp-primary) text-(--lp-primary-fg)">
@@ -62,7 +67,7 @@ function PdfBlock({ id, props, context }: BlockRenderProps<PdfBlockProps>) {
       </div>
       <div className={cn("grid gap-2", props.allowDownload && "grid-cols-2")}>
         <a
-          className={buttonClass("filled")}
+          className={buttonClass("filled", buttonShapeClass(context.theme))}
           data-lp-block={id}
           data-lp-target="open"
           href={src}
@@ -74,7 +79,7 @@ function PdfBlock({ id, props, context }: BlockRenderProps<PdfBlockProps>) {
         </a>
         {props.allowDownload && (
           <a
-            className={buttonClass("outline")}
+            className={buttonClass("outline", buttonShapeClass(context.theme))}
             data-lp-block={id}
             data-lp-target="download"
             download={props.source?.type === "file" ? name : undefined}
