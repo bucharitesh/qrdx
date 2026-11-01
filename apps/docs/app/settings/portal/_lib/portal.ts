@@ -16,13 +16,13 @@ export const PORTAL_RETURN_PATH = "/settings/usage";
 /** The slice of the Polar SDK this route uses. */
 export interface PortalClient {
   customers: {
-    getExternal(request: { externalId: string }): Promise<{ id: string }>;
+    getExternal(externalId: string): Promise<{ id: string }>;
   };
   customerSessions: {
     create(request: {
-      customerId: string;
-      returnUrl?: string | null;
-    }): Promise<{ customerPortalUrl: string }>;
+      customer_id: string;
+      return_url?: string | null;
+    }): Promise<{ customer_portal_url: string }>;
   };
 }
 
@@ -80,9 +80,7 @@ export async function resolvePortalRedirect({
 
   let customerId: string;
   try {
-    const customer = await client.customers.getExternal({
-      externalId: userId,
-    });
+    const customer = await client.customers.getExternal(userId);
     customerId = customer.id;
   } catch (error) {
     if (isNotFound(error)) return NO_CUSTOMER_PATH;
@@ -95,12 +93,12 @@ export async function resolvePortalRedirect({
   }
 
   try {
-    const { customerPortalUrl } = await client.customerSessions.create({
-      customerId,
-      returnUrl,
+    const { customer_portal_url } = await client.customerSessions.create({
+      customer_id: customerId,
+      return_url: returnUrl,
     });
-    if (!customerPortalUrl) throw new Error("No customerPortalUrl");
-    return customerPortalUrl;
+    if (!customer_portal_url) throw new Error("No customer_portal_url");
+    return customer_portal_url;
   } catch (error) {
     onFailure?.({
       stage: "session",

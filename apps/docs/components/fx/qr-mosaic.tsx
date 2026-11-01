@@ -37,7 +37,7 @@ const SWEEP_EVERY: [number, number] = [5200, 8200];
 const BEAM = 46;
 const IDLE_MS = 1400;
 
-const clamp01 = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v);
+const clamp01 = (v: number) => (v < 0 ? 0 : Math.min(v, 1));
 
 /**
  * A field of QR modules that fills its (relative) parent. Modules near a

@@ -30,12 +30,12 @@
   transform-origin: 50% 20%;
 }
 
-.wiggle:hover .spiderBody {
-  animation: jiggle 110ms linear infinite alternate;
-}
-
 [data-spin="true"] > .spiderBody {
   animation: spin 620ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.wiggle:hover .spiderBody {
+  animation: jiggle 110ms linear infinite alternate;
 }
 
 /* Jack-o'-lantern */
@@ -614,8 +614,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .wiggle:hover .spiderBody,
   [data-spin="true"] > .spiderBody,
+  .wiggle:hover .spiderBody,
   .pumpkinFlicker,
   .pumpkin[data-squash="true"] .pumpkinBody,
   .fig8x,

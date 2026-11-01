@@ -6,14 +6,15 @@ const YOUTUBE_PLAYER =
   /^https:\/\/www\.youtube-nocookie\.com\/embed\/[\w-]{11}(?:\?|$)/;
 
 describe("easter-egg destinations", () => {
-  it.each(
-    Object.entries(easterEggs),
-  )("%s opens the media itself, not a page about it", (_slug, egg) => {
-    expect(
-      DIRECT_IMAGE.test(egg.url) || YOUTUBE_PLAYER.test(egg.url),
-      egg.url,
-    ).toBe(true);
-  });
+  it.each(Object.entries(easterEggs))(
+    "%s opens the media itself, not a page about it",
+    (_slug, egg) => {
+      expect(
+        DIRECT_IMAGE.test(egg.url) || YOUTUBE_PLAYER.test(egg.url),
+        egg.url,
+      ).toBe(true);
+    },
+  );
 
   it("never points at meme or GIF article pages", () => {
     for (const egg of Object.values(easterEggs)) {

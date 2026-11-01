@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { Customer } from "@polar-sh/sdk/models/components/customer.js";
+import type { models } from "@polar-sh/sdk/2026-10";
 import type { user } from "@repo/database/schema";
 import { polar } from "@/lib/polar";
 import { logError } from "@/lib/shared";
@@ -8,12 +8,10 @@ import { logError } from "@/lib/shared";
 export const getOrCreateCustomer = async (
   userRecord: typeof user.$inferSelect,
 ) => {
-  let customer: Customer | null = null;
+  let customer: models.Customer | null = null;
 
   try {
-    customer = await polar.customers.getExternal({
-      externalId: userRecord.id,
-    });
+    customer = await polar.customers.getExternal(userRecord.id);
   } catch (_e) {
     customer = null;
   }
@@ -23,7 +21,7 @@ export const getOrCreateCustomer = async (
   try {
     const newCustomer = await polar.customers.create({
       email: userRecord.email,
-      externalId: userRecord.id,
+      external_id: userRecord.id,
       name: userRecord.name,
     });
 

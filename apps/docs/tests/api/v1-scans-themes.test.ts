@@ -221,17 +221,20 @@ describe("GET /v1/codes/{id}/scans", () => {
     ["free", "90d", "90d", 90],
     ["pro", "1095d", "1095d", 1095],
     ["business", "1095d", "1095d", Number.POSITIVE_INFINITY],
-  ] as const)("on %s, asking for %s gives %s (history: %s days)", async (plan, asked, served, retention) => {
-    state.plan = plan;
-    const { data } = (await (
-      await getScans("code_alice", `?range=${asked}`)
-    ).json()) as ScansBody;
-    expect(data.range).toBe(served);
-    // JSON turns Infinity into null: "unlimited".
-    expect(data.retentionDays).toBe(
-      Number.isFinite(retention) ? retention : null,
-    );
-  });
+  ] as const)(
+    "on %s, asking for %s gives %s (history: %s days)",
+    async (plan, asked, served, retention) => {
+      state.plan = plan;
+      const { data } = (await (
+        await getScans("code_alice", `?range=${asked}`)
+      ).json()) as ScansBody;
+      expect(data.range).toBe(served);
+      // JSON turns Infinity into null: "unlimited".
+      expect(data.retentionDays).toBe(
+        Number.isFinite(retention) ? retention : null,
+      );
+    },
+  );
 
   it("rejects unknown ranges", async () => {
     expect((await getScans("code_alice", "?range=10y")).status).toBe(400);

@@ -42,6 +42,10 @@ function MermaidContent({ chart }: { chart: string }) {
     fontFamily: "inherit",
     themeCSS: "margin: 1.5rem auto 0;",
     theme: resolvedTheme === "dark" ? "dark" : "default",
+    // Mermaid 12 defaults to the ELK layout and the "neo" look; keep the
+    // classic monochrome-friendly rendering.
+    look: "classic",
+    layout: "dagre",
   });
 
   const { svg, bindFunctions } = use(

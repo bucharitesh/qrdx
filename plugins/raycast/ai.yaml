@@ -22,7 +22,7 @@ instructions: |
 evals:
   - input: "@qrdx generate a QR code for https://qrdx.dev with rounded style"
     mocks:
-      generate-qr: "QR code for \"https://qrdx.dev\" saved to ~/Downloads/qrdx-1234567890.png"
+      generate-qr: 'QR code for "https://qrdx.dev" saved to ~/Downloads/qrdx-1234567890.png'
     expected:
       - callsTool:
           name: generate-qr
@@ -34,7 +34,7 @@ evals:
 
   - input: "@qrdx make a dark blue QR for https://github.com"
     mocks:
-      generate-qr: "QR code for \"https://github.com\" saved to ~/Downloads/qrdx-1234567890.png"
+      generate-qr: 'QR code for "https://github.com" saved to ~/Downloads/qrdx-1234567890.png'
     expected:
       - callsTool:
           name: generate-qr

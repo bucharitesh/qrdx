@@ -182,18 +182,18 @@ describe("validateSubscriptionAndUsage", () => {
     );
   });
 
-  it.each([
-    "active",
-    "trialing",
-  ])("lets a %s subscriber through without a limit", async (status) => {
-    subscribe(status);
-    for (let i = 0; i < 50; i++) addUsage("gemini-2.5-flash");
-    expect(await validateSubscriptionAndUsage(USER)).toMatchObject({
-      canProceed: true,
-      isSubscribed: true,
-      requestsRemaining: Number.POSITIVE_INFINITY,
-    });
-  });
+  it.each(["active", "trialing"])(
+    "lets a %s subscriber through without a limit",
+    async (status) => {
+      subscribe(status);
+      for (let i = 0; i < 50; i++) addUsage("gemini-2.5-flash");
+      expect(await validateSubscriptionAndUsage(USER)).toMatchObject({
+        canProceed: true,
+        isSubscribed: true,
+        requestsRemaining: Number.POSITIVE_INFINITY,
+      });
+    },
+  );
 
   it.each([
     "canceled",

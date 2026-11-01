@@ -34,7 +34,7 @@ export const dynamicParams = false;
 function getPublishedPage(slug: string): BlogPage {
   const page = blogSource.getPage([slug]);
 
-  if (!page || !page.data.published) {
+  if (!page?.data.published) {
     notFound();
   }
 

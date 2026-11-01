@@ -782,6 +782,7 @@ function interpret(source: string, options: InterpretOptions): Rendered {
       case "re": {
         const [x, y, w, h] = nums(4) as number[];
         closeSubpath();
+        // biome-ignore lint/suspicious/noLoopFunc: only called within this iteration
         const corner = (px: number, py: number) => applyMatrix(gs.ctm, px, py);
         polygons.push([
           corner(x as number, y as number),

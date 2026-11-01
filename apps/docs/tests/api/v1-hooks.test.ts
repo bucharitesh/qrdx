@@ -290,18 +290,18 @@ describe("POST /v1/hooks", () => {
     );
   });
 
-  it.each([
-    "free",
-    "pro",
-  ] as const)("is a Business feature (402 PLAN_REQUIRED on %s)", async (plan) => {
-    state.plan = plan;
-    const response = await subscribe({ hookUrl: ZAP, event: "scan.created" });
-    expect(response.status).toBe(402);
-    expect(await errorOf(response)).toMatchObject({
-      code: "PLAN_REQUIRED",
-      message: expect.stringContaining("Business"),
-    });
-  });
+  it.each(["free", "pro"] as const)(
+    "is a Business feature (402 PLAN_REQUIRED on %s)",
+    async (plan) => {
+      state.plan = plan;
+      const response = await subscribe({ hookUrl: ZAP, event: "scan.created" });
+      expect(response.status).toBe(402);
+      expect(await errorOf(response)).toMatchObject({
+        code: "PLAN_REQUIRED",
+        message: expect.stringContaining("Business"),
+      });
+    },
+  );
 
   it("needs codes:write", async () => {
     const response = await subscribe(

@@ -1302,7 +1302,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
 export const SUPPORTS_PATH2D = (() => {
   try {
     new Path2D().addPath(new Path2D());
-  } catch (_e) {
+  } catch {
     return false;
   }
   return true;

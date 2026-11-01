@@ -30,27 +30,28 @@
     "prepare": "husky"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.6.4",
     "@repo/typescript-config": "workspace:*",
     "@types/node": "^26.6.6",
     "husky": "9.1.7",
     "knip": "^6.44.1",
-    "tsup": "^8.5.1",
+    "tsup": "^9.0.0",
     "turbo": "^2.11.10",
     "typescript": "^6.0.3",
-    "ultracite": "7.2.2"
+    "ultracite": "8.1.0"
   },
   "license": "AGPL-3.0-or-later",
   "engines": {
-    "node": ">=18"
+    "node": ">=22.22.3"
   },
   "packageManager": "pnpm@10.33.0",
   "pnpm": {
     "overrides": {
-      "parse5": "^7.2.1",
       "react": "19.3.1",
       "react-dom": "19.3.1",
       "jspdf@<4.2.1": "^4.2.1",
-      "sharp@<0.35.5": "^0.35.5"
+      "sharp@<0.35.5": "^0.35.5",
+      "rehype-katex>katex": "^0.19.1"
     }
   },
   "type": "module"

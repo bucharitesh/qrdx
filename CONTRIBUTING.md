@@ -6,7 +6,7 @@ Not sure where to start? Look for issues labeled [`good first issue`](https://gi
 
 ## Prerequisites
 
-- Node.js 20 or newer
+- Node.js 22, version 22.22.3 or later (CI, Docker and production run Node 22)
 - pnpm 10 (the exact version is pinned in `package.json` under `packageManager`; `corepack enable` picks it up)
 - A Postgres database for the web app: a free [Neon](https://neon.tech) database, or the Docker Compose Postgres described below
 

@@ -77,6 +77,7 @@ export function groupAuthorizedApps(
         )
       : [];
     const active =
+      // biome-ignore lint/complexity/useMathMinMax: Dates; Math.max would return a number
       row.updatedAt > row.createdAt ? row.updatedAt : row.createdAt;
     const entry = byApp.get(row.appId);
     if (entry) {

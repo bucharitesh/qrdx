@@ -49,34 +49,29 @@ interface Input {
   size?: number;
 }
 
-// biome-ignore lint/suspicious/useAwait: Tool.Confirmation must return a Promise
-export const confirmation: Tool.Confirmation<Input> = async (input) => {
-  return {
-    message: `Save QR code for "${input.url}" to Downloads?`,
-    info: [
-      { name: "URL", value: input.url },
-      ...(input.bodyPattern
-        ? [{ name: "Body Pattern", value: input.bodyPattern }]
-        : []),
-      ...(input.cornerEyePattern
-        ? [{ name: "Corner Eye", value: input.cornerEyePattern }]
-        : []),
-      ...(input.fgColor
-        ? [{ name: "Foreground Color", value: input.fgColor }]
-        : []),
-      ...(input.bgColor
-        ? [{ name: "Background Color", value: input.bgColor }]
-        : []),
-      ...(input.templateId
-        ? [{ name: "Template", value: input.templateId }]
-        : []),
-      ...(input.level
-        ? [{ name: "Error Correction", value: input.level }]
-        : []),
-      { name: "Size", value: `${input.size ?? 512}px` },
-    ],
-  };
-};
+export const confirmation: Tool.Confirmation<Input> = async (input) => ({
+  message: `Save QR code for "${input.url}" to Downloads?`,
+  info: [
+    { name: "URL", value: input.url },
+    ...(input.bodyPattern
+      ? [{ name: "Body Pattern", value: input.bodyPattern }]
+      : []),
+    ...(input.cornerEyePattern
+      ? [{ name: "Corner Eye", value: input.cornerEyePattern }]
+      : []),
+    ...(input.fgColor
+      ? [{ name: "Foreground Color", value: input.fgColor }]
+      : []),
+    ...(input.bgColor
+      ? [{ name: "Background Color", value: input.bgColor }]
+      : []),
+    ...(input.templateId
+      ? [{ name: "Template", value: input.templateId }]
+      : []),
+    ...(input.level ? [{ name: "Error Correction", value: input.level }] : []),
+    { name: "Size", value: `${input.size ?? 512}px` },
+  ],
+});
 
 export default function generateQR(input: Input): string {
   const settings: Settings = {

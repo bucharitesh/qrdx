@@ -16,22 +16,27 @@ import { ErrorCorrectionDemo } from "@/components/sections/blog/error-correction
 import { Figure } from "@/components/sections/blog/figure";
 import { docsIcons } from "@/lib/docs-icons";
 
+// An odd last card spans the row instead of sitting alone in a half-empty one.
+// Module-level, so the component keeps its identity across renders.
+function SpanningCards(props: ComponentProps<typeof Cards>) {
+  return (
+    <Cards
+      {...props}
+      className={cn(
+        "[&>[data-card]:last-child:nth-child(odd)]:col-span-full",
+        props.className,
+      )}
+    />
+  );
+}
+
 export function getMDXComponents(components?: MDXComponents): MDXComponents {
   return {
     ...docsIcons,
     ...defaultMdxComponents,
     ...TabsComponents,
     ...FilesComponents,
-    // An odd last card spans the row instead of sitting alone in a half-empty one.
-    Cards: (props: ComponentProps<typeof Cards>) => (
-      <Cards
-        {...props}
-        className={cn(
-          "[&>[data-card]:last-child:nth-child(odd)]:col-span-full",
-          props.className,
-        )}
-      />
-    ),
+    Cards: SpanningCards,
     Accordion,
     Accordions,
     GithubCard,
