@@ -56,6 +56,7 @@ async function run<T>(
   action: string,
   limiters: (typeof mutationLimiter)[],
   body: (scope: ActiveScope) => Promise<T>,
+  { revalidate = true }: { revalidate?: boolean } = {},
 ): Promise<OAuthAppActionResult<T>> {
   try {
     const scope = await getActiveScope();
@@ -66,7 +67,7 @@ async function run<T>(
       })),
     );
     const data = await body(scope);
-    revalidatePath("/settings/developers", "layout");
+    if (revalidate) revalidatePath("/settings/developers", "layout");
     return { ok: true, data };
   } catch (error) {
     return failure(error, `oauth-apps.${action}`);
@@ -78,8 +79,15 @@ export async function createOAuthAppAction(
 ): Promise<OAuthAppActionResult<{ app: OAuthAppView; clientSecret: string }>> {
   const parsed = oauthAppInputSchema.safeParse(input);
   if (!parsed.success) return invalid(parsed.error);
-  return run("create", [mutationLimiter, createLimiter], (scope) =>
-    createOAuthApp(scope, parsed.data),
+  // No revalidation: it re-renders /settings/developers/new, which redirects
+  // to the list once the plan's app limit is reached, unmounting the dialog
+  // that shows the client secret (its only showing). The client navigates to
+  // the new app's page itself, and these pages are always rendered fresh.
+  return run(
+    "create",
+    [mutationLimiter, createLimiter],
+    (scope) => createOAuthApp(scope, parsed.data),
+    { revalidate: false },
   );
 }
 

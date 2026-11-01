@@ -6,8 +6,8 @@ import {
   CarouselContent,
   CarouselItem as CarouselItemBase,
 } from "@repo/design-system/components/ui/carousel";
+import { ArrowLeft2, ArrowRight2 } from "iconsax-reactjs";
 import * as React from "react";
-import { Icons } from "@/components/icons";
 
 interface CarouselProps extends React.ComponentProps<typeof CarouselBase> {
   children: React.ReactNode;
@@ -46,7 +46,7 @@ const Carousel = ({ className, children, ...props }: CarouselProps) => {
             className="w-8 h-8 rounded-full bg-transparent cursor-pointer hover:scale-110 transition-all duration-300"
             onClick={() => api?.scrollPrev()}
           >
-            <Icons.ChevronLeft className="size-4 text-muted-foreground" />
+            <ArrowLeft2 className="size-4 text-muted-foreground" />
           </button>
         </div>
       )}
@@ -57,7 +57,7 @@ const Carousel = ({ className, children, ...props }: CarouselProps) => {
             className="w-8 h-8 rounded-full bg-transparent cursor-pointer hover:scale-110 transition-all duration-300"
             onClick={() => api?.scrollNext()}
           >
-            <Icons.ChevronRight className="size-4 text-muted-foreground" />
+            <ArrowRight2 className="size-4 text-muted-foreground" />
           </button>
         </div>
       )}

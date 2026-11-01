@@ -1,8 +1,8 @@
 import { toast } from "@repo/design-system";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import posthog from "posthog-js";
 import { createTheme, deleteTheme, updateTheme } from "@/actions/qr-themes";
+import { track } from "@/lib/analytics";
 import { isUnauthorized } from "@/lib/handle-unauthorized";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 import { useThemePresetStore } from "@/store/theme-preset-store";
@@ -20,15 +20,7 @@ function handleMutationError(error: Error, operation: string) {
   const errorName = error.name;
 
   if (error.name !== "UnauthorizedError" && error.name !== "ValidationError") {
-    try {
-      posthog.capture("theme_mutation_error", {
-        operation,
-        error: error.message,
-        errorName,
-      });
-    } catch (posthogError) {
-      console.error("Failed to log to PostHog:", posthogError);
-    }
+    track("theme_save_failed", { operation, error_type: errorName });
   }
 
   const getErrorMessage = (error: Error) => {

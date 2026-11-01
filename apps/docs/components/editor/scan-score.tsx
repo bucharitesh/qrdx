@@ -7,7 +7,6 @@ import {
   PopoverTrigger,
 } from "@repo/design-system/components/ui/popover";
 import { cn } from "@repo/design-system/lib/utils";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
   TickCircle as CircleCheck,
   CloseCircle as CircleX,
@@ -20,7 +19,7 @@ import {
   type ScanGrade,
   type ScanScoreResult,
 } from "qrdx";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { InfoHint } from "@/components/help/info-hint";
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
 import { soundEvent } from "@/lib/sound/emit";
@@ -100,7 +99,10 @@ export function ScanScoreBadge({
   const [failed, setFailed] = useState(false);
   // Last pass/fail (score >= 75); a cue plays only when a change crosses it.
   const passed = useRef<boolean | null>(null);
-  const reduceMotion = useReducedMotion();
+  const button = useRef<HTMLButtonElement>(null);
+  const lastWidth = useRef<number | null>(null);
+  /** The label animates in only when it changes, not on first show. */
+  const labelChanged = useRef(false);
 
   // Same props the preview renders
   const qrProps = useMemo(
@@ -162,25 +164,44 @@ export function ScanScoreBadge({
   // last score (dimmed) until the new one lands.
   const result = scored && scored.value === value ? scored.result : null;
   const checking = !failed && scored?.key !== propsKey;
+  const hidden = failed && !result;
+  const state = result ? `${result.score}-${result.grade}` : "checking";
 
-  if (failed && !result) {
+  // The pill eases to its new width when the label changes (Web Animations,
+  // measured before paint); none with reduced motion.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: runs when the label changes
+  useLayoutEffect(() => {
+    const element = button.current;
+    if (!element) {
+      lastWidth.current = null;
+      return;
+    }
+    const width = element.getBoundingClientRect().width;
+    const previous = lastWidth.current;
+    lastWidth.current = width;
+    labelChanged.current = true;
+    if (previous === null) return;
+    if (
+      Math.abs(previous - width) < 0.5 ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      return;
+    }
+    element.animate([{ width: `${previous}px` }, { width: `${width}px` }], {
+      duration: 250,
+      easing: "cubic-bezier(.32,.72,0,1)",
+    });
+  }, [state, hidden]);
+
+  if (hidden) {
     return null;
   }
-
-  const state = result ? `${result.score}-${result.grade}` : "checking";
-  // Same motion values on the server and client (useReducedMotion is null
-  // during SSR); reduced motion only zeroes the duration.
-  const fade = {
-    initial: { opacity: 0, y: 4, filter: "blur(2px)" },
-    animate: { opacity: 1, y: 0, filter: "blur(0px)" },
-    exit: { opacity: 0, y: -4, filter: "blur(2px)" },
-  };
-  const ease = [0.32, 0.72, 0, 1] as const;
 
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <motion.button
+        <button
+          ref={button}
           aria-busy={checking}
           aria-label={
             result
@@ -191,8 +212,6 @@ export function ScanScoreBadge({
             "bg-background/90 hover:bg-muted inline-flex h-8 items-center gap-2 overflow-hidden rounded-full border px-3 text-xs font-medium whitespace-nowrap shadow-sm backdrop-blur transition-colors",
             className,
           )}
-          layout
-          transition={{ duration: reduceMotion ? 0 : 0.25, ease }}
           type="button"
         >
           <span className="relative grid size-3.5 shrink-0 place-items-center">
@@ -207,22 +226,20 @@ export function ScanScoreBadge({
               />
             ) : null}
           </span>
-          <AnimatePresence initial={false} mode="popLayout">
-            <motion.span
-              className={cn(
-                "tabular-nums transition-opacity",
-                checking && result && "opacity-60",
-              )}
-              key={state}
-              transition={{ duration: reduceMotion ? 0 : 0.2, ease }}
-              {...fade}
-            >
-              {result
-                ? `Scan score ${result.score} · ${GRADE_LABELS[result.grade]}`
-                : "Checking scan…"}
-            </motion.span>
-          </AnimatePresence>
-        </motion.button>
+          <span
+            className={cn(
+              "tabular-nums transition-opacity",
+              checking && result && "opacity-60",
+              labelChanged.current &&
+                "animate-in fade-in-0 slide-in-from-bottom-1 blur-in-2 duration-200 ease-[cubic-bezier(.32,.72,0,1)] motion-reduce:animate-none",
+            )}
+            key={state}
+          >
+            {result
+              ? `Scan score ${result.score} · ${GRADE_LABELS[result.grade]}`
+              : "Checking scan…"}
+          </span>
+        </button>
       </PopoverTrigger>
       <PopoverContent align="center" className="w-80" side="top">
         <div className="space-y-3">

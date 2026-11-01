@@ -35,7 +35,7 @@ export default async function AdminUsersPage({
     <div className="space-y-4">
       <SettingsHeader
         title="Users"
-        description="Search by email, name or id."
+        description="Search by email, name or id. Open a user for everything about their account and the support actions."
       />
 
       <form action="/admin/users" className="flex gap-2" method="get">
@@ -44,7 +44,7 @@ export default async function AdminUsersPage({
           className="max-w-sm"
           defaultValue={q}
           name="q"
-          placeholder="Search email or name"
+          placeholder="Email, name or user id"
           type="search"
         />
         <Button type="submit" variant="outline">
@@ -83,8 +83,8 @@ export default async function AdminUsersPage({
                 </TableCell>
                 <TableCell>{formatDate(row.createdAt)}</TableCell>
                 <TableCell>
-                  {row.subscriptionStatus === "active" ? (
-                    <Badge>Pro</Badge>
+                  {row.plan !== "free" ? (
+                    <Badge className="capitalize">{row.plan}</Badge>
                   ) : row.subscriptionStatus ? (
                     <Badge variant="outline">{row.subscriptionStatus}</Badge>
                   ) : (

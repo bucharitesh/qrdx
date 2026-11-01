@@ -4,22 +4,14 @@ import {
   getCatalogEntry,
 } from "@repo/integrations/src/catalog";
 import {
-  Chrome,
   Code1,
   CommandSquare,
-  Figma,
   Flash,
   Gallery,
   Global,
   type Icon,
-  Slack,
   Sms,
 } from "iconsax-reactjs";
-
-const BRAND_ICONS: Record<
-  Extract<CatalogLogo, { type: "brand" }>["icon"],
-  Icon
-> = { Chrome, Figma, Slack };
 
 const FEATURE_ICONS: Record<
   Extract<CatalogLogo, { type: "feature" }>["icon"],
@@ -73,24 +65,16 @@ export function IntegrationLogo({
     );
   }
 
-  const BrandIcon = logo.type === "brand" ? BRAND_ICONS[logo.icon] : null;
-
   return (
     <span
       aria-hidden
       className={cn(
-        "grid shrink-0 place-items-center rounded-full bg-white ring-1 ring-black/5 dark:ring-white/10",
+        "grid shrink-0 grid-cols-1 grid-rows-1 place-items-center rounded-full bg-white ring-1 ring-black/5 dark:ring-white/10",
         sizes.tile,
         className,
       )}
     >
-      {logo.type === "image" ? (
-        <img src={logo.src} alt="" className="size-full object-contain" />
-      ) : (
-        BrandIcon && (
-          <BrandIcon variant="Bold" color={logo.color} className="size-full" />
-        )
-      )}
+      <img src={logo.src} alt="" className="size-full object-contain" />
     </span>
   );
 }

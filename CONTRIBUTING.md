@@ -104,6 +104,22 @@ To auto-fix formatting and import order in the files you changed:
 ./apps/docs/node_modules/.bin/biome check --write <files>
 ```
 
+### Tests
+
+| Suite | Where | Run |
+| --- | --- | --- |
+| Unit and integration (Vitest) | `apps/docs/tests/**`, `packages/*/tests` | `pnpm --filter docs test:unit`, or `pnpm test` for the monorepo |
+| node:test suites next to the code | `apps/docs/**/*.test.ts` outside `tests/` and `e2e/` | `pnpm --filter docs test:node` |
+| Playground e2e | `apps/docs/e2e/playground.e2e.ts` | `pnpm --filter docs test:e2e` |
+| Signed-in app e2e | `apps/docs/e2e/app.e2e.ts` | `pnpm --filter docs test:e2e:app` (needs a session cookie, below) |
+| Public site e2e | `apps/docs/e2e/site.e2e.ts` | `pnpm --filter docs test:e2e:site` |
+
+`pnpm prepush` runs the first two. They need no database, network or email: route handlers run against an in-memory database (`apps/docs/tests/support/fake-db.ts`) that evaluates the app's real Drizzle queries. A known bug can be recorded as `it.fails` with a `// BUG (file): …` comment until it's fixed.
+
+The e2e suites drive headless Chrome over the DevTools Protocol, so they need Chrome (or `CHROME_PATH`) and a running dev server (`pnpm --filter docs dev`). They aren't part of `pnpm prepush`. Each one exits 0 with a notice when the server or Chrome is missing. `E2E_BASE_URL` points them at another server, and `E2E_SUITES` runs some of their areas, for example `E2E_SUITES=oauth,webhooks` or `E2E_SUITES=image,mcp`.
+
+The app suite signs in with a test account's Better Auth session cookie. Sign in to your local app with a throwaway account, copy the `better-auth.session_token` cookie, and pass it as `E2E_SESSION_COOKIE='better-auth.session_token=<value>'` or put that pair in a file named by `E2E_COOKIE_FILE`. Never commit it. The suite creates codes, a folder, a tag, a hosted page, an OAuth app and (on Business) a webhook, all named `E2E …`, under that account and deletes them again. Webhook URLs only ever point at `https://example.com`.
+
 ### Database changes
 
 Edit `packages/database/schema.ts`, apply it to your development database with `pnpm db:push`, and describe the schema change in your pull request.

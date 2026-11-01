@@ -2,10 +2,10 @@
 /** biome-ignore-all lint/a11y/useSemanticElements: false positive */
 "use client";
 
+import { Close, Play } from "@repo/design-system/components/icons";
 import { cn } from "@repo/design-system/lib/utils";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
-import { Icons } from "@/components/icons";
 
 type AnimationStyle =
   | "from-bottom"
@@ -105,7 +105,7 @@ export function HeroVideoDialog({
             <div
               className={`relative flex size-20 scale-100 items-center justify-center rounded-full bg-linear-to-t from-primary to-white/10 shadow-md transition-all duration-200 ease-out group-hover:scale-[1.2]`}
             >
-              <Icons.Play
+              <Play
                 className="size-8 scale-100 text-white transition-transform duration-200 ease-out group-hover:scale-105"
                 style={{
                   filter:
@@ -135,7 +135,7 @@ export function HeroVideoDialog({
                 className="absolute cursor-pointer hover:scale-[98%] transition-all duration-200 ease-out -top-16 right-0 rounded-full bg-neutral-900/50 p-2 text-xl text-white ring-1 backdrop-blur-md dark:bg-neutral-100/50 dark:text-black"
                 onClick={() => setIsVideoOpen(false)}
               >
-                <Icons.X className="size-5" />
+                <Close className="size-5" />
               </motion.button>
               <div className="relative isolate z-1 size-full overflow-hidden rounded-2xl border-2 border-white">
                 <iframe

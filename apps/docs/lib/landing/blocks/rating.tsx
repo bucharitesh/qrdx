@@ -3,6 +3,7 @@ import { cn } from "@repo/design-system/lib/utils";
 import { z } from "zod";
 import {
   buttonClass,
+  buttonShapeClass,
   itemIdSchema,
   lineText,
   linkProps,
@@ -10,6 +11,7 @@ import {
   mutedTextClass,
   surfaceClass,
 } from "@/components/landing/block-kit";
+import { LpHeading } from "@/components/landing/heading";
 import { landingUrlSchema } from "@/types/landing";
 import { type BlockRenderProps, registerBlock } from "../registry";
 import { ReviewLinksEditor } from "./rating-editor";
@@ -101,9 +103,14 @@ export function ReviewLinksBlock({
       {(props.title || props.description) && (
         <div className="space-y-1">
           {props.title && (
-            <h2 className="text-lg leading-tight font-semibold" id={titleId}>
+            <LpHeading
+              as="h2"
+              preview={context.thumbnail}
+              className="text-lg leading-tight font-semibold"
+              id={titleId}
+            >
               {props.title}
-            </h2>
+            </LpHeading>
           )}
           {props.description && (
             <p className={cn(mutedTextClass, "text-sm whitespace-pre-line")}>
@@ -115,7 +122,10 @@ export function ReviewLinksBlock({
       <div className="space-y-2">
         {links.map((link, index) => (
           <a
-            className={buttonClass(index === 0 ? "filled" : "outline")}
+            className={buttonClass(
+              index === 0 ? "filled" : "outline",
+              buttonShapeClass(context.theme),
+            )}
             key={link.id}
             {...linkProps(link.url, id, link.platform)}
           >

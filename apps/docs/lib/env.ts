@@ -108,6 +108,9 @@ export const env = createEnv({
     NEXT_PUBLIC_FEATUREBASE_APP_ID: z.string().min(1).optional(),
     NEXT_PUBLIC_POSTHOG_KEY: z.string().min(1).optional(),
     NEXT_PUBLIC_POSTHOG_HOST: z.url().min(1).optional(),
+    // Umami web analytics (cookieless). Off without the website id.
+    NEXT_PUBLIC_UMAMI_WEBSITE_ID: z.string().min(1).optional(),
+    NEXT_PUBLIC_UMAMI_SCRIPT_URL: z.url().optional(),
     NEXT_PUBLIC_QRDX_PRO_MONTHLY_PRODUCT_ID: z.string().min(1).optional(),
     NEXT_PUBLIC_QRDX_PRO_YEARLY_PRODUCT_ID: z.string().min(1).optional(),
     NEXT_PUBLIC_QRDX_BUSINESS_MONTHLY_PRODUCT_ID: z.string().min(1).optional(),
@@ -172,6 +175,8 @@ export const env = createEnv({
     NEXT_PUBLIC_FEATUREBASE_APP_ID: process.env.NEXT_PUBLIC_FEATUREBASE_APP_ID,
     NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY,
     NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST,
+    NEXT_PUBLIC_UMAMI_WEBSITE_ID: process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID,
+    NEXT_PUBLIC_UMAMI_SCRIPT_URL: process.env.NEXT_PUBLIC_UMAMI_SCRIPT_URL,
     NEXT_PUBLIC_QRDX_PRO_MONTHLY_PRODUCT_ID:
       process.env.NEXT_PUBLIC_QRDX_PRO_MONTHLY_PRODUCT_ID,
     NEXT_PUBLIC_QRDX_PRO_YEARLY_PRODUCT_ID:

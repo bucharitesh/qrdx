@@ -1,6 +1,6 @@
 "use client";
 
-import { Play } from "iconsax-reactjs";
+import { Play } from "@repo/design-system/components/icons";
 import { useState } from "react";
 
 /**

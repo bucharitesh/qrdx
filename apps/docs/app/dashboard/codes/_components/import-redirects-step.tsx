@@ -1,16 +1,10 @@
 "use client";
 
-import { Spinner } from "@repo/design-system/components/icons";
+import { Info, Spinner } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Checkbox } from "@repo/design-system/components/ui/checkbox";
 import { Progress } from "@repo/design-system/components/ui/progress";
-import {
-  ArrowLeft,
-  ArrowRight3,
-  InfoCircle,
-  RotateLeft,
-  Warning2,
-} from "iconsax-reactjs";
+import { ArrowLeft, ArrowRight3, RotateLeft, Warning2 } from "iconsax-reactjs";
 import { useCallback, useEffect, useState } from "react";
 import {
   MigrateApiError,
@@ -173,7 +167,7 @@ export function RedirectsStep({
             original destinations back (they're saved with this import).
           </p>
         </Note>
-        <Note icon={<InfoCircle />}>
+        <Note icon={<Info />}>
           <p>{redirectLimits}</p>
         </Note>
 

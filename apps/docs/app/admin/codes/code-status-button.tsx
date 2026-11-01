@@ -1,10 +1,6 @@
-"use client";
+import { AdminAction } from "../_components/admin-action";
 
-import { Button } from "@repo/design-system/components/ui/button";
-import { useTransition } from "react";
-import { toast } from "sonner";
-import { setDynamicCodeActiveAction } from "./actions";
-
+/** Disable (anti-phishing) or re-enable a code, with a reason for the log. */
 export function CodeStatusButton({
   codeId,
   slug,
@@ -14,42 +10,20 @@ export function CodeStatusButton({
   slug: string;
   isActive: boolean;
 }) {
-  const [isPending, startTransition] = useTransition();
-
-  const onClick = () => {
-    let reason: string | undefined;
-    if (isActive) {
-      const answer = window.prompt(
-        `Disable /q/${slug}? Scans will show a "no longer active" page and the owner cannot re-enable it. Reason (optional):`,
-      );
-      if (answer === null) return;
-      reason = answer || undefined;
-    } else if (!window.confirm(`Enable /q/${slug} again?`)) {
-      return;
-    }
-
-    startTransition(async () => {
-      const result = await setDynamicCodeActiveAction({
-        codeId,
-        active: !isActive,
-        reason,
-      });
-      if (result.ok) {
-        toast.success(isActive ? `Disabled /q/${slug}` : `Enabled /q/${slug}`);
-      } else {
-        toast.error(result.error);
-      }
-    });
-  };
-
   return (
-    <Button
-      disabled={isPending}
-      onClick={onClick}
-      size="sm"
-      variant={isActive ? "destructive" : "outline"}
-    >
-      {isActive ? "Disable" : "Enable"}
-    </Button>
+    <AdminAction
+      action="setCodeActive"
+      confirmLabel={isActive ? "Disable" : "Enable"}
+      description={
+        isActive
+          ? `Scans of /q/${slug} show a "no longer active" page and the owner can't re-enable it.`
+          : `/q/${slug} redirects again and the owner regains control.`
+      }
+      destructive={isActive}
+      input={{ codeId, active: !isActive }}
+      label={isActive ? "Disable" : "Enable"}
+      success={isActive ? `Disabled /q/${slug}` : `Enabled /q/${slug}`}
+      title={isActive ? `Disable /q/${slug}` : `Enable /q/${slug}`}
+    />
   );
 }

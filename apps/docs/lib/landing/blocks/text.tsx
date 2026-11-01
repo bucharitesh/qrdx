@@ -2,6 +2,7 @@ import { cn } from "@repo/design-system/lib/utils";
 import { Text as Type } from "iconsax-reactjs";
 import { z } from "zod";
 import { lineText, longText } from "@/components/landing/block-kit";
+import { LpHeading } from "@/components/landing/heading";
 import { type BlockRenderProps, registerBlock } from "../registry";
 import { TextEditor } from "./text-editor";
 
@@ -22,7 +23,7 @@ const SIZES = {
   lg: "text-lg",
 } as const;
 
-function TextBlock({ props }: BlockRenderProps<TextProps>) {
+function TextBlock({ props, context }: BlockRenderProps<TextProps>) {
   if (!(props.heading || props.body)) return null;
   return (
     <section
@@ -33,9 +34,13 @@ function TextBlock({ props }: BlockRenderProps<TextProps>) {
       )}
     >
       {props.heading && (
-        <h2 className="text-lg leading-snug font-semibold text-balance">
+        <LpHeading
+          as="h2"
+          preview={context.thumbnail}
+          className="text-lg leading-snug font-semibold text-balance"
+        >
           {props.heading}
-        </h2>
+        </LpHeading>
       )}
       {props.body && (
         <p

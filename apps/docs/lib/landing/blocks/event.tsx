@@ -9,11 +9,13 @@ import {
 import type { ReactNode } from "react";
 import {
   buttonClass,
+  buttonShapeClass,
   linkProps,
   mailHref,
   mutedTextClass,
   surfaceClass,
 } from "@/components/landing/block-kit";
+import { LpHeading } from "@/components/landing/heading";
 import { type BlockRenderProps, registerBlock } from "../registry";
 import {
   buildIcs,
@@ -79,12 +81,14 @@ export function EventBlock({
           <span className="text-2xl leading-none font-bold">{display.day}</span>
         </div>
         <div className="min-w-0 space-y-1">
-          <h2
+          <LpHeading
+            as="h2"
+            preview={context.thumbnail}
             className="text-xl leading-tight font-bold text-balance"
             id={titleId}
           >
             {props.title}
-          </h2>
+          </LpHeading>
           <p className="text-sm font-medium">
             <time dateTime={display.iso}>{display.date}</time>
           </p>
@@ -147,7 +151,7 @@ export function EventBlock({
         )}
         {props.cta && (
           <a
-            className={buttonClass("filled")}
+            className={buttonClass("filled", buttonShapeClass(context.theme))}
             {...linkProps(props.cta.url, id, "cta")}
           >
             {props.cta.label}
@@ -157,7 +161,7 @@ export function EventBlock({
           <details className="group">
             <summary
               className={cn(
-                buttonClass("outline"),
+                buttonClass("outline", buttonShapeClass(context.theme)),
                 "cursor-pointer list-none select-none [&::-webkit-details-marker]:hidden",
               )}
             >

@@ -1,15 +1,10 @@
 import { Button } from "@repo/design-system/components/ui/button";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@repo/design-system/components/ui/tooltip";
 import { ArrowRight, Book1, Home2 } from "iconsax-reactjs";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { AsciiField } from "@/components/fx/ascii-field";
-import { AsciiQr } from "@/components/fx/ascii-qr";
-import { EGG_QR } from "@/components/fx/qr-matrix";
+import { NotFoundCode } from "@/components/not-found-code";
+import { TrackOnMount } from "@/lib/analytics/react";
 
 export const metadata: Metadata = {
   title: "Page not found",
@@ -19,24 +14,13 @@ export const metadata: Metadata = {
 export default function NotFound() {
   return (
     <main className="relative isolate flex min-h-dvh w-full flex-col items-center justify-center overflow-hidden px-6 py-16">
+      <TrackOnMount event="404_viewed" props={{ area: "site" }} />
       <AsciiField
         variant="noise"
         className="-z-10 [mask-image:radial-gradient(ellipse_75%_75%_at_50%_50%,transparent_28%,black_62%,transparent_100%)]"
       />
       <div className="flex flex-col items-center gap-8 text-center">
-        <Tooltip delayDuration={500}>
-          <TooltipTrigger asChild>
-            <div className="relative rounded-[28px] bg-white p-3 shadow-[0_1px_2px_rgba(0,0,0,0.06),0_30px_60px_-30px_rgba(0,0,0,0.35)] ring-1 ring-black/5">
-              <AsciiQr code={EGG_QR.lost} knockout={[11, 5]} cell={9} />
-              <span className="pointer-events-none absolute inset-0 grid place-items-center">
-                <span className="font-mono text-3xl font-semibold tracking-tight text-neutral-950">
-                  404
-                </span>
-              </span>
-            </div>
-          </TooltipTrigger>
-          <TooltipContent side="bottom">Go on, scan it</TooltipContent>
-        </Tooltip>
+        <NotFoundCode />
         <div className="flex max-w-md flex-col items-center gap-3">
           <h1 className="text-balance text-3xl font-semibold tracking-tighter md:text-4xl">
             This page could not be found

@@ -2,6 +2,11 @@
 
 import { authClient } from "@repo/auth/client";
 import { toast } from "@repo/design-system";
+import {
+  GithubLogo,
+  GoogleLogo,
+  Spinner,
+} from "@repo/design-system/components/icons";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
@@ -14,7 +19,6 @@ import { Separator } from "@repo/design-system/components/ui/separator";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Icons } from "@/components/icons";
 import { QrdxLogoAnimation } from "@/components/qrdx-logo-animation";
 import { siteConfig } from "@/config/site";
 import { EmailCodeSignIn } from "./email-code-sign-in";
@@ -112,14 +116,14 @@ export function AuthDialog({
     {
       id: "google",
       label: "Google",
-      icon: Icons.google,
+      icon: GoogleLogo,
       loading: isGoogleLoading,
       onClick: handleGoogleSignIn,
     },
     {
       id: "github",
       label: "GitHub",
-      icon: Icons.github,
+      icon: GithubLogo,
       loading: isGithubLoading,
       onClick: handleGithubSignIn,
     },
@@ -167,7 +171,7 @@ export function AuthDialog({
                   <provider.icon className="size-5" />
                   <span className="font-medium">{provider.label}</span>
                   {provider.loading && (
-                    <Icons.Loader className="size-4 animate-spin" />
+                    <Spinner className="size-4 animate-spin" />
                   )}
                 </Button>
                 {lastLoginMethod === provider.id && (

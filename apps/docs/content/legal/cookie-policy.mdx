@@ -10,6 +10,7 @@ import { CookieSettingsButton } from "@/components/consent/cookie-settings-butto
 
 - QRdx uses a few necessary cookies to keep you signed in and secure, and browser storage to remember settings like your theme and editor state.
 - Two optional tools load only if you allow them: **PostHog** for product analytics and **Featurebase** for the feedback widget.
+- We count visits with **Umami**, which sets no cookies and stores nothing in your browser, so it needs no consent. It stays off if your browser sends Do Not Track or Global Privacy Control.
 - We use no advertising cookies.
 - Your choice is stored in your browser only. Change it any time with **Cookie settings** in the footer or the button below.
 
@@ -28,7 +29,8 @@ On your first visit to qrdx.dev we ask which optional categories you allow. Noth
 | **Analytics** | Measures which pages and features get used, so we know what to improve | PostHog | Off until you allow it |
 
 - Your choice is saved in your browser in a first-party `c15t` cookie and localStorage entry for up to 12 months. We don't keep a copy on our servers, so you'll be asked again on a new browser or device.
-- If you turn a category off, the page reloads without that tool, and the PostHog cookies and storage are deleted.
+- PostHog starts the moment you allow **Analytics** and stops the moment you turn it off. The page then reloads without it, and its cookies and storage are deleted.
+- Umami isn't in these categories because it doesn't use cookies or storage and keeps no profile. It counts page views and a few actions, such as a download and its format, and never runs when your browser sends Do Not Track or Global Privacy Control.
 
 ## Cookies
 
@@ -41,6 +43,7 @@ On your first visit to qrdx.dev we ask which optional categories you allow. Noth
 | `qrdx_currency` | QRdx | Remembers the currency you chose on the pricing page | 1 year | Necessary |
 | `c15t` | QRdx | Remembers your cookie choices | Up to 12 months | Necessary |
 | `ph_<project key>_posthog` | PostHog | Recognises your browser across visits for analytics | 1 year | Analytics |
+| `qrdx_analytics` | QRdx | Tells our server you allowed Analytics, so events it sends (a subscription starting, an integration connected) can be linked to your account. Removed when you turn Analytics off. | 1 year | Analytics |
 | Featurebase cookies | Featurebase | Keep the feedback widget's conversation going | Set by Featurebase | Functionality |
 
 Cloudflare Turnstile runs in a Cloudflare frame on the abuse report form and on hosted-page forms. Cloudflare may use its own storage there to tell people from bots, as described in its [Turnstile privacy policy](https://www.cloudflare.com/turnstile-privacy-policy/).
@@ -66,6 +69,7 @@ These items stay in your browser (localStorage, sessionStorage or IndexedDB). Th
 | `qrdx:halloween-2026:hidden` | That you closed the seasonal banner |
 | `qrdx:season-override` (sessionStorage) | A seasonal theme preview, for this tab only |
 | `qrdx:default-theme-applied:<workspace>` (sessionStorage) | That your default theme was already applied in this tab |
+| `qrdx:analytics-auth` (sessionStorage) | When your current sign-in started, so reloading the page doesn't count it twice. For this tab only. |
 | `ph_*` items | PostHog's analytics storage, only if you allow Analytics |
 
 ## On codes and hosted pages
@@ -90,4 +94,4 @@ Related pages: [Privacy Policy](/legal/privacy-policy), [Subprocessors](/legal/s
 
 ---
 
-**Changes:** 1 November 2026. First version, listing every cookie and storage item in the current app.
+**Changes:** 1 November 2026. First version, listing every cookie and storage item in the current app. Added Umami (no cookies), the `qrdx_analytics` cookie and the `qrdx:analytics-auth` item.

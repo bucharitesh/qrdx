@@ -51,6 +51,7 @@ import type {
   ImportPreview,
   ImportRowResult,
 } from "@/app/dashboard/codes/import/_lib/import";
+import { track } from "@/lib/analytics";
 import { soundEvent } from "@/lib/sound/emit";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 import {
@@ -233,6 +234,7 @@ export function ImportWizard({
     if (validRows.length === 0) return;
     const results: ImportRowResult[] = [];
     let stopped: string | null = null;
+    track("import_started", { provider: "csv", count: validRows.length });
     setPhase({ type: "importing", done: 0, total: validRows.length });
     for (let start = 0; start < validRows.length; start += IMPORT_CHUNK_SIZE) {
       const chunk = validRows.slice(start, start + IMPORT_CHUNK_SIZE);
@@ -256,6 +258,11 @@ export function ImportWizard({
     }
     setPhase({ type: "done", results, stopped });
     soundEvent(stopped ? "error" : "success");
+    track("import_completed", {
+      provider: "csv",
+      count: results.filter((r) => r.ok).length,
+      failed: results.filter((r) => !r.ok).length,
+    });
   };
 
   const downloadSample = () =>

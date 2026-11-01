@@ -6,6 +6,7 @@ import { getAllTemplates, getQRData, getSVGString } from "qrdx";
 import { patterns as cornerEyeDotPatterns } from "@/components/playground/corner-eye-dot-pattern-selector";
 import { patterns as cornerEyePatterns } from "@/components/playground/corner-eye-pattern-selector";
 import { patterns as bodyPatterns } from "@/components/playground/pattern-selector";
+import { track } from "@/lib/analytics";
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
 import { useControlsTabFromUrl } from "@/lib/hooks/use-controls-tab-from-url";
 import { useKeyboardShortcut } from "@/lib/hooks/use-keyboard-shortcuts";
@@ -78,6 +79,10 @@ export function usePlaygroundShortcuts({
       const prevIndex =
         (currentIndex - 1 + presetNames.length) % presetNames.length;
       applyThemePreset(presetNames[prevIndex]);
+      track("theme_applied", {
+        method: "preset",
+        preset: presetNames[prevIndex],
+      });
       soundEvent("apply");
     },
     { enabled: shortcutsEnabled },
@@ -92,6 +97,10 @@ export function usePlaygroundShortcuts({
       const currentIndex = presetNames.indexOf(themeState.preset || "default");
       const nextIndex = (currentIndex + 1) % presetNames.length;
       applyThemePreset(presetNames[nextIndex]);
+      track("theme_applied", {
+        method: "preset",
+        preset: presetNames[nextIndex],
+      });
       soundEvent("apply");
     },
     { enabled: shortcutsEnabled },
@@ -141,6 +150,7 @@ export function usePlaygroundShortcuts({
 
         const svgContent = await getSVGString(qrProps);
         await navigator.clipboard.writeText(svgContent);
+        track("qr_copied", { format: "svg", source: "playground" });
         toast.success("SVG copied to clipboard");
         soundEvent("copy");
       } catch (error) {

@@ -1,6 +1,7 @@
 "use client";
 
 import { authClient } from "@repo/auth/client";
+import { Spinner } from "@repo/design-system/components/icons";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
@@ -10,9 +11,9 @@ import {
   InputOTPSlot,
 } from "@repo/design-system/components/ui/input-otp";
 import { Label } from "@repo/design-system/components/ui/label";
+import { Sms } from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
-import { Icons } from "@/components/icons";
 
 const CODE_LENGTH = 6;
 // Matches the server: 3 tries per code, a 5-minute expiry.
@@ -244,7 +245,7 @@ export function EmailCodeSignIn({
         >
           {verifying ? (
             <>
-              <Icons.Loader className="size-3.5" />
+              <Spinner className="size-3.5" />
               Checking code…
             </>
           ) : (
@@ -309,9 +310,9 @@ export function EmailCodeSignIn({
           type="submit"
           variant="outline"
         >
-          <Icons.Mail className="size-5" />
+          <Sms className="size-5" />
           <span className="font-medium">Email me a code</span>
-          {sending && <Icons.Loader className="size-4" />}
+          {sending && <Spinner className="size-4" />}
         </Button>
         {lastUsed && (
           <Badge

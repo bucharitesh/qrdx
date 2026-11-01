@@ -1,6 +1,6 @@
 "use client";
 
-import { Spinner } from "@repo/design-system/components/icons";
+import { Info, Spinner } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Checkbox } from "@repo/design-system/components/ui/checkbox";
 import { Input } from "@repo/design-system/components/ui/input";
@@ -24,7 +24,6 @@ import {
   ArrowLeft,
   ArrowRight,
   ExportSquare,
-  InfoCircle,
   Key,
   SearchNormal1,
   Warning2,
@@ -83,7 +82,7 @@ function ConnectPanel({
 
   if (status && !status.available) {
     return (
-      <Note icon={<InfoCircle />}>
+      <Note icon={<Info />}>
         <p>Importing from {name} isn't available yet.</p>
       </Note>
     );
@@ -203,7 +202,7 @@ function ConnectPanel({
       )}
 
       {!(status?.oauth || status?.apiKey) && status && (
-        <Note icon={<InfoCircle />}>
+        <Note icon={<Info />}>
           <p>
             Connecting {name} isn't available right now. Export your links as
             CSV from {name} and use "Another provider (CSV)" instead.

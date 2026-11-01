@@ -182,8 +182,8 @@ export function CodesToolbar({
             <AlertDialogTitle>Empty the trash?</AlertDialogTitle>
             <AlertDialogDescription>
               {plural(trashCount, "code")} and their scan history are deleted
-              forever. Printed copies keep showing a "no longer active" page.
-              This can't be undone.
+              forever. Printed copies show a "QR code not found" page. This
+              can't be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

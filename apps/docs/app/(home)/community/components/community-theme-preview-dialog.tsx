@@ -134,6 +134,8 @@ export function CommunityThemePreviewDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
+        // The title names the theme; there's no description to point at.
+        aria-describedby={undefined}
         className="flex h-[80vh] w-[95vw] max-w-6xl flex-col gap-0 overflow-visible p-0"
         style={
           {

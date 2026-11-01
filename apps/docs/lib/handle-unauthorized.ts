@@ -1,7 +1,7 @@
 "use client";
 
 import { authClient } from "@repo/auth/client";
-import posthog from "posthog-js";
+import { resetAnalytics } from "@/lib/analytics";
 import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
 import { ApiError, UnauthorizedError } from "@/types/errors";
 
@@ -32,7 +32,7 @@ export async function handleUnauthorized(): Promise<void> {
   isSigningOut = true;
 
   try {
-    posthog.reset();
+    resetAnalytics();
     await authClient.signOut();
     window.location.href = DEFAULT_LOGIN_REDIRECT;
   } catch (signOutError) {

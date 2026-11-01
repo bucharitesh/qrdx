@@ -14,7 +14,10 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { headerNavEntries } from "./header-nav";
 
-/** Every header destination, grouped like the desktop dropdowns. */
+/**
+ * Every header destination, grouped like the desktop dropdowns. No
+ * prefetching: opening the menu would fetch every destination at once.
+ */
 export function HeaderMobileNavList({
   onNavigate,
   className,
@@ -47,6 +50,7 @@ export function HeaderMobileNavList({
                     href={item.href}
                     onClick={onNavigate}
                     aria-current={current ? "page" : undefined}
+                    prefetch={false}
                     className={cn(
                       "group/nav-item flex min-h-11 items-center gap-2.5 rounded-lg p-1.5 text-sm leading-tight text-foreground/80 transition-colors hover:bg-accent/70 hover:text-foreground active:bg-accent",
                       current && "bg-accent/60 font-medium text-foreground",
@@ -84,6 +88,7 @@ export function HeaderMobileNavList({
                 href={entry.href}
                 onClick={onNavigate}
                 aria-current={current ? "page" : undefined}
+                prefetch={false}
                 className={cn(
                   "inline-flex h-8 items-center rounded-full border border-border px-3 text-sm font-medium text-secondary-foreground/80 hover:text-secondary-foreground transition-colors",
                   current && "bg-secondary/60 text-secondary-foreground",

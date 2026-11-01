@@ -1,9 +1,9 @@
 import { authClient } from "@repo/auth/client";
-import { usePostHog } from "posthog-js/react";
 import { createContext, type ReactNode, useContext, useState } from "react";
 // import { QRCodeDialog } from "@/components/editor/qr";
 import { QRSaveDialog } from "@/components/editor/qr-save-dialog";
 import { QRShareDialog } from "@/components/editor/qr-share-dialog";
+import { track } from "@/lib/analytics";
 import {
   useCreateTheme,
   useUpdateTheme,
@@ -76,7 +76,6 @@ function useDialogActionsStore(): DialogActionsContextType {
   const createThemeMutation = useCreateTheme();
   const updateThemeMutation = useUpdateTheme();
   const { isGenerating } = useAIQRGenerationCore();
-  const posthog = usePostHog();
 
   const currentPreset = themeState?.preset
     ? getPreset(themeState.preset)
@@ -120,10 +119,7 @@ function useDialogActionsStore(): DialogActionsContextType {
 
     try {
       const theme = await createThemeMutation.mutateAsync(themeData);
-      posthog.capture("CREATE_THEME", {
-        theme_id: theme?.id,
-        theme_name: theme?.name,
-      });
+      track("theme_saved");
       if (!theme) return;
       applyThemePreset(theme?.id || themeState.preset || "default");
       soundEvent("success");
@@ -162,11 +158,7 @@ function useDialogActionsStore(): DialogActionsContextType {
       return;
     }
 
-    posthog.capture("SHARE_THEME", {
-      theme_id: presetId,
-      theme_name: currentPreset?.label,
-      is_saved: isSavedPreset,
-    });
+    track("theme_shared", { saved: isSavedPreset });
 
     setShareUrl(
       new URL(
@@ -189,11 +181,7 @@ function useDialogActionsStore(): DialogActionsContextType {
       : !!currentPreset && currentPreset.source === "SAVED";
     const themeName = name || currentPreset?.label || presetId;
 
-    posthog.capture("OPEN_IN_V0", {
-      theme_id: presetId,
-      theme_name: themeName,
-      is_saved: isSavedPreset,
-    });
+    track("v0_opened", { saved: isSavedPreset });
 
     const themeUrl = isSavedPreset
       ? `https://tweakcn.com/r/v0/${presetId}`

@@ -2,12 +2,14 @@ import { cn } from "@repo/design-system/lib/utils";
 import { Mobile as Smartphone } from "iconsax-reactjs";
 import { z } from "zod";
 import {
+  buttonShapeClass,
   imageSchema,
   lineText,
   longText,
   mutedTextClass,
   surfaceClass,
 } from "@/components/landing/block-kit";
+import { LpHeading } from "@/components/landing/heading";
 import { landingUrlSchema } from "@/types/landing";
 import {
   type BlockRenderContext,
@@ -104,15 +106,21 @@ export function AppsBlock({ id, props, context }: BlockRenderProps<AppsProps>) {
               className="size-16 shrink-0 rounded-[22%] object-cover shadow-sm"
               decoding="async"
               height={64}
+              loading={context.thumbnail ? "lazy" : undefined}
               src={props.icon.url}
               width={64}
             />
           )}
           <div className="min-w-0 space-y-1">
             {props.name && (
-              <h2 className="text-lg leading-tight font-semibold" id={titleId}>
+              <LpHeading
+                as="h2"
+                preview={context.thumbnail}
+                className="text-lg leading-tight font-semibold"
+                id={titleId}
+              >
                 {props.name}
-              </h2>
+              </LpHeading>
             )}
             {props.description && (
               <p className={cn(mutedTextClass, "text-sm whitespace-pre-line")}>
@@ -126,6 +134,7 @@ export function AppsBlock({ id, props, context }: BlockRenderProps<AppsProps>) {
         blockId={id}
         links={links}
         platform={serverPlatform(context)}
+        shapeClassName={buttonShapeClass(context.theme)}
       />
     </section>
   );

@@ -1,5 +1,6 @@
 "use client";
 
+import { Info } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Label } from "@repo/design-system/components/ui/label";
 import {
@@ -14,7 +15,6 @@ import {
   ArrowLeft,
   ArrowRight,
   DocumentUpload,
-  InfoCircle,
   TableDocument,
   Warning2,
 } from "iconsax-reactjs";
@@ -302,7 +302,7 @@ export function FileStep({
                 <p>Pick the column with each code's destination URL.</p>
               </Note>
             ) : (
-              <Note icon={<InfoCircle />}>
+              <Note icon={<Info />}>
                 <p>
                   The old short link (or code ID) is what makes a re-upload of
                   the same file skip codes it already imported, and it goes into

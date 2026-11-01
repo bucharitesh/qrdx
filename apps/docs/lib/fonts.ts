@@ -5,8 +5,10 @@ import { Geist, Geist_Mono, Mona_Sans } from "next/font/google";
 // live here rather than in @repo/design-system/lib/fonts.
 
 /** Brand face: Mona Sans text for UI and body, its expanded widths for display. */
+// `subsets` only picks what gets preloaded; latin-ext glyphs (₹, accents)
+// still load on demand through the unicode-range @font-face rules.
 const monaSans = Mona_Sans({
-  subsets: ["latin", "latin-ext"],
+  subsets: ["latin"],
   axes: ["wdth"],
   display: "swap",
   variable: "--font-mona-sans",
@@ -14,7 +16,7 @@ const monaSans = Mona_Sans({
 
 /** Code and data readouts. */
 const geistMono = Geist_Mono({
-  subsets: ["latin", "latin-ext"],
+  subsets: ["latin"],
   display: "swap",
   variable: "--font-geist-mono",
 });

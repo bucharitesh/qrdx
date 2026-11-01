@@ -13,6 +13,7 @@ import {
   inSchedule,
   pickVariant,
   pixelConfigSchema,
+  pixelsForOrigin,
   type RoutingConfigInput,
   type RoutingContext,
   type RoutingInput,
@@ -399,6 +400,29 @@ describe("pixel ids", () => {
     );
     assert.equal(pixelConfigSchema.safeParse({ meta: "12ab" }).success, false);
     assert.equal(pixelConfigSchema.parse({ gtm: "" }).gtm, undefined);
+  });
+
+  it("loads Tag Manager only on custom domains", () => {
+    const pixels = pixelConfigSchema.parse({
+      ga4: "G-ABC123XYZ",
+      gtm: "GTM-ABC1234",
+    });
+    const own = pixelsForOrigin(pixels, { customDomain: false });
+    assert.equal(own?.gtm, undefined);
+    assert.equal(own?.ga4, "G-ABC123XYZ");
+    assert.equal(pixels.gtm, "GTM-ABC1234", "the stored config is untouched");
+    assert.equal(
+      pixelsForOrigin(pixels, { customDomain: true })?.gtm,
+      "GTM-ABC1234",
+    );
+    const gtmOnly = pixelsForOrigin(
+      pixelConfigSchema.parse({ gtm: "GTM-X1Y2" }),
+      {
+        customDomain: false,
+      },
+    );
+    assert.equal(gtmOnly?.gtm, undefined);
+    assert.equal(pixelsForOrigin(null, { customDomain: false }), null);
   });
 });
 

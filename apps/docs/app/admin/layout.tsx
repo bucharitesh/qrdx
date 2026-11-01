@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import type { ReactNode } from "react";
+import { type ReactNode, Suspense } from "react";
 import { Header } from "@/components/header";
 import { AdminNav } from "./_components/admin-nav";
+import { AdminSearch } from "./_components/admin-search";
 import { requireAdmin } from "./_lib/guard";
 
 export const metadata: Metadata = {
@@ -22,8 +23,11 @@ export default async function AdminLayout({
       <Header />
       <main className="flex w-full flex-1 flex-col gap-4 px-4 py-4 md:flex-row md:px-6 md:py-8">
         <AdminNav />
-        <div className="mx-auto w-full max-w-6xl min-w-0 flex-1">
-          {children}
+        <div className="mx-auto w-full max-w-6xl min-w-0 flex-1 space-y-4">
+          <Suspense fallback={<div className="h-9" />}>
+            <AdminSearch />
+          </Suspense>
+          <div>{children}</div>
         </div>
       </main>
     </div>

@@ -17,9 +17,14 @@ import { LLMCopyButton, ViewOptions } from "@/components/ai/page-actions";
 import { Mermaid } from "@/components/mdx/mermaid";
 import * as Preview from "@/components/preview";
 import { Wrapper } from "@/components/preview/wrapper";
+import {
+  breadcrumbSchema,
+  type Crumb,
+  JsonLd,
+} from "@/components/sections/tools/json-ld";
 import { owner, repo } from "@/lib/github";
-import { createMetadata } from "@/lib/metadata";
-import { getPageImage, source } from "@/lib/source";
+import { baseUrl, createMetadata, siteName } from "@/lib/metadata";
+import { type Page as DocsPageData, getPageImage, source } from "@/lib/source";
 import { getMDXComponents } from "@/mdx-components";
 
 function PreviewRenderer({ preview }: { preview: string }): ReactNode {
@@ -32,6 +37,45 @@ function PreviewRenderer({ preview }: { preview: string }): ReactNode {
 }
 
 export const revalidate = false;
+
+/** Home, the docs home, each parent page that exists, then this page. */
+function docsCrumbs(page: DocsPageData): Crumb[] {
+  const crumbs: Crumb[] = [
+    { name: "Home", path: "/" },
+    { name: "Docs", path: "/docs" },
+  ];
+  for (let depth = 1; depth < page.slugs.length; depth++) {
+    const parent = source.getPage(page.slugs.slice(0, depth));
+    if (parent) crumbs.push({ name: parent.data.title, path: parent.url });
+  }
+  if (page.slugs.length > 0) {
+    crumbs.push({ name: page.data.title, path: page.url });
+  }
+  return crumbs;
+}
+
+function techArticleSchema(page: DocsPageData) {
+  const url = (path: string) => new URL(path, baseUrl).toString();
+  return {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    headline: page.data.title,
+    description: page.data.description,
+    url: url(page.url),
+    image: url(getPageImage(page).url),
+    inLanguage: "en",
+    ...(page.data.lastModified && {
+      dateModified: new Date(page.data.lastModified).toISOString(),
+    }),
+    isPartOf: { "@type": "WebSite", name: siteName, url: url("/") },
+    publisher: {
+      "@type": "Organization",
+      name: siteName,
+      url: url("/"),
+      logo: url("/logo.png"),
+    },
+  };
+}
 
 const _generator = createGenerator();
 
@@ -50,6 +94,10 @@ export default async function Page(props: PageProps<"/docs/[[...slug]]">) {
         style: "clerk",
       }}
     >
+      <JsonLd data={techArticleSchema(page)} />
+      {page.slugs.length > 0 && (
+        <JsonLd data={breadcrumbSchema(docsCrumbs(page))} />
+      )}
       <h1 className="text-[1.75em] font-semibold">{page.data.title}</h1>
       <p className="text-lg text-fd-muted-foreground mb-2">
         {page.data.description}
