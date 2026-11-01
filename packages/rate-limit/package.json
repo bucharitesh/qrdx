@@ -7,13 +7,13 @@
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "dependencies": {
-    "@t3-oss/env-nextjs": "^0.13.8",
-    "@upstash/ratelimit": "^2.0.7",
-    "@upstash/redis": "^1.35.7",
+    "@t3-oss/env-nextjs": "^0.13.11",
+    "@upstash/ratelimit": "^2.2.0",
+    "@upstash/redis": "^1.40.0",
     "zod": "^4.6.7"
   },
   "devDependencies": {
     "@repo/typescript-config": "workspace:*",
-    "typescript": "^5.9.3"
+    "typescript": "^6.0.3"
   }
 }
