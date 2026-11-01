@@ -1,7 +1,8 @@
 "use client";
 
+import { Play } from "@repo/design-system/components/icons";
 import { cn } from "@repo/design-system/lib/utils";
-import { Import as Download, Music, Pause, Play } from "iconsax-reactjs";
+import { Import as Download, Music, Pause } from "iconsax-reactjs";
 import { useEffect, useRef, useState } from "react";
 import { mutedTextClass, surfaceClass } from "@/components/landing/block-kit";
 import { UnavailableNotice } from "@/lib/files/block-ui";

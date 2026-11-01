@@ -24,11 +24,12 @@ const listQuerySchema = z.object({
   offset: z.coerce.number().int().min(0).max(100_000).default(0),
 });
 
-/** One code, or an array of up to 100 (arrays of more than one need Pro). */
-const createBodySchema = z.union([
-  createCodeSchema,
-  z.array(createCodeSchema).min(1).max(MAX_BULK_CREATE),
-]);
+/**
+ * Up to 100 codes in one request (arrays of more than one need Pro). Arrays
+ * and single objects are parsed separately: a union would collapse a bad
+ * destination into a bare "Invalid input" and hide the reason from callers.
+ */
+const createBatchSchema = z.array(createCodeSchema).min(1).max(MAX_BULK_CREATE);
 
 export async function GET(req: NextRequest) {
   try {
@@ -55,10 +56,10 @@ export async function POST(req: NextRequest) {
   try {
     const scope = await resolveApiScope(req, "write");
     assertJson(req);
-    const body = parseWithSchema(
-      createBodySchema,
-      await readJsonBody(req, MAX_BODY_BYTES),
-    );
+    const raw = await readJsonBody(req, MAX_BODY_BYTES);
+    const body = Array.isArray(raw)
+      ? parseWithSchema(createBatchSchema, raw)
+      : parseWithSchema(createCodeSchema, raw);
     await enforceCreateRateLimit(scope.userId);
 
     const isBatch = Array.isArray(body);

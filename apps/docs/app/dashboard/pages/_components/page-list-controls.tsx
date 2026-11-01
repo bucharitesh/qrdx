@@ -43,6 +43,7 @@ import type {
   LandingPageListItem,
   PageUsage,
 } from "@/app/dashboard/pages/_lib/landing-pages";
+import { track } from "@/lib/analytics";
 import { PLAN_NAMES } from "@/lib/pricing";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 
@@ -190,6 +191,7 @@ export function PageActions({
         toast.error(result.error.message);
         return;
       }
+      track("dynamic_code_created", { source: "page" });
       toast.success("QR code created");
       router.push(`/dashboard/codes/${encodeURIComponent(result.data.codeId)}`);
     });

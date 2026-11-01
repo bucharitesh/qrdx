@@ -2,6 +2,7 @@
 
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import { z } from "zod";
+import { hasAnalyticsConsent } from "@/lib/analytics/server";
 import { baseUrl } from "@/lib/metadata";
 import {
   BILLING_NOT_CONFIGURED_MESSAGE,
@@ -71,7 +72,13 @@ export async function createCheckout(input: {
     const checkout = await polar.checkouts.create({
       products: [productId],
       customerId: customer?.id,
-      metadata: { plan, interval },
+      metadata: {
+        plan,
+        interval,
+        // Lets the webhook attribute subscription_activated to this user in
+        // PostHog; without analytics consent it is an anonymous count.
+        ...((await hasAnalyticsConsent()) ? { analytics_consent: "1" } : {}),
+      },
       successUrl: `${baseUrl.origin}/success?checkout_id={CHECKOUT_ID}`,
       returnUrl: `${baseUrl.origin}/pricing`,
     });

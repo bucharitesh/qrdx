@@ -1,10 +1,14 @@
 "use client";
 
 import { cn } from "@repo/design-system/lib/utils";
+import { TableDocument } from "iconsax-reactjs";
 import type { ReactNode } from "react";
 import { getProvider, type ProviderId } from "@/lib/migrate/providers";
 
-/** Brand logo on a white tile (logos are drawn for light backgrounds), or a monogram. */
+/**
+ * Brand logo on a white tile (logos are drawn for light backgrounds). "Another
+ * provider (CSV)" has no brand, so it gets a spreadsheet icon on the same tile.
+ */
 export function ProviderLogo({
   provider,
   size = "md",
@@ -12,21 +16,24 @@ export function ProviderLogo({
   provider: ProviderId;
   size?: "sm" | "md";
 }) {
-  const { logo, name } = getProvider(provider);
+  const { logo } = getProvider(provider);
   return (
     <span
       aria-hidden
       className={cn(
-        "grid shrink-0 place-items-center overflow-hidden rounded-lg bg-white ring-1 ring-black/5 dark:ring-white/10",
-        size === "sm" ? "size-7 p-1 text-xs" : "size-9 p-1.5 text-sm",
+        "grid shrink-0 grid-cols-1 grid-rows-1 place-items-center overflow-hidden rounded-lg bg-white ring-1 ring-black/5 dark:ring-white/10",
+        size === "sm" ? "size-7 p-1" : "size-9 p-1.5",
       )}
     >
       {logo ? (
         <img alt="" className="size-full object-contain" src={logo} />
       ) : (
-        <span className="font-semibold leading-none text-neutral-700">
-          {provider === "csv" ? "CSV" : name.charAt(0)}
-        </span>
+        <TableDocument
+          className={cn(
+            "text-neutral-700",
+            size === "sm" ? "size-4" : "size-5",
+          )}
+        />
       )}
     </span>
   );

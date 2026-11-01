@@ -1,9 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { MagicStar } from "iconsax-reactjs";
 import { QRCodeSVG } from "qrdx";
 import { useEffect, useState } from "react";
-import { Icons } from "@/components/icons";
 
 const themes = [
   {
@@ -85,7 +85,7 @@ export function AIThemeGenerator() {
             animate={{ scale: 1, rotate: 180 }}
             exit={{ scale: 0 }}
           >
-            <Icons.Sparkles className="w-6 h-6 text-yellow-500" />
+            <MagicStar className="w-6 h-6 text-yellow-500" />
           </motion.div>
         )}
       </div>
@@ -99,7 +99,7 @@ export function AIThemeGenerator() {
           }}
           transition={{ duration: 0.5 }}
         >
-          <Icons.Sparkles
+          <MagicStar
             className="w-3.5 h-3.5"
             style={{ color: currentTheme.fgColor }}
           />

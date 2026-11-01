@@ -29,13 +29,19 @@ for (const [network, prefix] of [
 ] as const) {
   blocked.addSubnet(network, prefix, "ipv4");
 }
-// IPv6: unspecified, loopback, discard, documentation, ULA, link-local,
-// site-local, multicast. (v4-mapped/NAT64 forms are unwrapped below.)
+// IPv6: unspecified, loopback, IPv4-compatible, local-use NAT64, discard,
+// Teredo, documentation, 6to4, ULA, link-local, site-local, multicast.
+// (v4-mapped and NAT64 forms are unwrapped below; the tunnelling ranges embed
+// an IPv4 address too and are blocked whole, like app/api/scan/check/_lib/ssrf.ts.)
 for (const [network, prefix] of [
   ["::", 128],
   ["::1", 128],
+  ["::", 96],
+  ["64:ff9b:1::", 48],
   ["100::", 64],
+  ["2001::", 32],
   ["2001:db8::", 32],
+  ["2002::", 16],
   ["fc00::", 7],
   ["fe80::", 10],
   ["fec0::", 10],

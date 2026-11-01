@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { ComponentProps, MouseEvent } from "react";
+import { track } from "@/lib/analytics";
 
 const PLAYGROUND_PATH = "/playground";
 
@@ -13,6 +14,7 @@ async function applyPreset(preset: string) {
   const { useQREditorStore } = await loadEditorStore();
   // Persisted to localStorage, so the playground (and a new tab) opens with it.
   useQREditorStore.getState().applyThemePreset(preset);
+  track("theme_applied", { method: "preset", preset });
 }
 
 type HalloweenPresetLinkProps = Omit<ComponentProps<typeof Link>, "href"> & {

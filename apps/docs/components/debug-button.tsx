@@ -1,6 +1,6 @@
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
-import { Icons } from "@/components/icons";
+import { Danger } from "iconsax-reactjs";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 
 interface DebugButtonProps extends React.ComponentProps<typeof Button> {
@@ -24,7 +24,7 @@ export function DebugButton({
         className={cn("", className)}
         {...props}
       >
-        <Icons.Bug />
+        <Danger />
       </Button>
     </TooltipWrapper>
   );

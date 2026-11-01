@@ -1,6 +1,6 @@
 "use client";
 
-import { Spinner } from "@repo/design-system/components/icons";
+import { Info, Spinner } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Progress } from "@repo/design-system/components/ui/progress";
 import {
@@ -9,12 +9,12 @@ import {
   Copy,
   DocumentDownload,
   Global,
-  InfoCircle,
   Link21,
   Warning2,
 } from "iconsax-reactjs";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { track } from "@/lib/analytics";
 import {
   MigrateApiError,
   type MigrateClient,
@@ -135,10 +135,17 @@ export function RunStep({
   }, [refresh, run]);
 
   const done = job?.status === "done" && !running;
+  // biome-ignore lint/correctness/useExhaustiveDependencies: once, when the run finishes.
   useEffect(() => {
     if (done && !finishedOnce.current) {
       finishedOnce.current = true;
       soundEvent("success");
+      if (job)
+        track("import_completed", {
+          provider: job.provider,
+          count: job.created,
+          failed: job.failed,
+        });
     }
   }, [done]);
 
@@ -389,7 +396,7 @@ export function RunStep({
           </div>
         )}
 
-        <Note icon={<InfoCircle />}>
+        <Note icon={<Info />}>
           <p>
             Notes on each code say where it came from, its old link and its
             original creation date. Re-running this import skips everything

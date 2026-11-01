@@ -2,12 +2,13 @@ import type { NextRequest } from "next/server";
 import {
   assertJson,
   NO_STORE,
+  resolveApiCaller,
   resolveApiScope,
 } from "@/app/api/v1/codes/_lib/api";
 import { handleError } from "@/lib/error-response";
 import { createEndpoint, listEndpoints } from "@/lib/events/endpoints";
 import { parseWithSchema, readJsonBody } from "@/lib/request-guards";
-import { serializeHook, subscribeSchema } from "./_lib/hooks";
+import { canSeeHookUrls, serializeHook, subscribeSchema } from "./_lib/hooks";
 
 // REST Hooks (Zapier, Make, n8n): subscribe = POST, unsubscribe = DELETE
 // /api/v1/hooks/{id}. Subscriptions are ordinary webhook endpoints, so they
@@ -17,10 +18,11 @@ const MAX_BODY_BYTES = 16 * 1024;
 
 export async function GET(req: NextRequest) {
   try {
-    const scope = await resolveApiScope(req, "read");
-    const hooks = await listEndpoints(scope);
+    const caller = await resolveApiCaller(req, "read");
+    const hooks = await listEndpoints(caller.scope);
+    const revealUrl = canSeeHookUrls(caller);
     return Response.json(
-      { data: hooks.map(serializeHook) },
+      { data: hooks.map((hook) => serializeHook(hook, { revealUrl })) },
       { headers: NO_STORE },
     );
   } catch (error) {

@@ -62,7 +62,11 @@ export function LinksEditor({ value, onChange }: BlockEditorProps<LinksProps>) {
               value={item.description}
             />
             <ImageField
-              hint="Optional square image shown at the start of the button."
+              hint={
+                value.layout === "grid"
+                  ? "The tile's picture (portrait 4:5; wide 2:1 when highlighted)."
+                  : "Optional square image shown at the start of the button."
+              }
               label="Thumbnail"
               onChange={(thumbnail) => update({ thumbnail })}
               value={item.thumbnail}
@@ -76,9 +80,28 @@ export function LinksEditor({ value, onChange }: BlockEditorProps<LinksProps>) {
         )}
       />
       <ChoiceField
-        label="Button style"
+        label="Layout"
+        onChange={(layout) => set({ layout })}
+        options={[
+          { value: "list", label: "List" },
+          { value: "grid", label: "Grid of tiles" },
+        ]}
+        value={value.layout}
+      />
+      <ChoiceField
+        label={value.layout === "grid" ? "Tile style" : "Button style"}
         onChange={(style) => set({ style })}
-        options={BUTTON_STYLE_OPTIONS}
+        options={[
+          ...BUTTON_STYLE_OPTIONS,
+          {
+            value: "rows",
+            label: value.layout === "grid" ? "Plain" : "Rows",
+            title:
+              value.layout === "grid"
+                ? "Image and label, no card"
+                : "Thin lines between links, no buttons",
+          },
+        ]}
         value={value.style}
       />
       <SwitchField

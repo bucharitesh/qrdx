@@ -49,7 +49,7 @@ const CATEGORY_COPY: Partial<Record<AllConsentNames, CategoryCopy>> = {
   measurement: {
     title: "Analytics",
     description:
-      "Measures which pages and features get used, so we know what to improve.",
+      "Measures which pages and features get used, so we know what to improve. Cookieless visit counts (Umami) run without it.",
     tools: "PostHog",
     icon: Chart2,
   },

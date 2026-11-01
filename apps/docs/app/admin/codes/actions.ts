@@ -2,70 +2,118 @@
 
 import { database as db, qrCode, user } from "@repo/database";
 import { eq } from "drizzle-orm";
-import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { writeAuditLog } from "../_lib/audit";
-import { assertAdmin } from "../_lib/guard";
-import type { AdminActionResult } from "../actions";
+import {
+  type AdminActionResult,
+  adminError,
+  runAdminAction,
+} from "../_lib/action";
+import { adminId, requiredReason } from "../_lib/rules";
 
-const schema = z.object({
-  codeId: z.string().trim().min(1).max(128),
+const activeSchema = z.object({
+  codeId: adminId,
   active: z.boolean(),
-  reason: z.string().trim().max(500).optional(),
+  reason: requiredReason,
+});
+const pauseSchema = z.object({
+  codeId: adminId,
+  paused: z.boolean(),
+  reason: requiredReason,
+});
+
+async function findCode(codeId: string) {
+  const [target] = await db
+    .select({
+      slug: qrCode.slug,
+      kind: qrCode.kind,
+      destinationUrl: qrCode.destinationUrl,
+      isActive: qrCode.isActive,
+      pausedAt: qrCode.pausedAt,
+      ownerId: qrCode.userId,
+      ownerEmail: user.email,
+      organizationId: qrCode.organizationId,
+    })
+    .from(qrCode)
+    .innerJoin(user, eq(user.id, qrCode.userId))
+    .where(eq(qrCode.id, codeId))
+    .limit(1);
+  if (!target) throw adminError("QR code not found", 404);
+  return target;
+}
+
+const codeAudit = (
+  codeId: string,
+  target: Awaited<ReturnType<typeof findCode>>,
+) => ({
+  audit: {
+    targetType: "qr_code",
+    targetId: codeId,
+    subjectUserId: target.ownerId,
+    metadata: {
+      slug: target.slug,
+      kind: target.kind,
+      destinationUrl: target.destinationUrl,
+      ownerId: target.ownerId,
+      ownerEmail: target.ownerEmail,
+      organizationId: target.organizationId,
+    },
+  },
 });
 
 /**
- * Anti-phishing control: a disabled code stops redirecting (its scans show the
- * "no longer active" page) and its owner cannot turn it back on.
+ * Anti-phishing control: a disabled code (or hosted page, which is a code of
+ * kind "page") stops redirecting, its scans show the "no longer active" page
+ * and its owner cannot turn it back on.
  */
 export async function setDynamicCodeActiveAction(
-  input: z.input<typeof schema>,
+  input: z.input<typeof activeSchema>,
 ): Promise<AdminActionResult> {
-  const admin = await assertAdmin();
-  const parsed = schema.safeParse(input);
-  if (!parsed.success) return { ok: false, error: "Invalid input" };
-  const { codeId, active, reason } = parsed.data;
+  return runAdminAction(
+    { action: "qr_code.set_active", schema: activeSchema },
+    input,
+    async (_admin, { codeId, active }) => {
+      const target = await findCode(codeId);
+      if (target.isActive === active) return null;
+      await db
+        .update(qrCode)
+        .set({ isActive: active })
+        .where(eq(qrCode.id, codeId));
+      const outcome = codeAudit(codeId, target);
+      return {
+        audit: {
+          ...outcome.audit,
+          action: active ? "qr_code.enable" : "qr_code.disable",
+        },
+      };
+    },
+  );
+}
 
-  try {
-    const [target] = await db
-      .select({
-        slug: qrCode.slug,
-        destinationUrl: qrCode.destinationUrl,
-        isActive: qrCode.isActive,
-        ownerId: qrCode.userId,
-        ownerEmail: user.email,
-        organizationId: qrCode.organizationId,
-      })
-      .from(qrCode)
-      .innerJoin(user, eq(user.id, qrCode.userId))
-      .where(eq(qrCode.id, codeId))
-      .limit(1);
-    if (!target) return { ok: false, error: "QR code not found" };
-    if (target.isActive === active) return { ok: true };
-
-    await db
-      .update(qrCode)
-      .set({ isActive: active })
-      .where(eq(qrCode.id, codeId));
-    await writeAuditLog({
-      actor: admin,
-      action: active ? "qr_code.enable" : "qr_code.disable",
-      targetType: "qr_code",
-      targetId: codeId,
-      metadata: {
-        slug: target.slug,
-        destinationUrl: target.destinationUrl,
-        ownerId: target.ownerId,
-        ownerEmail: target.ownerEmail,
-        organizationId: target.organizationId,
-        reason: reason || null,
-      },
-    });
-  } catch (error) {
-    console.error("Admin action failed:", error);
-    return { ok: false, error: "Action failed" };
-  }
-
-  revalidatePath("/admin", "layout");
-  return { ok: true };
+/**
+ * Support pause, e.g. on the owner's request: the code sends visitors to its
+ * fallback (or the "paused" page) like a pause from the dashboard, and the
+ * owner can resume it themselves.
+ */
+export async function setDynamicCodePausedAction(
+  input: z.input<typeof pauseSchema>,
+): Promise<AdminActionResult> {
+  return runAdminAction(
+    { action: "qr_code.set_paused", schema: pauseSchema },
+    input,
+    async (_admin, { codeId, paused }) => {
+      const target = await findCode(codeId);
+      if (Boolean(target.pausedAt) === paused) return null;
+      await db
+        .update(qrCode)
+        .set({ pausedAt: paused ? new Date() : null })
+        .where(eq(qrCode.id, codeId));
+      const outcome = codeAudit(codeId, target);
+      return {
+        audit: {
+          ...outcome.audit,
+          action: paused ? "qr_code.pause" : "qr_code.resume",
+        },
+      };
+    },
+  );
 }

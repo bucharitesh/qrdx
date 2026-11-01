@@ -39,3 +39,22 @@ export async function deliverSignInCode(
   );
   return "logged";
 }
+
+interface AddressLimiter {
+  limit: (key: string) => Promise<{ success: boolean }>;
+}
+
+/**
+ * Each code allows 3 guesses, so the per-address limits are what bound
+ * guessing over time: a short burst window plus a daily cap. Every limiter
+ * counts the request; any one of them can refuse it.
+ */
+export async function addressMayRequestCode(
+  key: string,
+  limiters: readonly AddressLimiter[],
+): Promise<boolean> {
+  const results = await Promise.all(
+    limiters.map((limiter) => limiter.limit(key)),
+  );
+  return results.every((result) => result.success);
+}

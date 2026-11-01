@@ -2,8 +2,8 @@
 
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
+import { Copy, CopySuccess } from "iconsax-reactjs";
 import type { ComponentProps } from "react";
-import { Icons } from "@/components/icons";
 import { useCopyToClipboard } from "@/lib/hooks/use-copy-clipboard";
 import { TooltipWrapper } from "./tooltip-wrapper";
 
@@ -32,7 +32,7 @@ export function CopyButton({
         onClick={() => copyToClipboard(textToCopy, successMessage)}
         {...props}
       >
-        {hasCopied ? <Icons.CopyCheck /> : <Icons.Copy />}
+        {hasCopied ? <CopySuccess /> : <Copy />}
         <span className="sr-only">Copy</span>
       </Button>
     </TooltipWrapper>

@@ -6,6 +6,7 @@ import {
   mutedTextClass,
   surfaceClass,
 } from "@/components/landing/block-kit";
+import { LpHeading } from "@/components/landing/heading";
 import { type BlockRenderProps, registerBlock } from "../registry";
 import { CopyButton } from "./coupon-copy";
 import { WifiEditor } from "./menu-wifi-editor";
@@ -51,7 +52,7 @@ function Row({
   );
 }
 
-export function WifiBlock({ id, props }: BlockRenderProps<WifiProps>) {
+export function WifiBlock({ id, props, context }: BlockRenderProps<WifiProps>) {
   const titleId = `${id}-title`;
   return (
     <section
@@ -62,9 +63,14 @@ export function WifiBlock({ id, props }: BlockRenderProps<WifiProps>) {
         <span className="grid size-10 shrink-0 place-items-center rounded-full bg-(--lp-primary) text-(--lp-primary-fg)">
           <Wifi aria-hidden="true" className="size-5" />
         </span>
-        <h2 className="text-lg font-semibold" id={titleId}>
+        <LpHeading
+          as="h2"
+          preview={context.thumbnail}
+          className="text-lg font-semibold"
+          id={titleId}
+        >
           {props.title || "Wi-Fi"}
-        </h2>
+        </LpHeading>
       </div>
       <dl className="space-y-3">
         <Row

@@ -1,10 +1,13 @@
 "use client";
 
 import { authClient } from "@repo/auth/client";
-import { Spinner as Loader2 } from "@repo/design-system/components/icons";
+import {
+  GithubLogo,
+  GoogleLogo,
+  Spinner as Loader2,
+} from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { useState } from "react";
-import { Icons } from "@/components/icons";
 import { OAuthAppLogo } from "@/components/oauth/oauth-app-logo";
 import type { OAuthScope } from "@/lib/oauth-scopes";
 import { AuthorizeShell, ScopeList } from "./oauth-consent";
@@ -54,7 +57,7 @@ export function OAuthSignIn({
           onClick={() => handleSignIn("google")}
           variant="outline"
         >
-          <Icons.google className="h-4 w-4" />
+          <GoogleLogo className="h-4 w-4" />
           Continue with Google
           {loadingProvider === "google" && (
             <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -67,7 +70,7 @@ export function OAuthSignIn({
           onClick={() => handleSignIn("github")}
           variant="outline"
         >
-          <Icons.github className="h-4 w-4" />
+          <GithubLogo className="h-4 w-4" />
           Continue with GitHub
           {loadingProvider === "github" && (
             <Loader2 className="h-3.5 w-3.5 animate-spin" />

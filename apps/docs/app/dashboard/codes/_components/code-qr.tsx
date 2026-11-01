@@ -7,6 +7,7 @@ import { Import as Download } from "iconsax-reactjs";
 import { downloadQRCode, getQRData, QRCode } from "qrdx";
 import { useState } from "react";
 import { defaultThemeState } from "@/config/qr";
+import { track } from "@/lib/analytics";
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
 import { soundEvent } from "@/lib/sound/emit";
 import type { ThemeStyles } from "@/types/theme";
@@ -85,6 +86,11 @@ export async function downloadCodeQr(
     },
   );
   soundEvent("download");
+  track("qr_downloaded", {
+    format,
+    source: "dashboard",
+    content_type: "dynamic",
+  });
 }
 
 export function CodeDownloadButtons({

@@ -15,9 +15,27 @@ import {
   type SharedProps,
 } from "fumadocs-ui/components/dialog/search";
 import { useTreeContext } from "fumadocs-ui/contexts/tree";
+import { ArrowRight } from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
-import { useMemo } from "react";
-import { Icons } from "@/components/icons";
+import { useEffect, useMemo, useRef } from "react";
+import { track } from "@/lib/analytics";
+
+/** docs_search once a query settles: its length and result count, never the text. */
+function useTrackDocsSearch(search: string, loading: boolean, results: number) {
+  const last = useRef("");
+  useEffect(() => {
+    const query = search.trim();
+    if (query.length < 2 || loading || query === last.current) return;
+    const timer = setTimeout(() => {
+      last.current = query;
+      track("docs_search", {
+        query_length: query.length,
+        result_count: results,
+      });
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, [search, loading, results]);
+}
 
 export default function CustomSearchDialog(props: SharedProps) {
   const { search, setSearch, query } = useDocsSearch({
@@ -25,6 +43,11 @@ export default function CustomSearchDialog(props: SharedProps) {
   });
   const { full } = useTreeContext();
   const router = useRouter();
+  useTrackDocsSearch(
+    search,
+    query.isLoading,
+    Array.isArray(query.data) ? query.data.length : 0,
+  );
   const searchMap = useMemo(() => {
     const map = new Map<string, Item>();
 
@@ -52,7 +75,7 @@ export default function CustomSearchDialog(props: SharedProps) {
         type: "action",
         node: (
           <div className="inline-flex items-center gap-2 text-fd-muted-foreground">
-            <Icons.ArrowRight className="size-4" />
+            <ArrowRight className="size-4" />
             <p>
               Jump to{" "}
               <span className="font-medium text-fd-foreground">

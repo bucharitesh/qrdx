@@ -34,8 +34,8 @@ import {
   getLandingPageUsage,
 } from "@/actions/landing-pages";
 import type { PageUsage } from "@/app/dashboard/pages/_lib/landing-pages";
-import { LandingRender } from "@/components/landing/render";
-import { ScaledPreview } from "@/components/landing/scaled-preview";
+import { TemplatePreview } from "@/components/landing/template-preview";
+import { track } from "@/lib/analytics";
 import { demoPath } from "@/lib/landing/demo-paths";
 import type { PageTemplate } from "@/lib/landing/templates";
 import { PLAN_NAMES } from "@/lib/pricing";
@@ -43,6 +43,7 @@ import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 import { CodeDialog } from "./code-dialog";
 
 type TemplatesModule = typeof import("@/lib/landing/templates");
+type DemoModule = typeof import("@/lib/landing/demo");
 
 /** Loads the page types (and every block) only when the picker opens. */
 function useTemplates(open: boolean) {
@@ -51,6 +52,25 @@ function useTemplates(open: boolean) {
     if (!open || mod) return;
     let cancelled = false;
     import("@/lib/landing/templates").then((loaded) => {
+      if (!cancelled) setMod(loaded);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [open, mod]);
+  return mod;
+}
+
+/**
+ * The template gallery's thumbnails (lib/landing/demo: sample photos and
+ * media, half-size images), loaded with the picker.
+ */
+function useDemoContent(open: boolean) {
+  const [mod, setMod] = useState<DemoModule | null>(null);
+  useEffect(() => {
+    if (!open || mod) return;
+    let cancelled = false;
+    import("@/lib/landing/demo").then((loaded) => {
       if (!cancelled) setMod(loaded);
     });
     return () => {
@@ -132,6 +152,7 @@ export function NewCodeDialog({
 }) {
   const router = useRouter();
   const templates = useTemplates(open);
+  const demo = useDemoContent(open);
   const usage = usePageUsage(open);
   const openUpgradeDialog = useGetProDialogStore(
     (state) => state.openUpgradeDialog,
@@ -167,13 +188,17 @@ export function NewCodeDialog({
       try {
         return {
           variant: item,
-          content: templates.buildTemplateContent(template.type, item.id),
+          content: demo
+            ? demo.buildDemoContent(template.type, item.id, {
+                thumbnail: true,
+              })
+            : templates.buildTemplateContent(template.type, item.id),
         };
       } catch {
         return { variant: item, content: null };
       }
     });
-  }, [templates, template]);
+  }, [templates, demo, template]);
 
   const chooseType = (next: string) => {
     if (atPageLimit) {
@@ -199,6 +224,7 @@ export function NewCodeDialog({
         setError(result.error);
         return;
       }
+      track("template_used", { template_type: template.type });
       onOpenChange(false);
       router.push(`/dashboard/pages/${encodeURIComponent(result.data.pageId)}`);
     });
@@ -207,7 +233,12 @@ export function NewCodeDialog({
   return (
     <>
       <ResponsiveDialog onOpenChange={onOpenChange} open={open}>
-        <ResponsiveDialogContent className="p-6 sm:max-w-3xl" showCloseButton>
+        <ResponsiveDialogContent
+          // The template grid is taller than most laptop screens: the body
+          // scrolls so the header and the Create button stay in view.
+          className="flex flex-col overflow-hidden p-6 sm:max-w-3xl"
+          showCloseButton
+        >
           <ResponsiveDialogHeader>
             <ResponsiveDialogTitle>
               {template
@@ -224,7 +255,7 @@ export function NewCodeDialog({
           </ResponsiveDialogHeader>
 
           {!template ? (
-            <div className="space-y-4 py-2">
+            <div className="-mx-1 min-h-0 space-y-4 overflow-y-auto px-1 py-2">
               {!pagesOnly && (
                 <div className="space-y-2">
                   <p className="text-muted-foreground text-xs font-medium uppercase">
@@ -288,48 +319,46 @@ export function NewCodeDialog({
               </div>
             </div>
           ) : (
-            <form
-              className="space-y-4 py-2"
-              id="new-page-form"
-              onSubmit={submit}
-            >
+            // The previews render whole pages, form blocks included, so the
+            // <form> holds only the name field (forms can't nest).
+            <div className="-mx-1 min-h-0 space-y-4 overflow-y-auto px-1 py-2">
               <fieldset>
                 <legend className="sr-only">Template</legend>
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
                   {previews.map(({ variant: item, content }) => {
                     const active = item.id === variant?.id;
                     return (
-                      <div className="relative" key={item.id}>
+                      <div
+                        className={cn(
+                          "relative space-y-1.5 rounded-lg p-1.5",
+                          active
+                            ? "bg-accent ring-1 ring-foreground/15"
+                            : "has-[>button:hover]:bg-muted",
+                          "has-[>button:focus-visible]:ring-ring/50 has-[>button:focus-visible]:ring-[3px]",
+                        )}
+                        key={item.id}
+                      >
+                        {/* The preview has its own links and buttons, so it sits
+                            outside the card button (nested interactive content is
+                            invalid HTML, and its links would navigate away). */}
+                        {content ? (
+                          <TemplatePreview
+                            className={cn(
+                              "bg-muted aspect-[9/16] w-full rounded-md border",
+                              active && "ring-primary ring-2",
+                            )}
+                            content={content}
+                          />
+                        ) : (
+                          <div className="bg-muted aspect-[9/16] rounded-md border" />
+                        )}
+                        {/* Its ::after covers the whole card, preview included. */}
                         <button
                           aria-pressed={active}
-                          className={cn(
-                            "group w-full space-y-1.5 rounded-lg p-1.5 text-left outline-none",
-                            active
-                              ? "bg-accent ring-1 ring-foreground/15"
-                              : "hover:bg-muted",
-                            "focus-visible:ring-ring/50 focus-visible:ring-[3px]",
-                          )}
+                          className="block w-full space-y-1.5 text-left outline-none after:absolute after:inset-0 after:rounded-lg"
                           onClick={() => setVariantId(item.id)}
                           type="button"
                         >
-                          <ScaledPreview
-                            className={cn(
-                              "bg-muted aspect-[9/16] rounded-md border",
-                              active && "ring-primary ring-2",
-                            )}
-                          >
-                            {content && (
-                              <LandingRender
-                                content={content}
-                                context={{
-                                  theme: content.theme,
-                                  mode: "preview",
-                                  pageId: null,
-                                  qrCodeId: null,
-                                }}
-                              />
-                            )}
-                          </ScaledPreview>
                           <span className="block px-0.5 text-sm font-medium">
                             {item.name}
                           </span>
@@ -339,10 +368,10 @@ export function NewCodeDialog({
                             </span>
                           )}
                         </button>
-                        {/* Outside the card button, so opening it never selects the card. */}
+                        {/* Above the card button, so opening it never selects the card. */}
                         <a
                           aria-label={`Preview the ${item.name} template in a new tab`}
-                          className="bg-background/90 text-foreground hover:bg-background focus-visible:ring-ring/50 absolute top-3 right-3 inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium shadow-xs backdrop-blur-sm transition-colors outline-none focus-visible:ring-[3px]"
+                          className="bg-background/90 text-foreground hover:bg-background focus-visible:ring-ring/50 absolute top-3 right-3 z-10 inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium shadow-xs backdrop-blur-sm transition-colors outline-none focus-visible:ring-[3px]"
                           href={demoPath(template.type, item.id)}
                           rel="noopener"
                           target="_blank"
@@ -355,40 +384,42 @@ export function NewCodeDialog({
                   })}
                 </div>
               </fieldset>
-              <div className="space-y-1.5">
-                <Label htmlFor="new-page-title">
-                  Name{" "}
-                  <span className="text-muted-foreground font-normal">
-                    (optional, only you see it)
-                  </span>
-                </Label>
-                <Input
-                  id="new-page-title"
-                  maxLength={100}
-                  onChange={(event) => setTitle(event.target.value)}
-                  placeholder={`${template.label}, spring campaign`}
-                  value={title}
-                />
-              </div>
-              {error && (
-                <div
-                  className="bg-destructive/10 text-destructive space-y-2 rounded-md p-3 text-sm"
-                  role="alert"
-                >
-                  <p>{error.message}</p>
-                  {(error.code === "LIMIT_REACHED" ||
-                    error.code === "PLAN_REQUIRED") && (
-                    <Button
-                      onClick={() => openUpgradeDialog("pro")}
-                      size="sm"
-                      type="button"
-                    >
-                      Upgrade
-                    </Button>
-                  )}
+              <form className="space-y-4" id="new-page-form" onSubmit={submit}>
+                <div className="space-y-1.5">
+                  <Label htmlFor="new-page-title">
+                    Name{" "}
+                    <span className="text-muted-foreground font-normal">
+                      (optional, only you see it)
+                    </span>
+                  </Label>
+                  <Input
+                    id="new-page-title"
+                    maxLength={100}
+                    onChange={(event) => setTitle(event.target.value)}
+                    placeholder={`${template.label}, spring campaign`}
+                    value={title}
+                  />
                 </div>
-              )}
-            </form>
+                {error && (
+                  <div
+                    className="bg-destructive/10 text-destructive space-y-2 rounded-md p-3 text-sm"
+                    role="alert"
+                  >
+                    <p>{error.message}</p>
+                    {(error.code === "LIMIT_REACHED" ||
+                      error.code === "PLAN_REQUIRED") && (
+                      <Button
+                        onClick={() => openUpgradeDialog("pro")}
+                        size="sm"
+                        type="button"
+                      >
+                        Upgrade
+                      </Button>
+                    )}
+                  </div>
+                )}
+              </form>
+            </div>
           )}
 
           {template && (

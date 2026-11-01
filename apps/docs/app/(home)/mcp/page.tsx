@@ -23,7 +23,7 @@ import {
 } from "@/components/sections/tools/cards";
 import { FaqList } from "@/components/sections/tools/faq-list";
 import { ToolHero } from "@/components/sections/tools/tool-hero";
-import { mcpServerUrl } from "@/lib/mcp-clients";
+import { mcpLocalUrl, mcpServerUrl } from "@/lib/mcp-clients";
 import { baseUrl, createMetadata } from "@/lib/metadata";
 import {
   McpConnect,
@@ -40,6 +40,8 @@ export const metadata: Metadata = createMetadata({
 });
 
 const MCP_URL = mcpServerUrl(baseUrl);
+/** Only in local dev: this instance's own endpoint, shown as a hint. */
+const LOCAL_MCP_URL = mcpLocalUrl(baseUrl);
 const PAGE_URL = new URL("/mcp", baseUrl).toString();
 
 const steps: { title: string; body: string }[] = [
@@ -164,8 +166,16 @@ export default function McpPage() {
           "MCP (Model Context Protocol) is the open standard that lets AI assistants use outside tools. Connect QRdx once, ask for a QR code in plain words, and get the image back in the chat.",
         ]}
       >
-        <Suspense fallback={<McpConnectView url={MCP_URL} tab="claude" />}>
-          <McpConnect url={MCP_URL} />
+        <Suspense
+          fallback={
+            <McpConnectView
+              url={MCP_URL}
+              localUrl={LOCAL_MCP_URL}
+              tab="claude"
+            />
+          }
+        >
+          <McpConnect url={MCP_URL} localUrl={LOCAL_MCP_URL} />
         </Suspense>
         <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-muted-foreground">
           <ul className="contents">

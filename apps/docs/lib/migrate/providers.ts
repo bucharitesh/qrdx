@@ -98,7 +98,7 @@ export const API_PROVIDERS: Record<ApiProviderId, ApiProvider> = {
     integration: "bitly",
     connect: "oauth",
     website: "https://bitly.com",
-    logo: "/compare/bitly-qr.svg",
+    logo: "/integrations/bitly.svg",
     sharedDomains: ["bit.ly", "j.mp", "bitly.is"],
     capabilities: {
       search: true,
@@ -117,7 +117,7 @@ export const API_PROVIDERS: Record<ApiProviderId, ApiProvider> = {
     integration: "rebrandly",
     connect: "api_key",
     website: "https://www.rebrandly.com",
-    logo: null,
+    logo: "/integrations/rebrandly.svg",
     sharedDomains: ["rebrand.ly", "rb.gy"],
     capabilities: {
       search: false,
@@ -136,7 +136,7 @@ export const API_PROVIDERS: Record<ApiProviderId, ApiProvider> = {
     integration: "short-io",
     connect: "api_key",
     website: "https://short.io",
-    logo: null,
+    logo: "/integrations/short-io.svg",
     sharedDomains: ["short.gy", "shorturl.at"],
     capabilities: {
       search: false,
@@ -159,7 +159,7 @@ export const FILE_PROVIDERS: Record<FileProviderId, FileProvider> = {
     kind: "file",
     name: "QR Code Generator PRO",
     website: "https://www.qr-code-generator.com",
-    logo: null,
+    logo: "/compare/qr-code-generator-pro.png",
     export: "none",
     exportSteps: [
       "QR Code Generator PRO doesn't document an export of your code list. Make a spreadsheet with one row per code: Name, Short URL and Destination URL (copy them from the code details in your dashboard).",
@@ -252,7 +252,7 @@ export const FILE_PROVIDERS: Record<FileProviderId, FileProvider> = {
     kind: "file",
     name: "TinyURL",
     website: "https://tinyurl.com",
-    logo: null,
+    logo: "/compare/tinyurl.png",
     export: "unverified",
     exportSteps: [
       "TinyURL lists CSV export as a paid-plan feature. Export your links as CSV from your TinyURL dashboard.",
@@ -270,7 +270,7 @@ export const FILE_PROVIDERS: Record<FileProviderId, FileProvider> = {
     kind: "file",
     name: "Hovercode",
     website: "https://hovercode.com",
-    logo: null,
+    logo: "/compare/hovercode.svg",
     export: "unverified",
     exportSteps: [
       "Hovercode lists CSV exports on its Business plans. Export your codes as CSV from Hovercode.",
@@ -288,7 +288,7 @@ export const FILE_PROVIDERS: Record<FileProviderId, FileProvider> = {
     kind: "file",
     name: "Scanova",
     website: "https://scanova.io",
-    logo: null,
+    logo: "/compare/scanova.svg",
     export: "unverified",
     exportSteps: [
       "Export your codes as CSV from Scanova (it emails a download link that works for 24 hours).",

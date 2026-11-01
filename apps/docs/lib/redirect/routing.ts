@@ -334,6 +334,20 @@ export const PIXEL_PROVIDERS: readonly PixelProvider[] = [
 export const hasPixels = (config: PixelConfig | null): boolean =>
   Boolean(config && PIXEL_PROVIDERS.some((provider) => config[provider]));
 
+/**
+ * The pixels that may load where a hosted page is served. A Google Tag Manager
+ * container runs whatever scripts its owner publishes, so on QRdx's own
+ * origin it could act with a signed-in visitor's QRdx session. It loads only
+ * on the owner's custom domains, which are a separate origin.
+ */
+export function pixelsForOrigin(
+  config: PixelConfig | null,
+  { customDomain }: { customDomain: boolean },
+): PixelConfig | null {
+  if (!config?.gtm || customDomain) return config;
+  return { ...config, gtm: undefined };
+}
+
 function parseStored<T extends z.ZodType>(
   schema: T,
   value: unknown,

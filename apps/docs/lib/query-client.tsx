@@ -7,8 +7,8 @@ import {
   QueryClientProvider,
 } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import posthog from "posthog-js";
 import { type ReactNode, useState } from "react";
+import { track } from "@/lib/analytics";
 import {
   handleUnauthorizedIfNeeded,
   isUnauthorized,
@@ -18,16 +18,8 @@ function logClientError(error: Error, context: Record<string, unknown>) {
   console.error("Query error:", error, context);
 
   if (error.name !== "UnauthorizedError" && error.name !== "ValidationError") {
-    try {
-      posthog.capture("query_error", {
-        error: error.message,
-        errorName: error.name,
-        stack: error.stack,
-        ...context,
-      });
-    } catch (posthogError) {
-      console.error("Failed to log to PostHog:", posthogError);
-    }
+    // The error type only: messages and stacks can carry user data.
+    track("query_failed", { error_type: error.name });
   }
 }
 

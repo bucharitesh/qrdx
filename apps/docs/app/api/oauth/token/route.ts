@@ -2,6 +2,7 @@ import {
   database as db,
   oauthAuthorizationCode,
   oauthToken,
+  user,
 } from "@repo/database";
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import { and, eq, isNull } from "drizzle-orm";
@@ -10,6 +11,8 @@ import {
   authenticateClient,
   createTokenPair,
   hashToken,
+  isBanActive,
+  isUserBanned,
   NO_STORE_HEADERS,
   oauthError,
   verifyCodeChallenge,
@@ -131,6 +134,10 @@ async function handleAuthorizationCode(body: FormData) {
     );
   }
 
+  if (await isUserBanned(authCode.userId)) {
+    return oauthError("invalid_grant", "This account is suspended");
+  }
+
   const tokenResponse = await createTokenPair(
     app.id,
     authCode.userId,
@@ -158,6 +165,25 @@ async function handleRefreshToken(body: FormData) {
   }
 
   const now = new Date();
+  const refreshTokenHash = hashToken(refreshToken);
+
+  // Banned accounts can't refresh. Checked before rotating, so the grant
+  // works again if a temporary ban ends.
+  const [owner] = await db
+    .select({ banned: user.banned, banExpires: user.banExpires })
+    .from(oauthToken)
+    .innerJoin(user, eq(user.id, oauthToken.userId))
+    .where(
+      and(
+        eq(oauthToken.refreshTokenHash, refreshTokenHash),
+        eq(oauthToken.appId, app.id),
+        isNull(oauthToken.revokedAt),
+      ),
+    )
+    .limit(1);
+  if (owner && isBanActive(owner, now)) {
+    return oauthError("invalid_grant", "This account is suspended");
+  }
 
   // Rotate atomically: a refresh token can be redeemed exactly once.
   const [tokenRecord] = await db
@@ -165,7 +191,7 @@ async function handleRefreshToken(body: FormData) {
     .set({ revokedAt: now, updatedAt: now })
     .where(
       and(
-        eq(oauthToken.refreshTokenHash, hashToken(refreshToken)),
+        eq(oauthToken.refreshTokenHash, refreshTokenHash),
         eq(oauthToken.appId, app.id),
         isNull(oauthToken.revokedAt),
       ),

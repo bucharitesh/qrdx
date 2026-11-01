@@ -49,6 +49,7 @@ import {
 } from "@/components/editor/dynamic-link-toggle";
 import { ThemeGallery } from "@/components/editor/theme-gallery";
 import { seasonalPresetsFirst } from "@/components/seasonal/preset-order";
+import { track } from "@/lib/analytics";
 import { soundEvent } from "@/lib/sound/emit";
 import { useQREditorStore } from "@/store/editor-store";
 import { useThemePresetStore } from "@/store/theme-preset-store";
@@ -147,6 +148,7 @@ function QuickStyles() {
               key={id}
               onClick={() => {
                 applyThemePreset(id);
+                track("theme_applied", { method: "preset", preset: id });
                 soundEvent("apply");
               }}
               type="button"

@@ -36,7 +36,7 @@ export const notifications: IntegrationCatalogEntry[] = [
     kind: "connect",
     surface: "integrations",
     categories: ["notifications"],
-    logo: { type: "brand", icon: "Slack", color: "#4A154B" },
+    logo: { type: "image", src: "/integrations/slack.svg" },
     plan: "business",
     builtBy: "QRdx",
     website: "https://slack.com",

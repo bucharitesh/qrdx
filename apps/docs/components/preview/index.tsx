@@ -7,8 +7,8 @@ import { Heading } from "fumadocs-ui/components/heading";
 import { Step, Steps } from "fumadocs-ui/components/steps";
 import { Tab, Tabs } from "fumadocs-ui/components/tabs";
 import { TypeTable } from "fumadocs-ui/components/type-table";
+import { Home2 } from "iconsax-reactjs";
 import type { ReactNode } from "react";
-import { Icons } from "@/components/icons";
 import {
   Banner,
   File,
@@ -41,7 +41,7 @@ export function card(): ReactNode {
       <div className="rounded-lg bg-fd-background">
         <Card
           href="#"
-          icon={<Icons.Home />}
+          icon={<Home2 />}
           title="Hello World"
           description="Learn More about Caching and Revalidation"
         />

@@ -6,9 +6,9 @@ import {
   Collapsible,
   CollapsibleContent,
 } from "fumadocs-ui/components/ui/collapsible";
+import { Dislike, Like1 } from "iconsax-reactjs";
 import { usePathname } from "next/navigation";
 import { type SyntheticEvent, useEffect, useState, useTransition } from "react";
-import { Icons } from "@/components/icons";
 
 const rateButtonVariants = cva(
   "inline-flex items-center gap-2 px-3 py-2 rounded-full font-medium border text-sm [&_svg]:size-4 disabled:cursor-not-allowed",
@@ -107,7 +107,7 @@ export function Feedback({
             setOpinion("good");
           }}
         >
-          <Icons.ThumbsUp />
+          <Like1 />
           Good
         </button>
         <button
@@ -122,7 +122,7 @@ export function Feedback({
             setOpinion("bad");
           }}
         >
-          <Icons.ThumbsDown />
+          <Dislike />
           Bad
         </button>
       </div>
