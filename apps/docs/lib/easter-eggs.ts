@@ -21,60 +21,62 @@ export interface EasterEgg {
   why: string;
 }
 
+// Each destination is the media itself, not a page about it: the image or
+// GIF file, or YouTube's player-only embed for videos.
 export const easterEggs = {
   lost: {
     title: "Confused Travolta",
-    url: "https://giphy.com/gifs/hEc4k5pN17GZq",
+    url: "https://i.giphy.com/hEc4k5pN17GZq.webp",
     why: "404 page: looking around for a page that isn't there.",
   },
   oops: {
     title: "This is fine",
-    url: "https://knowyourmeme.com/memes/this-is-fine",
+    url: "https://i.imgflip.com/wxica.jpg",
     why: "Error page: something is on fire, we're calmly on it.",
   },
   footer: {
     title: "Never Gonna Give You Up",
-    url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+    url: "https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?autoplay=1",
     why: "Footer code mosaic: the classic QR prank, for whoever scans to the very end.",
   },
   hero: {
     title: "Stonks",
-    url: "https://knowyourmeme.com/memes/stonks",
+    url: "https://i.kym-cdn.com/entries/icons/original/000/029/959/Screen_Shot_2019-06-05_at_1.26.32_PM.jpg",
     why: "Home hero card: stands under the scan chart, and scans only go up.",
   },
   score: {
     title: "Is this a pigeon?",
-    url: "https://knowyourmeme.com/memes/is-this-a-pigeon",
+    url: "https://i.imgflip.com/1o00in.jpg",
     why: "Scan-score demo: lighten the ink until the scanner asks 'is this a QR code?'.",
   },
   print: {
     title: "What is this? A center for ants?",
-    url: "https://www.youtube.com/watch?v=LQc8NDKcnpM",
+    url: "https://www.youtube-nocookie.com/embed/LQc8NDKcnpM?autoplay=1",
     why: "Print-size demo: a code printed too small for its scanning distance.",
   },
   menu: {
     title: "They're the same picture",
-    url: "https://knowyourmeme.com/memes/theyre-the-same-picture",
+    url: "https://i.imgflip.com/2za3u1.jpg",
     why: "Dynamic-codes demo: three destinations, one printed code. Spot the difference.",
   },
   studio: {
     title: "Bob Ross: Happy Accident",
-    url: "https://www.youtube.com/watch?v=Fw6odlNp7_8",
+    url: "https://www.youtube-nocookie.com/embed/Fw6odlNp7_8?autoplay=1",
     why: "Style studio demo: no mistakes when styling a code, just happy accidents.",
   },
   mcp: {
     title: "I know Kung Fu",
-    url: "https://www.youtube.com/watch?v=8XV8aBNOIqI",
+    url: "https://www.youtube-nocookie.com/embed/8XV8aBNOIqI?autoplay=1",
     why: "MCP mockup: the assistant downloads a new skill (QR codes) and just knows it.",
   },
   pro: {
     title: "Shut up and take my money",
-    url: "https://knowyourmeme.com/memes/shut-up-and-take-my-money",
+    url: "https://imgflip.com/s/meme/Shut-Up-And-Take-My-Money-Fry.jpg",
     why: "Upgrade dialog: the code beside the Pro pitch says it for you.",
   },
   smudge: {
     title: "'Tis but a scratch",
-    url: "https://www.youtube.com/watch?v=Apt9HIg2wEU",
+    url: "https://www.youtube-nocookie.com/embed/Apt9HIg2wEU?autoplay=1",
     why: "Error-correction demo on the blog: smudge the code and it shrugs it off.",
   },
 } as const satisfies Record<string, EasterEgg>;
