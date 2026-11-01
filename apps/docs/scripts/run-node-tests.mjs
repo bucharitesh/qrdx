@@ -30,9 +30,18 @@ function find(dir, out = []) {
   return out;
 }
 
+// Deployment and service variables never reach the suites: Vercel runs them
+// inside `turbo build` with production values, which changed media URLs,
+// keys and gating. Same list as vitest.config.ts.
+const DEPLOYMENT_ENV =
+  /^(VERCEL|NEXT_PUBLIC_|KV_|UPSTASH_|REDIS_|POLAR_|RESEND_|EMAIL_|GOOGLE_|GITHUB_|R2_|DUB_|DROPBOX_|SLACK_|HUBSPOT_|MAILCHIMP_|NOTION_|BOX_|MICROSOFT_|CALENDLY_|STRIPE_|SHOPIFY_|WEB_RISK_|GROQ_|FAL_|CRON_|ADMIN_|INTEGRATION_|SCAN_HASH|TURNSTILE_|POSTHOG_|UMAMI_|DATABASE_|PG|POSTGRES_|NEON_|BETTER_AUTH_|QRDX_|SHORT_LINK|BASE_URL)/;
+const baseEnv = Object.fromEntries(
+  Object.entries(process.env).filter(([key]) => !DEPLOYMENT_ENV.test(key)),
+);
+
 // The values the suites' own "Run:" headers document (some assert on them).
 const env = {
-  ...process.env,
+  ...baseEnv,
   NODE_ENV: "test",
   DATABASE_URL: "postgres://test@127.0.0.1:1/test",
   BETTER_AUTH_SECRET: "test-secret-for-unsubscribe-tokens",
