@@ -29,7 +29,12 @@ import { HttpError } from "@/lib/error-response";
 import { baseUrl } from "@/lib/metadata";
 import { getPlanForScope, getPlanLimits } from "@/lib/plans";
 import type { ActiveScope } from "@/lib/scope";
-import { SHORT_LINK_BASE, shortLinkUrl } from "@/lib/short-links";
+import {
+  codeLinks,
+  SHARED_SLUG_SCOPE,
+  SHORT_LINK_BASE,
+} from "@/lib/short-links";
+import { findTakenSlugs, isUniqueViolation } from "@/lib/slug-claims";
 import type { MigrateRepo, Scope } from "../importer";
 import { readJobs } from "../jobs";
 import {
@@ -57,6 +62,7 @@ const asScope = (scope: Scope) => scope as ActiveScope;
 type CodeRow = {
   id: string;
   slug: string;
+  slugScope: string;
   domainId: string | null;
   archivedAt: Date | null;
   deletedAt: Date | null;
@@ -71,10 +77,7 @@ async function toRefs(rows: CodeRow[]): Promise<Map<string, CodeRef>> {
         row.id,
         {
           id: row.id,
-          shortLink: shortLinkUrl(
-            row.slug,
-            domain?.verified ? domain.hostname : null,
-          ),
+          shortLink: codeLinks(row, domain ?? null).link,
           state: row.deletedAt
             ? "trash"
             : row.archivedAt
@@ -89,6 +92,7 @@ async function toRefs(rows: CodeRow[]): Promise<Map<string, CodeRef>> {
 const refColumns = {
   id: qrCode.id,
   slug: qrCode.slug,
+  slugScope: qrCode.slugScope,
   domainId: qrCode.domainId,
   archivedAt: qrCode.archivedAt,
   deletedAt: qrCode.deletedAt,
@@ -239,12 +243,6 @@ async function saveJobs(userId: string, jobs: ImportJob[]): Promise<void> {
   });
 }
 
-const isUniqueViolation = (error: unknown) =>
-  typeof error === "object" &&
-  error !== null &&
-  ((error as { code?: string }).code === "23505" ||
-    /duplicate key|unique/i.test(String((error as Error).message)));
-
 export const dbRepo: MigrateRepo = {
   async usage(scope) {
     const usage = await getCodeUsage(asScope(scope));
@@ -252,21 +250,12 @@ export const dbRepo: MigrateRepo = {
       remaining:
         usage.limit === null ? null : Math.max(0, usage.limit - usage.used),
       bulk: usage.bulkApi,
+      customSlugs: usage.customSlugs,
     };
   },
   findImported,
   findByDestinations,
-  async findTakenSlugs(slugs) {
-    const taken = new Set<string>();
-    for (let i = 0; i < slugs.length; i += 500) {
-      const rows = await db
-        .select({ slug: qrCode.slug })
-        .from(qrCode)
-        .where(inArray(qrCode.slug, slugs.slice(i, i + 500)));
-      for (const row of rows) taken.add(row.slug);
-    }
-    return taken;
-  },
+  findTakenSlugs: (slugs, domainId) => findTakenSlugs(slugs, domainId),
   existingTagNames: (scope) => existingTagNames(asScope(scope)),
   domainFor,
   async qrdxHosts(scope) {
@@ -364,17 +353,45 @@ export const dbRepo: MigrateRepo = {
         warnings.set(row.codeId, `Created, but ${message}`);
     }
 
-    // Kept back-halves; a slug taken in the meantime keeps the random one.
-    const slugged = new Map<string, string>();
+    // Codes of links on the branded domain go on it (the importer checked it
+    // belongs to the workspace and the plan); pending domains too, so the
+    // codes open there once it's verified.
+    const bindIds = [...new Set(rows.flatMap((row) => row.bindDomainId ?? []))];
+    for (const domainId of bindIds) {
+      const ids = rows.flatMap((row) =>
+        row.bindDomainId === domainId ? [row.codeId] : [],
+      );
+      try {
+        await db.update(qrCode).set({ domainId }).where(where(ids));
+      } catch (error) {
+        if (!isUniqueViolation(error)) throw error;
+        // One random slug already on the domain: bind the others one by one.
+        for (const id of ids) {
+          await db
+            .update(qrCode)
+            .set({ domainId })
+            .where(where([id]))
+            .catch((inner: unknown) => {
+              if (!isUniqueViolation(inner)) throw inner;
+            });
+        }
+      }
+    }
+
+    // Kept back-halves (in their namespace); a slug taken in the meantime
+    // keeps the random one.
     await Promise.all(
       rows.map(async (row) => {
         if (!row.slug) return;
         try {
           await db
             .update(qrCode)
-            .set({ slug: row.slug })
+            .set({
+              slug: row.slug,
+              slugScope: row.slugDomainId ?? SHARED_SLUG_SCOPE,
+              ...(row.slugDomainId && { domainId: row.slugDomainId }),
+            })
             .where(where([row.codeId]));
-          slugged.set(row.codeId, row.slug);
         } catch (error) {
           if (!isUniqueViolation(error)) throw error;
           warnings.set(
@@ -417,19 +434,29 @@ export const dbRepo: MigrateRepo = {
   },
   async attachDomain(scope, ids, domainId) {
     await assertBindableDomains(asScope(scope), [domainId]);
-    let total = 0;
-    for (let i = 0; i < ids.length; i += 200) {
-      const rows = await db
+    const attach = (batch: string[]) =>
+      db
         .update(qrCode)
         .set({ domainId })
-        .where(
-          and(
-            inArray(qrCode.id, ids.slice(i, i + 200)),
-            scopeWhere(asScope(scope)),
-          ),
-        )
+        .where(and(inArray(qrCode.id, batch), scopeWhere(asScope(scope))))
         .returning({ id: qrCode.id });
-      total += rows.length;
+    let total = 0;
+    for (let i = 0; i < ids.length; i += 200) {
+      const batch = ids.slice(i, i + 200);
+      try {
+        total += (await attach(batch)).length;
+      } catch (error) {
+        if (!isUniqueViolation(error)) throw error;
+        // The domain already has a code with one of these slugs: that code
+        // stays on qrdx.dev/q/, the others move.
+        for (const id of batch) {
+          try {
+            total += (await attach([id])).length;
+          } catch (inner) {
+            if (!isUniqueViolation(inner)) throw inner;
+          }
+        }
+      }
     }
     return total;
   },

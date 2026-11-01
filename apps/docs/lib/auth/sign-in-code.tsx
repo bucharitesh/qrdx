@@ -1,6 +1,5 @@
 import "server-only";
 
-import { createHash } from "node:crypto";
 import {
   type SignInCodeSender,
   signInCodeRateLimited,
@@ -13,6 +12,7 @@ import {
   SignInCodeEmail,
 } from "@/lib/email/templates/sign-in-code";
 import {
+  addressKey,
   addressMayRequestCode,
   deliverSignInCode,
 } from "./sign-in-code-delivery";
@@ -32,11 +32,7 @@ const perAddressDailyLimiter = createRateLimiter({
 
 /** Registered with @repo/auth in app/api/auth/[...all]/route.ts. */
 export const sendSignInCode: SignInCodeSender = async ({ email, otp }) => {
-  // Hashed, so addresses never sit in Redis keys.
-  const key = createHash("sha256")
-    .update(email.trim().toLowerCase())
-    .digest("hex");
-  const allowed = await addressMayRequestCode(key, [
+  const allowed = await addressMayRequestCode(addressKey(email), [
     perAddressLimiter,
     perAddressDailyLimiter,
   ]);

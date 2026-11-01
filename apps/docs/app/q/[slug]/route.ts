@@ -1,6 +1,5 @@
 import { database as db, qrCode } from "@repo/database";
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
-import { eq } from "drizzle-orm";
 import { after, type NextRequest } from "next/server";
 import { CUSTOM_DOMAIN_HEADER } from "@/app/dashboard/domains/_lib/hostname";
 import { type RedirectCode, redirectCodeColumns } from "@/lib/redirect/code";
@@ -17,6 +16,7 @@ import {
 import { getClientIp } from "@/lib/request-guards";
 import { createScanId, recordScan } from "@/lib/scans";
 import { isValidSlug } from "@/lib/short-links";
+import { slugWhere } from "@/lib/slug-claims";
 import { statusPage } from "./status-page";
 
 export const runtime = "nodejs";
@@ -65,12 +65,17 @@ async function resolveShortLink(
   }
   // The limiter runs alongside the lookup so scans don't wait on it.
   const limited = isRateLimited(request);
+  // On a custom domain (set by proxy.ts) only that domain's codes resolve; the
+  // default host resolves every shared-namespace slug (generated ones and
+  // back-halves chosen on it), so links printed before a move keep working.
+  // One indexed lookup either way.
+  const customDomainId = request.headers.get(CUSTOM_DOMAIN_HEADER);
   let code: RedirectCode | null;
   try {
     [code = null] = await db
       .select(redirectCodeColumns)
       .from(qrCode)
-      .where(eq(qrCode.slug, slug))
+      .where(slugWhere(slug, customDomainId))
       .limit(1);
   } catch (error) {
     console.error("Short link lookup failed:", error);
@@ -80,10 +85,7 @@ async function resolveShortLink(
   if (await limited) {
     return statusPage("rate-limited");
   }
-  // On a custom domain (set by proxy.ts) only that domain's codes resolve; the
-  // default host resolves every code, so links printed before a move keep working.
-  const customDomainId = request.headers.get(CUSTOM_DOMAIN_HEADER);
-  if (!code || (customDomainId && code.domainId !== customDomainId)) {
+  if (!code) {
     return statusPage("not-found");
   }
   // Only the owner archiving or trashing, or an admin disabling, turns a code

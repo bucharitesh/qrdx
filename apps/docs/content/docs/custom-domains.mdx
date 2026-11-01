@@ -32,6 +32,10 @@ Once verified, the domain appears in the **Short link domain** picker when you c
 
 Every code also keeps working at its default `https://qrdx.dev/q/<slug>` link, so QR codes you printed before moving a code to your domain never break. Moving a code from one custom domain to another (or back to the default) does break QR codes printed with the old custom-domain link; the dialog warns you before you save.
 
+### Your own back-halves
+
+On Pro and Business you can choose a code's [back-half](/docs/dynamic-qr-codes#custom-back-halves) on your domain, such as `go.yourbrand.com/spring-menu`. It only has to be unique on that domain, so another QRdx customer using `spring-menu` doesn't matter, and only `api`, `p` and `q` are reserved there. A back-half chosen on your domain belongs to it and has no `qrdx.dev/q/` link. Moving such a code to another domain keeps the back-half when it's free there; moving it back to the default link keeps it when it's free on `qrdx.dev`, otherwise the code gets a new generated one.
+
 On your domain:
 
 - `https://go.yourbrand.com/<slug>` redirects for codes that use that domain. Codes on other domains, or on the default link only, show a "not found" page there.
@@ -47,7 +51,7 @@ Domains added while a team is active belong to the team. Owners and admins add, 
 ## Plans and removing domains
 
 - Downgrading never breaks anything: verified domains keep serving the codes that use them. Without Pro or Business you can't add or verify domains or move more codes onto one, but you can still edit those codes and remove domains.
-- Removing a domain switches its codes back to their default `qrdx.dev/q/<slug>` link. QR codes printed with the custom-domain link stop working, so the dialog shows how many codes use the domain first.
+- Removing a domain switches its codes back to their default `qrdx.dev/q/<slug>` link. Back-halves chosen on the domain move to `qrdx.dev` when they're free there; the others get a new generated back-half. QR codes printed with the custom-domain link stop working, so the dialog shows how many codes use the domain first.
 
 ## REST API
 
@@ -58,7 +62,7 @@ Each code in a response includes:
 | Field | Description |
 | --- | --- |
 | `shortLink` | The link to encode: on the custom domain once it is verified |
-| `defaultShortLink` | `https://qrdx.dev/q/<slug>`, which always works |
+| `defaultShortLink` | `https://qrdx.dev/q/<slug>`, which always works; `null` for a back-half chosen on the custom domain |
 | `domain` | `{ "id", "hostname", "verified" }`, or `null` |
 
 ## Self-hosting

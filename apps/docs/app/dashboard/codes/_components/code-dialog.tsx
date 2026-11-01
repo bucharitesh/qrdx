@@ -27,6 +27,7 @@ import { soundEvent } from "@/lib/sound/emit";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 import { CodeDownloadButtons, CodeQr } from "./code-qr";
 import { DomainPicker, useDomainOptions } from "./domain-picker";
+import { SlugField, useSlugCheck } from "./slug-field";
 import { useOpenInPlayground } from "./use-open-in-playground";
 
 interface CodeDialogProps {
@@ -45,6 +46,7 @@ export function CodeDialog({ open, onOpenChange, code }: CodeDialogProps) {
   const [destination, setDestination] = useState("");
   const [title, setTitle] = useState("");
   const [domainId, setDomainId] = useState<string | null>(null);
+  const [slug, setSlug] = useState("");
   const [created, setCreated] = useState<QrCodeView | null>(null);
   const [error, setError] = useState<{ code: string; message: string } | null>(
     null,
@@ -57,6 +59,7 @@ export function CodeDialog({ open, onOpenChange, code }: CodeDialogProps) {
       setDestination(code?.destinationUrl ?? "");
       setTitle(code?.title ?? "");
       setDomainId(code?.domain?.id ?? null);
+      setSlug(code?.slug ?? "");
       setCreated(null);
       setError(null);
     }
@@ -65,6 +68,25 @@ export function CodeDialog({ open, onOpenChange, code }: CodeDialogProps) {
   const preview = code ?? created;
   const domainChanged =
     Boolean(code) && domainId !== (code?.domain?.id ?? null);
+  const typedSlug = slug.trim();
+  // Editing: an empty field or the code's own back-half keeps the current one.
+  const slugChanged = Boolean(typedSlug) && typedSlug !== (code?.slug ?? "");
+  const customSlugs = domainOptions?.customSlugs ?? false;
+  const slugStatus = useSlugCheck({
+    slug: typedSlug,
+    domainId,
+    codeId: code?.id,
+    unchanged: !slugChanged,
+    enabled: customSlugs,
+  });
+  const slugHost =
+    (domainId &&
+      domainOptions?.domains.find((domain) => domain.id === domainId)
+        ?.hostname) ||
+    (domainId && code?.domain?.id === domainId ? code.domain.hostname : null);
+  const slugPrefix = slugHost
+    ? `${slugHost}/`
+    : `${domainOptions?.defaultHost ?? "qrdx.dev"}/q/`;
 
   const isPage = code?.kind === "page";
 
@@ -80,6 +102,10 @@ export function CodeDialog({ open, onOpenChange, code }: CodeDialogProps) {
       });
       return;
     }
+    if (slugChanged && slugStatus.state === "blocked") {
+      setError({ code: "INVALID_SLUG", message: slugStatus.message });
+      return;
+    }
 
     setError(null);
     startTransition(async () => {
@@ -91,8 +117,14 @@ export function CodeDialog({ open, onOpenChange, code }: CodeDialogProps) {
             title,
             // Only when changed: editing stays allowed after a downgrade.
             ...(domainChanged && { domainId }),
+            ...(slugChanged && { slug: typedSlug }),
           })
-        : await createQrCode({ destinationUrl, title, domainId });
+        : await createQrCode({
+            destinationUrl,
+            title,
+            domainId,
+            slug: slugChanged ? typedSlug : null,
+          });
       if (!result.success) {
         setError(result.error);
         soundEvent("error");
@@ -103,7 +135,7 @@ export function CodeDialog({ open, onOpenChange, code }: CodeDialogProps) {
       if (code) {
         toast.success(
           "Changes saved",
-          domainChanged
+          result.data.shortLink !== code.shortLink
             ? {
                 description: `Download the QR code again: it now encodes ${result.data.shortLink}.`,
               }
@@ -218,16 +250,30 @@ export function CodeDialog({ open, onOpenChange, code }: CodeDialogProps) {
                 options={domainOptions}
                 value={domainId}
               />
-              {domainChanged && (
+              {domainOptions && (
+                <SlugField
+                  allowed={customSlugs}
+                  disabled={isPending}
+                  editing={Boolean(code)}
+                  onChange={setSlug}
+                  onUpgrade={openGetProDialog}
+                  prefix={slugPrefix}
+                  status={slugStatus}
+                  value={slug}
+                />
+              )}
+              {domainChanged && !slugChanged && (
                 <p
                   className={
-                    code?.domain?.verified
+                    code?.domain?.verified || !code?.defaultShortLink
                       ? "bg-destructive/10 text-destructive rounded-md p-3 text-sm"
                       : "bg-muted rounded-md p-3 text-sm"
                   }
                 >
                   {code?.domain?.verified
-                    ? `QR codes already printed with ${code.shortLink} will stop working. Codes printed with ${code.defaultShortLink} keep working.`
+                    ? code.defaultShortLink
+                      ? `QR codes already printed with ${code.shortLink} will stop working. Codes printed with ${code.defaultShortLink} keep working.`
+                      : `QR codes already printed with ${code.shortLink} will stop working. Its back-half moves with the code when it's free there, otherwise the code gets a new one.`
                     : "The QR code changes to the new link, so download it again after saving. Codes you already printed keep working."}
                 </p>
               )}
@@ -237,7 +283,8 @@ export function CodeDialog({ open, onOpenChange, code }: CodeDialogProps) {
                   role="alert"
                 >
                   <p>{error.message}</p>
-                  {error.code === "LIMIT_REACHED" && (
+                  {(error.code === "LIMIT_REACHED" ||
+                    error.code === "PLAN_REQUIRED") && (
                     <Button onClick={openGetProDialog} size="sm" type="button">
                       Upgrade to Pro
                     </Button>

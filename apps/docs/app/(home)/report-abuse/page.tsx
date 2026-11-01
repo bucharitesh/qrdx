@@ -14,7 +14,7 @@ export const metadata: Metadata = createMetadata({
   path: "/report-abuse",
 });
 
-const OWN_LINK = /^\/(?:q|p)\/([0-9A-Za-z]{7})\/?$/;
+const OWN_LINK = /^\/(?:q|p)\/([A-Za-z0-9_-]{3,64})\/?$/;
 const OWN_ORIGINS = new Set([new URL(SHORT_LINK_BASE).origin, baseUrl.origin]);
 
 /** Prefill from ?slug= / ?url=, or from the QRdx page the visitor came from. */

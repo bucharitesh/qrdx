@@ -11,6 +11,7 @@ import { parseLandingPageContent } from "@/lib/landing/blocks";
 import { getPlanForScope, getPlanLimits, type Plan } from "@/lib/plans";
 import { type RedirectCode, redirectCodeColumns } from "@/lib/redirect/code";
 import { isValidSlug } from "@/lib/short-links";
+import { slugWhere } from "@/lib/slug-claims";
 import type { LandingPageContent } from "@/types/landing";
 
 export interface PublicPage {
@@ -59,7 +60,7 @@ export const loadPublicPage = cache(
     let where: SQL | undefined;
     if ("slug" in key) {
       if (!isValidSlug(key.slug)) return null;
-      where = eq(qrCode.slug, key.slug);
+      where = slugWhere(key.slug, customDomainId);
     } else {
       if (!/^[A-Za-z0-9_-]{1,64}$/.test(key.pageId)) return null;
       where = and(

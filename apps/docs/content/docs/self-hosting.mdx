@@ -167,7 +167,7 @@ Add one OAuth provider (GitHub or Google), or Resend for email sign-in codes, so
 | Analytics (PostHog, after cookie consent) | `NEXT_PUBLIC_POSTHOG_KEY`, `NEXT_PUBLIC_POSTHOG_HOST` | No product analytics |
 | Analytics (Umami, cookieless) | `NEXT_PUBLIC_UMAMI_WEBSITE_ID`, `NEXT_PUBLIC_UMAMI_SCRIPT_URL` | No visit counts |
 | Feedback widget | `NEXT_PUBLIC_FEATUREBASE_APP_ID` | The widget doesn't load |
-| Docs extras | `GITHUB_TOKEN`, `GITHUB_APP_ID` | Star counts may hit GitHub rate limits, and docs feedback isn't forwarded |
+| Docs extras | `GITHUB_TOKEN` | Star counts may hit GitHub rate limits |
 
 `INTEGRATION_ENCRYPTION_KEY` must be set in production as soon as you enable an integration, because it encrypts the stored tokens.
 
@@ -180,6 +180,10 @@ Add one OAuth provider (GitHub or Google), or Resend for email sign-in codes, so
 Put the app behind a reverse proxy such as Caddy, nginx or Traefik that terminates TLS, and don't expose port 3000 to the internet directly. Rate limiting reads the client IP from `X-Real-IP` and then `X-Forwarded-For`, so the proxy must set these headers and the app must only be reachable through it.
 
 Once HTTPS is set up, change `NEXT_PUBLIC_APP_URL` and `BETTER_AUTH_URL` to the `https://` URL, update the OAuth callback URLs, and rebuild.
+
+### Content-Security-Policy
+
+Production builds send a Content-Security-Policy on QRdx's own pages: signed-in pages get a fresh script nonce per request, prerendered pages an allowlist of script hosts. Hosted pages (`/p`) get a loose policy, because they run the owner's pixels and embed media from anywhere. If your reverse proxy also sets `Content-Security-Policy`, browsers enforce both, so leave it out there. Set `CSP_REPORT_ONLY=1` (at build time and at run time) to send the policy as report-only while you check a new setup; violations are logged by `/api/csp-report`. Add `CSP_HTTPS=1` when you serve over HTTPS outside Vercel, so browsers upgrade any `http://` resource.
 
 ## Updating
 

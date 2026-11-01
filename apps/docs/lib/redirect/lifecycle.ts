@@ -10,10 +10,10 @@ import { database as db, qrCode } from "@repo/database";
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import { compare } from "bcryptjs";
 import cuid from "cuid";
-import { eq } from "drizzle-orm";
 import { cookies, headers } from "next/headers";
 import { CUSTOM_DOMAIN_HEADER } from "@/app/dashboard/domains/_lib/hostname";
 import { getClientIp } from "@/lib/request-guards";
+import { slugWhere } from "@/lib/slug-claims";
 import type { Awaitable, RedirectCode } from "./code";
 import { escapeHtml, neutralPage } from "./pages";
 
@@ -386,7 +386,7 @@ export async function enforcePageLifecycle(
     [code] = await db
       .select(lifecycleColumns)
       .from(qrCode)
-      .where(eq(qrCode.slug, codeOrSlug))
+      .where(slugWhere(codeOrSlug, (await headers()).get(CUSTOM_DOMAIN_HEADER)))
       .limit(1);
   } else {
     code = codeOrSlug;

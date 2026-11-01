@@ -20,6 +20,7 @@ import { HttpError } from "@/lib/error-response";
 import { getPlanForScope, getPlanLimits } from "@/lib/plans";
 import { screenUrlChange } from "@/lib/safety/destinations";
 import { type ActiveScope, isInScope } from "@/lib/scope";
+import { SHARED_SLUG_SCOPE } from "@/lib/short-links";
 
 /** Older versions are pruned beyond this many per code. */
 export const MAX_VERSIONS_PER_CODE = 100;
@@ -255,6 +256,12 @@ export async function restoreCodeVersion(
       }
       values.fallbackUrl = target.fallbackUrl;
     } else if (field === "domainId") {
+      // A back-half chosen on its domain belongs there: moving it is an
+      // edit (it may need a new back-half), not a restore.
+      if (current.slugScope !== SHARED_SLUG_SCOPE) {
+        skipped.push(change.label);
+        continue;
+      }
       if (target.domainId) {
         try {
           await assertBindableDomains(scope, [target.domainId]);

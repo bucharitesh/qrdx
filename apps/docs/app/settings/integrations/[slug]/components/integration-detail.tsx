@@ -21,11 +21,16 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { NeedsSetupBadge, NeedsSetupNote } from "@/components/needs-setup";
+import {
+  NeedsSetupBadge,
+  NeedsSetupNote,
+  NoLongerAvailableBadge,
+} from "@/components/needs-setup";
 import {
   IntegrationLogo,
   logoForIntegration,
 } from "@/components/sections/integrations/integration-logo";
+import { isIntegrationsMock } from "@/lib/connected-accounts/mock";
 import {
   connectIntegrationAction,
   disconnectIntegrationAction,
@@ -69,6 +74,11 @@ interface IntegrationDetailProps {
   oauthConfigured?: boolean;
   /** Connect by pasting a key (Bitly token, Rebrandly, Short.io). */
   apiKey?: IntegrationApiKeyConfig;
+  /**
+   * Hidden in production (QRdx's keys are missing), but this user connected
+   * it before: show Disconnect and nothing else.
+   */
+  noLongerAvailable?: boolean;
 }
 
 export function IntegrationDetail({
@@ -89,6 +99,7 @@ export function IntegrationDetail({
   metadata,
   oauthConfigured,
   apiKey,
+  noLongerAvailable = false,
 }: IntegrationDetailProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -154,7 +165,11 @@ export function IntegrationDetail({
 
     setIsLoading(true);
     try {
-      const result = await disconnectIntegrationAction(slug);
+      // Dev sample (?integrations-mock=unavailable): nothing is stored.
+      const result =
+        noLongerAvailable && isIntegrationsMock()
+          ? { revoked: false }
+          : await disconnectIntegrationAction(slug);
       toast.success(
         result.revoked
           ? `${name} disconnected and QRdx's access revoked`
@@ -163,7 +178,9 @@ export function IntegrationDetail({
           ? { description: `You can also delete the key in ${name}.` }
           : undefined,
       );
-      router.refresh();
+      // Once disconnected, a no-longer-available integration has no page.
+      if (noLongerAvailable) router.push("/settings/integrations");
+      else router.refresh();
     } catch {
       toast.error("Failed to disconnect integration");
     } finally {
@@ -203,16 +220,71 @@ export function IntegrationDetail({
     }
   };
 
+  const backLink = (
+    <Link
+      href="/settings/integrations"
+      className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+    >
+      <ArrowLeft aria-hidden className="size-3.5" />
+      Integrations
+    </Link>
+  );
+
+  if (noLongerAvailable) {
+    return (
+      <div className="space-y-6">
+        {backLink}
+        <div className="rounded-xl border bg-card p-6">
+          <div className="flex items-start justify-between gap-4">
+            <div className="flex min-w-0 items-start gap-4">
+              <IntegrationLogo
+                logo={logoForIntegration(slug, logos)}
+                size="lg"
+              />
+              <div className="min-w-0 space-y-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <h1 className="text-xl font-semibold">{name}</h1>
+                  <NoLongerAvailableBadge />
+                </div>
+                <p className="text-sm text-muted-foreground">{description}</p>
+              </div>
+            </div>
+            <Button
+              className="shrink-0"
+              disabled={isLoading}
+              onClick={handleDisconnect}
+              size="sm"
+              variant="outline"
+            >
+              {isLoading && <Spinner className="size-3.5" />}
+              Disconnect
+            </Button>
+          </div>
+
+          <Separator className="my-5" />
+
+          <div className="space-y-1.5 text-sm">
+            <p className="font-medium">{name} is no longer available in QRdx</p>
+            <p className="max-w-prose text-muted-foreground text-pretty">
+              Nothing in QRdx uses this connection any more
+              {connectedAt
+                ? `. You connected it on ${connectedAt.toLocaleDateString(
+                    undefined,
+                    { year: "numeric", month: "short", day: "numeric" },
+                  )}`
+                : ""}
+              . Disconnect to delete it; where {name} supports it, QRdx's access
+              is revoked there too.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
-      {/* Breadcrumb */}
-      <Link
-        href="/settings/integrations"
-        className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
-      >
-        <ArrowLeft aria-hidden className="size-3.5" />
-        Integrations
-      </Link>
+      {backLink}
 
       {/* Header card */}
       <div className="rounded-xl border bg-card p-6">

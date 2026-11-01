@@ -9,6 +9,9 @@ const WIDE_SCREEN = "(min-width: 640px)";
  * browsers that render PDFs inline (navigator.pdfViewerEnabled) on screens
  * wide enough to read a page. Phones use the "Open PDF" button instead,
  * which opens their full-screen viewer.
+ *
+ * Only for PDFs QRdx stores (see lib/files/pdf-frame.ts, which also explains
+ * why there is no `sandbox`): the page's URL is never sent along.
  */
 export function PdfInlineViewer({
   src,
@@ -33,6 +36,7 @@ export function PdfInlineViewer({
     <iframe
       className="block h-[70vh] max-h-[720px] min-h-[420px] w-full rounded-(--lp-radius) border-0 bg-(--lp-muted)"
       loading="lazy"
+      referrerPolicy="no-referrer"
       src={src}
       title={title}
     />

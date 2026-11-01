@@ -8,11 +8,22 @@ import {
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { env } from "@/lib/env";
-import { getIntegrationAvailability } from "@/lib/integration-availability";
-import { isVisible, setupNeeded } from "@/lib/integration-availability-rules";
+import {
+  getIntegrationAvailability,
+  getStoredConnections,
+} from "@/lib/integration-availability";
+import {
+  hiddenSlugs,
+  isVisible,
+  settingsListing,
+  setupNeeded,
+} from "@/lib/integration-availability-rules";
 import { isIntegrationConfigured } from "@/lib/integration-oauth";
 import { SettingsHeader } from "../components/settings-header";
-import { IntegrationsClient } from "./components/integrations-client";
+import {
+  IntegrationsClient,
+  type IntegrationWithStatus,
+} from "./components/integrations-client";
 
 // Initialize integrations on module load
 initializeIntegrations();
@@ -32,6 +43,41 @@ export default async function IntegrationsPage() {
   const availableIntegrations = registry
     .getAll()
     .filter((integration) => isVisible(availability, integration.slug));
+
+  // Hidden ones this user connected before they were hidden stay listed
+  // (marked "No longer available") so they can be disconnected.
+  const leftovers = await getStoredConnections(
+    session.user.id,
+    hiddenSlugs(
+      availability,
+      registry.getAll().map((integration) => integration.slug),
+    ),
+  ).catch((error) => {
+    console.error("Failed to load hidden integrations:", error);
+    return new Map<string, never>();
+  });
+  const noLongerAvailable: IntegrationWithStatus[] = registry
+    .getAll()
+    .flatMap((integration) => {
+      const stored = leftovers.get(integration.slug);
+      if (
+        !stored ||
+        settingsListing(availability, integration.slug, true) !==
+          "no-longer-available"
+      ) {
+        return [];
+      }
+      return [
+        {
+          ...integration,
+          isConfigured: false,
+          isConnected: true,
+          noLongerAvailable: true,
+          status: stored.status,
+          connectedAt: stored.createdAt,
+        },
+      ];
+    });
 
   // Fetch connection status for each integration
   const integrationStatuses = await Promise.all(
@@ -95,7 +141,7 @@ export default async function IntegrationsPage() {
         description="Connect third-party services to enhance your QR codes"
       />
       <IntegrationsClient
-        integrations={integrationStatuses}
+        integrations={[...integrationStatuses, ...noLongerAvailable]}
         hiddenSlugs={Object.keys(availability.needsSetup).filter(
           (slug) => !isVisible(availability, slug),
         )}

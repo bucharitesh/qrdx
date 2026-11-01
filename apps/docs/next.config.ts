@@ -2,6 +2,14 @@ import { config, withAnalyzer } from "@repo/next-config";
 import { createMDX } from "fumadocs-mdx/next";
 import type { NextConfig } from "next";
 import { env } from "@/env";
+import {
+  appCsp,
+  cspHeaderName,
+  cspOptionsFromEnv,
+  hostedPageCsp,
+  prerenderedPagesSource,
+  reportingEndpoints,
+} from "@/lib/security/csp";
 
 type Rewrites = Awaited<ReturnType<NonNullable<NextConfig["rewrites"]>>>;
 type RewritePhases = Required<Exclude<Rewrites, unknown[]>>;
@@ -15,6 +23,52 @@ const toRewritePhases = (rewrites: Rewrites = []): RewritePhases =>
         afterFiles: rewrites.afterFiles ?? [],
         fallback: rewrites.fallback ?? [],
       };
+
+// Content-Security-Policy (lib/security/csp.ts): enforced in production
+// builds, off in `next dev` (which keeps the frame rules only) unless
+// CSP_DEV=1. CSP_REPORT_ONLY=1 sends it as Report-Only instead.
+const cspEnabled =
+  process.env.NODE_ENV === "production" || process.env.CSP_DEV === "1";
+const cspOptions = cspOptionsFromEnv();
+const cspHeader = cspHeaderName();
+const cspReporting = reportingEndpoints(cspOptions);
+
+// QRdx's own hosts (as in proxy.ts), plus a self-hosted app URL: customers'
+// custom domains never get the app policy.
+const appHostname = (() => {
+  try {
+    return new URL(process.env.NEXT_PUBLIC_APP_URL ?? "").hostname;
+  } catch {
+    return null;
+  }
+})();
+const PLATFORM_HOSTS = [
+  "(?:.+\\.)?(?:qrdx\\.dev|vercel\\.app)",
+  "localhost",
+  "127\\.0\\.0\\.1",
+  ...(appHostname ? [appHostname.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")] : []),
+].join("|");
+
+/** Headers that put the app policy on prerendered pages (nonce routes: proxy.ts). */
+const cspHeaders = cspEnabled
+  ? [
+      {
+        source: prerenderedPagesSource(),
+        has: [{ type: "host" as const, value: `(?:${PLATFORM_HOSTS})` }],
+        headers: [
+          { key: cspHeader, value: appCsp(cspOptions) },
+          ...(cspReporting
+            ? [{ key: "Reporting-Endpoints", value: cspReporting }]
+            : []),
+        ],
+      },
+      // Hosted pages, on any host: a loose policy (why: hostedPageCsp).
+      {
+        source: "/p/:path*",
+        headers: [{ key: cspHeader, value: hostedPageCsp(cspOptions) }],
+      },
+    ]
+  : [];
 
 let nextConfig: NextConfig = {
   ...config,
@@ -54,26 +108,39 @@ let nextConfig: NextConfig = {
       },
       // App pages can't be framed by other sites (clickjacking), except by
       // PostHog's heatmap viewer. Hosted pages (/p), short links (/q) and the
-      // API stay frameable: owners may embed them.
+      // API stay frameable: owners may embed them. With the CSP on, its
+      // frame-ancestors carries the same rule (lib/security/csp.ts).
       {
         source: "/:path((?!p/|q/|api/).*)",
         headers: [
           { key: "X-Frame-Options", value: "SAMEORIGIN" },
-          {
-            key: "Content-Security-Policy",
-            value: "frame-ancestors 'self' https://us.posthog.com",
-          },
+          ...(cspEnabled
+            ? []
+            : [
+                {
+                  key: "Content-Security-Policy",
+                  value: "frame-ancestors 'self' https://us.posthog.com",
+                },
+              ]),
         ],
       },
       // The OAuth consent screen must never render inside another site's frame
-      // (clickjacking an "Authorize" click).
+      // (clickjacking an "Authorize" click); the CSP says frame-ancestors 'none'.
       {
         source: "/oauth/:path*",
         headers: [
           { key: "X-Frame-Options", value: "DENY" },
-          { key: "Content-Security-Policy", value: "frame-ancestors 'none'" },
+          ...(cspEnabled
+            ? []
+            : [
+                {
+                  key: "Content-Security-Policy",
+                  value: "frame-ancestors 'none'",
+                },
+              ]),
         ],
       },
+      ...cspHeaders,
       // The API and MCP hosts serve machine endpoints, never pages to index.
       ...["api.qrdx.dev", "mcp.qrdx.dev"].map((host) => ({
         source: "/:path*",

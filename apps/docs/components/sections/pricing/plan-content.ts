@@ -174,6 +174,11 @@ const GROUPS: {
       row("Custom domains", (l) =>
         l.customDomains > 0 ? formatCount(l.customDomains) : false,
       ),
+      row(
+        "Custom back-halves",
+        flag("customSlugs"),
+        "Choose the link, like qrdx.dev/q/spring-menu",
+      ),
       row("Team members", teamMembers),
       row("Folder permissions", flag("folderPermissions")),
       row("Audit log", flag("auditLog")),

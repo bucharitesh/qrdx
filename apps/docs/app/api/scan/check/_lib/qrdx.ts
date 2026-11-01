@@ -15,9 +15,10 @@ import { baseUrl } from "@/lib/metadata";
 import { type RedirectCode, redirectCodeColumns } from "@/lib/redirect/code";
 import { evaluateLifecycle } from "@/lib/redirect/lifecycle";
 import { isValidSlug, SHORT_LINK_BASE } from "@/lib/short-links";
+import { slugWhere } from "@/lib/slug-claims";
 import type { InternalHop } from "./resolve";
 
-/** Hosts that serve `/q/<slug>` and `/p/<slug>` for every code. */
+/** Hosts that serve `/q/<slug>` and `/p/<slug>` for every shared-namespace slug. */
 const OWN_HOSTS: ReadonlySet<string> = new Set(
   [
     "qrdx.dev",
@@ -27,8 +28,9 @@ const OWN_HOSTS: ReadonlySet<string> = new Set(
   ].map((host) => host.toLowerCase()),
 );
 
-const OWN_PATH = /^\/(q|p)\/([0-9A-Za-z]{7})\/?$/;
-const CUSTOM_PATH = /^\/(?:(p)\/)?([0-9A-Za-z]{7})\/?$/;
+// Generated slugs and custom back-halves (checked again by isValidSlug).
+const OWN_PATH = /^\/(q|p)\/([A-Za-z0-9_-]{3,64})\/?$/;
+const CUSTOM_PATH = /^\/(?:(p)\/)?([A-Za-z0-9_-]{3,64})\/?$/;
 
 interface LinkTarget {
   slug: string;
@@ -117,16 +119,17 @@ export function createQrdxResolver() {
     return pending;
   };
 
-  const loadCode = (slug: string) => {
-    let pending = codes.get(slug);
+  const loadCode = (slug: string, domainId: string | null) => {
+    const key = `${domainId ?? ""}/${slug}`;
+    let pending = codes.get(key);
     if (!pending) {
       pending = db
         .select(redirectCodeColumns)
         .from(qrCode)
-        .where(eq(qrCode.slug, slug))
+        .where(slugWhere(slug, domainId))
         .limit(1)
         .then(([code]) => code ?? null);
-      codes.set(slug, pending);
+      codes.set(key, pending);
     }
     return pending;
   };
@@ -152,7 +155,7 @@ export function createQrdxResolver() {
     url: URL,
     target: LinkTarget,
   ): Promise<InternalHop> {
-    const code = await loadCode(target.slug);
+    const code = await loadCode(target.slug, target.domainId);
     const base = {
       slug: target.slug,
       kind: code?.kind ?? "redirect",

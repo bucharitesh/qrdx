@@ -45,6 +45,8 @@ export interface PlanLimits {
   /** Raw scans older than this may be rolled up into daily counts */
   rawScanRetentionDays: number;
   customDomains: number;
+  /** Choose a code's back-half (qrdx.dev/q/spring-menu) instead of a generated one */
+  customSlugs: boolean;
   /** May create teams (organizations) */
   teams: boolean;
   /** Members per team, owner included */
@@ -95,6 +97,7 @@ export const PLAN_LIMITS: Record<Plan, PlanLimits> = {
     analyticsRetentionDays: 90,
     rawScanRetentionDays: 90,
     customDomains: 0,
+    customSlugs: false,
     teams: false,
     teamMembers: 1,
     folderPermissions: false,
@@ -126,6 +129,7 @@ export const PLAN_LIMITS: Record<Plan, PlanLimits> = {
     analyticsRetentionDays: 3 * 365,
     rawScanRetentionDays: 3 * 365,
     customDomains: 5,
+    customSlugs: true,
     teams: true,
     teamMembers: 3,
     folderPermissions: false,
@@ -159,6 +163,7 @@ export const PLAN_LIMITS: Record<Plan, PlanLimits> = {
     // ~13 months raw, daily rollups after that
     rawScanRetentionDays: 395,
     customDomains: 25,
+    customSlugs: true,
     teams: true,
     teamMembers: UNLIMITED,
     folderPermissions: true,

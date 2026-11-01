@@ -75,11 +75,17 @@ function mockLinks(provider: ApiProviderId): SourceLink[] {
     const round = Math.floor(index / PAGES.length);
     const branded = index % 3 === 0;
     const domain = branded ? BRANDED : SHARED[provider];
-    // Branded links: mostly 7-character back-halves, a few readable ones.
+    // Mostly 7-character back-halves, some readable ones ("spring-menu"),
+    // and the odd one QRdx can't keep ("menu/allergens").
+    const readable = `${path.replace(/\//g, "-")}${round || ""}`;
     const backHalf =
       branded && index % 9 === 0
         ? `${path.split("/").pop()}${round || ""}`
-        : fakeKey(index + provider.length * 100);
+        : !branded && index % 4 === 1
+          ? readable
+          : index % 11 === 7
+            ? path
+            : fakeKey(index + provider.length * 100);
     const shortLink = `https://${domain}/${backHalf}`;
     const id =
       provider === "bitly"
@@ -111,6 +117,8 @@ function mockLinks(provider: ApiProviderId): SourceLink[] {
 interface MockCode {
   id: string;
   slug: string;
+  /** "" = qrdx.dev/q/, else the domain the back-half belongs to */
+  slugScope: string;
   url: string;
   notes: string | null;
   domainId: string | null;
@@ -125,7 +133,7 @@ function mockWorld(plan: "pro" | "free") {
   const ref = (code: MockCode): CodeRef => ({
     id: code.id,
     shortLink:
-      code.domainId === "dom_mock"
+      code.domainId === "dom_mock" || code.slugScope === "dom_mock"
         ? `https://${BRANDED}/${code.slug}`
         : `http://localhost:3000/q/${code.slug}`,
     state: "active",
@@ -135,6 +143,7 @@ function mockWorld(plan: "pro" | "free") {
     const code: MockCode = {
       id: `mock_${seq}`,
       slug: fakeKey(9000 + seq),
+      slugScope: "",
       url,
       notes,
       domainId: null,
@@ -160,7 +169,11 @@ function mockWorld(plan: "pro" | "free") {
 
   const repo: MigrateRepo = {
     async usage() {
-      return { remaining: remaining(), bulk: plan !== "free" };
+      return {
+        remaining: remaining(),
+        bulk: plan !== "free",
+        customSlugs: plan !== "free",
+      };
     },
     async findImported(_scope, provider, keys) {
       const map = new Map<string, CodeRef>();
@@ -184,11 +197,21 @@ function mockWorld(plan: "pro" | "free") {
       }
       return map;
     },
-    async findTakenSlugs(slugs) {
-      // "events1"-style back-halves pretend to belong to someone else.
-      const used = new Set(codes.map((code) => code.slug));
+    async findTakenSlugs(slugs, domainId) {
+      const used = new Set(
+        codes
+          .filter((code) =>
+            domainId
+              ? code.domainId === domainId || code.slugScope === domainId
+              : code.slugScope === "",
+          )
+          .map((code) => code.slug),
+      );
+      // On qrdx.dev, "review…" back-halves pretend to belong to someone else.
       return new Set(
-        slugs.filter((slug) => used.has(slug) || slug.startsWith("review")),
+        slugs.filter(
+          (slug) => used.has(slug) || (!domainId && slug.startsWith("review")),
+        ),
       );
     },
     async existingTagNames() {
@@ -240,7 +263,11 @@ function mockWorld(plan: "pro" | "free") {
         const code = codes.find((entry) => entry.id === row.codeId);
         if (!code) continue;
         code.notes = row.notes;
-        if (row.slug) code.slug = row.slug;
+        if (row.bindDomainId) code.domainId = row.bindDomainId;
+        if (row.slug) {
+          code.slug = row.slug;
+          code.slugScope = row.slugDomainId ?? "";
+        }
         result.set(code.id, { shortLink: ref(code).shortLink });
       }
       return result;
@@ -341,6 +368,7 @@ export function createMockClient(plan: "pro" | "free" = "pro"): MigrateClient {
     repo,
     now: () => new Date(),
     newId: () => `mockjob_${++id}`,
+    newSlug: () => fakeKey(Math.floor(Math.random() * 1e6)),
   };
   const scope = { userId: "mock-user", organizationId: null };
   const sources = new Map(API_PROVIDER_IDS.map((p) => [p, mockSource(p)]));

@@ -24,11 +24,14 @@ import { PLAN_NAMES } from "@/lib/pricing";
 import type { ActiveScope } from "@/lib/scope";
 import { logError } from "@/lib/shared";
 import {
+  copyObject,
   deleteObject,
   isStorageConfigured,
+  ObjectChangedError,
   type PresignedUpload,
   presignUpload,
 } from "@/lib/storage/r2";
+import { finalKeyFor, stagingKey } from "./keys";
 import { checkUpload } from "./quota";
 import { fileIdsInContent, fileIdsInLink } from "./references";
 import {
@@ -52,16 +55,26 @@ import { verifyStoredObject } from "./verify";
  * Uploaded files (file_asset) for hosted pages, per personal or team
  * workspace. Browsers upload straight to R2 with a presigned PUT:
  *
- *   createUpload  → pending row + presigned PUT (type, size, plan checked)
+ *   createUpload  → pending row + presigned PUT to a staging key (type,
+ *                   size, plan checked)
  *   (browser PUT)
- *   finalizeUpload → object checked (size, type, magic bytes) → ready | blocked
+ *   finalizeUpload → object checked (size, type, magic bytes) → the checked
+ *                   version copied (If-Match its ETag) to the file's key →
+ *                   ready | blocked
+ *
+ * The presigned PUT stays valid for minutes but only ever writes the staging
+ * key (lib/files/keys.ts), so it can't swap the bytes of a ready file.
  *
  * Files are served from a stable link (/api/files/<id>), so "Replace file"
  * swaps the stored object without touching the pages that use it, and a
  * blocked file disappears everywhere at once.
  */
 
-/** Pending uploads older than this are abandoned (presigned PUTs last 10 min). */
+/**
+ * Pending uploads older than this are abandoned (presigned PUTs last 10 min).
+ * Their staging objects are deleted with them; give the bucket a lifecycle
+ * rule that expires `staging/` after a day for the rest.
+ */
 const STALE_PENDING_MS = 2 * 60 * 60 * 1000;
 const LIST_LIMIT = 500;
 const PICKER_LIMIT = 200;
@@ -451,7 +464,11 @@ export async function createUpload(
   if (!check.ok) throw new HttpError(413, check.code, check.message);
 
   const id = cuid();
-  const storageKey = `${scopeSegment(scope)}/${id}/${storageFilename(filename, mime)}`;
+  // The browser writes to staging; finalizeUpload copies the checked bytes
+  // to the final key (`<scope>/<id>/<name>`).
+  const storageKey = stagingKey(
+    `${scopeSegment(scope)}/${id}/${storageFilename(filename, mime)}`,
+  );
   const upload = await presignUpload({
     key: storageKey,
     mime,
@@ -500,6 +517,39 @@ function assertReplaceable(
       `Replace this ${label} with another ${label} file, so the pages that show it keep working.`,
     );
   }
+}
+
+/**
+ * Copies the verified version of a staged upload to its final key (only if
+ * it still has the ETag that was checked) and drops the staging object.
+ * Returns the final key. Uploads from before staging are already in place.
+ */
+export async function promoteUpload(
+  row: FileRow,
+  etag: string | null,
+): Promise<string> {
+  const finalKey = finalKeyFor(row.storageKey);
+  if (finalKey === row.storageKey) return finalKey;
+  if (!etag) {
+    throw new Error("Verified upload has no ETag to copy it by");
+  }
+  try {
+    await copyObject(row.storageKey, finalKey, { ifMatch: etag });
+  } catch (error) {
+    if (error instanceof ObjectChangedError) {
+      await discardUpload(row);
+      throw new HttpError(
+        409,
+        "UPLOAD_CHANGED",
+        "The file changed while it was being checked. Upload it again.",
+      );
+    }
+    throw error;
+  }
+  await deleteObject(row.storageKey).catch((error) =>
+    logError(error as Error, { action: "files.promoteUpload", id: row.id }),
+  );
+  return finalKey;
 }
 
 const REJECTED_MESSAGES = {
@@ -607,14 +657,16 @@ export async function finalizeUpload(
     throw new HttpError(413, check.code, check.message);
   }
 
+  const storageKey = await promoteUpload(row, result.etag);
+
   if (!target) {
     const [ready] = await db
       .update(fileAsset)
-      .set({ status: "ready", sha256: result.sha256 })
+      .set({ status: "ready", sha256: result.sha256, storageKey })
       .where(and(eq(fileAsset.id, row.id), eq(fileAsset.status, "pending")))
       .returning();
     return toView(
-      ready ?? { ...row, status: "ready", sha256: result.sha256 },
+      ready ?? { ...row, status: "ready", sha256: result.sha256, storageKey },
       scope,
     );
   }
@@ -626,7 +678,7 @@ export async function finalizeUpload(
     db
       .update(fileAsset)
       .set({
-        storageKey: row.storageKey,
+        storageKey,
         filename: row.filename,
         mime: row.mime,
         size: row.size,
@@ -645,7 +697,7 @@ export async function finalizeUpload(
   const replaced = updated[0];
   if (!replaced) {
     // The target changed meanwhile (deleted, blocked or replaced).
-    await deleteObject(row.storageKey).catch(() => {});
+    await deleteObject(storageKey).catch(() => {});
     throw new HttpError(
       409,
       "NOT_REPLACEABLE",

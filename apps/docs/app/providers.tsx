@@ -1,10 +1,13 @@
 "use client";
 
+// First: before any schema parses in the browser (see the file).
+import "@/lib/zod-csp";
 import { DesignSystemProvider } from "@repo/design-system";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { type ReactNode, Suspense } from "react";
 import { AuthDialogWrapper } from "@/components/auth-dialog-wrapper";
 import { ConsentManager } from "@/components/consent/consent-manager";
+import { useCspNonce } from "@/components/csp-nonce";
 import { GetProDialogWrapper } from "@/components/get-pro-dialog-wrapper";
 import { NotOnCustomerPages } from "@/components/landing/not-on-customer-pages";
 import { SoundProvider } from "@/components/sound/sound-provider";
@@ -12,8 +15,10 @@ import { ChatProvider } from "@/lib/hooks/use-chat-context";
 import { QueryProvider } from "@/lib/query-client";
 
 export function Provider({ children }: { children: ReactNode }) {
+  // next-themes' inline theme script needs the CSP nonce on nonce routes.
+  const nonce = useCspNonce();
   return (
-    <DesignSystemProvider>
+    <DesignSystemProvider nonce={nonce}>
       <NuqsAdapter>
         <QueryProvider>
           <ChatProvider>
