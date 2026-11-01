@@ -29,6 +29,7 @@ const base: PlanLimits = {
   analyticsRetentionDays: 90,
   rawScanRetentionDays: 90,
   customDomains: 0,
+  customSlugs: false,
   teams: false,
   teamMembers: 1,
   folderPermissions: false,
@@ -62,6 +63,7 @@ const LIMITS: PlanLimitsByPlan = {
     analyticsRetentionDays: 3 * 365,
     rawScanRetentionDays: 3 * 365,
     customDomains: 5,
+    customSlugs: true,
     teams: true,
     teamMembers: 3,
     linkControls: true,
@@ -88,6 +90,7 @@ const LIMITS: PlanLimitsByPlan = {
     analyticsRetentionDays: UNLIMITED,
     rawScanRetentionDays: 395,
     customDomains: 25,
+    customSlugs: true,
     teams: true,
     teamMembers: UNLIMITED,
     folderPermissions: true,
@@ -184,6 +187,11 @@ describe("buildComparison", () => {
       free: false,
       pro: "5",
       business: "25",
+    });
+    assert.deepEqual(findRow("Custom back-halves"), {
+      free: false,
+      pro: true,
+      business: true,
     });
     assert.deepEqual(findRow("Team members"), {
       free: "1 (no teams)",

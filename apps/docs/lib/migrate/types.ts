@@ -143,9 +143,17 @@ export const importOptionsSchema = z.object({
   carryTags: z.boolean(),
   /** Import links whose destination already has a QRdx code */
   includeDuplicates: z.boolean(),
-  /** Keep back-halves of links on this (branded) domain as QRdx slugs */
+  /**
+   * Keep back-halves of links on this (branded) domain as slugs on the
+   * workspace's QRdx domain of the same name (unique per domain)
+   */
   backHalfDomain: z.string().trim().toLowerCase().max(253).nullable(),
-  /** Use the suggested back-half where the original can't be kept */
+  /**
+   * Keep the other links' back-halves as slugs on the shared qrdx.dev/q/ when
+   * they're free there (Pro). Absent in jobs started before it existed.
+   */
+  keepBackHalves: z.boolean().default(false),
+  /** Use the generated slug shown in the preview where a back-half can't be kept */
   useSuggestions: z.boolean(),
   /** Import only the first N importable links (plan limit) */
   limit: z.number().int().min(0).max(MAX_JOB_LINKS).nullable(),
@@ -176,11 +184,19 @@ export type BackHalfStatus =
   | "taken"
   | "repeated";
 
+/**
+ * Where a back-half is kept: "domain" = on the workspace's QRdx custom domain
+ * named like options.backHalfDomain (unique per domain); "shared" = on
+ * qrdx.dev/q/ (unique across QRdx).
+ */
+export type BackHalfTarget = "domain" | "shared";
+
 export interface BackHalfPlan {
   status: BackHalfStatus;
+  target: BackHalfTarget;
   /** The slug the code will get (null = a random one) */
   slug: string | null;
-  /** An available alternative when the original can't be kept */
+  /** The generated slug used when the original can't be kept */
   suggestion: string | null;
 }
 
@@ -219,11 +235,14 @@ export interface ImportPreview {
   remaining: number | null;
   /** Creates before the limit was applied */
   wanted: number;
-  /** Back-halves: domain status, kept/conflict counts */
+  /** The workspace's plan lets imports keep back-halves (Pro) */
+  canKeepBackHalves: boolean;
+  /** Back-halves (when asked to keep them): domain status, kept/conflict counts */
   backHalves: {
-    domain: string;
-    /** QRdx domain state for that hostname */
-    qrdx: "verified" | "pending" | "missing";
+    /** options.backHalfDomain; null = only qrdx.dev */
+    domain: string | null;
+    /** QRdx state of that domain (null without one) */
+    qrdx: "verified" | "pending" | "missing" | null;
     canUse: boolean;
     kept: number;
     conflicts: number;
@@ -253,8 +272,10 @@ export interface JobItem {
   title: string | null;
   tags: string[];
   createdAt: string | null;
-  /** Slug to claim (kept or suggested back-half); null = random */
+  /** Slug to claim (kept back-half or the generated fallback); null = random */
   slug: string | null;
+  /** Namespace of `slug`; absent (older jobs) = shared */
+  slugTarget?: BackHalfTarget;
   status: JobItemStatus;
   reason?: string;
   codeId?: string;

@@ -149,7 +149,6 @@ export default async function Page(props: PageProps<"/docs/[[...slug]]">) {
           })}
         />
       </div>
-      {/* <Feedback onRateAction={onRateAction} /> */}
       {page.data.lastModified && (
         <PageLastUpdate date={page.data.lastModified} />
       )}

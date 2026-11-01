@@ -13,6 +13,7 @@ import { baseUrl } from "@/lib/metadata";
 import { checkPageLifecycle } from "@/lib/redirect/lifecycle";
 import { getClientIp } from "@/lib/request-guards";
 import { isValidSlug } from "@/lib/short-links";
+import { slugWhere } from "@/lib/slug-claims";
 
 // .ics (RFC 5545) for an event block: /api/calendar/<code slug>?block=<id>.
 // Linked from the event block's "Add to calendar" menu (also on custom
@@ -77,16 +78,14 @@ export async function GET(request: NextRequest, { params }: Context) {
       })
       .from(qrCode)
       .innerJoin(landingPage, eq(landingPage.id, qrCode.pageId))
-      .where(and(eq(qrCode.slug, slug), eq(qrCode.kind, "page")))
+      .where(
+        and(
+          slugWhere(slug, request.headers.get(CUSTOM_DOMAIN_HEADER)),
+          eq(qrCode.kind, "page"),
+        ),
+      )
       .limit(1);
-    const customDomainId = request.headers.get(CUSTOM_DOMAIN_HEADER);
-    if (
-      !row ||
-      !row.isActive ||
-      row.archivedAt ||
-      row.deletedAt ||
-      (customDomainId && row.domainId !== customDomainId)
-    ) {
+    if (!row || !row.isActive || row.archivedAt || row.deletedAt) {
       return notFound();
     }
     // Same rules as viewing the page: password (unlock cookie), schedule, pause.

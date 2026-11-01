@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  EMAIL_CODES_REMAIN,
   type LinkedAccount,
   linkableProviders,
   linkErrorMessage,
@@ -26,8 +27,9 @@ describe("unlinkBlockReason", () => {
     expect(unlinkBlockReason([google, github], "acc_github")).toBeNull();
   });
 
-  it("never unlinks the last linked account", () => {
-    expect(unlinkBlockReason([google], "acc_google")).toBe("last-method");
+  it("unlinks the last linked account too, since email codes always work", () => {
+    expect(unlinkBlockReason([google], "acc_google")).toBeNull();
+    expect(unlinkBlockReason([github], "acc_github")).toBeNull();
   });
 
   it("refuses accounts that aren't the user's", () => {
@@ -66,9 +68,22 @@ describe("toSignInMethods", () => {
     expect(methods[1].linkedAt).toBe("2026-10-05");
   });
 
-  it("explains why the only linked provider can't be removed", () => {
-    const [onlyGoogle] = toSignInMethods([google], formatDate);
-    expect(onlyGoogle.unlinkBlocked).toBe(UNLINK_BLOCK_MESSAGES["last-method"]);
+  it("offers to unlink the only linked provider", () => {
+    const [onlyGoogle, email] = toSignInMethods([google], formatDate);
+    expect(onlyGoogle).toMatchObject({ kind: "google", unlinkBlocked: null });
+    // Email codes stay, so there is always a way in.
+    expect(email.kind).toBe("email");
+    expect(EMAIL_CODES_REMAIN).toMatch(/code sent to your email/);
+  });
+
+  it("still refuses rows it can't remove", () => {
+    const credential = {
+      id: "acc_pw",
+      providerId: "credential",
+      createdAt: new Date(),
+    };
+    expect(unlinkBlockReason([credential], "acc_pw")).toBe("unsupported");
+    expect(UNLINK_BLOCK_MESSAGES.unsupported).toMatch(/can't be removed/);
   });
 
   it("always shows email codes, which can't be removed", () => {

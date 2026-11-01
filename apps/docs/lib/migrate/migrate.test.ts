@@ -13,7 +13,7 @@ import {
   fromShortLink,
   shortLinkSource,
 } from "./adapters";
-import { backHalfCandidates, backHalfShapeProblem } from "./back-halves";
+import { backHalfShapeProblem, fallbackCandidates } from "./back-halves";
 import { detectFileProvider, guessFileMapping, linksFromRows } from "./files";
 import {
   type CreateInput,
@@ -30,9 +30,12 @@ import {
 import {
   applyChunk,
   createJob,
+  isSameLink,
   MAX_JOBS,
+  mappedItems,
   nextChunk,
   readJobs,
+  redirectTargets,
   upsertJob,
 } from "./jobs";
 import { fitToLimit, mappingCsv, mappingText } from "./mapping";
@@ -45,7 +48,7 @@ import {
   parseImportMarkers,
   splitShortLink,
 } from "./normalize";
-import { type PlanContext, planImport, slugCandidates } from "./plan";
+import { type PlanContext, planImport, slugLookups } from "./plan";
 import { parseProviderParam } from "./providers";
 import type {
   CodeRef,
@@ -62,6 +65,7 @@ const OPTIONS: ImportOptions = {
   carryTags: true,
   includeDuplicates: false,
   backHalfDomain: null,
+  keepBackHalves: false,
   useSuggestions: true,
   limit: null,
 };
@@ -99,6 +103,8 @@ const SCOPE: Scope = { userId: "user_1", organizationId: null };
 interface Code {
   id: string;
   slug: string;
+  /** "" = qrdx.dev/q/, else the custom domain the back-half belongs to */
+  slugScope: string;
   url: string;
   notes: string | null;
   tags: string[];
@@ -112,7 +118,12 @@ function fakeRepo(
   options: {
     remaining?: number | null;
     bulk?: boolean;
+    /** Taken on qrdx.dev/q/ by someone else */
     taken?: string[];
+    /** Taken on the custom domain (dom_1) by another code */
+    takenOnDomain?: string[];
+    customSlugs?: boolean;
+    domain?: { id: string | null; qrdx: "verified" | "pending" | "missing" };
     failCreateFor?: string[];
     /** Throw the first time notes are written (a crash mid-chunk) */
     crashOnFinish?: boolean;
@@ -126,13 +137,21 @@ function fakeRepo(
   const calls = { create: 0, finish: 0 };
   const ref = (code: Code): CodeRef => ({
     id: code.id,
-    shortLink: `https://qrdx.dev/q/${code.slug}`,
+    shortLink:
+      code.slugScope === "dom_1" ||
+      (code.domainId === "dom_1" && options.domain?.qrdx !== "pending")
+        ? `https://go.brand.com/${code.slug}`
+        : `https://qrdx.dev/q/${code.slug}`,
     state: "active",
   });
 
   const repo: MigrateRepo = {
     async usage() {
-      return { remaining, bulk: options.bulk ?? true };
+      return {
+        remaining,
+        bulk: options.bulk ?? true,
+        customSlugs: options.customSlugs ?? true,
+      };
     },
     async findImported(_scope, provider, keys) {
       const map = new Map<string, CodeRef>();
@@ -156,18 +175,35 @@ function fakeRepo(
       }
       return map;
     },
-    async findTakenSlugs(slugs) {
-      const used = new Set([
-        ...(options.taken ?? []),
-        ...codes.map((code) => code.slug),
-      ]);
+    async findTakenSlugs(slugs, domainId) {
+      const used = new Set(
+        domainId
+          ? [
+              ...(options.takenOnDomain ?? []),
+              ...codes
+                .filter(
+                  (code) =>
+                    code.domainId === domainId || code.slugScope === domainId,
+                )
+                .map((code) => code.slug),
+            ]
+          : [
+              ...(options.taken ?? []),
+              ...codes
+                .filter((code) => code.slugScope === "")
+                .map((code) => code.slug),
+            ],
+      );
       return new Set(slugs.filter((slug) => used.has(slug)));
     },
     async existingTagNames() {
       return new Set(["print"]);
     },
     async domainFor() {
-      return { id: "dom_1", qrdx: "verified", canUse: true };
+      return {
+        ...(options.domain ?? { id: "dom_1", qrdx: "verified" as const }),
+        canUse: true,
+      };
     },
     async qrdxHosts() {
       return new Set(["qrdx.dev"]);
@@ -192,6 +228,7 @@ function fakeRepo(
         const code: Code = {
           id: `code_${seq}`,
           slug: `Rnd${String(seq).padStart(4, "0")}`,
+          slugScope: "",
           url: input.destinationUrl,
           notes: null,
           tags: [],
@@ -217,7 +254,11 @@ function fakeRepo(
         code.notes = row.notes;
         code.tags = row.tags;
         code.folder = row.folderName;
-        if (row.slug) code.slug = row.slug;
+        if (row.bindDomainId) code.domainId = row.bindDomainId;
+        if (row.slug) {
+          code.slug = row.slug;
+          code.slugScope = row.slugDomainId ?? "";
+        }
         result.set(code.id, { shortLink: ref(code).shortLink });
       }
       return result;
@@ -254,6 +295,7 @@ function depsFor(repo: MigrateRepo): ImporterDeps {
     repo,
     now: () => new Date("2026-11-01T12:00:00.000Z"),
     newId: () => `job_${++id}`,
+    newSlug: () => "Zz00000",
   };
 }
 
@@ -267,6 +309,7 @@ function context(patch: Partial<PlanContext> = {}): PlanContext {
     candidates: new Map(),
     remaining: null,
     existingTags: new Set(),
+    canKeepBackHalves: true,
     backHalfDomain: null,
     checkDestination: okDestination,
     qrdxHosts: new Set(["qrdx.dev"]),
@@ -555,7 +598,11 @@ describe("plan limit", () => {
       options: OPTIONS,
     });
     // Another tab used 6 slots after the job started.
-    fake.repo.usage = async () => ({ remaining: 4, bulk: true });
+    fake.repo.usage = async () => ({
+      remaining: 4,
+      bulk: true,
+      customSlugs: true,
+    });
     const { result } = await runToEnd(deps, job.id);
     assert.equal(result.job.created, 4);
     assert.equal(result.job.skipped, 6);
@@ -885,7 +932,7 @@ describe("keep printed codes working", () => {
   });
 });
 
-// ─── Branded back-halves ─────────────────────────────────────────────────────
+// ─── Back-halves ─────────────────────────────────────────────────────────────
 
 describe("original back-halves", () => {
   const branded = (n: number, backHalf: string) =>
@@ -895,70 +942,325 @@ describe("original back-halves", () => {
       domain: "go.brand.com",
       backHalf,
     });
+  const shared = (n: number, backHalf: string) =>
+    link(n, {
+      id: `bit.ly/${backHalf}`,
+      shortLink: `https://bit.ly/${backHalf}`,
+      backHalf,
+    });
+  const KEEP = { ...OPTIONS, keepBackHalves: true };
+  const ON_DOMAIN = { ...KEEP, backHalfDomain: "go.brand.com" };
 
-  it("keeps 7-character back-halves and reports the rest with suggestions", async () => {
+  it("keeps readable back-halves on qrdx.dev and generates the rest", async () => {
     const links = [
-      branded(1, "Spring1"),
-      branded(2, "spring-menu"),
-      branded(3, "Taken01"),
-      branded(4, "pricing"),
-      link(5),
+      shared(1, "spring-menu"),
+      shared(2, "Taken01"),
+      shared(3, "pricing"),
+      shared(4, "menu/allergens"),
+      shared(5, "ab"),
+      link(6, { backHalf: null, shortLink: null, id: "no-link" }),
     ];
-    const options = { ...OPTIONS, backHalfDomain: "go.brand.com" };
     const fake = fakeRepo({ taken: ["Taken01"] });
     const preview = await previewImport(depsFor(fake.repo), SCOPE, {
-      provider: "dub",
+      provider: "bitly",
       links,
-      options,
+      options: KEEP,
     });
     const statuses = preview.items.map((item) => item.backHalf?.status ?? null);
-    assert.deepEqual(statuses, ["kept", "shape", "taken", "reserved", null]);
+    assert.deepEqual(statuses, [
+      "kept",
+      "taken",
+      "reserved",
+      "shape",
+      "shape",
+      null,
+    ]);
+    assert.equal(preview.items[0]?.backHalf?.target, "shared");
+    assert.equal(preview.items[0]?.backHalf?.slug, "spring-menu");
     assert.equal(preview.backHalves?.kept, 1);
-    assert.equal(preview.backHalves?.conflicts, 3);
-    assert.equal(preview.items[1]?.backHalf?.suggestion, "springm");
-    assert.match(preview.items[1]?.reason ?? "", /7 letters or digits/);
+    assert.equal(preview.backHalves?.conflicts, 4);
+    assert.equal(preview.backHalves?.domain, null);
+    // The change the preview shows: a generated slug, and why.
+    const taken = preview.items[1]?.backHalf;
+    assert.match(taken?.slug ?? "", /^[0-9A-Za-z]{7}$/);
+    assert.equal(taken?.slug, taken?.suggestion);
+    assert.match(preview.items[1]?.reason ?? "", /already uses/);
+    assert.match(preview.items[3]?.reason ?? "", /3 to 64 letters/);
   });
 
-  it("claims kept back-halves as slugs on import, on the verified domain", async () => {
+  it("shows the same generated slug in the preview and the import", async () => {
+    const fake = fakeRepo({ taken: ["Taken01"] });
+    const deps = depsFor(fake.repo);
+    const request = {
+      provider: "bitly" as const,
+      links: [shared(1, "Taken01")],
+      options: KEEP,
+    };
+    const preview = await previewImport(deps, SCOPE, request);
+    const shown = preview.items[0]?.backHalf?.slug;
+    const { job } = await startJob(deps, SCOPE, request);
+    await runToEnd(deps, job.id);
+    assert.ok(shown);
+    assert.equal(fake.codes[0]?.slug, shown);
+    assert.equal(fake.codes[0]?.slugScope, "");
+  });
+
+  it("claims kept back-halves on qrdx.dev on import", async () => {
     const fake = fakeRepo();
     const deps = depsFor(fake.repo);
     const { job } = await startJob(deps, SCOPE, {
-      provider: "dub",
-      links: [branded(1, "Spring1"), link(2)],
-      options: { ...OPTIONS, backHalfDomain: "go.brand.com" },
+      provider: "bitly",
+      links: [shared(1, "spring-menu"), link(2)],
+      options: KEEP,
     });
     await runToEnd(deps, job.id);
-    assert.equal(fake.codes[0]?.slug, "Spring1");
-    assert.equal(fake.codes[0]?.domainId, "dom_1");
-    assert.equal(fake.codes[1]?.domainId, null);
+    assert.equal(fake.codes[0]?.slug, "spring-menu");
+    assert.equal(fake.codes[0]?.slugScope, "");
+    assert.equal(fake.codes[0]?.domainId, null);
+    // link(2) has a 7-character back-half: kept too.
+    assert.equal(fake.codes[1]?.slug, "Ab00002");
   });
 
-  it("flags back-halves repeated in the selection", () => {
+  it("keeps back-halves only when asked, and only on Pro", async () => {
+    const links = [shared(1, "spring-menu")];
+    const off = await previewImport(depsFor(fakeRepo().repo), SCOPE, {
+      provider: "bitly",
+      links,
+      options: OPTIONS,
+    });
+    assert.equal(off.items[0]?.backHalf, null);
+    assert.equal(off.backHalves, null);
+
+    const free = await previewImport(
+      depsFor(fakeRepo({ customSlugs: false }).repo),
+      SCOPE,
+      { provider: "bitly", links, options: KEEP },
+    );
+    assert.equal(free.canKeepBackHalves, false);
+    assert.equal(free.backHalves?.canUse, false);
+    assert.equal(free.items[0]?.backHalf, null);
+  });
+
+  it("keeps branded back-halves on the custom domain, unique per domain", async () => {
+    const links = [
+      branded(1, "spring-menu"),
+      branded(2, "pricing"),
+      branded(3, "mine"),
+      branded(4, "api"),
+      shared(5, "spring-menu"),
+    ];
+    // Someone else has spring-menu and pricing on qrdx.dev: irrelevant on the domain.
+    const fake = fakeRepo({
+      taken: ["spring-menu", "pricing"],
+      takenOnDomain: ["mine"],
+    });
+    const preview = await previewImport(depsFor(fake.repo), SCOPE, {
+      provider: "bitly",
+      links,
+      options: ON_DOMAIN,
+    });
+    const plans = preview.items.map((item) => [
+      item.backHalf?.status,
+      item.backHalf?.target,
+    ]);
+    assert.deepEqual(plans, [
+      ["kept", "domain"],
+      ["kept", "domain"],
+      ["taken", "domain"],
+      ["reserved", "domain"],
+      ["taken", "shared"],
+    ]);
+    assert.match(preview.items[2]?.reason ?? "", /on go\.brand\.com/);
+    assert.equal(preview.backHalves?.domain, "go.brand.com");
+    assert.equal(preview.backHalves?.qrdx, "verified");
+  });
+
+  it("puts codes on a pending domain with their back-halves", async () => {
+    const fake = fakeRepo({ domain: { id: "dom_1", qrdx: "pending" } });
+    const deps = depsFor(fake.repo);
+    const { job } = await startJob(deps, SCOPE, {
+      provider: "bitly",
+      links: [branded(1, "spring-menu"), shared(2, "summer")],
+      options: ON_DOMAIN,
+    });
+    const { result } = await runToEnd(deps, job.id);
+    assert.deepEqual(
+      fake.codes.map((code) => [code.slug, code.slugScope, code.domainId]),
+      [
+        ["spring-menu", "dom_1", "dom_1"],
+        ["summer", "", null],
+      ],
+    );
+    // The codes are already on the domain: nothing left to attach.
+    assert.ok(result.job.domainAttachedAt);
+    // Its new link is the old one: no redirect to itself at the old provider.
+    const items = fake.jobs()[0]?.items ?? [];
+    assert.equal(items[0]?.newLink, "https://go.brand.com/spring-menu");
+    const plan = await runRedirects(deps, SCOPE, job.id, "dry-run", null);
+    assert.deepEqual(
+      plan.items.map((item) => item.key),
+      ["bit.ly/summer"],
+    );
+  });
+
+  it("keeps branded back-halves on qrdx.dev while the domain isn't in QRdx", async () => {
+    const fake = fakeRepo({
+      domain: { id: null, qrdx: "missing" },
+      taken: ["pricing"],
+    });
+    const preview = await previewImport(depsFor(fake.repo), SCOPE, {
+      provider: "bitly",
+      links: [branded(1, "spring-menu"), branded(2, "help")],
+      options: ON_DOMAIN,
+    });
+    assert.deepEqual(
+      preview.items.map((item) => [
+        item.backHalf?.status,
+        item.backHalf?.target,
+      ]),
+      [
+        ["kept", "shared"],
+        ["reserved", "shared"],
+      ],
+    );
+    assert.match(preview.items[1]?.reason ?? "", /Add go\.brand\.com/);
+    assert.equal(preview.backHalves?.qrdx, "missing");
+  });
+
+  it("flags back-halves repeated in the selection, per namespace", () => {
     const links = [
       branded(1, "Spring1"),
       { ...branded(2, "Spring1"), id: "other" },
+      shared(3, "Spring1"),
     ];
-    const options = { ...OPTIONS, backHalfDomain: "go.brand.com" };
-    const { candidates } = slugCandidates(links, options);
+    const domain = { qrdx: "verified" as const, canUse: true };
+    const { candidates } = slugLookups(
+      links,
+      ON_DOMAIN,
+      domain,
+      () => "Zz00000",
+    );
     const { preview } = planImport(
       links,
-      context({
-        options,
-        candidates,
-        backHalfDomain: { qrdx: "verified", canUse: true },
-      }),
+      context({ options: ON_DOMAIN, candidates, backHalfDomain: domain }),
     );
-    assert.equal(preview.items[1]?.backHalf?.status, "repeated");
+    assert.deepEqual(
+      preview.items.map((item) => item.backHalf?.status),
+      ["kept", "repeated", "kept"],
+    );
   });
 
-  it("checks shape and builds close alternatives", () => {
-    assert.equal(backHalfShapeProblem("AbC1234"), null);
-    assert.equal(backHalfShapeProblem("abc"), "shape");
-    assert.equal(backHalfShapeProblem("pricing"), "reserved");
-    const list = backHalfCandidates("spring-menu", () => "Zz00000");
-    assert.deepEqual(list.slice(0, 2), ["springm", "ingmenu"]);
-    const short = backHalfCandidates("eat", () => "Zz00000");
-    assert.match(short[0] ?? "", /^eat[0-9A-Za-z]{4}$/);
+  it("looks slugs up in the right namespace", () => {
+    const links = [branded(1, "spring-menu"), shared(2, "summer")];
+    const domain = { qrdx: "pending" as const, canUse: true };
+    const lookups = slugLookups(links, ON_DOMAIN, domain, () => "Zz00000");
+    assert.deepEqual(lookups.domain, ["spring-menu"]);
+    assert.ok(lookups.shared.includes("summer"));
+    assert.ok(!lookups.shared.includes("spring-menu"));
+    // Every link has generated fallbacks, looked up on qrdx.dev.
+    for (const list of lookups.candidates.values()) {
+      for (const slug of list) assert.ok(lookups.shared.includes(slug));
+    }
+  });
+
+  it("checks shape by namespace and derives stable fallbacks", () => {
+    assert.equal(backHalfShapeProblem("AbC1234", "shared"), null);
+    assert.equal(backHalfShapeProblem("spring-menu", "shared"), null);
+    assert.equal(backHalfShapeProblem("ab", "shared"), "shape");
+    assert.equal(backHalfShapeProblem("-menu", "shared"), "shape");
+    assert.equal(backHalfShapeProblem("menu/spring", "shared"), "shape");
+    assert.equal(backHalfShapeProblem("x".repeat(65), "shared"), "shape");
+    assert.equal(backHalfShapeProblem("pricing", "shared"), "reserved");
+    assert.equal(backHalfShapeProblem("pricing", "domain"), null);
+    assert.equal(backHalfShapeProblem("API", "domain"), "reserved");
+    const first = fallbackCandidates("bit.ly/x", () => "Zz00000");
+    assert.deepEqual(
+      fallbackCandidates("bit.ly/x", () => "Yy11111").slice(0, 2),
+      first.slice(0, 2),
+    );
+    for (const slug of first) assert.match(slug, /^[0-9A-Za-z]{7}$/);
+    assert.equal(first.at(-1), "Zz00000");
+  });
+
+  it("never re-points a link at itself", () => {
+    assert.equal(
+      isSameLink("https://go.brand.com/menu", "https://go.brand.com/menu/"),
+      true,
+    );
+    assert.equal(
+      isSameLink("go.brand.com/menu", "https://GO.brand.com/menu"),
+      true,
+    );
+    assert.equal(
+      isSameLink("https://bit.ly/menu", "https://qrdx.dev/q/menu"),
+      false,
+    );
+    const job = createJob({
+      id: "job",
+      provider: "bitly",
+      organizationId: null,
+      options: ON_DOMAIN,
+      now: new Date(),
+      items: [
+        {
+          key: "a",
+          shortLink: "https://go.brand.com/menu",
+          url: "https://example.com/a",
+          title: null,
+          tags: [],
+          createdAt: null,
+          slug: "menu",
+          status: "created",
+          codeId: "c1",
+          newLink: "https://go.brand.com/menu",
+        },
+        {
+          key: "b",
+          shortLink: "https://bit.ly/b",
+          url: "https://example.com/b",
+          title: null,
+          tags: [],
+          createdAt: null,
+          slug: null,
+          status: "created",
+          codeId: "c2",
+          newLink: "https://qrdx.dev/q/Ab3xK9q",
+        },
+      ],
+    });
+    assert.deepEqual(
+      redirectTargets(job).map((item) => item.key),
+      ["b"],
+    );
+    // The mapping CSV still lists both.
+    assert.equal(mappedItems(job).length, 2);
+  });
+
+  it("reads jobs saved before back-half namespaces existed", () => {
+    const [job] = readJobs({
+      v: 1,
+      jobs: [
+        {
+          id: "old",
+          provider: "dub",
+          organizationId: null,
+          createdAt: "2026-10-01T00:00:00.000Z",
+          updatedAt: "2026-10-01T00:00:00.000Z",
+          status: "done",
+          options: {
+            folderName: null,
+            carryTags: true,
+            includeDuplicates: false,
+            backHalfDomain: "go.brand.com",
+            useSuggestions: true,
+            limit: null,
+          },
+          cursor: 1,
+          items: [],
+        },
+      ],
+    });
+    assert.equal(job?.options.keepBackHalves, false);
   });
 });
 

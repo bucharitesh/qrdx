@@ -100,8 +100,8 @@ const socialProviders: BetterAuthOptions["socialProviders"] = {
     : {}),
 };
 
-// Email sign-in codes: request one, then sign in with it. Everything else the
-// emailOTP plugin offers (verification, password reset, email change) is off.
+// Email sign-in codes: request one, then sign in with it. Verification and
+// password reset, which the emailOTP plugin also offers, are off.
 const SEND_CODE_PATH = "/email-otp/send-verification-otp";
 const SIGN_IN_CODE_PATH = "/sign-in/email-otp";
 const UNUSED_EMAIL_OTP_PATHS = [
@@ -110,6 +110,13 @@ const UNUSED_EMAIL_OTP_PATHS = [
   "/email-otp/request-password-reset",
   "/forget-password/email-otp",
   "/email-otp/reset-password",
+];
+// Email change is on, but never over HTTP: only the app's server actions call
+// it, through auth.api (apps/docs/app/settings/account/_lib/
+// email-change-actions.ts). They add what the plugin doesn't: a recent
+// sign-in, per-user limits and the notice to the old address, so a direct
+// request can't skip them.
+const SERVER_ONLY_EMAIL_OTP_PATHS = [
   "/email-otp/request-email-change",
   "/email-otp/change-email",
 ];
@@ -120,12 +127,20 @@ export const auth = betterAuth({
     schema,
   }),
   socialProviders,
-  // Codes live in the core `verification` table. The identifier holds the
-  // address ("sign-in-otp-<email>"), so it is hashed like the code itself.
+  account: {
+    accountLinking: {
+      // Email codes always work for the account's address, so removing the
+      // last Google or GitHub link never locks anyone out.
+      allowUnlinkingAll: true,
+    },
+  },
+  // Codes live in the core `verification` table. Identifiers hold addresses
+  // ("sign-in-otp-<email>", "change-email-otp-<old>-<new>"), so they are
+  // hashed like the codes themselves.
   verification: {
     storeIdentifier: {
       default: "plain",
-      overrides: { "sign-in-otp-": "hashed" },
+      overrides: { "sign-in-otp-": "hashed", "change-email-otp-": "hashed" },
     },
   },
   databaseHooks: {
@@ -167,6 +182,9 @@ export const auth = betterAuth({
       allowedAttempts: 3,
       storeOTP: "hashed",
       disableSignUp: false,
+      // The code goes to the new address; the app requires a recent sign-in
+      // instead of a second code to the current one (see above).
+      changeEmail: { enabled: true },
       sendVerificationOTP,
     }),
     admin({ adminUserIds: getAdminUserIds() }),
@@ -191,6 +209,7 @@ export const auth = betterAuth({
     "/admin/impersonate-user",
     "/admin/set-user-password",
     ...UNUSED_EMAIL_OTP_PATHS,
+    ...SERVER_ONLY_EMAIL_OTP_PATHS,
   ],
   // Better Auth enforces these in production only, per IP, in memory.
   rateLimit: {

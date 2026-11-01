@@ -134,6 +134,13 @@ export function checkAuthorizeParams(
     };
   }
   if (params.codeChallenge) {
+    if (params.codeChallengeMethod === "plain") {
+      return {
+        error: "invalid_request",
+        description:
+          "code_challenge_method=plain is not supported: send an S256 challenge (BASE64URL(SHA256(code_verifier))) with code_challenge_method=S256",
+      };
+    }
     if (
       !PKCE_METHODS.includes(
         params.codeChallengeMethod as (typeof PKCE_METHODS)[number],

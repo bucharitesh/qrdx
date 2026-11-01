@@ -37,6 +37,7 @@ const jobItemSchema = z.object({
   tags: z.array(z.string().max(100)).max(50),
   createdAt: z.string().max(64).nullable(),
   slug: z.string().max(64).nullable(),
+  slugTarget: z.enum(["domain", "shared"]).optional(),
   status: z.enum(["pending", "created", "skipped", "failed"]),
   reason: z.string().max(500).optional(),
   codeId: z.string().max(64).optional(),
@@ -189,10 +190,37 @@ export function upsertJob(jobs: ImportJob[], job: ImportJob): ImportJob[] {
   return kept;
 }
 
-/** Old link → its QRdx link, for items that have one. */
-export function redirectTargets(job: ImportJob): JobItem[] {
+/** Host and path of a link, for comparing two links (scheme and case of the host ignored). */
+function linkKey(link: string): string | null {
+  try {
+    const url = new URL(/^https?:\/\//i.test(link) ? link : `https://${link}`);
+    return `${url.hostname.toLowerCase()}${url.pathname.replace(/\/+$/, "")}`;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * True when the QRdx link is the old link itself: a back-half kept on the
+ * custom domain that moves to QRdx. Re-pointing it at the old provider would
+ * make it redirect to itself.
+ */
+export function isSameLink(oldLink: string, newLink: string): boolean {
+  const key = linkKey(oldLink);
+  return key !== null && key === linkKey(newLink);
+}
+
+/** Old link → its QRdx link, for every item that has one (mapping CSV). */
+export function mappedItems(job: ImportJob): JobItem[] {
   return job.items.filter(
     (item) => item.newLink && item.codeId && item.shortLink,
+  );
+}
+
+/** Items whose old link can be re-pointed: mapped to a different QRdx link. */
+export function redirectTargets(job: ImportJob): JobItem[] {
+  return mappedItems(job).filter(
+    (item) => !isSameLink(item.shortLink as string, item.newLink as string),
   );
 }
 

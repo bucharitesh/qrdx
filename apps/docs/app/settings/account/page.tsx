@@ -11,6 +11,7 @@ import {
   planAccountDeletion,
 } from "@/lib/account/deletion";
 import { loadDeletionFacts } from "@/lib/account/deletion-server";
+import { canChangeEmailNow } from "@/lib/account/email-change";
 import { signInCodesAvailable } from "@/lib/account/reauth";
 import { toSessionViews } from "@/lib/account/sessions";
 import {
@@ -138,6 +139,10 @@ export default async function AccountPage({
           image: session.user.image ?? null,
           memberSince: formatDate(new Date(session.user.createdAt)),
           canUpload: isStorageConfigured,
+          recentSignIn: canChangeEmailNow(
+            new Date(session.session.createdAt),
+            now,
+          ),
         }}
       />
 

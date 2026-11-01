@@ -131,6 +131,7 @@ beforeEach(() => {
   vi.setSystemTime(NOW);
   fakeDb.resetAll();
   fakeDb.defaults("qrCode", () => ({
+    slugScope: "",
     contentType: "url",
     style: null,
     title: null,
@@ -149,7 +150,10 @@ beforeEach(() => {
     createdAt: new Date(),
     updatedAt: new Date(),
   }));
+  // As the database after manual-sql/0009 (0010 drops the first).
   fakeDb.unique("qrCode", "slug");
+  fakeDb.unique("qrCode", "slugScope", "slug");
+  fakeDb.unique("qrCode", "domainId", "slug");
   fakeDb.seed("user", [
     { id: "u_alice", banned: false, banExpires: null },
     { id: "u_bob", banned: false, banExpires: null },

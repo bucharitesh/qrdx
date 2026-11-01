@@ -225,6 +225,15 @@ function bearer(path: string, accessToken?: string) {
   });
 }
 
+/** The consent page's Allow, signed in as Alice. */
+function postAuthorizeQuery(query: AuthorizeQuery) {
+  auth.userId = "u_alice";
+  return postAuthorize({
+    ...(query as Record<string, string>),
+    decision: "allow",
+  });
+}
+
 /** Signs Alice in and approves the consent screen; returns the redirect URL. */
 async function approve(query: AuthorizeQuery = baseQuery()): Promise<URL> {
   auth.userId = "u_alice";
@@ -392,6 +401,24 @@ describe("GET /api/oauth/authorize", () => {
       ),
     ).toBe("invalid_request");
     expect((await getAuthorize(baseQuery(pkceApp))).status).toBe(302);
+  });
+
+  it("refuses PKCE plain for every app with a clear invalid_request", async () => {
+    // client_menu doesn't require PKCE, but a plain challenge is still refused.
+    for (const send of [getAuthorize, postAuthorizeQuery]) {
+      const response = await send(
+        baseQuery({ code_challenge: VERIFIER, code_challenge_method: "plain" }),
+      );
+      expect(response.status).toBe(400);
+      const body = (await response.json()) as {
+        error: string;
+        error_description: string;
+      };
+      expect(body.error).toBe("invalid_request");
+      expect(body.error_description).toMatch(/plain is not supported/);
+      expect(body.error_description).toMatch(/S256/);
+    }
+    expect(fakeDb.rows("oauthAuthorizationCode")).toHaveLength(0);
   });
 
   it("rejects malformed PKCE challenges and unknown methods", async () => {
@@ -592,6 +619,17 @@ describe("POST /api/oauth/token (authorization_code)", () => {
         await exchange(await codeFor(), { code_verifier: "x".repeat(43) }),
       ),
     ).toBe("invalid_grant");
+  });
+
+  it("never redeems a code whose challenge was stored as plain", async () => {
+    // A code issued before plain was refused: verifier === challenge.
+    const code = await codeFor();
+    const stored = fakeDb.rows("oauthAuthorizationCode")[0];
+    if (stored) {
+      stored.codeChallenge = VERIFIER;
+      stored.codeChallengeMethod = "plain";
+    }
+    expect(await errorOf(await exchange(code))).toBe("invalid_grant");
   });
 
   it("refuses a code_verifier for a code issued without a challenge (downgrade)", async () => {

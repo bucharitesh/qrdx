@@ -135,3 +135,33 @@ export function filterVisible<T>(
 ): T[] {
   return items.filter((item) => isVisible(availability, slugOf(item)));
 }
+
+/**
+ * How Settings → Integrations treats a slug. Production hides integrations
+ * that need setup, but someone who connected one before it was hidden must
+ * still be able to disconnect it:
+ * - "listed": shown as usual (available, or local dev);
+ * - "no-longer-available": hidden here, but this user has it connected, so
+ *   settings show it with a "No longer available" badge and Disconnect only;
+ * - "hidden": not shown.
+ * Only the settings list and detail pages use this. Connect buttons, pickers
+ * and the public pages keep using isVisible, which still hides it.
+ */
+export type SettingsListing = "listed" | "no-longer-available" | "hidden";
+
+export function settingsListing(
+  availability: IntegrationAvailability,
+  slug: string,
+  connected: boolean,
+): SettingsListing {
+  if (isVisible(availability, slug)) return "listed";
+  return connected ? "no-longer-available" : "hidden";
+}
+
+/** The slugs among `slugs` that are hidden here (production only). */
+export function hiddenSlugs(
+  availability: IntegrationAvailability,
+  slugs: Iterable<string>,
+): string[] {
+  return [...new Set(slugs)].filter((slug) => !isVisible(availability, slug));
+}

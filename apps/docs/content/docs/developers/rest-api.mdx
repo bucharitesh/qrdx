@@ -19,7 +19,7 @@ The same endpoints also answer under `https://qrdx.dev/api/v1`. Browser-session 
 | Endpoint | Scope | What it does |
 | --- | --- | --- |
 | `GET /v1/qr` | None | QR code image as SVG, PNG or EPS. See [Image API](/docs/developers/image-api) |
-| `/v1/codes` | `codes:read`, `codes:write` | List, create (one or up to 100 at a time), update and delete dynamic codes. See [Dynamic QR codes](/docs/dynamic-qr-codes#rest-api) |
+| `/v1/codes` | `codes:read`, `codes:write` | List, create (one or up to 100 at a time, with an optional custom back-half in `slug`), update and delete dynamic codes. See [Dynamic QR codes](/docs/dynamic-qr-codes#rest-api) |
 | `GET /v1/codes/{id}/scans` | `codes:read` | Scan analytics for a code, or individual scans page by page |
 | `POST /v1/conversions` | `codes:write` | Attribute a sale or sign-up to the scan that led to it (Business). See [Tracking and conversions](/docs/tracking-and-conversions) |
 | `/v1/hooks` | `codes:read`, `codes:write` | Subscribe a URL to events, REST Hooks style, for Zapier, Make and n8n. See [Webhooks](/docs/webhooks) |
@@ -65,7 +65,7 @@ https://qrdx.dev/api/oauth/authorize
   &code_challenge_method=S256
 ```
 
-`redirect_uri` must exactly match a registered URL, and `scope` (space or comma separated) may only ask for the app's scopes. PKCE is recommended, and required for apps that turn on **Require PKCE**; `S256` is the default method. People sign in if needed, then approve your app on the QRdx consent screen, which shows its name, logo, website, who built it and the requested permissions. QRdx then redirects to `redirect_uri` with `code` and your `state`, or with `error=access_denied` if they cancel. The code is valid for 10 minutes and can be used once.
+`redirect_uri` must exactly match a registered URL, and `scope` (space or comma separated) may only ask for the app's scopes. PKCE is recommended, and required for apps that turn on **Require PKCE**. `S256` is the only method: a `plain` challenge gets `invalid_request`. People sign in if needed, then approve your app on the QRdx consent screen, which shows its name, logo, website, who built it and the requested permissions. QRdx then redirects to `redirect_uri` with `code` and your `state`, or with `error=access_denied` if they cancel. The code is valid for 10 minutes and can be used once.
 
 ### 3. Exchange the code for tokens
 
@@ -113,4 +113,4 @@ People can revoke an app's access themselves in **Settings → Authorized apps**
 
 The codes, conversions and hooks endpoints return errors as `{ "code": "...", "message": "...", "status": 400 }`; the status codes are listed under [Dynamic QR codes](/docs/dynamic-qr-codes#rest-api). The OAuth, themes and profile endpoints use the OAuth shape, `{ "error": "invalid_token", "error_description": "..." }`.
 
-Requests are rate limited, and a `429` response tells you when to retry. The codes API allows 120 reads and 30 writes a minute per user. Creating several codes in one request and moving codes onto a custom domain need Pro or Business (`402 PLAN_REQUIRED` otherwise). Scans are never limited.
+Requests are rate limited, and a `429` response tells you when to retry. The codes API allows 120 reads and 30 writes a minute per user. Creating several codes in one request, choosing a code's `slug` and moving codes onto a custom domain need Pro or Business (`402 PLAN_REQUIRED` otherwise). Scans are never limited.

@@ -7,7 +7,7 @@ import { type ContactProps, contactSchema } from "@/lib/landing/blocks/contact";
 import { socialsSchema } from "@/lib/landing/blocks/socials";
 import { checkPageLifecycle } from "@/lib/redirect/lifecycle";
 import { getClientIp } from "@/lib/request-guards";
-import { isValidSlug } from "@/lib/short-links";
+import { isGeneratedSlug } from "@/lib/short-links";
 import { buildVCard, type VCardPhoto, vcardFilename } from "./vcard";
 
 // "Save contact" on hosted pages: /api/vcard/<page id or code slug>[?b=<block id>]
@@ -96,7 +96,8 @@ export async function GET(
   const { slug } = await params;
   const customDomainId = request.headers.get(CUSTOM_DOMAIN_HEADER);
   const page = await loadPublicPage(
-    isValidSlug(slug) ? { slug } : { pageId: slug },
+    // Links are built with the page id; 7-character slugs still work.
+    isGeneratedSlug(slug) ? { slug } : { pageId: slug },
     customDomainId,
   ).catch((error: unknown) => {
     console.error("vCard page lookup failed:", error);

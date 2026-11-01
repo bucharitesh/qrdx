@@ -52,7 +52,7 @@ https://qrdx.dev/api/oauth/authorize
 | `scope` | Yes | Space- or comma-separated; only scopes the app has |
 | `state` | Recommended | Any value; QRdx sends it back unchanged. Check it to stop CSRF |
 | `code_challenge` | If the app requires PKCE | 43–128 characters: the base64url SHA-256 of your `code_verifier` |
-| `code_challenge_method` | No | `S256` (the default). `plain` is accepted only for apps that don't require PKCE |
+| `code_challenge_method` | No | `S256`, the default and the only method accepted. `plain` is refused with `invalid_request` |
 | `prompt` | No | `consent` shows the consent screen even if the person approved these scopes before |
 
 ```ts title="lib/qrdx-oauth.ts"
@@ -94,7 +94,7 @@ QRdx then redirects to your `redirect_uri`:
 - Approved: `?code=<authorization code>&state=<your state>`. The code works once, within 10 minutes.
 - Cancelled: `?error=access_denied&error_description=...&state=<your state>`.
 
-Invalid requests (an unknown `client_id`, an unregistered `redirect_uri`, a scope the app doesn't have, a missing challenge when PKCE is required) never redirect. They return a JSON error such as `{ "error": "invalid_scope", "error_description": "..." }`.
+Invalid requests (an unknown `client_id`, an unregistered `redirect_uri`, a scope the app doesn't have, a missing challenge when PKCE is required, `code_challenge_method=plain`) never redirect. They return a JSON error such as `{ "error": "invalid_scope", "error_description": "..." }`.
 
 ## 3. Exchange the code for tokens
 
