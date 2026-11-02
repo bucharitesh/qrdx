@@ -56,7 +56,9 @@ const QRPreviewPanel: React.FC<QRPreviewPanelProps> = ({ style }) => {
     <div className="flex min-h-0 flex-1 flex-col">
       {/* Preview Content */}
       <div className="relative flex size-full items-center justify-center overflow-hidden p-4">
-        <div className="relative isolate flex size-full items-center justify-center overflow-hidden rounded-lg p-8">
+        {/* Taller top and bottom padding: the seasonal style strip sits over
+            the top edge and the scan score badge over the bottom one. */}
+        <div className="relative isolate flex size-full items-center justify-center overflow-hidden rounded-lg px-8 py-10 md:py-12">
           <ExamplesPreviewContainer className="size-full">
             <AnimatePresence mode="wait">
               <motion.div
