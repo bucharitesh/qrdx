@@ -8,13 +8,12 @@ import {
   useInView,
   useReducedMotion,
 } from "motion/react";
-import { QRCode } from "qrdx";
+import { QRCodeSVG } from "qrdx";
 import { useEffect, useRef, useState } from "react";
 import { DURATION, EASE } from "@/components/mockups/motion";
 import { PhoneFrame } from "@/components/mockups/phone-frame";
-import { easterEggUrl } from "@/lib/easter-eggs";
+import { HOME_CODES } from "./codes";
 import { DemoStage, QrTile, Readout } from "./demo-ui";
-import { FAMILY } from "./qr-family";
 
 // Illustrative destinations for one printed code.
 const DESTINATIONS = [
@@ -79,19 +78,7 @@ export function DynamicDemo() {
               label="Printed dynamic QR code"
               className="w-full p-0 shadow-none ring-0"
             >
-              <QRCode
-                value={easterEggUrl("menu")}
-                size={112}
-                level="M"
-                margin={0}
-                hideLogo
-                fgColor={FAMILY.fgColor}
-                eyeColor={FAMILY.eyeColor}
-                dotColor={FAMILY.dotColor}
-                bodyPattern={FAMILY.bodyPattern}
-                cornerEyePattern={FAMILY.cornerEyePattern}
-                cornerEyeDotPattern={FAMILY.cornerEyeDotPattern}
-              />
+              <QRCodeSVG {...HOME_CODES.dynamic} />
             </QrTile>
             <span className="text-[10px] font-medium text-neutral-500">
               Table 4 · Scan for menu

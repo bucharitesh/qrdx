@@ -1,4 +1,4 @@
-import { env } from "@/lib/env";
+import { isFeatureAvailable } from "@/lib/feature-availability";
 
 /**
  * Whether AI QR art is offered here. It runs on Gemini with GOOGLE_API_KEY,
@@ -7,7 +7,7 @@ import { env } from "@/lib/env";
  * Gemini's free tier allows no image generation.
  *
  * The pricing page, sitemap and llms.txt are prerendered, so a change takes
- * effect on the next deploy.
+ * effect on the next deploy. The rule lives in lib/feature-availability-rules.ts
+ * with the other features'.
  */
-export const isArtAvailable =
-  Boolean(env.GOOGLE_API_KEY) && env.AI_ART_ENABLED !== "0";
+export const isArtAvailable = isFeatureAvailable("aiArt");

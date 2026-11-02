@@ -1,0 +1,44 @@
+---
+title: What QRdx records when someone scans
+description: The data a scan of a dynamic code records, what it never stores, and how long it's kept.
+---
+
+Only dynamic codes record scans. A static code holds your content directly and never passes through QRdx.
+
+## What a scan records
+
+- Country, region and city, worked out from the network.
+- Device type, operating system and browser.
+- The referring site, if there is one.
+- The browser's language.
+- Which version the visitor saw, if an A/B test is running.
+- A daily, salted hash of the network address and browser, so a visitor counts once per day.
+
+## What it never stores
+
+QRdx never stores the scanner's IP address. The hash above can't be turned back into it, and it changes every day.
+
+Bots and link previews aren't recorded.
+
+## How long scans are kept
+
+Scans are kept as long as the code exists. Your plan decides how far back you can see them: 90 days on Free, 3 years on Pro and unlimited on Business.
+
+Deleting a code forever deletes its scans.
+
+## Cookies for people who scan
+
+Pages your scanners see, like short links and mobile pages, don't show a cookie banner and don't load QRdx's analytics or support widget.
+
+The only QRdx cookie there remembers a correct code password for 6 hours. Page owners can add their own analytics pixels to their pages on paid plans.
+
+## The QR code scanner
+
+The [QRdx scanner](/scan) keeps your scan history on your device only.
+
+## More detail
+
+- [Privacy policy](/legal/privacy-policy)
+- [Cookie policy](/legal/cookie-policy)
+- [Subprocessors](/legal/subprocessors)
+- [Data processing agreement](/legal/dpa)

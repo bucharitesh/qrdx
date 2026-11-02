@@ -11,6 +11,7 @@ import { cn } from "@repo/design-system/lib/utils";
 import { ArrowDown2 } from "iconsax-reactjs";
 import Link from "next/link";
 import { useId, useState } from "react";
+import { useAvailability } from "@/components/availability-provider";
 import { CookieSettingsButton } from "@/components/consent/cookie-settings-button";
 import { EGG_QR } from "@/components/fx/qr-matrix";
 import { QrMosaic } from "@/components/fx/qr-mosaic";
@@ -76,10 +77,12 @@ function FooterDisclosure({
 
 export function FooterSection() {
   const currentYear = new Date().getFullYear();
+  // No links to pages for features this deployment can't offer.
+  const { showsPath } = useAvailability();
 
   return (
     <footer id="footer" className="w-full">
-      <div className="flex flex-col gap-10 px-6 pt-14 pb-10 md:px-10 lg:flex-row lg:justify-between">
+      <div className="flex flex-col gap-10 px-10 pt-14 pb-10 lg:flex-row lg:justify-between">
         <div className="flex max-w-xs flex-col items-start gap-5">
           <Link
             href="/"
@@ -108,25 +111,30 @@ export function FooterSection() {
                   {column.title}
                 </h2>
                 <ul className="flex flex-col gap-y-2">
-                  {column.links.map((link) =>
-                    "children" in link && link.children ? (
-                      <FooterDisclosure
-                        key={link.id}
-                        title={link.title}
-                        links={link.children}
-                      />
-                    ) : (
-                      <li key={link.id}>
-                        <Link
-                          href={link.url ?? "/"}
-                          className={LINK}
-                          prefetch={false}
-                        >
-                          {link.title}
-                        </Link>
-                      </li>
-                    ),
-                  )}
+                  {column.links
+                    .filter(
+                      (link) =>
+                        !("url" in link && link.url) || showsPath(link.url),
+                    )
+                    .map((link) =>
+                      "children" in link && link.children ? (
+                        <FooterDisclosure
+                          key={link.id}
+                          title={link.title}
+                          links={link.children}
+                        />
+                      ) : (
+                        <li key={link.id}>
+                          <Link
+                            href={link.url ?? "/"}
+                            className={LINK}
+                            prefetch={false}
+                          >
+                            {link.title}
+                          </Link>
+                        </li>
+                      ),
+                    )}
                 </ul>
               </div>
             ))}
@@ -149,7 +157,7 @@ export function FooterSection() {
           <TooltipContent side="top">Go on, scan it</TooltipContent>
         </Tooltip>
       </div>
-      <div className="flex flex-col gap-1 border-t px-6 py-5 sm:flex-row sm:items-center sm:justify-between md:px-10">
+      <div className="flex flex-col gap-1 border-t px-10 py-5 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
           <p className="text-sm text-muted-foreground">
             © {currentYear} {siteConfig.name}. Open source under AGPL-3.0.

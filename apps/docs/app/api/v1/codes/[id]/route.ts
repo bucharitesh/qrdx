@@ -1,5 +1,4 @@
 import type { NextRequest } from "next/server";
-import { z } from "zod";
 import {
   codeIdSchema,
   deleteCode,
@@ -7,7 +6,6 @@ import {
   hasAnyField,
   setCodeArchived,
   updateCode,
-  updateCodeFields,
 } from "@/app/dashboard/codes/_lib/qr-codes";
 import { withApiQuotaHeaders } from "@/lib/api-quota";
 import { handleError } from "@/lib/error-response";
@@ -19,12 +17,9 @@ import {
   resolveApiScope,
   serializeCode,
 } from "../_lib/api";
+import { patchCodeSchema } from "../_lib/schemas";
 
 type Context = { params: Promise<{ id: string }> };
-
-const patchSchema = updateCodeFields
-  .extend({ archived: z.boolean().optional() })
-  .refine(hasAnyField, { message: "Nothing to update" });
 
 async function codeId({ params }: Context): Promise<string> {
   return parseWithSchema(codeIdSchema, (await params).id);
@@ -53,7 +48,7 @@ export const PATCH = withApiQuotaHeaders(
       assertJson(req);
       const id = await codeId(context);
       const { archived, ...fields } = parseWithSchema(
-        patchSchema,
+        patchCodeSchema,
         await readJsonBody(req, MAX_BODY_BYTES),
       );
 

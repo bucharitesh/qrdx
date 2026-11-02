@@ -40,7 +40,9 @@ const STYLES = {
     style: {
       ...FAMILY,
       bodyPattern: "circle",
-      cornerEyePattern: "circle",
+      // Circle eyes are on the engine's fragile list (WEAK_EYES); extra-rounded
+      // keeps the soft look and reads in every decoder.
+      cornerEyePattern: "extra-rounded",
       cornerEyeDotPattern: "circle",
     },
   },

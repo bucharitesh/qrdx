@@ -1,24 +1,12 @@
 import type { NextRequest } from "next/server";
-import { z } from "zod";
 import { codeIdSchema, getCode } from "@/app/dashboard/codes/_lib/qr-codes";
 import { withApiQuotaHeaders } from "@/lib/api-quota";
 import { handleError } from "@/lib/error-response";
 import { getPlanForScope, getPlanLimits } from "@/lib/plans";
 import { parseWithSchema } from "@/lib/request-guards";
-import {
-  getScanAnalytics,
-  listScans,
-  resolveScanRange,
-  SCAN_RANGE_KEYS,
-} from "@/lib/scans";
+import { getScanAnalytics, listScans, resolveScanRange } from "@/lib/scans";
 import { NO_STORE, resolveApiScope } from "../../_lib/api";
-
-const querySchema = z.object({
-  range: z.enum(SCAN_RANGE_KEYS as [string, ...string[]]).optional(),
-  // Individual scans, newest first; 0 = aggregates only.
-  limit: z.coerce.number().int().min(0).max(500).default(0),
-  before: z.iso.datetime().optional(),
-});
+import { scansQuerySchema } from "../../_lib/schemas";
 
 /**
  * Aggregated analytics for a range (clamped to the plan's retention), plus
@@ -30,7 +18,7 @@ export const GET = withApiQuotaHeaders(
       const scope = await resolveApiScope(req, "read");
       const id = parseWithSchema(codeIdSchema, (await params).id);
       const query = parseWithSchema(
-        querySchema,
+        scansQuerySchema,
         Object.fromEntries(req.nextUrl.searchParams),
       );
 

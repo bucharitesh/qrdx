@@ -1,5 +1,7 @@
 /** biome-ignore-all lint/style/noMagicNumbers: color math */
 
+import { roundTo } from "./fmt";
+
 export interface RGBAColor {
   r: number;
   g: number;
@@ -124,11 +126,10 @@ export function rgbToCmyk(
   if (k >= 1) {
     return [0, 0, 0, 1];
   }
-  const round = (value: number) => Math.round(value * 1000) / 1000;
   return [
-    round((1 - red - k) / (1 - k)),
-    round((1 - green - k) / (1 - k)),
-    round((1 - blue - k) / (1 - k)),
-    round(k),
+    roundTo((1 - red - k) / (1 - k)),
+    roundTo((1 - green - k) / (1 - k)),
+    roundTo((1 - blue - k) / (1 - k)),
+    roundTo(k),
   ];
 }

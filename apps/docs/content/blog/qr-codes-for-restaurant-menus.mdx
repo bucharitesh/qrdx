@@ -1,0 +1,138 @@
+---
+title: "QR Codes for Restaurant Menus: A Practical Guide"
+description: "Where to put a menu QR code, how big to print it, what it should open, Wi-Fi codes, accessibility and allergens, and the hygiene myths, with sources."
+date: "2026-11-02"
+author: ["ritesh-bucha"]
+category: Education
+tags: ["menu qr code", "restaurant qr code", "qr code menu", "table tent qr code", "wifi qr code", "digital menu"]
+image: /blog/qr-codes-for-restaurant-menus/cover.svg
+imageAlt: Line drawing of a café table with a menu QR code on a table tent, a Wi-Fi QR code on a small stand, a paper menu and a cup of coffee
+related: ["dynamic-vs-static-qr-codes", "how-big-should-a-qr-code-be"]
+published: true
+---
+
+**A good restaurant menu QR code is a dynamic link, printed large enough for the table, that opens a fast mobile menu page and sits beside a paper menu for anyone who wants one.** The dynamic link lets you change prices and dishes without reprinting. The mobile page beats a PDF on every phone. And the paper menu keeps the menu accessible to every guest, which UK guidance recommends for allergen information too.
+
+This guide covers each decision in order: the link, the placement and size, the page, a Wi-Fi code, accessibility, and the hygiene claims that still get repeated.
+
+## Step 1: choose the link
+
+A menu QR code is a URL QR code: it opens a web address. What matters is *which* address.
+
+- **A dynamic code (recommended for most venues).** The code holds a short link, and you choose where it sends people. When the menu changes, or moves from a PDF to a proper page, you update the destination and every printed code follows. You also see how many scans each placement gets. [Dynamic vs static QR codes](/blog/dynamic-vs-static-qr-codes) explains the mechanics, and what happens with some providers when a trial ends.
+- **A static code to a page on your own website.** If you run your own site and will keep one address, such as `yourcafe.com/menu`, a static code to it is free and can't be switched off by anyone. Keep the address stable and redirect it if the page ever moves.
+- **Avoid linking a file name.** A code that points at `menu-autumn-2026.pdf` breaks the day someone uploads `menu-winter-2026.pdf`.
+
+On QRdx, the [URL QR code generator](/qr-code-generator/url) makes static codes with no account. Dynamic codes and hosted menu pages need a free account, which includes 10 active dynamic codes and 3 hosted pages. Under the [Never-Hostage Guarantee](/guarantee), they keep working on every plan, including after you cancel.
+
+## Step 2: put the code where people look, at the right size
+
+Size follows scanning distance. QRdx's [print size calculator](/tools/print-size) uses module size = distance ÷ 250 (never under 0.4 mm). For a short link, which makes a 29 × 29 module code, that gives:
+
+| Placement | Scan distance | Code width | With quiet zone |
+| --- | --- | --- | --- |
+| Table tent or table sticker | about 40 cm | 4.6 cm | 5.9 cm |
+| Counter or menu board at arm's length | about 1 m | 11.6 cm | 14.8 cm |
+| Window or door, read from the sidewalk | about 2 m | 23.2 cm | 29.6 cm |
+
+Longer links make denser codes that need more space: a 108-character URL with tracking parameters needs 49 × 49 modules and a table-tent code about 7.8 cm wide. [How big should a QR code be?](/blog/how-big-should-a-qr-code-be) has the full chart.
+
+Placement tips that make the difference in a dining room:
+
+- **Table tents beat flat stickers.** A tent stands upright, so it faces the guest and stays out of spills. The [table tent guide](/qr-codes-on/table-tents) covers formats.
+- **One code per surface.** Two codes side by side (menu and reviews, say) get scanned at random. Label each one in words: "Scan for the menu".
+- **Matte, not gloss.** Laminated cards reflect overhead lights straight into the camera. Matte laminate or a matte sleeve fixes it.
+- **Away from edges and folds.** A code bent around a table edge or a menu fold distorts the grid.
+- **Test it in the room**, under the real lights, with two or three different phones. The [scan checker](/tools/scan-checker) will flag weak contrast or a missing margin before you print.
+
+The [menus placement guide](/qr-codes-on/menus) and [restaurants page](/qr-codes-for/restaurants) collect more ideas for counters, takeout bags and receipts.
+
+## Step 3: open a menu page, not a PDF
+
+A PDF is designed for paper. On a phone, guests pinch, zoom and scroll sideways; the file has to download before anything shows; and screen readers often can't make sense of it. A mobile web page loads in pieces, reflows to any screen, and can be edited in seconds.
+
+QRdx's hosted menu pages are built for this. Start from one of the [menu templates](/templates#menu) (café, restaurant, bar or juice bar) and each page gets:
+
+- sections of dishes with prices, descriptions and photos (up to 30 sections and 300 items);
+- the 14 allergens food businesses must declare in the UK and EU, shown in words on each dish;
+- diet tags: vegetarian, vegan, gluten-free, dairy-free, halal, kosher, spicy and organic;
+- "sold out" and badge labels you can switch on for the evening;
+- opening hours, and a Wi-Fi block that shows the network name and password, each with a copy button.
+
+The page has its own dynamic code, ready to download for the table tent. On the Free plan pages carry a small "Made with QRdx" footer; Pro removes it. The [landing pages docs](/docs/landing-pages) walk through creating and publishing one.
+
+## Step 4: add a Wi-Fi code
+
+Guests ask for the Wi-Fi password more than almost anything else. A Wi-Fi QR code answers it: the phone reads the network name and password from the code and offers to join.
+
+The format comes from the open-source ZXing barcode library, and looks like this:
+
+```txt
+WIFI:T:WPA;S:Cafe Guest;P:espresso-2026;;
+```
+
+`T` is the security type, `S` the network name and `P` the password; special characters such as `;` and `:` are escaped with a backslash ([ZXing's description](https://github.com/zxing/zxing/wiki/Barcode-Contents)). Phone cameras read it like any other code; Google's Pixel help, for example, lists connecting to a Wi-Fi network among the things a scanned code can do. The [Wi-Fi QR code generator](/qr-code-generator/wifi) builds and escapes it for you, with no account, and the code is static: it works with no server in between, so it never expires.
+
+Two practical notes. Use a guest network separate from the one your register and card terminals run on. And if you change the password often, put the Wi-Fi details on your menu page instead and update them there, rather than reprinting a code on every table.
+
+## Step 5: make it accessible to everyone
+
+A QR menu should be an extra, not the only way to see the menu. Not every guest has a phone with them, a working camera, a data connection or the eyesight for a small screen in a dim room.
+
+- **Keep paper menus available**, and say so on the table tent: "Paper menus available, just ask."
+- **Write allergens in words**, not icons alone. The UK Food Standards Agency's best practice guidance says businesses that provide allergen information digitally "should have an alternative way of accessing the information" for people who can't access it digitally, and as a backup if the digital version fails ([FSA best practice, paragraph 45](https://www.gov.uk/government/publications/allergen-information-for-non-prepacked-foods-best-practice/allergen-information-for-non-prepacked-foods-best-practice)). The same guidance recommends written allergen information supported by a conversation with staff. It's guidance, not law, but it's a sensible standard anywhere.
+- **Use real text on the page**, not photos of a printed menu, so text can be enlarged and read aloud by screen readers.
+- **Keep contrast high** on both the code and the page: dark text on a light background.
+- **Never require an app.** The built-in cameras on iPhone ([Apple's instructions](https://support.apple.com/en-us/102680)) and Pixel phones ([Google's instructions](https://support.google.com/pixelcamera/answer/16561572)) read QR codes directly.
+
+## Hygiene and safety: myths vs facts
+
+**Myth: QR menus are a hygiene measure.**
+Fact: the case for QR menus is editing and convenience, not germs. In April 2021 the US CDC concluded that "the risk of SARS-CoV-2 infection via the fomite transmission route is low, and generally less than 1 in 10,000" ([CDC science brief](https://archive.cdc.gov/www_cdc_gov/coronavirus/2019-ncov/more/science-and-research/surface-transmission.html)). A wipeable paper menu is a perfectly hygienic menu.
+
+**Myth: guests need to download an app to scan.**
+Fact: phone cameras read QR codes directly, as above. A code that asks for an app download first loses people.
+
+**Myth: QR codes expire.**
+Fact: the printed pattern never expires. What can stop is a dynamic code's redirect, if the provider switches it off when a trial or plan ends. [Do QR codes expire?](/blog/do-qr-codes-expire) covers who does what.
+
+**Myth: a QR code is always safe because it's yours.**
+Fact: anyone can stick their own code over yours, a scam known as quishing. Check your tables and windows regularly, print the venue name beside the code, and if you use a dynamic code, a short link on your own domain makes a fake easier to spot.
+
+## Extras worth adding
+
+- **A review code** by the door or on the receipt, made with the [Google review QR code generator](/qr-code-generator/google-review), so happy guests can leave a review in two taps.
+- **One code per placement** if you want to know whether the window or the tables get scanned more. With dynamic codes, each placement gets its own scan count.
+- **Seasonal menus without reprinting:** keep one code on every table and change where it points.
+
+## Checklist
+
+1. Dynamic link, or a static link to a stable page on your own domain.
+2. Code sized for the distance, with a 4-module margin, printed on matte stock.
+3. A label in words: "Scan for the menu."
+4. A fast mobile menu page with allergens written out, not a PDF.
+5. A separate Wi-Fi code, or Wi-Fi details on the menu page.
+6. Paper menus available, and a line saying so.
+7. Tested with several phones in the room; checked again every few weeks for stickers.
+
+## FAQ
+
+### How big should a menu QR code be on a table?
+
+For a short link scanned from about 40 cm, around 4.5 to 5 cm wide plus a margin. Longer links need more; the [calculator](/tools/print-size) works it out from your actual link.
+
+### Can I update my menu without reprinting the QR code?
+
+Yes, with a dynamic code or a hosted menu page. You change the destination or the page, and the printed code stays the same.
+
+### Should the QR code open a PDF?
+
+It can, but a mobile page is easier to read, faster to load and better for screen readers. If you keep a PDF, link it from a page so you can replace it without changing the code.
+
+### Do I still need paper menus?
+
+It's good practice. Some guests can't or won't use a phone, and UK guidance recommends a non-digital way to get allergen information.
+
+### Is a Wi-Fi QR code safe to print?
+
+It shares the password with anyone who scans it, so use it for a guest network that's kept separate from your business systems.

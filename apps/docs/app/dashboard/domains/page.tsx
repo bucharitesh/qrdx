@@ -89,7 +89,10 @@ export default async function DomainsPage() {
         {header}
         <Empty className="border">
           <EmptyHeader>
-            <HairlineFigure className="mx-auto mb-2 h-28 w-40" figure="Hub" />
+            <HairlineFigure
+              className="mx-auto mb-2 h-28 w-40"
+              figure="Domain"
+            />
             <EmptyTitle>Use your own domain for QR codes</EmptyTitle>
             <EmptyDescription>
               With Pro, your dynamic codes can open short links on your own

@@ -441,14 +441,18 @@ describe("over the limit", () => {
     );
   });
 
-  it("uses the OAuth error shape on /v1/me and /v1/themes", async () => {
+  it("adds the OAuth error fields on /v1/me and /v1/themes", async () => {
     setUsed("user:u_alice", 1000);
     const response = await getMe("profile-token");
     expect(response.status).toBe(429);
+    const message =
+      "Daily API limit reached: the Free plan allows 1,000 requests a day. It resets at 00:00 UTC. Upgrade your plan for a higher limit.";
     expect(await response.json()).toEqual({
       error: "rate_limited",
-      error_description:
-        "Daily API limit reached: the Free plan allows 1,000 requests a day. It resets at 00:00 UTC. Upgrade your plan for a higher limit.",
+      error_description: message,
+      code: "RATE_LIMITED",
+      message,
+      status: 429,
     });
     expect(response.headers.get("retry-after")).toBe(String(12 * 3600));
     expect(quotaHeaders(response)).toMatchObject({

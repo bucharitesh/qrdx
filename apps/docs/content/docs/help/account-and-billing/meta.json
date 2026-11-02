@@ -1,0 +1,15 @@
+{
+  "$schema": "../../../../.source/json-schema/docs.meta.json",
+  "title": "Account and billing",
+  "icon": "CreditCard",
+  "pages": [
+    "plans",
+    "change-plan",
+    "invoices",
+    "cancel",
+    "never-hostage",
+    "sign-in",
+    "export-your-data",
+    "delete-your-account"
+  ]
+}

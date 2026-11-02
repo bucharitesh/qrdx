@@ -1,15 +1,19 @@
+import {
+  SHOWCASE_ACCENT as ACCENT,
+  SHOWCASE_INK,
+  SHOWCASE_PAPER,
+} from "@/lib/landing/showcase-styles";
 import type { QRStyle } from "@/types/theme";
 
-// One QR style family for every code drawn on the home page: near-black ink on
-// white paper, rounded modules, with the brand blue used only as an accent on
-// the eyes. Demos vary one thing at a time from this base.
+// The hero editor's style family: near-black ink on white paper, rounded
+// modules, with the brand blue used only as an accent on the eyes. The
+// feature demos below the hero each use a showcase style instead
+// (lib/landing/showcase-styles.ts, ./codes.ts).
 
-export const INK = "#0b0b0d";
-export const ACCENT = "#155dfc";
-export const PAPER = "#ffffff";
+export const INK = SHOWCASE_INK;
 
 export const FAMILY = {
-  bgColor: PAPER,
+  bgColor: SHOWCASE_PAPER,
   fgColor: INK,
   eyeColor: INK,
   dotColor: ACCENT,

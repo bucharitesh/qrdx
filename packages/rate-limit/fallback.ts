@@ -55,7 +55,7 @@ export function createMemoryLimiter(
     windowMs,
     sliding = true,
   }: { tokens: number; windowMs: number; sliding?: boolean },
-  now: () => number = Date.now,
+  now: () => number = () => Date.now(),
   maxKeys: number = MAX_KEYS
 ) {
   const windows = new Map<string, WindowState>();
@@ -131,7 +131,7 @@ export const DEFAULT_COOLDOWN_MS = 30_000;
 export function createCircuitBreaker({
   failureThreshold = DEFAULT_FAILURE_THRESHOLD,
   cooldownMs = DEFAULT_COOLDOWN_MS,
-  now = Date.now,
+  now = () => Date.now(),
   log = (message) => console.error(message),
 }: BreakerOptions = {}) {
   let state: BreakerState = "closed";

@@ -826,6 +826,18 @@ async function testPages(page: Page) {
       );
     });
 
+    // What a scan opens: the page's code, /q/<slug>, redirects to /p/<slug>.
+    await step(area, "short link opens the page signed out", async () => {
+      const slug = pagePath.split("/").pop() ?? "";
+      const res = await http(`/q/${slug}`, { signedIn: false });
+      return check(
+        res.status >= 300 &&
+          res.status < 400 &&
+          localPath(res.location ?? "") === pagePath,
+        `${res.status} /q/${slug} → ${res.location}`,
+      );
+    });
+
     await step(area, "submit the form signed out", async () => {
       const visitor = await launch({ width: 420, height: 900 });
       try {

@@ -94,10 +94,12 @@ const eps = await getQRAsEPS(props, { sizeMm: 40, bleedMm: 3, colorMode: 'cmyk' 
 
 The CLI writes EPS too: `qrdx generate "https://example.com" -o qr.eps`.
 
-## AI art
+<IfAvailable feature="aiArt" title="AI art">
 
 [AI QR art](/ai/art) turns your code into a scene with Google's Gemini image model (Nano Banana 2.1). You get 30+ style presets, things to avoid, a **QR visibility** slider (how strongly Gemini favors the code) and a **creativity** slider (how freely it reads your prompt), seed locking, 1 to 4 variations per run and an optional reference image, such as a logo or a palette, whose colors and shapes carry over.
 
 Every image is checked on the server before you see it. QRdx sends Gemini a plain black-and-white code (error correction H, square modules, a wide quiet zone) and asks it to keep the module grid, the finder eyes and the quiet zone. It then decodes Gemini's image with jsQR, as it is and through a phone-camera model. If that fails, it blends the image into the code with Image QR on the same module grid, which only corrects the modules that would read wrong, and checks again. An image that still doesn't decode to your exact content isn't delivered. Your browser then scores the variations and picks the best; download it at 1024 px or as a 2048 px print copy (resampled and checked again).
 
 Each delivered image uses one AI art credit: Free accounts get 3 a month, Pro 30, and Business 150 shared by the whole team. Images that fail or don't pass the scan check use no credit, and the print copy is free. AI art is a raster image and its content is fixed, so for an editable link put a [dynamic code](/docs/dynamic-qr-codes)'s short link in it.
+
+</IfAvailable>

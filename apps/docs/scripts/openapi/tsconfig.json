@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["../../*"],
+      "@repo/*": ["../../../../packages/*"],
+      "server-only": ["../../tests/support/empty.ts"],
+      "qrdx": ["../../../../packages/qrdx/src/index.tsx"],
+      "qrdx/types": ["../../../../packages/qrdx/types/index.ts"]
+    }
+  }
+}

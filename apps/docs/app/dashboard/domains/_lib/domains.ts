@@ -270,6 +270,11 @@ export interface DomainOptions {
   domains: { id: string; hostname: string }[];
   /** False when the scope's plan has no custom domains */
   canUse: boolean;
+  /**
+   * False where custom domains can't be connected on this deployment (on
+   * Vercel without the Domains API). Codes keep the domain they already use.
+   */
+  available: boolean;
   /** The scope's plan lets codes choose their back-half */
   customSlugs: boolean;
   /** Host of default short links, e.g. qrdx.dev */
@@ -296,6 +301,7 @@ export async function getDomainOptions(
   return {
     domains,
     canUse: !disabled && limits.customDomains > 0,
+    available: !disabled,
     customSlugs: limits.customSlugs,
     defaultHost,
   };

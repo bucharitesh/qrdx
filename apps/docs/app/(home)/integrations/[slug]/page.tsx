@@ -28,6 +28,8 @@ import { IntegrationCard } from "@/components/sections/integrations/integration-
 import { IntegrationLogo } from "@/components/sections/integrations/integration-logo";
 import { resolveAction } from "@/components/sections/integrations/resolve-action";
 import { breadcrumbSchema, JsonLd } from "@/components/sections/tools/json-ld";
+import { getFeatures } from "@/lib/feature-availability";
+import { catalogParagraphs } from "@/lib/feature-availability-rules";
 import { getIntegrationAvailability } from "@/lib/integration-availability";
 import { isVisible, setupNeeded } from "@/lib/integration-availability-rules";
 import { baseUrl, createMetadata } from "@/lib/metadata";
@@ -150,7 +152,7 @@ export default async function IntegrationDetailPage({
 
       <header className="relative isolate overflow-hidden border-b">
         <GridLines className="-z-10" />
-        <div className="flex flex-col gap-8 px-6 pt-8 pb-10 md:px-10 md:pt-10 md:pb-12">
+        <div className="flex flex-col gap-8 px-10 pt-8 pb-10 md:pt-10 md:pb-12">
           <Breadcrumbs align="start" items={crumbs} />
           <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div className="flex min-w-0 flex-col gap-5 sm:flex-row sm:items-start">
@@ -203,11 +205,11 @@ export default async function IntegrationDetailPage({
         </div>
       </header>
 
-      <div className="grid gap-12 px-6 py-12 md:px-10 md:py-14 lg:grid-cols-[minmax(0,1fr)_17rem] lg:gap-14">
+      <div className="grid gap-12 px-10 py-12 md:py-14 lg:grid-cols-[minmax(0,1fr)_17rem] lg:gap-14">
         <div className="flex min-w-0 flex-col gap-14">
           <Section id="about" title="What it does">
             <div className="flex max-w-3xl flex-col gap-3 text-base leading-relaxed text-muted-foreground text-pretty">
-              {entry.description.map((paragraph) => (
+              {catalogParagraphs(entry, getFeatures()).map((paragraph) => (
                 <p key={paragraph}>{paragraph}</p>
               ))}
             </div>
@@ -317,7 +319,7 @@ export default async function IntegrationDetailPage({
       {related.length > 0 && (
         <section
           aria-labelledby="related"
-          className="flex flex-col gap-6 border-t px-6 py-12 md:px-10 md:py-14"
+          className="flex flex-col gap-6 border-t px-10 py-12 md:py-14"
         >
           <div className="flex flex-wrap items-end justify-between gap-3">
             <h2

@@ -314,13 +314,26 @@ describe("GET /v1/themes", () => {
     expect(((await other.json()) as { error: string }).error).toBe("not_found");
   });
 
-  it("needs themes:read, with OAuth-shaped errors", async () => {
+  it("needs themes:read, with the API and OAuth error fields", async () => {
+    const message =
+      "This token needs the 'themes:read' scope. Add it to your app and ask for it when the user authorizes.";
     const wrongScope = await getThemes("profile");
     expect(wrongScope.status).toBe(403);
     expect(await wrongScope.json()).toEqual({
       error: "insufficient_scope",
-      error_description: "Scope 'themes:read' required",
+      error_description: message,
+      code: "INSUFFICIENT_SCOPE",
+      message,
+      status: 403,
+      docs: "http://localhost:3000/docs/developers/rest-api#endpoints",
     });
-    expect((await getThemes()).status).toBe(401);
+    const missing = await getThemes();
+    expect(missing.status).toBe(401);
+    expect(await missing.json()).toMatchObject({
+      error: "invalid_token",
+      code: "UNAUTHORIZED",
+      status: 401,
+      docs: "http://localhost:3000/docs/developers/rest-api#get-an-access-token",
+    });
   });
 });

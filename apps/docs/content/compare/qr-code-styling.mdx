@@ -30,10 +30,10 @@ tableRows:
     qrdx: "React components"
     competitor: "Framework-agnostic class"
   - feature: Dot (body) styles
-    qrdx: "9"
+    qrdx: "{facts.bodyPatterns}"
     competitor: "6"
   - feature: Corner square / corner dot styles
-    qrdx: "9 / 11"
+    qrdx: "{facts.eyeShapes} / {facts.eyeCentres}"
     competitor: "7 / 7"
   - feature: Gradients
     qrdx: "Linear + radial"
@@ -42,13 +42,13 @@ tableRows:
     qrdx: true
     competitor: true
   - feature: Download formats
-    qrdx: "PNG, JPG, SVG, PDF"
+    qrdx: "PNG, JPG, SVG, PDF, EPS"
     competitor: "PNG, JPEG, WebP, SVG"
   - feature: Node.js rendering
     qrdx: "Not documented"
     competitor: "Via node-canvas or jsdom"
   - feature: Frame templates
-    qrdx: "6 built in"
+    qrdx: "{facts.frames} built in"
     competitor: "Via extensions"
   - feature: Visual editor that exports code
     qrdx: true
@@ -57,9 +57,9 @@ featureHighlights:
   - title: React-native API
     description: "QRdx is a set of React components you render with props. qr-code-styling is a class you instantiate and append to a DOM node, so React apps usually wrap it in a ref and an effect."
   - title: More shape options
-    description: "QRdx has 9 body patterns, 9 corner-eye shapes and 11 eye-dot shapes, including diamond, pacman, gear and star styles. qr-code-styling has 6 dot types and 7 types each for corner squares and corner dots."
+    description: "QRdx has {facts.bodyPatterns} body patterns, {facts.eyeShapes} corner-eye shapes and {facts.eyeCentres} eye-dot shapes, including diamond, pacman, gear and star styles. qr-code-styling has 6 dot types and 7 types each for corner squares and corner dots."
   - title: Templates and PDF export
-    description: "QRdx ships 6 frame templates and exports PDF as well as PNG, JPG and SVG. qr-code-styling exports PNG, JPEG, WebP and SVG, and adds borders through extensions."
+    description: "QRdx ships {facts.frames} call-to-action frames and exports PDF and EPS as well as PNG, JPG and SVG. qr-code-styling exports PNG, JPEG, WebP and SVG, and adds borders through extensions."
   - title: Design visually, paste the code
     description: "Style a code in the QRdx playground and copy it as a ready-to-use QRCode component, so designers and developers work from the same settings."
 ---

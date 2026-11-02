@@ -154,21 +154,28 @@
 }
 
 /* Bats */
+/* Bats: hang by their feet (the box's top edge), spread their wings to fly */
 .bat {
   position: absolute;
   top: 0;
   left: 0;
   pointer-events: auto;
+  transform-origin: 50% 0;
   will-change: transform;
 }
 
-.batWings {
+.batHanging {
   display: block;
+  transform-origin: 50% 0;
+}
+
+.batFlying {
+  display: none;
   transform-origin: 50% 45%;
 }
 
-.bat[data-mode="roost"] .batWings {
-  animation: roost 3.4s ease-in-out infinite;
+.bat[data-mode="roost"] .batHanging {
+  animation: roost 5.2s ease-in-out infinite;
   animation-delay: var(--delay, 0s);
 }
 
@@ -176,7 +183,12 @@
   pointer-events: none;
 }
 
-.bat[data-mode="fly"] .batWings {
+.bat[data-mode="fly"] .batHanging {
+  display: none;
+}
+
+.bat[data-mode="fly"] .batFlying {
+  display: block;
   animation: flap 0.22s ease-in-out infinite alternate;
 }
 
@@ -306,10 +318,10 @@
 @keyframes roost {
   0%,
   100% {
-    transform: rotate(-3deg) scale(1, 1);
+    transform: rotate(-2.5deg);
   }
   50% {
-    transform: rotate(3deg) scale(0.86, 0.96);
+    transform: rotate(2.5deg);
   }
 }
 
@@ -621,7 +633,8 @@
   .fig8x,
   .fig8y,
   .cat[data-mood] .catBody,
-  .bat .batWings,
+  .bat .batHanging,
+  .bat .batFlying,
   .fog,
   .light,
   .snowman[data-hop="true"] .snowmanBody,

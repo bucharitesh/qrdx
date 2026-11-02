@@ -16,6 +16,7 @@ import {
   getPlanLimits,
 } from "@/lib/plans";
 import { PLAN_NAMES } from "@/lib/pricing";
+import { signInPath } from "@/lib/safe-redirect";
 import { type ActiveScope, getActiveScope } from "@/lib/scope";
 import { getCurrentUser } from "@/lib/shared";
 import { UnauthorizedError } from "@/types/errors";
@@ -44,7 +45,8 @@ async function requireScope(): Promise<ActiveScope> {
   try {
     return await getActiveScope();
   } catch (error) {
-    if (error instanceof UnauthorizedError) redirect("/playground");
+    if (error instanceof UnauthorizedError)
+      redirect(signInPath("/dashboard/team"));
     throw error;
   }
 }
@@ -244,7 +246,7 @@ export default async function TeamPage({
           <CardHeader>
             <CardTitle>Invite people</CardTitle>
             <CardDescription>
-              QRdx doesn't send emails: create an invite link and share it
+              Invites aren't emailed: create an invite link and share it
               yourself. Links expire after 48 hours and only work for the
               invited email address.
             </CardDescription>

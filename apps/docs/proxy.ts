@@ -3,6 +3,7 @@ import { isMarkdownPreferred, rewritePath } from "fumadocs-core/negotiation";
 import { headers } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
 import { routeCustomDomain } from "@/app/dashboard/domains/_lib/host-routing";
+import { signInPath } from "@/lib/safe-redirect";
 import {
   appCsp,
   createNonce,
@@ -11,11 +12,11 @@ import {
   NONCE_ROUTE,
   reportingEndpoints,
 } from "@/lib/security/csp";
-import { API_AUTH_PREFIX, DEFAULT_LOGIN_REDIRECT } from "./routes";
+import { API_AUTH_PREFIX } from "./routes";
 
 const { rewrite: rewriteLLM } = rewritePath("/docs/*path", "/llms.mdx/*path");
 
-/** Signed-in pages: signed-out visitors are sent to sign in. */
+/** Signed-in pages: signed-out visitors are sent to sign in (and back). */
 const APP_PATHS =
   /^\/(?:editor\/theme\/[^/]+|dashboard(?:\/.*)?|settings(?:\/.*)?|success)$/;
 
@@ -81,7 +82,10 @@ export default async function proxy(request: NextRequest) {
   }
 
   if (!session) {
-    return NextResponse.redirect(new URL(DEFAULT_LOGIN_REDIRECT, request.url));
+    // Sign in, then come back to the page they asked for.
+    return NextResponse.redirect(
+      new URL(signInPath(pathname + request.nextUrl.search), request.url),
+    );
   }
 
   if (session) {

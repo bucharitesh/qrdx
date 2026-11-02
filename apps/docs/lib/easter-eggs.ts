@@ -22,7 +22,8 @@ export interface EasterEgg {
 }
 
 // Each destination is the media itself, not a page about it: the image or
-// GIF file, or YouTube's player-only embed for videos.
+// GIF file, or the video on YouTube (a watch link opens the YouTube app on
+// phones and plays at once).
 export const easterEggs = {
   lost: {
     title: "Confused Travolta",
@@ -36,7 +37,7 @@ export const easterEggs = {
   },
   footer: {
     title: "Never Gonna Give You Up",
-    url: "https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?autoplay=1",
+    url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
     why: "Footer code mosaic: the classic QR prank, for whoever scans to the very end.",
   },
   hero: {
@@ -51,7 +52,7 @@ export const easterEggs = {
   },
   print: {
     title: "What is this? A center for ants?",
-    url: "https://www.youtube-nocookie.com/embed/LQc8NDKcnpM?autoplay=1",
+    url: "https://www.youtube.com/watch?v=LQc8NDKcnpM",
     why: "Print-size demo: a code printed too small for its scanning distance.",
   },
   menu: {
@@ -61,12 +62,12 @@ export const easterEggs = {
   },
   studio: {
     title: "Bob Ross: Happy Accident",
-    url: "https://www.youtube-nocookie.com/embed/Fw6odlNp7_8?autoplay=1",
+    url: "https://www.youtube.com/watch?v=Fw6odlNp7_8",
     why: "Style studio demo: no mistakes when styling a code, just happy accidents.",
   },
   mcp: {
     title: "I know Kung Fu",
-    url: "https://www.youtube-nocookie.com/embed/8XV8aBNOIqI?autoplay=1",
+    url: "https://www.youtube.com/watch?v=8XV8aBNOIqI",
     why: "MCP mockup: the assistant downloads a new skill (QR codes) and just knows it.",
   },
   pro: {
@@ -76,7 +77,7 @@ export const easterEggs = {
   },
   smudge: {
     title: "'Tis but a scratch",
-    url: "https://www.youtube-nocookie.com/embed/Apt9HIg2wEU?autoplay=1",
+    url: "https://www.youtube.com/watch?v=Apt9HIg2wEU",
     why: "Error-correction demo on the blog: smudge the code and it shrugs it off.",
   },
 } as const satisfies Record<string, EasterEgg>;

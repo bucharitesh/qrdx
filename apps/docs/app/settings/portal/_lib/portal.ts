@@ -2,10 +2,10 @@
 // opens, otherwise a page on this site that says what to do next. No
 // server-only imports, so every outcome is unit tested directly.
 
-import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
+import { signInPath } from "@/lib/safe-redirect";
 
-/** Signed-out visitors land where they can sign in. */
-export const SIGNED_OUT_PATH = DEFAULT_LOGIN_REDIRECT;
+/** Signed-out visitors sign in, then come back to open the portal. */
+export const SIGNED_OUT_PATH = signInPath("/settings/portal");
 /** Users who never checked out have no Polar customer, so no portal. */
 export const NO_CUSTOMER_PATH = "/pricing";
 /** The usage page shows "Billing portal is unavailable right now" for this. */

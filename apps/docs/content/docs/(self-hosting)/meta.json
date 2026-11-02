@@ -1,0 +1,8 @@
+{
+  "$schema": "../../../.source/json-schema/docs.meta.json",
+  "title": "Self-hosting",
+  "description": "Run QRdx on your own servers",
+  "icon": "Server",
+  "root": true,
+  "pages": ["../self-hosting"]
+}

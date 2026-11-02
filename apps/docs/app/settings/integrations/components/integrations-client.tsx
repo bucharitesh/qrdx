@@ -36,6 +36,8 @@ export type IntegrationWithStatus = IntegrationDefinition & {
 const SHORTCUTS: {
   title: string;
   description: string;
+  /** The description to use instead while one of the slugs is hidden here. */
+  descriptionWithout?: Record<string, string>;
   href: string;
   slugs: string[];
 }[] = [
@@ -57,6 +59,11 @@ const SHORTCUTS: {
     title: "Tracking pixels",
     description:
       "Google Analytics, Tag Manager, Meta, TikTok and LinkedIn on hosted pages.",
+    // Without Tag Manager where it can't load (no custom domains here)
+    descriptionWithout: {
+      "google-tag-manager":
+        "Google Analytics, Meta, TikTok and LinkedIn on hosted pages.",
+    },
     href: "/dashboard/codes",
     slugs: [
       "google-analytics",
@@ -110,6 +117,10 @@ export function IntegrationsClient({
     () =>
       SHORTCUTS.map((shortcut) => ({
         ...shortcut,
+        description:
+          Object.entries(shortcut.descriptionWithout ?? {}).find(([slug]) =>
+            hiddenSlugs.includes(slug),
+          )?.[1] ?? shortcut.description,
         entries: shortcut.slugs
           .filter((slug) => !hiddenSlugs.includes(slug))
           .map((slug) => getCatalogEntry(slug))

@@ -33,6 +33,7 @@ import { type FormEvent, useCallback, useEffect, useId, useState } from "react";
 import { emitSound } from "@/components/editor/sound";
 import { NeedsSetupBadge } from "@/components/needs-setup";
 import { IntegrationLogo } from "@/components/sections/integrations/integration-logo";
+import { sourcesHint } from "@/lib/availability-copy";
 import {
   DataConnectionError,
   loadSourcePage,
@@ -61,13 +62,6 @@ const QUERY_LABELS: Record<string, { label: string; placeholder: string }> = {
     label: "Your Spotify profile",
     placeholder: "https://open.spotify.com/user/…",
   },
-};
-
-const listNames = (sources: SourceStatusView[]) => {
-  const names = sources.map((source) => source.name);
-  return names.length > 1
-    ? `${names.slice(0, -1).join(", ")} or ${names.at(-1)}`
-    : (names[0] ?? "");
 };
 
 function useSources(contentType: string) {
@@ -374,11 +368,14 @@ export function AccountSourcePicker({
     ) : null;
 
   if (ready.length === 0) {
-    if (accountSources.length === 0) return setupNote;
+    // Only sources this deployment can connect are named (production leaves
+    // out the ones that need setup); none, and the line is dropped.
+    const hint = sourcesHint(accountSources.map((source) => source.name));
+    if (!hint) return setupNote;
     return (
       <>
         <p className="text-muted-foreground text-xs text-pretty">
-          Pick from {listNames(accountSources)}:{" "}
+          {hint}:{" "}
           <Link className={linkClass} href="/integrations?category=sources">
             connect an account
           </Link>

@@ -1,23 +1,16 @@
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import type { NextRequest } from "next/server";
-import { cornerEyeDotPatternSchema, cornerEyePatternSchema } from "qrdx/types";
-import { z } from "zod";
 import { handleError } from "@/lib/error-response";
 import {
-  QR_DEFAULTS,
-  QR_MARGIN_MAX,
-  QR_SIZE_MAX,
-  QR_SIZE_MIN,
   QR_TEMPLATE_IDS,
   QrDataTooLongError,
-  qrImageFormats,
-  qrOptionsSchema,
   renderQrEps,
   renderQrPng,
   renderQrSvg,
 } from "@/lib/qr-render";
 import { enforceRateLimits, getClientIp } from "@/lib/request-guards";
 import { ValidationError } from "@/types/errors";
+import { qrImageQuerySchema } from "./_lib/query";
 
 const ipRateLimiter = createRateLimiter({
   limiter: slidingWindow(300, "60 s"),
@@ -33,26 +26,6 @@ const CORS_HEADERS = {
 // Same query → same bytes, so responses can be cached forever.
 const IMMUTABLE = "public, max-age=31536000, immutable";
 
-const querySchema = qrOptionsSchema.extend({
-  // Retired shapes are no longer listed, but existing image URLs that use
-  // them keep rendering exactly as before.
-  eye: cornerEyePatternSchema.default(QR_DEFAULTS.eye),
-  dot: cornerEyeDotPatternSchema.default(QR_DEFAULTS.dot),
-  format: z.enum(qrImageFormats).default("svg"),
-  size: z.coerce
-    .number()
-    .int()
-    .min(QR_SIZE_MIN)
-    .max(QR_SIZE_MAX)
-    .default(QR_DEFAULTS.size),
-  margin: z.coerce
-    .number()
-    .int()
-    .min(0)
-    .max(QR_MARGIN_MAX)
-    .default(QR_DEFAULTS.margin),
-});
-
 const templateIdsByLowercase = new Map(
   QR_TEMPLATE_IDS.map((id) => [id.toLowerCase(), id]),
 );
@@ -67,7 +40,7 @@ function parseQuery(searchParams: URLSearchParams) {
       templateIdsByLowercase.get(raw.template.toLowerCase()) ?? raw.template;
   }
 
-  const result = querySchema.safeParse(raw);
+  const result = qrImageQuerySchema.safeParse(raw);
   if (!result.success) {
     throw new ValidationError(
       "Invalid query parameters",

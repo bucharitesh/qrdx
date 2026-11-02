@@ -22,6 +22,7 @@ import {
 } from "iconsax-reactjs";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { useAvailability } from "@/components/availability-provider";
 import { track } from "@/lib/analytics";
 import { MigrateApiError, type MigrateClient } from "@/lib/migrate/client";
 import { FILE_PRESETS } from "@/lib/migrate/files";
@@ -85,6 +86,8 @@ export function PreviewStep({
   const openGetProDialog = useGetProDialogStore(
     (state) => state.openGetProDialog,
   );
+  // No Domains link where custom domains can't be added.
+  const { showsPath } = useAvailability();
   const [folderName, setFolderName] = useState(defaultFolderName(provider));
   // Plan options (the folder name doesn't change the plan).
   const [options, setOptions] = useState<ImportOptions>({
@@ -430,7 +433,8 @@ export function PreviewStep({
                           )}
                       </p>
                       {preview.backHalves.domain &&
-                        preview.backHalves.qrdx !== "verified" && (
+                        preview.backHalves.qrdx !== "verified" &&
+                        showsPath("/dashboard/domains") && (
                           <Link
                             className="font-medium text-foreground underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground"
                             href="/dashboard/domains"

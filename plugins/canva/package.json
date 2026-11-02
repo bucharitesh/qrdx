@@ -1,6 +1,7 @@
 {
   "name": "@qrdx/canva-plugin",
   "version": "0.0.1",
+  "license": "MIT",
   "private": true,
   "scripts": {
     "start": "webpack serve --config webpack.config.js",

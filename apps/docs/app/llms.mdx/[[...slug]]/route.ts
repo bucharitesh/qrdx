@@ -5,15 +5,21 @@ import { source } from "@/lib/source";
 export const revalidate = false;
 
 /**
- * One docs page as Markdown, for "Copy Markdown" and "View as Markdown":
- * /docs/<path>.mdx and /docs.mdx are rewritten here in next.config.ts.
+ * One docs page as Markdown, for "Copy Markdown", "View as Markdown" and
+ * agents: /docs/<path>.md, /docs/<path>.mdx, /docs.md and /docs.mdx are
+ * rewritten here in next.config.ts, and so is /docs/<path> when the request
+ * asks for text/markdown.
  */
 export async function GET(
   _request: Request,
   { params }: { params: Promise<{ slug?: string[] }> },
 ) {
   const { slug } = await params;
-  const page = source.getPage(slug);
+  // /docs/x.md asked for as text/markdown arrives here as x.md.
+  const last = slug?.at(-1)?.replace(/\.mdx?$/, "");
+  const page = source.getPage(
+    slug && last !== undefined ? [...slug.slice(0, -1), last] : slug,
+  );
   if (!page) notFound();
 
   return new Response(await getLLMText(page), {

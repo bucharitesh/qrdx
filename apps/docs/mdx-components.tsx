@@ -6,12 +6,15 @@ import * as TabsComponents from "fumadocs-ui/components/tabs";
 import defaultMdxComponents from "fumadocs-ui/mdx";
 import type { MDXComponents } from "mdx/types";
 import type { ComponentProps } from "react";
+import { APIPage } from "@/components/docs/api-page";
 import { ComponentLinks } from "@/components/docs/registry/component-links";
 import { ComponentPreview } from "@/components/docs/registry/component-preview";
 import { ComponentSource } from "@/components/docs/registry/component-source";
 import { InstallationTabs } from "@/components/docs/registry/installation-tabs";
 import { PackageManagerTabs } from "@/components/docs/registry/package-manager-tabs";
 import { GithubCard } from "@/components/mdx/github-card";
+import { IfAvailable } from "@/components/mdx/if-available";
+import { NpmStatus } from "@/components/mdx/npm-status";
 import { ErrorCorrectionDemo } from "@/components/sections/blog/error-correction-demo";
 import { Figure } from "@/components/sections/blog/figure";
 import { docsIcons } from "@/lib/docs-icons";
@@ -40,6 +43,8 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
     Accordion,
     Accordions,
     GithubCard,
+    IfAvailable,
+    NpmStatus,
     Figure,
     ErrorCorrectionDemo,
     ComponentLinks,
@@ -47,6 +52,8 @@ export function getMDXComponents(components?: MDXComponents): MDXComponents {
     ComponentSource,
     InstallationTabs,
     PackageManagerTabs,
+    // API reference pages (content/docs/developers/api)
+    OpenAPIPage: APIPage,
     ...components,
   };
 }

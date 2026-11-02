@@ -93,6 +93,12 @@ export const SOURCES = {
   posthogApp: "https://us.posthog.com",
   /** Vercel's toolbar, on preview deployments only */
   vercelLive: "https://vercel.live",
+  /**
+   * The public REST API host, for the API reference's Try it panel when the
+   * reader picks it (by default Try it calls this site's /api/v1: 'self').
+   * Only the image API answers cross-origin requests there.
+   */
+  qrdxApi: "https://api.qrdx.dev",
 } as const;
 
 export interface CspOptions {
@@ -198,6 +204,7 @@ export function appCspDirectives(
       SOURCES.r2Api,
       ...storageOrigins,
       SOURCES.zxingWasm,
+      SOURCES.qrdxApi,
       ...(preview ? [SOURCES.vercelLive, "wss://ws-us3.pusher.com"] : []),
       ...(dev ? ["ws:", "wss:"] : []),
     ]),

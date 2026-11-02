@@ -221,6 +221,7 @@ interface ApiError {
   code: string;
   message: string;
   status: number;
+  docs?: string;
 }
 const errorOf = async (response: Response) =>
   (await response.json()) as ApiError;
@@ -243,8 +244,10 @@ describe("who may call /v1/codes", () => {
     expect(created.status).toBe(403);
     expect(await errorOf(created)).toEqual({
       code: "INSUFFICIENT_SCOPE",
-      message: "This token needs the 'codes:write' scope.",
+      message:
+        "This token needs the 'codes:write' scope. Add it to your app and ask for it when the user authorizes.",
       status: 403,
+      docs: "http://localhost:3000/docs/developers/rest-api#endpoints",
     });
     expect((await patch("code_1", { title: "x" }, read)).status).toBe(403);
     expect((await remove("code_1", read)).status).toBe(403);
@@ -266,7 +269,15 @@ describe("who may call /v1/codes", () => {
   it("refuses unknown, expired and revoked tokens with 401 INVALID_TOKEN", async () => {
     const unknown = await getList("", { token: "made-up" });
     expect(unknown.status).toBe(401);
-    expect((await errorOf(unknown)).code).toBe("INVALID_TOKEN");
+    expect(unknown.headers.get("www-authenticate")).toBe(
+      'Bearer realm="QRdx API", error="invalid_token"',
+    );
+    const body = await errorOf(unknown);
+    expect(body.code).toBe("INVALID_TOKEN");
+    expect(body.message).toMatch(/refresh token/);
+    expect(body.docs).toBe(
+      "http://localhost:3000/docs/developers/rest-api#get-an-access-token",
+    );
 
     vi.setSystemTime(NOW.getTime() + HOUR + 1000);
     expect((await getList("", read)).status).toBe(401);
@@ -277,10 +288,19 @@ describe("who may call /v1/codes", () => {
     expect((await getList("", read)).status).toBe(401);
   });
 
-  it("refuses anonymous callers with 401", async () => {
+  it("refuses anonymous callers with a 401 that says how to get a token", async () => {
     const response = await getList();
     expect(response.status).toBe(401);
-    expect((await errorOf(response)).code).toBe("UNAUTHORIZED");
+    expect(response.headers.get("www-authenticate")).toBe(
+      'Bearer realm="QRdx API"',
+    );
+    expect(await errorOf(response)).toEqual({
+      code: "UNAUTHORIZED",
+      message:
+        'Missing access token. Send an OAuth access token as "Authorization: Bearer <token>". To get one, register an OAuth app at http://localhost:3000/settings/developers and follow http://localhost:3000/docs/developers/rest-api#get-an-access-token.',
+      status: 401,
+      docs: "http://localhost:3000/docs/developers/rest-api#get-an-access-token",
+    });
   });
 
   it("acts on the token owner's personal workspace only", async () => {

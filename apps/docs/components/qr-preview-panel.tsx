@@ -65,26 +65,37 @@ const QRPreviewPanel: React.FC<QRPreviewPanelProps> = ({ style }) => {
                 animate={{ filter: "blur(0px)", opacity: 1 }}
                 exit={{ filter: "blur(2px)", opacity: 0.4 }}
                 transition={{ duration: 0.1 }}
-                className="relative flex size-full items-center justify-center"
+                className="relative flex size-full items-center justify-center [container-type:size]"
               >
-                <QRCode
-                  art={style.art}
-                  bgColor={style.bgColor}
-                  cornerEyeDotPattern={style.cornerEyeDotPattern}
-                  cornerEyePattern={style.cornerEyePattern}
-                  dotColor={style.dotColor}
-                  bodyPattern={style.bodyPattern}
-                  level={style.level}
-                  eyeColor={style.eyeColor}
-                  fgColor={style.fgColor}
-                  frame={style.frame}
-                  hideLogo={!style.showLogo}
-                  logo={style.customLogo ?? DEFAULT_QR_LOGO}
-                  scale={previewScale}
-                  margin={style.margin}
-                  templateId={style.templateId}
-                  value={value}
-                />
+                {/* Fit the whole code (and frame) in the panel: on phones the
+                    editor sheet leaves a short area, and a fixed 512px code
+                    was cropped at the bottom. The SVG scales by its viewBox. */}
+                <div
+                  className="flex items-center justify-center [&>svg]:size-full"
+                  style={{
+                    width: "min(100cqw, 100cqh)",
+                    height: "min(100cqw, 100cqh)",
+                  }}
+                >
+                  <QRCode
+                    art={style.art}
+                    bgColor={style.bgColor}
+                    cornerEyeDotPattern={style.cornerEyeDotPattern}
+                    cornerEyePattern={style.cornerEyePattern}
+                    dotColor={style.dotColor}
+                    bodyPattern={style.bodyPattern}
+                    level={style.level}
+                    eyeColor={style.eyeColor}
+                    fgColor={style.fgColor}
+                    frame={style.frame}
+                    hideLogo={!style.showLogo}
+                    logo={style.customLogo ?? DEFAULT_QR_LOGO}
+                    scale={previewScale}
+                    margin={style.margin}
+                    templateId={style.templateId}
+                    value={value}
+                  />
+                </div>
               </motion.div>
             </AnimatePresence>
           </ExamplesPreviewContainer>

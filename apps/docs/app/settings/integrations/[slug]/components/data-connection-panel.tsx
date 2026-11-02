@@ -217,9 +217,6 @@ export function DataConnectionPanel({
         <p className="text-muted-foreground text-sm text-pretty">
           Paste any {name} link in the {name} content type: QRdx recognizes it,
           removes tracking and shows a preview.
-          {slug === "youtube"
-            ? " Picking from your channel's latest videos needs a YouTube Data API key on this server."
-            : " Picking from your public playlists needs Spotify app credentials on this server."}
         </p>
         <Button asChild variant="outline">
           <Link href={`/qr-code-generator/${slug}`}>Make a {name} QR code</Link>

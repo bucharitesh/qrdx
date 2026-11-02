@@ -29,7 +29,7 @@ export function CompareOthers({ currentSlug }: CompareOthersProps) {
   return (
     <section
       aria-labelledby="compare-others"
-      className="w-full px-6 py-14 md:px-10 md:py-16"
+      className="w-full px-10 py-14 md:py-16"
     >
       <div className="mx-auto max-w-6xl">
         <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">

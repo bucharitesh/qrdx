@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { NpmLagNotice } from "@/components/mdx/npm-status";
 import { CompareFeatures } from "@/components/sections/compare/compare-features";
 import { CompareGuide } from "@/components/sections/compare/compare-guide";
 import { CompareHero } from "@/components/sections/compare/compare-hero";
@@ -7,7 +8,7 @@ import { CompareMigrate } from "@/components/sections/compare/compare-migrate";
 import { CompareOthers } from "@/components/sections/compare/compare-others";
 import { CompareTable } from "@/components/sections/compare/compare-table";
 import { createMetadata } from "@/lib/metadata";
-import { getLatestVersion } from "@/lib/npm-version";
+import { getLatestVersion, getNpmLag } from "@/lib/npm-version";
 import { compareSource } from "@/lib/source";
 import { getMDXComponents } from "@/mdx-components";
 
@@ -25,13 +26,12 @@ export default async function ComparePage({ params }: PageProps) {
 
   const {
     competitor,
+    category,
     tagline,
     qrdxPlan,
     competitorPlan,
     tableRows,
     featureHighlights,
-    sources,
-    lastVerified,
     body: Mdx,
   } = page.data;
 
@@ -46,22 +46,22 @@ export default async function ComparePage({ params }: PageProps) {
     })),
   );
 
+  // Library pages compare the repo's qrdx; say so while npm is behind it.
+  const npmLag = category === "library" ? await getNpmLag("qrdx") : null;
+
   return (
     <main className="flex min-h-screen w-full flex-col items-center justify-center divide-y divide-border">
       <CompareHero competitor={competitor} slug={slug} tagline={tagline} />
       <CompareTable
         competitor={competitor}
         competitorPlan={competitorPlan}
+        notice={npmLag ? <NpmLagNotice lags={[npmLag]} /> : undefined}
         qrdxPlan={qrdxPlan}
         rows={rows}
         slug={slug}
       />
       <CompareFeatures competitor={competitor} highlights={featureHighlights} />
-      <CompareGuide
-        competitor={competitor}
-        sources={sources}
-        lastVerified={lastVerified}
-      >
+      <CompareGuide competitor={competitor}>
         <Mdx components={getMDXComponents()} />
       </CompareGuide>
       <CompareMigrate competitor={competitor} slug={slug} />

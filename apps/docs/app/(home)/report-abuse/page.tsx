@@ -47,7 +47,7 @@ export default async function ReportAbusePage({
   const defaultUrl = defaultTarget(params, requestHeaders.get("referer"));
 
   return (
-    <div className="container mx-auto grid gap-10 px-6 py-12 md:px-10 md:py-20 lg:max-w-6xl lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
+    <div className="container mx-auto grid gap-10 px-10 py-12 md:py-20 lg:max-w-6xl lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
       <div className="space-y-6">
         <div className="space-y-3">
           <h1 className="text-3xl font-bold tracking-tight">

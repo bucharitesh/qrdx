@@ -25,7 +25,7 @@ export const metadata: Metadata = createMetadata({
 
 export default function AiPage() {
   return (
-    <div className="relative isolate container mx-auto flex flex-1 flex-col gap-12 overflow-x-hidden overflow-y-auto px-4 md:px-6">
+    <div className="relative isolate container mx-auto flex flex-1 flex-col gap-12 overflow-x-hidden overflow-y-auto px-6">
       {/* AI Chat entry point section */}
       <section className="relative isolate flex flex-col gap-4 pt-20 md:pt-28">
         <Backdrop className="-z-10">
@@ -51,7 +51,7 @@ export default function AiPage() {
 
       <div className="flex justify-center pb-16">
         <HairlineFigure
-          figure="Phosphor"
+          figure="Prompt"
           className="aspect-[2/1] w-full max-w-xl opacity-80"
         />
       </div>

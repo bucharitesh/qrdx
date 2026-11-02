@@ -19,19 +19,24 @@ export const SOUND_GROUPS = {
     "good",
     "low",
   ],
-  /** Festive characters: direct clicks only, quieter than UI cues. */
+  /** Festive characters: direct activation only, quieter than UI cues. */
   seasonal: [
     // Halloween
     "boo",
     "meow",
+    "purr",
+    "hiss",
     "bat",
+    "spider",
     // Christmas
     "seasonal-bauble",
     "seasonal-gift",
     "seasonal-snowman",
+    "seasonal-tree",
     // New Year
     "seasonal-cork",
     "seasonal-balloon",
+    "seasonal-disco",
   ],
 } as const;
 
@@ -66,7 +71,7 @@ export interface SoundPreset {
   durationMs: number;
   /** The same cue plays at most once per this window. */
   debounceMs: number;
-  /** Only plays right after a direct click, tap or drag-release. */
+  /** Only plays right after a direct click, tap, release or Enter / Space on a control. */
   pointerOnly: boolean;
   synth: SynthRecipe;
   /** Where the cue belongs. */
@@ -214,11 +219,29 @@ export const SOUND_PRESETS: Record<SoundName, SoundPreset> = {
     durationMs: 250,
     use: "Halloween cat clicked.",
   }),
-  bat: seasonal("bat", {
+  purr: seasonal("purr", {
     sampleGain: 1,
     synthGain: 0.6,
     durationMs: 230,
+    use: "Halloween cat clicked again right after its meow.",
+  }),
+  hiss: seasonal("hiss", {
+    sampleGain: 1,
+    synthGain: 0.45,
+    durationMs: 210,
+    use: "Halloween cat clicked a third time in a row (it puffs up).",
+  }),
+  bat: seasonal("bat", {
+    sampleGain: 1,
+    synthGain: 1,
+    durationMs: 230,
     use: "Halloween bat clicked.",
+  }),
+  spider: seasonal("spider", {
+    sampleGain: 1,
+    synthGain: 0.6,
+    durationMs: 230,
+    use: "Halloween spider clicked (it spins up its thread).",
   }),
   "seasonal-bauble": seasonal("seasonal-bauble", {
     sample: "/sounds/bauble.mp3",
@@ -239,6 +262,12 @@ export const SOUND_PRESETS: Record<SoundName, SoundPreset> = {
     durationMs: 200,
     use: "Christmas snowman clicked.",
   }),
+  "seasonal-tree": seasonal("seasonal-tree", {
+    sampleGain: 1,
+    synthGain: 0.85,
+    durationMs: 230,
+    use: "Christmas tree clicked (its lights sparkle).",
+  }),
   "seasonal-cork": seasonal("seasonal-cork", {
     sampleGain: 1,
     synthGain: 0.6,
@@ -249,7 +278,13 @@ export const SOUND_PRESETS: Record<SoundName, SoundPreset> = {
     sampleGain: 1,
     synthGain: 0.6,
     durationMs: 180,
-    use: "New Year disco ball / balloon clicked.",
+    use: "New Year 2027 balloons clicked.",
+  }),
+  "seasonal-disco": seasonal("seasonal-disco", {
+    sampleGain: 1,
+    synthGain: 0.85,
+    durationMs: 210,
+    use: "New Year disco ball clicked.",
   }),
 };
 

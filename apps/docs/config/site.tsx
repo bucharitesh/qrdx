@@ -9,8 +9,11 @@ import {
   Clock,
   Code1,
   ElementPlus,
+  Lifebuoy,
   Link21,
   MagicStar,
+  MessageProgramming,
+  MessageQuestion,
   Mobile,
   Notepad2,
   PenTool2,
@@ -26,6 +29,9 @@ import { type PaidPlan, PRICING, formatPrice as price } from "@/lib/pricing";
 /** "$5/mo or $48/yr" in US dollars, for FAQ answers. */
 const usd = (plan: PaidPlan) =>
   `${price(PRICING[plan].month.amounts.USD, "USD")}/mo or ${price(PRICING[plan].year.amounts.USD, "USD")}/yr`;
+/** The "What do I get with Pro or Business?" answer; custom domains only where they can be added. */
+const paidPlansAnswer = (customDomains: boolean) =>
+  `Pro (${usd("pro")}) adds unlimited dynamic codes and hosted pages, 3 years of analytics, ${customDomains ? "5 custom domains, " : ""}teams of up to 3, smart routing, A/B tests, UTM tags, pixels, email alerts and a weekly digest, and link controls such as passwords and expiry dates. Business (${usd("business")}) adds white-label pages with custom CSS, unlimited analytics history, ${customDomains ? "25 custom domains, " : ""}unlimited team members, conversion tracking, webhooks and Slack or Discord alerts. Creating, customizing and downloading static QR codes stays free.`;
 const inr = (plan: PaidPlan) =>
   `${price(PRICING[plan].month.amounts.INR, "INR")} a month or ${price(PRICING[plan].year.amounts.INR, "INR")} a year`;
 
@@ -70,8 +76,8 @@ export const siteConfig = {
     // Top-level header entries. `href` is the group's hub (used on mobile);
     // entries with `items` render as a dropdown on desktop. A `featured` item
     // gets the large panel on the left; a `hub` item becomes the footer link.
-    // Each page appears once: /mcp is the top-level "MCP" link, so it isn't
-    // repeated under Developers (desktop and mobile both read this list).
+    // Each page appears once (desktop and mobile both read this list); the
+    // MCP server's connect page (/mcp) sits under Developers.
     links: [
       {
         id: 1,
@@ -178,6 +184,12 @@ export const siteConfig = {
             featured: true,
           },
           {
+            name: "MCP server",
+            href: "/mcp",
+            description: "Make QR codes from Claude, ChatGPT or Cursor",
+            icon: MessageProgramming,
+          },
+          {
             name: "Image API",
             href: "/docs/developers/image-api",
             description: "A QR code image from a URL, no API key",
@@ -204,12 +216,17 @@ export const siteConfig = {
           },
         ],
       },
-      { id: 4, name: "MCP", href: "/mcp" },
       {
         id: 5,
         name: "Resources",
         href: "/blog",
         items: [
+          {
+            name: "Help center",
+            href: "/docs/help",
+            description: "Answers for codes, billing, teams and fixes",
+            icon: Lifebuoy,
+          },
           {
             name: "Blog",
             href: "/blog",
@@ -233,6 +250,12 @@ export const siteConfig = {
             href: "/integrations",
             description: "Zapier, Make, Discord, analytics pixels and more",
             icon: Link21,
+          },
+          {
+            name: "Contact support",
+            href: "/docs/help/contact",
+            description: "Email, the support widget or GitHub",
+            icon: MessageQuestion,
           },
         ],
       },
@@ -759,8 +782,8 @@ export const siteConfig = {
   // Prices: lib/pricing.ts. Limits and card features: lib/plans.ts.
   pricing: {
     title: "Simple pricing. Codes that never go hostage.",
-    description:
-      "Static QR codes are free forever. Paid plans add unlimited dynamic codes, longer analytics, custom domains and teams.",
+    // The intro under it: buildPricingIntro (pricing/plan-content.ts), which
+    // leaves out features this deployment can't offer.
     tiers: {
       free: {
         tagline: "For personal projects and trying QRdx out",
@@ -833,7 +856,7 @@ export const siteConfig = {
       {
         id: 1,
         question: "Is QRdx really free? Are there hidden limits?",
-        answer: `Yes. Creating, customizing and downloading static QR codes is free and needs no account: unlimited codes, every design option (9 body patterns, 9 corner-eye shapes and 11 eye-dot shapes, gradients, logos, frames and Logo QR or Image QR art), and PNG, JPG, SVG, PDF and EPS downloads. There are no watermarks and no ads. Static codes store your content in the code itself, so they never expire and have no scan limits. A free account adds 10 dynamic QR codes, 3 hosted pages, 90 days of scan analytics, 10 saved themes and 5 AI theme generations; Pro (${usd("pro")}) and Business (${usd("business")}) raise those limits.`,
+        answer: `Yes. Creating, customizing and downloading static QR codes is free and needs no account: unlimited codes, every design option ({facts.bodyPatterns} body patterns, {facts.eyeShapes} corner-eye shapes and {facts.eyeCentres} eye centres, gradients, logos, frames and Logo QR or Image QR art), and PNG, JPG, SVG, PDF and EPS downloads. There are no watermarks and no ads. Static codes store your content in the code itself, so they never expire and have no scan limits. A free account adds 10 dynamic QR codes, 3 hosted pages, 90 days of scan analytics, 10 saved themes and 5 AI theme generations; Pro (${usd("pro")}) and Business (${usd("business")}) raise those limits.`,
       },
       {
         id: 2,
@@ -880,7 +903,9 @@ export const siteConfig = {
       {
         id: 9,
         question: "What do I get with Pro or Business?",
-        answer: `Pro (${usd("pro")}) adds unlimited dynamic codes and hosted pages, 3 years of analytics, 5 custom domains, teams of up to 3, smart routing, A/B tests, UTM tags, pixels, email alerts and a weekly digest, and link controls such as passwords and expiry dates. Business (${usd("business")}) adds white-label pages with custom CSS, unlimited analytics history, 25 custom domains, unlimited team members, conversion tracking, webhooks and Slack or Discord alerts. Creating, customizing and downloading static QR codes stays free.`,
+        answer: paidPlansAnswer(true),
+        // Where custom domains can't be added (lib/feature-availability-rules.ts)
+        answerWithoutCustomDomains: paidPlansAnswer(false),
       },
     ],
   },
@@ -921,6 +946,7 @@ export const siteConfig = {
       title: "Developers",
       links: [
         { id: 1, title: "Documentation", url: "/docs" },
+        { id: 8, title: "API reference", url: "/docs/developers/api" },
         { id: 2, title: "Image API", url: "/docs/developers/image-api" },
         { id: 3, title: "MCP server", url: "/mcp" },
         { id: 4, title: "shadcn/ui registry", url: "/docs/developers/shadcn" },
@@ -932,6 +958,7 @@ export const siteConfig = {
     {
       title: "Resources",
       links: [
+        { id: 8, title: "Help center", url: "/docs/help" },
         { id: 1, title: "Blog", url: "/blog" },
         { id: 2, title: "Changelog", url: "/changelogs" },
         { id: 3, title: "Integrations", url: "/integrations" },
