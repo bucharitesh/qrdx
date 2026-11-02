@@ -23,6 +23,14 @@ import {
 import { HttpError } from "@/lib/error-response";
 import { rasterizeImage, serializeQrSvg } from "@/lib/qr-render";
 import { logError } from "@/lib/shared";
+import {
+  encodePng,
+  findLeastBlend,
+  leastBlendBounds,
+  type ModuleGrid,
+  type QRModuleMap,
+  readModuleMap,
+} from "./art-blend";
 import { AI_MODELS, type ArtModelChoice, artProviderOptions } from "./models";
 import { aiGateway } from "./providers";
 
@@ -30,18 +38,24 @@ import { aiGateway } from "./providers";
 // 1. Draw the code as a plain black-on-white QR (level H, square modules, a
 //    wide quiet zone): the control image.
 // 2. The art model (lib/ai/models.ts, through Vercel AI Gateway) restyles it,
-//    told to keep the module grid, the finder eyes and the quiet zone (plus
-//    an optional reference image for colors or a logo).
+//    told to keep the module grid, flat finder eyes and a plain quiet zone
+//    (plus an optional reference image for colors or a logo).
 // 3. Decode the model's image with jsQR, as it is and through qrdx's
-//    phone-camera model. If it decodes to the exact content, deliver it.
-// 4. Otherwise blend it into the code with qrdx's Image QR (halftone) art
-//    mode on the same module grid, which only corrects the modules that would
-//    read wrong, and check that again. Nothing that fails is delivered.
+//    phone-camera model. If it decodes to the exact content, deliver it
+//    untouched (unless QR visibility asks for a stronger code).
+// 4. Otherwise find the least blend (./art-blend.ts): the lowest strength at
+//    which strengthening the finders, the quiet zone and then the modules,
+//    on the grid where the model drew them, makes it scan. Only when no
+//    strength QR visibility allows works, or the model didn't draw this code
+//    at all, does the Image QR (halftone) blend redraw the whole image as a
+//    code. Nothing that fails is delivered.
 
 /** Light border around the control code, in modules (the spec minimum is 4). */
 const CONTROL_QUIET_ZONE_MODULES = 6;
 /** Stays under the route's maxDuration, leaving time for the scan check. */
 const ART_MODEL_TIMEOUT_MS = 45_000;
+/** How long the least-blend search may take before the Image QR fallback. */
+const LEAST_BLEND_BUDGET_MS = 8000;
 /** Largest image a response carries (Vercel caps responses at 4.5 MB). */
 const MAX_DELIVERED_DATA_URL_LENGTH = 4_000_000;
 /** Seeds stay in a signed 32-bit integer (Gemini's range). */
@@ -83,6 +97,8 @@ export interface ControlImage {
   png: Uint8Array;
   /** Modules across the code itself, without the quiet zone */
   modules: number;
+  /** Every module's value and kind, read from the rendered control */
+  map: QRModuleMap;
 }
 
 /**
@@ -97,10 +113,39 @@ export async function renderControlImage(text: string): Promise<ControlImage> {
   if (!(scan.passed && scan.version)) {
     throw new Error("The control QR code doesn't decode");
   }
-  return { png, modules: 17 + 4 * scan.version };
+  const modules = 17 + 4 * scan.version;
+  return {
+    png,
+    modules,
+    map: readModuleMap(pixels, modules, CONTROL_QUIET_ZONE_MODULES),
+  };
+}
+
+/** Where the control image has its modules, in pixels. */
+export function controlGrid(control: ControlImage): Omit<ModuleGrid, "fit"> {
+  const pitch =
+    ART_IMAGE_SIZE / (control.modules + 2 * CONTROL_QUIET_ZONE_MODULES);
+  const edge = CONTROL_QUIET_ZONE_MODULES * pitch;
+  return { left: edge, top: edge, pitch };
 }
 
 // ── Prompt ─────────────────────────────────────────────────────────────────
+
+/**
+ * Extra rules per art model (gateway id), for what each got wrong in
+ * scripts/ai/art-eval.ts: the Gemini models painted scenes out to the
+ * image's edges, and Flash drew one city's finders as 3D blocks half again
+ * their size; GPT Image 2 redrew the code about 4% larger, off-center, in 2
+ * of 6 images.
+ */
+const MODEL_PROMPT_RULES: Record<string, string> = {
+  "google/gemini-nano-banana-2.1":
+    "- Keep it flat and front-on, like a print: no perspective, depth or 3D blocks, and nothing that rises above or overlaps the code.",
+  "google/gemini-3.1-flash-image":
+    "- Keep it flat and front-on, like a print: no perspective, depth or 3D blocks, and nothing that rises above or overlaps the code.",
+  "openai/gpt-image-2":
+    "- Don't zoom, crop or re-center: the code covers exactly the same pixels as in the first image.",
+};
 
 /** The instruction sent with the control image (exported for tests). */
 export function buildArtPrompt({
@@ -109,21 +154,26 @@ export function buildArtPrompt({
   visibility,
   creativity,
   withReference,
+  model = AI_MODELS.art.model,
 }: {
   prompt: string;
   negativePrompt?: string;
   visibility: number;
   creativity: number;
   withReference: boolean;
+  /** Gateway id of the art model, for its own rules */
+  model?: string;
 }): string {
+  const modelRule = MODEL_PROMPT_RULES[model];
   const lines = [
     `Repaint the QR code in the first image as artwork: ${prompt.replace(/[.\s]+$/, "")}.`,
     "",
     "The artwork must still scan as exactly this QR code:",
-    "- Keep the image square and the code where it is, at the same size, on the same grid. Don't move, add, remove, rotate or merge modules.",
-    "- Keep the three large square finder patterns in the corners and the small alignment square solid, dark and clearly visible.",
-    "- Every dark module must stay clearly darker than the light modules next to it. Paint the scene into the modules themselves, through color, texture and light, so the dark and light pattern stays intact.",
-    "- Keep the light border around the code (the quiet zone) light and free of detail.",
+    "- Keep the image square and the code exactly where it is, at the same size, on the same grid. Don't move, resize, add, remove, rotate or merge modules.",
+    "- Draw the three large finder patterns in the corners and the small alignment square flat and crisp, at exactly their current size: a solid dark ring, a clean light ring and a solid dark center, with straight edges and no scene painted inside them.",
+    "- Every dark module must stay clearly darker than the light modules next to it. Paint the scene into the modules themselves, through color, shading and light, so the dark and light pattern stays intact. Keep detail inside a module soft, without fine speckles or thin lines of the opposite tone.",
+    "- Keep the border around the code (the quiet zone) plain, light and free of detail: the scene stays inside the code's square.",
+    ...(modelRule ? [modelRule] : []),
     withReference
       ? "- No text, letters, signatures or watermarks."
       : "- No text, letters, logos, signatures or watermarks.",
@@ -149,7 +199,10 @@ export function buildArtPrompt({
   return lines.join("\n");
 }
 
-/** Image QR blend intensity for a QR visibility (exported for tests). */
+/**
+ * Image QR blend intensity for a QR visibility, for the last-resort blend
+ * (exported for tests).
+ */
 export function visibilityToBlendIntensity(visibility: number): number {
   const t = Math.min(Math.max(visibility, 0), 100) / 100;
   return Math.round((0.9 - 0.4 * t) * 100) / 100;
@@ -403,10 +456,12 @@ function blendPalette(pixels: DecodedImage): { fg: string; bg: string } {
 }
 
 /**
- * Blends the model's image into the code with qrdx's Image QR art on the
- * control's module grid, then checks the result. Null when no strength scans.
+ * The Image QR blend, the last resort: redraws the code with qrdx's Image QR
+ * art on the control's module grid, the model's image showing through it,
+ * then checks the result. Null when no strength scans. (The eval runs it on
+ * every image to compare with the least blend.)
  */
-async function blendArt({
+export async function blendImageQR({
   text,
   pixels,
   control,
@@ -441,6 +496,113 @@ async function blendArt({
   return null;
 }
 
+/**
+ * What the pipeline delivered before the least blend, for the eval to compare
+ * with: the model's image when it scanned as drawn, otherwise the Image QR
+ * blend. Null when neither scanned.
+ */
+export async function oldPipelineImage({
+  text,
+  image,
+  control,
+  visibility,
+}: {
+  text: string;
+  image: ArtModelImage;
+  control: ControlImage;
+  visibility: number;
+}): Promise<Uint8Array | null> {
+  const art = await readModelImage(image);
+  if ((await scanQRPixels(art.pixels, text)).passed) return art.png;
+  return blendImageQR({ text, pixels: art.pixels, control, visibility });
+}
+
+/** `pixels` over white where they're not opaque (scanners see it that way). */
+function flattenOnWhite(pixels: DecodedImage): DecodedImage | null {
+  const { data } = pixels;
+  let opaque = true;
+  for (let i = 3; i < data.length; i += 4) {
+    if (data[i] !== 255) {
+      opaque = false;
+      break;
+    }
+  }
+  if (opaque) return null;
+  const flat = new Uint8Array(data);
+  for (let i = 0; i < flat.length; i += 4) {
+    const a = (flat[i + 3] as number) / 255;
+    for (let c = 0; c < 3; c++) {
+      flat[i + c] = Math.round((flat[i + c] as number) * a + 255 * (1 - a));
+    }
+    flat[i + 3] = 255;
+  }
+  return { width: pixels.width, height: pixels.height, data: flat };
+}
+
+/**
+ * The delivery gate on the exact bytes delivered: the PNG decodes back to
+ * pixels that scanQRPixels reads as `text`, as drawn and through the
+ * phone-camera model.
+ */
+async function passesGate(png: Uint8Array, text: string): Promise<boolean> {
+  const pixels = await decodePNGPixels(png);
+  return Boolean(pixels && (await scanQRPixels(pixels, text)).passed);
+}
+
+interface Delivery {
+  png: Uint8Array;
+  blend: AIArtVariant["blend"];
+  blendStrength: number;
+}
+
+/**
+ * Makes the model's image scan with as little change as QR visibility
+ * allows: as drawn, else the least blend, else (from visibility 50) the
+ * Image QR blend. Null when none of them passes the gate.
+ */
+async function deliverable({
+  text,
+  art,
+  control,
+  visibility,
+  signal,
+}: {
+  text: string;
+  art: { png: Uint8Array; pixels: DecodedImage };
+  control: ControlImage;
+  visibility: number;
+  signal: AbortSignal;
+}): Promise<Delivery | null> {
+  const flat = flattenOnWhite(art.pixels);
+  const pixels = flat ?? art.pixels;
+  const bounds = leastBlendBounds(visibility);
+  if (bounds.floor === 0 && (await scanQRPixels(pixels, text)).passed) {
+    return {
+      png: flat ? encodePng(flat) : art.png,
+      blend: "none",
+      blendStrength: 0,
+    };
+  }
+  const least = await findLeastBlend({
+    pixels,
+    text,
+    map: control.map,
+    expected: controlGrid(control),
+    bounds,
+    deadline: Date.now() + LEAST_BLEND_BUDGET_MS,
+    signal,
+  });
+  if (least) {
+    const png = encodePng(least.pixels);
+    if (await passesGate(png, text)) {
+      return { png, blend: "least", blendStrength: least.strength };
+    }
+  }
+  if (!bounds.imageQRFallback) return null;
+  const png = await blendImageQR({ text, pixels, control, visibility });
+  return png ? { png, blend: "image-qr", blendStrength: 1 } : null;
+}
+
 // ── One variant ────────────────────────────────────────────────────────────
 
 /**
@@ -459,6 +621,7 @@ export async function generateArtVariant({
   control,
   signal,
   model = gatewayArtModel,
+  modelId = AI_MODELS.art.model,
   timeoutMs = ART_MODEL_TIMEOUT_MS,
 }: {
   text: string;
@@ -472,6 +635,8 @@ export async function generateArtVariant({
   control: ControlImage;
   signal: AbortSignal;
   model?: ArtImageModel;
+  /** Gateway id behind `model`, for its prompt rules */
+  modelId?: string;
   /** How long the model may take before the request fails */
   timeoutMs?: number;
 }): Promise<AIArtVariant> {
@@ -492,6 +657,7 @@ export async function generateArtVariant({
         visibility,
         creativity,
         withReference: Boolean(reference),
+        model: modelId,
       }),
       images,
       seed,
@@ -499,20 +665,23 @@ export async function generateArtVariant({
     signal,
     timeoutMs,
   );
+  // A PNG: the model's own, or redrawn from its JPEG or WebP.
   const art = await readModelImage(output);
-
-  // Both are PNGs: the model's own, or redrawn from its JPEG or WebP.
-  const blended = !(await scanQRPixels(art.pixels, text)).passed;
-  const png = blended
-    ? await blendArt({ text, pixels: art.pixels, control, visibility })
-    : art.png;
-  if (!png) {
+  const delivery = await deliverable({
+    text,
+    art,
+    control,
+    visibility,
+    signal,
+  });
+  if (!delivery) {
     throw new HttpError(
       502,
       "AI_ART_UNSCANNABLE",
       "This artwork didn't pass the scan check, so it wasn't delivered. No AI credit was used, please try again or raise QR visibility.",
     );
   }
+  const { png, blend, blendStrength } = delivery;
   const imageUrl = dataUrl(png, "image/png");
   if (imageUrl.length > MAX_DELIVERED_DATA_URL_LENGTH) {
     throw new HttpError(
@@ -526,6 +695,8 @@ export async function generateArtVariant({
     width: ART_IMAGE_SIZE,
     height: ART_IMAGE_SIZE,
     seed,
-    blended,
+    blended: blend !== "none",
+    blend,
+    blendStrength,
   };
 }
