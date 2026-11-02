@@ -1,14 +1,15 @@
 ---
 title: AI Features
 description: What QRdx sends to AI model providers when you use AI themes and AI QR art, what we keep, whether providers may train on it, and your responsibility for the results.
-lastUpdated: 2026-11-02
+lastUpdated: 2026-11-03
 ---
 
 <Callout title="Summary">
 
-- AI themes and AI QR art both use Google's Gemini API. AI themes send your prompt, the chat so far and any images you attach. AI QR art sends the code's content (as a plain QR image), your prompt and any reference image.
+- Every AI request goes through Vercel AI Gateway to the provider of the model for that feature: Anthropic's Claude for the AI theme chat and prompt enhancement, Google's Gemini for designing the theme and for AI QR art.
+- AI themes send your prompt, the chat so far and any images you attach. AI QR art sends the code's content (as a plain QR image), your prompt and any reference image.
 - QRdx keeps a usage record (which model, how much, when) to apply your plan's limits. We don't store your prompts or images on our servers, and we don't train any models.
-- Whether a provider may use your content to improve its own models depends on that provider's terms, explained below.
+- Vercel says the gateway keeps no prompts or outputs once a request is done. We send requests only to providers that, under Vercel's agreements, don't train on prompts. Details below.
 - AI output can be wrong or hard to scan. Check it before you print it. How you use it is up to you.
 
 </Callout>
@@ -17,9 +18,9 @@ lastUpdated: 2026-11-02
 
 | Feature | Provider | What is sent |
 | --- | --- | --- |
-| **AI themes** (the AI chat in the editor) | Google, Gemini API | Your prompt, the earlier messages in that chat, images you attach (JPEG, PNG, WebP or SVG) and the theme settings the model works with |
-| **Prompt enhancement** | Google, Gemini API | The prompt you ask it to improve |
-| **AI QR art** | Google, Gemini API (Gemini image models) | The text or link your code contains, rendered as a plain QR image, your prompt, the things to avoid, the style settings, and a reference image if you add one |
+| **AI themes** (the AI chat in the editor) | Anthropic (Claude) for the chat, then Google (Gemini) to design the theme, both through Vercel AI Gateway | Your prompt, the earlier messages in that chat, images you attach (JPEG, PNG, WebP or SVG) and the theme settings the model works with. Both models receive them |
+| **Prompt enhancement** | Anthropic (Claude), through Vercel AI Gateway | The prompt you ask it to improve, with any images and themes you mention in it |
+| **AI QR art** | Google (a Gemini image model), through Vercel AI Gateway | The text or link your code contains, rendered as a plain QR image, your prompt, the things to avoid, the style settings, and a reference image if you add one |
 
 You need to be signed in to use these features. Don't put passwords, personal data about other people or confidential information into prompts or images.
 
@@ -31,9 +32,11 @@ You need to be signed in to use these features. Don't put passwords, personal da
 
 ## What providers may do with it
 
-**Google (Gemini API).** Under Google's [Gemini API terms](https://ai.google.dev/gemini-api/terms), when the API is used as a paid service Google doesn't use prompts or responses to improve its products, and keeps them for a limited time only to detect abuse. When it's used as an unpaid service, Google may use content to improve its products, and human reviewers may read it. For users in the EEA, Switzerland and the UK, Google applies the paid-service terms either way. QRdx uses the Gemini API on the **unpaid** tier.
+**Vercel (AI Gateway).** Every AI request goes to Vercel's AI Gateway, which sends it on to the model's provider and bills QRdx for the usage. Vercel's documentation says the gateway doesn't keep prompts or outputs once a request is complete and doesn't use them for training ([zero data retention](https://vercel.com/docs/ai-gateway/security-and-compliance/zdr), [prompt training](https://vercel.com/docs/ai-gateway/security-and-compliance/disallow-prompt-training)). Vercel's [AI Product Terms](https://vercel.com/legal/ai-product-terms) apply to our use of the gateway.
 
-Google is on our [Subprocessors](/legal/subprocessors) list.
+**Anthropic and Google.** The gateway sends each request to one provider: Anthropic for the AI theme chat and prompt enhancement, and Google, through its Gemini API or Vertex AI, for theme design and AI QR art. QRdx limits each request to those providers, so the gateway doesn't pass it to another cloud. Under Vercel's AI Product Terms, content a provider receives through the gateway is subject to that provider's terms. Vercel [lists](https://vercel.com/docs/ai-gateway/security-and-compliance/disallow-prompt-training) Anthropic and Google among the providers that, under its agreements, don't use prompts for training, and QRdx asks the gateway to route only to such providers, so a request fails rather than reach one that might. We don't turn on the gateway's zero data retention option, so a provider may keep request data for as long as its terms allow.
+
+Vercel, Anthropic and Google are on our [Subprocessors](/legal/subprocessors) list.
 
 ## Your responsibility for the results
 
@@ -48,8 +51,8 @@ AI themes and AI art have usage limits by plan. AI art uses one credit per deliv
 
 ## Self-hosting
 
-If you run your own copy of QRdx, you choose whether to turn on AI features and with which provider keys. The provider terms that apply are the ones you agreed to.
+If you run your own copy of QRdx, you choose whether to turn on AI features. They run through your own Vercel AI Gateway key, so the terms you agreed with Vercel, and the models you configure, apply.
 
 ---
 
-**Changes:** 2 November 2026. AI QR art now runs on Google's Gemini API instead of fal.ai, and the separate upscaling step is gone. 1 November 2026: first version.
+**Changes:** 3 November 2026. AI features now run through Vercel AI Gateway: the AI theme chat and prompt enhancement use Anthropic's Claude, and theme design and AI QR art use Google's Gemini. Before, every request went straight to Google's Gemini API on its unpaid tier. 2 November 2026: AI QR art now runs on Google's Gemini API instead of fal.ai, and the separate upscaling step is gone. 1 November 2026: first version.

@@ -15,7 +15,7 @@ published: true
 **Short answer: a QR code itself never expires.** It's a printed pattern, and the pattern will decode for as long as it is legible. What can stop working is the thing the code points to. If the code holds your website address directly (a static code), it works as long as the website does. If it holds a short link that redirects through a QR provider (a dynamic code), it works only as long as that provider keeps redirecting, and many providers stop when a trial ends, a plan lapses or a scan cap is reached.
 
 <Callout title="Disclosure">
-We make QRdx, a QR code generator with dynamic codes. We've linked every claim about other vendors to the page it came from, as checked on 31 October 2026. Pricing pages change often, so check the current version before you decide.
+We make QRdx, a QR code generator with dynamic codes. We've linked every claim about other vendors to the page it came from, as checked on October 31, 2026. Pricing pages change often, so check the current version before you decide.
 </Callout>
 
 ## Static vs dynamic: why only one kind can "expire"
@@ -24,7 +24,7 @@ A **static QR code** stores its content in the pattern itself: a URL, Wi-Fi cred
 
 A **dynamic QR code** stores a short link, something like `qrdx.dev/q/aB3dE5f`. When someone scans it, the provider's server looks up the destination you set and redirects the phone there. That's what makes dynamic codes useful: you can change the destination after printing and count every scan. It is also what makes them fragile, because the redirect only happens while the provider agrees to do it.
 
-So when people ask "do QR codes expire?", what they usually mean is: **will the provider keep redirecting my dynamic code?** That is a business decision, not a technical one.
+So when people ask "do QR codes expire?", what they usually mean is: **will the provider keep redirecting my dynamic code?** That comes down to the provider's business rules.
 
 ## Why QR codes stop working
 
@@ -39,9 +39,9 @@ Several QR platforms offer a short free trial and switch dynamic codes off when 
 
 This is the most common reason a menu or flyer code "suddenly" stops working: it was made in a trial, printed, and the trial ended a week later.
 
-### 2. The subscription lapsed or was cancelled
+### 2. The subscription lapsed or was canceled
 
-On some platforms, dynamic codes live only as long as the paid plan. Scanova says "Dynamic QR Codes require an active subscription to keep working" ([Scanova pricing](https://scanova.io/pricing/)), and Uniqode says "If you decide to cancel your subscription, your QR Codes will become inactive" ([Uniqode pricing](https://www.uniqode.com/pricing)). A failed card payment can have the same effect as cancelling.
+On some platforms, dynamic codes live only as long as the paid plan. Scanova says "Dynamic QR Codes require an active subscription to keep working" ([Scanova pricing](https://scanova.io/pricing/)), and Uniqode says "If you decide to cancel your subscription, your QR Codes will become inactive" ([Uniqode pricing](https://www.uniqode.com/pricing)). A failed card payment can have the same effect as canceling.
 
 ### 3. A scan cap was reached
 
@@ -65,15 +65,15 @@ Codes that look "expired" are often just hard to read: printed too small for the
 | --- | --- | --- |
 | QRFY | Trial codes deactivated and linked to a QRFY service page | [Support](https://support.qrfy.com/en/articles/6998440-what-happens-to-my-account-and-qr-codes-when-the-trial-expires) |
 | Scanova | Dynamic codes stop when the free trial ends | [Pricing](https://scanova.io/pricing/) |
-| Uniqode | Trial and cancelled codes become inactive | [Pricing](https://www.uniqode.com/pricing) |
-| QR Code Generator PRO | Trial codes deactivated; cancelling needs 30 days' notice | [Pricing](https://www.qr-code-generator.com/pricing/) |
+| Uniqode | Trial and canceled codes become inactive | [Pricing](https://www.uniqode.com/pricing) |
+| QR Code Generator PRO | Trial codes deactivated; canceling needs 30 days' notice | [Pricing](https://www.qr-code-generator.com/pricing/) |
 | QR TIGER | Free plan: 3 dynamic codes, 500 scans each | [Pricing](https://www.qrcode-tiger.com/payment) |
 | QRCodeChimp | Free scans pause at 1,000 a month; on lapse, all but 10 codes pause | [Pricing](https://www.qrcodechimp.com/pricing) |
 | Hovercode | On cancel, first 3 codes stay live; custom-domain codes stop | [Pricing](https://hovercode.com/pricing/) |
 | Adobe Express | Static URL codes that "never expire" | [Adobe Express](https://www.adobe.com/express/feature/image/qr-code-generator) |
 | QRdx | Dynamic codes keep redirecting on every plan, including after cancellation | [Never-Hostage Guarantee](/guarantee) |
 
-Policies change, so read the current terms before you print anything in volume. *Updated 2 November 2026: QR TIGER's pricing page no longer says when codes stop, and Bitly's support article couldn't be loaded to confirm its policy, so we've removed both claims.*
+Policies change, so read the current terms before you print anything in volume. *Updated November 2, 2026: QR TIGER's pricing page no longer says when codes stop, and Bitly's support article couldn't be loaded to confirm its policy, so we've removed both claims.*
 
 ## How to tell if your QR code is static or dynamic
 
@@ -95,7 +95,7 @@ If you made the code yourself, the generator you used will usually label it as s
 
 - **Use static codes for content that won't change.** Wi-Fi logins, payment IDs, contact cards and links to stable pages don't need a dynamic code. They are free and permanent.
 - **For dynamic codes, read the policy before you print.** Look for what happens when a trial ends, when you cancel, when a payment fails and when a code gets popular. If the answer is "deactivated", "paused" or "redirected to our page", that code is a liability on anything printed in volume.
-- **Use a domain you control.** Short links on your own custom domain make codes recognisable and give you more options if you ever change provider.
+- **Use a domain you control.** Short links on your own custom domain make codes recognizable and give you more options if you ever change provider.
 - **Keep an export.** Make sure you can export your codes, slugs and scan data.
 
 QRdx's answer is written down as the [Never-Hostage Guarantee](/guarantee): static codes are free forever with no account; dynamic codes keep redirecting on every plan, including after a downgrade, a failed payment or a cancellation; we never pause scans or put ads or interstitials in front of them; plan limits only stop you creating new codes; and if QRdx ever shut down, you'd get 12 months' notice and a self-hosting path for the same slugs. QRdx is open source, so you can check how the redirect works in the code itself.

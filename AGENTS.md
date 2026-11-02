@@ -41,6 +41,7 @@ From the root, `pnpm prepush` runs everything the pre-push hook runs: engine bui
 - **Treat the database as shared and live.** `DATABASE_URL` may point at a database with real users (a self-hoster's production, or one database shared by dev and prod). Never run `pnpm db:push`, migrations, destructive SQL or scripts that write data against a database you weren't told is disposable. Schema changes are additive and idempotent: new columns nullable or defaulted, no drops or renames in the same change. When you can't apply a change yourself, write it to `packages/database/manual-sql/` and say so.
 - **No placeholders in shipped content.** Docs, legal pages and UI copy go live as written: no `[[PLACEHOLDER]]` (a test fails on them), no "TBD", no invented examples presented as real.
 - **Honest copy.** Never describe a feature that isn't built or isn't available on the deployment. Product counts come from code, not from memory: write `{facts.bodyPatterns}` and the other tokens from `apps/docs/lib/product-facts.ts` in MDX, and import the catalogues in TSX. Features that need setup are gated by `lib/feature-availability*`; docs use `<IfAvailable>`.
+- **Write like a person.** Use the humanizer skill (`.claude/skills/humanizer`) when writing or editing blog posts and other long-form copy.
 - **UI conventions.** Icons come from `iconsax-reactjs` (extra ones live in `packages/design-system/components/icons.tsx`). Don't edit `packages/design-system/components/ui/**`; compose around it. Keep the look monochrome with one accent colour.
 - **Keep secrets out.** Never print or commit `.env` values, session cookies or tokens. Tests use fakes (`apps/docs/tests/support/`).
 - **This Next.js has breaking changes from what you may know.** Read the guides in `apps/docs/node_modules/next/dist/docs/` before relying on memory. `apps/docs/AGENTS.md` is written by `next dev`; leave it alone.
@@ -56,4 +57,4 @@ From the root, `pnpm prepush` runs everything the pre-push hook runs: engine bui
 - [CONTRIBUTING.md](CONTRIBUTING.md): setup, project layout, checks and pull requests
 - [SECURITY.md](SECURITY.md): report vulnerabilities privately, never in a public issue
 - [TRADEMARK.md](TRADEMARK.md): the code is open source; the QRdx name and logo are not
-- [license.md](license.md): AGPL-3.0-or-later
+- [license.md](license.md): AGPL-3.0-or-later for the app; `packages/qrdx`, `packages/cli` and `plugins/*` are MIT (their own `LICENSE` files)

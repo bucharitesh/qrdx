@@ -37,7 +37,7 @@ const ctx = (
 
 /** Every variable any feature reads, set. */
 const EVERYTHING: Record<string, string> = {
-  GOOGLE_API_KEY: FAKE,
+  AI_GATEWAY_API_KEY: FAKE,
   VERCEL_API_TOKEN: FAKE,
   VERCEL_PROJECT_ID: FAKE,
   DOMAIN_CONNECT_PROVIDER_ID: FAKE,
@@ -56,13 +56,12 @@ const EVERYTHING: Record<string, string> = {
   YOUTUBE_API_KEY: FAKE,
   SPOTIFY_CLIENT_ID: FAKE,
   SPOTIFY_CLIENT_SECRET: FAKE,
-  POLAR_ACCESS_TOKEN: FAKE,
 };
 
 /** What each feature needs on Vercel in production, by variable name. */
 const NEEDS: Record<FeatureId, string[]> = {
-  aiThemes: ["GOOGLE_API_KEY"],
-  aiArt: ["GOOGLE_API_KEY"],
+  aiThemes: ["AI_GATEWAY_API_KEY"],
+  aiArt: ["AI_GATEWAY_API_KEY"],
   customDomains: ["VERCEL_API_TOKEN", "VERCEL_PROJECT_ID"],
   fileStorage: [
     "R2_ACCOUNT_ID",
@@ -83,7 +82,6 @@ const NEEDS: Record<FeatureId, string[]> = {
   scheduledJobs: ["CRON_SECRET"],
   youtubeChannelPicker: ["YOUTUBE_API_KEY"],
   spotifyPlaylistPicker: ["SPOTIFY_CLIENT_ID", "SPOTIFY_CLIENT_SECRET"],
-  checkout: ["POLAR_ACCESS_TOKEN"],
 };
 
 const vercelProd = { onVercel: true, production: true };
@@ -120,31 +118,28 @@ describe("each feature, on and off by env", () => {
     expect(computeFeatures(ctx(env, vercelProd)).email).toBe(false);
   });
 
-  it("switches AI art off with AI_ART_ENABLED=0, leaving AI themes on", () => {
-    const env = { ...EVERYTHING, AI_ART_ENABLED: "0" };
-    const features = computeFeatures(ctx(env, vercelProd));
-    expect(features.aiArt).toBe(false);
-    expect(features.aiThemes).toBe(true);
-    expect(missingFeatureSetup("aiArt", ctx(env, vercelProd))).toEqual([
-      "AI_ART_ENABLED=0",
-    ]);
-    expect(
-      computeFeatures(ctx({ ...env, AI_ART_ENABLED: "1" }, vercelProd)).aiArt,
-    ).toBe(true);
+  it("offers AI art whenever AI themes run: there is no separate art switch", () => {
+    const env = { AI_GATEWAY_API_KEY: FAKE, AI_ART_ENABLED: "0" };
+    expect(computeFeatures(ctx(env, vercelProd))).toMatchObject({
+      aiThemes: true,
+      aiArt: true,
+    });
+    expect(missingFeatureSetup("aiArt", ctx(env, vercelProd))).toEqual([]);
   });
 
-  it("closes paid checkout with POLAR_CHECKOUT_ENABLED=0", () => {
-    const env = { ...EVERYTHING, POLAR_CHECKOUT_ENABLED: "0" };
-    expect(computeFeatures(ctx(env, vercelProd)).checkout).toBe(false);
-    expect(missingFeatureSetup("checkout", ctx(env, vercelProd))).toEqual([
-      "POLAR_CHECKOUT_ENABLED=0",
-    ]);
+  it("runs AI only through the gateway: a Google key alone turns nothing on", () => {
+    const googleOnly = { GOOGLE_API_KEY: FAKE };
+    const features = computeFeatures(ctx(googleOnly, vercelProd));
+    expect(features.aiThemes).toBe(false);
+    expect(features.aiArt).toBe(false);
     expect(
-      computeFeatures(ctx({ ...env, POLAR_CHECKOUT_ENABLED: "1" }, vercelProd))
-        .checkout,
-    ).toBe(true);
-    // Without a Polar token there is no checkout to open at all.
-    expect(computeFeatures(ctx({}, vercelProd)).checkout).toBe(false);
+      missingFeatureSetup("aiThemes", ctx(googleOnly, vercelProd)),
+    ).toEqual(["AI_GATEWAY_API_KEY"]);
+    const gateway = { AI_GATEWAY_API_KEY: FAKE };
+    expect(computeFeatures(ctx(gateway, vercelProd))).toMatchObject({
+      aiThemes: true,
+      aiArt: true,
+    });
   });
 
   it("needs the cron secret only in production", () => {
@@ -265,7 +260,9 @@ describe("docs sidebar", () => {
 });
 
 // A deployment configured like production on 2026-11-02 (names from the
-// owner's list; AI_ART_ENABLED=0 there). Anything not listed is unset.
+// owner's list), with AI_GATEWAY_API_KEY in place of the old Google key and
+// the AI art and checkout switches removed on 2026-11-03. Anything not listed
+// is unset.
 const PRODUCTION_LIKE: Record<string, string> = Object.fromEntries(
   [
     "DROPBOX_CLIENT_ID",
@@ -274,7 +271,7 @@ const PRODUCTION_LIKE: Record<string, string> = Object.fromEntries(
     "DUB_CLIENT_SECRET",
     "DUB_REDIRECT_URI",
     "EMAIL_FROM",
-    "GOOGLE_API_KEY",
+    "AI_GATEWAY_API_KEY",
     "GOOGLE_CLIENT_ID",
     "GOOGLE_CLIENT_SECRET",
     "GOOGLE_DRIVE_REDIRECT_URI",
@@ -291,16 +288,14 @@ const PRODUCTION_LIKE: Record<string, string> = Object.fromEntries(
     "POLAR_WEBHOOK_SECRET",
   ].map((name) => [name, FAKE]),
 );
-PRODUCTION_LIKE.AI_ART_ENABLED = "0";
-// Polar hadn't approved the organization yet, so checkout was closed.
-PRODUCTION_LIKE.POLAR_CHECKOUT_ENABLED = "0";
 
 describe("a production-like deployment", () => {
   const features = computeFeatures(ctx(PRODUCTION_LIKE, vercelProd));
 
-  it("offers AI themes, storage, email, link safety and cron", () => {
+  it("offers AI themes and art, storage, email, link safety and cron", () => {
     for (const id of [
       "aiThemes",
+      "aiArt",
       "fileStorage",
       "email",
       "linkSafety",
@@ -310,15 +305,13 @@ describe("a production-like deployment", () => {
     }
   });
 
-  it("leaves out AI art, adding custom domains, the spam check, the media pickers and checkout", () => {
+  it("leaves out adding custom domains, the spam check and the media pickers", () => {
     expect(FEATURE_IDS.filter((id) => !features[id])).toEqual([
-      "aiArt",
       "customDomains",
       "domainConnect",
       "spamCheck",
       "youtubeChannelPicker",
       "spotifyPlaylistPicker",
-      "checkout",
     ]);
   });
 

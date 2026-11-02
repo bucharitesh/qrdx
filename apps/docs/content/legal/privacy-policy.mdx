@@ -1,7 +1,7 @@
 ---
 title: Privacy Policy
 description: What QRdx collects, why, who it is shared with, how long it is kept and the choices you have, for the website, accounts, dynamic codes, hosted pages, the API and the AI features.
-lastUpdated: 2026-11-02
+lastUpdated: 2026-11-03
 ---
 
 <Callout title="Summary">
@@ -96,7 +96,7 @@ QRdx's own analytics and feedback widget never load on hosted pages. Our server 
 
 ### AI features
 
-Your prompts, attached images and, for AI art, the content of the code are sent to Google (Gemini API) to generate the result. We store a usage record (which model, how many tokens or credits, when). We don't store your prompts or images on our servers. The [AI Features](/legal/ai-features) notice has the details.
+Your prompts, attached images and, for AI art, the content of the code are sent through Vercel AI Gateway to the model's provider to generate the result: Anthropic for the AI theme chat and prompt enhancement, Google for theme design and AI art. We store a usage record (which model, how many tokens or credits, when). We don't store your prompts or images on our servers. The [AI Features](/legal/ai-features) notice has the details.
 
 ### Integrations and imports
 
@@ -233,5 +233,5 @@ Questions or requests about privacy: [support@qrdx.dev](mailto:support@qrdx.dev)
 
 ---
 
-**Changes:** 2 November 2026. AI QR art now uses Google's Gemini API; fal.ai no longer receives any data. 1 November 2026: rewritten to match how QRdx works today: scan analytics without stored IP addresses, hosted pages and forms, teams, integrations, AI features, the API and MCP server, retention periods, and DPDP Act and CCPA sections. Added Umami's cookieless visit counts; PostHog now links events to your account ID instead of your email address and name, and never records sessions.
+**Changes:** 3 November 2026. AI features now run through Vercel AI Gateway, with Anthropic's Claude for the AI theme chat and prompt enhancement and Google's Gemini for theme design and AI art. 2 November 2026: AI QR art now uses Google's Gemini API; fal.ai no longer receives any data. 1 November 2026: rewritten to match how QRdx works today: scan analytics without stored IP addresses, hosted pages and forms, teams, integrations, AI features, the API and MCP server, retention periods, and DPDP Act and CCPA sections. Added Umami's cookieless visit counts; PostHog now links events to your account ID instead of your email address and name, and never records sessions.
 

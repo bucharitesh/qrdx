@@ -1,5 +1,5 @@
 // Run: cd apps/docs && npx tsx --conditions=react-server --test app/api/ai/art/art.test.ts
-// The image pipeline with a fake Gemini: nothing here calls a paid service,
+// The image pipeline with a fake art model: nothing here calls a paid service,
 // and no database query runs (the 503 check happens before any).
 import assert from "node:assert/strict";
 import { before, describe, it } from "node:test";
@@ -8,7 +8,7 @@ import { decodePNGPixels, scanQRPixels } from "qrdx";
 import { paintedArt } from "../../../../tests/support/ai-art-images";
 
 process.env.DATABASE_URL ??= "postgres://user:pass@localhost:5432/qrdx_test";
-delete process.env.GOOGLE_API_KEY;
+delete process.env.AI_GATEWAY_API_KEY;
 delete process.env.UPSTASH_REDIS_REST_URL;
 delete process.env.KV_REST_API_URL;
 
@@ -254,7 +254,7 @@ describe("credits", () => {
   });
 });
 
-describe("route without GOOGLE_API_KEY", () => {
+describe("route without AI_GATEWAY_API_KEY", () => {
   it("POST /api/ai/art answers 503 AI_NOT_CONFIGURED", async () => {
     const response = await route.POST(
       new Request("http://localhost/api/ai/art", {
