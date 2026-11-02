@@ -133,10 +133,20 @@ export function ChatInterface() {
       if (message.role !== "assistant") continue;
       message.parts.forEach((part, index) => {
         if (
+          part.type === "tool-design_qr" &&
+          part.state === "output-available" &&
+          part.output.ok
+        ) {
+          found.push({
+            id: `${message.id}-${index}`,
+            styles: part.output.themeStyles,
+          });
+        } else if (
           part.type === "tool-generateQRTheme" &&
           part.state === "output-available" &&
           part.output
         ) {
+          // Chats from before the agent
           found.push({
             id: `${message.id}-${index}`,
             styles: part.output as RecentGeneration["styles"],
@@ -159,6 +169,9 @@ export function ChatInterface() {
             onEditCancel={handleEditCancel}
             editingMessageIndex={editingMessageIndex}
             isGeneratingTheme={isGenerating}
+            onSuggestion={(content) =>
+              handleGenerateFromSuggestion({ content, mentions: [] })
+            }
           />
         ) : (
           <div className="animate-in fade-in-50 size-full overflow-y-auto overscroll-contain px-4 pt-6 pb-10 duration-300 ease-out">
@@ -182,7 +195,9 @@ export function ChatInterface() {
             !isMounted
               ? "h-0 scale-80 opacity-0"
               : hasMessages
-                ? "scale-100 opacity-100"
+                ? // Phones: the editor sheet is short, and results bring
+                  // their own suggestions, so the steps get the room.
+                  "scale-100 opacity-100 max-sm:hidden"
                 : "h-0 scale-80 opacity-0",
           )}
         >

@@ -537,24 +537,21 @@ async function inlineLogo(props: QRProps): Promise<QRProps> {
   return { ...props, imageSettings: { ...imageSettings, src: inlined } };
 }
 
-/**
- * Estimates how reliably a QR design scans (browser only). Renders the code
- * at several sizes with mild blur and contrast loss, decodes each with jsQR,
- * and combines that with contrast, logo coverage vs error correction, quiet
- * zone and eye-shape risk. jsQR is loaded on demand.
- *
- * This is a heuristic: real cameras, lighting and scanner apps vary.
- */
-export async function getScanScore(
-  props: QRProps,
-  options: ScanScoreOptions = {}
-): Promise<ScanScoreResult> {
-  assertBrowser();
-  const { signal } = options;
-  const sizes = [...(options.sizes ?? SCAN_TEST_SIZES)]
-    .filter((size) => size > 0)
-    .sort((a, b) => a - b);
+type DrawArtwork = (codeWidth: number) => ImageData;
 
+/**
+ * The score itself, shared by the browser and the pixel entry points:
+ * contrast, logo coverage vs error correction, quiet zone, eye shape and
+ * style-pair risk, plus decoding through the camera model at each size.
+ * `draw` returns the whole artwork (code and frame) with the code
+ * `codeWidth` px wide, on white.
+ */
+async function scoreArtwork(
+  props: QRProps,
+  draw: DrawArtwork,
+  sizes: number[],
+  signal?: AbortSignal
+): Promise<ScanScoreResult> {
   const checks: ScanCheck[] = [];
   let penalty = 0;
 
@@ -577,38 +574,15 @@ export async function getScanScore(
   const jsQR = await loadDecoder();
   throwIfAborted(signal);
 
-  const sourceProps = await inlineLogo(
-    withQRSize({ ...props, size: props.size ?? DEFAULT_SIZE }, SOURCE_SIZE)
-  );
-  throwIfAborted(signal);
-  const svgUri = await getQRAsSVGDataUri(sourceProps);
-  const img = await loadImage(svgUri);
-  throwIfAborted(signal);
-
-  const artwork = getFrameDimensions(SOURCE_SIZE, props.frame);
   const modules =
     moduleCount(props).length + 2 * (props.margin ?? DEFAULT_MARGIN);
-  const drawArtwork = (codeWidth: number) => {
-    const scale = codeWidth / SOURCE_SIZE;
-    const width = artwork.width * scale;
-    const height = artwork.height * scale;
-    const pad = Math.max(8, Math.round(codeWidth * 0.12));
-    const { canvas, ctx } = createCanvas(width + 2 * pad, height + 2 * pad);
-    // Codes are scanned off paper or screens; test on white.
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(img, pad, pad, width, height);
-    const image = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    canvas.remove();
-    return image;
-  };
   const decodeChecks: ScanCheck[] = [];
   let largestFails = false;
 
   for (const [index, size] of sizes.entries()) {
     await nextTick();
     throwIfAborted(signal);
-    const state = decodeAtSize(jsQR, drawArtwork, size, modules, (result) =>
+    const state = decodeAtSize(jsQR, draw, size, modules, (result) =>
       matches(result, props.value)
     );
     penalty += decodePenalty(index, sizes.length, state);
@@ -638,6 +612,123 @@ export async function getScanScore(
     score = Math.min(score, 30);
   }
   return { score, grade: gradeFor(score, fails), checks };
+}
+
+function testSizes(options: ScanScoreOptions): number[] {
+  return [...(options.sizes ?? SCAN_TEST_SIZES)]
+    .filter((size) => size > 0)
+    .sort((a, b) => a - b);
+}
+
+/**
+ * Estimates how reliably a QR design scans (browser only). Renders the code
+ * at several sizes with mild blur and contrast loss, decodes each with jsQR,
+ * and combines that with contrast, logo coverage vs error correction, quiet
+ * zone and eye-shape risk. jsQR is loaded on demand.
+ *
+ * This is a heuristic: real cameras, lighting and scanner apps vary.
+ */
+export async function getScanScore(
+  props: QRProps,
+  options: ScanScoreOptions = {}
+): Promise<ScanScoreResult> {
+  assertBrowser();
+  const { signal } = options;
+  const sizes = testSizes(options);
+
+  const sourceProps = await inlineLogo(
+    withQRSize({ ...props, size: props.size ?? DEFAULT_SIZE }, SOURCE_SIZE)
+  );
+  throwIfAborted(signal);
+  const svgUri = await getQRAsSVGDataUri(sourceProps);
+  const img = await loadImage(svgUri);
+  throwIfAborted(signal);
+
+  const artwork = getFrameDimensions(SOURCE_SIZE, props.frame);
+  const drawArtwork = (codeWidth: number) => {
+    const scale = codeWidth / SOURCE_SIZE;
+    const width = artwork.width * scale;
+    const height = artwork.height * scale;
+    const pad = Math.max(8, Math.round(codeWidth * 0.12));
+    const { canvas, ctx } = createCanvas(width + 2 * pad, height + 2 * pad);
+    // Codes are scanned off paper or screens; test on white.
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(img, pad, pad, width, height);
+    const image = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    canvas.remove();
+    return image;
+  };
+  return await scoreArtwork(props, drawArtwork, sizes, signal);
+}
+
+/**
+ * Smallest code width (px) the artwork passed to `getScanScoreFromPixels`
+ * should have: twice the largest default test size, so every test size is a
+ * downscale, as it is in the browser.
+ */
+export const PIXEL_SCORE_MIN_CODE_WIDTH = SOURCE_SIZE;
+
+/**
+ * `getScanScore` for servers and other places without a DOM: the same
+ * checks, weights and camera model, decoding `pixels` instead of drawing the
+ * SVG on a canvas. `pixels` is the whole artwork as `props` renders it (the
+ * code plus its frame, if any), at any size with the code at least
+ * `PIXEL_SCORE_MIN_CODE_WIDTH` px wide (rasterized with resvg, sharp or a
+ * canvas). Transparent pixels count as white, like paper. Logos must already
+ * be painted into the pixels; an opaque placeholder of the same size scores
+ * the same.
+ */
+export async function getScanScoreFromPixels(
+  props: QRProps,
+  pixels: QRArtPixels,
+  options: ScanScoreOptions = {}
+): Promise<ScanScoreResult> {
+  const { width, height } = pixels;
+  if (!(width > 0 && height > 0) || pixels.data.length < width * height * 4) {
+    throw new Error("Pixels must be width × height × 4 RGBA bytes");
+  }
+  const sizes = testSizes(options);
+  const size = props.size ?? DEFAULT_SIZE;
+  const artwork = getFrameDimensions(size, props.frame);
+  // Code width in the source pixels
+  const sourceCodeWidth = (width * size) / artwork.width;
+  const source = { data: onWhite(pixels), width, height };
+
+  const drawArtwork = (codeWidth: number) => {
+    const art = resizePixels(source, codeWidth / sourceCodeWidth);
+    const pad = Math.max(8, Math.round(codeWidth * 0.12));
+    return padWhite(art, pad);
+  };
+  return await scoreArtwork(props, drawArtwork, sizes, options.signal);
+}
+
+/** RGBA flattened onto white (opaque), as the browser draws on a white canvas. */
+function onWhite(pixels: QRArtPixels): Uint8ClampedArray {
+  const { data, width, height } = pixels;
+  const out = new Uint8ClampedArray(width * height * 4);
+  for (let i = 0; i < width * height * 4; i += 4) {
+    const alpha = (data[i + 3] as number) / 255;
+    for (let c = 0; c < 3; c++) {
+      out[i + c] = (data[i + c] as number) * alpha + 255 * (1 - alpha);
+    }
+    out[i + 3] = 255;
+  }
+  return out;
+}
+
+/** `image` centred on a white border `pad` px wide. */
+function padWhite(image: ImageData, pad: number): ImageData {
+  const width = image.width + 2 * pad;
+  const height = image.height + 2 * pad;
+  const out = new Uint8ClampedArray(width * height * 4).fill(255);
+  for (let y = 0; y < image.height; y++) {
+    out.set(
+      image.data.subarray(y * image.width * 4, (y + 1) * image.width * 4),
+      ((y + pad) * width + pad) * 4
+    );
+  }
+  return { data: out, width, height, colorSpace: "srgb" } as ImageData;
 }
 
 // ── Images ─────────────────────────────────────────────────────────────────

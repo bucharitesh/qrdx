@@ -21,6 +21,7 @@ import {
 } from "@/utils/ai/messages";
 import { AnimatedBot } from "./animated-bot";
 import Message from "./message";
+import { SuggestionChips, suggestionsFor } from "./suggestion-chips";
 
 type ChatMessagesProps = {
   messages: ChatMessage[];
@@ -30,6 +31,7 @@ type ChatMessagesProps = {
   onEditCancel: () => void;
   editingMessageIndex?: number | null;
   isGeneratingTheme: boolean;
+  onSuggestion: (text: string) => void;
 };
 
 export function Messages({
@@ -40,6 +42,7 @@ export function Messages({
   onEditCancel,
   editingMessageIndex,
   isGeneratingTheme,
+  onSuggestion,
 }: ChatMessagesProps) {
   const { status, error, clearError } = useChatContext();
   const { isScrollStart, isScrollEnd, scrollStartRef, scrollEndRef } =
@@ -75,12 +78,20 @@ export function Messages({
     const isSubmitted = status === "submitted";
     const isStreaming = status === "streaming";
     const isError = status === "error";
-    const lastAssistantMsgHasText = getLastAssistantMessage(
+    // Text or an agent step already shows that something is happening.
+    const lastAssistantMsgShowsWork = getLastAssistantMessage(
       messages,
-    )?.parts.some((part) => part.type === "text" && Boolean(part.text));
+    )?.parts.some(
+      (part) =>
+        (part.type === "text" && Boolean(part.text)) ||
+        part.type.startsWith("tool-"),
+    );
+    const lastIsUser = messages.at(-1)?.role === "user";
 
     return (
-      !isError && (isSubmitted || (isStreaming && !lastAssistantMsgHasText))
+      !isError &&
+      ((isSubmitted && lastIsUser) ||
+        (isStreaming && !lastAssistantMsgShowsWork))
     );
   }, [status, messages]);
 
@@ -124,9 +135,18 @@ export function Messages({
                   onEditCancel={onEditCancel}
                   isLastMessageStreaming={isLastMessageStreaming}
                   isGeneratingTheme={isGeneratingTheme}
+                  superseded={!isLastMessage}
                 />
               );
             })}
+
+            {status === "ready" && (
+              <SuggestionChips
+                disabled={isGeneratingTheme}
+                onPick={onSuggestion}
+                suggestions={suggestionsFor(messages.at(-1))}
+              />
+            )}
 
             {/* Loading message when AI is generating */}
             {showLoadingMessage && (
