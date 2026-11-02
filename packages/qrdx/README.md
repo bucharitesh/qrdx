@@ -370,6 +370,6 @@ Higher levels survive more damage (and larger logos) but produce denser codes.
 
 ## License
 
-[AGPL-3.0-or-later](https://github.com/bucharitesh/qrdx/blob/main/license.md) © Ritesh Bucha
+[MIT](./LICENSE) © Ritesh Bucha and QRdx contributors. Versions before 0.0.47 were published under AGPL-3.0-or-later.
 
 Includes code from [qrcode.react](https://github.com/zpao/qrcode.react) (ISC, © Paul O'Shannessy) and the [QR Code generator library](https://www.nayuki.io/page/qr-code-generator-library) (MIT, © Project Nayuki).

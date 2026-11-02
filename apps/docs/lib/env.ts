@@ -16,17 +16,13 @@ export const env = createEnv({
     GOOGLE_CLIENT_ID: z.string().min(1).optional(),
     GOOGLE_CLIENT_SECRET: z.string().min(1).optional(),
 
-    // AI Provider - Google (AI themes, prompt enhancement and AI QR art)
-    GOOGLE_API_KEY: z.string().min(1).optional(),
-    // "0" switches AI QR art off even with GOOGLE_API_KEY set (lib/ai/art-availability.ts)
-    AI_ART_ENABLED: z.enum(["0", "1"]).optional(),
+    // AI - Vercel AI Gateway (AI themes, prompt enhancement and AI QR art;
+    // models per task in lib/ai/models.ts)
+    AI_GATEWAY_API_KEY: z.string().min(1).optional(),
 
     // Payments - Polar
     POLAR_ACCESS_TOKEN: z.string().min(1).optional(),
     POLAR_WEBHOOK_SECRET: z.string().min(1).optional(),
-    // "0" closes paid checkout while the Polar organization can't take payments
-    // yet (lib/feature-availability-rules.ts, feature "checkout")
-    POLAR_CHECKOUT_ENABLED: z.enum(["0", "1"]).optional(),
 
     // Integrations - Dub
     DUB_CLIENT_ID: z.string().min(1).optional(),
@@ -130,11 +126,9 @@ export const env = createEnv({
     GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
-    GOOGLE_API_KEY: process.env.GOOGLE_API_KEY,
-    AI_ART_ENABLED: process.env.AI_ART_ENABLED,
+    AI_GATEWAY_API_KEY: process.env.AI_GATEWAY_API_KEY,
     POLAR_ACCESS_TOKEN: process.env.POLAR_ACCESS_TOKEN,
     POLAR_WEBHOOK_SECRET: process.env.POLAR_WEBHOOK_SECRET,
-    POLAR_CHECKOUT_ENABLED: process.env.POLAR_CHECKOUT_ENABLED,
     DUB_CLIENT_ID: process.env.DUB_CLIENT_ID,
     DUB_CLIENT_SECRET: process.env.DUB_CLIENT_SECRET,
     DUB_REDIRECT_URI: process.env.DUB_REDIRECT_URI,

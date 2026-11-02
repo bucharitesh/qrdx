@@ -63,7 +63,7 @@ function faqItems(allowances: AIArtAllowances) {
     {
       question: "Does QRdx store my prompt or image?",
       answer:
-        "QRdx doesn't save your prompt, reference image or the generated images; it only counts your credits. The prompt, the QR code image and any reference image are sent to Google's Gemini API to create the artwork, and the result comes straight back to your browser, so download the ones you want to keep.",
+        "QRdx doesn't save your prompt, reference image or the generated images; it only counts your credits. The prompt, the QR code image and any reference image are sent through Vercel AI Gateway to Google's Gemini image model to create the artwork, and the result comes straight back to your browser, so download the ones you want to keep.",
     },
   ];
 }

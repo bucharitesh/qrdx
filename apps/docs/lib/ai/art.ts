@@ -16,8 +16,9 @@ import { logError } from "@/lib/shared";
 import { SubscriptionRequiredError } from "@/types/errors";
 import { ART_USAGE_MODEL_IDS } from "./art-models";
 
-// AI QR art: credits, limits and configuration. The image pipeline (Gemini,
-// scan check, Image QR blend) is in ./art-image.ts.
+// AI QR art: credits, limits and configuration. The image pipeline (the art
+// model through Vercel AI Gateway, scan check, Image QR blend) is in
+// ./art-image.ts.
 
 export { ART_MODEL_ID, ART_USAGE_MODEL_IDS } from "./art-models";
 
@@ -25,13 +26,13 @@ export { ART_MODEL_ID, ART_USAGE_MODEL_IDS } from "./art-models";
 export const MAX_ART_REQUEST_BODY_BYTES =
   16 * 1024 + ART_REFERENCE_MAX_BYTES * 2;
 
-/** AI art runs on Gemini with the same key as AI themes (see art-availability). */
+/** AI art runs through the gateway with the same key as AI themes (see art-availability). */
 export const isArtConfigured = isArtAvailable;
 
 /** Safety cap per user per UTC day, on top of the monthly allowance. */
 export const AI_ART_DAILY_LIMIT = 25;
 
-/** Rejects AI art requests with a 503 when no Google AI key is set. */
+/** Rejects AI art requests with a 503 when it isn't offered here. */
 export function assertArtConfigured(): void {
   if (!isArtConfigured) {
     throw new HttpError(

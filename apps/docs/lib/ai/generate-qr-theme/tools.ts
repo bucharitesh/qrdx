@@ -4,8 +4,9 @@ import {
   ensureScannable,
   themeStylePropsOutputSchema,
 } from "@/lib/ai/generate-qr-theme";
+import { textProviderOptions } from "@/lib/ai/models";
 import { GENERATE_QR_THEME_OBJECT_SYSTEM } from "@/lib/ai/prompts";
-import { baseProviderOptions, myProvider } from "@/lib/ai/providers";
+import { languageModel } from "@/lib/ai/providers";
 import type { AdditionalAIContext } from "@/types/ai";
 
 // Annotated because ai 7's inferred tool type names @ai-sdk/provider types,
@@ -30,8 +31,8 @@ export const QR_THEME_GENERATION_TOOLS: QRThemeGenerationTools = {
 
       const { partialOutputStream, output } = streamText({
         abortSignal,
-        model: myProvider.languageModel("qr-theme-generation"),
-        providerOptions: baseProviderOptions,
+        model: languageModel("qr-theme-generation"),
+        providerOptions: textProviderOptions("qr-theme-generation"),
         instructions: GENERATE_QR_THEME_OBJECT_SYSTEM,
         output: Output.object({ schema: themeStylePropsOutputSchema }),
         messages,
