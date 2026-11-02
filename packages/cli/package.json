@@ -21,7 +21,7 @@
     "url": "git+https://github.com/bucharitesh/qrdx.git",
     "directory": "packages/cli"
   },
-  "license": "AGPL-3.0-or-later",
+  "license": "MIT",
   "author": "Ritesh Bucha",
   "type": "module",
   "bin": {

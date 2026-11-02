@@ -142,4 +142,4 @@ Node.js ≥ 22
 
 ## License
 
-[AGPL-3.0-or-later](https://github.com/bucharitesh/qrdx/blob/main/license.md)
+[MIT](./LICENSE) © Ritesh Bucha and QRdx contributors. Versions before 0.0.5 were published under AGPL-3.0-or-later.
