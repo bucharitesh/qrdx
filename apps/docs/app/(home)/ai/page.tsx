@@ -11,7 +11,7 @@ import { AIChatHero } from "./components/ai-chat-hero";
 
 export const metadata: Metadata = createMetadata({
   title: "AI QR Code Generator — Design QR Codes From a Prompt",
-  description: `Describe your brand or style and QRdx's AI designs a custom QR code theme with live preview. Free accounts include ${AI_REQUEST_FREE_TIER_LIMIT} AI generations; Pro unlocks unlimited.`,
+  description: `Tell QRdx's AI what the code should open (a link, Wi-Fi, a contact card and more) and how it should look. It checks the scan score, repairs the design until it's Great and asks before changing your editor. Free accounts include ${AI_REQUEST_FREE_TIER_LIMIT} AI requests; Pro unlocks unlimited.`,
   keywords: [
     "ai qr code generator",
     "ai qr code design",
