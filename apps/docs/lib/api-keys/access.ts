@@ -6,7 +6,7 @@ import type { ActiveScope, ScopeRole } from "@/lib/scope";
 
 /**
  * Team owners and admins see (and can revoke) every key in their team;
- * members see only their own. In a personal workspace every key is the
+ * members see only their own. In your own workspace every key is the
  * user's own.
  */
 export function canSeeAllKeys(

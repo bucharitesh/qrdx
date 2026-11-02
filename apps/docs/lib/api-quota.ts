@@ -1,5 +1,6 @@
 import "server-only";
 
+import { isOwnWorkspaceOf } from "@repo/auth/own-workspace-id";
 import {
   createRateLimiter,
   fixedWindow,
@@ -12,7 +13,7 @@ import { PLAN_NAMES } from "./pricing";
 /**
  * The daily REST API quota (PlanLimits.apiRequestsPerDay): how many /api/v1
  * requests a workspace may make in one UTC day. The count belongs to the
- * scope (a personal workspace or a team, see lib/scope) and the cap comes
+ * scope (a workspace, see lib/scope) and the cap comes
  * from the plan that governs it. app/api/v1/codes/_lib/api.ts decides which
  * requests count; its per-minute limits apply on top.
  *
@@ -44,7 +45,7 @@ const limiters = Object.fromEntries(
 
 export interface QuotaScope {
   userId: string;
-  /** null = the user's personal workspace */
+  /** null = a row from before workspaces (counted as the user's own) */
   organizationId: string | null;
 }
 
@@ -56,8 +57,13 @@ interface ApiQuotaUsage {
   reset: number;
 }
 
+/**
+ * One count per workspace. A person's own workspace keeps the per-person key
+ * its usage had before workspaces, so nobody's count started over.
+ */
 function apiQuotaKey(scope: QuotaScope): string {
-  return scope.organizationId
+  return scope.organizationId &&
+    !isOwnWorkspaceOf(scope.organizationId, scope.userId)
     ? `org:${scope.organizationId}`
     : `user:${scope.userId}`;
 }

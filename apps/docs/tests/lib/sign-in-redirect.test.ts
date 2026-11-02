@@ -89,8 +89,8 @@ describe("safeNextPath", () => {
 
 describe("signInPath", () => {
   it("encodes `next`", () => {
-    expect(signInPath("/dashboard/webhooks?tab=log")).toBe(
-      "/sign-in?next=%2Fdashboard%2Fwebhooks%3Ftab%3Dlog",
+    expect(signInPath("/dashboard/acme/settings/webhooks?tab=log")).toBe(
+      "/sign-in?next=%2Fdashboard%2Facme%2Fsettings%2Fwebhooks%3Ftab%3Dlog",
     );
   });
 
@@ -104,9 +104,10 @@ describe("proxy.ts", () => {
   it("sends signed-out visitors to sign in, returning to the page and query", async () => {
     const proxy = (await import("@/proxy")).default;
     for (const path of [
-      "/settings/developers",
-      "/dashboard/webhooks?tab=log",
+      "/settings/account",
+      "/dashboard/acme/settings/webhooks?tab=log",
       "/dashboard",
+      "/dashboard?to=settings/developers&new=1",
     ]) {
       const response = await proxy(
         new NextRequest(`http://localhost:3000${path}`),
@@ -118,29 +119,54 @@ describe("proxy.ts", () => {
     }
   });
 
-  it("sends old /dashboard codes-list links to /dashboard/codes with a 307, before sign-in", async () => {
-    const proxy = (await import("@/proxy")).default;
-    for (const signedIn of [false, true]) {
-      state.signedIn = signedIn;
-      const response = await proxy(
-        new NextRequest("http://localhost:3000/dashboard?q=menu&folder=f1"),
-      );
-      expect(response.status).toBe(307);
-      const location = new URL(response.headers.get("location") ?? "");
-      expect(location.pathname).toBe("/dashboard/codes");
-      expect(location.search).toBe("?q=menu&folder=f1");
-    }
-  });
-
-  it("keeps plain /dashboard (Home) for signed-in visitors", async () => {
+  it("has no redirects for old dashboard links (they 404 as workspace slugs)", async () => {
     state.signedIn = true;
     const proxy = (await import("@/proxy")).default;
-    for (const path of ["/dashboard", "/dashboard?utm_source=email"]) {
+    for (const path of [
+      "/dashboard",
+      "/dashboard?q=menu&folder=f1",
+      "/dashboard/codes",
+      "/dashboard/team",
+    ]) {
       const response = await proxy(
         new NextRequest(`http://localhost:3000${path}`),
       );
-      expect(response.headers.get("location")).toBeNull();
+      expect(response.headers.get("location"), path).toBeNull();
     }
+  });
+
+  // NextResponse.next({ request: { headers } }) passes request headers on as
+  // x-middleware-request-<name>, listed in x-middleware-override-headers.
+  const forwarded = (response: Response, name: string) =>
+    response.headers.get(`x-middleware-request-${name}`);
+
+  it("tells the page and its server actions which workspace the URL names", async () => {
+    state.signedIn = true;
+    const proxy = (await import("@/proxy")).default;
+    for (const method of ["GET", "POST"]) {
+      const response = await proxy(
+        new NextRequest("http://localhost:3000/dashboard/acme/codes/c1", {
+          method,
+          headers: { "x-qrdx-workspace": "someone-else" },
+        }),
+      );
+      expect(forwarded(response, "x-qrdx-workspace"), method).toBe("acme");
+    }
+  });
+
+  it("drops a workspace header the browser sends to other app pages", async () => {
+    state.signedIn = true;
+    const proxy = (await import("@/proxy")).default;
+    const response = await proxy(
+      new NextRequest("http://localhost:3000/settings/account", {
+        headers: { "x-qrdx-workspace": "someone-else" },
+      }),
+    );
+    expect(response.headers.get("location")).toBeNull();
+    expect(
+      response.headers.get("x-middleware-override-headers") ?? "",
+    ).not.toContain("x-qrdx-workspace");
+    expect(forwarded(response, "x-qrdx-workspace")).toBeNull();
   });
 
   it("lets signed-in visitors through", async () => {

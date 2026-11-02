@@ -71,7 +71,7 @@ async function run<T>(
       { limiter, key: `webhooks:${action}:${scope.userId}` },
     ]);
     const data = await body(scope);
-    revalidatePath("/dashboard/webhooks", "layout");
+    revalidatePath("/dashboard", "layout");
     return { ok: true, data };
   } catch (error) {
     return failure(error, action);

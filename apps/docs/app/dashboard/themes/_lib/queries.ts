@@ -1,14 +1,16 @@
 import "server-only";
 
+import { isOwnWorkspaceOf, ownWorkspaceId } from "@repo/auth/own-workspace-id";
 import { communityTheme, database as db, qrPreset } from "@repo/database";
-import { and, count, desc, eq, isNull, or, sql } from "drizzle-orm";
+import { and, count, desc, eq, isNull, or, type SQL, sql } from "drizzle-orm";
 import { getPlanLimits, PLANS } from "@/lib/plans";
 import { PLAN_NAMES } from "@/lib/pricing";
 import type { ActiveScope } from "@/lib/scope";
 import type { ThemeStyles } from "@/types/theme";
 import type { SavedTheme } from "./theme";
 
-type ScopeRef = Pick<ActiveScope, "userId" | "organizationId">;
+/** A workspace's themes (`organizationId`) as seen by `userId`. */
+type ScopeRef = { userId: string; organizationId: string | null };
 type ThemeOwner = { userId: string; organizationId: string | null };
 
 /** Name of the cheapest plan that shares themes with a team (from lib/plans). */
@@ -21,32 +23,53 @@ export const teamThemesPlanName = () =>
 export const canManageTeamThemes = (scope: Pick<ActiveScope, "role">) =>
   scope.role === "owner" || scope.role === "admin";
 
+/**
+ * "Your themes" are the ones in your own workspace: saved from the editor,
+ * picked in every workspace, published to the community. Rows from before
+ * workspaces (no organization yet, until the backfill moves them) count too.
+ */
 export function personalThemesWhere(userId: string) {
-  return and(eq(qrPreset.userId, userId), isNull(qrPreset.organizationId));
+  return or(
+    eq(qrPreset.organizationId, ownWorkspaceId(userId)),
+    and(eq(qrPreset.userId, userId), isNull(qrPreset.organizationId)),
+  ) as SQL;
 }
 
-/** A scope's own themes: the active team's, or the user's personal ones. */
+/** True for a theme in `userId`'s own workspace (or from before workspaces). */
+export const isPersonalTheme = (theme: ThemeOwner, userId: string) =>
+  theme.organizationId === null
+    ? theme.userId === userId
+    : isOwnWorkspaceOf(theme.organizationId, userId);
+
+const inOwnWorkspace = (scope: ScopeRef) =>
+  scope.organizationId === null ||
+  isOwnWorkspaceOf(scope.organizationId, scope.userId);
+
+/** A workspace's own themes: your own workspace's are your themes. */
 export function themeScopeWhere(scope: ScopeRef) {
-  return scope.organizationId
-    ? eq(qrPreset.organizationId, scope.organizationId)
-    : personalThemesWhere(scope.userId);
+  return inOwnWorkspace(scope) || scope.organizationId === null
+    ? personalThemesWhere(scope.userId)
+    : eq(qrPreset.organizationId, scope.organizationId);
 }
 
-/** The scope a theme row belongs to (its team, or its creator's personal space). */
+/** The scope a theme row belongs to (its workspace, seen by its creator). */
 export const ownerScope = (theme: ThemeOwner): ScopeRef => ({
   userId: theme.userId,
   organizationId: theme.organizationId,
 });
 
-/** Personal themes always; team themes as an owner/admin of that active team. */
+/**
+ * Your themes always; another workspace's themes as an owner or admin of
+ * that workspace while it's open.
+ */
 export function canEditTheme(scope: ActiveScope, theme: ThemeOwner): boolean {
-  if (theme.organizationId === null) return theme.userId === scope.userId;
+  if (isPersonalTheme(theme, scope.userId)) return true;
   return (
     theme.organizationId === scope.organizationId && canManageTeamThemes(scope)
   );
 }
 
-/** Personal themes plus, inside a team, the team's shared themes. */
+/** Your themes plus, in another workspace, that workspace's shared themes. */
 export async function listVisibleThemes(
   scope: ActiveScope,
 ): Promise<SavedTheme[]> {
@@ -66,9 +89,9 @@ export async function listVisibleThemes(
     .from(qrPreset)
     .leftJoin(communityTheme, eq(qrPreset.id, communityTheme.themeId))
     .where(
-      scope.organizationId
-        ? or(personal, eq(qrPreset.organizationId, scope.organizationId))
-        : personal,
+      inOwnWorkspace(scope)
+        ? personal
+        : or(personal, eq(qrPreset.organizationId, scope.organizationId)),
     )
     .orderBy(desc(qrPreset.createdAt));
 
@@ -82,14 +105,14 @@ type ThemeRow = Omit<
 
 /** Adds where a row lives and what the scope's user may do with it. */
 export function toSavedTheme(scope: ActiveScope, row: ThemeRow): SavedTheme {
-  const isTeam = row.organizationId !== null;
+  const isTeam = !isPersonalTheme(row, scope.userId);
   return {
     ...row,
     isPublished: Boolean(row.isPublished),
     scope: isTeam ? "team" : "personal",
     canEdit: canEditTheme(scope, row),
-    // A personal default only applies in the personal workspace.
-    isActiveDefault: row.isDefault && isTeam === Boolean(scope.organizationId),
+    // Your default applies in your own workspace; elsewhere, the workspace's.
+    isActiveDefault: row.isDefault && isTeam === !inOwnWorkspace(scope),
   };
 }
 

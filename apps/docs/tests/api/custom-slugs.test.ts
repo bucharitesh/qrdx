@@ -5,6 +5,8 @@
 // reserved; on a custom domain it's unique on that domain only. Runs the real
 // codes service and REST routes against in-memory tables with the indexes of
 // manual-sql/0009 (and, where it says so, without the global one 0010 drops).
+
+import { ownWorkspaceId } from "@repo/auth/own-workspace-id";
 import { NextRequest } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { fakeDb } from "../support/fake-db";
@@ -99,9 +101,10 @@ const { releaseDomainSlugs, findTakenSlugs } = await import(
 );
 
 const ORIGIN = "http://localhost:3000";
+// Alice's own workspace.
 const SCOPE = {
   userId: "u_alice",
-  organizationId: null,
+  organizationId: ownWorkspaceId("u_alice"),
   role: "owner" as const,
 };
 
@@ -145,11 +148,13 @@ beforeEach(() => {
 let seq = 0;
 function seedCode(overrides: Record<string, unknown>) {
   seq += 1;
+  const userId = (overrides.userId as string | undefined) ?? "u_someone";
   fakeDb.seed("qrCode", [
     {
       id: `seed_${seq}`,
-      userId: "u_someone",
-      organizationId: null,
+      userId,
+      // In its creator's own workspace unless a test says otherwise.
+      organizationId: ownWorkspaceId(userId),
       destinationUrl: "https://example.com/theirs",
       ...overrides,
     },

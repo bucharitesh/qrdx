@@ -338,7 +338,7 @@ async function saveColumn(
     .where(and(eq(qrCode.id, row.id), scopeWhere(scope)))
     .returning(codeColumns);
   if (!updated) throw new HttpError(404, "NOT_FOUND", "QR code not found");
-  revalidatePath(`/dashboard/codes/${row.id}`);
+  revalidatePath("/dashboard", "layout");
   return toSettings(scope, updated);
 }
 

@@ -9,14 +9,21 @@ function usersLabel(count: number): string {
   return count === 1 ? "1 user" : `${count.toLocaleString("en")} users`;
 }
 
-export function OAuthAppList({ apps }: { apps: OAuthAppView[] }) {
+export function OAuthAppList({
+  apps,
+  base,
+}: {
+  apps: OAuthAppView[];
+  /** The workspace's API keys & apps page */
+  base: string;
+}) {
   return (
     <ul className="divide-y overflow-hidden rounded-xl border">
       {apps.map((app) => (
         <li key={app.id}>
           <Link
             className="hover:bg-muted/40 focus-visible:bg-muted/40 flex items-center gap-4 p-4 transition-colors outline-none"
-            href={`/settings/developers/${encodeURIComponent(app.id)}`}
+            href={`${base}/${encodeURIComponent(app.id)}`}
           >
             <OAuthAppLogo logoUrl={app.logoUrl} name={app.name} />
             <div className="min-w-0 flex-1 space-y-1">

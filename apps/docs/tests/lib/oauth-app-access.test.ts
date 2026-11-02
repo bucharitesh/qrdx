@@ -5,6 +5,7 @@ import { describe, expect, it, vi } from "vitest";
 
 vi.mock("@repo/database", () => ({ database: {} }));
 
+import { ownWorkspaceId } from "@repo/auth/own-workspace-id";
 import {
   canEditOAuthApp,
   canManageOAuthApps,
@@ -25,9 +26,10 @@ const bob = "user_bob";
 const acme = "org_acme";
 const other = "org_other";
 
+// Someone's own workspace (what used to be their personal workspace).
 const personal = (userId: string) => ({
   userId,
-  organizationId: null,
+  organizationId: ownWorkspaceId(userId),
   role: "owner" as const,
 });
 const team = (
@@ -36,12 +38,15 @@ const team = (
   role: "owner" | "admin" | "member",
 ) => ({ userId, organizationId, role });
 
-const alicePersonalApp = { ownerUserId: alice, organizationId: null };
+const alicePersonalApp = {
+  ownerUserId: alice,
+  organizationId: ownWorkspaceId(alice),
+};
 const acmeApp = { ownerUserId: alice, organizationId: acme };
 const firstPartyApp = { ownerUserId: null, organizationId: null };
 
 describe("isAppInScope", () => {
-  it("personal apps belong to their owner's personal workspace only", () => {
+  it("apps in someone's own workspace belong there only", () => {
     expect(isAppInScope(personal(alice), alicePersonalApp)).toBe(true);
     expect(isAppInScope(personal(bob), alicePersonalApp)).toBe(false);
     expect(isAppInScope(team(alice, acme, "owner"), alicePersonalApp)).toBe(
@@ -52,7 +57,7 @@ describe("isAppInScope", () => {
   it("team apps belong to the team, whoever created them", () => {
     expect(isAppInScope(team(bob, acme, "member"), acmeApp)).toBe(true);
     expect(isAppInScope(team(alice, other, "owner"), acmeApp)).toBe(false);
-    // The creator's personal workspace doesn't see the team's app.
+    // The creator's own workspace doesn't see the team's app.
     expect(isAppInScope(personal(alice), acmeApp)).toBe(false);
   });
 

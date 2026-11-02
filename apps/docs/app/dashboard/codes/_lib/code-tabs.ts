@@ -1,7 +1,9 @@
-// Tabs of the code page (/dashboard/codes/<id>). The tab is a query
-// parameter, so a tab can be bookmarked or linked to, and links made before
-// the tabs existed keep working: /dashboard/codes/<id> opens Overview and the
-// old analytics links (?range=…, ?tz=…) open Analytics.
+import { workspaceLink } from "@/lib/workspace-paths";
+
+// Tabs of the code page (/dashboard/<workspace>/codes/<id>). The tab is a
+// query parameter, so a tab can be bookmarked or linked to:
+// /dashboard/<workspace>/codes/<id> opens Overview and analytics links with
+// ?range=… or ?tz=… open Analytics.
 
 export const CODE_TABS = ["overview", "analytics", "settings"] as const;
 
@@ -32,8 +34,12 @@ export function resolveCodeTab(query: Query): CodeTab {
   return "overview";
 }
 
-/** Link to a tab of a code's page; Overview has no parameter. */
+/**
+ * Link to a tab of a code's page in workspace `slug` (null: the reader's
+ * default workspace); Overview has no parameter.
+ */
 export function codeTabHref(
+  slug: string | null,
   codeId: string,
   tab: CodeTab,
   extra: { params?: Record<string, string>; hash?: string } = {},
@@ -44,5 +50,8 @@ export function codeTabHref(
     search.set(key, value);
   }
   const query = search.toString();
-  return `/dashboard/codes/${encodeURIComponent(codeId)}${query ? `?${query}` : ""}${extra.hash ? `#${extra.hash}` : ""}`;
+  return workspaceLink(
+    slug,
+    `/codes/${encodeURIComponent(codeId)}${query ? `?${query}` : ""}${extra.hash ? `#${extra.hash}` : ""}`,
+  );
 }

@@ -18,6 +18,7 @@ import {
   IntegrationLogo,
   logoForIntegration,
 } from "@/components/sections/integrations/integration-logo";
+import { useWorkspaceHref } from "@/components/workspace-provider";
 import { IntegrationCard } from "./integration-card";
 
 export type IntegrationWithStatus = IntegrationDefinition & {
@@ -39,6 +40,8 @@ const SHORTCUTS: {
   /** The description to use instead while one of the slugs is hidden here. */
   descriptionWithout?: Record<string, string>;
   href: string;
+  /** `href` is a page of the open workspace (/dashboard/<slug><href>). */
+  inWorkspace?: boolean;
   slugs: string[];
 }[] = [
   {
@@ -52,7 +55,8 @@ const SHORTCUTS: {
     title: "Webhooks, Zapier, Make and n8n",
     description:
       "Send scans, form responses and code changes to your own tools.",
-    href: "/dashboard/webhooks",
+    href: "/settings/webhooks",
+    inWorkspace: true,
     slugs: ["webhooks", "zapier", "make", "n8n"],
   },
   {
@@ -64,7 +68,8 @@ const SHORTCUTS: {
       "google-tag-manager":
         "Google Analytics, Meta, TikTok and LinkedIn on hosted pages.",
     },
-    href: "/dashboard/codes",
+    href: "/codes",
+    inWorkspace: true,
     slugs: [
       "google-analytics",
       "google-tag-manager",
@@ -76,7 +81,8 @@ const SHORTCUTS: {
   {
     title: "Custom domains",
     description: "Serve your dynamic codes' short links from your own domain.",
-    href: "/dashboard/domains",
+    href: "/settings/domains",
+    inWorkspace: true,
     slugs: ["custom-domains"],
   },
   {
@@ -103,6 +109,7 @@ export function IntegrationsClient({
   integrations,
   hiddenSlugs = [],
 }: IntegrationsClientProps) {
+  const inWorkspace = useWorkspaceHref();
   const [search, setSearch] = useState("");
 
   const filtered = useMemo(
@@ -245,7 +252,11 @@ export function IntegrationsClient({
             {shortcuts.map((shortcut) => (
               <Link
                 key={shortcut.title}
-                href={shortcut.href}
+                href={
+                  shortcut.inWorkspace
+                    ? inWorkspace(shortcut.href)
+                    : shortcut.href
+                }
                 className="group flex items-center gap-4 border-b px-4 py-3.5 transition-colors last:border-b-0 hover:bg-accent/40"
               >
                 <span className="flex shrink-0 -space-x-2">

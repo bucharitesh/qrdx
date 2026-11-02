@@ -188,8 +188,8 @@ export function describeDeletionPlan(plan: DeletionPlan): DeletionSummary {
 
   const consequences = [
     counted.length > 0
-      ? `Your personal workspace is deleted, with its ${listOf(counted)}, plus your scans, themes, webhooks and integrations.${codes > 0 ? ` Its printed QR codes show a "QR code not found" page.` : ""}`
-      : "Your personal workspace is deleted, with your themes, settings and integrations.",
+      ? `Your own workspace is deleted, with its ${listOf(counted)}, plus your scans, themes, webhooks and integrations.${codes > 0 ? ` Its printed QR codes show a "QR code not found" page.` : ""}`
+      : "Your own workspace is deleted, with your themes, settings and integrations.",
   ];
 
   for (const team of plan.teams) {
@@ -197,12 +197,12 @@ export function describeDeletionPlan(plan: DeletionPlan): DeletionSummary {
       const who = team.successor.name || team.successor.email;
       consequences.push(
         team.promote
-          ? `${team.name}: ${who} (${roleLabel(team.successor.role)}) becomes an owner and takes over what you created in the team, so its codes keep working.`
-          : `${team.name}: what you created in the team stays with it, under ${who}.`,
+          ? `${team.name}: ${who} (${roleLabel(team.successor.role)}) becomes an owner and takes over what you created in the workspace, so its codes keep working.`
+          : `${team.name}: what you created in the workspace stays with it, under ${who}.`,
       );
     } else if (team.action === "delete-team") {
       consequences.push(
-        `${team.name}: you're the only member, so the team and its content are deleted.`,
+        `${team.name}: you're the only member, so the workspace and its content are deleted.`,
       );
     }
   }

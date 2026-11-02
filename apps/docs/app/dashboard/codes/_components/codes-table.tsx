@@ -18,6 +18,7 @@ import type { TagRow } from "@/app/dashboard/codes/_lib/organize";
 import type { FolderRow } from "@/app/dashboard/codes/_lib/organize-shared";
 import type { QrCodeListItem } from "@/app/dashboard/codes/_lib/qr-codes";
 import { CopyButton } from "@/components/copy-button";
+import { useWorkspaceHref } from "@/components/workspace-provider";
 import { CodeActionsMenu } from "./code-actions-menu";
 import { startCodesDrag } from "./drag";
 import { displayUrl, formatDate, formatNumber } from "./format";
@@ -71,6 +72,7 @@ export function CodesTable({
   /** Show each code's folder (when listing across folders) */
   showFolder?: boolean;
 }) {
+  const inWorkspace = useWorkspaceHref();
   const selectable = Boolean(selected && onSelect);
   const allSelected =
     selectable &&
@@ -113,7 +115,7 @@ export function CodesTable({
       </TableHeader>
       <TableBody>
         {codes.map((code) => {
-          const href = `/dashboard/codes/${encodeURIComponent(code.id)}`;
+          const href = inWorkspace(`/codes/${encodeURIComponent(code.id)}`);
           const isSelected = selected?.has(code.id) ?? false;
           const inTrash = Boolean(code.deletedAt);
           const folderName =

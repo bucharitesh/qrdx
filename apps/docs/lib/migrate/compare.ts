@@ -2,6 +2,7 @@
 // the three steps. Client-safe. Steps stay within what the providers'
 // help docs say (see lib/migrate/providers.ts for the sources' wording).
 
+import { dashboardEntry } from "@/lib/workspace-paths";
 import { API_PROVIDERS, FILE_PROVIDERS, type ProviderId } from "./providers";
 
 export interface CompareMigration {
@@ -15,7 +16,7 @@ export interface CompareMigration {
 }
 
 const importHref = (provider: ProviderId) =>
-  `/dashboard/codes?import=${provider}`;
+  dashboardEntry("codes", { import: provider });
 
 function api(provider: "dub" | "bitly", printed: string): CompareMigration {
   const { name } = API_PROVIDERS[provider];

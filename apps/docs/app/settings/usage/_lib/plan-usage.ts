@@ -1,5 +1,6 @@
 import "server-only";
 
+import { isOwnWorkspaceOf } from "@repo/auth/own-workspace-id";
 import { database as db } from "@repo/database";
 import { subscription as subscriptionTable } from "@repo/database/schema";
 import { eq } from "drizzle-orm";
@@ -43,8 +44,9 @@ export type MeterResult = Meter | { id: MeterId; label: string; failed: true };
 
 export interface PlanUsage {
   plan: Plan;
+  /** isTeam: not the viewer's own workspace (its plan is its owners') */
   workspace: { isTeam: boolean; name: string };
-  /** Personal workspace, or an owner of the team (a team's plan is its owners'). */
+  /** An owner of the workspace (a workspace's plan is its owners'). */
   canChangePlan: boolean;
   /** The signed-in person's own subscription (null when they have none). */
   subscription: SubscriptionSummary | null;
@@ -73,12 +75,12 @@ async function hasAnySubscription(userId: string): Promise<boolean> {
  * domains, AI) are left out. One failed count doesn't hide the others.
  */
 export async function getPlanUsage(scope: ActiveScope): Promise<PlanUsage> {
-  const isTeam = Boolean(scope.organizationId);
+  const isTeam = !isOwnWorkspaceOf(scope.organizationId, scope.userId);
   const [plan, personalPlan, own, team, billingHistory] = await Promise.all([
     getPlanForScope(scope),
     getPlan(scope.userId),
     getMyActiveSubscription(scope.userId),
-    scope.organizationId ? getTeam(scope.organizationId) : null,
+    getTeam(scope.organizationId),
     hasAnySubscription(scope.userId),
   ]);
   const limits = getPlanLimits(plan);
@@ -180,13 +182,11 @@ export async function getPlanUsage(scope: ActiveScope): Promise<PlanUsage> {
 
   loaders.push({
     id: "savedThemes",
-    label: isTeam ? "Team themes" : "Saved themes",
+    label: isTeam ? "Shared themes" : "Saved themes",
     load: async () => {
-      // Personal themes follow the person's own plan; team themes the team's.
+      // Your themes follow your own plan; another workspace's its owners'.
       const themeLimits = isTeam ? limits : getPlanLimits(personalPlan);
-      const used = await countThemesInScope(
-        isTeam ? scope : { userId: scope.userId, organizationId: null },
-      );
+      const used = await countThemesInScope(scope);
       return {
         used,
         limit:
@@ -263,9 +263,9 @@ export async function getPlanUsage(scope: ActiveScope): Promise<PlanUsage> {
     plan,
     workspace: {
       isTeam,
-      name: team?.name ?? "Personal workspace",
+      name: team?.name ?? "This workspace",
     },
-    canChangePlan: !isTeam || scope.role === "owner",
+    canChangePlan: scope.role === "owner",
     subscription: own
       ? {
           plan: planForSubscriptionProduct(own.productId),

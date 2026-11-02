@@ -1,29 +1,48 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import { getHomeData } from "@/app/dashboard/_components/home/home-data";
-import { HomeView } from "@/app/dashboard/_components/home/home-view";
-import { legacyCodesUrl } from "@/app/dashboard/_components/home/legacy-codes-url";
-import { requireDashboardScope } from "@/app/dashboard/codes/_lib/qr-codes";
+import { signInPath } from "@/lib/safe-redirect";
+import { getActiveWorkspace } from "@/lib/scope";
+import { entryPath, workspaceHref } from "@/lib/workspace-paths";
+import { UnauthorizedError } from "@/types/errors";
 
 export const metadata: Metadata = {
-  title: "Home",
+  title: "Dashboard",
   robots: { index: false, follow: false },
 };
 
 type SearchParams = Record<string, string | string[] | undefined>;
 
 /**
- * Home. The codes list moved to /dashboard/codes; old /dashboard links that
- * carry its filters (or the import dialog's ?import=) still open it there.
+ * /dashboard opens the person's default workspace: the one last opened,
+ * else their own (made now for accounts from before workspaces). Links that
+ * can't know the slug (docs, API messages) add ?to=<section>, e.g.
+ * /dashboard?to=settings/developers; other query parameters are kept.
  */
-export default async function DashboardPage({
+export default async function DashboardIndex({
   searchParams,
 }: {
   searchParams: Promise<SearchParams>;
 }) {
-  const codesUrl = legacyCodesUrl(await searchParams);
-  if (codesUrl) redirect(codesUrl);
+  const params = await searchParams;
+  const query = new URLSearchParams();
+  for (const [key, value] of Object.entries(params)) {
+    if (key === "to") continue;
+    for (const item of Array.isArray(value) ? value : [value]) {
+      if (typeof item === "string") query.append(key, item);
+    }
+  }
+  const search = query.size > 0 ? `?${query}` : "";
 
-  const scope = await requireDashboardScope("/dashboard");
-  return <HomeView data={await getHomeData(scope)} />;
+  let slug: string | null = null;
+  try {
+    slug = (await getActiveWorkspace()).workspace.slug;
+  } catch (error) {
+    if (!(error instanceof UnauthorizedError)) throw error;
+  }
+  if (!slug) {
+    const back = new URLSearchParams(query);
+    if (typeof params.to === "string") back.set("to", params.to);
+    redirect(signInPath(`/dashboard${back.size > 0 ? `?${back}` : ""}`));
+  }
+  redirect(`${workspaceHref(slug, entryPath(params.to) ?? "")}${search}`);
 }

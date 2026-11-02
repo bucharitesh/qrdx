@@ -2,11 +2,12 @@
 
 import { database as db, landingPage } from "@repo/database";
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
-import { and, desc, eq, ilike, isNull, type SQL } from "drizzle-orm";
+import { and, desc, eq, ilike, type SQL } from "drizzle-orm";
 import { listCodes } from "@/app/dashboard/codes/_lib/qr-codes";
 import { getTemplate } from "@/lib/landing/templates";
-import { type ActiveScope, getActiveScope } from "@/lib/scope";
+import { type ActiveScope, getActiveWorkspace } from "@/lib/scope";
 import { logError } from "@/lib/shared";
+import { workspaceHref } from "@/lib/workspace-paths";
 import { UnauthorizedError } from "@/types/errors";
 
 /** One row of the ⌘K palette's workspace results. */
@@ -33,16 +34,12 @@ const searchLimiter = createRateLimiter({
 });
 
 function pageScopeWhere(scope: ActiveScope): SQL {
-  return scope.organizationId
-    ? eq(landingPage.organizationId, scope.organizationId)
-    : (and(
-        eq(landingPage.userId, scope.userId),
-        isNull(landingPage.organizationId),
-      ) as SQL);
+  return eq(landingPage.organizationId, scope.organizationId);
 }
 
 async function searchPages(
   scope: ActiveScope,
+  slug: string,
   term: string,
 ): Promise<SearchHit[]> {
   const pattern = `%${term.replace(/[\\%_]/g, "\\$&")}%`;
@@ -58,7 +55,7 @@ async function searchPages(
     .limit(RESULTS_PER_GROUP);
   return rows.map((row) => ({
     id: row.id,
-    href: `/dashboard/pages/${encodeURIComponent(row.id)}`,
+    href: workspaceHref(slug, `/pages/${encodeURIComponent(row.id)}`),
     title: row.title?.trim() || "Untitled page",
     detail: getTemplate(row.type)?.label ?? "Landing page",
   }));
@@ -77,20 +74,23 @@ export async function searchWorkspace(
   if (term.length < 2) return { ok: true, codes: [], pages: [] };
 
   try {
-    const scope = await getActiveScope();
+    const { scope, workspace } = await getActiveWorkspace();
     const { success } = await searchLimiter.limit(`app-search:${scope.userId}`);
     if (!success) {
       return { ok: false, error: "Too many searches. Wait a moment." };
     }
     const [{ codes }, pages] = await Promise.all([
       listCodes(scope, { q: term, status: "all", limit: RESULTS_PER_GROUP }),
-      searchPages(scope, term),
+      searchPages(scope, workspace.slug, term),
     ]);
     return {
       ok: true,
       codes: codes.map((code) => ({
         id: code.id,
-        href: `/dashboard/codes/${encodeURIComponent(code.id)}`,
+        href: workspaceHref(
+          workspace.slug,
+          `/codes/${encodeURIComponent(code.id)}`,
+        ),
         title: code.title?.trim() || code.destinationUrl,
         detail: code.shortLink.replace(/^https?:\/\//, ""),
         archived: code.archivedAt !== null,

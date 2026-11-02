@@ -188,7 +188,7 @@ describe("what client components learn", () => {
       expect.arrayContaining([
         "/ai",
         "/ai/art",
-        "/dashboard/domains",
+        "/dashboard/[workspace]/settings/domains",
         "/docs/custom-domains",
       ]),
     );
@@ -203,8 +203,9 @@ describe("what client components learn", () => {
   });
 
   it("matches links by exact path, ignoring query and hash", () => {
-    const hidden = ["/ai/art", "/dashboard/domains"];
+    const hidden = ["/ai/art", "/dashboard/[workspace]/settings/domains"];
     expect(isPathShown(hidden, "/ai/art")).toBe(false);
+    expect(isPathShown(hidden, "/dashboard/acme/settings/domains")).toBe(false);
     expect(isPathShown(hidden, "/ai/art?prompt=x#top")).toBe(false);
     expect(isPathShown(hidden, "/ai")).toBe(true);
     expect(isPathShown(hidden, "/dashboard")).toBe(true);

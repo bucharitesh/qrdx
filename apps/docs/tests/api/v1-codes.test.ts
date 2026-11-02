@@ -6,6 +6,7 @@
 // against in-memory tables; only side systems (URL safety lookups, custom
 // domains, version history, webhooks) are stubbed.
 import { createHash } from "node:crypto";
+import { ownWorkspaceId } from "@repo/auth/own-workspace-id";
 import { NextRequest } from "next/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { fakeDb } from "../support/fake-db";
@@ -131,6 +132,10 @@ beforeEach(() => {
   vi.useFakeTimers({ toFake: ["Date"] });
   vi.setSystemTime(NOW);
   fakeDb.resetAll();
+  // Workspaces are organizations; members point at them.
+  fakeDb.seed("organization", [
+    { id: "org_acme", name: "Acme", slug: "acme", createdAt: new Date(0) },
+  ]);
   fakeDb.defaults("qrCode", () => ({
     slugScope: "",
     contentType: "url",
@@ -297,7 +302,7 @@ describe("who may call /v1/codes", () => {
     expect(await errorOf(response)).toEqual({
       code: "UNAUTHORIZED",
       message:
-        'Missing API key. Send an API key as "Authorization: Bearer <key>"; create one at http://localhost:3000/settings/developers. OAuth access tokens go in the same header.',
+        'Missing API key. Send an API key as "Authorization: Bearer <key>"; create one at http://localhost:3000/dashboard?to=settings/developers. OAuth access tokens go in the same header.',
       status: 401,
       docs: "http://localhost:3000/docs/developers/api-keys",
     });
@@ -511,14 +516,15 @@ describe("POST /v1/codes", () => {
       title: "Launch",
       status: "active",
       scanCount: 0,
-      organizationId: null,
+      // An OAuth token acts on its user's own workspace.
+      organizationId: ownWorkspaceId("u_alice"),
       archivedAt: null,
     });
     expect(data.slug).toMatch(/^[0-9A-Za-z]{7}$/);
     expect(data.shortLink).toBe(`${ORIGIN}/q/${data.slug}`);
     expect(fakeDb.find("qrCode", { id: data.id })).toMatchObject({
       userId: "u_alice",
-      organizationId: null,
+      organizationId: ownWorkspaceId("u_alice"),
     });
     expect(state.emitted).toEqual([{ event: "code.created", ids: [data.id] }]);
   });
