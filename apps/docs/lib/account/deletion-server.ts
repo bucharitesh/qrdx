@@ -192,7 +192,7 @@ function isNotFound(error: unknown): boolean {
 async function deletePolarCustomer(userId: string, subscribed: boolean) {
   if (!isBillingConfigured) return;
   try {
-    await polar.customers.deleteExternal({ externalId: userId });
+    await polar.customers.deleteExternal(userId);
   } catch (error) {
     if (isNotFound(error)) return;
     if (subscribed) {

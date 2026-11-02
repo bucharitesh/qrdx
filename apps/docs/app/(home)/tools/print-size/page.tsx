@@ -65,12 +65,12 @@ export default function PrintSizePage() {
 
       <section
         aria-label="Print size calculator"
-        className="w-full px-6 md:px-10 py-10"
+        className="w-full px-10 py-10"
       >
         <PrintSizeCalculator />
       </section>
 
-      <section className="w-full px-6 md:px-10 py-10 grid gap-8 md:grid-cols-2">
+      <section className="w-full px-10 py-10 grid gap-8 md:grid-cols-2">
         <div className="flex flex-col gap-3">
           <h2 className="text-2xl font-medium tracking-tighter">
             How the size is calculated

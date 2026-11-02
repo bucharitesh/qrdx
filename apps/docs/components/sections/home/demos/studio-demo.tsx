@@ -6,7 +6,7 @@ import { cn } from "@repo/design-system/lib/utils";
 import { ArrowRight } from "iconsax-reactjs";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import Link from "next/link";
-import { QRCode } from "qrdx";
+import { QRCodeSVG } from "qrdx";
 import {
   BODY_PATTERN,
   type BodyPattern,
@@ -20,9 +20,14 @@ import {
 import { useId, useState } from "react";
 import { DURATION, EASE } from "@/components/mockups/motion";
 import { SegmentedControl } from "@/components/mockups/segmented-control";
-import { easterEggUrl } from "@/lib/easter-eggs";
+import {
+  SHOWCASE_ACCENT as ACCENT,
+  SHOWCASE_INK as INK,
+  SHOWCASE_PLACEMENTS,
+  SHOWCASE_STYLES,
+} from "@/lib/landing/showcase-styles";
+import { HOME_CODES } from "./codes";
 import { Chip, DemoStage, humanize, QrTile, Readout } from "./demo-ui";
-import { ACCENT, INK } from "./qr-family";
 
 type Tab = "patterns" | "colors" | "frames";
 
@@ -130,7 +135,7 @@ const SHOWN_BODIES: BodyPattern[] = (
 ).filter((item) => BODY_PATTERN.includes(item));
 
 const SHOWN_EYES: CornerEyePattern[] = (
-  ["extra-rounded", "rounded", "square", "leaf", "gear"] as const
+  ["squircle", "extra-rounded", "rounded", "square", "leaf", "gear"] as const
 ).filter((item) => CORNER_EYE_PATTERNS.includes(item));
 
 const SHOWN_FRAMES: FrameStyle[] = (
@@ -144,6 +149,9 @@ const SHOWN_FRAMES: FrameStyle[] = (
   ] as const
 ).filter((item) => FRAME_STYLES.includes(item));
 
+/** The look the studio opens on (lib/landing/showcase-styles.ts). */
+const START = SHOWCASE_STYLES[SHOWCASE_PLACEMENTS["home.studio"]];
+
 const MORE_LABEL = `All ${BODY_PATTERN.length} patterns, ${CORNER_EYE_PATTERNS.length} eyes and ${FRAME_STYLES.length - 1} frames in the playground`;
 
 /** Patterns / colors / frames playground in miniature, using the real renderer. */
@@ -151,8 +159,8 @@ export function StudioDemo() {
   const reduce = useReducedMotion();
   const textId = useId();
   const [tab, setTab] = useState<Tab>("patterns");
-  const [body, setBody] = useState<BodyPattern>("rounded");
-  const [eye, setEye] = useState<CornerEyePattern>("extra-rounded");
+  const [body, setBody] = useState<BodyPattern>(START.bodyPattern);
+  const [eye, setEye] = useState<CornerEyePattern>(START.cornerEyePattern);
   const [swatchId, setSwatchId] = useState("ink");
   const [angle, setAngle] = useState<(typeof ANGLES)[number]["value"]>("45");
   const [frameStyle, setFrameStyle] = useState<FrameStyle>("banner-bottom");
@@ -325,18 +333,13 @@ export function StudioDemo() {
               frameStyle !== "none" && "aspect-auto [&_svg]:h-auto",
             )}
           >
-            <QRCode
-              value={easterEggUrl("studio")}
-              size={224}
-              level="Q"
-              hideLogo
-              bgColor="#ffffff"
+            <QRCodeSVG
+              {...HOME_CODES.studio}
               fgColor={swatch.fg(Number(angle))}
               eyeColor={swatch.eye}
               dotColor={swatch.dot}
               bodyPattern={body}
               cornerEyePattern={eye}
-              cornerEyeDotPattern="rounded"
               frame={
                 frameStyle === "none"
                   ? undefined

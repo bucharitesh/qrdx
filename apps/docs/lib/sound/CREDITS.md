@@ -18,6 +18,12 @@ given here anyway). Only items whose `meta.license` is `CC0` were used.
 Every cue also has a Web Audio synth fallback, used while its sample loads or if
 the file fails to load.
 
+The other seasonal character cues have no file: they are synthesized at runtime
+in `lib/sound/synth.ts` (original, no third-party audio, 0 bytes to download):
+`boo` (ghost), `meow` / `purr` / `hiss` (cat), `bat`, `spider`, `seasonal-gift`,
+`seasonal-snowman`, `seasonal-tree`, `seasonal-cork`, `seasonal-balloon` and
+`seasonal-disco`.
+
 The engine skips leading silence and caps cues at 250 ms at runtime
 (`lib/sound/trim.ts`, `lib/sound/engine.ts`), so the files stay byte-identical
 to the registry.

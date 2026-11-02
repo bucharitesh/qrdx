@@ -1,6 +1,9 @@
+import { createHash } from "node:crypto";
+
 /**
- * Where a sign-in code goes. Pure so the rules are testable; the real
- * dependencies are wired in ./sign-in-code.tsx.
+ * Where an emailed code goes (sign-in codes, and the code that confirms a new
+ * email address). Pure so the rules are testable; the real dependencies are
+ * wired in ./sign-in-code.tsx and ./email-change-code.tsx.
  *
  * - Delivery allowed (production deployment): emailed through Resend.
  * - Not allowed, outside production (local dev): written to the server console.
@@ -21,23 +24,30 @@ export interface SignInCodeDeliveryDeps {
 export async function deliverSignInCode(
   { email, otp }: { email: string; otp: string },
   deps: SignInCodeDeliveryDeps,
+  /** What the code is, for the dev log line and errors */
+  label = "sign-in code",
 ): Promise<"emailed" | "logged"> {
   if (deps.deliveryAllowed && deps.nodeEnv !== "test") {
     const result = await deps.send();
     if (!result.sent) {
       throw new Error(
-        `Sign-in code email not sent (${result.reason ?? "unknown"})`,
+        `${label} email not sent (${result.reason ?? "unknown"})`,
       );
     }
     return "emailed";
   }
   if (deps.nodeEnv === "production") {
-    throw new Error("Sign-in code email is off for this deployment");
+    throw new Error(`${label} email is off for this deployment`);
   }
   deps.log(
-    `[dev only] QRdx sign-in code for ${email}: ${otp} (not emailed: delivery is off outside production)`,
+    `[dev only] QRdx ${label} for ${email}: ${otp} (not emailed: delivery is off outside production)`,
   );
   return "logged";
+}
+
+/** Rate-limit key for an address: hashed, so addresses never sit in Redis keys. */
+export function addressKey(email: string): string {
+  return createHash("sha256").update(email.trim().toLowerCase()).digest("hex");
 }
 
 interface AddressLimiter {

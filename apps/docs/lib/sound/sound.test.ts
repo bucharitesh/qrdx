@@ -10,6 +10,7 @@ import {
   POINTER_WINDOW_MS,
   type SoundSource,
 } from "./engine";
+import { isDirectActivation } from "./gesture";
 import {
   type PrefsStorage,
   readSoundPrefs,
@@ -209,12 +210,17 @@ describe("cue allowlist", () => {
     assert.deepEqual(SOUND_GROUPS.seasonal, [
       "boo",
       "meow",
+      "purr",
+      "hiss",
       "bat",
+      "spider",
       "seasonal-bauble",
       "seasonal-gift",
       "seasonal-snowman",
+      "seasonal-tree",
       "seasonal-cork",
       "seasonal-balloon",
+      "seasonal-disco",
     ]);
     assert.equal(new Set(SOUND_NAMES).size, SOUND_NAMES.length);
     for (const group of Object.keys(
@@ -270,6 +276,24 @@ describe("cue allowlist", () => {
         name,
       );
     }
+  });
+
+  it("gives every seasonal character a sound of its own", () => {
+    const seasonal = SOUND_GROUPS.seasonal.map((name) => SOUND_PRESETS[name]);
+    // No two characters share a recipe or a description.
+    assert.equal(new Set(seasonal.map((p) => p.synth)).size, seasonal.length);
+    assert.equal(new Set(seasonal.map((p) => p.use)).size, seasonal.length);
+    for (const name of ["purr", "hiss", "spider", "seasonal-tree"] as const) {
+      const preset = SOUND_PRESETS[name];
+      assert.equal(preset.group, "seasonal", name);
+      assert.ok(preset.pointerOnly, name);
+      assert.equal(preset.debounceMs, 1000, name);
+      // Synthesized: no file to download.
+      assert.equal(preset.sample, undefined, name);
+    }
+    assert.equal(SOUND_PRESETS["seasonal-disco"].sample, undefined);
+    assert.match(SOUND_PRESETS["seasonal-disco"].use, /disco ball/);
+    assert.doesNotMatch(SOUND_PRESETS["seasonal-balloon"].use, /disco/);
   });
 
   it("ships exactly the sample files the cues use", () => {
@@ -350,6 +374,59 @@ describe("engine gating", () => {
     assert.equal(engine.play("meow"), false, "too long after the click");
     engine.unlock(true);
     assert.equal(engine.play("meow"), true);
+  });
+});
+
+describe("direct activation", () => {
+  const control = {
+    closest: (selector: string) => selector.includes("button"),
+  };
+  const field = { closest: () => null };
+
+  it("counts clicks, taps and releases", () => {
+    for (const type of ["pointerdown", "pointerup", "touchend"]) {
+      assert.equal(isDirectActivation({ type }), true, type);
+    }
+  });
+
+  it("counts Enter and Space on a control (a keyboard click)", () => {
+    for (const key of ["Enter", " "]) {
+      assert.equal(
+        isDirectActivation({
+          type: "keydown",
+          key,
+          target: control as unknown as EventTarget,
+        }),
+        true,
+        key,
+      );
+    }
+  });
+
+  it("ignores typing, other keys and keys outside a control", () => {
+    const keydown = (key: string, target: unknown) =>
+      isDirectActivation({
+        type: "keydown",
+        key,
+        target: target as EventTarget,
+      });
+    assert.equal(keydown("a", control), false);
+    assert.equal(keydown("Tab", control), false);
+    assert.equal(keydown("Escape", control), false);
+    assert.equal(keydown(" ", field), false);
+    assert.equal(keydown("Enter", field), false);
+    assert.equal(keydown("Enter", null), false);
+  });
+
+  it("lets a keyboard-activated character play its cue", () => {
+    const { engine, advance } = ready();
+    const enter = { type: "keydown", key: "Enter", target: control };
+    engine.unlock(isDirectActivation(enter as never));
+    assert.equal(engine.play("spider"), true);
+    advance(POINTER_WINDOW_MS + 100);
+    const typed = { type: "keydown", key: "s", target: field };
+    engine.unlock(isDirectActivation(typed as never));
+    assert.equal(engine.play("purr"), false, "typing is not an activation");
   });
 });
 

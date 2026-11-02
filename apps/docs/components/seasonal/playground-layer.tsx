@@ -28,11 +28,52 @@ import { HalloweenHeaderChrome } from "./header-chrome";
 import { Champagne } from "./new-year";
 import { newYearPresets } from "./new-year-presets";
 import styles from "./seasonal.module.css";
+import { clearRight, reservedRects, type Size } from "./site-slots";
 import { useActiveSeason } from "./use-season";
 
 const GHOST_RATIO = 512 / 431;
 
 type CanvasSeason = "halloween" | "christmas" | "new-year";
+
+/** The character on the canvas's bottom-right edge: its size and preferred `right`. */
+const CORNER: Record<CanvasSeason, Size & { right: number }> = {
+  halloween: { width: 44, height: Math.round(44 * (512 / 295)), right: 14 },
+  christmas: { width: 34, height: Math.round(34 * (512 / 308)) + 8, right: 18 },
+  "new-year": {
+    width: 20,
+    height: Math.round(20 * (512 / 249)) + 8,
+    right: 20,
+  },
+};
+
+/**
+ * `right` for the corner character: clear of the fixed widgets in the window's
+ * bottom-right corner (the feedback launcher), which the canvas's corner sits under.
+ */
+function useCornerRight(layer: HTMLElement, season: CanvasSeason) {
+  const corner = CORNER[season];
+  const [right, setRight] = useState(corner.right);
+  useEffect(() => {
+    const update = () => {
+      const next = clearRight(
+        layer.getBoundingClientRect(),
+        corner,
+        corner.right,
+        reservedRects(),
+      );
+      setRight(next ?? corner.right);
+    };
+    update();
+    window.addEventListener("resize", update);
+    // The launcher loads late and the editor's panels resize.
+    const recheck = window.setInterval(update, 1500);
+    return () => {
+      window.removeEventListener("resize", update);
+      window.clearInterval(recheck);
+    };
+  }, [layer, corner]);
+  return right;
+}
 
 const CHIPS: Record<
   CanvasSeason,
@@ -112,7 +153,9 @@ function useLayerIn(
   const [layer] = useState(() => document.createElement("div"));
   useLayoutEffect(() => {
     layer.className = className;
-    layer.setAttribute("aria-hidden", "true");
+    // The front layer holds buttons (preset chips, characters); only the
+    // back one (fog) is purely decorative.
+    if (where === "first") layer.setAttribute("aria-hidden", "true");
     if (where === "first") canvas.insertBefore(layer, canvas.firstChild);
     else canvas.appendChild(layer);
     return () => layer.remove();
@@ -212,8 +255,11 @@ function CanvasLayers({
     }
     const chips = chipsRef.current?.getBoundingClientRect();
     if (chips) rects.push(chips);
+    // And the fixed corner widgets (feedback launcher, cookie card, dialogs).
+    rects.push(...reservedRects());
     return rects.filter((rect) => rect.width > 0 && rect.height > 0);
   }, [canvas, back, front]);
+  const cornerRight = useCornerRight(front, season);
 
   // Ghost floats in a free corner of the canvas (bottom-left, else top-right).
   const ghostPlacement: GhostPlacement = useCallback(
@@ -270,20 +316,25 @@ function CanvasLayers({
             <>
               <SpiderWeb className="absolute top-0 right-0 size-11 -scale-x-100 text-foreground/15" />
               <FloatGhost placement={ghostPlacement} size={40} />
-              <SittingCat stage={front} avoid={avoid} right={14} size={44} />
+              <SittingCat
+                stage={front}
+                avoid={avoid}
+                right={cornerRight}
+                size={CORNER.halloween.width}
+              />
             </>
           )}
           {season === "christmas" && (
             <Snowman
-              style={{ right: 18, bottom: 8 }}
-              width={34}
+              style={{ right: cornerRight, bottom: 8 }}
+              width={CORNER.christmas.width}
               avoid={avoid}
             />
           )}
           {season === "new-year" && (
             <Champagne
-              style={{ right: 20, bottom: 8 }}
-              width={20}
+              style={{ right: cornerRight, bottom: 8 }}
+              width={CORNER["new-year"].width}
               avoid={avoid}
             />
           )}

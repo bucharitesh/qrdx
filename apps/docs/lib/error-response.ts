@@ -13,18 +13,22 @@ export class HttpError extends Error {
   readonly status: number;
   readonly code: string;
   readonly headers?: Record<string, string>;
+  /** A docs page that explains the fix (sent as `docs`). */
+  readonly docs?: string;
 
   constructor(
     status: number,
     code: string,
     message: string,
     headers?: Record<string, string>,
+    docs?: string,
   ) {
     super(message);
     this.name = "HttpError";
     this.status = status;
     this.code = code;
     this.headers = headers;
+    this.docs = docs;
   }
 }
 
@@ -34,8 +38,15 @@ function jsonError(
   data: MyErrorResponseType["data"],
   status: MyErrorResponseType["status"],
   headers?: Record<string, string>,
+  docs?: string,
 ): Response {
-  const response: MyErrorResponseType = { code, message, data, status };
+  const response: MyErrorResponseType = {
+    code,
+    message,
+    data,
+    status,
+    ...(docs ? { docs } : {}),
+  };
   return new Response(JSON.stringify(response), {
     status,
     headers: { "Content-Type": "application/json", ...headers },
@@ -70,9 +81,15 @@ export function handleError(
       undefined,
       error.status,
       error.headers,
+      error.docs,
     );
   }
 
   logError(error as Error, context);
-  return new Response("Internal Server Error", { status: 500 });
+  return jsonError(
+    "INTERNAL_ERROR",
+    "Something went wrong on our side. Try again in a moment.",
+    undefined,
+    500,
+  );
 }

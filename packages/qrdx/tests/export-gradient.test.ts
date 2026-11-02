@@ -549,25 +549,25 @@ describe("solid colors", () => {
     bgColor: "#fef3c7",
   };
 
-  it.each([
-    "rgb",
-    "cmyk",
-  ] as const)("write no shadings in %s mode", async (colorMode) => {
-    const eps = await getQRAsEPS(props, { colorMode, bleedMm: 2 });
-    expect(eps).toContain("%%LanguageLevel: 2");
-    expect(eps).not.toMatch(/shfill|ShadingType/);
-    const pdf = readPdf(
-      await getQRAsPrintPDFBuffer(props, {
-        size: SIZE_MM,
-        colorMode,
-        bleed: 2,
-        cropMarks: true,
-      })
-    );
-    expect(pdf.text).not.toContain("/Shading");
-    expect(pdf.content).not.toMatch(/ sh(\s|$)/);
-    expect(pdf.content).not.toMatch(/(^|\s)W\*?(\s|$)/);
-  });
+  it.each(["rgb", "cmyk"] as const)(
+    "write no shadings in %s mode",
+    async (colorMode) => {
+      const eps = await getQRAsEPS(props, { colorMode, bleedMm: 2 });
+      expect(eps).toContain("%%LanguageLevel: 2");
+      expect(eps).not.toMatch(/shfill|ShadingType/);
+      const pdf = readPdf(
+        await getQRAsPrintPDFBuffer(props, {
+          size: SIZE_MM,
+          colorMode,
+          bleed: 2,
+          cropMarks: true,
+        })
+      );
+      expect(pdf.text).not.toContain("/Shading");
+      expect(pdf.content).not.toMatch(/ sh(\s|$)/);
+      expect(pdf.content).not.toMatch(/(^|\s)W\*?(\s|$)/);
+    }
+  );
 });
 
 // ── Generic SVG gradients (svgToEPS) ───────────────────────────────────────

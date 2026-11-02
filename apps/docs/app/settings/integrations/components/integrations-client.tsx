@@ -13,6 +13,7 @@ import {
 import { ArrowRight, SearchNormal1 } from "iconsax-reactjs";
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { NoLongerAvailableBadge } from "@/components/needs-setup";
 import {
   IntegrationLogo,
   logoForIntegration,
@@ -27,12 +28,16 @@ export type IntegrationWithStatus = IntegrationDefinition & {
   connectedAt?: Date;
   /** Local dev only: the env variable names it still needs. */
   needsSetup?: string[];
+  /** Hidden in production, but connected before: listed to disconnect only. */
+  noLongerAvailable?: boolean;
 };
 
 /** Built-in integrations are set up where they live in the app. */
 const SHORTCUTS: {
   title: string;
   description: string;
+  /** The description to use instead while one of the slugs is hidden here. */
+  descriptionWithout?: Record<string, string>;
   href: string;
   slugs: string[];
 }[] = [
@@ -54,6 +59,11 @@ const SHORTCUTS: {
     title: "Tracking pixels",
     description:
       "Google Analytics, Tag Manager, Meta, TikTok and LinkedIn on hosted pages.",
+    // Without Tag Manager where it can't load (no custom domains here)
+    descriptionWithout: {
+      "google-tag-manager":
+        "Google Analytics, Meta, TikTok and LinkedIn on hosted pages.",
+    },
     href: "/dashboard/codes",
     slugs: [
       "google-analytics",
@@ -107,6 +117,10 @@ export function IntegrationsClient({
     () =>
       SHORTCUTS.map((shortcut) => ({
         ...shortcut,
+        description:
+          Object.entries(shortcut.descriptionWithout ?? {}).find(([slug]) =>
+            hiddenSlugs.includes(slug),
+          )?.[1] ?? shortcut.description,
         entries: shortcut.slugs
           .filter((slug) => !hiddenSlugs.includes(slug))
           .map((slug) => getCatalogEntry(slug))
@@ -127,6 +141,8 @@ export function IntegrationsClient({
   );
 
   const connected = filtered.filter((i) => i.isConnected);
+  // No connect cards for integrations QRdx no longer offers.
+  const connectable = filtered.filter((i) => !i.noLongerAvailable);
   const nothing = filtered.length === 0 && shortcuts.length === 0;
 
   return (
@@ -163,13 +179,20 @@ export function IntegrationsClient({
                   size="sm"
                 />
                 <div className="min-w-0 flex-1">
-                  <span className="text-sm font-medium">
+                  <span className="flex flex-wrap items-center gap-2 text-sm font-medium">
                     {integration.name}
+                    {integration.noLongerAvailable && (
+                      <NoLongerAvailableBadge />
+                    )}
                   </span>
                   <p className="truncate text-muted-foreground text-xs">
-                    {integration.capabilities
-                      .map((capability) => getCapabilityLabel(capability.kind))
-                      .join(", ")}
+                    {integration.noLongerAvailable
+                      ? "Open to disconnect it."
+                      : integration.capabilities
+                          .map((capability) =>
+                            getCapabilityLabel(capability.kind),
+                          )
+                          .join(", ")}
                   </p>
                 </div>
                 <ArrowRight
@@ -182,13 +205,13 @@ export function IntegrationsClient({
         </section>
       )}
 
-      {filtered.length > 0 && (
+      {connectable.length > 0 && (
         <section className="space-y-3">
           <h2 className="text-sm font-medium text-muted-foreground">
             Connect an account
           </h2>
           <div className="grid gap-4 sm:grid-cols-2">
-            {filtered.map((integration) => (
+            {connectable.map((integration) => (
               <IntegrationCard
                 key={integration.slug}
                 slug={integration.slug}

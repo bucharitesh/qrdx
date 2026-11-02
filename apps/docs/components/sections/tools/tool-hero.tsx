@@ -35,7 +35,7 @@ export function ToolHero({
       <JsonLd data={breadcrumbSchema(crumbs)} />
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 -z-10 h-full w-full [background:radial-gradient(120%_100%_at_50%_0%,transparent_50%,color-mix(in_oklab,var(--foreground)_6%,transparent)_100%)]"
+        className="pointer-events-none absolute inset-0 -z-10 h-full w-full [background:radial-gradient(120%_100%_at_50%_0%,transparent_50%,color-mix(in_oklab,var(--foreground)_2.5%,transparent)_100%)] dark:[background:radial-gradient(120%_100%_at_50%_0%,transparent_50%,color-mix(in_oklab,var(--foreground)_6%,transparent)_100%)]"
       />
       <Backdrop className="-z-10 bottom-auto h-[min(100%,54rem)]">
         <AsciiField
@@ -45,7 +45,7 @@ export function ToolHero({
           className="[mask-image:radial-gradient(ellipse_72%_78%_at_50%_42%,rgba(0,0,0,0.32)_15%,black_50%,transparent_80%)]"
         />
       </Backdrop>
-      <div className="relative z-10 pt-28 pb-14 md:pb-16 px-6 md:px-10 mx-auto flex flex-col items-center gap-5">
+      <div className="relative z-10 pt-28 pb-14 md:pb-16 px-10 mx-auto flex flex-col items-center gap-5">
         <div className="max-w-3xl flex flex-col items-center gap-5">
           <Breadcrumbs items={crumbs} />
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-semibold tracking-tighter text-balance text-center text-secondary-foreground">

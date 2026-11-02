@@ -60,14 +60,11 @@ export default function ScanCheckerPage() {
         ]}
       />
 
-      <section
-        aria-label="QR code scan checker"
-        className="w-full px-6 md:px-10 py-10"
-      >
+      <section aria-label="QR code scan checker" className="w-full px-10 py-10">
         <ScanChecker />
       </section>
 
-      <section className="w-full px-6 md:px-10 py-10 grid gap-8 md:grid-cols-2">
+      <section className="w-full px-10 py-10 grid gap-8 md:grid-cols-2">
         <div className="flex flex-col gap-3">
           <h2 className="text-2xl font-medium tracking-tighter">
             What the checker tests

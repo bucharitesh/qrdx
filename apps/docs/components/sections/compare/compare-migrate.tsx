@@ -12,7 +12,7 @@ export function CompareMigrate({ slug, competitor }: CompareMigrateProps) {
   const migration = compareMigration(slug, competitor);
 
   return (
-    <section className="w-full px-6 py-14 md:py-16" id="switch">
+    <section className="w-full px-10 py-14 md:py-16" id="switch">
       <div className="mx-auto w-full max-w-3xl space-y-8">
         <div className="space-y-2 text-center">
           <p className="text-xs font-medium tracking-wider text-muted-foreground uppercase">

@@ -33,7 +33,7 @@ export default function CommunityPage() {
             className="[mask-image:radial-gradient(ellipse_75%_90%_at_50%_45%,rgba(0,0,0,0.3)_15%,black_50%,transparent_82%)]"
           />
         </Backdrop>
-        <div className="relative mx-auto flex max-w-3xl flex-col items-center gap-4 px-6 pt-16 pb-14 text-center md:pt-24 md:pb-16">
+        <div className="relative mx-auto flex max-w-[50rem] flex-col items-center gap-4 px-10 pt-16 pb-14 text-center md:pt-24 md:pb-16">
           <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
             Community
           </p>

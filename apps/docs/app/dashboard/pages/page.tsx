@@ -78,7 +78,7 @@ export default async function PagesPage({
           <EmptyHeader>
             <HairlineFigure
               className="mx-auto mb-2 aspect-square w-32"
-              figure="Stack"
+              figure="PageForm"
             />
             <EmptyTitle>No pages yet</EmptyTitle>
             <EmptyDescription>

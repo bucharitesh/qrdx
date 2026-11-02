@@ -117,18 +117,19 @@ describe("gradients", () => {
     expect(renderSvg(props)).toMatch(/id="fg-color-[0-9a-z]+"/);
   });
 
-  it.each(
-    NEW_BODIES
-  )("%s decodes with a radial gradient body and eyes", (bodyPattern) => {
-    expect(
-      unreadable({
-        bodyPattern,
-        cornerEyePattern: "rounded",
-        fgColor: gradient,
-        eyeColor: gradient,
-      })
-    ).toEqual([]);
-  });
+  it.each(NEW_BODIES)(
+    "%s decodes with a radial gradient body and eyes",
+    (bodyPattern) => {
+      expect(
+        unreadable({
+          bodyPattern,
+          cornerEyePattern: "rounded",
+          fgColor: gradient,
+          eyeColor: gradient,
+        })
+      ).toEqual([]);
+    }
+  );
 });
 
 describe("autoLevel and logo padding", () => {
@@ -272,24 +273,26 @@ describe("every new shape exports the same outline everywhere", () => {
     ]),
   ];
 
-  it.each(
-    styles
-  )("%s uses only painter-supported, deterministic markup", async (_label, style) => {
-    const props: QRProps = { value: VALUE, size: 256, ...style };
-    const svg = renderSvg(props);
-    expect(renderSvg(props)).toBe(svg);
-    expect(svg).not.toMatch(
-      /<(mask|clipPath|use|pattern|filter)\b|opacity=|NaN|Infinity/
-    );
-    const eps = await svgToEPS(svg);
-    expect(eps).not.toMatch(/NaN|Infinity/);
-    // Every painted element (background, modules, 3 eyes, 3 dots) reaches EPS
-    const painted = (svg.match(/<(path|rect|circle|polygon)\b/g) ?? []).length;
-    const fills =
-      (eps.match(/ e?f$/gm) ?? []).length +
-      (eps.match(/ e?f grestore$/gm) ?? []).length;
-    expect(fills).toBe(painted);
-  });
+  it.each(styles)(
+    "%s uses only painter-supported, deterministic markup",
+    async (_label, style) => {
+      const props: QRProps = { value: VALUE, size: 256, ...style };
+      const svg = renderSvg(props);
+      expect(renderSvg(props)).toBe(svg);
+      expect(svg).not.toMatch(
+        /<(mask|clipPath|use|pattern|filter)\b|opacity=|NaN|Infinity/
+      );
+      const eps = await svgToEPS(svg);
+      expect(eps).not.toMatch(/NaN|Infinity/);
+      // Every painted element (background, modules, 3 eyes, 3 dots) reaches EPS
+      const painted = (svg.match(/<(path|rect|circle|polygon)\b/g) ?? [])
+        .length;
+      const fills =
+        (eps.match(/ e?f$/gm) ?? []).length +
+        (eps.match(/ e?f grestore$/gm) ?? []).length;
+      expect(fills).toBe(painted);
+    }
+  );
 });
 
 describe("scan-score", () => {

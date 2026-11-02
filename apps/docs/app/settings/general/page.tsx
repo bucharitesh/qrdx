@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { getUserSettings } from "@/actions/user-settings";
 import { SoundSetting } from "@/components/sound/sound-setting";
+import { signInPath } from "@/lib/safe-redirect";
 import { SettingsHeader } from "../components/settings-header";
 import { AppearanceForm } from "./components/appearance-form";
 import { GeneralSettingsForm } from "./components/general-settings-form";
@@ -13,7 +14,7 @@ export default async function GeneralSettingsPage() {
   });
 
   if (!session) {
-    redirect("/playground");
+    redirect(signInPath("/settings/general"));
   }
 
   const userSettings = await getUserSettings();

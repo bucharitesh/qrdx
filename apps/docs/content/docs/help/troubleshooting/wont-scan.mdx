@@ -1,0 +1,44 @@
+---
+title: A code won't scan
+description: Why a QR code isn't scanning, and how to fix each cause.
+---
+
+If a phone camera doesn't react to your code, or reads it only sometimes, work through these checks.
+
+Start with the **Scan score** under the preview in the [playground](/playground). Click it to see which checks fail. See [Check a design with the scan score](/docs/help/designing/scan-score).
+
+For a code that's already printed, take a photo and drop it into the [scan checker](/tools/scan-checker). It shows what the code says and tests how well it reads.
+
+## Common causes
+
+### Low contrast or light on dark
+
+Scanners look for dark squares on a light background. Make the code darker or the background lighter, and avoid light codes on dark backgrounds. See [Choose colors that scan](/docs/help/designing/colors-and-contrast).
+
+### A logo covers too much
+
+Set **Error correction** to **High** in the **Design** tab. See [Add a logo](/docs/help/designing/logos).
+
+### Unusual eye shapes
+
+Circle and curly corner eyes fail in some scanner apps. Square, rounded and gear eyes read everywhere.
+
+### No clear border
+
+Scanners need empty space around the code. Set **Padding** to **Standard** or **Large**, and don't let other artwork touch the code.
+
+### Printed too small
+
+Make the code about one tenth of the scanning distance: 2 cm for a card read at 20 cm, 10 cm for a poster read from 1 m. The [print size calculator](/tools/print-size) works it out for you.
+
+### Too much content
+
+A static code that holds a lot of text becomes dense and hard to read when small. Use a dynamic code instead: it holds only a short link. See [Static or dynamic](/docs/help/getting-started/static-vs-dynamic).
+
+### The print itself
+
+Blurry printing, glossy surfaces that reflect light, and curved or folded surfaces all make codes harder to read. Print as a vector file (SVG, PDF or EPS) and test one copy before printing many.
+
+## It scans, but shows an error
+
+If the camera reads the code but you see a page like "QR code not found", see [A scan shows an error page](/docs/help/troubleshooting/error-pages).

@@ -6,7 +6,11 @@
 import assert from "node:assert/strict";
 import { createHash } from "node:crypto";
 import { before, beforeEach, describe, it } from "node:test";
-import { HeadObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import {
+  CopyObjectCommand,
+  HeadObjectCommand,
+  S3Client,
+} from "@aws-sdk/client-s3";
 
 // Refuse to run against anything but the dummy bucket.
 assert.equal(process.env.R2_ACCOUNT_ID, "test", "run with the dummy R2 env");
@@ -17,6 +21,8 @@ interface StoredFixture {
   type: string;
   /** Reported by HEAD (defaults to body length) */
   size?: number;
+  /** ETag sent with GET (a newer version than HEAD saw) */
+  getEtag?: string;
 }
 
 let objects = new Map<string, StoredFixture>();
@@ -24,6 +30,17 @@ let commands: string[] = [];
 let fetches: { key: string; range: string | null }[] = [];
 
 S3Client.prototype.send = async function send(command: unknown) {
+  if (command instanceof CopyObjectCommand) {
+    const { CopySource, Key, CopySourceIfMatch } = command.input;
+    commands.push(`copy ${CopySource} -> ${Key} if ${CopySourceIfMatch}`);
+    if (CopySourceIfMatch && CopySourceIfMatch !== '"etag"') {
+      throw Object.assign(new Error("PreconditionFailed"), {
+        name: "PreconditionFailed",
+        $metadata: { httpStatusCode: 412 },
+      });
+    }
+    return {};
+  }
   if (command instanceof HeadObjectCommand) {
     commands.push(`head ${command.input.Key}`);
     const object = objects.get(command.input.Key as string);
@@ -66,11 +83,12 @@ globalThis.fetch = (async (
   const object = objects.get(key);
   if (!object) return new Response("missing", { status: 404 });
   const match = range && /^bytes=(\d+)-(\d+)$/.exec(range);
+  const headers = object.getEtag ? { etag: object.getEtag } : undefined;
   if (match) {
     const body = object.body.slice(Number(match[1]), Number(match[2]) + 1);
-    return new Response(Buffer.from(body), { status: 206 });
+    return new Response(Buffer.from(body), { status: 206, headers });
   }
-  return new Response(Buffer.from(object.body), { status: 200 });
+  return new Response(Buffer.from(object.body), { status: 200, headers });
 }) as typeof fetch;
 
 const MB = 1024 * 1024;
@@ -78,12 +96,18 @@ const pdf = (text = "hello") =>
   new TextEncoder().encode(`%PDF-1.7\n${text}\n%%EOF`);
 
 let verifyStoredObject: typeof import("./verify").verifyStoredObject;
+let r2: typeof import("@/lib/storage/r2");
 let HASH_MAX_BYTES: number;
 let deliverFile: typeof import("./delivery").deliverFile;
+let unavailable: typeof import("./delivery").unavailable;
+let unavailableStatus: typeof import("./delivery").unavailableStatus;
 
 before(async () => {
   ({ verifyStoredObject, HASH_MAX_BYTES } = await import("./verify"));
-  ({ deliverFile } = await import("./delivery"));
+  r2 = await import("@/lib/storage/r2");
+  ({ deliverFile, unavailable, unavailableStatus } = await import(
+    "./delivery"
+  ));
 });
 
 beforeEach(() => {
@@ -116,9 +140,21 @@ describe("verifyStoredObject", () => {
     assert.deepEqual(result, {
       ok: true,
       sha256: createHash("sha256").update(body).digest("hex"),
+      etag: '"etag"',
     });
     assert.deepEqual(commands, [`head ${key}`]);
     assert.deepEqual(fetches, [{ key, range: null }]);
+  });
+
+  it("reports the ETag of the version it actually read", async () => {
+    const body = pdf();
+    objects.set(key, { body, type: "application/pdf", getEtag: '"v2"' });
+    const result = await verifyStoredObject({
+      key,
+      size: body.length,
+      mime: "application/pdf",
+    });
+    assert.equal(result.ok && result.etag, '"v2"');
   });
 
   it("rejects a size that differs from the announced one", async () => {
@@ -166,8 +202,28 @@ describe("verifyStoredObject", () => {
       size,
       mime: "video/mp4",
     });
-    assert.deepEqual(result, { ok: true, sha256: null });
+    assert.deepEqual(result, { ok: true, sha256: null, etag: '"etag"' });
     assert.deepEqual(fetches, [{ key: videoKey, range: "bytes=0-4095" }]);
+  });
+});
+
+describe("copyObject", () => {
+  it("copies only the version with the checked ETag", async () => {
+    await r2.copyObject("staging/u-1/x/menu ü.pdf", "u-1/x/menu ü.pdf", {
+      ifMatch: '"etag"',
+    });
+    assert.deepEqual(commands, [
+      'copy test-bucket/staging/u-1/x/menu%20%C3%BC.pdf -> u-1/x/menu ü.pdf if "etag"',
+    ]);
+    await assert.rejects(
+      r2.copyObject("staging/u-1/x/a.pdf", "u-1/x/a.pdf", { ifMatch: '"old"' }),
+      r2.ObjectChangedError,
+    );
+  });
+
+  it("refuses unsafe keys", async () => {
+    await assert.rejects(r2.copyObject("../secret", "u-1/x/a.pdf"));
+    await assert.rejects(r2.copyObject("u-1/x/a.pdf", "/abs"));
   });
 });
 
@@ -195,6 +251,19 @@ describe("deliverFile (without a database lookup)", () => {
         /default-src 'none'/,
       );
     }
+  });
+
+  it("answers 410 for blocked files in every form", async () => {
+    assert.equal(unavailableStatus({ status: "blocked" }), 410);
+    assert.equal(unavailableStatus({ status: "pending" }), 404);
+    assert.equal(unavailableStatus(undefined), 404);
+    assert.equal(unavailableStatus({ status: "ready" }), null);
+    for (const dest of ["image", "iframe", "video"]) {
+      assert.equal(unavailable(request(dest), 410).status, 410, dest);
+    }
+    // The <img> still gets a placeholder it can paint.
+    const image = unavailable(request("image"), 410);
+    assert.equal(image.headers.get("content-type"), "image/svg+xml");
   });
 
   it("answers media players and scripts with a plain 404", async () => {

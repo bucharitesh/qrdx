@@ -6,6 +6,8 @@ icon: Code
 
 Complete reference for all `qrdx` components, functions and types.
 
+<NpmStatus package="qrdx" />
+
 ## Components
 
 ### QRCode
@@ -38,7 +40,7 @@ import { QRCode } from 'qrdx';
 | `cornerEyePattern` | `CornerEyePattern` | `'gear'` | Corner marker pattern |
 | `cornerEyeDotPattern` | `CornerEyeDotPattern` | `'circle'` | Corner dot pattern |
 | `hideLogo` | `boolean` | `false` | Hide the logo. No logo is drawn unless `logo` is set |
-| `logo` | `string` | Default | Logo URL |
+| `logo` | `string` | — | Logo URL |
 | `templateId` | `string` | `'default'` | Template ID |
 | `customTemplate` | `TemplateDefinition` | — | Custom template |
 | `level` | `ErrorLevel` | `'Q'` | Error correction |
@@ -48,8 +50,9 @@ import { QRCode } from 'qrdx';
 | `eyeColors` | `EyeColors` | — | Per-eye `outer` / `inner` colors for `topLeft`, `topRight` and `bottomLeft`; each overrides `eyeColor` / `dotColor` |
 | `moduleScale` | `number` | `1` | Data module size, 0.5 to 1. Each pattern stops at the smallest size that still scans (`MODULE_SCALE_FLOOR`) |
 | `frame` | `QRFrame` | — | Call-to-action frame; see [Frames & print](/docs/features/frames) |
+| `art` | `QRArt` | — | Blend a logo or photo into the modules (Logo QR, Image QR); see [Art QR](/docs/features/art-qr) |
 
-All 23 body patterns, 17 eyes, 21 eye centres and 20 frames are shown live in [Shapes, eyes and frames](/docs/styles).
+All {facts.bodyPatterns} body patterns, {facts.eyeShapes} eyes, {facts.eyeCentres} eye centres and {facts.frames} frames are shown live in [Shapes, eyes and frames](/docs/styles).
 
 ### QRCodeCanvas
 
@@ -88,7 +91,7 @@ Download QR codes in multiple formats.
 downloadQRCode(
   qrProps: QRProps,
   options: {
-    format: 'png' | 'jpg' | 'svg' | 'pdf';
+    format: 'png' | 'jpg' | 'svg' | 'pdf' | 'eps';
     size: { width: number; height: number };
     filename?: string;
   }
@@ -125,6 +128,21 @@ Get SVG markup.
 ```tsx
 getSVGString(qrProps: QRProps): Promise<string>
 ```
+
+## Print and scan functions
+
+These are documented with examples on their feature pages.
+
+| Function | What it does | Docs |
+|----------|--------------|------|
+| `getQRAsSVG(props)` | SVG markup for a code, including its frame | [Frames](/docs/features/frames) |
+| `getQRAsPrintPDF`, `downloadPrintPDF` | Vector PDF at an exact physical size, with bleed, crop marks and CMYK (needs `jspdf`) | [Print-ready export](/docs/features/frames#print-ready-export) |
+| `downloadPrintSVG` | Print-ready SVG at an exact physical size | [Print-ready export](/docs/features/frames#print-ready-export) |
+| `getQRAsEPS`, `downloadPrintEPS` | Vector EPS for print shops and design tools | [Downloads](/docs/features/downloads) |
+| `getScanScore(props)` | Estimates how reliably a design scans | [Will it scan?](/docs/features/frames#will-it-scan) |
+| `getImageScanScore(image)` | Scores a QR code image you already have (browser only) | [Will it scan?](/docs/features/frames#will-it-scan) |
+| `scanQRPixels(pixels, expected)` | Checks that raw RGBA pixels decode to `expected`, also when blurred and shrunk; runs in Node | — |
+| `getStylePairRisk(...)` | Warns about eye and pattern pairs some scanners miss | [Patterns](/docs/features/patterns) |
 
 ## Detection Functions
 
@@ -264,7 +282,7 @@ type EyeColors = {
 };
 
 type QRFrame = {
-  style: FrameStyle; // 20 styles, see FRAME_STYLES
+  style: FrameStyle; // "none" or a frame, see FRAME_STYLES
   text?: string; // up to 24 characters, default "Scan me"
   color?: string;
   textColor?: string;
@@ -277,7 +295,7 @@ type QRFrame = {
 ### Download Types
 
 ```tsx
-type DownloadFormat = 'png' | 'jpg' | 'svg' | 'pdf';
+type DownloadFormat = 'png' | 'jpg' | 'svg' | 'pdf' | 'eps';
 
 type DownloadSize = {
   width: number;

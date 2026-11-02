@@ -13,16 +13,17 @@ import {
   Shapes,
   Text,
 } from "iconsax-reactjs";
+import { QRCodeSVG } from "qrdx";
+import type { QRProps } from "qrdx/types";
 import type { ReactNode } from "react";
 import { QrdxLogo } from "@/components/qrdx-logo";
-import { MockQr, type MockQrModules } from "./mock-qr";
+import { CANVA_PICKED, PLUGIN_CODES, VALUE } from "./mock-codes";
 
 // HTML/CSS mockups of each plugin's real UI (labels, controls and actions
 // are taken from plugins/*). Decorative: every window is aria-hidden and the
-// figure carries a text caption instead. The code they show encodes
-// https://qrdx.dev, the value typed in each mock.
-
-const VALUE = "https://qrdx.dev";
+// figure carries a text caption instead. The codes are real qrdx renders of
+// https://qrdx.dev, the value typed in each mock, one style per plugin
+// (./mock-codes.ts).
 
 const windowClass =
   "relative overflow-hidden rounded-[12px] border bg-background text-left shadow-[0_1px_2px_rgba(0,0,0,0.04),0_24px_48px_-24px_rgba(0,0,0,0.25)] dark:shadow-[0_24px_60px_-24px_rgba(0,0,0,0.7)]";
@@ -124,18 +125,19 @@ function Swatch({ color, label }: { color: string; label: string }) {
   );
 }
 
+/** A real code, scaled to its box. Decorative: the figure has a caption. */
+function MockCode({ code, className }: { code: QRProps; className?: string }) {
+  return (
+    <QRCodeSVG
+      {...code}
+      aria-hidden="true"
+      className={cn("block aspect-square h-auto w-full", className)}
+    />
+  );
+}
+
 /** A code on a white tile (codes are designed for light backgrounds). */
-function QrTile({
-  modules,
-  fg,
-  eye,
-  className,
-}: {
-  modules: MockQrModules;
-  fg?: string;
-  eye?: string;
-  className?: string;
-}) {
+function QrTile({ code, className }: { code: QRProps; className?: string }) {
   return (
     <span
       className={cn(
@@ -143,10 +145,17 @@ function QrTile({
         className,
       )}
     >
-      <MockQr modules={modules} fg={fg} eye={eye} className="w-full" />
+      <MockCode code={code} />
     </span>
   );
 }
+
+/** "Classy Rounded" from "classy-rounded", as the plugins label options. */
+const optionLabel = (value: string | undefined) =>
+  (value ?? "").replace(
+    /(^|-)(\w)/g,
+    (_, dash, letter: string) => `${dash ? " " : ""}${letter.toUpperCase()}`,
+  );
 
 /** A selection outline with corner handles, in the brand blue. */
 function Selection({ label }: { label?: string }) {
@@ -263,7 +272,7 @@ export function ChromeMock() {
               </span>
             </div>
             <div className="grid grid-cols-[6.5rem_minmax(0,1fr)] gap-3 p-3 @md:grid-cols-[8rem_minmax(0,1fr)]">
-              <QrTile modules="dots" className="self-start" />
+              <QrTile code={PLUGIN_CODES.chrome} className="self-start" />
               <div className="flex min-w-0 flex-col gap-2.5">
                 <span className="flex flex-col gap-1">
                   <span className="flex items-center justify-between gap-2">
@@ -362,7 +371,7 @@ export function FigmaMock() {
                 ))}
               </span>
               <span className="relative mt-auto mr-auto w-[38%]">
-                <MockQr modules="rounded" className="w-full" />
+                <MockCode code={PLUGIN_CODES.figma} />
                 <Selection label="240 × 240" />
               </span>
             </div>
@@ -396,7 +405,8 @@ export function FigmaMock() {
                         key={preset.label}
                         className={cn(
                           "size-4 rounded-full ring-1 ring-black/10 dark:ring-white/15",
-                          index === 0 &&
+                          // "Minimal", the preset the code on the menu uses.
+                          index === 1 &&
                             "ring-2 ring-foreground ring-offset-1 ring-offset-card",
                         )}
                         style={{ backgroundColor: preset.color }}
@@ -443,12 +453,13 @@ function Kbd({ children }: { children: ReactNode }) {
 
 /** Raycast's detail view for a generated code, with its action panel. */
 export function RaycastMock() {
+  const code = PLUGIN_CODES.raycast;
   const meta: [string, string][] = [
     ["Data", VALUE],
-    ["Body", "Rounded"],
-    ["Corner eyes", "Rounded"],
-    ["Template", "Default"],
-    ["Colors", "#0A0A0A on #FFFFFF"],
+    ["Body", optionLabel(code.bodyPattern)],
+    ["Corner eyes", optionLabel(code.cornerEyePattern)],
+    ["Corner dots", optionLabel(code.cornerEyeDotPattern)],
+    ["Colors", `${String(code.fgColor).toUpperCase()} on #FFFFFF`],
     ["Size", "1024 px"],
   ];
   return (
@@ -466,7 +477,7 @@ export function RaycastMock() {
 
         <div className="grid @md:grid-cols-[minmax(0,1fr)_13rem]">
           <div className="grid place-items-center p-6">
-            <QrTile modules="rounded" className="w-40 p-2 @md:w-48" />
+            <QrTile code={code} className="w-40 p-2 @md:w-48" />
           </div>
           <dl className="flex flex-col divide-y border-t px-4 py-1 text-[11px] @md:border-t-0 @md:border-l">
             {meta.map(([term, value]) => (
@@ -552,34 +563,33 @@ export function CanvaMock() {
               <Field>{VALUE}</Field>
             </span>
             <span className="grid place-items-center rounded-[8px] border bg-white py-2.5">
-              <MockQr modules="dots" className="w-24" />
+              <MockCode code={PLUGIN_CODES.canva} className="w-24" />
             </span>
             {(
               [
-                ["Templates", ["square", "rounded", "dots", "square"]],
-                ["Dot Pattern", ["dots", "rounded", "square", "dots"]],
+                ["Dot Pattern", PLUGIN_CODES.canvaBodies],
+                ["Eye Pattern", PLUGIN_CODES.canvaEyes],
               ] as const
-            ).map(([label, styles]) => (
+            ).map(([label, codes]) => (
               <span
                 key={label}
                 className={cn(
                   "flex flex-col gap-1",
                   // Only one picker row fits the narrow panel.
-                  label === "Dot Pattern" && "hidden @lg:flex",
+                  label === "Eye Pattern" && "hidden @lg:flex",
                 )}
               >
                 <Label>{label}</Label>
                 <span className="grid max-w-[13rem] grid-cols-4 gap-1">
-                  {styles.map((style, index) => (
+                  {codes.map((option, index) => (
                     <span
-                      key={`${label}-${style}-${index.toString()}`}
+                      key={`${option.bodyPattern}-${option.cornerEyePattern}`}
                       className={cn(
                         "rounded-[6px] bg-white p-1 ring-1 ring-black/10 dark:ring-white/10",
-                        index === (label === "Templates" ? 0 : 1) &&
-                          "ring-2 ring-foreground",
+                        index === CANVA_PICKED && "ring-2 ring-foreground",
                       )}
                     >
-                      <MockQr modules={style} className="w-full" />
+                      <MockCode code={option} />
                     </span>
                   ))}
                 </span>
@@ -614,7 +624,7 @@ export function CanvaMock() {
                   the schedule
                 </span>
                 <span className="relative w-[34%]">
-                  <MockQr modules="dots" className="w-full" />
+                  <MockCode code={PLUGIN_CODES.canva} />
                   <Selection />
                 </span>
               </span>

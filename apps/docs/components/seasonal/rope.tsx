@@ -3,7 +3,7 @@
 import { cn } from "@repo/design-system/lib/utils";
 import { type ReactNode, useEffect, useRef } from "react";
 import type { SoundName } from "@/lib/sound/presets";
-import { seasonalCue } from "./cue";
+import { CHARACTER_BUTTON, seasonalCue } from "./cue";
 import styles from "./seasonal.module.css";
 import { Sprite, type SpriteName } from "./sprite";
 import { addTick, prefersReducedMotion } from "./ticker";
@@ -33,6 +33,7 @@ export function HangingCharacter({
   onNear = "drop",
   onClick = "spin",
   cue,
+  label,
   className,
   children,
 }: {
@@ -49,12 +50,15 @@ export function HangingCharacter({
   visible?: number;
   onNear?: "drop" | "nudge";
   onClick?: "spin" | "swing";
+  /** Its sound on a click, tap or Enter / Space (motion or not). */
   cue?: SoundName;
+  /** Accessible name of the character's button. */
+  label: string;
   className?: string;
   children?: ReactNode;
 }) {
   const lineRef = useRef<SVGPolylineElement>(null);
-  const bodyRef = useRef<HTMLDivElement>(null);
+  const bodyRef = useRef<HTMLButtonElement>(null);
   const anchorRef = useRef(anchor);
   anchorRef.current = anchor;
   const height = Math.round(width * ratio);
@@ -166,7 +170,12 @@ export function HangingCharacter({
       wake();
     };
     render();
-    if (reduced) return;
+    // Its sound plays with reduced motion too; only the movement is skipped.
+    const onCue = () => {
+      if (cue) seasonalCue(cue);
+    };
+    body.addEventListener("click", onCue);
+    if (reduced) return () => body.removeEventListener("click", onCue);
 
     // Cursor nearby: drop a little and climb back, or a nudge in its direction.
     let climbTimer = 0;
@@ -205,7 +214,6 @@ export function HangingCharacter({
     // Click: spin and scurry up the thread, or a gentle swing.
     let spinTimer = 0;
     const onTap = () => {
-      if (cue) seasonalCue(cue);
       if (onClick === "spin") {
         body.dataset.spin = "true";
         setTarget(Math.max(12, rest * 0.25), true);
@@ -241,6 +249,7 @@ export function HangingCharacter({
       window.clearTimeout(spinTimer);
       window.removeEventListener("pointermove", onWindowMove);
       body.removeEventListener("click", onTap);
+      body.removeEventListener("click", onCue);
     };
   }, [stage, rest, width, shown, onNear, onClick, cue]);
 
@@ -261,17 +270,24 @@ export function HangingCharacter({
           strokeLinejoin="round"
         />
       </svg>
-      <div
+      <button
         ref={bodyRef}
+        type="button"
+        aria-label={label}
         className={cn(
-          "pointer-events-auto absolute top-0 left-0 origin-top cursor-pointer select-none",
+          "pointer-events-auto absolute top-0 left-0 block origin-top select-none",
+          CHARACTER_BUTTON,
           className,
         )}
         data-spin="false"
         style={{ width, height: shown }}
       >
-        <div
-          className={cn(styles.spiderBody, visible < 1 && "overflow-hidden")}
+        <span
+          className={cn(
+            styles.spiderBody,
+            "block",
+            visible < 1 && "overflow-hidden",
+          )}
         >
           <Sprite
             name={sprite}
@@ -280,8 +296,8 @@ export function HangingCharacter({
             className="absolute bottom-0 left-0"
           />
           {children}
-        </div>
-      </div>
+        </span>
+      </button>
     </>
   );
 }

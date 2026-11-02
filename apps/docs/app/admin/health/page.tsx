@@ -87,7 +87,8 @@ async function Backlog() {
 }
 
 const CRON_LABELS = {
-  webhooks: "Webhook retries + data syncs (every 5 min)",
+  webhooks:
+    "Webhook retries + data syncs (checked every few minutes, runs when due)",
   integrations: "Data syncs (optional schedule)",
   digest: "Weekly digest (Mondays)",
 };
@@ -97,14 +98,20 @@ async function Cron() {
   if (!loaded.ok) return <LoadFailed />;
   return (
     <Rows>
-      {Object.entries(loaded.data).map(([job, run]) => (
+      {Object.entries(loaded.data).map(([job, { run, lastCheckAt }]) => (
         <Row
           key={job}
-          meta={
+          meta={[
             run
               ? `${formatDateTime(run.at)} · ${formatNumber(run.durationMs)} ms`
-              : "No run recorded (runs are recorded in Redis from this release on)"
-          }
+              : "No run recorded (runs are recorded in Redis from this release on)",
+            // Frequent checks that found nothing due, newer than the last run.
+            lastCheckAt && (!run || lastCheckAt > run.at)
+              ? `last checked ${formatAgo(lastCheckAt)}, nothing due`
+              : null,
+          ]
+            .filter(Boolean)
+            .join(" · ")}
           title={
             <>
               {CRON_LABELS[job as keyof typeof CRON_LABELS] ?? job}

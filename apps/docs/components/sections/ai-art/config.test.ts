@@ -5,31 +5,13 @@ import {
   ART_MAX_SEED,
   ART_REFERENCE_MAX_BYTES,
   aiArtRequestSchema,
-  creativityToGuidanceScale,
-  isFalResultUrl,
   seedsForRun,
-  visibilityToConditioningScale,
 } from "./config";
 import { AI_ART_CATEGORIES, AI_ART_PRESETS } from "./presets";
 
 const base = { text: "https://qrdx.dev", prompt: "a zen garden" };
 const png = (bytes: number) =>
   `data:image/png;base64,${Buffer.alloc(bytes, 1).toString("base64")}`;
-
-describe("slider mappings", () => {
-  it("maps QR visibility onto the ControlNet conditioning scale", () => {
-    assert.equal(visibilityToConditioningScale(0), 0.8);
-    assert.equal(visibilityToConditioningScale(50), 1.4);
-    assert.equal(visibilityToConditioningScale(100), 2);
-    assert.equal(visibilityToConditioningScale(500), 2);
-  });
-
-  it("maps creativity onto the guidance scale (higher = freer)", () => {
-    assert.equal(creativityToGuidanceScale(0), 12);
-    assert.equal(creativityToGuidanceScale(100), 4);
-    assert.ok(creativityToGuidanceScale(30) > creativityToGuidanceScale(70));
-  });
-});
 
 describe("seedsForRun", () => {
   it("counts up from a locked seed", () => {
@@ -50,19 +32,14 @@ describe("seedsForRun", () => {
 describe("aiArtRequestSchema", () => {
   it("applies defaults", () => {
     const parsed = aiArtRequestSchema.parse(base);
-    assert.equal(parsed.variations, 1);
     assert.equal(parsed.visibility, 50);
+    assert.equal(parsed.seed, undefined);
     assert.equal(parsed.reference, undefined);
   });
 
-  it("accepts 1 to 4 variations", () => {
-    assert.ok(aiArtRequestSchema.safeParse({ ...base, variations: 4 }).success);
-    assert.ok(
-      !aiArtRequestSchema.safeParse({ ...base, variations: 5 }).success,
-    );
-    assert.ok(
-      !aiArtRequestSchema.safeParse({ ...base, variations: 0 }).success,
-    );
+  it("asks for one image per request (variations are separate requests)", () => {
+    const parsed = aiArtRequestSchema.parse({ ...base, variations: 4 });
+    assert.equal("variations" in parsed, false);
   });
 
   it("only accepts uploaded PNG/JPEG data URLs as references", () => {
@@ -103,23 +80,6 @@ describe("aiArtRequestSchema", () => {
         negativePrompt: "x".repeat(301),
       }).success,
     );
-  });
-});
-
-describe("isFalResultUrl", () => {
-  it("allows fal.ai's result hosts only", () => {
-    assert.ok(isFalResultUrl("https://v3.fal.media/files/abc/image.png"));
-    assert.ok(isFalResultUrl("https://fal.media/files/abc.png"));
-    assert.ok(
-      isFalResultUrl(
-        "https://storage.googleapis.com/falserverless/model/out.png",
-      ),
-    );
-    assert.ok(!isFalResultUrl("http://v3.fal.media/files/abc.png"));
-    assert.ok(!isFalResultUrl("https://evil.com/fal.media/x.png"));
-    assert.ok(!isFalResultUrl("https://fal.media.evil.com/x.png"));
-    assert.ok(!isFalResultUrl("https://storage.googleapis.com/other/x.png"));
-    assert.ok(!isFalResultUrl("not a url"));
   });
 });
 

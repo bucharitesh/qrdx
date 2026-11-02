@@ -32,6 +32,7 @@ vi.mock("next/headers", () => ({ headers: async () => new Headers() }));
 vi.mock("next/navigation", () => ({ redirect: () => {} }));
 vi.mock("@repo/rate-limit", () => ({
   slidingWindow: () => ({}),
+  fixedWindow: () => ({}),
   createRateLimiter: () => ({
     limit: async () => ({
       success: true,
@@ -221,17 +222,20 @@ describe("GET /v1/codes/{id}/scans", () => {
     ["free", "90d", "90d", 90],
     ["pro", "1095d", "1095d", 1095],
     ["business", "1095d", "1095d", Number.POSITIVE_INFINITY],
-  ] as const)("on %s, asking for %s gives %s (history: %s days)", async (plan, asked, served, retention) => {
-    state.plan = plan;
-    const { data } = (await (
-      await getScans("code_alice", `?range=${asked}`)
-    ).json()) as ScansBody;
-    expect(data.range).toBe(served);
-    // JSON turns Infinity into null: "unlimited".
-    expect(data.retentionDays).toBe(
-      Number.isFinite(retention) ? retention : null,
-    );
-  });
+  ] as const)(
+    "on %s, asking for %s gives %s (history: %s days)",
+    async (plan, asked, served, retention) => {
+      state.plan = plan;
+      const { data } = (await (
+        await getScans("code_alice", `?range=${asked}`)
+      ).json()) as ScansBody;
+      expect(data.range).toBe(served);
+      // JSON turns Infinity into null: "unlimited".
+      expect(data.retentionDays).toBe(
+        Number.isFinite(retention) ? retention : null,
+      );
+    },
+  );
 
   it("rejects unknown ranges", async () => {
     expect((await getScans("code_alice", "?range=10y")).status).toBe(400);
@@ -310,13 +314,26 @@ describe("GET /v1/themes", () => {
     expect(((await other.json()) as { error: string }).error).toBe("not_found");
   });
 
-  it("needs themes:read, with OAuth-shaped errors", async () => {
+  it("needs themes:read, with the API and OAuth error fields", async () => {
+    const message =
+      "This token needs the 'themes:read' scope. Add it to your app and ask for it when the user authorizes.";
     const wrongScope = await getThemes("profile");
     expect(wrongScope.status).toBe(403);
     expect(await wrongScope.json()).toEqual({
       error: "insufficient_scope",
-      error_description: "Scope 'themes:read' required",
+      error_description: message,
+      code: "INSUFFICIENT_SCOPE",
+      message,
+      status: 403,
+      docs: "http://localhost:3000/docs/developers/rest-api#endpoints",
     });
-    expect((await getThemes()).status).toBe(401);
+    const missing = await getThemes();
+    expect(missing.status).toBe(401);
+    expect(await missing.json()).toMatchObject({
+      error: "invalid_token",
+      code: "UNAUTHORIZED",
+      status: 401,
+      docs: "http://localhost:3000/docs/developers/rest-api#get-an-access-token",
+    });
   });
 });

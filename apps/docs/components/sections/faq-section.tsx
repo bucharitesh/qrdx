@@ -8,9 +8,27 @@ import {
 import { HairlineFigure } from "@/components/mockups/hairline";
 import { SectionHeader } from "@/components/sections/section-header";
 import { siteConfig } from "@/config/site";
+import { isFeatureAvailable } from "@/lib/feature-availability";
+import { fillFacts } from "@/lib/product-facts";
+
+type FaqItem = (typeof siteConfig.faqSection.faQitems)[number];
+
+/**
+ * Answers only mention features this deployment can offer. `{facts.…}` counts
+ * are filled in here, so config/site.tsx (also in client bundles) doesn't
+ * import the engine catalogue.
+ */
+function answerOf(item: FaqItem, customDomains: boolean): string {
+  return fillFacts(
+    (!customDomains && "answerWithoutCustomDomains" in item
+      ? item.answerWithoutCustomDomains
+      : undefined) ?? item.answer,
+  );
+}
 
 export function FAQSection() {
   const { faqSection } = siteConfig;
+  const customDomains = isFeatureAvailable("customDomains");
 
   const faqSchema = {
     "@context": "https://schema.org",
@@ -20,7 +38,7 @@ export function FAQSection() {
       name: item.question,
       acceptedAnswer: {
         "@type": "Answer",
-        text: item.answer,
+        text: answerOf(item, customDomains),
       },
     })),
   };
@@ -44,9 +62,9 @@ export function FAQSection() {
         </p>
       </SectionHeader>
 
-      <div className="mx-auto grid w-full max-w-5xl gap-10 px-6 md:grid-cols-[16rem_minmax(0,1fr)] md:gap-14 md:px-10">
+      <div className="mx-auto grid w-full max-w-5xl gap-10 px-10 md:grid-cols-[16rem_minmax(0,1fr)] md:gap-14">
         <div className="hidden flex-col gap-4 md:flex">
-          <HairlineFigure figure="Query" className="aspect-[5/4] w-full" />
+          <HairlineFigure figure="Question" className="aspect-[5/4] w-full" />
           <p className="text-sm text-muted-foreground text-pretty leading-relaxed">
             Something else?{" "}
             <a
@@ -69,7 +87,7 @@ export function FAQSection() {
               </AccordionTrigger>
               <AccordionContent className="pb-5 text-muted-foreground">
                 <p className="max-w-prose leading-relaxed text-pretty">
-                  {faq.answer}
+                  {answerOf(faq, customDomains)}
                 </p>
               </AccordionContent>
             </AccordionItem>

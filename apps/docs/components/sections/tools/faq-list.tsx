@@ -20,7 +20,7 @@ export function FaqList({ title, faqs }: FaqListProps) {
           {title}
         </h2>
       </SectionHeader>
-      <div className="max-w-3xl w-full mx-auto px-6 md:px-10 pt-10 grid gap-2">
+      <div className="max-w-3xl w-full mx-auto px-10 pt-10 grid gap-2">
         {faqs.map((faq) => (
           <details
             key={faq.question}

@@ -301,7 +301,7 @@ export function CommunityThemesContent() {
             </div>
           ) : themes.length === 0 ? (
             <div className="flex flex-col items-center gap-3 py-20 text-center">
-              <HairlineFigure className="aspect-square w-40" figure="Stack" />
+              <HairlineFigure className="aspect-square w-40" figure="Palette" />
               <h3 className="text-lg font-semibold tracking-tight">
                 {filter === "mine"
                   ? "No published themes"

@@ -231,8 +231,6 @@ export async function unlinkSignInMethod(
         return fail(
           "For your security, sign out and sign in again before removing a sign-in method.",
         );
-      case "FAILED_TO_UNLINK_LAST_ACCOUNT":
-        return fail(UNLINK_BLOCK_MESSAGES["last-method"]);
       case "ACCOUNT_NOT_FOUND":
         return fail(UNLINK_BLOCK_MESSAGES["not-found"]);
     }

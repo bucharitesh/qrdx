@@ -50,23 +50,90 @@ export interface SiteSlots {
 }
 
 export interface SlotSizes {
-  top?: Size;
+  /**
+   * `y`: where the slot starts (default: below the header; 0 hangs from the
+   * window's top edge). `nearRail`: beside the content rail instead of centred.
+   */
+  top?: Size & { y?: number; nearRail?: boolean };
   mid?: Size & { drift?: number };
   bottom?: Size;
   rest?: number;
 }
 
-const overlaps = (a: DOMRect, b: DOMRect, pad = 0) =>
+/** A box in viewport coordinates (a DOMRect, or a plain object in tests). */
+export interface Box {
+  left: number;
+  top: number;
+  right: number;
+  bottom: number;
+}
+
+const overlaps = (a: Box, b: Box, pad = 0) =>
   a.left < b.right + pad &&
   a.right > b.left - pad &&
   a.top < b.bottom + pad &&
   a.bottom > b.top - pad;
 
+/** Space kept between a character and a corner widget. */
+export const WIDGET_GAP = 12;
+
+/**
+ * Whether a widget is really on screen. A box ignores visibility and opacity,
+ * and Featurebase keeps a hidden, viewport-sized popup (an iframe with
+ * role="dialog") mounted all the time.
+ */
+function isShown(el: Element) {
+  if (typeof el.checkVisibility === "function") {
+    return el.checkVisibility({
+      opacityProperty: true,
+      visibilityProperty: true,
+    });
+  }
+  const style = getComputedStyle(el);
+  return (
+    style.display !== "none" &&
+    style.visibility !== "hidden" &&
+    Number(style.opacity) > 0
+  );
+}
+
+/**
+ * The boxes worth keeping clear of: non-empty, inside the viewport, and not a
+ * full-screen layer (an overlay covers the characters anyway; reserving it
+ * would leave them nowhere to go).
+ */
+export function widgetBoxes<T extends Box>(
+  boxes: T[],
+  width: number,
+  height: number,
+): T[] {
+  return boxes.filter((box) => {
+    const w = box.right - box.left;
+    const h = box.bottom - box.top;
+    return (
+      w > 0 &&
+      h > 0 &&
+      box.right > 0 &&
+      box.bottom > 0 &&
+      box.left < width &&
+      box.top < height &&
+      w * h < width * height * 0.5
+    );
+  });
+}
+
 /** Rects (viewport coordinates) the characters must keep clear of. */
-function reservedRects(width: number, height: number) {
-  const rects = [...document.querySelectorAll(OVERLAYS)]
-    .map((el) => el.getBoundingClientRect())
-    .filter((rect) => rect.width > 0 && rect.height > 0 && rect.width < width);
+export function reservedRects(
+  width = window.innerWidth,
+  height = window.innerHeight,
+) {
+  const rects = widgetBoxes(
+    [...document.querySelectorAll(OVERLAYS)]
+      .filter(isShown)
+      .map((el) => el.getBoundingClientRect()),
+    width,
+    height,
+  );
   // The feedback launcher's corner, even before its script has loaded.
   rects.push(new DOMRect(width - 100, height - 100, 100, 100));
   // The Next.js dev badge (development only).
@@ -74,6 +141,37 @@ function reservedRects(width: number, height: number) {
     rects.push(new DOMRect(0, height - 88, 100, 88));
   }
   return rects;
+}
+
+/**
+ * `right` offset for a character standing on the bottom edge of `container`:
+ * `right` itself, or further left when that spot touches a widget (the
+ * feedback launcher's corner). Null when it can't clear them inside the container.
+ */
+export function clearRight(
+  container: Box,
+  size: Size,
+  right: number,
+  widgets: Box[],
+  gap = WIDGET_GAP,
+): number | null {
+  let offset = right;
+  // Right to left: each widget it would touch moves it past that widget.
+  for (const widget of [...widgets].sort((a, b) => b.right - a.right)) {
+    const left = container.right - offset - size.width;
+    const spot = {
+      left,
+      right: left + size.width,
+      top: container.bottom - size.height,
+      bottom: container.bottom,
+    };
+    if (overlaps(spot, widget, gap)) {
+      offset = Math.ceil(container.right - widget.left + gap);
+    }
+  }
+  return container.right - offset - size.width >= container.left
+    ? offset
+    : null;
 }
 
 /**
@@ -104,16 +202,17 @@ export function computeSlots(rail: DOMRect, sizes: SlotSizes): SiteSlots {
 
   let top: TopSlot | null = null;
   if (sizes.top && right.to - right.from >= sizes.top.width) {
-    const { width: w, height: h } = sizes.top;
-    const x = right.to - (right.to - right.from - w) / 2;
-    const y = HEADER_ZONE;
-    if (fits(new DOMRect(x - w, y - 8, w, h + 40))) {
+    const { width: w, height: h, y = HEADER_ZONE, nearRail } = sizes.top;
+    const x = nearRail
+      ? Math.min(right.to, right.from + RAIL_GAP + w)
+      : right.to - (right.to - right.from - w) / 2;
+    if (fits(new DOMRect(x - w, Math.max(0, y - 8), w, h + 40))) {
       top = {
         x,
         y,
         minX: right.from,
         maxX: right.to,
-        minY: y - 10,
+        minY: Math.max(4, y - 10),
         maxY: y + 100,
       };
     }

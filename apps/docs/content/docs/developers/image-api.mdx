@@ -116,4 +116,4 @@ Data that doesn't fit in a QR code at the chosen error correction level also ret
 
 ## Self-hosting
 
-The endpoint is part of the QRdx web app, so a [self-hosted](/docs/self-hosting) instance serves it at `/v1/qr` on your own domain. Rate limiting uses Upstash Redis when it is configured and is off otherwise.
+The endpoint is part of the QRdx web app, so a [self-hosted](/docs/self-hosting) instance serves it at `/api/v1/qr` on your own domain (for example `https://qr.example.com/api/v1/qr?data=…`). The short `/v1/qr` path only works on `api.qrdx.dev`. Rate limiting uses Upstash Redis when it is configured and is off otherwise.

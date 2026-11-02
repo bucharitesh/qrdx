@@ -92,6 +92,38 @@ describe("qrdx CLI", () => {
     });
   });
 
+  describe("generate --help and --version", () => {
+    it("generate --help shows the same help as qrdx --help", () => {
+      const help = runCliOutput(["--help"]);
+      expect(runCliOutput(["generate", "--help"])).toBe(help);
+      expect(runCliOutput(["g", "-h"])).toBe(help);
+    });
+
+    it("generate --version prints only the version", () => {
+      expect(runCliOutput(["generate", "--version"])).toBe(
+        runCliOutput(["--version"])
+      );
+      expect(runCliOutput(["gen", "-v"])).toBe(runCliOutput(["--version"]));
+    });
+
+    it("help wins over options that would fail validation, and exits 0", () => {
+      const run = runCli(
+        ["generate", "https://qrdx.dev", "--frame", "nonsense", "-h"],
+        { cwd: tmpdir() }
+      );
+      expect(run.exitCode).toBe(0);
+      expect(stripLogo(run.stdout)).toContain("Usage: qrdx");
+    });
+
+    it("still generates without --help (no usage text)", () => {
+      const run = runCli(["generate", "https://qrdx.dev", "-o", "x.svg"], {
+        cwd: tmpdir(),
+      });
+      expect(run.exitCode).toBe(0);
+      expect(run.stdout).not.toContain("Usage: qrdx");
+    });
+  });
+
   describe("implicit generate", () => {
     it("treats a bare URL as a generate command", () => {
       const { exitCode } = runCli(["https://qrdx.dev"], { cwd: tmpdir() });

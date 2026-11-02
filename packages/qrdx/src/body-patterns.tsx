@@ -13,6 +13,7 @@ import {
   roundedRectPath,
   starPoints,
 } from "./shapes";
+import { compact } from "./utils/fmt";
 
 // Body patterns added after the original nine. Each one is drawn as a single
 // <path> (all modules unioned under the nonzero rule), so neighbouring
@@ -301,7 +302,7 @@ export function renderShapedBody(
       const cy = centerOf(y);
       if (isAlignment(x, y)) {
         solid.push(
-          `M${cx - cell / 2} ${cy - cell / 2}h${cell}v${cell}h${-cell}z`
+          compact`M${cx - cell / 2} ${cy - cell / 2}h${cell}v${cell}h${-cell}z`
         );
         continue;
       }
@@ -350,16 +351,24 @@ export function renderShapedBody(
         const x1 = x0 + cell;
         const y1 = y0 + cell;
         if (dark(x - 1, y) && dark(x, y - 1) && dark(x - 1, y - 1)) {
-          shapes.push(`M${x0} ${y0}h${r}A${r} ${r} 0 0 0 ${x0} ${y0 + r}Z`);
+          shapes.push(
+            compact`M${x0} ${y0}h${r}A${r} ${r} 0 0 0 ${x0} ${y0 + r}Z`
+          );
         }
         if (dark(x + 1, y) && dark(x, y - 1) && dark(x + 1, y - 1)) {
-          shapes.push(`M${x1} ${y0}v${r}A${r} ${r} 0 0 0 ${x1 - r} ${y0}Z`);
+          shapes.push(
+            compact`M${x1} ${y0}v${r}A${r} ${r} 0 0 0 ${x1 - r} ${y0}Z`
+          );
         }
         if (dark(x + 1, y) && dark(x, y + 1) && dark(x + 1, y + 1)) {
-          shapes.push(`M${x1} ${y1}h${-r}A${r} ${r} 0 0 0 ${x1} ${y1 - r}Z`);
+          shapes.push(
+            compact`M${x1} ${y1}h${-r}A${r} ${r} 0 0 0 ${x1} ${y1 - r}Z`
+          );
         }
         if (dark(x - 1, y) && dark(x, y + 1) && dark(x - 1, y + 1)) {
-          shapes.push(`M${x0} ${y1}v${-r}A${r} ${r} 0 0 0 ${x0 + r} ${y1}Z`);
+          shapes.push(
+            compact`M${x0} ${y1}v${-r}A${r} ${r} 0 0 0 ${x0 + r} ${y1}Z`
+          );
         }
       }
     }

@@ -122,11 +122,7 @@ export function formatDecimalMoney(
 
 /** Only https URLs leave a client (thumbnails, links). */
 export function httpsOrUndefined(value: unknown): string | undefined {
-  if (typeof value !== "string") return;
-  try {
-    const url = new URL(value);
-    return url.protocol === "https:" ? url.toString() : undefined;
-  } catch {
-    return;
-  }
+  if (typeof value !== "string" || !URL.canParse(value)) return;
+  const url = new URL(value);
+  return url.protocol === "https:" ? url.toString() : undefined;
 }

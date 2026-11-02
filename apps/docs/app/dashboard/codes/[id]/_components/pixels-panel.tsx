@@ -18,6 +18,7 @@ import {
   type CodeMarketingSettings,
   saveCodePixels,
 } from "@/actions/code-marketing";
+import { useAvailability } from "@/components/availability-provider";
 import { CopyButton } from "@/components/copy-button";
 import type { PixelConfig, PixelProvider } from "@/lib/redirect/routing";
 import {
@@ -63,6 +64,14 @@ const PROVIDERS: {
     placeholder: "1234567",
   },
 ];
+
+const PROVIDER_NAMES: Record<PixelProvider, string> = {
+  ga4: "Google Analytics",
+  gtm: "Tag Manager",
+  meta: "Meta",
+  tiktok: "TikTok",
+  linkedin: "LinkedIn",
+};
 
 type Draft = Record<PixelProvider, string> & {
   consent: "auto" | "always";
@@ -191,6 +200,15 @@ function PixelsEditor({ initial }: { initial: CodeMarketingSettings }) {
     JSON.stringify(fromDraft(toDraft(settings.pixels)));
   const setDraft = (patch: Partial<Draft>) =>
     setDraftState((current) => ({ ...current, ...patch }));
+  // Tag Manager only loads on custom domains: no field for it where they
+  // can't be added, unless this code already has a container to remove.
+  const { has } = useAvailability();
+  const providers = PROVIDERS.filter(
+    (provider) =>
+      provider.key !== "gtm" ||
+      has("customDomains") ||
+      Boolean(settings.pixels?.gtm),
+  );
 
   const save = () => {
     setError(null);
@@ -230,11 +248,11 @@ function PixelsEditor({ initial }: { initial: CodeMarketingSettings }) {
             <PlanLock plan="Pro">
               {PROVIDERS.some((provider) => settings.pixels?.[provider.key])
                 ? "Your plan doesn't include tracking pixels. The saved ones keep loading; you can remove them, and adding new ones needs Pro."
-                : "Tracking pixels (Google Analytics, Tag Manager, Meta, TikTok, LinkedIn) are part of Pro."}
+                : `Tracking pixels (${providers.map((provider) => PROVIDER_NAMES[provider.key]).join(", ")}) are part of Pro.`}
             </PlanLock>
           )}
           <div className="grid gap-3 sm:grid-cols-2">
-            {PROVIDERS.map((provider) => (
+            {providers.map((provider) => (
               <div className="space-y-1" key={provider.key}>
                 <Label htmlFor={`${id}-${provider.key}`}>
                   {provider.label}

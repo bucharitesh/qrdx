@@ -1,0 +1,88 @@
+---
+title: Help center
+description: Answers for making QR codes, dynamic codes, pages, billing and your account. No code needed.
+icon: LifeBuoy
+---
+
+import { HelpSearch, StillStuck } from "@/components/docs/help-home";
+
+<HelpSearch />
+
+## Common questions
+
+- [Make your first QR code](/docs/help/getting-started/first-qr-code)
+- [Static or dynamic, which do you need?](/docs/help/getting-started/static-vs-dynamic)
+- [Change where a code points](/docs/help/dynamic-codes/change-the-link)
+- [A code won't scan](/docs/help/troubleshooting/wont-scan)
+- [Download and print a QR code](/docs/help/getting-started/download-and-print)
+- [What happens to your codes if you stop paying](/docs/help/account-and-billing/never-hostage)
+- [Cancel your subscription](/docs/help/account-and-billing/cancel)
+- [A scan shows an error page](/docs/help/troubleshooting/error-pages)
+
+## Browse by topic
+
+<Cards>
+  <Card
+    icon={<Rocket />}
+    href="/docs/help/getting-started/first-qr-code"
+    title="Getting started"
+    description="Make, download and print your first code. Static or dynamic."
+  />
+  <Card
+    icon={<Palette />}
+    href="/docs/help/designing/colors-and-contrast"
+    title="Designing"
+    description="Colors, logos, frames and art, and codes that always scan."
+  />
+  <Card
+    icon={<QrCode />}
+    href="/docs/help/dynamic-codes/create"
+    title="Dynamic codes"
+    description="Change the link, see scans, pause, protect and route codes."
+  />
+  <Card
+    icon={<PanelsTopLeft />}
+    href="/docs/help/pages-and-forms/create-a-page"
+    title="Pages and forms"
+    description="Mobile pages and forms, hosted by QRdx."
+  />
+  <Card
+    icon={<CreditCard />}
+    href="/docs/help/account-and-billing/plans"
+    title="Account and billing"
+    description="Plans, invoices, cancelling, your data and your account."
+  />
+  <Card
+    icon={<Users />}
+    href="/docs/help/teams/create-and-invite"
+    title="Teams"
+    description="Invite people, roles and seats."
+  />
+  <IfAvailable path="/docs/help/domains/custom-domains">
+    <Card
+      icon={<Globe />}
+      href="/docs/help/domains/custom-domains"
+      title="Domains"
+      description="Short links on a domain you own."
+    />
+  </IfAvailable>
+  <Card
+    icon={<TriangleAlert />}
+    href="/docs/help/troubleshooting/wont-scan"
+    title="Troubleshooting"
+    description="Codes that won't scan, wrong pages, error pages and missing emails."
+  />
+  <Card
+    icon={<ShieldCheck />}
+    href="/docs/help/privacy-and-security/scan-data"
+    title="Privacy and security"
+    description="What a scan records, account safety and reporting abuse."
+  />
+</Cards>
+
+## More
+
+- [What's new and what's next](/docs/help/whats-new), and the full [changelog](/changelogs).
+- Building something? The [Developers](/docs/developers) tab has the REST API, webhooks, MCP and the CLI.
+
+<StillStuck />

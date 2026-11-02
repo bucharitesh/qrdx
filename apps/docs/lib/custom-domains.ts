@@ -3,23 +3,23 @@ import "server-only";
 import { randomBytes } from "node:crypto";
 import { Resolver } from "node:dns/promises";
 import { env } from "@/lib/env";
+import { getCustomDomainMode } from "@/lib/feature-availability";
+import type { CustomDomainMode } from "@/lib/feature-availability-rules";
 import { baseUrl } from "@/lib/metadata";
 
 /**
- * How custom domains are connected on this deployment:
+ * How custom domains are connected on this deployment (decided in
+ * lib/feature-availability-rules.ts, `customDomainMode`):
  * - "vercel": added to the Vercel project through the Domains API
  *   (VERCEL_API_TOKEN + VERCEL_PROJECT_ID).
  * - "manual": self-hosted; the owner routes the domain to this server and
  *   proves ownership with a TXT record we check over DNS.
  * - "disabled": on Vercel without API access. Vercel only routes domains that
- *   were added to the project, so nothing could ever reach this app.
+ *   were added to the project, so a new one could never reach this app.
+ *   Domains verified earlier keep serving (proxy.ts reads the database).
  */
-export type CustomDomainMode = "vercel" | "manual" | "disabled";
-
-export function getCustomDomainMode(): CustomDomainMode {
-  if (env.VERCEL_API_TOKEN && env.VERCEL_PROJECT_ID) return "vercel";
-  return process.env.VERCEL ? "disabled" : "manual";
-}
+export type { CustomDomainMode };
+export { getCustomDomainMode };
 
 export interface DnsRecord {
   type: "A" | "CNAME" | "TXT";

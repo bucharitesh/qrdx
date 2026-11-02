@@ -13,6 +13,7 @@ import { useLayoutEffect, useState } from "react";
 import { siteConfig } from "@/config/site";
 import { formatCompactNumber } from "@/utils/format";
 import styles from "./github-stars.module.css";
+import bar from "./header-bar.module.css";
 
 /** From our cached route (app/api/github-stars), not GitHub directly. */
 function useStars() {
@@ -116,7 +117,11 @@ export function GithubStars({
           variant="outline"
           size="sm"
           className={cn(
-            "relative gap-1.5 overflow-hidden transition-[box-shadow,background-color,color] duration-300 hover:shadow-[0_0_0_4px_color-mix(in_oklab,var(--foreground)_6%,transparent)]",
+            // Surface, border and focus ring: header-bar.module.css, shared
+            // with the nav pills.
+            bar.bar,
+            bar.outline,
+            "relative gap-1.5 overflow-hidden",
             !full && "max-sm:px-2",
             className,
           )}

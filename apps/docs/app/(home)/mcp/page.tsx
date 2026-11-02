@@ -1,22 +1,11 @@
 import { Card } from "@repo/design-system/components/ui/card";
 import { cn } from "@repo/design-system/lib/utils";
-import {
-  ArrowRight2,
-  ColorSwatch,
-  Location,
-  MessageText,
-  Personalcard,
-  ScanBarcode,
-  Sms,
-  TickCircle,
-  Wifi,
-} from "iconsax-reactjs";
+import { ArrowRight2, TickCircle } from "iconsax-reactjs";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { McpTerminal } from "@/components/mockups/mcp-terminal";
 import {
-  type CardIcon,
   IconTile,
   SectionHeading,
   textLinkClass,
@@ -25,6 +14,7 @@ import { FaqList } from "@/components/sections/tools/faq-list";
 import { ToolHero } from "@/components/sections/tools/tool-hero";
 import { mcpLocalUrl, mcpServerUrl } from "@/lib/mcp-clients";
 import { baseUrl, createMetadata } from "@/lib/metadata";
+import { MCP_FAQS, MCP_INTRO, MCP_STEPS, MCP_TOOLS } from "./content";
 import {
   McpConnect,
   McpConnectView,
@@ -37,120 +27,15 @@ export const metadata: Metadata = createMetadata({
   description:
     "Connect Claude, ChatGPT, Cursor, VS Code or any MCP app to the free QRdx MCP server in one click, then generate styled QR codes and Wi-Fi, vCard, email, SMS and location payloads. No account or API key.",
   path: "/mcp",
+  alternates: {
+    types: { "text/markdown": new URL("/mcp.md", baseUrl).toString() },
+  },
 });
 
 const MCP_URL = mcpServerUrl(baseUrl);
 /** Only in local dev: this instance's own endpoint, shown as a hint. */
 const LOCAL_MCP_URL = mcpLocalUrl(baseUrl);
 const PAGE_URL = new URL("/mcp", baseUrl).toString();
-
-const steps: { title: string; body: string }[] = [
-  {
-    title: "Add the server",
-    body: "One command or a few lines of config in Claude, Cursor, VS Code or any other MCP app. No account or API key.",
-  },
-  {
-    title: "Ask your assistant",
-    body: "In plain words: the link or details to encode, colors and shape. It picks the right QRdx tool.",
-  },
-  {
-    title: "Get a QR code back",
-    body: "A PNG image in the chat, plus SVG, PNG and EPS links ready for Markdown, HTML or print.",
-  },
-];
-
-const tools: {
-  name: string;
-  title: string;
-  description: string;
-  icon: CardIcon;
-}[] = [
-  {
-    name: "generate_qr_code",
-    title: "Generate a QR code",
-    description:
-      "Renders the code and returns a PNG image plus public SVG, PNG and EPS image URLs ready for Markdown or HTML. Takes the image API options: colors, body, eye and dot shapes, error correction, margin and frame. Set include_svg for the SVG markup.",
-    icon: ScanBarcode,
-  },
-  {
-    name: "list_qr_styles",
-    title: "List styles",
-    description:
-      "Body patterns, corner eye and eye dot shapes, frame templates, error correction levels, defaults and limits.",
-    icon: ColorSwatch,
-  },
-  {
-    name: "qr_payload_wifi",
-    title: "Wi-Fi network",
-    description:
-      "A WIFI: payload (WPA, WEP or open, optionally hidden) with special characters escaped.",
-    icon: Wifi,
-  },
-  {
-    name: "qr_payload_vcard",
-    title: "Contact card",
-    description:
-      "A vCard 3.0 contact: name, organization, title, phones, email, website, address and note.",
-    icon: Personalcard,
-  },
-  {
-    name: "qr_payload_email",
-    title: "Email",
-    description: "A mailto: link with optional cc, bcc, subject and body.",
-    icon: Sms,
-  },
-  {
-    name: "qr_payload_sms",
-    title: "Text message",
-    description:
-      "An sms: link with an optional message, or the older SMSTO: form.",
-    icon: MessageText,
-  },
-  {
-    name: "qr_payload_geo",
-    title: "Map location",
-    description: "A geo: location from latitude and longitude.",
-    icon: Location,
-  },
-];
-
-const faqs = [
-  {
-    question: "Do I need an account or an API key?",
-    answer:
-      "No. The QRdx MCP server is public and free. It needs no account or API key and keeps no session state.",
-  },
-  {
-    question: "Which AI tools does it work with?",
-    answer:
-      "Any MCP app that supports remote servers over Streamable HTTP, such as Claude, ChatGPT (in developer mode), Claude Code, Cursor, VS Code, Windsurf, Gemini CLI and Codex. Apps that only run local stdio servers can connect through the mcp-remote bridge.",
-  },
-  {
-    question: "Can it add logos or gradients?",
-    answer:
-      "No. Like the image API, the MCP server renders solid colors only. For logos and gradients, design the code in the QRdx playground or render it with the qrdx React library.",
-  },
-  {
-    question: "Can it create dynamic QR codes?",
-    answer:
-      "No. The MCP tools render static QR codes and format payloads. Dynamic codes, whose destination you can change later, are created in the QRdx dashboard or with the REST API.",
-  },
-  {
-    question: "Does QRdx store the codes I generate?",
-    answer:
-      "No. The tools only render images and format text. They don't read or change any QRdx account data, and the server doesn't save the codes. The image URLs it returns contain the encoded data, so don't share them if the data is private, such as a Wi-Fi password.",
-  },
-  {
-    question: "Are there limits?",
-    answer:
-      "Requests are limited to 120 per minute per IP address. Very long data may not fit in a QR code; the tool then returns an error suggesting a lower error correction level.",
-  },
-  {
-    question: "Can I run it myself?",
-    answer:
-      "Yes. The MCP server is part of the QRdx web app, so a self-hosted instance serves it at /api/mcp on your own domain.",
-  },
-];
 
 export default function McpPage() {
   return (
@@ -162,9 +47,7 @@ export default function McpPage() {
           { name: "MCP server", path: "/mcp" },
         ]}
         title="Make QR codes from your AI assistant"
-        intro={[
-          "MCP (Model Context Protocol) is the open standard that lets AI assistants use outside tools. Connect QRdx once, ask for a QR code in plain words, and get the image back in the chat.",
-        ]}
+        intro={[MCP_INTRO]}
       >
         <Suspense
           fallback={
@@ -200,7 +83,7 @@ export default function McpPage() {
 
       <section
         aria-labelledby="prompts"
-        className="flex w-full flex-col gap-8 px-6 py-12 md:px-10 md:py-16"
+        className="flex w-full flex-col gap-8 px-10 py-12 md:py-16"
       >
         <SectionHeading
           id="prompts"
@@ -223,7 +106,7 @@ export default function McpPage() {
 
       <section
         aria-labelledby="how"
-        className="grid w-full gap-10 px-6 py-12 md:px-10 md:py-16 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:items-center"
+        className="grid w-full gap-10 px-10 py-12 md:py-16 lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] lg:items-center"
       >
         <div className="flex min-w-0 flex-col gap-8">
           <SectionHeading
@@ -233,7 +116,7 @@ export default function McpPage() {
             description="Your assistant calls the QRdx tools for you. You never touch an API."
           />
           <ol className="flex flex-col gap-3">
-            {steps.map((step, index) => (
+            {MCP_STEPS.map((step, index) => (
               <li key={step.title}>
                 <Card className="flex-row gap-4 p-4">
                   <span className="grid size-9 shrink-0 place-items-center rounded-full border bg-muted/40 font-mono text-sm text-foreground/80">
@@ -257,7 +140,7 @@ export default function McpPage() {
 
       <section
         aria-labelledby="tools"
-        className="flex w-full flex-col gap-8 px-6 py-12 md:px-10 md:py-16"
+        className="flex w-full flex-col gap-8 px-10 py-12 md:py-16"
       >
         <SectionHeading
           id="tools"
@@ -275,7 +158,7 @@ export default function McpPage() {
           }
         />
         <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {tools.map((tool, index) => (
+          {MCP_TOOLS.map((tool, index) => (
             <li
               key={tool.name}
               className={cn(
@@ -314,7 +197,7 @@ export default function McpPage() {
         </ul>
       </section>
 
-      <FaqList title="MCP server FAQ" faqs={faqs} />
+      <FaqList title="MCP server FAQ" faqs={MCP_FAQS} />
     </main>
   );
 }

@@ -13,6 +13,8 @@
 // - Anything that stores a token or API key (OAuth and "api_key", like
 //   Rebrandly, Short.io, Stripe, Cal.com and Shopify) also needs
 //   INTEGRATION_ENCRYPTION_KEY in production, where tokens must be encrypted.
+// - Catalog entries for built-in features (custom domains, email alerts)
+//   follow lib/feature-availability-rules.ts, through `featureSetup`.
 
 /** Encrypts stored tokens and API keys; required in production. */
 export const ENCRYPTION_KEY_VAR = "INTEGRATION_ENCRYPTION_KEY";
@@ -42,6 +44,12 @@ export interface AvailabilityContext {
   definition: (slug: string) => AvailabilityDefinition | undefined;
   /** The OAuth credential variable names for a slug. */
   credentials: (slug: string) => AvailabilityCredentialNames | undefined;
+  /**
+   * Catalog entries that are really built-in features (custom-domains,
+   * email-alerts): what they still need, from lib/feature-availability-rules.
+   * Undefined for every other slug.
+   */
+  featureSetup?: (slug: string) => string[] | undefined;
 }
 
 /**
@@ -50,6 +58,9 @@ export interface AvailabilityContext {
  * values are never read beyond "is it set".
  */
 export function missingSetup(slug: string, ctx: AvailabilityContext): string[] {
+  const feature = ctx.featureSetup?.(slug);
+  if (feature) return feature;
+
   const definition = ctx.definition(slug);
   if (
     !definition ||
@@ -134,4 +145,34 @@ export function filterVisible<T>(
   slugOf: (item: T) => string,
 ): T[] {
   return items.filter((item) => isVisible(availability, slugOf(item)));
+}
+
+/**
+ * How Settings → Integrations treats a slug. Production hides integrations
+ * that need setup, but someone who connected one before it was hidden must
+ * still be able to disconnect it:
+ * - "listed": shown as usual (available, or local dev);
+ * - "no-longer-available": hidden here, but this user has it connected, so
+ *   settings show it with a "No longer available" badge and Disconnect only;
+ * - "hidden": not shown.
+ * Only the settings list and detail pages use this. Connect buttons, pickers
+ * and the public pages keep using isVisible, which still hides it.
+ */
+export type SettingsListing = "listed" | "no-longer-available" | "hidden";
+
+export function settingsListing(
+  availability: IntegrationAvailability,
+  slug: string,
+  connected: boolean,
+): SettingsListing {
+  if (isVisible(availability, slug)) return "listed";
+  return connected ? "no-longer-available" : "hidden";
+}
+
+/** The slugs among `slugs` that are hidden here (production only). */
+export function hiddenSlugs(
+  availability: IntegrationAvailability,
+  slugs: Iterable<string>,
+): string[] {
+  return [...new Set(slugs)].filter((slug) => !isVisible(availability, slug));
 }

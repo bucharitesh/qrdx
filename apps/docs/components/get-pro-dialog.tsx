@@ -16,27 +16,12 @@ import { cn } from "@repo/design-system/lib/utils";
 import { ShieldTick } from "iconsax-reactjs";
 import Link from "next/link";
 import { QRCodeSVG } from "qrdx";
+import { useAvailability } from "@/components/availability-provider";
 import { GridLines } from "@/components/fx";
+import { buildUpgradeHighlights } from "@/components/sections/pricing/plan-content";
 import { track } from "@/lib/analytics";
 import { easterEggUrl } from "@/lib/easter-eggs";
 import { PAID_PLANS, type PaidPlan, PLAN_NAMES } from "@/lib/pricing";
-
-// Headline features; the pricing page lists every limit (from lib/plans).
-const PLAN_FEATURES: Record<PaidPlan, string[]> = {
-  pro: [
-    "Unlimited dynamic codes and landing pages",
-    "3 years of analytics history",
-    "5 custom domains and teams of up to 3",
-    "Unlimited saved themes, shared with your team",
-    "Smart routing, A/B tests, UTM tags and pixels",
-  ],
-  business: [
-    "Everything in Pro",
-    "White-label pages with custom CSS",
-    "25 custom domains and unlimited team members",
-    "Conversion tracking and webhooks",
-  ],
-};
 
 interface GetProDialogProps {
   isOpen: boolean;
@@ -50,6 +35,11 @@ export function GetProDialog({
   onClose,
   plan = "pro",
 }: GetProDialogProps) {
+  // Headline features; nothing this deployment can't offer (custom domains).
+  const { has } = useAvailability();
+  const features = buildUpgradeHighlights({
+    customDomains: has("customDomains"),
+  });
   return (
     <ResponsiveDialog open={isOpen} onOpenChange={onClose}>
       <ResponsiveDialogContent
@@ -100,7 +90,7 @@ export function GetProDialog({
                       )}
                     </p>
                     <ul className="space-y-2">
-                      {PLAN_FEATURES[tier].map((feature) => (
+                      {features[tier].map((feature) => (
                         <li className="flex items-start gap-2" key={feature}>
                           <Tick
                             aria-hidden

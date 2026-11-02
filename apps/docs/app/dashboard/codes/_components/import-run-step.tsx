@@ -371,7 +371,7 @@ export function RunStep({
               </h3>
               <p className="text-muted-foreground text-xs">
                 {job.domainAttachedAt || attach.state === "done"
-                  ? `The codes are on ${job.backHalfDomain}. Old links on it work again as soon as its DNS points to QRdx.`
+                  ? `The codes are on ${job.backHalfDomain}. Old links on it work again as soon as its DNS points to QRdx and it's verified on the Domains page.`
                   : `After ${job.backHalfDomain} points to QRdx and is verified on the Domains page, attach the codes so ${job.backHalfDomain}/<back-half> opens them.`}
               </p>
               {attach.state === "error" && (

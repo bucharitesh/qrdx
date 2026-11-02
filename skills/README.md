@@ -20,7 +20,7 @@ Generate styled, scannable QR codes as SVG or PNG using [`@qrdx/cli`](https://ww
 
 **Features:**
 - SVG (vector, scalable) and PNG (raster) output
-- 9 body dot patterns, 9 corner eye patterns, 11 corner dot patterns
+- 23 body patterns, 17 corner eye patterns, 21 corner dot patterns
 - Solid colors and linear/radial gradients (foreground, background, eye and dot overrides)
 - Decorative templates: `Arrow`, `StandardBox`, `SquareBorder`, `StrikedBox`, `Halloween`
 - Center logo support with module excavation

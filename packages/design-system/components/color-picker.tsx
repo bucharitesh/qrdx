@@ -11,7 +11,7 @@ import {
 } from "@repo/design-system/components/ui/popover";
 import { useForwardedRef } from "@repo/design-system/hooks/use-forwarded-ref";
 import { cn } from "@repo/design-system/lib/utils";
-import { type ForwardedRef, useMemo, useState } from "react";
+import { type ForwardedRef, useId, useMemo, useState } from "react";
 import { HexColorPicker } from "react-colorful";
 
 interface ColorPickerProps {
@@ -42,6 +42,7 @@ const ColorInput = ({
     forwardedRef as ForwardedRef<HTMLInputElement>
   );
   const [open, setOpen] = useState(false);
+  const inputId = useId();
 
   const parsedValue = useMemo(() => value || "#FFFFFF", [value]);
 
@@ -67,7 +68,7 @@ const ColorInput = ({
 
   return (
     <div className="flex flex-col gap-2">
-      {label && <Label>{label}</Label>}
+      {label && <Label htmlFor={inputId}>{label}</Label>}
       <div className="flex items-center gap-2">
         <Popover onOpenChange={setOpen} open={open}>
           <PopoverTrigger asChild disabled={disabled} onBlur={onBlur}>
@@ -105,6 +106,7 @@ const ColorInput = ({
             !isValid && "border-red-500 focus-visible:ring-red-500"
           )}
           disabled={disabled}
+          id={inputId}
           maxLength={7}
           onBlur={handleInputBlur}
           onChange={handleInputChange}

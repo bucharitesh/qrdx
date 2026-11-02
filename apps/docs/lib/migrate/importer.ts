@@ -9,10 +9,10 @@ import {
   applyRedirects,
   clearRedirectErrors,
   createJob,
+  mappedItems,
   nextChunk,
   redirectBatch,
   redirectPlanItem,
-  redirectTargets,
   summarizeJob,
   upsertJob,
 } from "./jobs";
@@ -22,7 +22,7 @@ import {
   type ImportPlan,
   jobItemsFromPlan,
   planImport,
-  slugCandidates,
+  slugLookups,
 } from "./plan";
 import { isApiProviderId } from "./providers";
 import type {
@@ -75,10 +75,19 @@ export interface FinishInput {
   folderName: string | null;
   tags: string[];
   slug: string | null;
+  /** `slug` belongs to this custom domain's namespace (null = qrdx.dev/q/) */
+  slugDomainId: string | null;
+  /** Put the code on this custom domain of the workspace (pending is fine) */
+  bindDomainId: string | null;
 }
 
 export interface MigrateRepo {
-  usage(scope: Scope): Promise<{ remaining: number | null; bulk: boolean }>;
+  usage(scope: Scope): Promise<{
+    remaining: number | null;
+    bulk: boolean;
+    /** The plan includes custom back-halves */
+    customSlugs: boolean;
+  }>;
   /** Codes imported from `provider` (all of them, or only `keys`) by source id */
   findImported(
     scope: Scope,
@@ -90,7 +99,11 @@ export interface MigrateRepo {
     scope: Scope,
     urls: string[],
   ): Promise<Map<string, CodeRef>>;
-  findTakenSlugs(slugs: string[]): Promise<Set<string>>;
+  /** Which of `slugs` are taken on the custom domain, or on qrdx.dev/q/ (null) */
+  findTakenSlugs(
+    slugs: string[],
+    domainId: string | null,
+  ): Promise<Set<string>>;
   existingTagNames(scope: Scope): Promise<Set<string>>;
   /** The workspace's QRdx custom domain with this hostname */
   domainFor(
@@ -123,6 +136,8 @@ export interface ImporterDeps {
   repo: MigrateRepo;
   now: () => Date;
   newId: () => string;
+  /** A random generated slug (the last fallback for a back-half) */
+  newSlug: () => string;
 }
 
 // ─── Preview ─────────────────────────────────────────────────────────────────
@@ -135,14 +150,18 @@ async function buildPlan(
   const { repo } = deps;
   const { links, options, provider } = request;
   const backHalfDomain = options.backHalfDomain;
-  const { slugs, candidates } = slugCandidates(links, options);
+  // Which namespace each back-half is looked up in depends on the domain.
+  const domain = backHalfDomain
+    ? await repo.domainFor(scope, backHalfDomain)
+    : null;
+  const lookups = slugLookups(links, options, domain, deps.newSlug);
   const [
     usage,
     imported,
     byDestination,
     takenSlugs,
+    takenOnDomain,
     existingTags,
-    domain,
     hosts,
   ] = await Promise.all([
     repo.usage(scope),
@@ -151,9 +170,11 @@ async function buildPlan(
       scope,
       links.map((link) => link.destinationUrl),
     ),
-    repo.findTakenSlugs(slugs),
+    repo.findTakenSlugs(lookups.shared, null),
+    domain?.id && lookups.domain.length > 0
+      ? repo.findTakenSlugs(lookups.domain, domain.id)
+      : new Set<string>(),
     repo.existingTagNames(scope),
-    backHalfDomain ? repo.domainFor(scope, backHalfDomain) : null,
     repo.qrdxHosts(scope),
   ]);
 
@@ -163,9 +184,11 @@ async function buildPlan(
     imported,
     byDestination,
     takenSlugs,
-    candidates,
+    takenOnDomain,
+    candidates: lookups.candidates,
     remaining: usage.remaining,
     existingTags,
+    canKeepBackHalves: usage.customSlugs,
     backHalfDomain: domain,
     checkDestination: (url) => repo.checkDestination(url),
     qrdxHosts: hosts,
@@ -424,7 +447,11 @@ export async function runJobChunk(
   };
 }
 
-/** Notes (with the marker), folder, tags and kept back-half of created codes. */
+/**
+ * Notes (with the marker), folder, tags and kept back-half of created codes.
+ * Codes of links on the job's branded domain go on the workspace's QRdx domain
+ * of that name, also while it's pending: they open there once it's verified.
+ */
 async function finishItems(
   deps: ImporterDeps,
   scope: Scope,
@@ -432,41 +459,64 @@ async function finishItems(
   job: ImportJob,
   items: JobItem[],
 ): Promise<ImportJob> {
+  const { repo } = deps;
   const importedAt = deps.now();
-  const finished = await deps.repo.finishCodes(
-    scope,
-    items.flatMap((item) =>
-      item.codeId
-        ? [
-            {
-              codeId: item.codeId,
-              notes: buildImportNotes({
-                provider: job.provider,
-                key: item.key,
-                shortLink: item.shortLink,
-                createdAt: item.createdAt,
-                importedAt,
-              }),
-              folderName: job.options.folderName,
-              tags: item.tags,
-              slug: item.slug,
-            },
-          ]
-        : [],
-    ),
-  );
+  const hostname = job.options.backHalfDomain;
+  const [usage, domain] = await Promise.all([
+    repo.usage(scope),
+    hostname ? repo.domainFor(scope, hostname) : null,
+  ]);
+  const domainId =
+    domain?.id && domain.qrdx !== "missing" && domain.canUse ? domain.id : null;
+  const warnings = new Map<string, string>();
+  const rows: FinishInput[] = [];
+  for (const item of items) {
+    if (!item.codeId) continue;
+    const onDomain = Boolean(
+      domainId && splitShortLink(item.shortLink).domain === hostname,
+    );
+    let slug = usage.customSlugs ? item.slug : null;
+    if (slug && item.slugTarget === "domain" && !onDomain) {
+      // The domain left the workspace (or the plan) since the preview.
+      slug = null;
+      warnings.set(
+        item.codeId,
+        `${hostname} isn't available in QRdx any more, so the code got a random back-half`,
+      );
+    }
+    rows.push({
+      codeId: item.codeId,
+      notes: buildImportNotes({
+        provider: job.provider,
+        key: item.key,
+        shortLink: item.shortLink,
+        createdAt: item.createdAt,
+        importedAt,
+      }),
+      folderName: job.options.folderName,
+      tags: item.tags,
+      slug,
+      slugDomainId: slug && item.slugTarget === "domain" ? domainId : null,
+      bindDomainId: onDomain ? domainId : null,
+    });
+  }
+  const finished = await repo.finishCodes(scope, rows);
+  const bound = rows.some((row) => row.bindDomainId);
   const keys = new Map(items.map((item) => [item.key, item]));
   const next: ImportJob = {
     ...job,
+    ...(bound &&
+      !job.domainAttachedAt && { domainAttachedAt: importedAt.toISOString() }),
     updatedAt: importedAt.toISOString(),
     items: job.items.map((item) => {
       if (!(keys.has(item.key) && item.codeId)) return item;
       const final = finished.get(item.codeId);
+      const warning = final?.warning ?? warnings.get(item.codeId);
       const { unfinished: _done, ...rest } = item;
       return {
         ...rest,
         newLink: final?.shortLink ?? item.newLink,
-        ...(final?.warning && { reason: final.warning }),
+        ...(warning && { reason: warning }),
       };
     }),
   };
@@ -609,7 +659,7 @@ export async function resetRedirectErrors(
 /** Old link → new QRdx link for every item that has one (mapping CSV). */
 export async function jobMapping(deps: ImporterDeps, scope: Scope, id: string) {
   const { job } = await loadJob(deps, scope, id);
-  return redirectTargets(job);
+  return mappedItems(job);
 }
 
 // ─── Branded domain ──────────────────────────────────────────────────────────

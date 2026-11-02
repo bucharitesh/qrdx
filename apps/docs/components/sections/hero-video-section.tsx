@@ -30,7 +30,7 @@ export function HeroVideoSection() {
           Paste a link, style it and download. No account needed.
         </p>
       </SectionHeader>
-      <Reveal className="flex w-full flex-col items-center gap-8 px-6 py-12 md:px-10 md:py-16">
+      <Reveal className="flex w-full flex-col items-center gap-8 px-10 py-12 md:py-16">
         <BrowserFrame url="qrdx.dev/playground" className="w-full max-w-5xl">
           <LoopVideo {...loopVideos.playground} />
         </BrowserFrame>

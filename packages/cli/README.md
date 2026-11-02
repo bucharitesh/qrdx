@@ -131,7 +131,7 @@ When run in a TTY without an output path or data, `qrdx generate` starts a guide
 
 ## Requirements
 
-Node.js ≥ 18
+Node.js ≥ 22
 
 ## Links
 

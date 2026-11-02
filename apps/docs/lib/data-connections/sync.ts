@@ -35,6 +35,7 @@ import {
 import { and, eq, inArray, sql } from "drizzle-orm";
 import { after } from "next/server";
 import { getConnection } from "@/lib/connected-accounts/server";
+import { scheduleWorkerRun } from "@/lib/events/worker-due";
 import { isScopeMember, loadResponses, loadScans } from "./data";
 import { dataCallsAllowed } from "./server";
 
@@ -192,6 +193,25 @@ async function deliverBatch(
 
 const MAX_BATCHES_PER_RUN = 10;
 
+/**
+ * When a stream that isn't due now becomes due (epoch ms): its retry time or
+ * the end of another run's lease. Null when only new items start it (or it
+ * is off, paused or failed for good).
+ */
+export function syncDueAt(state: SyncState): number | null {
+  if (
+    !state.enabled ||
+    state.status === "failed" ||
+    state.status === "paused"
+  ) {
+    return null;
+  }
+  const times = [state.nextAttemptAt, state.leaseUntil]
+    .map((value) => (value ? Date.parse(value) : Number.NaN))
+    .filter(Number.isFinite);
+  return times.length > 0 ? Math.max(...times) : null;
+}
+
 /** Runs one stream until it is caught up, fails or the budget is used. */
 async function syncOne(
   row: SinkRow,
@@ -199,8 +219,17 @@ async function syncOne(
 ): Promise<"ok" | "failed" | "skipped"> {
   const now = new Date();
   let state = readSyncState(row.metadata.sync);
-  if (!(state && isSyncDue(state, now))) return "skipped";
-  if (!(await claim(row.id, now))) return "skipped";
+  if (!state) return "skipped";
+  if (!isSyncDue(state, now)) {
+    // Waiting for a retry, or another run holds it: be back by then.
+    const dueAt = syncDueAt(state);
+    if (dueAt !== null) await scheduleWorkerRun(dueAt);
+    return "skipped";
+  }
+  if (!(await claim(row.id, now))) {
+    await scheduleWorkerRun(now.getTime() + SYNC_LEASE_MS);
+    return "skipped";
+  }
 
   const release = (next: SyncState) =>
     writeSyncState(row.id, { ...next, leaseUntil: null });
@@ -233,6 +262,7 @@ async function syncOne(
       return "failed";
     }
 
+    let caughtUp = false;
     for (let batch = 0; batch < MAX_BATCHES_PER_RUN; batch++) {
       if (Date.now() > deadline) break;
       let outcome: Awaited<ReturnType<typeof deliverBatch>>;
@@ -241,6 +271,9 @@ async function syncOne(
       } catch (error) {
         state = nextSyncState(state, { ok: false, error });
         await release(state);
+        if (state.nextAttemptAt) {
+          await scheduleWorkerRun(Date.parse(state.nextAttemptAt));
+        }
         if (isIntegrationApiError(error) && error.code === "unauthorized") {
           await db
             .update(integration)
@@ -256,7 +289,10 @@ async function syncOne(
         });
         return "failed";
       }
-      if (outcome.read === 0) break;
+      if (outcome.read === 0) {
+        caughtUp = true;
+        break;
+      }
       state = nextSyncState(state, { ok: true, result: outcome.result });
       // Keep the lease while more batches follow.
       await writeSyncState(
@@ -273,12 +309,18 @@ async function syncOne(
           settings: { ...settingsOf(row.metadata), ...outcome.settingsPatch },
         };
       }
-      if (outcome.read < SYNC_BATCH_SIZE) break;
+      if (outcome.read < SYNC_BATCH_SIZE) {
+        caughtUp = true;
+        break;
+      }
     }
     await release(state);
+    // Out of time or batches with items left: the next worker run goes on.
+    if (!caughtUp) await scheduleWorkerRun(Date.now());
     return "ok";
   } catch (error) {
     // Lease expires and the next run picks the stream up again.
+    await scheduleWorkerRun(Date.now() + SYNC_LEASE_MS);
     log("integrations.sync_crashed", {
       provider: row.provider,
       integrationId: row.id,
@@ -349,6 +391,21 @@ export async function runIntegrationSyncs({
     });
   }
   return summary;
+}
+
+/**
+ * Earliest time a stream becomes due again (retries and leases), for the
+ * worker's marker. Streams waiting only for new items aren't counted: form
+ * responses start them right away and throttled scans mark the worker due.
+ */
+export async function nextIntegrationSyncDueAt(): Promise<number | null> {
+  let next: number | null = null;
+  for (const row of await loadSinkRows()) {
+    const state = readSyncState(row.metadata.sync);
+    const dueAt = state ? syncDueAt(state) : null;
+    if (dueAt !== null && (next === null || dueAt < next)) next = dueAt;
+  }
+  return next;
 }
 
 // ─── Triggers from the event pipeline ────────────────────────────────────────
@@ -422,14 +479,20 @@ export function triggerIntegrationSyncs(
           : entry.provider !== "google-sheets"),
     );
     const now = Date.now();
+    let waitUntil = Number.POSITIVE_INFINITY;
     const due = entries.filter((entry) => {
       if (stream !== "scans") return true;
       const last = lastScanTrigger.get(entry.id) ?? 0;
-      if (now - last < SCAN_TRIGGER_INTERVAL_MS) return false;
+      if (now - last < SCAN_TRIGGER_INTERVAL_MS) {
+        waitUntil = Math.min(waitUntil, last + SCAN_TRIGGER_INTERVAL_MS);
+        return false;
+      }
       lastScanTrigger.set(entry.id, now);
       return true;
     });
     if (lastScanTrigger.size > 5000) lastScanTrigger.clear();
+    // Throttled scans go out with the next append; make sure one comes.
+    if (Number.isFinite(waitUntil)) await scheduleWorkerRun(waitUntil);
     if (due.length === 0) return;
     await runIntegrationSyncs({
       budgetMs: 10_000,

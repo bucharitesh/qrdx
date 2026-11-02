@@ -1,4 +1,7 @@
-import { SeasonalLayer } from "@/components/seasonal/seasonal-layer";
+import {
+  SeasonalLayer,
+  SeasonCharacters,
+} from "@/components/seasonal/seasonal-layer";
 import { CTASection } from "@/components/sections/cta-section";
 import { FooterSection } from "@/components/sections/footer-section";
 import { Navbar } from "@/components/sections/navbar";
@@ -13,6 +16,8 @@ export default function Layout({ children }: LayoutProps<"/">) {
       {children}
       <CTASection />
       <FooterSection />
+      {/* Last: the characters are buttons, after the page in tab order. */}
+      <SeasonCharacters />
     </div>
   );
 }

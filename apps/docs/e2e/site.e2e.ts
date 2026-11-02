@@ -224,9 +224,9 @@ const EXPECTED_REDIRECTS: {
 }[] = [
   {
     from: /^\/(?:dashboard(?:\/.*)?|settings(?:\/.*)?|success|editor\/theme\/[^/]+)$/,
-    to: /^\/playground$/,
+    to: /^\/sign-in\?next=%2F[^#]*$/,
     status: [307],
-    why: "proxy.ts sends signed-out visitors to the sign-in entry point",
+    why: "proxy.ts sends signed-out visitors to sign in, then back (lib/safe-redirect)",
   },
   {
     from: /^\/integrations\/[^/]+$/,

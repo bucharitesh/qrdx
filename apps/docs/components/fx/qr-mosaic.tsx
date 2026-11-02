@@ -37,7 +37,7 @@ const SWEEP_EVERY: [number, number] = [5200, 8200];
 const BEAM = 46;
 const IDLE_MS = 1400;
 
-const clamp01 = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v);
+const clamp01 = (v: number) => (v < 0 ? 0 : Math.min(v, 1));
 
 /**
  * A field of QR modules that fills its (relative) parent. Modules near a
@@ -145,7 +145,9 @@ export function QrMosaic({
     const baseAlpha = (c: number, r: number) => {
       const n = valueNoise(c / TILE / 1.2 + 0.4, r / TILE / 1.2 + 0.9);
       const k = smoothstep(clamp01((n - 0.2) / 0.65));
-      return (dark ? 0.055 : 0.07) + (dark ? 0.085 : 0.1) * k;
+      // Grey modules on white read heavier than the same ΔL* lit on dark, so
+      // light mode sits at about two thirds of the dark weight.
+      return (dark ? 0.055 : 0.045) + (dark ? 0.085 : 0.065) * k;
     };
 
     const build = () => {

@@ -1,8 +1,10 @@
 import "@/styles/styles.css";
 import { cn } from "@repo/design-system/lib/utils";
 import type { Metadata, Viewport } from "next";
+import { ConsentEarlyScript } from "@/components/consent/consent-early-script";
 import { ThemeScript } from "@/components/theme-script";
 import { fonts } from "@/lib/fonts";
+import { getPublicAvailability } from "@/lib/integration-availability";
 import {
   baseUrl,
   siteDescription,
@@ -54,11 +56,13 @@ export default function Layout({ children }: LayoutProps<"/">) {
     <html className={cn(fonts)} lang="en" suppressHydrationWarning>
       <head>
         <ThemeScript />
+        <ConsentEarlyScript />
         <meta name="darkreader-lock" />
       </head>
       <body className="antialiased font-sans bg-background relative flex min-h-screen flex-col">
         {/* PostHog and Featurebase load from the consent manager in Provider, after consent. */}
-        <Provider>{children}</Provider>
+        {/* Features, pages and integrations this deployment can't offer (ids only). */}
+        <Provider availability={getPublicAvailability()}>{children}</Provider>
       </body>
     </html>
   );

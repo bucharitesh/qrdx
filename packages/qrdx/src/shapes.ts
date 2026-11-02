@@ -6,13 +6,9 @@
 // outline. Closed shapes run clockwise on screen (y down), so many of them in
 // one path union cleanly under the nonzero fill rule.
 
-export type Point = [number, number];
+import { fmt } from "./utils/fmt";
 
-/** Rounds to 3 decimals and drops trailing zeros, to keep markup small. */
-export function n(value: number): string {
-  const rounded = Math.round(value * 1000) / 1000;
-  return Object.is(rounded, -0) ? "0" : String(rounded);
-}
+export type Point = [number, number];
 
 /** Closed polygon through `points`. */
 export function polygonPath(points: Point[]): string {
@@ -20,14 +16,14 @@ export function polygonPath(points: Point[]): string {
     return "";
   }
   const [first, ...rest] = points as [Point, ...Point[]];
-  return `M${n(first[0])} ${n(first[1])}${rest
-    .map(([x, y]) => `L${n(x)} ${n(y)}`)
+  return `M${fmt(first[0])} ${fmt(first[1])}${rest
+    .map(([x, y]) => `L${fmt(x)} ${fmt(y)}`)
     .join("")}Z`;
 }
 
 /** Clockwise circle as two arcs. */
 export function circlePath(cx: number, cy: number, r: number): string {
-  return `M${n(cx - r)} ${n(cy)}A${n(r)} ${n(r)} 0 1 1 ${n(cx + r)} ${n(cy)}A${n(r)} ${n(r)} 0 1 1 ${n(cx - r)} ${n(cy)}Z`;
+  return `M${fmt(cx - r)} ${fmt(cy)}A${fmt(r)} ${fmt(r)} 0 1 1 ${fmt(cx + r)} ${fmt(cy)}A${fmt(r)} ${fmt(r)} 0 1 1 ${fmt(cx - r)} ${fmt(cy)}Z`;
 }
 
 /**
@@ -51,13 +47,13 @@ export function roundedRectPath(
     number,
   ];
   const arc = (r: number, toX: number, toY: number) =>
-    r > 0 ? `A${n(r)} ${n(r)} 0 0 1 ${n(toX)} ${n(toY)}` : "";
+    r > 0 ? `A${fmt(r)} ${fmt(r)} 0 0 1 ${fmt(toX)} ${fmt(toY)}` : "";
   return (
-    `M${n(x + tl)} ${n(y)}` +
-    `H${n(x + width - tr)}${arc(tr, x + width, y + tr)}` +
-    `V${n(y + height - br)}${arc(br, x + width - br, y + height)}` +
-    `H${n(x + bl)}${arc(bl, x, y + height - bl)}` +
-    `V${n(y + tl)}${arc(tl, x + tl, y)}Z`
+    `M${fmt(x + tl)} ${fmt(y)}` +
+    `H${fmt(x + width - tr)}${arc(tr, x + width, y + tr)}` +
+    `V${fmt(y + height - br)}${arc(br, x + width - br, y + height)}` +
+    `H${fmt(x + bl)}${arc(bl, x, y + height - bl)}` +
+    `V${fmt(y + tl)}${arc(tl, x + tl, y)}Z`
   );
 }
 
@@ -119,7 +115,7 @@ export function superellipsePoints(
  */
 export function heartPath(cx: number, cy: number, size: number): string {
   const s = size / 2;
-  const p = (x: number, y: number) => `${n(cx + x * s)} ${n(cy + y * s)}`;
+  const p = (x: number, y: number) => `${fmt(cx + x * s)} ${fmt(cy + y * s)}`;
   return (
     `M${p(0, -0.52)}` +
     `C${p(0.18, -0.92)} ${p(0.98, -0.94)} ${p(1, -0.34)}` +

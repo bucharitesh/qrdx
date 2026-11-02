@@ -1,14 +1,11 @@
 import "server-only";
 
-import {
-  createGoogleGenerativeAI,
-  type GoogleGenerativeAIProviderOptions,
-} from "@ai-sdk/google";
+import { createGoogle, type GoogleLanguageModelOptions } from "@ai-sdk/google";
 import { customProvider, type LanguageModel } from "ai";
 import { env } from "@/lib/env";
 import { HttpError } from "@/lib/error-response";
 
-const google = createGoogleGenerativeAI({
+const google = createGoogle({
   apiKey: env.GOOGLE_API_KEY,
 });
 
@@ -27,7 +24,7 @@ export const baseProviderOptions = {
       includeThoughts: false,
       thinkingBudget: 128,
     },
-  } satisfies GoogleGenerativeAIProviderOptions,
+  } satisfies GoogleLanguageModelOptions,
 };
 
 type ModelId = "base" | "qr-theme-generation" | "prompt-enhancement";

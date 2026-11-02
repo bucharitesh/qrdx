@@ -129,9 +129,12 @@ export function claudeConnectorUrl(serverUrl: string): string {
   return url.toString();
 }
 
-/** ChatGPT settings, Apps & Connectors (custom connectors need developer mode). */
-export const CHATGPT_CONNECTORS_URL =
-  "https://chatgpt.com/#settings/Connectors";
+/**
+ * ChatGPT's Plugins page, where + → Add custom MCP server connects a remote
+ * server (OpenAI's "Connect and test your plugin" guide, Nov 2026). The plan
+ * and workspace policies decide whether custom servers are allowed.
+ */
+export const CHATGPT_CONNECTORS_URL = "https://chatgpt.com/plugins";
 
 /** New Claude chat with the prompt filled in. */
 export function claudeChatUrl(prompt: string): string {
@@ -206,12 +209,14 @@ export function mcpConfigSnippets(
       language: "json",
       code: json({ servers: { [MCP_SERVER_NAME]: { type: "http", url } } }),
     },
+    // Windsurf is now Devin Desktop (windsurf.com redirects to devin.ai), which
+    // reads remote servers as `url` from ~/.config/devin/mcp_config.json.
     windsurf: {
       id: "windsurf",
-      name: "Windsurf",
-      file: "~/.codeium/windsurf/mcp_config.json",
+      name: "Devin Desktop (Windsurf)",
+      file: "~/.config/devin/mcp_config.json",
       language: "json",
-      code: json({ mcpServers: { [MCP_SERVER_NAME]: { serverUrl: url } } }),
+      code: json({ mcpServers: { [MCP_SERVER_NAME]: { url } } }),
     },
     gemini: {
       id: "gemini",

@@ -65,7 +65,7 @@ async function getActiveDriveClient() {
     (slug) => getIntegrationConfigWithEnv(slug, env),
   );
 
-  if (!integration || integration.status !== "active") {
+  if (integration?.status !== "active") {
     return {
       error: NextResponse.json(
         { error: "Google Drive integration not connected" },

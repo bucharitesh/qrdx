@@ -34,12 +34,18 @@ export const THREAT_LABELS: Record<WebRiskThreat, string> = {
   UNWANTED_SOFTWARE: "unwanted software",
 };
 
-/** Our own hosted landing pages (`<app or short-link origin>/p/<slug>`). */
+/**
+ * Our own hosted landing pages (`<app or short-link origin>/p/<slug>`), and
+ * the bare `/p` placeholder a page's code is created with before its slug
+ * exists. Never screened: on a localhost or intranet origin the heuristics
+ * flag the placeholder as a private address, and a new account's page code
+ * was saved switched off (/p/<slug> 404) with a bogus auto-hold report.
+ */
 function isOwnHostedPage(value: string): boolean {
   try {
     const url = new URL(value);
     const origins = new Set([baseUrl.origin, new URL(SHORT_LINK_BASE).origin]);
-    return origins.has(url.origin) && /^\/p\/[^/]+$/.test(url.pathname);
+    return origins.has(url.origin) && /^\/p(?:\/[^/]+)?$/.test(url.pathname);
   } catch {
     return false;
   }

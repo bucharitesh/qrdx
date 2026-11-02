@@ -1,13 +1,27 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
-  "extends": ["ultracite/core", "ultracite/react", "ultracite/next"],
+  "extends": [
+    "ultracite/biome/core",
+    "ultracite/biome/react",
+    "ultracite/biome/next"
+  ],
   "linter": {
     "rules": {
       "suspicious": {
         "noConsole": "off",
         "noArrayIndexKey": "off",
         "noExplicitAny": "off",
-        "noRedundantUseStrict": "off"
+        "noRedundantUseStrict": "off",
+        // `== null` is the codebase's deliberate null-or-undefined check.
+        "noEqualsToNull": "off",
+        // Flags defensive checks on casted, untrusted data (API bodies, prefs).
+        "noUnnecessaryConditions": "off",
+        // The flagged conditions are booleans and strings, which React renders as nothing.
+        "noLeakedRender": "off",
+        // Mostly parameters and memo() function names that reuse an outer name on purpose.
+        "noShadow": "off",
+        // Plugins and the app target current Chromium; these features are progressive.
+        "useBaseline": "off"
       },
       "a11y": {
         "noSvgWithoutTitle": "off"
@@ -20,14 +34,34 @@
         "noImgElement": "off",
         "noBarrelFile": "off",
         "useTopLevelRegex": "off",
-        "noDynamicNamespaceImportAccess": "off"
+        "noDynamicNamespaceImportAccess": "off",
+        // Inline JSX handlers are the React style used throughout.
+        "noJsxPropsBind": "off",
+        // Sequential awaits are deliberate: pagination, rate-limited APIs, try-in-order.
+        "noAwaitInLoops": "off"
       },
       "style": {
         "noMagicNumbers": "off",
         "noParameterAssign": "off",
         "noNestedTernary": "off",
         "useBlockStatements": "off",
-        "noNonNullAssertion": "off"
+        "noNonNullAssertion": "off",
+        // `i++` loops are idiomatic in the QR matrix and raster code.
+        "noIncrementDecrement": "off",
+        // A blanket `u` flag changes regex semantics; not worth a blind rewrite.
+        "useUnicodeRegex": "off",
+        // Positional groups are used for short, local matches.
+        "useNamedCaptureGroup": "off",
+        // Plain property access is the established style.
+        "useDestructuring": "off",
+        // Interfaces mix method and property signatures by intent.
+        "useConsistentMethodSignatures": "off",
+        // Some class methods implement an interface and don't need `this`.
+        "useThisInClassMethods": "off",
+        // Rethrows map low-level failures to user-facing messages on purpose.
+        "useErrorCause": "off",
+        // getElementById is the clearer lookup for a known id.
+        "useDomQuerySelector": "off"
       },
       "correctness": {
         "useImageSize": "off",
@@ -35,6 +69,43 @@
       }
     }
   },
+  "assist": {
+    "actions": {
+      "source": {
+        // Keys, members, attributes and CSS properties are grouped by meaning, not alphabet.
+        "useSortedKeys": "off",
+        "useSortedInterfaceMembers": "off",
+        "useSortedAttributes": "off",
+        "useSortedProperties": "off",
+        // Keeps package.json in its hand-ordered layout (scripts in run order).
+        "useSortedPackageJson": "off"
+      }
+    }
+  },
+  "tailwind": {
+    // Theme tokens (text-muted-foreground…) so useTailwindSortedClasses orders them like Tailwind does.
+    "stylesheet": "./packages/design-system/styles/globals.css"
+  },
+  "yaml": {
+    // Biome 2.6 formats YAML; keep flow sequences as ["a", "b"], as the files are written.
+    "formatter": { "bracketSpacing": false }
+  },
+  "overrides": [
+    {
+      // Installed by the submit_sitemap workflow; eslint comes with @raycast/eslint-config.
+      "includes": [".github/scripts/**", "plugins/raycast/eslint.config.js"],
+      "linter": {
+        "rules": { "correctness": { "noUndeclaredDependencies": "off" } }
+      }
+    },
+    {
+      // Two vendored @layer base blocks (shadcn/ui, next-forge) both style * and body.
+      "includes": ["packages/design-system/styles/globals.css"],
+      "linter": {
+        "rules": { "suspicious": { "noDuplicateSelectors": "off" } }
+      }
+    }
+  ],
   "files": {
     "includes": [
       "**/*",
@@ -42,6 +113,8 @@
       "!packages/cli/src/lib/codegen.ts",
       // Sample CLI output, not source
       "!packages/cli/qr.svg",
+      // Byte-exact SVG test inputs
+      "!packages/qrdx/tests/fixtures",
       "!packages/design-system/components/ui",
       "!packages/design-system/lib",
       "!packages/design-system/hooks",

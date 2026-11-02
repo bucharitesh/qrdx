@@ -5,8 +5,8 @@ date: "2026-10-31"
 author: ["ritesh-bucha"]
 category: Education
 tags: ["how qr codes work", "qr code structure", "error correction", "reed-solomon"]
-image: /blog/understanding-qr-codes/hero.webp
-imageAlt: Close-up of a 3D QR code with its three corner finder patterns glowing blue under a scan line
+image: /blog/understanding-qr-codes/cover.svg
+imageAlt: Line drawing of a QR code lying flat with its three finder patterns marked, a sampling grid floating above it and a phone reading it
 related: ["best-free-qr-code-generators-2026", "introducing-qrdx"]
 published: true
 ---
@@ -102,11 +102,11 @@ Switch levels below to see the trade-off on a real code. The URL stays the same;
 ## Error correction: why a torn code still scans
 
 <Figure
-  src="/blog/understanding-qr-codes/error-correction.webp"
-  alt="A damaged QR code whose missing pieces are rebuilt in blue glass, illustrating error correction"
-  width={1500}
-  height={1000}
-  caption="Reed–Solomon parity lets the decoder rebuild missing or misread codewords, up to the level's limit."
+  src="/blog/understanding-qr-codes/error-correction.svg"
+  alt="Line drawing of a QR code with a square patch of modules missing, read by a phone that shows a tick"
+  width={1600}
+  height={1067}
+  caption="This code uses level H. The missing patch covers about 9% of it and it still decodes: Reed–Solomon parity rebuilds the lost codewords, up to the level’s limit."
 />
 
 QR codes use **Reed–Solomon** codes over GF(256). In plain language: extra **parity-like** bytes are computed from your message so the decoder can **reconstruct missing or wrong modules** up to a limit.
@@ -126,10 +126,10 @@ You do not choose masks by hand in normal tools; the generator does it for you.
 ## What happens when you scan
 
 <Figure
-  src="/blog/understanding-qr-codes/scan-pipeline.webp"
-  alt="Isometric sequence from a tilted QR code to finder detection, flattening, sampling and decoded data"
-  width={2100}
-  height={900}
+  src="/blog/understanding-qr-codes/scan-pipeline.svg"
+  alt="Five tiles in a row: a tilted QR code in a viewfinder, its three finder patterns marked, the code under a sampling grid, sampled module dots, and the decoded text qrdx.dev"
+  width={1867}
+  height={800}
   caption="From camera frame to URL: find the finders, flatten the grid, sample each module, then decode."
 />
 

@@ -4,7 +4,7 @@ import { cn } from "@repo/design-system/lib/utils";
 import { QRCodeSVG } from "qrdx";
 import { type CSSProperties, type RefObject, useEffect, useRef } from "react";
 import type { AvoidRects } from "./cat";
-import { seasonalCue } from "./cue";
+import { CHARACTER_BUTTON, seasonalCue } from "./cue";
 import { HangingCharacter } from "./rope";
 import styles from "./seasonal.module.css";
 import { SeasonStage } from "./site-characters";
@@ -70,12 +70,13 @@ export function useKeepClear(
 
 /** A small tree on a snow mound; its lights twinkle, a click makes them sparkle. */
 export function ChristmasTree({ left, top }: { left: number; top: number }) {
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     const tree = ref.current;
     if (!tree) return;
     let timer = 0;
     const onClick = () => {
+      seasonalCue("seasonal-tree");
       tree.dataset.sparkle = "true";
       window.clearTimeout(timer);
       timer = window.setTimeout(() => {
@@ -89,14 +90,16 @@ export function ChristmasTree({ left, top }: { left: number; top: number }) {
     };
   }, []);
   return (
-    <div
+    <button
       ref={ref}
-      className={styles.tree}
+      type="button"
+      aria-label="Christmas tree"
+      className={cn(styles.tree, CHARACTER_BUTTON)}
       data-sparkle="false"
       style={{ left, top, width: TREE_WIDTH }}
     >
       <span className={styles.mound} />
-      <div className="relative">
+      <span className="relative block">
         <Sprite
           name="tree"
           width={TREE_WIDTH}
@@ -116,8 +119,8 @@ export function ChristmasTree({ left, top }: { left: number; top: number }) {
             }
           />
         ))}
-      </div>
-    </div>
+      </span>
+    </button>
   );
 }
 
@@ -131,7 +134,7 @@ export function Snowman({
   width?: number;
   avoid?: AvoidRects;
 }) {
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLButtonElement>(null);
   useKeepClear(ref, avoid);
 
   useEffect(() => {
@@ -190,14 +193,16 @@ export function Snowman({
   }, []);
 
   return (
-    <div
+    <button
       ref={ref}
-      className={styles.snowman}
+      type="button"
+      aria-label="Snowman"
+      className={cn(styles.snowman, CHARACTER_BUTTON)}
       data-hop="false"
       style={{ width, ...style }}
     >
       <span className={styles.mound} />
-      <div className={styles.snowmanBody}>
+      <span className={cn(styles.snowmanBody, "block")}>
         <Sprite
           name="snowman"
           width={width}
@@ -226,14 +231,14 @@ export function Snowman({
             </g>
           ))}
         </svg>
-      </div>
-    </div>
+      </span>
+    </button>
   );
 }
 
 /** A gift on the bottom edge; a click lifts its lid to show a tiny real QR card. */
 export function Gift({ right }: { right: number }) {
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLButtonElement>(null);
   const height = Math.round(GIFT_WIDTH * GIFT_RATIO);
   useEffect(() => {
     const gift = ref.current;
@@ -265,27 +270,31 @@ export function Gift({ right }: { right: number }) {
     />
   );
   return (
-    <div
+    <button
       ref={ref}
-      className={cn(styles.gift, "bottom-0")}
+      type="button"
+      aria-label="Gift"
+      className={cn(styles.gift, "bottom-0", CHARACTER_BUTTON)}
       data-open="false"
       style={{ right, width: GIFT_WIDTH, height }}
     >
       <span className={styles.giftGlow} />
       {/* The box: the render below its lid seam (41% down) */}
-      <div className="absolute inset-0 [clip-path:inset(41%_0_0_0)]">
+      <span className="absolute inset-0 block [clip-path:inset(41%_0_0_0)]">
         {sprite}
-      </div>
+      </span>
       <span className={styles.giftCard}>
         <span className="grid size-full place-items-center rounded-[3px] bg-white p-[2px] shadow-sm ring-1 ring-black/10">
           <QRCodeSVG value="https://qrdx.dev" size={64} className="size-full" />
         </span>
       </span>
       {/* The lid: the render above the seam, hinged on its left */}
-      <div className={cn(styles.giftLid, "[clip-path:inset(0_0_59%_0)]")}>
+      <span
+        className={cn(styles.giftLid, "block [clip-path:inset(0_0_59%_0)]")}
+      >
         {sprite}
-      </div>
-    </div>
+      </span>
+    </button>
   );
 }
 
@@ -312,6 +321,7 @@ function ChristmasScene({ stage }: { stage: HTMLDivElement }) {
           ratio={BAUBLE_RATIO}
           onNear="nudge"
           onClick="swing"
+          label="Bauble"
           cue="seasonal-bauble"
           className="drop-shadow-[0_3px_4px_rgb(0_0_0/0.25)]"
         />

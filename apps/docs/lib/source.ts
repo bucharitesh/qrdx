@@ -3,6 +3,7 @@ import {
   type InferPageType,
   loader,
 } from "fumadocs-core/source";
+import { openapiPlugin } from "fumadocs-openapi/server";
 import {
   blog,
   blogAuthors,
@@ -18,6 +19,8 @@ export const source = loader({
   baseUrl: "/docs",
   source: docs.toFumadocsSource(),
   icon: resolveDocsIcon,
+  // Method badges on the API reference pages in the sidebar.
+  plugins: [openapiPlugin()],
 });
 
 export const legalSource = loader({

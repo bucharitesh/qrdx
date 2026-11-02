@@ -51,7 +51,7 @@ export const HINTS = {
       label:
         "A static Wi-Fi code packed with dots next to a simpler dynamic code that holds only a short link",
     },
-    docsHref: "/docs/dynamic-qr-codes",
+    docsHref: "/docs/help/getting-started/static-vs-dynamic",
   },
   "dynamic-qr": {
     title: "Dynamic QR code",
@@ -62,7 +62,7 @@ export const HINTS = {
       label:
         "The same QR code stays put while the website it opens changes from a spring menu to a summer menu",
     },
-    docsHref: "/docs/dynamic-qr-codes",
+    docsHref: "/docs/help/dynamic-codes/create",
   },
 
   // ─── Playground: design ───────────────────────────────────────────────────
@@ -75,7 +75,7 @@ export const HINTS = {
       label:
         "A black code and a dark gradient code that scan, next to a pale grey code that won't scan",
     },
-    docsHref: "/docs/features/colors-gradients",
+    docsHref: "/docs/help/designing/colors-and-contrast",
   },
   dots: {
     title: "Dot shape",
@@ -86,7 +86,7 @@ export const HINTS = {
       label:
         "One QR code switching between square, circle, diamond and vertical line dots",
     },
-    docsHref: "/docs/features/patterns",
+    docsHref: "/docs/styles",
   },
   eyes: {
     title: "Eyes",
@@ -96,7 +96,7 @@ export const HINTS = {
       example: "eye-shapes",
       label: "One QR code switching between square, rounded and gear eyes",
     },
-    docsHref: "/docs/features/patterns",
+    docsHref: "/docs/styles#eye-frames",
   },
   logo: {
     title: "Logo in the center",
@@ -106,7 +106,7 @@ export const HINTS = {
       example: "logo-before-after",
       label: "The same code without a logo and with a logo in the center",
     },
-    docsHref: "/docs/features/logos",
+    docsHref: "/docs/help/designing/logos",
   },
   frame: {
     title: "Frame",
@@ -117,7 +117,7 @@ export const HINTS = {
       label:
         "One QR code shown with a banner, a border and a speech bubble frame",
     },
-    docsHref: "/docs/features/frames",
+    docsHref: "/docs/help/designing/frames",
   },
   "quiet-zone": {
     title: "Quiet zone",
@@ -138,7 +138,7 @@ export const HINTS = {
       label:
         "A plain code, a Logo QR with a flower logo and an Image QR made from a photo",
     },
-    docsHref: "/docs/features/art-qr",
+    docsHref: "/docs/help/designing/art",
   },
   "error-correction": {
     title: "Error correction",
@@ -149,7 +149,7 @@ export const HINTS = {
       label:
         "The same code with a logo at levels L, M, Q and H, getting denser at each level",
     },
-    docsHref: "/docs/features/logos",
+    docsHref: "/docs/help/designing/logos",
   },
 
   // ─── Playground: preview and dialogs ──────────────────────────────────────
@@ -162,7 +162,7 @@ export const HINTS = {
       label:
         "Score bands: Great from 85, OK from 65, Risky below 65, Fails when it doesn't decode",
     },
-    docsHref: "/tools/scan-checker",
+    docsHref: "/docs/help/designing/scan-score",
   },
   "download-formats": {
     title: "Which format?",
@@ -173,7 +173,7 @@ export const HINTS = {
       label:
         "A corner of a QR code zoomed in: the PNG turns into blocky pixels, the SVG stays sharp",
     },
-    docsHref: "/docs/features/downloads",
+    docsHref: "/docs/help/getting-started/download-and-print",
   },
   "print-ready": {
     title: "Bleed and crop marks",
@@ -184,7 +184,7 @@ export const HINTS = {
       label:
         "A print layout with the trim line, a 3 mm bleed and crop marks in the corners",
     },
-    docsHref: "/docs/features/downloads",
+    docsHref: "/docs/help/getting-started/download-and-print",
   },
   "share-design": {
     title: "Share a design",
@@ -258,7 +258,7 @@ export const HINTS = {
       label:
         "The same QR code stays put while the website it opens changes from a spring menu to a summer menu",
     },
-    docsHref: "/docs/dynamic-qr-codes",
+    docsHref: "/docs/help/dynamic-codes/change-the-link",
   },
   "custom-domains": {
     title: "Custom domains",
@@ -301,7 +301,7 @@ export const HINTS = {
       label:
         "Example chart of scans over a week with total scans and unique visitors",
     },
-    docsHref: "/docs/dynamic-qr-codes",
+    docsHref: "/docs/help/dynamic-codes/scans",
   },
 } satisfies Record<string, Hint>;
 

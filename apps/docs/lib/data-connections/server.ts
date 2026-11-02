@@ -78,7 +78,7 @@ export async function getFreshConnection(
   provider: string,
 ): Promise<Integration | null> {
   const connection = await getConnection(userId, provider);
-  if (!connection || connection.status !== "active") return connection;
+  if (connection?.status !== "active") return connection;
   if (
     provider === "shopify" &&
     connection.refreshToken &&
