@@ -1,6 +1,6 @@
 import { getCatalogBySurface } from "@repo/integrations/src/catalog";
+import { isArtAvailable } from "@/lib/ai/art-availability";
 import { AI_REQUEST_FREE_TIER_LIMIT, MAX_FREE_THEMES } from "@/lib/constants";
-import { env } from "@/lib/env";
 import { getIntegrationAvailability } from "@/lib/integration-availability";
 import { filterVisible } from "@/lib/integration-availability-rules";
 import { mcpServerUrl } from "@/lib/mcp-clients";
@@ -41,9 +41,9 @@ const list = (items: (string | false)[]): string => {
 
 function plans(): string[] {
   const { free, pro, business } = PLAN_LIMITS;
-  // AI art only runs where fal.ai is configured (lib/ai/art.ts).
+  // AI art runs where it is available (lib/ai/art-availability.ts).
   const art = (images: number) =>
-    Boolean(env.FAL_KEY) && `${images} AI art images a month`;
+    isArtAvailable && `${images} AI art images a month`;
   return [
     `- **Free** ($0): unlimited static QR codes with no account. A free account adds ${list(
       [
@@ -121,7 +121,7 @@ export function GET() {
       "/ai",
       "Describe a style and get an AI-designed QR code theme",
     ),
-    ...(env.FAL_KEY
+    ...(isArtAvailable
       ? [
           link(
             "AI QR code art",

@@ -1,6 +1,6 @@
-// Style presets for AI QR art. Prompts are written for Stable Diffusion 1.5
-// (Realistic Vision), which Illusion Diffusion runs: concrete scenes, light
-// and texture words, no text in the image.
+// Style presets for AI QR art. Each prompt is the scene Gemini repaints the
+// QR code as (lib/ai/art-image.ts adds the scan rules): concrete scenes,
+// light and texture words, no text in the image.
 
 export const AI_ART_CATEGORIES = [
   { id: "nature", label: "Nature" },
@@ -20,7 +20,7 @@ export interface AIArtPreset {
   name: string;
   category: AIArtCategory;
   prompt: string;
-  /** Added to the negative prompt when this preset is picked. */
+  /** Things to keep out of the image, filled in when this preset is picked. */
   negativePrompt?: string;
   /** CSS background for the preset card swatch. */
   swatch: string;

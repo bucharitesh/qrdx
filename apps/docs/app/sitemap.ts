@@ -1,7 +1,7 @@
 import { getCatalogBySurface } from "@repo/integrations/src/catalog";
 import type { MetadataRoute } from "next";
+import { isArtAvailable } from "@/lib/ai/art-availability";
 import { SLUG_TO_CATEGORY } from "@/lib/blog-constants";
-import { env } from "@/lib/env";
 import { getIntegrationAvailability } from "@/lib/integration-availability";
 import { filterVisible } from "@/lib/integration-availability-rules";
 import { baseUrl } from "@/lib/metadata";
@@ -88,8 +88,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       priority: 0.9,
     },
-    // AI QR art is only listed where it can run (same check as lib/ai/art.ts).
-    ...(env.FAL_KEY
+    // AI QR art is only listed where it can run (lib/ai/art-availability.ts).
+    ...(isArtAvailable
       ? [
           {
             url: url("/ai/art"),

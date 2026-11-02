@@ -1,7 +1,7 @@
 ---
 title: Subprocessors
 description: The third-party services that process personal data for QRdx, what each one does, what data it handles, where, and how we announce changes.
-lastUpdated: 2026-11-01
+lastUpdated: 2026-11-02
 ---
 
 <Callout title="Summary">
@@ -13,7 +13,7 @@ lastUpdated: 2026-11-01
 
 </Callout>
 
-**Last updated:** 1 November 2026
+**Last updated:** 2 November 2026
 
 ## Current subprocessors
 
@@ -24,9 +24,8 @@ lastUpdated: 2026-11-01
 | **Upstash** | Rate limiting | IP addresses and account IDs inside short-lived counters that expire within 2 days | **[[UPSTASH REGION]]** | [Privacy policy](https://upstash.com/trust/privacy.pdf) |
 | **Polar** | Merchant of record: checkout, subscriptions, invoices and sales tax. Card payments go through Stripe. | Name, email address, billing address, payment details, tax ID, subscription history | United States | [Privacy policy](https://polar.sh/legal/privacy) |
 | **Resend** | Sending transactional email | Recipient addresses and email content: invitations, form response notifications (which include answers), alerts and digests | United States | [DPA](https://resend.com/legal/dpa) |
-| **Google (Gemini API)** | AI themes and prompt enhancement | Prompts, the conversation so far and attached images | Global, wherever Google has facilities | [Gemini API terms](https://ai.google.dev/gemini-api/terms) |
+| **Google (Gemini API)** | AI themes, prompt enhancement and AI QR art | Prompts, the conversation so far and attached images; for AI art, the code's content (as a QR image), the prompt and any reference image | Global, wherever Google has facilities | [Gemini API terms](https://ai.google.dev/gemini-api/terms) |
 | **Google (Web Risk)** | Checking links against Google's lists of malware and phishing sites | Destination URLs of dynamic codes and links checked with the scan checker | Global | [Google Cloud DPA](https://cloud.google.com/terms/data-processing-addendum) |
-| **fal.ai** | AI QR art and image upscaling, when AI art is turned on | The code's content, prompts, reference images and generated images | United States | [Privacy policy](https://fal.ai/legal/privacy-policy) |
 | **Cloudflare (R2)** | Storage for files you upload, when file storage is turned on | Uploaded files and anything they contain | **[[R2 BUCKET LOCATION]]** | [DPA](https://www.cloudflare.com/cloudflare-customer-dpa/) |
 | **Cloudflare (Turnstile)** | Telling people from bots on the abuse report form and on hosted-page forms | IP address and browser signals | Global | [Turnstile privacy](https://www.cloudflare.com/turnstile-privacy-policy/) |
 | **Umami** | Cookieless visit counts on qrdx.dev; off when the browser sends Do Not Track or Global Privacy Control | Pages viewed (without query strings) and product actions with coarse details such as a download format. The request's IP address and browser details, used to count unique visitors without storing them; no cookies or identifiers | **[[UMAMI REGION]]** | [DPA](https://umami.is/dpa) |
@@ -52,4 +51,4 @@ Related pages: [Privacy Policy](/legal/privacy-policy), [Cookie Policy](/legal/c
 
 ---
 
-**Changes:** 1 November 2026. Rebuilt as a table from the services QRdx actually uses. Added Resend, Google Gemini, Google Web Risk, fal.ai, Cloudflare R2 and Turnstile, and Featurebase. Removed Anthropic (not used), Better Auth (a library that runs inside QRdx) and GitHub (a sign-in provider, now listed above). Corrected Polar's location. Added Umami, and updated what PostHog receives.
+**Changes:** 2 November 2026. Removed fal.ai: AI QR art now runs on Google's Gemini API, already listed. 1 November 2026: rebuilt as a table from the services QRdx actually uses. Added Resend, Google Gemini, Google Web Risk, fal.ai, Cloudflare R2 and Turnstile, and Featurebase. Removed Anthropic (not used), Better Auth (a library that runs inside QRdx) and GitHub (a sign-in provider, now listed above). Corrected Polar's location. Added Umami, and updated what PostHog receives.

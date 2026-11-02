@@ -160,7 +160,7 @@ export const PLAN_LIMITS: Record<Plan, PlanLimits> = {
     storageBytes: 50 * GB,
     maxFileBytes: 250 * MB,
     analyticsRetentionDays: UNLIMITED,
-    // ~13 months raw, daily rollups after that
+    // Planned: ~13 months raw, then daily rollups. Not built, so not advertised.
     rawScanRetentionDays: 395,
     customDomains: 25,
     customSlugs: true,

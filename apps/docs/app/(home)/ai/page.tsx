@@ -3,8 +3,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { AsciiField, Backdrop, RadialHalo } from "@/components/fx";
 import { HairlineFigure } from "@/components/mockups/hairline";
+import { isArtAvailable } from "@/lib/ai/art-availability";
 import { AI_REQUEST_FREE_TIER_LIMIT } from "@/lib/constants";
-import { env } from "@/lib/env";
 import { createMetadata } from "@/lib/metadata";
 import { AIAnnouncement } from "./components/ai-announcement";
 import { AIChatHero } from "./components/ai-chat-hero";
@@ -38,7 +38,7 @@ export default function AiPage() {
         </Backdrop>
         <AIAnnouncement />
         <AIChatHero />
-        {Boolean(env.FAL_KEY) && (
+        {isArtAvailable && (
           <Link
             href="/ai/art"
             className="group text-muted-foreground hover:text-foreground mx-auto flex items-center gap-2 text-sm font-medium transition-colors"

@@ -25,6 +25,7 @@ import {
   type WebhookEvent,
 } from "./types";
 import { checkWebhookUrl, isBlockedAddress } from "./url-safety";
+import { scheduleWorkerRun } from "./worker-due";
 
 export const webhookEventsSchema = z
   .array(z.enum(WEBHOOK_EVENTS))
@@ -399,16 +400,15 @@ export async function retryDelivery(
   }
   const result = await sendDelivery(row.endpoint, row.delivery);
   const attempts = row.delivery.attempts + 1;
+  // A pending delivery keeps its automatic retries; a finished one doesn't restart them.
+  const outcome = outcomeValues(attempts, result, new Date(), {
+    retry: row.delivery.status === "pending",
+  });
   await db
     .update(webhookDelivery)
-    .set({
-      attempts: sql`${webhookDelivery.attempts} + 1`,
-      // A pending delivery keeps its automatic retries; a finished one doesn't restart them.
-      ...outcomeValues(attempts, result, new Date(), {
-        retry: row.delivery.status === "pending",
-      }),
-    })
+    .set({ attempts: sql`${webhookDelivery.attempts} + 1`, ...outcome })
     .where(eq(webhookDelivery.id, deliveryId));
+  if (outcome.nextAttemptAt) await scheduleWorkerRun(outcome.nextAttemptAt);
   return toSendResult(deliveryId, result);
 }
 

@@ -56,6 +56,18 @@ interface GenerateFlags {
   frameText?: string;
   frameColor?: string;
   frameTextColor?: string;
+  /** `generate --help` / `-h`: show usage instead of generating. */
+  help?: boolean;
+  /** `generate --version` / `-v`: print the version instead of generating. */
+  version?: boolean;
+}
+
+/** What `qrdx generate` shows for --help and --version (index.ts owns both). */
+export interface GenerateMeta {
+  help: () => void;
+  version: () => void;
+  /** Runs once the arguments parsed and a code will be generated (the logo). */
+  start?: () => void;
 }
 
 const HEX_COLOR = /^#(?:[0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})$/i;
@@ -247,6 +259,16 @@ function parseFlags(args: string[]): GenerateFlags {
     const next = args[i + 1];
 
     switch (arg) {
+      case "-h":
+      case "--help":
+        flags.help = true;
+        i++;
+        break;
+      case "-v":
+      case "--version":
+        flags.version = true;
+        i++;
+        break;
       case "-o":
       case "--output":
         if (!next || /^--?[a-z]/i.test(next)) {
@@ -335,7 +357,8 @@ function parseFlags(args: string[]): GenerateFlags {
     }
   }
 
-  validateFlags(flags);
+  // Help and version win over everything else on the line, valid or not.
+  if (!(flags.help || flags.version)) validateFlags(flags);
   return flags;
 }
 
@@ -365,8 +388,14 @@ function inferFormat(
   return ext === ".svg" ? "svg" : (format ?? "svg");
 }
 
-export async function runGenerate(args: string[]): Promise<void> {
+export async function runGenerate(
+  args: string[],
+  meta?: GenerateMeta
+): Promise<void> {
   const flags = parseFlags(args);
+  if (meta && flags.help) return meta.help();
+  if (meta && flags.version) return meta.version();
+  meta?.start?.();
   const nonInteractive = !canUseClack;
 
   // Any advanced flag explicitly passed → skip the "customize?" gate

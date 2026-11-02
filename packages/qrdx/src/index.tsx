@@ -67,6 +67,8 @@ export {
 export * from "./scan-score";
 export * from "./templates";
 export * from "./utils";
+/** Reads an 8-bit PNG into RGBA pixels (no DOM or sharp), or null. */
+export { type DecodedImage, decodePng as decodePNGPixels } from "./utils/png";
 
 export async function getQRAsSVGDataUri(props: QRProps) {
   // Import QRCodeSVG and render it to string

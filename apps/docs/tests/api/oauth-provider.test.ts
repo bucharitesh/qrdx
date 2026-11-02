@@ -38,6 +38,7 @@ vi.mock("@repo/auth/server", () => ({
 vi.mock("next/headers", () => ({ headers: async () => new Headers() }));
 vi.mock("@repo/rate-limit", () => ({
   slidingWindow: () => ({}),
+  fixedWindow: () => ({}),
   createRateLimiter: () => ({
     limit: async () => ({
       success: !auth.rateLimited,
@@ -47,6 +48,11 @@ vi.mock("@repo/rate-limit", () => ({
       pending: Promise.resolve(),
     }),
   }),
+}));
+// /v1/me counts against the daily API quota, sized by the caller's plan.
+vi.mock("@/lib/plans", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/lib/plans")>()),
+  getPlanForScope: async () => "free",
 }));
 
 const authorize = await import("@/app/api/oauth/authorize/route");

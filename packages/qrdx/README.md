@@ -107,7 +107,7 @@ The logo is drawn at 25% of the code's width with the modules behind it excavate
 
 ### `QRCodeCanvas`
 
-Renders to a `<canvas>` (device-pixel-ratio aware). It draws plain square modules with solid colors only — gradients fall back to their first stop, and the pattern, eye/dot color and template props are ignored. Use `QRCodeSVG` for styled codes.
+Renders to a `<canvas>` (device-pixel-ratio aware). It draws plain square modules with solid colors only — gradients fall back to their first stop, and the pattern, eye/dot color, `eyeColors`, `moduleScale` and template props are ignored. Use `QRCodeSVG` for styled codes.
 
 ```tsx
 "use client";
@@ -242,7 +242,7 @@ const image = await loadQRArtImage(file, { mode: "logo" });
 - `logo`: `blend` traces the logo into crisp vector shapes that fill the code under a fine dot screen; `badge` puts it on a rounded plate in the middle of a code tinted with its colors.
 - `halftone`: `color` shows the photo in full color; `mono` is an error-diffused black-and-white halftone.
 
-In logo mode the finder eyes take the logo's colors unless you pass `matchEyes: false`; per-eye `eyeColors` still win. In Node, pass decoded RGBA pixels to `createQRArtImage` instead of `loadQRArtImage`. `art.image` is plain JSON, so you can store it with a design. Use level `H` and check the result with `getScanScore`. See the [Art QR docs](https://qrdx.dev/docs/features/art-qr).
+In logo mode the finder eyes take the logo's colors unless you pass `matchEyes: false`; per-eye `eyeColors` still win. In Node, pass decoded RGBA pixels to `createQRArtImage` instead of `loadQRArtImage`: `decodePNGPixels(bytes)` reads an 8-bit PNG into them without a canvas or sharp. `art.image` is plain JSON, so you can store it with a design. Use level `H` and check the result with `getScanScore`, or, for rendered pixels in Node, with `scanQRPixels(pixels, value)`, which decodes them as they are and through the phone-camera model. See the [Art QR docs](https://qrdx.dev/docs/features/art-qr).
 
 ## Export and download (browser)
 

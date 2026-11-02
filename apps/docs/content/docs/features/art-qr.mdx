@@ -10,7 +10,7 @@ QRdx has three ways to turn a QR code into artwork:
 |---|---|---|---|
 | **Logo QR** | Modules inside your logo's shape take its colors; the rest fade to a lighter tone | Vector (SVG, PDF, EPS, PNG) | Free |
 | **Image QR** | Every module shows your photo around a center square that keeps the true value (halftone) | Vector (SVG, PDF, EPS, PNG) | Free |
-| **AI art** | An image model paints a scene that follows the code's light and dark modules | 1024 px image, 2× upscale for print | AI art credits |
+| **AI art** | Google's Gemini repaints the code as a scene, and every image is verified to scan | 1024 px image, 2048 px print copy | AI art credits |
 
 Logo QR and Image QR are drawn by the `qrdx` library itself, so they work offline, in the editor, on the server and in Node, and the result is always a real QR code: the finder, timing and alignment patterns are never touched.
 
@@ -96,6 +96,8 @@ The CLI writes EPS too: `qrdx generate "https://example.com" -o qr.eps`.
 
 ## AI art
 
-[AI QR art](/ai/art) generates a scene around your code with an image model (Illusion Diffusion on fal.ai). You get 30+ style presets, a negative prompt, a **QR visibility** slider (how strictly the model follows the modules) and a **creativity** slider (how freely it reads your prompt), seed locking, 1 to 4 variations per run and an optional reference image whose light and dark shapes steer the composition. Every variation is decoded in your browser and the best scannable one is picked for you; upscale it 2× for print.
+[AI QR art](/ai/art) turns your code into a scene with Google's Gemini image model (Nano Banana 2.1). You get 30+ style presets, things to avoid, a **QR visibility** slider (how strongly Gemini favors the code) and a **creativity** slider (how freely it reads your prompt), seed locking, 1 to 4 variations per run and an optional reference image, such as a logo or a palette, whose colors and shapes carry over.
 
-Each image and each upscale uses one AI art credit: Free accounts get 3 a month, Pro 30, and Business 150 shared by the whole team. Failed generations are refunded. AI art is a raster image and its content is fixed, so for an editable link put a [dynamic code](/docs/dynamic-qr-codes)'s short link in it.
+Every image is checked on the server before you see it. QRdx sends Gemini a plain black-and-white code (error correction H, square modules, a wide quiet zone) and asks it to keep the module grid, the finder eyes and the quiet zone. It then decodes Gemini's image with jsQR, as it is and through a phone-camera model. If that fails, it blends the image into the code with Image QR on the same module grid, which only corrects the modules that would read wrong, and checks again. An image that still doesn't decode to your exact content isn't delivered. Your browser then scores the variations and picks the best; download it at 1024 px or as a 2048 px print copy (resampled and checked again).
+
+Each delivered image uses one AI art credit: Free accounts get 3 a month, Pro 30, and Business 150 shared by the whole team. Images that fail or don't pass the scan check use no credit, and the print copy is free. AI art is a raster image and its content is fixed, so for an editable link put a [dynamic code](/docs/dynamic-qr-codes)'s short link in it.

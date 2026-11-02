@@ -43,13 +43,18 @@ interface WindowState {
 const MAX_KEYS = 10_000;
 
 /**
- * Sliding window (the weighted two-window approximation Upstash uses) kept
- * in this instance's memory. Only used while Upstash is unreachable, so the
- * limits hold per instance rather than globally, which is far better than
- * no limits at all.
+ * Sliding window (the weighted two-window approximation Upstash uses), or a
+ * plain fixed window with `sliding: false` (Upstash fixedWindow: nothing
+ * carries over into the next window), kept in this instance's memory. Only
+ * used while Upstash is unreachable, so the limits hold per instance rather
+ * than globally, which is far better than no limits at all.
  */
 export function createMemoryLimiter(
-  { tokens, windowMs }: { tokens: number; windowMs: number },
+  {
+    tokens,
+    windowMs,
+    sliding = true,
+  }: { tokens: number; windowMs: number; sliding?: boolean },
   now: () => number = Date.now,
   maxKeys: number = MAX_KEYS
 ) {
@@ -80,7 +85,7 @@ export function createMemoryLimiter(
         state.current = 0;
         state.start = start;
       }
-      const weight = 1 - (at - start) / windowMs;
+      const weight = sliding ? 1 - (at - start) / windowMs : 0;
       const used = Math.floor(state.previous * weight) + state.current;
       const success = used < tokens;
       if (success) state.current++;

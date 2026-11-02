@@ -153,14 +153,20 @@ async function main(): Promise<void> {
 
   const command = args[0];
   const restArgs = args.slice(1);
+  const generateMeta = {
+    help: showHelp,
+    version: () => console.log(VERSION),
+    start: () => {
+      showLogo();
+      console.log();
+    },
+  };
 
   switch (command) {
     case "generate":
     case "gen":
     case "g":
-      showLogo();
-      console.log();
-      await runGenerate(restArgs);
+      await runGenerate(restArgs, generateMeta);
       break;
 
     case "--help":
@@ -181,9 +187,7 @@ async function main(): Promise<void> {
         console.error(`Run ${BOLD}qrdx --help${RESET} for usage.`);
         process.exitCode = 1;
       } else {
-        showLogo();
-        console.log();
-        await runGenerate(args);
+        await runGenerate(args, generateMeta);
       }
   }
 }

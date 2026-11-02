@@ -5,7 +5,7 @@ import {
   webhookDelivery,
   webhookEndpoint,
 } from "@repo/database";
-import { and, asc, eq, inArray, lt, lte, sql } from "drizzle-orm";
+import { and, asc, eq, inArray, lt, lte, min, sql } from "drizzle-orm";
 import { getPlanForScope, getPlanLimits } from "@/lib/plans";
 import { type PostResult, postJson } from "./http";
 import { signatureHeader } from "./signature";
@@ -16,10 +16,12 @@ import {
   WEBHOOK_SIGNATURE_HEADER,
   WEBHOOK_TIMESTAMP_HEADER,
 } from "./types";
+import { scheduleWorkerRun } from "./worker-due";
 
 const MINUTE_MS = 60_000;
 const MAX_RETRY_DELAY_MS = 24 * 60 * MINUTE_MS;
 // A claimed delivery is retried after this if the worker dies mid-send.
+const CLAIM_LEASE_MS = 5 * MINUTE_MS;
 const CLAIM_LEASE = sql`now() + interval '5 minutes'`;
 const CONCURRENCY = 8;
 /** Finished deliveries are kept this long for the delivery log. */
@@ -142,12 +144,20 @@ export interface ProcessSummary {
   failed: number;
 }
 
-/** Sends claimed deliveries and stores each outcome. Never throws. */
+/**
+ * Sends claimed deliveries and stores each outcome, then marks the worker due
+ * at the earliest retry (later ones are in the database, which the worker
+ * re-reads after each run).
+ */
 export async function processClaimed(
   rows: DeliveryRow[],
 ): Promise<ProcessSummary> {
   const summary: ProcessSummary = { succeeded: 0, retrying: 0, failed: 0 };
   if (rows.length === 0) return summary;
+  let nextRetryAt = Number.POSITIVE_INFINITY;
+  const retryAt = (time: number) => {
+    nextRetryAt = Math.min(nextRetryAt, time);
+  };
 
   const endpointIds = [...new Set(rows.map((row) => row.endpointId))];
   const endpoints = new Map(
@@ -204,9 +214,13 @@ export async function processClaimed(
         .where(eq(webhookDelivery.id, row.id));
       if (values.status === "succeeded") summary.succeeded++;
       else if (values.status === "failed") summary.failed++;
-      else summary.retrying++;
+      else {
+        summary.retrying++;
+        if (values.nextAttemptAt) retryAt(values.nextAttemptAt.getTime());
+      }
     } catch (error) {
       // The lease expires and the worker picks the row up again.
+      retryAt(Date.now() + CLAIM_LEASE_MS);
       console.error(
         JSON.stringify({
           event: "webhook.process_failed",
@@ -216,6 +230,7 @@ export async function processClaimed(
       );
     }
   });
+  if (Number.isFinite(nextRetryAt)) await scheduleWorkerRun(nextRetryAt);
   return summary;
 }
 
@@ -230,6 +245,8 @@ export async function deliverNow(ids: string[]): Promise<void> {
     });
     await processClaimed(rows);
   } catch (error) {
+    // The rows are due now (or once their lease ends): the worker sends them.
+    await scheduleWorkerRun(Date.now());
     console.error(
       JSON.stringify({
         event: "webhook.deliver_now_failed",
@@ -263,6 +280,19 @@ export async function runDeliveryWorker({
     if (rows.length < batchSize) break;
   }
   return total;
+}
+
+/**
+ * Earliest pending delivery's next attempt (retries, open scan batches,
+ * leases of in-flight sends) in epoch ms, or null when nothing is pending.
+ */
+export async function nextDeliveryDueAt(): Promise<number | null> {
+  const [row] = await db
+    .select({ next: min(webhookDelivery.nextAttemptAt) })
+    .from(webhookDelivery)
+    .where(eq(webhookDelivery.status, "pending"));
+  const next = row?.next;
+  return next ? new Date(next).getTime() : null;
 }
 
 /** Deletes finished deliveries older than the retention window, in chunks. */

@@ -48,7 +48,7 @@ export function HeroSection() {
             </Button>
           </div>
         </div>
-        <HeroScene className="relative left-1/2 mt-6 w-[150%] max-w-none -translate-x-1/2 sm:w-full sm:max-w-6xl sm:px-2 md:mt-4" />
+        <HeroScene className="relative left-1/2 mt-6 w-[120%] max-w-none -translate-x-1/2 sm:w-full sm:max-w-6xl sm:px-2 md:mt-4" />
         <div className="relative mx-auto mt-4 w-full max-w-5xl px-6 md:mt-6 md:px-10">
           <HeroEditor />
         </div>

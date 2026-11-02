@@ -6,6 +6,7 @@ import { eq } from "drizzle-orm";
 import type { NextRequest } from "next/server";
 import { z } from "zod";
 import { resolveApiScope } from "@/app/api/v1/codes/_lib/api";
+import { withApiQuotaHeaders } from "@/lib/api-quota";
 import { HttpError, handleError } from "@/lib/error-response";
 import { getPlanForScope, getPlanLimits } from "@/lib/plans";
 import { parsePixelConfig, verifyScanToken } from "@/lib/redirect/routing";
@@ -120,7 +121,7 @@ export function OPTIONS() {
   return withCors(new Response(null, { status: 204 }));
 }
 
-export async function POST(request: NextRequest) {
+export const POST = withApiQuotaHeaders(async (request: NextRequest) => {
   try {
     const isServer = request.headers
       .get("authorization")
@@ -240,4 +241,4 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     return withCors(handleError(error, { route: "api/v1/conversions" }));
   }
-}
+});

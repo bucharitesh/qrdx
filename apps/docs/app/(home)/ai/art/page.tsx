@@ -25,13 +25,13 @@ export const metadata: Metadata = createMetadata(
   isArtConfigured
     ? {
         title: "AI QR Code Art Generator — Scannable Artistic QR Codes",
-        description: `Turn a link into scannable AI artwork: ${AI_ART_PRESETS.length} style presets, up to 4 variations per run, a QR visibility slider and an automatic scan check that picks the best result. Requires sign-in; free accounts get ${PLAN_LIMITS.free.aiArtPerMonth} images a month.`,
+        description: `Turn a link into scannable AI artwork made with Google's Gemini: ${AI_ART_PRESETS.length} style presets, up to 4 variations per run, a QR visibility slider, and every image verified to scan before you see it. Requires sign-in; free accounts get ${PLAN_LIMITS.free.aiArtPerMonth} images a month.`,
         keywords: [
           "ai qr code art",
           "ai qr code art generator",
           "artistic qr code",
           "qr code art",
-          "illusion diffusion qr code",
+          "gemini qr code art",
           "scannable ai qr code",
         ],
         path: "/ai/art",
@@ -58,17 +58,17 @@ const STEPS = [
   {
     title: "A plain QR code",
     description:
-      "QRdx draws your link as a black-and-white QR code with the highest error correction (H) and a wide quiet zone. An optional reference image is blended in faintly to steer the composition.",
+      "QRdx draws your link as a black-and-white QR code with the highest error correction (H) and a wide quiet zone. An optional reference image, such as a logo or a palette, goes along with it.",
   },
   {
-    title: "Painted by an image model",
+    title: "Repainted by Gemini",
     description:
-      "An image model on fal.ai paints your scene, using the code's light and dark modules as a hidden guide. QR visibility sets how strictly it follows them.",
+      "Google's Gemini image model repaints the code as your scene, told to keep the module grid, the corner eyes and the quiet zone. QR visibility sets how strongly it favors the code.",
   },
   {
-    title: "Checked in your browser",
+    title: "Verified to scan",
     description:
-      "QRdx decodes every variation and picks the best scannable one. Upscale it 2× for print, or retry the same seed with a clearer code.",
+      "QRdx decodes every image on the server. If Gemini's version doesn't scan, it's blended into the code (Image QR) until it does, and nothing that fails is delivered or charged.",
   },
 ];
 
@@ -196,9 +196,10 @@ export default function AIArtPage() {
           {isArtConfigured ? (
             <p className="max-w-xl text-pretty text-muted-foreground md:text-lg">
               Pick one of {AI_ART_PRESETS.length} styles or describe your own
-              scene, and an image model paints it around your QR code. Sign in
-              to generate: free accounts get {PLAN_LIMITS.free.aiArtPerMonth}{" "}
-              images a month, Pro {PLAN_LIMITS.pro.aiArtPerMonth} and Business{" "}
+              scene, and Gemini paints it into your QR code. Every image is
+              checked to scan before you see it. Sign in to generate: free
+              accounts get {PLAN_LIMITS.free.aiArtPerMonth} images a month, Pro{" "}
+              {PLAN_LIMITS.pro.aiArtPerMonth} and Business{" "}
               {PLAN_LIMITS.business.aiArtPerMonth} shared by the team.
             </p>
           ) : (

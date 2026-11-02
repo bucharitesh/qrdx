@@ -23,6 +23,9 @@ import { readFileSync } from "node:fs";
 import { request as httpRequest } from "node:http";
 import { findChrome, launch, PAGE_HELPERS, serverIsUp, sleep } from "./cdp.mjs";
 
+/** The account the cookie signs in as (set at start; OAuth checks compare with it). */
+let signedInEmail = "";
+
 const BASE_URL = (process.env.E2E_BASE_URL ?? "http://localhost:3000").replace(
   /\/$/,
   "",
@@ -1131,7 +1134,7 @@ async function testOAuth(page: Page) {
       );
       const data = (res.json?.data ?? {}) as Record<string, unknown>;
       return check(
-        res.status === 200 && data.email === "qrdx-e2e-test@example.com",
+        res.status === 200 && data.email === signedInEmail,
         `${res.status} ${data.email ?? JSON.stringify(res.json)}`,
       );
     });
@@ -1143,7 +1146,7 @@ async function testOAuth(page: Page) {
       });
       const data = (res.json?.data ?? {}) as Record<string, unknown>;
       return check(
-        res.status === 200 && data.email === "qrdx-e2e-test@example.com",
+        res.status === 200 && data.email === signedInEmail,
         String(res.status),
       );
     });
@@ -1591,6 +1594,7 @@ async function main() {
     );
     return 1;
   }
+  signedInEmail = email;
   console.log(`Signed in as ${email} · run ${RUN}`);
 
   const page = await launch({});

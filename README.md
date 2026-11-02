@@ -41,7 +41,7 @@ Static QR codes store the content in the code itself, so they never expire and h
 **Design and export (free, no account)**
 
 - **Design:** 9 body patterns, 9 corner-eye shapes and 11 eye-dot shapes, solid colors or linear and radial gradients, center logos, call-to-action frames and decorative templates
-- **Art QR:** Logo QR and Image QR blend a logo or photo into the modules as vector art. Instances with a [fal.ai](https://fal.ai) key also offer AI QR art that paints a scene around the code (with an account)
+- **Art QR:** Logo QR and Image QR blend a logo or photo into the modules as vector art. Instances with a Google Gemini API key also offer AI QR art: Gemini repaints the code as a scene, and every image is verified to scan before it's delivered (with an account)
 - **Content types:** URLs, text, Wi-Fi, vCard, email, phone, SMS, WhatsApp, maps, UPI, PayPal and many social and payment profiles
 - **Export:** PNG, JPG, SVG, PDF and vector EPS with no watermark, plus print-ready PDFs at an exact size with bleed and crop marks
 - **Scan checks:** contrast warnings and a "Will it scan?" score
@@ -171,7 +171,7 @@ Read the full [self-hosting guide](https://qrdx.dev/docs/self-hosting) before ru
 - [Tailwind CSS](https://tailwindcss.com/), [shadcn/ui](https://ui.shadcn.com/) and [Radix UI](https://www.radix-ui.com/)
 - [Drizzle ORM](https://orm.drizzle.team/) on Postgres ([Neon](https://neon.tech/))
 - [Better Auth](https://www.better-auth.com/) for authentication
-- [Vercel AI SDK](https://ai-sdk.dev/) with Google Gemini for AI themes, [fal.ai](https://fal.ai/) for AI QR art
+- [Vercel AI SDK](https://ai-sdk.dev/) with Google Gemini for AI themes and AI QR art
 - [Polar](https://polar.sh/) for payments, [PostHog](https://posthog.com/) (with consent) and [Umami](https://umami.is/) (cookieless) for analytics, [Upstash](https://upstash.com/) for rate limiting
 - [Cloudflare R2](https://developers.cloudflare.com/r2/) for file storage and [Resend](https://resend.com/) for email
 - [Fumadocs](https://fumadocs.dev/) for documentation

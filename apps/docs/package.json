@@ -24,7 +24,6 @@
     "@aws-sdk/client-s3": "^3.1161.0",
     "@aws-sdk/s3-request-presigner": "^3.1161.0",
     "@c15t/nextjs": "3.2.1",
-    "@fal-ai/client": "^1.10.1",
     "@hookform/resolvers": "^7.0.0",
     "@lucasmarkes/hairline": "0.5.1",
     "@modelcontextprotocol/server": "^2.4.0",

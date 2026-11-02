@@ -113,4 +113,41 @@ People can revoke an app's access themselves in **Settings → Authorized apps**
 
 The codes, conversions and hooks endpoints return errors as `{ "code": "...", "message": "...", "status": 400 }`; the status codes are listed under [Dynamic QR codes](/docs/dynamic-qr-codes#rest-api). The OAuth, themes and profile endpoints use the OAuth shape, `{ "error": "invalid_token", "error_description": "..." }`.
 
-Requests are rate limited, and a `429` response tells you when to retry. The codes API allows 120 reads and 30 writes a minute per user. Creating several codes in one request, choosing a code's `slug` and moving codes onto a custom domain need Pro or Business (`402 PLAN_REQUIRED` otherwise). Scans are never limited.
+Creating several codes in one request, choosing a code's `slug` and moving codes onto a custom domain need Pro or Business (`402 PLAN_REQUIRED` otherwise). Scans are never limited.
+
+### Rate limits
+
+Two kinds of limit apply. Both answer `429 RATE_LIMITED` with a `Retry-After` header, the number of seconds to wait.
+
+- **Daily quota.** A workspace can make 1,000 API requests a day on Free, 10,000 on Pro and 100,000 on Business (see [Plans and limits](/docs/plans-and-limits)). The day runs from 00:00 to 24:00 UTC. Every authenticated request counts. Requests made with an access token count against the token owner's personal workspace and its plan. Requests made with a browser session count against the open team, or the personal workspace.
+- **Per-minute limits.** The codes, conversions and hooks endpoints allow 120 reads and 30 writes a minute per user, and 300 requests a minute per IP address.
+
+Requests turned away before the daily check don't count: an invalid token (`401`), a token without the needed scope (`403`) or a per-minute `429`. Responses to requests that count carry the daily quota in three headers, on successes and errors alike:
+
+| Header | Value |
+| --- | --- |
+| `X-RateLimit-Limit` | Requests a day on the workspace's plan |
+| `X-RateLimit-Remaining` | Requests left today |
+| `X-RateLimit-Reset` | When the count starts over (the next 00:00 UTC), in Unix seconds |
+
+The `X-RateLimit-*` headers always describe the daily quota. A per-minute `429` has a `Retry-After` header only. Over the daily quota you get:
+
+```http
+HTTP/1.1 429 Too Many Requests
+Retry-After: 43200
+X-RateLimit-Limit: 1000
+X-RateLimit-Remaining: 0
+X-RateLimit-Reset: 1793577600
+```
+
+```json
+{
+  "code": "RATE_LIMITED",
+  "message": "Daily API limit reached: the Free plan allows 1,000 requests a day. It resets at 00:00 UTC. Upgrade your plan for a higher limit.",
+  "status": 429
+}
+```
+
+`/v1/me` and `/v1/themes` send the same headers, with the error in the OAuth shape: `{ "error": "rate_limited", "error_description": "..." }`.
+
+The [image API](/docs/developers/image-api), the [MCP server](/docs/developers/mcp) and conversions reported from the browser with a `qrdx_sid` need no token, so they don't use the daily quota. They have per-IP limits of their own. A [self-hosted](/docs/self-hosting) instance enforces rate limits only when Upstash Redis is configured.

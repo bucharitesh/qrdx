@@ -56,7 +56,10 @@ const breaker = createCircuitBreaker();
 type Limiter = NonNullable<RatelimitConfig["limiter"]>;
 
 /** The window each limiter was built with, for the in-memory fallback. */
-const windows = new WeakMap<Limiter, { tokens: number; windowMs: number }>();
+const windows = new WeakMap<
+  Limiter,
+  { tokens: number; windowMs: number; sliding: boolean }
+>();
 
 /** Ratelimit.slidingWindow, remembering its window for the fallback. */
 export const slidingWindow = (
@@ -64,7 +67,29 @@ export const slidingWindow = (
 ): Limiter => {
   const limiter = Ratelimit.slidingWindow(...args);
   const [tokens, window] = args;
-  windows.set(limiter, { tokens, windowMs: parseDuration(window) });
+  windows.set(limiter, {
+    tokens,
+    windowMs: parseDuration(window),
+    sliding: true,
+  });
+  return limiter;
+};
+
+/**
+ * Ratelimit.fixedWindow, remembering its window for the fallback. Windows
+ * start at multiples of the duration since the epoch, so "1 d" runs from
+ * 00:00 to 24:00 UTC, in Upstash and in the fallback alike.
+ */
+export const fixedWindow = (
+  ...args: Parameters<typeof Ratelimit.fixedWindow>
+): Limiter => {
+  const limiter = Ratelimit.fixedWindow(...args);
+  const [tokens, window] = args;
+  windows.set(limiter, {
+    tokens,
+    windowMs: parseDuration(window),
+    sliding: false,
+  });
   return limiter;
 };
 
