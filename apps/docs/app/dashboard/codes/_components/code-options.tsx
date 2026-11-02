@@ -52,7 +52,7 @@ import { UtmPanel } from "@/app/dashboard/codes/[id]/_components/utm-panel";
 import { PLAN_NAMES } from "@/lib/pricing";
 
 /** One icon per option; none repeats in the grid. */
-const OPTION_ICONS: Record<CodeOptionId, Icon> = {
+export const OPTION_ICONS: Record<CodeOptionId, Icon> = {
   utm: Hashtag,
   routing: Routing2,
   ab: ChemicalGlass,
@@ -215,7 +215,7 @@ export function CodeOptionPanel({
 }) {
   const access = plans.options[option];
   if (!marketing) {
-    // No code yet: options on the plan create one first (see CodeDialog).
+    // No code yet: options on the plan create one first (see the code builder).
     return access.requiredPlan && !access.included ? (
       <PlanLock plan={access.requiredPlan}>
         {CODE_OPTION_COPY[option].summary}

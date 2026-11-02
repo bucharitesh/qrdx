@@ -21,8 +21,8 @@ import {
 } from "qrdx";
 import { useEffect, useState } from "react";
 import { HexColorPicker } from "react-colorful";
+import { useEditableStyle } from "@/components/editor/style-scope";
 import { soundEvent } from "@/lib/sound/emit";
-import { useQREditorStore } from "@/store/editor-store";
 import { FrameTextPresets } from "./frame-text-presets";
 import { ShapePicker } from "./option-tiles";
 
@@ -166,8 +166,7 @@ function FrameColorField({
 }
 
 export function FrameControls() {
-  const { themeState, setThemeState } = useQREditorStore();
-  const style = themeState.styles;
+  const { style, setStyle } = useEditableStyle();
   const frame: QRFrame = style.frame ?? { style: "none" };
   const active = frame.style !== "none";
   const isGradient = frame.style === "gradient-border";
@@ -184,10 +183,7 @@ export function FrameControls() {
   const fontScale = frame.fontScale ?? 1;
 
   const updateFrame = (changes: Partial<QRFrame>) => {
-    setThemeState({
-      ...themeState,
-      styles: { ...style, frame: { ...frame, ...changes } },
-    });
+    setStyle({ ...style, frame: { ...frame, ...changes } });
   };
 
   return (
