@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 // Tests run inside `turbo build` on Vercel with the deployment's env loaded
 // (preview or production). vitest.config.ts and scripts/run-node-tests.mjs
 // strip those variables first; a variable missing from that list leaked into
-// tests once (AI_ART_ENABLED=0 turned AI art off in its own tests).
+// tests once (an AI art switch, since removed, turned AI art off in its own tests).
 const ROOT = join(__dirname, "..", "..");
 const read = (path: string) => readFileSync(join(ROOT, path), "utf8");
 

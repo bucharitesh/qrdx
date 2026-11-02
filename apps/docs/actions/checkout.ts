@@ -3,11 +3,9 @@
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import { z } from "zod";
 import { hasAnalyticsConsent } from "@/lib/analytics/server";
-import { isFeatureAvailable } from "@/lib/feature-availability";
 import { baseUrl } from "@/lib/metadata";
 import {
   BILLING_NOT_CONFIGURED_MESSAGE,
-  CHECKOUT_CLOSED_MESSAGE,
   isBillingConfigured,
   polar,
 } from "@/lib/polar";
@@ -48,11 +46,6 @@ export async function createCheckout(input: {
   const productId = PRICING[plan][interval].productId;
   if (!(isBillingConfigured && productId)) {
     return { error: BILLING_NOT_CONFIGURED_MESSAGE, reason: "unavailable" };
-  }
-  // Closed by POLAR_CHECKOUT_ENABLED=0 (the pricing page shows it too; this
-  // covers a page loaded before the switch and the after-sign-in resume).
-  if (!isFeatureAvailable("checkout")) {
-    return { error: CHECKOUT_CLOSED_MESSAGE, reason: "unavailable" };
   }
 
   try {
