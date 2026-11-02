@@ -1,28 +1,47 @@
 "use client";
 
 import { Button } from "@repo/design-system/components/ui/button";
+import { cn } from "@repo/design-system/lib/utils";
 import { Import } from "iconsax-reactjs";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
-import { DownloadDialog } from "./download-dialog";
+import { useQREditorStore } from "@/store/editor-store";
+import { useDownloadDialogStore } from "./download-dialog-store";
 
 interface DownloadButtonProps {
-  dialogOpen: boolean;
-  setDialogOpen: (open: boolean) => void;
+  className?: string;
+  size?: "sm" | "default";
+  /** Off on touch screens (the phone's bottom bar), where hover never fires. */
+  tooltip?: boolean;
 }
 
+/**
+ * The editor's primary action, always labelled. Until there is content the
+ * preview shows a sample, so there is nothing of the user's to download yet.
+ */
 export function DownloadButton({
-  dialogOpen,
-  setDialogOpen,
+  className,
+  size = "sm",
+  tooltip = true,
 }: DownloadButtonProps) {
+  const hasContent = useQREditorStore((state) => state.value.trim() !== "");
+  const setOpen = useDownloadDialogStore((state) => state.setOpen);
+
+  const button = (
+    <Button
+      className={cn("gap-1.5", className)}
+      disabled={!hasContent}
+      onClick={() => setOpen(true)}
+      size={size}
+    >
+      <Import className="size-4" />
+      Download
+    </Button>
+  );
+
+  if (!(hasContent && tooltip)) return button;
   return (
-    <>
-      <TooltipWrapper label="Download QR code" kbd="D" asChild>
-        <Button variant="ghost" size="sm" onClick={() => setDialogOpen(true)}>
-          <Import className="size-4" />
-          <span className="hidden text-sm md:block sr-only">Download</span>
-        </Button>
-      </TooltipWrapper>
-      <DownloadDialog open={dialogOpen} onOpenChange={setDialogOpen} />
-    </>
+    <TooltipWrapper label="Download QR code" kbd="D" asChild>
+      {button}
+    </TooltipWrapper>
   );
 }

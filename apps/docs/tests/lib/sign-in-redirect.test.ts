@@ -118,6 +118,31 @@ describe("proxy.ts", () => {
     }
   });
 
+  it("sends old /dashboard codes-list links to /dashboard/codes with a 307, before sign-in", async () => {
+    const proxy = (await import("@/proxy")).default;
+    for (const signedIn of [false, true]) {
+      state.signedIn = signedIn;
+      const response = await proxy(
+        new NextRequest("http://localhost:3000/dashboard?q=menu&folder=f1"),
+      );
+      expect(response.status).toBe(307);
+      const location = new URL(response.headers.get("location") ?? "");
+      expect(location.pathname).toBe("/dashboard/codes");
+      expect(location.search).toBe("?q=menu&folder=f1");
+    }
+  });
+
+  it("keeps plain /dashboard (Home) for signed-in visitors", async () => {
+    state.signedIn = true;
+    const proxy = (await import("@/proxy")).default;
+    for (const path of ["/dashboard", "/dashboard?utm_source=email"]) {
+      const response = await proxy(
+        new NextRequest(`http://localhost:3000${path}`),
+      );
+      expect(response.headers.get("location")).toBeNull();
+    }
+  });
+
   it("lets signed-in visitors through", async () => {
     state.signedIn = true;
     const proxy = (await import("@/proxy")).default;

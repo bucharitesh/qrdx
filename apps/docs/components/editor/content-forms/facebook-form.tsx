@@ -31,7 +31,7 @@ export function FacebookForm() {
     <div className="space-y-3">
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="facebook-url">
-          Facebook Profile URL *
+          Facebook profile URL *
         </Label>
         <Input
           id="facebook-url"
@@ -42,9 +42,6 @@ export function FacebookForm() {
             setFacebookData({ ...facebookData, profileUrl: e.target.value })
           }
         />
-        <p className="text-muted-foreground text-[11px]">
-          Enter your full Facebook profile or page URL
-        </p>
       </div>
 
       <p className="text-muted-foreground text-xs">

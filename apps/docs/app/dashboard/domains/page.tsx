@@ -16,6 +16,9 @@ import { requireDashboardScope } from "@/app/dashboard/codes/_lib/qr-codes";
 import { UpgradeButton } from "@/app/dashboard/team/_components/small-actions";
 import { InfoHint } from "@/components/help/info-hint";
 import { HairlineFigure } from "@/components/mockups/hairline";
+import { getDomainConnectOffers } from "@/lib/domain-connect/offers";
+import { parseConnectReturn } from "@/lib/domain-connect/return";
+import { isFeatureAvailable } from "@/lib/feature-availability";
 import { PLAN_LIMITS } from "@/lib/plans";
 import { PLAN_NAMES } from "@/lib/pricing";
 import { SHORT_LINK_BASE } from "@/lib/short-links";
@@ -29,7 +32,11 @@ export const metadata: Metadata = {
 
 const DOCS_HREF = "/docs/custom-domains";
 
-export default async function DomainsPage() {
+export default async function DomainsPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
   const scope = await requireDashboardScope();
   const { mode, plan, limit, domains, canManage } =
     await getDomainsOverview(scope);
@@ -122,6 +129,17 @@ export default async function DomainsPage() {
     );
   }
 
+  // One-click DNS setup (Domain Connect) for domains waiting for DNS, where
+  // the viewer can verify them. Discovery streams in: the page doesn't wait.
+  const oneClick =
+    isFeatureAvailable("domainConnect") && canManage && limit > 0;
+  const pending = oneClick ? domains.filter((domain) => !domain.verified) : [];
+  const connectOffers =
+    pending.length > 0 ? getDomainConnectOffers(pending) : undefined;
+  const connectReturn = oneClick
+    ? parseConnectReturn(await searchParams)
+    : null;
+
   return (
     <div className="space-y-6">
       {header}
@@ -154,6 +172,8 @@ export default async function DomainsPage() {
         canAdd={limit > 0 && domains.length < limit}
         canManage={canManage}
         canUpgrade={!isTeam}
+        connectOffers={connectOffers}
+        connectReturn={connectReturn}
         defaultHost={new URL(SHORT_LINK_BASE).host}
         domains={domains}
         limit={limit}

@@ -11,9 +11,9 @@ Every REST API error is JSON with the same shape, whichever endpoint returns it:
 ```json
 {
   "code": "INSUFFICIENT_SCOPE",
-  "message": "This token needs the 'codes:write' scope. Add it to your app and ask for it when the user authorizes.",
+  "message": "This API key needs the 'codes:write' scope. Create a key that includes it at https://qrdx.dev/settings/developers; a key's scopes can't be changed.",
   "status": 403,
-  "docs": "https://qrdx.dev/docs/developers/rest-api#endpoints"
+  "docs": "https://qrdx.dev/docs/developers/api-keys"
 }
 ```
 
@@ -50,16 +50,16 @@ The image API reports query parameters as `{ "param", "message" }` instead of `{
 | 400 | `INVALID_SLUG` | The custom back-half (`slug`) breaks a rule: a reserved word, or the same back-half twice in one request. | Choose another back-half. The message names the rule. |
 | 400 | `TOO_MANY_CODES` | More than 100 codes in one request. The body schema normally rejects this first, as `VALIDATION_ERROR`. | Send at most 100 codes per request. |
 | 400 | `DOMAIN_NOT_VERIFIED` | `domainId` points to a custom domain that isn't verified yet. | Finish verifying the domain on the Domains page, or leave `domainId` out. |
-| 400 | `SID_REQUIRED` | A conversion without the `qrdx_sid` of the scan (from the browser), or without `sid` or `code` (from a server). | Send the `qrdx_sid` the short link added to your page URL, or, with a token, the code id as `code`. |
-| 401 | `UNAUTHORIZED` | No credentials: the request has no `Authorization: Bearer` header (and no QRdx browser session). | Send an OAuth access token as `Authorization: Bearer <token>`. |
-| 401 | `INVALID_TOKEN` | The access token is unknown, expired (tokens last one hour) or revoked. | Get a new access token with your refresh token, or send the user through authorization again. |
+| 400 | `SID_REQUIRED` | A conversion without the `qrdx_sid` of the scan (from the browser), or without `sid` or `code` (from a server). | Send the `qrdx_sid` the short link added to your page URL, or, with an API key or token, the code id as `code`. |
+| 401 | `UNAUTHORIZED` | No credentials: the request has no `Authorization: Bearer` header (and no QRdx browser session). | Send an API key as `Authorization: Bearer <key>`; create one in Settings → API keys & apps. OAuth access tokens go in the same header. |
+| 401 | `INVALID_TOKEN` | The API key or access token is unknown, revoked or expired (access tokens last one hour), or the key's creator was banned or left the key's team. | Check that you sent the whole key, or create a new one. For an access token, get a new one with your refresh token, or send the user through authorization again. |
 | 402 | `PLAN_REQUIRED` | The feature isn't on the workspace's plan: bulk creation, custom back-halves and custom domains need Pro; conversions and hooks need Business. | Upgrade the workspace, or leave the feature out of the request. |
 | 402 | `LIMIT_REACHED` | The workspace has as many active dynamic codes as its plan includes (10 on Free). | Archive a code (archived codes don't count) or upgrade to Pro for unlimited codes. |
-| 403 | `INSUFFICIENT_SCOPE` | The token is valid but lacks the scope this endpoint needs. | Add the scope named in the message to your app and ask for it when the user authorizes. |
-| 403 | `FORBIDDEN` | The caller may not do this: a team member deleting a code someone else created, a team member managing hooks, or a browser-session write from another site. | Ask a team owner or admin, or call the API with an access token from your server. |
-| 403 | `CONVERSIONS_OFF` | A browser conversion for a code that doesn't have conversion tracking turned on. | Turn on conversion tracking for the code, or report the conversion from your server with a token. |
+| 403 | `INSUFFICIENT_SCOPE` | The API key or token is valid but lacks the scope this endpoint needs. | Create a key with the scope named in the message (a key's scopes can't be changed). For an OAuth app, add the scope and ask for it when the user authorizes. |
+| 403 | `FORBIDDEN` | The caller may not do this: a team member deleting a code someone else created, a team member managing hooks, or a browser-session write from another site. A team API key can do only what its creator's role allows. | Ask a team owner or admin, or call the API with an API key from your server. |
+| 403 | `CONVERSIONS_OFF` | A browser conversion for a code that doesn't have conversion tracking turned on. | Turn on conversion tracking for the code, or report the conversion from your server with an API key. |
 | 403 | `LIMIT_REACHED` | The workspace already has 20 webhook endpoints and hooks. | Delete an endpoint or hook you no longer use. |
-| 404 | `NOT_FOUND` | No such endpoint, or the code, hook, theme or custom domain doesn't exist in the token's workspace. | Check the path and the id. Tokens act on the token owner's personal workspace, not on teams. |
+| 404 | `NOT_FOUND` | No such endpoint, or the code, hook, theme or custom domain doesn't exist in the workspace the key or token acts on. | Check the path and the id. An API key acts on the workspace it was created in; an OAuth token acts on its user's personal workspace. |
 | 404 | `INVALID_SID` | The `qrdx_sid` is unknown or older than 30 days, the attribution window. | Send the `qrdx_sid` of a recent scan, or report the conversion by code id from your server. |
 | 409 | `SLUG_TAKEN` | Another code already uses that back-half on that domain. | Choose another back-half. |
 | 413 | `PAYLOAD_TOO_LARGE` | The body is over the endpoint's limit: 4 MB for codes, 16 KB for hooks, 8 KB for conversions. | Send a smaller body. For codes, a large inline logo is the usual cause. |

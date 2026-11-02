@@ -1,18 +1,13 @@
 "use client";
 
 import { Button } from "@repo/design-system/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@repo/design-system/components/ui/card";
+import { Card, CardContent } from "@repo/design-system/components/ui/card";
 import {
   ExportSquare as ExternalLink,
   ColorSwatch as Palette,
   Edit2 as Pencil,
 } from "iconsax-reactjs";
-import { useState } from "react";
+import { type ReactNode, useState } from "react";
 import type { QrCodeView } from "@/app/dashboard/codes/_lib/qr-codes";
 import { CopyButton } from "@/components/copy-button";
 import { CodeActionsMenu } from "./code-actions-menu";
@@ -29,42 +24,65 @@ const STATUS_NOTES = {
     "Disabled by QRdx: this code was turned off by moderation and does not redirect. Contact support if you think this is a mistake.",
 } as const;
 
-export function CodeOverview({ code }: { code: QrCodeView }) {
+/** Title, status and actions of the code page, above its tabs. */
+export function CodeHeader({ code }: { code: QrCodeView }) {
   const [editOpen, setEditOpen] = useState(false);
+
+  return (
+    <div className="space-y-3">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0 space-y-1">
+          <div className="flex min-w-0 items-center gap-2">
+            <h1 className="truncate text-xl font-bold md:text-2xl">
+              {code.title || displayUrl(code.destinationUrl)}
+            </h1>
+            <StatusBadge status={code.status} />
+          </div>
+          <p className="text-muted-foreground truncate text-sm">
+            {displayUrl(code.shortLink)}
+          </p>
+        </div>
+        <div className="flex shrink-0 gap-1">
+          <Button onClick={() => setEditOpen(true)} size="sm">
+            <Pencil />
+            Edit link
+          </Button>
+          <CodeActionsMenu
+            afterDelete="/dashboard/codes"
+            code={code}
+            showAnalyticsLink={false}
+          />
+        </div>
+      </div>
+      {code.status !== "active" && (
+        <p className="bg-muted rounded-md p-3 text-sm">
+          {STATUS_NOTES[code.status]}
+        </p>
+      )}
+      <CodeDialog code={code} onOpenChange={setEditOpen} open={editOpen} />
+    </div>
+  );
+}
+
+/**
+ * The Overview tab: short link and destination, the QR code with downloads,
+ * and `children` (scans and options cards) under the details.
+ */
+export function CodeOverview({
+  code,
+  children,
+}: {
+  code: QrCodeView;
+  children?: ReactNode;
+}) {
   const openInPlayground = useOpenInPlayground();
 
   return (
-    <div className="grid gap-4 lg:grid-cols-[1fr_280px]">
-      <Card className="gap-4 py-5">
-        <CardHeader className="px-5">
-          <div className="flex items-start justify-between gap-3">
-            <div className="min-w-0 space-y-1">
-              <div className="flex items-center gap-2">
-                <CardTitle className="truncate text-lg">
-                  {code.title || displayUrl(code.destinationUrl)}
-                </CardTitle>
-                <StatusBadge status={code.status} />
-              </div>
-            </div>
-            <div className="flex shrink-0 gap-1">
-              <Button onClick={() => setEditOpen(true)} size="sm">
-                <Pencil />
-                Edit link
-              </Button>
-              <CodeActionsMenu
-                afterDelete="/dashboard"
-                code={code}
-                showAnalyticsLink={false}
-              />
-            </div>
-          </div>
-        </CardHeader>
+    // Phones: details, QR code, then the rest. Wide screens: the QR code
+    // sits in its own column beside everything else.
+    <div className="grid gap-4 lg:grid-cols-[1fr_280px] lg:grid-rows-[auto_1fr]">
+      <Card className="min-w-0 gap-4 py-5 lg:col-start-1">
         <CardContent className="space-y-4 px-5">
-          {code.status !== "active" && (
-            <p className="bg-muted rounded-md p-3 text-sm">
-              {STATUS_NOTES[code.status]}
-            </p>
-          )}
           <div className="space-y-1">
             <p className="text-muted-foreground text-xs font-medium uppercase">
               Short link (encoded in the QR code)
@@ -97,7 +115,7 @@ export function CodeOverview({ code }: { code: QrCodeView }) {
         </CardContent>
       </Card>
 
-      <Card className="gap-3 py-4">
+      <Card className="h-fit gap-3 py-4 lg:col-start-2 lg:row-span-2 lg:row-start-1">
         <CardContent className="space-y-3 px-4">
           <CodeQr
             className="bg-muted/40 rounded-lg border p-3"
@@ -117,7 +135,9 @@ export function CodeOverview({ code }: { code: QrCodeView }) {
         </CardContent>
       </Card>
 
-      <CodeDialog code={code} onOpenChange={setEditOpen} open={editOpen} />
+      {children && (
+        <div className="min-w-0 space-y-4 lg:col-start-1">{children}</div>
+      )}
     </div>
   );
 }

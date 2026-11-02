@@ -52,7 +52,7 @@ export function InstagramForm() {
     <div className="space-y-3">
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="instagram-username">
-          Instagram Username *
+          Instagram username *
         </Label>
         <Input
           id="instagram-username"
@@ -66,11 +66,6 @@ export function InstagramForm() {
         />
         {errors.username && (
           <p className="text-destructive text-[11px]">{errors.username}</p>
-        )}
-        {!errors.username && (
-          <p className="text-muted-foreground text-[11px]">
-            Enter your Instagram username with or without @
-          </p>
         )}
       </div>
 

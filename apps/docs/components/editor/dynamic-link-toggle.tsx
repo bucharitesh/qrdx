@@ -4,11 +4,20 @@ import { authClient } from "@repo/auth/client";
 import { toast } from "@repo/design-system";
 import { Spinner, Tick } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
-import { useIsMobile } from "@repo/design-system/hooks/use-mobile";
-import { cn } from "@repo/design-system/lib/utils";
-import { ArrowRight, Copy, Flash, Global } from "iconsax-reactjs";
+import {
+  ToggleGroup,
+  ToggleGroupItem,
+} from "@repo/design-system/components/ui/toggle-group";
+import { ArrowRight, Copy, Flash } from "iconsax-reactjs";
 import Link from "next/link";
-import { useEffect, useLayoutEffect, useState, useTransition } from "react";
+import {
+  useCallback,
+  useEffect,
+  useEffectEvent,
+  useLayoutEffect,
+  useState,
+  useTransition,
+} from "react";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import {
@@ -19,12 +28,13 @@ import {
 import { emitSound } from "@/components/editor/sound";
 import { InfoHint } from "@/components/help/info-hint";
 import { track } from "@/lib/analytics";
-import { useMounted } from "@/lib/hooks/use-mounted";
+import { usePostLoginAction } from "@/lib/hooks/use-post-login-action";
 import { useAuthStore } from "@/store/auth-store";
 import { useQREditorStore } from "@/store/editor-store";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 import type { UrlContent } from "@/types/qr-content";
 import type { ThemeStyles } from "@/types/theme";
+import { makeDynamicIntent, shouldResumeDynamic } from "./dynamic-resume";
 
 export interface LinkedDynamicCode {
   id: string;
@@ -124,20 +134,17 @@ async function safely<T>(
   }
 }
 
-/**
- * On phones, a signed-out visitor gets the dynamic card at the end of the
- * Content tab (after "Start from a style") instead of under the address
- * field, so the sign-in prompt doesn't interrupt making a first code.
- * Signed in, or on larger screens, it stays under the field.
- */
-export function useDynamicCardAtEnd(): boolean {
-  const isMobile = useIsMobile();
-  const { data: session, isPending } = authClient.useSession();
-  return isMobile && !isPending && !session?.user;
-}
+const choiceItemClass =
+  "h-auto flex-col items-start gap-0.5 rounded-lg px-3 py-2 text-left whitespace-normal data-[state=on]:border-foreground/40 data-[state=on]:bg-accent/60";
 
+/**
+ * Static or Dynamic, under a valid website address. Static encodes the
+ * address itself; Dynamic saves a dynamic code and encodes its short link.
+ * Signed out, Dynamic asks for sign-in and picks up again afterwards (the
+ * "MAKE_DYNAMIC" post-login action, see dynamic-resume.ts), with the same
+ * design and content, which the editor store keeps.
+ */
 export function DynamicLinkToggle() {
-  const isMounted = useMounted();
   const { data: session, isPending: isSessionPending } =
     authClient.useSession();
   const userId = session?.user?.id ?? null;
@@ -159,8 +166,15 @@ export function DynamicLinkToggle() {
   const [limitMessage, setLimitMessage] = useState<string | null>(null);
   const [designSaved, setDesignSaved] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [resume, setResume] = useState<unknown>(null);
 
-  const linked = code && userId && code.userId === userId ? code : null;
+  // While the session loads, keep showing a saved link so the card doesn't
+  // collapse and grow back; a different account unlinks it below.
+  const linked =
+    code &&
+    (isSessionPending ? true : userId !== null && code.userId === userId)
+      ? code
+      : null;
   const destination = normalizeDestination(url);
   const destinationChanged =
     linked !== null &&
@@ -190,12 +204,9 @@ export function DynamicLinkToggle() {
   };
 
   const enable = () => {
+    if (!destination) return;
     if (!userId) {
-      openAuthDialog("signin");
-      return;
-    }
-    if (!destination) {
-      toast.error("Enter a website address first");
+      openAuthDialog("signin", "MAKE_DYNAMIC", makeDynamicIntent(destination));
       return;
     }
 
@@ -212,7 +223,11 @@ export function DynamicLinkToggle() {
         if (result.error.code === "LIMIT_REACHED") {
           setLimitMessage(result.error.message);
         } else if (result.error.code === "UNAUTHORIZED") {
-          openAuthDialog("signin");
+          openAuthDialog(
+            "signin",
+            "MAKE_DYNAMIC",
+            makeDynamicIntent(destination),
+          );
         } else {
           toast.error(result.error.message);
         }
@@ -235,6 +250,22 @@ export function DynamicLinkToggle() {
       });
     });
   };
+
+  // Back from sign-in with a pending "Dynamic" pick: run it once the session
+  // and this form are both ready, for the destination it was made for.
+  usePostLoginAction(
+    "MAKE_DYNAMIC",
+    useCallback((data?: unknown) => setResume(data ?? null), []),
+  );
+  const runResume = useEffectEvent(() => {
+    const intent = resume;
+    setResume(null);
+    if (linked || !shouldResumeDynamic(intent, destination)) return;
+    enable();
+  });
+  useEffect(() => {
+    if (resume && userId) runResume();
+  }, [resume, userId]);
 
   const disable = () => {
     unlink();
@@ -298,82 +329,59 @@ export function DynamicLinkToggle() {
     }
   };
 
-  if (!isMounted) {
-    return <div aria-hidden className="h-[7.5rem] rounded-xl border" />;
-  }
+  // Only a real website can become dynamic; until then there's no choice.
+  if (!(linked || destination)) return null;
 
-  const destinationHost = (() => {
-    try {
-      return linked ? new URL(linked.destinationUrl).host : null;
-    } catch {
-      return null;
-    }
-  })();
+  const creating = isPending && !linked;
 
   return (
-    <section
-      aria-labelledby="dynamic-code-title"
-      className={cn(
-        "space-y-3 rounded-xl border p-4 transition-colors",
-        linked && "bg-accent/30",
-      )}
-    >
-      <div className="flex items-start gap-3">
-        <span className="bg-muted/40 text-foreground/80 grid size-9 shrink-0 place-items-center rounded-full border">
-          <Flash className="size-4" variant={linked ? "Bold" : "Linear"} />
-        </span>
-        <div className="min-w-0 flex-1 space-y-0.5">
-          <h3
-            className="flex items-center gap-2 text-sm font-medium"
-            id="dynamic-code-title"
-          >
-            Dynamic QR code
-            <InfoHint align="start" id="dynamic-qr" />
-            {linked && (
-              <span className="flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[11px] font-medium text-emerald-700 dark:text-emerald-400">
-                <span className="size-1.5 rounded-full bg-current" />
-                On
-              </span>
-            )}
-          </h3>
-          <p className="text-muted-foreground text-xs text-pretty">
-            {linked
-              ? "The code points to a short link, so you can change the destination after printing."
-              : "Change where it points after printing, and count every scan."}
-          </p>
-        </div>
-      </div>
-
-      {!linked && !userId && !isSessionPending && (
-        <Button
-          className="w-full"
-          onClick={() => openAuthDialog("signin")}
-          size="sm"
+    <section aria-label="Static or dynamic QR code" className="space-y-3">
+      <div className="flex items-start gap-1.5">
+        <ToggleGroup
+          aria-label="Static or dynamic QR code"
+          className="grid flex-1 grid-cols-2 gap-2"
+          onValueChange={(next) => {
+            if (next === "dynamic" && !linked) enable();
+            if (next === "static" && linked) disable();
+          }}
+          spacing={2}
+          type="single"
+          value={linked ? "dynamic" : "static"}
           variant="outline"
         >
-          Sign in to make it dynamic
-        </Button>
-      )}
-
-      {!linked && (userId || isSessionPending) && (
-        <div className="space-y-2">
-          <Button
-            className="w-full"
-            disabled={isPending || isSessionPending || !destination}
-            onClick={enable}
-            size="sm"
-            variant="outline"
+          <ToggleGroupItem
+            className={choiceItemClass}
+            disabled={isPending}
+            value="static"
           >
-            {isPending ? <Spinner /> : <Flash />}
-            Make it dynamic
-          </Button>
-          {!destination && (
-            <p className="text-muted-foreground text-center text-xs">
-              Enter a website address first.
-            </p>
-          )}
-        </div>
-      )}
+            <span className="text-sm font-medium">Static</span>
+            <span className="text-muted-foreground text-xs font-normal">
+              Fixed once printed
+            </span>
+          </ToggleGroupItem>
+          <ToggleGroupItem
+            className={choiceItemClass}
+            disabled={isPending || (isSessionPending && !linked)}
+            value="dynamic"
+          >
+            <span className="flex items-center gap-1.5 text-sm font-medium">
+              {creating ? (
+                <Spinner className="size-3.5" />
+              ) : (
+                <Flash
+                  className="size-3.5"
+                  variant={linked ? "Bold" : "Linear"}
+                />
+              )}
+              Dynamic
+            </span>
+            <span className="text-muted-foreground text-xs font-normal">
+              Edit later, count scans
+            </span>
+          </ToggleGroupItem>
+        </ToggleGroup>
+        <InfoHint align="end" className="mt-2.5" id="dynamic-qr" />
+      </div>
 
       {limitMessage && !linked && (
         <div className="bg-muted/50 space-y-2 rounded-lg p-3 text-xs">
@@ -383,7 +391,7 @@ export function DynamicLinkToggle() {
               Upgrade to Pro
             </Button>
             <Button asChild size="sm" variant="outline">
-              <Link href="/dashboard">Manage codes</Link>
+              <Link href="/dashboard/codes">Manage codes</Link>
             </Button>
           </div>
         </div>
@@ -409,16 +417,6 @@ export function DynamicLinkToggle() {
               )}
             </Button>
           </div>
-
-          {destinationHost && !destinationChanged && (
-            <p className="text-muted-foreground flex items-center gap-1.5 text-xs">
-              <Global className="size-3.5 shrink-0" />
-              <span className="min-w-0 truncate">
-                Scans go to{" "}
-                <span className="text-foreground">{destinationHost}</span>
-              </span>
-            </p>
-          )}
 
           {destinationChanged && (
             <div className="space-y-2 rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-xs">
@@ -456,15 +454,6 @@ export function DynamicLinkToggle() {
                 Scans & settings
                 <ArrowRight />
               </Link>
-            </Button>
-            <Button
-              className="text-muted-foreground ml-auto"
-              disabled={isPending}
-              onClick={disable}
-              size="sm"
-              variant="ghost"
-            >
-              Turn off
             </Button>
           </div>
         </div>

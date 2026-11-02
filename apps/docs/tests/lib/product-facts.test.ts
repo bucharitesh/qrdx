@@ -50,7 +50,7 @@ describe("PRODUCT_FACTS", () => {
     });
     expect(FRAME_STYLES).toContain("none");
     expect(STYLE_SUMMARY).toBe(
-      `${BODY_PATTERN.length} body patterns, ${CORNER_EYE_PATTERNS.length} corner-eye shapes and ${CORNER_EYE_DOT_PATTERNS.length} eye centres`,
+      `${BODY_PATTERN.length} body patterns, ${CORNER_EYE_PATTERNS.length} corner-eye shapes and ${CORNER_EYE_DOT_PATTERNS.length} eye centers`,
     );
   });
 });
@@ -148,11 +148,11 @@ describe("product counts in copy", () => {
     const expected: Record<string, number> = {
       "body patterns": PRODUCT_FACTS.bodyPatterns,
       "corner-eye shapes": PRODUCT_FACTS.eyeShapes,
-      "eye centres": PRODUCT_FACTS.eyeCentres,
+      "eye centers": PRODUCT_FACTS.eyeCentres,
       "call-to-action frames": PRODUCT_FACTS.frames,
     };
     for (const match of readme.matchAll(
-      /\b(\d+) (body patterns|corner-eye shapes|eye centres|call-to-action frames)\b/g,
+      /\b(\d+) (body patterns|corner-eye shapes|eye centers|call-to-action frames)\b/g,
     )) {
       expect(`${match[1]} ${match[2]}`).toBe(
         `${expected[match[2]]} ${match[2]}`,

@@ -59,21 +59,16 @@ export function UPIForm() {
         {errors.upiId && (
           <p className="text-destructive text-[11px]">{errors.upiId}</p>
         )}
-        {!errors.upiId && (
-          <p className="text-muted-foreground text-[11px]">
-            Enter your UPI ID (e.g., 9876543210@paytm)
-          </p>
-        )}
       </div>
 
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="upi-name">
-          Payee Name
+          Payee name
         </Label>
         <Input
           id="upi-name"
           type="text"
-          placeholder="Your Name"
+          placeholder="Your name"
           value={upiData.name}
           onChange={(e) => setUpiData({ ...upiData, name: e.target.value })}
         />
@@ -110,7 +105,7 @@ export function UPIForm() {
       </div>
 
       <p className="text-muted-foreground text-xs">
-        Scanning will open UPI payment app with pre-filled details
+        Scanning will open a UPI app with these payment details
       </p>
     </div>
   );

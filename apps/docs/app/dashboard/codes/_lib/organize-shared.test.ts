@@ -124,15 +124,21 @@ describe("list filters", () => {
 
   it("builds hrefs and resets the page on filter changes", () => {
     const filters = parseCodesFilters({ q: "a b", page: "2" });
-    assert.equal(codesHref("/dashboard", filters), "/dashboard?q=a+b");
     assert.equal(
-      codesHref("/dashboard", filters, { page: 3 }),
-      "/dashboard?q=a+b&page=3",
+      codesHref("/dashboard/codes", filters),
+      "/dashboard/codes?q=a+b",
     );
     assert.equal(
-      codesHref("/dashboard", filters, { q: "", tags: ["t1", "t2"] }),
-      "/dashboard?tags=t1%2Ct2",
+      codesHref("/dashboard/codes", filters, { page: 3 }),
+      "/dashboard/codes?q=a+b&page=3",
     );
-    assert.equal(codesHref("/dashboard", parseCodesFilters({})), "/dashboard");
+    assert.equal(
+      codesHref("/dashboard/codes", filters, { q: "", tags: ["t1", "t2"] }),
+      "/dashboard/codes?tags=t1%2Ct2",
+    );
+    assert.equal(
+      codesHref("/dashboard/codes", parseCodesFilters({})),
+      "/dashboard/codes",
+    );
   });
 });

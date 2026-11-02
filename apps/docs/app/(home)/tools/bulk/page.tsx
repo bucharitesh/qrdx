@@ -12,6 +12,7 @@ export const metadata: Metadata = createMetadata({
   description:
     "Generate up to 5,000 QR codes from a CSV file and download them as PNG or SVG in one ZIP. Custom styles and file names. Runs entirely in your browser.",
   path: "/tools/bulk",
+  ownOgImage: true,
 });
 
 const steps = [

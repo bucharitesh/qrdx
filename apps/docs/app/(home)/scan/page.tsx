@@ -30,8 +30,9 @@ import { isWebRiskConfigured } from "@/lib/safety/web-risk";
 export const metadata: Metadata = createMetadata({
   title: "QR Code Scanner Online",
   description:
-    "Free online QR code and barcode scanner. Scan with your camera or from an image, see where a link really goes before it opens, and keep your history on your device. No app, no signup.",
+    "Free online QR code and barcode scanner. Scan with your camera or from an image and see where a link really goes before it opens. No app, no signup.",
   path: "/scan",
+  ownOgImage: true,
   manifest: "/scan/manifest.webmanifest",
 });
 

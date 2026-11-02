@@ -31,7 +31,7 @@ export function PinterestForm() {
     <div className="space-y-3">
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="pinterest-username">
-          Pinterest Username *
+          Pinterest username *
         </Label>
         <Input
           id="pinterest-username"
@@ -42,9 +42,6 @@ export function PinterestForm() {
             setPinterestData({ ...pinterestData, username: e.target.value })
           }
         />
-        <p className="text-muted-foreground text-[11px]">
-          Enter your Pinterest username
-        </p>
       </div>
 
       <p className="text-muted-foreground text-xs">

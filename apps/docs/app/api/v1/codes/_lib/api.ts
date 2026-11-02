@@ -4,11 +4,15 @@ import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import type { NextRequest } from "next/server";
 import type { QrCodeView } from "@/app/dashboard/codes/_lib/qr-codes";
 import {
+  insufficientKeyScopeError,
   insufficientScopeError,
+  invalidApiKeyError,
   invalidTokenError,
   missingTokenError,
   oauthCompatibleError,
 } from "@/lib/api-errors";
+import { authenticateApiKey } from "@/lib/api-keys/service";
+import { API_KEY_PREFIX, isApiKeyFormat } from "@/lib/api-keys/shared";
 import { consumeApiQuota } from "@/lib/api-quota";
 import { HttpError } from "@/lib/error-response";
 import { baseUrl } from "@/lib/metadata";
@@ -62,16 +66,64 @@ async function sessionScope(req: NextRequest): Promise<ActiveScope> {
 
 export interface ApiCaller {
   scope: ActiveScope;
-  /** A session, or a token with codes:write (not only codes:read) */
+  /** A session, or a token or key with codes:write (not only codes:read) */
   canWrite: boolean;
 }
 
+/** Who a Bearer credential acts as, and its scopes. */
+interface BearerCaller {
+  kind: "oauth" | "apiKey";
+  scope: ActiveScope;
+  scopes: string[];
+}
+
 /**
- * Resolves who is calling: an OAuth bearer token (acts on the user's personal
- * workspace) or the browser session (acts on the active team or personal
- * workspace). Applies per-user and per-IP rate limits, then the workspace's
- * daily quota (lib/api-quota), which every authenticated request counts
- * against, token or session.
+ * An API key (`qrdx_…`, lib/api-keys) acts on its workspace with its
+ * creator's current role there; an OAuth access token acts on its user's
+ * personal workspace as its owner. Throws the 401 for a bad credential, in
+ * the words of the kind of credential it looks like.
+ */
+async function authenticateBearer(token: string): Promise<BearerCaller> {
+  if (isApiKeyFormat(token)) {
+    const key = await authenticateApiKey(token);
+    if (!key) throw invalidApiKeyError();
+    return {
+      kind: "apiKey",
+      scope: {
+        userId: key.userId,
+        organizationId: key.organizationId,
+        role: key.role,
+      },
+      scopes: key.scopes,
+    };
+  }
+  const oauth = await validateAccessToken(token);
+  if (oauth) {
+    return {
+      kind: "oauth",
+      scope: { userId: oauth.userId, organizationId: null, role: "owner" },
+      scopes: oauth.scopes,
+    };
+  }
+  // A truncated or mistyped key reads as a key, not as an OAuth token.
+  throw token.startsWith(API_KEY_PREFIX)
+    ? invalidApiKeyError()
+    : invalidTokenError();
+}
+
+function scopeError(bearer: BearerCaller, scope: string): HttpError {
+  return bearer.kind === "apiKey"
+    ? insufficientKeyScopeError(scope)
+    : insufficientScopeError(scope);
+}
+
+/**
+ * Resolves who is calling: an API key (acts on its workspace, personal or
+ * team, with its creator's role), an OAuth bearer token (acts on the user's
+ * personal workspace) or the browser session (acts on the active team or
+ * personal workspace). Applies per-user and per-IP rate limits, then the
+ * workspace's daily quota (lib/api-quota), which every authenticated request
+ * counts against, key, token or session.
  */
 export async function resolveApiCaller(
   req: NextRequest,
@@ -81,14 +133,13 @@ export async function resolveApiCaller(
   let caller: ApiCaller;
 
   if (authorization?.startsWith("Bearer ")) {
-    const token = await validateAccessToken(authorization.slice(7).trim());
-    if (!token) throw invalidTokenError();
-    if (!SCOPES_FOR[access].some((s) => token.scopes.includes(s))) {
-      throw insufficientScopeError(`codes:${access}`);
+    const bearer = await authenticateBearer(authorization.slice(7).trim());
+    if (!SCOPES_FOR[access].some((s) => bearer.scopes.includes(s))) {
+      throw scopeError(bearer, `codes:${access}`);
     }
     caller = {
-      scope: { userId: token.userId, organizationId: null, role: "owner" },
-      canWrite: SCOPES_FOR.write.some((s) => token.scopes.includes(s)),
+      scope: bearer.scope,
+      canWrite: SCOPES_FOR.write.some((s) => bearer.scopes.includes(s)),
     };
   } else {
     if (access === "write") assertSameOrigin(req);
@@ -122,13 +173,19 @@ export async function resolveApiScope(
 interface ApiToken {
   userId: string;
   scopes: string[];
+  /**
+   * The team of a team API key; null for OAuth tokens and personal keys,
+   * which act on the user's personal workspace.
+   */
+  organizationId: string | null;
 }
 
 /**
- * Bearer-token auth for the token-only endpoints (/v1/me, /v1/themes), plus
- * the daily quota of the token owner's personal workspace. Errors carry the
- * API shape and the OAuth fields these endpoints always sent
- * (lib/api-errors oauthCompatibleError).
+ * Bearer auth (API key or OAuth token) for the endpoints that take no browser
+ * session (/v1/me, /v1/themes), plus the daily quota of the key's workspace
+ * or the token owner's personal workspace. Errors carry the API shape and the
+ * OAuth fields these endpoints always sent (lib/api-errors
+ * oauthCompatibleError).
  */
 export async function requireApiToken(
   req: NextRequest,
@@ -143,22 +200,31 @@ export async function requireApiToken(
       error: oauthCompatibleError("invalid_token", missingTokenError()),
     };
   }
-  const tokenData = await validateAccessToken(authorization.slice(7).trim());
-  if (!tokenData) {
-    return {
-      error: oauthCompatibleError("invalid_token", invalidTokenError()),
-    };
+  let bearer: BearerCaller;
+  try {
+    bearer = await authenticateBearer(authorization.slice(7).trim());
+  } catch (error) {
+    if (!(error instanceof HttpError)) throw error;
+    return { error: oauthCompatibleError("invalid_token", error) };
   }
-  if (!tokenData.scopes.includes(requiredScope)) {
+  if (!bearer.scopes.includes(requiredScope)) {
     return {
       error: oauthCompatibleError(
         "insufficient_scope",
-        insufficientScopeError(requiredScope),
+        scopeError(bearer, requiredScope),
       ),
     };
   }
 
-  const scope = { userId: tokenData.userId, organizationId: null };
+  const tokenData: ApiToken = {
+    userId: bearer.scope.userId,
+    scopes: bearer.scopes,
+    organizationId: bearer.scope.organizationId,
+  };
+  const scope = {
+    userId: tokenData.userId,
+    organizationId: tokenData.organizationId,
+  };
   try {
     await consumeApiQuota(req, scope, await getPlanForScope(scope));
   } catch (error) {

@@ -44,7 +44,7 @@ export function CalcomForm() {
     <div className="space-y-3">
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="calcom-booking-url">
-          Cal.com Booking URL *
+          Cal.com booking URL *
         </Label>
         <Input
           id="calcom-booking-url"
@@ -56,11 +56,6 @@ export function CalcomForm() {
         />
         {errors.bookingUrl && (
           <p className="text-destructive text-[11px]">{errors.bookingUrl}</p>
-        )}
-        {!errors.bookingUrl && (
-          <p className="text-muted-foreground text-[11px]">
-            Enter your Cal.com booking link
-          </p>
         )}
       </div>
       <AccountSourcePicker

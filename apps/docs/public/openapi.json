@@ -3,7 +3,7 @@
   "info": {
     "title": "QRdx API",
     "version": "1.0.0",
-    "description": "Create and manage dynamic QR codes, read scan analytics, report conversions and subscribe to events over HTTP.\n\n- **Base URL:** `https://api.qrdx.dev/v1`. The same routes answer at `https://qrdx.dev/api/v1`.\n- **Auth:** an OAuth 2.0 access token, `Authorization: Bearer <token>` ([how to get one](https://qrdx.dev/docs/developers/rest-api#get-an-access-token)). Tokens act on the token owner's personal workspace. API keys aren't available yet. The image API (`GET /qr`) needs no token.\n- **Errors:** `{ \"code\", \"message\", \"status\" }`, plus `docs` when a page explains the fix ([every code](https://qrdx.dev/docs/developers/errors)).\n- **Limits:** a daily quota per workspace (1,000 requests on Free, 10,000 on Pro, 100,000 on Business), reported in `X-RateLimit-*` headers, plus per-minute limits. Over a limit you get `429` with `Retry-After`.",
+    "description": "Create and manage dynamic QR codes, read scan analytics, report conversions and subscribe to events over HTTP.\n\n- **Base URL:** `https://api.qrdx.dev/v1`. The same routes answer at `https://qrdx.dev/api/v1`.\n- **Auth:** an API key, `Authorization: Bearer qrdx_…` ([create one](https://qrdx.dev/docs/developers/api-keys)), or an OAuth 2.0 access token in the same header for apps that act for other people ([OAuth](https://qrdx.dev/docs/developers/rest-api#get-an-access-token)). A key acts on the workspace it was created in, with its creator's role there; a token acts on its user's personal workspace. The image API (`GET /qr`) needs neither.\n- **Errors:** `{ \"code\", \"message\", \"status\" }`, plus `docs` when a page explains the fix ([every code](https://qrdx.dev/docs/developers/errors)).\n- **Limits:** a daily quota per workspace (1,000 requests on Free, 10,000 on Pro, 100,000 on Business), reported in `X-RateLimit-*` headers, plus per-minute limits. Over a limit you get `429` with `Retry-After`.",
     "contact": {
       "name": "QRdx",
       "url": "https://qrdx.dev/docs/developers/quickstart"
@@ -50,10 +50,13 @@
     },
     {
       "name": "Profile",
-      "description": "The user behind the token."
+      "description": "The user behind the key or token."
     }
   ],
   "security": [
+    {
+      "apiKey": []
+    },
     {
       "oauth2": []
     }
@@ -65,7 +68,7 @@
         "summary": "Render a QR code image",
         "tags": ["QR images"],
         "security": [],
-        "description": "A QR code image as SVG (default), PNG or EPS, with no token.\n\n**No token needed**, and it doesn't use your daily quota: put the URL straight into an `<img>` tag. The same query always returns the same bytes, so responses are cached for a year. Colors are hex without `#` (or with `#` encoded as `%23`). Limit: 300 requests a minute per IP address. More in the [Image API guide](https://qrdx.dev/docs/developers/image-api).",
+        "description": "A QR code image as SVG (default), PNG or EPS, with no key.\n\n**No key or token needed**, and it doesn't use your daily quota: put the URL straight into an `<img>` tag. The same query always returns the same bytes, so responses are cached for a year. Colors are hex without `#` (or with `#` encoded as `%23`). Limit: 300 requests a minute per IP address. More in the [Image API guide](https://qrdx.dev/docs/developers/image-api).",
         "parameters": [
           {
             "name": "data",
@@ -360,10 +363,13 @@
         "tags": ["Codes"],
         "security": [
           {
+            "apiKey": []
+          },
+          {
             "oauth2": ["codes:read"]
           }
         ],
-        "description": "The dynamic codes of the token owner's personal workspace, newest first.\n\nPage through them with `limit` and `offset`; `pagination.total` counts every match.",
+        "description": "The dynamic codes of the workspace the key or token acts on, newest first.\n\nPage through them with `limit` and `offset`; `pagination.total` counts every match.\n\n**Scope:** `codes:read` or `codes:write`, for API keys and OAuth tokens alike.",
         "parameters": [
           {
             "name": "status",
@@ -524,10 +530,13 @@
         "tags": ["Codes"],
         "security": [
           {
+            "apiKey": []
+          },
+          {
             "oauth2": ["codes:write"]
           }
         ],
-        "description": "Creates one dynamic code, or up to 100 at once.\n\nSend an object for one code, or an array for several (Pro). The response's `shortLink` is what the QR code encodes: point it somewhere else later with PATCH and the printed code keeps working. Render it with the image API, for example `https://api.qrdx.dev/v1/qr?data=<shortLink>`. Free workspaces have 10 active codes. Create requests are limited to 20 a minute.",
+        "description": "Creates one dynamic code, or up to 100 at once.\n\nSend an object for one code, or an array for several (Pro). The response's `shortLink` is what the QR code encodes: point it somewhere else later with PATCH and the printed code keeps working. Render it with the image API, for example `https://api.qrdx.dev/v1/qr?data=<shortLink>`. Free workspaces have 10 active codes. Create requests are limited to 20 a minute.\n\n**Scope:** `codes:write`, for API keys and OAuth tokens alike.",
         "requestBody": {
           "required": true,
           "content": {
@@ -738,10 +747,13 @@
         "tags": ["Codes"],
         "security": [
           {
+            "apiKey": []
+          },
+          {
             "oauth2": ["codes:read"]
           }
         ],
-        "description": "One dynamic code of the token owner's personal workspace.",
+        "description": "One dynamic code of the workspace the key or token acts on.\n\n**Scope:** `codes:read` or `codes:write`, for API keys and OAuth tokens alike.",
         "responses": {
           "200": {
             "description": "The code",
@@ -826,10 +838,13 @@
         "tags": ["Codes"],
         "security": [
           {
+            "apiKey": []
+          },
+          {
             "oauth2": ["codes:write"]
           }
         ],
-        "description": "Changes a code's destination, title, design, domain or back-half, or archives it.\n\nSend only the fields to change. `archived: true` stops redirects and frees a plan slot; `false` restores the code. The destination, title and design stay editable on every plan.",
+        "description": "Changes a code's destination, title, design, domain or back-half, or archives it.\n\nSend only the fields to change. `archived: true` stops redirects and frees a plan slot; `false` restores the code. The destination, title and design stay editable on every plan.\n\n**Scope:** `codes:write`, for API keys and OAuth tokens alike.",
         "requestBody": {
           "required": true,
           "content": {
@@ -956,10 +971,13 @@
         "tags": ["Codes"],
         "security": [
           {
+            "apiKey": []
+          },
+          {
             "oauth2": ["codes:write"]
           }
         ],
-        "description": "Permanently deletes a code and its scan history.\n\nIts short link stops working, and this can't be undone. To pause a code and keep its scans, archive it with PATCH instead.",
+        "description": "Permanently deletes a code and its scan history.\n\nIts short link stops working, and this can't be undone. To pause a code and keep its scans, archive it with PATCH instead.\n\n**Scope:** `codes:write`, for API keys and OAuth tokens alike.",
         "responses": {
           "200": {
             "description": "Deleted",
@@ -1050,10 +1068,13 @@
         "tags": ["Scans"],
         "security": [
           {
+            "apiKey": []
+          },
+          {
             "oauth2": ["codes:read"]
           }
         ],
-        "description": "Scan analytics of a code for a range of days.\n\nTotals, a daily series and the top countries, cities, devices, systems, browsers and referrers. The range is clamped to how long the plan keeps analytics. With `limit` above 0 the response also lists individual scans, newest first: pass the response's `nextBefore` as `before` for the next page.",
+        "description": "Scan analytics of a code for a range of days.\n\nTotals, a daily series and the top countries, cities, devices, systems, browsers and referrers. The range is clamped to how long the plan keeps analytics. With `limit` above 0 the response also lists individual scans, newest first: pass the response's `nextBefore` as `before` for the next page.\n\n**Scope:** `codes:read` or `codes:write`, for API keys and OAuth tokens alike.",
         "parameters": [
           {
             "name": "range",
@@ -1206,11 +1227,14 @@
         "tags": ["Conversions"],
         "security": [
           {
+            "apiKey": []
+          },
+          {
             "oauth2": ["codes:write"]
           },
           {}
         ],
-        "description": "Attributes a sale, sign-up or other conversion to the scan that brought the visitor (Business).\n\nFrom your server, send a token and the scan's `sid`, or the code id as `code`. From the browser, `conversions.js` sends `sid` with no token, for codes with conversion tracking turned on. An `id`, such as your order id, makes retries safe: a repeat returns 200 with `duplicate: true`. More in [Tracking and conversions](https://qrdx.dev/docs/tracking-and-conversions).",
+        "description": "Attributes a sale, sign-up or other conversion to the scan that brought the visitor (Business).\n\nFrom your server, send an API key (or token) and the scan's `sid`, or the code id as `code`. From the browser, `conversions.js` sends `sid` with no key, for codes with conversion tracking turned on. An `id`, such as your order id, makes retries safe: a repeat returns 200 with `duplicate: true`. More in [Tracking and conversions](https://qrdx.dev/docs/tracking-and-conversions).\n\n**Scope:** `codes:write`, for API keys and OAuth tokens alike (when you send a key or token).",
         "requestBody": {
           "required": true,
           "content": {
@@ -1224,7 +1248,7 @@
                     "maxLength": 200
                   },
                   "code": {
-                    "description": "The code id, when no scan is known (token requests only)",
+                    "description": "The code id, when no scan is known (key or token requests only)",
                     "type": "string",
                     "pattern": "^[A-Za-z0-9_-]{1,64}$"
                   },
@@ -1399,10 +1423,13 @@
         "tags": ["Hooks"],
         "security": [
           {
+            "apiKey": []
+          },
+          {
             "oauth2": ["codes:read"]
           }
         ],
-        "description": "The workspace's hooks: REST Hooks subscriptions and webhook endpoints.\n\n`target_url` shows only the origin unless the token has `codes:write`. Listing works on every plan; subscribing needs Business.",
+        "description": "The workspace's hooks: REST Hooks subscriptions and webhook endpoints.\n\n`target_url` shows only the origin unless the key or token has `codes:write` and, in a team, belongs to an owner or admin. Listing works on every plan; subscribing needs Business.\n\n**Scope:** `codes:read` or `codes:write`, for API keys and OAuth tokens alike.",
         "responses": {
           "200": {
             "description": "The hooks",
@@ -1470,10 +1497,13 @@
         "tags": ["Hooks"],
         "security": [
           {
+            "apiKey": []
+          },
+          {
             "oauth2": ["codes:write"]
           }
         ],
-        "description": "Subscribes a URL to events, the REST Hooks way Zapier, Make and n8n call it (Business).\n\nQRdx posts each event to the URL, signed with the `secret` in the response, which is shown only once ([verifying signatures](https://qrdx.dev/docs/webhooks)). Send the URL as `target_url` (or `targetUrl`, `hookUrl`, `hook_url` or `url`) and one `event` or several `events`.",
+        "description": "Subscribes a URL to events, the REST Hooks way Zapier, Make and n8n call it (Business).\n\nQRdx posts each event to the URL, signed with the `secret` in the response, which is shown only once ([verifying signatures](https://qrdx.dev/docs/webhooks)). Send the URL as `target_url` (or `targetUrl`, `hookUrl`, `hook_url` or `url`) and one `event` or several `events`.\n\n**Scope:** `codes:write`, for API keys and OAuth tokens alike.",
         "requestBody": {
           "required": true,
           "content": {
@@ -1674,10 +1704,13 @@
         "tags": ["Hooks"],
         "security": [
           {
+            "apiKey": []
+          },
+          {
             "oauth2": ["codes:read"]
           }
         ],
-        "description": "One hook of the workspace.",
+        "description": "One hook of the workspace.\n\n**Scope:** `codes:read` or `codes:write`, for API keys and OAuth tokens alike.",
         "responses": {
           "200": {
             "description": "The hook",
@@ -1746,10 +1779,13 @@
         "tags": ["Hooks"],
         "security": [
           {
+            "apiKey": []
+          },
+          {
             "oauth2": ["codes:write"]
           }
         ],
-        "description": "Unsubscribes a hook: events stop at once.\n\nThis is the REST Hooks unsubscribe Zapier calls when a Zap is turned off. It works on every plan.",
+        "description": "Unsubscribes a hook: events stop at once.\n\nThis is the REST Hooks unsubscribe Zapier calls when a Zap is turned off. It works on every plan.\n\n**Scope:** `codes:write`, for API keys and OAuth tokens alike.",
         "responses": {
           "204": {
             "description": "Unsubscribed (no body)",
@@ -1793,10 +1829,13 @@
         "tags": ["Hooks"],
         "security": [
           {
+            "apiKey": []
+          },
+          {
             "oauth2": ["codes:read"]
           }
         ],
-        "description": "Sample payloads of an event, shaped exactly like real deliveries.\n\nZapier's “perform list”: up to three payloads built from the workspace's recent data, newest first, or a fixed example when it has none. Use it to map fields while building a Zap.",
+        "description": "Sample payloads of an event, shaped exactly like real deliveries.\n\nZapier's “perform list”: up to three payloads built from the workspace's recent data, newest first, or a fixed example when it has none. Use it to map fields while building a Zap.\n\n**Scope:** `codes:read` or `codes:write`, for API keys and OAuth tokens alike.",
         "parameters": [
           {
             "name": "event",
@@ -2011,14 +2050,17 @@
     "/me": {
       "get": {
         "operationId": "getProfile",
-        "summary": "Get the token's user",
+        "summary": "Get the profile",
         "tags": ["Profile"],
         "security": [
+          {
+            "apiKey": []
+          },
           {
             "oauth2": ["profile:read"]
           }
         ],
-        "description": "The id, name, email and avatar of the user who authorized the token.\n\nTokens only: a browser session gets `401`.",
+        "description": "The id, name, email and avatar of the user who created the API key or authorized the token.\n\nKeys and tokens only: a browser session gets `401`.\n\n**Scope:** `profile:read`, for API keys and OAuth tokens alike.",
         "responses": {
           "200": {
             "description": "The user",
@@ -2081,10 +2123,13 @@
         "tags": ["Themes"],
         "security": [
           {
+            "apiKey": []
+          },
+          {
             "oauth2": ["themes:read"]
           }
         ],
-        "description": "The user's saved QR themes: each one's name and design.\n\nTokens only: a browser session gets `401`.",
+        "description": "Saved QR themes, each one's name and design: the user's own themes for an OAuth token or a personal API key, the team's shared themes for a team key.\n\nKeys and tokens only: a browser session gets `401`.\n\n**Scope:** `themes:read`, for API keys and OAuth tokens alike.",
         "responses": {
           "200": {
             "description": "The themes",
@@ -2169,10 +2214,13 @@
         "tags": ["Themes"],
         "security": [
           {
+            "apiKey": []
+          },
+          {
             "oauth2": ["themes:read"]
           }
         ],
-        "description": "One of the user's saved themes.",
+        "description": "One saved theme, from the same set List themes returns for the key or token.\n\n**Scope:** `themes:read`, for API keys and OAuth tokens alike.",
         "responses": {
           "200": {
             "description": "The theme",
@@ -2239,9 +2287,15 @@
   },
   "components": {
     "securitySchemes": {
+      "apiKey": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "qrdx_ followed by 40 letters and digits",
+        "description": "An API key, sent as `Authorization: Bearer qrdx_…`. Create one in [Settings → API keys & apps](https://qrdx.dev/settings/developers): it is shown once. A key acts on the workspace it was created in (personal or team) as its creator, with their current role there, and only within its scopes, the same scopes as OAuth (each operation names the one it needs). [API keys](https://qrdx.dev/docs/developers/api-keys)."
+      },
       "oauth2": {
         "type": "oauth2",
-        "description": "An OAuth 2.0 access token, sent as `Authorization: Bearer <token>`. Register an app in [Settings → Developers](https://qrdx.dev/settings/developers), send the user through authorization (PKCE S256), then exchange the code for a token. Access tokens last 1 hour; refresh tokens 30 days. [Step by step](https://qrdx.dev/docs/developers/rest-api#get-an-access-token).",
+        "description": "An OAuth 2.0 access token, sent as `Authorization: Bearer <token>`. Register an app in [Settings → API keys & apps](https://qrdx.dev/settings/developers), send the user through authorization (PKCE S256), then exchange the code for a token. Access tokens last 1 hour; refresh tokens 30 days. [Step by step](https://qrdx.dev/docs/developers/rest-api#get-an-access-token).",
         "flows": {
           "authorizationCode": {
             "authorizationUrl": "https://qrdx.dev/api/oauth/authorize",
@@ -2419,10 +2473,10 @@
         }
       },
       "Error401_Unauthorized_InvalidToken": {
-        "description": "`UNAUTHORIZED`: No credentials: the request has no `Authorization: Bearer` header (and no QRdx browser session).\n\n`INVALID_TOKEN`: The access token is unknown, expired (tokens last one hour) or revoked.",
+        "description": "`UNAUTHORIZED`: No credentials: the request has no `Authorization: Bearer` header (and no QRdx browser session).\n\n`INVALID_TOKEN`: The API key or access token is unknown, revoked or expired (access tokens last one hour), or the key's creator was banned or left the key's team.",
         "headers": {
           "WWW-Authenticate": {
-            "description": "`Bearer realm=\"QRdx API\"`, with `error=\"invalid_token\"` for a bad token",
+            "description": "`Bearer realm=\"QRdx API\"`, with `error=\"invalid_token\"` for a bad key or token",
             "schema": {
               "type": "string"
             }
@@ -2438,18 +2492,18 @@
                 "summary": "UNAUTHORIZED",
                 "value": {
                   "code": "UNAUTHORIZED",
-                  "message": "Missing access token. Send an OAuth access token as \"Authorization: Bearer <token>\". To get one, register an OAuth app at https://qrdx.dev/settings/developers and follow https://qrdx.dev/docs/developers/rest-api#get-an-access-token.",
+                  "message": "Missing API key. Send an API key as \"Authorization: Bearer <key>\"; create one at https://qrdx.dev/settings/developers. OAuth access tokens go in the same header.",
                   "status": 401,
-                  "docs": "https://qrdx.dev/docs/developers/rest-api#get-an-access-token"
+                  "docs": "https://qrdx.dev/docs/developers/api-keys"
                 }
               },
               "INVALID_TOKEN": {
                 "summary": "INVALID_TOKEN",
                 "value": {
                   "code": "INVALID_TOKEN",
-                  "message": "Invalid or expired access token. Access tokens last one hour: get a new one with your refresh token, or send the user through authorization again.",
+                  "message": "Invalid API key: it doesn't exist, was revoked or has expired, or its creator left the workspace. Check that you copied the whole key, or create a new one at https://qrdx.dev/settings/developers.",
                   "status": 401,
-                  "docs": "https://qrdx.dev/docs/developers/rest-api#get-an-access-token"
+                  "docs": "https://qrdx.dev/docs/developers/api-keys"
                 }
               }
             }
@@ -2457,10 +2511,10 @@
         }
       },
       "Error401_Unauthorized_InvalidToken_OAuth": {
-        "description": "`UNAUTHORIZED`: No credentials: the request has no `Authorization: Bearer` header (and no QRdx browser session).\n\n`INVALID_TOKEN`: The access token is unknown, expired (tokens last one hour) or revoked.",
+        "description": "`UNAUTHORIZED`: No credentials: the request has no `Authorization: Bearer` header (and no QRdx browser session).\n\n`INVALID_TOKEN`: The API key or access token is unknown, revoked or expired (access tokens last one hour), or the key's creator was banned or left the key's team.",
         "headers": {
           "WWW-Authenticate": {
-            "description": "`Bearer realm=\"QRdx API\"`, with `error=\"invalid_token\"` for a bad token",
+            "description": "`Bearer realm=\"QRdx API\"`, with `error=\"invalid_token\"` for a bad key or token",
             "schema": {
               "type": "string"
             }
@@ -2476,22 +2530,22 @@
                 "summary": "UNAUTHORIZED",
                 "value": {
                   "error": "invalid_token",
-                  "error_description": "Missing access token. Send an OAuth access token as \"Authorization: Bearer <token>\". To get one, register an OAuth app at https://qrdx.dev/settings/developers and follow https://qrdx.dev/docs/developers/rest-api#get-an-access-token.",
+                  "error_description": "Missing API key. Send an API key as \"Authorization: Bearer <key>\"; create one at https://qrdx.dev/settings/developers. OAuth access tokens go in the same header.",
                   "code": "UNAUTHORIZED",
-                  "message": "Missing access token. Send an OAuth access token as \"Authorization: Bearer <token>\". To get one, register an OAuth app at https://qrdx.dev/settings/developers and follow https://qrdx.dev/docs/developers/rest-api#get-an-access-token.",
+                  "message": "Missing API key. Send an API key as \"Authorization: Bearer <key>\"; create one at https://qrdx.dev/settings/developers. OAuth access tokens go in the same header.",
                   "status": 401,
-                  "docs": "https://qrdx.dev/docs/developers/rest-api#get-an-access-token"
+                  "docs": "https://qrdx.dev/docs/developers/api-keys"
                 }
               },
               "INVALID_TOKEN": {
                 "summary": "INVALID_TOKEN",
                 "value": {
                   "error": "invalid_token",
-                  "error_description": "Invalid or expired access token. Access tokens last one hour: get a new one with your refresh token, or send the user through authorization again.",
+                  "error_description": "Invalid API key: it doesn't exist, was revoked or has expired, or its creator left the workspace. Check that you copied the whole key, or create a new one at https://qrdx.dev/settings/developers.",
                   "code": "INVALID_TOKEN",
-                  "message": "Invalid or expired access token. Access tokens last one hour: get a new one with your refresh token, or send the user through authorization again.",
+                  "message": "Invalid API key: it doesn't exist, was revoked or has expired, or its creator left the workspace. Check that you copied the whole key, or create a new one at https://qrdx.dev/settings/developers.",
                   "status": 401,
-                  "docs": "https://qrdx.dev/docs/developers/rest-api#get-an-access-token"
+                  "docs": "https://qrdx.dev/docs/developers/api-keys"
                 }
               }
             }
@@ -2547,7 +2601,7 @@
         }
       },
       "Error403_InsufficientScope_CodesRead": {
-        "description": "`INSUFFICIENT_SCOPE`: The token is valid but lacks the scope this endpoint needs.",
+        "description": "`INSUFFICIENT_SCOPE`: The API key or token is valid but lacks the scope this endpoint needs.",
         "content": {
           "application/json": {
             "schema": {
@@ -2558,9 +2612,9 @@
                 "summary": "INSUFFICIENT_SCOPE",
                 "value": {
                   "code": "INSUFFICIENT_SCOPE",
-                  "message": "This token needs the 'codes:read' scope. Add it to your app and ask for it when the user authorizes.",
+                  "message": "This API key needs the 'codes:read' scope. Create a key that includes it at https://qrdx.dev/settings/developers; a key's scopes can't be changed.",
                   "status": 403,
-                  "docs": "https://qrdx.dev/docs/developers/rest-api#endpoints"
+                  "docs": "https://qrdx.dev/docs/developers/api-keys"
                 }
               }
             }
@@ -2568,7 +2622,7 @@
         }
       },
       "Error403_InsufficientScope_ConversionsOff_CodesWrite": {
-        "description": "`INSUFFICIENT_SCOPE`: The token is valid but lacks the scope this endpoint needs.\n\n`CONVERSIONS_OFF`: A browser conversion for a code that doesn't have conversion tracking turned on.",
+        "description": "`INSUFFICIENT_SCOPE`: The API key or token is valid but lacks the scope this endpoint needs.\n\n`CONVERSIONS_OFF`: A browser conversion for a code that doesn't have conversion tracking turned on.",
         "content": {
           "application/json": {
             "schema": {
@@ -2579,9 +2633,9 @@
                 "summary": "INSUFFICIENT_SCOPE",
                 "value": {
                   "code": "INSUFFICIENT_SCOPE",
-                  "message": "This token needs the 'codes:write' scope. Add it to your app and ask for it when the user authorizes.",
+                  "message": "This API key needs the 'codes:write' scope. Create a key that includes it at https://qrdx.dev/settings/developers; a key's scopes can't be changed.",
                   "status": 403,
-                  "docs": "https://qrdx.dev/docs/developers/rest-api#endpoints"
+                  "docs": "https://qrdx.dev/docs/developers/api-keys"
                 }
               },
               "CONVERSIONS_OFF": {
@@ -2597,7 +2651,7 @@
         }
       },
       "Error403_InsufficientScope_Forbidden_CodesWrite": {
-        "description": "`INSUFFICIENT_SCOPE`: The token is valid but lacks the scope this endpoint needs.\n\n`FORBIDDEN`: The caller may not do this: a team member deleting a code someone else created, a team member managing hooks, or a browser-session write from another site.",
+        "description": "`INSUFFICIENT_SCOPE`: The API key or token is valid but lacks the scope this endpoint needs.\n\n`FORBIDDEN`: The caller may not do this: a team member deleting a code someone else created, a team member managing hooks, or a browser-session write from another site. A team API key can do only what its creator's role allows.",
         "content": {
           "application/json": {
             "schema": {
@@ -2608,16 +2662,16 @@
                 "summary": "INSUFFICIENT_SCOPE",
                 "value": {
                   "code": "INSUFFICIENT_SCOPE",
-                  "message": "This token needs the 'codes:write' scope. Add it to your app and ask for it when the user authorizes.",
+                  "message": "This API key needs the 'codes:write' scope. Create a key that includes it at https://qrdx.dev/settings/developers; a key's scopes can't be changed.",
                   "status": 403,
-                  "docs": "https://qrdx.dev/docs/developers/rest-api#endpoints"
+                  "docs": "https://qrdx.dev/docs/developers/api-keys"
                 }
               },
               "FORBIDDEN": {
                 "summary": "FORBIDDEN",
                 "value": {
                   "code": "FORBIDDEN",
-                  "message": "The caller may not do this: a team member deleting a code someone else created, a team member managing hooks, or a browser-session write from another site.",
+                  "message": "The caller may not do this: a team member deleting a code someone else created, a team member managing hooks, or a browser-session write from another site. A team API key can do only what its creator's role allows.",
                   "status": 403
                 }
               }
@@ -2626,7 +2680,7 @@
         }
       },
       "Error403_InsufficientScope_Forbidden_LimitReached_CodesWrite": {
-        "description": "`INSUFFICIENT_SCOPE`: The token is valid but lacks the scope this endpoint needs.\n\n`FORBIDDEN`: The caller may not do this: a team member deleting a code someone else created, a team member managing hooks, or a browser-session write from another site.\n\n`LIMIT_REACHED`: The workspace already has 20 webhook endpoints and hooks.",
+        "description": "`INSUFFICIENT_SCOPE`: The API key or token is valid but lacks the scope this endpoint needs.\n\n`FORBIDDEN`: The caller may not do this: a team member deleting a code someone else created, a team member managing hooks, or a browser-session write from another site. A team API key can do only what its creator's role allows.\n\n`LIMIT_REACHED`: The workspace already has 20 webhook endpoints and hooks.",
         "content": {
           "application/json": {
             "schema": {
@@ -2637,16 +2691,16 @@
                 "summary": "INSUFFICIENT_SCOPE",
                 "value": {
                   "code": "INSUFFICIENT_SCOPE",
-                  "message": "This token needs the 'codes:write' scope. Add it to your app and ask for it when the user authorizes.",
+                  "message": "This API key needs the 'codes:write' scope. Create a key that includes it at https://qrdx.dev/settings/developers; a key's scopes can't be changed.",
                   "status": 403,
-                  "docs": "https://qrdx.dev/docs/developers/rest-api#endpoints"
+                  "docs": "https://qrdx.dev/docs/developers/api-keys"
                 }
               },
               "FORBIDDEN": {
                 "summary": "FORBIDDEN",
                 "value": {
                   "code": "FORBIDDEN",
-                  "message": "The caller may not do this: a team member deleting a code someone else created, a team member managing hooks, or a browser-session write from another site.",
+                  "message": "The caller may not do this: a team member deleting a code someone else created, a team member managing hooks, or a browser-session write from another site. A team API key can do only what its creator's role allows.",
                   "status": 403
                 }
               },
@@ -2663,7 +2717,7 @@
         }
       },
       "Error403_InsufficientScope_ProfileRead_OAuth": {
-        "description": "`INSUFFICIENT_SCOPE`: The token is valid but lacks the scope this endpoint needs.",
+        "description": "`INSUFFICIENT_SCOPE`: The API key or token is valid but lacks the scope this endpoint needs.",
         "content": {
           "application/json": {
             "schema": {
@@ -2674,11 +2728,11 @@
                 "summary": "INSUFFICIENT_SCOPE",
                 "value": {
                   "error": "insufficient_scope",
-                  "error_description": "This token needs the 'profile:read' scope. Add it to your app and ask for it when the user authorizes.",
+                  "error_description": "This API key needs the 'profile:read' scope. Create a key that includes it at https://qrdx.dev/settings/developers; a key's scopes can't be changed.",
                   "code": "INSUFFICIENT_SCOPE",
-                  "message": "This token needs the 'profile:read' scope. Add it to your app and ask for it when the user authorizes.",
+                  "message": "This API key needs the 'profile:read' scope. Create a key that includes it at https://qrdx.dev/settings/developers; a key's scopes can't be changed.",
                   "status": 403,
-                  "docs": "https://qrdx.dev/docs/developers/rest-api#endpoints"
+                  "docs": "https://qrdx.dev/docs/developers/api-keys"
                 }
               }
             }
@@ -2686,7 +2740,7 @@
         }
       },
       "Error403_InsufficientScope_ThemesRead_OAuth": {
-        "description": "`INSUFFICIENT_SCOPE`: The token is valid but lacks the scope this endpoint needs.",
+        "description": "`INSUFFICIENT_SCOPE`: The API key or token is valid but lacks the scope this endpoint needs.",
         "content": {
           "application/json": {
             "schema": {
@@ -2697,11 +2751,11 @@
                 "summary": "INSUFFICIENT_SCOPE",
                 "value": {
                   "error": "insufficient_scope",
-                  "error_description": "This token needs the 'themes:read' scope. Add it to your app and ask for it when the user authorizes.",
+                  "error_description": "This API key needs the 'themes:read' scope. Create a key that includes it at https://qrdx.dev/settings/developers; a key's scopes can't be changed.",
                   "code": "INSUFFICIENT_SCOPE",
-                  "message": "This token needs the 'themes:read' scope. Add it to your app and ask for it when the user authorizes.",
+                  "message": "This API key needs the 'themes:read' scope. Create a key that includes it at https://qrdx.dev/settings/developers; a key's scopes can't be changed.",
                   "status": 403,
-                  "docs": "https://qrdx.dev/docs/developers/rest-api#endpoints"
+                  "docs": "https://qrdx.dev/docs/developers/api-keys"
                 }
               }
             }
@@ -2709,7 +2763,7 @@
         }
       },
       "Error404_NotFound": {
-        "description": "`NOT_FOUND`: No such endpoint, or the code, hook, theme or custom domain doesn't exist in the token's workspace.",
+        "description": "`NOT_FOUND`: No such endpoint, or the code, hook, theme or custom domain doesn't exist in the workspace the key or token acts on.",
         "content": {
           "application/json": {
             "schema": {
@@ -2729,7 +2783,7 @@
         }
       },
       "Error404_NotFound_InvalidSid": {
-        "description": "`NOT_FOUND`: No such endpoint, or the code, hook, theme or custom domain doesn't exist in the token's workspace.\n\n`INVALID_SID`: The `qrdx_sid` is unknown or older than 30 days, the attribution window.",
+        "description": "`NOT_FOUND`: No such endpoint, or the code, hook, theme or custom domain doesn't exist in the workspace the key or token acts on.\n\n`INVALID_SID`: The `qrdx_sid` is unknown or older than 30 days, the attribution window.",
         "content": {
           "application/json": {
             "schema": {
@@ -2757,7 +2811,7 @@
         }
       },
       "Error404_NotFound_OAuth": {
-        "description": "`NOT_FOUND`: No such endpoint, or the code, hook, theme or custom domain doesn't exist in the token's workspace.",
+        "description": "`NOT_FOUND`: No such endpoint, or the code, hook, theme or custom domain doesn't exist in the workspace the key or token acts on.",
         "content": {
           "application/json": {
             "schema": {

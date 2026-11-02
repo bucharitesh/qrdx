@@ -52,7 +52,12 @@ export function CopySVGButton() {
 
   return (
     <TooltipWrapper label="Copy SVG" kbd="C" asChild>
-      <Button variant="ghost" size="sm" onClick={handleCopySVG}>
+      <Button
+        disabled={!value.trim()}
+        onClick={handleCopySVG}
+        size="sm"
+        variant="ghost"
+      >
         {copied ? (
           <>
             <Check className="size-4" />

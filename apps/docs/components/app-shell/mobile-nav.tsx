@@ -13,43 +13,36 @@ import { HamburgerMenu as Menu } from "iconsax-reactjs";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { AppSidebar } from "./app-sidebar";
-import { findActiveNavItem } from "./nav-config";
+import type { ShellData } from "./shell-data";
 
-/** Below md the sidebar lives in a sheet opened from the top of the content. */
-export function MobileNav() {
+/** Below md the sidebar, workspace switcher included, lives in a sheet. */
+export function MobileNav({ shell }: { shell: ShellData | null }) {
   const pathname = usePathname();
   // Tied to the path it was opened on, so any navigation closes it.
   const [openOn, setOpenOn] = useState<string | null>(null);
-  const current = findActiveNavItem(pathname);
 
   return (
-    <div className="mb-4 flex items-center gap-3 md:hidden">
-      <Sheet
-        onOpenChange={(open) => setOpenOn(open ? pathname : null)}
-        open={openOn === pathname}
-      >
-        <SheetTrigger asChild>
-          <Button size="sm" variant="outline">
-            <Menu aria-hidden />
-            Menu
-          </Button>
-        </SheetTrigger>
-        <SheetContent
-          className="w-72 gap-0 overflow-y-auto p-4 pt-12"
-          side="left"
+    <Sheet
+      onOpenChange={(open) => setOpenOn(open ? pathname : null)}
+      open={openOn === pathname}
+    >
+      <SheetTrigger asChild>
+        <Button
+          aria-label="Open navigation"
+          className="size-8 md:hidden"
+          size="icon"
+          variant="ghost"
         >
-          <SheetHeader className="sr-only">
-            <SheetTitle>Navigation</SheetTitle>
-            <SheetDescription>Workspace and account pages</SheetDescription>
-          </SheetHeader>
-          <AppSidebar onNavigate={() => setOpenOn(null)} />
-        </SheetContent>
-      </Sheet>
-      {current && (
-        <span className="text-muted-foreground truncate text-sm font-medium">
-          {current.label}
-        </span>
-      )}
-    </div>
+          <Menu aria-hidden className="size-5" />
+        </Button>
+      </SheetTrigger>
+      <SheetContent className="w-72 gap-0 p-0 pt-10" side="left">
+        <SheetHeader className="sr-only">
+          <SheetTitle>Navigation</SheetTitle>
+          <SheetDescription>Dashboard and settings pages</SheetDescription>
+        </SheetHeader>
+        <AppSidebar onNavigate={() => setOpenOn(null)} shell={shell} />
+      </SheetContent>
+    </Sheet>
   );
 }

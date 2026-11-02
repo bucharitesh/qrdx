@@ -123,12 +123,15 @@ describe("QRdx figures", () => {
       )) {
         used.push(figure);
       }
-      // Data-driven call sites (feature rows) list names in objects.
+      // Data-driven call sites list names in objects.
       for (const [, figure = ""] of source.matchAll(/\bfigure: "([^"]+)"/g)) {
         used.push(figure);
       }
     }
-    expect(used.length).toBeGreaterThanOrEqual(20);
+    // A floor, so a broken scan can't pass by finding nothing. It was 20
+    // until round 4 took the 7 figures out of the home features section
+    // (one visual per feature: the live demo), leaving 18.
+    expect(used.length).toBeGreaterThanOrEqual(15);
     expect(used.filter((figure) => !names.has(figure))).toEqual([]);
   });
 

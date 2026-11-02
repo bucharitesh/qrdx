@@ -43,7 +43,7 @@ export function WhatsAppForm() {
     <div className="space-y-3">
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="whatsapp-phone">
-          Phone Number *
+          Phone number *
         </Label>
         <Input
           id="whatsapp-phone"
@@ -76,7 +76,7 @@ export function WhatsAppForm() {
       </div>
 
       <p className="text-muted-foreground text-xs">
-        Scanning will open WhatsApp with pre-filled message to this number
+        Scanning will open a WhatsApp chat with this number
       </p>
     </div>
   );

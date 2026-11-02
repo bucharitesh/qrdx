@@ -69,7 +69,7 @@ export function NewCodeButton({
   const onClick = () => {
     if (isAtLimit(usage)) {
       toast.error(
-        `Your plan includes ${usage.limit} active dynamic codes. Archive one or upgrade to Pro.`,
+        `Your plan includes ${usage.limit} active dynamic codes. ${usage.unlimitedPlan ? `Archive one or upgrade to ${PLAN_NAMES[usage.unlimitedPlan]}.` : "Archive one to make room."}`,
       );
       openGetProDialog();
       return;

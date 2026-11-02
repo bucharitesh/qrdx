@@ -77,7 +77,7 @@ Known bots, link previews and browser prefetches are not counted.
 
 ## REST API
 
-Manage codes programmatically under `https://api.qrdx.dev/v1/codes`. Requests are authenticated with an OAuth access token (`Authorization: Bearer <token>`) that has the `codes:read` or `codes:write` scope; see [REST API and OAuth](/docs/developers/rest-api) for how to get one. Token requests act on your personal workspace. Requests from a signed-in browser session also work and act on the active team.
+Manage codes programmatically under `https://api.qrdx.dev/v1/codes`. Requests are authenticated with an [API key](/docs/developers/api-keys) or an OAuth access token (`Authorization: Bearer <key or token>`) that has the `codes:read` or `codes:write` scope; see [REST API](/docs/developers/rest-api) for how to get one. A key acts on the workspace it was created in; token requests act on your personal workspace. Requests from a signed-in browser session also work and act on the active team.
 
 | Method | Path | Description |
 | --- | --- | --- |

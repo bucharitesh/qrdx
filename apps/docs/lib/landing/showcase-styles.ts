@@ -105,7 +105,7 @@ export const SHOWCASE_STYLES: Record<ShowcaseStyleName, ShowcaseStyle> = {
   },
   fluid: {
     label: "Fluid",
-    shows: "Modules that melt into one outline, with brand-blue eye centres",
+    shows: "Modules that melt into one outline, with brand-blue eye centers",
     bodyPattern: "liquid",
     cornerEyePattern: "squircle",
     cornerEyeDotPattern: "squircle",
@@ -138,7 +138,7 @@ export const SHOWCASE_STYLES: Record<ShowcaseStyleName, ShowcaseStyle> = {
   },
   logo: {
     label: "Logo",
-    shows: "A centre logo (the QRdx mark) on error correction H",
+    shows: "A center logo (the QRdx mark) on error correction H",
     bodyPattern: "classy",
     cornerEyePattern: "bevel",
     cornerEyeDotPattern: "square",

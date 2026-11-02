@@ -15,6 +15,8 @@ import type {
   DomainOptions,
   DomainRef,
 } from "@/app/dashboard/domains/_lib/domains";
+import { PLAN_NAMES } from "@/lib/pricing";
+import { useKnownCodeOptionPlans } from "./code-options";
 
 const DEFAULT_VALUE = "default";
 
@@ -57,6 +59,8 @@ export function DomainPicker({
   onChange: (domainId: string | null) => void;
   disabled?: boolean;
 }) {
+  // The cheapest plan with custom domains (lib/plans.ts), when the page knows.
+  const domainPlan = useKnownCodeOptionPlans()?.upgrades.customDomains[0];
   if (!options) return null;
   const domains = [...options.domains];
   if (current && !domains.some((domain) => domain.id === current.id)) {
@@ -92,7 +96,10 @@ export function DomainPicker({
       </Select>
       {!options.canUse && (
         <p className="text-muted-foreground text-xs">
-          {options.available && "Moving codes to a custom domain needs Pro. "}
+          {options.available &&
+            (domainPlan
+              ? `Moving codes to a custom domain needs ${PLAN_NAMES[domainPlan]}. `
+              : "Your plan doesn't include custom domains. ")}
           Codes keep the domain they already use.
         </p>
       )}
