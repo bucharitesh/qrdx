@@ -1,26 +1,27 @@
-// POST /api/ai/art end to end with a fake Gemini (the AI SDK's generateImage
-// is replaced) and in-memory tables: the real control image, scan check,
-// Image QR blend and credit bookkeeping all run. A credit is used only for a
-// delivered, scannable image; images made on fal.ai this month still count.
+// POST /api/ai/art end to end with a fake Vercel AI Gateway behind fetch (the
+// app's real gateway client builds every request) and in-memory tables: the
+// real control image, scan check, Image QR blend and credit bookkeeping all
+// run. A credit is used only for a delivered, scannable image; images made on
+// fal.ai this month still count.
 import { NextRequest } from "next/server";
 import { decodePNGPixels, scanQRPixels } from "qrdx";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { paintedArt } from "../support/ai-art-images";
 import { fakeDb } from "../support/fake-db";
+import {
+  gatewayError,
+  imageFileResult,
+  installFakeGateway,
+  textOnlyResult,
+  userParts,
+} from "../support/fake-gateway";
 
 const state = vi.hoisted(() => {
-  // lib/env reads the key when it's first imported.
+  // lib/env reads the key when it's first imported. A Google key does
+  // nothing any more: AI runs only through the gateway.
+  process.env.AI_GATEWAY_API_KEY = "test-gateway-key";
   process.env.GOOGLE_API_KEY = "test-google-key";
-  return {
-    plan: "free" as "free" | "pro" | "business",
-    respond: null as
-      | null
-      | ((call: {
-          prompt: { text: string; images: Uint8Array[] };
-          seed?: number;
-        }) => Promise<Uint8Array>),
-    calls: 0,
-  };
+  return { plan: "free" as "free" | "pro" | "business" };
 });
 
 vi.mock(
@@ -59,19 +60,6 @@ vi.mock("@/lib/plans", async (importOriginal) => ({
   ...(await importOriginal<typeof import("@/lib/plans")>()),
   getPlanForScope: async () => state.plan,
 }));
-vi.mock("ai", async (importOriginal) => ({
-  ...(await importOriginal<typeof import("ai")>()),
-  generateImage: async (options: {
-    prompt: { text: string; images: Uint8Array[] };
-    seed?: number;
-  }) => {
-    state.calls++;
-    if (!state.respond) throw new Error("No fake Gemini response set");
-    const data = await state.respond(options);
-    const image = { uint8Array: data, mediaType: "image/png", base64: "" };
-    return { image, images: [image] };
-  },
-}));
 
 const { POST } = await import("@/app/api/ai/art/route");
 const credits = await import("@/app/api/ai/art/credits/route");
@@ -96,17 +84,24 @@ const generate = (body: Record<string, unknown> = {}) =>
 
 const usage = () => fakeDb.rows("aiUsage");
 const thisMonth = new Date();
+const gateway = installFakeGateway();
+afterAll(() => {
+  vi.unstubAllGlobals();
+});
+
+/** Answers every model call with an image made from the control code. */
+const respondWithArt = (art: () => Promise<Uint8Array>) =>
+  gateway.respondWith(async () => imageFileResult(await art()));
 
 beforeEach(() => {
   fakeDb.resetAll();
   state.plan = "free";
-  state.calls = 0;
-  state.respond = null;
+  gateway.reset();
 });
 
 describe("POST /api/ai/art", () => {
   it("delivers a scannable image and uses one credit", async () => {
-    state.respond = () => paintedArt(control.png, { keep: 0.75 });
+    respondWithArt(() => paintedArt(control.png, { keep: 0.75 }));
     const response = await generate();
     expect(response.status).toBe(200);
     const body = await response.json();
@@ -124,7 +119,7 @@ describe("POST /api/ai/art", () => {
   });
 
   it("blends an image that doesn't scan, delivers it and charges for it", async () => {
-    state.respond = () => paintedArt(control.png, { keep: 0.6, smear: true });
+    respondWithArt(() => paintedArt(control.png, { keep: 0.6, smear: true }));
     const response = await generate({ visibility: 30 });
     expect(response.status).toBe(200);
     const { variant } = await response.json();
@@ -138,21 +133,21 @@ describe("POST /api/ai/art", () => {
     expect(usage()).toHaveLength(1);
   });
 
-  it("refunds the credit when Gemini fails", async () => {
-    state.respond = async () => {
-      throw new Error("upstream exploded");
-    };
+  it("refunds the credit when the model fails, after one retry", async () => {
+    gateway.respondWith(() =>
+      gatewayError(500, "internal_server_error", "upstream exploded"),
+    );
     const response = await generate();
     expect(response.status).toBe(502);
     const body = await response.json();
     expect(body.code).toBe("AI_ART_FAILED");
     expect(body.message).toMatch(/No AI credit was used/);
-    expect(state.calls).toBe(1);
+    expect(gateway.calls).toHaveLength(2);
     expect(usage()).toHaveLength(0);
   });
 
   it("refunds the credit when nothing readable comes back", async () => {
-    state.respond = async () => new Uint8Array([0, 1, 2, 3]);
+    respondWithArt(async () => new Uint8Array([0, 1, 2, 3]));
     const response = await generate();
     expect(response.status).toBe(502);
     expect((await response.json()).message).toMatch(/No AI credit was used/);
@@ -178,12 +173,12 @@ describe("POST /api/ai/art", () => {
         createdAt: thisMonth,
       },
     ]);
-    state.respond = () => paintedArt(control.png, { keep: 0.75 });
+    respondWithArt(() => paintedArt(control.png, { keep: 0.75 }));
 
     const response = await generate();
     expect(response.status).toBe(402);
     expect((await response.json()).code).toBe("SUBSCRIPTION_REQUIRED");
-    expect(state.calls).toBe(0);
+    expect(gateway.calls).toHaveLength(0);
     expect(usage()).toHaveLength(3);
 
     const allowance = await credits.GET(
@@ -207,9 +202,80 @@ describe("POST /api/ai/art", () => {
         createdAt: new Date("2020-01-15T00:00:00Z"),
       })),
     );
-    state.respond = () => paintedArt(control.png, { keep: 0.75 });
+    respondWithArt(() => paintedArt(control.png, { keep: 0.75 }));
     const response = await generate();
     expect(response.status).toBe(200);
     expect((await response.json()).credits).toMatchObject({ used: 1 });
+  });
+});
+
+describe("the art request through Vercel AI Gateway", () => {
+  it("sends the prompt and control code to Gemini Nano Banana 2.1, Google providers only", async () => {
+    respondWithArt(() => paintedArt(control.png, { keep: 0.75 }));
+    expect((await generate()).status).toBe(200);
+
+    expect(gateway.calls).toHaveLength(1);
+    const [call] = gateway.calls;
+    expect(call?.url).toBe("https://ai-gateway.vercel.sh/v4/ai/language-model");
+    expect(call?.headers).toMatchObject({
+      authorization: "Bearer test-gateway-key",
+      "ai-gateway-auth-method": "api-key",
+      "ai-language-model-id": "google/gemini-nano-banana-2.1",
+      "ai-language-model-streaming": "false",
+    });
+    expect(call?.body.seed).toBe(11);
+    expect(call?.body.providerOptions).toEqual({
+      gateway: { disallowPromptTraining: true, only: ["google", "vertex"] },
+      google: {
+        responseModalities: ["IMAGE"],
+        imageConfig: { aspectRatio: "1:1", imageSize: "1K" },
+      },
+    });
+    const { text, images } = userParts(call!);
+    expect(text).toMatch(
+      /^Repaint the QR code in the first image as artwork: a zen garden\./,
+    );
+    expect(images).toHaveLength(1);
+    expect(images[0]?.mediaType).toBe("image/png");
+    expect(Buffer.from(images[0]!.bytes).equals(Buffer.from(control.png))).toBe(
+      true,
+    );
+  });
+
+  it("sends a reference image second", async () => {
+    respondWithArt(() => paintedArt(control.png, { keep: 0.75 }));
+    const reference = `data:image/png;base64,${Buffer.from(control.png).toString("base64")}`;
+    expect((await generate({ reference })).status).toBe(200);
+    const { text, images } = userParts(gateway.calls[0]!);
+    expect(images).toHaveLength(2);
+    expect(text).toMatch(/The second image is a reference/);
+  });
+
+  it("answers a rejected key with AI_ART_FAILED and no retry", async () => {
+    gateway.respondWith(() =>
+      gatewayError(401, "authentication_error", "Authentication failed."),
+    );
+    const response = await generate();
+    expect(response.status).toBe(502);
+    expect((await response.json()).code).toBe("AI_ART_FAILED");
+    expect(gateway.calls).toHaveLength(1);
+    expect(usage()).toHaveLength(0);
+  });
+
+  it("says AI art is busy when the gateway rate limits twice", async () => {
+    gateway.respondWith(() => gatewayError(429, "rate_limit_exceeded"));
+    const response = await generate();
+    expect(response.status).toBe(503);
+    expect((await response.json()).code).toBe("AI_ART_BUSY");
+    expect(gateway.calls).toHaveLength(2);
+    expect(usage()).toHaveLength(0);
+  });
+
+  it("explains a reply without an image as a declined prompt", async () => {
+    gateway.respondWith(() => textOnlyResult("I can't help with that."));
+    const response = await generate();
+    expect(response.status).toBe(502);
+    expect((await response.json()).message).toMatch(/returned no image/);
+    expect(usage()).toHaveLength(0);
   });
 });
