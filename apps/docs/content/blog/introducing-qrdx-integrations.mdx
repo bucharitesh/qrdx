@@ -1,6 +1,6 @@
 ---
 title: Introducing QRdx Integrations
-description: Connect the tools you already use to supercharge your QR code workflow. Introducing our Integrations platform – starting with Dub.sh and Google Drive.
+description: QRdx now connects to other tools, starting with two integrations, Dub.sh for short links and Google Drive for images.
 date: "2026-03-23"
 updated: "2026-10-31"
 author: ["ritesh-bucha"]
@@ -11,23 +11,19 @@ imageAlt: "Line drawing of a QR code on a round hub connected by pipes to four t
 published: false
 ---
 
-Today, we're excited to announce a major new addition to QRdx: **Integrations**.
+QRdx now has **Integrations**: you can connect other tools you use to your QRdx account, starting today.
 
-QRdx has always been about giving you the most powerful, most beautiful QR code experience possible. But your workflow doesn't live in isolation – you use other tools, other platforms, other services. Starting today, QRdx connects to them.
+## What are QRdx integrations?
 
-## What are QRdx Integrations?
+An integration connects a third-party tool to your QRdx account and adds features to the QRdx editor and dashboard.
 
-QRdx Integrations let you connect third-party tools directly to your QRdx account. Once connected, these integrations unlock new capabilities inside the QRdx editor and dashboard that simply weren't possible before.
+Both integrations connect through **OAuth 2.0**, so you never give us a password. You grant access, QRdx stores the tokens encrypted at rest on its servers, and it refreshes them in the background before they expire.
 
-All integrations are authorized via **OAuth 2.0**, meaning you never share a password with us. You grant access, we store tokens encrypted at rest on our servers, and your credentials are automatically refreshed in the background so things just keep working.
+You can find, connect and manage integrations under **Settings → Integrations**.
 
-You can find, connect, and manage all integrations from **Settings → Integrations**.
+## The first two integrations
 
-## Flagship Integrations
-
-We're shipping two integrations today:
-
-### Dub.sh — Short links with advanced analytics
+### Dub.sh: short links and link analytics
 
 <Figure
   src="/blog/introducing-qrdx-integrations/dub.svg"
@@ -37,19 +33,19 @@ We're shipping two integrations today:
   caption="Encode a Dub short link in your QR code and every scan shows up as a click in your Dub analytics."
 />
 
-[Dub.sh](https://dub.co) is the open-source link management platform. With the Dub integration, you can generate short links for your QR codes directly inside QRdx — without ever leaving the editor.
+[Dub.sh](https://dub.co) is an open-source link management platform. With the Dub integration, you can make short links for your QR codes inside the QRdx editor.
 
-Once connected, you can:
+Once it's connected, you can:
 
-- **Create short links** – Turn any long URL into a clean, branded short link
-- **Track link analytics** – See click counts, referrers, devices, and locations
-- **Use custom domains** – Connect your own domain via your Dub workspace
-- **Set link expiration** – Expire links on a date you choose
-- **Generate QR codes** – Round-trip: create a short link and QR code together
+- turn any long URL into a short link;
+- see each link's clicks, referrers, devices and locations;
+- use your own domain, connected through your Dub workspace;
+- set a date when a link expires;
+- create a short link and its QR code in one step.
 
-The integration uses Dub's OAuth 2.0 flow with PKCE for added security. You authorize QRdx to access your Dub workspaces and links — and we only request the exact scopes we need: `workspaces.read`, `workspaces.write`, `links.read`, and `links.write`.
+The integration uses Dub's OAuth 2.0 flow with PKCE. You give QRdx access to your Dub workspaces and links, and it asks for four scopes: `workspaces.read`, `workspaces.write`, `links.read` and `links.write`.
 
-### Google Drive — Import assets from your Drive
+### Google Drive: import images from your Drive
 
 <Figure
   src="/blog/introducing-qrdx-integrations/drive.svg"
@@ -59,14 +55,14 @@ The integration uses Dub's OAuth 2.0 flow with PKCE for added security. You auth
   caption="Pick a logo straight from your Drive instead of downloading and re-uploading it."
 />
 
-Creating a QR code with a custom logo or brand image? With the Google Drive integration, you can browse and import images directly from your Drive — no downloading and re-uploading required.
+If your logo or brand images are in Google Drive, the Drive integration lets you browse and import them without downloading and re-uploading.
 
-Once connected, you can:
+Once it's connected, you can:
 
-- **Browse your Drive files** – See all your images in a file picker inside QRdx
-- **Import images for QR codes** – Use any Drive image as a logo or background
-- **Search for files** – Find the right asset fast with real-time search
-- **Preview thumbnails** – See what you're picking before you import it
+- browse your Drive images in a file picker inside QRdx;
+- use any Drive image as a logo or background;
+- search your files as you type;
+- see a thumbnail before you import.
 
 ## How OAuth works in QRdx
 
@@ -78,14 +74,14 @@ Once connected, you can:
   caption="You approve access on the provider's own page; QRdx only ever receives a scoped token, never your password."
 />
 
-Here's the flow when you connect an integration:
+When you connect an integration:
 
 1. Click **Connect** on an integration in your settings.
 2. You're redirected to the provider's OAuth authorization page (Dub, Google, etc.).
-3. You grant QRdx the permissions it requests — scoped to exactly what's needed.
-4. You're redirected back to QRdx and the connection is established.
+3. You grant QRdx the permissions it asks for, which are limited to what the integration needs.
+4. You're redirected back to QRdx and the connection is set up.
 
-Tokens are stored **encrypted at rest** and never exposed to the client. When a token is close to expiring, QRdx automatically refreshes it in the background — you never have to reconnect.
+Tokens are encrypted at rest and never sent to the browser. When a token is close to expiring, QRdx refreshes it in the background, so you don't have to reconnect.
 
 ## Build your own (soon)
 
@@ -97,23 +93,23 @@ Tokens are stored **encrypted at rest** and never exposed to the client. When a 
   caption="Each integration is a self-contained module, so adding a provider means implementing one standard interface."
 />
 
-We've architected the integrations platform to be fully extensible. Under the hood, each integration is a self-contained module with a config, a typed API client, and a UI layer. Adding a new provider is a matter of implementing a standard interface.
+Each integration is a self-contained module with a config, a typed API client and a UI layer, so adding a new provider means implementing one standard interface.
 
-We're planning to open up integrations to community contributions — so if there's a tool you'd love to see connected to QRdx, stay tuned. Or open an issue on [GitHub](https://github.com/bucharitesh/qrdx) and let us know.
+We plan to open integrations to community contributions. If there's a tool you want connected to QRdx, open an issue on [GitHub](https://github.com/bucharitesh/qrdx).
 
 ## What's next?
 
-This is just the start. We're already exploring integrations with:
+We're looking at integrations with:
 
-- **Notion** – Pull page content or brand assets into your QR code metadata
-- **Cloudinary** – Use your existing media library as a logo source
-- **Zapier** – Trigger QR code generation from any event in your stack
-- **Analytics providers** – Send link-click events to your existing data pipeline
+- Notion, to pull page content or brand assets into your QR code metadata;
+- Cloudinary, to use your existing media library as a logo source;
+- Zapier, to create QR codes from events elsewhere in your stack;
+- analytics providers, to send link-click events to your own data pipeline.
 
-If there's an integration you'd love to see — or if you want to build one — open an issue or start a discussion on GitHub.
+To ask for an integration or build one, open an issue or start a discussion on GitHub.
 
-[Explore Integrations →](/integrations)
+[Explore integrations →](/integrations)
 
-Like where this is heading? A star on GitHub helps other people find QRdx:
+A star on GitHub helps other people find QRdx:
 
 <GithubCard repo="bucharitesh/qrdx" />

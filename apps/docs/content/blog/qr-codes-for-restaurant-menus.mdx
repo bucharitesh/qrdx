@@ -11,7 +11,7 @@ related: ["dynamic-vs-static-qr-codes", "how-big-should-a-qr-code-be"]
 published: true
 ---
 
-**A good restaurant menu QR code is a dynamic link, printed large enough for the table, that opens a fast mobile menu page and sits beside a paper menu for anyone who wants one.** The dynamic link lets you change prices and dishes without reprinting. The mobile page beats a PDF on every phone. And the paper menu keeps the menu accessible to every guest, which UK guidance recommends for allergen information too.
+**A good restaurant menu QR code is a dynamic link, printed large enough for the table, that opens a fast mobile menu page and sits beside a paper menu for anyone who wants one.** The dynamic link lets you change prices and dishes without reprinting, and a mobile page works better than a PDF on every phone. The paper menu keeps the menu accessible to every guest, which UK guidance also recommends for allergen information.
 
 This guide covers each decision in order: the link, the placement and size, the page, a Wi-Fi code, accessibility, and the hygiene claims that still get repeated.
 
@@ -37,7 +37,7 @@ Size follows scanning distance. QRdx's [print size calculator](/tools/print-size
 
 Longer links make denser codes that need more space: a 108-character URL with tracking parameters needs 49 × 49 modules and a table-tent code about 7.8 cm wide. [How big should a QR code be?](/blog/how-big-should-a-qr-code-be) has the full chart.
 
-Placement tips that make the difference in a dining room:
+Placement tips for a dining room:
 
 - **Table tents beat flat stickers.** A tent stands upright, so it faces the guest and stays out of spills. The [table tent guide](/qr-codes-on/table-tents) covers formats.
 - **One code per surface.** Two codes side by side (menu and reviews, say) get scanned at random. Label each one in words: "Scan for the menu".
@@ -73,7 +73,7 @@ WIFI:T:WPA;S:Cafe Guest;P:espresso-2026;;
 
 `T` is the security type, `S` the network name and `P` the password; special characters such as `;` and `:` are escaped with a backslash ([ZXing's description](https://github.com/zxing/zxing/wiki/Barcode-Contents)). Phone cameras read it like any other code; Google's Pixel help, for example, lists connecting to a Wi-Fi network among the things a scanned code can do. The [Wi-Fi QR code generator](/qr-code-generator/wifi) builds and escapes it for you, with no account, and the code is static: it works with no server in between, so it never expires.
 
-Two practical notes. Use a guest network separate from the one your register and card terminals run on. And if you change the password often, put the Wi-Fi details on your menu page instead and update them there, rather than reprinting a code on every table.
+Use a guest network separate from the one your register and card terminals run on. If you change the password often, put the Wi-Fi details on your menu page instead and update them there, rather than reprinting a code on every table.
 
 ## Step 5: make it accessible to everyone
 

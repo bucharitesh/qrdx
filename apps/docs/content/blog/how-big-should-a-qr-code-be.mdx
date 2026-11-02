@@ -49,11 +49,11 @@ A QR code's size in modules is set by its **version**, from 1 to 40, where versi
 | A 108-character URL with tracking parameters | 108 | 8 | 49 × 49 |
 | A short vCard (name, company, phone, email, website) | 140 | 10 | 57 × 57 |
 
-These come from the capacity tables in ISO/IEC 18004, [the QR code standard](https://www.iso.org/standard/83389.html), which is what the calculator and the QRdx encoder both use. The lesson is simple: **shorter content gives a smaller code.** Trim tracking parameters you don't need, or use a [dynamic code](/blog/dynamic-vs-static-qr-codes) whose short link stays short whatever the destination.
+These come from the capacity tables in ISO/IEC 18004, [the QR code standard](https://www.iso.org/standard/83389.html), which is what the calculator and the QRdx encoder both use. **Shorter content gives a smaller code**, so trim tracking parameters you don't need, or use a [dynamic code](/blog/dynamic-vs-static-qr-codes) whose short link stays short whatever the destination.
 
 ## Error correction: more redundancy, more modules
 
-QR codes carry Reed–Solomon error correction at one of four levels. Each recovers roughly this share of the data if part of the code is damaged, dirty or covered:
+QR codes carry Reed-Solomon error correction at one of four levels. Each recovers roughly this share of the data if part of the code is damaged, dirty or covered:
 
 | Level | Recovers about | Use it for |
 | --- | --- | --- |
@@ -98,7 +98,7 @@ It's a heuristic: lighting, lenses and scanner apps vary. Treat a great score as
 
 ## A print checklist
 
-- **Measure the real distance.** The furthest point someone will scan from, not the nearest.
+- **Measure the real distance**: the farthest point someone will scan from, not the nearest.
 - **Shorten the content** before you make the code bigger.
 - **Export vector.** SVG, EPS or PDF stay sharp at any size. For PNG, export at least 300 pixels per inch of printed width: a 2.5 cm code needs 296 pixels, a 10 cm code 1,182. QRdx's [download options](/docs/features/downloads) cover all four formats.
 - **Keep dark on light** and at least 4.5:1 contrast.
@@ -123,7 +123,7 @@ A logo doesn't change the module count, but it hides modules, so you should rais
 
 ### Can a QR code be too big?
 
-Rarely in practice. The limit is the camera's field of view: someone standing close to a very large code may not fit all of it in frame. Size for the furthest distance and give people room to step back.
+Rarely in practice. The limit is the camera's field of view: someone standing close to a very large code may not fit all of it in frame. Size for the farthest distance and give people room to step back.
 
 ### Do colored QR codes scan?
 
