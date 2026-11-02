@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@repo/design-system/components/ui/button";
-import { Edit2, Lock } from "iconsax-reactjs";
+import { Edit2 } from "iconsax-reactjs";
 import {
   AnimatePresence,
   motion,
@@ -13,12 +13,12 @@ import { useEffect, useRef, useState } from "react";
 import { DURATION, EASE } from "@/components/mockups/motion";
 import { PhoneFrame } from "@/components/mockups/phone-frame";
 import { HOME_CODES } from "./codes";
-import { DemoStage, QrTile, Readout } from "./demo-ui";
+import { ControlBar, ExampleTag, QrTile, Readout } from "./demo-ui";
 
 // Illustrative destinations for one printed code.
 const DESTINATIONS = [
   {
-    url: "yourcafe.com/menu/summer",
+    url: "yourcafe.com/menu",
     title: "Summer menu",
     rows: [
       ["Iced latte", "4.50"],
@@ -27,26 +27,27 @@ const DESTINATIONS = [
     ],
   },
   {
-    url: "yourcafe.com/menu/autumn",
-    title: "Autumn menu",
+    url: "yourcafe.com/fall",
+    title: "Fall menu",
     rows: [
       ["Chai latte", "4.80"],
-      ["Apple crumble", "5.50"],
-      ["Hot cider", "3.90"],
+      ["Crumble", "5.50"],
+      ["Cider", "3.90"],
     ],
   },
   {
-    url: "yourcafe.com/events",
+    url: "yourcafe.com/jazz",
     title: "Tonight",
     rows: [
       ["Live jazz", "8 pm"],
       ["Open mic", "Thu"],
-      ["Book club", "Sun"],
+      ["Quiz", "Sun"],
     ],
   },
 ] as const;
 
-const CYCLE_MS = 3400;
+const CYCLE_MS = 4200;
+const SITE = "yourcafe.com";
 
 /** A printed dynamic code keeps working while its destination is edited. */
 export function DynamicDemo() {
@@ -68,12 +69,10 @@ export function DynamicDemo() {
 
   return (
     <div ref={ref} className="flex h-full flex-col">
-      <DemoStage
-        pattern="rain"
-        className="flex flex-1 items-center justify-center gap-3 px-5 sm:gap-5"
-      >
+      <div className="relative flex min-h-0 flex-1 items-center justify-center gap-3 px-5 pt-6 sm:gap-6">
+        <ExampleTag />
         <div className="flex shrink-0 flex-col items-center gap-2">
-          <div className="flex w-28 flex-col items-center gap-1.5 rounded-2xl bg-white p-2.5 pb-2 shadow-[0_1px_2px_rgba(0,0,0,0.06),0_14px_30px_-14px_rgba(0,0,0,0.3)] ring-1 ring-black/5 sm:w-32">
+          <div className="flex w-24 flex-col items-center gap-1.5 rounded-2xl bg-white p-2 pb-1.5 sm:w-32 sm:p-2.5 sm:pb-2 shadow-[0_1px_2px_rgba(0,0,0,0.06),0_10px_24px_-14px_rgba(0,0,0,0.28)] ring-1 ring-black/5">
             <QrTile
               label="Printed dynamic QR code"
               className="w-full p-0 shadow-none ring-0"
@@ -81,49 +80,24 @@ export function DynamicDemo() {
               <QRCodeSVG {...HOME_CODES.dynamic} />
             </QrTile>
             <span className="text-[10px] font-medium text-neutral-500">
-              Table 4 · Scan for menu
+              Scan for menu
             </span>
           </div>
           <Readout>printed once</Readout>
         </div>
 
-        <div
+        <span
           aria-hidden="true"
-          className="relative h-px w-8 shrink-0 bg-foreground/20 sm:w-14"
-        >
-          {!reduce && inView && (
-            <motion.span
-              className="absolute -top-[3px] size-[7px] rounded-full bg-foreground"
-              animate={{ left: ["0%", "100%"], opacity: [0, 1, 1, 0] }}
-              transition={{
-                duration: 1.6,
-                ease: "easeInOut",
-                repeat: Number.POSITIVE_INFINITY,
-                repeatDelay: 0.4,
-              }}
-            />
-          )}
-        </div>
+          className="h-px w-5 shrink-0 bg-foreground/25 sm:w-10"
+        />
 
-        <PhoneFrame className="w-[92px] shrink-0 sm:w-[100px]">
+        <PhoneFrame className="w-[84px] shrink-0 shadow-lg sm:w-[100px]">
           <div className="flex h-full flex-col bg-background">
-            <div className="mx-1.5 mt-0.5 flex h-4 items-center gap-1 overflow-hidden rounded-full bg-muted px-1.5">
-              <Lock
-                aria-hidden="true"
-                className="size-2 shrink-0 text-muted-foreground"
-              />
-              <AnimatePresence mode="popLayout" initial={false}>
-                <motion.span
-                  key={destination.url}
-                  initial={reduce ? false : { y: 8, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  exit={reduce ? undefined : { y: -8, opacity: 0 }}
-                  transition={{ duration: DURATION.slow, ease: EASE }}
-                  className="truncate text-[6.5px] leading-none text-foreground"
-                >
-                  {destination.url}
-                </motion.span>
-              </AnimatePresence>
+            {/* Phone browsers show only the domain in the address bar. */}
+            <div className="mx-1 mt-0.5 flex h-4 items-center justify-center rounded-full bg-muted px-1">
+              <span className="whitespace-nowrap text-[6.5px] leading-none text-foreground">
+                {SITE}
+              </span>
             </div>
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
@@ -135,7 +109,7 @@ export function DynamicDemo() {
                 aria-hidden="true"
                 className="flex flex-1 flex-col gap-1.5 p-1.5"
               >
-                <div className="aspect-[16/10] rounded-md bg-[linear-gradient(135deg,color-mix(in_oklab,var(--foreground)_10%,transparent),color-mix(in_oklab,var(--foreground)_4%,transparent))]" />
+                <div className="aspect-[16/10] rounded-md bg-foreground/[0.07]" />
                 <p className="text-[8px] font-semibold leading-none">
                   {destination.title}
                 </p>
@@ -143,10 +117,10 @@ export function DynamicDemo() {
                   {destination.rows.map(([item, price]) => (
                     <div
                       key={item}
-                      className="flex items-center justify-between border-b border-border/60 pb-0.5 text-[6.5px]"
+                      className="flex items-center justify-between gap-1 whitespace-nowrap border-b border-border/60 pb-0.5 text-[6.5px]"
                     >
                       <span className="text-foreground/80">{item}</span>
-                      <span className="tabular-nums text-muted-foreground">
+                      <span className="shrink-0 tabular-nums text-muted-foreground">
                         {price}
                       </span>
                     </div>
@@ -156,12 +130,13 @@ export function DynamicDemo() {
             </AnimatePresence>
           </div>
         </PhoneFrame>
-      </DemoStage>
-      <div className="flex items-center gap-3 border-t px-4 py-3">
+      </div>
+      <ControlBar className="gap-2.5 sm:gap-3">
         <Readout className="shrink-0">opens</Readout>
+        {/* Announced only when the visitor changes it, not on the auto cycle. */}
         <span
-          aria-live="polite"
-          className="min-w-0 flex-1 truncate font-mono text-xs text-foreground"
+          aria-live={auto ? "off" : "polite"}
+          className="min-w-0 flex-1 truncate font-mono text-[11px] text-foreground sm:text-xs"
         >
           {destination.url}
         </span>
@@ -169,15 +144,18 @@ export function DynamicDemo() {
           type="button"
           size="sm"
           variant="outline"
+          aria-label="Change the link"
+          // On phones the pencil alone keeps the whole link in view.
+          className="size-8 shrink-0 px-0 sm:w-auto sm:px-3"
           onClick={() => {
             setAuto(false);
             setIndex((current) => (current + 1) % DESTINATIONS.length);
           }}
         >
-          <Edit2 className="size-3.5" />
-          Change
+          <Edit2 aria-hidden="true" className="size-3.5" />
+          <span className="hidden sm:inline">Change</span>
         </Button>
-      </div>
+      </ControlBar>
     </div>
   );
 }

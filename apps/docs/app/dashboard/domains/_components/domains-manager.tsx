@@ -33,21 +33,55 @@ import { cn } from "@repo/design-system/lib/utils";
 import {
   TickCircle as CheckCircle2,
   Clock,
+  Flash,
   Global as Globe,
   Add as Plus,
   Refresh2 as RefreshCw,
   Trash as Trash2,
 } from "iconsax-reactjs";
-import { useRouter } from "next/navigation";
-import { type FormEvent, useState, useTransition } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import {
+  type FormEvent,
+  type ReactNode,
+  Suspense,
+  use,
+  useEffect,
+  useRef,
+  useState,
+  useTransition,
+} from "react";
 import {
   addCustomDomain,
   removeCustomDomain,
   verifyCustomDomain,
 } from "@/actions/custom-domains";
 import type { CustomDomainView } from "@/app/dashboard/domains/_lib/domains";
+import type {
+  DomainConnectOffer,
+  DomainConnectOffers,
+} from "@/lib/domain-connect/offers";
+import type { ConnectReturn } from "@/lib/domain-connect/return";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 import { DnsRecords } from "./dns-records";
+
+const NO_OFFERS: DomainConnectOffers = {};
+
+/** After a return from the DNS provider: check now, then twice more while DNS settles. */
+const AUTO_VERIFY_DELAYS_MS = [0, 10_000, 25_000];
+
+const wait = (ms: number) =>
+  new Promise<void>((resolve) => setTimeout(resolve, ms));
+
+/** Renders once the streamed one-click offers have arrived. */
+function WithOffers({
+  offers,
+  children,
+}: {
+  offers: Promise<DomainConnectOffers>;
+  children: (offers: DomainConnectOffers) => ReactNode;
+}) {
+  return children(use(offers));
+}
 
 const checkedFormat = new Intl.DateTimeFormat("en-US", {
   month: "short",
@@ -79,17 +113,22 @@ function DomainCard({
   domain,
   canManage,
   busy,
+  offer,
   onVerify,
   onRemove,
 }: {
   domain: CustomDomainView;
   canManage: boolean;
   busy: boolean;
+  /** One-click DNS setup at the domain's DNS provider, when it works */
+  offer: DomainConnectOffer | null;
   onVerify: () => void;
   onRemove: () => void;
 }) {
   const [showRecords, setShowRecords] = useState(false);
   const recordsVisible = !domain.verified || showRecords;
+  const oneClick = offer && canManage && !domain.verified ? offer : null;
+  const provider = oneClick?.providerName ?? null;
 
   return (
     <Card className="gap-4 py-4">
@@ -105,7 +144,9 @@ function DomainCard({
             <CardDescription>
               {domain.verified
                 ? `Short links look like https://${domain.hostname}/aB3dE5f · used by ${plural(domain.codeCount, "code")}`
-                : "Add these records at your DNS provider, then click Verify."}
+                : oneClick
+                  ? `${provider ? `Your DNS is at ${provider}, which` : "Your DNS provider"} can add these records for you.`
+                  : "Add these records at your DNS provider, then click Verify."}
             </CardDescription>
           </div>
           {canManage && (
@@ -114,7 +155,7 @@ function DomainCard({
                 disabled={busy}
                 onClick={onVerify}
                 size="sm"
-                variant={domain.verified ? "outline" : "default"}
+                variant={domain.verified || oneClick ? "outline" : "default"}
               >
                 {busy ? <Spinner /> : <RefreshCw />}
                 {domain.verified ? "Check DNS" : "Verify"}
@@ -133,6 +174,19 @@ function DomainCard({
         </div>
       </CardHeader>
       <CardContent className="space-y-3 px-4">
+        {oneClick && (
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+            <Button asChild className="w-full sm:w-auto">
+              <a href={oneClick.url}>
+                <Flash />
+                {provider ? `Set up with ${provider}` : "Set up automatically"}
+              </a>
+            </Button>
+            <p className="text-muted-foreground text-xs">
+              {`You approve the change at ${provider ?? "your DNS provider"}, then return here.`}
+            </p>
+          </div>
+        )}
         {domain.message && (
           <p
             className={cn(
@@ -143,6 +197,11 @@ function DomainCard({
             )}
           >
             {domain.verified ? `Last check: ${domain.message}` : domain.message}
+          </p>
+        )}
+        {recordsVisible && oneClick && domain.records.length > 0 && (
+          <p className="text-muted-foreground text-xs">
+            Or add these records yourself:
           </p>
         )}
         {recordsVisible && (
@@ -177,6 +236,8 @@ export function DomainsManager({
   limit,
   defaultHost,
   canUpgrade,
+  connectOffers,
+  connectReturn = null,
 }: {
   domains: CustomDomainView[];
   /** Owner or admin of the active scope */
@@ -188,8 +249,13 @@ export function DomainsManager({
   defaultHost: string;
   /** Personal scope: upgrading lifts the limit */
   canUpgrade: boolean;
+  /** One-click DNS setup by domain id, streamed (only where it's enabled) */
+  connectOffers?: Promise<DomainConnectOffers>;
+  /** Back from the DNS provider's consent page */
+  connectReturn?: ConnectReturn | null;
 }) {
   const router = useRouter();
+  const pathname = usePathname();
   const openGetProDialog = useGetProDialogStore((s) => s.openGetProDialog);
   const [hostname, setHostname] = useState("");
   const [addError, setAddError] = useState<string | null>(null);
@@ -247,6 +313,76 @@ export function DomainsManager({
       setBusyId(null);
     }
   };
+
+  // Back from the DNS provider: drop the return parameters, then check DNS
+  // (a few times, since new records take a moment to show up).
+  const handledReturn = useRef(false);
+  useEffect(() => {
+    if (!connectReturn || handledReturn.current) return;
+    handledReturn.current = true;
+    router.replace(pathname, { scroll: false });
+    const domain = domains.find(({ id }) => id === connectReturn.domainId);
+    if (!domain || domain.verified) return;
+    if (!connectReturn.applied) {
+      toast.info("Your DNS provider didn't add the records", {
+        description: "Add them yourself below, then click Verify.",
+      });
+      return;
+    }
+    const checkAfterSetup = async () => {
+      setBusyId(domain.id);
+      const toastId = toast.loading(`Checking DNS for ${domain.hostname}...`);
+      try {
+        let message: string | null = null;
+        for (const delay of AUTO_VERIFY_DELAYS_MS) {
+          if (delay) await wait(delay);
+          const result = await verifyCustomDomain({ id: domain.id });
+          if (!result.success) {
+            toast.error(result.error.message, { id: toastId });
+            return;
+          }
+          if (result.data.verified) {
+            toast.success(`${domain.hostname} is verified`, {
+              id: toastId,
+              description: "You can now pick it for your dynamic codes.",
+            });
+            return;
+          }
+          message = result.data.message;
+        }
+        toast.info("Not verified yet", {
+          id: toastId,
+          description: message ?? undefined,
+        });
+      } catch {
+        toast.error("Something went wrong. Please try again.", {
+          id: toastId,
+        });
+      } finally {
+        setBusyId(null);
+        router.refresh();
+      }
+    };
+    checkAfterSetup();
+  }, [connectReturn, domains, pathname, router]);
+
+  const renderCards = (offers: DomainConnectOffers) => (
+    <div className="space-y-3">
+      {domains.map((domain) => (
+        <DomainCard
+          busy={
+            busyId === domain.id || (isRemoving && removing?.id === domain.id)
+          }
+          canManage={canManage}
+          domain={domain}
+          key={domain.id}
+          offer={offers[domain.id] ?? null}
+          onRemove={() => setRemoving(domain)}
+          onVerify={() => verify(domain)}
+        />
+      ))}
+    </div>
+  );
 
   const confirmRemove = () => {
     const domain = removing;
@@ -330,22 +466,13 @@ export function DomainsManager({
             </EmptyDescription>
           </EmptyHeader>
         </Empty>
+      ) : connectOffers ? (
+        // Until the offers arrive the cards look exactly as without them.
+        <Suspense fallback={renderCards(NO_OFFERS)}>
+          <WithOffers offers={connectOffers}>{renderCards}</WithOffers>
+        </Suspense>
       ) : (
-        <div className="space-y-3">
-          {domains.map((domain) => (
-            <DomainCard
-              busy={
-                busyId === domain.id ||
-                (isRemoving && removing?.id === domain.id)
-              }
-              canManage={canManage}
-              domain={domain}
-              key={domain.id}
-              onRemove={() => setRemoving(domain)}
-              onVerify={() => verify(domain)}
-            />
-          ))}
-        </div>
+        renderCards(NO_OFFERS)
       )}
 
       <AlertDialog

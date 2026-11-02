@@ -88,7 +88,7 @@ What it checks:
 - **Logo coverage** compared with what the error-correction level can recover.
 - **Quiet zone**: the margin, plus the gap a frame adds.
 - **Eye shape risk**: `circle` eyes may be missed by some scanner apps (and the retired `curly` eyes, if a saved design still uses them, fail strict decoders).
-- **Style pairs** (`style-pair`): shapes that fail together in our decode tests, such as `small-square` dots next to square eyes, and retired centres in saved designs (see `getStylePairRisk`).
+- **Style pairs** (`style-pair`): shapes that fail together in our decode tests, such as `small-square` dots next to square eyes, and retired centers in saved designs (see `getStylePairRisk`).
 
 `getImageScanScore(fileOrImage)` does the same for an existing image: it returns the decoded content plus decode, contrast, polarity, quiet-zone and resolution checks measured from the pixels. The [scan checker](/tools/scan-checker) is built on it.
 

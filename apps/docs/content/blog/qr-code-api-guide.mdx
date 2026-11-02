@@ -142,7 +142,7 @@ Two gaps in 0.0.4: there's no EPS (a file named `qr.eps` gets SVG inside it), an
 
 ## 4. The REST API: dynamic codes with a token
 
-Static images need no account. Dynamic codes, the ones you can edit after printing and that count scans, live in a QRdx workspace, so the [REST API](/docs/developers/rest-api) needs an OAuth 2.0 access token. Register an OAuth app in **Settings → Developers**, send people through the authorization-code flow (PKCE with `S256` is supported), and exchange the code for an access token that lasts an hour plus a 30-day refresh token. Scopes are `codes:read`, `codes:write`, `themes:read` and `profile:read`.
+Static images need no account. Dynamic codes, the ones you can edit after printing and that count scans, live in a QRdx workspace, so the [REST API](/docs/developers/rest-api) needs a token. For your own scripts and servers, create an [API key](/docs/developers/api-keys) in **Settings → API keys & apps** and send it as the bearer token. For a product other people connect, register an OAuth app on the same page, send people through the authorization-code flow (PKCE with `S256` is supported), and exchange the code for an access token that lasts an hour plus a 30-day refresh token. Both use the scopes `codes:read`, `codes:write`, `themes:read` and `profile:read`.
 
 Create a dynamic code:
 

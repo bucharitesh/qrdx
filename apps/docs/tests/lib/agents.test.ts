@@ -168,7 +168,7 @@ describe("llms.txt", () => {
 
   it("takes product counts from the catalogues, never from the source", () => {
     expect(text).toContain(
-      `${PRODUCT_FACTS.bodyPatterns} body patterns, ${PRODUCT_FACTS.eyeShapes} corner-eye shapes and ${PRODUCT_FACTS.eyeCentres} eye centres, ${PRODUCT_FACTS.frames} frames`,
+      `${PRODUCT_FACTS.bodyPatterns} body patterns, ${PRODUCT_FACTS.eyeShapes} corner-eye shapes and ${PRODUCT_FACTS.eyeCentres} eye centers, ${PRODUCT_FACTS.frames} frames`,
     );
     expect(text).toContain(`${QR_TYPES.length} content types`);
     const source = readFileSync(
@@ -176,7 +176,7 @@ describe("llms.txt", () => {
       "utf8",
     );
     expect(source).not.toMatch(
-      /\b\d+\s+(?:body patterns|corner-eye|eye centres|frames|content types|industries|placements|styled codes)/,
+      /\b\d+\s+(?:body patterns|corner-eye|eye cent(?:er|re)s|frames|content types|industries|placements|styled codes)/,
     );
   });
 

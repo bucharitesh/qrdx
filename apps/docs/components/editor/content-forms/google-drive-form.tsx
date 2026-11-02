@@ -17,7 +17,6 @@ import {
 } from "iconsax-reactjs";
 import * as React from "react";
 import { toast } from "sonner";
-import { NeedsSetupNote } from "@/components/needs-setup";
 import { apiFetch } from "@/lib/api-fetch";
 import { useGoogleDriveIntegration } from "@/lib/hooks/use-google-drive-integration";
 import { useIntegrationAvailability } from "@/lib/hooks/use-integration-availability";
@@ -47,14 +46,14 @@ export function GoogleDriveForm() {
     search,
     loadMore,
   } = useGoogleDriveIntegration();
-  // Offer "Connect Google Drive" only where it is set up (production hides it).
+  // Offer "Connect Google Drive" only where it is set up: production hides
+  // it, and the editor never shows local dev's "needs setup" state.
   const availability = useIntegrationAvailability();
   const canConnect = Boolean(
-    availability && !isHiddenIn(availability, "google-drive"),
+    availability &&
+      !isHiddenIn(availability, "google-drive") &&
+      !needsSetupIn(availability, "google-drive"),
   );
-  const driveSetup = availability
-    ? needsSetupIn(availability, "google-drive")
-    : undefined;
 
   const storedConfig = getContentConfig("google-drive") as
     | GoogleDriveContent
@@ -137,11 +136,7 @@ export function GoogleDriveForm() {
       {!isConnected && canConnect && (
         <Alert>
           <AlertDescription className="space-y-3">
-            <p>
-              Connect Google Drive to browse files and folders, or paste a Drive
-              URL manually below.
-            </p>
-            <NeedsSetupNote names={driveSetup} />
+            <p>Connect Google Drive to pick a file, or paste a link below.</p>
             <Button
               disabled={isConnecting}
               onClick={handleConnect}

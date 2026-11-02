@@ -148,7 +148,7 @@ export function planAccountDeletion(facts: DeletionFacts): DeletionPlan {
   const blockers: string[] = [];
   if (facts.subscription && !facts.billingConfigured) {
     blockers.push(
-      `Your ${facts.subscription.planName} subscription can't be cancelled from here right now. Cancel it under Usage & billing first, or email support@qrdx.dev.`,
+      `Your ${facts.subscription.planName} subscription can't be cancelled from here right now. Cancel it under Settings → Plan & usage first, or email support@qrdx.dev.`,
     );
   }
 

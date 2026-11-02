@@ -3,6 +3,7 @@ import "server-only";
 import { database as db, qrCode, qrCodeTag } from "@repo/database";
 import { and, eq, inArray } from "drizzle-orm";
 import { z } from "zod";
+import { formatPlanList } from "@/app/dashboard/codes/_lib/code-options";
 import {
   existingFolderPaths,
   existingTagNames,
@@ -17,7 +18,13 @@ import {
   scopeWhere,
 } from "@/app/dashboard/codes/_lib/qr-codes";
 import { HttpError } from "@/lib/error-response";
-import { getPlanForScope, getPlanLimits } from "@/lib/plans";
+import {
+  cheapestPlanWith,
+  getPlanForScope,
+  getPlanLimits,
+  plansWith,
+} from "@/lib/plans";
+import { PLAN_NAMES } from "@/lib/pricing";
 import type { ActiveScope } from "@/lib/scope";
 import {
   findTakenSlugs,
@@ -31,6 +38,14 @@ import {
   MAX_IMPORT_ROWS,
   type NormalizedImportRow,
 } from "./csv";
+
+/** "Importing more than one code at a time is a Pro feature" (lib/plans.ts). */
+function bulkImportMessage(): string {
+  const plan = cheapestPlanWith((limits) => limits.bulkApi);
+  return plan
+    ? `Importing more than one code at a time is a ${PLAN_NAMES[plan]} feature.`
+    : "Your plan imports one code at a time.";
+}
 
 const rowSchema = z.object({
   line: z.number().int().min(1).max(10_000_000),
@@ -101,7 +116,9 @@ async function checkRows(
   for (const item of checked) {
     if (!item.row.slug) continue;
     if (!customSlugs) {
-      item.errors.push("Custom back-halves are part of Pro and Business");
+      item.errors.push(
+        `Custom back-halves are part of ${formatPlanList(plansWith((limits) => limits.customSlugs))}`,
+      );
     } else if (duplicates.has(item.row.line)) {
       item.errors.push("This back-half appears earlier in the file");
     } else if (taken.has(item.row.slug)) {
@@ -175,8 +192,7 @@ export async function previewImport(
 
   let blocked: string | null = null;
   if (validRows.length > 1 && !bulkApi) {
-    blocked =
-      "Importing more than one code at a time is a Pro feature. Upgrade, or import a file with a single row.";
+    blocked = `${bulkImportMessage()} Upgrade, or import a file with a single row.`;
   } else if (remaining !== null && validRows.length > remaining) {
     blocked = `Your plan has room for ${remaining} more active ${remaining === 1 ? "code" : "codes"}. Archive codes or upgrade to import ${validRows.length}.`;
   }
@@ -230,11 +246,7 @@ export async function importChunk(
   if (valid.length > 0) {
     const limits = getPlanLimits(await getPlanForScope(scope));
     if (valid.length > 1 && !limits.bulkApi) {
-      throw new HttpError(
-        402,
-        "PLAN_REQUIRED",
-        "Importing more than one code at a time is a Pro feature.",
-      );
+      throw new HttpError(402, "PLAN_REQUIRED", bulkImportMessage());
     }
     await enforceCreateRateLimit(scope.userId);
 

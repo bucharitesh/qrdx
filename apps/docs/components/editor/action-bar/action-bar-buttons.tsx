@@ -25,20 +25,22 @@ interface ActionBarButtonsProps {
   onSaveClick: () => void;
   onShareClick: (id?: string) => void;
   isSaving: boolean;
-  downloadDialogOpen: boolean;
-  setDownloadDialogOpen: (open: boolean) => void;
   codeDialogOpen: boolean;
   setCodeDialogOpen: (open: boolean) => void;
+  /**
+   * "mobile": Share and Download live in the bottom bar instead, and the
+   * keyboard shortcuts button is left out on a touch screen.
+   */
+  layout?: "desktop" | "mobile";
 }
 
 export function ActionBarButtons({
   onSaveClick,
   onShareClick,
   isSaving,
-  downloadDialogOpen,
-  setDownloadDialogOpen,
   codeDialogOpen,
   setCodeDialogOpen,
+  layout = "desktop",
 }: ActionBarButtonsProps) {
   const { themeState, resetToCurrentPreset, hasUnsavedChanges } =
     useQREditorStore();
@@ -49,6 +51,7 @@ export function ActionBarButtons({
     ? getPreset(themeState?.preset)
     : undefined;
   const isSavedPreset = !!currentPreset && currentPreset.source === "SAVED";
+  const desktop = layout === "desktop";
 
   const { setOpen } = useKeyboardShortcutsModal();
 
@@ -73,14 +76,14 @@ export function ActionBarButtons({
   const undoRedoDisabled = !isMounted || isGenerating;
 
   return (
-    <div className="w-full flex items-center justify-between gap-1">
+    <div className="flex w-full items-center justify-between gap-1">
       <div className="flex items-center gap-1">
         <UndoRedoButtons disabled={undoRedoDisabled} />
         <ResetButton onClick={handleReset} disabled={resetDisabled} />
       </div>
 
       <div className="flex items-center gap-1">
-        <KeyboardShortcutsButton onClick={() => setOpen(true)} />
+        {desktop && <KeyboardShortcutsButton onClick={() => setOpen(true)} />}
         <ContrastChecker
           currentStyles={themeState.styles}
           disabled={contrastDisabled}
@@ -100,10 +103,12 @@ export function ActionBarButtons({
             disabled={editDisabled}
           />
         )}
-        <ShareButton
-          onClick={() => onShareClick(themeState.preset)}
-          disabled={shareDisabled}
-        />
+        {desktop && (
+          <ShareButton
+            onClick={() => onShareClick(themeState.preset)}
+            disabled={shareDisabled}
+          />
+        )}
         {isSavedPreset && !hasUnsavedChanges() ? (
           <PublishButton
             themeId={themeState.preset as string}
@@ -118,14 +123,11 @@ export function ActionBarButtons({
           />
         )}
         <CopySVGButton />
-        <DownloadButton
-          dialogOpen={downloadDialogOpen}
-          setDialogOpen={setDownloadDialogOpen}
-        />
         <CodeButton
           dialogOpen={codeDialogOpen}
           setDialogOpen={setCodeDialogOpen}
         />
+        {desktop && <DownloadButton className="ml-2" />}
       </div>
     </div>
   );

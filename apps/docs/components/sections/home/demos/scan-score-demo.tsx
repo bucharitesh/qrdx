@@ -1,18 +1,18 @@
 "use client";
 
-import { Close, Tick } from "@repo/design-system/components/icons";
 import { cn } from "@repo/design-system/lib/utils";
 import { motion, useInView, useReducedMotion } from "motion/react";
 import { getScanScore, QRCodeSVG, type ScanScoreResult } from "qrdx";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { GRADE_LABELS } from "@/components/editor/scan-score";
+import { GRADE_COLORS, GRADE_LABELS } from "@/components/editor/scan-score";
 import { EASE } from "@/components/mockups/motion";
 import { SegmentedControl } from "@/components/mockups/segmented-control";
 import { HOME_CODES } from "./codes";
-import { DemoStage, QrTile, Readout } from "./demo-ui";
+import { ControlBar, QrTile, Readout } from "./demo-ui";
+import { scanRows } from "./scan-rows";
 
 const INKS = {
-  ink: { label: "Ink", color: "#0b0b0d" },
+  black: { label: "Black", color: "#0b0b0d" },
   graphite: { label: "Graphite", color: "#52525b" },
   gray: { label: "Gray", color: "#a1a1aa" },
   pale: { label: "Pale", color: "#d4d4d8" },
@@ -23,17 +23,7 @@ const INK_OPTIONS = (Object.keys(INKS) as InkKey[]).map((value) => ({
   label: INKS[value].label,
 }));
 
-const RING = {
-  great: "stroke-emerald-500",
-  ok: "stroke-amber-400",
-  risky: "stroke-orange-500",
-  fails: "stroke-red-500",
-} as const;
-
-/** Check rows always drawn, so the list never changes height. */
-const CHECK_ROWS = 3;
-
-const R = 30;
+const R = 26;
 const CIRC = 2 * Math.PI * R;
 
 /** Lighten the ink and watch the real scan score (decoded in your browser) react. */
@@ -41,9 +31,12 @@ export function ScanScoreDemo() {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { once: true, amount: 0.4 });
   const reduce = useReducedMotion();
-  const [ink, setInk] = useState<InkKey>("ink");
+  const [ink, setInk] = useState<InkKey>("black");
   const [result, setResult] = useState<ScanScoreResult | null>(null);
   const [checking, setChecking] = useState(true);
+  // Scoring needs canvas and image decoding; if the browser can't, say so
+  // instead of showing "Checking" forever.
+  const [failed, setFailed] = useState(false);
   const fg = INKS[ink].color;
   // Only the ink changes; the logo stays as printed.
   const props = useMemo(
@@ -62,8 +55,16 @@ export function ScanScoreDemo() {
     setChecking(true);
     const timer = window.setTimeout(() => {
       getScanScore(props, { signal: controller.signal })
-        .then((score) => setResult(score))
-        .catch(() => undefined)
+        .then((score) => {
+          setResult(score);
+          setFailed(false);
+        })
+        .catch((error: unknown) => {
+          if (controller.signal.aborted) return;
+          console.error("Home scan score demo failed", error);
+          setResult(null);
+          setFailed(true);
+        })
         .finally(() => {
           if (!controller.signal.aborted) setChecking(false);
         });
@@ -75,19 +76,14 @@ export function ScanScoreDemo() {
   }, [props, inView]);
 
   const score = result?.score ?? 0;
-  const checks = result
-    ? [...result.checks]
-        .sort((a, b) => Number(a.passed) - Number(b.passed))
-        .slice(0, CHECK_ROWS)
-    : [];
+  const rows = scanRows(result);
 
   return (
     <div ref={ref} className="flex h-full flex-col">
-      <DemoStage
-        pattern="scan"
-        className="flex flex-1 items-center justify-center gap-4 px-4 sm:gap-8 sm:px-5"
-      >
-        <div className="relative w-24 shrink-0 sm:w-36">
+      {/* Fixed widths and four fixed rows: switching ink or waiting for the
+          score never moves the code or the card. */}
+      <div className="flex min-h-0 flex-1 items-center justify-center gap-4 px-4 sm:gap-10 sm:px-6">
+        <div className="relative w-[5.5rem] shrink-0 sm:w-36">
           <QrTile
             label={`QR code with the QRdx logo, in ${INKS[ink].label.toLowerCase()} ink on white`}
             className="w-full p-0 transition-colors"
@@ -108,37 +104,32 @@ export function ScanScoreDemo() {
                 },
                 opacity: { duration: 0.2 },
               }}
-              className="pointer-events-none absolute inset-x-2 h-0.5 rounded-full bg-[#155dfc] shadow-[0_0_14px_3px_rgba(21,93,252,0.45)]"
+              className="pointer-events-none absolute inset-x-2 h-0.5 rounded-full bg-primary"
             />
           )}
         </div>
-        {/* Fixed width and three reserved rows: switching ink or waiting for
-            the score never moves the code or the card. */}
-        <div className="flex w-[12.5rem] min-w-0 flex-col gap-3 sm:w-[17rem]">
+        <div className="flex min-w-0 max-w-48 flex-1 flex-col gap-4">
           <div className="flex items-center gap-3">
-            <div className="relative size-[72px] shrink-0">
+            <div className="relative size-14 shrink-0 sm:size-16">
               <svg
-                viewBox="0 0 72 72"
+                viewBox="0 0 64 64"
                 className="size-full -rotate-90"
                 aria-hidden="true"
               >
                 <circle
-                  cx="36"
-                  cy="36"
+                  cx="32"
+                  cy="32"
                   r={R}
                   className="fill-none stroke-foreground/10"
-                  strokeWidth="5"
+                  strokeWidth="4"
                 />
                 <motion.circle
-                  cx="36"
-                  cy="36"
+                  cx="32"
+                  cy="32"
                   r={R}
-                  strokeWidth="5"
+                  strokeWidth="4"
                   strokeLinecap="round"
-                  className={cn(
-                    "fill-none transition-colors duration-300",
-                    result ? RING[result.grade] : "stroke-foreground/30",
-                  )}
+                  className="fill-none stroke-foreground"
                   strokeDasharray={CIRC}
                   initial={false}
                   animate={{ strokeDashoffset: CIRC * (1 - score / 100) }}
@@ -146,52 +137,60 @@ export function ScanScoreDemo() {
                 />
               </svg>
               <span
-                className="absolute inset-0 grid place-items-center text-lg font-semibold tabular-nums"
+                className="absolute inset-0 grid place-items-center text-base font-semibold tabular-nums sm:text-lg"
                 aria-live="polite"
               >
-                {result ? score : "…"}
+                {result ? score : failed ? "–" : "…"}
               </span>
             </div>
-            <div className="flex min-w-0 flex-col">
-              <span className="text-sm font-medium">
-                {result ? GRADE_LABELS[result.grade] : "Checking"}
+            <div className="flex min-w-0 flex-col gap-0.5">
+              <span className="flex items-center gap-1.5 text-sm font-medium">
+                <span
+                  aria-hidden="true"
+                  className={cn(
+                    "size-1.5 shrink-0 rounded-full transition-colors",
+                    result ? GRADE_COLORS[result.grade] : "bg-foreground/20",
+                  )}
+                />
+                {result
+                  ? GRADE_LABELS[result.grade]
+                  : failed
+                    ? "Couldn't check"
+                    : "Checking"}
               </span>
               <Readout>scan score</Readout>
             </div>
           </div>
-          <ul className="flex flex-col gap-1.5">
-            {Array.from({ length: CHECK_ROWS }, (_, index) => {
-              const check = checks[index];
-              return (
-                <li
-                  key={check?.id ?? `pending-${index}`}
-                  className="flex h-4 min-w-0 items-center gap-1.5 text-xs"
-                >
-                  {check ? (
-                    <>
-                      {check.passed ? (
-                        <Tick className="size-3.5 shrink-0 text-emerald-600 dark:text-emerald-400" />
-                      ) : (
-                        <Close className="size-3.5 shrink-0 text-red-500" />
-                      )}
-                      <span className="truncate text-muted-foreground">
-                        {check.message}
-                      </span>
-                    </>
-                  ) : (
-                    <span
-                      aria-hidden="true"
-                      className="h-2 w-4/5 rounded-full bg-muted motion-safe:animate-pulse"
-                    />
+          <dl className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-2.5 gap-y-1.5 text-[11px] sm:text-xs">
+            {rows.map((row) => (
+              <div key={row.id} className="contents">
+                <dt className="whitespace-nowrap text-muted-foreground">
+                  {row.label}
+                </dt>
+                <dd
+                  className={cn(
+                    "whitespace-nowrap text-right font-medium tabular-nums",
+                    row.passed === false && "text-red-600 dark:text-red-400",
                   )}
-                </li>
-              );
-            })}
-          </ul>
+                >
+                  {row.value ??
+                    (failed ? (
+                      "–"
+                    ) : (
+                      <span
+                        aria-hidden="true"
+                        className="inline-block h-2 w-10 rounded-full bg-foreground/10 motion-safe:animate-pulse"
+                      />
+                    ))}
+                </dd>
+              </div>
+            ))}
+          </dl>
         </div>
-      </DemoStage>
-      <div className="flex items-center justify-between gap-3 border-t px-4 py-3">
-        <Readout>ink</Readout>
+      </div>
+      <ControlBar className="justify-center sm:justify-between">
+        {/* On phones the four ink names need the whole strip. */}
+        <Readout className="hidden sm:inline">ink</Readout>
         <SegmentedControl
           label="Ink color"
           options={INK_OPTIONS}
@@ -199,7 +198,7 @@ export function ScanScoreDemo() {
           onChange={setInk}
           size="sm"
         />
-      </div>
+      </ControlBar>
     </div>
   );
 }

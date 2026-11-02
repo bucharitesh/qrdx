@@ -60,6 +60,7 @@ export async function generateMetadata({
     title: `${entry.name} integration`,
     description: entry.tagline,
     path: `/integrations/${entry.slug}`,
+    ownOgImage: true,
   });
 }
 

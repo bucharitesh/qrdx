@@ -59,15 +59,10 @@ export function AttendanceForm() {
         {errors.formUrl && (
           <p className="text-destructive text-[11px]">{errors.formUrl}</p>
         )}
-        {!errors.formUrl && (
-          <p className="text-muted-foreground text-[11px]">
-            Enter your Google Form URL for attendance tracking
-          </p>
-        )}
       </div>
 
       <p className="text-muted-foreground text-xs">
-        Scanning will open the Google Form for attendance submission
+        Scanning will open your attendance form
       </p>
     </div>
   );

@@ -42,16 +42,19 @@ import Papa from "papaparse";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { importQrCodesChunk, previewQrCodeImport } from "@/actions/bulk-codes";
+import { useKnownCodeOptionPlans } from "@/app/dashboard/codes/_components/code-options";
 import {
   DomainPicker,
   useDomainOptions,
 } from "@/app/dashboard/codes/_components/domain-picker";
 import { plural } from "@/app/dashboard/codes/_components/use-organize-action";
+import { formatPlanList } from "@/app/dashboard/codes/_lib/code-options";
 import type {
   ImportPreview,
   ImportRowResult,
 } from "@/app/dashboard/codes/import/_lib/import";
 import { track } from "@/lib/analytics";
+import { PLAN_NAMES, type Plan } from "@/lib/pricing";
 import { soundEvent } from "@/lib/sound/emit";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 import {
@@ -100,16 +103,24 @@ function saveText(text: string, filename: string) {
 
 export function ImportWizard({
   canBulk,
+  plan,
+  bulkPlans,
   basePath,
 }: {
-  /** Pro and Business may import more than one row */
+  /** The workspace's plan may import more than one row */
   canBulk: boolean;
+  /** The workspace's plan */
+  plan: Plan;
+  /** Plans that import more than one row, cheapest first (lib/plans.ts) */
+  bulkPlans: Plan[];
   /** Codes list to link to afterwards */
   basePath: string;
 }) {
   const openGetProDialog = useGetProDialogStore(
     (state) => state.openGetProDialog,
   );
+  // Plans with custom back-halves, for the column help (lib/plans.ts).
+  const slugPlans = useKnownCodeOptionPlans()?.upgrades.customSlugs ?? [];
   const domainOptions = useDomainOptions(true);
   const [file, setFile] = useState<ParsedFile | null>(null);
   const [parseError, setParseError] = useState<string | null>(null);
@@ -360,12 +371,16 @@ export function ImportWizard({
       {!canBulk && (
         <Alert>
           <Gem />
-          <AlertTitle>Bulk import is a Pro feature</AlertTitle>
+          <AlertTitle>
+            {bulkPlans[0]
+              ? `Bulk import is a ${PLAN_NAMES[bulkPlans[0]]} feature`
+              : "Bulk import isn't on your plan"}
+          </AlertTitle>
           <AlertDescription>
             <p>
-              On the Free plan you can import one code at a time. Pro and
-              Business import up to {MAX_IMPORT_ROWS.toLocaleString("en-US")}{" "}
-              codes per file.
+              On the {PLAN_NAMES[plan]} plan you can import one code at a time.
+              {bulkPlans.length > 0 &&
+                ` ${formatPlanList(bulkPlans)} import up to ${MAX_IMPORT_ROWS.toLocaleString("en-US")} codes per file.`}
             </p>
             <Button className="mt-2" onClick={openGetProDialog} size="sm">
               Upgrade
@@ -418,9 +433,10 @@ export function ImportWizard({
             <p className="text-muted-foreground max-w-md text-xs">
               First row: column names. Columns: destination (required), title,
               folder (use "Parent / Child" for subfolders), tags (separated by ;
-              or |) and slug (optional custom back-half on Pro: 3 to 64 letters,
-              digits, - or _). Up to {MAX_IMPORT_ROWS.toLocaleString("en-US")}{" "}
-              rows and 1 MB.
+              or |) and slug (optional custom back-half
+              {slugPlans.length > 0 && ` on ${formatPlanList(slugPlans)}`}: 3 to
+              64 letters, digits, - or _). Up to{" "}
+              {MAX_IMPORT_ROWS.toLocaleString("en-US")} rows and 1 MB.
             </p>
           </div>
         )}

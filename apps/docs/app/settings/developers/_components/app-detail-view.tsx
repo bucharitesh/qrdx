@@ -54,7 +54,7 @@ export function OAuthAppDetailView({
         href="/settings/developers"
       >
         <ArrowLeft2 aria-hidden className="size-3.5" />
-        Developers
+        API keys & apps
       </Link>
 
       <SettingsHeader

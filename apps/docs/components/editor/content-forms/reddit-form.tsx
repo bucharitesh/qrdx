@@ -30,7 +30,7 @@ export function RedditForm() {
     <div className="space-y-3">
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="reddit-username">
-          Reddit Username
+          Reddit username
         </Label>
         <Input
           id="reddit-username"
@@ -57,7 +57,7 @@ export function RedditForm() {
           }
         />
         <p className="text-muted-foreground text-[11px]">
-          Enter either a username or subreddit (subreddit takes priority)
+          Fill in one. If both are filled, the subreddit is used.
         </p>
       </div>
 

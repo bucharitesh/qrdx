@@ -36,7 +36,7 @@ export function VCardForm() {
       <div className="grid grid-cols-2 gap-2">
         <div className="space-y-2">
           <Label className="text-xs" htmlFor="vcard-firstname">
-            First Name *
+            First name *
           </Label>
           <Input
             id="vcard-firstname"
@@ -50,7 +50,7 @@ export function VCardForm() {
         </div>
         <div className="space-y-2">
           <Label className="text-xs" htmlFor="vcard-lastname">
-            Last Name
+            Last name
           </Label>
           <Input
             id="vcard-lastname"
@@ -71,7 +71,7 @@ export function VCardForm() {
         <Input
           id="vcard-organization"
           type="text"
-          placeholder="Company Name"
+          placeholder="Company name"
           value={vcardData.organization}
           onChange={(e) =>
             setVcardData({ ...vcardData, organization: e.target.value })
@@ -152,7 +152,7 @@ export function VCardForm() {
       </div>
 
       <p className="text-muted-foreground text-xs">
-        Scanning will save this contact to the device
+        Scanning will offer to save this contact
       </p>
     </div>
   );

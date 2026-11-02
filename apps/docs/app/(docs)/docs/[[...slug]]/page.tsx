@@ -24,6 +24,7 @@ import {
 } from "@/components/sections/tools/json-ld";
 import { owner, repo } from "@/lib/github";
 import { baseUrl, createMetadata, siteName } from "@/lib/metadata";
+import { brandedTitle, seoOverride } from "@/lib/seo-overrides";
 import { type Page as DocsPageData, getPageImage, source } from "@/lib/source";
 import { getMDXComponents } from "@/mdx-components";
 
@@ -171,9 +172,13 @@ export async function generateMetadata(
     notFound();
   }
 
+  // A search title of its own where the sidebar title competes with the
+  // marketing pages (lib/seo-overrides.ts).
+  const seo = seoOverride(page.url);
+
   return createMetadata({
-    title: page.data.title,
-    description: page.data.description,
+    title: brandedTitle(seo.title ?? page.data.title, " | QRdx Docs"),
+    description: seo.description ?? page.data.description,
     path: page.url,
     openGraph: {
       images: getPageImage(page).url,
