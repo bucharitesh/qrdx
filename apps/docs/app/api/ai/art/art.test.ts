@@ -5,7 +5,10 @@ import assert from "node:assert/strict";
 import { before, describe, it } from "node:test";
 import { APICallError, RetryError } from "ai";
 import { decodePNGPixels, scanQRPixels } from "qrdx";
-import { paintedArt } from "../../../../tests/support/ai-art-images";
+import {
+  paintedArt,
+  texturedArt,
+} from "../../../../tests/support/ai-art-images";
 
 process.env.DATABASE_URL ??= "postgres://user:pass@localhost:5432/qrdx_test";
 delete process.env.AI_GATEWAY_API_KEY;
@@ -85,9 +88,20 @@ describe("buildArtPrompt", () => {
     const text = prompt();
     assert.match(text, /^Repaint the QR code .*: a zen garden\.$/m);
     assert.match(text, /same grid/);
-    assert.match(text, /finder patterns/);
-    assert.match(text, /quiet zone/);
+    assert.match(text, /finder patterns .* flat and crisp/);
+    assert.match(text, /without fine speckles/);
+    assert.match(text, /quiet zone\) plain, light/);
     assert.match(text, /No text, letters, logos/);
+  });
+
+  it("adds each art model's own rules", () => {
+    assert.match(prompt(), /no perspective, depth or 3D blocks/);
+    assert.match(
+      prompt({ model: "openai/gpt-image-2" }),
+      /Don't zoom, crop or re-center/,
+    );
+    assert.doesNotMatch(prompt({ model: "openai/gpt-image-2" }), /3D blocks/);
+    assert.doesNotMatch(prompt({ model: "bfl/flux-kontext-pro" }), /3D|zoom/);
   });
 
   it("follows the sliders, the negative prompt and the reference", () => {
@@ -120,6 +134,8 @@ describe("generateArtVariant (fake Gemini)", () => {
     assert.deepEqual(calls[0]?.images[0], control.png);
     assert.match(calls[0]?.prompt ?? "", /a zen garden/);
     assert.equal(variant.blended, false);
+    assert.equal(variant.blend, "none");
+    assert.equal(variant.blendStrength, 0);
     assert.equal(variant.seed, 7);
     assert.equal(
       variant.imageUrl,
@@ -127,7 +143,26 @@ describe("generateArtVariant (fake Gemini)", () => {
     );
   });
 
-  it("blends an image that doesn't scan into the code, and still delivers it", async () => {
+  it("strengthens a textured image just enough to scan, on the model's own pixels", async () => {
+    const textured = await texturedArt(control.png);
+    const raw = (await decodePNGPixels(textured))!;
+    assert.equal((await scanQRPixels(raw, TEXT)).passed, false);
+    const { model } = fakeGemini(() => textured);
+    const variant = await pipeline.generateArtVariant(request({ model }));
+
+    assert.equal(variant.blended, true);
+    assert.equal(variant.blend, "least");
+    assert.ok(variant.blendStrength > 0 && variant.blendStrength < 1);
+    const pixels = await deliveredPixels(variant.imageUrl);
+    assert.equal((await scanQRPixels(pixels, TEXT)).passed, true);
+    // The scene far outside the code is the model's, pixel for pixel.
+    assert.deepEqual(
+      [...pixels.data.subarray(0, 4)],
+      [...raw.data.subarray(0, 4)],
+    );
+  });
+
+  it("still delivers an image that needs more, as Image QR at QR visibility 50", async () => {
     const broken = await paintedArt(control.png, { keep: 0.6, smear: true });
     assert.equal(
       (await scanQRPixels((await decodePNGPixels(broken))!, TEXT)).passed,
@@ -137,9 +172,36 @@ describe("generateArtVariant (fake Gemini)", () => {
     const variant = await pipeline.generateArtVariant(request({ model }));
 
     assert.equal(variant.blended, true);
+    assert.ok(["least", "image-qr"].includes(variant.blend));
+    assert.ok(variant.blendStrength > 0);
     const pixels = await deliveredPixels(variant.imageUrl);
     assert.equal(pixels.width, 1024);
     assert.equal((await scanQRPixels(pixels, TEXT)).passed, true);
+  });
+
+  it("strengthens even a scannable image at high QR visibility", async () => {
+    const restyled = await paintedArt(control.png, { keep: 0.75 });
+    const { model } = fakeGemini(() => restyled);
+    const variant = await pipeline.generateArtVariant(
+      request({ model, visibility: 100 }),
+    );
+    assert.equal(variant.blend, "least");
+    assert.ok(variant.blendStrength >= 0.6);
+    const pixels = await deliveredPixels(variant.imageUrl);
+    assert.equal((await scanQRPixels(pixels, TEXT)).passed, true);
+  });
+
+  it("delivers nothing at low QR visibility rather than cover the scene", async () => {
+    // Needs a strength of about 0.65; QR visibility 0 stops at 0.6.
+    const heavy = await texturedArt(control.png, { speckle: 200 });
+    const { model } = fakeGemini(() => heavy);
+    await assert.rejects(
+      pipeline.generateArtVariant(request({ model, visibility: 0 })),
+      (error: { status?: number; code?: string; message?: string }) =>
+        error.status === 502 &&
+        error.code === "AI_ART_UNSCANNABLE" &&
+        /raise QR visibility/.test(error.message ?? ""),
+    );
   });
 
   it("sends a reference image second", async () => {
