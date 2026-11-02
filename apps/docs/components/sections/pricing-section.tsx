@@ -42,6 +42,11 @@ import {
 import { useAuthStore } from "@/store/auth-store";
 
 interface PricingSectionProps {
+  /**
+   * False while paid checkout is closed (feature "checkout"): Upgrade buttons
+   * say it opens soon; subscribers still reach the billing portal.
+   */
+  checkoutOpen: boolean;
   /** Display currency (lib/region); checkout currency is Polar's choice. */
   currency: PricingCurrency;
   /** The signed-in user's own plan; null when signed out. */
@@ -238,6 +243,7 @@ function PriceLine({
 }
 
 export function PricingSection({
+  checkoutOpen,
   currency,
   currentPlan,
   description,
@@ -333,6 +339,16 @@ export function PricingSection({
           </Button>
         ),
         caption: "Plan changes happen in the billing portal.",
+      };
+    }
+    if (!checkoutOpen) {
+      return {
+        button: (
+          <Button className="w-full" disabled variant="outline">
+            Opening soon
+          </Button>
+        ),
+        caption: "Paid plans aren't open for checkout yet.",
       };
     }
     const busy = isPending && pendingPlan === plan;
