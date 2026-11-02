@@ -5,7 +5,7 @@
   "envMode": "loose",
   "tasks": {
     "build": {
-      "dependsOn": ["^build", "test"],
+      "dependsOn": ["^build"],
       "outputs": [
         ".next/**",
         "!.next/cache/**",
@@ -39,5 +39,8 @@
     "//#clean": {
       "cache": false
     }
+  },
+  "remoteCache": {
+    "enabled": false
   }
 }
