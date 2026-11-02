@@ -44,6 +44,7 @@ import { useRouter } from "next/navigation";
 import { type FormEvent, useState, useTransition } from "react";
 import { EventCheckboxes } from "@/app/dashboard/webhooks/_components/event-checkboxes";
 import { UpgradePlanButton } from "@/app/dashboard/webhooks/_components/upgrade-plan-button";
+import { useWorkspaceHref } from "@/components/workspace-provider";
 import type { NotificationWorkspace } from "@/lib/events/notification-settings";
 import {
   CHAT_NOTIFICATION_EVENTS,
@@ -101,7 +102,7 @@ export function WorkspaceNotifications({
 }) {
   const router = useRouter();
   const openUpgradeDialog = useGetProDialogStore((s) => s.openUpgradeDialog);
-  const isTeam = workspace.organizationId !== null;
+  const isTeam = !workspace.own;
   const [emailEvents, setEmailEventsState] = useState<NotificationEvent[]>(
     workspace.email?.events ?? [],
   );
@@ -224,7 +225,7 @@ export function WorkspaceNotifications({
         {plan === "pro"
           ? "are part of Pro and Business"
           : "are part of Business"}
-        .{isTeam ? " Team features follow the plan of the team's owners." : ""}
+        .{isTeam ? " This workspace follows the plan of its owners." : ""}
       </p>
       {!isTeam && <UpgradePlanButton plan={plan} size="sm" />}
     </div>
@@ -235,15 +236,14 @@ export function WorkspaceNotifications({
       <CardHeader>
         <div className="flex flex-wrap items-center gap-2">
           <CardTitle>{workspace.name}</CardTitle>
-          {isTeam && <Badge variant="outline">Team</Badge>}
           <Badge variant={workspace.plan === "free" ? "secondary" : "default"}>
             {PLAN_NAMES[workspace.plan]}
           </Badge>
         </div>
         <CardDescription>
           {isTeam
-            ? "Alerts about this team's codes and pages. Only you get them; every member picks their own."
-            : "Alerts about the codes and pages in your personal workspace."}
+            ? "Alerts about this workspace's codes and pages. Only you get them; every member picks their own."
+            : "Alerts about the codes and pages in your own workspace."}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -508,11 +508,12 @@ export function WorkspaceNotifications({
 }
 
 export function NotificationsFooter() {
+  const inWorkspace = useWorkspaceHref();
   return (
     <p className="text-muted-foreground text-xs">
       Every alert email has an unsubscribe link. Team invitations and other
       account emails are always sent. Want events in your own systems?{" "}
-      <Link className="underline" href="/dashboard/webhooks">
+      <Link className="underline" href={inWorkspace("/settings/webhooks")}>
         Use webhooks
       </Link>
       .

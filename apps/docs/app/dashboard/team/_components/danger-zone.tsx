@@ -15,6 +15,7 @@ import {
 import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
+import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { deleteTeam, leaveTeam } from "@/actions/organizations";
 import { useRefreshTeams } from "@/components/org-switcher";
@@ -30,6 +31,7 @@ export function LeaveTeamButton({
   disabledReason?: string;
 }) {
   const refresh = useRefreshTeams();
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
 
@@ -42,6 +44,8 @@ export function LeaveTeamButton({
       }
       setOpen(false);
       toast.success(`You left ${teamName}`);
+      // This workspace's pages are closed to you now: go to your default.
+      router.replace("/dashboard");
       refresh();
     });
 
@@ -52,14 +56,14 @@ export function LeaveTeamButton({
   return (
     <AlertDialog onOpenChange={setOpen} open={open}>
       <AlertDialogTrigger asChild>
-        <Button variant="outline">Leave team</Button>
+        <Button variant="outline">Leave workspace</Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Leave {teamName}?</AlertDialogTitle>
           <AlertDialogDescription>
-            You lose access to the team's codes and themes. Codes you created
-            stay with the team. You need a new invitation to rejoin.
+            You lose access to its codes, pages and themes. What you created
+            stays in the workspace. You need a new invitation to rejoin.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -71,7 +75,7 @@ export function LeaveTeamButton({
               leave();
             }}
           >
-            Leave team
+            Leave workspace
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
@@ -89,6 +93,7 @@ export function DeleteTeamButton({
   teamSlug: string;
 }) {
   const refresh = useRefreshTeams();
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [confirmSlug, setConfirmSlug] = useState("");
   const [isPending, startTransition] = useTransition();
@@ -102,6 +107,7 @@ export function DeleteTeamButton({
       }
       setOpen(false);
       toast.success(`Deleted ${teamName}`);
+      router.replace("/dashboard");
       refresh();
     });
 
@@ -114,15 +120,15 @@ export function DeleteTeamButton({
       open={open}
     >
       <AlertDialogTrigger asChild>
-        <Button variant="destructive">Delete team</Button>
+        <Button variant="destructive">Delete workspace</Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Delete {teamName}?</AlertDialogTitle>
           <AlertDialogDescription>
-            This removes the team, its members and pending invitations. The
-            team's dynamic QR codes keep redirecting: each code, theme and
-            domain moves to the personal workspace of the member who created it.
+            This removes the workspace, its members and pending invitations. Its
+            dynamic QR codes keep redirecting: each code, page, theme and domain
+            moves to the own workspace of the member who created it.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <div className="space-y-1.5">
@@ -147,7 +153,7 @@ export function DeleteTeamButton({
               remove();
             }}
           >
-            {isPending ? "Deleting..." : "Delete team"}
+            {isPending ? "Deleting..." : "Delete workspace"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

@@ -8,7 +8,6 @@ import { getDomainsOverview } from "@/app/dashboard/domains/_lib/domains";
 import { getPageUsage } from "@/app/dashboard/pages/_lib/landing-pages";
 import {
   getTeam,
-  listMyTeams,
   listPendingInvitations,
   listTeamMembers,
 } from "@/app/dashboard/team/_lib/queries";
@@ -33,6 +32,7 @@ export interface SetupTask {
 
 export interface HomeData {
   plan: Plan;
+  /** The workspace's name */
   teamName: string | null;
   codes: { used: number; limit: number | null };
   pages: number;
@@ -44,9 +44,7 @@ export interface HomeData {
 
 function codesWhere(scope: ActiveScope): SQL {
   return and(
-    scope.organizationId
-      ? eq(qrCode.organizationId, scope.organizationId)
-      : and(eq(qrCode.userId, scope.userId), isNull(qrCode.organizationId)),
+    eq(qrCode.organizationId, scope.organizationId),
     isNull(qrCode.deletedAt),
   ) as SQL;
 }
@@ -77,12 +75,8 @@ export async function getHomeData(scope: ActiveScope): Promise<HomeData> {
       getPageUsage(scope),
       totalScans(scope),
       listCodes(scope, { limit: 5, sort: "newest" }),
-      countThemesInScope(
-        scope.organizationId
-          ? scope
-          : { userId: scope.userId, organizationId: null },
-      ),
-      scope.organizationId ? getTeam(scope.organizationId) : null,
+      countThemesInScope(scope),
+      getTeam(scope.organizationId),
     ],
   );
   const plan = codeUsage.plan;
@@ -97,10 +91,8 @@ export async function getHomeData(scope: ActiveScope): Promise<HomeData> {
   if (limits.teams) {
     tasks.push({
       id: "team",
-      // In a team: someone besides you. Personal: you're in any team.
-      done: scope.organizationId
-        ? (await teamSize(scope.organizationId)) > 1
-        : (await listMyTeams(scope.userId)).length > 0,
+      // Someone besides you, invited or joined.
+      done: (await teamSize(scope.organizationId)) > 1,
     });
   }
   if (limits.customDomains > 0 && getCustomDomainMode() !== "disabled") {

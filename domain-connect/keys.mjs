@@ -29,7 +29,10 @@ const KEY_ID = "_dck1";
 const PROVIDER_ID = "qrdx.dev";
 const SERVICE_ID = "qrdx";
 const CLOUDFLARE_SYNC_UX = "https://dash.cloudflare.com/domainconnect";
-const DEFAULT_REDIRECT = "https://qrdx.dev/dashboard/domains";
+// Where the app sends people back (apps/docs/lib/domain-connect/return.ts
+// connectRedirectUri, without a domain id): Settings → Domains of their
+// default workspace.
+const DEFAULT_REDIRECT = "https://qrdx.dev/dashboard?to=settings/domains";
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 

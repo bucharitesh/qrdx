@@ -9,6 +9,7 @@
 // The route handlers run the real codes service against in-memory tables
 // (tests/support/fake-db); only side systems are stubbed.
 import { createHash } from "node:crypto";
+import { ownWorkspaceId } from "@repo/auth/own-workspace-id";
 import { NextRequest } from "next/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { fakeDb, repoDatabase } from "../support/fake-db";
@@ -154,6 +155,10 @@ beforeEach(() => {
   vi.useFakeTimers({ toFake: ["Date"] });
   vi.setSystemTime(NOW);
   fakeDb.resetAll();
+  // Workspaces are organizations; members point at them.
+  fakeDb.seed("organization", [
+    { id: "org_acme", name: "Acme", slug: "acme", createdAt: new Date(0) },
+  ]);
   fakeDb.defaults("qrCode", () => ({
     slugScope: "",
     contentType: "url",
@@ -262,7 +267,7 @@ describe("which workspace a key acts on", () => {
     ]);
   });
 
-  it("a personal key reads and writes the creator's personal workspace", async () => {
+  it("a key from before workspaces reads and writes the creator's own workspace", async () => {
     const response = await listCodes(KEYS.alicePersonal);
     expect(response.status).toBe(200);
     expect(await titles(response)).toEqual(["Personal"]);
@@ -274,7 +279,7 @@ describe("which workspace a key acts on", () => {
     expect(
       (await json<{ data: { organizationId: string | null } }>(created)).data
         .organizationId,
-    ).toBeNull();
+    ).toBe(ownWorkspaceId("u_alice"));
   });
 
   it("a team key reads and writes that team, and nothing else", async () => {
@@ -413,7 +418,7 @@ describe("key scopes", () => {
     expect(body).toMatchObject({
       code: "INSUFFICIENT_SCOPE",
       message:
-        "This API key needs the 'codes:write' scope. Create a key that includes it at http://localhost:3000/settings/developers; a key's scopes can't be changed.",
+        "This API key needs the 'codes:write' scope. Create a key that includes it at http://localhost:3000/dashboard?to=settings/developers; a key's scopes can't be changed.",
       docs: KEYS_DOCS,
     });
     expect(fakeDb.rows("qrCode")).toHaveLength(0);
@@ -583,7 +588,7 @@ describe("OAuth tokens and sessions are unaffected", () => {
     expect(await json(response)).toEqual({
       code: "UNAUTHORIZED",
       message:
-        'Missing API key. Send an API key as "Authorization: Bearer <key>"; create one at http://localhost:3000/settings/developers. OAuth access tokens go in the same header.',
+        'Missing API key. Send an API key as "Authorization: Bearer <key>"; create one at http://localhost:3000/dashboard?to=settings/developers. OAuth access tokens go in the same header.',
       status: 401,
       docs: KEYS_DOCS,
     });

@@ -1,6 +1,12 @@
 "use server";
 
+import { isOwnWorkspaceOf } from "@repo/auth/own-workspace-id";
 import { auth } from "@repo/auth/server";
+import {
+  SLUG_FORMAT_MESSAGE,
+  WORKSPACE_SLUG_PATTERN,
+  workspaceSlugProblem,
+} from "@repo/auth/workspace-rules";
 import {
   database as db,
   invitation,
@@ -12,19 +18,27 @@ import { and, count, eq, gt, ne } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { z } from "zod";
-import { TEAM_SLUG_PATTERN } from "@/app/dashboard/team/_lib/team";
 import {
   getOwnerPlanForOrganization,
   getPlan,
   getPlanLimits,
 } from "@/lib/plans";
-import { type ActiveScope, getActiveScope } from "@/lib/scope";
+import { PLAN_NAMES } from "@/lib/pricing";
+import {
+  type ActiveScope,
+  getActiveScope,
+  getActiveWorkspace,
+} from "@/lib/scope";
 import { logError } from "@/lib/shared";
+import { rememberLastWorkspace, workspaceSlug } from "@/lib/workspaces";
 import { UnauthorizedError } from "@/types/errors";
 
-// Teams are Better Auth organizations. Every write goes through the plugin's
-// API (auth.api.*), which re-checks membership and role permissions; these
-// actions add input validation, plan gating and rate limits on top.
+// Workspaces are Better Auth organizations. Every write goes through the
+// plugin's API (auth.api.*), which re-checks membership and role
+// permissions, and runs QRdx's slug and own-workspace rules
+// (packages/auth/workspace-hooks.ts); these actions add input validation,
+// plan gating and rate limits on top. The workspace acted on is the one in
+// the page's URL (lib/scope.ts).
 
 export type TeamActionResult<T = null> =
   | { ok: true; data: T }
@@ -35,6 +49,8 @@ const teamLimiter = createRateLimiter({ limiter: slidingWindow(30, "60 s") });
 const inviteLimiter = createRateLimiter({
   limiter: slidingWindow(30, "10 m"),
 });
+// The slug check runs as people type (debounced).
+const checkLimiter = createRateLimiter({ limiter: slidingWindow(60, "60 s") });
 
 const idSchema = z
   .string()
@@ -44,16 +60,24 @@ const idSchema = z
   // Plugin endpoints treat values containing "@" as emails.
   .regex(/^[^@\s]+$/);
 
-const createTeamSchema = z.object({
-  name: z.string().trim().min(2, "Team name is too short").max(50),
-  slug: z
-    .string()
-    .trim()
-    .toLowerCase()
-    .regex(
-      new RegExp(TEAM_SLUG_PATTERN),
-      "Use 3-48 lowercase letters, numbers and dashes",
-    ),
+const slugSchema = z
+  .string()
+  .trim()
+  .toLowerCase()
+  .regex(new RegExp(WORKSPACE_SLUG_PATTERN), SLUG_FORMAT_MESSAGE)
+  .refine((slug) => workspaceSlugProblem(slug) === null, {
+    message: "That URL is reserved. Pick another one.",
+  });
+const nameSchema = z
+  .string()
+  .trim()
+  .min(2, "Workspace name is too short.")
+  .max(50, "Workspace name is too long.");
+
+const createWorkspaceSchema = z.object({ name: nameSchema, slug: slugSchema });
+const updateWorkspaceSchema = z.object({
+  name: nameSchema.optional(),
+  slug: slugSchema.optional(),
 });
 
 const inviteSchema = z.object({
@@ -78,24 +102,26 @@ const deleteTeamSchema = organizationSchema.extend({
   confirmSlug: z.string().trim().max(64),
 });
 
+const MORE_WORKSPACES = `More workspaces are part of ${PLAN_NAMES.pro} and ${PLAN_NAMES.business}.`;
+
 const ERROR_MESSAGES: Record<string, string> = {
-  ORGANIZATION_ALREADY_EXISTS: "That team URL is already taken.",
-  YOU_ARE_NOT_ALLOWED_TO_CREATE_A_NEW_ORGANIZATION:
-    "Creating teams requires a Pro or Business plan.",
+  ORGANIZATION_ALREADY_EXISTS: "That workspace URL is already taken.",
+  ORGANIZATION_SLUG_ALREADY_TAKEN: "That workspace URL is already taken.",
+  YOU_ARE_NOT_ALLOWED_TO_CREATE_A_NEW_ORGANIZATION: MORE_WORKSPACES,
   USER_IS_ALREADY_A_MEMBER_OF_THIS_ORGANIZATION:
-    "That person is already a member of this team.",
+    "That person is already a member of this workspace.",
   YOU_CANNOT_LEAVE_THE_ORGANIZATION_AS_THE_ONLY_OWNER:
-    "A team needs at least one owner. Make someone else an owner first.",
+    "A workspace needs at least one owner. Make someone else an owner first.",
   YOU_CANNOT_LEAVE_THE_ORGANIZATION_WITHOUT_AN_OWNER:
-    "A team needs at least one owner. Make someone else an owner first.",
+    "A workspace needs at least one owner. Make someone else an owner first.",
   YOU_ARE_NOT_THE_RECIPIENT_OF_THE_INVITATION:
     "This invitation was sent to a different email address.",
   EMAIL_VERIFICATION_REQUIRED_BEFORE_ACCEPTING_OR_REJECTING_INVITATION:
     "Verify your email address before responding to this invitation.",
   INVITATION_NOT_FOUND: "This invitation is no longer valid.",
-  ORGANIZATION_MEMBERSHIP_LIMIT_REACHED: `This team is full. Pro teams have up to ${getPlanLimits("pro").teamMembers} members; Business teams have no limit.`,
+  ORGANIZATION_MEMBERSHIP_LIMIT_REACHED: `This workspace is full. ${PLAN_NAMES.pro} workspaces have up to ${getPlanLimits("pro").teamMembers} members; ${PLAN_NAMES.business} workspaces have no limit.`,
   INVITATION_LIMIT_REACHED:
-    "This team has no free seats for another invitation. Revoke a pending invitation or upgrade the team's plan.",
+    "This workspace has no free seats for another invitation. Revoke a pending invitation or upgrade the workspace's plan.",
 };
 
 // Errors the inviter or creator can fix by upgrading (TeamActionResult.upgrade).
@@ -113,10 +139,10 @@ function fail(error: string, upgrade?: boolean): TeamActionResult<never> {
   return upgrade ? { ok: false, error, upgrade } : { ok: false, error };
 }
 
-/** Surfaces Better Auth API errors (worded for "teams"); hides anything else. */
+/** Surfaces Better Auth API errors (worded for workspaces); hides anything else. */
 function failure(error: unknown, action: string): TeamActionResult<never> {
   if (error instanceof UnauthorizedError) {
-    return fail("Sign in to manage teams.");
+    return fail("Sign in to manage workspaces.");
   }
   const apiError = error as ErrorWithBody;
   if (error instanceof Error && typeof apiError.statusCode === "number") {
@@ -130,7 +156,7 @@ function failure(error: unknown, action: string): TeamActionResult<never> {
     if (message) {
       return fail(
         message.replace(/organization/gi, (word) =>
-          word[0] === "O" ? "Team" : "team",
+          word[0] === "O" ? "Workspace" : "workspace",
         ),
       );
     }
@@ -150,11 +176,9 @@ async function allow(
 
 const RATE_LIMITED = "Too many requests. Please wait a minute and try again.";
 
-/** The active team, when the caller may manage it (owner or admin). */
+/** The open workspace, when the caller may manage it (owner or admin). */
 function managedTeamId(scope: ActiveScope): string | null {
-  return scope.organizationId && scope.role !== "member"
-    ? scope.organizationId
-    : null;
+  return scope.role !== "member" ? scope.organizationId : null;
 }
 
 function revalidateTeam() {
@@ -196,28 +220,30 @@ async function seatLimitError(
   if ((members?.value ?? 0) + (pending?.value ?? 0) < seats) return null;
 
   return seats <= 1
-    ? "Adding members needs a team owner on Pro or Business."
-    : `This team has used all ${seats} seats (members plus pending invitations). Revoke an invitation, or upgrade a team owner to Business for unlimited members.`;
+    ? `Adding members needs a workspace owner on ${PLAN_NAMES.pro} or ${PLAN_NAMES.business}.`
+    : `This workspace has used all ${seats} seats (members plus pending invitations). Revoke an invitation, or upgrade a workspace owner to ${PLAN_NAMES.business} for unlimited members.`;
 }
 
-export async function createTeam(input: {
+export async function createWorkspace(input: {
   name: string;
   slug: string;
 }): Promise<TeamActionResult<{ id: string; slug: string }>> {
   try {
     const scope = await getActiveScope();
-    const parsed = createTeamSchema.safeParse(input);
+    const parsed = createWorkspaceSchema.safeParse(input);
     if (!parsed.success) {
-      return fail(parsed.error.issues[0]?.message ?? "Invalid team details.");
+      return fail(
+        parsed.error.issues[0]?.message ?? "Invalid workspace details.",
+      );
     }
     if (!(await allow(teamLimiter, scope, "create"))) return fail(RATE_LIMITED);
 
-    // The plugin's allowUserToCreateOrganization callback enforces this too.
+    // Everyone has their own workspace; more need a paid plan. The plugin's
+    // allowUserToCreateOrganization callback enforces this too.
     if (!getPlanLimits(await getPlan(scope.userId)).teams) {
-      return fail("Creating teams requires a Pro or Business plan.", true);
+      return fail(MORE_WORKSPACES, true);
     }
 
-    // Creating a team makes it the active workspace.
     const created = (await auth.api.createOrganization({
       headers: await headers(),
       body: { name: parsed.data.name, slug: parsed.data.slug },
@@ -226,7 +252,102 @@ export async function createTeam(input: {
     revalidateTeam();
     return { ok: true, data: { id: created.id, slug: created.slug } };
   } catch (error) {
-    return failure(error, "createTeam");
+    return failure(error, "createWorkspace");
+  }
+}
+
+export type WorkspaceSlugCheck =
+  | { status: "available" }
+  | { status: "unavailable"; message: string };
+
+/** Whether `slug` is free for a new or renamed workspace (as you type). */
+export async function checkWorkspaceSlug(input: {
+  slug: string;
+}): Promise<TeamActionResult<WorkspaceSlugCheck>> {
+  try {
+    const scope = await getActiveScope();
+    const slug = typeof input?.slug === "string" ? input.slug.trim() : "";
+    const problem = workspaceSlugProblem(slug);
+    if (problem) {
+      return { ok: true, data: { status: "unavailable", message: problem } };
+    }
+    if (!(await allow(checkLimiter, scope, "check"))) return fail(RATE_LIMITED);
+    const [existing] = await db
+      .select({ id: organization.id })
+      .from(organization)
+      .where(eq(organization.slug, slug))
+      .limit(1);
+    // The open workspace keeping its own URL counts as available.
+    if (existing && existing.id !== scope.organizationId) {
+      return {
+        ok: true,
+        data: {
+          status: "unavailable",
+          message: "That workspace URL is already taken.",
+        },
+      };
+    }
+    return { ok: true, data: { status: "available" } };
+  } catch (error) {
+    return failure(error, "checkWorkspaceSlug");
+  }
+}
+
+/**
+ * Renames the open workspace and/or changes its URL (owners and admins).
+ * Old /dashboard/<old slug> links stop working; printed codes don't change.
+ */
+export async function updateWorkspace(input: {
+  name?: string;
+  slug?: string;
+}): Promise<TeamActionResult<{ slug: string }>> {
+  try {
+    const scope = await getActiveScope();
+    if (scope.role === "member") {
+      return fail("Only workspace owners and admins can change its settings.");
+    }
+    const parsed = updateWorkspaceSchema.safeParse(input);
+    if (!parsed.success) {
+      return fail(
+        parsed.error.issues[0]?.message ?? "Invalid workspace details.",
+      );
+    }
+    const data = Object.fromEntries(
+      Object.entries(parsed.data).filter(([, value]) => value !== undefined),
+    );
+    if (Object.keys(data).length === 0) return fail("Nothing to save.");
+    if (!(await allow(teamLimiter, scope, "manage"))) return fail(RATE_LIMITED);
+
+    await auth.api.updateOrganization({
+      headers: await headers(),
+      body: { organizationId: scope.organizationId, data },
+    });
+
+    revalidateTeam();
+    const slug = await workspaceSlug(scope.organizationId);
+    return { ok: true, data: { slug: slug ?? parsed.data.slug ?? "" } };
+  } catch (error) {
+    return failure(error, "updateWorkspace");
+  }
+}
+
+/**
+ * Called when a workspace page opens: makes it the session's workspace (the
+ * playground, ⌘K and pages outside a workspace use it) and remembers it for
+ * the next sign-in. Does nothing when it already is.
+ */
+export async function rememberWorkspace(): Promise<void> {
+  try {
+    const { scope, sessionWorkspaceId } = await getActiveWorkspace();
+    if (sessionWorkspaceId === scope.organizationId) return;
+    await auth.api.setActiveOrganization({
+      headers: await headers(),
+      body: { organizationId: scope.organizationId },
+    });
+    await rememberLastWorkspace(scope.userId, scope.organizationId);
+  } catch (error) {
+    if (error instanceof UnauthorizedError) return;
+    logError(error as Error, { action: "rememberWorkspace" });
   }
 }
 
@@ -246,7 +367,9 @@ export async function inviteMember(input: {
   try {
     const scope = await getActiveScope();
     const organizationId = managedTeamId(scope);
-    if (!organizationId) return fail("Only team owners and admins can invite.");
+    if (!organizationId) {
+      return fail("Only workspace owners and admins can invite.");
+    }
     const parsed = inviteSchema.safeParse(input);
     if (!parsed.success) {
       return fail(parsed.error.issues[0]?.message ?? "Invalid invitation.");
@@ -300,7 +423,7 @@ export async function cancelInvitation(input: {
   try {
     const scope = await getActiveScope();
     if (!managedTeamId(scope))
-      return fail("Only team owners and admins can revoke invitations.");
+      return fail("Only workspace owners and admins can revoke invitations.");
     const parsed = invitationSchema.safeParse(input);
     if (!parsed.success) return fail("Invalid invitation.");
     if (!(await allow(teamLimiter, scope, "manage"))) return fail(RATE_LIMITED);
@@ -325,7 +448,7 @@ export async function updateMemberRole(input: {
     const scope = await getActiveScope();
     const organizationId = managedTeamId(scope);
     if (!organizationId)
-      return fail("Only team owners and admins can change roles.");
+      return fail("Only workspace owners and admins can change roles.");
     const parsed = roleSchema.safeParse(input);
     if (!parsed.success) return fail("Invalid role.");
     if (parsed.data.role === "owner" && scope.role !== "owner") {
@@ -356,12 +479,12 @@ export async function removeMember(input: {
     const scope = await getActiveScope();
     const organizationId = managedTeamId(scope);
     if (!organizationId)
-      return fail("Only team owners and admins can remove members.");
+      return fail("Only workspace owners and admins can remove members.");
     const parsed = memberSchema.safeParse(input);
     if (!parsed.success) return fail("Invalid member.");
     if (!(await allow(teamLimiter, scope, "manage"))) return fail(RATE_LIMITED);
 
-    // Codes the member created stay with the team (organization_id is kept).
+    // Codes the member created stay with the workspace (organization_id is kept).
     await auth.api.removeMember({
       headers: await headers(),
       body: { memberIdOrEmail: parsed.data.memberId, organizationId },
@@ -380,7 +503,10 @@ export async function leaveTeam(input: {
   try {
     const scope = await getActiveScope();
     const parsed = organizationSchema.safeParse(input);
-    if (!parsed.success) return fail("Invalid team.");
+    if (!parsed.success) return fail("Invalid workspace.");
+    if (isOwnWorkspaceOf(parsed.data.organizationId, scope.userId)) {
+      return fail("You can't leave your own workspace.");
+    }
     if (!(await allow(teamLimiter, scope, "manage"))) return fail(RATE_LIMITED);
 
     await auth.api.leaveOrganization({
@@ -402,27 +528,30 @@ export async function deleteTeam(input: {
   try {
     const scope = await getActiveScope();
     const parsed = deleteTeamSchema.safeParse(input);
-    if (!parsed.success) return fail("Invalid team.");
-    // Only the team that is open in the dashboard, and only by an owner.
+    if (!parsed.success) return fail("Invalid workspace.");
+    // Only the workspace that is open in the dashboard, and only by an owner.
     if (
       scope.organizationId !== parsed.data.organizationId ||
       scope.role !== "owner"
     ) {
-      return fail("Only owners can delete a team.");
+      return fail("Only owners can delete a workspace.");
+    }
+    if (isOwnWorkspaceOf(parsed.data.organizationId, scope.userId)) {
+      return fail("Your own workspace can't be deleted. Rename it instead.");
     }
     const [team] = await db
       .select({ slug: organization.slug })
       .from(organization)
       .where(eq(organization.id, parsed.data.organizationId))
       .limit(1);
-    if (!team) return fail("Team not found.");
+    if (!team) return fail("Workspace not found.");
     if (team.slug !== parsed.data.confirmSlug) {
-      return fail("Type the team URL exactly to confirm.");
+      return fail("Type the workspace URL exactly to confirm.");
     }
     if (!(await allow(teamLimiter, scope, "manage"))) return fail(RATE_LIMITED);
 
-    // qr_code / brand_kit / custom_domain rows keep working: their
-    // organization_id is set to null, so they return to their creators.
+    // Every row goes to the own workspace of the member who created it
+    // (packages/auth/workspace-hooks.ts), so codes keep working.
     await auth.api.deleteOrganization({
       headers: await headers(),
       body: { organizationId: parsed.data.organizationId },
@@ -437,7 +566,7 @@ export async function deleteTeam(input: {
 
 export async function acceptInvitation(input: {
   invitationId: string;
-}): Promise<TeamActionResult<{ organizationId: string }>> {
+}): Promise<TeamActionResult<{ organizationId: string; slug: string | null }>> {
   try {
     const scope = await getActiveScope();
     const parsed = invitationSchema.safeParse(input);
@@ -445,7 +574,7 @@ export async function acceptInvitation(input: {
     if (!(await allow(teamLimiter, scope, "respond")))
       return fail(RATE_LIMITED);
 
-    // Checks the invitee email, expiry and status; makes the team active.
+    // Checks the invitee email, expiry and status; makes the workspace active.
     const result = (await auth.api.acceptInvitation({
       headers: await headers(),
       body: { invitationId: parsed.data.invitationId },
@@ -454,7 +583,10 @@ export async function acceptInvitation(input: {
     revalidateTeam();
     return {
       ok: true,
-      data: { organizationId: result.member.organizationId },
+      data: {
+        organizationId: result.member.organizationId,
+        slug: await workspaceSlug(result.member.organizationId),
+      },
     };
   } catch (error) {
     return failure(error, "acceptInvitation");

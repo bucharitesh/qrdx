@@ -2,7 +2,6 @@ import { auth } from "@repo/auth/server";
 import { isMarkdownPreferred, rewritePath } from "fumadocs-core/negotiation";
 import { headers } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
-import { legacyCodesRedirect } from "@/app/dashboard/_components/home/legacy-codes-url";
 import { routeCustomDomain } from "@/app/dashboard/domains/_lib/host-routing";
 import { signInPath } from "@/lib/safe-redirect";
 import {
@@ -13,6 +12,7 @@ import {
   NONCE_ROUTE,
   reportingEndpoints,
 } from "@/lib/security/csp";
+import { WORKSPACE_HEADER, workspaceSlugFromPath } from "@/lib/workspace-paths";
 import { API_AUTH_PREFIX } from "./routes";
 
 const { rewrite: rewriteLLM } = rewritePath("/docs/*path", "/llms.mdx/*path");
@@ -30,18 +30,31 @@ const CSP_HEADER = cspHeaderName();
 const REPORTING_ENDPOINTS = reportingEndpoints(cspOptions);
 
 /**
- * Continues the request; on nonce routes with a fresh CSP nonce, which Next
- * reads from the request's policy and puts on every script it renders.
+ * Continues the request. Pages under /dashboard/<slug> get the slug as a
+ * request header (lib/scope.ts reads it, and so do the server actions they
+ * post, which go to the page's own URL); any copy the browser sent is
+ * dropped first. Nonce routes also get a fresh CSP nonce, which Next reads
+ * from the request's policy and puts on every script it renders.
  */
 function next(request: NextRequest): NextResponse {
   const { pathname } = request.nextUrl;
-  if (!(CSP_ENABLED && NONCE_ROUTE.test(pathname))) return NextResponse.next();
+  const slug = workspaceSlugFromPath(pathname);
+  const nonce = CSP_ENABLED && NONCE_ROUTE.test(pathname);
+  if (!(slug || nonce || request.headers.has(WORKSPACE_HEADER))) {
+    return NextResponse.next();
+  }
+
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.delete(WORKSPACE_HEADER);
+  if (slug) requestHeaders.set(WORKSPACE_HEADER, slug);
+  if (!nonce) {
+    return NextResponse.next({ request: { headers: requestHeaders } });
+  }
 
   const policy = appCsp(cspOptions, {
     nonce: createNonce(),
     oauth: pathname.startsWith("/oauth/"),
   });
-  const requestHeaders = new Headers(request.headers);
   requestHeaders.set(CSP_HEADER.toLowerCase(), policy);
   const response = NextResponse.next({ request: { headers: requestHeaders } });
   response.headers.set(CSP_HEADER, policy);
@@ -60,16 +73,6 @@ export default async function proxy(request: NextRequest) {
   // The catch-all matcher also reaches here on hosts that aren't custom domains.
   if (!APP_PATHS.test(request.nextUrl.pathname)) {
     return next(request);
-  }
-
-  // /dashboard is Home now: old links with codes-list filters (?q=, ?folder=,
-  // ?import=…) go to the list at /dashboard/codes, query kept, before sign-in.
-  const codesList = legacyCodesRedirect(
-    request.nextUrl.pathname,
-    request.nextUrl.search,
-  );
-  if (codesList) {
-    return NextResponse.redirect(new URL(codesList, request.url), 307);
   }
 
   if (isMarkdownPreferred(request)) {

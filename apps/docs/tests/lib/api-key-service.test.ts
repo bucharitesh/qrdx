@@ -5,6 +5,7 @@
 // active keys per workspace; and before manual-sql/0011 the service reports
 // "unavailable" instead of failing. In-memory tables (tests/support/fake-db).
 import { createHash } from "node:crypto";
+import { ownWorkspaceId } from "@repo/auth/own-workspace-id";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { fakeDb, repoDatabase } from "../support/fake-db";
 
@@ -32,9 +33,10 @@ const NOW = new Date("2026-11-02T12:00:00Z");
 const sha256 = (value: string) =>
   createHash("sha256").update(value).digest("hex");
 
+// Alice's own workspace (what used to be her personal workspace).
 const personal = {
   userId: "u_alice",
-  organizationId: null,
+  organizationId: ownWorkspaceId("u_alice"),
   role: "owner" as const,
 };
 const teamOwner = {
@@ -71,6 +73,12 @@ beforeEach(() => {
     { id: "m1", organizationId: "org_acme", userId: "u_alice", role: "owner" },
     { id: "m2", organizationId: "org_acme", userId: "u_bob", role: "member" },
     { id: "m3", organizationId: "org_acme", userId: "u_carol", role: "admin" },
+    {
+      id: "m_own",
+      organizationId: ownWorkspaceId("u_alice"),
+      userId: "u_alice",
+      role: "owner",
+    },
   ]);
 });
 
@@ -86,7 +94,7 @@ describe("createApiKey", () => {
       keyHash: sha256(key),
       start: key.slice(0, 11),
       userId: "u_alice",
-      organizationId: null,
+      organizationId: ownWorkspaceId("u_alice"),
       scopes: ["codes:read", "codes:write"],
       expiresAt: null,
       revokedAt: null,
@@ -238,7 +246,7 @@ describe("revokeApiKey", () => {
     });
     const outsider = {
       userId: "u_dave",
-      organizationId: null,
+      organizationId: ownWorkspaceId("u_dave"),
       role: "owner" as const,
     };
     await expect(

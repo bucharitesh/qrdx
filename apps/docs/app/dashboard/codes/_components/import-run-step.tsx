@@ -14,6 +14,7 @@ import {
 } from "iconsax-reactjs";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useWorkspaceHref } from "@/components/workspace-provider";
 import { track } from "@/lib/analytics";
 import {
   MigrateApiError,
@@ -54,6 +55,7 @@ export function RunStep({
   onClose: () => void;
   onBack: () => void;
 }) {
+  const inWorkspace = useWorkspaceHref();
   const [job, setJob] = useState<JobSummary | null>(null);
   const [items, setItems] = useState<JobItem[]>([]);
   const [running, setRunning] = useState(false);
@@ -251,7 +253,9 @@ export function RunStep({
 
   const skipped = reasonsOf(items, "skipped");
   const failed = reasonsOf(items, "failed");
-  const searchHref = `/dashboard/codes?q=${encodeURIComponent(`Imported from ${name}`)}`;
+  const searchHref = inWorkspace(
+    `/codes?q=${encodeURIComponent(`Imported from ${name}`)}`,
+  );
 
   return (
     <StepLayout

@@ -32,7 +32,8 @@ import {
 } from "@/lib/email/templates/weekly-digest";
 import { baseUrl } from "@/lib/metadata";
 import { getPlanForScope, getPlanLimits } from "@/lib/plans";
-import { workspaceTitle } from "./notify";
+import { workspaceLink } from "@/lib/workspace-paths";
+import { eventWorkspaceSlug, workspaceTitle } from "./notify";
 import type { EventScope } from "./subscribers";
 import { unsubscribeUrl } from "./unsubscribe";
 
@@ -93,6 +94,7 @@ export async function buildDigest(
 ): Promise<DigestNumbers> {
   const previousStart = new Date(start.getTime() - 7 * DAY_MS);
   const inWeek = and(gte(qrScan.scannedAt, start), lt(qrScan.scannedAt, end));
+  const slug = await eventWorkspaceSlug(scope);
 
   const [[totals], [previous], topCodes, topCountries, [created], [responses]] =
     await db.batch([
@@ -169,7 +171,7 @@ export async function buildDigest(
       label: codeLabel(code),
       scans: code.scans,
       url: new URL(
-        `/dashboard/codes/${encodeURIComponent(code.id)}`,
+        workspaceLink(slug, `/codes/${encodeURIComponent(code.id)}`),
         baseUrl.origin,
       ).toString(),
     })),
@@ -281,7 +283,7 @@ export async function runWeeklyDigest({
           <WeeklyDigestEmail
             {...digest}
             dashboardUrl={new URL(
-              "/dashboard/analytics",
+              workspaceLink(await eventWorkspaceSlug(scope), "/analytics"),
               baseUrl.origin,
             ).toString()}
             unsubscribeUrl={unsubscribe}

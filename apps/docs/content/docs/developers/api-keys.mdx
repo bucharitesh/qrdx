@@ -14,7 +14,7 @@ Every endpoint that takes an OAuth access token takes a key in the same header, 
 
 ## Create a key [#create-a-key]
 
-1. Open [Settings → API keys & apps](/settings/developers?new=1) with the workspace the key is for open: your personal workspace or a team.
+1. Open [Settings → API keys & apps](/dashboard?to=settings/developers&new=1) in the workspace the key is for. The link opens the workspace you last used; pick another one in the workspace switcher.
 2. Choose **Create key**. Name it after where it will run, pick its access and, if you like, when it expires.
 3. Copy the key. It's shown once: QRdx stores only a hash of it, so it can't be shown again. The same dialog shows a curl request with the key and this site's API address filled in, ready to paste.
 
@@ -36,10 +36,10 @@ Keys use the same scopes as OAuth apps. Pick one of three options when you creat
 
 A key belongs to the workspace that was open when you created it, and acts there as you:
 
-- **Personal workspace.** The key works with your personal codes, scans, hooks and themes, under your plan's limits and [daily quota](/docs/developers/rest-api#rate-limits).
-- **Team.** The key works with the team's codes, hooks and shared themes, under the team's plan and daily quota. It can do what you can do in the team, judged by your [role](/docs/teams) at the time of each request. If your role changes, the key's rights change with it; if you leave the team, the key stops working.
+- The key works with that workspace's codes, scans, hooks and themes, under the workspace's plan and [daily quota](/docs/developers/rest-api#rate-limits).
+- It can do what you can do in the workspace, judged by your [role](/docs/teams) at the time of each request. In your own workspace you're the owner. If your role changes, the key's rights change with it; if you leave the workspace, the key stops working, and deleting a workspace deletes its keys.
 
-Every team member can create keys. Owners and admins see every key in the team and can revoke any of them; members see and revoke only their own. `GET /v1/me` returns the profile of the person who created the key.
+Every member of a workspace can create keys. Owners and admins see every key in the workspace and can revoke any of them; members see and revoke only their own. `GET /v1/me` returns the profile of the person who created the key.
 
 ## Expiry, last use and revoking [#revoke]
 

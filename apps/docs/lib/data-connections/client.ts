@@ -6,6 +6,7 @@ import type {
   MailchimpMergeField,
 } from "@repo/integrations/src/integrations/mailchimp/types";
 import type { FormMapping } from "@repo/integrations/src/sinks/mapping";
+import { workspaceRequestHeaders } from "@/components/workspace-provider";
 import type { ScopedFormPage } from "./data";
 import {
   isIntegrationsMock,
@@ -43,7 +44,10 @@ export class DataConnectionError extends Error {
 async function request<T>(url: string, init?: RequestInit): Promise<T> {
   let response: Response;
   try {
-    response = await fetch(url, init);
+    response = await fetch(url, {
+      ...init,
+      headers: { ...workspaceRequestHeaders(), ...init?.headers },
+    });
   } catch {
     throw new DataConnectionError(
       "Couldn't reach QRdx. Check your connection and try again.",

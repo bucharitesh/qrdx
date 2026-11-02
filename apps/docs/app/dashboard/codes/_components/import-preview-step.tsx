@@ -23,6 +23,7 @@ import {
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useAvailability } from "@/components/availability-provider";
+import { useWorkspaceHref } from "@/components/workspace-provider";
 import { track } from "@/lib/analytics";
 import { MigrateApiError, type MigrateClient } from "@/lib/migrate/client";
 import { FILE_PRESETS } from "@/lib/migrate/files";
@@ -86,6 +87,7 @@ export function PreviewStep({
   onBack: () => void;
   onStarted: (job: JobSummary) => void;
 }) {
+  const inWorkspace = useWorkspaceHref();
   const openGetProDialog = useGetProDialogStore(
     (state) => state.openGetProDialog,
   );
@@ -439,10 +441,10 @@ export function PreviewStep({
                       </p>
                       {preview.backHalves.domain &&
                         preview.backHalves.qrdx !== "verified" &&
-                        showsPath("/dashboard/domains") && (
+                        showsPath(inWorkspace("/settings/domains")) && (
                           <Link
                             className="font-medium text-foreground underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground"
-                            href="/dashboard/domains"
+                            href={inWorkspace("/settings/domains")}
                           >
                             Open Domains
                           </Link>

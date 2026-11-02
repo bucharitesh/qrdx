@@ -36,6 +36,7 @@ import {
 import type { PageUsage } from "@/app/dashboard/pages/_lib/landing-pages";
 import { openCodeBuilder } from "@/components/code-builder/store";
 import { TemplatePreview } from "@/components/landing/template-preview";
+import { useWorkspaceHref } from "@/components/workspace-provider";
 import { track } from "@/lib/analytics";
 import { demoPath } from "@/lib/landing/demo-paths";
 import type { PageTemplate } from "@/lib/landing/templates";
@@ -150,6 +151,7 @@ export function NewCodeDialog({
   /** Template to preselect in `initialType`'s gallery (from a template demo) */
   initialVariant?: string | null;
 }) {
+  const inWorkspace = useWorkspaceHref();
   const router = useRouter();
   const templates = useTemplates(open);
   const demo = useDemoContent(open);
@@ -225,7 +227,9 @@ export function NewCodeDialog({
       }
       track("template_used", { template_type: template.type });
       onOpenChange(false);
-      router.push(`/dashboard/pages/${encodeURIComponent(result.data.pageId)}`);
+      router.push(
+        inWorkspace(`/pages/${encodeURIComponent(result.data.pageId)}`),
+      );
     });
   };
 

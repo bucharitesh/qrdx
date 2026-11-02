@@ -2,7 +2,11 @@ import * as schema from "@repo/database";
 import { database as db } from "@repo/database";
 import { type BetterAuthOptions, betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { APIError, createAuthMiddleware } from "better-auth/api";
+import {
+  APIError,
+  createAuthMiddleware,
+  getSessionFromCtx,
+} from "better-auth/api";
 import {
   admin,
   emailOTP,
@@ -16,6 +20,14 @@ import {
   ENTITLED_SUBSCRIPTION_STATUSES,
   hasEntitledSubscription,
 } from "./plan";
+import {
+  assertDeletable,
+  assertNotOwnMember,
+  assertWorkspaceSlug,
+  createOwnWorkspace,
+  handRowsBackToCreators,
+  initialWorkspaceId,
+} from "./workspace-hooks";
 
 // Members per team, owner included, by the best plan among its owners. Keep in
 // sync with `teamMembers` in apps/docs/lib/plans.ts. Business products are the
@@ -153,19 +165,55 @@ export const auth = betterAuth({
           const name = user.email.split("@")[0] || user.email;
           return Promise.resolve({ data: { ...user, name } });
         },
+        // Every account gets a workspace of its own straight away. If this
+        // fails, the first dashboard visit makes it (apps/docs/lib/workspaces.ts).
+        after: async (user) => {
+          try {
+            await createOwnWorkspace(user);
+          } catch (error) {
+            console.error("Could not create the new user's workspace", error);
+          }
+        },
+      },
+    },
+    session: {
+      create: {
+        // Sign-in opens the workspace last opened anywhere, else your own.
+        before: async (session) => {
+          if (session.activeOrganizationId) return;
+          try {
+            const activeOrganizationId = await initialWorkspaceId(
+              session.userId
+            );
+            if (activeOrganizationId) {
+              return { data: { ...session, activeOrganizationId } };
+            }
+          } catch (error) {
+            console.error("Could not pick the session's workspace", error);
+          }
+        },
       },
     },
   },
   hooks: {
     // Only sign-in codes can be requested (the plugin also accepts
     // verification and password-reset types, which QRdx doesn't use).
-    before: createAuthMiddleware((ctx) => {
+    before: createAuthMiddleware(async (ctx) => {
       if (ctx.path === SEND_CODE_PATH && ctx.body?.type !== "sign-in") {
-        return Promise.reject(
-          new APIError("BAD_REQUEST", { message: "Invalid code type" })
-        );
+        throw new APIError("BAD_REQUEST", { message: "Invalid code type" });
       }
-      return Promise.resolve();
+      // Leaving doesn't run the plugin's member hooks, so it's checked here.
+      if (ctx.path === "/organization/leave") {
+        const session = await getSessionFromCtx(ctx);
+        const organizationId = ctx.body?.organizationId;
+        if (session && typeof organizationId === "string") {
+          assertNotOwnMember(
+            organizationId,
+            session.user.id,
+            "You can't leave your own workspace."
+          );
+        }
+      }
     }),
   },
   plugins: [
@@ -188,8 +236,8 @@ export const auth = betterAuth({
       sendVerificationOTP,
     }),
     admin({ adminUserIds: getAdminUserIds() }),
-    // Teams. Every member can use the team; Pro and Business users can create
-    // one (any entitled subscription, see ./plan.ts).
+    // Workspaces. Everyone has their own (made at sign-up, above); Pro and
+    // Business users can create more (any entitled subscription, ./plan.ts).
     organization({
       creatorRole: "owner",
       allowUserToCreateOrganization: (user) => hasEntitledSubscription(user.id),
@@ -202,6 +250,39 @@ export const auth = betterAuth({
       sendInvitationEmail: () => Promise.resolve(),
       // Invite links can be forwarded, so only the verified invitee may accept.
       requireEmailVerificationOnInvitation: true,
+      // Workspace URLs and everyone's own workspace (./workspace-hooks.ts).
+      organizationHooks: {
+        beforeCreateOrganization: ({ organization: org }) => {
+          assertWorkspaceSlug(org.slug);
+          return Promise.resolve();
+        },
+        beforeUpdateOrganization: ({ organization: org }) => {
+          assertWorkspaceSlug(org.slug);
+          return Promise.resolve();
+        },
+        beforeDeleteOrganization: async ({ organization: org }) => {
+          await assertDeletable(org.id);
+          await handRowsBackToCreators(org.id);
+        },
+        beforeRemoveMember: ({ member, organization: org }) => {
+          assertNotOwnMember(
+            org.id,
+            member.userId,
+            "Nobody can be removed from their own workspace."
+          );
+          return Promise.resolve();
+        },
+        beforeUpdateMemberRole: ({ member, newRole, organization: org }) => {
+          if (!newRole.split(",").some((role) => role.trim() === "owner")) {
+            assertNotOwnMember(
+              org.id,
+              member.userId,
+              "The person whose own workspace this is stays an owner."
+            );
+          }
+          return Promise.resolve();
+        },
+      },
     }),
   ],
   // The admin panel does not use impersonation or password resets; keep them off the HTTP surface.

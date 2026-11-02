@@ -3,15 +3,21 @@
 // server-only imports, so every outcome is unit tested directly.
 
 import { signInPath } from "@/lib/safe-redirect";
+import { dashboardEntry } from "@/lib/workspace-paths";
 
 /** Signed-out visitors sign in, then come back to open the portal. */
 export const SIGNED_OUT_PATH = signInPath("/settings/portal");
 /** Users who never checked out have no Polar customer, so no portal. */
 export const NO_CUSTOMER_PATH = "/pricing";
-/** The usage page shows "Billing portal is unavailable right now" for this. */
-export const PORTAL_UNAVAILABLE_PATH = "/settings/usage?billing=unavailable";
+/**
+ * The usage page (in the person's default workspace: billing is per person)
+ * shows "Billing portal is unavailable right now" for this.
+ */
+export const PORTAL_UNAVAILABLE_PATH = dashboardEntry("settings/usage", {
+  billing: "unavailable",
+});
 /** Where the portal's back button returns to. */
-export const PORTAL_RETURN_PATH = "/settings/usage";
+export const PORTAL_RETURN_PATH = dashboardEntry("settings/usage");
 
 /** The slice of the Polar SDK this route uses. */
 export interface PortalClient {

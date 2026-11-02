@@ -43,6 +43,7 @@ import type {
   LandingPageListItem,
   PageUsage,
 } from "@/app/dashboard/pages/_lib/landing-pages";
+import { useWorkspaceHref } from "@/components/workspace-provider";
 import { track } from "@/lib/analytics";
 import { PLAN_NAMES } from "@/lib/pricing";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
@@ -58,11 +59,12 @@ export function NewPageButton({
   ...props
 }: {
   usage: PageUsage;
-  /** Open the dialog on this page type right away (`/dashboard/pages?new=menu`) */
+  /** Open the dialog on this page type right away (`…/pages?new=menu`) */
   autoOpenType?: string;
   /** ...with this template selected (`&template=cafe`, from a template demo) */
   autoOpenVariant?: string;
 } & ComponentProps<typeof Button>) {
+  const inWorkspace = useWorkspaceHref();
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [initialType, setInitialType] = useState<string | null>(null);
@@ -75,7 +77,7 @@ export function NewPageButton({
   // `?new=` so a refresh doesn't reopen it.
   useEffect(() => {
     if (!autoOpenType) return;
-    router.replace("/dashboard/pages", { scroll: false });
+    router.replace(inWorkspace("/pages"), { scroll: false });
     if (isAtLimit(usage)) {
       openUpgradeDialog("pro");
       return;
@@ -83,7 +85,14 @@ export function NewPageButton({
     setInitialType(autoOpenType);
     setInitialVariant(autoOpenVariant ?? null);
     setOpen(true);
-  }, [autoOpenType, autoOpenVariant, usage, router, openUpgradeDialog]);
+  }, [
+    autoOpenType,
+    autoOpenVariant,
+    usage,
+    router,
+    openUpgradeDialog,
+    inWorkspace,
+  ]);
   return (
     <>
       <Button
@@ -166,6 +175,7 @@ export function PageActions({
   page: LandingPageListItem;
   canDelete: boolean;
 }) {
+  const inWorkspace = useWorkspaceHref();
   const router = useRouter();
   const [confirm, setConfirm] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -193,7 +203,9 @@ export function PageActions({
       }
       track("dynamic_code_created", { source: "page" });
       toast.success("QR code created");
-      router.push(`/dashboard/codes/${encodeURIComponent(result.data.codeId)}`);
+      router.push(
+        inWorkspace(`/codes/${encodeURIComponent(result.data.codeId)}`),
+      );
     });
 
   return (
@@ -225,7 +237,9 @@ export function PageActions({
                 Copy short link
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link href={`/dashboard/codes/${encodeURIComponent(code.id)}`}>
+                <Link
+                  href={inWorkspace(`/codes/${encodeURIComponent(code.id)}`)}
+                >
                   <ChartNoAxesColumn />
                   QR code & analytics
                 </Link>
@@ -240,7 +254,9 @@ export function PageActions({
           {hasForm && (
             <DropdownMenuItem asChild>
               <Link
-                href={`/dashboard/pages/${encodeURIComponent(page.id)}/responses`}
+                href={inWorkspace(
+                  `/pages/${encodeURIComponent(page.id)}/responses`,
+                )}
               >
                 <Inbox />
                 Responses

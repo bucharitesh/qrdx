@@ -80,6 +80,10 @@ import type { ShellData } from "@/components/app-shell/shell-data";
 import { CopyButton } from "@/components/copy-button";
 import { AccountSourcePicker } from "@/components/data-connections/source-picker";
 import { InfoHint } from "@/components/help/info-hint";
+import {
+  useWorkspaceHref,
+  useWorkspaceSlug,
+} from "@/components/workspace-provider";
 import { defaultThemeState } from "@/config/qr";
 import { track } from "@/lib/analytics";
 import { PLAN_NAMES } from "@/lib/pricing";
@@ -178,6 +182,9 @@ export default function CodeBuilderModal({
   onChoosePageType: (type: string) => void;
 }) {
   const router = useRouter();
+  // Links into the dashboard carry the workspace (/dashboard/<workspace>/...).
+  const workspaceSlug = useWorkspaceSlug();
+  const inWorkspace = useWorkspaceHref();
   const { data: session } = authClient.useSession();
   const userId = session?.user?.id ?? null;
   const workspaceId = session?.session.activeOrganizationId ?? null;
@@ -786,7 +793,7 @@ export default function CodeBuilderModal({
           {code.pageId && (
             <Link
               className="font-medium underline underline-offset-4"
-              href={`/dashboard/pages/${code.pageId}`}
+              href={inWorkspace(`/pages/${code.pageId}`)}
             >
               Edit page
             </Link>
@@ -1014,7 +1021,7 @@ export default function CodeBuilderModal({
       <div className="flex flex-wrap gap-2">
         <Button asChild size="sm" variant="outline">
           <Link
-            href={codeTabHref(created.code.id, "overview")}
+            href={codeTabHref(workspaceSlug, created.code.id, "overview")}
             onClick={() => finishClose({ keepDraft: false })}
           >
             <ExportSquare aria-hidden />
@@ -1023,7 +1030,7 @@ export default function CodeBuilderModal({
         </Button>
         <Button asChild size="sm" variant="ghost">
           <Link
-            href={codeTabHref(created.code.id, "analytics")}
+            href={codeTabHref(workspaceSlug, created.code.id, "analytics")}
             onClick={() => finishClose({ keepDraft: false })}
           >
             View analytics

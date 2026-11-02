@@ -3,6 +3,7 @@
 import { toast } from "@repo/design-system";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useWorkspaceHref } from "@/components/workspace-provider";
 import { track } from "@/lib/analytics";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 import { createOAuthAppAction } from "../_lib/actions";
@@ -14,9 +15,10 @@ export function NewOAuthApp({
   canUpgrade,
 }: {
   storageEnabled: boolean;
-  /** Personal workspace: upgrading raises the app limit */
+  /** Your own workspace: upgrading raises the app limit */
   canUpgrade: boolean;
 }) {
+  const inWorkspace = useWorkspaceHref();
   const router = useRouter();
   const openUpgradeDialog = useGetProDialogStore((s) => s.openUpgradeDialog);
   const [created, setCreated] = useState<{
@@ -60,7 +62,9 @@ export function NewOAuthApp({
           if (!created) return;
           const id = created.id;
           setCreated(null);
-          router.push(`/settings/developers/${encodeURIComponent(id)}`);
+          router.push(
+            inWorkspace(`/settings/developers/${encodeURIComponent(id)}`),
+          );
         }}
         title="App created"
       />

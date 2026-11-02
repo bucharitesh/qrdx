@@ -37,6 +37,7 @@ import {
 } from "nuqs";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { HairlineFigure } from "@/components/mockups/hairline";
+import { useWorkspaceHref } from "@/components/workspace-provider";
 import { useCommunityThemes } from "@/lib/hooks/themes/use-community-themes";
 import { useQREditorStore } from "@/store/editor-store";
 import type {
@@ -68,6 +69,7 @@ const otherSortOptions: {
 ];
 
 export function CommunityThemesContent() {
+  const inWorkspace = useWorkspaceHref();
   const [sort, setSort] = useQueryState(
     "sort",
     parseAsStringLiteral(["popular", "newest", "oldest"] as const).withDefault(
@@ -275,7 +277,7 @@ export function CommunityThemesContent() {
                   <p className="text-muted-foreground text-xs leading-relaxed">
                     You can also manage all your saved themes from{" "}
                     <Link
-                      href="/dashboard/themes"
+                      href={inWorkspace("/themes")}
                       className="text-foreground font-medium underline underline-offset-2"
                     >
                       Themes

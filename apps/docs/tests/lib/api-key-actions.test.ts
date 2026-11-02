@@ -130,7 +130,7 @@ describe("revokeApiKeyAction", () => {
       ok: true,
       data: { id: "k1" },
     });
-    expect(mocks.revalidatePath).toHaveBeenCalledWith("/settings/developers");
+    expect(mocks.revalidatePath).toHaveBeenCalledWith("/dashboard", "layout");
   });
 
   it("doesn't refresh when nothing changed", async () => {

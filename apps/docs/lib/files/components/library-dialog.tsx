@@ -15,6 +15,7 @@ import { Spinner } from "@repo/design-system/components/ui/spinner";
 import { cn } from "@repo/design-system/lib/utils";
 import { FolderOpen } from "iconsax-reactjs";
 import { useState } from "react";
+import { workspaceRequestHeaders } from "@/components/workspace-provider";
 import {
   FILE_KIND_LABELS,
   type FileKind,
@@ -47,6 +48,7 @@ export function LibraryButton({
     try {
       const response = await fetch(`/api/files${kind ? `?kind=${kind}` : ""}`, {
         cache: "no-store",
+        headers: workspaceRequestHeaders(),
       });
       const body = (await response.json()) as {
         data?: FileView[];

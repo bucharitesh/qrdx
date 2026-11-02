@@ -67,7 +67,7 @@ async function run<T>(
       })),
     );
     const data = await body(scope);
-    if (revalidate) revalidatePath("/settings/developers", "layout");
+    if (revalidate) revalidatePath("/dashboard", "layout");
     return { ok: true, data };
   } catch (error) {
     return failure(error, `oauth-apps.${action}`);
@@ -79,7 +79,7 @@ export async function createOAuthAppAction(
 ): Promise<OAuthAppActionResult<{ app: OAuthAppView; clientSecret: string }>> {
   const parsed = oauthAppInputSchema.safeParse(input);
   if (!parsed.success) return invalid(parsed.error);
-  // No revalidation: it re-renders /settings/developers/new, which redirects
+  // No revalidation: it re-renders …/settings/developers/new, which redirects
   // to the list once the plan's app limit is reached, unmounting the dialog
   // that shows the client secret (its only showing). The client navigates to
   // the new app's page itself, and these pages are always rendered fresh.

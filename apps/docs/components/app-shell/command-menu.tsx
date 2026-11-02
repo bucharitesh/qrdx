@@ -31,9 +31,13 @@ import {
 import { useRouter } from "next/navigation";
 import { type ReactNode, useEffect, useState } from "react";
 import { useAvailability } from "@/components/availability-provider";
+import {
+  useWorkspace,
+  useWorkspaceHref,
+} from "@/components/workspace-provider";
 import { type CreateKind, useCreate } from "./create-actions";
 import { HELP_LINKS } from "./help-links";
-import { MAIN_NAV, SETTINGS_NAV } from "./nav-config";
+import { mainNav, settingsNav } from "./nav-config";
 import { paletteFilter } from "./palette-filter";
 import { type SearchHit, searchWorkspace } from "./search-actions";
 
@@ -136,6 +140,11 @@ export function CommandMenu() {
   const router = useRouter();
   const create = useCreate();
   const { showsPath } = useAvailability();
+  const workspace = useWorkspace();
+  const href = useWorkspaceHref();
+  const navGroups = workspace
+    ? [...mainNav(workspace.slug), ...settingsNav(workspace.slug)]
+    : settingsNav("").filter((group) => group.id === "account");
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const term = useDebounced(query.trim(), SEARCH_DELAY_MS);
@@ -207,9 +216,9 @@ export function CommandMenu() {
     }
   };
 
-  const go = (href: string) => {
+  const go = (target: string) => {
     onOpenChange(false);
-    router.push(href);
+    router.push(target);
   };
 
   const startCreate = (kind: CreateKind) => () => {
@@ -243,21 +252,21 @@ export function CommandMenu() {
       label: "Import codes from a CSV file",
       icon: DocumentUpload,
       keywords: ["bulk", "upload", "spreadsheet"],
-      run: () => go("/dashboard/codes/import"),
+      run: () => go(href("/codes/import")),
     },
     {
       id: "invite",
       label: "Invite a teammate",
       icon: UserAdd,
       keywords: ["team", "members", "workspace"],
-      run: () => go("/dashboard/team"),
+      run: () => go(href("/settings/team")),
     },
     {
       id: "domain",
       label: "Connect a domain",
       icon: Link21,
       keywords: ["custom domain", "dns", "branded"],
-      run: () => go("/dashboard/domains"),
+      run: () => go(href("/settings/domains")),
     },
     {
       id: "editor",
@@ -268,7 +277,7 @@ export function CommandMenu() {
     },
   ].filter(
     // "Connect a domain" only where domains can be added here.
-    (action) => action.id !== "domain" || showsPath("/dashboard/domains"),
+    (action) => action.id !== "domain" || showsPath(href("/settings/domains")),
   );
 
   const showHits = hits !== null && hits.term === term && term.length >= 2;
@@ -357,7 +366,7 @@ export function CommandMenu() {
                 ))}
               </CommandGroup>
 
-              {[...MAIN_NAV, ...SETTINGS_NAV].map((group) => {
+              {navGroups.map((group) => {
                 const items = group.items.filter((item) =>
                   showsPath(item.href),
                 );

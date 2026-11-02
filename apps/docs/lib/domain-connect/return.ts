@@ -3,16 +3,22 @@
 // `state`, so the domain id travels in redirect_uri itself. Nothing here is
 // trusted: the page only re-checks DNS for that domain, which is harmless.
 
+import { dashboardEntry } from "@/lib/workspace-paths";
+
 export const CONNECT_RETURN_PARAM = "connected";
 
-const DOMAINS_PATH = "/dashboard/domains";
 const DOMAIN_ID = /^[a-z0-9]{1,64}$/i;
 
-/** Where the provider sends the browser back to, for one domain. */
+/**
+ * Where the provider sends the browser back to, for one domain: the Domains
+ * page of the person's default workspace (/dashboard?to=…, so a workspace
+ * renamed in between still works), which re-checks that domain.
+ */
 export function connectRedirectUri(appUrl: URL, domainId: string): string {
-  const url = new URL(DOMAINS_PATH, appUrl);
-  url.searchParams.set(CONNECT_RETURN_PARAM, domainId);
-  return url.toString();
+  return new URL(
+    dashboardEntry("settings/domains", { [CONNECT_RETURN_PARAM]: domainId }),
+    appUrl,
+  ).toString();
 }
 
 export interface ConnectReturn {

@@ -17,6 +17,7 @@ vi.mock(
   async () => (await import("../support/fake-db")).repoDatabase,
 );
 
+import { ownWorkspaceId } from "@repo/auth/own-workspace-id";
 import {
   canRevokeKey,
   canSeeAllKeys,
@@ -200,9 +201,10 @@ describe("apiKeyInputSchema", () => {
 });
 
 describe("who sees and revokes keys", () => {
+  // u1's own workspace.
   const personal = {
     userId: "u1",
-    organizationId: null,
+    organizationId: ownWorkspaceId("u1"),
     role: "owner" as const,
   };
   const owner = { userId: "u1", organizationId: "t1", role: "owner" as const };

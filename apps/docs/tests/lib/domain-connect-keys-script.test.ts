@@ -79,7 +79,7 @@ describe("domain-connect/keys.mjs", () => {
             target: "cname.vercel-dns.com",
             vercel: "go.example.com,abc123",
           },
-          redirectUri: "https://qrdx.dev/dashboard/domains",
+          redirectUri: "https://qrdx.dev/dashboard?to=settings/domains",
         },
         {
           keyId: SIGNING_KEY_ID,

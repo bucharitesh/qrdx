@@ -1,3 +1,5 @@
+import { dashboardEntry } from "@/lib/workspace-paths";
+
 // URLs for the public template gallery and demos. Kept free of the template
 // registry so the dashboard picker can link to demos without loading it.
 
@@ -16,8 +18,9 @@ export function gallerySectionPath(type: string): string {
 
 /**
  * The dashboard's "New page" dialog with the type and template preselected
- * (read by app/dashboard/pages/page.tsx).
+ * (read by app/dashboard/[workspace]/pages/page.tsx), in the reader's
+ * default workspace.
  */
 export function templateStartPath(type: string, variantId: string): string {
-  return `/dashboard/pages?new=${encodeURIComponent(type)}&template=${encodeURIComponent(variantId)}`;
+  return dashboardEntry("pages", { new: type, template: variantId });
 }

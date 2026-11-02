@@ -45,7 +45,7 @@ From the dashboard you can:
 - **Bulk actions:** select codes to move, tag, pause, archive, favourite, trash or download them as a ZIP of PNG or SVG files.
 - **CSV import:** **Codes → Import** creates up to 1,000 dynamic codes from a CSV (destination, title, folder, tags, optional custom back-half in the `slug` column). Importing more than one row, and custom back-halves, need Pro.
 
-Codes in a team belong to the team. Every member can create and edit them; members can delete their own codes, owners and admins can delete any team code.
+Codes belong to the workspace they're created in. Every member of the workspace can create and edit them; members can delete their own codes, owners and admins can delete any code in the workspace.
 
 <Callout type="info">
   Codes never die: downgrading your plan never turns off existing codes. Over the limit you can still edit and archive codes, you just can't create or restore more until you're under it.
@@ -60,7 +60,7 @@ Codes in a team belong to the team. Every member can create and edit them; membe
 | Scan history | 90 days | 3 years | Unlimited |
 | Bulk creation via the API | No | Up to 100 per request | Up to 100 per request |
 
-Team codes use the best plan among the team's owners. See [Plans and limits](/docs/plans-and-limits) for everything else each plan includes.
+A workspace's codes use the best plan among its owners. See [Plans and limits](/docs/plans-and-limits) for everything else each plan includes.
 
 ## Scan analytics
 
@@ -77,7 +77,7 @@ Known bots, link previews and browser prefetches are not counted.
 
 ## REST API
 
-Manage codes programmatically under `https://api.qrdx.dev/v1/codes`. Requests are authenticated with an [API key](/docs/developers/api-keys) or an OAuth access token (`Authorization: Bearer <key or token>`) that has the `codes:read` or `codes:write` scope; see [REST API](/docs/developers/rest-api) for how to get one. A key acts on the workspace it was created in; token requests act on your personal workspace. Requests from a signed-in browser session also work and act on the active team.
+Manage codes programmatically under `https://api.qrdx.dev/v1/codes`. Requests are authenticated with an [API key](/docs/developers/api-keys) or an OAuth access token (`Authorization: Bearer <key or token>`) that has the `codes:read` or `codes:write` scope; see [REST API](/docs/developers/rest-api) for how to get one. A key acts on the workspace it was created in; token requests act on your own workspace. Requests from a signed-in browser session also work and act on the workspace you last opened in the dashboard.
 
 | Method | Path | Description |
 | --- | --- | --- |
@@ -149,7 +149,7 @@ Errors use one JSON shape, `{ "code": "...", "message": "...", "status": 400 }`,
 | 400 | `VALIDATION_ERROR`, `INVALID_SLUG` | Invalid body or query (details in `data`), or a `slug` that breaks the rules or is reserved |
 | 401 | `UNAUTHORIZED`, `INVALID_TOKEN` | No `Authorization: Bearer` token, or an invalid, expired or revoked one ([get a token](/docs/developers/rest-api#get-an-access-token)) |
 | 402 | `LIMIT_REACHED`, `PLAN_REQUIRED` | Over your plan's active code limit, or bulk creation or a custom `slug` without Pro |
-| 403 | `INSUFFICIENT_SCOPE`, `FORBIDDEN` | Token without the needed scope, or a team role that can't do this |
+| 403 | `INSUFFICIENT_SCOPE`, `FORBIDDEN` | Token without the needed scope, or a workspace role that can't do this |
 | 404 | `NOT_FOUND` | The code doesn't exist or isn't yours, or there's no such endpoint |
 | 409 | `SLUG_TAKEN` | Another code already uses that `slug` (on `qrdx.dev`, or on the custom domain) |
 | 429 | `RATE_LIMITED` | Too many requests; retry after the `Retry-After` header |

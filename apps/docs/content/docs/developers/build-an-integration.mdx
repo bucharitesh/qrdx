@@ -10,7 +10,7 @@ This guide covers the whole flow: create an app, send people to QRdx, exchange t
 
 ## 1. Create an OAuth app
 
-Open [Settings → API keys & apps](/settings/developers) and click **New app**. The app belongs to the workspace that's open: your personal workspace, or the team picked in the sidebar. In a team, only owners can create and change apps; admins and members can see them.
+Open [Settings → API keys & apps](/dashboard?to=settings/developers) and click **New app**. The app belongs to the workspace that's open, the one picked in the workspace switcher. Only the workspace's owners can create and change apps; admins and members can see them.
 
 | Field | What it's for |
 | --- | --- |
@@ -27,7 +27,7 @@ After you create the app, QRdx shows its **client ID** and **client secret**. Co
 | Pro | 5 |
 | Business | 25 |
 
-A team uses the best plan among its owners, as for every other [limit](/docs/plans-and-limits).
+A workspace uses the best plan among its owners, as for every other [limit](/docs/plans-and-limits).
 
 ## 2. Send people to QRdx
 
@@ -205,7 +205,7 @@ Ask for the least your integration needs: people see each scope on the consent s
 
 ## 5. Call the API
 
-Send the access token as a Bearer token to `https://api.qrdx.dev/v1`. Token requests act on the personal workspace of the person who authorized your app, with their plan's limits.
+Send the access token as a Bearer token to `https://api.qrdx.dev/v1`. Token requests act on the own workspace of the person who authorized your app (every account has one), under that workspace's plan.
 
 ```bash
 curl https://api.qrdx.dev/v1/codes \
@@ -240,7 +240,7 @@ curl https://api.qrdx.dev/v1/hooks \
   -d '{"target_url": "https://acme.example/webhooks/qrdx", "events": ["scan.created", "form.submitted"]}'
 ```
 
-The `201` response carries the subscription `id` and a signing `secret`, shown once. Every delivery is signed with it in `X-QRdx-Signature`; see [Verify signatures](/docs/webhooks#verify-signatures). Unsubscribe with `DELETE /v1/hooks/{id}` when the person disconnects. Subscriptions also appear in their Dashboard → Webhooks, where they can remove them.
+The `201` response carries the subscription `id` and a signing `secret`, shown once. Every delivery is signed with it in `X-QRdx-Signature`; see [Verify signatures](/docs/webhooks#verify-signatures). Unsubscribe with `DELETE /v1/hooks/{id}` when the person disconnects. Subscriptions also appear in Settings → Webhooks of their own workspace, where they can remove them.
 
 ## 7. Revoke and userinfo
 

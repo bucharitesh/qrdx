@@ -57,6 +57,7 @@ import type {
   QrCodeView,
 } from "@/app/dashboard/codes/_lib/qr-codes";
 import { openCodeBuilder } from "@/components/code-builder/store";
+import { useWorkspaceSlug } from "@/components/workspace-provider";
 import { downloadCodeQr } from "./code-qr";
 import { MoveToFolderDialog } from "./folder-dialogs";
 import { NotesDialog } from "./notes-dialog";
@@ -83,6 +84,7 @@ export function CodeActionsMenu({
   folders?: FolderRow[];
   tags?: TagRow[];
 }) {
+  const workspaceSlug = useWorkspaceSlug();
   const router = useRouter();
   const openInPlayground = useOpenInPlayground();
   const { run, isPending } = useOrganizeAction();
@@ -243,12 +245,12 @@ export function CodeActionsMenu({
           {showAnalyticsLink && (
             <>
               <DropdownMenuItem asChild>
-                <Link href={codeTabHref(code.id, "analytics")}>
+                <Link href={codeTabHref(workspaceSlug, code.id, "analytics")}>
                   <ChartNoAxesCombined /> View analytics
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link href={codeTabHref(code.id, "settings")}>
+                <Link href={codeTabHref(workspaceSlug, code.id, "settings")}>
                   <Setting2 /> Code settings
                 </Link>
               </DropdownMenuItem>

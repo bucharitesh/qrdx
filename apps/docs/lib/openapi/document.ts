@@ -915,7 +915,7 @@ From your server, send an API key (or token) and the scan's \`sid\`, or the code
         security: security("codes:read"),
         description: `The workspace's hooks: REST Hooks subscriptions and webhook endpoints.
 
-\`target_url\` shows only the origin unless the key or token has \`codes:write\` and, in a team, belongs to an owner or admin. Listing works on every plan; subscribing needs Business.`,
+\`target_url\` shows only the origin unless the key or token has \`codes:write\` and, in a workspace with other members, belongs to an owner or admin. Listing works on every plan; subscribing needs Business.`,
         responses: {
           "200": json("The hooks", c.schema(hookListResponseSchema), {
             hooks: { data: [exampleHook] },
@@ -1069,7 +1069,7 @@ Keys and tokens only: a browser session gets \`401\`.`,
         summary: "List themes",
         tags: ["Themes"],
         security: security("themes:read"),
-        description: `Saved QR themes, each one's name and design: the user's own themes for an OAuth token or a personal API key, the team's shared themes for a team key.
+        description: `Saved QR themes, each one's name and design: every theme the user saved for an OAuth token, the workspace's themes for an API key.
 
 Keys and tokens only: a browser session gets \`401\`.`,
         responses: {
@@ -1121,7 +1121,7 @@ Keys and tokens only: a browser session gets \`401\`.`,
 const DESCRIPTION = `Create and manage dynamic QR codes, read scan analytics, report conversions and subscribe to events over HTTP.
 
 - **Base URL:** \`${API_SERVER_URL}\`. The same routes answer at \`${SITE}/api/v1\`.
-- **Auth:** an API key, \`Authorization: Bearer qrdx_…\` ([create one](${docs("developers/api-keys")})), or an OAuth 2.0 access token in the same header for apps that act for other people ([OAuth](${docs("developers/rest-api#get-an-access-token")})). A key acts on the workspace it was created in, with its creator's role there; a token acts on its user's personal workspace. The image API (\`GET /qr\`) needs neither.
+- **Auth:** an API key, \`Authorization: Bearer qrdx_…\` ([create one](${docs("developers/api-keys")})), or an OAuth 2.0 access token in the same header for apps that act for other people ([OAuth](${docs("developers/rest-api#get-an-access-token")})). A key acts on the workspace it was created in, with its creator's role there; a token acts on its user's own workspace. The image API (\`GET /qr\`) needs neither.
 - **Errors:** \`{ "code", "message", "status" }\`, plus \`docs\` when a page explains the fix ([every code](${docs("developers/errors")})).
 - **Limits:** a daily quota per workspace (1,000 requests on Free, 10,000 on Pro, 100,000 on Business), reported in \`X-RateLimit-*\` headers, plus per-minute limits. Over a limit you get \`429\` with \`Retry-After\`.`;
 
@@ -1218,11 +1218,11 @@ export function buildOpenApiDocument(): Document {
           type: "http",
           scheme: "bearer",
           bearerFormat: "qrdx_ followed by 40 letters and digits",
-          description: `An API key, sent as \`Authorization: Bearer qrdx_…\`. Create one in [Settings → API keys & apps](${SITE}/settings/developers): it is shown once. A key acts on the workspace it was created in (personal or team) as its creator, with their current role there, and only within its scopes, the same scopes as OAuth (each operation names the one it needs). [API keys](${docs("developers/api-keys")}).`,
+          description: `An API key, sent as \`Authorization: Bearer qrdx_…\`. Create one in [Settings → API keys & apps](${SITE}/dashboard?to=settings/developers): it is shown once. A key acts on the workspace it was created in as its creator, with their current role there, and only within its scopes, the same scopes as OAuth (each operation names the one it needs). [API keys](${docs("developers/api-keys")}).`,
         },
         oauth2: {
           type: "oauth2",
-          description: `An OAuth 2.0 access token, sent as \`Authorization: Bearer <token>\`. Register an app in [Settings → API keys & apps](${SITE}/settings/developers), send the user through authorization (PKCE S256), then exchange the code for a token. Access tokens last 1 hour; refresh tokens 30 days. [Step by step](${docs("developers/rest-api#get-an-access-token")}).`,
+          description: `An OAuth 2.0 access token, sent as \`Authorization: Bearer <token>\`. Register an app in [Settings → API keys & apps](${SITE}/dashboard?to=settings/developers), send the user through authorization (PKCE S256), then exchange the code for a token. Access tokens last 1 hour; refresh tokens 30 days. [Step by step](${docs("developers/rest-api#get-an-access-token")}).`,
           flows: {
             authorizationCode: {
               authorizationUrl: `${SITE}/api/oauth/authorize`,
