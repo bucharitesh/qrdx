@@ -11,7 +11,7 @@
     "typecheck": "turbo typecheck --filter=!@repo/typescript-config",
     "typecheck:docs": "pnpm --filter docs exec tsc --noEmit",
     "lint:ci": "./apps/docs/node_modules/.bin/biome ci .",
-    "prepush": "pnpm --filter qrdx build:inplace && pnpm typecheck && pnpm typecheck:docs && pnpm lint:ci && pnpm test",
+    "prepush": "pnpm --filter qrdx build:inplace && pnpm typecheck && pnpm typecheck:docs && pnpm lint:ci && pnpm --filter @qrdx/cli build && pnpm test",
     "analyze": "turbo analyze",
     "translate": "turbo translate",
     "boundaries": "turbo boundaries",

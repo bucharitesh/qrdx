@@ -26,11 +26,27 @@ export function getRegistryItems(): RegistryItem[] {
   return items;
 }
 
+const REGISTRY_PREFIX = "registry/";
+
 /**
- * Reads a file under apps/docs (at build time) the way a shadcn/ui project
- * sees it, with `@/registry/...` imports rewritten.
+ * Reads a file under apps/docs/registry (at build time) the way a shadcn/ui
+ * project sees it, with `@/registry/...` imports rewritten.
+ *
+ * The "registry" path segment is a literal so Turbopack traces only that
+ * folder; a fully dynamic path made it trace (and deploy) the whole project.
  */
 export async function readRegistrySource(relativePath: string) {
-  const source = await readFile(path.join(process.cwd(), relativePath), "utf8");
+  const inRegistry = relativePath.startsWith(REGISTRY_PREFIX)
+    ? relativePath.slice(REGISTRY_PREFIX.length)
+    : null;
+  if (!inRegistry || inRegistry.split("/").includes("..")) {
+    throw new Error(
+      `Registry source must be under registry/: "${relativePath}"`,
+    );
+  }
+  const source = await readFile(
+    path.join(process.cwd(), "registry", inRegistry),
+    "utf8",
+  );
   return toConsumerSource(source);
 }
