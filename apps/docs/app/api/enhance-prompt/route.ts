@@ -5,12 +5,9 @@ import {
   toUIMessageStream,
 } from "ai";
 import type { NextRequest } from "next/server";
+import { textProviderOptions } from "@/lib/ai/models";
 import { ENHANCE_PROMPT_SYSTEM } from "@/lib/ai/prompts";
-import {
-  assertAIConfigured,
-  baseProviderOptions,
-  myProvider,
-} from "@/lib/ai/providers";
+import { assertAIConfigured, languageModel } from "@/lib/ai/providers";
 import { streamErrorMessage } from "@/lib/ai/stream-error-message";
 import { MAX_AI_REQUEST_BODY_BYTES } from "@/lib/constants";
 import { handleError } from "@/lib/error-response";
@@ -32,8 +29,9 @@ import { buildUserContentPartsFromPromptData } from "@/utils/ai/message-converte
 
 export async function POST(req: NextRequest) {
   try {
-    const userId = await getCurrentUserId(req);
+    // Before the session lookup: with AI off there's nothing to sign in for.
     assertAIConfigured();
+    const userId = await getCurrentUserId(req);
     await enforceAIRateLimit(req, "enhance-prompt", userId);
 
     const { promptData } = parseWithSchema(
@@ -47,7 +45,7 @@ export async function POST(req: NextRequest) {
       throw new ValidationError("Prompt is empty");
     }
 
-    const model = myProvider.languageModel("prompt-enhancement");
+    const model = languageModel("prompt-enhancement");
     const usageId = await reserveAIRequest(
       userId,
       typeof model === "string" ? model : model.modelId,
@@ -62,7 +60,7 @@ export async function POST(req: NextRequest) {
         },
       ],
       model,
-      providerOptions: baseProviderOptions,
+      providerOptions: textProviderOptions("prompt-enhancement"),
       experimental_transform: smoothStream({
         delayInMs: 10,
         chunking: "word",

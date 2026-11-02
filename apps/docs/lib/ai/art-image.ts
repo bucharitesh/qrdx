@@ -1,9 +1,9 @@
 import "server-only";
 
-import { createGoogle, type GoogleImageModelOptions } from "@ai-sdk/google";
 import {
   APICallError,
   generateImage,
+  generateText,
   NoImageGeneratedError,
   RetryError,
 } from "ai";
@@ -20,18 +20,19 @@ import {
   type AIArtVariant,
   ART_IMAGE_SIZE,
 } from "@/components/sections/ai-art/config";
-import { env } from "@/lib/env";
 import { HttpError } from "@/lib/error-response";
 import { rasterizeImage, serializeQrSvg } from "@/lib/qr-render";
 import { logError } from "@/lib/shared";
-import { ART_GEMINI_MODEL } from "./art-models";
+import { AI_MODELS, type ArtModelChoice, artProviderOptions } from "./models";
+import { aiGateway } from "./providers";
 
 // AI QR art in four steps, all on the server:
 // 1. Draw the code as a plain black-on-white QR (level H, square modules, a
 //    wide quiet zone): the control image.
-// 2. Gemini restyles it, told to keep the module grid, the finder eyes and
-//    the quiet zone (plus an optional reference image for colors or a logo).
-// 3. Decode Gemini's image with jsQR, as it is and through qrdx's
+// 2. The art model (lib/ai/models.ts, through Vercel AI Gateway) restyles it,
+//    told to keep the module grid, the finder eyes and the quiet zone (plus
+//    an optional reference image for colors or a logo).
+// 3. Decode the model's image with jsQR, as it is and through qrdx's
 //    phone-camera model. If it decodes to the exact content, deliver it.
 // 4. Otherwise blend it into the code with qrdx's Image QR (halftone) art
 //    mode on the same module grid, which only corrects the modules that would
@@ -43,8 +44,8 @@ const CONTROL_QUIET_ZONE_MODULES = 6;
 const ART_MODEL_TIMEOUT_MS = 45_000;
 /** Largest image a response carries (Vercel caps responses at 4.5 MB). */
 const MAX_DELIVERED_DATA_URL_LENGTH = 4_000_000;
-/** Gemini's seed is a signed 32-bit integer. */
-const GEMINI_SEED_RANGE = 2 ** 31;
+/** Seeds stay in a signed 32-bit integer (Gemini's range). */
+const SEED_RANGE = 2 ** 31;
 
 /** Plain props of the control code; the blend reuses them with `art`. */
 function controlProps(text: string): QRPropsSVG {
@@ -85,7 +86,7 @@ export interface ControlImage {
 }
 
 /**
- * Renders the image Gemini restyles: the code in black on white with error
+ * Renders the image the art model restyles: the code in black on white with error
  * correction H, square modules and a wide quiet zone, decoded once to make
  * sure it holds `text`.
  */
@@ -154,7 +155,7 @@ export function visibilityToBlendIntensity(visibility: number): number {
   return Math.round((0.9 - 0.4 * t) * 100) / 100;
 }
 
-// ── Gemini ─────────────────────────────────────────────────────────────────
+// ── Art model ──────────────────────────────────────────────────────────────
 
 export interface ArtModelRequest {
   prompt: string;
@@ -167,6 +168,8 @@ export interface ArtModelRequest {
 export interface ArtModelImage {
   data: Uint8Array;
   mediaType: string;
+  /** The response's provider metadata (the gateway's cost, generation id) */
+  providerMetadata?: Record<string, unknown>;
 }
 
 /** One image model call (tests pass a fake). */
@@ -174,33 +177,92 @@ export type ArtImageModel = (
   request: ArtModelRequest,
 ) => Promise<ArtModelImage>;
 
-let google: ReturnType<typeof createGoogle> | null = null;
+/**
+ * A multimodal LLM that answers with image files (Gemini image models): the
+ * prompt and images go in as one user message, and the last image file that
+ * comes back is the artwork.
+ */
+function filesArtModel(choice: ArtModelChoice): ArtImageModel {
+  return async ({ prompt, images, seed, abortSignal }) => {
+    const result = await generateText({
+      model: aiGateway()(choice.model),
+      messages: [
+        {
+          role: "user",
+          content: [
+            { type: "text", text: prompt },
+            // The exact image type is read from the bytes.
+            ...images.map((data) => ({
+              type: "file" as const,
+              data,
+              mediaType: "image",
+            })),
+          ],
+        },
+      ],
+      seed: seed % SEED_RANGE,
+      providerOptions: artProviderOptions(choice),
+      maxRetries: 1,
+      abortSignal,
+    });
+    const image = result.files
+      .filter((file) => file.mediaType.startsWith("image/"))
+      .at(-1);
+    if (!image) {
+      throw new NoImageGeneratedError({
+        message: "The model's response had no image",
+      });
+    }
+    return {
+      data: image.uint8Array,
+      mediaType: image.mediaType,
+      providerMetadata: result.providerMetadata,
+    };
+  };
+}
 
-/** Gemini through the AI SDK, with the app's GOOGLE_API_KEY. */
-export const geminiArtModel: ArtImageModel = async ({
-  prompt,
-  images,
-  seed,
-  abortSignal,
-}) => {
-  google ??= createGoogle({ apiKey: env.GOOGLE_API_KEY });
-  const result = await generateImage({
-    model: google.image(ART_GEMINI_MODEL),
-    prompt: { text: prompt, images },
-    aspectRatio: "1:1",
-    seed: seed % GEMINI_SEED_RANGE,
-    providerOptions: {
-      google: {
-        imageConfig: { imageSize: "1K" },
-      } satisfies GoogleImageModelOptions,
-    },
-    maxRetries: 1,
-    abortSignal,
-  });
-  // Thought images aren't returned, so the last image is the final one.
-  const image = result.images.at(-1) ?? result.image;
-  return { data: image.uint8Array, mediaType: image.mediaType };
-};
+/** An image model (generateImage), with the images as input images. */
+function imagesArtModel(choice: ArtModelChoice): ArtImageModel {
+  return async ({ prompt, images, seed, abortSignal }) => {
+    const result = await generateImage({
+      model: aiGateway().image(choice.model),
+      prompt: { text: prompt, images },
+      ...(choice.size ? { size: choice.size } : {}),
+      ...(choice.aspectRatio ? { aspectRatio: choice.aspectRatio } : {}),
+      seed: seed % SEED_RANGE,
+      providerOptions: artProviderOptions(choice),
+      maxRetries: 1,
+      abortSignal,
+    });
+    const image = result.images.at(-1) ?? result.image;
+    return {
+      data: image.uint8Array,
+      mediaType: image.mediaType,
+      providerMetadata: result.providerMetadata,
+    };
+  };
+}
+
+/** The pipeline's model call for an art model choice (the eval passes others). */
+export function artModelFor(choice: ArtModelChoice): ArtImageModel {
+  return choice.output === "files"
+    ? filesArtModel(choice)
+    : imagesArtModel(choice);
+}
+
+/** The configured art model (AI_MODELS.art) through the gateway. */
+export const gatewayArtModel: ArtImageModel = artModelFor(AI_MODELS.art);
+
+/**
+ * The HTTP status of a failed call: APICallError from a provider, or the
+ * gateway's own errors, which carry `statusCode` too (GatewayError isn't
+ * exported by "ai").
+ */
+function errorStatus(error: unknown): number | undefined {
+  if (APICallError.isInstance(error)) return error.statusCode;
+  const status = (error as { statusCode?: unknown } | null)?.statusCode;
+  return typeof status === "number" ? status : undefined;
+}
 
 async function callModel(
   model: ArtImageModel,
@@ -223,15 +285,9 @@ async function callModel(
     }
     // The AI SDK wraps the last failure when its retry gives up.
     const cause = RetryError.isInstance(error) ? error.lastError : error;
-    const status = APICallError.isInstance(cause)
-      ? cause.statusCode
-      : undefined;
+    const status = errorStatus(cause);
     // Only the message: the request body holds the prompt and images.
-    logError(error as Error, {
-      action: "generateArtImage",
-      model: ART_GEMINI_MODEL,
-      status,
-    });
+    logError(error as Error, { action: "generateArtImage", status });
     if (NoImageGeneratedError.isInstance(error)) {
       throw new HttpError(
         502,
@@ -256,7 +312,7 @@ async function callModel(
 
 // ── Scan check and blend ───────────────────────────────────────────────────
 
-/** Gemini's image as ART_IMAGE_SIZE square RGBA pixels, plus PNG bytes. */
+/** The model's image as ART_IMAGE_SIZE square RGBA pixels, plus PNG bytes. */
 async function readModelImage(
   image: ArtModelImage,
 ): Promise<{ png: Uint8Array; pixels: DecodedImage }> {
@@ -347,7 +403,7 @@ function blendPalette(pixels: DecodedImage): { fg: string; bg: string } {
 }
 
 /**
- * Blends Gemini's image into the code with qrdx's Image QR art on the
+ * Blends the model's image into the code with qrdx's Image QR art on the
  * control's module grid, then checks the result. Null when no strength scans.
  */
 async function blendArt({
@@ -402,7 +458,7 @@ export async function generateArtVariant({
   reference,
   control,
   signal,
-  model = geminiArtModel,
+  model = gatewayArtModel,
   timeoutMs = ART_MODEL_TIMEOUT_MS,
 }: {
   text: string;
@@ -416,7 +472,7 @@ export async function generateArtVariant({
   control: ControlImage;
   signal: AbortSignal;
   model?: ArtImageModel;
-  /** How long Gemini may take before the request fails */
+  /** How long the model may take before the request fails */
   timeoutMs?: number;
 }): Promise<AIArtVariant> {
   const images = [control.png];
@@ -445,7 +501,7 @@ export async function generateArtVariant({
   );
   const art = await readModelImage(output);
 
-  // Both are PNGs: Gemini's own, or redrawn from its JPEG.
+  // Both are PNGs: the model's own, or redrawn from its JPEG or WebP.
   const blended = !(await scanQRPixels(art.pixels, text)).passed;
   const png = blended
     ? await blendArt({ text, pixels: art.pixels, control, visibility })

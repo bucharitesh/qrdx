@@ -41,7 +41,6 @@ COPY --from=pruner /app/out/full/ .
 # ── 3. Build ─────────────────────────────────────────────────────────────────
 FROM installer AS builder
 ARG NEXT_PUBLIC_APP_URL=http://localhost:3000
-ARG NEXT_PUBLIC_API_URL
 ARG NEXT_PUBLIC_POSTHOG_KEY
 ARG NEXT_PUBLIC_POSTHOG_HOST
 ARG NEXT_PUBLIC_FEATUREBASE_APP_ID
