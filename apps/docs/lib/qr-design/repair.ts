@@ -49,8 +49,10 @@ export interface DesignLoopResult {
   grade: ScanGrade;
   checks: ScanCheck[];
   attempts: DesignAttempt[];
-  /** Repairs made after the first candidate (the fallback counts as one) */
+  /** Repairs made after the first candidate (at most MAX_REPAIRS) */
   repairs: number;
+  /** The result is the classic fallback, the repairs couldn't reach Great */
+  fellBack: boolean;
   /** Every change from the first candidate to the result, for the user */
   changes: string[];
 }
@@ -152,10 +154,14 @@ const lightBackground = (style: DesignStyle) =>
  * Keeps the hue but darkens (light backgrounds) or lightens (dark ones) a
  * colour just enough to reach 4.5:1 against every background colour.
  */
-function readable(color: string, style: DesignStyle): string {
+function readable(
+  color: string,
+  style: DesignStyle,
+  min = MIN_CONTRAST,
+): string {
   const grounds = backgrounds(style);
   const ok = (candidate: string) =>
-    grounds.every((ground) => contrastRatio(candidate, ground) >= MIN_CONTRAST);
+    grounds.every((ground) => contrastRatio(candidate, ground) >= min);
   if (ok(color)) return color;
   const target = lightBackground(style) ? "#000000" : "#FFFFFF";
   for (let step = 1; step <= 20; step++) {
@@ -165,10 +171,21 @@ function readable(color: string, style: DesignStyle): string {
   return target;
 }
 
-function fixContrast(style: DesignStyle, changes: string[]): DesignStyle {
+/**
+ * Contrast that still reads small, through blur and a phone camera's
+ * contrast loss: 4.5:1 passes the contrast check but can fail to decode at
+ * 96 px; dark on light at 7:1 reads there.
+ */
+const STRONG_CONTRAST = 7;
+
+function fixContrast(
+  style: DesignStyle,
+  changes: string[],
+  { min = MIN_CONTRAST, reason = "for contrast" } = {},
+): DesignStyle {
   const next: DesignStyle = { ...style };
   // A mid-tone background gradient can't contrast with anything; flatten it.
-  if (next.gradients?.background) {
+  if (next.gradients?.background && min === MIN_CONTRAST) {
     const { from, to } = next.gradients.background;
     const flat = lightBackground(next)
       ? (luminance(from) ?? 0) > (luminance(to) ?? 0)
@@ -190,23 +207,23 @@ function fixContrast(style: DesignStyle, changes: string[]): DesignStyle {
     ["dotColor", "eye centres", "eyeCentres"],
   ] as const;
   for (const [key, name, gradientKey] of parts) {
-    const fixed = readable(next[key], next);
+    const fixed = readable(next[key], next, min);
     if (fixed !== next[key]) {
       changes.push(
-        `${lightBackground(next) ? "Darkened" : "Lightened"} the ${name} (${next[key]} → ${fixed}) for contrast`,
+        `${lightBackground(next) ? "Darkened" : "Lightened"} the ${name} (${next[key]} → ${fixed}) ${reason}`,
       );
       next[key] = fixed;
     }
     const gradient = next.gradients?.[gradientKey];
     if (gradient) {
-      const from = readable(gradient.from, next);
-      const to = readable(gradient.to, next);
+      const from = readable(gradient.from, next, min);
+      const to = readable(gradient.to, next, min);
       if (from !== gradient.from || to !== gradient.to) {
         next.gradients = {
           ...next.gradients,
           [gradientKey]: { ...gradient, from, to },
         };
-        changes.push(`Adjusted the ${name} gradient for contrast`);
+        changes.push(`Adjusted the ${name} gradient ${reason}`);
       }
     }
   }
@@ -289,23 +306,41 @@ export function repairDesign(
   }
   const decodeFailed = [...ids].some((id) => id.startsWith("decode-"));
   if (decodeFailed) {
-    if (!SOLID_BODIES.has(next.bodyPattern)) {
+    // Low contrast that passes the check can still blur away when small.
+    next = fixContrast(next, changes, {
+      min: STRONG_CONTRAST,
+      reason: "so it reads at small sizes",
+    });
+    // Long content means many small modules: less error correction holds it
+    // in fewer, bigger ones, which helps most. A logo needs the correction.
+    if (next.logo === "none" && (next.level === "Q" || next.level === "H")) {
+      changes.push(
+        `Lowered error correction from ${next.level} to M for fewer, bigger modules`,
+      );
+      next.level = "M";
+    } else if (final && next.logo === "none" && next.level === "M") {
+      changes.push("Lowered error correction from M to L for bigger modules");
+      next.level = "L";
+    }
+    if (final && next.bodyPattern !== "square") {
+      changes.push(
+        `Changed the dots from ${next.bodyPattern} to squares so the code reads when it's small`,
+      );
+      next.bodyPattern = "square";
+    } else if (!SOLID_BODIES.has(next.bodyPattern)) {
       changes.push(
         `Changed the dots from ${next.bodyPattern} to rounded squares so the code reads when it's small`,
       );
       next.bodyPattern = "rounded";
-    } else if (next.cornerEyePattern !== "square" && final) {
+    }
+    if (
+      final &&
+      (next.cornerEyePattern !== "square" ||
+        next.cornerEyeDotPattern !== "square")
+    ) {
       changes.push("Squared the corner eyes so phones lock on faster");
       next.cornerEyePattern = "square";
       next.cornerEyeDotPattern = "square";
-    } else if (
-      next.logo === "none" &&
-      (next.level === "Q" || next.level === "H")
-    ) {
-      changes.push(
-        `Lowered error correction from ${next.level} to M for bigger modules`,
-      );
-      next.level = "M";
     }
   }
   return { style: next, changes };
@@ -394,18 +429,23 @@ export async function runDesignLoop({
   const first = normalizeDesign(initial, { hasLogo });
   await record(first.style, first.changes, "initial", -1);
 
-  /** The best attempt so far (the earliest of equals): repairs start from it. */
-  const best = () =>
-    attempts.reduce(
-      (top, attempt, index) =>
-        attempt.score > (attempts[top] as DesignAttempt).score ? index : top,
-      0,
-    );
+  /**
+   * The best attempt so far. Repairs build on the latest of equal scores, so
+   * each one tries something new; the result is the earliest of equals, the
+   * one with the fewest changes.
+   */
+  const best = ({ latest = false } = {}) =>
+    attempts.reduce((top, attempt, index) => {
+      const topScore = (attempts[top] as DesignAttempt).score;
+      return attempt.score > topScore || (latest && attempt.score === topScore)
+        ? index
+        : top;
+    }, 0);
 
   let repairs = 0;
   while (repairs < maxRepairs && !isGreat(attempts[best()] as DesignAttempt)) {
     repairs++;
-    const parent = best();
+    const parent = best({ latest: true });
     const base = attempts[parent] as DesignAttempt;
     const final = repairs === maxRepairs;
     let next: DesignStyle | null = null;
@@ -435,7 +475,11 @@ export async function runDesignLoop({
       }
     }
     if (!next) {
-      const repaired = repairDesign(base.style, base.failed, { final });
+      let repaired = repairDesign(base.style, base.failed, { final });
+      // Nothing small left to try: make the bigger changes now.
+      if (!final && same(repaired.style, base.style)) {
+        repaired = repairDesign(base.style, base.failed, { final: true });
+      }
       if (same(repaired.style, base.style)) break;
       next = repaired.style;
       changes = repaired.changes;
@@ -457,15 +501,18 @@ export async function runDesignLoop({
       );
       if (isGreat(attempt)) break;
     }
-    repairs++;
   }
 
   const index = best();
   const result = attempts[index] as DesignAttempt;
-  // The changes along the path from the first candidate to the result.
+  const fellBack = result.by === "fallback";
+  // The changes along the path from the first candidate to the result; a
+  // fallback replaces the whole look, so only its own change is true of it.
   const path: number[] = [];
   for (let at = index; at >= 0; at = parents[at] as number) path.unshift(at);
-  const changes = path.flatMap((at) => (attempts[at] as DesignAttempt).changes);
+  const changes = fellBack
+    ? result.changes
+    : path.flatMap((at) => (attempts[at] as DesignAttempt).changes);
   return {
     style: result.style,
     score: result.score,
@@ -473,6 +520,7 @@ export async function runDesignLoop({
     checks: (results[index] as ScanScoreResult).checks,
     attempts,
     repairs,
+    fellBack,
     changes,
   };
 }

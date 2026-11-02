@@ -114,6 +114,8 @@ export interface ContentField {
   /** Allowed values, for enum fields */
   values?: string[];
   kind: "string" | "boolean";
+  /** The form sends it even when empty, so a missing value means "" */
+  emptyByDefault?: boolean;
 }
 
 function fieldsOf(type: ContentType): ContentField[] {
@@ -124,12 +126,15 @@ function fieldsOf(type: ContentType): ContentField[] {
       const values =
         schema instanceof z.ZodEnum ? (schema.options as string[]) : undefined;
       const kind = schema.safeParse(true).success ? "boolean" : "string";
+      // A field the form always sends, possibly empty (a Wi-Fi password).
+      const emptyByDefault = !optional && schema.safeParse("").success;
       return {
         name,
         // Either-or types (Reddit, YouTube) have only optional fields.
-        required: !optional,
+        required: !optional && !emptyByDefault,
         kind,
         ...(values ? { values } : {}),
+        ...(emptyByDefault ? { emptyByDefault } : {}),
       };
     });
 }
@@ -274,6 +279,12 @@ export function validateDesignContent(input: ContentInput): ContentResult {
     if (value === undefined || value === null) continue;
     if (!allowed.has(name)) continue;
     fields[name] = typeof value === "string" ? value.trim() : value;
+  }
+  // As the form does: an open network's password is sent, empty.
+  for (const field of CONTENT_FIELDS[type]) {
+    if (field.emptyByDefault && fields[field.name] === undefined) {
+      fields[field.name] = "";
+    }
   }
   const parsed = schema.safeParse(fields);
   if (!parsed.success) {

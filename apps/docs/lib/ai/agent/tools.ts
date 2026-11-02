@@ -31,9 +31,12 @@ import {
 import { DesignTooLongError } from "@/lib/qr-design/score";
 import {
   type DesignStyle,
+  designerOutputSchema,
   designStyleSchema,
+  sanitizeDesignStyle,
   toThemeStyles,
 } from "@/lib/qr-design/style";
+import { logError } from "@/lib/shared";
 import type { ChatMessage } from "@/types/ai";
 import type { QRContentConfig } from "@/types/qr-content";
 import type { ThemeStyles } from "@/types/theme";
@@ -79,6 +82,8 @@ export interface DesignRecord {
   /** Checks the result still fails (empty for most Great designs) */
   failed: FailedCheck[];
   repairs: number;
+  /** Repairs couldn't reach Great: this is the classic fallback */
+  fellBack: boolean;
   /** What was changed after the first candidate to reach the score */
   changes: string[];
   attempts: Pick<DesignAttempt, "score" | "grade" | "by" | "changes">[];
@@ -191,7 +196,11 @@ export type AgentContext = {
   writer: UIMessageStreamWriter<ChatMessage>;
   templates: TemplateStore;
   score: ScoreFn;
+  /** design_qr calls in this request (MAX_DESIGNS_PER_REQUEST) */
+  designCalls: { count: number };
 };
+
+export const MAX_DESIGNS_PER_REQUEST = 3;
 
 // ── The designer model ─────────────────────────────────────────────────────
 
@@ -247,23 +256,59 @@ async function designStyle(request: DesignerRequest): Promise<DesignStyle> {
         `The code ${base.hasLogo ? "shows a logo now (logo keep keeps it)" : "has no logo now"}.`,
         "Return the complete style.",
       ];
+  // A complete style is a few hundred tokens. The cap and the timeout stop a
+  // runaway generation (the model has looped inside a string field before).
+  const timeout = AbortSignal.timeout(DESIGNER_TIMEOUT_MS);
   const { partialOutputStream, output } = streamText({
-    abortSignal: request.abortSignal,
+    abortSignal: request.abortSignal
+      ? AbortSignal.any([request.abortSignal, timeout])
+      : timeout,
+    maxOutputTokens: DESIGNER_MAX_OUTPUT_TOKENS,
     model: languageModel("qr-theme-generation"),
     providerOptions: textProviderOptions("qr-theme-generation"),
     instructions: QR_DESIGN_SYSTEM,
-    output: Output.object({ schema: designStyleSchema }),
+    output: Output.object({ schema: designerOutputSchema }),
     messages: [
       ...conversationForDesigner(request.messages),
       { role: "user", content: lines.join("\n") },
     ],
   });
   if (request.onPartial) {
+    let sent = 0;
     for await (const partial of partialOutputStream) {
-      request.onPartial(partial as Partial<DesignStyle>);
+      // A preview, not a transcript: a few updates a second, strings clipped.
+      if (Date.now() - sent < PARTIAL_INTERVAL_MS) continue;
+      sent = Date.now();
+      request.onPartial(clipPartial(partial as Partial<DesignStyle>));
     }
   }
-  return designStyleSchema.parse(await output);
+  // Colours and labels made valid, then checked against the strict schema.
+  return designStyleSchema.parse(
+    sanitizeDesignStyle(await output, revision?.style ?? base.style),
+  );
+}
+
+const DESIGNER_MAX_OUTPUT_TOKENS = 1500;
+const DESIGNER_TIMEOUT_MS = 30_000;
+const PARTIAL_INTERVAL_MS = 250;
+
+/** Strings in a partial style cut to the longest valid value. */
+function clipPartial(partial: Partial<DesignStyle>): Partial<DesignStyle> {
+  return JSON.parse(
+    JSON.stringify(partial, (_key, value) =>
+      typeof value === "string" ? value.slice(0, 40) : value,
+    ),
+  ) as Partial<DesignStyle>;
+}
+
+/** The first candidate, asked twice if the first answer is unusable. */
+async function initialStyle(request: DesignerRequest): Promise<DesignStyle> {
+  try {
+    return await designStyle(request);
+  } catch (error) {
+    if (request.abortSignal?.aborted) throw error;
+    return await designStyle({ ...request, onPartial: undefined });
+  }
 }
 
 // ── Tools ──────────────────────────────────────────────────────────────────
@@ -282,7 +327,7 @@ const designQrInput = z.object({
   content: contentInputSchema
     .optional()
     .describe(
-      "New content for the code, only with details the user gave. Leave out to keep the editor's content.",
+      'New content for the code, only with details the user gave, as one object with its own type, e.g. { type: "wifi", ssid, password, encryption }. Leave out to keep the editor\'s content.',
     ),
 });
 
@@ -356,6 +401,7 @@ function designForModel(output: DesignQrOutput) {
     score: output.score,
     grade: output.grade,
     repairs: output.repairs,
+    fellBack: output.fellBack,
     changes: output.changes,
     stillFailing: output.failed.map((check) => check.message),
     style: output.style,
@@ -397,6 +443,21 @@ export const QR_AGENT_TOOLS: QRAgentTools = {
         scoredWithSample = false;
       }
 
+      // A model that keeps retrying a failing design would loop to the step
+      // limit; three designs per request is plenty for a repair or a retry.
+      context.designCalls.count++;
+      if (context.designCalls.count > MAX_DESIGNS_PER_REQUEST) {
+        return {
+          ok: false,
+          issues: [
+            {
+              message:
+                "Too many designs in one go. Tell the user what happened and let them try again.",
+            },
+          ],
+        };
+      }
+
       const progress = (data: DesignProgress) =>
         writer.write({
           type: "data-design-progress",
@@ -415,7 +476,7 @@ export const QR_AGENT_TOOLS: QRAgentTools = {
         abortSignal,
       };
       try {
-        const initial = await designStyle({
+        const initial = await initialStyle({
           ...request,
           onPartial: (style) => progress({ stage: "designing", style }),
         });
@@ -454,6 +515,7 @@ export const QR_AGENT_TOOLS: QRAgentTools = {
               ...(fix ? { fix } : {}),
             })),
           repairs: result.repairs,
+          fellBack: result.fellBack,
           changes: result.changes,
           attempts: result.attempts.map(({ score, grade, by, changes }) => ({
             score,
@@ -469,7 +531,18 @@ export const QR_AGENT_TOOLS: QRAgentTools = {
         if (error instanceof DesignTooLongError) {
           return { ok: false, issues: [{ message: error.message }] };
         }
-        throw error;
+        if (abortSignal?.aborted) throw error;
+        // Loud on the server; a clear, final answer for the model.
+        logError(error as Error, { tool: "design_qr" });
+        return {
+          ok: false,
+          issues: [
+            {
+              message:
+                "The designer couldn't produce a style. Don't retry; tell the user it failed and to try again.",
+            },
+          ],
+        };
       }
     },
   }),
@@ -605,7 +678,8 @@ export function agentToolApproval() {
           reason: "No design with that id. Call design_qr first.",
         };
       }
-      if (!isGreat(design) && design.attempts.at(-1)?.by !== "fallback") {
+      // The fallback is the best the content allows (very long content).
+      if (!isGreat(design) && !design.fellBack) {
         return {
           type: "denied" as const,
           reason: `Its scan score is ${design.score}, below Great. Repair it with design_qr first.`,
