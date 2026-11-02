@@ -70,7 +70,7 @@ export interface AIArtAllowances {
 }
 
 interface AIArtStudioProps {
-  /** Server-side GOOGLE_API_KEY check; a 503 from the API flips it off too. */
+  /** Server-side AI_GATEWAY_API_KEY check; a 503 from the API flips it off too. */
   configured: boolean;
   /** Monthly images per plan, from lib/plans (null = unlimited). */
   allowances: AIArtAllowances;
@@ -506,7 +506,8 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
               <p className="text-muted-foreground text-xs">
                 Optional. A logo, photo or palette for Gemini to work into the
                 artwork: its colors and shapes carry over. It's resized in your
-                browser and sent to Google's Gemini API with your prompt.
+                browser and sent with your prompt through Vercel AI Gateway to
+                Google's Gemini image model.
               </p>
             </div>
           </div>

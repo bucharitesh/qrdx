@@ -1,10 +1,8 @@
 import { isFeatureAvailable } from "@/lib/feature-availability";
 
 /**
- * Whether AI QR art is offered here. It runs on Gemini with GOOGLE_API_KEY,
- * and AI_ART_ENABLED=0 switches it off with the key still set (AI themes keep
- * working): for example while the key's Google project has no billing, since
- * Gemini's free tier allows no image generation.
+ * Whether AI QR art is offered here: whenever AI_GATEWAY_API_KEY is set, as
+ * for AI themes (it runs through Vercel AI Gateway).
  *
  * The pricing page, sitemap and llms.txt are prerendered, so a change takes
  * effect on the next deploy. The rule lives in lib/feature-availability-rules.ts

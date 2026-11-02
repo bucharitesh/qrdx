@@ -1,42 +1,39 @@
 import "server-only";
 
-import { createGoogle, type GoogleLanguageModelOptions } from "@ai-sdk/google";
-import { customProvider, type LanguageModel } from "ai";
+import { createGateway, type LanguageModel } from "ai";
 import { env } from "@/lib/env";
 import { HttpError } from "@/lib/error-response";
+import { AI_MODELS, type AITextTask } from "./models";
 
-const google = createGoogle({
-  apiKey: env.GOOGLE_API_KEY,
-});
+// Every AI request goes through Vercel AI Gateway with AI_GATEWAY_API_KEY.
+// Which model serves each task, and the provider options it gets, are in
+// ./models.ts.
 
-export const isAIConfigured = Boolean(env.GOOGLE_API_KEY);
+export const isAIConfigured = Boolean(env.AI_GATEWAY_API_KEY);
 
-/** Rejects AI requests with a 503 when no provider key is set. */
+const notConfigured = () =>
+  new HttpError(503, "AI_NOT_CONFIGURED", "AI is not configured");
+
+/** Rejects AI requests with a 503 when AI_GATEWAY_API_KEY isn't set. */
 export function assertAIConfigured(): void {
-  if (!isAIConfigured) {
-    throw new HttpError(503, "AI_NOT_CONFIGURED", "AI is not configured");
-  }
+  if (!isAIConfigured) throw notConfigured();
 }
 
-export const baseProviderOptions = {
-  google: {
-    thinkingConfig: {
-      includeThoughts: false,
-      thinkingBudget: 128,
-    },
-  } satisfies GoogleLanguageModelOptions,
-};
+let gateway: ReturnType<typeof createGateway> | undefined;
 
-type ModelId = "base" | "qr-theme-generation" | "prompt-enhancement";
-
-interface MyProvider {
-  languageModel: (id: ModelId) => LanguageModel;
+/**
+ * The gateway client, with the app's key only. It's never created without
+ * one: the gateway would then fall back to a Vercel OIDC token on Vercel and
+ * bill AI the deployment didn't turn on.
+ */
+export function aiGateway(): ReturnType<typeof createGateway> {
+  const apiKey = env.AI_GATEWAY_API_KEY;
+  if (!apiKey) throw notConfigured();
+  gateway ??= createGateway({ apiKey });
+  return gateway;
 }
 
-export const myProvider: MyProvider = customProvider({
-  languageModels: {
-    base: google("gemini-2.5-flash"),
-    "qr-theme-generation": google("gemini-3-flash-preview"),
-    "prompt-enhancement": google("gemini-2.5-flash"),
-  },
-});
+/** The language model for a text task (see AI_MODELS). */
+export function languageModel(task: AITextTask): LanguageModel {
+  return aiGateway()(AI_MODELS[task].model);
+}
