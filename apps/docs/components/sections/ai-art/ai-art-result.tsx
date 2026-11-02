@@ -197,7 +197,8 @@ export function AIArtResultPanel({
       {result && variant && !isGenerating && (
         <>
           <ScanStatusCard
-            blended={variant.blended}
+            blend={variant.blend}
+            blendStrength={variant.blendStrength}
             isBest={selected === best && result.variants.length > 1}
             score={check?.score ?? null}
             status={check?.status ?? "checking"}
@@ -304,12 +305,14 @@ function ScanStatusCard({
   status,
   score,
   isBest,
-  blended,
+  blend,
+  blendStrength,
 }: {
   status: ScanStatus;
   score: number | null;
   isBest: boolean;
-  blended: boolean;
+  blend: AIArtVariant["blend"];
+  blendStrength: number;
 }) {
   const { icon, title, description } = SCAN_STATUS[status];
   return (
@@ -334,10 +337,18 @@ function ScanStatusCard({
           )}
         </span>
         <span className="text-muted-foreground text-xs">{description}</span>
-        {blended && (
+        {blend === "least" && (
           <span className="text-muted-foreground text-xs">
-            Gemini's version didn't pass the scan check, so QRdx blended it into
-            the code (Image QR) to make it scan.
+            The model's image didn't scan as drawn, so QRdx strengthened its
+            corner eyes, its border and, where needed, its modules, just enough
+            to scan (blend strength {Math.round(blendStrength * 100)}%).
+          </span>
+        )}
+        {blend === "image-qr" && (
+          <span className="text-muted-foreground text-xs">
+            The model's image didn't scan even with its code strengthened, so
+            QRdx redrew it as an Image QR code, with the picture showing
+            through.
           </span>
         )}
       </span>
