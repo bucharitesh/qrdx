@@ -2,8 +2,8 @@
 
 import { Button } from "@repo/design-system/components/ui/button";
 import { DEFAULT_FRAME_TEXT, type QRFrame } from "qrdx";
+import { useEditableStyle } from "@/components/editor/style-scope";
 import { soundEvent } from "@/lib/sound/emit";
-import { useQREditorStore } from "@/store/editor-store";
 
 const CTA_LABELS = [
   "Scan me",
@@ -21,23 +21,18 @@ const CTA_LABELS = [
  * the Banner frame, so the label shows right away.
  */
 export function FrameTextPresets() {
-  const themeState = useQREditorStore((state) => state.themeState);
-  const setThemeState = useQREditorStore((state) => state.setThemeState);
-  const style = themeState.styles;
+  const { style, setStyle } = useEditableStyle();
   const frame: QRFrame = style.frame ?? { style: "none" };
   const current = frame.text ?? DEFAULT_FRAME_TEXT;
   const framed = frame.style !== "none";
 
   const apply = (text: string) => {
-    setThemeState({
-      ...themeState,
-      styles: {
-        ...style,
-        frame: {
-          ...frame,
-          style: framed ? frame.style : "banner-bottom",
-          text,
-        },
+    setStyle({
+      ...style,
+      frame: {
+        ...frame,
+        style: framed ? frame.style : "banner-bottom",
+        text,
       },
     });
     soundEvent("tick");

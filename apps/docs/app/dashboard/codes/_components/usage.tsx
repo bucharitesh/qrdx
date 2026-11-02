@@ -4,12 +4,12 @@ import { toast } from "@repo/design-system";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Progress } from "@repo/design-system/components/ui/progress";
 import { Diamonds as Gem, Add as Plus } from "iconsax-reactjs";
-import { type ComponentProps, useState } from "react";
+import type { ComponentProps } from "react";
 import type { CodeUsage } from "@/app/dashboard/codes/_lib/qr-codes";
+import { openCodeBuilder } from "@/components/code-builder/store";
 import { PLAN_NAMES } from "@/lib/pricing";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 import { formatNumber } from "./format";
-import { NewCodeDialog } from "./new-code-dialog";
 
 const isAtLimit = (usage: CodeUsage) =>
   usage.limit !== null && usage.used >= usage.limit;
@@ -61,7 +61,6 @@ export function NewCodeButton({
   children = "New code",
   ...props
 }: { usage: CodeUsage } & ComponentProps<typeof Button>) {
-  const [open, setOpen] = useState(false);
   const openGetProDialog = useGetProDialogStore(
     (state) => state.openGetProDialog,
   );
@@ -74,17 +73,14 @@ export function NewCodeButton({
       openGetProDialog();
       return;
     }
-    setOpen(true);
+    // Website link or hosted page, chosen in the builder.
+    openCodeBuilder({ mode: "create" });
   };
 
   return (
-    <>
-      <Button onClick={onClick} {...props}>
-        <Plus />
-        {children}
-      </Button>
-      {/* Website link (redirect) or a hosted page type */}
-      <NewCodeDialog onOpenChange={setOpen} open={open} />
-    </>
+    <Button onClick={onClick} {...props}>
+      <Plus />
+      {children}
+    </Button>
   );
 }

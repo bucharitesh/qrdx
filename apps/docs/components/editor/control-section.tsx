@@ -2,13 +2,14 @@
 
 import { Kbd } from "@repo/design-system/components/ui/kbd";
 import { cn } from "@repo/design-system/lib/utils";
-import { ArrowDown2 } from "iconsax-reactjs";
+import { ArrowDown2, ArrowRight2 } from "iconsax-reactjs";
 import type * as React from "react";
 import { useEffect, useId, useState } from "react";
 import { InfoHint } from "@/components/help/info-hint";
 import type { HintId } from "@/lib/help/hints";
 import { useUserSettings } from "@/lib/hooks/use-user-settings";
 import type { ControlSectionProps } from "@/types";
+import { SidePanel } from "./control-sections/side-panel";
 import { SectionContext } from "./section-context";
 
 interface Props extends ControlSectionProps {
@@ -20,6 +21,11 @@ interface Props extends ControlSectionProps {
   description?: string;
   /** Info (i) next to the title; content lives in lib/help/hints.ts */
   hint?: HintId;
+  /**
+   * Opens beside the panel (a bottom sheet on phones) instead of expanding
+   * in place: for the shape sections, so the preview stays in view.
+   */
+  popover?: boolean;
 }
 
 /**
@@ -36,6 +42,7 @@ function ControlSection({
   id,
   description,
   hint,
+  popover = false,
 }: Props) {
   const [isExpanded, setIsExpanded] = useState(expanded);
   const { settings } = useUserSettings();
@@ -58,31 +65,67 @@ function ControlSection({
       <section className="scroll-mt-2 border-b last:border-b-0" id={id}>
         <div className="group/header relative">
           <h3>
-            <button
-              aria-controls={contentId}
-              aria-expanded={isExpanded}
-              className="hover:bg-accent/30 group-hover/header:bg-accent/30 focus-visible:bg-accent/40 flex w-full items-center gap-2 px-4 py-3 text-left transition-colors outline-none"
-              onClick={() => setIsExpanded((prev) => !prev)}
-              type="button"
-            >
-              <span className="text-sm font-medium">{title}</span>
-              {hint && <span aria-hidden className="size-4 shrink-0" />}
-              {showKbd && <Kbd>{kbd}</Kbd>}
-              <span
-                className={cn(
-                  "text-muted-foreground ml-auto flex min-w-0 items-center gap-2 truncate text-xs transition-opacity",
-                  isExpanded && "opacity-0",
-                )}
+            {popover ? (
+              <SidePanel
+                onOpenChange={setIsExpanded}
+                open={isExpanded}
+                title={title}
+                trigger={
+                  <button
+                    aria-expanded={isExpanded}
+                    aria-haspopup="dialog"
+                    className="hover:bg-accent/30 group-hover/header:bg-accent/30 focus-visible:bg-accent/40 aria-expanded:bg-accent/40 flex w-full items-center gap-2 px-4 py-3 text-left transition-colors outline-none"
+                    type="button"
+                  >
+                    <span className="text-sm font-medium">{title}</span>
+                    {hint && <span aria-hidden className="size-4 shrink-0" />}
+                    {showKbd && <Kbd>{kbd}</Kbd>}
+                    <span className="text-muted-foreground ml-auto flex min-w-0 items-center gap-2 truncate text-xs">
+                      {summary}
+                    </span>
+                    <ArrowRight2
+                      aria-hidden
+                      className="text-muted-foreground size-4 shrink-0"
+                    />
+                  </button>
+                }
               >
-                {summary}
-              </span>
-              <ArrowDown2
-                className={cn(
-                  "text-muted-foreground size-4 shrink-0 transition-transform duration-200",
-                  isExpanded && "rotate-180",
-                )}
-              />
-            </button>
+                <div className={cn("space-y-4 pt-0.5", className)}>
+                  {description && (
+                    <p className="text-muted-foreground -mt-1 text-xs text-pretty">
+                      {description}
+                    </p>
+                  )}
+                  {children}
+                </div>
+              </SidePanel>
+            ) : (
+              <button
+                aria-controls={contentId}
+                aria-expanded={isExpanded}
+                className="hover:bg-accent/30 group-hover/header:bg-accent/30 focus-visible:bg-accent/40 flex w-full items-center gap-2 px-4 py-3 text-left transition-colors outline-none"
+                onClick={() => setIsExpanded((prev) => !prev)}
+                type="button"
+              >
+                <span className="text-sm font-medium">{title}</span>
+                {hint && <span aria-hidden className="size-4 shrink-0" />}
+                {showKbd && <Kbd>{kbd}</Kbd>}
+                <span
+                  className={cn(
+                    "text-muted-foreground ml-auto flex min-w-0 items-center gap-2 truncate text-xs transition-opacity",
+                    isExpanded && "opacity-0",
+                  )}
+                >
+                  {summary}
+                </span>
+                <ArrowDown2
+                  className={cn(
+                    "text-muted-foreground size-4 shrink-0 transition-transform duration-200",
+                    isExpanded && "rotate-180",
+                  )}
+                />
+              </button>
+            )}
           </h3>
           {hint && (
             // Lies over the header (a button can't hold another button) and
@@ -95,23 +138,25 @@ function ControlSection({
             </span>
           )}
         </div>
-        <div
-          className="grid transition-[grid-template-rows] duration-200 ease-out motion-reduce:transition-none"
-          id={contentId}
-          inert={!isExpanded}
-          style={{ gridTemplateRows: isExpanded ? "1fr" : "0fr" }}
-        >
-          <div className="min-h-0 overflow-hidden">
-            <div className={cn("space-y-4 px-4 pt-0.5 pb-5", className)}>
-              {description && (
-                <p className="text-muted-foreground -mt-1 text-xs text-pretty">
-                  {description}
-                </p>
-              )}
-              {children}
+        {!popover && (
+          <div
+            className="grid transition-[grid-template-rows] duration-200 ease-out motion-reduce:transition-none"
+            id={contentId}
+            inert={!isExpanded}
+            style={{ gridTemplateRows: isExpanded ? "1fr" : "0fr" }}
+          >
+            <div className="min-h-0 overflow-hidden">
+              <div className={cn("space-y-4 px-4 pt-0.5 pb-5", className)}>
+                {description && (
+                  <p className="text-muted-foreground -mt-1 text-xs text-pretty">
+                    {description}
+                  </p>
+                )}
+                {children}
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </section>
     </SectionContext.Provider>
   );
