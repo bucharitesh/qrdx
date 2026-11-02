@@ -286,7 +286,7 @@ export function exportEntries(userId: string): ExportEntry[] {
       path: "developer-apps.json",
       title: "Developer apps",
       description:
-        "OAuth apps you registered under Settings → Developers. Client secrets are not included.",
+        "OAuth apps you registered under Settings → API keys & apps. Client secrets are not included.",
       load: () => q.oauthApps,
     },
     {

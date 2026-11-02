@@ -187,7 +187,7 @@ export function contrastProblems(styles: ThemeStyles): string[] {
   const eye = worstContrast(styles.eyeColor ?? styles.fgColor, styles.bgColor);
   if (eye < EYE_CONTRAST) problems.push(`eyes ${eye.toFixed(2)}:1`);
   const dot = worstContrast(styles.dotColor ?? styles.fgColor, styles.bgColor);
-  if (dot < EYE_CONTRAST) problems.push(`eye centres ${dot.toFixed(2)}:1`);
+  if (dot < EYE_CONTRAST) problems.push(`eye centers ${dot.toFixed(2)}:1`);
   const { frame } = styles;
   if (frame?.text && frame.color && frame.textColor) {
     const label = worstContrast(frame.textColor, frame.color);

@@ -13,6 +13,38 @@ export interface PromptSuggestion {
 /** "Create" ideas for the AI panel; each card previews its look. */
 export const CREATE_SUGGESTIONS: PromptSuggestion[] = [
   {
+    id: "cafe-wifi",
+    title: "Cafe Wi-Fi",
+    hint: "Asks for your network",
+    prompt:
+      "Make a Wi-Fi QR code for my cafe with warm coffee colours and a Free Wi-Fi frame.",
+    preview: {
+      bgColor: "#fdf6ec",
+      fgColor: "#5b3a29",
+      eyeColor: "#3f2a1d",
+      dotColor: "#3f2a1d",
+      bodyPattern: "rounded",
+      cornerEyePattern: "rounded",
+      cornerEyeDotPattern: "rounded",
+    },
+  },
+  {
+    id: "contact-card",
+    title: "Contact card",
+    hint: "vCard with a frame",
+    prompt:
+      "Make a contact card QR code for me in deep navy with a Save my contact frame.",
+    preview: {
+      bgColor: "#ffffff",
+      fgColor: "#1e3a8a",
+      eyeColor: "#1e3a8a",
+      dotColor: "#1e3a8a",
+      bodyPattern: "square",
+      cornerEyePattern: "square",
+      cornerEyeDotPattern: "square",
+    },
+  },
+  {
     id: "retro-arcade",
     title: "Retro arcade",
     hint: "Bright pixel squares",
@@ -152,13 +184,15 @@ export const CREATE_SUGGESTIONS: PromptSuggestion[] = [
 
 /** One line under each mode tab. */
 export const MODE_DESCRIPTIONS = {
-  create: "Start fresh from a vibe, a brand or a mood.",
+  create: "Start fresh: what it opens, and a vibe, a brand or a mood.",
   remix: "Take a preset and push it somewhere new.",
   tweak: "Adjust the design you have right now.",
 } as const;
 
 export const COMPOSER_PLACEHOLDERS = [
   "A minimalist black and white theme…",
+  "Wi-Fi for Cafe Guest with a Free Wi-Fi frame…",
+  "My contact card in navy with a frame…",
   "Retro arcade with pixel dots…",
   "Our café: warm browns, rounded eyes…",
   "Neon cyan on black for a night club…",

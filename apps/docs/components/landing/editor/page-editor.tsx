@@ -39,6 +39,7 @@ import {
 } from "react";
 import { publishLandingPage } from "@/actions/landing-pages";
 import { PhoneFrame } from "@/components/mockups/phone-frame";
+import { useWorkspaceHref } from "@/components/workspace-provider";
 import { track } from "@/lib/analytics";
 import {
   type BlockEditorContext,
@@ -156,6 +157,7 @@ export function PageEditor({
   branding,
   storageEnabled,
 }: PageEditorProps) {
+  const inWorkspace = useWorkspaceHref();
   const router = useRouter();
   const openUpgradeDialog = useGetProDialogStore(
     (state) => state.openUpgradeDialog,
@@ -429,7 +431,7 @@ export function PageEditor({
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
         <div className="flex min-w-0 flex-1 items-center gap-2">
           <Button asChild size="icon" title="All pages" variant="ghost">
-            <Link aria-label="All pages" href="/dashboard/pages">
+            <Link aria-label="All pages" href={inWorkspace("/pages")}>
               <ArrowLeft />
             </Link>
           </Button>
@@ -455,7 +457,9 @@ export function PageEditor({
           {code ? (
             <>
               <Button asChild size="sm" variant="outline">
-                <Link href={`/dashboard/codes/${encodeURIComponent(code.id)}`}>
+                <Link
+                  href={inWorkspace(`/codes/${encodeURIComponent(code.id)}`)}
+                >
                   <QrCode />
                   QR code
                 </Link>

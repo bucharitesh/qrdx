@@ -4,6 +4,7 @@
 //     npx tsx --conditions=react-server --test app/dashboard/themes/_lib/themes.test.ts
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
+import { ownWorkspaceId } from "@repo/auth/own-workspace-id";
 import type { ActiveScope } from "@/lib/scope";
 import {
   canEditTheme,
@@ -12,9 +13,11 @@ import {
   toSavedTheme,
 } from "./queries";
 
+// "Your themes" live in your own workspace.
+const MINE = ownWorkspaceId("me");
 const personal: ActiveScope = {
   userId: "me",
-  organizationId: null,
+  organizationId: MINE,
   role: "owner",
 };
 const teamAdmin: ActiveScope = {
@@ -32,7 +35,8 @@ const row = (overrides: {
   id: "theme",
   name: "Brand",
   userId: overrides.userId ?? "me",
-  organizationId: overrides.organizationId ?? null,
+  organizationId:
+    overrides.organizationId === undefined ? MINE : overrides.organizationId,
   isDefault: overrides.isDefault ?? false,
   style: { fgColor: "#111111" },
   createdAt: new Date("2026-10-01"),
@@ -49,17 +53,22 @@ describe("canManageTeamThemes", () => {
 });
 
 describe("canEditTheme", () => {
-  it("allows your own personal themes in every workspace", () => {
-    const mine = { userId: "me", organizationId: null };
+  it("allows your own themes in every workspace", () => {
+    const mine = { userId: "me", organizationId: MINE };
     assert.equal(canEditTheme(personal, mine), true);
     assert.equal(canEditTheme(teamMember, mine), true);
+    // From before workspaces (no workspace yet) they count as yours too.
+    const legacy = { userId: "me", organizationId: null };
+    assert.equal(canEditTheme(teamMember, legacy), true);
   });
 
-  it("never allows someone else's personal theme", () => {
-    assert.equal(
-      canEditTheme(personal, { userId: "other", organizationId: null }),
-      false,
-    );
+  it("never allows someone else's own themes", () => {
+    for (const theirs of [
+      { userId: "other", organizationId: ownWorkspaceId("other") },
+      { userId: "other", organizationId: null },
+    ]) {
+      assert.equal(canEditTheme(personal, theirs), false);
+    }
   });
 
   it("allows team themes only to owners/admins of that active team", () => {

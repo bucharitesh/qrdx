@@ -8,12 +8,14 @@ import { compareSource } from "@/lib/source";
 
 const title = "QRdx vs Other QR Code Generators and React QR Libraries";
 const description =
-  "Honest comparisons of QRdx with QR Code Monkey, QR Tiger, Canva, Bitly, Flowcode, qrcode.react and more: pricing, free-tier limits, and when each is the better pick.";
+  "How QRdx compares with QR Code Monkey, QR TIGER, Canva, Bitly, Flowcode, qrcode.react and more: pricing, free limits and when each is the better pick.";
 
 export const metadata: Metadata = createMetadata({
-  title,
+  // Names the brand already, so no " | QRdx" suffix.
+  title: { absolute: title },
   description,
   path: "/compare",
+  ownOgImage: true,
 });
 
 const groups = [

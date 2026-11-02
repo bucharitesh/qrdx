@@ -3,6 +3,7 @@
 import { cn } from "@repo/design-system/lib/utils";
 import { ArrowRight2, Clock, DocumentUpload } from "iconsax-reactjs";
 import Link from "next/link";
+import { useWorkspaceHref } from "@/components/workspace-provider";
 import {
   API_PROVIDER_IDS,
   API_PROVIDERS,
@@ -79,6 +80,7 @@ export function ProviderStep({
   onPickFile: (provider: FileProviderId) => void;
   onOpenJob: (job: JobSummary) => void;
 }) {
+  const inWorkspace = useWorkspaceHref();
   const status = (id: ApiProviderId) =>
     statuses?.find((entry) => entry.id === id);
   // Providers this deployment doesn't offer (they need setup in production).
@@ -144,7 +146,7 @@ export function ProviderStep({
             Already using the QRdx CSV template?{" "}
             <Link
               className="font-medium text-foreground underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground"
-              href="/dashboard/codes/import"
+              href={inWorkspace("/codes/import")}
             >
               Import CSV
             </Link>

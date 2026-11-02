@@ -6,11 +6,11 @@ icon: Globe
 
 By default a [dynamic QR code](/docs/dynamic-qr-codes) encodes a short link such as `https://qrdx.dev/q/aB3dE5f`. With a custom domain it encodes `https://go.yourbrand.com/aB3dE5f` instead, so people see your brand before they scan. Redirects, editing and scan analytics work the same way.
 
-Custom domains are part of Pro (up to 5 per personal workspace or team) and Business (up to 25).
+Custom domains are part of Pro (up to 5 per workspace) and Business (up to 25).
 
 ## Connect a domain
 
-1. Open [Dashboard → Domains](/dashboard/domains) and enter the domain, for example `go.yourbrand.com`. A subdomain works best, because your main website stays where it is.
+1. Open [Settings → Domains](/dashboard?to=settings/domains) and enter the domain, for example `go.yourbrand.com`. A subdomain works best, because your main website stays where it is.
 2. Add the DNS records shown for the domain at your DNS provider (where you bought the domain, Cloudflare, ...):
    - a subdomain gets a `CNAME` record,
    - a root domain (`yourbrand.com`) gets an `A` record,
@@ -24,6 +24,18 @@ Once verified, the domain appears in the **Short link domain** picker when you c
 <Callout type="info">
   A domain that isn't verified within 3 days can be added by another account, so nobody can hold on to a domain they don't control.
 </Callout>
+
+<IfAvailable feature="domainConnect" title="One-click DNS setup">
+
+Some DNS providers support [Domain Connect](https://www.domainconnect.org), an open standard that lets a service add its records for you. When your provider supports it and offers QRdx's setup, a domain waiting for DNS shows a **Set up with …** button named after your provider.
+
+1. Click the button. Your DNS provider opens and lists the records QRdx needs.
+2. Sign in there if asked, and approve the change. Nothing changes until you do.
+3. You come back to the Domains page, which checks DNS right away and again over the next half minute.
+
+The button appears only for subdomains such as `go.yourbrand.com`, and only when your provider can add exactly the records shown. Otherwise add the records from the table yourself, as above.
+
+</IfAvailable>
 
 ## Use it for codes
 
@@ -44,9 +56,9 @@ On your domain:
 
 Changes (a newly verified or removed domain) take up to a minute to reach every server.
 
-## Teams
+## Workspaces and roles
 
-Domains added while a team is active belong to the team. Owners and admins add, verify and remove them; every member can use verified team domains for their codes.
+A domain belongs to the workspace it was added in. Owners and admins add, verify and remove it; every member can use the workspace's verified domains for their codes.
 
 ## Plans and removing domains
 
@@ -74,5 +86,7 @@ How domains get connected depends on your deployment:
   1. Point the domain at your server with a `CNAME` (to your app's host name) or an `A` record (your server's IP).
   2. Make your reverse proxy accept the domain, serve HTTPS for it (for example with Caddy's on-demand TLS or a certbot certificate), and forward the original `Host` header to the app. With nginx that's `proxy_set_header Host $host;`; Caddy does it by default.
   3. Add the domain on the Domains page, create the `TXT` record it shows (`_qrdx-challenge.<your-domain>` with the value `qrdx-verify=<token>`), and click **Verify**. The app checks the record with a DNS lookup.
+
+**One-click DNS setup** (optional) uses [Domain Connect](https://www.domainconnect.org). It needs a template of your own, accepted by each DNS provider you want to support, and an RSA key that signs the setup links: set `DOMAIN_CONNECT_PROVIDER_ID`, `DOMAIN_CONNECT_SERVICE_ID` and `DOMAIN_CONNECT_PRIVATE_KEY` (PEM), and publish the public key as `TXT` records at `_dck1.<provider id>`. QRdx's own template (`domain-connect/` in the repository) works only for qrdx.dev, because providers check the signature against its key. Until the published key matches, no button is shown and the app logs why.
 
 The app recognizes custom domains by the `Host` header. Requests for your own app URL, `NEXT_PUBLIC_SHORT_LINK_BASE_URL`, `localhost` and `*.vercel.app` are always treated as the main app.

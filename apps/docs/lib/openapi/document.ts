@@ -20,8 +20,8 @@ import {
   MAX_BULK_CREATE,
 } from "@/app/dashboard/codes/_lib/qr-codes";
 import {
-  insufficientScopeError,
-  invalidTokenError,
+  insufficientKeyScopeError,
+  invalidApiKeyError,
   missingTokenError,
 } from "@/lib/api-errors";
 import { WEBHOOK_EVENTS, type WebhookEvent } from "@/lib/events/types";
@@ -257,9 +257,9 @@ function errorExample(error: ApiErrorInfo, scope: OAuthScope) {
     case "UNAUTHORIZED":
       return errorFromHttp(missingTokenError());
     case "INVALID_TOKEN":
-      return errorFromHttp(invalidTokenError());
+      return errorFromHttp(invalidApiKeyError());
     case "INSUFFICIENT_SCOPE":
-      return errorFromHttp(insufficientScopeError(scope));
+      return errorFromHttp(insufficientKeyScopeError(scope));
     case "VALIDATION_ERROR":
       return VALIDATION_EXAMPLE;
     case "RATE_LIMITED":
@@ -377,11 +377,11 @@ const OAUTH_ERROR_FOR: Partial<Record<ApiErrorCode, string>> = {
 
 const WWW_AUTHENTICATE = {
   description:
-    '`Bearer realm="QRdx API"`, with `error="invalid_token"` for a bad token',
+    '`Bearer realm="QRdx API"`, with `error="invalid_token"` for a bad key or token',
   schema: { type: "string" },
 };
 
-/** Errors every token-authenticated endpoint can return. */
+/** Errors every key- or token-authenticated endpoint can return. */
 const AUTH_ERRORS: ApiErrorCode[] = [
   "UNAUTHORIZED",
   "INVALID_TOKEN",
@@ -418,7 +418,11 @@ function json(
   };
 }
 
-const security = (scope: OAuthScope) => [{ oauth2: [scope] }];
+/**
+ * An API key or an OAuth token with `scope`. Bearer schemes take no scopes
+ * in OpenAPI, so the key's scope is in each operation's description.
+ */
+const security = (scope: OAuthScope) => [{ apiKey: [] }, { oauth2: [scope] }];
 
 // ─── Examples ────────────────────────────────────────────────────────────────
 
@@ -505,9 +509,9 @@ function operations(c: SchemaCollector): Record<string, JsonSchema> {
         summary: "Render a QR code image",
         tags: ["QR images"],
         security: [],
-        description: `A QR code image as SVG (default), PNG or EPS, with no token.
+        description: `A QR code image as SVG (default), PNG or EPS, with no key.
 
-**No token needed**, and it doesn't use your daily quota: put the URL straight into an \`<img>\` tag. The same query always returns the same bytes, so responses are cached for a year. Colors are hex without \`#\` (or with \`#\` encoded as \`%23\`). Limit: 300 requests a minute per IP address. More in the [Image API guide](${docs("developers/image-api")}).`,
+**No key or token needed**, and it doesn't use your daily quota: put the URL straight into an \`<img>\` tag. The same query always returns the same bytes, so responses are cached for a year. Colors are hex without \`#\` (or with \`#\` encoded as \`%23\`). Limit: 300 requests a minute per IP address. More in the [Image API guide](${docs("developers/image-api")}).`,
         parameters: c.parameters(
           qrImage,
           "query",
@@ -584,7 +588,7 @@ function operations(c: SchemaCollector): Record<string, JsonSchema> {
         summary: "List codes",
         tags: ["Codes"],
         security: security("codes:read"),
-        description: `The dynamic codes of the token owner's personal workspace, newest first.
+        description: `The dynamic codes of the workspace the key or token acts on, newest first.
 
 Page through them with \`limit\` and \`offset\`; \`pagination.total\` counts every match.`,
         parameters: c.parameters(listCodesQuerySchema, "query", {
@@ -680,7 +684,7 @@ Send an object for one code, or an array for several (Pro). The response's \`sho
         tags: ["Codes"],
         security: security("codes:read"),
         description:
-          "One dynamic code of the token owner's personal workspace.",
+          "One dynamic code of the workspace the key or token acts on.",
         responses: {
           "200": json("The code", c.schema(codeResponseSchema), {
             code: { data: exampleCode },
@@ -832,7 +836,7 @@ Totals, a daily series and the top countries, cities, devices, systems, browsers
         security: [...security("codes:write"), {}],
         description: `Attributes a sale, sign-up or other conversion to the scan that brought the visitor (Business).
 
-From your server, send a token and the scan's \`sid\`, or the code id as \`code\`. From the browser, \`conversions.js\` sends \`sid\` with no token, for codes with conversion tracking turned on. An \`id\`, such as your order id, makes retries safe: a repeat returns 200 with \`duplicate: true\`. More in [Tracking and conversions](${docs("tracking-and-conversions")}).`,
+From your server, send an API key (or token) and the scan's \`sid\`, or the code id as \`code\`. From the browser, \`conversions.js\` sends \`sid\` with no key, for codes with conversion tracking turned on. An \`id\`, such as your order id, makes retries safe: a repeat returns 200 with \`duplicate: true\`. More in [Tracking and conversions](${docs("tracking-and-conversions")}).`,
         requestBody: {
           required: true,
           content: {
@@ -840,7 +844,7 @@ From your server, send a token and the scan's \`sid\`, or the code id as \`code\
               schema: c.schema(
                 describeFields(conversionBodySchema, {
                   sid: "The `qrdx_sid` the short link appended to your page URL",
-                  code: "The code id, when no scan is known (token requests only)",
+                  code: "The code id, when no scan is known (key or token requests only)",
                   name: "What happened, e.g. `purchase` or `signup`",
                   value: "Amount, as a number or string with up to 2 decimals",
                   currency: "ISO 4217 code; `USD` when a value has none",
@@ -911,7 +915,7 @@ From your server, send a token and the scan's \`sid\`, or the code id as \`code\
         security: security("codes:read"),
         description: `The workspace's hooks: REST Hooks subscriptions and webhook endpoints.
 
-\`target_url\` shows only the origin unless the token has \`codes:write\`. Listing works on every plan; subscribing needs Business.`,
+\`target_url\` shows only the origin unless the key or token has \`codes:write\` and, in a workspace with other members, belongs to an owner or admin. Listing works on every plan; subscribing needs Business.`,
         responses: {
           "200": json("The hooks", c.schema(hookListResponseSchema), {
             hooks: { data: [exampleHook] },
@@ -1034,12 +1038,12 @@ Zapier's “perform list”: up to three payloads built from the workspace's rec
     "/me": {
       get: {
         operationId: "getProfile",
-        summary: "Get the token's user",
+        summary: "Get the profile",
         tags: ["Profile"],
         security: security("profile:read"),
-        description: `The id, name, email and avatar of the user who authorized the token.
+        description: `The id, name, email and avatar of the user who created the API key or authorized the token.
 
-Tokens only: a browser session gets \`401\`.`,
+Keys and tokens only: a browser session gets \`401\`.`,
         responses: {
           "200": json("The user", c.schema(profileResponseSchema), {
             profile: {
@@ -1065,9 +1069,9 @@ Tokens only: a browser session gets \`401\`.`,
         summary: "List themes",
         tags: ["Themes"],
         security: security("themes:read"),
-        description: `The user's saved QR themes: each one's name and design.
+        description: `Saved QR themes, each one's name and design: every theme the user saved for an OAuth token, the workspace's themes for an API key.
 
-Tokens only: a browser session gets \`401\`.`,
+Keys and tokens only: a browser session gets \`401\`.`,
         responses: {
           "200": json("The themes", c.schema(themeListResponseSchema), {
             themes: { data: [exampleTheme] },
@@ -1096,7 +1100,8 @@ Tokens only: a browser session gets \`401\`.`,
         summary: "Get a theme",
         tags: ["Themes"],
         security: security("themes:read"),
-        description: "One of the user's saved themes.",
+        description:
+          "One saved theme, from the same set List themes returns for the key or token.",
         responses: {
           "200": json("The theme", c.schema(themeResponseSchema), {
             theme: { data: exampleTheme },
@@ -1116,9 +1121,36 @@ Tokens only: a browser session gets \`401\`.`,
 const DESCRIPTION = `Create and manage dynamic QR codes, read scan analytics, report conversions and subscribe to events over HTTP.
 
 - **Base URL:** \`${API_SERVER_URL}\`. The same routes answer at \`${SITE}/api/v1\`.
-- **Auth:** an OAuth 2.0 access token, \`Authorization: Bearer <token>\` ([how to get one](${docs("developers/rest-api#get-an-access-token")})). Tokens act on the token owner's personal workspace. API keys aren't available yet. The image API (\`GET /qr\`) needs no token.
+- **Auth:** an API key, \`Authorization: Bearer qrdx_…\` ([create one](${docs("developers/api-keys")})), or an OAuth 2.0 access token in the same header for apps that act for other people ([OAuth](${docs("developers/rest-api#get-an-access-token")})). A key acts on the workspace it was created in, with its creator's role there; a token acts on its user's own workspace. The image API (\`GET /qr\`) needs neither.
 - **Errors:** \`{ "code", "message", "status" }\`, plus \`docs\` when a page explains the fix ([every code](${docs("developers/errors")})).
 - **Limits:** a daily quota per workspace (1,000 requests on Free, 10,000 on Pro, 100,000 on Business), reported in \`X-RateLimit-*\` headers, plus per-minute limits. Over a limit you get \`429\` with \`Retry-After\`.`;
+
+/**
+ * Ends each authenticated operation's description with the scope it needs,
+ * read from its OAuth requirement: API keys use the same scopes, but bearer
+ * schemes can't list them in OpenAPI.
+ */
+function withScopeNotes(
+  paths: Record<string, JsonSchema>,
+): Record<string, JsonSchema> {
+  for (const item of Object.values(paths)) {
+    for (const operation of Object.values(item) as JsonSchema[]) {
+      const requirements = (operation.security ?? []) as Record<
+        string,
+        string[]
+      >[];
+      const scope = requirements.flatMap((r) => r.oauth2 ?? [])[0];
+      if (!scope) continue;
+      const optional = requirements.some((r) => Object.keys(r).length === 0);
+      const scopes =
+        scope === "codes:read"
+          ? "`codes:read` or `codes:write`"
+          : `\`${scope}\``;
+      operation.description = `${operation.description}\n\n**Scope:** ${scopes}, for API keys and OAuth tokens alike${optional ? " (when you send a key or token)" : ""}.`;
+    }
+  }
+  return paths;
+}
 
 /** The OpenAPI document; the same input always gives the same output. */
 export function buildOpenApiDocument(): Document {
@@ -1126,7 +1158,7 @@ export function buildOpenApiDocument(): Document {
   // Shared schemas first, so components keep a stable order.
   c.schema(errorSchema);
   c.schema(oauthCompatibleErrorSchema);
-  const paths = operations(c);
+  const paths = withScopeNotes(operations(c));
   const missing = [
     ...JSON.stringify(paths).matchAll(/"#\/components\/schemas\/([^"]+)"/g),
   ]
@@ -1176,15 +1208,21 @@ export function buildOpenApiDocument(): Document {
         description: "REST Hooks subscriptions for Zapier, Make and n8n.",
       },
       { name: "Themes", description: "The user's saved QR designs." },
-      { name: "Profile", description: "The user behind the token." },
+      { name: "Profile", description: "The user behind the key or token." },
     ],
-    security: [{ oauth2: [] }],
+    security: [{ apiKey: [] }, { oauth2: [] }],
     paths,
     components: {
       securitySchemes: {
+        apiKey: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "qrdx_ followed by 40 letters and digits",
+          description: `An API key, sent as \`Authorization: Bearer qrdx_…\`. Create one in [Settings → API keys & apps](${SITE}/dashboard?to=settings/developers): it is shown once. A key acts on the workspace it was created in as its creator, with their current role there, and only within its scopes, the same scopes as OAuth (each operation names the one it needs). [API keys](${docs("developers/api-keys")}).`,
+        },
         oauth2: {
           type: "oauth2",
-          description: `An OAuth 2.0 access token, sent as \`Authorization: Bearer <token>\`. Register an app in [Settings → Developers](${SITE}/settings/developers), send the user through authorization (PKCE S256), then exchange the code for a token. Access tokens last 1 hour; refresh tokens 30 days. [Step by step](${docs("developers/rest-api#get-an-access-token")}).`,
+          description: `An OAuth 2.0 access token, sent as \`Authorization: Bearer <token>\`. Register an app in [Settings → API keys & apps](${SITE}/dashboard?to=settings/developers), send the user through authorization (PKCE S256), then exchange the code for a token. Access tokens last 1 hour; refresh tokens 30 days. [Step by step](${docs("developers/rest-api#get-an-access-token")}).`,
           flows: {
             authorizationCode: {
               authorizationUrl: `${SITE}/api/oauth/authorize`,

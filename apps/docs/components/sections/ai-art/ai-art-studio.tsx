@@ -18,6 +18,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { GalleryAdd, Lock } from "iconsax-reactjs";
 import { useRef, useState } from "react";
 import { SignInLink } from "@/components/auth/sign-in-link";
+import { workspaceRequestHeaders } from "@/components/workspace-provider";
 import { track } from "@/lib/analytics";
 import { apiFetch } from "@/lib/api-fetch";
 import { useSessionGuard } from "@/lib/hooks/use-gaurds";
@@ -103,7 +104,9 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
   const { data: creditsResponse } = useQuery({
     queryKey: CREDITS_QUERY_KEY,
     queryFn: async (): Promise<AIArtCreditsResponse> => {
-      const response = await fetch("/api/ai/art/credits");
+      const response = await fetch("/api/ai/art/credits", {
+        headers: workspaceRequestHeaders(),
+      });
       if (!response.ok) throw new Error("Failed to load AI art credits");
       return response.json();
     },
@@ -171,7 +174,10 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
   ): Promise<AIArtResult> => {
     const response = await apiFetch("/api/ai/art", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        ...workspaceRequestHeaders(),
+      },
       body: JSON.stringify(request),
       signal,
     });

@@ -1,7 +1,11 @@
 // Signed-in end-to-end checks of the app against the running dev server,
 // driven over the Chrome DevTools Protocol (no Playwright). It walks the real
-// dashboard and settings UI as the e2e test account:
+// dashboard and settings UI as the e2e test account. Dashboard pages live
+// under /dashboard/<workspace slug>/...; the slug is read at start from where
+// /dashboard sends the account (its default workspace).
 //
+//   workspace  /dashboard?to=… opens a section of the default workspace;
+//              unknown workspaces and pre-workspace URLs are 404s
 //   codes      create a dynamic code, edit its destination, follow its short link
 //   organize   folder + tag it, archive it (short link stops), trash and delete it
 //   pages      hosted page from a template with a form: publish, view signed
@@ -25,6 +29,13 @@ import { findChrome, launch, PAGE_HELPERS, serverIsUp, sleep } from "./cdp.mjs";
 
 /** The account the cookie signs in as (set at start; OAuth checks compare with it). */
 let signedInEmail = "";
+
+/** The account's default workspace (set at start from where /dashboard lands). */
+let workspaceSlug = "";
+
+/** `/dashboard/<workspace slug><path>`; `path` starts with "/" (or is empty for Home). */
+const ws = (path = "") =>
+  `/dashboard/${encodeURIComponent(workspaceSlug)}${path}`;
 
 const BASE_URL = (process.env.E2E_BASE_URL ?? "http://localhost:3000").replace(
   /\/$/,
@@ -401,7 +412,7 @@ async function createCode(
   title: string,
   destination: string,
 ): Promise<CreatedCode> {
-  await open(page, "/dashboard/codes");
+  await open(page, ws("/codes"));
   await click(page, { role: "button", name: "new code", exact: true });
   await click(page, { role: "button", name: "website link", dialog: true });
   await fill(page, { label: "destination url", dialog: true }, destination);
@@ -452,7 +463,7 @@ async function codeAction(page: Page, title: string, item: string) {
 async function deleteCodeForever(page: Page, code: CreatedCode) {
   try {
     for (const status of ["", "?status=archived"]) {
-      await open(page, `/dashboard/codes${status}`);
+      await open(page, ws(`/codes${status}`));
       const listed = await waitText(page, code.title, 8000).then(
         () => true,
         () => false,
@@ -463,7 +474,7 @@ async function deleteCodeForever(page: Page, code: CreatedCode) {
         break;
       }
     }
-    await open(page, "/dashboard/codes?status=trash");
+    await open(page, ws("/codes?status=trash"));
     await waitText(page, code.title, 15_000);
     await codeAction(page, code.title, "delete forever");
     await click(page, {
@@ -502,7 +513,7 @@ async function testCodes(page: Page) {
   });
 
   await step(area, "edit the destination", async () => {
-    await open(page, "/dashboard/codes");
+    await open(page, ws("/codes"));
     await codeAction(page, title, "edit link");
     await waitText(page, "edit dynamic qr code");
     // The dialog loads the code's current values first; typing earlier races it.
@@ -570,7 +581,7 @@ async function testOrganize(page: Page) {
   let codeDeleted = false;
 
   try {
-    await open(page, "/dashboard/codes");
+    await open(page, ws("/codes"));
     folderCreated = Boolean(
       await step(area, "create a folder", async () => {
         await click(page, { role: "button", name: "new folder", exact: true });
@@ -607,7 +618,7 @@ async function testOrganize(page: Page) {
 
     if (folderCreated) {
       await step(area, "move the code into the folder", async () => {
-        await open(page, "/dashboard/codes");
+        await open(page, ws("/codes"));
         await codeAction(page, code.title, "move to folder");
         await click(page, {
           role: "button",
@@ -629,7 +640,7 @@ async function testOrganize(page: Page) {
 
     if (tagCreated) {
       await step(area, "tag the code", async () => {
-        await open(page, "/dashboard/codes");
+        await open(page, ws("/codes"));
         await codeAction(page, code.title, "tags");
         await click(page, { label: tagName, dialog: true });
         await click(page, {
@@ -640,7 +651,7 @@ async function testOrganize(page: Page) {
         });
         await waitText(page, "tags saved");
         // The tag's view lists it.
-        await open(page, "/dashboard/codes");
+        await open(page, ws("/codes"));
         await click(page, { role: "link", name: tagName });
         await until(
           page,
@@ -652,10 +663,10 @@ async function testOrganize(page: Page) {
     }
 
     const archived = await step(area, "archive the code", async () => {
-      await open(page, "/dashboard/codes");
+      await open(page, ws("/codes"));
       await codeAction(page, code.title, "archive");
       await waitNoText(page, code.title);
-      await open(page, "/dashboard/codes?status=archived");
+      await open(page, ws("/codes?status=archived"));
       await waitText(page, code.title);
       return true;
     });
@@ -691,7 +702,7 @@ async function testOrganize(page: Page) {
     if (!codeDeleted) await deleteCodeForever(page, code);
     if (folderCreated) {
       await step(area, "delete the folder", async () => {
-        await open(page, "/dashboard/codes");
+        await open(page, ws("/codes"));
         await click(page, {
           role: "button",
           name: `${folderName} folder actions`,
@@ -711,7 +722,7 @@ async function testOrganize(page: Page) {
     }
     if (tagCreated) {
       await step(area, "delete the tag", async () => {
-        await open(page, "/dashboard/codes");
+        await open(page, ws("/codes"));
         await click(page, {
           role: "button",
           name: `${tagName} tag actions`,
@@ -739,7 +750,7 @@ async function testOrganize(page: Page) {
 // ── Hosted pages and forms ──────────────────────────────────────────────────
 
 async function deletePage(page: Page, title: string) {
-  await open(page, "/dashboard/pages");
+  await open(page, ws("/pages"));
   await waitText(page, title);
   await click(page, { role: "button", name: "more actions", within: title });
   await click(page, { role: "menuitem", name: "delete page" });
@@ -766,7 +777,7 @@ async function testPages(page: Page) {
         area,
         "create a page from the Guest feedback template",
         async () => {
-          await open(page, "/dashboard/pages");
+          await open(page, ws("/pages"));
           await click(page, { role: "button", name: "new page", exact: true });
           await click(page, {
             role: "button",
@@ -787,8 +798,8 @@ async function testPages(page: Page) {
           });
           const url = await until<string>(
             page,
-            `() => /\\/dashboard\\/pages\\/[^/]+$/.test(location.pathname) && location.pathname`,
-            { timeout: 60_000, what: "the page editor" },
+            `(prefix) => location.pathname.startsWith(prefix) && /^[^/]+$/.test(location.pathname.slice(prefix.length)) && location.pathname`,
+            { timeout: 60_000, args: [ws("/pages/")], what: "the page editor" },
           );
           return decodeURIComponent(url.split("/").pop() ?? "");
         },
@@ -877,7 +888,7 @@ async function testPages(page: Page) {
     await step(area, "the response shows in the dashboard", async () => {
       await open(
         page,
-        `/dashboard/pages/${encodeURIComponent(pageId as string)}/responses`,
+        ws(`/pages/${encodeURIComponent(pageId as string)}/responses`),
       );
       await waitText(page, comment);
       return true;
@@ -965,9 +976,9 @@ async function testOAuth(page: Page) {
     app =
       (await step(
         area,
-        "create an OAuth app in Settings → Developers",
+        "create an OAuth app in Settings → API keys & apps",
         async () => {
-          await open(page, "/settings/developers/new");
+          await open(page, ws("/settings/developers/new"));
           await fill(page, { label: "name" }, appName);
           await fill(
             page,
@@ -1009,8 +1020,11 @@ async function testOAuth(page: Page) {
           });
           const path = await until<string>(
             page,
-            `() => /^\\/settings\\/developers\\/(?!new$)[^/]+$/.test(location.pathname) && location.pathname`,
-            { what: "the app's settings page" },
+            `(prefix) => { const rest = location.pathname.startsWith(prefix) ? location.pathname.slice(prefix.length) : ""; return /^[^/]+$/.test(rest) && rest !== "new" && location.pathname; }`,
+            {
+              args: [ws("/settings/developers/")],
+              what: "the app's settings page",
+            },
           );
           return {
             id: decodeURIComponent(path.split("/").pop() ?? ""),
@@ -1410,7 +1424,7 @@ async function testOAuth(page: Page) {
 }
 
 async function deleteOAuthApp(page: Page, app: { id: string }, name: string) {
-  await open(page, `/settings/developers/${encodeURIComponent(app.id)}`);
+  await open(page, ws(`/settings/developers/${encodeURIComponent(app.id)}`));
   await click(page, { role: "button", name: "delete app", exact: true });
   await click(page, {
     role: "button",
@@ -1420,8 +1434,8 @@ async function deleteOAuthApp(page: Page, app: { id: string }, name: string) {
   });
   await until(
     page,
-    `(name) => location.pathname === "/settings/developers" && !__app.hasText(name)`,
-    { args: [name], what: "the app to be deleted" },
+    `(name, list) => location.pathname === list && !__app.hasText(name)`,
+    { args: [name, ws("/settings/developers")], what: "the app to be deleted" },
   );
 }
 
@@ -1430,7 +1444,7 @@ async function deleteOAuthApp(page: Page, app: { id: string }, name: string) {
 async function testWebhooks(page: Page) {
   const area = "webhooks";
   const url = `https://example.com/hook?e2e=${RUN}`;
-  await open(page, "/dashboard/webhooks");
+  await open(page, ws("/settings/webhooks"));
   await until(page, `() => !!document.querySelector("h1")`, {
     what: "the webhooks page",
   });
@@ -1506,24 +1520,97 @@ async function testWebhooks(page: Page) {
   }
 }
 
+// ── Workspace URLs ──────────────────────────────────────────────────────────
+
+/**
+ * Opens /dashboard and reads the slug of the workspace it sends the account
+ * to (/dashboard/<slug>), so every other check can build its URLs.
+ */
+async function resolveWorkspaceSlug(page: Page): Promise<string> {
+  await open(page, "/dashboard");
+  return until<string>(
+    page,
+    `() => { const m = /^\\/dashboard\\/([a-z0-9][a-z0-9-]*)(?:\\/|$)/.exec(location.pathname); return m ? m[1] : null; }`,
+    {
+      timeout: 60_000,
+      what: "the redirect from /dashboard to /dashboard/<workspace>",
+    },
+  );
+}
+
+/**
+ * URLs from before workspaces had URLs. They 404 (no redirects, by
+ * decision); a reserved slug keeps /dashboard/codes from ever opening a
+ * workspace.
+ */
+const PRE_WORKSPACE_PATHS = [
+  "/dashboard/codes",
+  "/dashboard/webhooks",
+  "/settings/developers",
+  "/settings/usage",
+  "/settings/themes",
+];
+
+async function testWorkspace(page: Page) {
+  const area = "workspace";
+
+  await step(
+    area,
+    "/dashboard?to=settings/developers&new=1 opens API keys & apps in the default workspace",
+    async () => {
+      const expected = ws("/settings/developers?new=1");
+      await open(page, "/dashboard?to=settings/developers&new=1");
+      const landed = await until<string>(
+        page,
+        `(expected) => location.pathname + location.search === expected && location.pathname + location.search`,
+        { args: [expected], what: expected },
+      ).catch(async () => localPath(await currentUrl(page)));
+      return check(landed === expected, `landed on ${landed}`);
+    },
+  );
+
+  // Random, valid slug format, so it's the membership lookup that answers.
+  const missing = `e2e-none-${randomBytes(6).toString("hex")}`;
+  await step(area, "a workspace URL that doesn't exist is a 404", async () => {
+    const res = await http(`/dashboard/${missing}`);
+    return check(
+      res.status === 404,
+      `/dashboard/${missing}: HTTP ${res.status}`,
+    );
+  });
+
+  for (const path of PRE_WORKSPACE_PATHS) {
+    await step(area, `${path} (pre-workspace URL) is a 404`, async () => {
+      const res = await http(path);
+      return check(
+        res.status === 404,
+        `HTTP ${res.status}${res.location ? ` → ${res.location}` : ""}`,
+      );
+    });
+  }
+}
+
 // ── Settings pages ──────────────────────────────────────────────────────────
 
-const SETTINGS_PAGES = [
+/** Account settings (the person) and the workspace's settings. */
+const settingsPages = () => [
   "/settings/general",
   "/settings/account",
-  "/settings/usage",
   "/settings/notifications",
   "/settings/integrations",
   "/settings/authorized-apps",
-  "/settings/developers",
-  "/settings/developers/new",
+  ws("/settings"),
+  ws("/settings/usage"),
+  ws("/settings/team"),
+  ws("/settings/domains"),
+  ws("/settings/webhooks"),
+  ws("/settings/developers"),
+  ws("/settings/developers/new"),
 ];
 
 /** Settings URLs that intentionally send people elsewhere. */
 const SETTINGS_REDIRECTS: Record<string, string> = {
   "/settings": "/settings/general",
-  // Saved themes moved to the workspace.
-  "/settings/themes": "/dashboard/themes",
 };
 
 async function testSettings(page: Page) {
@@ -1550,7 +1637,7 @@ async function testSettings(page: Page) {
   ).catch(() => null);
 
   for (const path of [
-    ...SETTINGS_PAGES,
+    ...settingsPages(),
     ...(integration ? [integration] : []),
   ]) {
     await step(area, `${path} renders`, async () => {
@@ -1621,7 +1708,20 @@ async function main() {
     secure: origin.protocol === "https:",
   });
 
+  // Every dashboard URL names the workspace; without it nothing can run.
+  try {
+    workspaceSlug = await resolveWorkspaceSlug(page);
+  } catch (error) {
+    console.log(
+      `FAIL: /dashboard didn't open a workspace (${errorMessage(error)}); landed on ${await currentUrl(page).catch(() => "?")}`,
+    );
+    await page.close();
+    return 1;
+  }
+  console.log(`Workspace ${ws()}`);
+
   const suites: [string, (page: Page) => Promise<void>][] = [
+    ["workspace", testWorkspace],
     ["codes", testCodes],
     ["organize", testOrganize],
     ["pages", testPages],

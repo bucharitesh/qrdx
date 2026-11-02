@@ -40,6 +40,9 @@ const EVERYTHING: Record<string, string> = {
   AI_GATEWAY_API_KEY: FAKE,
   VERCEL_API_TOKEN: FAKE,
   VERCEL_PROJECT_ID: FAKE,
+  DOMAIN_CONNECT_PROVIDER_ID: FAKE,
+  DOMAIN_CONNECT_SERVICE_ID: FAKE,
+  DOMAIN_CONNECT_PRIVATE_KEY: FAKE,
   R2_ACCOUNT_ID: FAKE,
   R2_ACCESS_KEY_ID: FAKE,
   R2_SECRET_ACCESS_KEY: FAKE,
@@ -67,6 +70,13 @@ const NEEDS: Record<FeatureId, string[]> = {
     "R2_BUCKET",
   ],
   email: ["RESEND_API_KEY", "EMAIL_FROM"],
+  domainConnect: [
+    "VERCEL_API_TOKEN",
+    "VERCEL_PROJECT_ID",
+    "DOMAIN_CONNECT_PROVIDER_ID",
+    "DOMAIN_CONNECT_SERVICE_ID",
+    "DOMAIN_CONNECT_PRIVATE_KEY",
+  ],
   spamCheck: ["TURNSTILE_SECRET_KEY", "NEXT_PUBLIC_TURNSTILE_SITE_KEY"],
   linkSafety: ["WEB_RISK_API_KEY"],
   scheduledJobs: ["CRON_SECRET"],
@@ -178,7 +188,7 @@ describe("what client components learn", () => {
       expect.arrayContaining([
         "/ai",
         "/ai/art",
-        "/dashboard/domains",
+        "/dashboard/[workspace]/settings/domains",
         "/docs/custom-domains",
       ]),
     );
@@ -193,8 +203,9 @@ describe("what client components learn", () => {
   });
 
   it("matches links by exact path, ignoring query and hash", () => {
-    const hidden = ["/ai/art", "/dashboard/domains"];
+    const hidden = ["/ai/art", "/dashboard/[workspace]/settings/domains"];
     expect(isPathShown(hidden, "/ai/art")).toBe(false);
+    expect(isPathShown(hidden, "/dashboard/acme/settings/domains")).toBe(false);
     expect(isPathShown(hidden, "/ai/art?prompt=x#top")).toBe(false);
     expect(isPathShown(hidden, "/ai")).toBe(true);
     expect(isPathShown(hidden, "/dashboard")).toBe(true);
@@ -298,6 +309,7 @@ describe("a production-like deployment", () => {
   it("leaves out adding custom domains, the spam check and the media pickers", () => {
     expect(FEATURE_IDS.filter((id) => !features[id])).toEqual([
       "customDomains",
+      "domainConnect",
       "spamCheck",
       "youtubeChannelPicker",
       "spotifyPlaylistPicker",

@@ -23,6 +23,7 @@ import {
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useAvailability } from "@/components/availability-provider";
+import { useWorkspaceHref } from "@/components/workspace-provider";
 import { track } from "@/lib/analytics";
 import { MigrateApiError, type MigrateClient } from "@/lib/migrate/client";
 import { FILE_PRESETS } from "@/lib/migrate/files";
@@ -39,7 +40,10 @@ import type {
   PlannedItem,
   SourceLink,
 } from "@/lib/migrate/types";
+import { PLAN_NAMES } from "@/lib/pricing";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
+import { formatPlanList } from "../_lib/code-options";
+import { useKnownCodeOptionPlans } from "./code-options";
 import { Note, plural, Stat, StepLayout } from "./import-shared";
 
 const STATUS_TEXT: Record<PlannedItem["status"], string> = {
@@ -83,6 +87,7 @@ export function PreviewStep({
   onBack: () => void;
   onStarted: (job: JobSummary) => void;
 }) {
+  const inWorkspace = useWorkspaceHref();
   const openGetProDialog = useGetProDialogStore(
     (state) => state.openGetProDialog,
   );
@@ -180,6 +185,8 @@ export function PreviewStep({
   // Unknown until the first preview: assume allowed, the preview corrects it.
   const canKeep = preview?.canKeepBackHalves ?? true;
   const withBackHalves = links.some((link) => link.backHalf);
+  // Plans that keep back-halves (lib/plans.ts customSlugs), when known.
+  const slugPlans = useKnownCodeOptionPlans()?.upgrades.customSlugs ?? [];
 
   return (
     <StepLayout
@@ -361,9 +368,9 @@ export function PreviewStep({
                 />
                 <Global aria-hidden className="size-4 text-foreground/70" />
                 Keep the original back-halves
-                {!canKeep && (
+                {!canKeep && slugPlans[0] && (
                   <span className="text-muted-foreground rounded-full border px-1.5 py-px text-[11px] font-medium">
-                    Pro
+                    {PLAN_NAMES[slugPlans[0]]}
                   </span>
                 )}
               </label>
@@ -434,10 +441,10 @@ export function PreviewStep({
                       </p>
                       {preview.backHalves.domain &&
                         preview.backHalves.qrdx !== "verified" &&
-                        showsPath("/dashboard/domains") && (
+                        showsPath(inWorkspace("/settings/domains")) && (
                           <Link
                             className="font-medium text-foreground underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground"
-                            href="/dashboard/domains"
+                            href={inWorkspace("/settings/domains")}
                           >
                             Open Domains
                           </Link>
@@ -446,8 +453,10 @@ export function PreviewStep({
                   ) : (
                     <Note icon={<Diamonds />}>
                       <p>
-                        Keeping back-halves is part of Pro and Business. Without
-                        it, every code gets a generated back-half.
+                        {slugPlans.length > 0
+                          ? `Keeping back-halves is part of ${formatPlanList(slugPlans)}.`
+                          : "Your plan doesn't keep back-halves."}{" "}
+                        Without it, every code gets a generated back-half.
                       </p>
                       <button
                         className="font-medium text-foreground underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground"

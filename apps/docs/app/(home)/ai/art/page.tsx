@@ -24,8 +24,8 @@ import { PLAN_LIMITS } from "@/lib/plans";
 export const metadata: Metadata = createMetadata(
   isArtConfigured
     ? {
-        title: "AI QR Code Art Generator — Scannable Artistic QR Codes",
-        description: `Turn a link into scannable AI artwork made with Google's Gemini: ${AI_ART_PRESETS.length} style presets, up to 4 variations per run, a QR visibility slider, and every image verified to scan before you see it. Requires sign-in; free accounts get ${PLAN_LIMITS.free.aiArtPerMonth} images a month.`,
+        title: "AI QR Code Art Generator: Scannable Artistic QR Codes",
+        description: `Turn a link into scannable AI art made with Google Gemini: ${AI_ART_PRESETS.length} styles, up to 4 variations a run, each checked to scan. Free accounts get ${PLAN_LIMITS.free.aiArtPerMonth} a month.`,
         keywords: [
           "ai qr code art",
           "ai qr code art generator",
@@ -68,7 +68,7 @@ const STEPS = [
   {
     title: "Verified to scan",
     description:
-      "QRdx decodes every image on the server. If Gemini's version doesn't scan, it's blended into the code (Image QR) until it does, and nothing that fails is delivered or charged.",
+      "QRdx decodes every image on the server. If Gemini's version doesn't scan, QRdx strengthens its corner eyes, border and modules only as much as it takes, redrawing it as Image QR only as a last resort, and nothing that fails is delivered or charged.",
   },
 ];
 

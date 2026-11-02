@@ -13,7 +13,7 @@ import { DialogActionsProvider } from "@/lib/hooks/use-dialog-actions";
 import { useMounted } from "@/lib/hooks/use-mounted";
 import { useQREditorStore } from "@/store/editor-store";
 import type { Theme, ThemeStyles } from "@/types/theme";
-import { ActionBar } from "./editor/action-bar";
+import { ActionBar, MobileActionBar } from "./editor/action-bar";
 import { AIWorkingGlow } from "./editor/ai/ai-working-glow";
 import ThemeControlPanel from "./qr-control-panel";
 import QRPreviewPanel from "./qr-preview-panel";
@@ -23,21 +23,45 @@ export interface EditorProps {
   themePromise: Promise<Theme | null>;
 }
 
-/** Static placeholder with the editor's layout, shown until hydration. */
+/**
+ * The sample code the preview shows until there's content: the default
+ * style encoding https://qrdx.dev, drawn with qrdx's QRCodeSVG. An <img>, so
+ * the server-rendered shell paints a real image early (the page's largest
+ * paint) instead of waiting for the editor to hydrate.
+ */
+const SAMPLE_QR_SRC = "/images/editor/sample-qr.svg";
+
+/**
+ * Static placeholder in the editor's layout (toolbar, preview, controls),
+ * shown until hydration.
+ */
 function EditorShell() {
   return (
     <div
       aria-busy="true"
-      className="relative isolate flex flex-1 flex-col-reverse overflow-hidden md:flex-row"
+      className="relative isolate flex flex-1 flex-col overflow-hidden md:flex-row"
     >
-      <div className="flex shrink-0 flex-col gap-3 border-b p-4 md:w-[30%] md:min-w-[22rem] md:border-r md:border-b-0">
+      <div className="order-2 flex min-h-0 flex-1 flex-col gap-3 border-t p-4 md:order-1 md:w-[30%] md:min-w-[22rem] md:flex-none md:border-t-0 md:border-r">
         <div className="bg-muted/60 h-10 animate-pulse rounded-full" />
         <div className="bg-muted/40 h-16 animate-pulse rounded-xl" />
         <div className="bg-muted/40 h-9 animate-pulse rounded-md" />
         <div className="bg-muted/30 hidden h-40 animate-pulse rounded-xl md:block" />
       </div>
-      <div className="flex flex-1 items-center justify-center p-8">
-        <div className="bg-muted/30 aspect-square w-full max-w-72 animate-pulse rounded-2xl" />
+      <div className="order-1 flex shrink-0 flex-col md:order-2 md:min-w-0 md:flex-1">
+        <div className="h-14 shrink-0 border-b" />
+        {/* The preview's padding (p-4 plus px-8 py-10 md:py-12), so the
+            sample sits where the live preview draws it. */}
+        <div className="flex h-[32svh] min-h-52 items-center justify-center px-12 py-14 md:h-auto md:flex-1 md:py-16">
+          <img
+            alt=""
+            className="aspect-square h-full max-w-full object-contain opacity-40"
+            decoding="async"
+            fetchPriority="high"
+            height={512}
+            src={SAMPLE_QR_SRC}
+            width={512}
+          />
+        </div>
       </div>
       <span className="sr-only">Loading the editor…</span>
     </div>
@@ -102,7 +126,7 @@ const Editor: React.FC<EditorProps> = ({ themePromise }) => {
     return (
       <DialogActionsProvider>
         <div className="relative isolate flex flex-1 flex-col overflow-hidden">
-          <ActionBar />
+          <ActionBar layout="mobile" />
           <div className="relative flex h-[32svh] min-h-52 shrink-0 flex-col overflow-hidden">
             <QRPreviewPanel style={styles} />
             <AIWorkingGlow />
@@ -115,6 +139,7 @@ const Editor: React.FC<EditorProps> = ({ themePromise }) => {
             />
             <ThemeControlPanel styles={styles} onChange={handleStyleChange} />
           </div>
+          <MobileActionBar />
         </div>
       </DialogActionsProvider>
     );

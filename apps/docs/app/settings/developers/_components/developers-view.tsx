@@ -1,12 +1,5 @@
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
-import {
-  Empty,
-  EmptyContent,
-  EmptyDescription,
-  EmptyHeader,
-  EmptyTitle,
-} from "@repo/design-system/components/ui/empty";
 import { Add } from "iconsax-reactjs";
 import Link from "next/link";
 import { UpgradePlanButton } from "@/app/dashboard/webhooks/_components/upgrade-plan-button";
@@ -14,63 +7,70 @@ import { HairlineFigure } from "@/components/mockups/hairline";
 import type { OAuthAppsOverview } from "@/lib/oauth-apps/service";
 import { PLAN_NAMES } from "@/lib/pricing";
 import { SettingsHeader } from "../../components/settings-header";
+import { ApiKeysSection, type ApiKeysState } from "./api-keys-section";
 import { OAuthAppList } from "./oauth-app-list";
 
-const DOCS_HREF = "/docs/developers/build-an-integration";
+const QUICKSTART_HREF = "/docs/developers/quickstart";
+const INTEGRATION_DOCS_HREF = "/docs/developers/build-an-integration";
 
-/** Settings → Developers: the active workspace's OAuth apps. */
-export function DevelopersView({ overview }: { overview: OAuthAppsOverview }) {
-  const { apps, limit, plan, canManage, isTeam, workspaceName } = overview;
+/** The open workspace's OAuth apps, for integrations other people install. */
+function OAuthAppsSection({
+  overview,
+  base,
+}: {
+  overview: OAuthAppsOverview;
+  base: string;
+}) {
+  const { apps, limit, plan, canManage, isTeam } = overview;
   const atLimit = apps.length >= limit;
 
   return (
-    <div className="space-y-6">
-      <SettingsHeader
-        description="Build an integration: register OAuth apps that call the QRdx API for the people who authorize them."
-        title="Developers"
-      >
-        <Button asChild size="sm" variant="outline">
-          <Link href={DOCS_HREF}>Docs</Link>
-        </Button>
-        {canManage &&
-          apps.length > 0 &&
-          (atLimit ? (
-            <Button disabled size="sm">
-              <Add />
-              New app
-            </Button>
-          ) : (
-            <Button asChild size="sm">
-              <Link href="/settings/developers/new">
-                <Add />
-                New app
-              </Link>
-            </Button>
-          ))}
-      </SettingsHeader>
-
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-muted-foreground text-sm">
-          OAuth apps in{" "}
-          <span className="text-foreground font-medium">{workspaceName}</span>
-          {isTeam ? ". Switch workspaces in the sidebar." : "."}
-        </p>
+    <section aria-labelledby="oauth-apps-heading" className="space-y-4">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="space-y-1">
+          <h2 className="text-base font-semibold" id="oauth-apps-heading">
+            OAuth apps
+          </h2>
+          <p className="text-muted-foreground text-sm">
+            Let other people connect their QRdx account to your product.{" "}
+            <Link
+              className="text-foreground underline underline-offset-4"
+              href={INTEGRATION_DOCS_HREF}
+            >
+              Guide
+            </Link>
+          </p>
+        </div>
         <div className="flex items-center gap-2">
           <Badge variant="outline">
             {apps.length} / {limit} {limit === 1 ? "app" : "apps"}
           </Badge>
           <Badge variant="secondary">{PLAN_NAMES[plan]}</Badge>
+          {canManage &&
+            (atLimit ? (
+              <Button disabled size="sm" variant="outline">
+                <Add />
+                New app
+              </Button>
+            ) : (
+              <Button asChild size="sm" variant="outline">
+                <Link href={`${base}/new`}>
+                  <Add />
+                  New app
+                </Link>
+              </Button>
+            ))}
         </div>
       </div>
 
       {!canManage && (
-        <p className="text-muted-foreground rounded-lg border p-4 text-sm">
+        <p className="text-muted-foreground rounded-xl border p-4 text-sm">
           Only team owners can create, edit or delete the team's OAuth apps.
         </p>
       )}
 
       {canManage && atLimit && apps.length > 0 && (
-        <div className="bg-muted/40 flex flex-wrap items-center justify-between gap-3 rounded-lg border p-4">
+        <div className="bg-muted/40 flex flex-wrap items-center justify-between gap-3 rounded-xl border p-4">
           <p className="text-sm">
             {isTeam
               ? `This team's plan includes ${limit === 1 ? "1 app" : `${limit} apps`}. A team owner on a higher plan raises the limit.`
@@ -86,39 +86,54 @@ export function DevelopersView({ overview }: { overview: OAuthAppsOverview }) {
       )}
 
       {apps.length === 0 ? (
-        <Empty className="border">
-          <EmptyHeader>
-            <HairlineFigure
-              className="mx-auto mb-2 h-28 w-40"
-              figure="Terminal"
-            />
-            <EmptyTitle>No OAuth apps yet</EmptyTitle>
-            <EmptyDescription>
-              Create an app to get a client ID and secret. People install it by
-              approving your app on the QRdx consent screen; your server then
-              calls the REST API with their access token.
-            </EmptyDescription>
-          </EmptyHeader>
-          <EmptyContent>
-            {canManage && (
-              <Button asChild>
-                <Link href="/settings/developers/new">
-                  <Add />
-                  New app
-                </Link>
-              </Button>
-            )}
-            <Link
-              className="text-muted-foreground text-xs underline"
-              href={DOCS_HREF}
-            >
-              Read the quickstart
-            </Link>
-          </EmptyContent>
-        </Empty>
+        <p className="text-muted-foreground rounded-xl border p-4 text-sm">
+          No OAuth apps yet. You only need one to act for other QRdx users.
+        </p>
       ) : (
-        <OAuthAppList apps={apps} />
+        <OAuthAppList apps={apps} base={base} />
       )}
+    </section>
+  );
+}
+
+/** Settings → API keys & apps: API keys, then OAuth apps, of the open workspace. */
+export function DevelopersView({
+  overview,
+  keys,
+  apiBase,
+  base,
+  openCreate,
+}: {
+  overview: OAuthAppsOverview;
+  keys: ApiKeysState;
+  apiBase: string;
+  /** This page: /dashboard/<workspace>/settings/developers */
+  base: string;
+  openCreate: boolean;
+}) {
+  return (
+    <div className="space-y-10">
+      <SettingsHeader
+        description="API keys and OAuth apps for the QRdx REST API."
+        title="API keys & apps"
+      >
+        <Button asChild size="sm" variant="outline">
+          <Link href={QUICKSTART_HREF}>Docs</Link>
+        </Button>
+      </SettingsHeader>
+
+      <ApiKeysSection
+        apiBase={apiBase}
+        emptyFigure={
+          <HairlineFigure className="mx-auto h-24 w-36" figure="Terminal" />
+        }
+        isTeam={overview.isTeam}
+        openCreate={openCreate}
+        state={keys}
+        workspaceName={overview.workspaceName}
+      />
+
+      <OAuthAppsSection base={base} overview={overview} />
     </div>
   );
 }

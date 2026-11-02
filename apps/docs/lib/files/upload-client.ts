@@ -1,6 +1,7 @@
 // Browser side of an upload: POST /api/files → PUT straight to storage →
 // POST /api/files/<id>/finalize. Used by the file manager and block editors.
 
+import { workspaceRequestHeaders } from "@/components/workspace-provider";
 import {
   FILE_KIND_LABELS,
   type FileKind,
@@ -39,7 +40,10 @@ async function readError(response: Response): Promise<UploadError> {
 async function postJson<T>(url: string, body: unknown): Promise<T> {
   const response = await fetch(url, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      ...workspaceRequestHeaders(),
+    },
     body: JSON.stringify(body),
   });
   if (!response.ok) throw await readError(response);

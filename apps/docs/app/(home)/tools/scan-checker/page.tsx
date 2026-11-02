@@ -11,8 +11,9 @@ import { ScanChecker } from "./scan-checker";
 export const metadata: Metadata = createMetadata({
   title: "QR Code Scan Checker",
   description:
-    "Upload or paste a picture of any QR code to read what it says and test how reliably it scans: small sizes, camera blur, contrast and clear space. Runs in your browser; nothing is uploaded.",
+    "Add a picture of a QR code to read it and test how reliably it scans at small sizes, with blur and low contrast. Runs in your browser; nothing is uploaded.",
   path: "/tools/scan-checker",
+  ownOgImage: true,
 });
 
 const faqs = [

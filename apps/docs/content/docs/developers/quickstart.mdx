@@ -1,10 +1,10 @@
 ---
 title: Quickstart
-description: Your first QRdx API request in under two minutes, with no key. Then dynamic codes with an access token.
+description: Your first QRdx API request in under two minutes, with no key. Then an API key and your first dynamic code.
 icon: Rocket
 ---
 
-The QRdx API has two halves. Images need nothing: no account, no key. Dynamic codes, scans and webhooks belong to an account, so they need an access token.
+The QRdx API has two halves. Images need nothing: no account, no key. Dynamic codes, scans and webhooks belong to a workspace, so they need an API key.
 
 ## 1. Make a QR code (no key)
 
@@ -52,80 +52,21 @@ That's a working API call. The URL itself is the image, so it also works straigh
 
 Change the colors, shapes, size and format with query parameters, or try them in the browser on the [Render a QR code image](/docs/developers/api/get-qr-image) page: its **Try it** panel sends the request and shows the image. Images don't count against any quota; the limit is 300 requests a minute per IP address.
 
-## 2. Get an access token [#get-an-access-token]
+## 2. Create an API key [#create-an-api-key]
 
-Everything else in the API acts on an account: create dynamic codes, change where they point, read their scans. Those requests carry an access token in the `Authorization` header.
+Everything else in the API acts on a workspace: create dynamic codes, change where they point, read their scans. Those requests carry an API key in the `Authorization` header.
 
-<Callout type="info" title="API keys aren't available yet">
-  Today, the only way to get a token is to register an OAuth app and sign in through it once. It takes about five minutes the first time. When API keys ship, this whole step becomes "create a key in Settings → Developers", and every request below works unchanged with the key in place of the token. [API keys](#api-keys) below will say when.
-</Callout>
+1. Open [Settings → API keys & apps](/dashboard?to=settings/developers&new=1) (sign in first if you need to). The **Create key** form opens.
+2. Keep **Full access** and choose **Create key**.
+3. Copy the key. It's shown once. The dialog also shows a curl request that creates a dynamic code, with your key filled in, if you'd rather paste that.
 
-1. **Register an app.** In [Settings → Developers](/settings/developers), choose **New app**. Give it a name, add the redirect URI `http://localhost:8787/callback`, and select the scopes `codes:read`, `codes:write` and `profile:read`. Copy the client ID and the client secret (the secret is shown once).
-2. **Sign in through it.** Save this script as `get-token.mjs`. It runs the OAuth flow with PKCE against your own account and prints your tokens. It needs Node 18 or later and nothing else:
+Export the key for the next steps:
 
-   ```js title="get-token.mjs"
-   import { createHash, randomBytes } from "node:crypto";
-   import { createServer } from "node:http";
+```bash
+export QRDX_API_KEY=qrdx_...
+```
 
-   const clientId = process.env.QRDX_CLIENT_ID;
-   const clientSecret = process.env.QRDX_CLIENT_SECRET;
-   const redirectUri = "http://localhost:8787/callback";
-
-   const verifier = randomBytes(32).toString("base64url");
-   const challenge = createHash("sha256").update(verifier).digest("base64url");
-   const state = randomBytes(16).toString("hex");
-
-   const authorize = new URL("https://qrdx.dev/api/oauth/authorize");
-   authorize.search = new URLSearchParams({
-     response_type: "code",
-     client_id: clientId,
-     redirect_uri: redirectUri,
-     scope: "codes:read codes:write profile:read",
-     state,
-     code_challenge: challenge,
-     code_challenge_method: "S256",
-   });
-   console.log(`Open this URL and approve your app:\n\n${authorize}\n`);
-
-   const server = createServer(async (req, res) => {
-     const url = new URL(req.url, redirectUri);
-     if (url.pathname !== "/callback") return res.writeHead(404).end();
-     const code = url.searchParams.get("code");
-     if (!code || url.searchParams.get("state") !== state) {
-       res.writeHead(400).end(url.searchParams.get("error") ?? "Bad callback");
-       return;
-     }
-     const response = await fetch("https://qrdx.dev/api/oauth/token", {
-       method: "POST",
-       body: new URLSearchParams({
-         grant_type: "authorization_code",
-         client_id: clientId,
-         client_secret: clientSecret,
-         code,
-         redirect_uri: redirectUri,
-         code_verifier: verifier,
-       }),
-     });
-     const tokens = await response.json();
-     res.end(response.ok ? "Done: back to your terminal." : "Failed: see your terminal.");
-     server.close();
-     console.log(tokens);
-   });
-   server.listen(8787);
-   ```
-
-   ```bash
-   QRDX_CLIENT_ID=... QRDX_CLIENT_SECRET=... node get-token.mjs
-   ```
-
-   Open the URL it prints, approve your app, and the terminal shows `access_token` and `refresh_token`.
-3. **Keep it handy.** Export the access token for the next step:
-
-   ```bash
-   export QRDX_TOKEN=...
-   ```
-
-Access tokens last one hour; the refresh token gets you a new one for 30 days ([refreshing tokens](/docs/developers/rest-api#4-refresh-and-revoke)). Requests made with a token act on your personal workspace and count against its daily quota (1,000 requests on Free).
+The key acts as you in the workspace that was open when you made it, and requests with it count against that workspace's daily quota (1,000 requests on Free). [API keys](/docs/developers/api-keys) covers scopes, teams, expiry and revoking.
 
 ## 3. Create a dynamic code
 
@@ -135,7 +76,7 @@ A dynamic code is a short link you can point somewhere else after it's printed:
   <Tab value="curl">
     ```bash
     curl -X POST https://api.qrdx.dev/v1/codes \
-      -H "Authorization: Bearer $QRDX_TOKEN" \
+      -H "Authorization: Bearer $QRDX_API_KEY" \
       -H "Content-Type: application/json" \
       -d '{"destinationUrl": "https://example.com", "title": "My first code"}'
     ```
@@ -145,7 +86,7 @@ A dynamic code is a short link you can point somewhere else after it's printed:
     const response = await fetch("https://api.qrdx.dev/v1/codes", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${process.env.QRDX_TOKEN}`,
+        Authorization: `Bearer ${process.env.QRDX_API_KEY}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
@@ -164,7 +105,7 @@ A dynamic code is a short link you can point somewhere else after it's printed:
 
     response = requests.post(
         "https://api.qrdx.dev/v1/codes",
-        headers={"Authorization": f"Bearer {os.environ['QRDX_TOKEN']}"},
+        headers={"Authorization": f"Bearer {os.environ['QRDX_API_KEY']}"},
         json={"destinationUrl": "https://example.com", "title": "My first code"},
     )
     response.raise_for_status()
@@ -198,7 +139,7 @@ Change the destination at any time; the printed code keeps working:
 
 ```bash
 curl -X PATCH https://api.qrdx.dev/v1/codes/$CODE_ID \
-  -H "Authorization: Bearer $QRDX_TOKEN" \
+  -H "Authorization: Bearer $QRDX_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"destinationUrl": "https://example.com/new-page"}'
 ```
@@ -212,16 +153,17 @@ Every error is JSON with a stable `code` and a message that says what to do:
 ```json
 {
   "code": "UNAUTHORIZED",
-  "message": "Missing access token. Send an OAuth access token as \"Authorization: Bearer <token>\". …",
-  "status": 401
+  "message": "Missing API key. Send an API key as \"Authorization: Bearer <key>\"; create one at https://qrdx.dev/dashboard?to=settings/developers. OAuth access tokens go in the same header.",
+  "status": 401,
+  "docs": "https://qrdx.dev/docs/developers/api-keys"
 }
 ```
 
 The [errors page](/docs/developers/errors) lists every code with its fix.
 
-## API keys
+## Acting for other people [#get-an-access-token]
 
-API keys don't exist yet. Until they do, use an OAuth access token as in [step 2](#get-an-access-token); they authenticate the same requests. When keys ship, this section will show how to create one, and the `Authorization: Bearer` header will take either.
+An API key acts as you. If your product calls QRdx for other people, register an OAuth app instead: each person approves it once, and your server gets an access token for their account, sent in the same `Authorization: Bearer` header. Every request above works unchanged with a token in place of the key. See [REST API and OAuth](/docs/developers/rest-api#get-an-access-token) and [Build an integration](/docs/developers/build-an-integration).
 
 ## Next steps
 

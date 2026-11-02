@@ -2,8 +2,8 @@ import { auth } from "@repo/auth/server";
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { safeNextPath } from "@/lib/safe-redirect";
-import { SignInPrompt } from "./sign-in-prompt";
+import { readSignInParams } from "./_lib/params";
+import { SignInPage } from "./sign-in-page";
 
 export const metadata: Metadata = {
   title: "Sign in",
@@ -13,20 +13,20 @@ export const metadata: Metadata = {
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
 /**
- * Where signed-out visitors to signed-in pages land (proxy.ts and the page
- * guards send them here as /sign-in?next=<path>). Opens the sign-in dialog,
- * which returns them to `next`; signed-in visitors go straight there.
+ * The sign-in page: the same panel as the dialog, on a page of its own. It's
+ * where proxy.ts and page guards send signed-out visitors (/sign-in?next=…),
+ * where /sign-out lands (?signedOut=1), and the fallback when the dialog
+ * can't open. Signed-in visitors go straight to `next`.
  */
-export default async function SignInPage({
+export default async function Page({
   searchParams,
 }: {
   searchParams: SearchParams;
 }) {
-  const { next: raw } = await searchParams;
-  const next = safeNextPath(Array.isArray(raw) ? raw[0] : raw);
+  const { next, signedOut } = readSignInParams(await searchParams);
 
   const session = await auth.api.getSession({ headers: await headers() });
   if (session?.user) redirect(next);
 
-  return <SignInPrompt next={next} />;
+  return <SignInPage next={next} signedOut={signedOut} />;
 }

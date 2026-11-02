@@ -67,9 +67,9 @@ import type { SavedTheme, ThemeActionResult } from "../_lib/theme";
 
 interface ThemeCardProps {
   theme: SavedTheme;
-  /** The workspace picked in the team switcher */
+  /** Your own workspace ("personal") or another one ("team") */
   workspace: "personal" | "team";
-  /** Shown as "Copy to team" on personal themes inside a team */
+  /** Shown as "Copy to this workspace" on your themes in another workspace */
   canCopyToTeam: boolean;
 }
 
@@ -213,7 +213,7 @@ export function ThemeCard({ theme, workspace, canCopyToTeam }: ThemeCardProps) {
               theme.isDefault &&
               !isTeamTheme && (
                 <Badge className="px-1.5 py-0 text-[10px]" variant="outline">
-                  Personal default
+                  Your default
                 </Badge>
               )
             )}
@@ -274,14 +274,14 @@ export function ThemeCard({ theme, workspace, canCopyToTeam }: ThemeCardProps) {
                 {theme.isDefault
                   ? "Remove as default"
                   : isTeamTheme
-                    ? "Set as team default"
+                    ? "Set as workspace default"
                     : "Set as default"}
               </DropdownMenuItem>
             )}
             {canCopyToTeam && !isTeamTheme && (
               <DropdownMenuItem onSelect={copyToTeam}>
                 <Users className="size-4" />
-                Copy to team
+                Copy to this workspace
               </DropdownMenuItem>
             )}
             <DropdownMenuItem onSelect={handleShare}>
@@ -384,7 +384,7 @@ export function ThemeCard({ theme, workspace, canCopyToTeam }: ThemeCardProps) {
             <AlertDialogDescription>
               QR codes you already made with this theme keep their look. This
               only removes the saved theme
-              {isTeamTheme ? " for everyone in the team" : ""}.
+              {isTeamTheme ? " for everyone in this workspace" : ""}.
               {theme.isPublished && " It is also removed from the community."}
             </AlertDialogDescription>
           </AlertDialogHeader>

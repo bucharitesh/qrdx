@@ -13,7 +13,13 @@ import {
 import { snapshotCodeVersion } from "@/lib/code-versions";
 import { HttpError } from "@/lib/error-response";
 import { baseUrl } from "@/lib/metadata";
-import { getPlanForScope, getPlanLimits, type Plan } from "@/lib/plans";
+import {
+  cheapestPlanWith,
+  getPlanForScope,
+  getPlanLimits,
+  type Plan,
+} from "@/lib/plans";
+import { PLAN_NAMES } from "@/lib/pricing";
 import {
   evaluateRouting,
   finalizeUrl,
@@ -202,11 +208,16 @@ async function toSettings(
   };
 }
 
-function planRequired(feature: string, plan: "Pro" | "Business"): HttpError {
+/** The limit (lib/plans.ts) a feature needs; the message names its cheapest plan. */
+function planRequired(
+  feature: string,
+  limit: "routing" | "pixels" | "conversions",
+): HttpError {
+  const plan = cheapestPlanWith((limits) => limits[limit]);
   return new HttpError(
     402,
     "PLAN_REQUIRED",
-    `${feature} is a ${plan} feature. You can still turn off or remove what's already set up.`,
+    `${feature} ${plan ? `is a ${PLAN_NAMES[plan]} feature` : "isn't on your plan"}. You can still turn off or remove what's already set up.`,
   );
 }
 
@@ -327,7 +338,7 @@ async function saveColumn(
     .where(and(eq(qrCode.id, row.id), scopeWhere(scope)))
     .returning(codeColumns);
   if (!updated) throw new HttpError(404, "NOT_FOUND", "QR code not found");
-  revalidatePath(`/dashboard/codes/${row.id}`);
+  revalidatePath("/dashboard", "layout");
   return toSettings(scope, updated);
 }
 
@@ -355,7 +366,7 @@ export async function saveCodeRouting(input: {
     const previous = parseRoutingConfig(row.routing);
     const limits = getPlanLimits(await getPlanForScope(scope));
     if (!(limits.routing || isRoutingReduction(next, previous))) {
-      throw planRequired("Smart routing", "Pro");
+      throw planRequired("Smart routing", "routing");
     }
     if (next) assertRoutingUrls(next);
     const hold = next
@@ -383,7 +394,9 @@ export async function saveCodeUtm(input: {
     const parsed = parse(nullable(utmConfigSchema), input.utm);
     const next = isEmptyUtm(parsed) ? null : parsed;
     const limits = getPlanLimits(await getPlanForScope(scope));
-    if (next && !limits.routing) throw planRequired("UTM parameters", "Pro");
+    if (next && !limits.routing) {
+      throw planRequired("UTM parameters", "routing");
+    }
     return saveColumn(scope, row, { utm: next });
   });
 }
@@ -404,9 +417,11 @@ export async function saveCodePixels(input: {
       const added = (
         ["ga4", "gtm", "meta", "tiktok", "linkedin"] as const
       ).some((key) => parsed[key] && parsed[key] !== previous?.[key]);
-      if (added && !limits.pixels) throw planRequired("Tracking pixels", "Pro");
+      if (added && !limits.pixels) {
+        throw planRequired("Tracking pixels", "pixels");
+      }
       if (parsed.conversions && !previous?.conversions && !limits.conversions) {
-        throw planRequired("Conversion tracking", "Business");
+        throw planRequired("Conversion tracking", "conversions");
       }
     }
     const empty =

@@ -92,7 +92,9 @@ export const codeSchema = named(
     organizationId: z
       .string()
       .nullable()
-      .describe("The team that owns the code; null in a personal workspace"),
+      .describe(
+        "The workspace that owns the code (a key's workspace, or a token user's own workspace)",
+      ),
   }),
   "A dynamic QR code",
 );

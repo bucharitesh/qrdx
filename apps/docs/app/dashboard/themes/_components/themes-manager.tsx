@@ -176,10 +176,10 @@ export function ThemesManager({
           <SectionHeading
             description={
               team.canManage
-                ? `Shared with everyone in ${team.name}. As an owner or admin you can edit them and pick the team default.`
-                : `Shared with everyone in ${team.name}. Team owners and admins can edit them.`
+                ? `Shared with everyone in ${team.name}. As an owner or admin you can edit them and pick its default.`
+                : `Shared with everyone in ${team.name}. Its owners and admins can edit them.`
             }
-            title="Team themes"
+            title="Shared themes"
           />
           {shownTeam.length > 0 ? (
             <>
@@ -190,7 +190,7 @@ export function ThemesManager({
               />
               {!team.themesAllowed && (
                 <p className="text-muted-foreground text-sm">
-                  Existing team themes keep working. Adding new ones needs the{" "}
+                  Existing shared themes keep working. Adding new ones needs the{" "}
                   {team.planName} plan.
                 </p>
               )}
@@ -198,8 +198,8 @@ export function ThemesManager({
           ) : query ? null : team.themesAllowed ? (
             <Card className="text-muted-foreground px-6 py-8 text-center text-sm">
               {team.canManage
-                ? 'No team themes yet. Use "Copy to team" on one of your themes below to share it.'
-                : "No team themes yet. Team owners and admins can share themes here."}
+                ? 'No shared themes yet. Use "Copy to this workspace" on one of your themes below.'
+                : "No shared themes yet. Owners and admins can share themes here."}
             </Card>
           ) : (
             <Card className="flex-col items-start gap-3 px-6 py-6 sm:flex-row sm:items-center sm:justify-between">
@@ -208,12 +208,14 @@ export function ThemesManager({
                   <Lock className="text-muted-foreground size-4" />
                 </div>
                 <div className="space-y-0.5">
-                  <p className="font-medium">Share themes with your team</p>
+                  <p className="font-medium">
+                    Share themes with this workspace
+                  </p>
                   <p className="text-muted-foreground text-sm text-pretty">
-                    Team themes are part of the {team.planName} plan: everyone
-                    in {team.name} can pick them in the editor, and the team
-                    default applies to new codes.
-                    {!team.canUpgrade && " Ask a team owner to upgrade."}
+                    Shared themes are part of the {team.planName} plan: everyone
+                    in {team.name} can pick them in the editor, and its default
+                    applies to new codes.
+                    {!team.canUpgrade && " Ask a workspace owner to upgrade."}
                   </p>
                 </div>
               </div>
@@ -229,7 +231,7 @@ export function ThemesManager({
         <section className="space-y-4">
           {team && (
             <SectionHeading
-              description="Only you can see these. They are available in every workspace."
+              description="Saved in your own workspace. You can pick them in every workspace."
               title="Your themes"
             />
           )}

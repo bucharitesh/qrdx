@@ -40,7 +40,7 @@ Static QR codes store the content in the code itself, so they never expire and h
 
 **Design and export (free, no account)**
 
-- **Design:** 23 body patterns, 17 corner-eye shapes and 21 eye centres, 19 call-to-action frames, solid colors or linear and radial gradients, center logos and decorative templates
+- **Design:** 23 body patterns, 17 corner-eye shapes and 21 eye centers, 19 call-to-action frames, solid colors or linear and radial gradients, center logos and decorative templates
 - **Art QR:** Logo QR and Image QR blend a logo or photo into the modules as vector art. Instances with a Google Gemini API key also offer AI QR art: Gemini repaints the code as a scene, and every image is verified to scan before it's delivered (with an account)
 - **Content types:** URLs, text, Wi-Fi, vCard, email, phone, SMS, WhatsApp, maps, UPI, PayPal and many social and payment profiles
 - **Export:** PNG, JPG, SVG, PDF and vector EPS with no watermark, plus print-ready PDFs at an exact size with bleed and crop marks

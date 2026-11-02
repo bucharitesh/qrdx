@@ -2,6 +2,7 @@
 
 "use server";
 
+import { ownWorkspaceId } from "@repo/auth/own-workspace-id";
 import { auth } from "@repo/auth/server";
 import {
   communityTheme,
@@ -13,7 +14,17 @@ import {
 } from "@repo/database";
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import cuid from "cuid";
-import { and, asc, count, desc, eq, inArray, isNull, sql } from "drizzle-orm";
+import {
+  and,
+  asc,
+  count,
+  desc,
+  eq,
+  inArray,
+  isNull,
+  or,
+  sql,
+} from "drizzle-orm";
 import { revalidateTag, unstable_cache } from "next/cache";
 import { headers } from "next/headers";
 import { z } from "zod";
@@ -293,8 +304,12 @@ export async function publishTheme(
         and(
           eq(themeTable.id, themeId),
           eq(themeTable.userId, userId),
-          // Team themes belong to the team, not to one member.
-          isNull(themeTable.organizationId),
+          // Only your own themes: another workspace's belong to it, not to
+          // one member. Rows from before workspaces have no workspace yet.
+          or(
+            isNull(themeTable.organizationId),
+            eq(themeTable.organizationId, ownWorkspaceId(userId)),
+          ),
         ),
       )
       .limit(1);

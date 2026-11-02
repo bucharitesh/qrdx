@@ -29,7 +29,7 @@ export function SmsForm() {
     <div className="space-y-3">
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="sms-phone">
-          Phone Number *
+          Phone number *
         </Label>
         <Input
           id="sms-phone"
@@ -57,7 +57,7 @@ export function SmsForm() {
       </div>
 
       <p className="text-muted-foreground text-xs">
-        Scanning will open the messaging app with pre-filled content
+        Scanning will open a text message to this number
       </p>
     </div>
   );

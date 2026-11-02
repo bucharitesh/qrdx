@@ -1,0 +1,61 @@
+---
+title: API keys
+description: Create a qrdx_ API key in Settings → API keys & apps and call the REST API with it. Scopes, workspaces and roles, expiry, last use and revoking.
+icon: LockKeyhole
+---
+
+An API key lets your own servers, scripts and CI jobs call the [REST API](/docs/developers/rest-api) with no OAuth flow. Send it in the `Authorization` header:
+
+```bash
+curl https://api.qrdx.dev/v1/codes -H "Authorization: Bearer $QRDX_API_KEY"
+```
+
+Every endpoint that takes an OAuth access token takes a key in the same header, and the [image API](/docs/developers/image-api) needs neither. When your product acts for other QRdx users, use an [OAuth app](/docs/developers/build-an-integration) instead, so each person approves it.
+
+## Create a key [#create-a-key]
+
+1. Open [Settings → API keys & apps](/dashboard?to=settings/developers&new=1) in the workspace the key is for. The link opens the workspace you last used; pick another one in the workspace switcher.
+2. Choose **Create key**. Name it after where it will run, pick its access and, if you like, when it expires.
+3. Copy the key. It's shown once: QRdx stores only a hash of it, so it can't be shown again. The same dialog shows a curl request with the key and this site's API address filled in, ready to paste.
+
+A key is `qrdx_` followed by 40 letters and digits. Lists show only its start, such as `qrdx_7KpQ2m…`, so you can tell keys apart.
+
+## Access [#access]
+
+Keys use the same scopes as OAuth apps. Pick one of three options when you create the key:
+
+| Access | Scopes | Allows |
+| --- | --- | --- |
+| Full access | `profile:read`, `themes:read`, `codes:read`, `codes:write` | Everything the API does |
+| Read only | `profile:read`, `themes:read`, `codes:read` | Read codes, scan analytics, themes and the profile |
+| Custom | The ones you choose | What those scopes allow ([the scope list](/docs/developers/rest-api#get-an-access-token)) |
+
+`codes:write` also allows everything `codes:read` does. A key's scopes can't be changed later; create a new key instead. A request outside the key's scopes gets `403 INSUFFICIENT_SCOPE`, and the message names the scope it needed.
+
+## Workspaces and roles [#workspaces-and-roles]
+
+A key belongs to the workspace that was open when you created it, and acts there as you:
+
+- The key works with that workspace's codes, scans, hooks and themes, under the workspace's plan and [daily quota](/docs/developers/rest-api#rate-limits).
+- It can do what you can do in the workspace, judged by your [role](/docs/teams) at the time of each request. In your own workspace you're the owner. If your role changes, the key's rights change with it; if you leave the workspace, the key stops working, and deleting a workspace deletes its keys.
+
+Every member of a workspace can create keys. Owners and admins see every key in the workspace and can revoke any of them; members see and revoke only their own. `GET /v1/me` returns the profile of the person who created the key.
+
+## Expiry, last use and revoking [#revoke]
+
+- **Expiry.** A key never expires, or expires after 30 days, 90 days or 1 year. An expired key gets `401 INVALID_TOKEN` and stays in the list, marked **Expired**, until you revoke it.
+- **Last use.** The list shows the date each key last authenticated a request.
+- **Revoking.** Choose **Revoke** next to a key. From then on, requests with it get `401 INVALID_TOKEN`. Revoking can't be undone.
+
+Each person can have up to 25 active keys in each workspace. Revoked and expired keys don't count.
+
+## Keep keys safe [#keep-keys-safe]
+
+- Keep a key on a server: in an environment variable or a secret manager. Never put one in a web page, a mobile app, a prompt or a repository.
+- Use one key per place it runs, so you can revoke one without breaking the others.
+- Give scripts that only report a read-only key, and give short-lived jobs a key that expires.
+- If a key leaks, revoke it and create a new one. The `qrdx_` prefix makes keys easy to search for in code and logs.
+
+## Self-hosting
+
+A [self-hosted](/docs/self-hosting) instance needs the `api_key` table in its database, which the usual schema sync after an update creates (the `migrate` service with Docker, `pnpm db:push` otherwise; see [updating](/docs/self-hosting)). Until it has one, Settings → API keys & apps says API keys aren't available and the API refuses keys with `401`. Its API lives at `/api/v1` on its own domain, which is the address the new-key dialog fills in.

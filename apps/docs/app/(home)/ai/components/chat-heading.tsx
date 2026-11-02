@@ -17,7 +17,7 @@ export function ChatHeading({
       }
       className="animate-text bg-linear-to-r from-(--gradient-base) via-(--gradient-accent) to-(--gradient-base) bg-size-[200%_auto] bg-clip-text pb-4 text-center text-[clamp(24px,7cqw,46px)] font-semibold tracking-tighter text-pretty text-transparent"
     >
-      What can I help you theme?
+      What QR code can I make for you?
     </h1>
   );
 }

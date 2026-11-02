@@ -27,7 +27,7 @@ import { QRCode } from 'qrdx';
 
 ### Module scale
 
-`moduleScale` (0.5 to 1, default 1) shrinks each data module around its centre for a lighter, more spaced look; connected patterns get thinner lines instead. Each pattern stops shrinking at the smallest size that still decodes in our tests (for example 0.95 for `circle`, 0.7 for `classy`; see `MODULE_SCALE_FLOOR`), and alignment patterns keep full size.
+`moduleScale` (0.5 to 1, default 1) shrinks each data module around its center for a lighter, more spaced look; connected patterns get thinner lines instead. Each pattern stops shrinking at the smallest size that still decodes in our tests (for example 0.95 for `circle`, 0.7 for `classy`; see `MODULE_SCALE_FLOOR`), and alignment patterns keep full size.
 
 ```tsx
 <QRCode value="https://example.com" bodyPattern="liquid" moduleScale={0.8} />
@@ -59,7 +59,7 @@ Control the dot inside each corner marker. There are {facts.eyeCentres} corner e
 
 `diamond` bodies next to `square` eyes, `pacman` next to `rounded` and `small-square` next to `square` or `rounded` eyes are missed up close; the playground won't combine them, they ship as `WEAK_BODY_EYES`, and `getStylePairRisk(props)` returns the warning the scan score shows.
 
-`curly` eyes and `diamond`, `star` and `banner` centres were retired because they don't scan reliably. Designs saved with them still render, but they are no longer offered or listed (see [Retired shapes](/docs/styles#retired-shapes)).
+`curly` eyes and `diamond`, `star` and `banner` centers were retired because they don't scan reliably. Designs saved with them still render, but they are no longer offered or listed (see [Retired shapes](/docs/styles#retired-shapes)).
 
 ## Per-eye colors
 

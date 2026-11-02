@@ -25,6 +25,7 @@ import {
 } from "@/components/editor/content-type-icons";
 import { DialogCloseButton } from "@/components/editor/dialog-close-button";
 import { InfoHint } from "@/components/help/info-hint";
+import { useWorkspaceHref } from "@/components/workspace-provider";
 import type { BlockIcon } from "@/lib/landing/registry";
 import { soundEvent } from "@/lib/sound/emit";
 import { useQREditorStore } from "@/store/editor-store";
@@ -249,6 +250,7 @@ export function ContentTypeModal({
   open,
   onOpenChange,
 }: ContentTypeModalProps) {
+  const inWorkspace = useWorkspaceHref();
   const router = useRouter();
   const contentType = useQREditorStore((state) => state.contentType);
   const setContentType = useQREditorStore((state) => state.setContentType);
@@ -365,7 +367,9 @@ export function ContentTypeModal({
   const selectItem = (item: PickerItem) => {
     if (item.kind === "page") {
       onOpenChange(false);
-      router.push(`/dashboard/pages?new=${encodeURIComponent(item.pageType)}`);
+      router.push(
+        inWorkspace(`/pages?new=${encodeURIComponent(item.pageType)}`),
+      );
       return;
     }
     setContentType(item.type);

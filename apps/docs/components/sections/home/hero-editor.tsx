@@ -8,16 +8,12 @@ import { cn } from "@repo/design-system/lib/utils";
 import { ArrowRight } from "iconsax-reactjs";
 import Link from "next/link";
 import { QRCode } from "qrdx";
-import {
-  BODY_PATTERN,
-  CORNER_EYE_DOT_PATTERNS,
-  CORNER_EYE_PATTERNS,
-} from "qrdx/types";
 import { useState } from "react";
 import { ScanScoreBadge } from "@/components/editor/scan-score";
 import { AsciiField } from "@/components/fx";
 import { EASE_CLASS } from "@/components/mockups/motion";
 import { SegmentedControl } from "@/components/mockups/segmented-control";
+import { PRODUCT_FACTS } from "@/lib/product-facts";
 import type { QRStyle } from "@/types/theme";
 import { FAMILY, FAMILY_GRADIENT, INK } from "./demos/qr-family";
 
@@ -130,14 +126,14 @@ export function HeroEditor() {
           />
         </div>
         <p className="text-sm text-muted-foreground leading-relaxed">
-          The full playground adds {BODY_PATTERN.length} dot patterns,{" "}
-          {CORNER_EYE_PATTERNS.length + CORNER_EYE_DOT_PATTERNS.length} eye
-          shapes, any colors and gradients, logos, templates and PNG, SVG, PDF
+          The full playground adds {PRODUCT_FACTS.bodyPatterns} body patterns,{" "}
+          {PRODUCT_FACTS.eyeShapes} eye shapes, {PRODUCT_FACTS.eyeCentres} eye
+          centers, any colors and gradients, logos, templates and PNG, SVG, PDF
           or EPS downloads.
         </p>
         <Button asChild className="w-fit">
           <Link href="/playground">
-            Customise in the playground
+            Customize in the playground
             <ArrowRight className="size-4" />
           </Link>
         </Button>

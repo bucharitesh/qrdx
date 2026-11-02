@@ -3,7 +3,6 @@
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import type { ReactNode } from "react";
-import { AsciiField, type AsciiVariant } from "@/components/fx";
 
 /** "circle-large" → "Circle large" */
 export const humanize = (id: string) =>
@@ -61,7 +60,7 @@ export function QrTile({
       role="img"
       aria-label={label}
       className={cn(
-        "flex aspect-square items-center justify-center rounded-2xl bg-white p-2 shadow-[0_1px_2px_rgba(0,0,0,0.06),0_14px_30px_-14px_rgba(0,0,0,0.3)] ring-1 ring-black/5 [&_svg]:size-full",
+        "flex aspect-square items-center justify-center rounded-2xl bg-white p-2 shadow-[0_1px_2px_rgba(0,0,0,0.06),0_10px_24px_-14px_rgba(0,0,0,0.28)] ring-1 ring-black/5 [&_svg]:size-full",
         className,
       )}
     >
@@ -70,29 +69,46 @@ export function QrTile({
   );
 }
 
-/**
- * The area a demo plays in: a quiet ASCII surface that answers the pointer.
- * Each demo picks its own pattern so neighbouring cards differ.
- */
+/** The area a demo plays in: a plain surface, no texture behind it. */
 export function DemoStage({
   children,
   className,
-  pattern = "noise",
 }: {
   children: ReactNode;
   className?: string;
-  pattern?: AsciiVariant;
+}) {
+  return <div className={cn("relative", className)}>{children}</div>;
+}
+
+/**
+ * The one control a feature card has, in a strip of fixed height along the
+ * bottom of its demo, so neighbouring cards line up.
+ */
+export function ControlBar({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
 }) {
   return (
-    <div className={cn("relative isolate overflow-hidden", className)}>
-      <AsciiField
-        variant={pattern}
-        radius={110}
-        seed={5}
-        className="-z-10 opacity-80 [mask-image:radial-gradient(ellipse_at_center,black_30%,transparent_85%)]"
-      />
+    <div
+      className={cn(
+        "flex h-12 shrink-0 items-center gap-3 border-t border-border/70 px-4",
+        className,
+      )}
+    >
       {children}
     </div>
+  );
+}
+
+/** Corner tag on demos whose numbers are made up. */
+export function ExampleTag() {
+  return (
+    <Readout className="absolute top-3 right-4 rounded-full border border-border/70 bg-background/70 px-2 py-0.5">
+      example data
+    </Readout>
   );
 }
 

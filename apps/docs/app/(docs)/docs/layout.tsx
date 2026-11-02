@@ -7,6 +7,8 @@ import { source } from "@/lib/source";
 import "katex/dist/katex.min.css";
 import { RootProvider } from "fumadocs-ui/provider/base";
 import CustomSearchDialog from "@/components/search";
+import { JsonLd } from "@/components/sections/tools/json-ld";
+import { organizationSchema } from "@/lib/seo-schema";
 
 // No sidebar entry for docs of features this deployment can't offer.
 const tree = filterPageTree(source.pageTree, isPathAvailable);
@@ -38,6 +40,7 @@ export default function Layout({ children }: LayoutProps<"/docs">) {
       }}
     >
       <DocsLayout {...DOCS_LAYOUT_PROPS}>
+        <JsonLd data={organizationSchema} />
         {/* Neutral light from the top right (the old image was a blue glow).
             Light mode needs half the ink, or it reads as a grey smudge. */}
         <div

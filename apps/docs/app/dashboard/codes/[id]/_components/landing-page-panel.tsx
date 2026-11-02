@@ -14,11 +14,16 @@ import {
   scopeWhere,
 } from "@/app/dashboard/codes/_lib/qr-codes";
 import { getTemplate } from "@/lib/landing/templates";
+import { requestWorkspaceSlug } from "@/lib/scope";
 import { SHORT_LINK_BASE } from "@/lib/short-links";
+import { workspaceLink } from "@/lib/workspace-paths";
 
 /** For codes that open a hosted page (kind 'page'): what it shows + edit link. */
 export async function LandingPagePanel({ codeId }: { codeId: string }) {
-  const scope = await requireDashboardScope();
+  const [scope, slug] = await Promise.all([
+    requireDashboardScope(),
+    requestWorkspaceSlug(),
+  ]);
   const [row] = await db
     .select({
       slug: qrCode.slug,
@@ -69,7 +74,12 @@ export async function LandingPagePanel({ codeId }: { codeId: string }) {
             </a>
           </Button>
           <Button asChild size="sm">
-            <Link href={`/dashboard/pages/${encodeURIComponent(row.pageId)}`}>
+            <Link
+              href={workspaceLink(
+                slug,
+                `/pages/${encodeURIComponent(row.pageId)}`,
+              )}
+            >
               <Pencil />
               Edit page
             </Link>

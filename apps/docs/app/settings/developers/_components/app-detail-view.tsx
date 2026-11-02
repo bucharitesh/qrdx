@@ -39,8 +39,11 @@ export function OAuthAppDetailView({
   canManage,
   storageEnabled,
   origin,
+  base,
 }: {
   app: OAuthAppView;
+  /** The workspace's API keys & apps page */
+  base: string;
   /** Owner of the workspace (team owners in a team) */
   canManage: boolean;
   storageEnabled: boolean;
@@ -51,10 +54,10 @@ export function OAuthAppDetailView({
     <div className="space-y-6">
       <Link
         className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 text-sm transition-colors"
-        href="/settings/developers"
+        href={base}
       >
         <ArrowLeft2 aria-hidden className="size-3.5" />
-        Developers
+        API keys & apps
       </Link>
 
       <SettingsHeader

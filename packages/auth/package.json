@@ -11,7 +11,10 @@
     "./proxy": "./proxy.ts",
     "./password": "./password.ts",
     "./keys": "./keys.ts",
-    "./provider": "./provider.tsx"
+    "./provider": "./provider.tsx",
+    "./own-workspace-id": "./own-workspace-id.ts",
+    "./workspace-hooks": "./workspace-hooks.ts",
+    "./workspace-rules": "./workspace-rules.ts"
   },
   "scripts": {
     "clean": "git clean -xdf .cache .turbo dist node_modules",

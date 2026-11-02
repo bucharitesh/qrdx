@@ -1,26 +1,30 @@
 ---
-title: Teams
-description: Share dynamic QR codes, pages, files, domains and themes with your team, invite people by email and choose owner, admin or member roles.
+title: Workspaces and teams
+description: Everyone has their own workspace. Create more on Pro or Business, invite people by email and choose owner, admin or member roles.
 icon: Users
 ---
 
-A team is a shared workspace. Everything created while a team is open belongs to the team instead of to you: dynamic codes and [hosted pages](/docs/landing-pages), [files](/docs/files), [custom domains](/docs/custom-domains), folders and tags, form responses and [webhooks](/docs/webhooks). Owners and admins can also copy saved themes to the team so every member designs with the same colors. Your personal workspace stays separate, and you switch between the two with the workspace switcher at the top of the dashboard sidebar.
+Everything you make in QRdx belongs to a workspace: dynamic codes and [hosted pages](/docs/landing-pages), [files](/docs/files), [custom domains](/docs/custom-domains), folders and tags, form responses, [webhooks](/docs/webhooks) and API keys. Saved themes are yours, and owners and admins can share copies with a workspace so every member designs with the same colors. Every dashboard page has the workspace in its URL (`/dashboard/<workspace>/…`). Switch workspaces with the workspace switcher at the bottom of the sidebar (on a phone, in the menu); you stay in the same section, such as Codes or Settings → Domains, of the workspace you pick.
 
-Creating a team needs Pro or Business. A Pro team has up to 3 members, a Business team has no member limit. Anyone can join a team they're invited to, including people on the Free plan.
+## Your own workspace
 
-## Create a team
+Every account has a workspace of its own, created automatically, with you as its owner. It uses your plan. You can rename it and change its URL, but you can't leave or delete it: it goes when you [delete your account](/docs/help/account-and-billing/delete-your-account). On Pro or Business you can invite people into it, or keep it to yourself and create a separate workspace for each team or client.
 
-1. Open the workspace switcher and click **Create team**, or go to [Dashboard → Team](/dashboard/team).
-2. Enter a name and a team URL (3 to 48 lowercase letters, numbers and dashes).
-3. The new team opens as your active workspace, with you as its owner.
+## Create another workspace
+
+Creating more workspaces needs Pro or Business. Anyone can join a workspace they're invited to, including people on the Free plan.
+
+1. Open the workspace switcher and click **Create workspace**.
+2. Enter a **Workspace name** and a **Workspace URL** (3 to 48 lowercase letters, numbers and dashes). QRdx checks as you type whether the URL is free; a few words, such as `codes` and `settings`, are reserved.
+3. Click **Create workspace**. It opens with you as its owner.
 
 ## Invite people
 
-Owners and admins invite people from [Dashboard → Team](/dashboard/team):
+Owners and admins invite people from [Settings → Team](/dashboard?to=settings/team):
 
 1. Enter the person's email address and pick a role, **Member** or **Admin**.
 2. QRdx emails them an invitation. Every invitation also has a link you can copy and send yourself.
-3. They open the link, sign in with the invited email address and click **Accept invitation**. The team then becomes their active workspace.
+3. They open the link, sign in with the invited email address and click **Accept invitation**. The workspace then opens for them.
 
 Invitations expire after 48 hours and only work for the email address they were sent to, so a forwarded link can't be used by someone else. Pending invitations take up a seat until they are accepted, so revoke the ones you no longer need.
 
@@ -30,27 +34,32 @@ Invitations expire after 48 hours and only work for the email address they were 
 | --- | --- | --- | --- |
 | Create and edit codes and pages, upload files | Yes | Yes | Yes |
 | Delete codes, files and form responses | Their own | Any | Any |
-| Add saved themes to the team | No | Yes | Yes |
+| Share saved themes with the workspace | No | Yes | Yes |
 | Invite and remove people, change roles | No | Yes | Yes |
+| Rename the workspace and change its URL | No | Yes | Yes |
 | Add, verify and remove custom domains | No | Yes | Yes |
 | Manage webhook endpoints and see signing secrets | No | Yes | Yes |
+| Create and change OAuth apps | No | No | Yes |
 | Make someone an owner | No | No | Yes |
-| Delete the team | No | No | Yes |
+| Delete the workspace | No | No | Yes |
 
-Members can see webhook endpoints and their delivery logs, and use the team's verified domains for their codes. [Notification settings](/docs/notifications) are personal: every member chooses their own alerts for each team.
+Members can see webhook endpoints and their delivery logs, and use the workspace's verified domains for their codes. [Notification settings](/docs/notifications) are personal: every member chooses their own alerts for each workspace.
 
-## Plans and limits
+## Plans and seats
 
-A team uses the best plan among its owners, so one owner on Business gives the whole team Business limits and members don't need their own subscription. Limits such as dynamic codes, pages, storage and form responses are counted per team, separately from each member's personal workspace. See [Plans and limits](/docs/plans-and-limits).
+A workspace uses the best plan among its owners, so one owner on Business gives the whole workspace Business limits and members don't need their own subscription. Limits such as dynamic codes, pages, storage and form responses are counted per workspace. See [Plans and limits](/docs/plans-and-limits).
 
-If the owners' plan changes, current members stay and every code keeps working; only new invitations and new things over the limit are blocked.
+Seats are members, owner included, plus pending invitations: 1 (just you) when the owners are on Free, up to 3 on Pro and no limit on Business. If the owners' plan changes, current members stay and every code keeps working; only new invitations and new things over the limit are blocked.
 
-## Leave or delete a team
+## Rename, leave or delete a workspace
 
-- **Leave:** click **Leave team** in the danger zone. The last owner can't leave: make another member an owner first, or delete the team.
-- **Remove a member:** the codes and pages they created stay with the team.
-- **Delete a team:** owners only. You confirm by typing the team URL. Nothing stops working: codes, pages, files, domains and other team items move back to the personal workspace of whoever created them.
+These are in the workspace's [Settings → General](/dashboard?to=settings).
+
+- **Rename:** owners and admins change the name and the URL. Links to the old URL stop working; printed codes don't change.
+- **Leave:** click **Leave workspace** in the danger zone. The last owner can't leave: make another member an owner first, or delete the workspace. Nobody can leave their own workspace.
+- **Remove a member:** in [Settings → Team](/dashboard?to=settings/team). The codes and pages they created stay in the workspace. Nobody can be removed from their own workspace.
+- **Delete a workspace:** owners only, and never someone's own workspace. You confirm by typing the workspace URL. Nothing stops working: codes, pages, files, domains and other items move to the own workspace of whoever created them. The workspace's API keys are deleted with it.
 
 ## API access
 
-[REST API](/docs/developers/rest-api) requests made with an OAuth access token act on the token owner's personal workspace. Requests made from a signed-in browser session act on the team that is open.
+[REST API](/docs/developers/rest-api) requests made with an OAuth access token act on the token owner's own workspace. An [API key](/docs/developers/api-keys) acts on the workspace it was created in, with your role there. Requests made from a signed-in browser session act on the workspace last opened in that session.

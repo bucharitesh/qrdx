@@ -3,6 +3,7 @@
 // longer URL at 320 px, and a scan score of at least 75. The same judge picks
 // the library in scripts/themes/generate.ts. Shuffle's runtime themes come
 // from the same building blocks, so a fixed sample of seeds is judged too.
+import { getContrastRatio } from "qrdx";
 import { describe, expect, it } from "vitest";
 import { CATEGORY_ORDER } from "@/lib/themes/categories";
 import { isInverted } from "@/lib/themes/color";
@@ -46,6 +47,23 @@ describe("the built-in library", () => {
     expect(inverted.length / year.length).toBeLessThanOrEqual(0.12);
     for (const [id, preset] of inverted) {
       expect(preset.category, id).toBe("dark");
+    }
+  });
+
+  it("draws border-frame labels in a color that shows on the background", () => {
+    // "border" and "rounded-border" frames set the label on the code's own
+    // background (packages/qrdx/src/frame.tsx), in textColor or else the
+    // frame color; a textColor equal to the background hid three labels.
+    for (const [id, preset] of entries) {
+      const { frame, bgColor } = preset.styles;
+      if (
+        !(frame?.text && ["border", "rounded-border"].includes(frame.style))
+      ) {
+        continue;
+      }
+      const label = frame.textColor || frame.color;
+      if (typeof label !== "string" || typeof bgColor !== "string") continue;
+      expect(getContrastRatio(label, bgColor), id).toBeGreaterThanOrEqual(3);
     }
   });
 

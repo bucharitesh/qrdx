@@ -38,9 +38,9 @@ import {
   GRADE_LABELS,
   ScanCheckList,
 } from "@/components/editor/scan-score";
+import { useEditorValue } from "@/components/editor/style-scope";
 import { DEFAULT_QR_LOGO, MAX_LOGO_FILE_SIZE } from "@/lib/constants";
 import { soundEvent } from "@/lib/sound/emit";
-import { useQREditorStore } from "@/store/editor-store";
 import type { QRStyle } from "@/types/theme";
 import { ART_COLOR_ISSUE_COPY, artColorFix, artColorIssue } from "./art-colors";
 import {
@@ -586,7 +586,7 @@ function ArtStrength({
 
 /** Live preview of the art code plus the library's scan score for it. */
 function ArtScanScore({ art, style }: { art: QRArt; style: StyleWithArt }) {
-  const value = useQREditorStore((state) => state.value);
+  const value = useEditorValue();
   const [result, setResult] = React.useState<ScanScoreResult | null>(null);
   const [checking, setChecking] = React.useState(false);
 

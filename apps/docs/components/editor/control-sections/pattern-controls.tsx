@@ -10,6 +10,7 @@ import type {
   ErrorLevel,
 } from "qrdx/types";
 import { useId, useState } from "react";
+import { useEditableStyle } from "@/components/editor/style-scope";
 import { BodyPatterns } from "@/components/icons/body-patterns";
 import { EyePatterns } from "@/components/icons/eye-patterns";
 import { EyeDotPatterns } from "@/components/icons/internal-eye-patterns";
@@ -17,7 +18,6 @@ import { patterns as eyeDotPatterns } from "@/components/playground/corner-eye-d
 import { patterns as eyePatterns } from "@/components/playground/corner-eye-pattern-selector";
 import { patterns as bodyPatterns } from "@/components/playground/pattern-selector";
 import { soundEvent } from "@/lib/sound/emit";
-import { useQREditorStore } from "@/store/editor-store";
 import type { QRStyle } from "@/types/theme";
 import {
   OptionGrid,
@@ -95,15 +95,14 @@ function EyePairSwatch({
 
 const fill = "size-full text-black [&>svg]:size-full";
 
+/** The design being edited (the playground's, or a scope's; see style-scope.tsx). */
 function useStyleSetter() {
-  const themeState = useQREditorStore((state) => state.themeState);
-  const setThemeState = useQREditorStore((state) => state.setThemeState);
-  const style = themeState.styles;
+  const { style, setStyle } = useEditableStyle();
   const set = <K extends keyof QRStyle>(key: K, value: QRStyle[K]) => {
-    setThemeState({ ...themeState, styles: { ...style, [key]: value } });
+    setStyle({ ...style, [key]: value });
     soundEvent("tick");
   };
-  return { style, set };
+  return { style, setStyle, set };
 }
 
 export const ERROR_LEVELS: Array<{
@@ -166,12 +165,10 @@ export function DotPatternControl() {
 
 /**
  * Eyes: matching outer + centre pairs as one choice (what most people want),
- * with the two shapes on their own behind "Customise outer and centre".
+ * with the two shapes on their own behind "Customize outer and center".
  */
 export function EyeControls() {
-  const themeState = useQREditorStore((state) => state.themeState);
-  const setThemeState = useQREditorStore((state) => state.setThemeState);
-  const { style, set } = useStyleSetter();
+  const { style, setStyle, set } = useStyleSetter();
   const outer = (style.cornerEyePattern || "square") as CornerEyePattern;
   const centre = (style.cornerEyeDotPattern || "circle") as CornerEyeDotPattern;
   const preset = EYE_PRESETS.find(
@@ -193,13 +190,10 @@ export function EyeControls() {
         onChange={(id) => {
           const item = EYE_PRESETS.find((entry) => entry.id === id);
           if (!item) return;
-          setThemeState({
-            ...themeState,
-            styles: {
-              ...style,
-              cornerEyePattern: item.outer,
-              cornerEyeDotPattern: item.centre,
-            },
+          setStyle({
+            ...style,
+            cornerEyePattern: item.outer,
+            cornerEyeDotPattern: item.centre,
           });
           soundEvent("tick");
         }}
@@ -240,7 +234,7 @@ export function EyeControls() {
           onClick={() => setCustom((open) => !open)}
           type="button"
         >
-          <span>Customise outer and centre</span>
+          <span>Customize outer and center</span>
           <span className="text-muted-foreground flex min-w-0 items-center gap-2 font-normal">
             {!preset && (
               <span className="truncate">
@@ -278,7 +272,7 @@ export function EyeControls() {
               category={(id) => EYE_DOT_CATEGORY[id] ?? "decorative"}
               featured={EYE_DOT_FEATURED}
               label="Inner eye shape"
-              noun="centre shapes"
+              noun="center shapes"
               onChange={(id) => set("cornerEyeDotPattern", id)}
               options={eyeDotPatterns}
               preview={(id) => (

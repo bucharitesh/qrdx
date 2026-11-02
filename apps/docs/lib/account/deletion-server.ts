@@ -1,5 +1,6 @@
 import "server-only";
 
+import { ownWorkspaceId } from "@repo/auth/own-workspace-id";
 import { auth } from "@repo/auth/server";
 import {
   brandKit,
@@ -27,6 +28,7 @@ import {
   isNotNull,
   isNull,
   ne,
+  or,
   sql,
 } from "drizzle-orm";
 import {
@@ -79,21 +81,44 @@ async function teamsWithContent(userId: string): Promise<string[]> {
   return results.flat().flatMap((row) => row.organizationId ?? []);
 }
 
+/**
+ * Rows deleted with the account outright: those from before workspaces (no
+ * workspace yet) and, when nobody else is in it, the own workspace's.
+ */
 async function countPersonal(
   table: (typeof TEAM_CONTENT)[number],
   userId: string,
+  ownAlone: boolean,
 ): Promise<number> {
+  const inOwn = ownAlone
+    ? or(
+        isNull(table.organizationId),
+        eq(table.organizationId, ownWorkspaceId(userId)),
+      )
+    : isNull(table.organizationId);
   const [row] = await db
     .select({ value: count() })
     .from(table)
-    .where(and(eq(table.userId, userId), isNull(table.organizationId)));
+    .where(and(eq(table.userId, userId), inOwn));
   return row?.value ?? 0;
+}
+
+/** The own workspace exists and nobody but its person is in it. */
+async function ownWorkspaceAlone(userId: string): Promise<boolean> {
+  const own = ownWorkspaceId(userId);
+  const rows = await db
+    .select({ userId: member.userId })
+    .from(member)
+    .where(eq(member.organizationId, own));
+  return rows.length > 0 && rows.every((row) => row.userId === userId);
 }
 
 /** Everything the deletion plan depends on, for one user. */
 export async function loadDeletionFacts(
   userId: string,
 ): Promise<DeletionFacts> {
+  const ownAlone = await ownWorkspaceAlone(userId);
+  const own = ownWorkspaceId(userId);
   const [memberships, contentTeams, active, codes, pages, files, domains] =
     await Promise.all([
       db
@@ -107,18 +132,20 @@ export async function loadDeletionFacts(
         .where(eq(member.userId, userId)),
       teamsWithContent(userId),
       getMyActiveSubscription(userId),
-      countPersonal(qrCode, userId),
-      countPersonal(landingPage, userId),
-      countPersonal(fileAsset, userId),
-      countPersonal(customDomain, userId),
+      countPersonal(qrCode, userId, ownAlone),
+      countPersonal(landingPage, userId, ownAlone),
+      countPersonal(fileAsset, userId, ownAlone),
+      countPersonal(customDomain, userId, ownAlone),
     ]);
 
+  // Your own workspace with nobody else in it goes with the account (as the
+  // personal workspace did); shared with others, it's handed over like any.
   const teamIds = [
     ...new Set([
       ...memberships.map((row) => row.organizationId),
       ...contentTeams,
     ]),
-  ];
+  ].filter((id) => !(ownAlone && id === own));
 
   const [others, names] =
     teamIds.length === 0
@@ -302,6 +329,15 @@ export async function executeAccountDeletion({
       .where(eq(userTable.id, userId))
       .limit(1),
   ]);
+
+  // 5b. Your own workspace, when nobody else is in it. Not through the
+  //     plugin, which never deletes an own workspace; its rows go with the
+  //     user row below.
+  if (await ownWorkspaceAlone(userId)) {
+    await db
+      .delete(organization)
+      .where(eq(organization.id, ownWorkspaceId(userId)));
+  }
 
   // 6. Likes the user gave stop counting.
   await db

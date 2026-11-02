@@ -22,6 +22,7 @@ import { Label } from "@repo/design-system/components/ui/label";
 import { Switch } from "@repo/design-system/components/ui/switch";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
+import { useWorkspaceHref } from "@/components/workspace-provider";
 import type { OAuthAppView } from "@/lib/oauth-apps/service";
 import {
   deleteOAuthAppAction,
@@ -66,6 +67,7 @@ export function AppDangerZone({
 }: {
   app: Pick<OAuthAppView, "id" | "name" | "active" | "userCount">;
 }) {
+  const inWorkspace = useWorkspaceHref();
   const router = useRouter();
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [pending, startTransition] = useTransition();
@@ -90,7 +92,7 @@ export function AppDangerZone({
       }
       setConfirmDelete(false);
       toast.success("App deleted");
-      router.push("/settings/developers");
+      router.push(inWorkspace("/settings/developers"));
       router.refresh();
     });
 

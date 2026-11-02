@@ -15,6 +15,7 @@ import { AsciiField, Aurora, Backdrop } from "@/components/fx";
 import { PRESSABLE } from "@/components/mockups/motion";
 import { SoundCue } from "@/components/sound/sound-cue";
 import { isPathAvailable } from "@/lib/feature-availability";
+import { dashboardEntry } from "@/lib/workspace-paths";
 
 export const metadata: Metadata = {
   title: "Thanks for upgrading",
@@ -31,19 +32,19 @@ const NEXT_STEPS: {
     icon: ScanBarcode,
     title: "Create dynamic codes",
     description: "Codes you can edit after printing, with scan analytics.",
-    href: "/dashboard/codes",
+    href: dashboardEntry("codes"),
   },
   {
     icon: Global,
     title: "Add a custom domain",
     description: "Serve your short links from your own domain.",
-    href: "/dashboard/domains",
+    href: dashboardEntry("settings/domains"),
   },
   {
     icon: Profile2User,
     title: "Invite your team",
     description: "Share codes, pages and saved themes with teammates.",
-    href: "/dashboard/team",
+    href: dashboardEntry("settings/team"),
   },
 ];
 

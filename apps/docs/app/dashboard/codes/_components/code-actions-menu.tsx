@@ -32,6 +32,7 @@ import {
   Pause,
   Edit2 as Pencil,
   ArrowRotateLeft as RotateCcw,
+  Setting2,
   StarSlash as StarOff,
   Tag2 as Tags,
   Trash as Trash2,
@@ -48,13 +49,15 @@ import {
   setQrCodesPaused,
   trashQrCodes,
 } from "@/actions/bulk-codes";
+import { codeTabHref } from "@/app/dashboard/codes/_lib/code-tabs";
 import type { TagRow } from "@/app/dashboard/codes/_lib/organize";
 import type { FolderRow } from "@/app/dashboard/codes/_lib/organize-shared";
 import type {
   QrCodeListItem,
   QrCodeView,
 } from "@/app/dashboard/codes/_lib/qr-codes";
-import { CodeDialog } from "./code-dialog";
+import { openCodeBuilder } from "@/components/code-builder/store";
+import { useWorkspaceSlug } from "@/components/workspace-provider";
 import { downloadCodeQr } from "./code-qr";
 import { MoveToFolderDialog } from "./folder-dialogs";
 import { NotesDialog } from "./notes-dialog";
@@ -81,10 +84,10 @@ export function CodeActionsMenu({
   folders?: FolderRow[];
   tags?: TagRow[];
 }) {
+  const workspaceSlug = useWorkspaceSlug();
   const router = useRouter();
   const openInPlayground = useOpenInPlayground();
   const { run, isPending } = useOrganizeAction();
-  const [editOpen, setEditOpen] = useState(false);
   const [dialog, setDialog] = useState<
     "move" | "tags" | "notes" | "purge" | null
   >(null);
@@ -234,15 +237,24 @@ export function CodeActionsMenu({
       <DropdownMenu>
         {trigger}
         <DropdownMenuContent align="end" className="w-56">
-          <DropdownMenuItem onSelect={() => setEditOpen(true)}>
+          <DropdownMenuItem
+            onSelect={() => openCodeBuilder({ mode: "edit", code })}
+          >
             <Pencil /> Edit link
           </DropdownMenuItem>
           {showAnalyticsLink && (
-            <DropdownMenuItem asChild>
-              <Link href={`/dashboard/codes/${encodeURIComponent(code.id)}`}>
-                <ChartNoAxesCombined /> View analytics
-              </Link>
-            </DropdownMenuItem>
+            <>
+              <DropdownMenuItem asChild>
+                <Link href={codeTabHref(workspaceSlug, code.id, "analytics")}>
+                  <ChartNoAxesCombined /> View analytics
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href={codeTabHref(workspaceSlug, code.id, "settings")}>
+                  <Setting2 /> Code settings
+                </Link>
+              </DropdownMenuItem>
+            </>
           )}
           <DropdownMenuItem onSelect={() => openInPlayground(code)}>
             <Palette /> Edit design in playground
@@ -311,8 +323,6 @@ export function CodeActionsMenu({
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-
-      <CodeDialog code={code} onOpenChange={setEditOpen} open={editOpen} />
 
       {listItem && (
         <>

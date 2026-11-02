@@ -7,6 +7,7 @@ import type { SourceItem } from "@repo/integrations";
 import { ExportSquare, ImportCurve } from "iconsax-reactjs";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useWorkspaceHref } from "@/components/workspace-provider";
 import {
   DataConnectionError,
   isIntegrationsMock,
@@ -22,6 +23,7 @@ const WHERE: Record<string, string> = {
 
 /** What the picker will offer, plus Shopify's bulk CSV. */
 export function SourcePreview({ slug, name }: { slug: string; name: string }) {
+  const inWorkspace = useWorkspaceHref();
   const [items, setItems] = useState<SourceItem[] | null>(null);
   const [more, setMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -73,7 +75,7 @@ export function SourcePreview({ slug, name }: { slug: string; name: string }) {
               </a>
             </Button>
             <Button asChild size="sm" variant="ghost">
-              <Link href="/dashboard/codes/import">Bulk import</Link>
+              <Link href={inWorkspace("/codes/import")}>Bulk import</Link>
             </Button>
           </div>
         )}

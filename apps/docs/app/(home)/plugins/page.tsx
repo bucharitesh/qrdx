@@ -32,14 +32,12 @@ import {
 const pageMetadata = createMetadata({
   title: "QR code plugins for Chrome, Figma, Raycast and Canva",
   description:
-    "Make styled QR codes without leaving your tools: a Chrome extension for the page you're on, a Figma plugin that inserts vector codes, a Raycast extension and a Canva app. Free, open source, no account.",
+    "Styled QR codes without leaving your tools: a Chrome extension, a Figma plugin, a Raycast extension and a Canva app. Free and open source, no account.",
   path: "/plugins",
+  ownOgImage: true,
 });
-// No `images` key, so this page's own opengraph-image.tsx is used instead
-// of the site-wide default that createMetadata fills in.
-const { images: _defaultImages, ...openGraph } = pageMetadata.openGraph ?? {};
 
-export const metadata: Metadata = { ...pageMetadata, openGraph };
+export const metadata: Metadata = pageMetadata;
 
 const MOCKS: Record<PluginInfo["slug"], ComponentType> = {
   chrome: ChromeMock,

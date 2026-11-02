@@ -28,7 +28,9 @@ export function ExampleForm({ type, Form }: ExampleFormProps) {
   const [revision, setRevision] = React.useState(0);
 
   const showingExample = isExampleContent(type, config);
-  const empty = isContentEmpty(config);
+  // A website needs no example: the preview already shows a sample code,
+  // and the field's row holds the "Use a link from…" menu.
+  const offerExample = isContentEmpty(config) && type !== "url";
 
   const fill = (next: QRContentConfig) => {
     setContentConfig(type, next);
@@ -39,7 +41,7 @@ export function ExampleForm({ type, Form }: ExampleFormProps) {
 
   return (
     <div className="space-y-3">
-      {(empty || showingExample) && (
+      {(offerExample || showingExample) && (
         <div className="flex min-h-7 items-center justify-between gap-3 text-xs">
           {showingExample ? (
             <>

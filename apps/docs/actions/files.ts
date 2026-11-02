@@ -92,7 +92,7 @@ async function mutate<T>(
       { limiter: mutationLimiter, key: `files:mutate:user:${scope.userId}` },
     ]);
     const data = await fn(scope);
-    revalidatePath("/dashboard/files");
+    revalidatePath("/dashboard", "layout");
     return { success: true, data };
   } catch (error) {
     return failure(error, action);
