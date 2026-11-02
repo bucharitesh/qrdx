@@ -38,7 +38,7 @@ export function TwitterForm() {
     <div className="space-y-3">
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="twitter-username">
-          Twitter / X Username *
+          Twitter / X username *
         </Label>
         <Input
           id="twitter-username"
@@ -49,13 +49,10 @@ export function TwitterForm() {
             setTwitterData({ ...twitterData, username: e.target.value })
           }
         />
-        <p className="text-muted-foreground text-[11px]">
-          Enter your Twitter/X username with or without @
-        </p>
       </div>
 
       <p className="text-muted-foreground text-xs">
-        Scanning will open your Twitter/X profile
+        Scanning will open your Twitter / X profile
       </p>
     </div>
   );

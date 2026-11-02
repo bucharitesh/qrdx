@@ -50,11 +50,18 @@ function plainTitle(title: Metadata["title"]): string | undefined {
  * Page metadata with canonical URL, Open Graph and Twitter card filled in.
  * Pass `path` (e.g. "/pricing") to set `alternates.canonical` and `og:url`.
  * Explicit `openGraph` / `twitter` / `alternates` fields win over the defaults.
+ *
+ * Pass `ownOgImage: true` when the route segment has its own
+ * `opengraph-image.tsx`. Next.js only uses a segment's image file when that
+ * segment's metadata sets no `openGraph.images`, so the site-wide default
+ * would hide it. Every other page needs the default: setting `openGraph`
+ * without images drops the image inherited from app/opengraph-image.tsx.
  */
 export function createMetadata({
   path,
+  ownOgImage = false,
   ...override
-}: Metadata & { path?: string }): Metadata {
+}: Metadata & { path?: string; ownOgImage?: boolean }): Metadata {
   const url = path ? new URL(path, baseUrl).toString() : undefined;
   const title = plainTitle(override.title);
   const description = override.description ?? undefined;
@@ -68,7 +75,7 @@ export function createMetadata({
       title,
       description,
       url,
-      images: [defaultOgImage],
+      ...(!ownOgImage && { images: [defaultOgImage] }),
       ...override.openGraph,
     },
     twitter: {

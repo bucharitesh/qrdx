@@ -52,7 +52,6 @@ export const christmasPresets = {
         style: "rounded-border",
         text: "Let it scan",
         color: "#1E3A5F",
-        textColor: "#FFFFFF",
       },
     },
   },

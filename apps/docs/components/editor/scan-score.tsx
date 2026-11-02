@@ -79,6 +79,8 @@ interface ScanScoreBadgeProps {
   style: Partial<QRStyle>;
   value: string;
   className?: string;
+  /** Each finished score for the current design (e.g. to warn before saving) */
+  onResult?: (result: ScanScoreResult) => void;
 }
 
 /**
@@ -90,6 +92,7 @@ export function ScanScoreBadge({
   style,
   value,
   className,
+  onResult,
 }: ScanScoreBadgeProps) {
   const [scored, setScored] = useState<{
     key: string;
@@ -128,6 +131,10 @@ export function ScanScoreBadge({
     [value, style],
   );
   const propsKey = JSON.stringify(qrProps);
+  const reportResult = useRef(onResult);
+  useEffect(() => {
+    reportResult.current = onResult;
+  });
 
   useEffect(() => {
     if (!value.trim()) {
@@ -140,6 +147,7 @@ export function ScanScoreBadge({
         .then((score) => {
           if (!controller.signal.aborted) {
             setScored({ key: propsKey, value, result: score });
+            reportResult.current?.(score);
             const pass = score.score >= 75;
             if (passed.current !== null && passed.current !== pass) {
               soundEvent(pass ? "good" : "low");

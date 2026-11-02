@@ -11,6 +11,8 @@ import { FormSubmissionEmail } from "@/lib/email/templates/form-submission";
 import { codeLabel, formatCount } from "@/lib/email/templates/parts";
 import { ScanMilestoneEmail } from "@/lib/email/templates/scan-milestone";
 import { baseUrl } from "@/lib/metadata";
+import { workspaceLink } from "@/lib/workspace-paths";
+import { workspaceSlug } from "@/lib/workspaces";
 import { postJson } from "./http";
 import type { EventScope, NotificationTarget } from "./subscribers";
 import type {
@@ -52,10 +54,14 @@ const CHANGE_LABELS: Record<string, string> = {
 };
 
 const absolute = (path: string) => new URL(path, baseUrl.origin).toString();
-const codeUrl = (id: string) =>
-  absolute(`/dashboard/codes/${encodeURIComponent(id)}`);
-const responsesUrl = (pageId: string) =>
-  absolute(`/dashboard/pages/${encodeURIComponent(pageId)}/responses`);
+// Links name the workspace (/dashboard/<slug>/...), so they open the right
+// one for every member; without a slug they go through /dashboard?to=.
+const codeUrl = (slug: string | null, id: string) =>
+  absolute(workspaceLink(slug, `/codes/${encodeURIComponent(id)}`));
+const responsesUrl = (slug: string | null, pageId: string) =>
+  absolute(
+    workspaceLink(slug, `/pages/${encodeURIComponent(pageId)}/responses`),
+  );
 
 async function teamName(organizationId: string): Promise<string | null> {
   const [team] = await db
@@ -66,17 +72,23 @@ async function teamName(organizationId: string): Promise<string | null> {
   return team?.name ?? null;
 }
 
-/** For sentences: "your personal workspace" / "the Acme team". */
+/** For sentences: "Acme" (every member reads the same alert). */
 export async function workspaceLabel(scope: EventScope): Promise<string> {
-  if (!scope.organizationId) return "your personal workspace";
-  const name = await teamName(scope.organizationId);
-  return name ? `the ${name} team` : "your team";
+  if (!scope.organizationId) return "your workspace";
+  return (await teamName(scope.organizationId)) ?? "your workspace";
 }
 
-/** For headings: "Personal workspace" / "Acme". */
+/** For headings: "Acme". */
 export async function workspaceTitle(scope: EventScope): Promise<string> {
-  if (!scope.organizationId) return "Personal workspace";
-  return (await teamName(scope.organizationId)) ?? "Your team";
+  if (!scope.organizationId) return "Your workspace";
+  return (await teamName(scope.organizationId)) ?? "Your workspace";
+}
+
+/** The slug for links into the event's workspace (null before workspaces). */
+export async function eventWorkspaceSlug(
+  scope: EventScope,
+): Promise<string | null> {
+  return scope.organizationId ? workspaceSlug(scope.organizationId) : null;
 }
 
 async function userName(id: string | null): Promise<string | null> {
@@ -101,8 +113,12 @@ function joinParts(parts: (string | null | undefined)[], separator: string) {
   return parts.filter(Boolean).join(separator) || null;
 }
 
-function milestoneAlert(data: ScanMilestoneData, workspace: string): Alert {
-  const url = codeUrl(data.code.id);
+function milestoneAlert(
+  data: ScanMilestoneData,
+  workspace: string,
+  slug: string | null,
+): Alert {
+  const url = codeUrl(slug, data.code.id);
   const label = codeLabel(data.code);
   if (data.milestone === 1) {
     const location = joinParts([data.scan.city, data.scan.country], ", ");
@@ -141,8 +157,12 @@ function milestoneAlert(data: ScanMilestoneData, workspace: string): Alert {
   };
 }
 
-function formAlert(data: FormSubmittedData, workspace: string): Alert {
-  const url = responsesUrl(data.page.id);
+function formAlert(
+  data: FormSubmittedData,
+  workspace: string,
+  slug: string | null,
+): Alert {
+  const url = responsesUrl(slug, data.page.id);
   const page = data.page.title?.trim()
     ? `“${data.page.title.trim()}”`
     : "your page";
@@ -173,9 +193,10 @@ function codeAlert(
   type: "code.created" | "code.updated",
   data: CodeEventData,
   workspace: string,
+  slug: string | null,
   actorName: string | null,
 ): Alert {
-  const url = codeUrl(data.code.id);
+  const url = codeUrl(slug, data.code.id);
   const label = codeLabel(data.code);
   const changes = (data.changes ?? []).map(
     (field) => CHANGE_LABELS[field] ?? field,
@@ -248,18 +269,26 @@ export async function notifyTargets<T extends AlertEvent>(
 ): Promise<void> {
   if (targets.length === 0) return;
   try {
-    const workspace = await workspaceLabel(scope);
+    const [workspace, slug] = await Promise.all([
+      workspaceLabel(scope),
+      eventWorkspaceSlug(scope),
+    ]);
     let alert: Alert;
     if (envelope.type === "scan.milestone") {
-      alert = milestoneAlert(envelope.data as ScanMilestoneData, workspace);
+      alert = milestoneAlert(
+        envelope.data as ScanMilestoneData,
+        workspace,
+        slug,
+      );
     } else if (envelope.type === "form.submitted") {
-      alert = formAlert(envelope.data as FormSubmittedData, workspace);
+      alert = formAlert(envelope.data as FormSubmittedData, workspace, slug);
     } else {
       const data = envelope.data as CodeEventData;
       alert = codeAlert(
         envelope.type as "code.created" | "code.updated",
         data,
         workspace,
+        slug,
         await userName(data.actor_id),
       );
     }

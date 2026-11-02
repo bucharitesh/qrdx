@@ -4,6 +4,7 @@ import { FAQSection } from "@/components/sections/faq-section";
 import { HeroSection } from "@/components/sections/hero-section";
 import { HeroVideoSection } from "@/components/sections/hero-video-section";
 import { FeatureRowsSection } from "@/components/sections/home/feature-rows-section";
+import { GallerySection } from "@/components/sections/home/gallery-section";
 import { UseCasesSection } from "@/components/sections/home/use-cases-section";
 import { isArtAvailable } from "@/lib/ai/art-availability";
 import { isFeatureAvailable } from "@/lib/feature-availability";
@@ -24,6 +25,7 @@ import {
   PRICING,
   PRICING_CURRENCIES,
 } from "@/lib/pricing";
+import { founderSchema, organizationId } from "@/lib/seo-schema";
 
 export const metadata: Metadata = createMetadata({
   title: { absolute: siteTitle },
@@ -32,8 +34,6 @@ export const metadata: Metadata = createMetadata({
 });
 
 const url = (path: string): string => new URL(path, baseUrl).toString();
-
-const organizationId = url("/#organization");
 
 const { free, pro, business } = PLAN_LIMITS;
 
@@ -123,31 +123,10 @@ const softwareApplicationSchema = {
   softwareVersion: "latest",
   license: "https://www.gnu.org/licenses/agpl-3.0.html",
   publisher: { "@id": organizationId },
-  author: {
-    "@type": "Person",
-    name: "Ritesh Bucha",
-    url: "https://github.com/bucharitesh",
-  },
+  author: { "@id": founderSchema["@id"] },
 };
 
-const organizationSchema = {
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "@id": organizationId,
-  name: siteName,
-  url: url("/"),
-  logo: url("/logo.png"),
-  description:
-    "Open-source QR code platform: a free QR code generator, dynamic QR codes with hosted pages and scan analytics, and developer tools.",
-  email: "support@qrdx.dev",
-  foundingDate: "2024",
-  sameAs: ["https://github.com/bucharitesh/qrdx"],
-  contactPoint: {
-    "@type": "ContactPoint",
-    contactType: "customer support",
-    email: "support@qrdx.dev",
-  },
-};
+// The Organization node itself comes from the (home) layout (lib/seo-schema.ts).
 
 // No SearchAction: the site has no search results URL (docs search is a dialog).
 const webSiteSchema = {
@@ -174,18 +153,12 @@ export default function Home() {
         type="application/ld+json"
         // biome-ignore lint/security/noDangerouslySetInnerHtml: schema markup requires raw JSON
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(organizationSchema),
-        }}
-      />
-      <script
-        type="application/ld+json"
-        // biome-ignore lint/security/noDangerouslySetInnerHtml: schema markup requires raw JSON
-        dangerouslySetInnerHTML={{
           __html: JSON.stringify(webSiteSchema),
         }}
       />
       <main className="flex flex-col items-center justify-center divide-y divide-border min-h-screen w-full">
         <HeroSection />
+        <GallerySection />
         <UseCasesSection />
         <AsciiDivider />
         <FeatureRowsSection />

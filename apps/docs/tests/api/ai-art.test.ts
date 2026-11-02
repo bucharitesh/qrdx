@@ -111,6 +111,8 @@ describe("POST /api/ai/art", () => {
       width: 1024,
       height: 1024,
       blended: false,
+      blend: "none",
+      blendStrength: 0,
     });
     expect(body.variant.imageUrl).toMatch(/^data:image\/png;base64,/);
     expect(body.credits).toMatchObject({ limit: 3, used: 1, remaining: 2 });
@@ -124,6 +126,8 @@ describe("POST /api/ai/art", () => {
     expect(response.status).toBe(200);
     const { variant } = await response.json();
     expect(variant.blended).toBe(true);
+    expect(["least", "image-qr"]).toContain(variant.blend);
+    expect(variant.blendStrength).toBeGreaterThan(0);
 
     const pixels = await decodePNGPixels(
       new Uint8Array(Buffer.from(variant.imageUrl.split(",")[1], "base64")),

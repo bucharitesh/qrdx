@@ -3,6 +3,8 @@
 // table. The drizzle operators are swapped for predicates the fake table
 // evaluates, so the service's real where-clauses decide which rows a
 // workspace can change. Nothing connects to a database.
+
+import { ownWorkspaceId } from "@repo/auth/own-workspace-id";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 type Row = Record<string, unknown>;
@@ -176,8 +178,17 @@ const secrets = await import("@/lib/oauth-apps/secrets");
 const service = await import("@/lib/oauth-apps/service");
 const { HttpError } = await import("@/lib/error-response");
 
-const alice = { userId: "alice", organizationId: null, role: "owner" as const };
-const bob = { userId: "bob", organizationId: null, role: "owner" as const };
+// Each in their own workspace (what used to be the personal workspace).
+const alice = {
+  userId: "alice",
+  organizationId: ownWorkspaceId("alice"),
+  role: "owner" as const,
+};
+const bob = {
+  userId: "bob",
+  organizationId: ownWorkspaceId("bob"),
+  role: "owner" as const,
+};
 const acmeOwner = {
   userId: "carol",
   organizationId: "acme",
@@ -247,7 +258,7 @@ describe("createOAuthApp", () => {
     expect(app).not.toHaveProperty("clientSecretHash");
     expect(row).toMatchObject({
       ownerUserId: "alice",
-      organizationId: null,
+      organizationId: ownWorkspaceId("alice"),
       verified: false,
       pkceRequired: true,
       isActive: true,

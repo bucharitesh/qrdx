@@ -36,7 +36,7 @@ function faqItems(allowances: AIArtAllowances) {
     {
       question: "What do QR visibility and creativity do?",
       answer:
-        "QR visibility sets how strongly Gemini is asked to favor the code: higher keeps the modules close to black and white, lower lets the scene's light and shadow form them. It also sets how strongly the code shows if QRdx has to blend the image in. Creativity sets how freely Gemini interprets your prompt: lower follows your words closely, higher improvises.",
+        "QR visibility sets how strongly Gemini is asked to favor the code: higher keeps the modules close to black and white, lower lets the scene's light and shadow form them. It also sets how far QRdx may change the image to make it scan. At 50 and below, an image that scans is delivered as it is; otherwise QRdx strengthens the corner eyes and the border, then the modules, only as far as needed. Below 50 it stops sooner rather than cover the scene, so a run can fail (using no credit). Above 50 the code is strengthened even when the image already scans. Creativity sets how freely Gemini interprets your prompt: lower follows your words closely, higher improvises.",
     },
     {
       question: "What are seeds and variations?",

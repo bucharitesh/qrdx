@@ -991,7 +991,6 @@ const library: Record<string, ThemePreset> = {
         style: "rounded-border",
         text: "Join our Wi-Fi",
         color: "#0F172A",
-        textColor: "#F8FAFC",
       },
     },
   },

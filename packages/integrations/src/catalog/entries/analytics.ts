@@ -111,7 +111,7 @@ export const analytics: IntegrationCatalogEntry[] = PIXELS.map((pixel) => ({
   primaryAction: {
     type: "link",
     label: "Open your codes",
-    href: "/dashboard/codes",
+    href: "/dashboard?to=codes",
   },
   secondaryAction: {
     type: "link",

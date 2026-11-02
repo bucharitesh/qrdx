@@ -22,7 +22,11 @@ export interface ThemeStyles {
 
 export interface UserSettings {
   keyboardShortcuts: boolean;
-  // Add more settings here in the future
+  /**
+   * The workspace last opened (organization id): the next sign-in starts
+   * there (packages/auth/workspace-hooks.ts). Written by the app only.
+   */
+  lastWorkspaceId?: string;
 }
 
 export const page = pgTable("page", {
@@ -380,6 +384,40 @@ export const oauthToken = pgTable(
   // Remembered consent and per-app user counts look tokens up by app and user.
   (table) => [
     index("oauth_token_app_id_user_id_idx").on(table.appId, table.userId),
+  ]
+);
+
+// API keys (Settings → Developers). A key belongs to the workspace it was made
+// in (organization_id; null = the creator's personal workspace) and acts as
+// its creator there, with their current role, narrowed by its scopes (the
+// OAuth scopes). Only a SHA-256 hash of the key is stored; `start` is its
+// visible beginning ("qrdx_aB3dE5") for telling keys apart. Revoked keys keep
+// their row (revoked_at) so the history stays readable. Deleting the creator
+// or the team deletes the key: a team key must never fall back to a personal
+// workspace. SQL: packages/database/manual-sql/0011_api_key.sql
+export const apiKey = pgTable(
+  "api_key",
+  {
+    id: text("id").primaryKey(),
+    name: text("name").notNull(),
+    keyHash: text("key_hash").notNull().unique(),
+    start: text("start").notNull(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    organizationId: text("organization_id").references(() => organization.id, {
+      onDelete: "cascade",
+    }),
+    scopes: json("scopes").$type<string[]>().notNull(),
+    expiresAt: timestamp("expires_at"),
+    lastUsedAt: timestamp("last_used_at"),
+    revokedAt: timestamp("revoked_at"),
+    createdAt: timestamp("created_at").notNull(),
+    updatedAt: timestamp("updated_at").notNull(),
+  },
+  (table) => [
+    index("api_key_user_id_idx").on(table.userId),
+    index("api_key_organization_id_idx").on(table.organizationId),
   ]
 );
 

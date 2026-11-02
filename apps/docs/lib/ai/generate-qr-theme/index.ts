@@ -41,7 +41,7 @@ export const themeStylePropsOutputSchema = themeStylePropsSchema
     bgColor: hex.describe("Background colour, #RRGGBB"),
     fgColor: hex.describe("Colour of the QR modules (dots), #RRGGBB"),
     eyeColor: hex.describe("Colour of the three corner eye frames, #RRGGBB"),
-    dotColor: hex.describe("Colour of the corner eye centres, #RRGGBB"),
+    dotColor: hex.describe("Color of the corner eye centers, #RRGGBB"),
   });
 
 export type GeneratedThemeStyles = z.infer<typeof themeStylePropsOutputSchema>;

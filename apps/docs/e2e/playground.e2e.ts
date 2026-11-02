@@ -6,6 +6,7 @@
 // and checks copy, undo/redo and the type picker's search.
 //
 //   pnpm --filter docs test:e2e            (E2E_BASE_URL defaults to :3000)
+//   E2E_SUITES="side panels" runs one suite
 //
 // Skips (exit 0) when no server is running or Chrome isn't installed.
 // Elements are found by role, label or text only.
@@ -713,17 +714,19 @@ const DESIGN_GROUPS = [
 
 // The Design tab shows a few common shapes per group; the full list (the
 // group's aria-label) appears after opening its section, then "More …"
-// (and, for the separate eye shapes, "Customise outer and centre").
+// (and, for the separate eye shapes, "Customize outer and center"). Eyes and
+// Frame open beside the panel, and "More" opens the catalog beside it too
+// (in place when it's already inside a side panel); see testSidePanels.
 const GROUP_OPENERS: Record<string, { section: string; buttons: string[] }> = {
   "Dot shape": { section: "dots", buttons: ["more dot shapes"] },
   "Eye style": { section: "eyes", buttons: ["more eye styles"] },
   "Outer eye shape": {
     section: "eyes",
-    buttons: ["customise outer and centre", "more outer shapes"],
+    buttons: ["customize outer and center", "more outer shapes"],
   },
   "Inner eye shape": {
     section: "eyes",
-    buttons: ["customise outer and centre", "more centre shapes"],
+    buttons: ["customize outer and center", "more center shapes"],
   },
   Border: { section: "frame", buttons: [] },
   "Call-to-action frame": { section: "frame", buttons: ["more frames"] },
@@ -734,7 +737,7 @@ async function revealGroup(page: Page, group: string) {
   const opener = GROUP_OPENERS[group];
   if (!opener) return;
   await page.evaluate(
-    `(section) => { const b = [...document.querySelectorAll('h3 > button[aria-expanded="false"]')].find((el) => { const n = __e2e.name(el); return n === section || n.startsWith(section + " "); }); if (b) __e2e.click(b); return true; }`,
+    `(section) => { const b = [...document.querySelectorAll('h3 > button[aria-expanded="false"]')].find((el) => __e2e.name(el).startsWith(section)); if (b) __e2e.click(b); return true; }`,
     opener.section,
   );
   await sleep(300);
@@ -795,13 +798,15 @@ async function testUndoRedo(page: Page) {
     return;
   }
   await pick(page, "Dot shape", target);
-  const changed = await pressedIn(page, "Dot shape");
+  // Clicking Undo is a click outside the catalog panel, which closes it;
+  // the row of common shapes always shows the current one.
+  const changed = await pressedIn(page, "Common dot shapes");
   await clickByRole(page, "button", "undo", true);
   await sleep(500);
-  const undone = await pressedIn(page, "Dot shape");
+  const undone = await pressedIn(page, "Common dot shapes");
   await clickByRole(page, "button", "redo", true);
   await sleep(500);
-  const redone = await pressedIn(page, "Dot shape");
+  const redone = await pressedIn(page, "Common dot shapes");
   record(
     "history",
     "undo restores the previous dot shape",
@@ -809,7 +814,229 @@ async function testUndoRedo(page: Page) {
     `${before} → ${changed} → undo ${undone}`,
   );
   record("history", "redo re-applies it", redone === target, `redo ${redone}`);
-  await pick(page, "Dot shape", before).catch(() => undefined);
+  await pick(page, "Common dot shapes", before).catch(() => undefined);
+}
+
+async function pressKey(page: Page, key: string, keyCode: number) {
+  await page.cdp.send("Input.dispatchKeyEvent", {
+    type: "keyDown",
+    key,
+    code: key,
+    windowsVirtualKeyCode: keyCode,
+    ...(key === "Enter" && { text: "\r" }),
+  });
+  await page.cdp.send("Input.dispatchKeyEvent", {
+    type: "keyUp",
+    key,
+    code: key,
+    windowsVirtualKeyCode: keyCode,
+  });
+  await sleep(250);
+}
+
+/** The open side panel (popover or sheet) holding `group`, measured. */
+const SIDE_PANEL_STATE = `(group, opener) => {
+  const grid = [...document.querySelectorAll("fieldset[aria-label]")].find((el) => __e2e.visible(el) && __e2e.norm(el.getAttribute("aria-label")) === __e2e.norm(group));
+  const panel = grid && grid.closest('[role="dialog"]');
+  const trigger = [...document.querySelectorAll("button")].find((el) => __e2e.visible(el) && __e2e.name(el).startsWith(opener));
+  const active = document.activeElement;
+  if (!panel) return { open: false, focus: active ? __e2e.name(active) : null };
+  const box = panel.getBoundingClientRect();
+  const design = trigger && trigger.closest("section");
+  const edge = design ? design.getBoundingClientRect().right : 0;
+  let scroller = grid.parentElement;
+  while (scroller && scroller !== panel && getComputedStyle(scroller).overflowY !== "auto") scroller = scroller.parentElement;
+  return {
+    open: true,
+    beside: box.left >= edge - 1,
+    sheet: Math.abs(box.bottom - innerHeight) < 2 && box.width >= innerWidth - 2,
+    // Tiles in the first row (a fieldset grid reports its declared tracks).
+    columns: (() => { const tops = [...grid.querySelectorAll(":scope > button")].map((b) => b.offsetTop); const i = tops.findIndex((t) => Math.abs(t - tops[0]) > 1); return i === -1 ? tops.length : i; })(),
+    sideScroll: scroller ? scroller.scrollWidth > scroller.clientWidth + 1 : null,
+    withinScreen: box.top >= 0 && box.bottom <= innerHeight + 1,
+    focus: active ? __e2e.name(active) : null,
+    focusInPanel: panel.contains(active),
+  };
+}`;
+
+type SidePanelState = {
+  open: boolean;
+  beside?: boolean;
+  sheet?: boolean;
+  columns?: number;
+  sideScroll?: boolean | null;
+  withinScreen?: boolean;
+  focus: string | null;
+  focusInPanel?: boolean;
+};
+
+const sidePanel = (page: Page, group: string, opener: string) =>
+  page.evaluate(SIDE_PANEL_STATE, group, opener) as Promise<SidePanelState>;
+
+/**
+ * Shape catalogs ("More") and the Eyes and Frame rows open beside the design
+ * panel instead of growing it; on phones they open as a bottom sheet.
+ */
+async function testSidePanels(page: Page) {
+  const area = "side panels";
+  await openTab(page, "design");
+  const original = await pressedIn(page, "Common dot shapes");
+
+  await clickByRole(page, "button", "more dot shapes", true);
+  await sleep(500);
+  let state = await sidePanel(page, "Dot shape", "more dot shapes");
+  record(
+    area,
+    "More opens the catalog beside the panel",
+    Boolean(state.open && state.beside),
+    JSON.stringify(state),
+  );
+  record(
+    area,
+    "catalog shows 4 to 5 columns with no sideways scroll, on screen",
+    state.columns !== undefined &&
+      state.columns >= 4 &&
+      state.columns <= 5 &&
+      state.sideScroll === false &&
+      state.withinScreen === true,
+    `${state.columns} columns, side scroll ${state.sideScroll}, on screen ${state.withinScreen}`,
+  );
+  record(
+    area,
+    "search has focus when it opens",
+    state.focus === "search dot shapes",
+    `focus: ${state.focus}`,
+  );
+
+  // ArrowDown leaves search for the picked tile; ArrowRight moves on;
+  // Enter applies that shape and the panel stays open to try more.
+  await pressKey(page, "ArrowDown", 40);
+  const onPicked = await sidePanel(page, "Dot shape", "more dot shapes");
+  await pressKey(page, "ArrowRight", 39);
+  const moved = await sidePanel(page, "Dot shape", "more dot shapes");
+  await pressKey(page, "Enter", 13);
+  await sleep(300);
+  const applied = await pressedIn(page, "Dot shape");
+  state = await sidePanel(page, "Dot shape", "more dot shapes");
+  record(
+    area,
+    "arrow keys move between tiles",
+    Boolean(
+      onPicked.focusInPanel &&
+        moved.focusInPanel &&
+        moved.focus &&
+        moved.focus !== onPicked.focus,
+    ),
+    `${onPicked.focus} → ${moved.focus}`,
+  );
+  record(
+    area,
+    "Enter applies the shape live and keeps the panel open",
+    state.open && applied !== null && applied === moved.focus,
+    `applied ${applied}, open ${state.open}`,
+  );
+
+  // ArrowDown moves exactly one row (the grid's own column count).
+  const focusIndex = `() => {
+    const grid = [...document.querySelectorAll("fieldset[aria-label]")].find((el) => __e2e.visible(el) && __e2e.norm(el.getAttribute("aria-label")) === "dot shape");
+    return grid ? [...grid.querySelectorAll(":scope > button")].indexOf(document.activeElement) : -1;
+  }`;
+  const rowStart = (await page.evaluate(focusIndex)) as number;
+  await pressKey(page, "ArrowDown", 40);
+  const rowNext = (await page.evaluate(focusIndex)) as number;
+  record(
+    area,
+    "ArrowDown moves one row down",
+    rowStart >= 0 && rowNext - rowStart === state.columns,
+    `${rowStart} → ${rowNext} with ${state.columns} columns`,
+  );
+
+  await pressEscape(page);
+  state = await sidePanel(page, "Dot shape", "more dot shapes");
+  record(
+    area,
+    "Esc closes it and focus returns to More",
+    !state.open && state.focus === "more dot shapes",
+    `open ${state.open}, focus ${state.focus}`,
+  );
+
+  await clickByRole(page, "button", "more dot shapes", true);
+  await sleep(400);
+  // A real click on the page outside the panel (Radix dismisses on the
+  // click that follows the pointerdown).
+  const outside = (await page.evaluate(`() => {
+    const panel = [...document.querySelectorAll('[role="dialog"]')].find(__e2e.visible);
+    const box = panel ? panel.getBoundingClientRect() : { right: 0 };
+    return { x: Math.min(innerWidth - 20, box.right + 120), y: innerHeight - 40 };
+  }`)) as { x: number; y: number };
+  for (const type of ["mousePressed", "mouseReleased"] as const) {
+    await page.cdp.send("Input.dispatchMouseEvent", {
+      type,
+      x: outside.x,
+      y: outside.y,
+      button: "left",
+      clickCount: 1,
+    });
+  }
+  await sleep(500);
+  state = await sidePanel(page, "Dot shape", "more dot shapes");
+  record(area, "an outside click closes it", !state.open, `open ${state.open}`);
+
+  // The Eyes row opens its pickers at the side as well.
+  await page.evaluate(
+    `() => { const b = [...document.querySelectorAll("h3 > button")].find((el) => __e2e.name(el).startsWith("eyes")); __e2e.click(b); return true; }`,
+  );
+  await sleep(500);
+  state = await sidePanel(page, "Common eye styles", "eyes");
+  record(
+    area,
+    "the Eyes row opens beside the panel",
+    Boolean(state.open && state.beside),
+    JSON.stringify(state),
+  );
+  await pressEscape(page);
+  state = await sidePanel(page, "Common eye styles", "eyes");
+  record(
+    area,
+    "Esc closes the Eyes panel and focus returns to its row",
+    !state.open && (state.focus ?? "").startsWith("eyes"),
+    `open ${state.open}, focus ${state.focus}`,
+  );
+
+  if (original)
+    await pick(page, "Common dot shapes", original).catch(() => undefined);
+
+  // Phones: no room at the side, so the same catalog is a bottom sheet.
+  await page.cdp.send("Emulation.setDeviceMetricsOverride", {
+    width: 390,
+    height: 844,
+    deviceScaleFactor: 1,
+    mobile: true,
+  });
+  try {
+    await openPlayground(page);
+    await openTab(page, "design");
+    await clickByRole(page, "button", "more dot shapes", true);
+    await sleep(700);
+    state = await sidePanel(page, "Dot shape", "more dot shapes");
+    record(
+      area,
+      "on a phone, More opens a bottom sheet",
+      Boolean(state.open && state.sheet),
+      JSON.stringify(state),
+    );
+    await pressEscape(page);
+    state = await sidePanel(page, "Dot shape", "more dot shapes");
+    record(area, "Esc closes the sheet", !state.open, `open ${state.open}`);
+  } finally {
+    await page.cdp.send("Emulation.setDeviceMetricsOverride", {
+      width: 1440,
+      height: 1000,
+      deviceScaleFactor: 1,
+      mobile: false,
+    });
+    await openPlayground(page);
+  }
 }
 
 /** Opens the preset picker: the dialog trigger next to "Previous theme". */
@@ -1083,6 +1310,7 @@ async function main() {
     ["type picker search", testTypeSearch],
     ["design pickers", testDesignPickers],
     ["undo / redo", testUndoRedo],
+    ["side panels", testSidePanels],
     ["presets", testPresets],
     ["copy", testCopy],
     ["downloads", (p) => testDownloads(p, downloadDir)],

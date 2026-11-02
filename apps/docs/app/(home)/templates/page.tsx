@@ -21,8 +21,9 @@ const demos = listTemplateDemos();
 
 export const metadata: Metadata = createMetadata({
   title: "QR Code Landing Page Templates with Live Demos",
-  description: `${demos.length} free mobile page templates for QR codes: link in bio, business card, menu, coupon, event, feedback form, PDF, gallery, audio and video. Open a live demo, then edit every block.`,
+  description: `${demos.length} free landing page templates for QR codes: link in bio, business card, menu, coupon, event, form, PDF, gallery, audio and video. Open a live demo first.`,
   path: TEMPLATES_PATH,
+  ownOgImage: true,
 });
 
 const faqs = [

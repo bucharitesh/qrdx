@@ -41,6 +41,7 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
+import { useWorkspaceHref } from "@/components/workspace-provider";
 import { track } from "@/lib/analytics";
 import type { WebhookEndpointView } from "@/lib/events/endpoints";
 import { EVENT_INFO } from "@/lib/events/types";
@@ -115,6 +116,7 @@ function EndpointCard({
   onSecret: () => void;
   onDelete: () => void;
 }) {
+  const inWorkspace = useWorkspaceHref();
   return (
     <Card className="gap-3 py-4">
       <CardHeader className="px-4">
@@ -191,7 +193,9 @@ function EndpointCard({
           )}
           <Button asChild size="sm" variant="outline">
             <Link
-              href={`/dashboard/webhooks/${encodeURIComponent(endpoint.id)}`}
+              href={inWorkspace(
+                `/settings/webhooks/${encodeURIComponent(endpoint.id)}`,
+              )}
             >
               <ListTree />
               Deliveries
@@ -216,7 +220,7 @@ export function WebhooksManager({
   /** The workspace's plan includes webhooks */
   allowed: boolean;
   canAdd: boolean;
-  /** Personal workspace: upgrading unlocks webhooks */
+  /** Your own workspace: upgrading unlocks webhooks */
   canUpgrade: boolean;
 }) {
   const router = useRouter();

@@ -39,6 +39,7 @@ import { type ColorConfig, getColorString } from "qrdx";
 import type React from "react";
 import { useCallback, useMemo, useState } from "react";
 import { seasonalPresetsFirst } from "@/components/seasonal/preset-order";
+import { useWorkspaceHref } from "@/components/workspace-provider";
 import { track } from "@/lib/analytics";
 import { useMounted } from "@/lib/hooks/use-mounted";
 import { shuffleNext } from "@/lib/hooks/use-theme-shuffle";
@@ -248,6 +249,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
   const [galleryOpen, setGalleryOpen] = useState(false);
 
   const isMounted = useMounted();
+  const inWorkspace = useWorkspaceHref();
 
   useSavedThemes();
 
@@ -311,7 +313,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
     );
   }, [filteredPresets, isSavedTheme]);
 
-  // Team themes (shared with the active team) above your personal ones.
+  // The open workspace's shared themes above your own.
   const savedThemeGroups = useMemo(() => {
     const team = filteredSavedThemes.filter(
       (name) => presets[name]?.scope === "team",
@@ -320,7 +322,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
       (name) => presets[name]?.scope !== "team",
     );
     return [
-      { heading: "Team themes", names: team },
+      { heading: "Shared themes", names: team },
       {
         heading: team.length > 0 ? "Your themes" : "Saved themes",
         names: personal,
@@ -432,7 +434,7 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                       <div className="flex w-full items-center justify-between">
                         <span>{group.heading}</span>
                         {groupIndex === 0 && (
-                          <Link href="/dashboard/themes">
+                          <Link href={inWorkspace("/themes")}>
                             <Button
                               variant="link"
                               size="sm"

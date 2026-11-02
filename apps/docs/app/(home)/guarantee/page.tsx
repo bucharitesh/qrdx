@@ -14,8 +14,9 @@ import { createMetadata } from "@/lib/metadata";
 export const metadata: Metadata = createMetadata({
   title: `${GUARANTEE_NAME}: Your QR Codes Keep Working`,
   description:
-    "QRdx never holds printed QR codes hostage: dynamic codes keep redirecting after a downgrade, failed payment or cancellation, with no pausing, no ads and full export.",
+    "QRdx never holds QR codes hostage: dynamic codes keep redirecting after a downgrade, failed payment or cancellation. No pausing, no ads, full export.",
   path: "/guarantee",
+  ownOgImage: true,
 });
 
 const UPDATED = "2026-10-31";

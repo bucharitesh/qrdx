@@ -45,6 +45,7 @@ import type {
   FolderRow,
 } from "@/app/dashboard/codes/_lib/organize-shared";
 import type { QrCodeListItem } from "@/app/dashboard/codes/_lib/qr-codes";
+import { useOptimisticCodeList } from "@/components/code-builder/use-optimistic-codes";
 import { CodesTable } from "./codes-table";
 import { MoveToFolderDialog } from "./folder-dialogs";
 import { TagsDialog } from "./tag-dialogs";
@@ -56,7 +57,7 @@ const OTHERS_SKIPPED =
 
 /** The codes table with selection, bulk actions and drag to folders. */
 export function CodesList({
-  codes,
+  codes: serverCodes,
   sparklines,
   folders,
   tags,
@@ -70,6 +71,8 @@ export function CodesList({
   status: CodesStatus;
   showFolder: boolean;
 }) {
+  // Saves from the code builder show at once, before the refresh lands.
+  const codes = useOptimisticCodeList(serverCodes);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [dialog, setDialog] = useState<"move" | "tags" | "purge" | null>(null);
   const [zipping, setZipping] = useState(false);

@@ -36,6 +36,8 @@ import {
   type SplitVariantCounts,
   type TimeBreakdown,
 } from "@/lib/scans";
+import { requestWorkspaceSlug } from "@/lib/scope";
+import { workspaceLink } from "@/lib/workspace-paths";
 
 const HOURS = Array.from({ length: 24 }, (_, hour) =>
   String(hour).padStart(2, "0"),
@@ -304,6 +306,7 @@ export async function AnalyticsExtra({
 }) {
   const timeZone = normalizeTimeZone(first(query.tz));
   const from = rangeStart(days);
+  const slug = await requestWorkspaceSlug();
   const [code] = await db
     .select({
       kind: qrCode.kind,
@@ -357,7 +360,7 @@ export async function AnalyticsExtra({
             <TimeZoneSwitch
               current={time.timeZone}
               params={params}
-              path={`/dashboard/codes/${encodeURIComponent(codeId)}`}
+              path={workspaceLink(slug, `/codes/${encodeURIComponent(codeId)}`)}
             />
           }
           time={time}

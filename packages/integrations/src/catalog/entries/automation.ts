@@ -8,7 +8,7 @@ import type {
 const ADD_ENDPOINT: CatalogAction = {
   type: "link",
   label: "Add a webhook endpoint",
-  href: "/dashboard/webhooks",
+  href: "/dashboard?to=settings/webhooks",
 };
 
 const WEBHOOK_DOCS: CatalogAction = {
@@ -19,7 +19,7 @@ const WEBHOOK_DOCS: CatalogAction = {
 
 const EVENTS_STEP = (tool: string): CatalogStep => ({
   title: "Add the URL to QRdx",
-  body: `Open Dashboard → Webhooks, click Add endpoint, paste the ${tool} URL and pick the events, for example form.submitted or scan.milestone.`,
+  body: `Open Settings → Webhooks, click Add endpoint, paste the ${tool} URL and pick the events, for example form.submitted or scan.milestone.`,
 });
 
 const AUTOMATION_CAPABILITIES: CatalogCapability[] = [
@@ -63,7 +63,7 @@ export const automation: IntegrationCatalogEntry[] = [
     steps: [
       {
         title: "Add an endpoint",
-        body: "Open Dashboard → Webhooks, click Add endpoint, enter a public https:// URL and pick the events.",
+        body: "Open Settings → Webhooks, click Add endpoint, enter a public https:// URL and pick the events.",
       },
       {
         title: "Copy the signing secret",
@@ -256,7 +256,7 @@ export function isFromQRdx(rawBody: string, header: string, secret: string) {
     secondaryAction: {
       type: "link",
       label: "Or use a webhook",
-      href: "/dashboard/webhooks",
+      href: "/dashboard?to=settings/webhooks",
     },
     steps: [
       {

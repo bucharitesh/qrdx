@@ -23,10 +23,11 @@ import {
 } from "./mcp-connect";
 
 export const metadata: Metadata = createMetadata({
-  title: "QR Code MCP Server for Claude, ChatGPT, Cursor and VS Code",
+  title: "QR Code MCP Server for Claude, ChatGPT and Cursor",
   description:
-    "Connect Claude, ChatGPT, Cursor, VS Code or any MCP app to the free QRdx MCP server in one click, then generate styled QR codes and Wi-Fi, vCard, email, SMS and location payloads. No account or API key.",
+    "Connect Claude, ChatGPT, Cursor, VS Code or any MCP app to the free QRdx MCP server and make styled QR codes, Wi-Fi, vCard and more. No account or API key.",
   path: "/mcp",
+  ownOgImage: true,
   alternates: {
     types: { "text/markdown": new URL("/mcp.md", baseUrl).toString() },
   },

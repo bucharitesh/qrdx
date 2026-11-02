@@ -149,12 +149,18 @@ vi.mock("@/lib/plans", async (importOriginal) => ({
   getPlanForScope: async (scope: {
     userId: string;
     organizationId: string | null;
-  }) =>
-    state.plans[
-      scope.organizationId
-        ? `org:${scope.organizationId}`
-        : `user:${scope.userId}`
-    ] ?? "free",
+  }) => {
+    // Someone's own workspace runs on their own plan (lib/plans.ts).
+    const { isOwnWorkspaceOf } = await import("@repo/auth/own-workspace-id");
+    const team =
+      scope.organizationId &&
+      !isOwnWorkspaceOf(scope.organizationId, scope.userId);
+    return (
+      state.plans[
+        team ? `org:${scope.organizationId}` : `user:${scope.userId}`
+      ] ?? "free"
+    );
+  },
 }));
 vi.mock("@/app/dashboard/domains/_lib/domains", () => ({
   getDomainRefs: async () => new Map(),
@@ -215,6 +221,10 @@ beforeEach(() => {
   vi.useFakeTimers({ toFake: ["Date"] });
   vi.setSystemTime(NOW);
   fakeDb.resetAll();
+  // Workspaces are organizations; members point at them.
+  fakeDb.seed("organization", [
+    { id: "org_acme", name: "Acme", slug: "acme", createdAt: new Date(0) },
+  ]);
   fakeDb.seed("user", [
     { id: "u_alice", name: "Alice", email: "alice@example.com", image: null },
     { id: "u_bob", name: "Bob", email: "bob@example.com", image: null },

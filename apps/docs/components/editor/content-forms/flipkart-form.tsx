@@ -45,7 +45,7 @@ export function FlipkartForm() {
     <div className="space-y-3">
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="flipkart-product-url">
-          Flipkart Product URL *
+          Flipkart product URL *
         </Label>
         <Input
           id="flipkart-product-url"
@@ -58,15 +58,10 @@ export function FlipkartForm() {
         {errors.productUrl && (
           <p className="text-destructive text-[11px]">{errors.productUrl}</p>
         )}
-        {!errors.productUrl && (
-          <p className="text-muted-foreground text-[11px]">
-            Enter your Flipkart product or store URL
-          </p>
-        )}
       </div>
 
       <p className="text-muted-foreground text-xs">
-        Scanning will open the Flipkart product page
+        Scanning will open your Flipkart product or store
       </p>
     </div>
   );

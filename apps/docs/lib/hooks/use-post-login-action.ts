@@ -11,7 +11,9 @@ export type PostLoginActionType =
   | "AI_GENERATE_RETRY"
   | "SAVE_THEME_FOR_SHARE"
   | "CHECKOUT"
-  | "LIKE_THEME";
+  | "LIKE_THEME"
+  /** The playground's Static/Dynamic choice: make the URL code dynamic. */
+  | "MAKE_DYNAMIC";
 
 export interface PostLoginActionPayload<T = any> {
   type: PostLoginActionType;

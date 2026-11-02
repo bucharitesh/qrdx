@@ -100,6 +100,10 @@ beforeEach(() => {
   vi.useFakeTimers({ toFake: ["Date"] });
   vi.setSystemTime(NOW);
   fakeDb.resetAll();
+  // Workspaces are organizations; members point at them.
+  fakeDb.seed("organization", [
+    { id: "org_acme", name: "Acme", slug: "acme", createdAt: new Date(0) },
+  ]);
   fakeDb.defaults("webhookEndpoint", () => ({ createdAt: new Date() }));
   fakeDb.seed("user", [
     { id: "u_alice", banned: false, banExpires: null },

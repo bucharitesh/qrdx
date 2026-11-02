@@ -135,7 +135,7 @@ export const linksAndStorage: IntegrationCatalogEntry[] = [
     primaryAction: {
       type: "link",
       label: "Add a domain",
-      href: "/dashboard/domains",
+      href: "/dashboard?to=settings/domains",
     },
     secondaryAction: {
       type: "link",
@@ -145,7 +145,7 @@ export const linksAndStorage: IntegrationCatalogEntry[] = [
     steps: [
       {
         title: "Add the domain",
-        body: "Open Dashboard → Domains and enter it. A subdomain such as go.yourbrand.com works best, because your website stays where it is.",
+        body: "Open Settings → Domains and enter it. A subdomain such as go.yourbrand.com works best, because your website stays where it is.",
       },
       {
         title: "Create the DNS records at your DNS provider",

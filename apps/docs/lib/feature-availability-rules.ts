@@ -11,10 +11,16 @@
 // are decided in lib/integration-availability-rules.ts, which defers to these
 // rules for the catalog entries that are really built-in features.
 
+import {
+  WORKSPACE_PATTERN_PREFIX,
+  workspacePattern,
+} from "@/lib/workspace-paths";
+
 export const FEATURE_IDS = [
   "aiThemes",
   "aiArt",
   "customDomains",
+  "domainConnect",
   "fileStorage",
   "email",
   "spamCheck",
@@ -78,13 +84,25 @@ export const FEATURE_RULES: Record<FeatureId, FeatureRule> = {
     requires: (ctx) =>
       ctx.onVercel ? ["VERCEL_API_TOKEN", "VERCEL_PROJECT_ID"] : [],
     paths: [
-      "/dashboard/domains",
+      `${WORKSPACE_PATTERN_PREFIX}/settings/domains`,
       "/docs/custom-domains",
       "/docs/help/domains/custom-domains",
     ],
     // Tag Manager containers run any script, so they only ever load on a
     // customer's own domain (components/landing/pixels.tsx).
     catalogSlugs: ["custom-domains", "google-tag-manager"],
+  },
+  domainConnect: {
+    // The "Set up with Cloudflare" button on the Domains page (Domain
+    // Connect, lib/domain-connect): our template's ids and the key that signs
+    // apply links. Only where custom domains can be added at all.
+    name: "One-click DNS setup (Domain Connect)",
+    requires: (ctx) => [
+      ...FEATURE_RULES.customDomains.requires(ctx),
+      "DOMAIN_CONNECT_PROVIDER_ID",
+      "DOMAIN_CONNECT_SERVICE_ID",
+      "DOMAIN_CONNECT_PRIVATE_KEY",
+    ],
   },
   fileStorage: {
     name: "File storage (Cloudflare R2)",
@@ -216,11 +234,12 @@ const pathOf = (href: string) => href.split(/[?#]/, 1)[0] ?? href;
 
 /**
  * False for a link to a page that only offers an unavailable feature
- * (exact path; query and hash ignored). External links always pass.
+ * (exact path; query and hash ignored; any workspace's page matches its
+ * /dashboard/[workspace]/… rule). External links always pass.
  */
 export function isPathShown(
   hiddenPaths: readonly string[],
   href: string,
 ): boolean {
-  return !hiddenPaths.includes(pathOf(href));
+  return !hiddenPaths.includes(workspacePattern(pathOf(href)));
 }
