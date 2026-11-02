@@ -291,7 +291,7 @@ export const community: SeoGroup = {
         "Public notices, consultations, service pages and multilingual information.",
       intro: [
         "Public notices are printed small and legalistic, and most residents walk past them. A QR code on a planning notice, a roadworks sign or a bin can open the full details, the consultation form or the service page in plain language, in the resident's language.",
-        "Government codes are also a target for fraud: fake stickers placed over real codes on parking meters and signs. Using your own domain for short links, and telling residents what it is, is the most effective defence.",
+        "Government codes are also a target for fraud: fake stickers placed over real codes on parking meters and signs. Printing the expected link next to every code, and telling residents what it is, is the most effective defence.",
       ],
       useCases: [
         {

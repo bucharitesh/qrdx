@@ -28,31 +28,33 @@ describe("frames", () => {
     });
   });
 
-  it.each(
-    active
-  )("%s keeps the code at full size inside the artwork", (style) => {
-    const layout = getFrameLayout(200, { style });
-    expect(layout.qrSize).toBe(200);
-    expect(layout.qrX).toBeGreaterThanOrEqual(0);
-    expect(layout.qrY).toBeGreaterThanOrEqual(0);
-    expect(layout.qrX + layout.qrSize).toBeLessThanOrEqual(layout.width);
-    expect(layout.qrY + layout.qrSize).toBeLessThanOrEqual(layout.height);
-    expect(getFrameDimensions(200, { style })).toEqual({
-      width: layout.width,
-      height: layout.height,
-    });
-  });
+  it.each(active)(
+    "%s keeps the code at full size inside the artwork",
+    (style) => {
+      const layout = getFrameLayout(200, { style });
+      expect(layout.qrSize).toBe(200);
+      expect(layout.qrX).toBeGreaterThanOrEqual(0);
+      expect(layout.qrY).toBeGreaterThanOrEqual(0);
+      expect(layout.qrX + layout.qrSize).toBeLessThanOrEqual(layout.width);
+      expect(layout.qrY + layout.qrSize).toBeLessThanOrEqual(layout.height);
+      expect(getFrameDimensions(200, { style })).toEqual({
+        width: layout.width,
+        height: layout.height,
+      });
+    }
+  );
 
-  it.each(
-    active
-  )("%s draws its shapes behind the code, never on top", (style) => {
-    const svg = renderSvg({ value: "frame", size: 200, frame: { style } });
-    // The QR code is the last nested <svg>; frame shapes come before it.
-    const codeStart = svg.indexOf("<svg", 1);
-    expect(codeStart).toBeGreaterThan(0);
-    const after = svg.slice(svg.indexOf("</svg>", codeStart) + 6);
-    expect(after).not.toMatch(/<(rect|path|polygon)\b/);
-  });
+  it.each(active)(
+    "%s draws its shapes behind the code, never on top",
+    (style) => {
+      const svg = renderSvg({ value: "frame", size: 200, frame: { style } });
+      // The QR code is the last nested <svg>; frame shapes come before it.
+      const codeStart = svg.indexOf("<svg", 1);
+      expect(codeStart).toBeGreaterThan(0);
+      const after = svg.slice(svg.indexOf("</svg>", codeStart) + 6);
+      expect(after).not.toMatch(/<(rect|path|polygon)\b/);
+    }
+  );
 
   it("uses 'Scan me' by default, trims, caps at 24 characters and allows hiding", () => {
     expect(getFrameText({ style: "banner-bottom" })).toBe("Scan me");

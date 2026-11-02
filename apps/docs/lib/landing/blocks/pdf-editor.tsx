@@ -2,6 +2,7 @@
 
 import { SwitchField, TextField } from "@/components/landing/editor/fields";
 import { FileSourceField } from "@/lib/files/components/file-source-field";
+import { canFramePdf } from "@/lib/files/pdf-frame";
 import type { BlockEditorProps } from "../registry";
 import type { PdfBlockProps } from "./pdf";
 
@@ -47,7 +48,11 @@ export function PdfEditor({
       />
       <SwitchField
         checked={value.inline}
-        hint="Shown on tablets and computers. Phones open the PDF full screen."
+        hint={
+          value.source?.type === "url" && !canFramePdf(value.source)
+            ? "Only PDFs uploaded to QRdx show on the page. Links to other sites open with the button."
+            : "Shown on tablets and computers. Phones open the PDF full screen."
+        }
         label="Show the PDF on the page"
         onChange={(inline) => set({ inline })}
       />

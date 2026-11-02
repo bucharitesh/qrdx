@@ -15,6 +15,16 @@ Static QR codes from the playground and the `qrdx` library stay free and unlimit
 
 Destinations must be `http://` or `https://` links. Links with a username or password, and links to other QRdx short links, are rejected.
 
+## Custom back-halves
+
+Every code gets a random 7-character back-half, the part after `/q/`. On Pro and Business you can choose your own instead, such as `https://qrdx.dev/q/spring-menu`: fill in **Custom back-half** when you create or edit a code, and the dialog tells you as you type whether it's free.
+
+- 3 to 64 characters: letters, digits, `-` and `_`, not starting or ending with `-`.
+- Back-halves are case-sensitive, like generated ones: `Spring-Menu` and `spring-menu` are two different links.
+- On `qrdx.dev` a back-half is unique across all of QRdx, and words that read as QRdx pages (`admin`, `api`, `docs`, `login`, `pricing`, `settings`, ...) are reserved.
+- On your own [custom domain](/docs/custom-domains) it only has to be unique on that domain, and only `api`, `p` and `q` are reserved, so `go.yourbrand.com/pricing` works. Such a back-half belongs to the domain: it has no `qrdx.dev/q/` link.
+- Changing the back-half of a code changes its link: QR codes printed with the old one stop working, so download the code again.
+
 ## Manage codes
 
 From the dashboard you can:
@@ -31,9 +41,9 @@ From the dashboard you can:
 - **Folders:** nest up to 5 levels deep. Drag codes onto a folder or use **Move to folder**. Deleting a folder moves its codes and subfolders up one level.
 - **Tags:** filter by several tags to see codes that have all of them.
 - **Favourites and notes:** star codes and keep private notes; notes are searchable.
-- **Search** covers titles, destinations, notes, tags and slugs (paste a short link to find its code).
+- **Search** covers titles, destinations, notes, tags and back-halves (paste a short link to find its code).
 - **Bulk actions:** select codes to move, tag, pause, archive, favourite, trash or download them as a ZIP of PNG or SVG files.
-- **CSV import:** **Codes → Import** creates up to 1,000 dynamic codes from a CSV (destination, title, folder, tags, optional slug). Importing more than one row needs Pro.
+- **CSV import:** **Codes → Import** creates up to 1,000 dynamic codes from a CSV (destination, title, folder, tags, optional custom back-half in the `slug` column). Importing more than one row, and custom back-halves, need Pro.
 
 Codes in a team belong to the team. Every member can create and edit them; members can delete their own codes, owners and admins can delete any team code.
 
@@ -72,9 +82,9 @@ Manage codes programmatically under `https://api.qrdx.dev/v1/codes`. Requests ar
 | Method | Path | Description |
 | --- | --- | --- |
 | `GET` | `/v1/codes` | List codes. Query: `status` (`active`, `archived`, `all`), `q`, `limit` (≤ 100), `offset` |
-| `POST` | `/v1/codes` | Create one code, or an array of up to 100 (arrays need Pro) |
+| `POST` | `/v1/codes` | Create one code, or an array of up to 100 (arrays need Pro). Body: `destinationUrl`, optional `title`, `style`, `domainId` and `slug` |
 | `GET` | `/v1/codes/{id}` | Get one code |
-| `PATCH` | `/v1/codes/{id}` | Update `destinationUrl`, `title`, `style`, `domainId` ([custom domains](/docs/custom-domains)) or `archived` |
+| `PATCH` | `/v1/codes/{id}` | Update `destinationUrl`, `title`, `style`, `domainId` ([custom domains](/docs/custom-domains)), `slug` or `archived` |
 | `DELETE` | `/v1/codes/{id}` | Delete a code and its scans |
 | `GET` | `/v1/codes/{id}/scans` | Analytics for `range` (`7d`, `30d`, `90d`, `365d`, `1095d`; limited by your plan's history). Add `limit` (≤ 500) for individual scans, and `before` (the last `scannedAt`) for the next page |
 
@@ -110,6 +120,17 @@ curl https://api.qrdx.dev/v1/codes \
 }
 ```
 
+Pass `slug` to choose the back-half (Pro and Business; see [custom back-halves](#custom-back-halves) for the rules). With a `domainId` it's checked on that domain, otherwise on `qrdx.dev`:
+
+```bash
+curl https://api.qrdx.dev/v1/codes \
+  -H "Authorization: Bearer $QRDX_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"destinationUrl": "https://example.com/menu", "slug": "spring-menu"}'
+```
+
+The response then has `"slug": "spring-menu"` and `"shortLink": "https://qrdx.dev/q/spring-menu"`. A back-half chosen on a custom domain has `"defaultShortLink": null`, because it only exists on that domain. In an array, every `slug` must be different.
+
 Change the destination:
 
 ```bash
@@ -121,15 +142,16 @@ curl -X PATCH https://api.qrdx.dev/v1/codes/cm3x... \
 
 `style` takes the same design fields as the playground (`fgColor`, `bgColor`, `bodyPattern`, `cornerEyePattern`, `level`, ...). Encode `shortLink` in your QR code, for example with the [`qrdx` library](/docs/getting-started).
 
-Errors use one JSON shape, `{ "code": "...", "message": "...", "status": 400 }`:
+Errors use one JSON shape, `{ "code": "...", "message": "...", "status": 400 }`, plus a `docs` link when a page explains the fix:
 
 | Status | Code | When |
 | --- | --- | --- |
-| 400 | `VALIDATION_ERROR` | Invalid body or query (details in `data`) |
-| 401 | `UNAUTHORIZED`, `INVALID_TOKEN` | Missing session, or an invalid or expired token |
-| 402 | `LIMIT_REACHED`, `PLAN_REQUIRED` | Over your plan's active code limit, or bulk creation without Pro |
+| 400 | `VALIDATION_ERROR`, `INVALID_SLUG` | Invalid body or query (details in `data`), or a `slug` that breaks the rules or is reserved |
+| 401 | `UNAUTHORIZED`, `INVALID_TOKEN` | No `Authorization: Bearer` token, or an invalid, expired or revoked one ([get a token](/docs/developers/rest-api#get-an-access-token)) |
+| 402 | `LIMIT_REACHED`, `PLAN_REQUIRED` | Over your plan's active code limit, or bulk creation or a custom `slug` without Pro |
 | 403 | `INSUFFICIENT_SCOPE`, `FORBIDDEN` | Token without the needed scope, or a team role that can't do this |
-| 404 | `NOT_FOUND` | The code doesn't exist or isn't yours |
+| 404 | `NOT_FOUND` | The code doesn't exist or isn't yours, or there's no such endpoint |
+| 409 | `SLUG_TAKEN` | Another code already uses that `slug` (on `qrdx.dev`, or on the custom domain) |
 | 429 | `RATE_LIMITED` | Too many requests; retry after the `Retry-After` header |
 
 ## Self-hosting

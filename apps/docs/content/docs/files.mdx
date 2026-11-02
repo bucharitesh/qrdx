@@ -97,8 +97,10 @@ Visitors always open files through `/api/files/<id>`, which redirects to the sto
 - With `R2_PUBLIC_BASE_URL` set (a custom domain connected to the bucket, or its `r2.dev` URL, which Cloudflare rate-limits and recommends for testing only), it redirects to the public URL. Object keys contain a random id, so files can't be listed or guessed.
 - Without it, the bucket stays private and every redirect is a presigned link that expires after an hour.
 
-Either way, a replaced, deleted or blocked file stops being served through its QRdx link within a minute.
+Either way, a replaced, deleted or blocked file stops being served through its QRdx link within a minute. A blocked file also leaves its public URL at once: its object moves to a `quarantine/` key with a random part (kept so an admin can restore it), and its QRdx link answers `410 Gone`.
+
+Browsers upload to a `staging/` key. Once the upload is checked, QRdx copies exactly the checked version to the file's own key, so an upload link that is still valid can't replace a checked file.
 
 <Callout type="info">
-  An upload that never finishes stops counting toward storage after two hours and is cleaned up the next time someone uploads to that workspace.
+  An upload that never finishes stops counting toward storage after two hours and is cleaned up the next time someone uploads to that workspace. Add an object lifecycle rule to the bucket (**Settings → Object lifecycle rules**) that deletes objects with the prefix `staging/` after one day, so leftovers from abandoned uploads go away too.
 </Callout>

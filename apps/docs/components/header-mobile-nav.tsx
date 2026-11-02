@@ -12,7 +12,7 @@ import { ExportSquare, HamburgerMenu } from "iconsax-reactjs";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { headerNavEntries } from "./header-nav";
+import { useHeaderNavEntries } from "./header-nav";
 
 /**
  * Every header destination, grouped like the desktop dropdowns. No
@@ -26,8 +26,9 @@ export function HeaderMobileNavList({
   className?: string;
 }) {
   const pathname = usePathname() ?? "/";
-  const groups = headerNavEntries.filter((entry) => entry.items);
-  const singles = headerNavEntries.filter((entry) => !entry.items);
+  const entries = useHeaderNavEntries();
+  const groups = entries.filter((entry) => entry.items);
+  const singles = entries.filter((entry) => !entry.items);
 
   return (
     <nav
@@ -60,7 +61,7 @@ export function HeaderMobileNavList({
                       rel: "noopener noreferrer",
                     })}
                   >
-                    <span className="grid size-8 shrink-0 place-items-center rounded-md border bg-muted/40 transition-colors group-hover/nav-item:bg-background">
+                    <span className="grid size-8 shrink-0 place-items-center rounded-[8px] border bg-muted/40 transition-colors group-hover/nav-item:bg-background">
                       <Icon aria-hidden className="size-4 text-foreground/80" />
                     </span>
                     <span className="min-w-0 text-pretty">

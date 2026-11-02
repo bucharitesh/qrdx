@@ -92,8 +92,8 @@ export function DomainPicker({
       </Select>
       {!options.canUse && (
         <p className="text-muted-foreground text-xs">
-          Moving codes to a custom domain needs Pro. Codes keep the domain they
-          already use.
+          {options.available && "Moving codes to a custom domain needs Pro. "}
+          Codes keep the domain they already use.
         </p>
       )}
       {options.canUse && (

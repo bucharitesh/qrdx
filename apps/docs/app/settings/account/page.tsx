@@ -11,6 +11,7 @@ import {
   planAccountDeletion,
 } from "@/lib/account/deletion";
 import { loadDeletionFacts } from "@/lib/account/deletion-server";
+import { canChangeEmailNow } from "@/lib/account/email-change";
 import { signInCodesAvailable } from "@/lib/account/reauth";
 import { toSessionViews } from "@/lib/account/sessions";
 import {
@@ -20,6 +21,7 @@ import {
   type SocialProvider,
   toSignInMethods,
 } from "@/lib/account/sign-in-methods";
+import { signInPath } from "@/lib/safe-redirect";
 import { scanGeo } from "@/lib/scans";
 import { isStorageConfigured } from "@/lib/storage/r2";
 import { SettingsHeader } from "../components/settings-header";
@@ -82,7 +84,7 @@ export default async function AccountPage({
 }) {
   const requestHeaders = await headers();
   const session = await auth.api.getSession({ headers: requestHeaders });
-  if (!session) redirect("/playground");
+  if (!session) redirect(signInPath("/settings/account"));
 
   const userId: string = session.user.id;
   const now = new Date();
@@ -138,6 +140,10 @@ export default async function AccountPage({
           image: session.user.image ?? null,
           memberSince: formatDate(new Date(session.user.createdAt)),
           canUpload: isStorageConfigured,
+          recentSignIn: canChangeEmailNow(
+            new Date(session.session.createdAt),
+            now,
+          ),
         }}
       />
 

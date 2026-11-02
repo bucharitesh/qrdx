@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { IconTile } from "@/components/sections/tools/cards";
 import { FaqList } from "@/components/sections/tools/faq-list";
 import { ToolHero } from "@/components/sections/tools/tool-hero";
+import { isFeatureAvailable } from "@/lib/feature-availability";
 import { listTemplateDemos } from "@/lib/landing/demo";
 import { TEMPLATES_PATH } from "@/lib/landing/demo-paths";
 import { listTemplates } from "@/lib/landing/templates";
@@ -43,7 +44,8 @@ const faqs = [
   {
     question: "Do I need a website?",
     answer:
-      "No. QRdx hosts the page for you on a short link. Pro and Business can also use their own domain.",
+      // Custom domains only where they can be added (lib/feature-availability-rules.ts)
+      `No. QRdx hosts the page for you on a short link.${isFeatureAvailable("customDomains") ? " Pro and Business can also use their own domain." : ""}`,
   },
   {
     question: "Do the demos collect any data?",
@@ -89,7 +91,7 @@ export default function TemplatesPage() {
               id={template.type}
               key={template.type}
             >
-              <div className="flex items-start gap-3.5 px-6 pt-10 pb-6 md:px-10">
+              <div className="flex items-start gap-3.5 px-10 pt-10 pb-6">
                 <IconTile icon={template.icon} />
                 <div className="min-w-0 flex-1 space-y-1">
                   <h2
@@ -107,7 +109,7 @@ export default function TemplatesPage() {
                 </span>
               </div>
               {/* A swipeable row on phones, a grid from sm. */}
-              <div className="flex scroll-px-6 snap-x snap-mandatory gap-4 overflow-x-auto px-6 pt-1 pb-10 [scrollbar-width:none] sm:grid sm:snap-none sm:grid-cols-2 sm:gap-x-6 sm:gap-y-10 sm:overflow-visible md:px-10 lg:grid-cols-3 lg:gap-x-8">
+              <div className="flex scroll-px-10 snap-x snap-mandatory gap-4 overflow-x-auto px-10 pt-1 pb-10 [scrollbar-width:none] sm:grid sm:snap-none sm:grid-cols-2 sm:gap-x-6 sm:gap-y-10 sm:overflow-visible lg:grid-cols-3 lg:gap-x-8">
                 {items.map((demo) => (
                   <TemplateCard
                     className="w-[15.5rem] shrink-0 snap-start sm:w-auto"

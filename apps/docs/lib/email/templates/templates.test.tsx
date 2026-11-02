@@ -6,6 +6,7 @@ import { render } from "@react-email/render";
 import * as React from "react";
 import { AbuseReportAckEmail } from "./abuse-report-ack";
 import { CodeActivityEmail } from "./code-activity";
+import { EmailChangeCodeEmail, EmailChangedEmail } from "./email-change";
 import { FirstScanEmail } from "./first-scan";
 import { FormSubmissionEmail } from "./form-submission";
 import { ScanMilestoneEmail } from "./scan-milestone";
@@ -189,5 +190,41 @@ describe("email templates", () => {
       assert.equal(new URL(href).pathname, "/", href);
     }
     assert.doesNotMatch(html, /<img/i);
+  });
+
+  it("email-change code email shows the code and nothing to click", async () => {
+    const { html, text } = await both(<EmailChangeCodeEmail code="915273" />);
+    assert.match(text, /Confirm your new email/i);
+    assert.match(text, /915273/);
+    assert.match(text, /expires in 5 minutes/);
+    assert.match(text, /Nothing changes without the code/);
+    assert.match(html, /letter-spacing:0\.4em[^"]*"[^>]*>915273</);
+    const hrefs = [...html.matchAll(/href="([^"]*)"/g)].map((m) => m[1]);
+    for (const href of hrefs) {
+      assert.equal(new URL(href).pathname, "/", href);
+      assert.equal(new URL(href).search, "", href);
+    }
+  });
+
+  it("email-changed notice names the new address and has no undo link", async () => {
+    const { html, text } = await both(
+      <EmailChangedEmail newEmail="ada+new@example.com" />,
+    );
+    assert.match(text, /Your QRdx email was changed/i);
+    assert.match(text, /ada\+new@example\.com/);
+    assert.match(text, /If this wasn't you, contact support/);
+    assert.doesNotMatch(text, /Unsubscribe/);
+    // Only the site's home links and a mail to support: nothing that acts on
+    // the account.
+    const hrefs = [...html.matchAll(/href="([^"]*)"/g)].map((m) => m[1]);
+    assert.ok(hrefs.includes("mailto:support@qrdx.dev"));
+    for (const href of hrefs) {
+      if (href.startsWith("mailto:")) {
+        assert.equal(href, "mailto:support@qrdx.dev");
+        continue;
+      }
+      assert.equal(new URL(href).pathname, "/", href);
+      assert.equal(new URL(href).search, "", href);
+    }
   });
 });

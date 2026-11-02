@@ -14,6 +14,7 @@ import Link from "next/link";
 import { AsciiField, Aurora, Backdrop } from "@/components/fx";
 import { PRESSABLE } from "@/components/mockups/motion";
 import { SoundCue } from "@/components/sound/sound-cue";
+import { isPathAvailable } from "@/lib/feature-availability";
 
 export const metadata: Metadata = {
   title: "Thanks for upgrading",
@@ -47,6 +48,8 @@ const NEXT_STEPS: {
 ];
 
 export default function SuccessPage() {
+  // No step for a feature this deployment can't offer (custom domains).
+  const steps = NEXT_STEPS.filter((step) => isPathAvailable(step.href));
   return (
     <main className="relative w-full overflow-hidden">
       <SoundCue name="success" />
@@ -58,7 +61,7 @@ export default function SuccessPage() {
           className="[mask-image:radial-gradient(ellipse_70%_70%_at_50%_35%,black_40%,transparent_85%)]"
         />
       </Backdrop>
-      <div className="relative mx-auto flex min-h-[70vh] max-w-3xl flex-col items-center justify-center gap-10 px-6 py-20 text-center">
+      <div className="relative mx-auto flex min-h-[70vh] max-w-[50rem] flex-col items-center justify-center gap-10 px-10 py-20 text-center">
         <div className="flex flex-col items-center gap-4">
           <span className="grid size-14 place-items-center rounded-full bg-emerald-500/10 ring-1 ring-emerald-500/20">
             <TickCircle
@@ -88,8 +91,13 @@ export default function SuccessPage() {
           </div>
         </div>
 
-        <ul className="grid w-full gap-4 text-left sm:grid-cols-3">
-          {NEXT_STEPS.map((step) => (
+        <ul
+          className={cn(
+            "grid w-full gap-4 text-left",
+            steps.length === 3 ? "sm:grid-cols-3" : "sm:grid-cols-2",
+          )}
+        >
+          {steps.map((step) => (
             <li key={step.href}>
               <Link
                 className="group block h-full rounded-xl outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"

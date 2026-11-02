@@ -1,0 +1,47 @@
+---
+title: A scan shows an error page
+description: What each QR code error page means, from "QR code not found" to "This campaign has ended", and how to fix it.
+---
+
+When a dynamic code can't open its destination, scanners see a short page. Here's what each one means.
+
+## "QR code not found"
+
+This is a 404 page: the short link doesn't belong to any code.
+
+- The code was **deleted forever**.
+- The code's **back-half** or **domain** was changed after it was printed.
+- The account that owned it was deleted.
+- The link was typed by hand with a mistake. Short links are case-sensitive.
+
+A deleted code can't come back. If you changed the back-half, change it back with **Edit link**.
+
+## "This QR code is no longer active"
+
+The code is **archived** or in the **trash**. Choose **Unarchive** or **Restore** in **Codes**. See [Archive, delete and restore codes](/docs/help/dynamic-codes/archive-and-delete).
+
+QRdx also turns off codes that link to harmful sites.
+
+## "This campaign is paused", "hasn't started yet" or "has ended"
+
+These come from the code's own settings: a pause, a start or end date, or a scan limit. Change them in **Access & schedule**. See [Pause, schedule or limit a code](/docs/help/dynamic-codes/pause-schedule-limit).
+
+## "This QR code is password protected"
+
+The code has a password. Enter it and click **Continue**. See [Protect a code with a password](/docs/help/dynamic-codes/password).
+
+## "Too many requests"
+
+One network opened a lot of QR codes in a few seconds. Wait a moment and scan again.
+
+## "This domain isn't connected yet"
+
+The code uses a custom domain whose DNS setup isn't finished. Check the domain on the **Domains** page in your dashboard.
+
+## "This page could not be found" on a page
+
+A mobile page at `/p/…` shows this when the page was deleted or the address was mistyped.
+
+## "This form isn't accepting responses right now"
+
+The workspace reached its monthly form response limit. See [Collect answers with a form](/docs/help/pages-and-forms/forms#monthly-limits).

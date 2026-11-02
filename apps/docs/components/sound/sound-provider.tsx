@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { SOUND_EVENT } from "@/lib/sound/emit";
 import { soundEngine } from "@/lib/sound/engine";
+import { isDirectActivation } from "@/lib/sound/gesture";
 import { SOUND_PREFS_KEY } from "@/lib/sound/prefs";
 
 /** An error toast this soon after a gesture is the user's failed action. */
@@ -32,7 +33,9 @@ export function SoundProvider() {
     const onGesture = (event: Event) => {
       if (!event.isTrusted) return;
       lastGestureAt = performance.now();
-      if (isUserActivation(event)) soundEngine.unlock(event.type !== "keydown");
+      if (isUserActivation(event)) {
+        soundEngine.unlock(isDirectActivation(event as KeyboardEvent));
+      }
     };
     const onCue = (event: Event) => {
       soundEngine.play(String((event as CustomEvent<unknown>).detail));

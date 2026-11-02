@@ -20,8 +20,9 @@ Visitors from India see prices in rupees. Checkout is handled by [Polar](https:/
 | Dynamic QR codes | 10 | Unlimited | Unlimited |
 | Scans | Unlimited | Unlimited | Unlimited |
 | Hosted landing pages | 3, with a "Made with QRdx" footer | Unlimited, no footer | Unlimited, white-label, custom CSS |
-| Analytics history | 90 days | 3 years | Unlimited (scan-level for 13 months, then daily totals) |
+| Analytics history | 90 days | 3 years | Unlimited |
 | Custom domains | None | 5 | 25 |
+| Custom back-halves (`qrdx.dev/q/spring-menu`) | No | Yes | Yes |
 | Team members | 1 (no teams) | 3 | Unlimited |
 | Smart routing, A/B tests, UTM tags | No | Yes | Yes |
 | Passwords, schedules, expiry, scan limits | No | Yes | Yes |
@@ -36,9 +37,10 @@ Visitors from India see prices in rupees. Checkout is handled by [Polar](https:/
 | AI art images per month | 3 | 30 | 150, pooled per team |
 | AI theme generations | 5 in total | Unlimited | Unlimited |
 | Saved themes | 10 | Unlimited, shared with your team | Unlimited, shared with your team |
-| Folder permissions and audit log | No | No | Coming soon |
 
 Only active dynamic codes count toward the code limit: archived codes don't. Scans never count toward anything, and no plan pauses a code because of traffic. The only scan caps are the ones you set yourself on a code.
+
+The API allowance is per workspace (personal or team) and resets at 00:00 UTC. Each request that counts returns `X-RateLimit-Limit`, `X-RateLimit-Remaining` and `X-RateLimit-Reset` so you can watch it. See the [REST API](/docs/developers/rest-api) for the per-minute limits.
 
 ## Personal and team workspaces
 
@@ -53,6 +55,7 @@ Free accounts can't create teams. A Pro team has up to 3 seats, a Business team 
 </Callout>
 
 - **Over a limit:** you can't create more until you're under it. You can still edit, archive and export what you have.
+- **Over the daily API allowance:** API calls get `429` until 00:00 UTC. Your codes keep redirecting and the website keeps working.
 - **Downgrading:** codes, landing pages and verified custom domains keep working. Analytics show the history your new plan includes.
 - **Cancelling:** your plan stays active until the end of the period you paid for, then your account moves to Free.
 - **A failed payment:** once the subscription lapses, it's the same as cancelling. Nothing is paused.

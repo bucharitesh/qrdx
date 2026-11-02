@@ -13,7 +13,12 @@ import { OAUTH_SCOPES, type OAuthScope } from "@/lib/oauth-scopes";
 
 export { OAUTH_SCOPES, type OAuthScope };
 
-export const PKCE_METHODS = ["S256", "plain"] as const;
+/**
+ * PKCE methods this provider accepts (RFC 7636 §4.2). "plain" is refused: it
+ * sends the verifier itself as the challenge, so anyone who sees the
+ * authorization request can redeem the code (OAuth 2.0 Security BCP §2.1.1).
+ */
+export const PKCE_METHODS = ["S256"] as const;
 // RFC 7636 §4.1/4.2: 43-128 chars from the unreserved set
 const PKCE_VALUE_REGEX = /^[A-Za-z0-9._~-]{43,128}$/;
 
@@ -93,14 +98,9 @@ export function verifyCodeChallenge(
   if (!isValidPkceValue(verifier)) {
     return false;
   }
-  if (method === "S256") {
-    const hash = createHash("sha256").update(verifier).digest("base64url");
-    return safeEqual(hash, challenge);
-  }
-  if (method === "plain") {
-    return safeEqual(verifier, challenge);
-  }
-  return false;
+  if (method !== "S256") return false;
+  const hash = createHash("sha256").update(verifier).digest("base64url");
+  return safeEqual(hash, challenge);
 }
 
 export async function authenticateClient(

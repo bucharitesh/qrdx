@@ -2,7 +2,7 @@
 
 import { authClient } from "@repo/auth/client";
 import { resetAnalytics } from "@/lib/analytics";
-import { DEFAULT_LOGIN_REDIRECT } from "@/routes";
+import { signInPath } from "@/lib/safe-redirect";
 import { ApiError, UnauthorizedError } from "@/types/errors";
 
 let isSigningOut = false;
@@ -30,17 +30,20 @@ export async function handleUnauthorized(): Promise<void> {
   }
 
   isSigningOut = true;
+  // Sign in again, then come back to this page.
+  const { pathname, search } = window.location;
+  const signIn = signInPath(pathname + search);
 
   try {
     resetAnalytics();
     await authClient.signOut();
-    window.location.href = DEFAULT_LOGIN_REDIRECT;
+    window.location.href = signIn;
   } catch (signOutError) {
     console.error(
       "Failed to sign out after unauthorized response:",
       signOutError,
     );
-    window.location.href = DEFAULT_LOGIN_REDIRECT;
+    window.location.href = signIn;
   } finally {
     isSigningOut = false;
   }

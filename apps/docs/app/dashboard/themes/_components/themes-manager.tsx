@@ -241,7 +241,7 @@ export function ThemesManager({
             />
           ) : query ? null : (
             <Card className="items-center gap-4 px-6 py-12 text-center">
-              <HairlineFigure className="aspect-square w-32" figure="Stack" />
+              <HairlineFigure className="aspect-square w-32" figure="Palette" />
               <div className="space-y-1">
                 <h3 className="text-lg font-semibold">No saved themes yet</h3>
                 <p className="text-muted-foreground mx-auto max-w-md text-sm text-pretty">

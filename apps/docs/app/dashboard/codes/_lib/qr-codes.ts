@@ -31,9 +31,24 @@ import { HttpError } from "@/lib/error-response";
 import { baseUrl } from "@/lib/metadata";
 import { getPlanForScope, getPlanLimits, type Plan } from "@/lib/plans";
 import { enforceRateLimits } from "@/lib/request-guards";
+import { signInPath } from "@/lib/safe-redirect";
 import { screenNewCodes, screenUrlChange } from "@/lib/safety/destinations";
 import { type ActiveScope, getActiveScope, isInScope } from "@/lib/scope";
-import { generateSlug, SHORT_LINK_BASE, shortLinkUrl } from "@/lib/short-links";
+import {
+  CUSTOM_SLUG_MAX,
+  CUSTOM_SLUG_MIN,
+  codeLinks,
+  generateSlug,
+  SHARED_SLUG_SCOPE,
+  SHORT_LINK_BASE,
+  SLUG_PROBLEM_MESSAGES,
+  slugProblem,
+} from "@/lib/short-links";
+import {
+  findTakenSlugs,
+  isUniqueViolation,
+  scopeForDomain,
+} from "@/lib/slug-claims";
 import { UnauthorizedError } from "@/types/errors";
 import { type ThemeStyles, themeStylePropsSchema } from "@/types/theme";
 
@@ -92,14 +107,18 @@ export const destinationUrlSchema = z
       return z.NEVER;
     }
     return url.href;
-  });
+  })
+  .describe(
+    "Where a scan sends people: a full http(s) URL, up to 2,048 characters",
+  );
 
 const titleSchema = z
   .string()
   .trim()
   .max(MAX_TITLE_LENGTH, `Titles can be up to ${MAX_TITLE_LENGTH} characters`)
   .nullish()
-  .transform((value) => value || null);
+  .transform((value) => value || null)
+  .describe("Name shown in the dashboard, up to 100 characters");
 
 const styleSchema = themeStylePropsSchema
   .refine((style) => JSON.stringify(style).length <= MAX_STYLE_LENGTH, {
@@ -108,13 +127,39 @@ const styleSchema = themeStylePropsSchema
   .nullish();
 
 /** A verified custom domain of the scope (Pro); null = the default short link. */
-const domainIdSchema = z.string().trim().min(1).max(64);
+const domainIdSchema = z
+  .string()
+  .trim()
+  .min(1)
+  .max(64)
+  .describe(
+    "A verified custom domain of the workspace (Pro); null uses the default qrdx.dev short link",
+  );
+
+/**
+ * A chosen back-half (Pro and Business). Shape here; reserved words depend on
+ * the domain, so createCodes/updateCode check those (INVALID_SLUG).
+ */
+export const slugSchema = z
+  .string()
+  .trim()
+  .superRefine((value, ctx) => {
+    const problem = slugProblem(value, { onCustomDomain: true });
+    if (problem && problem !== "reserved") {
+      ctx.addIssue({ code: "custom", message: SLUG_PROBLEM_MESSAGES[problem] });
+    }
+  })
+  .describe(
+    "A custom back-half for the short link, such as spring-menu (Pro and Business)",
+  );
 
 export const createCodeSchema = z.object({
   destinationUrl: destinationUrlSchema,
   title: titleSchema,
   style: styleSchema,
   domainId: domainIdSchema.nullish(),
+  /** Omitted or null = a generated 7-character slug */
+  slug: slugSchema.nullish(),
 });
 
 /** Editable fields, all optional (extend this, not the refined schema). */
@@ -123,6 +168,7 @@ export const updateCodeFields = z.object({
   title: titleSchema.optional(),
   style: styleSchema.optional(),
   domainId: domainIdSchema.nullable().optional(),
+  slug: slugSchema.optional(),
 });
 
 export const hasAnyField = (patch: Record<string, unknown>) =>
@@ -146,8 +192,11 @@ export interface QrCodeView {
   slug: string;
   /** The link to encode: on the code's custom domain once it is verified */
   shortLink: string;
-  /** `${SHORT_LINK_BASE}/q/<slug>`, which always works */
-  defaultShortLink: string;
+  /**
+   * `${SHORT_LINK_BASE}/q/<slug>`, which always works; null for a back-half
+   * chosen on a custom domain (it only exists there)
+   */
+  defaultShortLink: string | null;
   domain: DomainRef | null;
   destinationUrl: string;
   /** "redirect" sends visitors to destinationUrl; "page" opens the hosted page */
@@ -180,14 +229,12 @@ export function toCodeView(
   row: QrCodeRow,
   domain: DomainRef | null = null,
 ): QrCodeView {
-  const defaultShortLink = shortLinkUrl(row.slug);
+  const links = codeLinks(row, domain);
   return {
     id: row.id,
     slug: row.slug,
-    shortLink: domain?.verified
-      ? shortLinkUrl(row.slug, domain.hostname)
-      : defaultShortLink,
-    defaultShortLink,
+    shortLink: links.link,
+    defaultShortLink: links.defaultLink,
     domain,
     destinationUrl: row.destinationUrl,
     kind: row.kind,
@@ -219,12 +266,18 @@ const toOneCodeView = async (row: QrCodeRow) =>
 
 // ─── Scope + plan ────────────────────────────────────────────────────────────
 
-/** For dashboard pages: the active scope, or back to the sign-in entry point. */
-export async function requireDashboardScope(): Promise<ActiveScope> {
+/**
+ * For dashboard pages: the active scope, or sign in and come back to `next`
+ * (proxy.ts sends signed-out visitors there first; this covers a session that
+ * ended in between).
+ */
+export async function requireDashboardScope(
+  next = "/dashboard",
+): Promise<ActiveScope> {
   try {
     return await getActiveScope();
   } catch (error) {
-    if (error instanceof UnauthorizedError) redirect("/playground");
+    if (error instanceof UnauthorizedError) redirect(signInPath(next));
     throw error;
   }
 }
@@ -260,6 +313,8 @@ export interface CodeUsage {
   used: number;
   retentionDays: number;
   bulkApi: boolean;
+  /** May choose back-halves */
+  customSlugs: boolean;
 }
 
 export async function getCodeUsage(scope: ActiveScope): Promise<CodeUsage> {
@@ -274,6 +329,7 @@ export async function getCodeUsage(scope: ActiveScope): Promise<CodeUsage> {
     used,
     retentionDays: limits.analyticsRetentionDays,
     bulkApi: limits.bulkApi,
+    customSlugs: limits.customSlugs,
   };
 }
 
@@ -296,6 +352,90 @@ export function enforceCreateRateLimit(userId: string): Promise<void> {
   return enforceRateLimits([
     { limiter: createLimiter, key: `qr-codes:create:user:${userId}` },
   ]);
+}
+
+// The dialog checks as the user types (debounced): generous, but no scanner.
+const slugCheckLimiter = createRateLimiter({
+  limiter: slidingWindow(60, "60 s"),
+});
+
+export function enforceSlugCheckRateLimit(userId: string): Promise<void> {
+  return enforceRateLimits([
+    { limiter: slugCheckLimiter, key: `qr-codes:slug-check:user:${userId}` },
+  ]);
+}
+
+// ─── Back-halves ─────────────────────────────────────────────────────────────
+
+const slugPlanRequired = () =>
+  new HttpError(
+    402,
+    "PLAN_REQUIRED",
+    "Custom back-halves are part of Pro and Business.",
+  );
+
+const slugTaken = (slug: string) =>
+  new HttpError(
+    409,
+    "SLUG_TAKEN",
+    `${slug} is already taken. Try another back-half.`,
+  );
+
+/** Rules that depend on where the code lives (reserved words); throws INVALID_SLUG. */
+function assertSlugAllowed(slug: string, domainId: string | null) {
+  const problem = slugProblem(slug, { onCustomDomain: Boolean(domainId) });
+  if (problem) {
+    throw new HttpError(
+      400,
+      "INVALID_SLUG",
+      `${slug}: ${SLUG_PROBLEM_MESSAGES[problem]}`,
+    );
+  }
+}
+
+export interface SlugAvailability {
+  status: "available" | "taken" | "invalid" | "plan";
+  message: string;
+}
+
+/**
+ * For the dialog's live check: can a code in the scope (on `domainId`, or the
+ * default link) take this back-half? `codeId` = the code being edited.
+ */
+export async function checkSlugAvailability(
+  scope: ActiveScope,
+  input: { slug: string; domainId: string | null; codeId?: string },
+): Promise<SlugAvailability> {
+  const slug = input.slug.trim();
+  const limits = getPlanLimits(await getPlanForScope(scope));
+  if (!limits.customSlugs) {
+    return { status: "plan", message: slugPlanRequired().message };
+  }
+  if (input.domainId) {
+    try {
+      await assertBindableDomains(scope, [input.domainId]);
+    } catch (error) {
+      if (!(error instanceof HttpError)) throw error;
+      return { status: "invalid", message: error.message };
+    }
+  }
+  const problem = slugProblem(slug, {
+    onCustomDomain: Boolean(input.domainId),
+  });
+  if (problem) {
+    return { status: "invalid", message: SLUG_PROBLEM_MESSAGES[problem] };
+  }
+  const taken = await findTakenSlugs([slug], input.domainId, {
+    exceptCodeId: input.codeId,
+  });
+  return taken.has(slug)
+    ? {
+        status: "taken",
+        message: input.domainId
+          ? "Another code on this domain uses it. Try another one."
+          : "Another QRdx code uses it. Try another one.",
+      }
+    : { status: "available", message: "Available" };
 }
 
 // ─── Queries ─────────────────────────────────────────────────────────────────
@@ -334,8 +474,10 @@ function listStatusWhere(status: CodeListStatus): SQL | undefined {
   }
 }
 
-// A pasted short link (".../q/AbC1234" or "https://go.brand.com/AbC1234") finds its code.
-const SHORT_LINK_SLUG = /\/(?:q\/)?([0-9A-Za-z]{7})(?:[/?#]|$)/;
+// A pasted short link (".../q/spring-menu" or "https://go.brand.com/AbC1234") finds its code.
+const SHORT_LINK_SLUG = new RegExp(
+  `/(?:q/)?([A-Za-z0-9_-]{${CUSTOM_SLUG_MIN},${CUSTOM_SLUG_MAX}})(?:[/?#]|$)`,
+);
 
 /** Title, destination, notes, tag names (substring) or slug (exact). */
 function searchWhere(term: string): SQL {
@@ -508,8 +650,15 @@ export async function getCode(
 
 // ─── Mutations ───────────────────────────────────────────────────────────────
 
+/**
+ * Inserts rows; a generated slug that collides (≈1 in 3.5e12 per pair) is
+ * re-rolled, a chosen one (`chosen` ids) fails the whole request with
+ * SLUG_TAKEN. No conflict target: every unique index counts (shared and
+ * per-domain namespaces).
+ */
 async function insertWithUniqueSlugs(
   rows: (typeof qrCode.$inferInsert)[],
+  chosen: ReadonlySet<string> = new Set(),
 ): Promise<QrCodeRow[]> {
   const inserted: QrCodeRow[] = [];
   let pending = rows;
@@ -518,14 +667,17 @@ async function insertWithUniqueSlugs(
     const result = await db
       .insert(qrCode)
       .values(pending)
-      .onConflictDoNothing({ target: qrCode.slug })
+      .onConflictDoNothing()
       .returning();
     inserted.push(...result);
     const done = new Set(result.map((row) => row.id));
-    // A slug collision (≈1 in 3.5e12 per pair) only re-rolls that row.
-    pending = pending
-      .filter((row) => !done.has(row.id as string))
-      .map((row) => ({ ...row, slug: generateSlug() }));
+    pending = pending.filter((row) => !done.has(row.id as string));
+    const taken = pending.find((row) => chosen.has(row.id as string));
+    if (taken) {
+      if (inserted.length > 0) await deleteRows(inserted.map((row) => row.id));
+      throw slugTaken(taken.slug);
+    }
+    pending = pending.map((row) => ({ ...row, slug: generateSlug() }));
   }
 
   if (pending.length > 0) {
@@ -582,26 +734,53 @@ export async function createCodes(
     inputs.flatMap((input) => (input.domainId ? [input.domainId] : [])),
   );
 
+  // Chosen back-halves: Pro, allowed where the code lives, once per namespace.
+  const chosenKeys = new Set<string>();
+  for (const input of inputs) {
+    if (!input.slug) continue;
+    if (!limits.customSlugs) throw slugPlanRequired();
+    assertSlugAllowed(input.slug, input.domainId ?? null);
+    const key = `${scopeForDomain(input.domainId ?? null)}/${input.slug}`;
+    if (chosenKeys.has(key)) {
+      throw new HttpError(
+        400,
+        "INVALID_SLUG",
+        `${input.slug} is in the request more than once.`,
+      );
+    }
+    chosenKeys.add(key);
+  }
+
   // Codes created without a design start from the scope's default theme.
   const defaultStyle = inputs.some((input) => !input.style)
     ? (styleSchema.safeParse(await getDefaultThemeStyle(scope)).data ?? null)
     : null;
   const now = new Date();
-  const rows = inputs.map((input) => ({
-    id: cuid(),
-    userId: scope.userId,
-    organizationId: scope.organizationId,
-    slug: generateSlug(),
-    destinationUrl: input.destinationUrl,
-    title: input.title ?? null,
-    style: input.style ?? defaultStyle,
-    domainId: input.domainId ?? null,
-    ...(input.pageId && { kind: "page" as const, pageId: input.pageId }),
-    createdAt: now,
-    updatedAt: now,
-  }));
+  const chosen = new Set<string>();
+  const rows = inputs.map((input) => {
+    const id = cuid();
+    if (input.slug) chosen.add(id);
+    return {
+      id,
+      userId: scope.userId,
+      organizationId: scope.organizationId,
+      slug: input.slug || generateSlug(),
+      // Generated slugs always live in the shared namespace.
+      slugScope: input.slug
+        ? scopeForDomain(input.domainId ?? null)
+        : SHARED_SLUG_SCOPE,
+      destinationUrl: input.destinationUrl,
+      title: input.title ?? null,
+      style: input.style ?? defaultStyle,
+      domainId: input.domainId ?? null,
+      ...(input.pageId && { kind: "page" as const, pageId: input.pageId }),
+      createdAt: now,
+      updatedAt: now,
+    };
+  });
   const inserted = await insertWithUniqueSlugs(
     await screenNewCodes(scope, rows),
+    chosen,
   );
 
   if (capped && (await countUnarchived(scope)) > limits.dynamicCodes) {
@@ -619,9 +798,66 @@ export async function createCodes(
   return views;
 }
 
+type SlugValues = Pick<typeof qrCode.$inferInsert, "slug" | "slugScope">;
+
+/**
+ * The slug and namespace after a move or a new back-half, as a list of
+ * candidates to try in order (the next one when the previous is taken):
+ * - a chosen back-half lives where the code goes (Pro);
+ * - a shared-namespace slug stays (its qrdx.dev/q/ link keeps working);
+ * - a domain's own back-half moves with the code when it's allowed and free
+ *   there, else (back on the default link) the code gets a generated slug.
+ */
+async function slugChange(
+  scope: ActiveScope,
+  current: QrCodeRow,
+  patch: UpdateCodeInput,
+  domainId: string | null,
+): Promise<{ candidates: SlugValues[]; chosen: boolean } | null> {
+  const nextScope = scopeForDomain(domainId);
+  if (patch.slug !== undefined && patch.slug !== current.slug) {
+    if (!getPlanLimits(await getPlanForScope(scope)).customSlugs) {
+      throw slugPlanRequired();
+    }
+    assertSlugAllowed(patch.slug, domainId);
+    return {
+      candidates: [{ slug: patch.slug, slugScope: nextScope }],
+      chosen: true,
+    };
+  }
+  if (
+    current.slugScope === SHARED_SLUG_SCOPE ||
+    current.slugScope === nextScope
+  ) {
+    return null;
+  }
+  const keep = !slugProblem(current.slug, {
+    onCustomDomain: Boolean(domainId),
+  });
+  const generated = Array.from({ length: 5 }, () => ({
+    slug: generateSlug(),
+    slugScope: SHARED_SLUG_SCOPE,
+  }));
+  if (domainId) {
+    // Onto another custom domain: the back-half comes along or the move fails.
+    if (!keep) assertSlugAllowed(current.slug, domainId);
+    return {
+      candidates: [{ slug: current.slug, slugScope: nextScope }],
+      chosen: true,
+    };
+  }
+  return {
+    candidates: keep
+      ? [{ slug: current.slug, slugScope: nextScope }, ...generated]
+      : generated,
+    chosen: false,
+  };
+}
+
 /**
  * Destination, title and design stay editable on any plan ("codes never die").
  * Moving a code to a custom domain needs Pro; back to the default link never does.
+ * Choosing a new back-half needs Pro and changes the link.
  */
 export async function updateCode(
   scope: ActiveScope,
@@ -641,25 +877,67 @@ export async function updateCode(
   }
   if (patch.title !== undefined) values.title = patch.title;
   if (patch.style !== undefined) values.style = patch.style;
+  let domainId = current.domainId;
   if (patch.domainId !== undefined && patch.domainId !== current.domainId) {
     if (patch.domainId) await assertBindableDomains(scope, [patch.domainId]);
     values.domainId = patch.domainId;
+    domainId = patch.domainId;
   }
-  if (Object.keys(values).length === 0) return toOneCodeView(current);
+  const slug = await slugChange(scope, current, patch, domainId);
+  if (Object.keys(values).length === 0 && !slug) return toOneCodeView(current);
+
+  const first = slug?.candidates[0];
+  if (slug?.chosen && first) {
+    // Checked up front so a taken back-half doesn't leave a version behind.
+    const taken = await findTakenSlugs([first.slug as string], domainId, {
+      exceptCodeId: id,
+    });
+    if (taken.has(first.slug as string)) throw slugTaken(first.slug as string);
+  }
 
   await snapshotCodeVersion(id, scope.userId);
-  const [row] = await db
-    .update(qrCode)
-    .set(values)
-    .where(and(eq(qrCode.id, id), scopeWhere(scope)))
-    .returning();
+  const where = and(eq(qrCode.id, id), scopeWhere(scope));
+  let row: QrCodeRow | undefined;
+  let conflict = false;
+  for (const candidate of slug?.candidates ?? [null]) {
+    try {
+      [row] = await db
+        .update(qrCode)
+        .set(candidate ? { ...values, ...candidate } : values)
+        .where(where)
+        .returning();
+      if (candidate) Object.assign(values, candidate);
+      conflict = false;
+      break;
+    } catch (error) {
+      if (!isUniqueViolation(error)) throw error;
+      conflict = true;
+      if (!candidate) {
+        // A shared slug moving onto a domain that already serves it.
+        throw new HttpError(
+          409,
+          "SLUG_TAKEN",
+          `Another code on that domain already uses ${current.slug}. Choose another back-half to move this one.`,
+        );
+      }
+      if (slug?.chosen) throw slugTaken(candidate.slug as string);
+    }
+  }
+  if (conflict) {
+    throw new HttpError(503, "SLUG_UNAVAILABLE", "Please try again.");
+  }
   if (!row) throw notFound();
   const view = await toOneCodeView(row);
   // code.updated webhooks + alerts, after the response (never throws).
   (await import("@/lib/events/emit")).emitCodeUpdated(
     scope,
     view,
-    Object.keys(values).filter((field) => field !== "isActive"),
+    Object.keys(values).filter(
+      (field) =>
+        field !== "isActive" &&
+        field !== "slugScope" &&
+        !(field === "slug" && values.slug === current.slug),
+    ),
   );
   return view;
 }

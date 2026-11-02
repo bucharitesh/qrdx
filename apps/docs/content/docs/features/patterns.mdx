@@ -8,7 +8,7 @@ Change the shape of QR code elements for unique designs. See every option drawn 
 
 ## Body Patterns
 
-Control the shape of data dots. There are 23 body patterns:
+Control the shape of data dots. There are {facts.bodyPatterns} body patterns:
 
 - Classic: `square`, `small-square`, `horizontal-line`, `vertical-line`, `octagon`
 - Rounded: `circle` (default), `circle-large`, `rounded`, `liquid`, `liquid-horizontal`, `liquid-vertical`, `random-dots`
@@ -35,7 +35,7 @@ import { QRCode } from 'qrdx';
 
 ## Corner Eye Patterns
 
-Control the shape of corner markers. There are 17 corner eye patterns (the React component defaults to `gear`; the CLI defaults to `square`): `square`, `rounded`, `extra-rounded`, `squircle`, `cushion`, `bevel`, `octagon`, `leaf`, `leaf-reverse`, `drop`, `petal`, `shield`, `gear`, `circle`, `diya`, `message` and `pointy`.
+Control the shape of corner markers. There are {facts.eyeShapes} corner eye patterns (the React component defaults to `gear`; the CLI defaults to `square`): `square`, `rounded`, `extra-rounded`, `squircle`, `cushion`, `bevel`, `octagon`, `leaf`, `leaf-reverse`, `drop`, `petal`, `shield`, `gear`, `circle`, `diya`, `message` and `pointy`.
 
 `leaf`, `leaf-reverse`, `drop` and `petal` turn each of the three eyes to face its corner of the code. `circle` eyes may be missed by some scanner apps; the [scan score](/docs/utilities) warns about them.
 
@@ -47,7 +47,7 @@ Control the shape of corner markers. There are 17 corner eye patterns (the React
 
 ## Corner Eye Dot Patterns
 
-Control the dot inside each corner marker. There are 21 corner eye dot patterns (the React component defaults to `circle`; the CLI defaults to `square`): `square`, `rounded`, `extra-rounded`, `circle`, `squircle`, `octagon`, `hexagon`, `dots`, `leaf`, `leaf-reverse`, `drop`, `drop-reverse`, `plus`, `cross-rounded`, `flower`, `heart`, `message`, `message-reverse`, `diya`, `diya-reverse` and `rounded-triangle`.
+Control the dot inside each corner marker. There are {facts.eyeCentres} corner eye dot patterns (the React component defaults to `circle`; the CLI defaults to `square`): `square`, `rounded`, `extra-rounded`, `circle`, `squircle`, `octagon`, `hexagon`, `dots`, `leaf`, `leaf-reverse`, `drop`, `drop-reverse`, `plus`, `cross-rounded`, `flower`, `heart`, `message`, `message-reverse`, `diya`, `diya-reverse` and `rounded-triangle`.
 
 ```tsx
 <QRCode value="https://example.com" cornerEyeDotPattern="square" />

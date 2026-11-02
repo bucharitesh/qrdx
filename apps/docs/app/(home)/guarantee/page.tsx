@@ -8,6 +8,7 @@ import {
 } from "@/components/sections/pricing/guarantee-block";
 import { ToolHero } from "@/components/sections/tools/tool-hero";
 import { siteConfig } from "@/config/site";
+import { isFeatureAvailable } from "@/lib/feature-availability";
 import { createMetadata } from "@/lib/metadata";
 
 export const metadata: Metadata = createMetadata({
@@ -33,7 +34,8 @@ const scenarios: { when: string; outcome: string }[] = [
   {
     when: "You move to a smaller plan",
     outcome:
-      "Existing codes, landing pages and verified custom domains keep working. Analytics show the history your new plan includes.",
+      // Custom domains only where they can be added (lib/feature-availability-rules.ts)
+      `Existing codes, landing pages${isFeatureAvailable("customDomains") ? " and verified custom domains" : ""} keep working. Analytics show the history your new plan includes.`,
   },
   {
     when: "You go over a limit",
@@ -89,7 +91,7 @@ export default function GuaranteePage() {
 
       <section
         aria-labelledby="promises"
-        className="w-full px-6 md:px-10 py-12 flex flex-col gap-6"
+        className="w-full px-10 py-12 flex flex-col gap-6"
       >
         <h2
           className="text-2xl font-medium tracking-tighter text-secondary-foreground"
@@ -124,7 +126,7 @@ export default function GuaranteePage() {
 
       <section
         aria-labelledby="scenarios"
-        className="w-full px-6 md:px-10 py-12 flex flex-col gap-6"
+        className="w-full px-10 py-12 flex flex-col gap-6"
       >
         <h2
           className="text-2xl font-medium tracking-tighter text-secondary-foreground"
@@ -151,7 +153,7 @@ export default function GuaranteePage() {
 
       <section
         aria-labelledby="exception"
-        className="w-full px-6 md:px-10 py-12 flex flex-col gap-3 max-w-3xl"
+        className="w-full px-10 py-12 flex flex-col gap-3 max-w-3xl"
       >
         <h2
           className="text-2xl font-medium tracking-tighter text-secondary-foreground"

@@ -23,6 +23,8 @@ export function SpiderRope({
       anchor={anchor}
       rest={rest}
       sprite="spider"
+      label="Spider"
+      cue="spider"
       width={width}
       // The render is 243×512 with its silk to the top edge; the legs start ~34% down.
       ratio={512 / 243}

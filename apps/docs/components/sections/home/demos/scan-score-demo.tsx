@@ -3,18 +3,13 @@
 import { Close, Tick } from "@repo/design-system/components/icons";
 import { cn } from "@repo/design-system/lib/utils";
 import { motion, useInView, useReducedMotion } from "motion/react";
-import { getQRData, getScanScore, QRCode, type ScanScoreResult } from "qrdx";
-import { useEffect, useRef, useState } from "react";
+import { getScanScore, QRCodeSVG, type ScanScoreResult } from "qrdx";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { GRADE_LABELS } from "@/components/editor/scan-score";
 import { EASE } from "@/components/mockups/motion";
 import { SegmentedControl } from "@/components/mockups/segmented-control";
-import { easterEggUrl } from "@/lib/easter-eggs";
+import { HOME_CODES } from "./codes";
 import { DemoStage, QrTile, Readout } from "./demo-ui";
-import { FAMILY } from "./qr-family";
-
-const VALUE = easterEggUrl("score");
-/** Quiet zone in modules, drawn into the code so the score counts it. */
-const MARGIN = 2;
 
 const INKS = {
   ink: { label: "Ink", color: "#0b0b0d" },
@@ -50,30 +45,23 @@ export function ScanScoreDemo() {
   const [result, setResult] = useState<ScanScoreResult | null>(null);
   const [checking, setChecking] = useState(true);
   const fg = INKS[ink].color;
+  // Only the ink changes; the logo stays as printed.
+  const props = useMemo(
+    () => ({
+      ...HOME_CODES.scanScore,
+      fgColor: fg,
+      eyeColor: fg,
+      dotColor: fg,
+    }),
+    [fg],
+  );
 
   useEffect(() => {
     if (!inView) return;
     const controller = new AbortController();
     setChecking(true);
     const timer = window.setTimeout(() => {
-      getScanScore(
-        {
-          ...getQRData({
-            value: VALUE,
-            bgColor: FAMILY.bgColor,
-            fgColor: fg,
-            eyeColor: fg,
-            dotColor: fg,
-            bodyPattern: FAMILY.bodyPattern,
-            hideLogo: true,
-          }),
-          level: "Q",
-          margin: MARGIN,
-          cornerEyePattern: FAMILY.cornerEyePattern,
-          cornerEyeDotPattern: FAMILY.cornerEyeDotPattern,
-        },
-        { signal: controller.signal },
-      )
+      getScanScore(props, { signal: controller.signal })
         .then((score) => setResult(score))
         .catch(() => undefined)
         .finally(() => {
@@ -84,7 +72,7 @@ export function ScanScoreDemo() {
       window.clearTimeout(timer);
       controller.abort();
     };
-  }, [fg, inView]);
+  }, [props, inView]);
 
   const score = result?.score ?? 0;
   const checks = result
@@ -101,23 +89,10 @@ export function ScanScoreDemo() {
       >
         <div className="relative w-24 shrink-0 sm:w-36">
           <QrTile
-            label={`QR code in ${INKS[ink].label.toLowerCase()} ink on white`}
+            label={`QR code with the QRdx logo, in ${INKS[ink].label.toLowerCase()} ink on white`}
             className="w-full p-0 transition-colors"
           >
-            <QRCode
-              value={VALUE}
-              size={144}
-              level="Q"
-              margin={MARGIN}
-              hideLogo
-              bgColor={FAMILY.bgColor}
-              fgColor={fg}
-              eyeColor={fg}
-              dotColor={fg}
-              bodyPattern={FAMILY.bodyPattern}
-              cornerEyePattern={FAMILY.cornerEyePattern}
-              cornerEyeDotPattern={FAMILY.cornerEyeDotPattern}
-            />
+            <QRCodeSVG {...props} />
           </QrTile>
           {checking && !reduce && (
             <motion.span

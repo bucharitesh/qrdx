@@ -106,10 +106,11 @@ export function UseCasesSection() {
                   <Card className="h-full gap-0 py-0 transition-[border-color,box-shadow] duration-200 group-hover:border-foreground/15 group-hover:shadow-md">
                     <div className="p-1.5 pb-0">
                       <div className="aspect-[4/3] overflow-hidden rounded-[20px] bg-muted">
+                        {/* Decorative: the card's title names the scene. */}
                         <MockupImage
                           {...useCase.image}
+                          alt=""
                           bare
-                          sizes="(min-width: 1024px) 300px, (min-width: 640px) 50vw, 100vw"
                           className="h-full object-cover transition-transform duration-500 ease-[cubic-bezier(.32,.72,0,1)] group-hover:scale-[1.04] motion-reduce:transition-none motion-reduce:group-hover:scale-100"
                         />
                       </div>

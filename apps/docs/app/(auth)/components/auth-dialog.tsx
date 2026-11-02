@@ -21,17 +21,11 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { QrdxLogoAnimation } from "@/components/qrdx-logo-animation";
 import { siteConfig } from "@/config/site";
+import { safeNextPath } from "@/lib/safe-redirect";
 import { EmailCodeSignIn } from "./email-code-sign-in";
 
 const FOOTER_LINK =
   "rounded-sm transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
-
-/** The path when it stays on this site ("//host" and "/\host" leave it). */
-function sameSitePath(url: string | undefined): string | undefined {
-  return url?.startsWith("/") && !url.startsWith("//") && !url.startsWith("/\\")
-    ? url
-    : undefined;
-}
 
 interface AuthDialogProps {
   open: boolean;
@@ -58,7 +52,8 @@ export function AuthDialog({
   // Address the email code went to (the code step), and a key to start over.
   const [codeSentTo, setCodeSentTo] = useState<string | null>(null);
   const [emailFormKey, setEmailFormKey] = useState(0);
-  const redirectTo = sameSitePath(callbackURL);
+  // Only a path on this site, never another origin (lib/safe-redirect).
+  const redirectTo = safeNextPath(callbackURL, "") || undefined;
 
   const getCallbackUrl = () => {
     if (redirectTo) return redirectTo;

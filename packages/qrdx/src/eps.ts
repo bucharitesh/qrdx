@@ -3,6 +3,7 @@
 import type { QRProps } from "../types";
 import { downloadFile } from "./download";
 import { getPrintLayout, type PrintColorMode } from "./print";
+import { fmt } from "./utils/fmt";
 import { type RGBAColor, rgbToCmyk } from "./utils/parse-color";
 import { decodePng, deflate } from "./utils/png";
 import {
@@ -263,11 +264,6 @@ qrdxdict begin
 /QRDX-Regular /Helvetica latin1
 /QRDX-Bold /Helvetica-Bold latin1
 end`;
-
-const fmt = (value: number) => {
-  const rounded = Math.round(value * 1000) / 1000;
-  return Object.is(rounded, -0) ? "0" : String(rounded);
-};
 
 /** PostScript string literal; characters outside Latin-1 become "?". */
 function psString(text: string): string {

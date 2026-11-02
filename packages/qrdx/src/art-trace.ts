@@ -13,6 +13,8 @@
 // 4. Marching squares at the 0.5 level, then Douglas–Peucker simplification
 //    and gently rounded corners.
 
+import { roundTo } from "./utils/fmt";
+
 /** sRGB color, channels 0–1 (gamma encoded) */
 export type RGB = [number, number, number];
 
@@ -422,7 +424,8 @@ function simplifyLoop(loop: Point[], epsilon: number): Point[] {
   return [...first.slice(0, -1), ...second.slice(0, -1)];
 }
 
-const r2 = (n: number) => Math.round(n * 100) / 100;
+// Logo outlines are in sample pixels, drawn scaled down: 0.01 is plenty
+const r2 = (n: number) => roundTo(n, 2);
 
 /** Closed path through `loop` with corners rounded by at most `radius`. */
 function smoothPath(loop: Point[], radius: number): string {

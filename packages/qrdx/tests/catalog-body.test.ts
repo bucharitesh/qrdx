@@ -13,11 +13,12 @@ describe("new body patterns", () => {
       expect(unreadable({ bodyPattern, cornerEyePattern })).toEqual([]);
     });
 
-    it.each(
-      conditions({ bodyPattern, ...{ cornerEyePattern: "gear" } })
-    )("decodes (default eyes): %s", (_label, check) => {
-      expect(check()).toBe(true);
-    });
+    it.each(conditions({ bodyPattern, ...{ cornerEyePattern: "gear" } }))(
+      "decodes (default eyes): %s",
+      (_label, check) => {
+        expect(check()).toBe(true);
+      }
+    );
 
     it.each(
       conditions({

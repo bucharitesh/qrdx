@@ -1,41 +1,59 @@
-// Keeping a link's original back-half (go.brand.com/<back-half>) as its QRdx
-// slug. QRdx short links are exactly 7 letters or digits and slugs are unique
-// across all of QRdx, so not every back-half can move. Pure and client-safe.
+// Keeping a link's original back-half (bit.ly/<back-half>,
+// go.brand.com/<back-half>) as its QRdx slug: on the workspace's custom domain
+// for links on that domain (unique per domain), or on the shared qrdx.dev/q/
+// (unique across QRdx). Pure and client-safe.
 
 import {
-  generateSlug,
-  isReservedSlug,
-  isValidSlug,
-  SLUG_LENGTH,
+  isGeneratedSlug,
+  type SlugProblem,
+  slugProblem,
 } from "@/lib/short-links";
-import type { BackHalfStatus } from "./types";
+import type { BackHalfStatus, BackHalfTarget } from "./types";
 
-export const BACK_HALF_MESSAGES: Record<
-  Exclude<BackHalfStatus, "kept" | "not-on-domain">,
-  string
-> = {
-  shape: `QRdx short links are exactly ${SLUG_LENGTH} letters or digits, so this back-half can't be kept.`,
-  reserved: "This back-half is reserved for QRdx pages.",
-  taken: "Another QRdx code already uses this back-half.",
-  repeated: "Another selected link has the same back-half.",
-};
+type ConflictStatus = Exclude<BackHalfStatus, "kept" | "not-on-domain">;
 
-/** Why a back-half can't be a QRdx slug, before checking availability. */
+/** Why a back-half wasn't kept, for the preview ("spring-menu → Ab3xK9q"). */
+export function backHalfMessage(
+  status: ConflictStatus,
+  target: BackHalfTarget,
+  domain: string | null,
+): string {
+  const where =
+    target === "domain" && domain ? domain : "the shared qrdx.dev links";
+  switch (status) {
+    case "shape":
+      return "QRdx back-halves are 3 to 64 letters, digits, - or _, so this one can't be kept.";
+    case "reserved":
+      return target === "domain"
+        ? `This back-half is reserved on ${where}.`
+        : domain
+          ? `This back-half is reserved on qrdx.dev. Add ${domain} on the Domains page to keep it there.`
+          : "This back-half is reserved on qrdx.dev.";
+    case "taken":
+      return target === "domain"
+        ? `Another code on ${where} already uses this back-half.`
+        : "Another QRdx code already uses this back-half on qrdx.dev.";
+    case "repeated":
+      return "Another selected link has the same back-half.";
+  }
+}
+
+/** Why a back-half can't be a slug in `target`, before checking availability. */
 export function backHalfShapeProblem(
   backHalf: string,
+  target: BackHalfTarget,
 ): "shape" | "reserved" | null {
-  if (isValidSlug(backHalf)) return null;
-  return /^[0-9A-Za-z]+$/.test(backHalf) &&
-    backHalf.length === SLUG_LENGTH &&
-    isReservedSlug(backHalf)
-    ? "reserved"
-    : "shape";
+  const problem: SlugProblem | null = slugProblem(backHalf, {
+    onCustomDomain: target === "domain",
+  });
+  if (!problem) return null;
+  return problem === "reserved" ? "reserved" : "shape";
 }
 
 const BASE62 = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
-/** Deterministic base62 filler from a string (FNV-1a), for padding. */
-function filler(seed: string, length: number): string {
+/** Deterministic base62 string from a seed (FNV-1a). */
+function hashSlug(seed: string, length: number): string {
   let hash = 0x811c9dc5;
   let out = "";
   for (let round = 0; out.length < length; round++) {
@@ -49,25 +67,16 @@ function filler(seed: string, length: number): string {
 }
 
 /**
- * Alternatives close to the original: its letters and digits cut or padded to
- * 7, then two random slugs. The caller drops the taken ones.
+ * Generated slugs to use when a back-half can't be kept. Derived from the
+ * link, so the preview and the import that follows show the same one; a
+ * random one comes last. The caller drops the taken ones.
  */
-export function backHalfCandidates(
-  backHalf: string,
-  random: () => string = generateSlug,
+export function fallbackCandidates(
+  seed: string,
+  random: () => string,
 ): string[] {
-  const alnum = backHalf.replace(/[^0-9A-Za-z]/g, "");
-  const candidates: string[] = [];
-  if (alnum.length >= SLUG_LENGTH) {
-    candidates.push(alnum.slice(0, SLUG_LENGTH), alnum.slice(-SLUG_LENGTH));
-  } else if (alnum.length > 0) {
-    candidates.push(
-      alnum + filler(backHalf, SLUG_LENGTH - alnum.length),
-      alnum + filler(`${backHalf}+`, SLUG_LENGTH - alnum.length),
-    );
-  }
-  candidates.push(random(), random());
-  return [...new Set(candidates)].filter(isValidSlug);
+  const candidates = [hashSlug(seed, 7), hashSlug(`${seed}+`, 7), random()];
+  return [...new Set(candidates)].filter(isGeneratedSlug);
 }
 
 /** First candidate nobody uses (taken = in QRdx, used = earlier in the batch). */

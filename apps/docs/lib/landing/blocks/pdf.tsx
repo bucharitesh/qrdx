@@ -14,6 +14,7 @@ import {
   surfaceClass,
 } from "@/components/landing/block-kit";
 import { BlockHeading, PreviewPlaceholder } from "@/lib/files/block-ui";
+import { canFramePdf } from "@/lib/files/pdf-frame";
 import { fileSourceSchema, sourceName, sourceUrl } from "@/lib/files/source";
 import { type BlockRenderProps, registerBlock } from "../registry";
 import { PdfEditor } from "./pdf-editor";
@@ -24,7 +25,10 @@ export const pdfBlockSchema = z.object({
   source: fileSourceSchema.nullable().default(null),
   title: lineText(120).default(""),
   description: longText(500).default(""),
-  /** Show the document inline on screens wide enough to read it */
+  /**
+   * Show the document inline on screens wide enough to read it (uploaded
+   * PDFs only: links to other sites get the "Open PDF" button)
+   */
   inline: z.boolean().default(true),
   allowDownload: z.boolean().default(true),
   openLabel: lineText(40).default(""),
@@ -55,7 +59,9 @@ function PdfBlock({ id, props, context }: BlockRenderProps<PdfBlockProps>) {
         preview={context.thumbnail}
         title={props.title}
       />
-      {props.inline && <PdfInlineViewer src={src} title={label} />}
+      {props.inline && canFramePdf(props.source) && (
+        <PdfInlineViewer src={src} title={label} />
+      )}
       <div className={cn(surfaceClass, "flex items-center gap-3 p-3")}>
         <span className="flex size-10 shrink-0 items-center justify-center rounded-(--lp-radius) bg-(--lp-primary) text-(--lp-primary-fg)">
           <FileText aria-hidden="true" className="size-5" />

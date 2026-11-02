@@ -29,14 +29,16 @@ export function buildUserContentPartsFromPromptData(
           });
         } catch {
           userContentParts.push({
-            type: "image",
-            image: image.url,
+            type: "file",
+            mediaType: "image",
+            data: image.url,
           });
         }
       } else {
         userContentParts.push({
-          type: "image",
-          image: image.url,
+          type: "file",
+          mediaType: "image",
+          data: image.url,
         });
       }
     });

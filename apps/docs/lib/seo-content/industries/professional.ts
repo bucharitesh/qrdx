@@ -106,7 +106,7 @@ export const professional: SeoGroup = {
       title: "QR codes for marketing agencies",
       seoTitle: "QR Codes for Marketing Agencies and Campaigns",
       metaDescription:
-        "QR codes for marketing agencies: trackable campaign codes per channel, client custom domains, UTM tagging, A/B tests, reporting exports and team access.",
+        "QR codes for marketing agencies: trackable campaign codes per channel, UTM tagging, A/B tests, reporting exports and team access for every client.",
       summary:
         "Per-channel campaign codes, client domains, UTMs and scan reports.",
       intro: [
@@ -372,7 +372,7 @@ export const professional: SeoGroup = {
         {
           question: "Should banks use QR codes, given QR fraud?",
           answer:
-            "Yes, carefully. Use your own domain, link only to public pages or the app store, tell customers what genuine codes look like, and never ask for credentials behind a code. These steps make your codes easy to verify and fakes easier to spot.",
+            "Yes, carefully. Link to your own website or the app store, open only public pages, tell customers what genuine codes look like, and never ask for credentials behind a code. These steps make your codes easy to verify and fakes easier to spot.",
         },
         {
           question: "How do customers know a bank's QR code is genuine?",

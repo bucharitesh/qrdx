@@ -9,7 +9,7 @@ const root = import.meta.dirname;
 // analytics gating. Drop deployment and service variables before any test
 // module loads; `test.env` below then sets the fixed fake ones.
 const DEPLOYMENT_ENV =
-  /^(VERCEL|NEXT_PUBLIC_|KV_|UPSTASH_|REDIS_|POLAR_|RESEND_|EMAIL_|GOOGLE_|GITHUB_|R2_|DUB_|DROPBOX_|SLACK_|HUBSPOT_|MAILCHIMP_|NOTION_|BOX_|MICROSOFT_|CALENDLY_|STRIPE_|SHOPIFY_|WEB_RISK_|GROQ_|FAL_|CRON_|ADMIN_|INTEGRATION_|SCAN_HASH|TURNSTILE_|POSTHOG_|UMAMI_|DATABASE_|PG|POSTGRES_|NEON_|BETTER_AUTH_|QRDX_|SHORT_LINK|BASE_URL)/;
+  /^(VERCEL|NEXT_PUBLIC_|KV_|UPSTASH_|REDIS_|POLAR_|RESEND_|EMAIL_|GOOGLE_|GITHUB_|R2_|DUB_|BITLY_|DROPBOX_|SLACK_|HUBSPOT_|MAILCHIMP_|NOTION_|BOX_|MICROSOFT_|CALENDLY_|STRIPE_|SHOPIFY_|WEB_RISK_|GROQ_|AI_|YOUTUBE_|SPOTIFY_|CSP_|CRON_|ADMIN_|INTEGRATION_|SCAN_HASH|TURNSTILE_|POSTHOG_|UMAMI_|DATABASE_|PG|POSTGRES_|NEON_|BETTER_AUTH_|QRDX_|SHORT_LINK|BASE_URL)/;
 for (const key of Object.keys(process.env)) {
   if (DEPLOYMENT_ENV.test(key)) delete process.env[key];
 }
@@ -57,7 +57,6 @@ const config: ViteUserConfig = {
       R2_SECRET_ACCESS_KEY: "test-secret-key",
       R2_BUCKET: "test-bucket",
       RESEND_API_KEY: "",
-      FAL_KEY: "",
     },
   },
 };

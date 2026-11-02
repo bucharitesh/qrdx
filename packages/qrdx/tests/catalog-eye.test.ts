@@ -17,28 +17,31 @@ import {
 
 describe("new eye frames", () => {
   describe.each(NEW_EYES)("%s", (cornerEyePattern) => {
-    it.each(
-      BODY_PATTERN.filter((body) => !WEAK_BODIES.has(body))
-    )("decodes with a %s body", (bodyPattern) => {
-      expect(unreadable({ bodyPattern, cornerEyePattern })).toEqual([]);
-    });
+    it.each(BODY_PATTERN.filter((body) => !WEAK_BODIES.has(body)))(
+      "decodes with a %s body",
+      (bodyPattern) => {
+        expect(unreadable({ bodyPattern, cornerEyePattern })).toEqual([]);
+      }
+    );
 
-    it.each(
-      CORNER_EYE_DOT_PATTERNS.filter((dot) => !WEAK_DOTS.has(dot))
-    )("decodes with %s dots", (cornerEyeDotPattern) => {
-      expect(
-        unreadable({
-          bodyPattern: "square",
-          cornerEyePattern,
-          cornerEyeDotPattern,
-        })
-      ).toEqual([]);
-    });
+    it.each(CORNER_EYE_DOT_PATTERNS.filter((dot) => !WEAK_DOTS.has(dot)))(
+      "decodes with %s dots",
+      (cornerEyeDotPattern) => {
+        expect(
+          unreadable({
+            bodyPattern: "square",
+            cornerEyePattern,
+            cornerEyeDotPattern,
+          })
+        ).toEqual([]);
+      }
+    );
 
-    it.each(
-      conditions({ ...PLAIN, cornerEyePattern })
-    )("decodes: %s", (_label, check) => {
-      expect(check()).toBe(true);
-    });
+    it.each(conditions({ ...PLAIN, cornerEyePattern }))(
+      "decodes: %s",
+      (_label, check) => {
+        expect(check()).toBe(true);
+      }
+    );
   });
 });

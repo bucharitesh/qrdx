@@ -1,24 +1,24 @@
 "use client";
 
 import { type CSSProperties, useEffect, useRef } from "react";
-import { soundEvent } from "@/lib/sound/emit";
-import { BatArt } from "./art";
+import { BatArt, batHeight } from "./art";
+import { CHARACTER_BUTTON, seasonalCue } from "./cue";
 import styles from "./seasonal.module.css";
 import { addTick, prefersReducedMotion } from "./ticker";
 
-// A loose, organic cluster (never an even row): offsets from the cluster's
-// top-right corner, each bat on its own short silk thread.
+// Three bats hanging by their feet from the roost's edge, big–small–big:
+// each one's centre as an offset from the roost's right end, with a slight
+// lean so they don't read as stamped copies.
 const SLOTS = [
-  { dx: -10, thread: 4, size: 18, tilt: 172 },
-  { dx: -27, thread: 13, size: 15, tilt: 189 },
-  { dx: -41, thread: 2, size: 17, tilt: 181 },
-  { dx: -19, thread: 27, size: 14, tilt: 194 },
-  { dx: -35, thread: 31, size: 16, tilt: 168 },
+  { dx: -9, size: 18, tilt: -2 },
+  { dx: -28, size: 15, tilt: 3 },
+  { dx: -47, size: 18, tilt: -1 },
 ];
 const BAT_IDS = SLOTS.map((_, i) => `bat-${i}`);
-export const ROOST_WIDTH = 52;
+export const ROOST_WIDTH = 56;
+export const ROOST_HEIGHT = batHeight(18);
 
-/** Cluster corner plus the box the flock may flutter in (stage coordinates). */
+/** Roost's right end on its edge, plus the box the flock may flutter in (stage coordinates). */
 export interface RoostBox {
   x: number;
   y: number;
@@ -37,9 +37,10 @@ interface Bat {
 }
 
 /**
- * Bats roosting upside down in a page gutter. Hover near them (or click one)
- * and they flutter around as a flock (separation, alignment, cohesion) inside
- * their gutter, dodge the pointer, then settle back on their threads.
+ * Bats roosting upside down from the window's top edge in a page gutter.
+ * Hover near them (or click one) and they flutter around as a flock
+ * (separation, alignment, cohesion) inside their gutter, dodge the pointer,
+ * then hang back up.
  */
 export function BatRoost({
   stage,
@@ -48,7 +49,7 @@ export function BatRoost({
   stage: HTMLElement;
   roost: RoostBox;
 }) {
-  const nodes = useRef<(HTMLDivElement | null)[]>([]);
+  const nodes = useRef<(HTMLButtonElement | null)[]>([]);
   const roostRef = useRef(roost);
   roostRef.current = roost;
 
@@ -56,7 +57,7 @@ export function BatRoost({
     const reduced = prefersReducedMotion();
     const home = (i: number) => ({
       x: roostRef.current.x + SLOTS[i].dx,
-      y: roostRef.current.y + SLOTS[i].thread,
+      y: roostRef.current.y,
     });
     const bats: Bat[] = SLOTS.map((_, i) => ({
       mode: "roost",
@@ -82,7 +83,22 @@ export function BatRoost({
     };
     settle();
     window.addEventListener("resize", settle);
-    if (reduced) return () => window.removeEventListener("resize", settle);
+
+    // Click, tap or Enter / Space on a bat: a flutter, and (with motion) the
+    // flock takes off. Coming near only startles them, silently.
+    let scatterNow: (() => void) | null = null;
+    const onTap = () => {
+      seasonalCue("bat");
+      scatterNow?.();
+    };
+    for (const node of nodes.current) node?.addEventListener("click", onTap);
+    const detach = () => {
+      window.removeEventListener("resize", settle);
+      for (const node of nodes.current) {
+        node?.removeEventListener("click", onTap);
+      }
+    };
+    if (reduced) return detach;
 
     let pointer: { x: number; y: number } | null = null;
     let phase: "out" | "home" = "home";
@@ -153,8 +169,12 @@ export function BatRoost({
           bat.vx = (bat.vx / speed) * max;
           bat.vy = (bat.vy / speed) * max;
         }
-        // Stay inside the gutter: never over the page rails or content.
-        bat.x = Math.max(box.minX, Math.min(box.maxX, bat.x + bat.vx * dt));
+        // Stay inside the gutter, wingtips included: never over the rails or content.
+        const half = Math.min(SLOTS[i].size * 0.95, (box.maxX - box.minX) / 2);
+        bat.x = Math.max(
+          box.minX + half,
+          Math.min(box.maxX - half, bat.x + bat.vx * dt),
+        );
         bat.y = Math.max(box.minY, Math.min(box.maxY, bat.y + bat.vy * dt));
         if (phase === "home" && td < 6) {
           Object.assign(bat, home(i), { mode: "roost", vx: 0, vy: 0 });
@@ -175,9 +195,8 @@ export function BatRoost({
         y: box.minY + Math.random() * (box.maxY - box.minY),
       };
     };
-    const scatter = (event?: PointerEvent) => {
+    const scatter = () => {
       if (bats.some((bat) => bat.mode === "fly")) return;
-      if (event) soundEvent("bat"); // a direct click, not proximity
       phase = "out";
       wander();
       for (const bat of bats) {
@@ -202,63 +221,43 @@ export function BatRoost({
       const roostNow = roostRef.current;
       const near = Math.hypot(
         pointer.x - (roostNow.x - ROOST_WIDTH / 2),
-        pointer.y - (roostNow.y + 18),
+        pointer.y - (roostNow.y + ROOST_HEIGHT / 2),
       );
       if (near < 70) scatter();
     };
+    scatterNow = scatter;
     window.addEventListener("pointermove", onMove, { passive: true });
-    for (const node of nodes.current) {
-      node?.addEventListener("pointerdown", scatter);
-    }
     return () => {
       stop?.();
       window.clearTimeout(homeTimer);
       window.clearInterval(wanderTimer);
-      window.removeEventListener("resize", settle);
       window.removeEventListener("pointermove", onMove);
-      for (const node of nodes.current) {
-        node?.removeEventListener("pointerdown", scatter);
-      }
+      detach();
     };
   }, [stage]);
 
   return (
     <>
-      <svg
-        aria-hidden
-        className="pointer-events-none absolute top-0 left-0 overflow-visible text-foreground/25"
-        width="1"
-        height="1"
-      >
-        {SLOTS.map((slot, i) => (
-          <line
-            key={BAT_IDS[i]}
-            x1={roost.x + slot.dx}
-            x2={roost.x + slot.dx}
-            y1={roost.y - 6}
-            y2={roost.y + slot.thread + 3}
-            stroke="currentColor"
-            strokeWidth="0.75"
-          />
-        ))}
-      </svg>
       {SLOTS.map((slot, index) => (
-        <div
+        <button
           key={BAT_IDS[index]}
           ref={(node) => {
             nodes.current[index] = node;
           }}
-          className={styles.bat}
+          type="button"
+          aria-label="Bat"
+          className={`${styles.bat} ${CHARACTER_BUTTON} text-zinc-900 dark:text-zinc-500`}
           data-mode="roost"
-          style={{ "--delay": `${-index * 0.7}s` } as CSSProperties}
+          style={
+            { width: slot.size, "--delay": `${-index * 1.3}s` } as CSSProperties
+          }
         >
-          <span className={styles.batWings}>
-            <BatArt
-              size={slot.size}
-              className="text-zinc-800 dark:text-zinc-700 dark:drop-shadow-[0_0_1px_rgb(255_255_255/0.55)]"
-            />
-          </span>
-        </div>
+          <BatArt
+            width={slot.size}
+            hangingClassName={styles.batHanging}
+            flyingClassName={styles.batFlying}
+          />
+        </button>
       ))}
     </>
   );

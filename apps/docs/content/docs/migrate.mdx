@@ -54,22 +54,34 @@ QR codes you printed with another provider encode that provider's short link. Af
 2. Confirm, and QRdx changes each old link's destination to its new QRdx code. Visitors still end up on the same page, and every scan now shows in QRdx analytics. The old provider still sees a click first.
 3. **Undo** puts back the original destinations, which QRdx saved with the import.
 
-If the provider refuses (for example a Bitly plan without link redirects left), QRdx stops, says why, and leaves the remaining links unchanged. Links skipped because their destination already had a QRdx code point at that existing code.
+If the provider refuses (for example a Bitly plan without link redirects left), QRdx stops, says why, and leaves the remaining links unchanged. Links skipped because their destination already had a QRdx code point at that existing code.<IfAvailable feature="customDomains"> Links whose back-half moves with your own domain (below) aren't changed: after the DNS switch they're the QRdx link.</IfAvailable>
+
+## Keep the original back-halves
+
+On Pro and Business, tick **Keep the original back-halves** in the import preview. Each code then gets its old back-half instead of a random one when QRdx can keep it, so `bit.ly/spring-menu` becomes `qrdx.dev/q/spring-menu`:
+
+- A back-half is kept when it's 3 to 64 letters, digits, `-` or `_` (see [custom back-halves](/docs/dynamic-qr-codes#custom-back-halves)), isn't reserved, and isn't used yet on `qrdx.dev` by any QRdx code<IfAvailable feature="customDomains"> (on your own domain, only by your codes there)</IfAvailable>.
+- Otherwise the code gets a generated back-half, and the preview shows the change with the reason, for example `spring-menu → Ab3xK9q · Another QRdx code already uses this back-half on qrdx.dev`. The import uses exactly the back-half the preview shows.
+- Back-halves are case-sensitive, as at Bitly, Dub and Short.io.
 
 <Callout type="warn">
 Keep the provider connected until you're sure: undo needs the connection. The old account also has to stay active for its links to keep redirecting.
 </Callout>
 
-## Your own domain (go.yourbrand.com)
+<IfAvailable feature="customDomains" title="Your own domain (go.yourbrand.com)">
 
-If your links use your own domain, you can move that domain to QRdx and keep the back-halves, so `go.yourbrand.com/Spring1` keeps working after the DNS switch.
+If your links use your own domain, you can move that domain to QRdx and keep the back-halves, so `go.yourbrand.com/spring-menu` keeps working after the DNS switch.
 
-1. In the import preview, tick **Keep the original back-halves on my domain**. The preview shows which back-halves can be kept.
-2. Import. The codes claim their back-halves right away.
-3. Add the domain on [Dashboard → Domains](/dashboard/domains), point its DNS to QRdx and verify it (see [Custom domains](/docs/custom-domains)). Do this at a quiet time: links on the domain stop working at the old provider as soon as DNS moves.
-4. In the import summary, click **Attach codes**. The codes now answer on your domain. If the domain was verified before the import, this happens during the import.
+1. Add the domain on [Dashboard → Domains](/dashboard/domains) first. It can stay unverified for now: back-halves are then kept on the domain itself, where they only have to be unique among your own codes, and only `api`, `p` and `q` are reserved.
+2. In the import preview, tick **Keep the original back-halves** and pick the domain under **Links on**. The preview shows which back-halves are kept.
+3. Import. The codes go on the domain and claim their back-halves right away.
+4. Point the domain's DNS to QRdx and verify it (see [Custom domains](/docs/custom-domains)). Do this at a quiet time: links on the domain stop working at the old provider as soon as DNS moves, and start working on QRdx once it's verified.
 
-QRdx short links are exactly 7 letters or digits and unique across all of QRdx, so some back-halves can't move: readable ones like `spring-menu`, reserved words, or back-halves another QRdx code already uses. The preview lists them with a suggested alternative; those links need a reprint or a redirect at the old provider. Custom domains are part of Pro and Business.
+If the domain isn't in QRdx yet when you import, its back-halves are kept on `qrdx.dev` instead (where they must be free across QRdx). After you add and verify the domain, click **Attach codes** in the import summary to move those codes onto it.
+
+</IfAvailable>
+
+Back-halves that can't be kept get a generated one; those links need a reprint or a redirect at the old provider. Custom back-halves are part of Pro and Business.
 
 ## From an export file
 

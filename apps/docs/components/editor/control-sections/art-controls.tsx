@@ -20,7 +20,7 @@ import {
   ToggleGroupItem,
 } from "@repo/design-system/components/ui/toggle-group";
 import { cn } from "@repo/design-system/lib/utils";
-import { ArrowDown2, GalleryAdd as ImageUp } from "iconsax-reactjs";
+import { ArrowDown2, GalleryAdd as ImageUp, InfoCircle } from "iconsax-reactjs";
 import {
   DEFAULT_ART_INTENSITY,
   getQRData,
@@ -42,6 +42,7 @@ import { DEFAULT_QR_LOGO, MAX_LOGO_FILE_SIZE } from "@/lib/constants";
 import { soundEvent } from "@/lib/sound/emit";
 import { useQREditorStore } from "@/store/editor-store";
 import type { QRStyle } from "@/types/theme";
+import { ART_COLOR_ISSUE_COPY, artColorFix, artColorIssue } from "./art-colors";
 import {
   ART_RECOMMENDED,
   ART_SAMPLES,
@@ -119,6 +120,8 @@ export function ArtControls({ styles, onChange }: ArtControlsProps) {
   const pickedSample = art ? pickedSamples.get(art.image.data) : undefined;
   const followsRecommended =
     Object.keys(recommendedSettings(style)).length === 0;
+  // Art only renders dark-on-light; say so instead of staying silently plain.
+  const colorIssue = artColorIssue(style);
 
   const update = (next: QRArt | undefined, extra: Partial<QRStyle> = {}) => {
     const { art: _previous, ...rest } = style;
@@ -251,6 +254,34 @@ export function ArtControls({ styles, onChange }: ArtControlsProps) {
             Image QR
           </ToggleGroupItem>
         </ToggleGroup>
+
+        {choice !== "classic" && colorIssue && (
+          <div className="bg-muted/40 flex flex-col gap-2.5 rounded-lg border p-3">
+            <p
+              className="text-muted-foreground flex gap-2 text-xs"
+              role="status"
+            >
+              <InfoCircle
+                aria-hidden="true"
+                className="mt-px size-4 shrink-0"
+              />
+              {ART_COLOR_ISSUE_COPY[colorIssue]}
+            </p>
+            <Button
+              className="self-start"
+              onClick={() => {
+                const fix = artColorFix(style);
+                if (fix) onChange({ ...style, ...fix } as QRStyle);
+              }}
+              size="sm"
+              variant="outline"
+            >
+              {colorIssue === "inverted"
+                ? "Swap dot and background colors"
+                : "Put the dots on white"}
+            </Button>
+          </div>
+        )}
 
         {choice === "classic" ? null : (
           <>

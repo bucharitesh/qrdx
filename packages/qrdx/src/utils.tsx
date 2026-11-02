@@ -37,6 +37,7 @@ import { isFrameActive, wrapWithFrame } from "./frame";
 import { hashString } from "./shapes";
 import { getTemplate } from "./templates";
 import { getSolidColor } from "./utils/color";
+import { compact, fmt, SCALE_DECIMALS } from "./utils/fmt";
 import { parseColor } from "./utils/parse-color";
 
 // We could just do this in generatePath, except that we want to support
@@ -67,7 +68,7 @@ export function generatePath(modules: Modules, margin = 0): string {
         // M0 0h7v1H0z injects the space with the move and drops the comma,
         // saving a char per operation
         ops.push(
-          `M${start + margin} ${y + margin}h${x - start}v1H${start + margin}z`
+          compact`M${start + margin} ${y + margin}h${x - start}v1H${start + margin}z`
         );
         start = null;
         return;
@@ -82,11 +83,11 @@ export function generatePath(modules: Modules, margin = 0): string {
         }
         if (start === null) {
           // Just a single dark module.
-          ops.push(`M${x + margin},${y + margin} h1v1H${x + margin}z`);
+          ops.push(compact`M${x + margin},${y + margin} h1v1H${x + margin}z`);
         } else {
           // Otherwise finish the current line.
           ops.push(
-            `M${start + margin},${y + margin} h${x + 1 - start}v1H${
+            compact`M${start + margin},${y + margin} h${x + 1 - start}v1H${
               start + margin
             }z`
           );
@@ -162,11 +163,11 @@ function generateDataCircles(
         if (isAlignmentModule(x, y)) {
           shapes.push(
             <rect
-              height={pixelSize}
+              height={fmt(pixelSize)}
               key={key}
-              width={pixelSize}
-              x={cx - pixelSize / 2}
-              y={cy - pixelSize / 2}
+              width={fmt(pixelSize)}
+              x={fmt(cx - pixelSize / 2)}
+              y={fmt(cy - pixelSize / 2)}
             />
           );
           return;
@@ -177,11 +178,11 @@ function generateDataCircles(
             // Pattern 1: Standard circles with gaps
             shapes.push(
               <circle
-                cx={cx}
-                cy={cy}
+                cx={fmt(cx)}
+                cy={fmt(cy)}
                 key={key}
-                r={radius}
-                transform={`rotate(0,${cx},${cy})`}
+                r={fmt(radius)}
+                transform={compact`rotate(0,${cx},${cy})`}
               />
             );
             break;
@@ -192,11 +193,11 @@ function generateDataCircles(
               const largeRadius = pixelSize * 0.5; // 50% of pixel size for overlapping circles
               shapes.push(
                 <circle
-                  cx={cx}
-                  cy={cy}
+                  cx={fmt(cx)}
+                  cy={fmt(cy)}
                   key={key}
-                  r={largeRadius}
-                  transform={`rotate(0,${cx},${cy})`}
+                  r={fmt(largeRadius)}
+                  transform={compact`rotate(0,${cx},${cy})`}
                 />
               );
             }
@@ -208,9 +209,9 @@ function generateDataCircles(
               const halfSize = pixelSize * 0.357_143; // half of 71.4% pixel size
               shapes.push(
                 <path
-                  d={`M ${cx - halfSize} ${cy - halfSize}v ${pixelSize * 0.714_286}h ${pixelSize * 0.714_286}v -${pixelSize * 0.714_286}z`}
+                  d={compact`M ${cx - halfSize} ${cy - halfSize}v ${pixelSize * 0.714_286}h ${pixelSize * 0.714_286}v -${pixelSize * 0.714_286}z`}
                   key={key}
-                  transform={`rotate(0,${cx},${cy})`}
+                  transform={compact`rotate(0,${cx},${cy})`}
                 />
               );
             }
@@ -222,9 +223,9 @@ function generateDataCircles(
               const halfSize = pixelSize * 0.357_143;
               shapes.push(
                 <path
-                  d={`M ${cx - halfSize} ${cy - halfSize}v ${pixelSize * 0.714_286}h ${pixelSize * 0.714_286}v -${pixelSize * 0.714_286}z`}
+                  d={compact`M ${cx - halfSize} ${cy - halfSize}v ${pixelSize * 0.714_286}h ${pixelSize * 0.714_286}v -${pixelSize * 0.714_286}z`}
                   key={key}
-                  transform={`rotate(45,${cx},${cy})`}
+                  transform={compact`rotate(45,${cx},${cy})`}
                 />
               );
             }
@@ -242,11 +243,11 @@ function generateDataCircles(
               const variedRadius = radius * randomFactor;
               shapes.push(
                 <circle
-                  cx={cx}
-                  cy={cy}
+                  cx={fmt(cx)}
+                  cy={fmt(cy)}
                   key={key}
-                  r={variedRadius}
-                  transform={`rotate(0,${cx},${cy})`}
+                  r={fmt(variedRadius)}
+                  transform={compact`rotate(0,${cx},${cy})`}
                 />
               );
             }
@@ -259,9 +260,9 @@ function generateDataCircles(
               const halfHeight = pixelSize * 0.357_143;
               shapes.push(
                 <path
-                  d={`M ${cx - halfWidth} ${cy - halfHeight}v ${pixelSize * 0.714_286}h ${halfWidth}a ${halfWidth * 0.5} ${halfWidth * 0.5}, 0, 0, 0, 0 -${pixelSize * 0.714_286}h -${halfWidth}v -${pixelSize * 0.714_286}z`}
+                  d={compact`M ${cx - halfWidth} ${cy - halfHeight}v ${pixelSize * 0.714_286}h ${halfWidth}a ${halfWidth * 0.5} ${halfWidth * 0.5}, 0, 0, 0, 0 -${pixelSize * 0.714_286}h -${halfWidth}v -${pixelSize * 0.714_286}z`}
                   key={key}
-                  transform={`rotate(${((x + y) % 2) === 0 ? 0 : 90},${cx},${cy})`}
+                  transform={compact`rotate(${((x + y) % 2) === 0 ? 0 : 90},${cx},${cy})`}
                 />
               );
             }
@@ -274,14 +275,14 @@ function generateDataCircles(
               const cornerRadius = pixelSize * 0.2; // 20% radius for smooth corners
               shapes.push(
                 <rect
-                  height={pixelSize}
+                  height={fmt(pixelSize)}
                   key={key}
-                  rx={cornerRadius}
-                  ry={cornerRadius}
-                  transform={`rotate(0,${cx},${cy})`}
-                  width={pixelSize}
-                  x={cx - halfSize}
-                  y={cy - halfSize}
+                  rx={fmt(cornerRadius)}
+                  ry={fmt(cornerRadius)}
+                  transform={compact`rotate(0,${cx},${cy})`}
+                  width={fmt(pixelSize)}
+                  x={fmt(cx - halfSize)}
+                  y={fmt(cy - halfSize)}
                 />
               );
             }
@@ -293,12 +294,12 @@ function generateDataCircles(
               const halfSize = pixelSize * 0.5;
               shapes.push(
                 <rect
-                  height={pixelSize}
+                  height={fmt(pixelSize)}
                   key={key}
-                  transform={`rotate(0,${cx},${cy})`}
-                  width={pixelSize}
-                  x={cx - halfSize}
-                  y={cy - halfSize}
+                  transform={compact`rotate(0,${cx},${cy})`}
+                  width={fmt(pixelSize)}
+                  x={fmt(cx - halfSize)}
+                  y={fmt(cy - halfSize)}
                 />
               );
             }
@@ -311,9 +312,9 @@ function generateDataCircles(
               const lineWidth = pixelSize; // full width
               shapes.push(
                 <path
-                  d={`M ${cx - pixelSize * 0.5} ${cy - lineHeight * 0.5}v ${lineHeight}h ${lineWidth}v -${lineHeight}z`}
+                  d={compact`M ${cx - pixelSize * 0.5} ${cy - lineHeight * 0.5}v ${lineHeight}h ${lineWidth}v -${lineHeight}z`}
                   key={key}
-                  transform={`rotate(90,${cx},${cy})`}
+                  transform={compact`rotate(90,${cx},${cy})`}
                 />
               );
             }
@@ -323,11 +324,11 @@ function generateDataCircles(
             // Default to circle
             shapes.push(
               <circle
-                cx={cx}
-                cy={cy}
+                cx={fmt(cx)}
+                cy={fmt(cy)}
                 key={key}
-                r={radius}
-                transform={`rotate(0,${cx},${cy})`}
+                r={fmt(radius)}
+                transform={compact`rotate(0,${cx},${cy})`}
               />
             );
         }
@@ -338,7 +339,7 @@ function generateDataCircles(
           shapes.push(
             <g
               key={key}
-              transform={`translate(${cx},${cy}) scale(${scale}) translate(${-cx},${-cy})`}
+              transform={compact`translate(${cx},${cy}) scale(${fmt(scale, SCALE_DECIMALS)}) translate(${-cx},${-cy})`}
             >
               {shape}
             </g>
@@ -469,10 +470,10 @@ function generateCornerGradientDef(
           gradientUnits="userSpaceOnUse"
           id={id}
           key={id}
-          x1={x1}
-          x2={x2}
-          y1={y1}
-          y2={y2}
+          x1={fmt(x1)}
+          x2={fmt(x2)}
+          y1={fmt(y1)}
+          y2={fmt(y2)}
         >
           {gradient.stops.map((stop, index) => (
             <stop
@@ -496,14 +497,14 @@ function generateCornerGradientDef(
       id,
       element: (
         <radialGradient
-          cx={centerX}
-          cy={centerY}
-          fx={centerX}
-          fy={centerY}
+          cx={fmt(centerX)}
+          cy={fmt(centerY)}
+          fx={fmt(centerX)}
+          fy={fmt(centerY)}
           gradientUnits="userSpaceOnUse"
           id={id}
           key={id}
-          r={radius}
+          r={fmt(radius)}
         >
           {gradient.stops.map((stop, index) => (
             <stop
@@ -546,10 +547,10 @@ function generateGradientDef(
           gradientUnits="userSpaceOnUse"
           id={id}
           key={id}
-          x1={x1}
-          x2={x2}
-          y1={y1}
-          y2={y2}
+          x1={fmt(x1)}
+          x2={fmt(x2)}
+          y1={fmt(y1)}
+          y2={fmt(y2)}
         >
           {gradient.stops.map((stop, index) => (
             <stop
@@ -573,14 +574,14 @@ function generateGradientDef(
       id,
       element: (
         <radialGradient
-          cx={centerX}
-          cy={centerY}
-          fx={centerX}
-          fy={centerY}
+          cx={fmt(centerX)}
+          cy={fmt(centerY)}
+          fx={fmt(centerX)}
+          fy={fmt(centerY)}
           gradientUnits="userSpaceOnUse"
           id={id}
           key={id}
-          r={radius}
+          r={fmt(radius)}
         >
           {gradient.stops.map((stop, index) => (
             <stop
@@ -810,22 +811,22 @@ export function QRCodeSVG(props: QRPropsSVG) {
           src={imageSettings.src}
           style={{
             position: "absolute",
-            left: `${imgLeft}px`,
-            top: `${imgTop}px`,
-            width: `${imgWidth}px`,
-            height: `${imgHeight}px`,
+            left: `${fmt(imgLeft)}px`,
+            top: `${fmt(imgTop)}px`,
+            width: `${fmt(imgWidth)}px`,
+            height: `${fmt(imgHeight)}px`,
           }}
         />
       );
     } else {
       image = (
         <image
-          height={imgHeight}
+          height={fmt(imgHeight)}
           href={imageSettings.src}
           preserveAspectRatio="none"
-          width={imgWidth}
-          x={imgLeft}
-          y={imgTop}
+          width={fmt(imgWidth)}
+          x={fmt(imgLeft)}
+          y={fmt(imgTop)}
         />
       );
     }
@@ -1098,7 +1099,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
         <path
           d={topLeftEye}
           fillRule="evenodd"
-          transform={`rotate(0,${topLeftX + cornerSize / 2},${topLeftY + cornerSize / 2})`}
+          transform={compact`rotate(0,${topLeftX + cornerSize / 2},${topLeftY + cornerSize / 2})`}
         />
       </g>
 
@@ -1110,7 +1111,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
         <path
           d={topRightEye}
           fillRule="evenodd"
-          transform={`rotate(0,${topRightX + cornerSize / 2},${topRightY + cornerSize / 2})`}
+          transform={compact`rotate(0,${topRightX + cornerSize / 2},${topRightY + cornerSize / 2})`}
         />
       </g>
 
@@ -1122,7 +1123,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
         <path
           d={bottomLeftEye}
           fillRule="evenodd"
-          transform={`rotate(0,${bottomLeftX + cornerSize / 2},${bottomLeftY + cornerSize / 2})`}
+          transform={compact`rotate(0,${bottomLeftX + cornerSize / 2},${bottomLeftY + cornerSize / 2})`}
         />
       </g>
 
@@ -1187,7 +1188,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
         />
 
         {/* Scale all QR elements to fit template coordinate system */}
-        <g transform={`scale(${templateSize / size})`}>
+        <g transform={`scale(${fmt(templateSize / size, SCALE_DECIMALS)})`}>
           {/* Data module circles */}
           {artLayer ?? <g fill={fgFillValue}>{dataCircles}</g>}
 
@@ -1196,7 +1197,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
             <path
               d={topLeftEye}
               fillRule="evenodd"
-              transform={`rotate(0,${topLeftX + cornerSize / 2},${topLeftY + cornerSize / 2})`}
+              transform={compact`rotate(0,${topLeftX + cornerSize / 2},${topLeftY + cornerSize / 2})`}
             />
           </g>
 
@@ -1208,7 +1209,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
             <path
               d={topRightEye}
               fillRule="evenodd"
-              transform={`rotate(0,${topRightX + cornerSize / 2},${topRightY + cornerSize / 2})`}
+              transform={compact`rotate(0,${topRightX + cornerSize / 2},${topRightY + cornerSize / 2})`}
             />
           </g>
 
@@ -1220,7 +1221,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
             <path
               d={bottomLeftEye}
               fillRule="evenodd"
-              transform={`rotate(0,${bottomLeftX + cornerSize / 2},${bottomLeftY + cornerSize / 2})`}
+              transform={compact`rotate(0,${bottomLeftX + cornerSize / 2},${bottomLeftY + cornerSize / 2})`}
             />
           </g>
 
@@ -1302,7 +1303,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
 export const SUPPORTS_PATH2D = (() => {
   try {
     new Path2D().addPath(new Path2D());
-  } catch (_e) {
+  } catch {
     return false;
   }
   return true;

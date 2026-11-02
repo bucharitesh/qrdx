@@ -10,12 +10,15 @@ export * from "./api";
 export {
   createQRArtImage,
   DEFAULT_ART_INTENSITY,
+  getQRArtColorIssue,
   getQRArtEyeColors,
   getQRArtVariant,
   getQRFunctionModules,
   isQRArtActive,
   loadQRArtImage,
+  QR_ART_MIN_LUMA_GAP,
   QR_ART_SAMPLE_SIZES,
+  type QRArtColorIssue,
   type QRArtEyeColorOptions,
   type QRArtPixels,
   type QRArtRenderOptions,
@@ -67,6 +70,8 @@ export {
 export * from "./scan-score";
 export * from "./templates";
 export * from "./utils";
+/** Reads an 8-bit PNG into RGBA pixels (no DOM or sharp), or null. */
+export { type DecodedImage, decodePng as decodePNGPixels } from "./utils/png";
 
 export async function getQRAsSVGDataUri(props: QRProps) {
   // Import QRCodeSVG and render it to string
@@ -88,7 +93,7 @@ export async function getQRAsSVGDataUri(props: QRProps) {
           src: base64Image,
         },
       };
-    } catch (_error) {
+    } catch {
       // Remove the image from settings if it fails to load
       // This prevents SVG from containing external URLs that will fail during canvas conversion
       const { imageSettings: _removed, ...propsWithoutImage } = props;

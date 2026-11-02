@@ -5,6 +5,7 @@ import {
   resolveApiCaller,
   resolveApiScope,
 } from "@/app/api/v1/codes/_lib/api";
+import { withApiQuotaHeaders } from "@/lib/api-quota";
 import { handleError } from "@/lib/error-response";
 import { createEndpoint, listEndpoints } from "@/lib/events/endpoints";
 import { parseWithSchema, readJsonBody } from "@/lib/request-guards";
@@ -16,7 +17,7 @@ import { canSeeHookUrls, serializeHook, subscribeSchema } from "./_lib/hooks";
 
 const MAX_BODY_BYTES = 16 * 1024;
 
-export async function GET(req: NextRequest) {
+export const GET = withApiQuotaHeaders(async (req: NextRequest) => {
   try {
     const caller = await resolveApiCaller(req, "read");
     const hooks = await listEndpoints(caller.scope);
@@ -28,10 +29,10 @@ export async function GET(req: NextRequest) {
   } catch (error) {
     return handleError(error, { route: "GET /api/v1/hooks" });
   }
-}
+});
 
 /** Returns the signing secret once; it verifies X-QRdx-Signature. */
-export async function POST(req: NextRequest) {
+export const POST = withApiQuotaHeaders(async (req: NextRequest) => {
   try {
     const scope = await resolveApiScope(req, "write");
     assertJson(req);
@@ -50,4 +51,4 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     return handleError(error, { route: "POST /api/v1/hooks" });
   }
-}
+});

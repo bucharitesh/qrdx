@@ -10,11 +10,11 @@ interface TocItem {
 export function BlogTocMobile({ items }: { items: TocItem[] }) {
   return (
     <details className="group border-b border-border lg:hidden">
-      <summary className="flex cursor-pointer list-none items-center justify-between px-5 py-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground sm:px-12 [&::-webkit-details-marker]:hidden">
+      <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground sm:px-12 [&::-webkit-details-marker]:hidden">
         On this page
         <ChevronDown className="size-4 transition-transform group-open:rotate-180" />
       </summary>
-      <nav aria-label="Table of contents" className="px-5 pb-4 sm:px-12">
+      <nav aria-label="Table of contents" className="px-4 pb-4 sm:px-12">
         <ul className="flex flex-col gap-1">
           {items.map((item) => (
             <li key={item.url}>

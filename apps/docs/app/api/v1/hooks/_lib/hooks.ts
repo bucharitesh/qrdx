@@ -17,6 +17,14 @@ import {
 import type { ActiveScope } from "@/lib/scope";
 import { shortLinkUrl } from "@/lib/short-links";
 
+/** A subscription id in /v1/hooks/{id}. */
+export const hookIdSchema = z.string().trim().min(1).max(64);
+
+/** GET /v1/hooks/sample query */
+export const hookSampleQuerySchema = z.object({
+  event: z.enum(WEBHOOK_EVENTS),
+});
+
 /**
  * REST Hooks subscribe body. Zapier sends `hookUrl` by default; Make and
  * custom clients may send `target_url` or `url`. One event or several.

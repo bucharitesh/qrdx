@@ -9,6 +9,6 @@ export const metadata: Metadata = {
 };
 
 export default async function DevelopersPage() {
-  const scope = await requireDashboardScope();
+  const scope = await requireDashboardScope("/settings/developers");
   return <DevelopersView overview={await getOAuthAppsOverview(scope)} />;
 }

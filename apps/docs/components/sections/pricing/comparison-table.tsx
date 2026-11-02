@@ -27,23 +27,14 @@ function Cell({ value }: { value: CellValue }) {
       </>
     );
   }
-  return (
-    <span
-      className={cn(
-        "text-sm text-foreground/90",
-        value === "Coming soon" && "text-muted-foreground italic",
-      )}
-    >
-      {value}
-    </span>
-  );
+  return <span className="text-sm text-foreground/90">{value}</span>;
 }
 
 export function ComparisonTable({ groups }: { groups: ComparisonGroup[] }) {
   return (
     <section
       aria-labelledby="compare-plans"
-      className="flex w-full flex-col items-center px-6 py-16 md:py-20"
+      className="flex w-full flex-col items-center px-10 py-16 md:py-20"
     >
       <div className="mx-auto flex max-w-2xl flex-col items-center gap-2 text-center">
         <h2

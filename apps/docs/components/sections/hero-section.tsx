@@ -20,7 +20,7 @@ export function HeroSection() {
             className="[mask-image:radial-gradient(ellipse_46%_34%_at_50%_46%,rgba(0,0,0,0.28)_55%,black_100%),radial-gradient(ellipse_80%_70%_at_50%_38%,black_45%,transparent_85%)] [mask-composite:intersect]"
           />
         </Backdrop>
-        <div className="relative mx-auto flex w-full max-w-3xl flex-col items-center gap-7 px-6 text-center md:gap-8">
+        <div className="relative mx-auto flex w-full max-w-[50rem] flex-col items-center gap-7 px-10 text-center md:gap-8">
           <p className="flex h-8 items-center gap-2 rounded-full border bg-background/80 px-3 text-sm text-muted-foreground backdrop-blur">
             {hero.badgeIcon}
             {hero.badge}
@@ -48,8 +48,8 @@ export function HeroSection() {
             </Button>
           </div>
         </div>
-        <HeroScene className="relative left-1/2 mt-6 w-[150%] max-w-none -translate-x-1/2 sm:w-full sm:max-w-6xl sm:px-2 md:mt-4" />
-        <div className="relative mx-auto mt-4 w-full max-w-5xl px-6 md:mt-6 md:px-10">
+        <HeroScene className="relative left-1/2 mt-6 w-[120%] max-w-none -translate-x-1/2 sm:w-full sm:max-w-6xl sm:px-2 md:mt-4" />
+        <div className="relative mx-auto mt-4 w-full max-w-5xl px-10 md:mt-6">
           <HeroEditor />
         </div>
       </div>

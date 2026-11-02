@@ -40,8 +40,8 @@ Static QR codes store the content in the code itself, so they never expire and h
 
 **Design and export (free, no account)**
 
-- **Design:** 9 body patterns, 9 corner-eye shapes and 11 eye-dot shapes, solid colors or linear and radial gradients, center logos, call-to-action frames and decorative templates
-- **Art QR:** Logo QR and Image QR blend a logo or photo into the modules as vector art. Instances with a [fal.ai](https://fal.ai) key also offer AI QR art that paints a scene around the code (with an account)
+- **Design:** 23 body patterns, 17 corner-eye shapes and 21 eye centres, 19 call-to-action frames, solid colors or linear and radial gradients, center logos and decorative templates
+- **Art QR:** Logo QR and Image QR blend a logo or photo into the modules as vector art. Instances with a Google Gemini API key also offer AI QR art: Gemini repaints the code as a scene, and every image is verified to scan before it's delivered (with an account)
 - **Content types:** URLs, text, Wi-Fi, vCard, email, phone, SMS, WhatsApp, maps, UPI, PayPal and many social and payment profiles
 - **Export:** PNG, JPG, SVG, PDF and vector EPS with no watermark, plus print-ready PDFs at an exact size with bleed and crop marks
 - **Scan checks:** contrast warnings and a "Will it scan?" score
@@ -89,7 +89,7 @@ export function Example() {
 }
 ```
 
-`QRCode` renders an SVG. The package also exports `QRCodeCanvas`, `getQRAsSVG` for server-side rendering, download helpers for PNG, JPG, SVG, PDF and EPS, print-ready PDF and EPS at exact physical sizes, Logo QR and Image QR art, a scan score and QR decoding. See the [library docs](https://qrdx.dev/docs) for every prop.
+`QRCode` renders an SVG. The package also exports `QRCodeCanvas`, `getQRAsSVG` for server-side rendering, download helpers for PNG, JPG, SVG, PDF and EPS, print-ready PDF and EPS at exact physical sizes, Logo QR and Image QR art, a scan score and QR decoding (EPS, print-ready files, frames, art and the scan score need `qrdx` 0.0.47 or later). See the [library docs](https://qrdx.dev/docs) for every prop.
 
 ## Quickstart: CLI
 
@@ -99,12 +99,12 @@ npx @qrdx/cli generate
 
 # Non-interactive
 npx @qrdx/cli generate "https://qrdx.dev" -o qr.svg
-npx @qrdx/cli generate "https://qrdx.dev" -o qr.png --body circle --eye gear --dot star --size 1024
+npx @qrdx/cli generate "https://qrdx.dev" -o qr.png --body circle --eye gear --dot flower --size 1024
 npx @qrdx/cli generate "https://qrdx.dev" --logo "https://qrdx.dev/logo.png" --level H -o branded.svg
-npx @qrdx/cli generate "https://qrdx.dev" -o print.eps --size 144   # vector EPS, 2 inches wide
+npx @qrdx/cli generate "https://qrdx.dev" -o print.eps --size 144   # vector EPS, 2 inches wide (0.0.5+)
 ```
 
-Run `npx @qrdx/cli --help` for all options, including gradients (`--fg`, `--bg`), templates (`--template`), call-to-action frames (`--frame`) and margins. See the [CLI docs](https://qrdx.dev/docs/developers/cli).
+Run `npx @qrdx/cli --help` for all options, including gradients (`--fg`, `--bg`), templates (`--template`), call-to-action frames (`--frame`) and margins. EPS output and `--frame` need `@qrdx/cli` 0.0.5 or later. See the [CLI docs](https://qrdx.dev/docs/developers/cli).
 
 ## Agent skill
 
@@ -171,7 +171,7 @@ Read the full [self-hosting guide](https://qrdx.dev/docs/self-hosting) before ru
 - [Tailwind CSS](https://tailwindcss.com/), [shadcn/ui](https://ui.shadcn.com/) and [Radix UI](https://www.radix-ui.com/)
 - [Drizzle ORM](https://orm.drizzle.team/) on Postgres ([Neon](https://neon.tech/))
 - [Better Auth](https://www.better-auth.com/) for authentication
-- [Vercel AI SDK](https://ai-sdk.dev/) with Google Gemini for AI themes, [fal.ai](https://fal.ai/) for AI QR art
+- [Vercel AI SDK](https://ai-sdk.dev/) with Google Gemini for AI themes and AI QR art
 - [Polar](https://polar.sh/) for payments, [PostHog](https://posthog.com/) (with consent) and [Umami](https://umami.is/) (cookieless) for analytics, [Upstash](https://upstash.com/) for rate limiting
 - [Cloudflare R2](https://developers.cloudflare.com/r2/) for file storage and [Resend](https://resend.com/) for email
 - [Fumadocs](https://fumadocs.dev/) for documentation
@@ -196,7 +196,12 @@ Contributions are welcome:
 
 ## License
 
-QRdx is licensed under the [GNU Affero General Public License v3.0 or later](license.md) (AGPL-3.0-or-later). You can use, modify and self-host it freely. If you run a modified version as a network service, you must also make your modified source code available to its users under the same license.
+QRdx is open source:
+
+- **The app and everything else in this repository** are licensed under the [GNU Affero General Public License v3.0 or later](license.md) (AGPL-3.0-or-later). You can use, modify and self-host it freely. If you run a modified version as a network service, you must also make your modified source code available to its users under the same license.
+- **The plugins** (`plugins/chrome`, `plugins/figma`, `plugins/raycast`, `plugins/canva`) are MIT-licensed; each folder has its own `LICENSE`.
+
+The QRdx name and logo are trademarks; see the [trademark policy](TRADEMARK.md) before using them for a fork or a hosted service.
 
 ## Acknowledgments
 

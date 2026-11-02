@@ -13,40 +13,41 @@ import type { QRArtImage, QRArtMode } from "qrdx/types";
 import { useEffect, useState } from "react";
 import { SpotlightCard } from "@/components/fx";
 import { PRESSABLE } from "@/components/mockups/motion";
+import {
+  SHOWCASE_PLACEMENTS as AT,
+  SHOWCASE_STYLES,
+  type ShowcaseStyleName,
+  showcaseProps,
+} from "@/lib/landing/showcase-styles";
 import { ART_PLAYGROUND_HREF } from "./config";
 
-/** A simple two-tone mark standing in for "your logo". */
-const SAMPLE_LOGO = `data:image/svg+xml,${encodeURIComponent(
-  '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f43f5e"/><stop offset="1" stop-color="#f59e0b"/></linearGradient></defs><path fill="url(#g)" d="M50 88 14 54C3 43 4 25 17 17c10-6 23-3 33 8 10-11 23-14 33-8 13 8 14 26 3 37Z"/></svg>',
-)}`;
+const VALUE = "https://qrdx.dev";
 
-const SAMPLE_PHOTO = "/images/use-cases/market-stall-upi.webp";
-
+// Samples from public/images/art-samples (the editor's Art section offers
+// the same ones), styled in lib/landing/showcase-styles.ts.
 const EXAMPLES: {
-  mode: QRArtMode;
+  style: ShowcaseStyleName;
   title: string;
   description: string;
-  src: string;
 }[] = [
   {
-    mode: "logo",
+    style: AT["ai-art.logo"],
     title: "Logo QR",
     description:
       "Your logo's colors flow into the modules inside its shape; the finder patterns stay solid.",
-    src: SAMPLE_LOGO,
   },
   {
-    mode: "halftone",
+    style: AT["ai-art.image"],
     title: "Image QR",
     description:
       "A photo shows through every module, around a center that keeps the code scannable.",
-    src: SAMPLE_PHOTO,
   },
 ];
 
-function useArtImage(src: string, mode: QRArtMode) {
+function useArtImage(src: string | undefined, mode: QRArtMode) {
   const [image, setImage] = useState<QRArtImage | null>(null);
   useEffect(() => {
+    if (!src) return;
     let alive = true;
     loadQRArtImage(src, { mode })
       .then((next) => alive && setImage(next))
@@ -60,13 +61,9 @@ function useArtImage(src: string, mode: QRArtMode) {
   return image;
 }
 
-function ArtExample({
-  mode,
-  title,
-  description,
-  src,
-}: (typeof EXAMPLES)[number]) {
-  const image = useArtImage(src, mode);
+function ArtExample({ style, title, description }: (typeof EXAMPLES)[number]) {
+  const art = SHOWCASE_STYLES[style].art;
+  const image = useArtImage(art?.src, art?.mode ?? "logo");
 
   return (
     <Link
@@ -82,17 +79,15 @@ function ArtExample({
       >
         <div className="grid aspect-square w-full max-w-56 shrink-0 place-items-center self-center rounded-lg bg-white p-4 ring-1 ring-black/5 sm:w-44 sm:self-auto dark:ring-white/10">
           <QRCodeSVG
-            art={image ? { mode, image, intensity: 0.7 } : undefined}
-            bodyPattern={mode === "logo" ? "circle" : "square"}
+            {...showcaseProps(style, {
+              value: VALUE,
+              size: 160,
+              artImage: image,
+            })}
             className={cn(
               "size-full transition-opacity duration-300",
               !image && "opacity-60",
             )}
-            cornerEyeDotPattern="rounded"
-            cornerEyePattern="rounded"
-            level="H"
-            size={160}
-            value="https://qrdx.dev"
           />
         </div>
         <div className="flex flex-col gap-2">
@@ -126,7 +121,7 @@ export function VectorArtExamples() {
   return (
     <ul className="grid gap-4 lg:grid-cols-2">
       {EXAMPLES.map((example) => (
-        <li key={example.mode}>
+        <li key={example.style}>
           <ArtExample {...example} />
         </li>
       ))}

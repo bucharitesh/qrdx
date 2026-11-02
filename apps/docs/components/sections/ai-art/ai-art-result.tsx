@@ -1,44 +1,49 @@
 "use client";
 
+import { toast } from "@repo/design-system";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Spinner } from "@repo/design-system/components/ui/spinner";
 import { cn } from "@repo/design-system/lib/utils";
 import {
+  DocumentDownload,
   Gallery,
   Import,
   InfoCircle,
   Lock,
   MedalStar,
   ScanBarcode,
-  SearchZoomIn,
   TickCircle,
   Warning2,
 } from "iconsax-reactjs";
 import { type ReactNode, useEffect, useState } from "react";
 import { track } from "@/lib/analytics";
-import {
-  type AIArtResult,
-  type AIArtUpscaleResult,
-  type AIArtVariant,
-  ART_QR_VISIBILITY,
-  isFalResultUrl,
-} from "./config";
+import { type AIArtVariant, ART_PRINT_SIZE, ART_QR_VISIBILITY } from "./config";
 import {
   checkScannable,
+  createPrintImage,
   downloadImage,
   pickBestScannable,
   type ScanCheckResult,
   type ScanStatus,
+  saveBlob,
 } from "./image-utils";
 
+/** The images of one run (one request per variation). */
+export interface AIArtRun {
+  variants: AIArtVariant[];
+  /** Variations that failed; no credit was used for them */
+  failed: number;
+  /** Exactly what the QR code encodes */
+  text: string;
+  visibility: number;
+  creativity: number;
+}
+
 interface AIArtResultPanelProps {
-  result: AIArtResult | null;
+  result: AIArtRun | null;
   isGenerating: boolean;
   /** Variants the current run will return, for placeholders */
   pendingVariations: number;
-  upscaled: Record<string, AIArtUpscaleResult>;
-  upscalingUrl: string | null;
-  onUpscale: (variant: AIArtVariant) => void;
   onRetryClearer: (variant: AIArtVariant) => void;
   onLockSeed: (seed: number) => void;
 }
@@ -47,15 +52,12 @@ export function AIArtResultPanel({
   result,
   isGenerating,
   pendingVariations,
-  upscaled,
-  upscalingUrl,
-  onUpscale,
   onRetryClearer,
   onLockSeed,
 }: AIArtResultPanelProps) {
   const [checks, setChecks] = useState<(ScanCheckResult | undefined)[]>([]);
   const [selected, setSelected] = useState(0);
-  const [downloading, setDownloading] = useState(false);
+  const [preparingPrint, setPreparingPrint] = useState(false);
   const best = pickBestScannable(checks);
 
   useEffect(() => {
@@ -63,7 +65,8 @@ export function AIArtResultPanel({
     let cancelled = false;
     setChecks([]);
     setSelected(0);
-    // Every variant is decoded in the browser; the best one gets picked.
+    // Every image was decoded on the server; the browser scores how well
+    // each one survives shrinking and blur, and picks the best.
     result.variants.forEach((variant, index) => {
       checkScannable(variant.imageUrl, result.text).then((check) => {
         if (cancelled) return;
@@ -87,20 +90,35 @@ export function AIArtResultPanel({
 
   const variant = result?.variants[selected];
   const check = checks[selected];
-  const big = variant ? upscaled[variant.imageUrl] : undefined;
 
-  const handleDownload = async () => {
+  const handleDownload = () => {
     if (!variant) return;
-    setDownloading(true);
-    await downloadImage(
-      big?.imageUrl ?? variant.imageUrl,
-      `qrdx-ai-art-${variant.seed}${big ? "-2x" : ""}`,
-    );
-    track("qr_downloaded", {
-      format: big ? "ai-art-2x" : "ai-art",
-      source: "ai_art",
-    });
-    setDownloading(false);
+    downloadImage(variant.imageUrl, `qrdx-ai-art-${variant.seed}`);
+    track("qr_downloaded", { format: "ai-art", source: "ai_art" });
+  };
+
+  const handlePrintDownload = async () => {
+    if (!(variant && result)) return;
+    setPreparingPrint(true);
+    try {
+      const blob = await createPrintImage(
+        variant.imageUrl,
+        result.text,
+        ART_PRINT_SIZE,
+      );
+      if (!blob) {
+        toast.error("The print-size copy didn't pass the scan check", {
+          description: `Download the ${variant.width} px image instead.`,
+        });
+        return;
+      }
+      saveBlob(blob, `qrdx-ai-art-${variant.seed}-${ART_PRINT_SIZE}px`);
+      track("qr_downloaded", { format: "ai-art-print", source: "ai_art" });
+    } catch {
+      toast.error("Couldn't prepare the print-size image");
+    } finally {
+      setPreparingPrint(false);
+    }
   };
 
   return (
@@ -110,10 +128,9 @@ export function AIArtResultPanel({
           <img
             alt={`AI-generated QR code artwork that encodes ${result.text}`}
             className="size-full object-cover"
-            crossOrigin="anonymous"
-            height={variant.height ?? undefined}
+            height={variant.height}
             src={variant.imageUrl}
-            width={variant.width ?? undefined}
+            width={variant.width}
           />
         ) : (
           <div className="text-muted-foreground flex size-full flex-col items-center justify-center gap-2 p-6 text-center text-sm">
@@ -133,7 +150,8 @@ export function AIArtResultPanel({
               …
             </p>
             <p className="text-muted-foreground text-xs">
-              This can take up to a minute.
+              Each image is checked to scan before you see it. This can take up
+              to a minute.
             </p>
           </div>
         )}
@@ -155,7 +173,7 @@ export function AIArtResultPanel({
                   ? "border-foreground ring-foreground/15 ring-2"
                   : "hover:border-foreground/30",
               )}
-              key={item.imageUrl}
+              key={`${item.seed}-${index}`}
               onClick={() => setSelected(index)}
               role="option"
               type="button"
@@ -163,12 +181,11 @@ export function AIArtResultPanel({
               <img
                 alt=""
                 className="size-full object-cover"
-                crossOrigin="anonymous"
                 src={item.imageUrl}
               />
               <StatusDot status={checks[index]?.status ?? "checking"} />
               {index === best && (
-                <span className="absolute right-1 bottom-1 left-1 rounded-full bg-emerald-600 px-1 py-0.5 text-center text-[10px] font-medium text-white">
+                <span className="bg-foreground text-background absolute right-1 bottom-1 left-1 rounded-full px-1 py-0.5 text-center text-[10px] font-medium">
                   Best scannable
                 </span>
               )}
@@ -180,30 +197,25 @@ export function AIArtResultPanel({
       {result && variant && !isGenerating && (
         <>
           <ScanStatusCard
+            blended={variant.blended}
             isBest={selected === best && result.variants.length > 1}
-            status={check?.status ?? "checking"}
             score={check?.score ?? null}
+            status={check?.status ?? "checking"}
           />
 
           <div className="flex flex-wrap gap-2">
-            <Button disabled={downloading} onClick={handleDownload}>
-              {downloading ? <Spinner /> : <Import />}
-              {big ? "Download 2× (print)" : "Download"}
+            <Button onClick={handleDownload}>
+              <Import />
+              Download
             </Button>
-            {!big && isFalResultUrl(variant.imageUrl) && (
-              <Button
-                disabled={upscalingUrl !== null}
-                onClick={() => onUpscale(variant)}
-                variant="outline"
-              >
-                {upscalingUrl === variant.imageUrl ? (
-                  <Spinner />
-                ) : (
-                  <SearchZoomIn />
-                )}
-                Upscale 2× for print
-              </Button>
-            )}
+            <Button
+              disabled={preparingPrint}
+              onClick={handlePrintDownload}
+              variant="outline"
+            >
+              {preparingPrint ? <Spinner /> : <DocumentDownload />}
+              Print size ({ART_PRINT_SIZE} px)
+            </Button>
             {result.visibility < ART_QR_VISIBILITY.max && (
               <Button onClick={() => onRetryClearer(variant)} variant="outline">
                 <ScanBarcode />
@@ -217,12 +229,12 @@ export function AIArtResultPanel({
           </div>
 
           <p className="text-muted-foreground text-xs">
-            QR visibility {result.visibility} · Creativity {result.creativity}
-            {big ? ` · Upscaled to ${big.width ?? 2048} px` : ""}
+            QR visibility {result.visibility} · Creativity {result.creativity} ·{" "}
+            {variant.width} px
             {result.failed > 0
-              ? ` · ${result.failed} variation${result.failed > 1 ? "s" : ""} failed and ${result.failed > 1 ? "were" : "was"} refunded`
+              ? ` · ${result.failed} variation${result.failed > 1 ? "s" : ""} failed and used no credit`
               : ""}
-            . Each image and each upscale uses 1 AI art credit.
+            . Each image uses 1 AI art credit; the print-size download is free.
           </p>
         </>
       )}
@@ -257,22 +269,22 @@ const SCAN_STATUS: Record<
 > = {
   checking: {
     icon: <Spinner className="size-4" />,
-    title: "Checking that it scans…",
-    description: "Decoding the image in your browser.",
+    title: "Scoring the scan…",
+    description: "Decoded on the server; now testing it shrunk and blurred.",
   },
   scannable: {
     icon: (
       <TickCircle className="size-4 text-emerald-600 dark:text-emerald-400" />
     ),
-    title: "Scannable ✓",
+    title: "Verified to scan",
     description:
-      "Our in-browser check decoded it to your content. Still test it with a phone camera before printing.",
+      "Decoded to your content on our server and again in your browser. Still test it with a phone camera before printing.",
   },
   unreadable: {
     icon: <Warning2 className="size-4 text-amber-600 dark:text-amber-400" />,
-    title: "May not scan — try a clearer code",
+    title: "Hard to read when small — try a clearer code",
     description:
-      "Our in-browser check couldn't read it. Raise QR visibility, or test with a phone camera, which is often more forgiving.",
+      "It decoded on our server, but not in the in-browser test. Raise QR visibility, or test with a phone camera before using it.",
   },
   mismatch: {
     icon: <Warning2 className="size-4 text-amber-600 dark:text-amber-400" />,
@@ -282,8 +294,9 @@ const SCAN_STATUS: Record<
   },
   unverified: {
     icon: <InfoCircle className="text-muted-foreground size-4" />,
-    title: "Couldn't run the scan check",
-    description: "Test it with a phone camera before printing or sharing it.",
+    title: "Couldn't run the in-browser check",
+    description:
+      "It decoded on our server. Test it with a phone camera before printing or sharing it.",
   },
 };
 
@@ -291,10 +304,12 @@ function ScanStatusCard({
   status,
   score,
   isBest,
+  blended,
 }: {
   status: ScanStatus;
   score: number | null;
   isBest: boolean;
+  blended: boolean;
 }) {
   const { icon, title, description } = SCAN_STATUS[status];
   return (
@@ -312,13 +327,19 @@ function ScanStatusCard({
             </span>
           )}
           {isBest && (
-            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-xs text-emerald-700 dark:text-emerald-400">
+            <span className="bg-muted text-foreground inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs">
               <MedalStar className="size-3" />
               Best of this run
             </span>
           )}
         </span>
         <span className="text-muted-foreground text-xs">{description}</span>
+        {blended && (
+          <span className="text-muted-foreground text-xs">
+            Gemini's version didn't pass the scan check, so QRdx blended it into
+            the code (Image QR) to make it scan.
+          </span>
+        )}
       </span>
     </output>
   );

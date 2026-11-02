@@ -142,8 +142,10 @@ export async function previewQrCodeImport(
 ): Promise<OrganizeResult<ImportPreview>> {
   return runOrganize(
     "previewQrCodeImport",
-    (scope) =>
-      previewImport(scope, parseInput(importPreviewSchema, input).rows),
+    (scope) => {
+      const { rows, domainId } = parseInput(importPreviewSchema, input);
+      return previewImport(scope, rows, domainId ?? null);
+    },
     { revalidate: false },
   );
 }

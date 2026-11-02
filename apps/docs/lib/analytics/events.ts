@@ -26,6 +26,8 @@ export interface AnalyticsEvents {
   sign_up: { method: SignInMethod };
   sign_in: { method: SignInMethod };
   sign_out: NoProps;
+  /** Settings → Account: the account moved to a new address (never the address). */
+  email_changed: NoProps;
 
   // QR codes
   qr_generated: { content_type: string; source: QrSource; count?: number };
@@ -43,6 +45,8 @@ export interface AnalyticsEvents {
     visibility?: number;
     creativity?: number;
     variations?: number;
+    /** Variations that needed the Image QR blend to scan */
+    blended?: number;
     locked_seed: boolean;
     reference: boolean;
     preset?: string;

@@ -10,7 +10,10 @@
  * Cues (any other name is ignored, whoever emits it):
  *   ui          copy · download · success · error · ai-done
  *   playground  apply · shuffle · select · tick · back · forward · good · low
- *   seasonal    boo · meow · bat (direct click only, quieter, 1 per second)
+ *   seasonal    boo · meow · purr · hiss · bat · spider (Halloween),
+ *               seasonal-bauble · -gift · -snowman · -tree (Christmas),
+ *               seasonal-cork · -balloon · -disco (New Year);
+ *               direct activation only, quieter, 1 per second
  * See SOUND_PRESETS[name].use for where each belongs.
  *
  * Trigger one (one line; no engine import):
@@ -24,7 +27,8 @@
  *   mounted there (app/providers.tsx), so the engine stays disarmed;
  * - master volume 0.35; cues are 250 ms or shorter; at most 2 at once (a
  *   third is dropped); the same cue at most once per 400 ms (tick: 150 ms,
- *   seasonal: 1 s); seasonal cues need a click / tap within 600 ms;
+ *   seasonal: 1 s); seasonal cues need a click, tap or Enter / Space on a
+ *   control within 600 ms;
  * - mute persists in localStorage ("qrdx:sound"); a hidden tab suspends audio.
  *
  * Mute: <SoundSetting /> (Settings → Preferences) and <SoundSwitch /> (the

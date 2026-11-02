@@ -8,6 +8,8 @@ import { domainToASCII, domainToUnicode } from "node:url";
 
 // Never use a real key (or Google) from tests.
 process.env.WEB_RISK_API_KEY = "test-key";
+// A local origin for our own links, like the dev server and local builds.
+process.env.NEXT_PUBLIC_SHORT_LINK_BASE_URL = "http://localhost:3000";
 
 interface Call {
   url: URL;
@@ -256,5 +258,34 @@ describe("checkUrlSafety", () => {
     const safety = await checkUrlSafety("javascript:alert(1)");
     assert.equal(safety.verdict, "block");
     assert.equal(calls.length, 0);
+  });
+
+  // A hosted page's code is created pointing at `<short-link origin>/p`
+  // (landing-pages.ts) and gets `/p/<slug>` once its slug exists. On a local
+  // origin that placeholder used to read as a private address, so a new
+  // account's page code was saved switched off and /p/<slug> returned 404.
+  it("passes our own hosted pages and the page placeholder unscreened", async () => {
+    for (const url of [
+      "http://localhost:3000/p",
+      "http://localhost:3000/p/txAJ5ge",
+    ]) {
+      const safety = await checkUrlSafety(url);
+      assert.equal(safety.verdict, "ok", url);
+      assert.deepEqual(safety.signals, [], url);
+    }
+    assert.equal(calls.length, 0);
+  });
+
+  it("still screens other paths and hosts that look like ours", async () => {
+    respond = () => Response.json({});
+    for (const url of [
+      "http://localhost:3000/pricing",
+      "http://localhost:3000/p/a/b",
+      "http://localhost:4000/p",
+    ]) {
+      const safety = await checkUrlSafety(url);
+      assert.equal(safety.verdict, "review", url);
+      assert.ok(safety.signals.includes("private-network"), url);
+    }
   });
 });

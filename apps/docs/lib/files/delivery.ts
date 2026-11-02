@@ -19,6 +19,8 @@ import { FILE_ID_PATTERN } from "./types";
  * blocked or deleted. Unavailable files answer in a form the requesting
  * element can show: an image placeholder for <img>, a small page for
  * iframes and tabs, a plain error otherwise (media players show their own).
+ * Blocked files answer 410 Gone in every form; their stored object has also
+ * left its public URL (quarantine, lib/files/admin.ts).
  */
 
 const ipLimiter = createRateLimiter({ limiter: slidingWindow(600, "60 s") });
@@ -87,13 +89,22 @@ p{margin:0;color:var(--muted);font-size:15px;line-height:1.5}
 </html>`;
 }
 
-function unavailable(req: Request, status: 404 | 410 | 503): Response {
+/** Why a file row can't be served (null: it can). */
+export function unavailableStatus(
+  row: { status: string } | undefined,
+): 404 | 410 | null {
+  if (!row || row.status === "pending") return 404;
+  return row.status === "ready" ? null : 410;
+}
+
+export function unavailable(req: Request, status: 404 | 410 | 503): Response {
   const headers = { ...COMMON_HEADERS, "Cache-Control": "no-store" };
   switch (destinationOf(req)) {
     case "image":
-      // 200 so every browser paints the placeholder inside the <img>.
+      // 200 so every browser paints the placeholder inside the <img>; a
+      // blocked file keeps its 410 (browsers still decode the SVG body).
       return new Response(UNAVAILABLE_SVG, {
-        status: 200,
+        status: status === 410 ? 410 : 200,
         headers: {
           ...headers,
           "Content-Type": "image/svg+xml",
@@ -151,8 +162,8 @@ export async function deliverFile(
     .from(fileAsset)
     .where(eq(fileAsset.id, id))
     .limit(1);
-  if (!row || row.status === "pending") return unavailable(req, 404);
-  if (row.status !== "ready") return unavailable(req, 410);
+  const gone = unavailableStatus(row);
+  if (gone || !row) return unavailable(req, gone ?? 404);
 
   if (download) {
     const location = await presignDownload(row.storageKey, {

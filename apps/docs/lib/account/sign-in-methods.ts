@@ -3,9 +3,9 @@
  *
  * Email codes need no linked account: anyone who can read the account's
  * inbox can sign in, so that method is always on. Google and GitHub are
- * Better Auth `account` rows. Better Auth refuses to unlink the last row
- * (`allowUnlinkingAll` is off), and this guard matches it, so the page never
- * offers an unlink the server would reject.
+ * Better Auth `account` rows, and any of them can be unlinked, the last one
+ * too (`allowUnlinkingAll` in packages/auth/server.ts): email codes keep
+ * working, so nobody is locked out.
  */
 
 export const SOCIAL_PROVIDERS = ["google", "github"] as const;
@@ -27,7 +27,7 @@ export interface LinkedAccount {
   createdAt: Date | string;
 }
 
-export type UnlinkBlockReason = "not-found" | "last-method" | "unsupported";
+export type UnlinkBlockReason = "not-found" | "unsupported";
 
 /**
  * Why `accountId` can't be unlinked, or null when it can. Every linked
@@ -41,16 +41,17 @@ export function unlinkBlockReason(
   const target = accounts.find((account) => account.id === accountId);
   if (!target) return "not-found";
   if (!isSocialProvider(target.providerId)) return "unsupported";
-  if (accounts.length <= 1) return "last-method";
   return null;
 }
 
 export const UNLINK_BLOCK_MESSAGES: Record<UnlinkBlockReason, string> = {
   "not-found": "That sign-in method isn't linked to your account.",
-  "last-method":
-    "This is the only account you sign in with. Link another one before removing it.",
   unsupported: "This sign-in method can't be removed here.",
 };
+
+/** Said wherever unlinking is offered: email codes always remain. */
+export const EMAIL_CODES_REMAIN =
+  "You can still sign in with a code sent to your email.";
 
 export interface SignInMethodView {
   /** Account row id, or "email" for email codes */
