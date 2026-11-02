@@ -58,10 +58,23 @@ export function latestDate(
   return times.length > 0 ? new Date(Math.max(...times)) : undefined;
 }
 
+/**
+ * The environment without git's own variables. Inside a git hook git sets
+ * GIT_DIR, GIT_WORK_TREE, GIT_INDEX_FILE and more; passed on, they make a
+ * child `git` ignore its `cwd` and act on the hook's repository instead.
+ */
+export function withoutGitEnv(env: NodeJS.ProcessEnv): NodeJS.ProcessEnv {
+  return Object.fromEntries(
+    Object.entries(env).filter(([name]) => !name.startsWith("GIT_")),
+  ) as NodeJS.ProcessEnv;
+}
+
 function git(args: string[], cwd: string): string | null {
   try {
     return execFileSync("git", args, {
       cwd,
+      // `cwd` decides the repository, even when called from a git hook.
+      env: withoutGitEnv(process.env),
       encoding: "utf8",
       stdio: ["ignore", "pipe", "ignore"],
       timeout: 15_000,

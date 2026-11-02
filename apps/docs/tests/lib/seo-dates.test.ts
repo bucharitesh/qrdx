@@ -22,6 +22,7 @@ import {
   parseGitLog,
   shallowBoundary,
   trustedGitDate,
+  withoutGitEnv,
 } from "@/lib/seo-dates";
 import {
   PAGE_SOURCES,
@@ -107,6 +108,7 @@ describe.runIf(hasGit())("git dates from a full and a shallow checkout", () => {
   let root = "";
   let repo = "";
   let clone = "";
+  let decoy = "";
   // Fixed config so the user's own git settings (signing, hooks) don't apply.
   const config = [
     "-c",
@@ -118,12 +120,16 @@ describe.runIf(hasGit())("git dates from a full and a shallow checkout", () => {
     "-c",
     "core.hooksPath=/dev/null",
   ];
+  // Every GIT_* variable is dropped: inside a git hook (the pre-push hook
+  // runs this suite) git sets GIT_DIR and friends, and passing them on made
+  // `git init` and `git commit` here act on the real repository instead of
+  // the temp one (it marked the checkout bare and committed these fixtures).
   const run = (cwd: string, args: string[], date?: string) =>
     execFileSync("git", [...config, ...args], {
       cwd,
       stdio: "ignore",
       env: {
-        ...process.env,
+        ...withoutGitEnv(process.env),
         ...(date && { GIT_AUTHOR_DATE: date, GIT_COMMITTER_DATE: date }),
       },
     });
@@ -138,7 +144,22 @@ describe.runIf(hasGit())("git dates from a full and a shallow checkout", () => {
     root = realpathSync(mkdtempSync(join(tmpdir(), "seo-dates-")));
     repo = join(root, "repo");
     clone = join(root, "clone");
+    decoy = join(root, "decoy");
     mkdirSync(repo);
+    mkdirSync(decoy);
+    run(decoy, ["init", "-q"]);
+    // What a git hook does to every child process.
+    const hookGitDir = process.env.GIT_DIR;
+    process.env.GIT_DIR = join(decoy, ".git");
+    try {
+      buildFixtures();
+    } finally {
+      if (hookGitDir === undefined) delete process.env.GIT_DIR;
+      else process.env.GIT_DIR = hookGitDir;
+    }
+  });
+
+  function buildFixtures() {
     run(repo, ["init", "-q"]);
     commit("old.ts", "2026-01-01T00:00:00Z");
     commit("mid.ts", "2026-02-01T00:00:00Z");
@@ -148,7 +169,7 @@ describe.runIf(hasGit())("git dates from a full and a shallow checkout", () => {
     commit("recent.ts", "2026-06-01T00:00:00Z");
     // The last two commits only, like Vercel's shallow clone.
     run(root, ["clone", "-q", "--depth", "2", `file://${repo}`, clone]);
-  });
+  }
 
   afterAll(() => {
     if (root) rmSync(root, { recursive: true, force: true });
@@ -186,5 +207,35 @@ describe.runIf(hasGit())("git dates from a full and a shallow checkout", () => {
   it("trusts no git date outside a repository", () => {
     expect(shallowBoundary(root)).toBeNull();
     expect(gitLastModified(["repo/old.ts"], root).size).toBe(0);
+  });
+
+  it("leaves the hook's repository alone when GIT_DIR points at it", () => {
+    // beforeAll built the fixtures with GIT_DIR aimed at a decoy repo, as a
+    // pre-push hook does: the decoy must have no commits and stay non-bare.
+    const decoyGit = (args: string[]) =>
+      execFileSync("git", args, {
+        cwd: decoy,
+        encoding: "utf8",
+        env: withoutGitEnv(process.env),
+      }).trim();
+    expect(() => decoyGit(["rev-parse", "--verify", "HEAD"])).toThrow();
+    expect(decoyGit(["config", "--get", "core.bare"])).toBe("false");
+    expect(gitLastModified(["recent.ts"], repo).size).toBe(1);
+  });
+});
+
+describe("withoutGitEnv", () => {
+  it("drops every GIT_* variable a git hook sets, and keeps the rest", () => {
+    const env = withoutGitEnv({
+      ...process.env,
+      GIT_DIR: "/repo/.git",
+      GIT_WORK_TREE: "/repo",
+      GIT_INDEX_FILE: "/repo/.git/index",
+      PATH: "/usr/bin",
+    });
+    expect(Object.keys(env).filter((name) => name.startsWith("GIT_"))).toEqual(
+      [],
+    );
+    expect(env.PATH).toBe("/usr/bin");
   });
 });
