@@ -147,7 +147,7 @@ export function ChatInput({
         <div className="flex size-full items-center gap-2">
           <AnimatedBot className="size-4" thinking />
           <ShineText className="text-xs font-medium">
-            Designing your theme…
+            Designing your code…
           </ShineText>
         </div>
       </BannerWrapper>

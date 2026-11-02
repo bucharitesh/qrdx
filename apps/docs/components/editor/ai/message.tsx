@@ -7,6 +7,13 @@ import { AnimatedBot } from "@/components/editor/ai/animated-bot";
 import type { AIPromptData, ChatMessage } from "@/types/ai";
 import { buildAIPromptRender } from "@/utils/ai/ai-prompt";
 import ColorPreview from "../theme-preview/color-preview";
+import {
+  ApplyDesignCard,
+  AskUserCard,
+  DesignSteps,
+  SaveTemplateCard,
+  ScoreCheckStep,
+} from "./agent-parts";
 import { ChatImagePreview } from "./chat-image-preview";
 import { ChatThemePreview } from "./chat-theme-preview";
 import { MessageActions } from "./message-actions";
@@ -22,6 +29,8 @@ type MessageProps = {
   onEditCancel: () => void;
   isLastMessageStreaming: boolean;
   isGeneratingTheme: boolean;
+  /** A later message exists: questions and approvals here were passed over */
+  superseded: boolean;
 };
 
 export default function Message({
@@ -33,6 +42,7 @@ export default function Message({
   onEditCancel,
   isLastMessageStreaming,
   isGeneratingTheme,
+  superseded,
 }: MessageProps) {
   const isUser = message.role === "user";
   const isAssistant = message.role === "assistant";
@@ -73,6 +83,7 @@ export default function Message({
             <AssistantMessage
               message={message}
               isLastMessageStreaming={isLastMessageStreaming}
+              superseded={superseded}
             />
           )}
 
@@ -94,11 +105,13 @@ export default function Message({
 interface AssistantMessageProps {
   message: ChatMessage;
   isLastMessageStreaming: boolean;
+  superseded: boolean;
 }
 
 function AssistantMessage({
   message,
   isLastMessageStreaming,
+  superseded,
 }: AssistantMessageProps) {
   return (
     <div className="flex items-start gap-3">
@@ -127,6 +140,42 @@ function AssistantMessage({
             );
           }
 
+          if (type === "tool-design_qr") {
+            return (
+              <DesignSteps
+                active={isLastMessageStreaming}
+                key={key}
+                part={part}
+                retried={message.parts
+                  .slice(idx + 1)
+                  .some((later) => later.type === "tool-design_qr")}
+              />
+            );
+          }
+
+          if (type === "tool-check_scan_score") {
+            return <ScoreCheckStep key={key} part={part} />;
+          }
+
+          if (type === "tool-ask_user") {
+            return (
+              <AskUserCard key={key} part={part} superseded={superseded} />
+            );
+          }
+
+          if (type === "tool-apply_design") {
+            return (
+              <ApplyDesignCard key={key} part={part} superseded={superseded} />
+            );
+          }
+
+          if (type === "tool-save_template") {
+            return (
+              <SaveTemplateCard key={key} part={part} superseded={superseded} />
+            );
+          }
+
+          // Chats from before the agent
           if (type === "tool-generateQRTheme") {
             const { state } = part;
 
