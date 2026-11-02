@@ -26,7 +26,7 @@ export function PhoneForm() {
   return (
     <div className="space-y-2">
       <Label className="text-xs" htmlFor="phone-number">
-        Phone Number *
+        Phone number *
       </Label>
       <Input
         id="phone-number"
@@ -36,8 +36,7 @@ export function PhoneForm() {
         onChange={(e) => setPhoneData({ phoneNumber: e.target.value })}
       />
       <p className="text-muted-foreground text-xs">
-        Include country code (e.g., +1 for US). Scanning will initiate a phone
-        call.
+        Include the country code, like +1. Scanning starts a call.
       </p>
     </div>
   );

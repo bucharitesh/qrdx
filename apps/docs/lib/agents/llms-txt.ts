@@ -106,7 +106,7 @@ export function buildLlmsTxt(input: LlmsTxtInput): string {
     "",
     "- Static QR codes are free and need no account. The content is in the code itself, so they never expire and have no scan limits.",
     `- Dynamic QR codes: scans are unlimited on every plan and never paused. Under the [Never-Hostage Guarantee](${abs("/guarantee")}), every code keeps redirecting after a downgrade, a failed payment or a cancellation.`,
-    `- For AI agents: connect the MCP server at \`${mcpUrl}\` (Streamable HTTP, no key), or build image URLs like \`${api}/qr?data=…\` (no key). The REST API at \`${api}\` uses OAuth 2.0 access tokens; API keys aren't available yet. Its OpenAPI 3.1 document is at ${abs(OPENAPI_PATH)}.`,
+    `- For AI agents: connect the MCP server at \`${mcpUrl}\` (Streamable HTTP, no key), or build image URLs like \`${api}/qr?data=…\` (no key). The REST API at \`${api}\` takes a workspace API key (\`Authorization: Bearer qrdx_…\`, created in Settings; see ${abs("/docs/developers/api-keys")}) or an OAuth 2.0 access token. Its OpenAPI 3.1 document is at ${abs(OPENAPI_PATH)}.`,
     `- Markdown versions: add \`.md\` to any docs URL (for example ${abs("/docs/developers/mcp.md")}); ${abs("/pricing.md")} and ${abs("/mcp.md")} are Markdown too, and ${abs("/llms-full.txt")} has every docs page in one file.`,
   ].join("\n");
 
@@ -253,7 +253,13 @@ export function buildLlmsTxt(input: LlmsTxtInput): string {
     {
       title: "REST API",
       url: "/docs/developers/rest-api",
-      description: `Dynamic codes, scan analytics, conversions, webhook subscriptions and themes under ${api}, with OAuth 2.0 access tokens (authorization code with PKCE)`,
+      description: `Dynamic codes, scan analytics, conversions, webhook subscriptions and themes under ${api}, with a workspace API key or an OAuth 2.0 access token (authorization code with PKCE)`,
+    },
+    {
+      title: "API keys",
+      url: "/docs/developers/api-keys",
+      description:
+        "qrdx_ keys for your own servers and scripts: scopes, workspaces and roles, expiry and revoking",
     },
     {
       title: "OpenAPI document",

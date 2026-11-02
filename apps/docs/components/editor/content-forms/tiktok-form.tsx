@@ -29,7 +29,7 @@ export function TikTokForm() {
     <div className="space-y-3">
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="tiktok-username">
-          TikTok Username *
+          TikTok username *
         </Label>
         <Input
           id="tiktok-username"
@@ -40,9 +40,6 @@ export function TikTokForm() {
             setTiktokData({ ...tiktokData, username: e.target.value })
           }
         />
-        <p className="text-muted-foreground text-[11px]">
-          Enter your TikTok username with or without @
-        </p>
       </div>
 
       <p className="text-muted-foreground text-xs">

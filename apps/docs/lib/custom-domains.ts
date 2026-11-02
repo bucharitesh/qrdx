@@ -260,7 +260,12 @@ export async function checkVercelDomain(
 
 // ─── Manual verification (self-hosted) ───────────────────────────────────────
 
-const MANUAL_CHALLENGE_LABEL = "_qrdx-challenge";
+/**
+ * Ownership TXT record: `_qrdx-challenge.<hostname>` = `qrdx-verify=<token>`.
+ * domain-connect/qrdx.dev.qrdx.json writes the same record (lib/domain-connect).
+ */
+export const MANUAL_CHALLENGE_LABEL = "_qrdx-challenge";
+export const MANUAL_CHALLENGE_PREFIX = "qrdx-verify=";
 
 // Short timeouts: the check runs inside a server action.
 const resolver = new Resolver({ timeout: 4000, tries: 2 });
@@ -275,7 +280,7 @@ export function manualRecords(hostname: string, token: string): DnsRecord[] {
     {
       type: "TXT",
       name: `${MANUAL_CHALLENGE_LABEL}.${hostname}`,
-      value: `qrdx-verify=${token}`,
+      value: `${MANUAL_CHALLENGE_PREFIX}${token}`,
       note: "Proves you own the domain.",
     },
     {

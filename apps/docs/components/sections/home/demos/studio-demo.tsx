@@ -170,10 +170,11 @@ export function StudioDemo() {
   const styleKey = `${body}-${eye}-${swatch.id}-${angle}-${frameStyle}`;
 
   return (
-    <div className="grid h-full md:grid-cols-[minmax(0,1fr)_minmax(0,19rem)]">
+    // Beside the row's text (lg) the card is narrower, so the preview gives up width.
+    <div className="grid h-full md:grid-cols-[minmax(0,1fr)_minmax(0,19rem)] lg:grid-cols-[minmax(0,1fr)_minmax(0,14rem)] xl:grid-cols-[minmax(0,1fr)_minmax(0,19rem)]">
       <div className="flex min-w-0 flex-col gap-4 p-5 md:p-6">
         <SegmentedControl
-          label="Customise"
+          label="Customize"
           options={TABS}
           value={tab}
           onChange={setTab}
@@ -269,7 +270,7 @@ export function StudioDemo() {
                 ) : (
                   <p className="text-xs text-muted-foreground">
                     {swatch.gradient === "radial"
-                      ? "Radial gradients spread from the centre."
+                      ? "Radial gradients spread from the center."
                       : "Solid colors, or pick a gradient to set its angle."}
                   </p>
                 )}

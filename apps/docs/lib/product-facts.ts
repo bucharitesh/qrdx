@@ -35,8 +35,8 @@ export const PRODUCT_FACTS = {
 
 export type ProductFact = keyof typeof PRODUCT_FACTS;
 
-/** "<n> body patterns, <n> corner-eye shapes and <n> eye centres" */
-export const STYLE_SUMMARY = `${PRODUCT_FACTS.bodyPatterns} body patterns, ${PRODUCT_FACTS.eyeShapes} corner-eye shapes and ${PRODUCT_FACTS.eyeCentres} eye centres`;
+/** "<n> body patterns, <n> corner-eye shapes and <n> eye centers" */
+export const STYLE_SUMMARY = `${PRODUCT_FACTS.bodyPatterns} body patterns, ${PRODUCT_FACTS.eyeShapes} corner-eye shapes and ${PRODUCT_FACTS.eyeCentres} eye centers`;
 
 export function isProductFact(name: string): name is ProductFact {
   return Object.hasOwn(PRODUCT_FACTS, name);

@@ -9,6 +9,16 @@ import { baseUrl } from "@/lib/metadata";
 import { QR_TYPE_SLUGS } from "@/lib/qr-types-content";
 import { industries, placements } from "@/lib/seo-content";
 import {
+  gitLastModified,
+  latestDate as latest,
+  trustedLastModified,
+} from "@/lib/seo-dates";
+import {
+  PAGE_SOURCES,
+  QR_TYPES_SOURCE,
+  seoGroupSource,
+} from "@/lib/seo-page-sources";
+import {
   blogAuthorsSource,
   blogSource,
   changelogSource,
@@ -21,21 +31,42 @@ export const revalidate = false;
 
 type Entry = MetadataRoute.Sitemap[number];
 
-const latest = (dates: (Date | string | undefined)[]): Date | undefined => {
-  const times = dates
-    .filter((d): d is Date | string => Boolean(d))
-    .map((d) => new Date(d).getTime())
-    .filter((t) => !Number.isNaN(t));
-  return times.length > 0 ? new Date(Math.max(...times)) : undefined;
-};
-
+// lastmod is a real date or absent, never the build time (lib/seo-dates.ts).
 export default function sitemap(): MetadataRoute.Sitemap {
   const url = (path: string): string => new URL(path, baseUrl).toString();
 
+  // TypeScript-written pages: the git date of the file that holds the copy.
+  const collections = [industries, placements];
+  const groupFiles = collections.flatMap((collection) =>
+    collection.groups.map((group) => seoGroupSource(collection, group.id)),
+  );
+  const fileDates = gitLastModified([
+    QR_TYPES_SOURCE,
+    ...groupFiles,
+    ...Object.values(PAGE_SOURCES).flat(),
+  ]);
+  const pageDate = (path: string) =>
+    latest((PAGE_SOURCES[path] ?? []).map((file) => fileDates.get(file)));
+  const typesDate = fileDates.get(QR_TYPES_SOURCE);
+  const topicDate = (
+    collection: (typeof collections)[number],
+    slug: string,
+  ): Date | undefined => {
+    const group = collection.groupOf(slug);
+    return group
+      ? fileDates.get(seoGroupSource(collection, group.id))
+      : undefined;
+  };
+
   const posts = blogSource.getPages().filter((p) => p.data.published);
+  // A post's `updated` is its last substantive change; small fixes don't
+  // count, so its git date isn't used.
   const postDate = (p: (typeof posts)[number]) =>
-    latest([p.data.updated, p.data.lastModified, p.data.date]);
+    latest([p.data.updated, p.data.date]);
   const compares = compareSource.getPages();
+  // `lastVerified` is when the competitor facts were last checked.
+  const compareDate = (p: (typeof compares)[number]) =>
+    latest([p.data.lastVerified, trustedLastModified(p.data.lastModified)]);
 
   const categories = Object.entries(SLUG_TO_CATEGORY).flatMap(
     ([slug, name]) => {
@@ -76,11 +107,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: url("/pricing"),
+      lastModified: pageDate("/pricing"),
       changeFrequency: "monthly",
       priority: 0.9,
     },
     {
       url: url("/guarantee"),
+      lastModified: pageDate("/guarantee"),
       changeFrequency: "yearly",
       priority: 0.6,
     },
@@ -109,7 +142,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       priority: 0.8,
     },
-    { url: url("/templates"), changeFrequency: "monthly", priority: 0.8 },
+    {
+      url: url("/templates"),
+      lastModified: pageDate("/templates"),
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
     {
       url: url("/integrations"),
       changeFrequency: "monthly",
@@ -131,11 +169,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ),
     {
       url: url("/mcp"),
+      lastModified: pageDate("/mcp"),
       changeFrequency: "monthly",
       priority: 0.7,
     },
     {
       url: url("/plugins"),
+      lastModified: pageDate("/plugins"),
       changeFrequency: "monthly",
       priority: 0.7,
     },
@@ -154,7 +194,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
         (page) =>
           ({
             url: url(page.url),
-            lastModified: page.data.lastModified,
+            lastModified: trustedLastModified(page.data.lastModified),
             changeFrequency: "weekly",
             priority: page.url === "/docs" ? 0.8 : 0.5,
           }) satisfies Entry,
@@ -178,6 +218,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ),
     {
       url: url("/qr-code-generator"),
+      lastModified: typesDate,
       changeFrequency: "monthly",
       priority: 0.8,
     },
@@ -185,13 +226,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
       (type) =>
         ({
           url: url(`/qr-code-generator/${type}`),
+          lastModified: typesDate,
           changeFrequency: "monthly",
           priority: 0.7,
         }) satisfies Entry,
     ),
-    ...[industries, placements].flatMap((collection) => [
+    ...collections.flatMap((collection) => [
       {
         url: url(collection.basePath),
+        lastModified: latest(
+          collection.items.map((topic) => topicDate(collection, topic.slug)),
+        ),
         changeFrequency: "monthly",
         priority: 0.7,
       } satisfies Entry,
@@ -199,6 +244,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
         (topic) =>
           ({
             url: url(collection.path(topic.slug)),
+            lastModified: topicDate(collection, topic.slug),
             changeFrequency: "monthly",
             priority: 0.6,
           }) satisfies Entry,
@@ -206,32 +252,37 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ]),
     {
       url: url("/tools"),
+      lastModified: pageDate("/tools"),
       changeFrequency: "monthly",
       priority: 0.7,
     },
     {
       url: url("/tools/bulk"),
+      lastModified: pageDate("/tools/bulk"),
       changeFrequency: "monthly",
       priority: 0.7,
     },
     {
       url: url("/tools/print-size"),
+      lastModified: pageDate("/tools/print-size"),
       changeFrequency: "monthly",
       priority: 0.6,
     },
     {
       url: url("/tools/scan-checker"),
+      lastModified: pageDate("/tools/scan-checker"),
       changeFrequency: "monthly",
       priority: 0.7,
     },
     {
       url: url("/scan"),
+      lastModified: pageDate("/scan"),
       changeFrequency: "monthly",
       priority: 0.8,
     },
     {
       url: url("/compare"),
-      lastModified: latest(compares.map((p) => p.data.lastModified)),
+      lastModified: latest(compares.map(compareDate)),
       changeFrequency: "monthly",
       priority: 0.7,
     },
@@ -239,7 +290,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       (page) =>
         ({
           url: url(page.url),
-          lastModified: page.data.lastModified,
+          lastModified: compareDate(page),
           changeFrequency: "monthly",
           priority: 0.6,
         }) satisfies Entry,
@@ -248,7 +299,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       (page) =>
         ({
           url: url(page.url),
-          lastModified: page.data.lastModified,
+          lastModified: trustedLastModified(page.data.lastModified),
           changeFrequency: "yearly",
           priority: 0.3,
         }) satisfies Entry,

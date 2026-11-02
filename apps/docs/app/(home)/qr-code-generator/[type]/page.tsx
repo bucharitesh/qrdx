@@ -39,6 +39,7 @@ export async function generateMetadata({
     title: getQrTypeTitle(content),
     description: content.metaDescription,
     path: `/qr-code-generator/${content.type}`,
+    ownOgImage: true,
   });
 }
 

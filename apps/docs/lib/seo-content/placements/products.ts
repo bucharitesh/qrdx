@@ -233,7 +233,7 @@ export const products: SeoGroup = {
         {
           kind: "dynamic",
           label: "Dynamic link to support",
-          why: "Points at the current support site or help centre, whatever platform you use next year.",
+          why: "Points at the current support site or help center, whatever platform you use next year.",
         },
       ],
       distances: [
@@ -505,7 +505,7 @@ export const products: SeoGroup = {
         { label: "Back print, behind in a queue", meters: 1.5 },
       ],
       tips: [
-        "Print on flat areas: centre chest or upper back. Avoid seams, pockets and the curve under the arm.",
+        "Print on flat areas: center chest or upper back. Avoid seams, pockets and the curve under the arm.",
         "Size for the distance: about 12 cm on the chest for a metre away, about 17 cm on the back for 1.5 m.",
         "Screen printing and DTF give sharp, dark modules; embroidery is too coarse for most codes.",
         "Dark code on a light shirt works best. If you print light on dark, test it: not every scanner reads inverted codes.",

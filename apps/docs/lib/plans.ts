@@ -190,6 +190,21 @@ export function getPlanLimits(plan: Plan): PlanLimits {
   return PLAN_LIMITS[plan];
 }
 
+/**
+ * Plans whose limits pass `allows`, cheapest first. Copy that names a plan
+ * ("needs Pro", "part of Pro and Business") uses this, never a fixed name.
+ */
+export function plansWith(allows: (limits: PlanLimits) => boolean): Plan[] {
+  return PLANS.filter((plan) => allows(PLAN_LIMITS[plan]));
+}
+
+/** The cheapest plan whose limits pass `allows`; null when none does. */
+export function cheapestPlanWith(
+  allows: (limits: PlanLimits) => boolean,
+): Plan | null {
+  return plansWith(allows)[0] ?? null;
+}
+
 const PLAN_RANK: Record<Plan, number> = { free: 0, pro: 1, business: 2 };
 
 /** The most generous of several plans (free for none). */

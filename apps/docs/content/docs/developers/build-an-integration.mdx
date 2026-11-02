@@ -10,7 +10,7 @@ This guide covers the whole flow: create an app, send people to QRdx, exchange t
 
 ## 1. Create an OAuth app
 
-Open [Settings → Developers](/settings/developers) and click **New app**. The app belongs to the workspace that's open: your personal workspace, or the team picked in the sidebar. In a team, only owners can create and change apps; admins and members can see them.
+Open [Settings → API keys & apps](/settings/developers) and click **New app**. The app belongs to the workspace that's open: your personal workspace, or the team picked in the sidebar. In a team, only owners can create and change apps; admins and members can see them.
 
 | Field | What it's for |
 | --- | --- |
@@ -295,4 +295,4 @@ The QRdx team reviews listed apps and marks them **verified**, which removes the
 - Use PKCE (`S256`) and a fresh `state` for every authorization, and check `state` on return.
 - Register exact redirect URIs; QRdx compares them character for character.
 - Store access and refresh tokens encrypted, and save the new refresh token after every refresh.
-- Revoke tokens when people disconnect. Deleting your app in Settings → Developers revokes every token it issued; pausing it refuses them until you resume it.
+- Revoke tokens when people disconnect. Deleting your app in Settings → API keys & apps revokes every token it issued; pausing it refuses them until you resume it.

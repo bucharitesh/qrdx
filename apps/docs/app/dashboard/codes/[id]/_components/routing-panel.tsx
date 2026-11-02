@@ -63,6 +63,7 @@ import {
 } from "@/actions/code-marketing";
 import { InfoHint } from "@/components/help/info-hint";
 import type { HintId } from "@/lib/help/hints";
+import { type PaidPlan, PLAN_NAMES } from "@/lib/pricing";
 import type {
   RoutingCondition,
   RoutingConfig,
@@ -96,7 +97,8 @@ export function PanelCard({
 }: {
   title: string;
   description: ReactNode;
-  badge?: "Pro" | "Business";
+  /** The cheapest plan that unlocks the panel (lib/plans.ts), as a badge */
+  badge?: PaidPlan | null;
   /** Info (i) after the title; content lives in lib/help/hints.ts */
   hint?: HintId;
   children: ReactNode;
@@ -107,7 +109,7 @@ export function PanelCard({
         <div className="flex flex-wrap items-center gap-2">
           <CardTitle>{title}</CardTitle>
           {hint && <InfoHint align="start" className="-ml-0.5" id={hint} />}
-          {badge && <Badge variant="outline">{badge}</Badge>}
+          {badge && <Badge variant="outline">{PLAN_NAMES[badge]}</Badge>}
         </div>
         <CardDescription>{description}</CardDescription>
       </CardHeader>
@@ -135,7 +137,7 @@ export function PlanLock({
   plan,
   children,
 }: {
-  plan: "Pro" | "Business";
+  plan: PaidPlan;
   children: ReactNode;
 }) {
   const openUpgradeDialog = useGetProDialogStore((s) => s.openUpgradeDialog);
@@ -147,11 +149,11 @@ export function PlanLock({
       </p>
       <Button
         className="shrink-0"
-        onClick={() => openUpgradeDialog(plan === "Pro" ? "pro" : "business")}
+        onClick={() => openUpgradeDialog(plan)}
         size="sm"
       >
         <Gem />
-        Upgrade to {plan}
+        Upgrade to {PLAN_NAMES[plan]}
       </Button>
     </div>
   );
@@ -1293,9 +1295,37 @@ function RuleTester({ codeId, rules }: { codeId: string; rules: DraftRule[] }) {
 
 // ─── Panel ───────────────────────────────────────────────────────────────────
 
-function RoutingEditor({ initial }: { initial: CodeMarketingSettings }) {
+/**
+ * Saved rules, plus an unsaved A/B split when the panel is opened to start
+ * one (the builder's "A/B test" option) and the code has none yet.
+ */
+function initialRules(
+  initial: CodeMarketingSettings,
+  startWith: "split" | undefined,
+): DraftRule[] {
+  const saved = toDraft(initial.routing);
+  if (
+    startWith !== "split" ||
+    !initial.features.routing ||
+    saved.length >= MAX_RULES ||
+    saved.some((rule) => rule.mode === "split")
+  ) {
+    return saved;
+  }
+  return [...saved, newRule({ name: "A/B test", mode: "split" })];
+}
+
+function RoutingEditor({
+  initial,
+  plan,
+  startWith,
+}: {
+  initial: CodeMarketingSettings;
+  plan: PaidPlan | null;
+  startWith?: "split";
+}) {
   const [settings, setSettings] = useState(initial);
-  const [rules, setRules] = useState(() => toDraft(initial.routing));
+  const [rules, setRules] = useState(() => initialRules(initial, startWith));
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const locked = !settings.features.routing;
@@ -1341,7 +1371,7 @@ function RoutingEditor({ initial }: { initial: CodeMarketingSettings }) {
 
   return (
     <PanelCard
-      badge="Pro"
+      badge={plan}
       description={
         <>
           Send each scan to a different URL by device, country, language, time
@@ -1355,11 +1385,11 @@ function RoutingEditor({ initial }: { initial: CodeMarketingSettings }) {
       }
       title="Smart routing"
     >
-      {locked && (
-        <PlanLock plan="Pro">
+      {locked && plan && (
+        <PlanLock plan={plan}>
           {rules.length > 0
-            ? "Your plan doesn't include smart routing. These rules keep working; you can turn them off or delete them, and editing them needs Pro."
-            : "Smart routing (smart app links, country, language, time rules and A/B splits) is part of Pro."}
+            ? `Your plan doesn't include smart routing. These rules keep working; you can turn them off or delete them, and editing them needs ${PLAN_NAMES[plan]}.`
+            : `Smart routing (smart app links, country, language, time rules and A/B splits) is part of ${PLAN_NAMES[plan]}.`}
         </PlanLock>
       )}
 
@@ -1456,16 +1486,24 @@ function RoutingEditor({ initial }: { initial: CodeMarketingSettings }) {
   );
 }
 
-/** Smart routing rules for a dynamic code (Pro). */
+/** Smart routing rules and A/B splits for a dynamic code. */
 export function RoutingPanel({
   settings,
+  plan,
+  startWith,
 }: {
   settings: MarketingSettingsPromise;
+  /** The cheapest plan with smart routing (lib/plans.ts) */
+  plan: PaidPlan | null;
+  /** "split": add an unsaved A/B split when the code has none */
+  startWith?: "split";
 }) {
   return (
     <Suspense fallback={<PanelFallback />}>
       <MarketingSettingsGate settings={settings} title="Smart routing">
-        {(data) => <RoutingEditor initial={data} />}
+        {(data) => (
+          <RoutingEditor initial={data} plan={plan} startWith={startWith} />
+        )}
       </MarketingSettingsGate>
     </Suspense>
   );

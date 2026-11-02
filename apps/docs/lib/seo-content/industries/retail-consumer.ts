@@ -384,7 +384,7 @@ export const retailConsumer: SeoGroup = {
         "Window-sticker specs, walkaround videos, test drives and service history.",
       intro: [
         "Car lots are full of people browsing after hours, reading window stickers through the glass. A QR code on each vehicle's window card can open the full spec sheet, a walkaround video and a test-drive booking form, any time of day.",
-        "Garages and service centres use codes differently: on the key tag, the invoice and the service sticker on the windscreen, to bring the customer back for the next service and leave a review for this one.",
+        "Garages and service centers use codes differently: on the key tag, the invoice and the service sticker on the windscreen, to bring the customer back for the next service and leave a review for this one.",
       ],
       useCases: [
         {

@@ -258,7 +258,7 @@ export default async function AnalyticsPage({
           </EmptyHeader>
           <EmptyContent>
             <Button asChild>
-              <Link href="/dashboard">Go to codes</Link>
+              <Link href="/dashboard/codes">Go to codes</Link>
             </Button>
           </EmptyContent>
         </Empty>

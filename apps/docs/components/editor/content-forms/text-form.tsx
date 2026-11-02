@@ -52,11 +52,11 @@ export function TextForm() {
     <div className="space-y-3">
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="text-input">
-          Text Content *
+          Text content *
         </Label>
         <Textarea
           id="text-input"
-          placeholder="Enter any text content..."
+          placeholder="Enter any text…"
           value={textData.text}
           onChange={(e) => setTextData({ text: e.target.value })}
           onPaste={handlePaste}
@@ -68,7 +68,7 @@ export function TextForm() {
         )}
         {!errors.text && (
           <p className="text-muted-foreground text-[11px]">
-            Enter plain text content (paste URLs to auto-detect type)
+            Paste a link and it switches to the matching type.
           </p>
         )}
       </div>

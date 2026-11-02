@@ -200,7 +200,7 @@ const DOT_DESCRIPTIONS: Record<PickableCornerEyeDotPattern, string> = {
   leaf: "Leaf-shaped dot facing each corner",
   "leaf-reverse": "Mirrored leaf-shaped dot",
   drop: "Teardrop dot with a sharp outer corner",
-  "drop-reverse": "Teardrop dot pointing to the centre of the code",
+  "drop-reverse": "Teardrop dot pointing to the center of the code",
   plus: "Plus-shaped dot",
   "cross-rounded": "Cross with rounded arms",
   hexagon: "Hexagonal dot",

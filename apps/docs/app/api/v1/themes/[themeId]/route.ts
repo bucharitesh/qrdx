@@ -5,6 +5,7 @@ import { requireApiToken } from "@/app/api/v1/codes/_lib/api";
 import { oauthCompatibleError } from "@/lib/api-errors";
 import { withApiQuotaHeaders } from "@/lib/api-quota";
 import { HttpError } from "@/lib/error-response";
+import { themesWhere } from "../_lib/scope";
 
 export const GET = withApiQuotaHeaders(
   async (
@@ -25,12 +26,7 @@ export const GET = withApiQuotaHeaders(
         updatedAt: qrPreset.updatedAt,
       })
       .from(qrPreset)
-      .where(
-        and(
-          eq(qrPreset.id, themeId),
-          eq(qrPreset.userId, auth.tokenData.userId),
-        ),
-      )
+      .where(and(eq(qrPreset.id, themeId), themesWhere(auth.tokenData)))
       .limit(1);
 
     if (!theme) {

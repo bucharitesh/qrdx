@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createMetadata } from "@/lib/metadata";
+import { seoOverride } from "@/lib/seo-overrides";
 import { legalSource } from "@/lib/source";
 import { getMDXComponents } from "@/mdx-components";
 
@@ -91,9 +92,11 @@ export async function generateMetadata(
     notFound();
   }
 
+  const seo = seoOverride(page.url);
+
   return createMetadata({
     title: page.data.title,
-    description: page.data.description,
+    description: seo.description ?? page.data.description,
     path: page.url,
   });
 }

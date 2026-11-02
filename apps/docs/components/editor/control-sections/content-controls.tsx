@@ -43,10 +43,6 @@ import {
 } from "@/components/editor/content-forms";
 import { ExampleForm } from "@/components/editor/content-forms/example-form";
 import { ContentTypeSelector } from "@/components/editor/content-type-selector";
-import {
-  DynamicLinkToggle,
-  useDynamicCardAtEnd,
-} from "@/components/editor/dynamic-link-toggle";
 import { ThemeGallery } from "@/components/editor/theme-gallery";
 import { seasonalPresetsFirst } from "@/components/seasonal/preset-order";
 import { track } from "@/lib/analytics";
@@ -185,13 +181,13 @@ function QuickStyles() {
 }
 
 /**
- * The Content tab: what the code opens (type + form + dynamic link), then a
- * quick look to start from and a hand-off to the Design tab.
+ * The Content tab: what the code opens (type, form and, for a website, the
+ * Static/Dynamic choice), then a quick look to start from and a hand-off to
+ * the Design tab.
  */
 export function ContentControls({ onNext }: { onNext?: () => void }) {
   const contentType = useQREditorStore((state) => state.contentType);
   const Form = FORMS[contentType];
-  const dynamicCardAtEnd = useDynamicCardAtEnd();
 
   return (
     <div className="space-y-6 p-4">
@@ -209,8 +205,6 @@ export function ContentControls({ onNext }: { onNext?: () => void }) {
           </Button>
         )}
       </div>
-
-      {contentType === "url" && dynamicCardAtEnd && <DynamicLinkToggle />}
     </div>
   );
 }

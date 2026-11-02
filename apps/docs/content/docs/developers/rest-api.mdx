@@ -1,16 +1,19 @@
 ---
 title: REST API and OAuth
-description: Manage dynamic QR codes, read scan analytics, report conversions and subscribe to webhooks over HTTP with OAuth 2.0 access tokens.
+description: Manage dynamic QR codes, read scan analytics, report conversions and subscribe to webhooks over HTTP, with an API key or an OAuth 2.0 access token.
 icon: Code
 ---
 
-The QRdx REST API lives under `https://api.qrdx.dev/v1`. It uses JSON and, apart from the keyless [image API](/docs/developers/image-api), authenticates requests with an OAuth 2.0 access token:
+The QRdx REST API lives under `https://api.qrdx.dev/v1`. It uses JSON and, apart from the keyless [image API](/docs/developers/image-api), authenticates requests with a Bearer credential:
 
 ```bash
-curl https://api.qrdx.dev/v1/codes -H "Authorization: Bearer $QRDX_TOKEN"
+curl https://api.qrdx.dev/v1/codes -H "Authorization: Bearer $QRDX_API_KEY"
 ```
 
-Requests made with a token act on the token owner's personal workspace. The codes, conversions and hooks endpoints also accept the browser session of someone signed in to QRdx; those requests act on the open [team](/docs/teams).
+- **An [API key](/docs/developers/api-keys)** (`qrdx_…`) for your own servers and scripts. It acts on the workspace it was created in, personal or team, with your role there.
+- **An OAuth 2.0 access token** for apps that act for other QRdx users ([below](#get-an-access-token)). Requests made with a token act on the token owner's personal workspace.
+
+The codes, conversions and hooks endpoints also accept the browser session of someone signed in to QRdx; those requests act on the open [team](/docs/teams).
 
 The same endpoints also answer under `https://qrdx.dev/api/v1`. Browser-session requests use that path, since the sign-in cookie belongs to qrdx.dev, and a [self-hosted](/docs/self-hosting) instance serves the API at `/api/v1` on its own domain.
 
@@ -25,14 +28,14 @@ New here? The [quickstart](/docs/developers/quickstart) takes you from nothing t
 | `GET /v1/codes/{id}/scans` | `codes:read` | Scan analytics for a code, or individual scans page by page |
 | `POST /v1/conversions` | `codes:write` | Attribute a sale or sign-up to the scan that led to it (Business). See [Tracking and conversions](/docs/tracking-and-conversions) |
 | `/v1/hooks` | `codes:read`, `codes:write` | Subscribe a URL to events, REST Hooks style, for Zapier, Make and n8n. See [Webhooks](/docs/webhooks) |
-| `GET /v1/themes`, `GET /v1/themes/{id}` | `themes:read` | Your saved QR themes (name and style) |
-| `GET /v1/me` | `profile:read` | The signed-in user's id, name, email and avatar |
+| `GET /v1/themes`, `GET /v1/themes/{id}` | `themes:read` | Your saved QR themes (name and style); a team API key reads the team's shared themes |
+| `GET /v1/me` | `profile:read` | The id, name, email and avatar of the key's creator or the token's user |
 
 `codes:write` also allows everything `codes:read` does.
 
 ## Get an access token
 
-QRdx is an OAuth 2.0 provider. Your app sends people to QRdx to sign in, and gets back an access token that can only do what the granted scopes allow.
+For your own scripts, an [API key](/docs/developers/api-keys) is simpler. When your app acts for other people, QRdx is an OAuth 2.0 provider: your app sends people to QRdx to sign in, and gets back an access token that can only do what the granted scopes allow. API keys use the same scopes.
 
 | Scope | Allows |
 | --- | --- |
@@ -43,7 +46,7 @@ QRdx is an OAuth 2.0 provider. Your app sends people to QRdx to sign in, and get
 
 ### 1. Register an app
 
-Create an OAuth app yourself in [Settings → Developers](/settings/developers): give it a name, its redirect URIs and the scopes it needs, and you get a client ID and a client secret. The secret is shown once; keep it on your server. Free workspaces can have 1 app, Pro 5 and Business 25. [Build an integration](/docs/developers/build-an-integration) walks through the whole flow, from creating the app to getting it listed in the integrations directory.
+Create an OAuth app yourself in [Settings → API keys & apps](/settings/developers): give it a name, its redirect URIs and the scopes it needs, and you get a client ID and a client secret. The secret is shown once; keep it on your server. Free workspaces can have 1 app, Pro 5 and Business 25. [Build an integration](/docs/developers/build-an-integration) walks through the whole flow, from creating the app to getting it listed in the integrations directory.
 
 On a [self-hosted](/docs/self-hosting) instance you can also create a first-party app from `apps/docs`:
 
@@ -121,10 +124,10 @@ Creating several codes in one request, choosing a code's `slug` and moving codes
 
 Two kinds of limit apply. Both answer `429 RATE_LIMITED` with a `Retry-After` header, the number of seconds to wait.
 
-- **Daily quota.** A workspace can make 1,000 API requests a day on Free, 10,000 on Pro and 100,000 on Business (see [Plans and limits](/docs/plans-and-limits)). The day runs from 00:00 to 24:00 UTC. Every authenticated request counts. Requests made with an access token count against the token owner's personal workspace and its plan. Requests made with a browser session count against the open team, or the personal workspace.
+- **Daily quota.** A workspace can make 1,000 API requests a day on Free, 10,000 on Pro and 100,000 on Business (see [Plans and limits](/docs/plans-and-limits)). The day runs from 00:00 to 24:00 UTC. Every authenticated request counts. Requests made with an API key count against the key's workspace and its plan. Requests made with an access token count against the token owner's personal workspace. Requests made with a browser session count against the open team, or the personal workspace.
 - **Per-minute limits.** The codes, conversions and hooks endpoints allow 120 reads and 30 writes a minute per user, and 300 requests a minute per IP address.
 
-Requests turned away before the daily check don't count: an invalid token (`401`), a token without the needed scope (`403`) or a per-minute `429`. Responses to requests that count carry the daily quota in three headers, on successes and errors alike:
+Requests turned away before the daily check don't count: an invalid key or token (`401`), one without the needed scope (`403`) or a per-minute `429`. Responses to requests that count carry the daily quota in three headers, on successes and errors alike:
 
 | Header | Value |
 | --- | --- |

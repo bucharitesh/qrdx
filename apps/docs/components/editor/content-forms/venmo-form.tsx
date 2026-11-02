@@ -45,7 +45,7 @@ export function VenmoForm() {
     <div className="space-y-3">
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="venmo-username">
-          Venmo Username *
+          Venmo username *
         </Label>
         <Input
           id="venmo-username"
@@ -95,7 +95,7 @@ export function VenmoForm() {
       </div>
 
       <p className="text-muted-foreground text-xs">
-        Scanning will open Venmo with pre-filled payment details
+        Scanning will open Venmo with these payment details
       </p>
     </div>
   );
