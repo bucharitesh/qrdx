@@ -12,6 +12,7 @@ import {
   useRef,
   useState,
 } from "react";
+import type { DesignProgress } from "@/lib/ai/agent/tools";
 import type { ChatMessage } from "@/types/ai";
 
 export interface ThemeEvent {
@@ -20,17 +21,27 @@ export interface ThemeEvent {
   at: number;
 }
 
+/** An approved design in the editor, or taken back with Undo. */
+export type AppliedState = "applied" | "undone";
+
 export interface ChatContextValue extends UseChatHelpers<ChatMessage> {
   startNewChat: () => void;
   resetMessagesUpToIndex: (index: number) => void;
   /**
-   * A generateQRTheme call of the current request is running: from its first
-   * tool or data part until its output is applied, it fails, or the request
-   * ends. Plain chat replies never set this.
+   * A design_qr call of the current request is running, until its result
+   * arrives or the request ends. Plain chat replies never set this.
    */
   themeInFlight: boolean;
-  /** Last theme outcome (applied / error), for the preview glow. */
+  /** Last outcome (applied / error), for the preview glow. */
   themeEvent: ThemeEvent | null;
+  /** Live progress of running design_qr calls, by tool call id */
+  designProgress: Record<string, DesignProgress[]>;
+  /** Approved designs applied in this session, by apply_design call id */
+  applied: Record<string, AppliedState>;
+  /** Puts back what an applied design replaced (content and style). */
+  undoApplied: (toolCallId: string) => void;
+  /** Applies an undone design again. */
+  redoApplied: (toolCallId: string) => void;
 }
 
 type PendingCall = (chat: ChatContextValue) => void;
@@ -57,6 +68,7 @@ const METHODS = [
   "resumeStream",
   "addToolResult",
   "addToolOutput",
+  "addToolApprovalResponse",
   "clearError",
   "startNewChat",
   "resetMessagesUpToIndex",
@@ -84,6 +96,10 @@ function createIdleChat(
     error: undefined,
     themeInFlight: false,
     themeEvent: null,
+    designProgress: {},
+    applied: {},
+    undoApplied: () => {},
+    redoApplied: () => {},
     ...Object.fromEntries(METHODS.map((name) => [name, deferred(name)])),
   } as unknown as ChatContextValue;
 }

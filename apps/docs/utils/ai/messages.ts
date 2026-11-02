@@ -5,8 +5,9 @@ function filterMessagesToDisplay(messages: ChatMessage[]): ChatMessage[] {
     const hasTextPart = message.parts.some(
       (part) => part.type === "text" && Boolean(part.text),
     );
-    const hasThemeToolPart = message.parts.some(
-      (part) => part.type === "tool-generateQRTheme",
+    // Agent steps, questions and approvals show as parts of their own.
+    const hasThemeToolPart = message.parts.some((part) =>
+      part.type.startsWith("tool-"),
     );
     const images = message.metadata?.promptData?.images;
     const hasAttachments = images && images.length > 0;
