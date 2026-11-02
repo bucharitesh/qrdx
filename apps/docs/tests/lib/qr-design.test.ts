@@ -26,6 +26,7 @@ import {
   type DesignStyle,
   designStyleSchema,
   fromThemeStyles,
+  sanitizeDesignStyle,
   styleDiff,
   toThemeStyles,
 } from "@/lib/qr-design/style";
@@ -43,7 +44,7 @@ describe("content", () => {
       "hidden",
     ]);
     expect(contentFieldGuide()).toContain(
-      "wifi (WiFi): ssid*, password*, encryption*=WPA|WEP|nopass, hidden (true/false)",
+      "wifi (WiFi): ssid*, password, encryption*=WPA|WEP|nopass, hidden (true/false)",
     );
   });
 
@@ -84,6 +85,15 @@ describe("content", () => {
     expect(!reddit.ok && reddit.issues[0]?.message).toMatch(
       /username|subreddit/i,
     );
+  });
+
+  it("sends an empty password for an open network, as the form does", () => {
+    const open = validateDesignContent({
+      type: "wifi",
+      ssid: "Office Guest",
+      encryption: "nopass",
+    });
+    expect(open.ok && open.value).toBe("WIFI:T:nopass;S:Office Guest;;");
   });
 
   it("ignores fields that don't belong to the type", () => {
@@ -174,6 +184,35 @@ describe("style", () => {
     expect(design.frame).toEqual({ style: "border", text: "Hi" });
   });
 
+  it("makes a designer's answer valid instead of failing on it", () => {
+    // Models don't keep to regex patterns or length limits; seen live:
+    // an explanation written inside a colour.
+    const style = sanitizeDesignStyle(
+      {
+        ...CLASSIC_STYLE,
+        fgColor: "#000080 (navy)",
+        eyeColor: "#FFF",
+        dotColor: "navy",
+        frame: {
+          style: "badge",
+          text: "Save my contact, please, right now",
+          textColor: "#FFFFFFShortened to #FFFFFF since navy is dark",
+        },
+      },
+      { ...CLASSIC_STYLE, fgColor: "#111111" },
+    );
+    expect(designStyleSchema.safeParse(style).success).toBe(true);
+    expect(style.fgColor).toBe("#000080");
+    expect(style.eyeColor).toBe("#FFFFFF");
+    // No colour in it: the dot colour falls back to the dots' colour.
+    expect(style.dotColor).toBe("#000080");
+    expect(style.frame).toEqual({
+      style: "badge",
+      text: "Save my contact, please,",
+      textColor: "#FFFFFF",
+    });
+  });
+
   it("lists what changed in plain words", () => {
     expect(
       styleDiff(CLASSIC_STYLE, { ...CLASSIC_STYLE, fgColor: "#1E3A8A" }),
@@ -246,10 +285,51 @@ describe("runDesignLoop", () => {
     expect(result.grade).toBe("great");
     expect(result.score).toBeGreaterThanOrEqual(GREAT_SCORE);
     expect(result.repairs).toBeGreaterThan(0);
-    expect(result.repairs).toBeLessThanOrEqual(MAX_REPAIRS + 1);
+    expect(result.repairs).toBeLessThanOrEqual(MAX_REPAIRS);
+    expect(result.fellBack).toBe(false);
     expect(result.changes.length).toBeGreaterThan(0);
     // It kept the orange look rather than falling back to black on white.
     expect(result.style.bgColor).toBe("#FFF7ED");
+  });
+
+  it("keeps the colours of long content, deepening them rather than falling back", async () => {
+    const vcard = validateDesignContent({
+      type: "vcard",
+      firstName: "Ada",
+      lastName: "Lovelace",
+      organization: "Analytical Engines",
+      email: "ada@example.com",
+      phone: "+441234567890",
+    });
+    if (!vcard.ok) throw new Error("invalid vCard");
+    const result = await runDesignLoop({
+      value: vcard.value,
+      initial: {
+        ...CLASSIC_STYLE,
+        bgColor: "#F5F3FF",
+        fgColor: "#A78BFA",
+        eyeColor: "#A78BFA",
+        dotColor: "#A78BFA",
+        bodyPattern: "heart",
+        cornerEyePattern: "circle",
+        frame: { style: "badge", text: "Save my contact" },
+      },
+      hasLogo: false,
+      score: scoreDesign,
+    });
+    expect(result.grade).toBe("great");
+    expect(result.fellBack).toBe(false);
+    expect(result.style.bgColor).toBe("#F5F3FF");
+    expect(result.style.fgColor).not.toBe("#000000");
+    expect(result.style.frame).toEqual({
+      style: "badge",
+      text: "Save my contact",
+    });
+    // No repair is wasted on a repeat of the one before.
+    const styles = result.attempts.map((attempt) =>
+      JSON.stringify(attempt.style),
+    );
+    expect(new Set(styles).size).toBe(styles.length);
   });
 
   it("asks the model first and keeps a revision that scores Great", async () => {
@@ -302,10 +382,12 @@ describe("runDesignLoop", () => {
           checks: [{ id: "decode-96", passed: false, message: "Doesn't read" }],
         }) satisfies ScanScoreResult,
     );
+    // A model that keeps proposing new hearts.
+    let call = 0;
     const revise = vi.fn(async (style: DesignStyle) => ({
       ...style,
       bodyPattern: "heart" as const,
-      fgColor: "#123456",
+      fgColor: ["#123456", "#234567"][call++] ?? "#345678",
     }));
     const result = await runDesignLoop({
       value: WIFI,
@@ -323,7 +405,12 @@ describe("runDesignLoop", () => {
       "repair",
       "fallback",
     ]);
-    expect(result.repairs).toBe(MAX_REPAIRS + 1);
+    expect(result.repairs).toBe(MAX_REPAIRS);
+    expect(result.fellBack).toBe(true);
+    // Only the fallback's own change describes the result.
+    expect(result.changes).toEqual([
+      expect.stringMatching(/classic black-on-white/),
+    ]);
     expect(result.grade).toBe("great");
     expect(result.style.frame).toEqual({
       style: "banner-bottom",

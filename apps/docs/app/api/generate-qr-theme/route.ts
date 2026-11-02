@@ -96,6 +96,7 @@ export async function POST(req: NextRequest) {
           writer,
           templates: accountTemplateStore,
           score: scoreDesign,
+          designCalls: { count: 0 },
         };
         const result = streamText({
           abortSignal: req.signal,

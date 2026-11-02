@@ -9,6 +9,7 @@
 import { readUIMessageStream, type UIMessageChunk } from "ai";
 import { NextRequest } from "next/server";
 import { afterAll, beforeEach, describe, expect, it, vi } from "vitest";
+import type { DesignQrOutput } from "@/lib/ai/agent/tools";
 import type { ChatMessage } from "@/types/ai";
 import { type GatewayCall, installFakeGateway } from "../support/fake-gateway";
 
@@ -336,14 +337,16 @@ describe("the QR agent", () => {
 
     const design = toolPart(assistant, "tool-design_qr");
     expect(design?.state).toBe("output-available");
-    const output = design?.state === "output-available" ? design.output : null;
+    const output = (
+      design?.state === "output-available" ? design.output : null
+    ) as DesignQrOutput | null;
     expect(output).toMatchObject({
       ok: true,
       grade: "great",
       content: { summary: "WiFi · Cafe Guest" },
       value: "WIFI:T:WPA;S:Cafe Guest;P:sunshine123;H:false;;",
     });
-    if (!output || !("score" in output)) throw new Error("no design");
+    if (!output?.ok) throw new Error("no design");
     expect(output.score).toBeGreaterThanOrEqual(85);
     expect(output.attempts[0]?.grade).not.toBe("great");
     expect(output.attempts.map((attempt) => attempt.by)).toEqual([
@@ -461,6 +464,104 @@ describe("the QR agent", () => {
       "Open network",
     );
     expect(state.reserved).toHaveLength(1);
+  });
+
+  it("caps the designer's output and repairs a runaway answer", async () => {
+    // Seen live: the designer looped inside a colour string. Its output is
+    // capped, and the colour it meant is kept instead of failing the design.
+    const runaway = {
+      ...REVISED,
+      frame: {
+        style: "badge",
+        text: "Free Wi-Fi",
+        textColor: `#FFFFFF${" Ready. OK.".repeat(50)}`,
+      },
+    };
+    script(
+      [
+        stream([
+          toolCall("call_design", "design_qr", {
+            brief: "Navy with a badge frame",
+            start_from: "new",
+            content: WIFI_CONTENT,
+          }),
+        ]),
+        stream(text("t1", "Scan score is Great.")),
+      ],
+      [runaway, REVISED],
+    );
+    const { chunks } = await post([userMessage("navy wifi badge")]);
+    const assistant = await assistantFrom(chunks);
+    const designer = gateway.calls.filter(isDesigner);
+    for (const call of designer) {
+      expect(call.body.maxOutputTokens).toBe(1500);
+    }
+    const design = toolPart(assistant, "tool-design_qr");
+    expect(design?.state === "output-available" && design.output).toMatchObject(
+      {
+        ok: true,
+        style: {
+          frame: { style: "badge", text: "Free Wi-Fi", textColor: "#FFFFFF" },
+        },
+      },
+    );
+    // Progress partials are clipped, never the runaway string.
+    expect(JSON.stringify(chunks)).not.toContain(" Ready. OK.".repeat(5));
+  });
+
+  it("asks the designer again when its first answer is unusable", async () => {
+    script(
+      [
+        stream([
+          toolCall("call_design", "design_qr", {
+            brief: "Navy",
+            start_from: "new",
+            content: WIFI_CONTENT,
+          }),
+        ]),
+        stream(text("t1", "Scan score is Great.")),
+      ],
+      [{ not: "a style" }, REVISED],
+    );
+    const { chunks } = await post([userMessage("navy wifi")]);
+    const assistant = await assistantFrom(chunks);
+    expect(gateway.calls.filter(isDesigner).length).toBeGreaterThanOrEqual(2);
+    expect(toolPart(assistant, "tool-design_qr")?.state).toBe(
+      "output-available",
+    );
+  });
+
+  it("stops a model that keeps retrying a failing design", async () => {
+    // The designer never answers usefully; the chat model keeps asking.
+    let chatTurns = 0;
+    gateway.respondWith((call) => {
+      if (isDesigner(call)) return stream(text("j", "not json at all"));
+      chatTurns++;
+      return stream([
+        toolCall(`call_${chatTurns}`, "design_qr", {
+          brief: "Navy",
+          start_from: "new",
+        }),
+      ]);
+    });
+    const { chunks } = await post([userMessage("navy")]);
+    const assistant = await assistantFrom(chunks);
+    const outputs = assistant.parts.flatMap((part) =>
+      part.type === "tool-design_qr" && part.state === "output-available"
+        ? [part.output as DesignQrOutput]
+        : [],
+    );
+    // Each design asks the designer twice, then fails with a clear answer;
+    // after three designs the tool refuses without calling the designer.
+    expect(gateway.calls.filter(isDesigner)).toHaveLength(6);
+    expect(outputs[0]).toMatchObject({
+      ok: false,
+      issues: [{ message: expect.stringMatching(/couldn't produce a style/) }],
+    });
+    expect(outputs[3]).toMatchObject({
+      ok: false,
+      issues: [{ message: expect.stringMatching(/Too many designs/) }],
+    });
   });
 
   it("tells the model what's wrong with content instead of guessing", async () => {
