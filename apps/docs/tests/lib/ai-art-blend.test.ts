@@ -109,13 +109,26 @@ describe("locateGrid", () => {
   });
 });
 
+// Byte equality without vitest's element-by-element deep compare, which took
+// over 30 s on CI for a full-size RGBA buffer.
+function sameBytes(a: Uint8Array | Uint8ClampedArray, b: Uint8Array): boolean {
+  return (
+    Buffer.compare(
+      Buffer.from(a.buffer, a.byteOffset, a.byteLength),
+      Buffer.from(b.buffer, b.byteOffset, b.byteLength),
+    ) === 0
+  );
+}
+
 describe("correctArt", () => {
   it("leaves the image alone at strength 0 and never edits its input", () => {
     const before = new Uint8Array(textured.data);
     const grid = locateGrid(textured, control.map, controlGrid(control));
-    expect(correctArt(textured, control.map, grid, 0).data).toEqual(before);
+    expect(
+      sameBytes(correctArt(textured, control.map, grid, 0).data, before),
+    ).toBe(true);
     correctArt(textured, control.map, grid, 1);
-    expect(textured.data).toEqual(before);
+    expect(sameBytes(textured.data, before)).toBe(true);
   });
 
   it("changes the image more as the strength grows", () => {
