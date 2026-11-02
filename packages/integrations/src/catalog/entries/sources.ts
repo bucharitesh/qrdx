@@ -101,7 +101,7 @@ export const sources: IntegrationCatalogEntry[] = [
       },
       {
         title: "Pick a product, or export all",
-        body: "Choose From your account → Shopify in the URL type, or download the product CSV and import it under Dashboard → Import.",
+        body: "Choose From your account → Shopify in the URL type, or download the product CSV and import it under Codes → Import.",
       },
     ],
     capabilities: [

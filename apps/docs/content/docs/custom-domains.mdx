@@ -6,11 +6,11 @@ icon: Globe
 
 By default a [dynamic QR code](/docs/dynamic-qr-codes) encodes a short link such as `https://qrdx.dev/q/aB3dE5f`. With a custom domain it encodes `https://go.yourbrand.com/aB3dE5f` instead, so people see your brand before they scan. Redirects, editing and scan analytics work the same way.
 
-Custom domains are part of Pro (up to 5 per personal workspace or team) and Business (up to 25).
+Custom domains are part of Pro (up to 5 per workspace) and Business (up to 25).
 
 ## Connect a domain
 
-1. Open [Dashboard → Domains](/dashboard/domains) and enter the domain, for example `go.yourbrand.com`. A subdomain works best, because your main website stays where it is.
+1. Open [Settings → Domains](/dashboard?to=settings/domains) and enter the domain, for example `go.yourbrand.com`. A subdomain works best, because your main website stays where it is.
 2. Add the DNS records shown for the domain at your DNS provider (where you bought the domain, Cloudflare, ...):
    - a subdomain gets a `CNAME` record,
    - a root domain (`yourbrand.com`) gets an `A` record,
@@ -56,9 +56,9 @@ On your domain:
 
 Changes (a newly verified or removed domain) take up to a minute to reach every server.
 
-## Teams
+## Workspaces and roles
 
-Domains added while a team is active belong to the team. Owners and admins add, verify and remove them; every member can use verified team domains for their codes.
+A domain belongs to the workspace it was added in. Owners and admins add, verify and remove it; every member can use the workspace's verified domains for their codes.
 
 ## Plans and removing domains
 

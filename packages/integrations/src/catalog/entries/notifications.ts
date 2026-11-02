@@ -154,7 +154,7 @@ export const notifications: IntegrationCatalogEntry[] = [
     steps: [
       {
         title: "Open Settings → Notifications",
-        body: "Your personal workspace and every team you belong to have their own switches.",
+        body: "Your own workspace and every other workspace you belong to have their own switches.",
       },
       {
         title: "Turn on the emails you want",
