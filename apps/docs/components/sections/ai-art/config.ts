@@ -13,8 +13,10 @@ export const ART_MAX_SEED = 4_294_967_295;
 
 /**
  * QR visibility 0 = most artistic, 100 = the code shows most clearly. It sets
- * how strictly the prompt asks Gemini to keep the modules, and how strongly
- * the Image QR blend shows the code when Gemini's image doesn't scan.
+ * how strictly the prompt asks the model to keep the modules, and the bounds
+ * of the blend that makes its image scan (lib/ai/art-blend.ts,
+ * leastBlendBounds): how far QRdx may strengthen the code, and from 50 up how
+ * strong the code is at least.
  */
 export const ART_QR_VISIBILITY = {
   min: 0,
@@ -127,11 +129,17 @@ export interface AIArtVariant {
   width: number;
   height: number;
   seed: number;
-  /**
-   * Gemini's own image didn't pass the scan check, so QRdx blended it into
-   * the code (Image QR) to make it scan
-   */
+  /** The model's own image didn't pass the scan check as drawn */
   blended: boolean;
+  /**
+   * How QRdx made it scan: "none" (the model's image as drawn), "least"
+   * (finders, quiet zone and modules strengthened just enough, on the
+   * model's own image) or "image-qr" (redrawn as an Image QR code, the last
+   * resort)
+   */
+  blend: "none" | "least" | "image-qr";
+  /** How strong the blend is, 0–1: 0 as drawn, 1 for Image QR */
+  blendStrength: number;
 }
 
 export interface AIArtCredits {
