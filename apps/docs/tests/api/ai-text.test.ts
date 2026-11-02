@@ -146,6 +146,7 @@ describe("POST /api/enhance-prompt", () => {
 });
 
 describe("POST /api/generate-qr-theme", () => {
+  // A complete style from the designer (lib/qr-design/style.ts).
   const generatedTheme = {
     bgColor: "#FFFFFF",
     fgColor: "#111111",
@@ -154,9 +155,14 @@ describe("POST /api/generate-qr-theme", () => {
     bodyPattern: "circle",
     cornerEyePattern: "rounded",
     cornerEyeDotPattern: "circle",
+    margin: 4,
+    level: "Q",
+    frame: { style: "none" },
+    templateId: "default",
+    logo: "none",
   };
 
-  it("chats on Claude, designs the theme on Gemini 3 Flash, each with its own options", async () => {
+  it("chats on Claude, designs the code on Gemini 3 Flash, each with its own options", async () => {
     let baseCalls = 0;
     gateway.respondWith((call) => {
       if (modelOf(call) === "google/gemini-3-flash") {
@@ -181,8 +187,11 @@ describe("POST /api/generate-qr-theme", () => {
           {
             type: "tool-call",
             toolCallId: "call_1",
-            toolName: "generateQRTheme",
-            input: "{}",
+            toolName: "design_qr",
+            input: JSON.stringify({
+              brief: "Crisp blue and red",
+              start_from: "new",
+            }),
           },
           {
             type: "finish",
@@ -205,7 +214,8 @@ describe("POST /api/generate-qr-theme", () => {
     });
     expect(response.status).toBe(200);
     const events = await response.text();
-    expect(events).toContain('"status":"ready"');
+    expect(events).toContain('"type":"tool-output-available"');
+    expect(events).toContain('"grade":"great"');
     expect(events).toContain("Here's a crisp blue and red theme.");
 
     const models = gateway.calls.map(modelOf);
@@ -219,7 +229,13 @@ describe("POST /api/generate-qr-theme", () => {
       gateway: { disallowPromptTraining: true, only: ["anthropic"] },
     });
     expect(chat?.body.tools.map((tool: { name: string }) => tool.name)).toEqual(
-      ["generateQRTheme"],
+      [
+        "design_qr",
+        "check_scan_score",
+        "ask_user",
+        "apply_design",
+        "save_template",
+      ],
     );
     expect(design?.body.providerOptions).toEqual({
       gateway: { disallowPromptTraining: true, only: ["google", "vertex"] },

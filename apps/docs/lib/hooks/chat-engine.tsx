@@ -3,7 +3,12 @@
 import { useChat } from "@ai-sdk/react";
 import { toast } from "@repo/design-system";
 import { useQueryClient } from "@tanstack/react-query";
-import { DefaultChatTransport } from "ai";
+import {
+  DefaultChatTransport,
+  isToolUIPart,
+  lastAssistantMessageIsCompleteWithApprovalResponses,
+  lastAssistantMessageIsCompleteWithToolCalls,
+} from "ai";
 import {
   useCallback,
   useEffect,
@@ -14,6 +19,8 @@ import {
 } from "react";
 import { getAIMockMode } from "@/components/editor/ai/dev-mock-mode";
 import { emitSound } from "@/components/editor/sound";
+import type { EditorContextInput } from "@/lib/ai/agent/editor-context";
+import type { ApplyDesignOutput, DesignProgress } from "@/lib/ai/agent/tools";
 import { parseAiSdkTransportError } from "@/lib/ai/parse-ai-sdk-transport-error";
 import { track } from "@/lib/analytics";
 import { handleUnauthorized } from "@/lib/handle-unauthorized";
@@ -21,7 +28,14 @@ import { isDeepEqual } from "@/lib/utils";
 import { useAIChatStore } from "@/store/ai-chat-store";
 import { useQREditorStore } from "@/store/editor-store";
 import type { ChatMessage } from "@/types/ai";
-import type { ChatContextValue, ThemeEvent } from "./use-chat-context";
+import type { ThemeEditorState } from "@/types/editor";
+import type { ContentType, QRContentConfig } from "@/types/qr-content";
+import { encodeQRContent } from "@/utils/qr-content-encoder";
+import type {
+  AppliedState,
+  ChatContextValue,
+  ThemeEvent,
+} from "./use-chat-context";
 import { SUBSCRIPTION_STATUS_QUERY_KEY } from "./use-subscription";
 
 /*
@@ -29,11 +43,14 @@ import { SUBSCRIPTION_STATUS_QUERY_KEY } from "./use-subscription";
  * this, lazily, so it stays out of pages that never show the chat.
  */
 
-const TOOL_TYPE = "tool-generateQRTheme";
+const DESIGN_TOOL = "tool-design_qr";
+const APPLY_TOOL = "tool-apply_design";
 /** Stop a request whose stream went silent this long. */
 const STALLED_STREAM_MS = 60_000;
+/** Largest logo sent along with a request (see editor-context.ts). */
+const MAX_CONTEXT_LOGO_LENGTH = 200_000;
 
-/** Dev only: `?ai-mock=theme|chat|error` replays a recorded response. */
+/** Dev only: `?ai-mock=...` replays a recorded response. */
 const devFetch: typeof fetch | undefined =
   process.env.NODE_ENV === "development"
     ? async (input, init) => {
@@ -42,24 +59,108 @@ const devFetch: typeof fetch | undefined =
         const { mockChatResponse } = await import(
           "@/components/editor/ai/dev-mock-chat"
         );
-        return mockChatResponse(mode);
+        return mockChatResponse(mode, init);
       }
     : undefined;
 
-function applyGeneratedQRStyle(qrStyle: Record<string, unknown>) {
-  const { themeState, setThemeState } = useQREditorStore.getState();
+/** The code in the editor, sent with every request (lib/ai/agent/editor-context.ts). */
+function editorContext(): EditorContextInput {
+  const { contentType, contentConfigs, value, themeState } =
+    useQREditorStore.getState();
+  const config = contentConfigs[contentType] as
+    | (QRContentConfig & Record<string, unknown>)
+    | undefined;
+  const { type: _type, ...content } = config ?? { type: contentType };
+  const { customLogo, art, ...style } = themeState.styles;
+  return {
+    contentType,
+    ...(config ? { content } : {}),
+    value,
+    style,
+    ...(style.showLogo &&
+    customLogo &&
+    customLogo.length <= MAX_CONTEXT_LOGO_LENGTH
+      ? { customLogo }
+      : {}),
+    hasArt: Boolean(art),
+  };
+}
 
-  // Merge the generated style with the current style
-  const mergedStyle = { ...themeState.styles, ...qrStyle };
-
-  if (isDeepEqual(themeState.styles, mergedStyle)) {
-    return;
+/**
+ * Resume a paused run once the user has answered a question or responded to
+ * every approval in it. Never for a run that merely ended on a server tool
+ * (a step limit), which would start a new request on its own.
+ */
+function shouldResume({ messages }: { messages: ChatMessage[] }): boolean {
+  if (lastAssistantMessageIsCompleteWithApprovalResponses({ messages })) {
+    return true;
   }
+  if (!lastAssistantMessageIsCompleteWithToolCalls({ messages })) return false;
+  const last = messages.at(-1);
+  if (!last) return false;
+  const stepStart = last.parts.reduce(
+    (found, part, index) => (part.type === "step-start" ? index : found),
+    -1,
+  );
+  const lastStep = last.parts.slice(stepStart + 1);
+  return lastStep.some(
+    (part) =>
+      part.type === "tool-ask_user" && part.state === "output-available",
+  );
+}
 
-  setThemeState({
-    ...themeState,
-    styles: mergedStyle,
+interface EditorSnapshot {
+  themeState: ThemeEditorState;
+  contentType: ContentType;
+  contentConfig: QRContentConfig | undefined;
+  value: string;
+}
+
+function snapshot(): EditorSnapshot {
+  const state = useQREditorStore.getState();
+  return {
+    themeState: state.themeState,
+    contentType: state.contentType,
+    contentConfig: state.contentConfigs[state.contentType],
+    value: state.value,
+  };
+}
+
+/** Puts an applied design in the editor: its style (through the undo history) and content. */
+function applyToEditor(design: Extract<ApplyDesignOutput, { ok: true }>) {
+  const store = useQREditorStore.getState();
+  const current = store.themeState.styles;
+  const logo =
+    design.logo === "keep"
+      ? { showLogo: current.showLogo, customLogo: current.customLogo }
+      : { showLogo: design.logo.showLogo, customLogo: design.logo.customLogo };
+  store.setThemeState({
+    ...store.themeState,
+    styles: {
+      ...(current.size ? { size: current.size } : {}),
+      ...design.themeStyles,
+      ...logo,
+    },
   });
+  if (design.content) {
+    const { config } = design.content;
+    store.setContentType(config.type);
+    store.setContentConfig(config.type, config);
+    store.setValue(encodeQRContent(config));
+  }
+  return useQREditorStore.getState().themeState;
+}
+
+function restoreEditor(before: EditorSnapshot, applied: ThemeEditorState) {
+  const store = useQREditorStore.getState();
+  // Untouched since: step back through the editor's own history (redo works).
+  if (isDeepEqual(store.themeState, applied)) store.undo();
+  else store.setThemeState(before.themeState);
+  store.setContentType(before.contentType);
+  if (before.contentConfig) {
+    store.setContentConfig(before.contentType, before.contentConfig);
+  }
+  store.setValue(before.value);
 }
 
 /** The chat itself; ChatProvider loads it on first use and keeps it mounted. */
@@ -75,41 +176,35 @@ export function ChatEngine({
   const hasStoreHydrated = useAIChatStore((s) => s.hasHydrated);
   const hasInitializedRef = useRef(false);
 
-  // Theme application bookkeeping: each tool call applies (and chimes) once.
-  const appliedIds = useRef(new Set<string>());
-  const failedIds = useRef(new Set<string>());
-  const [streamingToolId, setStreamingToolId] = useState<string | null>(null);
-  // useChat keeps its first callbacks, so onError reads this through a ref.
-  const inFlightToolIdRef = useRef<string | null>(null);
-  const [themeEvent, setThemeEvent] = useState<ThemeEvent | null>(null);
-
-  const markApplied = useCallback(
-    (toolCallId: string, themeStyles?: Record<string, unknown>) => {
-      if (themeStyles) applyGeneratedQRStyle(themeStyles);
-      if (appliedIds.current.has(toolCallId)) return;
-      appliedIds.current.add(toolCallId);
-      setThemeEvent((prev) => ({ kind: "applied", at: (prev?.at ?? 0) + 1 }));
-      emitSound("ai-done");
-      track("ai_theme_generated", { status: "success" });
-    },
-    [],
+  // Each approved design is applied (and chimes) once; undo keeps what it replaced.
+  const handledIds = useRef(new Set<string>());
+  const snapshots = useRef(
+    new Map<
+      string,
+      {
+        before: EditorSnapshot;
+        applied: ThemeEditorState;
+        design: Extract<ApplyDesignOutput, { ok: true }>;
+      }
+    >(),
   );
-
-  const markFailed = useCallback((toolCallId: string) => {
-    if (failedIds.current.has(toolCallId)) return;
-    failedIds.current.add(toolCallId);
-    setThemeEvent((prev) => ({ kind: "error", at: (prev?.at ?? 0) + 1 }));
-    emitSound("error");
-    track("ai_theme_generated", { status: "fail" });
-  }, []);
+  const [applied, setApplied] = useState<Record<string, AppliedState>>({});
+  const [designProgress, setDesignProgress] = useState<
+    Record<string, DesignProgress[]>
+  >({});
+  const [themeEvent, setThemeEvent] = useState<ThemeEvent | null>(null);
 
   const chat = useChat<ChatMessage>({
     transport: new DefaultChatTransport({
       api: "/api/generate-qr-theme",
       fetch: devFetch,
+      prepareSendMessagesRequest: ({ body, messages, id }) => ({
+        body: { ...body, id, messages, editor: editorContext() },
+      }),
     }),
+    sendAutomaticallyWhen: shouldResume,
     onError: (error) => {
-      const defaultMessage = "Failed to generate QR style. Please try again.";
+      const defaultMessage = "Failed to design the QR code. Please try again.";
       const normalizedError = parseAiSdkTransportError(error, defaultMessage);
 
       if (
@@ -120,28 +215,24 @@ export function ChatEngine({
         return;
       }
 
-      if (inFlightToolIdRef.current) markFailed(inFlightToolIdRef.current);
-      else {
-        emitSound("error");
-        track("ai_theme_generated", { status: "fail" });
-      }
+      setThemeEvent((prev) => ({ kind: "error", at: (prev?.at ?? 0) + 1 }));
+      emitSound("error");
+      track("ai_theme_generated", { status: "fail" });
       toast.error("An error occurred", {
         description: normalizedError.message,
       });
     },
     onData: (dataPart) => {
-      if (dataPart.type !== "data-generated-qr-style") return;
-
-      const toolCallId = dataPart.id ?? "current";
-      const { themeStyles, status } = dataPart.data;
-      if (status === "ready") {
-        markApplied(toolCallId, themeStyles as Record<string, unknown>);
-        return;
-      }
-      if (!appliedIds.current.has(toolCallId)) setStreamingToolId(toolCallId);
-      if (themeStyles) {
-        applyGeneratedQRStyle(themeStyles as Record<string, unknown>);
-      }
+      if (dataPart.type !== "data-design-progress" || !dataPart.id) return;
+      const id = dataPart.id;
+      // The latest partial design, then one entry per scored attempt.
+      setDesignProgress((current) => ({
+        ...current,
+        [id]: [
+          ...(current[id] ?? []).filter((entry) => entry.stage !== "designing"),
+          dataPart.data,
+        ],
+      }));
     },
     onFinish: () => {
       queryClient.invalidateQueries({
@@ -153,49 +244,72 @@ export function ChatEngine({
   const requestActive =
     chat.status === "submitted" || chat.status === "streaming";
 
-  // The tool part is the source of truth; transient data parts only add the
-  // live preview. Apply the final output if the "ready" data part was missed.
+  // Apply approved designs as their results arrive.
   const lastMessage = chat.messages.at(-1);
-  const toolParts = useMemo(
+  const applyParts = useMemo(
     () =>
       lastMessage?.role === "assistant"
         ? lastMessage.parts.flatMap((part) =>
-            part.type === TOOL_TYPE ? [part] : [],
+            part.type === APPLY_TOOL ? [part] : [],
           )
         : [],
     [lastMessage],
   );
-
   useEffect(() => {
-    for (const part of toolParts) {
+    for (const part of applyParts) {
+      if (handledIds.current.has(part.toolCallId)) continue;
       if (part.state === "output-available") {
-        markApplied(
-          part.toolCallId,
-          part.output as unknown as Record<string, unknown>,
-        );
+        handledIds.current.add(part.toolCallId);
+        const output = part.output;
+        if (!output.ok) continue;
+        const before = snapshot();
+        const after = applyToEditor(output);
+        snapshots.current.set(part.toolCallId, {
+          before,
+          applied: after,
+          design: output,
+        });
+        setApplied((current) => ({ ...current, [part.toolCallId]: "applied" }));
+        setThemeEvent((prev) => ({ kind: "applied", at: (prev?.at ?? 0) + 1 }));
+        emitSound("ai-done");
+        track("ai_theme_generated", { status: "success" });
       } else if (part.state === "output-error") {
-        markFailed(part.toolCallId);
+        handledIds.current.add(part.toolCallId);
+        setThemeEvent((prev) => ({ kind: "error", at: (prev?.at ?? 0) + 1 }));
+        emitSound("error");
       }
     }
-  }, [toolParts, markApplied, markFailed]);
+  }, [applyParts]);
 
-  const isPending = (toolCallId: string) =>
-    !appliedIds.current.has(toolCallId) && !failedIds.current.has(toolCallId);
-  const pendingToolPart = toolParts.find(
-    (part) =>
-      (part.state === "input-streaming" || part.state === "input-available") &&
-      isPending(part.toolCallId),
-  );
-  const inFlightToolId = requestActive
-    ? (pendingToolPart?.toolCallId ??
-      (streamingToolId && isPending(streamingToolId) ? streamingToolId : null))
-    : null;
-  const themeInFlight = inFlightToolId !== null;
-  inFlightToolIdRef.current = inFlightToolId;
+  const undoApplied = useCallback((toolCallId: string) => {
+    const entry = snapshots.current.get(toolCallId);
+    if (!entry) return;
+    restoreEditor(entry.before, entry.applied);
+    setApplied((current) => ({ ...current, [toolCallId]: "undone" }));
+  }, []);
 
-  // A request is over (finished, failed or stopped): nothing is streaming.
+  const redoApplied = useCallback((toolCallId: string) => {
+    const entry = snapshots.current.get(toolCallId);
+    if (!entry) return;
+    const before = snapshot();
+    const after = applyToEditor(entry.design);
+    snapshots.current.set(toolCallId, { ...entry, before, applied: after });
+    setApplied((current) => ({ ...current, [toolCallId]: "applied" }));
+  }, []);
+
+  // A design_qr call of the current request is running.
+  const themeInFlight =
+    requestActive &&
+    lastMessage?.role === "assistant" &&
+    lastMessage.parts.some(
+      (part) =>
+        part.type === DESIGN_TOOL &&
+        (part.state === "input-streaming" || part.state === "input-available"),
+    );
+
+  // Progress of finished requests isn't needed: their results hold it.
   useEffect(() => {
-    if (!requestActive) setStreamingToolId(null);
+    if (!requestActive) setDesignProgress({});
   }, [requestActive]);
 
   // Safety net: stop a request whose stream went silent, so the busy UI ends.
@@ -203,7 +317,7 @@ export function ChatEngine({
   // biome-ignore lint/correctness/useExhaustiveDependencies: any new chunk counts as activity
   useEffect(() => {
     lastActivity.current = Date.now();
-  }, [chat.messages, chat.status]);
+  }, [chat.messages, chat.status, designProgress]);
   useEffect(() => {
     if (!requestActive) return;
     const timer = setInterval(() => {
@@ -237,17 +351,6 @@ export function ChatEngine({
       if (!isDeepEqual(persistedMessages, chat.messages)) {
         setStoredMessages(chat.messages);
       }
-
-      // Check for themeStyles in metadata of the last assistant message
-      const lastMessage = chat.messages[chat.messages.length - 1];
-      if (
-        lastMessage?.role === "assistant" &&
-        lastMessage?.metadata?.themeStyles
-      ) {
-        applyGeneratedQRStyle(
-          lastMessage.metadata.themeStyles as Record<string, unknown>,
-        );
-      }
     }
   }, [chat.status, chat.messages, setStoredMessages]);
 
@@ -255,9 +358,10 @@ export function ChatEngine({
     if (!hasStoreHydrated || hasInitializedRef.current) return;
 
     if (storedMessages.length > 0) {
+      // Designs applied before a reload stay as they are; never re-apply.
       for (const message of storedMessages) {
         for (const part of message.parts) {
-          if (part.type === TOOL_TYPE) appliedIds.current.add(part.toolCallId);
+          if (isToolUIPart(part)) handledIds.current.add(part.toolCallId);
         }
       }
       chat.setMessages(storedMessages);
@@ -272,6 +376,10 @@ export function ChatEngine({
     resetMessagesUpToIndex,
     themeInFlight,
     themeEvent,
+    designProgress,
+    applied,
+    undoApplied,
+    redoApplied,
   };
   // Every render of the engine is new chat state for the consumers.
   useLayoutEffect(() => onChange(value));
