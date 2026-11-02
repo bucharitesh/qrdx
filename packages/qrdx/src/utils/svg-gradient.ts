@@ -5,6 +5,7 @@
 // a gradient is written once in gradient space and placed on each shape with
 // a matrix, which keeps gradientUnits, gradientTransform and per-shape
 // transforms exact.
+import { fmt, roundTo, SCALE_DECIMALS } from "./fmt";
 import { parseColor, type RGBAColor, rgbToCmyk } from "./parse-color";
 import {
   IDENTITY,
@@ -315,15 +316,9 @@ export function placeGradient(
   return { kind, coords: [fx, fy, fr, cx, cy, r], matrix, stops };
 }
 
-/** Number for PDF and PostScript: no exponent, no "-0". */
-export function formatNumber(value: number, digits = 6): string {
-  const scale = 10 ** digits;
-  const rounded = Math.round(value * scale) / scale;
-  return Object.is(rounded, -0) ? "0" : String(rounded);
-}
-
+/** Shading matrix for PDF and PostScript (6 decimals: it scales). */
 export function formatMatrix(matrix: Matrix): string {
-  return matrix.map((value) => formatNumber(value)).join(" ");
+  return matrix.map((value) => fmt(value, SCALE_DECIMALS)).join(" ");
 }
 
 function components(color: RGBAColor, space: ShadingColorSpace): string {
@@ -331,7 +326,7 @@ function components(color: RGBAColor, space: ShadingColorSpace): string {
     space === "cmyk"
       ? rgbToCmyk(color.r, color.g, color.b)
       : [color.r / 255, color.g / 255, color.b / 255];
-  return values.map((value) => formatNumber(value, 4)).join(" ");
+  return values.map((value) => fmt(value, 4)).join(" ");
 }
 
 const exponential = (c0: string, c1: string) =>
@@ -345,7 +340,7 @@ const exponential = (c0: string, c1: string) =>
  */
 function stopFunction(stops: ShadingStop[], space: ShadingColorSpace) {
   const pieces: { from: number; to: number; c0: string; c1: string }[] = [];
-  const offsets = stops.map((stop) => Number(formatNumber(stop.offset, 4)));
+  const offsets = stops.map((stop) => roundTo(stop.offset, 4));
   const colors = stops.map((stop) => components(stop.color, space));
   const firstOffset = offsets[0] as number;
   const lastOffset = offsets.at(-1) as number;
@@ -378,7 +373,7 @@ function stopFunction(stops: ShadingStop[], space: ShadingColorSpace) {
     `/Functions [${pieces.map((piece) => exponential(piece.c0, piece.c1)).join(" ")}]`,
     `/Bounds [${pieces
       .slice(1)
-      .map((piece) => formatNumber(piece.from, 4))
+      .map((piece) => fmt(piece.from, 4))
       .join(" ")}]`,
     `/Encode [${pieces.map(() => "0 1").join(" ")}] >>`,
   ].join(" ");
@@ -398,7 +393,7 @@ export function shadingDictionary(
   return [
     `<< /ShadingType ${gradient.kind === "linear" ? 2 : 3}`,
     `/ColorSpace /Device${space === "cmyk" ? "CMYK" : "RGB"}`,
-    `/Coords [${gradient.coords.map((value) => formatNumber(value)).join(" ")}]`,
+    `/Coords [${gradient.coords.map((value) => fmt(value, SCALE_DECIMALS)).join(" ")}]`,
     `/Function ${stopFunction(gradient.stops, space)}`,
     "/Extend [true true] >>",
   ].join(" ");

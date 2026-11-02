@@ -94,6 +94,8 @@ export const MyErrorResponseSchema = z.object({
   message: z.string().optional(),
   data: z.unknown().optional(),
   status: z.number().optional(),
+  /** A docs page that explains the fix (REST API errors). */
+  docs: z.string().optional(),
 });
 
 export type MyErrorResponseType = z.infer<typeof MyErrorResponseSchema>;

@@ -2,6 +2,7 @@ import { getCatalogBySurface } from "@repo/integrations/src/catalog";
 import type { MetadataRoute } from "next";
 import { isArtAvailable } from "@/lib/ai/art-availability";
 import { SLUG_TO_CATEGORY } from "@/lib/blog-constants";
+import { isPathAvailable } from "@/lib/feature-availability";
 import { getIntegrationAvailability } from "@/lib/integration-availability";
 import { filterVisible } from "@/lib/integration-availability-rules";
 import { baseUrl } from "@/lib/metadata";
@@ -83,12 +84,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "yearly",
       priority: 0.6,
     },
-    {
-      url: url("/ai"),
-      changeFrequency: "weekly",
-      priority: 0.9,
-    },
-    // AI QR art is only listed where it can run (lib/ai/art-availability.ts).
+    // AI themes and AI QR art are only listed where they can run
+    // (lib/feature-availability-rules.ts).
+    ...(isPathAvailable("/ai")
+      ? [
+          {
+            url: url("/ai"),
+            changeFrequency: "weekly",
+            priority: 0.9,
+          } satisfies Entry,
+        ]
+      : []),
     ...(isArtAvailable
       ? [
           {
@@ -139,15 +145,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       priority: 0.6,
     },
-    ...source.getPages().map(
-      (page) =>
-        ({
-          url: url(page.url),
-          lastModified: page.data.lastModified,
-          changeFrequency: "weekly",
-          priority: page.url === "/docs" ? 0.8 : 0.5,
-        }) satisfies Entry,
-    ),
+    // Docs for features this deployment can't offer (custom domains) are
+    // left out; the pages stay up for existing users.
+    ...source
+      .getPages()
+      .filter((page) => isPathAvailable(page.url))
+      .map(
+        (page) =>
+          ({
+            url: url(page.url),
+            lastModified: page.data.lastModified,
+            changeFrequency: "weekly",
+            priority: page.url === "/docs" ? 0.8 : 0.5,
+          }) satisfies Entry,
+      ),
     {
       url: url("/blog"),
       lastModified: latest(posts.map(postDate)),

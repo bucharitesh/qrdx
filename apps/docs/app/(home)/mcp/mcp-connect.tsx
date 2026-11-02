@@ -452,7 +452,7 @@ function setups(url: string): Record<McpClientId, ClientSetup> {
     },
     chatgpt: {
       title: "Make QR codes in ChatGPT with QRdx",
-      lead: "One click copies the server URL and opens ChatGPT's settings. Custom connectors run in ChatGPT's developer mode.",
+      lead: "One click copies the server URL and opens ChatGPT's Plugins page, where you add QRdx as a custom MCP server.",
       action: (
         <OpenWithCopy
           brand="chatgpt"
@@ -464,10 +464,10 @@ function setups(url: string): Record<McpClientId, ClientSetup> {
         </OpenWithCopy>
       ),
       steps: [
-        "Click Connect to ChatGPT. The server URL is copied and ChatGPT opens its settings.",
-        "In Apps & Connectors, open Advanced settings and turn on Developer mode. On Business and Enterprise workspaces an admin may need to allow it first.",
-        "Click Create, name it QRdx, paste the URL as the MCP server URL, choose No authentication and create it.",
-        "In a new chat, pick Developer mode from the + menu, switch on QRdx and ask for a QR code. Availability depends on your ChatGPT plan.",
+        "Click Connect to ChatGPT. The server URL is copied and ChatGPT opens its Plugins page.",
+        "Click + and choose Add custom MCP server. Name it QRdx and paste the URL under Connection.",
+        "Choose no authentication, accept the warning and create it.",
+        "In a new chat, type @, pick QRdx and ask for a QR code. Your ChatGPT plan and workspace settings decide whether custom MCP servers are allowed.",
       ],
     },
     "claude-code": {
@@ -533,7 +533,7 @@ function setups(url: string): Record<McpClientId, ClientSetup> {
     },
     windsurf: {
       title: "Make QR codes in Windsurf with QRdx",
-      lead: "Copy the config into Windsurf's MCP settings. Cascade can then call the QRdx tools.",
+      lead: "Windsurf is now Devin Desktop. Copy the config into its MCP settings and the agent can call the QRdx tools.",
       action: (
         <BrandCopyButton
           brand="windsurf"
@@ -546,8 +546,9 @@ function setups(url: string): Record<McpClientId, ClientSetup> {
       extra: <CodeBlock {...snippets.windsurf} />,
       steps: [
         "Click Copy Windsurf config.",
-        "In Windsurf, open the MCP settings from the Cascade panel (or edit ~/.codeium/windsurf/mcp_config.json) and paste it. Merge it into mcpServers if you already have servers.",
-        "Refresh the MCP servers, check qrdx is on, then ask Cascade for a QR code.",
+        "In Devin Desktop, paste it into ~/.config/devin/mcp_config.json (or .devin/mcp_config.json for one project). Merge it into mcpServers if you already have servers.",
+        "Older Windsurf builds read ~/.codeium/windsurf/mcp_config.json and want serverUrl in place of url.",
+        "Refresh the MCP servers, check qrdx is on, then ask the agent for a QR code.",
       ],
     },
   };

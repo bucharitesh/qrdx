@@ -6,6 +6,7 @@ import { DEFAULT_MARGIN, ERROR_LEVEL_MAP } from "./constants";
 import { downloadFile } from "./download";
 import { getFrameLayout, isFrameActive } from "./frame";
 import { resolveErrorLevel } from "./utils";
+import { COORD_DECIMALS, fmt } from "./utils/fmt";
 import { type RGBAColor, rgbToCmyk } from "./utils/parse-color";
 import {
   getPrintBleedFill,
@@ -545,6 +546,9 @@ async function createPrintPDF(
     unit: "mm",
     format: [layout.pageWidth, layout.pageHeight],
     compress: true,
+    // jsPDF writes path coordinates (in points) with 16 decimals by
+    // default; 0.001 pt is 0.35 µm, far finer than any press.
+    floatPrecision: COORD_DECIMALS,
   });
   pdf.setProperties({ title: "QR code", creator: "qrdx" });
 
@@ -624,7 +628,7 @@ export async function getQRAsPrintSVG(
   const markup = await renderPrintSVG(props);
   const unit = options.unit ?? "mm";
   const toUnit = (mm: number) =>
-    `${Math.round((unit === "in" ? mm / MM_PER_INCH : mm) * 1000) / 1000}${unit}`;
+    `${fmt(unit === "in" ? mm / MM_PER_INCH : mm)}${unit}`;
   const rootTag = /^<svg\b[^>]*>/.exec(markup)?.[0];
   if (!rootTag) {
     throw new Error("Failed to render the QR code for printing");

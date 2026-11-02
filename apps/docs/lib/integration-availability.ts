@@ -9,11 +9,19 @@ import {
 import { getIntegrationCatalog } from "@repo/integrations/src/catalog";
 import { and, eq, inArray } from "drizzle-orm";
 import { env } from "@/lib/env";
+import { featureContext, getFeatures } from "@/lib/feature-availability";
+import {
+  featureForCatalogSlug,
+  missingFeatureSetup,
+  type PublicAvailability,
+  toPublicAvailability,
+} from "@/lib/feature-availability-rules";
 import {
   computeAvailability,
   type IntegrationAvailability,
   isVisible,
 } from "@/lib/integration-availability-rules";
+import { toAvailabilityView } from "@/lib/integration-availability-view";
 
 initializeIntegrations();
 
@@ -29,12 +37,29 @@ export function getIntegrationAvailability(): IntegrationAvailability {
     ...getIntegrationCatalog().map((entry) => entry.slug),
     ...registry.getAll().map((definition) => definition.slug),
   ];
+  const features = featureContext();
   return computeAvailability(slugs, {
     env: env as Readonly<Record<string, string | undefined>>,
     production: process.env.NODE_ENV === "production",
     definition: (slug) => registry.get(slug),
     credentials: (slug) => INTEGRATION_ENV_VARS[slug],
+    featureSetup: (slug) => {
+      const id = featureForCatalogSlug(slug);
+      return id && missingFeatureSetup(id, features);
+    },
   });
+}
+
+/**
+ * For client components (the root layout hands it to every page): the
+ * features, pages and integrations to leave out here. Ids, paths and slugs
+ * only, never variable names or values.
+ */
+export function getPublicAvailability(): PublicAvailability {
+  return toPublicAvailability(
+    getFeatures(),
+    toAvailabilityView(getIntegrationAvailability()).hidden,
+  );
 }
 
 /** True when `slug` may be shown here (available, or local dev). */

@@ -142,15 +142,15 @@ curl -X PATCH https://api.qrdx.dev/v1/codes/cm3x... \
 
 `style` takes the same design fields as the playground (`fgColor`, `bgColor`, `bodyPattern`, `cornerEyePattern`, `level`, ...). Encode `shortLink` in your QR code, for example with the [`qrdx` library](/docs/getting-started).
 
-Errors use one JSON shape, `{ "code": "...", "message": "...", "status": 400 }`:
+Errors use one JSON shape, `{ "code": "...", "message": "...", "status": 400 }`, plus a `docs` link when a page explains the fix:
 
 | Status | Code | When |
 | --- | --- | --- |
 | 400 | `VALIDATION_ERROR`, `INVALID_SLUG` | Invalid body or query (details in `data`), or a `slug` that breaks the rules or is reserved |
-| 401 | `UNAUTHORIZED`, `INVALID_TOKEN` | Missing session, or an invalid or expired token |
+| 401 | `UNAUTHORIZED`, `INVALID_TOKEN` | No `Authorization: Bearer` token, or an invalid, expired or revoked one ([get a token](/docs/developers/rest-api#get-an-access-token)) |
 | 402 | `LIMIT_REACHED`, `PLAN_REQUIRED` | Over your plan's active code limit, or bulk creation or a custom `slug` without Pro |
 | 403 | `INSUFFICIENT_SCOPE`, `FORBIDDEN` | Token without the needed scope, or a team role that can't do this |
-| 404 | `NOT_FOUND` | The code doesn't exist or isn't yours |
+| 404 | `NOT_FOUND` | The code doesn't exist or isn't yours, or there's no such endpoint |
 | 409 | `SLUG_TAKEN` | Another code already uses that `slug` (on `qrdx.dev`, or on the custom domain) |
 | 429 | `RATE_LIMITED` | Too many requests; retry after the `Retry-After` header |
 

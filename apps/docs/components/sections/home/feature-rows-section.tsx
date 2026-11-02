@@ -49,7 +49,7 @@ interface CardFeature {
 const cards: CardFeature[] = [
   {
     demo: "scan-score",
-    figure: "Phosphor",
+    figure: "Loupe",
     title: "Know it scans before you print",
     description:
       "Every design gets a live scan score, decoded in your browser. Lighten the ink and watch it react.",
@@ -58,7 +58,7 @@ const cards: CardFeature[] = [
   },
   {
     demo: "print-size",
-    figure: "Loupe",
+    figure: "Measure",
     title: "Print it big enough",
     description:
       "The minimum size depends on how far away people scan from and how much data the code holds.",
@@ -67,7 +67,7 @@ const cards: CardFeature[] = [
   },
   {
     demo: "dynamic",
-    figure: "Relay",
+    figure: "LinkSwap",
     title: "Change the link after printing",
     description:
       "Dynamic codes point to a short link you can edit from your dashboard, so the printed code never needs replacing. Free account required.",
@@ -76,7 +76,7 @@ const cards: CardFeature[] = [
   },
   {
     demo: "analytics",
-    figure: "Plot",
+    figure: "Chart",
     title: "See every scan",
     description:
       "Dynamic codes count scans over time, with countries, devices, browsers and referrers.",
@@ -103,7 +103,7 @@ function Row({
   reverse?: boolean;
 }) {
   return (
-    <Reveal className="grid items-center gap-8 px-6 py-12 md:grid-cols-5 md:gap-12 md:px-10 md:py-16">
+    <Reveal className="grid items-center gap-8 px-10 py-12 md:grid-cols-5 md:gap-12 md:py-16">
       <div
         className={cn(
           "flex flex-col gap-3 md:col-span-2",
@@ -153,7 +153,7 @@ export function FeatureRowsSection() {
           link={<MoreLink href="/playground">Open the playground</MoreLink>}
           aside={
             <HairlineFigure
-              figure="Exploded"
+              figure="Layers"
               className="mt-8 hidden aspect-[5/4] w-full max-w-[22rem] md:block"
             />
           }
@@ -169,7 +169,7 @@ export function FeatureRowsSection() {
           }
         />
 
-        <div className="grid gap-4 px-6 py-12 sm:grid-cols-2 md:px-10 md:py-16">
+        <div className="grid gap-4 px-10 py-12 sm:grid-cols-2 md:py-16">
           {cards.map((card, index) => (
             <Reveal key={card.demo} delay={(index % 2) * 70} className="h-full">
               <SpotlightCard asChild>
@@ -192,8 +192,6 @@ export function FeatureRowsSection() {
                     </div>
                     <HairlineFigure
                       figure={card.figure}
-                      surface="card"
-                      intensity={0.6}
                       className="hidden aspect-[5/4] w-32 shrink-0 lg:block xl:w-36"
                     />
                   </div>
@@ -211,7 +209,7 @@ export function FeatureRowsSection() {
           link={<MoreLink href="/tools/bulk">Open the bulk generator</MoreLink>}
           aside={
             <HairlineFigure
-              figure="Cabinet"
+              figure="Stack"
               className="mt-8 hidden aspect-[5/4] w-full max-w-[22rem] md:block"
             />
           }
@@ -229,7 +227,7 @@ export function FeatureRowsSection() {
           link={<MoreLink href="/docs">Read the docs</MoreLink>}
           aside={
             <HairlineFigure
-              figure="Hub"
+              figure="Terminal"
               className="mt-8 hidden aspect-[5/4] w-full max-w-[22rem] md:block"
             />
           }

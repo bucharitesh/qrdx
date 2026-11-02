@@ -1,7 +1,7 @@
 "use client";
 
 import { type ReactNode, useCallback, useState } from "react";
-import { BatRoost, ROOST_WIDTH } from "./bats";
+import { BatRoost, ROOST_HEIGHT, ROOST_WIDTH } from "./bats";
 import { SittingCat } from "./cat";
 import { FloatGhost, type GhostPlacement } from "./ghost";
 import { SpiderWeb } from "./glyphs";
@@ -15,7 +15,8 @@ const GHOST_DRIFT = 4;
 const CAT_SIZE = 48;
 
 const SIZES: SlotSizes = {
-  top: { width: ROOST_WIDTH, height: 80 },
+  // Bats hang from the window's top edge, beside the content rail.
+  top: { width: ROOST_WIDTH, height: ROOST_HEIGHT, y: 0, nearRail: true },
   mid: {
     width: GHOST_SIZE,
     height: GHOST_SIZE * (512 / 431),
@@ -24,7 +25,11 @@ const SIZES: SlotSizes = {
   bottom: { width: CAT_SIZE, height: CAT_SIZE * (512 / 295) },
 };
 
-/** The fixed, pointer-events-none layer every marketing season draws on. */
+/**
+ * The fixed, pointer-events-none layer every marketing season draws on. Not
+ * aria-hidden: its characters are buttons; the purely decorative pieces
+ * (webs, threads) hide themselves.
+ */
 export function SeasonStage({
   children,
 }: {
@@ -34,7 +39,6 @@ export function SeasonStage({
   return (
     <div
       ref={setStage}
-      aria-hidden
       className="pointer-events-none fixed inset-0 z-30 overflow-hidden select-none"
     >
       {stage && children(stage)}
@@ -87,8 +91,8 @@ function HalloweenScene({ stage }: { stage: HTMLDivElement }) {
 
 /**
  * Halloween on marketing pages: characters on a fixed layer (scrolling never
- * moves them). Web + spider at the top-left of the content rail, bats roosting
- * in the right gutter, a ghost floating in the left gutter, a cat on a free
+ * moves them). Web + spider at the top-left of the content rail, bats hanging
+ * from the top edge of the right gutter, a ghost floating in the left gutter, a cat on a free
  * bottom corner.
  */
 export function HalloweenSiteCharacters() {

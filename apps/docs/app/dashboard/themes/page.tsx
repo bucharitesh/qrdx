@@ -6,6 +6,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getPlan, getPlanForScope, getPlanLimits } from "@/lib/plans";
 import { PLAN_NAMES } from "@/lib/pricing";
+import { signInPath } from "@/lib/safe-redirect";
 import { type ActiveScope, getActiveScope } from "@/lib/scope";
 import { UnauthorizedError } from "@/types/errors";
 import { PageHeader } from "../_components/page-header";
@@ -27,7 +28,8 @@ async function requireScope(): Promise<ActiveScope> {
   try {
     return await getActiveScope();
   } catch (error) {
-    if (error instanceof UnauthorizedError) redirect("/playground");
+    if (error instanceof UnauthorizedError)
+      redirect(signInPath("/dashboard/themes"));
     throw error;
   }
 }

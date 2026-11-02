@@ -1,0 +1,252 @@
+---
+title: "QR Code API Guide: React, CLI, REST and MCP Examples"
+description: "Working examples for every way to make QR codes with QRdx from code: a keyless image API, React, the CLI, the REST API for dynamic codes, MCP and shadcn/ui."
+date: "2026-11-02"
+author: ["ritesh-bucha"]
+category: Education
+tags: ["qr code api", "free qr code api", "react qr code", "qr code cli", "mcp server", "shadcn qr code"]
+image: /blog/qr-code-api-guide/cover.svg
+imageAlt: Line drawing of a terminal window showing a curl request to api.qrdx.dev linked by a pipe to a styled QR code on a stand
+related: ["dynamic-vs-static-qr-codes", "how-big-should-a-qr-code-be"]
+published: true
+---
+
+**QRdx gives you six ways to make QR codes from code.** For an image you can embed, call the [image API](/docs/developers/image-api): it's a URL, with no key. Render codes inside a React app with the `qrdx` library. Script them with the `@qrdx/cli` command-line tool. Create editable, trackable dynamic codes over the [REST API](/docs/developers/rest-api) with a token. Let an AI assistant make them through the [MCP server](/docs/developers/mcp). Or drop ready-made components into a shadcn/ui project.
+
+Every example below was run on 2 November 2026: the HTTP ones against the live endpoints, the npm ones against the versions npm installs today.
+
+<Callout title="What npm installs today">
+npm currently has `qrdx` 0.0.46 and `@qrdx/cli` 0.0.4. The QRdx docs describe the next releases (0.0.47 and 0.0.5), which add frames, many more patterns, EPS output and the scan score, and aren't published yet. This post only shows code that works with the published versions and says where the next release changes things.
+</Callout>
+
+## 1. The image API: a QR code from a URL, no key
+
+`GET https://api.qrdx.dev/v1/qr` returns a QR code as SVG, PNG or vector EPS. Everything goes in the query string, so the URL is the image:
+
+```md
+![QR code](https://api.qrdx.dev/v1/qr?data=https://github.com/you/repo)
+```
+
+```html
+<img
+  src="https://api.qrdx.dev/v1/qr?data=https://qrdx.dev&size=256&fg=155dfc"
+  width="256"
+  height="256"
+  alt="QR code for qrdx.dev"
+/>
+```
+
+Download files with curl (quote the URL so the shell keeps the `&`):
+
+```bash
+# PNG, 1024 px
+curl -o qr.png "https://api.qrdx.dev/v1/qr?data=https://qrdx.dev&format=png&size=1024"
+
+# Vector EPS for a print shop; size is in points, so 144 = 2 inches
+curl -o qr.eps "https://api.qrdx.dev/v1/qr?data=https://qrdx.dev&format=eps&size=144"
+
+# Rounded modules with a frame template
+curl -o menu.svg "https://api.qrdx.dev/v1/qr?data=https%3A%2F%2Fexample.com%2Fmenu&body=rounded&eye=rounded&dot=rounded&template=Arrow"
+```
+
+From JavaScript, encode the data so `&`, `#`, `+` and spaces survive:
+
+```ts
+const src = `https://api.qrdx.dev/v1/qr?${new URLSearchParams({
+  data: "https://example.com/menu?table=12",
+  size: "512",
+  margin: "4",
+})}`;
+```
+
+The parameters are `data`, `format`, `size` (64 to 2048), `fg`, `bg`, `eyeColor`, `dotColor`, `body`, `eye`, `dot`, `level` (L, M, Q or H; Q by default), `margin` (4 by default) and `template`. Responses are cached for a year, because the same query always returns the same bytes, and are served with `Access-Control-Allow-Origin: *`.
+
+Limits worth knowing: 300 requests a minute per IP address; solid colors only, so no logos or gradients; and the data is part of the URL, so don't put a Wi-Fi password in a link you'll share. The image API is also part of the open-source app, so a [self-hosted](/docs/self-hosting) instance serves it at `/api/v1/qr`.
+
+## 2. React: the `qrdx` library
+
+```bash
+npm install qrdx
+```
+
+<NpmStatus package="qrdx" />
+
+With the published 0.0.46, use `QRCodeSVG`. It takes the props you'd expect and renders a plain SVG:
+
+```tsx
+import { QRCodeSVG } from "qrdx";
+
+export function MenuCode() {
+  return (
+    <QRCodeSVG
+      value="https://example.com/menu"
+      size={256}
+      level="Q"
+      fgColor="#0a0a0a"
+      bgColor="#ffffff"
+      bodyPattern="rounded"
+      cornerEyePattern="rounded"
+      cornerEyeDotPattern="rounded"
+      margin={4}
+    />
+  );
+}
+```
+
+It works on the server too. This turns a code into an SVG string, for a route handler, an email or a static file:
+
+```tsx
+import { renderToStaticMarkup } from "react-dom/server";
+import { QRCodeSVG } from "qrdx";
+
+const svg = renderToStaticMarkup(
+  <QRCodeSVG value="https://example.com" size={512} margin={4} />,
+);
+```
+
+Three things change with the next release, so they're worth knowing on 0.0.46:
+
+- **`<QRCode>` renders at a fixed 128 px and adds the QRdx logo in the center** unless you pass `hideLogo`. Its `size` prop is ignored. In 0.0.47 there's no default logo and `size` works. Until then, prefer `QRCodeSVG`.
+- **0.0.46 has a smaller set of body patterns:** `square`, `rounded`, `circle`, `circle-large`, `circle-mixed`, `diamond`, `pacman`, `small-square` and `vertical-line`. The docs list the larger set coming in 0.0.47.
+- **0.0.46 lists React 19 as its own dependency**, so a React 18 app can end up with two copies of React. In 0.0.47, React is a peer dependency.
+
+If you need frames, logos, gradients or print PDFs today, design the code in the [playground](/playground) and export it, or use the image API.
+
+## 3. The command line: `@qrdx/cli`
+
+<NpmStatus package="@qrdx/cli" />
+
+```bash
+npx @qrdx/cli generate "https://example.com" -o qr.svg --margin 4
+```
+
+Always pass `-o`: in a script, version 0.0.4 generates the code but writes nothing without an output file. The extension picks the format, `.svg` or `.png`:
+
+```bash
+# High-resolution PNG
+npx @qrdx/cli generate "https://example.com/menu" -o menu.png --size 1024 --level M --margin 4
+
+# Brand color and rounded shapes
+npx @qrdx/cli generate "https://example.com" --body rounded --eye rounded --dot rounded --fg "#1a1a2e" --margin 4 -o brand.svg
+
+# A Wi-Fi login
+npx @qrdx/cli generate "WIFI:T:WPA;S:Cafe Guest;P:espresso-2026;;" --level M --margin 4 -o wifi.svg
+
+# A frame template
+npx @qrdx/cli generate "https://example.com" --template Arrow --margin 4 -o arrow.svg
+```
+
+Install it globally with `npm install -g @qrdx/cli` to get a `qrdx` command. PNG output uses [sharp](https://sharp.pixelplumbing.com), which npm installs alongside it on most platforms. Run `qrdx generate` with no arguments in a terminal and it asks for each option.
+
+Two gaps in 0.0.4: there's no EPS (a file named `qr.eps` gets SVG inside it), and no `--frame` or `--format` options. Both arrive in 0.0.5. For EPS today, use the image API's `format=eps`.
+
+## 4. The REST API: dynamic codes with a token
+
+Static images need no account. Dynamic codes, the ones you can edit after printing and that count scans, live in a QRdx workspace, so the [REST API](/docs/developers/rest-api) needs an OAuth 2.0 access token. Register an OAuth app in **Settings → Developers**, send people through the authorization-code flow (PKCE with `S256` is supported), and exchange the code for an access token that lasts an hour plus a 30-day refresh token. Scopes are `codes:read`, `codes:write`, `themes:read` and `profile:read`.
+
+Create a dynamic code:
+
+```bash
+curl https://api.qrdx.dev/v1/codes \
+  -H "Authorization: Bearer $QRDX_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"destinationUrl": "https://example.com/menu", "title": "Spring menu"}'
+```
+
+The response includes the short link to print, such as `"shortLink": "https://qrdx.dev/q/aB3dE5f"`, and the code's `id`. Point it somewhere new later:
+
+```bash
+curl -X PATCH https://api.qrdx.dev/v1/codes/$CODE_ID \
+  -H "Authorization: Bearer $QRDX_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"destinationUrl": "https://example.com/summer-menu"}'
+```
+
+And read its scans with `GET /v1/codes/{id}/scans?range=30d`. To print the code, pass the short link to any of the tools above, for example `https://api.qrdx.dev/v1/qr?data=https://qrdx.dev/q/aB3dE5f`.
+
+A request without a token gets `401` with `{"code":"UNAUTHORIZED"}`. A workspace can make 1,000 requests a day on Free, 10,000 on Pro and 100,000 on Business; every response carries `X-RateLimit-Limit`, `X-RateLimit-Remaining` and `X-RateLimit-Reset`. Creating up to 100 codes in one request and choosing a custom back-half need Pro. The full reference is in the [dynamic QR codes docs](/docs/dynamic-qr-codes#rest-api).
+
+## 5. MCP: let your AI assistant make codes
+
+QRdx runs a public [Model Context Protocol](https://modelcontextprotocol.io) server at `https://mcp.qrdx.dev/mcp`. It needs no account or key and keeps no session state.
+
+Claude Code:
+
+```bash
+claude mcp add --transport http qrdx https://mcp.qrdx.dev/mcp
+```
+
+Cursor (`~/.cursor/mcp.json` or `.cursor/mcp.json`):
+
+```json
+{
+  "mcpServers": {
+    "qrdx": { "url": "https://mcp.qrdx.dev/mcp" }
+  }
+}
+```
+
+VS Code (`.vscode/mcp.json`):
+
+```json
+{
+  "servers": {
+    "qrdx": { "type": "http", "url": "https://mcp.qrdx.dev/mcp" }
+  }
+}
+```
+
+For clients that only run local servers, bridge it with `npx -y mcp-remote https://mcp.qrdx.dev/mcp`. The server exposes seven tools: `generate_qr_code`, `list_qr_styles`, and payload builders for Wi-Fi, vCard contacts, email, SMS and map locations. Ask "make a Wi-Fi QR code for the network Office Guest" and the assistant builds the escaped `WIFI:` payload first, then renders it, returning a PNG and image API URLs you can paste into Markdown. It renders solid colors only and allows 120 requests a minute per IP. The [connect page](/mcp) has one-click setup for more clients.
+
+## 6. shadcn/ui: components you own
+
+For a React app built on shadcn/ui, QRdx publishes a registry of eight components: QR Code, QR Code Card, Download, Share Dialog, Generator, Scanner, Wi-Fi QR Code and vCard QR Code. The shadcn CLI copies the source into your project:
+
+```bash
+npx shadcn@latest add https://qrdx.dev/r/qr-code.json
+```
+
+Or add the namespace to `components.json` once:
+
+```json
+{
+  "registries": {
+    "@qrdx": "https://qrdx.dev/r/{name}.json"
+  }
+}
+```
+
+and install several by name with `npx shadcn@latest add @qrdx/qr-code @qrdx/qr-code-download`. The components use your theme tokens and your own Button, Card and Dialog.
+
+One caveat today: the registry installs `qrdx` from npm, which means 0.0.46, and seven of the eight components draw with `<QRCode>`. On 0.0.46 they render the code at 128 px with the QRdx logo in the middle, as described in section 2. The Scanner is unaffected. Once 0.0.47 is on npm, they render at the size you pass with no default logo; until then, you own the copied code and can swap `QRCode` for `QRCodeSVG`.
+
+## Which one should you use?
+
+| You want to… | Use |
+| --- | --- |
+| Put a code in a README, email or CMS | Image API |
+| Render codes inside a React app | `qrdx` library (`QRCodeSVG` on 0.0.46) |
+| Generate files in a script or CI | `@qrdx/cli`, or curl the image API |
+| Create codes you can edit and track | REST API with a token |
+| Ask an AI assistant for a code | MCP server |
+| Ship QR UI in a shadcn/ui app | Registry components |
+
+Whatever makes the code, the printing rules are the same: dark on light, a quiet zone of 4 modules, and the right size for the distance. [How big should a QR code be?](/blog/how-big-should-a-qr-code-be) has the numbers, and the [scan checker](/tools/scan-checker) will grade any image you generate.
+
+## FAQ
+
+### Is there a free QR code API?
+
+Yes. The image API needs no account or key and allows 300 requests a minute per IP address. The MCP server is free and keyless too. The REST API, for dynamic codes, includes 1,000 requests a day on the Free plan.
+
+### Can the API add a logo?
+
+Not the image API or the MCP server: they render solid colors only. Logos and gradients need the React library or the playground.
+
+### Can I make dynamic QR codes through the API?
+
+Yes, with `POST /v1/codes` and an OAuth access token with the `codes:write` scope. Each code gets a short link you can re-point with `PATCH`.
+
+### Can I run all of this myself?
+
+The app is open source under AGPL-3.0. A self-hosted instance serves the image API at `/api/v1/qr`, the REST API at `/api/v1` and the MCP server at `/api/mcp`. See [self-hosting](/docs/self-hosting).

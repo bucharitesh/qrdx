@@ -63,6 +63,16 @@ describe("app policy (prerendered pages)", () => {
     expect(script?.some((source) => source.startsWith("'nonce-"))).toBe(false);
   });
 
+  it("lets the API reference's Try it reach the REST API", () => {
+    // Same-origin /api/v1 by default; api.qrdx.dev when the reader picks it.
+    for (const options of [PROD, { ...PROD, preview: true }]) {
+      const connect = directive(appCsp(options), "connect-src") ?? [];
+      expect(connect).toContain("'self'");
+      expect(connect).toContain("https://api.qrdx.dev");
+      expect(connect).not.toContain("https://*.qrdx.dev");
+    }
+  });
+
   it("allowlists connections and frames", () => {
     const connect = directive(policy, "connect-src") ?? [];
     for (const source of [

@@ -1,0 +1,41 @@
+---
+title: Check a design with the scan score
+description: The scan score tests your design the way a phone camera sees it, and tells you what to fix.
+---
+
+Every design in the playground gets a **Scan score** from 0 to 100. It's shown under the preview, for example "Scan score 92 · Great".
+
+## What the score means
+
+- **Great** (85 or more): ready to print.
+- **OK** (65 to 84): it should scan, but check the warnings.
+- **Risky** (below 65): fix the checks marked with a cross.
+- **Fails**: the code didn't decode in testing, or the contrast is far too low. Don't print it.
+
+## See what to fix
+
+Click the score. The **Will it scan?** panel lists every check, with the failed ones first.
+
+The score checks:
+
+- **Decoding**: the code is read at small sizes with a camera-like blur.
+- **Contrast**: the code and background should differ by 4.5:1 or more.
+- **Dark on light**: dark codes on light backgrounds scan in more apps.
+- **Logo size**: a logo must not cover more than error correction can rebuild.
+- **Eye shape**: circle and curly eyes fail in some scanner apps.
+- **Clear space**: the empty border around the code. Four modules is ideal.
+
+## Quick fixes
+
+- Low contrast: make the code darker or the background lighter. See [Choose colors that scan](/docs/help/designing/colors-and-contrast).
+- Logo covers too much: set **Error correction** to **High**. See [Add a logo](/docs/help/designing/logos).
+- Eyes: switch to square, rounded or gear eyes.
+- Clear space: set **Padding** to **Standard** or **Large**.
+
+## Check a printed code
+
+The score tests the design on screen. To test a code you already printed, take a photo and drop it into the [scan checker](/tools/scan-checker). The image never leaves your device.
+
+## Related
+
+- [A code won't scan](/docs/help/troubleshooting/wont-scan)

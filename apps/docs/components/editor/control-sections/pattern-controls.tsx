@@ -353,8 +353,8 @@ export function ErrorLevelControl() {
         ))}
       </OptionGrid>
       <p className="text-muted-foreground text-xs text-pretty">
-        Higher levels survive scratches and logos but add more dots. Use Q or H
-        when you add a logo.
+        Higher levels survive scratches and logos but add more dots. Use H when
+        you add a logo.
       </p>
     </div>
   );

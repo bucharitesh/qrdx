@@ -119,7 +119,7 @@ function VectorArtSection({ lead }: { lead: boolean }) {
   return (
     <section
       aria-labelledby="vector-art"
-      className="w-full px-6 py-14 md:px-12 md:py-16"
+      className="w-full px-10 py-14 md:px-12 md:py-16"
     >
       <div className="mx-auto flex max-w-5xl flex-col gap-8">
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
@@ -186,7 +186,7 @@ export default function AIArtPage() {
           className="opacity-60 [mask-image:radial-gradient(ellipse_45%_60%_at_50%_50%,transparent_35%,black_100%)]"
           variant="qr"
         />
-        <div className="relative mx-auto flex max-w-3xl flex-col items-center gap-4 px-6 pt-16 pb-16 text-center md:pt-24 md:pb-20">
+        <div className="relative mx-auto flex max-w-[50rem] flex-col items-center gap-4 px-10 pt-16 pb-16 text-center md:pt-24 md:pb-20">
           <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
             QR art
           </p>
@@ -227,7 +227,7 @@ export default function AIArtPage() {
 
       {isArtConfigured ? (
         <>
-          <section className="w-full px-6 py-12 md:px-12 md:py-16">
+          <section className="w-full px-10 py-12 md:px-12 md:py-16">
             <div className="mx-auto max-w-5xl">
               <AIArtStudio allowances={ALLOWANCES} configured />
             </div>
@@ -235,7 +235,7 @@ export default function AIArtPage() {
           <VectorArtSection lead={false} />
           <section
             aria-labelledby="how-it-works"
-            className="w-full px-6 py-14 md:px-12 md:py-16"
+            className="w-full px-10 py-14 md:px-12 md:py-16"
           >
             <div className="mx-auto flex max-w-5xl flex-col gap-8">
               <h2
@@ -252,7 +252,7 @@ export default function AIArtPage() {
       ) : (
         <>
           <VectorArtSection lead />
-          <section className="w-full px-6 py-14 md:px-12 md:py-16">
+          <section className="w-full px-10 py-14 md:px-12 md:py-16">
             <AIArtComingSoon />
           </section>
         </>

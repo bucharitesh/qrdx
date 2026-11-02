@@ -23,7 +23,7 @@ export default async function LegalPage(
   );
 
   return (
-    <div className="container mx-auto grid gap-8 px-6 py-12 md:px-10 md:py-20 lg:max-w-6xl lg:grid-cols-[11rem_minmax(0,1fr)] lg:gap-16">
+    <div className="container mx-auto grid gap-8 px-10 py-12 md:py-20 lg:max-w-6xl lg:grid-cols-[11rem_minmax(0,1fr)] lg:gap-16">
       {/* Sibling legal pages, so a reader is never at a dead end. */}
       <nav aria-label="Legal" className="lg:sticky lg:top-28 lg:self-start">
         <p className="mb-3 hidden text-xs font-medium uppercase tracking-wider text-muted-foreground lg:block">

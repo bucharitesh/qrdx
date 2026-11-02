@@ -1,0 +1,15 @@
+{
+  "$schema": "../../../../.source/json-schema/docs.meta.json",
+  "title": "Dynamic codes",
+  "icon": "QrCode",
+  "pages": [
+    "create",
+    "change-the-link",
+    "scans",
+    "pause-schedule-limit",
+    "password",
+    "routing",
+    "archive-and-delete",
+    "import"
+  ]
+}

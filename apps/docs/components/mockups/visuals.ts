@@ -3,8 +3,8 @@ import type { QrTypeGroup } from "@/lib/qr-types-content";
 
 // Every marketing image and clip in one place. Paths are under apps/docs/public.
 // Product screenshots and video posters are real captures of the app.
-// Use-case photos are generated from .claude/build/visuals-plan.json (same
-// paths and sizes); the QR codes in them are illustrative.
+// Use-case illustrations are drawn in code by scripts/use-case-art (light and
+// dark files), each with a real QR code rendered by qrdx.
 
 export interface Visual {
   src: string;
@@ -88,56 +88,64 @@ export const loopVideos = {
 
 export const useCaseImages = {
   cafeTableTent: {
-    src: "/images/use-cases/cafe-table-tent.webp",
-    width: 1200,
-    height: 900,
-    alt: "Table tent with a QR code for the menu on a wooden café table next to a cup of coffee",
+    src: "/images/use-cases/cafe-table-tent-light.svg",
+    darkSrc: "/images/use-cases/cafe-table-tent-dark.svg",
+    width: 800,
+    height: 600,
+    alt: "Drawing of a table tent with a menu QR code on a café table, beside a cup of coffee",
   },
   businessCard: {
-    src: "/images/use-cases/business-card.webp",
-    width: 1200,
-    height: 900,
-    alt: "Business card with a QR code on a desk beside a notebook and pen",
+    src: "/images/use-cases/business-card-light.svg",
+    darkSrc: "/images/use-cases/business-card-dark.svg",
+    width: 800,
+    height: 600,
+    alt: "Drawing of business cards with a QR code stacked on a desk, beside a pen",
   },
   hotelWifi: {
-    src: "/images/use-cases/hotel-wifi-sign.webp",
-    width: 1200,
-    height: 900,
-    alt: "Small sign with a Wi-Fi QR code on a hotel reception desk",
+    src: "/images/use-cases/hotel-wifi-sign-light.svg",
+    darkSrc: "/images/use-cases/hotel-wifi-sign-dark.svg",
+    width: 800,
+    height: 600,
+    alt: "Drawing of an acrylic stand with a Wi-Fi QR code on a hotel counter, beside a service bell",
   },
   marketStallUpi: {
-    src: "/images/use-cases/market-stall-upi.webp",
-    width: 1200,
-    height: 900,
-    alt: "Hand holding a phone up to a payment QR code stand at a fruit market stall",
+    src: "/images/use-cases/market-stall-upi-light.svg",
+    darkSrc: "/images/use-cases/market-stall-upi-dark.svg",
+    width: 800,
+    height: 600,
+    alt: "Drawing of a phone scanning a payment QR code stand on a market stall, beside a crate of fruit",
   },
   productPackaging: {
-    src: "/images/use-cases/product-packaging.webp",
-    width: 1200,
-    height: 900,
-    alt: "Kraft paper product boxes with printed QR code labels",
+    src: "/images/use-cases/product-packaging-light.svg",
+    darkSrc: "/images/use-cases/product-packaging-dark.svg",
+    width: 800,
+    height: 600,
+    alt: "Drawing of stacked boxes, each with a round QR code sticker",
   },
   eventCheckIn: {
-    src: "/images/use-cases/event-check-in.webp",
-    width: 1200,
-    height: 900,
-    alt: "Event check-in desk with a QR code stand next to name badges and lanyards",
+    src: "/images/use-cases/event-check-in-light.svg",
+    darkSrc: "/images/use-cases/event-check-in-dark.svg",
+    width: 800,
+    height: 600,
+    alt: "Drawing of a check-in sign with a QR code on a registration desk, beside badges and lanyards",
   },
   retailShelf: {
-    src: "/images/use-cases/retail-shelf-tag.webp",
-    width: 1200,
-    height: 900,
-    alt: "Shelf tag with a QR code below handmade mugs in a shop",
+    src: "/images/use-cases/retail-shelf-tag-light.svg",
+    darkSrc: "/images/use-cases/retail-shelf-tag-dark.svg",
+    width: 800,
+    height: 600,
+    alt: "Drawing of a QR code tag hanging from a shop shelf of mugs",
   },
   busStopPoster: {
-    src: "/images/use-cases/bus-stop-poster.webp",
-    width: 1200,
-    height: 900,
-    alt: "Poster with a large QR code in a bus stop shelter, seen from a few steps away",
+    src: "/images/use-cases/bus-stop-poster-light.svg",
+    darkSrc: "/images/use-cases/bus-stop-poster-dark.svg",
+    width: 800,
+    height: 600,
+    alt: "Drawing of a poster with a large QR code on a bus shelter",
   },
 } satisfies Record<string, Visual>;
 
-/** One photo per generator category, shared by the hub and every type page in it. */
+/** One illustration per generator category, shared by the hub and every type page in it. */
 export const qrTypeGroupImages: Record<QrTypeGroup, Visual> = {
   utilities: useCaseImages.hotelWifi,
   contact: useCaseImages.businessCard,

@@ -9,7 +9,7 @@ export function CTASection() {
   const { ctaSection } = siteConfig;
 
   return (
-    <section id="cta" className="w-full px-4 py-4 md:px-6 md:py-6">
+    <section id="cta" className="w-full px-6 py-4 md:py-6">
       <div className="relative isolate overflow-hidden rounded-xl border border-black/10 bg-neutral-950 text-white shadow-[0_24px_60px_-28px_rgba(0,0,0,0.5)] dark:border-white/10 dark:shadow-none">
         <AsciiField
           variant="wave"

@@ -17,7 +17,8 @@ import { type TrimBounds, trimBounds } from "./trim";
 export const MASTER_VOLUME = 0.35;
 /** At most two cues sound together; a third requested meanwhile is dropped. */
 export const MAX_VOICES = 2;
-/** Pointer-only cues (seasonal) need a click / tap / release this recent. */
+/** Pointer-only cues (seasonal) need a direct activation this recent: a click,
+ * tap, release, or Enter / Space on a control (see gesture.ts). */
 export const POINTER_WINDOW_MS = 600;
 /** A context still waking up may take cues for this long. */
 const RESUME_GRACE_MS = 500;
@@ -232,12 +233,13 @@ export function createSoundEngine(options: SoundEngineOptions = {}) {
     play,
     /**
      * Call from trusted user-gesture handlers (no sound plays here); nothing
-     * plays before the first one. `pointer` marks a click, tap or release.
+     * plays before the first one. `direct` marks a click, tap, release or a
+     * control activated from the keyboard (isDirectActivation).
      */
-    unlock(pointer = false): boolean {
+    unlock(direct = false): boolean {
       if (!armed) return false;
       gestured = true;
-      if (pointer) lastPointerAt = now();
+      if (direct) lastPointerAt = now();
       if (getPrefs().muted || hidden) return false;
       const context = ensureContext();
       if (context) resume(context);

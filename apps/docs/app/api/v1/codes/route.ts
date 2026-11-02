@@ -1,11 +1,9 @@
 import type { NextRequest } from "next/server";
-import { z } from "zod";
 import {
   createCodeSchema,
   createCodes,
   enforceCreateRateLimit,
   listCodes,
-  MAX_BULK_CREATE,
 } from "@/app/dashboard/codes/_lib/qr-codes";
 import { withApiQuotaHeaders } from "@/lib/api-quota";
 import { handleError } from "@/lib/error-response";
@@ -17,26 +15,13 @@ import {
   resolveApiScope,
   serializeCode,
 } from "./_lib/api";
-
-const listQuerySchema = z.object({
-  status: z.enum(["active", "archived", "all"]).default("active"),
-  q: z.string().max(200).optional(),
-  limit: z.coerce.number().int().min(1).max(100).default(50),
-  offset: z.coerce.number().int().min(0).max(100_000).default(0),
-});
-
-/**
- * Up to 100 codes in one request (arrays of more than one need Pro). Arrays
- * and single objects are parsed separately: a union would collapse a bad
- * destination into a bare "Invalid input" and hide the reason from callers.
- */
-const createBatchSchema = z.array(createCodeSchema).min(1).max(MAX_BULK_CREATE);
+import { createCodesBatchSchema, listCodesQuerySchema } from "./_lib/schemas";
 
 export const GET = withApiQuotaHeaders(async (req: NextRequest) => {
   try {
     const scope = await resolveApiScope(req, "read");
     const query = parseWithSchema(
-      listQuerySchema,
+      listCodesQuerySchema,
       Object.fromEntries(req.nextUrl.searchParams),
     );
     const { codes, total } = await listCodes(scope, query);
@@ -59,7 +44,7 @@ export const POST = withApiQuotaHeaders(async (req: NextRequest) => {
     assertJson(req);
     const raw = await readJsonBody(req, MAX_BODY_BYTES);
     const body = Array.isArray(raw)
-      ? parseWithSchema(createBatchSchema, raw)
+      ? parseWithSchema(createCodesBatchSchema, raw)
       : parseWithSchema(createCodeSchema, raw);
     await enforceCreateRateLimit(scope.userId);
 

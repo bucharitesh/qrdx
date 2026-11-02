@@ -63,9 +63,6 @@ importers:
       '@hookform/resolvers':
         specifier: ^7.0.0
         version: 7.0.0(@standard-schema/spec@1.1.0)(ajv-formats@2.1.1(ajv@8.18.0))(ajv@8.18.0)(react-hook-form@7.91.0(@types/react@19.3.0)(react@19.3.1))(valibot@1.4.2(typescript@6.0.3))(zod@4.6.7)
-      '@lucasmarkes/hairline':
-        specifier: 0.5.1
-        version: 0.5.1(react@19.3.1)
       '@modelcontextprotocol/server':
         specifier: ^2.4.0
         version: 2.4.0
@@ -180,6 +177,9 @@ importers:
       fumadocs-mdx:
         specifier: 15.4.10
         version: 15.4.10(@types/mdast@4.0.4)(@types/mdx@2.0.14)(@types/react@19.3.0)(fumadocs-core@16.17.9(@mdx-js/mdx@3.1.1)(@modelcontextprotocol/server@2.4.0)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.3.0)(lucide-react@1.66.0(@types/react@19.3.0)(react@19.3.1))(next@16.4.3(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(@types/node@26.6.6)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(zod@4.6.7))(next@16.4.3(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(@types/node@26.6.6)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react@19.3.1)(vite@7.3.7(@types/node@26.6.6)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1))
+      fumadocs-openapi:
+        specifier: 12.5.6
+        version: 12.5.6(418649c0839d6277f70ae4eaa57b400c)
       fumadocs-twoslash:
         specifier: 4.0.4
         version: 4.0.4(1d44c40c2314b874bd5efbb422028633)
@@ -2727,6 +2727,17 @@ packages:
       '@types/react':
         optional: true
 
+  '@fumadocs/json-schema@0.3.5':
+    resolution: {integrity: sha512-BhFhYtVufkLY0cZfWuMFJm0Rq7oBaIDMzONrsHovhY6on7GiPiuTSuJv4ZlOgmyBaPL3HW+s1wkevjhvRUUlFg==}
+    peerDependencies:
+      json-schema-typed: '*'
+      react: 19.3.1
+    peerDependenciesMeta:
+      json-schema-typed:
+        optional: true
+      react:
+        optional: true
+
   '@fumadocs/tailwind@0.1.4':
     resolution: {integrity: sha512-1LAmuroJ6TJoQodyODRhMC9ThAkfrV2N5vZjaj4KKs+dpF2bs0d/2z0604iMKBLv2BKstR7zE9TUa/L0pxGnhA==}
     peerDependencies:
@@ -2737,6 +2748,24 @@ packages:
 
   '@fumari/image-size@0.1.1':
     resolution: {integrity: sha512-iaiV2wyzJ4mW358NX4CX3yGit+WjKYzpaQ+rldK9BjL/5jFpeV6ruWnZVq7MEyMn3Gd0DLi8g/79NZAAQaGscw==}
+
+  '@fumari/json-schema-ts@1.0.2':
+    resolution: {integrity: sha512-1NHGl8Oqg50mhpWMvbhqnwFRLBugkGCRubLSH/TrAzTAS99x4z0xFgOVcbJne+yfaZv94ZNdmRWobDvUiZswPg==}
+    peerDependencies:
+      json-schema-typed: '*'
+    peerDependenciesMeta:
+      json-schema-typed:
+        optional: true
+
+  '@fumari/stf@1.1.2':
+    resolution: {integrity: sha512-8PuvETmnMRJjof6BJLFNJBKq9at6Ar1oJWRkedSJ0K/GJ73QPHVSZqTkgXh3hb6uXkQhbbWkv+5WD0Fh50YUGA==}
+    peerDependencies:
+      '@types/react': '*'
+      react: 19.3.1
+      react-dom: 19.3.1
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
 
   '@hookform/resolvers@7.0.0':
     resolution: {integrity: sha512-aJugiXf4mijjZYaJKbap8jxJsIrZ94Er1oi8UxoN9fMGdSMRXPMPKc+EtsFK2iqnk/3E0hJQHH/RqZj2cIiGfw==}
@@ -3298,14 +3327,6 @@ packages:
 
   '@leichtgewicht/ip-codec@2.0.5':
     resolution: {integrity: sha512-Vo+PSpZG2/fmgmiNzYK9qWRh8h/CHrwD0mo1h1DzL4yzHNSfWYujGTYsWGreD000gcgmZ7K4Ys6Tx9TxtsKdDw==}
-
-  '@lucasmarkes/hairline@0.5.1':
-    resolution: {integrity: sha512-zjY3bdMC3As/+enKitZ1X+D1HjpesQiAKzG1sbCFsOrb5xIuJEoepkJTBIO4jmFh6JXOQlGGylhV71nr9ipNpQ==}
-    peerDependencies:
-      react: 19.3.1
-    peerDependenciesMeta:
-      react:
-        optional: true
 
   '@mdx-js/mdx@3.1.1':
     resolution: {integrity: sha512-f6ZO2ifpwAQIpzGWaBQT2TXxPv6z3RBzQKpVftEWN78Vl/YweF1uwussDx8ECAXVtr3Rs89fKyG9YlzUs9DyGQ==}
@@ -4784,6 +4805,22 @@ packages:
     resolution: {integrity: sha512-tlynfm3LIQtOCjFdT7kjyMnGrl0PbhyldgCfj7b1VxafD6uYiJFjd2ATzmYb+YnzNIzNezpK7XzFzDtPu37IeA==}
     cpu: [x64]
     os: [win32]
+
+  '@scalar/helpers@0.16.4':
+    resolution: {integrity: sha512-9eILWzUcAkHEuYMMvijpSIy69t+Vkq+NudLB/7lgARFTWqXfQpIxW1L3VH7ogKyRie5+E4CNZ3PSvlw6IIfLGw==}
+    engines: {node: '>=22'}
+
+  '@scalar/json-magic@0.16.1':
+    resolution: {integrity: sha512-yWQJUrkufUsShizF+rGKO4BoZ/ijMpnrgwRjtCA2cYqjxkQOYaQCd+WVF+b3ihmXE7amr768pLItFCx5UV/ObQ==}
+    engines: {node: '>=22'}
+
+  '@scalar/openapi-types@0.9.8':
+    resolution: {integrity: sha512-pGcpkZObsGBC7nRKYte+6gstoe0C4hp7B2UWQYjg5To1wE68s3OHVvin+muL3tn3ZAoahXeJAkn1+aEcMi802w==}
+    engines: {node: '>=22'}
+
+  '@scalar/openapi-upgrader@0.4.6':
+    resolution: {integrity: sha512-wkTbowGZAlDA5AhCAnBVft6y3veoE17P+okH/zrwM/BZWBSzPghGpa4BPTCg3+IzRmRP/8ZeaYO7LfxCDAEmcA==}
+    engines: {node: '>=22'}
 
   '@scena/dragscroll@1.4.0':
     resolution: {integrity: sha512-3O8daaZD9VXA9CP3dra6xcgt/qrm0mg0xJCwiX6druCteQ9FFsXffkF8PrqxY4Z4VJ58fFKEa0RlKqbsi/XnRA==}
@@ -7739,6 +7776,24 @@ packages:
       satteri:
         optional: true
       vite:
+        optional: true
+
+  fumadocs-openapi@12.5.6:
+    resolution: {integrity: sha512-Gq9y+WKES22/vf/AfE0PrD+8jt3VJX9iQQOzW+CZ7uTzodr6ZdWaBurpwi6VWroHf+JKsu29mT42JJk3okjlDQ==}
+    peerDependencies:
+      '@scalar/api-client-react': ^2.0.20
+      '@types/react': '*'
+      fumadocs-core: ^16.17.8
+      fumadocs-ui: ^16.17.8
+      json-schema-typed: '*'
+      react: 19.3.1
+      react-dom: 19.3.1
+    peerDependenciesMeta:
+      '@scalar/api-client-react':
+        optional: true
+      '@types/react':
+        optional: true
+      json-schema-typed:
         optional: true
 
   fumadocs-twoslash@4.0.4:
@@ -12960,11 +13015,33 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.3.0
 
+  '@fumadocs/json-schema@0.3.5(@types/react@19.3.0)(json-schema-typed@8.0.2)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)':
+    dependencies:
+      '@fuma-translate/react': 1.0.2(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+      '@scalar/json-magic': 0.16.1
+    optionalDependencies:
+      json-schema-typed: 8.0.2
+      react: 19.3.1
+    transitivePeerDependencies:
+      - '@types/react'
+      - react-dom
+
   '@fumadocs/tailwind@0.1.4(tailwindcss@4.3.3)':
     optionalDependencies:
       tailwindcss: 4.3.3
 
   '@fumari/image-size@0.1.1': {}
+
+  '@fumari/json-schema-ts@1.0.2(json-schema-typed@8.0.2)':
+    optionalDependencies:
+      json-schema-typed: 8.0.2
+
+  '@fumari/stf@1.1.2(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)':
+    dependencies:
+      react: 19.3.1
+      react-dom: 19.3.1(react@19.3.1)
+    optionalDependencies:
+      '@types/react': 19.3.0
 
   '@hookform/resolvers@7.0.0(@standard-schema/spec@1.1.0)(ajv-formats@2.1.1(ajv@8.18.0))(ajv@8.18.0)(react-hook-form@7.91.0(@types/react@19.3.0)(react@19.3.1))(valibot@1.4.2(typescript@6.0.3))(zod@4.6.7)':
     dependencies:
@@ -13431,10 +13508,6 @@ snapshots:
       solid-js: 1.9.18
 
   '@leichtgewicht/ip-codec@2.0.5': {}
-
-  '@lucasmarkes/hairline@0.5.1(react@19.3.1)':
-    optionalDependencies:
-      react: 19.3.1
 
   '@mdx-js/mdx@3.1.1':
     dependencies:
@@ -14911,6 +14984,22 @@ snapshots:
 
   '@rollup/rollup-win32-x64-msvc@4.67.3':
     optional: true
+
+  '@scalar/helpers@0.16.4': {}
+
+  '@scalar/json-magic@0.16.1':
+    dependencies:
+      '@scalar/helpers': 0.16.4
+      pathe: 2.0.3
+      undici: 7.30.1
+      yaml: 2.9.1
+
+  '@scalar/openapi-types@0.9.8': {}
+
+  '@scalar/openapi-upgrader@0.4.6':
+    dependencies:
+      '@scalar/helpers': 0.16.4
+      '@scalar/openapi-types': 0.9.8
 
   '@scena/dragscroll@1.4.0':
     dependencies:
@@ -17835,6 +17924,37 @@ snapshots:
       react: 19.3.1
       vite: 7.3.7(@types/node@26.6.6)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.51.2)(tsx@4.23.15)(yaml@2.9.1)
     transitivePeerDependencies:
+      - supports-color
+
+  fumadocs-openapi@12.5.6(418649c0839d6277f70ae4eaa57b400c):
+    dependencies:
+      '@base-ui/react': 1.9.0(@date-fns/tz@1.4.1)(@types/react@19.3.0)(date-fns@4.4.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+      '@fuma-translate/react': 1.0.2(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+      '@fumadocs/json-schema': 0.3.5(@types/react@19.3.0)(json-schema-typed@8.0.2)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+      '@fumari/json-schema-ts': 1.0.2(json-schema-typed@8.0.2)
+      '@fumari/stf': 1.1.2(@types/react@19.3.0)(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+      '@scalar/json-magic': 0.16.1
+      '@scalar/openapi-upgrader': 0.4.6
+      chokidar: 6.0.0
+      class-variance-authority: 0.7.1
+      cn: 0.5.1
+      fumadocs-core: 16.17.9(@mdx-js/mdx@3.1.1)(@modelcontextprotocol/server@2.4.0)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.3.0)(lucide-react@1.66.0(@types/react@19.3.0)(react@19.3.1))(next@16.4.3(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(@types/node@26.6.6)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(zod@4.6.7)
+      fumadocs-ui: 16.17.9(@types/mdx@2.0.14)(@types/react-dom@19.3.0(@types/react@19.3.0))(@types/react@19.3.0)(fumadocs-core@16.17.9(@mdx-js/mdx@3.1.1)(@modelcontextprotocol/server@2.4.0)(@types/estree-jsx@1.0.5)(@types/hast@3.0.5)(@types/mdast@4.0.4)(@types/react@19.3.0)(lucide-react@1.66.0(@types/react@19.3.0)(react@19.3.1))(next@16.4.3(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(@types/node@26.6.6)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(zod@4.6.7))(next@16.4.3(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(@types/node@26.6.6)(react-dom@19.3.1(react@19.3.1))(react@19.3.1))(react-dom@19.3.1(react@19.3.1))(react@19.3.1)(tailwindcss@4.3.3)
+      github-slugger: 2.0.0
+      lucide-react: 1.66.0(@types/react@19.3.0)(react@19.3.1)
+      react: 19.3.1
+      react-dom: 19.3.1(react@19.3.1)
+      remark: 15.0.1
+      remark-rehype: 11.1.2
+      shiki: 4.5.0
+      undici: 8.12.3
+      yaml: 2.9.1
+    optionalDependencies:
+      '@types/react': 19.3.0
+      json-schema-typed: 8.0.2
+    transitivePeerDependencies:
+      - '@date-fns/tz'
+      - date-fns
       - supports-color
 
   fumadocs-twoslash@4.0.4(1d44c40c2314b874bd5efbb422028633):

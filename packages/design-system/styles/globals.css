@@ -234,9 +234,10 @@
 :root {
   --background: oklch(0.994 0 0);
   --foreground: oklch(0 0 0);
-  --card: oklch(0.994 0 0);
+  /* Raised surfaces are pure white on the near-white page (dark lifts them instead). */
+  --card: oklch(1 0 0);
   --card-foreground: oklch(0 0 0);
-  --popover: oklch(0.9911 0 0);
+  --popover: oklch(1 0 0);
   --popover-foreground: oklch(0 0 0);
   --primary: oklch(0.5465 0.2455 262.8657);
   --primary-foreground: oklch(1 0 0);
@@ -246,7 +247,8 @@
   --muted-foreground: oklch(0.4386 0 0);
   --accent: oklch(0.962 0.002 270);
   --accent-foreground: oklch(0.145 0 0);
-  --destructive: oklch(0.629 0.1902 23.0704);
+  /* AA as text on white and under white text (the old 0.629 was 3.8:1). */
+  --destructive: oklch(0.55 0.2 25);
   --destructive-foreground: oklch(1 0 0);
   --border: oklch(0.92 0.003 270);
   --input: oklch(0.92 0.003 270);

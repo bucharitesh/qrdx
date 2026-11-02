@@ -2,8 +2,8 @@ import { database as db, user as userTable } from "@repo/database";
 import { eq } from "drizzle-orm";
 import type { NextRequest } from "next/server";
 import { requireApiToken } from "@/app/api/v1/codes/_lib/api";
+import { invalidTokenError, oauthCompatibleError } from "@/lib/api-errors";
 import { withApiQuotaHeaders } from "@/lib/api-quota";
-import { oauthError } from "@/lib/oauth";
 
 export const GET = withApiQuotaHeaders(async (req: NextRequest) => {
   const auth = await requireApiToken(req, "profile:read");
@@ -21,7 +21,8 @@ export const GET = withApiQuotaHeaders(async (req: NextRequest) => {
     .limit(1);
 
   if (!profile) {
-    return oauthError("invalid_token", "User not found", 401);
+    // The token's user is gone: the same as any other dead token.
+    return oauthCompatibleError("invalid_token", invalidTokenError());
   }
 
   return Response.json({ data: profile });

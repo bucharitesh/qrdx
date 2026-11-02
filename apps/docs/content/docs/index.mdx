@@ -1,249 +1,61 @@
 ---
-title: Introduction
-description: Docs for QRdx, the open-source QR code generator with dynamic QR codes, hosted pages, analytics, teams and developer APIs.
+title: QRdx docs
+description: Help for everyone who makes QR codes with QRdx, guides to every feature, and docs for developers.
 icon: Book
 ---
 
-QRdx is an open-source (AGPL-3.0) QR code platform you can use in several ways:
+QRdx is an open-source (AGPL-3.0) QR code platform. Design static QR codes for free with no account, or sign in for dynamic codes you can change after printing, mobile pages and scan analytics.
 
-- **Design static QR codes** in the [playground](/playground) and download PNG, JPG, SVG, PDF or EPS files. Free, unlimited and no account needed.
-- **Create dynamic QR codes** with an account: short links you can repoint after printing, hosted mobile pages, smart routing and scan analytics, alone or with a team.
-- **Build QR codes into your own software** with the [`qrdx`](https://www.npmjs.com/package/qrdx) React library, the CLI, the image API, the REST API and the MCP server.
+Every dynamic code keeps redirecting on every plan, even after a downgrade or cancellation. That's the [Never-Hostage Guarantee](/guarantee).
 
-Every dynamic code keeps redirecting on every plan, even after a downgrade or cancellation. See [Plans and limits](/docs/plans-and-limits) and the [Never-Hostage Guarantee](/guarantee).
-
-## Get started
+## Where to start
 
 <Cards>
   <Card
-    icon={<MousePointerClick />}
-    href="/playground"
-    title="Playground"
-    description="Design a QR code visually and download it. No code or signup needed."
+    icon={<LifeBuoy />}
+    href="/docs/help"
+    title="Help"
+    description="Plain answers for making codes, billing, teams and fixing problems. No code needed."
   />
   <Card
-    icon={<QrCode />}
+    icon={<Book />}
     href="/docs/dynamic-qr-codes"
-    title="Dynamic QR codes"
-    description="Change where a printed code points and see how often it is scanned."
-  />
-  <Card
-    icon={<Rocket />}
-    href="/docs/getting-started"
-    title="Install the React library"
-    description="Install qrdx and render your first QR code in a few lines."
-  />
-  <Card
-    icon={<FileCode />}
-    href="/docs/usage"
-    title="Basic usage"
-    description="Colors, patterns, logos, templates and error correction with the QRCode component."
-  />
-</Cards>
-
-## Features
-
-<Cards>
-  <Card
-    icon={<Grid3x3 />}
-    href="/docs/features/patterns"
-    title="Patterns"
-    description="Shapes for the data modules, corner eyes and eye dots."
-  />
-  <Card
-    icon={<Palette />}
-    href="/docs/features/colors-gradients"
-    title="Colors & gradients"
-    description="Solid colors, linear and radial gradients, and contrast checks."
-  />
-  <Card
-    icon={<Image />}
-    href="/docs/features/logos"
-    title="Logos"
-    description="Put a logo in the center without breaking scanning."
-  />
-  <Card
-    icon={<LayoutTemplate />}
-    href="/docs/features/templates"
-    title="Templates"
-    description="Pre-designed frame templates, or register your own."
-  />
-  <Card
-    icon={<Frame />}
-    href="/docs/features/frames"
-    title="Frames & print"
-    description="Call-to-action frames, a scan score and print-ready PDF export."
-  />
-  <Card
-    icon={<Sparkles />}
-    href="/docs/features/art-qr"
-    title="Art QR codes"
-    description="Blend a logo or photo into the code, or generate AI artwork around it."
-  />
-  <Card
-    icon={<Download />}
-    href="/docs/features/downloads"
-    title="Downloads"
-    description="PNG, JPG, SVG, PDF and EPS export, clipboard and data URLs."
-  />
-</Cards>
-
-## Dynamic QR
-
-Dynamic codes, pages and everything below need a free QRdx account. Some features are part of Pro or Business; each page says which.
-
-<Cards>
-  <Card
-    icon={<QrCode />}
-    href="/docs/dynamic-qr-codes"
-    title="Dynamic QR codes"
-    description="Editable short links with scan analytics, folders, tags, version history and CSV import."
-  />
-  <Card
-    icon={<PanelsTopLeft />}
-    href="/docs/landing-pages"
-    title="Landing pages"
-    description="Mobile pages built from blocks: link lists, business pages and vCard Plus."
-  />
-  <Card
-    icon={<ClipboardList />}
-    href="/docs/forms-and-pages"
-    title="Menus, coupons, events and forms"
-    description="Page types for restaurants, offers and events, and forms with a response inbox."
-  />
-  <Card
-    icon={<Globe />}
-    href="/docs/custom-domains"
-    title="Custom domains"
-    description="Serve your short links from a domain you own."
-  />
-  <Card
-    icon={<FolderOpen />}
-    href="/docs/files"
-    title="Files"
-    description="Upload PDFs, images, audio and video for your pages."
-  />
-  <Card
-    icon={<LockKeyhole />}
-    href="/docs/code-controls"
-    title="Code controls"
-    description="Pause a code, add a password, schedule it or cap its scans."
-  />
-  <Card
-    icon={<Split />}
-    href="/docs/smart-routing"
-    title="Smart routing"
-    description="Route scans by device, country, language or time, run A/B tests and add UTM tags."
-  />
-  <Card
-    icon={<Target />}
-    href="/docs/tracking-and-conversions"
-    title="Tracking and conversions"
-    description="Pixels on hosted pages, scan timing and conversion attribution."
-  />
-  <Card
-    icon={<Bell />}
-    href="/docs/notifications"
-    title="Notifications"
-    description="Email alerts, a weekly digest and Slack or Discord messages."
-  />
-  <Card
-    icon={<Webhook />}
-    href="/docs/webhooks"
-    title="Webhooks"
-    description="Signed events for scans, code changes and form submissions."
-  />
-  <Card
-    icon={<Users />}
-    href="/docs/teams"
-    title="Teams"
-    description="Share codes, pages and domains with owner, admin and member roles."
-  />
-</Cards>
-
-## Developers
-
-<Cards>
-  <Card
-    icon={<ImageDown />}
-    href="/docs/developers/image-api"
-    title="QR code image API"
-    description="Get a QR code image from a URL for READMEs, emails and HTML. No API key."
-  />
-  <Card
-    icon={<Code />}
-    href="/docs/developers/rest-api"
-    title="REST API and OAuth"
-    description="Manage dynamic codes, read scans and subscribe to events over HTTP."
-  />
-  <Card
-    icon={<Bot />}
-    href="/docs/developers/mcp"
-    title="MCP server"
-    description="Let Claude, Cursor, VS Code and other AI tools generate QR codes."
+    title="Guides"
+    description="Every product feature in depth: dynamic codes, pages, forms, routing, analytics and teams."
   />
   <Card
     icon={<Terminal />}
-    href="/docs/developers/cli"
-    title="CLI"
-    description="Generate SVG, PNG or EPS QR codes from the terminal or CI."
-  />
-  <Card
-    icon={<Blocks />}
-    href="/docs/developers/shadcn"
-    title="shadcn/ui registry"
-    description="Add a QR code or QR scanner component with one command."
+    href="/docs/developers"
+    title="Developers"
+    description="The REST API with a Try it panel, webhooks, OAuth apps, MCP and the CLI."
   />
   <Card
     icon={<Code />}
-    href="/docs/api-reference"
-    title="Library API reference"
-    description="Every component, function and type exported by qrdx."
+    href="/docs/getting-started"
+    title="React library"
+    description="Render and export styled QR codes with the qrdx package and the shadcn/ui registry."
   />
-  <Card
-    icon={<Wrench />}
-    href="/docs/utilities"
-    title="Utilities"
-    description="Color, contrast, validation and feature detection helpers."
-  />
-  <Card
-    icon={<Scan />}
-    href="/docs/qr-detection"
-    title="QR detection"
-    description="Read and decode QR codes from images in the browser."
-  />
-</Cards>
-
-## Self-hosting
-
-<Cards>
   <Card
     icon={<Server />}
     href="/docs/self-hosting"
-    title="Self-hosting guide"
-    description="Run your own QRdx instance, dynamic codes included, with Docker Compose or Node.js."
+    title="Self-hosting"
+    description="Run your own QRdx, dynamic codes included, with Docker Compose or Node.js."
   />
 </Cards>
 
-## Quick example
+## Quick links
 
-```tsx
-import { QRCode } from 'qrdx';
+- [Make your first QR code](/docs/help/getting-started/first-qr-code)
+- [Static or dynamic, which do you need?](/docs/help/getting-started/static-vs-dynamic)
+- [A code won't scan](/docs/help/troubleshooting/wont-scan)
+- [Plans and limits](/docs/plans-and-limits)
+- [REST API and OAuth](/docs/developers/rest-api)
+- [Install the React library](/docs/getting-started)
 
-export default function App() {
-  return (
-    <QRCode
-      value="https://example.com"
-      size={512}
-      fgColor="#000000"
-      bgColor="#ffffff"
-    />
-  );
-}
-```
+## Stay up to date
 
-## Community & support
+- [Changelog](/changelogs): every release, newest first.
+- [What's new and what's next](/docs/help/whats-new).
+- [GitHub](https://github.com/bucharitesh/qrdx): source code, [issues](https://github.com/bucharitesh/qrdx/issues) and [discussions](https://github.com/bucharitesh/qrdx/discussions).
 
-- [GitHub repository](https://github.com/bucharitesh/qrdx)
-- [Issues](https://github.com/bucharitesh/qrdx/issues)
-- [Discussions](https://github.com/bucharitesh/qrdx/discussions)
+Need a person? [Contact support](/docs/help/contact).

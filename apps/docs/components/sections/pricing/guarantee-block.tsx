@@ -59,7 +59,7 @@ export function GuaranteeBlock({ className }: { className?: string }) {
   return (
     <section
       aria-labelledby="guarantee"
-      className={cn("w-full px-6 py-16 md:py-20", className)}
+      className={cn("w-full px-10 py-16 md:py-20", className)}
     >
       <div className="mx-auto flex max-w-5xl flex-col gap-8">
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">

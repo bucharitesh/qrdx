@@ -1,0 +1,188 @@
+---
+title: Use QRdx with AI agents
+description: Connect Claude, ChatGPT, Cursor, VS Code or Devin Desktop to the QRdx MCP server, give agents keyless QR image URLs, and call the REST API for a user.
+icon: Bot
+---
+
+AI assistants and coding agents can use QRdx in three ways. Pick by what the agent has to do:
+
+| The agent needs to | Use | Key or account |
+| --- | --- | --- |
+| Make a QR code in a chat or an agent run | [MCP server](#connect-the-mcp-server) | None |
+| Put a QR code in Markdown, HTML, an email or a build | [Image API](#give-agents-qr-image-urls) | None |
+| Create or change dynamic codes, read scans | [REST API](#call-the-rest-api-for-a-user) | OAuth access token |
+| Read the QRdx docs | [Markdown and llms.txt](#read-qrdx-as-markdown) | None |
+
+## Connect the MCP server
+
+The QRdx MCP server lives at:
+
+```txt
+https://mcp.qrdx.dev/mcp
+```
+
+It uses the Streamable HTTP transport and needs no account, sign-in or API key. The [connect page](/mcp) has one-click buttons for Claude, Cursor and VS Code. The tools and their inputs are listed in [MCP server](/docs/developers/mcp).
+
+<Tabs items={["Claude", "Claude Code", "Cursor", "VS Code", "ChatGPT", "Devin Desktop (Windsurf)", "Other apps"]}>
+  <Tab value="Claude">
+    Claude on the web and Claude Desktop share the same connectors.
+
+    1. Open **Customize → Connectors** and click **Add custom connector**. The **Connect to Claude** button on the [connect page](/mcp) opens this dialog with the name and URL filled in.
+    2. Name it `QRdx` and enter `https://mcp.qrdx.dev/mcp`. Leave the OAuth fields empty.
+    3. Click **Add**, then turn QRdx on from the tools menu of a chat.
+
+    Free plans can add one custom connector. On Team and Enterprise plans, an owner adds the connector for the organization.
+  </Tab>
+  <Tab value="Claude Code">
+    ```bash
+    claude mcp add --transport http qrdx https://mcp.qrdx.dev/mcp
+    ```
+
+    Add `--scope user` to use it in every project. To share it with a repository instead, commit a `.mcp.json`:
+
+    ```json
+    {
+      "mcpServers": {
+        "qrdx": {
+          "type": "http",
+          "url": "https://mcp.qrdx.dev/mcp"
+        }
+      }
+    }
+    ```
+
+    Run `/mcp` in Claude Code to check that `qrdx` is connected.
+  </Tab>
+  <Tab value="Cursor">
+    [Add to Cursor](cursor://anysphere.cursor-deeplink/mcp/install?name=qrdx&config=eyJ1cmwiOiJodHRwczovL21jcC5xcmR4LmRldi9tY3AifQ%3D%3D) opens Cursor's install prompt. The link follows Cursor's [MCP install link](https://cursor.com/docs/mcp/install-links) format: the server name, and its `mcp.json` entry in base64.
+
+    Or add the server to `~/.cursor/mcp.json` (every project) or `.cursor/mcp.json` (one project):
+
+    ```json
+    {
+      "mcpServers": {
+        "qrdx": {
+          "url": "https://mcp.qrdx.dev/mcp"
+        }
+      }
+    }
+    ```
+  </Tab>
+  <Tab value="VS Code">
+    [Install in VS Code](https://vscode.dev/redirect/mcp/install?name=qrdx&config=%7B%22type%22%3A%22http%22%2C%22url%22%3A%22https%3A%2F%2Fmcp.qrdx.dev%2Fmcp%22%7D) hands over to VS Code, which asks you to confirm. From a terminal:
+
+    ```bash
+    code --add-mcp '{"name":"qrdx","type":"http","url":"https://mcp.qrdx.dev/mcp"}'
+    ```
+
+    Or add it to `.vscode/mcp.json` in your workspace:
+
+    ```json
+    {
+      "servers": {
+        "qrdx": {
+          "type": "http",
+          "url": "https://mcp.qrdx.dev/mcp"
+        }
+      }
+    }
+    ```
+
+    Then use GitHub Copilot Chat in agent mode and make sure `qrdx` is on in the tools picker.
+  </Tab>
+  <Tab value="ChatGPT">
+    1. Go to [ChatGPT Plugins](https://chatgpt.com/plugins), click **+** and choose **Add custom MCP server**.
+    2. Name it `QRdx` and enter `https://mcp.qrdx.dev/mcp` as the URL.
+    3. Choose no authentication, accept the warning and create it.
+    4. In a new chat, type `@` and pick QRdx.
+
+    Your ChatGPT plan and your workspace's settings decide whether custom MCP servers are allowed. ChatGPT only connects to remote servers like this one.
+  </Tab>
+  <Tab value="Devin Desktop (Windsurf)">
+    Windsurf is now Devin Desktop. Add the server to `~/.config/devin/mcp_config.json` (every project) or `.devin/mcp_config.json` (one project), then refresh the MCP servers:
+
+    ```json
+    {
+      "mcpServers": {
+        "qrdx": {
+          "url": "https://mcp.qrdx.dev/mcp"
+        }
+      }
+    }
+    ```
+
+    Older Windsurf builds read `~/.codeium/windsurf/mcp_config.json` and expect `serverUrl` in place of `url`.
+  </Tab>
+  <Tab value="Other apps">
+    Any app that supports remote MCP servers needs only the URL `https://mcp.qrdx.dev/mcp` with no authentication. The [connect page](/mcp) has steps for Gemini CLI, Codex, Zed, Cline, Continue, Goose, LM Studio, Raycast, Warp, JetBrains IDEs, Perplexity, Le Chat and Copilot Studio.
+
+    Apps that only run local (stdio) servers can bridge the URL with [`mcp-remote`](https://www.npmjs.com/package/mcp-remote), which needs Node.js:
+
+    ```json
+    {
+      "mcpServers": {
+        "qrdx": {
+          "command": "npx",
+          "args": ["-y", "mcp-remote", "https://mcp.qrdx.dev/mcp"]
+        }
+      }
+    }
+    ```
+  </Tab>
+</Tabs>
+
+Then ask in plain words, for example "Make a QR code for https://example.com in #155dfc with rounded dots" or "Make a Wi-Fi QR code for the network Office Guest".
+
+### Discovery for MCP clients
+
+Clients and registries that discover servers on their own can read:
+
+- the **MCP Server Card** at `https://mcp.qrdx.dev/mcp/server-card`, in the format of the MCP [Server Card extension](https://modelcontextprotocol.io/seps/2127-mcp-server-cards): name, version, transport and supported protocol versions;
+- the **AI Catalog** at [`/.well-known/ai-catalog.json`](/.well-known/ai-catalog.json), which points to the server card;
+- the **API catalog** at [`/.well-known/api-catalog`](/.well-known/api-catalog) ([RFC 9727](https://www.rfc-editor.org/rfc/rfc9727)), which lists the REST API with its [OpenAPI document](/openapi.json) and the MCP server.
+
+## Give agents QR image URLs
+
+The [image API](/docs/developers/image-api) turns a URL into a QR code image with no key, so an agent can write the image straight into Markdown, HTML or an email:
+
+```txt
+https://api.qrdx.dev/v1/qr?data=<encoded text>&format=svg|png|eps
+```
+
+```md
+![QR code for qrdx.dev](https://api.qrdx.dev/v1/qr?data=https%3A%2F%2Fqrdx.dev&format=png&size=512)
+```
+
+- **Encode `data`** with `encodeURIComponent`, or `&`, `#`, `+` and spaces split it.
+- **Pick the format for the destination.** PNG works in chat apps and email clients that don't show SVG; SVG is sharpest on the web; EPS is for print shops.
+- **Style with query parameters** (`fg`, `bg`, `body`, `eye`, `dot`, `level`, `margin`, `template`). The values are listed in [Image API](/docs/developers/image-api#parameters), and the MCP tool `list_qr_styles` returns them too.
+- **The same URL always returns the same image**, so it's safe to cache and embed.
+
+## Call the REST API for a user
+
+To create or change [dynamic codes](/docs/dynamic-qr-codes), read scans or subscribe to [webhooks](/docs/webhooks), an agent calls the [REST API](/docs/developers/rest-api) at `https://api.qrdx.dev/v1` with an OAuth 2.0 access token. The [OpenAPI document](/openapi.json) describes every endpoint, schema and error, and the [API reference](/docs/developers/api) has a page for each.
+
+QRdx doesn't issue API keys yet, so an agent gets a token the way any OAuth app does:
+
+1. **Register an app** in [Settings → Developers](/settings/developers) with the scopes it needs and a redirect URI it can receive, such as a `http://localhost` callback for a command-line agent.
+2. **Run the authorization code flow with PKCE once.** The user approves the app on the QRdx consent screen; the agent exchanges the code for an access token and a refresh token. The steps are in [Get an access token](/docs/developers/rest-api#get-an-access-token).
+3. **Keep the refresh token in a secret store**, never in a prompt, a log or the repository. Access tokens last an hour; refreshing returns a new refresh token and the old one stops working.
+4. **Ask for the least access.** `codes:read` is enough to report on codes and scans; `codes:write` creates and edits them.
+5. **Respect the quota.** Each workspace has a daily request quota by plan (see [Plans and limits](/docs/plans-and-limits)). On `429 RATE_LIMITED`, wait for the seconds in `Retry-After`.
+
+Requests made with a token act on the token owner's personal workspace, not on a team.
+
+## Read QRdx as Markdown
+
+- [`/llms.txt`](/llms.txt): an index of the whole site for LLMs, with the product, developer tools, docs, help center, pricing and legal pages.
+- [`/llms-full.txt`](/llms-full.txt): every docs page in one file, in sidebar order.
+- Add `.md` to any docs URL for that page alone, for example [`/docs/developers/mcp.md`](/docs/developers/mcp.md). [`/pricing.md`](/pricing.md) and [`/mcp.md`](/mcp.md) work too.
+- Requests to the home page, `/pricing`, `/mcp` or any docs page with `Accept: text/markdown` get the Markdown version at the same URL.
+
+## Limits
+
+- **The MCP tools make static QR codes.** They render images and build payloads (Wi-Fi, contacts, email, SMS, map locations). They can't create dynamic codes or read anything from a QRdx account; use the REST API for that.
+- **No logos or gradients** from the MCP server or the image API: they draw solid colors. Use the [playground](/playground) or the [React library](/docs/getting-started) for logos and gradients.
+- **Image URLs contain the encoded data.** Don't put passwords or other secrets in them, such as a private Wi-Fi password in a public README.
+- **Rate limits apply per IP address** to the MCP server and the image API; the numbers are on the [MCP server](/docs/developers/mcp#privacy-and-limits) and [Image API](/docs/developers/image-api#limits) pages.
+- **REST API tokens come from OAuth only.** There are no API keys and no client-credentials grant yet, and tokens can't act on team workspaces.

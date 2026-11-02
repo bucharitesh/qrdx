@@ -293,16 +293,79 @@ export const SYNTH: Record<SoundName, SynthRecipe> = {
     osc.start(t);
     osc.stop(t + 0.24);
   },
-  bat: (ctx, out, t) => {
-    for (let i = 0; i < 5; i++) {
-      noise(ctx, out, t + i * 0.04, {
-        filter: "bandpass",
-        freq: 1800 - i * 80,
-        q: 1.4,
-        decay: 0.018,
-        gain: 0.3 * (1 - i * 0.12),
+  // Low purr: a ~27 Hz pulse of muffled breath over a faint hum.
+  purr: (ctx, out, t) => {
+    for (let i = 0; i < 6; i++) {
+      noise(ctx, out, t + i * 0.036, {
+        filter: "lowpass",
+        freq: 420,
+        to: 300,
+        q: 0.7,
+        attack: 0.008,
+        decay: 0.03,
+        gain: (i === 0 ? 0.3 : 0.5) * (1 - i * 0.06),
       });
     }
+    tone(ctx, out, t, { freq: 52, attack: 0.03, decay: 0.19, gain: 0.12 });
+  },
+  // A short, soft hiss (breath through teeth), never harsh.
+  hiss: (ctx, out, t) => {
+    noise(ctx, out, t, {
+      filter: "highpass",
+      freq: 3200,
+      to: 4200,
+      q: 0.7,
+      attack: 0.04,
+      decay: 0.16,
+      gain: 0.22,
+    });
+  },
+  // Wing flutter (soft papery beats), then a tiny high squeak.
+  bat: (ctx, out, t) => {
+    for (let i = 0; i < 5; i++) {
+      noise(ctx, out, t + i * 0.034, {
+        filter: "bandpass",
+        freq: 1800 - i * 80,
+        q: 1.2,
+        attack: 0.004,
+        decay: 0.024,
+        gain: 0.7 * (1 - i * 0.1),
+      });
+    }
+    tone(ctx, out, t + 0.165, {
+      freq: 3400,
+      to: 4300,
+      attack: 0.004,
+      decay: 0.045,
+      gain: 0.12,
+    });
+  },
+  // Silk: a quick airy zip up the thread, then the web's soft twang.
+  spider: (ctx, out, t) => {
+    noise(ctx, out, t, {
+      filter: "bandpass",
+      freq: 1400,
+      to: 4200,
+      q: 2.2,
+      attack: 0.012,
+      decay: 0.07,
+      gain: 0.16,
+    });
+    tone(ctx, out, t + 0.06, {
+      type: "triangle",
+      freq: 330,
+      to: 311,
+      attack: 0.002,
+      decay: 0.16,
+      gain: 0.3,
+    });
+    tone(ctx, out, t + 0.06, {
+      freq: 660,
+      to: 622,
+      attack: 0.002,
+      decay: 0.08,
+      gain: 0.08,
+    });
   },
   // Christmas: small glass bell.
   "seasonal-bauble": (ctx, out, t) => {
@@ -320,6 +383,12 @@ export const SYNTH: Record<SoundName, SynthRecipe> = {
       gain: 0.18,
     });
     chime(ctx, out, t + 0.07, 1318.5, 0.14, 0.18);
+  },
+  // Twinkling lights: three quick, soft rising glints (E6, G6, B6).
+  "seasonal-tree": (ctx, out, t) => {
+    [1318.5, 1568, 1975.5].forEach((freq, i) => {
+      chime(ctx, out, t + i * 0.05, freq, 0.12, 0.12);
+    });
   },
   // Soft snowy puff with a low, round note.
   "seasonal-snowman": (ctx, out, t) => {
@@ -348,6 +417,24 @@ export const SYNTH: Record<SoundName, SynthRecipe> = {
       attack: 0.01,
       decay: 0.12,
       gain: 0.08,
+    });
+  },
+  // Mirror-ball shimmer: scattered high glints over a faint sparkle.
+  "seasonal-disco": (ctx, out, t) => {
+    [2349.3, 3136, 2637, 3520].forEach((freq, i) => {
+      tone(ctx, out, t + i * 0.035, {
+        freq,
+        attack: 0.002,
+        decay: 0.09,
+        gain: 0.1,
+      });
+    });
+    noise(ctx, out, t, {
+      filter: "highpass",
+      freq: 6500,
+      attack: 0.02,
+      decay: 0.16,
+      gain: 0.05,
     });
   },
   // A light upward boop.

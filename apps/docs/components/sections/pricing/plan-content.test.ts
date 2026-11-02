@@ -5,6 +5,9 @@ import type { PlanLimits } from "@/lib/plans";
 import {
   buildComparison,
   buildHighlights,
+  buildPricingDescription,
+  buildPricingIntro,
+  buildUpgradeHighlights,
   formatBytes,
   formatDays,
   maxYearlySavingsPercent,
@@ -230,12 +233,16 @@ describe("buildComparison", () => {
     });
   });
 
-  it("marks planned features that aren't built yet", () => {
-    assert.deepEqual(findRow("Audit log"), {
-      free: false,
-      pro: false,
-      business: "Coming soon",
-    });
+  it("only sells features that are built", () => {
+    // Business has folderPermissions and auditLog set, but neither is built.
+    const rows = buildComparison(LIMITS, "USD").flatMap((group) => group.rows);
+    const features = rows.map((r) => r.feature);
+    assert.ok(!features.includes("Folder permissions"));
+    assert.ok(!features.includes("Audit log"));
+    const cells = rows.flatMap((r) => Object.values(r.values));
+    assert.ok(cells.every((cell) => !/soon/i.test(String(cell))));
+    const lines = Object.values(buildHighlights(LIMITS)).flat();
+    assert.ok(lines.every((line) => !/coming soon|audit log/i.test(line)));
   });
 
   it("drops the AI art row only where AI art isn't available", () => {
@@ -265,5 +272,82 @@ describe("buildHighlights", () => {
       lines.some((line) => line.includes("AI art"));
     assert.ok(art(buildHighlights(LIMITS).business));
     assert.ok(!art(buildHighlights(LIMITS, { aiArt: false }).business));
+  });
+});
+
+describe("features this deployment can't offer", () => {
+  const rows = (options: Parameters<typeof buildComparison>[2]) =>
+    buildComparison(LIMITS, "USD", options).flatMap((group) => group.rows);
+  const features = (options: Parameters<typeof buildComparison>[2]) =>
+    rows(options).map((row) => row.feature);
+
+  it("drops each feature's comparison row only when it's off", () => {
+    const cases = {
+      aiThemes: "AI theme generations",
+      customDomains: "Custom domains",
+      fileStorage: "File storage",
+      emailAlerts: "Email digests and alerts",
+    } as const;
+    for (const [option, feature] of Object.entries(cases)) {
+      assert.ok(features({}).includes(feature), feature);
+      assert.ok(features({ [option]: true }).includes(feature), feature);
+      assert.ok(!features({ [option]: false }).includes(feature), feature);
+      assert.equal(
+        features({ [option]: false }).length,
+        features({}).length - 1,
+        feature,
+      );
+    }
+  });
+
+  it("drops Tag Manager from the pixels hint without custom domains", () => {
+    const hint = (customDomains: boolean) =>
+      rows({ customDomains }).find(
+        (row) => row.feature === "Retargeting pixels",
+      )?.hint;
+    assert.match(hint(true) ?? "", /GTM/);
+    assert.doesNotMatch(hint(false) ?? "", /GTM/);
+  });
+
+  it("keeps custom domains and storage off the plan cards when off", () => {
+    const off = buildHighlights(LIMITS, {
+      customDomains: false,
+      fileStorage: false,
+    });
+    const lines = Object.values(off).flat();
+    assert.ok(lines.every((line) => !/custom domain/i.test(line)));
+    assert.ok(lines.every((line) => !/storage/i.test(line)));
+    assert.ok(off.pro.includes("1,000 form responses a month"));
+    assert.ok(buildHighlights(LIMITS).pro.includes("5 custom domains"));
+  });
+
+  it("builds the pricing intro and description from what's offered", () => {
+    assert.equal(
+      buildPricingIntro(),
+      "Static QR codes are free forever. Paid plans add unlimited dynamic codes, longer analytics, custom domains and teams.",
+    );
+    assert.equal(
+      buildPricingIntro({ customDomains: false }),
+      "Static QR codes are free forever. Paid plans add unlimited dynamic codes, longer analytics and teams.",
+    );
+    assert.match(
+      buildPricingDescription(),
+      /analytics history, custom domains and teams/,
+    );
+    assert.doesNotMatch(
+      buildPricingDescription({ customDomains: false }),
+      /custom domain/,
+    );
+  });
+
+  it("keeps custom domains out of the upgrade dialog when off", () => {
+    const on = Object.values(buildUpgradeHighlights()).flat();
+    const off = Object.values(
+      buildUpgradeHighlights({ customDomains: false }),
+    ).flat();
+    assert.ok(on.some((line) => /custom domains/.test(line)));
+    assert.ok(off.every((line) => !/custom domain/i.test(line)));
+    assert.ok(off.includes("Teams of up to 3"));
+    assert.ok(off.includes("Unlimited team members"));
   });
 });

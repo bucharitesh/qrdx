@@ -4,7 +4,6 @@ import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import cuid from "cuid";
 import { eq } from "drizzle-orm";
 import type { NextRequest } from "next/server";
-import { z } from "zod";
 import { resolveApiScope } from "@/app/api/v1/codes/_lib/api";
 import { withApiQuotaHeaders } from "@/lib/api-quota";
 import { HttpError, handleError } from "@/lib/error-response";
@@ -17,6 +16,7 @@ import {
   readJsonBody,
 } from "@/lib/request-guards";
 import { type ActiveScope, isInScope } from "@/lib/scope";
+import { conversionBodySchema } from "./_lib/schemas";
 
 /**
  * POST /api/v1/conversions — attributes a conversion (sale, sign-up, …) to the
@@ -42,60 +42,6 @@ const CORS_HEADERS = {
 };
 
 const MAX_BODY_BYTES = 8 * 1024;
-const MAX_METADATA_KEYS = 20;
-
-const valueSchema = z
-  .union([z.number(), z.string().trim()])
-  .transform((value, ctx) => {
-    const text = typeof value === "number" ? value.toFixed(2) : value;
-    if (
-      !/^\d{1,12}(?:\.\d{1,2})?$/.test(text) ||
-      (typeof value === "number" && !(Number.isFinite(value) && value >= 0))
-    ) {
-      ctx.addIssue({
-        code: "custom",
-        message: "value must be a non-negative amount with up to 2 decimals",
-      });
-      return z.NEVER;
-    }
-    return text;
-  });
-
-const bodySchema = z.object({
-  sid: z.string().max(200).optional(),
-  code: z
-    .string()
-    .regex(/^[A-Za-z0-9_-]{1,64}$/)
-    .optional(),
-  name: z
-    .string()
-    .trim()
-    .min(1)
-    .max(64)
-    .regex(
-      /^[\p{L}\p{N} _.:/-]+$/u,
-      "name: letters, numbers, spaces and _ . : / -",
-    )
-    .default("conversion"),
-  value: valueSchema.optional(),
-  currency: z
-    .string()
-    .trim()
-    .toUpperCase()
-    .regex(/^[A-Z]{3}$/, "currency must be an ISO 4217 code like USD")
-    .optional(),
-  id: z.string().trim().min(1).max(128).optional(),
-  metadata: z
-    .record(
-      z.string().regex(/^[A-Za-z0-9_.-]{1,40}$/),
-      z.union([z.string().max(200), z.number(), z.boolean(), z.null()]),
-    )
-    .refine((value) => Object.keys(value).length <= MAX_METADATA_KEYS, {
-      message: `metadata can have up to ${MAX_METADATA_KEYS} keys`,
-    })
-    .optional(),
-});
-
 const ipLimiter = createRateLimiter({ limiter: slidingWindow(60, "60 s") });
 const scanLimiter = createRateLimiter({ limiter: slidingWindow(10, "60 m") });
 const codeLimiter = createRateLimiter({ limiter: slidingWindow(600, "60 s") });
@@ -136,7 +82,7 @@ export const POST = withApiQuotaHeaders(async (request: NextRequest) => {
     }
 
     const body = parseWithSchema(
-      bodySchema,
+      conversionBodySchema,
       await readJsonBody(request, MAX_BODY_BYTES),
     );
 

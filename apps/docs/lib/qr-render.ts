@@ -54,7 +54,9 @@ export const QR_DEFAULTS = {
 
 export const QR_TEMPLATE_IDS = getTemplateIds() as [string, ...string[]];
 
-const HEX_COLOR = /^#?(?:[0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})$/i;
+// Both cases spelled out, not /i: JSON Schema patterns (the OpenAPI document)
+// carry no flags.
+const HEX_COLOR = /^#?(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/;
 
 const hexColor = z
   .string()

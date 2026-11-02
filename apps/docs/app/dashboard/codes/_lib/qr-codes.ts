@@ -31,6 +31,7 @@ import { HttpError } from "@/lib/error-response";
 import { baseUrl } from "@/lib/metadata";
 import { getPlanForScope, getPlanLimits, type Plan } from "@/lib/plans";
 import { enforceRateLimits } from "@/lib/request-guards";
+import { signInPath } from "@/lib/safe-redirect";
 import { screenNewCodes, screenUrlChange } from "@/lib/safety/destinations";
 import { type ActiveScope, getActiveScope, isInScope } from "@/lib/scope";
 import {
@@ -106,14 +107,18 @@ export const destinationUrlSchema = z
       return z.NEVER;
     }
     return url.href;
-  });
+  })
+  .describe(
+    "Where a scan sends people: a full http(s) URL, up to 2,048 characters",
+  );
 
 const titleSchema = z
   .string()
   .trim()
   .max(MAX_TITLE_LENGTH, `Titles can be up to ${MAX_TITLE_LENGTH} characters`)
   .nullish()
-  .transform((value) => value || null);
+  .transform((value) => value || null)
+  .describe("Name shown in the dashboard, up to 100 characters");
 
 const styleSchema = themeStylePropsSchema
   .refine((style) => JSON.stringify(style).length <= MAX_STYLE_LENGTH, {
@@ -122,7 +127,14 @@ const styleSchema = themeStylePropsSchema
   .nullish();
 
 /** A verified custom domain of the scope (Pro); null = the default short link. */
-const domainIdSchema = z.string().trim().min(1).max(64);
+const domainIdSchema = z
+  .string()
+  .trim()
+  .min(1)
+  .max(64)
+  .describe(
+    "A verified custom domain of the workspace (Pro); null uses the default qrdx.dev short link",
+  );
 
 /**
  * A chosen back-half (Pro and Business). Shape here; reserved words depend on
@@ -136,7 +148,10 @@ export const slugSchema = z
     if (problem && problem !== "reserved") {
       ctx.addIssue({ code: "custom", message: SLUG_PROBLEM_MESSAGES[problem] });
     }
-  });
+  })
+  .describe(
+    "A custom back-half for the short link, such as spring-menu (Pro and Business)",
+  );
 
 export const createCodeSchema = z.object({
   destinationUrl: destinationUrlSchema,
@@ -251,12 +266,18 @@ const toOneCodeView = async (row: QrCodeRow) =>
 
 // ─── Scope + plan ────────────────────────────────────────────────────────────
 
-/** For dashboard pages: the active scope, or back to the sign-in entry point. */
-export async function requireDashboardScope(): Promise<ActiveScope> {
+/**
+ * For dashboard pages: the active scope, or sign in and come back to `next`
+ * (proxy.ts sends signed-out visitors there first; this covers a session that
+ * ended in between).
+ */
+export async function requireDashboardScope(
+  next = "/dashboard",
+): Promise<ActiveScope> {
   try {
     return await getActiveScope();
   } catch (error) {
-    if (error instanceof UnauthorizedError) redirect("/playground");
+    if (error instanceof UnauthorizedError) redirect(signInPath(next));
     throw error;
   }
 }

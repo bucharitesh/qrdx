@@ -227,7 +227,10 @@ export const sources: IntegrationCatalogEntry[] = [
       "Paste any YouTube link and QRdx cleans it up: videos, Shorts, playlists, channels and timestamps.",
     description: [
       "The YouTube content type recognizes youtu.be links, Shorts, live streams, embeds, YouTube Music and @handles, keeps the start time and playlist, drops tracking parameters and shows the title and thumbnail before you print.",
-      "When this server has a YouTube Data API key, you can also name your channel and pick one of its latest uploads.",
+    ],
+    // Needs YOUTUBE_API_KEY on the server
+    configuredExtras: [
+      "You can also name your channel and pick one of its latest uploads.",
     ],
     kind: "native",
     surface: "integrations",
@@ -280,7 +283,10 @@ export const sources: IntegrationCatalogEntry[] = [
       "Paste any Spotify link or URI and get a clean link with a cover preview.",
     description: [
       "The Spotify content type reads open.spotify.com links (also /intl-xx/ and embed links) and spotify: URIs for songs, albums, artists, playlists, podcasts and audiobooks, removes the ?si= tracking and previews the title and cover art.",
-      "When this server has Spotify app credentials, you can paste your profile link and pick one of your public playlists.",
+    ],
+    // Needs SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET on the server
+    configuredExtras: [
+      "You can also paste your profile link and pick one of your public playlists.",
     ],
     kind: "native",
     surface: "integrations",

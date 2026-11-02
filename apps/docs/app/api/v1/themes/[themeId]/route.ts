@@ -2,8 +2,9 @@ import { database as db, qrPreset } from "@repo/database";
 import { and, eq } from "drizzle-orm";
 import type { NextRequest } from "next/server";
 import { requireApiToken } from "@/app/api/v1/codes/_lib/api";
+import { oauthCompatibleError } from "@/lib/api-errors";
 import { withApiQuotaHeaders } from "@/lib/api-quota";
-import { oauthError } from "@/lib/oauth";
+import { HttpError } from "@/lib/error-response";
 
 export const GET = withApiQuotaHeaders(
   async (
@@ -33,7 +34,10 @@ export const GET = withApiQuotaHeaders(
       .limit(1);
 
     if (!theme) {
-      return oauthError("not_found", "Theme not found", 404);
+      return oauthCompatibleError(
+        "not_found",
+        new HttpError(404, "NOT_FOUND", "Theme not found."),
+      );
     }
 
     return Response.json({ data: theme });

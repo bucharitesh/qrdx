@@ -1,13 +1,9 @@
 import type { NextRequest } from "next/server";
-import { z } from "zod";
 import { NO_STORE, resolveApiScope } from "@/app/api/v1/codes/_lib/api";
 import { withApiQuotaHeaders } from "@/lib/api-quota";
 import { handleError } from "@/lib/error-response";
-import { WEBHOOK_EVENTS } from "@/lib/events/types";
 import { parseWithSchema } from "@/lib/request-guards";
-import { recentSamples } from "../_lib/hooks";
-
-const querySchema = z.object({ event: z.enum(WEBHOOK_EVENTS) });
+import { hookSampleQuerySchema, recentSamples } from "../_lib/hooks";
 
 /**
  * Zapier "perform list": an array of payloads shaped exactly like real
@@ -17,7 +13,7 @@ export const GET = withApiQuotaHeaders(async (req: NextRequest) => {
   try {
     const scope = await resolveApiScope(req, "read");
     const { event } = parseWithSchema(
-      querySchema,
+      hookSampleQuerySchema,
       Object.fromEntries(req.nextUrl.searchParams),
     );
     return Response.json(await recentSamples(scope, event), {

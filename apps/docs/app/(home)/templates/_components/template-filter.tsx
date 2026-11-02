@@ -61,7 +61,7 @@ export function TemplateFilter({
       <div className="sticky top-0 z-30 border-b bg-background/85 backdrop-blur supports-backdrop-filter:bg-background/70">
         <div
           aria-label="Page types"
-          className="flex scroll-px-6 snap-x gap-1.5 overflow-x-auto px-6 py-3 [mask-image:linear-gradient(to_right,transparent,black_20px,black_calc(100%-20px),transparent)] [scrollbar-width:none] md:flex-wrap md:justify-center md:px-10 md:[mask-image:none]"
+          className="flex scroll-px-10 snap-x gap-1.5 overflow-x-auto px-10 py-3 [mask-image:linear-gradient(to_right,transparent,black_20px,black_calc(100%-20px),transparent)] [scrollbar-width:none] md:flex-wrap md:justify-center md:[mask-image:none]"
           role="toolbar"
         >
           {chips.map((chip) => {

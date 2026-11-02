@@ -14,6 +14,8 @@ Requests made with a token act on the token owner's personal workspace. The code
 
 The same endpoints also answer under `https://qrdx.dev/api/v1`. Browser-session requests use that path, since the sign-in cookie belongs to qrdx.dev, and a [self-hosted](/docs/self-hosting) instance serves the API at `/api/v1` on its own domain.
 
+New here? The [quickstart](/docs/developers/quickstart) takes you from nothing to a first request. Every endpoint has its own page, with request and response schemas, samples in curl, JavaScript and Python, and a Try it panel, in the [API reference](/docs/developers/api), generated from the [OpenAPI document](/openapi.json).
+
 ## Endpoints
 
 | Endpoint | Scope | What it does |
@@ -111,7 +113,7 @@ People can revoke an app's access themselves in **Settings → Authorized apps**
 
 ## Errors and limits
 
-The codes, conversions and hooks endpoints return errors as `{ "code": "...", "message": "...", "status": 400 }`; the status codes are listed under [Dynamic QR codes](/docs/dynamic-qr-codes#rest-api). The OAuth, themes and profile endpoints use the OAuth shape, `{ "error": "invalid_token", "error_description": "..." }`.
+Every `/v1` endpoint returns errors as `{ "code": "...", "message": "...", "status": 400 }`, with a `docs` link when a page explains the fix; the [errors page](/docs/developers/errors) lists every code with its fix. An unknown path gets `404 NOT_FOUND`. `/v1/me` and `/v1/themes` also include the OAuth fields they have always sent, `"error": "invalid_token"` and `"error_description"`, and the OAuth endpoints (`/api/oauth/*`) use only the OAuth shape.
 
 Creating several codes in one request, choosing a code's `slug` and moving codes onto a custom domain need Pro or Business (`402 PLAN_REQUIRED` otherwise). Scans are never limited.
 
@@ -148,6 +150,6 @@ X-RateLimit-Reset: 1793577600
 }
 ```
 
-`/v1/me` and `/v1/themes` send the same headers, with the error in the OAuth shape: `{ "error": "rate_limited", "error_description": "..." }`.
+`/v1/me` and `/v1/themes` send the same headers and body, plus `"error": "rate_limited"` and `"error_description"`.
 
 The [image API](/docs/developers/image-api), the [MCP server](/docs/developers/mcp) and conversions reported from the browser with a `qrdx_sid` need no token, so they don't use the daily quota. They have per-IP limits of their own. A [self-hosted](/docs/self-hosting) instance enforces rate limits only when Upstash Redis is configured.
