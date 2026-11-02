@@ -10,6 +10,7 @@ vi.mock("@/actions/user-settings", () => ({ getUserSettings: vi.fn() }));
 
 import ControlSection from "@/components/editor/control-section";
 import {
+  firstRowLength,
   gridMove,
   ShapePicker,
 } from "@/components/editor/control-sections/option-tiles";
@@ -53,6 +54,14 @@ describe("grid keys", () => {
     expect(gridMove("ArrowDown", 9, 12, 5)).toBe(11);
     expect(gridMove("ArrowLeft", 0, 12, 5)).toBeNull();
     expect(gridMove("ArrowRight", 11, 12, 5)).toBeNull();
+  });
+
+  it("count columns from the tiles' rows, not the declared tracks", () => {
+    expect(firstRowLength([0, 0, 0, 0, 0, 84, 84, 84])).toBe(5);
+    expect(firstRowLength([0, 0, 0])).toBe(3);
+    // Sub-pixel layout still counts as one row.
+    expect(firstRowLength([10, 10.4, 10.2, 96])).toBe(3);
+    expect(firstRowLength([])).toBe(1);
   });
 
   it("leave other keys (Enter, Space, Escape, letters) alone", () => {

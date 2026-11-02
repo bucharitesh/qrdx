@@ -41,6 +41,18 @@ export function gridMove(
   return clamped === index ? null : clamped;
 }
 
+/**
+ * Tiles in the first row. A <fieldset> grid reports its declared
+ * `repeat(6, minmax(0px, 1fr))`, not resolved tracks, so counting the
+ * computed grid-template-columns gave the wrong number of columns.
+ */
+export function firstRowLength(tops: number[]): number {
+  const first = tops[0];
+  if (first === undefined) return 1;
+  const length = tops.findIndex((top) => Math.abs(top - first) > 1);
+  return length === -1 ? tops.length : length;
+}
+
 /** Arrow keys move focus between the tiles of a grid; Enter or Space picks. */
 function onGridKeyDown(event: React.KeyboardEvent<HTMLElement>) {
   const grid = event.currentTarget;
@@ -49,9 +61,7 @@ function onGridKeyDown(event: React.KeyboardEvent<HTMLElement>) {
   ];
   const index = tiles.indexOf(document.activeElement as HTMLButtonElement);
   if (index < 0) return;
-  const columns =
-    getComputedStyle(grid).gridTemplateColumns.split(" ").filter(Boolean)
-      .length || 1;
+  const columns = firstRowLength(tiles.map((tile) => tile.offsetTop));
   const next = gridMove(event.key, index, tiles.length, columns);
   const target = next === null ? undefined : tiles[next];
   if (target) {
