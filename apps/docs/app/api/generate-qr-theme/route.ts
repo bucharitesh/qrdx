@@ -6,13 +6,31 @@ import {
   toUIMessageStream,
 } from "ai";
 import type { NextRequest } from "next/server";
-import { QR_THEME_GENERATION_TOOLS } from "@/lib/ai/generate-qr-theme/tools";
+import {
+  describeEditorForModel,
+  editorBase,
+  editorContextSchema,
+} from "@/lib/ai/agent/editor-context";
+import { toAgentModelMessages } from "@/lib/ai/agent/messages";
+import { QR_AGENT_SYSTEM } from "@/lib/ai/agent/prompts";
+import {
+  createResumeToken,
+  toolApprovalSecret,
+  verifyResumeToken,
+} from "@/lib/ai/agent/resume";
+import { accountTemplateStore } from "@/lib/ai/agent/templates";
+import {
+  type AgentContext,
+  agentToolApproval,
+  DesignRegistry,
+  QR_AGENT_TOOLS,
+} from "@/lib/ai/agent/tools";
 import { textProviderOptions } from "@/lib/ai/models";
-import { GENERATE_QR_THEME_SYSTEM } from "@/lib/ai/prompts";
 import { assertAIConfigured, languageModel } from "@/lib/ai/providers";
 import { streamErrorMessage } from "@/lib/ai/stream-error-message";
 import { MAX_AI_REQUEST_BODY_BYTES } from "@/lib/constants";
 import { handleError } from "@/lib/error-response";
+import { scoreDesign } from "@/lib/qr-design/score";
 import {
   enforceAIRateLimit,
   parseWithSchema,
@@ -26,7 +44,20 @@ import {
 } from "@/lib/subscription";
 import { generateQRThemeRequestSchema } from "@/lib/validations/ai";
 import type { ChatMessage } from "@/types/ai";
-import { convertMessagesToModelMessages } from "@/utils/ai/message-converter";
+
+// The AI chat in the editor's Generate tab: an agent (lib/ai/models.ts
+// "base") that designs any kind of QR code with the tools in
+// lib/ai/agent/tools.ts. Runs pause for the user (ask_user, and approval
+// before apply_design or save_template) and resume with a second request
+// that carries the answer; lib/ai/agent/resume.ts keeps those from being
+// counted as new AI requests.
+
+/** Model calls in one request: design, a short reply, an approval. */
+const MAX_STEPS = 8;
+
+const requestSchema = generateQRThemeRequestSchema.extend({
+  editor: editorContextSchema.optional(),
+});
 
 export async function POST(req: NextRequest) {
   try {
@@ -35,39 +66,63 @@ export async function POST(req: NextRequest) {
     const userId = await getCurrentUserId(req);
     await enforceAIRateLimit(req, "generate-qr-theme", userId);
 
-    const { messages } = parseWithSchema(
-      generateQRThemeRequestSchema,
+    const body = parseWithSchema(
+      requestSchema,
       await readJsonBody(req, MAX_AI_REQUEST_BODY_BYTES),
     );
-    const modelMessages = await convertMessagesToModelMessages(
-      messages as unknown as ChatMessage[],
-    );
+    const messages = body.messages as unknown as ChatMessage[];
+    const base = editorBase(body.editor);
+    const tools = QR_AGENT_TOOLS;
+    const modelMessages = await toAgentModelMessages(messages, tools);
 
     const model = languageModel("base");
-    const usageId = await reserveAIRequest(
-      userId,
-      typeof model === "string" ? model : model.modelId,
-    );
+    const modelId = typeof model === "string" ? model : model.modelId;
+    // A run resumed after the user answered or approved is the same request.
+    const last = messages.at(-1);
+    const resuming =
+      last?.role === "assistant" &&
+      verifyResumeToken(last.metadata?.resume, userId, messages);
+    const usageId = resuming ? null : await reserveAIRequest(userId, modelId);
 
     const stream = createUIMessageStream<ChatMessage>({
+      // A resumed run continues the same assistant message.
+      originalMessages: messages,
       onError: streamErrorMessage,
       execute: ({ writer }) => {
+        const context: AgentContext = {
+          userId,
+          base,
+          designs: DesignRegistry.fromMessages(messages),
+          writer,
+          templates: accountTemplateStore,
+          score: scoreDesign,
+        };
         const result = streamText({
           abortSignal: req.signal,
-          model: model,
+          model,
           providerOptions: textProviderOptions("base"),
-          instructions: GENERATE_QR_THEME_SYSTEM,
+          instructions: `${QR_AGENT_SYSTEM}\n\n${describeEditorForModel(base)}`,
           messages: modelMessages,
-          tools: QR_THEME_GENERATION_TOOLS,
-          stopWhen: isStepCount(5),
+          tools,
+          toolApproval: agentToolApproval(),
+          experimental_toolApprovalSecret: toolApprovalSecret(),
+          stopWhen: isStepCount(MAX_STEPS),
+          toolsContext: {
+            design_qr: context,
+            check_scan_score: context,
+            apply_design: context,
+            save_template: context,
+          },
           onError: async ({ error }) => {
             logError(error as Error, { route: "/api/generate-qr-theme" });
+            if (!usageId) return;
             await releaseAIRequest(usageId).catch((releaseError) =>
               logError(releaseError as Error, { action: "releaseAIRequest" }),
             );
           },
           // `usage` covers every step (v6's `totalUsage`).
           onEnd: async ({ usage }) => {
+            if (!usageId) return;
             try {
               await finalizeAIRequest(usageId, usage);
             } catch (error) {
@@ -77,21 +132,25 @@ export async function POST(req: NextRequest) {
               });
             }
           },
-          toolsContext: { generateQRTheme: { writer } },
         });
 
+        // Did the run stop to wait for the user?
+        let waiting = false;
         writer.merge(
-          toUIMessageStream<typeof QR_THEME_GENERATION_TOOLS, ChatMessage>({
+          toUIMessageStream<typeof tools, ChatMessage>({
             stream: result.stream,
-            tools: QR_THEME_GENERATION_TOOLS,
+            tools,
+            originalMessages: messages,
             onError: streamErrorMessage,
             messageMetadata: ({ part }) => {
-              // `toolName` is not typed for some reason, must be kept in sync with the actual tool names
-              if (
-                part.type === "tool-result" &&
-                part.toolName === "generateQRTheme"
-              ) {
-                return { themeStyles: part.output };
+              if (part.type === "tool-call" && part.toolName === "ask_user") {
+                waiting = true;
+              }
+              if (part.type === "tool-approval-request" && !part.isAutomatic) {
+                waiting = true;
+              }
+              if (part.type === "finish" && waiting) {
+                return { resume: createResumeToken(userId, messages) };
               }
             },
           }),
