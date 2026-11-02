@@ -32,6 +32,7 @@ import {
   Pause,
   Edit2 as Pencil,
   ArrowRotateLeft as RotateCcw,
+  Setting2,
   StarSlash as StarOff,
   Tag2 as Tags,
   Trash as Trash2,
@@ -48,6 +49,7 @@ import {
   setQrCodesPaused,
   trashQrCodes,
 } from "@/actions/bulk-codes";
+import { codeTabHref } from "@/app/dashboard/codes/_lib/code-tabs";
 import type { TagRow } from "@/app/dashboard/codes/_lib/organize";
 import type { FolderRow } from "@/app/dashboard/codes/_lib/organize-shared";
 import type {
@@ -238,11 +240,18 @@ export function CodeActionsMenu({
             <Pencil /> Edit link
           </DropdownMenuItem>
           {showAnalyticsLink && (
-            <DropdownMenuItem asChild>
-              <Link href={`/dashboard/codes/${encodeURIComponent(code.id)}`}>
-                <ChartNoAxesCombined /> View analytics
-              </Link>
-            </DropdownMenuItem>
+            <>
+              <DropdownMenuItem asChild>
+                <Link href={codeTabHref(code.id, "analytics")}>
+                  <ChartNoAxesCombined /> View analytics
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href={codeTabHref(code.id, "settings")}>
+                  <Setting2 /> Code settings
+                </Link>
+              </DropdownMenuItem>
+            </>
           )}
           <DropdownMenuItem onSelect={() => openInPlayground(code)}>
             <Palette /> Edit design in playground

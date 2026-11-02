@@ -3,9 +3,9 @@ import { notFound } from "next/navigation";
 import { getTheme } from "@/actions/qr-themes";
 import { LazyEditor as Editor } from "@/components/lazy-editor";
 import { QRCodeThemeNotFoundError } from "@/types/errors";
-import { playgroundMetadata } from "../metadata";
+import { sharedThemeMetadata } from "../metadata";
 
-export const metadata: Metadata = playgroundMetadata;
+export const metadata: Metadata = sharedThemeMetadata;
 
 /**
  * A shared theme link, /playground/<themeId>: rendered per request. No

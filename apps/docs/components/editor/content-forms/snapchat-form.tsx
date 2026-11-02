@@ -31,7 +31,7 @@ export function SnapchatForm() {
     <div className="space-y-3">
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="snapchat-username">
-          Snapchat Username *
+          Snapchat username *
         </Label>
         <Input
           id="snapchat-username"
@@ -42,13 +42,10 @@ export function SnapchatForm() {
             setSnapchatData({ ...snapchatData, username: e.target.value })
           }
         />
-        <p className="text-muted-foreground text-[11px]">
-          Enter your Snapchat username
-        </p>
       </div>
 
       <p className="text-muted-foreground text-xs">
-        Scanning will open the add friend page for your Snapchat profile
+        Scanning will open your Snapchat add-friend page
       </p>
     </div>
   );

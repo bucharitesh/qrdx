@@ -128,6 +128,8 @@ export function usePlaygroundShortcuts({
   useKeyboardShortcut(
     "c",
     async () => {
+      // No content yet: the preview is a sample, so there's nothing to copy.
+      if (!value.trim()) return;
       try {
         const qrProps = {
           ...getQRData({

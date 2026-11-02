@@ -1,7 +1,8 @@
 // REST API (/v1) errors that tell the caller what to do next: how to get a
-// token, which scope is missing, where the endpoint list is. Every /v1 error
-// has the shape { code, message, status } (lib/error-response), plus `docs`
-// where a page explains the fix.
+// key or token, which scope is missing, where the endpoint list is. Every /v1
+// error has the shape { code, message, status } (lib/error-response), plus
+// `docs` where a page explains the fix. OAuth access tokens and API keys get
+// their own wording; the codes are the same.
 
 import { HttpError } from "@/lib/error-response";
 import { baseUrl } from "@/lib/metadata";
@@ -11,11 +12,13 @@ const docsUrl = (path: string) => new URL(path, baseUrl).href;
 export const API_DOCS = {
   /** How to register an OAuth app and get an access token. */
   auth: docsUrl("/docs/developers/rest-api#get-an-access-token"),
+  /** How to create, scope and revoke API keys. */
+  apiKeys: docsUrl("/docs/developers/api-keys"),
   /** Every endpoint and the scope it needs. */
   endpoints: docsUrl("/docs/developers/rest-api#endpoints"),
 } as const;
 
-/** Where developers register OAuth apps. */
+/** Where developers create API keys and register OAuth apps. */
 export const DEVELOPER_SETTINGS_URL = docsUrl("/settings/developers");
 
 /** No credentials at all (or not a Bearer token). */
@@ -23,9 +26,37 @@ export function missingTokenError(): HttpError {
   return new HttpError(
     401,
     "UNAUTHORIZED",
-    `Missing access token. Send an OAuth access token as "Authorization: Bearer <token>". To get one, register an OAuth app at ${DEVELOPER_SETTINGS_URL} and follow ${API_DOCS.auth}.`,
+    `Missing API key. Send an API key as "Authorization: Bearer <key>"; create one at ${DEVELOPER_SETTINGS_URL}. OAuth access tokens go in the same header.`,
     { "WWW-Authenticate": 'Bearer realm="QRdx API"' },
-    API_DOCS.auth,
+    API_DOCS.apiKeys,
+  );
+}
+
+/**
+ * A `qrdx_` key that is malformed, unknown, revoked or expired, or whose
+ * creator was banned or left the key's team. One message for all of them:
+ * the fix is the same, and it tells a guesser nothing.
+ */
+export function invalidApiKeyError(): HttpError {
+  return new HttpError(
+    401,
+    "INVALID_TOKEN",
+    `Invalid API key: it doesn't exist, was revoked or has expired, or its creator left the workspace. Check that you copied the whole key, or create a new one at ${DEVELOPER_SETTINGS_URL}.`,
+    { "WWW-Authenticate": 'Bearer realm="QRdx API", error="invalid_token"' },
+    API_DOCS.apiKeys,
+  );
+}
+
+/** A valid API key without the scope this endpoint needs. */
+export function insufficientKeyScopeError(scope: string): HttpError {
+  return new HttpError(
+    403,
+    "INSUFFICIENT_SCOPE",
+    `This API key needs the '${scope}' scope. Create a key that includes it at ${DEVELOPER_SETTINGS_URL}; a key's scopes can't be changed.`,
+    {
+      "WWW-Authenticate": `Bearer realm="QRdx API", error="insufficient_scope", scope="${scope}"`,
+    },
+    API_DOCS.apiKeys,
   );
 }
 

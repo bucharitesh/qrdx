@@ -7,11 +7,14 @@ import { cn } from "@repo/design-system/lib/utils";
 import { Lock } from "iconsax-reactjs";
 import { useEffect, useRef, useState } from "react";
 import { checkQrCodeSlug } from "@/actions/qr-codes";
+import { PLAN_NAMES } from "@/lib/pricing";
 import {
   CUSTOM_SLUG_MAX,
   SLUG_PROBLEM_MESSAGES,
   slugProblem,
 } from "@/lib/short-links";
+import { formatPlanList } from "../_lib/code-options";
+import { useKnownCodeOptionPlans } from "./code-options";
 
 /** Where the typed back-half stands; "idle" = nothing to check. */
 export type SlugStatus =
@@ -118,6 +121,8 @@ export function SlugField({
   onUpgrade: () => void;
 }) {
   const describedBy = "code-slug-status";
+  // Plans with custom back-halves (lib/plans.ts), when the page knows them.
+  const slugPlans = useKnownCodeOptionPlans()?.upgrades.customSlugs ?? [];
   return (
     <div className="space-y-1.5">
       <div className="flex items-center justify-between gap-2">
@@ -132,7 +137,7 @@ export function SlugField({
             type="button"
           >
             <Lock aria-hidden className="size-3" />
-            Pro
+            {slugPlans[0] ? PLAN_NAMES[slugPlans[0]] : "Upgrade"}
           </button>
         )}
       </div>
@@ -183,7 +188,9 @@ export function SlugField({
         id={describedBy}
       >
         {!allowed
-          ? "Choose your own link, like qrdx.dev/q/spring-menu, on Pro and Business."
+          ? slugPlans.length > 0
+            ? `Choose your own link, like qrdx.dev/q/spring-menu, on ${formatPlanList(slugPlans)}.`
+            : "Choose your own link, like qrdx.dev/q/spring-menu, on a higher plan."
           : status.state === "blocked" || status.state === "unknown"
             ? status.message
             : status.state === "available"

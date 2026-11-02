@@ -17,7 +17,8 @@ import {
 // The client half of the API reference pages (components/docs/api-page.tsx).
 
 const PUBLIC_API = "https://api.qrdx.dev/v1";
-const TOKEN_HELP = "/docs/developers/quickstart#get-an-access-token";
+const TOKEN_HELP = "/docs/developers/rest-api#get-an-access-token";
+const KEY_HELP = "/docs/developers/api-keys#create-a-key";
 
 /**
  * Try it calls this site's /api/v1 (lib/api-reference TRY_IT_SERVER); code
@@ -65,6 +66,19 @@ const tokenField: AuthProvider = {
   ),
 };
 
+/** The API key scheme (http bearer): paste `Bearer qrdx_…`. */
+const keyField: AuthProvider = {
+  on: ({ scheme }) =>
+    scheme.type === "http" && scheme.scheme?.toLowerCase() === "bearer",
+  render: ({ Value }) => (
+    <Value
+      name="Authorization"
+      type="header"
+      description={`Paste an API key after \`Bearer \`. It is kept in this browser and sent only with your Try it requests. A read-only key is safest. [Create a key](${KEY_HELP})`}
+    />
+  ),
+};
+
 /** Explains the one failure the browser hides: a blocked cross-origin call. */
 function ResultDisplay(props: ResultDisplayProps) {
   const blocked =
@@ -87,7 +101,7 @@ function ResultDisplay(props: ResultDisplayProps) {
 export const APIPageClient = createOpenAPIPage({
   codeUsages,
   playground: {
-    authProviders: [tokenField],
+    authProviders: [keyField, tokenField],
     components: { ResultDisplay },
     fetchOptions: {
       requestTimeout: 30,

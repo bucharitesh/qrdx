@@ -47,7 +47,7 @@ export function EthereumForm() {
     <div className="space-y-3">
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="ethereum-address">
-          Ethereum Address *
+          Ethereum address *
         </Label>
         <Input
           id="ethereum-address"
@@ -61,11 +61,6 @@ export function EthereumForm() {
         />
         {errors.address && (
           <p className="text-destructive text-[11px]">{errors.address}</p>
-        )}
-        {!errors.address && (
-          <p className="text-muted-foreground text-[11px]">
-            Enter a valid Ethereum address (0x...)
-          </p>
         )}
       </div>
 
@@ -90,7 +85,7 @@ export function EthereumForm() {
 
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="ethereum-gas">
-          Gas Limit
+          Gas limit
         </Label>
         <Input
           id="ethereum-gas"
@@ -108,7 +103,7 @@ export function EthereumForm() {
       </div>
 
       <p className="text-muted-foreground text-xs">
-        Scanning will open Ethereum wallet with payment details
+        Scanning will open an Ethereum wallet with these payment details
       </p>
     </div>
   );

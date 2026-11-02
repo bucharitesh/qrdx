@@ -36,8 +36,7 @@ export function MapsForm() {
         onChange={(e) => setMapsData({ location: e.target.value })}
       />
       <p className="text-muted-foreground text-xs">
-        Enter an address or coordinates (latitude, longitude). Scanning will
-        open Google Maps.
+        Scanning will open this place in Google Maps
       </p>
     </div>
   );

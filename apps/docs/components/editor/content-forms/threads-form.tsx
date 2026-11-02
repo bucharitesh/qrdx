@@ -31,7 +31,7 @@ export function ThreadsForm() {
     <div className="space-y-3">
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="threads-username">
-          Threads Username *
+          Threads username *
         </Label>
         <Input
           id="threads-username"
@@ -42,9 +42,6 @@ export function ThreadsForm() {
             setThreadsData({ ...threadsData, username: e.target.value })
           }
         />
-        <p className="text-muted-foreground text-[11px]">
-          Enter your Threads username with or without @
-        </p>
       </div>
 
       <p className="text-muted-foreground text-xs">

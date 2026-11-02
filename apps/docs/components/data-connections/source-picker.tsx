@@ -88,7 +88,8 @@ interface PickerDialogProps {
   onPick: (item: SourceItem) => void;
 }
 
-function SourcePickerDialog({
+/** Pick one item (a payment link, product, event type…) from a connected source. */
+export function SourcePickerDialog({
   source,
   open,
   onOpenChange,

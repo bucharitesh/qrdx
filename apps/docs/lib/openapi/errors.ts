@@ -47,21 +47,21 @@ export const API_ERRORS = [
     status: 400,
     meaning:
       "A conversion without the `qrdx_sid` of the scan (from the browser), or without `sid` or `code` (from a server).",
-    fix: "Send the `qrdx_sid` the short link added to your page URL, or, with a token, the code id as `code`.",
+    fix: "Send the `qrdx_sid` the short link added to your page URL, or, with an API key or token, the code id as `code`.",
   },
   {
     code: "UNAUTHORIZED",
     status: 401,
     meaning:
       "No credentials: the request has no `Authorization: Bearer` header (and no QRdx browser session).",
-    fix: "Send an OAuth access token as `Authorization: Bearer <token>`.",
+    fix: "Send an API key as `Authorization: Bearer <key>`; create one in Settings → API keys & apps. OAuth access tokens go in the same header.",
   },
   {
     code: "INVALID_TOKEN",
     status: 401,
     meaning:
-      "The access token is unknown, expired (tokens last one hour) or revoked.",
-    fix: "Get a new access token with your refresh token, or send the user through authorization again.",
+      "The API key or access token is unknown, revoked or expired (access tokens last one hour), or the key's creator was banned or left the key's team.",
+    fix: "Check that you sent the whole key, or create a new one. For an access token, get a new one with your refresh token, or send the user through authorization again.",
   },
   {
     code: "PLAN_REQUIRED",
@@ -80,22 +80,23 @@ export const API_ERRORS = [
   {
     code: "INSUFFICIENT_SCOPE",
     status: 403,
-    meaning: "The token is valid but lacks the scope this endpoint needs.",
-    fix: "Add the scope named in the message to your app and ask for it when the user authorizes.",
+    meaning:
+      "The API key or token is valid but lacks the scope this endpoint needs.",
+    fix: "Create a key with the scope named in the message (a key's scopes can't be changed). For an OAuth app, add the scope and ask for it when the user authorizes.",
   },
   {
     code: "FORBIDDEN",
     status: 403,
     meaning:
-      "The caller may not do this: a team member deleting a code someone else created, a team member managing hooks, or a browser-session write from another site.",
-    fix: "Ask a team owner or admin, or call the API with an access token from your server.",
+      "The caller may not do this: a team member deleting a code someone else created, a team member managing hooks, or a browser-session write from another site. A team API key can do only what its creator's role allows.",
+    fix: "Ask a team owner or admin, or call the API with an API key from your server.",
   },
   {
     code: "CONVERSIONS_OFF",
     status: 403,
     meaning:
       "A browser conversion for a code that doesn't have conversion tracking turned on.",
-    fix: "Turn on conversion tracking for the code, or report the conversion from your server with a token.",
+    fix: "Turn on conversion tracking for the code, or report the conversion from your server with an API key.",
   },
   {
     code: "LIMIT_REACHED",
@@ -107,8 +108,8 @@ export const API_ERRORS = [
     code: "NOT_FOUND",
     status: 404,
     meaning:
-      "No such endpoint, or the code, hook, theme or custom domain doesn't exist in the token's workspace.",
-    fix: "Check the path and the id. Tokens act on the token owner's personal workspace, not on teams.",
+      "No such endpoint, or the code, hook, theme or custom domain doesn't exist in the workspace the key or token acts on.",
+    fix: "Check the path and the id. An API key acts on the workspace it was created in; an OAuth token acts on its user's personal workspace.",
   },
   {
     code: "INVALID_SID",

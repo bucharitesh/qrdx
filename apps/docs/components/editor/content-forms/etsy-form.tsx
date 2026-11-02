@@ -43,7 +43,7 @@ export function EtsyForm() {
     <div className="space-y-3">
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="etsy-shop-url">
-          Etsy Shop URL *
+          Etsy shop URL *
         </Label>
         <Input
           id="etsy-shop-url"
@@ -55,11 +55,6 @@ export function EtsyForm() {
         />
         {errors.shopUrl && (
           <p className="text-destructive text-[11px]">{errors.shopUrl}</p>
-        )}
-        {!errors.shopUrl && (
-          <p className="text-muted-foreground text-[11px]">
-            Enter your Etsy shop or product URL
-          </p>
         )}
       </div>
 

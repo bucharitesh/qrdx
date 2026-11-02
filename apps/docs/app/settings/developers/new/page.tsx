@@ -28,7 +28,7 @@ export default async function NewOAuthAppPage() {
         href="/settings/developers"
       >
         <ArrowLeft2 aria-hidden className="size-3.5" />
-        Developers
+        API keys & apps
       </Link>
       <SettingsHeader
         description={`The app belongs to ${isTeam ? workspaceName : "your personal workspace"}, and its consent screen says it's built by ${isTeam ? workspaceName : "you (your account name)"}. You'll see its client secret once, right after creating it.`}

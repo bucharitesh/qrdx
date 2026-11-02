@@ -71,6 +71,11 @@ export const env = createEnv({
     VERCEL_API_TOKEN: z.string().min(1).optional(),
     VERCEL_PROJECT_ID: z.string().min(1).optional(),
     VERCEL_TEAM_ID: z.string().min(1).optional(),
+    // One-click DNS setup (Domain Connect): our template's ids and the RSA
+    // private key (PEM) that signs apply links (lib/domain-connect)
+    DOMAIN_CONNECT_PROVIDER_ID: z.string().min(1).optional(),
+    DOMAIN_CONNECT_SERVICE_ID: z.string().min(1).optional(),
+    DOMAIN_CONNECT_PRIVATE_KEY: z.string().min(1).optional(),
 
     // File storage: Cloudflare R2 (feature hidden unless account, keys and bucket are set)
     R2_ACCOUNT_ID: z.string().min(1).optional(),
@@ -154,6 +159,9 @@ export const env = createEnv({
     VERCEL_API_TOKEN: process.env.VERCEL_API_TOKEN,
     VERCEL_PROJECT_ID: process.env.VERCEL_PROJECT_ID,
     VERCEL_TEAM_ID: process.env.VERCEL_TEAM_ID,
+    DOMAIN_CONNECT_PROVIDER_ID: process.env.DOMAIN_CONNECT_PROVIDER_ID,
+    DOMAIN_CONNECT_SERVICE_ID: process.env.DOMAIN_CONNECT_SERVICE_ID,
+    DOMAIN_CONNECT_PRIVATE_KEY: process.env.DOMAIN_CONNECT_PRIVATE_KEY,
     R2_ACCOUNT_ID: process.env.R2_ACCOUNT_ID,
     R2_ACCESS_KEY_ID: process.env.R2_ACCESS_KEY_ID,
     R2_SECRET_ACCESS_KEY: process.env.R2_SECRET_ACCESS_KEY,

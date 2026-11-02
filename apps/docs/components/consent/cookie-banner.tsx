@@ -36,7 +36,7 @@ export function CookieBanner() {
   // Server HTML, hydration and c15t's start: the early banner, shown only
   // where the head script set the attribute.
   const early = !(mounted && ready);
-  // Stays mounted under "Customise" while a choice is owed, so closing the
+  // Stays mounted under "Customize" while a choice is owed, so closing the
   // dialog hands focus back to the button that opened it.
   const visible =
     banner.isVisible || (dialog.isVisible && prompt.kind === "choice");

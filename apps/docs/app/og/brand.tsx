@@ -121,6 +121,18 @@ export function BrandOgImage({
   );
 }
 
+/**
+ * A page's own Open Graph image in the brand frame, for `opengraph-image.tsx`
+ * files. The page's metadata must pass `ownOgImage: true` to createMetadata,
+ * or the site-wide default hides this one.
+ */
+export async function renderPageOgImage(props: BrandOgImageProps) {
+  return new ImageResponse(<BrandOgImage {...props} />, {
+    ...ogSize,
+    fonts: await loadOgFonts(),
+  });
+}
+
 /** Site-wide default image, served by app/opengraph-image.tsx and app/twitter-image.tsx */
 export async function renderSiteOgImage() {
   return new ImageResponse(

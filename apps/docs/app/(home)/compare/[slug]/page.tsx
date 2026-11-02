@@ -9,6 +9,7 @@ import { CompareOthers } from "@/components/sections/compare/compare-others";
 import { CompareTable } from "@/components/sections/compare/compare-table";
 import { createMetadata } from "@/lib/metadata";
 import { getLatestVersion, getNpmLag } from "@/lib/npm-version";
+import { brandedTitle } from "@/lib/seo-overrides";
 import { compareSource } from "@/lib/source";
 import { getMDXComponents } from "@/mdx-components";
 
@@ -90,8 +91,10 @@ export async function generateMetadata({
     page.data;
 
   return createMetadata({
-    title: seoTitle ?? `QRdx vs ${competitor}`,
+    // "QRdx vs …" already names the brand, so no " | QRdx" suffix.
+    title: brandedTitle(seoTitle ?? `QRdx vs ${competitor}`),
     description: seoDescription ?? description ?? tagline,
     path: `/compare/${slug}`,
+    ownOgImage: true,
   });
 }

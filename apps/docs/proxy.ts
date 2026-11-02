@@ -2,6 +2,7 @@ import { auth } from "@repo/auth/server";
 import { isMarkdownPreferred, rewritePath } from "fumadocs-core/negotiation";
 import { headers } from "next/headers";
 import { type NextRequest, NextResponse } from "next/server";
+import { legacyCodesRedirect } from "@/app/dashboard/_components/home/legacy-codes-url";
 import { routeCustomDomain } from "@/app/dashboard/domains/_lib/host-routing";
 import { signInPath } from "@/lib/safe-redirect";
 import {
@@ -59,6 +60,16 @@ export default async function proxy(request: NextRequest) {
   // The catch-all matcher also reaches here on hosts that aren't custom domains.
   if (!APP_PATHS.test(request.nextUrl.pathname)) {
     return next(request);
+  }
+
+  // /dashboard is Home now: old links with codes-list filters (?q=, ?folder=,
+  // ?import=…) go to the list at /dashboard/codes, query kept, before sign-in.
+  const codesList = legacyCodesRedirect(
+    request.nextUrl.pathname,
+    request.nextUrl.search,
+  );
+  if (codesList) {
+    return NextResponse.redirect(new URL(codesList, request.url), 307);
   }
 
   if (isMarkdownPreferred(request)) {

@@ -4,7 +4,7 @@ description: Share dynamic QR codes, pages, files, domains and themes with your 
 icon: Users
 ---
 
-A team is a shared workspace. Everything created while a team is open belongs to the team instead of to you: dynamic codes and [hosted pages](/docs/landing-pages), [files](/docs/files), [custom domains](/docs/custom-domains), folders and tags, form responses and [webhooks](/docs/webhooks). Owners and admins can also copy saved themes to the team so every member designs with the same colors. Your personal workspace stays separate, and you switch between the two with the workspace switcher at the top of the dashboard sidebar.
+A team is a shared workspace. Everything created while a team is open belongs to the team instead of to you: dynamic codes and [hosted pages](/docs/landing-pages), [files](/docs/files), [custom domains](/docs/custom-domains), folders and tags, form responses and [webhooks](/docs/webhooks). Owners and admins can also copy saved themes to the team so every member designs with the same colors. Your personal workspace stays separate, and you switch between the two with the workspace switcher in the app's top bar (on a phone, at the top of the menu).
 
 Creating a team needs Pro or Business. A Pro team has up to 3 members, a Business team has no member limit. Anyone can join a team they're invited to, including people on the Free plan.
 
@@ -53,4 +53,4 @@ If the owners' plan changes, current members stay and every code keeps working; 
 
 ## API access
 
-[REST API](/docs/developers/rest-api) requests made with an OAuth access token act on the token owner's personal workspace. Requests made from a signed-in browser session act on the team that is open.
+[REST API](/docs/developers/rest-api) requests made with an OAuth access token act on the token owner's personal workspace. An [API key](/docs/developers/api-keys) created while the team is open acts on the team, with your role in it. Requests made from a signed-in browser session act on the team that is open.

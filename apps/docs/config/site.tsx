@@ -856,7 +856,7 @@ export const siteConfig = {
       {
         id: 1,
         question: "Is QRdx really free? Are there hidden limits?",
-        answer: `Yes. Creating, customizing and downloading static QR codes is free and needs no account: unlimited codes, every design option ({facts.bodyPatterns} body patterns, {facts.eyeShapes} corner-eye shapes and {facts.eyeCentres} eye centres, gradients, logos, frames and Logo QR or Image QR art), and PNG, JPG, SVG, PDF and EPS downloads. There are no watermarks and no ads. Static codes store your content in the code itself, so they never expire and have no scan limits. A free account adds 10 dynamic QR codes, 3 hosted pages, 90 days of scan analytics, 10 saved themes and 5 AI theme generations; Pro (${usd("pro")}) and Business (${usd("business")}) raise those limits.`,
+        answer: `Yes. Creating, customizing and downloading static QR codes is free and needs no account: unlimited codes, every design option ({facts.bodyPatterns} body patterns, {facts.eyeShapes} corner-eye shapes and {facts.eyeCentres} eye centers, gradients, logos, frames and Logo QR or Image QR art), and PNG, JPG, SVG, PDF and EPS downloads. There are no watermarks and no ads. Static codes store your content in the code itself, so they never expire and have no scan limits. A free account adds 10 dynamic QR codes, 3 hosted pages, 90 days of scan analytics, 10 saved themes and 5 AI theme generations; Pro (${usd("pro")}) and Business (${usd("business")}) raise those limits.`,
       },
       {
         id: 2,
@@ -898,7 +898,7 @@ export const siteConfig = {
         id: 8,
         question: "Can developers generate QR codes with an API?",
         answer:
-          "Yes. The image API turns any URL into an SVG, PNG or EPS QR code with no API key, and the REST API (OAuth) creates and edits dynamic codes and reads their scans. There is also an MCP server for Claude, Cursor and VS Code, a command-line tool (@qrdx/cli), a shadcn/ui component and the qrdx React library.",
+          "Yes. The image API turns any URL into an SVG, PNG or EPS QR code with no API key, and the REST API, with a workspace API key or OAuth, creates and edits dynamic codes and reads their scans. There is also an MCP server for Claude, Cursor and VS Code, a command-line tool (@qrdx/cli), a shadcn/ui component and the qrdx React library.",
       },
       {
         id: 9,

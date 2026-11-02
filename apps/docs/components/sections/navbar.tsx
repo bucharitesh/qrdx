@@ -8,6 +8,7 @@ import { HamburgerMenu } from "iconsax-reactjs";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { GithubStars } from "@/components/github-stars";
+import { HeaderAccountLink } from "@/components/header-account-link";
 import bar from "@/components/header-bar.module.css";
 import { HeaderMobileNavList } from "@/components/header-mobile-nav";
 import { HeaderNav } from "@/components/header-nav";
@@ -112,9 +113,10 @@ export function Navbar() {
             <HeaderNav />
 
             <div className="flex flex-row items-center gap-3 lg:gap-4 shrink-0">
-              <div className="flex items-center gap-1">
+              <div className="hidden items-center gap-1 sm:flex">
                 <GithubStars />
               </div>
+              <HeaderAccountLink />
               <Link className="hidden lg:block" href="/playground">
                 <Button>Try the Playground</Button>
               </Link>
@@ -183,11 +185,11 @@ export function Navbar() {
               />
 
               {/* Action buttons */}
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <Link href="/playground">
                   <Button>Try the Playground</Button>
                 </Link>
-
+                <HeaderAccountLink onNavigate={closeDrawer} />
                 <GithubStars full />
               </div>
             </div>

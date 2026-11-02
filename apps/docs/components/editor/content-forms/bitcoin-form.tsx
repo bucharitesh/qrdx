@@ -48,7 +48,7 @@ export function BitcoinForm() {
     <div className="space-y-3">
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="bitcoin-address">
-          Bitcoin Address *
+          Bitcoin address *
         </Label>
         <Input
           id="bitcoin-address"
@@ -115,7 +115,7 @@ export function BitcoinForm() {
       </div>
 
       <p className="text-muted-foreground text-xs">
-        Scanning will open Bitcoin wallet with payment details
+        Scanning will open a Bitcoin wallet with these payment details
       </p>
     </div>
   );

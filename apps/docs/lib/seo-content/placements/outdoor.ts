@@ -17,7 +17,7 @@ export const outdoor: SeoGroup = {
       summary:
         "Which OOH sites suit QR codes, how big to go and per-site tracking.",
       intro: [
-        "A QR code on a motorway billboard is a waste of ink: drivers can't and shouldn't scan. Codes on out-of-home ads work where people are on foot and standing still: bus shelters, station platforms, shopping centres, escalator panels and waiting areas.",
+        "A QR code on a motorway billboard is a waste of ink: drivers can't and shouldn't scan. Codes on out-of-home ads work where people are on foot and standing still: bus shelters, station platforms, shopping centers, escalator panels and waiting areas.",
         "Out-of-home is also hard to measure, which is where dynamic codes earn their keep. One code per site, each counted separately, tells you which sites drove action.",
       ],
       useCases: [
@@ -39,7 +39,7 @@ export const outdoor: SeoGroup = {
         {
           title: "Local businesses",
           description:
-            "Shopping-centre and street-level panels that open directions and the current offer.",
+            "Shopping-center and street-level panels that open directions and the current offer.",
         },
       ],
       recommended: [
@@ -265,7 +265,7 @@ export const outdoor: SeoGroup = {
         {
           question: "What height should a QR code on a sign be?",
           answer:
-            "Around 1.2 to 1.5 m to the centre of the code. That works for most adults, children and wheelchair users without bending or stretching.",
+            "Around 1.2 to 1.5 m to the center of the code. That works for most adults, children and wheelchair users without bending or stretching.",
         },
         {
           question: "How long does an outdoor QR code sign last?",

@@ -25,9 +25,10 @@ import {
 } from "iconsax-reactjs";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { markSignOutIntent } from "@/app/(auth)/sign-out/_lib/intent";
 import { hasAdminRole } from "@/components/app-shell/nav-config";
-import { resetAnalytics, track } from "@/lib/analytics";
 import { useSubscription } from "@/lib/hooks/use-subscription";
+import { PLAN_NAMES, type Plan } from "@/lib/pricing";
 import { useAuthStore } from "@/store/auth-store";
 
 /** Each state fades in as it replaces the last (spinner, sign in, avatar). */
@@ -46,27 +47,62 @@ function PlaygroundLink() {
   );
 }
 
-export function UserProfileDropdown() {
+export function UserProfileDropdown({
+  plan,
+  signedIn = false,
+}: {
+  /**
+   * The person's own plan, when the page knows it (the app shell). Without
+   * it the badge can only tell Free from paid, so a paid plan shows none.
+   */
+  plan?: Plan;
+  /** The page only renders for signed-in people (the app shell). */
+  signedIn?: boolean;
+} = {}) {
   const { data: session, isPending } = authClient.useSession();
   const { openAuthDialog } = useAuthStore();
   const router = useRouter();
   const { subscriptionStatus } = useSubscription();
-  const isPro = subscriptionStatus?.isSubscribed === true;
+  const isPro = plan
+    ? plan !== "free"
+    : subscriptionStatus?.isSubscribed === true;
+  const badge = plan
+    ? PLAN_NAMES[plan]
+    : subscriptionStatus && !isPro
+      ? PLAN_NAMES.free
+      : null;
 
-  const handleLogOut = async () => {
-    track("sign_out");
-    await authClient.signOut();
-    resetAnalytics();
-    router.refresh();
+  // /sign-out does the work (a POST, analytics cleanup, then /sign-in);
+  // the mark tells it this came from the menu, so it doesn't ask again.
+  const handleSignOut = () => {
+    markSignOutIntent();
+    router.push("/sign-out");
   };
 
+  // While the session loads, hold the exact space of what usually comes
+  // next, so the header doesn't move (CLS): the avatar in the app, the
+  // signed-out buttons on the site (what first-time visitors get).
   if (isPending) {
+    if (signedIn) {
+      return (
+        <div
+          key="spinner"
+          className={cn("flex size-8 items-center justify-center", FADE_IN)}
+        >
+          <Spinner className="text-muted-foreground size-7 animate-spin" />
+        </div>
+      );
+    }
     return (
       <div
-        key="spinner"
-        className={cn("flex size-8 items-center justify-center", FADE_IN)}
+        aria-hidden
+        key="auth-placeholder"
+        className="invisible flex gap-3.5"
       >
-        <Spinner className="text-muted-foreground size-7 animate-spin" />
+        <PlaygroundLink />
+        <Button tabIndex={-1} variant="outline">
+          Sign in
+        </Button>
       </div>
     );
   }
@@ -76,14 +112,18 @@ export function UserProfileDropdown() {
       <div key="auth-buttons" className={cn("flex gap-3.5", FADE_IN)}>
         <PlaygroundLink />
         <Button variant="outline" onClick={() => openAuthDialog("signin")}>
-          Sign In
+          Sign in
         </Button>
       </div>
     );
   }
 
   return (
-    <div key="user-dropdown" className={cn("flex", FADE_IN)}>
+    // min-h-9: as tall as the Sign in button it replaces.
+    <div
+      key="user-dropdown"
+      className={cn("flex items-center", !signedIn && "min-h-9", FADE_IN)}
+    >
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
@@ -109,12 +149,12 @@ export function UserProfileDropdown() {
                 <p className="truncate text-sm leading-tight font-medium">
                   {session.user.name}
                 </p>
-                {subscriptionStatus && (
+                {badge && (
                   <Badge
                     variant={isPro ? "default" : "secondary"}
                     className="shrink-0"
                   >
-                    {isPro ? "Pro" : "Free"}
+                    {badge}
                   </Badge>
                 )}
               </div>
@@ -131,10 +171,10 @@ export function UserProfileDropdown() {
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
             <Link href="/settings/account">
-              <Setting2 /> Settings
+              <Setting2 /> Account settings
             </Link>
           </DropdownMenuItem>
-          {subscriptionStatus &&
+          {(plan || subscriptionStatus) &&
             (isPro ? (
               <DropdownMenuItem asChild>
                 {/* Route handler that redirects to the Polar portal. */}
@@ -160,11 +200,11 @@ export function UserProfileDropdown() {
           <DropdownMenuItem asChild>
             <Link href="/legal/privacy-policy">
               <SecuritySafe />
-              Privacy Policy
+              Privacy policy
             </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={handleLogOut}>
-            <Logout /> Log out
+          <DropdownMenuItem onSelect={handleSignOut}>
+            <Logout /> Sign out
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
