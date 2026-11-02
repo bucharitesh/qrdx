@@ -53,6 +53,7 @@ const EVERYTHING: Record<string, string> = {
   YOUTUBE_API_KEY: FAKE,
   SPOTIFY_CLIENT_ID: FAKE,
   SPOTIFY_CLIENT_SECRET: FAKE,
+  POLAR_ACCESS_TOKEN: FAKE,
 };
 
 /** What each feature needs on Vercel in production, by variable name. */
@@ -72,6 +73,7 @@ const NEEDS: Record<FeatureId, string[]> = {
   scheduledJobs: ["CRON_SECRET"],
   youtubeChannelPicker: ["YOUTUBE_API_KEY"],
   spotifyPlaylistPicker: ["SPOTIFY_CLIENT_ID", "SPOTIFY_CLIENT_SECRET"],
+  checkout: ["POLAR_ACCESS_TOKEN"],
 };
 
 const vercelProd = { onVercel: true, production: true };
@@ -119,6 +121,20 @@ describe("each feature, on and off by env", () => {
     expect(
       computeFeatures(ctx({ ...env, AI_ART_ENABLED: "1" }, vercelProd)).aiArt,
     ).toBe(true);
+  });
+
+  it("closes paid checkout with POLAR_CHECKOUT_ENABLED=0", () => {
+    const env = { ...EVERYTHING, POLAR_CHECKOUT_ENABLED: "0" };
+    expect(computeFeatures(ctx(env, vercelProd)).checkout).toBe(false);
+    expect(missingFeatureSetup("checkout", ctx(env, vercelProd))).toEqual([
+      "POLAR_CHECKOUT_ENABLED=0",
+    ]);
+    expect(
+      computeFeatures(ctx({ ...env, POLAR_CHECKOUT_ENABLED: "1" }, vercelProd))
+        .checkout,
+    ).toBe(true);
+    // Without a Polar token there is no checkout to open at all.
+    expect(computeFeatures(ctx({}, vercelProd)).checkout).toBe(false);
   });
 
   it("needs the cron secret only in production", () => {
@@ -261,9 +277,13 @@ const PRODUCTION_LIKE: Record<string, string> = Object.fromEntries(
     "R2_SECRET_ACCESS_KEY",
     "RESEND_API_KEY",
     "WEB_RISK_API_KEY",
+    "POLAR_ACCESS_TOKEN",
+    "POLAR_WEBHOOK_SECRET",
   ].map((name) => [name, FAKE]),
 );
 PRODUCTION_LIKE.AI_ART_ENABLED = "0";
+// Polar hadn't approved the organization yet, so checkout was closed.
+PRODUCTION_LIKE.POLAR_CHECKOUT_ENABLED = "0";
 
 describe("a production-like deployment", () => {
   const features = computeFeatures(ctx(PRODUCTION_LIKE, vercelProd));
@@ -280,13 +300,14 @@ describe("a production-like deployment", () => {
     }
   });
 
-  it("leaves out AI art, adding custom domains, the spam check and the media pickers", () => {
+  it("leaves out AI art, adding custom domains, the spam check, the media pickers and checkout", () => {
     expect(FEATURE_IDS.filter((id) => !features[id])).toEqual([
       "aiArt",
       "customDomains",
       "spamCheck",
       "youtubeChannelPicker",
       "spotifyPlaylistPicker",
+      "checkout",
     ]);
   });
 
