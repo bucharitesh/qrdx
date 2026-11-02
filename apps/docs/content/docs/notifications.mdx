@@ -4,7 +4,7 @@ description: Email alerts, a weekly digest, and Slack or Discord messages when y
 icon: Bell
 ---
 
-Choose what QRdx tells you about in [Settings → Notifications](/settings/notifications). Settings are per person and per workspace: your personal workspace and every team you belong to have their own switches, and in a team every member picks their own.
+Choose what QRdx tells you about in [Settings → Notifications](/settings/notifications). Settings are per person and per workspace: your own workspace and every other workspace you belong to have their own switches, and in a shared workspace every member picks their own.
 
 | Channel | What you can get | Plan |
 | --- | --- | --- |
@@ -12,13 +12,13 @@ Choose what QRdx tells you about in [Settings → Notifications](/settings/notif
 | Slack, Discord | Scan milestones, form submissions, new codes, code changes | Business |
 | [Webhooks](/docs/webhooks), Zapier, Make | Every event, including each scan | Business |
 
-Team workspaces follow the plan of the team's owners. Everything is off until you turn it on.
+Each workspace follows the plan of its owners. Everything is off until you turn it on.
 
 ## Alerts
 
 - **Scan milestones:** a code's first scan (with when, where and on which device), then 10, 100, 500, 1,000, 5,000, 10,000 scans and beyond.
 - **Form submissions:** the answers from a form on one of your [hosted pages](/docs/landing-pages), with a link to all responses.
-- **New codes** and **code changes:** who created a code, or changed its destination, title, design or domain. Most useful in teams.
+- **New codes** and **code changes:** who created a code, or changed its destination, title, design or domain. Most useful in workspaces you share with other people.
 
 To keep a busy form or a bulk import from flooding your inbox or channel, each target gets at most 30 alerts of one kind per hour; the rest are skipped (the weekly digest still counts them, and webhooks still receive every event).
 

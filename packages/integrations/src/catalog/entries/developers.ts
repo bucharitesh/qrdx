@@ -8,7 +8,7 @@ export const developers: IntegrationCatalogEntry[] = [
       "Create, update and archive dynamic codes and read their scans from your own code.",
     description: [
       "The codes API under /api/v1/codes lists, creates (one or up to 100 at a time), updates and deletes dynamic codes, and returns scan analytics for any range your plan includes.",
-      "Requests use an OAuth access token with the codes:read or codes:write scope and act on your personal workspace. Errors share one JSON shape.",
+      "Requests use an OAuth access token with the codes:read or codes:write scope and act on your own workspace. Errors share one JSON shape.",
     ],
     kind: "native",
     surface: "developers",

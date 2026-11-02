@@ -4,7 +4,7 @@ description: Import your short links and dynamic QR codes into QRdx, keep printe
 icon: Download
 ---
 
-QRdx imports links and dynamic codes from other providers in one go. Open [Dashboard → Codes](/dashboard/codes) and click **Import**. Every import has the same three steps: pick what to bring, preview it, import it.
+QRdx imports links and dynamic codes from other providers in one go. Open [Dashboard → Codes](/dashboard?to=codes) and click **Import**. Every import has the same three steps: pick what to bring, preview it, import it.
 
 - **Connected accounts:** Dub, Bitly, Rebrandly and Short.io. QRdx lists your links through the provider's API.
 - **Export files:** QR Code Generator PRO, Uniqode (Beaconstac), Flowcode, QR TIGER, ME-QR, TinyURL, Hovercode, Scanova, or any CSV with destination URLs.
@@ -72,7 +72,7 @@ Keep the provider connected until you're sure: undo needs the connection. The ol
 
 If your links use your own domain, you can move that domain to QRdx and keep the back-halves, so `go.yourbrand.com/spring-menu` keeps working after the DNS switch.
 
-1. Add the domain on [Dashboard → Domains](/dashboard/domains) first. It can stay unverified for now: back-halves are then kept on the domain itself, where they only have to be unique among your own codes, and only `api`, `p` and `q` are reserved.
+1. Add the domain in [Settings → Domains](/dashboard?to=settings/domains) first. It can stay unverified for now: back-halves are then kept on the domain itself, where they only have to be unique among your own codes, and only `api`, `p` and `q` are reserved.
 2. In the import preview, tick **Keep the original back-halves** and pick the domain under **Links on**. The preview shows which back-halves are kept.
 3. Import. The codes go on the domain and claim their back-halves right away.
 4. Point the domain's DNS to QRdx and verify it (see [Custom domains](/docs/custom-domains)). Do this at a quiet time: links on the domain stop working at the old provider as soon as DNS moves, and start working on QRdx once it's verified.
