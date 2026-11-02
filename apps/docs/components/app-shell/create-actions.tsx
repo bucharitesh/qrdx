@@ -9,6 +9,8 @@ import {
   useState,
 } from "react";
 import { NewCodeDialog } from "@/app/dashboard/codes/_components/new-code-dialog";
+import { CodeBuilderHost } from "@/components/code-builder/code-builder-host";
+import { openCodeBuilder } from "@/components/code-builder/store";
 import { PLAN_NAMES } from "@/lib/pricing";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 import type { ShellData } from "./shell-data";
@@ -29,8 +31,9 @@ export function useCreate() {
 }
 
 /**
- * Holds the one "new code / page" dialog the app chrome opens. At the Free
- * cap, a new code goes to the upgrade dialog instead, like the codes list.
+ * Holds what the app chrome opens: the code builder for a new dynamic code
+ * and the page gallery for a landing page or form. At the Free cap, a new
+ * code goes to the upgrade dialog instead, like the codes list.
  */
 export function CreateProvider({
   codes,
@@ -40,7 +43,7 @@ export function CreateProvider({
   children: ReactNode;
 }) {
   // The kind outlives `open`, so the dialog doesn't change while it closes.
-  const [kind, setKind] = useState<CreateKind>("code");
+  const [kind, setKind] = useState<Exclude<CreateKind, "code">>("page");
   const [open, setOpen] = useState(false);
   const openGetProDialog = useGetProDialogStore(
     (state) => state.openGetProDialog,
@@ -55,6 +58,10 @@ export function CreateProvider({
         openGetProDialog();
         return;
       }
+      if (next === "code") {
+        openCodeBuilder({ mode: "create" });
+        return;
+      }
       setKind(next);
       setOpen(true);
     },
@@ -64,11 +71,13 @@ export function CreateProvider({
   return (
     <CreateContext.Provider value={start}>
       {children}
+      {/* New dynamic codes open the code builder; pages and forms the gallery. */}
+      <CodeBuilderHost usage={codes} />
       <NewCodeDialog
         initialType={kind === "form" ? FORM_PAGE_TYPE : null}
         onOpenChange={setOpen}
         open={open}
-        pagesOnly={kind === "page" || kind === "form"}
+        pagesOnly
       />
     </CreateContext.Provider>
   );

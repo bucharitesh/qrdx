@@ -7,11 +7,11 @@ import {
   ColorSwatch as Palette,
   Edit2 as Pencil,
 } from "iconsax-reactjs";
-import { type ReactNode, useState } from "react";
+import type { ReactNode } from "react";
 import type { QrCodeView } from "@/app/dashboard/codes/_lib/qr-codes";
+import { openCodeBuilder } from "@/components/code-builder/store";
 import { CopyButton } from "@/components/copy-button";
 import { CodeActionsMenu } from "./code-actions-menu";
-import { CodeDialog } from "./code-dialog";
 import { CodeDownloadButtons, CodeQr } from "./code-qr";
 import { displayUrl } from "./format";
 import { StatusBadge } from "./status-badge";
@@ -26,8 +26,6 @@ const STATUS_NOTES = {
 
 /** Title, status and actions of the code page, above its tabs. */
 export function CodeHeader({ code }: { code: QrCodeView }) {
-  const [editOpen, setEditOpen] = useState(false);
-
   return (
     <div className="space-y-3">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -43,7 +41,10 @@ export function CodeHeader({ code }: { code: QrCodeView }) {
           </p>
         </div>
         <div className="flex shrink-0 gap-1">
-          <Button onClick={() => setEditOpen(true)} size="sm">
+          <Button
+            onClick={() => openCodeBuilder({ mode: "edit", code })}
+            size="sm"
+          >
             <Pencil />
             Edit link
           </Button>
@@ -59,7 +60,6 @@ export function CodeHeader({ code }: { code: QrCodeView }) {
           {STATUS_NOTES[code.status]}
         </p>
       )}
-      <CodeDialog code={code} onOpenChange={setEditOpen} open={editOpen} />
     </div>
   );
 }
