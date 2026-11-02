@@ -5,6 +5,13 @@
 
 @import "fumadocs-ui/css/neutral.css";
 @import "fumadocs-ui/css/preset.css";
+
+/* fumadocs' search marks matches with the CSS Custom Highlight API through
+   these two classes. Next's CSS optimizer (lightningcss) doesn't know the
+   valid ::highlight() pseudo-element yet and warns on every build, so they
+   aren't generated here; the same rule ships inline from
+   components/search-highlight-style.tsx instead. */
+@source not inline("[&_::highlight(fd-search)]:text-fd-primary [&_::highlight(fd-search)]:underline");
 @import "fumadocs-twoslash/twoslash.css";
 /* API reference pages (content/docs/developers/api) */
 @import "fumadocs-openapi/css/preset.css";
