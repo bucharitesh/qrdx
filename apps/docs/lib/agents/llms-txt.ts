@@ -382,8 +382,12 @@ export function buildLlmsTxt(input: LlmsTxtInput): string {
   const legal = links([
     ...input.legal,
     {
-      title: "Licence (AGPL-3.0)",
+      title: "Licence (the app is AGPL-3.0)",
       url: "https://github.com/bucharitesh/qrdx/blob/main/license.md",
+    },
+    {
+      title: "Licence of the qrdx library and @qrdx/cli (MIT)",
+      url: "https://github.com/bucharitesh/qrdx/blob/main/packages/qrdx/LICENSE",
     },
   ]);
 
