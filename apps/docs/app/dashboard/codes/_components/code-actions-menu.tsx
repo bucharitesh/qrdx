@@ -56,8 +56,8 @@ import type {
   QrCodeListItem,
   QrCodeView,
 } from "@/app/dashboard/codes/_lib/qr-codes";
+import { openCodeBuilder } from "@/components/code-builder/store";
 import { useWorkspaceSlug } from "@/components/workspace-provider";
-import { CodeDialog } from "./code-dialog";
 import { downloadCodeQr } from "./code-qr";
 import { MoveToFolderDialog } from "./folder-dialogs";
 import { NotesDialog } from "./notes-dialog";
@@ -88,7 +88,6 @@ export function CodeActionsMenu({
   const router = useRouter();
   const openInPlayground = useOpenInPlayground();
   const { run, isPending } = useOrganizeAction();
-  const [editOpen, setEditOpen] = useState(false);
   const [dialog, setDialog] = useState<
     "move" | "tags" | "notes" | "purge" | null
   >(null);
@@ -238,7 +237,9 @@ export function CodeActionsMenu({
       <DropdownMenu>
         {trigger}
         <DropdownMenuContent align="end" className="w-56">
-          <DropdownMenuItem onSelect={() => setEditOpen(true)}>
+          <DropdownMenuItem
+            onSelect={() => openCodeBuilder({ mode: "edit", code })}
+          >
             <Pencil /> Edit link
           </DropdownMenuItem>
           {showAnalyticsLink && (
@@ -322,8 +323,6 @@ export function CodeActionsMenu({
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-
-      <CodeDialog code={code} onOpenChange={setEditOpen} open={editOpen} />
 
       {listItem && (
         <>
