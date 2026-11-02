@@ -68,7 +68,7 @@ const STEPS = [
   {
     title: "Verified to scan",
     description:
-      "QRdx decodes every image on the server. If Gemini's version doesn't scan, it's blended into the code (Image QR) until it does, and nothing that fails is delivered or charged.",
+      "QRdx decodes every image on the server. If Gemini's version doesn't scan, QRdx strengthens its corner eyes, border and modules only as much as it takes, redrawing it as Image QR only as a last resort, and nothing that fails is delivered or charged.",
   },
 ];
 
