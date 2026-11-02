@@ -848,7 +848,8 @@ const SIDE_PANEL_STATE = `(group, opener) => {
     open: true,
     beside: box.left >= edge - 1,
     sheet: Math.abs(box.bottom - innerHeight) < 2 && box.width >= innerWidth - 2,
-    columns: getComputedStyle(grid).gridTemplateColumns.split(" ").filter(Boolean).length,
+    // Tiles in the first row (a fieldset grid reports its declared tracks).
+    columns: (() => { const tops = [...grid.querySelectorAll(":scope > button")].map((b) => b.offsetTop); const i = tops.findIndex((t) => Math.abs(t - tops[0]) > 1); return i === -1 ? tops.length : i; })(),
     sideScroll: scroller ? scroller.scrollWidth > scroller.clientWidth + 1 : null,
     withinScreen: box.top >= 0 && box.bottom <= innerHeight + 1,
     focus: active ? __e2e.name(active) : null,
@@ -933,6 +934,21 @@ async function testSidePanels(page: Page) {
     `applied ${applied}, open ${state.open}`,
   );
 
+  // ArrowDown moves exactly one row (the grid's own column count).
+  const focusIndex = `() => {
+    const grid = [...document.querySelectorAll("fieldset[aria-label]")].find((el) => __e2e.visible(el) && __e2e.norm(el.getAttribute("aria-label")) === "dot shape");
+    return grid ? [...grid.querySelectorAll(":scope > button")].indexOf(document.activeElement) : -1;
+  }`;
+  const rowStart = (await page.evaluate(focusIndex)) as number;
+  await pressKey(page, "ArrowDown", 40);
+  const rowNext = (await page.evaluate(focusIndex)) as number;
+  record(
+    area,
+    "ArrowDown moves one row down",
+    rowStart >= 0 && rowNext - rowStart === state.columns,
+    `${rowStart} → ${rowNext} with ${state.columns} columns`,
+  );
+
   await pressEscape(page);
   state = await sidePanel(page, "Dot shape", "more dot shapes");
   record(
@@ -944,10 +960,23 @@ async function testSidePanels(page: Page) {
 
   await clickByRole(page, "button", "more dot shapes", true);
   await sleep(400);
-  await page.evaluate(
-    `() => { const t = __e2e.byRole("tab", "content"); t.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, pointerType: "mouse", button: 0 })); return true; }`,
-  );
-  await sleep(400);
+  // A real click on the page outside the panel (Radix dismisses on the
+  // click that follows the pointerdown).
+  const outside = (await page.evaluate(`() => {
+    const panel = [...document.querySelectorAll('[role="dialog"]')].find(__e2e.visible);
+    const box = panel ? panel.getBoundingClientRect() : { right: 0 };
+    return { x: Math.min(innerWidth - 20, box.right + 120), y: innerHeight - 40 };
+  }`)) as { x: number; y: number };
+  for (const type of ["mousePressed", "mouseReleased"] as const) {
+    await page.cdp.send("Input.dispatchMouseEvent", {
+      type,
+      x: outside.x,
+      y: outside.y,
+      button: "left",
+      clickCount: 1,
+    });
+  }
+  await sleep(500);
   state = await sidePanel(page, "Dot shape", "more dot shapes");
   record(area, "an outside click closes it", !state.open, `open ${state.open}`);
 
