@@ -798,13 +798,15 @@ async function testUndoRedo(page: Page) {
     return;
   }
   await pick(page, "Dot shape", target);
-  const changed = await pressedIn(page, "Dot shape");
+  // Clicking Undo is a click outside the catalog panel, which closes it;
+  // the row of common shapes always shows the current one.
+  const changed = await pressedIn(page, "Common dot shapes");
   await clickByRole(page, "button", "undo", true);
   await sleep(500);
-  const undone = await pressedIn(page, "Dot shape");
+  const undone = await pressedIn(page, "Common dot shapes");
   await clickByRole(page, "button", "redo", true);
   await sleep(500);
-  const redone = await pressedIn(page, "Dot shape");
+  const redone = await pressedIn(page, "Common dot shapes");
   record(
     "history",
     "undo restores the previous dot shape",
@@ -812,7 +814,7 @@ async function testUndoRedo(page: Page) {
     `${before} → ${changed} → undo ${undone}`,
   );
   record("history", "redo re-applies it", redone === target, `redo ${redone}`);
-  await pick(page, "Dot shape", before).catch(() => undefined);
+  await pick(page, "Common dot shapes", before).catch(() => undefined);
 }
 
 async function pressKey(page: Page, key: string, keyCode: number) {
