@@ -89,6 +89,8 @@ describe("MCP over Streamable HTTP", () => {
     }[];
     expect(tools.map((tool) => tool.name).sort()).toEqual(
       [
+        "design_qr",
+        "list_options",
         "generate_qr_code",
         "list_qr_styles",
         "qr_payload_email",
@@ -188,6 +190,88 @@ describe("MCP over Streamable HTTP", () => {
     expect(geo.message?.result.content[0]?.text).toMatch(
       /^geo:48\.8584,2\.2945/,
     );
+  });
+
+  it("design_qr validates content, repairs the style to Great and returns JSON, PNG and SVG", async () => {
+    const { message } = await call("design_qr", {
+      content: {
+        type: "wifi",
+        ssid: "Cafe Guest",
+        password: "sunshine123",
+        encryption: "WPA",
+      },
+      style: {
+        bgColor: "#FFF7ED",
+        fgColor: "#FDBA74",
+        bodyPattern: "circle",
+        cornerEyePattern: "circle",
+        frame: { style: "banner-bottom", text: "Free Wi-Fi" },
+      },
+    });
+    expect(message?.result.isError).toBeFalsy();
+    const content = message?.result.content as {
+      type: string;
+      text?: string;
+      data?: string;
+    }[];
+    expect(content[0]?.text).toMatch(
+      /^Scan score \d+\/100 \(great\) after \d repairs?\./,
+    );
+    expect(content[0]?.text).toContain("Content: WiFi · Cafe Guest");
+    const design = JSON.parse(content[1]?.text as string);
+    expect(design).toMatchObject({
+      grade: "great",
+      great: true,
+      payload: "WIFI:T:WPA;S:Cafe Guest;P:sunshine123;H:false;;",
+      style: {
+        bgColor: "#FFF7ED",
+        frame: { style: "banner-bottom", text: "Free Wi-Fi" },
+      },
+    });
+    expect(design.score).toBeGreaterThanOrEqual(85);
+    expect(design.repairs).toBeGreaterThan(0);
+    expect(design.changes.length).toBeGreaterThan(0);
+    // The pale orange dots were darkened, keeping their hue.
+    expect(design.style.fgColor).not.toBe("#FDBA74");
+    expect(design.style.cornerEyePattern).not.toBe("circle");
+
+    const png = Buffer.from(
+      content.find((part) => part.type === "image")?.data ?? "",
+      "base64",
+    );
+    expect([...png.subarray(0, 4)]).toEqual([137, 80, 78, 71]);
+    const svg = content.at(-1)?.text ?? "";
+    expect(svg).toMatch(/^<svg/);
+    expect(decodeQR(rasterizeSvg(svg, { width: 480, pad: 24 }))).toBe(
+      "WIFI:T:WPA;S:Cafe Guest;P:sunshine123;H:false;;",
+    );
+  });
+
+  it("design_qr refuses content the editor's form would refuse", async () => {
+    const { message } = await call("design_qr", {
+      content: {
+        type: "wifi",
+        ssid: "Cafe",
+        password: "short",
+        encryption: "WPA",
+      },
+    });
+    expect(message?.result.isError).toBe(true);
+    expect(message?.result.content[0]?.text).toMatch(/8-63/);
+  });
+
+  it("list_options lists every content type, shape, frame and template", async () => {
+    const { message } = await call("list_options", {});
+    const options = JSON.parse(message?.result.content[0]?.text as string);
+    expect(
+      options.contentTypes.map((item: { type: string }) => item.type),
+    ).toContain("vcard");
+    expect(options.style.frames.styles).toContain("banner-bottom");
+    expect(options.style.eyes).not.toContain("curly");
+    expect(
+      options.style.templates.map((item: { id: string }) => item.id),
+    ).toContain("StandardBox");
+    expect(options.scanScore).toMatchObject({ great: 85, maxRepairs: 3 });
   });
 
   it("lists styles as JSON", async () => {
