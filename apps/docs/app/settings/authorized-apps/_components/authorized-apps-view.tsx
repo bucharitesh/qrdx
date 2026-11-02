@@ -55,7 +55,10 @@ export function AuthorizedAppsView({ apps }: { apps: AuthorizedAppView[] }) {
       {apps.length === 0 ? (
         <Empty className="border">
           <EmptyHeader>
-            <HairlineFigure className="mx-auto mb-2 h-28 w-40" figure="Relay" />
+            <HairlineFigure
+              className="mx-auto mb-2 h-28 w-40"
+              figure="AuthorizedApp"
+            />
             <EmptyTitle>No apps have access</EmptyTitle>
             <EmptyDescription>
               When you approve an app on the QRdx consent screen, it shows up

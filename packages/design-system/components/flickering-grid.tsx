@@ -37,7 +37,8 @@ export const FlickeringGrid: React.FC<FlickeringGridProps> = ({
         return "rgba(0, 0, 0,";
       }
       const canvas = document.createElement("canvas");
-      canvas.width = canvas.height = 1;
+      canvas.width = 1;
+      canvas.height = 1;
       const ctx = canvas.getContext("2d");
       if (!ctx) {
         return "rgba(255, 0, 0,";

@@ -65,7 +65,7 @@ export default function CompareHubPage() {
           seed={41}
           className="[mask-image:radial-gradient(ellipse_70%_75%_at_50%_45%,rgba(0,0,0,0.3)_15%,black_50%,transparent_80%)]"
         />
-        <div className="relative mx-auto flex max-w-3xl flex-col items-center gap-4 px-6 pt-20 pb-16 text-center md:pt-28 md:pb-20">
+        <div className="relative mx-auto flex max-w-[50rem] flex-col items-center gap-4 px-10 pt-20 pb-16 text-center md:pt-28 md:pb-20">
           <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
             {pages.length} honest comparisons
           </p>
@@ -88,7 +88,7 @@ export default function CompareHubPage() {
         return (
           <section
             aria-labelledby={`compare-${group.category}`}
-            className="w-full px-6 py-14 md:px-10 md:py-16"
+            className="w-full px-10 py-14 md:py-16"
             key={group.category}
           >
             <div className="mx-auto max-w-6xl">

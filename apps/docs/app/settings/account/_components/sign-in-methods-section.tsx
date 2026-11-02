@@ -22,6 +22,7 @@ import { Sms } from "iconsax-reactjs";
 import { usePathname, useRouter } from "next/navigation";
 import { type ReactNode, useEffect, useState } from "react";
 import {
+  EMAIL_CODES_REMAIN,
   linkErrorMessage,
   PROVIDER_LABELS,
   type SignInMethodView,
@@ -233,7 +234,7 @@ export function SignInMethodsSection({
             <AlertDialogTitle>Unlink {unlinking?.label}?</AlertDialogTitle>
             <AlertDialogDescription>
               You won't be able to sign in with {unlinking?.label} until you
-              link it again. Your other sign-in methods keep working.
+              link it again. {EMAIL_CODES_REMAIN}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

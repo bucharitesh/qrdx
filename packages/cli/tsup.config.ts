@@ -2,7 +2,8 @@ import { defineConfig } from "tsup";
 
 export default defineConfig({
   entry: ["src/index.ts"],
-  format: ["cjs"],
+  // ESM: @clack/prompts 1.x ships ESM only (package.json "type": "module").
+  format: ["esm"],
   outExtension: () => ({ js: ".js" }),
   banner: { js: "#!/usr/bin/env node" },
   external: ["sharp"],

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { isEmailConfigured } from "@/lib/email/send";
 import { listNotificationWorkspaces } from "@/lib/events/notification-settings";
+import { signInPath } from "@/lib/safe-redirect";
 import { SettingsHeader } from "../components/settings-header";
 import {
   NotificationsFooter,
@@ -18,7 +19,7 @@ export const metadata: Metadata = {
 
 export default async function NotificationsPage() {
   const session = await auth.api.getSession({ headers: await headers() });
-  if (!session) redirect("/playground");
+  if (!session) redirect(signInPath("/settings/notifications"));
 
   const workspaces = await listNotificationWorkspaces(session.user.id);
 

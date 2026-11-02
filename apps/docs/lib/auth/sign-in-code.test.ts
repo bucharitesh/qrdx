@@ -1,14 +1,18 @@
-// Sign-in code delivery rules and the @repo/auth wrapper (nothing is sent).
+// Sign-in and email-change code delivery rules and the @repo/auth wrapper
+// (nothing is sent).
 //   cd apps/docs && npx tsx --test lib/auth/sign-in-code.test.ts
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import {
+  EMAIL_CHANGE_CODE_NOT_SENT,
+  registerEmailChangeCodeSender,
   registerSignInCodeSender,
   SIGN_IN_CODE_NOT_SENT,
   sendVerificationOTP,
   signInCodeRateLimited,
 } from "@repo/auth/email-otp";
 import {
+  addressKey,
   addressMayRequestCode,
   deliverSignInCode,
   type SignInCodeDeliveryDeps,
@@ -66,6 +70,15 @@ describe("deliverSignInCode", () => {
     assert.equal(calls.logs.length, 0);
   });
 
+  it("names the kind of code in the dev log line", async () => {
+    const { deps, calls } = fakeDeps({ nodeEnv: "development" });
+    await deliverSignInCode(CODE, deps, "email-change code");
+    assert.match(
+      calls.logs[0],
+      /^\[dev only\] QRdx email-change code for ada@example\.com: 402871/,
+    );
+  });
+
   it("fails when the email isn't sent", async () => {
     const { deps } = fakeDeps({
       nodeEnv: "production",
@@ -77,21 +90,53 @@ describe("deliverSignInCode", () => {
 });
 
 describe("@repo/auth sendVerificationOTP", () => {
-  it("delivers sign-in codes only", async () => {
-    const received: string[] = [];
+  it("delivers sign-in and email-change codes, each through its own sender", async () => {
+    const signIn: string[] = [];
+    const change: string[] = [];
     registerSignInCodeSender(async ({ otp }) => {
-      received.push(otp);
+      signIn.push(otp);
     });
-    for (const type of [
-      "email-verification",
-      "forget-password",
-      "change-email",
-    ] as const) {
+    registerEmailChangeCodeSender(async ({ email, otp }) => {
+      change.push(`${email}:${otp}`);
+    });
+    for (const type of ["email-verification", "forget-password"] as const) {
       await sendVerificationOTP({ ...CODE, type });
     }
-    assert.deepEqual(received, []);
+    assert.deepEqual(signIn, []);
+    assert.deepEqual(change, []);
     await sendVerificationOTP({ ...CODE, type: "sign-in" });
-    assert.deepEqual(received, ["402871"]);
+    await sendVerificationOTP({
+      email: "new@example.com",
+      otp: "915273",
+      type: "change-email",
+    });
+    assert.deepEqual(signIn, ["402871"]);
+    assert.deepEqual(change, ["new@example.com:915273"]);
+  });
+
+  it("refuses an email-change code when no sender is registered", async () => {
+    registerEmailChangeCodeSender(undefined as never);
+    await assert.rejects(
+      sendVerificationOTP({ ...CODE, type: "change-email" }),
+      (error: { body?: { code?: string } }) => {
+        assert.equal(error.body?.code, EMAIL_CHANGE_CODE_NOT_SENT);
+        return true;
+      },
+    );
+  });
+
+  it("answers 429 when a new address got too many email-change codes", async () => {
+    registerEmailChangeCodeSender(async () => {
+      throw signInCodeRateLimited();
+    });
+    await assert.rejects(
+      sendVerificationOTP({ ...CODE, type: "change-email" }),
+      (error: { statusCode?: number; body?: { code?: string } }) => {
+        assert.equal(error.statusCode, 429);
+        assert.equal(error.body?.code, "EMAIL_CHANGE_CODE_RATE_LIMITED");
+        return true;
+      },
+    );
   });
 
   it("turns a failed send into an error without the code", async () => {
@@ -120,6 +165,15 @@ describe("@repo/auth sendVerificationOTP", () => {
         return true;
       },
     );
+  });
+});
+
+describe("addressKey", () => {
+  it("hashes the address, ignoring case and spaces", () => {
+    const key = addressKey(" Ada@Example.com ");
+    assert.equal(key, addressKey("ada@example.com"));
+    assert.match(key, /^[0-9a-f]{64}$/);
+    assert.doesNotMatch(key, /ada/);
   });
 });
 

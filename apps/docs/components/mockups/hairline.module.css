@@ -1,0 +1,768 @@
+/*
+ * QRdx figures (hairline.tsx): colours, strokes, the entrance, pointer depth
+ * and each figure's idle loop. The markup is generated (scripts/figure-art),
+ * so its classes are global, scoped under .figure. The colour tokens are the
+ * use-case illustrations' (scripts/use-case-art/kit.ts THEMES), the hero's
+ * family; tests/figure-art.test.ts keeps them in step.
+ *
+ * Motion is transform, opacity and (for the entrance) stroke-dashoffset only.
+ * hairline-motion.tsx sets --px/--py from the pointer, [data-wait] until a
+ * figure is first seen and [data-paused] while it's off screen. Reduced
+ * motion shows the finished frame: no entrance, no depth, no loops.
+ */
+
+.figure {
+  --hf-fill: #ffffff;
+  --hf-side: #eef0f3;
+  --hf-side-2: #e2e5ea;
+  --hf-line: rgba(18, 18, 28, 0.26);
+  --hf-line-2: rgba(18, 18, 28, 0.46);
+  --hf-text: rgba(18, 18, 28, 0.2);
+  --hf-text-2: rgba(18, 18, 28, 0.5);
+  --hf-ink: #0b0b0d;
+  --hf-eye: #0b0b0d;
+  --hf-dot: #155dfc;
+  --hf-glass: rgba(236, 240, 248, 0.55);
+  --hf-screen: #f6f7fb;
+  --hf-accent: #155dfc;
+  --hf-glow: 0.42;
+  --hf-shade: 0.09;
+}
+
+:global(.dark) .figure {
+  --hf-fill: #131317;
+  --hf-side: #0b0b0e;
+  --hf-side-2: #08080a;
+  --hf-line: rgba(255, 255, 255, 0.24);
+  --hf-line-2: rgba(255, 255, 255, 0.42);
+  --hf-text: rgba(255, 255, 255, 0.18);
+  --hf-text-2: rgba(255, 255, 255, 0.5);
+  --hf-ink: #e9edff;
+  --hf-eye: #e9edff;
+  --hf-dot: #8aa9ff;
+  --hf-glass: rgba(255, 255, 255, 0.035);
+  --hf-screen: #050507;
+  --hf-accent: #7f9dff;
+  --hf-glow: 0.9;
+  --hf-shade: 0.55;
+}
+
+.figure > :global(svg) {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* --- Paint ---------------------------------------------------------------- */
+
+.figure :global(svg *) {
+  vector-effect: non-scaling-stroke;
+}
+.figure :global(.f) {
+  fill: var(--hf-fill);
+  stroke: var(--hf-line);
+  stroke-width: 1.1;
+  stroke-linejoin: round;
+}
+.figure :global(.s) {
+  fill: var(--hf-side);
+  stroke: var(--hf-line);
+  stroke-width: 1.1;
+  stroke-linejoin: round;
+}
+.figure :global(.s2) {
+  fill: var(--hf-side-2);
+  stroke: var(--hf-line);
+  stroke-width: 1.1;
+  stroke-linejoin: round;
+}
+.figure :global(.glass) {
+  fill: var(--hf-glass);
+  stroke: var(--hf-line);
+  stroke-width: 1.1;
+  stroke-linejoin: round;
+}
+.figure :global(.scr) {
+  fill: var(--hf-screen);
+  stroke: var(--hf-line);
+  stroke-width: 1;
+}
+.figure :global(.l),
+.figure :global(.l2),
+.figure :global(.ic),
+.figure :global(.vf),
+.figure :global(.tick),
+.figure :global(.rim),
+.figure :global(.dash),
+.figure :global(.ghost),
+.figure :global(.vfd),
+.figure :global(.beam),
+.figure :global(.beam-w) {
+  fill: none;
+  stroke-width: 1.1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.figure :global(.l) {
+  stroke: var(--hf-line);
+}
+.figure :global(.l2),
+.figure :global(.dash),
+.figure :global(.ghost) {
+  stroke: var(--hf-line-2);
+}
+.figure :global(.ic) {
+  stroke: var(--hf-line-2);
+  stroke-width: 1.3;
+}
+.figure :global(.vf),
+.figure :global(.vfd),
+.figure :global(.beam) {
+  stroke: var(--hf-accent);
+  stroke-width: 1.4;
+}
+.figure :global(.beam-w) {
+  stroke: var(--hf-accent);
+  stroke-width: 7;
+  opacity: 0.16;
+}
+.figure :global(.tick) {
+  stroke: #fff;
+  stroke-width: 1.4;
+}
+.figure :global(.rim) {
+  stroke-width: 1.5;
+}
+.figure :global(.dash),
+.figure :global(.vfd) {
+  stroke-dasharray: 3 3;
+}
+.figure :global(.ghost) {
+  stroke-dasharray: 3 2.6;
+}
+.figure :global(.tx),
+.figure :global(.tx2),
+.figure :global(.tx3) {
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.figure :global(.tx) {
+  stroke: var(--hf-text);
+  stroke-width: 2;
+}
+.figure :global(.tx2) {
+  stroke: var(--hf-text-2);
+  stroke-width: 2.2;
+}
+.figure :global(.tx3) {
+  stroke: var(--hf-text-2);
+  stroke-width: 3;
+}
+.figure :global(.tube-o) {
+  fill: none;
+  stroke: var(--hf-line);
+  stroke-linecap: round;
+}
+.figure :global(.tube) {
+  fill: none;
+  stroke: var(--hf-fill);
+  stroke-linecap: round;
+}
+.figure :global(.dot) {
+  fill: var(--hf-line-2);
+}
+.figure :global(.ink) {
+  fill: var(--hf-ink);
+}
+/* The codes (inside <use>) colour themselves from these tokens inline. */
+.figure :global(.paper) {
+  fill: var(--hf-fill);
+}
+.figure :global(.hi) {
+  fill: var(--hf-accent);
+  opacity: 0.12;
+}
+.figure :global(.glow) {
+  opacity: var(--hf-glow);
+}
+.figure :global(.shade) {
+  opacity: var(--hf-shade);
+}
+
+/* --- Entrance: layers rise back to front while the outlines draw ---------- */
+
+.figure :global(.I1),
+.figure :global(.I2),
+.figure :global(.I3) {
+  animation: rise 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) backwards;
+}
+.figure :global(.I2) {
+  animation-delay: 0.12s;
+}
+.figure :global(.I3) {
+  animation-delay: 0.24s;
+}
+.figure
+  :global(
+    :is(
+      .f,
+      .s,
+      .s2,
+      .glass,
+      .scr,
+      .l,
+      .l2,
+      .ic,
+      .vf,
+      .rim,
+      .tx,
+      .tx2,
+      .tx3,
+      .tube-o
+    )
+  ) {
+  animation: draw 1.6s 0.05s cubic-bezier(0.45, 0, 0.25, 1) backwards;
+}
+.figure :global(use) {
+  animation: fade 0.6s 0.5s backwards;
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+/* A fixed dash longer than any outline: every stroke draws at one speed. */
+@keyframes draw {
+  0% {
+    stroke-dasharray: 1600;
+    stroke-dashoffset: 1600;
+  }
+  99.9% {
+    stroke-dasharray: 1600;
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
+
+/* --- Pointer depth: the front layers follow the pointer further ----------- */
+
+.figure :global(.L1),
+.figure :global(.L2),
+.figure :global(.L3) {
+  transition: transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.figure :global(.L1) {
+  transform: translate(calc(var(--px, 0) * 1.5px), calc(var(--py, 0) * 1px));
+}
+.figure :global(.L2) {
+  transform: translate(calc(var(--px, 0) * 3.5px), calc(var(--py, 0) * 2.2px));
+}
+.figure :global(.L3) {
+  transform: translate(calc(var(--px, 0) * 6px), calc(var(--py, 0) * 3.6px));
+}
+
+/* --- Idle loops (each starts once the entrance is done) ------------------- */
+
+.figure
+  :global(
+    :is(.k-pop, .k-spin, .k-spin2, .k-type, .k-press, .k-twinkle, .k-twinkle2)
+  ) {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* A scan line sweeps a code (CodeCard, ScanPhone); the phone's tick pops. */
+.figure :global(.k-sweep) {
+  opacity: 0;
+  animation: sweep 4.4s 1.4s cubic-bezier(0.45, 0, 0.55, 1) infinite both;
+}
+@keyframes sweep {
+  0% {
+    opacity: 0;
+    transform: none;
+  }
+  8%,
+  50% {
+    opacity: 1;
+  }
+  58%,
+  100% {
+    opacity: 0;
+    transform: translateY(var(--d));
+  }
+}
+.figure :global(.k-pop) {
+  animation: pop 4.4s 1.4s ease-out infinite both;
+}
+@keyframes pop {
+  0%,
+  56%,
+  70%,
+  100% {
+    transform: none;
+  }
+  62% {
+    transform: scale(1.2);
+  }
+}
+
+/* LinkSwap: the destination page swaps. */
+.figure :global(.k-swap-a) {
+  animation: swap-a 7s 1.4s ease-in-out infinite both;
+}
+.figure :global(.k-swap-b) {
+  opacity: 0;
+  animation: swap-b 7s 1.4s ease-in-out infinite both;
+}
+@keyframes swap-a {
+  0%,
+  42%,
+  100% {
+    opacity: 1;
+  }
+  50%,
+  92% {
+    opacity: 0;
+  }
+}
+@keyframes swap-b {
+  0%,
+  42%,
+  100% {
+    opacity: 0;
+  }
+  50%,
+  92% {
+    opacity: 1;
+  }
+}
+
+/* Loupe: the lens glides; its magnified modules move the other way by the
+   zoom (1.8), so it always shows the spot under its centre. */
+.figure :global(.k-glide) {
+  animation: glide 8s 1.4s ease-in-out infinite both;
+}
+.figure :global(.k-glide-in) {
+  animation: glide-in 8s 1.4s ease-in-out infinite both;
+}
+@keyframes glide {
+  0%,
+  100% {
+    transform: none;
+  }
+  33% {
+    transform: translate(-14px, -5px);
+  }
+  66% {
+    transform: translate(10px, -10px);
+  }
+}
+@keyframes glide-in {
+  0%,
+  100% {
+    transform: none;
+  }
+  33% {
+    transform: translate(25.2px, 9px);
+  }
+  66% {
+    transform: translate(-18px, 18px);
+  }
+}
+
+/* Chart: the newest bar settles and grows. */
+.figure :global(.k-grow) {
+  animation: grow 5s 1.4s ease-in-out infinite both;
+}
+@keyframes grow {
+  0%,
+  100% {
+    transform: none;
+  }
+  50% {
+    transform: translateY(12px);
+  }
+}
+
+/* Domain: the meridians turn (the reduced-motion frame keeps them apart). */
+.figure :global(.k-spin) {
+  transform: scaleX(0.42);
+  animation: spin 10s -1.76s linear infinite;
+}
+.figure :global(.k-spin2) {
+  transform: scaleX(-0.85);
+  animation: spin 10s -4.4s linear infinite;
+}
+@keyframes spin {
+  0%,
+  100% {
+    transform: scaleX(1);
+  }
+  12.5% {
+    transform: scaleX(0.71);
+  }
+  25% {
+    transform: scaleX(0.02);
+  }
+  37.5% {
+    transform: scaleX(-0.71);
+  }
+  50% {
+    transform: scaleX(-1);
+  }
+  62.5% {
+    transform: scaleX(-0.71);
+  }
+  75% {
+    transform: scaleX(-0.02);
+  }
+  87.5% {
+    transform: scaleX(0.71);
+  }
+}
+
+/* LostCode: the torn half rocks on the foot of the tear. */
+.figure :global(.k-rock) {
+  animation: rock 6s 1.4s ease-in-out infinite both;
+}
+@keyframes rock {
+  0%,
+  100% {
+    transform: none;
+  }
+  50% {
+    transform: translate(45px, 92px) rotate(-3deg) translate(-45px, -92px);
+  }
+}
+
+/* Measure: a marker slides along the ruler. */
+.figure :global(.k-slide) {
+  animation: slide 7s 1.4s ease-in-out infinite both;
+}
+@keyframes slide {
+  0%,
+  100% {
+    transform: none;
+  }
+  50% {
+    transform: translateX(84px);
+  }
+}
+
+/* Stack: a highlight steps down the CSV while the top card lifts. */
+.figure :global(.k-row) {
+  animation: row 6s 1.4s ease-in-out infinite both;
+}
+@keyframes row {
+  0%,
+  18%,
+  100% {
+    transform: none;
+  }
+  25%,
+  43% {
+    transform: translateY(12px);
+  }
+  50%,
+  68% {
+    transform: translateY(24px);
+  }
+  75%,
+  93% {
+    transform: translateY(36px);
+  }
+}
+.figure :global(.k-lift) {
+  animation: lift 6s 1.4s ease-in-out infinite both;
+}
+@keyframes lift {
+  0%,
+  100% {
+    transform: none;
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+/* Terminal and PageForm: a line types out; the caret blinks; a button is pressed. */
+.figure :global(.k-type) {
+  transform-origin: 0 50%;
+  animation: type 4.8s 1.4s ease-out infinite both;
+}
+@keyframes type {
+  0% {
+    transform: scaleX(0);
+  }
+  35%,
+  88% {
+    transform: none;
+    opacity: 1;
+  }
+  96% {
+    opacity: 0;
+  }
+  100% {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+}
+.figure :global(.k-blink) {
+  animation: blink 1.1s 1.4s steps(1, end) infinite both;
+}
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+.figure :global(.k-press) {
+  animation: press 4.8s 1.4s ease-in-out infinite both;
+}
+@keyframes press {
+  0%,
+  72%,
+  84%,
+  100% {
+    transform: none;
+  }
+  77% {
+    transform: scale(0.92);
+  }
+}
+
+/* AuthorizedApp: a pulse hops from app to app under the key, which nudges. */
+.figure :global(.k-hop) {
+  opacity: 0;
+  animation: hop 3.6s 1.4s linear infinite both;
+}
+@keyframes hop {
+  0% {
+    opacity: 0;
+    transform: none;
+  }
+  10% {
+    opacity: 1;
+  }
+  45% {
+    opacity: 1;
+    transform: translateX(56px);
+  }
+  52%,
+  100% {
+    opacity: 0;
+    transform: translateX(56px);
+  }
+}
+.figure :global(.k-nudge) {
+  animation: nudge 4.4s 1.4s ease-in-out infinite both;
+}
+@keyframes nudge {
+  0%,
+  100% {
+    transform: none;
+  }
+  50% {
+    transform: translateX(4px);
+  }
+}
+
+/* Plug: the plug pushes toward the socket and eases back. */
+.figure :global(.k-plug) {
+  animation: plug 5s 1.4s ease-in-out infinite both;
+}
+@keyframes plug {
+  0%,
+  100% {
+    transform: none;
+  }
+  45%,
+  60% {
+    transform: translate(var(--dx), var(--dy));
+  }
+}
+
+/* Webhook: a pulse travels code → bolt → endpoint; the bolt flashes, the LED blinks. */
+.figure :global(.k-pulse) {
+  opacity: 0;
+  animation: pulse 3.8s 1.4s linear infinite both;
+}
+@keyframes pulse {
+  0% {
+    opacity: 0;
+    transform: none;
+  }
+  5% {
+    opacity: 1;
+  }
+  33% {
+    opacity: 1;
+    transform: translateX(34px);
+  }
+  36% {
+    opacity: 0;
+    transform: translateX(38px);
+  }
+  46% {
+    opacity: 0;
+    transform: translateX(66px);
+  }
+  49% {
+    opacity: 1;
+  }
+  78% {
+    opacity: 1;
+    transform: translateX(98px);
+  }
+  84%,
+  100% {
+    opacity: 0;
+    transform: translateX(98px);
+  }
+}
+.figure :global(.k-flash) {
+  opacity: 0;
+  animation: flash 3.8s 1.4s ease-out infinite both;
+}
+@keyframes flash {
+  0%,
+  32%,
+  54%,
+  100% {
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
+}
+.figure :global(.k-led) {
+  animation: led 3.8s 1.4s steps(1, end) infinite both;
+}
+@keyframes led {
+  82%,
+  90% {
+    opacity: 0.2;
+  }
+  86%,
+  94% {
+    opacity: 1;
+  }
+}
+
+/* Question: the bubbles bob, out of step. Layers: the plates breathe. */
+.figure :global(.k-bob) {
+  animation: bob 5s 1.4s ease-in-out infinite both;
+}
+.figure :global(.k-bob2) {
+  animation: bob 5s -1.1s ease-in-out infinite both;
+}
+@keyframes bob {
+  0%,
+  100% {
+    transform: none;
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+.figure :global(.k-float1) {
+  animation: float1 6s 1.4s ease-in-out infinite both;
+}
+.figure :global(.k-float2) {
+  animation: float2 6s 1.4s ease-in-out infinite both;
+}
+@keyframes float1 {
+  0%,
+  100% {
+    transform: none;
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+@keyframes float2 {
+  0%,
+  100% {
+    transform: none;
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+/* Palette: the swatch fan opens and closes about its pivot. */
+.figure :global(.k-fan) {
+  transform-origin: 0 0;
+  animation: fan 6s 1.4s ease-in-out infinite both;
+}
+.figure :global(.k-fan1) {
+  --a: -4.5deg;
+}
+.figure :global(.k-fan2) {
+  --a: -1.5deg;
+}
+.figure :global(.k-fan3) {
+  --a: 1.5deg;
+}
+.figure :global(.k-fan4) {
+  --a: 4.5deg;
+}
+@keyframes fan {
+  0%,
+  100% {
+    transform: none;
+  }
+  50% {
+    transform: rotate(var(--a));
+  }
+}
+
+/* Prompt: the sparkles twinkle. */
+.figure :global(.k-twinkle) {
+  animation: twinkle 3.2s 1.4s ease-in-out infinite both;
+}
+.figure :global(.k-twinkle2) {
+  animation: twinkle 3.2s -0.2s ease-in-out infinite both;
+}
+@keyframes twinkle {
+  0%,
+  100% {
+    transform: none;
+  }
+  50% {
+    transform: scale(0.55);
+    opacity: 0.45;
+  }
+}
+
+/* --- States (last, and doubled for specificity, so they beat every rule
+   above without !important) ---------------------------------------------- */
+
+/* Not seen yet: hold everything until hairline-motion.tsx clears it. */
+.figure.figure[data-wait] > :global(svg) {
+  opacity: 0;
+}
+.figure.figure[data-wait] :global(*) {
+  animation: none;
+}
+.figure.figure[data-paused] :global(*) {
+  animation-play-state: paused;
+}
+
+/* Reduced motion: the finished frame, still. */
+@media (prefers-reduced-motion: reduce) {
+  .figure.figure :global(*) {
+    animation: none;
+    transition: none;
+  }
+  .figure.figure :global(:is(.L1, .L2, .L3)) {
+    transform: none;
+  }
+}

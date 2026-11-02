@@ -3,21 +3,22 @@
 import { cn } from "@repo/design-system/lib/utils";
 import { Mobile } from "iconsax-reactjs";
 import { animate, useInView, useReducedMotion } from "motion/react";
-import { QRCode } from "qrdx";
+import { QRCodeSVG } from "qrdx";
 import { useEffect, useId, useRef, useState } from "react";
 import { EASE, EASE_CLASS } from "@/components/mockups/motion";
-import { easterEggUrl } from "@/lib/easter-eggs";
 import {
   calculatePrintSize,
   getMinVersion,
   mmToInches,
   modulesForVersion,
 } from "@/lib/print-size";
+import { HOME_CODES } from "./codes";
 import { DemoStage, Readout } from "./demo-ui";
-import { FAMILY } from "./qr-family";
 
-const CONTENT = easterEggUrl("print");
-const MODULES = modulesForVersion(getMinVersion(CONTENT, "Q") ?? 2);
+const CODE = HOME_CODES.printSize;
+const MODULES = modulesForVersion(
+  getMinVersion(CODE.value, CODE.level ?? "Q") ?? 2,
+);
 const MIN_M = 0.2;
 const MAX_M = 5;
 const MAX_SYMBOL_MM = calculatePrintSize({
@@ -100,19 +101,7 @@ export function PrintSizeDemo() {
               className={`aspect-square rounded-[6px] bg-white p-[4%] shadow-[0_10px_24px_-12px_rgba(0,0,0,0.35)] ring-1 ring-black/10 transition-[width] duration-200 [&_svg]:size-full ${EASE_CLASS}`}
               style={{ width: `${scale * 100}%` }}
             >
-              <QRCode
-                value={CONTENT}
-                size={144}
-                level="Q"
-                margin={0}
-                hideLogo
-                fgColor={FAMILY.fgColor}
-                eyeColor={FAMILY.eyeColor}
-                dotColor={FAMILY.dotColor}
-                bodyPattern={FAMILY.bodyPattern}
-                cornerEyePattern={FAMILY.cornerEyePattern}
-                cornerEyeDotPattern={FAMILY.cornerEyeDotPattern}
-              />
+              <QRCodeSVG {...CODE} />
             </div>
           </div>
         </div>

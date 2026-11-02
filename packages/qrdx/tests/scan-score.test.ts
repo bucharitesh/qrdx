@@ -82,17 +82,22 @@ describe("getScanScore", () => {
     ],
     ["inverted", { ...PLAIN, fgColor: "#ffffff", bgColor: "#111111" }],
     ["no quiet zone", { ...PLAIN, margin: 0 }],
-  ])("never grades a code that reads at the largest size as fails (%s)", async (_name, props) => {
-    const result = await getScanScore(props);
-    const readsLarge = result.checks.find((c) => c.id === "decode-320")?.passed;
-    // Cross-check with an independent capture at a typical phone distance.
-    if (
-      readsLarge &&
-      capture(props, { modulePx: 6, page: props.bgColor as string }) === VALUE
-    ) {
-      expect(result.grade).not.toBe("fails");
+  ])(
+    "never grades a code that reads at the largest size as fails (%s)",
+    async (_name, props) => {
+      const result = await getScanScore(props);
+      const readsLarge = result.checks.find(
+        (c) => c.id === "decode-320"
+      )?.passed;
+      // Cross-check with an independent capture at a typical phone distance.
+      if (
+        readsLarge &&
+        capture(props, { modulePx: 6, page: props.bgColor as string }) === VALUE
+      ) {
+        expect(result.grade).not.toBe("fails");
+      }
     }
-  });
+  );
 
   it("grades a code that cannot be read as fails", async () => {
     const result = await getScanScore({

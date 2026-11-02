@@ -1,42 +1,61 @@
-/** biome-ignore-all lint/suspicious/noAssignInExpressions: false positive */
 "use client";
 
 import Script from "next/script";
+import { useTheme } from "next-themes";
+import { useEffect, useRef } from "react";
 import { env } from "@/lib/env";
 
+type FeaturebaseFn = ((...args: unknown[]) => void) & { q?: unknown[] };
+
+function featurebase(): FeaturebaseFn {
+  const win = window as unknown as { Featurebase?: FeaturebaseFn };
+  if (typeof win.Featurebase !== "function") {
+    const queue: FeaturebaseFn = (...args) => {
+      queue.q ??= [];
+      queue.q.push(args);
+    };
+    win.Featurebase = queue;
+  }
+  return win.Featurebase;
+}
+
+/**
+ * Featurebase messenger (feedback and support), loaded only after the
+ * "Functionality" consent (components/consent/consent-scripts.tsx).
+ *
+ * Visitors stay anonymous: Featurebase asks for an email in the widget when it
+ * needs one. Identifying signed-in users would need Featurebase's secure
+ * installation (a server-signed token), which QRdx doesn't set up, so no
+ * email or user id is sent. The widget follows the site's light or dark theme.
+ */
+function boot(theme: "light" | "dark") {
+  featurebase()("boot", {
+    appId: env.NEXT_PUBLIC_FEATUREBASE_APP_ID,
+    theme,
+    language: "en",
+  });
+}
+
 const FeaturebaseScript = () => {
-  const handleScriptLoad = () => {
-    const win = window as any;
+  const { resolvedTheme } = useTheme();
+  const theme = resolvedTheme === "dark" ? "dark" : "light";
+  const loaded = useRef(false);
 
-    // Initialize Featurebase if it doesn't exist
-    if (typeof win.Featurebase !== "function") {
-      win.Featurebase = (...args: any[]) => {
-        (win.Featurebase.q = win.Featurebase.q || []).push(...args);
-      };
-    }
-
-    // Boot Featurebase messenger with configuration
-    win.Featurebase("boot", {
-      appId: env.NEXT_PUBLIC_FEATUREBASE_APP_ID, // required
-      email: "user@example.com", // optional, requires secure installation by default
-      userId: "12345", // optional, requires secure installation by default
-      createdAt: "2025-05-06T12:00:00Z", // optional
-      theme: "light", // "light" or "dark"
-      language: "en", // short code (e.g. "en", "de", etc.)
-      // + feel free to add any more custom values about the user here
-    });
-  };
+  // Booting again with the new theme is how Featurebase switches it.
+  useEffect(() => {
+    if (loaded.current) boot(theme);
+  }, [theme]);
 
   return (
-    <>
-      {/* Load the Featurebase SDK */}
-      <Script
-        src="https://do.featurebase.app/js/sdk.js"
-        id="featurebase-sdk"
-        strategy="afterInteractive"
-        onLoad={handleScriptLoad}
-      />
-    </>
+    <Script
+      id="featurebase-sdk"
+      onLoad={() => {
+        loaded.current = true;
+        boot(theme);
+      }}
+      src="https://do.featurebase.app/js/sdk.js"
+      strategy="afterInteractive"
+    />
   );
 };
 

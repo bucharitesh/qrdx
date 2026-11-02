@@ -77,8 +77,9 @@ export function pickBestScannable(
 }
 
 /**
- * Prepares an uploaded reference image: at most 512 px, grayscale (only its
- * light and dark shapes are used) and JPEG, so the request stays small.
+ * Prepares an uploaded reference image (a logo, photo or palette): at most
+ * 512 px and JPEG, so the request stays small. Colors are kept: Gemini can
+ * carry them into the artwork.
  */
 export async function prepareReferenceImage(file: File): Promise<string> {
   const url = URL.createObjectURL(file);
@@ -95,22 +96,10 @@ export async function prepareReferenceImage(file: File): Promise<string> {
     canvas.height = height;
     const ctx = canvas.getContext("2d");
     if (!ctx) throw new Error("Could not read this image");
+    // JPEG has no transparency: transparent logos go on white.
     ctx.fillStyle = "#ffffff";
     ctx.fillRect(0, 0, width, height);
     ctx.drawImage(img, 0, 0, width, height);
-    const pixels = ctx.getImageData(0, 0, width, height);
-    const { data } = pixels;
-    for (let i = 0; i < data.length; i += 4) {
-      const luma = Math.round(
-        0.299 * (data[i] ?? 0) +
-          0.587 * (data[i + 1] ?? 0) +
-          0.114 * (data[i + 2] ?? 0),
-      );
-      data[i] = luma;
-      data[i + 1] = luma;
-      data[i + 2] = luma;
-    }
-    ctx.putImageData(pixels, 0, 0);
     const dataUrl = canvas.toDataURL("image/jpeg", 0.85);
     canvas.remove();
     if (dataUrl.length > (ART_REFERENCE_MAX_BYTES * 4) / 3) {
@@ -128,25 +117,57 @@ const EXTENSIONS: Record<string, string> = {
   "image/webp": "webp",
 };
 
-/** Cross-origin `<a download>` is ignored by browsers, so fetch the file and save it as a blob. */
-export async function downloadImage(
+/** A data: URL as a Blob, without fetch (the CSP keeps data: out of connect-src). */
+function dataUrlToBlob(dataUrl: string): Blob {
+  const comma = dataUrl.indexOf(",");
+  const type = dataUrl.slice(5, dataUrl.indexOf(";")) || "image/png";
+  const binary = atob(dataUrl.slice(comma + 1));
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return new Blob([bytes], { type });
+}
+
+/** Saves a Blob under `fileName` (the extension comes from its type). */
+export function saveBlob(blob: Blob, fileName: string): void {
+  const objectUrl = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = objectUrl;
+  link.download = `${fileName}.${EXTENSIONS[blob.type] ?? "png"}`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  soundEvent("download");
+  setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+}
+
+/** Saves a generated image (a data: URL) as a file. */
+export function downloadImage(imageUrl: string, fileName: string): void {
+  saveBlob(dataUrlToBlob(imageUrl), fileName);
+}
+
+/**
+ * The print-size copy: the artwork resampled to `size` px in the browser,
+ * then decoded again. Null when that copy doesn't scan to `expected`.
+ */
+export async function createPrintImage(
   imageUrl: string,
-  fileName: string,
-): Promise<void> {
-  try {
-    const response = await fetch(imageUrl);
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    const blob = await response.blob();
-    const objectUrl = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = objectUrl;
-    link.download = `${fileName}.${EXTENSIONS[blob.type] ?? "png"}`;
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    soundEvent("download");
-    setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
-  } catch {
-    window.open(imageUrl, "_blank", "noopener,noreferrer");
-  }
+  expected: string,
+  size: number,
+): Promise<Blob | null> {
+  const img = await loadImage(imageUrl);
+  const canvas = document.createElement("canvas");
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("Could not get a canvas context");
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = "high";
+  ctx.drawImage(img, 0, 0, size, size);
+  const blob = await new Promise<Blob | null>((resolve) =>
+    canvas.toBlob(resolve, "image/png"),
+  );
+  canvas.remove();
+  if (!blob) return null;
+  const check = await getImageScanScore(blob);
+  return check.data === expected ? blob : null;
 }

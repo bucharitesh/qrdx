@@ -12,6 +12,7 @@ import {
   readJsonBody,
 } from "@/lib/request-guards";
 import { type ActiveScope, getActiveScope } from "@/lib/scope";
+import { generateSlug } from "@/lib/short-links";
 import { ImportError, type ImporterDeps } from "../importer";
 import { dbRepo } from "./repo";
 
@@ -36,6 +37,7 @@ export const deps: ImporterDeps = {
   repo: dbRepo,
   now: () => new Date(),
   newId: () => cuid(),
+  newSlug: generateSlug,
 };
 
 /** Import calls come from our own dashboard only (cookie auth). */

@@ -80,12 +80,12 @@ export default function BulkPage() {
 
       <section
         aria-label="Bulk QR code generator"
-        className="w-full px-6 md:px-10 py-10"
+        className="w-full px-10 py-10"
       >
         <BulkGenerator />
       </section>
 
-      <section className="w-full px-6 md:px-10 py-10 flex flex-col gap-6">
+      <section className="w-full px-10 py-10 flex flex-col gap-6">
         <h2 className="text-2xl font-medium tracking-tighter">How it works</h2>
         <ol className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {steps.map((step, index) => (

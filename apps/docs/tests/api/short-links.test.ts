@@ -82,6 +82,7 @@ function seedCode(overrides: Record<string, unknown> = {}) {
       userId: "u_alice",
       organizationId: null,
       slug: "Menu123",
+      slugScope: "",
       kind: "redirect",
       destinationUrl: "https://cafe.example/menu",
       domainId: null,
@@ -516,6 +517,76 @@ describe("custom domains", () => {
   it("keeps the default short link working after a move to a custom domain", async () => {
     seedCode({ domainId: "dom_brand" });
     expect((await visit("Menu123")).status).toBe(302);
+  });
+});
+
+describe("custom back-halves", () => {
+  const onDomain = (domainId: string) => ({
+    headers: { "x-qrdx-custom-domain": domainId },
+  });
+  const seedMore = (rows: Record<string, unknown>[]) =>
+    fakeDb.seed(
+      "qrCode",
+      rows.map((row, index) => ({
+        ...fakeDb.find("qrCode", { id: "code_1" }),
+        id: `code_${index + 2}`,
+        ...row,
+      })),
+    );
+
+  it("resolves a back-half chosen on qrdx.dev at /q/<back-half>", async () => {
+    seedCode({ slug: "spring-menu" });
+    const response = await visit("spring-menu");
+    expect(response.status).toBe(302);
+    expect(response.headers.get("location")).toBe("https://cafe.example/menu");
+    expect(scans()).toHaveLength(1);
+    // Case-sensitive, like generated slugs.
+    expect((await visit("Spring-Menu")).status).toBe(404);
+  });
+
+  it("serves a domain's back-half only on that domain", async () => {
+    seedCode({
+      slug: "pricing",
+      slugScope: "dom_brand",
+      domainId: "dom_brand",
+    });
+    expect((await visit("pricing", onDomain("dom_brand"))).status).toBe(302);
+    expect((await visit("pricing")).status).toBe(404);
+    expect((await visit("pricing", onDomain("dom_other"))).status).toBe(404);
+  });
+
+  it("sends each domain's /<back-half> to its own code", async () => {
+    seedCode({ slug: "menu", destinationUrl: "https://shared.example/" });
+    seedMore([
+      {
+        slug: "menu",
+        slugScope: "dom_brand",
+        domainId: "dom_brand",
+        destinationUrl: "https://brand.example/",
+      },
+      {
+        slug: "menu",
+        slugScope: "dom_other",
+        domainId: "dom_other",
+        destinationUrl: "https://other.example/",
+      },
+    ]);
+    const location = async (options?: Visit) =>
+      (await visit("menu", options)).headers.get("location");
+    expect(await location()).toBe("https://shared.example/");
+    expect(await location(onDomain("dom_brand"))).toBe(
+      "https://brand.example/",
+    );
+    expect(await location(onDomain("dom_other"))).toBe(
+      "https://other.example/",
+    );
+  });
+
+  it("answers 404 for paths that can't be slugs, before any lookup", async () => {
+    seedCode();
+    for (const slug of ["ab", "-menu", "menu-", "a".repeat(65), "menu.html"]) {
+      expect((await visit(encodeURIComponent(slug))).status, slug).toBe(404);
+    }
   });
 });
 

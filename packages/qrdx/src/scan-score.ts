@@ -2,6 +2,7 @@
 import type { QRCode as JsQRResult } from "jsqr";
 import type { ColorConfig, ErrorLevel, QRProps } from "../types";
 import { normalizeColorConfig } from "../types/color";
+import type { QRArtPixels } from "./art";
 import qrcodegen from "./codegen";
 import {
   DEFAULT_BGCOLOR,
@@ -1017,4 +1018,131 @@ export async function getImageScanScore(
     grade: gradeFor(score, largestFails),
     checks: [...decodeChecks, ...checks],
   };
+}
+
+// ── Raw pixels (Node and browsers) ─────────────────────────────────────────
+
+export interface PixelScanResult {
+  /** What the pixels decode to as they are, or null when no code was found */
+  data: string | null;
+  /** QR version of the code that was found, or null */
+  version: number | null;
+  /**
+   * True when the pixels decode to `expected` as they are and, at every
+   * check size, through the phone-camera model (two of three attempts)
+   */
+  passed: boolean;
+}
+
+/** Code widths (px) `scanQRPixels` checks through the camera model. */
+export const PIXEL_SCAN_SIZES = [320] as const;
+
+/** Area-average resize of RGBA pixels by `scale` (at most 1). */
+function resizePixels(
+  source: { data: Uint8ClampedArray; width: number; height: number },
+  scale: number
+): ImageData {
+  const factor = Math.min(1, scale);
+  const width = Math.max(1, Math.round(source.width * factor));
+  const height = Math.max(1, Math.round(source.height * factor));
+  const out = new Uint8ClampedArray(width * height * 4);
+  const stepX = source.width / width;
+  const stepY = source.height / height;
+  for (let y = 0; y < height; y++) {
+    const y0 = Math.floor(y * stepY);
+    const y1 = Math.max(
+      y0 + 1,
+      Math.min(source.height, Math.floor((y + 1) * stepY))
+    );
+    for (let x = 0; x < width; x++) {
+      const x0 = Math.floor(x * stepX);
+      const x1 = Math.max(
+        x0 + 1,
+        Math.min(source.width, Math.floor((x + 1) * stepX))
+      );
+      const sums = [0, 0, 0, 0];
+      for (let sy = y0; sy < y1; sy++) {
+        for (let sx = x0; sx < x1; sx++) {
+          const i = (sy * source.width + sx) * 4;
+          for (let c = 0; c < 4; c++) {
+            sums[c] = (sums[c] as number) + (source.data[i + c] as number);
+          }
+        }
+      }
+      const count = (y1 - y0) * (x1 - x0);
+      const o = (y * width + x) * 4;
+      for (let c = 0; c < 4; c++) {
+        out[o + c] = (sums[c] as number) / count;
+      }
+    }
+  }
+  return { data: out, width, height, colorSpace: "srgb" } as ImageData;
+}
+
+function decodedText(result: JsQRResult): string {
+  try {
+    return new TextDecoder("utf-8", { fatal: true }).decode(
+      Uint8Array.from(result.binaryData)
+    );
+  } catch {
+    return result.data;
+  }
+}
+
+/**
+ * Checks that raw RGBA pixels (from `decodePNGPixels`, `sharp().raw()` or a
+ * canvas) hold a QR code that decodes to `expected`: as they are, and through
+ * the phone-camera model (blur and contrast loss) with the code shrunk to each
+ * of `sizes` px. Needs no DOM, so it runs in Node. Light-on-dark codes fail,
+ * since many scanner apps can't read them.
+ */
+export async function scanQRPixels(
+  pixels: QRArtPixels,
+  expected: string,
+  options: { sizes?: readonly number[] } = {}
+): Promise<PixelScanResult> {
+  const { width, height } = pixels;
+  if (!(width > 0 && height > 0) || pixels.data.length < width * height * 4) {
+    throw new Error("Pixels must be width × height × 4 RGBA bytes");
+  }
+  const jsQR = await loadDecoder();
+  const source = {
+    data:
+      pixels.data instanceof Uint8ClampedArray
+        ? pixels.data
+        : Uint8ClampedArray.from(pixels.data),
+    width,
+    height,
+  };
+  const located = jsQR(source.data, width, height, {
+    inversionAttempts: "dontInvert",
+  });
+  if (!located) {
+    return { data: null, version: null, passed: false };
+  }
+  const data = decodedText(located);
+  const { version, location } = located;
+  if (!matches(located, expected)) {
+    return { data, version, passed: false };
+  }
+  const dimension = 17 + 4 * version;
+  const codeWidth =
+    (distance(location.topLeftCorner, location.topRightCorner) +
+      distance(location.bottomLeftCorner, location.bottomRightCorner) +
+      distance(location.topLeftCorner, location.bottomLeftCorner) +
+      distance(location.topRightCorner, location.bottomRightCorner)) /
+    4;
+  for (const size of options.sizes ?? PIXEL_SCAN_SIZES) {
+    const state = decodeAtSize(
+      jsQR,
+      (target) => resizePixels(source, target / codeWidth),
+      size,
+      dimension,
+      (result) => matches(result, expected)
+    );
+    if (state !== "pass") {
+      return { data, version, passed: false };
+    }
+  }
+  return { data, version, passed: true };
 }

@@ -1,4 +1,4 @@
-/** biome-ignore-all lint/security/noDangerouslySetInnerHtml: false positive */
+import { InlineScript } from "@/components/csp-nonce";
 import {
   // DEFAULT_FONT_MONO,
   // DEFAULT_FONT_SANS,
@@ -57,10 +57,6 @@ export function ThemeScript() {
     })();
   `;
 
-  return (
-    <script
-      dangerouslySetInnerHTML={{ __html: scriptContent }}
-      suppressHydrationWarning
-    />
-  );
+  // Carries the request's CSP nonce on nonce routes (lib/security/csp.ts).
+  return <InlineScript html={scriptContent} />;
 }

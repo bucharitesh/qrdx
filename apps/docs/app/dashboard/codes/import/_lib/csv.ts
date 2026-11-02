@@ -9,7 +9,7 @@ import {
   splitFolderPath,
   splitTagNames,
 } from "@/app/dashboard/codes/_lib/organize-shared";
-import { isReservedSlug, SLUG_LENGTH } from "@/lib/short-links";
+import { SLUG_PROBLEM_MESSAGES, slugProblem } from "@/lib/short-links";
 
 export const MAX_IMPORT_ROWS = 1000;
 /** Rows per server request (the create API's bulk cap). */
@@ -105,8 +105,6 @@ export interface NormalizedImportRow {
   slug: string | null;
 }
 
-const SLUG_PATTERN = new RegExp(`^[0-9A-Za-z]{${SLUG_LENGTH}}$`);
-
 function destinationError(value: string): string | null {
   if (!value) return "Destination URL is missing";
   if (value.length > MAX_DESTINATION_LENGTH)
@@ -126,8 +124,15 @@ function destinationError(value: string): string | null {
   return null;
 }
 
-/** Problems with a row (empty = importable as far as the file goes). */
-export function checkImportRow(row: ImportRowInput): {
+/**
+ * Problems with a row (empty = importable as far as the file goes).
+ * `onCustomDomain`: the codes go on a custom domain, where fewer back-halves
+ * are reserved.
+ */
+export function checkImportRow(
+  row: ImportRowInput,
+  { onCustomDomain = false }: { onCustomDomain?: boolean } = {},
+): {
   errors: string[];
   normalized: NormalizedImportRow;
 } {
@@ -158,12 +163,13 @@ export function checkImportRow(row: ImportRowInput): {
 
   const slug = row.slug.trim();
   if (slug) {
-    if (!SLUG_PATTERN.test(slug)) {
+    const problem = slugProblem(slug, { onCustomDomain });
+    if (problem) {
       errors.push(
-        `Slugs are exactly ${SLUG_LENGTH} letters or digits (A–Z, a–z, 0–9)`,
+        problem === "reserved"
+          ? "This back-half is reserved"
+          : `Back-half: ${SLUG_PROBLEM_MESSAGES[problem]}`,
       );
-    } else if (isReservedSlug(slug)) {
-      errors.push("This slug is reserved");
     }
   }
 

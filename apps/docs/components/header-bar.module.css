@@ -1,0 +1,121 @@
+/*
+ * One set of tokens for the site headers (components/header.tsx and
+ * components/sections/navbar.tsx): the bar's surface, the top-level nav
+ * pills (header-nav.tsx), the GitHub pill (github-stars.tsx) and the keyboard
+ * focus ring the mega menu's links share (header-nav-panel.module.css).
+ * Put `.bar` on each element that reads them.
+ *
+ * This CSS is unlayered, so it beats the design-system Tailwind utilities on
+ * the same elements (the trigger's accent fills and its 3px focus ring plus
+ * outline) without !important.
+ */
+
+.bar {
+  /* Mostly opaque, so the hero's pattern doesn't muddy the pills. */
+  --bar-bg: oklch(1 0 0 / 86%);
+  --bar-border: oklch(0 0 0 / 7%);
+  --bar-shadow:
+    0 1px 2px oklch(0 0 0 / 3%), 0 12px 32px -16px oklch(0 0 0 / 16%);
+
+  --pill-text: oklch(0.145 0 0 / 62%);
+  --pill-text-on: oklch(0.145 0 0);
+  --pill-hover: oklch(0 0 0 / 4.5%);
+  --pill-open: oklch(0 0 0 / 6%);
+  --pill-surface: oklch(1 0 0);
+  --pill-border: oklch(0 0 0 / 9%);
+  --pill-border-hover: oklch(0 0 0 / 15%);
+  --pill-shadow: 0 1px 2px oklch(0 0 0 / 5%);
+
+  /* Keyboard focus only: 3:1 against the bar. */
+  --focus-ring: oklch(0 0 0 / 48%);
+}
+
+:global(.dark) .bar {
+  --bar-bg: oklch(0.17 0.005 275 / 80%);
+  --bar-border: oklch(1 0 0 / 8%);
+  --bar-shadow:
+    inset 0 1px 0 oklch(1 0 0 / 4%), 0 12px 32px -16px oklch(0 0 0 / 60%);
+
+  --pill-text: oklch(0.9551 0 0 / 60%);
+  --pill-text-on: oklch(0.9551 0 0);
+  --pill-hover: oklch(1 0 0 / 7%);
+  --pill-open: oklch(1 0 0 / 9%);
+  --pill-surface: oklch(1 0 0 / 4%);
+  --pill-border: oklch(1 0 0 / 10%);
+  --pill-border-hover: oklch(1 0 0 / 18%);
+  --pill-shadow: inset 0 1px 0 oklch(1 0 0 / 4%);
+
+  --focus-ring: oklch(1 0 0 / 60%);
+}
+
+/* The bar itself, where it has a surface (the app header, the scrolled
+   home bar). Blur comes from the element's own utilities. */
+.surface {
+  border-color: var(--bar-border);
+  background-color: var(--bar-bg);
+}
+
+.floating {
+  box-shadow: var(--bar-shadow);
+}
+
+/* Top-level triggers and links: text at rest, a filled pill on hover, open
+   and for the current section, and a ring only for keyboard focus. */
+.pill {
+  border-radius: 9999px;
+  background-color: transparent;
+  color: var(--pill-text);
+  outline: none;
+  box-shadow: none;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease;
+}
+.pill:hover,
+.pill:focus-visible {
+  background-color: var(--pill-hover);
+  color: var(--pill-text-on);
+}
+.pill[data-state="open"],
+.pill.current {
+  background-color: var(--pill-open);
+  color: var(--pill-text-on);
+}
+/* Drawn on the pill's own edge: one clean ring, no gap. */
+.pill:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 0;
+  box-shadow: none;
+}
+
+/* A bordered pill on the bar: the GitHub stars link. */
+.outline {
+  border: 1px solid var(--pill-border);
+  background-color: var(--pill-surface);
+  box-shadow: var(--pill-shadow);
+  color: var(--pill-text-on);
+  outline: none;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease;
+}
+.outline:hover {
+  border-color: var(--pill-border-hover);
+  background-color: color-mix(
+    in oklab,
+    var(--pill-surface),
+    var(--pill-text-on) 4%
+  );
+}
+.outline:focus-visible {
+  border-color: transparent;
+  outline: 2px solid var(--focus-ring);
+  outline-offset: -1px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pill,
+  .outline {
+    transition: none;
+  }
+}

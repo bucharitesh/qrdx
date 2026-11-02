@@ -27,6 +27,7 @@ import {
   type ScanSummary,
   type WebhookEnvelope,
 } from "./types";
+import { scheduleWorkerRun } from "./worker-due";
 
 // emitEvent(type, data, scope) fans an event out to the workspace's webhook
 // endpoints (stored in webhook_delivery, first attempt sent right away,
@@ -35,7 +36,8 @@ import {
 // scan.created is batched per endpoint: the first scan opens a delivery that
 // stays open for SCAN_BATCH_WINDOW_SECONDS; later scans are appended to it
 // (up to SCAN_BATCH_MAX_SCANS, then only `count` grows). The batch is sent by
-// the next scan after the window closes or by the cron worker, whichever
+// the next scan after the window closes or by the worker, which is marked due
+// for the window's end (worker-due.ts) and runs every few minutes, whichever
 // comes first. Busy codes therefore cost one small UPDATE per scan per
 // endpoint, and receivers get at most one request per minute.
 
@@ -144,6 +146,8 @@ async function batchScan(endpointId: string, scan: ScanSummary, now: Date) {
     attempts: 0,
     nextAttemptAt: BATCH_OPEN_FOR,
   });
+  // Without further scans, the worker sends the batch when its window closes.
+  await scheduleWorkerRun(Date.now() + SCAN_BATCH_WINDOW_SECONDS * 1000);
   // A new window means the previous one has closed: send what's due now
   // instead of waiting for the cron worker.
   await processClaimed(

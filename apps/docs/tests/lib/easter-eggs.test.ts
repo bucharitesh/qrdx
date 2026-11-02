@@ -2,23 +2,24 @@ import { describe, expect, it } from "vitest";
 import { easterEggs, getEasterEgg } from "@/lib/easter-eggs";
 
 const DIRECT_IMAGE = /^https:\/\/[^/]+\/.+\.(?:jpe?g|png|gif|webp)$/i;
-const YOUTUBE_PLAYER =
-  /^https:\/\/www\.youtube-nocookie\.com\/embed\/[\w-]{11}(?:\?|$)/;
+// The video on YouTube itself (opens the app on phones), not an embed.
+const YOUTUBE_VIDEO = /^https:\/\/www\.youtube\.com\/watch\?v=[\w-]{11}$/;
 
 describe("easter-egg destinations", () => {
-  it.each(
-    Object.entries(easterEggs),
-  )("%s opens the media itself, not a page about it", (_slug, egg) => {
-    expect(
-      DIRECT_IMAGE.test(egg.url) || YOUTUBE_PLAYER.test(egg.url),
-      egg.url,
-    ).toBe(true);
-  });
+  it.each(Object.entries(easterEggs))(
+    "%s opens the media itself, not a page about it",
+    (_slug, egg) => {
+      expect(
+        DIRECT_IMAGE.test(egg.url) || YOUTUBE_VIDEO.test(egg.url),
+        egg.url,
+      ).toBe(true);
+    },
+  );
 
-  it("never points at meme or GIF article pages", () => {
+  it("never points at meme or GIF article pages, or a bare video player", () => {
     for (const egg of Object.values(easterEggs)) {
       expect(egg.url).not.toMatch(
-        /knowyourmeme\.com\/memes|giphy\.com\/gifs|youtube\.com\/watch/,
+        /knowyourmeme\.com\/memes|giphy\.com\/gifs|youtube-nocookie\.com|\/embed\//,
       );
     }
   });

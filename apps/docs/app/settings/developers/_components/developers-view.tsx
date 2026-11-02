@@ -88,7 +88,10 @@ export function DevelopersView({ overview }: { overview: OAuthAppsOverview }) {
       {apps.length === 0 ? (
         <Empty className="border">
           <EmptyHeader>
-            <HairlineFigure className="mx-auto mb-2 h-28 w-40" figure="Relay" />
+            <HairlineFigure
+              className="mx-auto mb-2 h-28 w-40"
+              figure="Terminal"
+            />
             <EmptyTitle>No OAuth apps yet</EmptyTitle>
             <EmptyDescription>
               Create an app to get a client ID and secret. People install it by

@@ -1,6 +1,7 @@
 // Pricing-page copy derived from the plan limits (lib/plans.ts is the single
 // source of truth). Pure and client-safe: the server page passes the limits in.
 
+import { listNames } from "@/lib/availability-copy";
 import { AI_REQUEST_FREE_TIER_LIMIT } from "@/lib/constants";
 import type { PlanLimits } from "@/lib/plans";
 import {
@@ -26,13 +27,8 @@ export interface ComparisonGroup {
   rows: ComparisonRow[];
 }
 
-/** Planned plan features that aren't built yet; shown as "Coming soon". */
-const NOT_YET_AVAILABLE = new Set<keyof PlanLimits>([
-  "folderPermissions",
-  "auditLog",
-]);
-
-const COMING_SOON = "Coming soon";
+// Only built features are sold: planned limits in lib/plans.ts (folder
+// permissions, audit log) stay off the pricing page until they ship.
 
 const MB = 1024 * 1024;
 const GB = 1024 * MB;
@@ -55,8 +51,6 @@ export function formatDays(days: number): string {
   }
   return `${formatCount(days)} days`;
 }
-
-const months = (days: number) => Math.round(days / 30.4375);
 
 /** Whole-percent saving of the yearly price over 12 monthly payments. */
 export function yearlySavingsPercent(
@@ -92,12 +86,10 @@ function row(
   });
 }
 
-/** A plan flag, or "Coming soon" where the plan includes a feature not built yet. */
+/** A plan flag: true when the plan includes every key. */
 function flag(...keys: (keyof PlanLimits)[]) {
-  return (limits: PlanLimits): CellValue => {
-    if (!keys.every((key) => Boolean(limits[key]))) return false;
-    return keys.some((key) => NOT_YET_AVAILABLE.has(key)) ? COMING_SOON : true;
-  };
+  return (limits: PlanLimits): CellValue =>
+    keys.every((key) => Boolean(limits[key]));
 }
 
 function landingPages(limits: PlanLimits): string {
@@ -110,21 +102,26 @@ function landingPages(limits: PlanLimits): string {
   return `${count}, no footer`;
 }
 
+// Every scan is kept at full detail for the whole history: nothing rolls raw
+// scans up into daily totals yet, so the copy must not promise that.
 function analyticsHistory(limits: PlanLimits): string {
-  const history = formatDays(limits.analyticsRetentionDays);
-  if (
-    !Number.isFinite(limits.analyticsRetentionDays) &&
-    Number.isFinite(limits.rawScanRetentionDays)
-  ) {
-    return `${history} (scan-level for ${months(limits.rawScanRetentionDays)} months, then daily totals)`;
-  }
-  return history;
+  return formatDays(limits.analyticsRetentionDays);
 }
 
 function teamMembers(limits: PlanLimits): string {
   if (!limits.teams) return "1 (no teams)";
   return formatCount(limits.teamMembers);
 }
+
+// Dropped where AI art isn't available (PricingOptions.aiArt).
+const AI_ART_ROW = "AI art images per month";
+const AI_THEMES_ROW = "AI theme generations";
+const CUSTOM_DOMAINS_ROW = "Custom domains";
+const FILE_STORAGE_ROW = "File storage";
+const EMAIL_ALERTS_ROW = "Email digests and alerts";
+const PIXELS_HINT = "GA4, Meta, GTM, TikTok";
+// Tag Manager only loads on custom domains (components/landing/pixels.tsx).
+const PIXELS_HINT_WITHOUT_GTM = "GA4, Meta, TikTok, LinkedIn";
 
 const GROUPS: {
   title: string;
@@ -142,12 +139,12 @@ const GROUPS: {
           ? `${formatCount(l.savedThemes)}, shared with your team`
           : formatCount(l.savedThemes),
       ),
-      row("AI theme generations", (_, plan) =>
+      row(AI_THEMES_ROW, (_, plan) =>
         plan === "free"
           ? `${AI_REQUEST_FREE_TIER_LIMIT} in total`
           : "Unlimited",
       ),
-      row("AI art images per month", (l) =>
+      row(AI_ART_ROW, (l) =>
         l.aiArtPooled
           ? `${formatCount(l.aiArtPerMonth)}, pooled per team`
           : formatCount(l.aiArtPerMonth),
@@ -164,26 +161,29 @@ const GROUPS: {
         "Send scans by device, country, time or language",
       ),
       row("Password, schedule, expiry and scan limits", flag("linkControls")),
-      row("Retargeting pixels", flag("pixels"), "GA4, Meta, GTM, TikTok"),
+      row("Retargeting pixels", flag("pixels"), PIXELS_HINT),
       row("Conversion tracking", flag("conversions")),
     ],
   },
   {
     title: "Brand and team",
     rows: [
-      row("Custom domains", (l) =>
+      row(CUSTOM_DOMAINS_ROW, (l) =>
         l.customDomains > 0 ? formatCount(l.customDomains) : false,
       ),
+      row(
+        "Custom back-halves",
+        flag("customSlugs"),
+        "Choose the link, like qrdx.dev/q/spring-menu",
+      ),
       row("Team members", teamMembers),
-      row("Folder permissions", flag("folderPermissions")),
-      row("Audit log", flag("auditLog")),
     ],
   },
   {
     title: "Files and forms",
     rows: [
       row(
-        "File storage",
+        FILE_STORAGE_ROW,
         (l) =>
           `${formatBytes(l.storageBytes)} (${formatBytes(l.maxFileBytes)} per file)`,
       ),
@@ -195,7 +195,7 @@ const GROUPS: {
   {
     title: "Automation and API",
     rows: [
-      row("Email digests and alerts", flag("emailAlerts")),
+      row(EMAIL_ALERTS_ROW, flag("emailAlerts")),
       row("Webhooks, Zapier and Slack", flag("webhooks")),
       row("API requests per day", (l) =>
         l.bulkApi
@@ -220,24 +220,126 @@ export function priceRow(currency: PricingCurrency): ComparisonRow {
   };
 }
 
+/**
+ * What this deployment can offer (lib/feature-availability-rules.ts): rows
+ * and plan-card lines for a feature that can't work here are left out. Each
+ * defaults to true.
+ */
+export interface PricingOptions {
+  /** AI QR art (GOOGLE_API_KEY, not switched off by AI_ART_ENABLED=0). */
+  aiArt?: boolean;
+  /** AI themes (GOOGLE_API_KEY). */
+  aiThemes?: boolean;
+  /** Adding custom domains (on Vercel: VERCEL_API_TOKEN + VERCEL_PROJECT_ID). */
+  customDomains?: boolean;
+  /** File uploads (Cloudflare R2). */
+  fileStorage?: boolean;
+  /** Email alerts and digests (Resend). */
+  emailAlerts?: boolean;
+}
+
+const ROW_FEATURE: Record<string, keyof PricingOptions> = {
+  [AI_ART_ROW]: "aiArt",
+  [AI_THEMES_ROW]: "aiThemes",
+  [CUSTOM_DOMAINS_ROW]: "customDomains",
+  [FILE_STORAGE_ROW]: "fileStorage",
+  [EMAIL_ALERTS_ROW]: "emailAlerts",
+};
+
+const offered = (options: PricingOptions, feature?: keyof PricingOptions) =>
+  !feature || options[feature] !== false;
+
 export function buildComparison(
   limits: PlanLimitsByPlan,
   currency: PricingCurrency,
+  options: PricingOptions = {},
 ): ComparisonGroup[] {
   return [
     { title: "Price", rows: [priceRow(currency)] },
     ...GROUPS.map((group) => ({
       title: group.title,
-      rows: group.rows.map((build) => build(limits)),
+      rows: group.rows
+        .map((build) => build(limits))
+        .filter((row) => offered(options, ROW_FEATURE[row.feature]))
+        .map((row) =>
+          row.hint === PIXELS_HINT && !offered(options, "customDomains")
+            ? { ...row, hint: PIXELS_HINT_WITHOUT_GTM }
+            : row,
+        ),
     })),
-  ];
+  ].filter((group) => group.rows.length > 0);
+}
+
+/** "5 GB storage, 1,000 form responses a month", without storage when off. */
+function storageAndForms(limits: PlanLimits, fileStorage: boolean): string {
+  const forms = `${formatCount(limits.formResponsesPerMonth)} form responses a month`;
+  return fileStorage
+    ? `${formatBytes(limits.storageBytes)} storage, ${forms}`
+    : `${forms.charAt(0).toUpperCase()}${forms.slice(1)}`;
+}
+
+/** What paid plans add, in a list: "unlimited dynamic codes, …, and teams". */
+function paidExtras(options: PricingOptions, analytics: string): string {
+  return listNames(
+    [
+      "unlimited dynamic codes",
+      analytics,
+      ...(offered(options, "customDomains") ? ["custom domains"] : []),
+      "teams",
+    ],
+    "and",
+  );
+}
+
+/** The pricing page's intro line, under its title. */
+export function buildPricingIntro(options: PricingOptions = {}): string {
+  return `Static QR codes are free forever. Paid plans add ${paidExtras(options, "longer analytics")}.`;
+}
+
+/** The pricing page's meta description (and its JSON-LD). */
+export function buildPricingDescription(options: PricingOptions = {}): string {
+  const usd = (plan: PaidPlan) =>
+    formatPrice(PRICING[plan].month.amounts.USD, "USD");
+  return `Static QR codes are free forever. Pro (${usd("pro")}/mo) and Business (${usd("business")}/mo) add ${paidExtras(options, "analytics history")}. Codes keep working if you cancel.`;
+}
+
+/**
+ * The upgrade dialog's headline features (components/get-pro-dialog.tsx, a
+ * client component that can't read lib/plans); the pricing page lists every
+ * limit.
+ */
+export function buildUpgradeHighlights(
+  options: Pick<PricingOptions, "customDomains"> = {},
+): Record<PaidPlan, string[]> {
+  const domains = offered(options, "customDomains");
+  return {
+    pro: [
+      "Unlimited dynamic codes and landing pages",
+      "3 years of analytics history",
+      domains ? "5 custom domains and teams of up to 3" : "Teams of up to 3",
+      "Unlimited saved themes, shared with your team",
+      "Smart routing, A/B tests, UTM tags and pixels",
+    ],
+    business: [
+      "Everything in Pro",
+      "White-label pages with custom CSS",
+      domains
+        ? "25 custom domains and unlimited team members"
+        : "Unlimited team members",
+      "Conversion tracking and webhooks",
+    ],
+  };
 }
 
 /** Short feature lists for the plan cards. */
 export function buildHighlights(
   limits: PlanLimitsByPlan,
+  options: PricingOptions = {},
 ): Record<Plan, string[]> {
   const { free, pro, business } = limits;
+  const aiArt = offered(options, "aiArt");
+  const domains = offered(options, "customDomains");
+  const storage = offered(options, "fileStorage");
   return {
     free: [
       "Unlimited static QR codes, no account needed",
@@ -245,29 +347,35 @@ export function buildHighlights(
       "Unlimited scans, never paused, no ads",
       `${formatCount(free.landingPages)} hosted landing pages`,
       `${formatDays(free.analyticsRetentionDays)} of analytics history`,
-      `${formatBytes(free.storageBytes)} of file storage`,
+      ...(storage ? [`${formatBytes(free.storageBytes)} of file storage`] : []),
     ],
     pro: [
       "Unlimited dynamic codes and landing pages",
       `${formatDays(pro.analyticsRetentionDays)} of analytics history`,
-      `${formatCount(pro.customDomains)} custom domains`,
+      ...(domains ? [`${formatCount(pro.customDomains)} custom domains`] : []),
       `Teams of up to ${formatCount(pro.teamMembers)} people`,
       pro.teamThemes
         ? "Unlimited saved themes, shared with your team"
         : "Unlimited saved themes",
       "Smart routing, A/B tests, UTM tags and pixels",
       "Passwords, schedules, expiry and scan limits",
-      `${formatBytes(pro.storageBytes)} storage, ${formatCount(pro.formResponsesPerMonth)} form responses a month`,
+      storageAndForms(pro, storage),
     ],
     business: [
       "White-label pages with custom CSS",
       `${formatDays(business.analyticsRetentionDays)} analytics history`,
-      `${formatCount(business.customDomains)} custom domains`,
+      ...(domains
+        ? [`${formatCount(business.customDomains)} custom domains`]
+        : []),
       "Unlimited team members",
       "Conversion tracking",
       "Webhooks, Zapier and Slack",
-      `${formatBytes(business.storageBytes)} storage, ${formatCount(business.formResponsesPerMonth)} form responses a month`,
-      `${formatCount(business.aiArtPerMonth)} AI art images a month, pooled per team`,
+      storageAndForms(business, storage),
+      ...(aiArt
+        ? [
+            `${formatCount(business.aiArtPerMonth)} AI art images a month, pooled per team`,
+          ]
+        : []),
     ],
   };
 }

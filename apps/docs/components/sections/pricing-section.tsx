@@ -46,6 +46,8 @@ interface PricingSectionProps {
   currency: PricingCurrency;
   /** The signed-in user's own plan; null when signed out. */
   currentPlan: Plan | null;
+  /** The intro under the title (buildPricingIntro: only what's offered here). */
+  description: string;
   /** Card feature lists, built from lib/plans on the server. */
   highlights: Record<Plan, string[]>;
 }
@@ -238,6 +240,7 @@ function PriceLine({
 export function PricingSection({
   currency,
   currentPlan,
+  description,
   highlights,
 }: PricingSectionProps) {
   const { pricing } = siteConfig;
@@ -397,7 +400,7 @@ export function PricingSection({
           focus={[1, 0]}
           className="[mask-image:linear-gradient(to_bottom,black_45%,transparent)]"
         />
-        <div className="relative mx-auto flex max-w-2xl flex-col items-center gap-3 px-6 pt-14 pb-10 text-center md:pt-20">
+        <div className="relative mx-auto flex max-w-[44rem] flex-col items-center gap-3 px-10 pt-14 pb-10 text-center md:pt-20">
           <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
             Pricing
           </p>
@@ -405,7 +408,7 @@ export function PricingSection({
             {pricing.title}
           </h1>
           <p className="max-w-xl text-pretty text-muted-foreground md:text-lg">
-            {pricing.description}
+            {description}
           </p>
           <div className="mt-5 flex flex-col items-center gap-3">
             <BillingToggle
@@ -418,7 +421,7 @@ export function PricingSection({
         </div>
       </div>
 
-      <div className="relative grid w-full max-w-6xl gap-4 px-6 md:grid-cols-3">
+      <div className="relative grid w-full max-w-[74rem] gap-4 px-10 md:grid-cols-3">
         {/* The Pro card (the middle one, also when stacked) sits in a soft light. */}
         <RadialHalo className="-inset-y-32" width={760} height={1000} />
         {cards.map(({ plan, lead, action }) => {
@@ -469,7 +472,7 @@ export function PricingSection({
         })}
       </div>
 
-      <div className="mt-4 w-full max-w-6xl px-6">
+      <div className="mt-4 w-full max-w-[74rem] px-10">
         <Card className="gap-4 bg-muted/40 p-5 shadow-none md:flex-row md:items-center md:justify-between dark:bg-card">
           <div className="flex items-start gap-4">
             <span className="grid size-9 shrink-0 place-items-center rounded-full border bg-muted/40">

@@ -11,7 +11,12 @@ import { and, eq, gte } from "drizzle-orm";
 import { after } from "next/server";
 import { isPlatformHostname } from "@/app/dashboard/domains/_lib/hostname";
 import { baseUrl } from "@/lib/metadata";
-import { isValidSlug, SHORT_LINK_BASE } from "@/lib/short-links";
+import {
+  isGeneratedSlug,
+  isValidSlug,
+  SHARED_SLUG_SCOPE,
+  SHORT_LINK_BASE,
+} from "@/lib/short-links";
 import type { PublicAbuseReason } from "./abuse-reasons";
 import { checkUrlSafety, describeSafety } from "./check";
 
@@ -24,8 +29,9 @@ export interface ReportTarget {
   customHost: string | null;
 }
 
-const OWN_PATH = /^\/(?:q|p)\/([0-9A-Za-z]{7})\/?$/;
-const CUSTOM_PATH = /^\/(?:p\/)?([0-9A-Za-z]{7})\/?$/;
+// Generated slugs and custom back-halves (checked again by isValidSlug).
+const OWN_PATH = /^\/(?:q|p)\/([A-Za-z0-9_-]{3,64})\/?$/;
+const CUSTOM_PATH = /^\/(?:p\/)?([A-Za-z0-9_-]{3,64})\/?$/;
 const OWN_HOSTS = new Set([
   new URL(SHORT_LINK_BASE).hostname,
   baseUrl.hostname,
@@ -34,7 +40,8 @@ const OWN_HOSTS = new Set([
 /** Accepts a short link, a hosted page link, a custom-domain link or a bare slug. */
 export function parseReportTarget(input: string): ReportTarget {
   const value = input.trim();
-  if (isValidSlug(value)) {
+  // A bare word is only taken for a slug when it looks generated.
+  if (isGeneratedSlug(value)) {
     return {
       url: `${SHORT_LINK_BASE}/q/${value}`,
       slug: value,
@@ -96,15 +103,20 @@ export async function findReportedCode(
     })
     .from(qrCode)
     .leftJoin(customDomain, eq(customDomain.id, qrCode.domainId))
-    .where(eq(qrCode.slug, target.slug))
+    .where(
+      target.customHost
+        ? and(
+            eq(qrCode.slug, target.slug),
+            eq(customDomain.hostname, target.customHost),
+          )
+        : and(
+            eq(qrCode.slug, target.slug),
+            eq(qrCode.slugScope, SHARED_SLUG_SCOPE),
+          ),
+    )
     .limit(1);
   if (!row) return null;
-  if (
-    target.customHost &&
-    !(row.verified && row.hostname === target.customHost)
-  ) {
-    return null;
-  }
+  if (target.customHost && !row.verified) return null;
   return {
     id: row.id,
     pageId: row.pageId,

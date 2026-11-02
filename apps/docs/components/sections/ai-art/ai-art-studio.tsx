@@ -22,17 +22,19 @@ import { track } from "@/lib/analytics";
 import { apiFetch } from "@/lib/api-fetch";
 import { useSessionGuard } from "@/lib/hooks/use-gaurds";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
-import { MyErrorResponseSchema, UnauthorizedError } from "@/types/errors";
+import {
+  MyErrorResponseSchema,
+  type MyErrorResponseType,
+  UnauthorizedError,
+} from "@/types/errors";
 import { AIArtComingSoon } from "./ai-art-coming-soon";
 import { AIArtPresetGallery } from "./ai-art-preset-gallery";
-import { AIArtResultPanel } from "./ai-art-result";
+import { AIArtResultPanel, type AIArtRun } from "./ai-art-result";
 import {
   type AIArtCredits,
   type AIArtCreditsResponse,
   type AIArtRequest,
   type AIArtResult,
-  type AIArtUpscaleResult,
-  type AIArtVariant,
   ART_CREATIVITY,
   ART_MAX_SEED,
   ART_MAX_VARIATIONS,
@@ -41,6 +43,7 @@ import {
   ART_PROMPT_MIN_LENGTH,
   ART_QR_VISIBILITY,
   ART_TEXT_MAX_LENGTH,
+  seedsForRun,
 } from "./config";
 import { prepareReferenceImage } from "./image-utils";
 import { AI_ART_PRESETS } from "./presets";
@@ -49,6 +52,17 @@ const CREDITS_QUERY_KEY = ["ai-art-credits"];
 const REFERENCE_TYPES = ["image/png", "image/jpeg", "image/webp"];
 const REFERENCE_UPLOAD_MAX_BYTES = 10 * 1024 * 1024;
 
+/** A failed /api/ai/art response, with its JSON error body. */
+class ArtRequestError extends Error {
+  readonly body: MyErrorResponseType;
+
+  constructor(body: MyErrorResponseType) {
+    super(body.message ?? "AI art request failed");
+    this.name = "ArtRequestError";
+    this.body = body;
+  }
+}
+
 export interface AIArtAllowances {
   free: number | null;
   pro: number | null;
@@ -56,7 +70,7 @@ export interface AIArtAllowances {
 }
 
 interface AIArtStudioProps {
-  /** Server-side FAL_KEY check; a 503 from the API flips it off too. */
+  /** Server-side GOOGLE_API_KEY check; a 503 from the API flips it off too. */
   configured: boolean;
   /** Monthly images per plan, from lib/plans (null = unlimited). */
   allowances: AIArtAllowances;
@@ -76,13 +90,9 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
   const [seed, setSeed] = useState("");
   const [seedLocked, setSeedLocked] = useState(false);
   const [reference, setReference] = useState<string | null>(null);
-  const [result, setResult] = useState<AIArtResult | null>(null);
+  const [result, setResult] = useState<AIArtRun | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [pendingVariations, setPendingVariations] = useState(1);
-  const [upscaled, setUpscaled] = useState<Record<string, AIArtUpscaleResult>>(
-    {},
-  );
-  const [upscalingUrl, setUpscalingUrl] = useState<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
   const referenceInputRef = useRef<HTMLInputElement>(null);
 
@@ -134,12 +144,7 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
     }
   };
 
-  const showError = async (response: Response, title: string) => {
-    const parsed = MyErrorResponseSchema.safeParse(
-      await response.json().catch(() => null),
-    );
-    const error = parsed.success ? parsed.data : {};
-
+  const showError = (error: MyErrorResponseType, title: string) => {
     if (error.code === "AI_NOT_CONFIGURED") {
       setIsConfigured(false);
       return;
@@ -157,53 +162,99 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
         error.message ??
         "Something went wrong. Please try again.",
     });
-    queryClient.invalidateQueries({ queryKey: CREDITS_QUERY_KEY });
   };
 
-  const generate = async (request: AIArtRequest) => {
+  /** One image per request, so each response stays small. */
+  const requestImage = async (
+    request: AIArtRequest,
+    signal: AbortSignal,
+  ): Promise<AIArtResult> => {
+    const response = await apiFetch("/api/ai/art", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(request),
+      signal,
+    });
+    if (!response.ok) {
+      const parsed = MyErrorResponseSchema.safeParse(
+        await response.json().catch(() => null),
+      );
+      throw new ArtRequestError(parsed.success ? parsed.data : {});
+    }
+    return (await response.json()) as AIArtResult;
+  };
+
+  const generate = async (request: AIArtRequest, seeds: number[]) => {
     if (!checkValidSession("signin")) return;
 
     const controller = new AbortController();
     abortRef.current = controller;
     setIsGenerating(true);
-    setPendingVariations(request.variations ?? 1);
+    setPendingVariations(seeds.length);
 
     try {
-      const response = await apiFetch("/api/ai/art", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(request),
-        signal: controller.signal,
-      });
+      const outcomes = await Promise.allSettled(
+        seeds.map((seed) =>
+          requestImage({ ...request, seed }, controller.signal),
+        ),
+      );
+      if (controller.signal.aborted) return;
+      const done = outcomes.flatMap((outcome) =>
+        outcome.status === "fulfilled" ? [outcome.value] : [],
+      );
+      const failures = outcomes.flatMap((outcome) =>
+        outcome.status === "rejected" ? [outcome.reason as unknown] : [],
+      );
+      if (failures.some((error) => error instanceof UnauthorizedError)) return;
 
-      if (!response.ok) {
-        await showError(response, "Couldn't generate QR art");
+      // Each response counted the credits when it was reserved; the most
+      // recent count is the highest.
+      const latest = done
+        .map((item) => item.credits)
+        .filter((item): item is AIArtCredits => item !== null)
+        .sort((a, b) => b.used - a.used)[0];
+      setCredits(latest ?? null);
+      queryClient.invalidateQueries({ queryKey: CREDITS_QUERY_KEY });
+
+      const first = failures[0];
+      if (done.length === 0) {
+        if (first instanceof ArtRequestError) {
+          showError(first.body, "Couldn't generate QR art");
+        } else {
+          toast.error("Couldn't generate QR art", {
+            description: "Check your connection and try again.",
+          });
+        }
         return;
       }
 
-      const next = (await response.json()) as AIArtResult;
-      setResult(next);
-      setCredits(next.credits);
-      if (next.failed > 0) {
+      const [{ text, visibility, creativity }] = done as [AIArtResult];
+      setResult({
+        variants: done.map((item) => item.variant),
+        failed: failures.length,
+        text,
+        visibility,
+        creativity,
+      });
+      if (failures.length > 0) {
         toast.warning(
-          `${next.failed} of ${next.failed + next.variants.length} variations failed`,
-          { description: "Those credits were refunded." },
+          `${failures.length} of ${seeds.length} variations failed`,
+          {
+            description:
+              first instanceof ArtRequestError && first.body.message
+                ? first.body.message
+                : "No AI credit was used for them.",
+          },
         );
       }
       track("ai_art_generated", {
         visibility: request.visibility,
         creativity: request.creativity,
-        variations: request.variations,
-        locked_seed: request.seed !== undefined,
+        variations: seeds.length,
+        blended: done.filter((item) => item.variant.blended).length,
+        locked_seed: lockedSeed !== undefined,
         reference: Boolean(request.reference),
         preset: presetId ?? undefined,
-      });
-    } catch (error) {
-      if (controller.signal.aborted || error instanceof UnauthorizedError) {
-        return;
-      }
-      toast.error("Couldn't generate QR art", {
-        description: "Check your connection and try again.",
       });
     } finally {
       if (abortRef.current === controller) abortRef.current = null;
@@ -217,38 +268,8 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
     ...(negativePrompt.trim() && { negativePrompt: negativePrompt.trim() }),
     visibility,
     creativity,
-    variations,
-    ...(lockedSeed !== undefined && { seed: lockedSeed }),
     ...(reference && { reference }),
   });
-
-  const upscale = async (variant: AIArtVariant) => {
-    if (!checkValidSession("signin")) return;
-    setUpscalingUrl(variant.imageUrl);
-    try {
-      const response = await apiFetch("/api/ai/art/upscale", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ imageUrl: variant.imageUrl }),
-      });
-      if (!response.ok) {
-        await showError(response, "Couldn't upscale this image");
-        return;
-      }
-      const next = (await response.json()) as AIArtUpscaleResult;
-      setUpscaled((previous) => ({ ...previous, [variant.imageUrl]: next }));
-      setCredits(next.credits);
-      toast.success("Upscaled 2× for print");
-    } catch (error) {
-      if (!(error instanceof UnauthorizedError)) {
-        toast.error("Couldn't upscale this image", {
-          description: "Check your connection and try again.",
-        });
-      }
-    } finally {
-      setUpscalingUrl(null);
-    }
-  };
 
   const handleReference = async (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -283,7 +304,9 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
         className="flex flex-col gap-6"
         onSubmit={(event) => {
           event.preventDefault();
-          if (canSubmit) generate(currentRequest());
+          if (canSubmit) {
+            generate(currentRequest(), seedsForRun(variations, lockedSeed));
+          }
         }}
       >
         <div className="flex flex-col gap-2">
@@ -377,8 +400,9 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
             ))}
           </ToggleGroup>
           <p className="text-muted-foreground text-xs">
-            Each variation uses a different seed and 1 credit; every result is
-            scan-checked and the best one is picked for you.
+            Each variation is its own image and uses 1 credit. Every image is
+            verified to scan before you see it, and the best one is picked for
+            you.
           </p>
         </div>
 
@@ -399,8 +423,7 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
                 value={negativePrompt}
               />
               <p className="text-muted-foreground text-xs">
-                Added to QRdx's defaults (blurry, low quality, text,
-                watermarks…).
+                Gemini is asked to keep these out of the image.
               </p>
             </div>
 
@@ -434,8 +457,8 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
                 value={seed}
               />
               <p className="text-muted-foreground text-xs">
-                The same seed and settings give the same image; variations use
-                seed, seed + 1, …
+                The same seed and settings give a similar image (Gemini can
+                still vary it); variations use seed, seed + 1, …
               </p>
             </div>
 
@@ -452,7 +475,7 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
               {reference ? (
                 <div className="flex items-center gap-3">
                   <img
-                    alt="Reference (grayscale)"
+                    alt="Reference"
                     className="size-16 rounded border object-cover"
                     src={reference}
                   />
@@ -481,10 +504,9 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
                 </Button>
               )}
               <p className="text-muted-foreground text-xs">
-                Optional. Its light and dark shapes (in grayscale) are blended
-                into the hidden QR guide to steer the composition; colors and
-                style still come from your prompt. It's resized in your browser
-                and sent to fal.ai inside that guide image.
+                Optional. A logo, photo or palette for Gemini to work into the
+                artwork: its colors and shapes carry over. It's resized in your
+                browser and sent to Google's Gemini API with your prompt.
               </p>
             </div>
           </div>
@@ -552,23 +574,21 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
         }}
         onRetryClearer={(variant) =>
           result &&
-          generate({
-            ...currentRequest(),
-            text: result.text,
-            visibility: Math.min(
-              ART_QR_VISIBILITY.max,
-              result.visibility + ART_QR_VISIBILITY.retryStep,
-            ),
-            creativity: result.creativity,
-            variations: 1,
-            seed: variant.seed,
-          })
+          generate(
+            {
+              ...currentRequest(),
+              text: result.text,
+              visibility: Math.min(
+                ART_QR_VISIBILITY.max,
+                result.visibility + ART_QR_VISIBILITY.retryStep,
+              ),
+              creativity: result.creativity,
+            },
+            [variant.seed],
+          )
         }
-        onUpscale={upscale}
         pendingVariations={pendingVariations}
         result={result}
-        upscaled={upscaled}
-        upscalingUrl={upscalingUrl}
       />
     </div>
   );

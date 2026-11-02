@@ -6,7 +6,10 @@ import { getIntegrationAvailability } from "@/lib/integration-availability";
 import { filterVisible } from "@/lib/integration-availability-rules";
 import { toAvailabilityView } from "@/lib/integration-availability-view";
 import { createMetadata } from "@/lib/metadata";
-import { IntegrationsDirectory } from "./components/integrations-directory";
+import {
+  IntegrationsDirectory,
+  IntegrationsDirectoryFallback,
+} from "./components/integrations-directory";
 import { IntegrationsHero } from "./components/integrations-hero";
 import { IntegrationsMore } from "./components/integrations-more";
 
@@ -34,6 +37,7 @@ export function generateMetadata(): Metadata {
 
 export default function IntegrationsPage() {
   const listed = listedIntegrations();
+  const slugs = listed.map((entry) => entry.slug);
   const { needsSetup } = toAvailabilityView(getIntegrationAvailability());
 
   return (
@@ -49,13 +53,19 @@ export default function IntegrationsPage() {
       <section
         id="directory"
         aria-label="All integrations"
-        className="scroll-mt-20 border-b px-6 py-12 md:px-10 md:py-16"
+        className="scroll-mt-20 border-b px-10 py-12 md:py-16"
       >
-        <Suspense fallback={<div className="min-h-[40rem]" />}>
-          <IntegrationsDirectory
-            slugs={listed.map((entry) => entry.slug)}
-            needsSetup={needsSetup}
-          />
+        {/* The fallback is the full, unfiltered list, so the server HTML
+            links every listed integration (crawlers don't run the filter). */}
+        <Suspense
+          fallback={
+            <IntegrationsDirectoryFallback
+              slugs={slugs}
+              needsSetup={needsSetup}
+            />
+          }
+        >
+          <IntegrationsDirectory slugs={slugs} needsSetup={needsSetup} />
         </Suspense>
       </section>
 

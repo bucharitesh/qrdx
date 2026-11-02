@@ -20,6 +20,11 @@ import { HttpError } from "@/lib/error-response";
 import { getPlanForScope, getPlanLimits } from "@/lib/plans";
 import type { ActiveScope } from "@/lib/scope";
 import {
+  findTakenSlugs,
+  isUniqueViolation,
+  scopeForDomain,
+} from "@/lib/slug-claims";
+import {
   checkImportRow,
   duplicateSlugLines,
   IMPORT_CHUNK_SIZE,
@@ -41,6 +46,8 @@ export const importPreviewSchema = z.object({
     .array(rowSchema)
     .min(1, "The file has no rows to import")
     .max(MAX_IMPORT_ROWS, `Import up to ${MAX_IMPORT_ROWS} rows at a time`),
+  /** The custom domain the codes go on (back-halves are checked there) */
+  domainId: z.string().trim().min(1).max(64).nullish(),
 });
 
 export const importChunkSchema = z.object({
@@ -55,10 +62,18 @@ interface CheckedRow {
   errors: string[];
 }
 
-/** File checks plus the server-only ones: destination rules and slug availability. */
-async function checkRows(rows: ImportRow[]): Promise<CheckedRow[]> {
+/**
+ * File checks plus the server-only ones: destination rules, the plan and
+ * back-half availability (on the custom domain the codes go on, or qrdx.dev).
+ */
+async function checkRows(
+  scope: ActiveScope,
+  rows: ImportRow[],
+  domainId: string | null,
+): Promise<CheckedRow[]> {
+  const onCustomDomain = Boolean(domainId);
   const checked = rows.map((input) => {
-    const { errors, normalized } = checkImportRow(input);
+    const { errors, normalized } = checkImportRow(input, { onCustomDomain });
     if (errors.length === 0) {
       const destination = destinationUrlSchema.safeParse(
         normalized.destinationUrl,
@@ -76,22 +91,21 @@ async function checkRows(rows: ImportRow[]): Promise<CheckedRow[]> {
   const slugs = checked.flatMap(({ row, errors }) =>
     row.slug && errors.length === 0 ? [row.slug] : [],
   );
-  const taken = new Set(
-    slugs.length > 0
-      ? (
-          await db
-            .select({ slug: qrCode.slug })
-            .from(qrCode)
-            .where(inArray(qrCode.slug, slugs))
-        ).map((row) => row.slug)
-      : [],
-  );
+  const customSlugs =
+    slugs.length === 0 ||
+    getPlanLimits(await getPlanForScope(scope)).customSlugs;
+  const taken =
+    slugs.length > 0 && customSlugs
+      ? await findTakenSlugs(slugs, domainId)
+      : new Set<string>();
   for (const item of checked) {
     if (!item.row.slug) continue;
-    if (duplicates.has(item.row.line)) {
-      item.errors.push("This slug appears earlier in the file");
+    if (!customSlugs) {
+      item.errors.push("Custom back-halves are part of Pro and Business");
+    } else if (duplicates.has(item.row.line)) {
+      item.errors.push("This back-half appears earlier in the file");
     } else if (taken.has(item.row.slug)) {
-      item.errors.push("This slug is already in use");
+      item.errors.push("This back-half is already in use");
     }
   }
   return checked;
@@ -144,9 +158,10 @@ export interface ImportPreview {
 export async function previewImport(
   scope: ActiveScope,
   rows: ImportRow[],
+  domainId: string | null = null,
 ): Promise<ImportPreview> {
   const [checked, usage, folders, tags] = await Promise.all([
-    checkRows(rows),
+    checkRows(scope, rows, domainId),
     getCodeUsage(scope),
     existingFolderPaths(scope),
     existingTagNames(scope),
@@ -188,12 +203,6 @@ export interface ImportRowResult {
   code?: { id: string; shortLink: string };
 }
 
-const isUniqueViolation = (error: unknown) =>
-  typeof error === "object" &&
-  error !== null &&
-  ((error as { code?: string }).code === "23505" ||
-    /duplicate key|unique/i.test(String((error as Error).message)));
-
 /**
  * Creates the valid rows of one chunk (plan limits apply as for any create),
  * then files them into folders, tags them and applies custom slugs.
@@ -203,7 +212,7 @@ export async function importChunk(
   rows: ImportRow[],
   domainId: string | null,
 ): Promise<ImportRowResult[]> {
-  const checked = await checkRows(rows);
+  const checked = await checkRows(scope, rows, domainId);
   const results = new Map<number, ImportRowResult>();
   const valid: NormalizedImportRow[] = [];
   for (const item of checked) {
@@ -302,7 +311,7 @@ export async function importChunk(
         try {
           await db
             .update(qrCode)
-            .set({ slug: row.slug })
+            .set({ slug: row.slug, slugScope: scopeForDomain(domainId) })
             .where(and(eq(qrCode.id, code.id), scopeWhere(scope)));
           return {
             ...code,
@@ -315,7 +324,7 @@ export async function importChunk(
           if (!isUniqueViolation(error)) throw error;
           notes.set(
             row.line,
-            `Slug ${row.slug} was taken in the meantime, so the code got ${code.slug}`,
+            `The back-half ${row.slug} was taken in the meantime, so the code got ${code.slug}`,
           );
           return code;
         }

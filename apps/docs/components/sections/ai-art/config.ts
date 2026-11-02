@@ -11,7 +11,11 @@ export const ART_NEGATIVE_PROMPT_MAX_LENGTH = 300;
 export const ART_MAX_VARIATIONS = 4;
 export const ART_MAX_SEED = 4_294_967_295;
 
-/** QR visibility 0 = most artistic, 100 = the code shows most clearly. */
+/**
+ * QR visibility 0 = most artistic, 100 = the code shows most clearly. It sets
+ * how strictly the prompt asks Gemini to keep the modules, and how strongly
+ * the Image QR blend shows the code when Gemini's image doesn't scan.
+ */
 export const ART_QR_VISIBILITY = {
   min: 0,
   max: 100,
@@ -29,25 +33,10 @@ export const ART_CREATIVITY = {
   default: 45,
 } as const;
 
-/** ControlNet conditioning scale at visibility 0 and 100. */
-const CONDITIONING_SCALE_RANGE = { min: 0.8, max: 2 } as const;
-/** Classifier-free guidance at creativity 0 (strict) and 100 (free). */
-const GUIDANCE_RANGE = { strict: 12, free: 4 } as const;
-
-const clampPercent = (value: number) => Math.min(Math.max(value, 0), 100) / 100;
-const round2 = (value: number) => Math.round(value * 100) / 100;
-
-/** "QR visibility" slider → ControlNet `controlnet_conditioning_scale`. */
-export function visibilityToConditioningScale(visibility: number): number {
-  const { min, max } = CONDITIONING_SCALE_RANGE;
-  return round2(min + clampPercent(visibility) * (max - min));
-}
-
-/** "Creativity" slider → classifier-free `guidance_scale`. */
-export function creativityToGuidanceScale(creativity: number): number {
-  const { strict, free } = GUIDANCE_RANGE;
-  return round2(strict - clampPercent(creativity) * (strict - free));
-}
+/** Delivered artwork, square, in pixels. */
+export const ART_IMAGE_SIZE = 1024;
+/** The print-size download, resampled in the browser and scan-checked again. */
+export const ART_PRINT_SIZE = 2048;
 
 /** Seeds for a run: consecutive from a locked seed, else random. */
 export function seedsForRun(
@@ -126,41 +115,23 @@ export const aiArtRequestSchema = z.object({
     .min(ART_CREATIVITY.min)
     .max(ART_CREATIVITY.max)
     .default(ART_CREATIVITY.default),
-  variations: z.number().int().min(1).max(ART_MAX_VARIATIONS).default(1),
-  /** Locked seed: variations use seed, seed + 1, … */
+  /** One image per request; variations send one request per seed. */
   seed: z.number().int().min(0).max(ART_MAX_SEED).optional(),
   reference: artReferenceSchema.optional(),
 });
 export type AIArtRequest = z.input<typeof aiArtRequestSchema>;
 
-/**
- * fal.ai's result hosts. Only these are sent back for upscaling, so the
- * upscaler never fetches an arbitrary URL on a user's behalf.
- */
-export function isFalResultUrl(value: string): boolean {
-  try {
-    const url = new URL(value);
-    if (url.protocol !== "https:") return false;
-    return (
-      url.hostname === "fal.media" ||
-      url.hostname.endsWith(".fal.media") ||
-      (url.hostname === "storage.googleapis.com" &&
-        url.pathname.startsWith("/falserverless/"))
-    );
-  } catch {
-    return false;
-  }
-}
-
-export const aiArtUpscaleRequestSchema = z.object({
-  imageUrl: z.url().max(2048),
-});
-
 export interface AIArtVariant {
+  /** The PNG or JPEG itself, as a data: URL (nothing is stored) */
   imageUrl: string;
-  width: number | null;
-  height: number | null;
+  width: number;
+  height: number;
   seed: number;
+  /**
+   * Gemini's own image didn't pass the scan check, so QRdx blended it into
+   * the code (Image QR) to make it scan
+   */
+  blended: boolean;
 }
 
 export interface AIArtCredits {
@@ -181,20 +152,12 @@ export interface AIArtCreditsResponse {
   credits: AIArtCredits | null;
 }
 
+/** One generated image (POST /api/ai/art). */
 export interface AIArtResult {
-  variants: AIArtVariant[];
-  /** Variants that failed and were refunded */
-  failed: number;
-  /** Exactly what the QR code encodes, for the client-side scan check. */
+  variant: AIArtVariant;
+  /** Exactly what the QR code encodes, for the client-side scan score. */
   text: string;
   visibility: number;
   creativity: number;
-  credits: AIArtCredits | null;
-}
-
-export interface AIArtUpscaleResult {
-  imageUrl: string;
-  width: number | null;
-  height: number | null;
   credits: AIArtCredits | null;
 }

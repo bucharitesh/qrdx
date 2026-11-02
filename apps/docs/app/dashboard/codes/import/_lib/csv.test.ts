@@ -97,7 +97,7 @@ describe("checkImportRow", () => {
         title: "x".repeat(101),
         folder: "a/b/c/d/e/f",
         tags: Array.from({ length: 11 }, (_, i) => `t${i}`).join(","),
-        slug: "too-long-slug",
+        slug: "-bad-",
       }),
     );
     assert.equal(errors.length, 5);
@@ -122,6 +122,42 @@ describe("checkImportRow", () => {
       checkImportRow(input({ slug: "Pricing" })).errors[0] ?? "",
       /reserved/,
     );
+    // On a custom domain only that domain's own paths are reserved.
+    assert.deepEqual(
+      checkImportRow(input({ slug: "Pricing" }), { onCustomDomain: true })
+        .errors,
+      [],
+    );
+    assert.match(
+      checkImportRow(input({ slug: "api" }), { onCustomDomain: true })
+        .errors[0] ?? "",
+      /reserved/,
+    );
+  });
+
+  it("accepts custom back-halves of 3 to 64 characters", () => {
+    for (const slug of [
+      "abc",
+      "spring-menu",
+      "Spring_Menu_2026",
+      "a".repeat(64),
+    ]) {
+      assert.deepEqual(checkImportRow(input({ slug })).errors, [], slug);
+    }
+    for (const slug of [
+      "ab",
+      "a".repeat(65),
+      "-menu",
+      "menu-",
+      "menü",
+      "a/b",
+    ]) {
+      assert.match(
+        checkImportRow(input({ slug })).errors[0] ?? "",
+        /Back-half/,
+        slug,
+      );
+    }
   });
 });
 

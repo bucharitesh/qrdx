@@ -73,10 +73,7 @@ export function HubPage({
               {group.description}
             </p>
           </SectionHeader>
-          <CardGrid
-            count={group.items.length}
-            className="w-full px-6 md:px-10 py-10"
-          >
+          <CardGrid count={group.items.length} className="w-full px-10 py-10">
             {group.items.map((item) => (
               <LinkCard
                 key={item.slug}
@@ -92,7 +89,7 @@ export function HubPage({
 
       <section
         aria-label="Related guides and tools"
-        className="w-full px-6 md:px-10 py-10"
+        className="w-full px-10 py-10"
       >
         <CardGrid count={links.length}>
           {links.map((link) => (

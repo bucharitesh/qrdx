@@ -128,19 +128,15 @@ function ElsewhereList({ entries }: { entries: IntegrationCatalogEntry[] }) {
   );
 }
 
-/**
- * Category filter (sidebar on desktop, chips on mobile) and search, both in
- * the URL. Lists the third-party integrations this server can offer.
- */
-export function IntegrationsDirectory({
-  slugs,
-  needsSetup = {},
-}: {
+interface DirectoryProps {
   /** Listed integrations to show, in display order (decided on the server). */
   slugs: string[];
   /** Local dev only: slug → env variable names it still needs. */
   needsSetup?: Record<string, string[]>;
-}) {
+}
+
+/** The listed entries, their categories and the filter ids ("all" first). */
+function useListedEntries(slugs: string[]) {
   const entries = useMemo(
     () =>
       slugs
@@ -153,6 +149,74 @@ export function IntegrationsDirectory({
     () => ["all", ...categories.map((category) => category.id)] as Filter[],
     [categories],
   );
+  return { entries, categories, filters };
+}
+
+/**
+ * Category filter (sidebar on desktop, chips on mobile) and search, both in
+ * the URL. Lists the third-party integrations this server can offer.
+ */
+export function IntegrationsDirectory({ slugs, needsSetup }: DirectoryProps) {
+  const listed = useListedEntries(slugs);
+  const [filter, setFilter] = useQueryState(
+    "category",
+    parseAsStringLiteral(listed.filters).withDefault("all"),
+  );
+  const [query, setQuery] = useQueryState(
+    "q",
+    parseAsString.withDefault("").withOptions({ throttleMs: 200 }),
+  );
+  return (
+    <DirectoryView
+      {...listed}
+      needsSetup={needsSetup}
+      filter={filter}
+      query={query}
+      setFilter={setFilter}
+      setQuery={setQuery}
+    />
+  );
+}
+
+const ignore = () => {};
+
+/**
+ * The unfiltered directory, for the server HTML: the URL-driven one reads
+ * search params, so it only renders in the browser. Every card link is in
+ * the page for crawlers and before hydration; filtering takes over after.
+ */
+export function IntegrationsDirectoryFallback({
+  slugs,
+  needsSetup,
+}: DirectoryProps) {
+  return (
+    <DirectoryView
+      {...useListedEntries(slugs)}
+      needsSetup={needsSetup}
+      filter="all"
+      query=""
+      setFilter={ignore}
+      setQuery={ignore}
+    />
+  );
+}
+
+function DirectoryView({
+  entries,
+  categories,
+  filters,
+  needsSetup = {},
+  filter,
+  query,
+  setFilter,
+  setQuery,
+}: ReturnType<typeof useListedEntries> & {
+  needsSetup?: Record<string, string[]>;
+  filter: Filter;
+  query: string;
+  setFilter: (next: Filter | null) => unknown;
+  setQuery: (next: string | null) => unknown;
+}) {
   const counts = useMemo(
     () =>
       Object.fromEntries(
@@ -165,15 +229,6 @@ export function IntegrationsDirectory({
         ]),
       ) as Record<Filter, number>,
     [filters, entries],
-  );
-
-  const [filter, setFilter] = useQueryState(
-    "category",
-    parseAsStringLiteral(filters).withDefault("all"),
-  );
-  const [query, setQuery] = useQueryState(
-    "q",
-    parseAsString.withDefault("").withOptions({ throttleMs: 200 }),
   );
 
   const results = useMemo(
@@ -269,7 +324,7 @@ export function IntegrationsDirectory({
           <div
             role="toolbar"
             aria-label="Integration categories"
-            className="-mx-6 flex snap-x gap-1 overflow-x-auto px-6 [mask-image:linear-gradient(to_right,transparent,black_24px,black_calc(100%-24px),transparent)] [scrollbar-width:none] md:-mx-10 md:px-10 lg:hidden"
+            className="-mx-10 flex snap-x gap-1 overflow-x-auto px-10 [mask-image:linear-gradient(to_right,transparent,black_24px,black_calc(100%-24px),transparent)] [scrollbar-width:none] lg:hidden"
           >
             {filters.map((item) => (
               <FilterButton
@@ -317,11 +372,7 @@ export function IntegrationsDirectory({
         ) : (
           <Card className="items-center gap-4 px-6 py-10 text-center shadow-xs dark:shadow-none">
             {elsewhere.length === 0 && (
-              <HairlineFigure
-                figure="Loupe"
-                surface="card"
-                className="aspect-square w-28"
-              />
+              <HairlineFigure figure="Plug" className="aspect-square w-28" />
             )}
             <div className="flex flex-col gap-1">
               <p className="font-medium">

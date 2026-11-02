@@ -23,7 +23,7 @@ Endpoint URLs must be public `https://` host names. IP addresses, `localhost` an
 
 | Event | When | Notes |
 | --- | --- | --- |
-| `scan.created` | A dynamic code is scanned | Batched: one request per minute per endpoint with up to 100 scans and the exact `count` |
+| `scan.created` | A dynamic code is scanned | Batched: at most one request per minute per endpoint, sent within a few minutes, with up to 100 scans and the exact `count` |
 | `scan.milestone` | A code's 1st scan, then 10, 100, 500, 1,000, 5,000, 10,000, 50,000, 100,000, 500,000 and 1,000,000 scans, then every million | Fires once per milestone |
 | `code.created` | A dynamic code is created (dashboard or API) | One event per code, also for bulk creation |
 | `code.updated` | A code's destination, title, design or short-link domain changes | `changes` lists the fields |
@@ -135,7 +135,7 @@ Rotating the secret takes effect immediately: the old secret stops verifying, so
 
 ## Retries and the delivery log
 
-Respond with any `2xx` status within 10 seconds. Anything else (an error status, a redirect, a timeout, an unreachable host) counts as a failure, and QRdx retries with growing waits: after about 1 minute, 4 minutes, 16 minutes, 1 hour, 4 hours, 17 hours and 24 hours. That's 8 attempts over roughly two days, after which the delivery is marked **Failed**.
+Respond with any `2xx` status within 10 seconds. Anything else (an error status, a redirect, a timeout, an unreachable host) counts as a failure, and QRdx retries with growing waits of at least 1 minute, 4 minutes, 16 minutes, 1 hour, 4 hours, 17 hours and 24 hours. Each retry goes out within a few minutes of its wait ending. That's 8 attempts over roughly two days, after which the delivery is marked **Failed**.
 
 Each endpoint's **Deliveries** page lists the last 50 deliveries with their status, attempts, last error and payload. **Retry** re-sends one immediately (also for delivered ones). Deliveries are kept for 30 days.
 
@@ -178,9 +178,13 @@ Without Business the subscribe call returns `402 PLAN_REQUIRED`. A `scan.created
 
 ## Self-hosting
 
-Deliveries are sent right away; retries and scan batches whose minute has ended are sent by a scheduled job. On Vercel, `apps/docs/vercel.json` runs it once a day, which works on every plan; on Vercel Pro you can change the schedule to every 5 minutes (`*/5 * * * *`) for faster retries. Elsewhere, call the job yourself with the `CRON_SECRET` you set in the environment:
+Deliveries are sent right away; retries and scan batches whose minute has ended are sent by a scheduled job. QRdx runs it every 5 minutes from a GitHub Actions workflow, which works on Vercel's free Hobby plan, and `apps/docs/vercel.json` also runs it in full once a day. GitHub can start scheduled runs late, so expect retries within a few minutes rather than to the minute.
+
+To do the same, copy `.github/workflows/webhook-worker.yml`, add your `CRON_SECRET` as an Actions secret and your job URL as the `WEBHOOK_WORKER_URL` variable. Or call the job from any scheduler with the `CRON_SECRET` you set in the environment:
 
 ```bash
 # every 1-5 minutes
 curl -H "Authorization: Bearer $CRON_SECRET" https://your-host/api/cron/webhooks
 ```
+
+With `?source=github` added to the URL, the job first checks a small marker in Upstash Redis and returns `{"skipped": true}` without querying the database when nothing is due, so a database that scales to zero can stay asleep (without Upstash, it always runs the full job). Keep one call a day without it: that run always does the full job and repairs the marker.

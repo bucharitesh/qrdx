@@ -34,7 +34,7 @@ export const dynamicParams = false;
 function getPublishedPage(slug: string): BlogPage {
   const page = blogSource.getPage([slug]);
 
-  if (!page || !page.data.published) {
+  if (!page?.data.published) {
     notFound();
   }
 
@@ -219,7 +219,7 @@ export default async function BlogPostPage({ params }: PageProps) {
           </div>
         </header>
 
-        <div className="px-5 md:px-10 w-full border-b">
+        <div className="px-6 md:px-10 w-full border-b">
           <div className="md:border-x md:mx-10 relative">
             <div className="absolute hidden lg:block top-0 -left-4 md:-left-14 h-full w-4 md:w-14 text-foreground/5 bg-size-[10px_10px] bg-[repeating-linear-gradient(315deg,currentColor_0_1px,#0000_0_50%)]" />
             <div className="absolute hidden lg:block top-0 -right-4 md:-right-14 h-full w-4 md:w-14 text-foreground/5 bg-size-[10px_10px] bg-[repeating-linear-gradient(315deg,currentColor_0_1px,#0000_0_50%)]" />
@@ -240,7 +240,7 @@ export default async function BlogPostPage({ params }: PageProps) {
                   </div>
                 )}
                 {toc && toc.length > 0 && <BlogTocMobile items={toc} />}
-                <div className="prose prose-neutral max-w-none transition-all px-5 py-10 sm:px-12">
+                <div className="prose prose-neutral max-w-none transition-all px-4 py-10 sm:px-12">
                   <MDX components={getMDXComponents()} />
                 </div>
               </div>

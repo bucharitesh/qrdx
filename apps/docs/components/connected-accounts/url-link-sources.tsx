@@ -13,6 +13,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { emitSound } from "@/components/editor/sound";
 import { IntegrationLogo } from "@/components/sections/integrations/integration-logo";
+import { linkSourcesHint } from "@/lib/availability-copy";
 import type { ConnectedProvider } from "@/lib/connected-accounts/client";
 import { useQREditorStore } from "@/store/editor-store";
 import type { UrlContent } from "@/types/qr-content";
@@ -91,7 +92,9 @@ function ProviderMenu({
 /**
  * Under the website field: shorten the address with a connected Bitly,
  * Rebrandly or Short.io account, or replace it with the share link of a
- * Dropbox, OneDrive, Box or Notion item. Hidden when signed out.
+ * Dropbox, OneDrive, Box or Notion item. Only providers this deployment can
+ * connect are named (production leaves out the ones that need setup), and
+ * nothing shows when there are none. Hidden when signed out.
  */
 export function UrlLinkSources() {
   const providers = useConnections();
@@ -117,10 +120,13 @@ export function UrlLinkSources() {
   };
 
   if (shorteners.length === 0 && pickers.length === 0) {
+    const hint = linkSourcesHint(
+      providers.filter((provider) => provider.configured),
+    );
+    if (!hint) return null;
     return (
       <p className="text-muted-foreground text-xs text-pretty">
-        Shorten with Bitly, Rebrandly or Short.io, or pick a file from Dropbox,
-        OneDrive, Box or Notion:{" "}
+        {hint}:{" "}
         <Link className={linkClass} href="/settings/integrations">
           connect an account
         </Link>

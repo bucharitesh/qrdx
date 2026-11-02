@@ -17,6 +17,7 @@ import {
   initialsOf,
 } from "@/lib/account/avatar";
 import { removeAvatar, updateProfileName, uploadAvatar } from "../_lib/actions";
+import { ChangeEmailDialog } from "./change-email-dialog";
 import { SettingsRow, SettingsSection } from "./settings-section";
 
 export interface ProfileView {
@@ -27,6 +28,8 @@ export interface ProfileView {
   memberSince: string;
   /** R2 is configured, so pictures can be uploaded */
   canUpload: boolean;
+  /** Signed in within the last day, so the email can be changed now */
+  recentSignIn: boolean;
 }
 
 /** Center-crops to a square and re-encodes (which also drops EXIF/GPS data). */
@@ -290,7 +293,18 @@ export function ProfileSection({ profile }: { profile: ProfileView }) {
         description="Sign-in codes and team invitations go here."
         label="Email"
       >
-        <div className="flex flex-wrap items-center gap-2">
+        <EmailField profile={profile} />
+      </SettingsRow>
+    </SettingsSection>
+  );
+}
+
+function EmailField({ profile }: { profile: ProfileView }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <div className="flex max-w-md flex-wrap items-center gap-x-3 gap-y-2">
+        <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
           <span className="text-sm font-medium break-all">{profile.email}</span>
           {profile.emailVerified ? (
             <Badge variant="secondary">
@@ -301,18 +315,19 @@ export function ProfileSection({ profile }: { profile: ProfileView }) {
             <Badge variant="outline">Not verified</Badge>
           )}
         </div>
-        <p className="text-muted-foreground mt-2 text-xs text-pretty">
-          Your email address can't be changed here. To move your account to
-          another address, email{" "}
-          <a
-            className="hover:text-foreground underline underline-offset-4"
-            href="mailto:support@qrdx.dev"
-          >
-            support@qrdx.dev
-          </a>{" "}
-          from this one. Member since {profile.memberSince}.
-        </p>
-      </SettingsRow>
-    </SettingsSection>
+        <Button onClick={() => setOpen(true)} size="sm" variant="outline">
+          Change
+        </Button>
+      </div>
+      <p className="text-muted-foreground mt-2 text-xs text-pretty">
+        Member since {profile.memberSince}.
+      </p>
+      <ChangeEmailDialog
+        currentEmail={profile.email}
+        onOpenChange={setOpen}
+        open={open}
+        recentSignIn={profile.recentSignIn}
+      />
+    </>
   );
 }

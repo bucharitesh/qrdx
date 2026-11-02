@@ -71,7 +71,7 @@ export async function createCheckout(input: {
     const customer = await getOrCreateCustomer(user);
     const checkout = await polar.checkouts.create({
       products: [productId],
-      customerId: customer?.id,
+      customer_id: customer?.id,
       metadata: {
         plan,
         interval,
@@ -79,8 +79,8 @@ export async function createCheckout(input: {
         // PostHog; without analytics consent it is an anonymous count.
         ...((await hasAnalyticsConsent()) ? { analytics_consent: "1" } : {}),
       },
-      successUrl: `${baseUrl.origin}/success?checkout_id={CHECKOUT_ID}`,
-      returnUrl: `${baseUrl.origin}/pricing`,
+      success_url: `${baseUrl.origin}/success?checkout_id={CHECKOUT_ID}`,
+      return_url: `${baseUrl.origin}/pricing`,
     });
 
     return { url: checkout.url };

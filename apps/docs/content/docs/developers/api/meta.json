@@ -1,0 +1,30 @@
+{
+  "$schema": "../../../../.source/json-schema/docs.meta.json",
+  "title": "API reference",
+  "icon": "FileCode",
+  "pages": [
+    "---QR images---",
+    "get-qr-image",
+    "---Codes---",
+    "list-codes",
+    "create-codes",
+    "get-code",
+    "update-code",
+    "delete-code",
+    "---Scans---",
+    "get-code-scans",
+    "---Conversions---",
+    "create-conversion",
+    "---Hooks---",
+    "list-hooks",
+    "create-hook",
+    "get-hook",
+    "delete-hook",
+    "get-hook-samples",
+    "---Themes---",
+    "list-themes",
+    "get-theme",
+    "---Profile---",
+    "get-profile"
+  ]
+}

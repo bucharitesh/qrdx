@@ -1,0 +1,56 @@
+# Calls the webhook worker (/api/cron/webhooks) every 5 minutes, so webhook
+# retries, closed scan batches and data-sync retries go out within a few
+# minutes. Vercel Hobby only allows daily crons (apps/docs/vercel.json keeps
+# that daily full run); Actions minutes are free for this public repo.
+#
+# Required secret: CRON_SECRET (Settings → Secrets and variables → Actions),
+# the same value as CRON_SECRET in the Vercel project. Until it exists, runs
+# skip with a notice instead of failing.
+# Optional variable: WEBHOOK_WORKER_URL, the job's full URL without a query,
+# for self-hosting (default https://qrdx.dev/api/cron/webhooks).
+#
+# ?source=github makes the route check a cheap Upstash marker first and
+# return {"skipped":true} without touching Postgres while nothing is due, so
+# Neon can scale to zero. GitHub runs schedules from the default branch only
+# and can start them late; nothing here depends on exact times.
+name: Webhook worker
+
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+
+# One call at a time; a late run waits for the previous one.
+concurrency:
+  group: webhook-worker
+  cancel-in-progress: false
+
+permissions: {}
+
+jobs:
+  call:
+    name: Call the webhook worker
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      # The response body isn't printed: this repo's logs are public.
+      - name: Call /api/cron/webhooks
+        shell: bash
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+          WORKER_URL: ${{ vars.WEBHOOK_WORKER_URL || 'https://qrdx.dev/api/cron/webhooks' }}
+        run: |
+          if [ -z "$CRON_SECRET" ]; then
+            echo "::notice::CRON_SECRET isn't set, so the webhook worker wasn't called. Add it under Settings → Secrets and variables → Actions (the same value as in Vercel), then re-run this workflow."
+            echo "Skipped: the CRON_SECRET secret isn't set." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          body=$(curl --fail --silent --show-error \
+            --max-time 90 --retry 2 --retry-delay 10 \
+            -H "Authorization: Bearer $CRON_SECRET" \
+            "$WORKER_URL?source=github")
+          if [ "$(jq -r '.skipped // false' <<<"$body")" = "true" ]; then
+            echo "Nothing was due."
+          else
+            echo "The worker ran."
+          fi

@@ -221,7 +221,7 @@ export default async function FormResponsesPage({
 
       {items.length === 0 ? (
         <Empty className="border">
-          <HairlineFigure className="aspect-square w-32" figure="Stack" />
+          <HairlineFigure className="aspect-square w-32" figure="PageForm" />
           <EmptyHeader>
             <EmptyTitle>No responses yet</EmptyTitle>
             <EmptyDescription>

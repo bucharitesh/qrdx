@@ -1,5 +1,7 @@
-import type { Plugin } from "esbuild";
 import { defineConfig, type Options } from "tsup";
+
+// esbuild's Plugin type, via tsup (esbuild is tsup's dependency, not ours).
+type Plugin = NonNullable<Options["esbuildPlugins"]>[number];
 
 // QRCodeCanvas needs client-only hooks, so it is built as its own entry that
 // keeps its "use client" directive. The main entry imports that built file

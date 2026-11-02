@@ -9,6 +9,7 @@ import {
   useState,
   useSyncExternalStore,
 } from "react";
+import { useCspNonce } from "@/components/csp-nonce";
 import {
   getClientSeason,
   ringInYear,
@@ -211,6 +212,7 @@ export function SeasonBar({
 }: {
   serverSeason: BarSeason | null;
 }) {
+  const nonce = useCspNonce();
   const [season, setSeason] = useState<BarSeason | null>(serverSeason);
   // True only while hydrating server HTML, so the script is never created client-side.
   const hydrating = useSyncExternalStore(
@@ -227,7 +229,11 @@ export function SeasonBar({
   return (
     <>
       {hydrating && serverSeason && (
-        <script dangerouslySetInnerHTML={{ __html: PRE_PAINT_SCRIPT }} />
+        <script
+          dangerouslySetInnerHTML={{ __html: PRE_PAINT_SCRIPT }}
+          nonce={nonce}
+          suppressHydrationWarning
+        />
       )}
       {season && (
         <aside

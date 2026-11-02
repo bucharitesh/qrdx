@@ -30,7 +30,7 @@ export function DocsNotFound() {
   return (
     // [grid-area:main] places it in the docs layout grid, like DocsPage does.
     <div className="mx-auto flex w-full max-w-xl flex-1 flex-col items-center justify-center gap-6 px-6 py-16 text-center [grid-area:main]">
-      <HairlineFigure className="h-32 w-44" figure="Query" />
+      <HairlineFigure className="h-32 w-44" figure="LostCode" />
       <div className="flex flex-col gap-2">
         <h1 className="text-2xl font-semibold tracking-tight md:text-3xl">
           This page isn't in the docs

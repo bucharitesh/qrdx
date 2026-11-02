@@ -4,10 +4,12 @@ import { database as db, webhookDelivery } from "@repo/database";
 import { getCatalogBySurface } from "@repo/integrations/src/catalog";
 import { redis } from "@repo/rate-limit";
 import { and, count, eq, gte, lte, min, sql } from "drizzle-orm";
-import { type CronJob, type CronRun, getCronRuns } from "@/lib/cron-runs";
+import { type CronJob, type CronStatus, getCronRuns } from "@/lib/cron-runs";
 import { isOutboundDeliveryAllowed } from "@/lib/delivery-guard";
 import { isEmailConfigured } from "@/lib/email/send";
 import { env } from "@/lib/env";
+import { featureContext, getFeatures } from "@/lib/feature-availability";
+import { FEATURE_IDS, FEATURE_RULES } from "@/lib/feature-availability-rules";
 import { getIntegrationAvailability } from "@/lib/integration-availability";
 import { headObject, isStorageConfigured } from "@/lib/storage/r2";
 import { cached, withTimeout } from "./cache";
@@ -172,7 +174,7 @@ export function getIntegrationHealth(): IntegrationAvailabilityRow[] {
 
 // ─── Cron and webhook backlog ────────────────────────────────────────────────
 
-export function getCronHealth(): Promise<Record<CronJob, CronRun | null>> {
+export function getCronHealth(): Promise<Record<CronJob, CronStatus>> {
   return cached("health:cron", TTL_MS, () =>
     withTimeout(TIMEOUT_MS, () => getCronRuns()),
   );
@@ -231,40 +233,41 @@ export function getBuildInfo() {
   };
 }
 
-/** Optional features: whether each is configured (names only). */
+/**
+ * Optional features: whether each is configured (names only). The feature
+ * rows come from lib/feature-availability-rules.ts, the same rules that
+ * decide what the site offers.
+ */
 export function getConfiguration(): {
   name: string;
   on: boolean;
   vars: string;
 }[] {
   const set = (value: string | undefined) => Boolean(value);
+  const ctx = featureContext();
+  const features = getFeatures();
   return [
-    {
-      name: "Cron secret",
-      on: set(env.CRON_SECRET),
-      vars: "CRON_SECRET",
-    },
+    ...FEATURE_IDS.map((id) => {
+      const rule = FEATURE_RULES[id];
+      const names = rule.requires(ctx);
+      return {
+        name: rule.name,
+        on: features[id],
+        vars:
+          [
+            ...names,
+            ...(id === "aiArt" ? ["AI_ART_ENABLED (0 switches it off)"] : []),
+          ].join(", ") ||
+          (id === "customDomains"
+            ? "None off Vercel (DNS TXT verification)"
+            : "None needed here"),
+      };
+    }),
     {
       name: "Integration token encryption",
       on: set(env.INTEGRATION_ENCRYPTION_KEY),
       vars: "INTEGRATION_ENCRYPTION_KEY",
     },
-    {
-      name: "Custom domains (Vercel)",
-      on: set(env.VERCEL_API_TOKEN) && set(env.VERCEL_PROJECT_ID),
-      vars: "VERCEL_API_TOKEN, VERCEL_PROJECT_ID",
-    },
-    {
-      name: "Safe Browsing (Web Risk)",
-      on: set(env.WEB_RISK_API_KEY),
-      vars: "WEB_RISK_API_KEY",
-    },
-    {
-      name: "Turnstile",
-      on: set(env.TURNSTILE_SECRET_KEY),
-      vars: "TURNSTILE_SECRET_KEY",
-    },
-    { name: "AI QR art (fal.ai)", on: set(env.FAL_KEY), vars: "FAL_KEY" },
     {
       name: "Polar webhooks",
       on: set(env.POLAR_WEBHOOK_SECRET),

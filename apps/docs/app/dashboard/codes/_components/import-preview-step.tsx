@@ -22,6 +22,7 @@ import {
 } from "iconsax-reactjs";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
+import { useAvailability } from "@/components/availability-provider";
 import { track } from "@/lib/analytics";
 import { MigrateApiError, type MigrateClient } from "@/lib/migrate/client";
 import { FILE_PRESETS } from "@/lib/migrate/files";
@@ -52,10 +53,13 @@ const STATUS_TEXT: Record<PlannedItem["status"], string> = {
 const QRDX_DOMAIN_TEXT = {
   verified: "is verified in QRdx: the codes go on it right away.",
   pending:
-    "is added in QRdx but not verified yet. The back-halves are claimed now; after you move DNS and verify, attach the codes from the summary.",
+    "is added in QRdx but not verified yet. The codes go on it now and open there once you move its DNS to QRdx and verify it.",
   missing:
-    "isn't in QRdx yet. The back-halves are claimed now; add the domain on the Domains page, move DNS, verify, then attach the codes from the summary.",
+    "isn't in QRdx yet, so its back-halves are kept on qrdx.dev. To keep them on the domain itself, add it on the Domains page first.",
 } as const;
+
+/** Select value for "keep back-halves on qrdx.dev only". */
+const SHARED_ONLY = "__qrdx";
 
 /** Domains a customer could own (not a provider's shared or code domains). */
 function ownDomains(provider: ProviderId, domains: string[]) {
@@ -82,6 +86,8 @@ export function PreviewStep({
   const openGetProDialog = useGetProDialogStore(
     (state) => state.openGetProDialog,
   );
+  // No Domains link where custom domains can't be added.
+  const { showsPath } = useAvailability();
   const [folderName, setFolderName] = useState(defaultFolderName(provider));
   // Plan options (the folder name doesn't change the plan).
   const [options, setOptions] = useState<ImportOptions>({
@@ -89,6 +95,7 @@ export function PreviewStep({
     carryTags: true,
     includeDuplicates: false,
     backHalfDomain: null,
+    keepBackHalves: false,
     useSuggestions: true,
     limit: null,
   });
@@ -169,6 +176,10 @@ export function PreviewStep({
 
   const creates = preview?.creates ?? 0;
   const limited = (preview?.overLimit ?? 0) > 0;
+  const keeping = options.keepBackHalves || options.backHalfDomain !== null;
+  // Unknown until the first preview: assume allowed, the preview corrects it.
+  const canKeep = preview?.canKeepBackHalves ?? true;
+  const withBackHalves = links.some((link) => link.backHalf);
 
   return (
     <StepLayout
@@ -330,31 +341,47 @@ export function PreviewStep({
             </span>
           </label>
 
-          {branded.length > 0 && (
+          {withBackHalves && (
             <div className="space-y-3 p-4">
-              <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                <label
-                  className="flex flex-1 items-center gap-2.5 text-sm font-medium"
-                  htmlFor="migrate-back-halves"
-                >
-                  <Checkbox
-                    checked={options.backHalfDomain !== null}
-                    id="migrate-back-halves"
-                    disabled={preview?.backHalves?.canUse === false}
-                    onCheckedChange={(value) =>
+              <label
+                className="flex items-center gap-2.5 text-sm font-medium"
+                htmlFor="migrate-back-halves"
+              >
+                <Checkbox
+                  checked={keeping}
+                  disabled={!(canKeep || keeping)}
+                  id="migrate-back-halves"
+                  onCheckedChange={(value) =>
+                    set({
+                      keepBackHalves: value === true,
+                      backHalfDomain:
+                        value === true ? (branded[0] ?? null) : null,
+                    })
+                  }
+                />
+                <Global aria-hidden className="size-4 text-foreground/70" />
+                Keep the original back-halves
+                {!canKeep && (
+                  <span className="text-muted-foreground rounded-full border px-1.5 py-px text-[11px] font-medium">
+                    Pro
+                  </span>
+                )}
+              </label>
+              <p className="text-muted-foreground pl-6 text-xs">
+                Each code keeps its old back-half when it's free, so
+                bit.ly/spring-menu becomes qrdx.dev/q/spring-menu. The others
+                get a generated one, listed below.
+              </p>
+              {keeping && branded.length > 0 && (
+                <div className="flex flex-col gap-2 pl-6 sm:flex-row sm:items-center">
+                  <span className="text-sm">Links on</span>
+                  <Select
+                    onValueChange={(value) =>
                       set({
-                        backHalfDomain:
-                          value === true ? (branded[0] ?? null) : null,
+                        backHalfDomain: value === SHARED_ONLY ? null : value,
                       })
                     }
-                  />
-                  <Global aria-hidden className="size-4 text-foreground/70" />
-                  Keep the original back-halves on my domain
-                </label>
-                {options.backHalfDomain !== null && branded.length > 1 && (
-                  <Select
-                    onValueChange={(value) => set({ backHalfDomain: value })}
-                    value={options.backHalfDomain}
+                    value={options.backHalfDomain ?? SHARED_ONLY}
                   >
                     <SelectTrigger
                       aria-label="Your domain"
@@ -368,18 +395,19 @@ export function PreviewStep({
                           {domain}
                         </SelectItem>
                       ))}
+                      <SelectItem value={SHARED_ONLY}>
+                        None of my domains
+                      </SelectItem>
                     </SelectContent>
                   </Select>
-                )}
-              </div>
-              <p className="text-muted-foreground pl-6 text-xs">
-                Moving {branded.length === 1 ? branded[0] : "your domain"} to
-                QRdx? Codes keep their back-halves, so go.yourbrand.com/abc
-                keeps working after the DNS switch. QRdx short links are exactly
-                7 letters or digits and unique across QRdx, so some back-halves
-                can't move.
-              </p>
-              {preview?.backHalves && options.backHalfDomain && (
+                  <span className="text-muted-foreground text-xs sm:flex-1">
+                    {options.backHalfDomain
+                      ? "keep theirs on that domain, so printed codes work again after its DNS moves to QRdx."
+                      : "Every back-half is kept on qrdx.dev."}
+                  </span>
+                </div>
+              )}
+              {keeping && preview?.backHalves && (
                 <div className="space-y-2 pl-6">
                   {preview.backHalves.canUse ? (
                     <Note icon={<Info />}>
@@ -393,42 +421,42 @@ export function PreviewStep({
                           kept
                         </span>
                         {preview.backHalves.conflicts > 0 &&
-                          `, ${plural(preview.backHalves.conflicts, "conflict")} (listed below)`}
-                        . {options.backHalfDomain}{" "}
-                        {QRDX_DOMAIN_TEXT[preview.backHalves.qrdx]}
+                          `, ${preview.backHalves.conflicts} with a generated one (listed below)`}
+                        .
+                        {preview.backHalves.domain &&
+                          preview.backHalves.qrdx && (
+                            <>
+                              {" "}
+                              {preview.backHalves.domain}{" "}
+                              {QRDX_DOMAIN_TEXT[preview.backHalves.qrdx]}
+                            </>
+                          )}
                       </p>
-                      {preview.backHalves.qrdx !== "verified" && (
-                        <Link
-                          className="font-medium text-foreground underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground"
-                          href="/dashboard/domains"
-                        >
-                          Open Domains
-                        </Link>
-                      )}
+                      {preview.backHalves.domain &&
+                        preview.backHalves.qrdx !== "verified" &&
+                        showsPath("/dashboard/domains") && (
+                          <Link
+                            className="font-medium text-foreground underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground"
+                            href="/dashboard/domains"
+                          >
+                            Open Domains
+                          </Link>
+                        )}
                     </Note>
                   ) : (
                     <Note icon={<Diamonds />}>
                       <p>
-                        Keeping back-halves on your own domain is part of Pro
-                        and Business.
+                        Keeping back-halves is part of Pro and Business. Without
+                        it, every code gets a generated back-half.
                       </p>
+                      <button
+                        className="font-medium text-foreground underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground"
+                        onClick={openGetProDialog}
+                        type="button"
+                      >
+                        Upgrade
+                      </button>
                     </Note>
-                  )}
-                  {preview.backHalves.conflicts > 0 && (
-                    <label
-                      className="flex items-center gap-2.5 text-sm"
-                      htmlFor="migrate-suggestions"
-                    >
-                      <Checkbox
-                        checked={options.useSuggestions}
-                        id="migrate-suggestions"
-                        onCheckedChange={(value) =>
-                          set({ useSuggestions: value === true })
-                        }
-                      />
-                      Use the suggested back-half where the original can't be
-                      kept
-                    </label>
                   )}
                 </div>
               )}
@@ -454,17 +482,33 @@ export function PreviewStep({
                     <div className="truncate font-medium">
                       {link.title ?? displayLink(link.shortLink ?? link.id)}
                     </div>
-                    <div className="text-muted-foreground truncate text-xs">
-                      {link.shortLink ? displayLink(link.shortLink) : link.id}
-                      {item.reason ? ` · ${item.reason}` : ""}
-                      {item.backHalf?.suggestion &&
-                      item.backHalf.status !== "kept"
-                        ? ` · Suggested: ${item.backHalf.suggestion}`
-                        : ""}
-                      {item.existing
-                        ? ` · ${displayLink(item.existing.shortLink)}`
-                        : ""}
-                    </div>
+                    {item.status === "create" &&
+                    item.backHalf &&
+                    item.backHalf.status !== "kept" ? (
+                      <div className="text-muted-foreground space-y-0.5 text-xs">
+                        <div className="flex min-w-0 items-center gap-1.5">
+                          <code className="bg-muted text-foreground min-w-0 truncate rounded px-1 py-px">
+                            {link.backHalf}
+                          </code>
+                          <span aria-hidden>→</span>
+                          <span className="sr-only">becomes</span>
+                          <code className="bg-muted text-foreground shrink-0 rounded px-1 py-px">
+                            {item.backHalf.slug ?? "random"}
+                          </code>
+                        </div>
+                        {item.reason && (
+                          <p className="truncate">{item.reason}</p>
+                        )}
+                      </div>
+                    ) : (
+                      <div className="text-muted-foreground truncate text-xs">
+                        {link.shortLink ? displayLink(link.shortLink) : link.id}
+                        {item.reason ? ` · ${item.reason}` : ""}
+                        {item.existing
+                          ? ` · ${displayLink(item.existing.shortLink)}`
+                          : ""}
+                      </div>
+                    )}
                   </div>
                   <span className="text-muted-foreground shrink-0 rounded-full border px-2 py-0.5 text-xs">
                     {item.status === "create"

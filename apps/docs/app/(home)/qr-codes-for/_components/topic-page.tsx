@@ -24,6 +24,7 @@ import {
   QR_TYPE_ICONS,
   topicIcon,
 } from "@/components/sections/tools/topic-icons";
+import { isFeatureAvailable } from "@/lib/feature-availability";
 import { getQrType } from "@/lib/qr-types-content";
 import {
   PAGE_TYPES,
@@ -31,6 +32,7 @@ import {
   type SeoCollection,
   type SeoTopic,
 } from "@/lib/seo-content";
+import { topicForDeployment } from "@/lib/seo-content/availability";
 import { SAMPLE_SHORT_LINK, sizingRows } from "@/lib/seo-content/sizing";
 
 interface TopicPageProps {
@@ -88,7 +90,15 @@ function viewRecommendation(item: Recommendation): RecommendationView | null {
   }
 }
 
-export function TopicPage({ topic, collection, other }: TopicPageProps) {
+export function TopicPage({
+  topic: source,
+  collection,
+  other,
+}: TopicPageProps) {
+  // No tips, FAQs or recommendations selling what this deployment can't offer.
+  const topic = topicForDeployment(source, {
+    customDomains: isFeatureAvailable("customDomains"),
+  });
   const path = collection.path(topic.slug);
   const recommendations = topic.recommended
     .map(viewRecommendation)
@@ -136,7 +146,7 @@ export function TopicPage({ topic, collection, other }: TopicPageProps) {
             {collection.ideasHeading(topic)}
           </h2>
         </SectionHeader>
-        <CardGrid count={topic.useCases.length} className="px-6 md:px-10 py-10">
+        <CardGrid count={topic.useCases.length} className="px-10 py-10">
           {topic.useCases.map((useCase, index) => (
             <div
               key={useCase.title}
@@ -172,7 +182,7 @@ export function TopicPage({ topic, collection, other }: TopicPageProps) {
         <CardGrid
           count={recommendations.length}
           max={2}
-          className="px-6 md:px-10 py-10"
+          className="px-10 py-10"
         >
           {recommendations.map((item) => (
             <SpotlightLink
@@ -218,7 +228,7 @@ export function TopicPage({ topic, collection, other }: TopicPageProps) {
         aria-labelledby="sizing"
         className="grid w-full md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-border"
       >
-        <div className="px-6 md:px-10 py-10 flex flex-col gap-4 min-w-0">
+        <div className="px-10 py-10 flex flex-col gap-4 min-w-0">
           <h2 id="sizing" className="text-2xl font-medium tracking-tighter">
             How big to print it
           </h2>
@@ -282,7 +292,7 @@ export function TopicPage({ topic, collection, other }: TopicPageProps) {
             />
           )}
         </div>
-        <div className="px-6 md:px-10 py-10 flex flex-col gap-4">
+        <div className="px-10 py-10 flex flex-col gap-4">
           <h2 className="text-2xl font-medium tracking-tighter">
             Placement tips
           </h2>
@@ -319,7 +329,7 @@ export function TopicPage({ topic, collection, other }: TopicPageProps) {
 
       <section
         className={cn(
-          "w-full px-6 md:px-10 py-12 grid gap-12",
+          "w-full px-10 py-12 grid gap-12",
           related.length > 0 &&
             group &&
             siblings.length > 0 &&

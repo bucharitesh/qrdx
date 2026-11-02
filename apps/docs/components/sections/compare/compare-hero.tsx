@@ -30,7 +30,7 @@ export function CompareHero({ slug, competitor, tagline }: CompareHeroProps) {
         seed={slug.length * 13 + slug.charCodeAt(0)}
         className="[mask-image:radial-gradient(ellipse_70%_75%_at_50%_45%,rgba(0,0,0,0.3)_15%,black_50%,transparent_80%)]"
       />
-      <div className="relative mx-auto flex max-w-3xl flex-col items-center gap-8 px-6 pt-14 pb-16 text-center md:pt-20 md:pb-20">
+      <div className="relative mx-auto flex max-w-[50rem] flex-col items-center gap-8 px-10 pt-14 pb-16 text-center md:pt-20 md:pb-20">
         <CompareHeroLogos competitor={competitor} slug={slug} />
         <div className="flex flex-col items-center gap-4">
           <Breadcrumbs items={crumbs} />

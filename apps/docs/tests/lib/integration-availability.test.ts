@@ -14,9 +14,11 @@ import {
   computeAvailability,
   ENCRYPTION_KEY_VAR,
   filterVisible,
+  hiddenSlugs,
   isAvailable,
   isVisible,
   missingSetup,
+  settingsListing,
   setupNeeded,
 } from "@/lib/integration-availability-rules";
 
@@ -169,6 +171,58 @@ describe("computeAvailability", () => {
     const availability = computeAvailability([], context({}, true));
     expect(isAvailable(availability, "constructor")).toBe(true);
     expect(isAvailable(availability, "toString")).toBe(true);
+  });
+});
+
+describe("connected but unavailable", () => {
+  const slugs = ["acme", "keyed", "parser", "zapier"];
+  const production = computeAvailability(slugs, context({}, true));
+  const dev = computeAvailability(slugs, context({}, false));
+
+  it("keeps a hidden integration in settings while the user has it connected", () => {
+    expect(settingsListing(production, "acme", true)).toBe(
+      "no-longer-available",
+    );
+    expect(settingsListing(production, "keyed", true)).toBe(
+      "no-longer-available",
+    );
+  });
+
+  it("leaves it hidden for everyone who hasn't connected it", () => {
+    expect(settingsListing(production, "acme", false)).toBe("hidden");
+  });
+
+  it("lists available integrations as usual, connected or not", () => {
+    for (const connected of [true, false]) {
+      expect(settingsListing(production, "parser", connected)).toBe("listed");
+      expect(settingsListing(production, "zapier", connected)).toBe("listed");
+    }
+  });
+
+  it("lists everything in dev, where unavailable ones say what they need", () => {
+    expect(settingsListing(dev, "acme", true)).toBe("listed");
+    expect(settingsListing(dev, "acme", false)).toBe("listed");
+    expect(setupNeeded(dev, "acme")).toEqual([
+      "ACME_CLIENT_ID",
+      "ACME_CLIENT_SECRET",
+    ]);
+  });
+
+  it("still hides it from pickers and connect buttons", () => {
+    // Those use isVisible / filterVisible, which a connection doesn't change.
+    expect(isVisible(production, "acme")).toBe(false);
+    expect(filterVisible(production, slugs, (slug) => slug)).toEqual([
+      "parser",
+      "zapier",
+    ]);
+  });
+
+  it("names the hidden slugs to look for leftover connections", () => {
+    expect(hiddenSlugs(production, [...slugs, "acme"])).toEqual([
+      "acme",
+      "keyed",
+    ]);
+    expect(hiddenSlugs(dev, slugs)).toEqual([]);
   });
 });
 

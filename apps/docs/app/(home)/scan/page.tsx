@@ -23,6 +23,7 @@ import {
 import { FaqList } from "@/components/sections/tools/faq-list";
 import { JsonLd } from "@/components/sections/tools/json-ld";
 import { ToolHero } from "@/components/sections/tools/tool-hero";
+import { isFeatureAvailable } from "@/lib/feature-availability";
 import { baseUrl, createMetadata } from "@/lib/metadata";
 import { isWebRiskConfigured } from "@/lib/safety/web-risk";
 
@@ -109,8 +110,7 @@ function faqs(webRisk: boolean) {
     },
     {
       question: 'What does "Verified QRdx code" mean?',
-      answer:
-        "The link is a real, active dynamic QR code created with QRdx (a qrdx.dev/q/ link or a verified custom domain) and has no open abuse reports. It tells you the code is genuine and hasn't been switched off; the code's owner still decides where it points, so the other safety checks still apply.",
+      answer: `The link is a real, active dynamic QR code created with QRdx (a qrdx.dev/q/ link${isFeatureAvailable("customDomains") ? " or a verified custom domain" : ""}) and has no open abuse reports. It tells you the code is genuine and hasn't been switched off; the code's owner still decides where it points, so the other safety checks still apply.`,
     },
     {
       question: "Are my scans uploaded or saved?",
@@ -188,17 +188,14 @@ export default function ScanPage() {
         ]}
       />
 
-      <section
-        aria-label="QR code scanner"
-        className="w-full px-6 md:px-10 py-10"
-      >
+      <section aria-label="QR code scanner" className="w-full px-10 py-10">
         <Scanner />
         <RegisterScannerServiceWorker />
       </section>
 
       <section
         aria-labelledby="reads"
-        className="w-full px-6 md:px-10 py-12 flex flex-col gap-8"
+        className="w-full px-10 py-12 flex flex-col gap-8"
       >
         <SectionHeading
           id="reads"
@@ -228,7 +225,7 @@ export default function ScanPage() {
 
       <section
         aria-labelledby="safety"
-        className="w-full px-6 md:px-10 py-12 grid gap-8 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]"
+        className="w-full px-10 py-12 grid gap-8 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]"
       >
         <SectionHeading
           id="safety"

@@ -68,13 +68,13 @@ export default async function QrTypePage({ params }: PageProps) {
       <section
         id="generator"
         aria-label={`${name} QR code generator`}
-        className="w-full px-6 md:px-10 py-10"
+        className="w-full px-10 py-10"
       >
         <TypeGenerator key={content.type} type={content.type} />
       </section>
 
       <section className="grid w-full md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-border">
-        <div className="px-6 md:px-10 py-10 flex flex-col gap-4">
+        <div className="px-10 py-10 flex flex-col gap-4">
           <h2 className="text-2xl font-medium tracking-tighter">
             How to create a {name} QR code
           </h2>
@@ -101,7 +101,7 @@ export default async function QrTypePage({ params }: PageProps) {
           />
         </div>
 
-        <div className="px-6 md:px-10 py-10 flex flex-col gap-4 min-w-0">
+        <div className="px-10 py-10 flex flex-col gap-4 min-w-0">
           <h2 className="text-2xl font-medium tracking-tighter">
             {name} QR code format
           </h2>
@@ -131,7 +131,7 @@ export default async function QrTypePage({ params }: PageProps) {
 
       <FaqList title={`${name} QR code FAQ`} faqs={content.faqs} />
 
-      <section className="w-full px-6 md:px-10 py-10 flex flex-col gap-5">
+      <section className="w-full px-10 py-10 flex flex-col gap-5">
         <div className="flex flex-wrap items-end justify-between gap-2">
           <h2 className="text-2xl font-semibold tracking-tight">
             Related QR code generators

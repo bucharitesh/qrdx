@@ -1,0 +1,159 @@
+/*
+ * The mega menu's surfaces (components/header-nav-panel.tsx): the shared
+ * panel, the featured card and its artwork, the item rows and their icon
+ * tiles. Motion and positioning live in header-nav.module.css.
+ *
+ * This CSS is unlayered, so it beats the design-system NavigationMenu's
+ * Tailwind utilities on the same elements (its accent hover and focus fills,
+ * and the focus ring its content strips from links) without !important.
+ */
+
+.root {
+  --panel-bg: oklch(1 0 0);
+  --panel-border: oklch(0 0 0 / 8%);
+  --panel-shadow:
+    0 1px 2px oklch(0 0 0 / 4%), 0 8px 16px -6px oklch(0 0 0 / 8%),
+    0 28px 56px -20px oklch(0 0 0 / 18%);
+
+  --item-hover: oklch(0 0 0 / 3.5%);
+  --item-current: oklch(0 0 0 / 4.5%);
+  --rule: oklch(0 0 0 / 7%);
+
+  --tile-bg: oklch(1 0 0);
+  --tile-border: oklch(0 0 0 / 9%);
+  --tile-border-hover: oklch(0 0 0 / 16%);
+  --tile-shadow: 0 1px 2px oklch(0 0 0 / 6%);
+
+  --card-bg: oklch(0.977 0 0);
+  --card-bg-hover: oklch(0.966 0 0);
+  --card-border: oklch(0 0 0 / 6%);
+  --card-border-hover: oklch(0 0 0 / 11%);
+
+  /* The artwork: a code drawn on its own paper, like a printed one. */
+  --art-bg: oklch(1 0 0);
+  --art-ink: oklch(0.16 0 0);
+  --art-muted: oklch(0.55 0 0);
+  --art-border: oklch(0 0 0 / 8%);
+  --art-shadow:
+    0 1px 2px oklch(0 0 0 / 6%), 0 10px 24px -10px oklch(0 0 0 / 22%);
+}
+
+:global(.dark) .root {
+  --panel-bg: linear-gradient(
+    to bottom,
+    oklch(0.212 0.004 275),
+    oklch(0.19 0.004 275)
+  );
+  --panel-border: oklch(1 0 0 / 10%);
+  --panel-shadow:
+    inset 0 1px 0 oklch(1 0 0 / 5%), 0 0 0 1px oklch(0 0 0 / 35%),
+    0 10px 20px -8px oklch(0 0 0 / 45%), 0 32px 64px -20px oklch(0 0 0 / 65%);
+
+  --item-hover: oklch(1 0 0 / 5%);
+  --item-current: oklch(1 0 0 / 6.5%);
+  --rule: oklch(1 0 0 / 7%);
+
+  --tile-bg: oklch(1 0 0 / 4%);
+  --tile-border: oklch(1 0 0 / 9%);
+  --tile-border-hover: oklch(1 0 0 / 18%);
+  --tile-shadow: inset 0 1px 0 oklch(1 0 0 / 4%);
+
+  --card-bg: oklch(1 0 0 / 2.5%);
+  --card-bg-hover: oklch(1 0 0 / 4.5%);
+  --card-border: oklch(1 0 0 / 7%);
+  --card-border-hover: oklch(1 0 0 / 13%);
+
+  --art-bg: oklch(0.155 0.004 275);
+  --art-ink: oklch(0.93 0 0);
+  --art-muted: oklch(0.6 0 0);
+  --art-border: oklch(1 0 0 / 10%);
+  --art-shadow:
+    inset 0 1px 0 oklch(1 0 0 / 4%), 0 12px 28px -10px oklch(0 0 0 / 70%);
+}
+
+/* The shared panel every dropdown renders into. */
+.root [data-slot="navigation-menu-viewport"] {
+  border-color: var(--panel-border);
+  border-radius: 18px;
+  background: var(--panel-bg);
+  box-shadow: var(--panel-shadow);
+}
+
+/* Rows, the hub link and the featured card. */
+.item {
+  border-radius: 10px;
+  background-color: transparent;
+  color: inherit;
+  outline: none;
+  transition: background-color 150ms ease;
+}
+.item:hover,
+.item:focus-visible {
+  background-color: var(--item-hover);
+}
+.item[data-active] {
+  background-color: var(--item-current);
+}
+.item:focus-visible {
+  /* --focus-ring: header-bar.module.css, also on the menu root. */
+  outline: 2px solid var(--focus-ring);
+  outline-offset: -2px;
+}
+
+.tile {
+  border: 1px solid var(--tile-border);
+  border-radius: 9px;
+  background: var(--tile-bg);
+  box-shadow: var(--tile-shadow);
+  color: color-mix(in oklab, currentColor 72%, transparent);
+  transition:
+    border-color 150ms ease,
+    color 150ms ease;
+}
+.item:hover .tile,
+.item:focus-visible .tile,
+.item[data-active] .tile {
+  border-color: var(--tile-border-hover);
+  color: inherit;
+}
+
+.rule {
+  border-color: var(--rule);
+}
+
+.feature {
+  border: 1px solid var(--card-border);
+  background-color: var(--card-bg);
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease;
+}
+.feature:hover,
+.feature:focus-visible,
+.feature[data-active] {
+  border-color: var(--card-border-hover);
+  background-color: var(--card-bg-hover);
+}
+
+.paper {
+  border: 1px solid var(--art-border);
+  background: var(--art-bg);
+  box-shadow: var(--art-shadow);
+  color: var(--art-ink);
+}
+
+.ink {
+  color: var(--art-ink);
+}
+
+.inkMuted {
+  color: var(--art-muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .item,
+  .tile,
+  .feature {
+    transition: none;
+  }
+}

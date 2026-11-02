@@ -198,7 +198,7 @@ export const outdoor: SeoGroup = {
       summary: "Wayfinding, information boards and safety notices that last.",
       intro: [
         "Signs are permanent and information isn't. A QR code on a sign can carry the part that changes (hours, routes, detailed instructions, translations) while the sign itself stays put for years.",
-        "Signage is also where tampering happens. For signs in public places, use a custom domain and inspect the codes regularly, so nobody can cover them with a look-alike sticker.",
+        "Signage is also where tampering happens. For signs in public places, print the link next to the code and inspect the codes regularly, so nobody can cover them with a look-alike sticker.",
       ],
       useCases: [
         {
@@ -252,7 +252,7 @@ export const outdoor: SeoGroup = {
       tips: [
         "Mount codes between 1.2 and 1.5 m, so they're reachable for wheelchair users and children.",
         "Outdoors, use UV-resistant inks, aluminium composite or engraved panels, and an anti-graffiti laminate.",
-        "Inspect public signs for stickers placed over the real code; a printed custom domain helps people spot fakes.",
+        "Inspect public signs for stickers placed over the real code; the printed link next to it helps people spot fakes.",
         "Use error correction H on signs likely to get scratched or dirty.",
       ],
       ctas: [
@@ -275,7 +275,7 @@ export const outdoor: SeoGroup = {
         {
           question: "How do I stop people tampering with QR codes on signs?",
           answer:
-            "Use tamper-evident materials, print your short-link domain next to the code, use a custom domain so the link preview is recognisable, and check signs regularly.",
+            "Use tamper-evident materials, print your short-link domain next to the code, and check signs regularly.",
         },
       ],
       related: ["tourism", "government", "construction", "museums"],

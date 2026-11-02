@@ -111,7 +111,7 @@ export function IntegrationsMore() {
     <>
       <section
         aria-label="AI assistants and plugins"
-        className="border-b px-6 py-12 md:px-10 md:py-16"
+        className="border-b px-10 py-12 md:py-16"
       >
         <ul className="grid gap-4 md:grid-cols-2">
           <li className="min-w-0">
@@ -138,7 +138,7 @@ export function IntegrationsMore() {
       <section
         id="build"
         aria-labelledby="build-heading"
-        className="scroll-mt-20 px-6 py-12 md:px-10 md:py-16"
+        className="scroll-mt-20 px-10 py-12 md:py-16"
       >
         <div className="grid gap-8 rounded-2xl border bg-card p-6 shadow-xs md:p-8 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:gap-12 dark:shadow-none">
           <div className="flex min-w-0 flex-col justify-between gap-6">

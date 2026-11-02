@@ -25,7 +25,7 @@ import { parseLandingPageContent } from "@/lib/landing/blocks";
 import { buildTemplateContent, getTemplate } from "@/lib/landing/templates";
 import { getPlanForScope, getPlanLimits, type Plan } from "@/lib/plans";
 import { type ActiveScope, isInScope } from "@/lib/scope";
-import { SHORT_LINK_BASE, shortLinkUrl } from "@/lib/short-links";
+import { codeLinks, SHORT_LINK_BASE } from "@/lib/short-links";
 import type { LandingPageContent } from "@/types/landing";
 
 /** Versions kept per page; older ones are pruned on publish. */
@@ -139,6 +139,7 @@ type CodeRow = Pick<
   typeof qrCode.$inferSelect,
   | "id"
   | "slug"
+  | "slugScope"
   | "pageId"
   | "domainId"
   | "scanCount"
@@ -156,6 +157,7 @@ async function codesByPage(
     .select({
       id: qrCode.id,
       slug: qrCode.slug,
+      slugScope: qrCode.slugScope,
       pageId: qrCode.pageId,
       domainId: qrCode.domainId,
       scanCount: qrCode.scanCount,
@@ -170,12 +172,17 @@ async function codesByPage(
   for (const row of rows) {
     if (!row.pageId) continue;
     const domain = row.domainId ? domains.get(row.domainId) : undefined;
-    const host = domain?.verified ? domain.hostname : null;
+    const { link } = codeLinks(row, domain ?? null);
+    // On the domain when the link is (a back-half chosen there, or verified).
+    const host =
+      domain && link.startsWith(`https://${domain.hostname}/`)
+        ? domain.hostname
+        : null;
     const path = `/p/${encodeURIComponent(row.slug)}`;
     const ref: PageCodeRef = {
       id: row.id,
       slug: row.slug,
-      shortLink: shortLinkUrl(row.slug, host),
+      shortLink: link,
       pageUrl: host ? `https://${host}${path}` : `${SHORT_LINK_BASE}${path}`,
       scanCount: row.scanCount,
       status: codeStatus(row),

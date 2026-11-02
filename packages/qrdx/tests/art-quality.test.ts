@@ -364,22 +364,23 @@ describe("art samples", () => {
 });
 
 describe.each(CASES)("$mode $variant: $name", (c) => {
-  it.each(
-    STRENGTHS
-  )("decodes at 160, 320 and 640 px and through the camera at strength %s", (intensity) => {
-    const props = propsFor(c, intensity);
-    const svg = renderSvg(props);
-    expect(svg).toContain(`data-qrdx-art-variant="${c.variant}"`);
-    const results = decodeAtSizes(svg, props);
-    expect(
-      results.filter((r) => r.plain !== VALUE).map((r) => r.width),
-      "sizes that fail to decode as rendered"
-    ).toEqual([]);
-    expect(
-      results.filter((r) => !r.camera).map((r) => r.width),
-      "sizes that fail through the camera model"
-    ).toEqual([]);
-  });
+  it.each(STRENGTHS)(
+    "decodes at 160, 320 and 640 px and through the camera at strength %s",
+    (intensity) => {
+      const props = propsFor(c, intensity);
+      const svg = renderSvg(props);
+      expect(svg).toContain(`data-qrdx-art-variant="${c.variant}"`);
+      const results = decodeAtSizes(svg, props);
+      expect(
+        results.filter((r) => r.plain !== VALUE).map((r) => r.width),
+        "sizes that fail to decode as rendered"
+      ).toEqual([]);
+      expect(
+        results.filter((r) => !r.camera).map((r) => r.width),
+        "sizes that fail through the camera model"
+      ).toEqual([]);
+    }
+  );
 });
 
 describe("scan score at the default strength", () => {
