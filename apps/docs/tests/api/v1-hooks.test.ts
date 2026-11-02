@@ -40,6 +40,7 @@ vi.mock("@repo/auth/server", () => ({
 vi.mock("next/headers", () => ({ headers: async () => new Headers() }));
 vi.mock("@repo/rate-limit", () => ({
   slidingWindow: () => ({}),
+  fixedWindow: () => ({}),
   createRateLimiter: () => ({
     limit: async () => ({
       success: true,

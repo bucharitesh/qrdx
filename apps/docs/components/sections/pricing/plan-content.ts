@@ -56,8 +56,6 @@ export function formatDays(days: number): string {
   return `${formatCount(days)} days`;
 }
 
-const months = (days: number) => Math.round(days / 30.4375);
-
 /** Whole-percent saving of the yearly price over 12 monthly payments. */
 export function yearlySavingsPercent(
   plan: PaidPlan,
@@ -110,21 +108,19 @@ function landingPages(limits: PlanLimits): string {
   return `${count}, no footer`;
 }
 
+// Every scan is kept at full detail for the whole history: nothing rolls raw
+// scans up into daily totals yet, so the copy must not promise that.
 function analyticsHistory(limits: PlanLimits): string {
-  const history = formatDays(limits.analyticsRetentionDays);
-  if (
-    !Number.isFinite(limits.analyticsRetentionDays) &&
-    Number.isFinite(limits.rawScanRetentionDays)
-  ) {
-    return `${history} (scan-level for ${months(limits.rawScanRetentionDays)} months, then daily totals)`;
-  }
-  return history;
+  return formatDays(limits.analyticsRetentionDays);
 }
 
 function teamMembers(limits: PlanLimits): string {
   if (!limits.teams) return "1 (no teams)";
   return formatCount(limits.teamMembers);
 }
+
+// Dropped where AI art isn't available (PricingOptions.aiArt).
+const AI_ART_ROW = "AI art images per month";
 
 const GROUPS: {
   title: string;
@@ -147,7 +143,7 @@ const GROUPS: {
           ? `${AI_REQUEST_FREE_TIER_LIMIT} in total`
           : "Unlimited",
       ),
-      row("AI art images per month", (l) =>
+      row(AI_ART_ROW, (l) =>
         l.aiArtPooled
           ? `${formatCount(l.aiArtPerMonth)}, pooled per team`
           : formatCount(l.aiArtPerMonth),
@@ -225,22 +221,32 @@ export function priceRow(currency: PricingCurrency): ComparisonRow {
   };
 }
 
+/** What this deployment offers beyond the plan limits themselves. */
+export interface PricingOptions {
+  /** AI QR art is available here (lib/ai/art-availability.ts). Default true. */
+  aiArt?: boolean;
+}
+
 export function buildComparison(
   limits: PlanLimitsByPlan,
   currency: PricingCurrency,
+  { aiArt = true }: PricingOptions = {},
 ): ComparisonGroup[] {
   return [
     { title: "Price", rows: [priceRow(currency)] },
     ...GROUPS.map((group) => ({
       title: group.title,
-      rows: group.rows.map((build) => build(limits)),
+      rows: group.rows
+        .map((build) => build(limits))
+        .filter((row) => aiArt || row.feature !== AI_ART_ROW),
     })),
-  ];
+  ].filter((group) => group.rows.length > 0);
 }
 
 /** Short feature lists for the plan cards. */
 export function buildHighlights(
   limits: PlanLimitsByPlan,
+  { aiArt = true }: PricingOptions = {},
 ): Record<Plan, string[]> {
   const { free, pro, business } = limits;
   return {
@@ -272,7 +278,11 @@ export function buildHighlights(
       "Conversion tracking",
       "Webhooks, Zapier and Slack",
       `${formatBytes(business.storageBytes)} storage, ${formatCount(business.formResponsesPerMonth)} form responses a month`,
-      `${formatCount(business.aiArtPerMonth)} AI art images a month, pooled per team`,
+      ...(aiArt
+        ? [
+            `${formatCount(business.aiArtPerMonth)} AI art images a month, pooled per team`,
+          ]
+        : []),
     ],
   };
 }

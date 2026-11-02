@@ -4,7 +4,8 @@ import { database as db, webhookDelivery } from "@repo/database";
 import { getCatalogBySurface } from "@repo/integrations/src/catalog";
 import { redis } from "@repo/rate-limit";
 import { and, count, eq, gte, lte, min, sql } from "drizzle-orm";
-import { type CronJob, type CronRun, getCronRuns } from "@/lib/cron-runs";
+import { isArtAvailable } from "@/lib/ai/art-availability";
+import { type CronJob, type CronStatus, getCronRuns } from "@/lib/cron-runs";
 import { isOutboundDeliveryAllowed } from "@/lib/delivery-guard";
 import { isEmailConfigured } from "@/lib/email/send";
 import { env } from "@/lib/env";
@@ -172,7 +173,7 @@ export function getIntegrationHealth(): IntegrationAvailabilityRow[] {
 
 // ─── Cron and webhook backlog ────────────────────────────────────────────────
 
-export function getCronHealth(): Promise<Record<CronJob, CronRun | null>> {
+export function getCronHealth(): Promise<Record<CronJob, CronStatus>> {
   return cached("health:cron", TTL_MS, () =>
     withTimeout(TIMEOUT_MS, () => getCronRuns()),
   );
@@ -264,7 +265,17 @@ export function getConfiguration(): {
       on: set(env.TURNSTILE_SECRET_KEY),
       vars: "TURNSTILE_SECRET_KEY",
     },
-    { name: "AI QR art (fal.ai)", on: set(env.FAL_KEY), vars: "FAL_KEY" },
+    {
+      name: "AI themes (Gemini)",
+      on: set(env.GOOGLE_API_KEY),
+      vars: "GOOGLE_API_KEY",
+    },
+    {
+      // Needs a Gemini key with billing: the free tier allows no images.
+      name: "AI QR art (Gemini images)",
+      on: isArtAvailable,
+      vars: "GOOGLE_API_KEY, AI_ART_ENABLED (0 switches it off)",
+    },
     {
       name: "Polar webhooks",
       on: set(env.POLAR_WEBHOOK_SECRET),

@@ -176,7 +176,7 @@ describe("buildComparison", () => {
     assert.deepEqual(findRow("Analytics history"), {
       free: "90 days",
       pro: "3 years",
-      business: "Unlimited (scan-level for 13 months, then daily totals)",
+      business: "Unlimited",
     });
     assert.deepEqual(findRow("Saved themes"), {
       free: "10",
@@ -237,6 +237,17 @@ describe("buildComparison", () => {
       business: "Coming soon",
     });
   });
+
+  it("drops the AI art row only where AI art isn't available", () => {
+    const features = (aiArt?: boolean) =>
+      buildComparison(LIMITS, "USD", aiArt === undefined ? {} : { aiArt })
+        .flatMap((group) => group.rows)
+        .map((row) => row.feature);
+    assert.ok(features().includes("AI art images per month"));
+    assert.ok(features(true).includes("AI art images per month"));
+    assert.ok(!features(false).includes("AI art images per month"));
+    assert.equal(features(false).length, features(true).length - 1);
+  });
 });
 
 describe("buildHighlights", () => {
@@ -247,5 +258,12 @@ describe("buildHighlights", () => {
     );
     assert.ok(highlights.pro.includes("Teams of up to 3 people"));
     assert.ok(highlights.business.includes("25 custom domains"));
+  });
+
+  it("only sells AI art where it's available", () => {
+    const art = (lines: string[]) =>
+      lines.some((line) => line.includes("AI art"));
+    assert.ok(art(buildHighlights(LIMITS).business));
+    assert.ok(!art(buildHighlights(LIMITS, { aiArt: false }).business));
   });
 });

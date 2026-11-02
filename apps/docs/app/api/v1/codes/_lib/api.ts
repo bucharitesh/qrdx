@@ -3,9 +3,11 @@ import "server-only";
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import type { NextRequest } from "next/server";
 import type { QrCodeView } from "@/app/dashboard/codes/_lib/qr-codes";
+import { consumeApiQuota } from "@/lib/api-quota";
 import { HttpError } from "@/lib/error-response";
 import { baseUrl } from "@/lib/metadata";
-import { validateAccessToken } from "@/lib/oauth";
+import { type OAuthScope, requireAuth, validateAccessToken } from "@/lib/oauth";
+import { getPlanForScope } from "@/lib/plans";
 import { enforceRateLimits, getClientIp } from "@/lib/request-guards";
 import { type ActiveScope, getActiveScope } from "@/lib/scope";
 
@@ -50,7 +52,9 @@ export interface ApiCaller {
 /**
  * Resolves who is calling: an OAuth bearer token (acts on the user's personal
  * workspace) or the browser session (acts on the active team or personal
- * workspace). Applies per-user and per-IP rate limits.
+ * workspace). Applies per-user and per-IP rate limits, then the workspace's
+ * daily quota (lib/api-quota), which every authenticated request counts
+ * against, token or session.
  */
 export async function resolveApiCaller(
   req: NextRequest,
@@ -80,13 +84,19 @@ export async function resolveApiCaller(
     caller = { scope: await getActiveScope(req.headers), canWrite: true };
   }
 
-  await enforceRateLimits([
-    {
-      limiter: access === "write" ? writeLimiter : readLimiter,
-      key: `api:codes:${access}:user:${caller.scope.userId}`,
-    },
-    { limiter: ipLimiter, key: `api:codes:ip:${getClientIp(req)}` },
+  // The plan lookup overlaps the per-minute checks; only requests they let
+  // through use up the daily quota.
+  const [plan] = await Promise.all([
+    getPlanForScope(caller.scope),
+    enforceRateLimits([
+      {
+        limiter: access === "write" ? writeLimiter : readLimiter,
+        key: `api:codes:${access}:user:${caller.scope.userId}`,
+      },
+      { limiter: ipLimiter, key: `api:codes:ip:${getClientIp(req)}` },
+    ]),
   ]);
+  await consumeApiQuota(req, caller.scope, plan);
   return caller;
 }
 
@@ -96,6 +106,31 @@ export async function resolveApiScope(
   access: ApiAccess,
 ): Promise<ActiveScope> {
   return (await resolveApiCaller(req, access)).scope;
+}
+
+/**
+ * requireAuth for the token-only endpoints with OAuth-shaped errors (/v1/me,
+ * /v1/themes), plus the daily quota of the token owner's personal workspace.
+ */
+export async function requireApiToken(
+  req: NextRequest,
+  requiredScope: OAuthScope,
+): Promise<Awaited<ReturnType<typeof requireAuth>>> {
+  const auth = await requireAuth(req, requiredScope);
+  if (auth.error) return auth;
+  const scope = { userId: auth.tokenData.userId, organizationId: null };
+  try {
+    await consumeApiQuota(req, scope, await getPlanForScope(scope));
+  } catch (error) {
+    if (!(error instanceof HttpError)) throw error;
+    return {
+      error: Response.json(
+        { error: "rate_limited", error_description: error.message },
+        { status: error.status, headers: error.headers },
+      ),
+    };
+  }
+  return auth;
 }
 
 /** Mutations take JSON only (also keeps simple cross-site form posts out). */

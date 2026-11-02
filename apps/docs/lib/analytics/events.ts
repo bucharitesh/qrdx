@@ -45,6 +45,8 @@ export interface AnalyticsEvents {
     visibility?: number;
     creativity?: number;
     variations?: number;
+    /** Variations that needed the Image QR blend to scan */
+    blended?: number;
     locked_seed: boolean;
     reference: boolean;
     preset?: string;

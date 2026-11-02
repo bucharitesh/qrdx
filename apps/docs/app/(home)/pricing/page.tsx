@@ -12,6 +12,7 @@ import { pricingSchema } from "@/components/sections/pricing/pricing-schema";
 import { PricingSection } from "@/components/sections/pricing-section";
 import { JsonLd } from "@/components/sections/tools/json-ld";
 import { siteConfig } from "@/config/site";
+import { isArtAvailable } from "@/lib/ai/art-availability";
 import { createMetadata } from "@/lib/metadata";
 import { getPlan, PLAN_LIMITS, type Plan } from "@/lib/plans";
 import { formatPrice, PRICING } from "@/lib/pricing";
@@ -72,10 +73,14 @@ export default async function PricingPage({
       <PricingSection
         currency={currency}
         currentPlan={plan}
-        highlights={buildHighlights(PLAN_LIMITS)}
+        highlights={buildHighlights(PLAN_LIMITS, { aiArt: isArtAvailable })}
       />
       <GuaranteeBlock />
-      <ComparisonTable groups={buildComparison(PLAN_LIMITS, currency)} />
+      <ComparisonTable
+        groups={buildComparison(PLAN_LIMITS, currency, {
+          aiArt: isArtAvailable,
+        })}
+      />
       <PricingFaq faqs={siteConfig.pricing.faq} />
     </main>
   );

@@ -75,6 +75,24 @@ describe("createMemoryLimiter", () => {
     expect(allowed).toBe(5);
   });
 
+  it("with sliding: false (fixedWindow), starts each window from zero", () => {
+    const time = clock(0);
+    const memory = createMemoryLimiter(
+      { tokens: 3, windowMs: 1000, sliding: false },
+      time.now,
+    );
+    for (let i = 0; i < 3; i++) memory.limit("k");
+    expect(memory.limit("k")).toMatchObject({ success: false, reset: 1000 });
+    // Right at the start of the next window, nothing carries over.
+    time.advance(1000);
+    expect([1, 2, 3, 4].map(() => memory.limit("k").success)).toEqual([
+      true,
+      true,
+      true,
+      false,
+    ]);
+  });
+
   it("keeps a bounded number of keys", () => {
     const memory = createMemoryLimiter(
       { tokens: 1, windowMs: 60_000 },

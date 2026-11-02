@@ -149,8 +149,8 @@ Add one OAuth provider (GitHub or Google), or Resend for email sign-in codes, so
 | Google sign-in | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | Google sign-in is unavailable |
 | Auth base URL | `BETTER_AUTH_URL` | Inferred from each request, with a warning in the logs |
 | Admin panel | `ADMIN_EMAILS`, `ADMIN_USER_IDS` | Nobody can open `/admin` |
-| AI theme generation | `GOOGLE_API_KEY` | AI requests fail. The editor works normally. |
-| AI QR art ([fal.ai](https://fal.ai)) | `FAL_KEY` | The AI art page can't generate images and is hidden from search engines |
+| AI themes and AI QR art (Google Gemini) | `GOOGLE_API_KEY` | AI requests fail and the AI art page can't generate images (it's hidden from search engines). The editor works normally. AI art uses Gemini image models, which need a key on a paid (billing-enabled) Gemini API tier |
+| Switching AI QR art off | `AI_ART_ENABLED=0` | With `GOOGLE_API_KEY` set, AI art is offered unless this is `0`. Use it while the key has no billing: AI themes keep working, and the AI art page, its pricing lines and its sitemap entry are hidden (prerendered pages update on the next deploy) |
 | Short-link origin | `NEXT_PUBLIC_SHORT_LINK_BASE_URL` | [Dynamic codes](/docs/dynamic-qr-codes#self-hosting) use `NEXT_PUBLIC_APP_URL` |
 | Scan privacy salt | `SCAN_HASH_SALT` | Derived from `BETTER_AUTH_SECRET` |
 | File storage (Cloudflare R2) | `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`, `R2_PUBLIC_BASE_URL` | Uploads are off; pages can still link to files hosted elsewhere. See [Files](/docs/files#set-up-storage-self-hosting) |

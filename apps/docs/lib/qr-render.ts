@@ -13,7 +13,13 @@ import {
   type PickableCornerEyeDotPattern,
   type PickableCornerEyePattern,
 } from "qrdx/types";
-import { createElement, Fragment, isValidElement, type ReactNode } from "react";
+import {
+  createElement,
+  Fragment,
+  isValidElement,
+  type ReactElement,
+  type ReactNode,
+} from "react";
 import { z } from "zod";
 import { baseUrl } from "@/lib/metadata";
 
@@ -277,19 +283,35 @@ export function renderQrSvg(options: QrOptions): string {
 /** Renders the QR code to PNG bytes (rasterized from the same SVG). */
 export async function renderQrPng(options: QrOptions): Promise<ArrayBuffer> {
   const svg = renderQrSvg(options);
-  const src = `data:image/svg+xml;base64,${Buffer.from(svg).toString("base64")}`;
+  return rasterizeImage(
+    `data:image/svg+xml;base64,${Buffer.from(svg).toString("base64")}`,
+    options.size,
+  );
+}
+
+/**
+ * SVG markup of any qrdx element tree, for renders the options above don't
+ * cover (AI art blends a picture into the modules with `art`).
+ */
+export function serializeQrSvg(element: ReactElement): string {
+  return serializeNode(element);
+}
+
+/**
+ * Draws an image (an SVG, PNG or JPEG data URL) onto a `size` × `size`
+ * canvas, stretched to fill it, and returns PNG bytes.
+ */
+export async function rasterizeImage(
+  src: string,
+  size: number,
+): Promise<ArrayBuffer> {
   const image = new ImageResponse(
     createElement(
       "div",
       { style: { display: "flex", width: "100%", height: "100%" } },
-      createElement("img", {
-        alt: "",
-        height: options.size,
-        src,
-        width: options.size,
-      }),
+      createElement("img", { alt: "", height: size, src, width: size }),
     ),
-    { width: options.size, height: options.size },
+    { width: size, height: size },
   );
   return image.arrayBuffer();
 }

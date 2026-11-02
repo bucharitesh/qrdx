@@ -81,8 +81,6 @@ export const SOURCES = {
   r2Api: "https://*.r2.cloudflarestorage.com",
   /** The scanner's ZXing WebAssembly decoder (barcode-detector) */
   zxingWasm: "https://fastly.jsdelivr.net",
-  /** AI art results */
-  falMedia: ["https://fal.media", "https://*.fal.media"],
   /** Video and map embeds in the page editor preview and template demos */
   embeds: [
     "https://www.youtube-nocookie.com",
@@ -200,7 +198,6 @@ export function appCspDirectives(
       SOURCES.r2Api,
       ...storageOrigins,
       SOURCES.zxingWasm,
-      ...SOURCES.falMedia,
       ...(preview ? [SOURCES.vercelLive, "wss://ws-us3.pusher.com"] : []),
       ...(dev ? ["ws:", "wss:"] : []),
     ]),

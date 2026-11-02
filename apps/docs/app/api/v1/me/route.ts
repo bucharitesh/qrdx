@@ -1,10 +1,12 @@
 import { database as db, user as userTable } from "@repo/database";
 import { eq } from "drizzle-orm";
 import type { NextRequest } from "next/server";
-import { oauthError, requireAuth } from "@/lib/oauth";
+import { requireApiToken } from "@/app/api/v1/codes/_lib/api";
+import { withApiQuotaHeaders } from "@/lib/api-quota";
+import { oauthError } from "@/lib/oauth";
 
-export async function GET(req: NextRequest) {
-  const auth = await requireAuth(req, "profile:read");
+export const GET = withApiQuotaHeaders(async (req: NextRequest) => {
+  const auth = await requireApiToken(req, "profile:read");
   if (auth.error) return auth.error;
 
   const [profile] = await db
@@ -23,4 +25,4 @@ export async function GET(req: NextRequest) {
   }
 
   return Response.json({ data: profile });
-}
+});

@@ -46,6 +46,7 @@ vi.mock("next/navigation", () => ({
 }));
 vi.mock("@repo/rate-limit", () => ({
   slidingWindow: () => ({}),
+  fixedWindow: () => ({}),
   createRateLimiter: () => ({
     limit: async () => ({
       success: !state.rateLimited,

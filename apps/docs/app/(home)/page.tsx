@@ -5,7 +5,7 @@ import { HeroSection } from "@/components/sections/hero-section";
 import { HeroVideoSection } from "@/components/sections/hero-video-section";
 import { FeatureRowsSection } from "@/components/sections/home/feature-rows-section";
 import { UseCasesSection } from "@/components/sections/home/use-cases-section";
-import { env } from "@/lib/env";
+import { isArtAvailable } from "@/lib/ai/art-availability";
 import {
   baseUrl,
   createMetadata,
@@ -94,8 +94,8 @@ const softwareApplicationSchema = {
     "Center logos, call-to-action frames and decorative templates",
     "Logo QR and Image QR art that blend a logo or photo into the code",
     "AI-designed QR code themes",
-    // Same check as lib/ai/art.ts: AI art only runs where fal.ai is configured.
-    ...(env.FAL_KEY ? ["AI QR code art that still scans"] : []),
+    // AI art is listed where it can run (lib/ai/art-availability.ts).
+    ...(isArtAvailable ? ["AI QR code art that still scans"] : []),
     "PNG, JPG, SVG, PDF and EPS downloads, with print-ready PDFs at exact sizes",
     "Dynamic QR codes with editable destinations and scan analytics",
     "Hosted mobile pages: link lists, business pages, vCards, menus, coupons, events, forms, PDFs, images, audio and video",

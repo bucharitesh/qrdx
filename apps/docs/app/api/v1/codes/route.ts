@@ -7,6 +7,7 @@ import {
   listCodes,
   MAX_BULK_CREATE,
 } from "@/app/dashboard/codes/_lib/qr-codes";
+import { withApiQuotaHeaders } from "@/lib/api-quota";
 import { handleError } from "@/lib/error-response";
 import { parseWithSchema, readJsonBody } from "@/lib/request-guards";
 import {
@@ -31,7 +32,7 @@ const listQuerySchema = z.object({
  */
 const createBatchSchema = z.array(createCodeSchema).min(1).max(MAX_BULK_CREATE);
 
-export async function GET(req: NextRequest) {
+export const GET = withApiQuotaHeaders(async (req: NextRequest) => {
   try {
     const scope = await resolveApiScope(req, "read");
     const query = parseWithSchema(
@@ -50,9 +51,9 @@ export async function GET(req: NextRequest) {
   } catch (error) {
     return handleError(error, { route: "GET /api/v1/codes" });
   }
-}
+});
 
-export async function POST(req: NextRequest) {
+export const POST = withApiQuotaHeaders(async (req: NextRequest) => {
   try {
     const scope = await resolveApiScope(req, "write");
     assertJson(req);
@@ -72,4 +73,4 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     return handleError(error, { route: "POST /api/v1/codes" });
   }
-}
+});
