@@ -12,8 +12,15 @@ const BILLING = {
   year: { label: "yearly", duration: "P1Y", unitCode: "ANN" },
 } as const;
 
-/** schema.org Product with one Offer per plan, billing period and currency. */
-export function pricingSchema(description: string): Record<string, unknown> {
+/**
+ * schema.org Product with one Offer per plan, billing period and currency.
+ * While checkout is closed the paid offers aren't marked in stock: they can't
+ * be bought yet.
+ */
+export function pricingSchema(
+  description: string,
+  { checkoutOpen = true }: { checkoutOpen?: boolean } = {},
+): Record<string, unknown> {
   const url = new URL("/pricing", baseUrl).toString();
 
   const free = PRICING_CURRENCIES.map((currency) => ({
@@ -35,7 +42,9 @@ export function pricingSchema(description: string): Record<string, unknown> {
           name: `${PLAN_NAMES[plan]} (${billing.label})`,
           price,
           priceCurrency: currency,
-          availability: "https://schema.org/InStock",
+          ...(checkoutOpen
+            ? { availability: "https://schema.org/InStock" }
+            : {}),
           url,
           priceSpecification: {
             "@type": "UnitPriceSpecification",
