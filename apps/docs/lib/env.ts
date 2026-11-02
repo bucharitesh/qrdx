@@ -24,6 +24,9 @@ export const env = createEnv({
     // Payments - Polar
     POLAR_ACCESS_TOKEN: z.string().min(1).optional(),
     POLAR_WEBHOOK_SECRET: z.string().min(1).optional(),
+    // "0" closes paid checkout while the Polar organization can't take payments
+    // yet (lib/feature-availability-rules.ts, feature "checkout")
+    POLAR_CHECKOUT_ENABLED: z.enum(["0", "1"]).optional(),
 
     // Integrations - Dub
     DUB_CLIENT_ID: z.string().min(1).optional(),
@@ -126,6 +129,7 @@ export const env = createEnv({
     AI_ART_ENABLED: process.env.AI_ART_ENABLED,
     POLAR_ACCESS_TOKEN: process.env.POLAR_ACCESS_TOKEN,
     POLAR_WEBHOOK_SECRET: process.env.POLAR_WEBHOOK_SECRET,
+    POLAR_CHECKOUT_ENABLED: process.env.POLAR_CHECKOUT_ENABLED,
     DUB_CLIENT_ID: process.env.DUB_CLIENT_ID,
     DUB_CLIENT_SECRET: process.env.DUB_CLIENT_SECRET,
     DUB_REDIRECT_URI: process.env.DUB_REDIRECT_URI,

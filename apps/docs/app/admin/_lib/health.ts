@@ -257,6 +257,9 @@ export function getConfiguration(): {
           [
             ...names,
             ...(id === "aiArt" ? ["AI_ART_ENABLED (0 switches it off)"] : []),
+            ...(id === "checkout"
+              ? ["POLAR_CHECKOUT_ENABLED (0 closes checkout)"]
+              : []),
           ].join(", ") ||
           (id === "customDomains"
             ? "None off Vercel (DNS TXT verification)"

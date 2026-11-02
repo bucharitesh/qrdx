@@ -22,6 +22,7 @@ export const FEATURE_IDS = [
   "scheduledJobs",
   "youtubeChannelPicker",
   "spotifyPlaylistPicker",
+  "checkout",
 ] as const;
 
 export type FeatureId = (typeof FEATURE_IDS)[number];
@@ -128,6 +129,18 @@ export const FEATURE_RULES: Record<FeatureId, FeatureRule> = {
     name: "Spotify playlist picker",
     requires: () => ["SPOTIFY_CLIENT_ID", "SPOTIFY_CLIENT_SECRET"],
     extrasOf: "spotify",
+  },
+  checkout: {
+    // Paid plans are sold through Polar. Until Polar approves the
+    // organization it can't charge cards, so POLAR_CHECKOUT_ENABLED=0 closes
+    // checkout: Upgrade buttons say it opens soon instead of starting a
+    // checkout that fails, and existing subscribers keep the billing portal.
+    name: "Paid checkout (Polar)",
+    requires: () => ["POLAR_ACCESS_TOKEN"],
+    switchedOff: (ctx) =>
+      ctx.env.POLAR_CHECKOUT_ENABLED?.trim() === "0"
+        ? "POLAR_CHECKOUT_ENABLED=0"
+        : undefined,
   },
 };
 
