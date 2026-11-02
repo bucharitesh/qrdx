@@ -914,6 +914,7 @@ const STRING_LISTS = [
 
 export const repoDatabase: Record<string, unknown> = {
   database,
+  and: drizzle.and,
   eq: drizzle.eq,
   ...Object.fromEntries(STRING_LISTS),
   ...Object.fromEntries(TABLE_NAMES.map((name) => [name, table(name)])),

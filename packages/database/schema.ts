@@ -22,7 +22,11 @@ export interface ThemeStyles {
 
 export interface UserSettings {
   keyboardShortcuts: boolean;
-  // Add more settings here in the future
+  /**
+   * The workspace last opened (organization id): the next sign-in starts
+   * there (packages/auth/workspace-hooks.ts). Written by the app only.
+   */
+  lastWorkspaceId?: string;
 }
 
 export const page = pgTable("page", {
