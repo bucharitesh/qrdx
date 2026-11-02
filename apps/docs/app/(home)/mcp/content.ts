@@ -1,6 +1,8 @@
 // The /mcp page's copy that the Markdown version (/mcp.md,
 // lib/agents/markdown-pages.ts) repeats, kept in one place.
 import {
+  Brush2,
+  Category,
   ColorSwatch,
   Location,
   MessageText,
@@ -35,6 +37,20 @@ export const MCP_TOOLS: {
   description: string;
   icon: CardIcon;
 }[] = [
+  {
+    name: "design_qr",
+    title: "Design a QR code",
+    description:
+      "Any content type (link, Wi-Fi, contact, payment, social and more) with the style your assistant picks: colours and gradients, shapes, a frame with its text, a border. Validates the content like the editor, checks the scan score and repairs the style until it is Great. Returns the score, what changed, the style JSON, a PNG and the SVG.",
+    icon: Brush2,
+  },
+  {
+    name: "list_options",
+    title: "List design options",
+    description:
+      "Every value design_qr accepts: content types and their fields, shapes, frames, borders, error correction levels and limits.",
+    icon: Category,
+  },
   {
     name: "generate_qr_code",
     title: "Generate a QR code",
