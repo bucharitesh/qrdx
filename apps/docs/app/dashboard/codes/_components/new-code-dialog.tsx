@@ -34,13 +34,13 @@ import {
   getLandingPageUsage,
 } from "@/actions/landing-pages";
 import type { PageUsage } from "@/app/dashboard/pages/_lib/landing-pages";
+import { openCodeBuilder } from "@/components/code-builder/store";
 import { TemplatePreview } from "@/components/landing/template-preview";
 import { track } from "@/lib/analytics";
 import { demoPath } from "@/lib/landing/demo-paths";
 import type { PageTemplate } from "@/lib/landing/templates";
 import { PLAN_NAMES } from "@/lib/pricing";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
-import { CodeDialog } from "./code-dialog";
 
 type TemplatesModule = typeof import("@/lib/landing/templates");
 type DemoModule = typeof import("@/lib/landing/demo");
@@ -157,7 +157,6 @@ export function NewCodeDialog({
   const openUpgradeDialog = useGetProDialogStore(
     (state) => state.openUpgradeDialog,
   );
-  const [linkOpen, setLinkOpen] = useState(false);
   const [type, setType] = useState<string | null>(null);
   const [variantId, setVariantId] = useState<string | null>(null);
   const [title, setTitle] = useState("");
@@ -231,216 +230,213 @@ export function NewCodeDialog({
   };
 
   return (
-    <>
-      <ResponsiveDialog onOpenChange={onOpenChange} open={open}>
-        <ResponsiveDialogContent
-          // The template grid is taller than most laptop screens: the body
-          // scrolls so the header and the Create button stay in view.
-          className="flex flex-col overflow-hidden p-6 sm:max-w-3xl"
-          showCloseButton
-        >
-          <ResponsiveDialogHeader>
-            <ResponsiveDialogTitle>
-              {template
-                ? `New ${template.label.toLowerCase()} page`
-                : pagesOnly
-                  ? "New page"
-                  : "New dynamic QR code"}
-            </ResponsiveDialogTitle>
-            <ResponsiveDialogDescription>
-              {template
-                ? "Pick a starting point. You can change every block, color and text afterwards."
-                : "What should people see when they scan it? You can edit it after printing."}
-            </ResponsiveDialogDescription>
-          </ResponsiveDialogHeader>
+    <ResponsiveDialog onOpenChange={onOpenChange} open={open}>
+      <ResponsiveDialogContent
+        // The template grid is taller than most laptop screens: the body
+        // scrolls so the header and the Create button stay in view.
+        className="flex flex-col overflow-hidden p-6 sm:max-w-3xl"
+        showCloseButton
+      >
+        <ResponsiveDialogHeader>
+          <ResponsiveDialogTitle>
+            {template
+              ? `New ${template.label.toLowerCase()} page`
+              : pagesOnly
+                ? "New page"
+                : "New dynamic QR code"}
+          </ResponsiveDialogTitle>
+          <ResponsiveDialogDescription>
+            {template
+              ? "Pick a starting point. You can change every block, color and text afterwards."
+              : "What should people see when they scan it? You can edit it after printing."}
+          </ResponsiveDialogDescription>
+        </ResponsiveDialogHeader>
 
-          {!template ? (
-            <div className="-mx-1 min-h-0 space-y-4 overflow-y-auto px-1 py-2">
-              {!pagesOnly && (
-                <div className="space-y-2">
-                  <p className="text-muted-foreground text-xs font-medium uppercase">
-                    Link
-                  </p>
-                  <TypeCard
-                    description="Send scans to any web address, and change it anytime"
-                    icon={Link2}
-                    label="Website link"
-                    onClick={() => {
-                      onOpenChange(false);
-                      setLinkOpen(true);
-                    }}
-                  />
-                </div>
-              )}
+        {!template ? (
+          <div className="-mx-1 min-h-0 space-y-4 overflow-y-auto px-1 py-2">
+            {!pagesOnly && (
               <div className="space-y-2">
-                <div className="flex items-center justify-between gap-2">
-                  <p className="text-muted-foreground text-xs font-medium uppercase">
-                    Hosted page
-                  </p>
-                  {usage && usage.limit !== null && (
-                    <span className="text-muted-foreground text-xs">
-                      {usage.used} / {usage.limit} pages (
-                      {PLAN_NAMES[usage.plan]})
-                    </span>
-                  )}
-                </div>
-                {atPageLimit && (
-                  <div className="bg-muted flex flex-col gap-2 rounded-md p-3 text-sm sm:flex-row sm:items-center sm:justify-between">
-                    <span>
-                      Your plan includes {usage?.limit} hosted pages. Existing
-                      pages keep working.
-                    </span>
-                    <Button onClick={() => openUpgradeDialog("pro")} size="sm">
-                      <Gem />
-                      Upgrade for unlimited
-                    </Button>
-                  </div>
-                )}
-                {templates ? (
-                  <div className="grid gap-2 sm:grid-cols-2">
-                    {templates.listTemplates().map((item) => (
-                      <TypeCard
-                        description={item.description}
-                        icon={item.icon}
-                        key={item.type}
-                        label={item.label}
-                        locked={atPageLimit}
-                        onClick={() => chooseType(item.type)}
-                      />
-                    ))}
-                  </div>
-                ) : (
-                  <div className="grid gap-2 sm:grid-cols-2">
-                    {Array.from({ length: 6 }, (_, index) => (
-                      <Skeleton className="h-[66px] rounded-lg" key={index} />
-                    ))}
-                  </div>
+                <p className="text-muted-foreground text-xs font-medium uppercase">
+                  Link
+                </p>
+                <TypeCard
+                  description="Send scans to any web address, and change it anytime"
+                  icon={Link2}
+                  label="Website link"
+                  onClick={() => {
+                    onOpenChange(false);
+                    openCodeBuilder({ mode: "create" });
+                  }}
+                />
+              </div>
+            )}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-muted-foreground text-xs font-medium uppercase">
+                  Hosted page
+                </p>
+                {usage && usage.limit !== null && (
+                  <span className="text-muted-foreground text-xs">
+                    {usage.used} / {usage.limit} pages ({PLAN_NAMES[usage.plan]}
+                    )
+                  </span>
                 )}
               </div>
+              {atPageLimit && (
+                <div className="bg-muted flex flex-col gap-2 rounded-md p-3 text-sm sm:flex-row sm:items-center sm:justify-between">
+                  <span>
+                    Your plan includes {usage?.limit} hosted pages. Existing
+                    pages keep working.
+                  </span>
+                  <Button onClick={() => openUpgradeDialog("pro")} size="sm">
+                    <Gem />
+                    Upgrade for unlimited
+                  </Button>
+                </div>
+              )}
+              {templates ? (
+                <div className="grid gap-2 sm:grid-cols-2">
+                  {templates.listTemplates().map((item) => (
+                    <TypeCard
+                      description={item.description}
+                      icon={item.icon}
+                      key={item.type}
+                      label={item.label}
+                      locked={atPageLimit}
+                      onClick={() => chooseType(item.type)}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="grid gap-2 sm:grid-cols-2">
+                  {Array.from({ length: 6 }, (_, index) => (
+                    <Skeleton className="h-[66px] rounded-lg" key={index} />
+                  ))}
+                </div>
+              )}
             </div>
-          ) : (
-            // The previews render whole pages, form blocks included, so the
-            // <form> holds only the name field (forms can't nest).
-            <div className="-mx-1 min-h-0 space-y-4 overflow-y-auto px-1 py-2">
-              <fieldset>
-                <legend className="sr-only">Template</legend>
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-                  {previews.map(({ variant: item, content }) => {
-                    const active = item.id === variant?.id;
-                    return (
-                      <div
-                        className={cn(
-                          "relative space-y-1.5 rounded-lg p-1.5",
-                          active
-                            ? "bg-accent ring-1 ring-foreground/15"
-                            : "has-[>button:hover]:bg-muted",
-                          "has-[>button:focus-visible]:ring-ring/50 has-[>button:focus-visible]:ring-[3px]",
-                        )}
-                        key={item.id}
-                      >
-                        {/* The preview has its own links and buttons, so it sits
+          </div>
+        ) : (
+          // The previews render whole pages, form blocks included, so the
+          // <form> holds only the name field (forms can't nest).
+          <div className="-mx-1 min-h-0 space-y-4 overflow-y-auto px-1 py-2">
+            <fieldset>
+              <legend className="sr-only">Template</legend>
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+                {previews.map(({ variant: item, content }) => {
+                  const active = item.id === variant?.id;
+                  return (
+                    <div
+                      className={cn(
+                        "relative space-y-1.5 rounded-lg p-1.5",
+                        active
+                          ? "bg-accent ring-1 ring-foreground/15"
+                          : "has-[>button:hover]:bg-muted",
+                        "has-[>button:focus-visible]:ring-ring/50 has-[>button:focus-visible]:ring-[3px]",
+                      )}
+                      key={item.id}
+                    >
+                      {/* The preview has its own links and buttons, so it sits
                             outside the card button (nested interactive content is
                             invalid HTML, and its links would navigate away). */}
-                        {content ? (
-                          <TemplatePreview
-                            className={cn(
-                              "bg-muted aspect-[9/16] w-full rounded-md border",
-                              active && "ring-primary ring-2",
-                            )}
-                            content={content}
-                          />
-                        ) : (
-                          <div className="bg-muted aspect-[9/16] rounded-md border" />
-                        )}
-                        {/* Its ::after covers the whole card, preview included. */}
-                        <button
-                          aria-pressed={active}
-                          className="block w-full space-y-1.5 text-left outline-none after:absolute after:inset-0 after:rounded-lg"
-                          onClick={() => setVariantId(item.id)}
-                          type="button"
-                        >
-                          <span className="block px-0.5 text-sm font-medium">
-                            {item.name}
-                          </span>
-                          {item.description && (
-                            <span className="text-muted-foreground block px-0.5 text-xs leading-snug">
-                              {item.description}
-                            </span>
+                      {content ? (
+                        <TemplatePreview
+                          className={cn(
+                            "bg-muted aspect-[9/16] w-full rounded-md border",
+                            active && "ring-primary ring-2",
                           )}
-                        </button>
-                        {/* Above the card button, so opening it never selects the card. */}
-                        <a
-                          aria-label={`Preview the ${item.name} template in a new tab`}
-                          className="bg-background/90 text-foreground hover:bg-background focus-visible:ring-ring/50 absolute top-3 right-3 z-10 inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium shadow-xs backdrop-blur-sm transition-colors outline-none focus-visible:ring-[3px]"
-                          href={demoPath(template.type, item.id)}
-                          rel="noopener"
-                          target="_blank"
-                        >
-                          <ExportSquare aria-hidden className="size-3" />
-                          Preview
-                        </a>
-                      </div>
-                    );
-                  })}
-                </div>
-              </fieldset>
-              <form className="space-y-4" id="new-page-form" onSubmit={submit}>
-                <div className="space-y-1.5">
-                  <Label htmlFor="new-page-title">
-                    Name{" "}
-                    <span className="text-muted-foreground font-normal">
-                      (optional, only you see it)
-                    </span>
-                  </Label>
-                  <Input
-                    id="new-page-title"
-                    maxLength={100}
-                    onChange={(event) => setTitle(event.target.value)}
-                    placeholder={`${template.label}, spring campaign`}
-                    value={title}
-                  />
-                </div>
-                {error && (
-                  <div
-                    className="bg-destructive/10 text-destructive space-y-2 rounded-md p-3 text-sm"
-                    role="alert"
-                  >
-                    <p>{error.message}</p>
-                    {(error.code === "LIMIT_REACHED" ||
-                      error.code === "PLAN_REQUIRED") && (
-                      <Button
-                        onClick={() => openUpgradeDialog("pro")}
-                        size="sm"
+                          content={content}
+                        />
+                      ) : (
+                        <div className="bg-muted aspect-[9/16] rounded-md border" />
+                      )}
+                      {/* Its ::after covers the whole card, preview included. */}
+                      <button
+                        aria-pressed={active}
+                        className="block w-full space-y-1.5 text-left outline-none after:absolute after:inset-0 after:rounded-lg"
+                        onClick={() => setVariantId(item.id)}
                         type="button"
                       >
-                        Upgrade
-                      </Button>
-                    )}
-                  </div>
-                )}
-              </form>
-            </div>
-          )}
+                        <span className="block px-0.5 text-sm font-medium">
+                          {item.name}
+                        </span>
+                        {item.description && (
+                          <span className="text-muted-foreground block px-0.5 text-xs leading-snug">
+                            {item.description}
+                          </span>
+                        )}
+                      </button>
+                      {/* Above the card button, so opening it never selects the card. */}
+                      <a
+                        aria-label={`Preview the ${item.name} template in a new tab`}
+                        className="bg-background/90 text-foreground hover:bg-background focus-visible:ring-ring/50 absolute top-3 right-3 z-10 inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium shadow-xs backdrop-blur-sm transition-colors outline-none focus-visible:ring-[3px]"
+                        href={demoPath(template.type, item.id)}
+                        rel="noopener"
+                        target="_blank"
+                      >
+                        <ExportSquare aria-hidden className="size-3" />
+                        Preview
+                      </a>
+                    </div>
+                  );
+                })}
+              </div>
+            </fieldset>
+            <form className="space-y-4" id="new-page-form" onSubmit={submit}>
+              <div className="space-y-1.5">
+                <Label htmlFor="new-page-title">
+                  Name{" "}
+                  <span className="text-muted-foreground font-normal">
+                    (optional, only you see it)
+                  </span>
+                </Label>
+                <Input
+                  id="new-page-title"
+                  maxLength={100}
+                  onChange={(event) => setTitle(event.target.value)}
+                  placeholder={`${template.label}, spring campaign`}
+                  value={title}
+                />
+              </div>
+              {error && (
+                <div
+                  className="bg-destructive/10 text-destructive space-y-2 rounded-md p-3 text-sm"
+                  role="alert"
+                >
+                  <p>{error.message}</p>
+                  {(error.code === "LIMIT_REACHED" ||
+                    error.code === "PLAN_REQUIRED") && (
+                    <Button
+                      onClick={() => openUpgradeDialog("pro")}
+                      size="sm"
+                      type="button"
+                    >
+                      Upgrade
+                    </Button>
+                  )}
+                </div>
+              )}
+            </form>
+          </div>
+        )}
 
-          {template && (
-            <ResponsiveDialogFooter className="gap-2">
-              <Button
-                onClick={() => setType(null)}
-                type="button"
-                variant="outline"
-              >
-                <ArrowLeft />
-                Back
-              </Button>
-              <Button disabled={isPending} form="new-page-form" type="submit">
-                {isPending && <Loader2 className="animate-spin" />}
-                {isPending ? "Creating..." : "Create page"}
-              </Button>
-            </ResponsiveDialogFooter>
-          )}
-        </ResponsiveDialogContent>
-      </ResponsiveDialog>
-      {!pagesOnly && <CodeDialog onOpenChange={setLinkOpen} open={linkOpen} />}
-    </>
+        {template && (
+          <ResponsiveDialogFooter className="gap-2">
+            <Button
+              onClick={() => setType(null)}
+              type="button"
+              variant="outline"
+            >
+              <ArrowLeft />
+              Back
+            </Button>
+            <Button disabled={isPending} form="new-page-form" type="submit">
+              {isPending && <Loader2 className="animate-spin" />}
+              {isPending ? "Creating..." : "Create page"}
+            </Button>
+          </ResponsiveDialogFooter>
+        )}
+      </ResponsiveDialogContent>
+    </ResponsiveDialog>
   );
 }
