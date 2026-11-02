@@ -13,6 +13,7 @@ import { ArrowRight2, TickCircle } from "iconsax-reactjs";
 import Link from "next/link";
 import { type ReactNode, useEffect, useState } from "react";
 import { useCreate } from "@/components/app-shell/create-actions";
+import { useWorkspaceHref } from "@/components/workspace-provider";
 import type { SetupTask } from "./home-data";
 
 const HIDDEN_KEY = "qrdx:home-setup-hidden";
@@ -85,14 +86,9 @@ function TaskLink({ href, children }: { href: string; children: ReactNode }) {
  * "Get set up": the first things worth doing, ticked from real data. Gone
  * once everything is done, or after Hide (remembered in this browser).
  */
-export function SetupChecklist({
-  tasks,
-  isTeam,
-}: {
-  tasks: SetupTask[];
-  isTeam: boolean;
-}) {
+export function SetupChecklist({ tasks }: { tasks: SetupTask[] }) {
   const create = useCreate();
+  const href = useWorkspaceHref();
   const [hidden, setHidden] = useState(false);
   useEffect(() => setHidden(readHidden()), []);
 
@@ -133,18 +129,12 @@ export function SetupChecklist({
       action: <TaskLink href="/playground?tab=customisations">Design</TaskLink>,
     },
     team: {
-      label: isTeam ? "Invite a teammate" : "Create a team",
-      action: (
-        <TaskLink
-          href={isTeam ? "/dashboard/team" : "/dashboard/team?create=1"}
-        >
-          {isTeam ? "Invite" : "Create"}
-        </TaskLink>
-      ),
+      label: "Invite a teammate",
+      action: <TaskLink href={href("/settings/team")}>Invite</TaskLink>,
     },
     domain: {
       label: "Connect a custom domain",
-      action: <TaskLink href="/dashboard/domains">Connect</TaskLink>,
+      action: <TaskLink href={href("/settings/domains")}>Connect</TaskLink>,
     },
   };
 

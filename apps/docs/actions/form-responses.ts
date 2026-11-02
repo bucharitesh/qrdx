@@ -81,7 +81,7 @@ export async function deleteFormResponses(input: {
     const deleted = await deletePageResponses(page.id, [
       ...new Set(parsed.data.ids),
     ]);
-    revalidatePath(`/dashboard/pages/${page.id}/responses`);
+    revalidatePath("/dashboard", "layout");
     return { success: true, data: { deleted } };
   } catch (error) {
     return failure(error);

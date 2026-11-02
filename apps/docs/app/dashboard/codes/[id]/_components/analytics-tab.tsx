@@ -31,6 +31,8 @@ import {
   SCAN_RANGES,
   scanRangeLabel,
 } from "@/lib/scans";
+import { requestWorkspaceSlug } from "@/lib/scope";
+import { workspaceLink } from "@/lib/workspace-paths";
 
 type Query = Record<string, string | string[] | undefined>;
 
@@ -127,11 +129,17 @@ export async function AnalyticsTab({
   query: Query;
 }) {
   const { range, days } = resolveScanRange(query.range, retentionDays);
-  const analytics = await getScanAnalytics(code.id, days);
+  const [analytics, slug] = await Promise.all([
+    getScanAnalytics(code.id, days),
+    requestWorkspaceSlug(),
+  ]);
   const lockedRanges = SCAN_RANGE_KEYS.some(
     (key) => SCAN_RANGES[key] > retentionDays,
   );
-  const exportHref = `/dashboard/codes/${encodeURIComponent(code.id)}/export?range=${range}`;
+  const exportHref = workspaceLink(
+    slug,
+    `/codes/${encodeURIComponent(code.id)}/export?range=${range}`,
+  );
 
   return (
     <div className="space-y-6">
@@ -163,7 +171,7 @@ export async function AnalyticsTab({
               >
                 <Link
                   aria-current={key === range ? "true" : undefined}
-                  href={codeTabHref(code.id, "analytics", {
+                  href={codeTabHref(slug, code.id, "analytics", {
                     params: { range: key },
                   })}
                   scroll={false}

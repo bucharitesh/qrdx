@@ -21,6 +21,7 @@ import {
 } from "drizzle-orm";
 import { HttpError } from "@/lib/error-response";
 import { isOAuthScope, type OAuthScope } from "@/lib/oauth-scopes";
+import { isOwnWorkspaceScope } from "@/lib/own-workspace";
 import { getPlanForScope, getPlanLimits, type Plan } from "@/lib/plans";
 import type { ActiveScope } from "@/lib/scope";
 import { canManageOAuthApps, isAppInScope } from "./access";
@@ -29,8 +30,8 @@ import type { OAuthAppValues } from "./validation";
 
 /**
  * Self-serve OAuth apps (Settings → Developers). An app belongs to the
- * workspace it was created in: the creator's personal workspace or the open
- * team. Owners manage apps; plan limits cap how many a workspace has.
+ * workspace it was created in. Owners manage apps; plan limits cap how many
+ * a workspace has.
  */
 
 export interface OAuthAppView {
@@ -164,7 +165,7 @@ export interface OAuthAppsOverview {
   plan: Plan;
   limit: number;
   canManage: boolean;
-  /** "Personal workspace" or the team's name */
+  /** The workspace's name */
   workspaceName: string;
   isTeam: boolean;
   apps: OAuthAppView[];
@@ -176,21 +177,19 @@ export async function getOAuthAppsOverview(
   const [{ plan, limit }, apps, team] = await Promise.all([
     oauthAppLimit(scope),
     listOAuthApps(scope),
-    scope.organizationId
-      ? db
-          .select({ name: organization.name })
-          .from(organization)
-          .where(eq(organization.id, scope.organizationId))
-          .limit(1)
-          .then(([row]) => row ?? null)
-      : null,
+    db
+      .select({ name: organization.name })
+      .from(organization)
+      .where(eq(organization.id, scope.organizationId))
+      .limit(1)
+      .then(([row]) => row ?? null),
   ]);
   return {
     plan,
     limit,
     canManage: canManageOAuthApps(scope),
-    workspaceName: team?.name ?? "Personal workspace",
-    isTeam: Boolean(scope.organizationId),
+    workspaceName: team?.name ?? "This workspace",
+    isTeam: !isOwnWorkspaceScope(scope),
     apps,
   };
 }
@@ -201,7 +200,7 @@ export function appLimitError(limit: number, isTeam: boolean): HttpError {
     402,
     "LIMIT_REACHED",
     isTeam
-      ? `This team's plan includes ${apps}. Delete one, or ask a team owner to upgrade.`
+      ? `This workspace's plan includes ${apps}. Delete one, or ask a workspace owner to upgrade.`
       : `Your plan includes ${apps}. Delete one or upgrade to add more.`,
   );
 }
@@ -217,7 +216,7 @@ export async function createOAuthApp(
     db.select({ total: count() }).from(oauthApp).where(scopeWhere(scope)),
   ]);
   if (total >= limit) {
-    throw appLimitError(limit, Boolean(scope.organizationId));
+    throw appLimitError(limit, !isOwnWorkspaceScope(scope));
   }
 
   const { secret, hash } = await createClientSecret();

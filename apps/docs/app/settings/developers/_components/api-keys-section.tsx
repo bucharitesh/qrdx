@@ -231,7 +231,7 @@ export function ApiKeysSection({
             <DialogDescription>
               {isTeam
                 ? `For ${workspaceName}. It can do what your role allows, within its scopes.`
-                : "For your personal workspace, within the scopes you choose."}
+                : "For your own workspace, within the scopes you choose."}
             </DialogDescription>
           </DialogHeader>
           <CreateApiKeyForm

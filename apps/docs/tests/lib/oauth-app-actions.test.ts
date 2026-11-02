@@ -1,5 +1,6 @@
-// Which OAuth app server actions revalidate /settings/developers. Creating an
-// app must not: the re-render redirects /settings/developers/new to the list
+// Which OAuth app server actions revalidate the dashboard (API keys & apps
+// is a workspace's settings page). Creating an app must not: the re-render
+// redirects …/settings/developers/new to the list
 // once the plan's app limit is reached, which unmounted the dialog showing the
 // new client secret (its only showing). The service, scope and rate limits are
 // fakes; nothing connects to a database.
@@ -64,9 +65,6 @@ describe("OAuth app actions", () => {
       ok: true,
     });
     expect(mocks.revalidatePath).toHaveBeenCalledTimes(2);
-    expect(mocks.revalidatePath).toHaveBeenCalledWith(
-      "/settings/developers",
-      "layout",
-    );
+    expect(mocks.revalidatePath).toHaveBeenCalledWith("/dashboard", "layout");
   });
 });

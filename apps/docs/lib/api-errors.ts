@@ -6,6 +6,7 @@
 
 import { HttpError } from "@/lib/error-response";
 import { baseUrl } from "@/lib/metadata";
+import { dashboardEntry } from "@/lib/workspace-paths";
 
 const docsUrl = (path: string) => new URL(path, baseUrl).href;
 
@@ -18,8 +19,13 @@ export const API_DOCS = {
   endpoints: docsUrl("/docs/developers/rest-api#endpoints"),
 } as const;
 
-/** Where developers create API keys and register OAuth apps. */
-export const DEVELOPER_SETTINGS_URL = docsUrl("/settings/developers");
+/**
+ * Where developers create API keys and register OAuth apps: Settings → API
+ * keys & apps of their default workspace.
+ */
+export const DEVELOPER_SETTINGS_URL = docsUrl(
+  dashboardEntry("settings/developers"),
+);
 
 /** No credentials at all (or not a Bearer token). */
 export function missingTokenError(): HttpError {

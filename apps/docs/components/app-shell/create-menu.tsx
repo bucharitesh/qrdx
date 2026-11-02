@@ -18,6 +18,7 @@ import {
   TaskSquare,
 } from "iconsax-reactjs";
 import Link from "next/link";
+import { useWorkspaceHref } from "@/components/workspace-provider";
 import { useCreate } from "./create-actions";
 
 /**
@@ -26,6 +27,7 @@ import { useCreate } from "./create-actions";
  */
 export function CreateMenu() {
   const create = useCreate();
+  const href = useWorkspaceHref();
 
   return (
     <div className="bg-background flex h-8 items-center rounded-full border shadow-xs">
@@ -64,7 +66,7 @@ export function CreateMenu() {
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem asChild>
-            <Link href="/dashboard/codes/import">
+            <Link href={href("/codes/import")}>
               <DocumentUpload aria-hidden />
               Import codes
             </Link>

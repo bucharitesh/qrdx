@@ -384,7 +384,7 @@ describe("offers on the Domains page", () => {
 describe("coming back from the DNS provider", () => {
   it("builds the return link and reads it back", () => {
     expect(connectRedirectUri(new URL("https://qrdx.dev"), "ck9abc")).toBe(
-      "https://qrdx.dev/dashboard/domains?connected=ck9abc",
+      "https://qrdx.dev/dashboard?to=settings/domains&connected=ck9abc",
     );
     expect(parseConnectReturn({ connected: "ck9abc" })).toEqual({
       domainId: "ck9abc",

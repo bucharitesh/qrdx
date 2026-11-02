@@ -56,6 +56,7 @@ import { useRouter } from "next/navigation";
 import { type DragEvent, useRef, useState, useTransition } from "react";
 import { deleteFileAction } from "@/actions/files";
 import { UpgradeButton } from "@/app/dashboard/team/_components/small-actions";
+import { useWorkspaceHref } from "@/components/workspace-provider";
 import { FileKindIcon } from "@/lib/files/components/file-kind-icon";
 import {
   UploadProgress,
@@ -162,6 +163,7 @@ export function FilesManager({
   canManageAll: boolean;
   isTeam: boolean;
 }) {
+  const inWorkspace = useWorkspaceHref();
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const replaceRef = useRef<HTMLInputElement>(null);
@@ -478,7 +480,9 @@ export function FilesManager({
                           <li key={page.id}>
                             <Link
                               className="underline"
-                              href={`/dashboard/pages/${page.id}`}
+                              href={inWorkspace(
+                                `/pages/${encodeURIComponent(page.id)}`,
+                              )}
                             >
                               {page.title || "Untitled page"}
                             </Link>

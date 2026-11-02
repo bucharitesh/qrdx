@@ -14,6 +14,7 @@ import {
   type AuthorizedAppView,
   groupAuthorizedApps,
 } from "./authorized-group";
+import { appBuilderName } from "./builder";
 
 /** The apps that can still use `userId`'s account, newest activity first. */
 export async function listAuthorizedApps(
@@ -50,9 +51,7 @@ export async function listAuthorizedApps(
       return {
         ...row,
         firstParty,
-        builtBy: firstParty
-          ? "QRdx"
-          : (row.teamName ?? row.ownerName ?? "an independent developer"),
+        builtBy: appBuilderName(row),
       };
     }),
     now,

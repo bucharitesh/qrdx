@@ -35,9 +35,11 @@ import { CopyButton } from "@/components/copy-button";
 import { AccountSourcePicker } from "@/components/data-connections/source-picker";
 import { normalizeDestination } from "@/components/editor/dynamic-link-toggle";
 import { InfoHint } from "@/components/help/info-hint";
+import { useWorkspaceSlug } from "@/components/workspace-provider";
 import { track } from "@/lib/analytics";
 import { PLAN_NAMES } from "@/lib/pricing";
 import { soundEvent } from "@/lib/sound/emit";
+import { workspaceLink } from "@/lib/workspace-paths";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 import {
   CodeOptionPanel,
@@ -58,6 +60,7 @@ interface CodeDialogProps {
 }
 
 export function CodeDialog({ open, onOpenChange, code }: CodeDialogProps) {
+  const workspaceSlug = useWorkspaceSlug();
   const router = useRouter();
   const openInPlayground = useOpenInPlayground();
   const openGetProDialog = useGetProDialogStore(
@@ -289,7 +292,10 @@ export function CodeDialog({ open, onOpenChange, code }: CodeDialogProps) {
                     {code?.pageId && (
                       <Link
                         className="font-medium underline underline-offset-4"
-                        href={`/dashboard/pages/${code.pageId}`}
+                        href={workspaceLink(
+                          workspaceSlug,
+                          `/pages/${encodeURIComponent(code.pageId)}`,
+                        )}
                       >
                         Edit page
                       </Link>
@@ -433,7 +439,9 @@ export function CodeDialog({ open, onOpenChange, code }: CodeDialogProps) {
           ) : created ? (
             <>
               <Button asChild variant="outline">
-                <Link href={codeTabHref(created.id, "analytics")}>
+                <Link
+                  href={codeTabHref(workspaceSlug, created.id, "analytics")}
+                >
                   View analytics
                 </Link>
               </Button>

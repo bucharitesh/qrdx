@@ -25,6 +25,7 @@ import {
 import { codeTabHref } from "@/app/dashboard/codes/_lib/code-tabs";
 import type { QrCodeView } from "@/app/dashboard/codes/_lib/qr-codes";
 import { getScanSparklines } from "@/lib/scans";
+import { requestWorkspaceSlug } from "@/lib/scope";
 import { LandingPagePanel } from "./landing-page-panel";
 import type { MarketingSettingsPromise } from "./routing-panel";
 
@@ -60,10 +61,11 @@ export async function OverviewTab({
   plans: CodeOptionPlans;
   marketing: MarketingSettingsPromise;
 }) {
-  const [sparklines, settings, lifecycle] = await Promise.all([
+  const [sparklines, settings, lifecycle, slug] = await Promise.all([
     getScanSparklines([code.id], 7),
     marketing,
     getCodeLifecycle(code.id),
+    requestWorkspaceSlug(),
   ]);
   const week = sparklines.get(code.id) ?? [];
   const weekTotal = week.reduce((sum, value) => sum + value, 0);
@@ -75,7 +77,9 @@ export async function OverviewTab({
   const hrefs = Object.fromEntries(
     codeOptionsFor(kind).map((id) => [
       id,
-      codeTabHref(code.id, "settings", { hash: CODE_OPTION_ANCHORS[id] }),
+      codeTabHref(slug, code.id, "settings", {
+        hash: CODE_OPTION_ANCHORS[id],
+      }),
     ]),
   ) as Partial<Record<CodeOptionId, string>>;
 
@@ -86,7 +90,7 @@ export async function OverviewTab({
         <CardHeader className="flex flex-row items-center justify-between gap-2 px-4">
           <CardTitle className="text-base">Scans</CardTitle>
           <Button asChild className="-my-1" size="sm" variant="ghost">
-            <Link href={codeTabHref(code.id, "analytics")}>
+            <Link href={codeTabHref(slug, code.id, "analytics")}>
               View analytics
               <ArrowRight />
             </Link>

@@ -10,6 +10,7 @@ import {
 import { type ReactNode, useState } from "react";
 import type { QrCodeView } from "@/app/dashboard/codes/_lib/qr-codes";
 import { CopyButton } from "@/components/copy-button";
+import { useWorkspaceHref } from "@/components/workspace-provider";
 import { CodeActionsMenu } from "./code-actions-menu";
 import { CodeDialog } from "./code-dialog";
 import { CodeDownloadButtons, CodeQr } from "./code-qr";
@@ -26,6 +27,7 @@ const STATUS_NOTES = {
 
 /** Title, status and actions of the code page, above its tabs. */
 export function CodeHeader({ code }: { code: QrCodeView }) {
+  const inWorkspace = useWorkspaceHref();
   const [editOpen, setEditOpen] = useState(false);
 
   return (
@@ -48,7 +50,7 @@ export function CodeHeader({ code }: { code: QrCodeView }) {
             Edit link
           </Button>
           <CodeActionsMenu
-            afterDelete="/dashboard/codes"
+            afterDelete={inWorkspace("/codes")}
             code={code}
             showAnalyticsLink={false}
           />

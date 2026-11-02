@@ -11,6 +11,11 @@
 // are decided in lib/integration-availability-rules.ts, which defers to these
 // rules for the catalog entries that are really built-in features.
 
+import {
+  WORKSPACE_PATTERN_PREFIX,
+  workspacePattern,
+} from "@/lib/workspace-paths";
+
 export const FEATURE_IDS = [
   "aiThemes",
   "aiArt",
@@ -79,7 +84,7 @@ export const FEATURE_RULES: Record<FeatureId, FeatureRule> = {
     requires: (ctx) =>
       ctx.onVercel ? ["VERCEL_API_TOKEN", "VERCEL_PROJECT_ID"] : [],
     paths: [
-      "/dashboard/domains",
+      `${WORKSPACE_PATTERN_PREFIX}/settings/domains`,
       "/docs/custom-domains",
       "/docs/help/domains/custom-domains",
     ],
@@ -229,11 +234,12 @@ const pathOf = (href: string) => href.split(/[?#]/, 1)[0] ?? href;
 
 /**
  * False for a link to a page that only offers an unavailable feature
- * (exact path; query and hash ignored). External links always pass.
+ * (exact path; query and hash ignored; any workspace's page matches its
+ * /dashboard/[workspace]/… rule). External links always pass.
  */
 export function isPathShown(
   hiddenPaths: readonly string[],
   href: string,
 ): boolean {
-  return !hiddenPaths.includes(pathOf(href));
+  return !hiddenPaths.includes(workspacePattern(pathOf(href)));
 }

@@ -1,5 +1,6 @@
 import "server-only";
 
+import { ownWorkspaceId } from "@repo/auth/own-workspace-id";
 import {
   database as db,
   member,
@@ -54,6 +55,8 @@ export const chatEventsSchema = z
 export interface NotificationWorkspace {
   organizationId: string | null;
   name: string;
+  /** The person's own workspace (its plan is their own) */
+  own: boolean;
   plan: Plan;
   emailAlerts: boolean;
   chat: boolean;
@@ -98,7 +101,11 @@ async function assertMember(userId: string, organizationId: string | null) {
     )
     .limit(1);
   if (!row) {
-    throw new HttpError(403, "FORBIDDEN", "You're not a member of that team.");
+    throw new HttpError(
+      403,
+      "FORBIDDEN",
+      "You're not a member of that workspace.",
+    );
   }
 }
 
@@ -109,7 +116,7 @@ async function planFor(userId: string, organizationId: string | null) {
   return { emailAlerts: limits.emailAlerts, chat: limits.webhooks };
 }
 
-/** Personal workspace first, then every team the person belongs to. */
+/** Every workspace the person belongs to, their own first. */
 export async function listNotificationWorkspaces(
   userId: string,
 ): Promise<NotificationWorkspace[]> {
@@ -127,10 +134,12 @@ export async function listNotificationWorkspaces(
       .orderBy(asc(notificationSetting.createdAt)),
   ]);
 
+  // Your own workspace first, then the others by name.
+  const own = ownWorkspaceId(userId);
   const scopes: { organizationId: string | null; name: string }[] = [
-    { organizationId: null, name: "Personal workspace" },
-    ...teams.map((team) => ({ organizationId: team.id, name: team.name })),
-  ];
+    ...teams.filter((team) => team.id === own),
+    ...teams.filter((team) => team.id !== own),
+  ].map((team) => ({ organizationId: team.id, name: team.name }));
 
   return Promise.all(
     scopes.map(async ({ organizationId, name }) => {
@@ -143,6 +152,7 @@ export async function listNotificationWorkspaces(
       return {
         organizationId,
         name,
+        own: organizationId === own,
         plan,
         emailAlerts: limits.emailAlerts,
         chat: limits.webhooks,

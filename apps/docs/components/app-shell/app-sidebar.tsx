@@ -19,12 +19,13 @@ import { type ReactElement, useId } from "react";
 import { useAvailability } from "@/components/availability-provider";
 import { OrgSwitcher } from "@/components/org-switcher";
 import { PLAN_NAMES } from "@/lib/pricing";
+import { workspaceHref } from "@/lib/workspace-paths";
 import {
   type AppNavGroup,
   isNavItemActive,
   isSettingsPath,
-  MAIN_NAV,
-  SETTINGS_NAV,
+  mainNav,
+  settingsNav,
 } from "./nav-config";
 import type { ShellData } from "./shell-data";
 
@@ -172,11 +173,12 @@ function NavGroups({
 
 /**
  * The sidebar, shared by the desktop rail and the mobile sheet. Dashboard
- * pages get the product nav; settings pages get their own area with a way
- * back. Both end with the workspace switcher, whose menu also leads to
- * settings and Plan & usage. Team, Domains and Webhooks sit in settings while
- * their URLs stay under /dashboard. The list scrolls; both ends stay put.
- * `collapsed` turns it into an icon rail (desktop only).
+ * pages get the product nav; settings pages (the workspace's and the
+ * account's) get their own area with a way back. Both end with the workspace
+ * switcher, whose menu also leads to settings and Plan & usage. The list
+ * scrolls; both ends stay put. `collapsed` turns it into an icon rail
+ * (desktop only). Without shell data (signed out, or the lookup failed) only
+ * the account settings are listed.
  */
 export function AppSidebar({
   shell,
@@ -193,6 +195,13 @@ export function AppSidebar({
   const pathname = usePathname();
   const inSettings = isSettingsPath(pathname);
   const planName = shell ? PLAN_NAMES[shell.plan] : undefined;
+  const slug = shell?.workspace.slug ?? null;
+  const dashboardHome = slug ? workspaceHref(slug) : "/dashboard";
+  const groups = slug
+    ? inSettings
+      ? settingsNav(slug)
+      : mainNav(slug)
+    : settingsNav("").filter((group) => group.id === "account");
 
   const toggle = onCollapsedChange && (
     <RailTip
@@ -232,7 +241,7 @@ export function AppSidebar({
             "text-muted-foreground",
             collapsed ? "size-9 justify-center" : "h-8 min-w-0 gap-2 px-2.5",
           )}
-          href="/dashboard"
+          href={dashboardHome}
           onClick={onNavigate}
         >
           <ArrowLeft aria-hidden className="size-4 shrink-0" />
@@ -263,7 +272,7 @@ export function AppSidebar({
         )}
         <NavGroups
           collapsed={collapsed}
-          groups={inSettings ? SETTINGS_NAV : MAIN_NAV}
+          groups={groups}
           label={inSettings ? "Settings" : "Dashboard"}
           onNavigate={onNavigate}
         />
@@ -279,6 +288,7 @@ export function AppSidebar({
           collapsed={collapsed}
           onNavigate={onNavigate}
           planName={planName}
+          shell={shell}
           side="top"
         />
       </div>

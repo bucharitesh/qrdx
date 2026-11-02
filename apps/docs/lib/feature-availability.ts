@@ -51,7 +51,7 @@ const hiddenPaths = toPublicAvailability(features).hiddenPaths;
 
 /**
  * False for a link to a page that only offers an unavailable feature, like
- * /dashboard/domains where custom domains can't be added.
+ * a workspace's Domains page where custom domains can't be added.
  */
 export function isPathAvailable(href: string): boolean {
   return isPathShown(hiddenPaths, href);

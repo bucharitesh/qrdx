@@ -39,7 +39,7 @@ vi.mock(
   "@repo/database/schema",
   async () => (await import("../support/fake-db")).repoDatabase,
 );
-vi.mock("next/headers", () => ({ headers: async () => new Headers() }));
+vi.mock("next/headers", () => ({ headers: vi.fn(async () => new Headers()) }));
 vi.mock("next/cache", () => ({ revalidatePath: () => {} }));
 vi.mock("@repo/rate-limit", () => ({
   slidingWindow: () => ({}),
@@ -82,7 +82,11 @@ vi.mock("@repo/auth/server", async () => {
         getSession: async () =>
           state.session
             ? {
-                user: { id: state.session.userId },
+                // Better Auth's session user carries the name and email.
+                user: {
+                  ...db.find("user", { id: state.session.userId }),
+                  id: state.session.userId,
+                },
                 session: {
                   activeOrganizationId: state.session.organizationId,
                 },
@@ -136,6 +140,13 @@ vi.mock("@repo/auth/server", async () => {
           return row;
         }),
         updateMemberRole: call("updateMemberRole"),
+        updateOrganization: call("updateOrganization", (body) => {
+          const data = body.data as { name?: string; slug?: string };
+          const row = db.find("organization", { id: body.organizationId });
+          if (row) Object.assign(row, data);
+          return row;
+        }),
+        setActiveOrganization: call("setActiveOrganization"),
         removeMember: call("removeMember"),
         leaveOrganization: call("leaveOrganization"),
         deleteOrganization: call("deleteOrganization"),
@@ -152,7 +163,10 @@ vi.mock("@repo/auth/server", async () => {
 });
 
 const teams = await import("@/actions/organizations");
-const { getActiveScope } = await import("@/lib/scope");
+const { getActiveScope, WorkspaceNotFoundError } = await import("@/lib/scope");
+const { ownWorkspaceId, ownWorkspaceMemberId } = await import(
+  "@repo/auth/own-workspace-id"
+);
 const { getOwnerPlanForOrganization } = await import("@/lib/plans");
 const { UnauthorizedError } = await import("@/types/errors");
 
@@ -244,16 +258,18 @@ afterEach(() => {
   vi.useRealTimers();
 });
 
-// ─── Creating a team ────────────────────────────────────────────────────────
+// ─── Creating a workspace ───────────────────────────────────────────────────
 
-describe("creating a team", () => {
-  it("needs Pro or Business, and offers the upgrade", async () => {
+describe("creating a workspace", () => {
+  it("needs Pro or Business (everyone already has their own), and offers the upgrade", async () => {
     signIn("u_free");
-    expect(await teams.createTeam({ name: "Acme", slug: "acme" })).toEqual({
-      ok: false,
-      error: "Creating teams requires a Pro or Business plan.",
-      upgrade: true,
-    });
+    expect(await teams.createWorkspace({ name: "Acme", slug: "acme" })).toEqual(
+      {
+        ok: false,
+        error: "More workspaces are part of Pro and Business.",
+        upgrade: true,
+      },
+    );
     expect(calls("createOrganization")).toHaveLength(0);
   });
 
@@ -262,14 +278,14 @@ describe("creating a team", () => {
       subscribe("u_lapsed", "pro", status);
     }
     signIn("u_lapsed");
-    const result = await teams.createTeam({ name: "Acme", slug: "acme" });
+    const result = await teams.createWorkspace({ name: "Acme", slug: "acme" });
     expect(result).toMatchObject({ ok: false, upgrade: true });
   });
 
-  it("creates the team on Pro (and trials), normalizing the URL", async () => {
+  it("creates the workspace on Pro (and trials), normalizing the URL", async () => {
     subscribe("u_pro", "pro", "trialing");
     signIn("u_pro");
-    const result = await teams.createTeam({
+    const result = await teams.createWorkspace({
       name: "  Acme Corp ",
       slug: " Acme-Corp ",
     });
@@ -283,20 +299,20 @@ describe("creating a team", () => {
     });
   });
 
-  it("creates the team on Business", async () => {
+  it("creates the workspace on Business", async () => {
     subscribe("u_biz", "business");
     signIn("u_biz");
-    expect((await teams.createTeam({ name: "Acme", slug: "acme" })).ok).toBe(
-      true,
-    );
+    expect(
+      (await teams.createWorkspace({ name: "Acme", slug: "acme" })).ok,
+    ).toBe(true);
   });
 
-  it("validates the name and the 3-48 character team URL", async () => {
+  it("validates the name and the 3-48 character workspace URL, refusing reserved words", async () => {
     subscribe("u_pro", "pro");
     signIn("u_pro");
-    expect(await teams.createTeam({ name: "A", slug: "acme" })).toEqual({
+    expect(await teams.createWorkspace({ name: "A", slug: "acme" })).toEqual({
       ok: false,
-      error: "Team name is too short",
+      error: "Workspace name is too short.",
     });
     for (const slug of [
       "ab",
@@ -306,42 +322,56 @@ describe("creating a team", () => {
       "a".repeat(49),
       "acmé",
     ]) {
-      expect(await teams.createTeam({ name: "Acme", slug }), slug).toEqual({
-        ok: false,
-        error: "Use 3-48 lowercase letters, numbers and dashes",
-      });
+      expect(await teams.createWorkspace({ name: "Acme", slug }), slug).toEqual(
+        {
+          ok: false,
+          error: "Use 3-48 lowercase letters, numbers and dashes.",
+        },
+      );
+    }
+    // Old dashboard sections can never become someone's workspace URL.
+    for (const slug of ["codes", "settings", "team", "personal", "api"]) {
+      expect(await teams.createWorkspace({ name: "Acme", slug }), slug).toEqual(
+        { ok: false, error: "That URL is reserved. Pick another one." },
+      );
     }
     expect(
-      (await teams.createTeam({ name: "Acme", slug: "a".repeat(48) })).ok,
+      (await teams.createWorkspace({ name: "Acme", slug: "a".repeat(48) })).ok,
     ).toBe(true);
     expect(calls("createOrganization")).toHaveLength(1);
   });
 
-  it("explains a taken team URL", async () => {
+  it("explains a taken workspace URL", async () => {
     subscribe("u_pro", "pro");
     signIn("u_pro");
     state.apiError = {
       method: "createOrganization",
       code: "ORGANIZATION_ALREADY_EXISTS",
     };
-    expect(await teams.createTeam({ name: "Acme", slug: "acme" })).toEqual({
-      ok: false,
-      error: "That team URL is already taken.",
-    });
+    expect(await teams.createWorkspace({ name: "Acme", slug: "acme" })).toEqual(
+      {
+        ok: false,
+        error: "That workspace URL is already taken.",
+      },
+    );
   });
 
   it("asks signed-out visitors to sign in, and rate limits", async () => {
-    expect(await teams.createTeam({ name: "Acme", slug: "acme" })).toEqual({
-      ok: false,
-      error: "Sign in to manage teams.",
-    });
+    expect(await teams.createWorkspace({ name: "Acme", slug: "acme" })).toEqual(
+      {
+        ok: false,
+        error: "Sign in to manage workspaces.",
+      },
+    );
     subscribe("u_pro", "pro");
     signIn("u_pro");
     state.rateLimited = true;
-    expect(await teams.createTeam({ name: "Acme", slug: "acme" })).toEqual({
-      ok: false,
-      error: "Too many requests. Please wait a minute and try again.",
-    });
+    expect(await teams.createWorkspace({ name: "Acme", slug: "acme" })).toEqual(
+      {
+        ok: false,
+        error: "Too many requests. Please wait a minute and try again.",
+      },
+    );
   });
 });
 
@@ -369,7 +399,7 @@ describe("team seats: members (owner included) plus pending invitations", () => 
     expect(fourth).toEqual({
       ok: false,
       error:
-        "This team has used all 3 seats (members plus pending invitations). Revoke an invitation, or upgrade a team owner to Business for unlimited members.",
+        "This workspace has used all 3 seats (members plus pending invitations). Revoke an invitation, or upgrade a workspace owner to Business for unlimited members.",
       upgrade: true,
     });
     expect(calls("createInvitation")).toHaveLength(1);
@@ -469,11 +499,13 @@ describe("team seats: members (owner included) plus pending invitations", () => 
     });
     expect(result).toEqual({
       ok: false,
-      error: "Adding members needs a team owner on Pro or Business.",
+      error: "Adding members needs a workspace owner on Pro or Business.",
       upgrade: true,
     });
     expect(calls("removeMember")).toHaveLength(0);
-    expect(fakeDb.rows("member")).toHaveLength(3);
+    expect(
+      fakeDb.rows("member").filter((m) => m.organizationId === "org_acme"),
+    ).toHaveLength(3);
 
     // Members still work in the team.
     signIn("u_bob", "org_acme");
@@ -496,7 +528,7 @@ describe("team seats: members (owner included) plus pending invitations", () => 
     ).toEqual({
       ok: false,
       error:
-        "This team has no free seats for another invitation. Revoke a pending invitation or upgrade the team's plan.",
+        "This workspace has no free seats for another invitation. Revoke a pending invitation or upgrade the workspace's plan.",
       upgrade: true,
     });
   });
@@ -510,7 +542,7 @@ describe("team seats: members (owner included) plus pending invitations", () => 
     expect(await teams.acceptInvitation({ invitationId: "inv_1" })).toEqual({
       ok: false,
       error:
-        "This team is full. Pro teams have up to 3 members; Business teams have no limit.",
+        "This workspace is full. Pro workspaces have up to 3 members; Business workspaces have no limit.",
     });
   });
 });
@@ -527,7 +559,7 @@ describe("who manages a team", () => {
 
   const invitation = { email: "new@example.com", role: "member" as const };
 
-  it("lets owners and admins invite, but not members or personal workspaces", async () => {
+  it("lets owners and admins invite, but not members", async () => {
     expect((await teams.inviteMember(invitation)).ok).toBe(true);
     signIn("u_admin", "org_acme");
     expect((await teams.inviteMember(invitation)).ok).toBe(true);
@@ -535,11 +567,25 @@ describe("who manages a team", () => {
     signIn("u_member", "org_acme");
     expect(await teams.inviteMember(invitation)).toEqual({
       ok: false,
-      error: "Only team owners and admins can invite.",
+      error: "Only workspace owners and admins can invite.",
     });
-    signIn("u_owner", null);
-    expect((await teams.inviteMember(invitation)).ok).toBe(false);
     expect(calls("createInvitation")).toHaveLength(2);
+  });
+
+  it("lets people invite into their own workspace by their plan's seats", async () => {
+    // u_owner is on Business: their own workspace has no member limit.
+    signIn("u_owner", null);
+    expect((await teams.inviteMember(invitation)).ok).toBe(true);
+    expect(calls("createInvitation")[0]?.body).toMatchObject({
+      organizationId: ownWorkspaceId("u_owner"),
+    });
+    // On Free their own workspace has one seat: theirs.
+    signIn("u_free", null);
+    expect(await teams.inviteMember(invitation)).toEqual({
+      ok: false,
+      error: "Adding members needs a workspace owner on Pro or Business.",
+      upgrade: true,
+    });
   });
 
   it("invites by valid email as member or admin only", async () => {
@@ -578,17 +624,17 @@ describe("who manages a team", () => {
     signIn("u_member", "org_acme");
     expect(await teams.removeMember({ memberId: "m_2" })).toEqual({
       ok: false,
-      error: "Only team owners and admins can remove members.",
+      error: "Only workspace owners and admins can remove members.",
     });
     expect(
       await teams.updateMemberRole({ memberId: "m_2", role: "member" }),
     ).toEqual({
       ok: false,
-      error: "Only team owners and admins can change roles.",
+      error: "Only workspace owners and admins can change roles.",
     });
     expect(await teams.cancelInvitation({ invitationId: pending })).toEqual({
       ok: false,
-      error: "Only team owners and admins can revoke invitations.",
+      error: "Only workspace owners and admins can revoke invitations.",
     });
     expect(state.calls).toHaveLength(0);
   });
@@ -611,7 +657,7 @@ describe("who manages a team", () => {
         organizationId: "org_acme",
         confirmSlug: "acme",
       }),
-    ).toEqual({ ok: false, error: "Only owners can delete a team." });
+    ).toEqual({ ok: false, error: "Only owners can delete a workspace." });
 
     signIn("u_owner", null);
     expect(
@@ -629,7 +675,10 @@ describe("who manages a team", () => {
         organizationId: "org_acme",
         confirmSlug: "Acme",
       }),
-    ).toEqual({ ok: false, error: "Type the team URL exactly to confirm." });
+    ).toEqual({
+      ok: false,
+      error: "Type the workspace URL exactly to confirm.",
+    });
     expect(calls("deleteOrganization")).toHaveLength(0);
 
     expect(
@@ -641,7 +690,26 @@ describe("who manages a team", () => {
     expect(calls("deleteOrganization")).toHaveLength(1);
   });
 
-  it("words Better Auth errors for teams", async () => {
+  it("never deletes or leaves someone's own workspace", async () => {
+    signIn("u_owner", null);
+    const own = (await getActiveScope()).organizationId;
+    expect(own).toBe(ownWorkspaceId("u_owner"));
+    const slug = fakeDb.find("organization", { id: own })?.slug as string;
+    expect(
+      await teams.deleteTeam({ organizationId: own, confirmSlug: slug }),
+    ).toEqual({
+      ok: false,
+      error: "Your own workspace can't be deleted. Rename it instead.",
+    });
+    expect(await teams.leaveTeam({ organizationId: own })).toEqual({
+      ok: false,
+      error: "You can't leave your own workspace.",
+    });
+    expect(calls("deleteOrganization")).toHaveLength(0);
+    expect(calls("leaveOrganization")).toHaveLength(0);
+  });
+
+  it("words Better Auth errors for workspaces", async () => {
     state.apiError = {
       method: "leaveOrganization",
       code: "YOU_CANNOT_LEAVE_THE_ORGANIZATION_AS_THE_ONLY_OWNER",
@@ -649,7 +717,7 @@ describe("who manages a team", () => {
     expect(await teams.leaveTeam({ organizationId: "org_acme" })).toEqual({
       ok: false,
       error:
-        "A team needs at least one owner. Make someone else an owner first.",
+        "A workspace needs at least one owner. Make someone else an owner first.",
     });
     state.apiError = {
       method: "removeMember",
@@ -658,21 +726,101 @@ describe("who manages a team", () => {
     };
     expect(await teams.removeMember({ memberId: "m_9" })).toEqual({
       ok: false,
-      error: "Team member not found",
+      error: "Workspace member not found",
     });
   });
 });
 
 // ─── The active workspace ───────────────────────────────────────────────────
 
+const own = (userId: string) => ({
+  userId,
+  organizationId: ownWorkspaceId(userId),
+  role: "owner",
+});
+
 describe("getActiveScope", () => {
-  it("is the personal workspace without an open team", async () => {
+  it("makes your own workspace on the first visit and moves your rows into it", async () => {
+    fakeDb.seed("user", [
+      { id: "u_alice", name: "Alice Smith", email: "alice@example.com" },
+    ]);
+    fakeDb.seed("qrCode", [
+      // From before workspaces: no workspace yet.
+      { id: "c1", userId: "u_alice", organizationId: null, slug: "abc1234" },
+      // Someone else's, and a team's: untouched.
+      { id: "c2", userId: "u_bob", organizationId: null, slug: "abc1235" },
+      { id: "c3", userId: "u_alice", organizationId: "org_x", slug: "abc1236" },
+    ]);
+    fakeDb.seed("qrPreset", [
+      { id: "t1", userId: "u_alice", organizationId: null, name: "Mine" },
+    ]);
+    fakeDb.seed("oauthApp", [
+      { id: "app_mine", ownerUserId: "u_alice", organizationId: null },
+      // First-party apps (no owner) never get a workspace.
+      { id: "app_qrdx", ownerUserId: null, organizationId: null },
+    ]);
     signIn("u_alice");
-    expect(await getActiveScope()).toEqual({
-      userId: "u_alice",
-      organizationId: null,
+
+    expect(await getActiveScope()).toEqual(own("u_alice"));
+    expect(
+      fakeDb.find("organization", { id: ownWorkspaceId("u_alice") }),
+    ).toMatchObject({ name: "Alice's workspace", slug: "alice-smith" });
+    expect(
+      fakeDb.find("member", { id: ownWorkspaceMemberId("u_alice") }),
+    ).toMatchObject({ userId: "u_alice", role: "owner" });
+    const orgOf = (table: string, id: string) =>
+      fakeDb.find(table, { id })?.organizationId;
+    expect(orgOf("qrCode", "c1")).toBe(ownWorkspaceId("u_alice"));
+    expect(orgOf("qrCode", "c2")).toBeNull();
+    expect(orgOf("qrCode", "c3")).toBe("org_x");
+    // Moving a code changes nothing about its short link.
+    expect(fakeDb.find("qrCode", { id: "c1" })?.slug).toBe("abc1234");
+    expect(orgOf("qrPreset", "t1")).toBe(ownWorkspaceId("u_alice"));
+    expect(orgOf("oauthApp", "app_mine")).toBe(ownWorkspaceId("u_alice"));
+    expect(orgOf("oauthApp", "app_qrdx")).toBeNull();
+
+    // Idempotent: the second visit writes nothing new.
+    expect(await getActiveScope()).toEqual(own("u_alice"));
+    expect(fakeDb.rows("organization")).toHaveLength(1);
+    expect(fakeDb.rows("member")).toHaveLength(1);
+  });
+
+  it("picks a free, unreserved URL for the own workspace", async () => {
+    fakeDb.seed("organization", [
+      { id: "org_1", name: "Acme", slug: "acme", createdAt: NOW },
+      { id: "org_2", name: "Acme 2", slug: "acme-2", createdAt: NOW },
+    ]);
+    fakeDb.seed("user", [{ id: "u_a", name: "Acme", email: "a@x.dev" }]);
+    signIn("u_a");
+    await getActiveScope();
+    expect(
+      fakeDb.find("organization", { id: ownWorkspaceId("u_a") })?.slug,
+    ).toBe("acme-3");
+    fakeDb.seed("user", [{ id: "u_s", name: "Settings", email: "s@x.dev" }]);
+    signIn("u_s");
+    await getActiveScope();
+    expect(
+      fakeDb.find("organization", { id: ownWorkspaceId("u_s") })?.slug,
+    ).toBe("settings-workspace");
+  });
+
+  it("opens the workspace the URL names, for members only, never falling back", async () => {
+    acme();
+    const byUrl = (slug: string) =>
+      getActiveScope(new Headers({ "x-qrdx-workspace": slug }));
+    signIn("u_owner", null);
+    expect(await byUrl("acme")).toEqual({
+      userId: "u_owner",
+      organizationId: "org_acme",
       role: "owner",
     });
+    // Not a member, or no such workspace: the same 404, nothing created.
+    signIn("u_stranger", "org_acme");
+    await expect(byUrl("acme")).rejects.toBeInstanceOf(WorkspaceNotFoundError);
+    await expect(byUrl("nope")).rejects.toBeInstanceOf(WorkspaceNotFoundError);
+    expect(
+      fakeDb.find("organization", { id: ownWorkspaceId("u_stranger") }),
+    ).toBeUndefined();
   });
 
   it("uses the strongest of several roles", async () => {
@@ -692,17 +840,89 @@ describe("getActiveScope", () => {
     }
   });
 
-  it("falls back to the personal workspace after leaving the team", async () => {
+  it("falls back to your own workspace after leaving the session's workspace", async () => {
     acme();
     signIn("u_alice", "org_acme");
-    expect(await getActiveScope()).toEqual({
-      userId: "u_alice",
-      organizationId: null,
-      role: "owner",
-    });
+    expect(await getActiveScope()).toEqual(own("u_alice"));
   });
 
   it("throws UnauthorizedError when signed out", async () => {
     await expect(getActiveScope()).rejects.toBeInstanceOf(UnauthorizedError);
+  });
+});
+
+// ─── Renaming and the URL check ─────────────────────────────────────────────
+
+describe("renaming a workspace", () => {
+  beforeEach(() => {
+    subscribe("u_owner", "pro");
+    acme();
+    join("org_acme", "u_member", "member");
+    fakeDb.seed("organization", [
+      { id: "org_beta", name: "Beta", slug: "beta", createdAt: NOW },
+    ]);
+  });
+
+  it("checks a URL as you type: format, reserved words, taken, your own", async () => {
+    const check = (slug: string) => teams.checkWorkspaceSlug({ slug });
+    expect(await check("acme")).toEqual({
+      ok: true,
+      data: { status: "available" },
+    });
+    expect(await check("beta")).toEqual({
+      ok: true,
+      data: {
+        status: "unavailable",
+        message: "That workspace URL is already taken.",
+      },
+    });
+    expect(await check("codes")).toMatchObject({
+      data: {
+        status: "unavailable",
+        message: expect.stringMatching(/reserved/),
+      },
+    });
+    expect(await check("A")).toMatchObject({
+      data: { status: "unavailable", message: expect.stringMatching(/3-48/) },
+    });
+    expect(await check("new-acme")).toEqual({
+      ok: true,
+      data: { status: "available" },
+    });
+  });
+
+  it("lets owners and admins rename and move the workspace", async () => {
+    expect(
+      await teams.updateWorkspace({ name: "Acme Inc", slug: "acme-inc" }),
+    ).toEqual({ ok: true, data: { slug: "acme-inc" } });
+    expect(calls("updateOrganization")[0]?.body).toEqual({
+      organizationId: "org_acme",
+      data: { name: "Acme Inc", slug: "acme-inc" },
+    });
+    expect(await teams.updateWorkspace({ slug: "settings" })).toEqual({
+      ok: false,
+      error: "That URL is reserved. Pick another one.",
+    });
+    signIn("u_member", "org_acme");
+    expect(await teams.updateWorkspace({ name: "Mine now" })).toEqual({
+      ok: false,
+      error: "Only workspace owners and admins can change its settings.",
+    });
+    expect(calls("updateOrganization")).toHaveLength(1);
+  });
+});
+
+describe("remembering the workspace you opened", () => {
+  it("makes it the session's workspace once, and only for members", async () => {
+    acme();
+    const opened = new Headers({ "x-qrdx-workspace": "acme" });
+    // The page's server action posts to its own URL, so proxy.ts adds this.
+    const { headers } = await import("next/headers");
+    vi.mocked(headers).mockResolvedValueOnce(opened as never);
+    signIn("u_owner", null);
+    await teams.rememberWorkspace();
+    expect(calls("setActiveOrganization")[0]?.body).toEqual({
+      organizationId: "org_acme",
+    });
   });
 });

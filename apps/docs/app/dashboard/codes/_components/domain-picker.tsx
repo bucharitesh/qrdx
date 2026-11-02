@@ -15,6 +15,7 @@ import type {
   DomainOptions,
   DomainRef,
 } from "@/app/dashboard/domains/_lib/domains";
+import { useWorkspaceHref } from "@/components/workspace-provider";
 import { PLAN_NAMES } from "@/lib/pricing";
 import { useKnownCodeOptionPlans } from "./code-options";
 
@@ -59,6 +60,7 @@ export function DomainPicker({
   onChange: (domainId: string | null) => void;
   disabled?: boolean;
 }) {
+  const inWorkspace = useWorkspaceHref();
   // The cheapest plan with custom domains (lib/plans.ts), when the page knows.
   const domainPlan = useKnownCodeOptionPlans()?.upgrades.customDomains[0];
   if (!options) return null;
@@ -106,7 +108,7 @@ export function DomainPicker({
       {options.canUse && (
         <p className="text-muted-foreground text-xs">
           Manage domains on the{" "}
-          <Link className="underline" href="/dashboard/domains">
+          <Link className="underline" href={inWorkspace("/settings/domains")}>
             Domains
           </Link>{" "}
           page.

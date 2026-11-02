@@ -362,7 +362,7 @@ export function DangerZoneSection({
       tone="danger"
     >
       <SettingsRow
-        description="Delete your account and everything in your personal workspace. This can't be undone."
+        description="Delete your account and everything in your own workspace. This can't be undone."
         label="Delete account"
       >
         <div className="space-y-4">

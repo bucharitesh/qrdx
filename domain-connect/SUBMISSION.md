@@ -178,13 +178,13 @@ The key id `_dck1` is fixed in the app (`SIGNING_KEY_ID` in `apps/docs/lib/domai
 
 ## How the app decides (reference)
 
-For each domain waiting for DNS, on the Domains page, for team owners and admins on a plan with custom domains (code: `apps/docs/lib/domain-connect/`):
+For each domain waiting for DNS, on the Domains page, for workspace owners and admins on a plan with custom domains (code: `apps/docs/lib/domain-connect/`):
 
 1. The published key at `_dck1.qrdx.dev` must match `DOMAIN_CONNECT_PRIVATE_KEY`.
 2. Find the domain's DNS zone (the most specific parent name with an SOA record), read `_domainconnect.<zone>`, and fetch `https://<that>/v2/<zone>/settings`. That URL comes from the customer's DNS, so the server fetches it only over HTTPS on the default port, to public addresses, without redirects.
 3. The provider must offer the synchronous flow, and `GET {urlAPI}/v2/domainTemplates/providers/qrdx.dev/services/qrdx` must answer 2xx.
 4. The records the page shows must be ones the template can write exactly: a CNAME on a subdomain, plus Vercel's `_vercel` TXT or the `_qrdx-challenge` TXT. Root domains (A records) keep the manual table only.
-5. The link is signed (RS256 over the sorted query, then `&key=_dck1&sig=…`) and returns to `/dashboard/domains?connected=<id>`, which checks DNS right away and twice more over the next half minute.
+5. The link is signed (RS256 over the sorted query, then `&key=_dck1&sig=…`) and returns to `/dashboard?to=settings/domains&connected=<id>` (Settings → Domains of the person's default workspace), which checks DNS right away and twice more over the next half minute.
 
 Results are cached for up to ten minutes, and the page never waits on discovery: the button streams in.
 

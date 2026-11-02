@@ -20,7 +20,8 @@ import {
   validateScopes,
 } from "@/lib/oauth";
 import { OAUTH_SCOPES, type OAuthScope } from "@/lib/oauth-scopes";
-import { isFirstPartyApp, isTrustedApp } from "./access";
+import { isTrustedApp } from "./access";
+import { appBuilderName } from "./builder";
 import { isAllowedRedirectUri } from "./validation";
 
 /**
@@ -225,9 +226,7 @@ export async function loadAuthorizeApp(
     logoUrl: row.logoUrl,
     websiteUrl: row.websiteUrl,
     trusted: isTrustedApp(row),
-    builtBy: isFirstPartyApp(row)
-      ? "QRdx"
-      : (row.teamName ?? row.ownerName ?? "an independent developer"),
+    builtBy: appBuilderName(row),
     redirectUris: Array.isArray(row.redirectUris) ? row.redirectUris : [],
     scopes: Array.isArray(row.scopes) ? row.scopes : [],
     pkceRequired: row.pkceRequired,

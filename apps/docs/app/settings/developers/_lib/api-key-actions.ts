@@ -88,6 +88,6 @@ export async function revokeApiKeyAction(input: {
   const result = await run("revoke", [mutationLimiter], (scope) =>
     revokeApiKey(scope, parsed.data.id),
   );
-  if (result.ok) revalidatePath("/settings/developers");
+  if (result.ok) revalidatePath("/dashboard", "layout");
   return result;
 }
