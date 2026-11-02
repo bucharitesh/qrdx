@@ -38,7 +38,7 @@ import {
 } from "./_components/sign-in-methods-section";
 
 export const metadata: Metadata = {
-  title: "Account",
+  title: "Profile & security",
   robots: { index: false, follow: false },
 };
 
@@ -129,7 +129,7 @@ export default async function AccountPage({
     <div className="space-y-6">
       <SettingsHeader
         description="Your profile, how you sign in, where you're signed in, and your data."
-        title="Account"
+        title="Profile & security"
       />
 
       <ProfileSection

@@ -38,12 +38,12 @@ export function WifiForm() {
     <div className="space-y-3">
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="wifi-ssid">
-          Network Name (SSID) *
+          Network name *
         </Label>
         <Input
           id="wifi-ssid"
           type="text"
-          placeholder="My WiFi Network"
+          placeholder="My Wi-Fi network"
           value={wifiData.ssid}
           onChange={(e) => setWifiData({ ...wifiData, ssid: e.target.value })}
         />
@@ -51,7 +51,7 @@ export function WifiForm() {
 
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="wifi-encryption">
-          Security Type
+          Security
         </Label>
         <Select
           value={wifiData.encryption}
@@ -65,7 +65,7 @@ export function WifiForm() {
           <SelectContent>
             <SelectItem value="WPA">WPA/WPA2</SelectItem>
             <SelectItem value="WEP">WEP</SelectItem>
-            <SelectItem value="nopass">No Password</SelectItem>
+            <SelectItem value="nopass">No password</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -89,7 +89,7 @@ export function WifiForm() {
 
       <div className="flex items-center justify-between rounded-lg border px-3 py-2 transition-colors hover:bg-muted/50">
         <Label className="cursor-pointer text-xs" htmlFor="wifi-hidden">
-          Hidden Network
+          Hidden network
         </Label>
         <Switch
           id="wifi-hidden"
@@ -101,7 +101,7 @@ export function WifiForm() {
       </div>
 
       <p className="text-muted-foreground text-xs">
-        Scanning will automatically connect to this WiFi network
+        Scanning will offer to join this Wi-Fi network
       </p>
     </div>
   );

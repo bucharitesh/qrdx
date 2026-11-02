@@ -1,8 +1,8 @@
 import { database as db, qrPreset } from "@repo/database";
-import { eq } from "drizzle-orm";
 import type { NextRequest } from "next/server";
 import { requireApiToken } from "@/app/api/v1/codes/_lib/api";
 import { withApiQuotaHeaders } from "@/lib/api-quota";
+import { themesWhere } from "./_lib/scope";
 
 export const GET = withApiQuotaHeaders(async (req: NextRequest) => {
   const auth = await requireApiToken(req, "themes:read");
@@ -17,7 +17,7 @@ export const GET = withApiQuotaHeaders(async (req: NextRequest) => {
       updatedAt: qrPreset.updatedAt,
     })
     .from(qrPreset)
-    .where(eq(qrPreset.userId, auth.tokenData.userId));
+    .where(themesWhere(auth.tokenData));
 
   return Response.json({ data: themes });
 });

@@ -10,6 +10,7 @@ import { BlogTocMobile } from "@/components/sections/blog/blog-toc-mobile";
 import { Breadcrumbs } from "@/components/sections/breadcrumbs";
 import { SectionHeader } from "@/components/sections/section-header";
 import { type ResolvedAuthor, resolveAuthors } from "@/lib/blog-authors";
+import { brandedTitle, seoOverride } from "@/lib/seo-overrides";
 import { blogSource } from "@/lib/source";
 import { getMDXComponents } from "@/mdx-components";
 import {
@@ -311,7 +312,12 @@ export async function generateMetadata({
 }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const page = getPublishedPage(slug);
-  const { title, description, date, updated, author, tags } = page.data;
+  const { date, updated, author, tags } = page.data;
+  // A shorter search title or description where the post's own (also its
+  // H1 and intro) runs long (lib/seo-overrides.ts).
+  const seo = seoOverride(page.url);
+  const title = seo.title ?? page.data.title;
+  const description = seo.description ?? page.data.description;
   const url = absoluteUrl(page.url);
   const authors = resolveAuthors(author);
   const twitterHandle = authors.find((a) => a.twitter)?.twitter;
@@ -319,7 +325,7 @@ export async function generateMetadata({
   // og:image / twitter:image come from ./opengraph-image.tsx; setting
   // `images` here would suppress the file-based image.
   return {
-    title,
+    title: brandedTitle(title),
     description,
     ...(tags && tags.length > 0 && { keywords: tags }),
     authors: authors.map((a) => ({

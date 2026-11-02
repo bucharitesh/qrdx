@@ -333,7 +333,7 @@ describe("GET /v1/themes", () => {
       error: "invalid_token",
       code: "UNAUTHORIZED",
       status: 401,
-      docs: "http://localhost:3000/docs/developers/rest-api#get-an-access-token",
+      docs: "http://localhost:3000/docs/developers/api-keys",
     });
   });
 });

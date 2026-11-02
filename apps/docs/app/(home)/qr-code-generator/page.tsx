@@ -9,13 +9,15 @@ import { QR_TYPE_ICONS } from "@/components/sections/tools/topic-icons";
 import { createMetadata } from "@/lib/metadata";
 import { QR_TYPE_GROUPS, QR_TYPES } from "@/lib/qr-types-content";
 
-const title = "Free QR Code Generators for Every Type";
-const description = `${QR_TYPES.length} free QR code generators: Wi-Fi, vCard, WhatsApp, UPI, email, social profiles, payments and more. Each explains the exact payload format. No signup.`;
+// "QR code types": the home page owns "QR code generator".
+const title = `QR Code Types: ${QR_TYPES.length} Free Generators (Wi-Fi, vCard, UPI)`;
+const description = `${QR_TYPES.length} QR code types, each with a free generator: Wi-Fi, vCard, WhatsApp, UPI, email, social profiles and payments. Each shows its exact payload format.`;
 
 export const metadata: Metadata = createMetadata({
   title,
   description,
   path: "/qr-code-generator",
+  ownOgImage: true,
 });
 
 export default function QrTypesHubPage() {

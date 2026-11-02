@@ -5,16 +5,12 @@ import { Label } from "@repo/design-system/components/ui/label";
 import { cn } from "@repo/design-system/lib/utils";
 import { Global, InfoCircle, Warning2 } from "iconsax-reactjs";
 import * as React from "react";
-import { UrlLinkSources } from "@/components/connected-accounts/url-link-sources";
-import { AccountSourcePicker } from "@/components/data-connections/source-picker";
 import {
   checkUrl,
   withScheme,
 } from "@/components/editor/content-forms/url-check";
-import {
-  DynamicLinkToggle,
-  useDynamicCardAtEnd,
-} from "@/components/editor/dynamic-link-toggle";
+import { DynamicLinkToggle } from "@/components/editor/dynamic-link-toggle";
+import { LinkSourceMenu } from "@/components/editor/link-source-menu";
 import { useSmartPaste } from "@/lib/hooks/use-smart-paste";
 import { useQREditorStore } from "@/store/editor-store";
 import type { UrlContent } from "@/types/qr-content";
@@ -63,12 +59,16 @@ export function UrlForm() {
   };
 
   const showError = check.status === "error" && touched;
-  const dynamicCardAtEnd = useDynamicCardAtEnd();
 
   return (
     <div className="space-y-4">
       <div className="space-y-2">
-        <Label htmlFor="url-input">Website address</Label>
+        {/* A fixed-height row: the menu shows up once accounts load, and
+            must not push the form down when it does. */}
+        <div className="flex min-h-7 items-center justify-between gap-2">
+          <Label htmlFor="url-input">Website address</Label>
+          <LinkSourceMenu />
+        </div>
         <Input
           aria-describedby={helperId}
           aria-invalid={showError || undefined}
@@ -114,16 +114,11 @@ export function UrlForm() {
               </span>
             </>
           ) : (
-            "Paste any link. Instagram, YouTube, WhatsApp and other links switch to the matching type."
+            "Paste any link. Social and WhatsApp links get their own type."
           )}
         </p>
       </div>
-      <UrlLinkSources />
-      <AccountSourcePicker
-        contentType="url"
-        onPick={(item) => setUrl(item.url)}
-      />
-      {!dynamicCardAtEnd && <DynamicLinkToggle />}
+      <DynamicLinkToggle />
     </div>
   );
 }

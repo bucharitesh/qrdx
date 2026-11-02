@@ -288,7 +288,7 @@ describe("who may call /v1/codes", () => {
     expect((await getList("", read)).status).toBe(401);
   });
 
-  it("refuses anonymous callers with a 401 that says how to get a token", async () => {
+  it("refuses anonymous callers with a 401 that says how to get a key", async () => {
     const response = await getList();
     expect(response.status).toBe(401);
     expect(response.headers.get("www-authenticate")).toBe(
@@ -297,9 +297,9 @@ describe("who may call /v1/codes", () => {
     expect(await errorOf(response)).toEqual({
       code: "UNAUTHORIZED",
       message:
-        'Missing access token. Send an OAuth access token as "Authorization: Bearer <token>". To get one, register an OAuth app at http://localhost:3000/settings/developers and follow http://localhost:3000/docs/developers/rest-api#get-an-access-token.',
+        'Missing API key. Send an API key as "Authorization: Bearer <key>"; create one at http://localhost:3000/settings/developers. OAuth access tokens go in the same header.',
       status: 401,
-      docs: "http://localhost:3000/docs/developers/rest-api#get-an-access-token",
+      docs: "http://localhost:3000/docs/developers/api-keys",
     });
   });
 

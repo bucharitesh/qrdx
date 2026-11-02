@@ -126,7 +126,7 @@ export const hospitalityTravel: SeoGroup = {
             "An audio page per stop plays in the browser, so visitors don't need to download an app on roaming data.",
         },
         {
-          title: "Visitor centre information",
+          title: "Visitor center information",
           description:
             "Opening hours, tours, ticket prices and accessibility information behind one code on the door, updated for each season.",
         },
@@ -150,7 +150,7 @@ export const hospitalityTravel: SeoGroup = {
         {
           kind: "page",
           page: "business",
-          why: "Seasonal opening hours, address, contact buttons and amenities for a visitor centre or attraction.",
+          why: "Seasonal opening hours, address, contact buttons and amenities for a visitor center or attraction.",
         },
         {
           kind: "page",
@@ -255,7 +255,7 @@ export const hospitalityTravel: SeoGroup = {
       tips: [
         "Gallery lighting is low to protect objects. Print labels with strong contrast and a matte finish; test under the actual lux levels.",
         "Put the code in the same corner of every label so visitors learn where to look.",
-        "Mount labels at a height that works for wheelchair users and children (around 90 to 120 cm to the centre), and include a short room or object number for audio-guide users without phones.",
+        "Mount labels at a height that works for wheelchair users and children (around 90 to 120 cm to the center), and include a short room or object number for audio-guide users without phones.",
         "Codes on labels can stay small: about 6 cm works from half a metre with a short link, less if visitors lean in.",
       ],
       ctas: [

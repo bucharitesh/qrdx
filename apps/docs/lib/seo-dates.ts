@@ -1,0 +1,179 @@
+// Last-modified dates for the sitemap that are real, never the build time.
+//
+// Dates people write in frontmatter (a blog post's `updated`, a comparison's
+// `lastVerified`, a changelog entry's `date`) come first. Git dates fill in
+// the rest, from the fumadocs `lastModified` plugin for MDX and from
+// `gitLastModified()` here for pages written in TypeScript.
+//
+// Git dates are only trusted from a complete history. Vercel builds from a
+// shallow clone, and in a shallow clone every file that wasn't touched by the
+// last few commits shows the date of the oldest commit there (the "shallow
+// boundary"). That is why every docs, compare and blog URL in the production
+// sitemap carried the deploy date. Dates that match a boundary commit are
+// dropped, so those URLs have no lastmod instead of a wrong one. Setting
+// VERCEL_DEEP_CLONE=true on the Vercel project gives builds the full history.
+import { execFileSync } from "node:child_process";
+import { readFileSync, realpathSync } from "node:fs";
+import path from "node:path";
+
+/** Newest date per file from `git log --format=commit:%aI --name-only`. */
+export function parseGitLog(stdout: string): Map<string, Date> {
+  const dates = new Map<string, Date>();
+  let current: Date | undefined;
+  for (const line of stdout.split("\n")) {
+    if (line.startsWith("commit:")) {
+      const parsed = new Date(line.slice("commit:".length));
+      current = Number.isNaN(parsed.getTime()) ? undefined : parsed;
+    } else if (line.length > 0 && current && !dates.has(line)) {
+      // The log is newest first, so the first date seen for a file wins.
+      dates.set(line, current);
+    }
+  }
+  return dates;
+}
+
+/**
+ * The git date, unless it is a shallow clone's boundary date (when the file's
+ * real last change is unknown). `boundary` is null when git isn't available.
+ */
+export function trustedGitDate(
+  date: Date | string | undefined,
+  boundary: ReadonlySet<number> | null,
+): Date | undefined {
+  if (!date || !boundary) return undefined;
+  const parsed = new Date(date);
+  const time = parsed.getTime();
+  if (Number.isNaN(time) || boundary.has(time)) return undefined;
+  return parsed;
+}
+
+/** The newest of the given dates; undefined when none is a valid date. */
+export function latestDate(
+  dates: readonly (Date | string | undefined)[],
+): Date | undefined {
+  const times = dates
+    .filter((d): d is Date | string => Boolean(d))
+    .map((d) => new Date(d).getTime())
+    .filter((t) => !Number.isNaN(t));
+  return times.length > 0 ? new Date(Math.max(...times)) : undefined;
+}
+
+function git(args: string[], cwd: string): string | null {
+  try {
+    return execFileSync("git", args, {
+      cwd,
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"],
+      timeout: 15_000,
+      maxBuffer: 32 * 1024 * 1024,
+    });
+  } catch {
+    return null;
+  }
+}
+
+const boundaryCache = new Map<string, ReadonlySet<number> | null>();
+
+/**
+ * Author times of the shallow clone's boundary commits: empty for a complete
+ * history, null when this isn't a git checkout (a Docker build, for example).
+ */
+export function shallowBoundary(
+  cwd: string = process.cwd(),
+): ReadonlySet<number> | null {
+  const cached = boundaryCache.get(cwd);
+  if (cached !== undefined) return cached;
+  const boundary = readShallowBoundary(cwd);
+  boundaryCache.set(cwd, boundary);
+  return boundary;
+}
+
+function readShallowBoundary(cwd: string): ReadonlySet<number> | null {
+  const shallow = git(["rev-parse", "--is-shallow-repository"], cwd)?.trim();
+  if (shallow === "false") return new Set();
+  if (shallow !== "true") return null;
+
+  const file = git(["rev-parse", "--git-path", "shallow"], cwd)?.trim();
+  let shas: string[] = [];
+  try {
+    shas = file
+      ? readFileSync(path.resolve(cwd, file), "utf8")
+          .split(/\s+/)
+          .filter(Boolean)
+      : [];
+  } catch {
+    shas = [];
+  }
+  const out = shas.length
+    ? git(["show", "-s", "--format=%aI", ...shas], cwd)
+    : null;
+  // A shallow clone whose boundary can't be read: trust no git date.
+  if (!out) return null;
+  return new Set(
+    out
+      .split("\n")
+      .filter(Boolean)
+      .map((line) => new Date(line).getTime()),
+  );
+}
+
+/** A fumadocs `lastModified` (a git date) if it can be trusted. */
+export function trustedLastModified(
+  date: Date | string | undefined,
+): Date | undefined {
+  return trustedGitDate(date, shallowBoundary());
+}
+
+function realPath(dir: string): string {
+  try {
+    return realpathSync(dir);
+  } catch {
+    return dir;
+  }
+}
+
+const fileDatesCache = new Map<string, Map<string, Date>>();
+
+/**
+ * Trusted git dates for source files, keyed by the path as given (relative to
+ * `cwd`, the app directory in the build, e.g. "lib/qr-types-content.ts").
+ * Files with no trusted date are left out. One `git log` per list of paths.
+ */
+export function gitLastModified(
+  files: readonly string[],
+  cwd: string = process.cwd(),
+): ReadonlyMap<string, Date> {
+  const key = `${cwd}\0${files.join("\n")}`;
+  const cached = fileDatesCache.get(key);
+  if (cached) return cached;
+
+  const result = new Map<string, Date>();
+  fileDatesCache.set(key, result);
+  const boundary = shallowBoundary(cwd);
+  const root = git(["rev-parse", "--show-toplevel"], cwd)?.trim();
+  if (!boundary || !root || files.length === 0) return result;
+
+  const out = git(
+    [
+      "-c",
+      "core.quotepath=off",
+      "log",
+      "--format=commit:%aI",
+      "--name-only",
+      "--",
+      ...files,
+    ],
+    cwd,
+  );
+  if (!out) return result;
+
+  // git prints paths from the repository root, with symlinks resolved.
+  const byRootPath = parseGitLog(out);
+  const base = realPath(cwd);
+  for (const file of files) {
+    const date = byRootPath.get(path.relative(root, path.resolve(base, file)));
+    const trusted = trustedGitDate(date, boundary);
+    if (trusted) result.set(file, trusted);
+  }
+  return result;
+}

@@ -12,7 +12,7 @@ registerTemplate({
     {
       id: "document",
       name: "Document",
-      description: "A guide or manual, front and centre",
+      description: "A guide or manual, front and center",
       theme: {
         colors: {
           background: "#fafafa",

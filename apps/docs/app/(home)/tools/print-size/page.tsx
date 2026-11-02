@@ -18,6 +18,7 @@ export const metadata: Metadata = createMetadata({
   description:
     "Find the minimum printed size for a QR code from the scanning distance, the data it holds and its error-correction level. Results in mm and inches.",
   path: "/tools/print-size",
+  ownOgImage: true,
 });
 
 const faqs = [

@@ -9,28 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@repo/design-system/components/ui/dialog";
-import { Input } from "@repo/design-system/components/ui/input";
-import { Label } from "@repo/design-system/components/ui/label";
-import { CopyButton } from "@/app/dashboard/webhooks/_components/event-checkboxes";
-
-function CopyField({ label, value }: { label: string; value: string }) {
-  const id = `secret-dialog-${label.toLowerCase().replace(/\s+/g, "-")}`;
-  return (
-    <div className="space-y-1.5">
-      <Label htmlFor={id}>{label}</Label>
-      <div className="flex items-center gap-2">
-        <Input
-          className="font-mono text-xs"
-          id={id}
-          onFocus={(event) => event.currentTarget.select()}
-          readOnly
-          value={value}
-        />
-        <CopyButton label={`Copy ${label.toLowerCase()}`} value={value} />
-      </div>
-    </div>
-  );
-}
+import { CopyField } from "./snippet";
 
 /**
  * Shows a client secret right after it was created. It is never shown again:

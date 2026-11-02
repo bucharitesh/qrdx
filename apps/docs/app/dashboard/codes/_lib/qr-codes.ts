@@ -29,7 +29,14 @@ import { getDefaultThemeStyle } from "@/app/dashboard/themes/_lib/queries";
 import { snapshotCodeVersion } from "@/lib/code-versions";
 import { HttpError } from "@/lib/error-response";
 import { baseUrl } from "@/lib/metadata";
-import { getPlanForScope, getPlanLimits, type Plan } from "@/lib/plans";
+import {
+  cheapestPlanWith,
+  getPlanForScope,
+  getPlanLimits,
+  type Plan,
+  plansWith,
+} from "@/lib/plans";
+import { PLAN_NAMES } from "@/lib/pricing";
 import { enforceRateLimits } from "@/lib/request-guards";
 import { signInPath } from "@/lib/safe-redirect";
 import { screenNewCodes, screenUrlChange } from "@/lib/safety/destinations";
@@ -51,6 +58,7 @@ import {
 } from "@/lib/slug-claims";
 import { UnauthorizedError } from "@/types/errors";
 import { type ThemeStyles, themeStylePropsSchema } from "@/types/theme";
+import { formatPlanList } from "./code-options";
 
 export const MAX_DESTINATION_LENGTH = 2048;
 export const MAX_TITLE_LENGTH = 100;
@@ -306,10 +314,16 @@ export async function countUnarchived(scope: ActiveScope): Promise<number> {
   return row?.total ?? 0;
 }
 
+/** The cheapest plan without a cap on active dynamic codes (lib/plans.ts). */
+const unlimitedCodesPlan = () =>
+  cheapestPlanWith((limits) => !Number.isFinite(limits.dynamicCodes));
+
 export interface CodeUsage {
   plan: Plan;
   /** null = unlimited */
   limit: number | null;
+  /** The cheapest plan with no cap on active codes (for "upgrade to …"); null = none */
+  unlimitedPlan: Plan | null;
   used: number;
   retentionDays: number;
   bulkApi: boolean;
@@ -326,6 +340,7 @@ export async function getCodeUsage(scope: ActiveScope): Promise<CodeUsage> {
   return {
     plan,
     limit: Number.isFinite(limits.dynamicCodes) ? limits.dynamicCodes : null,
+    unlimitedPlan: unlimitedCodesPlan(),
     used,
     retentionDays: limits.analyticsRetentionDays,
     bulkApi: limits.bulkApi,
@@ -334,10 +349,11 @@ export async function getCodeUsage(scope: ActiveScope): Promise<CodeUsage> {
 }
 
 export function limitReached(limit: number): HttpError {
+  const upgrade = unlimitedCodesPlan();
   return new HttpError(
     402,
     "LIMIT_REACHED",
-    `Your plan includes ${limit} active dynamic QR codes. Archive one or upgrade to Pro for unlimited codes.`,
+    `Your plan includes ${limit} active dynamic QR codes. ${upgrade ? `Archive one or upgrade to ${PLAN_NAMES[upgrade]} for unlimited codes.` : "Archive one to make room."}`,
   );
 }
 
@@ -371,7 +387,7 @@ const slugPlanRequired = () =>
   new HttpError(
     402,
     "PLAN_REQUIRED",
-    "Custom back-halves are part of Pro and Business.",
+    `Custom back-halves are part of ${formatPlanList(plansWith((limits) => limits.customSlugs))}.`,
   );
 
 const slugTaken = (slug: string) =>
@@ -708,10 +724,13 @@ export async function createCodes(
   const limits = getPlanLimits(plan);
 
   if (inputs.length > 1 && !limits.bulkApi) {
+    const bulkPlan = cheapestPlanWith((each) => each.bulkApi);
     throw new HttpError(
       402,
       "PLAN_REQUIRED",
-      "Creating codes in bulk is a Pro feature.",
+      bulkPlan
+        ? `Creating codes in bulk is a ${PLAN_NAMES[bulkPlan]} feature.`
+        : "Your plan can't create codes in bulk.",
     );
   }
   if (inputs.length > MAX_BULK_CREATE) {

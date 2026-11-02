@@ -713,17 +713,17 @@ const DESIGN_GROUPS = [
 
 // The Design tab shows a few common shapes per group; the full list (the
 // group's aria-label) appears after opening its section, then "More …"
-// (and, for the separate eye shapes, "Customise outer and centre").
+// (and, for the separate eye shapes, "Customize outer and center").
 const GROUP_OPENERS: Record<string, { section: string; buttons: string[] }> = {
   "Dot shape": { section: "dots", buttons: ["more dot shapes"] },
   "Eye style": { section: "eyes", buttons: ["more eye styles"] },
   "Outer eye shape": {
     section: "eyes",
-    buttons: ["customise outer and centre", "more outer shapes"],
+    buttons: ["customize outer and center", "more outer shapes"],
   },
   "Inner eye shape": {
     section: "eyes",
-    buttons: ["customise outer and centre", "more centre shapes"],
+    buttons: ["customize outer and center", "more center shapes"],
   },
   Border: { section: "frame", buttons: [] },
   "Call-to-action frame": { section: "frame", buttons: ["more frames"] },

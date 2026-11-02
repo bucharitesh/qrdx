@@ -53,6 +53,8 @@ export const metadata: Metadata = createMetadata({
     "qr code generator india price",
   ],
   path: "/pricing",
+  // ./opengraph-image.tsx
+  ownOgImage: true,
   alternates: {
     types: { "text/markdown": new URL("/pricing.md", baseUrl).toString() },
   },

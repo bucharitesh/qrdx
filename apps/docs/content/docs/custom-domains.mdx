@@ -25,6 +25,18 @@ Once verified, the domain appears in the **Short link domain** picker when you c
   A domain that isn't verified within 3 days can be added by another account, so nobody can hold on to a domain they don't control.
 </Callout>
 
+<IfAvailable feature="domainConnect" title="One-click DNS setup">
+
+Some DNS providers support [Domain Connect](https://www.domainconnect.org), an open standard that lets a service add its records for you. When your provider supports it and offers QRdx's setup, a domain waiting for DNS shows a **Set up with …** button named after your provider.
+
+1. Click the button. Your DNS provider opens and lists the records QRdx needs.
+2. Sign in there if asked, and approve the change. Nothing changes until you do.
+3. You come back to the Domains page, which checks DNS right away and again over the next half minute.
+
+The button appears only for subdomains such as `go.yourbrand.com`, and only when your provider can add exactly the records shown. Otherwise add the records from the table yourself, as above.
+
+</IfAvailable>
+
 ## Use it for codes
 
 - **New code:** pick the domain in **Short link domain** before you click **Create code**.
@@ -74,5 +86,7 @@ How domains get connected depends on your deployment:
   1. Point the domain at your server with a `CNAME` (to your app's host name) or an `A` record (your server's IP).
   2. Make your reverse proxy accept the domain, serve HTTPS for it (for example with Caddy's on-demand TLS or a certbot certificate), and forward the original `Host` header to the app. With nginx that's `proxy_set_header Host $host;`; Caddy does it by default.
   3. Add the domain on the Domains page, create the `TXT` record it shows (`_qrdx-challenge.<your-domain>` with the value `qrdx-verify=<token>`), and click **Verify**. The app checks the record with a DNS lookup.
+
+**One-click DNS setup** (optional) uses [Domain Connect](https://www.domainconnect.org). It needs a template of your own, accepted by each DNS provider you want to support, and an RSA key that signs the setup links: set `DOMAIN_CONNECT_PROVIDER_ID`, `DOMAIN_CONNECT_SERVICE_ID` and `DOMAIN_CONNECT_PRIVATE_KEY` (PEM), and publish the public key as `TXT` records at `_dck1.<provider id>`. QRdx's own template (`domain-connect/` in the repository) works only for qrdx.dev, because providers check the signature against its key. Until the published key matches, no button is shown and the app logs why.
 
 The app recognizes custom domains by the `Host` header. Requests for your own app URL, `NEXT_PUBLIC_SHORT_LINK_BASE_URL`, `localhost` and `*.vercel.app` are always treated as the main app.

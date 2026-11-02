@@ -22,14 +22,14 @@ The same routes also answer at `https://qrdx.dev/api/v1`. Requests and responses
 
 Try it sends real requests from your browser to this site's `/api/v1` (the same API as `api.qrdx.dev/v1`), and never with your QRdx sign-in cookie:
 
-- **No token needed:** [Render a QR code image](/docs/developers/api/get-qr-image) works straight away.
-- **Everything else** needs an OAuth access token. Paste it into the **Authorization** field as `Bearer <token>`. [How to get a token](/docs/developers/quickstart#get-an-access-token).
+- **No key needed:** [Render a QR code image](/docs/developers/api/get-qr-image) works straight away.
+- **Everything else** needs an API key. Paste it into the **Authorization** field as `Bearer qrdx_…`. [Create a key](/docs/developers/api-keys#create-a-key).
 
-Requests made with a token act on real data in the token owner's personal workspace and count against its daily quota, exactly as they would from your own code.
+Requests made with a key act on real data in the key's workspace and count against its daily quota, exactly as they would from your own code. A read-only key is a safe way to explore.
 
 ## Authentication
 
-Send an OAuth 2.0 access token in the `Authorization` header. Each endpoint below lists the scope it needs; `codes:write` also allows everything `codes:read` does. API keys aren't available yet, so for now you get a token by registering an OAuth app: see [REST API and OAuth](/docs/developers/rest-api#get-an-access-token).
+Send an [API key](/docs/developers/api-keys) in the `Authorization` header as `Bearer qrdx_…`. Apps that act for other QRdx users send an [OAuth 2.0 access token](/docs/developers/rest-api#get-an-access-token) in the same header instead. Each endpoint below lists the scope it needs, for keys and tokens alike; `codes:write` also allows everything `codes:read` does.
 
 ## Errors and limits
 
@@ -96,11 +96,11 @@ The user's saved QR designs.
 
 ### Profile
 
-The user behind the token.
+The user behind the key or token.
 
 | Endpoint | Request | Scope |
 | --- | --- | --- |
-| [Get the token's user](/docs/developers/api/get-profile) | `GET /me` | `profile:read` |
+| [Get the profile](/docs/developers/api/get-profile) | `GET /me` | `profile:read` |
 
 ## OpenAPI document
 

@@ -12,19 +12,39 @@ import {
   ResponsiveDialogHeader,
   ResponsiveDialogTitle,
 } from "@repo/design-system/components/ui/revola";
-import { ColorSwatch as Palette } from "iconsax-reactjs";
+import { cn } from "@repo/design-system/lib/utils";
+import { ArrowLeft, ColorSwatch as Palette } from "iconsax-reactjs";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { type FormEvent, useEffect, useState, useTransition } from "react";
+import {
+  type FormEvent,
+  useEffect,
+  useRef,
+  useState,
+  useTransition,
+} from "react";
 import { createQrCode, updateQrCode } from "@/actions/qr-codes";
+import type {
+  CodeKind,
+  CodeOptionId,
+} from "@/app/dashboard/codes/_lib/code-options";
+import { codeTabHref } from "@/app/dashboard/codes/_lib/code-tabs";
 import type { QrCodeView } from "@/app/dashboard/codes/_lib/qr-codes";
+import { PanelFallback } from "@/app/dashboard/codes/[id]/_components/routing-panel";
 import { CopyButton } from "@/components/copy-button";
 import { AccountSourcePicker } from "@/components/data-connections/source-picker";
 import { normalizeDestination } from "@/components/editor/dynamic-link-toggle";
 import { InfoHint } from "@/components/help/info-hint";
 import { track } from "@/lib/analytics";
+import { PLAN_NAMES } from "@/lib/pricing";
 import { soundEvent } from "@/lib/sound/emit";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
+import {
+  CodeOptionPanel,
+  CodeOptionPlanNote,
+  CodeOptionsField,
+  useCodeOptions,
+} from "./code-options";
 import { CodeDownloadButtons, CodeQr } from "./code-qr";
 import { DomainPicker, useDomainOptions } from "./domain-picker";
 import { SlugField, useSlugCheck } from "./slug-field";
@@ -48,24 +68,34 @@ export function CodeDialog({ open, onOpenChange, code }: CodeDialogProps) {
   const [domainId, setDomainId] = useState<string | null>(null);
   const [slug, setSlug] = useState("");
   const [created, setCreated] = useState<QrCodeView | null>(null);
+  /** The option whose panel is open in place of the form */
+  const [option, setOption] = useState<CodeOptionId | null>(null);
   const [error, setError] = useState<{ code: string; message: string } | null>(
     null,
   );
   const [isPending, startTransition] = useTransition();
   const domainOptions = useDomainOptions(open);
 
+  // Reset only as the dialog opens: panels refresh the page when they save,
+  // which hands in a new `code` object while an option is open.
+  const wasOpen = useRef(false);
   useEffect(() => {
-    if (open) {
+    if (open && !wasOpen.current) {
       setDestination(code?.destinationUrl ?? "");
       setTitle(code?.title ?? "");
       setDomainId(code?.domain?.id ?? null);
       setSlug(code?.slug ?? "");
       setCreated(null);
+      setOption(null);
       setError(null);
     }
+    wasOpen.current = open;
   }, [open, code]);
 
   const preview = code ?? created;
+  const codeId = preview?.id ?? null;
+  const kind: CodeKind = code?.kind === "page" ? "page" : "redirect";
+  const options = useCodeOptions(open, codeId);
   const domainChanged =
     Boolean(code) && domainId !== (code?.domain?.id ?? null);
   const typedSlug = slug.trim();
@@ -90,8 +120,9 @@ export function CodeDialog({ open, onOpenChange, code }: CodeDialogProps) {
 
   const isPage = code?.kind === "page";
 
-  const submit = (event: FormEvent) => {
-    event.preventDefault();
+  /** Saves the form; `thenOpen` opens that option once a new code exists. */
+  const submit = (event?: FormEvent, thenOpen?: CodeOptionId) => {
+    event?.preventDefault();
     const destinationUrl = isPage
       ? code?.destinationUrl
       : normalizeDestination(destination);
@@ -144,14 +175,50 @@ export function CodeDialog({ open, onOpenChange, code }: CodeDialogProps) {
         onOpenChange(false);
       } else {
         setCreated(result.data);
+        if (thenOpen) setOption(thenOpen);
         track("dynamic_code_created", { source: "dashboard" });
       }
     });
   };
 
+  const selectOption = (id: CodeOptionId) => {
+    const access = options.plans?.options[id];
+    if (!access) return;
+    // An option off the plan only explains which plan unlocks it.
+    if (codeId || !access.included) {
+      setOption(id);
+      return;
+    }
+    submit(undefined, id);
+  };
+
+  const closeOption = () => {
+    setOption(null);
+    // Panels save on their own; show what they saved on the buttons.
+    options.reload();
+  };
+
+  const optionsField = (
+    <CodeOptionsField
+      creating={!codeId}
+      disabled={isPending}
+      kind={kind}
+      onSelect={selectOption}
+      options={options}
+    />
+  );
+
   return (
     <ResponsiveDialog onOpenChange={onOpenChange} open={open}>
-      <ResponsiveDialogContent className="p-6 sm:max-w-2xl" showCloseButton>
+      <ResponsiveDialogContent
+        // Panels can be taller than the screen: the body scrolls so the
+        // header and footer stay in view.
+        className={cn(
+          "flex flex-col overflow-hidden p-6",
+          option ? "sm:max-w-3xl" : "sm:max-w-2xl",
+        )}
+        showCloseButton
+      >
         <ResponsiveDialogHeader>
           <ResponsiveDialogTitle>
             {code
@@ -161,174 +228,212 @@ export function CodeDialog({ open, onOpenChange, code }: CodeDialogProps) {
                 : "New dynamic QR code"}
           </ResponsiveDialogTitle>
           <ResponsiveDialogDescription>
-            {created
-              ? "Download it and print it anywhere. You can change where it points at any time."
-              : "The QR code encodes a short link, so you can change the destination after printing."}
+            {option && options.plans ? (
+              <CodeOptionPlanNote option={option} plans={options.plans} />
+            ) : created ? (
+              "Download it and print it anywhere. You can change where it points at any time."
+            ) : (
+              "The QR code encodes a short link, so you can change the destination after printing."
+            )}
           </ResponsiveDialogDescription>
         </ResponsiveDialogHeader>
 
-        <div className="grid gap-6 py-4 md:grid-cols-[1fr_220px]">
-          {created ? (
-            <div className="space-y-4">
-              <div className="space-y-1.5">
-                <Label>Short link</Label>
-                <div className="flex items-center gap-1">
-                  <code className="bg-muted min-w-0 flex-1 truncate rounded-md px-2 py-1.5 text-sm">
-                    {created.shortLink}
-                  </code>
-                  <CopyButton
-                    className="size-8"
-                    successMessage={{ title: "Short link copied" }}
-                    textToCopy={created.shortLink}
-                  />
-                </div>
-              </div>
-              <div className="space-y-1.5">
-                <Label>Opens</Label>
-                <p className="text-muted-foreground text-sm break-all">
-                  {created.destinationUrl}
-                </p>
-              </div>
-            </div>
-          ) : (
-            <form className="space-y-4" id="code-form" onSubmit={submit}>
-              {isPage ? (
-                <div className="rounded-lg border p-3 text-sm">
-                  <p className="text-muted-foreground">
-                    This code opens a hosted page.
-                  </p>
-                  {code?.pageId && (
-                    <Link
-                      className="font-medium underline underline-offset-4"
-                      href={`/dashboard/pages/${code.pageId}`}
-                    >
-                      Edit page
-                    </Link>
-                  )}
-                </div>
-              ) : (
-                <div className="space-y-1.5">
-                  <div className="flex items-center gap-1.5">
-                    <Label htmlFor="code-destination">Destination URL</Label>
-                    <InfoHint align="start" id="dynamic-destination" />
-                  </div>
-                  <Input
-                    autoFocus
-                    id="code-destination"
-                    inputMode="url"
-                    maxLength={2048}
-                    onChange={(event) => setDestination(event.target.value)}
-                    placeholder="https://example.com/menu"
-                    required
-                    value={destination}
-                  />
-                  <AccountSourcePicker
-                    contentType="url"
-                    onPick={(item) => setDestination(item.url)}
-                  />
-                </div>
-              )}
-              <div className="space-y-1.5">
-                <Label htmlFor="code-title">
-                  Title{" "}
-                  <span className="text-muted-foreground font-normal">
-                    (optional)
-                  </span>
-                </Label>
-                <Input
-                  id="code-title"
-                  maxLength={100}
-                  onChange={(event) => setTitle(event.target.value)}
-                  placeholder="Table tent, spring menu"
-                  value={title}
-                />
-              </div>
-              <DomainPicker
-                current={code?.domain ?? null}
-                disabled={isPending}
-                onChange={setDomainId}
-                options={domainOptions}
-                value={domainId}
+        {option ? (
+          <div className="-mx-1 min-h-0 overflow-y-auto px-1 py-2">
+            {options.ready && options.plans ? (
+              <CodeOptionPanel
+                lifecycle={options.data?.lifecycle ?? null}
+                marketing={options.marketing}
+                option={option}
+                plans={options.plans}
               />
-              {domainOptions && (
-                <SlugField
-                  allowed={customSlugs}
-                  disabled={isPending}
-                  editing={Boolean(code)}
-                  onChange={setSlug}
-                  onUpgrade={openGetProDialog}
-                  prefix={slugPrefix}
-                  status={slugStatus}
-                  value={slug}
-                />
-              )}
-              {domainChanged && !slugChanged && (
-                <p
-                  className={
-                    code?.domain?.verified || !code?.defaultShortLink
-                      ? "bg-destructive/10 text-destructive rounded-md p-3 text-sm"
-                      : "bg-muted rounded-md p-3 text-sm"
-                  }
-                >
-                  {code?.domain?.verified
-                    ? code.defaultShortLink
-                      ? `QR codes already printed with ${code.shortLink} will stop working. Codes printed with ${code.defaultShortLink} keep working.`
-                      : `QR codes already printed with ${code.shortLink} will stop working. Its back-half moves with the code when it's free there, otherwise the code gets a new one.`
-                    : "The QR code changes to the new link, so download it again after saving. Codes you already printed keep working."}
-                </p>
-              )}
-              {error && (
-                <div
-                  className="bg-destructive/10 text-destructive space-y-2 rounded-md p-3 text-sm"
-                  role="alert"
-                >
-                  <p>{error.message}</p>
-                  {(error.code === "LIMIT_REACHED" ||
-                    error.code === "PLAN_REQUIRED") && (
-                    <Button onClick={openGetProDialog} size="sm" type="button">
-                      Upgrade to Pro
-                    </Button>
-                  )}
-                </div>
-              )}
-            </form>
-          )}
-
-          <div className="space-y-3">
-            {preview ? (
-              <>
-                <CodeQr
-                  className="bg-muted/40 rounded-lg border p-3"
-                  style={preview.style}
-                  value={preview.shortLink}
-                />
-                <CodeDownloadButtons code={preview} />
-                <Button
-                  className="w-full"
-                  onClick={() => openInPlayground(preview)}
-                  size="sm"
-                  type="button"
-                  variant="ghost"
-                >
-                  <Palette />
-                  Edit design in playground
-                </Button>
-              </>
+            ) : options.error ? (
+              <p className="text-destructive text-sm" role="alert">
+                {options.error}
+              </p>
             ) : (
-              <div className="text-muted-foreground flex aspect-square items-center justify-center rounded-lg border border-dashed p-6 text-center text-sm">
-                Your QR code appears here once it's created.
-              </div>
+              <PanelFallback />
             )}
           </div>
-        </div>
+        ) : (
+          <div className="-mx-1 grid min-h-0 gap-6 overflow-y-auto px-1 py-4 md:grid-cols-[1fr_220px]">
+            {created ? (
+              <div className="space-y-4">
+                <div className="space-y-1.5">
+                  <Label>Short link</Label>
+                  <div className="flex items-center gap-1">
+                    <code className="bg-muted min-w-0 flex-1 truncate rounded-md px-2 py-1.5 text-sm">
+                      {created.shortLink}
+                    </code>
+                    <CopyButton
+                      className="size-8"
+                      successMessage={{ title: "Short link copied" }}
+                      textToCopy={created.shortLink}
+                    />
+                  </div>
+                </div>
+                <div className="space-y-1.5">
+                  <Label>Opens</Label>
+                  <p className="text-muted-foreground text-sm break-all">
+                    {created.destinationUrl}
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <form className="space-y-4" id="code-form" onSubmit={submit}>
+                {isPage ? (
+                  <div className="rounded-lg border p-3 text-sm">
+                    <p className="text-muted-foreground">
+                      This code opens a hosted page.
+                    </p>
+                    {code?.pageId && (
+                      <Link
+                        className="font-medium underline underline-offset-4"
+                        href={`/dashboard/pages/${code.pageId}`}
+                      >
+                        Edit page
+                      </Link>
+                    )}
+                  </div>
+                ) : (
+                  <div className="space-y-1.5">
+                    <div className="flex items-center gap-1.5">
+                      <Label htmlFor="code-destination">Destination URL</Label>
+                      <InfoHint align="start" id="dynamic-destination" />
+                    </div>
+                    <Input
+                      autoFocus
+                      id="code-destination"
+                      inputMode="url"
+                      maxLength={2048}
+                      onChange={(event) => setDestination(event.target.value)}
+                      placeholder="https://example.com/menu"
+                      required
+                      value={destination}
+                    />
+                    <AccountSourcePicker
+                      contentType="url"
+                      onPick={(item) => setDestination(item.url)}
+                    />
+                  </div>
+                )}
+                <div className="space-y-1.5">
+                  <Label htmlFor="code-title">
+                    Title{" "}
+                    <span className="text-muted-foreground font-normal">
+                      (optional)
+                    </span>
+                  </Label>
+                  <Input
+                    id="code-title"
+                    maxLength={100}
+                    onChange={(event) => setTitle(event.target.value)}
+                    placeholder="Table tent, spring menu"
+                    value={title}
+                  />
+                </div>
+                <DomainPicker
+                  current={code?.domain ?? null}
+                  disabled={isPending}
+                  onChange={setDomainId}
+                  options={domainOptions}
+                  value={domainId}
+                />
+                {domainOptions && (
+                  <SlugField
+                    allowed={customSlugs}
+                    disabled={isPending}
+                    editing={Boolean(code)}
+                    onChange={setSlug}
+                    onUpgrade={openGetProDialog}
+                    prefix={slugPrefix}
+                    status={slugStatus}
+                    value={slug}
+                  />
+                )}
+                {domainChanged && !slugChanged && (
+                  <p
+                    className={
+                      code?.domain?.verified || !code?.defaultShortLink
+                        ? "bg-destructive/10 text-destructive rounded-md p-3 text-sm"
+                        : "bg-muted rounded-md p-3 text-sm"
+                    }
+                  >
+                    {code?.domain?.verified
+                      ? code.defaultShortLink
+                        ? `QR codes already printed with ${code.shortLink} will stop working. Codes printed with ${code.defaultShortLink} keep working.`
+                        : `QR codes already printed with ${code.shortLink} will stop working. Its back-half moves with the code when it's free there, otherwise the code gets a new one.`
+                      : "The QR code changes to the new link, so download it again after saving. Codes you already printed keep working."}
+                  </p>
+                )}
+                {error && (
+                  <div
+                    className="bg-destructive/10 text-destructive space-y-2 rounded-md p-3 text-sm"
+                    role="alert"
+                  >
+                    <p>{error.message}</p>
+                    {(error.code === "LIMIT_REACHED" ||
+                      error.code === "PLAN_REQUIRED") && (
+                      <Button
+                        onClick={openGetProDialog}
+                        size="sm"
+                        type="button"
+                      >
+                        {/* The message names the plan a PLAN_REQUIRED needs. */}
+                        {error.code === "LIMIT_REACHED" &&
+                        options.plans?.upgrades.unlimitedCodes
+                          ? `Upgrade to ${PLAN_NAMES[options.plans.upgrades.unlimitedCodes]}`
+                          : "Upgrade"}
+                      </Button>
+                    )}
+                  </div>
+                )}
+              </form>
+            )}
+
+            {/* Without a code, the placeholder is hidden on phones, where it
+                would push the options out of view. */}
+            <div className={cn("space-y-3", !preview && "hidden md:block")}>
+              {preview ? (
+                <>
+                  <CodeQr
+                    className="bg-muted/40 rounded-lg border p-3"
+                    style={preview.style}
+                    value={preview.shortLink}
+                  />
+                  <CodeDownloadButtons code={preview} />
+                  <Button
+                    className="w-full"
+                    onClick={() => openInPlayground(preview)}
+                    size="sm"
+                    type="button"
+                    variant="ghost"
+                  >
+                    <Palette />
+                    Edit design in playground
+                  </Button>
+                </>
+              ) : (
+                <div className="text-muted-foreground flex aspect-square items-center justify-center rounded-lg border border-dashed p-6 text-center text-sm">
+                  Your QR code appears here once it's created.
+                </div>
+              )}
+            </div>
+            {/* Full width, under the form and the QR code. */}
+            <div className="md:col-span-2">{optionsField}</div>
+          </div>
+        )}
 
         <ResponsiveDialogFooter className="gap-2">
-          {created ? (
+          {option ? (
+            <Button onClick={closeOption} type="button" variant="outline">
+              <ArrowLeft />
+              Back
+            </Button>
+          ) : created ? (
             <>
               <Button asChild variant="outline">
-                <Link
-                  href={`/dashboard/codes/${encodeURIComponent(created.id)}`}
-                >
+                <Link href={codeTabHref(created.id, "analytics")}>
                   View analytics
                 </Link>
               </Button>
