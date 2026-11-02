@@ -4,7 +4,6 @@ import { Button } from "@repo/design-system/components/ui/button";
 import { Kbd } from "@repo/design-system/components/ui/kbd";
 import { cn } from "@repo/design-system/lib/utils";
 import { Add as Plus } from "iconsax-reactjs";
-import { InfoHint } from "@/components/help/info-hint";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { MAX_IMAGE_FILES } from "@/lib/constants";
 import { useAIChatForm } from "@/lib/hooks/use-ai-chat-form";
@@ -147,7 +146,7 @@ export function ChatInput({
         <div className="flex size-full items-center gap-2">
           <AnimatedBot className="size-4" thinking />
           <ShineText className="text-xs font-medium">
-            Designing your theme…
+            Designing your code…
           </ShineText>
         </div>
       </BannerWrapper>
@@ -223,7 +222,6 @@ export function ChatInput({
                 uploadedImages.length >= MAX_IMAGE_FILES
               }
             />
-            <InfoHint align="start" className="mx-1.5" id="ai-generate" />
           </div>
 
           <div className="flex items-center gap-1.5">
