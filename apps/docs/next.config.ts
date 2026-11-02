@@ -232,6 +232,32 @@ let nextConfig: NextConfig = {
         destination: "https://qrdx.dev/docs/developers/rest-api",
         permanent: false,
       },
+      // docs.qrdx.dev and app.qrdx.dev are the addresses people guess; both
+      // point at this project (Cloudflare CNAME, DNS only) and only redirect.
+      {
+        source: "/",
+        has: [{ type: "host", value: "docs.qrdx.dev" }],
+        destination: "https://qrdx.dev/docs",
+        permanent: false,
+      },
+      {
+        source: "/:path+",
+        has: [{ type: "host", value: "docs.qrdx.dev" }],
+        destination: "https://qrdx.dev/docs/:path+",
+        permanent: false,
+      },
+      {
+        source: "/",
+        has: [{ type: "host", value: "app.qrdx.dev" }],
+        destination: "https://qrdx.dev/dashboard",
+        permanent: false,
+      },
+      {
+        source: "/:path+",
+        has: [{ type: "host", value: "app.qrdx.dev" }],
+        destination: "https://qrdx.dev/:path+",
+        permanent: false,
+      },
       // /help, /support and moved docs pages (lib/docs-redirects.ts), on
       // QRdx's own hosts: on a custom domain those paths are short links.
       ...DOCS_REDIRECTS.map((redirect) => ({
