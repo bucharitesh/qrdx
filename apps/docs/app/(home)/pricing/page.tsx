@@ -39,6 +39,9 @@ const OPTIONS: PricingOptions = {
 
 const DESCRIPTION = buildPricingDescription(OPTIONS);
 
+// Closed by POLAR_CHECKOUT_ENABLED=0 while Polar can't take payments yet.
+const CHECKOUT_OPEN = isFeatureAvailable("checkout");
+
 export const metadata: Metadata = createMetadata({
   title: "Pricing: Free, Pro and Business Plans",
   description: DESCRIPTION,
@@ -85,8 +88,11 @@ export default async function PricingPage({
 
   return (
     <main className="flex flex-col items-center justify-center divide-y divide-border min-h-screen w-full">
-      <JsonLd data={pricingSchema(DESCRIPTION)} />
+      <JsonLd
+        data={pricingSchema(DESCRIPTION, { checkoutOpen: CHECKOUT_OPEN })}
+      />
       <PricingSection
+        checkoutOpen={CHECKOUT_OPEN}
         currency={currency}
         currentPlan={plan}
         description={buildPricingIntro(OPTIONS)}
