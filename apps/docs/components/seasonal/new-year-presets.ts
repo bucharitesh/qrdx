@@ -55,7 +55,6 @@ export const newYearPresets = {
         style: "rounded-border",
         text: "Happy New Year",
         color: "#2B2350",
-        textColor: "#FFF9F2",
       },
     },
   },
