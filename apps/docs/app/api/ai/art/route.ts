@@ -19,7 +19,7 @@ import { parseWithSchema, readJsonBody } from "@/lib/request-guards";
 import { getActiveScope } from "@/lib/scope";
 import { logError } from "@/lib/shared";
 
-// The Gemini call gives up (and the credit is refunded) before this limit.
+// The art model call gives up (and the credit is refunded) before this limit.
 export const maxDuration = 60;
 
 /**

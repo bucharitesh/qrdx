@@ -7,12 +7,9 @@ import {
 } from "ai";
 import type { NextRequest } from "next/server";
 import { QR_THEME_GENERATION_TOOLS } from "@/lib/ai/generate-qr-theme/tools";
+import { textProviderOptions } from "@/lib/ai/models";
 import { GENERATE_QR_THEME_SYSTEM } from "@/lib/ai/prompts";
-import {
-  assertAIConfigured,
-  baseProviderOptions,
-  myProvider,
-} from "@/lib/ai/providers";
+import { assertAIConfigured, languageModel } from "@/lib/ai/providers";
 import { streamErrorMessage } from "@/lib/ai/stream-error-message";
 import { MAX_AI_REQUEST_BODY_BYTES } from "@/lib/constants";
 import { handleError } from "@/lib/error-response";
@@ -33,8 +30,9 @@ import { convertMessagesToModelMessages } from "@/utils/ai/message-converter";
 
 export async function POST(req: NextRequest) {
   try {
-    const userId = await getCurrentUserId(req);
+    // Before the session lookup: with AI off there's nothing to sign in for.
     assertAIConfigured();
+    const userId = await getCurrentUserId(req);
     await enforceAIRateLimit(req, "generate-qr-theme", userId);
 
     const { messages } = parseWithSchema(
@@ -45,7 +43,7 @@ export async function POST(req: NextRequest) {
       messages as unknown as ChatMessage[],
     );
 
-    const model = myProvider.languageModel("base");
+    const model = languageModel("base");
     const usageId = await reserveAIRequest(
       userId,
       typeof model === "string" ? model : model.modelId,
@@ -57,7 +55,7 @@ export async function POST(req: NextRequest) {
         const result = streamText({
           abortSignal: req.signal,
           model: model,
-          providerOptions: baseProviderOptions,
+          providerOptions: textProviderOptions("base"),
           instructions: GENERATE_QR_THEME_SYSTEM,
           messages: modelMessages,
           tools: QR_THEME_GENERATION_TOOLS,

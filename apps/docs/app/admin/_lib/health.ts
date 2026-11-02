@@ -113,25 +113,33 @@ function probeBilling() {
   });
 }
 
-function probeGoogleAi() {
-  return probe("google-ai", "Google AI", async (signal) => {
-    if (!env.GOOGLE_API_KEY) return off("GOOGLE_API_KEY not set: AI is off");
-    // Listing one model is free; the key goes in a header, never the URL.
-    const response = await fetch(
-      "https://generativelanguage.googleapis.com/v1beta/models?pageSize=1",
-      {
-        headers: { "x-goog-api-key": env.GOOGLE_API_KEY },
-        signal,
-        cache: "no-store",
-      },
-    );
-    if (response.ok) return { status: "ok", detail: "Key valid" };
+function probeAiGateway() {
+  return probe("ai-gateway", "AI (Vercel AI Gateway)", async (signal) => {
+    if (!env.AI_GATEWAY_API_KEY) {
+      return off("AI_GATEWAY_API_KEY not set: AI is off");
+    }
+    // Reading the credit balance is free and checks the key.
+    const response = await fetch("https://ai-gateway.vercel.sh/v1/credits", {
+      headers: { Authorization: `Bearer ${env.AI_GATEWAY_API_KEY}` },
+      signal,
+      cache: "no-store",
+    });
+    if (!response.ok) {
+      return {
+        status: "error",
+        detail:
+          response.status === 401 || response.status === 403
+            ? `Key rejected (HTTP ${response.status})`
+            : `HTTP ${response.status}`,
+      };
+    }
+    const { balance } = (await response.json()) as { balance?: unknown };
     return {
-      status: "error",
+      status: "ok",
       detail:
-        response.status === 400 || response.status === 403
-          ? `Key rejected (HTTP ${response.status})`
-          : `HTTP ${response.status}`,
+        typeof balance === "string"
+          ? `Key valid; credit balance ${balance}`
+          : "Key valid",
     };
   });
 }
@@ -143,7 +151,7 @@ export function getServiceProbes(): Promise<Probe[]> {
     probeStorage(),
     probeEmail(),
     probeBilling(),
-    probeGoogleAi(),
+    probeAiGateway(),
   ]);
 }
 
@@ -254,13 +262,7 @@ export function getConfiguration(): {
         name: rule.name,
         on: features[id],
         vars:
-          [
-            ...names,
-            ...(id === "aiArt" ? ["AI_ART_ENABLED (0 switches it off)"] : []),
-            ...(id === "checkout"
-              ? ["POLAR_CHECKOUT_ENABLED (0 closes checkout)"]
-              : []),
-          ].join(", ") ||
+          names.join(", ") ||
           (id === "customDomains"
             ? "None off Vercel (DNS TXT verification)"
             : "None needed here"),
