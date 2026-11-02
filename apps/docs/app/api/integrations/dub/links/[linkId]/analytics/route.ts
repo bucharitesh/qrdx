@@ -27,7 +27,7 @@ export async function GET(request: Request, context: RouteContext) {
 
     const integration = await getDubIntegration(session.user.id);
 
-    if (!integration || integration.status !== "active") {
+    if (integration?.status !== "active") {
       return NextResponse.json(
         { error: "Dub integration not connected" },
         { status: 404 },

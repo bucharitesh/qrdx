@@ -25,7 +25,12 @@ export async function HighlightedCode({
 }: HighlightedCodeProps): Promise<ReactNode> {
   return highlight(code.trimEnd(), {
     lang,
-    themes: { light: "catppuccin-latte", dark: "catppuccin-mocha" },
+    // Same pair as the MDX blocks (source.config.ts).
+    themes: { light: "github-light-default", dark: "catppuccin-mocha" },
+    // CSS variables only, like the MDX code blocks. Passing `themes` replaces
+    // fumadocs' default, whose `defaultColor: false` would otherwise be lost and
+    // Shiki would inline the light theme (a light block in dark mode).
+    defaultColor: false,
     components: {
       pre: (props: ComponentProps<"pre">) => (
         <CodeBlock

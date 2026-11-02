@@ -22,6 +22,7 @@ import { getPlanForScope, getPlanLimits, type Plan } from "@/lib/plans";
 import { type ActiveScope, isInScope } from "@/lib/scope";
 import { logError } from "@/lib/shared";
 import { SHORT_LINK_BASE } from "@/lib/short-links";
+import { releaseDomainSlugs } from "@/lib/slug-claims";
 import { parseCustomHostname } from "./hostname";
 
 /**
@@ -269,29 +270,39 @@ export interface DomainOptions {
   domains: { id: string; hostname: string }[];
   /** False when the scope's plan has no custom domains */
   canUse: boolean;
+  /**
+   * False where custom domains can't be connected on this deployment (on
+   * Vercel without the Domains API). Codes keep the domain they already use.
+   */
+  available: boolean;
+  /** The scope's plan lets codes choose their back-half */
+  customSlugs: boolean;
   /** Host of default short links, e.g. qrdx.dev */
   defaultHost: string;
 }
 
-/** For the domain picker in the code dialog. */
+/** For the domain picker and back-half field in the code dialog. */
 export async function getDomainOptions(
   scope: ActiveScope,
 ): Promise<DomainOptions> {
   const defaultHost = new URL(SHORT_LINK_BASE).host;
-  if (getCustomDomainMode() === "disabled") {
-    return { domains: [], canUse: false, defaultHost };
-  }
+  const disabled = getCustomDomainMode() === "disabled";
   const [plan, domains] = await Promise.all([
     getPlanForScope(scope),
-    db
-      .select({ id: customDomain.id, hostname: customDomain.hostname })
-      .from(customDomain)
-      .where(and(scopeWhere(scope), eq(customDomain.verified, true)))
-      .orderBy(asc(customDomain.hostname)),
+    disabled
+      ? []
+      : db
+          .select({ id: customDomain.id, hostname: customDomain.hostname })
+          .from(customDomain)
+          .where(and(scopeWhere(scope), eq(customDomain.verified, true)))
+          .orderBy(asc(customDomain.hostname)),
   ]);
+  const limits = getPlanLimits(plan);
   return {
     domains,
-    canUse: getPlanLimits(plan).customDomains > 0,
+    canUse: !disabled && limits.customDomains > 0,
+    available: !disabled,
+    customSlugs: limits.customSlugs,
     defaultHost,
   };
 }
@@ -415,6 +426,8 @@ export async function addDomain(
       !existing.verified &&
       existing.createdAt.getTime() < Date.now() - UNVERIFIED_CLAIM_TTL_MS;
     if (!stale) throw domainTaken();
+    // Back-halves its former owner claimed on it (an import) move to qrdx.dev.
+    await releaseDomainSlugs(existing.id);
     await db
       .delete(customDomain)
       .where(
@@ -523,7 +536,10 @@ export async function verifyDomain(
   return toView(saved, counts.get(saved.id) ?? 0);
 }
 
-/** Removes the domain; its codes fall back to the default short link. */
+/**
+ * Removes the domain; its codes fall back to the default short link. Back-halves
+ * chosen on it move to qrdx.dev when they're free there, else get a new one.
+ */
 export async function removeDomain(
   scope: ActiveScope,
   id: string,
@@ -539,6 +555,7 @@ export async function removeDomain(
       throw providerError(error, row.hostname, "removeDomain");
     }
   }
+  await releaseDomainSlugs(row.id);
   await db
     .delete(customDomain)
     .where(and(eq(customDomain.id, row.id), scopeWhere(scope)));

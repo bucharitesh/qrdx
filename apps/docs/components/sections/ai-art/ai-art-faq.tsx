@@ -17,16 +17,16 @@ function faqItems(allowances: AIArtAllowances) {
     {
       question: "Will the QR art actually scan?",
       answer:
-        "Usually, but not always. Every image is generated from a QR code with the highest error correction level (H), and afterwards QRdx decodes every variation in your browser and marks the best scannable one. If none scans, raise QR visibility and retry with the same seed. Always test the final image with a phone camera before printing it.",
+        "Every image you receive has been decoded back to your exact content on our server, both as it is and through a simulated phone camera (smaller, blurred and lower in contrast). Gemini starts from a QR code with the highest error correction level (H) and is told to keep its grid. If its version doesn't pass, QRdx blends it into the code with Image QR, which only corrects the modules that would read wrong, and checks it again; an image that still fails isn't delivered and uses no credit. Your browser then scores each variation and picks the best. Still test the final image with a phone camera before printing it.",
     },
     {
       question: "How many images can I make?",
-      answer: `Each image uses one AI art credit, and so does each 2× upscale. Free accounts get ${count(allowances.free)} credits a month, Pro ${count(allowances.pro)} and Business ${count(allowances.business)}, shared by everyone in the team. Credits reset on the first of each month (UTC), and there is also a safety limit of 25 images per person per day. If a generation fails, its credit is refunded.`,
+      answer: `Each delivered image uses one AI art credit; the print-size download is free. Free accounts get ${count(allowances.free)} credits a month, Pro ${count(allowances.pro)} and Business ${count(allowances.business)}, shared by everyone in the team. Credits reset on the first of each month (UTC), and there is also a safety limit of 25 images per person per day. If a generation fails or doesn't pass the scan check, no credit is used.`,
     },
     {
       question: "Do I need an account?",
       answer:
-        "Yes. Each image runs on a paid GPU model, so you need to sign in. AI art credits are separate from AI theme generation.",
+        "Yes. Each image is a paid call to Google's Gemini image model, so you need to sign in. AI art credits are separate from AI theme generation.",
     },
     {
       question: "Can I change the link after printing?",
@@ -36,21 +36,21 @@ function faqItems(allowances: AIArtAllowances) {
     {
       question: "What do QR visibility and creativity do?",
       answer:
-        "QR visibility sets how strongly the image model has to follow the QR pattern (the ControlNet conditioning scale): higher keeps the modules crisp and easy to scan, lower gives the model more freedom. Creativity sets how freely the model interprets your prompt (the guidance scale): lower follows your words closely, higher improvises.",
+        "QR visibility sets how strongly Gemini is asked to favor the code: higher keeps the modules close to black and white, lower lets the scene's light and shadow form them. It also sets how strongly the code shows if QRdx has to blend the image in. Creativity sets how freely Gemini interprets your prompt: lower follows your words closely, higher improvises.",
     },
     {
       question: "What are seeds and variations?",
-      answer: `A seed fixes the model's starting noise, so the same seed and settings give the same image. Each run makes 1 to ${ART_MAX_VARIATIONS} variations with different seeds; lock a seed to explore small changes to the prompt or sliders around one result.`,
+      answer: `A seed steers the model's randomness, so the same seed and settings give a similar image, though Gemini can still vary it. Each run makes 1 to ${ART_MAX_VARIATIONS} variations with different seeds; lock a seed to explore small changes to the prompt or sliders around one result.`,
     },
     {
       question: "What does the reference image do?",
       answer:
-        "Its light and dark shapes, in grayscale and at low strength, are blended into the hidden QR guide the model follows, which nudges the composition. It doesn't transfer colors or style: those come from your prompt. Only images you upload are accepted, never links.",
+        "It's sent to Gemini next to the QR code, so its colors, shapes or logo can carry over into the artwork. It's resized to 512 pixels in your browser first. Only images you upload are accepted, never links.",
     },
     {
       question: "Can I print it large?",
       answer:
-        "Images are 1024 × 1024 pixels. Upscale 2× gives you 2048 × 2048 pixels with Real-ESRGAN on fal.ai, enough for about 17 cm (6.8 in) at 300 dpi. For any size, the vector Logo QR and Image QR modes in the playground export SVG, PDF and EPS.",
+        "Images are 1024 × 1024 pixels, about 8.7 cm (3.4 in) at 300 dpi. The print-size download is 2048 × 2048 pixels, resampled in your browser and checked to scan again before it saves, for about 17 cm (6.8 in) at 300 dpi. It doesn't add detail. For any size, the vector Logo QR and Image QR modes in the playground export SVG, PDF and EPS.",
     },
     {
       question: "What can I encode?",
@@ -58,12 +58,12 @@ function faqItems(allowances: AIArtAllowances) {
     },
     {
       question: "Which AI model is used?",
-      answer: `Illusion Diffusion on fal.ai: Stable Diffusion 1.5 guided by the QR Code Monster ControlNet, with ${AI_ART_PRESETS.length} style presets written for it. QRdx draws a plain black-and-white QR code on the server and the model paints your scene around its pattern.`,
+      answer: `Google's Gemini image model (Nano Banana 2.1), with ${AI_ART_PRESETS.length} style presets. QRdx draws a plain black-and-white QR code on the server, Gemini repaints it as your scene, and QRdx's own scan check and Image QR blend make sure the result decodes.`,
     },
     {
       question: "Does QRdx store my prompt or image?",
       answer:
-        "QRdx doesn't save your prompt, reference image or the generated images; it only counts your credits. The prompt and the guide image are sent to fal.ai to create the artwork, and results are served from fal.ai's CDN, so download them to keep a copy.",
+        "QRdx doesn't save your prompt, reference image or the generated images; it only counts your credits. The prompt, the QR code image and any reference image are sent to Google's Gemini API to create the artwork, and the result comes straight back to your browser, so download the ones you want to keep.",
     },
   ];
 }

@@ -1,6 +1,6 @@
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { cn } from "@repo/design-system/lib/utils";
-import { Setting2 } from "iconsax-reactjs";
+import { InfoCircle, Setting2 } from "iconsax-reactjs";
 
 // Local dev only: integrations whose credentials aren't set are still shown,
 // marked with the env variable NAMES they need (never values). Production
@@ -54,5 +54,22 @@ export function NeedsSetupNote({
         </code>
       </span>
     </p>
+  );
+}
+
+/**
+ * Production: an integration hidden because it needs setup, which this user
+ * connected before it was hidden. Settings show it with this badge so it can
+ * be disconnected; nothing else in the app offers it.
+ */
+export function NoLongerAvailableBadge({ className }: { className?: string }) {
+  return (
+    <Badge
+      variant="outline"
+      className={cn("gap-1 font-normal text-muted-foreground", className)}
+    >
+      <InfoCircle aria-hidden className="size-3" />
+      No longer available
+    </Badge>
   );
 }

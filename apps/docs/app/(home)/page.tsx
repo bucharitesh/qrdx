@@ -5,7 +5,8 @@ import { HeroSection } from "@/components/sections/hero-section";
 import { HeroVideoSection } from "@/components/sections/hero-video-section";
 import { FeatureRowsSection } from "@/components/sections/home/feature-rows-section";
 import { UseCasesSection } from "@/components/sections/home/use-cases-section";
-import { env } from "@/lib/env";
+import { isArtAvailable } from "@/lib/ai/art-availability";
+import { isFeatureAvailable } from "@/lib/feature-availability";
 import {
   baseUrl,
   createMetadata,
@@ -36,10 +37,16 @@ const organizationId = url("/#organization");
 
 const { free, pro, business } = PLAN_LIMITS;
 
+// Custom domains are only sold where they can be added
+// (lib/feature-availability-rules.ts); the page updates on the next deploy.
+const customDomains = isFeatureAvailable("customDomains");
+const domains = (count: number) =>
+  customDomains ? `${count} custom domains, ` : "";
+
 /** Offer descriptions; limits come from lib/plans.ts so they can't drift. */
 const PLAN_SUMMARY: Record<PaidPlan, string> = {
-  pro: `Unlimited dynamic QR codes and hosted pages, ${pro.analyticsRetentionDays / 365} years of scan analytics, ${pro.customDomains} custom domains, teams of up to ${pro.teamMembers}, smart routing, A/B tests, UTM tags, passwords, schedules and scan limits.`,
-  business: `Everything in Pro, plus white-label hosted pages with custom CSS, unlimited analytics history, ${business.customDomains} custom domains, unlimited team members, conversion tracking, webhooks and Slack or Discord alerts.`,
+  pro: `Unlimited dynamic QR codes and hosted pages, ${pro.analyticsRetentionDays / 365} years of scan analytics, ${domains(pro.customDomains)}teams of up to ${pro.teamMembers}, smart routing, A/B tests, UTM tags, passwords, schedules and scan limits.`,
+  business: `Everything in Pro, plus white-label hosted pages with custom CSS, unlimited analytics history, ${domains(business.customDomains)}unlimited team members, conversion tracking, webhooks and Slack or Discord alerts.`,
 };
 
 const offers = [
@@ -94,14 +101,14 @@ const softwareApplicationSchema = {
     "Center logos, call-to-action frames and decorative templates",
     "Logo QR and Image QR art that blend a logo or photo into the code",
     "AI-designed QR code themes",
-    // Same check as lib/ai/art.ts: AI art only runs where fal.ai is configured.
-    ...(env.FAL_KEY ? ["AI QR code art that still scans"] : []),
+    // AI art is listed where it can run (lib/ai/art-availability.ts).
+    ...(isArtAvailable ? ["AI QR code art that still scans"] : []),
     "PNG, JPG, SVG, PDF and EPS downloads, with print-ready PDFs at exact sizes",
     "Dynamic QR codes with editable destinations and scan analytics",
     "Hosted mobile pages: link lists, business pages, vCards, menus, coupons, events, forms, PDFs, images, audio and video",
     "Smart routing by device, country, language and time, A/B tests and UTM tags",
     "Passwords, start and expiry dates, scan limits and fallback URLs",
-    "Custom domains for short links",
+    ...(customDomains ? ["Custom domains for short links"] : []),
     "Folders, tags, version history and trash for dynamic codes",
     "Teams with owner, admin and member roles",
     "Email alerts, a weekly digest, Slack and Discord messages and signed webhooks",

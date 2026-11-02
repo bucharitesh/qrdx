@@ -8,8 +8,17 @@ import {
 import { headers } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import { env } from "@/lib/env";
-import { getIntegrationAvailability } from "@/lib/integration-availability";
-import { isVisible, setupNeeded } from "@/lib/integration-availability-rules";
+import {
+  getIntegrationAvailability,
+  getStoredConnections,
+  isUnavailableMock,
+  SAMPLE_STORED_CONNECTION,
+} from "@/lib/integration-availability";
+import {
+  isVisible,
+  settingsListing,
+  setupNeeded,
+} from "@/lib/integration-availability-rules";
 import {
   isIntegrationConfigured,
   isOAuthConfigured,
@@ -20,12 +29,14 @@ initializeIntegrations();
 
 interface IntegrationPageProps {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }
 
 export default async function IntegrationPage({
   params,
+  searchParams,
 }: IntegrationPageProps) {
-  const { slug } = await params;
+  const [{ slug }, query] = await Promise.all([params, searchParams]);
 
   const session = await auth.api.getSession({
     headers: await headers(),
@@ -39,9 +50,36 @@ export default async function IntegrationPage({
   if (!integration) notFound();
 
   // Production and preview: an integration that needs setup doesn't exist
-  // for users. Local dev shows it with the env variable names it needs.
+  // for users, unless they connected it before it was hidden: then this page
+  // only lets them disconnect it. Local dev shows it with the env variable
+  // names it needs.
   const availability = getIntegrationAvailability();
-  if (!isVisible(availability, slug)) notFound();
+  const mock = isUnavailableMock(query["integrations-mock"]);
+  if (mock || !isVisible(availability, slug)) {
+    const stored = mock
+      ? SAMPLE_STORED_CONNECTION
+      : (await getStoredConnections(session.user.id, [slug])).get(slug);
+    const listing = mock
+      ? "no-longer-available"
+      : settingsListing(availability, slug, Boolean(stored));
+    if (listing !== "no-longer-available" || !stored) notFound();
+    return (
+      <IntegrationDetail
+        slug={integration.slug}
+        name={integration.name}
+        description={integration.description}
+        logos={integration.logos}
+        capabilities={[]}
+        features={[]}
+        category={[]}
+        isConfigured={false}
+        isConnected
+        noLongerAvailable
+        status={stored.status}
+        connectedAt={stored.createdAt}
+      />
+    );
+  }
 
   const isConfigured = isIntegrationConfigured(slug);
 

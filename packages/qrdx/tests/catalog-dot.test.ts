@@ -19,10 +19,11 @@ describe("new eye dots", () => {
       ).toEqual([]);
     });
 
-    it.each(
-      conditions({ ...PLAIN, cornerEyeDotPattern })
-    )("decodes: %s", (_label, check) => {
-      expect(check()).toBe(true);
-    });
+    it.each(conditions({ ...PLAIN, cornerEyeDotPattern }))(
+      "decodes: %s",
+      (_label, check) => {
+        expect(check()).toBe(true);
+      }
+    );
   });
 });

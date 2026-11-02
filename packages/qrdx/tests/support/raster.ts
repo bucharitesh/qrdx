@@ -556,6 +556,7 @@ export function simulateCamera(
     const stride = horizontal ? 1 : width;
     for (let line = 0; line < lines; line++) {
       const start = horizontal ? line * width : line;
+      // biome-ignore lint/suspicious/noLoopFunc: only called within this iteration
       const at = (position: number) =>
         grey[
           start + Math.min(Math.max(position, 0), span - 1) * stride

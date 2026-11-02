@@ -3,7 +3,7 @@
 import { cn } from "@repo/design-system/lib/utils";
 import { motion, useSpring } from "motion/react";
 import { type CSSProperties, useEffect, useRef } from "react";
-import { soundEvent } from "@/lib/sound/emit";
+import { CHARACTER_BUTTON, seasonalCue } from "./cue";
 import styles from "./seasonal.module.css";
 import { Sprite } from "./sprite";
 import { prefersReducedMotion } from "./ticker";
@@ -35,7 +35,7 @@ export function FloatGhost({
   size?: number;
 }) {
   const rootRef = useRef<HTMLDivElement>(null);
-  const ghostRef = useRef<HTMLDivElement>(null);
+  const ghostRef = useRef<HTMLButtonElement>(null);
   const fleeX = useSpring(0, { stiffness: 150, damping: 13, mass: 0.7 });
   const fleeY = useSpring(0, { stiffness: 150, damping: 13, mass: 0.7 });
 
@@ -93,7 +93,7 @@ export function FloatGhost({
 
     let booTimer = 0;
     const boo = () => {
-      soundEvent("boo");
+      seasonalCue("boo");
       ghost.dataset.bubble = "true";
       window.clearTimeout(booTimer);
       booTimer = window.setTimeout(() => {
@@ -148,9 +148,11 @@ export function FloatGhost({
           }
         >
           <div className={styles.fig8y}>
-            <div
+            <button
               ref={ghostRef}
-              className={cn(styles.ghost, "cursor-pointer")}
+              type="button"
+              aria-label="Ghost"
+              className={cn(styles.ghost, "block", CHARACTER_BUTTON)}
               data-caught="false"
               data-bubble="false"
               style={{ width: size }}
@@ -169,7 +171,7 @@ export function FloatGhost({
                 height={Math.round(size * RATIO)}
                 className="h-auto w-full drop-shadow-[0_8px_14px_rgb(0_0_0/0.22)]"
               />
-            </div>
+            </button>
           </div>
         </div>
       </motion.div>

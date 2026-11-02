@@ -15,6 +15,7 @@ import {
   SHAPED_FRAMES,
 } from "./frame-styles";
 import { getSolidColor } from "./utils/color";
+import { compact, roundTo } from "./utils/fmt";
 
 /** System font stack for frame labels, so rendering never fetches a font. */
 export const FRAME_FONT_FAMILY =
@@ -387,19 +388,20 @@ export function getFrameDimensions(
   return { width, height };
 }
 
-const round = (value: number) => Math.round(value * 100) / 100;
+// Frame boxes, labels and the code's offset snap to 0.01 px
+const round = (value: number) => roundTo(value, 2);
 
 function boxPath({ x, y, width, height, radius }: FrameBox): string {
   const r = round(Math.min(radius, width / 2, height / 2));
   const [x0, y0, w, h] = [round(x), round(y), round(width), round(height)];
   if (r <= 0) {
-    return `M${x0} ${y0}h${w}v${h}h${-w}z`;
+    return compact`M${x0} ${y0}h${w}v${h}h${-w}z`;
   }
   return (
-    `M${x0 + r} ${y0}h${round(w - 2 * r)}a${r} ${r} 0 0 1 ${r} ${r}` +
-    `v${round(h - 2 * r)}a${r} ${r} 0 0 1 ${-r} ${r}` +
-    `h${round(-(w - 2 * r))}a${r} ${r} 0 0 1 ${-r} ${-r}` +
-    `v${round(-(h - 2 * r))}a${r} ${r} 0 0 1 ${r} ${-r}z`
+    compact`M${x0 + r} ${y0}h${round(w - 2 * r)}a${r} ${r} 0 0 1 ${r} ${r}` +
+    compact`v${round(h - 2 * r)}a${r} ${r} 0 0 1 ${-r} ${r}` +
+    compact`h${round(-(w - 2 * r))}a${r} ${r} 0 0 1 ${-r} ${-r}` +
+    compact`v${round(-(h - 2 * r))}a${r} ${r} 0 0 1 ${r} ${-r}z`
   );
 }
 

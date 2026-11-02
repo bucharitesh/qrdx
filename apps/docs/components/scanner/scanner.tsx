@@ -398,7 +398,7 @@ export function Scanner() {
           <div className="flex items-center gap-4 rounded-xl border border-dashed p-5">
             <HairlineFigure
               className="aspect-square w-16 shrink-0"
-              figure="Loupe"
+              figure="ScanPhone"
             />
             <p className="text-muted-foreground text-sm">
               {!historyLoaded

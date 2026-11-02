@@ -1,6 +1,7 @@
 {
   "name": "@qrdx/canva-plugin",
   "version": "0.0.1",
+  "license": "MIT",
   "private": true,
   "scripts": {
     "start": "webpack serve --config webpack.config.js",
@@ -25,7 +26,7 @@
     "@types/react-dom": "^19.3.0",
     "@types/webpack-env": "^1.18.0",
     "css-loader": "^7.1.5",
-    "cssnano": "^7.1.9",
+    "cssnano": "^9.9.0",
     "postcss-loader": "^8.1.0",
     "style-loader": "^4.0.0",
     "terser-webpack-plugin": "^5.6.1",
@@ -35,6 +36,9 @@
     "typescript": "^6.0.3",
     "webpack": "^5.112.2",
     "webpack-cli": "^7.3.1",
-    "webpack-dev-server": "^5.2.7"
+    "webpack-dev-server": "^6.1.0"
+  },
+  "engines": {
+    "node": ">=22.22.3"
   }
 }

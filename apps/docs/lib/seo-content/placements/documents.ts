@@ -132,8 +132,8 @@ export const documents: SeoGroup = {
       recommended: [
         {
           kind: "dynamic",
-          label: "Dynamic code per certificate, on your domain",
-          why: "Create codes in bulk through the API, one per certificate, on a custom domain so the verification link itself proves the issuer.",
+          label: "Dynamic code per certificate",
+          why: "Create codes in bulk through the API, one per certificate, so each verification link can be updated or revoked on its own.",
         },
         {
           kind: "page",

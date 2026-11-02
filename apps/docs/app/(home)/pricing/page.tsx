@@ -6,15 +6,18 @@ import { GuaranteeBlock } from "@/components/sections/pricing/guarantee-block";
 import {
   buildComparison,
   buildHighlights,
+  buildPricingDescription,
+  buildPricingIntro,
+  type PricingOptions,
 } from "@/components/sections/pricing/plan-content";
 import { PricingFaq } from "@/components/sections/pricing/pricing-faq";
 import { pricingSchema } from "@/components/sections/pricing/pricing-schema";
 import { PricingSection } from "@/components/sections/pricing-section";
 import { JsonLd } from "@/components/sections/tools/json-ld";
 import { siteConfig } from "@/config/site";
-import { createMetadata } from "@/lib/metadata";
+import { isFeatureAvailable } from "@/lib/feature-availability";
+import { baseUrl, createMetadata } from "@/lib/metadata";
 import { getPlan, PLAN_LIMITS, type Plan } from "@/lib/plans";
-import { formatPrice, PRICING } from "@/lib/pricing";
 import {
   CURRENCY_COOKIE,
   CURRENCY_PARAM,
@@ -23,7 +26,18 @@ import {
 } from "@/lib/region";
 import { logError } from "@/lib/shared";
 
-const DESCRIPTION = `Static QR codes are free forever. Pro (${formatPrice(PRICING.pro.month.amounts.USD, "USD")}/mo) and Business (${formatPrice(PRICING.business.month.amounts.USD, "USD")}/mo) add unlimited dynamic codes, analytics history, custom domains and teams. Codes keep working if you cancel.`;
+// Rows, plan-card lines and copy for features that can't work on this
+// deployment are left out (lib/feature-availability-rules.ts). The page is
+// prerendered, so a change shows up on the next deploy.
+const OPTIONS: PricingOptions = {
+  aiArt: isFeatureAvailable("aiArt"),
+  aiThemes: isFeatureAvailable("aiThemes"),
+  customDomains: isFeatureAvailable("customDomains"),
+  fileStorage: isFeatureAvailable("fileStorage"),
+  emailAlerts: isFeatureAvailable("email"),
+};
+
+const DESCRIPTION = buildPricingDescription(OPTIONS);
 
 export const metadata: Metadata = createMetadata({
   title: "Pricing: Free, Pro and Business Plans",
@@ -36,6 +50,9 @@ export const metadata: Metadata = createMetadata({
     "qr code generator india price",
   ],
   path: "/pricing",
+  alternates: {
+    types: { "text/markdown": new URL("/pricing.md", baseUrl).toString() },
+  },
 });
 
 /** The signed-in visitor's own plan; null when signed out (or unknown). */
@@ -72,10 +89,13 @@ export default async function PricingPage({
       <PricingSection
         currency={currency}
         currentPlan={plan}
-        highlights={buildHighlights(PLAN_LIMITS)}
+        description={buildPricingIntro(OPTIONS)}
+        highlights={buildHighlights(PLAN_LIMITS, OPTIONS)}
       />
       <GuaranteeBlock />
-      <ComparisonTable groups={buildComparison(PLAN_LIMITS, currency)} />
+      <ComparisonTable
+        groups={buildComparison(PLAN_LIMITS, currency, OPTIONS)}
+      />
       <PricingFaq faqs={siteConfig.pricing.faq} />
     </main>
   );

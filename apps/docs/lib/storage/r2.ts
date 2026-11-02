@@ -1,6 +1,7 @@
 import "server-only";
 
 import {
+  CopyObjectCommand,
   DeleteObjectCommand,
   GetObjectCommand,
   HeadObjectCommand,
@@ -73,6 +74,11 @@ function assertKey(key: string) {
     throw new Error(`Invalid storage key "${key}"`);
   }
 }
+
+/** HTTP status of a failed S3 call. */
+const statusOf = (error: unknown) =>
+  (error as { $metadata?: { httpStatusCode?: number } }).$metadata
+    ?.httpStatusCode;
 
 export interface PresignedUpload {
   url: string;
@@ -175,9 +181,9 @@ export async function headObject(key: string): Promise<StoredObject | null> {
       lastModified: object.LastModified ?? null,
     };
   } catch (error) {
-    const status = (error as { $metadata?: { httpStatusCode?: number } })
-      .$metadata?.httpStatusCode;
-    if (status === 404 || (error as Error).name === "NotFound") return null;
+    if (statusOf(error) === 404 || (error as Error).name === "NotFound") {
+      return null;
+    }
     throw error;
   }
 }
@@ -203,6 +209,50 @@ export async function putObject(
       ...(cacheControl && { CacheControl: cacheControl }),
     }),
   );
+}
+
+/** The source of a conditional copy no longer has the expected ETag. */
+export class ObjectChangedError extends Error {
+  constructor(key: string) {
+    super(`Object "${key}" changed before it could be copied`);
+    this.name = "ObjectChangedError";
+  }
+}
+
+/**
+ * Server-side copy inside the bucket (type and metadata kept). With
+ * `ifMatch`, R2 copies only while the source still has that ETag, so the
+ * copy holds exactly the bytes that were checked; otherwise it throws
+ * ObjectChangedError.
+ */
+export async function copyObject(
+  from: string,
+  to: string,
+  { ifMatch }: { ifMatch?: string } = {},
+): Promise<void> {
+  assertKey(from);
+  assertKey(to);
+  const { client, bucket } = storage();
+  try {
+    await client.send(
+      new CopyObjectCommand({
+        Bucket: bucket,
+        Key: to,
+        CopySource: `${bucket}/${from.split("/").map(encodeURIComponent).join("/")}`,
+        MetadataDirective: "COPY",
+        ...(ifMatch && { CopySourceIfMatch: ifMatch }),
+      }),
+    );
+  } catch (error) {
+    if (
+      ifMatch &&
+      (statusOf(error) === 412 ||
+        (error as Error).name === "PreconditionFailed")
+    ) {
+      throw new ObjectChangedError(from);
+    }
+    throw error;
+  }
 }
 
 /** Deletes an object; deleting a missing key succeeds. */

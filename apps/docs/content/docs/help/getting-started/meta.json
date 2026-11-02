@@ -1,0 +1,6 @@
+{
+  "$schema": "../../../../.source/json-schema/docs.meta.json",
+  "title": "Getting started",
+  "icon": "Rocket",
+  "pages": ["first-qr-code", "download-and-print", "static-vs-dynamic"]
+}

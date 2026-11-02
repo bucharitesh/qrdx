@@ -26,6 +26,7 @@ import {
   QRCode,
 } from "qrdx";
 import { useRef, useState } from "react";
+// biome-ignore lint/correctness/noUndeclaredDependencies: "styles/" is a tsconfig/webpack path alias
 import * as styles from "styles/components.css";
 
 const QRDX_LOGO = "https://qrdx.dev/logo.png";

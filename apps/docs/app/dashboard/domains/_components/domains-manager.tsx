@@ -359,7 +359,7 @@ export function DomainsManager({
             <AlertDialogTitle>Remove {removing?.hostname}?</AlertDialogTitle>
             <AlertDialogDescription>
               {removing && removing.codeCount > 0
-                ? `${removing.codeCount === 1 ? "1 code uses" : `${removing.codeCount} codes use`} this domain. QR codes printed with ${removing.hostname} links will stop working, and the codes switch to their ${defaultHost}/q/… link.`
+                ? `${removing.codeCount === 1 ? "1 code uses" : `${removing.codeCount} codes use`} this domain. QR codes printed with ${removing.hostname} links will stop working, and the codes switch to their ${defaultHost}/q/… link. Back-halves chosen on the domain stay when they're free on ${defaultHost}; the others get a new one.`
                 : `Short links on ${removing?.hostname ?? "this domain"} stop working.`}
             </AlertDialogDescription>
           </AlertDialogHeader>

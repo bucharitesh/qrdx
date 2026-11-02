@@ -12,7 +12,7 @@ export function PricingFaq({ faqs }: PricingFaqProps) {
   return (
     <section
       aria-labelledby="pricing-faq"
-      className="w-full px-6 py-16 md:py-20"
+      className="w-full px-10 py-16 md:py-20"
       id="faq"
     >
       <JsonLd data={faqSchema(faqs)} />

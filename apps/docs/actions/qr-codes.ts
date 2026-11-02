@@ -5,16 +5,19 @@ import { z } from "zod";
 import {
   type CodeListStatus,
   type CodeUsage,
+  checkSlugAvailability,
   codeIdSchema,
   createCodeSchema,
   createCodes,
   deleteCode,
   enforceCreateRateLimit,
+  enforceSlugCheckRateLimit,
   getCode,
   getCodeUsage,
   hasAnyField,
   listCodes,
   type QrCodeView,
+  type SlugAvailability,
   setCodeArchived,
   updateCode,
   updateCodeFields,
@@ -35,6 +38,8 @@ export type QrCodeErrorCode =
   | "RATE_LIMITED"
   | "DOMAIN_NOT_VERIFIED"
   | "UNSAFE_DESTINATION"
+  | "INVALID_SLUG"
+  | "SLUG_TAKEN"
   | "UNKNOWN_ERROR";
 
 export type QrCodeActionResult<T> =
@@ -49,6 +54,8 @@ const KNOWN_CODES = new Set<string>([
   "RATE_LIMITED",
   "DOMAIN_NOT_VERIFIED",
   "UNSAFE_DESTINATION",
+  "INVALID_SLUG",
+  "SLUG_TAKEN",
 ]);
 
 function failure(
@@ -196,4 +203,23 @@ export async function getQrCode(
 
 export async function getQrCodeUsage(): Promise<QrCodeActionResult<CodeUsage>> {
   return run("getQrCodeUsage", getCodeUsage);
+}
+
+const slugCheckSchema = z.object({
+  slug: z.string().trim().max(100),
+  /** The domain the code would be on; null = the default short link */
+  domainId: z.string().trim().min(1).max(64).nullable(),
+  /** The code being edited (its own back-half counts as free) */
+  codeId: codeIdSchema.optional(),
+});
+
+/** Live availability of a back-half for the code dialog (rate-limited per user). */
+export async function checkQrCodeSlug(
+  input: z.input<typeof slugCheckSchema>,
+): Promise<QrCodeActionResult<SlugAvailability>> {
+  return run("checkQrCodeSlug", async (scope) => {
+    const data = parse(slugCheckSchema, input);
+    await enforceSlugCheckRateLimit(scope.userId);
+    return checkSlugAvailability(scope, data);
+  });
 }

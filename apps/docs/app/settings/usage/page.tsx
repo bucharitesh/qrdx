@@ -9,6 +9,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { UsageStats } from "@/app/settings/components/usage-stats";
 import { ManageBillingLink } from "@/components/app-shell/manage-billing-link";
+import { signInPath } from "@/lib/safe-redirect";
 import { SettingsHeader } from "../components/settings-header";
 
 export default async function UsagePage({
@@ -20,7 +21,7 @@ export default async function UsagePage({
     headers: await headers(),
   });
 
-  if (!session) redirect("/playground");
+  if (!session) redirect(signInPath("/settings/usage"));
 
   // Set by /settings/portal when the Polar customer portal can't be opened.
   const { billing } = await searchParams;

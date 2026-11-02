@@ -167,7 +167,7 @@ export default function ToolsPage() {
 
       <section
         aria-label="Tools"
-        className="w-full px-6 md:px-10 py-10 flex flex-col gap-3"
+        className="w-full px-10 py-10 flex flex-col gap-3"
       >
         <div className="grid gap-3 sm:grid-cols-2">
           {featuredTools.map((tool) => (

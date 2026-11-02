@@ -11,6 +11,7 @@ import {
   primaryKey,
   text,
   timestamp,
+  uniqueIndex,
 } from "drizzle-orm/pg-core";
 
 export interface ThemeStyles {
@@ -463,7 +464,18 @@ export const qrCode = pgTable(
     organizationId: text("organization_id").references(() => organization.id, {
       onDelete: "set null",
     }),
+    // Generated (7 base62 characters) or a custom back-half (3–64 of
+    // [A-Za-z0-9_-]), case-sensitive. Unique per slug_scope, and per domain.
+    // The global .unique() stays until manual-sql/0010 drops it, after the
+    // code that reads slug_scope is deployed (the code before it relies on
+    // ON CONFLICT (slug)).
     slug: text("slug").notNull().unique(),
+    // Namespace of the slug: '' = shared (qrdx.dev/q/<slug>: generated slugs
+    // and back-halves chosen on the default link), else the custom_domain id
+    // a back-half was chosen on (only https://<domain>/<slug>). Plain text,
+    // no FK: lib/slug-claims releaseDomainSlugs() empties it before a domain
+    // is deleted.
+    slugScope: text("slug_scope").notNull().default(""),
     destinationUrl: text("destination_url").notNull(),
     title: text("title"),
     contentType: text("content_type").notNull().default("url"),
@@ -513,6 +525,13 @@ export const qrCode = pgTable(
     index("qr_code_domain_id_idx").on(table.domainId),
     index("qr_code_folder_id_idx").on(table.folderId),
     index("qr_code_page_id_idx").on(table.pageId),
+    // A namespace holds each slug once (/q/<slug> on the shared host).
+    uniqueIndex("qr_code_slug_scope_slug_unique").on(
+      table.slugScope,
+      table.slug
+    ),
+    // A custom domain serves each slug once (https://<domain>/<slug>).
+    uniqueIndex("qr_code_domain_id_slug_unique").on(table.domainId, table.slug),
   ]
 );
 

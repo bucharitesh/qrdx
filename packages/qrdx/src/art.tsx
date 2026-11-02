@@ -40,6 +40,7 @@ import {
   type TracedLogo,
   traceLogo,
 } from "./art-trace";
+import { roundTo } from "./utils/fmt";
 import { parseColor } from "./utils/parse-color";
 
 /** Intensity used when `art.intensity` is not set. */
@@ -652,8 +653,9 @@ function logoPixels(art: QRArt, image: DecodedArtImage, traced: TracedLogo) {
 
 // ── SVG building ───────────────────────────────────────────────────────────
 
-const round = (n: number) => Math.round(n * 100) / 100;
-const round4 = (n: number) => Math.round(n * 10_000) / 10_000;
+// Art paths snap to 0.01 px and their scale factors to 4 decimals
+const round = (n: number) => roundTo(n, 2);
+const round4 = (n: number) => roundTo(n, 4);
 
 class PathGroups {
   private readonly groups = new Map<string, string[]>();
@@ -792,15 +794,42 @@ const MAX_STRENGTH: Record<QRArtVariant, number> = {
   mono: 0.7,
 };
 
+/**
+ * How much lighter (luma, 0–1) the background must be than the dots for art
+ * to render. Art needs dark modules on a light background with room in
+ * between; otherwise the plain look is kept so nothing gets worse.
+ */
+export const QR_ART_MIN_LUMA_GAP = 0.35;
+
+/** Why art can't render with these colors, if it can't. */
+export type QRArtColorIssue = "inverted" | "low-contrast";
+
+/**
+ * Null when art renders with `fgColor` on `bgColor`; otherwise why not:
+ * "inverted" (dots lighter than the background) or "low-contrast" (too
+ * close). Gradients: pass the first stop, as the renderer does. Editors use
+ * this to explain why art isn't showing instead of failing silently.
+ */
+export function getQRArtColorIssue(
+  fgColor: string,
+  bgColor: string
+): QRArtColorIssue | null {
+  const fg = rgbFrom(fgColor, [0, 0, 0]);
+  const bg = rgbFrom(bgColor, [1, 1, 1]);
+  const gap = luma(bg) - luma(fg);
+  if (gap >= QR_ART_MIN_LUMA_GAP) {
+    return null;
+  }
+  return gap <= -QR_ART_MIN_LUMA_GAP ? "inverted" : "low-contrast";
+}
+
 /** Strength actually used: 0 when colors are inverted or too close. */
 function effectiveStrength(art: QRArt, fg: RGB, bg: RGB): number {
   const t = Math.min(
     Math.max(art.intensity ?? DEFAULT_ART_INTENSITY, 0),
     MAX_STRENGTH[getQRArtVariant(art)]
   );
-  // Art needs dark modules on a light background with room in between;
-  // otherwise keep the plain look so nothing gets worse.
-  return luma(bg) - luma(fg) >= 0.35 ? t : 0;
+  return luma(bg) - luma(fg) >= QR_ART_MIN_LUMA_GAP ? t : 0;
 }
 
 function context(options: QRArtRenderOptions): RenderContext | null {

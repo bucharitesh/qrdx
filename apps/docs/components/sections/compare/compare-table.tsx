@@ -2,6 +2,7 @@ import { Close, Tick } from "@repo/design-system/components/icons";
 import { Card } from "@repo/design-system/components/ui/card";
 import { cn } from "@repo/design-system/lib/utils";
 import { Minus } from "iconsax-reactjs";
+import type { ReactNode } from "react";
 import { QrdxLogo } from "@/components/qrdx-logo";
 import { CompetitorLogo } from "@/components/sections/compare/competitor-logo";
 
@@ -18,6 +19,8 @@ interface CompareTableProps {
   qrdxPlan: string;
   competitorPlan: string;
   rows: TableRow[];
+  /** Shown above the table, e.g. that npm doesn't have the version compared yet. */
+  notice?: ReactNode;
 }
 
 function CellValue({ value }: { value: string | boolean }) {
@@ -56,11 +59,12 @@ export function CompareTable({
   qrdxPlan,
   competitorPlan,
   rows,
+  notice,
 }: CompareTableProps) {
   return (
     <section
       aria-labelledby="at-a-glance"
-      className="w-full scroll-mt-20 px-6 py-14 md:py-16"
+      className="w-full scroll-mt-20 px-10 py-14 md:py-16"
       id="at-a-glance"
     >
       <div className="mx-auto flex max-w-2xl flex-col items-center gap-2 text-center">
@@ -72,6 +76,8 @@ export function CompareTable({
           {competitor} is ahead, the table says so.
         </p>
       </div>
+
+      {notice && <div className="mx-auto mt-8 max-w-4xl">{notice}</div>}
 
       <Card className="mx-auto mt-10 max-w-4xl gap-0 overflow-hidden py-0 shadow-xs">
         <div className={cn(GRID, "items-end bg-muted/40")}>

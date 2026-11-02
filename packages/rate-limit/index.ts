@@ -1,6 +1,20 @@
 import { Ratelimit, type RatelimitConfig } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
+import {
+  createCircuitBreaker,
+  createMemoryLimiter,
+  type LimitResult,
+  parseDuration,
+  withFallback,
+} from "./fallback";
 import { keys } from "./keys";
+
+export {
+  createCircuitBreaker,
+  createMemoryLimiter,
+  parseDuration,
+  withFallback,
+} from "./fallback";
 
 type RateLimitResponse = Awaited<ReturnType<Ratelimit["limit"]>>;
 
@@ -28,16 +42,59 @@ function getUpstashCredentials(): { url: string; token: string } | null {
 
 const credentials = getUpstashCredentials();
 
-// One quick retry at most: a dead Upstash should fail fast (the limiter fails open).
+// One quick retry at most: a dead Upstash should fail fast (the breaker
+// below then moves limits to memory).
 export const redis = credentials
   ? new Redis({ ...credentials, retry: { retries: 1, backoff: () => 50 } })
   : null;
 
 let warnedNoopInProduction = false;
 
-// After a failed call, skip Upstash for a while so every request doesn't pay for it.
-const UPSTASH_FAILURE_COOLDOWN_MS = 5 * 60_000;
-let upstashUnavailableUntil = 0;
+// One breaker per instance: every limiter talks to the same Upstash.
+const breaker = createCircuitBreaker();
+
+type Limiter = NonNullable<RatelimitConfig["limiter"]>;
+
+/** The window each limiter was built with, for the in-memory fallback. */
+const windows = new WeakMap<
+  Limiter,
+  { tokens: number; windowMs: number; sliding: boolean }
+>();
+
+/** Ratelimit.slidingWindow, remembering its window for the fallback. */
+export const slidingWindow = (
+  ...args: Parameters<typeof Ratelimit.slidingWindow>
+): Limiter => {
+  const limiter = Ratelimit.slidingWindow(...args);
+  const [tokens, window] = args;
+  windows.set(limiter, {
+    tokens,
+    windowMs: parseDuration(window),
+    sliding: true,
+  });
+  return limiter;
+};
+
+/**
+ * Ratelimit.fixedWindow, remembering its window for the fallback. Windows
+ * start at multiples of the duration since the epoch, so "1 d" runs from
+ * 00:00 to 24:00 UTC, in Upstash and in the fallback alike.
+ */
+export const fixedWindow = (
+  ...args: Parameters<typeof Ratelimit.fixedWindow>
+): Limiter => {
+  const limiter = Ratelimit.fixedWindow(...args);
+  const [tokens, window] = args;
+  windows.set(limiter, {
+    tokens,
+    windowMs: parseDuration(window),
+    sliding: false,
+  });
+  return limiter;
+};
+
+const DEFAULT_TOKENS = 10;
+const DEFAULT_WINDOW = "10 s";
 
 export const createRateLimiter = (
   props: Omit<RatelimitConfig, "redis">
@@ -52,41 +109,29 @@ export const createRateLimiter = (
     return noopRateLimiter;
   }
 
+  const limiter =
+    props.limiter ?? slidingWindow(DEFAULT_TOKENS, DEFAULT_WINDOW);
   const ratelimit = new Ratelimit({
     redis,
-    limiter: props.limiter ?? Ratelimit.slidingWindow(10, "10 s"),
+    limiter,
     prefix: props.prefix ?? "qrdx",
-    // Upstash allows the request itself when a check takes longer than this.
+    // Upstash allows the request itself when a check takes longer than
+    // this; the fallback judges it in memory instead.
     timeout: 1000,
   });
+  const memory = createMemoryLimiter(
+    windows.get(limiter) ?? {
+      tokens: DEFAULT_TOKENS,
+      windowMs: parseDuration(DEFAULT_WINDOW),
+    }
+  );
+  const limit = withFallback(
+    (identifier) => ratelimit.limit(identifier) as Promise<LimitResult>,
+    memory,
+    breaker
+  );
 
   return {
-    limit: async (identifier: string) => {
-      if (Date.now() < upstashUnavailableUntil) {
-        return noopRateLimiter.limit(identifier);
-      }
-      try {
-        const result = await ratelimit.limit(identifier);
-        if (result.reason === "timeout") {
-          // Upstash already allowed this request; back off like a failure.
-          upstashUnavailableUntil = Date.now() + UPSTASH_FAILURE_COOLDOWN_MS;
-          console.error(
-            "[rate-limit] Upstash timed out; allowing requests without rate limiting for 5 minutes."
-          );
-        }
-        return result;
-      } catch (error) {
-        // Fail open: an unreachable Upstash must never take routes (or QR
-        // redirects) down. Cost-sensitive quotas are enforced in the database.
-        upstashUnavailableUntil = Date.now() + UPSTASH_FAILURE_COOLDOWN_MS;
-        console.error(
-          "[rate-limit] Upstash unavailable; allowing requests without rate limiting for 5 minutes:",
-          error instanceof Error ? error.message : error
-        );
-        return noopRateLimiter.limit(identifier);
-      }
-    },
+    limit: (identifier) => limit(identifier) as Promise<RateLimitResponse>,
   };
 };
-
-export const { slidingWindow } = Ratelimit;

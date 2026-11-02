@@ -1,0 +1,45 @@
+---
+title: A code opens the wrong page
+description: Why a QR code opens an old or unexpected link, and how to find out what it really holds.
+---
+
+## First, see what the code holds
+
+Take a photo of the printed code and drop it into the [scan checker](/tools/scan-checker). It shows exactly what the code contains.
+
+- If it shows your website address, the code is **static**.
+- If it shows a short link like `qrdx.dev/q/…`, the code is **dynamic**.
+
+## A static code
+
+A static code stores the link inside the code. It can't be changed after printing.
+
+This happens when a code is downloaded before it was made dynamic. To fix it, print the dynamic version. See [Create a dynamic QR code](/docs/help/dynamic-codes/create).
+
+## A dynamic code
+
+Open the code in **Codes** and check each of these.
+
+### The new destination wasn't saved
+
+In the playground, changing the address isn't enough: click **Point it to the new address**. In the dashboard, use **Edit link** and **Save changes**. See [Change where a code points](/docs/help/dynamic-codes/change-the-link).
+
+### A smart routing rule matched
+
+Rules can send some scans elsewhere, for example by device or country. The first matching rule wins. Open **Smart routing** and click **Test your rules**.
+
+### An A/B test is running
+
+Each visitor sees one version for the day. Another person may see a different page.
+
+### The code is paused or ended
+
+A paused or ended code opens its **Fallback URL**, if you set one. Check **Access & schedule**.
+
+### UTM parameters were added
+
+If you set UTM parameters, scans open your link with `utm_` tags added. That's expected, and the page is the same.
+
+## Still seeing the old page?
+
+QRdx doesn't cache redirects, so the next scan uses the new destination. If your phone shows an old version of the page itself, reload it in the browser.

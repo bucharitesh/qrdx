@@ -23,7 +23,7 @@ export default async function OpengraphImage({
   const { slug } = await params;
   const page = blogSource.getPage([slug]);
 
-  if (!page || !page.data.published) {
+  if (!page?.data.published) {
     notFound();
   }
 

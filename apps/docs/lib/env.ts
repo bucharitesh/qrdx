@@ -8,9 +8,6 @@ export const env = createEnv({
 
     // Optional services: a missing value disables only that feature.
 
-    // Docs feedback GitHub App
-    GITHUB_APP_ID: z.string().optional(),
-
     // Auth - GitHub
     GITHUB_CLIENT_ID: z.string().min(1).optional(),
     GITHUB_CLIENT_SECRET: z.string().min(1).optional(),
@@ -19,8 +16,10 @@ export const env = createEnv({
     GOOGLE_CLIENT_ID: z.string().min(1).optional(),
     GOOGLE_CLIENT_SECRET: z.string().min(1).optional(),
 
-    // AI Provider - Google
+    // AI Provider - Google (AI themes, prompt enhancement and AI QR art)
     GOOGLE_API_KEY: z.string().min(1).optional(),
+    // "0" switches AI QR art off even with GOOGLE_API_KEY set (lib/ai/art-availability.ts)
+    AI_ART_ENABLED: z.enum(["0", "1"]).optional(),
 
     // Payments - Polar
     POLAR_ACCESS_TOKEN: z.string().min(1).optional(),
@@ -74,9 +73,6 @@ export const env = createEnv({
     VERCEL_PROJECT_ID: z.string().min(1).optional(),
     VERCEL_TEAM_ID: z.string().min(1).optional(),
 
-    // AI QR art (fal.ai)
-    FAL_KEY: z.string().min(1).optional(),
-
     // File storage: Cloudflare R2 (feature hidden unless account, keys and bucket are set)
     R2_ACCOUNT_ID: z.string().min(1).optional(),
     R2_ACCESS_KEY_ID: z.string().min(1).optional(),
@@ -122,12 +118,12 @@ export const env = createEnv({
   },
   runtimeEnv: {
     DATABASE_URL: process.env.DATABASE_URL,
-    GITHUB_APP_ID: process.env.GITHUB_APP_ID,
     GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
     GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
     GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
     GOOGLE_API_KEY: process.env.GOOGLE_API_KEY,
+    AI_ART_ENABLED: process.env.AI_ART_ENABLED,
     POLAR_ACCESS_TOKEN: process.env.POLAR_ACCESS_TOKEN,
     POLAR_WEBHOOK_SECRET: process.env.POLAR_WEBHOOK_SECRET,
     DUB_CLIENT_ID: process.env.DUB_CLIENT_ID,
@@ -160,7 +156,6 @@ export const env = createEnv({
     VERCEL_API_TOKEN: process.env.VERCEL_API_TOKEN,
     VERCEL_PROJECT_ID: process.env.VERCEL_PROJECT_ID,
     VERCEL_TEAM_ID: process.env.VERCEL_TEAM_ID,
-    FAL_KEY: process.env.FAL_KEY,
     R2_ACCOUNT_ID: process.env.R2_ACCOUNT_ID,
     R2_ACCESS_KEY_ID: process.env.R2_ACCESS_KEY_ID,
     R2_SECRET_ACCESS_KEY: process.env.R2_SECRET_ACCESS_KEY,

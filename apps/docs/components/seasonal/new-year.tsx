@@ -4,7 +4,7 @@ import { type CSSProperties, useEffect, useRef } from "react";
 import { ringInYear } from "@/lib/seasonal";
 import type { AvoidRects } from "./cat";
 import { useKeepClear } from "./christmas";
-import { seasonalCue } from "./cue";
+import { CHARACTER_BUTTON, seasonalCue } from "./cue";
 import { HangingCharacter } from "./rope";
 import styles from "./seasonal.module.css";
 import { SeasonStage } from "./site-characters";
@@ -45,7 +45,7 @@ export function Champagne({
   width?: number;
   avoid?: AvoidRects;
 }) {
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLButtonElement>(null);
   useKeepClear(ref, avoid);
   useEffect(() => {
     const bottle = ref.current;
@@ -69,9 +69,11 @@ export function Champagne({
     };
   }, []);
   return (
-    <div
+    <button
       ref={ref}
-      className={styles.bottle}
+      type="button"
+      aria-label="Champagne"
+      className={`${styles.bottle} ${CHARACTER_BUTTON}`}
       data-pop="false"
       style={{ width, ...style }}
     >
@@ -96,13 +98,13 @@ export function Champagne({
         height={Math.round(width * BOTTLE_RATIO)}
         className="relative h-auto w-full"
       />
-    </div>
+    </button>
   );
 }
 
 /** "2027" balloons bobbing in the right margin; a click gives them a bounce. */
 function Balloons({ left, top }: { left: number; top: number }) {
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     const balloons = ref.current;
     if (!balloons) return;
@@ -125,21 +127,23 @@ function Balloons({ left, top }: { left: number; top: number }) {
     };
   }, []);
   return (
-    <div
+    <button
       ref={ref}
-      className={styles.balloons}
+      type="button"
+      aria-label={`${BALLOONS_YEAR} balloons`}
+      className={`${styles.balloons} ${CHARACTER_BUTTON}`}
       data-bounce="false"
       style={{ left, top, width: BALLOONS_WIDTH }}
     >
-      <div className={styles.balloonsBody}>
+      <span className={`${styles.balloonsBody} block`}>
         <Sprite
           name="balloons"
           width={BALLOONS_WIDTH}
           height={Math.round(BALLOONS_WIDTH * BALLOONS_RATIO)}
           className="h-auto w-full"
         />
-      </div>
-    </div>
+      </span>
+    </button>
   );
 }
 
@@ -165,6 +169,8 @@ function NewYearScene({ stage }: { stage: HTMLDivElement }) {
           ratio={DISCO_RATIO}
           onNear="nudge"
           onClick="swing"
+          label="Disco ball"
+          cue="seasonal-disco"
           className="drop-shadow-[0_3px_5px_rgb(0_0_0/0.25)]"
         >
           {/* Slowly turning: a sheen sweeps the mirror tiles, a few faint flecks */}

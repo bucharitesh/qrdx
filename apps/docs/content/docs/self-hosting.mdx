@@ -12,7 +12,7 @@ QRdx is AGPL-3.0 licensed, and you can run the whole web app (QR editor, account
 
 ## Requirements
 
-- Docker with Compose v2, or Node.js 20+ and pnpm 10 for the manual setup
+- Docker with Compose v2, or Node.js 22 (22.22.3 or later) and pnpm 10 for the manual setup
 - A way to sign in, so accounts can be created: a GitHub or Google OAuth app, or [Resend](https://resend.com) for email sign-in codes. Codes are emailed only when `NEXT_PUBLIC_APP_URL` isn't `localhost`; `pnpm dev` prints them in the terminal instead.
 - Postgres: the container bundled in `docker-compose.yml`, or a [Neon](https://neon.tech) database
 
@@ -149,8 +149,8 @@ Add one OAuth provider (GitHub or Google), or Resend for email sign-in codes, so
 | Google sign-in | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | Google sign-in is unavailable |
 | Auth base URL | `BETTER_AUTH_URL` | Inferred from each request, with a warning in the logs |
 | Admin panel | `ADMIN_EMAILS`, `ADMIN_USER_IDS` | Nobody can open `/admin` |
-| AI theme generation | `GOOGLE_API_KEY` | AI requests fail. The editor works normally. |
-| AI QR art ([fal.ai](https://fal.ai)) | `FAL_KEY` | The AI art page can't generate images and is hidden from search engines |
+| AI themes and AI QR art (Google Gemini) | `GOOGLE_API_KEY` | AI requests fail and the AI art page can't generate images (it's hidden from search engines). The editor works normally. AI art uses Gemini image models, which need a key on a paid (billing-enabled) Gemini API tier |
+| Switching AI QR art off | `AI_ART_ENABLED=0` | With `GOOGLE_API_KEY` set, AI art is offered unless this is `0`. Use it while the key has no billing: AI themes keep working, and the AI art page, its pricing lines and its sitemap entry are hidden (prerendered pages update on the next deploy) |
 | Short-link origin | `NEXT_PUBLIC_SHORT_LINK_BASE_URL` | [Dynamic codes](/docs/dynamic-qr-codes#self-hosting) use `NEXT_PUBLIC_APP_URL` |
 | Scan privacy salt | `SCAN_HASH_SALT` | Derived from `BETTER_AUTH_SECRET` |
 | File storage (Cloudflare R2) | `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`, `R2_PUBLIC_BASE_URL` | Uploads are off; pages can still link to files hosted elsewhere. See [Files](/docs/files#set-up-storage-self-hosting) |
@@ -167,7 +167,7 @@ Add one OAuth provider (GitHub or Google), or Resend for email sign-in codes, so
 | Analytics (PostHog, after cookie consent) | `NEXT_PUBLIC_POSTHOG_KEY`, `NEXT_PUBLIC_POSTHOG_HOST` | No product analytics |
 | Analytics (Umami, cookieless) | `NEXT_PUBLIC_UMAMI_WEBSITE_ID`, `NEXT_PUBLIC_UMAMI_SCRIPT_URL` | No visit counts |
 | Feedback widget | `NEXT_PUBLIC_FEATUREBASE_APP_ID` | The widget doesn't load |
-| Docs extras | `GITHUB_TOKEN`, `GITHUB_APP_ID` | Star counts may hit GitHub rate limits, and docs feedback isn't forwarded |
+| Docs extras | `GITHUB_TOKEN` | Star counts may hit GitHub rate limits |
 
 `INTEGRATION_ENCRYPTION_KEY` must be set in production as soon as you enable an integration, because it encrypts the stored tokens.
 
@@ -180,6 +180,10 @@ Add one OAuth provider (GitHub or Google), or Resend for email sign-in codes, so
 Put the app behind a reverse proxy such as Caddy, nginx or Traefik that terminates TLS, and don't expose port 3000 to the internet directly. Rate limiting reads the client IP from `X-Real-IP` and then `X-Forwarded-For`, so the proxy must set these headers and the app must only be reachable through it.
 
 Once HTTPS is set up, change `NEXT_PUBLIC_APP_URL` and `BETTER_AUTH_URL` to the `https://` URL, update the OAuth callback URLs, and rebuild.
+
+### Content-Security-Policy
+
+Production builds send a Content-Security-Policy on QRdx's own pages: signed-in pages get a fresh script nonce per request, prerendered pages an allowlist of script hosts. Hosted pages (`/p`) get a loose policy, because they run the owner's pixels and embed media from anywhere. If your reverse proxy also sets `Content-Security-Policy`, browsers enforce both, so leave it out there. Set `CSP_REPORT_ONLY=1` (at build time and at run time) to send the policy as report-only while you check a new setup; violations are logged by `/api/csp-report`. Add `CSP_HTTPS=1` when you serve over HTTPS outside Vercel, so browsers upgrade any `http://` resource.
 
 ## Updating
 

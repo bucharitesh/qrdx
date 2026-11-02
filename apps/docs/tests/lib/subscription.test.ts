@@ -117,12 +117,6 @@ vi.mock("@repo/database/schema", () => ({
   },
 }));
 
-// lib/ai/art pulls in fal.ai and rate limiting; only its model ids matter here.
-vi.mock("@/lib/ai/art", () => ({
-  ART_MODEL_ID: "fal-ai/illusion-diffusion",
-  ART_UPSCALE_MODEL_ID: "fal-ai/esrgan",
-}));
-
 const {
   finalizeAIRequest,
   releaseAIRequest,
@@ -158,8 +152,9 @@ describe("validateSubscriptionAndUsage", () => {
     });
   });
 
-  it("does not count AI art or upscales against the free tier", async () => {
-    for (let i = 0; i < 20; i++) addUsage("fal-ai/illusion-diffusion");
+  it("does not count AI art (Gemini, or fal.ai from before) against the free tier", async () => {
+    for (let i = 0; i < 20; i++) addUsage("google/gemini-nano-banana-2.1");
+    for (let i = 0; i < 5; i++) addUsage("fal-ai/illusion-diffusion");
     addUsage("fal-ai/esrgan");
     addUsage("gemini-2.5-flash");
     const result = await validateSubscriptionAndUsage(USER);
@@ -182,18 +177,18 @@ describe("validateSubscriptionAndUsage", () => {
     );
   });
 
-  it.each([
-    "active",
-    "trialing",
-  ])("lets a %s subscriber through without a limit", async (status) => {
-    subscribe(status);
-    for (let i = 0; i < 50; i++) addUsage("gemini-2.5-flash");
-    expect(await validateSubscriptionAndUsage(USER)).toMatchObject({
-      canProceed: true,
-      isSubscribed: true,
-      requestsRemaining: Number.POSITIVE_INFINITY,
-    });
-  });
+  it.each(["active", "trialing"])(
+    "lets a %s subscriber through without a limit",
+    async (status) => {
+      subscribe(status);
+      for (let i = 0; i < 50; i++) addUsage("gemini-2.5-flash");
+      expect(await validateSubscriptionAndUsage(USER)).toMatchObject({
+        canProceed: true,
+        isSubscribed: true,
+        requestsRemaining: Number.POSITIVE_INFINITY,
+      });
+    },
+  );
 
   it.each([
     "canceled",
@@ -245,7 +240,7 @@ describe("reserveAIRequest", () => {
   });
 
   it("does not let art usage block free theme requests", async () => {
-    for (let i = 0; i < 30; i++) addUsage("fal-ai/illusion-diffusion");
+    for (let i = 0; i < 30; i++) addUsage("google/gemini-nano-banana-2.1");
     await expect(reserveAIRequest(USER, "gemini-2.5-flash")).resolves.toEqual(
       expect.any(String),
     );

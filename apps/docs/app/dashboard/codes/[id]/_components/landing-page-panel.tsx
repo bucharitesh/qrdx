@@ -31,7 +31,7 @@ export async function LandingPagePanel({ codeId }: { codeId: string }) {
     .leftJoin(landingPage, eq(landingPage.id, qrCode.pageId))
     .where(and(eq(qrCode.id, codeId), scopeWhere(scope)))
     .limit(1);
-  if (!row || row.kind !== "page") return null;
+  if (row?.kind !== "page") return null;
 
   if (!row.pageId) {
     return (

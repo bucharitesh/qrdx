@@ -180,20 +180,49 @@ export function cable(points: [number, number, number?][], r = 18) {
   return d;
 }
 
-/** "M x y h1 v1 h-1 z" for every dark module, optionally skipping finders. */
-export function modulesPath(code: readonly string[], skipFinders = false) {
+/**
+ * "M x y h1 v1 h-1 z" for every dark module, optionally skipping finders and
+ * keeping only rows in [from, to). `dot` draws each module as a round dot.
+ */
+export function modulesPath(
+  code: readonly string[],
+  skipFinders = false,
+  { from = 0, to = code.length, dot = false } = {},
+) {
   const n = code.length;
   const finder = (x: number, y: number) =>
     (x < 7 && y < 7) || (x >= n - 7 && y < 7) || (x < 7 && y >= n - 7);
   let d = "";
   code.forEach((row, y) => {
+    if (y < from || y >= to) return;
     for (let x = 0; x < row.length; x++) {
       if (row[x] !== "1" || (skipFinders && finder(x, y))) continue;
-      d += `M${x} ${y}h1v1h-1z`;
+      d += dot
+        ? `M${x + 0.08} ${y + 0.5}a.42 .42 0 1 0 .84 0a.42 .42 0 1 0-.84 0z`
+        : `M${x} ${y}h1v1h-1z`;
     }
   });
   return d;
 }
+
+/** A rounded rectangle path (SVG units), clockwise. */
+export function roundRect(
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  r: number,
+) {
+  return `M${x + r} ${y}h${w - 2 * r}a${r} ${r} 0 0 1 ${r} ${r}v${h - 2 * r}a${r} ${r} 0 0 1-${r} ${r}h-${w - 2 * r}a${r} ${r} 0 0 1-${r}-${r}v-${h - 2 * r}a${r} ${r} 0 0 1 ${r}-${r}z`;
+}
+
+/** Finder origins (module units) for a code of size n, top two then bottom. */
+export const finderOrigins = (n: number) =>
+  [
+    [0, 0],
+    [n - 7, 0],
+    [0, n - 7],
+  ] as const;
 
 /** The three finder patterns as rings + centres, in module units. */
 export function finderPaths(n: number) {
@@ -247,7 +276,6 @@ export function trackGeometry() {
     r - half,
     10,
   );
-  const mid = outline(x0, y0, x1, y1, r, 12);
   const top = `${path(outer.all.map(([x, y]) => proj(x, y, z1)))}${path(
     inner.all.map(([x, y]) => proj(x, y, z1)),
   )}`;
@@ -264,7 +292,70 @@ export function trackGeometry() {
   const rails =
     path(railA.all.map(([x, y]) => proj(x, y, z1))) +
     path(railB.all.map(([x, y]) => proj(x, y, z1)));
-  // The tiles ride the centre line, clockwise on screen.
-  const motion = path(mid.all.map(([x, y]) => proj(x, y, z1)));
-  return { top, outerSide, innerWall, rails, motion };
+  return { top, outerSide, innerWall, rails };
+}
+
+const near = (a: W2 | undefined, b: W2) =>
+  Boolean(a) && Math.hypot((a?.[0] ?? 0) - b[0], (a?.[1] ?? 0) - b[1]) < 0.01;
+
+/**
+ * The conveyor's centre line in world (x, y), running counter-clockwise on
+ * screen (down the left edge, along the front, up past the gate) and starting
+ * at (x0, fromY) on the left straight. Ends back at the start.
+ */
+export function beltLine(fromY: number): W2[] {
+  const { x0, y0, x1, y1, r } = TRACK;
+  const ccw: W2[] = [];
+  for (const p of [...outline(x0, y0, x1, y1, r, 12).all].reverse()) {
+    if (!near(ccw.at(-1), p)) ccw.push(p);
+  }
+  if (near(ccw[0], ccw.at(-1) as W2)) ccw.pop();
+  // The left straight runs from (x0, y0 + r) to (x0, y1 - r).
+  const i = ccw.findIndex((p) => near(p, [x0, y0 + r]));
+  const rotated = [...ccw.slice(i + 1), ...ccw.slice(0, i + 1)];
+  return [[x0, fromY], ...rotated, [x0, fromY]];
+}
+
+/** Cumulative lengths along a polyline. */
+export function cumulative(pts: readonly W2[]) {
+  const out = [0];
+  for (let k = 1; k < pts.length; k++) {
+    const [ax = 0, ay = 0] = pts[k - 1] ?? [];
+    const [bx = 0, by = 0] = pts[k] ?? [];
+    out.push((out[k - 1] ?? 0) + Math.hypot(bx - ax, by - ay));
+  }
+  return out;
+}
+
+/**
+ * Screen points along a ground cable (same rounding as `cable`), for things
+ * that travel along it.
+ */
+export function cablePoints(points: [number, number][], r = 18): P2[] {
+  const out: P2[] = [];
+  for (let k = 0; k < points.length; k++) {
+    const [x = 0, y = 0] = points[k] ?? [];
+    if (k === 0 || k === points.length - 1) {
+      out.push(proj(x, y));
+      continue;
+    }
+    const toward = ([px = 0, py = 0]: [number, number]) => {
+      const len = Math.hypot(px - x, py - y) || 1;
+      const t = Math.min(r, len / 2) / len;
+      return [x + (px - x) * t, y + (py - y) * t] as const;
+    };
+    const a = toward(points[k - 1] ?? [x, y]);
+    const b = toward(points[k + 1] ?? [x, y]);
+    for (let s = 0; s <= 4; s++) {
+      const t = s / 4;
+      const u = 1 - t;
+      out.push(
+        proj(
+          u * u * a[0] + 2 * u * t * x + t * t * b[0],
+          u * u * a[1] + 2 * u * t * y + t * t * b[1],
+        ),
+      );
+    }
+  }
+  return out;
 }

@@ -2,6 +2,15 @@ import { config, withAnalyzer } from "@repo/next-config";
 import { createMDX } from "fumadocs-mdx/next";
 import type { NextConfig } from "next";
 import { env } from "@/env";
+import { DOCS_REDIRECTS } from "@/lib/docs-redirects";
+import {
+  appCsp,
+  cspHeaderName,
+  cspOptionsFromEnv,
+  hostedPageCsp,
+  prerenderedPagesSource,
+  reportingEndpoints,
+} from "@/lib/security/csp";
 
 type Rewrites = Awaited<ReturnType<NonNullable<NextConfig["rewrites"]>>>;
 type RewritePhases = Required<Exclude<Rewrites, unknown[]>>;
@@ -15,6 +24,55 @@ const toRewritePhases = (rewrites: Rewrites = []): RewritePhases =>
         afterFiles: rewrites.afterFiles ?? [],
         fallback: rewrites.fallback ?? [],
       };
+
+// Content-Security-Policy (lib/security/csp.ts): enforced in production
+// builds, off in `next dev` (which keeps the frame rules only) unless
+// CSP_DEV=1. CSP_REPORT_ONLY=1 sends it as Report-Only instead.
+const cspEnabled =
+  process.env.NODE_ENV === "production" || process.env.CSP_DEV === "1";
+const cspOptions = cspOptionsFromEnv();
+const cspHeader = cspHeaderName();
+const cspReporting = reportingEndpoints(cspOptions);
+
+// QRdx's own hosts (as in proxy.ts), plus a self-hosted app URL: customers'
+// custom domains never get the app policy.
+const appHostname = (() => {
+  try {
+    return new URL(process.env.NEXT_PUBLIC_APP_URL ?? "").hostname;
+  } catch {
+    return null;
+  }
+})();
+const PLATFORM_HOSTS = [
+  "(?:.+\\.)?(?:qrdx\\.dev|vercel\\.app)",
+  "localhost",
+  "127\\.0\\.0\\.1",
+  ...(appHostname ? [appHostname.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")] : []),
+].join("|");
+
+/** An Accept header that lists text/markdown (rewrites to the Markdown versions). */
+const MARKDOWN_ACCEPT = "(?:.*[,\\s])?text/markdown(?:[;,\\s].*)?";
+
+/** Headers that put the app policy on prerendered pages (nonce routes: proxy.ts). */
+const cspHeaders = cspEnabled
+  ? [
+      {
+        source: prerenderedPagesSource(),
+        has: [{ type: "host" as const, value: `(?:${PLATFORM_HOSTS})` }],
+        headers: [
+          { key: cspHeader, value: appCsp(cspOptions) },
+          ...(cspReporting
+            ? [{ key: "Reporting-Endpoints", value: cspReporting }]
+            : []),
+        ],
+      },
+      // Hosted pages, on any host: a loose policy (why: hostedPageCsp).
+      {
+        source: "/p/:path*",
+        headers: [{ key: cspHeader, value: hostedPageCsp(cspOptions) }],
+      },
+    ]
+  : [];
 
 let nextConfig: NextConfig = {
   ...config,
@@ -54,31 +112,77 @@ let nextConfig: NextConfig = {
       },
       // App pages can't be framed by other sites (clickjacking), except by
       // PostHog's heatmap viewer. Hosted pages (/p), short links (/q) and the
-      // API stay frameable: owners may embed them.
+      // API stay frameable: owners may embed them. With the CSP on, its
+      // frame-ancestors carries the same rule (lib/security/csp.ts).
       {
         source: "/:path((?!p/|q/|api/).*)",
         headers: [
           { key: "X-Frame-Options", value: "SAMEORIGIN" },
-          {
-            key: "Content-Security-Policy",
-            value: "frame-ancestors 'self' https://us.posthog.com",
-          },
+          ...(cspEnabled
+            ? []
+            : [
+                {
+                  key: "Content-Security-Policy",
+                  value: "frame-ancestors 'self' https://us.posthog.com",
+                },
+              ]),
         ],
       },
       // The OAuth consent screen must never render inside another site's frame
-      // (clickjacking an "Authorize" click).
+      // (clickjacking an "Authorize" click); the CSP says frame-ancestors 'none'.
       {
         source: "/oauth/:path*",
         headers: [
           { key: "X-Frame-Options", value: "DENY" },
-          { key: "Content-Security-Policy", value: "frame-ancestors 'none'" },
+          ...(cspEnabled
+            ? []
+            : [
+                {
+                  key: "Content-Security-Policy",
+                  value: "frame-ancestors 'none'",
+                },
+              ]),
         ],
       },
+      ...cspHeaders,
       // The API and MCP hosts serve machine endpoints, never pages to index.
       ...["api.qrdx.dev", "mcp.qrdx.dev"].map((host) => ({
         source: "/:path*",
         has: [{ type: "host" as const, value: host }],
         headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
+      })),
+      // The OpenAPI document (pnpm openapi:generate): readable by API tools
+      // on any origin (Swagger Editor, Postman on the web, AI agents).
+      {
+        source: "/openapi.json",
+        headers: [
+          { key: "Access-Control-Allow-Origin", value: "*" },
+          {
+            key: "Cache-Control",
+            value: "public, max-age=300, stale-while-revalidate=86400",
+          },
+        ],
+      },
+      // Agent discovery (lib/agents): the home page points to the RFC 9727
+      // API catalog, and pages with a Markdown version link to it (docs
+      // pages do so in their <head>).
+      ...[
+        {
+          path: "/",
+          links: [
+            '</.well-known/api-catalog>; rel="api-catalog"',
+            '</index.md>; rel="alternate"; type="text/markdown"',
+          ],
+        },
+        ...["/pricing", "/mcp", "/docs"].map((path) => ({
+          path,
+          links: [`<${path}.md>; rel="alternate"; type="text/markdown"`],
+        })),
+      ].map(({ path, links }) => ({
+        source: path,
+        has: [{ type: "host" as const, value: `(?:${PLATFORM_HOSTS})` }],
+        missing: [{ type: "host" as const, value: "(?:api|mcp)\\.qrdx\\.dev" }],
+        headers: [{ key: "Link", value: links.join(", ") }],
       })),
       // Unhashed public media: browsers reuse it for a day, then revalidate.
       ...["images", "samples", "sounds"].map((dir) => ({
@@ -114,17 +218,26 @@ let nextConfig: NextConfig = {
         permanent: true,
       },
       {
-        source: "/:path((?!mcp$|api/mcp$|_next/).*)",
+        // Except the endpoint, its Server Card and the discovery documents.
+        source:
+          "/:path((?!mcp$|mcp/server-card$|api/mcp$|api/mcp/server-card$|\\.well-known/|_next/).*)",
         has: [{ type: "host", value: "mcp.qrdx.dev" }],
         destination: "https://qrdx.dev/mcp",
         permanent: false,
       },
+      // api.qrdx.dev/openapi.json is the API's OpenAPI document (public/).
       {
-        source: "/:path((?!v1(?:/|$)|_next/).*)",
+        source: "/:path((?!v1(?:/|$)|openapi\\.json$|\\.well-known/|_next/).*)",
         has: [{ type: "host", value: "api.qrdx.dev" }],
         destination: "https://qrdx.dev/docs/developers/rest-api",
         permanent: false,
       },
+      // /help, /support and moved docs pages (lib/docs-redirects.ts), on
+      // QRdx's own hosts: on a custom domain those paths are short links.
+      ...DOCS_REDIRECTS.map((redirect) => ({
+        ...redirect,
+        has: [{ type: "host" as const, value: `(?:${PLATFORM_HOSTS})` }],
+      })),
     ];
   },
   // Keep the shared rewrites (PostHog /ingest proxy) alongside the docs ones.
@@ -141,6 +254,12 @@ let nextConfig: NextConfig = {
           has: [{ type: "host", value: "mcp.qrdx.dev" }],
           destination: "/api/mcp",
         },
+        // The MCP Server Card at <endpoint>/server-card (SEP-2127).
+        {
+          source: "/mcp/server-card",
+          has: [{ type: "host", value: "mcp.qrdx.dev" }],
+          destination: "/api/mcp/server-card",
+        },
         // api.qrdx.dev/v1/... is the public REST API (same routes as
         // qrdx.dev/api/v1/..., which keeps working).
         {
@@ -148,6 +267,25 @@ let nextConfig: NextConfig = {
           has: [{ type: "host", value: "api.qrdx.dev" }],
           destination: "/api/v1/:path*",
         },
+        // Markdown for agents that ask for it (Accept: text/markdown): the
+        // home page, pricing, the MCP page and every docs page. Browsers
+        // never send text/markdown, so they keep getting HTML.
+        ...[
+          { source: "/", destination: "/index.md" },
+          { source: "/pricing", destination: "/pricing.md" },
+          { source: "/mcp", destination: "/mcp.md" },
+          { source: "/docs", destination: "/llms.mdx" },
+          { source: "/docs/:path+", destination: "/llms.mdx/:path+" },
+        ].map((rule) => ({
+          ...rule,
+          has: [
+            { type: "header" as const, key: "accept", value: MARKDOWN_ACCEPT },
+            { type: "host" as const, value: `(?:${PLATFORM_HOSTS})` },
+          ],
+          missing: [
+            { type: "host" as const, value: "(?:api|mcp)\\.qrdx\\.dev" },
+          ],
+        })),
       ],
       afterFiles: [
         ...base.afterFiles,
@@ -157,6 +295,15 @@ let nextConfig: NextConfig = {
         },
         {
           source: "/docs/:path*.mdx",
+          destination: "/llms.mdx/:path*",
+        },
+        // llmstxt.org's convention: the page URL plus .md.
+        {
+          source: "/docs.md",
+          destination: "/llms.mdx",
+        },
+        {
+          source: "/docs/:path*.md",
           destination: "/llms.mdx/:path*",
         },
       ],

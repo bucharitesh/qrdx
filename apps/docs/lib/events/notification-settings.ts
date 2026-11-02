@@ -361,7 +361,7 @@ export async function applyUnsubscribe(
     .from(notificationSetting)
     .where(eq(notificationSetting.id, settingId))
     .limit(1);
-  if (!row || row.channel !== "email") return { found: false };
+  if (row?.channel !== "email") return { found: false };
   const remaining =
     event === "all"
       ? []

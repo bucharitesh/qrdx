@@ -107,7 +107,7 @@ The logo is drawn at 25% of the code's width with the modules behind it excavate
 
 ### `QRCodeCanvas`
 
-Renders to a `<canvas>` (device-pixel-ratio aware). It draws plain square modules with solid colors only — gradients fall back to their first stop, and the pattern, eye/dot color and template props are ignored. Use `QRCodeSVG` for styled codes.
+Renders to a `<canvas>` (device-pixel-ratio aware). It draws plain square modules with solid colors only — gradients fall back to their first stop, and the pattern, eye/dot color, `eyeColors`, `moduleScale` and template props are ignored. Use `QRCodeSVG` for styled codes.
 
 ```tsx
 "use client";
@@ -242,7 +242,9 @@ const image = await loadQRArtImage(file, { mode: "logo" });
 - `logo`: `blend` traces the logo into crisp vector shapes that fill the code under a fine dot screen; `badge` puts it on a rounded plate in the middle of a code tinted with its colors.
 - `halftone`: `color` shows the photo in full color; `mono` is an error-diffused black-and-white halftone.
 
-In logo mode the finder eyes take the logo's colors unless you pass `matchEyes: false`; per-eye `eyeColors` still win. In Node, pass decoded RGBA pixels to `createQRArtImage` instead of `loadQRArtImage`. `art.image` is plain JSON, so you can store it with a design. Use level `H` and check the result with `getScanScore`. See the [Art QR docs](https://qrdx.dev/docs/features/art-qr).
+In logo mode the finder eyes take the logo's colors unless you pass `matchEyes: false`; per-eye `eyeColors` still win. In Node, pass decoded RGBA pixels to `createQRArtImage` instead of `loadQRArtImage`: `decodePNGPixels(bytes)` reads an 8-bit PNG into them without a canvas or sharp. `art.image` is plain JSON, so you can store it with a design. Use level `H` and check the result with `getScanScore`, or, for rendered pixels in Node, with `scanQRPixels(pixels, value)`, which decodes them as they are and through the phone-camera model. See the [Art QR docs](https://qrdx.dev/docs/features/art-qr).
+
+Art only renders dark dots on a light background: the background must be at least `QR_ART_MIN_LUMA_GAP` (0.35) lighter in luma than `fgColor` (gradients by their first stop). Otherwise the plain code is drawn so nothing gets worse. `getQRArtColorIssue(fgColor, bgColor)` returns `"inverted"`, `"low-contrast"` or `null`, so an editor can say why art isn't showing.
 
 ## Export and download (browser)
 
@@ -265,6 +267,8 @@ const svgMarkup = await getSVGString(props);
 ```
 
 Sizes must be square and between 50 and 5000 pixels (`validateSize`); with a frame the file is larger by the frame. For `eps`, `size.width` is in PostScript points (72 per inch). When `props.size` is set, a logo laid out for that size is scaled with the export (`withQRSize`). PDF export loads `jspdf` on demand and throws a clear error if it is not installed; EPS needs no extra package. Lower-level helpers: `getQRAsSVGDataUri(props)` and `getQRAsCanvas(props, mimeType, returnCanvas?)`.
+
+Vector output writes coordinates with at most 3 decimals (0.001 px in SVG, 0.001 pt in PDF and EPS; scale factors keep 6), so edges move by at most 0.0005 px and SVG markup is roughly 30% smaller than with full-precision numbers.
 
 ### Print-ready files
 

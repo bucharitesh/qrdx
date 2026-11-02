@@ -13,8 +13,10 @@ import {
 } from "iconsax-reactjs";
 import type { Metadata } from "next";
 import { AsciiField } from "@/components/fx";
+import { NpmLagNotice } from "@/components/mdx/npm-status";
 import { IconTile } from "@/components/sections/tools/cards";
 import { createMetadata } from "@/lib/metadata";
+import { getNpmLag, type NpmLag } from "@/lib/npm-version";
 import { changelogSource } from "@/lib/source";
 
 export const metadata: Metadata = createMetadata({
@@ -79,16 +81,34 @@ const proseClass = cn(
   "prose-hr:my-6 prose-hr:border-border",
 );
 
-const Page = () => {
+const Page = async () => {
   const entries = [...changelogSource.getPages()].sort(
     (a, b) =>
       new Date(b.data.date).getTime() - new Date(a.data.date).getTime() ||
       compareVersions(b.data.version, a.data.version),
   );
 
+  // An entry that releases npm packages says "Coming to npm" until npm has
+  // them (checked hourly; nothing is claimed when npm can't be reached).
+  const npmLags = new Map<string, NpmLag[]>(
+    await Promise.all(
+      entries.map(async (entry) => {
+        const lags = await Promise.all(
+          (entry.data.npm ?? []).map(({ name, version }) =>
+            getNpmLag(name, version),
+          ),
+        );
+        return [
+          entry.url,
+          lags.filter((lag): lag is NpmLag => lag !== null),
+        ] as const;
+      }),
+    ),
+  );
+
   return (
     <main className="flex w-full min-h-screen flex-col">
-      <header className="relative w-full overflow-hidden border-b px-6 py-14 md:px-10 md:py-20">
+      <header className="relative w-full overflow-hidden border-b px-10 py-14 md:py-20">
         <AsciiField
           variant="wave"
           density={0.9}
@@ -107,11 +127,12 @@ const Page = () => {
         </div>
       </header>
 
-      <ol className="mx-auto w-full max-w-5xl px-6 py-10 md:px-10 md:py-16">
+      <ol className="mx-auto w-full max-w-5xl px-10 py-10 md:py-16">
         {entries.map((entry, index) => {
           const MDX = entry.data.body;
           const Icon = entryIcon(entry.data.tags);
           const isLast = index === entries.length - 1;
+          const lags = npmLags.get(entry.url) ?? [];
 
           return (
             <li
@@ -129,6 +150,11 @@ const Page = () => {
                   {entry.data.version && (
                     <span className="rounded-full border px-2 py-0.5 font-mono text-xs text-muted-foreground">
                       v{entry.data.version}
+                    </span>
+                  )}
+                  {lags.length > 0 && (
+                    <span className="rounded-full border border-dashed px-2 py-0.5 text-xs text-muted-foreground">
+                      Coming to npm
                     </span>
                   )}
                 </div>
@@ -171,6 +197,7 @@ const Page = () => {
                     </ul>
                   )}
                   <div className="my-6 h-px bg-border" />
+                  <NpmLagNotice lags={lags} />
                   <div className={proseClass}>
                     <MDX
                       components={{

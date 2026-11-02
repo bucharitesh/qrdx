@@ -33,6 +33,15 @@ const styles = {
   },
 } satisfies Record<string, CSSProperties>;
 
+/** The 6-digit code, large and letter-spaced (still copyable as one word). */
+export function EmailCodeBox({ code }: { code: string }) {
+  return (
+    <Section style={styles.codeBox}>
+      <Text style={styles.code}>{code}</Text>
+    </Section>
+  );
+}
+
 export interface SignInCodeEmailProps {
   /** The 6-digit code */
   code: string;
@@ -52,9 +61,7 @@ export function SignInCodeEmail({
     >
       <EmailHeading>Your QRdx sign-in code</EmailHeading>
       <EmailText>Enter this code in the QRdx sign-in window:</EmailText>
-      <Section style={styles.codeBox}>
-        <Text style={styles.code}>{code}</Text>
-      </Section>
+      <EmailCodeBox code={code} />
       <EmailText>
         The code expires in {expiry} and works once. Don't share it with anyone.
       </EmailText>

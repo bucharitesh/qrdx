@@ -93,7 +93,7 @@ function PluginSection({ plugin, index }: { plugin: Plugin; index: number }) {
     <section
       id={plugin.slug}
       aria-labelledby={headingId}
-      className="flex scroll-mt-20 flex-col gap-10 px-6 py-14 md:px-10 md:py-20"
+      className="flex scroll-mt-20 flex-col gap-10 px-10 py-14 md:py-20"
     >
       <div
         className={cn(
@@ -198,7 +198,9 @@ function PluginSection({ plugin, index }: { plugin: Plugin; index: number }) {
         </div>
 
         <div className={cn("min-w-0", flip && "lg:order-1")}>
-          <div className="rounded-2xl border bg-muted/30 p-3 sm:p-6 md:p-8">
+          {/* On phones the mockup spans the column, grid line to grid line,
+              so its small UI text stays legible; the copy keeps the gutter. */}
+          <div className="-mx-4 rounded-2xl border bg-muted/30 p-3 sm:mx-0 sm:p-6 md:p-8">
             <Mock />
           </div>
         </div>
@@ -303,7 +305,7 @@ export default function PluginsPage() {
 
       <section
         aria-labelledby="more"
-        className="flex flex-col gap-8 px-6 py-14 md:px-10 md:py-16"
+        className="flex flex-col gap-8 px-10 py-14 md:py-16"
       >
         <SectionHeading
           id="more"

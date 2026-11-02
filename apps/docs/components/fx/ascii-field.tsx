@@ -64,7 +64,7 @@ const HALF_TOP = RAMP.length; // ▀
 const HALF_BOTTOM = RAMP.length + 1; // ▄
 const FULL = RAMP.length + 2; // █
 
-const clamp01 = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v);
+const clamp01 = (v: number) => (v < 0 ? 0 : Math.min(v, 1));
 
 function makeSpec(
   variant: AsciiVariant,
@@ -89,10 +89,13 @@ function makeSpec(
   }
 
   if (variant === "qr") {
+    // Solid modules read as grey blocks on white: light mode gets about 60% of
+    // the dark ink, which keeps both at a similar perceived weight.
+    let ink = 1;
     // Each cell is one module wide and two tall (half blocks keep them square).
     const tileAlpha = (c: number, r: number) => {
       const n = valueNoise(c / TILE / 1.3 + 0.3, (r * 2) / TILE / 1.3 + 0.7);
-      return 0.045 + 0.075 * smoothstep(clamp01((n - 0.25) / 0.6));
+      return ink * (0.045 + 0.075 * smoothstep(clamp01((n - 0.25) / 0.6)));
     };
     return {
       chars: CHARS,
@@ -100,6 +103,9 @@ function makeSpec(
       cellH,
       radius,
       scramble,
+      tone(dark) {
+        ink = dark ? 1 : 0.6;
+      },
       base(c, r, _cols, _rows, out: Cell) {
         const top = qrModule(c, r * 2);
         const bottom = qrModule(c, r * 2 + 1);

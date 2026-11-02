@@ -1,4 +1,9 @@
-import { smoothStream, streamText } from "ai";
+import {
+  createUIMessageStreamResponse,
+  smoothStream,
+  streamText,
+  toUIMessageStream,
+} from "ai";
 import type { NextRequest } from "next/server";
 import { ENHANCE_PROMPT_SYSTEM } from "@/lib/ai/prompts";
 import {
@@ -49,7 +54,7 @@ export async function POST(req: NextRequest) {
     );
 
     const result = streamText({
-      system: ENHANCE_PROMPT_SYSTEM,
+      instructions: ENHANCE_PROMPT_SYSTEM,
       messages: [
         {
           role: "user",
@@ -68,16 +73,22 @@ export async function POST(req: NextRequest) {
           logError(releaseError as Error, { action: "releaseAIRequest" }),
         );
       },
-      onFinish: async ({ totalUsage }) => {
+      // `usage` covers every step (v6's `totalUsage`).
+      onEnd: async ({ usage }) => {
         try {
-          await finalizeAIRequest(usageId, totalUsage);
+          await finalizeAIRequest(usageId, usage);
         } catch (error) {
           logError(error as Error, { action: "finalizeAIRequest" });
         }
       },
     });
 
-    return result.toUIMessageStreamResponse({ onError: streamErrorMessage });
+    return createUIMessageStreamResponse({
+      stream: toUIMessageStream({
+        stream: result.stream,
+        onError: streamErrorMessage,
+      }),
+    });
   } catch (error) {
     return handleError(error, { route: "/api/enhance-prompt" });
   }

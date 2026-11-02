@@ -6,12 +6,14 @@ import { Separator } from "@repo/design-system/components/ui/separator";
 import { cn } from "@repo/design-system/lib/utils";
 import {
   Book1 as BookOpen,
+  Lifebuoy,
   ShieldTick as ShieldCheck,
   Magicpen as SquareTerminal,
 } from "iconsax-reactjs";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useId } from "react";
+import { useAvailability } from "@/components/availability-provider";
 import { OrgSwitcher } from "@/components/org-switcher";
 import { APP_NAV, hasAdminRole, isNavItemActive } from "./nav-config";
 
@@ -24,6 +26,9 @@ export function AppSidebar({ onNavigate }: { onNavigate?: () => void }) {
   const { data: session } = authClient.useSession();
   // Rendered twice (rail + sheet), so label ids must be unique per instance.
   const idPrefix = useId();
+  // Pages for features this deployment can't offer (e.g. adding custom
+  // domains) aren't linked; their URLs keep working for existing users.
+  const { showsPath } = useAvailability();
 
   return (
     <div className="flex flex-col gap-6">
@@ -44,27 +49,29 @@ export function AppSidebar({ onNavigate }: { onNavigate?: () => void }) {
                 {group.label}
               </div>
               <ul aria-labelledby={labelId} className="flex flex-col gap-0.5">
-                {group.items.map((item) => {
-                  const isActive = isNavItemActive(item, pathname);
-                  return (
-                    <li key={item.href}>
-                      <Link
-                        aria-current={isActive ? "page" : undefined}
-                        className={cn(
-                          linkClass,
-                          isActive
-                            ? "bg-muted text-foreground"
-                            : "text-muted-foreground",
-                        )}
-                        href={item.href}
-                        onClick={onNavigate}
-                      >
-                        <item.icon aria-hidden className="size-4 shrink-0" />
-                        <span className="truncate">{item.label}</span>
-                      </Link>
-                    </li>
-                  );
-                })}
+                {group.items
+                  .filter((item) => showsPath(item.href))
+                  .map((item) => {
+                    const isActive = isNavItemActive(item, pathname);
+                    return (
+                      <li key={item.href}>
+                        <Link
+                          aria-current={isActive ? "page" : undefined}
+                          className={cn(
+                            linkClass,
+                            isActive
+                              ? "bg-muted text-foreground"
+                              : "text-muted-foreground",
+                          )}
+                          href={item.href}
+                          onClick={onNavigate}
+                        >
+                          <item.icon aria-hidden className="size-4 shrink-0" />
+                          <span className="truncate">{item.label}</span>
+                        </Link>
+                      </li>
+                    );
+                  })}
               </ul>
             </div>
           );
@@ -80,6 +87,14 @@ export function AppSidebar({ onNavigate }: { onNavigate?: () => void }) {
             Open playground
           </Link>
         </Button>
+        <Link
+          className={cn(linkClass, "text-muted-foreground")}
+          href="/docs/help"
+          onClick={onNavigate}
+        >
+          <Lifebuoy aria-hidden className="size-4 shrink-0" />
+          Help
+        </Link>
         <Link
           className={cn(linkClass, "text-muted-foreground")}
           href="/docs"

@@ -1,165 +1,251 @@
 // Run: cd apps/docs && npx tsx --conditions=react-server --test app/api/ai/art/art.test.ts
-// fal.ai is mocked and FAL_KEY is unset: nothing here calls a paid service,
+// The image pipeline with a fake Gemini: nothing here calls a paid service,
 // and no database query runs (the 503 check happens before any).
 import assert from "node:assert/strict";
 import { before, describe, it } from "node:test";
+import { APICallError, RetryError } from "ai";
+import { decodePNGPixels, scanQRPixels } from "qrdx";
+import { paintedArt } from "../../../../tests/support/ai-art-images";
 
 process.env.DATABASE_URL ??= "postgres://user:pass@localhost:5432/qrdx_test";
-delete process.env.FAL_KEY;
+delete process.env.GOOGLE_API_KEY;
 delete process.env.UPSTASH_REDIS_REST_URL;
 delete process.env.KV_REST_API_URL;
 
+const TEXT = "https://qrdx.dev/q/Ab3dE9x";
+
 let art: typeof import("@/lib/ai/art");
+let pipeline: typeof import("@/lib/ai/art-image");
 let route: typeof import("./route");
-let upscaleRoute: typeof import("./upscale/route");
+let control: import("@/lib/ai/art-image").ControlImage;
 
 before(async () => {
   art = await import("@/lib/ai/art");
+  pipeline = await import("@/lib/ai/art-image");
   route = await import("./route");
-  upscaleRoute = await import("./upscale/route");
+  control = await pipeline.renderControlImage(TEXT);
 });
 
-type SubscribeCall = { modelId: string; input: Record<string, unknown> };
+type Call = import("@/lib/ai/art-image").ArtModelRequest;
 
-function fakeFal(
-  respond: (call: SubscribeCall) => Promise<unknown> | unknown,
-): { fal: import("@/lib/ai/art").ArtFalClient; calls: SubscribeCall[] } {
-  const calls: SubscribeCall[] = [];
-  const fal = {
-    subscribe: async (
-      modelId: string,
-      options: { input: Record<string, unknown> },
-    ) => {
-      const call = { modelId, input: options.input };
+function fakeGemini(
+  respond: (call: Call) => Promise<Uint8Array> | Uint8Array,
+): { model: import("@/lib/ai/art-image").ArtImageModel; calls: Call[] } {
+  const calls: Call[] = [];
+  return {
+    calls,
+    model: async (call) => {
       calls.push(call);
-      return { data: await respond(call), requestId: "req_1" };
+      return { data: await respond(call), mediaType: "image/png" };
     },
-    queue: { cancel: async () => undefined },
-  } as unknown as import("@/lib/ai/art").ArtFalClient;
-  return { fal, calls };
+  };
 }
 
-const generated = (seed: number) => ({
-  image: {
-    url: `https://v3.fal.media/files/test/${seed}.png`,
-    width: 1024,
-    height: 1024,
-  },
-  seed,
+const request = (overrides: Record<string, unknown> = {}) => ({
+  text: TEXT,
+  prompt: "a zen garden",
+  visibility: 50,
+  creativity: 45,
+  seed: 7,
+  control,
+  signal: new AbortController().signal,
+  ...overrides,
 });
 
-describe("runArtVariants (mocked fal)", () => {
-  it("runs one call per seed with the mapped model inputs", async () => {
-    const { fal, calls } = fakeFal(({ input }) =>
-      generated(input.seed as number),
-    );
-    const outcomes = await art.runArtVariants({
-      controlImage: "data:image/png;base64,AAAA",
-      prompt: "a zen garden",
-      negativePrompt: "people",
-      visibility: 100,
-      creativity: 0,
-      seeds: [7, 8, 9],
-      signal: new AbortController().signal,
-      fal,
-    });
+const deliveredPixels = async (imageUrl: string) => {
+  assert.match(imageUrl, /^data:image\/png;base64,/);
+  const pixels = await decodePNGPixels(
+    new Uint8Array(Buffer.from(imageUrl.split(",")[1] ?? "", "base64")),
+  );
+  assert.ok(pixels);
+  return pixels;
+};
 
-    assert.equal(calls.length, 3);
-    for (const call of calls) {
-      assert.equal(call.modelId, art.ART_MODEL_ID);
-      assert.equal(call.input.image_url, "data:image/png;base64,AAAA");
-      assert.equal(call.input.controlnet_conditioning_scale, 2);
-      assert.equal(call.input.guidance_scale, 12);
-      assert.match(String(call.input.negative_prompt), /, people$/);
-      assert.match(String(call.input.negative_prompt), /^ugly/);
-    }
-    assert.deepEqual(
-      calls.map((call) => call.input.seed),
-      [7, 8, 9],
-    );
-    assert.deepEqual(
-      outcomes.map((outcome) => outcome.ok && outcome.variant.seed),
-      [7, 8, 9],
-    );
+describe("control image", () => {
+  it("is a square level-H code that decodes to the content", async () => {
+    const pixels = await decodePNGPixels(control.png);
+    assert.equal(pixels?.width, 1024);
+    assert.equal(pixels?.height, 1024);
+    assert.equal(control.modules, 33);
+    assert.equal((await scanQRPixels(pixels!, TEXT)).passed, true);
   });
+});
 
-  it("reports failed variants separately so they can be refunded", async () => {
-    const { fal } = fakeFal(({ input }) => {
-      if (input.seed === 2) throw new Error("GPU exploded");
-      if (input.seed === 3) return { image: {} };
-      return generated(input.seed as number);
-    });
-    const outcomes = await art.runArtVariants({
-      controlImage: "data:image/png;base64,AAAA",
-      prompt: "a zen garden",
+describe("buildArtPrompt", () => {
+  const prompt = (overrides: Record<string, unknown> = {}) =>
+    pipeline.buildArtPrompt({
+      prompt: "a zen garden.",
       visibility: 50,
-      creativity: 50,
-      seeds: [1, 2, 3],
-      signal: new AbortController().signal,
-      fal,
+      creativity: 45,
+      withReference: false,
+      ...overrides,
     });
-    assert.deepEqual(
-      outcomes.map((outcome) => outcome.ok),
-      [true, false, false],
-    );
-    const failure = outcomes[1];
-    assert.ok(failure && !failure.ok);
-    assert.equal((failure.error as { status?: number }).status, 502);
+
+  it("asks Gemini to keep the grid, the finder eyes and the quiet zone", () => {
+    const text = prompt();
+    assert.match(text, /^Repaint the QR code .*: a zen garden\.$/m);
+    assert.match(text, /same grid/);
+    assert.match(text, /finder patterns/);
+    assert.match(text, /quiet zone/);
+    assert.match(text, /No text, letters, logos/);
   });
 
-  it("rejects more than four variations", async () => {
-    const { fal } = fakeFal(() => generated(1));
+  it("follows the sliders, the negative prompt and the reference", () => {
+    assert.match(prompt({ visibility: 90 }), /Favor the code/);
+    assert.match(prompt({ visibility: 10 }), /Favor the scene/);
+    assert.match(prompt({ creativity: 10 }), /literally/);
+    assert.match(prompt({ creativity: 90 }), /freely/);
+    assert.match(prompt({ negativePrompt: "people" }), /^Avoid: people\.$/m);
+    const withReference = prompt({ withReference: true });
+    assert.match(withReference, /second image is a reference/);
+    assert.doesNotMatch(withReference, /logos/);
+  });
+
+  it("maps QR visibility onto the blend strength (higher = clearer code)", () => {
+    assert.equal(pipeline.visibilityToBlendIntensity(0), 0.9);
+    assert.equal(pipeline.visibilityToBlendIntensity(100), 0.5);
+    assert.equal(pipeline.visibilityToBlendIntensity(500), 0.5);
+  });
+});
+
+describe("generateArtVariant (fake Gemini)", () => {
+  it("delivers Gemini's image as it is when it scans", async () => {
+    const restyled = await paintedArt(control.png, { keep: 0.75 });
+    const { model, calls } = fakeGemini(() => restyled);
+    const variant = await pipeline.generateArtVariant(request({ model }));
+
+    assert.equal(calls.length, 1);
+    assert.equal(calls[0]?.seed, 7);
+    assert.equal(calls[0]?.images.length, 1);
+    assert.deepEqual(calls[0]?.images[0], control.png);
+    assert.match(calls[0]?.prompt ?? "", /a zen garden/);
+    assert.equal(variant.blended, false);
+    assert.equal(variant.seed, 7);
+    assert.equal(
+      variant.imageUrl,
+      `data:image/png;base64,${Buffer.from(restyled).toString("base64")}`,
+    );
+  });
+
+  it("blends an image that doesn't scan into the code, and still delivers it", async () => {
+    const broken = await paintedArt(control.png, { keep: 0.6, smear: true });
+    assert.equal(
+      (await scanQRPixels((await decodePNGPixels(broken))!, TEXT)).passed,
+      false,
+    );
+    const { model } = fakeGemini(() => broken);
+    const variant = await pipeline.generateArtVariant(request({ model }));
+
+    assert.equal(variant.blended, true);
+    const pixels = await deliveredPixels(variant.imageUrl);
+    assert.equal(pixels.width, 1024);
+    assert.equal((await scanQRPixels(pixels, TEXT)).passed, true);
+  });
+
+  it("sends a reference image second", async () => {
+    const { model, calls } = fakeGemini(() => control.png);
+    const reference = `data:image/png;base64,${Buffer.from(control.png).toString("base64")}`;
+    await pipeline.generateArtVariant(request({ model, reference }));
+    assert.equal(calls[0]?.images.length, 2);
+    assert.match(calls[0]?.prompt ?? "", /second image is a reference/);
+  });
+
+  it("says no credit was used when Gemini fails", async () => {
+    const { model } = fakeGemini(() => {
+      throw new Error("upstream exploded");
+    });
     await assert.rejects(
-      art.runArtVariants({
-        controlImage: "data:image/png;base64,AAAA",
-        prompt: "a zen garden",
-        visibility: 50,
-        creativity: 50,
-        seeds: [1, 2, 3, 4, 5],
-        signal: new AbortController().signal,
-        fal,
+      pipeline.generateArtVariant(request({ model })),
+      (error: { status?: number; code?: string; message?: string }) =>
+        error.status === 502 &&
+        error.code === "AI_ART_FAILED" &&
+        /No AI credit was used/.test(error.message ?? ""),
+    );
+  });
+
+  it("turns a quota error into a retryable 503, also after the SDK's retry", async () => {
+    const quota = new APICallError({
+      message: "Resource exhausted",
+      url: "https://generativelanguage.googleapis.com",
+      requestBodyValues: {},
+      statusCode: 429,
+    });
+    for (const thrown of [
+      quota,
+      new RetryError({
+        message: "Failed after 2 attempts",
+        reason: "maxRetriesExceeded",
+        errors: [quota, quota],
       }),
-      RangeError,
+    ]) {
+      const { model } = fakeGemini(() => {
+        throw thrown;
+      });
+      await assert.rejects(
+        pipeline.generateArtVariant(request({ model })),
+        (error: { status?: number; code?: string; message?: string }) =>
+          error.status === 503 &&
+          error.code === "AI_ART_BUSY" &&
+          /No AI credit was used/.test(error.message ?? ""),
+      );
+    }
+  });
+
+  it("rejects an image it can't read", async () => {
+    const { model } = fakeGemini(() => new Uint8Array([1, 2, 3, 4]));
+    await assert.rejects(
+      pipeline.generateArtVariant(request({ model })),
+      (error: { status?: number; message?: string }) =>
+        error.status === 502 &&
+        /No AI credit was used/.test(error.message ?? ""),
+    );
+  });
+
+  it("gives up on a slow model, saying no credit was used", async () => {
+    const { model } = fakeGemini(
+      (call) =>
+        new Promise((_, reject) => {
+          // AbortSignal.timeout doesn't keep the process alive; this does.
+          const pending = setTimeout(() => {}, 5000);
+          call.abortSignal.addEventListener("abort", () => {
+            clearTimeout(pending);
+            reject(call.abortSignal.reason);
+          });
+        }),
+    );
+    await assert.rejects(
+      pipeline.generateArtVariant(request({ model, timeoutMs: 50 })),
+      (error: { status?: number; code?: string; message?: string }) =>
+        error.status === 504 &&
+        error.code === "AI_ART_TIMEOUT" &&
+        /No AI credit was used/.test(error.message ?? ""),
+    );
+  });
+
+  it("passes a cancelled request through untouched", async () => {
+    const controller = new AbortController();
+    const { model } = fakeGemini(() => {
+      controller.abort();
+      throw new DOMException("aborted", "AbortError");
+    });
+    await assert.rejects(
+      pipeline.generateArtVariant(
+        request({ model, signal: controller.signal }),
+      ),
+      (error: { name?: string }) => error.name === "AbortError",
     );
   });
 });
 
-describe("upscaleArtImage (mocked fal)", () => {
-  it("asks Real-ESRGAN for 2× with the x2 weights", async () => {
-    const { fal, calls } = fakeFal(() => ({
-      image: {
-        url: "https://v3.fal.media/files/test/up.png",
-        width: 2048,
-        height: 2048,
-      },
-    }));
-    const image = await art.upscaleArtImage({
-      imageUrl: "https://v3.fal.media/files/test/1.png",
-      signal: new AbortController().signal,
-      fal,
-    });
-    assert.equal(calls[0]?.modelId, art.ART_UPSCALE_MODEL_ID);
-    assert.equal(calls[0]?.input.scale, 2);
-    assert.equal(calls[0]?.input.model, "RealESRGAN_x2plus");
-    assert.equal(image.width, 2048);
+describe("credits", () => {
+  it("still count this month's fal.ai images", () => {
+    assert.ok(art.ART_USAGE_MODEL_IDS.includes(art.ART_MODEL_ID));
+    for (const id of ["fal-ai/illusion-diffusion", "fal-ai/esrgan"]) {
+      assert.ok(art.ART_USAGE_MODEL_IDS.includes(id), id);
+    }
   });
 
-  it("never sends other URLs to the upscaler", async () => {
-    const { fal, calls } = fakeFal(() => generated(1));
-    await assert.rejects(
-      art.upscaleArtImage({
-        imageUrl: "https://example.com/photo.png",
-        signal: new AbortController().signal,
-        fal,
-      }),
-      (error: { status?: number }) => error.status === 400,
-    );
-    assert.equal(calls.length, 0);
-  });
-});
-
-describe("artCreditWindow", () => {
-  it("is the UTC calendar month", () => {
+  it("use the UTC calendar month", () => {
     const { start, resetsAt } = art.artCreditWindow(
       new Date("2026-12-31T23:30:00Z"),
     );
@@ -168,28 +254,16 @@ describe("artCreditWindow", () => {
   });
 });
 
-describe("routes without FAL_KEY", () => {
-  const post = (path: string, body: unknown) =>
-    new Request(`http://localhost${path}`, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(body),
-    }) as unknown as import("next/server").NextRequest;
-
+describe("route without GOOGLE_API_KEY", () => {
   it("POST /api/ai/art answers 503 AI_NOT_CONFIGURED", async () => {
     const response = await route.POST(
-      post("/api/ai/art", { text: "https://qrdx.dev", prompt: "a garden" }),
+      new Request("http://localhost/api/ai/art", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ text: "https://qrdx.dev", prompt: "a garden" }),
+      }) as unknown as import("next/server").NextRequest,
     );
     assert.equal(response.status, 503);
     assert.equal((await response.json()).code, "AI_NOT_CONFIGURED");
-  });
-
-  it("POST /api/ai/art/upscale answers 503 AI_NOT_CONFIGURED", async () => {
-    const response = await upscaleRoute.POST(
-      post("/api/ai/art/upscale", {
-        imageUrl: "https://v3.fal.media/files/x.png",
-      }),
-    );
-    assert.equal(response.status, 503);
   });
 });

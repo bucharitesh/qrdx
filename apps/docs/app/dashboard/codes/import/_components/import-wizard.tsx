@@ -184,11 +184,13 @@ export function ImportWizard({
   const localErrors = useMemo(() => {
     const errors = new Map<number, string[]>();
     for (const row of rows) {
-      const result = checkImportRow(row).errors;
+      const result = checkImportRow(row, {
+        onCustomDomain: Boolean(domainId),
+      }).errors;
       if (result.length > 0) errors.set(row.line, result);
     }
     return errors;
-  }, [rows]);
+  }, [rows, domainId]);
 
   useEffect(() => {
     if (!destinationMapped || rows.length === 0) {
@@ -199,7 +201,7 @@ export function ImportWizard({
     setChecking(true);
     setPreviewError(null);
     const timer = setTimeout(async () => {
-      const result = await previewQrCodeImport({ rows });
+      const result = await previewQrCodeImport({ rows, domainId });
       if (cancelled) return;
       setChecking(false);
       if (result.success) {
@@ -213,7 +215,7 @@ export function ImportWizard({
       cancelled = true;
       clearTimeout(timer);
     };
-  }, [rows, destinationMapped]);
+  }, [rows, destinationMapped, domainId]);
 
   const errorsByLine = useMemo(() => {
     if (!preview) return localErrors;
@@ -416,8 +418,9 @@ export function ImportWizard({
             <p className="text-muted-foreground max-w-md text-xs">
               First row: column names. Columns: destination (required), title,
               folder (use "Parent / Child" for subfolders), tags (separated by ;
-              or |) and slug (optional, 7 letters or digits). Up to{" "}
-              {MAX_IMPORT_ROWS.toLocaleString("en-US")} rows and 1 MB.
+              or |) and slug (optional custom back-half on Pro: 3 to 64 letters,
+              digits, - or _). Up to {MAX_IMPORT_ROWS.toLocaleString("en-US")}{" "}
+              rows and 1 MB.
             </p>
           </div>
         )}

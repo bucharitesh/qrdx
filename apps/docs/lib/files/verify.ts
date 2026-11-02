@@ -11,7 +11,12 @@ export const HASH_MAX_BYTES = 25 * 1024 * 1024;
 const READ_TIMEOUT_MS = 30_000;
 
 export type VerifyResult =
-  | { ok: true; sha256: string | null }
+  | {
+      ok: true;
+      sha256: string | null;
+      /** ETag of the object version that was read (copy it with If-Match) */
+      etag: string | null;
+    }
   | {
       ok: false;
       /** missing: nothing uploaded (yet); the rest mean the upload is rejected */
@@ -105,17 +110,19 @@ export async function verifyStoredObject({
   if (!(response.ok && response.body)) {
     throw new Error(`Reading the uploaded file failed (${response.status})`);
   }
+  // The version that was actually read, even if it changed after the HEAD.
+  const etag = response.headers.get("etag") ?? stored.etag;
 
   if (hashWhole && response.status === 200) {
     const hashed = await hashStream(response.body, SNIFF_BYTES, size);
     if (hashed.size !== size) return { ok: false, reason: "size" };
     return matchesDeclaredType(mime, hashed.prefix)
-      ? { ok: true, sha256: hashed.sha256 }
+      ? { ok: true, sha256: hashed.sha256, etag }
       : { ok: false, reason: "type" };
   }
 
   const prefix = await readPrefix(response.body, SNIFF_BYTES);
   return matchesDeclaredType(mime, prefix)
-    ? { ok: true, sha256: null }
+    ? { ok: true, sha256: null, etag }
     : { ok: false, reason: "type" };
 }

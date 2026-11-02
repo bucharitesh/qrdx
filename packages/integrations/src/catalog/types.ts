@@ -113,6 +113,12 @@ export interface IntegrationCatalogEntry {
   tagline: string;
   /** "What it does" paragraphs. */
   description: string[];
+  /**
+   * More "What it does" paragraphs about an optional extra that needs setup
+   * on the server (the YouTube channel and Spotify playlist pickers). The app
+   * shows them only where that extra is configured.
+   */
+  configuredExtras?: string[];
   kind: CatalogKind;
   /** Where it is presented; only "integrations" entries are on /integrations. */
   surface: CatalogSurface;

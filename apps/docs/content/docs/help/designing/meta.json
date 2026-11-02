@@ -1,0 +1,13 @@
+{
+  "$schema": "../../../../.source/json-schema/docs.meta.json",
+  "title": "Designing",
+  "icon": "Palette",
+  "pages": [
+    "colors-and-contrast",
+    "logos",
+    "frames",
+    "art",
+    "scan-score",
+    "save-a-design"
+  ]
+}

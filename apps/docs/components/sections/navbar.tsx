@@ -8,6 +8,7 @@ import { HamburgerMenu } from "iconsax-reactjs";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { GithubStars } from "@/components/github-stars";
+import bar from "@/components/header-bar.module.css";
 import { HeaderMobileNavList } from "@/components/header-mobile-nav";
 import { HeaderNav } from "@/components/header-nav";
 import { EASE_CLASS } from "@/components/mockups/motion";
@@ -90,7 +91,12 @@ export function Navbar() {
           className={cn(
             "mx-auto max-w-7xl rounded-2xl transition-all duration-300  xl:px-0",
             hasScrolled
-              ? "px-2 border border-border backdrop-blur-lg bg-background/75"
+              ? cn(
+                  "px-2 border backdrop-blur-lg",
+                  bar.bar,
+                  bar.surface,
+                  bar.floating,
+                )
               : "shadow-none px-7",
           )}
         >

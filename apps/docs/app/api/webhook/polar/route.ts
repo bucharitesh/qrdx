@@ -14,6 +14,7 @@ function safeParseDate(value: string | Date | null | undefined): Date | null {
 
 type WebhooksConfig = Parameters<typeof Webhooks>[0];
 
+// Payload fields are snake_case since @polar-sh/sdk 1.0.
 const onPayload: WebhooksConfig["onPayload"] = async ({ data, type }) => {
   if (
     type === "subscription.created" ||
@@ -24,33 +25,33 @@ const onPayload: WebhooksConfig["onPayload"] = async ({ data, type }) => {
     type === "subscription.updated"
   ) {
     try {
-      const userId = data.customer?.externalId;
+      const userId = data.customer?.external_id;
 
       const subscriptionData = {
         id: data.id,
-        createdAt: new Date(data.createdAt),
-        modifiedAt: safeParseDate(data.modifiedAt),
+        createdAt: new Date(data.created_at),
+        modifiedAt: safeParseDate(data.modified_at),
         amount: data.amount,
         currency: data.currency,
-        recurringInterval: data.recurringInterval,
+        recurringInterval: data.recurring_interval,
         status: data.status,
         currentPeriodStart:
-          safeParseDate(data.currentPeriodStart) || new Date(),
-        currentPeriodEnd: safeParseDate(data.currentPeriodEnd) || new Date(),
-        cancelAtPeriodEnd: data.cancelAtPeriodEnd || false,
-        canceledAt: safeParseDate(data.canceledAt),
-        startedAt: safeParseDate(data.startedAt) || new Date(),
-        endsAt: safeParseDate(data.endsAt),
-        endedAt: safeParseDate(data.endedAt),
-        customerId: data.customerId,
-        productId: data.productId,
-        discountId: data.discountId || null,
-        checkoutId: data.checkoutId || "",
-        customerCancellationReason: data.customerCancellationReason || null,
-        customerCancellationComment: data.customerCancellationComment || null,
+          safeParseDate(data.current_period_start) || new Date(),
+        currentPeriodEnd: safeParseDate(data.current_period_end) || new Date(),
+        cancelAtPeriodEnd: data.cancel_at_period_end || false,
+        canceledAt: safeParseDate(data.canceled_at),
+        startedAt: safeParseDate(data.started_at) || new Date(),
+        endsAt: safeParseDate(data.ends_at),
+        endedAt: safeParseDate(data.ended_at),
+        customerId: data.customer_id,
+        productId: data.product_id,
+        discountId: data.discount_id || null,
+        checkoutId: data.checkout_id || "",
+        customerCancellationReason: data.customer_cancellation_reason || null,
+        customerCancellationComment: data.customer_cancellation_comment || null,
         metadata: data.metadata ? JSON.stringify(data.metadata) : null,
-        customFieldData: data.customFieldData
-          ? JSON.stringify(data.customFieldData)
+        customFieldData: data.custom_field_data
+          ? JSON.stringify(data.custom_field_data)
           : null,
         userId: userId as string | null,
       };
@@ -94,8 +95,8 @@ const onPayload: WebhooksConfig["onPayload"] = async ({ data, type }) => {
         trackServer(
           "subscription_activated",
           {
-            plan: planForProductId(data.productId) ?? "pro",
-            interval: data.recurringInterval ?? undefined,
+            plan: planForProductId(data.product_id) ?? "pro",
+            interval: data.recurring_interval ?? undefined,
           },
           {
             // Named only if the buyer allowed analytics (set at checkout).

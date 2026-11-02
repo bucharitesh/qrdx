@@ -31,7 +31,7 @@ export const metadata: Metadata = {
 const DOCS_HREF = "/docs/webhooks";
 
 export default async function WebhooksPage() {
-  const scope = await requireDashboardScope();
+  const scope = await requireDashboardScope("/dashboard/webhooks");
   const [{ plan, allowed }, endpoints] = await Promise.all([
     webhookPlan(scope),
     listEndpoints(scope),
@@ -68,7 +68,10 @@ export default async function WebhooksPage() {
         {header}
         <Empty className="border">
           <EmptyHeader>
-            <HairlineFigure className="mx-auto mb-2 h-28 w-40" figure="Plug" />
+            <HairlineFigure
+              className="mx-auto mb-2 h-28 w-40"
+              figure="Webhook"
+            />
             <EmptyTitle>Webhooks are part of Business</EmptyTitle>
             <EmptyDescription>
               Get a signed HTTPS request the moment something happens: scans

@@ -90,6 +90,8 @@ export default async function Page(props: PageProps<"/docs/[[...slug]]">) {
   return (
     <DocsPage
       toc={toc}
+      // API reference pages (frontmatter `full`) need the width for Try it.
+      full={page.data.full}
       tableOfContent={{
         style: "clerk",
       }}
@@ -149,7 +151,6 @@ export default async function Page(props: PageProps<"/docs/[[...slug]]">) {
           })}
         />
       </div>
-      {/* <Feedback onRateAction={onRateAction} /> */}
       {page.data.lastModified && (
         <PageLastUpdate date={page.data.lastModified} />
       )}
@@ -176,6 +177,12 @@ export async function generateMetadata(
     path: page.url,
     openGraph: {
       images: getPageImage(page).url,
+    },
+    // The page as Markdown (app/llms.mdx), for agents.
+    alternates: {
+      types: {
+        "text/markdown": new URL(`${page.url}.md`, baseUrl).toString(),
+      },
     },
   });
 }

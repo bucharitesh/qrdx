@@ -6,12 +6,49 @@ import { SpiderWeb } from "./glyphs";
 import { type Anchor, SpiderRope } from "./spider-rope";
 import { useHalloweenOn } from "./use-halloween";
 
-function visibleRects(header: HTMLElement, layer: HTMLElement) {
-  return [...header.querySelectorAll<HTMLElement>("a, button")]
-    .filter((el) => !layer.contains(el))
-    .map((el) => el.getBoundingClientRect())
-    .filter((rect) => rect.width > 0 && rect.height > 0)
+/** The nav mega-menu's panel renders inside the header but drops below the bar. */
+const POPUP = '[data-slot="navigation-menu-viewport"]';
+
+/** Elements that are part of the bar itself, not our layer or an open menu. */
+const inBar = (el: Element, layer: HTMLElement) =>
+  !layer.contains(el) && !el.closest(POPUP);
+
+/** Narrowest gap after the logo the spider hangs in (px). */
+const MIN_GAP = 56;
+
+interface Box {
+  left: number;
+  top: number;
+  right: number;
+  bottom: number;
+}
+
+/**
+ * The first gap after the logo at least MIN_GAP wide, among the bar's own
+ * links and buttons. Boxes outside the bar's height (an open menu's links)
+ * don't count, so opening a menu never moves the spider.
+ */
+export function spiderGap(bar: Box, logo: Box, rects: Box[]) {
+  const items = rects
+    .filter(
+      (rect) =>
+        rect.right > rect.left &&
+        rect.bottom > rect.top &&
+        rect.top >= bar.top - 1 &&
+        rect.bottom <= bar.bottom + 1,
+    )
     .sort((a, b) => a.left - b.left);
+  let start = logo.right;
+  let end = bar.right;
+  for (const rect of items) {
+    if (rect.right <= logo.right + 1) continue;
+    if (rect.left - start >= MIN_GAP) {
+      end = rect.left;
+      break;
+    }
+    start = Math.max(start, rect.right);
+  }
+  return { start, end, roomy: end - start >= MIN_GAP };
 }
 
 function HeaderCharacters({
@@ -50,7 +87,6 @@ function HeaderCharacters({
     // never from scrolling.
     const measure = () => {
       const box = header.getBoundingClientRect();
-      const rects = visibleRects(header, layerEl);
       const logoRect = logo?.getBoundingClientRect();
       if (!logoRect || logoRect.width === 0) {
         layerEl.style.display = "none";
@@ -59,19 +95,12 @@ function HeaderCharacters({
       layerEl.style.display = "";
 
       // Spider: hangs inside the header in the first roomy gap after the logo.
-      let gapStart = logoRect.right;
-      let gapEnd = box.right;
-      for (const rect of rects) {
-        if (rect.right <= logoRect.right + 1) continue;
-        if (rect.left - gapStart >= 56) {
-          gapEnd = rect.left;
-          break;
-        }
-        gapStart = Math.max(gapStart, rect.right);
-      }
-      const roomy =
-        spider && window.innerWidth >= 640 && gapEnd - gapStart >= 56;
-      const anchorX = Math.round(gapStart - box.left + 26);
+      const rects = [...header.querySelectorAll("a, button")]
+        .filter((el) => inBar(el, layerEl))
+        .map((el) => el.getBoundingClientRect());
+      const gap = spiderGap(box, logoRect, rects);
+      const roomy = spider && window.innerWidth >= 640 && gap.roomy;
+      const anchorX = Math.round(gap.start - box.left + 26);
       place(fan, anchorX - 22, 0, roomy && window.innerWidth >= 640);
       setRope((current) => {
         if (!roomy) return null;
@@ -85,16 +114,20 @@ function HeaderCharacters({
 
     const resize = new ResizeObserver(() => measure());
     // Containers too: the marketing navbar narrows into a pill on scroll, which
-    // moves its buttons without resizing them.
+    // moves its buttons without resizing them. Open menus aren't the bar.
     const watch = () => {
       resize.observe(header);
       for (const el of header.querySelectorAll("a, button, div")) {
-        if (!layerEl.contains(el)) resize.observe(el);
+        if (inBar(el, layerEl)) resize.observe(el);
       }
     };
     let pending = 0;
     const mutations = new MutationObserver((records) => {
-      if (records.every((record) => layerEl.contains(record.target))) return;
+      const own = (node: Node) => {
+        const el = node instanceof Element ? node : node.parentElement;
+        return !el || !inBar(el, layerEl);
+      };
+      if (records.every((record) => own(record.target))) return;
       if (pending) return;
       pending = requestAnimationFrame(() => {
         pending = 0;
@@ -117,7 +150,6 @@ function HeaderCharacters({
   return (
     <div
       ref={layerRef}
-      aria-hidden
       className="pointer-events-none absolute inset-0 z-10 select-none"
     >
       <SpiderWeb

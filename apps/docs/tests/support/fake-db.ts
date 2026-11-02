@@ -14,8 +14,9 @@
 // Supported: select/selectDistinct/selectDistinctOn with from, inner/left joins, where,
 // orderBy (asc/desc/column), limit, offset, groupBy with count/sum/max/min,
 // correlated exists/inArray subqueries; insert with values, returning,
-// onConflictDoNothing/onConflictDoUpdate; update set/where/returning (with
-// `sql` increments like sql`${col} + 1`, and json ->> 'key' reads); delete;
+// onConflictDoNothing/onConflictDoUpdate; update set/where/returning (unique
+// keys checked like inserts, `sql` increments like sql`${col} + 1`, and
+// json ->> 'key' reads); delete;
 // transaction (rolled back when the callback throws); db.query.<table>
 // findMany/findFirst without relations. Anything else throws, so a test can never pass
 // on a query the fake silently misread.
@@ -624,6 +625,28 @@ function insertRow(table: string, value: Row, mode: ConflictMode): Row | null {
   return row;
 }
 
+/** Like Postgres: an update that would duplicate a unique key fails (23505). */
+function assertUniqueAfter(table: string, row: Row, patch: Row) {
+  const keys = uniqueKeys.get(table) ?? [];
+  if (keys.length === 0) return;
+  const next = { ...row };
+  applyPatch(table, next, patch);
+  for (const columns of keys) {
+    const clash = rowsOf(table).some(
+      (other) =>
+        other !== row &&
+        columns.every((c) => other[c] != null && same(other[c], next[c])),
+    );
+    if (clash) {
+      const error = new Error(
+        `duplicate key value violates unique constraint (${table}.${columns.join(",")})`,
+      ) as Error & { code: string };
+      error.code = "23505";
+      throw error;
+    }
+  }
+}
+
 function applyPatch(table: string, row: Row, patch: Row) {
   const ctx: Ctx = { [table]: row };
   const next: Row = {};
@@ -692,7 +715,10 @@ function update(t: unknown) {
         const matched = rowsOf(table).filter((row) =>
           truthy(where, { [table]: row }),
         );
-        for (const row of matched) applyPatch(table, row, patch);
+        for (const row of matched) {
+          assertUniqueAfter(table, row, patch);
+          applyPatch(table, row, patch);
+        }
         return wantReturning ? returningRows(table, matched, shape) : [];
       };
       const builder = {

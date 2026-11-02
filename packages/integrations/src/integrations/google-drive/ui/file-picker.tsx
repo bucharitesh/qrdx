@@ -175,7 +175,7 @@ export function GoogleDriveFilePicker({
 
           {/* Error message */}
           {error && (
-            <div className="rounded-md bg-destructive/10 p-3 text-destructive text-sm">
+            <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
               {error}
             </div>
           )}
@@ -189,8 +189,8 @@ export function GoogleDriveFilePicker({
             ) : files.length === 0 ? (
               <div className="flex flex-col items-center justify-center p-8 text-center">
                 <FileImage className="mb-4 h-12 w-12 text-muted-foreground" />
-                <p className="font-medium text-sm">No images found</p>
-                <p className="text-muted-foreground text-xs">
+                <p className="text-sm font-medium">No images found</p>
+                <p className="text-xs text-muted-foreground">
                   {searchTerm
                     ? "Try a different search term"
                     : "Your Google Drive doesn't contain any images"}
@@ -200,7 +200,7 @@ export function GoogleDriveFilePicker({
               <div className="grid grid-cols-4 gap-4 p-4">
                 {files.map((file) => (
                   <button
-                    className="group relative aspect-square overflow-hidden rounded-lg border bg-muted hover:border-primary focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="group relative aspect-square overflow-hidden rounded-lg border bg-muted hover:border-primary focus:ring-2 focus:ring-primary focus:outline-none"
                     key={file.id}
                     onClick={() => handleFileSelect(file)}
                     type="button"
@@ -216,7 +216,7 @@ export function GoogleDriveFilePicker({
                         <ImageIcon className="h-8 w-8 text-muted-foreground" />
                       </div>
                     )}
-                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-2 text-white text-xs opacity-0 transition-opacity group-hover:opacity-100">
+                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-2 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100">
                       <p className="truncate font-medium">{file.name}</p>
                     </div>
                   </button>

@@ -1,0 +1,6 @@
+{
+  "$schema": "../../../../.source/json-schema/docs.meta.json",
+  "title": "Pages and forms",
+  "icon": "PanelsTopLeft",
+  "pages": ["create-a-page", "forms"]
+}

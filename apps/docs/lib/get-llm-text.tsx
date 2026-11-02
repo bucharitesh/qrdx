@@ -1,3 +1,11 @@
+import { cleanLlmMarkdown } from "@/lib/agents/llm-markdown";
+import {
+  isFeatureAvailable,
+  isPathAvailable,
+} from "@/lib/feature-availability";
+import type { FeatureId } from "@/lib/feature-availability-rules";
+import { isIntegrationVisible } from "@/lib/integration-availability";
+import { baseUrl } from "@/lib/metadata";
 import type { Page } from "@/lib/source";
 import { owner, repo } from "./github";
 
@@ -8,19 +16,34 @@ function sectionOf(page: Page): string | null {
   return first.charAt(0).toUpperCase() + first.slice(1).replaceAll("-", " ");
 }
 
-/** One docs page as Markdown (llms-full.txt and the per-page .mdx links). */
+/** The same test <IfAvailable> applies when it renders (components/mdx/if-available.tsx). */
+function isShown({ feature, path, integration }: Record<string, string>) {
+  return (
+    (!feature || isFeatureAvailable(feature as FeatureId)) &&
+    (!path || isPathAvailable(path)) &&
+    (!integration || isIntegrationVisible(integration))
+  );
+}
+
+/** The page's absolute URL. */
+export const pageUrl = (page: Page) => new URL(page.url, baseUrl).toString();
+
+/** One docs page as Markdown (llms-full.txt and the per-page .md links). */
 export async function getLLMText(page: Page) {
   const processed = await page.data.getText("processed");
   const section = sectionOf(page);
   const title = section ? `${page.data.title} (${section})` : page.data.title;
 
-  return [
+  const header = [
     `# ${title}`,
-    `URL: ${page.url}`,
-    `Source: https://raw.githubusercontent.com/${owner}/${repo}/refs/heads/main/apps/docs/content/docs/${page.path}`,
     "",
-    page.data.description ?? "",
+    `URL: ${pageUrl(page)}`,
+    `Source: https://github.com/${owner}/${repo}/blob/main/apps/docs/content/docs/${page.path}`,
     "",
-    processed,
-  ].join("\n");
+  ];
+  if (page.data.description) header.push(page.data.description, "");
+  return `${header.join("\n")}\n${cleanLlmMarkdown(processed, {
+    origin: baseUrl.origin,
+    isShown,
+  })}`;
 }

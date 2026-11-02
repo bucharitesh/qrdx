@@ -34,7 +34,7 @@ function fakeClient(overrides: {
     customerSessions: {
       create:
         overrides.create ??
-        vi.fn(async () => ({ customerPortalUrl: PORTAL_URL })),
+        vi.fn(async () => ({ customer_portal_url: PORTAL_URL })),
     },
   };
 }
@@ -43,7 +43,7 @@ const signedIn = async () => "user_1";
 
 describe("resolvePortalRedirect", () => {
   it("opens the portal for a customer, returning to the usage page", async () => {
-    const create = vi.fn(async () => ({ customerPortalUrl: PORTAL_URL }));
+    const create = vi.fn(async () => ({ customer_portal_url: PORTAL_URL }));
     const getExternal = vi.fn(async () => ({ id: "cus_123" }));
     const onFailure = vi.fn();
 
@@ -55,10 +55,10 @@ describe("resolvePortalRedirect", () => {
     });
 
     expect(url).toBe(PORTAL_URL);
-    expect(getExternal).toHaveBeenCalledWith({ externalId: "user_1" });
+    expect(getExternal).toHaveBeenCalledWith("user_1");
     expect(create).toHaveBeenCalledWith({
-      customerId: "cus_123",
-      returnUrl: RETURN_URL,
+      customer_id: "cus_123",
+      return_url: RETURN_URL,
     });
     expect(onFailure).not.toHaveBeenCalled();
   });
@@ -168,7 +168,7 @@ describe("resolvePortalRedirect", () => {
   it("shows the unavailable notice when Polar returns no portal URL", async () => {
     const url = await resolvePortalRedirect({
       client: fakeClient({
-        create: async () => ({ customerPortalUrl: "" }),
+        create: async () => ({ customer_portal_url: "" }),
       }),
       getUserId: signedIn,
     });

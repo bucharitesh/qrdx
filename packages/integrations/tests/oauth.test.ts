@@ -1,4 +1,5 @@
 import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { json, mockFetch } from "./helpers";
 
 // token-refresh reads and writes the integration row; keep it in memory.
 const db = vi.hoisted(() => ({
@@ -48,8 +49,6 @@ const ENV = {
   NOTION_CLIENT_SECRET: "ntn-secret",
 };
 const getConfig = (slug: string) => getIntegrationConfigWithEnv(slug, ENV);
-
-import { json, mockFetch } from "./helpers";
 
 beforeAll(() => {
   vi.stubEnv(

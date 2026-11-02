@@ -160,7 +160,10 @@ export async function CodesView({
       trashCount === 0 ? (
         <Empty className="border">
           <EmptyHeader>
-            <HairlineFigure className="mx-auto mb-2 h-28 w-40" figure="Relay" />
+            <HairlineFigure
+              className="mx-auto mb-2 h-28 w-40"
+              figure="CodeCard"
+            />
             <EmptyTitle>No dynamic QR codes yet</EmptyTitle>
             <EmptyDescription>
               A dynamic code encodes a short link. Print it once and change the

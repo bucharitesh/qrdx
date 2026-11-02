@@ -110,7 +110,7 @@ function Orbit({ entries }: { entries: IntegrationCatalogEntry[] }) {
   return (
     <div
       aria-hidden
-      className="group/orbit relative mx-auto aspect-square w-[var(--orbit)] [--orbit:18.5rem] sm:[--orbit:22rem]"
+      className="group/orbit relative mx-auto aspect-square w-[var(--orbit)] [--orbit:min(18.5rem,calc(100vw-5rem))] sm:[--orbit:22rem]"
     >
       <div className="absolute inset-[7%] rounded-full border border-dashed border-foreground/10" />
       <div className="absolute inset-[25%] rounded-full border border-dashed border-foreground/10" />
@@ -153,7 +153,7 @@ export function IntegrationsHero({
           className="[mask-image:radial-gradient(ellipse_70%_110%_at_76%_50%,black_25%,rgba(0,0,0,0.35)_70%,transparent_100%)]"
         />
       </Backdrop>
-      <div className="grid items-center gap-12 px-6 pt-14 pb-14 md:px-10 md:pt-20 md:pb-20 lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-16">
+      <div className="grid grid-cols-1 items-center gap-12 px-10 pt-14 pb-14 md:pt-20 md:pb-20 lg:grid-cols-[minmax(0,1fr)_auto] lg:gap-16">
         <div className="flex max-w-2xl flex-col gap-6">
           <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
             Integrations

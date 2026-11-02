@@ -13,6 +13,7 @@ import type {
   FrameRect,
 } from "./frame";
 import { circlePath, type Point, roundedRectPath } from "./shapes";
+import { compact, roundTo } from "./utils/fmt";
 import { parseColor } from "./utils/parse-color";
 
 export const SHAPED_FRAME_STYLES = [
@@ -276,8 +277,8 @@ const chatBubble: Layout = (ctx) => {
     shapes: [
       rect(0, 0, width, bubbleHeight, radius, color),
       path(
-        `M${width * 0.13} ${top}L${width * 0.05} ${bubbleHeight + tail}` +
-          `Q${width * 0.16} ${bubbleHeight + tail * 0.45} ${width * 0.32} ${top}Z`,
+        compact`M${width * 0.13} ${top}L${width * 0.05} ${bubbleHeight + tail}` +
+          compact`Q${width * 0.16} ${bubbleHeight + tail * 0.45} ${width * 0.32} ${top}Z`,
         color
       ),
       rect(
@@ -512,17 +513,19 @@ const ticket: Layout = (ctx) => {
   const side = size * 0.05;
   const windowWidth = size + 2 * gap;
   const width = windowWidth + 2 * side;
-  const perforation = side + windowWidth + side * 1.2;
+  // Rounded first: the notches are half circles from perforation − notch to
+  // perforation + notch, which must be exactly twice their radius apart
+  const perforation = roundTo(side + windowWidth + side * 1.2);
   const height = perforation + band;
-  const notch = size * 0.055;
+  const notch = roundTo(size * 0.055);
   const r = size * 0.04;
   const body =
-    `M${r} 0H${width - r}A${r} ${r} 0 0 1 ${width} ${r}` +
-    `V${perforation - notch}A${notch} ${notch} 0 0 0 ${width} ${perforation + notch}` +
-    `V${height - r}A${r} ${r} 0 0 1 ${width - r} ${height}` +
-    `H${r}A${r} ${r} 0 0 1 0 ${height - r}` +
-    `V${perforation + notch}A${notch} ${notch} 0 0 0 0 ${perforation - notch}` +
-    `V${r}A${r} ${r} 0 0 1 ${r} 0Z`;
+    compact`M${r} 0H${width - r}A${r} ${r} 0 0 1 ${width} ${r}` +
+    compact`V${perforation - notch}A${notch} ${notch} 0 0 0 ${width} ${perforation + notch}` +
+    compact`V${height - r}A${r} ${r} 0 0 1 ${width - r} ${height}` +
+    compact`H${r}A${r} ${r} 0 0 1 0 ${height - r}` +
+    compact`V${perforation + notch}A${notch} ${notch} 0 0 0 0 ${perforation - notch}` +
+    compact`V${r}A${r} ${r} 0 0 1 ${r} 0Z`;
   const dashes: string[] = [];
   const dash = size * 0.03;
   const dashGap = size * 0.022;
@@ -735,9 +738,9 @@ const tag: Layout = (ctx) => {
   const height = top + windowWidth + row;
   const r = size * 0.04;
   const body =
-    `M${chamfer} 0H${width - chamfer}L${width} ${chamfer}` +
-    `V${height - r}A${r} ${r} 0 0 1 ${width - r} ${height}` +
-    `H${r}A${r} ${r} 0 0 1 0 ${height - r}V${chamfer}Z` +
+    compact`M${chamfer} 0H${width - chamfer}L${width} ${chamfer}` +
+    compact`V${height - r}A${r} ${r} 0 0 1 ${width - r} ${height}` +
+    compact`H${r}A${r} ${r} 0 0 1 0 ${height - r}V${chamfer}Z` +
     circlePath(width / 2, holeY, hole);
   return {
     width,

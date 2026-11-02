@@ -55,7 +55,7 @@ export default function QrTypesHubPage() {
                 {group.description}
               </p>
             </SectionHeader>
-            <div className="w-full px-6 md:px-10 py-10 grid gap-6 lg:grid-cols-3">
+            <div className="w-full px-10 py-10 grid gap-6 lg:grid-cols-3">
               <MockupImage
                 {...qrTypeGroupImages[group.id]}
                 sizes="(min-width: 1280px) 400px, (min-width: 1024px) 33vw, 100vw"
@@ -81,7 +81,7 @@ export default function QrTypesHubPage() {
         );
       })}
 
-      <section aria-label="More tools" className="w-full px-6 md:px-10 py-10">
+      <section aria-label="More tools" className="w-full px-10 py-10">
         <CardGrid count={2} max={2}>
           <LinkCard
             href="/tools/bulk"

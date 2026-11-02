@@ -17,7 +17,7 @@ export function CompareFeatures({
   highlights,
 }: CompareFeaturesProps) {
   return (
-    <section className="w-full px-6 py-14 md:py-16">
+    <section className="w-full px-10 py-14 md:py-16">
       <div className="mx-auto flex max-w-2xl flex-col items-center gap-2 text-center">
         <h2 className="text-2xl font-semibold tracking-tight text-balance md:text-3xl">
           Why choose QRdx over {competitor}?

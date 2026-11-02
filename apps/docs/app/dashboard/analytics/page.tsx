@@ -249,7 +249,7 @@ export default async function AnalyticsPage({
         {header}
         <Empty className="border">
           <EmptyHeader>
-            <HairlineFigure className="mx-auto mb-2 h-28 w-40" figure="Plot" />
+            <HairlineFigure className="mx-auto mb-2 h-28 w-40" figure="Chart" />
             <EmptyTitle>No dynamic codes yet</EmptyTitle>
             <EmptyDescription>
               Create a dynamic QR code and its scans show up here, next to every

@@ -20,7 +20,7 @@ export interface PatternOptions {
 
 const LAST = RAMP.length - 1;
 const SCRAMBLE = [2, 3, 4, 5, 6, 7] as const;
-const clamp01 = (v: number) => (v < 0 ? 0 : v > 1 ? 1 : v);
+const clamp01 = (v: number) => (v < 0 ? 0 : Math.min(v, 1));
 /** −0.5…0.5 per cell, so density steps dither instead of banding. */
 const dither = (c: number, r: number, seed: number) =>
   hash2(c * 31 + seed, r * 17 + 7) - 0.5;

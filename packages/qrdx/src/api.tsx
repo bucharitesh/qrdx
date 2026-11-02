@@ -16,6 +16,7 @@ import {
   resolveErrorLevel,
 } from "./utils";
 import { getSolidColor } from "./utils/color";
+import { fmt } from "./utils/fmt";
 
 export async function getQRAsSVG(props: QRPropsSVG) {
   const {
@@ -86,12 +87,12 @@ export async function getQRAsSVG(props: QRPropsSVG) {
 
     image = (
       <image
-        height={calculatedImageSettings.h}
+        height={fmt(calculatedImageSettings.h)}
         href={base64Image}
         preserveAspectRatio="none"
-        width={calculatedImageSettings.w}
-        x={calculatedImageSettings.x + margin}
-        y={calculatedImageSettings.y + margin}
+        width={fmt(calculatedImageSettings.w)}
+        x={fmt(calculatedImageSettings.x + margin)}
+        y={fmt(calculatedImageSettings.y + margin)}
       />
     );
   }

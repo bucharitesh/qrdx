@@ -2,7 +2,7 @@
 
 import { cn } from "@repo/design-system/lib/utils";
 import { useEffect, useRef } from "react";
-import { soundEvent } from "@/lib/sound/emit";
+import { CHARACTER_BUTTON, seasonalCue } from "./cue";
 import styles from "./seasonal.module.css";
 import { Sprite } from "./sprite";
 import { addTick, prefersReducedMotion } from "./ticker";
@@ -42,7 +42,7 @@ export function SittingCat({
   right?: number;
   size?: number;
 }) {
-  const catRef = useRef<HTMLDivElement>(null);
+  const catRef = useRef<HTMLButtonElement>(null);
   const bubbleRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
@@ -139,17 +139,22 @@ export function SittingCat({
       }
     };
 
-    // Click: meow. Three quick clicks: hiss and puff up.
+    // Click (or Enter / Space): meow. Again right away: it purrs. A third
+    // time: it hisses and puffs up.
     let clicks: number[] = [];
     const onClick = () => {
-      soundEvent("meow");
       const now = performance.now();
       clicks = [...clicks.filter((t) => now - t < 1400), now];
       window.clearTimeout(purrTimer);
       if (clicks.length >= 3) {
         clicks = [];
+        seasonalCue("hiss");
         say("hiss", "Hss!", 1300);
+      } else if (clicks.length === 2) {
+        seasonalCue("purr");
+        say("purr", "purr…", 1200);
       } else {
+        seasonalCue("meow");
         say("meow", "Meow!", 1200);
       }
     };
@@ -174,9 +179,11 @@ export function SittingCat({
   }, [stage, avoid]);
 
   return (
-    <div
+    <button
       ref={catRef}
-      className={cn(styles.cat, "cursor-pointer")}
+      type="button"
+      aria-label="Black cat"
+      className={cn(styles.cat, "block", CHARACTER_BUTTON)}
       data-mood="idle"
       data-blink="false"
       data-bubble="false"
@@ -191,7 +198,7 @@ export function SittingCat({
       >
         Meow!
       </span>
-      <div className={styles.catBody}>
+      <span className={cn(styles.catBody, "block")}>
         <Sprite
           name="cat"
           width={size}
@@ -247,7 +254,7 @@ export function SittingCat({
             </g>
           ))}
         </svg>
-      </div>
-    </div>
+      </span>
+    </button>
   );
 }
