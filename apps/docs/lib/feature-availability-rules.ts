@@ -22,7 +22,6 @@ export const FEATURE_IDS = [
   "scheduledJobs",
   "youtubeChannelPicker",
   "spotifyPlaylistPicker",
-  "checkout",
 ] as const;
 
 export type FeatureId = (typeof FEATURE_IDS)[number];
@@ -44,8 +43,6 @@ interface FeatureRule {
   name: string;
   /** Variable names that must be set; empty when nothing needs configuring. */
   requires: (ctx: FeatureContext) => readonly string[];
-  /** The switch that turns it off while its variables are set, if flipped. */
-  switchedOff?: (ctx: FeatureContext) => string | undefined;
   /**
    * Pages that only offer this feature. They leave the nav, footer, app
    * sidebar, sitemap and llms.txt while it's unavailable; the pages
@@ -62,18 +59,16 @@ interface FeatureRule {
 }
 
 export const FEATURE_RULES: Record<FeatureId, FeatureRule> = {
+  // All AI runs through Vercel AI Gateway (lib/ai/providers.ts); the models
+  // per task are in lib/ai/models.ts.
   aiThemes: {
-    name: "AI themes (Gemini)",
-    requires: () => ["GOOGLE_API_KEY"],
+    name: "AI themes (Vercel AI Gateway)",
+    requires: () => ["AI_GATEWAY_API_KEY"],
     paths: ["/ai"],
   },
   aiArt: {
-    // Gemini image models need a key on a paid tier: the free tier allows no
-    // images, so AI_ART_ENABLED=0 switches art off while themes keep working.
-    name: "AI QR art (Gemini images)",
-    requires: () => ["GOOGLE_API_KEY"],
-    switchedOff: (ctx) =>
-      ctx.env.AI_ART_ENABLED?.trim() === "0" ? "AI_ART_ENABLED=0" : undefined,
+    name: "AI QR art (Vercel AI Gateway)",
+    requires: () => ["AI_GATEWAY_API_KEY"],
     paths: ["/ai/art"],
   },
   customDomains: {
@@ -130,32 +125,19 @@ export const FEATURE_RULES: Record<FeatureId, FeatureRule> = {
     requires: () => ["SPOTIFY_CLIENT_ID", "SPOTIFY_CLIENT_SECRET"],
     extrasOf: "spotify",
   },
-  checkout: {
-    // Paid plans are sold through Polar. Until Polar approves the
-    // organization it can't charge cards, so POLAR_CHECKOUT_ENABLED=0 closes
-    // checkout: Upgrade buttons say it opens soon instead of starting a
-    // checkout that fails, and existing subscribers keep the billing portal.
-    name: "Paid checkout (Polar)",
-    requires: () => ["POLAR_ACCESS_TOKEN"],
-    switchedOff: (ctx) =>
-      ctx.env.POLAR_CHECKOUT_ENABLED?.trim() === "0"
-        ? "POLAR_CHECKOUT_ENABLED=0"
-        : undefined,
-  },
 };
 
 /**
- * What `id` still needs here, in a stable order: missing variable names,
- * then the switch that turned it off. Empty when it is available.
+ * The variable names `id` still needs here, in a stable order. Empty when it
+ * is available.
  */
 export function missingFeatureSetup(
   id: FeatureId,
   ctx: FeatureContext,
 ): string[] {
-  const rule = FEATURE_RULES[id];
-  const missing = rule.requires(ctx).filter((name) => !ctx.env[name]?.trim());
-  const off = rule.switchedOff?.(ctx);
-  return off ? [...missing, off] : missing;
+  return FEATURE_RULES[id]
+    .requires(ctx)
+    .filter((name) => !ctx.env[name]?.trim());
 }
 
 export type FeatureMap = Record<FeatureId, boolean>;

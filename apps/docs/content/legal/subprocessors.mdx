@@ -1,7 +1,7 @@
 ---
 title: Subprocessors
 description: The third-party services that process personal data for QRdx, what each one does, what data it handles, where, and how we announce changes.
-lastUpdated: 2026-11-02
+lastUpdated: 2026-11-03
 ---
 
 <Callout title="Summary">
@@ -13,18 +13,19 @@ lastUpdated: 2026-11-02
 
 </Callout>
 
-**Last updated:** 2 November 2026
+**Last updated:** 3 November 2026
 
 ## Current subprocessors
 
 | Service | What it does for QRdx | Personal data it handles | Location | Policy |
 | --- | --- | --- | --- | --- |
-| **Vercel** | Hosting, edge network and server functions. Looks up the country and city of each request from its IP address, and registers custom domains and their TLS certificates. | Everything that passes through the Service, including IP addresses of requests | United States, with a global edge network | [DPA](https://vercel.com/legal/dpa) |
+| **Vercel** | Hosting, edge network and server functions. Looks up the country and city of each request from its IP address, and registers custom domains and their TLS certificates. Runs AI Gateway, which passes AI requests to Anthropic and Google and bills QRdx for them. | Everything that passes through the Service, including IP addresses of requests and AI prompts and images on their way to the model | United States, with a global edge network | [DPA](https://vercel.com/legal/dpa), [AI Product Terms](https://vercel.com/legal/ai-product-terms) |
 | **Neon** | PostgreSQL database | Account data, Customer Content and End User data (scans, page events, form responses) | United States | [DPA](https://neon.com/dpa) |
 | **Upstash** | Rate limiting | IP addresses and account IDs inside short-lived counters that expire within 2 days | **India (AWS Mumbai)** | [Privacy policy](https://upstash.com/trust/privacy.pdf) |
 | **Polar** | Merchant of record: checkout, subscriptions, invoices and sales tax. Card payments go through Stripe. | Name, email address, billing address, payment details, tax ID, subscription history | United States | [Privacy policy](https://polar.sh/legal/privacy) |
 | **Resend** | Sending transactional email | Recipient addresses and email content: invitations, form response notifications (which include answers), alerts and digests | United States | [DPA](https://resend.com/legal/dpa) |
-| **Google (Gemini API)** | AI themes, prompt enhancement and AI QR art | Prompts, the conversation so far and attached images; for AI art, the code's content (as a QR image), the prompt and any reference image | Global, wherever Google has facilities | [Gemini API terms](https://ai.google.dev/gemini-api/terms) |
+| **Anthropic (Claude, through Vercel AI Gateway)** | The AI theme chat and prompt enhancement | Prompts, the conversation so far and attached images | Set by Anthropic; QRdx doesn't choose a region | [AI Gateway data controls](https://vercel.com/docs/ai-gateway/security-and-compliance/disallow-prompt-training) |
+| **Google (Gemini, through Vercel AI Gateway)** | Designing AI themes and AI QR art, through the Gemini API or Vertex AI | Prompts, the conversation so far and attached images; for AI art, the code's content (as a QR image), the prompt and any reference image | Global, wherever Google has facilities | [AI Gateway data controls](https://vercel.com/docs/ai-gateway/security-and-compliance/disallow-prompt-training) |
 | **Google (Web Risk)** | Checking links against Google's lists of malware and phishing sites | Destination URLs of dynamic codes and links checked with the scan checker | Global | [Google Cloud DPA](https://cloud.google.com/terms/data-processing-addendum) |
 | **Cloudflare (R2)** | Storage for files you upload, when file storage is turned on | Uploaded files and anything they contain | **Asia-Pacific** | [DPA](https://www.cloudflare.com/cloudflare-customer-dpa/) |
 | **Cloudflare (Turnstile)** | Telling people from bots on the abuse report form and on hosted-page forms | IP address and browser signals | Global | [Turnstile privacy](https://www.cloudflare.com/turnstile-privacy-policy/) |
@@ -51,4 +52,4 @@ Related pages: [Privacy Policy](/legal/privacy-policy), [Cookie Policy](/legal/c
 
 ---
 
-**Changes:** 2 November 2026. Removed fal.ai: AI QR art now runs on Google's Gemini API, already listed. Umami is our own self-hosted instance on Vercel and Neon, not Umami Cloud. 1 November 2026: rebuilt as a table from the services QRdx actually uses. Added Resend, Google Gemini, Google Web Risk, fal.ai, Cloudflare R2 and Turnstile, and Featurebase. Removed Anthropic (not used), Better Auth (a library that runs inside QRdx) and GitHub (a sign-in provider, now listed above). Corrected Polar's location. Added Umami, and updated what PostHog receives.
+**Changes:** 3 November 2026. Added Anthropic: the AI theme chat and prompt enhancement run on Claude. AI requests now pass through Vercel AI Gateway (Vercel was already listed), and Google's row covers Gemini through the gateway instead of the Gemini API directly. 2 November 2026: removed fal.ai: AI QR art now runs on Google's Gemini API, already listed. Umami is our own self-hosted instance on Vercel and Neon, not Umami Cloud. 1 November 2026: rebuilt as a table from the services QRdx actually uses. Added Resend, Google Gemini, Google Web Risk, fal.ai, Cloudflare R2 and Turnstile, and Featurebase. Removed Anthropic (not used), Better Auth (a library that runs inside QRdx) and GitHub (a sign-in provider, now listed above). Corrected Polar's location. Added Umami, and updated what PostHog receives.

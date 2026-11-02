@@ -226,9 +226,9 @@ export function priceRow(currency: PricingCurrency): ComparisonRow {
  * defaults to true.
  */
 export interface PricingOptions {
-  /** AI QR art (GOOGLE_API_KEY, not switched off by AI_ART_ENABLED=0). */
+  /** AI QR art (AI_GATEWAY_API_KEY). */
   aiArt?: boolean;
-  /** AI themes (GOOGLE_API_KEY). */
+  /** AI themes (AI_GATEWAY_API_KEY). */
   aiThemes?: boolean;
   /** Adding custom domains (on Vercel: VERCEL_API_TOKEN + VERCEL_PROJECT_ID). */
   customDomains?: boolean;
