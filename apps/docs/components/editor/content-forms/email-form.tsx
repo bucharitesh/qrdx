@@ -46,7 +46,7 @@ export function EmailForm() {
     <div className="space-y-3">
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="email-recipient">
-          Recipient Email *
+          Recipient email *
         </Label>
         <Input
           id="email-recipient"
@@ -93,7 +93,7 @@ export function EmailForm() {
       </div>
 
       <p className="text-muted-foreground text-xs">
-        Scanning will open the default email app with pre-filled content
+        Scanning will open an email draft to this address
       </p>
     </div>
   );

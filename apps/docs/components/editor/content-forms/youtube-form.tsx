@@ -73,7 +73,7 @@ export function YouTubeForm() {
           }
         />
         <p className="text-muted-foreground text-[11px]">
-          Enter a video URL or channel URL (video takes priority)
+          Fill in one. If both are filled, the video is used.
         </p>
       </div>
       <MediaLinkAssist

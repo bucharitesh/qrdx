@@ -155,6 +155,7 @@ Add one OAuth provider (GitHub or Google), or Resend for email sign-in codes, so
 | File storage (Cloudflare R2) | `R2_ACCOUNT_ID`, `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`, `R2_PUBLIC_BASE_URL` | Uploads are off; pages can still link to files hosted elsewhere. See [Files](/docs/files#set-up-storage-self-hosting) |
 | Email (Resend) | `RESEND_API_KEY`, `EMAIL_FROM` | Emails are skipped and logged, so email sign-in codes can't be sent; team invites use copyable links. See [Notifications](/docs/notifications#self-hosting) |
 | Custom domains on Vercel | `VERCEL_API_TOKEN`, `VERCEL_PROJECT_ID`, `VERCEL_TEAM_ID` | Leave unset off Vercel: domains are then verified with a DNS `TXT` record. See [Custom domains](/docs/custom-domains#self-hosting) |
+| One-click DNS setup (Domain Connect) | `DOMAIN_CONNECT_PROVIDER_ID`, `DOMAIN_CONNECT_SERVICE_ID`, `DOMAIN_CONNECT_PRIVATE_KEY` | No **Set up with …** button: people add DNS records themselves. Needs your own Domain Connect template accepted by each DNS provider, and its public key in DNS. See [Custom domains](/docs/custom-domains#self-hosting) |
 | Scheduled jobs | `CRON_SECRET` | In production the weekly digest and webhook retry jobs refuse to run |
 | Link safety (Google Web Risk) | `WEB_RISK_API_KEY` | Destinations are checked by the offline rules only. See [Code controls](/docs/code-controls) |
 | Form spam check (Cloudflare Turnstile) | `NEXT_PUBLIC_TURNSTILE_SITE_KEY`, `TURNSTILE_SECRET_KEY` | Forms rely on the built-in honeypot and rate limits |

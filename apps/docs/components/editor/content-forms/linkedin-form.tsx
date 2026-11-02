@@ -31,7 +31,7 @@ export function LinkedInForm() {
     <div className="space-y-3">
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="linkedin-url">
-          LinkedIn Profile URL *
+          LinkedIn profile URL *
         </Label>
         <Input
           id="linkedin-url"
@@ -42,13 +42,10 @@ export function LinkedInForm() {
             setLinkedinData({ ...linkedinData, profileUrl: e.target.value })
           }
         />
-        <p className="text-muted-foreground text-[11px]">
-          Enter your full LinkedIn profile or company page URL
-        </p>
       </div>
 
       <p className="text-muted-foreground text-xs">
-        Scanning will open your LinkedIn profile
+        Scanning will open your LinkedIn profile or company page
       </p>
     </div>
   );

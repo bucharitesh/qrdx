@@ -5,7 +5,7 @@ export const PRIVACY_POLICY_URL = "/legal/privacy-policy";
 export const ACTION_LABELS: Record<HeadlessConsentSurfaceAction, string> = {
   accept: "Accept all",
   reject: "Reject all",
-  customize: "Customise",
+  customize: "Customize",
   save: "Save choices",
   dismiss: "OK",
 };

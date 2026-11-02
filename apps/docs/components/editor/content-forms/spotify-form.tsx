@@ -66,11 +66,6 @@ export function SpotifyForm() {
         {errors.uri && (
           <p className="text-destructive text-[11px]">{errors.uri}</p>
         )}
-        {!errors.uri && (
-          <p className="text-muted-foreground text-[11px]">
-            Enter a Spotify URI (spotify:track:xxx) or share URL
-          </p>
-        )}
       </div>
       <MediaLinkAssist
         kind="spotify"

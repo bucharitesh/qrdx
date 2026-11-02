@@ -94,7 +94,7 @@ export function UseCasesSection() {
           right content for the job.
         </p>
       </SectionHeader>
-      <ul className="grid w-full gap-4 px-6 py-12 sm:grid-cols-2 md:px-10 md:py-16 lg:grid-cols-4">
+      <ul className="grid w-full gap-4 px-10 py-12 sm:grid-cols-2 md:py-16 lg:grid-cols-4">
         {useCases.map((useCase, index) => (
           <li key={useCase.href}>
             <Reveal delay={(index % 4) * 60} className="h-full">

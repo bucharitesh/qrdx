@@ -63,7 +63,7 @@ export function GoogleReviewForm() {
         )}
         {!errors.placeId && (
           <p className="text-muted-foreground text-[11px]">
-            Find your Google Place ID at{" "}
+            Find yours with the{" "}
             <a
               href="https://developers.google.com/maps/documentation/places/web-service/place-id"
               target="_blank"
@@ -77,7 +77,7 @@ export function GoogleReviewForm() {
       </div>
 
       <p className="text-muted-foreground text-xs">
-        Scanning will open Google to write a review for your business
+        Scanning will open Google to review your business
       </p>
     </div>
   );

@@ -12,6 +12,7 @@ import {
   type CodeMarketingSettings,
   saveCodeUtm,
 } from "@/actions/code-marketing";
+import { type PaidPlan, PLAN_NAMES } from "@/lib/pricing";
 import type { UtmConfig } from "@/lib/redirect/routing";
 import {
   MarketingSettingsGate,
@@ -88,7 +89,13 @@ function previewUrl(destination: string, draft: Draft): string {
   }
 }
 
-function UtmEditor({ initial }: { initial: CodeMarketingSettings }) {
+function UtmEditor({
+  initial,
+  plan,
+}: {
+  initial: CodeMarketingSettings;
+  plan: PaidPlan | null;
+}) {
   const id = useId();
   const [settings, setSettings] = useState(initial);
   const [draft, setDraft] = useState(() => toDraft(initial.utm));
@@ -120,7 +127,7 @@ function UtmEditor({ initial }: { initial: CodeMarketingSettings }) {
 
   return (
     <PanelCard
-      badge="Pro"
+      badge={plan}
       description={
         <>
           Tag every scan for Google Analytics and other tools. Parameters are
@@ -134,11 +141,11 @@ function UtmEditor({ initial }: { initial: CodeMarketingSettings }) {
       hint="utm"
       title="UTM parameters"
     >
-      {locked && (
-        <PlanLock plan="Pro">
+      {locked && plan && (
+        <PlanLock plan={plan}>
           {settings.utm
-            ? "Your plan doesn't include UTM parameters. The saved ones keep being added; you can remove them, and changing them needs Pro."
-            : "Automatic UTM tagging is part of Pro."}
+            ? `Your plan doesn't include UTM parameters. The saved ones keep being added; you can remove them, and changing them needs ${PLAN_NAMES[plan]}.`
+            : `Automatic UTM tagging is part of ${PLAN_NAMES[plan]}.`}
         </PlanLock>
       )}
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -284,12 +291,19 @@ function UtmEditor({ initial }: { initial: CodeMarketingSettings }) {
   );
 }
 
-/** UTM and custom query parameters appended on redirect (Pro). */
-export function UtmPanel({ settings }: { settings: MarketingSettingsPromise }) {
+/** UTM and custom query parameters appended on redirect. */
+export function UtmPanel({
+  settings,
+  plan,
+}: {
+  settings: MarketingSettingsPromise;
+  /** The cheapest plan with UTM parameters (lib/plans.ts) */
+  plan: PaidPlan | null;
+}) {
   return (
     <Suspense fallback={<PanelFallback />}>
       <MarketingSettingsGate settings={settings} title="UTM parameters">
-        {(data) => <UtmEditor initial={data} />}
+        {(data) => <UtmEditor initial={data} plan={plan} />}
       </MarketingSettingsGate>
     </Suspense>
   );

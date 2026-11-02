@@ -4,7 +4,7 @@ description: Add your analytics and retargeting pixels to hosted pages, see when
 icon: Target
 ---
 
-Every [dynamic QR code](/docs/dynamic-qr-codes) records scans without cookies. On top of that you can load your own pixels on hosted pages (Pro) and attribute conversions such as purchases to the scan that brought the visitor (Business). Both are set up on the code's page in the [dashboard](/dashboard), under **Settings**.
+Every [dynamic QR code](/docs/dynamic-qr-codes) records scans without cookies. On top of that you can load your own pixels on hosted pages (Pro) and attribute conversions such as purchases to the scan that brought the visitor (Business). Both are set up on the code's page in the [dashboard](/dashboard/codes), on its **Settings** tab.
 
 ## Analytics on every code
 
@@ -75,7 +75,7 @@ The script remembers `qrdx_sid` in a first-party cookie on your domain for 30 da
 
 ### From your server
 
-To report conversions from your backend (more reliable than the browser), keep `qrdx_sid` with the order and call the API with an [OAuth access token](/docs/developers/rest-api#get-an-access-token) that has the `codes:write` scope:
+To report conversions from your backend (more reliable than the browser), keep `qrdx_sid` with the order and call the API with an [API key](/docs/developers/api-keys) or an [OAuth access token](/docs/developers/rest-api#get-an-access-token) that has the `codes:write` scope:
 
 ```bash
 curl -X POST https://api.qrdx.dev/v1/conversions \

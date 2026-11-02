@@ -166,7 +166,7 @@ export function DotPatternControl() {
 
 /**
  * Eyes: matching outer + centre pairs as one choice (what most people want),
- * with the two shapes on their own behind "Customise outer and centre".
+ * with the two shapes on their own behind "Customize outer and center".
  */
 export function EyeControls() {
   const themeState = useQREditorStore((state) => state.themeState);
@@ -240,7 +240,7 @@ export function EyeControls() {
           onClick={() => setCustom((open) => !open)}
           type="button"
         >
-          <span>Customise outer and centre</span>
+          <span>Customize outer and center</span>
           <span className="text-muted-foreground flex min-w-0 items-center gap-2 font-normal">
             {!preset && (
               <span className="truncate">
@@ -278,7 +278,7 @@ export function EyeControls() {
               category={(id) => EYE_DOT_CATEGORY[id] ?? "decorative"}
               featured={EYE_DOT_FEATURED}
               label="Inner eye shape"
-              noun="centre shapes"
+              noun="center shapes"
               onChange={(id) => set("cornerEyeDotPattern", id)}
               options={eyeDotPatterns}
               preview={(id) => (

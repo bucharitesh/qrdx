@@ -20,6 +20,7 @@ import {
 } from "@/actions/code-marketing";
 import { useAvailability } from "@/components/availability-provider";
 import { CopyButton } from "@/components/copy-button";
+import { type PaidPlan, PLAN_NAMES } from "@/lib/pricing";
 import type { PixelConfig, PixelProvider } from "@/lib/redirect/routing";
 import {
   MarketingSettingsGate,
@@ -119,10 +120,12 @@ function ConversionsSection({
   settings,
   draft,
   setDraft,
+  plan,
 }: {
   settings: CodeMarketingSettings;
   draft: Draft;
   setDraft: (patch: Partial<Draft>) => void;
+  plan: PaidPlan | null;
 }) {
   const id = useId();
   const locked = !settings.features.conversions;
@@ -143,7 +146,9 @@ function ConversionsSection({
     <div className="space-y-3 border-t pt-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="space-y-1">
-          <p className="text-sm font-medium">Conversion tracking (Business)</p>
+          <p className="text-sm font-medium">
+            Conversion tracking{plan && ` (${PLAN_NAMES[plan]})`}
+          </p>
           <p className="text-muted-foreground text-sm">
             Adds a signed <code className="font-mono text-xs">qrdx_sid</code> to
             the URL each scan opens. Your site reports sales or sign-ups with
@@ -163,9 +168,10 @@ function ConversionsSection({
           {draft.conversions ? "On" : "Off"}
         </Label>
       </div>
-      {locked && !settings.pixels?.conversions && (
-        <PlanLock plan="Business">
-          Conversion tracking and revenue attribution are part of Business.
+      {locked && plan && !settings.pixels?.conversions && (
+        <PlanLock plan={plan}>
+          Conversion tracking and revenue attribution are part of{" "}
+          {PLAN_NAMES[plan]}.
         </PlanLock>
       )}
       {draft.conversions && (
@@ -187,7 +193,13 @@ function ConversionsSection({
   );
 }
 
-function PixelsEditor({ initial }: { initial: CodeMarketingSettings }) {
+function PixelsEditor({
+  initial,
+  plans,
+}: {
+  initial: CodeMarketingSettings;
+  plans: PixelPlans;
+}) {
   const id = useId();
   const [settings, setSettings] = useState(initial);
   const [draft, setDraftState] = useState(() => toDraft(initial.pixels));
@@ -229,7 +241,7 @@ function PixelsEditor({ initial }: { initial: CodeMarketingSettings }) {
 
   return (
     <PanelCard
-      badge={isPage ? "Pro" : "Business"}
+      badge={isPage ? plans.pixels : plans.conversions}
       description={
         <>
           {isPage
@@ -244,11 +256,11 @@ function PixelsEditor({ initial }: { initial: CodeMarketingSettings }) {
     >
       {isPage && (
         <>
-          {locked && (
-            <PlanLock plan="Pro">
+          {locked && plans.pixels && (
+            <PlanLock plan={plans.pixels}>
               {PROVIDERS.some((provider) => settings.pixels?.[provider.key])
-                ? "Your plan doesn't include tracking pixels. The saved ones keep loading; you can remove them, and adding new ones needs Pro."
-                : `Tracking pixels (${providers.map((provider) => PROVIDER_NAMES[provider.key]).join(", ")}) are part of Pro.`}
+                ? `Your plan doesn't include tracking pixels. The saved ones keep loading; you can remove them, and adding new ones needs ${PLAN_NAMES[plans.pixels]}.`
+                : `Tracking pixels (${providers.map((provider) => PROVIDER_NAMES[provider.key]).join(", ")}) are part of ${PLAN_NAMES[plans.pixels]}.`}
             </PlanLock>
           )}
           <div className="grid gap-3 sm:grid-cols-2">
@@ -308,6 +320,7 @@ function PixelsEditor({ initial }: { initial: CodeMarketingSettings }) {
       {!isPage && (
         <ConversionsSection
           draft={draft}
+          plan={plans.conversions}
           setDraft={setDraft}
           settings={settings}
         />
@@ -339,16 +352,24 @@ function PixelsEditor({ initial }: { initial: CodeMarketingSettings }) {
   );
 }
 
-/** Owner pixels for hosted pages (Pro) and conversion tracking (Business). */
+/** Owner pixels for hosted pages and conversion tracking for website links. */
+/** The cheapest plans with pixels and with conversions (lib/plans.ts). */
+export interface PixelPlans {
+  pixels: PaidPlan | null;
+  conversions: PaidPlan | null;
+}
+
 export function PixelsPanel({
   settings,
+  plans,
 }: {
   settings: MarketingSettingsPromise;
+  plans: PixelPlans;
 }) {
   return (
     <Suspense fallback={<PanelFallback />}>
       <MarketingSettingsGate settings={settings} title="Tracking">
-        {(data) => <PixelsEditor initial={data} />}
+        {(data) => <PixelsEditor initial={data} plans={plans} />}
       </MarketingSettingsGate>
     </Suspense>
   );

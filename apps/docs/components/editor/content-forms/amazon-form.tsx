@@ -50,7 +50,7 @@ export function AmazonForm() {
     <div className="space-y-3">
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="amazon-product-url">
-          Amazon Product URL *
+          Amazon product URL *
         </Label>
         <Input
           id="amazon-product-url"
@@ -63,15 +63,10 @@ export function AmazonForm() {
         {errors.productUrl && (
           <p className="text-destructive text-[11px]">{errors.productUrl}</p>
         )}
-        {!errors.productUrl && (
-          <p className="text-muted-foreground text-[11px]">
-            Enter your Amazon product or store URL
-          </p>
-        )}
       </div>
 
       <p className="text-muted-foreground text-xs">
-        Scanning will open the Amazon product page
+        Scanning will open your Amazon product or store
       </p>
     </div>
   );

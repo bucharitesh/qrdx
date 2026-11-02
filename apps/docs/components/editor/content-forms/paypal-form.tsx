@@ -29,7 +29,7 @@ export function PayPalForm() {
     <div className="space-y-3">
       <div className="space-y-2">
         <Label className="text-xs" htmlFor="paypal-url">
-          PayPal.Me URL or Payment Link *
+          PayPal.Me URL or payment link *
         </Label>
         <Input
           id="paypal-url"
@@ -40,9 +40,6 @@ export function PayPalForm() {
             setPaypalData({ ...paypalData, paypalUrl: e.target.value })
           }
         />
-        <p className="text-muted-foreground text-[11px]">
-          Enter your PayPal.Me URL or a PayPal payment link
-        </p>
       </div>
 
       <p className="text-muted-foreground text-xs">

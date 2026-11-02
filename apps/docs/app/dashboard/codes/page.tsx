@@ -7,7 +7,7 @@ export const metadata = codesMetadata;
 
 type SearchParams = Record<string, string | string[] | undefined>;
 
-// /dashboard renders the same view; detail pages are /dashboard/codes/<id>.
+// The codes list (/dashboard is Home); detail pages are /dashboard/codes/<id>.
 export default function CodesPage({
   searchParams,
 }: {

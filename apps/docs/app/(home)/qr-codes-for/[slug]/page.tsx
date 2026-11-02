@@ -25,6 +25,7 @@ export async function generateMetadata({
     title: topic.seoTitle,
     description: topic.metaDescription,
     path: industries.path(topic.slug),
+    ownOgImage: true,
   });
 }
 

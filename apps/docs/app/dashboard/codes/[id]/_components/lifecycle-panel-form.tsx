@@ -26,6 +26,7 @@ import {
   setCodePaused,
   updateCodeLifecycle,
 } from "@/actions/code-lifecycle";
+import { type PaidPlan, PLAN_NAMES } from "@/lib/pricing";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 
 type UpdateInput = Parameters<typeof updateCodeLifecycle>[0];
@@ -99,11 +100,15 @@ function statusSummary(view: CodeLifecycleView) {
 
 export function LifecyclePanelForm({
   initial,
+  plan,
 }: {
   initial: CodeLifecycleView;
+  /** The cheapest plan with password, dates and scan limits (lib/plans.ts) */
+  plan: PaidPlan | null;
 }) {
   const router = useRouter();
-  const openGetProDialog = useGetProDialogStore((s) => s.openGetProDialog);
+  const openUpgradeDialog = useGetProDialogStore((s) => s.openUpgradeDialog);
+  const upgrade = () => openUpgradeDialog(plan ?? "pro");
   const [view, setView] = useState(initial);
   const [password, setPassword] = useState("");
   const [removePassword, setRemovePassword] = useState(false);
@@ -182,7 +187,7 @@ export function LifecyclePanelForm({
     startSaving(async () => {
       const result = await updateCodeLifecycle({ id: view.id, ...patch });
       if (!result.success) {
-        if (result.error.code === "PLAN_REQUIRED") openGetProDialog();
+        if (result.error.code === "PLAN_REQUIRED") upgrade();
         toast.error(result.error.message);
         return;
       }
@@ -260,11 +265,11 @@ export function LifecyclePanelForm({
           <div className="bg-muted/50 flex flex-col gap-3 rounded-lg border p-3 text-sm sm:flex-row sm:items-center sm:justify-between">
             <p>
               Passwords, start and end dates, scan limits and fallback URLs are
-              part of Pro.
+              part of {plan ? PLAN_NAMES[plan] : "a paid plan"}.
               {hasProSettings &&
                 " Your current settings keep working, and you can remove them any time."}
             </p>
-            <Button onClick={openGetProDialog} size="sm" type="button">
+            <Button onClick={upgrade} size="sm" type="button">
               Upgrade
             </Button>
           </div>

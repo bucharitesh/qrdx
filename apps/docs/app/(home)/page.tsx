@@ -24,6 +24,7 @@ import {
   PRICING,
   PRICING_CURRENCIES,
 } from "@/lib/pricing";
+import { founderSchema, organizationId } from "@/lib/seo-schema";
 
 export const metadata: Metadata = createMetadata({
   title: { absolute: siteTitle },
@@ -32,8 +33,6 @@ export const metadata: Metadata = createMetadata({
 });
 
 const url = (path: string): string => new URL(path, baseUrl).toString();
-
-const organizationId = url("/#organization");
 
 const { free, pro, business } = PLAN_LIMITS;
 
@@ -123,31 +122,10 @@ const softwareApplicationSchema = {
   softwareVersion: "latest",
   license: "https://www.gnu.org/licenses/agpl-3.0.html",
   publisher: { "@id": organizationId },
-  author: {
-    "@type": "Person",
-    name: "Ritesh Bucha",
-    url: "https://github.com/bucharitesh",
-  },
+  author: { "@id": founderSchema["@id"] },
 };
 
-const organizationSchema = {
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "@id": organizationId,
-  name: siteName,
-  url: url("/"),
-  logo: url("/logo.png"),
-  description:
-    "Open-source QR code platform: a free QR code generator, dynamic QR codes with hosted pages and scan analytics, and developer tools.",
-  email: "support@qrdx.dev",
-  foundingDate: "2024",
-  sameAs: ["https://github.com/bucharitesh/qrdx"],
-  contactPoint: {
-    "@type": "ContactPoint",
-    contactType: "customer support",
-    email: "support@qrdx.dev",
-  },
-};
+// The Organization node itself comes from the (home) layout (lib/seo-schema.ts).
 
 // No SearchAction: the site has no search results URL (docs search is a dialog).
 const webSiteSchema = {
@@ -168,13 +146,6 @@ export default function Home() {
         // biome-ignore lint/security/noDangerouslySetInnerHtml: schema markup requires raw JSON
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(softwareApplicationSchema),
-        }}
-      />
-      <script
-        type="application/ld+json"
-        // biome-ignore lint/security/noDangerouslySetInnerHtml: schema markup requires raw JSON
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(organizationSchema),
         }}
       />
       <script

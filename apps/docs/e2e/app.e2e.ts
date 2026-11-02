@@ -965,7 +965,7 @@ async function testOAuth(page: Page) {
     app =
       (await step(
         area,
-        "create an OAuth app in Settings → Developers",
+        "create an OAuth app in Settings → API keys & apps",
         async () => {
           await open(page, "/settings/developers/new");
           await fill(page, { label: "name" }, appName);

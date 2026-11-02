@@ -32,7 +32,6 @@ import { cn } from "@repo/design-system/lib/utils";
 import { ArrowSwapVertical, ExportSquare, InfoCircle } from "iconsax-reactjs";
 import * as React from "react";
 import { toast } from "sonner";
-import { NeedsSetupNote } from "@/components/needs-setup";
 import {
   IntegrationLogo,
   logoForIntegration,
@@ -83,10 +82,14 @@ export function DubshForm() {
   const { setValue, getContentConfig, setContentConfig } = useQREditorStore();
   const { links, isLoading, isMutating, isConnected, error, createLink } =
     useDubIntegration();
-  // Offer "Connect Dub" only where Dub is set up (production hides it).
+  // Offer "Connect Dub" only where Dub is set up: production hides it, and
+  // the editor never shows local dev's "needs setup" state as an option.
   const availability = useIntegrationAvailability();
-  const canConnect = Boolean(availability && !isHiddenIn(availability, "dub"));
-  const dubSetup = availability ? needsSetupIn(availability, "dub") : undefined;
+  const canConnect = Boolean(
+    availability &&
+      !isHiddenIn(availability, "dub") &&
+      !needsSetupIn(availability, "dub"),
+  );
 
   // Initialize from stored config or use defaults
   const storedConfig = getContentConfig("dubsh") as DubshContent | undefined;
@@ -200,17 +203,13 @@ export function DubshForm() {
           }
           className={errors.shortUrl ? "border-destructive" : ""}
         />
-        {errors.shortUrl ? (
+        {errors.shortUrl && (
           <p className="text-destructive text-[11px]">{errors.shortUrl}</p>
-        ) : (
-          <p className="text-muted-foreground text-[11px]">
-            Enter a Dub short link manually.
-          </p>
         )}
       </div>
 
       <p className="text-muted-foreground text-xs">
-        Scanning will redirect to your Dub short link.
+        Scanning will open your Dub short link.
       </p>
     </div>
   );
@@ -231,9 +230,8 @@ export function DubshForm() {
               <div className="space-y-1">
                 <p className="text-sm font-medium">Connect Dub</p>
                 <p className="text-muted-foreground text-xs leading-relaxed">
-                  Connect Dub to create, select, and track Dub-powered QR codes.
+                  Connect Dub to create, pick and track Dub links here.
                 </p>
-                <NeedsSetupNote names={dubSetup} />
               </div>
               <div className="flex flex-wrap gap-2">
                 <Button
@@ -284,7 +282,7 @@ export function DubshForm() {
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="create">Create new</TabsTrigger>
           <TabsTrigger value="select">Select existing</TabsTrigger>
-          <TabsTrigger value="manual">Manual URL</TabsTrigger>
+          <TabsTrigger value="manual">Paste a link</TabsTrigger>
         </TabsList>
 
         <TabsContent value="create" className="space-y-3">
@@ -326,7 +324,7 @@ export function DubshForm() {
               </div>
               <div className="space-y-2">
                 <Label className="text-xs" htmlFor="dub-key">
-                  Slug
+                  Custom ending
                 </Label>
                 <Input
                   id="dub-key"
@@ -389,15 +387,15 @@ export function DubshForm() {
         <TabsContent value="select" className="space-y-3">
           {isLoading ? (
             <div className="space-y-2">
-              <Label className="text-xs">Dub Short Link *</Label>
+              <Label className="text-xs">Dub short link *</Label>
               <Skeleton className="h-10 w-full" />
               <p className="text-muted-foreground text-[11px]">
-                Loading your Dub links...
+                Loading your Dub links…
               </p>
             </div>
           ) : (
             <div className="space-y-2">
-              <Label className="text-xs">Dub Short Link *</Label>
+              <Label className="text-xs">Dub short link *</Label>
               <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
                   <Button
@@ -422,7 +420,7 @@ export function DubshForm() {
                       </span>
                     ) : (
                       <span className="text-muted-foreground">
-                        Select a short link...
+                        Select a short link…
                       </span>
                     )}
                     <ArrowSwapVertical className="ml-2 size-4 shrink-0 opacity-50" />
@@ -430,7 +428,7 @@ export function DubshForm() {
                 </PopoverTrigger>
                 <PopoverContent className="w-[400px] p-0">
                   <Command>
-                    <CommandInput placeholder="Search links..." />
+                    <CommandInput placeholder="Search links…" />
                     <CommandList>
                       <CommandEmpty>No links found.</CommandEmpty>
                       <CommandGroup>
@@ -495,7 +493,7 @@ export function DubshForm() {
               )}
               {!errors.shortUrl && selectedLink && (
                 <p className="text-muted-foreground text-[11px]">
-                  Points to: {selectedLink.url}
+                  Scans go to {selectedLink.url}
                 </p>
               )}
             </div>
@@ -505,9 +503,11 @@ export function DubshForm() {
         <TabsContent value="manual">{manualForm}</TabsContent>
       </Tabs>
 
-      <p className="text-muted-foreground text-xs">
-        Scanning will redirect to the selected Dub short link.
-      </p>
+      {mode !== "manual" && (
+        <p className="text-muted-foreground text-xs">
+          Scanning will open your Dub short link.
+        </p>
+      )}
     </div>
   );
 }
