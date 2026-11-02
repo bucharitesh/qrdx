@@ -155,6 +155,7 @@ export function DesignControls({
 
       <ControlSection
         hint="eyes"
+        popover
         summary={eyeSummary(
           current.cornerEyePattern,
           current.cornerEyeDotPattern,
@@ -176,7 +177,7 @@ export function DesignControls({
         style={current}
       />
 
-      <ControlSection hint="frame" summary={frameSummary} title="Frame">
+      <ControlSection hint="frame" popover summary={frameSummary} title="Frame">
         <BorderControl />
         <FrameControls />
       </ControlSection>

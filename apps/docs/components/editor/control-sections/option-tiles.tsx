@@ -7,19 +7,42 @@ import { cn } from "@repo/design-system/lib/utils";
 import { SearchNormal1 } from "iconsax-reactjs";
 import * as React from "react";
 import { SHAPE_CATEGORIES } from "./shape-catalog";
+import {
+  offsetBeyond,
+  SidePanel,
+  useInsideSidePanel,
+  useSidePanelSide,
+} from "./side-panel";
 
-const GRID_KEYS = new Set([
-  "ArrowRight",
-  "ArrowLeft",
-  "ArrowDown",
-  "ArrowUp",
-  "Home",
-  "End",
-]);
+/**
+ * Where an arrow, Home or End key moves focus in a grid of `count` tiles,
+ * or null for any other key or when focus would stay put. Enter or Space
+ * picks the focused tile (they are buttons).
+ */
+export function gridMove(
+  key: string,
+  index: number,
+  count: number,
+  columns: number,
+): number | null {
+  if (index < 0 || count === 0) return null;
+  const step: Record<string, number> = {
+    ArrowRight: 1,
+    ArrowLeft: -1,
+    ArrowDown: Math.max(1, columns),
+    ArrowUp: -Math.max(1, columns),
+  };
+  let next: number;
+  if (key === "Home") next = 0;
+  else if (key === "End") next = count - 1;
+  else if (key in step) next = index + (step[key] ?? 0);
+  else return null;
+  const clamped = Math.max(0, Math.min(count - 1, next));
+  return clamped === index ? null : clamped;
+}
 
 /** Arrow keys move focus between the tiles of a grid; Enter or Space picks. */
 function onGridKeyDown(event: React.KeyboardEvent<HTMLElement>) {
-  if (!GRID_KEYS.has(event.key)) return;
   const grid = event.currentTarget;
   const tiles = [
     ...grid.querySelectorAll<HTMLButtonElement>(":scope > button"),
@@ -29,20 +52,9 @@ function onGridKeyDown(event: React.KeyboardEvent<HTMLElement>) {
   const columns =
     getComputedStyle(grid).gridTemplateColumns.split(" ").filter(Boolean)
       .length || 1;
-  const step: Record<string, number> = {
-    ArrowRight: 1,
-    ArrowLeft: -1,
-    ArrowDown: columns,
-    ArrowUp: -columns,
-  };
-  const next =
-    event.key === "Home"
-      ? 0
-      : event.key === "End"
-        ? tiles.length - 1
-        : index + (step[event.key] ?? 0);
-  const target = tiles[Math.max(0, Math.min(tiles.length - 1, next))];
-  if (target && target !== tiles[index]) {
+  const next = gridMove(event.key, index, tiles.length, columns);
+  const target = next === null ? undefined : tiles[next];
+  if (target) {
     event.preventDefault();
     target.focus();
   }
@@ -262,9 +274,12 @@ interface ShapePickerProps<T extends string> {
 }
 
 /**
- * Most-used first: a row of small tiles plus "More", which opens an inline
- * browser (search, category chips, every option) right under the row, so
- * the code preview stays in view while you try shapes.
+ * Most-used first: a row of small tiles plus "More", which opens the full
+ * catalog (search, category chips, every option) in a side panel beside the
+ * design panel (a bottom sheet on phones), so the code preview stays in view
+ * while you try shapes. Picking applies at once and keeps the panel open.
+ * Already inside a side panel (a section opened at the side), the catalog
+ * opens in place instead of stacking a second panel.
  */
 export function ShapePicker<T extends string>({
   label,
@@ -279,12 +294,29 @@ export function ShapePicker<T extends string>({
   riskOf,
   blockedOf,
 }: ShapePickerProps<T>) {
+  const inPanel = useInsideSidePanel();
+  const side = useSidePanelSide();
   const [open, setOpen] = React.useState(false);
+  // How far the catalog sits from the More tile: enough to clear the whole
+  // picker row (and so the design panel's edge), measured as it opens.
+  const [sideOffset, setSideOffset] = React.useState(28);
   const [query, setQuery] = React.useState("");
   const [filter, setFilter] = React.useState("all");
   const browserId = React.useId();
   const moreRef = React.useRef<HTMLButtonElement>(null);
   const searchRef = React.useRef<HTMLInputElement>(null);
+  const gridRef = React.useRef<HTMLDivElement>(null);
+  /** The whole picker row: the catalog opens beyond it, clear of the panel. */
+  const rootRef = React.useRef<HTMLDivElement>(null);
+
+  const openCatalog = (next: boolean) => {
+    const tile = moreRef.current?.getBoundingClientRect();
+    const row = rootRef.current?.getBoundingClientRect();
+    // The row sits in the panel's 16px padding: 28px past it leaves the same
+    // 12px gap beyond the panel's edge that the section rows get.
+    if (next && tile && row) setSideOffset(offsetBeyond(side, tile, row, 28));
+    setOpen(next);
+  };
 
   const byId = new Map(options.map((option) => [option.id, option]));
   const row = featured.includes(value)
@@ -307,21 +339,177 @@ export function ShapePicker<T extends string>({
     counts.set(key, (counts.get(key) ?? 0) + 1);
   }
 
-  const close = () => {
+  const closeInline = () => {
     setOpen(false);
     moreRef.current?.focus();
   };
 
   React.useEffect(() => {
-    if (!open) return;
+    if (!(open && inPanel)) return;
     // Jump to search with a mouse or keyboard; on touch it would pop the keyboard.
     if (window.matchMedia("(pointer: fine)").matches) {
       searchRef.current?.focus({ preventScroll: true });
     }
-  }, [open]);
+  }, [open, inPanel]);
+
+  /** ArrowDown from search goes to the picked tile (or the first one). */
+  const focusGrid = () => {
+    const grid = gridRef.current;
+    const target =
+      grid?.querySelector<HTMLButtonElement>(
+        'button[aria-pressed="true"]:not(:disabled)',
+      ) ?? grid?.querySelector<HTMLButtonElement>("button:not(:disabled)");
+    target?.focus();
+  };
+
+  const moreTile = (
+    <button
+      aria-controls={inPanel ? browserId : undefined}
+      aria-expanded={open}
+      aria-haspopup={inPanel ? undefined : "dialog"}
+      aria-label={`More ${noun}`}
+      className={cn(
+        SMALL_TILE,
+        "bg-muted/40 text-muted-foreground hover:text-foreground flex flex-col items-center justify-center gap-0 text-center",
+        open && "border-foreground/30 bg-accent text-foreground",
+      )}
+      onClick={
+        inPanel ? () => (open ? closeInline() : setOpen(true)) : undefined
+      }
+      ref={moreRef}
+      title={`All ${options.length} ${noun}`}
+      type="button"
+    >
+      <span className="text-sm font-semibold tabular-nums leading-none">
+        {inPanel && open ? "Less" : `+${options.length - row.length}`}
+      </span>
+      {!(inPanel && open) && (
+        <span className="mt-1 text-[10px] leading-none">More</span>
+      )}
+    </button>
+  );
+
+  const catalog = (
+    <div className="space-y-2.5">
+      <div
+        className={cn(
+          "space-y-2.5",
+          // In a side panel the search and filters stay put while the grid scrolls.
+          !inPanel && "bg-popover sticky top-0 z-10 -mx-3 px-3 pb-1",
+        )}
+      >
+        <div className="flex items-center gap-1.5">
+          <div className="relative min-w-0 flex-1">
+            <SearchNormal1
+              aria-hidden
+              className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 size-3.5 -translate-y-1/2"
+            />
+            <Input
+              aria-label={`Search ${noun}`}
+              className="h-8 pl-8 text-sm"
+              onChange={(event) => setQuery(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === "ArrowDown") {
+                  event.preventDefault();
+                  focusGrid();
+                }
+              }}
+              placeholder={`Search ${options.length} ${noun}`}
+              ref={searchRef}
+              value={query}
+            />
+          </div>
+          {inPanel && (
+            <Button
+              aria-label={`Close ${noun}`}
+              onClick={closeInline}
+              size="icon-sm"
+              type="button"
+              variant="ghost"
+            >
+              <Close />
+            </Button>
+          )}
+        </div>
+
+        <div
+          aria-label={`Filter ${noun}`}
+          // One line that scrolls sideways if the panel is narrow.
+          className="no-scrollbar -mx-2.5 flex gap-0.5 overflow-x-auto px-2.5 [mask-image:linear-gradient(to_right,transparent,black_10px,black_calc(100%-16px),transparent)]"
+          role="toolbar"
+        >
+          {[
+            { id: "all", label: "All", count: options.length },
+            ...categories
+              .filter((item) => counts.has(item.id))
+              .map((item) => ({ ...item, count: counts.get(item.id) ?? 0 })),
+          ].map((chip) => (
+            <Button
+              aria-pressed={filter === chip.id}
+              className="h-7 shrink-0 gap-1 px-2 text-xs"
+              key={chip.id}
+              onClick={() => setFilter(chip.id)}
+              size="sm"
+              type="button"
+              variant={filter === chip.id ? "secondary" : "ghost"}
+            >
+              {chip.label}
+              <span className="text-muted-foreground tabular-nums">
+                {chip.count}
+              </span>
+            </Button>
+          ))}
+        </div>
+      </div>
+
+      {visible.length > 0 ? (
+        <div
+          className={cn(
+            "-mx-1 px-1 pt-1 pb-1",
+            inPanel && "max-h-[18.5rem] overflow-y-auto overscroll-contain",
+          )}
+          ref={gridRef}
+        >
+          <OptionGrid
+            // The side panel is wide enough for 4 to 5 columns.
+            className={inPanel ? undefined : "grid-cols-4 @[25rem]:grid-cols-5"}
+            label={label}
+          >
+            {visible.map((option) => (
+              <OptionTile
+                blocked={value !== option.id && blockedOf?.(option.id)}
+                key={option.id}
+                name={option.name}
+                onSelect={() => onChange(option.id)}
+                risk={riskOf?.(option.id)}
+                selected={value === option.id}
+              >
+                {preview(option.id)}
+              </OptionTile>
+            ))}
+          </OptionGrid>
+        </div>
+      ) : (
+        <div className="text-muted-foreground flex flex-col items-center gap-2 py-6 text-center text-xs">
+          No {noun} match "{query}".
+          <Button
+            onClick={() => {
+              setQuery("");
+              setFilter("all");
+            }}
+            size="sm"
+            type="button"
+            variant="outline"
+          >
+            Show all
+          </Button>
+        </div>
+      )}
+    </div>
+  );
 
   return (
-    <div>
+    <div ref={rootRef}>
       <div className="mb-2 flex items-baseline justify-between gap-3 text-xs">
         <span className="text-muted-foreground font-medium">{label}</span>
         <span className="flex min-w-0 items-baseline gap-1.5 truncate">
@@ -350,127 +538,36 @@ export function ShapePicker<T extends string>({
             {preview(id)}
           </CompactTile>
         ))}
-        <button
-          aria-controls={browserId}
-          aria-expanded={open}
-          aria-label={`More ${noun}`}
-          className={cn(
-            SMALL_TILE,
-            "bg-muted/40 text-muted-foreground hover:text-foreground flex flex-col items-center justify-center gap-0 text-center",
-            open && "border-foreground/30 bg-accent text-foreground",
-          )}
-          onClick={() => (open ? close() : setOpen(true))}
-          ref={moreRef}
-          title={`All ${options.length} ${noun}`}
-          type="button"
-        >
-          <span className="text-sm font-semibold tabular-nums leading-none">
-            {open ? "Less" : `+${options.length - row.length}`}
-          </span>
-          {!open && <span className="mt-1 text-[10px] leading-none">More</span>}
-        </button>
+        {inPanel ? (
+          moreTile
+        ) : (
+          <SidePanel
+            description={`All ${options.length} ${noun}. Picking one applies it right away.`}
+            initialFocus={searchRef}
+            onOpenChange={openCatalog}
+            open={open}
+            sideOffset={sideOffset}
+            title={label}
+            trigger={moreTile}
+          >
+            {catalog}
+          </SidePanel>
+        )}
       </OptionGrid>
 
-      {open && (
+      {inPanel && open && (
         // biome-ignore lint/a11y/noStaticElementInteractions: Escape closes the browser from anywhere inside it.
         <div
-          className="bg-muted/30 animate-in fade-in-0 slide-in-from-top-1 mt-2 space-y-2.5 rounded-xl border p-2.5 duration-200 motion-reduce:animate-none"
+          className="bg-muted/30 animate-in fade-in-0 slide-in-from-top-1 mt-2 rounded-xl border p-2.5 duration-200 motion-reduce:animate-none"
           id={browserId}
           onKeyDown={(event) => {
             if (event.key === "Escape") {
               event.stopPropagation();
-              close();
+              closeInline();
             }
           }}
         >
-          <div className="flex items-center gap-1.5">
-            <div className="relative min-w-0 flex-1">
-              <SearchNormal1
-                aria-hidden
-                className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 size-3.5 -translate-y-1/2"
-              />
-              <Input
-                aria-label={`Search ${noun}`}
-                className="h-8 pl-8 text-sm"
-                onChange={(event) => setQuery(event.target.value)}
-                placeholder={`Search ${options.length} ${noun}`}
-                ref={searchRef}
-                value={query}
-              />
-            </div>
-            <Button
-              aria-label={`Close ${noun}`}
-              onClick={close}
-              size="icon-sm"
-              type="button"
-              variant="ghost"
-            >
-              <Close />
-            </Button>
-          </div>
-
-          <div
-            aria-label={`Filter ${noun}`}
-            // One line that scrolls sideways if the panel is narrow.
-            className="no-scrollbar -mx-2.5 flex gap-0.5 overflow-x-auto px-2.5 [mask-image:linear-gradient(to_right,transparent,black_10px,black_calc(100%-16px),transparent)]"
-            role="toolbar"
-          >
-            {[
-              { id: "all", label: "All", count: options.length },
-              ...categories
-                .filter((item) => counts.has(item.id))
-                .map((item) => ({ ...item, count: counts.get(item.id) ?? 0 })),
-            ].map((chip) => (
-              <Button
-                aria-pressed={filter === chip.id}
-                className="h-7 shrink-0 gap-1 px-2 text-xs"
-                key={chip.id}
-                onClick={() => setFilter(chip.id)}
-                size="sm"
-                type="button"
-                variant={filter === chip.id ? "secondary" : "ghost"}
-              >
-                {chip.label}
-                <span className="text-muted-foreground tabular-nums">
-                  {chip.count}
-                </span>
-              </Button>
-            ))}
-          </div>
-
-          {visible.length > 0 ? (
-            <div className="-mx-1 max-h-[18.5rem] overflow-y-auto overscroll-contain px-1 pt-1 pb-1">
-              <OptionGrid label={label}>
-                {visible.map((option) => (
-                  <OptionTile
-                    blocked={value !== option.id && blockedOf?.(option.id)}
-                    key={option.id}
-                    name={option.name}
-                    onSelect={() => onChange(option.id)}
-                    risk={riskOf?.(option.id)}
-                    selected={value === option.id}
-                  >
-                    {preview(option.id)}
-                  </OptionTile>
-                ))}
-              </OptionGrid>
-            </div>
-          ) : (
-            <div className="text-muted-foreground flex flex-col items-center gap-2 py-6 text-center text-xs">
-              No {noun} match "{query}".
-              <Button
-                onClick={() => {
-                  setQuery("");
-                  setFilter("all");
-                }}
-                size="sm"
-                type="button"
-                variant="outline"
-              >
-                Show all
-              </Button>
-            </div>
-          )}
+          {catalog}
         </div>
       )}
     </div>
