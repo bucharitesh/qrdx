@@ -4,6 +4,7 @@ import { FAQSection } from "@/components/sections/faq-section";
 import { HeroSection } from "@/components/sections/hero-section";
 import { HeroVideoSection } from "@/components/sections/hero-video-section";
 import { FeatureRowsSection } from "@/components/sections/home/feature-rows-section";
+import { GallerySection } from "@/components/sections/home/gallery-section";
 import { UseCasesSection } from "@/components/sections/home/use-cases-section";
 import { isArtAvailable } from "@/lib/ai/art-availability";
 import { isFeatureAvailable } from "@/lib/feature-availability";
@@ -157,6 +158,7 @@ export default function Home() {
       />
       <main className="flex flex-col items-center justify-center divide-y divide-border min-h-screen w-full">
         <HeroSection />
+        <GallerySection />
         <UseCasesSection />
         <AsciiDivider />
         <FeatureRowsSection />
