@@ -49,6 +49,10 @@ jobs:
       - name: Build qrdx
         run: pnpm turbo build --filter=qrdx
 
+      # The CLI tests run its built dist/index.js.
+      - name: Build CLI
+        run: pnpm --filter @qrdx/cli build
+
       - name: Typecheck packages
         run: pnpm typecheck
 
@@ -57,8 +61,12 @@ jobs:
           pnpm --filter docs exec next typegen
           pnpm typecheck:docs
 
-      # Tests run locally before every push (.husky/pre-push → pnpm prepush),
-      # not here.
+      # All package tests. They used to run inside `turbo build` (on Vercel and
+      # here, through "Build qrdx"); build no longer depends on test, so this
+      # job is where they run, and branch protection requires it. They also
+      # run locally before every push (.husky/pre-push → pnpm prepush).
+      - name: Test
+        run: pnpm test
 
       # Biome is a devDependency of apps/docs; run it over the whole repo.
       - name: Lint (Biome)

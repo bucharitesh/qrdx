@@ -465,11 +465,10 @@ export const qrCode = pgTable(
       onDelete: "set null",
     }),
     // Generated (7 base62 characters) or a custom back-half (3–64 of
-    // [A-Za-z0-9_-]), case-sensitive. Unique per slug_scope, and per domain.
-    // The global .unique() stays until manual-sql/0010 drops it, after the
-    // code that reads slug_scope is deployed (the code before it relies on
-    // ON CONFLICT (slug)).
-    slug: text("slug").notNull().unique(),
+    // [A-Za-z0-9_-]), case-sensitive. Unique per slug_scope, and per domain
+    // (the two unique indexes below, from manual-sql/0009). The old global
+    // unique constraint was dropped by manual-sql/0010 on 2 Nov 2026.
+    slug: text("slug").notNull(),
     // Namespace of the slug: '' = shared (qrdx.dev/q/<slug>: generated slugs
     // and back-halves chosen on the default link), else the custom_domain id
     // a back-half was chosen on (only https://<domain>/<slug>). Plain text,
