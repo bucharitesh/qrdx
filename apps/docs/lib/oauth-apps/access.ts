@@ -14,9 +14,8 @@ export function isFirstPartyApp(app: OAuthAppOwnership): boolean {
 }
 
 /**
- * The app belongs to the active workspace: a team's apps in that team, the
- * user's own apps (made outside any team) in their personal workspace.
- * First-party apps belong to no workspace.
+ * The app belongs to the open workspace (apps are made in one). First-party
+ * apps belong to no workspace.
  */
 export function isAppInScope(
   scope: Pick<ActiveScope, "userId" | "organizationId">,
@@ -31,7 +30,7 @@ export function isAppInScope(
 /**
  * Only owners create, edit, delete apps or regenerate their secrets: team
  * owners in a team (admins and members can look), and the user in their
- * personal workspace (where their role is always "owner").
+ * own workspace (where their role is always "owner").
  */
 export function canManageOAuthApps(scope: Pick<ActiveScope, "role">): boolean {
   return scope.role === "owner";

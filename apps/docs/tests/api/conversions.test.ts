@@ -50,7 +50,17 @@ vi.mock("@/lib/plans", async (importOriginal) => ({
   getPlanForScope: async (scope: {
     userId: string;
     organizationId: string | null;
-  }) => state.plans[scope.organizationId ?? scope.userId] ?? "free",
+  }) => {
+    // Someone's own workspace runs on their own plan (lib/plans.ts).
+    const { isOwnWorkspaceOf } = await import("@repo/auth/own-workspace-id");
+    const own =
+      !scope.organizationId ||
+      isOwnWorkspaceOf(scope.organizationId, scope.userId);
+    return (
+      state.plans[own ? scope.userId : (scope.organizationId as string)] ??
+      "free"
+    );
+  },
 }));
 vi.mock("@/lib/shared", () => ({ logError: () => {} }));
 

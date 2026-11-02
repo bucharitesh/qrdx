@@ -9,9 +9,12 @@ import {
 
 /** Overview · Analytics · Settings. Each tab is its own URL. */
 export function CodeTabsNav({
+  slug,
   codeId,
   current,
 }: {
+  /** The workspace's slug */
+  slug: string;
   codeId: string;
   current: CodeTab;
 }) {
@@ -30,7 +33,7 @@ export function CodeTabsNav({
                     ? "border-foreground text-foreground"
                     : "text-muted-foreground hover:text-foreground border-transparent",
                 )}
-                href={codeTabHref(codeId, tab)}
+                href={codeTabHref(slug, codeId, tab)}
                 scroll={false}
               >
                 {CODE_TAB_LABELS[tab]}

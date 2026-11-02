@@ -27,6 +27,7 @@ import {
 } from "@/actions/qr-codes";
 import { emitSound } from "@/components/editor/sound";
 import { InfoHint } from "@/components/help/info-hint";
+import { useWorkspaceHref } from "@/components/workspace-provider";
 import { track } from "@/lib/analytics";
 import { usePostLoginAction } from "@/lib/hooks/use-post-login-action";
 import { useAuthStore } from "@/store/auth-store";
@@ -145,6 +146,7 @@ const choiceItemClass =
  * design and content, which the editor store keeps.
  */
 export function DynamicLinkToggle() {
+  const inWorkspace = useWorkspaceHref();
   const { data: session, isPending: isSessionPending } =
     authClient.useSession();
   const userId = session?.user?.id ?? null;
@@ -391,7 +393,7 @@ export function DynamicLinkToggle() {
               Upgrade to Pro
             </Button>
             <Button asChild size="sm" variant="outline">
-              <Link href="/dashboard/codes">Manage codes</Link>
+              <Link href={inWorkspace("/codes")}>Manage codes</Link>
             </Button>
           </div>
         </div>
@@ -450,7 +452,9 @@ export function DynamicLinkToggle() {
               {designSaved ? "Design saved" : "Save design to code"}
             </Button>
             <Button asChild size="sm" variant="ghost">
-              <Link href={`/dashboard/codes/${encodeURIComponent(linked.id)}`}>
+              <Link
+                href={inWorkspace(`/codes/${encodeURIComponent(linked.id)}`)}
+              >
                 Scans & settings
                 <ArrowRight />
               </Link>

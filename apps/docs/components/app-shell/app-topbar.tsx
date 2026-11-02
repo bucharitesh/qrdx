@@ -6,22 +6,24 @@ import { usePathname } from "next/navigation";
 import bar from "@/components/header-bar.module.css";
 import { QrdxLogo } from "@/components/qrdx-logo";
 import { UserProfileDropdown } from "@/components/user-profile-dropdown";
+import { workspaceHref } from "@/lib/workspace-paths";
 import { CommandMenu } from "./command-menu";
 import { CreateMenu } from "./create-menu";
 import { HelpMenu } from "./help-menu";
 import { MobileNav } from "./mobile-nav";
-import { findActiveNavItem, isSettingsPath, SETTINGS_HOME } from "./nav-config";
+import { findActiveNavItem, isSettingsPath, settingsHome } from "./nav-config";
 import type { ShellData } from "./shell-data";
 
 /** "Dashboard / Codes" or "Settings / Plan & usage", from the current path. */
-function Breadcrumb() {
+function Breadcrumb({ slug }: { slug: string | null }) {
   const pathname = usePathname();
   const inSettings = isSettingsPath(pathname);
-  const item = findActiveNavItem(pathname);
+  const home = slug ? workspaceHref(slug) : "/dashboard";
+  const item = slug ? findActiveNavItem(pathname, slug) : undefined;
   const area = inSettings
-    ? { label: "Settings", href: SETTINGS_HOME }
-    : { label: "Dashboard", href: "/dashboard" };
-  const page = item && item.href !== "/dashboard" ? item : null;
+    ? { label: "Settings", href: slug ? settingsHome(slug) : "/settings" }
+    : { label: "Dashboard", href: home };
+  const page = item && item.href !== home ? item : null;
 
   return (
     <nav aria-label="Breadcrumb" className="min-w-0">
@@ -60,11 +62,12 @@ function Breadcrumb() {
 }
 
 /**
- * The app's own top bar (/dashboard, /settings), 48px: logo, where you are,
+ * The app's own top bar (/dashboard/<slug>, /settings), 48px: logo, where you are,
  * ⌘K, Create, Help and the account menu. No marketing menus; the site keeps
  * its own header.
  */
 export function AppTopBar({ shell }: { shell: ShellData | null }) {
+  const slug = shell?.workspace.slug ?? null;
   return (
     // z-40: backdrop-blur makes the bar its own stacking context, so its
     // menus would otherwise sit under positioned page content.
@@ -80,14 +83,14 @@ export function AppTopBar({ shell }: { shell: ShellData | null }) {
         <Link
           aria-label="QRdx dashboard"
           className="flex shrink-0 items-center rounded-md p-1"
-          href="/dashboard"
+          href={slug ? workspaceHref(slug) : "/dashboard"}
         >
           <QrdxLogo className="fill-secondary-foreground size-5" />
         </Link>
         <span aria-hidden className="text-border hidden text-lg sm:inline">
           /
         </span>
-        <Breadcrumb />
+        <Breadcrumb slug={slug} />
 
         <div className="ml-auto flex shrink-0 items-center gap-1.5 md:gap-2">
           <CommandMenu />

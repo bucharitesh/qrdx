@@ -8,6 +8,7 @@ import {
 import Link from "next/link";
 import { PageHeader } from "@/components/app-shell/page-header";
 import { PLAN_NAMES } from "@/lib/pricing";
+import { workspaceHref } from "@/lib/workspace-paths";
 import type { HomeData } from "./home-data";
 import { NewCodeButton } from "./new-code-button";
 import { SetupChecklist } from "./setup-checklist";
@@ -44,8 +45,9 @@ const STATUS_LABELS = {
 } as const;
 
 /** The app's front page: setup, the numbers that matter, the newest codes. */
-export function HomeView({ data }: { data: HomeData }) {
-  const workspace = data.teamName ?? "Personal workspace";
+export function HomeView({ data, slug }: { data: HomeData; slug: string }) {
+  const workspace = data.teamName ?? "Workspace";
+  const href = (path: string) => workspaceHref(slug, path);
 
   return (
     <div className="space-y-6">
@@ -56,11 +58,11 @@ export function HomeView({ data }: { data: HomeData }) {
         <NewCodeButton />
       </PageHeader>
 
-      <SetupChecklist isTeam={data.teamName !== null} tasks={data.tasks} />
+      <SetupChecklist tasks={data.tasks} />
 
       <div className="grid grid-cols-3 gap-2 sm:gap-3">
         <Stat
-          href="/dashboard/codes"
+          href={href("/codes")}
           label="Dynamic QR codes"
           value={
             data.codes.limit === null
@@ -69,12 +71,12 @@ export function HomeView({ data }: { data: HomeData }) {
           }
         />
         <Stat
-          href="/dashboard/analytics"
+          href={href("/analytics")}
           label="Scans, all time"
           value={number(data.totalScans)}
         />
         <Stat
-          href="/dashboard/pages"
+          href={href("/pages")}
           label="Landing pages"
           value={number(data.pages)}
         />
@@ -86,7 +88,7 @@ export function HomeView({ data }: { data: HomeData }) {
           {data.recent.length > 0 && (
             <Link
               className="text-muted-foreground hover:text-foreground text-sm underline-offset-4 hover:underline"
-              href="/dashboard/codes"
+              href={href("/codes")}
             >
               View all
             </Link>
@@ -111,7 +113,7 @@ export function HomeView({ data }: { data: HomeData }) {
                   <li key={code.id}>
                     <Link
                       className="hover:bg-muted/50 focus-visible:ring-ring/50 flex items-center gap-4 rounded-md px-2 py-3 outline-none focus-visible:ring-[3px]"
-                      href={`/dashboard/codes/${encodeURIComponent(code.id)}`}
+                      href={href(`/codes/${encodeURIComponent(code.id)}`)}
                     >
                       <div className="min-w-0 flex-1">
                         <div className="truncate text-sm font-medium">

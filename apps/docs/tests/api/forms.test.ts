@@ -97,7 +97,7 @@ vi.mock("@/lib/shared", () => ({ logError: () => {} }));
 
 const forms = await import("@/app/api/forms/[pageId]/route");
 const exportRoute = await import(
-  "@/app/dashboard/pages/[id]/responses/export/route"
+  "@/app/dashboard/[workspace]/pages/[id]/responses/export/route"
 );
 
 const ORIGIN = "http://localhost:3000";
@@ -218,6 +218,10 @@ beforeEach(() => {
   state.turnstileCalls = [];
   state.emitted = [];
   state.cookies = new Map();
+  // Workspaces are organizations; members point at them.
+  fakeDb.seed("organization", [
+    { id: "org_acme", name: "Acme", slug: "acme", createdAt: NOW },
+  ]);
   page("page_1");
   pageCode("page_1");
 });

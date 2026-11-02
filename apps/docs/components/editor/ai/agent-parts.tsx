@@ -24,6 +24,7 @@ import type {
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
 import { useChatContext } from "@/lib/hooks/use-chat-context";
 import { designQRProps } from "@/lib/qr-design/props";
+import { dashboardEntry } from "@/lib/workspace-paths";
 import { useQREditorStore } from "@/store/editor-store";
 import type { ChatMessage } from "@/types/ai";
 import type { ThemeStyles } from "@/types/theme";
@@ -621,7 +622,7 @@ export function SaveTemplateCard({
               size="sm"
               variant="ghost"
             >
-              <Link href="/dashboard/themes">Open themes</Link>
+              <Link href={dashboardEntry("themes")}>Open themes</Link>
             </Button>
           </>
         ) : limitReached ? (

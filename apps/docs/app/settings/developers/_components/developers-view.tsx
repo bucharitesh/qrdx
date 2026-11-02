@@ -14,7 +14,13 @@ const QUICKSTART_HREF = "/docs/developers/quickstart";
 const INTEGRATION_DOCS_HREF = "/docs/developers/build-an-integration";
 
 /** The open workspace's OAuth apps, for integrations other people install. */
-function OAuthAppsSection({ overview }: { overview: OAuthAppsOverview }) {
+function OAuthAppsSection({
+  overview,
+  base,
+}: {
+  overview: OAuthAppsOverview;
+  base: string;
+}) {
   const { apps, limit, plan, canManage, isTeam } = overview;
   const atLimit = apps.length >= limit;
 
@@ -48,7 +54,7 @@ function OAuthAppsSection({ overview }: { overview: OAuthAppsOverview }) {
               </Button>
             ) : (
               <Button asChild size="sm" variant="outline">
-                <Link href="/settings/developers/new">
+                <Link href={`${base}/new`}>
                   <Add />
                   New app
                 </Link>
@@ -84,7 +90,7 @@ function OAuthAppsSection({ overview }: { overview: OAuthAppsOverview }) {
           No OAuth apps yet. You only need one to act for other QRdx users.
         </p>
       ) : (
-        <OAuthAppList apps={apps} />
+        <OAuthAppList apps={apps} base={base} />
       )}
     </section>
   );
@@ -95,11 +101,14 @@ export function DevelopersView({
   overview,
   keys,
   apiBase,
+  base,
   openCreate,
 }: {
   overview: OAuthAppsOverview;
   keys: ApiKeysState;
   apiBase: string;
+  /** This page: /dashboard/<workspace>/settings/developers */
+  base: string;
   openCreate: boolean;
 }) {
   return (
@@ -124,7 +133,7 @@ export function DevelopersView({
         workspaceName={overview.workspaceName}
       />
 
-      <OAuthAppsSection overview={overview} />
+      <OAuthAppsSection base={base} overview={overview} />
     </div>
   );
 }

@@ -1,5 +1,6 @@
 "use server";
 
+import { isOwnWorkspaceOf } from "@repo/auth/own-workspace-id";
 import { database as db, qrPreset as themeTable } from "@repo/database";
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import cuid from "cuid";
@@ -12,6 +13,7 @@ import {
   canManageTeamThemes,
   countThemesInScope,
   findThemeById,
+  isPersonalTheme,
   listVisibleThemes,
   ownerScope,
   setOnlyDefaultTheme,
@@ -25,6 +27,7 @@ import type {
 import { getPlan, getPlanForScope, getPlanLimits } from "@/lib/plans";
 import { getActiveScope } from "@/lib/scope";
 import { getCurrentUserId, logError } from "@/lib/shared";
+import { ensureOwnWorkspaceFor } from "@/lib/workspaces";
 import {
   actionError,
   actionSuccess,
@@ -88,12 +91,12 @@ async function allowMutation(userId: string): Promise<boolean> {
 }
 
 function revalidate() {
-  revalidatePath("/dashboard/themes");
+  revalidatePath("/dashboard", "layout");
 }
 
 /**
- * Themes the signed-in user can pick from: their personal themes plus, while
- * a team is active, the team's shared themes. Empty when signed out.
+ * Themes the signed-in user can pick from: their own plus, in another
+ * workspace, its shared themes. Empty when signed out.
  */
 export async function getThemes(): Promise<SavedTheme[]> {
   try {
@@ -125,7 +128,11 @@ export const getTheme = cache(async (themeId: string) => {
   }
 });
 
-/** Saves a personal theme (Free: up to the plan's saved-theme limit). */
+/**
+ * Saves one of your themes, in your own workspace (Free: up to the plan's
+ * saved-theme limit). Owners and admins share it with another workspace
+ * with copyThemeToTeam.
+ */
 export async function createTheme(formData: {
   name: string;
   style: ThemeStyles;
@@ -139,7 +146,8 @@ export async function createTheme(formData: {
     }
     if (!(await allowMutation(userId))) throw new ValidationError(TOO_MANY);
 
-    const personal = { userId, organizationId: null };
+    const own = await ensureOwnWorkspaceFor(userId);
+    const personal = { userId, organizationId: own.id };
     const limit = getPlanLimits(await getPlan(userId)).savedThemes;
     const limitReached = () =>
       actionError(
@@ -155,6 +163,7 @@ export async function createTheme(formData: {
       .values({
         id: cuid(),
         userId,
+        organizationId: own.id,
         name,
         style,
         createdAt: now,
@@ -282,8 +291,8 @@ export async function setDefaultTheme(
     const theme = await findThemeById(parsed.data);
     if (!theme || !canEditTheme(scope, theme)) {
       return fail(
-        theme?.organizationId
-          ? "Only team owners and admins can change the team's default theme."
+        theme && !isPersonalTheme(theme, scope.userId)
+          ? "Only workspace owners and admins can change its default theme."
           : "Theme not found.",
       );
     }
@@ -304,7 +313,7 @@ export async function setDefaultTheme(
   }
 }
 
-/** Copies one of your personal themes into the active team's shared themes. */
+/** Copies one of your themes into the open workspace's shared themes. */
 export async function copyThemeToTeam(
   themeId: string,
 ): Promise<ThemeActionResult<{ id: string }>> {
@@ -312,18 +321,18 @@ export async function copyThemeToTeam(
     const scope = await getActiveScope();
     const parsed = idSchema.safeParse(themeId);
     if (!parsed.success) return fail("Theme not found.");
-    if (!scope.organizationId) {
-      return fail("Switch to a team to share themes with it.");
+    if (isOwnWorkspaceOf(scope.organizationId, scope.userId)) {
+      return fail("Open another workspace to share themes with it.");
     }
     if (!canManageTeamThemes(scope)) {
-      return fail("Only team owners and admins can add team themes.");
+      return fail("Only workspace owners and admins can share themes here.");
     }
     if (!(await allowMutation(scope.userId))) return fail(TOO_MANY);
 
     const limits = getPlanLimits(await getPlanForScope(scope));
     if (!limits.teamThemes) {
       return fail(
-        `Team themes are part of the ${teamThemesPlanName()} plan (based on the team owner's plan).`,
+        `Shared themes are part of the ${teamThemesPlanName()} plan (based on the workspace owner's plan).`,
         scope.role === "owner",
       );
     }
@@ -331,14 +340,16 @@ export async function copyThemeToTeam(
       Number.isFinite(limits.savedThemes) &&
       (await countThemesInScope(scope)) >= limits.savedThemes
     ) {
-      return fail(`This team's plan includes ${limits.savedThemes} themes.`);
+      return fail(
+        `This workspace's plan includes ${limits.savedThemes} themes.`,
+      );
     }
 
     const theme = await findThemeById(parsed.data);
     if (
       !theme ||
-      theme.organizationId !== null ||
-      theme.userId !== scope.userId
+      theme.userId !== scope.userId ||
+      !isPersonalTheme(theme, scope.userId)
     ) {
       return fail("Theme not found.");
     }

@@ -247,12 +247,18 @@ describe("code page tabs", () => {
   });
 
   it("builds tab links", () => {
-    expect(codeTabHref("c 1", "overview")).toBe("/dashboard/codes/c%201");
-    expect(codeTabHref("c1", "analytics", { params: { range: "7d" } })).toBe(
-      "/dashboard/codes/c1?tab=analytics&range=7d",
+    expect(codeTabHref("acme", "c 1", "overview")).toBe(
+      "/dashboard/acme/codes/c%201",
     );
-    expect(codeTabHref("c1", "settings", { hash: "utm" })).toBe(
-      "/dashboard/codes/c1?tab=settings#utm",
+    expect(
+      codeTabHref("acme", "c1", "analytics", { params: { range: "7d" } }),
+    ).toBe("/dashboard/acme/codes/c1?tab=analytics&range=7d");
+    expect(codeTabHref("acme", "c1", "settings", { hash: "utm" })).toBe(
+      "/dashboard/acme/codes/c1?tab=settings#utm",
+    );
+    // Outside a workspace (the playground): through the default workspace.
+    expect(codeTabHref(null, "c1", "settings", { hash: "utm" })).toBe(
+      "/dashboard?to=codes/c1&tab=settings#utm",
     );
   });
 });

@@ -208,9 +208,9 @@ describe("describeDeletionPlan", () => {
       ),
     );
     expect(summary.consequences).toEqual([
-      'Your personal workspace is deleted, with its 12 codes, 1 hosted page and 2 custom domains, plus your scans, themes, webhooks and integrations. Its printed QR codes show a "QR code not found" page.',
-      "Acme: Bob (admin) becomes an owner and takes over what you created in the team, so its codes keep working.",
-      "Solo: you're the only member, so the team and its content are deleted.",
+      'Your own workspace is deleted, with its 12 codes, 1 hosted page and 2 custom domains, plus your scans, themes, webhooks and integrations. Its printed QR codes show a "QR code not found" page.',
+      "Acme: Bob (admin) becomes an owner and takes over what you created in the workspace, so its codes keep working.",
+      "Solo: you're the only member, so the workspace and its content are deleted.",
       "Your Business subscription is cancelled straight away.",
       "You're signed out on every device.",
     ]);
@@ -220,7 +220,7 @@ describe("describeDeletionPlan", () => {
     expect(
       describeDeletionPlan(planAccountDeletion(facts())).consequences,
     ).toEqual([
-      "Your personal workspace is deleted, with your themes, settings and integrations.",
+      "Your own workspace is deleted, with your themes, settings and integrations.",
       "You're signed out on every device.",
     ]);
   });

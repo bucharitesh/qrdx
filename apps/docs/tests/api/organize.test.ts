@@ -4,6 +4,8 @@
 // delete only what they created; trashed codes free their plan slot and
 // restoring needs one; duplicates copy destination, design, folder, tags and
 // notes but never scans. Runs the real service on in-memory tables.
+
+import { ownWorkspaceId } from "@repo/auth/own-workspace-id";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { fakeDb } from "../support/fake-db";
 
@@ -64,8 +66,17 @@ const { HttpError } = await import("@/lib/error-response");
 const { ValidationError } = await import("@/types/errors");
 
 type Scope = Parameters<typeof organize.createFolder>[0];
-const alice: Scope = { userId: "u_alice", organizationId: null, role: "owner" };
-const bob: Scope = { userId: "u_bob", organizationId: null, role: "owner" };
+// Each in their own workspace.
+const alice: Scope = {
+  userId: "u_alice",
+  organizationId: ownWorkspaceId("u_alice"),
+  role: "owner",
+};
+const bob: Scope = {
+  userId: "u_bob",
+  organizationId: ownWorkspaceId("u_bob"),
+  role: "owner",
+};
 const teamOwner: Scope = {
   userId: "u_alice",
   organizationId: "org_acme",
@@ -81,10 +92,11 @@ const NOW = new Date("2026-11-01T12:00:00Z");
 let seq = 0;
 function seedCode(overrides: Record<string, unknown> = {}) {
   seq += 1;
+  const userId = (overrides.userId as string | undefined) ?? "u_alice";
   const row = {
     id: `code_${seq}`,
-    userId: "u_alice",
-    organizationId: null,
+    userId,
+    organizationId: ownWorkspaceId(userId),
     slug: `Slug${String(seq).padStart(3, "0")}`,
     destinationUrl: `https://example.com/${seq}`,
     title: `Code ${seq}`,

@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { acceptInvitation, rejectInvitation } from "@/actions/organizations";
 import { useRefreshTeams } from "@/components/org-switcher";
+import { workspaceHref } from "@/lib/workspace-paths";
 
 export function InviteActions({ invitationId }: { invitationId: string }) {
   const router = useRouter();
@@ -22,10 +23,12 @@ export function InviteActions({ invitationId }: { invitationId: string }) {
         toast.error(result.error);
         return;
       }
-      toast.success("You joined the team");
-      // Accepting makes the team the active workspace.
+      toast.success("You joined the workspace");
+      // Accepting makes it the active workspace.
       refresh();
-      router.push("/dashboard/team");
+      router.push(
+        result.data.slug ? workspaceHref(result.data.slug) : "/dashboard",
+      );
     });
 
   const decline = () =>

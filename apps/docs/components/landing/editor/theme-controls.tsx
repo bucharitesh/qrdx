@@ -7,6 +7,7 @@ import { cn } from "@repo/design-system/lib/utils";
 import { Warning2 as AlertTriangle, Magicpen as Wand2 } from "iconsax-reactjs";
 import Link from "next/link";
 import { useId } from "react";
+import { useWorkspaceHref } from "@/components/workspace-provider";
 import type { LandingTheme } from "@/types/landing";
 import {
   contrastRatio,
@@ -141,6 +142,7 @@ export function ThemeControls({
   onChange: (theme: LandingTheme) => void;
   savedThemes: SavedThemePalette[];
 }) {
+  const inWorkspace = useWorkspaceHref();
   const set = (patch: Partial<LandingTheme>) =>
     onChange({ ...theme, ...patch });
   const setColors = (patch: Partial<Colors>) =>
@@ -178,7 +180,7 @@ export function ThemeControls({
         ) : (
           <p className="text-muted-foreground text-xs">
             Use the colors of your QR themes here.{" "}
-            <Link className="underline" href="/dashboard/themes">
+            <Link className="underline" href={inWorkspace("/themes")}>
               Save a theme
             </Link>{" "}
             in the editor first.

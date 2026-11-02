@@ -258,7 +258,7 @@ Every REST API error is JSON with the same shape, whichever endpoint returns it:
 \`\`\`json
 {
   "code": "INSUFFICIENT_SCOPE",
-  "message": "This API key needs the 'codes:write' scope. Create a key that includes it at https://qrdx.dev/settings/developers; a key's scopes can't be changed.",
+  "message": "This API key needs the 'codes:write' scope. Create a key that includes it at https://qrdx.dev/dashboard?to=settings/developers; a key's scopes can't be changed.",
   "status": 403,
   "docs": "https://qrdx.dev/docs/developers/api-keys"
 }

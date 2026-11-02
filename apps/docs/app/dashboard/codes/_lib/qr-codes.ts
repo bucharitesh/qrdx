@@ -18,7 +18,7 @@ import {
   type SQL,
   sql,
 } from "drizzle-orm";
-import { redirect } from "next/navigation";
+import { notFound as pageNotFound, redirect } from "next/navigation";
 import { z } from "zod";
 import {
   assertBindableDomains,
@@ -40,7 +40,12 @@ import { PLAN_NAMES } from "@/lib/pricing";
 import { enforceRateLimits } from "@/lib/request-guards";
 import { signInPath } from "@/lib/safe-redirect";
 import { screenNewCodes, screenUrlChange } from "@/lib/safety/destinations";
-import { type ActiveScope, getActiveScope, isInScope } from "@/lib/scope";
+import {
+  type ActiveScope,
+  getActiveScope,
+  isInScope,
+  WorkspaceNotFoundError,
+} from "@/lib/scope";
 import {
   CUSTOM_SLUG_MAX,
   CUSTOM_SLUG_MIN,
@@ -275,9 +280,10 @@ const toOneCodeView = async (row: QrCodeRow) =>
 // ─── Scope + plan ────────────────────────────────────────────────────────────
 
 /**
- * For dashboard pages: the active scope, or sign in and come back to `next`
- * (proxy.ts sends signed-out visitors there first; this covers a session that
- * ended in between).
+ * For dashboard pages: the workspace in the URL, or sign in and come back to
+ * `next` (proxy.ts sends signed-out visitors there first; this covers a
+ * session that ended in between). A workspace the viewer can't open is a 404
+ * (the [workspace] layout shows it; pages render alongside it).
  */
 export async function requireDashboardScope(
   next = "/dashboard",
@@ -286,6 +292,7 @@ export async function requireDashboardScope(
     return await getActiveScope();
   } catch (error) {
     if (error instanceof UnauthorizedError) redirect(signInPath(next));
+    if (error instanceof WorkspaceNotFoundError) pageNotFound();
     throw error;
   }
 }

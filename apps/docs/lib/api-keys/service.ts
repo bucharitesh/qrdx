@@ -282,7 +282,7 @@ export async function revokeApiKey(
 export interface ApiKeyCaller {
   keyId: string;
   userId: string;
-  /** null = the creator's personal workspace */
+  /** null = a key from before workspaces: it acts on the creator's own workspace */
   organizationId: string | null;
   /** The creator's role in the workspace now ("owner" in a personal one) */
   role: ScopeRole;

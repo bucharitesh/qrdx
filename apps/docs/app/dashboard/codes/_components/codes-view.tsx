@@ -60,8 +60,8 @@ const STATUS_NOTES = {
 
 /**
  * The codes list: folders and tags sidebar, search, filters, bulk actions.
- * Rendered by /dashboard/codes (`basePath` is where its links point; old
- * /dashboard links with list filters redirect there in proxy.ts).
+ * Rendered by /dashboard/<workspace>/codes (`basePath` is where its links
+ * point).
  */
 export async function CodesView({
   basePath,
@@ -70,7 +70,7 @@ export async function CodesView({
   basePath: string;
   searchParams: Promise<SearchParams>;
 }) {
-  const scope = await requireDashboardScope(basePath);
+  const scope = await requireDashboardScope();
   const filters = parseCodesFilters(await searchParams);
 
   const [usage, folders, tags, trashCount] = await Promise.all([
@@ -144,7 +144,7 @@ export async function CodesView({
           title="Dynamic QR codes"
         >
           <Button asChild variant="outline">
-            <Link href="/dashboard/codes/import">
+            <Link href={`${basePath}/import`}>
               <FileUp />
               Import CSV
             </Link>
@@ -180,7 +180,7 @@ export async function CodesView({
                   Create your first dynamic QR code
                 </NewCodeButton>
                 <Button asChild variant="outline">
-                  <Link href="/dashboard/codes/import">
+                  <Link href={`${basePath}/import`}>
                     <FileUp />
                     Import from CSV
                   </Link>

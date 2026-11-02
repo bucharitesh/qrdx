@@ -60,7 +60,7 @@ export const API_ERRORS = [
     code: "INVALID_TOKEN",
     status: 401,
     meaning:
-      "The API key or access token is unknown, revoked or expired (access tokens last one hour), or the key's creator was banned or left the key's team.",
+      "The API key or access token is unknown, revoked or expired (access tokens last one hour), or the key's creator was banned or left the key's workspace.",
     fix: "Check that you sent the whole key, or create a new one. For an access token, get a new one with your refresh token, or send the user through authorization again.",
   },
   {
@@ -88,8 +88,8 @@ export const API_ERRORS = [
     code: "FORBIDDEN",
     status: 403,
     meaning:
-      "The caller may not do this: a team member deleting a code someone else created, a team member managing hooks, or a browser-session write from another site. A team API key can do only what its creator's role allows.",
-    fix: "Ask a team owner or admin, or call the API with an API key from your server.",
+      "The caller may not do this: a workspace member deleting a code someone else created, a member managing hooks, or a browser-session write from another site. An API key can do only what its creator's role in its workspace allows.",
+    fix: "Ask a workspace owner or admin, or call the API with an API key from your server.",
   },
   {
     code: "CONVERSIONS_OFF",
@@ -109,7 +109,7 @@ export const API_ERRORS = [
     status: 404,
     meaning:
       "No such endpoint, or the code, hook, theme or custom domain doesn't exist in the workspace the key or token acts on.",
-    fix: "Check the path and the id. An API key acts on the workspace it was created in; an OAuth token acts on its user's personal workspace.",
+    fix: "Check the path and the id. An API key acts on the workspace it was created in; an OAuth token acts on its user's own workspace.",
   },
   {
     code: "INVALID_SID",

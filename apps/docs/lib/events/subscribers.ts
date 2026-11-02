@@ -11,7 +11,7 @@ import {
 import { and, eq, isNull, type SQL } from "drizzle-orm";
 import { getPlanForScope, type Plan } from "@/lib/plans";
 
-/** Personal workspace (organizationId null) or a team. */
+/** A workspace (organizationId null only for rows from before workspaces). */
 export interface EventScope {
   userId: string;
   organizationId: string | null;
