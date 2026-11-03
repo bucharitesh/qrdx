@@ -4,7 +4,12 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { ART_MODEL_ID, ART_USAGE_MODEL_IDS } from "@/lib/ai/art-models";
+import {
+  ART_MODEL_ID,
+  ART_MODEL_LABEL,
+  ART_SUPPORTS_SEED,
+  ART_USAGE_MODEL_IDS,
+} from "@/lib/ai/art-models";
 import {
   AI_MODELS,
   type AITask,
@@ -13,6 +18,7 @@ import {
   creatorOf,
   textProviderOptions,
 } from "@/lib/ai/models";
+import { PRODUCT_FACTS } from "@/lib/product-facts";
 
 const TASKS = Object.keys(AI_MODELS) as AITask[];
 
@@ -26,7 +32,7 @@ describe("the model map", () => {
     }
   });
 
-  it("uses Claude Haiku 5.5 for text, Gemini 3 Flash for the theme schema and Nano Banana 2.1 for art", () => {
+  it("uses Claude Haiku 5.5 for text, Gemini 3 Flash for the theme schema and GPT Image 2 for art", () => {
     expect(AI_MODELS.base.model).toBe("anthropic/claude-haiku-5.5");
     expect(AI_MODELS["prompt-enhancement"].model).toBe(
       "anthropic/claude-haiku-5.5",
@@ -35,8 +41,14 @@ describe("the model map", () => {
       "google/gemini-3-flash",
     );
     expect(AI_MODELS.art).toMatchObject({
-      model: "google/gemini-nano-banana-2.1",
-      output: "files",
+      model: "openai/gpt-image-2",
+      providers: ["openai"],
+      output: "images",
+      size: "1024x1024",
+      maker: "OpenAI",
+      name: "GPT Image 2",
+      // The gateway warns "seed is not supported" for it.
+      supportsSeed: false,
     });
   });
 
@@ -44,6 +56,7 @@ describe("the model map", () => {
     const allowed: Record<string, string[]> = {
       anthropic: ["anthropic"],
       google: ["google", "vertex"],
+      openai: ["openai"],
     };
     for (const task of TASKS) {
       const { model, providers } = AI_MODELS[task];
@@ -68,19 +81,19 @@ describe("provider options", () => {
     });
   });
 
-  it("ask a Gemini art model for one square 1K image, and an image model for nothing Google", () => {
+  it("route the art model to OpenAI only, with no prompt training, and ask Gemini for one square 1K image", () => {
     expect(artProviderOptions(AI_MODELS.art)).toEqual({
+      gateway: { disallowPromptTraining: true, only: ["openai"] },
+    });
+    const nanoBanana = ART_EVAL_CANDIDATES.find(
+      (choice) => choice.model === "google/gemini-nano-banana-2.1",
+    );
+    expect(nanoBanana && artProviderOptions(nanoBanana)).toEqual({
       gateway: { disallowPromptTraining: true, only: ["google", "vertex"] },
       google: {
         responseModalities: ["IMAGE"],
         imageConfig: { aspectRatio: "1:1", imageSize: "1K" },
       },
-    });
-    const gptImage = ART_EVAL_CANDIDATES.find(
-      (choice) => choice.model === "openai/gpt-image-2",
-    );
-    expect(gptImage && artProviderOptions(gptImage)).toEqual({
-      gateway: { disallowPromptTraining: true },
     });
   });
 
@@ -93,24 +106,64 @@ describe("art eval candidates", () => {
   it("start with the configured art model and take an input image", () => {
     expect(ART_EVAL_CANDIDATES[0]).toBe(AI_MODELS.art);
     expect(ART_EVAL_CANDIDATES.map((choice) => choice.model)).toEqual([
+      "openai/gpt-image-2",
       "google/gemini-nano-banana-2.1",
       "google/gemini-3.1-flash-image",
-      "openai/gpt-image-2",
       "bfl/flux-kontext-pro",
     ]);
     for (const choice of ART_EVAL_CANDIDATES) {
       if (choice.output === "files") expect(choice.options).toBeDefined();
       else expect(choice.size ?? choice.aspectRatio).toBeDefined();
+      expect(choice.maker && choice.name, choice.model).toBeTruthy();
+      expect(typeof choice.supportsSeed, choice.model).toBe("boolean");
     }
+  });
+});
+
+describe("the art model in copy", () => {
+  const app = join(__dirname, "..", "..");
+  const read = (path: string) => readFileSync(join(app, path), "utf8");
+
+  it("names it from the model map", () => {
+    expect(ART_MODEL_LABEL).toBe("OpenAI's GPT Image 2");
+    expect(PRODUCT_FACTS.artModel).toBe(ART_MODEL_LABEL);
+    expect(ART_SUPPORTS_SEED).toBe(AI_MODELS.art.supportsSeed);
+  });
+
+  it("isn't hard-coded in the studio, the AI art page or the Art QR docs", () => {
+    const files = [
+      "components/sections/ai-art/ai-art-faq.tsx",
+      "components/sections/ai-art/ai-art-studio.tsx",
+      "components/sections/ai-art/ai-art-result.tsx",
+      "components/sections/ai-art/ai-art-coming-soon.tsx",
+      "app/(home)/ai/art/page.tsx",
+      "content/docs/features/art-qr.mdx",
+    ];
+    for (const file of files) {
+      const text = read(file);
+      for (const name of [
+        "Nano Banana",
+        "Gemini",
+        "GPT Image",
+        "OpenAI",
+        "Google's",
+      ]) {
+        expect(text, `${file} names ${name}`).not.toContain(name);
+      }
+    }
+    expect(read("content/docs/features/art-qr.mdx")).toContain(
+      "{facts.artModel}",
+    );
   });
 });
 
 describe("AI art usage ids", () => {
   it("count the art model and every earlier one", () => {
     expect(ART_MODEL_ID).toBe(AI_MODELS.art.model);
+    expect(ART_MODEL_ID).toBe("openai/gpt-image-2");
     expect(ART_USAGE_MODEL_IDS).toEqual(
       expect.arrayContaining([
-        AI_MODELS.art.model,
+        "openai/gpt-image-2",
         "google/gemini-nano-banana-2.1",
         "fal-ai/illusion-diffusion",
         "fal-ai/esrgan",
@@ -126,6 +179,7 @@ describe("legal pages", () => {
   const NAMES: Record<string, string> = {
     anthropic: "Anthropic",
     google: "Google",
+    openai: "OpenAI",
   };
   const page = (name: string) =>
     readFileSync(

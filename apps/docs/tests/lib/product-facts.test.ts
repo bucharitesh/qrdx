@@ -47,6 +47,7 @@ describe("PRODUCT_FACTS", () => {
       eyeShapes: CORNER_EYE_PATTERNS.length,
       eyeCentres: CORNER_EYE_DOT_PATTERNS.length,
       frames: FRAME_STYLES.length - 1,
+      artModel: "OpenAI's GPT Image 2",
     });
     expect(FRAME_STYLES).toContain("none");
     expect(STYLE_SUMMARY).toBe(
@@ -94,6 +95,22 @@ describe("remarkProductFacts", () => {
 
   it("rejects an unknown name", async () => {
     await expect(toMarkdown("{facts.nope} things\n")).rejects.toThrow(/nope/);
+  });
+
+  it("names the AI art model from the model map in the Art QR docs", async () => {
+    const source = readFileSync(
+      path.join(app, "content/docs/features/art-qr.mdx"),
+      "utf8",
+    )
+      // Only the body: the frontmatter isn't Markdown.
+      .replace(/^---[\s\S]*?---\n/, "");
+    const paragraph = source
+      .split("\n")
+      .find((line) => line.includes("{facts.artModel}"));
+    expect(paragraph).toBeDefined();
+    const markdown = await toMarkdown(`${paragraph}\n`);
+    expect(markdown).toContain(`with ${PRODUCT_FACTS.artModel}, through`);
+    expect(markdown).not.toContain("facts.");
   });
 });
 

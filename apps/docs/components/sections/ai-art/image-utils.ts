@@ -78,7 +78,7 @@ export function pickBestScannable(
 
 /**
  * Prepares an uploaded reference image (a logo, photo or palette): at most
- * 512 px and JPEG, so the request stays small. Colors are kept: Gemini can
+ * 512 px and JPEG, so the request stays small. Colors are kept: the model can
  * carry them into the artwork.
  */
 export async function prepareReferenceImage(file: File): Promise<string> {
