@@ -7,6 +7,13 @@ export const ErrorCode = {
   THEME_NOT_FOUND: "THEME_NOT_FOUND",
   THEME_LIMIT_REACHED: "THEME_LIMIT_REACHED",
   ALREADY_PUBLISHED: "ALREADY_PUBLISHED",
+  /** The design doesn't scan Great with every community sample */
+  SCAN_GATE: "SCAN_GATE",
+  /** The creator didn't accept the community licence (CC0) */
+  LICENSE_REQUIRED: "LICENSE_REQUIRED",
+  /** The community tables aren't there yet (manual-sql/0012) */
+  COMMUNITY_UNAVAILABLE: "COMMUNITY_UNAVAILABLE",
+  RATE_LIMITED: "RATE_LIMITED",
   UNKNOWN_ERROR: "UNKNOWN_ERROR",
 } as const;
 

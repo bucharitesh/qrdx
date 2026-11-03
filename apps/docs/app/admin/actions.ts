@@ -54,6 +54,12 @@ const userAudit = (
   },
 });
 
+/** Community lists are cached; a ban or unban shows at once. */
+function refreshCommunity() {
+  revalidateTag("community-themes", "max");
+  revalidateTag("community-tag-counts", "max");
+}
+
 export async function banUserAction(
   input: z.input<typeof banSchema>,
 ): Promise<AdminActionResult> {
@@ -74,6 +80,9 @@ export async function banUserAction(
         },
         headers: await headers(),
       });
+      // A banned account's community themes leave the gallery now, not
+      // when the cache next expires.
+      refreshCommunity();
       return userAudit(target, { expiresInDays: expiresInDays ?? null });
     },
   );
@@ -88,6 +97,7 @@ export async function unbanUserAction(
     async (_admin, { userId }) => {
       const target = await findUser(userId);
       await auth.api.unbanUser({ body: { userId }, headers: await headers() });
+      refreshCommunity();
       return userAudit(target);
     },
   );

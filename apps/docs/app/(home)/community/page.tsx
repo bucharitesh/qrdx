@@ -4,6 +4,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { AsciiField, Backdrop, MeshGradient } from "@/components/fx";
+import {
+  COMMUNITY_LICENSE_NAME,
+  COMMUNITY_LICENSE_URL,
+} from "@/lib/community/licence";
 import { createMetadata } from "@/lib/metadata";
 import { CommunityThemesContent } from "./components/community-themes-content";
 
@@ -43,6 +47,18 @@ export default function CommunityPage() {
           <p className="max-w-xl text-pretty text-muted-foreground md:text-lg">
             QR code styles shared by QRdx users. Preview any theme, then open it
             in the editor to make it yours.
+          </p>
+          <p className="text-muted-foreground text-xs">
+            Themes published from now on are free under{" "}
+            <a
+              className="underline underline-offset-2"
+              href={COMMUNITY_LICENSE_URL}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              {COMMUNITY_LICENSE_NAME}
+            </a>
+            : use them for anything, no credit needed.
           </p>
           <Button asChild className="mt-3">
             <Link href="/playground?tab=customisations">

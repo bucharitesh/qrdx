@@ -79,6 +79,24 @@ export function useMyPublishedThemeIds() {
   });
 }
 
+/** A publish the server refused, with its reason code (shown in the dialog). */
+export class PublishRefusedError extends Error {
+  constructor(
+    readonly code: ErrorCode,
+    message: string,
+  ) {
+    super(message);
+    this.name = "PublishRefusedError";
+  }
+}
+
+/** Refusals the publish dialog explains inline instead of in a toast. */
+const INLINE_REFUSALS = new Set<ErrorCode>([
+  ErrorCode.SCAN_GATE,
+  ErrorCode.LICENSE_REQUIRED,
+  ErrorCode.ALREADY_PUBLISHED,
+]);
+
 export function usePublishTheme() {
   const queryClient = useQueryClient();
 
@@ -86,18 +104,15 @@ export function usePublishTheme() {
     mutationFn: async ({
       themeId,
       tags = [],
+      acceptLicense,
     }: {
       themeId: string;
       tags?: string[];
+      acceptLicense: boolean;
     }) => {
-      const result = await publishTheme(themeId, tags);
+      const result = await publishTheme(themeId, tags, { acceptLicense });
       if (!result.success) {
-        if (result.error.code === ErrorCode.ALREADY_PUBLISHED) {
-          toast.error("Already published", {
-            description: result.error.message,
-          });
-        }
-        throw new Error(result.error.message);
+        throw new PublishRefusedError(result.error.code, result.error.message);
       }
       return result.data;
     },
@@ -111,8 +126,8 @@ export function usePublishTheme() {
     },
     onError: (error) => {
       if (
-        (error as Error).message.includes("already published") ||
-        (error as Error).message.includes("Already published")
+        error instanceof PublishRefusedError &&
+        INLINE_REFUSALS.has(error.code)
       ) {
         return;
       }
