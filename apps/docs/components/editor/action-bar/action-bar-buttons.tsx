@@ -105,7 +105,7 @@ export function ActionBarButtons({
         )}
         {desktop && (
           <ShareButton
-            onClick={() => onShareClick(themeState.preset)}
+            onClick={() => onShareClick()}
             disabled={shareDisabled}
           />
         )}
