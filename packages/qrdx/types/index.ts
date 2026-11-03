@@ -63,6 +63,38 @@ export {
   frameSchema,
   frameStyleSchema,
 } from "./frame";
+export type {
+  AnyQRFrame,
+  FrameSpec,
+  FrameSpecColor,
+  FrameSpecIcon,
+  FrameSpecLabel,
+  FrameSpecPaint,
+  FrameSpecShape,
+  QRCustomFrame,
+} from "./frame-spec";
+export {
+  anyFrameSchema,
+  CUSTOM_FRAME_STYLE,
+  customFrameSchema,
+  FRAME_COLOR_TOKENS,
+  FRAME_ICON_MAX_SEGMENTS,
+  FRAME_ICONS,
+  FRAME_SPEC_KIND,
+  FRAME_SPEC_LABEL_MAX_FONT,
+  FRAME_SPEC_LIMITS,
+  FRAME_SPEC_VERSION,
+  frameSpecColorSchema,
+  frameSpecLabelSchema,
+  frameSpecPadding,
+  frameSpecPaintSchema,
+  frameSpecQrZone,
+  frameSpecSchema,
+  frameSpecShapeSchema,
+  getFrameSpecIssues,
+  isLatin1Text,
+  sanitizeFrameText,
+} from "./frame-spec";
 export type { BodyPattern } from "./image-pattern";
 export { BODY_PATTERN, bodyPatternSchema } from "./image-pattern";
 export type {
