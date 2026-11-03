@@ -28,6 +28,9 @@ import {
 import { revalidateTag, unstable_cache } from "next/cache";
 import { headers } from "next/headers";
 import { z } from "zod";
+import { publicStyleFromSaved } from "@/lib/community/public-style-server";
+import { checkScanGate, gateFailureMessage } from "@/lib/community/scan-gate";
+import { authorNotBanned } from "@/lib/community/visibility";
 import {
   COMMUNITY_THEME_TAGS,
   COMMUNITY_THEMES_PAGE_SIZE,
@@ -50,6 +53,7 @@ import {
   UnauthorizedError,
   ValidationError,
 } from "@/types/errors";
+import type { ThemeStyles } from "@/types/theme";
 
 async function getOptionalUserId(): Promise<string | null> {
   try {
@@ -93,7 +97,8 @@ async function fetchCommunityThemesCore(
   timeRange: string = "all",
 ): Promise<CommunityThemesResponse> {
   const fetchLimit = limit + 1;
-  const conditions = [];
+  // Banned accounts' themes are hidden everywhere in the community.
+  const conditions = [authorNotBanned()];
 
   if (filter === "mine") {
     if (!userId) throw new UnauthorizedError();
@@ -154,7 +159,7 @@ async function fetchCommunityThemesCore(
   if (sort === "popular") {
     const offset = typeof cursor === "number" ? cursor : 0;
     results = await baseQuery
-      .where(conditions.length > 0 ? and(...conditions) : undefined)
+      .where(and(...conditions))
       .orderBy(desc(communityTheme.likeCount), desc(communityTheme.publishedAt))
       .limit(fetchLimit)
       .offset(offset);
@@ -163,7 +168,7 @@ async function fetchCommunityThemesCore(
       conditions.push(sql`${communityTheme.publishedAt} < ${cursor}`);
     }
     results = await baseQuery
-      .where(conditions.length > 0 ? and(...conditions) : undefined)
+      .where(and(...conditions))
       .orderBy(desc(communityTheme.publishedAt))
       .limit(fetchLimit);
   } else {
@@ -171,7 +176,7 @@ async function fetchCommunityThemesCore(
       conditions.push(sql`${communityTheme.publishedAt} > ${cursor}`);
     }
     results = await baseQuery
-      .where(conditions.length > 0 ? and(...conditions) : undefined)
+      .where(and(...conditions))
       .orderBy(asc(communityTheme.publishedAt))
       .limit(fetchLimit);
   }
@@ -212,7 +217,9 @@ async function fetchCommunityThemesCore(
     id: row.id,
     themeId: row.themeId,
     name: row.themeName,
-    styles: row.themeStyles,
+    // The saved theme is a live pointer: clean it on every read (no uploaded
+    // logo or image art ever leaves the account).
+    styles: publicStyleFromSaved(row.themeStyles as ThemeStyles),
     author: {
       id: row.authorId,
       name: row.authorName,
@@ -274,9 +281,18 @@ export async function getCommunityThemes(
 export async function publishTheme(
   themeId: string,
   tags: string[] = [],
+  options: { acceptLicense?: boolean } = {},
 ): Promise<ActionResult<{ id: string }>> {
   try {
     const userId = await getCurrentUserId();
+
+    // Everything shared in the community is CC0 1.0: the creator says so.
+    if (options.acceptLicense !== true) {
+      return actionError(
+        ErrorCode.LICENSE_REQUIRED,
+        "Confirm the CC0 licence to publish.",
+      );
+    }
 
     const rateLimiter = createRateLimiter({
       limiter: slidingWindow(10, "10 s"),
@@ -339,10 +355,19 @@ export async function publishTheme(
       const { success } = await rateLimiter.limit(`publish:${userId}`);
       if (!success) {
         return actionError(
-          ErrorCode.UNKNOWN_ERROR,
+          ErrorCode.RATE_LIMITED,
           "You're publishing too fast. Please try again later.",
         );
       }
+    }
+
+    // Only designs that scan Great go public, scored here on the server with
+    // the design as the gallery shows it (no uploaded logo or image art).
+    const gate = await checkScanGate(
+      publicStyleFromSaved(existingTheme.style as ThemeStyles),
+    );
+    if (!gate.passed) {
+      return actionError(ErrorCode.SCAN_GATE, gateFailureMessage(gate));
     }
 
     const id = cuid();
@@ -518,7 +543,7 @@ async function fetchCommunityDataForThemeCore(
     })
     .from(communityTheme)
     .innerJoin(userTable, eq(communityTheme.userId, userTable.id))
-    .where(eq(communityTheme.themeId, themeId))
+    .where(and(eq(communityTheme.themeId, themeId), authorNotBanned()))
     .limit(1);
 
   if (!result) return null;
@@ -658,6 +683,12 @@ const getCachedTagCounts = unstable_cache(
         count: count().as("tag_count"),
       })
       .from(communityThemeTag)
+      .innerJoin(
+        communityTheme,
+        eq(communityTheme.id, communityThemeTag.communityThemeId),
+      )
+      .innerJoin(userTable, eq(userTable.id, communityTheme.userId))
+      .where(authorNotBanned())
       .groupBy(communityThemeTag.tag)
       .orderBy(sql`tag_count desc`);
 
