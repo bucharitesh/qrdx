@@ -88,6 +88,8 @@ interface QREditorStore {
   future: QRHistoryEntry[];
   setThemeState: (state: ThemeEditorState) => void;
   applyThemePreset: (preset: string) => void;
+  /** Replaces the whole look as one undo step, like applying a preset. */
+  replaceThemeState: (state: ThemeEditorState) => void;
   saveThemeCheckpoint: () => void;
   restoreThemeCheckpoint: () => void;
   resetToCurrentPreset: () => void;
@@ -212,6 +214,24 @@ export const useQREditorStore = create<QREditorStore>()(
         set({
           themeState: newThemeState,
           themeCheckpoint: newThemeState, // Applying a preset also updates the checkpoint
+          history: updatedHistory,
+          future: [],
+        });
+      },
+      replaceThemeState: (state: ThemeEditorState) => {
+        const currentThemeState = get().themeState;
+        const newThemeState = withOwnPresetStyles(state, currentThemeState);
+        // Always its own history entry (setThemeState merges quick edits).
+        const updatedHistory = [
+          ...get().history,
+          { state: currentThemeState, timestamp: Date.now() },
+        ];
+        if (updatedHistory.length > MAX_HISTORY_COUNT) {
+          updatedHistory.shift();
+        }
+        set({
+          themeState: newThemeState,
+          themeCheckpoint: newThemeState,
           history: updatedHistory,
           future: [],
         });

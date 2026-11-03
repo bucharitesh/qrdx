@@ -10,7 +10,10 @@ import {
 } from "@/lib/hooks/themes/use-theme-mutations";
 import { useAIQRGenerationCore } from "@/lib/hooks/use-ai-qr-generation-core";
 import { usePostLoginAction } from "@/lib/hooks/use-post-login-action";
+import { playgroundHref } from "@/lib/playground-links";
+import { encodeStyleParam, type OmittedPart } from "@/lib/playground-style";
 import { soundEvent } from "@/lib/sound/emit";
+import { isShuffleId } from "@/lib/themes/shuffle";
 import { useAuthStore } from "@/store/auth-store";
 import { useQREditorStore } from "@/store/editor-store";
 import { useThemePresetStore } from "@/store/theme-preset-store";
@@ -36,6 +39,10 @@ interface DialogActionsContextType {
   saveDialogOpen: boolean;
   shareDialogOpen: boolean;
   shareUrl: string;
+  /** The share link carries the style itself (no saved theme behind it) */
+  shareIsStyleLink: boolean;
+  /** What a style link leaves out of the design */
+  shareOmitted: OmittedPart[];
   dialogKey: number;
   isCreatingTheme: boolean;
   isUpdatingTheme: boolean;
@@ -62,6 +69,8 @@ function useDialogActionsStore(): DialogActionsContextType {
   const [pendingAction, setPendingAction] = useState<PendingAction>(null);
   const [shareDialogOpen, setShareDialogOpen] = useState(false);
   const [shareUrl, setShareUrl] = useState("");
+  const [shareIsStyleLink, setShareIsStyleLink] = useState(false);
+  const [shareOmitted, setShareOmitted] = useState<OmittedPart[]>([]);
   const [dialogKey, _setDialogKey] = useState(0);
 
   const {
@@ -141,31 +150,68 @@ function useDialogActionsStore(): DialogActionsContextType {
     }
   };
 
+  /**
+   * `id`: a theme saved just now (the preset store may not list it yet).
+   * Otherwise a stored theme that is unchanged shares as /playground/<id>:
+   * one of the user's saved themes, or a theme the page was opened with
+   * (/playground/<id>, not in the store). Anything else, built-in presets
+   * included (they have no /playground/<id> page), shares its style.
+   */
   const handleShareClick = async (id?: string) => {
-    // `id` is passed right after a save, before the preset store has refreshed
-    if (!id && hasThemeChangedFromCheckpoint()) {
-      handleSaveClick({ shareAfterSave: true });
-      return;
-    }
-
     const presetId = id ?? themeState.preset;
     const currentPreset = presetId ? getPreset(presetId) : undefined;
-    const isSavedPreset = !!id || currentPreset?.source === "SAVED";
+    const isSavedPreset = currentPreset?.source === "SAVED";
+    const isLinkedTheme =
+      !currentPreset &&
+      !!presetId &&
+      presetId !== "default" &&
+      !isShuffleId(presetId);
+    const unchanged = id
+      ? true
+      : isSavedPreset
+        ? !hasUnsavedChanges()
+        : isLinkedTheme && !hasThemeChangedFromCheckpoint();
 
-    // Only saved themes have a shareable URL (/playground/<id>)
-    if (!(presetId && isSavedPreset)) {
+    if (presetId && (isSavedPreset || isLinkedTheme) && unchanged) {
+      track("theme_shared", { saved: true });
+      setShareUrl(
+        new URL(
+          playgroundHref({ themeId: presetId }),
+          window.location.origin,
+        ).toString(),
+      );
+      setShareIsStyleLink(false);
+      setShareOmitted([]);
+      setShareDialogOpen(true);
+      return;
+    }
+
+    // Anything else shares its style in the link, signed in or not. Logos
+    // and art never go in a link (lib/playground-style.ts).
+    const builtInPreset =
+      presetId &&
+      currentPreset &&
+      currentPreset.source !== "SAVED" &&
+      !isShuffleId(presetId)
+        ? presetId
+        : undefined;
+    const encoded = encodeStyleParam(themeState.styles, {
+      preset: builtInPreset,
+    });
+    if (!encoded) {
       handleSaveClick({ shareAfterSave: true });
       return;
     }
 
-    track("theme_shared", { saved: isSavedPreset });
-
+    track("theme_shared", { saved: false });
     setShareUrl(
       new URL(
-        `/playground/${encodeURIComponent(presetId)}`,
+        playgroundHref({ style: encoded.value }),
         window.location.origin,
       ).toString(),
     );
+    setShareIsStyleLink(true);
+    setShareOmitted(encoded.omitted);
     setShareDialogOpen(true);
   };
 
@@ -229,6 +275,8 @@ function useDialogActionsStore(): DialogActionsContextType {
     saveDialogOpen,
     shareDialogOpen,
     shareUrl,
+    shareIsStyleLink,
+    shareOmitted,
     dialogKey,
     isCreatingTheme: createThemeMutation.isPending,
     isUpdatingTheme: updateThemeMutation.isPending,
@@ -277,8 +325,17 @@ export function DialogActionsProvider({ children }: { children: ReactNode }) {
         {...getSaveDialogCopy(store.pendingAction)}
       />
       <QRShareDialog
-        open={store.shareDialogOpen}
+        omitted={store.shareOmitted}
         onOpenChange={store.setShareDialogOpen}
+        onSaveAsTheme={
+          store.shareIsStyleLink
+            ? () => {
+                store.setShareDialogOpen(false);
+                store.handleSaveClick({ shareAfterSave: true });
+              }
+            : undefined
+        }
+        open={store.shareDialogOpen}
         url={store.shareUrl}
       />
     </DialogActionsContext>

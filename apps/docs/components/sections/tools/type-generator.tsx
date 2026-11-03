@@ -48,6 +48,7 @@ import { HairlineFigure } from "@/components/mockups/hairline";
 import { track } from "@/lib/analytics";
 import { useTrackQrGenerated } from "@/lib/analytics/react";
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
+import { playgroundHref } from "@/lib/playground-links";
 import { soundEvent } from "@/lib/sound/emit";
 import { dubshSchema, googleDriveSchema } from "@/lib/validations/qr-content";
 import { useQREditorStore } from "@/store/editor-store";
@@ -349,8 +350,12 @@ export function TypeGenerator({ type }: { type: ContentType }) {
         </div>
 
         <Button asChild variant="ghost" className="w-full">
+          {/* The link names the type; what was typed stays in this browser's
+              editor store, never in the address. */}
           <Link
-            href="/playground"
+            href={playgroundHref({
+              type: LINK_ONLY.has(activeType) ? "url" : activeType,
+            })}
             onClick={() => {
               const store = useQREditorStore.getState();
               // Dub and Drive links are plain URLs, so they open as a URL code.
