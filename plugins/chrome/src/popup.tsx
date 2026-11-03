@@ -22,8 +22,9 @@ import {
   takePendingValue,
 } from "./storage";
 
-// The playground has no URL parameter for its content yet, so link to the homepage.
-const QRDX_URL = "https://qrdx.dev";
+const PLAYGROUND_URL = "https://qrdx.dev/playground?ref=chrome-extension";
+// The playground's limit for a link it opens with (apps/docs/lib/playground-links.ts).
+const MAX_LINK_URL_LENGTH = 2048;
 const PREVIEW_SIZE = 192;
 const THUMB_SIZE = 56;
 const THUMB_VALUE = "https://qrdx.dev";
@@ -52,6 +53,27 @@ function truncate(text: string, max: number) {
 function fileStem(text: string) {
   const hostname = URL.canParse(text) ? new URL(text).hostname : "";
   return hostname ? `qrdx-${hostname.replace(/^www\./, "")}` : "qrdx-qr-code";
+}
+
+/**
+ * The playground, opened with this code's web address when it is one
+ * (http or https, no user name or password). The address goes after the
+ * `#`, which browsers never send to a server; selected text and anything
+ * else that isn't a web address are never passed.
+ */
+function playgroundLink(text: string) {
+  if (text.length > MAX_LINK_URL_LENGTH || !URL.canParse(text)) {
+    return PLAYGROUND_URL;
+  }
+  const url = new URL(text);
+  const webAddress =
+    (url.protocol === "http:" || url.protocol === "https:") &&
+    url.hostname !== "" &&
+    url.username === "" &&
+    url.password === "";
+  return webAddress
+    ? `${PLAYGROUND_URL}#${new URLSearchParams({ url: url.href })}`
+    : PLAYGROUND_URL;
 }
 
 function errorMessage(action: Action, error: unknown) {
@@ -153,7 +175,12 @@ function Generator({
       <header className="header">
         <img alt="" height={20} src="icons/icon-32.png" width={20} />
         <h1>QRdx</h1>
-        <a className="link" href={QRDX_URL} rel="noreferrer" target="_blank">
+        <a
+          className="link"
+          href={playgroundLink(text)}
+          rel="noreferrer"
+          target="_blank"
+        >
           Open in QRdx
         </a>
       </header>
