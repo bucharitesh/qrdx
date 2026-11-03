@@ -20,6 +20,12 @@ export interface CommunityTheme {
   isLikedByMe: boolean;
   publishedAt: string;
   tags: string[];
+  /** Item page slug (community_item themes only) */
+  slug?: string;
+  /** The creator's public handle, when they chose one */
+  handle?: string | null;
+  /** Published by the official QRdx profile */
+  official?: boolean;
 }
 
 export type CommunitySortOption = "popular" | "newest" | "oldest";

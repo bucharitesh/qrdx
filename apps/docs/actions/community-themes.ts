@@ -5,6 +5,8 @@
 import { ownWorkspaceId } from "@repo/auth/own-workspace-id";
 import { auth } from "@repo/auth/server";
 import {
+  communityItem,
+  communityItemTag,
   communityTheme,
   communityThemeTag,
   database as db,
@@ -22,6 +24,7 @@ import {
   eq,
   inArray,
   isNull,
+  ne,
   or,
   sql,
 } from "drizzle-orm";
@@ -29,7 +32,15 @@ import { revalidateTag, unstable_cache } from "next/cache";
 import { headers } from "next/headers";
 import { z } from "zod";
 import { publicStyleFromSaved } from "@/lib/community/public-style-server";
+import { PublishError, publishSavedTheme } from "@/lib/community/publish";
+import {
+  myPublishedThemeSources,
+  themeItemsFeed,
+  themeItemTagCounts,
+} from "@/lib/community/queries";
+import { toggleItemLike } from "@/lib/community/reactions";
 import { checkScanGate, gateFailureMessage } from "@/lib/community/scan-gate";
+import { COMMUNITY_TAG, communityState } from "@/lib/community/store";
 import { authorNotBanned } from "@/lib/community/visibility";
 import {
   COMMUNITY_THEME_TAGS,
@@ -242,6 +253,12 @@ const getCachedCommunityThemes = unstable_cache(
   { revalidate: 60, tags: ["community-themes"] },
 );
 
+const getCachedThemeItems = unstable_cache(
+  themeItemsFeed,
+  ["community-theme-items"],
+  { revalidate: 60, tags: ["community-themes", COMMUNITY_TAG] },
+);
+
 export async function getCommunityThemes(
   sort: CommunitySortOption = "popular",
   cursor?: string | number,
@@ -265,6 +282,23 @@ export async function getCommunityThemes(
 
     const userId = await getOptionalUserId();
 
+    // community_item once the backfill has copied the themes; until then
+    // (and before manual-sql/0012) the gallery reads community_theme.
+    if ((await communityState()).themes === "items") {
+      if ((filter === "mine" || filter === "liked") && !userId) {
+        throw new UnauthorizedError();
+      }
+      return getCachedThemeItems({
+        sort,
+        cursor: cursor ?? null,
+        limit,
+        filter,
+        tags,
+        userId,
+        timeRange,
+      });
+    }
+
     return getCachedCommunityThemes(
       sort,
       cursor ?? null,
@@ -276,6 +310,52 @@ export async function getCommunityThemes(
     );
   } catch (error) {
     logError(error as Error, { action: "getCommunityThemes", sort, cursor });
+    throw error;
+  }
+}
+
+const itemPublishLimiter = createRateLimiter({
+  limiter: slidingWindow(10, "1 d"),
+});
+
+/** Publishes a saved theme as a community_item snapshot (version 1). */
+async function publishThemeAsItem(
+  userId: string,
+  theme: { id: string; name: string; style: unknown },
+  tags: string[],
+): Promise<ActionResult<{ id: string }>> {
+  if ((await myPublishedThemeSources(userId)).includes(theme.id)) {
+    return actionError(
+      ErrorCode.ALREADY_PUBLISHED,
+      "This theme is already published to the community.",
+    );
+  }
+  if (process.env.NODE_ENV !== "development") {
+    const { success } = await itemPublishLimiter.limit(
+      `community-publish:${userId}`,
+    );
+    if (!success) {
+      return actionError(
+        ErrorCode.RATE_LIMITED,
+        "You've published a lot today. Try again tomorrow.",
+      );
+    }
+  }
+  try {
+    const item = await publishSavedTheme({
+      userId,
+      theme: {
+        id: theme.id,
+        name: theme.name,
+        style: theme.style as ThemeStyles,
+      },
+      tags,
+    });
+    return actionSuccess({ id: item.id });
+  } catch (error) {
+    if (error instanceof PublishError) {
+      return actionError(ErrorCode[error.code], error.message);
+    }
     throw error;
   }
 }
@@ -336,6 +416,10 @@ export async function publishTheme(
       throw new QRCodeThemeNotFoundError(
         "Theme not found or not owned by user",
       );
+    }
+
+    if ((await communityState()).themes === "items") {
+      return await publishThemeAsItem(userId, existingTheme, validTags);
     }
 
     // Check not already published
@@ -415,6 +499,29 @@ export async function unpublishTheme(
       throw new ValidationError("Theme ID required");
     }
 
+    // Both places a theme can be published: the item (soft-removed, its
+    // page answers "removed") and the legacy row (deleted, as before).
+    const removedItems = (await communityState()).tables
+      ? await db
+          .update(communityItem)
+          .set({
+            status: "removed",
+            removedAt: new Date(),
+            removedReason: "creator",
+            updatedAt: new Date(),
+          })
+          .where(
+            and(
+              eq(communityItem.type, "theme"),
+              eq(communityItem.sourceKind, "qr_preset"),
+              eq(communityItem.sourceId, themeId),
+              eq(communityItem.createdBy, userId),
+              ne(communityItem.status, "removed"),
+            ),
+          )
+          .returning({ id: communityItem.id })
+      : [];
+
     const [deleted] = await db
       .delete(communityTheme)
       .where(
@@ -425,7 +532,9 @@ export async function unpublishTheme(
       )
       .returning({ id: communityTheme.id });
 
-    if (!deleted) {
+    if (removedItems.length > 0) revalidateTag(COMMUNITY_TAG, "max");
+
+    if (!(deleted || removedItems.length > 0)) {
       throw new QRCodeThemeNotFoundError(
         "Published theme not found or not owned by user",
       );
@@ -449,6 +558,12 @@ export async function toggleLikeTheme(
 
     if (!communityThemeId) {
       throw new ValidationError("Community theme ID required");
+    }
+
+    // The gallery lists items once the backfill has run: their ids are
+    // community_item ids, liked through community_like.
+    if ((await communityState()).themes === "items") {
+      return actionSuccess(await toggleItemLike(userId, communityThemeId));
     }
 
     // Check if already liked
@@ -599,6 +714,10 @@ export async function getMyPublishedThemeIds(): Promise<string[]> {
   try {
     const userId = await getCurrentUserId();
 
+    if ((await communityState()).themes === "items") {
+      return await myPublishedThemeSources(userId);
+    }
+
     const published = await db
       .select({ themeId: communityTheme.themeId })
       .from(communityTheme)
@@ -631,6 +750,45 @@ export async function updateCommunityThemeTags(
     const validTags = tags.filter((t): t is string =>
       (COMMUNITY_THEME_TAGS as readonly string[]).includes(t),
     );
+
+    if ((await communityState()).themes === "items") {
+      // Tags are details, not design: changing them makes no new version.
+      const [item] = await db
+        .select({ id: communityItem.id })
+        .from(communityItem)
+        .where(
+          and(
+            eq(communityItem.type, "theme"),
+            eq(communityItem.sourceKind, "qr_preset"),
+            eq(communityItem.sourceId, themeId),
+            eq(communityItem.createdBy, userId),
+            ne(communityItem.status, "removed"),
+          ),
+        )
+        .limit(1);
+      if (!item) {
+        throw new QRCodeThemeNotFoundError(
+          "Published theme not found or not owned by user",
+        );
+      }
+      const clear = db
+        .delete(communityItemTag)
+        .where(eq(communityItemTag.itemId, item.id));
+      if (validTags.length > 0) {
+        await db.batch([
+          clear,
+          db
+            .insert(communityItemTag)
+            .values(validTags.map((tag) => ({ itemId: item.id, tag }))),
+        ]);
+      } else {
+        await clear;
+      }
+      revalidateTag(COMMUNITY_TAG, "max");
+      revalidateTag("community-themes", "max");
+      revalidateTag("community-tag-counts", "max");
+      return actionSuccess({ tags: validTags });
+    }
 
     // Verify ownership via the community_theme row
     const [ct] = await db
@@ -700,11 +858,20 @@ const getCachedTagCounts = unstable_cache(
   { revalidate: 300, tags: ["community-tag-counts"] },
 );
 
+const getCachedItemTagCounts = unstable_cache(
+  themeItemTagCounts,
+  ["community-item-tag-counts"],
+  { revalidate: 300, tags: ["community-tag-counts", COMMUNITY_TAG] },
+);
+
 export async function getCommunityTagCounts(): Promise<
   { tag: string; count: number }[]
 > {
   try {
-    return getCachedTagCounts();
+    if ((await communityState()).themes === "items") {
+      return await getCachedItemTagCounts();
+    }
+    return await getCachedTagCounts();
   } catch (error) {
     logError(error as Error, { action: "getCommunityTagCounts" });
     return [];
