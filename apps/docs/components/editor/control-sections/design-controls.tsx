@@ -88,7 +88,7 @@ export function DesignControls({
   const frameStyle = current.frame?.style ?? "none";
   const frameSummary =
     frameStyle !== "none"
-      ? frameName(frameStyle)
+      ? frameName(current.frame)
       : current.templateId && current.templateId !== "default"
         ? "Border"
         : "None";

@@ -1,4 +1,9 @@
 import { SCAN_DEVICE_TYPES } from "@repo/database";
+import {
+  frameSpecColorSchema,
+  frameSpecPaintSchema,
+  frameSpecSchema,
+} from "qrdx/types";
 import { z } from "zod";
 import type { serializeCode } from "@/app/api/v1/codes/_lib/api";
 import type { serializeHook } from "@/app/api/v1/hooks/_lib/hooks";
@@ -41,6 +46,24 @@ export function named<T extends z.ZodType>(
 
 const dateTime = (description: string) =>
   z.iso.datetime().describe(`${description} (ISO 8601, UTC)`);
+
+// A custom frame's spec (qrdx frame specs) is referenced, not repeated: its
+// colors and paints appear in every shape and label.
+named(
+  "FrameSpecColor",
+  frameSpecColorSchema,
+  "A frame spec color: a theme token (frame, text, accent, background), a #rgb/#rrggbb color, or an opaque mix of two.",
+);
+named(
+  "FrameSpecPaint",
+  frameSpecPaintSchema,
+  "A frame spec fill: a color, or a gradient drawn as solid steps.",
+);
+named(
+  "FrameSpec",
+  frameSpecSchema,
+  "A custom frame as data (qrdx frame spec v1): shapes, labels, colors and where the code goes. See https://github.com/bucharitesh/qrdx/tree/main/packages/qrdx#custom-frames.",
+);
 
 // The original schema, so the codes routes' refined copy references it too.
 export const styleSchema = named(

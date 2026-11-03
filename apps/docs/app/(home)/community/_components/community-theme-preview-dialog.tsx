@@ -27,6 +27,7 @@ import { useToggleLike } from "@/lib/hooks/themes";
 import { useSessionGuard } from "@/lib/hooks/use-gaurds";
 import { usePostLoginAction } from "@/lib/hooks/use-post-login-action";
 import { soundEvent } from "@/lib/sound/emit";
+import { useQREditorStore } from "@/store/editor-store";
 import type { CommunityTheme } from "@/types/community";
 
 const QRCode = lazy(() =>
@@ -106,16 +107,22 @@ export function CommunityThemePreviewDialog({
     toggleLike.mutate(displayTheme.id);
   };
 
+  // The gallery's cleaned design goes into the editor; never a
+  // /playground/<savedThemeId> link, which shows the whole saved theme.
   const handleViewDetails = () => {
+    const { themeState, setThemeState } = useQREditorStore.getState();
+    setThemeState({ ...themeState, styles: displayTheme.styles });
     onOpenChange(false);
-    router.push(`/playground/${displayTheme.themeId}`);
+    router.push("/playground?tab=customisations");
   };
 
   const handleShare = async () => {
-    const url = `${siteConfig.url}/playground/${displayTheme.themeId}`;
+    const url = displayTheme.slug
+      ? `${siteConfig.url}/community/themes/${displayTheme.slug}`
+      : `${siteConfig.url}/community`;
     try {
       await navigator.clipboard.writeText(url);
-      toast.success("Theme URL copied to clipboard!");
+      toast.success("Community link copied");
       soundEvent("copy");
     } catch {
       toast.error("Failed to copy URL");

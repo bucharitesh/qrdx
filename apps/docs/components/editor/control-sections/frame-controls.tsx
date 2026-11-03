@@ -1,33 +1,46 @@
 "use client";
 
+import { authClient } from "@repo/auth/client";
+import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
+import { useQuery } from "@tanstack/react-query";
+import { Brush2, DocumentUpload, Global } from "iconsax-reactjs";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@repo/design-system/components/ui/popover";
-import { Slider } from "@repo/design-system/components/ui/slider";
-import {
+  type AnyQRFrame,
   DEFAULT_FRAME_TEXT,
-  FRAME_FONT_SCALE_MAX,
-  FRAME_FONT_SCALE_MIN,
   FRAME_TEXT_MAX_LENGTH,
   type FrameStyle,
   GRADIENT_FRAME_DEFAULTS,
   mixFrameColors,
+  OFFICIAL_FRAMES,
   QRCodeSVG,
-  type QRFrame,
+  type QRCustomFrame,
 } from "qrdx";
-import { useEffect, useState } from "react";
-import { HexColorPicker } from "react-colorful";
+import { useMemo, useState } from "react";
+import { getSavedCommunityFrames } from "@/actions/community";
+import { ImportFrameDialog } from "@/components/community/import-frame-dialog";
+import { PublishFrameDialog } from "@/components/community/publish-frame-dialog";
 import { useEditableStyle } from "@/components/editor/style-scope";
+import {
+  BUILT_IN_SPEC_STYLES,
+  builtInSpec,
+  officialFrameOfSpec,
+} from "@/lib/community/catalog";
+import { useSessionGuard } from "@/lib/hooks/use-gaurds";
 import { soundEvent } from "@/lib/sound/emit";
+import { CustomFrameFields } from "./custom-frame-fields";
+import { FrameColorField, FrameTextSize } from "./frame-fields";
+import { carryFrameSettings, customFrameName } from "./frame-specs";
 import { FrameTextPresets } from "./frame-text-presets";
 import { ShapePicker } from "./option-tiles";
 
-// Every frame style (20: fills a 3-column grid with no lone tile)
-const FRAME_OPTIONS: { id: FrameStyle; name: string }[] = [
+// One picker for every frame: the engine's built-in call-to-action frames,
+// QRdx's official frames (frame specs, from the engine's catalogue) and the
+// frames you saved from the community. Official and saved frames are custom
+// frames: their labels, colors and icons are edited through the spec.
+
+const BUILT_IN_OPTIONS: { id: FrameStyle; name: string }[] = [
   { id: "none", name: "None" },
   { id: "banner-bottom", name: "Banner" },
   { id: "banner-top", name: "Top banner" },
@@ -50,27 +63,37 @@ const FRAME_OPTIONS: { id: FrameStyle; name: string }[] = [
   { id: "menu-card", name: "Menu card" },
 ];
 
+const OFFICIAL_PREFIX = "official:";
+const SAVED_PREFIX = "saved:";
+const CUSTOM_ID = "custom";
+
 /** Name for the collapsed Frame header. */
-export function frameName(id: string) {
-  return FRAME_OPTIONS.find((option) => option.id === id)?.name ?? "None";
+export function frameName(frame: AnyQRFrame | undefined) {
+  if (!frame || frame.style === "none") return "None";
+  if (frame.style === "custom") return customFrameName(frame);
+  return (
+    BUILT_IN_OPTIONS.find((option) => option.id === frame.style)?.name ?? "None"
+  );
 }
 
-const FRAME_FEATURED: FrameStyle[] = [
+const FEATURED = [
   "none",
   "banner-bottom",
   "rounded-border",
-  "speech-bubble",
-  "polaroid",
+  `${OFFICIAL_PREFIX}wifi-card`,
+  `${OFFICIAL_PREFIX}review-us`,
 ];
 
-const FRAME_CATEGORIES = [
+const CATEGORIES = [
+  { id: "ready-made", label: "Ready-made" },
+  { id: "seasonal", label: "Seasonal" },
   { id: "banners", label: "Banners" },
   { id: "borders", label: "Borders" },
   { id: "bubbles", label: "Bubbles" },
   { id: "objects", label: "Objects" },
 ];
 
-const FRAME_CATEGORY: Partial<Record<FrameStyle, string>> = {
+const BUILT_IN_CATEGORY: Partial<Record<FrameStyle, string>> = {
   none: "borders",
   border: "borders",
   "rounded-border": "borders",
@@ -103,71 +126,226 @@ const SECOND_LINE = new Set<FrameStyle>([
   "menu-card",
 ]);
 
-const HEX_COLOR = /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i;
-
-interface FrameColorFieldProps {
-  id: string;
-  label: string;
-  value: string;
-  disabled?: boolean;
-  onChange: (color: string) => void;
-}
-
-function FrameColorField({
-  id,
-  label,
-  value,
-  disabled,
-  onChange,
-}: FrameColorFieldProps) {
-  const [draft, setDraft] = useState(value);
-
-  useEffect(() => {
-    setDraft(value);
-  }, [value]);
-
-  return (
-    <div className="space-y-1.5">
-      <Label className="text-xs" htmlFor={id}>
-        {label}
-      </Label>
-      <div className="flex items-center gap-2">
-        <Popover>
-          <PopoverTrigger asChild disabled={disabled}>
-            <button
-              aria-label={`Pick ${label.toLowerCase()}`}
-              className="size-9 shrink-0 rounded-full border shadow-xs disabled:opacity-50"
-              style={{ backgroundColor: value }}
-              type="button"
-            />
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-3">
-            <HexColorPicker color={value} onChange={onChange} />
-          </PopoverContent>
-        </Popover>
-        <Input
-          className="flex-1 font-mono text-sm"
-          disabled={disabled}
-          id={id}
-          maxLength={7}
-          onBlur={() => setDraft(value)}
-          onChange={(event) => {
-            setDraft(event.target.value);
-            if (HEX_COLOR.test(event.target.value)) {
-              onChange(event.target.value);
-            }
-          }}
-          placeholder="#000000"
-          value={draft}
-        />
-      </div>
-    </div>
-  );
+/** Frames saved from the community, for the signed-in picker. */
+function useSavedFrames() {
+  const { data: session } = authClient.useSession();
+  return useQuery({
+    queryKey: ["community", "saved-frames", session?.user?.id ?? null],
+    queryFn: () => getSavedCommunityFrames(),
+    enabled: Boolean(session?.user),
+    staleTime: 60_000,
+  });
 }
 
 export function FrameControls() {
   const { style, setStyle } = useEditableStyle();
-  const frame: QRFrame = style.frame ?? { style: "none" };
+  const { checkValidSession } = useSessionGuard();
+  const frame: AnyQRFrame = style.frame ?? { style: "none" };
+  const custom = frame.style === "custom" ? frame : null;
+  const builtIn = frame.style === "custom" ? null : frame;
+  const { data: saved = [] } = useSavedFrames();
+  const [importOpen, setImportOpen] = useState(false);
+  const [publishOpen, setPublishOpen] = useState(false);
+
+  const setFrame = (next: AnyQRFrame) => setStyle({ ...style, frame: next });
+
+  // Every option the picker shows, keyed by a string id
+  const options = useMemo(() => {
+    const list: { id: string; name: string; frame: AnyQRFrame }[] = [
+      ...BUILT_IN_OPTIONS.map((option) => ({
+        id: option.id as string,
+        name: option.name,
+        frame: { style: option.id, text: "" } as AnyQRFrame,
+      })),
+      ...OFFICIAL_FRAMES.map((official) => ({
+        id: `${OFFICIAL_PREFIX}${official.id}`,
+        name: official.name,
+        frame: { style: "custom", spec: official.spec } as QRCustomFrame,
+      })),
+      ...saved.map((item) => ({
+        id: `${SAVED_PREFIX}${item.id}`,
+        name: item.name,
+        frame: item.frame,
+      })),
+    ];
+    return list;
+  }, [saved]);
+
+  const value = useMemo(() => {
+    if (!custom) return frame.style as string;
+    const official = officialFrameOfSpec(custom.spec);
+    if (official) return `${OFFICIAL_PREFIX}${official.id}`;
+    const json = JSON.stringify(custom.spec);
+    const match = saved.find(
+      (item) => JSON.stringify(item.frame.spec) === json,
+    );
+    return match ? `${SAVED_PREFIX}${match.id}` : CUSTOM_ID;
+  }, [custom, frame.style, saved]);
+
+  const pickerOptions =
+    value === CUSTOM_ID && custom
+      ? [...options, { id: CUSTOM_ID, name: "Custom", frame: custom }]
+      : options;
+  const byId = new Map(pickerOptions.map((option) => [option.id, option]));
+
+  const categoryOf = (id: string) => {
+    if (id.startsWith(SAVED_PREFIX)) return "saved";
+    if (id === CUSTOM_ID) return "ready-made";
+    if (id.startsWith(OFFICIAL_PREFIX)) {
+      const official = OFFICIAL_FRAMES.find(
+        (item) => `${OFFICIAL_PREFIX}${item.id}` === id,
+      );
+      return official?.category === "seasonal" ? "seasonal" : "ready-made";
+    }
+    return BUILT_IN_CATEGORY[id as FrameStyle] ?? "objects";
+  };
+
+  const pick = (id: string) => {
+    const option = byId.get(id);
+    if (!option) return;
+    soundEvent("tick");
+    if (option.frame.style === "custom") {
+      // A ready-made frame looks like its tile: its own labels and colors.
+      setFrame(id === CUSTOM_ID && custom ? custom : option.frame);
+      return;
+    }
+    // A built-in style keeps the text and colors chosen so far.
+    setFrame({ ...carryFrameSettings(frame), style: option.frame.style });
+  };
+
+  const editableSpec =
+    builtIn && BUILT_IN_SPEC_STYLES.includes(builtIn.style)
+      ? builtInSpec(builtIn.style)
+      : undefined;
+
+  return (
+    <div className="space-y-4">
+      <ShapePicker
+        categories={[
+          ...CATEGORIES,
+          ...(saved.length > 0 ? [{ id: "saved", label: "Saved" }] : []),
+        ]}
+        category={categoryOf}
+        featured={FEATURED}
+        label="Frame"
+        noun="frames"
+        onChange={pick}
+        options={pickerOptions.map(({ id, name }) => ({ id, name }))}
+        preview={(id) => {
+          const option = byId.get(id);
+          if (!option) return null;
+          return (
+            <QRCodeSVG
+              bgColor="#ffffff"
+              bodyPattern="square"
+              cornerEyeDotPattern="square"
+              cornerEyePattern="square"
+              fgColor="#000000"
+              frame={
+                option.frame.style === "custom" || !frame.color
+                  ? option.frame
+                  : // Built-in tiles take the chosen frame color
+                    { ...option.frame, color: frame.color }
+              }
+              size={40}
+              style={{ maxHeight: "100%", maxWidth: "100%" }}
+              value="qrdx.dev"
+            />
+          );
+        }}
+        value={value}
+      />
+
+      {custom ? (
+        <CustomFrameFields frame={custom} onChange={setFrame} />
+      ) : (
+        builtIn && (
+          <BuiltInFrameFields
+            frame={builtIn}
+            onChange={(changes) => setFrame({ ...builtIn, ...changes })}
+          />
+        )
+      )}
+
+      <div className="flex flex-wrap gap-2">
+        {editableSpec && builtIn && (
+          <Button
+            onClick={() => {
+              setFrame({
+                ...carryFrameSettings(builtIn),
+                style: "custom",
+                spec: editableSpec,
+              });
+              soundEvent("tick");
+            }}
+            size="sm"
+            type="button"
+            variant="outline"
+          >
+            <Brush2 aria-hidden className="size-4" />
+            Customise
+          </Button>
+        )}
+        <Button
+          onClick={() => {
+            if (checkValidSession("signin")) setImportOpen(true);
+          }}
+          size="sm"
+          type="button"
+          variant="outline"
+        >
+          <DocumentUpload aria-hidden className="size-4" />
+          Import SVG
+        </Button>
+        {custom && (
+          <Button
+            onClick={() => {
+              if (checkValidSession("signin")) setPublishOpen(true);
+            }}
+            size="sm"
+            type="button"
+            variant="outline"
+          >
+            <Global aria-hidden className="size-4" />
+            Publish frame
+          </Button>
+        )}
+      </div>
+
+      <p className="text-muted-foreground text-xs">
+        The frame is added around the code, so the downloaded image gets bigger
+        and the code itself stays scannable.
+      </p>
+
+      <ImportFrameDialog
+        onImported={(spec) => {
+          setFrame({ style: "custom", spec });
+          soundEvent("tick");
+        }}
+        onOpenChange={setImportOpen}
+        open={importOpen}
+      />
+      {custom && (
+        <PublishFrameDialog
+          frame={custom}
+          onOpenChange={setPublishOpen}
+          open={publishOpen}
+        />
+      )}
+    </div>
+  );
+}
+
+type BuiltInFrame = Exclude<AnyQRFrame, QRCustomFrame>;
+
+/** Label, colors and text size of a built-in frame. */
+function BuiltInFrameFields({
+  frame,
+  onChange,
+}: {
+  frame: BuiltInFrame;
+  onChange: (changes: Partial<BuiltInFrame>) => void;
+}) {
   const active = frame.style !== "none";
   const isGradient = frame.style === "gradient-border";
   const frameColor =
@@ -182,44 +360,8 @@ export function FrameControls() {
         : "#ffffff");
   const fontScale = frame.fontScale ?? 1;
 
-  const updateFrame = (changes: Partial<QRFrame>) => {
-    setStyle({ ...style, frame: { ...frame, ...changes } });
-  };
-
   return (
-    <div className="space-y-4">
-      <ShapePicker
-        categories={FRAME_CATEGORIES}
-        category={(id) => FRAME_CATEGORY[id] ?? "objects"}
-        featured={FRAME_FEATURED}
-        label="Call-to-action frame"
-        noun="frames"
-        onChange={(id) => {
-          updateFrame({ style: id });
-          soundEvent("tick");
-        }}
-        options={FRAME_OPTIONS}
-        preview={(id) => (
-          <QRCodeSVG
-            bgColor="#ffffff"
-            bodyPattern="square"
-            cornerEyeDotPattern="square"
-            cornerEyePattern="square"
-            fgColor="#000000"
-            frame={{
-              style: id,
-              text: "",
-              // Each tile keeps its own default palette until a color is picked
-              ...(frame.color && { color: frame.color }),
-            }}
-            size={40}
-            style={{ maxHeight: "100%", maxWidth: "100%" }}
-            value="qrdx.dev"
-          />
-        )}
-        value={frame.style}
-      />
-
+    <>
       <div className="space-y-1.5">
         <div className="flex items-center justify-between">
           <Label className="text-xs" htmlFor="frame-text">
@@ -234,7 +376,7 @@ export function FrameControls() {
           id="frame-text"
           maxLength={FRAME_TEXT_MAX_LENGTH}
           onChange={(event) =>
-            updateFrame({
+            onChange({
               text: event.target.value.slice(0, FRAME_TEXT_MAX_LENGTH),
             })
           }
@@ -251,21 +393,21 @@ export function FrameControls() {
           disabled={!active}
           id="frame-color"
           label="Frame color"
-          onChange={(color) => updateFrame({ color })}
+          onChange={(color) => onChange({ color })}
           value={frameColor}
         />
         <FrameColorField
           disabled={!active}
           id="frame-text-color"
           label="Text color"
-          onChange={(color) => updateFrame({ textColor: color })}
+          onChange={(color) => onChange({ textColor: color })}
           value={textColor}
         />
         {isGradient && (
           <FrameColorField
             id="frame-end-color"
             label="End color"
-            onChange={(color) => updateFrame({ secondaryColor: color })}
+            onChange={(color) => onChange({ secondaryColor: color })}
             value={endColor}
           />
         )}
@@ -285,7 +427,7 @@ export function FrameControls() {
             id="frame-secondary-text"
             maxLength={FRAME_TEXT_MAX_LENGTH}
             onChange={(event) =>
-              updateFrame({
+              onChange({
                 secondaryText: event.target.value.slice(
                   0,
                   FRAME_TEXT_MAX_LENGTH,
@@ -298,30 +440,11 @@ export function FrameControls() {
         </div>
       )}
 
-      <div className="space-y-2">
-        <div className="flex items-center justify-between">
-          <Label className="text-xs" htmlFor="frame-font-scale">
-            Text size
-          </Label>
-          <span className="text-muted-foreground text-xs tabular-nums">
-            {Math.round(fontScale * 100)}%
-          </span>
-        </div>
-        <Slider
-          disabled={!active}
-          id="frame-font-scale"
-          max={FRAME_FONT_SCALE_MAX}
-          min={FRAME_FONT_SCALE_MIN}
-          onValueChange={([value]) => updateFrame({ fontScale: value })}
-          step={0.05}
-          value={[fontScale]}
-        />
-      </div>
-
-      <p className="text-muted-foreground text-xs">
-        The frame is added around the code, so the downloaded image gets bigger
-        and the code itself stays scannable.
-      </p>
-    </div>
+      <FrameTextSize
+        disabled={!active}
+        onChange={(value) => onChange({ fontScale: value })}
+        value={fontScale}
+      />
+    </>
   );
 }
