@@ -45,7 +45,8 @@ interface AIArtResultPanelProps {
   /** Variants the current run will return, for placeholders */
   pendingVariations: number;
   onRetryClearer: (variant: AIArtVariant) => void;
-  onLockSeed: (seed: number) => void;
+  /** Unset when the art model ignores seeds: there's nothing to lock */
+  onLockSeed?: (seed: number) => void;
 }
 
 export function AIArtResultPanel({
@@ -165,7 +166,11 @@ export function AIArtResultPanel({
         >
           {result.variants.map((item, index) => (
             <button
-              aria-label={`Variation ${index + 1}, seed ${item.seed}`}
+              aria-label={
+                onLockSeed
+                  ? `Variation ${index + 1}, seed ${item.seed}`
+                  : `Variation ${index + 1}`
+              }
               aria-selected={index === selected}
               className={cn(
                 "relative aspect-square overflow-hidden rounded-lg border transition-all",
@@ -223,10 +228,12 @@ export function AIArtResultPanel({
                 Retry with a clearer code
               </Button>
             )}
-            <Button onClick={() => onLockSeed(variant.seed)} variant="ghost">
-              <Lock />
-              Lock seed {variant.seed}
-            </Button>
+            {onLockSeed && (
+              <Button onClick={() => onLockSeed(variant.seed)} variant="ghost">
+                <Lock />
+                Lock seed {variant.seed}
+              </Button>
+            )}
           </div>
 
           <p className="text-muted-foreground text-xs">

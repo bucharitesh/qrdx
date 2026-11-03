@@ -19,6 +19,7 @@ import { GalleryAdd, Lock } from "iconsax-reactjs";
 import { useRef, useState } from "react";
 import { SignInLink } from "@/components/auth/sign-in-link";
 import { workspaceRequestHeaders } from "@/components/workspace-provider";
+import { ART_MODEL_LABEL, ART_SUPPORTS_SEED } from "@/lib/ai/art-models";
 import { track } from "@/lib/analytics";
 import { apiFetch } from "@/lib/api-fetch";
 import { useSessionGuard } from "@/lib/hooks/use-gaurds";
@@ -120,9 +121,13 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
     return <AIArtComingSoon />;
   }
 
+  // A model that ignores seeds gets random ones: they only tell variations apart.
   const lockedSeed =
-    seedLocked && seed.trim() !== "" ? Number(seed.trim()) : undefined;
+    ART_SUPPORTS_SEED && seedLocked && seed.trim() !== ""
+      ? Number(seed.trim())
+      : undefined;
   const seedInvalid =
+    ART_SUPPORTS_SEED &&
     seedLocked &&
     (lockedSeed === undefined ||
       !Number.isInteger(lockedSeed) ||
@@ -414,7 +419,9 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
 
         <details className="group rounded-lg border p-3">
           <summary className="cursor-pointer text-sm font-medium">
-            Advanced: negative prompt, seed, reference image
+            {ART_SUPPORTS_SEED
+              ? "Advanced: negative prompt, seed, reference image"
+              : "Advanced: negative prompt, reference image"}
           </summary>
           <div className="mt-4 flex flex-col gap-5">
             <div className="flex flex-col gap-2">
@@ -429,44 +436,46 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
                 value={negativePrompt}
               />
               <p className="text-muted-foreground text-xs">
-                Gemini is asked to keep these out of the image.
+                The model is asked to keep these out of the image.
               </p>
             </div>
 
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center justify-between gap-2">
-                <Label htmlFor="ai-art-seed">Seed</Label>
-                <div className="flex items-center gap-2">
-                  <Label
-                    className="text-muted-foreground text-xs"
-                    htmlFor="ai-art-seed-lock"
-                  >
-                    Lock seed
-                  </Label>
-                  <Switch
-                    checked={seedLocked}
-                    disabled={isGenerating}
-                    id="ai-art-seed-lock"
-                    onCheckedChange={setSeedLocked}
-                  />
+            {ART_SUPPORTS_SEED && (
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center justify-between gap-2">
+                  <Label htmlFor="ai-art-seed">Seed</Label>
+                  <div className="flex items-center gap-2">
+                    <Label
+                      className="text-muted-foreground text-xs"
+                      htmlFor="ai-art-seed-lock"
+                    >
+                      Lock seed
+                    </Label>
+                    <Switch
+                      checked={seedLocked}
+                      disabled={isGenerating}
+                      id="ai-art-seed-lock"
+                      onCheckedChange={setSeedLocked}
+                    />
+                  </div>
                 </div>
+                <Input
+                  aria-invalid={seedInvalid || undefined}
+                  disabled={isGenerating || !seedLocked}
+                  id="ai-art-seed"
+                  inputMode="numeric"
+                  onChange={(event) =>
+                    setSeed(event.target.value.replace(/[^\d]/g, ""))
+                  }
+                  placeholder={seedLocked ? "e.g. 42" : "Random each run"}
+                  value={seed}
+                />
+                <p className="text-muted-foreground text-xs">
+                  The same seed and settings give a similar image (the model can
+                  still vary it); variations use seed, seed + 1, …
+                </p>
               </div>
-              <Input
-                aria-invalid={seedInvalid || undefined}
-                disabled={isGenerating || !seedLocked}
-                id="ai-art-seed"
-                inputMode="numeric"
-                onChange={(event) =>
-                  setSeed(event.target.value.replace(/[^\d]/g, ""))
-                }
-                placeholder={seedLocked ? "e.g. 42" : "Random each run"}
-                value={seed}
-              />
-              <p className="text-muted-foreground text-xs">
-                The same seed and settings give a similar image (Gemini can
-                still vary it); variations use seed, seed + 1, …
-              </p>
-            </div>
+            )}
 
             <div className="flex flex-col gap-2">
               <Label>Reference image</Label>
@@ -510,10 +519,10 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
                 </Button>
               )}
               <p className="text-muted-foreground text-xs">
-                Optional. A logo, photo or palette for Gemini to work into the
-                artwork: its colors and shapes carry over. It's resized in your
-                browser and sent with your prompt through Vercel AI Gateway to
-                Google's Gemini image model.
+                Optional. A logo, photo or palette for the model to work into
+                the artwork: its colors and shapes carry over. It's resized in
+                your browser and sent with your prompt through Vercel AI Gateway
+                to {ART_MODEL_LABEL}.
               </p>
             </div>
           </div>
@@ -572,13 +581,17 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
 
       <AIArtResultPanel
         isGenerating={isGenerating}
-        onLockSeed={(value) => {
-          setSeed(String(value));
-          setSeedLocked(true);
-          toast.success(`Seed ${value} locked`, {
-            description: "Find it under Advanced.",
-          });
-        }}
+        onLockSeed={
+          ART_SUPPORTS_SEED
+            ? (value) => {
+                setSeed(String(value));
+                setSeedLocked(true);
+                toast.success(`Seed ${value} locked`, {
+                  description: "Find it under Advanced.",
+                });
+              }
+            : undefined
+        }
         onRetryClearer={(variant) =>
           result &&
           generate(
