@@ -1,0 +1,117 @@
+{
+  "id": "save-contact",
+  "name": "Save my contact",
+  "description": "A business-card style frame with a corner tab and a contact prompt.",
+  "category": "use-case",
+  "contentTypes": ["vcard"],
+  "tags": ["business card", "contact", "networking"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1620
+    },
+    "qr": {
+      "size": 1000,
+      "padding": 80,
+      "radius": 24,
+      "x": 120,
+      "y": 260
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1620,
+        "radius": 48,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1620,
+        "radius": 48,
+        "fill": "frame",
+        "hole": {
+          "x": 24,
+          "y": 24,
+          "width": 1192,
+          "height": 1572,
+          "radius": 28
+        }
+      },
+      {
+        "type": "polygon",
+        "points": [[1056, 24], [1188, 24], [1216, 52], [1216, 184]],
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1380,
+        "width": 1240,
+        "height": 240,
+        "radius": 48,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1380,
+        "width": 1240,
+        "height": 52,
+        "fill": "frame"
+      },
+      {
+        "type": "icon",
+        "icon": "user",
+        "x": 110,
+        "y": 1440,
+        "size": 120,
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "name",
+        "slot": "secondary",
+        "text": "",
+        "color": "frame",
+        "box": {
+          "x": 90,
+          "y": 60,
+          "width": 900,
+          "height": 110
+        },
+        "align": "start",
+        "weight": "regular"
+      },
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Save my contact",
+        "color": "text",
+        "box": {
+          "x": 270,
+          "y": 1420,
+          "width": 870,
+          "height": 160
+        },
+        "fontSize": 115.2,
+        "align": "start"
+      }
+    ]
+  }
+}

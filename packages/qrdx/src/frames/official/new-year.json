@@ -1,0 +1,94 @@
+{
+  "id": "new-year",
+  "name": "New Year",
+  "description": "A card shaded from the frame color, with sparkles. Uses a gradient fill.",
+  "category": "seasonal",
+  "contentTypes": [],
+  "tags": ["seasonal", "new year", "celebration"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1720
+    },
+    "qr": {
+      "size": 1000,
+      "padding": 80,
+      "radius": 24,
+      "x": 120,
+      "y": 320
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1720,
+        "radius": 64,
+        "fill": {
+          "gradient": {
+            "from": "frame",
+            "to": {
+              "mix": ["frame", "#ffffff"],
+              "amount": 0.28
+            },
+            "direction": "vertical",
+            "steps": 32
+          }
+        }
+      },
+      {
+        "type": "icon",
+        "icon": "sparkle",
+        "x": 150,
+        "y": 60,
+        "size": 140,
+        "fill": "text"
+      },
+      {
+        "type": "icon",
+        "icon": "sparkle",
+        "x": 970,
+        "y": 80,
+        "size": 110,
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Happy New Year",
+        "color": "text",
+        "box": {
+          "x": 320,
+          "y": 90,
+          "width": 600,
+          "height": 120
+        },
+        "weight": "regular"
+      },
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan me",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 1440,
+          "width": 1000,
+          "height": 220
+        }
+      }
+    ]
+  }
+}

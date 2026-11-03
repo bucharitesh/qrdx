@@ -1,0 +1,103 @@
+{
+  "id": "book-now",
+  "name": "Book now",
+  "description": "A calendar page with binding tabs, for salons, clinics and classes.",
+  "category": "use-case",
+  "contentTypes": ["calcom", "url"],
+  "tags": ["booking", "appointments", "salon", "clinic"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1760
+    },
+    "qr": {
+      "size": 1000,
+      "padding": 80,
+      "radius": 24,
+      "x": 120,
+      "y": 400
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 26,
+        "y": 300,
+        "width": 1188,
+        "height": 1434,
+        "radius": 24,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 40,
+        "width": 1240,
+        "height": 1720,
+        "radius": 48,
+        "fill": "frame",
+        "hole": {
+          "x": 26,
+          "y": 300,
+          "width": 1188,
+          "height": 1434,
+          "radius": 24
+        }
+      },
+      {
+        "type": "rect",
+        "x": 300,
+        "y": 0,
+        "width": 64,
+        "height": 140,
+        "radius": 32,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 876,
+        "y": 0,
+        "width": 64,
+        "height": 140,
+        "radius": 32,
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan to book",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 140,
+          "width": 1000,
+          "height": 140
+        },
+        "fontSize": 100.8
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Appointments online",
+        "color": "frame",
+        "box": {
+          "x": 120,
+          "y": 1520,
+          "width": 1000,
+          "height": 140
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

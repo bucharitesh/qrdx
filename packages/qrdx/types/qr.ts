@@ -7,7 +7,7 @@ import {
   cornerEyeDotPatternSchema,
 } from "./corner-dot";
 import { type CornerEyePattern, cornerEyePatternSchema } from "./corner-eye";
-import { frameSchema, type QRFrame } from "./frame";
+import { type AnyQRFrame, anyFrameSchema } from "./frame-spec";
 import { type BodyPattern, bodyPatternSchema } from "./image-pattern";
 import type { TemplateDefinition } from "./template";
 
@@ -71,7 +71,7 @@ export const qrPropsSchema = z.object({
   isOGContext: z.boolean().optional(),
   templateId: z.string().optional(),
   customProps: z.record(z.string(), z.any()).optional(),
-  frame: frameSchema.optional(),
+  frame: anyFrameSchema.optional(),
   art: qrArtSchema.optional(),
   eyeColors: eyeColorsSchema.optional(),
   moduleScale: z
@@ -109,8 +109,9 @@ export interface QRProps {
   // Generic custom props that can be used by any template
   // Each template can define its own custom props type (e.g., FlamQRProps)
   customProps?: Record<string, any>;
-  // Call-to-action frame around the code; the rendered output grows to fit it
-  frame?: QRFrame;
+  // Frame around the code: a built-in style, or { style: "custom", spec }
+  // (see types/frame-spec.ts); the rendered output grows to fit it
+  frame?: AnyQRFrame;
   // Blend a logo or photo into the modules (vector, no AI); see types/art.ts
   art?: QRArt;
   // Per-eye colors; each overrides eyeColor (outer) / dotColor (inner)

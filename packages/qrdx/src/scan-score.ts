@@ -13,7 +13,7 @@ import {
 } from "./constants";
 import { handleImageLoad } from "./detection";
 import { withQRSize } from "./download";
-import { FRAME_GAP_RATIO, getFrameDimensions, isFrameActive } from "./frame";
+import { getFrameDimensions, getFrameGapRatio, isFrameActive } from "./frame";
 import { getQRAsSVGDataUri } from "./index";
 import { getStylePairRisk } from "./scan-risk";
 import { getImageSettings, getLuminance, resolveErrorLevel } from "./utils";
@@ -432,7 +432,8 @@ function quietZoneCheck(props: QRProps): { check: ScanCheck; penalty: number } {
   const count = moduleCount(props).length + 2 * margin;
   // A frame keeps a light gap around the code.
   const modules =
-    margin + (isFrameActive(props.frame) ? FRAME_GAP_RATIO * count : 0);
+    margin +
+    (isFrameActive(props.frame) ? getFrameGapRatio(props.frame) * count : 0);
   const rounded = Math.round(modules * 10) / 10;
   if (modules >= 4) {
     return {

@@ -47,12 +47,38 @@ export {
   type FrameShape,
   frameLabels,
   getFrameDimensions,
+  getFrameGapRatio,
   getFrameLayout,
   getFrameSecondaryText,
   getFrameText,
   isFrameActive,
 } from "./frame";
+export {
+  FRAME_ICON_BOX,
+  type FrameIconPath,
+  getFrameIconPath,
+} from "./frame-icons";
+export {
+  FRAME_IMPORT_LIMITS,
+  type FrameImportColor,
+  type FrameImportOptions,
+  type FrameImportResult,
+  type FrameImportWarning,
+  importFrameSvg,
+} from "./frame-import";
+export {
+  FrameSpecError,
+  getCustomFrameLayout,
+  getFrameSpecGapRatio,
+  resolveFrameSpec,
+} from "./frame-spec";
 export { GRADIENT_FRAME_DEFAULTS, mixFrameColors } from "./frame-styles";
+export { BUILT_IN_FRAME_SPECS } from "./frames/builtin";
+export {
+  getOfficialFrame,
+  OFFICIAL_FRAMES,
+  type OfficialFrame,
+} from "./frames/official";
 export * from "./print";
 export * from "./qr-code";
 // QRCodeCanvas is the only export that needs client-only hooks. It lives in
