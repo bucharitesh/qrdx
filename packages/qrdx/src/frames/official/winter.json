@@ -1,0 +1,142 @@
+{
+  "id": "winter",
+  "name": "Winter",
+  "description": "A light card with snowflakes over the code and on the label band.",
+  "category": "seasonal",
+  "contentTypes": [],
+  "tags": ["seasonal", "winter", "snow"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1580
+    },
+    "qr": {
+      "size": 1000,
+      "padding": 80,
+      "radius": 24,
+      "x": 120,
+      "y": 220
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1580,
+        "radius": 40,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1580,
+        "radius": 40,
+        "fill": "frame",
+        "hole": {
+          "x": 14,
+          "y": 14,
+          "width": 1212,
+          "height": 1552,
+          "radius": 26
+        }
+      },
+      {
+        "type": "icon",
+        "icon": "snowflake",
+        "x": 465,
+        "y": 38,
+        "size": 90,
+        "fill": {
+          "mix": ["frame", "#ffffff"],
+          "amount": 0.6
+        }
+      },
+      {
+        "type": "icon",
+        "icon": "snowflake",
+        "x": 575,
+        "y": 30,
+        "size": 90,
+        "fill": {
+          "mix": ["frame", "#ffffff"],
+          "amount": 0.6
+        }
+      },
+      {
+        "type": "icon",
+        "icon": "snowflake",
+        "x": 685,
+        "y": 38,
+        "size": 90,
+        "fill": {
+          "mix": ["frame", "#ffffff"],
+          "amount": 0.6
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1320,
+        "width": 1240,
+        "height": 260,
+        "radius": 40,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1320,
+        "width": 1240,
+        "height": 44,
+        "fill": "frame"
+      },
+      {
+        "type": "icon",
+        "icon": "snowflake",
+        "x": 80,
+        "y": 1390,
+        "size": 120,
+        "fill": {
+          "mix": ["frame", "#ffffff"],
+          "amount": 0.45
+        }
+      },
+      {
+        "type": "icon",
+        "icon": "snowflake",
+        "x": 1040,
+        "y": 1390,
+        "size": 120,
+        "fill": {
+          "mix": ["frame", "#ffffff"],
+          "amount": 0.45
+        }
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan me",
+        "color": "text",
+        "box": {
+          "x": 220,
+          "y": 1340,
+          "width": 800,
+          "height": 220
+        }
+      }
+    ]
+  }
+}

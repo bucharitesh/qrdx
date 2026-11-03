@@ -1,0 +1,95 @@
+{
+  "id": "audio-guide",
+  "name": "Audio guide",
+  "description": "Headphones around the code, for museum and tour audio guides.",
+  "category": "use-case",
+  "contentTypes": ["url"],
+  "tags": ["museum", "tour", "audio", "gallery"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1560,
+      "height": 1960
+    },
+    "qr": {
+      "size": 1000,
+      "padding": 80,
+      "radius": 24,
+      "x": 280,
+      "y": 420
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M90 780A690 690 0 0 1 1470 780L1410 780A630 630 0 0 0 150 780Z",
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 20,
+        "y": 700,
+        "width": 140,
+        "height": 400,
+        "radius": 60,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 1400,
+        "y": 700,
+        "width": 140,
+        "height": 400,
+        "radius": 60,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 170,
+        "y": 300,
+        "width": 1220,
+        "height": 1620,
+        "radius": 48,
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for the audio guide",
+        "color": "text",
+        "box": {
+          "x": 280,
+          "y": 1540,
+          "width": 1000,
+          "height": 150
+        },
+        "fontSize": 108
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Listen as you walk",
+        "color": {
+          "mix": ["text", "frame"],
+          "amount": 0.3
+        },
+        "box": {
+          "x": 280,
+          "y": 1690,
+          "width": 1000,
+          "height": 110
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

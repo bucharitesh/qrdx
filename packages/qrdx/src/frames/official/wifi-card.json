@@ -1,0 +1,89 @@
+{
+  "id": "wifi-card",
+  "name": "Wi-Fi card",
+  "description": "A dark card with a Wi-Fi glyph, a join prompt and a pill for the network name.",
+  "category": "use-case",
+  "contentTypes": ["wifi"],
+  "tags": ["wifi", "hospitality", "cafe", "hotel"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1660
+    },
+    "qr": {
+      "size": 1000,
+      "padding": 80,
+      "radius": 24,
+      "x": 120,
+      "y": 390
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1660,
+        "radius": 64,
+        "fill": "frame"
+      },
+      {
+        "type": "icon",
+        "icon": "wifi",
+        "x": 555,
+        "y": 60,
+        "size": 130,
+        "fill": "text"
+      },
+      {
+        "type": "rect",
+        "x": 220,
+        "y": 1500,
+        "width": 800,
+        "height": 116,
+        "radius": 58,
+        "fill": {
+          "mix": ["frame", "#ffffff"],
+          "amount": 0.16
+        }
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan to join Wi-Fi",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 196,
+          "width": 1080,
+          "height": 104
+        },
+        "fontSize": 74.9
+      },
+      {
+        "type": "text",
+        "id": "network",
+        "slot": "secondary",
+        "text": "Guest Wi-Fi",
+        "color": "text",
+        "box": {
+          "x": 240,
+          "y": 1500,
+          "width": 760,
+          "height": 116
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

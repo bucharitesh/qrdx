@@ -1,0 +1,77 @@
+{
+  "id": "donate",
+  "name": "Donate",
+  "description": "A heart badge over a donation prompt.",
+  "category": "use-case",
+  "contentTypes": ["paypal", "upi", "url"],
+  "tags": ["charity", "donations", "nonprofit"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1800
+    },
+    "qr": {
+      "size": 1000,
+      "padding": 80,
+      "radius": 24,
+      "x": 120,
+      "y": 480
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1800,
+        "radius": 64,
+        "fill": "frame"
+      },
+      {
+        "type": "icon",
+        "icon": "heart",
+        "x": 530,
+        "y": 60,
+        "size": 180,
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan to donate",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 250,
+          "width": 1000,
+          "height": 130
+        },
+        "fontSize": 93.6
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Every gift helps",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 1600,
+          "width": 1000,
+          "height": 140
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

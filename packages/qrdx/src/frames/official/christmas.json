@@ -1,0 +1,131 @@
+{
+  "id": "christmas",
+  "name": "Christmas",
+  "description": "A light card with a tree, small sparkles and a label band.",
+  "category": "seasonal",
+  "contentTypes": [],
+  "tags": ["seasonal", "christmas", "holidays"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1760
+    },
+    "qr": {
+      "size": 1000,
+      "padding": 80,
+      "radius": 24,
+      "x": 120,
+      "y": 400
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 48,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 48,
+        "fill": "frame",
+        "hole": {
+          "x": 24,
+          "y": 24,
+          "width": 1192,
+          "height": 1712,
+          "radius": 28
+        }
+      },
+      {
+        "type": "icon",
+        "icon": "tree",
+        "x": 540,
+        "y": 46,
+        "size": 160,
+        "fill": "frame"
+      },
+      {
+        "type": "icon",
+        "icon": "sparkle",
+        "x": 330,
+        "y": 90,
+        "size": 80,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.5
+        }
+      },
+      {
+        "type": "icon",
+        "icon": "sparkle",
+        "x": 830,
+        "y": 90,
+        "size": 80,
+        "fill": {
+          "mix": ["frame", "background"],
+          "amount": 0.5
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 240,
+        "radius": 48,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1520,
+        "width": 1240,
+        "height": 52,
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Merry Christmas",
+        "color": "frame",
+        "box": {
+          "x": 120,
+          "y": 214,
+          "width": 1000,
+          "height": 90
+        },
+        "weight": "regular"
+      },
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan me",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 1540,
+          "width": 1000,
+          "height": 200
+        }
+      }
+    ]
+  }
+}
