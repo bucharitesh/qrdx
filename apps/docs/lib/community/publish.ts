@@ -8,7 +8,7 @@ import {
   database as db,
 } from "@repo/database";
 import cuid from "cuid";
-import { and, eq } from "drizzle-orm";
+import { and, eq, ne } from "drizzle-orm";
 import { revalidateTag } from "next/cache";
 import type { QRCustomFrame } from "qrdx/types";
 import { COMMUNITY_THEME_TAGS, MAX_TAGS_PER_THEME } from "@/lib/constants";
@@ -266,5 +266,37 @@ export async function publishFrame(input: {
     ...details,
     payload: { frame },
     gate,
+  });
+}
+
+/**
+ * The creator takes their item out of the community. The row stays
+ * (status "removed"); copies people made are theirs (CC0).
+ */
+export async function unpublishItem(
+  userId: string,
+  itemId: string,
+): Promise<boolean> {
+  return guarded(async () => {
+    const removed = await db
+      .update(communityItem)
+      .set({
+        status: "removed",
+        removedAt: new Date(),
+        removedReason: "creator",
+        updatedAt: new Date(),
+      })
+      .where(
+        and(
+          eq(communityItem.id, itemId),
+          eq(communityItem.createdBy, userId),
+          ne(communityItem.status, "removed"),
+        ),
+      )
+      .returning({ id: communityItem.id, type: communityItem.type });
+    if (removed.length === 0) return false;
+    revalidateTag(COMMUNITY_TAG, "max");
+    if (removed[0]?.type === "theme") revalidateTag("community-themes", "max");
+    return true;
   });
 }

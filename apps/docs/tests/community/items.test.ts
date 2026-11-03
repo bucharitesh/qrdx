@@ -41,6 +41,7 @@ import {
   PublishError,
   publishFrame,
   publishSavedTheme,
+  unpublishItem,
 } from "@/lib/community/publish";
 import {
   getItem,
@@ -494,6 +495,24 @@ describe("publishing", () => {
       profileId: "cp_official_qrdx",
       isOfficial: true,
     });
+  });
+
+  it("lets only the creator unpublish, and hides the item at once", async () => {
+    const result = await publishFrame({
+      userId: "u_ana",
+      frame: WIFI_FRAME,
+      details: { name: "Mine" },
+    });
+    expect((await getItem("frame", result.slug, "u_ana"))?.isMine).toBe(true);
+    expect((await getItem("frame", result.slug, "u_was"))?.isMine).toBe(false);
+    expect(await unpublishItem("u_was", result.id)).toBe(false);
+    expect(await unpublishItem("u_ana", result.id)).toBe(true);
+    expect(fakeDb.find("communityItem", { id: result.id })).toMatchObject({
+      status: "removed",
+      removedReason: "creator",
+    });
+    expect(await getItem("frame", result.slug, null)).toBeNull();
+    expect(await unpublishItem("u_ana", result.id)).toBe(false);
   });
 
   it("says when the tables aren't there yet", async () => {

@@ -2,6 +2,17 @@
 
 import { toast } from "@repo/design-system";
 import { Spinner } from "@repo/design-system/components/icons";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@repo/design-system/components/ui/alert-dialog";
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import { Archive, Brush2, FolderAdd, Heart } from "iconsax-reactjs";
@@ -11,6 +22,7 @@ import {
   copyCommunityItem,
   toggleCommunityLike,
   toggleCommunitySave,
+  unpublishCommunityItem,
 } from "@/actions/community";
 import { useWorkspaceHref } from "@/components/workspace-provider";
 import { defaultThemeState } from "@/config/qr";
@@ -204,6 +216,60 @@ export function ItemActions({
           </Button>
         )}
       </div>
+      {item.isMine && item.id && <UnpublishButton item={item} />}
     </div>
+  );
+}
+
+/** The creator's own item: take it out of the community. */
+function UnpublishButton({ item }: { item: CommunityItemDetail }) {
+  const router = useRouter();
+  const [open, setOpen] = useState(false);
+  const [pending, setPending] = useState(false);
+
+  const unpublish = async () => {
+    if (!item.id) return;
+    setPending(true);
+    const result = await unpublishCommunityItem(item.id);
+    setPending(false);
+    if (!result.ok) {
+      toast.error(result.message);
+      return;
+    }
+    setOpen(false);
+    toast.success(`"${item.name}" is no longer in the community.`);
+    router.push("/community");
+  };
+
+  return (
+    <AlertDialog onOpenChange={setOpen} open={open}>
+      <AlertDialogTrigger asChild>
+        <Button className="px-0" size="sm" variant="link">
+          Unpublish
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Remove from the community?</AlertDialogTitle>
+          <AlertDialogDescription>
+            It leaves the community at once. People who already used it keep
+            their copies: it was shared under CC0.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction
+            disabled={pending}
+            onClick={(event) => {
+              event.preventDefault();
+              void unpublish();
+            }}
+          >
+            {pending && <Spinner className="size-4" />}
+            Unpublish
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }

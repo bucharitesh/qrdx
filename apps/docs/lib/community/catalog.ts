@@ -57,6 +57,7 @@ export function officialFrameDetail(frame: OfficialFrame): CommunityItemDetail {
     remixedFromLabel: null,
     isLikedByMe: false,
     isSavedByMe: false,
+    isMine: false,
   };
 }
 

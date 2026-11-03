@@ -70,6 +70,7 @@ const ROW = {
   facets: communityItem.facets,
   remixedFromLabel: communityItem.remixedFromLabel,
   sourceId: communityItem.sourceId,
+  createdBy: communityItem.createdBy,
   profileId: communityProfile.id,
   profileKind: communityProfile.kind,
   handle: communityProfile.handle,
@@ -97,6 +98,7 @@ interface ItemRow {
   facets: Record<string, unknown> | null;
   remixedFromLabel: string | null;
   sourceId: string | null;
+  createdBy: string | null;
   profileId: string;
   profileKind: string;
   handle: string | null;
@@ -378,6 +380,7 @@ export async function getItem(
       remixedFromLabel: row.remixedFromLabel,
       isLikedByMe: liked.length > 0,
       isSavedByMe: saved.length > 0,
+      isMine: viewerId !== null && row.createdBy === viewerId,
       ...(entries ? { entries } : {}),
     };
     return detail;
