@@ -307,7 +307,7 @@ const chatBubble: Layout = (ctx) => {
  * Letters of `text` set along a circle of `radius` around (cx, cy): over the
  * top reading clockwise, or along the bottom reading left to right, upright.
  */
-function arcLabels(
+export function arcLabels(
   text: string,
   cx: number,
   cy: number,
