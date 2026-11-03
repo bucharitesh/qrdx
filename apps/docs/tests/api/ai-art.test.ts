@@ -1,8 +1,8 @@
 // POST /api/ai/art end to end with a fake Vercel AI Gateway behind fetch (the
 // app's real gateway client builds every request) and in-memory tables: the
-// real control image, scan check, Image QR blend and credit bookkeeping all
-// run. A credit is used only for a delivered, scannable image; images made on
-// fal.ai this month still count.
+// real control image, scan check, blend and credit bookkeeping all run. A
+// credit is used only for a delivered, scannable image; images made this
+// month with earlier art models (Nano Banana 2.1, fal.ai) still count.
 import { NextRequest } from "next/server";
 import { decodePNGPixels, scanQRPixels } from "qrdx";
 import { afterAll, beforeEach, describe, expect, it, vi } from "vitest";
@@ -10,10 +10,9 @@ import { paintedArt } from "../support/ai-art-images";
 import { fakeDb } from "../support/fake-db";
 import {
   gatewayError,
-  imageFileResult,
+  imageModelParts,
+  imageModelResult,
   installFakeGateway,
-  textOnlyResult,
-  userParts,
 } from "../support/fake-gateway";
 
 const state = vi.hoisted(() => {
@@ -91,7 +90,27 @@ afterAll(() => {
 
 /** Answers every model call with an image made from the control code. */
 const respondWithArt = (art: () => Promise<Uint8Array>) =>
-  gateway.respondWith(async () => imageFileResult(await art()));
+  gateway.respondWith(async () => imageModelResult([await art()]));
+
+const usageRow = (
+  id: string,
+  userId: string,
+  modelId: string,
+  createdAt = thisMonth,
+) => ({
+  id,
+  userId,
+  modelId,
+  daysSinceEpoch: "0",
+  createdAt,
+});
+
+const allowance = async () =>
+  (
+    await (
+      await credits.GET(new NextRequest("http://localhost/api/ai/art/credits"))
+    ).json()
+  ).credits;
 
 beforeEach(() => {
   fakeDb.resetAll();
@@ -117,7 +136,7 @@ describe("POST /api/ai/art", () => {
     expect(body.variant.imageUrl).toMatch(/^data:image\/png;base64,/);
     expect(body.credits).toMatchObject({ limit: 3, used: 1, remaining: 2 });
     expect(usage()).toHaveLength(1);
-    expect(usage()[0]?.modelId).toBe("google/gemini-nano-banana-2.1");
+    expect(usage()[0]?.modelId).toBe("openai/gpt-image-2");
   });
 
   it("blends an image that doesn't scan, delivers it and charges for it", async () => {
@@ -195,6 +214,77 @@ describe("POST /api/ai/art", () => {
     });
   });
 
+  it("counts this month's Nano Banana 2.1 images with GPT Image 2's in one allowance", async () => {
+    fakeDb.seed("aiUsage", [
+      usageRow("nano_1", "u_alice", "google/gemini-nano-banana-2.1"),
+      usageRow("nano_2", "u_alice", "google/gemini-nano-banana-2.1"),
+      // Last month's don't count.
+      usageRow(
+        "nano_old",
+        "u_alice",
+        "google/gemini-nano-banana-2.1",
+        new Date("2020-01-15T00:00:00Z"),
+      ),
+    ]);
+    respondWithArt(() => paintedArt(control.png, { keep: 0.75 }));
+
+    const response = await generate();
+    expect(response.status).toBe(200);
+    expect((await response.json()).credits).toMatchObject({
+      limit: 3,
+      used: 3,
+      remaining: 0,
+    });
+    expect(
+      usage().filter((row) => row.modelId === "openai/gpt-image-2"),
+    ).toHaveLength(1);
+
+    // The allowance is used up: the next run is refused before any call.
+    gateway.reset();
+    respondWithArt(() => paintedArt(control.png, { keep: 0.75 }));
+    expect((await generate()).status).toBe(402);
+    expect(gateway.calls).toHaveLength(0);
+  });
+
+  it("pools a Business workspace's images across its members and both models", async () => {
+    state.plan = "business";
+    // The first look creates Alice's own workspace.
+    expect(await allowance()).toMatchObject({ used: 0, pooled: true });
+    const workspaceId = fakeDb.find("member", {
+      userId: "u_alice",
+    })?.organizationId;
+    expect(workspaceId).toBeDefined();
+    fakeDb.seed("member", [
+      {
+        id: "m_bob",
+        userId: "u_bob",
+        organizationId: workspaceId,
+        role: "member",
+        createdAt: thisMonth,
+      },
+    ]);
+    fakeDb.seed("aiUsage", [
+      usageRow("bob_nano", "u_bob", "google/gemini-nano-banana-2.1"),
+      usageRow("bob_gpt", "u_bob", "openai/gpt-image-2"),
+      usageRow("alice_nano", "u_alice", "google/gemini-nano-banana-2.1"),
+      // Someone outside the workspace, and a theme request: neither counts.
+      usageRow("carol_gpt", "u_carol", "openai/gpt-image-2"),
+      usageRow("alice_theme", "u_alice", "anthropic/claude-haiku-5.5"),
+    ]);
+    expect(await allowance()).toMatchObject({
+      plan: "business",
+      limit: 150,
+      used: 3,
+      remaining: 147,
+      pooled: true,
+    });
+
+    respondWithArt(() => paintedArt(control.png, { keep: 0.75 }));
+    const response = await generate();
+    expect(response.status).toBe(200);
+    expect((await response.json()).credits).toMatchObject({ used: 4 });
+  });
+
   it("ignores fal.ai images from earlier months", async () => {
     fakeDb.seed(
       "aiUsage",
@@ -214,33 +304,31 @@ describe("POST /api/ai/art", () => {
 });
 
 describe("the art request through Vercel AI Gateway", () => {
-  it("sends the prompt and control code to Gemini Nano Banana 2.1, Google providers only", async () => {
+  it("sends the prompt and control code to GPT Image 2, OpenAI only, untrained, without a seed", async () => {
     respondWithArt(() => paintedArt(control.png, { keep: 0.75 }));
     expect((await generate()).status).toBe(200);
 
     expect(gateway.calls).toHaveLength(1);
     const [call] = gateway.calls;
-    expect(call?.url).toBe("https://ai-gateway.vercel.sh/v4/ai/language-model");
+    expect(call?.url).toBe("https://ai-gateway.vercel.sh/v4/ai/image-model");
     expect(call?.headers).toMatchObject({
       authorization: "Bearer test-gateway-key",
       "ai-gateway-auth-method": "api-key",
-      "ai-language-model-id": "google/gemini-nano-banana-2.1",
-      "ai-language-model-streaming": "false",
+      "ai-model-id": "openai/gpt-image-2",
+      "ai-image-model-specification-version": "4",
     });
-    expect(call?.body.seed).toBe(11);
+    expect(call?.body).toMatchObject({ n: 1, size: "1024x1024" });
+    // GPT Image 2 ignores seeds, so none is sent.
+    expect(call?.body.seed).toBeUndefined();
     expect(call?.body.providerOptions).toEqual({
-      gateway: { disallowPromptTraining: true, only: ["google", "vertex"] },
-      google: {
-        responseModalities: ["IMAGE"],
-        imageConfig: { aspectRatio: "1:1", imageSize: "1K" },
-      },
+      gateway: { disallowPromptTraining: true, only: ["openai"] },
     });
-    const { text, images } = userParts(call!);
+    const { text, images } = imageModelParts(call!);
     expect(text).toMatch(
       /^Repaint the QR code in the first image as artwork: a zen garden\./,
     );
+    expect(text).toMatch(/Don't zoom, crop or re-center/);
     expect(images).toHaveLength(1);
-    expect(images[0]?.mediaType).toBe("image/png");
     expect(Buffer.from(images[0]!.bytes).equals(Buffer.from(control.png))).toBe(
       true,
     );
@@ -250,7 +338,7 @@ describe("the art request through Vercel AI Gateway", () => {
     respondWithArt(() => paintedArt(control.png, { keep: 0.75 }));
     const reference = `data:image/png;base64,${Buffer.from(control.png).toString("base64")}`;
     expect((await generate({ reference })).status).toBe(200);
-    const { text, images } = userParts(gateway.calls[0]!);
+    const { text, images } = imageModelParts(gateway.calls[0]!);
     expect(images).toHaveLength(2);
     expect(text).toMatch(/The second image is a reference/);
   });
@@ -276,7 +364,7 @@ describe("the art request through Vercel AI Gateway", () => {
   });
 
   it("explains a reply without an image as a declined prompt", async () => {
-    gateway.respondWith(() => textOnlyResult("I can't help with that."));
+    gateway.respondWith(() => imageModelResult([]));
     const response = await generate();
     expect(response.status).toBe(502);
     expect((await response.json()).message).toMatch(/returned no image/);

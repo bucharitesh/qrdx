@@ -1,6 +1,7 @@
 // Product counts quoted in copy (docs, compare pages, the blog, llms.txt, the
 // FAQ), read from the engine's catalogue so they can't drift from what the
-// playground offers. Content files write a token instead of a number:
+// playground offers, and the AI art model's name, read from the model map.
+// Content files write a token instead of a number or name:
 //
 //   MDX body:     There are {facts.bodyPatterns} body patterns.
 //   frontmatter:  description: "{facts.bodyPatterns} body patterns, …"
@@ -21,6 +22,7 @@ import { CORNER_EYE_DOT_PATTERNS } from "../../../packages/qrdx/types/corner-dot
 import { CORNER_EYE_PATTERNS } from "../../../packages/qrdx/types/corner-eye";
 import { FRAME_STYLES } from "../../../packages/qrdx/types/frame";
 import { BODY_PATTERN } from "../../../packages/qrdx/types/image-pattern";
+import { ART_MODEL_LABEL } from "./ai/art-models";
 
 export const PRODUCT_FACTS = {
   /** Shapes for the data modules (`bodyPattern`). */
@@ -31,6 +33,8 @@ export const PRODUCT_FACTS = {
   eyeCentres: CORNER_EYE_DOT_PATTERNS.length,
   /** Call-to-action frames (`frame.style`); `none` isn't a frame. */
   frames: FRAME_STYLES.filter((style) => style !== "none").length,
+  /** The AI art model as copy names it ("OpenAI's GPT Image 2"), from lib/ai/models.ts. */
+  artModel: ART_MODEL_LABEL,
 } as const;
 
 export type ProductFact = keyof typeof PRODUCT_FACTS;
@@ -42,8 +46,8 @@ export function isProductFact(name: string): name is ProductFact {
   return Object.hasOwn(PRODUCT_FACTS, name);
 }
 
-/** The count for a `facts.<name>` token; a typo throws, so it fails the build. */
-export function productFact(name: string): number {
+/** The value of a `facts.<name>` token; a typo throws, so it fails the build. */
+export function productFact(name: string): number | string {
   if (!isProductFact(name)) {
     throw new Error(
       `Unknown product fact "facts.${name}". Use one of: ${Object.keys(PRODUCT_FACTS).join(", ")} (lib/product-facts.ts).`,
@@ -54,7 +58,7 @@ export function productFact(name: string): number {
 
 const TOKEN = /\{facts\.(\w+)\}/g;
 
-/** Replaces each `{facts.<name>}` in `text` with its count. */
+/** Replaces each `{facts.<name>}` in `text` with its value. */
 export function fillFacts(text: string): string {
   return text.replace(TOKEN, (_, name: string) => String(productFact(name)));
 }

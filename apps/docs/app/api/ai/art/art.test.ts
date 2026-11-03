@@ -31,7 +31,7 @@ before(async () => {
 
 type Call = import("@/lib/ai/art-image").ArtModelRequest;
 
-function fakeGemini(
+function fakeArtModel(
   respond: (call: Call) => Promise<Uint8Array> | Uint8Array,
 ): { model: import("@/lib/ai/art-image").ArtImageModel; calls: Call[] } {
   const calls: Call[] = [];
@@ -84,7 +84,7 @@ describe("buildArtPrompt", () => {
       ...overrides,
     });
 
-  it("asks Gemini to keep the grid, the finder eyes and the quiet zone", () => {
+  it("asks the model to keep the grid, the finder eyes and the quiet zone", () => {
     const text = prompt();
     assert.match(text, /^Repaint the QR code .*: a zen garden\.$/m);
     assert.match(text, /same grid/);
@@ -94,13 +94,17 @@ describe("buildArtPrompt", () => {
     assert.match(text, /No text, letters, logos/);
   });
 
-  it("adds each art model's own rules", () => {
-    assert.match(prompt(), /no perspective, depth or 3D blocks/);
+  it("adds the art model's own rules: GPT Image 2's by default", () => {
+    assert.match(prompt(), /Don't zoom, crop or re-center/);
+    assert.doesNotMatch(prompt(), /3D blocks/);
     assert.match(
-      prompt({ model: "openai/gpt-image-2" }),
-      /Don't zoom, crop or re-center/,
+      prompt({ model: "google/gemini-nano-banana-2.1" }),
+      /no perspective, depth or 3D blocks/,
     );
-    assert.doesNotMatch(prompt({ model: "openai/gpt-image-2" }), /3D blocks/);
+    assert.doesNotMatch(
+      prompt({ model: "google/gemini-nano-banana-2.1" }),
+      /zoom/,
+    );
     assert.doesNotMatch(prompt({ model: "bfl/flux-kontext-pro" }), /3D|zoom/);
   });
 
@@ -122,10 +126,10 @@ describe("buildArtPrompt", () => {
   });
 });
 
-describe("generateArtVariant (fake Gemini)", () => {
-  it("delivers Gemini's image as it is when it scans", async () => {
+describe("generateArtVariant (fake art model)", () => {
+  it("delivers the model's image as it is when it scans", async () => {
     const restyled = await paintedArt(control.png, { keep: 0.75 });
-    const { model, calls } = fakeGemini(() => restyled);
+    const { model, calls } = fakeArtModel(() => restyled);
     const variant = await pipeline.generateArtVariant(request({ model }));
 
     assert.equal(calls.length, 1);
@@ -147,7 +151,7 @@ describe("generateArtVariant (fake Gemini)", () => {
     const textured = await texturedArt(control.png);
     const raw = (await decodePNGPixels(textured))!;
     assert.equal((await scanQRPixels(raw, TEXT)).passed, false);
-    const { model } = fakeGemini(() => textured);
+    const { model } = fakeArtModel(() => textured);
     const variant = await pipeline.generateArtVariant(request({ model }));
 
     assert.equal(variant.blended, true);
@@ -168,7 +172,7 @@ describe("generateArtVariant (fake Gemini)", () => {
       (await scanQRPixels((await decodePNGPixels(broken))!, TEXT)).passed,
       false,
     );
-    const { model } = fakeGemini(() => broken);
+    const { model } = fakeArtModel(() => broken);
     const variant = await pipeline.generateArtVariant(request({ model }));
 
     assert.equal(variant.blended, true);
@@ -181,7 +185,7 @@ describe("generateArtVariant (fake Gemini)", () => {
 
   it("strengthens even a scannable image at high QR visibility", async () => {
     const restyled = await paintedArt(control.png, { keep: 0.75 });
-    const { model } = fakeGemini(() => restyled);
+    const { model } = fakeArtModel(() => restyled);
     const variant = await pipeline.generateArtVariant(
       request({ model, visibility: 100 }),
     );
@@ -194,7 +198,7 @@ describe("generateArtVariant (fake Gemini)", () => {
   it("delivers nothing at low QR visibility rather than cover the scene", async () => {
     // Needs a strength of about 0.65; QR visibility 0 stops at 0.6.
     const heavy = await texturedArt(control.png, { speckle: 200 });
-    const { model } = fakeGemini(() => heavy);
+    const { model } = fakeArtModel(() => heavy);
     await assert.rejects(
       pipeline.generateArtVariant(request({ model, visibility: 0 })),
       (error: { status?: number; code?: string; message?: string }) =>
@@ -205,15 +209,15 @@ describe("generateArtVariant (fake Gemini)", () => {
   });
 
   it("sends a reference image second", async () => {
-    const { model, calls } = fakeGemini(() => control.png);
+    const { model, calls } = fakeArtModel(() => control.png);
     const reference = `data:image/png;base64,${Buffer.from(control.png).toString("base64")}`;
     await pipeline.generateArtVariant(request({ model, reference }));
     assert.equal(calls[0]?.images.length, 2);
     assert.match(calls[0]?.prompt ?? "", /second image is a reference/);
   });
 
-  it("says no credit was used when Gemini fails", async () => {
-    const { model } = fakeGemini(() => {
+  it("says no credit was used when the model fails", async () => {
+    const { model } = fakeArtModel(() => {
       throw new Error("upstream exploded");
     });
     await assert.rejects(
@@ -240,7 +244,7 @@ describe("generateArtVariant (fake Gemini)", () => {
         errors: [quota, quota],
       }),
     ]) {
-      const { model } = fakeGemini(() => {
+      const { model } = fakeArtModel(() => {
         throw thrown;
       });
       await assert.rejects(
@@ -254,7 +258,7 @@ describe("generateArtVariant (fake Gemini)", () => {
   });
 
   it("rejects an image it can't read", async () => {
-    const { model } = fakeGemini(() => new Uint8Array([1, 2, 3, 4]));
+    const { model } = fakeArtModel(() => new Uint8Array([1, 2, 3, 4]));
     await assert.rejects(
       pipeline.generateArtVariant(request({ model })),
       (error: { status?: number; message?: string }) =>
@@ -264,7 +268,7 @@ describe("generateArtVariant (fake Gemini)", () => {
   });
 
   it("gives up on a slow model, saying no credit was used", async () => {
-    const { model } = fakeGemini(
+    const { model } = fakeArtModel(
       (call) =>
         new Promise((_, reject) => {
           // AbortSignal.timeout doesn't keep the process alive; this does.
@@ -286,7 +290,7 @@ describe("generateArtVariant (fake Gemini)", () => {
 
   it("passes a cancelled request through untouched", async () => {
     const controller = new AbortController();
-    const { model } = fakeGemini(() => {
+    const { model } = fakeArtModel(() => {
       controller.abort();
       throw new DOMException("aborted", "AbortError");
     });
