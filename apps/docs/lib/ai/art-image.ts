@@ -58,8 +58,12 @@ const ART_MODEL_TIMEOUT_MS = 45_000;
 const LEAST_BLEND_BUDGET_MS = 8000;
 /** Largest image a response carries (Vercel caps responses at 4.5 MB). */
 const MAX_DELIVERED_DATA_URL_LENGTH = 4_000_000;
-/** Seeds stay in a signed 32-bit integer (Gemini's range). */
+/** Seeds stay in a signed 32-bit integer (the Gemini image models' range). */
 const SEED_RANGE = 2 ** 31;
+
+/** The seed for a model that follows one; nothing for one that ignores it. */
+const seedFor = (choice: ArtModelChoice, seed: number) =>
+  choice.supportsSeed ? { seed: seed % SEED_RANGE } : {};
 
 /** Plain props of the control code; the blend reuses them with `art`. */
 function controlProps(text: string): QRPropsSVG {
@@ -133,18 +137,19 @@ export function controlGrid(control: ControlImage): Omit<ModuleGrid, "fit"> {
 
 /**
  * Extra rules per art model (gateway id), for what each got wrong in
- * scripts/ai/art-eval.ts: the Gemini models painted scenes out to the
- * image's edges, and Flash drew one city's finders as 3D blocks half again
- * their size; GPT Image 2 redrew the code about 4% larger, off-center, in 2
- * of 6 images.
+ * scripts/ai/art-eval.ts. GPT Image 2's is the one users get (it's the art
+ * model): it redrew the code about 4% larger, off-center, in 2 of 6 images
+ * of the first eval. The others are for the eval's candidates: the Gemini
+ * models painted scenes out to the image's edges, and Flash drew one city's
+ * finders as 3D blocks half again their size.
  */
 const MODEL_PROMPT_RULES: Record<string, string> = {
+  "openai/gpt-image-2":
+    "- Don't zoom, crop or re-center: the code covers exactly the same pixels as in the first image.",
   "google/gemini-nano-banana-2.1":
     "- Keep it flat and front-on, like a print: no perspective, depth or 3D blocks, and nothing that rises above or overlaps the code.",
   "google/gemini-3.1-flash-image":
     "- Keep it flat and front-on, like a print: no perspective, depth or 3D blocks, and nothing that rises above or overlaps the code.",
-  "openai/gpt-image-2":
-    "- Don't zoom, crop or re-center: the code covers exactly the same pixels as in the first image.",
 };
 
 /** The instruction sent with the control image (exported for tests). */
@@ -231,7 +236,7 @@ export type ArtImageModel = (
 ) => Promise<ArtModelImage>;
 
 /**
- * A multimodal LLM that answers with image files (Gemini image models): the
+ * A multimodal LLM that answers with image files (the Gemini image models): the
  * prompt and images go in as one user message, and the last image file that
  * comes back is the artwork.
  */
@@ -253,7 +258,7 @@ function filesArtModel(choice: ArtModelChoice): ArtImageModel {
           ],
         },
       ],
-      seed: seed % SEED_RANGE,
+      ...seedFor(choice, seed),
       providerOptions: artProviderOptions(choice),
       maxRetries: 1,
       abortSignal,
@@ -282,7 +287,7 @@ function imagesArtModel(choice: ArtModelChoice): ArtImageModel {
       prompt: { text: prompt, images },
       ...(choice.size ? { size: choice.size } : {}),
       ...(choice.aspectRatio ? { aspectRatio: choice.aspectRatio } : {}),
-      seed: seed % SEED_RANGE,
+      ...seedFor(choice, seed),
       providerOptions: artProviderOptions(choice),
       maxRetries: 1,
       abortSignal,

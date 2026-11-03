@@ -16,7 +16,8 @@ const ENTITLED_SUBSCRIPTION_STATUSES = ["active", "trialing"];
 const FREE_LIMIT_REACHED_MESSAGE = `You've reached your free limit of ${AI_REQUEST_FREE_TIER_LIMIT} requests. Please upgrade to continue.`;
 
 // AI art has its own monthly credits (lib/ai/art.ts), so its rows, including
-// those from before it moved to Gemini, don't use up the free AI theme requests.
+// those of earlier art models (Nano Banana 2.1, fal.ai), don't use up the free
+// AI theme requests.
 const freeTierUsage = (userId: string) =>
   and(
     eq(aiUsage.userId, userId),
