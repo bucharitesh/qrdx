@@ -2,11 +2,18 @@
 
 import { ADMIN_ROLE } from "@repo/auth/admin";
 import { auth } from "@repo/auth/server";
-import { communityTheme, database as db, qrPreset, user } from "@repo/database";
-import { eq } from "drizzle-orm";
+import {
+  communityItem,
+  communityTheme,
+  database as db,
+  qrPreset,
+  user,
+} from "@repo/database";
+import { and, eq, ne, type SQL } from "drizzle-orm";
 import { revalidateTag } from "next/cache";
 import { headers } from "next/headers";
 import { z } from "zod";
+import { COMMUNITY_TAG, isMissingSchemaError } from "@/lib/community/tables";
 import {
   type AdminActionResult,
   adminError,
@@ -30,6 +37,10 @@ const roleSchema = z.object({
 const removeThemeSchema = z.object({
   communityThemeId: adminId,
   reason: optionalReason,
+});
+const removeItemSchema = z.object({
+  itemId: adminId,
+  reason: requiredReason,
 });
 
 async function findUser(userId: string) {
@@ -170,6 +181,10 @@ export async function removeCommunityThemeAction(
       await db
         .delete(communityTheme)
         .where(eq(communityTheme.id, communityThemeId));
+      // Its copy in community_item (made by the backfill) goes too.
+      await markItemsRemoved(
+        eq(communityItem.legacyCommunityThemeId, communityThemeId),
+      );
       return {
         audit: {
           targetType: "community_theme",
@@ -189,6 +204,74 @@ export async function removeCommunityThemeAction(
   if (result.ok) {
     revalidateTag("community-themes", "max");
     revalidateTag("community-tag-counts", "max");
+    revalidateTag(COMMUNITY_TAG, "max");
+  }
+  return result;
+}
+
+/** Soft-removes community items (nothing to do before manual-sql/0012). */
+async function markItemsRemoved(where: SQL): Promise<number> {
+  try {
+    const rows = await db
+      .update(communityItem)
+      .set({
+        status: "removed",
+        removedAt: new Date(),
+        removedReason: "moderation",
+        updatedAt: new Date(),
+      })
+      .where(and(where, ne(communityItem.status, "removed")))
+      .returning({ id: communityItem.id });
+    return rows.length;
+  } catch (error) {
+    if (isMissingSchemaError(error)) return 0;
+    throw error;
+  }
+}
+
+/**
+ * Post-moderation: takes a published frame, theme or collection out of the
+ * community. The row stays (status "removed") for the audit trail; copies
+ * people already made are theirs (CC0).
+ */
+export async function removeCommunityItemAction(
+  input: z.input<typeof removeItemSchema>,
+): Promise<AdminActionResult> {
+  const result = await runAdminAction(
+    { action: "community_item.remove", schema: removeItemSchema },
+    input,
+    async (_admin, { itemId }) => {
+      const [target] = await db
+        .select({
+          type: communityItem.type,
+          slug: communityItem.slug,
+          name: communityItem.name,
+          createdBy: communityItem.createdBy,
+          status: communityItem.status,
+        })
+        .from(communityItem)
+        .where(eq(communityItem.id, itemId))
+        .limit(1);
+      if (!target) throw adminError("Community item not found", 404);
+      if (target.status === "removed") return null;
+      await markItemsRemoved(eq(communityItem.id, itemId));
+      return {
+        audit: {
+          targetType: "community_item",
+          targetId: itemId,
+          subjectUserId: target.createdBy,
+          metadata: {
+            type: target.type,
+            slug: target.slug,
+            name: target.name,
+          },
+        },
+      };
+    },
+  );
+  if (result.ok) {
+    revalidateTag(COMMUNITY_TAG, "max");
+    revalidateTag("community-themes", "max");
   }
   return result;
 }
