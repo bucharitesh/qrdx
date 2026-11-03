@@ -79,6 +79,8 @@ export interface CommunityItemDetail extends CommunityItemCard {
   remixedFromLabel: string | null;
   isLikedByMe: boolean;
   isSavedByMe: boolean;
+  /** The viewer published it (and may unpublish it) */
+  isMine: boolean;
 }
 
 export interface CommunityProfileView {

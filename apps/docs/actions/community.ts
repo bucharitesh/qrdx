@@ -16,7 +16,11 @@ import {
   ProfileInputError,
   saveCommunityProfile,
 } from "@/lib/community/profiles";
-import { PublishError, publishFrame } from "@/lib/community/publish";
+import {
+  PublishError,
+  publishFrame,
+  unpublishItem,
+} from "@/lib/community/publish";
 import { savedFrames } from "@/lib/community/queries";
 import {
   ItemNotFoundError,
@@ -210,6 +214,25 @@ export async function toggleCommunitySave(
     return { ok: true, data: await toggleItemSave(userId, id) };
   } catch (error) {
     return failure(error, "toggleCommunitySave");
+  }
+}
+
+/** The creator unpublishes their own item. */
+export async function unpublishCommunityItem(
+  itemId: string,
+): Promise<CommunityResult<{ removed: true }>> {
+  try {
+    const userId = await getCurrentUserId();
+    const id = idSchema.parse(itemId);
+    if (!(await unpublishItem(userId, id))) {
+      return fail(
+        "NOT_FOUND",
+        "Only the person who published it can unpublish it.",
+      );
+    }
+    return { ok: true, data: { removed: true } };
+  } catch (error) {
+    return failure(error, "unpublishCommunityItem");
   }
 }
 
