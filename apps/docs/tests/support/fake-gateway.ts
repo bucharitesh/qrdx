@@ -79,6 +79,43 @@ export function userParts(call: GatewayCall): {
   };
 }
 
+/**
+ * An image model call's prompt and input images (`files`), as the gateway
+ * received them (POST …/image-model).
+ */
+export function imageModelParts(call: GatewayCall): {
+  text: string;
+  images: { mediaType: string; bytes: Uint8Array }[];
+} {
+  const files = (call.body.files ?? []) as {
+    type: string;
+    mediaType?: string;
+    data: string;
+  }[];
+  return {
+    text: call.body.prompt,
+    images: files.map((file) => ({
+      mediaType: file.mediaType ?? "",
+      bytes: new Uint8Array(Buffer.from(file.data, "base64")),
+    })),
+  };
+}
+
+/** An image model result (ImageModelV4): base64 images, as the gateway sends them. */
+export function imageModelResult(
+  images: Uint8Array[],
+  gateway: Record<string, unknown> = {
+    cost: "0.0228",
+    generationId: "gen_test",
+  },
+): Response {
+  return Response.json({
+    images: images.map((png) => Buffer.from(png).toString("base64")),
+    warnings: [],
+    providerMetadata: { gateway },
+  });
+}
+
 /** A language model result (LanguageModelV4) with one image file. */
 export function imageFileResult(
   png: Uint8Array,

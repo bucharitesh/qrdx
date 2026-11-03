@@ -38,6 +38,16 @@ export interface ArtModelChoice extends AIModelChoice {
   /** generateImage settings, for output "images". */
   size?: `${number}x${number}`;
   aspectRatio?: `${number}:${number}`;
+  /** Who makes the model, for copy ("OpenAI"). */
+  maker: string;
+  /** The model's name, for copy ("GPT Image 2"). */
+  name: string;
+  /**
+   * Whether the model follows `seed`, so the same seed and settings give a
+   * similar image. Only then is the seed sent, and only then does the studio
+   * offer its seed lock.
+   */
+  supportsSeed: boolean;
 }
 
 /** Google's Gemini API and Vertex AI: both are Google. */
@@ -50,6 +60,33 @@ const GOOGLE = ["google", "vertex"] as const;
 const GEMINI_IMAGE_OPTIONS: ProviderOptionValues = {
   responseModalities: ["IMAGE"],
   imageConfig: { aspectRatio: "1:1", imageSize: "1K" },
+};
+
+/**
+ * GPT Image 2 through generateImage, square at the delivered size. OpenAI is
+ * its only provider on the gateway, and the gateway lists OpenAI among the
+ * providers that don't train on prompts (disallowPromptTraining). It ignores
+ * `seed` (the gateway warns "seed is not supported").
+ */
+const GPT_IMAGE_2: ArtModelChoice = {
+  model: "openai/gpt-image-2",
+  providers: ["openai"],
+  output: "images",
+  size: "1024x1024",
+  maker: "OpenAI",
+  name: "GPT Image 2",
+  supportsSeed: false,
+};
+
+/** The art model before GPT Image 2, kept for scripts/ai/art-eval.ts. */
+const NANO_BANANA_2_1: ArtModelChoice = {
+  model: "google/gemini-nano-banana-2.1",
+  providers: GOOGLE,
+  output: "files",
+  options: GEMINI_IMAGE_OPTIONS,
+  maker: "Google",
+  name: "Nano Banana 2.1",
+  supportsSeed: true,
 };
 
 export const AI_MODELS: { [T in AITextTask]: AIModelChoice } & {
@@ -67,12 +104,12 @@ export const AI_MODELS: { [T in AITextTask]: AIModelChoice } & {
     model: "anthropic/claude-haiku-5.5",
     providers: ["anthropic"],
   },
-  art: {
-    model: "google/gemini-nano-banana-2.1",
-    providers: GOOGLE,
-    output: "files",
-    options: GEMINI_IMAGE_OPTIONS,
-  },
+  /**
+   * AI QR art. GPT Image 2 since 3 November 2026: in scripts/ai/art-eval.ts
+   * 7 of 12 of its images scanned as drawn and the rest needed the lightest
+   * blend, against 2 of 12 for Nano Banana 2.1.
+   */
+  art: GPT_IMAGE_2,
 };
 
 /** Text-call options each model creator's provider reads. */
@@ -136,12 +173,24 @@ export function artProviderOptions(
  */
 export const ART_EVAL_CANDIDATES: readonly ArtModelChoice[] = [
   AI_MODELS.art,
+  NANO_BANANA_2_1,
   {
     model: "google/gemini-3.1-flash-image",
     providers: GOOGLE,
     output: "files",
     options: GEMINI_IMAGE_OPTIONS,
+    maker: "Google",
+    name: "Gemini 3.1 Flash Image",
+    supportsSeed: true,
   },
-  { model: "openai/gpt-image-2", output: "images", size: "1024x1024" },
-  { model: "bfl/flux-kontext-pro", output: "images", aspectRatio: "1:1" },
+  {
+    model: "bfl/flux-kontext-pro",
+    output: "images",
+    aspectRatio: "1:1",
+    maker: "Black Forest Labs",
+    name: "FLUX.1 Kontext Pro",
+    // Not verified through the gateway (every eval call failed), so the
+    // seed isn't sent.
+    supportsSeed: false,
+  },
 ];

@@ -18,6 +18,11 @@ import { ART_PLAYGROUND_HREF } from "@/components/sections/ai-art/config";
 import { AI_ART_PRESETS } from "@/components/sections/ai-art/presets";
 import { VectorArtExamples } from "@/components/sections/ai-art/vector-art-examples";
 import { isArtConfigured } from "@/lib/ai/art";
+import {
+  ART_MODEL_LABEL,
+  ART_MODEL_MAKER,
+  ART_MODEL_NAME,
+} from "@/lib/ai/art-models";
 import { createMetadata } from "@/lib/metadata";
 import { PLAN_LIMITS } from "@/lib/plans";
 
@@ -25,13 +30,13 @@ export const metadata: Metadata = createMetadata(
   isArtConfigured
     ? {
         title: "AI QR Code Art Generator: Scannable Artistic QR Codes",
-        description: `Turn a link into scannable AI art made with Google Gemini: ${AI_ART_PRESETS.length} styles, up to 4 variations a run, each checked to scan. Free accounts get ${PLAN_LIMITS.free.aiArtPerMonth} a month.`,
+        description: `Turn a link into scannable AI art made with ${ART_MODEL_LABEL}: ${AI_ART_PRESETS.length} styles, up to 4 variations a run, each checked to scan. Free accounts get ${PLAN_LIMITS.free.aiArtPerMonth} a month.`,
         keywords: [
           "ai qr code art",
           "ai qr code art generator",
           "artistic qr code",
           "qr code art",
-          "gemini qr code art",
+          `${ART_MODEL_NAME.toLowerCase()} qr code art`,
           "scannable ai qr code",
         ],
         path: "/ai/art",
@@ -61,14 +66,13 @@ const STEPS = [
       "QRdx draws your link as a black-and-white QR code with the highest error correction (H) and a wide quiet zone. An optional reference image, such as a logo or a palette, goes along with it.",
   },
   {
-    title: "Repainted by Gemini",
-    description:
-      "Google's Gemini image model repaints the code as your scene, told to keep the module grid, the corner eyes and the quiet zone. QR visibility sets how strongly it favors the code.",
+    title: `Repainted by ${ART_MODEL_MAKER}`,
+    description: `${ART_MODEL_LABEL} repaints the code as your scene, told to keep the module grid, the corner eyes and the quiet zone. QR visibility sets how strongly it favors the code.`,
   },
   {
     title: "Verified to scan",
     description:
-      "QRdx decodes every image on the server. If Gemini's version doesn't scan, QRdx strengthens its corner eyes, border and modules only as much as it takes, redrawing it as Image QR only as a last resort, and nothing that fails is delivered or charged.",
+      "QRdx decodes every image on the server. If the model's version doesn't scan, QRdx strengthens its corner eyes, border and modules only as much as it takes, redrawing it as Image QR only as a last resort, and nothing that fails is delivered or charged.",
   },
 ];
 
@@ -196,10 +200,10 @@ export default function AIArtPage() {
           {isArtConfigured ? (
             <p className="max-w-xl text-pretty text-muted-foreground md:text-lg">
               Pick one of {AI_ART_PRESETS.length} styles or describe your own
-              scene, and Gemini paints it into your QR code. Every image is
-              checked to scan before you see it. Sign in to generate: free
-              accounts get {PLAN_LIMITS.free.aiArtPerMonth} images a month, Pro{" "}
-              {PLAN_LIMITS.pro.aiArtPerMonth} and Business{" "}
+              scene, and {ART_MODEL_LABEL} paints it into your QR code. Every
+              image is checked to scan before you see it. Sign in to generate:
+              free accounts get {PLAN_LIMITS.free.aiArtPerMonth} images a month,
+              Pro {PLAN_LIMITS.pro.aiArtPerMonth} and Business{" "}
               {PLAN_LIMITS.business.aiArtPerMonth} shared by the team.
             </p>
           ) : (
