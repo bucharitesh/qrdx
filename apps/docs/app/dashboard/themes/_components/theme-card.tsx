@@ -53,10 +53,10 @@ import {
   updateTheme,
 } from "@/actions/qr-themes";
 import { CodeQr } from "@/app/dashboard/codes/_components/code-qr";
+import { PublishThemeDialog } from "@/components/community/publish-theme-dialog";
 import { TagSelector } from "@/components/tag-selector";
 import { defaultThemeState } from "@/config/qr";
 import {
-  usePublishTheme,
   useUnpublishTheme,
   useUpdateCommunityThemeTags,
 } from "@/lib/hooks/themes/use-community-themes";
@@ -77,7 +77,6 @@ export function ThemeCard({ theme, workspace, canCopyToTeam }: ThemeCardProps) {
   const router = useRouter();
   const openGetProDialog = useGetProDialogStore((s) => s.openGetProDialog);
   const deleteThemeMutation = useDeleteTheme();
-  const publishMutation = usePublishTheme();
   const unpublishMutation = useUnpublishTheme();
   const updateTagsMutation = useUpdateCommunityThemeTags();
   const [isPending, startTransition] = useTransition();
@@ -160,19 +159,6 @@ export function ThemeCard({ theme, workspace, canCopyToTeam }: ThemeCardProps) {
     deleteThemeMutation.mutate(theme.id, {
       onSuccess: () => setShowDeleteDialog(false),
     });
-  };
-
-  const handleConfirmPublish = () => {
-    publishMutation.mutate(
-      { themeId: theme.id, tags: selectedTags },
-      {
-        onSuccess: () => {
-          setShowPublishDialog(false);
-          setSelectedTags([]);
-          router.refresh();
-        },
-      },
-    );
   };
 
   const handleConfirmEditTags = () => {
@@ -315,10 +301,7 @@ export function ThemeCard({ theme, workspace, canCopyToTeam }: ThemeCardProps) {
                     </DropdownMenuItem>
                   </>
                 ) : (
-                  <DropdownMenuItem
-                    disabled={publishMutation.isPending}
-                    onSelect={() => setShowPublishDialog(true)}
-                  >
+                  <DropdownMenuItem onSelect={() => setShowPublishDialog(true)}>
                     <Globe className="size-4" />
                     Publish to community
                   </DropdownMenuItem>
@@ -409,41 +392,14 @@ export function ThemeCard({ theme, workspace, canCopyToTeam }: ThemeCardProps) {
         </AlertDialogContent>
       </AlertDialog>
 
-      <Dialog onOpenChange={setShowPublishDialog} open={showPublishDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              Publish &quot;{theme.name}&quot; to the community?
-            </DialogTitle>
-            <DialogDescription>
-              Your theme will be publicly visible on the community page. You can
-              unpublish it at any time.
-            </DialogDescription>
-          </DialogHeader>
-          <TagSelector
-            disabled={publishMutation.isPending}
-            onTagsChange={setSelectedTags}
-            selectedTags={selectedTags}
-          />
-          <DialogFooter>
-            <Button
-              onClick={() => setShowPublishDialog(false)}
-              variant="outline"
-            >
-              Cancel
-            </Button>
-            <Button
-              disabled={publishMutation.isPending}
-              onClick={handleConfirmPublish}
-            >
-              {publishMutation.isPending && (
-                <Loader2 className="size-4 animate-spin" />
-              )}
-              Publish
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <PublishThemeDialog
+        onOpenChange={setShowPublishDialog}
+        onPublished={() => router.refresh()}
+        open={showPublishDialog}
+        themeId={theme.id}
+        themeName={theme.name}
+        themeStyle={theme.style}
+      />
 
       <Dialog onOpenChange={setShowEditTagsDialog} open={showEditTagsDialog}>
         <DialogContent>

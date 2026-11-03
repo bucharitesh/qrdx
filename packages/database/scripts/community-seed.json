@@ -1,0 +1,365 @@
+{
+  "frames": [
+    "wifi-card",
+    "table-tent",
+    "order-at-table",
+    "review-us",
+    "scan-to-pay",
+    "event-ticket",
+    "rsvp-card",
+    "save-contact",
+    "follow-us",
+    "get-the-app",
+    "feedback-bubble",
+    "product-info",
+    "register-product",
+    "donate",
+    "check-in",
+    "audio-guide",
+    "sign-rider",
+    "book-now",
+    "shop-window",
+    "attendance",
+    "winter",
+    "halloween",
+    "christmas",
+    "new-year"
+  ],
+  "featured": [
+    "frame:wifi-card",
+    "frame:table-tent",
+    "frame:review-us",
+    "frame:scan-to-pay",
+    "theme:cafe-crema",
+    "theme:pay-blue",
+    "theme:ticket-red",
+    "theme:winter-frost"
+  ],
+  "themes": [
+    {
+      "id": "cafe-crema",
+      "name": "Café crema",
+      "description": "Espresso brown on warm cream, with the table tent frame. For café menus and table cards.",
+      "tags": ["warm", "earthy", "soft"],
+      "style": {
+        "bgColor": "#FBF6EE",
+        "fgColor": "#3B2A20",
+        "eyeColor": "#3B2A20",
+        "dotColor": "#6B4226",
+        "bodyPattern": "rounded",
+        "cornerEyePattern": "rounded",
+        "cornerEyeDotPattern": "rounded",
+        "level": "Q",
+        "margin": 2,
+        "showLogo": false
+      },
+      "frame": {
+        "official": "table-tent",
+        "color": "#3B2A20",
+        "textColor": "#FBF6EE"
+      }
+    },
+    {
+      "id": "bistro-ink",
+      "name": "Bistro ink",
+      "description": "Ink black with wine red eyes, on the order at table frame. For bistros and wine bars.",
+      "tags": ["elegant", "minimal", "professional"],
+      "style": {
+        "bgColor": "#FFFFFF",
+        "fgColor": "#1F2421",
+        "eyeColor": "#7A1F2B",
+        "dotColor": "#7A1F2B",
+        "bodyPattern": "square",
+        "cornerEyePattern": "square",
+        "cornerEyeDotPattern": "square",
+        "level": "Q",
+        "margin": 2,
+        "showLogo": false
+      },
+      "frame": {
+        "official": "order-at-table",
+        "color": "#1F2421",
+        "textColor": "#FFFFFF"
+      }
+    },
+    {
+      "id": "pay-blue",
+      "name": "Payments blue",
+      "description": "A calm, trustworthy blue on the scan to pay frame. For counters and invoices.",
+      "tags": ["professional", "corporate", "cool"],
+      "style": {
+        "bgColor": "#FFFFFF",
+        "fgColor": "#0B3D91",
+        "eyeColor": "#0B3D91",
+        "dotColor": "#0B3D91",
+        "bodyPattern": "rounded",
+        "cornerEyePattern": "rounded",
+        "cornerEyeDotPattern": "rounded",
+        "level": "Q",
+        "margin": 2,
+        "showLogo": false
+      },
+      "frame": {
+        "official": "scan-to-pay",
+        "color": "#0B3D91",
+        "textColor": "#FFFFFF"
+      }
+    },
+    {
+      "id": "review-gold",
+      "name": "Review gold",
+      "description": "Dark bronze on ivory with gold stars, on the review us frame.",
+      "tags": ["warm", "elegant"],
+      "style": {
+        "bgColor": "#FFFDF5",
+        "fgColor": "#2B2111",
+        "eyeColor": "#2B2111",
+        "dotColor": "#6B5014",
+        "bodyPattern": "rounded",
+        "cornerEyePattern": "rounded",
+        "cornerEyeDotPattern": "rounded",
+        "level": "Q",
+        "margin": 2,
+        "showLogo": false
+      },
+      "frame": {
+        "official": "review-us",
+        "color": "#2B2111",
+        "textColor": "#FFFDF5"
+      }
+    },
+    {
+      "id": "ticket-red",
+      "name": "Ticket red",
+      "description": "Box office red on white, on the event ticket frame with its tear-off stub.",
+      "tags": ["bold", "vibrant"],
+      "style": {
+        "bgColor": "#FFFFFF",
+        "fgColor": "#7F1D1D",
+        "eyeColor": "#991B1B",
+        "dotColor": "#991B1B",
+        "bodyPattern": "square",
+        "cornerEyePattern": "square",
+        "cornerEyeDotPattern": "square",
+        "level": "Q",
+        "margin": 2,
+        "showLogo": false
+      },
+      "frame": {
+        "official": "event-ticket",
+        "color": "#991B1B",
+        "textColor": "#FFFFFF"
+      }
+    },
+    {
+      "id": "clinic-mint",
+      "name": "Clinic mint",
+      "description": "Deep teal on a soft mint white, on the book now frame. For clinics and salons.",
+      "tags": ["soft", "professional", "accessible"],
+      "style": {
+        "bgColor": "#F3FBF8",
+        "fgColor": "#0F3D33",
+        "eyeColor": "#0F5E55",
+        "dotColor": "#0F5E55",
+        "bodyPattern": "rounded",
+        "cornerEyePattern": "extra-rounded",
+        "cornerEyeDotPattern": "rounded",
+        "level": "Q",
+        "margin": 2,
+        "showLogo": false
+      },
+      "frame": {
+        "official": "book-now",
+        "color": "#0F5E55",
+        "textColor": "#FFFFFF"
+      }
+    },
+    {
+      "id": "realty-navy",
+      "name": "Realty navy",
+      "description": "Navy on white, on the wide sign rider frame. For property signs and flyers.",
+      "tags": ["professional", "corporate", "elegant"],
+      "style": {
+        "bgColor": "#FFFFFF",
+        "fgColor": "#0F1F3D",
+        "eyeColor": "#0F1F3D",
+        "dotColor": "#0F1F3D",
+        "bodyPattern": "square",
+        "cornerEyePattern": "square",
+        "cornerEyeDotPattern": "square",
+        "level": "Q",
+        "margin": 2,
+        "showLogo": false
+      },
+      "frame": {
+        "official": "sign-rider",
+        "color": "#0F1F3D",
+        "textColor": "#FFFFFF"
+      }
+    },
+    {
+      "id": "museum-stone",
+      "name": "Museum stone",
+      "description": "Charcoal on warm stone, on the audio guide frame. For museums and tours.",
+      "tags": ["minimal", "monochrome", "elegant"],
+      "style": {
+        "bgColor": "#F5F3EF",
+        "fgColor": "#2E2B28",
+        "eyeColor": "#2E2B28",
+        "dotColor": "#2E2B28",
+        "bodyPattern": "square",
+        "cornerEyePattern": "square",
+        "cornerEyeDotPattern": "square",
+        "level": "Q",
+        "margin": 2,
+        "showLogo": false
+      },
+      "frame": {
+        "official": "audio-guide",
+        "color": "#2E2B28",
+        "textColor": "#F5F3EF"
+      }
+    },
+    {
+      "id": "winter-frost",
+      "name": "Winter frost",
+      "description": "Deep ice blue on a frosted white, on the winter frame.",
+      "tags": ["winter", "cool", "soft"],
+      "style": {
+        "bgColor": "#F4F8FC",
+        "fgColor": "#12324A",
+        "eyeColor": "#12324A",
+        "dotColor": "#1D4E73",
+        "bodyPattern": "rounded",
+        "cornerEyePattern": "rounded",
+        "cornerEyeDotPattern": "rounded",
+        "level": "Q",
+        "margin": 2,
+        "showLogo": false
+      },
+      "frame": {
+        "official": "winter",
+        "color": "#12324A",
+        "textColor": "#F4F8FC"
+      }
+    },
+    {
+      "id": "new-year-midnight",
+      "name": "New Year midnight",
+      "description": "Midnight navy with gold eyes, on the New Year frame.",
+      "tags": ["midnight", "elegant"],
+      "style": {
+        "bgColor": "#FFFFFF",
+        "fgColor": "#0B1026",
+        "eyeColor": "#0B1026",
+        "dotColor": "#6B5014",
+        "bodyPattern": "rounded",
+        "cornerEyePattern": "rounded",
+        "cornerEyeDotPattern": "rounded",
+        "level": "Q",
+        "margin": 2,
+        "showLogo": false
+      },
+      "frame": {
+        "official": "new-year",
+        "color": "#0B1026",
+        "textColor": "#FFFFFF"
+      }
+    }
+  ],
+  "collections": [
+    {
+      "id": "restaurants-and-cafes",
+      "name": "Restaurants & cafés",
+      "description": "Menus, ordering, reviews and feedback, for tables and counters.",
+      "items": [
+        "frame:table-tent",
+        "frame:order-at-table",
+        "frame:review-us",
+        "frame:feedback-bubble",
+        "theme:cafe-crema",
+        "theme:bistro-ink"
+      ]
+    },
+    {
+      "id": "wifi-and-hospitality",
+      "name": "Wi-Fi & hospitality",
+      "description": "Guest Wi-Fi, check-in and bookings for hotels, rentals and cafés.",
+      "items": [
+        "frame:wifi-card",
+        "frame:check-in",
+        "frame:book-now",
+        "frame:table-tent",
+        "theme:cafe-crema"
+      ]
+    },
+    {
+      "id": "reviews-and-feedback",
+      "name": "Reviews & feedback",
+      "description": "Ask for a review, a rating or a follow.",
+      "items": [
+        "frame:review-us",
+        "frame:feedback-bubble",
+        "frame:follow-us",
+        "theme:review-gold"
+      ]
+    },
+    {
+      "id": "payments-and-donations",
+      "name": "Payments & donations",
+      "description": "Pay at the counter or give to a cause.",
+      "items": ["frame:scan-to-pay", "frame:donate", "theme:pay-blue"]
+    },
+    {
+      "id": "events-and-tickets",
+      "name": "Events & tickets",
+      "description": "Tickets, RSVPs, check-in, attendance and audio guides.",
+      "items": [
+        "frame:event-ticket",
+        "frame:rsvp-card",
+        "frame:check-in",
+        "frame:attendance",
+        "frame:audio-guide",
+        "theme:ticket-red",
+        "theme:museum-stone"
+      ]
+    },
+    {
+      "id": "retail-and-packaging",
+      "name": "Retail & packaging",
+      "description": "Shop windows, product labels, registration and app downloads.",
+      "items": [
+        "frame:shop-window",
+        "frame:product-info",
+        "frame:register-product",
+        "frame:get-the-app"
+      ]
+    },
+    {
+      "id": "business-cards-and-contact",
+      "name": "Business cards & contact",
+      "description": "Save a contact, book a visit, follow, or see a property.",
+      "items": [
+        "frame:save-contact",
+        "frame:book-now",
+        "frame:follow-us",
+        "frame:sign-rider",
+        "theme:clinic-mint",
+        "theme:realty-navy"
+      ]
+    },
+    {
+      "id": "seasonal",
+      "name": "Seasonal",
+      "description": "Winter, Halloween, Christmas and New Year, kept subtle.",
+      "items": [
+        "frame:winter",
+        "frame:halloween",
+        "frame:christmas",
+        "frame:new-year",
+        "theme:winter-frost",
+        "theme:new-year-midnight"
+      ]
+    }
+  ]
+}
