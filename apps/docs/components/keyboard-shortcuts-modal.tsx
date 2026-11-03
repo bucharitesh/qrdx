@@ -10,7 +10,9 @@ import {
 import { Kbd, KbdGroup } from "@repo/design-system/components/ui/kbd";
 import { ScrollArea } from "@repo/design-system/components/ui/scroll-area";
 import { Keyboard } from "iconsax-reactjs";
+import { useAvailability } from "@/components/availability-provider";
 import { SoundSwitch } from "@/components/sound/sound-switch";
+import type { FeatureId } from "@/lib/feature-availability-rules";
 import { useKeyboardShortcut } from "@/lib/hooks/use-keyboard-shortcuts";
 import { useUserSettings } from "@/lib/hooks/use-user-settings";
 
@@ -22,6 +24,8 @@ interface KeyboardShortcutsModalProps {
 interface ShortcutItem {
   keys: string[];
   description: string;
+  /** Left out where this deployment can't offer the feature */
+  feature?: FeatureId;
 }
 
 interface ShortcutCategory {
@@ -35,7 +39,11 @@ const shortcutCategories: ShortcutCategory[] = [
     shortcuts: [
       { keys: ["1"], description: "Open Content tab" },
       { keys: ["2"], description: "Open Design tab" },
-      { keys: ["3"], description: "Open Generate (AI) tab" },
+      {
+        keys: ["3"],
+        description: "Open Generate (AI) tab",
+        feature: "aiThemes",
+      },
     ],
   },
   {
@@ -79,6 +87,7 @@ export function KeyboardShortcutsModal({
 }: KeyboardShortcutsModalProps) {
   const { settings } = useUserSettings();
   const shortcutsEnabled = settings?.keyboardShortcuts ?? true;
+  const { has } = useAvailability();
 
   // Close modal on Escape
   useKeyboardShortcut(
@@ -129,21 +138,25 @@ export function KeyboardShortcutsModal({
                   {category.title}
                 </h3>
                 <div className="space-y-2">
-                  {category.shortcuts.map((shortcut, index) => (
-                    <div
-                      key={index}
-                      className="flex items-center justify-between gap-4 rounded-lg border border-border bg-muted/30 px-4 py-2.5 transition-colors hover:bg-muted/50"
-                    >
-                      <span className="text-sm text-muted-foreground">
-                        {shortcut.description}
-                      </span>
-                      <KbdGroup>
-                        {shortcut.keys.map((key, keyIndex) => (
-                          <Kbd key={keyIndex}>{key}</Kbd>
-                        ))}
-                      </KbdGroup>
-                    </div>
-                  ))}
+                  {category.shortcuts
+                    .filter(
+                      (shortcut) => !shortcut.feature || has(shortcut.feature),
+                    )
+                    .map((shortcut, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center justify-between gap-4 rounded-lg border border-border bg-muted/30 px-4 py-2.5 transition-colors hover:bg-muted/50"
+                      >
+                        <span className="text-sm text-muted-foreground">
+                          {shortcut.description}
+                        </span>
+                        <KbdGroup>
+                          {shortcut.keys.map((key, keyIndex) => (
+                            <Kbd key={keyIndex}>{key}</Kbd>
+                          ))}
+                        </KbdGroup>
+                      </div>
+                    ))}
                 </div>
               </div>
             ))}

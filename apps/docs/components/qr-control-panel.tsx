@@ -7,6 +7,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@repo/design-system/components/ui/tabs";
+import { cn } from "@repo/design-system/lib/utils";
 import { Brush2, Edit2 } from "iconsax-reactjs";
 import type * as React from "react";
 import { AnimatedBot } from "@/components/editor/ai/animated-bot";
@@ -20,6 +21,7 @@ import {
   type ControlTab,
   useControlsTabFromUrl,
 } from "@/lib/hooks/use-controls-tab-from-url";
+import { usePlaygroundFocusStore } from "@/store/playground-focus-store";
 import type { QRStyle } from "@/types/theme";
 
 interface ThemeControlPanelProps {
@@ -49,12 +51,24 @@ function GenerateTrigger({ thinking }: { thinking: boolean }) {
 
 /**
  * The editor's left panel: Content (what it opens) → Design (how it looks)
- * → Generate (AI). The old "Settings" tab URL opens Design at the Logo section.
+ * → Generate (AI, only where this deployment has AI). The old "Settings" tab
+ * URL, and a link's ?section=logo, open Design at the Logo section.
  */
 const ThemeControlPanel = ({ styles, onChange }: ThemeControlPanelProps) => {
-  const { tab, handleSetTab } = useControlsTabFromUrl();
+  const { tab, handleSetTab, aiAvailable } = useControlsTabFromUrl();
   const { isGenerating } = useAIQRGenerationCore();
+  const focusSection = usePlaygroundFocusStore((state) => state.section);
+  const setFocusSection = usePlaygroundFocusStore((state) => state.setSection);
   const view: ControlTab = tab === "settings" ? "customisations" : tab;
+  const focus =
+    tab === "settings" || (view === "customisations" && focusSection === "logo")
+      ? "logo"
+      : undefined;
+
+  const changeTab = (next: ControlTab) => {
+    setFocusSection(null);
+    handleSetTab(next);
+  };
 
   const panelContent = (value: ControlTab, children: React.ReactNode) => (
     <TabsContent
@@ -72,11 +86,16 @@ const ThemeControlPanel = ({ styles, onChange }: ThemeControlPanelProps) => {
       </div>
       <Tabs
         className="flex min-h-0 w-full flex-1 flex-col gap-0"
-        onValueChange={(next) => handleSetTab(next as ControlTab)}
+        onValueChange={(next) => changeTab(next as ControlTab)}
         value={view}
       >
         <div className="border-b px-3 py-2.5">
-          <TabsList className="grid h-10 w-full grid-cols-3">
+          <TabsList
+            className={cn(
+              "grid h-10 w-full",
+              aiAvailable ? "grid-cols-3" : "grid-cols-2",
+            )}
+          >
             <TabsTrigger className={triggerClass} value="content">
               <Edit2 className="size-4" />
               Content
@@ -85,29 +104,25 @@ const ThemeControlPanel = ({ styles, onChange }: ThemeControlPanelProps) => {
               <Brush2 className="size-4" />
               Design
             </TabsTrigger>
-            <GenerateTrigger thinking={isGenerating} />
+            {aiAvailable && <GenerateTrigger thinking={isGenerating} />}
           </TabsList>
         </div>
 
         {panelContent(
           "content",
           <ScrollArea className={scrollAreaClass}>
-            <ContentControls onNext={() => handleSetTab("customisations")} />
+            <ContentControls onNext={() => changeTab("customisations")} />
           </ScrollArea>,
         )}
 
         {panelContent(
           "customisations",
           <ScrollArea className={scrollAreaClass}>
-            <DesignControls
-              focus={tab === "settings" ? "logo" : undefined}
-              onChange={onChange}
-              styles={styles}
-            />
+            <DesignControls focus={focus} onChange={onChange} styles={styles} />
           </ScrollArea>,
         )}
 
-        {panelContent("ai", <ChatInterface />)}
+        {aiAvailable && panelContent("ai", <ChatInterface />)}
       </Tabs>
     </>
   );

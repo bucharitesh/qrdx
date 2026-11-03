@@ -35,7 +35,7 @@ export function usePlaygroundShortcuts({
     useQREditorStore();
   const { getAllPresets } = useThemePresetStore();
   const { setTheme, theme } = useTheme();
-  const { handleSetTab } = useControlsTabFromUrl();
+  const { handleSetTab, aiAvailable } = useControlsTabFromUrl();
   const { settings } = useUserSettings();
 
   // Check if keyboard shortcuts are enabled
@@ -264,7 +264,7 @@ export function usePlaygroundShortcuts({
     { enabled: shortcutsEnabled },
   );
 
-  // Tab switching: 1 Content, 2 Design, 3 Generate (AI)
+  // Tab switching: 1 Content, 2 Design, 3 Generate (AI, where available)
   useKeyboardShortcut("1", () => handleSetTab("content"), {
     enabled: shortcutsEnabled,
   });
@@ -272,6 +272,6 @@ export function usePlaygroundShortcuts({
     enabled: shortcutsEnabled,
   });
   useKeyboardShortcut("3", () => handleSetTab("ai"), {
-    enabled: shortcutsEnabled,
+    enabled: shortcutsEnabled && aiAvailable,
   });
 }
