@@ -215,7 +215,9 @@ async function fetchCommunityThemesCore(
 
   const mappedThemes: CommunityTheme[] = themes.map((row: any) => ({
     id: row.id,
-    themeId: row.themeId,
+    // Never the saved theme's id: /playground/<id> serves the whole saved
+    // theme (uploaded logo included) to anyone who has it.
+    themeId: row.id,
     name: row.themeName,
     // The saved theme is a live pointer: clean it on every read (no uploaded
     // logo or image art ever leaves the account).
