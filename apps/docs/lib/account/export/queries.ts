@@ -4,6 +4,10 @@ import {
   account,
   aiUsage,
   brandKit,
+  communityItem,
+  communityLike,
+  communityProfile,
+  communitySave,
   communityTheme,
   conversion,
   customDomain,
@@ -339,6 +343,65 @@ export function exportQueries(userId: string) {
       .from(themeLike)
       .where(eq(themeLike.userId, userId))
       .orderBy(asc(themeLike.createdAt)),
+
+    // Community items (manual-sql/0012): the export reads them only when
+    // the tables exist (lib/account/export/entries.ts).
+    communityProfile: db
+      .select({
+        id: communityProfile.id,
+        kind: communityProfile.kind,
+        handle: communityProfile.handle,
+        displayName: communityProfile.displayName,
+        avatarUrl: communityProfile.avatarUrl,
+        createdAt: communityProfile.createdAt,
+      })
+      .from(communityProfile)
+      .where(eq(communityProfile.userId, userId)),
+
+    communityItems: db
+      .select({
+        id: communityItem.id,
+        type: communityItem.type,
+        slug: communityItem.slug,
+        name: communityItem.name,
+        description: communityItem.description,
+        status: communityItem.status,
+        license: communityItem.license,
+        version: communityItem.currentVersion,
+        payload: communityItem.payload,
+        likeCount: communityItem.likeCount,
+        useCount: communityItem.useCount,
+        publishedAt: communityItem.publishedAt,
+      })
+      .from(communityItem)
+      .where(
+        inArray(
+          communityItem.profileId,
+          db
+            .select({ id: communityProfile.id })
+            .from(communityProfile)
+            .where(eq(communityProfile.userId, userId)),
+        ),
+      )
+      .orderBy(asc(communityItem.publishedAt)),
+
+    communityLikes: db
+      .select({
+        itemId: communityLike.itemId,
+        likedAt: communityLike.createdAt,
+      })
+      .from(communityLike)
+      .where(eq(communityLike.userId, userId))
+      .orderBy(asc(communityLike.createdAt)),
+
+    communitySaves: db
+      .select({
+        itemId: communitySave.itemId,
+        savedAt: communitySave.createdAt,
+      })
+      .from(communitySave)
+      .where(eq(communitySave.userId, userId))
+      .orderBy(asc(communitySave.createdAt)),
 
     folders: db
       .select({

@@ -1,4 +1,4 @@
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
   type AnyPgColumn,
   bigint,
@@ -302,6 +302,245 @@ export const themeLike = pgTable(
     createdAt: timestamp("created_at").notNull(),
   },
   (table) => [primaryKey({ columns: [table.userId, table.themeId] })]
+);
+
+// ─── Community (manual-sql/0012_community.sql) ──────────────────────────────
+// Items people share (frames, themes, collections) belong to a creator
+// profile. Each publish is an immutable version; `payload` on the item is a
+// copy of the current version for fast reads. Only new tables: nothing
+// existing changes, so code deployed before the SQL keeps working, and code
+// that reads these tables falls back to community_theme until they exist
+// (apps/docs/lib/community/store.ts).
+
+/** Item types, in gallery order. */
+export const COMMUNITY_ITEM_TYPES = ["frame", "theme", "collection"] as const;
+
+/** A public creator: a person (handle opt-in) or the official QRdx profile. */
+export const communityProfile = pgTable(
+  "community_profile",
+  {
+    id: text("id").primaryKey(),
+    // "person" | "official"
+    kind: text("kind").notNull().default("person"),
+    userId: text("user_id").references(() => user.id, { onDelete: "cascade" }),
+    // The workspace an official profile publishes for
+    workspaceId: text("workspace_id").references(() => organization.id, {
+      onDelete: "set null",
+    }),
+    // Lowercase, opt-in; null until the person claims one
+    handle: text("handle"),
+    displayName: text("display_name").notNull(),
+    bio: text("bio"),
+    avatarUrl: text("avatar_url"),
+    // Set only by the seed script or an admin
+    verifiedAt: timestamp("verified_at"),
+    // "active" | "suspended"
+    status: text("status").notNull().default("active"),
+    handleChangedAt: timestamp("handle_changed_at"),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("community_profile_handle_unique").on(table.handle),
+    uniqueIndex("community_profile_person_user_unique")
+      .on(table.userId)
+      .where(sql`kind = 'person'`),
+  ]
+);
+
+export const communityItem = pgTable(
+  "community_item",
+  {
+    id: text("id").primaryKey(),
+    // COMMUNITY_ITEM_TYPES
+    type: text("type").notNull(),
+    slug: text("slug").notNull(),
+    profileId: text("profile_id")
+      .notNull()
+      .references(() => communityProfile.id, { onDelete: "cascade" }),
+    // The account that published it (no FK: survives leaving a workspace)
+    createdBy: text("created_by"),
+    name: text("name").notNull(),
+    description: text("description"),
+    // "published" | "hidden" | "removed" (post-moderation: live at once)
+    status: text("status").notNull().default("published"),
+    license: text("license").notNull().default("CC0-1.0"),
+    currentVersion: integer("current_version").notNull().default(1),
+    // Copy of the current version's payload
+    payload: json("payload").$type<Record<string, unknown>>().notNull(),
+    // SHA-256 of the normalized payload (exact duplicates are refused)
+    payloadHash: text("payload_hash").notNull(),
+    // { contentTypes, colors, category } lifted out for filters
+    facets: json("facets").$type<Record<string, unknown>>(),
+    scanScore: integer("scan_score"),
+    scanCheckedAt: timestamp("scan_checked_at"),
+    isOfficial: boolean("is_official").notNull().default(false),
+    featuredAt: timestamp("featured_at"),
+    remixedFromItemId: text("remixed_from_item_id").references(
+      (): AnyPgColumn => communityItem.id,
+      { onDelete: "set null" }
+    ),
+    remixedFromVersion: integer("remixed_from_version"),
+    // "Sunset by @ana": the credit survives the original's removal
+    remixedFromLabel: text("remixed_from_label"),
+    // Where it was published from (e.g. "qr_preset" + its id); no FK
+    sourceKind: text("source_kind"),
+    sourceId: text("source_id"),
+    likeCount: integer("like_count").notNull().default(0),
+    saveCount: integer("save_count").notNull().default(0),
+    useCount: integer("use_count").notNull().default(0),
+    remixCount: integer("remix_count").notNull().default(0),
+    // community_theme.id this item was copied from (the backfill's key)
+    legacyCommunityThemeId: text("legacy_community_theme_id").unique(),
+    publishedAt: timestamp("published_at").notNull().defaultNow(),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at").notNull().defaultNow(),
+    removedAt: timestamp("removed_at"),
+    removedReason: text("removed_reason"),
+  },
+  (table) => [
+    uniqueIndex("community_item_type_slug_unique").on(table.type, table.slug),
+    index("community_item_type_status_published_idx").on(
+      table.type,
+      table.status,
+      table.publishedAt
+    ),
+    index("community_item_type_status_likes_idx").on(
+      table.type,
+      table.status,
+      table.likeCount
+    ),
+    index("community_item_profile_id_idx").on(table.profileId),
+    index("community_item_payload_hash_idx").on(table.payloadHash),
+    index("community_item_source_idx").on(table.sourceKind, table.sourceId),
+  ]
+);
+
+/** Immutable snapshots: publishing an update adds the next version. */
+export const communityItemVersion = pgTable(
+  "community_item_version",
+  {
+    id: text("id").primaryKey(),
+    itemId: text("item_id")
+      .notNull()
+      .references(() => communityItem.id, { onDelete: "cascade" }),
+    version: integer("version").notNull(),
+    payload: json("payload").$type<Record<string, unknown>>().notNull(),
+    payloadHash: text("payload_hash").notNull(),
+    changelog: text("changelog"),
+    createdBy: text("created_by"),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("community_item_version_item_version_unique").on(
+      table.itemId,
+      table.version
+    ),
+  ]
+);
+
+export const communityItemTag = pgTable(
+  "community_item_tag",
+  {
+    itemId: text("item_id")
+      .notNull()
+      .references(() => communityItem.id, { onDelete: "cascade" }),
+    tag: text("tag").notNull(),
+  },
+  (table) => [
+    primaryKey({ columns: [table.itemId, table.tag] }),
+    index("community_item_tag_tag_idx").on(table.tag),
+  ]
+);
+
+export const communityLike = pgTable(
+  "community_like",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    itemId: text("item_id")
+      .notNull()
+      .references(() => communityItem.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (table) => [
+    primaryKey({ columns: [table.userId, table.itemId] }),
+    index("community_like_item_id_idx").on(table.itemId),
+  ]
+);
+
+/** Private bookmarks. */
+export const communitySave = pgTable(
+  "community_save",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    itemId: text("item_id")
+      .notNull()
+      .references(() => communityItem.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (table) => [
+    primaryKey({ columns: [table.userId, table.itemId] }),
+    index("community_save_item_id_idx").on(table.itemId),
+  ]
+);
+
+/**
+ * Uses (a copy into a workspace), at most one per person, item, kind and
+ * day; also the lineage of copies (`preset_id`: the saved theme it made).
+ */
+export const communityUse = pgTable(
+  "community_use",
+  {
+    id: text("id").primaryKey(),
+    itemId: text("item_id")
+      .notNull()
+      .references(() => communityItem.id, { onDelete: "cascade" }),
+    version: integer("version").notNull(),
+    userId: text("user_id").references(() => user.id, {
+      onDelete: "set null",
+    }),
+    // "copy"
+    kind: text("kind").notNull(),
+    workspaceId: text("workspace_id"),
+    presetId: text("preset_id"),
+    // Days since 1970-01-01 (UTC)
+    day: integer("day").notNull(),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("community_use_once_a_day_unique").on(
+      table.itemId,
+      table.userId,
+      table.kind,
+      table.day
+    ),
+    index("community_use_item_id_idx").on(table.itemId),
+  ]
+);
+
+/** The ordered items of a collection item. */
+export const communityCollectionEntry = pgTable(
+  "community_collection_entry",
+  {
+    collectionId: text("collection_id")
+      .notNull()
+      .references(() => communityItem.id, { onDelete: "cascade" }),
+    itemId: text("item_id")
+      .notNull()
+      .references(() => communityItem.id, { onDelete: "cascade" }),
+    position: integer("position").notNull(),
+  },
+  (table) => [
+    primaryKey({ columns: [table.collectionId, table.itemId] }),
+    index("community_collection_entry_position_idx").on(
+      table.collectionId,
+      table.position
+    ),
+  ]
 );
 
 // OAuth apps. Apps without an owner (owner_user_id null) were registered by the

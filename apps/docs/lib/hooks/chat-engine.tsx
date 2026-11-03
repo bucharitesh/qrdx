@@ -71,7 +71,9 @@ function editorContext(): EditorContextInput {
     | (QRContentConfig & Record<string, unknown>)
     | undefined;
   const { type: _type, ...content } = config ?? { type: contentType };
-  const { customLogo, art, ...style } = themeState.styles;
+  const { customLogo, art, frame, ...rest } = themeState.styles;
+  // The chat designs built-in frames; a custom frame stays out of its context.
+  const style = frame && frame.style !== "custom" ? { ...rest, frame } : rest;
   return {
     contentType,
     ...(config ? { content } : {}),

@@ -4,6 +4,9 @@ import { ownWorkspaceId } from "@repo/auth/own-workspace-id";
 import { auth } from "@repo/auth/server";
 import {
   brandKit,
+  communityItem,
+  communityLike,
+  communitySave,
   communityTheme,
   customDomain,
   database as db,
@@ -31,6 +34,7 @@ import {
   or,
   sql,
 } from "drizzle-orm";
+import { isMissingSchemaError } from "@/lib/community/tables";
 import {
   getCustomDomainMode,
   removeVercelProjectDomain,
@@ -111,6 +115,43 @@ async function ownWorkspaceAlone(userId: string): Promise<boolean> {
     .from(member)
     .where(eq(member.organizationId, own));
   return rows.length > 0 && rows.every((row) => row.userId === userId);
+}
+
+/**
+ * Likes and saves the user gave on community items stop counting (their
+ * rows cascade with the user). Nothing to do before manual-sql/0012.
+ */
+async function uncountCommunityReactions(userId: string): Promise<void> {
+  try {
+    await db.batch([
+      db
+        .update(communityItem)
+        .set({ likeCount: sql`GREATEST(${communityItem.likeCount} - 1, 0)` })
+        .where(
+          inArray(
+            communityItem.id,
+            db
+              .select({ id: communityLike.itemId })
+              .from(communityLike)
+              .where(eq(communityLike.userId, userId)),
+          ),
+        ),
+      db
+        .update(communityItem)
+        .set({ saveCount: sql`GREATEST(${communityItem.saveCount} - 1, 0)` })
+        .where(
+          inArray(
+            communityItem.id,
+            db
+              .select({ id: communitySave.itemId })
+              .from(communitySave)
+              .where(eq(communitySave.userId, userId)),
+          ),
+        ),
+    ]);
+  } catch (error) {
+    if (!isMissingSchemaError(error)) throw error;
+  }
 }
 
 /** Everything the deletion plan depends on, for one user. */
@@ -352,6 +393,11 @@ export async function executeAccountDeletion({
           .where(eq(themeLike.userId, userId)),
       ),
     );
+
+  // 6b. The same for community items (likes and saves), once
+  //     manual-sql/0012 exists. Their own profile and items cascade with
+  //     the user row.
+  await uncountCommunityReactions(userId);
 
   // 7. The account. Sessions, linked accounts, memberships, codes (their
   //    short links then show "not found"), pages, scans, tokens and the rest

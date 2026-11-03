@@ -1,0 +1,157 @@
+"use client";
+
+import { Badge } from "@repo/design-system/components/ui/badge";
+import { cn } from "@repo/design-system/lib/utils";
+import { Heart } from "iconsax-reactjs";
+import Link from "next/link";
+import {
+  type CommunityItemCard,
+  itemPath,
+  TYPE_LABELS,
+  TYPE_SEGMENTS,
+} from "@/lib/community/types";
+import { CreatorLine } from "./creator-line";
+import { DesignQr } from "./design-qr";
+
+const COUNT = new Intl.NumberFormat("en", { notation: "compact" });
+
+/** Where a card goes: its item page, or the type's gallery (legacy themes). */
+export const cardHref = (card: CommunityItemCard) =>
+  card.slug
+    ? itemPath(card.type, card.slug)
+    : `/community/${TYPE_SEGMENTS[card.type]}`;
+
+/** One item in a grid or row: the design, its name, type and creator. */
+export function ItemCard({
+  card,
+  className,
+}: {
+  card: CommunityItemCard;
+  className?: string;
+}) {
+  const stack = card.type === "collection" ? (card.stack ?? []) : [];
+  return (
+    <Link
+      className={cn(
+        "group bg-card flex min-w-0 flex-col overflow-hidden rounded-xl border shadow-xs transition-[border-color,box-shadow] outline-none",
+        "hover:border-foreground/15 hover:shadow-sm focus-visible:ring-ring/50 focus-visible:ring-[3px]",
+        className,
+      )}
+      href={cardHref(card)}
+    >
+      <div className="bg-muted/40 relative aspect-[6/5] overflow-hidden border-b">
+        {card.type === "collection" ? (
+          <div className="absolute inset-5 grid place-items-center">
+            {stack.length === 0 ? (
+              <span className="text-muted-foreground text-xs">Empty</span>
+            ) : (
+              stack.map((style, index) => (
+                <div
+                  className="absolute grid aspect-square h-[78%] place-items-center rounded-lg bg-white p-2 shadow-sm ring-1 ring-black/5"
+                  key={index}
+                  style={{
+                    transform: `translateX(${(index - (stack.length - 1) / 2) * 22}%) rotate(${(index - (stack.length - 1) / 2) * 5}deg)`,
+                    zIndex: index,
+                  }}
+                >
+                  <DesignQr className="size-full" style={style} />
+                </div>
+              ))
+            )}
+          </div>
+        ) : (
+          <div className="absolute inset-3 rounded-lg bg-white p-2.5 ring-1 ring-black/5 transition-transform duration-300 group-hover:scale-[1.02]">
+            <DesignQr className="size-full" style={card.preview} />
+          </div>
+        )}
+        {card.isOfficial && (
+          <Badge
+            className="bg-background/90 text-foreground absolute top-2 left-2 border px-1.5 py-0 text-[10px] shadow-xs"
+            variant="outline"
+          >
+            Official
+          </Badge>
+        )}
+      </div>
+      <div className="flex min-w-0 flex-1 flex-col gap-1.5 px-3.5 py-3">
+        <div className="flex min-w-0 items-baseline justify-between gap-2">
+          <span className="truncate text-sm font-medium">{card.name}</span>
+          <span className="text-muted-foreground shrink-0 text-xs">
+            {card.type === "collection" && card.itemCount !== undefined
+              ? `${card.itemCount} ${card.itemCount === 1 ? "item" : "items"}`
+              : TYPE_LABELS[card.type].one}
+          </span>
+        </div>
+        <div className="flex min-w-0 items-center justify-between gap-2">
+          <CreatorLine creator={card.creator} link={false} />
+          {(card.likeCount > 0 || card.useCount > 0) && (
+            <span className="text-muted-foreground flex shrink-0 items-center gap-2 text-xs tabular-nums">
+              {card.likeCount > 0 && (
+                <span className="flex items-center gap-0.5">
+                  <Heart aria-label="Likes" className="size-3" />
+                  {COUNT.format(card.likeCount)}
+                </span>
+              )}
+              {card.useCount > 0 && (
+                <span>{COUNT.format(card.useCount)} uses</span>
+              )}
+            </span>
+          )}
+        </div>
+      </div>
+    </Link>
+  );
+}
+
+/** A titled row of cards (scrolls sideways on phones). */
+export function ItemRow({
+  title,
+  badge,
+  href,
+  cards,
+}: {
+  title: string;
+  badge?: React.ReactNode;
+  href?: string;
+  cards: CommunityItemCard[];
+}) {
+  if (cards.length === 0) return null;
+  return (
+    <section className="space-y-3">
+      <div className="flex items-center justify-between gap-3">
+        <h2 className="flex items-center gap-1.5 text-base font-semibold tracking-tight">
+          {title}
+          {badge}
+        </h2>
+        {href && (
+          <Link
+            className="text-muted-foreground hover:text-foreground text-sm"
+            href={href}
+          >
+            See all
+          </Link>
+        )}
+      </div>
+      <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-1 sm:mx-0 sm:grid sm:grid-cols-2 sm:overflow-visible sm:px-0 md:grid-cols-3 lg:grid-cols-4">
+        {cards.map((card) => (
+          <ItemCard
+            card={card}
+            className="w-[70%] shrink-0 snap-start sm:w-auto"
+            key={`${card.type}-${card.slug || card.id}`}
+          />
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/** Every card of a list, in a responsive grid. */
+export function ItemGrid({ cards }: { cards: CommunityItemCard[] }) {
+  return (
+    <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+      {cards.map((card) => (
+        <ItemCard card={card} key={`${card.type}-${card.slug || card.id}`} />
+      ))}
+    </div>
+  );
+}

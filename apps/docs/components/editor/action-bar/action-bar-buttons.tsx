@@ -61,11 +61,11 @@ export function ActionBarButtons({
     resetToCurrentPreset();
   };
 
-  const isPublished = useMemo(() => {
-    if (!isSavedPreset || !themes || !themeState.preset) return false;
-    const theme = themes.find((t) => t.id === themeState.preset);
-    return theme?.isPublished ?? false;
+  const savedTheme = useMemo(() => {
+    if (!isSavedPreset || !themes || !themeState.preset) return undefined;
+    return themes.find((t) => t.id === themeState.preset);
   }, [isSavedPreset, themes, themeState.preset]);
+  const isPublished = savedTheme?.isPublished ?? false;
 
   // During SSR and initial render, use safe default values to avoid hydration mismatch
   const resetDisabled = !isMounted || !hasUnsavedChanges() || isGenerating;
@@ -113,6 +113,8 @@ export function ActionBarButtons({
           <PublishButton
             themeId={themeState.preset as string}
             isPublished={isPublished}
+            themeName={savedTheme?.name}
+            themeStyle={savedTheme?.style}
             disabled={isGenerating}
           />
         ) : (
