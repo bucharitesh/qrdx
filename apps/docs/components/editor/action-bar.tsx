@@ -1,7 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import { ActionBarButtons } from "@/components/editor/action-bar/action-bar-buttons";
+import { useCodeDialogStore } from "@/components/editor/action-bar/code-dialog-store";
 import { DownloadButton } from "@/components/editor/action-bar/download-button";
 import { DownloadDialog } from "@/components/editor/action-bar/download-dialog";
 import { useDownloadDialogStore } from "@/components/editor/action-bar/download-dialog-store";
@@ -27,7 +27,8 @@ export function ActionBar({ layout = "desktop" }: ActionBarProps) {
   const { resetToCurrentPreset } = useQREditorStore();
   const downloadOpen = useDownloadDialogStore((state) => state.open);
   const setDownloadOpen = useDownloadDialogStore((state) => state.setOpen);
-  const [codeDialogOpen, setCodeDialogOpen] = useState(false);
+  const codeDialogOpen = useCodeDialogStore((state) => state.open);
+  const setCodeDialogOpen = useCodeDialogStore((state) => state.setOpen);
 
   usePlaygroundShortcuts({
     onSave: () => handleSaveClick(),
@@ -60,7 +61,6 @@ export function ActionBar({ layout = "desktop" }: ActionBarProps) {
 /** The phone's sticky bottom bar: Share, and Download as the main action. */
 export function MobileActionBar() {
   const { handleShareClick } = useDialogActions();
-  const preset = useQREditorStore((state) => state.themeState.preset);
   const { isGenerating } = useAIQRGenerationCore();
 
   return (
@@ -69,7 +69,7 @@ export function MobileActionBar() {
         className="h-10 px-4"
         disabled={isGenerating}
         labelled
-        onClick={() => handleShareClick(preset)}
+        onClick={() => handleShareClick()}
         variant="outline"
       />
       <DownloadButton className="h-10 flex-1" tooltip={false} />
