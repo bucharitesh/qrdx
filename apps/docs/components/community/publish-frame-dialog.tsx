@@ -1,0 +1,205 @@
+"use client";
+
+import { Info, Spinner, Tick } from "@repo/design-system/components/icons";
+import { Button } from "@repo/design-system/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@repo/design-system/components/ui/dialog";
+import { Input } from "@repo/design-system/components/ui/input";
+import { Label } from "@repo/design-system/components/ui/label";
+import { Textarea } from "@repo/design-system/components/ui/textarea";
+import Link from "next/link";
+import type { QRCustomFrame } from "qrdx";
+import { useEffect, useId, useState } from "react";
+import { publishCommunityFrame } from "@/actions/community";
+import { TagSelector } from "@/components/tag-selector";
+import {
+  DESCRIPTION_MAX_LENGTH,
+  FRAME_TAGS,
+  NAME_MAX_LENGTH,
+} from "@/lib/community/payloads";
+import { GATE_SAMPLES, MIN_GATE_SCORE } from "@/lib/community/scan-samples";
+import { soundEvent } from "@/lib/sound/emit";
+import { LicenceConfirm } from "./licence-confirm";
+
+const CHECKS_NOTE = `On a plain black code it must scan Great (${MIN_GATE_SCORE}+) with ${GATE_SAMPLES.map((sample) => sample.label).join(" and ")}. We check when you publish.`;
+
+/** Publish the editor's custom frame: details, the scan check and CC0. */
+export function PublishFrameDialog({
+  open,
+  onOpenChange,
+  frame,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  frame: QRCustomFrame;
+}) {
+  const nameId = useId();
+  const descriptionId = useId();
+  const [name, setName] = useState("");
+  const [description, setDescription] = useState("");
+  const [tags, setTags] = useState<string[]>([]);
+  const [accepted, setAccepted] = useState(false);
+  const [pending, setPending] = useState(false);
+  const [refusal, setRefusal] = useState<{
+    message: string;
+    href?: string;
+  } | null>(null);
+  const [published, setPublished] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!open) {
+      setName("");
+      setDescription("");
+      setTags([]);
+      setAccepted(false);
+      setRefusal(null);
+      setPublished(null);
+      setPending(false);
+    }
+  }, [open]);
+
+  const submit = async () => {
+    setPending(true);
+    setRefusal(null);
+    try {
+      const result = await publishCommunityFrame({
+        frame,
+        name,
+        description,
+        tags,
+        acceptLicense: accepted,
+      });
+      if (result.ok) {
+        setPublished(result.data.href);
+        soundEvent("success");
+      } else {
+        setRefusal({ message: result.message, href: result.href });
+      }
+    } catch {
+      setRefusal({ message: "Something went wrong. Please try again." });
+    } finally {
+      setPending(false);
+    }
+  };
+
+  return (
+    <Dialog onOpenChange={onOpenChange} open={open}>
+      <DialogContent className="sm:max-w-lg">
+        {published ? (
+          <>
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Tick aria-hidden className="size-5" />
+                Published
+              </DialogTitle>
+              <DialogDescription>
+                {name.trim() || "Your frame"} is live in the community.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button onClick={() => onOpenChange(false)} variant="outline">
+                Done
+              </Button>
+              <Button asChild>
+                <Link href={published}>View it</Link>
+              </Button>
+            </DialogFooter>
+          </>
+        ) : (
+          <>
+            <DialogHeader>
+              <DialogTitle>Publish this frame</DialogTitle>
+              <DialogDescription>
+                Anyone can find it in the community and use it with their own
+                codes.
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="space-y-4">
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor={nameId}>Name</Label>
+                  <span className="text-muted-foreground text-xs tabular-nums">
+                    {name.length}/{NAME_MAX_LENGTH}
+                  </span>
+                </div>
+                <Input
+                  disabled={pending}
+                  id={nameId}
+                  maxLength={NAME_MAX_LENGTH}
+                  onChange={(event) => setName(event.target.value)}
+                  placeholder="e.g. Café table card"
+                  value={name}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor={descriptionId}>Description</Label>
+                  <span className="text-muted-foreground text-xs tabular-nums">
+                    {description.length}/{DESCRIPTION_MAX_LENGTH}
+                  </span>
+                </div>
+                <Textarea
+                  disabled={pending}
+                  id={descriptionId}
+                  maxLength={DESCRIPTION_MAX_LENGTH}
+                  onChange={(event) => setDescription(event.target.value)}
+                  placeholder="Optional: what it's for"
+                  rows={3}
+                  value={description}
+                />
+              </div>
+              <TagSelector
+                disabled={pending}
+                onTagsChange={setTags}
+                options={FRAME_TAGS}
+                selectedTags={tags}
+              />
+              <p className="text-muted-foreground flex gap-2 text-xs leading-relaxed">
+                <Info aria-hidden className="mt-0.5 size-3.5 shrink-0" />
+                <span>{CHECKS_NOTE}</span>
+              </p>
+              <LicenceConfirm
+                checked={accepted}
+                disabled={pending}
+                onCheckedChange={setAccepted}
+              />
+              {refusal && (
+                <p className="text-destructive text-sm" role="alert">
+                  {refusal.message}{" "}
+                  {refusal.href && (
+                    <Link
+                      className="underline underline-offset-2"
+                      href={refusal.href}
+                    >
+                      See it
+                    </Link>
+                  )}
+                </p>
+              )}
+            </div>
+
+            <DialogFooter>
+              <Button onClick={() => onOpenChange(false)} variant="outline">
+                Cancel
+              </Button>
+              <Button
+                disabled={!(accepted && name.trim()) || pending}
+                onClick={submit}
+              >
+                {pending && <Spinner className="size-4" />}
+                {pending ? "Checking and publishing" : "Publish"}
+              </Button>
+            </DialogFooter>
+          </>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+}

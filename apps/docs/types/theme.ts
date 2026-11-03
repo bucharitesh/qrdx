@@ -1,12 +1,12 @@
 import type { qrPreset } from "@repo/database";
 import type { InferSelectModel } from "drizzle-orm";
 import {
+  anyFrameSchema,
   bodyPatternSchema,
   colorConfigSchema,
   cornerEyeDotPatternSchema,
   cornerEyePatternSchema,
   errorLevelSchema,
-  frameSchema,
   qrArtSchema,
 } from "qrdx/types";
 import { z } from "zod";
@@ -58,10 +58,10 @@ export const themeStylePropsSchema = z.object({
     .optional()
     .describe("Margin (quiet zone) around the QR code, in modules"),
   templateId: z.string().optional().describe("Template/frame ID to use"),
-  frame: frameSchema
+  frame: anyFrameSchema
     .optional()
     .describe(
-      "Call-to-action frame around the QR code, e.g. a 'Scan me' banner (text up to 24 characters)",
+      "Call-to-action frame around the QR code, e.g. a 'Scan me' banner (text up to 24 characters), or a custom frame drawn from a frame spec (style 'custom')",
     ),
   showLogo: z.boolean().optional().describe("Whether to show a logo in center"),
   customLogo: z

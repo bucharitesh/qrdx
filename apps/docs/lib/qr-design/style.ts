@@ -392,8 +392,10 @@ export function fromThemeStyles(
       Math.max(0, Math.round(styles.margin ?? CLASSIC_STYLE.margin)),
     ),
     level: pick(ERROR_LEVELS, styles.level, "Q"),
+    // A custom frame (a frame spec) can't be described here: the chat and
+    // the MCP tool design built-in frames only.
     frame:
-      frame && frame.style !== "none"
+      frame && frame.style !== "none" && frame.style !== "custom"
         ? {
             style: frame.style,
             ...(frame.text !== undefined ? { text: frame.text } : {}),

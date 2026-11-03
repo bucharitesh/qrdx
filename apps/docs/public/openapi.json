@@ -3383,6 +3383,691 @@
         },
         "required": ["code", "message", "status"]
       },
+      "FrameSpec": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "const": "qrdx.frame"
+          },
+          "version": {
+            "type": "number",
+            "const": 1
+          },
+          "artboard": {
+            "type": "object",
+            "properties": {
+              "width": {
+                "type": "number",
+                "minimum": -4000,
+                "maximum": 4000
+              },
+              "height": {
+                "type": "number",
+                "minimum": -4000,
+                "maximum": 4000
+              }
+            },
+            "required": ["width", "height"],
+            "additionalProperties": false
+          },
+          "qr": {
+            "type": "object",
+            "properties": {
+              "x": {
+                "type": "number",
+                "minimum": -4000,
+                "maximum": 4000
+              },
+              "y": {
+                "type": "number",
+                "minimum": -4000,
+                "maximum": 4000
+              },
+              "size": {
+                "type": "number",
+                "minimum": -4000,
+                "maximum": 4000
+              },
+              "padding": {
+                "type": "number",
+                "minimum": -4000,
+                "maximum": 4000
+              },
+              "radius": {
+                "type": "number",
+                "minimum": -4000,
+                "maximum": 4000
+              }
+            },
+            "required": ["x", "y", "size"],
+            "additionalProperties": false
+          },
+          "colors": {
+            "type": "object",
+            "properties": {
+              "frame": {
+                "type": "string",
+                "pattern": "^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$"
+              },
+              "text": {
+                "type": "string",
+                "pattern": "^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$"
+              },
+              "accent": {
+                "type": "string",
+                "pattern": "^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$"
+              }
+            },
+            "required": ["frame"],
+            "additionalProperties": false
+          },
+          "shapes": {
+            "maxItems": 64,
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "rect"
+                    },
+                    "x": {
+                      "type": "number",
+                      "minimum": -4000,
+                      "maximum": 4000
+                    },
+                    "y": {
+                      "type": "number",
+                      "minimum": -4000,
+                      "maximum": 4000
+                    },
+                    "width": {
+                      "type": "number",
+                      "minimum": -4000,
+                      "maximum": 4000
+                    },
+                    "height": {
+                      "type": "number",
+                      "minimum": -4000,
+                      "maximum": 4000
+                    },
+                    "radius": {
+                      "type": "number",
+                      "minimum": -4000,
+                      "maximum": 4000
+                    },
+                    "fill": {
+                      "$ref": "#/components/schemas/FrameSpecPaint"
+                    },
+                    "hole": {
+                      "type": "object",
+                      "properties": {
+                        "x": {
+                          "type": "number",
+                          "minimum": -4000,
+                          "maximum": 4000
+                        },
+                        "y": {
+                          "type": "number",
+                          "minimum": -4000,
+                          "maximum": 4000
+                        },
+                        "width": {
+                          "type": "number",
+                          "minimum": -4000,
+                          "maximum": 4000
+                        },
+                        "height": {
+                          "type": "number",
+                          "minimum": -4000,
+                          "maximum": 4000
+                        },
+                        "radius": {
+                          "type": "number",
+                          "minimum": -4000,
+                          "maximum": 4000
+                        }
+                      },
+                      "required": ["x", "y", "width", "height"],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": ["type", "x", "y", "width", "height", "fill"],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "circle"
+                    },
+                    "cx": {
+                      "type": "number",
+                      "minimum": -4000,
+                      "maximum": 4000
+                    },
+                    "cy": {
+                      "type": "number",
+                      "minimum": -4000,
+                      "maximum": 4000
+                    },
+                    "r": {
+                      "type": "number",
+                      "minimum": -4000,
+                      "maximum": 4000
+                    },
+                    "hole": {
+                      "type": "number",
+                      "minimum": -4000,
+                      "maximum": 4000
+                    },
+                    "fill": {
+                      "$ref": "#/components/schemas/FrameSpecPaint"
+                    }
+                  },
+                  "required": ["type", "cx", "cy", "r", "fill"],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "ellipse"
+                    },
+                    "cx": {
+                      "type": "number",
+                      "minimum": -4000,
+                      "maximum": 4000
+                    },
+                    "cy": {
+                      "type": "number",
+                      "minimum": -4000,
+                      "maximum": 4000
+                    },
+                    "rx": {
+                      "type": "number",
+                      "minimum": -4000,
+                      "maximum": 4000
+                    },
+                    "ry": {
+                      "type": "number",
+                      "minimum": -4000,
+                      "maximum": 4000
+                    },
+                    "fill": {
+                      "$ref": "#/components/schemas/FrameSpecPaint"
+                    }
+                  },
+                  "required": ["type", "cx", "cy", "rx", "ry", "fill"],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "polygon"
+                    },
+                    "points": {
+                      "minItems": 3,
+                      "maxItems": 256,
+                      "type": "array",
+                      "items": {
+                        "type": "array",
+                        "prefixItems": [
+                          {
+                            "type": "number",
+                            "minimum": -4000,
+                            "maximum": 4000
+                          },
+                          {
+                            "type": "number",
+                            "minimum": -4000,
+                            "maximum": 4000
+                          }
+                        ],
+                        "items": false,
+                        "minItems": 2,
+                        "maxItems": 2
+                      }
+                    },
+                    "fill": {
+                      "$ref": "#/components/schemas/FrameSpecPaint"
+                    }
+                  },
+                  "required": ["type", "points", "fill"],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "path"
+                    },
+                    "d": {
+                      "type": "string",
+                      "minLength": 2,
+                      "maxLength": 16000
+                    },
+                    "fill": {
+                      "$ref": "#/components/schemas/FrameSpecPaint"
+                    },
+                    "fillRule": {
+                      "type": "string",
+                      "enum": ["nonzero", "evenodd"]
+                    }
+                  },
+                  "required": ["type", "d", "fill"],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "line"
+                    },
+                    "x1": {
+                      "type": "number",
+                      "minimum": -4000,
+                      "maximum": 4000
+                    },
+                    "y1": {
+                      "type": "number",
+                      "minimum": -4000,
+                      "maximum": 4000
+                    },
+                    "x2": {
+                      "type": "number",
+                      "minimum": -4000,
+                      "maximum": 4000
+                    },
+                    "y2": {
+                      "type": "number",
+                      "minimum": -4000,
+                      "maximum": 4000
+                    },
+                    "width": {
+                      "type": "number",
+                      "minimum": -4000,
+                      "maximum": 4000
+                    },
+                    "cap": {
+                      "type": "string",
+                      "enum": ["butt", "round"]
+                    },
+                    "dash": {
+                      "type": "array",
+                      "prefixItems": [
+                        {
+                          "type": "number",
+                          "minimum": -4000,
+                          "maximum": 4000
+                        },
+                        {
+                          "type": "number",
+                          "minimum": -4000,
+                          "maximum": 4000
+                        }
+                      ],
+                      "items": false,
+                      "minItems": 2,
+                      "maxItems": 2
+                    },
+                    "fill": {
+                      "$ref": "#/components/schemas/FrameSpecPaint"
+                    }
+                  },
+                  "required": ["type", "x1", "y1", "x2", "y2", "width", "fill"],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "icon"
+                    },
+                    "icon": {
+                      "type": "string",
+                      "enum": [
+                        "wifi",
+                        "star",
+                        "heart",
+                        "phone",
+                        "headphones",
+                        "calendar",
+                        "user",
+                        "chat",
+                        "bag",
+                        "bell",
+                        "cup",
+                        "card",
+                        "check",
+                        "info",
+                        "home",
+                        "pin",
+                        "share",
+                        "download",
+                        "clock",
+                        "snowflake",
+                        "pumpkin",
+                        "tree",
+                        "sparkle",
+                        "gift"
+                      ]
+                    },
+                    "x": {
+                      "type": "number",
+                      "minimum": -4000,
+                      "maximum": 4000
+                    },
+                    "y": {
+                      "type": "number",
+                      "minimum": -4000,
+                      "maximum": 4000
+                    },
+                    "size": {
+                      "type": "number",
+                      "minimum": -4000,
+                      "maximum": 4000
+                    },
+                    "fill": {
+                      "$ref": "#/components/schemas/FrameSpecPaint"
+                    }
+                  },
+                  "required": ["type", "icon", "x", "y", "size", "fill"],
+                  "additionalProperties": false
+                }
+              ]
+            }
+          },
+          "labels": {
+            "maxItems": 8,
+            "type": "array",
+            "items": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "text"
+                    },
+                    "id": {
+                      "type": "string",
+                      "pattern": "^[a-z][a-z0-9-]{0,31}$"
+                    },
+                    "slot": {
+                      "type": "string",
+                      "enum": ["primary", "secondary", "fixed"]
+                    },
+                    "text": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "maxLength": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 24
+                    },
+                    "color": {
+                      "$ref": "#/components/schemas/FrameSpecColor"
+                    },
+                    "weight": {
+                      "type": "string",
+                      "enum": ["bold", "regular"]
+                    },
+                    "box": {
+                      "type": "object",
+                      "properties": {
+                        "x": {
+                          "type": "number",
+                          "minimum": -4000,
+                          "maximum": 4000
+                        },
+                        "y": {
+                          "type": "number",
+                          "minimum": -4000,
+                          "maximum": 4000
+                        },
+                        "width": {
+                          "type": "number",
+                          "minimum": -4000,
+                          "maximum": 4000
+                        },
+                        "height": {
+                          "type": "number",
+                          "minimum": -4000,
+                          "maximum": 4000
+                        }
+                      },
+                      "required": ["x", "y", "width", "height"],
+                      "additionalProperties": false
+                    },
+                    "align": {
+                      "type": "string",
+                      "enum": ["start", "middle", "end"]
+                    },
+                    "fontSize": {
+                      "type": "number",
+                      "minimum": -4000,
+                      "maximum": 4000
+                    }
+                  },
+                  "required": ["type", "id", "slot", "text", "color", "box"],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string",
+                      "const": "curved"
+                    },
+                    "id": {
+                      "type": "string",
+                      "pattern": "^[a-z][a-z0-9-]{0,31}$"
+                    },
+                    "slot": {
+                      "type": "string",
+                      "enum": ["primary", "secondary", "fixed"]
+                    },
+                    "text": {
+                      "type": "string",
+                      "maxLength": 200
+                    },
+                    "maxLength": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "maximum": 24
+                    },
+                    "color": {
+                      "$ref": "#/components/schemas/FrameSpecColor"
+                    },
+                    "weight": {
+                      "type": "string",
+                      "enum": ["bold", "regular"]
+                    },
+                    "curve": {
+                      "type": "object",
+                      "properties": {
+                        "cx": {
+                          "type": "number",
+                          "minimum": -4000,
+                          "maximum": 4000
+                        },
+                        "cy": {
+                          "type": "number",
+                          "minimum": -4000,
+                          "maximum": 4000
+                        },
+                        "radius": {
+                          "type": "number",
+                          "minimum": -4000,
+                          "maximum": 4000
+                        },
+                        "side": {
+                          "type": "string",
+                          "enum": ["top", "bottom"]
+                        },
+                        "spread": {
+                          "type": "number",
+                          "minimum": 20,
+                          "maximum": 300
+                        }
+                      },
+                      "required": ["cx", "cy", "radius", "side"],
+                      "additionalProperties": false
+                    },
+                    "fontSize": {
+                      "type": "number",
+                      "minimum": -4000,
+                      "maximum": 4000
+                    }
+                  },
+                  "required": [
+                    "type",
+                    "id",
+                    "slot",
+                    "text",
+                    "color",
+                    "curve",
+                    "fontSize"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            }
+          },
+          "bleed": {
+            "anyOf": [
+              {
+                "type": "string",
+                "const": "none"
+              },
+              {
+                "$ref": "#/components/schemas/FrameSpecColor"
+              }
+            ]
+          }
+        },
+        "required": [
+          "kind",
+          "version",
+          "artboard",
+          "qr",
+          "colors",
+          "shapes",
+          "labels"
+        ],
+        "additionalProperties": false,
+        "description": "A custom frame as data (qrdx frame spec v1): shapes, labels, colors and where the code goes. See https://github.com/bucharitesh/qrdx/tree/main/packages/qrdx#custom-frames."
+      },
+      "FrameSpecColor": {
+        "anyOf": [
+          {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": ["frame", "text", "accent", "background"]
+              },
+              {
+                "type": "string",
+                "pattern": "^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$"
+              }
+            ]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "mix": {
+                "type": "array",
+                "prefixItems": [
+                  {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "enum": ["frame", "text", "accent", "background"]
+                      },
+                      {
+                        "type": "string",
+                        "pattern": "^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$"
+                      }
+                    ]
+                  },
+                  {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "enum": ["frame", "text", "accent", "background"]
+                      },
+                      {
+                        "type": "string",
+                        "pattern": "^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$"
+                      }
+                    ]
+                  }
+                ],
+                "items": false,
+                "minItems": 2,
+                "maxItems": 2
+              },
+              "amount": {
+                "type": "number",
+                "minimum": 0,
+                "maximum": 1
+              }
+            },
+            "required": ["mix", "amount"],
+            "additionalProperties": false
+          }
+        ],
+        "description": "A frame spec color: a theme token (frame, text, accent, background), a #rgb/#rrggbb color, or an opaque mix of two."
+      },
+      "FrameSpecPaint": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/FrameSpecColor"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "gradient": {
+                "type": "object",
+                "properties": {
+                  "from": {
+                    "$ref": "#/components/schemas/FrameSpecColor"
+                  },
+                  "to": {
+                    "$ref": "#/components/schemas/FrameSpecColor"
+                  },
+                  "direction": {
+                    "type": "string",
+                    "enum": ["horizontal", "vertical"]
+                  },
+                  "steps": {
+                    "type": "integer",
+                    "minimum": 2,
+                    "maximum": 64
+                  }
+                },
+                "required": ["from", "to"],
+                "additionalProperties": false
+              }
+            },
+            "required": ["gradient"],
+            "additionalProperties": false
+          }
+        ],
+        "description": "A frame spec fill: a color, or a gradient drawn as solid steps."
+      },
       "Hook": {
         "type": "object",
         "properties": {
@@ -4169,58 +4854,97 @@
             "type": "string"
           },
           "frame": {
-            "description": "Call-to-action frame around the QR code, e.g. a 'Scan me' banner (text up to 24 characters)",
-            "type": "object",
-            "properties": {
-              "style": {
-                "type": "string",
-                "enum": [
-                  "none",
-                  "banner-bottom",
-                  "banner-top",
-                  "border",
-                  "rounded-border",
-                  "speech-bubble",
-                  "banner-top-bottom",
-                  "speech-bubble-top",
-                  "chat-bubble",
-                  "circle",
-                  "polaroid",
-                  "phone",
-                  "ticket",
-                  "badge",
-                  "envelope",
-                  "tag",
-                  "menu-card",
-                  "sticker",
-                  "gradient-border",
-                  "focus"
-                ]
+            "description": "Call-to-action frame around the QR code, e.g. a 'Scan me' banner (text up to 24 characters), or a custom frame drawn from a frame spec (style 'custom')",
+            "oneOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "style": {
+                    "type": "string",
+                    "enum": [
+                      "none",
+                      "banner-bottom",
+                      "banner-top",
+                      "border",
+                      "rounded-border",
+                      "speech-bubble",
+                      "banner-top-bottom",
+                      "speech-bubble-top",
+                      "chat-bubble",
+                      "circle",
+                      "polaroid",
+                      "phone",
+                      "ticket",
+                      "badge",
+                      "envelope",
+                      "tag",
+                      "menu-card",
+                      "sticker",
+                      "gradient-border",
+                      "focus"
+                    ]
+                  },
+                  "text": {
+                    "type": "string",
+                    "maxLength": 24
+                  },
+                  "color": {
+                    "type": "string"
+                  },
+                  "textColor": {
+                    "type": "string"
+                  },
+                  "secondaryText": {
+                    "type": "string",
+                    "maxLength": 24
+                  },
+                  "secondaryColor": {
+                    "type": "string"
+                  },
+                  "fontScale": {
+                    "type": "number",
+                    "minimum": 0.5,
+                    "maximum": 1.5
+                  }
+                },
+                "required": ["style"]
               },
-              "text": {
-                "type": "string",
-                "maxLength": 24
-              },
-              "color": {
-                "type": "string"
-              },
-              "textColor": {
-                "type": "string"
-              },
-              "secondaryText": {
-                "type": "string",
-                "maxLength": 24
-              },
-              "secondaryColor": {
-                "type": "string"
-              },
-              "fontScale": {
-                "type": "number",
-                "minimum": 0.5,
-                "maximum": 1.5
+              {
+                "type": "object",
+                "properties": {
+                  "style": {
+                    "type": "string",
+                    "const": "custom"
+                  },
+                  "text": {
+                    "type": "string",
+                    "maxLength": 24
+                  },
+                  "color": {
+                    "type": "string"
+                  },
+                  "textColor": {
+                    "type": "string"
+                  },
+                  "secondaryText": {
+                    "type": "string",
+                    "maxLength": 24
+                  },
+                  "secondaryColor": {
+                    "type": "string"
+                  },
+                  "fontScale": {
+                    "type": "number",
+                    "minimum": 0.5,
+                    "maximum": 1.5
+                  },
+                  "spec": {
+                    "$ref": "#/components/schemas/FrameSpec"
+                  }
+                },
+                "required": ["style", "spec"]
               }
-            },
-            "required": ["style"]
+            ]
           },
           "showLogo": {
             "description": "Whether to show a logo in center",
