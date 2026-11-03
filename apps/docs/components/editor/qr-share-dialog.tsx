@@ -15,6 +15,7 @@ import {
   ResponsiveDialogHeader,
   ResponsiveDialogTitle,
 } from "@repo/design-system/components/ui/revola";
+import { cn } from "@repo/design-system/lib/utils";
 import { Copy, Facebook, Share, Sms, Whatsapp } from "iconsax-reactjs";
 import { QRCodeSVG } from "qrdx";
 import { type ComponentType, useEffect, useState } from "react";
@@ -22,6 +23,7 @@ import { DialogCloseButton } from "@/components/editor/dialog-close-button";
 import { emitSound } from "@/components/editor/sound";
 import { InfoHint } from "@/components/help/info-hint";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
+import type { OmittedPart } from "@/lib/playground-style";
 import { useQREditorStore } from "@/store/editor-store";
 import { useThemePresetStore } from "@/store/theme-preset-store";
 
@@ -29,6 +31,28 @@ interface QRShareDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   url: string;
+  /** Parts of the design the link leaves out (a style link never carries a logo or art) */
+  omitted?: OmittedPart[];
+  /** For a style link: save the design as a theme instead, for a short link */
+  onSaveAsTheme?: () => void;
+}
+
+const OMITTED_NAMES: Record<OmittedPart, string> = {
+  logo: "your logo",
+  art: "the art",
+  frame: "the custom frame",
+};
+
+/** "Your logo and the art aren't in the link." */
+function omittedNote(parts: OmittedPart[]): string | null {
+  if (parts.length === 0) return null;
+  const names = parts.map((part) => OMITTED_NAMES[part]);
+  const list =
+    names.length === 1
+      ? names[0]
+      : `${names.slice(0, -1).join(", ")} and ${names.at(-1)}`;
+  const verb = names.length === 1 ? "isn't" : "aren't";
+  return `${list.charAt(0).toUpperCase()}${list.slice(1)} ${verb} in the link.`;
 }
 
 const SAMPLE_VALUE = "https://qrdx.dev";
@@ -69,7 +93,13 @@ function shareTargets(url: string, title: string) {
   }[];
 }
 
-export function QRShareDialog({ open, onOpenChange, url }: QRShareDialogProps) {
+export function QRShareDialog({
+  open,
+  onOpenChange,
+  url,
+  omitted = [],
+  onSaveAsTheme,
+}: QRShareDialogProps) {
   const [copied, setCopied] = useState(false);
   const [canShare, setCanShare] = useState(false);
   const value = useQREditorStore((state) => state.value);
@@ -79,6 +109,8 @@ export function QRShareDialog({ open, onOpenChange, url }: QRShareDialogProps) {
   );
   const style = themeState.styles;
   const name = preset?.label ?? "My QR design";
+  const note = omittedNote(omitted);
+  const longLink = url.length > 120;
   const title = `${name} · a QR code design on QRdx`;
 
   useEffect(() => {
@@ -156,7 +188,7 @@ export function QRShareDialog({ open, onOpenChange, url }: QRShareDialogProps) {
                   <span id="share-link-label">Link</span>{" "}
                   <InfoHint align="start" id="share-design" />
                 </p>
-                <div className="flex flex-col gap-2 sm:flex-row">
+                <div className="flex flex-col gap-2">
                   <Input
                     aria-labelledby="share-link-label"
                     className="bg-muted/40 text-muted-foreground min-w-0 flex-1 truncate font-mono text-xs"
@@ -166,9 +198,26 @@ export function QRShareDialog({ open, onOpenChange, url }: QRShareDialogProps) {
                   />
                   <Button onClick={handleCopy}>
                     {copied ? <Tick /> : <Copy />}
-                    {copied ? "Copied" : "Copy link"}
+                    {copied ? "Copied" : "Copy link to this design"}
                   </Button>
                 </div>
+                {(note || onSaveAsTheme) && (
+                  <p className="text-muted-foreground mt-2 text-xs text-pretty">
+                    {note}
+                    {note && onSaveAsTheme && " "}
+                    {onSaveAsTheme && (
+                      <button
+                        className="hover:text-foreground underline underline-offset-2"
+                        onClick={onSaveAsTheme}
+                        type="button"
+                      >
+                        {note
+                          ? "Save it as a theme instead"
+                          : "Save it as a theme for a shorter link"}
+                      </button>
+                    )}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -208,8 +257,19 @@ export function QRShareDialog({ open, onOpenChange, url }: QRShareDialogProps) {
               </div>
 
               <div className="flex items-center gap-3 rounded-lg border p-3">
-                <div className="grid size-20 shrink-0 place-items-center rounded-[10px] bg-white p-1.5 ring-1 ring-black/5 [&_svg]:h-auto [&_svg]:max-w-full">
-                  <QRCodeSVG level="M" size={72} value={url || SAMPLE_VALUE} />
+                {/* A style link is long: a bigger, lower-density code so a
+                    phone can still read it off the screen. */}
+                <div
+                  className={cn(
+                    "grid shrink-0 place-items-center rounded-[10px] bg-white p-1.5 ring-1 ring-black/5 [&_svg]:h-auto [&_svg]:max-w-full",
+                    longLink ? "size-28" : "size-20",
+                  )}
+                >
+                  <QRCodeSVG
+                    level={longLink ? "L" : "M"}
+                    size={longLink ? 100 : 72}
+                    value={url || SAMPLE_VALUE}
+                  />
                 </div>
                 <div className="min-w-0 space-y-0.5">
                   <p className="text-sm font-medium">Open on your phone</p>
