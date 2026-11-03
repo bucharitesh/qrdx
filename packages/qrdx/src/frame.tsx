@@ -1,14 +1,16 @@
 /** biome-ignore-all lint/style/noMagicNumbers: frame proportions */
 import type { ReactElement, SVGProps } from "react";
 import React from "react";
-import type { ColorConfig, QRFrame } from "../types";
+import type { ColorConfig } from "../types";
 import {
   DEFAULT_FRAME_TEXT,
   FRAME_FONT_SCALE_MAX,
   FRAME_FONT_SCALE_MIN,
   FRAME_TEXT_MAX_LENGTH,
 } from "../types/frame";
+import { type AnyQRFrame, CUSTOM_FRAME_STYLE } from "../types/frame-spec";
 import { DEFAULT_BGCOLOR } from "./constants";
+import { getCustomFrameLayout, getFrameSpecGapRatio } from "./frame-spec";
 import {
   estimateTextEm,
   isShapedFrameStyle,
@@ -61,7 +63,7 @@ export type FrameShape = FrameRect | FramePolygon | FramePath;
 
 export interface FrameLabel {
   text: string;
-  /** Horizontal center of the label */
+  /** Horizontal center of the label (its left or right end with `align`) */
   x: number;
   /** Alphabetic baseline of the label */
   y: number;
@@ -71,6 +73,10 @@ export interface FrameLabel {
   color: string;
   /** Clockwise rotation in degrees around (x, y), for text set on a curve */
   rotate?: number;
+  /** Which end of the text `x` is (default "middle") */
+  align?: "start" | "middle" | "end";
+  /** CSS font weight (default 700); PDF and EPS draw 600+ as bold */
+  fontWeight?: number;
 }
 
 export interface FrameLayout {
@@ -93,22 +99,36 @@ export interface FrameLayout {
   color: string;
 }
 
-/** True when `frame` draws something. */
+/**
+ * True when `frame` draws something. A "custom" frame counts even when its
+ * spec is invalid: drawing it then throws a FrameSpecError instead of
+ * leaving the frame out silently.
+ */
 export function isFrameActive(
-  frame: QRFrame | null | undefined
-): frame is QRFrame {
+  frame: AnyQRFrame | null | undefined
+): frame is AnyQRFrame {
   return Boolean(frame?.style && frame.style !== "none");
 }
 
+/**
+ * Light gap the frame keeps around the code, as a share of the code width
+ * (FRAME_GAP_RATIO for the built-in frames, the plate padding for custom).
+ */
+export function getFrameGapRatio(frame: AnyQRFrame): number {
+  return frame.style === CUSTOM_FRAME_STYLE
+    ? getFrameSpecGapRatio(frame.spec)
+    : FRAME_GAP_RATIO;
+}
+
 /** The label a frame renders: trimmed and capped at 24 characters. */
-export function getFrameText(frame: QRFrame): string {
+export function getFrameText(frame: AnyQRFrame): string {
   return (frame.text ?? DEFAULT_FRAME_TEXT)
     .trim()
     .slice(0, FRAME_TEXT_MAX_LENGTH);
 }
 
 /** The second label (no default), trimmed and capped at 24 characters. */
-export function getFrameSecondaryText(frame: QRFrame): string {
+export function getFrameSecondaryText(frame: AnyQRFrame): string {
   return (frame.secondaryText ?? "").trim().slice(0, FRAME_TEXT_MAX_LENGTH);
 }
 
@@ -149,12 +169,17 @@ function makeLabel(
 /**
  * Computes where the frame shapes, label and QR code go for a code of `size`
  * pixels. The QR code keeps its full size; the frame is added around it.
+ * A "custom" frame is drawn from its spec (throws a FrameSpecError when the
+ * spec is invalid).
  */
 export function getFrameLayout(
   size: number,
-  frame: QRFrame,
+  frame: AnyQRFrame,
   bgColor?: ColorConfig
 ): FrameLayout {
+  if (frame.style === CUSTOM_FRAME_STYLE) {
+    return getCustomFrameLayout(size, frame, bgColor);
+  }
   const color = frame.color || DEFAULT_FRAME_COLOR;
   const background = getSolidColor(bgColor, DEFAULT_BGCOLOR);
   const text = getFrameText(frame);
@@ -379,7 +404,7 @@ function ring(outer: FrameBox, hole: FrameBox, fill: string): FrameRect {
  */
 export function getFrameDimensions(
   size: number,
-  frame?: QRFrame | null
+  frame?: AnyQRFrame | null
 ): { width: number; height: number } {
   if (!isFrameActive(frame)) {
     return { width: size, height: size };
@@ -461,7 +486,7 @@ export function wrapWithFrame(
   qrElement: ReactElement<SVGProps<SVGSVGElement>>,
   options: {
     size: number;
-    frame: QRFrame;
+    frame: AnyQRFrame;
     bgColor?: ColorConfig;
     svgProps?: SVGProps<SVGSVGElement>;
   }
@@ -495,9 +520,9 @@ export function wrapWithFrame(
           fill={label.color}
           fontFamily={FRAME_FONT_FAMILY}
           fontSize={round(label.fontSize)}
-          fontWeight={700}
+          fontWeight={label.fontWeight ?? 700}
           key={index}
-          textAnchor="middle"
+          textAnchor={label.align ?? "middle"}
           x={round(label.x)}
           y={round(label.y)}
           {...(label.rotate && {
@@ -567,8 +592,13 @@ export function drawFrameOnCanvas(
 
   for (const label of frameLabels(layout)) {
     ctx.fillStyle = label.color;
-    ctx.font = `700 ${label.fontSize}px ${FRAME_FONT_FAMILY}`;
-    ctx.textAlign = "center";
+    ctx.font = `${label.fontWeight ?? 700} ${label.fontSize}px ${FRAME_FONT_FAMILY}`;
+    ctx.textAlign =
+      label.align === "start"
+        ? "left"
+        : label.align === "end"
+          ? "right"
+          : "center";
     ctx.textBaseline = "alphabetic";
     if (label.rotate) {
       ctx.save();

@@ -1,0 +1,77 @@
+{
+  "id": "register-product",
+  "name": "Register product",
+  "description": "A card with a check badge on its top edge, for product registration.",
+  "category": "use-case",
+  "contentTypes": ["url"],
+  "tags": ["warranty", "registration", "packaging"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1720
+    },
+    "qr": {
+      "size": 1000,
+      "padding": 80,
+      "radius": 24,
+      "x": 120,
+      "y": 420
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 140,
+        "width": 1240,
+        "height": 1580,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 150,
+        "r": 140,
+        "fill": "background"
+      },
+      {
+        "type": "circle",
+        "cx": 620,
+        "cy": 150,
+        "r": 118,
+        "fill": "frame"
+      },
+      {
+        "type": "icon",
+        "icon": "check",
+        "x": 530,
+        "y": 60,
+        "size": 180,
+        "fill": "background"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Register your product",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 1530,
+          "width": 1000,
+          "height": 150
+        },
+        "fontSize": 108
+      }
+    ]
+  }
+}

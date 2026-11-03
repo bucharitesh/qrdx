@@ -1,0 +1,107 @@
+{
+  "id": "get-the-app",
+  "name": "Get the app",
+  "description": "A phone outline with a download glyph and an app prompt on the screen.",
+  "category": "use-case",
+  "contentTypes": ["url"],
+  "tags": ["app", "download", "mobile"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1960
+    },
+    "qr": {
+      "size": 1000,
+      "padding": 80,
+      "radius": 24,
+      "x": 120,
+      "y": 300
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1960,
+        "radius": 150,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 40,
+        "y": 200,
+        "width": 1160,
+        "height": 1560,
+        "radius": 60,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 530,
+        "y": 88,
+        "width": 180,
+        "height": 32,
+        "radius": 16,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 470,
+        "y": 1836,
+        "width": 300,
+        "height": 28,
+        "radius": 14,
+        "fill": "background"
+      },
+      {
+        "type": "icon",
+        "icon": "download",
+        "x": 565,
+        "y": 1410,
+        "size": 110,
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Get the app",
+        "color": "frame",
+        "box": {
+          "x": 120,
+          "y": 1530,
+          "width": 1000,
+          "height": 120
+        },
+        "fontSize": 86.4
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Free download",
+        "color": {
+          "mix": ["frame", "background"],
+          "amount": 0.35
+        },
+        "box": {
+          "x": 120,
+          "y": 1650,
+          "width": 1000,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

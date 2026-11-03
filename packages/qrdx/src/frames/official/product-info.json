@@ -1,0 +1,119 @@
+{
+  "id": "product-info",
+  "name": "Product info",
+  "description": "A packaging label with an info glyph, for instructions and manuals.",
+  "category": "use-case",
+  "contentTypes": ["url", "google-drive"],
+  "tags": ["packaging", "instructions", "manual", "retail"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1720
+    },
+    "qr": {
+      "size": 1000,
+      "padding": 80,
+      "radius": 24,
+      "x": 120,
+      "y": 330
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1720,
+        "radius": 20,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1720,
+        "radius": 20,
+        "fill": "frame",
+        "hole": {
+          "x": 24,
+          "y": 24,
+          "width": 1192,
+          "height": 1672,
+          "radius": 6
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 250,
+        "radius": 20,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 226,
+        "width": 1240,
+        "height": 24,
+        "fill": "frame"
+      },
+      {
+        "type": "icon",
+        "icon": "info",
+        "x": 100,
+        "y": 65,
+        "size": 120,
+        "fill": "text"
+      },
+      {
+        "type": "rect",
+        "x": 120,
+        "y": 1438,
+        "width": 1000,
+        "height": 4,
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for instructions",
+        "color": "text",
+        "box": {
+          "x": 260,
+          "y": 60,
+          "width": 900,
+          "height": 130
+        },
+        "fontSize": 93.6,
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Manuals and support",
+        "color": "frame",
+        "box": {
+          "x": 120,
+          "y": 1470,
+          "width": 1000,
+          "height": 150
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

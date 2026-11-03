@@ -24,7 +24,14 @@ function decodeEntities(value: string): string {
         entity[1].toLowerCase() === "x"
           ? Number.parseInt(entity.slice(2), 16)
           : Number.parseInt(entity.slice(1), 10);
-      return Number.isFinite(code) ? String.fromCodePoint(code) : match;
+      // Out-of-range code points and lone surrogates stay as written
+      // (String.fromCodePoint would throw on the first).
+      return Number.isInteger(code) &&
+        code > 0 &&
+        code <= 0x10_ff_ff &&
+        !(code >= 0xd8_00 && code <= 0xdf_ff)
+        ? String.fromCodePoint(code)
+        : match;
     }
     return ENTITIES[entity.toLowerCase()] ?? match;
   });
