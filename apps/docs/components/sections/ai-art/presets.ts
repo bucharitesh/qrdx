@@ -1,4 +1,4 @@
-// Style presets for AI QR art. Each prompt is the scene Gemini repaints the
+// Style presets for AI QR art. Each prompt is the scene the model repaints the
 // QR code as (lib/ai/art-image.ts adds the scan rules): concrete scenes,
 // light and texture words, no text in the image.
 

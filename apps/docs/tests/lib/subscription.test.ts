@@ -152,7 +152,8 @@ describe("validateSubscriptionAndUsage", () => {
     });
   });
 
-  it("does not count AI art (Gemini, or fal.ai from before) against the free tier", async () => {
+  it("does not count AI art (GPT Image 2, or Nano Banana and fal.ai from before) against the free tier", async () => {
+    for (let i = 0; i < 20; i++) addUsage("openai/gpt-image-2");
     for (let i = 0; i < 20; i++) addUsage("google/gemini-nano-banana-2.1");
     for (let i = 0; i < 5; i++) addUsage("fal-ai/illusion-diffusion");
     addUsage("fal-ai/esrgan");
@@ -240,6 +241,7 @@ describe("reserveAIRequest", () => {
   });
 
   it("does not let art usage block free theme requests", async () => {
+    for (let i = 0; i < 30; i++) addUsage("openai/gpt-image-2");
     for (let i = 0; i < 30; i++) addUsage("google/gemini-nano-banana-2.1");
     await expect(reserveAIRequest(USER, "gemini-2.5-flash")).resolves.toEqual(
       expect.any(String),
