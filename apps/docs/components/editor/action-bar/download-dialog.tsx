@@ -63,19 +63,16 @@ import { emitSound } from "@/components/editor/sound";
 import { InfoHint } from "@/components/help/info-hint";
 import { track } from "@/lib/analytics";
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
+import { PRINT_SIZE_LIMITS } from "@/lib/print-size";
 import { useQREditorStore } from "@/store/editor-store";
 import { usePreferencesStore } from "@/store/preferences-store";
 import type { DownloadOptions as DownloadOptionsType } from "@/types/theme";
+import { useDownloadDialogStore } from "./download-dialog-store";
 
 interface DownloadDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
-
-const PRINT_SIZE_LIMITS: Record<PrintUnit, { min: number; max: number }> = {
-  mm: { min: 5, max: 2000 },
-  in: { min: 0.2, max: 78 },
-};
 
 // Modules smaller than this tend to smear on paper.
 const MIN_PRINT_MODULE_MM = 0.3;
@@ -169,6 +166,19 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
   const [printBleed, setPrintBleed] = React.useState(0);
   const [cropMarks, setCropMarks] = React.useState(false);
   const [colorMode, setColorMode] = React.useState<PrintColorMode>("rgb");
+
+  // A playground link (open=print&print=40mm) asks for a tab and width once.
+  const request = useDownloadDialogStore((state) => state.request);
+  const setRequest = useDownloadDialogStore((state) => state.setRequest);
+  React.useEffect(() => {
+    if (!(open && request)) return;
+    setTab(request.tab);
+    if (request.print) {
+      setPrintUnit(request.print.unit);
+      setPrintSize(request.print.size);
+    }
+    setRequest(null);
+  }, [open, request, setRequest]);
 
   const format = downloadOptions.format;
   const formatInfo = FORMATS.find((item) => item.id === format) ?? FORMATS[0];
