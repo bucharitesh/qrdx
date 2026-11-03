@@ -172,7 +172,6 @@ export function BuilderStyle({
   const choices = useMemo(() => themeChoices(themes ?? []), [themes]);
   const update = <K extends keyof QRStyle>(key: K, next: QRStyle[K]) =>
     onChange({ ...current, [key]: next });
-  const frameStyle = current.frame?.style ?? "none";
 
   return (
     <QRStyleScopeProvider onChange={onChange} style={current} value={value}>
@@ -264,7 +263,7 @@ export function BuilderStyle({
           <ControlSection
             hint="frame"
             popover
-            summary={frameStyle === "none" ? "None" : frameName(frameStyle)}
+            summary={frameName(current.frame)}
             title="Frame"
           >
             <FrameControls />

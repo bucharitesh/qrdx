@@ -27,12 +27,15 @@ interface TagSelectorProps {
   selectedTags: string[];
   onTagsChange: (tags: string[]) => void;
   disabled?: boolean;
+  /** The vocabulary (default: the community theme tags) */
+  options?: readonly string[];
 }
 
 export function TagSelector({
   selectedTags,
   onTagsChange,
   disabled,
+  options = COMMUNITY_THEME_TAGS,
 }: TagSelectorProps) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
@@ -116,7 +119,7 @@ export function TagSelector({
             >
               <CommandEmpty>No tags found.</CommandEmpty>
               <CommandGroup>
-                {COMMUNITY_THEME_TAGS.map((tag) => {
+                {options.map((tag) => {
                   const isSelected = selectedTags.includes(tag);
                   const isAtLimit =
                     !isSelected && selectedTags.length >= MAX_TAGS_PER_THEME;

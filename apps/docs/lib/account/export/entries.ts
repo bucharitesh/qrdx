@@ -1,5 +1,6 @@
 import "server-only";
 
+import { isMissingSchemaError } from "@/lib/community/tables";
 import { listAuthorizedApps } from "@/lib/oauth-apps/authorized";
 import type { ExportEntry } from "./archive";
 import {
@@ -9,6 +10,21 @@ import {
   SCAN_PAGE_SIZE,
   type ScanCursor,
 } from "./queries";
+
+/**
+ * Rows from the community tables, or null before manual-sql/0012 made them
+ * (the export still works then).
+ */
+async function whenCommunityExists<T>(
+  query: PromiseLike<T>,
+): Promise<T | null> {
+  try {
+    return await query;
+  } catch (error) {
+    if (isMissingSchemaError(error)) return null;
+    throw error;
+  }
+}
 
 /** Per-file caps, so one export stays a download rather than a project. */
 export const MAX_SCAN_ROWS = 500_000;
@@ -230,10 +246,14 @@ export function exportEntries(userId: string): ExportEntry[] {
       path: "community.json",
       title: "Community",
       description:
-        "Themes you published to the community gallery, and themes you liked.",
+        "Your community profile, what you published to the community, and what you liked and saved.",
       load: async () => ({
         published: await q.communityThemes,
         liked: await q.themeLikes,
+        profile: await whenCommunityExists(q.communityProfile),
+        items: await whenCommunityExists(q.communityItems),
+        likedItems: await whenCommunityExists(q.communityLikes),
+        savedItems: await whenCommunityExists(q.communitySaves),
       }),
     },
     {

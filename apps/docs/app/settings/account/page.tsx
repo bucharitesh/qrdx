@@ -21,10 +21,13 @@ import {
   type SocialProvider,
   toSignInMethods,
 } from "@/lib/account/sign-in-methods";
+import { getMyCommunityProfile } from "@/lib/community/profiles";
+import { CommunityUnavailableError } from "@/lib/community/store";
 import { signInPath } from "@/lib/safe-redirect";
 import { scanGeo } from "@/lib/scans";
 import { isStorageConfigured } from "@/lib/storage/r2";
 import { SettingsHeader } from "../components/settings-header";
+import { CommunityProfileSection } from "./_components/community-profile-section";
 import {
   DangerZoneSection,
   type ReauthMode,
@@ -90,28 +93,33 @@ export default async function AccountPage({
   const now = new Date();
   // Better Auth's listSessions needs a session younger than a day, which
   // would hide this list from most people; the rows are read directly.
-  const [accounts, sessionRows, facts, params] = await Promise.all([
-    auth.api.listUserAccounts({ headers: requestHeaders }) as Promise<
-      LinkedAccount[]
-    >,
-    db
-      .select({
-        id: sessionTable.id,
-        createdAt: sessionTable.createdAt,
-        updatedAt: sessionTable.updatedAt,
-        expiresAt: sessionTable.expiresAt,
-        ipAddress: sessionTable.ipAddress,
-        userAgent: sessionTable.userAgent,
-      })
-      .from(sessionTable)
-      .where(
-        and(eq(sessionTable.userId, userId), gt(sessionTable.expiresAt, now)),
-      )
-      .orderBy(desc(sessionTable.updatedAt))
-      .limit(SESSION_LIMIT),
-    loadDeletionFacts(userId),
-    searchParams,
-  ]);
+  const [accounts, sessionRows, facts, params, communityProfile] =
+    await Promise.all([
+      auth.api.listUserAccounts({ headers: requestHeaders }) as Promise<
+        LinkedAccount[]
+      >,
+      db
+        .select({
+          id: sessionTable.id,
+          createdAt: sessionTable.createdAt,
+          updatedAt: sessionTable.updatedAt,
+          expiresAt: sessionTable.expiresAt,
+          ipAddress: sessionTable.ipAddress,
+          userAgent: sessionTable.userAgent,
+        })
+        .from(sessionTable)
+        .where(
+          and(eq(sessionTable.userId, userId), gt(sessionTable.expiresAt, now)),
+        )
+        .orderBy(desc(sessionTable.updatedAt))
+        .limit(SESSION_LIMIT),
+      loadDeletionFacts(userId),
+      searchParams,
+      getMyCommunityProfile(userId).catch((error: unknown) => {
+        if (error instanceof CommunityUnavailableError) return null;
+        throw error;
+      }),
+    ]);
 
   const sessions = toSessionViews(sessionRows, {
     currentSessionId: session.session.id,
@@ -155,6 +163,11 @@ export default async function AccountPage({
       />
 
       <SessionsSection sessions={sessions} />
+
+      {/* Hidden until the community tables exist (manual-sql/0012). */}
+      {communityProfile && (
+        <CommunityProfileSection profile={communityProfile} />
+      )}
 
       <DataExportSection />
 
