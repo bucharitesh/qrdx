@@ -1,0 +1,24 @@
+# Changelog
+
+Release notes for earlier versions are at [qrdx.dev/changelog](https://qrdx.dev/changelog).
+
+## 0.0.47 (not yet on npm)
+
+npm's latest is 0.0.46, so these changes ship with the rest of 0.0.47.
+
+### Custom frames
+
+- **Frame specs.** `frame: { style: "custom", spec }` draws a frame from a JSON spec: rects, circles, ellipses, polygons, paths, dashed lines and built-in icons, straight and curved labels, and colors bound to the theme (`color`, `textColor`, `secondaryColor`) or fixed. A spec compiles to the same shapes as the built-in frames, so SVG, canvas, PDF and EPS draw the same artwork. Validate one with `frameSpecSchema` or `getFrameSpecIssues`; the hard limits are in `FRAME_SPEC_LIMITS`. Drawing an invalid spec throws a `FrameSpecError`.
+- **The quiet zone stays clear.** Custom frames always paint an opaque plate (the code's background, or white when it is transparent) under the code and its padding, and labels may not overlap them.
+- **SVG import.** `importFrameSvg(svg)` converts SVG artwork into a spec on a server. Only filled shapes survive, rewritten from parsed numbers. Script, style, images, `use`, text, filters, links and external references are removed and reported as warnings. DOCTYPE and entity declarations, oversized or malformed files are refused.
+- **Official frames.** `OFFICIAL_FRAMES` holds 24 specs (20 use cases and 4 seasonal frames, CC0 1.0), and `getOfficialFrame(id)` returns one. Each decodes with a link, a Wi-Fi network and a contact card at phone distances, scores Great, and reads with zbar.
+- **Built-ins as specs.** `BUILT_IN_FRAME_SPECS` has `banner-bottom`, `rounded-border`, `circle` and `ticket` as specs. They match the built-in styles in SVG, PDF and EPS.
+- `FrameLabel` has optional `align` and `fontWeight`; `getFrameGapRatio(frame)` returns the light gap a frame keeps around the code.
+
+### Fixes
+
+- The SVG reader behind PDF and EPS export no longer throws on character references outside Unicode (such as `&#x110000;`).
+
+### Unchanged
+
+- `FRAME_STYLES`, `FrameStyle`, `QRFrame` and `frameSchema` still describe the built-in frames only, and every built-in frame draws exactly as before. `QRProps.frame` (and `qrPropsSchema`) now accept either kind: `AnyQRFrame` / `anyFrameSchema`.

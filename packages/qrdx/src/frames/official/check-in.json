@@ -1,0 +1,110 @@
+{
+  "id": "check-in",
+  "name": "Check in",
+  "description": "A sign with a location pin, for check-in desks and front doors.",
+  "category": "use-case",
+  "contentTypes": ["attendance", "url"],
+  "tags": ["check-in", "reception", "events", "visitors"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1700
+    },
+    "qr": {
+      "size": 1000,
+      "padding": 80,
+      "radius": 24,
+      "x": 120,
+      "y": 300
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1700,
+        "radius": 40,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1700,
+        "radius": 40,
+        "fill": "frame",
+        "hole": {
+          "x": 30,
+          "y": 30,
+          "width": 1180,
+          "height": 1640,
+          "radius": 16
+        }
+      },
+      {
+        "type": "icon",
+        "icon": "pin",
+        "x": 100,
+        "y": 60,
+        "size": 140,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1430,
+        "width": 1240,
+        "height": 270,
+        "radius": 40,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1430,
+        "width": 1240,
+        "height": 44,
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Check in here",
+        "color": "frame",
+        "box": {
+          "x": 270,
+          "y": 70,
+          "width": 870,
+          "height": 130
+        },
+        "fontSize": 93.6,
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Welcome",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 1460,
+          "width": 1000,
+          "height": 200
+        }
+      }
+    ]
+  }
+}

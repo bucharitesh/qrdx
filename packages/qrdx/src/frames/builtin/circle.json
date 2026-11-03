@@ -1,0 +1,81 @@
+{
+  "kind": "qrdx.frame",
+  "version": 1,
+  "artboard": {
+    "width": 1978.214,
+    "height": 1978.214
+  },
+  "qr": {
+    "x": 489.107,
+    "y": 489.107,
+    "size": 1000,
+    "padding": 50
+  },
+  "colors": {
+    "frame": "#000000",
+    "text": "#FFFFFF"
+  },
+  "shapes": [
+    {
+      "type": "circle",
+      "cx": 989.107,
+      "cy": 989.107,
+      "r": 779.107,
+      "fill": "background"
+    },
+    {
+      "type": "circle",
+      "cx": 989.107,
+      "cy": 989.107,
+      "r": 989.107,
+      "hole": 779.107,
+      "fill": "frame"
+    },
+    {
+      "type": "circle",
+      "cx": 105,
+      "cy": 989.107,
+      "r": 14.7,
+      "fill": "text"
+    },
+    {
+      "type": "circle",
+      "cx": 1873.214,
+      "cy": 989.107,
+      "r": 14.7,
+      "fill": "text"
+    }
+  ],
+  "labels": [
+    {
+      "type": "curved",
+      "id": "top",
+      "slot": "primary",
+      "text": "Scan me",
+      "color": "text",
+      "curve": {
+        "cx": 989.107,
+        "cy": 989.107,
+        "radius": 884.107,
+        "side": "top",
+        "spread": 140
+      },
+      "fontSize": 105
+    },
+    {
+      "type": "curved",
+      "id": "bottom",
+      "slot": "secondary",
+      "text": "",
+      "color": "text",
+      "curve": {
+        "cx": 989.107,
+        "cy": 989.107,
+        "radius": 884.107,
+        "side": "bottom",
+        "spread": 140
+      },
+      "fontSize": 105
+    }
+  ]
+}

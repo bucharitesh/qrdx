@@ -1,0 +1,94 @@
+{
+  "id": "scan-to-pay",
+  "name": "Scan to pay",
+  "description": "Payment prompt with a card glyph and a line for a note.",
+  "category": "use-case",
+  "contentTypes": ["upi", "paypal", "venmo", "url"],
+  "tags": ["payments", "checkout", "retail"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1760
+    },
+    "qr": {
+      "size": 1000,
+      "padding": 80,
+      "radius": 24,
+      "x": 120,
+      "y": 400
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 28,
+        "y": 300,
+        "width": 1184,
+        "height": 1432,
+        "radius": 28,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 56,
+        "fill": "frame",
+        "hole": {
+          "x": 28,
+          "y": 300,
+          "width": 1184,
+          "height": 1432,
+          "radius": 28
+        }
+      },
+      {
+        "type": "icon",
+        "icon": "card",
+        "x": 130,
+        "y": 85,
+        "size": 130,
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan to pay",
+        "color": "text",
+        "box": {
+          "x": 300,
+          "y": 80,
+          "width": 840,
+          "height": 140
+        },
+        "fontSize": 100.8,
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Thank you",
+        "color": "frame",
+        "box": {
+          "x": 120,
+          "y": 1510,
+          "width": 1000,
+          "height": 150
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}
