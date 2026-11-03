@@ -3,7 +3,7 @@
 A Manifest V3 extension that shows a styled QR code for the current tab, any link, image or selected text. It is built with the [`qrdx`](../../packages/qrdx) library and runs entirely in the browser.
 
 - Popup: QR code for the current tab's URL (editable), 12 style presets taken from the QRdx playground, foreground and background colors, export size (256 to 2048 px).
-- Actions: Download PNG, Download SVG, Copy image (PNG), Open in QRdx (opens qrdx.dev).
+- Actions: Download PNG, Download SVG, Copy image (PNG), Open in QRdx (opens the qrdx.dev playground with the code's web address filled in).
 - Context menu: "QR code for this link", "QR code for this image" (encodes the image address) and "QR code for selected text" open the popup with that value.
 - Remembers the last style and size (`chrome.storage.local`), follows the system light or dark theme, keyboard and screen-reader friendly.
 - Warns when content is too long for a QR code, when colors have low contrast, and when a code is light on dark (phone cameras read these; some older scanner apps don't).
@@ -38,7 +38,7 @@ When you use a context-menu item, the extension opens its popup with `chrome.act
 
 ## Privacy
 
-No data leaves your browser. QR codes are drawn locally by the bundled `qrdx` library; the extension makes no network requests, has no analytics and no account. Your last style is stored in `chrome.storage.local` on this device only (not synced). The page URL, link, image address or selected text you turn into a QR code is never sent anywhere. "Open in QRdx" opens https://qrdx.dev in a new tab and does not pass the current page's URL.
+No data leaves your browser. QR codes are drawn locally by the bundled `qrdx` library; the extension makes no network requests, has no analytics and no account. Your last style is stored in `chrome.storage.local` on this device only (not synced). The page URL, link, image address or selected text you turn into a QR code is never sent anywhere. "Open in QRdx" opens the playground at https://qrdx.dev/playground in a new tab, only when you click it. When the code holds a web address (http or https, without a user name or password), the address is passed after a `#` in the link: browsers never send that part to a server, and the playground reads it on your device, fills it in and removes it from the address bar. Selected text and anything else that isn't a web address are never passed.
 
 ## Icons
 
