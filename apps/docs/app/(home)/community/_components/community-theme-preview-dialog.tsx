@@ -117,7 +117,9 @@ export function CommunityThemePreviewDialog({
   };
 
   const handleShare = async () => {
-    const url = `${siteConfig.url}/community`;
+    const url = displayTheme.slug
+      ? `${siteConfig.url}/community/themes/${displayTheme.slug}`
+      : `${siteConfig.url}/community`;
     try {
       await navigator.clipboard.writeText(url);
       toast.success("Community link copied");
