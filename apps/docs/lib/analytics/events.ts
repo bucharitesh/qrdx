@@ -34,6 +34,14 @@ export interface AnalyticsEvents {
   qr_downloaded: { format: string; source: QrSource; content_type?: string };
   qr_copied: { format: "svg"; source: QrSource };
 
+  /**
+   * A playground link applied its parameters. `source`: where it came from
+   * ("direct", "external", a same-site section or a `ref` tag); `target`:
+   * the parameter names it applied, joined with "+" ("type+open"). Never
+   * their values: no address, design or content.
+   */
+  playground_handoff: { source: string; target: string };
+
   // Themes and AI
   theme_applied: { method: "preset" | "shuffle"; preset?: string };
   ai_theme_generated: { status: "success" | "fail" };

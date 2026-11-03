@@ -28,6 +28,15 @@ export const REFERENCE_MODULES = 25;
 
 const MM_PER_INCH = 25.4;
 
+/**
+ * Widths the editor's Print-ready download accepts, per unit. Also bounds a
+ * `print=` size in a playground link.
+ */
+export const PRINT_SIZE_LIMITS = {
+  mm: { min: 5, max: 2000 },
+  in: { min: 0.2, max: 78 },
+} as const satisfies Record<"mm" | "in", { min: number; max: number }>;
+
 const MM_PER_UNIT: Record<DistanceUnit, number> = {
   cm: 10,
   m: 1000,

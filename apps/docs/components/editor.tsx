@@ -11,6 +11,7 @@ import React, { use, useEffect } from "react";
 import { useTrackQrGenerated } from "@/lib/analytics/react";
 import { DialogActionsProvider } from "@/lib/hooks/use-dialog-actions";
 import { useMounted } from "@/lib/hooks/use-mounted";
+import { usePlaygroundParams } from "@/lib/hooks/use-playground-params";
 import { useQREditorStore } from "@/store/editor-store";
 import type { Theme, ThemeStyles } from "@/types/theme";
 import { ActionBar, MobileActionBar } from "./editor/action-bar";
@@ -101,8 +102,18 @@ const Editor: React.FC<EditorProps> = ({ themePromise }) => {
         styles: initialQRPreset.style,
         preset: initialQRPreset.id,
       });
+      // The look the page opened with: Share offers this theme's own link
+      // until it changes.
+      useQREditorStore.getState().saveThemeCheckpoint();
     }
   }, [initialQRPreset, setThemeState]);
+
+  // Links like /playground?type=wifi or ?style=…, applied once after the
+  // saved state and any /playground/<themeId> theme, before the controls
+  // mount (their forms read the store once).
+  const { settled } = usePlaygroundParams({
+    themePath: Boolean(initialQRPreset),
+  });
 
   if (initialQRPreset && !initialQRPreset.style) {
     return (
@@ -114,8 +125,9 @@ const Editor: React.FC<EditorProps> = ({ themePromise }) => {
 
   // The editor store restores from localStorage on the client, so anything
   // rendered from it would differ from the server HTML (hydration errors and
-  // shifted Radix ids). Render a neutral shell until mounted.
-  if (!isMounted) {
+  // shifted Radix ids). Render a neutral shell until mounted, and until a
+  // playground link's parameters are in the store.
+  if (!(isMounted && settled)) {
     return <EditorShell />;
   }
 
