@@ -1,0 +1,81 @@
+{
+  "id": "sign-rider",
+  "name": "Sign rider",
+  "description": "A wide rider for property signs, with the prompt beside the code.",
+  "category": "use-case",
+  "contentTypes": ["url"],
+  "tags": ["real estate", "property", "signage"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1920,
+      "height": 992
+    },
+    "qr": {
+      "size": 800,
+      "padding": 64,
+      "radius": 25.6,
+      "x": 1024,
+      "y": 96
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1920,
+        "height": 992,
+        "radius": 38.4,
+        "fill": "frame"
+      },
+      {
+        "type": "icon",
+        "icon": "home",
+        "x": 96,
+        "y": 120,
+        "size": 144,
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for photos & price",
+        "color": "text",
+        "box": {
+          "x": 96,
+          "y": 320,
+          "width": 832,
+          "height": 160
+        },
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Book a viewing",
+        "color": {
+          "mix": ["text", "frame"],
+          "amount": 0.25
+        },
+        "box": {
+          "x": 96,
+          "y": 528,
+          "width": 832,
+          "height": 112
+        },
+        "align": "start",
+        "weight": "regular"
+      }
+    ]
+  }
+}

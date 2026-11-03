@@ -220,7 +220,76 @@ const Framed: TemplateDefinition<{ label?: string }> = {
 
 Frames are plain shapes and text with opaque colors, so SVG, PNG, PDF and EPS match: the gradient border is drawn as fine solid color steps, and `circle` sets its letters as rotated text in every format.
 
-The label uses a system font stack (nothing is fetched). `getFrameDimensions(size, frame)` returns the output size for a `size`-pixel code, and `frameSchema` (zod) validates frame options.
+The label uses a system font stack (nothing is fetched). `getFrameDimensions(size, frame)` returns the output size for a `size`-pixel code, and `frameSchema` (zod) validates frame options. To draw a frame of your own, see [Custom frames](#custom-frames).
+
+## Custom frames
+
+A custom frame is data: a JSON **frame spec** with shapes, labels, theme colors and the place the code goes. Pass it as `frame: { style: "custom", spec }`. The engine turns it into the same plain shapes the built-in frames use, so SVG, canvas (PNG/JPG), PDF and EPS draw the same artwork. A spec holds no markup, URLs, scripts or images, so specs from other people are safe to store and render.
+
+```tsx
+import { QRCodeSVG, type FrameSpec } from "qrdx";
+
+const spec: FrameSpec = {
+  kind: "qrdx.frame",
+  version: 1,
+  artboard: { width: 1240, height: 1460 },
+  qr: { x: 120, y: 120, size: 1000, padding: 80, radius: 24 }, // the code, its margin included
+  colors: { frame: "#111111", text: "#ffffff" },               // defaults the theme can override
+  shapes: [
+    { type: "rect", x: 0, y: 0, width: 1240, height: 1460, radius: 64, fill: "frame" },
+    { type: "icon", icon: "wifi", x: 80, y: 1260, size: 120, fill: "text" },
+  ],
+  labels: [
+    {
+      type: "text", id: "cta", slot: "primary", text: "Scan to join Wi-Fi",
+      box: { x: 240, y: 1240, width: 920, height: 160 }, align: "start", color: "text",
+    },
+  ],
+};
+
+<QRCodeSVG value="WIFI:T:WPA;S:Guest;P:secret;;" frame={{ style: "custom", spec, color: "#1e3a8a" }} />;
+```
+
+**Units and layout.** Coordinates are in artboard units; the spec is scaled so `qr.size` becomes the code's size. The engine always paints an opaque plate of the code's background (white when the background is transparent) under the code and `qr.padding` around it, so nothing in the spec can show in the quiet zone. Labels may not overlap the code or its padding.
+
+**Shapes** are painted behind the code, in order: `rect` (with `radius` and an optional `hole`), `circle` (with an optional `hole` radius, for rings), `ellipse`, `polygon`, `path` (SVG path data: `M L H V C S Q T A Z` and plain numbers only), `line` (a filled bar with `width`, `cap: "butt" | "round"` and an optional `dash: [dash, gap]`) and `icon` (a built-in glyph by id: <!-- catalogue:FRAME_ICONS -->`wifi`, `star`, `heart`, `phone`, `headphones`, `calendar`, `user`, `chat`, `bag`, `bell`, `cup`, `card`, `check`, `info`, `home`, `pin`, `share`, `download`, `clock`, `snowflake`, `pumpkin`, `tree`, `sparkle`, `gift`<!-- /catalogue -->).
+
+**Colors.** A fill is a theme token or a fixed `#rgb`/`#rrggbb` color. `frame` is the frame's `color` (else `colors.frame`), `text` is `textColor` (else `colors.text`, else the frame color), `accent` is `secondaryColor` (else `colors.accent`, else the frame color) and `background` is the code's background. `{ mix: [a, b], amount }` is an opaque tint, and `{ gradient: { from, to, direction, steps } }` draws a gradient as solid color steps, which EPS can print too. `bleed` names the color print bleed continues with when the artwork fills its edges.
+
+**Labels.** A `text` label is fitted in its `box` (`align` start, middle or end; `weight` bold or regular; `fontSize` defaults to 52% of the box height and never exceeds 95% of it). A `curved` label sets its letters along a circle (`curve: { cx, cy, radius, side: "top" | "bottom", spread }`). `slot: "primary"` shows the frame's `text`, `"secondary"` its `secondaryText` (each falls back to the label's own `text`, and `""` hides it), and `"fixed"` always shows `text`. `fontScale` scales every label. Text is cleaned with `sanitizeFrameText` (no control, invisible or direction-override characters, at most 24 characters). PDF and EPS print labels in Helvetica, so use Latin-1 text there (`isLatin1Text`).
+
+**Validation.** `frameSpecSchema` (zod) checks every field and the hard limits in `FRAME_SPEC_LIMITS`: artboard sides of 50 to 2000 units, at most 3 decimals per number, 64 shapes, 8 labels, 256 points per polygon, 16,000 characters per path, 2,000 segments in all, 32 KB of JSON, a code at least half the artboard's shorter side and padding of at least 4% of the code. `getFrameSpecIssues(spec)` lists problems as text. Drawing an invalid spec throws a `FrameSpecError` instead of leaving the frame out.
+
+**Official frames.** `OFFICIAL_FRAMES` holds 24 ready-made specs (20 use cases such as a Wi-Fi card, a table tent, a review card and an event ticket, and 4 seasonal ones), each with an `id`, `name`, `description`, suggested `contentTypes` and `tags`, released under CC0 1.0. `getOfficialFrame(id)` returns one. `BUILT_IN_FRAME_SPECS` has `banner-bottom`, `rounded-border`, `circle` and `ticket` written as specs, as starting points.
+
+```ts
+import { getOfficialFrame } from "qrdx";
+
+const wifi = getOfficialFrame("wifi-card"); // undefined for an unknown id
+const frame = wifi && ({ style: "custom", spec: wifi.spec, secondaryText: "Harbour Guest" } as const);
+```
+
+### Importing an SVG (server)
+
+`importFrameSvg(svg, options?)` converts SVG artwork into a spec, for a server to run on uploads. It never stores or returns the SVG: only filled shapes survive, rewritten as path data from the numbers it parsed, with colors as hex.
+
+```ts
+import { importFrameSvg } from "qrdx";
+
+const result = importFrameSvg(uploadedSvg);
+if (result.ok) {
+  save(result.spec);            // validated with frameSpecSchema
+  show(result.warnings);        // what was dropped or changed, e.g. "Removed 2 images"
+  show(result.palette);         // colors found, and which became the frame and accent tokens
+} else {
+  reject(result.error);
+}
+```
+
+- **Kept:** `svg`, `g`, `path`, `rect`, `circle`, `ellipse`, `polygon` and `polyline` fills (transforms applied), and strokes on `rect`, `circle`, `ellipse` and `line`, turned into filled outlines. Internal gradients become their first color. The two most used colors become the `frame` and `accent` tokens, so the frame follows the theme.
+- **Removed, with a warning:** `script`, `style`, `foreignObject`, `image`, `use`, text, filters, masks, clip paths, patterns, animation and unknown elements; every attribute other than geometry and paint, so `on*` handlers and `href`/`xlink:href` go too; `url(...)` paints that point outside the file; strokes on paths and polylines (outline them first).
+- **Refused:** files over 200 KB, any DOCTYPE or entity declaration, processing instructions other than the XML declaration, malformed markup (it is scanned in linear time before parsing), more than 500 elements, nesting deeper than 16 and more than 4,000 path segments (`FRAME_IMPORT_LIMITS`).
+- **The code's place:** a `rect` with the id `qr` (or `qr-code`, `qrdx-qr`) marks it and isn't drawn; or pass `options.qr` in the SVG's units. Without either, the code is centered at 60% of the shorter side and a warning says so. Shapes are clipped to the artboard (the viewBox, scaled so its longer side is 1000 units).
 
 ## Art QR (Logo QR and Image QR)
 

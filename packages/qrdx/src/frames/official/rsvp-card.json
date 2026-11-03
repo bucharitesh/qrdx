@@ -1,0 +1,112 @@
+{
+  "id": "rsvp-card",
+  "name": "RSVP card",
+  "description": "An invitation card with a double rule border and a diamond ornament.",
+  "category": "use-case",
+  "contentTypes": ["url"],
+  "tags": ["events", "wedding", "party", "invitation"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1320,
+      "height": 1760
+    },
+    "qr": {
+      "size": 1000,
+      "padding": 80,
+      "radius": 24,
+      "x": 160,
+      "y": 420
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#111111"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1320,
+        "height": 1760,
+        "radius": 24,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1320,
+        "height": 1760,
+        "radius": 24,
+        "fill": "frame",
+        "hole": {
+          "x": 22,
+          "y": 22,
+          "width": 1276,
+          "height": 1716,
+          "radius": 4
+        }
+      },
+      {
+        "type": "rect",
+        "x": 50,
+        "y": 50,
+        "width": 1220,
+        "height": 1660,
+        "fill": "frame",
+        "hole": {
+          "x": 58,
+          "y": 58,
+          "width": 1204,
+          "height": 1644
+        }
+      },
+      {
+        "type": "rect",
+        "x": 440,
+        "y": 297,
+        "width": 440,
+        "height": 6,
+        "fill": "frame"
+      },
+      {
+        "type": "polygon",
+        "points": [[660, 278], [682, 300], [660, 322], [638, 300]],
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan to RSVP",
+        "color": "text",
+        "box": {
+          "x": 160,
+          "y": 110,
+          "width": 1000,
+          "height": 160
+        },
+        "fontSize": 115.2
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "We hope you can make it",
+        "color": "text",
+        "box": {
+          "x": 160,
+          "y": 1530,
+          "width": 1000,
+          "height": 130
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

@@ -1,0 +1,127 @@
+{
+  "id": "review-us",
+  "name": "Review us",
+  "description": "Five stars over the code and a review prompt on a band.",
+  "category": "use-case",
+  "contentTypes": ["google-review", "url"],
+  "tags": ["reviews", "feedback", "restaurant", "retail"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1720
+    },
+    "qr": {
+      "size": 1000,
+      "padding": 80,
+      "radius": 24,
+      "x": 120,
+      "y": 310
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1720,
+        "radius": 56,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1720,
+        "radius": 56,
+        "fill": "frame",
+        "hole": {
+          "x": 28,
+          "y": 28,
+          "width": 1184,
+          "height": 1664,
+          "radius": 30
+        }
+      },
+      {
+        "type": "icon",
+        "icon": "star",
+        "x": 240,
+        "y": 74,
+        "size": 120,
+        "fill": "frame"
+      },
+      {
+        "type": "icon",
+        "icon": "star",
+        "x": 400,
+        "y": 74,
+        "size": 120,
+        "fill": "frame"
+      },
+      {
+        "type": "icon",
+        "icon": "star",
+        "x": 560,
+        "y": 74,
+        "size": 120,
+        "fill": "frame"
+      },
+      {
+        "type": "icon",
+        "icon": "star",
+        "x": 720,
+        "y": 74,
+        "size": 120,
+        "fill": "frame"
+      },
+      {
+        "type": "icon",
+        "icon": "star",
+        "x": 880,
+        "y": 74,
+        "size": 120,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1430,
+        "width": 1240,
+        "height": 290,
+        "radius": 56,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 1430,
+        "width": 1240,
+        "height": 60,
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Loved it? Leave a review",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1450,
+          "width": 1040,
+          "height": 240
+        }
+      }
+    ]
+  }
+}

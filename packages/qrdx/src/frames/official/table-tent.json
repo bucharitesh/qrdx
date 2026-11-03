@@ -1,0 +1,75 @@
+{
+  "id": "table-tent",
+  "name": "Table tent topper",
+  "description": "An arched topper for table tents and menu holders.",
+  "category": "use-case",
+  "contentTypes": ["url"],
+  "tags": ["menu", "restaurant", "cafe", "table"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1840
+    },
+    "qr": {
+      "size": 1000,
+      "padding": 80,
+      "radius": 24,
+      "x": 120,
+      "y": 500
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M0 1840V620A620 620 0 0 1 1240 620V1840Z",
+        "fill": "frame"
+      },
+      {
+        "type": "icon",
+        "icon": "cup",
+        "x": 550,
+        "y": 120,
+        "size": 140,
+        "fill": "background"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "",
+        "color": {
+          "mix": ["background", "frame"],
+          "amount": 0.2
+        },
+        "box": {
+          "x": 140,
+          "y": 290,
+          "width": 960,
+          "height": 100
+        },
+        "weight": "regular"
+      },
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan for our menu",
+        "color": "text",
+        "box": {
+          "x": 100,
+          "y": 1610,
+          "width": 1040,
+          "height": 170
+        }
+      }
+    ]
+  }
+}
