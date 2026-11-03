@@ -1,0 +1,342 @@
+// Links into the playground: one writer (playgroundHref) and one reader
+// (parsePlaygroundParams). Pure and client-safe, so marketing pages can build
+// links without loading the editor.
+//
+// Only harmless state goes in a link. The one piece of content allowed is a
+// web address (`url`, http or https only, never with a user name or
+// password), and playgroundHref puts it after the `#`, which browsers never
+// send to a server. Wi-Fi passwords, contact details, payment details and
+// any other form content never go in a link. A design travels as `style`
+// (lib/playground-style.ts), which never carries a logo or art.
+//
+// /playground stays static: page.tsx never reads searchParams. The editor
+// reads these after mount (lib/hooks/use-playground-params.ts), applies them
+// once and removes the one-shot ones from the address bar.
+
+import { PRINT_SIZE_LIMITS } from "@/lib/print-size";
+import { CONTENT_TYPES_METADATA, type ContentType } from "@/types/qr-content";
+
+export const PLAYGROUND_PATH = "/playground";
+
+/** The editor panel's tabs, as stored in `?tab=`. "settings" is legacy (Design at Logo). */
+export const CONTROL_TABS = [
+  "content",
+  "customisations",
+  "settings",
+  "ai",
+] as const;
+export type ControlTab = (typeof CONTROL_TABS)[number];
+
+/** Friendlier names a link may use for a tab. */
+export const TAB_ALIASES = {
+  design: "customisations",
+  generate: "ai",
+} as const satisfies Record<string, ControlTab>;
+export type TabAlias = keyof typeof TAB_ALIASES;
+
+/**
+ * Design sections a link can open. Only sections the Design tab can jump to
+ * today; the others need section anchors first (hub plan, phase 3).
+ */
+export const DESIGN_SECTIONS = ["logo"] as const;
+export type DesignSection = (typeof DESIGN_SECTIONS)[number];
+
+/**
+ * Surfaces a link can open, each one that exists today: the download dialog,
+ * its Print-ready tab and the React code dialog.
+ */
+export const OPEN_TARGETS = ["download", "print", "code"] as const;
+export type OpenTarget = (typeof OPEN_TARGETS)[number];
+
+/** Code dialog languages. Only React exists today. */
+export const CODE_LANGS = ["react"] as const;
+export type CodeLang = (typeof CODE_LANGS)[number];
+
+export type PrintUnit = keyof typeof PRINT_SIZE_LIMITS;
+export interface PrintWidth {
+  size: number;
+  unit: PrintUnit;
+}
+
+/** Longest `url` a link may carry. */
+export const MAX_LINK_URL_LENGTH = 2048;
+
+/** Version prefix of a `style` value (lib/playground-style.ts). */
+export const STYLE_PARAM_VERSION = "1";
+/** Longest `style` value accepted, in characters (about 4 KB). */
+export const MAX_STYLE_PARAM_LENGTH = 4096;
+
+/** Parameters applied once and then removed from the address bar. */
+export const ONE_SHOT_PARAMS = [
+  "section",
+  "type",
+  "url",
+  "preset",
+  "style",
+  "open",
+  "print",
+  "lang",
+] as const;
+
+export interface PlaygroundParams {
+  tab?: ControlTab;
+  section?: DesignSection;
+  type?: ContentType;
+  url?: string;
+  preset?: string;
+  /** The raw `style` value, checked for shape and size only; decode it with decodeStyleParam. */
+  style?: string;
+  open?: OpenTarget;
+  print?: PrintWidth;
+  lang?: CodeLang;
+}
+
+export interface PlaygroundLinkOptions {
+  /** A saved or community theme: /playground/<themeId> */
+  themeId?: string;
+  tab?: ControlTab | TabAlias;
+  section?: DesignSection;
+  type?: ContentType;
+  /** http(s) only; anything else is left out of the link. */
+  url?: string;
+  /** A built-in preset id */
+  preset?: string;
+  /** From encodeStyleParam */
+  style?: string;
+  open?: OpenTarget;
+  print?: PrintWidth;
+  lang?: CodeLang;
+}
+
+const CONTENT_TYPE_IDS = new Set<string>(
+  CONTENT_TYPES_METADATA.map((meta) => meta.type),
+);
+const PRESET_ID = /^[A-Za-z][A-Za-z0-9_-]{0,63}$/;
+const STYLE_VALUE = new RegExp(`^${STYLE_PARAM_VERSION}\\.[A-Za-z0-9_-]+$`);
+const PRINT_VALUE = /^(\d{1,4}(?:\.\d{1,2})?)(mm|in)$/;
+
+const isOneOf = <T extends string>(
+  list: readonly T[],
+  value: unknown,
+): value is T =>
+  typeof value === "string" && (list as readonly string[]).includes(value);
+
+/** A tab name or alias as the panel's tab, or null when unknown. */
+export function resolveControlTab(
+  raw: string | null | undefined,
+): ControlTab | null {
+  if (!raw) return null;
+  const value = raw.trim().toLowerCase();
+  if (isOneOf(CONTROL_TABS, value)) return value;
+  if (value in TAB_ALIASES) return TAB_ALIASES[value as TabAlias];
+  return null;
+}
+
+/**
+ * A web address safe to put in a link and to encode: http or https, at most
+ * MAX_LINK_URL_LENGTH characters, with a host and without a user name or
+ * password. Returns the normalized address, or null.
+ */
+export function parseLinkUrl(raw: string | null | undefined): string | null {
+  if (typeof raw !== "string") return null;
+  const value = raw.trim();
+  if (!value || value.length > MAX_LINK_URL_LENGTH) return null;
+  let url: URL;
+  try {
+    url = new URL(value);
+  } catch {
+    return null;
+  }
+  if (url.protocol !== "http:" && url.protocol !== "https:") return null;
+  if (!url.hostname || url.username || url.password) return null;
+  return url.href.length > MAX_LINK_URL_LENGTH ? null : url.href;
+}
+
+/** `40mm`, `1.5in`: a Print-ready width within the dialog's limits, or null. */
+export function parsePrintWidth(
+  raw: string | null | undefined,
+): PrintWidth | null {
+  const match = raw?.trim().toLowerCase().match(PRINT_VALUE);
+  if (!match) return null;
+  const size = Number(match[1]);
+  const unit = match[2] as PrintUnit;
+  const { min, max } = PRINT_SIZE_LIMITS[unit];
+  return Number.isFinite(size) && size >= min && size <= max
+    ? { size, unit }
+    : null;
+}
+
+export function formatPrintWidth({ size, unit }: PrintWidth): string {
+  return `${size}${unit}`;
+}
+
+/** A `style` value with the right prefix, characters and size, or null. */
+export function parseStyleValue(raw: string | null | undefined): string | null {
+  if (typeof raw !== "string") return null;
+  const value = raw.trim();
+  if (value.length > MAX_STYLE_PARAM_LENGTH) return null;
+  return STYLE_VALUE.test(value) ? value : null;
+}
+
+/** A built-in preset id's shape (existence is checked by the editor). */
+export function parsePresetId(raw: string | null | undefined): string | null {
+  if (typeof raw !== "string") return null;
+  const value = raw.trim();
+  // Shuffled themes are composed from blocks that change between releases.
+  if (value.startsWith("shuffle")) return null;
+  return PRESET_ID.test(value) ? value : null;
+}
+
+/**
+ * Parameters from a playground address. `search` is location.search; `hash`
+ * (location.hash) may carry the same names after the `#`, and wins when both
+ * do. Invalid values are left out.
+ */
+export function parsePlaygroundParams(
+  search: string | URLSearchParams,
+  hash = "",
+): PlaygroundParams {
+  const query = new URLSearchParams(search);
+  const fragment = new URLSearchParams(hash.replace(/^#/, ""));
+  const get = (name: string) => fragment.get(name) ?? query.get(name);
+
+  const params: PlaygroundParams = {};
+
+  const tab = resolveControlTab(get("tab"));
+  if (tab) params.tab = tab;
+
+  const section = get("section")?.trim().toLowerCase();
+  if (isOneOf(DESIGN_SECTIONS, section)) params.section = section;
+
+  const url = parseLinkUrl(get("url"));
+  const type = get("type")?.trim().toLowerCase();
+  if (type && CONTENT_TYPE_IDS.has(type)) params.type = type as ContentType;
+  // A web address only goes with the URL type.
+  if (url && (!params.type || params.type === "url")) {
+    params.url = url;
+    params.type = "url";
+  }
+
+  const preset = parsePresetId(get("preset"));
+  if (preset) params.preset = preset;
+
+  const style = parseStyleValue(get("style"));
+  if (style) params.style = style;
+
+  const print = parsePrintWidth(get("print"));
+  const open = get("open")?.trim().toLowerCase();
+  if (isOneOf(OPEN_TARGETS, open)) params.open = open;
+  // A width alone means the Print-ready tab.
+  if (print && (!params.open || params.open === "print")) {
+    params.print = print;
+    params.open = "print";
+  }
+
+  const lang = get("lang")?.trim().toLowerCase();
+  if (isOneOf(CODE_LANGS, lang) && params.open === "code") params.lang = lang;
+
+  return params;
+}
+
+/** True when `params` holds anything the editor applies once. */
+export function hasOneShotParams(params: PlaygroundParams): boolean {
+  return ONE_SHOT_PARAMS.some((name) => params[name] !== undefined);
+}
+
+/**
+ * The address without the one-shot parameters (query and `#`), keeping the
+ * others (campaign tags, `season`). `tab` is rewritten to `tab` when given,
+ * or removed when null.
+ */
+export function stripOneShotParams(
+  href: string,
+  tab?: ControlTab | null,
+): string {
+  const url = new URL(href);
+  for (const name of ONE_SHOT_PARAMS) url.searchParams.delete(name);
+  if (tab === null) url.searchParams.delete("tab");
+  else if (tab) url.searchParams.set("tab", tab);
+
+  const fragment = new URLSearchParams(url.hash.replace(/^#/, ""));
+  const looksLikeParams = url.hash.includes("=");
+  if (looksLikeParams) {
+    for (const name of [...ONE_SHOT_PARAMS, "tab"]) fragment.delete(name);
+    const rest = fragment.toString();
+    url.hash = rest ? `#${rest}` : "";
+  }
+  return `${url.pathname}${url.search}${url.hash}`;
+}
+
+/**
+ * A link into the playground. Invalid values are dropped, so a link never
+ * carries more than the rules above allow. The web address goes after the
+ * `#` (never sent to a server); everything else goes in the query.
+ */
+export function playgroundHref(options: PlaygroundLinkOptions = {}): string {
+  const path = options.themeId
+    ? `${PLAYGROUND_PATH}/${encodeURIComponent(options.themeId)}`
+    : PLAYGROUND_PATH;
+  const query = new URLSearchParams();
+
+  if (options.tab && resolveControlTab(options.tab))
+    query.set("tab", options.tab);
+  if (isOneOf(DESIGN_SECTIONS, options.section)) {
+    query.set("section", options.section);
+  }
+
+  const url = parseLinkUrl(options.url);
+  if (options.type && CONTENT_TYPE_IDS.has(options.type)) {
+    if (!(url && options.type === "url")) query.set("type", options.type);
+  }
+  // A preset or style only applies without a theme path.
+  if (!options.themeId) {
+    const preset = parsePresetId(options.preset);
+    if (preset) query.set("preset", preset);
+    const style = parseStyleValue(options.style);
+    if (style) query.set("style", style);
+  }
+  const print = options.print
+    ? parsePrintWidth(formatPrintWidth(options.print))
+    : null;
+  if (print) {
+    query.set("open", "print");
+    query.set("print", formatPrintWidth(print));
+  } else if (isOneOf(OPEN_TARGETS, options.open)) {
+    query.set("open", options.open);
+    if (options.open === "code" && isOneOf(CODE_LANGS, options.lang)) {
+      query.set("lang", options.lang);
+    }
+  }
+
+  const search = query.toString();
+  const fragment =
+    url && (!options.type || options.type === "url")
+      ? `#${new URLSearchParams({ url }).toString()}`
+      : "";
+  return `${path}${search ? `?${search}` : ""}${fragment}`;
+}
+
+/**
+ * Where a hand-off came from, for analytics without values: the `ref`
+ * campaign tag, else "direct", "external" or the first path segment of a
+ * same-site referrer ("qr-code-generator", "tools", "home").
+ */
+export function handoffSource(
+  referrer: string,
+  origin: string,
+  ref?: string | null,
+): string {
+  const tag = ref?.trim().toLowerCase();
+  if (tag && /^[a-z0-9][a-z0-9_-]{0,31}$/.test(tag)) return tag;
+  if (!referrer) return "direct";
+  try {
+    const from = new URL(referrer);
+    if (from.origin !== origin) return "external";
+    const segment = from.pathname.split("/")[1] ?? "";
+    return /^[a-z0-9][a-z0-9_-]{0,31}$/i.test(segment)
+      ? segment.toLowerCase()
+      : "home";
+  } catch {
+    return "unknown";
+  }
+}
