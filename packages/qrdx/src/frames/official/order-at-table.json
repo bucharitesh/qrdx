@@ -1,0 +1,86 @@
+{
+  "id": "order-at-table",
+  "name": "Order at table",
+  "description": "Order prompt with a service bell and a pill for the table number.",
+  "category": "use-case",
+  "contentTypes": ["url"],
+  "tags": ["restaurant", "ordering", "table"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1680
+    },
+    "qr": {
+      "size": 1000,
+      "padding": 80,
+      "radius": 24,
+      "x": 120,
+      "y": 360
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1680,
+        "radius": 64,
+        "fill": "frame"
+      },
+      {
+        "type": "icon",
+        "icon": "bell",
+        "x": 100,
+        "y": 70,
+        "size": 130,
+        "fill": "text"
+      },
+      {
+        "type": "rect",
+        "x": 370,
+        "y": 1480,
+        "width": 500,
+        "height": 140,
+        "radius": 70,
+        "fill": "background"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan to order",
+        "color": "text",
+        "box": {
+          "x": 270,
+          "y": 70,
+          "width": 870,
+          "height": 130
+        },
+        "fontSize": 93.6,
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "table",
+        "slot": "secondary",
+        "text": "Table 12",
+        "color": "frame",
+        "box": {
+          "x": 390,
+          "y": 1480,
+          "width": 460,
+          "height": 140
+        }
+      }
+    ]
+  }
+}

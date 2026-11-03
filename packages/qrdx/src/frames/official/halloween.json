@@ -1,0 +1,80 @@
+{
+  "id": "halloween",
+  "name": "Halloween",
+  "description": "A dark card with a pumpkin. Set a secondary color to tint the pumpkin.",
+  "category": "seasonal",
+  "contentTypes": [],
+  "tags": ["seasonal", "halloween", "october"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1720
+    },
+    "qr": {
+      "size": 1000,
+      "padding": 80,
+      "radius": 24,
+      "x": 120,
+      "y": 320
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff",
+      "accent": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1720,
+        "radius": 64,
+        "fill": "frame"
+      },
+      {
+        "type": "icon",
+        "icon": "pumpkin",
+        "x": 545,
+        "y": 60,
+        "size": 150,
+        "fill": "accent"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan me",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 1430,
+          "width": 1000,
+          "height": 180
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Happy Halloween",
+        "color": {
+          "mix": ["text", "frame"],
+          "amount": 0.3
+        },
+        "box": {
+          "x": 120,
+          "y": 1600,
+          "width": 1000,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

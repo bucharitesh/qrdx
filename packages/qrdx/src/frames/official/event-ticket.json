@@ -1,0 +1,77 @@
+{
+  "id": "event-ticket",
+  "name": "Event ticket",
+  "description": "A ticket with notches, a perforated stub and an admission line.",
+  "category": "use-case",
+  "contentTypes": ["url"],
+  "tags": ["events", "tickets", "concert"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1800
+    },
+    "qr": {
+      "size": 1000,
+      "padding": 80,
+      "radius": 24,
+      "x": 120,
+      "y": 120
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "path",
+        "d": "M48 0H1192A48 48 0 0 1 1240 48V1240A60 60 0 0 0 1240 1360V1752A48 48 0 0 1 1192 1800H48A48 48 0 0 1 0 1752V1360A60 60 0 0 0 0 1240V48A48 48 0 0 1 48 0Z",
+        "fill": "frame"
+      },
+      {
+        "type": "line",
+        "x1": 96,
+        "y1": 1300,
+        "x2": 1152,
+        "y2": 1300,
+        "width": 12,
+        "dash": [36, 24],
+        "fill": "background"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Admit one",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 1350,
+          "width": 1000,
+          "height": 230
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "Show at the door",
+        "color": {
+          "mix": ["text", "frame"],
+          "amount": 0.3
+        },
+        "box": {
+          "x": 120,
+          "y": 1590,
+          "width": 1000,
+          "height": 130
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

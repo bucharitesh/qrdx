@@ -1,0 +1,73 @@
+{
+  "id": "feedback-bubble",
+  "name": "Feedback bubble",
+  "description": "A chat bubble that asks for feedback.",
+  "category": "use-case",
+  "contentTypes": ["url"],
+  "tags": ["feedback", "survey", "customer service"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1720
+    },
+    "qr": {
+      "size": 1000,
+      "padding": 80,
+      "radius": 24,
+      "x": 120,
+      "y": 120
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1540,
+        "radius": 90,
+        "fill": "frame"
+      },
+      {
+        "type": "path",
+        "d": "M900 1500L1150 1720Q1080 1600 1110 1500Z",
+        "fill": "frame"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Tell us how we did",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 1250,
+          "width": 1000,
+          "height": 190
+        }
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 1420,
+          "width": 1000,
+          "height": 90
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

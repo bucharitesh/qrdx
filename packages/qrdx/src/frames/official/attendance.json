@@ -1,0 +1,110 @@
+{
+  "id": "attendance",
+  "name": "Attendance",
+  "description": "A poster with a check glyph, for classes, shifts and events.",
+  "category": "use-case",
+  "contentTypes": ["attendance"],
+  "tags": ["attendance", "school", "workplace", "events"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1760
+    },
+    "qr": {
+      "size": 1000,
+      "padding": 80,
+      "radius": 24,
+      "x": 120,
+      "y": 440
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 32,
+        "fill": "background"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1760,
+        "radius": 32,
+        "fill": "frame",
+        "hole": {
+          "x": 22,
+          "y": 22,
+          "width": 1196,
+          "height": 1716,
+          "radius": 12
+        }
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 360,
+        "radius": 32,
+        "fill": "frame"
+      },
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 324,
+        "width": 1240,
+        "height": 36,
+        "fill": "frame"
+      },
+      {
+        "type": "icon",
+        "icon": "check",
+        "x": 550,
+        "y": 50,
+        "size": 140,
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Scan to mark attendance",
+        "color": "text",
+        "box": {
+          "x": 80,
+          "y": 210,
+          "width": 1080,
+          "height": 120
+        },
+        "fontSize": 86.4
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "One scan per person",
+        "color": "frame",
+        "box": {
+          "x": 120,
+          "y": 1560,
+          "width": 1000,
+          "height": 130
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}

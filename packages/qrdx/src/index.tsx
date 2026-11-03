@@ -74,6 +74,11 @@ export {
 } from "./frame-spec";
 export { GRADIENT_FRAME_DEFAULTS, mixFrameColors } from "./frame-styles";
 export { BUILT_IN_FRAME_SPECS } from "./frames/builtin";
+export {
+  getOfficialFrame,
+  OFFICIAL_FRAMES,
+  type OfficialFrame,
+} from "./frames/official";
 export * from "./print";
 export * from "./qr-code";
 // QRCodeCanvas is the only export that needs client-only hooks. It lives in

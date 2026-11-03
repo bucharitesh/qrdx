@@ -1,0 +1,83 @@
+{
+  "id": "follow-us",
+  "name": "Follow us",
+  "description": "A speech bubble with a share glyph, for a page of your social links.",
+  "category": "use-case",
+  "contentTypes": ["url", "instagram", "tiktok", "facebook"],
+  "tags": ["social", "followers", "marketing"],
+  "license": "CC0-1.0",
+  "spec": {
+    "kind": "qrdx.frame",
+    "version": 1,
+    "artboard": {
+      "width": 1240,
+      "height": 1760
+    },
+    "qr": {
+      "size": 1000,
+      "padding": 80,
+      "radius": 24,
+      "x": 120,
+      "y": 300
+    },
+    "colors": {
+      "frame": "#111111",
+      "text": "#ffffff"
+    },
+    "shapes": [
+      {
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "width": 1240,
+        "height": 1640,
+        "radius": 80,
+        "fill": "frame"
+      },
+      {
+        "type": "polygon",
+        "points": [[160, 1620], [330, 1620], [150, 1760]],
+        "fill": "frame"
+      },
+      {
+        "type": "icon",
+        "icon": "share",
+        "x": 110,
+        "y": 70,
+        "size": 120,
+        "fill": "text"
+      }
+    ],
+    "labels": [
+      {
+        "type": "text",
+        "id": "cta",
+        "slot": "primary",
+        "text": "Follow us",
+        "color": "text",
+        "box": {
+          "x": 270,
+          "y": 60,
+          "width": 870,
+          "height": 140
+        },
+        "fontSize": 100.8,
+        "align": "start"
+      },
+      {
+        "type": "text",
+        "id": "note",
+        "slot": "secondary",
+        "text": "for news and offers",
+        "color": "text",
+        "box": {
+          "x": 120,
+          "y": 1420,
+          "width": 1000,
+          "height": 150
+        },
+        "weight": "regular"
+      }
+    ]
+  }
+}
