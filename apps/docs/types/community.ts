@@ -8,6 +8,10 @@ export interface CommunityThemeAuthor {
 
 export interface CommunityTheme {
   id: string;
+  /**
+   * Public id of the published design (never the saved theme's id, whose
+   * /playground/<id> link shows the whole saved theme)
+   */
   themeId: string;
   name: string;
   styles: ThemeStyles;

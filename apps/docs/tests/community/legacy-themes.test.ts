@@ -152,6 +152,16 @@ describe("the legacy gallery", () => {
     expect(icon?.styles.customLogo).toBe(logoIconDataUrl("wifi"));
     expect(JSON.stringify(themes)).not.toContain("base64");
   });
+
+  it("never exposes the saved theme's id (its /playground link shows everything)", async () => {
+    state.userId = null;
+    const { themes } = await getCommunityThemes("popular");
+    const savedIds = new Set(fakeDb.rows("qrPreset").map((row) => row.id));
+    for (const theme of themes) {
+      expect(savedIds.has(theme.themeId)).toBe(false);
+      expect(theme.themeId).toBe(theme.id);
+    }
+  });
 });
 
 describe("publishTheme", () => {
