@@ -163,6 +163,30 @@ export const invitation = pgTable(
   ]
 );
 
+// A workspace's join link (Settings → Team): anyone signed in who opens
+// /join/<token> joins as `role` (never owner) while the plan has seats. One
+// per workspace; only a SHA-256 hash of the token is stored, so the link is
+// shown once, when it's made or reset. Turning it off deletes the row, and
+// deleting the workspace deletes it.
+// SQL: packages/database/manual-sql/0014_workspace_join_link.sql
+export const workspaceJoinLink = pgTable(
+  "workspace_join_link",
+  {
+    organizationId: text("organization_id")
+      .primaryKey()
+      .references(() => organization.id, { onDelete: "cascade" }),
+    tokenHash: text("token_hash").notNull().unique(),
+    // "admin" | "member" | "billing" | "viewer"
+    role: text("role").notNull().default("member"),
+    createdBy: text("created_by").references(() => user.id, {
+      onDelete: "set null",
+    }),
+    createdAt: timestamp("created_at").notNull(),
+    updatedAt: timestamp("updated_at").notNull(),
+  },
+  (table) => [index("workspace_join_link_created_by_idx").on(table.createdBy)]
+);
+
 /** Saved QR themes (brand kits were merged into these). */
 export const qrPreset = pgTable(
   "qr_preset",
