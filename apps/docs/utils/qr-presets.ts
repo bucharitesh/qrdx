@@ -1643,7 +1643,7 @@ const looks: Record<string, ThemePreset> = {
       dotColor: "#14532D",
       bodyPattern: "circle",
       cornerEyePattern: "rounded",
-      cornerEyeDotPattern: "circle",
+      cornerEyeDotPattern: "rounded",
       level: "Q",
       margin: 4,
       frame: {
@@ -1785,7 +1785,7 @@ const looks: Record<string, ThemePreset> = {
       dotColor: "#BE185D",
       bodyPattern: "random-dots",
       cornerEyePattern: "extra-rounded",
-      cornerEyeDotPattern: "circle",
+      cornerEyeDotPattern: "extra-rounded",
       level: "Q",
       margin: 4,
     },

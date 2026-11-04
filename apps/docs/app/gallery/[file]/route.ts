@@ -7,6 +7,7 @@ import {
 } from "@/lib/landing/showcase-gallery";
 import { loadGalleryAssets } from "@/lib/landing/showcase-gallery-assets";
 import { serializeQrSvg } from "@/lib/qr-render";
+import { buildTimeParams } from "@/lib/static-params";
 
 // The "Made with QRdx" walls' codes as SVG files (/gallery/<id>.svg), drawn
 // by the engine and prerendered at build time. The walls load them as lazy
@@ -14,18 +15,13 @@ import { serializeQrSvg } from "@/lib/qr-render";
 // names answer 404.
 
 /**
- * Every tile, for the build to prerender. None in `next dev`: there Next
- * calls this on each request and, when it returns paths, rewrites
- * .next/dev/prerender-manifest.json with an unlocked read-modify-write
- * (next/dist/server/dev/next-dev-server.js). The home wall requests 40
- * images at once, and together with other dynamic routes that corrupted
- * the manifest and left most pages answering 500 until .next/dev was
- * deleted. With no paths, dev renders each image on request and never
- * touches the manifest; production still prerenders all of them.
+ * Every tile, for the build to prerender; none under `next dev`
+ * (lib/static-params.ts says why). Unknown names answer 404 below.
  */
 export function generateStaticParams() {
-  if (process.env.NODE_ENV === "development") return [];
-  return WALL_TILES.map((tile) => ({ file: `${tile.id}.svg` }));
+  return buildTimeParams(() =>
+    WALL_TILES.map((tile) => ({ file: `${tile.id}.svg` })),
+  );
 }
 
 export async function GET(
