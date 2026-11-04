@@ -2,7 +2,7 @@
 // tile, sized exactly as the page reserves for it (so the lazy image
 // can't shift the layout), with nothing it would have to fetch (an SVG shown
 // as an <img> can't load external files).
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { GET, generateStaticParams } from "@/app/gallery/[file]/route";
 import { galleryImage, WALL_TILES } from "@/lib/landing/showcase-gallery";
 
@@ -12,6 +12,19 @@ const get = (file: string) =>
   });
 
 describe("wall images", () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it("list no paths in next dev, which would rewrite its prerender manifest", () => {
+    // next dev rewrites .next/dev/prerender-manifest.json without a lock
+    // whenever a route lists paths; 40 parallel image requests corrupted it.
+    vi.stubEnv("NODE_ENV", "development");
+    expect(generateStaticParams()).toEqual([]);
+    vi.stubEnv("NODE_ENV", "production");
+    expect(generateStaticParams()).toHaveLength(WALL_TILES.length);
+  });
+
   it("prerender one file per tile", () => {
     expect(generateStaticParams()).toEqual(
       WALL_TILES.map((tile) => ({ file: `${tile.id}.svg` })),
