@@ -70,9 +70,11 @@ async function callModel(prompt: string): Promise<ModelReply> {
     model: languageModel("code-suggestions"),
     instructions: SUGGEST_INSTRUCTIONS,
     prompt,
-    // Two short lines; anything longer is cut, never paid for.
+    // Two short lines; anything longer is cut, never paid for. Without
+    // `reasoning: "none"` the model spends the whole budget thinking and
+    // replies with nothing (seen on the first real call, 2026-11-05).
     maxOutputTokens: 80,
-    temperature: 0.4,
+    reasoning: "none",
     maxRetries: 1,
     providerOptions: textProviderOptions("code-suggestions"),
     abortSignal: AbortSignal.timeout(10_000),

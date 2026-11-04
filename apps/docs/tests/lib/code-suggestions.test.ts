@@ -180,6 +180,8 @@ describe("suggestCodeDetails", () => {
       "anthropic/claude-haiku-5.5",
     );
     expect(call?.body.maxOutputTokens).toBe(80);
+    // Thinking would use the whole budget and leave no reply.
+    expect(call?.body.reasoning).toBe("none");
     expect(call?.body.providerOptions).toEqual({
       gateway: { disallowPromptTraining: true, only: ["anthropic"] },
     });
