@@ -353,7 +353,7 @@ export function CodeActionsMenu({
           )}
           {/* Public, read-only analytics page (share-stats-dialog.tsx) */}
           <DropdownMenuItem onSelect={() => setDialog("share")}>
-            <Share /> Share analytics…
+            <Share /> Share analytics...
           </DropdownMenuItem>
           <DropdownMenuItem onSelect={() => openInPlayground(code)}>
             <Palette /> Edit design in playground
