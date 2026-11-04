@@ -18,6 +18,7 @@ import {
   serializeCode,
 } from "../_lib/api";
 import { patchCodeSchema } from "../_lib/schemas";
+import { resolveCodeStyles } from "../_lib/style";
 
 type Context = { params: Promise<{ id: string }> };
 
@@ -49,7 +50,11 @@ export const PATCH = withApiQuotaHeaders(
       const id = await codeId(context);
       const { archived, ...fields } = parseWithSchema(
         patchCodeSchema,
-        await readJsonBody(req, MAX_BODY_BYTES),
+        await resolveCodeStyles(
+          scope,
+          await readJsonBody(req, MAX_BODY_BYTES),
+          async () => (await getCode(scope, id)).style?.customLogo ?? null,
+        ),
       );
 
       let code = hasAnyField(fields)

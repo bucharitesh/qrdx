@@ -16,6 +16,7 @@ import {
   serializeCode,
 } from "./_lib/api";
 import { createCodesBatchSchema, listCodesQuerySchema } from "./_lib/schemas";
+import { resolveCodeStyles } from "./_lib/style";
 
 export const GET = withApiQuotaHeaders(async (req: NextRequest) => {
   try {
@@ -42,7 +43,10 @@ export const POST = withApiQuotaHeaders(async (req: NextRequest) => {
   try {
     const scope = await resolveApiScope(req, "write");
     assertJson(req);
-    const raw = await readJsonBody(req, MAX_BODY_BYTES);
+    const raw = await resolveCodeStyles(
+      scope,
+      await readJsonBody(req, MAX_BODY_BYTES),
+    );
     const body = Array.isArray(raw)
       ? parseWithSchema(createCodesBatchSchema, raw)
       : parseWithSchema(createCodeSchema, raw);

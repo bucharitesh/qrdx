@@ -4,13 +4,13 @@ description: Turn any URL into a QR code image you can embed in Markdown, HTML o
 icon: ImageDown
 ---
 
-`GET https://api.qrdx.dev/v1/qr` returns a QR code as an SVG or PNG image, or as a vector EPS file for print and design tools. Everything is in the query string, so the URL itself is the image: paste it into a README, an `<img>` tag or an email template.
+`GET https://api.qrdx.dev/v1/qr` returns a QR code as an SVG or PNG image, or as a vector EPS file for print and design tools. Everything is in the query string, so the URL itself is the image: paste it into a README, an `<img>` tag or an email template. It takes the editor's styles too: gradients, frames (custom frames included), borders, eye and dot colors and logo icons.
 
 ```md
 ![QR code](https://api.qrdx.dev/v1/qr?data=https://github.com/you/repo)
 ```
 
-No account or API key is required.
+No account or API key is required. The one exception is a logo you uploaded to QRdx (see [Logos](#logos)).
 
 [Try it in the playground](/playground?open=code&lang=image): style a code there, then copy its image URL.
 
@@ -43,8 +43,33 @@ Stylised dots with a frame:
 https://api.qrdx.dev/v1/qr?data=https://qrdx.dev&body=rounded&eye=rounded&dot=rounded&template=Arrow
 ```
 
+A built-in frame with its label, and a community frame by its id:
+
+```txt
+https://api.qrdx.dev/v1/qr?data=https://qrdx.dev&frame=banner-bottom&frameText=Scan%20the%20menu
+https://api.qrdx.dev/v1/qr?data=https://qrdx.dev&item=frame:wifi-card
+```
+
+The whole design as JSON in `style`, here a gradient, red eyes and a frame:
+
+```js
+const style = {
+  fgColor: {
+    type: "linear",
+    angle: 45,
+    stops: [
+      { color: "#1d4ed8", offset: 0 },
+      { color: "#7c3aed", offset: 100 },
+    ],
+  },
+  eyeColor: "#b91c1c",
+  frame: { style: "banner-bottom", text: "Scan the menu" },
+};
+const src = `https://api.qrdx.dev/v1/qr?data=${encodeURIComponent(link)}&style=${encodeURIComponent(JSON.stringify(style))}`;
+```
+
 <Callout>
-  Encode the `data` value when it contains `&`, `#`, `+` or spaces, for example with `encodeURIComponent` in JavaScript. Otherwise the URL is split at those characters.
+  Encode the `data` value when it contains `&`, `#`, `+` or spaces, for example with `encodeURIComponent` in JavaScript. Otherwise the URL is split at those characters. Encode `style` the same way.
 </Callout>
 
 ## Parameters
@@ -63,9 +88,66 @@ https://api.qrdx.dev/v1/qr?data=https://qrdx.dev&body=rounded&eye=rounded&dot=ro
 | `dot` | `square` | Shape of the dot inside each corner eye |
 | `level` | `Q` | Error correction: `L` (~7%), `M` (~15%), `Q` (~25%) or `H` (~30%) |
 | `margin` | `4` | Quiet zone around the code in modules, `0` to `16` |
-| `template` | none | Decorative frame template |
+| `template` | none | Decorative border template |
+| `frame` | none | A built-in call-to-action [frame](/docs/features/frames), such as `banner-bottom`, `speech-bubble` or `circle` (any of the {facts.frames} styles) |
+| `frameText` | `Scan me` | The frame's label, up to 24 characters. Also relabels the frame of a `style` or `item` |
+| `style` | none | The editor's whole design as JSON; see [Styles](#style) |
+| `item` | none | A community frame or theme by id, such as `frame:wifi-card`; see [Community items](#community-items) |
+| `logoIcon` | none | A quick logo icon in the center; see [Logos](#logos) |
+| `logoFileId` | none | A logo you uploaded, by file id; needs an API key; see [Logos](#logos) |
 
-Write colors without the `#`, or encode it as `%23`: a bare `#` starts the URL fragment and is never sent. Enum values (`level`, `format`, `template`) are case-insensitive.
+Write colors without the `#`, or encode it as `%23`: a bare `#` starts the URL fragment and is never sent. Enum values (`level`, `format`, `template`, `frame`) are case-insensitive.
+
+With a frame, `size` is the width of the code itself and the frame adds to the image, in every format.
+
+## Styles [#style]
+
+`style` takes the design as JSON with the same fields as a saved theme, so a theme from [`GET /v1/themes`](/docs/developers/api/list-themes) or the `qrdxStyle` that the [MCP server](/docs/developers/mcp)'s `design_qr` returns can be passed as it is (minus an uploaded logo, see below):
+
+| Field | Takes |
+| --- | --- |
+| `bgColor`, `fgColor`, `eyeColor`, `dotColor` | A color (hex such as `#155dfc`, `rgb()`, `hsl()` or a color name), or a gradient: `{ "type": "linear", "angle": 45, "stops": [...] }` or `{ "type": "radial", "stops": [...] }`, with 2 to 8 stops of `{ "color", "offset" }` (offset 0 to 100) |
+| `bodyPattern`, `cornerEyePattern`, `cornerEyeDotPattern` | The [pattern values](#pattern-values) |
+| `level`, `margin` | As the parameters above (`margin` 0 to 16) |
+| `templateId` | A border template, `default` for none |
+| `frame` | A built-in frame, `{ "style": "banner-bottom", "text": "Scan me", "color": "#155dfc", "textColor": "#ffffff" }`, or a custom one, `{ "style": "custom", "spec": { … } }`, with a frame spec from the [community](#community-items) or a custom frame made in the playground's Frame section. Specs are checked against the engine's frame-spec rules (no markup, links or images; at most 32 KB) |
+| `eyeColors` | Colors per eye, over `eyeColor` and `dotColor`: `{ "topLeft": { "outer": "#b91c1c", "inner": "#1d4ed8" }, "topRight": …, "bottomLeft": … }`, each a color or a gradient |
+| `moduleScale` | Size of each dot, `0.5` to `1` (default `1`) |
+| `shape` | `square` (default) or `circle`: the code in a disc of decorative dots |
+| `autoLevel` | Raise error correction to `H` when the logo covers more than 7% of the code (always on here when there's a logo) |
+| `logoOptions` | The logo's layout: `size` (`0.1` to `0.3` of the code's width; QRdx shrinks it when the code can't spare the modules), `padding` (`0` to `2` modules), `x` and `y` (`0` to `1`), `shape` (`square`, `rounded` or `circle` crop) and `plate` (a color behind it) |
+| `showLogo`, `logoIcon`, `logoFileId` | See [Logos](#logos) |
+
+`style` also takes the `style` value of a playground link (it starts with `1.`), so a design shared from the [playground](/playground) renders as it looks there, without its logo.
+
+Fields you set with the flat parameters (`fg`, `body`, `frame` and the rest) win over `style`, and `style` wins over `item`. Unknown fields, logo addresses (`customLogo`) and Logo QR or Image QR art (`art`) are refused with a `400` that says why.
+
+## Community items [#community-items]
+
+`item` renders a published [community](/community) frame or theme, free under CC0. Find ids with [`GET /v1/community/items`](/docs/developers/api/list-community-items), or open an item page and use its type and slug: `/community/frames/wifi-card` is `frame:wifi-card`. A frame item sits on a plain black-on-white code; add `style` or flat parameters to change the code under it.
+
+## Logos [#logos]
+
+- **Quick icons.** `logoIcon` puts one of the editor's icons on a white tile in the center: `wifi`, `location`, `phone`, `email`, `link`, `file`, `calendar`, `whatsapp` or `instagram`. QRdx draws them itself, and they need no key.
+- **The QRdx mark** that the editor shows by default isn't drawn here: `showLogo: true` alone adds no logo.
+- **Error correction rises for a logo.** When a logo covers more than 7% of the code, the code is drawn at level `H`, whatever `level` says, so it still scans.
+
+<IfAvailable feature="fileStorage">
+
+**Your own logo.** `logoFileId` draws a PNG or JPEG of up to 1 MB that you uploaded in [Dashboard → Files](/docs/files). The id is the last part of the file's link, `https://qrdx.dev/api/files/<id>`. Send an [API key](/docs/developers/api-keys) of the workspace that owns the file:
+
+```bash
+curl -o qr.png -H "Authorization: Bearer $QRDX_API_KEY" \
+  "https://api.qrdx.dev/v1/qr?data=https://qrdx.dev&format=png&logoFileId=<id>"
+```
+
+The response is private (`Cache-Control: private, no-store`) and counts toward the workspace's daily API quota. A file from another workspace gets `404`, and a request without a key gets `401`. QRdx reads the image from its own storage and checks that it really is a PNG or JPEG; it never fetches a logo from a web address you send.
+
+</IfAvailable>
+
+`logoOptions` sizes, places, crops and backs any of these logos. Removing an uploaded logo's own background is done in the playground; the image API draws the uploaded file as it is.
+
+Logo QR and Image QR art aren't available here: the playground builds them from your picture in the browser, and the image API doesn't build art from uploads. Design art codes in the [playground](/playground?tab=design).
 
 ### Pattern values
 
@@ -81,10 +163,10 @@ These are the same styles as the [`qrdx` React library](/docs/features/patterns)
 A successful request returns the image with:
 
 - `Content-Type: image/svg+xml`, `image/png` or `application/postscript` (EPS is sent as a `qr-code.eps` download)
-- `Cache-Control: public, max-age=31536000, immutable`
+- `Cache-Control: public, max-age=31536000, immutable`, except for renders with `item` (5 minutes, 10 at the CDN, since an item can get a new version or be taken down) and with `logoFileId` (`private, no-store`)
 - `Access-Control-Allow-Origin: *`, so you can `fetch` it from any website
 
-Rendering is deterministic: the same query string always returns the same bytes, which is why responses can be cached for a year.
+Rendering is deterministic: the same query string always returns the same bytes, which is why responses can be cached for a year. URLs that use only the original parameters render exactly as they always have.
 
 Invalid parameters return `400` with a JSON body that names each problem:
 
@@ -106,7 +188,8 @@ Data that doesn't fit in a QR code at the chosen error correction level also ret
 ## Limits
 
 - **Rate limit:** 300 requests per minute per IP address. Over the limit you get `429` with a `Retry-After` header.
-- **No logos or gradients.** The API renders solid colors only. For logos and gradients, use the [web editor](/playground?tab=design) or the [React library](/docs/features/logos).
+- **No scan check.** The image API draws what you ask for. To check and repair a design's scan score first, use `design_qr` on the [MCP server](/docs/developers/mcp), or the scan score in the [playground](/playground?tab=design).
+- **`style` is up to 8,192 characters** in the URL, and its JSON up to 40 KB.
 - **The data is part of the URL.** Like any URL, it can end up in server logs, browser history and caches. Don't put passwords or other secrets in it.
 
 ## Scanning tips
