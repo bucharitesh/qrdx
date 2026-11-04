@@ -16,6 +16,7 @@ import {
 import { HttpError } from "@/lib/error-response";
 import { isBanActive } from "@/lib/oauth";
 import { isOAuthScope, type OAuthScope } from "@/lib/oauth-scopes";
+import { assertCan } from "@/lib/permissions-server";
 import type { ActiveScope, ScopeRole } from "@/lib/scope";
 import { logError } from "@/lib/shared";
 import { canRevokeKey, canSeeAllKeys, roleFromMembership } from "./access";
@@ -218,6 +219,8 @@ export async function createApiKey(
   },
   now: Date = new Date(),
 ): Promise<{ key: string; apiKey: ApiKeyView }> {
+  // A key acts with its creator's role, so read-only roles get none.
+  assertCan(scope, "apiKeys.create");
   if ((await countActiveKeys(scope, now)) >= MAX_API_KEYS) {
     throw keyLimitError();
   }

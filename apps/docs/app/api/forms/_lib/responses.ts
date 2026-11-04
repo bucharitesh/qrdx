@@ -27,6 +27,8 @@ import {
   type FormResponseData,
   formResponseDataSchema,
 } from "@/lib/landing/blocks/form-fields";
+import { can } from "@/lib/permissions";
+import { assertCan } from "@/lib/permissions-server";
 import { getPlanForScope, getPlanLimits, type Plan } from "@/lib/plans";
 import {
   checkPageLifecycle,
@@ -323,14 +325,18 @@ export async function getInboxPage(
   };
 }
 
-/** Team members may manage responses of their own pages; owners and admins any. */
+/**
+ * Team members may manage responses of their own pages; owners and admins
+ * any; viewers and billing members none (lib/permissions.ts).
+ */
 export function assertCanManageResponses(
   scope: ActiveScope,
   page: { userId: string },
 ): void {
+  assertCan(scope, "content.write");
   if (
     scope.organizationId &&
-    scope.role === "member" &&
+    !can(scope.role, "content.manageAll") &&
     page.userId !== scope.userId
   ) {
     throw new HttpError(

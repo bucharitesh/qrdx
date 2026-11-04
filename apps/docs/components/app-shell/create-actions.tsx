@@ -1,5 +1,6 @@
 "use client";
 
+import { toast } from "@repo/design-system";
 import { usePathname } from "next/navigation";
 import {
   createContext,
@@ -12,6 +13,8 @@ import { NewCodeDialog } from "@/app/dashboard/codes/_components/new-code-dialog
 import { CodeBuilderHost } from "@/components/code-builder/code-builder-host";
 import { openCodeBuilder } from "@/components/code-builder/store";
 import { useShowLimit } from "@/components/limits/limit-dialog";
+import { useWorkspace } from "@/components/workspace-provider";
+import { can, forbiddenMessage } from "@/lib/permissions";
 import { isSettingsPath } from "./nav-config";
 import { usePasteToCreate } from "./paste-to-create";
 import type { ShellData } from "./shell-data";
@@ -49,9 +52,22 @@ export function CreateProvider({
   const [open, setOpen] = useState(false);
   const showLimit = useShowLimit();
   const pathname = usePathname();
+  // Every create entry point (buttons, ⌘K, `c`, pasting a link) goes through
+  // here: viewers and billing members get the reason instead of a dialog
+  // (lib/permissions.ts; the server refuses the create too).
+  const role = useWorkspace()?.role;
+  const canWrite = can(role, "content.write");
+  const refuse = useCallback(
+    () => toast.error(forbiddenMessage(role, "content.write")),
+    [role],
+  );
 
   const startCode = useCallback(
     (destination?: string) => {
+      if (!canWrite) {
+        refuse();
+        return;
+      }
       if (codes && codes.used >= codes.limit) {
         showLimit("dynamicCodes", { used: codes.used });
         return;
@@ -62,11 +78,15 @@ export function CreateProvider({
           : { mode: "create" },
       );
     },
-    [codes, showLimit],
+    [canWrite, codes, refuse, showLimit],
   );
 
   const start = useCallback(
     (next: CreateKind) => {
+      if (!canWrite) {
+        refuse();
+        return;
+      }
       if (next === "code") {
         startCode();
         return;
@@ -74,13 +94,13 @@ export function CreateProvider({
       setKind(next);
       setOpen(true);
     },
-    [startCode],
+    [canWrite, refuse, startCode],
   );
 
   // Paste a web address on a dashboard page (not in a field, no dialog
   // open) to start a code for it, as on Dub's links page. Settings pages,
   // full of URL fields, leave pastes alone.
-  usePasteToCreate(startCode, !isSettingsPath(pathname));
+  usePasteToCreate(startCode, canWrite && !isSettingsPath(pathname));
 
   return (
     <CreateContext.Provider value={start}>

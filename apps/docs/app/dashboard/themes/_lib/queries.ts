@@ -3,6 +3,7 @@ import "server-only";
 import { isOwnWorkspaceOf, ownWorkspaceId } from "@repo/auth/own-workspace-id";
 import { communityTheme, database as db, qrPreset } from "@repo/database";
 import { and, count, desc, eq, isNull, or, type SQL, sql } from "drizzle-orm";
+import { can } from "@/lib/permissions";
 import { getPlanLimits, PLANS } from "@/lib/plans";
 import { PLAN_NAMES } from "@/lib/pricing";
 import type { ActiveScope } from "@/lib/scope";
@@ -21,7 +22,7 @@ export const teamThemesPlanName = () =>
 
 /** Team themes are visible to every member; owners and admins manage them. */
 export const canManageTeamThemes = (scope: Pick<ActiveScope, "role">) =>
-  scope.role === "owner" || scope.role === "admin";
+  can(scope.role, "themes.manage");
 
 /**
  * "Your themes" are the ones in your own workspace: saved from the editor,

@@ -43,7 +43,7 @@ import type {
 } from "@/app/dashboard/pages/_lib/landing-pages";
 import { CapMeter } from "@/components/limits/cap-meter";
 import { useShowLimit } from "@/components/limits/limit-dialog";
-import { useWorkspaceHref } from "@/components/workspace-provider";
+import { useCan, useWorkspaceHref } from "@/components/workspace-provider";
 import { track } from "@/lib/analytics";
 import { PLAN_NAMES } from "@/lib/pricing";
 
@@ -149,6 +149,8 @@ export function PageActions({
   const [isPending, startTransition] = useTransition();
   const [code] = page.codes.filter((item) => !item.inTrash);
   const hasForm = page.blockTypes.some((type) => FORM_BLOCKS.has(type));
+  // Viewers and billing members can't add a code (lib/permissions.ts).
+  const canWrite = useCan("content.write");
 
   const remove = () =>
     startTransition(async () => {
@@ -179,6 +181,9 @@ export function PageActions({
         inWorkspace(`/codes/${encodeURIComponent(result.data.codeId)}`),
       );
     });
+
+  // Nothing to offer a read-only role on a page with no code or form yet.
+  if (!(code || hasForm || canDelete || canWrite)) return null;
 
   return (
     <>
@@ -218,10 +223,12 @@ export function PageActions({
               </DropdownMenuItem>
             </>
           ) : (
-            <DropdownMenuItem disabled={isPending} onSelect={createCode}>
-              <QrCode />
-              Create a QR code
-            </DropdownMenuItem>
+            canWrite && (
+              <DropdownMenuItem disabled={isPending} onSelect={createCode}>
+                <QrCode />
+                Create a QR code
+              </DropdownMenuItem>
+            )
           )}
           {hasForm && (
             <DropdownMenuItem asChild>

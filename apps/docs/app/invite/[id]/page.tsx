@@ -16,10 +16,8 @@ import {
   getInvitationDetails,
   isTeamMember,
 } from "@/app/dashboard/team/_lib/queries";
-import {
-  formatUtcDateTime,
-  TEAM_ROLE_LABELS,
-} from "@/app/dashboard/team/_lib/team";
+import { formatUtcDateTime } from "@/app/dashboard/team/_lib/team";
+import { inviteRolePhrase } from "@/lib/email/templates/team-invite";
 import { InviteActions, SignOutButton } from "./invite-actions";
 
 /** j***@example.com: enough to recognise the address without exposing it. */
@@ -161,7 +159,7 @@ export default async function InvitePage({
           )}{" "}
           invited you to join{" "}
           <span className="font-medium">{invitation.teamName}</span> as{" "}
-          {TEAM_ROLE_LABELS[invitation.role].toLowerCase()}.
+          {inviteRolePhrase(invitation.role)}.
         </>
       }
       title={`Join ${invitation.teamName}`}

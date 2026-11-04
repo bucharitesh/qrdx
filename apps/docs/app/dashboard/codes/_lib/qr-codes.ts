@@ -30,6 +30,8 @@ import { snapshotCodeVersion } from "@/lib/code-versions";
 import { HttpError } from "@/lib/error-response";
 import { noteLimitUsage } from "@/lib/limit-notices";
 import { baseUrl } from "@/lib/metadata";
+import { can } from "@/lib/permissions";
+import { assertCan } from "@/lib/permissions-server";
 import {
   cheapestPlanWith,
   getPlanForScope,
@@ -738,6 +740,7 @@ export async function createCodes(
   // pageId: a hosted-page code (kind 'page'), created by actions/landing-pages
   inputs: (CreateCodeInput & { pageId?: string })[],
 ): Promise<QrCodeView[]> {
+  assertCan(scope, "content.write");
   if (inputs.length === 0) return [];
 
   const plan = await getPlanForScope(scope);
@@ -911,6 +914,7 @@ export async function updateCode(
   id: string,
   patch: UpdateCodeInput,
 ): Promise<QrCodeView> {
+  assertCan(scope, "content.write");
   const current = await findCodeRow(scope, id);
 
   const values: Partial<typeof qrCode.$inferInsert> = {};
@@ -995,6 +999,7 @@ export async function setCodeArchived(
   id: string,
   archived: boolean,
 ): Promise<QrCodeView> {
+  assertCan(scope, "content.write");
   const current = await findCodeRow(scope, id);
   if (Boolean(current.archivedAt) === archived) return toOneCodeView(current);
 
@@ -1034,10 +1039,11 @@ export async function deleteCode(
   scope: ActiveScope,
   id: string,
 ): Promise<{ id: string }> {
+  assertCan(scope, "content.write");
   const current = await findCodeRow(scope, id);
   if (
     scope.organizationId &&
-    scope.role === "member" &&
+    !can(scope.role, "content.manageAll") &&
     current.userId !== scope.userId
   ) {
     throw new HttpError(
