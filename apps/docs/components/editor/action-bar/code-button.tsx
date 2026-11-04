@@ -13,7 +13,7 @@ interface CodeButtonProps {
 export function CodeButton({ dialogOpen, setDialogOpen }: CodeButtonProps) {
   return (
     <>
-      <TooltipWrapper label="Get React code" kbd="V" asChild>
+      <TooltipWrapper label="Get code" kbd="V" asChild>
         <Button variant="ghost" size="sm" onClick={() => setDialogOpen(true)}>
           <Code className="size-4" />
           <span className="hidden text-sm md:block sr-only">Code</span>
