@@ -13,6 +13,7 @@ import {
 import { cn } from "@repo/design-system/lib/utils";
 import { Folder2 as Folder, Notepad2 as NotebookPen } from "iconsax-reactjs";
 import Link from "next/link";
+import { useState } from "react";
 import { setQrCodesFavorite } from "@/actions/bulk-codes";
 import type { TagRow } from "@/app/dashboard/codes/_lib/organize";
 import type { FolderRow } from "@/app/dashboard/codes/_lib/organize-shared";
@@ -60,6 +61,7 @@ export function CodesTable({
   folders,
   tags,
   showFolder = false,
+  keyboardShortcuts = false,
 }: {
   codes: QrCodeListItem[];
   /** Daily scans for the last 7 days, by code id */
@@ -71,8 +73,11 @@ export function CodesTable({
   tags?: TagRow[];
   /** Show each code's folder (when listing across folders) */
   showFolder?: boolean;
+  /** Row keys (see _lib/row-shortcuts.ts) for the row under the pointer or focus */
+  keyboardShortcuts?: boolean;
 }) {
   const inWorkspace = useWorkspaceHref();
+  const [activeRow, setActiveRow] = useState<string | null>(null);
   const selectable = Boolean(selected && onSelect);
   const allSelected =
     selectable &&
@@ -104,9 +109,15 @@ export function CodesTable({
             </TableHead>
           )}
           <TableHead>Code</TableHead>
-          <TableHead>Short link</TableHead>
-          <TableHead className="text-right">Scans</TableHead>
-          <TableHead>{trash ? "Deleted" : "Created"}</TableHead>
+          {/* Phones: code, status and actions fit without scrolling sideways;
+              the code's page has its link, scans and dates. */}
+          <TableHead className="hidden sm:table-cell">Short link</TableHead>
+          <TableHead className="hidden text-right sm:table-cell">
+            Scans
+          </TableHead>
+          <TableHead className="hidden sm:table-cell">
+            {trash ? "Deleted" : "Created"}
+          </TableHead>
           <TableHead>Status</TableHead>
           <TableHead>
             <span className="sr-only">Actions</span>
@@ -127,6 +138,16 @@ export function CodesTable({
               data-state={isSelected ? "selected" : undefined}
               draggable={!inTrash && selectable}
               key={code.id}
+              onBlur={(event) => {
+                if (!event.currentTarget.contains(event.relatedTarget)) {
+                  setActiveRow((row) => (row === code.id ? null : row));
+                }
+              }}
+              onFocus={() => setActiveRow(code.id)}
+              onMouseEnter={() => setActiveRow(code.id)}
+              onMouseLeave={() =>
+                setActiveRow((row) => (row === code.id ? null : row))
+              }
               onDragStart={(event) =>
                 startCodesDrag(
                   event,
@@ -145,7 +166,7 @@ export function CodesTable({
                   />
                 </TableCell>
               )}
-              <TableCell className="max-w-[320px]">
+              <TableCell className="max-w-[260px] max-sm:max-w-[190px]">
                 <div className="flex min-w-0 items-start gap-2">
                   {!inTrash && <FavoriteButton code={code} />}
                   <div className="min-w-0 flex-1 space-y-1">
@@ -199,9 +220,9 @@ export function CodesTable({
                   </div>
                 </div>
               </TableCell>
-              <TableCell>
+              <TableCell className="hidden sm:table-cell">
                 <div className="flex items-center gap-1">
-                  <span className="text-muted-foreground max-w-[200px] truncate font-mono text-xs">
+                  <span className="text-muted-foreground max-w-[170px] truncate font-mono text-xs">
                     {displayUrl(code.shortLink)}
                   </span>
                   <CopyButton
@@ -210,7 +231,7 @@ export function CodesTable({
                   />
                 </div>
               </TableCell>
-              <TableCell>
+              <TableCell className="hidden sm:table-cell">
                 <div className="flex items-center justify-end gap-3">
                   <Sparkline values={sparklines[code.id] ?? []} />
                   <span className="min-w-10 text-right tabular-nums">
@@ -218,7 +239,7 @@ export function CodesTable({
                   </span>
                 </div>
               </TableCell>
-              <TableCell className="whitespace-nowrap">
+              <TableCell className="hidden whitespace-nowrap sm:table-cell">
                 {formatDate(inTrash ? code.deletedAt : code.createdAt)}
               </TableCell>
               <TableCell>
@@ -228,7 +249,13 @@ export function CodesTable({
                 />
               </TableCell>
               <TableCell className="text-right">
-                <CodeActionsMenu code={code} folders={folders} tags={tags} />
+                <CodeActionsMenu
+                  code={code}
+                  folders={folders}
+                  keysActive={activeRow === code.id}
+                  keysEnabled={keyboardShortcuts}
+                  tags={tags}
+                />
               </TableCell>
             </TableRow>
           );
