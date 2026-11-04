@@ -8,6 +8,7 @@ export const metadata: Metadata = createMetadata({
   title: "Where to Put QR Codes: Sizes for Every Placement",
   description: `QR codes on business cards, packaging, menus, billboards, receipts and ${placements.items.length - 5} more placements: what to link to, how big to print and where to place them.`,
   path: placements.basePath,
+  ownOgImage: true,
 });
 
 export default function PlacementsHubPage() {
