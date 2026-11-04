@@ -12,14 +12,15 @@ import {
 } from "@repo/design-system/components/ui/revola";
 import { cn } from "@repo/design-system/lib/utils";
 import { ArrowRotateLeft, SearchNormal1, Shuffle } from "iconsax-reactjs";
-import { QRCodeSVG } from "qrdx";
+import { QRCodeSVG, type QRProps, withQRSize } from "qrdx";
 import * as React from "react";
 import { DialogCloseButton } from "@/components/editor/dialog-close-button";
 import { emitSound } from "@/components/editor/sound";
 import { seasonalPresetsFirst } from "@/components/seasonal/preset-order";
 import { track } from "@/lib/analytics";
+import { DEFAULT_QR_LOGO } from "@/lib/constants";
 import { useThemeShuffle } from "@/lib/hooks/use-theme-shuffle";
-import { styleSvgOptions } from "@/lib/qr-design/engine-options";
+import { designQRProps } from "@/lib/qr-design/props";
 import {
   CATEGORY_LABELS,
   CATEGORY_ORDER,
@@ -74,6 +75,25 @@ const CATEGORIES = CATEGORY_ORDER.filter((category) =>
   ITEMS.some((item) => item.category === category),
 );
 
+/**
+ * A theme's thumbnail as the editor draws it (lib/qr-design/props.ts): its
+ * border template, frame, engine options (per-eye colors, module size,
+ * shape) and the logo it shows, capped as the editor caps it (the editor's
+ * default logo when it has none of its own), scaled to the thumbnail, with
+ * the quiet zone capped so small thumbnails stay readable.
+ */
+export function thumbProps(styles: ThemeStyles, size: number): QRProps {
+  const props = designQRProps(
+    THUMB_VALUE,
+    styles,
+    styles.customLogo ?? DEFAULT_QR_LOGO,
+  );
+  return {
+    ...withQRSize(props, size),
+    margin: Math.min(styles.margin ?? 0, 3),
+  };
+}
+
 /** Renders its QR code only once it scrolls near the viewport. */
 function LazyThumb({ styles, size }: { styles: ThemeStyles; size: number }) {
   const ref = React.useRef<HTMLSpanElement>(null);
@@ -103,25 +123,13 @@ function LazyThumb({ styles, size }: { styles: ThemeStyles; size: number }) {
     >
       {visible && (
         <QRCodeSVG
-          bgColor={styles.bgColor}
-          bodyPattern={styles.bodyPattern}
-          cornerEyeDotPattern={styles.cornerEyeDotPattern}
-          cornerEyePattern={styles.cornerEyePattern}
-          dotColor={styles.dotColor}
-          eyeColor={styles.eyeColor}
-          fgColor={styles.fgColor}
-          frame={styles.frame}
-          level={styles.level}
-          margin={Math.min(styles.margin ?? 0, 3)}
-          size={size}
+          {...thumbProps(styles, size)}
           style={{
             maxWidth: size,
             maxHeight: size,
             width: "auto",
             height: "auto",
           }}
-          value={THUMB_VALUE}
-          {...styleSvgOptions(styles)}
         />
       )}
     </span>
