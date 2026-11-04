@@ -19,12 +19,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@repo/design-system/components/ui/dropdown-menu";
-import { Progress } from "@repo/design-system/components/ui/progress";
 import {
   Chart as ChartNoAxesColumn,
   Copy,
   ExportSquare as ExternalLink,
-  Diamonds as Gem,
   DirectInbox as Inbox,
   More as MoreHorizontal,
   Add as Plus,
@@ -43,10 +41,11 @@ import type {
   LandingPageListItem,
   PageUsage,
 } from "@/app/dashboard/pages/_lib/landing-pages";
+import { CapMeter } from "@/components/limits/cap-meter";
+import { useShowLimit } from "@/components/limits/limit-dialog";
 import { useWorkspaceHref } from "@/components/workspace-provider";
 import { track } from "@/lib/analytics";
 import { PLAN_NAMES } from "@/lib/pricing";
-import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 
 const isAtLimit = (usage: PageUsage) =>
   usage.limit !== null && usage.used >= usage.limit;
@@ -69,9 +68,7 @@ export function NewPageButton({
   const [open, setOpen] = useState(false);
   const [initialType, setInitialType] = useState<string | null>(null);
   const [initialVariant, setInitialVariant] = useState<string | null>(null);
-  const openUpgradeDialog = useGetProDialogStore(
-    (state) => state.openUpgradeDialog,
-  );
+  const showLimit = useShowLimit();
 
   // Arriving from the editor's type picker: open on that type, then drop
   // `?new=` so a refresh doesn't reopen it.
@@ -79,29 +76,20 @@ export function NewPageButton({
     if (!autoOpenType) return;
     router.replace(inWorkspace("/pages"), { scroll: false });
     if (isAtLimit(usage)) {
-      openUpgradeDialog("pro");
+      showLimit("landingPages", { used: usage.used });
       return;
     }
     setInitialType(autoOpenType);
     setInitialVariant(autoOpenVariant ?? null);
     setOpen(true);
-  }, [
-    autoOpenType,
-    autoOpenVariant,
-    usage,
-    router,
-    openUpgradeDialog,
-    inWorkspace,
-  ]);
+  }, [autoOpenType, autoOpenVariant, usage, router, showLimit, inWorkspace]);
   return (
     <>
       <Button
         onClick={() => {
+          // The server would refuse it (LIMIT_REACHED): show the limit.
           if (isAtLimit(usage)) {
-            toast.error(
-              `Your plan includes ${usage.limit} hosted pages. Delete one or upgrade to Pro.`,
-            );
-            openUpgradeDialog("pro");
+            showLimit("landingPages", { used: usage.used });
             return;
           }
           setInitialType(null);
@@ -125,9 +113,6 @@ export function NewPageButton({
 }
 
 export function PageUsageMeter({ usage }: { usage: PageUsage }) {
-  const openUpgradeDialog = useGetProDialogStore(
-    (state) => state.openUpgradeDialog,
-  );
   if (usage.limit === null) {
     return (
       <p className="text-muted-foreground text-sm">
@@ -136,33 +121,15 @@ export function PageUsageMeter({ usage }: { usage: PageUsage }) {
       </p>
     );
   }
-  const percent = Math.min(100, (usage.used / Math.max(1, usage.limit)) * 100);
   return (
-    <div className="flex flex-col gap-3 rounded-lg border p-4 sm:flex-row sm:items-center sm:gap-6">
-      <div className="flex-1 space-y-2">
-        <div className="flex items-center justify-between gap-2 text-sm">
-          <span className="font-medium">
-            {usage.used} / {usage.limit} hosted pages ({PLAN_NAMES[usage.plan]})
-          </span>
-          {isAtLimit(usage) && (
-            <span className="text-muted-foreground text-xs">Limit reached</span>
-          )}
-        </div>
-        <Progress aria-label="Hosted pages used" value={percent} />
-        <p className="text-muted-foreground text-xs">
-          Free pages show a small "Made with QRdx" footer. Existing pages keep
-          working on every plan.
-        </p>
-      </div>
-      <Button
-        onClick={() => openUpgradeDialog("pro")}
-        size="sm"
-        variant="outline"
-      >
-        <Gem />
-        Upgrade for unlimited
-      </Button>
-    </div>
+    <CapMeter
+      limit={usage.limit}
+      meterId="landingPages"
+      note={`Free pages show a small "Made with QRdx" footer. Existing pages keep working on every plan.`}
+      plan={usage.plan}
+      source="pages_meter"
+      used={usage.used}
+    />
   );
 }
 
@@ -177,6 +144,7 @@ export function PageActions({
 }) {
   const inWorkspace = useWorkspaceHref();
   const router = useRouter();
+  const showLimit = useShowLimit();
   const [confirm, setConfirm] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [code] = page.codes.filter((item) => !item.inTrash);
@@ -198,7 +166,11 @@ export function PageActions({
     startTransition(async () => {
       const result = await createLandingPageCode({ id: page.id });
       if (!result.success) {
-        toast.error(result.error.message);
+        if (result.error.code === "LIMIT_REACHED") {
+          showLimit("dynamicCodes", { message: result.error.message });
+        } else {
+          toast.error(result.error.message);
+        }
         return;
       }
       track("dynamic_code_created", { source: "page" });
