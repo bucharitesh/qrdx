@@ -14,6 +14,7 @@ import {
   scopeWhere,
 } from "@/app/dashboard/codes/_lib/qr-codes";
 import { getTemplate } from "@/lib/landing/templates";
+import { can } from "@/lib/permissions";
 import { requestWorkspaceSlug } from "@/lib/scope";
 import { SHORT_LINK_BASE } from "@/lib/short-links";
 import { workspaceLink } from "@/lib/workspace-paths";
@@ -59,7 +60,9 @@ export async function LandingPagePanel({ codeId }: { codeId: string }) {
           <CardTitle className="text-base">Hosted page</CardTitle>
           <CardDescription className="truncate">
             Scans open {row.title ? `"${row.title}"` : "your page"} ({label}).
-            Edit it anytime; the printed code stays the same.
+            {can(scope.role, "content.write")
+              ? "Edit it anytime; the printed code stays the same."
+              : "The printed code always opens its latest version."}
           </CardDescription>
         </div>
         <div className="flex shrink-0 gap-2">
@@ -81,7 +84,7 @@ export async function LandingPagePanel({ codeId }: { codeId: string }) {
               )}
             >
               <Pencil />
-              Edit page
+              {can(scope.role, "content.write") ? "Edit page" : "Open page"}
             </Link>
           </Button>
         </div>

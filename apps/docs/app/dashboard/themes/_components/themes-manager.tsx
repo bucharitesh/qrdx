@@ -34,6 +34,8 @@ interface ThemesManagerProps {
     name: string;
     /** Owner or admin of the team */
     canManage: boolean;
+    /** A viewer or billing member here: shared themes are view-only */
+    readOnly?: boolean;
     /** The team owner's plan includes team themes */
     themesAllowed: boolean;
     /** Owners can upgrade; other members ask an owner */
@@ -178,7 +180,9 @@ export function ThemesManager({
             description={
               team.canManage
                 ? `Shared with everyone in ${team.name}. As an owner or admin you can edit them and pick its default.`
-                : `Shared with everyone in ${team.name}. Its owners and admins can edit them.`
+                : team.readOnly
+                  ? `Shared with everyone in ${team.name}. You have view-only access here; its owners and admins edit them.`
+                  : `Shared with everyone in ${team.name}. Its owners and admins can edit them.`
             }
             title="Shared themes"
           />
