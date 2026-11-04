@@ -1,6 +1,14 @@
 import "server-only";
 
 import { countUnarchived } from "@/app/dashboard/codes/_lib/qr-codes";
+import { attentionMeters, type Meter } from "@/app/settings/usage/_lib/meters";
+import {
+  getUsageMeters,
+  meterCapsFor,
+} from "@/app/settings/usage/_lib/plan-usage";
+import type { ShellLimits } from "@/components/limits/plan-limits-provider";
+import { getChangelogSeen } from "@/lib/changelog-feed-server";
+import { getCheckoutOpen } from "@/lib/checkout-availability";
 import {
   cheapestPlanWith,
   getPlan,
@@ -10,8 +18,10 @@ import {
 } from "@/lib/plans";
 import { getActiveWorkspace } from "@/lib/scope";
 import { logError } from "@/lib/shared";
+import { workspaceHref } from "@/lib/workspace-paths";
 import { loadWorkspaces, type Workspace } from "@/lib/workspaces";
 import { UnauthorizedError } from "@/types/errors";
+import type { WhatsNewSeen } from "./whats-new";
 
 export type ShellWorkspace = Pick<
   Workspace,
@@ -37,6 +47,10 @@ export interface ShellData {
    * (null when no plan lifts it); null when the plan has no cap.
    */
   codes: { used: number; limit: number; unlimitedPlan: Plan | null } | null;
+  /** The plan's caps, upgrade rules and checkout, for limit cards */
+  limits: ShellLimits;
+  /** What "What's new" the person has seen (null when it couldn't be read) */
+  changelogSeen: WhatsNewSeen | null;
 }
 
 const toShellWorkspace = ({
@@ -58,11 +72,18 @@ const toShellWorkspace = ({
 export async function getShellData(): Promise<ShellData | null> {
   try {
     const { scope, workspace, user } = await getActiveWorkspace();
-    const [plan, personalPlan, workspaces] = await Promise.all([
+    const [plan, personalPlan, workspaces, seen] = await Promise.all([
       getPlanForScope(scope),
       getPlan(scope.userId),
       loadWorkspaces(user),
+      // Without it nothing is marked new; the rest of the chrome still works.
+      getChangelogSeen(scope.userId).catch((error: unknown) => {
+        logError(error as Error, { action: "app-shell.changelogSeen" });
+        return null;
+      }),
     ]);
+    const isTeam = !workspace.own;
+    const canUpgrade = scope.role === "owner";
     const limit = getPlanLimits(plan).dynamicCodes;
     const codes = Number.isFinite(limit)
       ? {
@@ -78,13 +99,51 @@ export async function getShellData(): Promise<ShellData | null> {
       workspaces: workspaces.map(toShellWorkspace),
       plan,
       personalPlan,
-      canUpgrade: scope.role === "owner",
+      canUpgrade,
       canCreateWorkspace: getPlanLimits(personalPlan).teams,
       codes,
+      limits: {
+        plan,
+        canUpgrade,
+        checkoutOpen: getCheckoutOpen(),
+        caps: meterCapsFor(plan, { isTeam, personalPlan }),
+        isTeam,
+        usageHref: workspaceHref(workspace.slug, "/settings/usage"),
+      },
+      changelogSeen: seen && {
+        viewerId: scope.userId,
+        stored: seen.stored,
+        signedUpAt: seen.signedUpAt,
+      },
     };
   } catch (error) {
     if (error instanceof UnauthorizedError) return null;
     logError(error as Error, { action: "app-shell.getShellData" });
     return null;
+  }
+}
+
+/**
+ * The open workspace's limits at 90% or more, fullest first, for the
+ * sidebar's notice. Only capped meters are counted; unlimited ones never
+ * warn. Empty when signed out or when the counts fail (the page that
+ * enforces a limit still says so).
+ */
+export async function getShellLimitWarnings(): Promise<Meter[]> {
+  try {
+    const { scope } = await getActiveWorkspace();
+    // AI theme requests are the person's one-time allowance on Free, used in
+    // the playground (which says so when it runs out); once used up it
+    // would sit here for good, so it stays on Plan & usage only.
+    const usage = await getUsageMeters(scope, {
+      cappedOnly: true,
+      skip: ["aiThemes"],
+    });
+    return attentionMeters(usage.meters);
+  } catch (error) {
+    if (!(error instanceof UnauthorizedError)) {
+      logError(error as Error, { action: "app-shell.limitWarnings" });
+    }
+    return [];
   }
 }

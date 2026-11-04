@@ -12,11 +12,18 @@ import {
 import { HamburgerMenu as Menu } from "iconsax-reactjs";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import type { Meter } from "@/app/settings/usage/_lib/meters";
 import { AppSidebar } from "./app-sidebar";
 import type { ShellData } from "./shell-data";
 
 /** Below md the sidebar, workspace switcher included, lives in a sheet. */
-export function MobileNav({ shell }: { shell: ShellData | null }) {
+export function MobileNav({
+  shell,
+  limitWarnings = null,
+}: {
+  shell: ShellData | null;
+  limitWarnings?: Promise<Meter[]> | null;
+}) {
   const pathname = usePathname();
   // Tied to the path it was opened on, so any navigation closes it.
   const [openOn, setOpenOn] = useState<string | null>(null);
@@ -41,7 +48,11 @@ export function MobileNav({ shell }: { shell: ShellData | null }) {
           <SheetTitle>Navigation</SheetTitle>
           <SheetDescription>Dashboard and settings pages</SheetDescription>
         </SheetHeader>
-        <AppSidebar onNavigate={() => setOpenOn(null)} shell={shell} />
+        <AppSidebar
+          limitWarnings={limitWarnings}
+          onNavigate={() => setOpenOn(null)}
+          shell={shell}
+        />
       </SheetContent>
     </Sheet>
   );
