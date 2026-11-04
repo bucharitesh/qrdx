@@ -1,13 +1,16 @@
 import { notFound } from "next/navigation";
 import { ogSize, renderPageOgImage } from "@/app/og/brand";
 import { placements } from "@/lib/seo-content";
+import { buildTimeParams } from "@/lib/static-params";
 
 export const alt = "Where to put a QR code, and how big to print it";
 export const size = ogSize;
 export const contentType = "image/png";
 
 export function generateStaticParams() {
-  return placements.items.map((item) => ({ slug: item.slug }));
+  return buildTimeParams(() =>
+    placements.items.map((item) => ({ slug: item.slug })),
+  );
 }
 
 export default async function Image({
