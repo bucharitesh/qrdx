@@ -2,6 +2,7 @@ import { useFeatureSupport } from "@canva/app-hooks";
 import {
   Button,
   FormField,
+  Link,
   Rows,
   SegmentedControl,
   Swatch,
@@ -10,6 +11,7 @@ import {
 } from "@canva/app-ui-kit";
 import { openColorSelector } from "@canva/asset";
 import { addElementAtCursor, addElementAtPoint } from "@canva/design";
+import { requestOpenExternalUrl } from "@canva/platform";
 import type {
   BodyPattern,
   CornerEyeDotPattern,
@@ -28,6 +30,7 @@ import {
 import { useRef, useState } from "react";
 // biome-ignore lint/correctness/noUndeclaredDependencies: "styles/" is a tsconfig/webpack path alias
 import * as styles from "styles/components.css";
+import { playgroundLink } from "../../playground-link";
 
 const QRDX_LOGO = "https://qrdx.dev/logo.png";
 
@@ -462,6 +465,18 @@ export const App = () => {
         >
           {isLoading ? "Adding to Design..." : "Add to Design"}
         </Button>
+
+        <Text alignment="center" size="small" tone="tertiary">
+          <Link
+            href={playgroundLink(url)}
+            // Canva opens outside links itself, after asking the user.
+            requestOpenExternalUrl={() =>
+              requestOpenExternalUrl({ url: playgroundLink(url) })
+            }
+          >
+            More options in the QRdx playground
+          </Link>
+        </Text>
       </Rows>
     </div>
   );

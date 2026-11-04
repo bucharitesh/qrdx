@@ -64,12 +64,12 @@ const faqs = [
   {
     question: "Do I need a QRdx account?",
     answer:
-      "No. The plugins are free and work without an account. Open in QRdx in the Chrome extension opens the full editor at qrdx.dev, where you can sign in for dynamic codes you can edit after printing.",
+      "No. The plugins are free and work without an account. Each one links to the full editor at qrdx.dev (Open in QRdx in Chrome and Raycast, More options in Figma and Canva), where you can sign in for dynamic codes you can edit after printing.",
   },
   {
     question: "Do the plugins send my data anywhere?",
     answer:
-      "The Chrome extension and the Figma plugin make no network requests: codes are drawn on your device by the qrdx library. The Raycast extension keeps saved codes in Raycast's local storage, and Generate QR with AI sends your description to Raycast AI. The Canva app draws the code in its panel and adds it to your design as an image.",
+      "The Chrome extension and the Figma plugin make no network requests: codes are drawn on your device by the qrdx library. The Raycast extension keeps saved codes in Raycast's local storage, and Generate QR with AI sends your description to Raycast AI. The Canva app draws the code in its panel and adds it to your design as an image. When you open the playground from a plugin, only a web address goes along, after the # in the link, which browsers never send to a server.",
   },
   {
     question: "Can I change a code after adding it?",

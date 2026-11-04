@@ -105,6 +105,10 @@ figma.ui.onmessage = (input: unknown) => {
     postSelection(figma.command === "edit");
     return;
   }
+  if (message.type === "open-playground") {
+    figma.openExternal(message.link);
+    return;
+  }
   try {
     if (message.type === "insert") insertQR(message.svg, message.meta);
     else replaceQR(message.svg, message.meta);
