@@ -7,6 +7,13 @@
 // previous design). Content isn't part of the editor's undo history, so the
 // outcome carries an `undo` that restores both, for the toast's Undo.
 
+import {
+  builderRequestFor,
+  dynamicBlockedReason,
+  type OpenCodeBuilderIntent,
+  openCodeBuilderIntent,
+  type PlaygroundBuilderRequest,
+} from "@/components/code-builder/playground-request";
 import { useCodeDialogStore } from "@/components/editor/action-bar/code-dialog-store";
 import { useDownloadDialogStore } from "@/components/editor/action-bar/download-dialog-store";
 import { useCommunitySheetStore } from "@/components/editor/community-sheet-store";
@@ -16,7 +23,11 @@ import { usePhotoScanDialogStore } from "@/components/editor/photo-scan-dialog-s
 import { AI_ART_PRESETS } from "@/components/sections/ai-art/presets";
 import { toPayload } from "@/components/sections/tools/payload";
 import { defaultThemeState } from "@/config/qr";
-import type { ControlTab, PlaygroundParams } from "@/lib/playground-links";
+import {
+  type ControlTab,
+  DYNAMIC_OPEN_TARGET,
+  type PlaygroundParams,
+} from "@/lib/playground-links";
 import { decodeStyleParam } from "@/lib/playground-style";
 import { isDeepEqual } from "@/lib/utils";
 import { useArtSessionStore } from "@/store/art-session-store";
@@ -55,6 +66,8 @@ export interface ApplyContext {
   isBuiltInPreset: (id: string) => boolean;
   presetLabel: (id: string) => string;
   dynamicLink: DynamicLinkAccess;
+  /** For open=dynamic (see applyDynamicOpen); without it, open=dynamic is ignored. */
+  codeBuilder?: CodeBuilderAccess;
 }
 
 export interface ApplyOutcome {
@@ -68,6 +81,8 @@ export interface ApplyOutcome {
   message: string | null;
   /** open=download/print asked for a dialog while there is nothing to download yet */
   needsContent: boolean;
+  /** open=dynamic for a type that can't be dynamic: why, for a toast */
+  notice?: string | null;
   /** Puts back the design and content from before */
   undo: () => void;
 }
@@ -209,6 +224,13 @@ export function applyPlaygroundParams(
     if (params.print) applied.push("print");
     if (params.printDistance) applied.push("printDistance");
   }
+  // open=dynamic: see applyDynamicOpen below.
+  let notice: string | null = null;
+  if (params.open === DYNAMIC_OPEN_TARGET) {
+    const dynamic = applyDynamicOpen(context);
+    if (dynamic.applied) applied.push("open");
+    notice = dynamic.notice;
+  }
 
   // 4. The Art tab's mode (and AI art's style preset).
   const art = applyArtParams(params, context);
@@ -262,6 +284,7 @@ export function applyPlaygroundParams(
     replaced: lookReplaced || contentReplaced,
     message,
     needsContent,
+    notice,
     undo,
   };
 }
@@ -312,3 +335,47 @@ function applyArtParams(
     look: mode === "logo" ? "Logo QR" : "Image QR",
   };
 }
+
+// ─── open=dynamic (hub phase 4) ─────────────────────────────────────────────
+
+/** How a link opens the code builder over the playground. */
+export interface CodeBuilderAccess {
+  /** The signed-in account, or null */
+  userId: string | null;
+  /** Opens the builder (the playground mounts its host once it renders) */
+  open: (request: PlaygroundBuilderRequest) => void;
+  /** Signed out: sign-in first; the builder opens afterwards (OPEN_CODE_BUILDER) */
+  signIn: (intent: OpenCodeBuilderIntent) => void;
+}
+
+/**
+ * open=dynamic, after the link's type and url: the builder for the URL code
+ * (editing the dynamic code it's bound to, else creating one with its
+ * address and design). Signed out, it asks for sign-in first. Other types
+ * open nothing and say why.
+ */
+function applyDynamicOpen(context: ApplyContext): {
+  applied: boolean;
+  notice: string | null;
+} {
+  const access = context.codeBuilder;
+  if (!access) return { applied: false, notice: null };
+  const editor = useQREditorStore.getState();
+  const blocked = dynamicBlockedReason(editor.contentType);
+  if (blocked) return { applied: false, notice: blocked };
+  if (!(context.signedIn && access.userId)) {
+    access.signIn(openCodeBuilderIntent("dynamic"));
+    return { applied: true, notice: null };
+  }
+  const next = builderRequestFor({
+    contentType: editor.contentType,
+    url: (editor.contentConfigs.url as UrlContent | undefined)?.url ?? "",
+    style: editor.themeState.styles,
+    linked: context.dynamicLink.get(),
+    userId: access.userId,
+  });
+  if (!next.ok) return { applied: false, notice: next.reason };
+  access.open(next.request);
+  return { applied: true, notice: null };
+}
+// ─── end open=dynamic ───────────────────────────────────────────────────────

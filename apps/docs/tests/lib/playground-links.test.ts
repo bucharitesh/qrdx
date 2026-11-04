@@ -133,8 +133,8 @@ describe("other parameters", () => {
     ]) {
       expect(parseHref(`/playground?open=${target}`).open).toBe(target);
     }
-    // Make it dynamic and the Art tab come in later phases.
-    for (const later of ["dynamic", "art"]) {
+    // The Art tab comes in a later phase (open=dynamic: its own block below).
+    for (const later of ["art"]) {
       expect(parseHref(`/playground?open=${later}`).open).toBeUndefined();
     }
   });
@@ -553,3 +553,53 @@ describe("the Art tab", () => {
     ).toBe("/playground?tab=art");
   });
 });
+
+// ─── open=dynamic (hub phase 4) ─────────────────────────────────────────────
+describe("open=dynamic", () => {
+  it("is read on its own and with the link's address", () => {
+    expect(parseHref("/playground?open=dynamic")).toEqual({ open: "dynamic" });
+    expect(
+      parseHref(
+        "/playground?open=dynamic#url=https%3A%2F%2Fexample.com%2Fmenu",
+      ),
+    ).toEqual({
+      open: "dynamic",
+      type: "url",
+      url: "https://example.com/menu",
+    });
+    expect(parseHref("/playground?open=DYNAMIC")).toEqual({ open: "dynamic" });
+  });
+
+  it("doesn't take a print width or a Get code tab", () => {
+    expect(parseHref("/playground?open=dynamic&print=40mm")).toEqual({
+      open: "dynamic",
+    });
+    expect(parseHref("/playground?open=dynamic&lang=react")).toEqual({
+      open: "dynamic",
+    });
+  });
+
+  it("is written with the address after the #", () => {
+    const href = playgroundHref({
+      open: "dynamic",
+      url: "https://example.com/menu",
+    });
+    expect(href).toBe(
+      "/playground?open=dynamic#url=https%3A%2F%2Fexample.com%2Fmenu",
+    );
+    expect(parseHref(href)).toEqual({
+      open: "dynamic",
+      type: "url",
+      url: "https://example.com/menu",
+    });
+  });
+
+  it("applies once and is removed from the address", () => {
+    const href = "https://qrdx.dev/playground?open=dynamic&utm_source=x";
+    expect(hasOneShotParams(parseHref(href))).toBe(true);
+    const left = stripOneShotParams(href, null);
+    expect(left).toBe("/playground?utm_source=x");
+    expect(hasOneShotParams(parseHref(left))).toBe(false);
+  });
+});
+// ─── end open=dynamic ───────────────────────────────────────────────────────

@@ -5,18 +5,21 @@ import { toast } from "@repo/design-system";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useAvailability } from "@/components/availability-provider";
+import { openPlaygroundBuilder } from "@/components/code-builder/in-place";
 import { useDynamicLinkStore } from "@/components/editor/dynamic-link-toggle";
 import { track } from "@/lib/analytics";
 import { isUntrackedAnalyticsPath } from "@/lib/analytics/privacy";
 import { previousPathname } from "@/lib/navigation-history";
 import { applyPlaygroundParams, SIGNED_IN_TYPES } from "@/lib/playground-apply";
 import {
+  DYNAMIC_OPEN_TARGET,
   handoffSource,
   hasOneShotParams,
   parsePlaygroundParams,
   resolveControlTab,
   stripOneShotParams,
 } from "@/lib/playground-links";
+import { useAuthStore } from "@/store/auth-store";
 import { useQREditorStore } from "@/store/editor-store";
 import { useThemePresetStore } from "@/store/theme-preset-store";
 import { getPresetLabel } from "@/utils/qr-presets-helper";
@@ -108,6 +111,8 @@ export function usePlaygroundParams({ themePath }: { themePath: boolean }): {
     if (params.type && SIGNED_IN_TYPES.has(params.type) && sessionPending) {
       return;
     }
+    // open=dynamic asks for sign-in when signed out; wait until that's known.
+    if (params.open === DYNAMIC_OPEN_TARGET && sessionPending) return;
     handled.current = href;
 
     const presets = useThemePresetStore.getState();
@@ -125,6 +130,15 @@ export function usePlaygroundParams({ themePath }: { themePath: boolean }): {
         get: () => useDynamicLinkStore.getState().code,
         unlink: () => useDynamicLinkStore.getState().unlink(),
         link: (code) => useDynamicLinkStore.getState().link(code),
+      },
+      // open=dynamic: the builder over the editor, or sign-in first.
+      codeBuilder: {
+        userId: session?.user?.id ?? null,
+        open: openPlaygroundBuilder,
+        signIn: (intent) =>
+          useAuthStore
+            .getState()
+            .openAuthDialog("signin", "OPEN_CODE_BUILDER", intent),
       },
     });
 
@@ -154,6 +168,9 @@ export function usePlaygroundParams({ themePath }: { themePath: boolean }): {
       });
     } else if (outcome.needsContent) {
       toast("Add your content first, then download it.");
+    }
+    if (outcome.notice) {
+      toast("This code can't be dynamic", { description: outcome.notice });
     }
   }, [
     hydrated,

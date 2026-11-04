@@ -462,3 +462,82 @@ describe("the Art tab", () => {
     expect(usePlaygroundFocusStore.getState().section).toBe("error-correction");
   });
 });
+
+// ─── open=dynamic (hub phase 4) ─────────────────────────────────────────────
+describe("open=dynamic", () => {
+  const builder = (userId: string | null) => ({
+    userId,
+    open: vi.fn(),
+    signIn: vi.fn(),
+  });
+
+  it("signed out, asks for sign-in first and opens nothing yet", () => {
+    const codeBuilder = builder(null);
+    const outcome = apply(
+      "/playground?open=dynamic#url=https%3A%2F%2Fexample.com%2Fmenu",
+      { codeBuilder },
+    );
+    expect(codeBuilder.signIn).toHaveBeenCalledWith({
+      kind: "dynamic",
+      at: Date.now(),
+    });
+    expect(codeBuilder.open).not.toHaveBeenCalled();
+    expect(outcome.applied).toEqual(["url", "open"]);
+    // The address is in the editor for when the builder opens.
+    expect(editor().value).toBe("https://example.com/menu");
+  });
+
+  it("signed in, opens the builder with the address and the design", () => {
+    useQREditorStore.setState({ themeState: { styles: MY_STYLE } });
+    const codeBuilder = builder("u_alice");
+    const outcome = apply(
+      "/playground?open=dynamic#url=https%3A%2F%2Fexample.com%2Fmenu",
+      { signedIn: true, codeBuilder },
+    );
+    expect(codeBuilder.open).toHaveBeenCalledWith({
+      mode: "create",
+      initial: { destination: "https://example.com/menu", style: MY_STYLE },
+      origin: "playground",
+    });
+    expect(codeBuilder.signIn).not.toHaveBeenCalled();
+    expect(outcome.notice).toBeNull();
+  });
+
+  it("bound to the account's dynamic code, edits it", () => {
+    linked = {
+      id: "code_1",
+      shortLink: "https://qrdx.dev/q/abc1234",
+      destinationUrl: "https://example.com/menu",
+      userId: "u_alice",
+    };
+    const codeBuilder = builder("u_alice");
+    apply("/playground?open=dynamic#url=https%3A%2F%2Fexample.com%2Fmenu", {
+      signedIn: true,
+      codeBuilder,
+    });
+    expect(codeBuilder.open).toHaveBeenCalledWith({
+      mode: "edit",
+      codeId: "code_1",
+      origin: "playground",
+    });
+  });
+
+  it("another type opens nothing and says why", () => {
+    const codeBuilder = builder("u_alice");
+    const outcome = apply("/playground?type=wifi&open=dynamic", {
+      signedIn: true,
+      codeBuilder,
+    });
+    expect(codeBuilder.open).not.toHaveBeenCalled();
+    expect(codeBuilder.signIn).not.toHaveBeenCalled();
+    expect(outcome.applied).toEqual(["type"]);
+    expect(outcome.notice).toBe("Wi-Fi details are stored in the code itself.");
+  });
+
+  it("is ignored where the builder can't open", () => {
+    const outcome = apply("/playground?open=dynamic");
+    expect(outcome.applied).toEqual([]);
+    expect(outcome.notice).toBeNull();
+  });
+});
+// ─── end open=dynamic ───────────────────────────────────────────────────────
