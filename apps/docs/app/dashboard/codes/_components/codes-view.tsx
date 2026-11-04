@@ -13,6 +13,7 @@ import {
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Fragment } from "react";
+import { getUserSettings } from "@/actions/user-settings";
 import { PageHeader } from "@/app/dashboard/_components/page-header";
 import { codeOptionPlansFor } from "@/app/dashboard/codes/_lib/code-option-plans";
 import {
@@ -74,11 +75,13 @@ export async function CodesView({
   const scope = await requireDashboardScope();
   const filters = parseCodesFilters(await searchParams);
 
-  const [usage, folders, tags, trashCount] = await Promise.all([
+  const [usage, folders, tags, trashCount, settings] = await Promise.all([
     getCodeUsage(scope),
     listFolders(scope),
     listTags(scope),
     countTrash(scope),
+    // Row keys follow the shortcuts switch; unread, they stay on (the default).
+    getUserSettings().catch(() => null),
   ]);
 
   // Ids from old links (deleted folder or tag) are dropped, not errors.
@@ -188,7 +191,7 @@ export async function CodesView({
                 </Button>
               </div>
               <p className="text-muted-foreground text-xs">
-                Or turn on "Make it dynamic" for a URL code in the{" "}
+                Or pick Dynamic for a URL code in the{" "}
                 <Link
                   className="underline"
                   href={playgroundHref({ type: "url" })}
@@ -277,6 +280,7 @@ export async function CodesView({
                 <CodesList
                   codes={codes}
                   folders={folders}
+                  keyboardShortcuts={settings?.keyboardShortcuts ?? true}
                   showFolder={!folder && effective.folder !== "none"}
                   sparklines={sparklines}
                   status={effective.status}

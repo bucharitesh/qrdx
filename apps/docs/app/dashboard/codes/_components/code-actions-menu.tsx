@@ -17,6 +17,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
+  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@repo/design-system/components/ui/dropdown-menu";
 import {
@@ -24,8 +25,10 @@ import {
   DirectboxSend as ArchiveRestore,
   Chart as ChartNoAxesCombined,
   Copy,
+  DocumentDownload,
   Import as Download,
   FolderAdd as FolderInput,
+  Link21,
   More as MoreHorizontal,
   Notepad2 as NotebookPen,
   ColorSwatch as Palette,
@@ -39,7 +42,7 @@ import {
 } from "iconsax-reactjs";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { type KeyboardEvent, useEffect, useRef, useState } from "react";
 import {
   duplicateQrCode,
   purgeQrCodes,
@@ -56,6 +59,15 @@ import type {
   QrCodeListItem,
   QrCodeView,
 } from "@/app/dashboard/codes/_lib/qr-codes";
+import {
+  ROW_KEYS,
+  type RowAction,
+  resolveRowShortcut,
+} from "@/app/dashboard/codes/_lib/row-shortcuts";
+import {
+  describeFocusTarget,
+  hasOpenOverlay,
+} from "@/components/app-shell/paste-to-create";
 import { openCodeBuilder } from "@/components/code-builder/store";
 import { useWorkspaceSlug } from "@/components/workspace-provider";
 import { downloadCodeQr } from "./code-qr";
@@ -76,6 +88,8 @@ export function CodeActionsMenu({
   afterDelete,
   folders,
   tags,
+  keysEnabled = false,
+  keysActive = false,
 }: {
   code: MenuCode;
   showAnalyticsLink?: boolean;
@@ -83,6 +97,10 @@ export function CodeActionsMenu({
   afterDelete?: string;
   folders?: FolderRow[];
   tags?: TagRow[];
+  /** Row keys (E, L, D, M, T, A, X) are on: the person's shortcuts switch */
+  keysEnabled?: boolean;
+  /** This row is under the pointer or holds focus, so its keys apply */
+  keysActive?: boolean;
 }) {
   const workspaceSlug = useWorkspaceSlug();
   const router = useRouter();
@@ -91,6 +109,7 @@ export function CodeActionsMenu({
   const [dialog, setDialog] = useState<
     "move" | "tags" | "notes" | "purge" | null
   >(null);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const ids = [code.id];
   const archived = code.archivedAt !== null;
@@ -172,6 +191,75 @@ export function CodeActionsMenu({
     );
   };
 
+  const copyLink = () => {
+    navigator.clipboard
+      .writeText(code.shortLink)
+      .then(() => toast.success("Short link copied"))
+      .catch(() => toast.error("Couldn't copy the short link"));
+  };
+
+  const listItem = isListItem(code) ? code : null;
+  // Move and tags need the list's folders and tags; a trashed code has none.
+  const available: RowAction[] = trashed
+    ? []
+    : listItem
+      ? ["edit", "copy", "duplicate", "move", "tags", "archive", "trash"]
+      : ["edit", "copy", "duplicate", "archive", "trash"];
+  const handlers: Record<RowAction, () => void> = {
+    edit: () => openCodeBuilder({ mode: "edit", code }),
+    copy: copyLink,
+    duplicate,
+    move: () => setDialog("move"),
+    tags: () => setDialog("tags"),
+    archive: toggleArchived,
+    trash: () => void trash(),
+  };
+  const keyState = useRef({ handlers, available, isPending });
+  keyState.current = { handlers, available, isPending };
+
+  // The row's keys while it's under the pointer; the open menu handles its own.
+  useEffect(() => {
+    if (!(keysEnabled && keysActive && !trashed)) return;
+    const onKeyDown = (event: globalThis.KeyboardEvent) => {
+      const { handlers, available, isPending } = keyState.current;
+      const action = resolveRowShortcut(event, {
+        enabled: true,
+        typing: describeFocusTarget(
+          event.target instanceof Element ? event.target : null,
+        ).typing,
+        overlayOpen: hasOpenOverlay(document),
+        available,
+      });
+      if (!action || isPending) return;
+      event.preventDefault();
+      handlers[action]();
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [keysEnabled, keysActive, trashed]);
+
+  /** With the menu open, its keys run the item (before the menu's typeahead). */
+  const onMenuKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (!keysEnabled) return;
+    const action = resolveRowShortcut(event, {
+      enabled: true,
+      typing: false,
+      overlayOpen: false,
+      available,
+    });
+    if (!action || isPending) return;
+    event.preventDefault();
+    setMenuOpen(false);
+    handlers[action]();
+  };
+
+  const keyHint = (action: RowAction) =>
+    keysEnabled ? (
+      <DropdownMenuShortcut>
+        {ROW_KEYS[action].toUpperCase()}
+      </DropdownMenuShortcut>
+    ) : null;
+
   const trigger = (
     <DropdownMenuTrigger asChild>
       <Button
@@ -230,17 +318,22 @@ export function CodeActionsMenu({
     );
   }
 
-  const listItem = isListItem(code) ? code : null;
-
   return (
     <>
-      <DropdownMenu>
+      <DropdownMenu onOpenChange={setMenuOpen} open={menuOpen}>
         {trigger}
-        <DropdownMenuContent align="end" className="w-56">
-          <DropdownMenuItem
-            onSelect={() => openCodeBuilder({ mode: "edit", code })}
-          >
+        <DropdownMenuContent
+          align="end"
+          className="w-60"
+          onKeyDown={onMenuKeyDown}
+        >
+          <DropdownMenuItem onSelect={handlers.edit}>
             <Pencil /> Edit link
+            {keyHint("edit")}
+          </DropdownMenuItem>
+          <DropdownMenuItem onSelect={copyLink}>
+            <Link21 /> Copy short link
+            {keyHint("copy")}
           </DropdownMenuItem>
           {showAnalyticsLink && (
             <>
@@ -263,7 +356,7 @@ export function CodeActionsMenu({
             <Download /> Download PNG
           </DropdownMenuItem>
           <DropdownMenuItem onSelect={() => download("svg")}>
-            <Download /> Download SVG
+            <DocumentDownload /> Download SVG
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           {listItem && (
@@ -281,9 +374,11 @@ export function CodeActionsMenu({
               </DropdownMenuItem>
               <DropdownMenuItem onSelect={() => setDialog("move")}>
                 <FolderInput /> Move to folder...
+                {keyHint("move")}
               </DropdownMenuItem>
               <DropdownMenuItem onSelect={() => setDialog("tags")}>
                 <Tags /> Tags...
+                {keyHint("tags")}
               </DropdownMenuItem>
               <DropdownMenuItem onSelect={() => setDialog("notes")}>
                 <NotebookPen /> Notes...
@@ -292,6 +387,7 @@ export function CodeActionsMenu({
           )}
           <DropdownMenuItem onSelect={duplicate}>
             <Copy /> Duplicate
+            {keyHint("duplicate")}
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           {listItem && (
@@ -317,9 +413,11 @@ export function CodeActionsMenu({
                 <Archive /> Archive
               </>
             )}
+            {keyHint("archive")}
           </DropdownMenuItem>
           <DropdownMenuItem onSelect={trash} variant="destructive">
             <Trash2 /> Move to trash
+            {keyHint("trash")}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
