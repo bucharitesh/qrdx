@@ -68,7 +68,9 @@ describe("frames", () => {
     }
   });
 
-  it("stay scannable with square modules", async () => {
+  // Decodes every frame style in turn: about 5 s on a CI runner, so the
+  // default 5 s timeout made it flaky (it failed #197's CI at 5,043 ms).
+  it("stay scannable with square modules", { timeout: 30_000 }, async () => {
     for (const style of FRAME_STYLES) {
       const svg = buildSVGString({
         value: VALUE,
