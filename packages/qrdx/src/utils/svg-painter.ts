@@ -74,6 +74,9 @@ export type FillPaint =
 
 const WHITE: RGBAColor = { r: 255, g: 255, b: 255, a: 1 };
 
+/** The code's background gradient (utils.tsx ids it "bg-color-…"). */
+const BACKGROUND_PAINT = /^url\(\s*#bg-color-/;
+
 const URL_REFERENCE = /^url\(\s*#([^)\s]+)\s*\)/;
 
 const SKIPPED_ELEMENTS = new Set([
@@ -279,12 +282,15 @@ export abstract class SvgPainter {
   /**
    * Opaque color see-through paint is flattened over where a backend can't
    * blend (PostScript; a PDF gradient whose stops differ in alpha; a PDF
-   * angular fan): the code's background on paper. The background itself
-   * (the shape marked `data-qrdx-bg`) is flattened over `paper`. Exporters
-   * set both from the props.
+   * angular fan): the code's background on paper. The background itself is
+   * flattened over `paper`: the shape filled with the background gradient
+   * (`url(#bg-color-…)`) or with the background color. Exporters set all
+   * three from the props.
    */
   backdrop: RGBAColor = WHITE;
   paper: RGBAColor = WHITE;
+  /** The background's color as drawn (alpha included), when it is solid */
+  background: RGBAColor | null = null;
   /** True while painting the background shape (and its pattern) */
   protected onPaper = false;
   /** True while painting an angular gradient's wedge fan */
@@ -385,7 +391,17 @@ export abstract class SvgPainter {
     if (color.a >= 1) {
       return color;
     }
-    return flattenOver(color, this.onPaper ? this.paper : this.backdrop);
+    const background = this.background;
+    const isBackground =
+      background !== null &&
+      Math.abs(background.r - color.r) < 0.5 &&
+      Math.abs(background.g - color.g) < 0.5 &&
+      Math.abs(background.b - color.b) < 0.5 &&
+      Math.abs(background.a - color.a) < 0.002;
+    return flattenOver(
+      color,
+      this.onPaper || isBackground ? this.paper : this.backdrop
+    );
   }
 
   /**
@@ -755,7 +771,10 @@ export abstract class SvgPainter {
     };
     // The code's background sits on paper (see `flatten`)
     const wasOnPaper = this.onPaper;
-    if (node.attrs["data-qrdx-bg"] !== undefined) {
+    if (
+      (node.name === "rect" || node.name === "circle") &&
+      BACKGROUND_PAINT.test(readStyle(node, "fill") ?? "")
+    ) {
       this.onPaper = true;
     }
     try {

@@ -68,5 +68,7 @@ export function setBackdrop(painter: SvgPainter, props: QRProps) {
   const white = { r: 255, g: 255, b: 255, a: 1 };
   const background = parseColor(getSolidColor(props.bgColor, DEFAULT_BGCOLOR));
   painter.paper = white;
+  painter.background =
+    background && !isGradient(props.bgColor) ? background : null;
   painter.backdrop = background ? flattenOver(background, white) : white;
 }
