@@ -109,9 +109,15 @@ export function CodesTable({
             </TableHead>
           )}
           <TableHead>Code</TableHead>
-          <TableHead>Short link</TableHead>
-          <TableHead className="text-right">Scans</TableHead>
-          <TableHead>{trash ? "Deleted" : "Created"}</TableHead>
+          {/* Phones: code, status and actions fit without scrolling sideways;
+              the code's page has its link, scans and dates. */}
+          <TableHead className="hidden sm:table-cell">Short link</TableHead>
+          <TableHead className="hidden text-right sm:table-cell">
+            Scans
+          </TableHead>
+          <TableHead className="hidden sm:table-cell">
+            {trash ? "Deleted" : "Created"}
+          </TableHead>
           <TableHead>Status</TableHead>
           <TableHead>
             <span className="sr-only">Actions</span>
@@ -160,7 +166,7 @@ export function CodesTable({
                   />
                 </TableCell>
               )}
-              <TableCell className="max-w-[320px]">
+              <TableCell className="max-w-[260px] max-sm:max-w-[190px]">
                 <div className="flex min-w-0 items-start gap-2">
                   {!inTrash && <FavoriteButton code={code} />}
                   <div className="min-w-0 flex-1 space-y-1">
@@ -214,9 +220,9 @@ export function CodesTable({
                   </div>
                 </div>
               </TableCell>
-              <TableCell>
+              <TableCell className="hidden sm:table-cell">
                 <div className="flex items-center gap-1">
-                  <span className="text-muted-foreground max-w-[200px] truncate font-mono text-xs">
+                  <span className="text-muted-foreground max-w-[170px] truncate font-mono text-xs">
                     {displayUrl(code.shortLink)}
                   </span>
                   <CopyButton
@@ -225,7 +231,7 @@ export function CodesTable({
                   />
                 </div>
               </TableCell>
-              <TableCell>
+              <TableCell className="hidden sm:table-cell">
                 <div className="flex items-center justify-end gap-3">
                   <Sparkline values={sparklines[code.id] ?? []} />
                   <span className="min-w-10 text-right tabular-nums">
@@ -233,7 +239,7 @@ export function CodesTable({
                   </span>
                 </div>
               </TableCell>
-              <TableCell className="whitespace-nowrap">
+              <TableCell className="hidden whitespace-nowrap sm:table-cell">
                 {formatDate(inTrash ? code.deletedAt : code.createdAt)}
               </TableCell>
               <TableCell>
