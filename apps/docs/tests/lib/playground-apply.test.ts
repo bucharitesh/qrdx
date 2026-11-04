@@ -375,3 +375,90 @@ describe("once only", () => {
     expect(editor().history.length).toBe(historyLength);
   });
 });
+
+// ── The Art tab (hub phase 3) ───────────────────────────────────────────────
+
+const { useArtSessionStore, DEFAULT_AI_ART_DRAFT } = await import(
+  "@/store/art-session-store"
+);
+const { AI_ART_PRESETS } = await import("@/components/sections/ai-art/presets");
+
+/** A tiny sampled picture, as loadQRArtImage would return (1×1 RGBA). */
+const ART_IMAGE = { width: 1, height: 1, data: "AAAAAA==" };
+
+describe("the Art tab", () => {
+  beforeEach(() => {
+    useArtSessionStore.setState({
+      picked: null,
+      source: null,
+      draft: DEFAULT_AI_ART_DRAFT,
+    });
+  });
+
+  it("opens on Logo QR without touching a design that has no art", () => {
+    useQREditorStore.setState({ themeState: { styles: MY_STYLE } });
+    const outcome = apply("/playground?tab=art&art=logo");
+    expect(outcome.tab).toBe("art");
+    expect(outcome.applied).toEqual(["art"]);
+    expect(outcome.replaced).toBe(false);
+    expect(useArtSessionStore.getState().picked).toBe("logo");
+    expect(editor().themeState.styles).toEqual(MY_STYLE);
+    expect(editor().history).toHaveLength(0);
+  });
+
+  it("switches the design's art to the mode asked for, as one undo step", () => {
+    const logoArt = { mode: "logo" as const, image: ART_IMAGE, intensity: 0.6 };
+    const styles = { ...MY_STYLE, art: logoArt };
+    useQREditorStore.setState({ themeState: { styles } });
+    const outcome = apply("/playground?tab=art&art=image");
+    expect(editor().themeState.styles.art).toEqual({
+      ...logoArt,
+      mode: "halftone",
+    });
+    expect(outcome.replaced).toBe(true);
+    expect(outcome.message).toBe("Opened Image QR");
+    editor().undo();
+    expect(editor().themeState.styles).toEqual(styles);
+  });
+
+  it("ignores art=ai where AI art isn't set up", () => {
+    const outcome = apply("/playground?tab=art&art=ai&artStyle=zen-garden");
+    expect(outcome.applied).toEqual([]);
+    expect(outcome.tab).toBe("art");
+    expect(useArtSessionStore.getState().picked).toBeNull();
+    expect(useArtSessionStore.getState().draft).toEqual(DEFAULT_AI_ART_DRAFT);
+  });
+
+  it("opens AI art on a style preset, whose prompt comes from the preset", () => {
+    const preset = AI_ART_PRESETS.find(({ id }) => id === "zen-garden");
+    const outcome = apply(
+      "/playground?tab=art&art=ai&artStyle=zen-garden&prompt=ignored",
+      { aiArtAvailable: true },
+    );
+    expect(outcome.applied).toEqual(["art", "artStyle"]);
+    const { picked, draft } = useArtSessionStore.getState();
+    expect(picked).toBe("ai");
+    expect(draft.presetId).toBe("zen-garden");
+    expect(draft.prompt).toBe(preset?.prompt);
+    expect(draft.prompt).not.toContain("ignored");
+  });
+
+  it("leaves the form alone for an unknown style", () => {
+    const outcome = apply("/playground?tab=art&art=ai&artStyle=nope", {
+      aiArtAvailable: true,
+    });
+    expect(outcome.applied).toEqual(["art"]);
+    expect(useArtSessionStore.getState().draft.prompt).toBe("");
+  });
+
+  it("lands the old Design art link on the Art tab", () => {
+    expect(apply("/playground?tab=customisations&section=art").tab).toBe("art");
+    expect(usePlaygroundFocusStore.getState().section).toBeNull();
+  });
+
+  it("opens any Design section", () => {
+    const outcome = apply("/playground?section=error-correction");
+    expect(outcome.tab).toBe("customisations");
+    expect(usePlaygroundFocusStore.getState().section).toBe("error-correction");
+  });
+});

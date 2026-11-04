@@ -53,7 +53,9 @@ export function usePlaygroundParams({ themePath }: { themePath: boolean }): {
   settled: boolean;
 } {
   const { data: session, isPending: sessionPending } = authClient.useSession();
-  const aiAvailable = useAvailability().has("aiThemes");
+  const { has } = useAvailability();
+  const aiAvailable = has("aiThemes");
+  const aiArtAvailable = has("aiArt");
   const [hydrated, setHydrated] = useState(hasHydrated);
   // The address last handled, so each link applies once (React's dev mode
   // runs effects twice).
@@ -88,13 +90,14 @@ export function usePlaygroundParams({ themePath }: { themePath: boolean }): {
     if (handled.current === href) return;
     const params = parsePlaygroundParams(search, hash);
 
-    // A tab alias, or Generate where AI is off, is rewritten to the tab shown.
+    // A tab alias, or Generate where AI is off, is rewritten to the tab shown;
+    // so is a tab the link implies without naming it (section=art: Art).
     const rawTab =
       new URLSearchParams(hash.replace(/^#/, "")).get("tab") ??
       new URLSearchParams(search).get("tab");
     const shownTab =
       params.tab === "ai" && !aiAvailable ? "customisations" : params.tab;
-    const tabNeedsRewrite = rawTab !== null && rawTab !== (shownTab ?? null);
+    const tabNeedsRewrite = rawTab !== (shownTab ?? null);
 
     if (!(hasOneShotParams(params) || tabNeedsRewrite)) {
       handled.current = href;
@@ -112,6 +115,7 @@ export function usePlaygroundParams({ themePath }: { themePath: boolean }): {
       themePath,
       signedIn: Boolean(session?.user),
       aiAvailable,
+      aiArtAvailable,
       isBuiltInPreset: (id) => {
         const preset = presets.getPreset(id);
         return Boolean(preset) && preset?.source !== "SAVED";
@@ -156,6 +160,7 @@ export function usePlaygroundParams({ themePath }: { themePath: boolean }): {
     sessionPending,
     session,
     aiAvailable,
+    aiArtAvailable,
     themePath,
     searchKey,
     hashKey,

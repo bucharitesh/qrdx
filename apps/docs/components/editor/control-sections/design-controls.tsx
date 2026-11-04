@@ -2,11 +2,13 @@
 
 import { type ColorConfig, getColorString } from "qrdx";
 import * as React from "react";
-import ControlSection from "@/components/editor/control-section";
+import ControlSection, {
+  sectionAnchorId,
+} from "@/components/editor/control-section";
 import { GradientPicker } from "@/components/editor/gradient-picker";
 import { defaultThemeState } from "@/config/qr";
+import type { DesignSection } from "@/lib/playground-links";
 import type { QRStyle } from "@/types/theme";
-import { ArtControls } from "./art-controls";
 import { ColorPresets } from "./color-presets";
 import { FrameControls, frameName } from "./frame-controls";
 import { LogoControls } from "./logo-controls";
@@ -55,11 +57,21 @@ function Swatches({ colors }: { colors: (ColorConfig | undefined)[] }) {
 interface DesignControlsProps {
   styles: QRStyle;
   onChange: (styles: QRStyle) => void;
-  /** Open and scroll to a section (the old "Settings" tab maps to Logo) */
-  focus?: "logo";
+  /**
+   * Open and scroll to a section: a link's ?section=, or the old "Settings"
+   * tab (Logo). Vector art moved to the Art tab (components/editor/art).
+   */
+  focus?: DesignSection;
 }
 
-/** The Design tab: every style control, top to bottom, as one accordion. */
+/**
+ * The Design tab: every style control, top to bottom, as one accordion.
+ *
+ * Each section passes `section={id}` (its anchor, `section-<id>`) and
+ * `expanded={open(id)}`, so a link can open it. To add one: add its id to
+ * DESIGN_SECTIONS (lib/playground-links.ts), in this order, then a
+ * <ControlSection section="<id>" expanded={open("<id>")} …> below.
+ */
 export function DesignControls({
   styles,
   onChange,
@@ -74,11 +86,15 @@ export function DesignControls({
     onChange({ ...styles, [key]: value });
   };
 
+  /** Expanded on its own (Colors, Dots), or the section a link asked for. */
+  const open = (id: DesignSection, byDefault = false) =>
+    byDefault || focus === id;
+
   React.useEffect(() => {
-    if (focus !== "logo") return;
+    if (!focus) return;
     const frame = requestAnimationFrame(() => {
       document
-        .getElementById("section-logo")
+        .getElementById(sectionAnchorId(focus))
         ?.scrollIntoView({ block: "start" });
     });
     return () => cancelAnimationFrame(frame);
@@ -97,8 +113,9 @@ export function DesignControls({
   return (
     <div className="@container" onClickCapture={closeOtherSections}>
       <ControlSection
-        expanded
+        expanded={open("colors", true)}
         hint="colors"
+        section="colors"
         summary={
           <Swatches
             colors={[
@@ -145,8 +162,9 @@ export function DesignControls({
       </ControlSection>
 
       <ControlSection
-        expanded
+        expanded={open("dots", true)}
         hint="dots"
+        section="dots"
         summary={patternName(current.bodyPattern)}
         title="Dots"
       >
@@ -154,8 +172,10 @@ export function DesignControls({
       </ControlSection>
 
       <ControlSection
+        expanded={open("eyes")}
         hint="eyes"
         popover
+        section="eyes"
         summary={eyeSummary(
           current.cornerEyePattern,
           current.cornerEyeDotPattern,
@@ -165,8 +185,9 @@ export function DesignControls({
         <EyeControls />
       </ControlSection>
 
+      {/* Its own section, anchored as section-logo (logo-controls.tsx). */}
       <LogoControls
-        expanded={focus === "logo"}
+        expanded={open("logo")}
         onStyleChange={(next) =>
           onChange({
             ...styles,
@@ -177,13 +198,22 @@ export function DesignControls({
         style={current}
       />
 
-      <ControlSection hint="frame" popover summary={frameSummary} title="Frame">
+      <ControlSection
+        expanded={open("frame")}
+        hint="frame"
+        popover
+        section="frame"
+        summary={frameSummary}
+        title="Frame"
+      >
         <BorderControl />
         <FrameControls />
       </ControlSection>
 
       <ControlSection
+        expanded={open("padding")}
         hint="quiet-zone"
+        section="padding"
         summary={`${margin} ${margin === 1 ? "module" : "modules"}`}
         title="Padding"
       >
@@ -193,10 +223,10 @@ export function DesignControls({
         />
       </ControlSection>
 
-      <ArtControls onChange={onChange} styles={styles} />
-
       <ControlSection
+        expanded={open("error-correction")}
         hint="error-correction"
+        section="error-correction"
         summary={level ? `${level.name} · ${level.recovery}` : undefined}
         title="Error correction"
       >

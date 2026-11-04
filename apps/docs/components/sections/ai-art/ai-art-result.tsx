@@ -17,6 +17,7 @@ import {
 } from "iconsax-reactjs";
 import { type ReactNode, useEffect, useState } from "react";
 import { track } from "@/lib/analytics";
+import type { AIArtRun } from "./ai-art-run";
 import { type AIArtVariant, ART_PRINT_SIZE, ART_QR_VISIBILITY } from "./config";
 import {
   checkScannable,
@@ -28,16 +29,7 @@ import {
   saveBlob,
 } from "./image-utils";
 
-/** The images of one run (one request per variation). */
-export interface AIArtRun {
-  variants: AIArtVariant[];
-  /** Variations that failed; no credit was used for them */
-  failed: number;
-  /** Exactly what the QR code encodes */
-  text: string;
-  visibility: number;
-  creativity: number;
-}
+export type { AIArtRun } from "./ai-art-run";
 
 interface AIArtResultPanelProps {
   result: AIArtRun | null;
@@ -250,7 +242,7 @@ export function AIArtResultPanel({
   );
 }
 
-const STATUS_COLORS: Record<ScanStatus, string> = {
+export const STATUS_COLORS: Record<ScanStatus, string> = {
   checking: "bg-muted-foreground/60",
   scannable: "bg-emerald-500",
   mismatch: "bg-red-500",
@@ -258,7 +250,7 @@ const STATUS_COLORS: Record<ScanStatus, string> = {
   unverified: "bg-muted-foreground",
 };
 
-function StatusDot({ status }: { status: ScanStatus }) {
+export function StatusDot({ status }: { status: ScanStatus }) {
   return (
     <span
       aria-hidden
@@ -271,7 +263,7 @@ function StatusDot({ status }: { status: ScanStatus }) {
   );
 }
 
-const SCAN_STATUS: Record<
+export const SCAN_STATUS: Record<
   ScanStatus,
   { icon: ReactNode; title: string; description: string }
 > = {
@@ -308,7 +300,7 @@ const SCAN_STATUS: Record<
   },
 };
 
-function ScanStatusCard({
+export function ScanStatusCard({
   status,
   score,
   isBest,
