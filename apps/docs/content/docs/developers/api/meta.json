@@ -24,6 +24,9 @@
     "---Themes---",
     "list-themes",
     "get-theme",
+    "---Community---",
+    "list-community-items",
+    "get-community-item",
     "---Profile---",
     "get-profile"
   ]

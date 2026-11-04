@@ -297,7 +297,7 @@ export function buildLlmsTxt(input: LlmsTxtInput): string {
     {
       title: "QR code image API",
       url: "/docs/developers/image-api",
-      description: `\`GET ${api}/qr?data=…\` returns an SVG, PNG or EPS QR code; no key, solid colors only`,
+      description: `\`GET ${api}/qr?data=…\` returns an SVG, PNG or EPS QR code; no key; gradients, frames, borders and logo icons through \`style\` (the editor's style JSON)`,
     },
     {
       title: "Example image API URL",
