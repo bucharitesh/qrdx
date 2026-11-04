@@ -585,7 +585,8 @@ namespace qrcodegen {
     // Returns the number of data bits that can be stored in a QR Code of the given version number, after
     // all function modules are excluded. This includes remainder bits, so it might not be a multiple of 8.
     // The result is in the range [208, 29648]. This could be implemented as a 40-entry lookup table.
-    private static getNumRawDataModules(ver: int): int {
+    // Modified: public so codeword-map.ts (and its tests) can read the layout
+    public static getNumRawDataModules(ver: int): int {
       if (ver < QrCode.MIN_VERSION || ver > QrCode.MAX_VERSION)
         throw new RangeError("Version number out of range");
       let result: int = (16 * ver + 128) * ver + 64;
@@ -611,7 +612,8 @@ namespace qrcodegen {
 
     // Returns a Reed-Solomon ECC generator polynomial for the given degree. This could be
     // implemented as a lookup table over all possible parameter values, instead of as an algorithm.
-    private static reedSolomonComputeDivisor(degree: int): Array<byte> {
+    // Modified: public so codeword-map.ts (and its tests) can read the layout
+    public static reedSolomonComputeDivisor(degree: int): Array<byte> {
       if (degree < 1 || degree > 255)
         throw new RangeError("Degree out of range");
       // Polynomial coefficients are stored from highest to lowest power, excluding the leading term which is always 1.
@@ -636,7 +638,8 @@ namespace qrcodegen {
     }
 
     // Returns the Reed-Solomon error correction codeword for the given data and divisor polynomials.
-    private static reedSolomonComputeRemainder(
+    // Modified: public so codeword-map.ts (and its tests) can read the layout
+    public static reedSolomonComputeRemainder(
       data: Readonly<Array<byte>>,
       divisor: Readonly<Array<byte>>,
     ): Array<byte> {
@@ -723,7 +726,8 @@ namespace qrcodegen {
     private static readonly PENALTY_N3: int = 40;
     private static readonly PENALTY_N4: int = 10;
 
-    private static readonly ECC_CODEWORDS_PER_BLOCK: Array<Array<int>> = [
+    // Modified: public so codeword-map.ts (and its tests) can read the layout
+    public static readonly ECC_CODEWORDS_PER_BLOCK: Array<Array<int>> = [
       // Version: (note that index 0 is for padding, and is set to an illegal value)
       //0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40    Error correction level
       [
@@ -748,7 +752,8 @@ namespace qrcodegen {
       ], // High
     ];
 
-    private static readonly NUM_ERROR_CORRECTION_BLOCKS: Array<Array<int>> = [
+    // Modified: public so codeword-map.ts (and its tests) can read the layout
+    public static readonly NUM_ERROR_CORRECTION_BLOCKS: Array<Array<int>> = [
       // Version: (note that index 0 is for padding, and is set to an illegal value)
       //0, 1, 2, 3, 4, 5, 6, 7, 8, 9,10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40    Error correction level
       [
