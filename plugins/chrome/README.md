@@ -8,7 +8,13 @@ A Manifest V3 extension that shows a styled QR code for the current tab, any lin
 - Remembers the last style and size (`chrome.storage.local`), follows the system light or dark theme, keyboard and screen-reader friendly.
 - Warns when content is too long for a QR code, when colors have low contrast, and when a code is light on dark (phone cameras read these; some older scanner apps don't).
 
+## Install
+
+Get it from the [Chrome Web Store](https://chromewebstore.google.com/detail/bpepiomjdoicpmbihlohodghdglkhicc): click **Add to Chrome**, then pin QRdx from the puzzle-piece menu. It's free and needs no account.
+
 ## Build and load unpacked
+
+To run your own build, for development or to try changes before they reach the store:
 
 ```bash
 pnpm --filter @qrdx/chrome-extension build   # writes plugins/chrome/dist
