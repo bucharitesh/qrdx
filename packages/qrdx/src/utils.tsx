@@ -1227,17 +1227,9 @@ export function QRCodeSVG(props: QRPropsSVG) {
           cy={fmt(size / 2)}
           {...bgFillValue}
           r={fmt(size / 2)}
-          data-qrdx-bg=""
         />
       ) : (
-        <rect
-          {...bgFillValue}
-          height={size}
-          width={size}
-          x={0}
-          y={0}
-          data-qrdx-bg=""
-        />
+        <rect {...bgFillValue} height={size} width={size} x={0} y={0} />
       )}
 
       {/* Data module circles */}
@@ -1333,7 +1325,6 @@ export function QRCodeSVG(props: QRPropsSVG) {
             cy={templateSize / 2}
             {...templateBgFillValue}
             r={templateSize / 2}
-            data-qrdx-bg=""
           />
         ) : (
           <rect
@@ -1342,7 +1333,6 @@ export function QRCodeSVG(props: QRPropsSVG) {
             width={templateSize}
             x={0}
             y={0}
-            data-qrdx-bg=""
           />
         )}
 
