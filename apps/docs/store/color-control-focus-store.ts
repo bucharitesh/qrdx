@@ -1,8 +1,15 @@
+import type { EyePosition } from "qrdx/types";
 import { create } from "zustand";
 
 import { useControlsTabFromUrl } from "@/lib/hooks/use-controls-tab-from-url";
 
-export type FocusColorId = "bgColor" | "fgColor" | "eyeColor" | "dotColor";
+export type FocusColorId =
+  | "bgColor"
+  | "fgColor"
+  | "eyeColor"
+  | "dotColor"
+  // Per-eye colors (the Eye colors section)
+  | `eyeColors.${EyePosition}.${"outer" | "inner"}`;
 
 interface ColorRefEntry {
   ref: HTMLElement | null;

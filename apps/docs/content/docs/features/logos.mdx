@@ -22,6 +22,27 @@ import { QRCode } from 'qrdx';
 
 Always use higher error correction (`Q` or `H`) with logos.
 
+## Size, clear space and position
+
+`logoOptions` lays the logo out in units that don't depend on the render size, on `QRCode` and in `getQRData`:
+
+- `size`: the logo's width as a share of the code's width, `0.1` to `0.3` (default `0.25`). In our decode tests even level H stops reading above 25%.
+- `padding`: clear space around the logo, `0` to `2` modules.
+- `x` and `y`: where the logo's center sits across the code, `0` to `1` (default `0.5`, the middle). The logo always stays inside the code.
+
+```tsx
+<QRCode
+  value="https://example.com"
+  logo="https://example.com/logo.png"
+  level="H"
+  logoOptions={{ size: 0.2, padding: 1, x: 0.6, y: 0.55 }}
+/>
+```
+
+Keep a moved logo off the three corner eyes and the small square near the bottom-right corner (the alignment pattern decoders use to correct perspective). The scan score fails a logo that covers one of them.
+
+In the playground, **Design → Logo options** has the same controls, plus **Raise error correction for big logos** (`autoLevel`).
+
 ## Advanced Control
 
 ```tsx
