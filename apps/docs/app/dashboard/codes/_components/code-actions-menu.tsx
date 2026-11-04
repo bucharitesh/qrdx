@@ -389,6 +389,12 @@ export function CodeActionsMenu({
             <Copy /> Duplicate
             {keyHint("duplicate")}
           </DropdownMenuItem>
+          {/* ── Moving and sharing a code ─────────────────────────────────
+              Other lanes add their items here, in this one menu (the cards,
+              the rows and the code's own page all use it): "Move to
+              workspace…" (feat/workspace-roles-join) and "Share analytics"
+              (feat/code-features). Use an icon not used elsewhere in this
+              menu, and a key from row-shortcuts.ts only if it's free. */}
           <DropdownMenuSeparator />
           {listItem && (
             <DropdownMenuItem onSelect={togglePaused}>

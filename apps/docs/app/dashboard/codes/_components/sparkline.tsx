@@ -1,8 +1,13 @@
-const WIDTH = 64;
-const HEIGHT = 20;
-
 /** Inline SVG trend line; renders on the server, no chart library needed. */
-export function Sparkline({ values }: { values: number[] }) {
+export function Sparkline({
+  values,
+  width: WIDTH = 64,
+  height: HEIGHT = 20,
+}: {
+  values: number[];
+  width?: number;
+  height?: number;
+}) {
   const max = Math.max(1, ...values);
   const step = values.length > 1 ? WIDTH / (values.length - 1) : WIDTH;
   const points = values

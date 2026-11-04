@@ -1,6 +1,5 @@
 "use client";
 
-import { Star } from "@repo/design-system/components/icons";
 import { Checkbox } from "@repo/design-system/components/ui/checkbox";
 import {
   Table,
@@ -10,48 +9,22 @@ import {
   TableHeader,
   TableRow,
 } from "@repo/design-system/components/ui/table";
-import { cn } from "@repo/design-system/lib/utils";
 import { Folder2 as Folder, Notepad2 as NotebookPen } from "iconsax-reactjs";
 import Link from "next/link";
 import { useState } from "react";
-import { setQrCodesFavorite } from "@/actions/bulk-codes";
+import type { CodeProperty } from "@/app/dashboard/codes/_lib/display";
+import { CODE_PROPERTIES } from "@/app/dashboard/codes/_lib/display";
 import type { TagRow } from "@/app/dashboard/codes/_lib/organize";
 import type { FolderRow } from "@/app/dashboard/codes/_lib/organize-shared";
 import type { QrCodeListItem } from "@/app/dashboard/codes/_lib/qr-codes";
 import { CopyButton } from "@/components/copy-button";
 import { useWorkspaceHref } from "@/components/workspace-provider";
 import { CodeActionsMenu } from "./code-actions-menu";
-import { startCodesDrag } from "./drag";
+import { DestinationIcon, FavoriteButton } from "./codes-cards";
 import { displayUrl, formatDate, formatNumber } from "./format";
 import { Sparkline } from "./sparkline";
 import { StatusBadge } from "./status-badge";
 import { TagChip } from "./tag-chip";
-import { useOrganizeAction } from "./use-organize-action";
-
-function FavoriteButton({ code }: { code: QrCodeListItem }) {
-  const { run, isPending } = useOrganizeAction();
-  const label = code.isFavorite ? "Remove from favorites" : "Add to favorites";
-  return (
-    <button
-      aria-label={label}
-      aria-pressed={code.isFavorite}
-      className="text-muted-foreground hover:text-foreground focus-visible:ring-ring rounded-sm p-0.5 outline-none focus-visible:ring-2 disabled:opacity-50"
-      disabled={isPending}
-      onClick={() =>
-        run(() =>
-          setQrCodesFavorite({ ids: [code.id], favorite: !code.isFavorite }),
-        )
-      }
-      title={label}
-      type="button"
-    >
-      <Star
-        className={cn("size-4", code.isFavorite && "text-amber-400")}
-        variant={code.isFavorite ? "Bold" : "Linear"}
-      />
-    </button>
-  );
-}
 
 export function CodesTable({
   codes,
@@ -62,6 +35,7 @@ export function CodesTable({
   tags,
   showFolder = false,
   keyboardShortcuts = false,
+  properties = [...CODE_PROPERTIES],
 }: {
   codes: QrCodeListItem[];
   /** Daily scans for the last 7 days, by code id */
@@ -75,7 +49,10 @@ export function CodesTable({
   showFolder?: boolean;
   /** Row keys (see _lib/row-shortcuts.ts) for the row under the pointer or focus */
   keyboardShortcuts?: boolean;
+  /** Columns shown (the Display menu) */
+  properties?: CodeProperty[];
 }) {
+  const shows = (property: CodeProperty) => properties.includes(property);
   const inWorkspace = useWorkspaceHref();
   const [activeRow, setActiveRow] = useState<string | null>(null);
   const selectable = Boolean(selected && onSelect);
@@ -111,13 +88,19 @@ export function CodesTable({
           <TableHead>Code</TableHead>
           {/* Phones: code, status and actions fit without scrolling sideways;
               the code's page has its link, scans and dates. */}
-          <TableHead className="hidden sm:table-cell">Short link</TableHead>
-          <TableHead className="hidden text-right sm:table-cell">
-            Scans
-          </TableHead>
-          <TableHead className="hidden sm:table-cell">
-            {trash ? "Deleted" : "Created"}
-          </TableHead>
+          {shows("shortLink") && (
+            <TableHead className="hidden sm:table-cell">Short link</TableHead>
+          )}
+          {shows("scans") && (
+            <TableHead className="hidden text-right sm:table-cell">
+              Scans <span className="font-normal">· 7 days</span>
+            </TableHead>
+          )}
+          {shows("created") && (
+            <TableHead className="hidden sm:table-cell">
+              {trash ? "Deleted" : "Created"}
+            </TableHead>
+          )}
           <TableHead>Status</TableHead>
           <TableHead>
             <span className="sr-only">Actions</span>
@@ -134,9 +117,7 @@ export function CodesTable({
           const title = code.title || displayUrl(code.destinationUrl);
           return (
             <TableRow
-              className={cn(!inTrash && selectable && "cursor-grab")}
               data-state={isSelected ? "selected" : undefined}
-              draggable={!inTrash && selectable}
               key={code.id}
               onBlur={(event) => {
                 if (!event.currentTarget.contains(event.relatedTarget)) {
@@ -147,12 +128,6 @@ export function CodesTable({
               onMouseEnter={() => setActiveRow(code.id)}
               onMouseLeave={() =>
                 setActiveRow((row) => (row === code.id ? null : row))
-              }
-              onDragStart={(event) =>
-                startCodesDrag(
-                  event,
-                  isSelected && selected ? [...selected] : [code.id],
-                )
               }
             >
               {selectable && (
@@ -167,28 +142,36 @@ export function CodesTable({
                 </TableCell>
               )}
               <TableCell className="max-w-[260px] max-sm:max-w-[190px]">
-                <div className="flex min-w-0 items-start gap-2">
-                  {!inTrash && <FavoriteButton code={code} />}
-                  <div className="min-w-0 flex-1 space-y-1">
+                <div className="flex min-w-0 items-center gap-2.5">
+                  <DestinationIcon className="size-7" code={code} />
+                  <div className="min-w-0 flex-1 space-y-0.5">
                     {inTrash ? (
                       <span className="block truncate font-medium">
                         {title}
                       </span>
                     ) : (
-                      <Link
-                        className="block min-w-0 hover:underline"
-                        draggable={false}
-                        href={href}
-                      >
-                        <span className="block truncate font-medium">
-                          {title}
-                        </span>
-                      </Link>
+                      <div className="flex min-w-0 items-center gap-1">
+                        <Link
+                          className="block min-w-0 hover:underline"
+                          href={href}
+                        >
+                          <span className="block truncate font-medium">
+                            {title}
+                          </span>
+                        </Link>
+                        <FavoriteButton code={code} />
+                      </div>
                     )}
-                    <span className="text-muted-foreground block truncate text-xs">
-                      {displayUrl(code.destinationUrl)}
-                    </span>
-                    {(folderName || code.tags.length > 0 || code.notes) && (
+                    {shows("destination") && (
+                      <span className="text-muted-foreground block truncate text-xs">
+                        {code.kind === "page"
+                          ? "Hosted page"
+                          : displayUrl(code.destinationUrl)}
+                      </span>
+                    )}
+                    {(folderName ||
+                      (shows("tags") && code.tags.length > 0) ||
+                      code.notes) && (
                       <div className="flex flex-wrap items-center gap-1">
                         {folderName && (
                           <span className="text-muted-foreground inline-flex max-w-40 items-center gap-1 text-[11px]">
@@ -196,7 +179,7 @@ export function CodesTable({
                             <span className="truncate">{folderName}</span>
                           </span>
                         )}
-                        {code.tags.map((ref) => (
+                        {(shows("tags") ? code.tags : []).map((ref) => (
                           <TagChip
                             color={ref.color}
                             key={ref.id}
@@ -220,28 +203,44 @@ export function CodesTable({
                   </div>
                 </div>
               </TableCell>
-              <TableCell className="hidden sm:table-cell">
-                <div className="flex items-center gap-1">
-                  <span className="text-muted-foreground max-w-[170px] truncate font-mono text-xs">
-                    {displayUrl(code.shortLink)}
-                  </span>
-                  <CopyButton
-                    successMessage={{ title: "Short link copied" }}
-                    textToCopy={code.shortLink}
-                  />
-                </div>
-              </TableCell>
-              <TableCell className="hidden sm:table-cell">
-                <div className="flex items-center justify-end gap-3">
-                  <Sparkline values={sparklines[code.id] ?? []} />
-                  <span className="min-w-10 text-right tabular-nums">
-                    {formatNumber(code.scanCount)}
-                  </span>
-                </div>
-              </TableCell>
-              <TableCell className="hidden whitespace-nowrap sm:table-cell">
-                {formatDate(inTrash ? code.deletedAt : code.createdAt)}
-              </TableCell>
+              {shows("shortLink") && (
+                <TableCell className="hidden sm:table-cell">
+                  <div className="flex items-center gap-1">
+                    <span className="text-muted-foreground max-w-[170px] truncate font-mono text-xs">
+                      {displayUrl(code.shortLink)}
+                    </span>
+                    <CopyButton
+                      successMessage={{ title: "Short link copied" }}
+                      textToCopy={code.shortLink}
+                    />
+                  </div>
+                </TableCell>
+              )}
+              {shows("scans") && (
+                <TableCell className="hidden sm:table-cell">
+                  {/* The trend only when there were scans: a flat line says nothing. */}
+                  <div
+                    className="flex items-center justify-end gap-3"
+                    title="All-time scans, with the last 7 days"
+                  >
+                    {(sparklines[code.id] ?? []).some((value) => value > 0) && (
+                      <Sparkline
+                        height={16}
+                        values={sparklines[code.id] ?? []}
+                        width={48}
+                      />
+                    )}
+                    <span className="min-w-10 text-right tabular-nums">
+                      {formatNumber(code.scanCount)}
+                    </span>
+                  </div>
+                </TableCell>
+              )}
+              {shows("created") && (
+                <TableCell className="hidden whitespace-nowrap sm:table-cell">
+                  {formatDate(inTrash ? code.deletedAt : code.createdAt)}
+                </TableCell>
+              )}
               <TableCell>
                 <StatusBadge
                   paused={Boolean(code.pausedAt)}
