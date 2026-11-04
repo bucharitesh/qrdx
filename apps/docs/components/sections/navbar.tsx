@@ -20,7 +20,9 @@ import { QrdxLogo } from "../qrdx-logo";
 // this bar is on every marketing page, so it stays light.
 
 const INITIAL_WIDTH = "70rem";
-const MAX_WIDTH = "60rem";
+// Wide enough for the full row (signed in, with the GitHub pill) with real
+// gaps; narrower and the links run into each other.
+const SCROLLED_WIDTH = "66rem";
 
 /** The drawer's exit (and the overlay's) before it unmounts. */
 const DRAWER_EXIT_MS = 150;
@@ -78,31 +80,33 @@ export function Navbar() {
     setDrawer((prev) => (prev === "open" ? "closing" : "open"));
 
   return (
+    // At the top the bar sits in its own band, ruled off like the page's other
+    // grid lines, so a hero's backdrop starts below it instead of under the
+    // links. Scrolled, it floats as a pill. The band's height never changes
+    // (the pill moves with the sticky offset), so scrolling shifts no content.
+    // No transform here: it would trap the drawer's fixed overlay.
     <header
       className={cn(
-        "sticky z-20 mx-4 flex justify-center transition-all duration-300 md:mx-0",
-        hasScrolled ? "top-6" : "top-4 mx-0",
+        "sticky z-20 flex justify-center border-b py-2 transition-[border-color,top,margin] duration-300 motion-reduce:transition-none",
+        hasScrolled
+          ? "top-2 mx-4 border-transparent md:mx-0"
+          : "top-0 border-border",
       )}
     >
       <div
-        className="transition-[width] duration-300 ease-[cubic-bezier(.25,.1,.25,1)] motion-reduce:transition-none"
-        style={{ width: hasScrolled ? MAX_WIDTH : INITIAL_WIDTH }}
+        className="max-w-full transition-[width] duration-300 ease-[cubic-bezier(.25,.1,.25,1)] motion-reduce:transition-none"
+        style={{ width: hasScrolled ? SCROLLED_WIDTH : INITIAL_WIDTH }}
       >
         <div
           className={cn(
-            "mx-auto max-w-7xl rounded-2xl transition-all duration-300  xl:px-0",
+            "mx-auto rounded-2xl border transition-[background-color,border-color,box-shadow,padding] duration-300 motion-reduce:transition-none",
             hasScrolled
-              ? cn(
-                  "px-2 border backdrop-blur-lg",
-                  bar.bar,
-                  bar.surface,
-                  bar.floating,
-                )
-              : "shadow-none px-7",
+              ? cn("px-1 backdrop-blur-lg", bar.bar, bar.surface, bar.floating)
+              : "border-transparent px-3 lg:px-7 xl:px-0",
           )}
         >
-          <div className="flex h-[56px] items-center justify-between p-4">
-            <Link href="/" className="flex items-center gap-2">
+          <div className="flex h-14 items-center justify-between gap-6 px-4">
+            <Link href="/" className="flex shrink-0 items-center gap-2">
               <QrdxLogo className="size-5 block fill-secondary-foreground lg:hidden" />
               <QrdxLogoAnimation size={30} className="hidden lg:block" />
               <p className="text-lg font-semibold text-secondary-foreground">
@@ -113,7 +117,8 @@ export function Navbar() {
             <HeaderNav />
 
             <div className="flex flex-row items-center gap-3 lg:gap-4 shrink-0">
-              <div className="hidden items-center gap-1 sm:flex">
+              {/* Off between lg and xl, where the links and buttons fill the bar. */}
+              <div className="hidden items-center sm:flex lg:hidden xl:flex">
                 <GithubStars />
               </div>
               <HeaderAccountLink />
