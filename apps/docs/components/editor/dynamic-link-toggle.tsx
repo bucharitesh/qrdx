@@ -8,7 +8,7 @@ import {
   ToggleGroup,
   ToggleGroupItem,
 } from "@repo/design-system/components/ui/toggle-group";
-import { ArrowRight, Copy, Flash } from "iconsax-reactjs";
+import { ArrowRight, Copy, Flash, Setting4 } from "iconsax-reactjs";
 import Link from "next/link";
 import {
   useCallback,
@@ -25,11 +25,15 @@ import {
   type QrCodeActionResult,
   updateQrCode,
 } from "@/actions/qr-codes";
+import {
+  currentBuilderRequest,
+  openPlaygroundBuilder,
+} from "@/components/code-builder/in-place";
 import { emitSound } from "@/components/editor/sound";
 import { InfoHint } from "@/components/help/info-hint";
-import { useWorkspaceHref } from "@/components/workspace-provider";
 import { track } from "@/lib/analytics";
 import { usePostLoginAction } from "@/lib/hooks/use-post-login-action";
+import { dashboardEntry } from "@/lib/workspace-paths";
 import { useAuthStore } from "@/store/auth-store";
 import { useQREditorStore } from "@/store/editor-store";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
@@ -135,6 +139,66 @@ async function safely<T>(
   }
 }
 
+export type MakeDynamicOutcome =
+  | { kind: "linked"; code: LinkedDynamicCode; trimmed: boolean }
+  | { kind: "limit"; message: string }
+  | { kind: "signin" }
+  | { kind: "error"; message: string };
+
+/**
+ * The one-click "Dynamic": saves a dynamic code for the address in this
+ * design. `create` is the createQrCode server action (a fake in tests).
+ */
+export async function makeDynamic(
+  input: { destination: string; styles: ThemeStyles; userId: string },
+  create: typeof createQrCode = createQrCode,
+): Promise<MakeDynamicOutcome> {
+  const { style, trimmed } = styleForCode(input.styles);
+  const result = await safely(() =>
+    create({ destinationUrl: input.destination, style }),
+  );
+  if (!result.success) {
+    if (result.error.code === "LIMIT_REACHED") {
+      return { kind: "limit", message: result.error.message };
+    }
+    if (result.error.code === "UNAUTHORIZED") return { kind: "signin" };
+    return { kind: "error", message: result.error.message };
+  }
+  return {
+    kind: "linked",
+    trimmed,
+    code: {
+      id: result.data.id,
+      shortLink: result.data.shortLink,
+      destinationUrl: result.data.destinationUrl,
+      userId: input.userId,
+    },
+  };
+}
+
+/** Shown when the plan's dynamic codes are used up. */
+export function DynamicLimitCard({
+  message,
+  onUpgrade,
+}: {
+  message: string;
+  onUpgrade: () => void;
+}) {
+  return (
+    <div className="bg-muted/50 space-y-2 rounded-lg p-3 text-xs">
+      <p>{message}</p>
+      <div className="flex flex-wrap gap-2">
+        <Button onClick={onUpgrade} size="sm">
+          Upgrade to Pro
+        </Button>
+        <Button asChild size="sm" variant="outline">
+          <Link href={dashboardEntry("codes")}>Manage codes</Link>
+        </Button>
+      </div>
+    </div>
+  );
+}
+
 const choiceItemClass =
   "h-auto flex-col items-start gap-0.5 rounded-lg px-3 py-2 text-left whitespace-normal data-[state=on]:border-foreground/40 data-[state=on]:bg-accent/60";
 
@@ -143,10 +207,11 @@ const choiceItemClass =
  * address itself; Dynamic saves a dynamic code and encodes its short link.
  * Signed out, Dynamic asks for sign-in and picks up again afterwards (the
  * "MAKE_DYNAMIC" post-login action, see dynamic-resume.ts), with the same
- * design and content, which the editor store keeps.
+ * design and content, which the editor store keeps. Signed in, "Link
+ * options…" opens the code builder over the editor for the domain,
+ * back-half, folder and tags (creating the code, or editing the linked one).
  */
 export function DynamicLinkToggle() {
-  const inWorkspace = useWorkspaceHref();
   const { data: session, isPending: isSessionPending } =
     authClient.useSession();
   const userId = session?.user?.id ?? null;
@@ -213,44 +278,46 @@ export function DynamicLinkToggle() {
     }
 
     setLimitMessage(null);
-    const { style, trimmed } = styleForCode(
-      useQREditorStore.getState().themeState.styles,
-    );
-
     startTransition(async () => {
-      const result = await safely(() =>
-        createQrCode({ destinationUrl: destination, style }),
-      );
-      if (!result.success) {
-        if (result.error.code === "LIMIT_REACHED") {
-          setLimitMessage(result.error.message);
-        } else if (result.error.code === "UNAUTHORIZED") {
-          openAuthDialog(
-            "signin",
-            "MAKE_DYNAMIC",
-            makeDynamicIntent(destination),
-          );
-        } else {
-          toast.error(result.error.message);
-        }
+      const outcome = await makeDynamic({
+        destination,
+        styles: useQREditorStore.getState().themeState.styles,
+        userId,
+      });
+      if (outcome.kind === "limit") {
+        setLimitMessage(outcome.message);
+        return;
+      }
+      if (outcome.kind === "signin") {
+        openAuthDialog(
+          "signin",
+          "MAKE_DYNAMIC",
+          makeDynamicIntent(destination),
+        );
+        return;
+      }
+      if (outcome.kind === "error") {
+        toast.error(outcome.message);
         return;
       }
 
-      link({
-        id: result.data.id,
-        shortLink: result.data.shortLink,
-        destinationUrl: result.data.destinationUrl,
-        userId,
-      });
-      setValue(result.data.shortLink);
+      link(outcome.code);
+      setValue(outcome.code.shortLink);
       emitSound("success");
       track("dynamic_code_created", { source: "playground" });
       toast.success("Your QR code is now dynamic", {
-        description: trimmed
+        description: outcome.trimmed
           ? "Change where it points at any time. Your logo was too large to save with the code."
           : "Change where it points at any time from your dashboard.",
       });
     });
+  };
+
+  // The builder over the editor: domain, back-half, folder, tags, routing.
+  const openLinkOptions = () => {
+    const next = currentBuilderRequest(userId);
+    if (next.ok) openPlaygroundBuilder(next.request);
+    else toast(next.reason);
   };
 
   // Back from sign-in with a pending "Dynamic" pick: run it once the session
@@ -386,17 +453,20 @@ export function DynamicLinkToggle() {
       </div>
 
       {limitMessage && !linked && (
-        <div className="bg-muted/50 space-y-2 rounded-lg p-3 text-xs">
-          <p>{limitMessage}</p>
-          <div className="flex flex-wrap gap-2">
-            <Button onClick={openGetProDialog} size="sm">
-              Upgrade to Pro
-            </Button>
-            <Button asChild size="sm" variant="outline">
-              <Link href={inWorkspace("/codes")}>Manage codes</Link>
-            </Button>
-          </div>
-        </div>
+        <DynamicLimitCard message={limitMessage} onUpgrade={openGetProDialog} />
+      )}
+
+      {userId && !linked && (
+        <Button
+          className="text-muted-foreground hover:text-foreground -ml-2 h-7 px-2 text-xs"
+          disabled={isPending}
+          onClick={openLinkOptions}
+          size="sm"
+          variant="ghost"
+        >
+          <Setting4 className="size-3.5" />
+          Link options…
+        </Button>
       )}
 
       {linked && (
@@ -441,20 +511,29 @@ export function DynamicLinkToggle() {
             </div>
           )}
 
-          <div className="flex flex-wrap items-center gap-2">
-            <Button
-              disabled={isPending}
-              onClick={saveDesign}
-              size="sm"
-              variant="outline"
-            >
-              {designSaved ? <Tick /> : isPending ? <Spinner /> : null}
-              {designSaved ? "Design saved" : "Save design to code"}
-            </Button>
-            <Button asChild size="sm" variant="ghost">
-              <Link
-                href={inWorkspace(`/codes/${encodeURIComponent(linked.id)}`)}
+          <div className="space-y-1.5">
+            <div className="grid grid-cols-2 gap-2">
+              <Button
+                disabled={isPending}
+                onClick={saveDesign}
+                size="sm"
+                variant="outline"
               >
+                {designSaved ? <Tick /> : isPending ? <Spinner /> : null}
+                {designSaved ? "Design saved" : "Save design to code"}
+              </Button>
+              <Button
+                disabled={isPending}
+                onClick={openLinkOptions}
+                size="sm"
+                variant="outline"
+              >
+                <Setting4 />
+                Link options…
+              </Button>
+            </div>
+            <Button asChild className="-ml-2.5" size="sm" variant="ghost">
+              <Link href={dashboardEntry(`codes/${linked.id}`)}>
                 Scans & settings
                 <ArrowRight />
               </Link>

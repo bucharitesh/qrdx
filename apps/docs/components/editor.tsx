@@ -15,6 +15,7 @@ import { useMounted } from "@/lib/hooks/use-mounted";
 import { usePlaygroundParams } from "@/lib/hooks/use-playground-params";
 import { useQREditorStore } from "@/store/editor-store";
 import type { Theme, ThemeStyles } from "@/types/theme";
+import { PlaygroundCodeBuilder } from "./code-builder/playground-host";
 import { ActionBar, MobileActionBar } from "./editor/action-bar";
 import { AIWorkingGlow } from "./editor/ai/ai-working-glow";
 import { CommunitySheet } from "./editor/community-sheet";
@@ -75,13 +76,15 @@ function EditorShell() {
 
 /**
  * Surfaces over the editor that open from several places (their stores):
- * the photo check and the community sheet.
+ * the photo check, the community sheet, and the code builder with the
+ * hosted page gallery (loaded on first use, see PlaygroundCodeBuilder).
  */
 function EditorOverlays() {
   return (
     <>
       <PhotoScanDialog />
       <CommunitySheet />
+      <PlaygroundCodeBuilder />
     </>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { authClient } from "@repo/auth/client";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Kbd } from "@repo/design-system/components/ui/kbd";
@@ -17,17 +18,23 @@ import {
   type Icon,
   SearchNormal1,
 } from "iconsax-reactjs";
-import { useRouter } from "next/navigation";
 import * as React from "react";
+import { useAvailability } from "@/components/availability-provider";
+import {
+  currentPageGalleryRequest,
+  openPlaygroundBuilder,
+} from "@/components/code-builder/in-place";
+import { openCodeBuilderIntent } from "@/components/code-builder/playground-request";
 import {
   getTypeIcon,
   TypeIconTile,
 } from "@/components/editor/content-type-icons";
 import { DialogCloseButton } from "@/components/editor/dialog-close-button";
 import { InfoHint } from "@/components/help/info-hint";
-import { useWorkspaceHref } from "@/components/workspace-provider";
+import { offeredPageTypes } from "@/lib/landing/file-page-types";
 import type { BlockIcon } from "@/lib/landing/registry";
 import { soundEvent } from "@/lib/sound/emit";
+import { useAuthStore } from "@/store/auth-store";
 import { useQREditorStore } from "@/store/editor-store";
 import {
   CONTENT_CATEGORIES,
@@ -180,8 +187,11 @@ function rememberRecent(type: ContentType) {
 
 type TemplatesModule = typeof import("@/lib/landing/templates");
 
-/** Hosted page types, loaded only while the picker is open. */
-function usePageItems(open: boolean): PageItem[] | null {
+/**
+ * Hosted page types, loaded only while the picker is open. Types built on
+ * uploads are left out where file storage is off.
+ */
+function usePageItems(open: boolean, fileStorage: boolean): PageItem[] | null {
   const [items, setItems] = React.useState<PageItem[] | null>(null);
   React.useEffect(() => {
     if (!open || items) return;
@@ -190,15 +200,17 @@ function usePageItems(open: boolean): PageItem[] | null {
       .then((mod: TemplatesModule) => {
         if (cancelled) return;
         setItems(
-          mod.listTemplates().map((template) => ({
-            kind: "page",
-            key: `page:${template.type}`,
-            pageType: template.type,
-            label: template.label,
-            description: template.description,
-            Icon: template.icon,
-            keywords: PAGE_KEYWORDS[template.type] ?? [],
-          })),
+          offeredPageTypes(mod.listTemplates(), fileStorage).map(
+            (template) => ({
+              kind: "page",
+              key: `page:${template.type}`,
+              pageType: template.type,
+              label: template.label,
+              description: template.description,
+              Icon: template.icon,
+              keywords: PAGE_KEYWORDS[template.type] ?? [],
+            }),
+          ),
         );
       })
       .catch(() => {
@@ -207,7 +219,7 @@ function usePageItems(open: boolean): PageItem[] | null {
     return () => {
       cancelled = true;
     };
-  }, [open, items]);
+  }, [open, items, fileStorage]);
   return items;
 }
 
@@ -250,11 +262,12 @@ export function ContentTypeModal({
   open,
   onOpenChange,
 }: ContentTypeModalProps) {
-  const inWorkspace = useWorkspaceHref();
-  const router = useRouter();
+  const { data: session } = authClient.useSession();
+  const openAuthDialog = useAuthStore((state) => state.openAuthDialog);
+  const fileStorage = useAvailability().has("fileStorage");
   const contentType = useQREditorStore((state) => state.contentType);
   const setContentType = useQREditorStore((state) => state.setContentType);
-  const pageItems = usePageItems(open);
+  const pageItems = usePageItems(open, fileStorage);
   const [query, setQuery] = React.useState("");
   const [recent, setRecent] = React.useState<ContentType[]>([]);
   const [activeSection, setActiveSection] = React.useState(
@@ -293,12 +306,13 @@ export function ContentTypeModal({
         id: PAGES_SECTION,
         label: "Hosted pages",
         Icon: Element4,
-        description:
-          "Mobile pages QRdx hosts for you, each with a dynamic QR code. Opens in your dashboard.",
+        description: session?.user
+          ? "Mobile pages QRdx hosts for you, each with a dynamic QR code in this design. You edit the page in your dashboard."
+          : "Mobile pages QRdx hosts for you, each with a dynamic QR code in this design. Sign in to make one.",
         items: pageItems,
       },
     ];
-  }, [pageItems]);
+  }, [pageItems, session?.user]);
 
   const results = React.useMemo(() => {
     if (!tokens.length) return [];
@@ -367,9 +381,18 @@ export function ContentTypeModal({
   const selectItem = (item: PickerItem) => {
     if (item.kind === "page") {
       onOpenChange(false);
-      router.push(
-        inWorkspace(`/pages?new=${encodeURIComponent(item.pageType)}`),
-      );
+      // The page gallery opens over the editor, its code in this design.
+      if (session?.user) {
+        openPlaygroundBuilder(
+          currentPageGalleryRequest({ type: item.pageType }),
+        );
+      } else {
+        openAuthDialog(
+          "signin",
+          "OPEN_CODE_BUILDER",
+          openCodeBuilderIntent("page", { type: item.pageType }),
+        );
+      }
       return;
     }
     setContentType(item.type);
