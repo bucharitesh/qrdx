@@ -1,6 +1,5 @@
 "use client";
 
-import { authClient } from "@repo/auth/client";
 import { toast } from "@repo/design-system";
 import { Bot, Close } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
@@ -14,31 +13,24 @@ import {
   ToggleGroup,
   ToggleGroupItem,
 } from "@repo/design-system/components/ui/toggle-group";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { GalleryAdd, Lock } from "iconsax-reactjs";
+import { ArrowRight, GalleryAdd, Lock } from "iconsax-reactjs";
+import Link from "next/link";
 import { useRef, useState } from "react";
 import { SignInLink } from "@/components/auth/sign-in-link";
-import { workspaceRequestHeaders } from "@/components/workspace-provider";
 import { ART_MODEL_LABEL, ART_SUPPORTS_SEED } from "@/lib/ai/art-models";
-import { track } from "@/lib/analytics";
-import { apiFetch } from "@/lib/api-fetch";
-import { useSessionGuard } from "@/lib/hooks/use-gaurds";
-import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
-import {
-  MyErrorResponseSchema,
-  type MyErrorResponseType,
-  UnauthorizedError,
-} from "@/types/errors";
+import { playgroundHref } from "@/lib/playground-links";
 import { AIArtComingSoon } from "./ai-art-coming-soon";
 import { AIArtPresetGallery } from "./ai-art-preset-gallery";
-import { AIArtResultPanel, type AIArtRun } from "./ai-art-result";
+import { AIArtResultPanel } from "./ai-art-result";
+import {
+  createAIArtRunStore,
+  lockedSeedFor,
+  seedIsInvalid,
+} from "./ai-art-run";
 import {
   type AIArtCredits,
-  type AIArtCreditsResponse,
   type AIArtRequest,
-  type AIArtResult,
   ART_CREATIVITY,
-  ART_MAX_SEED,
   ART_MAX_VARIATIONS,
   ART_NEGATIVE_PROMPT_MAX_LENGTH,
   ART_PROMPT_MAX_LENGTH,
@@ -47,23 +39,12 @@ import {
   ART_TEXT_MAX_LENGTH,
   seedsForRun,
 } from "./config";
-import { prepareReferenceImage } from "./image-utils";
 import { AI_ART_PRESETS } from "./presets";
-
-const CREDITS_QUERY_KEY = ["ai-art-credits"];
-const REFERENCE_TYPES = ["image/png", "image/jpeg", "image/webp"];
-const REFERENCE_UPLOAD_MAX_BYTES = 10 * 1024 * 1024;
-
-/** A failed /api/ai/art response, with its JSON error body. */
-class ArtRequestError extends Error {
-  readonly body: MyErrorResponseType;
-
-  constructor(body: MyErrorResponseType) {
-    super(body.message ?? "AI art request failed");
-    this.name = "ArtRequestError";
-    this.body = body;
-  }
-}
+import {
+  AI_ART_REFERENCE_TYPES,
+  readReferenceFile,
+  useAIArtRun,
+} from "./use-ai-art-run";
 
 export interface AIArtAllowances {
   free: number | null;
@@ -79,7 +60,8 @@ interface AIArtStudioProps {
 }
 
 export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
-  const [isConfigured, setIsConfigured] = useState(configured);
+  const [store] = useState(() => createAIArtRunStore(configured));
+  const art = useAIArtRun({ store });
   const [text, setText] = useState("");
   const [prompt, setPrompt] = useState("");
   const [presetId, setPresetId] = useState<string | null>(null);
@@ -92,186 +74,24 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
   const [seed, setSeed] = useState("");
   const [seedLocked, setSeedLocked] = useState(false);
   const [reference, setReference] = useState<string | null>(null);
-  const [result, setResult] = useState<AIArtRun | null>(null);
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [pendingVariations, setPendingVariations] = useState(1);
-  const abortRef = useRef<AbortController | null>(null);
   const referenceInputRef = useRef<HTMLInputElement>(null);
 
-  const queryClient = useQueryClient();
-  const { data: session } = authClient.useSession();
-  const { checkValidSession } = useSessionGuard();
-  const { openGetProDialog, openUpgradeDialog } = useGetProDialogStore();
-  const { data: creditsResponse } = useQuery({
-    queryKey: CREDITS_QUERY_KEY,
-    queryFn: async (): Promise<AIArtCreditsResponse> => {
-      const response = await fetch("/api/ai/art/credits", {
-        headers: workspaceRequestHeaders(),
-      });
-      if (!response.ok) throw new Error("Failed to load AI art credits");
-      return response.json();
-    },
-    enabled: isConfigured && Boolean(session?.user.id),
-    staleTime: 60_000,
-    refetchOnWindowFocus: false,
-  });
-  const credits = creditsResponse?.credits ?? null;
+  const { credits, isGenerating, pendingVariations, run: result } = art;
 
-  if (!isConfigured) {
+  if (!art.configured) {
     return <AIArtComingSoon />;
   }
 
   // A model that ignores seeds gets random ones: they only tell variations apart.
-  const lockedSeed =
-    ART_SUPPORTS_SEED && seedLocked && seed.trim() !== ""
-      ? Number(seed.trim())
-      : undefined;
-  const seedInvalid =
-    ART_SUPPORTS_SEED &&
-    seedLocked &&
-    (lockedSeed === undefined ||
-      !Number.isInteger(lockedSeed) ||
-      lockedSeed < 0 ||
-      lockedSeed > ART_MAX_SEED);
-  const notEnoughCredits =
-    credits?.remaining !== null &&
-    credits?.remaining !== undefined &&
-    credits.remaining < variations;
+  const lockedSeed = lockedSeedFor(seed, seedLocked, ART_SUPPORTS_SEED);
+  const seedInvalid = seedIsInvalid(seed, seedLocked, ART_SUPPORTS_SEED);
+  const notEnoughCredits = art.lacksCredits(variations);
   const canSubmit =
     text.trim().length > 0 &&
     prompt.trim().length >= ART_PROMPT_MIN_LENGTH &&
     !seedInvalid &&
     !isGenerating;
-
-  const setCredits = (next: AIArtCredits | null) => {
-    if (next) {
-      queryClient.setQueryData<AIArtCreditsResponse>(CREDITS_QUERY_KEY, {
-        configured: true,
-        credits: next,
-      });
-    }
-  };
-
-  const showError = (error: MyErrorResponseType, title: string) => {
-    if (error.code === "AI_NOT_CONFIGURED") {
-      setIsConfigured(false);
-      return;
-    }
-    if (error.code === "SUBSCRIPTION_REQUIRED") {
-      if (credits?.plan === "pro") openUpgradeDialog("business");
-      else openGetProDialog();
-    }
-
-    const details = (error.data as { details?: { message?: string }[] })
-      ?.details;
-    toast.error(title, {
-      description:
-        details?.[0]?.message ??
-        error.message ??
-        "Something went wrong. Please try again.",
-    });
-  };
-
-  /** One image per request, so each response stays small. */
-  const requestImage = async (
-    request: AIArtRequest,
-    signal: AbortSignal,
-  ): Promise<AIArtResult> => {
-    const response = await apiFetch("/api/ai/art", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...workspaceRequestHeaders(),
-      },
-      body: JSON.stringify(request),
-      signal,
-    });
-    if (!response.ok) {
-      const parsed = MyErrorResponseSchema.safeParse(
-        await response.json().catch(() => null),
-      );
-      throw new ArtRequestError(parsed.success ? parsed.data : {});
-    }
-    return (await response.json()) as AIArtResult;
-  };
-
-  const generate = async (request: AIArtRequest, seeds: number[]) => {
-    if (!checkValidSession("signin")) return;
-
-    const controller = new AbortController();
-    abortRef.current = controller;
-    setIsGenerating(true);
-    setPendingVariations(seeds.length);
-
-    try {
-      const outcomes = await Promise.allSettled(
-        seeds.map((seed) =>
-          requestImage({ ...request, seed }, controller.signal),
-        ),
-      );
-      if (controller.signal.aborted) return;
-      const done = outcomes.flatMap((outcome) =>
-        outcome.status === "fulfilled" ? [outcome.value] : [],
-      );
-      const failures = outcomes.flatMap((outcome) =>
-        outcome.status === "rejected" ? [outcome.reason as unknown] : [],
-      );
-      if (failures.some((error) => error instanceof UnauthorizedError)) return;
-
-      // Each response counted the credits when it was reserved; the most
-      // recent count is the highest.
-      const latest = done
-        .map((item) => item.credits)
-        .filter((item): item is AIArtCredits => item !== null)
-        .sort((a, b) => b.used - a.used)[0];
-      setCredits(latest ?? null);
-      queryClient.invalidateQueries({ queryKey: CREDITS_QUERY_KEY });
-
-      const first = failures[0];
-      if (done.length === 0) {
-        if (first instanceof ArtRequestError) {
-          showError(first.body, "Couldn't generate QR art");
-        } else {
-          toast.error("Couldn't generate QR art", {
-            description: "Check your connection and try again.",
-          });
-        }
-        return;
-      }
-
-      const [{ text, visibility, creativity }] = done as [AIArtResult];
-      setResult({
-        variants: done.map((item) => item.variant),
-        failed: failures.length,
-        text,
-        visibility,
-        creativity,
-      });
-      if (failures.length > 0) {
-        toast.warning(
-          `${failures.length} of ${seeds.length} variations failed`,
-          {
-            description:
-              first instanceof ArtRequestError && first.body.message
-                ? first.body.message
-                : "No AI credit was used for them.",
-          },
-        );
-      }
-      track("ai_art_generated", {
-        visibility: request.visibility,
-        creativity: request.creativity,
-        variations: seeds.length,
-        blended: done.filter((item) => item.variant.blended).length,
-        locked_seed: lockedSeed !== undefined,
-        reference: Boolean(request.reference),
-        preset: presetId ?? undefined,
-      });
-    } finally {
-      if (abortRef.current === controller) abortRef.current = null;
-      setIsGenerating(false);
-    }
-  };
+  const meta = { preset: presetId, lockedSeed: lockedSeed !== undefined };
 
   const currentRequest = (): AIArtRequest => ({
     text: text.trim(),
@@ -288,25 +108,8 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
     const file = event.target.files?.[0];
     event.target.value = "";
     if (!file) return;
-    if (!REFERENCE_TYPES.includes(file.type)) {
-      toast.error("Unsupported image format", {
-        description: "Use a PNG, JPG or WebP image.",
-      });
-      return;
-    }
-    if (file.size > REFERENCE_UPLOAD_MAX_BYTES) {
-      toast.error("Image is too large", {
-        description: "Reference images must be 10MB or smaller.",
-      });
-      return;
-    }
-    try {
-      setReference(await prepareReferenceImage(file));
-    } catch (error) {
-      toast.error("Couldn't use this image", {
-        description: error instanceof Error ? error.message : undefined,
-      });
-    }
+    const prepared = await readReferenceFile(file);
+    if (prepared) setReference(prepared);
   };
 
   return (
@@ -316,7 +119,11 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
         onSubmit={(event) => {
           event.preventDefault();
           if (canSubmit) {
-            generate(currentRequest(), seedsForRun(variations, lockedSeed));
+            art.generate(
+              currentRequest(),
+              seedsForRun(variations, lockedSeed),
+              meta,
+            );
           }
         }}
       >
@@ -480,7 +287,7 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
             <div className="flex flex-col gap-2">
               <Label>Reference image</Label>
               <input
-                accept={REFERENCE_TYPES.join(",")}
+                accept={AI_ART_REFERENCE_TYPES.join(",")}
                 aria-label="Upload a reference image"
                 className="sr-only"
                 onChange={handleReference}
@@ -541,11 +348,7 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
                 : `Generate ${variations > 1 ? `${variations} variations` : "QR art"}`}
             </Button>
             {isGenerating && (
-              <Button
-                onClick={() => abortRef.current?.abort()}
-                type="button"
-                variant="outline"
-              >
+              <Button onClick={art.cancel} type="button" variant="outline">
                 <Close />
                 Cancel
               </Button>
@@ -554,7 +357,7 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
           <CreditsNote
             allowances={allowances}
             credits={credits}
-            signedIn={Boolean(session?.user.id)}
+            signedIn={art.signedIn}
             variations={variations}
           />
         </div>
@@ -577,6 +380,22 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
             and use its short link here.
           </p>
         </div>
+
+        <p className="text-muted-foreground -mt-2 text-sm text-pretty">
+          Already designing a code?{" "}
+          <Link
+            className="text-foreground inline-flex items-center gap-1 font-medium underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground"
+            href={playgroundHref({
+              tab: "art",
+              art: "ai",
+              artStyle: presetId ?? undefined,
+            })}
+          >
+            Open in playground
+            <ArrowRight aria-hidden className="size-3.5" />
+          </Link>{" "}
+          to paint its content, dynamic link included.
+        </p>
       </form>
 
       <AIArtResultPanel
@@ -593,19 +412,7 @@ export function AIArtStudio({ configured, allowances }: AIArtStudioProps) {
             : undefined
         }
         onRetryClearer={(variant) =>
-          result &&
-          generate(
-            {
-              ...currentRequest(),
-              text: result.text,
-              visibility: Math.min(
-                ART_QR_VISIBILITY.max,
-                result.visibility + ART_QR_VISIBILITY.retryStep,
-              ),
-              creativity: result.creativity,
-            },
-            [variant.seed],
-          )
+          art.retryClearer(currentRequest(), variant, meta)
         }
         pendingVariations={pendingVariations}
         result={result}
