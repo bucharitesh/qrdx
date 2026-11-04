@@ -1,5 +1,6 @@
 import "server-only";
 
+import { unstable_rethrow } from "next/navigation";
 import { countUnarchived } from "@/app/dashboard/codes/_lib/qr-codes";
 import { attentionMeters, type Meter } from "@/app/settings/usage/_lib/meters";
 import {
@@ -117,6 +118,9 @@ export async function getShellData(): Promise<ShellData | null> {
       },
     };
   } catch (error) {
+    // Next's own signals (a request-time API during prerendering, a
+    // redirect) aren't failures: let them through.
+    unstable_rethrow(error);
     if (error instanceof UnauthorizedError) return null;
     logError(error as Error, { action: "app-shell.getShellData" });
     return null;
