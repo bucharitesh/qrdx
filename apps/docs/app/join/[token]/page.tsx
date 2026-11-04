@@ -15,10 +15,8 @@ import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 import { isTeamMember } from "@/app/dashboard/team/_lib/queries";
 import { WorkspaceAvatar } from "@/components/workspaces/workspace-avatar";
-import {
-  WORKSPACE_ROLE_DESCRIPTIONS,
-  WORKSPACE_ROLE_LABELS,
-} from "@/lib/permissions";
+import { inviteRolePhrase } from "@/lib/email/templates/team-invite";
+import { WORKSPACE_ROLE_DESCRIPTIONS } from "@/lib/permissions";
 import { getClientIp } from "@/lib/request-guards";
 import { signInPath } from "@/lib/safe-redirect";
 import { logError } from "@/lib/shared";
@@ -175,7 +173,7 @@ export default async function JoinPage({
           <span className="text-foreground font-medium">
             {session.user.email}
           </span>
-          . You'll join as {WORKSPACE_ROLE_LABELS[target.role].toLowerCase()}:{" "}
+          . You'll join as {inviteRolePhrase(target.role)}:{" "}
           {WORKSPACE_ROLE_DESCRIPTIONS[target.role].toLowerCase()}.
         </>
       }
