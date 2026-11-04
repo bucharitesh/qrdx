@@ -2,14 +2,15 @@
 
 import { cn } from "@repo/design-system/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
-import { getFrameDimensions } from "qrdx";
+import { getFrameDimensions, isFrameActive } from "qrdx";
 import type React from "react";
-import { lazy } from "react";
+import { lazy, useRef } from "react";
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
 import { styleEngineOptions } from "@/lib/qr-design/engine-options";
 import { useQREditorStore } from "@/store/editor-store";
 import type { QRStyle } from "@/types/theme";
-import { ArtCanvas } from "./editor/art/art-canvas";
+import { ArtCanvas, useShownArt } from "./editor/art/art-canvas";
+import { FrameTextOverlay } from "./editor/frame-inline/frame-text-overlay";
 import { usePhotoScanDialogStore } from "./editor/photo-scan-dialog-store";
 import { ScanScoreBadge } from "./editor/scan-score";
 import ExamplesPreviewContainer from "./editor/theme-preview/examples-preview-container";
@@ -58,6 +59,8 @@ const QRPreviewPanel: React.FC<QRPreviewPanelProps> = ({ style }) => {
   const storedValue = useQREditorStore((state) => state.value);
   const hasContent = storedValue.trim().length > 0;
   const value = hasContent ? storedValue : SAMPLE_PREVIEW_VALUE;
+  const rootRef = useRef<HTMLDivElement>(null);
+  const shownArt = useShownArt();
 
   // Keep a framed code inside the same 512px box as a plain one
   const framed = getFrameDimensions(512, style.frame);
@@ -66,7 +69,10 @@ const QRPreviewPanel: React.FC<QRPreviewPanelProps> = ({ style }) => {
   return (
     <div className="flex min-h-0 flex-1 flex-col">
       {/* Preview Content */}
-      <div className="relative flex size-full items-center justify-center overflow-hidden p-4">
+      <div
+        className="relative flex size-full items-center justify-center overflow-hidden p-4"
+        ref={rootRef}
+      >
         {/* Taller top and bottom padding: the seasonal style strip sits over
             the top edge and the scan score badge over the bottom one. */}
         <div className="relative isolate flex size-full items-center justify-center overflow-hidden rounded-lg px-8 py-10 md:py-12">
@@ -89,6 +95,7 @@ const QRPreviewPanel: React.FC<QRPreviewPanelProps> = ({ style }) => {
                     "flex items-center justify-center transition-opacity [&>svg]:size-full",
                     !hasContent && "opacity-40",
                   )}
+                  data-preview-code=""
                   style={{
                     width: "min(100cqw, 100cqh)",
                     height: "min(100cqw, 100cqh)",
@@ -105,6 +112,7 @@ const QRPreviewPanel: React.FC<QRPreviewPanelProps> = ({ style }) => {
                     eyeColor={style.eyeColor}
                     fgColor={style.fgColor}
                     frame={style.frame}
+                    frameLabelMarkers
                     hideLogo={!style.showLogo}
                     logo={style.customLogo ?? DEFAULT_QR_LOGO}
                     scale={previewScale}
@@ -127,6 +135,14 @@ const QRPreviewPanel: React.FC<QRPreviewPanelProps> = ({ style }) => {
           />
         ) : (
           <SampleLabel className="absolute bottom-4 left-1/2 z-10 -translate-x-1/2" />
+        )}
+        {/* Frame text is edited where it's drawn (frame-inline/). */}
+        {isFrameActive(style.frame) && (
+          <FrameTextOverlay
+            disabled={shownArt.visible}
+            frame={style.frame}
+            rootRef={rootRef}
+          />
         )}
         {/* An AI art result from the Art tab covers the code until Back to code. */}
         <ArtCanvas />
