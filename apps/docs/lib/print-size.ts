@@ -204,8 +204,60 @@ export function toMillimeters(value: number, unit: DistanceUnit): number {
   return value * MM_PER_UNIT[unit];
 }
 
+export function fromMillimeters(mm: number, unit: DistanceUnit): number {
+  return mm / MM_PER_UNIT[unit];
+}
+
 export function mmToInches(mm: number): number {
   return mm / MM_PER_INCH;
+}
+
+// ── The editor's Print-ready tab ─────────────────────────────────────────────
+// Its readout ("Scans from up to about …") is qrdx's getPrintLayout
+// maxScanDistance: the plain 10:1 rule on the code width, quiet zone
+// included. Typing a distance runs the same rule backwards.
+
+export type PrintWidthUnit = keyof typeof PRINT_SIZE_LIMITS;
+
+/** Rule of thumb: a code scans from about 10x its width. Both in mm. */
+export function scanDistanceForWidth(widthMm: number): number {
+  return widthMm * DISTANCE_TO_SIZE_RATIO;
+}
+
+/** The inverse of scanDistanceForWidth: the width (mm) for a distance (mm). */
+export function widthForScanDistance(distanceMm: number): number {
+  return distanceMm / DISTANCE_TO_SIZE_RATIO;
+}
+
+/** The distance unit shown next to a Print-ready width: metres, or feet with inches. */
+export function scanDistanceUnit(unit: PrintWidthUnit): "m" | "ft" {
+  return unit === "in" ? "ft" : "m";
+}
+
+/** Scan distance, in `distanceUnit`, for a Print-ready width in `unit`. */
+export function scanDistanceForPrintWidth(
+  width: number,
+  unit: PrintWidthUnit,
+  distanceUnit: DistanceUnit,
+): number {
+  const widthMm = unit === "in" ? toMillimeters(width, "in") : width;
+  return fromMillimeters(scanDistanceForWidth(widthMm), distanceUnit);
+}
+
+/**
+ * Print-ready width, in `unit`, for a scan distance. Rounded to what the width
+ * field holds: 0.1 mm or 0.01 in. May fall outside PRINT_SIZE_LIMITS; the
+ * dialog says so.
+ */
+export function printWidthForScanDistance(
+  distance: number,
+  distanceUnit: DistanceUnit,
+  unit: PrintWidthUnit,
+): number {
+  const widthMm = widthForScanDistance(toMillimeters(distance, distanceUnit));
+  const width = unit === "in" ? mmToInches(widthMm) : widthMm;
+  const steps = unit === "in" ? 100 : 10;
+  return Math.round(width * steps) / steps;
 }
 
 /** Pixels needed to print `mm` at a given resolution (dots per inch). */
