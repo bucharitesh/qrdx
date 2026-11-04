@@ -1,0 +1,108 @@
+// Dev only: stand-in AI art, so the playground's Art tab and the /ai/art
+// studio can be checked without signing in, spending credits or calling a
+// model. use-ai-art-run.ts imports this lazily, and only inside a
+// `process.env.NODE_ENV === "development"` branch with the localStorage flag
+// set (see devArtMock there), so a production build never contains it.
+//
+// Each "image" is a real QR code for the request's text, drawn over a soft
+// gradient: it scans, so the in-browser scan score, Print PNG and Use as
+// Image QR all run on it for real.
+
+import { getQRAsSVGDataUri } from "qrdx";
+import type { AIArtCreditsResponse, AIArtRequest, AIArtResult } from "./config";
+import { ART_IMAGE_SIZE } from "./config";
+
+const MOCK_DELAY_MS = 1200;
+
+function loadImage(src: string): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = () => reject(new Error("Dev mock: couldn't draw the code"));
+    img.src = src;
+  });
+}
+
+function wait(ms: number, signal: AbortSignal): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(resolve, ms);
+    signal.addEventListener("abort", () => {
+      clearTimeout(timer);
+      reject(signal.reason);
+    });
+  });
+}
+
+/** A fake /api/ai/art response for `request`. */
+export async function mockArtImage(
+  request: AIArtRequest,
+  signal: AbortSignal,
+): Promise<AIArtResult> {
+  await wait(MOCK_DELAY_MS, signal);
+  const seed = request.seed ?? 0;
+  const visibility = request.visibility ?? 50;
+  const size = ART_IMAGE_SIZE;
+
+  const code = await loadImage(
+    await getQRAsSVGDataUri({
+      value: request.text,
+      level: "H",
+      margin: 4,
+      size,
+      fgColor: "#111827",
+      bgColor: "#ffffff",
+    }),
+  );
+  const canvas = document.createElement("canvas");
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("Dev mock: no canvas");
+
+  const hue = (seed * 47) % 360;
+  const gradient = ctx.createLinearGradient(0, 0, size, size);
+  gradient.addColorStop(0, `hsl(${hue} 70% 82%)`);
+  gradient.addColorStop(1, `hsl(${(hue + 60) % 360} 55% 58%)`);
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, size, size);
+  // Higher QR visibility shows the code more strongly.
+  ctx.globalAlpha = 0.55 + (0.4 * visibility) / 100;
+  ctx.drawImage(code, 0, 0, size, size);
+  ctx.globalAlpha = 1;
+
+  const imageUrl = canvas.toDataURL("image/png");
+  canvas.remove();
+  return {
+    variant: {
+      imageUrl,
+      width: size,
+      height: size,
+      seed,
+      blended: false,
+      blend: "none",
+      blendStrength: 0,
+    },
+    text: request.text,
+    visibility,
+    creativity: request.creativity ?? 45,
+    credits: null,
+  };
+}
+
+/** Fake credits: a Pro month with room to spare. */
+export function mockArtCredits(): AIArtCreditsResponse {
+  const now = new Date();
+  return {
+    configured: true,
+    credits: {
+      plan: "pro",
+      limit: 30,
+      used: 2,
+      remaining: 28,
+      pooled: false,
+      resetsAt: new Date(
+        Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1),
+      ).toISOString(),
+    },
+  };
+}

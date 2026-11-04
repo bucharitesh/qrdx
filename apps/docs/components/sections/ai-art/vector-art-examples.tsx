@@ -1,7 +1,7 @@
 "use client";
 
 // Live Logo QR and Image QR examples (vector art modes from the qrdx library,
-// no AI). Each card opens the playground's Art section.
+// no AI). Each card opens the playground's Art tab on its mode.
 
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Card } from "@repo/design-system/components/ui/card";
@@ -19,25 +19,29 @@ import {
   type ShowcaseStyleName,
   showcaseProps,
 } from "@/lib/landing/showcase-styles";
-import { ART_PLAYGROUND_HREF } from "./config";
+import { artPlaygroundHref } from "./config";
 
 const VALUE = "https://qrdx.dev";
 
-// Samples from public/images/art-samples (the editor's Art section offers
+// Samples from public/images/art-samples (the editor's Art tab offers
 // the same ones), styled in lib/landing/showcase-styles.ts.
 const EXAMPLES: {
   style: ShowcaseStyleName;
+  /** The Art tab mode the card opens */
+  mode: "logo" | "image";
   title: string;
   description: string;
 }[] = [
   {
     style: AT["ai-art.logo"],
+    mode: "logo",
     title: "Logo QR",
     description:
       "Your logo's colors flow into the modules inside its shape; the finder patterns stay solid.",
   },
   {
     style: AT["ai-art.image"],
+    mode: "image",
     title: "Image QR",
     description:
       "A photo shows through every module, around a center that keeps the code scannable.",
@@ -61,14 +65,19 @@ function useArtImage(src: string | undefined, mode: QRArtMode) {
   return image;
 }
 
-function ArtExample({ style, title, description }: (typeof EXAMPLES)[number]) {
+function ArtExample({
+  style,
+  mode,
+  title,
+  description,
+}: (typeof EXAMPLES)[number]) {
   const art = SHOWCASE_STYLES[style].art;
   const image = useArtImage(art?.src, art?.mode ?? "logo");
 
   return (
     <Link
       className="group block h-full rounded-xl outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50"
-      href={ART_PLAYGROUND_HREF}
+      href={artPlaygroundHref(mode)}
     >
       <SpotlightCard
         as={Card}
