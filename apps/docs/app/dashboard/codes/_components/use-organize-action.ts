@@ -4,6 +4,7 @@ import { toast } from "@repo/design-system";
 import { useRouter } from "next/navigation";
 import { useCallback, useTransition } from "react";
 import type { OrganizeResult } from "@/app/dashboard/codes/_lib/organize";
+import { useShowLimit } from "@/components/limits/limit-dialog";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 
 type Message<T> = string | ((data: T) => string | null);
@@ -29,6 +30,7 @@ export function useOrganizeAction() {
   const openGetProDialog = useGetProDialogStore(
     (state) => state.openGetProDialog,
   );
+  const showLimit = useShowLimit();
 
   const run = useCallback(
     <T>(
@@ -39,9 +41,16 @@ export function useOrganizeAction() {
         startTransition(async () => {
           const result = await action();
           if (!result.success) {
-            const upgrade =
-              result.error.code === "LIMIT_REACHED" ||
-              result.error.code === "PLAN_REQUIRED";
+            // The plan's active-code cap: its limit card. Folder and tag
+            // caps are the same on every plan, so no upgrade for those.
+            if (result.error.meter) {
+              showLimit(result.error.meter, {
+                message: result.error.message,
+              });
+              done(null);
+              return;
+            }
+            const upgrade = result.error.code === "PLAN_REQUIRED";
             toast.error(
               result.error.message,
               upgrade
@@ -72,7 +81,7 @@ export function useOrganizeAction() {
           done(result.data);
         });
       }),
-    [openGetProDialog, router],
+    [openGetProDialog, router, showLimit],
   );
 
   return { run, isPending };

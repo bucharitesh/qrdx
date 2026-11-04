@@ -14,6 +14,7 @@ import {
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { inviteMember } from "@/actions/organizations";
+import { useShowLimit } from "@/components/limits/limit-dialog";
 import { InviteLinkField } from "./invite-link";
 
 export function InviteForm() {
@@ -26,13 +27,19 @@ export function InviteForm() {
     emailed: boolean;
   } | null>(null);
   const [isPending, startTransition] = useTransition();
+  const showLimit = useShowLimit();
 
   const submit = (event: React.FormEvent) => {
     event.preventDefault();
     startTransition(async () => {
       const result = await inviteMember({ email, role });
       if (!result.ok) {
-        toast.error(result.error);
+        // No free seat (INVITATION_LIMIT_REACHED): the seats limit card.
+        if (result.upgrade) {
+          showLimit("teamSeats", { message: result.error });
+        } else {
+          toast.error(result.error);
+        }
         return;
       }
       setCreated({

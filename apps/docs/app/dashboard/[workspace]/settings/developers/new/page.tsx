@@ -43,7 +43,7 @@ export default async function NewOAuthAppPage({
         description={`The app belongs to ${isTeam ? workspaceName : "your own workspace"}, and its consent screen says it's built by ${isTeam ? workspaceName : "you (your account name)"}. You'll see its client secret once, right after creating it.`}
         title="New OAuth app"
       />
-      <NewOAuthApp canUpgrade={!isTeam} storageEnabled={isStorageConfigured} />
+      <NewOAuthApp storageEnabled={isStorageConfigured} />
     </div>
   );
 }
