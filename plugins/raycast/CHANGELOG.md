@@ -1,5 +1,11 @@
 # QRdx Changelog
 
+## [1.1.0] - 2026-11-04
+
+### Added
+
+- **Open in QRdx Playground** action (⌘O) on a code's preview and on each saved code. It opens the full editor at qrdx.dev with the code's web address; other content, colors and patterns stay in Raycast.
+
 ## [1.0.0] - 2026-03-25
 
 ### Added

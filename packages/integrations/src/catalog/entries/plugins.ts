@@ -127,7 +127,8 @@ export const plugins: IntegrationCatalogEntry[] = [
       },
       {
         title: "Offline",
-        description: "No network access: nothing leaves Figma.",
+        description:
+          "No network access. Its playground link carries only a web address.",
       },
     ],
     keywords: ["design", "vector", "plugin", "print", "mockup"],
