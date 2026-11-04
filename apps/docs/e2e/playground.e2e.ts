@@ -708,7 +708,7 @@ const DESIGN_GROUPS = [
   "Outer eye shape",
   "Inner eye shape",
   "Border",
-  "Call-to-action frame",
+  "Frame",
   "Error correction",
 ];
 
@@ -729,7 +729,7 @@ const GROUP_OPENERS: Record<string, { section: string; buttons: string[] }> = {
     buttons: ["customize outer and center", "more center shapes"],
   },
   Border: { section: "frame", buttons: [] },
-  "Call-to-action frame": { section: "frame", buttons: ["more frames"] },
+  Frame: { section: "frame", buttons: ["more frames"] },
   "Error correction": { section: "error correction", buttons: [] },
 };
 
