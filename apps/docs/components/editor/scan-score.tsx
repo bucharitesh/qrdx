@@ -1,6 +1,7 @@
 "use client";
 
 import { Spinner } from "@repo/design-system/components/icons";
+import { Button } from "@repo/design-system/components/ui/button";
 import {
   Popover,
   PopoverContent,
@@ -10,6 +11,7 @@ import { cn } from "@repo/design-system/lib/utils";
 import {
   TickCircle as CircleCheck,
   CloseCircle as CircleX,
+  ScanBarcode,
 } from "iconsax-reactjs";
 import Link from "next/link";
 import {
@@ -81,6 +83,12 @@ interface ScanScoreBadgeProps {
   className?: string;
   /** Each finished score for the current design (e.g. to warn before saving) */
   onResult?: (result: ScanScoreResult) => void;
+  /**
+   * Opens the photo check for this design. Where it's set (the playground,
+   * which mounts PhotoScanDialog), the popover's main action is "Check a
+   * photo of the print"; elsewhere it links to the scan checker page.
+   */
+  onCheckPhoto?: () => void;
 }
 
 /**
@@ -93,7 +101,9 @@ export function ScanScoreBadge({
   value,
   className,
   onResult,
+  onCheckPhoto,
 }: ScanScoreBadgeProps) {
+  const [popoverOpen, setPopoverOpen] = useState(false);
   const [scored, setScored] = useState<{
     key: string;
     value: string;
@@ -206,7 +216,7 @@ export function ScanScoreBadge({
   }
 
   return (
-    <Popover>
+    <Popover onOpenChange={setPopoverOpen} open={popoverOpen}>
       <PopoverTrigger asChild>
         <button
           ref={button}
@@ -249,7 +259,14 @@ export function ScanScoreBadge({
           </span>
         </button>
       </PopoverTrigger>
-      <PopoverContent align="center" className="w-80" side="top">
+      {/* Scrolls when the screen is short (a phone's preview), so the photo
+          check button stays reachable. */}
+      <PopoverContent
+        align="center"
+        className="max-h-(--radix-popover-content-available-height) w-80 overflow-y-auto"
+        collisionPadding={8}
+        side="top"
+      >
         <div className="space-y-3">
           <div className="flex items-baseline justify-between">
             <h3 className="text-sm font-semibold">
@@ -277,9 +294,24 @@ export function ScanScoreBadge({
               className="text-foreground font-medium underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground"
               href="/tools/scan-checker"
             >
-              Check a printed code
+              {onCheckPhoto ? "Full scan checker" : "Check a printed code"}
             </Link>
           </p>
+          {onCheckPhoto && (
+            <Button
+              className="w-full"
+              onClick={() => {
+                setPopoverOpen(false);
+                onCheckPhoto();
+              }}
+              size="sm"
+              type="button"
+              variant="outline"
+            >
+              <ScanBarcode className="size-4" />
+              Check a photo of the print
+            </Button>
+          )}
         </div>
       </PopoverContent>
     </Popover>

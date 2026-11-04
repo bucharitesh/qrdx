@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import {
@@ -16,8 +17,15 @@ import {
   TabsTrigger,
 } from "@repo/design-system/components/ui/tabs";
 import { Textarea } from "@repo/design-system/components/ui/textarea";
+import { Printer } from "iconsax-reactjs";
+import Link from "next/link";
 import { useState } from "react";
 import { InfoHint } from "@/components/help/info-hint";
+import {
+  formatPrintDistance,
+  parsePrintDistance,
+  playgroundHref,
+} from "@/lib/playground-links";
 import {
   calculatePrintSize,
   type DistanceUnit,
@@ -124,6 +132,20 @@ export function PrintSizeCalculator() {
   const modules = version ? modulesForVersion(version) : null;
   const result =
     distanceMm && modules ? calculatePrintSize({ distanceMm, modules }) : null;
+  // The playground gets the distance, not a width: only its Print-ready tab
+  // knows the real code's modules and quiet zone, and sizes it from them.
+  // Outside the distances that tab can produce, there's no link.
+  const linkDistance = result
+    ? parsePrintDistance(
+        formatPrintDistance({
+          value: Number(distanceValue.toFixed(3)),
+          unit,
+        }),
+      )
+    : null;
+  const playgroundPrintHref = linkDistance
+    ? playgroundHref({ open: "print", printDistance: linkDistance })
+    : null;
 
   return (
     <div className="grid gap-6 lg:grid-cols-2">
@@ -284,6 +306,20 @@ export function PrintSizeCalculator() {
               {formatLength(result.ruleOfThumbMm)}. Print above the minimum for
               curved surfaces, low contrast, glossy material or poor lighting.
             </p>
+            {playgroundPrintHref && (
+              <div className="mt-auto flex flex-wrap items-center gap-x-3 gap-y-1.5 border-t border-border pt-3">
+                <Button asChild size="sm" variant="outline">
+                  <Link href={playgroundPrintHref}>
+                    <Printer aria-hidden className="size-4" />
+                    Make a code this size
+                  </Link>
+                </Button>
+                <span className="text-xs text-muted-foreground">
+                  Opens the editor's Print-ready download, sized for{" "}
+                  {linkDistance?.value} {linkDistance?.unit} from your code.
+                </span>
+              </div>
+            )}
           </>
         )}
       </div>

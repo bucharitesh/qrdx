@@ -23,6 +23,12 @@ vi.mock("@/actions/qr-themes", () => ({ getThemes: vi.fn() }));
 const { useCodeDialogStore } = await import(
   "@/components/editor/action-bar/code-dialog-store"
 );
+const { usePhotoScanDialogStore } = await import(
+  "@/components/editor/photo-scan-dialog-store"
+);
+const { useCommunitySheetStore } = await import(
+  "@/components/editor/community-sheet-store"
+);
 const { useDownloadDialogStore } = await import(
   "@/components/editor/action-bar/download-dialog-store"
 );
@@ -94,7 +100,9 @@ beforeEach(() => {
     contentConfigs: {},
   });
   useDownloadDialogStore.setState({ open: false, request: null });
-  useCodeDialogStore.setState({ open: false });
+  useCodeDialogStore.setState({ open: false, lang: null });
+  usePhotoScanDialogStore.setState({ open: false });
+  useCommunitySheetStore.setState({ open: false, publishRequested: false });
   usePlaygroundFocusStore.setState({ section: null });
 });
 
@@ -257,6 +265,17 @@ describe("view", () => {
     });
   });
 
+  it("asks the Print tab for a scan distance", () => {
+    useQREditorStore.setState({ value: "https://example.com" });
+    const outcome = apply("/playground?open=print&print=40mm&printDistance=1m");
+    expect(outcome.applied).toEqual(["open", "printDistance"]);
+    expect(useDownloadDialogStore.getState()).toMatchObject({
+      open: true,
+      request: { tab: "print", printDistance: { value: 1, unit: "m" } },
+    });
+    expect(useDownloadDialogStore.getState().request?.print).toBeUndefined();
+  });
+
   it("keeps the print request for later when there's nothing to download", () => {
     const outcome = apply("/playground?open=print&print=2in");
     expect(outcome.needsContent).toBe(true);
@@ -266,9 +285,28 @@ describe("view", () => {
     });
   });
 
-  it("opens the code dialog", () => {
-    apply("/playground?open=code&lang=react");
-    expect(useCodeDialogStore.getState().open).toBe(true);
+  it("opens Get code on the tab a link names, and forgets it on close", () => {
+    const outcome = apply("/playground?open=code&lang=mcp");
+    expect(useCodeDialogStore.getState()).toMatchObject({
+      open: true,
+      lang: "mcp",
+    });
+    expect(outcome.applied).toEqual(["open", "lang"]);
+    useCodeDialogStore.getState().setOpen(false);
+    expect(useCodeDialogStore.getState().lang).toBeNull();
+    apply("/playground?open=code");
+    expect(useCodeDialogStore.getState()).toMatchObject({
+      open: true,
+      lang: null,
+    });
+  });
+
+  it("opens the photo check and the community sheet", () => {
+    apply("/playground?open=photo-check");
+    expect(usePhotoScanDialogStore.getState().open).toBe(true);
+    apply("/playground?open=community");
+    expect(useCommunitySheetStore.getState().open).toBe(true);
+    expect(useCommunitySheetStore.getState().publishRequested).toBe(false);
   });
 });
 

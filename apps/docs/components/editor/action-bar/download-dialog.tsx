@@ -38,7 +38,9 @@ import {
   Import,
   InfoCircle,
   Printer,
+  TableDocument,
 } from "iconsax-reactjs";
+import Link from "next/link";
 import {
   type DownloadSize,
   downloadPrintEPS,
@@ -48,6 +50,7 @@ import {
   getFrameDimensions,
   getPrintLayout,
   getQRData,
+  getQRModuleCount,
   getSVGString,
   PRESET_SIZES,
   type PrintColorMode,
@@ -63,24 +66,41 @@ import { emitSound } from "@/components/editor/sound";
 import { InfoHint } from "@/components/help/info-hint";
 import { track } from "@/lib/analytics";
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
-import { PRINT_SIZE_LIMITS } from "@/lib/print-size";
+import {
+  fromMillimeters,
+  MIN_MODULE_MM,
+  moduleForPrintWidth,
+  PRINT_SIZE_LIMITS,
+  printTabForDistance,
+  printWidthForScanDistance,
+  scanDistanceForModule,
+  scanDistanceForPrintWidth,
+  scanDistanceUnit,
+} from "@/lib/print-size";
 import { useQREditorStore } from "@/store/editor-store";
 import { usePreferencesStore } from "@/store/preferences-store";
 import type { DownloadOptions as DownloadOptionsType } from "@/types/theme";
 import { useDownloadDialogStore } from "./download-dialog-store";
+import { BULK_FROM_EDITOR_HREF } from "./more-menu";
 
 interface DownloadDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
 
-// Modules smaller than this tend to smear on paper.
-const MIN_PRINT_MODULE_MM = 0.3;
-
 function formatLength(mm: number, unit: PrintUnit): string {
   return unit === "in"
     ? `${Math.round((mm / 25.4) * 100) / 100} in`
     : `${Math.round(mm * 10) / 10} mm`;
+}
+
+function roundTo(
+  value: number,
+  decimals: number,
+  round: (value: number) => number = Math.round,
+): number {
+  const factor = 10 ** decimals;
+  return round(value * factor) / factor;
 }
 
 function formatDistance(mm: number, unit: PrintUnit): string {
@@ -167,18 +187,14 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
   const [cropMarks, setCropMarks] = React.useState(false);
   const [colorMode, setColorMode] = React.useState<PrintColorMode>("rgb");
 
-  // A playground link (open=print&print=40mm) asks for a tab and width once.
-  const request = useDownloadDialogStore((state) => state.request);
-  const setRequest = useDownloadDialogStore((state) => state.setRequest);
+  // What the "Scanned from about" field shows while it differs from the
+  // width's own distance: someone typing, or a link's printDistance.
+  const [distanceDraft, setDistanceDraft] = React.useState<string | null>(null);
+  // The code can change while the dialog is closed; reopened, the field
+  // follows the width again.
   React.useEffect(() => {
-    if (!(open && request)) return;
-    setTab(request.tab);
-    if (request.print) {
-      setPrintUnit(request.print.unit);
-      setPrintSize(request.print.size);
-    }
-    setRequest(null);
-  }, [open, request, setRequest]);
+    if (!open) setDistanceDraft(null);
+  }, [open]);
 
   const format = downloadOptions.format;
   const formatInfo = FORMATS.find((item) => item.id === format) ?? FORMATS[0];
@@ -213,6 +229,38 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
     () => ({ ...qrProps, bgColor: themeState.styles.bgColor }),
     [qrProps, themeState.styles.bgColor],
   );
+  // Modules across the print, quiet zone included (what getPrintLayout
+  // divides the width into): the scan distance rule works per module.
+  const printModuleCount = React.useMemo(() => {
+    try {
+      return getQRModuleCount(printProps);
+    } catch {
+      return null;
+    }
+  }, [printProps]);
+
+  // A playground link asks for a tab once: a width (print=40mm), or a scan
+  // distance (printDistance=1m) sized for this code's modules.
+  const request = useDownloadDialogStore((state) => state.request);
+  const setRequest = useDownloadDialogStore((state) => state.setRequest);
+  React.useEffect(() => {
+    if (!(open && request)) return;
+    setTab(request.tab);
+    if (request.printDistance && printModuleCount) {
+      const print = printTabForDistance(
+        request.printDistance,
+        printModuleCount,
+      );
+      setPrintUnit(print.unit);
+      setPrintSize(print.size);
+      setDistanceDraft(String(roundTo(print.fieldDistance, 2)));
+    } else if (request.print) {
+      setPrintUnit(request.print.unit);
+      setPrintSize(request.print.size);
+      setDistanceDraft(null);
+    }
+    setRequest(null);
+  }, [open, request, setRequest, printModuleCount]);
 
   const printLayout = React.useMemo((): {
     layout: PrintLayout | null;
@@ -619,6 +667,9 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
                   cropMarks={cropMarks}
                   layout={printLayout.layout}
                   layoutError={printLayout.error}
+                  moduleCount={printModuleCount}
+                  distanceDraft={distanceDraft}
+                  onDistanceDraftChange={setDistanceDraft}
                   onBleedChange={setPrintBleed}
                   onColorModeChange={setColorMode}
                   onCropMarksChange={setCropMarks}
@@ -689,6 +740,16 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
                 </>
               )}
             </div>
+            <div className="border-t px-6 py-3">
+              <Link
+                className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 text-xs underline-offset-4 transition-colors hover:underline"
+                href={BULK_FROM_EDITOR_HREF}
+                onNavigate={() => onOpenChange(false)}
+              >
+                <TableDocument className="size-3.5 shrink-0" />
+                Make many from a CSV with this style
+              </Link>
+            </div>
           </Tabs>
         </div>
       </ResponsiveDialogContent>
@@ -706,6 +767,11 @@ interface PrintOptionsProps {
   colorMode: PrintColorMode;
   layout: PrintLayout | null;
   layoutError: string;
+  /** Modules across the code, quiet zone included; null when it can't be encoded. */
+  moduleCount: number | null;
+  /** The distance field's text while it differs from the width's distance */
+  distanceDraft: string | null;
+  onDistanceDraftChange: (draft: string | null) => void;
   onSizeChange: (size: number) => void;
   onUnitChange: (unit: PrintUnit) => void;
   onBleedChange: (bleed: number) => void;
@@ -721,6 +787,9 @@ function PrintOptions({
   colorMode,
   layout,
   layoutError,
+  moduleCount,
+  distanceDraft,
+  onDistanceDraftChange: setDistanceDraft,
   onSizeChange,
   onUnitChange,
   onBleedChange,
@@ -730,8 +799,99 @@ function PrintOptions({
   const limits = PRINT_SIZE_LIMITS[unit];
   const label = "text-muted-foreground mb-2.5 block text-xs font-medium";
 
+  // "Scanned from about": the readout below, run backwards, per module
+  // (lib/print-size.ts, the same rule as /tools/print-size). While someone
+  // types, their text stays as typed; otherwise it follows the width, and
+  // stays empty when the modules are too small to promise a distance.
+  const distanceUnit = scanDistanceUnit(unit);
+  const widthDistance =
+    moduleCount && Number.isFinite(size) && size > 0
+      ? scanDistanceForPrintWidth(size, unit, moduleCount, distanceUnit)
+      : null;
+  const shownDistance =
+    distanceDraft ??
+    (widthDistance === null ? "" : String(roundTo(widthDistance, 2)));
+  // The nearest distance is the smallest printable module (or the smallest
+  // width, when that's bigger); the farthest is the largest width.
+  const distanceMin = moduleCount
+    ? roundTo(
+        fromMillimeters(
+          scanDistanceForModule(
+            Math.max(
+              moduleForPrintWidth(limits.min, unit, moduleCount),
+              MIN_MODULE_MM,
+            ),
+          ),
+          distanceUnit,
+        ),
+        2,
+        Math.ceil,
+      )
+    : null;
+  const distanceMax = moduleCount
+    ? roundTo(
+        fromMillimeters(
+          scanDistanceForModule(
+            moduleForPrintWidth(limits.max, unit, moduleCount),
+          ),
+          distanceUnit,
+        ),
+        2,
+        Math.floor,
+      )
+    : null;
+  const outOfRange =
+    Number.isFinite(size) && (size < limits.min || size > limits.max);
+
   return (
     <div className="space-y-6">
+      <section className="grid grid-cols-2 items-end gap-2">
+        <div>
+          <Label className={label} htmlFor="print-distance">
+            Scanned from about
+          </Label>
+          <InputGroup>
+            <InputGroupInput
+              disabled={!moduleCount}
+              id="print-distance"
+              inputMode="decimal"
+              max={distanceMax ?? undefined}
+              min={distanceMin ?? undefined}
+              onBlur={() => setDistanceDraft(null)}
+              onChange={(event) => {
+                const text = event.target.value;
+                setDistanceDraft(text);
+                const distance = Number(text);
+                if (
+                  moduleCount &&
+                  text.trim() &&
+                  Number.isFinite(distance) &&
+                  distance > 0
+                ) {
+                  onSizeChange(
+                    printWidthForScanDistance(
+                      distance,
+                      distanceUnit,
+                      unit,
+                      moduleCount,
+                    ),
+                  );
+                }
+              }}
+              step={0.1}
+              type="number"
+              value={shownDistance}
+            />
+            <InputGroupAddon align="inline-end">
+              <InputGroupText>{distanceUnit}</InputGroupText>
+            </InputGroupAddon>
+          </InputGroup>
+        </div>
+        <p className="text-muted-foreground pb-3 text-xs">
+          Sets the code width below.
+        </p>
+      </section>
+
       <section className="grid grid-cols-2 gap-2">
         <div>
           <Label className={label} htmlFor="print-size">
@@ -742,7 +902,10 @@ function PrintOptions({
               id="print-size"
               max={limits.max}
               min={limits.min}
-              onChange={(event) => onSizeChange(Number(event.target.value))}
+              onChange={(event) => {
+                setDistanceDraft(null);
+                onSizeChange(Number(event.target.value));
+              }}
               step={unit === "in" ? 0.1 : 1}
               type="number"
               value={Number.isNaN(size) ? "" : size}
@@ -760,7 +923,9 @@ function PrintOptions({
             aria-labelledby="print-unit"
             className="grid w-full grid-cols-2"
             onValueChange={(next) => {
-              if (next) onUnitChange(next as PrintUnit);
+              if (!next) return;
+              setDistanceDraft(null);
+              onUnitChange(next as PrintUnit);
             }}
             type="single"
             value={unit}
@@ -843,17 +1008,19 @@ function PrintOptions({
             {layout.pageWidth !== layout.trimWidth &&
               ` (page ${formatLength(layout.pageWidth, unit)} × ${formatLength(layout.pageHeight, unit)})`}
           </p>
-          <p>
-            Scans from up to about{" "}
-            {formatDistance(layout.maxScanDistance, unit)} away (code width ≈
-            scan distance ÷ 10).
-          </p>
+          {layout.moduleSize >= MIN_MODULE_MM - 1e-9 && (
+            <p>
+              Scans from up to about{" "}
+              {formatDistance(scanDistanceForModule(layout.moduleSize), unit)}{" "}
+              away (about 250× the size of one dot).
+            </p>
+          )}
           {layout.codeWidth < 20 && (
             <p className="text-amber-700 dark:text-amber-400">
               Under 2 cm is hard for phones to scan; go bigger if you can.
             </p>
           )}
-          {layout.moduleSize < MIN_PRINT_MODULE_MM && (
+          {layout.moduleSize < MIN_MODULE_MM - 1e-9 && (
             <p className="text-amber-700 dark:text-amber-400">
               Each dot is only {Math.round(layout.moduleSize * 100) / 100} mm
               and may smear in print. Make the code bigger or shorten its
@@ -874,7 +1041,11 @@ function PrintOptions({
       ) : (
         <p className="text-destructive flex items-center gap-1.5 text-sm">
           <InfoCircle className="size-4 shrink-0" />
-          {layoutError}
+          {outOfRange
+            ? distanceMin !== null && distanceMax !== null
+              ? `Enter ${limits.min}–${limits.max} ${unit}, or a distance of ${distanceMin}–${distanceMax} ${distanceUnit}.`
+              : `Enter ${limits.min}–${limits.max} ${unit}.`
+            : layoutError}
         </p>
       )}
     </div>
