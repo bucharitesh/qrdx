@@ -56,7 +56,7 @@ import { useRouter } from "next/navigation";
 import { type DragEvent, useRef, useState, useTransition } from "react";
 import { deleteFileAction } from "@/actions/files";
 import { UpgradeButton } from "@/app/dashboard/team/_components/small-actions";
-import { useWorkspaceHref } from "@/components/workspace-provider";
+import { useCan, useWorkspaceHref } from "@/components/workspace-provider";
 import { FileKindIcon } from "@/lib/files/components/file-kind-icon";
 import {
   UploadProgress,
@@ -173,6 +173,9 @@ export function FilesManager({
   const [deleting, setDeleting] = useState<FileRow | null>(null);
   const [isPending, startTransition] = useTransition();
   const { upload, current, busy } = useFileUploads({ kinds: FILE_KINDS });
+  // Viewers and billing members browse and copy links; no uploads, replaces
+  // or deletes (lib/permissions.ts; the server refuses them too).
+  const canWrite = useCan("content.write");
 
   const counts = new Map<Filter, number>([["all", files.length]]);
   for (const file of files)
@@ -249,53 +252,57 @@ export function FilesManager({
     <div className="space-y-6">
       <UsageCard canUpgrade={canUpgrade} isTeam={isTeam} overview={overview} />
 
-      <section
-        aria-label="Upload files"
-        className={cn(
-          "flex flex-col items-center gap-3 rounded-lg border-2 border-dashed p-6 text-center transition-colors",
-          dragging && "border-primary bg-primary/5",
-        )}
-        onDragLeave={() => setDragging(false)}
-        onDragOver={(event) => {
-          event.preventDefault();
-          setDragging(true);
-        }}
-        onDrop={onDrop}
-      >
-        <Upload aria-hidden="true" className="size-6 text-muted-foreground" />
-        <div className="space-y-1">
-          <p className="font-medium text-sm">Drop files here or choose them</p>
-          <p className="text-muted-foreground text-xs">
-            {formatsForKinds()} · up to {formatBytes(overview.maxFileBytes)}{" "}
-            each
-          </p>
-        </div>
-        <input
-          accept={acceptAttribute()}
-          aria-hidden="true"
-          className="sr-only"
-          multiple
-          onChange={(event) => {
-            const list = Array.from(event.target.files ?? []);
-            event.target.value = "";
-            uploadMany(list);
+      {canWrite && (
+        <section
+          aria-label="Upload files"
+          className={cn(
+            "flex flex-col items-center gap-3 rounded-lg border-2 border-dashed p-6 text-center transition-colors",
+            dragging && "border-primary bg-primary/5",
+          )}
+          onDragLeave={() => setDragging(false)}
+          onDragOver={(event) => {
+            event.preventDefault();
+            setDragging(true);
           }}
-          ref={inputRef}
-          tabIndex={-1}
-          type="file"
-        />
-        <Button
-          disabled={busy}
-          onClick={() => inputRef.current?.click()}
-          size="sm"
+          onDrop={onDrop}
         >
-          <Upload />
-          {busy ? "Uploading…" : "Choose files"}
-        </Button>
-        <div className="w-full max-w-sm">
-          <UploadProgress state={current} />
-        </div>
-      </section>
+          <Upload aria-hidden="true" className="size-6 text-muted-foreground" />
+          <div className="space-y-1">
+            <p className="font-medium text-sm">
+              Drop files here or choose them
+            </p>
+            <p className="text-muted-foreground text-xs">
+              {formatsForKinds()} · up to {formatBytes(overview.maxFileBytes)}{" "}
+              each
+            </p>
+          </div>
+          <input
+            accept={acceptAttribute()}
+            aria-hidden="true"
+            className="sr-only"
+            multiple
+            onChange={(event) => {
+              const list = Array.from(event.target.files ?? []);
+              event.target.value = "";
+              uploadMany(list);
+            }}
+            ref={inputRef}
+            tabIndex={-1}
+            type="file"
+          />
+          <Button
+            disabled={busy}
+            onClick={() => inputRef.current?.click()}
+            size="sm"
+          >
+            <Upload />
+            {busy ? "Uploading…" : "Choose files"}
+          </Button>
+          <div className="w-full max-w-sm">
+            <UploadProgress state={current} />
+          </div>
+        </section>
+      )}
 
       <input
         aria-hidden="true"
@@ -319,9 +326,9 @@ export function FilesManager({
             </EmptyMedia>
             <EmptyTitle>No files yet</EmptyTitle>
             <EmptyDescription>
-              Upload a menu PDF, photos, music or a video, then add it to a
-              hosted page with the PDF, Gallery, Audio, Video file or Downloads
-              block.
+              {canWrite
+                ? "Upload a menu PDF, photos, music or a video, then add it to a hosted page with the PDF, Gallery, Audio, Video file or Downloads block."
+                : "Files this workspace uploads show up here."}
             </EmptyDescription>
           </EmptyHeader>
         </Empty>
@@ -343,7 +350,7 @@ export function FilesManager({
 
           <ul className="divide-y rounded-lg border">
             {visible.map((file) => {
-              const canManage = canManageAll || file.mine;
+              const canManage = canWrite && (canManageAll || file.mine);
               const blocked = file.status === "blocked";
               return (
                 <li className="flex items-center gap-3 p-3" key={file.id}>

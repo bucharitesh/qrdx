@@ -33,6 +33,7 @@ import type {
   ShellWorkspace,
 } from "@/components/app-shell/shell-data";
 import { CreateWorkspaceDialog } from "@/components/workspaces/create-workspace-dialog";
+import { WorkspaceAvatar } from "@/components/workspaces/workspace-avatar";
 import { PLAN_NAMES } from "@/lib/pricing";
 import { switchWorkspaceHref, workspaceHref } from "@/lib/workspace-paths";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
@@ -54,26 +55,6 @@ export function useRefreshTeams() {
     queryClient.invalidateQueries();
     router.refresh();
   }, [queryClient, router]);
-}
-
-/** The workspace's letter tile. */
-function WorkspaceTile({ name }: { name: string }) {
-  return (
-    <span
-      aria-hidden
-      className="bg-foreground text-background flex size-7 shrink-0 items-center justify-center rounded-md text-xs font-semibold uppercase"
-    >
-      {name.trim().charAt(0) || "W"}
-    </span>
-  );
-}
-
-function WorkspaceInitial({ name }: { name: string }) {
-  return (
-    <span className="bg-muted text-foreground flex size-5 shrink-0 items-center justify-center rounded text-[11px] font-semibold uppercase">
-      {name.trim().charAt(0) || "W"}
-    </span>
-  );
 }
 
 /**
@@ -137,7 +118,7 @@ export function OrgSwitcher({
         )}
         type="button"
       >
-        <WorkspaceTile name={active.name} />
+        <WorkspaceAvatar logo={active.logo} name={active.name} size="sm" />
         {!collapsed && (
           <>
             <span className="flex min-w-0 flex-1 flex-col">
@@ -184,7 +165,12 @@ export function OrgSwitcher({
                 href={switchWorkspaceHref(pathname, workspace.slug)}
                 onClick={follow}
               >
-                <WorkspaceInitial name={workspace.name} />
+                <WorkspaceAvatar
+                  logo={workspace.logo}
+                  name={workspace.name}
+                  size="xs"
+                  tone="muted"
+                />
                 <span className="flex-1 truncate">{workspace.name}</span>
                 {workspace.id === active.id && <Check className="size-4" />}
               </Link>

@@ -23,6 +23,7 @@ import {
   listFiles,
 } from "@/lib/files/service";
 import { isOwnWorkspaceScope } from "@/lib/own-workspace";
+import { can } from "@/lib/permissions";
 
 export const metadata: Metadata = {
   title: "Files",
@@ -86,7 +87,7 @@ export default async function FilesPage() {
     <div className="space-y-6">
       {header}
       <FilesManager
-        canManageAll={scope.role !== "member"}
+        canManageAll={can(scope.role, "content.manageAll")}
         canUpgrade={isOwnWorkspaceScope(scope) && overview.plan !== "business"}
         files={rows}
         isTeam={!isOwnWorkspaceScope(scope)}

@@ -13,6 +13,7 @@ import {
 import { snapshotCodeVersion } from "@/lib/code-versions";
 import { HttpError } from "@/lib/error-response";
 import { baseUrl } from "@/lib/metadata";
+import { assertCan } from "@/lib/permissions-server";
 import {
   cheapestPlanWith,
   getPlanForScope,
@@ -130,12 +131,16 @@ function parse<T extends z.ZodType>(schema: T, input: unknown): z.infer<T> {
   return result.data;
 }
 
+/** Saves need a role that may write (lib/permissions.ts); reads say so. */
 async function run<T>(
   action: string,
   fn: (scope: ActiveScope) => Promise<T>,
+  { access = "write" }: { access?: "read" | "write" } = {},
 ): Promise<MarketingActionResult<T>> {
   try {
-    return { success: true, data: await fn(await getActiveScope()) };
+    const scope = await getActiveScope();
+    if (access === "write") assertCan(scope, "content.write");
+    return { success: true, data: await fn(scope) };
   } catch (error) {
     return failure(error, { action });
   }
@@ -347,8 +352,10 @@ async function saveColumn(
 export async function getCodeMarketing(
   id: string,
 ): Promise<MarketingActionResult<CodeMarketingSettings>> {
-  return run("getCodeMarketing", async (scope) =>
-    toSettings(scope, await loadCode(scope, id)),
+  return run(
+    "getCodeMarketing",
+    async (scope) => toSettings(scope, await loadCode(scope, id)),
+    { access: "read" },
   );
 }
 
@@ -487,34 +494,39 @@ export interface RoutingTestResult {
 export async function testCodeRouting(
   input: z.input<typeof testSchema>,
 ): Promise<MarketingActionResult<RoutingTestResult>> {
-  return run("testCodeRouting", async (scope) => {
-    const { id, routing, sample } = parse(testSchema, input);
-    const row = await loadCode(scope, id);
-    const result = evaluateRouting(
-      routing,
-      {
-        deviceType: sample.device,
-        os: sample.os,
-        country: sample.country,
-        region: sample.region,
-        language: sample.language,
-        now: new Date(sample.at),
-        scanNumber: sample.scanNumber,
-        visitorKey: createHash("sha256")
-          .update(sample.visitor || "visitor")
-          .digest("hex"),
-      },
-      row.destinationUrl,
-    );
-    const conversions = parsePixelConfig(row.pixels)?.conversions;
-    return {
-      ruleId: result.rule?.id ?? null,
-      variantId: result.variant?.id ?? null,
-      url: finalizeUrl(result.url, {
-        utm: parseUtmConfig(row.utm),
-        scanToken: conversions ? "…" : null,
-      }).replace(`${SCAN_TOKEN_PARAM}=%E2%80%A6`, `${SCAN_TOKEN_PARAM}=…`),
-      trace: result.trace,
-    };
-  });
+  return run(
+    "testCodeRouting",
+    async (scope) => {
+      const { id, routing, sample } = parse(testSchema, input);
+      const row = await loadCode(scope, id);
+      const result = evaluateRouting(
+        routing,
+        {
+          deviceType: sample.device,
+          os: sample.os,
+          country: sample.country,
+          region: sample.region,
+          language: sample.language,
+          now: new Date(sample.at),
+          scanNumber: sample.scanNumber,
+          visitorKey: createHash("sha256")
+            .update(sample.visitor || "visitor")
+            .digest("hex"),
+        },
+        row.destinationUrl,
+      );
+      const conversions = parsePixelConfig(row.pixels)?.conversions;
+      return {
+        ruleId: result.rule?.id ?? null,
+        variantId: result.variant?.id ?? null,
+        url: finalizeUrl(result.url, {
+          utm: parseUtmConfig(row.utm),
+          scanToken: conversions ? "…" : null,
+        }).replace(`${SCAN_TOKEN_PARAM}=%E2%80%A6`, `${SCAN_TOKEN_PARAM}=…`),
+        trace: result.trace,
+      };
+      // Stores nothing: a dry run of unsaved rules.
+    },
+    { access: "read" },
+  );
 }

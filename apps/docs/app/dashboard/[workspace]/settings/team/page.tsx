@@ -12,6 +12,10 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { requireDashboardScope } from "@/app/dashboard/codes/_lib/qr-codes";
 import { InviteForm } from "@/app/dashboard/team/_components/invite-form";
+import {
+  JoinLinkCard,
+  type JoinLinkView,
+} from "@/app/dashboard/team/_components/join-link-card";
 import { MembersTable } from "@/app/dashboard/team/_components/members-table";
 import { PendingInvitations } from "@/app/dashboard/team/_components/pending-invitations";
 import { UpgradeButton } from "@/app/dashboard/team/_components/small-actions";
@@ -27,28 +31,56 @@ import {
   TEAM_ROLE_LABELS,
 } from "@/app/dashboard/team/_lib/team";
 import { SettingsHeader } from "@/app/settings/components/settings-header";
+import { can, WORKSPACE_ROLE_DESCRIPTIONS } from "@/lib/permissions";
 import { getOwnerPlanForOrganization, getPlanLimits } from "@/lib/plans";
 import { PLAN_NAMES } from "@/lib/pricing";
-import { getCurrentUser } from "@/lib/shared";
+import { getCurrentUser, logError } from "@/lib/shared";
+import { getJoinLink, JoinLinksUnavailableError } from "@/lib/workspace-join";
 
 export const metadata: Metadata = {
   title: "Team",
   robots: { index: false, follow: false },
 };
 
+/**
+ * The join link, or "unavailable" until manual-sql/0014 is applied (or when
+ * it can't be read): the rest of the page still works.
+ */
+async function loadJoinLink(
+  organizationId: string,
+): Promise<JoinLinkView | null | "unavailable"> {
+  try {
+    const link = await getJoinLink(organizationId);
+    return link
+      ? {
+          role: link.role,
+          createdAt: link.createdAt.toISOString(),
+          createdByName: link.createdByName,
+        }
+      : null;
+  } catch (error) {
+    if (!(error instanceof JoinLinksUnavailableError)) {
+      logError(error as Error, { action: "team.joinLink" });
+    }
+    return "unavailable";
+  }
+}
+
 /** The workspace's members, invitations and seats. */
 export default async function TeamPage() {
   const scope = await requireDashboardScope();
-  const canManage = scope.role !== "member";
-  const [user, team, members, invitations, teamPlan] = await Promise.all([
-    getCurrentUser(),
-    getTeam(scope.organizationId),
-    listTeamMembers(scope.organizationId),
-    canManage
-      ? listPendingInvitations(scope.organizationId)
-      : Promise.resolve([]),
-    getOwnerPlanForOrganization(scope.organizationId),
-  ]);
+  const canManage = can(scope.role, "members.manage");
+  const [user, team, members, invitations, teamPlan, joinLink] =
+    await Promise.all([
+      getCurrentUser(),
+      getTeam(scope.organizationId),
+      listTeamMembers(scope.organizationId),
+      canManage
+        ? listPendingInvitations(scope.organizationId)
+        : Promise.resolve([]),
+      getOwnerPlanForOrganization(scope.organizationId),
+      canManage ? loadJoinLink(scope.organizationId) : Promise.resolve(null),
+    ]);
   if (!team) notFound();
   const received = await listReceivedInvitations(user.email);
   const seats = getPlanLimits(teamPlan).teamMembers;
@@ -98,7 +130,12 @@ export default async function TeamPage() {
         <CardHeader>
           <div className="flex flex-wrap items-center gap-2">
             <CardTitle>Members</CardTitle>
-            <Badge variant="outline">{TEAM_ROLE_LABELS[scope.role]}</Badge>
+            <Badge
+              title={WORKSPACE_ROLE_DESCRIPTIONS[scope.role]}
+              variant="outline"
+            >
+              {TEAM_ROLE_LABELS[scope.role]}
+            </Badge>
             <Badge variant={teamPlan !== "free" ? "default" : "secondary"}>
               {PLAN_NAMES[teamPlan]}
             </Badge>
@@ -106,7 +143,7 @@ export default async function TeamPage() {
           <CardDescription>
             {members.length} member{members.length === 1 ? "" : "s"}
             {Number.isFinite(seats) ? ` of ${seats}` : ""}. Seats follow the
-            plan of the workspace's owners.
+            plan of the workspace's owners and billing members.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -136,7 +173,7 @@ export default async function TeamPage() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
-              <InviteForm />
+              <InviteForm currentRole={scope.role} />
               <div className="space-y-2">
                 <h3 className="text-sm font-medium">Pending invitations</h3>
                 <PendingInvitations
@@ -156,14 +193,37 @@ export default async function TeamPage() {
             <div className="space-y-0.5">
               <p className="font-medium">Invite your colleagues</p>
               <p className="text-muted-foreground text-sm text-pretty">
-                {ownWorkspace || scope.role === "owner"
+                {ownWorkspace || can(scope.role, "billing.manage")
                   ? `Members are part of ${PLAN_NAMES.pro} and ${PLAN_NAMES.business}.`
-                  : "Ask a workspace owner to upgrade to add members."}
+                  : "Ask a workspace owner or billing member to upgrade to add members."}
               </p>
             </div>
-            {scope.role === "owner" && <UpgradeButton size="sm" />}
+            {can(scope.role, "billing.manage") && <UpgradeButton size="sm" />}
           </Card>
         ))}
+
+      {canManage && seats > 1 && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Join link</CardTitle>
+            <CardDescription className="text-pretty">
+              One link for the whole team: anyone signed in who opens it joins
+              this workspace, while it has free seats. Reset it or turn it off
+              any time.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {joinLink === "unavailable" ? (
+              <p className="text-muted-foreground text-sm">
+                Join links aren't set up on this server yet. Invite people by
+                email for now.
+              </p>
+            ) : (
+              <JoinLinkCard currentRole={scope.role} link={joinLink} />
+            )}
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

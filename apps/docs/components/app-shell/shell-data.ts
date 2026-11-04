@@ -10,6 +10,7 @@ import {
 import type { ShellLimits } from "@/components/limits/plan-limits-provider";
 import { getChangelogSeen } from "@/lib/changelog-feed-server";
 import { getCheckoutOpen } from "@/lib/checkout-availability";
+import { can } from "@/lib/permissions";
 import {
   cheapestPlanWith,
   getPlan,
@@ -26,7 +27,7 @@ import type { WhatsNewSeen } from "./whats-new";
 
 export type ShellWorkspace = Pick<
   Workspace,
-  "id" | "name" | "slug" | "role" | "own"
+  "id" | "name" | "slug" | "logo" | "role" | "own"
 >;
 
 /** What the app chrome shows about the workspace (no secrets, no PII). */
@@ -39,7 +40,7 @@ export interface ShellData {
   plan: Plan;
   /** The signed-in person's own plan (their subscription). */
   personalPlan: Plan;
-  /** May change the workspace's plan: its owners. */
+  /** May change the workspace's plan: its owners and billing members. */
   canUpgrade: boolean;
   /** May create another workspace (the person's plan allows it). */
   canCreateWorkspace: boolean;
@@ -58,9 +59,10 @@ const toShellWorkspace = ({
   id,
   name,
   slug,
+  logo,
   role,
   own,
-}: Workspace): ShellWorkspace => ({ id, name, slug, role, own });
+}: Workspace): ShellWorkspace => ({ id, name, slug, logo, role, own });
 
 /**
  * The open workspace (from the URL, else the person's default), their other
@@ -84,7 +86,7 @@ export async function getShellData(): Promise<ShellData | null> {
       }),
     ]);
     const isTeam = !workspace.own;
-    const canUpgrade = scope.role === "owner";
+    const canUpgrade = can(scope.role, "billing.manage");
     const limit = getPlanLimits(plan).dynamicCodes;
     const codes = Number.isFinite(limit)
       ? {

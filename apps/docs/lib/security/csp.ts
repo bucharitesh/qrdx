@@ -37,7 +37,7 @@ export type Directives = Record<string, string[]>;
 
 /** Paths rendered per request that carry a nonce (must stay dynamic: no PPR or static rendering). */
 export const NONCE_ROUTE =
-  /^\/(?:dashboard|settings|admin|oauth|invite)(?:\/.*)?$/;
+  /^\/(?:dashboard|settings|admin|oauth|invite|join)(?:\/.*)?$/;
 
 /** Path prefixes the prerendered-page policy (next.config) never applies to. */
 export const NO_APP_CSP_PREFIXES = [
@@ -47,6 +47,7 @@ export const NO_APP_CSP_PREFIXES = [
   "admin",
   "oauth",
   "invite",
+  "join",
   // Customer-facing: hosted pages and short links (own policies).
   "p",
   "q",

@@ -171,6 +171,7 @@ describe("which paths get which policy", () => {
       "/admin/users",
       "/oauth/authorize",
       "/invite/abc",
+      "/join/abc",
     ]) {
       expect(NONCE_ROUTE.test(path), path).toBe(true);
     }
@@ -204,6 +205,7 @@ describe("which paths get which policy", () => {
       "/admin",
       "/oauth/authorize",
       "/invite/x",
+      "/join/x",
       "/p/abc",
       "/q/abc",
       "/api/events",

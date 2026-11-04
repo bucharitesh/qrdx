@@ -18,19 +18,25 @@ export function isDeleteConfirmed(text: string): boolean {
   return text.trim().toLowerCase() === DELETE_CONFIRMATION;
 }
 
-const ROLE_RANK: Record<string, number> = { owner: 0, admin: 1, member: 2 };
+const ROLE_RANK: Record<string, number> = {
+  owner: 0,
+  admin: 1,
+  member: 2,
+  billing: 3,
+  viewer: 4,
+};
 
 /** Best rank among comma-separated roles ("owner,admin" ranks as owner). */
 export function roleRank(role: string | null | undefined): number {
-  if (!role) return 3;
+  if (!role) return 5;
   return Math.min(
-    ...role.split(",").map((value) => ROLE_RANK[value.trim()] ?? 3),
+    ...role.split(",").map((value) => ROLE_RANK[value.trim()] ?? 5),
   );
 }
 
 export function roleLabel(role: string): string {
   const rank = roleRank(role);
-  return rank === 0 ? "owner" : rank === 1 ? "admin" : "member";
+  return ["owner", "admin", "member", "billing", "viewer"][rank] ?? "member";
 }
 
 export interface TeamMemberFacts {

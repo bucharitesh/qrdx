@@ -19,6 +19,16 @@ import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { z } from "zod";
 import {
+  can,
+  canAssignRole,
+  forbiddenMessage,
+  JOINABLE_ROLES,
+  strongestRole,
+  WORKSPACE_ROLE_LABELS,
+  WORKSPACE_ROLES,
+  type WorkspaceRole,
+} from "@/lib/permissions";
+import {
   getOwnerPlanForOrganization,
   getPlan,
   getPlanLimits,
@@ -87,12 +97,12 @@ const inviteSchema = z.object({
     .toLowerCase()
     .max(254)
     .pipe(z.email("Enter a valid email")),
-  role: z.enum(["member", "admin"]),
+  role: z.enum(JOINABLE_ROLES as [WorkspaceRole, ...WorkspaceRole[]]),
 });
 
 const roleSchema = z.object({
   memberId: idSchema,
-  role: z.enum(["owner", "admin", "member"]),
+  role: z.enum(WORKSPACE_ROLES),
 });
 
 const memberSchema = z.object({ memberId: idSchema });
@@ -176,9 +186,36 @@ async function allow(
 
 const RATE_LIMITED = "Too many requests. Please wait a minute and try again.";
 
-/** The open workspace, when the caller may manage it (owner or admin). */
+/** The open workspace, when the caller may manage its people (lib/permissions). */
 function managedTeamId(scope: ActiveScope): string | null {
-  return scope.role !== "member" ? scope.organizationId : null;
+  return can(scope.role, "members.manage") ? scope.organizationId : null;
+}
+
+/** A member of the open workspace, with their strongest role. */
+async function findTeamMember(organizationId: string, memberId: string) {
+  const [row] = await db
+    .select({ id: member.id, role: member.role, userId: member.userId })
+    .from(member)
+    .where(
+      and(eq(member.id, memberId), eq(member.organizationId, organizationId)),
+    )
+    .limit(1);
+  return row ? { ...row, role: strongestRole(row.role) } : null;
+}
+
+/** Why `actor` can't give `to` (or change `from`), in the dialog's words. */
+function roleChangeError(
+  actor: WorkspaceRole,
+  from: WorkspaceRole | null,
+  to: WorkspaceRole,
+): string {
+  if (to === "owner" || from === "owner") {
+    return "Only owners can make someone an owner, or change an owner's role.";
+  }
+  if (to === "billing" || from === "billing") {
+    return `Only owners can give or take away the ${WORKSPACE_ROLE_LABELS.billing} role, since it decides who pays for the workspace.`;
+  }
+  return forbiddenMessage(actor, "members.manage");
 }
 
 function revalidateTeam() {
@@ -303,8 +340,8 @@ export async function updateWorkspace(input: {
 }): Promise<TeamActionResult<{ slug: string }>> {
   try {
     const scope = await getActiveScope();
-    if (scope.role === "member") {
-      return fail("Only workspace owners and admins can change its settings.");
+    if (!can(scope.role, "workspace.update")) {
+      return fail(forbiddenMessage(scope.role, "workspace.update"));
     }
     const parsed = updateWorkspaceSchema.safeParse(input);
     if (!parsed.success) {
@@ -353,7 +390,7 @@ export async function rememberWorkspace(): Promise<void> {
 
 export async function inviteMember(input: {
   email: string;
-  role: "member" | "admin";
+  role: WorkspaceRole;
 }): Promise<
   TeamActionResult<{
     id: string;
@@ -368,11 +405,14 @@ export async function inviteMember(input: {
     const scope = await getActiveScope();
     const organizationId = managedTeamId(scope);
     if (!organizationId) {
-      return fail("Only workspace owners and admins can invite.");
+      return fail(forbiddenMessage(scope.role, "members.manage"));
     }
     const parsed = inviteSchema.safeParse(input);
     if (!parsed.success) {
       return fail(parsed.error.issues[0]?.message ?? "Invalid invitation.");
+    }
+    if (!canAssignRole(scope.role, null, parsed.data.role)) {
+      return fail(roleChangeError(scope.role, null, parsed.data.role));
     }
     if (!(await allow(inviteLimiter, scope, "invite")))
       return fail(RATE_LIMITED);
@@ -423,7 +463,7 @@ export async function cancelInvitation(input: {
   try {
     const scope = await getActiveScope();
     if (!managedTeamId(scope))
-      return fail("Only workspace owners and admins can revoke invitations.");
+      return fail(forbiddenMessage(scope.role, "members.manage"));
     const parsed = invitationSchema.safeParse(input);
     if (!parsed.success) return fail("Invalid invitation.");
     if (!(await allow(teamLimiter, scope, "manage"))) return fail(RATE_LIMITED);
@@ -442,19 +482,21 @@ export async function cancelInvitation(input: {
 
 export async function updateMemberRole(input: {
   memberId: string;
-  role: "owner" | "admin" | "member";
+  role: WorkspaceRole;
 }): Promise<TeamActionResult> {
   try {
     const scope = await getActiveScope();
     const organizationId = managedTeamId(scope);
     if (!organizationId)
-      return fail("Only workspace owners and admins can change roles.");
+      return fail(forbiddenMessage(scope.role, "members.manage"));
     const parsed = roleSchema.safeParse(input);
     if (!parsed.success) return fail("Invalid role.");
-    if (parsed.data.role === "owner" && scope.role !== "owner") {
-      return fail("Only owners can make someone an owner.");
-    }
     if (!(await allow(teamLimiter, scope, "manage"))) return fail(RATE_LIMITED);
+    const target = await findTeamMember(organizationId, parsed.data.memberId);
+    if (!target) return fail("That person isn't a member of this workspace.");
+    if (!canAssignRole(scope.role, target.role, parsed.data.role)) {
+      return fail(roleChangeError(scope.role, target.role, parsed.data.role));
+    }
 
     await auth.api.updateMemberRole({
       headers: await headers(),
@@ -479,10 +521,23 @@ export async function removeMember(input: {
     const scope = await getActiveScope();
     const organizationId = managedTeamId(scope);
     if (!organizationId)
-      return fail("Only workspace owners and admins can remove members.");
+      return fail(forbiddenMessage(scope.role, "members.manage"));
     const parsed = memberSchema.safeParse(input);
     if (!parsed.success) return fail("Invalid member.");
     if (!(await allow(teamLimiter, scope, "manage"))) return fail(RATE_LIMITED);
+    // Owners and billing members decide who pays: only owners remove them.
+    const target = await findTeamMember(organizationId, parsed.data.memberId);
+    if (
+      target &&
+      (target.role === "owner" || target.role === "billing") &&
+      !can(scope.role, "owners.manage")
+    ) {
+      return fail(
+        target.role === "owner"
+          ? "Only owners can remove an owner from the workspace."
+          : "Only owners can remove a billing member from the workspace.",
+      );
+    }
 
     // Codes the member created stay with the workspace (organization_id is kept).
     await auth.api.removeMember({
@@ -532,7 +587,7 @@ export async function deleteTeam(input: {
     // Only the workspace that is open in the dashboard, and only by an owner.
     if (
       scope.organizationId !== parsed.data.organizationId ||
-      scope.role !== "owner"
+      !can(scope.role, "workspace.delete")
     ) {
       return fail("Only owners can delete a workspace.");
     }

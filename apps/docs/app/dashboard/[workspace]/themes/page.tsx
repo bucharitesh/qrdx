@@ -14,6 +14,7 @@ import {
   listVisibleThemes,
   teamThemesPlanName,
 } from "@/app/dashboard/themes/_lib/queries";
+import { can } from "@/lib/permissions";
 import { getPlan, getPlanForScope, getPlanLimits } from "@/lib/plans";
 import { playgroundHref } from "@/lib/playground-links";
 import { PLAN_NAMES } from "@/lib/pricing";
@@ -85,7 +86,7 @@ export default async function ThemesPage() {
                 name: team.name,
                 canManage: canManageTeamThemes(scope),
                 themesAllowed: getPlanLimits(scopePlan).teamThemes,
-                canUpgrade: scope.role === "owner",
+                canUpgrade: can(scope.role, "billing.manage"),
                 planName: teamThemesPlanName(),
               }
             : null

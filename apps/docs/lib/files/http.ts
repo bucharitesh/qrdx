@@ -3,6 +3,7 @@ import "server-only";
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import { HttpError } from "@/lib/error-response";
 import { baseUrl } from "@/lib/metadata";
+import { assertCan } from "@/lib/permissions-server";
 import { enforceRateLimits, getClientIp } from "@/lib/request-guards";
 import { type ActiveScope, getActiveScope } from "@/lib/scope";
 
@@ -53,6 +54,8 @@ export async function resolveUploadScope(
     assertJson(req);
   }
   const scope = await getActiveScope(req.headers);
+  // Uploading adds a file to the workspace: not for read-only roles.
+  if (write) assertCan(scope, "content.write");
   await enforceRateLimits([
     { limiter: userLimiter, key: `files:upload:user:${scope.userId}` },
     { limiter: ipLimiter, key: `files:upload:ip:${getClientIp(req)}` },
