@@ -11,6 +11,7 @@ import { createMetadata } from "@/lib/metadata";
 import { getLatestVersion, getNpmLag } from "@/lib/npm-version";
 import { brandedTitle } from "@/lib/seo-overrides";
 import { compareSource } from "@/lib/source";
+import { buildTimeParams } from "@/lib/static-params";
 import { getMDXComponents } from "@/mdx-components";
 
 interface PageProps {
@@ -71,10 +72,13 @@ export default async function ComparePage({ params }: PageProps) {
   );
 }
 
+// Unknown slugs render notFound() (lib/static-params.ts).
 export function generateStaticParams() {
-  return compareSource.generateParams().map((params) => ({
-    slug: params.slug?.[0] ?? "",
-  }));
+  return buildTimeParams(() =>
+    compareSource.generateParams().map((params) => ({
+      slug: params.slug?.[0] ?? "",
+    })),
+  );
 }
 
 export async function generateMetadata({

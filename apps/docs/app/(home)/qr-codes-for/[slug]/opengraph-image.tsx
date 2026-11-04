@@ -1,13 +1,16 @@
 import { notFound } from "next/navigation";
 import { ogSize, renderPageOgImage } from "@/app/og/brand";
 import { industries } from "@/lib/seo-content";
+import { buildTimeParams } from "@/lib/static-params";
 
 export const alt = "QR code ideas for one industry";
 export const size = ogSize;
 export const contentType = "image/png";
 
 export function generateStaticParams() {
-  return industries.items.map((item) => ({ slug: item.slug }));
+  return buildTimeParams(() =>
+    industries.items.map((item) => ({ slug: item.slug })),
+  );
 }
 
 export default async function Image({
