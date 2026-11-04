@@ -46,8 +46,10 @@ import type {
 } from "@/app/dashboard/codes/_lib/organize-shared";
 import type { QrCodeListItem } from "@/app/dashboard/codes/_lib/qr-codes";
 import { useOptimisticCodeList } from "@/components/code-builder/use-optimistic-codes";
+import { CodesCards } from "./codes-cards";
 import { CodesTable } from "./codes-table";
 import { MoveToFolderDialog } from "./folder-dialogs";
+import { useListDisplay } from "./list-display";
 import { TagsDialog } from "./tag-dialogs";
 import { plural, useOrganizeAction } from "./use-organize-action";
 import { downloadCodesZip } from "./zip-download";
@@ -76,6 +78,7 @@ export function CodesList({
 }) {
   // Saves from the code builder show at once, before the refresh lands.
   const codes = useOptimisticCodeList(serverCodes);
+  const { display } = useListDisplay();
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [dialog, setDialog] = useState<"move" | "tags" | "purge" | null>(null);
   const [zipping, setZipping] = useState(false);
@@ -327,18 +330,32 @@ export function CodesList({
         </div>
       )}
 
-      <div className="rounded-lg border">
-        <CodesTable
+      {display.view === "cards" ? (
+        <CodesCards
           codes={codes}
           folders={folders}
           keyboardShortcuts={keyboardShortcuts}
           onSelect={select}
+          properties={display.properties}
           selected={selected}
-          showFolder={showFolder}
           sparklines={sparklines}
           tags={tags}
         />
-      </div>
+      ) : (
+        <div className="rounded-lg border">
+          <CodesTable
+            codes={codes}
+            folders={folders}
+            keyboardShortcuts={keyboardShortcuts}
+            onSelect={select}
+            properties={display.properties}
+            selected={selected}
+            showFolder={showFolder}
+            sparklines={sparklines}
+            tags={tags}
+          />
+        </div>
+      )}
 
       <MoveToFolderDialog
         folders={folders}

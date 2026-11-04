@@ -6,16 +6,16 @@ import {
   EmptyHeader,
   EmptyTitle,
 } from "@repo/design-system/components/ui/empty";
-import {
-  ArrowRight2 as ChevronRight,
-  DocumentUpload as FileUp,
-} from "iconsax-reactjs";
+import { DocumentUpload as FileUp } from "iconsax-reactjs";
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import Link from "next/link";
-import { Fragment } from "react";
 import { getUserSettings } from "@/actions/user-settings";
-import { PageHeader } from "@/app/dashboard/_components/page-header";
 import { codeOptionPlansFor } from "@/app/dashboard/codes/_lib/code-option-plans";
+import {
+  DISPLAY_COOKIES,
+  parseDisplay,
+} from "@/app/dashboard/codes/_lib/display";
 import {
   countTrash,
   listFolders,
@@ -24,7 +24,6 @@ import {
 import {
   type CodesFilters,
   codesHref,
-  folderPath,
   isUnfiltered,
   parseCodesFilters,
 } from "@/app/dashboard/codes/_lib/organize-shared";
@@ -33,15 +32,16 @@ import {
   listCodes,
   requireDashboardScope,
 } from "@/app/dashboard/codes/_lib/qr-codes";
+import { getDomainOptions } from "@/app/dashboard/domains/_lib/domains";
 import { HairlineFigure } from "@/components/mockups/hairline";
 import { playgroundHref } from "@/lib/playground-links";
 import { getScanSparklines } from "@/lib/scans";
 import { CodeOptionPlansProvider } from "./code-options";
+import { CodesHeader } from "./codes-header";
 import { CodesList } from "./codes-list";
-import { CodesSidebar, CodesSidebarSheet } from "./codes-sidebar";
 import { CodesToolbar } from "./codes-toolbar";
 import { formatNumber } from "./format";
-import { ImportDialog } from "./import-dialog";
+import { ListDisplayProvider } from "./list-display";
 import { NewCodeButton, UsageMeter } from "./usage";
 
 export const codesMetadata: Metadata = {
@@ -61,7 +61,9 @@ const STATUS_NOTES = {
 } as const;
 
 /**
- * The codes list: folders and tags sidebar, search, filters, bulk actions.
+ * The codes list, the way Dub's links page works: a folder switcher as the
+ * title, a Filter and Display toolbar with live search, then cards or rows,
+ * and bulk actions. No second sidebar: the area sidebar has the rest.
  * Rendered by /dashboard/<workspace>/codes (`basePath` is where its links
  * point).
  */
@@ -116,161 +118,104 @@ export async function CodesView({
   const href = (patch: Partial<CodesFilters>) =>
     codesHref(basePath, effective, patch);
 
-  const sidebarProps = {
-    activeCount: usage.used,
-    basePath,
-    filters: effective,
-    folders,
-    tags,
-    trashCount,
+  const [domainOptions, cookieStore] = await Promise.all([
+    getDomainOptions(scope).catch(() => null),
+    cookies(),
+  ]);
+  const display = parseDisplay(cookieStore.get(DISPLAY_COOKIES.codes)?.value);
+  const domains = {
+    defaultHost: domainOptions?.defaultHost ?? "",
+    domains: domainOptions?.domains ?? [],
   };
-
-  const crumbs = folder ? folderPath(folders, folder.id) : [];
-  const heading =
-    effective.status === "trash"
-      ? "Trash"
-      : effective.folder === "none"
-        ? "Not in a folder"
-        : folder
-          ? folder.name
-          : effective.favorites
-            ? "Favorites"
-            : effective.status === "archived"
-              ? "Archived"
-              : "All codes";
+  // The full empty state only when there's nothing to organise either:
+  // leftover folders, tags or trash keep the toolbar to manage them.
+  const brandNew =
+    isEmpty && folders.length === 0 && tags.length === 0 && trashCount === 0;
 
   return (
     // The create and edit dialogs read the option plans from here.
     <CodeOptionPlansProvider plans={codeOptionPlansFor(usage.plan)}>
-      <div className="space-y-6">
-        <PageHeader
-          description="Print once, then change where your codes point and see every scan."
-          title="Dynamic QR codes"
-        >
-          <Button asChild variant="outline">
-            <Link href={`${basePath}/import`}>
-              <FileUp />
-              Import CSV
-            </Link>
-          </Button>
-          <ImportDialog />
-          <NewCodeButton usage={usage} />
-        </PageHeader>
+      <ListDisplayProvider initial={display} list="codes">
+        <div className="space-y-5">
+          <CodesHeader
+            basePath={basePath}
+            filters={effective}
+            folders={folders}
+            total={total}
+            usage={usage}
+          />
+          <UsageMeter usage={usage} />
 
-        <UsageMeter usage={usage} />
-
-        {/* The full empty state only when there's nothing to organise either:
-          leftover folders, tags or trash keep the sidebar, so they can still
-          be managed. */}
-        {isEmpty &&
-        folders.length === 0 &&
-        tags.length === 0 &&
-        trashCount === 0 ? (
-          <Empty className="border">
-            <EmptyHeader>
-              <HairlineFigure
-                className="mx-auto mb-2 h-28 w-40"
-                figure="CodeCard"
-              />
-              <EmptyTitle>No dynamic QR codes yet</EmptyTitle>
-              <EmptyDescription>
-                A dynamic code encodes a short link. Print it once and change
-                the destination whenever you like, with scan analytics included.
-              </EmptyDescription>
-            </EmptyHeader>
-            <EmptyContent>
-              <div className="flex flex-wrap justify-center gap-2">
-                <NewCodeButton usage={usage}>
-                  Create your first dynamic QR code
-                </NewCodeButton>
-                <Button asChild variant="outline">
-                  <Link href={`${basePath}/import`}>
-                    <FileUp />
-                    Import from CSV
+          {brandNew ? (
+            <Empty className="border">
+              <EmptyHeader>
+                <HairlineFigure
+                  className="mx-auto mb-2 h-28 w-40"
+                  figure="CodeCard"
+                />
+                <EmptyTitle>No dynamic QR codes yet</EmptyTitle>
+                <EmptyDescription>
+                  A dynamic code encodes a short link. Print it once and change
+                  the destination whenever you like, with scan analytics
+                  included.
+                </EmptyDescription>
+              </EmptyHeader>
+              <EmptyContent>
+                <div className="flex flex-wrap justify-center gap-2">
+                  <NewCodeButton usage={usage}>
+                    Create your first dynamic QR code
+                  </NewCodeButton>
+                  <Button asChild variant="outline">
+                    <Link href={`${basePath}/import`}>
+                      <FileUp />
+                      Import from CSV
+                    </Link>
+                  </Button>
+                </div>
+                <p className="text-muted-foreground text-xs">
+                  Or pick Dynamic for a URL code in the{" "}
+                  <Link
+                    className="underline"
+                    href={playgroundHref({ type: "url" })}
+                  >
+                    playground
                   </Link>
-                </Button>
-              </div>
-              <p className="text-muted-foreground text-xs">
-                Or pick Dynamic for a URL code in the{" "}
-                <Link
-                  className="underline"
-                  href={playgroundHref({ type: "url" })}
-                >
-                  playground
-                </Link>
-                .
-              </p>
-            </EmptyContent>
-          </Empty>
-        ) : (
-          <div className="grid gap-6 xl:grid-cols-[13rem_minmax(0,1fr)]">
-            <aside className="hidden xl:block">
-              <div className="sticky top-8">
-                <CodesSidebar {...sidebarProps} />
-              </div>
-            </aside>
-
-            <div className="min-w-0 space-y-4">
+                  .
+                </p>
+              </EmptyContent>
+            </Empty>
+          ) : (
+            <div className="space-y-4">
               <CodesToolbar
                 basePath={basePath}
+                domains={domains}
                 filters={effective}
                 tags={tags}
                 trashCount={trashCount}
-              >
-                <CodesSidebarSheet {...sidebarProps} />
-              </CodesToolbar>
-
-              <div className="space-y-1">
-                <h2 className="flex min-w-0 flex-wrap items-center gap-1 text-base font-semibold">
-                  {crumbs.length > 1 ? (
-                    crumbs.map((crumb, index) => (
-                      <Fragment key={crumb.id}>
-                        {index > 0 && (
-                          <ChevronRight className="text-muted-foreground size-4" />
-                        )}
-                        {index < crumbs.length - 1 ? (
-                          <Link
-                            className="text-muted-foreground hover:text-foreground truncate"
-                            href={href({ folder: crumb.id })}
-                          >
-                            {crumb.name}
-                          </Link>
-                        ) : (
-                          <span className="truncate">{crumb.name}</span>
-                        )}
-                      </Fragment>
-                    ))
-                  ) : (
-                    <span className="truncate">{heading}</span>
-                  )}
-                  <span className="text-muted-foreground ml-1 text-sm font-normal tabular-nums">
-                    {formatNumber(total)} {total === 1 ? "code" : "codes"}
-                  </span>
-                </h2>
-                {(effective.status === "archived" ||
-                  effective.status === "trash") && (
-                  <p className="text-muted-foreground text-xs">
-                    {STATUS_NOTES[effective.status]}
-                  </p>
-                )}
-              </div>
+              />
+              {(effective.status === "archived" ||
+                effective.status === "trash") && (
+                <p className="text-muted-foreground text-xs">
+                  {STATUS_NOTES[effective.status]}
+                </p>
+              )}
 
               {codes.length === 0 ? (
-                <div className="text-muted-foreground space-y-2 rounded-lg border py-10 text-center text-sm">
+                <div className="text-muted-foreground space-y-2 rounded-xl border py-10 text-center text-sm">
                   <p>
                     {effective.status === "trash"
                       ? "The trash is empty."
                       : effective.q
                         ? `No codes match "${effective.q}".`
                         : folder
-                          ? "This folder is empty. Drag codes onto it in the sidebar, or use Move to folder."
+                          ? "This folder is empty. Use Move to folder on a code to add it."
                           : effective.status === "archived"
                             ? "No archived codes."
                             : isUnfiltered(effective)
                               ? "No active codes. Create one, or restore codes from Archived or the trash."
                               : "No codes match these filters."}
                   </p>
-                  {!isUnfiltered(effective) && effective.status !== "trash" && (
+                  {!isUnfiltered(effective) && (
                     <Link className="underline" href={basePath}>
                       Show all codes
                     </Link>
@@ -322,9 +267,9 @@ export async function CodesView({
                 </div>
               )}
             </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      </ListDisplayProvider>
     </CodeOptionPlansProvider>
   );
 }

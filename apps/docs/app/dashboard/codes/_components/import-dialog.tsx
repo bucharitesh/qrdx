@@ -97,9 +97,15 @@ function heading(step: Step): { title: string; description: string } {
 function ImportDialogInner({
   mock: forceMock = false,
   defaultOpen = false,
+  openSignal = 0,
+  hideTrigger = false,
 }: {
   mock?: boolean;
   defaultOpen?: boolean;
+  /** Bump it to open the dialog from elsewhere (the codes "…" menu) */
+  openSignal?: number;
+  /** The opener lives elsewhere: no Import button here */
+  hideTrigger?: boolean;
 }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -111,6 +117,9 @@ function ImportDialogInner({
   const mockPlan = searchParams.get("plan") === "free" ? "free" : "pro";
 
   const [open, setOpen] = useState(defaultOpen || param !== null);
+  useEffect(() => {
+    if (openSignal > 0) setOpen(true);
+  }, [openSignal]);
   const [step, setStep] = useState<Step>(() => stepFor(param));
   const [client, setClient] = useState<MigrateClient | null>(
     mockWanted ? null : httpClient,
@@ -194,7 +203,11 @@ function ImportDialogInner({
 
   return (
     <Dialog onOpenChange={close} open={open}>
-      <Button onClick={() => setOpen(true)} variant="outline">
+      <Button
+        className={hideTrigger ? "hidden" : undefined}
+        onClick={() => setOpen(true)}
+        variant="outline"
+      >
         <Import />
         Import
       </Button>
@@ -316,14 +329,21 @@ function ImportDialogInner({
  * Rebrandly, Short.io (connected accounts) and export files of other
  * providers. `?import=<provider>` opens it on that provider.
  */
-export function ImportDialog(props: { mock?: boolean; defaultOpen?: boolean }) {
+export function ImportDialog(props: {
+  mock?: boolean;
+  defaultOpen?: boolean;
+  openSignal?: number;
+  hideTrigger?: boolean;
+}) {
   return (
     <Suspense
       fallback={
-        <Button disabled variant="outline">
-          <Import />
-          Import
-        </Button>
+        props.hideTrigger ? null : (
+          <Button disabled variant="outline">
+            <Import />
+            Import
+          </Button>
+        )
       }
     >
       <ImportDialogInner {...props} />

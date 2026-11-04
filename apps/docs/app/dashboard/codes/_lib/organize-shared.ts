@@ -200,6 +200,13 @@ export const CODE_SORT_LABELS: Record<CodeSort, string> = {
 
 export type CodesStatus = "active" | "archived" | "trash";
 
+/** What a code opens: a website link (redirect) or a hosted page. */
+export const CODE_TYPES = ["link", "page"] as const;
+export type CodeTypeFilter = (typeof CODE_TYPES)[number];
+
+/** `domain=` for codes on the default short link (no custom domain). */
+export const DEFAULT_DOMAIN_FILTER = "default";
+
 export interface CodesFilters {
   status: CodesStatus;
   q: string;
@@ -207,6 +214,10 @@ export interface CodesFilters {
   folder: string | null;
   tags: string[];
   favorites: boolean;
+  /** Website links or hosted pages only; null for both */
+  type: CodeTypeFilter | null;
+  /** A custom domain's id, DEFAULT_DOMAIN_FILTER, or null for any */
+  domain: string | null;
   sort: CodeSort;
   page: number;
 }
@@ -222,6 +233,8 @@ export function parseCodesFilters(params: SearchParams): CodesFilters {
   const status = first(params.status);
   const sort = first(params.sort);
   const folder = first(params.folder)?.trim() ?? "";
+  const type = first(params.type);
+  const domain = first(params.domain)?.trim() ?? "";
   const page = Number.parseInt(first(params.page) ?? "1", 10);
   return {
     status: status === "archived" || status === "trash" ? status : "active",
@@ -236,6 +249,10 @@ export function parseCodesFilters(params: SearchParams): CodesFilters {
       ),
     ].slice(0, 10),
     favorites: first(params.fav) === "1",
+    type: CODE_TYPES.includes(type as CodeTypeFilter)
+      ? (type as CodeTypeFilter)
+      : null,
+    domain: ID_PATTERN.test(domain) ? domain : null,
     sort: CODE_SORTS.includes(sort as CodeSort) ? (sort as CodeSort) : "newest",
     page: Number.isFinite(page) && page > 0 ? page : 1,
   };
@@ -254,6 +271,8 @@ export function codesHref(
   if (next.folder) search.set("folder", next.folder);
   if (next.tags.length > 0) search.set("tags", next.tags.join(","));
   if (next.favorites) search.set("fav", "1");
+  if (next.type) search.set("type", next.type);
+  if (next.domain) search.set("domain", next.domain);
   if (next.q) search.set("q", next.q);
   if (next.sort !== "newest") search.set("sort", next.sort);
   if (next.page > 1) search.set("page", String(next.page));
@@ -268,6 +287,8 @@ export function isUnfiltered(filters: CodesFilters): boolean {
     !filters.q &&
     !filters.folder &&
     filters.tags.length === 0 &&
-    !filters.favorites
+    !filters.favorites &&
+    !filters.type &&
+    !filters.domain
   );
 }
