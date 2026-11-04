@@ -122,8 +122,8 @@ export function MoveToWorkspaceDialog({
           </div>
         ) : targets.length === 0 ? (
           <p className="text-muted-foreground py-2 text-sm text-pretty">
-            You're not in another workspace where you can add codes. Viewers and
-            billing members can't add them.
+            You're not in another workspace where you can add codes. Workspaces
+            where you're a viewer or billing member aren't listed.
           </p>
         ) : (
           <RadioGroup
