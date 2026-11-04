@@ -26,9 +26,9 @@ const APP = join(import.meta.dirname, "../../app");
 
 /**
  * Routes that list their params some other way, each fixed in its own PR:
- * the home wall's images (#176) and the sample codes (#181).
+ * the sample codes (#181).
  */
-const ELSEWHERE = ["gallery/[file]/route.ts", "sample-codes/[file]/route.ts"];
+const ELSEWHERE = ["sample-codes/[file]/route.ts"];
 
 /** Every route file under app/ that exports generateStaticParams. */
 function routesWithStaticParams(dir = APP, out: string[] = []): string[] {

@@ -1,21 +1,27 @@
 import { QRCodeSVG } from "qrdx";
 import { createElement } from "react";
 import {
-  GALLERY_CODES,
   galleryCodeProps,
-  getGalleryCode,
+  getWallTile,
+  WALL_TILES,
 } from "@/lib/landing/showcase-gallery";
 import { loadGalleryAssets } from "@/lib/landing/showcase-gallery-assets";
 import { serializeQrSvg } from "@/lib/qr-render";
+import { buildTimeParams } from "@/lib/static-params";
 
-// The home page gallery's codes as SVG files (/gallery/<id>.svg), drawn by
-// the engine and prerendered at build time. The page loads them as lazy
-// <img>s, so they stay off the critical path and out of the HTML.
+// The "Made with QRdx" walls' codes as SVG files (/gallery/<id>.svg), drawn
+// by the engine and prerendered at build time. The walls load them as lazy
+// <img>s, so they stay off the critical path and out of the HTML. Unknown
+// names answer 404.
 
-export const dynamicParams = false;
-
+/**
+ * Every tile, for the build to prerender; none under `next dev`
+ * (lib/static-params.ts says why). Unknown names answer 404 below.
+ */
 export function generateStaticParams() {
-  return GALLERY_CODES.map((code) => ({ file: `${code.id}.svg` }));
+  return buildTimeParams(() =>
+    WALL_TILES.map((tile) => ({ file: `${tile.id}.svg` })),
+  );
 }
 
 export async function GET(
@@ -23,12 +29,12 @@ export async function GET(
   { params }: RouteContext<"/gallery/[file]">,
 ) {
   const { file } = await params;
-  const code = file.endsWith(".svg")
-    ? getGalleryCode(file.slice(0, -".svg".length))
+  const tile = file.endsWith(".svg")
+    ? getWallTile(file.slice(0, -".svg".length))
     : undefined;
-  if (!code) return new Response("Not found", { status: 404 });
+  if (!tile) return new Response("Not found", { status: 404 });
 
-  const props = galleryCodeProps(code, await loadGalleryAssets(code));
+  const props = galleryCodeProps(tile, await loadGalleryAssets(tile));
   const svg = serializeQrSvg(createElement(QRCodeSVG, props));
   return new Response(svg, {
     headers: {
