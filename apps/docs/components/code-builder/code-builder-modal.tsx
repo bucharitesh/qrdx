@@ -40,9 +40,11 @@ import { cn } from "@repo/design-system/lib/utils";
 import {
   ArrowLeft,
   Brush2,
+  Category2,
   DocumentText1,
   ExportSquare,
   Link2,
+  MagicStar,
 } from "iconsax-reactjs";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -51,6 +53,7 @@ import {
   type FormEvent,
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
   useTransition,
@@ -87,13 +90,23 @@ import {
 } from "@/components/workspace-provider";
 import { defaultThemeState } from "@/config/qr";
 import { track } from "@/lib/analytics";
+import {
+  dynamicDestination,
+  type OtherDynamicType,
+} from "@/lib/dynamic-content";
 import { offeredPageTypes } from "@/lib/landing/file-page-types";
+import { playgroundHref } from "@/lib/playground-links";
 import { PLAN_NAMES } from "@/lib/pricing";
 import { SHORT_LINK_BASE } from "@/lib/short-links";
 import { soundEvent } from "@/lib/sound/emit";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 import type { QRStyle } from "@/types/theme";
 import { type CodeBuilderData, getCodeBuilderData } from "./actions";
+import {
+  DynamicTypeFields,
+  DynamicTypePicker,
+  emptyContentValues,
+} from "./builder-content";
 import { BuilderOptionBar, BuilderOptionsOn } from "./builder-options";
 import { FolderField, TagsField } from "./builder-organize";
 import { BuilderPreview } from "./builder-preview";
@@ -133,6 +146,9 @@ type Panel =
   | { type: "style" };
 
 type Phase = "form" | "success";
+
+/** What a new code opens: a website, a hosted page, or another web-address type. */
+type ContentChoice = "link" | "page" | "other";
 
 type FormError = {
   code: string;
@@ -207,7 +223,9 @@ export default function CodeBuilderModal({
   const editing = request.mode === "edit";
   // Opened over the playground: results apply to it in place.
   const fromPlayground = request.origin === "playground";
-  const fileStorage = useAvailability().has("fileStorage");
+  const availability = useAvailability();
+  const fileStorage = availability.has("fileStorage");
+  const aiArtAvailable = availability.has("aiArt");
   const [open, setOpen] = useState(true);
   const [loaded, setLoaded] = useState<LoadedCode | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -217,7 +235,12 @@ export default function CodeBuilderModal({
       : EMPTY_FIELDS,
   );
   const [fields, setFields] = useState<BuilderFields>(initial);
-  const [contentType, setContentType] = useState<"link" | "page">("link");
+  const [contentType, setContentType] = useState<ContentChoice>("link");
+  /** "More types": the type picked, and what its form holds */
+  const [otherType, setOtherType] = useState<OtherDynamicType | null>(null);
+  const [otherValues, setOtherValues] = useState<Record<string, string>>({});
+  /** The website link as typed, kept while another choice is open */
+  const savedLink = useRef("");
   const [phase, setPhase] = useState<Phase>("form");
   const [created, setCreated] = useState<{
     code: QrCodeView;
@@ -320,6 +343,12 @@ export default function CodeBuilderModal({
     defaultThemeState.styles;
 
   const destination = checkDestination(fields.destination);
+  const typedContent =
+    !editing && contentType === "other" && otherType !== null;
+  const otherResult = useMemo(
+    () => (otherType ? dynamicDestination(otherType, otherValues) : null),
+    [otherType, otherValues],
+  );
   const destinationMessage =
     error?.field === "destination"
       ? error.message
@@ -423,6 +452,9 @@ export default function CodeBuilderModal({
   }, [draftable, saveDraftNow]);
 
   const restoreDraft = (draft: CodeDraft) => {
+    // A draft keeps the web address a type made, so it opens as a link.
+    setContentType("link");
+    setOtherType(null);
     setSessionId(draft.id);
     setFields({ ...draft.fields, tagIds: [...draft.fields.tagIds] });
     setError(null);
@@ -579,7 +611,8 @@ export default function CodeBuilderModal({
       setShowDestinationError(true);
       if (!destination.ok) {
         soundEvent("error");
-        destinationRef.current?.focus();
+        if (typedContent) focusContentIssue();
+        else destinationRef.current?.focus();
         return;
       }
     }
@@ -650,6 +683,10 @@ export default function CodeBuilderModal({
   }
 
   const startAnother = () => {
+    setContentType("link");
+    setOtherType(null);
+    setOtherValues({});
+    savedLink.current = "";
     setLoaded(null);
     setCreated(null);
     setInitial(EMPTY_FIELDS);
@@ -663,6 +700,82 @@ export default function CodeBuilderModal({
     setPhase("form");
   };
 
+  // ─── What it opens ────────────────────────────────────────────────────────
+
+  /** The form's encoded web address becomes the destination (empty until complete). */
+  const destinationFor = (
+    type: OtherDynamicType,
+    values: Record<string, string>,
+  ) => {
+    const result = dynamicDestination(type, values);
+    return result.ok ? result.url : "";
+  };
+
+  const chooseContent = (next: ContentChoice) => {
+    if (next === contentType) return;
+    if (contentType === "link") savedLink.current = fields.destination;
+    if (next === "link") update("destination", savedLink.current);
+    if (next === "other") {
+      update(
+        "destination",
+        otherType ? destinationFor(otherType, otherValues) : "",
+      );
+    }
+    setShowDestinationError(false);
+    setContentType(next);
+  };
+
+  const pickOtherType = (type: OtherDynamicType) => {
+    const values = emptyContentValues(type);
+    setOtherType(type);
+    setOtherValues(values);
+    setShowDestinationError(false);
+    update("destination", "");
+  };
+
+  const setOtherValue = (name: string, value: string) => {
+    if (!otherType) return;
+    const values = { ...otherValues, [name]: value };
+    setOtherValues(values);
+    update("destination", destinationFor(otherType, values));
+  };
+
+  function focusContentIssue() {
+    const field =
+      otherResult && !otherResult.ok
+        ? otherResult.issues.find((issue) => issue.field)?.field
+        : undefined;
+    const fallback = otherType ? Object.keys(otherValues)[0] : undefined;
+    document
+      .getElementById(`code-builder-content-${field ?? fallback}`)
+      ?.focus();
+  }
+
+  /**
+   * AI art paints the code's short link into the image, so it needs the
+   * code to exist; the playground's Art tab runs it (credits and all).
+   */
+  const openAiArt = () => {
+    if (!(target && userId)) return;
+    openInFullEditor({
+      code: target,
+      style: fields.style ?? target.style ?? displayStyle,
+      userId,
+    });
+    leaveFor(playgroundHref({ art: "ai" }));
+  };
+
+  /**
+   * Closes for good, then opens another page. Without the animated close:
+   * the playground mounts its own builder host, which would show this
+   * request again if the store still held it when the dashboard unmounts.
+   */
+  function leaveFor(href: string) {
+    finishClose({ keepDraft: true });
+    onClosed();
+    router.push(href);
+  }
+
   const openFullEditor = () => {
     const style = displayStyle;
     if (target && userId) {
@@ -672,10 +785,10 @@ export default function CodeBuilderModal({
     } else {
       return;
     }
-    finishClose({ keepDraft: true });
     // From the playground the design is already in the editor underneath.
     const to = fullEditorDestination(request.origin);
-    if (to) router.push(to);
+    if (to) leaveFor(to);
+    else finishClose({ keepDraft: true });
   };
 
   // ─── Keyboard ─────────────────────────────────────────────────────────────
@@ -686,7 +799,11 @@ export default function CodeBuilderModal({
     singleKeys,
     options: isPage ? codeOptionsFor("page") : codeOptionsFor("redirect"),
     busy: isPending,
-    formShown: formShown && contentType === "link",
+    formShown:
+      formShown &&
+      (editing ||
+        contentType === "link" ||
+        (contentType === "other" && otherType !== null)),
   };
   const contextRef = useRef(shortcutContext);
   contextRef.current = shortcutContext;
@@ -798,9 +915,40 @@ export default function CodeBuilderModal({
     </Button>
   );
 
+  // Only once the code exists: the art encodes its real short link.
+  const aiArtButton = aiArtAvailable && target && userId && (
+    <Button
+      className="w-full"
+      onClick={openAiArt}
+      size="sm"
+      title={`AI art for ${displayUrl(target.shortLink)} in the playground's Art tab`}
+      type="button"
+      variant="ghost"
+    >
+      <MagicStar aria-hidden />
+      Make AI art in the playground
+    </Button>
+  );
+
   const linkForm = (
     <>
-      {isPage && code ? (
+      {typedContent && otherType ? (
+        <DynamicTypeFields
+          autoFocus={wide}
+          destination={otherResult?.ok ? otherResult.url : null}
+          disabled={isPending}
+          error={error?.field === "destination" ? error.message : null}
+          issues={otherResult && !otherResult.ok ? otherResult.issues : []}
+          onChange={setOtherValue}
+          onChangeType={() => {
+            setOtherType(null);
+            update("destination", "");
+          }}
+          showIssues={showDestinationError}
+          type={otherType}
+          values={otherValues}
+        />
+      ) : isPage && code ? (
         <div className="rounded-lg border p-3 text-sm">
           <p className="text-muted-foreground">
             This code opens a hosted page.
@@ -1040,6 +1188,7 @@ export default function CodeBuilderModal({
         )}
       </div>
       {!wide && <CodeDownloadButtons code={created.code} />}
+      {!wide && aiArtButton}
       <BuilderOptionsOn
         kind="redirect"
         onSelect={selectOption}
@@ -1157,6 +1306,7 @@ export default function CodeBuilderModal({
         </Button>
         <div className="-mx-4 border-y">{styleBody}</div>
         {fullEditorButton}
+        {aiArtButton}
       </div>
     );
   } else if (phase === "success") {
@@ -1169,7 +1319,7 @@ export default function CodeBuilderModal({
         noValidate
         onSubmit={(event: FormEvent) => {
           event.preventDefault();
-          if (contentType === "link") submit();
+          if (editing || contentType === "link" || typedContent) submit();
         }}
       >
         {!editing && (
@@ -1178,24 +1328,38 @@ export default function CodeBuilderModal({
             <ToggleGroup
               className="w-full"
               onValueChange={(value) => {
-                if (value === "link" || value === "page") setContentType(value);
+                if (value === "link" || value === "page" || value === "other") {
+                  chooseContent(value);
+                }
               }}
               type="single"
               value={contentType}
               variant="outline"
             >
               <ToggleGroupItem className="flex-1 gap-1.5" value="link">
-                <Link2 aria-hidden className="size-4" />
+                <Link2 aria-hidden className="size-4 max-sm:hidden" />
                 Website link
               </ToggleGroupItem>
               <ToggleGroupItem className="flex-1 gap-1.5" value="page">
-                <DocumentText1 aria-hidden className="size-4" />
+                <DocumentText1 aria-hidden className="size-4 max-sm:hidden" />
                 Hosted page
+              </ToggleGroupItem>
+              <ToggleGroupItem className="flex-1 gap-1.5" value="other">
+                <Category2 aria-hidden className="size-4 max-sm:hidden" />
+                More types
               </ToggleGroupItem>
             </ToggleGroup>
           </div>
         )}
-        {contentType === "page" && !editing ? pageTypePicker : linkForm}
+        {editing ? (
+          linkForm
+        ) : contentType === "page" ? (
+          pageTypePicker
+        ) : contentType === "other" && !otherType ? (
+          <DynamicTypePicker onPick={pickOtherType} />
+        ) : (
+          linkForm
+        )}
       </form>
     );
   }
@@ -1278,14 +1442,16 @@ export default function CodeBuilderModal({
                   <div className="space-y-2 px-4 pb-4">
                     <CodeDownloadButtons code={created.code} />
                     {fullEditorButton}
+                    {aiArtButton}
                   </div>
                 ) : (
                   <>
                     <div className="min-h-0 flex-1 overflow-y-auto border-t">
                       {ready && styleBody}
                     </div>
-                    <div className="shrink-0 border-t p-3">
+                    <div className="shrink-0 space-y-1 border-t p-3">
                       {fullEditorButton}
+                      {aiArtButton}
                     </div>
                   </>
                 )}
@@ -1344,7 +1510,11 @@ export default function CodeBuilderModal({
                   aria-label={editing ? "Save changes" : "Create code"}
                   className="max-md:w-full"
                   disabled={
-                    isPending || !ready || panel !== null || (editing && !dirty)
+                    isPending ||
+                    !ready ||
+                    panel !== null ||
+                    (editing && !dirty) ||
+                    (!editing && contentType === "other" && !otherType)
                   }
                   form="code-builder-form"
                   type="submit"
