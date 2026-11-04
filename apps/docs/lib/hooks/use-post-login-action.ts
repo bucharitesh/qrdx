@@ -15,7 +15,10 @@ export type PostLoginActionType =
   | "CHECKOUT"
   | "LIKE_THEME"
   /** The playground's Static/Dynamic choice: make the URL code dynamic. */
-  | "MAKE_DYNAMIC";
+  | "MAKE_DYNAMIC"
+  // The playground's Art tab (hub phase 3)
+  /** AI art's Generate, signed out: back on the Art tab, run it (components/editor/art/ai-art-panel.tsx). */
+  | "AI_ART_GENERATE";
 
 export interface PostLoginActionPayload<T = any> {
   type: PostLoginActionType;

@@ -1290,6 +1290,126 @@ async function testDownloads(page: Page, downloadDir: string) {
   }
 }
 
+// ── Art tab links (hub phase 3) ─────────────────────────────────────────────
+
+/** The design's art mode as the editor saved it ("logo", "halftone"), or null. */
+async function savedArtMode(page: Page): Promise<string | null> {
+  return (await page.evaluate(
+    `() => { try { return JSON.parse(localStorage.getItem("editor-storage"))?.state?.themeState?.styles?.art?.mode ?? null; } catch { return null; } }`,
+  )) as string | null;
+}
+
+/** The Art tab's mode toggle, as shown ("Off", "Logo QR", …). */
+async function pickedArtMode(page: Page): Promise<string | null> {
+  return (await page.evaluate(
+    `() => { const group = document.querySelector('[aria-label="Art mode"]'); const on = group && [...group.querySelectorAll('[role=radio]')].find((b) => b.getAttribute("aria-checked") === "true"); return on ? on.textContent.trim() : null; }`,
+  )) as string | null;
+}
+
+async function openPlaygroundAt(page: Page, path: string) {
+  await page.goto(`${BASE_URL}${path}`, { wait: 3000 });
+  await install(page);
+  await page.waitFor(
+    `() => !!(window.__e2e && __e2e.byRole("tab", "content"))`,
+    { timeout: 30_000 },
+  );
+  await sleep(500);
+}
+
+/** Clicks the first sample in the Art tab's sample grid. */
+async function pickArtSample(page: Page) {
+  const ok = await page.evaluate(
+    `() => { const grid = [...document.querySelectorAll("[aria-label]")].find((el) => /^try a sample (logo|photo)$/i.test(el.getAttribute("aria-label"))); const tile = grid && grid.querySelector("button[aria-pressed]"); if (!tile) return false; tile.click(); return true; }`,
+  );
+  if (!ok) throw new Error("No sample in the Art tab");
+}
+
+const waitForArtMode = (page: Page, mode: "logo" | "halftone") =>
+  page.waitFor(
+    `() => { try { return JSON.parse(localStorage.getItem("editor-storage"))?.state?.themeState?.styles?.art?.mode === "${mode}"; } catch { return false; } }`,
+    { timeout: 20_000 },
+  );
+
+async function testArtTabLinks(page: Page) {
+  // A visitor with no saved design.
+  await page.evaluate(
+    `() => { localStorage.removeItem("editor-storage"); return true; }`,
+  );
+  await openPlaygroundAt(page, "/playground?tab=art&art=logo");
+  const search = await page.evaluate(`() => location.search`);
+  record(
+    "art tab",
+    "?tab=art&art=logo is applied once, then left out of the address",
+    search === "?tab=art",
+    String(search),
+  );
+  const picked = await pickedArtMode(page);
+  const untouched = await savedArtMode(page);
+  record(
+    "art tab",
+    "it opens the Art tab on Logo QR without changing the design",
+    picked === "Logo QR" && untouched === null,
+    `picked ${picked}, art ${untouched}`,
+  );
+
+  await pickArtSample(page);
+  await waitForArtMode(page, "logo");
+  await clickByRole(page, "button", "undo", true);
+  await sleep(700);
+  const undone = await savedArtMode(page);
+  record(
+    "art tab",
+    "Undo takes back the logo picked there",
+    undone === null,
+    `art after undo: ${undone}`,
+  );
+
+  // An Image QR design: the link switches it to Logo QR, and the toast's
+  // Undo brings Image QR back.
+  await clickByRole(page, "option", "image qr", true);
+  await sleep(500);
+  await pickArtSample(page);
+  await waitForArtMode(page, "halftone");
+  await openPlaygroundAt(page, "/playground?tab=art&art=logo");
+  const switched = await savedArtMode(page);
+  const switchedSearch = await page.evaluate(`() => location.search`);
+  record(
+    "art tab",
+    "art=logo switches an Image QR design to Logo QR",
+    switched === "logo" && switchedSearch === "?tab=art",
+    `art ${switched}, address ${switchedSearch}`,
+  );
+  const toastUndo = await page.evaluate(
+    `() => { const toast = [...document.querySelectorAll("[data-sonner-toast]")].find((t) => /Opened Logo QR/.test(t.textContent)); const undo = toast && [...toast.querySelectorAll("button")].find((b) => b.textContent.trim() === "Undo"); if (!undo) return false; undo.click(); return true; }`,
+  );
+  await sleep(700);
+  const restored = await savedArtMode(page);
+  record(
+    "art tab",
+    "the toast's Undo brings Image QR back",
+    toastUndo === true && restored === "halftone",
+    `toast ${toastUndo}, art ${restored}`,
+  );
+
+  // The Design tab's old Art section link opens the Art tab.
+  await openPlaygroundAt(page, "/playground?tab=customisations&section=art");
+  const legacy = (await page.evaluate(
+    `() => ({ search: location.search, tab: [...document.querySelectorAll('[role=tab][aria-selected="true"]')].map((t) => t.textContent.trim()).join() })`,
+  )) as { search: string; tab: string };
+  record(
+    "art tab",
+    "?tab=customisations&section=art lands on the Art tab",
+    legacy.search === "?tab=art" && legacy.tab === "Art",
+    `${legacy.search} ${legacy.tab}`,
+  );
+
+  // Leave a plain design for the suites after this one.
+  await page.evaluate(
+    `() => { localStorage.removeItem("editor-storage"); return true; }`,
+  );
+  await openPlayground(page);
+}
+
 // ── Main ────────────────────────────────────────────────────────────────────
 
 async function main() {
@@ -1314,6 +1434,7 @@ async function main() {
     ["presets", testPresets],
     ["copy", testCopy],
     ["downloads", (p) => testDownloads(p, downloadDir)],
+    ["art tab links", testArtTabLinks],
   ];
   const selected = process.env.E2E_SUITES?.split(",").map((s) => s.trim());
   try {
