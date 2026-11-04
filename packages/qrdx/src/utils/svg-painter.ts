@@ -1,6 +1,7 @@
 /** biome-ignore-all lint/style/noMagicNumbers: SVG painting */
 // Walks the SVG this library renders and hands vector shapes, text and images
 // to an output backend (PDF via jsPDF, EPS as PostScript).
+import { angularSpan, arcsOverlap, flattenOver } from "./paint";
 import { parseColor, type RGBAColor } from "./parse-color";
 import {
   applyMatrix,
@@ -16,6 +17,7 @@ import {
 } from "./svg-geometry";
 
 import {
+  boundingBox,
   invertMatrix,
   type PlacedGradient,
   placeGradient,
@@ -48,12 +50,29 @@ export interface PaintState {
   textAnchor: string;
   /** Viewport size, for percentage lengths */
   viewport: [number, number];
+  /** Inherited `fill-opacity` (1 when unset) */
+  fillOpacity?: number;
+  /**
+   * `opacity` of this element times its ancestors' (1 when unset). Exact for
+   * shapes that don't overlap inside a see-through group, as in QR codes.
+   */
+  opacity?: number;
 }
 
 export type PaintColor = RGBAColor | null;
 
-/** A fill: a solid color, or a gradient placed on the shape being painted. */
-export type FillPaint = { color: RGBAColor } | { gradient: PlacedGradient };
+/**
+ * A fill: a solid color (its `a` folds in fill-opacity and opacity), a
+ * gradient placed on the shape being painted (`alpha` multiplies its stops'
+ * own alpha), or a userSpaceOnUse `<pattern>` (angular gradients and image
+ * fills) whose content is painted inside the shape.
+ */
+export type FillPaint =
+  | { color: RGBAColor }
+  | { gradient: PlacedGradient; alpha: number }
+  | { pattern: SvgNode; alpha: number };
+
+const WHITE: RGBAColor = { r: 255, g: 255, b: 255, a: 1 };
 
 const URL_REFERENCE = /^url\(\s*#([^)\s]+)\s*\)/;
 
@@ -196,6 +215,20 @@ function collectClipPaths(
   return out;
 }
 
+/** `<pattern>` elements by id, anywhere in the tree. */
+function collectPatterns(
+  node: SvgNode,
+  out: Map<string, SvgNode>
+): Map<string, SvgNode> {
+  if (node.name === "pattern" && node.attrs.id) {
+    out.set(node.attrs.id, node);
+  }
+  for (const child of node.children) {
+    collectPatterns(child, out);
+  }
+  return out;
+}
+
 /** Outline of one clip-path child, in its own user space. */
 function clipShapeSegments(
   node: SvgNode,
@@ -241,6 +274,21 @@ export abstract class SvgPainter {
   protected readonly shadings: Map<string, SvgGradient> | null;
   /** `<clipPath>`s of the document being walked (collected at its root) */
   private clipPaths = new Map<string, SvgNode>();
+  /** `<pattern>`s of the document being walked (collected at its root) */
+  private patterns = new Map<string, SvgNode>();
+  /**
+   * Opaque color see-through paint is flattened over where a backend can't
+   * blend (PostScript; a PDF gradient whose stops differ in alpha; a PDF
+   * angular fan): the code's background on paper. The background itself
+   * (the shape marked `data-qrdx-bg`) is flattened over `paper`. Exporters
+   * set both from the props.
+   */
+  backdrop: RGBAColor = WHITE;
+  paper: RGBAColor = WHITE;
+  /** True while painting the background shape (and its pattern) */
+  protected onPaper = false;
+  /** True while painting an angular gradient's wedge fan */
+  protected inConic = false;
 
   /**
    * `gradients` maps gradient ids to the color they flatten to. Pass
@@ -276,13 +324,24 @@ export abstract class SvgPainter {
   /**
    * Resolves a fill for these segments: a gradient this painter shades is
    * placed on the shape (or becomes the solid color SVG paints for a
-   * degenerate gradient); anything else goes through `resolveColor`.
+   * degenerate gradient), a userSpaceOnUse pattern is returned to paint
+   * inside the shape, and anything else goes through `resolveColor`.
+   * `alpha` (fill-opacity times opacity) is folded into solid colors and
+   * returned alongside gradients and patterns.
    */
   resolveFill(
     value: string | undefined,
     segments: Segment[],
-    viewport: [number, number]
+    viewport: [number, number],
+    alpha = 1
   ): FillPaint | null {
+    if (alpha <= 0) {
+      return null;
+    }
+    const pattern = this.patternOf(value);
+    if (pattern) {
+      return { pattern, alpha };
+    }
     const gradient = this.shadedGradient(value);
     if (gradient) {
       const placed = placeGradient(gradient, segments, viewport);
@@ -290,12 +349,187 @@ export abstract class SvgPainter {
         return null;
       }
       if ("coords" in placed) {
-        return { gradient: placed };
+        return { gradient: placed, alpha };
       }
-      return placed.a > 0 ? { color: placed } : null;
+      const color = { ...placed, a: placed.a * alpha };
+      return color.a > 0 ? { color } : null;
     }
     const color = this.resolveColor(value);
-    return color ? { color } : null;
+    if (!color) {
+      return null;
+    }
+    const withAlpha = { ...color, a: color.a * alpha };
+    return withAlpha.a > 0 ? { color: withAlpha } : null;
+  }
+
+  /** The userSpaceOnUse `<pattern>` a `url(#id)` paint points to, if any. */
+  patternOf(value: string | undefined): SvgNode | undefined {
+    const id = value ? URL_REFERENCE.exec(value)?.[1] : undefined;
+    const pattern = id ? this.patterns.get(id) : undefined;
+    if (
+      pattern?.attrs.patternUnits !== "userSpaceOnUse" ||
+      (pattern.attrs.patternContentUnits ?? "userSpaceOnUse") !==
+        "userSpaceOnUse" ||
+      pattern.attrs.viewBox
+    ) {
+      return undefined;
+    }
+    return pattern;
+  }
+
+  /**
+   * `color` made opaque for a backend without transparency: over paper
+   * while painting the background, over the backdrop otherwise.
+   */
+  flatten(color: RGBAColor): RGBAColor {
+    if (color.a >= 1) {
+      return color;
+    }
+    return flattenOver(color, this.onPaper ? this.paper : this.backdrop);
+  }
+
+  /**
+   * Paints a pattern's content inside `segments` (the shape, in the user
+   * space of `state`): clip to the shape, then walk the tiles that meet it.
+   * The tile at (x, y) holds the content with its origin at the tile's
+   * corner, and content past a tile is cut off when there is more than one.
+   * A pattern marked `data-qrdx-conic` (an angular gradient's wedge fan)
+   * only walks the wedges whose `data-arc` meets the shape.
+   * Returns false when this backend can't clip (nothing is painted).
+   */
+  paintPattern(
+    segments: Segment[],
+    state: PaintState,
+    pattern: SvgNode,
+    alpha: number
+  ): boolean {
+    const box = boundingBox(segments);
+    if (!box || box.width <= 0 || box.height <= 0) {
+      return true;
+    }
+    const [vw, vh] = state.viewport;
+    const tileX = length(pattern.attrs.x, vw);
+    const tileY = length(pattern.attrs.y, vh);
+    const tileWidth = length(pattern.attrs.width, vw);
+    const tileHeight = length(pattern.attrs.height, vh);
+    if (!(tileWidth > 0 && tileHeight > 0)) {
+      return true;
+    }
+    const transform = parseTransform(pattern.attrs.patternTransform);
+    const inverse = invertMatrix(transform);
+    if (!inverse) {
+      return true;
+    }
+    if (!this.beginClip(segments, state.matrix, state.fillRule === "evenodd")) {
+      return false;
+    }
+    const wasConic = this.inConic;
+    this.inConic = pattern.attrs["data-qrdx-conic"] !== undefined;
+    try {
+      // The shape's box in pattern space (before patternTransform)
+      const corners = [
+        applyMatrix(inverse, box.x, box.y),
+        applyMatrix(inverse, box.x + box.width, box.y),
+        applyMatrix(inverse, box.x, box.y + box.height),
+        applyMatrix(inverse, box.x + box.width, box.y + box.height),
+      ];
+      const xs = corners.map(([x]) => x);
+      const ys = corners.map(([, y]) => y);
+      const minX = Math.min(...xs);
+      const maxX = Math.max(...xs);
+      const minY = Math.min(...ys);
+      const maxY = Math.max(...ys);
+      const firstColumn = Math.floor((minX - tileX) / tileWidth);
+      const lastColumn = Math.ceil((maxX - tileX) / tileWidth) - 1;
+      const firstRow = Math.floor((minY - tileY) / tileHeight);
+      const lastRow = Math.ceil((maxY - tileY) / tileHeight) - 1;
+      const tiles = (lastColumn - firstColumn + 1) * (lastRow - firstRow + 1);
+      if (tiles > 4096) {
+        return true;
+      }
+      const conic = (pattern.attrs["data-qrdx-conic"] ?? "")
+        .trim()
+        .split(/\s+/)
+        .map(Number);
+      const base = multiply(state.matrix, transform);
+      for (let row = firstRow; row <= lastRow; row++) {
+        for (let column = firstColumn; column <= lastColumn; column++) {
+          const originX = tileX + column * tileWidth;
+          const originY = tileY + row * tileHeight;
+          const matrix = multiply(base, [1, 0, 0, 1, originX, originY]);
+          const contentBox = {
+            x: minX - originX,
+            y: minY - originY,
+            width: maxX - minX,
+            height: maxY - minY,
+          };
+          const span =
+            conic.length === 2 && conic.every(Number.isFinite)
+              ? angularSpan(conic[0] as number, conic[1] as number, contentBox)
+              : null;
+          const clipped =
+            tiles > 1 &&
+            this.beginClip(
+              [
+                { op: "M", x: 0, y: 0 },
+                { op: "L", x: tileWidth, y: 0 },
+                { op: "L", x: tileWidth, y: tileHeight },
+                { op: "L", x: 0, y: tileHeight },
+                { op: "Z" },
+              ],
+              matrix,
+              false
+            );
+          try {
+            const contentState: PaintState = {
+              matrix,
+              viewport: state.viewport,
+              fill: "#000000",
+              fillRule: "nonzero",
+              stroke: "none",
+              strokeWidth: 1,
+              fontSize: 16,
+              fontWeight: "normal",
+              textAnchor: "start",
+              fillOpacity: 1,
+              opacity: alpha,
+            };
+            // A fan with one alpha sits in a <g opacity>: look inside it
+            const visit = (children: SvgNode[], parent: PaintState) => {
+              for (const child of children) {
+                if (child.name === "g" && !child.attrs.transform) {
+                  const own = Number.parseFloat(child.attrs.opacity ?? "1");
+                  visit(child.children, {
+                    ...parent,
+                    opacity:
+                      (parent.opacity ?? 1) * (Number.isFinite(own) ? own : 1),
+                  });
+                  continue;
+                }
+                if (span && child.attrs["data-arc"]) {
+                  const [from, sweep] = child.attrs["data-arc"]
+                    .split(/\s+/)
+                    .map(Number) as [number, number];
+                  if (!arcsOverlap([from, from + sweep], span)) {
+                    continue;
+                  }
+                }
+                this.walk(child, parent);
+              }
+            };
+            visit(pattern.children, contentState);
+          } finally {
+            if (clipped) {
+              this.endClip();
+            }
+          }
+        }
+      }
+    } finally {
+      this.inConic = wasConic;
+      this.endClip();
+    }
+    return true;
   }
 
   /**
@@ -466,6 +700,7 @@ export abstract class SvgPainter {
   walk(node: SvgNode, parent: PaintState, isRoot = false) {
     if (isRoot) {
       this.clipPaths = collectClipPaths(node, new Map());
+      this.patterns = collectPatterns(node, new Map());
     }
     if (SKIPPED_ELEMENTS.has(node.name)) {
       return;
@@ -489,7 +724,21 @@ export abstract class SvgPainter {
     }
 
     const fontSize = readStyle(node, "font-size");
+    const ownOpacity = Number.parseFloat(readStyle(node, "opacity") ?? "1");
+    const ownFillOpacity = readStyle(node, "fill-opacity");
+    const fillOpacity =
+      ownFillOpacity === undefined
+        ? (parent.fillOpacity ?? 1)
+        : Number.parseFloat(ownFillOpacity);
     const state: PaintState = {
+      fillOpacity: Number.isFinite(fillOpacity)
+        ? Math.min(Math.max(fillOpacity, 0), 1)
+        : 1,
+      opacity:
+        (parent.opacity ?? 1) *
+        (Number.isFinite(ownOpacity)
+          ? Math.min(Math.max(ownOpacity, 0), 1)
+          : 1),
       matrix,
       viewport,
       fill: readStyle(node, "fill") ?? parent.fill,
@@ -504,17 +753,26 @@ export abstract class SvgPainter {
       fontWeight: readStyle(node, "font-weight") ?? parent.fontWeight,
       textAnchor: readStyle(node, "text-anchor") ?? parent.textAnchor,
     };
-    // clip-path: paint the element inside the clip outline only
-    const clip = node.attrs["clip-path"] ? this.clipOf(node, state) : null;
-    if (clip && this.beginClip(clip.segments, clip.matrix, clip.evenOdd)) {
-      try {
-        this.paintNode(node, state);
-      } finally {
-        this.endClip();
-      }
-      return;
+    // The code's background sits on paper (see `flatten`)
+    const wasOnPaper = this.onPaper;
+    if (node.attrs["data-qrdx-bg"] !== undefined) {
+      this.onPaper = true;
     }
-    this.paintNode(node, state);
+    try {
+      // clip-path: paint the element inside the clip outline only
+      const clip = node.attrs["clip-path"] ? this.clipOf(node, state) : null;
+      if (clip && this.beginClip(clip.segments, clip.matrix, clip.evenOdd)) {
+        try {
+          this.paintNode(node, state);
+        } finally {
+          this.endClip();
+        }
+        return;
+      }
+      this.paintNode(node, state);
+    } finally {
+      this.onPaper = wasOnPaper;
+    }
   }
 
   private paintNode(node: SvgNode, state: PaintState) {

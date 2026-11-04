@@ -120,6 +120,7 @@ ${BOLD}Gradient Colors:${RESET}
   Pass a JSON object to --fg / --bg / --eye-color / --dot-color for gradients:
   ${DIM}Linear:  '{"type":"linear","stops":[{"color":"#f00","offset":0},{"color":"#00f","offset":100}],"angle":45}'${RESET}
   ${DIM}Radial:  '{"type":"radial","stops":[{"color":"#f00","offset":0},{"color":"#00f","offset":100}]}'${RESET}
+  ${DIM}Angular: '{"type":"angular","stops":[{"color":"#f00","offset":0},{"color":"#00f","offset":100}],"angle":0}'${RESET}
 
 ${BOLD}Global Options:${RESET}
   --help, -h          Show this help message

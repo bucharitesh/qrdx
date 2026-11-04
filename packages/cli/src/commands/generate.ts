@@ -92,7 +92,7 @@ function parseColorFlag(value: string): ColorConfig {
   const result = colorConfigSchema.safeParse(parsed);
   if (!result.success) {
     throw new Error(
-      `Invalid gradient: ${trimmed}\nExpected {"type":"linear"|"radial","stops":[{"color":"#hex","offset":0-100}, ...]} with at least 2 stops.`
+      `Invalid gradient: ${trimmed}\nExpected {"type":"linear"|"radial"|"angular","stops":[{"color":"#hex","offset":0-100}, ...]} with at least 2 stops.`
     );
   }
   return result.data;

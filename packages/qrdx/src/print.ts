@@ -13,6 +13,7 @@ import {
   getPrintBleedFill,
   PRINT_RENDER_SIZE,
   renderPrintSVG,
+  setBackdrop,
 } from "./utils/print-shared";
 import {
   applyMatrix,
@@ -38,7 +39,6 @@ import {
   length,
   type PaintState,
   rasterizeImage,
-  readStyle,
   SvgPainter,
 } from "./utils/svg-painter";
 
@@ -332,55 +332,126 @@ class PdfPainter extends SvgPainter {
     this.pdf.restoreGraphicsState();
   }
 
-  paint(segments: Segment[], node: SvgNode, state: PaintState) {
+  /**
+   * Runs `draw` with fill (and stroke) opacity set through an ExtGState
+   * (`/GSn gs`), inside `q … Q` so it doesn't leak. Opaque paint draws as is.
+   */
+  private withAlpha(fill: number, stroke: number, draw: () => void) {
+    if (fill >= 1 && stroke >= 1) {
+      draw();
+      return;
+    }
+    this.pdf.saveGraphicsState();
+    // jsPDF types GState as a method; it is the GState class.
+    const GState = this.pdf.GState as unknown as new (parameters: {
+      opacity?: number;
+      "stroke-opacity"?: number;
+    }) => unknown;
+    this.pdf.setGState(new GState({ opacity: fill, "stroke-opacity": stroke }));
+    try {
+      draw();
+    } finally {
+      this.pdf.restoreGraphicsState();
+    }
+  }
+
+  /**
+   * A gradient ready to shade with one alpha for all of it: PDF shadings
+   * have no per-stop alpha, so stops that all share an alpha use it as the
+   * fill opacity, and stops that differ are flattened over the backdrop.
+   */
+  private opaqueGradient(gradient: PlacedGradient, alpha: number) {
+    const first = gradient.stops[0]?.color.a ?? 1;
+    const uniform = gradient.stops.every(
+      (stop) => Math.abs(stop.color.a - first) < 0.002
+    );
+    if (uniform) {
+      return {
+        gradient: {
+          ...gradient,
+          stops: gradient.stops.map((stop) => ({
+            ...stop,
+            color: { ...stop.color, a: 1 },
+          })),
+        },
+        alpha: first * alpha,
+      };
+    }
+    return {
+      gradient: {
+        ...gradient,
+        stops: gradient.stops.map((stop) => ({
+          ...stop,
+          color: this.flatten({ ...stop.color, a: stop.color.a * alpha }),
+        })),
+      },
+      alpha: 1,
+    };
+  }
+
+  paint(segments: Segment[], _node: SvgNode, state: PaintState) {
     if (segments.length === 0) {
       return;
     }
-    const opacity = Number.parseFloat(readStyle(node, "opacity") ?? "1");
-    const fillOpacity = Number.parseFloat(
-      readStyle(node, "fill-opacity") ?? "1"
-    );
-    if (opacity === 0) {
+    const opacity = state.opacity ?? 1;
+    if (opacity <= 0) {
       return;
     }
-    const paint =
-      fillOpacity === 0
-        ? null
-        : this.resolveFill(state.fill, segments, state.viewport);
-    if (paint && "gradient" in paint) {
-      this.shade(segments, state, paint.gradient);
+    const paint = this.resolveFill(
+      state.fill,
+      segments,
+      state.viewport,
+      (state.fillOpacity ?? 1) * opacity
+    );
+    if (paint && "pattern" in paint) {
+      this.paintPattern(segments, state, paint.pattern, paint.alpha);
+    } else if (paint && "gradient" in paint) {
+      const { gradient, alpha } = this.opaqueGradient(
+        paint.gradient,
+        paint.alpha
+      );
+      this.withAlpha(alpha, 1, () => this.shade(segments, state, gradient));
     }
-    const fill = paint && "color" in paint ? paint.color : null;
-    const stroke =
+    // An angular fan's wedges overlap (see conicWedges), and PDF blends each
+    // fill on its own: flatten see-through wedges over the backdrop.
+    const solid = paint && "color" in paint ? paint.color : null;
+    const fill = solid && this.inConic ? this.flatten(solid) : solid;
+    const strokeColor =
       state.strokeWidth > 0 ? this.resolveColor(state.stroke) : null;
+    const stroke = strokeColor && {
+      ...strokeColor,
+      a: strokeColor.a * opacity,
+    };
     if (!(fill || stroke)) {
       return;
     }
     const evenOdd = state.fillRule === "evenodd";
 
-    if (fill) {
-      this.setColor("fill", fill);
-    }
-    if (stroke) {
-      this.setColor("draw", stroke);
-      this.pdf.setLineWidth(state.strokeWidth * matrixScale(state.matrix));
-    }
-    this.tracePath(segments, state.matrix);
-    if (fill && stroke) {
-      if (evenOdd) {
-        this.pdf.fillStrokeEvenOdd();
-      } else {
-        this.pdf.fillStroke();
+    this.withAlpha(fill?.a ?? 1, stroke?.a ?? 1, () => {
+      if (fill) {
+        this.setColor("fill", fill);
       }
-    } else if (fill) {
-      if (evenOdd) {
-        this.pdf.fillEvenOdd();
-      } else {
-        this.pdf.fill();
+      if (stroke) {
+        this.setColor("draw", stroke);
+        this.pdf.setLineWidth(state.strokeWidth * matrixScale(state.matrix));
       }
-    } else {
-      this.pdf.stroke();
-    }
+      this.tracePath(segments, state.matrix);
+      if (fill && stroke) {
+        if (evenOdd) {
+          this.pdf.fillStrokeEvenOdd();
+        } else {
+          this.pdf.fillStroke();
+        }
+      } else if (fill) {
+        if (evenOdd) {
+          this.pdf.fillEvenOdd();
+        } else {
+          this.pdf.fill();
+        }
+      } else {
+        this.pdf.stroke();
+      }
+    });
   }
 
   text(node: SvgNode, state: PaintState) {
@@ -455,14 +526,16 @@ class PdfPainter extends SvgPainter {
     }
     const [x0, y0] = applyMatrix(state.matrix, x, y);
     const [x1, y1] = applyMatrix(state.matrix, x + width, y + height);
-    this.pdf.addImage(
-      source,
-      format,
-      Math.min(x0, x1),
-      Math.min(y0, y1),
-      Math.abs(x1 - x0),
-      Math.abs(y1 - y0)
-    );
+    this.withAlpha(state.opacity ?? 1, 1, () => {
+      this.pdf.addImage(
+        source,
+        format,
+        Math.min(x0, x1),
+        Math.min(y0, y1),
+        Math.abs(x1 - x0),
+        Math.abs(y1 - y0)
+      );
+    });
   }
 
   /** Matrix that maps a nested <svg> viewport onto its parent. */
@@ -579,6 +652,8 @@ async function createPrintPDF(
     resources ? { gradients, resources } : null,
     images
   );
+
+  setBackdrop(painter, props);
 
   const scale = layout.codeWidth / RENDER_SIZE;
   const rootWidth = length(root.attrs.width, RENDER_SIZE, RENDER_SIZE);

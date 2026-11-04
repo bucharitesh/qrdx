@@ -5,8 +5,10 @@ import { withQRSize } from "../download";
 import { getFrameLayout, isFrameActive } from "../frame";
 import { getQRAsSVGDataUri } from "../index";
 import { getSolidColor } from "./color";
+import { flattenOver } from "./paint";
+import { parseColor } from "./parse-color";
 import { parseSvgMarkup } from "./svg-geometry";
-import { readStyle } from "./svg-painter";
+import { readStyle, type SvgPainter } from "./svg-painter";
 
 // Shared by the PDF (print.ts) and EPS (eps.ts) exporters; not public API.
 
@@ -56,4 +58,15 @@ export function getPrintBleedFill(
   );
   const fill = background && readStyle(background, "fill");
   return fill?.startsWith("url(") ? fill : color;
+}
+
+/**
+ * What see-through paint is flattened over where a format can't blend: the
+ * background (its first color for a gradient) on white paper.
+ */
+export function setBackdrop(painter: SvgPainter, props: QRProps) {
+  const white = { r: 255, g: 255, b: 255, a: 1 };
+  const background = parseColor(getSolidColor(props.bgColor, DEFAULT_BGCOLOR));
+  painter.paper = white;
+  painter.backdrop = background ? flattenOver(background, white) : white;
 }
