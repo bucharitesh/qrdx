@@ -55,12 +55,38 @@ const plugins: Plugin[] = PLUGINS.flatMap((info) => {
   return entry ? [{ ...info, entry }] : [];
 });
 
+/** "A", "A and B", "A, B and C". */
+const listNames = (names: string[]) =>
+  names.length < 2
+    ? (names[0] ?? "")
+    : `${names.slice(0, -1).join(", ")} and ${names.at(-1)}`;
+
+const listed = plugins.filter((plugin) => plugin.storeUrl);
+const fromSource = plugins.filter((plugin) => !plugin.storeUrl);
+
+// Which plugins install from their store and which from source, from
+// plugin-data.ts, so the answer can't go stale when a listing goes live.
+const storeFaq =
+  fromSource.length === 0
+    ? []
+    : [
+        {
+          question:
+            listed.length === 0
+              ? "Why install from source?"
+              : "Why do some install from source?",
+          answer: [
+            listed.length > 0 &&
+              `The ${listNames(listed.map((plugin) => plugin.entry.name))} ${listed.length === 1 ? "is" : "are"} in ${listed.length === 1 ? `the ${listed[0]?.store}` : "their stores"}.`,
+            `The ${listNames(fromSource.map((plugin) => plugin.entry.name))} ${fromSource.length === 1 ? "isn't" : "aren't"} listed yet. Until then, each builds from the open-source QRdx repository in a few commands; the steps are on this page and in each plugin's folder on GitHub.`,
+          ]
+            .filter(Boolean)
+            .join(" "),
+        },
+      ];
+
 const faqs = [
-  {
-    question: "Why install from source?",
-    answer:
-      "None of the four is in its store yet. Until then, each one builds from the open-source QRdx repository in a few commands; the steps are on this page and in each plugin's folder on GitHub.",
-  },
+  ...storeFaq,
   {
     question: "Do I need a QRdx account?",
     answer:
@@ -209,7 +235,9 @@ function PluginSection({ plugin, index }: { plugin: Plugin; index: number }) {
         className="flex scroll-mt-24 flex-col gap-4"
       >
         <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-          <h3 className="font-medium">Install from source</h3>
+          <h3 className="font-medium">
+            {plugin.storeUrl ? "Install" : "Install from source"}
+          </h3>
           <a
             href={plugin.sourceUrl}
             target="_blank"

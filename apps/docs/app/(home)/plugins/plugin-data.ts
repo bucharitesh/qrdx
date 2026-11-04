@@ -1,6 +1,9 @@
 // What /plugins adds to the catalog entries (packages/integrations/src/catalog/
 // entries/plugins.ts): what kind of plugin it is, where it runs and where to
-// install it. None is in its store yet, so each installs from source.
+// install it. A plugin with a `storeUrl` installs from its store; the others
+// install from source until they're listed.
+
+import { CHROME_WEB_STORE_URL } from "@repo/integrations/src/catalog/entries/plugins";
 
 const REPO = "https://github.com/bucharitesh/qrdx";
 
@@ -27,6 +30,7 @@ export const PLUGINS: PluginInfo[] = [
     kind: "Browser extension",
     platforms: ["Chrome 120+", "Windows", "macOS", "Linux", "ChromeOS"],
     store: "Chrome Web Store",
+    storeUrl: CHROME_WEB_STORE_URL,
     installUrl: `${REPO}/tree/main/plugins/chrome#build-and-load-unpacked`,
     sourceUrl: `${REPO}/tree/main/plugins/chrome`,
   },

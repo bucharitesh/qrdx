@@ -11,12 +11,15 @@ import {
 } from "@repo/design-system/components/ui/sheet";
 import { HamburgerMenu as Menu } from "iconsax-reactjs";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import type { Meter } from "@/app/settings/usage/_lib/meters";
 import { AppSidebar } from "./app-sidebar";
 import type { ShellData } from "./shell-data";
 
-/** Below md the sidebar, workspace switcher included, lives in a sheet. */
+/**
+ * Below md the sidebar, workspace switcher included, lives in a sheet, with
+ * the same areas and the same slide between them.
+ */
 export function MobileNav({
   shell,
   limitWarnings = null,
@@ -25,13 +28,16 @@ export function MobileNav({
   limitWarnings?: Promise<Meter[]> | null;
 }) {
   const pathname = usePathname();
-  // Tied to the path it was opened on, so any navigation closes it.
-  const [openOn, setOpenOn] = useState<string | null>(null);
+  // Tied to the paths it may show: the one it was opened on, plus an area
+  // opened from it (it stays open to show that area slide in). Any other
+  // navigation closes it.
+  const [openOn, setOpenOn] = useState<string[] | null>(null);
+  const bodyRef = useRef<HTMLDivElement>(null);
 
   return (
     <Sheet
-      onOpenChange={(open) => setOpenOn(open ? pathname : null)}
-      open={openOn === pathname}
+      onOpenChange={(open) => setOpenOn(open ? [pathname] : null)}
+      open={openOn?.includes(pathname) ?? false}
     >
       <SheetTrigger asChild>
         <Button
@@ -43,16 +49,32 @@ export function MobileNav({
           <Menu aria-hidden className="size-5" />
         </Button>
       </SheetTrigger>
-      <SheetContent className="w-72 gap-0 p-0 pt-10" side="left">
+      <SheetContent
+        className="w-72 gap-0 p-0 pt-10"
+        // Start in the open area: the others are inert, so the default
+        // (first tabbable in the sheet) would skip past the whole nav.
+        onOpenAutoFocus={(event) => {
+          const first = bodyRef.current
+            ?.querySelector("[data-area-panel]:not([inert])")
+            ?.querySelector<HTMLElement>("a[href], button");
+          if (!first) return;
+          event.preventDefault();
+          first.focus();
+        }}
+        side="left"
+      >
         <SheetHeader className="sr-only">
           <SheetTitle>Navigation</SheetTitle>
           <SheetDescription>Dashboard and settings pages</SheetDescription>
         </SheetHeader>
-        <AppSidebar
-          limitWarnings={limitWarnings}
-          onNavigate={() => setOpenOn(null)}
-          shell={shell}
-        />
+        <div className="contents" ref={bodyRef}>
+          <AppSidebar
+            limitWarnings={limitWarnings}
+            onAreaNavigate={(href) => setOpenOn([pathname, href])}
+            onNavigate={() => setOpenOn(null)}
+            shell={shell}
+          />
+        </div>
       </SheetContent>
     </Sheet>
   );
