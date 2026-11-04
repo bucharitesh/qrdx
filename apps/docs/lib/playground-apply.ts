@@ -195,6 +195,7 @@ export function applyPlaygroundParams(
     downloads.setRequest({
       tab: params.open === "print" ? "print" : "image",
       ...(params.print ? { print: params.print } : {}),
+      ...(params.printDistance ? { printDistance: params.printDistance } : {}),
     });
     // Nothing to download while the preview is a sample: the request waits
     // for the first time the dialog opens.
@@ -202,6 +203,7 @@ export function applyPlaygroundParams(
     else needsContent = true;
     applied.push("open");
     if (params.print) applied.push("print");
+    if (params.printDistance) applied.push("printDistance");
   }
 
   const after = useQREditorStore.getState();

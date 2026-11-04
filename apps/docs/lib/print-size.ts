@@ -296,6 +296,34 @@ export function printWidthForScanDistance(
     : rounded;
 }
 
+/**
+ * The Print-ready tab for a scan distance a link asked for (printDistance):
+ * mm for cm and m, inches for in and ft; the distance as the "Scanned from
+ * about" field shows it (m or ft); and the width for this code's modules.
+ */
+export function printTabForDistance(
+  distance: { value: number; unit: DistanceUnit },
+  moduleCount: number,
+): { unit: PrintWidthUnit; fieldDistance: number; size: number } {
+  const unit: PrintWidthUnit =
+    distance.unit === "cm" || distance.unit === "m" ? "mm" : "in";
+  const fieldUnit = scanDistanceUnit(unit);
+  const fieldDistance = fromMillimeters(
+    toMillimeters(distance.value, distance.unit),
+    fieldUnit,
+  );
+  return {
+    unit,
+    fieldDistance,
+    size: printWidthForScanDistance(
+      fieldDistance,
+      fieldUnit,
+      unit,
+      moduleCount,
+    ),
+  };
+}
+
 /** Pixels needed to print `mm` at a given resolution (dots per inch). */
 export function pixelsForPrint(mm: number, dpi = 300): number {
   return Math.ceil(mmToInches(mm) * dpi);
