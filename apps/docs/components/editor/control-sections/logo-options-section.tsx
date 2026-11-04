@@ -5,6 +5,7 @@ import { Label } from "@repo/design-system/components/ui/label";
 import { Slider } from "@repo/design-system/components/ui/slider";
 import { Switch } from "@repo/design-system/components/ui/switch";
 import { Gps } from "iconsax-reactjs";
+import { getLogoSizeLimit } from "qrdx";
 import {
   AUTO_LEVEL_LOGO_COVERAGE,
   LOGO_PADDING_MAX,
@@ -13,8 +14,9 @@ import {
   LOGO_SIZE_MIN,
   type LogoOptions,
 } from "qrdx/types";
-import type * as React from "react";
+import * as React from "react";
 import ControlSection from "@/components/editor/control-section";
+import { useQREditorStore } from "@/store/editor-store";
 import type { QRStyle } from "@/types/theme";
 import { LOGO_SHAPE_NAMES, LogoCropControls } from "./logo-crop-controls";
 
@@ -62,6 +64,37 @@ export function LogoOptionsSection({
   const y = options.y ?? 0.5;
   const centered = x === 0.5 && y === 0.5;
 
+  // The largest logo this code's error correction can repair, block by
+  // block (qrdx getLogoSizeLimit); the engine caps a bigger one to it.
+  const value = useQREditorStore((state) => state.value);
+  const limit = React.useMemo(
+    () =>
+      value.trim()
+        ? getLogoSizeLimit({
+            value,
+            level: style.level,
+            margin: style.margin,
+            shape: style.shape,
+            autoLevel: style.autoLevel,
+            logoOptions: { padding, x, y },
+          })
+        : LOGO_SIZE_MAX,
+    [
+      value,
+      style.level,
+      style.margin,
+      style.shape,
+      style.autoLevel,
+      padding,
+      x,
+      y,
+    ],
+  );
+  const maxPercent = Math.floor(limit * 100 + 1e-6);
+  const capped = maxPercent < percent(LOGO_SIZE_MAX);
+  const shown = Math.min(percent(size), maxPercent);
+  const minPercent = Math.min(percent(LOGO_SIZE_MIN), maxPercent);
+
   const setOptions = (change: Partial<LogoOptions>) => {
     const next: LogoOptions = { ...options, ...change };
     for (const key of Object.keys(next) as (keyof LogoOptions)[]) {
@@ -99,17 +132,28 @@ export function LogoOptionsSection({
         style={style}
       />
 
-      <SliderRow label="Size" value={`${percent(size)}% of the code`}>
+      <SliderRow label="Size" value={`${shown}% of the code`}>
         <Slider
           aria-label="Logo size"
-          max={percent(LOGO_SIZE_MAX)}
-          min={percent(LOGO_SIZE_MIN)}
+          disabled={maxPercent <= minPercent}
+          max={Math.max(maxPercent, minPercent + 1)}
+          min={minPercent}
           onValueChange={([next]) =>
             setOptions({ size: (next ?? percent(LOGO_SIZE_DEFAULT)) / 100 })
           }
           step={1}
-          value={[percent(size)]}
+          value={[shown]}
         />
+        {capped && (
+          <p className="text-muted-foreground text-xs text-pretty">
+            {maxPercent > 0
+              ? `Up to ${maxPercent}% for this code: a bigger logo would hide more than its error correction can repair.`
+              : "This code is too small to hold a logo."}{" "}
+            {style.level === "H"
+              ? "Shorter content makes room."
+              : "Level H or shorter content makes room."}
+          </p>
+        )}
       </SliderRow>
 
       <SliderRow

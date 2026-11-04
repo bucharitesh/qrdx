@@ -45,8 +45,11 @@ describe("scoreDesign", () => {
       WIFI,
       toThemeStyles({ ...CLASSIC_STYLE, logo: "qrdx", level: "L" }),
     );
+    // At level L the logo is drawn only as big as each error-correction
+    // block can repair (qrdx caps it), so its check passes on that footprint
     const logo = withLogo.checks.find((c) => c.id === "logo");
-    expect(logo?.passed).toBe(false);
+    expect(logo?.passed).toBe(true);
+    expect(logo?.message).toMatch(/repairs it/);
 
     const framed = await scoreDesign(
       WIFI,
