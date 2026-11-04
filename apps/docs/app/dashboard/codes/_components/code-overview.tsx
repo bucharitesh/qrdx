@@ -11,7 +11,7 @@ import type { ReactNode } from "react";
 import type { QrCodeView } from "@/app/dashboard/codes/_lib/qr-codes";
 import { openCodeBuilder } from "@/components/code-builder/store";
 import { CopyButton } from "@/components/copy-button";
-import { useWorkspaceHref } from "@/components/workspace-provider";
+import { useCan, useWorkspaceHref } from "@/components/workspace-provider";
 import { CodeActionsMenu } from "./code-actions-menu";
 import { CodeDownloadButtons, CodeQr } from "./code-qr";
 import { displayUrl } from "./format";
@@ -28,6 +28,8 @@ const STATUS_NOTES = {
 /** Title, status and actions of the code page, above its tabs. */
 export function CodeHeader({ code }: { code: QrCodeView }) {
   const inWorkspace = useWorkspaceHref();
+  // Viewers and billing members read only (lib/permissions.ts).
+  const canWrite = useCan("content.write");
 
   return (
     <div className="space-y-3">
@@ -44,13 +46,15 @@ export function CodeHeader({ code }: { code: QrCodeView }) {
           </p>
         </div>
         <div className="flex shrink-0 gap-1">
-          <Button
-            onClick={() => openCodeBuilder({ mode: "edit", code })}
-            size="sm"
-          >
-            <Pencil />
-            Edit link
-          </Button>
+          {canWrite && (
+            <Button
+              onClick={() => openCodeBuilder({ mode: "edit", code })}
+              size="sm"
+            >
+              <Pencil />
+              Edit link
+            </Button>
+          )}
           <CodeActionsMenu
             afterDelete={inWorkspace("/codes")}
             code={code}
@@ -79,6 +83,8 @@ export function CodeOverview({
   children?: ReactNode;
 }) {
   const openInPlayground = useOpenInPlayground();
+  // Editing the design saves it back to the code: not for read-only roles.
+  const canWrite = useCan("content.write");
 
   return (
     // Phones: details, QR code, then the rest. Wide screens: the QR code
@@ -126,15 +132,17 @@ export function CodeOverview({
             value={code.shortLink}
           />
           <CodeDownloadButtons code={code} />
-          <Button
-            className="w-full"
-            onClick={() => openInPlayground(code)}
-            size="sm"
-            variant="ghost"
-          >
-            <Palette />
-            Edit design in playground
-          </Button>
+          {canWrite && (
+            <Button
+              className="w-full"
+              onClick={() => openInPlayground(code)}
+              size="sm"
+              variant="ghost"
+            >
+              <Palette />
+              Edit design in playground
+            </Button>
+          )}
         </CardContent>
       </Card>
 

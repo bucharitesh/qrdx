@@ -6,6 +6,7 @@ import { getSavedThemePalettes } from "@/app/dashboard/pages/_lib/saved-themes";
 import { PageEditor } from "@/components/landing/editor/page-editor";
 import { HttpError } from "@/lib/error-response";
 import { getTemplate } from "@/lib/landing/templates";
+import { can } from "@/lib/permissions";
 import { getPlanForScope, getPlanLimits } from "@/lib/plans";
 import { isStorageConfigured } from "@/lib/storage/r2";
 
@@ -48,6 +49,8 @@ export default async function EditLandingPage({
           : null
       }
       initialContent={page.content}
+      // Viewers and billing members see the page, not the editor.
+      readOnly={!can(scope.role, "content.write")}
       page={{
         id: page.id,
         title: page.title,

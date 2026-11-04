@@ -39,6 +39,9 @@ export type {
   PublicStatsShare,
 } from "@/lib/public-stats-shared";
 
+import { can } from "@/lib/permissions";
+import { assertCan } from "@/lib/permissions-server";
+
 /** 24 random bytes as 32 URL-safe characters. */
 export const TOKEN_PATTERN = /^[A-Za-z0-9_-]{32}$/;
 const newToken = () => randomBytes(24).toString("base64url");
@@ -75,13 +78,10 @@ async function guarded<T>(query: () => Promise<T>): Promise<T> {
   }
 }
 
-// Owners and editors (everyone who can change a code today); an explicit
-// list, so a role added later (a read-only viewer) can't share until
-// someone decides it may.
-const SHARE_ROLES = new Set(["owner", "admin", "member"]);
-
+// Everyone who can change a code (lib/permissions.ts "content.write"):
+// viewers and billing members can't share a code's analytics.
 export const canSharePublicStats = (scope: Pick<ActiveScope, "role">) =>
-  SHARE_ROLES.has(scope.role);
+  can(scope.role, "content.write");
 
 export const publicStatsUrl = (token: string) =>
   new URL(publicStatsPath(token), baseUrl.origin).toString();
@@ -127,13 +127,7 @@ function toShare(
 }
 
 function assertCanShare(scope: ActiveScope) {
-  if (!canSharePublicStats(scope)) {
-    throw new HttpError(
-      403,
-      "FORBIDDEN",
-      "Only owners and editors can share a code's analytics.",
-    );
-  }
+  assertCan(scope, "content.write");
 }
 
 /** Whether the code's analytics are shared, and the link when they are. */
