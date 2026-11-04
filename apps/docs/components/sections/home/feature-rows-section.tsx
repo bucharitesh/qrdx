@@ -153,9 +153,16 @@ export function FeatureRowsSection() {
           link={<MoreLink href="/playground">Open the playground</MoreLink>}
           visual={
             <Card className="gap-0 overflow-hidden py-0">
+              {/* The demo mounts as it nears the viewport, so the skeleton
+                  must already be its full height or everything below jumps
+                  (fast scrolls on phones). Below md the controls stack on the
+                  preview and the pattern buttons wrap, so the height depends
+                  on the width: these are the measured Patterns-tab heights
+                  (the tallest tab), rounded up. Re-measure if the demo's
+                  controls change. */}
               <LiveDemo
                 name="studio"
-                className="min-h-[560px] md:h-[340px] md:min-h-0 lg:h-[400px] xl:h-[340px]"
+                className="min-h-[770px] min-[360px]:min-h-[724px] min-[390px]:min-h-[690px] min-[450px]:min-h-[654px] min-[570px]:min-h-[634px] md:h-[340px] md:min-h-0 lg:h-[400px] xl:h-[340px]"
               />
             </Card>
           }
