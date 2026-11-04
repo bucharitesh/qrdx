@@ -7,6 +7,7 @@ import {
   ResizablePanelGroup,
 } from "@repo/design-system/components/ui/resizable";
 import { useIsMobile } from "@repo/design-system/hooks/use-mobile";
+import { cn } from "@repo/design-system/lib/utils";
 import React, { use, useEffect } from "react";
 import { useTrackQrGenerated } from "@/lib/analytics/react";
 import { DialogActionsProvider } from "@/lib/hooks/use-dialog-actions";
@@ -16,6 +17,9 @@ import { useQREditorStore } from "@/store/editor-store";
 import type { Theme, ThemeStyles } from "@/types/theme";
 import { ActionBar, MobileActionBar } from "./editor/action-bar";
 import { AIWorkingGlow } from "./editor/ai/ai-working-glow";
+import { CommunitySheet } from "./editor/community-sheet";
+import { useCommunitySheetStore } from "./editor/community-sheet-store";
+import { PhotoScanDialog } from "./editor/photo-scan-dialog";
 import ThemeControlPanel from "./qr-control-panel";
 import QRPreviewPanel from "./qr-preview-panel";
 
@@ -69,6 +73,19 @@ function EditorShell() {
   );
 }
 
+/**
+ * Surfaces over the editor that open from several places (their stores):
+ * the photo check and the community sheet.
+ */
+function EditorOverlays() {
+  return (
+    <>
+      <PhotoScanDialog />
+      <CommunitySheet />
+    </>
+  );
+}
+
 /** qr_generated, in its own component so typing doesn't re-render the editor. */
 function TrackQrGenerated() {
   const value = useQREditorStore((state) => state.value);
@@ -79,6 +96,7 @@ function TrackQrGenerated() {
 
 const Editor: React.FC<EditorProps> = ({ themePromise }) => {
   const isMobile = useIsMobile();
+  const communityOpen = useCommunitySheetStore((state) => state.open);
   const isMounted = useMounted();
 
   const themeState = useQREditorStore((state) => state.themeState);
@@ -153,6 +171,7 @@ const Editor: React.FC<EditorProps> = ({ themePromise }) => {
           </div>
           <MobileActionBar />
         </div>
+        <EditorOverlays />
       </DialogActionsProvider>
     );
   }
@@ -178,7 +197,14 @@ const Editor: React.FC<EditorProps> = ({ themePromise }) => {
             </ResizablePanel>
             <ResizableHandle />
             <ResizablePanel defaultSize={70}>
-              <div className="flex h-full flex-col">
+              {/* Room for the docked community sheet (25rem), so the
+                  preview and toolbar stay in view beside it. */}
+              <div
+                className={cn(
+                  "flex h-full flex-col",
+                  communityOpen && "pr-[25rem]",
+                )}
+              >
                 <div className="flex min-h-0 flex-1 flex-col">
                   <ActionBar />
                   <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
@@ -192,6 +218,7 @@ const Editor: React.FC<EditorProps> = ({ themePromise }) => {
           </ResizablePanelGroup>
         </div>
       </div>
+      <EditorOverlays />
     </DialogActionsProvider>
   );
 };

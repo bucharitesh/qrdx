@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import {
@@ -16,8 +17,11 @@ import {
   TabsTrigger,
 } from "@repo/design-system/components/ui/tabs";
 import { Textarea } from "@repo/design-system/components/ui/textarea";
+import { Printer } from "iconsax-reactjs";
+import Link from "next/link";
 import { useState } from "react";
 import { InfoHint } from "@/components/help/info-hint";
+import { playgroundHref } from "@/lib/playground-links";
 import {
   calculatePrintSize,
   type DistanceUnit,
@@ -32,6 +36,7 @@ import {
   MIN_VERSION,
   mmToInches,
   modulesForVersion,
+  PRINT_SIZE_LIMITS,
   pixelsForPrint,
   QUIET_ZONE_MODULES,
   toMillimeters,
@@ -124,6 +129,19 @@ export function PrintSizeCalculator() {
   const modules = version ? modulesForVersion(version) : null;
   const result =
     distanceMm && modules ? calculatePrintSize({ distanceMm, modules }) : null;
+  // The editor's Print-ready width counts the code with its quiet zone, which
+  // QRdx presets keep at 3 or 4 modules: so the quiet-zone size, rounded up
+  // to a whole millimetre, never prints below the minimum.
+  const printWidthMm = result ? Math.ceil(result.totalMm) : null;
+  const playgroundPrintHref =
+    printWidthMm !== null &&
+    printWidthMm >= PRINT_SIZE_LIMITS.mm.min &&
+    printWidthMm <= PRINT_SIZE_LIMITS.mm.max
+      ? playgroundHref({
+          open: "print",
+          print: { size: printWidthMm, unit: "mm" },
+        })
+      : null;
 
   return (
     <div className="grid gap-6 lg:grid-cols-2">
@@ -284,6 +302,20 @@ export function PrintSizeCalculator() {
               {formatLength(result.ruleOfThumbMm)}. Print above the minimum for
               curved surfaces, low contrast, glossy material or poor lighting.
             </p>
+            {playgroundPrintHref && (
+              <div className="mt-auto flex flex-wrap items-center gap-x-3 gap-y-1.5 border-t border-border pt-3">
+                <Button asChild size="sm" variant="outline">
+                  <Link href={playgroundPrintHref}>
+                    <Printer aria-hidden className="size-4" />
+                    Make a code this size
+                  </Link>
+                </Button>
+                <span className="text-xs text-muted-foreground">
+                  Opens the editor's Print-ready download at {printWidthMm} mm,
+                  quiet zone included.
+                </span>
+              </div>
+            )}
           </>
         )}
       </div>
