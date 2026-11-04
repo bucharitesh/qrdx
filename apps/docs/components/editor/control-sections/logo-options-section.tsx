@@ -118,7 +118,8 @@ export function LogoOptionsSection({
     <ControlSection
       id="section-logo-options"
       summary={[
-        `${percent(size)}%`,
+        // The size it is drawn at (capped to what the code can repair)
+        `${shown}%`,
         shape !== "square" && LOGO_SHAPE_NAMES[shape].toLowerCase(),
         !centered && "moved",
       ]
