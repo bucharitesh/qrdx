@@ -35,17 +35,18 @@ import {
   Shuffle,
 } from "iconsax-reactjs";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { type ColorConfig, getColorString } from "qrdx";
 import type React from "react";
 import { useCallback, useMemo, useState } from "react";
 import { seasonalPresetsFirst } from "@/components/seasonal/preset-order";
-import { useWorkspaceHref } from "@/components/workspace-provider";
 import { track } from "@/lib/analytics";
 import { useMounted } from "@/lib/hooks/use-mounted";
 import { shuffleNext } from "@/lib/hooks/use-theme-shuffle";
 import { useUserSettings } from "@/lib/hooks/use-user-settings";
 import { soundEvent } from "@/lib/sound/emit";
 import { isShuffleId } from "@/lib/themes/shuffle";
+import { dashboardEntry } from "@/lib/workspace-paths";
 import { useQREditorStore } from "@/store/editor-store";
 import { useThemePresetStore } from "@/store/theme-preset-store";
 import type { ThemePreset } from "@/types/theme";
@@ -55,6 +56,7 @@ import {
 } from "@/utils/qr-presets-helper";
 import { ThemeToggle } from "../theme-toggle";
 import { TooltipWrapper } from "../tooltip-wrapper";
+import { useCommunitySheetStore } from "./community-sheet-store";
 import { ThemeGallery } from "./theme-gallery";
 import { useSavedThemes } from "./use-saved-themes";
 
@@ -249,7 +251,10 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
   const [galleryOpen, setGalleryOpen] = useState(false);
 
   const isMounted = useMounted();
-  const inWorkspace = useWorkspaceHref();
+  // The editor mounts the community sheet (components/editor.tsx); the /ai
+  // page's picker has no editor, so its link still goes to /community.
+  const inEditor = usePathname()?.startsWith("/playground") ?? false;
+  const openCommunitySheet = useCommunitySheetStore((store) => store.setOpen);
 
   useSavedThemes();
 
@@ -434,7 +439,9 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                       <div className="flex w-full items-center justify-between">
                         <span>{group.heading}</span>
                         {groupIndex === 0 && (
-                          <Link href={inWorkspace("/themes")}>
+                          // Outside any workspace: /dashboard?to=themes opens
+                          // the reader's default one.
+                          <Link href={dashboardEntry("themes")}>
                             <Button
                               variant="link"
                               size="sm"
@@ -553,15 +560,29 @@ const ThemePresetSelect: React.FC<ThemePresetSelectProps> = ({
                 )}
                 <Separator className="my-1" />
                 <div className="px-3 py-2">
-                  <Link href="/community">
+                  {inEditor ? (
                     <Button
                       variant="link"
                       size="sm"
                       className="text-muted-foreground hover:text-foreground w-full justify-center text-xs"
+                      onClick={() => {
+                        setMenuOpen(false);
+                        openCommunitySheet(true);
+                      }}
+                      type="button"
                     >
                       Discover more themes →
                     </Button>
-                  </Link>
+                  ) : (
+                    <Button
+                      asChild
+                      variant="link"
+                      size="sm"
+                      className="text-muted-foreground hover:text-foreground w-full justify-center text-xs"
+                    >
+                      <Link href="/community">Discover more themes →</Link>
+                    </Button>
+                  )}
                 </div>
               </CommandList>
             </Command>

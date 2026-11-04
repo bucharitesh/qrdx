@@ -3,6 +3,7 @@
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   Barcode,
+  Brush2,
   Calendar1 as CalendarDays,
   CalendarAdd as CalendarPlus,
   Personalcard as Contact,
@@ -21,7 +22,9 @@ import {
   Wallet,
   Wifi,
 } from "iconsax-reactjs";
+import Link from "next/link";
 import { useMemo, useState } from "react";
+import { parseLinkUrl, playgroundHref } from "@/lib/playground-links";
 import { OpenButton } from "./confirm-open";
 import { formatLabel } from "./detector";
 import { downloadText, fileSlug } from "./download";
@@ -68,6 +71,15 @@ const COPY_LABELS: Record<PaymentScheme, string> = {
   venmo: "Copy username",
   epc: "Copy IBAN",
 };
+
+/**
+ * "Restyle in the playground" for a scanned web address: the address goes
+ * after the `#`, so it never reaches a server. Null for anything that isn't
+ * http(s). No analytics: the scanner tracks nothing.
+ */
+export function restyleHref(url: string): string | null {
+  return parseLinkUrl(url) ? playgroundHref({ url }) : null;
+}
 
 /** mailto: address part, percent-encoded except the characters addresses need. */
 function mailtoAddress(value: string): string {
@@ -223,7 +235,8 @@ function PaymentDetails({
 
 function Details({ parsed }: { parsed: ParsedScan }) {
   switch (parsed.kind) {
-    case "url":
+    case "url": {
+      const restyle = restyleHref(parsed.url);
       return (
         <div className="flex flex-col gap-4">
           {parsed.gs1 && (
@@ -240,8 +253,20 @@ function Details({ parsed }: { parsed: ParsedScan }) {
             </div>
           )}
           <LinkPreview url={parsed.url} />
+          {restyle && (
+            <Link
+              className="text-muted-foreground hover:text-foreground inline-flex w-fit items-center gap-1.5 text-xs underline-offset-4 transition-colors hover:underline"
+              href={restyle}
+              // A phone camera tool: don't fetch the editor until asked.
+              prefetch={false}
+            >
+              <Brush2 aria-hidden className="size-3.5 shrink-0" />
+              Restyle in the playground
+            </Link>
+          )}
         </div>
       );
+    }
     case "wifi":
       return <WifiDetails parsed={parsed} />;
     case "contact": {

@@ -204,8 +204,124 @@ export function toMillimeters(value: number, unit: DistanceUnit): number {
   return value * MM_PER_UNIT[unit];
 }
 
+export function fromMillimeters(mm: number, unit: DistanceUnit): number {
+  return mm / MM_PER_UNIT[unit];
+}
+
 export function mmToInches(mm: number): number {
   return mm / MM_PER_INCH;
+}
+
+// ── The editor's Print-ready tab ─────────────────────────────────────────────
+// The same module-aware rule as the calculator above (calculatePrintSize):
+// a code scans from about SCAN_DISTANCE_PER_MODULE times the size of one
+// module, 10:1 for a typical 25-module code, so denser codes need bigger
+// prints. The Print-ready width spans the code's whole module count, quiet
+// zone included (qrdx's getPrintLayout moduleCount), so one module is
+// width / moduleCount. Modules under MIN_MODULE_MM have no distance: the
+// dialog says they're too small instead. (qrdx's own maxScanDistance, a flat
+// 10:1 on the width, stays the library's API; the app doesn't show it.)
+
+export type PrintWidthUnit = keyof typeof PRINT_SIZE_LIMITS;
+
+/** Scan distance per mm of module: 10 × 25 = 250. */
+export const SCAN_DISTANCE_PER_MODULE =
+  DISTANCE_TO_SIZE_RATIO * REFERENCE_MODULES;
+
+/** About how far a code with `moduleMm` modules scans from. Both in mm. */
+export function scanDistanceForModule(moduleMm: number): number {
+  return moduleMm * SCAN_DISTANCE_PER_MODULE;
+}
+
+/**
+ * The module size (mm) for a scan distance (mm), never under MIN_MODULE_MM
+ * (the inverse of scanDistanceForModule, floored as calculatePrintSize is).
+ */
+export function moduleForScanDistance(distanceMm: number): number {
+  return Math.max(distanceMm / SCAN_DISTANCE_PER_MODULE, MIN_MODULE_MM);
+}
+
+/** The distance unit shown next to a Print-ready width: metres, or feet with inches. */
+export function scanDistanceUnit(unit: PrintWidthUnit): "m" | "ft" {
+  return unit === "in" ? "ft" : "m";
+}
+
+/** One module's size (mm) at a Print-ready width in `unit` across `moduleCount` modules. */
+export function moduleForPrintWidth(
+  width: number,
+  unit: PrintWidthUnit,
+  moduleCount: number,
+): number {
+  const widthMm = unit === "in" ? toMillimeters(width, "in") : width;
+  return widthMm / moduleCount;
+}
+
+/**
+ * Scan distance, in `distanceUnit`, for a Print-ready width in `unit` across
+ * `moduleCount` modules. Null when its modules are under MIN_MODULE_MM: too
+ * small to promise a distance.
+ */
+export function scanDistanceForPrintWidth(
+  width: number,
+  unit: PrintWidthUnit,
+  moduleCount: number,
+  distanceUnit: DistanceUnit,
+): number | null {
+  const moduleMm = moduleForPrintWidth(width, unit, moduleCount);
+  // A hair of tolerance: a width rounded to the field still counts.
+  if (!(moduleMm >= MIN_MODULE_MM - 1e-9)) return null;
+  return fromMillimeters(scanDistanceForModule(moduleMm), distanceUnit);
+}
+
+/**
+ * Print-ready width, in `unit`, for a scan distance with `moduleCount`
+ * modules across. Never below MIN_MODULE_MM modules (rounded up so it stays
+ * there). Rounded to what the width field holds: 0.1 mm or 0.01 in. May fall
+ * outside PRINT_SIZE_LIMITS; the dialog says so.
+ */
+export function printWidthForScanDistance(
+  distance: number,
+  distanceUnit: DistanceUnit,
+  unit: PrintWidthUnit,
+  moduleCount: number,
+): number {
+  const moduleMm = moduleForScanDistance(toMillimeters(distance, distanceUnit));
+  const widthMm = moduleMm * moduleCount;
+  const width = unit === "in" ? mmToInches(widthMm) : widthMm;
+  const steps = unit === "in" ? 100 : 10;
+  const rounded = Math.round(width * steps) / steps;
+  // Rounding down must not take the modules under the minimum.
+  return moduleForPrintWidth(rounded, unit, moduleCount) < MIN_MODULE_MM - 1e-9
+    ? rounded + 1 / steps
+    : rounded;
+}
+
+/**
+ * The Print-ready tab for a scan distance a link asked for (printDistance):
+ * mm for cm and m, inches for in and ft; the distance as the "Scanned from
+ * about" field shows it (m or ft); and the width for this code's modules.
+ */
+export function printTabForDistance(
+  distance: { value: number; unit: DistanceUnit },
+  moduleCount: number,
+): { unit: PrintWidthUnit; fieldDistance: number; size: number } {
+  const unit: PrintWidthUnit =
+    distance.unit === "cm" || distance.unit === "m" ? "mm" : "in";
+  const fieldUnit = scanDistanceUnit(unit);
+  const fieldDistance = fromMillimeters(
+    toMillimeters(distance.value, distance.unit),
+    fieldUnit,
+  );
+  return {
+    unit,
+    fieldDistance,
+    size: printWidthForScanDistance(
+      fieldDistance,
+      fieldUnit,
+      unit,
+      moduleCount,
+    ),
+  };
 }
 
 /** Pixels needed to print `mm` at a given resolution (dots per inch). */

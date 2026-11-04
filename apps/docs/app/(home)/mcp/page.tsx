@@ -14,6 +14,7 @@ import { FaqList } from "@/components/sections/tools/faq-list";
 import { ToolHero } from "@/components/sections/tools/tool-hero";
 import { mcpLocalUrl, mcpServerUrl } from "@/lib/mcp-clients";
 import { baseUrl, createMetadata } from "@/lib/metadata";
+import { playgroundHref } from "@/lib/playground-links";
 import { MCP_FAQS, MCP_INTRO, MCP_STEPS, MCP_TOOLS } from "./content";
 import {
   McpConnect,
@@ -77,6 +78,13 @@ export default function McpPage() {
             className="inline-flex items-center gap-1 font-medium text-foreground/80 underline-offset-4 transition-colors hover:text-foreground hover:underline"
           >
             MCP docs
+            <ArrowRight2 aria-hidden className="size-3.5" />
+          </Link>
+          <Link
+            href={playgroundHref({ open: "code", lang: "mcp" })}
+            className="inline-flex items-center gap-1 font-medium text-foreground/80 underline-offset-4 transition-colors hover:text-foreground hover:underline"
+          >
+            Try it in the playground
             <ArrowRight2 aria-hidden className="size-3.5" />
           </Link>
         </div>
