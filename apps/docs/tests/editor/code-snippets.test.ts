@@ -855,12 +855,14 @@ describe("engine options", () => {
     moduleScale: 0.8,
     autoLevel: true,
     logoOptions: { size: 0.2, x: 0.6 },
+    shape: "circle",
   };
   const notes = [
     LEFT_OUT.eyeColors,
     LEFT_OUT.moduleScale,
     LEFT_OUT.autoLevel,
     LEFT_OUT.logoOptions,
+    LEFT_OUT.shape,
   ];
 
   it("lists them as left out where the tab can't express them", () => {

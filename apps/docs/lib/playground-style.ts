@@ -25,6 +25,7 @@ import {
   logoShapeSchema,
   MODULE_SCALE_MAX,
   MODULE_SCALE_MIN,
+  qrShapeSchema,
 } from "qrdx/types";
 import { z } from "zod";
 import {
@@ -54,6 +55,7 @@ const KEYS = {
   moduleScale: "ms",
   autoLevel: "al",
   logoOptions: "lo",
+  shape: "sh",
 } as const satisfies Partial<Record<keyof ThemeStyles, string>>;
 type LinkedField = keyof typeof KEYS;
 
@@ -128,6 +130,7 @@ const ENGINE_OPTION_FIELDS = {
     })
     .strict()
     .optional(),
+  shape: qrShapeSchema.optional(),
 };
 
 /** The style a link carries, as strict as the editor's own schema or more. */

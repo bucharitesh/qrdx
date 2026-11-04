@@ -35,6 +35,14 @@ describe("styleEngineOptions", () => {
     expect(styleEngineOptions(style)).toEqual(style);
   });
 
+  it("carries the circle shape, and nothing for a square one", () => {
+    expect(styleEngineOptions({ shape: "circle" })).toEqual({
+      shape: "circle",
+    });
+    expect(styleEngineOptions({ shape: "square" })).toEqual({});
+    expect(styleSvgOptions({ shape: "circle" })).toEqual({ shape: "circle" });
+  });
+
   it("gives <QRCodeSVG> only the props it takes", () => {
     expect(
       styleSvgOptions({

@@ -108,6 +108,7 @@ export type {
   QRProps,
   QRPropsCanvas,
   QRPropsSVG,
+  QRShape,
 } from "./qr";
 export {
   AUTO_LEVEL_LOGO_COVERAGE,
@@ -125,7 +126,10 @@ export {
   logoShapeSchema,
   MODULE_SCALE_MAX,
   MODULE_SCALE_MIN,
+  QR_CIRCLE_QUIET_MIN,
+  QR_SHAPES,
   qrPropsSchema,
+  qrShapeSchema,
 } from "./qr";
 export type {
   BaseTemplateProps,

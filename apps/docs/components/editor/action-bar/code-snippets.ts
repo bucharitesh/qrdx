@@ -169,6 +169,7 @@ export const LEFT_OUT = {
   moduleScale: "The dot size",
   autoLevel: "Automatic error correction for the logo",
   logoOptions: "The logo's size, position, shape and plate",
+  shape: "The circle shape",
   longContent: "Content over 2,048 characters (the image API's limit)",
   privateContent:
     "Your content (image URLs reach a server, so only web addresses go in)",
@@ -254,6 +255,7 @@ function noteEngineOptions(style: ThemeStyles, notes: Notes) {
   const logo = logoOf(style).kind !== "none";
   if (logo && options.autoLevel) notes.add(LEFT_OUT.autoLevel);
   if (logo && options.logoOptions) notes.add(LEFT_OUT.logoOptions);
+  if (options.shape) notes.add(LEFT_OUT.shape);
 }
 
 const roundMargin = (margin: number | undefined) =>

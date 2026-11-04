@@ -63,6 +63,16 @@ A `circle` center inside eyes with square corners (`square`, `rounded`, `extra-r
 
 `curly` eyes and `diamond`, `star` and `banner` centers were retired because they don't scan reliably. Designs saved with them still render, but they are no longer offered or listed (see [Retired shapes](/docs/styles#retired-shapes)).
 
+## Circle codes
+
+`shape="circle"` puts the code in a disc and fills the rest of it with decorative modules in the same dot shape. The real code keeps a light ring of `margin` modules around it (at least 3), and scanners read only the code in the middle. The disc is bigger than the code, so print it a little larger for the same scan distance; the print-size calculator counts the whole disc.
+
+```tsx
+<QRCode value="https://example.com" shape="circle" bodyPattern="rounded" />
+```
+
+In our decode tests circle codes read like square ones with solid dot shapes (`square`, `rounded`, `classy`, `liquid`). In the playground it is **Design → Code shape**.
+
 ## Per-eye colors
 
 `eyeColor` and `dotColor` color all three eyes. `eyeColors` overrides them per eye (`topLeft`, `topRight`, `bottomLeft`), each with an `outer` (frame) and `inner` (dot) color or gradient:

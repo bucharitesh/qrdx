@@ -5508,6 +5508,11 @@
             "description": "Raise error correction to H when the logo covers more than 7% of the code",
             "type": "boolean"
           },
+          "shape": {
+            "description": "Outline of the code: square (default) or circle, which puts the code in a disc of decorative dots",
+            "type": "string",
+            "enum": ["square", "circle"]
+          },
           "logoOptions": {
             "description": "Logo size (share of the code width), clear space in modules and position (0 to 1 across the code)",
             "type": "object",
@@ -5531,6 +5536,13 @@
                 "type": "number",
                 "minimum": 0,
                 "maximum": 1
+              },
+              "shape": {
+                "type": "string",
+                "enum": ["square", "rounded", "circle"]
+              },
+              "plate": {
+                "type": "string"
               }
             }
           }

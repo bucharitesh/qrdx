@@ -1,4 +1,4 @@
-import type { EyeColors, LogoOptions } from "qrdx/types";
+import type { EyeColors, LogoOptions, QRShape } from "qrdx/types";
 import type { ThemeStyles } from "@/types/theme";
 
 /** Engine options a style can carry beyond colors, shapes and the frame. */
@@ -7,6 +7,7 @@ export interface StyleEngineOptions {
   moduleScale?: number;
   autoLevel?: boolean;
   logoOptions?: LogoOptions;
+  shape?: QRShape;
 }
 
 /**
@@ -32,19 +33,21 @@ export function styleEngineOptions(
       Object.keys(style.logoOptions).length > 0 && {
         logoOptions: style.logoOptions,
       }),
+    ...(style.shape === "circle" && { shape: "circle" as const }),
   };
 }
 
 /**
- * The options `<QRCodeSVG>` takes directly (per-eye colors and module
- * size), for previews without a logo. Logo layout goes through `getQRData`.
+ * The options `<QRCodeSVG>` takes directly (per-eye colors, module size
+ * and the circle shape), for previews without a logo. Logo layout goes through `getQRData`.
  */
 export function styleSvgOptions(
   style: Partial<ThemeStyles>,
-): Pick<StyleEngineOptions, "eyeColors" | "moduleScale"> {
-  const { eyeColors, moduleScale } = styleEngineOptions(style);
+): Pick<StyleEngineOptions, "eyeColors" | "moduleScale" | "shape"> {
+  const { eyeColors, moduleScale, shape } = styleEngineOptions(style);
   return {
     ...(eyeColors && { eyeColors }),
     ...(moduleScale !== undefined && { moduleScale }),
+    ...(shape && { shape }),
   };
 }

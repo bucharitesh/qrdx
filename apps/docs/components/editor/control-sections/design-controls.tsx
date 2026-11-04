@@ -200,7 +200,8 @@ export function DesignControls({
       />
 
       {/* ── Engine options (feat/customization-gaps): logo options, eye
-          colors, dot size. Sections live in customization-sections.tsx. ── */}
+          colors, dot size, code shape. Sections live in
+          customization-sections.tsx. ── */}
       <CustomizationSections onChange={onChange} styles={styles} />
       {/* ── end engine options ── */}
 
