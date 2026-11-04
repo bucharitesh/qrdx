@@ -79,19 +79,6 @@ async function readsInPrint(props: QRProps, width: number): Promise<boolean> {
   );
 }
 
-/**
- * Older built-in themes that put a circle centre in rounded-corner eyes,
- * which the engine now flags as a sharp-render warning ("sharp-dot-eye":
- * jsQR misses it at some sizes, zbar reads it; the editor doesn't block it).
- * They're kept as they are for saved designs and ?preset= links; their tiles
- * still pass the score, camera and crisp checks. No new theme may join.
- */
-const SHARP_RENDER_WARNINGS = new Set([
-  "halloweenGhost",
-  "christmasPine",
-  "newYearMidnight",
-]);
-
 async function propsFor(tile: WallTile): Promise<QRProps> {
   return galleryCodeProps(tile, await loadGalleryAssets(tile));
 }
@@ -143,15 +130,7 @@ async function expectScans(tile: WallTile) {
     return;
   }
 
-  const risk = getStylePairRisk(props);
-  if (
-    risk?.kind === "sharp-dot-eye" &&
-    SHARP_RENDER_WARNINGS.has(tile.preset)
-  ) {
-    // A warning, not a block: every other check below still applies.
-  } else {
-    expect(risk, "weak body and eye pair").toBeNull();
-  }
+  expect(getStylePairRisk(props), "weak body and eye pair").toBeNull();
   for (const variant of variants) {
     const { score, grade, checks } = await getScanScore(variant);
     const failed = checks.filter((c) => !c.passed).map((c) => c.id);
