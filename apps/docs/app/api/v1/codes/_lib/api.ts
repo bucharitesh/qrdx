@@ -176,6 +176,57 @@ export async function resolveApiCaller(
   return caller;
 }
 
+/** The 401 for a keyed feature called without an API key. */
+export function apiKeyRequiredError(feature: string): HttpError {
+  return new HttpError(
+    401,
+    "UNAUTHORIZED",
+    `${feature} needs a QRdx API key: send it as Authorization: Bearer qrdx_… (create one in Settings → API keys & apps).`,
+    { "WWW-Authenticate": 'Bearer realm="QRdx API"' },
+    `${baseUrl.origin}/docs/developers/api-keys`,
+  );
+}
+
+/**
+ * The API key on a public endpoint's optional keyed feature (a logo by file
+ * id on GET /v1/qr, the MCP save_template tool): its workspace and scopes,
+ * after the per-minute limits and the daily quota. Null when no
+ * Authorization header is sent; throws the 401 for anything but a valid
+ * `qrdx_…` key, and the 403 when `access` is "write" and the key is read-only.
+ */
+export async function optionalApiKeyCaller(
+  req: Request,
+  access: ApiAccess,
+  feature: string,
+): Promise<{ scope: ActiveScope; scopes: string[] } | null> {
+  const authorization = req.headers.get("authorization");
+  if (!authorization) return null;
+  const token = authorization.startsWith("Bearer ")
+    ? authorization.slice(7).trim()
+    : "";
+  if (!isApiKeyFormat(token)) {
+    throw token.startsWith(API_KEY_PREFIX)
+      ? invalidApiKeyError()
+      : apiKeyRequiredError(feature);
+  }
+  const bearer = await authenticateBearer(token);
+  if (!SCOPES_FOR[access].some((s) => bearer.scopes.includes(s))) {
+    throw scopeError(bearer, `codes:${access}`);
+  }
+  const [plan] = await Promise.all([
+    getPlanForScope(bearer.scope),
+    enforceRateLimits([
+      {
+        limiter: access === "write" ? writeLimiter : readLimiter,
+        key: `api:codes:${access}:user:${bearer.scope.userId}`,
+      },
+      { limiter: ipLimiter, key: `api:codes:ip:${getClientIp(req)}` },
+    ]),
+  ]);
+  await consumeApiQuota(req, bearer.scope, plan);
+  return { scope: bearer.scope, scopes: bearer.scopes };
+}
+
 /** resolveApiCaller's scope. */
 export async function resolveApiScope(
   req: NextRequest,

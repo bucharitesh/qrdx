@@ -13,6 +13,7 @@ const state = vi.hoisted(() => ({ rateLimited: false }));
 
 vi.mock("@repo/rate-limit", () => ({
   slidingWindow: () => ({}),
+  fixedWindow: () => ({}),
   createRateLimiter: () => ({
     limit: async () => ({
       success: !state.rateLimited,
@@ -80,7 +81,7 @@ describe("MCP over Streamable HTTP", () => {
     expect(response.headers.get("access-control-allow-origin")).toBe("*");
   });
 
-  it("lists the QR tools, all read-only", async () => {
+  it("lists the QR tools, all read-only but save_template", async () => {
     const { message } = await rpc("tools/list");
     const tools = message?.result.tools as {
       name: string;
@@ -90,6 +91,7 @@ describe("MCP over Streamable HTTP", () => {
     expect(tools.map((tool) => tool.name).sort()).toEqual(
       [
         "design_qr",
+        "get_community_item",
         "list_options",
         "generate_qr_code",
         "list_qr_styles",
@@ -98,10 +100,15 @@ describe("MCP over Streamable HTTP", () => {
         "qr_payload_sms",
         "qr_payload_vcard",
         "qr_payload_wifi",
+        "save_template",
+        "search_community",
       ].sort(),
     );
     for (const tool of tools) {
-      expect(tool.annotations?.readOnlyHint, tool.name).toBe(true);
+      // save_template writes a theme to the API key's workspace.
+      expect(tool.annotations?.readOnlyHint, tool.name).toBe(
+        tool.name !== "save_template",
+      );
       expect(tool.annotations?.destructiveHint, tool.name).toBe(false);
     }
   });
