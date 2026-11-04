@@ -1,0 +1,2 @@
+# git pull / merge: rebuild the engine if the merge changed it.
+sh scripts/rebuild-engine-if-changed.sh "$(git rev-parse -q --verify ORIG_HEAD)" "$(git rev-parse HEAD)"
