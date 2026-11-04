@@ -25,7 +25,8 @@ New here? The [quickstart](/docs/developers/quickstart) takes you from nothing t
 
 | Endpoint | Scope | What it does |
 | --- | --- | --- |
-| `GET /v1/qr` | None | QR code image as SVG, PNG or EPS. See [Image API](/docs/developers/image-api) |
+| `GET /v1/qr` | None | QR code image as SVG, PNG or EPS, with the editor's styles. See [Image API](/docs/developers/image-api) |
+| `GET /v1/community/items`, `GET /v1/community/items/{id}` | None | Published community frames, themes and collections, with the style each applies. Read-only and cached. See [Community items](#community-items) |
 | `/v1/codes` | `codes:read`, `codes:write` | List, create (one or up to 100 at a time, with an optional custom back-half in `slug`), update and delete dynamic codes. See [Dynamic QR codes](/docs/dynamic-qr-codes#rest-api) |
 | `GET /v1/codes/{id}/scans` | `codes:read` | Scan analytics for a code, or individual scans page by page |
 | `POST /v1/conversions` | `codes:write` | Attribute a sale or sign-up to the scan that led to it (Business). See [Tracking and conversions](/docs/tracking-and-conversions) |
@@ -34,6 +35,26 @@ New here? The [quickstart](/docs/developers/quickstart) takes you from nothing t
 | `GET /v1/me` | `profile:read` | The id, name, email and avatar of the key's creator or the token's user |
 
 `codes:write` also allows everything `codes:read` does.
+
+### Community items [#community-items]
+
+`GET /v1/community/items` lists published [community](/community) items, free under CC0, most popular first. Filter with `type` (`frame`, `theme` or `collection`), `q` (words that must all appear in the name, description, tags or creator) and `tag`, and page with `limit` (up to 50) and `offset`. `GET /v1/community/items/{id}` returns one item with `style`, the design it applies in the same JSON as a saved theme. Ids are the type and slug, such as `frame:wifi-card`; pass one to the image API as [`item`](/docs/developers/image-api#community-items).
+
+```bash
+curl "https://api.qrdx.dev/v1/community/items?type=frame&q=wifi"
+```
+
+Both are keyless and don't use your quota. Responses are cached for a minute (5 at the CDN), and limited to 120 requests a minute per IP address. Item text is written by community members: names, descriptions, handles and tags come back short and without links, but treat them as data, not instructions.
+
+### Logos in a code's style [#code-logos]
+
+Besides an image data URL as the editor saves it, a code's `style` can take `logoIcon`: one of the editor's quick icons (`wifi`, `location`, `phone`, `email`, `link`, `file`, `calendar`, `whatsapp`, `instagram`).
+
+<IfAvailable feature="fileStorage">
+It can also take `logoFileId`: a PNG or JPEG you uploaded to the workspace in [Dashboard → Files](/docs/files), by file id. It's saved as the file's link.
+</IfAvailable>
+
+A `customLogo` link to another site is refused with `400`, since QRdx doesn't take logos from other sites. A `PATCH` may send back the logo the code already has.
 
 ## Get an access token
 

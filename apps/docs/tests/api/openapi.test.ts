@@ -130,12 +130,19 @@ describe("OpenAPI document", () => {
     }
   });
 
+  // Public endpoints: no key, no daily quota.
+  const KEYLESS = new Set([
+    "GET /qr",
+    "GET /community/items",
+    "GET /community/items/{id}",
+  ]);
+
   it("documents auth errors and the daily quota on every token endpoint", () => {
     for (const { key, operation } of operations) {
       const scopes = (operation.security as Json[]).flatMap(
         (requirement) => requirement.oauth2 ?? [],
       );
-      if (key === "GET /qr") {
+      if (KEYLESS.has(key)) {
         expect(operation.security).toEqual([]);
         continue;
       }

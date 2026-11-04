@@ -1,39 +1,71 @@
-import { getFrameLayout, isFrameActive } from "qrdx";
-import type { QRArtImage, QRArtMode, QRArtVariant, QRProps } from "qrdx/types";
+import { getFrameLayout, isFrameActive, OFFICIAL_FRAMES } from "qrdx";
+import type {
+  ColorConfig,
+  QRArtImage,
+  QRArtMode,
+  QRArtVariant,
+  QRProps,
+} from "qrdx/types";
+import { itemPath } from "@/lib/community/types";
 import { demoPath } from "@/lib/landing/demo-paths";
+import {
+  BODY_CATALOG,
+  EYE_CATALOG,
+  FRAME_CATALOG,
+} from "@/lib/pattern-catalog";
+import { playgroundHref } from "@/lib/playground-links";
+import { getQrType } from "@/lib/qr-types-content";
+import { CATEGORY_LABELS } from "@/lib/themes/categories";
 import type { ContentType, QRContentConfig } from "@/types/qr-content";
+import type { ThemeStyles } from "@/types/theme";
 import { encodeQRContent } from "@/utils/qr-content-encoder";
 import { defaultPresets } from "@/utils/qr-presets";
 
 /**
- * The home page gallery (components/sections/home/gallery-section.tsx): real
- * codes in the built-in themes (utils/qr-presets.ts), one per content type
- * and one per style feature, so the page shows what QRdx makes instead of one
- * house style. Each image is drawn by the engine on the server
- * (app/gallery/[file]/route.ts) and tests/home/gallery-scan.test.ts decodes
- * every one, so a style change can't ship a code that doesn't scan.
+ * The "Made with QRdx" walls (components/showcase/): every tile is a real
+ * code QRdx draws. Each image is drawn by the engine at build time
+ * (app/gallery/[file]/route.ts) and tests/home/gallery-scan*.test.ts decode
+ * every one, so nothing that doesn't scan can ship.
+ *
+ * Tiles come in four bands: every built-in theme, the official frames, art
+ * and logos (with the border templates and the transparent and print-ready
+ * codes), and every content type and hosted page. The home page shows a
+ * curated selection (lib/landing/showcase-wall.ts); /community shows them
+ * all.
  *
  * Sample values are obviously samples: qrdx.dev pages, example.com
- * addresses and a 555-01xx phone number, which is reserved for fiction.
+ * addresses, a 555-01xx phone number (reserved for fiction), each
+ * platform's own account, placeholders such as "yourname", and payment
+ * addresses nobody owns. SAMPLE_HOSTS lists every host a tile may point at.
  */
 
-export const GALLERY_FILTERS = [
-  { value: "style", label: "Styles" },
-  { value: "content", label: "Content types" },
-] as const;
+export type WallBand = "themes" | "frames" | "art" | "content";
 
-export type GalleryFilter = (typeof GALLERY_FILTERS)[number]["value"];
+/** Tile proportions: a justified row gives every tile in it one height. */
+export type TileShape = "wide" | "square" | "tall";
+
+export const TILE_ASPECT: Record<TileShape, number> = {
+  wide: 1.6,
+  square: 1,
+  tall: 0.75,
+};
+
+/** Width the codes are drawn at, before any frame. */
+export const GALLERY_CODE_SIZE = 240;
 
 /** A sample from public/images/art-samples, sampled as the editor does. */
-export type GalleryArtSample = "bloom" | "dog";
+export type GalleryArtSample = "bloom" | "wave" | "dog" | "portrait";
 
-export interface GalleryCode {
+/** A center logo: the QRdx mark (the editor's default) or a sample logo. */
+export type GalleryLogo = "qrdx" | "cafe";
+
+export interface WallTile {
   /** Slug for the image URL: /gallery/<id>.svg */
   id: string;
-  filter: GalleryFilter;
-  /** Short name on the tile, e.g. "Wi-Fi". */
+  band: WallBand;
+  /** Chip text, first part, e.g. "Wi-Fi". */
   label: string;
-  /** One line under the label. */
+  /** Chip text, second part, e.g. "Guest Wi-Fi theme". */
   detail: string;
   /** What the image shows, for screen readers and image search. */
   alt: string;
@@ -41,12 +73,22 @@ export interface GalleryCode {
   value: string;
   /** Built-in theme the code is drawn in (a key of defaultPresets). */
   preset: string;
+  /** Changes on top of the theme (an official frame, a template, an eye). */
+  style?: Partial<ThemeStyles>;
   /** Where the tile goes. */
   href: string;
-  /** Style tiles of a plain theme: clicking opens it in the playground. */
+  /** Theme tiles: the link opens this theme in the playground. */
   appliesPreset?: boolean;
-  /** Center logo: a sample mark from public/images/art-samples/logos. */
-  logo?: "cafe";
+  /** The shape the tile takes when a layout doesn't choose one. */
+  shape: TileShape;
+  /** Content type the value is (content tiles). */
+  contentType?: ContentType;
+  /** Hosted page type the value opens (content tiles). */
+  pageType?: string;
+  /** Official frame id (frame tiles). */
+  officialFrame?: string;
+  /** Center logo (theme logos come from `showLogo`). */
+  logo?: GalleryLogo;
   /** Logo QR or Image QR (vector art, no AI). */
   art?: {
     mode: QRArtMode;
@@ -58,6 +100,12 @@ export interface GalleryCode {
   transparent?: boolean;
   /** The tile draws crop marks around the code, as the print PDF has. */
   print?: boolean;
+  /**
+   * An option the scan score marks down that the wall still shows, so the
+   * community wall covers everything the editor offers. Such tiles must
+   * decode crisp and through the camera model instead; this says why.
+   */
+  caution?: string;
 }
 
 const SITE = "https://qrdx.dev";
@@ -65,285 +113,283 @@ const SITE = "https://qrdx.dev";
 const SAMPLE_PHONE = "+1 415 555 0132";
 const SAMPLE_GREETING = "Hello from QRdx";
 
+/**
+ * Hosts a tile's value may point at: QRdx, example.com, and the platform a
+ * content type is for (its own account or an obvious placeholder handle).
+ */
+export const SAMPLE_HOSTS = [
+  "qrdx.dev",
+  "wa.me",
+  "www.google.com",
+  "search.google.com",
+  "www.facebook.com",
+  "www.instagram.com",
+  "www.reddit.com",
+  "www.tiktok.com",
+  "twitter.com",
+  "www.linkedin.com",
+  "www.youtube.com",
+  "www.pinterest.com",
+  "www.snapchat.com",
+  "www.threads.net",
+  "open.spotify.com",
+  "paypal.me",
+  "venmo.com",
+  "www.etsy.com",
+  "dub.sh",
+  "drive.google.com",
+  "www.amazon.com",
+  "www.flipkart.com",
+  "cal.com",
+] as const;
+
 const encode = (content: QRContentConfig) => encodeQRContent(content);
 const page = (type: string, id: string) => `${SITE}${demoPath(type, id)}`;
 const generator = (type: ContentType) => `/qr-code-generator/${type}`;
-const theme = (id: string) => `${defaultPresets[id]?.label ?? id} theme`;
+const themeName = (id: string) => defaultPresets[id]?.label ?? id;
+const kebab = (id: string) =>
+  id.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
 
-/** The playground's Design tab, where logos and Logo QR or Image QR art live. */
-const DESIGN_TAB = "/playground?tab=customisations";
+/** The playground's Design tab (border templates, eye shapes). */
+const DESIGN_TAB = playgroundHref({ tab: "customisations" });
+/** Its Logo section, where center logos live. */
+const LOGO_SECTION = playgroundHref({ tab: "customisations", section: "logo" });
+/** The Art tab, in Logo QR or Image QR mode. */
+const ART_TAB = {
+  logo: playgroundHref({ tab: "art", art: "logo" }),
+  halftone: playgroundHref({ tab: "art", art: "image" }),
+} as const satisfies Record<QRArtMode, string>;
 
-const content: GalleryCode[] = [
-  {
-    id: "website",
-    filter: "content",
-    label: "Website",
-    detail: "Opens a link",
-    alt: "QR code for a website, blue gradient dots",
-    value: encode({ type: "url", url: SITE }),
-    preset: "gradientBlue",
-    href: generator("url"),
-  },
-  {
-    id: "wifi",
-    filter: "content",
-    label: "Wi-Fi",
-    detail: "Joins the network",
-    alt: "Wi-Fi QR code in a frame that says Join our Wi-Fi",
-    value: encode({
-      type: "wifi",
-      ssid: "QRdx Sample",
-      password: "sample-only",
-      encryption: "WPA",
-    }),
-    preset: "guestWifi",
-    href: generator("wifi"),
-  },
-  {
-    id: "contact",
-    filter: "content",
-    label: "Contact",
-    detail: "Saves a vCard",
-    alt: "Contact card QR code in a frame that says Save my contact",
-    value: encode({
-      type: "vcard",
-      firstName: "Sam",
-      lastName: "Sample",
-      // Name and email only: each extra field makes the code denser.
-      email: "sam@example.com",
-    }),
-    preset: "businessCard",
-    href: generator("vcard"),
-  },
-  {
-    id: "menu",
-    filter: "content",
-    label: "Menu page",
-    detail: "Opens a hosted menu",
-    alt: "QR code on a menu card that says Scan for the menu",
-    value: page("menu", "cafe"),
-    preset: "restaurantMenu",
-    href: demoPath("menu", "cafe"),
-  },
-  {
-    id: "event",
-    filter: "content",
-    label: "Event page",
-    detail: "Opens a hosted event",
-    alt: "QR code on a ticket that says Your ticket",
-    value: page("event", "conference"),
-    preset: "eventTicket",
-    href: demoPath("event", "conference"),
-  },
-  {
-    id: "upi",
-    filter: "content",
-    label: "UPI payment",
-    detail: "Opens a UPI app to pay",
-    alt: "UPI payment QR code in green",
-    value: encode({
-      type: "upi",
-      upiId: "sample@example",
-      name: "QRdx Sample",
-    }),
-    preset: "emerald",
-    href: generator("upi"),
-  },
-  {
-    id: "email",
-    filter: "content",
-    label: "Email",
-    detail: "Drafts an email",
-    alt: "Email QR code with lilac dots",
-    value: encode({
-      type: "email",
-      recipient: "hello@example.com",
-      subject: SAMPLE_GREETING,
-    }),
-    preset: "lavender",
-    href: generator("email"),
-  },
-  {
-    id: "sms",
-    filter: "content",
-    label: "SMS",
-    detail: "Writes a text",
-    alt: "SMS QR code in pink",
-    value: encode({
-      type: "sms",
-      phoneNumber: SAMPLE_PHONE,
-      message: SAMPLE_GREETING,
-    }),
-    preset: "bubblegum",
-    href: generator("sms"),
-  },
-  {
-    id: "whatsapp",
-    filter: "content",
-    label: "WhatsApp",
-    detail: "Starts a chat",
-    alt: "WhatsApp QR code with speech-bubble eyes",
-    value: encode({
-      type: "whatsapp",
-      phoneNumber: SAMPLE_PHONE,
-      message: SAMPLE_GREETING,
-    }),
-    preset: "message",
-    href: generator("whatsapp"),
-  },
-  {
-    id: "phone",
-    filter: "content",
-    label: "Phone",
-    detail: "Calls a number",
-    alt: "Phone call QR code in peach",
-    value: encode({ type: "phone", phoneNumber: SAMPLE_PHONE }),
-    preset: "pastelDream",
-    href: generator("phone"),
-  },
-  {
-    id: "links",
-    filter: "content",
-    label: "Link in bio",
-    detail: "Opens a link page",
-    alt: "QR code with violet to orange gradient dots",
-    value: page("links", "creator"),
-    preset: "instagram",
-    href: demoPath("links", "creator"),
-  },
-  {
-    id: "coupon",
-    filter: "content",
-    label: "Coupon",
-    detail: "Opens a hosted coupon",
-    alt: "QR code on a tag that says Scan for 20% off",
-    value: page("coupon", "store-discount"),
-    preset: "retailSale",
-    href: demoPath("coupon", "store-discount"),
-  },
-];
+const BODY_LABELS = new Map(BODY_CATALOG.map((b) => [b.value, b.label]));
+const EYE_LABELS = new Map(EYE_CATALOG.map((e) => [e.value, e.label]));
+const FRAME_LABELS = new Map(FRAME_CATALOG.map((f) => [f.value, f.label]));
 
-const style: GalleryCode[] = [
-  {
-    id: "liquid",
-    filter: "style",
-    label: "Liquid",
-    detail: theme("amethystHaze"),
-    alt: "QR code with flowing liquid modules in purple",
+/** A theme's look in words, for alt text: "liquid modules, squircle eyes". */
+function describeLook(styles: ThemeStyles): string {
+  const body = BODY_LABELS.get(styles.bodyPattern ?? "circle") ?? "dot";
+  const eye = EYE_LABELS.get(styles.cornerEyePattern ?? "gear") ?? "square";
+  const parts = [`${body.toLowerCase()} modules`, `${eye.toLowerCase()} eyes`];
+  const { frame } = styles;
+  if (frame && isFrameActive(frame) && frame.style !== "custom") {
+    const name = FRAME_LABELS.get(frame.style)?.toLowerCase() ?? "frame";
+    parts.push(
+      frame.text
+        ? `a ${name} frame that says ${frame.text}`
+        : `a ${name} frame`,
+    );
+  }
+  if (styles.templateId) parts.push("a border");
+  if (styles.showLogo) parts.push("the QRdx logo in the center");
+  return parts.join(", ");
+}
+
+/** The shape a code takes by default: frames and borders stand tall. */
+function naturalShape(styles: ThemeStyles): TileShape {
+  const { frame, bgColor } = styles;
+  if (!(frame && isFrameActive(frame))) return "square";
+  const { width, height } = getFrameLayout(GALLERY_CODE_SIZE, frame, bgColor);
+  const ratio = height / width;
+  if (ratio > 1.1) return "tall";
+  return ratio < 0.8 ? "wide" : "square";
+}
+
+// ── Themes: every built-in theme, opening it in the playground ────────────
+
+/**
+ * Built-in themes the scan score marks down that the wall still shows, as
+ * it shows every theme (tests/themes/presets-gate.test.ts names them too).
+ */
+const THEME_CAUTIONS: Record<string, string> = {
+  halloweenPumpkin:
+    "A light-on-dark seasonal theme: some scanner apps can't read light codes on dark, so the scan score marks it down.",
+};
+
+const themeTiles: WallTile[] = Object.entries(defaultPresets).map(
+  ([id, preset]) => {
+    const label = preset.label ?? id;
+    const category = preset.category ?? "brand";
+    return {
+      id: `theme-${kebab(id)}`,
+      band: "themes",
+      label,
+      detail: `${CATEGORY_LABELS[category]} theme`,
+      alt: `QR code in the ${label} theme: ${describeLook(preset.styles)}`,
+      // Scanning a theme tile opens that theme, as clicking it does.
+      value: `${SITE}${playgroundHref({ preset: id })}`,
+      ...(THEME_CAUTIONS[id] && { caution: THEME_CAUTIONS[id] }),
+      preset: id,
+      href: playgroundHref({ preset: id }),
+      appliesPreset: true,
+      shape: naturalShape(preset.styles),
+    };
+  },
+);
+
+// ── Frames: QRdx's official frame specs, on the classic code ─────────────
+
+/** What each official frame's code holds: something its prompt fits. */
+const FRAME_VALUES: Record<string, string> = {
+  "wifi-card": encode({
+    type: "wifi",
+    ssid: "QRdx Sample",
+    password: "sample-only",
+    encryption: "WPA",
+  }),
+  "save-contact": encode({
+    type: "vcard",
+    firstName: "Sam",
+    lastName: "Sample",
+    email: "sam@example.com",
+  }),
+  "order-at-table": page("menu", "restaurant"),
+  "table-tent": page("menu", "cafe"),
+  "event-ticket": page("event", "conference"),
+  "rsvp-card": page("event", "wedding"),
+  "feedback-bubble": page("feedback", "guest-feedback"),
+  "check-in": page("feedback", "sign-up"),
+  attendance: page("feedback", "sign-up"),
+  "get-the-app": page("apps", "app-launch"),
+  "audio-guide": page("mp3", "podcast"),
+  "shop-window": page("business", "local-shop"),
+  "sign-rider": page("vcard", "realtor"),
+  "product-info": page("pdf", "brochure"),
+  "review-us": encode({
+    type: "google-review",
+    // Google's documented sample place ID.
+    placeId: "ChIJN1t_tDeuEmsRUsoyG83frY4",
+  }),
+  "scan-to-pay": encode({
+    type: "upi",
+    upiId: "sample@example",
+    name: "QRdx Sample",
+  }),
+  "follow-us": encode({ type: "instagram", username: "instagram" }),
+  donate: encode({ type: "paypal", paypalUrl: "https://paypal.me/yourname" }),
+  "book-now": encode({
+    type: "calcom",
+    bookingUrl: "https://cal.com/yourname/30min",
+  }),
+};
+
+const frameTiles: WallTile[] = OFFICIAL_FRAMES.map((frame) => {
+  const style: Partial<ThemeStyles> = {
+    frame: { style: "custom", spec: frame.spec },
+  };
+  return {
+    id: `frame-${frame.id}`,
+    band: "frames",
+    label: frame.name,
+    detail: "Official frame",
+    alt: `QR code in the ${frame.name} frame: ${frame.description}`,
+    value: FRAME_VALUES[frame.id] ?? SITE,
+    preset: "classic",
+    style,
+    href: itemPath("frame", frame.id),
+    officialFrame: frame.id,
+    shape: naturalShape({ ...defaultPresets.classic?.styles, ...style }),
+  };
+});
+
+// ── Art, logos, borders and output options ───────────────────────────────
+
+const ART_SAMPLES: Record<GalleryArtSample, string> = {
+  bloom: "a pink flower logo",
+  wave: "a blue wave logo",
+  dog: "a photo of a dog",
+  portrait: "a black-and-white portrait",
+};
+
+const art = (
+  sample: GalleryArtSample,
+  mode: QRArtMode,
+  variant: QRArtVariant,
+  preset: string,
+): WallTile => {
+  const logo = mode === "logo";
+  const name = logo ? "Logo QR" : "Image QR";
+  const look = {
+    blend: "blended in",
+    badge: "as a badge",
+    color: "in color",
+    mono: "in one ink",
+  }[variant];
+  return {
+    id: `art-${mode}-${variant}-${sample}`,
+    band: "art",
+    label: name,
+    detail: `${variant[0]?.toUpperCase()}${variant.slice(1)}, ${themeName(preset)} theme`,
+    alt: `${name} code showing ${ART_SAMPLES[sample]} ${look}`,
     value: SITE,
-    preset: "amethystHaze",
-    href: "/playground",
-    appliesPreset: true,
+    preset,
+    href: ART_TAB[mode],
+    art: { mode, variant, intensity: 0.7, sample },
+    shape: "square",
+  };
+};
+
+/** The border templates that score Great are themes; these show the rest. */
+const border = (
+  templateId: string,
+  label: string,
+  caution?: string,
+): WallTile => ({
+  id: `border-${kebab(templateId)}`,
+  band: "art",
+  label: `${label} border`,
+  detail: "Border template",
+  alt: `QR code inside the ${label} border template`,
+  value: SITE,
+  preset: "minimal",
+  style: {
+    templateId,
+    bodyPattern: "square",
+    cornerEyePattern: "square",
+    cornerEyeDotPattern: "square",
   },
+  href: DESIGN_TAB,
+  shape: "square",
+  ...(caution && { caution }),
+});
+
+const SMALL_IN_BORDER =
+  "The border draws the code at under half the artwork's width, so the scan score marks it down; print it at 5 cm or more.";
+
+const artTiles: WallTile[] = [
+  art("bloom", "logo", "blend", "classic"),
+  art("wave", "logo", "badge", "minimal"),
+  art("wave", "logo", "blend", "folio"),
+  art("bloom", "logo", "badge", "fog"),
+  art("dog", "halftone", "color", "slate"),
+  art("portrait", "halftone", "mono", "monochrome"),
+  art("portrait", "halftone", "color", "classic"),
+  art("dog", "halftone", "mono", "minimal"),
   {
-    id: "leaf-eyes",
-    filter: "style",
-    label: "Leaf eyes",
-    detail: theme("harbor"),
-    alt: "QR code with leaf-shaped corner eyes in navy",
-    value: SITE,
-    preset: "harbor",
-    href: "/playground",
-    appliesPreset: true,
-  },
-  {
-    id: "hearts",
-    filter: "style",
-    label: "Hearts",
-    detail: theme("sweetheart"),
-    alt: "QR code made of small hearts",
-    value: SITE,
-    preset: "sweetheart",
-    href: "/playground",
-    appliesPreset: true,
-  },
-  {
-    id: "octagons",
-    filter: "style",
-    label: "Octagons",
-    detail: theme("fire"),
-    alt: "QR code made of orange octagons",
-    value: SITE,
-    preset: "fire",
-    href: "/playground",
-    appliesPreset: true,
-  },
-  {
-    id: "gradient",
-    filter: "style",
-    label: "Gradient",
-    detail: theme("rainbow"),
-    alt: "QR code in a four-color gradient",
-    value: SITE,
-    preset: "rainbow",
-    href: "/playground",
-    appliesPreset: true,
-  },
-  {
-    // Not a light-on-dark theme: the scan score warns that some scanner
-    // apps can't read those, so the gallery shows none.
-    id: "eye-colors",
-    filter: "style",
-    label: "Eye colors",
-    detail: theme("royal"),
-    alt: "Navy QR code with gold centers in its corner eyes",
-    value: SITE,
-    preset: "royal",
-    href: "/playground",
-    appliesPreset: true,
-  },
-  {
-    id: "frame",
-    filter: "style",
-    label: "Frame",
-    detail: theme("realEstate"),
-    alt: "QR code with a banner that says Book a viewing",
-    value: page("vcard", "realtor"),
-    preset: "realEstate",
-    href: "/playground",
-    appliesPreset: true,
-  },
-  {
-    id: "logo",
-    filter: "style",
+    id: "logo-cafe",
+    band: "art",
     label: "Logo",
     detail: "Any image in the center",
     alt: "QR code with a coffee cup logo in the center",
     value: page("menu", "cafe"),
     preset: "caffeine",
     logo: "cafe",
-    href: "/docs/help/designing/logos",
+    href: LOGO_SECTION,
+    shape: "square",
   },
   {
-    id: "logo-qr",
-    filter: "style",
-    label: "Logo QR",
-    detail: "Logo traced into the code",
-    alt: "QR code filled with a pink flower logo",
-    value: SITE,
-    preset: "classic",
-    art: { mode: "logo", variant: "blend", intensity: 0.7, sample: "bloom" },
-    href: DESIGN_TAB,
-  },
-  {
-    id: "image-qr",
-    filter: "style",
-    label: "Image QR",
-    detail: "A photo in every module",
-    alt: "QR code showing a photo of a dog through its modules",
-    value: SITE,
-    preset: "slate",
-    art: {
-      mode: "halftone",
-      variant: "color",
-      intensity: 0.7,
-      sample: "dog",
-    },
-    href: DESIGN_TAB,
+    id: "logo-qrdx",
+    band: "art",
+    label: "QRdx logo",
+    detail: "The editor's default logo",
+    alt: "QR code with the QRdx logo in the center",
+    value: `${SITE}/docs/help/designing/logos`,
+    preset: "modern",
+    logo: "qrdx",
+    href: LOGO_SECTION,
+    shape: "square",
   },
   {
     id: "transparent",
-    filter: "style",
+    band: "art",
     label: "Transparent",
     detail: "No background color",
     alt: "QR code with a transparent background",
@@ -351,10 +397,11 @@ const style: GalleryCode[] = [
     preset: "gilt",
     transparent: true,
     href: "/docs/features/downloads",
+    shape: "square",
   },
   {
     id: "print",
-    filter: "style",
+    band: "art",
     label: "Print-ready",
     detail: "CMYK PDF and EPS",
     alt: "QR code inside printer's crop marks",
@@ -362,21 +409,396 @@ const style: GalleryCode[] = [
     preset: "folio",
     print: true,
     href: "/docs/help/getting-started/download-and-print",
+    shape: "square",
+  },
+  border("StandardBox", "Standard box", SMALL_IN_BORDER),
+  border("StrikedBox", "Striked box"),
+  border("Arrow", "Arrow", SMALL_IN_BORDER),
+  border("Halloween", "Halloween", SMALL_IN_BORDER),
+  {
+    id: "eyes-circle",
+    band: "art",
+    label: "Circle eyes",
+    detail: "Bubbles theme with round eyes",
+    alt: "QR code with round corner eyes",
+    value: SITE,
+    preset: "bubbles",
+    style: { cornerEyePattern: "circle", cornerEyeDotPattern: "circle" },
+    href: DESIGN_TAB,
+    shape: "square",
+    caution:
+      "Round eyes read in most camera apps but not in strict scanners, so the scan score marks them down.",
   },
 ];
 
-export const GALLERY_CODES: readonly GalleryCode[] = [...style, ...content];
+// ── Content types and hosted pages ───────────────────────────────────────
 
-export function getGalleryCode(id: string): GalleryCode | undefined {
-  return GALLERY_CODES.find((code) => code.id === id);
+interface Look {
+  preset: string;
+  /** An official frame on the classic code instead of a theme. */
+  frame?: string;
+  shape?: TileShape;
 }
 
-/** Image URL of a gallery code (app/gallery/[file]/route.ts). */
-export const galleryImagePath = (code: Pick<GalleryCode, "id">) =>
-  `/gallery/${code.id}.svg`;
+interface ContentSpec extends Look {
+  label?: string;
+  config: QRContentConfig;
+}
 
-/** Width the codes are drawn at, before any frame. */
-export const GALLERY_CODE_SIZE = 240;
+/** Each content type with a sample value and a look that suits it. */
+const CONTENT: Record<ContentType, ContentSpec> = {
+  url: {
+    label: "Website",
+    config: { type: "url", url: `${SITE}/playground` },
+    preset: "orchid",
+  },
+  text: {
+    label: "Text",
+    config: { type: "text", text: SAMPLE_GREETING },
+    preset: "loveNote",
+  },
+  email: {
+    config: {
+      type: "email",
+      recipient: "hello@example.com",
+      subject: SAMPLE_GREETING,
+    },
+    preset: "periwinkle",
+  },
+  phone: {
+    label: "Phone",
+    config: { type: "phone", phoneNumber: SAMPLE_PHONE },
+    preset: "helpDesk",
+  },
+  sms: {
+    config: {
+      type: "sms",
+      phoneNumber: SAMPLE_PHONE,
+      message: SAMPLE_GREETING,
+    },
+    preset: "bubblegum",
+  },
+  whatsapp: {
+    config: {
+      type: "whatsapp",
+      phoneNumber: SAMPLE_PHONE,
+      message: SAMPLE_GREETING,
+    },
+    preset: "message",
+  },
+  wifi: {
+    config: {
+      type: "wifi",
+      ssid: "QRdx Sample",
+      password: "sample-only",
+      encryption: "WPA",
+    },
+    preset: "guestWifi",
+  },
+  vcard: {
+    label: "Contact",
+    config: {
+      type: "vcard",
+      firstName: "Sam",
+      lastName: "Sample",
+      // Name and email only: each extra field makes the code denser.
+      email: "sam@example.com",
+    },
+    preset: "businessCard",
+  },
+  maps: {
+    label: "Maps",
+    config: { type: "maps", location: "Eiffel Tower, Paris" },
+    preset: "nature",
+    shape: "wide",
+  },
+  facebook: {
+    config: {
+      type: "facebook",
+      profileUrl: "https://www.facebook.com/facebook",
+    },
+    preset: "cobalt",
+  },
+  instagram: {
+    config: { type: "instagram", username: "instagram" },
+    preset: "instagram",
+  },
+  reddit: {
+    config: { type: "reddit", subreddit: "reddit" },
+    preset: "blaze",
+  },
+  tiktok: { config: { type: "tiktok", username: "tiktok" }, preset: "acid" },
+  twitter: {
+    label: "X",
+    config: { type: "twitter", username: "X" },
+    preset: "ink",
+  },
+  linkedin: {
+    config: {
+      type: "linkedin",
+      profileUrl: "https://www.linkedin.com/company/linkedin",
+    },
+    preset: "harbor",
+    shape: "wide",
+  },
+  youtube: {
+    config: { type: "youtube", channelUrl: "@YouTube" },
+    preset: "retro",
+  },
+  pinterest: {
+    config: { type: "pinterest", username: "pinterest" },
+    preset: "rose",
+  },
+  snapchat: {
+    config: { type: "snapchat", username: "teamsnapchat" },
+    preset: "butter",
+  },
+  threads: {
+    config: { type: "threads", username: "threads" },
+    preset: "monochrome",
+  },
+  spotify: {
+    config: {
+      type: "spotify",
+      // Spotify's own Today's Top Hits playlist.
+      uri: "https://open.spotify.com/playlist/37i9dQZF1DXcBWIGoYBM5M",
+    },
+    preset: "pistachio",
+    shape: "wide",
+  },
+  upi: {
+    label: "UPI",
+    config: { type: "upi", upiId: "sample@example", name: "QRdx Sample" },
+    preset: "classic",
+    frame: "scan-to-pay",
+  },
+  paypal: {
+    config: { type: "paypal", paypalUrl: "https://paypal.me/yourname" },
+    preset: "ultramarine",
+  },
+  "google-review": {
+    label: "Google review",
+    // Google's documented sample place ID.
+    config: { type: "google-review", placeId: "ChIJN1t_tDeuEmsRUsoyG83frY4" },
+    preset: "moss",
+  },
+  venmo: {
+    config: { type: "venmo", username: "your-name" },
+    preset: "aurora",
+  },
+  bitcoin: {
+    // A provably unspendable address: obviously not anyone's wallet.
+    config: { type: "bitcoin", address: "1BitcoinEaterAddressDontSendf59kuE" },
+    preset: "amberMinimal",
+  },
+  ethereum: {
+    // The conventional burn address.
+    config: {
+      type: "ethereum",
+      address: "0x000000000000000000000000000000000000dEaD",
+    },
+    preset: "onyx",
+  },
+  etsy: {
+    config: { type: "etsy", shopUrl: "YourShopName" },
+    preset: "terracotta",
+    shape: "wide",
+  },
+  dubsh: {
+    label: "Dub link",
+    config: { type: "dubsh", shortUrl: "https://dub.sh/qrdx" },
+    preset: "twinkle",
+  },
+  "google-drive": {
+    config: {
+      type: "google-drive",
+      url: "https://drive.google.com/file/d/sample-file-id/view",
+    },
+    preset: "classic",
+    frame: "product-info",
+  },
+  attendance: {
+    config: { type: "attendance", formUrl: page("feedback", "sign-up") },
+    preset: "classic",
+    frame: "attendance",
+  },
+  amazon: {
+    config: {
+      type: "amazon",
+      productUrl: "https://www.amazon.com/dp/B08N5WRWNW",
+    },
+    preset: "clay",
+  },
+  flipkart: {
+    config: { type: "flipkart", productUrl: "https://www.flipkart.com/" },
+    preset: "pinwheel",
+  },
+  calcom: {
+    label: "Cal.com",
+    config: { type: "calcom", bookingUrl: "https://cal.com/yourname/30min" },
+    preset: "seafoam",
+  },
+};
+
+/** Hosted pages, each opening its live demo on qrdx.dev. */
+const PAGES: (Look & { type: string; variant: string; label: string })[] = [
+  {
+    type: "menu",
+    variant: "cafe",
+    label: "Menu page",
+    preset: "restaurantMenu",
+  },
+  {
+    type: "event",
+    variant: "conference",
+    label: "Event page",
+    preset: "eventTicket",
+  },
+  {
+    type: "coupon",
+    variant: "store-discount",
+    label: "Coupon page",
+    preset: "retailSale",
+  },
+  {
+    type: "links",
+    variant: "creator",
+    label: "Link in bio",
+    preset: "gradientPurple",
+  },
+  {
+    type: "vcard",
+    variant: "realtor",
+    label: "Contact page",
+    preset: "realEstate",
+  },
+  {
+    type: "business",
+    variant: "florist",
+    label: "Business page",
+    preset: "blossom",
+    shape: "wide",
+  },
+  {
+    type: "feedback",
+    variant: "guest-feedback",
+    label: "Feedback form",
+    preset: "classic",
+    frame: "feedback-bubble",
+  },
+  { type: "pdf", variant: "brochure", label: "PDF page", preset: "gallery" },
+  {
+    type: "images",
+    variant: "portfolio",
+    label: "Image gallery",
+    preset: "dusk",
+  },
+  {
+    type: "video",
+    variant: "product-video",
+    label: "Video page",
+    preset: "viewfinder",
+  },
+  {
+    type: "mp3",
+    variant: "podcast",
+    label: "Audio page",
+    preset: "classic",
+    frame: "audio-guide",
+  },
+  { type: "apps", variant: "app-launch", label: "App page", preset: "hotline" },
+  {
+    type: "custom",
+    variant: "coming-soon",
+    label: "Custom page",
+    preset: "obsidian",
+  },
+];
+
+const OFFICIAL = new Map(OFFICIAL_FRAMES.map((frame) => [frame.id, frame]));
+
+/** A look's styles, detail text and alt description. */
+function resolveLook(look: Look) {
+  const preset = defaultPresets[look.preset];
+  if (!preset) throw new Error(`Unknown wall theme "${look.preset}"`);
+  const official = look.frame ? OFFICIAL.get(look.frame) : undefined;
+  if (look.frame && !official) {
+    throw new Error(`Unknown official frame "${look.frame}"`);
+  }
+  const style: Partial<ThemeStyles> | undefined = official && {
+    frame: { style: "custom", spec: official.spec },
+  };
+  const styles = { ...preset.styles, ...style };
+  return {
+    style,
+    styles,
+    detail: official
+      ? `${official.name} frame`
+      : `${preset.label ?? look.preset} theme`,
+    look: official
+      ? `in the ${official.name} frame`
+      : `in the ${preset.label ?? look.preset} theme`,
+    officialFrame: official?.id,
+  };
+}
+
+const contentTiles: WallTile[] = [
+  ...(Object.entries(CONTENT) as [ContentType, ContentSpec][]).map(
+    ([type, spec]) => {
+      const { style, styles, detail, look, officialFrame } = resolveLook(spec);
+      const label = spec.label ?? getQrType(type)?.name ?? type;
+      return {
+        id: `type-${type}`,
+        band: "content" as const,
+        label,
+        detail,
+        alt: `${label} QR code ${look}`,
+        value: encode(spec.config),
+        preset: spec.preset,
+        ...(style && { style }),
+        href: generator(type),
+        shape: spec.shape ?? naturalShape(styles),
+        contentType: type,
+        ...(officialFrame && { officialFrame }),
+      };
+    },
+  ),
+  ...PAGES.map((spec) => {
+    const { style, styles, detail, look, officialFrame } = resolveLook(spec);
+    return {
+      id: `page-${spec.type}`,
+      band: "content" as const,
+      label: spec.label,
+      detail,
+      alt: `QR code for a hosted ${spec.label.toLowerCase()} ${look}`,
+      value: page(spec.type, spec.variant),
+      preset: spec.preset,
+      ...(style && { style }),
+      href: demoPath(spec.type, spec.variant),
+      shape: spec.shape ?? naturalShape(styles),
+      pageType: spec.type,
+      ...(officialFrame && { officialFrame }),
+    };
+  }),
+];
+
+/** Every tile, in band order (the community wall shows them all). */
+export const WALL_TILES: readonly WallTile[] = [
+  ...themeTiles,
+  ...frameTiles,
+  ...artTiles,
+  ...contentTiles,
+];
+
+const BY_ID = new Map(WALL_TILES.map((tile) => [tile.id, tile]));
+
+export function getWallTile(id: string): WallTile | undefined {
+  return BY_ID.get(id);
+}
+
+/** Image URL of a tile's code (app/gallery/[file]/route.ts). */
+export const galleryImagePath = (tile: Pick<WallTile, "id">) =>
+  `/gallery/${tile.id}.svg`;
 
 /**
  * The checkerboard behind the transparent code: light in both color
@@ -385,15 +807,22 @@ export const GALLERY_CODE_SIZE = 240;
  */
 export const GALLERY_CHECKER = { light: "#ffffff", dark: "#e5e5e5" } as const;
 
-/** A gallery image's URL and intrinsic size (a frame makes it larger). */
-export function galleryImage(code: GalleryCode): {
+/** The theme's styles with the tile's changes on top. */
+export function tileStyles(tile: WallTile): ThemeStyles {
+  const preset = defaultPresets[tile.preset];
+  if (!preset) throw new Error(`Unknown wall theme "${tile.preset}"`);
+  return { ...preset.styles, ...tile.style };
+}
+
+/** A tile image's URL and intrinsic size (frames make it larger). */
+export function galleryImage(tile: WallTile): {
   src: string;
   width: number;
   height: number;
   framed: boolean;
 } {
-  const src = galleryImagePath(code);
-  const { frame, bgColor } = defaultPresets[code.preset]?.styles ?? {};
+  const src = galleryImagePath(tile);
+  const { frame, bgColor } = tileStyles(tile);
   if (!(frame && isFrameActive(frame))) {
     const size = GALLERY_CODE_SIZE;
     return { src, width: size, height: size, framed: false };
@@ -402,8 +831,26 @@ export function galleryImage(code: GalleryCode): {
   return { src, width: layout.width, height: layout.height, framed: true };
 }
 
-/** Center logo width, as a share of the code (the editor's logos are 25%). */
-const LOGO_SCALE = 0.24;
+const firstColor = (color: ColorConfig | undefined, fallback: string) => {
+  if (!color) return fallback;
+  if (typeof color === "string") return color;
+  if (color.type === "solid") return color.color;
+  return color.stops[0]?.color ?? fallback;
+};
+
+/**
+ * The backdrop a tile's code sits on: the code's own background, carried
+ * to the tile's edges like a seamless paper sweep, so a wide or tall tile
+ * is the code in a field of its own color. Null for the transparent code,
+ * which shows a checkerboard.
+ */
+export function tileBackdrop(tile: WallTile): string | null {
+  if (tile.transparent) return null;
+  return firstColor(tileStyles(tile).bgColor, "#ffffff");
+}
+
+/** Center logo width as a share of the code (the editor draws 256 of 1024). */
+const LOGO_SCALE = 0.25;
 
 export interface GalleryAssets {
   /** The center logo as a data URI (it must be inline: the SVG is an <img>). */
@@ -412,30 +859,35 @@ export interface GalleryAssets {
   artImage?: QRArtImage;
 }
 
-/** Props for `<QRCodeSVG>` drawing a gallery code in its theme. */
+/** The logo a tile draws: its own, or the QRdx mark when its theme shows one. */
+export function tileLogo(tile: WallTile): GalleryLogo | undefined {
+  return tile.logo ?? (tileStyles(tile).showLogo ? "qrdx" : undefined);
+}
+
+/** Props for `<QRCodeSVG>` drawing a tile's code. */
 export function galleryCodeProps(
-  code: GalleryCode,
+  tile: WallTile,
   assets: GalleryAssets = {},
 ): QRProps {
-  const preset = defaultPresets[code.preset];
-  if (!preset) throw new Error(`Unknown gallery theme "${code.preset}"`);
-  const styles = preset.styles;
+  const styles = tileStyles(tile);
+  const logo = tileLogo(tile);
   const props: QRProps = {
-    value: code.value,
+    value: tile.value,
     size: GALLERY_CODE_SIZE,
-    bgColor: code.transparent ? "transparent" : styles.bgColor,
+    bgColor: tile.transparent ? "transparent" : styles.bgColor,
     fgColor: styles.fgColor,
     eyeColor: styles.eyeColor,
     dotColor: styles.dotColor,
     bodyPattern: styles.bodyPattern,
     cornerEyePattern: styles.cornerEyePattern,
     cornerEyeDotPattern: styles.cornerEyeDotPattern,
-    level: code.logo || code.art ? "H" : styles.level,
+    level: logo || tile.art ? "H" : styles.level,
     margin: styles.margin,
   };
+  if (styles.templateId) props.templateId = styles.templateId;
   if (styles.frame) props.frame = styles.frame;
-  if (code.logo) {
-    if (!assets.logo) throw new Error(`Gallery code "${code.id}" needs a logo`);
+  if (logo) {
+    if (!assets.logo) throw new Error(`Wall tile "${tile.id}" needs a logo`);
     const width = Math.round(GALLERY_CODE_SIZE * LOGO_SCALE);
     props.imageSettings = {
       src: assets.logo,
@@ -444,11 +896,11 @@ export function galleryCodeProps(
       excavate: true,
     };
   }
-  if (code.art) {
+  if (tile.art) {
     if (!assets.artImage) {
-      throw new Error(`Gallery code "${code.id}" needs its art sample`);
+      throw new Error(`Wall tile "${tile.id}" needs its art sample`);
     }
-    const { mode, variant, intensity } = code.art;
+    const { mode, variant, intensity } = tile.art;
     props.art = { mode, variant, intensity, image: assets.artImage };
   }
   return props;
