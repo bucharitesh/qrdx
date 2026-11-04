@@ -14,13 +14,6 @@ import {
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@repo/design-system/components/ui/select";
-import {
   Table,
   TableBody,
   TableCell,
@@ -31,12 +24,9 @@ import {
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { removeMember, updateMemberRole } from "@/actions/organizations";
-import {
-  formatUtcDate,
-  TEAM_ROLE_DESCRIPTIONS,
-  TEAM_ROLE_LABELS,
-  type TeamRole,
-} from "../_lib/team";
+import { assignableRoles, can } from "@/lib/permissions";
+import { formatUtcDate, TEAM_ROLE_LABELS, type TeamRole } from "../_lib/team";
+import { RoleSelect } from "./role-select";
 
 export interface MemberRow {
   id: string;
@@ -46,8 +36,6 @@ export interface MemberRow {
   role: TeamRole;
   joinedAt: string;
 }
-
-const ROLES: TeamRole[] = ["owner", "admin", "member"];
 
 export function MembersTable({
   members,
@@ -61,13 +49,16 @@ export function MembersTable({
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [removing, setRemoving] = useState<MemberRow | null>(null);
-  const canManage = currentRole !== "member";
+  const canManage = can(currentRole, "members.manage");
   const ownerCount = members.filter((m) => m.role === "owner").length;
 
-  // Mirrors the organization plugin's rules so the UI only offers allowed changes.
+  // Mirrors the server's rules (lib/permissions.ts canAssignRole and the
+  // organization plugin) so the UI only offers allowed changes: admins
+  // handle admin, member and viewer; owners also owner and billing.
+  const rolesFor = (target: MemberRow) =>
+    assignableRoles(currentRole, target.role);
   const canChangeRole = (target: MemberRow) => {
-    if (!canManage) return false;
-    if (target.role === "owner" && currentRole !== "owner") return false;
+    if (rolesFor(target).length === 0) return false;
     if (target.userId === currentUserId) {
       return currentRole === "owner" && ownerCount > 1;
     }
@@ -76,7 +67,8 @@ export function MembersTable({
   const canRemove = (target: MemberRow) =>
     canManage &&
     target.userId !== currentUserId &&
-    (target.role !== "owner" || currentRole === "owner");
+    ((target.role !== "owner" && target.role !== "billing") ||
+      can(currentRole, "owners.manage"));
 
   const changeRole = (target: MemberRow, role: TeamRole) =>
     startTransition(async () => {
@@ -141,31 +133,14 @@ export function MembersTable({
               </TableCell>
               <TableCell>
                 {canChangeRole(member) ? (
-                  <Select
+                  <RoleSelect
+                    className="h-8"
                     disabled={isPending}
-                    onValueChange={(value) =>
-                      changeRole(member, value as TeamRole)
-                    }
+                    label={`Role for ${member.email}`}
+                    onChange={(role) => changeRole(member, role)}
+                    roles={rolesFor(member)}
                     value={member.role}
-                  >
-                    <SelectTrigger
-                      aria-label={`Role for ${member.email}`}
-                      className="h-8 w-32"
-                    >
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {ROLES.filter(
-                        (role) => role !== "owner" || currentRole === "owner",
-                      ).map((role) => (
-                        <SelectItem key={role} value={role}>
-                          <span title={TEAM_ROLE_DESCRIPTIONS[role]}>
-                            {TEAM_ROLE_LABELS[role]}
-                          </span>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  />
                 ) : (
                   <Badge
                     variant={member.role === "owner" ? "default" : "outline"}
@@ -206,8 +181,8 @@ export function MembersTable({
               Remove {removing?.name || removing?.email}?
             </AlertDialogTitle>
             <AlertDialogDescription>
-              They lose access to this team right away. Dynamic QR codes and
-              themes they created stay with the team and keep working.
+              They lose access to this workspace right away. Dynamic QR codes
+              and themes they created stay with it and keep working.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

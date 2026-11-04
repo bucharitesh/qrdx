@@ -4,23 +4,26 @@ import { toast } from "@repo/design-system";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@repo/design-system/components/ui/select";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { inviteMember } from "@/actions/organizations";
 import { useShowLimit } from "@/components/limits/limit-dialog";
+import {
+  assignableRoles,
+  JOINABLE_ROLES,
+  type WorkspaceRole,
+} from "@/lib/permissions";
 import { InviteLinkField } from "./invite-link";
+import { RoleSelect } from "./role-select";
 
-export function InviteForm() {
+export function InviteForm({ currentRole }: { currentRole: WorkspaceRole }) {
   const router = useRouter();
   const [email, setEmail] = useState("");
-  const [role, setRole] = useState<"member" | "admin">("member");
+  const [role, setRole] = useState<WorkspaceRole>("member");
+  // Never owner; billing only for owners (lib/permissions.ts).
+  const roles = assignableRoles(currentRole).filter((r) =>
+    JOINABLE_ROLES.includes(r),
+  );
   const [created, setCreated] = useState<{
     id: string;
     email: string;
@@ -73,18 +76,13 @@ export function InviteForm() {
         </div>
         <div className="space-y-1.5 sm:w-36">
           <Label htmlFor="invite-role">Role</Label>
-          <Select
-            onValueChange={(value) => setRole(value as "member" | "admin")}
+          <RoleSelect
+            className="w-full"
+            id="invite-role"
+            onChange={setRole}
+            roles={roles}
             value={role}
-          >
-            <SelectTrigger className="w-full" id="invite-role">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="member">Member</SelectItem>
-              <SelectItem value="admin">Admin</SelectItem>
-            </SelectContent>
-          </Select>
+          />
         </div>
         <Button disabled={isPending} type="submit">
           {isPending ? "Creating link..." : "Create invite link"}
