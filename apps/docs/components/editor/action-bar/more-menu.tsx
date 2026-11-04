@@ -1,5 +1,6 @@
 "use client";
 
+import { authClient } from "@repo/auth/client";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   Drawer,
@@ -21,6 +22,7 @@ import { Kbd } from "@repo/design-system/components/ui/kbd";
 import { cn } from "@repo/design-system/lib/utils";
 import {
   Element3,
+  Flash,
   type Icon,
   Keyboard,
   More,
@@ -31,11 +33,22 @@ import {
 import Link from "next/link";
 import { type ReactNode, useState } from "react";
 import { PLUGINS } from "@/app/(home)/plugins/plugin-data";
+import {
+  currentBuilderRequest,
+  openPlaygroundBuilder,
+} from "@/components/code-builder/in-place";
+import {
+  dynamicBlockedReason,
+  openCodeBuilderIntent,
+} from "@/components/code-builder/playground-request";
 import { useCommunitySheetStore } from "@/components/editor/community-sheet-store";
+import { useDynamicLinkStore } from "@/components/editor/dynamic-link-toggle";
 import { usePhotoScanDialogStore } from "@/components/editor/photo-scan-dialog-store";
 import { useKeyboardShortcutsModal } from "@/components/keyboard-shortcuts-trigger";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { useUserSettings } from "@/lib/hooks/use-user-settings";
+import { useAuthStore } from "@/store/auth-store";
+import { useQREditorStore } from "@/store/editor-store";
 
 /** The bulk tool with "My editor style" preselected (it reads the persisted editor store). */
 export const BULK_FROM_EDITOR_HREF = "/tools/bulk?style=editor";
@@ -60,6 +73,8 @@ interface MoreItem {
   kbd?: string;
   /** Starts a new group below a line. */
   separated?: boolean;
+  /** Shown but not offered; the hint says why. */
+  disabled?: boolean;
 }
 
 interface MoreMenuProps {
@@ -76,8 +91,10 @@ export function MoreMenu({ layout = "desktop" }: MoreMenuProps) {
   const { setOpen: openShortcuts } = useKeyboardShortcutsModal();
   const { settings } = useUserSettings();
   const desktop = layout === "desktop";
+  const dynamicItem = useMakeDynamicItem();
 
   const items: MoreItem[] = [
+    dynamicItem,
     {
       id: "bulk",
       label: "Make many from a CSV",
@@ -155,6 +172,7 @@ export function MoreMenu({ layout = "desktop" }: MoreMenuProps) {
                 ) : (
                   <button
                     className={drawerRowClass}
+                    disabled={item.disabled}
                     onClick={() => {
                       setOpen(false);
                       item.run?.();
@@ -188,10 +206,69 @@ export function MoreMenu({ layout = "desktop" }: MoreMenuProps) {
 }
 
 const drawerRowClass =
-  "hover:bg-accent active:bg-accent flex w-full items-start gap-3 rounded-md px-3 py-3 text-left outline-none focus-visible:ring-2 focus-visible:ring-ring";
+  "hover:bg-accent active:bg-accent flex w-full items-start gap-3 rounded-md px-3 py-3 text-left outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none";
+
+/**
+ * "Make it dynamic…": the code builder over the editor for a URL code
+ * (signed out: sign-in first, then it opens). Bound to a dynamic code, it
+ * opens that code's link options. Other types say why they can't be.
+ */
+function useMakeDynamicItem(): MoreItem {
+  const { data: session, isPending } = authClient.useSession();
+  const userId = session?.user?.id ?? null;
+  const contentType = useQREditorStore((state) => state.contentType);
+  const linked = useDynamicLinkStore(
+    (state) => userId !== null && state.code?.userId === userId,
+  );
+  const openAuthDialog = useAuthStore((state) => state.openAuthDialog);
+
+  const blocked = dynamicBlockedReason(contentType);
+  if (blocked) {
+    return {
+      id: "dynamic",
+      label: "Make it dynamic…",
+      hint: blocked,
+      icon: Flash,
+      disabled: true,
+    };
+  }
+  const open = () => {
+    if (!userId) {
+      openAuthDialog(
+        "signin",
+        "OPEN_CODE_BUILDER",
+        openCodeBuilderIntent("dynamic"),
+      );
+      return;
+    }
+    const next = currentBuilderRequest(userId);
+    if (next.ok) openPlaygroundBuilder(next.request);
+  };
+  if (linked) {
+    return {
+      id: "dynamic",
+      label: "Link options…",
+      hint: "Its short link, folder, tags and routing.",
+      icon: Flash,
+      run: open,
+    };
+  }
+  return {
+    id: "dynamic",
+    label: "Make it dynamic…",
+    hint: userId
+      ? "Change where it points after printing, and count scans."
+      : "Sign in to change where it points after printing.",
+    icon: Flash,
+    run: open,
+    disabled: isPending,
+  };
+}
 
 function MenuEntry({ item }: { item: MoreItem }) {
-  const itemClass = "cursor-pointer items-start gap-3 px-2.5 py-2";
+  // A disabled item keeps its reason readable: only the label dims.
+  const itemClass =
+    "cursor-pointer items-start gap-3 px-2.5 py-2 data-[disabled]:opacity-100";
   let entry: ReactNode;
   if (item.href) {
     entry = (
@@ -203,7 +280,11 @@ function MenuEntry({ item }: { item: MoreItem }) {
     );
   } else {
     entry = (
-      <DropdownMenuItem className={itemClass} onSelect={() => item.run?.()}>
+      <DropdownMenuItem
+        className={itemClass}
+        disabled={item.disabled}
+        onSelect={() => item.run?.()}
+      >
         <ItemBody item={item} />
         {item.kbd && (
           <DropdownMenuShortcut className="self-center tracking-normal">
@@ -233,7 +314,12 @@ function ItemBody({ item }: { item: MoreItem }) {
         )}
       />
       <span className="flex min-w-0 flex-col gap-0.5">
-        <span className="text-foreground text-sm leading-tight">
+        <span
+          className={cn(
+            "text-sm leading-tight",
+            item.disabled ? "text-muted-foreground" : "text-foreground",
+          )}
+        >
           {item.label}
         </span>
         {item.hint && (
