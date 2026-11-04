@@ -15,6 +15,7 @@ import type { Metadata } from "next";
 import { AsciiField } from "@/components/fx";
 import { NpmLagNotice } from "@/components/mdx/npm-status";
 import { IconTile } from "@/components/sections/tools/cards";
+import { changelogAnchor } from "@/lib/changelog-feed";
 import { createMetadata } from "@/lib/metadata";
 import { getNpmLag, type NpmLag } from "@/lib/npm-version";
 import { changelogSource } from "@/lib/source";
@@ -137,7 +138,9 @@ const Page = async () => {
           return (
             <li
               key={entry.url}
-              className="grid min-w-0 gap-3 md:grid-cols-[10rem_minmax(0,1fr)] md:gap-0"
+              // The app's "What's new" links here (/changelogs#<slug>).
+              id={changelogAnchor(entry.slugs)}
+              className="grid min-w-0 scroll-mt-24 gap-3 md:grid-cols-[10rem_minmax(0,1fr)] md:gap-0"
             >
               <div className="flex items-center gap-2 md:flex-col md:items-start md:gap-2 md:pt-1 md:pr-8">
                 <div className="flex items-center gap-2 md:sticky md:top-24 md:flex-col md:items-start">

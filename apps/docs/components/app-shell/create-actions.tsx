@@ -1,6 +1,5 @@
 "use client";
 
-import { toast } from "@repo/design-system";
 import {
   createContext,
   type ReactNode,
@@ -11,8 +10,7 @@ import {
 import { NewCodeDialog } from "@/app/dashboard/codes/_components/new-code-dialog";
 import { CodeBuilderHost } from "@/components/code-builder/code-builder-host";
 import { openCodeBuilder } from "@/components/code-builder/store";
-import { PLAN_NAMES } from "@/lib/pricing";
-import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
+import { useShowLimit } from "@/components/limits/limit-dialog";
 import type { ShellData } from "./shell-data";
 
 /** What the Create menu, ⌘K and the `c` key can start. */
@@ -32,8 +30,9 @@ export function useCreate() {
 
 /**
  * Holds what the app chrome opens: the code builder for a new dynamic code
- * and the page gallery for a landing page or form. At the Free cap, a new
- * code goes to the upgrade dialog instead, like the codes list.
+ * and the page gallery for a landing page or form. At the plan's cap (the
+ * server would answer LIMIT_REACHED), a new code shows the limit card
+ * instead, like the codes list.
  */
 export function CreateProvider({
   codes,
@@ -45,17 +44,12 @@ export function CreateProvider({
   // The kind outlives `open`, so the dialog doesn't change while it closes.
   const [kind, setKind] = useState<Exclude<CreateKind, "code">>("page");
   const [open, setOpen] = useState(false);
-  const openGetProDialog = useGetProDialogStore(
-    (state) => state.openGetProDialog,
-  );
+  const showLimit = useShowLimit();
 
   const start = useCallback(
     (next: CreateKind) => {
       if (next === "code" && codes && codes.used >= codes.limit) {
-        toast.error(
-          `Your plan includes ${codes.limit} active dynamic codes. ${codes.unlimitedPlan ? `Archive one or upgrade to ${PLAN_NAMES[codes.unlimitedPlan]}.` : "Archive one to make room."}`,
-        );
-        openGetProDialog();
+        showLimit("dynamicCodes", { used: codes.used });
         return;
       }
       if (next === "code") {
@@ -65,7 +59,7 @@ export function CreateProvider({
       setKind(next);
       setOpen(true);
     },
-    [codes, openGetProDialog],
+    [codes, showLimit],
   );
 
   return (

@@ -71,7 +71,18 @@ export type OrganizeErrorCode =
 
 export type OrganizeResult<T> =
   | { success: true; data: T }
-  | { success: false; error: { code: OrganizeErrorCode; message: string } };
+  | {
+      success: false;
+      error: {
+        code: OrganizeErrorCode;
+        message: string;
+        /**
+         * Set when LIMIT_REACHED is the plan's active-code cap (402), which
+         * an upgrade lifts; folder and tag caps (400) are the same for all.
+         */
+        meter?: "dynamicCodes";
+      };
+    };
 
 const KNOWN_CODES = new Set<string>([
   "NOT_FOUND",
@@ -82,7 +93,11 @@ const KNOWN_CODES = new Set<string>([
   "DOMAIN_NOT_VERIFIED",
 ]);
 
-function failure(error: unknown, action: string): OrganizeResult<never> {
+/** An action's error as its result (exported for tests). */
+export function organizeFailure(
+  error: unknown,
+  action: string,
+): OrganizeResult<never> {
   if (error instanceof UnauthorizedError) {
     return {
       success: false,
@@ -105,6 +120,9 @@ function failure(error: unknown, action: string): OrganizeResult<never> {
             ? "VALIDATION_ERROR"
             : "UNKNOWN_ERROR",
         message: error.message,
+        ...(error.code === "LIMIT_REACHED" && error.status === 402
+          ? { meter: "dynamicCodes" as const }
+          : {}),
       },
     };
   }
@@ -139,7 +157,7 @@ export async function runOrganize<T>(
     if (revalidate) revalidatePath("/dashboard", "layout");
     return { success: true, data };
   } catch (error) {
-    return failure(error, action);
+    return organizeFailure(error, action);
   }
 }
 

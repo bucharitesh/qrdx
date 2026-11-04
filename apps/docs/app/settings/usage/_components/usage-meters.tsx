@@ -1,20 +1,30 @@
 import { Progress } from "@repo/design-system/components/ui/progress";
 import { cn } from "@repo/design-system/lib/utils";
-import type { Plan } from "@/lib/pricing";
+import { UpgradeButton } from "@/components/limits/upgrade-button";
+import { formatBytes } from "@/lib/files/types";
+import { PLAN_NAMES, type Plan } from "@/lib/pricing";
+import { type LimitContext, limitCopy } from "../_lib/limit-copy";
 import {
+  type Meter,
+  type MeterCaps,
+  type MeterResult,
   meterLevel,
   meterPercent,
   meterValue,
   resetLine,
+  splitUnlimited,
 } from "../_lib/meters";
-import type { MeterResult } from "../_lib/plan-usage";
 
-const LEVEL_TEXT = {
-  near: "Almost full",
-  full: "Limit reached",
-} as const;
+/** What a warning row needs to say why and offer the upgrade. */
+export type UsageContext = Omit<LimitContext, "cap"> & { caps: MeterCaps };
 
-function MeterRow({ meter, plan }: { meter: MeterResult; plan: Plan }) {
+function MeterRow({
+  meter,
+  context,
+}: {
+  meter: MeterResult;
+  context: UsageContext;
+}) {
   if ("failed" in meter) {
     return (
       <li className="space-y-1 py-4">
@@ -31,10 +41,11 @@ function MeterRow({ meter, plan }: { meter: MeterResult; plan: Plan }) {
 
   const level = meterLevel(meter);
   const capped = level === "ok" || level === "near" || level === "full";
-  const warn = level === "near" || level === "full";
+  // At 90% or more: the same words as the app's limit cards, and the upgrade.
+  const copy = limitCopy(meter, { ...context, cap: context.caps[meter.id] });
   const details = [
-    warn ? LEVEL_TEXT[level] : null,
-    resetLine(meter.resetsAt),
+    copy?.status ?? null,
+    copy ? null : resetLine(meter.resetsAt),
     meter.note ?? null,
   ].filter(Boolean);
 
@@ -44,12 +55,12 @@ function MeterRow({ meter, plan }: { meter: MeterResult; plan: Plan }) {
         <span className="text-sm font-medium">{meter.label}</span>
         <span
           className={cn(
-            "shrink-0 text-sm",
+            "shrink-0 text-sm tabular-nums",
             level === "excluded" ? "text-muted-foreground" : "font-medium",
-            warn && "text-primary",
+            copy && "text-primary",
           )}
         >
-          {meterValue(meter, plan)}
+          {meterValue(meter, context.plan)}
         </span>
       </div>
       {capped && (
@@ -57,7 +68,7 @@ function MeterRow({ meter, plan }: { meter: MeterResult; plan: Plan }) {
           aria-label={`${meter.label} used`}
           className={cn(
             "h-1.5",
-            !warn &&
+            !copy &&
               "bg-muted [&_[data-slot=progress-indicator]]:bg-foreground/70",
           )}
           value={meterPercent(meter)}
@@ -66,23 +77,77 @@ function MeterRow({ meter, plan }: { meter: MeterResult; plan: Plan }) {
       {details.length > 0 && (
         <p className="text-muted-foreground text-xs">{details.join(" · ")}</p>
       )}
+      {copy && (
+        <div className="flex flex-col gap-3 pt-1 sm:flex-row sm:items-start sm:justify-between">
+          <p className="text-muted-foreground max-w-prose text-sm text-pretty">
+            {copy.reason}
+          </p>
+          {copy.upgrade && (
+            <UpgradeButton
+              className="shrink-0 self-start"
+              source="usage_page"
+              upgrade={copy.upgrade}
+              variant="outline"
+            />
+          )}
+        </div>
+      )}
     </li>
   );
 }
 
-/** Every counted limit of the workspace's plan, one row each. */
+const unlimitedCount = (meter: Meter) =>
+  meter.unit === "bytes"
+    ? formatBytes(meter.used)
+    : meter.used.toLocaleString("en-US");
+
+/** What the plan doesn't cap: counts only, no bars. */
+function UnlimitedRow({ meters, plan }: { meters: Meter[]; plan: Plan }) {
+  return (
+    <li className="space-y-2 py-4">
+      <span className="text-sm font-medium">
+        Unlimited on {PLAN_NAMES[plan]}
+      </span>
+      <ul className="grid gap-x-8 gap-y-1.5 sm:grid-cols-2">
+        {meters.map((meter) => (
+          <li
+            className="flex items-baseline justify-between gap-4 text-sm"
+            key={meter.id}
+          >
+            <span className="text-muted-foreground truncate">
+              {meter.label}
+            </span>
+            <span className="shrink-0 tabular-nums">
+              {unlimitedCount(meter)}
+            </span>
+          </li>
+        ))}
+      </ul>
+    </li>
+  );
+}
+
+/**
+ * Every counted limit of the workspace's plan: a bar for each cap (warning
+ * from 90%, with the reason and the upgrade), and one line for everything
+ * the plan doesn't cap.
+ */
 export function UsageMeters({
   meters,
-  plan,
+  context,
 }: {
   meters: MeterResult[];
-  plan: Plan;
+  context: UsageContext;
 }) {
+  const { capped, unlimited } = splitUnlimited(meters);
   return (
     <ul className="divide-y">
-      {meters.map((meter) => (
-        <MeterRow key={meter.id} meter={meter} plan={plan} />
+      {capped.map((meter) => (
+        <MeterRow context={context} key={meter.id} meter={meter} />
       ))}
+      {unlimited.length > 0 && (
+        <UnlimitedRow meters={unlimited} plan={context.plan} />
+      )}
     </ul>
   );
 }
