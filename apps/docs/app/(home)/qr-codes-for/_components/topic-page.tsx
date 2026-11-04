@@ -62,10 +62,10 @@ function viewRecommendation(item: Recommendation): RecommendationView | null {
         badge: "Static · free, no account",
         title: `${type.name} QR code`,
         why: item.why,
-        // Straight into the editor with this type; its form data never goes
-        // in the link (lib/playground-links.ts).
-        href: playgroundHref({ type: type.type }),
-        linkText: "Make it in the playground",
+        // The type's generator page: a working generator that also hands off
+        // to the playground, and the internal link its search ranking needs.
+        href: `/qr-code-generator/${type.type}`,
+        linkText: `Open the ${type.name} generator`,
         icon: QR_TYPE_ICONS[type.type],
       };
     }
