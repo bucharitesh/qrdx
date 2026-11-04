@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { ImageResponse } from "next/og";
 import { BrandOgImage, loadOgFonts, ogSize } from "@/app/og/brand";
 import { getPageImage, source } from "@/lib/source";
+import { buildTimeParams } from "@/lib/static-params";
 
 export const revalidate = false;
 
@@ -25,9 +26,12 @@ export async function GET(
   );
 }
 
+// Unknown pages answer notFound() above (lib/static-params.ts).
 export function generateStaticParams() {
-  return source.getPages().map((page) => ({
-    lang: page.locale,
-    slug: getPageImage(page).segments,
-  }));
+  return buildTimeParams(() =>
+    source.getPages().map((page) => ({
+      lang: page.locale,
+      slug: getPageImage(page).segments,
+    })),
+  );
 }

@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { createMetadata } from "@/lib/metadata";
 import { seoOverride } from "@/lib/seo-overrides";
 import { getLegalPageImage, legalSource } from "@/lib/source";
+import { buildTimeParams } from "@/lib/static-params";
 import { getMDXComponents } from "@/mdx-components";
 
 export default async function LegalPage(
@@ -78,8 +79,9 @@ export default async function LegalPage(
   );
 }
 
-export async function generateStaticParams() {
-  return legalSource.generateParams();
+// Unknown pages render notFound() above (lib/static-params.ts).
+export function generateStaticParams() {
+  return buildTimeParams(() => legalSource.generateParams());
 }
 
 export async function generateMetadata(

@@ -26,6 +26,7 @@ import { owner, repo } from "@/lib/github";
 import { baseUrl, createMetadata, siteName } from "@/lib/metadata";
 import { brandedTitle, seoOverride } from "@/lib/seo-overrides";
 import { type Page as DocsPageData, getPageImage, source } from "@/lib/source";
+import { buildTimeParams } from "@/lib/static-params";
 import { getMDXComponents } from "@/mdx-components";
 
 function PreviewRenderer({ preview }: { preview: string }): ReactNode {
@@ -159,8 +160,9 @@ export default async function Page(props: PageProps<"/docs/[[...slug]]">) {
   );
 }
 
-export async function generateStaticParams() {
-  return await source.generateParams();
+// Unknown pages render notFound() above (lib/static-params.ts).
+export function generateStaticParams() {
+  return buildTimeParams(() => source.generateParams());
 }
 
 export async function generateMetadata(
