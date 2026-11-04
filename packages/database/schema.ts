@@ -1200,6 +1200,92 @@ export const abuseReport = pgTable(
   ]
 );
 
+// ─── Code features: UTM templates, limit notices, public stats ──────────────
+// Each is a table of its own (manual-sql/0013, 0015, 0016) and no existing
+// table gains a column, so queries that read whole rows keep working on a
+// database where those files aren't applied yet. The app treats a missing
+// table as "feature off" (isMissingSchemaError in lib/community/tables.ts).
+
+/** A named set of UTM parameters a workspace reuses (manual-sql/0013). */
+export const utmTemplate = pgTable(
+  "utm_template",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    organizationId: text("organization_id")
+      .notNull()
+      .references(() => organization.id, { onDelete: "cascade" }),
+    name: text("name").notNull(),
+    // Same shape as qr_code.utm (utmConfigSchema in apps/docs/lib/redirect/routing.ts)
+    utm: json("utm").$type<unknown>().notNull(),
+    createdAt: timestamp("created_at").notNull(),
+    updatedAt: timestamp("updated_at").notNull(),
+  },
+  (table) => [
+    index("utm_template_user_id_idx").on(table.userId),
+    index("utm_template_organization_id_idx").on(table.organizationId),
+  ]
+);
+
+/**
+ * Plan-limit emails already sent (manual-sql/0015): one row per workspace,
+ * limit, subject, period and threshold, so each is sent once.
+ */
+export const limitNotice = pgTable(
+  "limit_notice",
+  {
+    id: text("id").primaryKey(),
+    organizationId: text("organization_id")
+      .notNull()
+      .references(() => organization.id, { onDelete: "cascade" }),
+    // A lib/plans.ts limit: dynamicCodes, landingPages, savedThemes,
+    // storage, aiArt or formResponses
+    limitId: text("limit_id").notNull(),
+    // '' = the whole workspace; else the user id of an allowance counted per
+    // person (AI art on plans that don't pool it). Plain text, no FK.
+    subject: text("subject").notNull().default(""),
+    // Calendar month (UTC) the notice belongs to, "2026-11"
+    period: text("period").notNull(),
+    // 90 or 100 (percent of the limit)
+    threshold: integer("threshold").notNull(),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("limit_notice_once_unique").on(
+      table.organizationId,
+      table.limitId,
+      table.subject,
+      table.period,
+      table.threshold
+    ),
+  ]
+);
+
+/**
+ * A code's public, read-only analytics page, /stats/<token>
+ * (manual-sql/0016). No row = off; a new token = a reset link.
+ */
+export const codePublicStats = pgTable(
+  "code_public_stats",
+  {
+    id: text("id").primaryKey(),
+    qrCodeId: text("qr_code_id")
+      .notNull()
+      .references(() => qrCode.id, { onDelete: "cascade" }),
+    token: text("token").notNull(),
+    // User id; no FK so the link survives its creator leaving the team
+    createdBy: text("created_by"),
+    // When the current link was made (a reset makes a new one)
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("code_public_stats_qr_code_id_unique").on(table.qrCodeId),
+    uniqueIndex("code_public_stats_token_unique").on(table.token),
+  ]
+);
+
 // Relations (for `database.query.*` with `with`); no effect on SQL.
 
 export const organizationRelations = relations(organization, ({ many }) => ({
