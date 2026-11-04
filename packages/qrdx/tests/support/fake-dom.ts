@@ -15,6 +15,61 @@ import {
 
 const hex = (n: number) => n.toString(16).padStart(2, "0");
 
+/** Samples per axis when averaging a source footprint into one pixel. */
+const RESAMPLE_TAPS = 3;
+
+/**
+ * Draws the [sx, sy, sw, sh] region of `from` into [dx, dy, dw, dh] of `to`,
+ * averaging a few samples per destination pixel (close enough to a browser's
+ * smoothed scaling for decode tests), composited source-over.
+ */
+function drawCanvasRegion(
+  from: RasterImage,
+  to: RasterImage,
+  [sx, sy, sw, sh, dx, dy, dw, dh]: number[]
+) {
+  if (!(sw && sh && dw && dh)) return;
+  const x0 = Math.max(0, Math.floor(dx));
+  const y0 = Math.max(0, Math.floor(dy));
+  const x1 = Math.min(to.width, Math.ceil(dx + dw));
+  const y1 = Math.min(to.height, Math.ceil(dy + dh));
+  const scaleX = sw / dw;
+  const scaleY = sh / dh;
+  for (let y = y0; y < y1; y++) {
+    for (let x = x0; x < x1; x++) {
+      const sum = [0, 0, 0, 0];
+      let taps = 0;
+      for (let ty = 0; ty < RESAMPLE_TAPS; ty++) {
+        for (let tx = 0; tx < RESAMPLE_TAPS; tx++) {
+          const px = Math.floor(
+            sx + (x - dx + (tx + 0.5) / RESAMPLE_TAPS) * scaleX
+          );
+          const py = Math.floor(
+            sy + (y - dy + (ty + 0.5) / RESAMPLE_TAPS) * scaleY
+          );
+          if (px < 0 || py < 0 || px >= from.width || py >= from.height) {
+            continue;
+          }
+          const at = (py * from.width + px) * 4;
+          for (let c = 0; c < 4; c++) sum[c] += from.data[at + c] as number;
+          taps++;
+        }
+      }
+      if (!taps) continue;
+      const alpha = sum[3] / taps / 255;
+      const out = (y * to.width + x) * 4;
+      for (let c = 0; c < 3; c++) {
+        to.data[out + c] = Math.round(
+          (sum[c] / taps) * alpha + (to.data[out + c] as number) * (1 - alpha)
+        );
+      }
+      to.data[out + 3] = Math.round(
+        255 * (alpha + ((to.data[out + 3] as number) / 255) * (1 - alpha))
+      );
+    }
+  }
+}
+
 class FakeImage {
   crossOrigin: string | null = null;
   onload: (() => void) | null = null;
@@ -108,14 +163,9 @@ class FakeContext {
     );
   }
 
-  drawImage(
-    source: FakeImage | FakeCanvas,
-    dx: number,
-    dy: number,
-    dw?: number,
-    dh?: number
-  ) {
+  drawImage(source: FakeImage | FakeCanvas, ...args: number[]) {
     if (source instanceof FakeImage) {
+      const [dx = 0, dy = 0, dw, dh] = args;
       if (!source.svg) throw new Error("image not loaded");
       drawSvg(
         this.canvas.image,
@@ -127,7 +177,21 @@ class FakeContext {
       );
       return;
     }
-    throw new Error("drawImage(canvas) is not supported by the fake DOM");
+    // drawImage(canvas, dx, dy[, dw, dh]) or the 9-argument crop form.
+    const crop =
+      args.length >= 8
+        ? args
+        : [
+            0,
+            0,
+            source.width,
+            source.height,
+            args[0] ?? 0,
+            args[1] ?? 0,
+            args[2] ?? source.width,
+            args[3] ?? source.height,
+          ];
+    drawCanvasRegion(source.image, this.canvas.image, crop);
   }
 
   getImageData(x: number, y: number, width: number, height: number) {
