@@ -17,16 +17,16 @@ import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { Copy, Link21, Refresh } from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useEffect, useState } from "react";
 import {
   disableWorkspaceJoinLink,
   issueWorkspaceJoinLink,
   setWorkspaceJoinLinkRole,
 } from "@/actions/workspace-join";
+import { inviteRolePhrase } from "@/lib/email/templates/team-invite";
 import {
   assignableRoles,
   JOINABLE_ROLES,
-  WORKSPACE_ROLE_LABELS,
   type WorkspaceRole,
 } from "@/lib/permissions";
 import { formatUtcDate } from "../_lib/team";
@@ -43,15 +43,19 @@ export interface JoinLinkView {
  * shown once, right after it's made or reset; only its hash is stored.
  */
 export function JoinLinkCard({
-  link,
+  link: savedLink,
   currentRole,
 }: {
   link: JoinLinkView | null;
   currentRole: WorkspaceRole;
 }) {
   const router = useRouter();
-  const [isPending, startTransition] = useTransition();
-  const [role, setRole] = useState<WorkspaceRole>(link?.role ?? "member");
+  // The card follows each action's result at once; the page refresh that
+  // follows (other parts of the page) never holds the buttons.
+  const [link, setLink] = useState(savedLink);
+  useEffect(() => setLink(savedLink), [savedLink]);
+  const [isPending, setPending] = useState(false);
+  const [role, setRole] = useState<WorkspaceRole>(savedLink?.role ?? "member");
   const [fresh, setFresh] = useState<string | null>(null);
   const [confirm, setConfirm] = useState<"reset" | "off" | null>(null);
 
@@ -62,50 +66,66 @@ export function JoinLinkCard({
   const canChange = link ? roles.includes(link.role) : true;
   const url = fresh ? new URL(fresh, window.location.origin).toString() : null;
 
+  /** Runs an action with the buttons disabled; refreshes the page after. */
+  const busy = async (run: () => Promise<boolean>) => {
+    setPending(true);
+    try {
+      if (await run()) router.refresh();
+    } finally {
+      setPending(false);
+    }
+  };
+
   const issue = (nextRole?: WorkspaceRole) =>
-    startTransition(async () => {
+    busy(async () => {
       const result = await issueWorkspaceJoinLink(
         nextRole ? { role: nextRole } : {},
       );
       setConfirm(null);
       if (!result.ok) {
         toast.error(result.error);
-        return;
+        return false;
       }
       setFresh(result.data.path);
       setRole(result.data.role);
+      setLink({
+        role: result.data.role,
+        createdAt: new Date().toISOString(),
+        createdByName: null,
+      });
       toast.success(link ? "Join link reset" : "Join link created");
-      router.refresh();
+      return true;
     });
 
   const changeRole = (next: WorkspaceRole) => {
     setRole(next);
-    if (!link) return;
-    startTransition(async () => {
+    const current = link;
+    if (!current) return;
+    void busy(async () => {
       const result = await setWorkspaceJoinLinkRole({ role: next });
       if (!result.ok) {
-        setRole(link.role);
+        setRole(current.role);
         toast.error(result.error);
-        return;
+        return false;
       }
-      toast.success(
-        `The link now adds people as ${WORKSPACE_ROLE_LABELS[next].toLowerCase()}`,
-      );
-      router.refresh();
+      setLink({ ...current, role: next });
+      toast.success(`The link now adds people as ${inviteRolePhrase(next)}`);
+      return true;
     });
   };
 
   const turnOff = () =>
-    startTransition(async () => {
+    busy(async () => {
       const result = await disableWorkspaceJoinLink();
       setConfirm(null);
       if (!result.ok) {
         toast.error(result.error);
-        return;
+        return false;
       }
       setFresh(null);
+      setLink(null);
       toast.success("Join link turned off");
-      router.refresh();
+      return true;
     });
 
   const copy = () => {
@@ -150,7 +170,7 @@ export function JoinLinkCard({
               </Button>
             </>
           ) : (
-            <Button disabled={isPending} onClick={() => issue(role)}>
+            <Button disabled={isPending} onClick={() => void issue(role)}>
               {isPending ? (
                 <Spinner aria-hidden className="animate-spin" />
               ) : (
@@ -175,7 +195,7 @@ export function JoinLinkCard({
         <div className="bg-muted/40 space-y-2 rounded-lg border p-3">
           <p className="text-sm text-pretty">
             Copy it now: it's shown only once. Anyone signed in who opens it
-            joins as {WORKSPACE_ROLE_LABELS[role].toLowerCase()}.
+            joins as {inviteRolePhrase(role)}.
           </p>
           <div className="flex gap-2">
             <Input
@@ -216,8 +236,8 @@ export function JoinLinkCard({
               disabled={isPending}
               onClick={(event) => {
                 event.preventDefault();
-                if (confirm === "reset") issue();
-                else turnOff();
+                if (confirm === "reset") void issue();
+                else void turnOff();
               }}
             >
               {confirm === "reset" ? "Reset link" : "Turn off"}
