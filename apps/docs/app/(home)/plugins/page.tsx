@@ -293,7 +293,7 @@ export default function PluginsPage() {
           </ul>
         </nav>
         <p className="text-xs text-muted-foreground">
-          Free · No account · Open source (AGPL-3.0)
+          Free · No account · Open source (MIT)
         </p>
       </ToolHero>
 
