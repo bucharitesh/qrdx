@@ -181,6 +181,11 @@ export interface QRProps {
   // Outline: "circle" puts the symbol in a disc of decorative modules (see
   // QR_SHAPES); ignored with a template
   shape?: QRShape;
+  // For editors drawing a live preview: marks each frame label <text> with
+  // data-qrdx-frame-label (its FrameLabel.field). Off by default, and every
+  // export (getQRAsSVGDataUri and the PNG, JPG, PDF and EPS built on it)
+  // drops it, so downloads never carry the marker.
+  frameLabelMarkers?: boolean;
 }
 
 export type QRPropsCanvas = QRProps &
