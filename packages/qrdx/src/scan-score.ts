@@ -23,7 +23,13 @@ export type ScanGrade = "great" | "ok" | "risky" | "fails";
 
 export interface ScanCheck {
   id: string;
+  /** False only for a problem; a skipped check is `true` so it costs nothing. */
   passed: boolean;
+  /**
+   * The check couldn't run on this input (a photo cropped too tight to see
+   * the quiet zone): neither passed nor failed. Show it as "not checked".
+   */
+  skipped?: boolean;
   message: string;
   /** How to fix a failed check */
   fix?: string;
@@ -1000,6 +1006,7 @@ export async function getImageScanScore(
     checks.push({
       id: "quiet-zone",
       passed: true,
+      skipped: true,
       message: "The image is cropped too tight to check the quiet zone",
     });
   } else {
