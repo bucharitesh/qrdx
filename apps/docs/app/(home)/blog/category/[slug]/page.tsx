@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { BlogList } from "@/components/sections/blog/blog-list";
 import { Breadcrumbs } from "@/components/sections/breadcrumbs";
 import { SectionHeader } from "@/components/sections/section-header";
-import { SLUG_TO_CATEGORY } from "@/lib/blog-constants";
+import { isCategorySlug, SLUG_TO_CATEGORY } from "@/lib/blog-constants";
 import { createMetadata } from "@/lib/metadata";
 import { blogCategoriesSource } from "@/lib/source";
 import { buildTimeParams } from "@/lib/static-params";
@@ -26,9 +26,6 @@ export function generateStaticParams() {
     Object.keys(SLUG_TO_CATEGORY).map((slug) => ({ slug })),
   );
 }
-
-/** A category slug from the list (own keys only, so "constructor" is not one). */
-const isCategorySlug = (slug: string) => Object.hasOwn(SLUG_TO_CATEGORY, slug);
 
 function getCategoryPosts(categoryName: string) {
   return getPublishedPosts().filter(

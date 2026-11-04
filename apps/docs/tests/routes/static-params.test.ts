@@ -139,6 +139,9 @@ describe("routes with a fixed param list", () => {
       "og/docs/[...slug]/route.tsx",
       "templates/[type]/page.tsx",
       "templates/[type]/[template]/page.tsx",
+      "(home)/blog/category/[slug]/opengraph-image.tsx",
+      "(home)/community/[type]/opengraph-image.tsx",
+      "og/legal/[...slug]/route.tsx",
     ]) {
       expect(ROUTES).toContain(file);
     }
@@ -211,6 +214,20 @@ describe("fumadocs sources (docs, legal, blog, compare, llms.mdx, OG)", () => {
       ["guide", "nope"],
     ]) {
       expect(source.getPage(slugs), slugs.join("/")).toBeUndefined();
+    }
+  });
+});
+
+describe("blog categories", () => {
+  it("are own keys of the list only", async () => {
+    const { isCategorySlug, SLUG_TO_CATEGORY } = await import(
+      "@/lib/blog-constants"
+    );
+    for (const slug of Object.keys(SLUG_TO_CATEGORY)) {
+      expect(isCategorySlug(slug), slug).toBe(true);
+    }
+    for (const slug of ["nope", "constructor", "__proto__", "toString"]) {
+      expect(isCategorySlug(slug), slug).toBe(false);
     }
   });
 });
