@@ -85,6 +85,7 @@ export default async function ThemesPage() {
             ? {
                 name: team.name,
                 canManage: canManageTeamThemes(scope),
+                readOnly: !can(scope.role, "content.write"),
                 themesAllowed: getPlanLimits(scopePlan).teamThemes,
                 canUpgrade: can(scope.role, "billing.manage"),
                 planName: teamThemesPlanName(),
