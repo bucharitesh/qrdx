@@ -11,6 +11,7 @@ import { LICENSE_SHORT } from "@/lib/community/licence";
 import { listFrames, listItems } from "@/lib/community/queries";
 import { typeFromSegment } from "@/lib/community/types";
 import { createMetadata } from "@/lib/metadata";
+import { playgroundHref } from "@/lib/playground-links";
 import { CommunityThemesContent } from "../_components/community-themes-content";
 
 const COPY = {
@@ -200,7 +201,7 @@ async function TypeGrid({
           {type === "frame" && (
             <Link
               className="text-sm underline underline-offset-2"
-              href="/playground?tab=customisations"
+              href={playgroundHref({ tab: "design" })}
             >
               Open the editor
             </Link>

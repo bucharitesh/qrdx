@@ -415,3 +415,22 @@ export function handoffSource(
     return "unknown";
   }
 }
+
+// ---------------------------------------------------------------------------
+// Hand-off sources (hub phase 5). handoffSource reads a link's `ref` tag
+// first. A link from a page whose address says nothing about where it came
+// from (the 404 page) names itself with one, and so do the plugins
+// (plugins/{figma,canva,raycast}/src/playground-link.ts). A name, never a
+// value from the page.
+
+/** A `ref` tag handoffSource accepts. */
+const HANDOFF_REF = /^[a-z0-9][a-z0-9_-]{0,31}$/;
+
+/** `href` (a playgroundHref link) with a `ref` tag in its query, before any `#`. */
+export function withHandoffRef(href: string, ref: string): string {
+  if (!HANDOFF_REF.test(ref)) return href;
+  const hashAt = href.indexOf("#");
+  const base = hashAt === -1 ? href : href.slice(0, hashAt);
+  const hash = hashAt === -1 ? "" : href.slice(hashAt);
+  return `${base}${base.includes("?") ? "&" : "?"}ref=${ref}${hash}`;
+}
