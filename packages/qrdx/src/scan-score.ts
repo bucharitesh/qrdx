@@ -1,6 +1,6 @@
 /** biome-ignore-all lint/style/noMagicNumbers: scoring weights and thresholds */
 import type { QRCode as JsQRResult } from "jsqr";
-import type { ColorConfig, ErrorLevel, QRProps } from "../types";
+import type { ColorConfig, QRProps } from "../types";
 import { normalizeColorConfig } from "../types/color";
 import { EYE_POSITIONS } from "../types/qr";
 import type { QRArtPixels } from "./art";
@@ -16,6 +16,7 @@ import { handleImageLoad } from "./detection";
 import { withQRSize } from "./download";
 import { getFrameDimensions, getFrameGapRatio, isFrameActive } from "./frame";
 import { getQRAsSVGDataUri } from "./index";
+import { getLogoBlockDamage } from "./logo-budget";
 import { circleQuietZone, getLayoutMargin } from "./qr-shape";
 import { getStylePairRisk } from "./scan-risk";
 import { getImageSettings, getLuminance, resolveErrorLevel } from "./utils";
@@ -59,14 +60,6 @@ export interface ScanScoreOptions {
 
 /** Widths (px) of the QR code that `getScanScore` decodes by default. */
 export const SCAN_TEST_SIZES = [96, 160, 320] as const;
-
-/** Share of codewords each error correction level can recover. */
-const EC_CAPACITY: Record<ErrorLevel, number> = {
-  L: 0.07,
-  M: 0.15,
-  Q: 0.25,
-  H: 0.3,
-};
 
 // Code width (px) the artwork is rendered at before downscaling to test sizes.
 const SOURCE_SIZE = 640;
@@ -459,24 +452,40 @@ function logoCheck(props: QRProps): {
   }
   const coverage = (box.w * box.h) / (n * n);
   const level = resolveErrorLevel(props);
-  const capacity = EC_CAPACITY[level];
-  const ratio = coverage / capacity;
   const percent = Math.round(coverage * 100);
-  const message = `Logo covers ${percent}% of the code; level ${level} recovers about ${Math.round(capacity * 100)}%`;
-  if (ratio <= 0.5) {
-    return { check: { id: "logo", passed: true, message }, penalty: 0 };
+  // Count spoiled codewords per Reed–Solomon block, as getQRData caps logos
+  // (logo-budget.ts): area alone passes logos small codes can't repair.
+  const damage = getLogoBlockDamage(
+    {
+      value: props.value,
+      size: props.size ?? DEFAULT_SIZE,
+      margin: props.margin ?? DEFAULT_MARGIN,
+      level,
+      shape: props.shape,
+    },
+    imageSettings
+  );
+  if (!damage || damage.worst <= damage.budget) {
+    return {
+      check: {
+        id: "logo",
+        passed: true,
+        message: `Logo covers ${percent}% of the code; error correction repairs it with room to spare`,
+      },
+      penalty: 0,
+    };
   }
   return {
     check: {
       id: "logo",
       passed: false,
-      message,
+      message: `Logo covers ${percent}% of the code and spoils ${damage.worst} codewords in one block, which repairs ${damage.correctable}`,
       fix:
-        level === "H"
+        damage.level === "H"
           ? "Use a smaller logo"
           : "Switch error correction to H or use a smaller logo",
     },
-    penalty: ratio > 0.8 ? 25 : 10,
+    penalty: damage.worst > damage.correctable ? 25 : 10,
   };
 }
 

@@ -57,13 +57,16 @@ const unreadable = (props: QRProps) =>
   );
 
 describe("getQRData logo layout", () => {
-  it("keeps the old 25% centered logo without logoOptions", () => {
-    expect(getQRData({ value: VALUE, logo: "data:,x" }).imageSettings).toEqual({
-      src: "data:,x",
-      width: 256,
-      height: 256,
-      excavate: true,
-    });
+  it("keeps the old 25% centered logo without logoOptions when it fits", () => {
+    expect(
+      getQRData({
+        // Version 12 at H: room for a 25% logo in every block
+        value: `https://qrdx.dev/q/Ab3dE9x/${"x".repeat(120)}`,
+        level: "H",
+        margin: 4,
+        logo: "data:,x",
+      }).imageSettings
+    ).toEqual({ src: "data:,x", width: 256, height: 256, excavate: true });
   });
 
   it("sizes the logo as a share of the code's width", () => {
@@ -241,7 +244,7 @@ describe("each option decodes at three phone distances", () => {
     });
   }
 
-  it("a 25% logo on L without autoLevel does not read (what autoLevel fixes)", () => {
+  it("a 25% logo on L without autoLevel is shrunk until it reads", () => {
     const props = editorProps({
       value: VALUE,
       level: "L",
@@ -249,7 +252,8 @@ describe("each option decodes at three phone distances", () => {
       logo: LOGO_PNG,
       logoOptions: { size: 0.25 },
     });
-    expect(unreadable(props).length).toBeGreaterThan(0);
+    expect(props.imageSettings?.width ?? 0).toBeLessThan(0.25 * 256);
+    expect(unreadable(props)).toEqual([]);
   });
 });
 
@@ -332,31 +336,34 @@ describe("the scan score accounts for them", () => {
   });
 
   it("fails a logo moved over the bottom-right alignment pattern", async () => {
-    // Version 3 at H: the alignment pattern spans modules 20–24
-    const props = editorProps({
+    // Version 3 at H (29 modules, margin 2): the alignment pattern spans
+    // modules 20-24. Raw imageSettings are drawn as given (never capped).
+    const modulePx = 256 / (29 + 4);
+    const base: QRProps = {
       value: "https://qrdx.dev/q/Ab3dE9x",
+      size: 256,
       level: "H",
       margin: 2,
       bodyPattern: "square",
-      logo: LOGO_PNG,
-      logoOptions: { size: 0.2, padding: 1, x: 0.62, y: 0.6 },
+      cornerEyePattern: "square",
+      cornerEyeDotPattern: "square",
+    };
+    const logoAt = (place: { x?: number; y?: number }) => ({
+      src: LOGO_PNG,
+      width: 4 * modulePx,
+      height: 4 * modulePx,
+      excavate: true,
+      ...place,
     });
-    const result = await getScanScore(props);
+    const result = await getScanScore({
+      ...base,
+      imageSettings: logoAt({ x: 18 * modulePx, y: 18 * modulePx }),
+    });
     const logo = result.checks.find((check) => check.id === "logo");
     expect(logo?.passed).toBe(false);
     expect(logo?.message).toMatch(/bottom-right/);
-    // Centered, the same logo reads and passes
-    const centered = await getScanScore({
-      ...props,
-      ...getQRData({
-        value: props.value,
-        size: 256,
-        level: "H",
-        margin: 2,
-        logo: LOGO_PNG,
-        logoOptions: { size: 0.2, padding: 1 },
-      }),
-    });
+    // Centered, a logo of the same size passes
+    const centered = await getScanScore({ ...base, imageSettings: logoAt({}) });
     expect(centered.checks.find((c) => c.id === "logo")?.passed).toBe(true);
   });
 
@@ -370,7 +377,21 @@ describe("the scan score accounts for them", () => {
         logoOptions: { size: 0.12 },
       })
     );
-    const big = await getScanScore(
+    expect(small.checks.find((c) => c.id === "logo")?.passed).toBe(true);
+    // Drawn as given, a 30% logo with clear space overwhelms level M
+    const result = await getScanScore({
+      ...editorProps({ value: VALUE, level: "M", bodyPattern: "square" }),
+      imageSettings: {
+        src: LOGO_PNG,
+        width: 0.3 * 256,
+        height: 0.3 * 256,
+        excavate: true,
+        padding: 2 * (256 / 41),
+      },
+    });
+    expect(result.checks.find((c) => c.id === "logo")?.passed).toBe(false);
+    // getQRData caps the same request, so it passes
+    const capped = await getScanScore(
       editorProps({
         value: VALUE,
         level: "M",
@@ -379,8 +400,7 @@ describe("the scan score accounts for them", () => {
         logoOptions: { size: 0.3, padding: 2 },
       })
     );
-    expect(small.checks.find((c) => c.id === "logo")?.passed).toBe(true);
-    expect(big.checks.find((c) => c.id === "logo")?.passed).toBe(false);
+    expect(capped.checks.find((c) => c.id === "logo")?.passed).toBe(true);
   });
 
   it("checks contrast of each eye's own colors", async () => {

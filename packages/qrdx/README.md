@@ -104,7 +104,7 @@ It accepts the `QRCodeSVG` styling props above (`value`, `size`, `level`, colors
 | `logoOptions` | `LogoOptions` | — | Logo `size` (share of the code's width, 0.1–0.3, default 0.25), `padding` (clear space, 0–2 modules), `x` / `y` (center across the code, 0–1, default 0.5), `shape` and `plate` |
 | `scale` | `number` | `1` | Multiplier applied to `size` |
 
-The logo is drawn at 25% of the code's width with the modules behind it excavated, so pair it with level `H` (or at least the default `Q`). `getQRData` takes the same `logoOptions` and turns them into `imageSettings`; with `autoLevel` it lays the logo out at the level the code is drawn at.
+The logo is drawn at 25% of the code's width with the modules behind it excavated, so pair it with level `H` (or at least the default `Q`). `getQRData` takes the same `logoOptions` and turns them into `imageSettings`; with `autoLevel` it lays the logo out at the level the code is drawn at. Both cap the logo (size plus clear space) so its worst Reed–Solomon block loses at most 60% of what it can repair (`getLogoSizeLimit`, `getLogoBlockDamage`, on `getCodewordMap`); small codes hold smaller logos. Raw `imageSettings` are drawn as given, and `getScanScore` checks them with the same per-block count.
 
 ### `QRCodeCanvas`
 

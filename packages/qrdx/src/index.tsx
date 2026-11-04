@@ -314,4 +314,15 @@ export async function getQRAsCanvas(
   });
 }
 
-export { getQRData } from "./helpers";
+export {
+  type CodewordMap,
+  damagedCodewords,
+  getCodewordMap,
+} from "./codeword-map";
+export { getLogoSizeLimit, getQRData } from "./helpers";
+export {
+  getLogoBlockDamage,
+  LOGO_EC_SAFETY,
+  type LogoBlockDamage,
+  logoFitsBudget,
+} from "./logo-budget";

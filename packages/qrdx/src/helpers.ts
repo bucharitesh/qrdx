@@ -1,7 +1,8 @@
-import type { ImageSettings, LogoOptions, QRProps } from "../types";
-import { LOGO_SIZE_DEFAULT } from "../types/qr";
+import type { ErrorLevel, ImageSettings, LogoOptions, QRProps } from "../types";
+import { LOGO_SIZE_DEFAULT, LOGO_SIZE_MAX } from "../types/qr";
 import qrcodegen from "./codegen";
 import { DEFAULT_LEVEL, DEFAULT_MARGIN, ERROR_LEVEL_MAP } from "./constants";
+import { fitLogoWidth } from "./logo-budget";
 import { getLayoutMargin } from "./qr-shape";
 import { resolveErrorLevel } from "./utils";
 
@@ -41,9 +42,9 @@ function logoImageSettings(
     margin: number;
     level?: QRProps["level"];
     shape?: QRProps["shape"];
-  }
+  },
+  width = code.size * (options?.size ?? LOGO_SIZE_DEFAULT)
 ): ImageSettings {
-  const width = code.size * (options?.size ?? LOGO_SIZE_DEFAULT);
   const settings: ImageSettings = {
     src,
     width,
@@ -78,6 +79,80 @@ function logoImageSettings(
   return settings;
 }
 
+/**
+ * The logo's imageSettings, no bigger than the code's error correction can
+ * repair (logo-budget.ts): the requested size when it fits, else the
+ * largest that does, or none when not even a sliver fits.
+ */
+function capLogo(
+  src: string,
+  options: LogoOptions | undefined,
+  code: {
+    value: string;
+    size: number;
+    margin: number;
+    level?: QRProps["level"];
+    shape?: QRProps["shape"];
+  },
+  autoLevel: boolean | undefined
+): ImageSettings | undefined {
+  const requested = code.level ?? DEFAULT_LEVEL;
+  let drawn = requested;
+  // autoLevel can raise the level (more modules): lay the logo out at the
+  // level it will be drawn at, so clear space stays in whole modules.
+  if (autoLevel) {
+    drawn = resolveErrorLevel({
+      ...code,
+      imageSettings: logoImageSettings(src, options, code),
+      autoLevel,
+    });
+  }
+  const fit = (level: ErrorLevel) => {
+    const layout = (width?: number) =>
+      logoImageSettings(src, options, { ...code, level }, width);
+    const width = fitLogoWidth(code, [level], layout().width, layout);
+    return width > 0 ? layout(width) : undefined;
+  };
+  if (drawn === requested) {
+    return fit(requested);
+  }
+  // autoLevel draws at H only while the logo covers more than 7%: keep the
+  // H-sized logo when it still does, else size it for the requested level
+  const atH = fit(drawn);
+  if (
+    atH &&
+    resolveErrorLevel({ ...code, imageSettings: atH, autoLevel }) === drawn
+  ) {
+    return atH;
+  }
+  return fit(requested);
+}
+
+/**
+ * The largest logo `size` (share of the code's width, up to LOGO_SIZE_MAX)
+ * that fits this code's error correction with `options`' clear space and
+ * position, so the editor can cap its slider. 0 when no logo fits.
+ */
+export function getLogoSizeLimit({
+  value,
+  level,
+  margin,
+  shape,
+  autoLevel,
+  logoOptions,
+}: Pick<QRProps, "value" | "level" | "margin" | "shape" | "autoLevel"> & {
+  logoOptions?: LogoOptions;
+}): number {
+  const size = 1024;
+  const settings = capLogo(
+    "data:,",
+    { ...logoOptions, size: LOGO_SIZE_MAX },
+    { value: `${value}`, size, margin: margin ?? DEFAULT_MARGIN, level, shape },
+    autoLevel
+  );
+  return settings ? settings.width / size : 0;
+}
+
 export function getQRData({
   value,
   size = 1024,
@@ -108,19 +183,8 @@ export function getQRData({
     shape,
   };
   // No default logo: only render (and excavate for) one the caller passes.
-  let imageSettings =
-    !hideLogo && logo ? logoImageSettings(logo, logoOptions, code) : undefined;
-  // autoLevel can raise the level (more modules): lay the logo out again at
-  // the level it will be drawn at, so clear space stays in whole modules.
-  if (imageSettings && logo && autoLevel) {
-    const drawn = resolveErrorLevel({ ...code, imageSettings, autoLevel });
-    if (drawn !== (level ?? DEFAULT_LEVEL)) {
-      imageSettings = logoImageSettings(logo, logoOptions, {
-        ...code,
-        level: drawn,
-      });
-    }
-  }
+  const imageSettings =
+    !hideLogo && logo ? capLogo(logo, logoOptions, code, autoLevel) : undefined;
   return {
     value: code.value,
     bgColor,
