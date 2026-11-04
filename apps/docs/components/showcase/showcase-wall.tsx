@@ -143,30 +143,57 @@ function Tile({ placement }: { placement: WallPlacement }) {
 }
 
 /**
+ * Fades a row out into the page (a mask, so it works on any background).
+ * Written out in full for each breakpoint so Tailwind sees the classes.
+ */
+const FADE = "[mask-image:linear-gradient(to_bottom,#000_8%,transparent_96%)]";
+const FADE_LG =
+  "lg:[mask-image:linear-gradient(to_bottom,#000_8%,transparent_96%)]";
+
+/**
  * Rows of tiles. From `lg` up each row's two halves join into one row
  * (`lg:contents`); below it each half is a row. Rows marked not compact
- * show from `lg` only.
+ * show from `lg` only. With `fade`, only the last row seen fades out: the
+ * last row from `lg` up, and below it the second half of the last compact
+ * row (a `contents` box from `lg` up, so its mask can't apply there).
  */
 export function ShowcaseWall({
   rows,
+  fade = false,
   className,
 }: {
   rows: WallRow[];
+  fade?: boolean;
   className?: string;
 }) {
+  const lastCompact = rows.reduce(
+    (last, row, index) => (row.compact ? index : last),
+    -1,
+  );
   return (
     <div className={cn("flex flex-col", GAP, className)}>
-      {rows.map((row) => (
+      {rows.map((row, index) => (
         <div
           key={row.halves.flat()[0]?.tile.id}
           className={cn(
             "flex flex-col lg:flex-row",
             GAP,
             !row.compact && "max-lg:hidden",
+            fade && index === rows.length - 1 && FADE_LG,
           )}
         >
-          {row.halves.map((half) => (
-            <div key={half[0]?.tile.id} className={cn("flex lg:contents", GAP)}>
+          {row.halves.map((half, side) => (
+            <div
+              key={half[0]?.tile.id}
+              className={cn(
+                "flex lg:contents",
+                GAP,
+                fade &&
+                  index === lastCompact &&
+                  side === row.halves.length - 1 &&
+                  FADE,
+              )}
+            >
               {half.map((placement) => (
                 <Tile key={placement.tile.id} placement={placement} />
               ))}
