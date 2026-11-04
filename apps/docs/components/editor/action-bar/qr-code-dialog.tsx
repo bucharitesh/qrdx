@@ -10,16 +10,36 @@ import {
   ResponsiveDialogHeader,
   ResponsiveDialogTitle,
 } from "@repo/design-system/components/ui/revola";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@repo/design-system/components/ui/tabs";
 import { DynamicCodeBlock } from "fumadocs-ui/components/dynamic-codeblock";
-import { Book1, Copy } from "iconsax-reactjs";
+import { Book1, Copy, Element3, InfoCircle } from "iconsax-reactjs";
 import Link from "next/link";
-import type { ColorConfig } from "qrdx/types";
-import { normalizeColorConfig } from "qrdx/types";
-import { useMemo, useState } from "react";
+import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
+import { useCodeDialogStore } from "@/components/editor/action-bar/code-dialog-store";
+import {
+  CODE_TAB_LABELS,
+  CODE_TABS,
+  type CodeTab,
+  cliSnippet,
+  imageSnippet,
+  MCP_SERVER_URL,
+  mcpSnippet,
+  NPM_QRDX,
+  REACT_INSTALL,
+  reactSnippet,
+  restSnippet,
+  type SnippetInput,
+  shadcnSnippet,
+} from "@/components/editor/action-bar/code-snippets";
 import { DialogCloseButton } from "@/components/editor/dialog-close-button";
 import { emitSound } from "@/components/editor/sound";
 import { InfoHint } from "@/components/help/info-hint";
-import { DEFAULT_QR_LOGO } from "@/lib/constants";
+import type { CodeLang } from "@/lib/playground-links";
 import { useQREditorStore } from "@/store/editor-store";
 
 interface QRCodeDialogProps {
@@ -27,256 +47,419 @@ interface QRCodeDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
-/**
- * Serialize ColorConfig to a JavaScript object literal string with proper formatting
- * Returns a string that can be used inside JSX braces: fgColor={serialized}
- * @param color - The ColorConfig to serialize
- * @param baseIndent - Base indentation for the prop line (e.g., "      " for 6 spaces)
- */
-function serializeColorConfig(
-  color: ColorConfig | undefined,
-  baseIndent: string = "      ",
-): { value: string; isMultiLine: boolean } {
-  if (!color) return { value: "", isMultiLine: false };
+const linkClass =
+  "text-foreground font-medium underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground";
 
-  // Handle string (backward compatibility)
-  if (typeof color === "string") {
-    return { value: `"${color}"`, isMultiLine: false };
-  }
+/** The tab a link asked for, when it ships; React otherwise. */
+const tabFor = (lang: CodeLang | null): CodeTab =>
+  lang && CODE_TABS.includes(lang) ? lang : "react";
 
-  const normalized = normalizeColorConfig(color);
-
-  if (normalized.type === "solid") {
-    return { value: `"${normalized.color}"`, isMultiLine: false };
-  }
-
-  // For gradients, serialize as formatted multi-line object
-  // Indentation levels:
-  // - baseIndent: prop line (e.g., "      ")
-  // - baseIndent + "  ": object properties (e.g., "        ")
-  // - baseIndent + "    ": array items (e.g., "          ")
-  const indent1 = `${baseIndent}  `; // 2 spaces more than base
-  const indent2 = `${baseIndent}    `; // 4 spaces more than base
-
-  if (normalized.type === "linear") {
-    const stops = normalized.stops
-      .map(
-        (stop) =>
-          `${indent2}{ color: "${stop.color}", offset: ${stop.offset} }`,
-      )
-      .join(",\n");
-    const angleLine =
-      normalized.angle !== undefined
-        ? `,\n${indent1}angle: ${normalized.angle}`
-        : "";
-    return {
-      value: `{\n${indent1}type: "linear",\n${indent1}stops: [\n${stops},\n${indent1}],${angleLine},\n${baseIndent}}`,
-      isMultiLine: true,
-    };
-  }
-
-  if (normalized.type === "radial") {
-    const stops = normalized.stops
-      .map(
-        (stop) =>
-          `${indent2}{ color: "${stop.color}", offset: ${stop.offset} }`,
-      )
-      .join(",\n");
-    return {
-      value: `{\n${indent1}type: "radial",\n${indent1}stops: [\n${stops},\n${indent1}],\n${baseIndent}}`,
-      isMultiLine: true,
-    };
-  }
-
-  return { value: "", isMultiLine: false };
+/** ["Gradients", "Your logo", "The frame"] → "gradients, your logo and the frame" */
+function listItems(items: string[]): string {
+  const words = items.map(
+    (item) => item.charAt(0).toLowerCase() + item.slice(1),
+  );
+  return words.length > 1
+    ? `${words.slice(0, -1).join(", ")} and ${words.at(-1)}`
+    : (words[0] ?? "");
 }
 
+/**
+ * Get code (V): the editor's design as React, shadcn, an image URL, a REST
+ * API request and MCP arguments (code-snippets.ts writes them). A link's
+ * open=code&lang=… picks the first tab.
+ */
 export function QRCodeDialog({ open, onOpenChange }: QRCodeDialogProps) {
-  const { value, themeState } = useQREditorStore();
-  const [copied, setCopied] = useState<"code" | "install" | null>(null);
+  const handleOpenChange = (next: boolean) => {
+    onOpenChange(next);
+    // A link's tab applies to the open it came with; V opens on React.
+    if (!next) useCodeDialogStore.setState({ lang: null });
+  };
 
-  const style = themeState.styles;
-
-  // Generate full component code
-  const fullComponentCode = useMemo(() => {
-    const props: string[] = [];
-    const indent = "      "; // 6 spaces to match JSX indentation
-
-    if (value) {
-      props.push(`${indent}value="${value}"`);
-    }
-    if (style.bgColor) {
-      props.push(`${indent}bgColor="${style.bgColor}"`);
-    }
-    if (style.fgColor) {
-      const serialized = serializeColorConfig(style.fgColor, indent);
-      if (serialized.value) {
-        if (serialized.isMultiLine) {
-          props.push(`${indent}fgColor={${serialized.value}}`);
-        } else {
-          props.push(`${indent}fgColor={${serialized.value}}`);
-        }
-      }
-    }
-    if (style.eyeColor) {
-      const serialized = serializeColorConfig(style.eyeColor, indent);
-      if (serialized.value) {
-        if (serialized.isMultiLine) {
-          props.push(`${indent}eyeColor={${serialized.value}}`);
-        } else {
-          props.push(`${indent}eyeColor={${serialized.value}}`);
-        }
-      }
-    }
-    if (style.dotColor) {
-      const serialized = serializeColorConfig(style.dotColor, indent);
-      if (serialized.value) {
-        if (serialized.isMultiLine) {
-          props.push(`${indent}dotColor={${serialized.value}}`);
-        } else {
-          props.push(`${indent}dotColor={${serialized.value}}`);
-        }
-      }
-    }
-    if (style.bodyPattern) {
-      props.push(`${indent}bodyPattern="${style.bodyPattern}"`);
-    }
-    if (style.cornerEyePattern) {
-      props.push(`${indent}cornerEyePattern="${style.cornerEyePattern}"`);
-    }
-    if (style.cornerEyeDotPattern) {
-      props.push(`${indent}cornerEyeDotPattern="${style.cornerEyeDotPattern}"`);
-    }
-    if (style.level) {
-      props.push(`${indent}level="${style.level}"`);
-    }
-    if (style.templateId) {
-      props.push(`${indent}templateId="${style.templateId}"`);
-    }
-    if (style.margin) {
-      props.push(`${indent}margin={${style.margin}}`);
-    }
-    if (style.frame && style.frame.style !== "none") {
-      props.push(`${indent}frame={${JSON.stringify(style.frame)}}`);
-    }
-    if (style.showLogo !== undefined) {
-      props.push(`${indent}hideLogo={${!style.showLogo}}`);
-    }
-    if (style.showLogo) {
-      props.push(`${indent}logo="${style.customLogo ?? DEFAULT_QR_LOGO}"`);
-    }
-    if (style.size) {
-      props.push(`${indent}size={${style.size}}`);
-    }
-
-    return `import { QRCode } from "qrdx";
-
-export function MyQRCode() {
   return (
-    <QRCode
-${props.join("\n")}
-    />
+    <ResponsiveDialog onOpenChange={handleOpenChange} open={open}>
+      <ResponsiveDialogContent className="max-h-[92dvh] gap-0 overflow-hidden p-0 sm:max-w-3xl dark:!border-border">
+        <GetCode onLeave={() => handleOpenChange(false)} />
+      </ResponsiveDialogContent>
+    </ResponsiveDialog>
   );
-}`;
-  }, [value, style]);
+}
 
-  const copy = async (text: string, what: "code" | "install") => {
+function GetCode({ onLeave }: { onLeave: () => void }) {
+  const lang = useCodeDialogStore((state) => state.lang);
+  const style = useQREditorStore((state) => state.themeState.styles);
+  const value = useQREditorStore((state) => state.value);
+  const contentType = useQREditorStore((state) => state.contentType);
+  const content = useQREditorStore(
+    (state) => state.contentConfigs[state.contentType],
+  );
+
+  const [tab, setTab] = useState<CodeTab>(() => tabFor(lang));
+  // A link that opens the dialog on another tab while it's open.
+  const [linkedLang, setLinkedLang] = useState(lang);
+  if (lang !== linkedLang) {
+    setLinkedLang(lang);
+    if (lang) setTab(tabFor(lang));
+  }
+
+  // On a narrow screen the tab list scrolls: keep the open tab in view.
+  const tabStrip = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const strip = tabStrip.current;
+    const active = strip?.querySelector<HTMLElement>(
+      `[data-code-tab="${tab}"]`,
+    );
+    if (!(strip && active)) return;
+    const gutter = 24;
+    const start = active.offsetLeft - gutter;
+    const end = active.offsetLeft + active.offsetWidth + gutter;
+    if (start < strip.scrollLeft) strip.scrollLeft = start;
+    else if (end > strip.scrollLeft + strip.clientWidth) {
+      strip.scrollLeft = end - strip.clientWidth;
+    }
+  }, [tab]);
+
+  const [copied, setCopied] = useState<string | null>(null);
+  const copiedTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  useEffect(() => () => clearTimeout(copiedTimer.current), []);
+  const copy = async (id: string, text: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      setCopied(what);
+      setCopied(id);
       emitSound("copy");
-      setTimeout(() => setCopied(null), 2000);
+      clearTimeout(copiedTimer.current);
+      copiedTimer.current = setTimeout(() => setCopied(null), 2000);
     } catch {
       toast.error("Couldn't copy to the clipboard");
     }
   };
+  const copyProps = (id: string, text: string) => ({
+    copied: copied === id,
+    onCopy: () => copy(id, text),
+  });
 
-  const lineCount = fullComponentCode.split("\n").length;
+  const input: SnippetInput = useMemo(
+    () => ({ style, value, contentType, content }),
+    [style, value, contentType, content],
+  );
+  const react = useMemo(() => reactSnippet(input), [input]);
+  const shadcn = useMemo(() => shadcnSnippet(input), [input]);
+  const image = useMemo(() => imageSnippet(input), [input]);
+  const rest = useMemo(() => restSnippet(input), [input]);
+  const mcp = useMemo(() => mcpSnippet(input), [input]);
+  const cli = useMemo(
+    () => (CODE_TABS.includes("cli") ? cliSnippet(input) : null),
+    [input],
+  );
 
   return (
-    <ResponsiveDialog onOpenChange={onOpenChange} open={open}>
-      <ResponsiveDialogContent className="max-h-[92dvh] gap-0 overflow-hidden p-0 sm:max-w-3xl dark:!border-border">
-        <div className="flex max-h-[inherit] min-h-0 flex-col">
-          <ResponsiveDialogHeader className="flex-row items-start gap-3 px-6 pt-1 pb-0 text-left sm:pt-6">
-            <div className="min-w-0 flex-1 space-y-1">
-              <ResponsiveDialogTitle>
-                Use this design in React
-              </ResponsiveDialogTitle>
-              <ResponsiveDialogDescription>
-                Install the open-source{" "}
-                <code className="font-mono text-xs">qrdx</code> package and drop
-                in this component. It renders exactly what you see in the
-                editor.
-              </ResponsiveDialogDescription>
-            </div>
-            <DialogCloseButton className="-mt-1 -mr-2 hidden sm:inline-flex" />
-          </ResponsiveDialogHeader>
+    <div className="flex max-h-[inherit] min-h-0 flex-col">
+      <ResponsiveDialogHeader className="flex-row items-start gap-3 px-6 pt-1 pb-0 text-left sm:pt-6">
+        <div className="min-w-0 flex-1 space-y-1">
+          <ResponsiveDialogTitle>Get code</ResponsiveDialogTitle>
+          <ResponsiveDialogDescription>
+            Use this design in your app, on a web page, through the API or with
+            an AI assistant.
+          </ResponsiveDialogDescription>
+        </div>
+        <DialogCloseButton className="-mt-1 -mr-2 hidden sm:inline-flex" />
+      </ResponsiveDialogHeader>
 
-          <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto px-6 pt-5 pb-6">
-            <div className="bg-muted/40 flex h-10 items-center gap-2 rounded-full border pr-1 pl-4">
-              <span className="text-muted-foreground font-mono text-xs select-none">
-                $
-              </span>
-              <code className="min-w-0 flex-1 truncate font-mono text-xs">
-                npm install qrdx
-              </code>
-              <Button
-                aria-label={
-                  copied === "install"
-                    ? "Install command copied"
-                    : "Copy install command"
-                }
-                className="text-muted-foreground hover:text-foreground"
-                onClick={() => copy("npm install qrdx", "install")}
-                size="icon-sm"
-                variant="ghost"
+      <Tabs
+        className="flex min-h-0 flex-1 flex-col gap-0"
+        onValueChange={(next) => setTab(next as CodeTab)}
+        value={tab}
+      >
+        <div
+          className="relative flex overflow-x-auto px-6 pt-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          ref={tabStrip}
+        >
+          <TabsList className="w-max shrink-0">
+            {CODE_TABS.map((id) => (
+              <TabsTrigger
+                className="px-3"
+                data-code-tab={id}
+                key={id}
+                value={id}
               >
-                {copied === "install" ? <Tick /> : <Copy />}
-              </Button>
-            </div>
+                {CODE_TAB_LABELS[id]}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </div>
 
-            <div className="flex min-h-0 flex-col overflow-hidden rounded-lg border">
-              <div className="bg-muted/40 flex items-center justify-between gap-2 border-b py-1.5 pr-1.5 pl-4">
-                <span className="text-muted-foreground font-mono text-xs">
-                  my-qr-code.tsx
-                  <span className="text-muted-foreground/60">
-                    {" "}
-                    · {lineCount} lines
-                  </span>{" "}
-                  <InfoHint align="start" id="react-component" />
-                </span>
-                <Button
-                  aria-live="polite"
-                  onClick={() => copy(fullComponentCode, "code")}
-                  size="sm"
-                  variant={copied === "code" ? "secondary" : "outline"}
-                >
-                  {copied === "code" ? <Tick /> : <Copy />}
-                  {copied === "code" ? "Copied" : "Copy code"}
-                </Button>
-              </div>
-              <div className="max-h-[min(52dvh,460px)] overflow-auto [&_button]:hidden [&_figure]:my-0 [&_figure]:rounded-none [&_figure]:border-0 [&_figure]:bg-transparent [&_figure]:shadow-none [&_figure>div]:max-h-none [&_pre]:py-3 [&_pre]:text-[13px]">
-                <DynamicCodeBlock code={fullComponentCode} lang="tsx" />
-              </div>
-            </div>
+        <div className="min-h-0 flex-1 overflow-y-auto px-6 pt-4 pb-6">
+          <TabsContent className="mt-0 space-y-4" value="react">
+            <Lead>
+              Install the open-source{" "}
+              <code className="font-mono text-xs">qrdx</code> package (
+              {NPM_QRDX.version} on npm) and drop in this component.
+            </Lead>
+            <CommandLine
+              prefix="$"
+              text={REACT_INSTALL}
+              {...copyProps("react-install", REACT_INSTALL)}
+            />
+            <CodeCard
+              code={react.code}
+              hint={<InfoHint align="start" id="react-component" />}
+              lang="tsx"
+              title="my-qr-code.tsx"
+              {...copyProps("react-code", react.code)}
+            />
+            <LeftOut items={react.omitted} />
+          </TabsContent>
 
-            <p className="text-muted-foreground flex items-center gap-1.5 text-xs">
-              <Book1 className="size-3.5 shrink-0" />
-              <span>
-                Props, frames and downloads are covered in the{" "}
-                <Link
-                  className="text-foreground font-medium underline decoration-foreground/30 underline-offset-4 hover:decoration-foreground"
-                  href="/docs"
-                  onClick={() => onOpenChange(false)}
-                >
-                  docs
-                </Link>
-                .
-              </span>
+          <TabsContent className="mt-0 space-y-4" value="shadcn">
+            <Lead>
+              Add the QR Code component from the QRdx registry, then use it with
+              this design.
+            </Lead>
+            <CommandLine
+              prefix="$"
+              text={shadcn.install}
+              {...copyProps("shadcn-install", shadcn.install)}
+            />
+            <CodeCard
+              code={shadcn.code}
+              lang="tsx"
+              title="my-qr-code.tsx"
+              {...copyProps("shadcn-code", shadcn.code)}
+            />
+            <LeftOut items={shadcn.omitted} />
+          </TabsContent>
+
+          <TabsContent className="mt-0 space-y-4" value="image">
+            <Lead>
+              A public image of this code to embed anywhere. No API key needed.
+            </Lead>
+            <CodeCard
+              code={image.code}
+              lang="html"
+              title="HTML"
+              {...copyProps("image-html", image.code)}
+            />
+            <UrlBox
+              label="Image URL"
+              text={image.url}
+              {...copyProps("image-url", image.url)}
+            />
+            <LeftOut items={image.omitted} />
+          </TabsContent>
+
+          <TabsContent className="mt-0 space-y-4" value="api">
+            {rest.unavailable ? (
+              <p className="bg-muted/40 text-muted-foreground rounded-lg border px-4 py-3 text-sm">
+                {rest.unavailable}
+              </p>
+            ) : (
+              <>
+                <Lead>
+                  Creates a dynamic code with this design. It needs an{" "}
+                  <Link
+                    className={linkClass}
+                    href="/docs/developers/api-keys"
+                    onNavigate={onLeave}
+                  >
+                    API key
+                  </Link>
+                  .
+                </Lead>
+                <CodeCard
+                  code={rest.code}
+                  lang="bash"
+                  title="Terminal"
+                  {...copyProps("api-curl", rest.code)}
+                />
+                <LeftOut items={rest.omitted} />
+              </>
+            )}
+          </TabsContent>
+
+          <TabsContent className="mt-0 space-y-4" value="mcp">
+            <Lead>
+              Add this server to your AI assistant; no key needed.{" "}
+              <Link
+                className={linkClass}
+                href="/docs/developers/mcp"
+                onNavigate={onLeave}
+              >
+                Set it up
+              </Link>
+            </Lead>
+            <CommandLine
+              text={MCP_SERVER_URL}
+              {...copyProps("mcp-server", MCP_SERVER_URL)}
+            />
+            <CodeCard
+              code={mcp.code}
+              lang="json"
+              title="design_qr arguments"
+              {...copyProps("mcp-args", mcp.code)}
+            />
+            <p className="text-muted-foreground text-xs">
+              Ask: “Use QRdx design_qr with these arguments.” QRdx may change
+              the style until the code scans well.
             </p>
+            <LeftOut items={mcp.omitted} />
+          </TabsContent>
+
+          {cli ? (
+            <TabsContent className="mt-0 space-y-4" value="cli">
+              <Lead>Writes this design to qr.svg.</Lead>
+              <CodeCard
+                code={cli.code}
+                lang="bash"
+                title="Terminal"
+                {...copyProps("cli", cli.code)}
+              />
+              <LeftOut items={cli.omitted} />
+            </TabsContent>
+          ) : null}
+
+          <div className="text-muted-foreground mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 border-t pt-4 text-xs">
+            <span className="flex items-center gap-1.5">
+              <Book1 className="size-3.5 shrink-0" />
+              <Link
+                className={linkClass}
+                href="/docs/developers"
+                onNavigate={onLeave}
+              >
+                Developer docs
+              </Link>
+            </span>
+            <span className="flex items-center gap-1.5">
+              <Element3 className="size-3.5 shrink-0" />
+              <Link className={linkClass} href="/plugins" onNavigate={onLeave}>
+                Plugins for Figma, Canva, Raycast and Chrome
+              </Link>
+            </span>
           </div>
         </div>
-      </ResponsiveDialogContent>
-    </ResponsiveDialog>
+      </Tabs>
+    </div>
+  );
+}
+
+function Lead({ children }: { children: ReactNode }) {
+  return <p className="text-muted-foreground text-sm">{children}</p>;
+}
+
+interface CopyProps {
+  copied: boolean;
+  onCopy: () => void;
+}
+
+function CopyIconButton({
+  copied,
+  onCopy,
+  label,
+}: CopyProps & { label: string }) {
+  return (
+    <Button
+      aria-label={copied ? `${label} copied` : `Copy ${label}`}
+      className="text-muted-foreground hover:text-foreground shrink-0"
+      onClick={onCopy}
+      size="icon-sm"
+      variant="ghost"
+    >
+      {copied ? <Tick /> : <Copy />}
+    </Button>
+  );
+}
+
+/** One line to copy: a command (with a `$`) or an address. */
+function CommandLine({
+  text,
+  prefix,
+  ...copy
+}: CopyProps & { text: string; prefix?: string }) {
+  return (
+    <div className="bg-muted/40 flex h-10 items-center gap-2 rounded-full border pr-1 pl-4">
+      {prefix ? (
+        <span className="text-muted-foreground font-mono text-xs select-none">
+          {prefix}
+        </span>
+      ) : null}
+      <code className="min-w-0 flex-1 truncate font-mono text-xs" title={text}>
+        {text}
+      </code>
+      <CopyIconButton label={prefix ? "command" : "address"} {...copy} />
+    </div>
+  );
+}
+
+/** A long address, wrapped so all of it shows. */
+function UrlBox({
+  text,
+  label,
+  ...copy
+}: CopyProps & { text: string; label: string }) {
+  return (
+    <div className="space-y-1.5">
+      <span className="text-muted-foreground block text-xs font-medium">
+        {label}
+      </span>
+      <div className="bg-muted/40 flex items-start gap-2 rounded-lg border py-1 pr-1 pl-4">
+        <code className="min-w-0 flex-1 py-1.5 font-mono text-xs leading-5 break-all">
+          {text}
+        </code>
+        <CopyIconButton label={label.toLowerCase()} {...copy} />
+      </div>
+    </div>
+  );
+}
+
+function CodeCard({
+  title,
+  hint,
+  code,
+  lang,
+  copied,
+  onCopy,
+}: CopyProps & {
+  title: string;
+  hint?: ReactNode;
+  code: string;
+  lang: string;
+}) {
+  const lines = code.split("\n").length;
+  return (
+    <div className="flex min-h-0 flex-col overflow-hidden rounded-lg border">
+      <div className="bg-muted/40 flex items-center justify-between gap-2 border-b py-1.5 pr-1.5 pl-4">
+        <span className="text-muted-foreground min-w-0 truncate font-mono text-xs">
+          {title}
+          <span className="text-muted-foreground/60">
+            {" "}
+            · {lines} {lines === 1 ? "line" : "lines"}
+          </span>{" "}
+          {hint}
+        </span>
+        <Button
+          aria-live="polite"
+          className="shrink-0"
+          onClick={onCopy}
+          size="sm"
+          variant={copied ? "secondary" : "outline"}
+        >
+          {copied ? <Tick /> : <Copy />}
+          {copied ? "Copied" : "Copy"}
+        </Button>
+      </div>
+      <div className="max-h-[min(40dvh,360px)] overflow-auto [&_button]:hidden [&_figure]:my-0 [&_figure]:rounded-none [&_figure]:border-0 [&_figure]:bg-transparent [&_figure]:shadow-none [&_figure>div]:max-h-none [&_pre]:py-3 [&_pre]:text-[13px]">
+        <DynamicCodeBlock code={code} lang={lang} />
+      </div>
+    </div>
+  );
+}
+
+/** What this tab can't express, on one muted line. */
+function LeftOut({ items }: { items: string[] }) {
+  if (items.length === 0) return null;
+  return (
+    <p className="text-muted-foreground flex items-start gap-1.5 text-xs">
+      <InfoCircle className="mt-px size-3.5 shrink-0" />
+      <span>Left out: {listItems(items)}.</span>
+    </p>
   );
 }

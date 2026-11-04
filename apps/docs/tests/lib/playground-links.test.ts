@@ -2,7 +2,9 @@
 // (parsePlaygroundParams). Only harmless state may travel; private content
 // never does, and invalid values are dropped on both sides.
 import { describe, expect, it } from "vitest";
+import { CODE_TABS } from "@/components/editor/action-bar/code-snippets";
 import {
+  CODE_LANGS,
   handoffSource,
   hasOneShotParams,
   MAX_LINK_URL_LENGTH,
@@ -108,10 +110,17 @@ describe("other parameters", () => {
   });
 
   it("opens only surfaces that exist today", () => {
-    expect(parseHref("/playground?open=download").open).toBe("download");
-    expect(parseHref("/playground?open=print").open).toBe("print");
-    expect(parseHref("/playground?open=code").open).toBe("code");
-    for (const later of ["community", "photo-check", "dynamic", "art"]) {
+    for (const target of [
+      "download",
+      "print",
+      "code",
+      "photo-check",
+      "community",
+    ]) {
+      expect(parseHref(`/playground?open=${target}`).open).toBe(target);
+    }
+    // Make it dynamic and the Art tab come in later phases.
+    for (const later of ["dynamic", "art"]) {
       expect(parseHref(`/playground?open=${later}`).open).toBeUndefined();
     }
   });
@@ -134,10 +143,18 @@ describe("other parameters", () => {
     });
   });
 
-  it("only takes the React code language, with the code dialog", () => {
-    expect(parseHref("/playground?open=code&lang=react").lang).toBe("react");
-    expect(parseHref("/playground?open=code&lang=mcp").lang).toBeUndefined();
+  it("takes the Get code tabs that ship, with the code dialog", () => {
+    for (const lang of ["react", "shadcn", "image", "api", "mcp"]) {
+      expect(parseHref(`/playground?open=code&lang=${lang}`).lang).toBe(lang);
+    }
+    // The CLI tab is hidden until a working @qrdx/cli is on npm.
+    expect(parseHref("/playground?open=code&lang=cli").lang).toBeUndefined();
+    expect(parseHref("/playground?open=code&lang=vue").lang).toBeUndefined();
     expect(parseHref("/playground?lang=react").lang).toBeUndefined();
+  });
+
+  it("offers a link for exactly the Get code tabs that ship", () => {
+    expect([...CODE_LANGS]).toEqual([...CODE_TABS]);
   });
 
   it("only takes sections the Design tab can open today", () => {

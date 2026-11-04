@@ -43,13 +43,23 @@ export type DesignSection = (typeof DESIGN_SECTIONS)[number];
 
 /**
  * Surfaces a link can open, each one that exists today: the download dialog,
- * its Print-ready tab and the React code dialog.
+ * its Print-ready tab, Get code, the photo check and the community sheet.
  */
-export const OPEN_TARGETS = ["download", "print", "code"] as const;
+export const OPEN_TARGETS = [
+  "download",
+  "print",
+  "code",
+  "photo-check",
+  "community",
+] as const;
 export type OpenTarget = (typeof OPEN_TARGETS)[number];
 
-/** Code dialog languages. Only React exists today. */
-export const CODE_LANGS = ["react"] as const;
+/**
+ * Get code dialog tabs a link can open (open=code&lang=…): only tabs that
+ * ship. The CLI tab waits for a working @qrdx/cli on npm (CLI_TAB_ENABLED in
+ * components/editor/action-bar/code-snippets.ts); add "cli" here with it.
+ */
+export const CODE_LANGS = ["react", "shadcn", "image", "api", "mcp"] as const;
 export type CodeLang = (typeof CODE_LANGS)[number];
 
 export type PrintUnit = keyof typeof PRINT_SIZE_LIMITS;
