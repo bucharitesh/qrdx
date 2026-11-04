@@ -1,6 +1,6 @@
 ---
 title: Workspaces and teams
-description: Everyone has their own workspace. Create more on Pro or Business, invite people by email and choose owner, admin or member roles.
+description: Everyone has their own workspace. Create more on Pro or Business, invite people by email or a join link, and choose owner, admin, member, billing or viewer roles.
 icon: Users
 ---
 
@@ -22,43 +22,65 @@ Creating more workspaces needs Pro or Business. Anyone can join a workspace they
 
 Owners and admins invite people from [Settings → Team](/dashboard?to=settings/team):
 
-1. Enter the person's email address and pick a role, **Member** or **Admin**.
+1. Enter the person's email address and pick a role: **Admin**, **Member** or **Viewer**. Owners can also invite someone as **Billing**.
 2. QRdx emails them an invitation. Every invitation also has a link you can copy and send yourself.
 3. They open the link, sign in with the invited email address and click **Accept invitation**. The workspace then opens for them.
 
 Invitations expire after 48 hours and only work for the email address they were sent to, so a forwarded link can't be used by someone else. Pending invitations take up a seat until they are accepted, so revoke the ones you no longer need.
 
+## Join link
+
+A join link is one link for the whole team: anyone signed in who opens it joins the workspace, while it has free seats. Owners and admins manage it in [Settings → Team](/dashboard?to=settings/team), on Pro and Business:
+
+1. Pick the role people get when they join (**Member** by default; never owner, and only owners can make a **Billing** link) and click **Create join link**.
+2. Copy the link and share it. For safety it's shown only once; QRdx keeps a fingerprint of it, not the link.
+3. Lost it, or it went somewhere it shouldn't? Click **Reset link**: the old one stops working and you get a new one. **Turn off** stops it for good.
+
+People who aren't signed in sign in first and come back to the link. Someone who's already a member is told so. When the seats are taken, joining stops until a seat is free.
+
 ## Roles
 
-| | Member | Admin | Owner |
-| --- | --- | --- | --- |
-| Create and edit codes and pages, upload files | Yes | Yes | Yes |
-| Delete codes, files and form responses | Their own | Any | Any |
-| Share saved themes with the workspace | No | Yes | Yes |
-| Invite and remove people, change roles | No | Yes | Yes |
-| Rename the workspace and change its URL | No | Yes | Yes |
-| Add, verify and remove custom domains | No | Yes | Yes |
-| Manage webhook endpoints and see signing secrets | No | Yes | Yes |
-| Create and change OAuth apps | No | No | Yes |
-| Make someone an owner | No | No | Yes |
-| Delete the workspace | No | No | Yes |
+| | Viewer | Billing | Member | Admin | Owner |
+| --- | --- | --- | --- | --- | --- |
+| See codes, pages and analytics | Yes | Yes | Yes | Yes | Yes |
+| Create and edit codes and pages, upload files | No | No | Yes | Yes | Yes |
+| Delete codes, files and form responses | No | No | Their own | Any | Any |
+| Create API keys | No | No | Yes | Yes | Yes |
+| Share saved themes with the workspace | No | No | No | Yes | Yes |
+| Invite and remove people, change roles | No | No | No | Yes | Yes |
+| Rename the workspace, change its URL and logo | No | No | No | Yes | Yes |
+| Add, verify and remove custom domains | No | No | No | Yes | Yes |
+| Manage webhook endpoints and see signing secrets | No | No | No | Yes | Yes |
+| Upgrade the workspace's plan | No | Yes | No | No | Yes |
+| Create and change OAuth apps | No | No | No | No | Yes |
+| Make someone an owner or billing member | No | No | No | No | Yes |
+| Delete the workspace | No | No | No | No | Yes |
 
-Members can see webhook endpoints and their delivery logs, and use the workspace's verified domains for their codes. [Notification settings](/docs/notifications) are personal: every member chooses their own alerts for each workspace.
+Viewers and billing members only read: they can't create, edit or delete anything in the workspace, and an API key can't do more than its creator's role. Members can see webhook endpoints and their delivery logs, and use the workspace's verified domains for their codes. [Notification settings](/docs/notifications) are personal: every member chooses their own alerts for each workspace.
 
 ## Plans and seats
 
-A workspace uses the best plan among its owners, so one owner on Business gives the whole workspace Business limits and members don't need their own subscription. Limits such as dynamic codes, pages, storage and form responses are counted per workspace. See [Plans and limits](/docs/plans-and-limits).
+A workspace uses the best plan among its owners and billing members, so one of them on Business gives the whole workspace Business limits and members don't need their own subscription. That's what the **Billing** role is for: someone who pays for the workspace without managing it. Limits such as dynamic codes, pages, storage and form responses are counted per workspace. See [Plans and limits](/docs/plans-and-limits).
 
-Seats are members, owner included, plus pending invitations: 1 (just you) when the owners are on Free, up to 3 on Pro and no limit on Business. If the owners' plan changes, current members stay and every code keeps working; only new invitations and new things over the limit are blocked.
+Seats are members, owner included, plus pending invitations: 1 (just you) when the owners and billing members are on Free, up to 3 on Pro and no limit on Business. If their plan changes, current members stay and every code keeps working; only new invitations and new things over the limit are blocked.
 
 ## Rename, leave or delete a workspace
 
 These are in the workspace's [Settings → General](/dashboard?to=settings).
 
 - **Rename:** owners and admins change the name and the URL. Links to the old URL stop working; printed codes don't change.
+- **Logo:** owners and admins upload a logo (when file storage is set up on the server) or use an https image URL. It shows in the workspace switcher; without one the switcher shows the first letter of the name.
 - **Leave:** click **Leave workspace** in the danger zone. The last owner can't leave: make another member an owner first, or delete the workspace. Nobody can leave their own workspace.
 - **Remove a member:** in [Settings → Team](/dashboard?to=settings/team). The codes and pages they created stay in the workspace. Nobody can be removed from their own workspace.
 - **Delete a workspace:** owners only, and never someone's own workspace. You confirm by typing the workspace URL. Nothing stops working: codes, pages, files, domains and other items move to the own workspace of whoever created them. The workspace's API keys are deleted with it.
+
+## Move a code to another workspace
+
+In the code's **⋯** menu on the Codes page, choose **Move to workspace...** and pick a workspace where you can create codes. The short link stays the same, so printed codes keep working, and its scans and version history move with it. Its folder and tags stay behind, because they belong to the old workspace.
+
+- Members can move the codes they created; owners and admins any code.
+- The other workspace's plan must have room for another active code. Archived codes don't count.
+- A code whose link is on a custom domain can't move, because the domain belongs to the old workspace and its printed link would stop working. Codes that open a hosted page stay with their page.
 
 ## API access
 
