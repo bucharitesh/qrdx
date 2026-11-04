@@ -38,7 +38,9 @@ import {
   Import,
   InfoCircle,
   Printer,
+  TableDocument,
 } from "iconsax-reactjs";
+import Link from "next/link";
 import {
   type DownloadSize,
   downloadPrintEPS,
@@ -63,11 +65,17 @@ import { emitSound } from "@/components/editor/sound";
 import { InfoHint } from "@/components/help/info-hint";
 import { track } from "@/lib/analytics";
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
-import { PRINT_SIZE_LIMITS } from "@/lib/print-size";
+import {
+  PRINT_SIZE_LIMITS,
+  printWidthForScanDistance,
+  scanDistanceForPrintWidth,
+  scanDistanceUnit,
+} from "@/lib/print-size";
 import { useQREditorStore } from "@/store/editor-store";
 import { usePreferencesStore } from "@/store/preferences-store";
 import type { DownloadOptions as DownloadOptionsType } from "@/types/theme";
 import { useDownloadDialogStore } from "./download-dialog-store";
+import { BULK_FROM_EDITOR_HREF } from "./more-menu";
 
 interface DownloadDialogProps {
   open: boolean;
@@ -81,6 +89,15 @@ function formatLength(mm: number, unit: PrintUnit): string {
   return unit === "in"
     ? `${Math.round((mm / 25.4) * 100) / 100} in`
     : `${Math.round(mm * 10) / 10} mm`;
+}
+
+function roundTo(
+  value: number,
+  decimals: number,
+  round: (value: number) => number = Math.round,
+): number {
+  const factor = 10 ** decimals;
+  return round(value * factor) / factor;
 }
 
 function formatDistance(mm: number, unit: PrintUnit): string {
@@ -689,6 +706,16 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
                 </>
               )}
             </div>
+            <div className="border-t px-6 py-3">
+              <Link
+                className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1.5 text-xs underline-offset-4 transition-colors hover:underline"
+                href={BULK_FROM_EDITOR_HREF}
+                onNavigate={() => onOpenChange(false)}
+              >
+                <TableDocument className="size-3.5 shrink-0" />
+                Make many from a CSV with this style
+              </Link>
+            </div>
           </Tabs>
         </div>
       </ResponsiveDialogContent>
@@ -730,8 +757,66 @@ function PrintOptions({
   const limits = PRINT_SIZE_LIMITS[unit];
   const label = "text-muted-foreground mb-2.5 block text-xs font-medium";
 
+  // "Scanned from about": the readout below, run backwards. While someone
+  // types, their text stays as typed; otherwise it follows the width.
+  const distanceUnit = scanDistanceUnit(unit);
+  const [distanceDraft, setDistanceDraft] = React.useState<string | null>(null);
+  const shownDistance =
+    distanceDraft ??
+    (Number.isFinite(size) && size > 0
+      ? String(roundTo(scanDistanceForPrintWidth(size, unit, distanceUnit), 2))
+      : "");
+  const distanceMin = roundTo(
+    scanDistanceForPrintWidth(limits.min, unit, distanceUnit),
+    2,
+    Math.ceil,
+  );
+  const distanceMax = roundTo(
+    scanDistanceForPrintWidth(limits.max, unit, distanceUnit),
+    2,
+    Math.floor,
+  );
+  const outOfRange =
+    Number.isFinite(size) && (size < limits.min || size > limits.max);
+
   return (
     <div className="space-y-6">
+      <section className="grid grid-cols-2 items-end gap-2">
+        <div>
+          <Label className={label} htmlFor="print-distance">
+            Scanned from about
+          </Label>
+          <InputGroup>
+            <InputGroupInput
+              id="print-distance"
+              inputMode="decimal"
+              max={distanceMax}
+              min={distanceMin}
+              onBlur={() => setDistanceDraft(null)}
+              onChange={(event) => {
+                const text = event.target.value;
+                setDistanceDraft(text);
+                const distance = Number(text);
+                if (text.trim() && Number.isFinite(distance) && distance > 0) {
+                  onSizeChange(
+                    printWidthForScanDistance(distance, distanceUnit, unit),
+                  );
+                }
+              }}
+              step={0.1}
+              type="number"
+              value={shownDistance}
+            />
+            <InputGroupAddon align="inline-end">
+              <InputGroupText>{distanceUnit}</InputGroupText>
+            </InputGroupAddon>
+          </InputGroup>
+        </div>
+        <p className="text-muted-foreground pb-3 text-xs">
+          Sets the code width below.
+        </p>
+      </section>
+
       <section className="grid grid-cols-2 gap-2">
         <div>
           <Label className={label} htmlFor="print-size">
@@ -760,7 +845,9 @@ function PrintOptions({
             aria-labelledby="print-unit"
             className="grid w-full grid-cols-2"
             onValueChange={(next) => {
-              if (next) onUnitChange(next as PrintUnit);
+              if (!next) return;
+              setDistanceDraft(null);
+              onUnitChange(next as PrintUnit);
             }}
             type="single"
             value={unit}
@@ -874,7 +961,9 @@ function PrintOptions({
       ) : (
         <p className="text-destructive flex items-center gap-1.5 text-sm">
           <InfoCircle className="size-4 shrink-0" />
-          {layoutError}
+          {outOfRange
+            ? `Enter ${limits.min}–${limits.max} ${unit}, or a distance of ${distanceMin}–${distanceMax} ${distanceUnit}.`
+            : layoutError}
         </p>
       )}
     </div>

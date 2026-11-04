@@ -5,6 +5,7 @@ import { useCodeDialogStore } from "@/components/editor/action-bar/code-dialog-s
 import { DownloadButton } from "@/components/editor/action-bar/download-button";
 import { DownloadDialog } from "@/components/editor/action-bar/download-dialog";
 import { useDownloadDialogStore } from "@/components/editor/action-bar/download-dialog-store";
+import { MoreMenu } from "@/components/editor/action-bar/more-menu";
 import { ShareButton } from "@/components/editor/action-bar/share-button";
 import { HorizontalScrollArea } from "@/components/horizontal-scroll-area";
 import { useAIQRGenerationCore } from "@/lib/hooks/use-ai-qr-generation-core";
@@ -41,18 +42,34 @@ export function ActionBar({ layout = "desktop" }: ActionBarProps) {
     onReset: () => resetToCurrentPreset(),
   });
 
+  const buttons = (
+    <HorizontalScrollArea className="flex h-14 w-full items-center justify-end gap-4 px-4">
+      <ActionBarButtons
+        onSaveClick={() => handleSaveClick()}
+        isSaving={isCreatingTheme}
+        onShareClick={handleShareClick}
+        codeDialogOpen={codeDialogOpen}
+        setCodeDialogOpen={setCodeDialogOpen}
+        layout={layout}
+      />
+    </HorizontalScrollArea>
+  );
+
   return (
     <div className="border-b">
-      <HorizontalScrollArea className="flex h-14 w-full items-center justify-end gap-4 px-4">
-        <ActionBarButtons
-          onSaveClick={() => handleSaveClick()}
-          isSaving={isCreatingTheme}
-          onShareClick={handleShareClick}
-          codeDialogOpen={codeDialogOpen}
-          setCodeDialogOpen={setCodeDialogOpen}
-          layout={layout}
-        />
-      </HorizontalScrollArea>
+      {layout === "mobile" ? (
+        // A phone's row scrolls sideways; More stays in reach at its end and
+        // opens as a bottom drawer.
+        <div className="flex items-center">
+          <div className="min-w-0 flex-1">{buttons}</div>
+          <div className="flex h-14 shrink-0 items-center gap-1 pr-3">
+            <span aria-hidden className="bg-border h-8 w-px" />
+            <MoreMenu layout="mobile" />
+          </div>
+        </div>
+      ) : (
+        buttons
+      )}
       <DownloadDialog open={downloadOpen} onOpenChange={setDownloadOpen} />
     </div>
   );

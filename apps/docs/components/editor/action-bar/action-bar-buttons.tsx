@@ -2,8 +2,6 @@
 
 import { Separator } from "@repo/design-system/components/ui/separator";
 import { useMemo } from "react";
-import { KeyboardShortcutsButton } from "@/components/keyboard-shortcuts-button";
-import { useKeyboardShortcutsModal } from "@/components/keyboard-shortcuts-trigger";
 import { useThemesData } from "@/lib/hooks/themes/use-themes-data";
 import { useAIQRGenerationCore } from "@/lib/hooks/use-ai-qr-generation-core";
 import { useMounted } from "@/lib/hooks/use-mounted";
@@ -15,6 +13,7 @@ import { CodeButton } from "./code-button";
 import { CopySVGButton } from "./copy-svg-button";
 import { DownloadButton } from "./download-button";
 import { EditButton } from "./edit-button";
+import { MoreMenu } from "./more-menu";
 import { PublishButton } from "./publish-button";
 import { ResetButton } from "./reset-button";
 import { SaveButton } from "./save-button";
@@ -28,8 +27,8 @@ interface ActionBarButtonsProps {
   codeDialogOpen: boolean;
   setCodeDialogOpen: (open: boolean) => void;
   /**
-   * "mobile": Share and Download live in the bottom bar instead, and the
-   * keyboard shortcuts button is left out on a touch screen.
+   * "mobile": Share and Download live in the bottom bar instead, and More
+   * (a bottom drawer there) is pinned by ActionBar outside the scrolling row.
    */
   layout?: "desktop" | "mobile";
 }
@@ -52,8 +51,6 @@ export function ActionBarButtons({
     : undefined;
   const isSavedPreset = !!currentPreset && currentPreset.source === "SAVED";
   const desktop = layout === "desktop";
-
-  const { setOpen } = useKeyboardShortcutsModal();
 
   const isMounted = useMounted();
 
@@ -83,7 +80,6 @@ export function ActionBarButtons({
       </div>
 
       <div className="flex items-center gap-1">
-        {desktop && <KeyboardShortcutsButton onClick={() => setOpen(true)} />}
         <ContrastChecker
           currentStyles={themeState.styles}
           disabled={contrastDisabled}
@@ -129,6 +125,8 @@ export function ActionBarButtons({
           dialogOpen={codeDialogOpen}
           setDialogOpen={setCodeDialogOpen}
         />
+        {/* On phones ActionBar pins More outside the scrolling row. */}
+        {desktop && <MoreMenu />}
         {desktop && <DownloadButton className="ml-2" />}
       </div>
     </div>
