@@ -7,6 +7,7 @@ import { CompareHeroLogos } from "@/components/sections/compare/compare-hero-log
 import { CompareMigrateButton } from "@/components/sections/compare/compare-migrate-button";
 import { breadcrumbSchema, JsonLd } from "@/components/sections/tools/json-ld";
 import { compareMigration } from "@/lib/migrate/compare";
+import { playgroundHref } from "@/lib/playground-links";
 
 interface CompareHeroProps {
   slug: string;
@@ -43,7 +44,7 @@ export function CompareHero({ slug, competitor, tagline }: CompareHeroProps) {
         </div>
         <div className="flex flex-wrap items-center justify-center gap-2">
           <Button asChild>
-            <Link href="/playground">
+            <Link href={playgroundHref()}>
               Try the Playground
               <ArrowRight aria-hidden />
             </Link>

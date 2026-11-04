@@ -7,6 +7,7 @@ import { useAIQRGenerationCore } from "@/lib/hooks/use-ai-qr-generation-core";
 import { useChatContext } from "@/lib/hooks/use-chat-context";
 import { useGuards } from "@/lib/hooks/use-gaurds";
 import { usePostLoginAction } from "@/lib/hooks/use-post-login-action";
+import { playgroundHref } from "@/lib/playground-links";
 import { usePreferencesStore } from "@/store/preferences-store";
 import type { AIPromptData } from "@/types/ai";
 import { AIChatForm } from "./ai-chat-form";
@@ -31,7 +32,7 @@ export function AIChatHero() {
     setChatSuggestionsOpen(true);
 
     generateQRCore(promptData);
-    router.push("/playground?tab=ai");
+    router.push(playgroundHref({ tab: "ai" }));
   };
 
   usePostLoginAction("AI_GENERATE_FROM_PAGE", ({ promptData }) => {

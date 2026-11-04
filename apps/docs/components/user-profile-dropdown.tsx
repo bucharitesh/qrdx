@@ -28,6 +28,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { markSignOutIntent } from "@/app/(auth)/sign-out/_lib/intent";
 import { hasAdminRole } from "@/components/app-shell/nav-config";
 import { useSubscription } from "@/lib/hooks/use-subscription";
+import { playgroundHref } from "@/lib/playground-links";
 import { PLAN_NAMES, type Plan } from "@/lib/pricing";
 import { useAuthStore } from "@/store/auth-store";
 
@@ -41,7 +42,7 @@ function PlaygroundLink() {
     return null;
   }
   return (
-    <Link className="hidden sm:block" href="/playground">
+    <Link className="hidden sm:block" href={playgroundHref()}>
       <Button>Try the Playground</Button>
     </Link>
   );

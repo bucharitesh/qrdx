@@ -25,6 +25,7 @@ import {
   topicIcon,
 } from "@/components/sections/tools/topic-icons";
 import { isFeatureAvailable } from "@/lib/feature-availability";
+import { playgroundHref } from "@/lib/playground-links";
 import { getQrType } from "@/lib/qr-types-content";
 import {
   PAGE_TYPES,
@@ -61,8 +62,10 @@ function viewRecommendation(item: Recommendation): RecommendationView | null {
         badge: "Static · free, no account",
         title: `${type.name} QR code`,
         why: item.why,
-        href: `/qr-code-generator/${type.type}`,
-        linkText: `Open the ${type.name} generator`,
+        // Straight into the editor with this type; its form data never goes
+        // in the link (lib/playground-links.ts).
+        href: playgroundHref({ type: type.type }),
+        linkText: "Make it in the playground",
         icon: QR_TYPE_ICONS[type.type],
       };
     }
@@ -126,7 +129,7 @@ export function TopicPage({
       >
         <div className="flex flex-wrap items-center justify-center gap-2.5">
           <Button asChild>
-            <Link href="/playground">
+            <Link href={playgroundHref()}>
               Design a free QR code
               <ArrowRight className="size-4" />
             </Link>

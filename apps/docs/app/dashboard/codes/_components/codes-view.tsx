@@ -33,6 +33,7 @@ import {
   requireDashboardScope,
 } from "@/app/dashboard/codes/_lib/qr-codes";
 import { HairlineFigure } from "@/components/mockups/hairline";
+import { playgroundHref } from "@/lib/playground-links";
 import { getScanSparklines } from "@/lib/scans";
 import { CodeOptionPlansProvider } from "./code-options";
 import { CodesList } from "./codes-list";
@@ -188,7 +189,10 @@ export async function CodesView({
               </div>
               <p className="text-muted-foreground text-xs">
                 Or turn on "Make it dynamic" for a URL code in the{" "}
-                <Link className="underline" href="/playground">
+                <Link
+                  className="underline"
+                  href={playgroundHref({ type: "url" })}
+                >
                   playground
                 </Link>
                 .
