@@ -6,6 +6,7 @@ import {
   CORNER_EYE_DOT_PATTERNS,
   CORNER_EYE_PATTERNS,
   customFrameSchema,
+  EYE_POSITIONS,
   FRAME_STYLES,
   FRAME_TEXT_MAX_LENGTH,
   type QRCustomFrame,
@@ -21,6 +22,7 @@ import { readLogoDataUrl } from "@/lib/qr-api/logo";
 import {
   type ApiStyle,
   apiFrameSchema,
+  apiStyleFields,
   FILE_ID,
   parseApiStyle,
 } from "@/lib/qr-api/style";
@@ -49,6 +51,7 @@ import {
   designStyleSchema,
   ERROR_LEVELS,
   fromThemeStyles,
+  HEX_COLOR,
   LOGO_ICON_IDS,
   type LogoIconId,
   MARGIN_MAX,
@@ -96,6 +99,53 @@ const customFrameInputSchema = designFrameSchema.omit({ style: true }).extend({
     ),
 });
 
+const hexInput = z.string().regex(HEX_COLOR).describe("#RRGGBB");
+const eyeInput = z
+  .object({ outer: hexInput.optional(), inner: hexInput.optional() })
+  .strict();
+
+/**
+ * Engine options design_qr draws as they are (repairs never change them):
+ * per-eye colours (#RRGGBB, like the rest of design_qr), dot size, auto
+ * error correction, the circle shape and the logo's layout.
+ */
+const engineInputFields = {
+  eyeColors: z
+    .object(
+      Object.fromEntries(
+        EYE_POSITIONS.map((position) => [position, eyeInput.optional()]),
+      ) as Record<
+        (typeof EYE_POSITIONS)[number],
+        z.ZodOptional<typeof eyeInput>
+      >,
+    )
+    .strict()
+    .optional()
+    .describe(
+      "Per-eye colours: { topLeft, topRight, bottomLeft }, each { outer, inner } as #RRGGBB",
+    ),
+  moduleScale: apiStyleFields.moduleScale,
+  autoLevel: apiStyleFields.autoLevel,
+  shape: apiStyleFields.shape,
+  logoOptions: apiStyleFields.logoOptions,
+};
+type EngineInput = {
+  [K in keyof typeof engineInputFields]?: z.output<
+    (typeof engineInputFields)[K]
+  >;
+};
+const ENGINE_KEYS = Object.keys(engineInputFields) as (keyof EngineInput)[];
+
+/** The engine options a style or a base sets. */
+function engineOptionsOf(source: object | null | undefined): EngineInput {
+  if (!source) return {};
+  return Object.fromEntries(
+    ENGINE_KEYS.filter(
+      (key) => (source as Record<string, unknown>)[key] !== undefined,
+    ).map((key) => [key, (source as Record<string, unknown>)[key]]),
+  ) as EngineInput;
+}
+
 /** Every style option, all optional: missing ones get scannable defaults. */
 const styleInputSchema = designStyleSchema
   .omit({ logo: true, frame: true })
@@ -113,6 +163,7 @@ const styleInputSchema = designStyleSchema
       .describe(
         "A quick logo icon in the centre (wifi, location, phone, email, link, file, calendar, whatsapp, instagram), or none. For your own image use logo_file_id.",
       ),
+    ...engineInputFields,
   })
   .describe(
     "How the code looks. Leave options out for defaults (or the preset's or community item's): eyes and eye centres follow the dot colour, square shapes, margin 4, level Q, no frame.",
@@ -165,7 +216,16 @@ type StyleInput = NonNullable<DesignQrInput["style"]>;
 /** The requested style with defaults filled in (no base). */
 export function styleFromInput(style: DesignQrInput["style"]): DesignStyle {
   const fg = style?.fgColor ?? CLASSIC_STYLE.fgColor;
-  const { frame, logo: _logo, ...rest } = style ?? {};
+  const {
+    frame,
+    logo: _logo,
+    eyeColors: _eyes,
+    moduleScale: _scale,
+    autoLevel: _auto,
+    shape: _shape,
+    logoOptions: _layout,
+    ...rest
+  } = style ?? {};
   return {
     ...CLASSIC_STYLE,
     ...rest,
@@ -179,7 +239,16 @@ export function styleFromInput(style: DesignQrInput["style"]): DesignStyle {
 
 /** The style options set over a base design (a preset or a community item). */
 function styleOnBase(base: DesignStyle, style: StyleInput | undefined) {
-  const { frame, logo: _logo, ...rest } = style ?? {};
+  const {
+    frame,
+    logo: _logo,
+    eyeColors: _eyes,
+    moduleScale: _scale,
+    autoLevel: _auto,
+    shape: _shape,
+    logoOptions: _layout,
+    ...rest
+  } = style ?? {};
   const fg = rest.fgColor;
   return {
     ...base,
@@ -381,8 +450,16 @@ export async function designQr(
     }
     initial.logo = logoFile ? "keep" : (logoIcon ?? "none");
 
-    const withFrame = (style: ThemeStyles): ThemeStyles =>
-      customFrame ? { ...style, frame: customFrame } : style;
+    // Engine options from the base, then the ones the caller set.
+    const engine: EngineInput = {
+      ...engineOptionsOf(base),
+      ...engineOptionsOf(input.style),
+    };
+    const withFrame = (style: ThemeStyles): ThemeStyles => ({
+      ...style,
+      ...(engine as ThemeStyles),
+      ...(customFrame ? { frame: customFrame } : {}),
+    });
 
     const result = await runDesignLoop({
       value: content.value,
@@ -535,6 +612,8 @@ export function designOptions() {
         recovery: { L: "~7%", M: "~15%", Q: "~25%", H: "~30%" }[id],
       })),
       margin: { min: 0, max: MARGIN_MAX, ideal: 4 },
+      engineOptions:
+        "eyeColors { topLeft, topRight, bottomLeft: { outer, inner } } (#RRGGBB), moduleScale 0.5-1 (dot size), autoLevel, shape (square or circle), logoOptions { size 0.1-0.3, padding 0-2 modules, x and y 0-1, shape square|rounded|circle (crop), plate (colour) }. Drawn and scored as given; repairs never change them.",
       logos: {
         icons: LOGO_ICON_IDS,
         how: "style.logo picks a quick icon QRdx draws on a white tile. logo_file_id uses an image you uploaded to QRdx (PNG or JPEG, up to 1 MB) and needs the workspace's API key on the MCP connection. Logos are scored by the modules they cover; a repair may raise error correction to H or remove the logo.",

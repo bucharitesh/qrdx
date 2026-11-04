@@ -114,6 +114,51 @@ describe("the API style", () => {
     }
   });
 
+  it("takes the engine options in the engine's ranges, and nothing outside them", () => {
+    const ok = parseApiStyle({
+      eyeColors: {
+        topLeft: {
+          outer: "#b91c1c",
+          inner: {
+            type: "radial",
+            stops: [
+              { color: "#000000", offset: 0 },
+              { color: "#1d4ed8", offset: 100 },
+            ],
+          },
+        },
+        bottomLeft: { outer: "15803d" },
+      },
+      moduleScale: 0.8,
+      autoLevel: true,
+      shape: "circle",
+      logoOptions: {
+        size: 0.2,
+        padding: 1,
+        x: 0.5,
+        y: 0.5,
+        shape: "rounded",
+        plate: "#ffffff",
+      },
+    });
+    expect(ok.ok, JSON.stringify(ok)).toBe(true);
+    for (const bad of [
+      { moduleScale: 0.2 },
+      { moduleScale: 1.5 },
+      { shape: "heart" },
+      { eyeColors: { middle: { outer: "#000" } } },
+      { eyeColors: { topLeft: { outer: "url(#x)" } } },
+      { logoOptions: { size: 0.5 } },
+      { logoOptions: { padding: 3 } },
+      { logoOptions: { x: 2 } },
+      { logoOptions: { shape: "star" } },
+      { logoOptions: { plate: "url(https://example.com/p.png)" } },
+      { logoOptions: { src: "https://example.com/l.png" } },
+    ]) {
+      expect(parseApiStyle(bad).ok, JSON.stringify(bad)).toBe(false);
+    }
+  });
+
   it("refuses logo addresses and art with the reason, never fetching anything", () => {
     const logoUrl = parseApiStyle({ customLogo: "https://example.com/l.png" });
     expect(logoUrl).toMatchObject({

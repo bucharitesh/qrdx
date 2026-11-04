@@ -4587,6 +4587,555 @@
                     },
                     "required": ["mode", "image"]
                   },
+                  "eyeColors": {
+                    "description": "Per-eye colors (topLeft, topRight, bottomLeft), each with an outer frame and inner dot color that override eyeColor and dotColor",
+                    "type": "object",
+                    "properties": {
+                      "topLeft": {
+                        "type": "object",
+                        "properties": {
+                          "outer": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "solid"
+                                  },
+                                  "color": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": ["type", "color"]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "linear"
+                                  },
+                                  "stops": {
+                                    "minItems": 2,
+                                    "type": "array",
+                                    "items": {
+                                      "type": "object",
+                                      "properties": {
+                                        "color": {
+                                          "type": "string"
+                                        },
+                                        "offset": {
+                                          "type": "number",
+                                          "minimum": 0,
+                                          "maximum": 100
+                                        }
+                                      },
+                                      "required": ["color", "offset"]
+                                    }
+                                  },
+                                  "angle": {
+                                    "default": 0,
+                                    "type": "number"
+                                  }
+                                },
+                                "required": ["type", "stops"]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "radial"
+                                  },
+                                  "stops": {
+                                    "minItems": 2,
+                                    "type": "array",
+                                    "items": {
+                                      "type": "object",
+                                      "properties": {
+                                        "color": {
+                                          "type": "string"
+                                        },
+                                        "offset": {
+                                          "type": "number",
+                                          "minimum": 0,
+                                          "maximum": 100
+                                        }
+                                      },
+                                      "required": ["color", "offset"]
+                                    }
+                                  }
+                                },
+                                "required": ["type", "stops"]
+                              }
+                            ]
+                          },
+                          "inner": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "solid"
+                                  },
+                                  "color": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": ["type", "color"]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "linear"
+                                  },
+                                  "stops": {
+                                    "minItems": 2,
+                                    "type": "array",
+                                    "items": {
+                                      "type": "object",
+                                      "properties": {
+                                        "color": {
+                                          "type": "string"
+                                        },
+                                        "offset": {
+                                          "type": "number",
+                                          "minimum": 0,
+                                          "maximum": 100
+                                        }
+                                      },
+                                      "required": ["color", "offset"]
+                                    }
+                                  },
+                                  "angle": {
+                                    "default": 0,
+                                    "type": "number"
+                                  }
+                                },
+                                "required": ["type", "stops"]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "radial"
+                                  },
+                                  "stops": {
+                                    "minItems": 2,
+                                    "type": "array",
+                                    "items": {
+                                      "type": "object",
+                                      "properties": {
+                                        "color": {
+                                          "type": "string"
+                                        },
+                                        "offset": {
+                                          "type": "number",
+                                          "minimum": 0,
+                                          "maximum": 100
+                                        }
+                                      },
+                                      "required": ["color", "offset"]
+                                    }
+                                  }
+                                },
+                                "required": ["type", "stops"]
+                              }
+                            ]
+                          }
+                        }
+                      },
+                      "topRight": {
+                        "type": "object",
+                        "properties": {
+                          "outer": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "solid"
+                                  },
+                                  "color": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": ["type", "color"]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "linear"
+                                  },
+                                  "stops": {
+                                    "minItems": 2,
+                                    "type": "array",
+                                    "items": {
+                                      "type": "object",
+                                      "properties": {
+                                        "color": {
+                                          "type": "string"
+                                        },
+                                        "offset": {
+                                          "type": "number",
+                                          "minimum": 0,
+                                          "maximum": 100
+                                        }
+                                      },
+                                      "required": ["color", "offset"]
+                                    }
+                                  },
+                                  "angle": {
+                                    "default": 0,
+                                    "type": "number"
+                                  }
+                                },
+                                "required": ["type", "stops"]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "radial"
+                                  },
+                                  "stops": {
+                                    "minItems": 2,
+                                    "type": "array",
+                                    "items": {
+                                      "type": "object",
+                                      "properties": {
+                                        "color": {
+                                          "type": "string"
+                                        },
+                                        "offset": {
+                                          "type": "number",
+                                          "minimum": 0,
+                                          "maximum": 100
+                                        }
+                                      },
+                                      "required": ["color", "offset"]
+                                    }
+                                  }
+                                },
+                                "required": ["type", "stops"]
+                              }
+                            ]
+                          },
+                          "inner": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "solid"
+                                  },
+                                  "color": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": ["type", "color"]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "linear"
+                                  },
+                                  "stops": {
+                                    "minItems": 2,
+                                    "type": "array",
+                                    "items": {
+                                      "type": "object",
+                                      "properties": {
+                                        "color": {
+                                          "type": "string"
+                                        },
+                                        "offset": {
+                                          "type": "number",
+                                          "minimum": 0,
+                                          "maximum": 100
+                                        }
+                                      },
+                                      "required": ["color", "offset"]
+                                    }
+                                  },
+                                  "angle": {
+                                    "default": 0,
+                                    "type": "number"
+                                  }
+                                },
+                                "required": ["type", "stops"]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "radial"
+                                  },
+                                  "stops": {
+                                    "minItems": 2,
+                                    "type": "array",
+                                    "items": {
+                                      "type": "object",
+                                      "properties": {
+                                        "color": {
+                                          "type": "string"
+                                        },
+                                        "offset": {
+                                          "type": "number",
+                                          "minimum": 0,
+                                          "maximum": 100
+                                        }
+                                      },
+                                      "required": ["color", "offset"]
+                                    }
+                                  }
+                                },
+                                "required": ["type", "stops"]
+                              }
+                            ]
+                          }
+                        }
+                      },
+                      "bottomLeft": {
+                        "type": "object",
+                        "properties": {
+                          "outer": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "solid"
+                                  },
+                                  "color": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": ["type", "color"]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "linear"
+                                  },
+                                  "stops": {
+                                    "minItems": 2,
+                                    "type": "array",
+                                    "items": {
+                                      "type": "object",
+                                      "properties": {
+                                        "color": {
+                                          "type": "string"
+                                        },
+                                        "offset": {
+                                          "type": "number",
+                                          "minimum": 0,
+                                          "maximum": 100
+                                        }
+                                      },
+                                      "required": ["color", "offset"]
+                                    }
+                                  },
+                                  "angle": {
+                                    "default": 0,
+                                    "type": "number"
+                                  }
+                                },
+                                "required": ["type", "stops"]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "radial"
+                                  },
+                                  "stops": {
+                                    "minItems": 2,
+                                    "type": "array",
+                                    "items": {
+                                      "type": "object",
+                                      "properties": {
+                                        "color": {
+                                          "type": "string"
+                                        },
+                                        "offset": {
+                                          "type": "number",
+                                          "minimum": 0,
+                                          "maximum": 100
+                                        }
+                                      },
+                                      "required": ["color", "offset"]
+                                    }
+                                  }
+                                },
+                                "required": ["type", "stops"]
+                              }
+                            ]
+                          },
+                          "inner": {
+                            "anyOf": [
+                              {
+                                "type": "string"
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "solid"
+                                  },
+                                  "color": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": ["type", "color"]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "linear"
+                                  },
+                                  "stops": {
+                                    "minItems": 2,
+                                    "type": "array",
+                                    "items": {
+                                      "type": "object",
+                                      "properties": {
+                                        "color": {
+                                          "type": "string"
+                                        },
+                                        "offset": {
+                                          "type": "number",
+                                          "minimum": 0,
+                                          "maximum": 100
+                                        }
+                                      },
+                                      "required": ["color", "offset"]
+                                    }
+                                  },
+                                  "angle": {
+                                    "default": 0,
+                                    "type": "number"
+                                  }
+                                },
+                                "required": ["type", "stops"]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "radial"
+                                  },
+                                  "stops": {
+                                    "minItems": 2,
+                                    "type": "array",
+                                    "items": {
+                                      "type": "object",
+                                      "properties": {
+                                        "color": {
+                                          "type": "string"
+                                        },
+                                        "offset": {
+                                          "type": "number",
+                                          "minimum": 0,
+                                          "maximum": 100
+                                        }
+                                      },
+                                      "required": ["color", "offset"]
+                                    }
+                                  }
+                                },
+                                "required": ["type", "stops"]
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "moduleScale": {
+                    "description": "Size of each data module, 0.5 to 1 (default 1)",
+                    "type": "number",
+                    "minimum": 0.5,
+                    "maximum": 1
+                  },
+                  "autoLevel": {
+                    "description": "Raise error correction to H when the logo covers more than 7% of the code",
+                    "type": "boolean"
+                  },
+                  "shape": {
+                    "description": "Outline of the code: square (default) or circle, which puts the code in a disc of decorative dots",
+                    "type": "string",
+                    "enum": ["square", "circle"]
+                  },
+                  "logoOptions": {
+                    "description": "Logo size (share of the code width), clear space in modules and position (0 to 1 across the code)",
+                    "type": "object",
+                    "properties": {
+                      "size": {
+                        "type": "number",
+                        "minimum": 0.1,
+                        "maximum": 0.3
+                      },
+                      "padding": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 2
+                      },
+                      "x": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                      },
+                      "y": {
+                        "type": "number",
+                        "minimum": 0,
+                        "maximum": 1
+                      },
+                      "shape": {
+                        "type": "string",
+                        "enum": ["square", "rounded", "circle"]
+                      },
+                      "plate": {
+                        "type": "string"
+                      }
+                    }
+                  },
                   "logoIcon": {
                     "description": "A quick logo icon, by id (instead of customLogo)",
                     "type": "string"

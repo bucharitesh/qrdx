@@ -186,6 +186,7 @@ export const LEFT_OUT = {
     "Art (Logo QR or Image QR: it's built from your picture in the browser, and the API doesn't build art)",
   unsafeColors: "Colors the API doesn't take",
   customFrameTooLarge: "The custom frame (too large for an image URL)",
+  eyeGradients: "Gradients on single eyes (drawn in their first color)",
   longContent: "Content over 2,048 characters (the image API's limit)",
   privateContent:
     "Your content (image URLs reach a server, so only web addresses go in)",
@@ -282,6 +283,44 @@ function noteApiArt(style: ThemeStyles, notes: Notes) {
 /** The editor's quick logo icon the style shows, by id. */
 function logoIconOf(style: ThemeStyles): LogoIconId | null {
   return style.showLogo ? presetLogoIcon(style.customLogo) : null;
+}
+
+/**
+ * Engine options for the API tabs (per-eye colors, dot size, auto error
+ * correction, the circle shape and, with a logo the tab draws, its layout).
+ * `color` turns each eye color into what the tab takes, or undefined.
+ */
+function apiEngineOptions(
+  style: ThemeStyles,
+  drawsLogo: boolean,
+  color: (value: ColorConfig) => ColorConfig | undefined,
+): Record<string, unknown> {
+  const options = styleEngineOptions(style);
+  const out: Record<string, unknown> = {};
+  if (options.eyeColors) {
+    const eyes: Record<string, Record<string, ColorConfig>> = {};
+    for (const [position, eye] of Object.entries(options.eyeColors)) {
+      const parts: Record<string, ColorConfig> = {};
+      for (const part of ["outer", "inner"] as const) {
+        const value = eye?.[part];
+        const converted = value === undefined ? undefined : color(value);
+        if (converted !== undefined) parts[part] = converted;
+      }
+      if (Object.keys(parts).length > 0) eyes[position] = parts;
+    }
+    if (Object.keys(eyes).length > 0) out.eyeColors = eyes;
+  }
+  if (options.moduleScale !== undefined) out.moduleScale = options.moduleScale;
+  if (options.shape) out.shape = options.shape;
+  if (drawsLogo && options.autoLevel) out.autoLevel = true;
+  if (drawsLogo && options.logoOptions) {
+    const { plate, ...layout } = options.logoOptions;
+    out.logoOptions = {
+      ...layout,
+      ...(plate && isSafeColor(plate.trim()) ? { plate: plate.trim() } : {}),
+    };
+  }
+  return out;
 }
 
 const roundMargin = (margin: number | undefined) =>
@@ -620,7 +659,13 @@ export function imageSnippet(input: SnippetInput): ImageSnippet {
   else if (logo.kind === "qrdx") notes.add(LEFT_OUT.qrdxLogo);
   else if (logo.kind !== "none") notes.add(LEFT_OUT.imageUploadedLogo);
   noteApiArt(style, notes);
-  noteEngineOptions(style, notes);
+  Object.assign(
+    styleParam,
+    apiEngineOptions(style, Boolean(icon), (color) => {
+      const paint = imagePaint(color, notes);
+      return paint && "flat" in paint ? `#${paint.flat}` : paint?.style;
+    }),
+  );
 
   if (Object.keys(styleParam).length > 0) {
     let json = JSON.stringify(styleParam);
@@ -917,7 +962,16 @@ export function mcpSnippet(input: SnippetInput): Snippet {
   else if (logo.kind === "qrdx") notes.add(LEFT_OUT.qrdxLogo);
   else if (logo.kind !== "none") notes.add(LEFT_OUT.mcpUploadedLogo);
   noteApiArt(style, notes);
-  noteEngineOptions(style, notes);
+  Object.assign(
+    design,
+    apiEngineOptions(style, Boolean(icon), (color) => {
+      const paint = normalizeColorConfig(color);
+      if (paint.type !== "solid") notes.add(LEFT_OUT.eyeGradients);
+      const solid =
+        paint.type === "solid" ? paint.color : paint.stops[0]?.color;
+      return solid ? mcpHex(solid, notes) : undefined;
+    }),
+  );
 
   return {
     code: formatJson({ content: mcpContent(input), style: design }),
