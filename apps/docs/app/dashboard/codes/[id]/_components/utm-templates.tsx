@@ -107,9 +107,36 @@ export function UtmTemplatesMenu({
   disabled?: boolean;
 }) {
   const { templates, upsert, remove } = useUtmTemplates();
-  const [dialog, setDialog] = useState<"save" | "manage" | null>(null);
-
   if (templates === null) return null;
+  return (
+    <UtmTemplatesMenuBody
+      current={current}
+      disabled={disabled}
+      onApply={onApply}
+      onRemoved={remove}
+      onSaved={upsert}
+      templates={templates}
+    />
+  );
+}
+
+/** The menu and its dialogs for loaded templates. */
+export function UtmTemplatesMenuBody({
+  templates,
+  current,
+  onApply,
+  onSaved,
+  onRemoved,
+  disabled,
+}: {
+  templates: UtmTemplateView[];
+  current: UtmConfig;
+  onApply: (utm: UtmConfig) => void;
+  onSaved: (template: UtmTemplateView) => void;
+  onRemoved: (id: string) => void;
+  disabled?: boolean;
+}) {
+  const [dialog, setDialog] = useState<"save" | "manage" | null>(null);
   const empty = isEmptyUtm(current);
   const full = templates.length >= MAX_UTM_TEMPLATES;
 
@@ -175,13 +202,13 @@ export function UtmTemplatesMenu({
       <SaveTemplateDialog
         current={current}
         onOpenChange={(open) => setDialog(open ? "save" : null)}
-        onSaved={upsert}
+        onSaved={onSaved}
         open={dialog === "save"}
       />
       <ManageTemplatesDialog
         onOpenChange={(open) => setDialog(open ? "manage" : null)}
-        onRemoved={remove}
-        onRenamed={upsert}
+        onRemoved={onRemoved}
+        onRenamed={onSaved}
         open={dialog === "manage"}
         templates={templates}
       />
