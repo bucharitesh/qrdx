@@ -6,6 +6,7 @@ import {
   DEFAULT_MARGIN,
   ERROR_LEVEL_MAP,
 } from "../../src/constants";
+import { getLayoutMargin } from "../../src/qr-shape";
 import { QRCodeSVG, resolveErrorLevel } from "../../src/utils";
 import { parseSvgMarkup, type SvgNode } from "../../src/utils/svg-geometry";
 import type { QRProps } from "../../types";
@@ -55,10 +56,12 @@ export function capture(
   options: CaptureOptions
 ): string | null {
   const svg = parsedSvg(props);
-  // The level the code is drawn at (autoLevel can raise it)
+  // The level the code is drawn at (autoLevel can raise it), and the
+  // margin it is laid out with (a circle code sits further in)
+  const symbol = symbolSize(props.value, resolveErrorLevel(props));
   const modules =
-    symbolSize(props.value, resolveErrorLevel(props)) +
-    2 * (props.margin ?? DEFAULT_MARGIN);
+    symbol +
+    2 * getLayoutMargin(symbol, props.margin ?? DEFAULT_MARGIN, props.shape);
   const image = rasterizeSvg(svg, {
     width: modules * options.modulePx,
     pad: 4 * options.modulePx,

@@ -12,6 +12,7 @@ import {
   MODULE_SCALE_MAX,
   MODULE_SCALE_MIN,
   qrArtSchema,
+  qrShapeSchema,
 } from "qrdx/types";
 import { z } from "zod";
 
@@ -91,6 +92,11 @@ export const themeStylePropsSchema = z.object({
     .optional()
     .describe(
       "Raise error correction to H when the logo covers more than 7% of the code",
+    ),
+  shape: qrShapeSchema
+    .optional()
+    .describe(
+      "Outline of the code: square (default) or circle, which puts the code in a disc of decorative dots",
     ),
   logoOptions: logoOptionsSchema
     .optional()

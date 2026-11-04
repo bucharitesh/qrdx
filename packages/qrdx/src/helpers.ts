@@ -2,6 +2,7 @@ import type { ImageSettings, LogoOptions, QRProps } from "../types";
 import { LOGO_SIZE_DEFAULT } from "../types/qr";
 import qrcodegen from "./codegen";
 import { DEFAULT_LEVEL, DEFAULT_MARGIN, ERROR_LEVEL_MAP } from "./constants";
+import { getLayoutMargin } from "./qr-shape";
 import { resolveErrorLevel } from "./utils";
 
 interface QRDataProps extends QRProps {
@@ -39,6 +40,7 @@ function logoImageSettings(
     size: number;
     margin: number;
     level?: QRProps["level"];
+    shape?: QRProps["shape"];
   }
 ): ImageSettings {
   const width = code.size * (options?.size ?? LOGO_SIZE_DEFAULT);
@@ -56,7 +58,9 @@ function logoImageSettings(
     return settings;
   }
   const modules = symbolModules(code.value, code.level);
-  const modulePx = code.size / (modules + 2 * code.margin);
+  // A circle code draws its symbol further in (see qr-shape.ts)
+  const margin = getLayoutMargin(modules, code.margin, code.shape);
+  const modulePx = code.size / (modules + 2 * margin);
   if (options.padding) {
     settings.padding = options.padding * modulePx;
   }
@@ -94,12 +98,14 @@ export function getQRData({
   eyeColors,
   moduleScale,
   autoLevel,
+  shape,
 }: QRDataProps): QRDataResult {
   const code = {
     value: `${value}`,
     size,
     margin: margin ?? DEFAULT_MARGIN,
     level,
+    shape,
   };
   // No default logo: only render (and excavate for) one the caller passes.
   let imageSettings =
@@ -132,6 +138,7 @@ export function getQRData({
     ...(eyeColors && { eyeColors }),
     ...(moduleScale !== undefined && { moduleScale }),
     ...(autoLevel && { autoLevel }),
+    ...(shape && shape !== "square" && { shape }),
     ...(imageSettings && { imageSettings }),
   };
 }

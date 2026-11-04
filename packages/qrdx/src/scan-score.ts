@@ -16,6 +16,7 @@ import { handleImageLoad } from "./detection";
 import { withQRSize } from "./download";
 import { getFrameDimensions, getFrameGapRatio, isFrameActive } from "./frame";
 import { getQRAsSVGDataUri } from "./index";
+import { circleQuietZone, getLayoutMargin } from "./qr-shape";
 import { getStylePairRisk } from "./scan-risk";
 import { getImageSettings, getLuminance, resolveErrorLevel } from "./utils";
 import { parseColor, type RGBAColor } from "./utils/parse-color";
@@ -411,7 +412,7 @@ function logoCheck(props: QRProps): {
   const settings = getImageSettings(
     cells,
     props.size ?? DEFAULT_SIZE,
-    props.margin ?? DEFAULT_MARGIN,
+    getLayoutMargin(cells.length, props.margin ?? DEFAULT_MARGIN, props.shape),
     imageSettings
   );
   if (!settings) {
@@ -480,7 +481,11 @@ function logoCheck(props: QRProps): {
 }
 
 function quietZoneCheck(props: QRProps): { check: ScanCheck; penalty: number } {
-  const margin = props.margin ?? DEFAULT_MARGIN;
+  // A circle code keeps at least QR_CIRCLE_QUIET_MIN before its decoration
+  const margin =
+    props.shape === "circle"
+      ? circleQuietZone(props.margin ?? DEFAULT_MARGIN)
+      : (props.margin ?? DEFAULT_MARGIN);
   const count = moduleCount(props).length + 2 * margin;
   // A frame keeps a light gap around the code.
   const modules =
@@ -630,8 +635,10 @@ async function scoreArtwork(
   const jsQR = await loadDecoder();
   throwIfAborted(signal);
 
+  const symbol = moduleCount(props).length;
   const modules =
-    moduleCount(props).length + 2 * (props.margin ?? DEFAULT_MARGIN);
+    symbol +
+    2 * getLayoutMargin(symbol, props.margin ?? DEFAULT_MARGIN, props.shape);
   const decodeChecks: ScanCheck[] = [];
   let largestFails = false;
 

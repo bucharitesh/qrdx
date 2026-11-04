@@ -96,6 +96,10 @@ export * from "./qr-code";
 // package stays usable from React Server Components.
 export { QRCodeCanvas } from "./qr-code-canvas";
 export {
+  circleQuietZone,
+  getLayoutMargin,
+} from "./qr-shape";
+export {
   getStylePairRisk,
   isWeakSharpPair,
   SHARP_DOT_EYE_SAFE_BODIES,

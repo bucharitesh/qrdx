@@ -81,6 +81,18 @@ export const MODULE_SCALE_MAX = 1;
  */
 export const AUTO_LEVEL_LOGO_COVERAGE = 0.07;
 
+/**
+ * Outline of the whole code: "square" (the QR symbol as is) or "circle": the
+ * symbol sits in a disc filled with decorative modules. Decoders read only
+ * the symbol, which keeps its quiet ring (`margin`, at least
+ * QR_CIRCLE_QUIET_MIN modules) before the decoration starts.
+ */
+export const QR_SHAPES = ["square", "circle"] as const;
+export const qrShapeSchema = z.enum(QR_SHAPES);
+export type QRShape = z.infer<typeof qrShapeSchema>;
+/** Smallest light ring between a circle code's symbol and its decoration. */
+export const QR_CIRCLE_QUIET_MIN = 3;
+
 /** The three finder patterns, for per-eye colors. */
 export const EYE_POSITIONS = ["topLeft", "topRight", "bottomLeft"] as const;
 export type EyePosition = (typeof EYE_POSITIONS)[number];
@@ -123,6 +135,7 @@ export const qrPropsSchema = z.object({
     .max(MODULE_SCALE_MAX)
     .optional(),
   autoLevel: z.boolean().optional(),
+  shape: qrShapeSchema.optional(),
 });
 
 // Inferred types
@@ -165,6 +178,9 @@ export interface QRProps {
   // Raise error correction to H when the logo covers more than 7% of the
   // code (off by default, so existing output never changes)
   autoLevel?: boolean;
+  // Outline: "circle" puts the symbol in a disc of decorative modules (see
+  // QR_SHAPES); ignored with a template
+  shape?: QRShape;
 }
 
 export type QRPropsCanvas = QRProps &

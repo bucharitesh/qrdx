@@ -86,6 +86,7 @@ export const THEME_STYLE_KEYS = [
   "moduleScale",
   "autoLevel",
   "logoOptions",
+  "shape",
 ];
 
 const sha = (text) => createHash("sha256").update(text).digest("hex");
