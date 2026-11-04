@@ -63,6 +63,7 @@ export function CodesList({
   tags,
   status,
   showFolder,
+  keyboardShortcuts,
 }: {
   codes: QrCodeListItem[];
   sparklines: Record<string, number[]>;
@@ -70,6 +71,8 @@ export function CodesList({
   tags: TagRow[];
   status: CodesStatus;
   showFolder: boolean;
+  /** user.settings.keyboardShortcuts: row keys on */
+  keyboardShortcuts: boolean;
 }) {
   // Saves from the code builder show at once, before the refresh lands.
   const codes = useOptimisticCodeList(serverCodes);
@@ -328,6 +331,7 @@ export function CodesList({
         <CodesTable
           codes={codes}
           folders={folders}
+          keyboardShortcuts={keyboardShortcuts}
           onSelect={select}
           selected={selected}
           showFolder={showFolder}
