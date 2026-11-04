@@ -111,6 +111,12 @@ import { BuilderOptionBar, BuilderOptionsOn } from "./builder-options";
 import { FolderField, TagsField } from "./builder-organize";
 import { BuilderPreview } from "./builder-preview";
 import { BuilderStyle } from "./builder-style";
+import {
+  SlugSuggestions,
+  SuggestButton,
+  TagSuggestions,
+  useCodeSuggestions,
+} from "./builder-suggest";
 import { DraftControls, type DraftState } from "./draft-controls";
 import {
   type CodeDraft,
@@ -366,6 +372,19 @@ export default function CodeBuilderModal({
     unchanged: !slugChanged,
     enabled: customSlugs,
   });
+  // "Suggest" (lib/code-suggestions): AI on this server, custom back-halves
+  // on the plan, and a typed website link to read.
+  const suggestOn =
+    availability.has("aiThemes") && customSlugs && !isPage && !typedContent;
+  const suggestions = useCodeSuggestions({
+    destination: suggestOn && destination.ok ? destination.url : null,
+    domainId: fields.domainId,
+    codeId: code?.id ?? null,
+    tags,
+    currentTagIds: fields.tagIds,
+  });
+  const suggestError =
+    suggestions.state.status === "error" ? suggestions.state.message : null;
   const domainChanged =
     Boolean(code) && fields.domainId !== (code?.domain?.id ?? null);
   const host =
@@ -1010,6 +1029,16 @@ export default function CodeBuilderModal({
       {domainOptions ? (
         <div className="space-y-1">
           <SlugField
+            action={
+              suggestOn && (
+                <SuggestButton
+                  disabled={!destination.ok}
+                  label="Suggest back-halves"
+                  loading={suggestions.loading}
+                  onClick={() => suggestions.request("slug")}
+                />
+              )
+            }
             allowed={customSlugs}
             disabled={isPending}
             editing={editing}
@@ -1023,6 +1052,14 @@ export default function CodeBuilderModal({
             }
             value={fields.slug}
           />
+          {suggestOn && suggestions.field !== null && (
+            <SlugSuggestions
+              error={suggestions.field === "slug" ? suggestError : null}
+              onPick={(slug) => update("slug", slug)}
+              suggestions={suggestions.current?.slugs ?? null}
+              value={fields.slug}
+            />
+          )}
         </div>
       ) : builderData || builderError ? (
         // Loaded without domain options: the server still generates a link.
@@ -1085,6 +1122,16 @@ export default function CodeBuilderModal({
             value={fields.folderId}
           />
           <TagsField
+            action={
+              suggestOn && (
+                <SuggestButton
+                  disabled={!destination.ok || tags === null}
+                  label="Suggest tags"
+                  loading={suggestions.loading}
+                  onClick={() => suggestions.request("tags")}
+                />
+              )
+            }
             disabled={isPending}
             onChange={(tagIds) => update("tagIds", tagIds)}
             onCreated={(tag) =>
@@ -1092,7 +1139,20 @@ export default function CodeBuilderModal({
             }
             tags={tags}
             value={fields.tagIds}
-          />
+          >
+            {suggestOn && suggestions.field !== null && (
+              <TagSuggestions
+                error={suggestions.field === "tags" ? suggestError : null}
+                onChange={(tagIds) => update("tagIds", tagIds)}
+                onCreated={(tag) =>
+                  setCreatedTags((list) => [...(list ?? []), tag])
+                }
+                suggestions={suggestions.current?.tags ?? null}
+                tags={tags}
+                value={fields.tagIds}
+              />
+            )}
+          </TagsField>
         </div>
       ) : (
         <p className="text-muted-foreground text-xs">

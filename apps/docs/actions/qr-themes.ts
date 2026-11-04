@@ -24,6 +24,7 @@ import type {
   SavedTheme,
   ThemeActionResult,
 } from "@/app/dashboard/themes/_lib/theme";
+import { noteLimitUsage } from "@/lib/limit-notices";
 import { getPlan, getPlanForScope, getPlanLimits } from "@/lib/plans";
 import { getActiveScope } from "@/lib/scope";
 import { getCurrentUserId, logError } from "@/lib/shared";
@@ -172,12 +173,14 @@ export async function createTheme(formData: {
       .returning();
 
     // Concurrent saves can both pass the check above; keep only what the plan allows.
-    if (
-      Number.isFinite(limit) &&
-      (await countThemesInScope(personal)) > limit
-    ) {
-      await db.delete(themeTable).where(eq(themeTable.id, insertedTheme.id));
-      return limitReached();
+    if (Number.isFinite(limit)) {
+      const used = await countThemesInScope(personal);
+      if (used > limit) {
+        await db.delete(themeTable).where(eq(themeTable.id, insertedTheme.id));
+        return limitReached();
+      }
+      // You hear about it at 90% and 100% (after the response).
+      noteLimitUsage(personal, "savedThemes", { used, limit });
     }
 
     revalidate();
@@ -365,6 +368,10 @@ export async function copyThemeToTeam(
       createdAt: now,
       updatedAt: now,
     });
+    // Owners hear about it at 90% and 100% (after the response).
+    if (Number.isFinite(limits.savedThemes)) {
+      noteLimitUsage(scope, "savedThemes");
+    }
 
     revalidate();
     return { ok: true, data: { id } };

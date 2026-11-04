@@ -16,6 +16,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { assertBindableDomains } from "@/app/dashboard/domains/_lib/domains";
 import { HttpError } from "@/lib/error-response";
+import { noteLimitUsage } from "@/lib/limit-notices";
 import { getPlanForScope, getPlanLimits } from "@/lib/plans";
 import { type ActiveScope, getActiveScope } from "@/lib/scope";
 import { logError } from "@/lib/shared";
@@ -851,9 +852,15 @@ async function withSlotCheck(
   }
   const changed = await apply();
   // Concurrent requests may have used the same slots: re-check after writing.
-  if (capped && (await countUnarchived(scope)) > limit) {
-    await undo(changed);
-    throw limitReached(limit);
+  if (capped) {
+    const used = await countUnarchived(scope);
+    if (used > limit) {
+      await undo(changed);
+      throw limitReached(limit);
+    }
+    // Owners hear about it at 90% and 100% (after the response).
+    if (changed.length > 0)
+      noteLimitUsage(scope, "dynamicCodes", { used, limit });
   }
   return changed;
 }

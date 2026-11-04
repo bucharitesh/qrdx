@@ -22,6 +22,7 @@ import {
   PanelFallback,
   PlanLock,
 } from "./routing-panel";
+import { UtmTemplatesMenu } from "./utm-templates";
 
 const FIELDS = [
   { key: "source", param: "utm_source", placeholder: "qr" },
@@ -266,26 +267,39 @@ function UtmEditor({
       </div>
 
       {error && <PanelError message={error} />}
-      <div className="flex flex-wrap justify-end gap-2">
-        {settings.utm && (
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        {/* Saved templates: nothing renders while off (plan or server). */}
+        <div>
+          {!locked && (
+            <UtmTemplatesMenu
+              // Checked by the server when it's saved as a template.
+              current={fromDraft(draft) as UtmConfig}
+              disabled={isPending}
+              onApply={(utm) => setDraft(toDraft(utm))}
+            />
+          )}
+        </div>
+        <div className="ml-auto flex flex-wrap justify-end gap-2">
+          {settings.utm && (
+            <Button
+              disabled={isPending}
+              onClick={() => save(toDraft(null))}
+              size="sm"
+              type="button"
+              variant="ghost"
+            >
+              Remove all
+            </Button>
+          )}
           <Button
-            disabled={isPending}
-            onClick={() => save(toDraft(null))}
+            disabled={isPending || !dirty || locked}
+            onClick={() => save(draft)}
             size="sm"
             type="button"
-            variant="ghost"
           >
-            Remove all
+            {isPending ? "Saving…" : "Save parameters"}
           </Button>
-        )}
-        <Button
-          disabled={isPending || !dirty || locked}
-          onClick={() => save(draft)}
-          size="sm"
-          type="button"
-        >
-          {isPending ? "Saving…" : "Save parameters"}
-        </Button>
+        </div>
       </div>
     </PanelCard>
   );

@@ -3,9 +3,9 @@
 -- code builder's UTM panel, instead of retyping utm_source, utm_medium and
 -- utm_campaign for every code.
 --
--- NOT USED BY ANY CODE YET. Written by the dashboard-gaps agent (2026-11-04),
--- which stopped here as its brief says for schema changes. Apply it before
--- deploying the code that reads it; nothing deployed today reads it.
+-- Written by the dashboard-gaps agent (2026-11-04). Read by the UTM panel's
+-- templates (apps/docs/lib/utm-templates.ts, feat/code-features), which
+-- stay hidden until this is applied: the missing table counts as "off".
 --
 -- Additive and idempotent: safe to run more than once, in one transaction. It
 -- creates a new table and its indexes and changes no existing table or
@@ -13,12 +13,14 @@
 --
 -- `utm` holds the same shape as qr_code.utm, validated by the app with
 -- utmConfigSchema (apps/docs/lib/redirect/routing.ts) on read and write.
--- Scope follows qr_preset: the creator, plus the team when it belongs to
--- one (null = the creator's personal scope). Deleting the creator or the
--- team deletes their templates.
+-- Scope: the workspace (organization_id, required: every row belongs to
+-- one, as with the app's other workspace data since workspaces shipped).
+-- user_id is the creator. Deleting the creator or the workspace deletes
+-- their templates. (Changed from a nullable organization_id on 2026-11-05,
+-- before this file was applied, by the code-features agent.)
 --
 -- Constraint and index names match what drizzle-kit generates from this
--- definition, to add to packages/database/schema.ts with the feature:
+-- definition, now `utmTemplate` in packages/database/schema.ts:
 --
 --   export const utmTemplate = pgTable(
 --     "utm_template",
@@ -27,10 +29,9 @@
 --       userId: text("user_id")
 --         .notNull()
 --         .references(() => user.id, { onDelete: "cascade" }),
---       organizationId: text("organization_id").references(
---         () => organization.id,
---         { onDelete: "cascade" }
---       ),
+--       organizationId: text("organization_id")
+--         .notNull()
+--         .references(() => organization.id, { onDelete: "cascade" }),
 --       name: text("name").notNull(),
 --       utm: json("utm").$type<unknown>().notNull(),
 --       createdAt: timestamp("created_at").notNull(),
@@ -47,7 +48,7 @@ BEGIN;
 CREATE TABLE IF NOT EXISTS "utm_template" (
   "id" text PRIMARY KEY NOT NULL,
   "user_id" text NOT NULL,
-  "organization_id" text,
+  "organization_id" text NOT NULL,
   "name" text NOT NULL,
   "utm" json NOT NULL,
   "created_at" timestamp NOT NULL,
