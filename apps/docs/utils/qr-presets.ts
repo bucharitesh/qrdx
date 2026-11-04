@@ -1,3 +1,4 @@
+import { isWeakSharpPair } from "qrdx";
 import type { ColorConfig } from "qrdx/types";
 import { christmasPresets } from "@/components/seasonal/christmas-presets";
 import { halloweenPresets } from "@/components/seasonal/halloween-presets";
@@ -1838,12 +1839,18 @@ const HALLOWEEN_TAGS: Record<keyof typeof halloweenPresets, string[]> = {
 
 /**
  * Seasonal themes keep their look, except an eye centre the generator rejects
- * (star centres read only at some sizes): it becomes the eye frame's own
- * matching centre, which always reads.
+ * (star centres read only at some sizes) or that the engine flags in sharp
+ * renders (a circle centre in rounded-corner eyes with a light body, which
+ * strict scanners miss in screenshots: Halloween Ghost, Christmas Pine and
+ * New Year Midnight): it becomes the eye frame's own matching centre, which
+ * always reads.
  */
 function scannableCentres(styles: ThemeStyles): ThemeStyles {
   const dot = styles.cornerEyeDotPattern;
-  if (!(dot && (UNSCANNABLE.dots as readonly string[]).includes(dot))) {
+  const eye = styles.cornerEyePattern ?? "gear";
+  const body = styles.bodyPattern ?? "circle";
+  const rejected = dot && (UNSCANNABLE.dots as readonly string[]).includes(dot);
+  if (!(dot && (rejected || isWeakSharpPair(dot, eye, body)))) {
     return styles;
   }
   return {
