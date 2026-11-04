@@ -36,6 +36,7 @@ import {
   Edit2 as Pencil,
   ArrowRotateLeft as RotateCcw,
   Setting2,
+  Share,
   StarSlash as StarOff,
   Tag2 as Tags,
   Trash as Trash2,
@@ -73,6 +74,7 @@ import { useWorkspaceSlug } from "@/components/workspace-provider";
 import { downloadCodeQr } from "./code-qr";
 import { MoveToFolderDialog } from "./folder-dialogs";
 import { NotesDialog } from "./notes-dialog";
+import { ShareStatsDialog } from "./share-stats-dialog";
 import { TagsDialog } from "./tag-dialogs";
 import { useOpenInPlayground } from "./use-open-in-playground";
 import { useOrganizeAction } from "./use-organize-action";
@@ -107,7 +109,7 @@ export function CodeActionsMenu({
   const openInPlayground = useOpenInPlayground();
   const { run, isPending } = useOrganizeAction();
   const [dialog, setDialog] = useState<
-    "move" | "tags" | "notes" | "purge" | null
+    "move" | "tags" | "notes" | "purge" | "share" | null
   >(null);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -349,6 +351,10 @@ export function CodeActionsMenu({
               </DropdownMenuItem>
             </>
           )}
+          {/* Public, read-only analytics page (share-stats-dialog.tsx) */}
+          <DropdownMenuItem onSelect={() => setDialog("share")}>
+            <Share /> Share analytics…
+          </DropdownMenuItem>
           <DropdownMenuItem onSelect={() => openInPlayground(code)}>
             <Palette /> Edit design in playground
           </DropdownMenuItem>
@@ -428,6 +434,11 @@ export function CodeActionsMenu({
         </DropdownMenuContent>
       </DropdownMenu>
 
+      <ShareStatsDialog
+        code={code}
+        onOpenChange={(open) => setDialog(open ? "share" : null)}
+        open={dialog === "share"}
+      />
       {listItem && (
         <>
           <MoveToFolderDialog

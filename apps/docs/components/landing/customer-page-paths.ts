@@ -6,9 +6,11 @@
  *   the page owner configured may load there;
  * - the scanner (/scan), which promises no tracking;
  * - template demos (/templates/<type>/<id>), which must look like a published
- *   page and record nothing (the /templates gallery itself is a normal page).
+ *   page and record nothing (the /templates gallery itself is a normal page);
+ * - public analytics pages (/stats/<token>), shared by a code's owner: the
+ *   token in the path is the page's only key.
  */
-const UNTRACKED_PATHS = ["/p", "/q", "/ended", "/scan"];
+const UNTRACKED_PATHS = ["/p", "/q", "/ended", "/scan", "/stats"];
 const TEMPLATE_DEMO_PATH = /^\/templates\/[^/]+\/[^/]+\/?$/;
 
 export function isUntrackedPath(pathname: string | null): boolean {
