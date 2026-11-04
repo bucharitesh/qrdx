@@ -31,13 +31,19 @@ interface EyeColorsSectionProps {
   /** The style with defaults filled in */
   style: QRStyle;
   onChange: (eyeColors: QRStyle["eyeColors"]) => void;
+  /** Open it (a link asked for this section) */
+  expanded?: boolean;
 }
 
 /**
  * Per-eye colors: each corner eye's frame and center can differ from the
  * Eyes and Dots colors. An eye without its own color keeps those.
  */
-export function EyeColorsSection({ style, onChange }: EyeColorsSectionProps) {
+export function EyeColorsSection({
+  style,
+  onChange,
+  expanded,
+}: EyeColorsSectionProps) {
   const custom = hasEyeColors(style);
 
   const setEye = (
@@ -61,7 +67,8 @@ export function EyeColorsSection({ style, onChange }: EyeColorsSectionProps) {
 
   return (
     <ControlSection
-      id="section-eye-colors"
+      expanded={expanded}
+      section="eye-colors"
       summary={
         custom ? (
           <span className="flex -space-x-1">

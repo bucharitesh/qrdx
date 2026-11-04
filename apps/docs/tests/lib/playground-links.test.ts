@@ -173,7 +173,9 @@ describe("other parameters", () => {
 
   it("only takes sections the Design tab can open", () => {
     expect(parseHref("/playground?section=logo").section).toBe("logo");
-    expect(parseHref("/playground?section=shape").section).toBeUndefined();
+    expect(parseHref("/playground?section=stickers").section).toBeUndefined();
+    // The engine-option sections (customization-sections.tsx) open too
+    expect(parseHref("/playground?section=shape").section).toBe("shape");
     // Art isn't a Design section any more: it opens the Art tab.
     expect(parseHref("/playground?section=art").section).toBeUndefined();
   });

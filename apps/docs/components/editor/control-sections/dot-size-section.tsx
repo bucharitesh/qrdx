@@ -12,13 +12,19 @@ interface DotSizeSectionProps {
   /** The style with defaults filled in */
   style: QRStyle;
   onChange: (moduleScale: number | undefined) => void;
+  /** Open it (a link asked for this section) */
+  expanded?: boolean;
 }
 
 /**
  * Size of each data dot (moduleScale). Every dot shape stops at the
  * smallest size it still scans at, so the range depends on the shape.
  */
-export function DotSizeSection({ style, onChange }: DotSizeSectionProps) {
+export function DotSizeSection({
+  style,
+  onChange,
+  expanded,
+}: DotSizeSectionProps) {
   const pattern = style.bodyPattern ?? "circle";
   const floor = Math.round((MODULE_SCALE_FLOOR[pattern] ?? 1) * 100);
   const value = Math.max(floor, Math.round((style.moduleScale ?? 1) * 100));
@@ -26,7 +32,8 @@ export function DotSizeSection({ style, onChange }: DotSizeSectionProps) {
 
   return (
     <ControlSection
-      id="section-dot-size"
+      expanded={expanded}
+      section="dot-size"
       summary={`${value}%`}
       title="Dot size"
     >
