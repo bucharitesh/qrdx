@@ -6,6 +6,7 @@ import { env } from "@/lib/env";
 import { HttpError, handleError } from "@/lib/error-response";
 import { emitFormSubmitted } from "@/lib/events";
 import { validateAnswers } from "@/lib/landing/blocks/form-fields";
+import { noteLimitUsage } from "@/lib/limit-notices";
 import {
   enforceRateLimits,
   getClientIp,
@@ -171,6 +172,13 @@ export async function POST(request: NextRequest, { params }: Context) {
     });
     // A count only: nothing about the visitor, the page or the answers.
     trackServer("form_submitted", {});
+    // Owners hear about the monthly cap at 90% and 100% (after the response).
+    if (scope.organizationId) {
+      noteLimitUsage(
+        { userId: scope.userId, organizationId: scope.organizationId },
+        "formResponses",
+      );
+    }
 
     return json({ ok: true }, 201);
   } catch (error) {
