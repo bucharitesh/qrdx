@@ -142,6 +142,13 @@ describe("wall tiles", () => {
         const params = parsePlaygroundParams(url.search);
         expect(Object.keys(params).length, tile.id).toBeGreaterThan(0);
         if (params.preset) expect(defaultPresets).toHaveProperty(params.preset);
+        // Logo QR and Image QR open the Art tab in their own mode.
+        if (tile.art) {
+          expect(params, tile.id).toEqual({
+            tab: "art",
+            art: tile.art.mode === "logo" ? "logo" : "image",
+          });
+        }
       } else {
         expect(path, tile.id).toMatch(/^\/docs\//);
         expect(

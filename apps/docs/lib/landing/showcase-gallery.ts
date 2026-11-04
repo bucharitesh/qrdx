@@ -150,9 +150,15 @@ const themeName = (id: string) => defaultPresets[id]?.label ?? id;
 const kebab = (id: string) =>
   id.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
 
-/** The playground's Design tab, where logos and Logo QR or Image QR art live. */
+/** The playground's Design tab (border templates, eye shapes). */
 const DESIGN_TAB = playgroundHref({ tab: "customisations" });
+/** Its Logo section, where center logos live. */
 const LOGO_SECTION = playgroundHref({ tab: "customisations", section: "logo" });
+/** The Art tab, in Logo QR or Image QR mode. */
+const ART_TAB = {
+  logo: playgroundHref({ tab: "art", art: "logo" }),
+  halftone: playgroundHref({ tab: "art", art: "image" }),
+} as const satisfies Record<QRArtMode, string>;
 
 const BODY_LABELS = new Map(BODY_CATALOG.map((b) => [b.value, b.label]));
 const EYE_LABELS = new Map(EYE_CATALOG.map((e) => [e.value, e.label]));
@@ -315,7 +321,7 @@ const art = (
     alt: `${name} code showing ${ART_SAMPLES[sample]} ${look}`,
     value: SITE,
     preset,
-    href: DESIGN_TAB,
+    href: ART_TAB[mode],
     art: { mode, variant, intensity: 0.7, sample },
     shape: "square",
   };
