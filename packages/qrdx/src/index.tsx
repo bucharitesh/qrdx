@@ -87,11 +87,14 @@ export * from "./qr-code";
 export { QRCodeCanvas } from "./qr-code-canvas";
 export {
   getStylePairRisk,
+  isWeakSharpPair,
+  SHARP_DOT_EYE_SAFE_BODIES,
   type StylePairRisk,
   WEAK_BODY_EYES,
   WEAK_DOT_EYES,
   WEAK_DOTS,
   WEAK_EYES,
+  WEAK_SHARP_DOT_EYES,
 } from "./scan-risk";
 export * from "./scan-score";
 export * from "./templates";
