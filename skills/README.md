@@ -47,4 +47,4 @@ Each skill contains:
 
 ## License
 
-[AGPL-3.0-or-later](../license.md), same as the rest of this repository.
+[AGPL-3.0-or-later](../LICENSE), same as the rest of this repository.
