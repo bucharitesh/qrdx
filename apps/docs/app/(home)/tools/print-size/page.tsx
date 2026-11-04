@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { MockupImage } from "@/components/mockups/mockup-image";
 import { useCaseImages } from "@/components/mockups/visuals";
+import { PrintSizePlacements } from "@/components/sections/page-codes/page-code-sections";
 import { FaqList } from "@/components/sections/tools/faq-list";
 import { PrintSizeCalculator } from "@/components/sections/tools/print-size-calculator";
 import { ToolHero } from "@/components/sections/tools/tool-hero";
@@ -141,6 +142,8 @@ export default function PrintSizePage() {
           />
         </div>
       </section>
+
+      <PrintSizePlacements />
 
       <FaqList title="QR code size FAQ" faqs={faqs} />
     </main>
