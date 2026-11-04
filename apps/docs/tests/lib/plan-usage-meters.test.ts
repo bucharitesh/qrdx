@@ -124,10 +124,12 @@ describe("upgradeAction", () => {
     expect(upgradeAction("free", true)).toEqual({
       label: "Upgrade to Pro",
       href: "/pricing",
+      plan: "pro",
     });
     expect(upgradeAction("pro", true)).toEqual({
       label: "Upgrade to Business",
       href: "/pricing",
+      plan: "business",
     });
     expect(upgradeAction("business", true)).toBeNull();
   });
