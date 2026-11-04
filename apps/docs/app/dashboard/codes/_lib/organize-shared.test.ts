@@ -98,6 +98,8 @@ describe("list filters", () => {
       folder: "f_1",
       tags: "t1,t2,t1,bad id",
       fav: "1",
+      type: "page",
+      domain: "dom_1",
       sort: "scans",
       page: "3",
     });
@@ -107,6 +109,8 @@ describe("list filters", () => {
       folder: "f_1",
       tags: ["t1", "t2"],
       favorites: true,
+      type: "page",
+      domain: "dom_1",
       sort: "scans",
       page: 3,
     });
@@ -115,8 +119,12 @@ describe("list filters", () => {
       sort: "drop table",
       page: "-1",
       folder: "../x",
+      type: "wifi",
+      domain: "../x",
     });
     assert.equal(fallback.status, "active");
+    assert.equal(fallback.type, null);
+    assert.equal(fallback.domain, null);
     assert.equal(fallback.sort, "newest");
     assert.equal(fallback.page, 1);
     assert.equal(fallback.folder, null);
