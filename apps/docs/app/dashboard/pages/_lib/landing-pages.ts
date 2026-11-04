@@ -11,6 +11,7 @@ import { and, count, desc, eq, inArray, isNull, type SQL } from "drizzle-orm";
 import { z } from "zod";
 import {
   codeStatus,
+  createCodeSchema,
   createCodes,
   type QrCodeStatus,
   scopeWhere,
@@ -48,6 +49,11 @@ export const createPageSchema = z.object({
   type: slugPart,
   variantId: slugPart.nullish(),
   title: pageTitleSchema,
+  /**
+   * The page code's QR design, checked like a code's (the playground passes
+   * its current design); omitted = the workspace's default theme.
+   */
+  style: createCodeSchema.shape.style,
 });
 
 export const publishPageSchema = z.object({
@@ -402,7 +408,7 @@ export async function createPage(
       {
         destinationUrl: pagePlaceholderUrl(),
         title: input.title ?? template.label,
-        style: null,
+        style: input.style ?? null,
         domainId: null,
         pageId,
       },

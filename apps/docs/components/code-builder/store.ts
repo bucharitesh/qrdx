@@ -1,13 +1,21 @@
 "use client";
 
 import { toast } from "@repo/design-system";
+import { useEffect, useId } from "react";
 import { create } from "zustand";
 import type {
   QrCodeListItem,
   QrCodeView,
 } from "@/app/dashboard/codes/_lib/qr-codes";
+import type { QRStyle } from "@/types/theme";
 import type { OptimisticEntry } from "./optimistic";
 import type { BuilderFields } from "./types";
+
+/**
+ * Where the builder was opened from. "playground": the playground editor is
+ * underneath, so results apply to it in place and nothing navigates there.
+ */
+export type CodeBuilderOrigin = "playground";
 
 /** What `openCodeBuilder` was asked to open. */
 export type CodeBuilderRequest =
@@ -15,6 +23,7 @@ export type CodeBuilderRequest =
       mode: "create";
       /** Prefill, e.g. a pasted URL */
       initial?: Partial<BuilderFields>;
+      origin?: CodeBuilderOrigin;
     }
   | {
       mode: "edit";
@@ -24,6 +33,18 @@ export type CodeBuilderRequest =
        * list row (QrCodeListItem) also carries its folder and tags.
        */
       code?: QrCodeView | QrCodeListItem;
+      origin?: CodeBuilderOrigin;
+    }
+  | {
+      /** The hosted page gallery (NewCodeDialog), at a type and template */
+      mode: "page";
+      /** A page type (lib/landing/templates); none = the type list */
+      type?: string;
+      /** A template of that type to preselect */
+      template?: string;
+      /** The page code's design; none = the workspace's default theme */
+      style?: QRStyle | null;
+      origin?: CodeBuilderOrigin;
     };
 
 interface CodeBuilderState {
@@ -75,16 +96,31 @@ export const useCodeBuilderStore = create<CodeBuilderState>()((set) => ({
 }));
 
 /**
+ * Registers the calling component as a builder host and says whether it is
+ * the one that renders (the first mounted). Kept here, apart from the host's
+ * markup, so the playground can register a host without loading the builder.
+ */
+export function useCodeBuilderHostSlot(): boolean {
+  const id = useId();
+  const registerHost = useCodeBuilderStore((state) => state.registerHost);
+  const active = useCodeBuilderStore((state) => state.hosts[0] === id);
+  useEffect(() => registerHost(id), [registerHost, id]);
+  return active;
+}
+
+/**
  * Opens the dynamic code builder from anywhere in the app (the app shell
- * mounts its host). Create a new code, or edit one by id.
+ * and the playground mount a host). Create a new code, edit one by id, or
+ * open the hosted page gallery.
  */
 export function openCodeBuilder(
   request:
-    | { mode: "create"; initial?: Partial<BuilderFields> }
+    | Extract<CodeBuilderRequest, { mode: "create" | "page" }>
     | {
         mode: "edit";
         codeId?: string;
         code?: QrCodeView | QrCodeListItem;
+        origin?: CodeBuilderOrigin;
       },
 ): void {
   const store = useCodeBuilderStore.getState();
@@ -103,7 +139,12 @@ export function openCodeBuilder(
       toast.error("Couldn't open this code.");
       return;
     }
-    store.open({ mode: "edit", codeId, code: request.code });
+    store.open({
+      mode: "edit",
+      codeId,
+      code: request.code,
+      ...(request.origin && { origin: request.origin }),
+    });
     return;
   }
   store.open(request);
