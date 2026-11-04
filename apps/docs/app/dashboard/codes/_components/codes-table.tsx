@@ -13,6 +13,7 @@ import {
 import { cn } from "@repo/design-system/lib/utils";
 import { Folder2 as Folder, Notepad2 as NotebookPen } from "iconsax-reactjs";
 import Link from "next/link";
+import { useState } from "react";
 import { setQrCodesFavorite } from "@/actions/bulk-codes";
 import type { TagRow } from "@/app/dashboard/codes/_lib/organize";
 import type { FolderRow } from "@/app/dashboard/codes/_lib/organize-shared";
@@ -60,6 +61,7 @@ export function CodesTable({
   folders,
   tags,
   showFolder = false,
+  keyboardShortcuts = false,
 }: {
   codes: QrCodeListItem[];
   /** Daily scans for the last 7 days, by code id */
@@ -71,8 +73,11 @@ export function CodesTable({
   tags?: TagRow[];
   /** Show each code's folder (when listing across folders) */
   showFolder?: boolean;
+  /** Row keys (see _lib/row-shortcuts.ts) for the row under the pointer or focus */
+  keyboardShortcuts?: boolean;
 }) {
   const inWorkspace = useWorkspaceHref();
+  const [activeRow, setActiveRow] = useState<string | null>(null);
   const selectable = Boolean(selected && onSelect);
   const allSelected =
     selectable &&
@@ -127,6 +132,16 @@ export function CodesTable({
               data-state={isSelected ? "selected" : undefined}
               draggable={!inTrash && selectable}
               key={code.id}
+              onBlur={(event) => {
+                if (!event.currentTarget.contains(event.relatedTarget)) {
+                  setActiveRow((row) => (row === code.id ? null : row));
+                }
+              }}
+              onFocus={() => setActiveRow(code.id)}
+              onMouseEnter={() => setActiveRow(code.id)}
+              onMouseLeave={() =>
+                setActiveRow((row) => (row === code.id ? null : row))
+              }
               onDragStart={(event) =>
                 startCodesDrag(
                   event,
@@ -228,7 +243,13 @@ export function CodesTable({
                 />
               </TableCell>
               <TableCell className="text-right">
-                <CodeActionsMenu code={code} folders={folders} tags={tags} />
+                <CodeActionsMenu
+                  code={code}
+                  folders={folders}
+                  keysActive={activeRow === code.id}
+                  keysEnabled={keyboardShortcuts}
+                  tags={tags}
+                />
               </TableCell>
             </TableRow>
           );
