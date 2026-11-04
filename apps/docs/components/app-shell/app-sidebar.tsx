@@ -117,7 +117,7 @@ function AreaRow({
 }: {
   row: Extract<NavRow, { kind: "area" }>;
   collapsed: boolean;
-  onArea: (href: string) => void;
+  onArea: (href: string, byKeyboard: boolean) => void;
 }) {
   const ItemIcon = row.icon;
   return (
@@ -131,7 +131,8 @@ function AreaRow({
         )}
         data-area-row={row.area}
         href={row.href}
-        onClick={() => onArea(row.href)}
+        // A click from Enter or Space has no pointer details (detail 0).
+        onClick={(event) => onArea(row.href, event.detail === 0)}
       >
         <ItemIcon aria-hidden className="size-4 shrink-0" />
         {!collapsed && (
@@ -196,7 +197,7 @@ function AreaPanel({
   offset: -1 | 0 | 1;
   collapsed: boolean;
   onNavigate?: () => void;
-  onArea: (href: string) => void;
+  onArea: (href: string, byKeyboard: boolean) => void;
   onAction: (action: NavAction) => void;
 }) {
   const pathname = usePathname();
@@ -247,7 +248,9 @@ function AreaPanel({
             )}
             data-area-back=""
             href={area.back.href}
-            onClick={() => onArea(area.back?.href ?? "")}
+            onClick={(event) =>
+              onArea(area.back?.href ?? "", event.detail === 0)
+            }
           >
             <ArrowLeft aria-hidden className="size-4 shrink-0" />
             {!collapsed && <span className="truncate">{area.back.label}</span>}
@@ -429,7 +432,8 @@ export function AppSidebar({
   const rootRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const shown = useRef(current);
-  // Set when the change of area started in this sidebar, so focus follows.
+  // Set when the keyboard changed the area from this sidebar, so focus
+  // follows into the new panel (a pointer click leaves focus alone).
   const leaving = useRef<NavAreaId | null>(null);
 
   useEffect(() => {
@@ -451,8 +455,8 @@ export function AppSidebar({
     target?.focus({ preventScroll: true });
   }, [current]);
 
-  const openArea = (href: string) => {
-    leaving.current = current;
+  const openArea = (href: string, byKeyboard: boolean) => {
+    leaving.current = byKeyboard ? current : null;
     onAreaNavigate?.(href);
   };
   const runAction = (action: NavAction) => {
