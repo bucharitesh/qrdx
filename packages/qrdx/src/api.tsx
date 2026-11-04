@@ -9,6 +9,7 @@ import {
   ERROR_LEVEL_MAP,
 } from "./constants";
 import { isFrameActive, wrapWithFrame } from "./frame";
+import { renderLogo } from "./logo";
 import {
   excavateModules,
   generatePath,
@@ -16,7 +17,6 @@ import {
   resolveErrorLevel,
 } from "./utils";
 import { getSolidColor } from "./utils/color";
-import { fmt } from "./utils/fmt";
 
 export async function getQRAsSVG(props: QRPropsSVG) {
   const {
@@ -85,15 +85,14 @@ export async function getQRAsSVG(props: QRPropsSVG) {
           return res.text();
         });
 
-    image = (
-      <image
-        height={fmt(calculatedImageSettings.h)}
-        href={base64Image}
-        preserveAspectRatio="none"
-        width={fmt(calculatedImageSettings.w)}
-        x={fmt(calculatedImageSettings.x + margin)}
-        y={fmt(calculatedImageSettings.y + margin)}
-      />
+    image = renderLogo(
+      { ...imageSettings, src: base64Image },
+      {
+        x: calculatedImageSettings.x + margin,
+        y: calculatedImageSettings.y + margin,
+        w: calculatedImageSettings.w,
+        h: calculatedImageSettings.h,
+      }
     );
   }
 

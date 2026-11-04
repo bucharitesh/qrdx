@@ -845,3 +845,46 @@ describe("cliSnippet", () => {
     expect(words[3]).toBe("it's a test & more");
   });
 });
+
+// ── Engine options (per-eye colors, dot size, logo layout, autoLevel) ──────
+describe("engine options", () => {
+  const engine: ThemeStyles = {
+    ...plain,
+    showLogo: true,
+    eyeColors: { topLeft: { outer: "#b91c1c" } },
+    moduleScale: 0.8,
+    autoLevel: true,
+    logoOptions: { size: 0.2, x: 0.6 },
+    shape: "circle",
+  };
+  const notes = [
+    LEFT_OUT.eyeColors,
+    LEFT_OUT.moduleScale,
+    LEFT_OUT.autoLevel,
+    LEFT_OUT.logoOptions,
+    LEFT_OUT.shape,
+  ];
+
+  it("lists them as left out where the tab can't express them", () => {
+    for (const [tab, serialize] of Object.entries(ALL_SERIALIZERS)) {
+      if (tab === "api") continue;
+      const { omitted } = serialize(urlInput(engine));
+      for (const note of notes)
+        expect(omitted, `${tab}: ${note}`).toContain(note);
+    }
+  });
+
+  it("carries them in the REST body, which createCodeSchema accepts", () => {
+    const { code, omitted } = restSnippet(urlInput(engine));
+    const body = restBody(code);
+    expect(createCodeSchema.safeParse(body).success).toBe(true);
+    expect(body.style).toEqual(engine);
+    expect(omitted).toEqual([]);
+  });
+
+  it("says nothing about the logo layout when there is no logo", () => {
+    const { omitted } = reactSnippet(urlInput({ ...engine, showLogo: false }));
+    expect(omitted).not.toContain(LEFT_OUT.logoOptions);
+    expect(omitted).not.toContain(LEFT_OUT.autoLevel);
+  });
+});

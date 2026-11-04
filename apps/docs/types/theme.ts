@@ -7,7 +7,12 @@ import {
   cornerEyeDotPatternSchema,
   cornerEyePatternSchema,
   errorLevelSchema,
+  eyeColorsSchema,
+  logoOptionsSchema,
+  MODULE_SCALE_MAX,
+  MODULE_SCALE_MIN,
   qrArtSchema,
+  qrShapeSchema,
 } from "qrdx/types";
 import { z } from "zod";
 
@@ -71,6 +76,33 @@ export const themeStylePropsSchema = z.object({
   art: qrArtSchema
     .optional()
     .describe("Logo QR or Image QR (halftone) art built from an image"),
+  eyeColors: eyeColorsSchema
+    .optional()
+    .describe(
+      "Per-eye colors (topLeft, topRight, bottomLeft), each with an outer frame and inner dot color that override eyeColor and dotColor",
+    ),
+  moduleScale: z
+    .number()
+    .min(MODULE_SCALE_MIN)
+    .max(MODULE_SCALE_MAX)
+    .optional()
+    .describe("Size of each data module, 0.5 to 1 (default 1)"),
+  autoLevel: z
+    .boolean()
+    .optional()
+    .describe(
+      "Raise error correction to H when the logo covers more than 7% of the code",
+    ),
+  shape: qrShapeSchema
+    .optional()
+    .describe(
+      "Outline of the code: square (default) or circle, which puts the code in a disc of decorative dots",
+    ),
+  logoOptions: logoOptionsSchema
+    .optional()
+    .describe(
+      "Logo size (share of the code width), clear space in modules and position (0 to 1 across the code)",
+    ),
 });
 
 export type ThemeStyles = z.infer<typeof themeStylePropsSchema>;

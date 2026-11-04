@@ -10,6 +10,7 @@ import { emitSound } from "@/components/editor/sound";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { track } from "@/lib/analytics";
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
+import { styleEngineOptions } from "@/lib/qr-design/engine-options";
 import { useQREditorStore } from "@/store/editor-store";
 
 export function CopySVGButton() {
@@ -28,6 +29,9 @@ export function CopySVGButton() {
           bodyPattern: themeState.styles.bodyPattern,
           hideLogo: !themeState.styles.showLogo,
           logo: themeState.styles.customLogo ?? DEFAULT_QR_LOGO,
+          level: themeState.styles.level,
+          margin: themeState.styles.margin,
+          ...styleEngineOptions(themeState.styles),
         }),
         level: themeState.styles.level,
         cornerEyePattern: themeState.styles.cornerEyePattern,

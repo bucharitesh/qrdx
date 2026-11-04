@@ -49,6 +49,7 @@ import { track } from "@/lib/analytics";
 import { useTrackQrGenerated } from "@/lib/analytics/react";
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
 import { playgroundHref } from "@/lib/playground-links";
+import { styleEngineOptions } from "@/lib/qr-design/engine-options";
 import { soundEvent } from "@/lib/sound/emit";
 import { dubshSchema, googleDriveSchema } from "@/lib/validations/qr-content";
 import { useQREditorStore } from "@/store/editor-store";
@@ -306,6 +307,7 @@ export function TypeGenerator({ type }: { type: ContentType }) {
               size={288}
               templateId={styles.templateId}
               value={payload}
+              {...styleEngineOptions(styles)}
             />
           ) : (
             <div className="flex flex-col items-center gap-3 px-6 text-center">

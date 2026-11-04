@@ -321,6 +321,36 @@ describe("scan-score", () => {
     expect(result.score).toBeLessThan(reference);
   });
 
+  it("warns about circle centres that fail sharp renders, at no cost", async () => {
+    const style = {
+      bodyPattern: "circle",
+      cornerEyePattern: "rounded",
+      cornerEyeDotPattern: "circle",
+    } as const;
+    const result = await getScanScore({
+      value: VALUE,
+      size: 256,
+      margin: 4,
+      ...style,
+    });
+    const pair = result.checks.find((check) => check.id === "style-pair");
+    expect(pair?.passed).toBe(false);
+    expect(pair?.message).toMatch(/circle centres in rounded eyes/);
+    expect(pair?.fix).toMatch(/rounded centre/);
+    // The same code with a rounded centre: no warning, the same score
+    const rounded = await getScanScore({
+      value: VALUE,
+      size: 256,
+      margin: 4,
+      ...style,
+      cornerEyeDotPattern: "rounded",
+    });
+    expect(
+      rounded.checks.find((check) => check.id === "style-pair")
+    ).toBeUndefined();
+    expect(result.score).toBe(rounded.score);
+  });
+
   it("flags fragile shapes on their own, and nothing new", () => {
     expect(getStylePairRisk({ cornerEyeDotPattern: "star" })?.kind).toBe("dot");
     expect(getStylePairRisk({ cornerEyePattern: "curly" })?.kind).toBe("eye");

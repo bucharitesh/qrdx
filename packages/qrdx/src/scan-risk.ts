@@ -57,9 +57,90 @@ export const WEAK_DOTS: readonly CornerEyeDotPattern[] = [
   "star",
 ];
 
+// Sharp renders (screens, PNG exports, high-resolution prints), with no
+// camera blur: a circle centre inside these eyes fails jsQR at some sizes,
+// while zbar reads every one. The circle is a little short along the
+// diagonal, so the finder's 1:1:3:1:1 cross-check fails inside rings with
+// square corners; round rings (gear, circle, octagon) are unaffected.
+// Measured on 3 values × 4–28 px per module (tests/decode-sharp-centre.test.ts).
+// One decoder only, so these warn in the scan score; picking them is not
+// blocked and no default changes until a phone check confirms it.
+
+/** Eyes whose circle centre fails strict decoders in sharp renders. */
+export const WEAK_SHARP_DOT_EYES: Partial<
+  Record<CornerEyeDotPattern, readonly CornerEyePattern[]>
+> = {
+  circle: [
+    "square",
+    "rounded",
+    "diya",
+    "extra-rounded",
+    "message",
+    "pointy",
+    "leaf",
+    "leaf-reverse",
+    "drop",
+    "bevel",
+    "squircle",
+    "cushion",
+    "shield",
+    "petal",
+  ],
+};
+
+// Solid bodies leave jsQR enough margin to read anyway
+const SOLID_BODIES = ["square", "liquid", "classy", "classy-rounded"] as const;
+
+/**
+ * Bodies that read every sharp render of a weak pair above, keyed
+ * "centre/eye". Pairs not listed fail with every body.
+ */
+export const SHARP_DOT_EYE_SAFE_BODIES: Partial<
+  Record<`${CornerEyeDotPattern}/${CornerEyePattern}`, readonly BodyPattern[]>
+> = {
+  "circle/rounded": SOLID_BODIES,
+  "circle/extra-rounded": SOLID_BODIES,
+  "circle/message": [...SOLID_BODIES, "leaf"],
+  "circle/pointy": SOLID_BODIES,
+  "circle/leaf-reverse": SOLID_BODIES,
+  "circle/drop": SOLID_BODIES,
+  "circle/bevel": [...SOLID_BODIES, "leaf"],
+  "circle/squircle": [
+    ...SOLID_BODIES,
+    "circle",
+    "diamond",
+    "circle-mixed",
+    "rounded",
+    "horizontal-line",
+    "leaf",
+    "heart",
+    "mosaic",
+    "octagon",
+  ],
+  "circle/cushion": SOLID_BODIES,
+  "circle/shield": [...SOLID_BODIES, "rounded", "horizontal-line", "leaf"],
+  "circle/petal": SOLID_BODIES,
+};
+
+/** True when this centre, eye and body fail strict decoders in sharp renders. */
+export function isWeakSharpPair(
+  dot: CornerEyeDotPattern,
+  eye: CornerEyePattern,
+  body: BodyPattern
+): boolean {
+  return (
+    (WEAK_SHARP_DOT_EYES[dot]?.includes(eye) ?? false) &&
+    !SHARP_DOT_EYE_SAFE_BODIES[`${dot}/${eye}`]?.includes(body)
+  );
+}
+
 export interface StylePairRisk {
-  /** A weak pair ("dot-eye", "body-eye") or a weak shape on its own */
-  kind: "dot-eye" | "body-eye" | "eye" | "dot";
+  /**
+   * A weak pair ("dot-eye", "body-eye"), a weak shape on its own, or a
+   * centre and eye that fail strict decoders in sharp renders only
+   * ("sharp-dot-eye": a warning; the editor doesn't block it).
+   */
+  kind: "dot-eye" | "body-eye" | "eye" | "dot" | "sharp-dot-eye";
   message: string;
   fix: string;
 }
@@ -103,6 +184,13 @@ export function getStylePairRisk(
       kind: "eye",
       message: `${eye} eyes only read in lenient decoders`,
       fix: "Pick square, rounded or gear eyes",
+    };
+  }
+  if (isWeakSharpPair(dot, eye, body)) {
+    return {
+      kind: "sharp-dot-eye",
+      message: `${dot} centres in ${eye} eyes are missed by some decoders on screens and in sharp prints`,
+      fix: "Pick a rounded centre, or gear or octagon eyes",
     };
   }
   return null;
