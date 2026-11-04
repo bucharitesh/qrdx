@@ -10,6 +10,7 @@ import {
 import { cn } from "@repo/design-system/lib/utils";
 import {
   TickCircle as CircleCheck,
+  MinusCirlce as CircleMinus,
   CloseCircle as CircleX,
   ScanBarcode,
 } from "iconsax-reactjs";
@@ -43,16 +44,24 @@ export const GRADE_COLORS: Record<ScanGrade, string> = {
   fails: "bg-red-500",
 };
 
+/** Failed checks first (their fixes on top), then passed, then not checked. */
+const checkOrder = (check: ScanCheck) =>
+  check.passed ? (check.skipped ? 2 : 1) : 0;
+
 export function ScanCheckList({ checks }: { checks: ScanCheck[] }) {
-  // Failed checks first, so the fixes are at the top.
-  const sorted = [...checks].sort(
-    (a, b) => Number(a.passed) - Number(b.passed),
-  );
+  const sorted = [...checks].sort((a, b) => checkOrder(a) - checkOrder(b));
   return (
     <ul className="space-y-2.5">
       {sorted.map((check) => (
         <li className="flex gap-2 text-sm" key={check.id}>
-          {check.passed ? (
+          {check.skipped ? (
+            // Couldn't be checked: neither a pass nor a problem.
+            <CircleMinus
+              aria-label="Not checked"
+              className="mt-0.5 size-4 shrink-0 text-muted-foreground"
+              variant="Bold"
+            />
+          ) : check.passed ? (
             <CircleCheck
               className="mt-0.5 size-4 shrink-0 text-emerald-500"
               variant="Bold"
@@ -64,7 +73,14 @@ export function ScanCheckList({ checks }: { checks: ScanCheck[] }) {
             />
           )}
           <div className="min-w-0">
-            <p className="leading-snug">{check.message}</p>
+            <p
+              className={cn(
+                "leading-snug",
+                check.skipped && "text-muted-foreground",
+              )}
+            >
+              {check.message}
+            </p>
             {!check.passed && check.fix && (
               <p className="text-muted-foreground mt-0.5 text-xs leading-snug">
                 {check.fix}
