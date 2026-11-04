@@ -3,34 +3,53 @@
 // makes Next rewrite .next/dev/prerender-manifest.json without a lock, and
 // parallel cold loads corrupted it), `dynamicParams` left at its default so
 // dev can render them, and a 404 for any param that isn't in the list.
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
+import { readdirSync, readFileSync } from "node:fs";
+import { join, relative } from "node:path";
+import { getIntegrationCatalog } from "@repo/integrations/src/catalog";
+import { loader } from "fumadocs-core/source";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import * as integrationImage from "@/app/(home)/integrations/[slug]/opengraph-image";
+import * as integrationPage from "@/app/(home)/integrations/[slug]/page";
 import * as typeImage from "@/app/(home)/qr-code-generator/[type]/opengraph-image";
 import * as typePage from "@/app/(home)/qr-code-generator/[type]/page";
 import * as industryImage from "@/app/(home)/qr-codes-for/[slug]/opengraph-image";
 import * as industryPage from "@/app/(home)/qr-codes-for/[slug]/page";
 import * as placementImage from "@/app/(home)/qr-codes-on/[slug]/opengraph-image";
 import * as placementPage from "@/app/(home)/qr-codes-on/[slug]/page";
+import * as templateTypePage from "@/app/templates/[type]/page";
+import { listTemplates } from "@/lib/landing/templates";
 import { QR_TYPE_SLUGS } from "@/lib/qr-types-content";
 import { industries, placements } from "@/lib/seo-content";
 import { buildTimeParams } from "@/lib/static-params";
 
-const APP = join(import.meta.dirname, "../../app/(home)");
+const APP = join(import.meta.dirname, "../../app");
 
-/** Every route with a fixed param list, relative to app/(home). */
-const ROUTES = [
-  "qr-code-generator/[type]/page.tsx",
-  "qr-code-generator/[type]/opengraph-image.tsx",
-  "qr-codes-for/[slug]/page.tsx",
-  "qr-codes-for/[slug]/opengraph-image.tsx",
-  "qr-codes-on/[slug]/page.tsx",
-  "qr-codes-on/[slug]/opengraph-image.tsx",
-  "blog/[slug]/page.tsx",
-  "blog/[slug]/opengraph-image.tsx",
-  "blog/authors/[slug]/page.tsx",
-  "blog/category/[slug]/page.tsx",
-];
+/**
+ * Routes that list their params some other way, each fixed in its own PR:
+ * the home wall's images (#176) and the sample codes (#181).
+ */
+const ELSEWHERE = ["gallery/[file]/route.ts", "sample-codes/[file]/route.ts"];
+
+/** Every route file under app/ that exports generateStaticParams. */
+function routesWithStaticParams(dir = APP, out: string[] = []): string[] {
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const path = join(dir, entry.name);
+    if (entry.isDirectory()) routesWithStaticParams(path, out);
+    else if (
+      /\.(ts|tsx)$/.test(entry.name) &&
+      /export (async )?function generateStaticParams/.test(
+        readFileSync(path, "utf8"),
+      )
+    ) {
+      out.push(relative(APP, path));
+    }
+  }
+  return out;
+}
+
+const ROUTES = routesWithStaticParams()
+  .filter((file) => !ELSEWHERE.includes(file))
+  .sort();
 
 interface ParamsRoute {
   generateStaticParams: () => Record<string, string>[];
@@ -63,6 +82,21 @@ const QR_ROUTES: [string, ParamsRoute, Record<string, string>[]][] = [
     placementImage,
     placements.items.map((item) => ({ slug: item.slug })),
   ],
+  [
+    "/integrations/[slug]",
+    integrationPage,
+    getIntegrationCatalog().map((entry) => ({ slug: entry.slug })),
+  ],
+  [
+    "its OG image",
+    integrationImage,
+    getIntegrationCatalog().map((entry) => ({ slug: entry.slug })),
+  ],
+  [
+    "/templates/[type]",
+    templateTypePage,
+    listTemplates().map((template) => ({ type: template.type })),
+  ],
 ];
 
 /** What notFound() throws (its digest), so a test can tell it from a crash. */
@@ -91,6 +125,25 @@ describe("buildTimeParams", () => {
 });
 
 describe("routes with a fixed param list", () => {
+  it("are all found, the generator, topic, blog, docs and catalogue routes among them", () => {
+    for (const file of [
+      "(home)/qr-code-generator/[type]/page.tsx",
+      "(home)/qr-codes-for/[slug]/page.tsx",
+      "(home)/qr-codes-on/[slug]/page.tsx",
+      "(home)/blog/[slug]/page.tsx",
+      "(home)/compare/[slug]/page.tsx",
+      "(home)/integrations/[slug]/page.tsx",
+      "(home)/legal/[[...slug]]/page.tsx",
+      "(docs)/docs/[[...slug]]/page.tsx",
+      "llms.mdx/[[...slug]]/route.ts",
+      "og/docs/[...slug]/route.tsx",
+      "templates/[type]/page.tsx",
+      "templates/[type]/[template]/page.tsx",
+    ]) {
+      expect(ROUTES).toContain(file);
+    }
+  });
+
   it.each(ROUTES)(
     "%s lists its params through buildTimeParams, with dynamic params on",
     (file) => {
@@ -113,7 +166,7 @@ describe("routes with a fixed param list", () => {
     },
   );
 
-  it("answer 404 for a type or topic that isn't in the list", async () => {
+  it("answer 404 for a param that isn't in the list", async () => {
     const params = (value: string) =>
       Promise.resolve({ type: value, slug: value });
     for (const value of ["not-a-type", "constructor", "__proto__"]) {
@@ -125,9 +178,39 @@ describe("routes with a fixed param list", () => {
         () => placementPage.default({ params: params(value) } as never),
         () =>
           placementPage.generateMetadata({ params: params(value) } as never),
+        // Its generateMetadata returns {} for an unknown slug; the page 404s.
+        () => integrationPage.default({ params: params(value) } as never),
+        () => integrationImage.default({ params: params(value) } as never),
+        () => templateTypePage.default({ params: params(value) } as never),
       ]) {
         expect(await notFoundDigest(render), value).toMatch(/;404$/);
       }
+    }
+  });
+});
+
+describe("fumadocs sources (docs, legal, blog, compare, llms.mdx, OG)", () => {
+  // Those routes call notFound() when source.getPage() finds nothing; their
+  // modules load MDX, so this checks the loader they use directly.
+  it("find no page for an unknown path or a prototype name", () => {
+    const source = loader({
+      baseUrl: "/docs",
+      source: {
+        files: [
+          { type: "page", path: "index.mdx", data: { title: "Home" } },
+          { type: "page", path: "guide.mdx", data: { title: "Guide" } },
+        ],
+      },
+    });
+    expect(source.getPage(["guide"])?.data.title).toBe("Guide");
+    for (const slugs of [
+      ["nope"],
+      ["constructor"],
+      ["__proto__"],
+      ["toString"],
+      ["guide", "nope"],
+    ]) {
+      expect(source.getPage(slugs), slugs.join("/")).toBeUndefined();
     }
   });
 });

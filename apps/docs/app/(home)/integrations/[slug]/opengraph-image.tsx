@@ -7,13 +7,16 @@ import { notFound } from "next/navigation";
 import { ogSize, renderPageOgImage } from "@/app/og/brand";
 import { getIntegrationAvailability } from "@/lib/integration-availability";
 import { isVisible } from "@/lib/integration-availability-rules";
+import { buildTimeParams } from "@/lib/static-params";
 
 export const alt = "A QRdx integration";
 export const size = ogSize;
 export const contentType = "image/png";
 
 export function generateStaticParams() {
-  return getIntegrationCatalog().map((entry) => ({ slug: entry.slug }));
+  return buildTimeParams(() =>
+    getIntegrationCatalog().map((entry) => ({ slug: entry.slug })),
+  );
 }
 
 // Same rule as the page: moved entries and ones this deployment hides get none.
