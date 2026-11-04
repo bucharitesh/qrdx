@@ -14,6 +14,7 @@ npm's latest is 0.0.46, so these changes ship with the rest of 0.0.47.
 - **Official frames.** `OFFICIAL_FRAMES` holds 24 specs (20 use cases and 4 seasonal frames, CC0 1.0), and `getOfficialFrame(id)` returns one. Each decodes with a link, a Wi-Fi network and a contact card at phone distances, scores Great, and reads with zbar.
 - **Built-ins as specs.** `BUILT_IN_FRAME_SPECS` has `banner-bottom`, `rounded-border`, `circle` and `ticket` as specs. They match the built-in styles in SVG, PDF and EPS.
 - `FrameLabel` has optional `align` and `fontWeight`; `getFrameGapRatio(frame)` returns the light gap a frame keeps around the code.
+- **Frame label markers.** `FrameLabel.field` says which frame text a label draws: `"text"`, `"secondaryText"` or a custom spec's label id (every letter of curved text carries it). With `frameLabelMarkers`, `QRCode` and `QRCodeSVG` add it to each frame `<text>` as `data-qrdx-frame-label` (`FRAME_LABEL_ATTRIBUTE`), so an editor's preview can find and edit each label. It is off by default, and `getQRAsSVGDataUri` drops it, so SVG, PNG, JPG, PDF and EPS exports are byte-identical with or without it.
 
 ### Fixes
 
