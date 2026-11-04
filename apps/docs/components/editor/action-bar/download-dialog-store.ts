@@ -1,10 +1,14 @@
 import { create } from "zustand";
-import type { PrintWidth } from "@/lib/playground-links";
+import type { PrintDistance, PrintWidth } from "@/lib/playground-links";
 
-/** How the dialog should open next time: a tab, and a Print-ready width. */
+/**
+ * How the dialog should open next time: a tab, and a Print-ready width or a
+ * scan distance to size the code for (the distance wins).
+ */
 export interface DownloadDialogRequest {
   tab: "image" | "print";
   print?: PrintWidth;
+  printDistance?: PrintDistance;
 }
 
 interface DownloadDialogStore {

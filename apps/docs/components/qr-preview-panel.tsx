@@ -8,6 +8,7 @@ import { lazy } from "react";
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
 import { useQREditorStore } from "@/store/editor-store";
 import type { QRStyle } from "@/types/theme";
+import { usePhotoScanDialogStore } from "./editor/photo-scan-dialog-store";
 import { ScanScoreBadge } from "./editor/scan-score";
 import ExamplesPreviewContainer from "./editor/theme-preview/examples-preview-container";
 
@@ -26,6 +27,9 @@ const QRCode = lazy(() =>
  * value, which stays empty).
  */
 export const SAMPLE_PREVIEW_VALUE = "https://qrdx.dev";
+
+/** The scan score popover's "Check a photo of the print" (PhotoScanDialog). */
+const openPhotoCheck = () => usePhotoScanDialogStore.getState().setOpen(true);
 
 function SampleLabel({ className }: { className?: string }) {
   const contentType = useQREditorStore((state) => state.contentType);
@@ -114,6 +118,7 @@ const QRPreviewPanel: React.FC<QRPreviewPanelProps> = ({ style }) => {
         {hasContent ? (
           <ScanScoreBadge
             className="absolute bottom-4 left-1/2 z-10 -translate-x-1/2"
+            onCheckPhoto={openPhotoCheck}
             style={style}
             value={value}
           />

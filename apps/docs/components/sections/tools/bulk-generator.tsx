@@ -1,5 +1,6 @@
 "use client";
 
+import { authClient } from "@repo/auth/client";
 import {
   Spinner as Loader2,
   Close as X,
@@ -22,9 +23,11 @@ import { cn } from "@repo/design-system/lib/utils";
 import { strToU8, Zip, ZipDeflate, ZipPassThrough } from "fflate";
 import {
   Import as Download,
+  Brush2 as EditStyle,
   TableDocument as FileSpreadsheet,
   Export as Upload,
 } from "iconsax-reactjs";
+import Link from "next/link";
 import Papa from "papaparse";
 import { getQRCodeDataUrl, QRCode } from "qrdx";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -36,6 +39,7 @@ import { track } from "@/lib/analytics";
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
 import { useMounted } from "@/lib/hooks/use-mounted";
 import { useQRThemes } from "@/lib/hooks/use-themes";
+import { playgroundHref } from "@/lib/playground-links";
 import { soundEvent } from "@/lib/sound/emit";
 import { useQREditorStore } from "@/store/editor-store";
 import type { ThemeStyles } from "@/types/theme";
@@ -92,6 +96,41 @@ function withDefaults(styles: ThemeStyles): ThemeStyles {
   return { ...defaultThemeState.styles, ...styles };
 }
 
+/** The `style` a link may ask for: editor, preset:<id> or saved:<id>. */
+const STYLE_PARAM = "style";
+const STYLE_VALUE =
+  /^(?:editor|preset:[A-Za-z][A-Za-z0-9_-]{0,63}|saved:[A-Za-z0-9_-]{1,64})$/;
+
+/**
+ * Reads `?style=` once and removes it from the address bar, so a reload or a
+ * shared link doesn't keep overriding the choice. Browser only: the page
+ * stays static.
+ */
+function takeStyleParam(): string | null {
+  const url = new URL(window.location.href);
+  const raw = url.searchParams.get(STYLE_PARAM);
+  if (raw === null) return null;
+  url.searchParams.delete(STYLE_PARAM);
+  window.history.replaceState(
+    null,
+    "",
+    `${url.pathname}${url.search}${url.hash}`,
+  );
+  const value = raw.trim();
+  return STYLE_VALUE.test(value) ? value : null;
+}
+
+/** "Edit this style in the playground" for a style option id. */
+function playgroundStyleHref(styleId: string): string {
+  if (styleId.startsWith("preset:")) {
+    return playgroundHref({ preset: styleId.slice(7), tab: "design" });
+  }
+  if (styleId.startsWith("saved:")) {
+    return playgroundHref({ themeId: styleId.slice(6), tab: "design" });
+  }
+  return playgroundHref({ tab: "design" });
+}
+
 function saveBlob(url: string, filename: string) {
   const link = document.createElement("a");
   link.href = url;
@@ -121,7 +160,15 @@ function readableError(error: unknown): string {
 export function BulkGenerator() {
   const mounted = useMounted();
   const editorStyles = useQREditorStore((state) => state.themeState.styles);
-  const { data: savedThemes } = useQRThemes();
+  const { data: session, isPending: sessionPending } = authClient.useSession();
+  const {
+    data: savedThemes,
+    isPlaceholderData: themesPlaceholder,
+    isError: themesError,
+  } = useQRThemes();
+  // A saved theme a link asked for (style=saved:<id>), until the list says
+  // whether it's there.
+  const [requestedSaved, setRequestedSaved] = useState<string | null>(null);
 
   const [fileName, setFileName] = useState<string | null>(null);
   const [rawRows, setRawRows] = useState<string[][] | null>(null);
@@ -163,12 +210,38 @@ export function BulkGenerator() {
     return options;
   }, [editorStyles, savedThemes]);
 
+  // A saved theme stays selected while the list loads, and shows as soon as
+  // it arrives; until then (or if it never does) the default stands in.
+  const activeStyleId = styleOptions.has(styleId) ? styleId : DEFAULT_STYLE_ID;
+
   const selectedStyle = useMemo(() => {
-    const base = (
-      styleOptions.get(styleId) ?? styleOptions.get(DEFAULT_STYLE_ID)
-    )?.styles as ThemeStyles;
+    const base = styleOptions.get(activeStyleId)?.styles as ThemeStyles;
     return level === "style" ? base : { ...base, level };
-  }, [styleOptions, styleId, level]);
+  }, [styleOptions, activeStyleId, level]);
+
+  // A link from the playground or the dashboard: ?style=editor,
+  // preset:<id> or saved:<id>. Read once, in the browser.
+  useEffect(() => {
+    const requested = takeStyleParam();
+    if (!requested) return;
+    if (requested === "editor") setStyleId("editor");
+    else if (requested.startsWith("preset:")) {
+      if (Object.hasOwn(defaultPresets, requested.slice(7))) {
+        setStyleId(requested);
+      }
+    } else {
+      setStyleId(requested);
+      setRequestedSaved(requested.slice(6));
+    }
+  }, []);
+
+  const savedThemesSettled =
+    !sessionPending && (!session?.user || !themesPlaceholder || themesError);
+  const requestedSavedMissing =
+    requestedSaved !== null &&
+    styleId === `saved:${requestedSaved}` &&
+    savedThemesSettled &&
+    !styleOptions.has(styleId);
 
   // Reset column choices whenever the table shape changes.
   useEffect(() => {
@@ -535,7 +608,7 @@ export function BulkGenerator() {
                 Style
               </Label>
               <Select
-                value={styleOptions.has(styleId) ? styleId : DEFAULT_STYLE_ID}
+                value={activeStyleId}
                 onValueChange={setStyleId}
                 disabled={running}
               >
@@ -564,6 +637,20 @@ export function BulkGenerator() {
                   </SelectGroup>
                 </SelectContent>
               </Select>
+              {requestedSavedMissing && (
+                <p className="text-xs text-muted-foreground">
+                  {session?.user
+                    ? "That saved theme wasn't found in your account."
+                    : "Sign in to use your saved theme."}
+                </p>
+              )}
+              <Link
+                className="inline-flex w-fit items-center gap-1.5 text-xs text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline"
+                href={playgroundStyleHref(activeStyleId)}
+              >
+                <EditStyle aria-hidden className="size-3.5 shrink-0" />
+                Edit this style in the playground
+              </Link>
             </div>
             <div className="flex flex-col gap-1.5">
               <Label className="text-xs">
