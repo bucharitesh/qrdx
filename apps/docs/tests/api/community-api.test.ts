@@ -383,6 +383,39 @@ describe("community items in renders", () => {
     );
   });
 
+  it("design_qr draws per-eye colours, dot size, the circle shape and the logo layout as given", async () => {
+    const result = await call("design_qr", {
+      content: { type: "url", url: "https://qrdx.dev/engine" },
+      style: {
+        level: "H",
+        logo: "link",
+        eyeColors: { topLeft: { outer: "#B91C1C" } },
+        moduleScale: 0.85,
+        shape: "circle",
+        logoOptions: { size: 0.2, shape: "circle", plate: "#FFFFFF" },
+      },
+      include_svg: true,
+    });
+    expect(result.isError).toBeFalsy();
+    const design = JSON.parse(result.content[1]?.text ?? "{}");
+    expect(design.qrdxStyle).toMatchObject({
+      eyeColors: { topLeft: { outer: "#B91C1C" } },
+      moduleScale: 0.85,
+      shape: "circle",
+      logoOptions: { size: 0.2, shape: "circle", plate: "#FFFFFF" },
+      logoIcon: "link",
+    });
+    const svg = result.content.at(-1)?.text ?? "";
+    expect(svg).toContain("#B91C1C");
+    expect(decodeQR(rasterizeSvg(svg, { width: 640, pad: 24 }))).toBe(
+      "https://qrdx.dev/engine",
+    );
+    const style = decodeStyleParam(
+      new URL(design.playground_url).searchParams.get("style"),
+    )?.styles;
+    expect(style).toMatchObject({ moduleScale: 0.85, shape: "circle" });
+  });
+
   it("design_qr starts from a built-in preset and its playground link names it", async () => {
     const result = await call("design_qr", {
       content: { type: "url", url: "https://qrdx.dev" },

@@ -81,6 +81,18 @@ const DESIGNS = {
     showLogo: true,
     customLogo: logoIconDataUrl("link"),
   },
+  engineOptions: {
+    level: "H",
+    eyeColors: {
+      topLeft: { outer: "#b91c1c", inner: "#1d4ed8" },
+      bottomLeft: { outer: "#15803d" },
+    },
+    moduleScale: 0.85,
+    showLogo: true,
+    customLogo: logoIconDataUrl("wifi"),
+    logoOptions: { size: 0.2, padding: 1, shape: "circle", plate: "#ffffff" },
+  },
+  circle: { shape: "circle", bodyPattern: "rounded", margin: 4 },
 } as const;
 
 describe("Get code image URLs", () => {

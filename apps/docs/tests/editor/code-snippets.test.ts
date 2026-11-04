@@ -994,7 +994,8 @@ describe("engine options", () => {
 
   it("lists them as left out where the tab can't express them", () => {
     for (const [tab, serialize] of Object.entries(ALL_SERIALIZERS)) {
-      if (tab === "api") continue;
+      // REST, the image API and MCP take them (below).
+      if (tab === "api" || tab === "image" || tab === "mcp") continue;
       const { omitted } = serialize(urlInput(engine));
       for (const note of notes)
         expect(omitted, `${tab}: ${note}`).toContain(note);
@@ -1006,6 +1007,48 @@ describe("engine options", () => {
     const body = restBody(code);
     expect(createCodeSchema.safeParse(body).success).toBe(true);
     expect(body.style).toEqual(engine);
+    expect(omitted).toEqual([]);
+  });
+
+  const withIcon: ThemeStyles = {
+    ...engine,
+    level: "H",
+    customLogo: logoIconDataUrl("wifi"),
+    logoOptions: { size: 0.2, padding: 1, shape: "circle", plate: "#ffffff" },
+  };
+
+  it("sends them to the image API in style", () => {
+    const { url, omitted } = imageSnippet(urlInput(withIcon));
+    imageQuery(url);
+    expect(styleOf(url)).toEqual({
+      eyeColors: { topLeft: { outer: "#b91c1c" } },
+      moduleScale: 0.8,
+      shape: "circle",
+      autoLevel: true,
+      logoOptions: {
+        size: 0.2,
+        padding: 1,
+        shape: "circle",
+        plate: "#ffffff",
+      },
+    });
+    expect(omitted).toEqual([]);
+    // Without a logo the tab draws, the layout stays out (nothing to lay out).
+    expect(styleOf(imageSnippet(urlInput(engine)).url).logoOptions).toBe(
+      undefined,
+    );
+  });
+
+  it("passes them to design_qr", () => {
+    const { args, omitted } = mcpArgs(urlInput(withIcon));
+    expect(args.style).toMatchObject({
+      logo: "wifi",
+      eyeColors: { topLeft: { outer: "#B91C1C" } },
+      moduleScale: 0.8,
+      shape: "circle",
+      autoLevel: true,
+      logoOptions: { size: 0.2, padding: 1, shape: "circle", plate: "#ffffff" },
+    });
     expect(omitted).toEqual([]);
   });
 

@@ -111,6 +111,11 @@ With a frame, `size` is the width of the code itself and the frame adds to the i
 | `level`, `margin` | As the parameters above (`margin` 0 to 16) |
 | `templateId` | A border template, `default` for none |
 | `frame` | A built-in frame, `{ "style": "banner-bottom", "text": "Scan me", "color": "#155dfc", "textColor": "#ffffff" }`, or a custom one, `{ "style": "custom", "spec": { … } }`, with a frame spec from the [community](#community-items) or a custom frame made in the playground's Frame section. Specs are checked against the engine's frame-spec rules (no markup, links or images; at most 32 KB) |
+| `eyeColors` | Colors per eye, over `eyeColor` and `dotColor`: `{ "topLeft": { "outer": "#b91c1c", "inner": "#1d4ed8" }, "topRight": …, "bottomLeft": … }`, each a color or a gradient |
+| `moduleScale` | Size of each dot, `0.5` to `1` (default `1`) |
+| `shape` | `square` (default) or `circle`: the code in a disc of decorative dots |
+| `autoLevel` | Raise error correction to `H` when the logo covers more than 7% of the code (always on here when there's a logo) |
+| `logoOptions` | The logo's layout: `size` (`0.1` to `0.3` of the code's width; QRdx shrinks it when the code can't spare the modules), `padding` (`0` to `2` modules), `x` and `y` (`0` to `1`), `shape` (`square`, `rounded` or `circle` crop) and `plate` (a color behind it) |
 | `showLogo`, `logoIcon`, `logoFileId` | See [Logos](#logos) |
 
 `style` also takes the `style` value of a playground link (it starts with `1.`), so a design shared from the [playground](/playground) renders as it looks there, without its logo.
@@ -139,6 +144,8 @@ curl -o qr.png -H "Authorization: Bearer $QRDX_API_KEY" \
 The response is private (`Cache-Control: private, no-store`) and counts toward the workspace's daily API quota. A file from another workspace gets `404`, and a request without a key gets `401`. QRdx reads the image from its own storage and checks that it really is a PNG or JPEG; it never fetches a logo from a web address you send.
 
 </IfAvailable>
+
+`logoOptions` sizes, places, crops and backs any of these logos. Removing an uploaded logo's own background is done in the playground; the image API draws the uploaded file as it is.
 
 Logo QR and Image QR art aren't available here: the playground builds them from your picture in the browser, and the image API doesn't build art from uploads. Design art codes in the [playground](/playground?tab=design).
 

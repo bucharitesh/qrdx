@@ -16,12 +16,13 @@
 // - Art (Logo QR, Image QR) is refused: it's built in the browser from the
 //   picture (see content/docs/developers/image-api.mdx#limits).
 //
-// Extension point: new engine options (per-eye colours, `moduleScale`, logo
-// size and padding, the circle shape) are added as fields of
-// `apiStyleFields` below, and mapped to engine props in
-// lib/qr-design/props.ts (designQRProps), which every server render uses.
-// The OpenAPI document and the MCP tool schemas are generated from this
-// schema, so they pick a new field up with no other change.
+// Engine options (per-eye colours, `moduleScale`, `autoLevel`, the logo's
+// size, clear space, position, crop and plate, the circle shape) are fields
+// here with the engine's own ranges, and reach the engine through
+// lib/qr-design/engine-options.ts in designQRProps, which every server
+// render uses. A new engine option is added the same way: a field in
+// `apiStyleFields`, mapped in engine-options.ts. The OpenAPI document and
+// the MCP tool descriptions are generated from this schema.
 
 import { getTemplateIds } from "qrdx";
 import {
@@ -29,8 +30,16 @@ import {
   cornerEyeDotPatternSchema,
   cornerEyePatternSchema,
   customFrameSchema,
+  EYE_POSITIONS,
   errorLevelSchema,
   frameSchema,
+  LOGO_PADDING_MAX,
+  LOGO_SIZE_MAX,
+  LOGO_SIZE_MIN,
+  logoShapeSchema,
+  MODULE_SCALE_MAX,
+  MODULE_SCALE_MIN,
+  qrShapeSchema,
 } from "qrdx/types";
 import { z } from "zod";
 import { decodeStyleParam } from "@/lib/playground-style";
@@ -142,6 +151,59 @@ export const apiFrameSchema = z
 
 const TEMPLATE_IDS = getTemplateIds() as [string, ...string[]];
 
+const eyeOverrideSchema = z
+  .object({
+    outer: apiColorSchema.optional().describe("The eye's frame"),
+    inner: apiColorSchema.optional().describe("The eye's centre"),
+  })
+  .strict();
+
+/** Per-eye colours: each eye's frame and centre, over eyeColor and dotColor. */
+const eyeColorsSchema = z
+  .object(
+    Object.fromEntries(
+      EYE_POSITIONS.map((position) => [position, eyeOverrideSchema.optional()]),
+    ) as Record<
+      (typeof EYE_POSITIONS)[number],
+      z.ZodOptional<typeof eyeOverrideSchema>
+    >,
+  )
+  .strict()
+  .describe(
+    "Per-eye colours: { topLeft, topRight, bottomLeft }, each { outer, inner }",
+  );
+
+/** The logo's layout, in the engine's ranges. */
+const logoOptionsSchema = z
+  .object({
+    size: z
+      .number()
+      .min(LOGO_SIZE_MIN)
+      .max(LOGO_SIZE_MAX)
+      .optional()
+      .describe(
+        `Share of the code's width, ${LOGO_SIZE_MIN} to ${LOGO_SIZE_MAX} (the engine shrinks it when the code can't spare the modules)`,
+      ),
+    padding: z
+      .number()
+      .min(0)
+      .max(LOGO_PADDING_MAX)
+      .optional()
+      .describe(
+        `Clear space around the logo, 0 to ${LOGO_PADDING_MAX} modules`,
+      ),
+    x: z.number().min(0).max(1).optional().describe("Position across, 0 to 1"),
+    y: z.number().min(0).max(1).optional().describe("Position down, 0 to 1"),
+    shape: logoShapeSchema
+      .optional()
+      .describe("Crop: square, rounded or circle"),
+    plate: colorString
+      .optional()
+      .describe("A solid plate behind the logo, in its shape"),
+  })
+  .strict()
+  .describe("The logo's size, clear space, position, crop and plate");
+
 /** Every field the API accepts (ThemeStyles names, plus the logo fields). */
 export const apiStyleFields = {
   bgColor: apiColorSchema.optional().describe("Background"),
@@ -173,6 +235,27 @@ export const apiStyleFields = {
     .optional()
     .describe('Decorative border template; "default" for none'),
   frame: apiFrameSchema.optional(),
+  eyeColors: eyeColorsSchema.optional(),
+  moduleScale: z
+    .number()
+    .min(MODULE_SCALE_MIN)
+    .max(MODULE_SCALE_MAX)
+    .optional()
+    .describe(
+      `Size of each dot, ${MODULE_SCALE_MIN} to ${MODULE_SCALE_MAX} (default 1)`,
+    ),
+  autoLevel: z
+    .boolean()
+    .optional()
+    .describe(
+      "Raise error correction to H when the logo covers more than 7% of the code (always on for API renders with a logo)",
+    ),
+  shape: qrShapeSchema
+    .optional()
+    .describe(
+      "square (default), or circle: the code in a disc of decorative dots",
+    ),
+  logoOptions: logoOptionsSchema.optional(),
   showLogo: z
     .boolean()
     .optional()
@@ -215,7 +298,7 @@ export type ApiStyle = z.output<typeof apiStyleSchema>;
 export const apiStyleToolSchema = z
   .record(z.string(), z.unknown())
   .describe(
-    'The editor\'s style JSON, as design_qr returns it in qrdxStyle and a saved theme stores it. Fields: bgColor, fgColor, eyeColor, dotColor (a colour such as #155dfc, or a gradient { type: linear | radial, angle, stops: [{ color, offset 0-100 }] } with 2 to 8 stops), bodyPattern, cornerEyePattern, cornerEyeDotPattern, level (L, M, Q, H), margin (0-16), templateId, frame (a built-in style with text, or { style: "custom", spec }), showLogo, logoIcon, logoFileId. Unknown fields are refused.',
+    'The editor\'s style JSON, as design_qr returns it in qrdxStyle and a saved theme stores it. Fields: bgColor, fgColor, eyeColor, dotColor (a colour such as #155dfc, or a gradient { type: linear | radial, angle, stops: [{ color, offset 0-100 }] } with 2 to 8 stops), bodyPattern, cornerEyePattern, cornerEyeDotPattern, level (L, M, Q, H), margin (0-16), templateId, frame (a built-in style with text, or { style: "custom", spec }), eyeColors ({ topLeft, topRight, bottomLeft: { outer, inner } }), moduleScale (0.5-1), autoLevel, shape (square or circle), logoOptions ({ size 0.1-0.3, padding 0-2, x and y 0-1, shape square, rounded or circle, plate }), showLogo, logoIcon, logoFileId. Unknown fields are refused.',
   );
 
 export interface StyleIssue {

@@ -121,6 +121,7 @@ More inputs:
 - **`community_item`**: start from a community frame or theme by id, such as `frame:wifi-card`. A frame item sits on a classic code; your style options change the code under it.
 - **A custom frame**: `style.frame` can be `{ "style": "custom", "spec": … }` with a frame spec, such as a community frame's from `get_community_item`. It's drawn and scored as it is; repairs change the code, never the frame.
 - **`style.logo`**: a quick logo icon (`wifi`, `location`, `phone`, `email`, `link`, `file`, `calendar`, `whatsapp` or `instagram`).
+- **Engine options**: `style.eyeColors` (per-eye `#RRGGBB` colors), `moduleScale` (dot size, `0.5` to `1`), `shape` (`circle` for a round code), `autoLevel` and `logoOptions` (the logo's size, clear space, position, crop and plate). They're drawn and scored as given; repairs don't change them.
 
 <IfAvailable feature="fileStorage">
 `logo_file_id` draws a logo you uploaded to QRdx instead, with an [API key](#use-an-api-key).
