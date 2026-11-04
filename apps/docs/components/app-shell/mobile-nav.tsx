@@ -16,7 +16,10 @@ import type { Meter } from "@/app/settings/usage/_lib/meters";
 import { AppSidebar } from "./app-sidebar";
 import type { ShellData } from "./shell-data";
 
-/** Below md the sidebar, workspace switcher included, lives in a sheet. */
+/**
+ * Below md the sidebar, workspace switcher included, lives in a sheet, with
+ * the same areas and the same slide between them.
+ */
 export function MobileNav({
   shell,
   limitWarnings = null,
@@ -25,13 +28,15 @@ export function MobileNav({
   limitWarnings?: Promise<Meter[]> | null;
 }) {
   const pathname = usePathname();
-  // Tied to the path it was opened on, so any navigation closes it.
-  const [openOn, setOpenOn] = useState<string | null>(null);
+  // Tied to the paths it may show: the one it was opened on, plus an area
+  // opened from it (it stays open to show that area slide in). Any other
+  // navigation closes it.
+  const [openOn, setOpenOn] = useState<string[] | null>(null);
 
   return (
     <Sheet
-      onOpenChange={(open) => setOpenOn(open ? pathname : null)}
-      open={openOn === pathname}
+      onOpenChange={(open) => setOpenOn(open ? [pathname] : null)}
+      open={openOn?.includes(pathname) ?? false}
     >
       <SheetTrigger asChild>
         <Button
@@ -50,6 +55,7 @@ export function MobileNav({
         </SheetHeader>
         <AppSidebar
           limitWarnings={limitWarnings}
+          onAreaNavigate={(href) => setOpenOn([pathname, href])}
           onNavigate={() => setOpenOn(null)}
           shell={shell}
         />
