@@ -5,6 +5,7 @@ import Link from "next/link";
 import { CommunityTabs } from "@/components/community/community-tabs";
 import { ItemRow } from "@/components/community/item-card";
 import { AsciiField, Backdrop, MeshGradient } from "@/components/fx";
+import { CommunityWall } from "@/components/showcase/community-wall";
 import { getCommunityHome } from "@/lib/community/home";
 import {
   COMMUNITY_LICENSE_NAME,
@@ -77,6 +78,8 @@ export default async function CommunityPage() {
         active="home"
         showCollections={home.collections.length > 0}
       />
+
+      <CommunityWall />
 
       <div className="mx-auto max-w-6xl space-y-12 px-4 py-10 sm:px-6">
         <ItemRow
