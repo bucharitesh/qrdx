@@ -18,7 +18,12 @@ export type PostLoginActionType =
   | "MAKE_DYNAMIC"
   // The playground's Art tab (hub phase 3)
   /** AI art's Generate, signed out: back on the Art tab, run it (components/editor/art/ai-art-panel.tsx). */
-  | "AI_ART_GENERATE";
+  | "AI_ART_GENERATE"
+  /**
+   * The playground's "Make it dynamic…" or a hosted page type: open the code
+   * builder or the page gallery over the editor (components/code-builder/playground-host.tsx).
+   */
+  | "OPEN_CODE_BUILDER";
 
 export interface PostLoginActionPayload<T = any> {
   type: PostLoginActionType;
