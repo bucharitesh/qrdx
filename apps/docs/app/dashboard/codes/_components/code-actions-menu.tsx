@@ -351,10 +351,6 @@ export function CodeActionsMenu({
               </DropdownMenuItem>
             </>
           )}
-          {/* Public, read-only analytics page (share-stats-dialog.tsx) */}
-          <DropdownMenuItem onSelect={() => setDialog("share")}>
-            <Share /> Share analytics...
-          </DropdownMenuItem>
           <DropdownMenuItem onSelect={() => openInPlayground(code)}>
             <Palette /> Edit design in playground
           </DropdownMenuItem>
@@ -401,6 +397,10 @@ export function CodeActionsMenu({
               workspace…" (feat/workspace-roles-join) and "Share analytics"
               (feat/code-features). Use an icon not used elsewhere in this
               menu, and a key from row-shortcuts.ts only if it's free. */}
+          {/* Public, read-only analytics page (share-stats-dialog.tsx) */}
+          <DropdownMenuItem onSelect={() => setDialog("share")}>
+            <Share /> Share analytics...
+          </DropdownMenuItem>
           <DropdownMenuSeparator />
           {listItem && (
             <DropdownMenuItem onSelect={togglePaused}>
