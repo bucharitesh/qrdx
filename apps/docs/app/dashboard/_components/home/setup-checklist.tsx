@@ -13,7 +13,7 @@ import { ArrowRight2, TickCircle } from "iconsax-reactjs";
 import Link from "next/link";
 import { type ReactNode, useEffect, useState } from "react";
 import { useCreate } from "@/components/app-shell/create-actions";
-import { useWorkspaceHref } from "@/components/workspace-provider";
+import { useCan, useWorkspaceHref } from "@/components/workspace-provider";
 import { playgroundHref } from "@/lib/playground-links";
 import type { SetupTask } from "./home-data";
 
@@ -90,11 +90,13 @@ function TaskLink({ href, children }: { href: string; children: ReactNode }) {
 export function SetupChecklist({ tasks }: { tasks: SetupTask[] }) {
   const create = useCreate();
   const href = useWorkspaceHref();
+  // Setting up is for people who can create; viewers just read.
+  const canWrite = useCan("content.write");
   const [hidden, setHidden] = useState(false);
   useEffect(() => setHidden(readHidden()), []);
 
   const done = tasks.filter((task) => task.done).length;
-  if (hidden || done === tasks.length) return null;
+  if (!canWrite || hidden || done === tasks.length) return null;
 
   const rows: Record<SetupTask["id"], { label: string; action: ReactNode }> = {
     code: {

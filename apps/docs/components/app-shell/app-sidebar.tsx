@@ -27,6 +27,7 @@ import {
 import type { Meter } from "@/app/settings/usage/_lib/meters";
 import { useAvailability } from "@/components/availability-provider";
 import { OrgSwitcher } from "@/components/org-switcher";
+import { useCan } from "@/components/workspace-provider";
 import { unreadLabel } from "@/lib/changelog-feed";
 import { PLAN_NAMES } from "@/lib/pricing";
 import { useCreate } from "./create-actions";
@@ -429,7 +430,9 @@ export function AppSidebar({
   const create = useCreate();
   const planName = shell ? PLAN_NAMES[shell.plan] : undefined;
   const slug = shell?.workspace.slug ?? null;
-  const areas = useMemo(() => navAreas(slug), [slug]);
+  // Viewers and billing members get no create-only rows (lib/permissions.ts).
+  const canWrite = useCan("content.write");
+  const areas = useMemo(() => navAreas(slug, { canWrite }), [slug, canWrite]);
   const current = areaForPath(pathname, slug);
   const rootRef = useRef<HTMLDivElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
