@@ -26,6 +26,7 @@ export const metadata: Metadata = createMetadata({
     "community qr codes",
   ],
   path: "/community",
+  ownOgImage: true,
 });
 
 export default async function CommunityPage() {
