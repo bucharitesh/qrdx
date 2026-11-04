@@ -6,6 +6,8 @@ import { and, asc, eq } from "drizzle-orm";
 import { z } from "zod";
 import { isMissingSchemaError } from "@/lib/community/tables";
 import { HttpError } from "@/lib/error-response";
+import { can } from "@/lib/permissions";
+import { assertCan } from "@/lib/permissions-server";
 import { cheapestPlanWith, getPlanForScope, getPlanLimits } from "@/lib/plans";
 import { PLAN_NAMES } from "@/lib/pricing";
 import {
@@ -64,18 +66,18 @@ async function guarded<T>(query: () => Promise<T>): Promise<T> {
   }
 }
 
-// An explicit list, so a role added later (a read-only viewer) can't write
-// until someone decides it may.
-const WRITE_ROLES = new Set(["owner", "admin", "member"]);
-const MANAGE_ROLES = new Set(["owner", "admin"]);
+// The workspace permission table (lib/permissions.ts): viewers and billing
+// members can't write; owners and admins manage everyone's templates.
 
 /** Creators edit their own templates; owners and admins any in the workspace. */
 export function canEditUtmTemplate(
   scope: Pick<ActiveScope, "userId" | "role">,
   template: { userId: string },
 ): boolean {
-  if (!WRITE_ROLES.has(scope.role)) return false;
-  return template.userId === scope.userId || MANAGE_ROLES.has(scope.role);
+  if (!can(scope.role, "content.write")) return false;
+  return (
+    template.userId === scope.userId || can(scope.role, "content.manageAll")
+  );
 }
 
 const nameSchema = z
@@ -114,13 +116,7 @@ function planRequired(): HttpError {
 }
 
 async function assertAllowed(scope: ActiveScope) {
-  if (!WRITE_ROLES.has(scope.role)) {
-    throw new HttpError(
-      403,
-      "FORBIDDEN",
-      "Your role can't change templates here.",
-    );
-  }
+  assertCan(scope, "content.write");
   if (!getPlanLimits(await getPlanForScope(scope)).routing) {
     throw planRequired();
   }
@@ -296,13 +292,7 @@ export async function deleteUtmTemplate(
   input: { id: unknown },
 ): Promise<{ id: string }> {
   const id = parseOrThrow(idSchema, input.id);
-  if (!WRITE_ROLES.has(scope.role)) {
-    throw new HttpError(
-      403,
-      "FORBIDDEN",
-      "Your role can't change templates here.",
-    );
-  }
+  assertCan(scope, "content.write");
   // Removing needs no plan, like removing UTM parameters from a code.
   const row = await findRow(scope, id);
   if (!canEditUtmTemplate(scope, row)) {
