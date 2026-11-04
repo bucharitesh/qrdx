@@ -389,7 +389,7 @@ export function buildLlmsTxt(input: LlmsTxtInput): string {
     ...input.legal,
     {
       title: "Licence (the app is AGPL-3.0)",
-      url: "https://github.com/bucharitesh/qrdx/blob/main/license.md",
+      url: "https://github.com/bucharitesh/qrdx/blob/main/LICENSE",
     },
     {
       title: "Licence of the qrdx library and @qrdx/cli (MIT)",

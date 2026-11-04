@@ -18,7 +18,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/bucharitesh/qrdx/blob/main/license.md"><img src="https://img.shields.io/github/license/bucharitesh/qrdx?color=blue" alt="License" /></a>
+  <a href="https://github.com/bucharitesh/qrdx/blob/main/LICENSE"><img src="https://img.shields.io/github/license/bucharitesh/qrdx?color=blue" alt="License" /></a>
   <a href="https://www.npmjs.com/package/qrdx"><img src="https://img.shields.io/npm/v/qrdx?color=f80" alt="npm version" /></a>
   <a href="https://www.npmjs.com/package/qrdx"><img src="https://img.shields.io/npm/dm/qrdx" alt="npm downloads" /></a>
   <a href="https://github.com/bucharitesh/qrdx/stargazers"><img src="https://img.shields.io/github/stars/bucharitesh/qrdx" alt="GitHub stars" /></a>
@@ -198,7 +198,7 @@ Contributions are welcome:
 
 QRdx is open source:
 
-- **The app and everything else in this repository** (outside the MIT folders below) are licensed under the [GNU Affero General Public License v3.0 or later](license.md) (AGPL-3.0-or-later). You can use, modify and self-host it freely. If you run a modified version as a network service, you must also make your modified source code available to its users under the same license.
+- **The app and everything else in this repository** (outside the MIT folders below) are licensed under the [GNU Affero General Public License v3.0 or later](LICENSE) (see [LICENSING.md](LICENSING.md) for which folders are MIT) (AGPL-3.0-or-later). You can use, modify and self-host it freely. If you run a modified version as a network service, you must also make your modified source code available to its users under the same license.
 - **The developer tools are MIT-licensed**, each with its own `LICENSE`: the React library and QR engine ([`packages/qrdx`](packages/qrdx), `qrdx` on npm, from 0.0.47), the CLI ([`packages/cli`](packages/cli), `@qrdx/cli`, from 0.0.5) and the plugins (`plugins/chrome`, `plugins/figma`, `plugins/raycast`, `plugins/canva`). Earlier npm releases of the library and CLI were AGPL-3.0-or-later.
 
 The QRdx name and logo are trademarks; see the [trademark policy](TRADEMARK.md) before using them for a fork or a hosted service.
