@@ -40,6 +40,7 @@ import {
 import { publishLandingPage } from "@/actions/landing-pages";
 import { PhoneFrame } from "@/components/mockups/phone-frame";
 import { useWorkspaceHref } from "@/components/workspace-provider";
+import { ViewOnlyNotice } from "@/components/workspaces/view-only";
 import { track } from "@/lib/analytics";
 import {
   type BlockEditorContext,
@@ -77,6 +78,12 @@ export interface PageEditorProps {
   /** badge: "Made with QRdx" footer (Free); whiteLabel: Business */
   branding: { badge: boolean; whiteLabel: boolean };
   storageEnabled: boolean;
+  /**
+   * Viewers and billing members (lib/permissions.ts): the published page
+   * and its links, without the editor or Publish (the server refuses a
+   * publish too).
+   */
+  readOnly?: boolean;
 }
 
 type Issues = Map<string, string[]>;
@@ -156,6 +163,7 @@ export function PageEditor({
   canUseCustomCss,
   branding,
   storageEnabled,
+  readOnly = false,
 }: PageEditorProps) {
   const inWorkspace = useWorkspaceHref();
   const router = useRouter();
@@ -358,12 +366,12 @@ export function PageEditor({
     const onKey = (event: KeyboardEvent) => {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "s") {
         event.preventDefault();
-        if (dirty && !isPublishing) publish();
+        if (!readOnly && dirty && !isPublishing) publish();
       }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [dirty, isPublishing, publish]);
+  }, [dirty, isPublishing, publish, readOnly]);
 
   const editorContext: BlockEditorContext = {
     theme: content.theme,
@@ -426,6 +434,76 @@ export function PageEditor({
     </div>
   );
 
+  const codeLinks = code ? (
+    <>
+      <Button asChild size="sm" variant="outline">
+        <Link href={inWorkspace(`/codes/${encodeURIComponent(code.id)}`)}>
+          <QrCode />
+          QR code
+        </Link>
+      </Button>
+      <Button asChild size="sm" variant="outline">
+        <a href={code.pageUrl} rel="noopener" target="_blank">
+          <ExternalLink />
+          View live
+        </a>
+      </Button>
+    </>
+  ) : (
+    <span className="text-muted-foreground text-xs">
+      No QR code links to this page yet
+    </span>
+  );
+
+  if (readOnly) {
+    return (
+      <div className="space-y-4">
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
+          <div className="flex min-w-0 flex-1 items-center gap-2">
+            <Button asChild size="icon" title="All pages" variant="ghost">
+              <Link aria-label="All pages" href={inWorkspace("/pages")}>
+                <ArrowLeft />
+              </Link>
+            </Button>
+            <h1 className="truncate text-base font-semibold">
+              {page.title || `Untitled ${page.typeLabel.toLowerCase()}`}
+            </h1>
+            <Badge className="hidden sm:inline-flex" variant="secondary">
+              {page.typeLabel}
+            </Badge>
+            <span className="text-muted-foreground hidden text-xs whitespace-nowrap sm:inline">
+              Published · v{version}
+            </span>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">{codeLinks}</div>
+        </div>
+        <ViewOnlyNotice>
+          You have view-only access, so this page can't be edited here.
+        </ViewOnlyNotice>
+        <PhoneFrame className="mx-auto w-full max-w-[340px]">
+          <LandingRender
+            content={initialContent}
+            context={{
+              theme: initialContent.theme,
+              mode: "preview",
+              pageId: page.id,
+              qrCodeId: code?.id ?? null,
+            }}
+            customCss={css}
+            fill="container"
+            footer={
+              <LandingPageFooter
+                badge={branding.badge}
+                badgeHref="#"
+                reportHref="#"
+              />
+            }
+          />
+        </PhoneFrame>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-4">
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center">
@@ -454,28 +532,7 @@ export function PageEditor({
           </span>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          {code ? (
-            <>
-              <Button asChild size="sm" variant="outline">
-                <Link
-                  href={inWorkspace(`/codes/${encodeURIComponent(code.id)}`)}
-                >
-                  <QrCode />
-                  QR code
-                </Link>
-              </Button>
-              <Button asChild size="sm" variant="outline">
-                <a href={code.pageUrl} rel="noopener" target="_blank">
-                  <ExternalLink />
-                  View live
-                </a>
-              </Button>
-            </>
-          ) : (
-            <span className="text-muted-foreground text-xs">
-              No QR code links to this page yet
-            </span>
-          )}
+          {codeLinks}
           <Button
             disabled={!dirty || isPublishing}
             onClick={publish}
