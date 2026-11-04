@@ -4,9 +4,9 @@ import {
   Brush2,
   Category,
   ColorSwatch,
-  Element3,
   Location,
   MessageText,
+  People,
   Personalcard,
   Save2,
   ScanBarcode,
@@ -73,7 +73,7 @@ export const MCP_TOOLS: {
     title: "Get a community item",
     description:
       "One frame or theme with the style it applies, ready to pass to design_qr or generate_qr_code.",
-    icon: Element3,
+    icon: People,
   },
   {
     name: "save_template",
