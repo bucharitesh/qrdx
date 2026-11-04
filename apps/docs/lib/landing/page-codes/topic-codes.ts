@@ -434,16 +434,16 @@ const INDUSTRY_TILES: Record<string, TileSpec[]> = {
   // Professional services
   "real-estate": [
     tile(
-      "Sign rider",
-      demo("vcard", "realtor"),
-      "realEstate",
-      official("sign-rider", "Photos and floor plan", "Book a viewing"),
-    ),
-    tile(
       "Agent contact",
       vcard("Riya", "Sample", "riya@example.com"),
       "royal",
       official("save-contact"),
+    ),
+    tile(
+      "Sign rider",
+      demo("vcard", "realtor"),
+      "realEstate",
+      official("sign-rider", "Photos and floor plan", "Book a viewing"),
     ),
     tile(
       "Open house",
