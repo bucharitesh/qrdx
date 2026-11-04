@@ -93,22 +93,48 @@ export async function scoreDesign(
   return getScanScoreFromPixels(props, pixels);
 }
 
-/** SVG markup of the design, `size` px wide (code only; frames add to it). */
+export interface RenderOptions {
+  /**
+   * Raise error correction to H when the logo covers more than 7% of the
+   * code (the engine's autoLevel). For renders nobody scores first.
+   */
+  autoLevel?: boolean;
+}
+
+function renderProps(
+  value: string,
+  style: ThemeStyles,
+  logo: string | undefined,
+  { autoLevel }: RenderOptions,
+): QRProps {
+  const props = designQRProps(value, style, logo);
+  return autoLevel && props.imageSettings ? { ...props, autoLevel } : props;
+}
+
+/**
+ * SVG markup of the design, `size` px wide (code only; frames add to it).
+ * `logo` is the image drawn when the style shows a logo: a data URL QRdx
+ * built or read itself (lib/qr-api/logo.ts), never an address from a caller.
+ */
 export function renderDesignSvg(
   value: string,
   style: ThemeStyles,
   size = 512,
+  logo?: string,
+  options: RenderOptions = {},
 ): string {
-  return svgOf(withQRSize(designQRProps(value, style, undefined), size));
+  return svgOf(withQRSize(renderProps(value, style, logo, options), size));
 }
 
-/** PNG bytes of the design with the code `size` px wide. */
+/** PNG bytes of the design with the code `size` px wide (`logo` as above). */
 export async function renderDesignPng(
   value: string,
   style: ThemeStyles,
   size = 512,
+  logo?: string,
+  options: RenderOptions = {},
 ): Promise<Uint8Array> {
-  const props = withQRSize(designQRProps(value, style, undefined), size);
+  const props = withQRSize(renderProps(value, style, logo, options), size);
   const artwork = getFrameDimensions(size, props.frame);
   return rasterize(
     svgOf(props),

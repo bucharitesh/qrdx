@@ -58,7 +58,8 @@ export const QR_TEMPLATE_IDS = getTemplateIds() as [string, ...string[]];
 // carry no flags.
 const HEX_COLOR = /^#?(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/;
 
-const hexColor = z
+/** A hex colour as the image API takes it (# optional). */
+export const hexColor = z
   .string()
   .regex(
     HEX_COLOR,
