@@ -28,10 +28,14 @@ import { useWorkspaceHref } from "@/components/workspace-provider";
 import { defaultThemeState } from "@/config/qr";
 import type { CommunityItemDetail } from "@/lib/community/types";
 import { useSessionGuard } from "@/lib/hooks/use-gaurds";
+import { playgroundHref } from "@/lib/playground-links";
 import { soundEvent } from "@/lib/sound/emit";
 import { useQREditorStore } from "@/store/editor-store";
 
-/** Puts an item into the editor: a frame joins your design, a theme replaces it. */
+/**
+ * Puts an item into the editor: a frame joins your design, a theme replaces
+ * it. Through the store, since a link's `style` can only replace a design.
+ */
 export function useApplyToEditor() {
   const router = useRouter();
   return (item: Pick<CommunityItemDetail, "type" | "apply">) => {
@@ -42,7 +46,7 @@ export function useApplyToEditor() {
         : { ...defaultThemeState.styles, ...item.apply };
     setThemeState({ ...themeState, styles });
     soundEvent("apply");
-    router.push("/playground?tab=customisations");
+    router.push(playgroundHref({ tab: "design" }));
   };
 }
 

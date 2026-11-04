@@ -14,6 +14,7 @@ import Link from "next/link";
 import { type ReactNode, useEffect, useState } from "react";
 import { useCreate } from "@/components/app-shell/create-actions";
 import { useWorkspaceHref } from "@/components/workspace-provider";
+import { playgroundHref } from "@/lib/playground-links";
 import type { SetupTask } from "./home-data";
 
 const HIDDEN_KEY = "qrdx:home-setup-hidden";
@@ -126,7 +127,11 @@ export function SetupChecklist({ tasks }: { tasks: SetupTask[] }) {
     },
     theme: {
       label: "Save a theme with your logo and colors",
-      action: <TaskLink href="/playground?tab=customisations">Design</TaskLink>,
+      action: (
+        <TaskLink href={playgroundHref({ tab: "design", section: "logo" })}>
+          Design
+        </TaskLink>
+      ),
     },
     team: {
       label: "Invite a teammate",

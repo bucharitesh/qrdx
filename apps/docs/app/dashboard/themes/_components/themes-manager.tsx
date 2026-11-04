@@ -19,6 +19,7 @@ import {
 import Link from "next/link";
 import { useState } from "react";
 import { HairlineFigure } from "@/components/mockups/hairline";
+import { playgroundHref } from "@/lib/playground-links";
 import { UpgradeButton } from "../../team/_components/small-actions";
 import type { SavedTheme } from "../_lib/theme";
 import { ThemeCard } from "./theme-card";
@@ -253,7 +254,7 @@ export function ThemesManager({
                 </p>
               </div>
               <Button asChild>
-                <Link href="/playground?tab=customisations">
+                <Link href={playgroundHref({ tab: "design" })}>
                   <Plus className="size-4" />
                   Create a theme
                 </Link>
