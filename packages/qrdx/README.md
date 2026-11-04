@@ -101,9 +101,10 @@ It accepts the `QRCodeSVG` styling props above (`value`, `size`, `level`, colors
 |------|------|---------|-------------|
 | `logo` | `string` | — | Center logo URL or data URL. No logo is drawn unless you pass one |
 | `hideLogo` | `boolean` | `false` | Hide the logo even when `logo` is set (handy for toggles) |
+| `logoOptions` | `LogoOptions` | — | Logo `size` (share of the code's width, 0.1–0.3, default 0.25), `padding` (clear space, 0–2 modules) and `x` / `y` (center across the code, 0–1, default 0.5) |
 | `scale` | `number` | `1` | Multiplier applied to `size` |
 
-The logo is drawn at 25% of the code's width with the modules behind it excavated, so pair it with level `H` (or at least the default `Q`).
+The logo is drawn at 25% of the code's width with the modules behind it excavated, so pair it with level `H` (or at least the default `Q`). `getQRData` takes the same `logoOptions` and turns them into `imageSettings`; with `autoLevel` it lays the logo out at the level the code is drawn at.
 
 ### `QRCodeCanvas`
 
@@ -374,7 +375,7 @@ EPS has no transparency or crop marks, and PNG and JPEG logos are embedded as im
 
 ## Will it scan? (browser)
 
-`getScanScore(props)` estimates how reliably a design scans. It renders the code at 96, 160 and 320 px, simulates camera blur and contrast loss, decodes each with jsQR, and combines that with contrast, polarity, logo coverage vs. error correction, quiet zone and eye-shape risk (`circle` eyes only read in lenient decoders; retired `curly` eyes in saved designs fail strict ones).
+`getScanScore(props)` estimates how reliably a design scans. It renders the code at 96, 160 and 320 px, simulates camera blur and contrast loss, decodes each with jsQR, and combines that with contrast (per-eye colors included), polarity, logo coverage vs. error correction, a logo moved over a corner eye or the bottom-right alignment pattern, quiet zone and eye-shape risk (`circle` eyes only read in lenient decoders; retired `curly` eyes in saved designs fail strict ones). Known-weak style pairs come from `getStylePairRisk`; a `circle` centre inside square-cornered eyes is flagged as `sharp-dot-eye` (missed by jsQR in sharp renders) without lowering the score.
 
 ```ts
 import { getScanScore, getImageScanScore } from "qrdx";

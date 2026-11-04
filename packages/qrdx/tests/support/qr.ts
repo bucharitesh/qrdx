@@ -6,7 +6,7 @@ import {
   DEFAULT_MARGIN,
   ERROR_LEVEL_MAP,
 } from "../../src/constants";
-import { QRCodeSVG } from "../../src/utils";
+import { QRCodeSVG, resolveErrorLevel } from "../../src/utils";
 import { parseSvgMarkup, type SvgNode } from "../../src/utils/svg-geometry";
 import type { QRProps } from "../../types";
 import { decodeQR, rasterizeSvg, simulateCamera } from "./raster";
@@ -55,8 +55,10 @@ export function capture(
   options: CaptureOptions
 ): string | null {
   const svg = parsedSvg(props);
+  // The level the code is drawn at (autoLevel can raise it)
   const modules =
-    symbolSize(props.value, props.level) + 2 * (props.margin ?? DEFAULT_MARGIN);
+    symbolSize(props.value, resolveErrorLevel(props)) +
+    2 * (props.margin ?? DEFAULT_MARGIN);
   const image = rasterizeSvg(svg, {
     width: modules * options.modulePx,
     pad: 4 * options.modulePx,

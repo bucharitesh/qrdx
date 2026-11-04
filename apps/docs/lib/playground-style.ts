@@ -16,7 +16,14 @@ import {
   colorConfigSchema,
   cornerEyeDotPatternSchema,
   cornerEyePatternSchema,
+  EYE_POSITIONS,
+  type EyePosition,
   errorLevelSchema,
+  LOGO_PADDING_MAX,
+  LOGO_SIZE_MAX,
+  LOGO_SIZE_MIN,
+  MODULE_SCALE_MAX,
+  MODULE_SCALE_MIN,
 } from "qrdx/types";
 import { z } from "zod";
 import {
@@ -41,6 +48,11 @@ const KEYS = {
   templateId: "t",
   frame: "r",
   showLogo: "g",
+  // Engine options the editor exposes (see ENGINE_OPTION_FIELDS below)
+  eyeColors: "ec",
+  moduleScale: "ms",
+  autoLevel: "al",
+  logoOptions: "lo",
 } as const satisfies Partial<Record<keyof ThemeStyles, string>>;
 type LinkedField = keyof typeof KEYS;
 
@@ -76,6 +88,45 @@ const safeOptionalColor = z.string().refine(isSafeColor).optional();
 
 const templateIds = new Set(getTemplateIds());
 
+// ── Engine options: per-eye colors, module size, auto error correction and
+// the logo's size, clear space and position. Each is validated as strictly
+// as the engine accepts it, or more: colors through the same safe-color
+// check, numbers inside the engine's ranges, no extra keys anywhere.
+const eyeOverrideSchema = z
+  .object({
+    outer: safeColorConfig.optional(),
+    inner: safeColorConfig.optional(),
+  })
+  .strict();
+const ENGINE_OPTION_FIELDS = {
+  eyeColors: z
+    .object(
+      Object.fromEntries(
+        EYE_POSITIONS.map((position) => [
+          position,
+          eyeOverrideSchema.optional(),
+        ]),
+      ) as Record<EyePosition, z.ZodOptional<typeof eyeOverrideSchema>>,
+    )
+    .strict()
+    .optional(),
+  moduleScale: z
+    .number()
+    .min(MODULE_SCALE_MIN)
+    .max(MODULE_SCALE_MAX)
+    .optional(),
+  autoLevel: z.literal(true).optional(),
+  logoOptions: z
+    .object({
+      size: z.number().min(LOGO_SIZE_MIN).max(LOGO_SIZE_MAX).optional(),
+      padding: z.number().min(0).max(LOGO_PADDING_MAX).optional(),
+      x: z.number().min(0).max(1).optional(),
+      y: z.number().min(0).max(1).optional(),
+    })
+    .strict()
+    .optional(),
+};
+
 /** The style a link carries, as strict as the editor's own schema or more. */
 const linkedStyleSchema = z
   .object({
@@ -100,6 +151,7 @@ const linkedStyleSchema = z
       )
       .optional(),
     showLogo: z.literal(true).optional(),
+    ...ENGINE_OPTION_FIELDS,
   })
   .strict();
 

@@ -1,5 +1,6 @@
 import { getQRData, type QRProps } from "qrdx";
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
+import { styleEngineOptions } from "@/lib/qr-design/engine-options";
 import type { ThemeStyles } from "@/types/theme";
 
 /** Blank border the QR spec asks for around the code, in modules. */
@@ -31,5 +32,6 @@ export function buildQrProps(
     hideLogo: !styles.showLogo,
     logo: logo ?? styles.customLogo ?? DEFAULT_QR_LOGO,
     margin: quietZone ? QUIET_ZONE_MODULES : (styles.margin ?? 0),
+    ...styleEngineOptions(styles),
   });
 }

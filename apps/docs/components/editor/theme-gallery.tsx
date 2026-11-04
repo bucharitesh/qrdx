@@ -19,6 +19,7 @@ import { emitSound } from "@/components/editor/sound";
 import { seasonalPresetsFirst } from "@/components/seasonal/preset-order";
 import { track } from "@/lib/analytics";
 import { useThemeShuffle } from "@/lib/hooks/use-theme-shuffle";
+import { styleSvgOptions } from "@/lib/qr-design/engine-options";
 import {
   CATEGORY_LABELS,
   CATEGORY_ORDER,
@@ -120,6 +121,7 @@ function LazyThumb({ styles, size }: { styles: ThemeStyles; size: number }) {
             height: "auto",
           }}
           value={THUMB_VALUE}
+          {...styleSvgOptions(styles)}
         />
       )}
     </span>

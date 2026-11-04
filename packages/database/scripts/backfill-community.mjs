@@ -82,6 +82,10 @@ export const THEME_STYLE_KEYS = [
   "showLogo",
   "customLogo",
   "art",
+  "eyeColors",
+  "moduleScale",
+  "autoLevel",
+  "logoOptions",
 ];
 
 const sha = (text) => createHash("sha256").update(text).digest("hex");

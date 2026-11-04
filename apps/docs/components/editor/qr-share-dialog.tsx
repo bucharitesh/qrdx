@@ -24,6 +24,7 @@ import { emitSound } from "@/components/editor/sound";
 import { InfoHint } from "@/components/help/info-hint";
 import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import type { OmittedPart } from "@/lib/playground-style";
+import { styleSvgOptions } from "@/lib/qr-design/engine-options";
 import { useQREditorStore } from "@/store/editor-store";
 import { useThemePresetStore } from "@/store/theme-preset-store";
 
@@ -172,6 +173,7 @@ export function QRShareDialog({
                   size={220}
                   templateId={style.templateId}
                   value={value || SAMPLE_VALUE}
+                  {...styleSvgOptions(style)}
                 />
               </div>
               <figcaption className="space-y-0.5">

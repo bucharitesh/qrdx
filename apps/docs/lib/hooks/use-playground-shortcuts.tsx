@@ -12,6 +12,7 @@ import { useControlsTabFromUrl } from "@/lib/hooks/use-controls-tab-from-url";
 import { useKeyboardShortcut } from "@/lib/hooks/use-keyboard-shortcuts";
 import { shuffleNext } from "@/lib/hooks/use-theme-shuffle";
 import { useUserSettings } from "@/lib/hooks/use-user-settings";
+import { styleEngineOptions } from "@/lib/qr-design/engine-options";
 import { soundEvent } from "@/lib/sound/emit";
 import { useQREditorStore } from "@/store/editor-store";
 import { useThemePresetStore } from "@/store/theme-preset-store";
@@ -141,6 +142,9 @@ export function usePlaygroundShortcuts({
             bodyPattern: themeState.styles.bodyPattern,
             hideLogo: !themeState.styles.showLogo,
             logo: themeState.styles.customLogo ?? DEFAULT_QR_LOGO,
+            level: themeState.styles.level,
+            margin: themeState.styles.margin,
+            ...styleEngineOptions(themeState.styles),
           }),
           level: themeState.styles.level,
           cornerEyePattern: themeState.styles.cornerEyePattern,

@@ -29,6 +29,7 @@ import {
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
 import { type CodeLang, parseLinkUrl } from "@/lib/playground-links";
 import { CONTENT_FIELDS } from "@/lib/qr-design/content";
+import { styleEngineOptions } from "@/lib/qr-design/engine-options";
 import type { ContentType, QRContentConfig } from "@/types/qr-content";
 import type { ThemeStyles } from "@/types/theme";
 
@@ -164,6 +165,10 @@ export const LEFT_OUT = {
   shadcnUploadedLogo: "Your logo (it shows the QRdx logo)",
   restLogo: "Your logo (it can be large; add customLogo yourself)",
   art: "Art (Logo QR or Image QR)",
+  eyeColors: "Per-eye colors",
+  moduleScale: "The dot size",
+  autoLevel: "Automatic error correction for the logo",
+  logoOptions: "The logo's size, clear space and position",
   longContent: "Content over 2,048 characters (the image API's limit)",
   privateContent:
     "Your content (image URLs reach a server, so only web addresses go in)",
@@ -239,6 +244,16 @@ function noteFrame(style: ThemeStyles, notes: Notes) {
 
 function noteArt(style: ThemeStyles, notes: Notes) {
   if (style.art) notes.add(LEFT_OUT.art);
+}
+
+/** Engine options newer than npm qrdx 0.0.46, the image API and MCP. */
+function noteEngineOptions(style: ThemeStyles, notes: Notes) {
+  const options = styleEngineOptions(style);
+  if (options.eyeColors) notes.add(LEFT_OUT.eyeColors);
+  if (options.moduleScale !== undefined) notes.add(LEFT_OUT.moduleScale);
+  const logo = logoOf(style).kind !== "none";
+  if (logo && options.autoLevel) notes.add(LEFT_OUT.autoLevel);
+  if (logo && options.logoOptions) notes.add(LEFT_OUT.logoOptions);
 }
 
 const roundMargin = (margin: number | undefined) =>
@@ -346,6 +361,7 @@ export function reactSnippet(input: SnippetInput): Snippet {
   else props.push("hideLogo");
   if (logo.kind === "uploaded") notes.add(LEFT_OUT.uploadedLogo);
   noteArt(style, notes);
+  noteEngineOptions(style, notes);
 
   return {
     code: component('import { QRCode } from "qrdx";', "QRCode", props),
@@ -376,6 +392,7 @@ export function shadcnSnippet(input: SnippetInput): ShadcnSnippet {
   else if (logo.kind === "uploaded") notes.add(LEFT_OUT.shadcnUploadedLogo);
   else notes.add(LEFT_OUT.shadcnNoLogo);
   noteArt(style, notes);
+  noteEngineOptions(style, notes);
 
   return {
     install: SHADCN_INSTALL,
@@ -503,6 +520,7 @@ export function imageSnippet(input: SnippetInput): ImageSnippet {
   if (logo.kind === "uploaded") notes.add(LEFT_OUT.uploadedLogo);
   else if (logo.kind !== "none") notes.add(LEFT_OUT.logo);
   noteArt(style, notes);
+  noteEngineOptions(style, notes);
 
   const url = `${IMAGE_API_URL}?${params.toString()}`;
   return {
@@ -767,6 +785,7 @@ export function mcpSnippet(input: SnippetInput): Snippet {
 
   if (logoOf(style).kind !== "none") notes.add(LEFT_OUT.logo);
   noteArt(style, notes);
+  noteEngineOptions(style, notes);
 
   return {
     code: formatJson({ content: mcpContent(input), style: design }),
@@ -877,6 +896,7 @@ export function cliSnippet(input: SnippetInput): Snippet {
   else frameFlags.push("--no-logo");
   if (logo.kind === "uploaded") notes.add(LEFT_OUT.uploadedLogo);
   noteArt(style, notes);
+  noteEngineOptions(style, notes);
 
   const lines = [
     `npx @qrdx/cli generate ${shellArg(payloadOf(input.value))} -o qr.svg`,

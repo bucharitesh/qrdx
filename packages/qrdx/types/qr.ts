@@ -26,6 +26,31 @@ export const imageSettingsSchema = z.object({
   padding: z.number().min(0).optional(),
 });
 
+/**
+ * Smallest and largest logo width, as a share of the code's width. Above
+ * 25% even level H stops reading in our decode tests (tests/engine-options).
+ */
+export const LOGO_SIZE_MIN = 0.1;
+export const LOGO_SIZE_MAX = 0.3;
+/** Logo width `getQRData` uses when no size is given (25%). */
+export const LOGO_SIZE_DEFAULT = 0.25;
+/** Most clear space around a logo, in modules. */
+export const LOGO_PADDING_MAX = 2;
+
+/**
+ * Logo layout for `getQRData` and `<QRCode>`, in units that don't depend on
+ * the render size: `size` is a share of the code's width, `padding` is clear
+ * space in modules, `x` and `y` place the logo's center across the code
+ * (0 to 1, 0.5 is the middle; the logo always stays inside the code).
+ */
+export const logoOptionsSchema = z.object({
+  size: z.number().min(LOGO_SIZE_MIN).max(LOGO_SIZE_MAX).optional(),
+  padding: z.number().min(0).max(LOGO_PADDING_MAX).optional(),
+  x: z.number().min(0).max(1).optional(),
+  y: z.number().min(0).max(1).optional(),
+});
+export type LogoOptions = z.infer<typeof logoOptionsSchema>;
+
 export const errorLevelSchema = z.enum(["L", "M", "Q", "H"]);
 
 /** Smallest and largest `moduleScale` (size of each data module). */

@@ -25,6 +25,7 @@ import {
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { InfoHint } from "@/components/help/info-hint";
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
+import { styleEngineOptions } from "@/lib/qr-design/engine-options";
 import { soundEvent } from "@/lib/sound/emit";
 import type { QRStyle } from "@/types/theme";
 
@@ -145,6 +146,9 @@ export function ScanScoreBadge({
         bodyPattern: style.bodyPattern,
         hideLogo: !style.showLogo,
         logo: style.customLogo ?? DEFAULT_QR_LOGO,
+        level: style.level,
+        margin: style.margin,
+        ...styleEngineOptions(style),
       }),
       level: style.level,
       cornerEyePattern: style.cornerEyePattern,

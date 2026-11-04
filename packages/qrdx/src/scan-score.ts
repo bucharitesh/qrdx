@@ -2,6 +2,7 @@
 import type { QRCode as JsQRResult } from "jsqr";
 import type { ColorConfig, ErrorLevel, QRProps } from "../types";
 import { normalizeColorConfig } from "../types/color";
+import { EYE_POSITIONS } from "../types/qr";
 import type { QRArtPixels } from "./art";
 import qrcodegen from "./codegen";
 import {
@@ -312,10 +313,19 @@ function contrastChecks(props: QRProps): {
   fails: boolean;
 } {
   const fg = props.fgColor ?? DEFAULT_FGCOLOR;
+  // Per-eye colors replace eyeColor / dotColor on that eye only
+  const perEye = EYE_POSITIONS.flatMap((position) => {
+    const eye = props.eyeColors?.[position];
+    return [
+      ...(eye?.outer ? colorStops(eye.outer, DEFAULT_FGCOLOR) : []),
+      ...(eye?.inner ? colorStops(eye.inner, DEFAULT_FGCOLOR) : []),
+    ];
+  });
   const darkColors = [
     ...colorStops(fg, DEFAULT_FGCOLOR),
     ...colorStops(props.eyeColor ?? fg, DEFAULT_FGCOLOR),
     ...colorStops(props.dotColor ?? fg, DEFAULT_FGCOLOR),
+    ...perEye,
   ];
   const lightColors = colorStops(props.bgColor, DEFAULT_BGCOLOR);
   const white: RGBAColor = { r: 255, g: 255, b: 255, a: 1 };
@@ -407,10 +417,46 @@ function logoCheck(props: QRProps): {
   if (!settings) {
     return { check: null, penalty: 0 };
   }
-  const area = settings.excavation
-    ? settings.excavation.w * settings.excavation.h
-    : settings.w * settings.h;
-  const coverage = area / (cells.length * cells.length);
+  // A moved logo must leave each corner eye and the format information
+  // beside it (the 9×9 corner zones) alone: no error correction covers them.
+  const box = settings.excavation ?? settings;
+  const n = cells.length;
+  const zones = [
+    [0, 0],
+    [n - 8, 0],
+    [0, n - 8],
+  ] as const;
+  const coversEye = zones.some(
+    ([zx, zy]) =>
+      box.x < zx + 9 &&
+      box.x + box.w > zx &&
+      box.y < zy + 9 &&
+      box.y + box.h > zy
+  );
+  // Decoders correct perspective with the alignment pattern nearest the
+  // bottom-right corner (version 2 and up, 5×5 around n − 7); others, like
+  // the central one in bigger codes, can sit under a centered logo.
+  const alignment = n > 21 ? n - 9 : null;
+  const coversAlignment =
+    alignment !== null &&
+    box.x < alignment + 5 &&
+    box.x + box.w > alignment &&
+    box.y < alignment + 5 &&
+    box.y + box.h > alignment;
+  if (coversEye || coversAlignment) {
+    return {
+      check: {
+        id: "logo",
+        passed: false,
+        message: coversEye
+          ? "The logo covers a corner eye"
+          : "The logo covers the small square near the bottom-right corner",
+        fix: "Move the logo toward the center or make it smaller",
+      },
+      penalty: 40,
+    };
+  }
+  const coverage = (box.w * box.h) / (n * n);
   const level = resolveErrorLevel(props);
   const capacity = EC_CAPACITY[level];
   const ratio = coverage / capacity;
