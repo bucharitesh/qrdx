@@ -201,6 +201,35 @@ function dynamicCover() {
   ].join("");
 }
 
+// A styled code on a stand, a phone that has just read it, and the branch
+// diagram of the open-source repo on the floor in front.
+function launchCover() {
+  const cam = camera(240, 150, 1.1);
+  const branch = `${path("M6 10H84", "l2")}${path("M26 10C36 10 36 22 46 22H84", "vf")}${[
+    6, 26, 58, 84,
+  ]
+    .map((x) => circle(x, 10, 2.6, "f"))
+    .join("")}${[46, 70].map((x) => circle(x, 22, 2.6, "acc")).join("")}`;
+  const screen = `${finder(7, 9, 22, 22, 4)}${code(10, 12, 16, 16)}${line(6, 30, 40, "tx2")}${line(6, 24, 46)}${line(6, 27, 52)}${badge(18, 60, 4.5)}`;
+  return [
+    plinth(cam, -78, -78, 78, 78),
+    wire(
+      cam,
+      [
+        [-40, 4, 2],
+        [30, 4, 2],
+        [30, -38, 2],
+      ],
+      "dash",
+    ),
+    shade(...cam.p(31, -46, 0), 16, 4),
+    glow(cam, [-50, 34, 44], 58, 50),
+    signRight(cam, [-58, 2, 0], 56, 74),
+    phoneLeft(cam, [14, -44, 76], screen, 0.95),
+    tile(cam, [-12, 36, 1.5], 84, 28, branch, { t: 1.5, r: 4 }),
+  ].join("");
+}
+
 // The same code at three sizes, with a tape measure along the floor.
 function sizeCover() {
   const cam = camera(240, 146, 1.1);
@@ -861,6 +890,7 @@ function understandingPipeline() {
 
 export const SCENES: Record<BlogArtId, () => string> = {
   dynamicCover,
+  launchCover,
   sizeCover,
   apiCover,
   menuCover,
