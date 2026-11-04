@@ -66,9 +66,14 @@ const link = (item: AppNavItem): NavRow => ({ kind: "link", item });
 
 /**
  * Every area of a workspace. Without one (signed out, or the shell's lookup
- * failed) only the account settings are offered, as today.
+ * failed) only the account settings are offered, as today. `canWrite`
+ * false (viewers and billing members, lib/permissions.ts) leaves out the
+ * rows that only create: Import and the page and form templates.
  */
-export function navAreas(slug: string | null): Record<NavAreaId, NavArea> {
+export function navAreas(
+  slug: string | null,
+  { canWrite = true }: { canWrite?: boolean } = {},
+): Record<NavAreaId, NavArea> {
   if (!slug) {
     const account = settingsNav("").filter((group) => group.id === "account");
     const empty = (id: NavAreaId, title: string): NavArea => ({
@@ -185,11 +190,15 @@ export function navAreas(slug: string | null): Record<NavAreaId, NavArea> {
               label: "Analytics",
               icon: Chart,
             }),
-            link({
-              href: codesImport,
-              label: "Import",
-              icon: DocumentUpload,
-            }),
+            ...(canWrite
+              ? [
+                  link({
+                    href: codesImport,
+                    label: "Import",
+                    icon: DocumentUpload,
+                  }),
+                ]
+              : []),
           ],
         },
       ],
@@ -203,24 +212,28 @@ export function navAreas(slug: string | null): Record<NavAreaId, NavArea> {
           id: "pages",
           rows: [link({ href: pages, label: "All pages", icon: Element2 })],
         },
-        {
-          id: "templates",
-          label: "Start from a template",
-          rows: [
-            {
-              kind: "action",
-              action: "page-templates",
-              label: "Page templates",
-              icon: DocumentText1,
-            },
-            {
-              kind: "action",
-              action: "form-templates",
-              label: "Form templates",
-              icon: TaskSquare,
-            },
-          ],
-        },
+        ...(canWrite
+          ? [
+              {
+                id: "templates",
+                label: "Start from a template",
+                rows: [
+                  {
+                    kind: "action",
+                    action: "page-templates",
+                    label: "Page templates",
+                    icon: DocumentText1,
+                  },
+                  {
+                    kind: "action",
+                    action: "form-templates",
+                    label: "Form templates",
+                    icon: TaskSquare,
+                  },
+                ],
+              } satisfies NavAreaGroup,
+            ]
+          : []),
       ],
     },
     settings: {

@@ -38,6 +38,7 @@ import {
   flattenFolderTree,
 } from "@/app/dashboard/codes/_lib/organize-shared";
 import type { CodeUsage } from "@/app/dashboard/codes/_lib/qr-codes";
+import { useCan } from "@/components/workspace-provider";
 import { DeleteFolderDialog, FolderNameDialog } from "./folder-dialogs";
 import { formatNumber } from "./format";
 import { ImportDialog } from "./import-dialog";
@@ -62,6 +63,9 @@ export function CodesHeader({
   usage: CodeUsage;
 }) {
   const router = useRouter();
+  // Viewers and billing members only browse: no folder, code or import
+  // actions (lib/permissions.ts; the server refuses them too).
+  const canWrite = useCan("content.write");
   const [nameMode, setNameMode] = useState<NameMode | null>(null);
   const [deleting, setDeleting] = useState<FolderRow | null>(null);
   const [importSignal, setImportSignal] = useState(0);
@@ -155,14 +159,20 @@ export function CodesHeader({
                   ))}
                 </>
               )}
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                onSelect={() => setNameMode({ type: "create", parent: null })}
-              >
-                <FolderAdd aria-hidden />
-                New folder…
-              </DropdownMenuItem>
-              {current && (
+              {canWrite && (
+                <>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onSelect={() =>
+                      setNameMode({ type: "create", parent: null })
+                    }
+                  >
+                    <FolderAdd aria-hidden />
+                    New folder…
+                  </DropdownMenuItem>
+                </>
+              )}
+              {canWrite && current && (
                 <>
                   <DropdownMenuItem
                     onSelect={() =>
@@ -197,38 +207,40 @@ export function CodesHeader({
         </span>
       </div>
 
-      <div className="flex shrink-0 items-center gap-2">
-        <NewCodeButton usage={usage} />
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              aria-label="More code actions"
-              size="icon"
-              variant="outline"
-            >
-              <More aria-hidden />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-60">
-            <DropdownMenuLabel className="text-muted-foreground text-xs font-medium">
-              Import codes
-            </DropdownMenuLabel>
-            <DropdownMenuItem asChild>
-              <Link href={`${basePath}/import`}>
-                <DocumentUpload aria-hidden />
-                From a CSV file
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onSelect={() => setImportSignal((count) => count + 1)}
-            >
-              <Import aria-hidden />
-              From Dub, Bitly and other apps
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-        <ImportDialog hideTrigger openSignal={importSignal} />
-      </div>
+      {canWrite && (
+        <div className="flex shrink-0 items-center gap-2">
+          <NewCodeButton usage={usage} />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                aria-label="More code actions"
+                size="icon"
+                variant="outline"
+              >
+                <More aria-hidden />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-60">
+              <DropdownMenuLabel className="text-muted-foreground text-xs font-medium">
+                Import codes
+              </DropdownMenuLabel>
+              <DropdownMenuItem asChild>
+                <Link href={`${basePath}/import`}>
+                  <DocumentUpload aria-hidden />
+                  From a CSV file
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onSelect={() => setImportSignal((count) => count + 1)}
+              >
+                <Import aria-hidden />
+                From Dub, Bitly and other apps
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <ImportDialog hideTrigger openSignal={importSignal} />
+        </div>
+      )}
 
       <FolderNameDialog
         mode={nameMode}

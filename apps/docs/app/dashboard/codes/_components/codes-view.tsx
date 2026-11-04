@@ -34,6 +34,7 @@ import {
 } from "@/app/dashboard/codes/_lib/qr-codes";
 import { getDomainOptions } from "@/app/dashboard/domains/_lib/domains";
 import { HairlineFigure } from "@/components/mockups/hairline";
+import { can } from "@/lib/permissions";
 import { playgroundHref } from "@/lib/playground-links";
 import { getScanSparklines } from "@/lib/scans";
 import { CodeOptionPlansProvider } from "./code-options";
@@ -131,6 +132,9 @@ export async function CodesView({
   // leftover folders, tags or trash keep the toolbar to manage them.
   const brandNew =
     isEmpty && folders.length === 0 && tags.length === 0 && trashCount === 0;
+  // Viewers and billing members see the list without create or import
+  // buttons (lib/permissions.ts; the server refuses them too).
+  const canWrite = can(scope.role, "content.write");
 
   return (
     // The create and edit dialogs read the option plans from here.
@@ -155,34 +159,36 @@ export async function CodesView({
                 />
                 <EmptyTitle>No dynamic QR codes yet</EmptyTitle>
                 <EmptyDescription>
-                  A dynamic code encodes a short link. Print it once and change
-                  the destination whenever you like, with scan analytics
-                  included.
+                  {canWrite
+                    ? "A dynamic code encodes a short link. Print it once and change the destination whenever you like, with scan analytics included."
+                    : "When someone in this workspace creates one, it shows up here with its scans."}
                 </EmptyDescription>
               </EmptyHeader>
-              <EmptyContent>
-                <div className="flex flex-wrap justify-center gap-2">
-                  <NewCodeButton usage={usage}>
-                    Create your first dynamic QR code
-                  </NewCodeButton>
-                  <Button asChild variant="outline">
-                    <Link href={`${basePath}/import`}>
-                      <FileUp />
-                      Import from CSV
+              {canWrite && (
+                <EmptyContent>
+                  <div className="flex flex-wrap justify-center gap-2">
+                    <NewCodeButton usage={usage}>
+                      Create your first dynamic QR code
+                    </NewCodeButton>
+                    <Button asChild variant="outline">
+                      <Link href={`${basePath}/import`}>
+                        <FileUp />
+                        Import from CSV
+                      </Link>
+                    </Button>
+                  </div>
+                  <p className="text-muted-foreground text-xs">
+                    Or pick Dynamic for a URL code in the{" "}
+                    <Link
+                      className="underline"
+                      href={playgroundHref({ type: "url" })}
+                    >
+                      playground
                     </Link>
-                  </Button>
-                </div>
-                <p className="text-muted-foreground text-xs">
-                  Or pick Dynamic for a URL code in the{" "}
-                  <Link
-                    className="underline"
-                    href={playgroundHref({ type: "url" })}
-                  >
-                    playground
-                  </Link>
-                  .
-                </p>
-              </EmptyContent>
+                    .
+                  </p>
+                </EmptyContent>
+              )}
             </Empty>
           ) : (
             <div className="space-y-4">
@@ -212,7 +218,9 @@ export async function CodesView({
                           : effective.status === "archived"
                             ? "No archived codes."
                             : isUnfiltered(effective)
-                              ? "No active codes. Create one, or restore codes from Archived or the trash."
+                              ? canWrite
+                                ? "No active codes. Create one, or restore codes from Archived or the trash."
+                                : "No active codes."
                               : "No codes match these filters."}
                   </p>
                   {!isUnfiltered(effective) && (

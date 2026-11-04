@@ -61,6 +61,7 @@ import {
   codesHref,
   DEFAULT_DOMAIN_FILTER,
 } from "@/app/dashboard/codes/_lib/organize-shared";
+import { useCan } from "@/components/workspace-provider";
 import { DisplayMenu, ListSearch } from "./display-menu";
 import { TagDot } from "./tag-chip";
 import { DeleteTagDialog, TagEditDialog } from "./tag-dialogs";
@@ -175,6 +176,9 @@ export function CodesToolbar({
   const router = useRouter();
   const [, startTransition] = useTransition();
   const { run, isPending } = useOrganizeAction();
+  // Viewers and billing members filter and search; they don't edit tags or
+  // empty the trash (lib/permissions.ts; the server refuses it too).
+  const canWrite = useCan("content.write");
   const [confirmEmpty, setConfirmEmpty] = useState(false);
   const [newTag, setNewTag] = useState(false);
   const [manageTags, setManageTags] = useState(false);
@@ -294,14 +298,18 @@ export function CodesToolbar({
                       <span className="truncate">{tag.name}</span>
                     </DropdownMenuCheckboxItem>
                   ))}
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onSelect={() => setNewTag(true)}>
-                    New tag…
-                  </DropdownMenuItem>
-                  {tags.length > 0 && (
-                    <DropdownMenuItem onSelect={() => setManageTags(true)}>
-                      Edit tags…
-                    </DropdownMenuItem>
+                  {canWrite && (
+                    <>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onSelect={() => setNewTag(true)}>
+                        New tag…
+                      </DropdownMenuItem>
+                      {tags.length > 0 && (
+                        <DropdownMenuItem onSelect={() => setManageTags(true)}>
+                          Edit tags…
+                        </DropdownMenuItem>
+                      )}
+                    </>
                   )}
                 </DropdownMenuSubContent>
               </DropdownMenuSub>
@@ -389,7 +397,7 @@ export function CodesToolbar({
               onChange: (value) => go({ sort: value as CodeSort }),
             }}
           />
-          {filters.status === "trash" && trashCount > 0 && (
+          {canWrite && filters.status === "trash" && trashCount > 0 && (
             <Button
               disabled={isPending}
               onClick={() => setConfirmEmpty(true)}
