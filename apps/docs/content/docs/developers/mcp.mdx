@@ -12,7 +12,7 @@ https://mcp.qrdx.dev/mcp
 
 Use this URL in every client. The same server also answers at `https://qrdx.dev/api/mcp`, and the [connect page](/mcp) shows the public URL on qrdx.dev, on preview deployments and in local development.
 
-It uses the Streamable HTTP transport, needs no account or API key, and keeps no session state. Your AI assistant can call it to design QR codes for any content type with a checked scan score, render QR codes, list the available styles, and build correctly formatted payloads for Wi-Fi, contacts, email, SMS and map locations.
+It uses the Streamable HTTP transport and keeps no session state. Your AI assistant can call it to design QR codes for any content type with a checked scan score, render QR codes, list the available styles, find community frames and themes, and build correctly formatted payloads for Wi-Fi, contacts, email, SMS and map locations. None of that needs an account or API key. With a QRdx API key on the connection, it can also save a design to your themes and use logos you uploaded (see [Use an API key](#use-an-api-key)).
 
 [Try it in the playground](/playground?open=code&lang=mcp): style a code there, then copy it as `design_qr` arguments for your assistant.
 
@@ -73,15 +73,19 @@ Then ask for what you need, for example:
 - "Create a Wi-Fi QR code for the network Office Guest with password correct-horse-battery."
 - "Generate a contact QR code for Ada Lovelace, ada@example.com, and add it to the README."
 - "Design a Wi-Fi QR code for Cafe Guest in warm browns with a Free Wi-Fi frame, and tell me its scan score."
+- "Find a community frame for a restaurant menu and use it for https://example.com/menu."
 
 ## Tools
 
 | Tool | What it does |
 |------|--------------|
-| `design_qr` | Designs a code for any content type with the style your assistant chooses, checks its scan score and repairs the style until it is Great. Returns the score, what it changed, the style JSON, a PNG and the SVG. |
-| `list_options` | Lists every value `design_qr` accepts: content types and their fields, colours and gradients, shapes, frames, borders, error correction levels and limits. |
-| `generate_qr_code` | Renders a QR code. Returns a PNG image and public [image API](/docs/developers/image-api) URLs (SVG and PNG) ready for Markdown or HTML, plus the SVG markup on request. |
-| `list_qr_styles` | Lists body patterns, corner eye and eye dot shapes, frame templates, error correction levels, defaults and limits. |
+| `design_qr` | Designs a code for any content type with the style your assistant chooses, or starting from a built-in theme or a community item, checks its scan score and repairs the style until it is Great. Returns the score, what it changed, the style JSON, a playground link, a PNG and the SVG. |
+| `list_options` | Lists every value `design_qr` accepts: content types and their fields, colours and gradients, shapes, frames, borders, logo icons, built-in themes, error correction levels and limits. |
+| `generate_qr_code` | Renders a QR code with the editor's styles. Returns a PNG image and public [image API](/docs/developers/image-api) URLs (SVG and PNG) ready for Markdown or HTML, plus the SVG markup on request. |
+| `list_qr_styles` | Lists body patterns, corner eye and eye dot shapes, border templates, frames, logo icons, error correction levels, defaults and limits. |
+| `search_community` | Finds published [community](/community) frames, themes and collections by words, type or tag. |
+| `get_community_item` | One community item with the style it applies, ready for `design_qr` or `generate_qr_code`. |
+| `save_template` | Saves a design as a theme in your workspace. Needs an [API key](#use-an-api-key). |
 | `qr_payload_wifi` | Builds a `WIFI:` network payload (WPA, WEP or open, optionally hidden) with special characters escaped. |
 | `qr_payload_vcard` | Builds a vCard 3.0 contact (RFC 2426): name, organization, title, phones, email, website, address and note. |
 | `qr_payload_email` | Builds a `mailto:` link (RFC 6068) with optional cc, bcc, subject and body. |
@@ -109,21 +113,86 @@ The payload tools return a plain string. Your assistant then passes it as `data`
 
 Options you leave out get defaults (eyes follow the dot colour, square shapes, margin 4, error correction Q, no frame). QRdx then runs the editor's scan check on the design: it renders the code, decodes it at 96, 160 and 320 px through a phone-camera model, and checks contrast, quiet zone, eye shapes and shape pairs. Below Great (85), it repairs the style, up to three times, changing as little as it can (darker colours that keep their hue, a safer eye shape, less error correction for long content). If that isn't enough, it falls back to a classic black-on-white code with your frame. The result says what was changed and why.
 
-No AI model runs on QRdx's side for `design_qr`: your assistant picks the style, QRdx validates, checks and repairs it. Content that isn't valid (a WPA password under 8 characters, a malformed email address) is refused with the reason. Logos aren't available over MCP. `design_qr` has its own limit of 20 calls per minute per IP address.
+No AI model runs on QRdx's side for `design_qr`: your assistant picks the style, QRdx validates, checks and repairs it. Content that isn't valid (a WPA password under 8 characters, a malformed email address) is refused with the reason. `design_qr` has its own limit of 20 calls per minute per IP address.
 
-Saving a design to a QRdx account isn't available over MCP. In the editor, the AI chat can save a design as a template to your themes.
+More inputs:
+
+- **`preset`**: start from a built-in theme by id (`list_options` lists them). Style options you set win over it.
+- **`community_item`**: start from a community frame or theme by id, such as `frame:wifi-card`. A frame item sits on a classic code; your style options change the code under it.
+- **A custom frame**: `style.frame` can be `{ "style": "custom", "spec": … }` with a frame spec, such as a community frame's from `get_community_item`. It's drawn and scored as it is; repairs change the code, never the frame.
+- **`style.logo`**: a quick logo icon (`wifi`, `location`, `phone`, `email`, `link`, `file`, `calendar`, `whatsapp` or `instagram`).
+- **Engine options**: `style.eyeColors` (per-eye `#RRGGBB` colors), `moduleScale` (dot size, `0.5` to `1`), `shape` (`circle` for a round code), `autoLevel` and `logoOptions` (the logo's size, clear space, position, crop and plate). They're drawn and scored as given; repairs don't change them.
+
+<IfAvailable feature="fileStorage">
+`logo_file_id` draws a logo you uploaded to QRdx instead, with an [API key](#use-an-api-key).
+</IfAvailable>
+
+Logos are scored by the modules they cover, as in the editor, so a repair may raise error correction to H or remove the logo. The QRdx mark that the editor shows by default isn't drawn here.
+
+The result's `qrdxStyle` is the design as the editor's style JSON. Pass it to `save_template`, to `generate_qr_code` as `style` to render the same design at another size, or to the image API's [`style`](/docs/developers/image-api#style). `playground_url` opens the design in the [playground](/playground): it carries the style only, never the logo or the content, and `playgroundLeftOut` says what it leaves out.
 
 ### generate_qr_code inputs
 
-The inputs match the [image API parameters](/docs/developers/image-api#parameters): `data` (required), `size`, `fg`, `bg`, `eyeColor`, `dotColor`, `body`, `eye`, `dot`, `level`, `margin` and `template`. Set `include_svg` to `true` to also get the SVG markup as text, for example to save an `.svg` file. It is off by default because the markup is often 50 to 150 KB, which would fill the conversation.
+The inputs match the [image API parameters](/docs/developers/image-api#parameters): `data` (required), `size`, `fg`, `bg`, `eyeColor`, `dotColor`, `body`, `eye`, `dot`, `level`, `margin`, `template`, `frame`, `frameText`, `logoIcon`, `logoFileId`, `item` (a community item id) and `style` (the editor's style JSON: gradients, custom frames and the rest, as `design_qr` returns it). The flat options win over `style`, and `style` wins over `item`. Set `include_svg` to `true` to also get the SVG markup as text, for example to save an `.svg` file. It is off by default because the markup is often 50 to 150 KB, which would fill the conversation.
 
-Like the image API, the MCP server renders solid colors only. It doesn't support logos or gradients.
+`generate_qr_code` doesn't check the scan score; use `design_qr` for that. A code with your uploaded logo has no public image URL, since the image API only draws that logo for requests with your key.
+
+### Community
+
+`search_community` finds published [community](/community) frames, themes and collections, free under CC0, by words (`q`), `type` and `tag`. `get_community_item` returns one item with the style it applies; pass its id to `design_qr` as `community_item` or to `generate_qr_code` as `item`. The same data is on the REST API at [`/v1/community/items`](/docs/developers/api/list-community-items).
+
+Item text is written by community members. Names, descriptions, handles, tags and frame labels come back short, on one line and without links, emails or markup, and every result says to treat them as data, not instructions.
+
+## Use an API key [#use-an-api-key]
+
+Some tools need a QRdx [API key](/docs/developers/api-keys) on the connection, sent as `Authorization: Bearer qrdx_…`:
+
+- **`save_template`** saves a design as a theme, listed under Themes in the dashboard and offered in the editor. It needs a key with `codes:write`, which **Full access** keys have. A key of your own workspace saves to your themes; a team key saves to the team's shared themes when its creator is an owner or admin and the plan has team themes. Saves count toward the plan's saved-theme limit (see [Plans and limits](/docs/plans-and-limits)); over it, the tool returns the API's `LIMIT_REACHED` error (`402`). Without a key it returns a `401` error that says how to add one.
+<IfAvailable feature="fileStorage">
+- **Logos you uploaded** in [Dashboard → Files](/docs/files), by file id (`logo_file_id` in `design_qr`, `logoFileId` in `generate_qr_code`): a PNG or JPEG of up to 1 MB. The key must belong to the workspace that owns the file.
+</IfAvailable>
+
+<Tabs items={["Claude Code", "Cursor", "VS Code"]}>
+  <Tab value="Claude Code">
+    ```bash
+    claude mcp add --transport http qrdx https://mcp.qrdx.dev/mcp \
+      --header "Authorization: Bearer $QRDX_API_KEY"
+    ```
+  </Tab>
+  <Tab value="Cursor">
+    ```json
+    {
+      "mcpServers": {
+        "qrdx": {
+          "url": "https://mcp.qrdx.dev/mcp",
+          "headers": { "Authorization": "Bearer qrdx_…" }
+        }
+      }
+    }
+    ```
+  </Tab>
+  <Tab value="VS Code">
+    ```json
+    {
+      "servers": {
+        "qrdx": {
+          "type": "http",
+          "url": "https://mcp.qrdx.dev/mcp",
+          "headers": { "Authorization": "Bearer qrdx_…" }
+        }
+      }
+    }
+    ```
+  </Tab>
+</Tabs>
+
+Keep the key out of shared or committed config files. Calls made with a key count toward the workspace's daily [API quota](/docs/plans-and-limits); every other tool works the same with or without one.
 
 ## Privacy and limits
 
-- The tools only render images, check designs and format text. They don't read or change any QRdx account data, and the server doesn't save the codes you generate.
+- The tools render images, check designs, format text and read the public community. Only `save_template` writes anything: the theme you ask it to save, in the API key's workspace. The server doesn't save the codes you generate.
 - The image URLs that `generate_qr_code` returns contain the encoded data. Don't share them if the data is private, such as a Wi-Fi password.
-- Requests are limited to 120 per minute per IP address, and `design_qr` to 20.
+- Requests are limited to 120 per minute per IP address, and `design_qr` to 20. With a key, `save_template` is also limited to 30 a minute per user.
 
 ## Self-hosting and local development
 

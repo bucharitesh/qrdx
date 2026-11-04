@@ -140,7 +140,7 @@ curl -X PATCH https://api.qrdx.dev/v1/codes/cm3x... \
   -d '{"destinationUrl": "https://example.com/summer-menu"}'
 ```
 
-`style` takes the same design fields as the playground (`fgColor`, `bgColor`, `bodyPattern`, `cornerEyePattern`, `level`, ...). Encode `shortLink` in your QR code, for example with the [`qrdx` library](/docs/getting-started).
+`style` takes the same design fields as the playground (`fgColor`, `bgColor`, `bodyPattern`, `cornerEyePattern`, `level`, ...). For a logo, send `logoIcon`<IfAvailable feature="fileStorage"> or an uploaded file's `logoFileId`</IfAvailable> ([logos in a code's style](/docs/developers/rest-api#code-logos)). Encode `shortLink` in your QR code, for example with the [`qrdx` library](/docs/getting-started) or the [image API](/docs/developers/image-api).
 
 Errors use one JSON shape, `{ "code": "...", "message": "...", "status": 400 }`, plus a `docs` link when a page explains the fix:
 

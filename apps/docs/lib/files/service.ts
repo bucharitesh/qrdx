@@ -347,6 +347,25 @@ export function listPickerFiles(scope: ActiveScope, kind?: FileKind) {
   return listFiles(scope, { kind, readyOnly: true, limit: PICKER_LIMIT });
 }
 
+/**
+ * A ready file of the workspace, with where it's stored, for server-side
+ * reads (a logo the API draws, lib/qr-api/logo.ts). Throws NOT_FOUND when
+ * the file isn't in the workspace or isn't ready.
+ */
+export async function getReadyFile(
+  scope: ActiveScope,
+  id: string,
+): Promise<{ id: string; mime: string; size: number; storageKey: string }> {
+  const row = await findRow(scope, id);
+  if (row.status !== "ready") throw notFound();
+  return {
+    id: row.id,
+    mime: row.mime,
+    size: row.size,
+    storageKey: row.storageKey,
+  };
+}
+
 export interface FileUsage {
   /** Hosted pages whose content uses the file */
   pages: { id: string; title: string | null }[];

@@ -5,9 +5,12 @@
 // - React and shadcn: npm `qrdx` 0.0.46 (NPM_QRDX below). Props and shapes
 //   added to packages/qrdx since then are listed as left out until a newer
 //   qrdx is on npm. Check `npm view qrdx version` before widening NPM_QRDX.
-// - Image URL: GET https://api.qrdx.dev/v1/qr (app/api/v1/qr/_lib/query.ts).
+// - Image URL: GET https://api.qrdx.dev/v1/qr (app/api/v1/qr/_lib/query.ts):
+//   flat parameters where they say it, and `style` (lib/qr-api/style.ts) for
+//   gradients, other colors and frames with more than a label.
 // - REST API: POST https://api.qrdx.dev/v1/codes (createCodeSchema in
-//   app/dashboard/codes/_lib/qr-codes.ts).
+//   app/dashboard/codes/_lib/qr-codes.ts, logo fields in
+//   app/api/v1/codes/_lib/style.ts).
 // - MCP: the design_qr tool at https://mcp.qrdx.dev/mcp
 //   (app/api/mcp/design.ts, lib/qr-design/style.ts).
 // - CLI: @qrdx/cli flags (packages/cli/src/commands/generate.ts), hidden
@@ -26,10 +29,13 @@ import {
   cornerEyePatternSchema,
   normalizeColorConfig,
 } from "qrdx/types";
+import { presetLogoIcon } from "@/lib/community/public-style";
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
 import { type CodeLang, parseLinkUrl } from "@/lib/playground-links";
+import { GRADIENT_STOPS_MAX, isSafeColor } from "@/lib/qr-api/style";
 import { CONTENT_FIELDS } from "@/lib/qr-design/content";
 import { styleEngineOptions } from "@/lib/qr-design/engine-options";
+import type { LogoIconId } from "@/lib/qr-design/style";
 import type { ContentType, QRContentConfig } from "@/types/qr-content";
 import type { ThemeStyles } from "@/types/theme";
 
@@ -148,7 +154,7 @@ export const NPM_QRDX = {
 /** Plain-English names for what a tab leaves out. */
 export const LEFT_OUT = {
   gradients: "Gradients",
-  imageGradients: "Gradients (drawn in their first color)",
+  imageGradients: `Gradients with more than ${GRADIENT_STOPS_MAX} colors (drawn in their first color)`,
   gradientMiddle: "Middle gradient colors",
   gradientStops: "Gradient stop positions",
   nonHexColors: "Colors that aren't hex",
@@ -163,13 +169,24 @@ export const LEFT_OUT = {
   uploadedLogo: "Your logo",
   shadcnNoLogo: "Hiding the logo (it shows the QRdx logo)",
   shadcnUploadedLogo: "Your logo (it shows the QRdx logo)",
-  restLogo: "Your logo (it can be large; add customLogo yourself)",
+  restLogo:
+    "Your logo (upload it in Dashboard → Files and send its id as logoFileId)",
+  qrdxLogo: "The QRdx logo (the API doesn't draw it)",
+  imageUploadedLogo:
+    "Your logo (the image API draws an uploaded logo only for requests with your API key, by logoFileId, so a public image URL can't carry it)",
+  mcpUploadedLogo:
+    "Your logo (upload it in Dashboard → Files and pass its id as logo_file_id, with your API key on the connection)",
   art: "Art (Logo QR or Image QR)",
   eyeColors: "Per-eye colors",
   moduleScale: "The dot size",
   autoLevel: "Automatic error correction for the logo",
   logoOptions: "The logo's size, position, shape and plate",
   shape: "The circle shape",
+  apiArt:
+    "Art (Logo QR or Image QR: it's built from your picture in the browser, and the API doesn't build art)",
+  unsafeColors: "Colors the API doesn't take",
+  customFrameTooLarge: "The custom frame (too large for an image URL)",
+  eyeGradients: "Gradients on single eyes (drawn in their first color)",
   longContent: "Content over 2,048 characters (the image API's limit)",
   privateContent:
     "Your content (image URLs reach a server, so only web addresses go in)",
@@ -256,6 +273,54 @@ function noteEngineOptions(style: ThemeStyles, notes: Notes) {
   if (logo && options.autoLevel) notes.add(LEFT_OUT.autoLevel);
   if (logo && options.logoOptions) notes.add(LEFT_OUT.logoOptions);
   if (options.shape) notes.add(LEFT_OUT.shape);
+}
+
+/** Art, for the API tabs: they can't draw it, and say why. */
+function noteApiArt(style: ThemeStyles, notes: Notes) {
+  if (style.art) notes.add(LEFT_OUT.apiArt);
+}
+
+/** The editor's quick logo icon the style shows, by id. */
+function logoIconOf(style: ThemeStyles): LogoIconId | null {
+  return style.showLogo ? presetLogoIcon(style.customLogo) : null;
+}
+
+/**
+ * Engine options for the API tabs (per-eye colors, dot size, auto error
+ * correction, the circle shape and, with a logo the tab draws, its layout).
+ * `color` turns each eye color into what the tab takes, or undefined.
+ */
+function apiEngineOptions(
+  style: ThemeStyles,
+  drawsLogo: boolean,
+  color: (value: ColorConfig) => ColorConfig | undefined,
+): Record<string, unknown> {
+  const options = styleEngineOptions(style);
+  const out: Record<string, unknown> = {};
+  if (options.eyeColors) {
+    const eyes: Record<string, Record<string, ColorConfig>> = {};
+    for (const [position, eye] of Object.entries(options.eyeColors)) {
+      const parts: Record<string, ColorConfig> = {};
+      for (const part of ["outer", "inner"] as const) {
+        const value = eye?.[part];
+        const converted = value === undefined ? undefined : color(value);
+        if (converted !== undefined) parts[part] = converted;
+      }
+      if (Object.keys(parts).length > 0) eyes[position] = parts;
+    }
+    if (Object.keys(eyes).length > 0) out.eyeColors = eyes;
+  }
+  if (options.moduleScale !== undefined) out.moduleScale = options.moduleScale;
+  if (options.shape) out.shape = options.shape;
+  if (drawsLogo && options.autoLevel) out.autoLevel = true;
+  if (drawsLogo && options.logoOptions) {
+    const { plate, ...layout } = options.logoOptions;
+    out.logoOptions = {
+      ...layout,
+      ...(plate && isSafeColor(plate.trim()) ? { plate: plate.trim() } : {}),
+    };
+  }
+  return out;
 }
 
 const roundMargin = (margin: number | undefined) =>
@@ -431,26 +496,66 @@ function hexKey(hex: string): string {
     : bare;
 }
 
-/** A color as an image API value (hex without `#`), or undefined. */
-function imageColor(
+/** Longest `style` value (STYLE_QUERY_MAX_LENGTH in app/api/v1/qr/_lib/query.ts). */
+const IMAGE_STYLE_MAX_LENGTH = 8192;
+
+/**
+ * A color for the image API: a flat hex value when it is one, else for
+ * `style` (gradients up to GRADIENT_STOPS_MAX stops, rgb()/hsl(), names).
+ * Undefined when the API can't take it.
+ */
+function imagePaint(
   color: ColorConfig | undefined,
   notes: Notes,
-): string | undefined {
+): { flat: string } | { style: ColorConfig } | undefined {
   if (color === undefined) return undefined;
   const paint = normalizeColorConfig(color);
-  const solid = paint.type === "solid" ? paint.color : paint.stops[0]?.color;
-  if (paint.type !== "solid") notes.add(LEFT_OUT.imageGradients);
-  if (!(solid && IMAGE_HEX.test(solid.trim()))) {
-    notes.add(LEFT_OUT.nonHexColors);
+  const solid = (value: string) => {
+    const trimmed = value.trim();
+    if (IMAGE_HEX.test(trimmed)) {
+      return { flat: trimmed.replace(/^#/, "").toLowerCase() };
+    }
+    if (isSafeColor(trimmed)) return { style: trimmed };
+    notes.add(LEFT_OUT.unsafeColors);
     return undefined;
+  };
+  if (paint.type === "solid") return solid(paint.color);
+  const stops = paint.stops.map((stop) => ({
+    color: stop.color.trim(),
+    offset: stop.offset,
+  }));
+  if (
+    stops.length > GRADIENT_STOPS_MAX ||
+    !stops.every((stop) => isSafeColor(stop.color))
+  ) {
+    notes.add(LEFT_OUT.imageGradients);
+    return stops[0] ? solid(stops[0].color) : undefined;
   }
-  return solid.trim().replace(/^#/, "").toLowerCase();
+  return {
+    style:
+      paint.type === "linear"
+        ? {
+            type: "linear",
+            angle: Math.round((((paint.angle ?? 0) % 360) + 360) % 360),
+            stops,
+          }
+        : { type: "radial", stops },
+  };
+}
+
+/** A frame color the API takes, or undefined (noted). */
+function frameColor(color: string | undefined, notes: Notes) {
+  if (!color) return undefined;
+  if (isSafeColor(color.trim())) return color.trim();
+  notes.add(LEFT_OUT.unsafeColors);
+  return undefined;
 }
 
 /**
- * An image URL for this design. The image API draws solid hex colors,
- * shapes, a border template, the level and the quiet zone; no gradients,
- * logo, frame or art.
+ * An image URL for this design. Flat parameters carry what they can (hex
+ * colors, shapes, the level, the quiet zone, the border, a frame with its
+ * label, a quick logo icon); `style` carries gradients, other colors and a
+ * frame with more than a label, custom frames included.
  */
 export function imageSnippet(input: SnippetInput): ImageSnippet {
   const { style } = input;
@@ -469,16 +574,26 @@ export function imageSnippet(input: SnippetInput): ImageSnippet {
   }
   const data = webAddress ? ownValue : SAMPLE_VALUE;
   const params = new URLSearchParams({ data });
+  const styleParam: Record<string, unknown> = {};
 
-  const fg = imageColor(style.fgColor ?? ENGINE_DEFAULTS.fgColor, notes);
-  const bg = imageColor(style.bgColor ?? ENGINE_DEFAULTS.bgColor, notes);
-  if (fg && hexKey(fg) !== IMAGE_DEFAULTS.fg) params.set("fg", fg);
-  if (bg && hexKey(bg) !== IMAGE_DEFAULTS.bg) params.set("bg", bg);
-  const fgKey = hexKey(fg ?? IMAGE_DEFAULTS.fg);
+  const fg = imagePaint(style.fgColor ?? ENGINE_DEFAULTS.fgColor, notes);
+  const bg = imagePaint(style.bgColor ?? ENGINE_DEFAULTS.bgColor, notes);
+  if (fg && "flat" in fg) {
+    if (hexKey(fg.flat) !== IMAGE_DEFAULTS.fg) params.set("fg", fg.flat);
+  } else if (fg) styleParam.fgColor = fg.style;
+  if (bg && "flat" in bg) {
+    if (hexKey(bg.flat) !== IMAGE_DEFAULTS.bg) params.set("bg", bg.flat);
+  } else if (bg) styleParam.bgColor = bg.style;
+  const fgKey = fg && "flat" in fg ? hexKey(fg.flat) : null;
   for (const key of ["eyeColor", "dotColor"] as const) {
-    const color = imageColor(style[key], notes);
+    const color = imagePaint(style[key], notes);
+    if (!color) continue;
     // Both default to the foreground color.
-    if (color && hexKey(color) !== fgKey) params.set(key, color);
+    if ("flat" in color) {
+      if (hexKey(color.flat) !== fgKey) params.set(key, color.flat);
+    } else {
+      styleParam[key] = color.style;
+    }
   }
 
   const shapes = [
@@ -517,12 +632,54 @@ export function imageSnippet(input: SnippetInput): ImageSnippet {
     else notes.add(borderLeftOut(template));
   }
 
-  noteFrame(style, notes);
+  const frame = style.frame;
+  if (frame && frame.style !== "none") {
+    const extras =
+      frame.style === "custom" ||
+      frame.color ||
+      frame.textColor ||
+      frame.secondaryColor ||
+      frame.secondaryText ||
+      frame.fontScale !== undefined;
+    if (!extras) {
+      params.set("frame", frame.style);
+      if (frame.text !== undefined) params.set("frameText", frame.text);
+    } else {
+      const { color, textColor, secondaryColor, ...rest } = frame;
+      const colors = Object.entries({ color, textColor, secondaryColor })
+        .map(([key, value]) => [key, frameColor(value, notes)] as const)
+        .filter(([, value]) => value);
+      styleParam.frame = { ...rest, ...Object.fromEntries(colors) };
+    }
+  }
+
+  const icon = logoIconOf(style);
   const logo = logoOf(style);
-  if (logo.kind === "uploaded") notes.add(LEFT_OUT.uploadedLogo);
-  else if (logo.kind !== "none") notes.add(LEFT_OUT.logo);
-  noteArt(style, notes);
-  noteEngineOptions(style, notes);
+  if (icon) params.set("logoIcon", icon);
+  else if (logo.kind === "qrdx") notes.add(LEFT_OUT.qrdxLogo);
+  else if (logo.kind !== "none") notes.add(LEFT_OUT.imageUploadedLogo);
+  noteApiArt(style, notes);
+  Object.assign(
+    styleParam,
+    apiEngineOptions(style, Boolean(icon), (color) => {
+      const paint = imagePaint(color, notes);
+      return paint && "flat" in paint ? `#${paint.flat}` : paint?.style;
+    }),
+  );
+
+  if (Object.keys(styleParam).length > 0) {
+    let json = JSON.stringify(styleParam);
+    if (json.length > IMAGE_STYLE_MAX_LENGTH && styleParam.frame) {
+      delete styleParam.frame;
+      notes.add(
+        frame?.style === "custom"
+          ? LEFT_OUT.customFrameTooLarge
+          : LEFT_OUT.frame,
+      );
+      json = JSON.stringify(styleParam);
+    }
+    if (Object.keys(styleParam).length > 0) params.set("style", json);
+  }
 
   const url = `${IMAGE_API_URL}?${params.toString()}`;
   return {
@@ -578,10 +735,19 @@ const singleQuote = (text: string) => `'${text.replace(/'/g, `'\\''`)}'`;
 export const REST_UNAVAILABLE =
   "The API makes dynamic codes, and those open a link. Switch the content type to URL to get a request for this design.";
 
+/** The id in a link to one of QRdx's uploaded files (/api/files/<id>). */
+function uploadedFileId(logo: string | undefined): string | null {
+  const match = /^https:\/\/[^/\s]+\/api\/files\/([a-z0-9]{20,40})$/.exec(
+    logo?.trim() ?? "",
+  );
+  return match?.[1] ?? null;
+}
+
 /**
  * `curl` for POST /v1/codes: a dynamic code that opens the URL content,
- * with this style. The logo image and art stay out (both can be large, and
- * art is image pixels).
+ * with this style. A quick logo icon goes as logoIcon and an uploaded
+ * file's link as logoFileId; other logo images and art stay out (both can
+ * be large, and art is image pixels).
  */
 export function restSnippet(input: SnippetInput): RestSnippet {
   if (input.contentType !== "url") {
@@ -596,13 +762,19 @@ export function restSnippet(input: SnippetInput): RestSnippet {
     SAMPLE_VALUE;
 
   const { customLogo, art, ...rest } = input.style;
-  const style: ThemeStyles = { ...rest };
-  if (customLogo && rest.showLogo) {
+  const style: ThemeStyles & { logoIcon?: LogoIconId; logoFileId?: string } = {
+    ...rest,
+  };
+  const icon = logoIconOf(input.style);
+  const fileId = rest.showLogo ? uploadedFileId(customLogo) : null;
+  if (icon) style.logoIcon = icon;
+  else if (fileId) style.logoFileId = fileId;
+  else if (customLogo && rest.showLogo) {
     // Without the image, showLogo would draw the QRdx logo instead.
     style.showLogo = false;
     notes.add(LEFT_OUT.restLogo);
   }
-  if (art) notes.add(LEFT_OUT.art);
+  if (art) notes.add(LEFT_OUT.apiArt);
 
   const body = formatJson({ destinationUrl: destination, style });
   return {
@@ -701,8 +873,9 @@ function mcpContent(input: SnippetInput): Record<string, string | boolean> {
 
 /**
  * Arguments for the MCP `design_qr` tool. Its vocabulary: #RRGGBB colors,
- * two-color gradients, the offered shapes, built-in frames and borders.
- * It has no logo, art or custom frames.
+ * two-color gradients, the offered shapes, built-in and custom frames,
+ * borders and the quick logo icons. An uploaded logo goes by
+ * logo_file_id with an API key, and art isn't drawn.
  */
 export function mcpSnippet(input: SnippetInput): Snippet {
   const { style } = input;
@@ -761,33 +934,44 @@ export function mcpSnippet(input: SnippetInput): Snippet {
 
   const frame = style.frame;
   if (frame && frame.style !== "none") {
-    if (frame.style === "custom") {
-      notes.add(LEFT_OUT.customFrame);
-    } else {
-      const out: Record<string, string> = { style: frame.style };
-      // design_qr draws "Scan me" for an empty label.
-      if (frame.text !== undefined) {
-        if (frame.text.trim()) out.text = frame.text;
-        else notes.add(LEFT_OUT.frameLabelHidden);
-      }
-      if (frame.secondaryText?.trim()) out.secondaryText = frame.secondaryText;
-      for (const key of ["color", "textColor"] as const) {
-        const color = frame[key];
-        if (!color) continue;
-        const hex = mcpHex(color, notes);
-        if (hex) out[key] = hex;
-      }
-      if (frame.secondaryColor) notes.add(LEFT_OUT.frameSecondColor);
-      if (frame.fontScale !== undefined && frame.fontScale !== 1) {
-        notes.add(LEFT_OUT.frameLabelSize);
-      }
-      design.frame = out;
+    const out: Record<string, unknown> = { style: frame.style };
+    // A custom frame is drawn from its spec (checked by design_qr).
+    if (frame.style === "custom") out.spec = frame.spec;
+    // design_qr draws "Scan me" for an empty label.
+    if (frame.text !== undefined) {
+      if (frame.text.trim()) out.text = frame.text;
+      else notes.add(LEFT_OUT.frameLabelHidden);
     }
+    if (frame.secondaryText?.trim()) out.secondaryText = frame.secondaryText;
+    for (const key of ["color", "textColor"] as const) {
+      const color = frame[key];
+      if (!color) continue;
+      const hex = mcpHex(color, notes);
+      if (hex) out[key] = hex;
+    }
+    if (frame.secondaryColor) notes.add(LEFT_OUT.frameSecondColor);
+    if (frame.fontScale !== undefined && frame.fontScale !== 1) {
+      notes.add(LEFT_OUT.frameLabelSize);
+    }
+    design.frame = out;
   }
 
-  if (logoOf(style).kind !== "none") notes.add(LEFT_OUT.logo);
-  noteArt(style, notes);
-  noteEngineOptions(style, notes);
+  const icon = logoIconOf(style);
+  const logo = logoOf(style);
+  if (icon) design.logo = icon;
+  else if (logo.kind === "qrdx") notes.add(LEFT_OUT.qrdxLogo);
+  else if (logo.kind !== "none") notes.add(LEFT_OUT.mcpUploadedLogo);
+  noteApiArt(style, notes);
+  Object.assign(
+    design,
+    apiEngineOptions(style, Boolean(icon), (color) => {
+      const paint = normalizeColorConfig(color);
+      if (paint.type !== "solid") notes.add(LEFT_OUT.eyeGradients);
+      const solid =
+        paint.type === "solid" ? paint.color : paint.stops[0]?.color;
+      return solid ? mcpHex(solid, notes) : undefined;
+    }),
+  );
 
   return {
     code: formatJson({ content: mcpContent(input), style: design }),

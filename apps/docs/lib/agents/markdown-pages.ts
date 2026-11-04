@@ -149,7 +149,7 @@ export function mcpMarkdown(origin: URL): string {
     `> ${MCP_INTRO}`,
     [
       `- Endpoint: \`${url}\` (Streamable HTTP)`,
-      "- No account or API key; the tools are read-only and keep no data.",
+      "- No account or API key for designing, rendering and the community. Only save_template writes (a theme in an API key's workspace); the server keeps no other data.",
       `- Connect page: ${abs("/mcp")}`,
       `- Docs: ${abs("/docs/developers/mcp")}`,
       `- Server card: ${mcpServerCardUrl(origin)}`,

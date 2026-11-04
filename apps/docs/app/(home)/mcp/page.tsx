@@ -157,8 +157,9 @@ export default function McpPage() {
           title="What your assistant can call"
           description={
             <>
-              Seven read-only tools. They render images and format text, and
-              never read or change QRdx account data. Full parameters are in the{" "}
+              {MCP_TOOLS.length} tools. All but save_template are read-only and
+              need no key: they render images, format text and read the public
+              community. Full parameters are in the{" "}
               <Link href="/docs/developers/mcp" className={textLinkClass}>
                 MCP server docs
               </Link>
