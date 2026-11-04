@@ -4,6 +4,7 @@ import { authClient } from "@repo/auth/client";
 import { useRouter } from "next/navigation";
 import type { QrCodeView } from "@/app/dashboard/codes/_lib/qr-codes";
 import { loadCodeIntoEditor } from "@/components/editor/dynamic-link-toggle";
+import { playgroundHref } from "@/lib/playground-links";
 
 /** Opens a code in the playground, still bound to its short link. */
 export function useOpenInPlayground() {
@@ -14,6 +15,8 @@ export function useOpenInPlayground() {
   return (code: QrCodeView) => {
     if (!userId) return;
     loadCodeIntoEditor(code, userId);
-    router.push("/playground");
+    // The code's content and link binding go through the store
+    // (loadCodeIntoEditor); the link carries none of it.
+    router.push(playgroundHref());
   };
 }

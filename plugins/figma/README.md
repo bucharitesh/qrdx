@@ -7,10 +7,11 @@ A Figma plugin that inserts styled QR codes as vector layers, built with the [`q
 - Every inserted code remembers its content and style (plugin data). Select one and the plugin offers **Replace selected QR**, which swaps in the new code while keeping the old one's on-canvas size, position, rotation, constraints and layer order. **Load its settings** copies the selected code's content and style into the form.
 - Inserted codes get an **Edit QR code** button in Figma's right panel that reopens the plugin with that code's settings loaded.
 - Follows Figma's light or dark theme. Warns when content is too long, when colors have low contrast, and when a code is light on dark.
+- **More options in the QRdx playground** opens the full editor at qrdx.dev in your browser, with the code's web address filled in. The Classic and Minimal presets go along too; the other ten have changed in the playground since they were copied, so they don't.
 
 ## How it works
 
-`src/ui.tsx` (the plugin window) renders the SVG with `qrdx` and sends it to `src/code.ts` (Figma's main thread), which calls `figma.createNodeFromSvg`, names the node, stores the settings with `setPluginData("qrdx", …)` and sets relaunch data. `src/messages.ts` holds the message types and validates everything the main thread receives. The plugin has no network access (`"allowedDomains": ["none"]`): nothing leaves Figma.
+`src/ui.tsx` (the plugin window) renders the SVG with `qrdx` and sends it to `src/code.ts` (Figma's main thread), which calls `figma.createNodeFromSvg`, names the node, stores the settings with `setPluginData("qrdx", …)` and sets relaunch data. `src/messages.ts` holds the message types and validates everything the main thread receives. The plugin has no network access (`"allowedDomains": ["none"]`). The playground link is built in `src/playground-link.ts` and opened by the main thread with `figma.openExternal`, only when you click it. A web address (http or https, without a user name or password) goes after the `#`, which browsers never send to a server; text that isn't a web address is never passed. `apps/docs/tests/plugins/playground-links.test.ts` checks the link against the site's reader.
 
 ## Build
 

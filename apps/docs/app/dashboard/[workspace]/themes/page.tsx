@@ -15,6 +15,7 @@ import {
   teamThemesPlanName,
 } from "@/app/dashboard/themes/_lib/queries";
 import { getPlan, getPlanForScope, getPlanLimits } from "@/lib/plans";
+import { playgroundHref } from "@/lib/playground-links";
 import { PLAN_NAMES } from "@/lib/pricing";
 
 export const metadata: Metadata = {
@@ -59,7 +60,7 @@ export default async function ThemesPage() {
           {PLAN_NAMES[personalPlan]}
         </Badge>
         <Button asChild size="sm">
-          <Link href="/playground?tab=customisations">
+          <Link href={playgroundHref({ tab: "design" })}>
             <Plus className="size-4" />
             New theme
           </Link>

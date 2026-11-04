@@ -26,6 +26,7 @@ import { DEFAULT_QR_LOGO } from "@/lib/constants";
 import { useToggleLike } from "@/lib/hooks/themes";
 import { useSessionGuard } from "@/lib/hooks/use-gaurds";
 import { usePostLoginAction } from "@/lib/hooks/use-post-login-action";
+import { playgroundHref } from "@/lib/playground-links";
 import { soundEvent } from "@/lib/sound/emit";
 import { useQREditorStore } from "@/store/editor-store";
 import type { CommunityTheme } from "@/types/community";
@@ -107,13 +108,15 @@ export function CommunityThemePreviewDialog({
     toggleLike.mutate(displayTheme.id);
   };
 
-  // The gallery's cleaned design goes into the editor; never a
-  // /playground/<savedThemeId> link, which shows the whole saved theme.
+  // The gallery's cleaned design goes into the editor through the store; never
+  // a /playground/<savedThemeId> link, which shows the whole saved theme. A
+  // `style` link can't carry it either: it drops the logo icon a published
+  // theme may keep (lib/community/public-style-server.ts).
   const handleViewDetails = () => {
     const { themeState, setThemeState } = useQREditorStore.getState();
     setThemeState({ ...themeState, styles: displayTheme.styles });
     onOpenChange(false);
-    router.push("/playground?tab=customisations");
+    router.push(playgroundHref({ tab: "design" }));
   };
 
   const handleShare = async () => {

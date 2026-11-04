@@ -7,6 +7,8 @@ import { useEffect, useRef, useState } from "react";
 import { useAvailability } from "@/components/availability-provider";
 import { useDynamicLinkStore } from "@/components/editor/dynamic-link-toggle";
 import { track } from "@/lib/analytics";
+import { isUntrackedAnalyticsPath } from "@/lib/analytics/privacy";
+import { previousPathname } from "@/lib/navigation-history";
 import { applyPlaygroundParams, SIGNED_IN_TYPES } from "@/lib/playground-apply";
 import {
   handoffSource,
@@ -20,6 +22,19 @@ import { useThemePresetStore } from "@/store/theme-preset-store";
 import { getPresetLabel } from "@/utils/qr-presets-helper";
 
 const hasHydrated = () => useQREditorStore.persist?.hasHydrated?.() ?? true;
+
+/**
+ * The page a link into the playground was on: the previous page in this tab
+ * after an in-app navigation (document.referrer still names the page the
+ * visit started on), else document.referrer. Pages analytics never records
+ * (the scanner, customer pages) aren't named here either.
+ */
+function handoffReferrer(origin: string): string {
+  const previous = previousPathname(window.location.pathname);
+  return previous && !isUntrackedAnalyticsPath(previous)
+    ? new URL(previous, origin).href
+    : document.referrer;
+}
 
 /**
  * Applies a playground link's parameters (lib/playground-links.ts) once, in
@@ -119,7 +134,7 @@ export function usePlaygroundParams({ themePath }: { themePath: boolean }): {
     if (outcome.applied.length > 0) {
       track("playground_handoff", {
         source: handoffSource(
-          document.referrer,
+          handoffReferrer(origin),
           origin,
           new URLSearchParams(search).get("ref"),
         ),

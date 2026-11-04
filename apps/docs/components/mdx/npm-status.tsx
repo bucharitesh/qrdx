@@ -8,6 +8,7 @@ import {
   type NpmLag,
   type PublishedPackage,
 } from "@/lib/npm-version";
+import { playgroundHref } from "@/lib/playground-links";
 
 // Styled here too: the changelog renders the notice outside docs prose.
 const LINK = "font-medium text-foreground underline underline-offset-4";
@@ -24,7 +25,7 @@ const DETAILS: Record<PublishedPackage, (lag: NpmLag) => ReactNode> = {
       and the scan score came later, and {published} lists React 19, sharp and
       jspdf as its own dependencies. Until the release is out, use every option
       in the{" "}
-      <Link className={LINK} href="/playground">
+      <Link className={LINK} href={playgroundHref()}>
         playground
       </Link>
       , or render images from a URL with the{" "}
@@ -45,7 +46,7 @@ const DETAILS: Record<PublishedPackage, (lag: NpmLag) => ReactNode> = {
       </Link>
       : <code className="break-all">{EPS_EXAMPLE}</code>. For frames, download
       from the{" "}
-      <Link className={LINK} href="/playground">
+      <Link className={LINK} href={playgroundHref()}>
         playground
       </Link>
       .
