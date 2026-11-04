@@ -18,6 +18,7 @@ import {
 } from "drizzle-orm";
 import { z } from "zod";
 import { HttpError } from "@/lib/error-response";
+import { noteLimitUsage } from "@/lib/limit-notices";
 import { baseUrl } from "@/lib/metadata";
 import { getPlanForScope, getPlanLimits, type Plan } from "@/lib/plans";
 import { PLAN_NAMES } from "@/lib/pricing";
@@ -662,12 +663,13 @@ export async function finalizeUpload(
 
   // Authoritative quota check (presign-time checks can race).
   const limits = await scopeLimits(scope);
+  const usedBefore = await usedBytes(scope, {
+    includePending: false,
+    excludeId: target?.id,
+  });
   const check = checkUpload({
     limits,
-    usedBytes: await usedBytes(scope, {
-      includePending: false,
-      excludeId: target?.id,
-    }),
+    usedBytes: usedBefore,
     size: row.size,
     planName: limits.planName,
   });
@@ -677,6 +679,13 @@ export async function finalizeUpload(
   }
 
   const storageKey = await promoteUpload(row, result.etag);
+  // Owners hear about it at 90% and 100% (after the response).
+  if (Number.isFinite(limits.storageBytes)) {
+    noteLimitUsage(scope, "storage", {
+      used: usedBefore + row.size,
+      limit: limits.storageBytes,
+    });
+  }
 
   if (!target) {
     const [ready] = await db

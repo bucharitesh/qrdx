@@ -29,7 +29,7 @@ import {
   SelectValue,
 } from "@repo/design-system/components/ui/select";
 import { Add } from "iconsax-reactjs";
-import { useMemo, useState, useTransition } from "react";
+import { type ReactNode, useMemo, useState, useTransition } from "react";
 import { createCodeTag } from "@/actions/tags";
 import { TagDot } from "@/app/dashboard/codes/_components/tag-chip";
 import type { TagRow } from "@/app/dashboard/codes/_lib/organize";
@@ -90,12 +90,18 @@ export function TagsField({
   onChange,
   onCreated,
   disabled,
+  action,
+  children,
 }: {
   tags: TagRow[] | null;
   value: string[];
   onChange: (tagIds: string[]) => void;
   onCreated: (tag: TagRow) => void;
   disabled?: boolean;
+  /** A small action on the label row (the builder's "Suggest") */
+  action?: ReactNode;
+  /** Under the field (the builder's suggested tags) */
+  children?: ReactNode;
 }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -138,7 +144,10 @@ export function TagsField({
 
   return (
     <div className="min-w-0 space-y-1.5">
-      <Label htmlFor="code-builder-tags">Tags</Label>
+      <div className="flex items-center justify-between gap-2">
+        <Label htmlFor="code-builder-tags">Tags</Label>
+        {action}
+      </div>
       <Popover onOpenChange={setOpen} open={open}>
         <PopoverTrigger asChild>
           <button
@@ -216,6 +225,7 @@ export function TagsField({
           )}
         </PopoverContent>
       </Popover>
+      {children}
     </div>
   );
 }

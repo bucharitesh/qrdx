@@ -9,6 +9,7 @@ import { CodeActivityEmail } from "./code-activity";
 import { EmailChangeCodeEmail, EmailChangedEmail } from "./email-change";
 import { FirstScanEmail } from "./first-scan";
 import { FormSubmissionEmail } from "./form-submission";
+import { LimitNoticeEmail } from "./limit-notice";
 import { ScanMilestoneEmail } from "./scan-milestone";
 import { SignInCodeEmail } from "./sign-in-code";
 import { TeamInviteEmail } from "./team-invite";
@@ -226,5 +227,50 @@ describe("email templates", () => {
       assert.equal(new URL(href).pathname, "/", href);
       assert.equal(new URL(href).search, "", href);
     }
+  });
+
+  it("limit notices name the workspace and limit and link to plan and usage", async () => {
+    const usageUrl = "https://qrdx.dev/dashboard/acme/settings/usage";
+    const near = await both(
+      <LimitNoticeEmail
+        level="near"
+        limitLabel="Form responses"
+        noun="form responses"
+        planName="Free"
+        reason="5 form responses left this month on Free. Resets Dec 1."
+        recipientReason="You get this because you're an owner of Acme on QRdx."
+        usageUrl={usageUrl}
+        value="45 of 50"
+        workspaceName="Acme"
+      />,
+    );
+    assert.match(near.text, /Acme is close to a plan limit/i);
+    assert.match(near.text, /Acme has used 45 of 50 form responses\./);
+    assert.match(near.text, /Resets Dec 1\./);
+    assert.match(near.text, /Form responses:\s+45 of 50/);
+    assert.match(
+      near.html,
+      /href="https:\/\/qrdx\.dev\/dashboard\/acme\/settings\/usage"/,
+    );
+    // An account notice: no unsubscribe link, the reason says why instead.
+    assert.doesNotMatch(near.text, /Unsubscribe/);
+    assert.match(near.text, /owner of Acme/);
+
+    const full = await both(
+      <LimitNoticeEmail
+        level="full"
+        limitLabel="Dynamic QR codes"
+        noun="dynamic QR codes"
+        planName="Free"
+        reason="Free includes 10 active dynamic codes. Archive one or upgrade to Pro for unlimited codes. Existing codes keep working."
+        recipientReason="You get this because you're an owner of Acme on QRdx."
+        usageUrl={usageUrl}
+        value="10 of 10"
+        workspaceName="Acme"
+      />,
+    );
+    assert.match(full.text, /Acme has reached a plan limit/i);
+    assert.match(full.text, /Existing codes keep working/);
+    assert.doesNotMatch(full.text, /Resets/);
   });
 });

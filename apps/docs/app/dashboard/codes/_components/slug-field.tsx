@@ -5,7 +5,7 @@ import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { cn } from "@repo/design-system/lib/utils";
 import { Lock } from "iconsax-reactjs";
-import { useEffect, useRef, useState } from "react";
+import { type ReactNode, useEffect, useRef, useState } from "react";
 import { checkQrCodeSlug } from "@/actions/qr-codes";
 import { PLAN_NAMES } from "@/lib/pricing";
 import {
@@ -108,6 +108,7 @@ export function SlugField({
   disabled,
   onUpgrade,
   pending = false,
+  action,
 }: {
   value: string;
   onChange: (value: string) => void;
@@ -125,6 +126,8 @@ export function SlugField({
    * plan badge yet, so the form keeps its shape instead of an empty box.
    */
   pending?: boolean;
+  /** A small action on the label row (the builder's "Suggest") */
+  action?: ReactNode;
 }) {
   const describedBy = "code-slug-status";
   // Plans with custom back-halves (lib/plans.ts), when the page knows them.
@@ -136,6 +139,7 @@ export function SlugField({
           Custom back-half{" "}
           <span className="text-muted-foreground font-normal">(optional)</span>
         </Label>
+        {action}
         {!(allowed || pending) && (
           <button
             className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium transition-colors"

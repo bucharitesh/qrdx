@@ -25,7 +25,13 @@ const TASKS = Object.keys(AI_MODELS) as AITask[];
 describe("the model map", () => {
   it("has a gateway model for every task", () => {
     expect(TASKS.sort()).toEqual(
-      ["art", "base", "prompt-enhancement", "qr-theme-generation"].sort(),
+      [
+        "art",
+        "base",
+        "code-suggestions",
+        "prompt-enhancement",
+        "qr-theme-generation",
+      ].sort(),
     );
     for (const task of TASKS) {
       expect(AI_MODELS[task].model, task).toMatch(/^[a-z0-9-]+\/[a-z0-9.-]+$/);
@@ -35,6 +41,9 @@ describe("the model map", () => {
   it("uses Claude Haiku 5.5 for text, Gemini 3 Flash for the theme schema and GPT Image 2 for art", () => {
     expect(AI_MODELS.base.model).toBe("anthropic/claude-haiku-5.5");
     expect(AI_MODELS["prompt-enhancement"].model).toBe(
+      "anthropic/claude-haiku-5.5",
+    );
+    expect(AI_MODELS["code-suggestions"].model).toBe(
       "anthropic/claude-haiku-5.5",
     );
     expect(AI_MODELS["qr-theme-generation"].model).toBe(
@@ -71,6 +80,9 @@ describe("provider options", () => {
       gateway: { disallowPromptTraining: true, only: ["anthropic"] },
     });
     expect(textProviderOptions("prompt-enhancement")).toEqual({
+      gateway: { disallowPromptTraining: true, only: ["anthropic"] },
+    });
+    expect(textProviderOptions("code-suggestions")).toEqual({
       gateway: { disallowPromptTraining: true, only: ["anthropic"] },
     });
     expect(textProviderOptions("qr-theme-generation")).toEqual({
