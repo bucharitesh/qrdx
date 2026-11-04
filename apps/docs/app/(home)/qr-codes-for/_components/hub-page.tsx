@@ -1,3 +1,4 @@
+import { TopicHubStrip } from "@/components/sections/page-codes/page-code-sections";
 import { SectionHeader } from "@/components/sections/section-header";
 import {
   CardGrid,
@@ -54,7 +55,9 @@ export function HubPage({
         ]}
         title={title}
         intro={intro}
-      />
+      >
+        <TopicHubStrip collection={collection} />
+      </ToolHero>
 
       {collection.groups.map((group) => (
         <section

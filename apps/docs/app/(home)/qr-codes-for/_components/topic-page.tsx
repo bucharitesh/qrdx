@@ -5,6 +5,7 @@ import Link from "next/link";
 import { SignInLink } from "@/components/auth/sign-in-link";
 import { MockupImage } from "@/components/mockups/mockup-image";
 import { useCaseImages } from "@/components/mockups/visuals";
+import { TopicCodeStrip } from "@/components/sections/page-codes/page-code-sections";
 import { SectionHeader } from "@/components/sections/section-header";
 import {
   CardGrid,
@@ -138,6 +139,7 @@ export function TopicPage({
             <SignInLink href="/dashboard">Create a dynamic code</SignInLink>
           </Button>
         </div>
+        <TopicCodeStrip topic={topic} collection={collection} />
       </ToolHero>
 
       <section aria-labelledby="ideas" className="flex flex-col w-full">
