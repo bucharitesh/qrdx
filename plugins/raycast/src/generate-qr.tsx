@@ -22,6 +22,7 @@ import {
   cornerEyePatternPreviews,
   templatePreviews,
 } from "./pattern-previews";
+import { playgroundLink } from "./playground-link";
 import { buildPNGBuffer, buildSVGString, getSVGDataURI } from "./qr-engine";
 import { generateSavedPreview, saveQR } from "./storage";
 import {
@@ -341,6 +342,14 @@ export function QRPreview({
               onAction={saveSVG}
               shortcut={{ modifiers: ["cmd", "shift"], key: "x" }}
               title="Save SVG to Downloads"
+            />
+          </ActionPanel.Section>
+          <ActionPanel.Section title="QRdx">
+            <Action.OpenInBrowser
+              icon={Icon.Globe}
+              shortcut={{ modifiers: ["cmd"], key: "o" }}
+              title="Open in QRdx Playground"
+              url={playgroundLink(url)}
             />
           </ActionPanel.Section>
           {onEdit && (

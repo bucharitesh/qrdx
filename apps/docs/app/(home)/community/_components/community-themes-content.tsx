@@ -39,6 +39,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { HairlineFigure } from "@/components/mockups/hairline";
 import { useWorkspaceHref } from "@/components/workspace-provider";
 import { useCommunityThemes } from "@/lib/hooks/themes/use-community-themes";
+import { playgroundHref } from "@/lib/playground-links";
 import { useQREditorStore } from "@/store/editor-store";
 import type {
   CommunityFilterOption,
@@ -328,7 +329,7 @@ export function CommunityThemesContent() {
                 </Button>
               ) : (
                 <Button asChild className="mt-2" variant="outline">
-                  <Link href="/playground?tab=customisations">
+                  <Link href={playgroundHref({ tab: "design" })}>
                     <Brush2 aria-hidden />
                     Open the editor
                   </Link>

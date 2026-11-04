@@ -17,6 +17,7 @@ import {
 } from "@raycast/api";
 import { useCallback, useEffect, useState } from "react";
 import { QRForm, QRPreview } from "./generate-qr";
+import { playgroundLink } from "./playground-link";
 import { buildPNGBuffer, buildSVGString } from "./qr-engine";
 import {
   deleteQR,
@@ -177,6 +178,14 @@ function SavedQRActions({
           onAction={saveSVG}
           shortcut={{ modifiers: ["cmd", "shift"], key: "s" }}
           title="Save SVG to Downloads"
+        />
+      </ActionPanel.Section>
+      <ActionPanel.Section title="QRdx">
+        <Action.OpenInBrowser
+          icon={Icon.Globe}
+          shortcut={{ modifiers: ["cmd"], key: "o" }}
+          title="Open in QRdx Playground"
+          url={playgroundLink(saved.url)}
         />
       </ActionPanel.Section>
       <ActionPanel.Section>

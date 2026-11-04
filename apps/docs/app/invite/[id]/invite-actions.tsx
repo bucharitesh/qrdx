@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { acceptInvitation, rejectInvitation } from "@/actions/organizations";
 import { useRefreshTeams } from "@/components/org-switcher";
+import { playgroundHref } from "@/lib/playground-links";
 import { workspaceHref } from "@/lib/workspace-paths";
 
 export function InviteActions({ invitationId }: { invitationId: string }) {
@@ -48,7 +49,7 @@ export function InviteActions({ invitationId }: { invitationId: string }) {
           You declined this invitation.
         </p>
         <Button asChild variant="outline">
-          <Link href="/playground">Go to the playground</Link>
+          <Link href={playgroundHref()}>Go to the playground</Link>
         </Button>
       </div>
     );
