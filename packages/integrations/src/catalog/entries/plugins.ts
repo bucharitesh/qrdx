@@ -1,6 +1,10 @@
 import type { IntegrationCatalogEntry } from "../types";
 
 const REPO = "https://github.com/bucharitesh/qrdx";
+
+/** The extension's Chrome Web Store listing (live since 2026-11). */
+export const CHROME_WEB_STORE_URL =
+  "https://chromewebstore.google.com/detail/bpepiomjdoicpmbihlohodghdglkhicc";
 const CLONE = `git clone ${REPO}.git\ncd qrdx && pnpm install`;
 
 export const plugins: IntegrationCatalogEntry[] = [
@@ -21,24 +25,15 @@ export const plugins: IntegrationCatalogEntry[] = [
     plan: "no-account",
     builtBy: "QRdx",
     website: "https://www.google.com/chrome/",
-    note: "Not in the Chrome Web Store yet. Install it from source.",
     primaryAction: {
       type: "link",
-      label: "View source",
-      href: `${REPO}/tree/main/plugins/chrome`,
+      label: "Add to Chrome",
+      href: CHROME_WEB_STORE_URL,
     },
     steps: [
       {
-        title: "Build the extension",
-        snippet: {
-          label: "Terminal",
-          language: "bash",
-          code: `${CLONE}\npnpm --filter @qrdx/chrome-extension build`,
-        },
-      },
-      {
-        title: "Load it in Chrome",
-        body: "Open chrome://extensions, turn on Developer mode, click Load unpacked and select plugins/chrome/dist.",
+        title: "Add it from the Chrome Web Store",
+        body: "Open the QRdx listing in the Chrome Web Store and click Add to Chrome. It's free and needs no account.",
       },
       {
         title: "Pin QRdx",
