@@ -14,17 +14,24 @@ interface CodeShapeSectionProps {
   /** The style with defaults filled in */
   style: QRStyle;
   onChange: (shape: QRShape | undefined) => void;
+  /** Open it (a link asked for this section) */
+  expanded?: boolean;
 }
 
 /**
  * The code's outline: square, or a circle that fills a disc around the
  * code with decorative dots. Scanners only read the code in the middle.
  */
-export function CodeShapeSection({ style, onChange }: CodeShapeSectionProps) {
+export function CodeShapeSection({
+  style,
+  onChange,
+  expanded,
+}: CodeShapeSectionProps) {
   const shape = style.shape ?? "square";
   return (
     <ControlSection
-      id="section-shape"
+      expanded={expanded}
+      section="shape"
       summary={SHAPE_NAMES[shape]}
       title="Code shape"
     >

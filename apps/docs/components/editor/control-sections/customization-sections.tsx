@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { defaultThemeState } from "@/config/qr";
+import type { DesignSection } from "@/lib/playground-links";
 import type { QRStyle } from "@/types/theme";
 import { CodeShapeSection } from "./code-shape-section";
 import { DotSizeSection } from "./dot-size-section";
@@ -11,6 +12,8 @@ import { LogoOptionsSection } from "./logo-options-section";
 interface CustomizationSectionsProps {
   styles: QRStyle;
   onChange: (styles: QRStyle) => void;
+  /** The section a link asked for (opens it) */
+  focus?: DesignSection;
 }
 
 /**
@@ -21,6 +24,7 @@ interface CustomizationSectionsProps {
 export function CustomizationSections({
   styles,
   onChange,
+  focus,
 }: CustomizationSectionsProps) {
   const current = React.useMemo(
     () => ({ ...defaultThemeState.styles, ...styles }),
@@ -41,14 +45,17 @@ export function CustomizationSections({
         <LogoOptionsSection onChange={update} style={current} />
       )}
       <EyeColorsSection
+        expanded={focus === "eye-colors"}
         onChange={(eyeColors) => update({ eyeColors })}
         style={current}
       />
       <DotSizeSection
+        expanded={focus === "dot-size"}
         onChange={(moduleScale) => update({ moduleScale })}
         style={current}
       />
       <CodeShapeSection
+        expanded={focus === "shape"}
         onChange={(shape) => update({ shape })}
         style={current}
       />

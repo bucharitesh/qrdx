@@ -55,6 +55,11 @@ export const DESIGN_SECTIONS = [
   "dots",
   "eyes",
   "logo",
+  // Engine options (customization-sections.tsx); Logo options shows only
+  // with a logo on, so links open it through "logo"
+  "eye-colors",
+  "dot-size",
+  "shape",
   "frame",
   "padding",
   "error-correction",
