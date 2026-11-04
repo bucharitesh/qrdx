@@ -16,26 +16,40 @@ import {
 } from "iconsax-reactjs";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { type ReactElement, Suspense, useId } from "react";
+import {
+  type ReactElement,
+  Suspense,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+} from "react";
 import type { Meter } from "@/app/settings/usage/_lib/meters";
 import { useAvailability } from "@/components/availability-provider";
 import { OrgSwitcher } from "@/components/org-switcher";
 import { unreadLabel } from "@/lib/changelog-feed";
 import { PLAN_NAMES } from "@/lib/pricing";
-import { workspaceHref } from "@/lib/workspace-paths";
+import { useCreate } from "./create-actions";
 import { LimitNotice } from "./limit-notice";
 import {
-  type AppNavGroup,
-  isNavItemActive,
-  isSettingsPath,
-  mainNav,
-  settingsNav,
-} from "./nav-config";
+  AREA_ROW_ICON,
+  areaForPath,
+  areaOffset,
+  NAV_AREAS,
+  type NavAction,
+  type NavArea,
+  type NavAreaId,
+  type NavRow,
+  navAreas,
+} from "./nav-areas";
+import { isNavItemActive } from "./nav-config";
 import type { ShellData } from "./shell-data";
 import { useWhatsNew } from "./whats-new";
 
+// The focus ring is inset: the area panels clip their sides (they slide),
+// and an outside ring would be cut off there. Keyboard focus only.
 const rowClass =
-  "hover:bg-foreground/[0.05] hover:text-foreground focus-visible:ring-ring/50 flex shrink-0 items-center rounded-md text-sm font-medium outline-none transition-colors focus-visible:ring-[3px]";
+  "hover:bg-foreground/[0.05] hover:text-foreground focus-visible:ring-ring/50 flex shrink-0 items-center rounded-md text-sm font-medium outline-none transition-colors focus-visible:ring-[3px] focus-visible:ring-inset";
 
 /** In the icon rail every row is a square with its label in a tooltip. */
 function RailTip({
@@ -97,82 +111,236 @@ function NavLink({
   );
 }
 
-function NavGroups({
-  groups,
-  label,
+/** A row that opens another area, ending with a chevron. */
+function AreaRow({
+  row,
+  collapsed,
+  onArea,
+}: {
+  row: Extract<NavRow, { kind: "area" }>;
+  collapsed: boolean;
+  onArea: (href: string, byKeyboard: boolean) => void;
+}) {
+  const ItemIcon = row.icon;
+  return (
+    <RailTip collapsed={collapsed} label={row.label}>
+      <Link
+        aria-label={collapsed ? row.label : undefined}
+        className={cn(
+          rowClass,
+          "group text-muted-foreground",
+          collapsed ? "size-9 justify-center" : "h-8 w-full gap-2.5 px-2.5",
+        )}
+        data-area-row={row.area}
+        href={row.href}
+        // A click from Enter or Space has no pointer details (detail 0).
+        onClick={(event) => onArea(row.href, event.detail === 0)}
+      >
+        <ItemIcon aria-hidden className="size-4 shrink-0" />
+        {!collapsed && (
+          <>
+            <span className="flex-1 truncate">{row.label}</span>
+            <AREA_ROW_ICON
+              aria-hidden
+              className="text-muted-foreground/70 size-3.5 shrink-0 transition-transform duration-150 group-hover:translate-x-0.5 motion-reduce:transition-none"
+            />
+          </>
+        )}
+      </Link>
+    </RailTip>
+  );
+}
+
+/** A row that starts something here, without leaving the page. */
+function ActionRow({
+  row,
+  collapsed,
+  onAction,
+}: {
+  row: Extract<NavRow, { kind: "action" }>;
+  collapsed: boolean;
+  onAction: (action: NavAction) => void;
+}) {
+  const ItemIcon = row.icon;
+  return (
+    <RailTip collapsed={collapsed} label={row.label}>
+      <button
+        aria-label={collapsed ? row.label : undefined}
+        className={cn(
+          rowClass,
+          "text-muted-foreground",
+          collapsed ? "size-9 justify-center" : "h-8 w-full gap-2.5 px-2.5",
+        )}
+        onClick={() => onAction(row.action)}
+        type="button"
+      >
+        <ItemIcon aria-hidden className="size-4 shrink-0" />
+        {!collapsed && <span className="truncate text-left">{row.label}</span>}
+      </button>
+    </RailTip>
+  );
+}
+
+/**
+ * One area's panel: its way back and title, then its groups. Every area is
+ * rendered; the open one sits in place and the others wait off to their
+ * side (areaOffset), faded and inert, so a change of area slides them.
+ */
+function AreaPanel({
+  area,
+  offset,
   collapsed,
   onNavigate,
+  onArea,
+  onAction,
 }: {
-  groups: AppNavGroup[];
-  label: string;
+  area: NavArea;
+  /** -1 waiting on the left, 0 open, 1 waiting on the right */
+  offset: -1 | 0 | 1;
   collapsed: boolean;
   onNavigate?: () => void;
+  onArea: (href: string, byKeyboard: boolean) => void;
+  onAction: (action: NavAction) => void;
 }) {
   const pathname = usePathname();
-  // Rendered twice (rail + sheet), so label ids must be unique per instance.
+  // Rendered twice (rail + sheet), so ids must be unique per instance.
   const idPrefix = useId();
   // Pages for features this deployment can't offer (e.g. adding custom
   // domains) aren't linked; their URLs keep working for existing users.
   const { showsPath } = useAvailability();
-  const visible = groups
+  const open = offset === 0;
+  const groups = area.groups
     .map((group) => ({
       ...group,
-      items: group.items.filter((item) => showsPath(item.href)),
+      rows: group.rows.filter((row) =>
+        row.kind === "link"
+          ? showsPath(row.item.href)
+          : row.kind === "area"
+            ? showsPath(row.href)
+            : true,
+      ),
     }))
-    .filter((group) => group.items.length > 0);
+    .filter((group) => group.rows.length > 0);
+  const titleId = `${idPrefix}-title`;
 
   return (
-    <nav
-      aria-label={label}
-      className={cn("flex flex-col", collapsed ? "items-center" : "gap-4")}
+    <div
+      aria-hidden={open ? undefined : true}
+      className={cn(
+        "flex w-full flex-col transition-[translate,opacity] duration-[220ms] ease-[cubic-bezier(.32,.72,0,1)] motion-reduce:transition-none",
+        open
+          ? "relative"
+          : "pointer-events-none absolute inset-x-0 top-0 opacity-0",
+        offset < 0 && "-translate-x-full",
+        offset > 0 && "translate-x-full",
+      )}
+      data-area-panel={area.id}
+      inert={!open}
     >
-      {visible.map((group, index) => {
-        const labelId = `${idPrefix}-${group.id}`;
-        return (
-          <div
+      {area.back && (
+        <RailTip collapsed={collapsed} label={`Back to ${area.back.label}`}>
+          <Link
+            aria-label={collapsed ? `Back to ${area.back.label}` : undefined}
             className={cn(
-              "flex w-full flex-col gap-0.5",
-              collapsed && "items-center",
+              rowClass,
+              "text-muted-foreground mb-1",
+              collapsed
+                ? "size-9 self-center justify-center"
+                : "h-8 w-full gap-2 px-2.5",
             )}
-            key={group.id}
+            data-area-back=""
+            href={area.back.href}
+            onClick={(event) =>
+              onArea(area.back?.href ?? "", event.detail === 0)
+            }
           >
-            {collapsed
-              ? index > 0 && (
-                  <span aria-hidden className="bg-border my-2 h-px w-6" />
-                )
-              : group.label && (
-                  <div
-                    className="text-muted-foreground px-2.5 pb-1 text-xs font-medium"
-                    id={labelId}
-                  >
-                    {group.label}
-                  </div>
-                )}
-            <ul
-              aria-label={collapsed ? group.label : undefined}
-              aria-labelledby={!collapsed && group.label ? labelId : undefined}
+            <ArrowLeft aria-hidden className="size-4 shrink-0" />
+            {!collapsed && <span className="truncate">{area.back.label}</span>}
+          </Link>
+        </RailTip>
+      )}
+      {area.back && !collapsed && (
+        <h2 className="px-2.5 pt-1 pb-3 text-base font-semibold" id={titleId}>
+          {area.title}
+        </h2>
+      )}
+      <nav
+        aria-label={area.back && !collapsed ? undefined : area.title}
+        aria-labelledby={area.back && !collapsed ? titleId : undefined}
+        className={cn("flex flex-col", collapsed ? "items-center" : "gap-4")}
+      >
+        {groups.map((group, index) => {
+          const labelId = `${idPrefix}-${group.id}`;
+          return (
+            <div
               className={cn(
                 "flex w-full flex-col gap-0.5",
                 collapsed && "items-center",
               )}
+              key={group.id}
             >
-              {group.items.map((item) => (
-                <li key={item.href}>
-                  <NavLink
-                    active={isNavItemActive(item, pathname)}
-                    collapsed={collapsed}
-                    href={item.href}
-                    icon={item.icon}
-                    label={item.label}
-                    onNavigate={onNavigate}
-                  />
-                </li>
-              ))}
-            </ul>
-          </div>
-        );
-      })}
-    </nav>
+              {collapsed
+                ? index > 0 && (
+                    <span aria-hidden className="bg-border my-2 h-px w-6" />
+                  )
+                : group.label && (
+                    <div
+                      className="text-muted-foreground px-2.5 pb-1 text-xs font-medium"
+                      id={labelId}
+                    >
+                      {group.label}
+                    </div>
+                  )}
+              <ul
+                aria-label={collapsed ? group.label : undefined}
+                aria-labelledby={
+                  !collapsed && group.label ? labelId : undefined
+                }
+                className={cn(
+                  "flex w-full flex-col gap-0.5",
+                  collapsed && "items-center",
+                )}
+              >
+                {group.rows.map((row) => (
+                  <li
+                    key={
+                      row.kind === "link"
+                        ? row.item.href
+                        : row.kind === "area"
+                          ? `area:${row.area}`
+                          : `action:${row.action}`
+                    }
+                  >
+                    {row.kind === "link" ? (
+                      <NavLink
+                        active={isNavItemActive(row.item, pathname)}
+                        collapsed={collapsed}
+                        href={row.item.href}
+                        icon={row.item.icon}
+                        label={row.item.label}
+                        onNavigate={onNavigate}
+                      />
+                    ) : row.kind === "area" ? (
+                      <AreaRow
+                        collapsed={collapsed}
+                        onArea={onArea}
+                        row={row}
+                      />
+                    ) : (
+                      <ActionRow
+                        collapsed={collapsed}
+                        onAction={onAction}
+                        row={row}
+                      />
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          );
+        })}
+      </nav>
+    </div>
   );
 }
 
@@ -229,13 +397,14 @@ function WhatsNewRow({
 }
 
 /**
- * The sidebar, shared by the desktop rail and the mobile sheet. Dashboard
- * pages get the product nav; settings pages (the workspace's and the
- * account's) get their own area with a way back. Both end with the workspace
- * switcher, whose menu also leads to settings and Plan & usage. The list
- * scrolls; both ends stay put. `collapsed` turns it into an icon rail
- * (desktop only). Without shell data (signed out, or the lookup failed) only
- * the account settings are listed.
+ * The sidebar, shared by the desktop rail and the mobile sheet. Its areas
+ * (nav-areas.ts) are the dashboard, Codes, Pages & forms and Settings; the
+ * URL picks the open one, and changing it slides the panels sideways
+ * (deeper from the right, back from the left; instant with reduced
+ * motion). The collapse toggle, What's new and the workspace switcher stay
+ * put in every area. `collapsed` turns it into an icon rail (desktop only).
+ * Without shell data (signed out, or the lookup failed) only the account
+ * settings are listed.
  */
 export function AppSidebar({
   shell,
@@ -243,6 +412,7 @@ export function AppSidebar({
   collapsed = false,
   onCollapsedChange,
   onNavigate,
+  onAreaNavigate,
 }: {
   shell: ShellData | null;
   /** Limits at 90% or more, streamed from the server (app-shell.tsx) */
@@ -250,18 +420,51 @@ export function AppSidebar({
   collapsed?: boolean;
   /** Present on the desktop rail, which can collapse; absent in the sheet. */
   onCollapsedChange?: (collapsed: boolean) => void;
+  /** A page was picked (the sheet closes) */
   onNavigate?: () => void;
+  /** Another area was opened at `href` (the sheet stays open to show it) */
+  onAreaNavigate?: (href: string) => void;
 }) {
   const pathname = usePathname();
-  const inSettings = isSettingsPath(pathname);
+  const create = useCreate();
   const planName = shell ? PLAN_NAMES[shell.plan] : undefined;
   const slug = shell?.workspace.slug ?? null;
-  const dashboardHome = slug ? workspaceHref(slug) : "/dashboard";
-  const groups = slug
-    ? inSettings
-      ? settingsNav(slug)
-      : mainNav(slug)
-    : settingsNav("").filter((group) => group.id === "account");
+  const areas = useMemo(() => navAreas(slug), [slug]);
+  const current = areaForPath(pathname, slug);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const shown = useRef(current);
+  // Set when the keyboard changed the area from this sidebar, so focus
+  // follows into the new panel (a pointer click leaves focus alone).
+  const leaving = useRef<NavAreaId | null>(null);
+
+  useEffect(() => {
+    const left = shown.current;
+    shown.current = current;
+    if (left === current) return;
+    scrollRef.current?.scrollTo({ top: 0 });
+    if (leaving.current === null) return;
+    leaving.current = null;
+    // The old panel went inert and took focus with it: land on the row that
+    // leads back to it, else the new area's way back, else its first item.
+    const panel = rootRef.current?.querySelector(
+      `[data-area-panel="${current}"]`,
+    );
+    const target =
+      panel?.querySelector<HTMLElement>(`[data-area-row="${left}"]`) ??
+      panel?.querySelector<HTMLElement>("[data-area-back]") ??
+      panel?.querySelector<HTMLElement>("a[href], button");
+    target?.focus({ preventScroll: true });
+  }, [current]);
+
+  const openArea = (href: string, byKeyboard: boolean) => {
+    leaving.current = byKeyboard ? current : null;
+    onAreaNavigate?.(href);
+  };
+  const runAction = (action: NavAction) => {
+    onNavigate?.();
+    create(action === "form-templates" ? "form" : "page");
+  };
 
   const toggle = onCollapsedChange && (
     <RailTip
@@ -284,58 +487,41 @@ export function AppSidebar({
     </RailTip>
   );
 
-  // Dashboard: the top holds only the collapse toggle (none in the sheet).
-  // Settings: the way back. Both keep the workspace switcher at the foot.
-  const head = inSettings ? (
-    <div
-      className={cn(
-        "flex items-center",
-        collapsed ? "flex-col gap-1" : "justify-between gap-2",
-      )}
-    >
-      <RailTip collapsed={collapsed} label="Back to dashboard">
-        <Link
-          aria-label={collapsed ? "Back to dashboard" : undefined}
-          className={cn(
-            rowClass,
-            "text-muted-foreground",
-            collapsed ? "size-9 justify-center" : "h-8 min-w-0 gap-2 px-2.5",
-          )}
-          href={dashboardHome}
-          onClick={onNavigate}
-        >
-          <ArrowLeft aria-hidden className="size-4 shrink-0" />
-          {!collapsed && <span className="truncate">Dashboard</span>}
-        </Link>
-      </RailTip>
-      {toggle}
-    </div>
-  ) : toggle ? (
-    <div className={cn("flex", collapsed ? "justify-center" : "justify-end")}>
-      {toggle}
-    </div>
-  ) : null;
-
   return (
-    <div className="flex h-full min-h-0 flex-col">
-      {head && <div className="shrink-0 p-2.5">{head}</div>}
+    <div className="flex h-full min-h-0 flex-col" ref={rootRef}>
+      {toggle && (
+        <div
+          className={cn(
+            "flex shrink-0 p-2.5 pb-1",
+            collapsed ? "justify-center" : "justify-end",
+          )}
+        >
+          {toggle}
+        </div>
+      )}
 
       <div
         className={cn(
           "min-h-0 flex-1 overflow-x-hidden overflow-y-auto pb-4 [scrollbar-width:thin]",
           collapsed ? "px-2" : "px-2.5",
-          !head && "pt-2.5",
+          !toggle && "pt-2.5",
         )}
+        ref={scrollRef}
       >
-        {inSettings && !collapsed && (
-          <h2 className="px-2.5 pt-1 pb-3 text-base font-semibold">Settings</h2>
-        )}
-        <NavGroups
-          collapsed={collapsed}
-          groups={groups}
-          label={inSettings ? "Settings" : "Dashboard"}
-          onNavigate={onNavigate}
-        />
+        {/* Clips the panels waiting off to either side. */}
+        <div className="relative overflow-hidden">
+          {NAV_AREAS.map((id) => (
+            <AreaPanel
+              area={areas[id]}
+              collapsed={collapsed}
+              key={id}
+              offset={areaOffset(id, current)}
+              onAction={runAction}
+              onArea={openArea}
+              onNavigate={onNavigate}
+            />
+          ))}
+        </div>
       </div>
 
       <div
