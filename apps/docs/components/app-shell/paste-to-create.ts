@@ -10,8 +10,8 @@ import { useEffect, useRef } from "react";
 import { useCodeBuilderStore } from "@/components/code-builder/store";
 import { checkDestination } from "@/components/code-builder/validation";
 
-/** What the paste landed on, as far as these rules care. */
-export interface PasteTarget {
+/** What a paste or key press landed on, as far as these rules care. */
+export interface FocusTarget {
   /** A text field, select, contenteditable or text role, or inside one */
   typing: boolean;
   /** Inside a dialog, sheet, popover, menu or listbox */
@@ -21,7 +21,7 @@ export interface PasteTarget {
 export interface PasteContext {
   /** The clipboard's plain text */
   text: string | null | undefined;
-  target: PasteTarget;
+  target: FocusTarget;
   /** A dialog, sheet or popover is open somewhere on the page */
   overlayOpen: boolean;
   /** The builder itself is already open */
@@ -79,10 +79,10 @@ const OVERLAY_SELECTOR = [
   "[data-vaul-drawer]",
 ].join(",");
 
-/** Where a paste landed (the focused element, or the body). */
-export function describePasteTarget(
+/** What a paste or key press landed on (the focused element, or the body). */
+export function describeFocusTarget(
   element: (Pick<Element, "closest"> & { isContentEditable?: boolean }) | null,
-): PasteTarget {
+): FocusTarget {
   if (!element) return { typing: false, inOverlay: false };
   return {
     typing:
@@ -128,7 +128,7 @@ export function usePasteToCreate(
     const onPaste = (event: ClipboardEvent) => {
       const url = destinationFromPaste({
         text: event.clipboardData?.getData("text/plain"),
-        target: describePasteTarget(
+        target: describeFocusTarget(
           event.target instanceof Element ? event.target : null,
         ),
         overlayOpen: hasOpenOverlay(document),

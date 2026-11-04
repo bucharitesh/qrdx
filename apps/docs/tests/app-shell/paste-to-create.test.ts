@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
-  describePasteTarget,
+  describeFocusTarget,
   destinationFromPaste,
   hasOpenOverlay,
   type PasteContext,
@@ -125,7 +125,7 @@ describe("destinationFromPaste", () => {
 function element(
   matches: string[],
   isContentEditable = false,
-): Parameters<typeof describePasteTarget>[0] {
+): Parameters<typeof describeFocusTarget>[0] {
   return {
     isContentEditable,
     closest: (selector: string) =>
@@ -137,13 +137,13 @@ function element(
   };
 }
 
-describe("describePasteTarget", () => {
+describe("describeFocusTarget", () => {
   it("sees the body as a quiet place", () => {
-    expect(describePasteTarget(null)).toEqual({
+    expect(describeFocusTarget(null)).toEqual({
       typing: false,
       inOverlay: false,
     });
-    expect(describePasteTarget(element([]))).toEqual({
+    expect(describeFocusTarget(element([]))).toEqual({
       typing: false,
       inOverlay: false,
     });
@@ -158,9 +158,9 @@ describe("describePasteTarget", () => {
       '[role="textbox"]',
       '[role="combobox"]',
     ]) {
-      expect(describePasteTarget(element([match])).typing, match).toBe(true);
+      expect(describeFocusTarget(element([match])).typing, match).toBe(true);
     }
-    expect(describePasteTarget(element([], true)).typing).toBe(true);
+    expect(describeFocusTarget(element([], true)).typing).toBe(true);
   });
 
   it("sees dialogs, sheets, popovers and menus as overlays", () => {
@@ -171,7 +171,7 @@ describe("describePasteTarget", () => {
       "[data-radix-popper-content-wrapper]",
       "[data-vaul-drawer]",
     ]) {
-      expect(describePasteTarget(element([match])).inOverlay, match).toBe(true);
+      expect(describeFocusTarget(element([match])).inOverlay, match).toBe(true);
     }
   });
 });
