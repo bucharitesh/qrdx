@@ -33,6 +33,7 @@ import { catalogParagraphs } from "@/lib/feature-availability-rules";
 import { getIntegrationAvailability } from "@/lib/integration-availability";
 import { isVisible, setupNeeded } from "@/lib/integration-availability-rules";
 import { baseUrl, createMetadata } from "@/lib/metadata";
+import { buildTimeParams } from "@/lib/static-params";
 
 interface IntegrationPageProps {
   params: Promise<{ slug: string }>;
@@ -40,8 +41,11 @@ interface IntegrationPageProps {
 
 // Every slug, including the ones that moved: those prerender as a 308 to
 // their new page (getCatalogRedirect), so old links and bookmarks keep working.
+// Unknown slugs render notFound() below (lib/static-params.ts).
 export function generateStaticParams() {
-  return getIntegrationCatalog().map((entry) => ({ slug: entry.slug }));
+  return buildTimeParams(() =>
+    getIntegrationCatalog().map((entry) => ({ slug: entry.slug })),
+  );
 }
 
 export async function generateMetadata({
