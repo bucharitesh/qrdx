@@ -308,7 +308,7 @@ const image = await loadQRArtImage(file, { mode: "logo" });
 
 `variant` picks a look within the mode (`QR_ART_VARIANTS`; the first is the default):
 
-- `logo`: `blend` traces the logo into crisp vector shapes that fill the code under a fine dot screen; `badge` puts it on a rounded plate in the middle of a code tinted with its colors.
+- `logo`: `blend` traces the logo into crisp vector shapes that fill the code under a fine dot screen; `badge` puts it on a rounded plate in the middle of a code tinted with its colors. Every module under the plate can spoil a codeword, so `intensity` grows the plate only as far as each error correction block can repair with room to spare. Small codes get a smaller logo, and the smallest (version 1, version 2 at L or M, version 3 at L) draw no plate and keep only the logo's colors.
 - `halftone`: `color` shows the photo in full color; `mono` is an error-diffused black-and-white halftone.
 
 In logo mode the finder eyes take the logo's colors unless you pass `matchEyes: false`; per-eye `eyeColors` still win. In Node, pass decoded RGBA pixels to `createQRArtImage` instead of `loadQRArtImage`: `decodePNGPixels(bytes)` reads an 8-bit PNG into them without a canvas or sharp. `art.image` is plain JSON, so you can store it with a design. Use level `H` and check the result with `getScanScore`, or, for rendered pixels in Node, with `scanQRPixels(pixels, value)`, which decodes them as they are and through the phone-camera model. See the [Art QR docs](https://qrdx.dev/docs/features/art-qr).

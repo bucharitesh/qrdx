@@ -73,6 +73,7 @@ Art replaces the body pattern; the corner eyes keep their `cornerEyePattern`, `c
 ### How scannability is kept
 
 - **Logo QR**: dark modules inside the logo are recolored, but only ever darkened to a luminance a scanner still reads as dark; light modules inside the logo get a pale tint that stays above the light threshold. Dark modules outside the logo fade to grey, never lighter than the dark threshold.
+- **Logo QR badge**: every module under the plate can spoil one codeword. The plate is sized so that no error correction block loses more than 60% of the codewords it can repair, which leaves the rest for the camera. Intensity grows the plate up to that size. Small codes get a smaller logo, and the smallest (version 1, version 2 at L or M, version 3 at L) draw no plate.
 - **Image QR**: each module is split into a 3 × 3 grid. The outer cells show the photo, pushed darker or lighter to match the module's value, and the center keeps the exact foreground or background color, which is where scanners sample.
 - Finder, timing, alignment, format and version modules are always drawn solid.
 
