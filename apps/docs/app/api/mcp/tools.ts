@@ -21,6 +21,7 @@ import {
 import { HttpError } from "@/lib/error-response";
 import { baseUrl } from "@/lib/metadata";
 import { getPlanLimits } from "@/lib/plans";
+import { playgroundHref } from "@/lib/playground-links";
 import {
   type FlatStyle,
   renderStyledPng,
@@ -649,7 +650,7 @@ export function registerQrTools(server: McpServer) {
           databaseThemeStore,
         );
         const editorUrl = new URL(
-          `/playground/${encodeURIComponent(saved.id)}`,
+          playgroundHref({ themeId: saved.id }),
           baseUrl,
         ).toString();
         return {
