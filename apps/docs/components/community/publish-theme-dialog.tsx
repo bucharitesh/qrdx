@@ -37,6 +37,7 @@ export function PublishThemeDialog({
   themeId,
   themeName,
   themeStyle,
+  workspaceTheme = false,
   onPublished,
 }: {
   open: boolean;
@@ -45,6 +46,8 @@ export function PublishThemeDialog({
   themeName?: string;
   /** The saved style, to say what won't be shared */
   themeStyle?: ThemeStyles;
+  /** A theme of the open workspace: the published copy is credited to you */
+  workspaceTheme?: boolean;
   onPublished?: () => void;
 }) {
   const publish = usePublishTheme();
@@ -91,6 +94,8 @@ export function PublishThemeDialog({
           <DialogDescription>
             Anyone can find it in the community gallery and use it. You can
             unpublish it at any time.
+            {workspaceTheme &&
+              " It's published under your profile; the theme stays in this workspace."}
           </DialogDescription>
         </DialogHeader>
 
