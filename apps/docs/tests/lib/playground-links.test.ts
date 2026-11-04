@@ -1,21 +1,32 @@
 // Playground links: the one writer (playgroundHref) and reader
 // (parsePlaygroundParams). Only harmless state may travel; private content
 // never does, and invalid values are dropped on both sides.
+
+import { getQRModuleCount } from "qrdx";
 import { describe, expect, it } from "vitest";
 import { CODE_TABS } from "@/components/editor/action-bar/code-snippets";
 import {
   CODE_LANGS,
+  formatPrintDistance,
   handoffSource,
   hasOneShotParams,
   MAX_LINK_URL_LENGTH,
   MAX_STYLE_PARAM_LENGTH,
+  PRINT_DISTANCE_MAX_MM,
+  PRINT_DISTANCE_MIN_MM,
   parseLinkUrl,
   parsePlaygroundParams,
+  parsePrintDistance,
   parsePrintWidth,
   playgroundHref,
   resolveControlTab,
   stripOneShotParams,
 } from "@/lib/playground-links";
+import {
+  printTabForDistance,
+  printWidthForScanDistance,
+  scanDistanceForPrintWidth,
+} from "@/lib/print-size";
 
 const parseHref = (href: string) => {
   const url = new URL(href, "https://qrdx.dev");
@@ -249,6 +260,133 @@ describe("playgroundHref", () => {
       open: "code",
       lang: "react",
     });
+  });
+});
+
+describe("printDistance", () => {
+  it("accepts a number and a unit: cm, m, in or ft", () => {
+    expect(parsePrintDistance("1m")).toEqual({ value: 1, unit: "m" });
+    expect(parsePrintDistance("30cm")).toEqual({ value: 30, unit: "cm" });
+    expect(parsePrintDistance("3ft")).toEqual({ value: 3, unit: "ft" });
+    expect(parsePrintDistance("36in")).toEqual({ value: 36, unit: "in" });
+    expect(parsePrintDistance("2.5M")).toEqual({ value: 2.5, unit: "m" });
+  });
+
+  it("stays within what the Print tab can produce", () => {
+    // The 0.4 mm minimum module: 100 mm. The largest width over the fewest
+    // modules (2000 mm / 21 × 250): about 23.8 m.
+    expect(PRINT_DISTANCE_MIN_MM).toBe(100);
+    expect(PRINT_DISTANCE_MAX_MM).toBeCloseTo(23_809.52, 1);
+    expect(parsePrintDistance("10cm")).toEqual({ value: 10, unit: "cm" });
+    expect(parsePrintDistance("0.1m")).toEqual({ value: 0.1, unit: "m" });
+    expect(parsePrintDistance("9cm")).toBeNull();
+    expect(parsePrintDistance("23.8m")).toEqual({ value: 23.8, unit: "m" });
+    expect(parsePrintDistance("23.9m")).toBeNull();
+    expect(parsePrintDistance("78ft")).toEqual({ value: 78, unit: "ft" });
+    expect(parsePrintDistance("79ft")).toBeNull();
+  });
+
+  it("ignores garbage", () => {
+    for (const raw of [
+      "",
+      "1",
+      "m",
+      "1 m",
+      "1meter",
+      "-1m",
+      "1e3cm",
+      "1mm",
+      "1.2345m",
+      "0x10m",
+      "1m;2m",
+    ]) {
+      expect(parsePrintDistance(raw), raw).toBeNull();
+    }
+    expect(parsePrintDistance(null)).toBeNull();
+  });
+
+  it("only goes with open=print, and wins over a width", () => {
+    expect(parseHref("/playground?open=print&printDistance=1m")).toEqual({
+      open: "print",
+      printDistance: { value: 1, unit: "m" },
+    });
+    expect(
+      parseHref("/playground?open=print&print=40mm&printDistance=3ft"),
+    ).toEqual({ open: "print", printDistance: { value: 3, unit: "ft" } });
+    // A bad distance leaves the width in charge.
+    expect(
+      parseHref("/playground?open=print&print=40mm&printDistance=nope"),
+    ).toEqual({ open: "print", print: { size: 40, unit: "mm" } });
+    expect(parseHref("/playground?printDistance=1m")).toEqual({});
+    expect(parseHref("/playground?open=code&printDistance=1m")).toEqual({
+      open: "code",
+    });
+  });
+
+  it("is written by playgroundHref and stripped once applied", () => {
+    const href = playgroundHref({
+      open: "print",
+      printDistance: { value: 1, unit: "m" },
+    });
+    expect(href).toBe("/playground?open=print&printDistance=1m");
+    expect(
+      playgroundHref({
+        print: { size: 40, unit: "mm" },
+        printDistance: { value: 3, unit: "ft" },
+      }),
+    ).toBe("/playground?open=print&printDistance=3ft");
+    expect(
+      playgroundHref({ printDistance: { value: 1, unit: "mm" as never } }),
+    ).toBe("/playground");
+    expect(stripOneShotParams(`https://qrdx.dev${href}`, null)).toBe(
+      "/playground",
+    );
+  });
+});
+
+describe("/tools/print-size → Print tab round trip", () => {
+  // The calculator links its distance as entered (print-size-calculator.tsx).
+  const calculatorLink = (value: number, unit: "m" | "ft") => {
+    const distance = parsePrintDistance(formatPrintDistance({ value, unit }));
+    if (!distance) throw new Error("not linkable");
+    return playgroundHref({ open: "print", printDistance: distance });
+  };
+  // The editor's default design on a typical link.
+  const code = { value: "https://example.org/menu", level: "Q" as const };
+  const modules = getQRModuleCount(code);
+
+  it("shows 1 m in the Print tab, with the width for this code", () => {
+    const link = calculatorLink(1, "m");
+    expect(link).toBe("/playground?open=print&printDistance=1m");
+    const { printDistance } = parseHref(link);
+    if (!printDistance) throw new Error("no printDistance");
+    const tab = printTabForDistance(printDistance, modules);
+    expect(tab.unit).toBe("mm");
+    expect(tab.fieldDistance).toBe(1);
+    expect(modules).toBe(29);
+    expect(tab.size).toBe(116);
+    expect(scanDistanceForPrintWidth(tab.size, "mm", modules, "m")).toBe(1);
+  });
+
+  it("shows 3 ft in the Print tab, in inches", () => {
+    const { printDistance } = parseHref(calculatorLink(3, "ft"));
+    if (!printDistance) throw new Error("no printDistance");
+    const tab = printTabForDistance(printDistance, modules);
+    expect(tab.unit).toBe("in");
+    expect(tab.fieldDistance).toBe(3);
+    expect(tab.size).toBe(printWidthForScanDistance(3, "ft", "in", modules));
+    const back = scanDistanceForPrintWidth(tab.size, "in", modules, "ft");
+    expect(back).not.toBeNull();
+    expect(Math.round((back ?? 0) * 100) / 100).toBe(3);
+  });
+
+  it("puts centimetres and inches in the field's own unit", () => {
+    expect(
+      printTabForDistance({ value: 50, unit: "cm" }, modules),
+    ).toMatchObject({ unit: "mm", fieldDistance: 0.5 });
+    expect(
+      printTabForDistance({ value: 36, unit: "in" }, modules),
+    ).toMatchObject({ unit: "in", fieldDistance: 3 });
   });
 });
 

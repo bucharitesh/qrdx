@@ -71,6 +71,7 @@ import {
   MIN_MODULE_MM,
   moduleForPrintWidth,
   PRINT_SIZE_LIMITS,
+  printTabForDistance,
   printWidthForScanDistance,
   scanDistanceForModule,
   scanDistanceForPrintWidth,
@@ -186,18 +187,14 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
   const [cropMarks, setCropMarks] = React.useState(false);
   const [colorMode, setColorMode] = React.useState<PrintColorMode>("rgb");
 
-  // A playground link (open=print&print=40mm) asks for a tab and width once.
-  const request = useDownloadDialogStore((state) => state.request);
-  const setRequest = useDownloadDialogStore((state) => state.setRequest);
+  // What the "Scanned from about" field shows while it differs from the
+  // width's own distance: someone typing, or a link's printDistance.
+  const [distanceDraft, setDistanceDraft] = React.useState<string | null>(null);
+  // The code can change while the dialog is closed; reopened, the field
+  // follows the width again.
   React.useEffect(() => {
-    if (!(open && request)) return;
-    setTab(request.tab);
-    if (request.print) {
-      setPrintUnit(request.print.unit);
-      setPrintSize(request.print.size);
-    }
-    setRequest(null);
-  }, [open, request, setRequest]);
+    if (!open) setDistanceDraft(null);
+  }, [open]);
 
   const format = downloadOptions.format;
   const formatInfo = FORMATS.find((item) => item.id === format) ?? FORMATS[0];
@@ -241,6 +238,29 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
       return null;
     }
   }, [printProps]);
+
+  // A playground link asks for a tab once: a width (print=40mm), or a scan
+  // distance (printDistance=1m) sized for this code's modules.
+  const request = useDownloadDialogStore((state) => state.request);
+  const setRequest = useDownloadDialogStore((state) => state.setRequest);
+  React.useEffect(() => {
+    if (!(open && request)) return;
+    setTab(request.tab);
+    if (request.printDistance && printModuleCount) {
+      const print = printTabForDistance(
+        request.printDistance,
+        printModuleCount,
+      );
+      setPrintUnit(print.unit);
+      setPrintSize(print.size);
+      setDistanceDraft(String(roundTo(print.fieldDistance, 2)));
+    } else if (request.print) {
+      setPrintUnit(request.print.unit);
+      setPrintSize(request.print.size);
+      setDistanceDraft(null);
+    }
+    setRequest(null);
+  }, [open, request, setRequest, printModuleCount]);
 
   const printLayout = React.useMemo((): {
     layout: PrintLayout | null;
@@ -648,6 +668,8 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
                   layout={printLayout.layout}
                   layoutError={printLayout.error}
                   moduleCount={printModuleCount}
+                  distanceDraft={distanceDraft}
+                  onDistanceDraftChange={setDistanceDraft}
                   onBleedChange={setPrintBleed}
                   onColorModeChange={setColorMode}
                   onCropMarksChange={setCropMarks}
@@ -747,6 +769,9 @@ interface PrintOptionsProps {
   layoutError: string;
   /** Modules across the code, quiet zone included; null when it can't be encoded. */
   moduleCount: number | null;
+  /** The distance field's text while it differs from the width's distance */
+  distanceDraft: string | null;
+  onDistanceDraftChange: (draft: string | null) => void;
   onSizeChange: (size: number) => void;
   onUnitChange: (unit: PrintUnit) => void;
   onBleedChange: (bleed: number) => void;
@@ -763,6 +788,8 @@ function PrintOptions({
   layout,
   layoutError,
   moduleCount,
+  distanceDraft,
+  onDistanceDraftChange: setDistanceDraft,
   onSizeChange,
   onUnitChange,
   onBleedChange,
@@ -777,7 +804,6 @@ function PrintOptions({
   // types, their text stays as typed; otherwise it follows the width, and
   // stays empty when the modules are too small to promise a distance.
   const distanceUnit = scanDistanceUnit(unit);
-  const [distanceDraft, setDistanceDraft] = React.useState<string | null>(null);
   const widthDistance =
     moduleCount && Number.isFinite(size) && size > 0
       ? scanDistanceForPrintWidth(size, unit, moduleCount, distanceUnit)
@@ -876,7 +902,10 @@ function PrintOptions({
               id="print-size"
               max={limits.max}
               min={limits.min}
-              onChange={(event) => onSizeChange(Number(event.target.value))}
+              onChange={(event) => {
+                setDistanceDraft(null);
+                onSizeChange(Number(event.target.value));
+              }}
               step={unit === "in" ? 0.1 : 1}
               type="number"
               value={Number.isNaN(size) ? "" : size}

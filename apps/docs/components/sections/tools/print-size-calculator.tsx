@@ -21,7 +21,11 @@ import { Printer } from "iconsax-reactjs";
 import Link from "next/link";
 import { useState } from "react";
 import { InfoHint } from "@/components/help/info-hint";
-import { playgroundHref } from "@/lib/playground-links";
+import {
+  formatPrintDistance,
+  parsePrintDistance,
+  playgroundHref,
+} from "@/lib/playground-links";
 import {
   calculatePrintSize,
   type DistanceUnit,
@@ -36,7 +40,6 @@ import {
   MIN_VERSION,
   mmToInches,
   modulesForVersion,
-  PRINT_SIZE_LIMITS,
   pixelsForPrint,
   QUIET_ZONE_MODULES,
   toMillimeters,
@@ -129,19 +132,20 @@ export function PrintSizeCalculator() {
   const modules = version ? modulesForVersion(version) : null;
   const result =
     distanceMm && modules ? calculatePrintSize({ distanceMm, modules }) : null;
-  // The editor's Print-ready width counts the code with its quiet zone, which
-  // QRdx presets keep at 3 or 4 modules: so the quiet-zone size, rounded up
-  // to a whole millimetre, never prints below the minimum.
-  const printWidthMm = result ? Math.ceil(result.totalMm) : null;
-  const playgroundPrintHref =
-    printWidthMm !== null &&
-    printWidthMm >= PRINT_SIZE_LIMITS.mm.min &&
-    printWidthMm <= PRINT_SIZE_LIMITS.mm.max
-      ? playgroundHref({
-          open: "print",
-          print: { size: printWidthMm, unit: "mm" },
-        })
-      : null;
+  // The playground gets the distance, not a width: only its Print-ready tab
+  // knows the real code's modules and quiet zone, and sizes it from them.
+  // Outside the distances that tab can produce, there's no link.
+  const linkDistance = result
+    ? parsePrintDistance(
+        formatPrintDistance({
+          value: Number(distanceValue.toFixed(3)),
+          unit,
+        }),
+      )
+    : null;
+  const playgroundPrintHref = linkDistance
+    ? playgroundHref({ open: "print", printDistance: linkDistance })
+    : null;
 
   return (
     <div className="grid gap-6 lg:grid-cols-2">
@@ -311,8 +315,8 @@ export function PrintSizeCalculator() {
                   </Link>
                 </Button>
                 <span className="text-xs text-muted-foreground">
-                  Opens the editor's Print-ready download at {printWidthMm} mm,
-                  quiet zone included.
+                  Opens the editor's Print-ready download, sized for{" "}
+                  {linkDistance?.value} {linkDistance?.unit} from your code.
                 </span>
               </div>
             )}

@@ -265,6 +265,17 @@ describe("view", () => {
     });
   });
 
+  it("asks the Print tab for a scan distance", () => {
+    useQREditorStore.setState({ value: "https://example.com" });
+    const outcome = apply("/playground?open=print&print=40mm&printDistance=1m");
+    expect(outcome.applied).toEqual(["open", "printDistance"]);
+    expect(useDownloadDialogStore.getState()).toMatchObject({
+      open: true,
+      request: { tab: "print", printDistance: { value: 1, unit: "m" } },
+    });
+    expect(useDownloadDialogStore.getState().request?.print).toBeUndefined();
+  });
+
   it("keeps the print request for later when there's nothing to download", () => {
     const outcome = apply("/playground?open=print&print=2in");
     expect(outcome.needsContent).toBe(true);
