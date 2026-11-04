@@ -7,7 +7,11 @@
 
 import type { JSONValue } from "ai";
 
-export type AITextTask = "base" | "qr-theme-generation" | "prompt-enhancement";
+export type AITextTask =
+  | "base"
+  | "qr-theme-generation"
+  | "prompt-enhancement"
+  | "code-suggestions";
 export type AITask = AITextTask | "art";
 
 /** Options for one provider, as `providerOptions[name]` takes them. */
@@ -101,6 +105,15 @@ export const AI_MODELS: { [T in AITextTask]: AIModelChoice } & {
    */
   "qr-theme-generation": { model: "google/gemini-3-flash", providers: GOOGLE },
   "prompt-enhancement": {
+    model: "anthropic/claude-haiku-5.5",
+    providers: ["anthropic"],
+  },
+  /**
+   * The code builder's "Suggest": three back-halves and up to three tags
+   * from a destination (lib/code-suggestions). The small text model, one
+   * short call with a two-line reply.
+   */
+  "code-suggestions": {
     model: "anthropic/claude-haiku-5.5",
     providers: ["anthropic"],
   },
