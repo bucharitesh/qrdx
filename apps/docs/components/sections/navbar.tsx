@@ -87,10 +87,13 @@ export function Navbar() {
     // No transform here: it would trap the drawer's fixed overlay.
     <header
       className={cn(
-        "sticky z-20 flex justify-center border-b py-2 transition-[border-color,top,margin] duration-300 motion-reduce:transition-none",
+        "sticky flex justify-center border-b py-2 transition-[border-color,top,margin] duration-300 motion-reduce:transition-none",
         hasScrolled
           ? "top-2 mx-4 border-transparent md:mx-0"
           : "top-0 border-border",
+        // The header is the drawer's stacking context: while the drawer is
+        // up, lift it above page-level layers (the cookie banner is z-50).
+        drawer === "closed" ? "z-20" : "z-[60]",
       )}
     >
       <div
@@ -121,10 +124,8 @@ export function Navbar() {
               <div className="hidden items-center sm:flex lg:hidden xl:flex">
                 <GithubStars />
               </div>
-              <HeaderAccountLink />
-              <Link className="hidden lg:block" href="/playground">
-                <Button>Try the Playground</Button>
-              </Link>
+              {/* Under 360px it would cover the logo; the drawer has it. */}
+              <HeaderAccountLink className="max-[359px]:hidden" compact />
               <Button
                 variant="secondary"
                 className="lg:hidden"
@@ -191,9 +192,6 @@ export function Navbar() {
 
               {/* Action buttons */}
               <div className="flex flex-wrap items-center gap-2">
-                <Link href="/playground">
-                  <Button>Try the Playground</Button>
-                </Link>
                 <HeaderAccountLink onNavigate={closeDrawer} />
                 <GithubStars full />
               </div>

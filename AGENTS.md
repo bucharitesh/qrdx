@@ -57,4 +57,4 @@ From the root, `pnpm prepush` runs everything the pre-push hook runs: engine bui
 - [CONTRIBUTING.md](CONTRIBUTING.md): setup, project layout, checks and pull requests
 - [SECURITY.md](SECURITY.md): report vulnerabilities privately, never in a public issue
 - [TRADEMARK.md](TRADEMARK.md): the code is open source; the QRdx name and logo are not
-- [license.md](license.md): AGPL-3.0-or-later for the app; `packages/qrdx`, `packages/cli` and `plugins/*` are MIT (their own `LICENSE` files)
+- [LICENSE](LICENSE) and [LICENSING.md](LICENSING.md): AGPL-3.0-or-later for the app; `packages/qrdx`, `packages/cli` and `plugins/*` are MIT (their own `LICENSE` files)

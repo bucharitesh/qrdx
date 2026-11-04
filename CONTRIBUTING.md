@@ -132,4 +132,4 @@ Edit `packages/database/schema.ts`, apply it to your development database with `
 - Update the docs (`apps/docs/content/docs`) or package READMEs when you change behavior or public APIs.
 - Make sure the checks above pass. A maintainer reviews every pull request before it's merged.
 
-By contributing, you agree that your contributions are licensed under the project's [AGPL-3.0-or-later license](license.md), or under the MIT license for files in folders with their own MIT `LICENSE` (`packages/qrdx`, `packages/cli`, `plugins/*`), and that you'll follow the [Code of Conduct](.github/CODE_OF_CONDUCT.md).
+By contributing, you agree that your contributions are licensed under the project's [AGPL-3.0-or-later license](LICENSE), or under the MIT license for files in folders with their own MIT `LICENSE` (`packages/qrdx`, `packages/cli`, `plugins/*`), and that you'll follow the [Code of Conduct](.github/CODE_OF_CONDUCT.md).
