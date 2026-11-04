@@ -14,12 +14,28 @@ import {
   type Segment,
   type SvgNode,
 } from "./svg-geometry";
+
 import {
   invertMatrix,
   type PlacedGradient,
   placeGradient,
   type SvgGradient,
 } from "./svg-gradient";
+
+/** A path segment mapped through an affine `matrix`. */
+function transformSegment(segment: Segment, matrix: Matrix): Segment {
+  if (segment.op === "Z") {
+    return segment;
+  }
+  if (segment.op === "C") {
+    const [x1, y1] = applyMatrix(matrix, segment.x1, segment.y1);
+    const [x2, y2] = applyMatrix(matrix, segment.x2, segment.y2);
+    const [x, y] = applyMatrix(matrix, segment.x, segment.y);
+    return { op: "C", x1, y1, x2, y2, x, y };
+  }
+  const [x, y] = applyMatrix(matrix, segment.x, segment.y);
+  return { op: segment.op, x, y };
+}
 
 export interface PaintState {
   matrix: Matrix;
@@ -166,10 +182,65 @@ export async function rasterizeImage(href: string): Promise<string | null> {
   });
 }
 
+/** `<clipPath>` elements by id, anywhere in the tree. */
+function collectClipPaths(
+  node: SvgNode,
+  out: Map<string, SvgNode>
+): Map<string, SvgNode> {
+  if (node.name === "clipPath" && node.attrs.id) {
+    out.set(node.attrs.id, node);
+  }
+  for (const child of node.children) {
+    collectClipPaths(child, out);
+  }
+  return out;
+}
+
+/** Outline of one clip-path child, in its own user space. */
+function clipShapeSegments(
+  node: SvgNode,
+  viewport: [number, number]
+): Segment[] {
+  const [vw, vh] = viewport;
+  const attr = (name: string, reference: number) =>
+    length(node.attrs[name], reference);
+  switch (node.name) {
+    case "path":
+      return parsePathData(node.attrs.d ?? "");
+    case "rect": {
+      const rx = node.attrs.rx ?? node.attrs.ry;
+      const ry = node.attrs.ry ?? node.attrs.rx;
+      return rectSegments(
+        attr("x", vw),
+        attr("y", vh),
+        attr("width", vw),
+        attr("height", vh),
+        length(rx, vw),
+        length(ry, vh)
+      );
+    }
+    case "circle": {
+      const r = attr("r", Math.hypot(vw, vh) / Math.SQRT2);
+      return ellipseSegments(attr("cx", vw), attr("cy", vh), r, r);
+    }
+    case "ellipse":
+      return ellipseSegments(
+        attr("cx", vw),
+        attr("cy", vh),
+        attr("rx", vw),
+        attr("ry", vh)
+      );
+    default:
+      return [];
+  }
+}
+
 export abstract class SvgPainter {
   protected readonly gradients: Map<string, string>;
   /** Gradients the backend shades natively (see `resolveFill`) */
   protected readonly shadings: Map<string, SvgGradient> | null;
+  /** `<clipPath>`s of the document being walked (collected at its root) */
+  private clipPaths = new Map<string, SvgNode>();
 
   /**
    * `gradients` maps gradient ids to the color they flatten to. Pass
@@ -288,6 +359,61 @@ export abstract class SvgPainter {
 
   abstract image(node: SvgNode, state: PaintState): void;
 
+  /**
+   * Restricts painting to `segments` (device space via `matrix`) until the
+   * matching `endClip`. Backends that can't clip leave this as is, so they
+   * paint the element unclipped.
+   */
+  beginClip(_segments: Segment[], _matrix: Matrix, _evenOdd: boolean): boolean {
+    return false;
+  }
+
+  /** Ends the clip a `beginClip` that returned true started. */
+  endClip(): void {
+    // Nothing to undo when beginClip didn't clip
+  }
+
+  /**
+   * The `clip-path="url(#id)"` outline of `node` (userSpaceOnUse: the
+   * node's own user space), or null when it has none or it can't be found.
+   */
+  private clipOf(
+    node: SvgNode,
+    state: PaintState
+  ): { segments: Segment[]; matrix: Matrix; evenOdd: boolean } | null {
+    const reference = readStyle(node, "clip-path");
+    const id = reference ? URL_REFERENCE.exec(reference)?.[1] : undefined;
+    const clip = id ? this.clipPaths.get(id) : undefined;
+    if (!clip) {
+      return null;
+    }
+    const segments: Segment[] = [];
+    let evenOdd = false;
+    for (const child of clip.children) {
+      const shape = clipShapeSegments(child, state.viewport);
+      if (shape.length === 0) {
+        continue;
+      }
+      const transform = parseTransform(child.attrs.transform);
+      const isIdentity =
+        transform[0] === 1 &&
+        transform[1] === 0 &&
+        transform[2] === 0 &&
+        transform[3] === 1 &&
+        transform[4] === 0 &&
+        transform[5] === 0;
+      segments.push(
+        ...(isIdentity
+          ? shape
+          : shape.map((segment) => transformSegment(segment, transform)))
+      );
+      evenOdd ||= readStyle(child, "clip-rule") === "evenodd";
+    }
+    return segments.length > 0
+      ? { segments, matrix: state.matrix, evenOdd }
+      : null;
+  }
+
   viewportMatrix(node: SvgNode, state: PaintState): [Matrix, [number, number]] {
     const x = length(node.attrs.x, state.viewport[0]);
     const y = length(node.attrs.y, state.viewport[1]);
@@ -338,6 +464,9 @@ export abstract class SvgPainter {
   }
 
   walk(node: SvgNode, parent: PaintState, isRoot = false) {
+    if (isRoot) {
+      this.clipPaths = collectClipPaths(node, new Map());
+    }
     if (SKIPPED_ELEMENTS.has(node.name)) {
       return;
     }
@@ -375,7 +504,21 @@ export abstract class SvgPainter {
       fontWeight: readStyle(node, "font-weight") ?? parent.fontWeight,
       textAnchor: readStyle(node, "text-anchor") ?? parent.textAnchor,
     };
-    const [vw, vh] = viewport;
+    // clip-path: paint the element inside the clip outline only
+    const clip = node.attrs["clip-path"] ? this.clipOf(node, state) : null;
+    if (clip && this.beginClip(clip.segments, clip.matrix, clip.evenOdd)) {
+      try {
+        this.paintNode(node, state);
+      } finally {
+        this.endClip();
+      }
+      return;
+    }
+    this.paintNode(node, state);
+  }
+
+  private paintNode(node: SvgNode, state: PaintState) {
+    const [vw, vh] = state.viewport;
     const attr = (name: string, reference: number) =>
       length(node.attrs[name], reference);
 

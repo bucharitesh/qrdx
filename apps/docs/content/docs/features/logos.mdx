@@ -43,6 +43,24 @@ Keep a moved logo off the three corner eyes and the small square near the bottom
 
 In the playground, **Design → Logo options** has the same controls, plus **Raise error correction for big logos** (`autoLevel`).
 
+## Shape, plate and background
+
+- `shape`: crop the logo to `"square"` (as uploaded, the default), `"rounded"` corners or a `"circle"`.
+- `plate`: a solid color drawn behind the logo in the same shape; the logo sits inset on it.
+
+```tsx
+<QRCode
+  value="https://example.com"
+  logo="/logo.png"
+  level="H"
+  logoOptions={{ size: 0.22, shape: "circle", plate: "#ffffff" }}
+/>
+```
+
+The crop is an SVG clip path. The print PDF and EPS clip to the same outline, so every download format looks the same. EPS has no transparency, so the transparent parts of a logo print white there.
+
+If an uploaded logo sits on a solid box (common with JPEGs), the playground offers **Remove background**. When the four corners share one color, it clears that color from the edges inward, so the same color inside the mark (white letters, say) stays. In code, `removeLogoBackground(src)` returns the cleaned PNG as a data URL in the browser, and `removeLogoBackdrop(pixels)` does the same on RGBA pixels anywhere.
+
 ## Advanced Control
 
 ```tsx

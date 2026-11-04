@@ -11,6 +11,14 @@ import { type AnyQRFrame, anyFrameSchema } from "./frame-spec";
 import { type BodyPattern, bodyPatternSchema } from "./image-pattern";
 import type { TemplateDefinition } from "./template";
 
+/**
+ * How a logo is cropped: "square" (as uploaded), "rounded" corners or a
+ * "circle". A plate behind the logo takes the same shape.
+ */
+export const LOGO_SHAPES = ["square", "rounded", "circle"] as const;
+export const logoShapeSchema = z.enum(LOGO_SHAPES);
+export type LogoShape = z.infer<typeof logoShapeSchema>;
+
 // Zod schemas
 export const imageSettingsSchema = z.object({
   src: z.string(),
@@ -24,6 +32,13 @@ export const imageSettingsSchema = z.object({
    * pixels as `width` and `height` (default 0).
    */
   padding: z.number().min(0).optional(),
+  /** Crop the logo to this shape (default "square": no crop). */
+  shape: logoShapeSchema.optional(),
+  /**
+   * Solid color of a plate behind the logo, in the logo's shape. The plate
+   * fills the logo box and the logo is drawn inset inside it.
+   */
+  plate: z.string().optional(),
 });
 
 /**
@@ -42,12 +57,15 @@ export const LOGO_PADDING_MAX = 2;
  * the render size: `size` is a share of the code's width, `padding` is clear
  * space in modules, `x` and `y` place the logo's center across the code
  * (0 to 1, 0.5 is the middle; the logo always stays inside the code).
+ * `shape` crops it and `plate` draws a solid plate behind it.
  */
 export const logoOptionsSchema = z.object({
   size: z.number().min(LOGO_SIZE_MIN).max(LOGO_SIZE_MAX).optional(),
   padding: z.number().min(0).max(LOGO_PADDING_MAX).optional(),
   x: z.number().min(0).max(1).optional(),
   y: z.number().min(0).max(1).optional(),
+  shape: logoShapeSchema.optional(),
+  plate: z.string().optional(),
 });
 export type LogoOptions = z.infer<typeof logoOptionsSchema>;
 

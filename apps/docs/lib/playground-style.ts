@@ -22,6 +22,7 @@ import {
   LOGO_PADDING_MAX,
   LOGO_SIZE_MAX,
   LOGO_SIZE_MIN,
+  logoShapeSchema,
   MODULE_SCALE_MAX,
   MODULE_SCALE_MIN,
 } from "qrdx/types";
@@ -122,6 +123,8 @@ const ENGINE_OPTION_FIELDS = {
       padding: z.number().min(0).max(LOGO_PADDING_MAX).optional(),
       x: z.number().min(0).max(1).optional(),
       y: z.number().min(0).max(1).optional(),
+      shape: logoShapeSchema.optional(),
+      plate: safeOptionalColor,
     })
     .strict()
     .optional(),

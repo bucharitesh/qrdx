@@ -16,6 +16,7 @@ import {
 import type * as React from "react";
 import ControlSection from "@/components/editor/control-section";
 import type { QRStyle } from "@/types/theme";
+import { LOGO_SHAPE_NAMES, LogoCropControls } from "./logo-crop-controls";
 
 const percent = (share: number) => Math.round(share * 100);
 
@@ -47,8 +48,8 @@ interface LogoOptionsSectionProps {
 }
 
 /**
- * The logo's size, clear space and position, and automatic error
- * correction. Shown while the logo is on.
+ * The logo's shape, plate and background, its size, clear space and
+ * position, and automatic error correction. Shown while the logo is on.
  */
 export function LogoOptionsSection({
   style,
@@ -63,6 +64,9 @@ export function LogoOptionsSection({
 
   const setOptions = (change: Partial<LogoOptions>) => {
     const next: LogoOptions = { ...options, ...change };
+    for (const key of Object.keys(next) as (keyof LogoOptions)[]) {
+      if (next[key] === undefined) delete next[key];
+    }
     // Defaults are left out, so an untouched logo saves as before
     if (next.size === LOGO_SIZE_DEFAULT) delete next.size;
     if (next.padding === 0) delete next.padding;
@@ -75,12 +79,26 @@ export function LogoOptionsSection({
     });
   };
 
+  const shape = options.shape ?? "square";
+
   return (
     <ControlSection
       id="section-logo-options"
-      summary={`${percent(size)}%${centered ? "" : " · moved"}`}
+      summary={[
+        `${percent(size)}%`,
+        shape !== "square" && LOGO_SHAPE_NAMES[shape].toLowerCase(),
+        !centered && "moved",
+      ]
+        .filter(Boolean)
+        .join(" · ")}
       title="Logo options"
     >
+      <LogoCropControls
+        onChange={onChange}
+        setOptions={setOptions}
+        style={style}
+      />
+
       <SliderRow label="Size" value={`${percent(size)}% of the code`}>
         <Slider
           aria-label="Logo size"

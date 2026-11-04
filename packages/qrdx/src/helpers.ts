@@ -42,7 +42,15 @@ function logoImageSettings(
   }
 ): ImageSettings {
   const width = code.size * (options?.size ?? LOGO_SIZE_DEFAULT);
-  const settings: ImageSettings = { src, width, height: width, excavate: true };
+  const settings: ImageSettings = {
+    src,
+    width,
+    height: width,
+    excavate: true,
+    ...(options?.shape &&
+      options.shape !== "square" && { shape: options.shape }),
+    ...(options?.plate && { plate: options.plate }),
+  };
   const positioned = options?.x !== undefined || options?.y !== undefined;
   if (!(options?.padding || positioned)) {
     return settings;

@@ -23,6 +23,7 @@ import {
   ERROR_LEVEL_MAP,
 } from "./constants";
 import { drawFrameOnCanvas, getFrameLayout, isFrameActive } from "./frame";
+import { logoImageBox, traceLogoShape } from "./logo";
 import {
   excavateModules,
   generatePath,
@@ -161,13 +162,27 @@ export function QRCodeCanvas(props: QRPropsCanvas) {
       }
 
       if (haveImageToRender) {
-        ctx.drawImage(
-          image,
-          calculatedImageSettings.x + margin,
-          calculatedImageSettings.y + margin,
-          calculatedImageSettings.w,
-          calculatedImageSettings.h
-        );
+        const box = {
+          x: calculatedImageSettings.x + margin,
+          y: calculatedImageSettings.y + margin,
+          w: calculatedImageSettings.w,
+          h: calculatedImageSettings.h,
+        };
+        const shape = imageSettings?.shape ?? "square";
+        const plate = imageSettings?.plate;
+        const imageBox = logoImageBox(box, plate);
+        ctx.save();
+        if (plate) {
+          traceLogoShape(ctx, shape, box);
+          ctx.fillStyle = plate;
+          ctx.fill();
+        }
+        if (shape !== "square") {
+          traceLogoShape(ctx, shape, imageBox);
+          ctx.clip();
+        }
+        ctx.drawImage(image, imageBox.x, imageBox.y, imageBox.w, imageBox.h);
+        ctx.restore();
       }
     }
   });
