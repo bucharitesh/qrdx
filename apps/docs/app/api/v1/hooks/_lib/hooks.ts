@@ -14,6 +14,7 @@ import {
   type WebhookEnvelope,
   type WebhookEvent,
 } from "@/lib/events/types";
+import { can } from "@/lib/permissions";
 import type { ActiveScope } from "@/lib/scope";
 import { shortLinkUrl } from "@/lib/short-links";
 
@@ -90,7 +91,7 @@ export function canSeeHookUrls(caller: {
   scope: Pick<ActiveScope, "role">;
   canWrite: boolean;
 }): boolean {
-  return caller.canWrite && caller.scope.role !== "member";
+  return caller.canWrite && can(caller.scope.role, "webhooks.manage");
 }
 
 /** `https://hooks.zapier.com/…`: the host, without the secret path. */

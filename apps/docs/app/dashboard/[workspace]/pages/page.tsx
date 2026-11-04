@@ -42,6 +42,7 @@ import {
 import { CopyButton } from "@/components/copy-button";
 import { HairlineFigure } from "@/components/mockups/hairline";
 import { getTemplate } from "@/lib/landing/templates";
+import { can } from "@/lib/permissions";
 import { requestWorkspaceSlug } from "@/lib/scope";
 import { workspaceLink } from "@/lib/workspace-paths";
 
@@ -94,7 +95,9 @@ export default async function PagesPage({
     getPageUsage(scope),
     listPages(scope),
   ]);
-  const canDeleteAny = !(scope.organizationId && scope.role === "member");
+  const canWrite = can(scope.role, "content.write");
+  const canDeleteAny =
+    canWrite && (!scope.organizationId || can(scope.role, "content.manageAll"));
   const display = parseDisplay(cookieStore.get(DISPLAY_COOKIES.pages)?.value);
 
   // The types in use, for the Filter menu; then the filters from the URL.
@@ -133,7 +136,8 @@ export default async function PagesPage({
       scans: codes.reduce((sum, item) => sum + item.scanCount, 0),
       href: workspaceLink(slug, `/pages/${encodeURIComponent(page.id)}`),
       isForm: page.type === FORM_TYPE,
-      canDelete: canDeleteAny || page.createdBy === scope.userId,
+      canDelete:
+        canDeleteAny || (canWrite && page.createdBy === scope.userId),
     };
   });
   const scansLabel = (scans: number) =>

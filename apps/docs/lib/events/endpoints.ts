@@ -10,6 +10,8 @@ import cuid from "cuid";
 import { and, count, desc, eq, inArray, sql } from "drizzle-orm";
 import { z } from "zod";
 import { HttpError } from "@/lib/error-response";
+import { can } from "@/lib/permissions";
+import { assertCan } from "@/lib/permissions-server";
 import { getPlanForScope, getPlanLimits, type Plan } from "@/lib/plans";
 import type { ActiveScope } from "@/lib/scope";
 import { outcomeValues, sendDelivery } from "./deliveries";
@@ -93,16 +95,10 @@ const asEvents = (value: unknown): WebhookEvent[] =>
 
 /** Owners and admins manage a team's webhooks; personal scope is always "owner". */
 export const canManageWebhooks = (scope: ActiveScope) =>
-  scope.role === "owner" || scope.role === "admin";
+  can(scope.role, "webhooks.manage");
 
 function assertManager(scope: ActiveScope) {
-  if (!canManageWebhooks(scope)) {
-    throw new HttpError(
-      403,
-      "FORBIDDEN",
-      "Only team owners and admins can manage webhooks.",
-    );
-  }
+  assertCan(scope, "webhooks.manage");
 }
 
 export async function webhookPlan(

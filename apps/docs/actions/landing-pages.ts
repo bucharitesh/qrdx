@@ -16,6 +16,7 @@ import {
   publishPageSchema,
 } from "@/app/dashboard/pages/_lib/landing-pages";
 import { HttpError } from "@/lib/error-response";
+import { assertCan } from "@/lib/permissions-server";
 import { enforceRateLimits } from "@/lib/request-guards";
 import { type ActiveScope, getActiveScope } from "@/lib/scope";
 import { logError } from "@/lib/shared";
@@ -101,14 +102,23 @@ function parse<T extends z.ZodType>(schema: T, input: unknown): z.infer<T> {
   return result.data;
 }
 
-/** Every action resolves the caller's scope itself; nothing scope-related comes from the client. */
+/**
+ * Every action resolves the caller's scope itself; nothing scope-related
+ * comes from the client. Changes need a role that may write
+ * (lib/permissions.ts); reads say so.
+ */
 async function run<T>(
   action: string,
   fn: (scope: ActiveScope) => Promise<T>,
-  { revalidate = false } = {},
+  {
+    revalidate = false,
+    access = "write",
+  }: { revalidate?: boolean; access?: "read" | "write" } = {},
 ): Promise<LandingPageActionResult<T>> {
   try {
-    const data = await fn(await getActiveScope());
+    const scope = await getActiveScope();
+    if (access === "write") assertCan(scope, "content.write");
+    const data = await fn(scope);
     if (revalidate) revalidatePath("/dashboard", "layout");
     return { success: true, data };
   } catch (error) {
@@ -176,5 +186,5 @@ export async function createLandingPageCode(input: {
 export async function getLandingPageUsage(): Promise<
   LandingPageActionResult<PageUsage>
 > {
-  return run("getLandingPageUsage", getPageUsage);
+  return run("getLandingPageUsage", getPageUsage, { access: "read" });
 }

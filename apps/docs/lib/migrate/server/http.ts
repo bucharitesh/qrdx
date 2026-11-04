@@ -5,6 +5,7 @@ import cuid from "cuid";
 import type { z } from "zod";
 import { HttpError, handleError } from "@/lib/error-response";
 import { baseUrl } from "@/lib/metadata";
+import { assertCan } from "@/lib/permissions-server";
 import {
   enforceRateLimits,
   getClientIp,
@@ -70,6 +71,8 @@ export async function migrateScope(
 ): Promise<ActiveScope> {
   if (write) assertSameOrigin(req);
   const scope = await getActiveScope(req.headers);
+  // Imports create codes: viewers and billing members can't run them.
+  if (write) assertCan(scope, "content.write");
   await enforceRateLimits([
     {
       limiter: write ? writeLimiter : readLimiter,

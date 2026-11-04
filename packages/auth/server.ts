@@ -13,6 +13,10 @@ import {
   lastLoginMethod,
   organization,
 } from "better-auth/plugins";
+import {
+  defaultRoles,
+  memberAc,
+} from "better-auth/plugins/organization/access";
 import { getAdminUserIds } from "./admin";
 import { sendVerificationOTP } from "./email-otp";
 import { keys } from "./keys";
@@ -29,9 +33,12 @@ import {
   initialWorkspaceId,
 } from "./workspace-hooks";
 
-// Members per team, owner included, by the best plan among its owners. Keep in
-// sync with `teamMembers` in apps/docs/lib/plans.ts. Business products are the
-// env ids; any other entitled product counts as Pro (planForSubscriptionProduct).
+// Members per team, owner included, by the best plan among its owners and
+// billing members (the roles that pay, PLAN_ROLES in apps/docs/lib/
+// permissions.ts). Keep in sync with `teamMembers` and
+// getOwnerPlanForOrganization in apps/docs/lib/plans.ts. Business products
+// are the env ids; any other entitled product counts as Pro
+// (planForSubscriptionProduct).
 const TEAM_MEMBER_LIMITS = {
   free: 1,
   pro: 3,
@@ -46,17 +53,21 @@ const BUSINESS_PRODUCT_IDS = new Set(
 // Better Auth's default invitation cap, kept for teams without a member limit.
 const MAX_PENDING_INVITATIONS = 100;
 
+const PLAN_ROLES = new Set(["owner", "billing"]);
+
 async function teamMemberLimit(organizationId: string): Promise<number> {
   const owners = await db.query.member.findMany({
     columns: { userId: true, role: true },
-    where: (table, { and, eq, like }) =>
+    where: (table, { and, eq, like, or }) =>
       and(
         eq(table.organizationId, organizationId),
-        like(table.role, "%owner%")
+        or(like(table.role, "%owner%"), like(table.role, "%billing%"))
       ),
   });
   const ownerIds = owners
-    .filter((m) => m.role.split(",").some((role) => role.trim() === "owner"))
+    .filter((m) =>
+      m.role.split(",").some((role) => PLAN_ROLES.has(role.trim()))
+    )
     .map((m) => m.userId);
   if (ownerIds.length === 0) return TEAM_MEMBER_LIMITS.free;
 
@@ -240,6 +251,12 @@ export const auth = betterAuth({
     // Business users can create more (any entitled subscription, ./plan.ts).
     organization({
       creatorRole: "owner",
+      // QRdx's five roles (apps/docs/lib/permissions.ts decides what each
+      // may do in the app). Viewer and billing get the plugin's member
+      // statements: neither manages the workspace or its people through
+      // the plugin. Registering them lets invitations and role changes use
+      // them (the plugin refuses roles it doesn't know).
+      roles: { ...defaultRoles, viewer: memberAc, billing: memberAc },
       allowUserToCreateOrganization: (user) => hasEntitledSubscription(user.id),
       // Seats follow the owners' plan: Pro 3, Business unlimited. Checked when
       // an invitation is accepted; pending invitations can't exceed free seats.

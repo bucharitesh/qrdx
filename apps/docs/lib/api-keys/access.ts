@@ -2,17 +2,18 @@
 // tested) and client-safe: Settings → Developers uses the same rules to
 // decide what to show.
 
+import { can, strongestRole } from "@/lib/permissions";
 import type { ActiveScope, ScopeRole } from "@/lib/scope";
 
 /**
  * Team owners and admins see (and can revoke) every key in their team;
- * members see only their own. In your own workspace every key is the
+ * everyone else sees only their own. In your own workspace every key is the
  * user's own.
  */
 export function canSeeAllKeys(
   scope: Pick<ActiveScope, "organizationId" | "role">,
 ): boolean {
-  return !scope.organizationId || scope.role !== "member";
+  return !scope.organizationId || can(scope.role, "apiKeys.manageAll");
 }
 
 export function canRevokeKey(
@@ -28,7 +29,5 @@ export function canRevokeKey(
  * Read on every request, so a demotion takes effect at once.
  */
 export function roleFromMembership(memberRole: string): ScopeRole {
-  const roles = memberRole.split(",").map((role) => role.trim());
-  if (roles.includes("owner")) return "owner";
-  return roles.includes("admin") ? "admin" : "member";
+  return strongestRole(memberRole);
 }

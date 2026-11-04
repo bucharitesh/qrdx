@@ -30,6 +30,7 @@ import {
 import { and, asc, eq, isNull, like, or, sql } from "drizzle-orm";
 import { HttpError } from "@/lib/error-response";
 import { logError } from "@/lib/log-error";
+import { strongestRole, type WorkspaceRole } from "@/lib/permissions";
 import { isUniqueViolation } from "@/lib/slug-claims";
 
 // Every signed-in person works in a workspace (a Better Auth organization).
@@ -39,12 +40,13 @@ import { isUniqueViolation } from "@/lib/slug-claims";
 // (packages/database/scripts/backfill-workspaces.mjs) does the same for every
 // account at once; this code is correct whether or not it has run.
 
-export type WorkspaceRole = "owner" | "admin" | "member";
+export { strongestRole, type WorkspaceRole } from "@/lib/permissions";
 
 export interface Workspace {
   id: string;
   name: string;
   slug: string;
+  /** An uploaded logo's URL or an https image URL (null: the initial letter) */
   logo: string | null;
   /** The viewer's role (the strongest of several) */
   role: WorkspaceRole;
@@ -64,12 +66,6 @@ export class WorkspaceNotFoundError extends HttpError {
     super(404, "WORKSPACE_NOT_FOUND", "Workspace not found.");
     this.name = "WorkspaceNotFoundError";
   }
-}
-
-export function strongestRole(role: string): WorkspaceRole {
-  const roles = role.split(",").map((r) => r.trim());
-  if (roles.includes("owner")) return "owner";
-  return roles.includes("admin") ? "admin" : "member";
 }
 
 const workspaceColumns = {

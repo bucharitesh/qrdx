@@ -12,6 +12,7 @@ import {
 } from "@/app/dashboard/codes/_lib/qr-codes";
 import { snapshotCodeVersion } from "@/lib/code-versions";
 import { HttpError } from "@/lib/error-response";
+import { assertCan } from "@/lib/permissions-server";
 import { getPlanForScope, getPlanLimits } from "@/lib/plans";
 import { type EndedReason, lifecycleState } from "@/lib/redirect/lifecycle";
 import { enforceRateLimits } from "@/lib/request-guards";
@@ -219,13 +220,19 @@ async function toView(
   };
 }
 
+/** Changes need a role that may write (lib/permissions.ts); reads say so. */
 async function run(
   action: string,
   fn: (scope: ActiveScope) => Promise<CodeLifecycleView>,
-  { revalidate = false } = {},
+  {
+    revalidate = false,
+    access = "write",
+  }: { revalidate?: boolean; access?: "read" | "write" } = {},
 ): Promise<LifecycleActionResult> {
   try {
-    const data = await fn(await getActiveScope());
+    const scope = await getActiveScope();
+    if (access === "write") assertCan(scope, "content.write");
+    const data = await fn(scope);
     if (revalidate) revalidatePath("/dashboard", "layout");
     return { success: true, data };
   } catch (error) {
@@ -239,8 +246,11 @@ const sameTime = (a: Date | null, b: Date | null) =>
 export async function getCodeLifecycle(
   id: string,
 ): Promise<LifecycleActionResult> {
-  return run("getCodeLifecycle", async (scope) =>
-    toView(scope, await findRow(scope, parse(codeIdSchema, id))),
+  return run(
+    "getCodeLifecycle",
+    async (scope) =>
+      toView(scope, await findRow(scope, parse(codeIdSchema, id))),
+    { access: "read" },
   );
 }
 

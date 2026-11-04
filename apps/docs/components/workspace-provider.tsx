@@ -1,6 +1,11 @@
 "use client";
 
 import { createContext, type ReactNode, useCallback, useContext } from "react";
+import {
+  can,
+  type WorkspaceAction,
+  type WorkspaceRole,
+} from "@/lib/permissions";
 import { WORKSPACE_HEADER, workspaceLink } from "@/lib/workspace-paths";
 
 /** What client components know about the open workspace (no secrets). */
@@ -9,7 +14,9 @@ export interface ClientWorkspace {
   name: string;
   slug: string;
   /** The viewer's role in it */
-  role: "owner" | "admin" | "member";
+  role: WorkspaceRole;
+  /** Its logo (an image URL), or null for the initial letter */
+  logo?: string | null;
   /** The viewer's own workspace */
   own: boolean;
 }
@@ -67,4 +74,13 @@ export function useWorkspaceHref(): (path?: string) => string {
   const workspace = useContext(WorkspaceContext);
   const slug = workspace?.slug ?? null;
   return useCallback((path = "") => workspaceLink(slug, path), [slug]);
+}
+
+/**
+ * Whether the signed-in person may do `action` in the open workspace, for
+ * hiding controls (the server checks again). Outside the app shell there is
+ * no workspace and this is false.
+ */
+export function useCan(action: WorkspaceAction): boolean {
+  return can(useContext(WorkspaceContext)?.role, action);
 }
