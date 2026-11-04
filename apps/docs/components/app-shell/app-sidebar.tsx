@@ -46,8 +46,10 @@ import { isNavItemActive } from "./nav-config";
 import type { ShellData } from "./shell-data";
 import { useWhatsNew } from "./whats-new";
 
+// The focus ring is inset: the area panels clip their sides (they slide),
+// and an outside ring would be cut off there. Keyboard focus only.
 const rowClass =
-  "hover:bg-foreground/[0.05] hover:text-foreground focus-visible:ring-ring/50 flex shrink-0 items-center rounded-md text-sm font-medium outline-none transition-colors focus-visible:ring-[3px]";
+  "hover:bg-foreground/[0.05] hover:text-foreground focus-visible:ring-ring/50 flex shrink-0 items-center rounded-md text-sm font-medium outline-none transition-colors focus-visible:ring-[3px] focus-visible:ring-inset";
 
 /** In the icon rail every row is a square with its label in a tooltip. */
 function RailTip({
