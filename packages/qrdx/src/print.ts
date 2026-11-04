@@ -314,6 +314,19 @@ class PdfPainter extends SvgPainter {
     this.pdf.restoreGraphicsState();
   }
 
+  /** `q <path> W n`: everything until `endClip` stays inside the path. */
+  override beginClip(segments: Segment[], matrix: Matrix, evenOdd: boolean) {
+    this.pdf.saveGraphicsState();
+    this.tracePath(segments, matrix);
+    this.pdf.clip(evenOdd ? "evenodd" : undefined);
+    this.pdf.discardPath();
+    return true;
+  }
+
+  override endClip() {
+    this.pdf.restoreGraphicsState();
+  }
+
   paint(segments: Segment[], node: SvgNode, state: PaintState) {
     if (segments.length === 0) {
       return;

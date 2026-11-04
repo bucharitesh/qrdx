@@ -34,6 +34,7 @@ import {
 import { generateCornerDotPath } from "./corner-dot";
 import { generateCornerSquarePath } from "./corner-eye";
 import { isFrameActive, wrapWithFrame } from "./frame";
+import { LOGO_PLATE_INSET, LOGO_ROUNDED_RADIUS, renderLogo } from "./logo";
 import { hashString } from "./shapes";
 import { getTemplate } from "./templates";
 import { getSolidColor } from "./utils/color";
@@ -805,6 +806,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
       );
 
     if (isOGContext) {
+      const shape = imageSettings.shape ?? "square";
       image = (
         <img
           alt="Logo"
@@ -815,20 +817,28 @@ export function QRCodeSVG(props: QRPropsSVG) {
             top: `${fmt(imgTop)}px`,
             width: `${fmt(imgWidth)}px`,
             height: `${fmt(imgHeight)}px`,
+            ...(shape !== "square" && {
+              borderRadius:
+                shape === "circle"
+                  ? "50%"
+                  : `${fmt(Math.min(imgWidth, imgHeight) * LOGO_ROUNDED_RADIUS)}px`,
+            }),
+            ...(imageSettings.plate && {
+              backgroundColor: imageSettings.plate,
+              padding: `${fmt(imgWidth * LOGO_PLATE_INSET)}px`,
+              boxSizing: "border-box",
+            }),
           }}
         />
       );
     } else {
-      image = (
-        <image
-          height={fmt(imgHeight)}
-          href={imageSettings.src}
-          preserveAspectRatio="none"
-          width={fmt(imgWidth)}
-          x={fmt(imgLeft)}
-          y={fmt(imgTop)}
-        />
-      );
+      // Cropped to imageSettings.shape, on its plate (see logo.tsx)
+      image = renderLogo(imageSettings, {
+        x: imgLeft,
+        y: imgTop,
+        w: imgWidth,
+        h: imgHeight,
+      });
     }
   }
 

@@ -79,6 +79,16 @@ export {
   OFFICIAL_FRAMES,
   type OfficialFrame,
 } from "./frames/official";
+export {
+  LOGO_PLATE_INSET,
+  LOGO_ROUNDED_RADIUS,
+} from "./logo";
+export {
+  LOGO_CLEANUP_MAX_SIDE,
+  type LogoPixels,
+  removeLogoBackdrop,
+  removeLogoBackground,
+} from "./logo-cleanup";
 export * from "./print";
 export * from "./qr-code";
 // QRCodeCanvas is the only export that needs client-only hooks. It lives in

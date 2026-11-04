@@ -168,7 +168,7 @@ export const LEFT_OUT = {
   eyeColors: "Per-eye colors",
   moduleScale: "The dot size",
   autoLevel: "Automatic error correction for the logo",
-  logoOptions: "The logo's size, clear space and position",
+  logoOptions: "The logo's size, position, shape and plate",
   longContent: "Content over 2,048 characters (the image API's limit)",
   privateContent:
     "Your content (image URLs reach a server, so only web addresses go in)",

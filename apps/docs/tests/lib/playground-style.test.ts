@@ -310,3 +310,24 @@ describe("engine options", () => {
     ).toBeUndefined();
   });
 });
+
+describe("engine options: logo shape and plate", () => {
+  it("round-trips the crop and a safe plate color", () => {
+    const styles: ThemeStyles = {
+      bgColor: "#ffffff",
+      showLogo: true,
+      logoOptions: { size: 0.2, shape: "circle", plate: "#fde68a" },
+    };
+    expect(decodeStyleParam(encode(styles).value)).toEqual({ styles });
+  });
+
+  it("rejects an unknown shape or a plate that could load a resource", () => {
+    for (const json of [
+      { lo: { shape: "star" } },
+      { lo: { plate: "url(https://tracker.example/x)" } },
+      { lo: { plate: 7 } },
+    ]) {
+      expect(decodeStyleParam(forge(json)), JSON.stringify(json)).toBeNull();
+    }
+  });
+});
