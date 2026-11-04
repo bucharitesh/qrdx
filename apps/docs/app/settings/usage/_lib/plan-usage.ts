@@ -25,6 +25,7 @@ import {
 import { getStorageOverview } from "@/lib/files/service";
 import { formatBytes } from "@/lib/files/types";
 import { listOAuthApps } from "@/lib/oauth-apps/service";
+import { can } from "@/lib/permissions";
 import {
   getPlan,
   getPlanForScope,
@@ -57,7 +58,7 @@ export interface PlanUsage {
   plan: Plan;
   /** isTeam: not the viewer's own workspace (its plan is its owners') */
   workspace: { isTeam: boolean; name: string };
-  /** An owner of the workspace (a workspace's plan is its owners'). */
+  /** An owner or billing member (they pay for the workspace's plan). */
   canChangePlan: boolean;
   /** The signed-in person's own subscription (null when they have none). */
   subscription: SubscriptionSummary | null;
@@ -124,7 +125,7 @@ export async function getPlanUsage(scope: ActiveScope): Promise<PlanUsage> {
       isTeam,
       name: team?.name ?? "This workspace",
     },
-    canChangePlan: scope.role === "owner",
+    canChangePlan: can(scope.role, "billing.manage"),
     subscription: own
       ? {
           plan: planForSubscriptionProduct(own.productId),

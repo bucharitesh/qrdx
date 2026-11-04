@@ -20,6 +20,7 @@ import { z } from "zod";
 import { HttpError } from "@/lib/error-response";
 import { noteLimitUsage } from "@/lib/limit-notices";
 import { baseUrl } from "@/lib/metadata";
+import { can } from "@/lib/permissions";
 import { getPlanForScope, getPlanLimits, type Plan } from "@/lib/plans";
 import { PLAN_NAMES } from "@/lib/pricing";
 import type { ActiveScope } from "@/lib/scope";
@@ -148,15 +149,19 @@ function scopeSegment(scope: ActiveScope): string {
     : `u-${scope.userId}`;
 }
 
-/** Team members manage their own uploads; owners and admins every team file. */
+/**
+ * Team members manage their own uploads; owners and admins every team file;
+ * viewers and billing members none (lib/permissions.ts).
+ */
 export function canManageFile(
   scope: ActiveScope,
   row: Pick<FileRow, "userId">,
 ): boolean {
-  return !(
-    scope.organizationId &&
-    scope.role === "member" &&
-    row.userId !== scope.userId
+  if (!can(scope.role, "content.write")) return false;
+  return (
+    !scope.organizationId ||
+    can(scope.role, "content.manageAll") ||
+    row.userId === scope.userId
   );
 }
 

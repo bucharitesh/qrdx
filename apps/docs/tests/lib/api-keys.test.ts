@@ -233,7 +233,10 @@ describe("who sees and revokes keys", () => {
     expect(roleFromMembership("member")).toBe("member");
     expect(roleFromMembership("member, admin")).toBe("admin");
     expect(roleFromMembership("admin,owner")).toBe("owner");
-    expect(roleFromMembership("viewer")).toBe("member");
+    expect(roleFromMembership("viewer")).toBe("viewer");
+    expect(roleFromMembership("billing")).toBe("billing");
+    // Unknown roles never grant more than reading.
+    expect(roleFromMembership("superuser")).toBe("viewer");
   });
 });
 

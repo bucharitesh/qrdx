@@ -1,26 +1,22 @@
-export type TeamRole = "owner" | "admin" | "member";
+import {
+  strongestRole,
+  WORKSPACE_ROLE_DESCRIPTIONS,
+  WORKSPACE_ROLE_LABELS,
+  type WorkspaceRole,
+} from "@/lib/permissions";
+
+// Roles, labels and descriptions live in lib/permissions.ts (one table for
+// the server and the UI); these names stay for the team pages.
+export type TeamRole = WorkspaceRole;
 
 /** 3-48 lowercase letters, digits and inner dashes. */
 export const TEAM_SLUG_PATTERN = "^[a-z0-9](?:[a-z0-9-]{1,46}[a-z0-9])$";
 
-export const TEAM_ROLE_LABELS: Record<TeamRole, string> = {
-  owner: "Owner",
-  admin: "Admin",
-  member: "Member",
-};
-
-export const TEAM_ROLE_DESCRIPTIONS: Record<TeamRole, string> = {
-  owner: "Everything admins can do, plus making owners and deleting the team",
-  admin: "Invite and remove members, change roles, manage team themes",
-  member: "Create and edit the team's codes, use team themes",
-};
+export const TEAM_ROLE_LABELS = WORKSPACE_ROLE_LABELS;
+export const TEAM_ROLE_DESCRIPTIONS = WORKSPACE_ROLE_DESCRIPTIONS;
 
 /** Strongest role in Better Auth's comma-separated role field. */
-export function primaryRole(role: string): TeamRole {
-  const roles = role.split(",").map((r) => r.trim());
-  if (roles.includes("owner")) return "owner";
-  return roles.includes("admin") ? "admin" : "member";
-}
+export const primaryRole = strongestRole;
 
 export function slugify(name: string): string {
   return name
