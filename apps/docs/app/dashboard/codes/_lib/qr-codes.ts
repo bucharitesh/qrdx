@@ -28,6 +28,7 @@ import {
 import { getDefaultThemeStyle } from "@/app/dashboard/themes/_lib/queries";
 import { snapshotCodeVersion } from "@/lib/code-versions";
 import { HttpError } from "@/lib/error-response";
+import { noteLimitUsage } from "@/lib/limit-notices";
 import { baseUrl } from "@/lib/metadata";
 import {
   cheapestPlanWith,
@@ -821,9 +822,17 @@ export async function createCodes(
     chosen,
   );
 
-  if (capped && (await countUnarchived(scope)) > limits.dynamicCodes) {
-    await deleteRows(inserted.map((row) => row.id));
-    throw limitReached(limits.dynamicCodes);
+  if (capped) {
+    const used = await countUnarchived(scope);
+    if (used > limits.dynamicCodes) {
+      await deleteRows(inserted.map((row) => row.id));
+      throw limitReached(limits.dynamicCodes);
+    }
+    // Owners hear about it at 90% and 100% (after the response).
+    noteLimitUsage(scope, "dynamicCodes", {
+      used,
+      limit: limits.dynamicCodes,
+    });
   }
 
   // Keep the caller's order (returning() order is not guaranteed).
@@ -1003,12 +1012,19 @@ export async function setCodeArchived(
     .returning();
   if (!row) throw notFound();
 
-  if (capped && (await countUnarchived(scope)) > limits.dynamicCodes) {
-    await db
-      .update(qrCode)
-      .set({ archivedAt: current.archivedAt })
-      .where(where);
-    throw limitReached(limits.dynamicCodes);
+  if (capped) {
+    const used = await countUnarchived(scope);
+    if (used > limits.dynamicCodes) {
+      await db
+        .update(qrCode)
+        .set({ archivedAt: current.archivedAt })
+        .where(where);
+      throw limitReached(limits.dynamicCodes);
+    }
+    noteLimitUsage(scope, "dynamicCodes", {
+      used,
+      limit: limits.dynamicCodes,
+    });
   }
   return toOneCodeView(row);
 }
