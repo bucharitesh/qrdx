@@ -16,14 +16,17 @@ import {
 } from "@/app/dashboard/team/_components/danger-zone";
 import { getTeam, listTeamMembers } from "@/app/dashboard/team/_lib/queries";
 import { SettingsHeader } from "@/app/settings/components/settings-header";
+import { WorkspaceAvatar } from "@/components/workspaces/workspace-avatar";
 import { WorkspaceGeneralForm } from "@/components/workspaces/workspace-general-form";
+import { WorkspaceLogoField } from "@/components/workspaces/workspace-logo-field";
+import { can, forbiddenMessage } from "@/lib/permissions";
 
 export const metadata: Metadata = {
   title: "Workspace settings",
   robots: { index: false, follow: false },
 };
 
-/** The open workspace's name and URL, and leaving or deleting it. */
+/** The open workspace's name, URL and logo, and leaving or deleting it. */
 export default async function WorkspaceSettingsPage() {
   const scope = await requireDashboardScope();
   const [team, members] = await Promise.all([
@@ -36,26 +39,37 @@ export default async function WorkspaceSettingsPage() {
   const isOnlyOwner = scope.role === "owner" && owners <= 1;
   // Someone else's own workspace can't be deleted either.
   const someonesOwn = members.some((m) => isOwnWorkspaceOf(team.id, m.userId));
+  const canEdit = can(scope.role, "workspace.update");
 
   return (
     <div className="space-y-6">
       <SettingsHeader
-        description="The workspace's name and its address in the dashboard."
-        title="General"
+        description="The workspace's name, logo and its address in the dashboard."
+        title={
+          <span className="flex min-w-0 items-center gap-3">
+            <WorkspaceAvatar logo={team.logo} name={team.name} size="md" />
+            <span className="truncate">General</span>
+          </span>
+        }
       />
 
       <Card>
         <CardHeader>
           <CardTitle>Workspace</CardTitle>
-          {scope.role === "member" && (
+          {!canEdit && (
             <CardDescription>
-              Only owners and admins can change these.
+              {forbiddenMessage(scope.role, "workspace.update")}
             </CardDescription>
           )}
         </CardHeader>
-        <CardContent>
+        <CardContent className="space-y-6">
+          <WorkspaceLogoField
+            canEdit={canEdit}
+            logo={team.logo}
+            name={team.name}
+          />
           <WorkspaceGeneralForm
-            canEdit={scope.role !== "member"}
+            canEdit={canEdit}
             name={team.name}
             slug={team.slug}
           />
@@ -87,7 +101,7 @@ export default async function WorkspaceSettingsPage() {
               organizationId={team.id}
               teamName={team.name}
             />
-            {scope.role === "owner" && !someonesOwn && (
+            {can(scope.role, "workspace.delete") && !someonesOwn && (
               <DeleteTeamButton
                 organizationId={team.id}
                 teamName={team.name}

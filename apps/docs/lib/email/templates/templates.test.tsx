@@ -12,7 +12,7 @@ import { FormSubmissionEmail } from "./form-submission";
 import { LimitNoticeEmail } from "./limit-notice";
 import { ScanMilestoneEmail } from "./scan-milestone";
 import { SignInCodeEmail } from "./sign-in-code";
-import { TeamInviteEmail } from "./team-invite";
+import { inviteRole, TeamInviteEmail, teamInviteSubject } from "./team-invite";
 import { WeeklyDigestEmail, weekOverWeek } from "./weekly-digest";
 
 // tsconfig has jsx: "preserve", so tsx compiles JSX to React.createElement.
@@ -156,7 +156,10 @@ describe("email templates", () => {
         teamName="Acme"
       />,
     );
-    assert.match(invite.text, /Ada invited you to the Acme team as an admin/i);
+    assert.match(
+      invite.text,
+      /Ada invited you to the Acme workspace as an admin/i,
+    );
     assert.ok(invite.html.includes("https://qrdx.dev/invite/inv_1"));
     assert.doesNotMatch(invite.text, /Unsubscribe/);
 
@@ -171,6 +174,50 @@ describe("email templates", () => {
     assert.match(ack.text, /We received your report/i);
     assert.match(ack.text, /rep_1/);
     assert.doesNotMatch(ack.text, /Unsubscribe/);
+  });
+
+  it("team invitations say the role they give, in the subject, preview and body", async () => {
+    const cases = [
+      [
+        "viewer",
+        "a viewer",
+        /see the workspace's codes, pages and analytics without changing anything/,
+      ],
+      ["billing", "a billing manager", /handle the plan and billing/],
+      ["admin", "an admin", /manage people, settings, domains/],
+      ["member", "a member", /create codes and pages/],
+    ] as const;
+    for (const [role, phrase, line] of cases) {
+      const subject = teamInviteSubject({
+        inviterName: "Ada",
+        teamName: "Acme",
+        memberRole: role,
+      });
+      assert.equal(subject, `Ada invited you to Acme on QRdx as ${phrase}`);
+      const email = await both(
+        <TeamInviteEmail
+          expiresAt="2026-11-07T10:00:00Z"
+          inviteUrl="https://qrdx.dev/invite/inv_1"
+          inviterName="Ada"
+          memberRole={role}
+          teamName="Acme"
+        />,
+      );
+      assert.ok(
+        email.text.includes(
+          `Ada invited you to the Acme workspace as ${phrase}.`,
+        ),
+        role,
+      );
+      assert.match(email.text, line);
+      // The inbox preview is the subject line.
+      assert.ok(email.html.includes(subject), `${role} preview`);
+    }
+    // Several roles read as the strongest; unknown ones as viewer.
+    assert.equal(inviteRole("member,admin"), "admin");
+    assert.equal(inviteRole("billing"), "billing");
+    assert.equal(inviteRole("superuser"), "viewer");
+    assert.equal(inviteRole(null), "viewer");
   });
 
   it("sign-in code email shows the code and has no tracking links", async () => {

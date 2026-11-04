@@ -56,7 +56,10 @@ const bulkSchema = z
   });
 
 export async function listCodeTags(): Promise<OrganizeResult<TagRow[]>> {
-  return runOrganize("listCodeTags", listTags, { revalidate: false });
+  return runOrganize("listCodeTags", listTags, {
+    revalidate: false,
+    access: "read",
+  });
 }
 
 export async function createCodeTag(

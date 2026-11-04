@@ -25,6 +25,7 @@ import type {
   ThemeActionResult,
 } from "@/app/dashboard/themes/_lib/theme";
 import { noteLimitUsage } from "@/lib/limit-notices";
+import { can } from "@/lib/permissions";
 import { getPlan, getPlanForScope, getPlanLimits } from "@/lib/plans";
 import { getActiveScope } from "@/lib/scope";
 import { getCurrentUserId, logError } from "@/lib/shared";
@@ -336,7 +337,7 @@ export async function copyThemeToTeam(
     if (!limits.teamThemes) {
       return fail(
         `Shared themes are part of the ${teamThemesPlanName()} plan (based on the workspace owner's plan).`,
-        scope.role === "owner",
+        can(scope.role, "billing.manage"),
       );
     }
     if (

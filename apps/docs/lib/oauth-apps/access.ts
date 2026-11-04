@@ -1,6 +1,7 @@
 // Who owns and who may change an OAuth app. Pure (unit tested) and
 // client-safe: the settings pages use the same rules to hide controls.
 
+import { can } from "@/lib/permissions";
 import type { ActiveScope } from "@/lib/scope";
 
 export interface OAuthAppOwnership {
@@ -33,7 +34,7 @@ export function isAppInScope(
  * own workspace (where their role is always "owner").
  */
 export function canManageOAuthApps(scope: Pick<ActiveScope, "role">): boolean {
-  return scope.role === "owner";
+  return can(scope.role, "oauthApps.manage");
 }
 
 export function canEditOAuthApp(

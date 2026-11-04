@@ -17,6 +17,8 @@ import { z } from "zod";
 import { assertBindableDomains } from "@/app/dashboard/domains/_lib/domains";
 import { HttpError } from "@/lib/error-response";
 import { noteLimitUsage } from "@/lib/limit-notices";
+import { can } from "@/lib/permissions";
+import { assertCan } from "@/lib/permissions-server";
 import { getPlanForScope, getPlanLimits } from "@/lib/plans";
 import { type ActiveScope, getActiveScope } from "@/lib/scope";
 import { logError } from "@/lib/shared";
@@ -147,14 +149,23 @@ export function parseInput<T extends z.ZodType>(
   return result.data;
 }
 
-/** Resolves the caller's scope (never from the client), runs `fn`, maps errors. */
+/**
+ * Resolves the caller's scope (never from the client), runs `fn`, maps
+ * errors. Everything here changes codes unless `access` says "read", so it
+ * needs a role that may write (lib/permissions.ts).
+ */
 export async function runOrganize<T>(
   action: string,
   fn: (scope: ActiveScope) => Promise<T>,
-  { revalidate = true } = {},
+  {
+    revalidate = true,
+    access = "write",
+  }: { revalidate?: boolean; access?: "read" | "write" } = {},
 ): Promise<OrganizeResult<T>> {
   try {
-    const data = await fn(await getActiveScope());
+    const scope = await getActiveScope();
+    if (access === "write") assertCan(scope, "content.write");
+    const data = await fn(scope);
     if (revalidate) revalidatePath("/dashboard", "layout");
     return { success: true, data };
   } catch (error) {
@@ -217,7 +228,7 @@ const tagScope = (scope: ActiveScope): SQL =>
 
 /** Owners and admins act on everything in a team; members on what they created. */
 const canManageAll = (scope: ActiveScope) =>
-  !scope.organizationId || scope.role !== "member";
+  !scope.organizationId || can(scope.role, "content.manageAll");
 
 /** Narrows a code query to what the caller may trash or purge. */
 const deletableWhere = (scope: ActiveScope): SQL | undefined =>

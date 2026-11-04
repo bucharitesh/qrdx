@@ -17,7 +17,7 @@ import type { TagRow } from "@/app/dashboard/codes/_lib/organize";
 import type { FolderRow } from "@/app/dashboard/codes/_lib/organize-shared";
 import type { QrCodeListItem } from "@/app/dashboard/codes/_lib/qr-codes";
 import { CopyButton } from "@/components/copy-button";
-import { useWorkspaceHref } from "@/components/workspace-provider";
+import { useCan, useWorkspaceHref } from "@/components/workspace-provider";
 import { CodeActionsMenu } from "./code-actions-menu";
 import { displayUrl, formatDate, formatNumber } from "./format";
 import { Sparkline } from "./sparkline";
@@ -27,7 +27,17 @@ import { useOrganizeAction } from "./use-organize-action";
 
 export function FavoriteButton({ code }: { code: QrCodeListItem }) {
   const { run, isPending } = useOrganizeAction();
+  // Read-only roles see the star, not a toggle (lib/permissions.ts).
+  const canWrite = useCan("content.write");
   const label = code.isFavorite ? "Remove from favorites" : "Add to favorites";
+  if (!canWrite) {
+    return code.isFavorite ? (
+      <span className="p-0.5" title="Favorite">
+        <Star className="size-4 text-amber-400" variant="Bold" />
+        <span className="sr-only">Favorite</span>
+      </span>
+    ) : null;
+  }
   return (
     <button
       aria-label={label}

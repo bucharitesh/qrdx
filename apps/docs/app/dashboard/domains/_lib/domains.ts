@@ -18,6 +18,8 @@ import {
   VercelApiError,
 } from "@/lib/custom-domains";
 import { HttpError } from "@/lib/error-response";
+import { can } from "@/lib/permissions";
+import { assertCan } from "@/lib/permissions-server";
 import { getPlanForScope, getPlanLimits, type Plan } from "@/lib/plans";
 import { type ActiveScope, isInScope } from "@/lib/scope";
 import { logError } from "@/lib/shared";
@@ -107,17 +109,11 @@ function scopeWhere(scope: ActiveScope): SQL {
 
 /** Owners and admins manage a team's domains; everyone can use verified ones. */
 export function canManageDomains(scope: ActiveScope): boolean {
-  return scope.role !== "member";
+  return can(scope.role, "domains.manage");
 }
 
 function assertCanManage(scope: ActiveScope) {
-  if (!canManageDomains(scope)) {
-    throw new HttpError(
-      403,
-      "FORBIDDEN",
-      "Only team owners and admins can manage custom domains.",
-    );
-  }
+  assertCan(scope, "domains.manage");
 }
 
 function requireMode(): Exclude<CustomDomainMode, "disabled"> {

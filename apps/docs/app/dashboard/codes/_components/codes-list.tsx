@@ -46,6 +46,7 @@ import type {
 } from "@/app/dashboard/codes/_lib/organize-shared";
 import type { QrCodeListItem } from "@/app/dashboard/codes/_lib/qr-codes";
 import { useOptimisticCodeList } from "@/components/code-builder/use-optimistic-codes";
+import { useCan } from "@/components/workspace-provider";
 import { CodesCards } from "./codes-cards";
 import { CodesTable } from "./codes-table";
 import { MoveToFolderDialog } from "./folder-dialogs";
@@ -83,6 +84,9 @@ export function CodesList({
   const [dialog, setDialog] = useState<"move" | "tags" | "purge" | null>(null);
   const [zipping, setZipping] = useState(false);
   const { run, isPending } = useOrganizeAction();
+  // Viewers and billing members select codes to download them; the write
+  // actions aren't offered (lib/permissions.ts; the server refuses them too).
+  const canWrite = useCan("content.write");
 
   // Drop selections that left the page (navigation, refresh after an action).
   useEffect(() => {
@@ -199,51 +203,57 @@ export function CodesList({
           </Button>
           <div className="bg-border mx-1 h-5 w-px" />
           {status === "trash" ? (
-            <>
-              <Button
-                disabled={busy}
-                onClick={() =>
-                  run(() => restoreQrCodes({ ids }), {
-                    success: ({ updated }) =>
-                      `Restored ${plural(updated, "code")}`,
-                  }).then(done)
-                }
-                size="sm"
-                variant="ghost"
-              >
-                <RotateCcw />
-                Restore
-              </Button>
-              <Button
-                disabled={busy}
-                onClick={() => setDialog("purge")}
-                size="sm"
-                variant="ghost"
-              >
-                <Trash2 />
-                Delete forever
-              </Button>
-            </>
+            canWrite && (
+              <>
+                <Button
+                  disabled={busy}
+                  onClick={() =>
+                    run(() => restoreQrCodes({ ids }), {
+                      success: ({ updated }) =>
+                        `Restored ${plural(updated, "code")}`,
+                    }).then(done)
+                  }
+                  size="sm"
+                  variant="ghost"
+                >
+                  <RotateCcw />
+                  Restore
+                </Button>
+                <Button
+                  disabled={busy}
+                  onClick={() => setDialog("purge")}
+                  size="sm"
+                  variant="ghost"
+                >
+                  <Trash2 />
+                  Delete forever
+                </Button>
+              </>
+            )
           ) : (
             <>
-              <Button
-                disabled={busy}
-                onClick={() => setDialog("move")}
-                size="sm"
-                variant="ghost"
-              >
-                <FolderInput />
-                Move
-              </Button>
-              <Button
-                disabled={busy}
-                onClick={() => setDialog("tags")}
-                size="sm"
-                variant="ghost"
-              >
-                <Tags />
-                Tag
-              </Button>
+              {canWrite && (
+                <>
+                  <Button
+                    disabled={busy}
+                    onClick={() => setDialog("move")}
+                    size="sm"
+                    variant="ghost"
+                  >
+                    <FolderInput />
+                    Move
+                  </Button>
+                  <Button
+                    disabled={busy}
+                    onClick={() => setDialog("tags")}
+                    size="sm"
+                    variant="ghost"
+                  >
+                    <Tags />
+                    Tag
+                  </Button>
+                </>
+              )}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button disabled={busy} size="sm" variant="ghost">
@@ -260,71 +270,78 @@ export function CodesList({
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button disabled={busy} size="sm" variant="ghost">
-                    <MoreHorizontal />
-                    More
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="start" className="w-52">
-                  <DropdownMenuItem
-                    onSelect={() =>
-                      run(() => setQrCodesPaused({ ids, paused: !allPaused }), {
-                        success: ({ updated }) =>
-                          `${allPaused ? "Resumed" : "Paused"} ${plural(updated, "code")}`,
-                        description: allPaused
-                          ? "Scans redirect again."
-                          : "Scans go to each code's fallback URL, or a neutral 'paused' page.",
-                      })
-                    }
-                  >
-                    {allPaused ? <Play /> : <Pause />}
-                    {allPaused ? "Resume" : "Pause"}
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onSelect={() =>
-                      run(
-                        () =>
-                          setQrCodesFavorite({ ids, favorite: !allFavorite }),
-                        {
-                          success: allFavorite
-                            ? "Removed from favorites"
-                            : "Added to favorites",
-                        },
-                      )
-                    }
-                  >
-                    <Star />
-                    {allFavorite ? "Remove from favorites" : "Add to favorites"}
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onSelect={() =>
-                      run(
-                        () =>
-                          setQrCodesArchived({
-                            ids,
-                            archived: status !== "archived",
-                          }),
-                        {
-                          success: ({ updated }) =>
-                            status === "archived"
-                              ? `Unarchived ${plural(updated, "code")}`
-                              : `Archived ${plural(updated, "code")}`,
-                        },
-                      ).then(done)
-                    }
-                  >
-                    {status === "archived" ? <ArchiveRestore /> : <Archive />}
-                    {status === "archived" ? "Unarchive" : "Archive"}
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onSelect={trash} variant="destructive">
-                    <Trash2 />
-                    Move to trash
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              {canWrite && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button disabled={busy} size="sm" variant="ghost">
+                      <MoreHorizontal />
+                      More
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className="w-52">
+                    <DropdownMenuItem
+                      onSelect={() =>
+                        run(
+                          () => setQrCodesPaused({ ids, paused: !allPaused }),
+                          {
+                            success: ({ updated }) =>
+                              `${allPaused ? "Resumed" : "Paused"} ${plural(updated, "code")}`,
+                            description: allPaused
+                              ? "Scans redirect again."
+                              : "Scans go to each code's fallback URL, or a neutral 'paused' page.",
+                          },
+                        )
+                      }
+                    >
+                      {allPaused ? <Play /> : <Pause />}
+                      {allPaused ? "Resume" : "Pause"}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onSelect={() =>
+                        run(
+                          () =>
+                            setQrCodesFavorite({ ids, favorite: !allFavorite }),
+                          {
+                            success: allFavorite
+                              ? "Removed from favorites"
+                              : "Added to favorites",
+                          },
+                        )
+                      }
+                    >
+                      <Star />
+                      {allFavorite
+                        ? "Remove from favorites"
+                        : "Add to favorites"}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onSelect={() =>
+                        run(
+                          () =>
+                            setQrCodesArchived({
+                              ids,
+                              archived: status !== "archived",
+                            }),
+                          {
+                            success: ({ updated }) =>
+                              status === "archived"
+                                ? `Unarchived ${plural(updated, "code")}`
+                                : `Archived ${plural(updated, "code")}`,
+                          },
+                        ).then(done)
+                      }
+                    >
+                      {status === "archived" ? <ArchiveRestore /> : <Archive />}
+                      {status === "archived" ? "Unarchive" : "Archive"}
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onSelect={trash} variant="destructive">
+                      <Trash2 />
+                      Move to trash
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
             </>
           )}
         </div>

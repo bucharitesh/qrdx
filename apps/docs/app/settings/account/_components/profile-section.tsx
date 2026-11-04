@@ -16,6 +16,7 @@ import {
   AVATAR_PIXELS,
   initialsOf,
 } from "@/lib/account/avatar";
+import { squareImage } from "@/lib/square-image";
 import { removeAvatar, updateProfileName, uploadAvatar } from "../_lib/actions";
 import { ChangeEmailDialog } from "./change-email-dialog";
 import { SettingsRow, SettingsSection } from "./settings-section";
@@ -30,38 +31,6 @@ export interface ProfileView {
   canUpload: boolean;
   /** Signed in within the last day, so the email can be changed now */
   recentSignIn: boolean;
-}
-
-/** Center-crops to a square and re-encodes (which also drops EXIF/GPS data). */
-async function squareAvatar(file: File): Promise<Blob> {
-  const bitmap = await createImageBitmap(file);
-  const side = Math.min(bitmap.width, bitmap.height);
-  const canvas = document.createElement("canvas");
-  canvas.width = AVATAR_PIXELS;
-  canvas.height = AVATAR_PIXELS;
-  const context = canvas.getContext("2d");
-  if (!context) throw new Error("Canvas is unavailable");
-  context.imageSmoothingQuality = "high";
-  context.drawImage(
-    bitmap,
-    (bitmap.width - side) / 2,
-    (bitmap.height - side) / 2,
-    side,
-    side,
-    0,
-    0,
-    AVATAR_PIXELS,
-    AVATAR_PIXELS,
-  );
-  bitmap.close();
-  const encode = (type: string, quality?: number) =>
-    new Promise<Blob | null>((resolve) =>
-      canvas.toBlob(resolve, type, quality),
-    );
-  // Browsers that can't write WebP hand back a PNG instead.
-  const blob = (await encode("image/webp", 0.9)) ?? (await encode("image/png"));
-  if (!blob) throw new Error("Encoding failed");
-  return blob;
 }
 
 function Avatar({
@@ -118,7 +87,7 @@ function AvatarField({ profile }: { profile: ProfileView }) {
     try {
       let blob: Blob;
       try {
-        blob = await squareAvatar(file);
+        blob = await squareImage(file, AVATAR_PIXELS);
       } catch {
         toast.error("We couldn't read that picture. Try a PNG or JPEG.");
         return;

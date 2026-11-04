@@ -53,7 +53,10 @@ describe("roleRank and pickSuccessor", () => {
     expect(roleRank("owner")).toBe(0);
     expect(roleRank("member, admin")).toBe(1);
     expect(roleRank("member")).toBe(2);
-    expect(roleRank(null)).toBe(3);
+    // Billing and viewer come after member: a successor who can edit first.
+    expect(roleRank("billing")).toBe(3);
+    expect(roleRank("viewer")).toBe(4);
+    expect(roleRank(null)).toBe(5);
   });
 
   it("prefers another owner, then the senior admin, then the longest-standing member", () => {
