@@ -62,5 +62,15 @@ export function getPageImage(page: InferPageType<typeof source>) {
   };
 }
 
+/** A legal page's Open Graph image, served by app/og/legal/[...slug]. */
+export function getLegalPageImage(page: InferPageType<typeof legalSource>) {
+  const segments = [...page.slugs, "image.png"];
+
+  return {
+    segments,
+    url: `/og/legal/${segments.join("/")}`,
+  };
+}
+
 export type Page = InferPageType<typeof source>;
 export type Meta = InferMetaType<typeof source>;

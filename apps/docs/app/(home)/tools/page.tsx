@@ -29,6 +29,7 @@ export const metadata: Metadata = createMetadata({
   description:
     "Free QR code tools: bulk generator from CSV, scan checker, print size calculator, Wi-Fi and vCard generators, and a QR image API for developers.",
   path: "/tools",
+  ownOgImage: true,
 });
 
 interface Tool {
