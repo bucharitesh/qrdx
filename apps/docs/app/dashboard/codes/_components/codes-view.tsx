@@ -188,7 +188,7 @@ export async function CodesView({
                 </Button>
               </div>
               <p className="text-muted-foreground text-xs">
-                Or turn on "Make it dynamic" for a URL code in the{" "}
+                Or pick Dynamic for a URL code in the{" "}
                 <Link
                   className="underline"
                   href={playgroundHref({ type: "url" })}
