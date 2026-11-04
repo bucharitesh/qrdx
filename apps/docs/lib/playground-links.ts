@@ -24,12 +24,16 @@ import { CONTENT_TYPES_METADATA, type ContentType } from "@/types/qr-content";
 
 export const PLAYGROUND_PATH = "/playground";
 
-/** The editor panel's tabs, as stored in `?tab=`. "settings" is legacy (Design at Logo). */
+/**
+ * The editor panel's tabs, as stored in `?tab=`. "settings" is legacy (Design
+ * at Logo). "art" is the Art tab (see the Art tab block at the end).
+ */
 export const CONTROL_TABS = [
   "content",
   "customisations",
   "settings",
   "ai",
+  "art",
 ] as const;
 export type ControlTab = (typeof CONTROL_TABS)[number];
 
@@ -41,10 +45,20 @@ export const TAB_ALIASES = {
 export type TabAlias = keyof typeof TAB_ALIASES;
 
 /**
- * Design sections a link can open. Only sections the Design tab can jump to
- * today; the others need section anchors first (hub plan, phase 3).
+ * Design sections a link can open (?section=), in the Design tab's order.
+ * Each one has an anchor (components/editor/control-sections/design-controls.tsx);
+ * a new Design section adds its id here. The old `section=art` opens the Art
+ * tab instead (the Art tab block below).
  */
-export const DESIGN_SECTIONS = ["logo"] as const;
+export const DESIGN_SECTIONS = [
+  "colors",
+  "dots",
+  "eyes",
+  "logo",
+  "frame",
+  "padding",
+  "error-correction",
+] as const;
 export type DesignSection = (typeof DESIGN_SECTIONS)[number];
 
 /**
@@ -110,6 +124,9 @@ export const ONE_SHOT_PARAMS = [
   "print",
   "printDistance",
   "lang",
+  // The Art tab
+  "art",
+  "artStyle",
 ] as const;
 
 export interface PlaygroundParams {
@@ -125,6 +142,10 @@ export interface PlaygroundParams {
   /** With open=print: size the code to scan from this distance (wins over `print`). */
   printDistance?: PrintDistance;
   lang?: CodeLang;
+  /** The Art tab's mode (comes with tab=art) */
+  art?: ArtLinkMode;
+  /** With art=ai: an AI art style preset id (shape only; the editor checks it exists) */
+  artStyle?: string;
 }
 
 export interface PlaygroundLinkOptions {
@@ -144,6 +165,10 @@ export interface PlaygroundLinkOptions {
   /** Implies open=print; wins over `print`. */
   printDistance?: PrintDistance;
   lang?: CodeLang;
+  /** Implies tab=art. */
+  art?: ArtLinkMode;
+  /** With art=ai only: an AI art style preset id. Never a prompt. */
+  artStyle?: string;
 }
 
 const CONTENT_TYPE_IDS = new Set<string>(
@@ -270,6 +295,7 @@ export function parsePlaygroundParams(
 
   const section = get("section")?.trim().toLowerCase();
   if (isOneOf(DESIGN_SECTIONS, section)) params.section = section;
+  parseArtParams(get, section, params);
 
   const url = parseLinkUrl(get("url"));
   const type = get("type")?.trim().toLowerCase();
@@ -352,6 +378,7 @@ export function playgroundHref(options: PlaygroundLinkOptions = {}): string {
   if (isOneOf(DESIGN_SECTIONS, options.section)) {
     query.set("section", options.section);
   }
+  appendArtParams(query, options);
 
   const url = parseLinkUrl(options.url);
   if (options.type && CONTENT_TYPE_IDS.has(options.type)) {
@@ -433,4 +460,60 @@ export function withHandoffRef(href: string, ref: string): string {
   const base = hashAt === -1 ? href : href.slice(0, hashAt);
   const hash = hashAt === -1 ? "" : href.slice(hashAt);
   return `${base}${base.includes("?") ? "&" : "?"}ref=${ref}${hash}`;
+}
+
+// ── The Art tab (hub phase 3) ───────────────────────────────────────────────
+// ?tab=art opens it. `art` picks a mode and brings tab=art with it (a link
+// naming another tab drops it); `artStyle` picks an AI art style preset and
+// only goes with art=ai. The prompt never comes from a link: a preset fills it
+// in from components/sections/ai-art/presets.ts. The old `section=art` (the
+// Design tab's Art section before the tab) opens the Art tab.
+
+/** Art modes a link can pick. `image` is Image QR (the halftone mode). */
+export const ART_LINK_MODES = ["logo", "image", "ai"] as const;
+export type ArtLinkMode = (typeof ART_LINK_MODES)[number];
+
+const ART_STYLE_ID = /^[a-z][a-z0-9-]{0,47}$/;
+
+/** An AI art preset id's shape (existence is checked by the editor). */
+export function parseArtStyleId(raw: string | null | undefined): string | null {
+  if (typeof raw !== "string") return null;
+  const value = raw.trim().toLowerCase();
+  return ART_STYLE_ID.test(value) ? value : null;
+}
+
+/** Tabs the old `section=art` may come with: none, or the old Design ones. */
+const LEGACY_ART_SECTION_TABS = new Set<ControlTab | undefined>([
+  undefined,
+  "customisations",
+  "settings",
+]);
+
+function parseArtParams(
+  get: (name: string) => string | null,
+  section: string | undefined,
+  params: PlaygroundParams,
+): void {
+  if (section === "art" && LEGACY_ART_SECTION_TABS.has(params.tab)) {
+    params.tab = "art";
+  }
+  const art = get("art")?.trim().toLowerCase();
+  if (!isOneOf(ART_LINK_MODES, art)) return;
+  if (params.tab !== undefined && params.tab !== "art") return;
+  params.art = art;
+  params.tab = "art";
+  const style = parseArtStyleId(get("artStyle"));
+  if (style && art === "ai") params.artStyle = style;
+}
+
+function appendArtParams(
+  query: URLSearchParams,
+  options: PlaygroundLinkOptions,
+): void {
+  if (!isOneOf(ART_LINK_MODES, options.art)) return;
+  if (options.tab && resolveControlTab(options.tab) !== "art") return;
+  query.set("tab", "art");
+  query.set("art", options.art);
+  const style = parseArtStyleId(options.artStyle);
+  if (style && options.art === "ai") query.set("artStyle", style);
 }

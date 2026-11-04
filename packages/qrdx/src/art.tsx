@@ -14,7 +14,8 @@
 //   code under a dot screen (dark dots on dark modules, light dots on light
 //   ones, skipped where the logo already gives the right tone).
 // - Logo QR, "badge": the logo on a rounded plate in the middle, with modules
-//   and eyes tinted in the logo's colors.
+//   and eyes tinted in the logo's colors. The plate is sized from the code's
+//   real error correction (codeword-map.ts), not from its width.
 // - Image QR, "color": the photo at 3–4 sub-cells per module, luminance
 //   adjusted per module where needed, under tinted center dots.
 // - Image QR, "mono": Floyd–Steinberg halftone of the photo at 3 × 3
@@ -40,6 +41,11 @@ import {
   type TracedLogo,
   traceLogo,
 } from "./art-trace";
+import {
+  type CodewordMap,
+  damagedCodewords,
+  getCodewordMap,
+} from "./codeword-map";
 import { roundTo } from "./utils/fmt";
 import { parseColor } from "./utils/parse-color";
 
@@ -1792,12 +1798,31 @@ const BADGE_LEVEL_SCALE: Record<ErrorLevel, number> = {
   H: 1,
 };
 
-/** Badge geometry in modules: logo box and the plate around it. */
-function badgeLayout(ctx: RenderContext, traced: TracedLogo) {
-  const { size, t, modules } = ctx;
-  const share = (0.18 + 0.15 * t) * BADGE_LEVEL_SCALE[errorLevelOf(modules)];
-  const box = Math.min(0.32, share) * size;
-  const aspect = traced.width / traced.height;
+/** Largest logo box, as a share of the code width. */
+const BADGE_MAX_SHARE = 0.32;
+
+/** Modules whose center is this close to the plate (or inside it) are cleared. */
+const BADGE_CLEARANCE = 0.55;
+
+/**
+ * Share of each Reed–Solomon block's repair capacity the plate may use up.
+ * The rest absorbs camera noise, the logo-colored eyes and body, and modules
+ * misread at the plate's edge. Measured over versions 1–6 × L/M/Q/H × six
+ * sample logos × strengths 0.6–1, decoded with jsQR through the camera model
+ * at 4, 6 and 9 px per module: at 0.6 the plate adds no failures to the
+ * same codes drawn without one; 0.65–0.7 lose version 2-M codes and 0.75
+ * loses version 2 and 3 codes at 6 px.
+ */
+const BADGE_EC_SAFETY = 0.6;
+
+/**
+ * Smallest logo box (modules) worth drawing. When the code can't spare
+ * even that, the badge draws no plate and the code keeps the logo's colors.
+ */
+const BADGE_MIN_BOX = 2;
+
+/** Badge geometry in modules for a logo box of `box` modules (longest side). */
+function badgeGeometry(box: number, aspect: number, size: number) {
   const logoW = aspect >= 1 ? box : box * aspect;
   const logoH = aspect >= 1 ? box / aspect : box;
   const pad = Math.max(0.7, box * 0.09);
@@ -1812,6 +1837,167 @@ function badgeLayout(ctx: RenderContext, traced: TracedLogo) {
     cx: size / 2,
     cy: size / 2,
   };
+}
+
+type BadgeLayout = ReturnType<typeof badgeGeometry>;
+
+const plateRect = (layout: BadgeLayout) => ({
+  cx: layout.cx,
+  cy: layout.cy,
+  w: layout.plateW,
+  h: layout.plateH,
+  r: layout.radius,
+});
+
+/** True when the plate clears module (x, y): its dot would touch the plate. */
+function plateClears(rect: ReturnType<typeof plateRect>, x: number, y: number) {
+  return roundedRectDistance(x + 0.5, y + 0.5, rect) < BADGE_CLEARANCE;
+}
+
+/** Modules (y × size + x) the plate clears. */
+function plateModules(layout: BadgeLayout, size: number): number[] {
+  const rect = plateRect(layout);
+  const reach = BADGE_CLEARANCE + 1;
+  const x0 = Math.max(0, Math.floor(layout.cx - layout.plateW / 2 - reach));
+  const x1 = Math.min(
+    size - 1,
+    Math.ceil(layout.cx + layout.plateW / 2 + reach)
+  );
+  const y0 = Math.max(0, Math.floor(layout.cy - layout.plateH / 2 - reach));
+  const y1 = Math.min(
+    size - 1,
+    Math.ceil(layout.cy + layout.plateH / 2 + reach)
+  );
+  const cleared: number[] = [];
+  for (let y = y0; y <= y1; y++) {
+    for (let x = x0; x <= x1; x++) {
+      if (plateClears(rect, x, y)) {
+        cleared.push(y * size + x);
+      }
+    }
+  }
+  return cleared;
+}
+
+/**
+ * Most codewords per block the plate may spoil: the block's repair capacity
+ * (ISO/IEC 18004 Table 9) times BADGE_EC_SAFETY.
+ */
+const badgeBudget = (map: CodewordMap) =>
+  Math.floor(map.correctable * BADGE_EC_SAFETY);
+
+/** True when a badge with logo box `box` stays inside every block's budget. */
+function badgeFits(box: number, aspect: number, map: CodewordMap) {
+  const layout = badgeGeometry(box, aspect, map.size);
+  const budget = badgeBudget(map);
+  return damagedCodewords(map, plateModules(layout, map.size)).every(
+    (count) => count <= budget
+  );
+}
+
+/**
+ * Largest logo box (modules) up to `ceiling` whose plate fits the budget,
+ * by binary search; -1 when even the smallest plate doesn't. Codewords are
+ * placed by the data layout, not by area, so the same share of a small code
+ * can cost far more than a block repairs.
+ */
+function largestFit(map: CodewordMap, aspect: number, ceiling: number) {
+  if (badgeFits(ceiling, aspect, map)) {
+    return ceiling;
+  }
+  let lo = 0;
+  let hi = ceiling;
+  if (!badgeFits(lo, aspect, map)) {
+    return -1;
+  }
+  // Invariant: lo fits, hi doesn't. 1/64 module is finer than any render.
+  while (hi - lo > 1 / 64) {
+    const mid = (lo + hi) / 2;
+    if (badgeFits(mid, aspect, map)) {
+      lo = mid;
+    } else {
+      hi = mid;
+    }
+  }
+  return lo;
+}
+
+const maxBoxCache = new Map<string, number>();
+
+/** Largest logo box any strength may use for this code and logo shape. */
+function badgeMaxBox(map: CodewordMap, aspect: number) {
+  const key = `${map.version}${map.level}:${aspect.toFixed(3)}`;
+  let limit = maxBoxCache.get(key);
+  if (limit === undefined) {
+    limit = largestFit(map, aspect, BADGE_MAX_SHARE * map.size);
+    if (maxBoxCache.size >= 64) {
+      maxBoxCache.clear();
+    }
+    maxBoxCache.set(key, limit);
+  }
+  return limit;
+}
+
+/** Logo QR "badge" sizes for one code, in modules. */
+export interface QRArtBadgeLayout {
+  /** Logo box (longest side) the strength asks for */
+  wantedBox: number;
+  /**
+   * Largest logo box the code's error correction can spare: the plate may
+   * spoil at most a set share of the codewords each Reed–Solomon block
+   * repairs. Below 2 modules no plate is drawn.
+   */
+  maxBox: number;
+  /** Logo box drawn: the wanted box, capped at `maxBox`; 0 with no plate */
+  box: number;
+  /** Logo and plate as drawn (centered on the code), or null with no plate */
+  plate: {
+    logoW: number;
+    logoH: number;
+    plateW: number;
+    plateH: number;
+    radius: number;
+    cx: number;
+    cy: number;
+  } | null;
+}
+
+/**
+ * Badge sizes: strength grows the logo box, capped where the plate would
+ * spoil more codewords than the code's error correction can spare. No
+ * plate when the cap is under BADGE_MIN_BOX.
+ */
+function badgeLayout(ctx: RenderContext, traced: TracedLogo): QRArtBadgeLayout {
+  const { size, t, modules, version } = ctx;
+  const level = errorLevelOf(modules);
+  const share = (0.18 + 0.15 * t) * BADGE_LEVEL_SCALE[level];
+  const aspect = traced.width / traced.height;
+  const wantedBox = Math.min(BADGE_MAX_SHARE, share) * size;
+  const map = getCodewordMap(version, level);
+  const maxBox = Math.max(0, badgeMaxBox(map, aspect));
+  if (maxBox < BADGE_MIN_BOX) {
+    return { wantedBox, maxBox, box: 0, plate: null };
+  }
+  // Within budget (the common case) the wanted box is kept as it is.
+  const box = largestFit(map, aspect, Math.min(wantedBox, maxBox));
+  return box < 0
+    ? { wantedBox, maxBox, box: 0, plate: null }
+    : { wantedBox, maxBox, box, plate: badgeGeometry(box, aspect, size) };
+}
+
+/**
+ * Logo QR "badge" sizes for `options` (as `renderQRArt` would draw them), or
+ * null when they don't render a badge. Editors can compare `box` with
+ * `wantedBox` to say the code is too small for a bigger logo.
+ */
+export function getQRArtBadgeLayout(
+  options: QRArtRenderOptions
+): QRArtBadgeLayout | null {
+  const ctx = context(options);
+  if (!(ctx && ctx.art.mode === "logo" && ctx.variant === "badge")) {
+    return null;
+  }
+  return badgeLayout(ctx, tracedLogo(ctx.art, ctx.image));
 }
 
 /** Signed distance from (px, py) to a centered rounded rectangle. */
@@ -1858,17 +2044,10 @@ function renderLogoBadge(ctx: RenderContext): JSX.Element[] {
   const { art, image, size, kinds, modules, bg, margin, pixelSize, version } =
     ctx;
   const traced = tracedLogo(art, image);
-  const logo = logoPixels(art, image, traced);
-  const layout = badgeLayout(ctx, traced);
+  const layout = badgeLayout(ctx, traced).plate;
   const { body } = badgeColors(ctx, traced);
   const bodyHex = toHex(body);
-  const rect = {
-    cx: layout.cx,
-    cy: layout.cy,
-    w: layout.plateW,
-    h: layout.plateH,
-    r: layout.radius,
-  };
+  const rect = layout && plateRect(layout);
   // Clear every module whose dot would touch the plate, plus alignment
   // patterns (drawn solid below, or dropped when the plate covers them).
   const cleared = modules.map((row) => [...row]);
@@ -1877,8 +2056,7 @@ function renderLogoBadge(ctx: RenderContext): JSX.Element[] {
       const kind = kinds[y * size + x];
       if (
         kind === KIND_ALIGNMENT ||
-        (kind !== KIND_FINDER &&
-          roundedRectDistance(x + 0.5, y + 0.5, rect) < 0.55)
+        (rect && kind !== KIND_FINDER && plateClears(rect, x, y))
       ) {
         (cleared[y] as boolean[])[x] = false;
       }
@@ -1909,7 +2087,7 @@ function renderLogoBadge(ctx: RenderContext): JSX.Element[] {
     layers.push(...dots.toElements("art-body"));
   }
   const visibleAlignment = alignmentCenters(version, size).filter(
-    ([cx, cy]) => roundedRectDistance(cx + 0.5, cy + 0.5, rect) > 3.2
+    ([cx, cy]) => !rect || roundedRectDistance(cx + 0.5, cy + 0.5, rect) > 3.2
   );
   if (visibleAlignment.length > 0) {
     layers.push(
@@ -1921,7 +2099,11 @@ function renderLogoBadge(ctx: RenderContext): JSX.Element[] {
       />
     );
   }
+  if (!layout) {
+    return layers;
+  }
   // Plate: background color with a hairline ring in a tint of the logo.
+  const logo = logoPixels(art, image, traced);
   const plateX = (layout.cx - layout.plateW / 2 + margin) * pixelSize;
   const plateY = (layout.cy - layout.plateH / 2 + margin) * pixelSize;
   const plateW = layout.plateW * pixelSize;

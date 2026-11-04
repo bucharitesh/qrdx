@@ -4,7 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createMetadata } from "@/lib/metadata";
 import { seoOverride } from "@/lib/seo-overrides";
-import { legalSource } from "@/lib/source";
+import { getLegalPageImage, legalSource } from "@/lib/source";
 import { getMDXComponents } from "@/mdx-components";
 
 export default async function LegalPage(
@@ -98,5 +98,6 @@ export async function generateMetadata(
     title: page.data.title,
     description: seo.description ?? page.data.description,
     path: page.url,
+    openGraph: { images: getLegalPageImage(page).url },
   });
 }

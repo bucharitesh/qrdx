@@ -1,15 +1,15 @@
 ---
 title: Short links and file pickers
-description: Shorten a QR code's link with your own Bitly, Rebrandly or Short.io account, or encode a Dropbox, OneDrive, Box or Notion share link.
+description: Shorten a QR code's link with your own Bitly, Rebrandly or Short.io account, or encode a Dropbox share link.
 icon: Blocks
 ---
 
 Connect an account in [Settings → Integrations](/settings/integrations) and the **Website** type in the QR editor gets two buttons under the address field:
 
 - **Shorten**: creates a link in your Bitly, Rebrandly or Short.io account (or picks one you already have). The QR code encodes that short link, so you can change where it points later in that service, and it counts the clicks.
-- **Pick a file**: browse or search Dropbox, OneDrive, Box or Notion. QRdx creates the item's share link and the QR code encodes it.
+- **Pick a file**: browse or search Dropbox<IfAvailable integration="onedrive">, OneDrive</IfAvailable><IfAvailable integration="box">, Box</IfAvailable><IfAvailable integration="notion">, Notion</IfAvailable>. QRdx creates the item's share link and the QR code encodes it.
 
-Hosted pages can use cloud files too: PDF, audio, video and download blocks get **From Dropbox**, **From OneDrive** or **From Box** next to the upload buttons.
+Hosted pages can use cloud files too: PDF, audio, video and download blocks get **From Dropbox**<IfAvailable integration="onedrive">, **From OneDrive**</IfAvailable><IfAvailable integration="box">, **From Box**</IfAvailable> next to the upload buttons.
 
 Integrations belong to your user account. Tokens and API keys are stored encrypted, and you can disconnect at any time.
 
@@ -31,28 +31,43 @@ If you'd rather keep the destination editable in QRdx itself, with scan analytic
 
 ## File pickers
 
-| Service | Link QRdx encodes | Who can open it |
-| --- | --- | --- |
-| Dropbox | A shared link (created, or the existing one reused) | Anyone with the link, unless your team only allows team links |
-| OneDrive | A view-only sharing link | Anyone with the link; organization-only where your admin turned "Anyone" links off |
-| Box | The item's shared link, set to "People with the link" | Anyone with the link; company-only where your admin requires it |
-| Notion | The page's "Publish to web" link | Anyone, once the page is published |
+**Dropbox** encodes a shared link (created, or the existing one reused). Anyone with the link can open it, unless your team only allows team links.
+
+<IfAvailable integration="onedrive">
+
+**OneDrive** encodes a view-only sharing link. Anyone with the link can open it; only your organization can where your admin turned "Anyone" links off.
+
+</IfAvailable>
+
+<IfAvailable integration="box">
+
+**Box** encodes the item's shared link, set to "People with the link". Anyone with the link can open it; only your company can where your admin requires it.
+
+</IfAvailable>
+
+<IfAvailable integration="notion">
+
+**Notion** encodes the page's "Publish to web" link. Anyone can open it once the page is published.
+
+</IfAvailable>
 
 When the link can't be opened by everyone, QRdx says so right after you pick, so a printed code doesn't send people to a sign-in page.
 
-### Notion pages
+<IfAvailable integration="notion">
 
-QRdx only sees the pages you share with it: Notion asks which ones when you connect. To add more later, open the page in Notion, click **•••** → **Connections** and add QRdx (or reconnect and pick them).
+**Notion pages.** QRdx only sees the pages you share with it: Notion asks which ones when you connect. To add more later, open the page in Notion, click **•••** → **Connections** and add QRdx (or reconnect and pick them).
 
 Notion's API can't publish a page. Publish it yourself (**Share** → **Publish** → **Publish to web**), then pick it again so QRdx uses the public link.
 
+</IfAvailable>
+
 ### Files on hosted pages
 
-For Dropbox and Box, page blocks get a direct link to the file, so audio and video players and the PDF viewer can load it. OneDrive sharing links open OneDrive's viewer, so a block shows them as a link.
+For Dropbox<IfAvailable integration="box"> and Box</IfAvailable>, page blocks get a direct link to the file, so audio and video players and the PDF viewer can load it.<IfAvailable integration="onedrive"> OneDrive sharing links open OneDrive's viewer, so a block shows them as a link.</IfAvailable>
 
 ## Disconnecting
 
-Disconnecting deletes the stored token. For Dropbox, Box and Notion, QRdx also revokes it with the service. For Bitly, Rebrandly and Short.io, delete the key in that service too if you no longer use it; for OneDrive, remove QRdx from your Microsoft account's app permissions.
+Disconnecting deletes the stored token. For Dropbox<IfAvailable integration="box">, Box</IfAvailable><IfAvailable integration="notion">, Notion</IfAvailable>, QRdx also revokes it with the service. For Bitly, Rebrandly and Short.io, delete the key in that service too if you no longer use it<IfAvailable integration="onedrive">; for OneDrive, remove QRdx from your Microsoft account's app permissions</IfAvailable>.
 
 QR codes you already made keep working: they hold the short link or share link, not your token.
 

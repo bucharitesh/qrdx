@@ -90,6 +90,7 @@ export async function generateMetadata({
     title,
     description,
     path: `/blog/category/${slug}`,
+    ownOgImage: true,
     alternates: { types: rssAlternateTypes },
     ...(postCount < MIN_POSTS_TO_INDEX && {
       robots: { index: false, follow: true },

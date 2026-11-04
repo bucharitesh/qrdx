@@ -56,6 +56,8 @@ import {
   verifyCustomDomain,
 } from "@/actions/custom-domains";
 import type { CustomDomainView } from "@/app/dashboard/domains/_lib/domains";
+import { InlineLimit } from "@/components/limits/inline-limit";
+import { useShowLimit } from "@/components/limits/limit-dialog";
 import type {
   DomainConnectOffer,
   DomainConnectOffers,
@@ -257,6 +259,7 @@ export function DomainsManager({
   const router = useRouter();
   const pathname = usePathname();
   const openGetProDialog = useGetProDialogStore((s) => s.openGetProDialog);
+  const showLimit = useShowLimit();
   const [hostname, setHostname] = useState("");
   const [addError, setAddError] = useState<string | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
@@ -270,6 +273,11 @@ export function DomainsManager({
     startAdding(async () => {
       const result = await addCustomDomain({ hostname });
       if (!result.success) {
+        // The plan's domain cap: the limit card says why and what lifts it.
+        if (result.error.code === "LIMIT_REACHED") {
+          showLimit("customDomains", { message: result.error.message });
+          return;
+        }
         setAddError(result.error.message);
         if (result.error.code === "PLAN_REQUIRED" && canUpgrade) {
           openGetProDialog();
@@ -427,13 +435,24 @@ export function DomainsManager({
                   {isAdding ? "Adding..." : "Add domain"}
                 </Button>
               </div>
-              <p className="text-muted-foreground text-xs">
-                {canAdd
-                  ? "A subdomain such as go. or qr. works best: your main website stays where it is."
-                  : limit === 0
-                    ? "Adding domains needs Pro or Business."
-                    : `You've added ${plural(limit, "domain")}, the most your plan includes. Remove one to add another.`}
-              </p>
+              {canAdd || limit === 0 ? (
+                <p className="text-muted-foreground text-xs">
+                  {canAdd
+                    ? "A subdomain such as go. or qr. works best: your main website stays where it is."
+                    : "Adding domains needs Pro or Business."}
+                </p>
+              ) : (
+                <InlineLimit
+                  className="mt-1"
+                  fallback={
+                    <p className="text-muted-foreground text-xs">
+                      {`You've added ${plural(limit, "domain")}, the most your plan includes. Remove one to add another.`}
+                    </p>
+                  }
+                  meterId="customDomains"
+                  used={domains.length}
+                />
+              )}
               {addError && (
                 <p
                   className="bg-destructive/10 text-destructive rounded-md p-3 text-sm"

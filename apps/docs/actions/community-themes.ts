@@ -2,7 +2,6 @@
 
 "use server";
 
-import { ownWorkspaceId } from "@repo/auth/own-workspace-id";
 import { auth } from "@repo/auth/server";
 import {
   communityItem,
@@ -16,21 +15,15 @@ import {
 } from "@repo/database";
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import cuid from "cuid";
-import {
-  and,
-  asc,
-  count,
-  desc,
-  eq,
-  inArray,
-  isNull,
-  ne,
-  or,
-  sql,
-} from "drizzle-orm";
+import { and, asc, count, desc, eq, inArray, ne, sql } from "drizzle-orm";
 import { revalidateTag, unstable_cache } from "next/cache";
 import { headers } from "next/headers";
 import { z } from "zod";
+import {
+  canEditTheme,
+  findThemeById,
+  isPersonalTheme,
+} from "@/app/dashboard/themes/_lib/queries";
 import { publicStyleFromSaved } from "@/lib/community/public-style-server";
 import { PublishError, publishSavedTheme } from "@/lib/community/publish";
 import {
@@ -47,6 +40,11 @@ import {
   COMMUNITY_THEMES_PAGE_SIZE,
   MAX_TAGS_PER_THEME,
 } from "@/lib/constants";
+import {
+  type ActiveScope,
+  getActiveScope,
+  WorkspaceNotFoundError,
+} from "@/lib/scope";
 import { getCurrentUserId } from "@/lib/shared";
 import type {
   CommunityFilterOption,
@@ -360,6 +358,33 @@ async function publishThemeAsItem(
   }
 }
 
+/**
+ * What `userId` may do with a saved theme when publishing: "own" (their
+ * themes), "workspace" (a theme of the open workspace they can edit),
+ * "view" (one they only see there) or "none" (another workspace's, or a
+ * workspace they aren't in).
+ */
+async function publishAccess(
+  userId: string,
+  theme: { userId: string; organizationId: string | null },
+): Promise<"own" | "workspace" | "view" | "none"> {
+  if (isPersonalTheme(theme, userId)) return "own";
+  let scope: ActiveScope;
+  try {
+    scope = await getActiveScope();
+  } catch (error) {
+    if (error instanceof WorkspaceNotFoundError) return "none";
+    throw error;
+  }
+  if (
+    scope.userId !== userId ||
+    theme.organizationId !== scope.organizationId
+  ) {
+    return "none";
+  }
+  return canEditTheme(scope, theme) ? "workspace" : "view";
+}
+
 export async function publishTheme(
   themeId: string,
   tags: string[] = [],
@@ -394,32 +419,36 @@ export async function publishTheme(
       (COMMUNITY_THEME_TAGS as readonly string[]).includes(t),
     );
 
-    // Verify theme ownership
-    const [existingTheme] = await db
-      .select()
-      .from(themeTable)
-      .where(
-        and(
-          eq(themeTable.id, themeId),
-          eq(themeTable.userId, userId),
-          // Only your own themes: another workspace's belong to it, not to
-          // one member. Rows from before workspaces have no workspace yet.
-          or(
-            isNull(themeTable.organizationId),
-            eq(themeTable.organizationId, ownWorkspaceId(userId)),
-          ),
-        ),
-      )
-      .limit(1);
-
-    if (!existingTheme) {
+    // Your own themes, or a workspace theme you can edit there (an owner or
+    // admin of the open workspace, as for editing it). Either way the item
+    // is a snapshot credited to your profile; the theme stays the workspace's.
+    const existingTheme = await findThemeById(themeId);
+    const access = existingTheme
+      ? await publishAccess(userId, existingTheme)
+      : "none";
+    if (!existingTheme || access === "none") {
       throw new QRCodeThemeNotFoundError(
         "Theme not found or not owned by user",
+      );
+    }
+    if (access === "view") {
+      return actionError(
+        ErrorCode.THEME_NOT_FOUND,
+        "Only owners and admins of this workspace can publish its themes.",
       );
     }
 
     if ((await communityState()).themes === "items") {
       return await publishThemeAsItem(userId, existingTheme, validTags);
+    }
+
+    // The legacy gallery shows the live theme row, not a snapshot, so a
+    // workspace's theme would change under its publisher's name.
+    if (access === "workspace") {
+      return actionError(
+        ErrorCode.COMMUNITY_UNAVAILABLE,
+        "Publishing workspace themes isn't available on this deployment yet.",
+      );
     }
 
     // Check not already published

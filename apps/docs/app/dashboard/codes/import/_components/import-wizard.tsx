@@ -53,6 +53,7 @@ import type {
   ImportPreview,
   ImportRowResult,
 } from "@/app/dashboard/codes/import/_lib/import";
+import { useShowLimit } from "@/components/limits/limit-dialog";
 import { track } from "@/lib/analytics";
 import { PLAN_NAMES, type Plan } from "@/lib/pricing";
 import { soundEvent } from "@/lib/sound/emit";
@@ -119,6 +120,7 @@ export function ImportWizard({
   const openGetProDialog = useGetProDialogStore(
     (state) => state.openGetProDialog,
   );
+  const showLimit = useShowLimit();
   // Plans with custom back-halves, for the column help (lib/plans.ts).
   const slugPlans = useKnownCodeOptionPlans()?.upgrades.customSlugs ?? [];
   const domainOptions = useDomainOptions(true);
@@ -254,10 +256,11 @@ export function ImportWizard({
       const result = await importQrCodesChunk({ rows: chunk, domainId });
       if (!result.success) {
         stopped = result.error.message;
-        if (
-          result.error.code === "LIMIT_REACHED" ||
-          result.error.code === "PLAN_REQUIRED"
-        ) {
+        // The active-code cap: its limit card (and upgrade, when it can be
+        // bought). A plan feature: the upgrade dialog.
+        if (result.error.meter) {
+          showLimit(result.error.meter);
+        } else if (result.error.code === "PLAN_REQUIRED") {
           openGetProDialog();
         }
         break;

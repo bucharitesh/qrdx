@@ -39,7 +39,12 @@ export default async function UsagePage({
   const portalUnavailable = billing === "unavailable";
 
   const planName = PLAN_NAMES[usage.plan];
-  const upgrade = upgradeAction(usage.plan, usage.canChangePlan);
+  // Only plans checkout can sell here are offered.
+  const upgrade = upgradeAction(
+    usage.plan,
+    usage.canChangePlan,
+    usage.checkoutOpen,
+  );
   const subscription = usage.subscription;
   // The person's own subscription sets this workspace's plan when it is
   // their own, or when they own it and their plan is the one in force.
@@ -122,7 +127,15 @@ export default async function UsagePage({
           </CardDescription>
         </CardHeader>
         <CardContent className="pt-0">
-          <UsageMeters meters={usage.meters} plan={usage.plan} />
+          <UsageMeters
+            context={{
+              plan: usage.plan,
+              canUpgrade: usage.canChangePlan,
+              checkoutOpen: usage.checkoutOpen,
+              caps: usage.caps,
+            }}
+            meters={usage.meters}
+          />
         </CardContent>
       </Card>
     </div>

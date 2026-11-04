@@ -1,8 +1,16 @@
 // Client-safe settings shared by the /ai/art page and /api/ai/art.
 import { z } from "zod";
+import { playgroundHref } from "@/lib/playground-links";
 
-/** The playground's Art section (vector Logo QR and Image QR, no AI). */
-export const ART_PLAYGROUND_HREF = "/playground?tab=customisations";
+/** The playground's Art tab (Logo QR, Image QR and, where it's set up, AI art). */
+export const ART_PLAYGROUND_HREF = playgroundHref({ tab: "art" });
+
+/** The Art tab on one mode: Logo QR, Image QR or AI art (with a style preset). */
+export const artPlaygroundHref = (
+  art: "logo" | "image" | "ai",
+  artStyle?: string | null,
+): string =>
+  playgroundHref({ tab: "art", art, artStyle: artStyle ?? undefined });
 
 export const ART_TEXT_MAX_LENGTH = 300;
 export const ART_PROMPT_MIN_LENGTH = 3;

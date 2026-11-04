@@ -13,6 +13,7 @@ export const metadata: Metadata = createMetadata({
   title,
   description,
   path: "/blog",
+  ownOgImage: true,
   alternates: { types: rssAlternateTypes },
 });
 

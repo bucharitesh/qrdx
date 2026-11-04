@@ -2,6 +2,7 @@ import { Ruler, TableDocument } from "iconsax-reactjs";
 import type { Metadata } from "next";
 import { MockupImage } from "@/components/mockups/mockup-image";
 import { qrTypeGroupImages } from "@/components/mockups/visuals";
+import { GeneratorHubStrip } from "@/components/sections/page-codes/page-code-sections";
 import { SectionHeader } from "@/components/sections/section-header";
 import { CardGrid, LinkCard } from "@/components/sections/tools/cards";
 import { ToolHero } from "@/components/sections/tools/tool-hero";
@@ -34,7 +35,9 @@ export default function QrTypesHubPage() {
           `A QR code can do more than open a website. Depending on the text inside it, a phone can join a Wi-Fi network, save a contact, start a payment or open a chat. Pick one of the ${QR_TYPES.length} types below for a generator with the right fields, a live preview and PNG or SVG download.`,
           "By default the codes made on these pages are static: the content is encoded in the pattern itself, so they work offline, never expire and have no scan limit. Each page also documents the exact format it writes, so you know what a scanner will read.",
         ]}
-      />
+      >
+        <GeneratorHubStrip />
+      </ToolHero>
 
       {QR_TYPE_GROUPS.map((group) => {
         const items = QR_TYPES.filter((item) => item.group === group.id);

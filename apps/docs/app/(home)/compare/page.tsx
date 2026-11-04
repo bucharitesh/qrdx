@@ -75,10 +75,11 @@ export default function CompareHubPage() {
             QRdx vs other QR code generators
           </h1>
           <p className="max-w-2xl text-pretty text-muted-foreground md:text-lg">
-            QRdx is a free, open-source (AGPL-3.0) QR code generator and React
-            library. Each page compares it with a tool people weigh it against,
-            including where the other tool is the better choice. Competitor
-            prices and limits were checked on their own websites.
+            QRdx is a free, open-source QR code generator (AGPL-3.0-or-later)
+            with an MIT-licensed React library. Each page compares it with a
+            tool people weigh it against, including where the other tool is the
+            better choice. Competitor prices and limits were checked on their
+            own websites.
           </p>
         </div>
       </section>

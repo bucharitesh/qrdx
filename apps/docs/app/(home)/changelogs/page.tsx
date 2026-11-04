@@ -15,15 +15,17 @@ import type { Metadata } from "next";
 import { AsciiField } from "@/components/fx";
 import { NpmLagNotice } from "@/components/mdx/npm-status";
 import { IconTile } from "@/components/sections/tools/cards";
+import { changelogAnchor } from "@/lib/changelog-feed";
 import { createMetadata } from "@/lib/metadata";
 import { getNpmLag, type NpmLag } from "@/lib/npm-version";
-import { changelogSource } from "@/lib/source";
+import { changelogEntries } from "./entries";
 
 export const metadata: Metadata = createMetadata({
   title: "Changelog",
   description:
     "Release notes for QRdx: dynamic QR codes, hosted pages, integrations, library and CLI updates, and fixes.",
   path: "/changelogs",
+  ownOgImage: true,
 });
 
 /** Entry icon, picked from its first tag that has one. */
@@ -58,17 +60,6 @@ function formatDate(date: string): string {
   });
 }
 
-/** "0.1.0" > "0.0.6", for entries released on the same day. */
-function compareVersions(a = "0", b = "0"): number {
-  const pa = a.split(".").map(Number);
-  const pb = b.split(".").map(Number);
-  for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
-    const diff = (pa[i] ?? 0) - (pb[i] ?? 0);
-    if (diff) return diff;
-  }
-  return 0;
-}
-
 const proseClass = cn(
   "prose prose-neutral dark:prose-invert max-w-none min-w-0 text-[15px] leading-relaxed",
   "prose-headings:scroll-mt-24 prose-headings:font-semibold prose-headings:tracking-tight prose-headings:text-foreground",
@@ -82,11 +73,7 @@ const proseClass = cn(
 );
 
 const Page = async () => {
-  const entries = [...changelogSource.getPages()].sort(
-    (a, b) =>
-      new Date(b.data.date).getTime() - new Date(a.data.date).getTime() ||
-      compareVersions(b.data.version, a.data.version),
-  );
+  const entries = changelogEntries();
 
   // An entry that releases npm packages says "Coming to npm" until npm has
   // them (checked hourly; nothing is claimed when npm can't be reached).
@@ -137,7 +124,9 @@ const Page = async () => {
           return (
             <li
               key={entry.url}
-              className="grid min-w-0 gap-3 md:grid-cols-[10rem_minmax(0,1fr)] md:gap-0"
+              // The app's "What's new" links here (/changelogs#<slug>).
+              id={changelogAnchor(entry.slugs)}
+              className="grid min-w-0 scroll-mt-24 gap-3 md:grid-cols-[10rem_minmax(0,1fr)] md:gap-0"
             >
               <div className="flex items-center gap-2 md:flex-col md:items-start md:gap-2 md:pt-1 md:pr-8">
                 <div className="flex items-center gap-2 md:sticky md:top-24 md:flex-col md:items-start">
