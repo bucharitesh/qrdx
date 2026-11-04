@@ -43,31 +43,61 @@ function runInBackground(task: () => Promise<void>): void {
   }
 }
 
-/** Checks `limit` for the workspace after this request; never throws. */
+/**
+ * A notice that takes longer than this is given up (and logged): a slow or
+ * unreachable database never holds the request's background work open.
+ */
+export const NOTICE_TIMEOUT_MS = 10_000;
+
+function logFailure(limit: NoticeLimitId, error: unknown) {
+  console.error(
+    JSON.stringify({
+      event: "limit_notice.failed",
+      limit,
+      error: error instanceof Error ? error.message : String(error),
+    }),
+  );
+}
+
+/**
+ * Checks `limit` for the workspace after this request. Fire and forget: it
+ * never throws and never delays or fails the caller's write; problems
+ * (an unreachable limit_notice table, a timeout, a failed send) are logged.
+ */
 export function noteLimitUsage(
   scope: LimitScope,
   limit: NoticeLimitId,
   known?: KnownUsage,
 ): void {
-  if (!scope.organizationId || !limitNoticesCanSend()) return;
-  // A known count without a cap needs nothing more.
-  if (known && known.limit === null) return;
-  runInBackground(async () => {
-    try {
-      const { sendLimitNotice } = await import("./notify");
-      await sendLimitNotice(
-        { userId: scope.userId, organizationId: scope.organizationId },
-        limit,
-        known,
-      );
-    } catch (error) {
-      console.error(
-        JSON.stringify({
-          event: "limit_notice.failed",
-          limit,
-          error: error instanceof Error ? error.message : String(error),
-        }),
-      );
-    }
-  });
+  try {
+    if (!scope.organizationId || !limitNoticesCanSend()) return;
+    // A known count without a cap needs nothing more.
+    if (known && known.limit === null) return;
+    runInBackground(async () => {
+      let timer: ReturnType<typeof setTimeout> | undefined;
+      try {
+        const { sendLimitNotice } = await import("./notify");
+        await Promise.race([
+          sendLimitNotice(
+            { userId: scope.userId, organizationId: scope.organizationId },
+            limit,
+            known,
+          ),
+          new Promise((_, reject) => {
+            timer = setTimeout(
+              () =>
+                reject(new Error(`timed out after ${NOTICE_TIMEOUT_MS} ms`)),
+              NOTICE_TIMEOUT_MS,
+            );
+          }),
+        ]);
+      } catch (error) {
+        logFailure(limit, error);
+      } finally {
+        clearTimeout(timer);
+      }
+    });
+  } catch (error) {
+    logFailure(limit, error);
+  }
 }
