@@ -16,7 +16,9 @@ import { AnalyticsTab } from "@/app/dashboard/codes/[id]/_components/analytics-t
 import { CodeTabsNav } from "@/app/dashboard/codes/[id]/_components/code-tabs-nav";
 import { OverviewTab } from "@/app/dashboard/codes/[id]/_components/overview-tab";
 import { SettingsTab } from "@/app/dashboard/codes/[id]/_components/settings-tab";
+import { ViewOnly } from "@/components/workspaces/view-only";
 import { HttpError } from "@/lib/error-response";
+import { can } from "@/lib/permissions";
 import { getPlanForScope, getPlanLimits } from "@/lib/plans";
 import { workspaceHref } from "@/lib/workspace-paths";
 
@@ -51,6 +53,9 @@ export default async function CodeDetailPage({
   ]);
   const tab = resolveCodeTab(query);
   const plans = codeOptionPlansFor(plan);
+  // Viewers and billing members see the settings, disabled (the server
+  // refuses every save too).
+  const readOnly = !can(scope.role, "content.write");
 
   return (
     <CodeOptionPlansProvider plans={plans}>
@@ -82,11 +87,16 @@ export default async function CodeDetailPage({
         )}
         {tab === "settings" && (
           // Shared by the routing, UTM and pixels panels (streams in).
-          <SettingsTab
-            code={code}
-            marketing={getCodeMarketing(code.id)}
-            plans={plans}
-          />
+          <ViewOnly
+            notice="You have view-only access, so this code's settings can't be changed."
+            readOnly={readOnly}
+          >
+            <SettingsTab
+              code={code}
+              marketing={getCodeMarketing(code.id)}
+              plans={plans}
+            />
+          </ViewOnly>
         )}
       </div>
     </CodeOptionPlansProvider>
