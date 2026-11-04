@@ -9,8 +9,10 @@
 
 import { useCodeDialogStore } from "@/components/editor/action-bar/code-dialog-store";
 import { useDownloadDialogStore } from "@/components/editor/action-bar/download-dialog-store";
+import { useCommunitySheetStore } from "@/components/editor/community-sheet-store";
 import { checkUrl } from "@/components/editor/content-forms/url-check";
 import type { LinkedDynamicCode } from "@/components/editor/dynamic-link-toggle";
+import { usePhotoScanDialogStore } from "@/components/editor/photo-scan-dialog-store";
 import { toPayload } from "@/components/sections/tools/payload";
 import { defaultThemeState } from "@/config/qr";
 import type { ControlTab, PlaygroundParams } from "@/lib/playground-links";
@@ -179,13 +181,21 @@ export function applyPlaygroundParams(
 
   let needsContent = false;
   if (params.open === "code") {
-    useCodeDialogStore.getState().setOpen(true);
+    useCodeDialogStore.getState().openWith(params.lang);
+    applied.push("open");
+    if (params.lang) applied.push("lang");
+  } else if (params.open === "photo-check") {
+    usePhotoScanDialogStore.getState().setOpen(true);
+    applied.push("open");
+  } else if (params.open === "community") {
+    useCommunitySheetStore.getState().setOpen(true);
     applied.push("open");
   } else if (params.open === "download" || params.open === "print") {
     const downloads = useDownloadDialogStore.getState();
     downloads.setRequest({
       tab: params.open === "print" ? "print" : "image",
       ...(params.print ? { print: params.print } : {}),
+      ...(params.printDistance ? { printDistance: params.printDistance } : {}),
     });
     // Nothing to download while the preview is a sample: the request waits
     // for the first time the dialog opens.
@@ -193,6 +203,7 @@ export function applyPlaygroundParams(
     else needsContent = true;
     applied.push("open");
     if (params.print) applied.push("print");
+    if (params.printDistance) applied.push("printDistance");
   }
 
   const after = useQREditorStore.getState();

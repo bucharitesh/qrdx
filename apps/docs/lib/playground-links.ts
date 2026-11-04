@@ -13,7 +13,13 @@
 // reads these after mount (lib/hooks/use-playground-params.ts), applies them
 // once and removes the one-shot ones from the address bar.
 
-import { PRINT_SIZE_LIMITS } from "@/lib/print-size";
+import {
+  type DistanceUnit,
+  MIN_MODULE_MM,
+  PRINT_SIZE_LIMITS,
+  SCAN_DISTANCE_PER_MODULE,
+  toMillimeters,
+} from "@/lib/print-size";
 import { CONTENT_TYPES_METADATA, type ContentType } from "@/types/qr-content";
 
 export const PLAYGROUND_PATH = "/playground";
@@ -43,13 +49,23 @@ export type DesignSection = (typeof DESIGN_SECTIONS)[number];
 
 /**
  * Surfaces a link can open, each one that exists today: the download dialog,
- * its Print-ready tab and the React code dialog.
+ * its Print-ready tab, Get code, the photo check and the community sheet.
  */
-export const OPEN_TARGETS = ["download", "print", "code"] as const;
+export const OPEN_TARGETS = [
+  "download",
+  "print",
+  "code",
+  "photo-check",
+  "community",
+] as const;
 export type OpenTarget = (typeof OPEN_TARGETS)[number];
 
-/** Code dialog languages. Only React exists today. */
-export const CODE_LANGS = ["react"] as const;
+/**
+ * Get code dialog tabs a link can open (open=code&lang=…): only tabs that
+ * ship. The CLI tab waits for a working @qrdx/cli on npm (CLI_TAB_ENABLED in
+ * components/editor/action-bar/code-snippets.ts); add "cli" here with it.
+ */
+export const CODE_LANGS = ["react", "shadcn", "image", "api", "mcp"] as const;
 export type CodeLang = (typeof CODE_LANGS)[number];
 
 export type PrintUnit = keyof typeof PRINT_SIZE_LIMITS;
@@ -57,6 +73,23 @@ export interface PrintWidth {
   size: number;
   unit: PrintUnit;
 }
+
+/**
+ * A scan distance for the Print-ready tab (printDistance=1m, 30cm, 3ft):
+ * the tab sizes the code from it, since only it knows the code's modules.
+ */
+export interface PrintDistance {
+  value: number;
+  unit: DistanceUnit;
+}
+
+/** The fewest modules a code can have across: version 1 with no quiet zone. */
+const FEWEST_MODULES = 21;
+/** Nearest distance the Print tab gives: the 0.4 mm minimum module (100 mm). */
+export const PRINT_DISTANCE_MIN_MM = MIN_MODULE_MM * SCAN_DISTANCE_PER_MODULE;
+/** Farthest: the largest width over the fewest modules (about 23.8 m). */
+export const PRINT_DISTANCE_MAX_MM =
+  (PRINT_SIZE_LIMITS.mm.max / FEWEST_MODULES) * SCAN_DISTANCE_PER_MODULE;
 
 /** Longest `url` a link may carry. */
 export const MAX_LINK_URL_LENGTH = 2048;
@@ -75,6 +108,7 @@ export const ONE_SHOT_PARAMS = [
   "style",
   "open",
   "print",
+  "printDistance",
   "lang",
 ] as const;
 
@@ -88,6 +122,8 @@ export interface PlaygroundParams {
   style?: string;
   open?: OpenTarget;
   print?: PrintWidth;
+  /** With open=print: size the code to scan from this distance (wins over `print`). */
+  printDistance?: PrintDistance;
   lang?: CodeLang;
 }
 
@@ -105,6 +141,8 @@ export interface PlaygroundLinkOptions {
   style?: string;
   open?: OpenTarget;
   print?: PrintWidth;
+  /** Implies open=print; wins over `print`. */
+  printDistance?: PrintDistance;
   lang?: CodeLang;
 }
 
@@ -114,6 +152,7 @@ const CONTENT_TYPE_IDS = new Set<string>(
 const PRESET_ID = /^[A-Za-z][A-Za-z0-9_-]{0,63}$/;
 const STYLE_VALUE = new RegExp(`^${STYLE_PARAM_VERSION}\\.[A-Za-z0-9_-]+$`);
 const PRINT_VALUE = /^(\d{1,4}(?:\.\d{1,2})?)(mm|in)$/;
+const PRINT_DISTANCE_VALUE = /^(\d{1,5}(?:\.\d{1,3})?)(cm|m|in|ft)$/;
 
 const isOneOf = <T extends string>(
   list: readonly T[],
@@ -168,6 +207,30 @@ export function parsePrintWidth(
 
 export function formatPrintWidth({ size, unit }: PrintWidth): string {
   return `${size}${unit}`;
+}
+
+/**
+ * `1m`, `30cm`, `3ft`, `36in`: a scan distance within what the Print-ready
+ * tab can produce (PRINT_DISTANCE_MIN_MM to PRINT_DISTANCE_MAX_MM), or null.
+ */
+export function parsePrintDistance(
+  raw: string | null | undefined,
+): PrintDistance | null {
+  const match = raw?.trim().toLowerCase().match(PRINT_DISTANCE_VALUE);
+  if (!match) return null;
+  const value = Number(match[1]);
+  const unit = match[2] as DistanceUnit;
+  const mm = toMillimeters(value, unit);
+  // A hair of tolerance, so the bounds themselves round-trip.
+  return Number.isFinite(mm) &&
+    mm >= PRINT_DISTANCE_MIN_MM - 1e-6 &&
+    mm <= PRINT_DISTANCE_MAX_MM + 1e-6
+    ? { value, unit }
+    : null;
+}
+
+export function formatPrintDistance({ value, unit }: PrintDistance): string {
+  return `${value}${unit}`;
 }
 
 /** A `style` value with the right prefix, characters and size, or null. */
@@ -230,6 +293,12 @@ export function parsePlaygroundParams(
   if (print && (!params.open || params.open === "print")) {
     params.print = print;
     params.open = "print";
+  }
+  // A distance only with open=print, and it wins over a width.
+  const printDistance = parsePrintDistance(get("printDistance"));
+  if (printDistance && params.open === "print") {
+    params.printDistance = printDistance;
+    delete params.print;
   }
 
   const lang = get("lang")?.trim().toLowerCase();
@@ -298,7 +367,13 @@ export function playgroundHref(options: PlaygroundLinkOptions = {}): string {
   const print = options.print
     ? parsePrintWidth(formatPrintWidth(options.print))
     : null;
-  if (print) {
+  const printDistance = options.printDistance
+    ? parsePrintDistance(formatPrintDistance(options.printDistance))
+    : null;
+  if (printDistance) {
+    query.set("open", "print");
+    query.set("printDistance", formatPrintDistance(printDistance));
+  } else if (print) {
     query.set("open", "print");
     query.set("print", formatPrintWidth(print));
   } else if (isOneOf(OPEN_TARGETS, options.open)) {
