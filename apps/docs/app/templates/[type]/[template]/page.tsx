@@ -11,6 +11,7 @@ import {
 } from "@/lib/landing/demo";
 import { TEMPLATES_PATH } from "@/lib/landing/demo-paths";
 import { baseUrl, createMetadata } from "@/lib/metadata";
+import { buildTimeParams } from "@/lib/static-params";
 
 // Public demo of one hosted-page template, rendered with the same components
 // as a published page (/p/<slug>) from the template definition alone: no
@@ -24,10 +25,12 @@ type Props = { params: Promise<{ type: string; template: string }> };
 export const revalidate = 86400;
 
 export function generateStaticParams() {
-  return listTemplateDemos().map(({ template, variant }) => ({
-    type: template.type,
-    template: variant.id,
-  }));
+  return buildTimeParams(() =>
+    listTemplateDemos().map(({ template, variant }) => ({
+      type: template.type,
+      template: variant.id,
+    })),
+  );
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

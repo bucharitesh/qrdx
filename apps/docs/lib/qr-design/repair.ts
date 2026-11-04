@@ -292,7 +292,11 @@ export function repairDesign(
   }
   if (ids.has("style-pair")) {
     const risk = getStylePairRisk(next);
-    if (risk?.kind === "dot" || risk?.kind === "dot-eye") {
+    if (
+      risk?.kind === "dot" ||
+      risk?.kind === "dot-eye" ||
+      risk?.kind === "sharp-dot-eye"
+    ) {
       changes.push(
         `Changed the eye centres from ${next.cornerEyeDotPattern} to rounded: ${risk.message}`,
       );

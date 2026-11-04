@@ -9,7 +9,7 @@
 
 import { authClient } from "@repo/auth/client";
 import { toast } from "@repo/design-system";
-import { Close } from "@repo/design-system/components/icons";
+import { Close, Spinner } from "@repo/design-system/components/icons";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -77,6 +77,7 @@ import { codeTabHref } from "@/app/dashboard/codes/_lib/code-tabs";
 import type { QrCodeView } from "@/app/dashboard/codes/_lib/qr-codes";
 import { PanelFallback } from "@/app/dashboard/codes/[id]/_components/routing-panel";
 import type { ShellData } from "@/components/app-shell/shell-data";
+import { useAvailability } from "@/components/availability-provider";
 import { CopyButton } from "@/components/copy-button";
 import { AccountSourcePicker } from "@/components/data-connections/source-picker";
 import { InfoHint } from "@/components/help/info-hint";
@@ -86,7 +87,9 @@ import {
 } from "@/components/workspace-provider";
 import { defaultThemeState } from "@/config/qr";
 import { track } from "@/lib/analytics";
+import { offeredPageTypes } from "@/lib/landing/file-page-types";
 import { PLAN_NAMES } from "@/lib/pricing";
+import { SHORT_LINK_BASE } from "@/lib/short-links";
 import { soundEvent } from "@/lib/sound/emit";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 import type { QRStyle } from "@/types/theme";
@@ -102,7 +105,9 @@ import {
   draftFieldsForStorage,
   hasDraftableContent,
 } from "./drafts";
-import { openInFullEditor } from "./full-editor";
+import { BuilderFormBanner } from "./form-banner";
+import { fullEditorDestination, openInFullEditor } from "./full-editor";
+import { bindCreatedCode, syncSavedCode } from "./in-place";
 import { previewLink } from "./links";
 import { listItemFromView } from "./optimistic";
 import { builderServices, type LoadedCode, loadCodeForEdit } from "./services";
@@ -116,10 +121,10 @@ import { type SubmitResult, submitCreate, submitUpdate } from "./submit";
 import { type BuilderFields, EMPTY_FIELDS } from "./types";
 import { newDraftId, useCodeDrafts } from "./use-code-drafts";
 import {
+  changedFields,
   checkDestination,
   fieldsEqual,
   MAX_TITLE_LENGTH,
-  needsUpgrade,
 } from "./validation";
 
 type Panel =
@@ -174,12 +179,13 @@ export default function CodeBuilderModal({
   onClosed,
   onChoosePageType,
 }: {
-  request: CodeBuilderRequest;
+  /** Create or edit; the page gallery opens in the host, not here */
+  request: Extract<CodeBuilderRequest, { mode: "create" | "edit" }>;
   /** The plan's cap on dynamic codes, from the app shell; null = no cap */
   usage: ShellData["codes"];
   onClosed: () => void;
-  /** "Hosted page": continue in the page template gallery */
-  onChoosePageType: (type: string) => void;
+  /** "Hosted page": continue in the page template gallery, in this design */
+  onChoosePageType: (type: string, style: QRStyle | null) => void;
 }) {
   const router = useRouter();
   // Links into the dashboard carry the workspace (/dashboard/<workspace>/...).
@@ -199,6 +205,9 @@ export default function CodeBuilderModal({
   const dropOptimistic = useCodeBuilderStore((state) => state.dropOptimistic);
 
   const editing = request.mode === "edit";
+  // Opened over the playground: results apply to it in place.
+  const fromPlayground = request.origin === "playground";
+  const fileStorage = useAvailability().has("fileStorage");
   const [open, setOpen] = useState(true);
   const [loaded, setLoaded] = useState<LoadedCode | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -340,7 +349,7 @@ export default function CodeBuilderModal({
     null;
   const slugPrefix = host
     ? `${host}/`
-    : `${domainOptions?.defaultHost ?? "qrdx.dev"}/q/`;
+    : `${domainOptions?.defaultHost ?? new URL(SHORT_LINK_BASE).host}/q/`;
   const link = created
     ? {
         value: created.code.shortLink,
@@ -499,6 +508,13 @@ export default function CodeBuilderModal({
         },
         settledAt: Date.now(),
       });
+      if (fromPlayground) {
+        // The playground underneath encodes this code: a new back-half or
+        // domain changes its short link, and a design changed here follows.
+        syncSavedCode(result.code, {
+          style: changedFields(initial, fields).style ? fields.style : null,
+        });
+      }
       soundEvent("apply");
       toast.success(
         "Changes saved",
@@ -525,11 +541,21 @@ export default function CodeBuilderModal({
       }),
       settledAt: Date.now(),
     });
+    if (fromPlayground && userId) {
+      // The playground's URL code becomes this one, in the design made here
+      // (with its logo, even when the saved copy had to leave it out).
+      bindCreatedCode(
+        { ...result.code, style: fields.style ?? result.code.style },
+        userId,
+      );
+    }
     setCreated({ code: result.code, copied: false, warnings: result.warnings });
     setPhase("success");
     setPanel(thenOpen ? { type: "option", option: thenOpen } : null);
     soundEvent("success");
-    track("dynamic_code_created", { source: "dashboard" });
+    track("dynamic_code_created", {
+      source: fromPlayground ? "playground" : "dashboard",
+    });
     // Copied right away, like Dub; the success screen keeps a Copy button.
     navigator.clipboard
       ?.writeText(result.code.shortLink)
@@ -647,7 +673,9 @@ export default function CodeBuilderModal({
       return;
     }
     finishClose({ keepDraft: true });
-    router.push("/playground");
+    // From the playground the design is already in the editor underneath.
+    const to = fullEditorDestination(request.origin);
+    if (to) router.push(to);
   };
 
   // ─── Keyboard ─────────────────────────────────────────────────────────────
@@ -713,32 +741,17 @@ export default function CodeBuilderModal({
         : "New dynamic QR code";
   const optionPanel = panel?.type === "option" ? panel.option : null;
 
-  const formBanner =
-    error?.field === "form" || error?.field === "domain" ? (
-      <div
-        className="bg-destructive/10 text-destructive space-y-2 rounded-md p-3 text-sm"
-        role="alert"
-      >
-        <p>{error.message}</p>
-        {needsUpgrade(error.code) && (
-          <Button
-            onClick={() =>
-              error.code === "LIMIT_REACHED" && plans?.upgrades.unlimitedCodes
-                ? plans.upgrades.unlimitedCodes === "business"
-                  ? openUpgradeDialog("business")
-                  : openGetProDialog()
-                : openGetProDialog()
-            }
-            size="sm"
-            type="button"
-          >
-            {error.code === "LIMIT_REACHED" && plans?.upgrades.unlimitedCodes
-              ? `Upgrade to ${PLAN_NAMES[plans.upgrades.unlimitedCodes]}`
-              : "Upgrade"}
-          </Button>
-        )}
-      </div>
-    ) : null;
+  const formBanner = (
+    <BuilderFormBanner
+      error={
+        error?.field === "form" || error?.field === "domain" ? error : null
+      }
+      onUpgrade={(plan) =>
+        plan === "business" ? openUpgradeDialog("business") : openGetProDialog()
+      }
+      unlimitedCodesPlan={plans?.upgrades.unlimitedCodes}
+    />
+  );
 
   const designButton = phase === "form" && panel === null && (
     <Button
@@ -772,14 +785,16 @@ export default function CodeBuilderModal({
       size="sm"
       title={
         target || destination.ok
-          ? "Art, AI art, padding and more in the playground"
+          ? fromPlayground
+            ? "Use this design in the playground and close"
+            : "Art, AI art, padding and more in the playground"
           : "Enter a destination first"
       }
       type="button"
       variant="outline"
     >
       <Brush2 aria-hidden />
-      Open full editor
+      {fromPlayground ? "Continue in the editor" : "Open full editor"}
     </Button>
   );
 
@@ -869,7 +884,19 @@ export default function CodeBuilderModal({
             : "The short link is generated when you create the code."}
         </p>
       ) : (
-        <Skeleton className="h-[4.5rem] w-full" />
+        // The plan's rights are still loading: the field itself, read-only,
+        // instead of an empty placeholder box.
+        <SlugField
+          allowed={false}
+          disabled
+          editing={editing}
+          onChange={(slug) => update("slug", slug)}
+          onUpgrade={openGetProDialog}
+          pending
+          prefix={slugPrefix}
+          status={{ state: "idle" }}
+          value={fields.slug}
+        />
       )}
       {domainChanged && !slugChanged && code && (
         <p
@@ -942,32 +969,34 @@ export default function CodeBuilderModal({
       </p>
       {pageTypes ? (
         <div className="grid gap-2 sm:grid-cols-2">
-          {pageTypes.listTemplates().map((item) => {
-            const Icon = item.icon;
-            return (
-              <button
-                className="hover:bg-muted/60 focus-visible:ring-ring/50 flex items-start gap-3 rounded-lg border p-3 text-left transition-colors outline-none focus-visible:ring-[3px]"
-                key={item.type}
-                onClick={() => {
-                  setOpen(false);
-                  onChoosePageType(item.type);
-                }}
-                type="button"
-              >
-                <span className="bg-muted/40 text-foreground/80 flex size-9 shrink-0 items-center justify-center rounded-md border">
-                  <Icon className="size-4.5" />
-                </span>
-                <span className="min-w-0 flex-1">
-                  <span className="block text-sm font-medium">
-                    {item.label}
+          {offeredPageTypes(pageTypes.listTemplates(), fileStorage).map(
+            (item) => {
+              const Icon = item.icon;
+              return (
+                <button
+                  className="hover:bg-muted/60 focus-visible:ring-ring/50 flex items-start gap-3 rounded-lg border p-3 text-left transition-colors outline-none focus-visible:ring-[3px]"
+                  key={item.type}
+                  onClick={() => {
+                    setOpen(false);
+                    onChoosePageType(item.type, fields.style);
+                  }}
+                  type="button"
+                >
+                  <span className="bg-muted/40 text-foreground/80 flex size-9 shrink-0 items-center justify-center rounded-md border">
+                    <Icon className="size-4.5" />
                   </span>
-                  <span className="text-muted-foreground block text-xs leading-snug">
-                    {item.description}
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-sm font-medium">
+                      {item.label}
+                    </span>
+                    <span className="text-muted-foreground block text-xs leading-snug">
+                      {item.description}
+                    </span>
                   </span>
-                </span>
-              </button>
-            );
-          })}
+                </button>
+              );
+            },
+          )}
         </div>
       ) : (
         <div className="grid gap-2 sm:grid-cols-2">
@@ -1004,6 +1033,11 @@ export default function CodeBuilderModal({
         <p className="text-muted-foreground text-sm break-all">
           {created.code.destinationUrl}
         </p>
+        {fromPlayground && (
+          <p className="text-muted-foreground text-xs">
+            The playground now uses this short link.
+          </p>
+        )}
       </div>
       {!wide && <CodeDownloadButtons code={created.code} />}
       <BuilderOptionsOn
@@ -1096,12 +1130,15 @@ export default function CodeBuilderModal({
       </p>
     );
   } else if (!ready) {
+    // Said in words while the code loads, instead of empty boxes.
     main = (
-      <div className="space-y-4">
-        <Skeleton className="h-16 w-full" />
-        <Skeleton className="h-16 w-full" />
-        <Skeleton className="h-16 w-full" />
-      </div>
+      <p
+        className="text-muted-foreground flex items-center gap-2 text-sm"
+        role="status"
+      >
+        <Spinner className="size-4 animate-spin" />
+        Loading this code…
+      </p>
     );
   } else if (optionBody) {
     main = optionBody;
@@ -1163,7 +1200,9 @@ export default function CodeBuilderModal({
     );
   }
 
-  const showPreviewColumn = wide && !(contentType === "page" && !editing);
+  // Not while an edited code loads: the column would be empty until then.
+  const showPreviewColumn =
+    wide && ready && !(contentType === "page" && !editing);
   const showOptions = ready && !(contentType === "page" && !editing);
 
   return (

@@ -9,6 +9,7 @@ import { useState } from "react";
 import { defaultThemeState } from "@/config/qr";
 import { track } from "@/lib/analytics";
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
+import { styleEngineOptions } from "@/lib/qr-design/engine-options";
 import { soundEvent } from "@/lib/sound/emit";
 import type { ThemeStyles } from "@/types/theme";
 
@@ -50,6 +51,7 @@ export function CodeQr({
         margin={s.margin}
         templateId={s.templateId}
         value={value}
+        {...styleEngineOptions(s)}
       />
     </div>
   );
@@ -72,6 +74,8 @@ export async function downloadCodeQr(
         hideLogo: !s.showLogo,
         logo: s.customLogo ?? DEFAULT_QR_LOGO,
         margin: s.margin,
+        level: s.level,
+        ...styleEngineOptions(s),
       }),
       level: s.level,
       cornerEyePattern: s.cornerEyePattern,

@@ -12,6 +12,7 @@ import { SectionHeader } from "@/components/sections/section-header";
 import { type ResolvedAuthor, resolveAuthors } from "@/lib/blog-authors";
 import { brandedTitle, seoOverride } from "@/lib/seo-overrides";
 import { blogSource } from "@/lib/source";
+import { buildTimeParams } from "@/lib/static-params";
 import { getMDXComponents } from "@/mdx-components";
 import {
   absoluteUrl,
@@ -29,8 +30,6 @@ import {
 interface PageProps {
   params: Promise<{ slug: string }>;
 }
-
-export const dynamicParams = false;
 
 function getPublishedPage(slug: string): BlogPage {
   const page = blogSource.getPage([slug]);
@@ -303,8 +302,12 @@ export default async function BlogPostPage({ params }: PageProps) {
   );
 }
 
+// Unknown and unpublished slugs render notFound() (getPublishedPage,
+// lib/static-params.ts).
 export function generateStaticParams() {
-  return getPublishedPosts().map((p) => ({ slug: getPostSlug(p) }));
+  return buildTimeParams(() =>
+    getPublishedPosts().map((p) => ({ slug: getPostSlug(p) })),
+  );
 }
 
 export async function generateMetadata({

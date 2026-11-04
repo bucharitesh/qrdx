@@ -17,3 +17,7 @@ export const SLUG_TO_CATEGORY: Record<string, string> = {
   engineering: "Engineering",
   education: "Education",
 };
+
+/** A category slug from the list (own keys only, so "constructor" is not one). */
+export const isCategorySlug = (slug: string): boolean =>
+  Object.hasOwn(SLUG_TO_CATEGORY, slug);

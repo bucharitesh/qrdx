@@ -18,15 +18,15 @@ import {
   getQrTypeTitle,
   QR_TYPE_SLUGS,
 } from "@/lib/qr-types-content";
+import { buildTimeParams } from "@/lib/static-params";
 
 interface PageProps {
   params: Promise<{ type: string }>;
 }
 
-export const dynamicParams = false;
-
+// Unknown types render notFound() below (lib/static-params.ts).
 export function generateStaticParams() {
-  return QR_TYPE_SLUGS.map((type) => ({ type }));
+  return buildTimeParams(() => QR_TYPE_SLUGS.map((type) => ({ type })));
 }
 
 export async function generateMetadata({
