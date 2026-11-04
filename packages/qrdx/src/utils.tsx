@@ -13,7 +13,11 @@ import type {
   TemplateConfig,
 } from "../types";
 import { normalizeColorConfig } from "../types/color";
-import { AUTO_LEVEL_LOGO_COVERAGE, type EyePosition } from "../types/qr";
+import {
+  AUTO_LEVEL_LOGO_COVERAGE,
+  type EyePosition,
+  type QRShape,
+} from "../types/qr";
 import { getQRArtEyeColors, isQRArtActive, renderQRArt } from "./art";
 import {
   alignmentMask,
@@ -34,6 +38,8 @@ import {
 import { generateCornerDotPath } from "./corner-dot";
 import { generateCornerSquarePath } from "./corner-eye";
 import { isFrameActive, wrapWithFrame } from "./frame";
+import { LOGO_PLATE_INSET, LOGO_ROUNDED_RADIUS, renderLogo } from "./logo";
+import { circleDecoration, getLayoutMargin } from "./qr-shape";
 import { hashString } from "./shapes";
 import { getTemplate } from "./templates";
 import { getSolidColor } from "./utils/color";
@@ -133,26 +139,29 @@ function generateDataCircles(
     pattern?: BodyPattern;
     /** Size of each module, 0.5 to 1 (see `moduleScale`) */
     scale?: number;
+    /** Decorative modules (a circle code's ring): no finders or alignment */
+    plain?: boolean;
   }
 ): JSX.Element[] {
-  const { margin, pixelSize, pattern = "circle" } = options;
+  const { margin, pixelSize, pattern = "circle", plain = false } = options;
   if (isShapedBodyPattern(pattern)) {
     return renderShapedBody(modules, {
       margin,
       pixelSize,
       pattern,
       scale: options.scale,
+      plain,
     });
   }
   const scale = clampModuleScale(options.scale, pattern);
   const shapes: JSX.Element[] = [];
   const qrSize = modules.length;
   const radius = pixelSize * 0.45; // radius for circles (≥0.45 needed for reliable scanning)
-  const isAlignmentModule = alignmentMask(qrSize);
+  const isAlignmentModule = plain ? () => false : alignmentMask(qrSize);
 
   modules.forEach((row, y) => {
     row.forEach((cell, x) => {
-      if (cell && !isCornerModule(x, y, qrSize)) {
+      if (cell && (plain || !isCornerModule(x, y, qrSize))) {
         const cx = (x + 0.5 + margin) * pixelSize;
         const cy = (y + 0.5 + margin) * pixelSize;
         const key = `${x}-${y}`;
@@ -676,6 +685,7 @@ export function resolveErrorLevel(props: {
   imageSettings?: ImageSettings;
   isOGContext?: boolean;
   autoLevel?: boolean;
+  shape?: QRShape;
 }): ErrorLevel {
   const level = props.level ?? DEFAULT_LEVEL;
   const { imageSettings } = props;
@@ -693,7 +703,11 @@ export function resolveErrorLevel(props: {
     const settings = getImageSettings(
       cells,
       props.size ?? DEFAULT_SIZE,
-      props.margin ?? DEFAULT_MARGIN,
+      getLayoutMargin(
+        cells.length,
+        props.margin ?? DEFAULT_MARGIN,
+        props.shape
+      ),
       imageSettings
     );
     if (settings) {
@@ -752,6 +766,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
     eyeColors,
     moduleScale,
     autoLevel,
+    shape,
     ...otherProps
   } = props;
 
@@ -773,6 +788,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
     imageSettings,
     isOGContext,
     autoLevel,
+    shape,
   });
 
   const qrCode = qrcodegen.QrCode.encodeText(
@@ -780,12 +796,18 @@ export function QRCodeSVG(props: QRPropsSVG) {
     ERROR_LEVEL_MAP[effectiveLevel]
   );
   let cells = qrCode.getModules();
+  // A circle code draws the symbol further in, inside its disc
+  const circle = shape === "circle";
+  const layoutMargin = getLayoutMargin(cells.length, margin, shape);
+  const decoration = circle
+    ? circleDecoration(value, cells.length, margin)
+    : null;
 
-  const numCells = cells.length + margin * 2;
+  const numCells = cells.length + layoutMargin * 2;
   const calculatedImageSettings = getImageSettings(
     cells,
     size,
-    margin,
+    layoutMargin,
     imageSettings
   );
 
@@ -801,10 +823,11 @@ export function QRCodeSVG(props: QRPropsSVG) {
         calculatedImageSettings,
         size,
         numCells,
-        margin
+        layoutMargin
       );
 
     if (isOGContext) {
+      const shape = imageSettings.shape ?? "square";
       image = (
         <img
           alt="Logo"
@@ -815,20 +838,28 @@ export function QRCodeSVG(props: QRPropsSVG) {
             top: `${fmt(imgTop)}px`,
             width: `${fmt(imgWidth)}px`,
             height: `${fmt(imgHeight)}px`,
+            ...(shape !== "square" && {
+              borderRadius:
+                shape === "circle"
+                  ? "50%"
+                  : `${fmt(Math.min(imgWidth, imgHeight) * LOGO_ROUNDED_RADIUS)}px`,
+            }),
+            ...(imageSettings.plate && {
+              backgroundColor: imageSettings.plate,
+              padding: `${fmt(imgWidth * LOGO_PLATE_INSET)}px`,
+              boxSizing: "border-box",
+            }),
           }}
         />
       );
     } else {
-      image = (
-        <image
-          height={fmt(imgHeight)}
-          href={imageSettings.src}
-          preserveAspectRatio="none"
-          width={fmt(imgWidth)}
-          x={fmt(imgLeft)}
-          y={fmt(imgTop)}
-        />
-      );
+      // Cropped to imageSettings.shape, on its plate (see logo.tsx)
+      image = renderLogo(imageSettings, {
+        x: imgLeft,
+        y: imgTop,
+        w: imgWidth,
+        h: imgHeight,
+      });
     }
   }
 
@@ -849,12 +880,12 @@ export function QRCodeSVG(props: QRPropsSVG) {
         art,
         modules: cells,
         version: qrCode.version,
-        margin,
+        margin: layoutMargin,
         pixelSize,
         ...artColors,
         body: (artModules) =>
           generateDataCircles(artModules, {
-            margin,
+            margin: layoutMargin,
             pixelSize,
             pattern: bodyPattern,
             scale: moduleScale,
@@ -870,11 +901,20 @@ export function QRCodeSVG(props: QRPropsSVG) {
   const dataCircles = artLayer
     ? null
     : generateDataCircles(cells, {
-        margin,
+        margin: layoutMargin,
         pixelSize,
         pattern: bodyPattern,
         scale: moduleScale,
       });
+  const decorationShapes = decoration
+    ? generateDataCircles(decoration, {
+        margin: 0,
+        pixelSize,
+        pattern: bodyPattern,
+        scale: moduleScale,
+        plain: true,
+      })
+    : null;
 
   // Normalize bgColor and fgColor first to ensure proper structure
   const normalizedBgColor = normalizeColorConfig(bgColor, DEFAULT_BGCOLOR);
@@ -912,13 +952,26 @@ export function QRCodeSVG(props: QRPropsSVG) {
     DEFAULT_FGCOLOR
   );
 
+  // Data modules, plus a circle code's decoration around them
+  const dataLayer = artLayer ? (
+    <>
+      {artLayer}
+      {decorationShapes && <g fill={fgFillValue}>{decorationShapes}</g>}
+    </>
+  ) : (
+    <g fill={fgFillValue}>
+      {dataCircles}
+      {decorationShapes}
+    </g>
+  );
+
   // Calculate corner positions with margin
-  const topLeftX = margin * pixelSize;
-  const topLeftY = margin * pixelSize;
-  const topRightX = (qrSize - 7 + margin) * pixelSize;
-  const topRightY = margin * pixelSize;
-  const bottomLeftX = margin * pixelSize;
-  const bottomLeftY = (qrSize - 7 + margin) * pixelSize;
+  const topLeftX = layoutMargin * pixelSize;
+  const topLeftY = layoutMargin * pixelSize;
+  const topRightX = (qrSize - 7 + layoutMargin) * pixelSize;
+  const topRightY = layoutMargin * pixelSize;
+  const bottomLeftX = layoutMargin * pixelSize;
+  const bottomLeftY = (qrSize - 7 + layoutMargin) * pixelSize;
 
   // Eye colors: a per-eye override (eyeColors) wins over Logo QR's matched
   // colors, then eyeColor (outer frame) and dotColor (inner dot), which fall
@@ -1088,11 +1141,20 @@ export function QRCodeSVG(props: QRPropsSVG) {
         {bottomLeftDotGradient?.element}
       </defs>
 
-      {/* Background */}
-      <rect fill={bgFillValue} height={size} width={size} x={0} y={0} />
+      {/* Background: the square, or a circle code's disc */}
+      {circle ? (
+        <circle
+          cx={fmt(size / 2)}
+          cy={fmt(size / 2)}
+          fill={bgFillValue}
+          r={fmt(size / 2)}
+        />
+      ) : (
+        <rect fill={bgFillValue} height={size} width={size} x={0} y={0} />
+      )}
 
       {/* Data module circles */}
-      {artLayer ?? <g fill={fgFillValue}>{dataCircles}</g>}
+      {dataLayer}
 
       {/* Top-left corner square */}
       <g fill={topLeftEyeFillValue}>
@@ -1179,18 +1241,27 @@ export function QRCodeSVG(props: QRPropsSVG) {
         </defs>
 
         {/* Background */}
-        <rect
-          fill={templateBgFillValue}
-          height={templateSize}
-          width={templateSize}
-          x={0}
-          y={0}
-        />
+        {circle ? (
+          <circle
+            cx={templateSize / 2}
+            cy={templateSize / 2}
+            fill={templateBgFillValue}
+            r={templateSize / 2}
+          />
+        ) : (
+          <rect
+            fill={templateBgFillValue}
+            height={templateSize}
+            width={templateSize}
+            x={0}
+            y={0}
+          />
+        )}
 
         {/* Scale all QR elements to fit template coordinate system */}
         <g transform={`scale(${fmt(templateSize / size, SCALE_DECIMALS)})`}>
           {/* Data module circles */}
-          {artLayer ?? <g fill={fgFillValue}>{dataCircles}</g>}
+          {dataLayer}
 
           {/* Top-left corner square */}
           <g fill={topLeftEyeFillValue}>

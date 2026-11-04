@@ -274,19 +274,23 @@ export function renderShapedBody(
     pixelSize: number;
     pattern: ShapedBodyPattern;
     scale?: number;
+    /** Decorative modules (a circle code's ring): no finders or alignment */
+    plain?: boolean;
   }
 ): JSX.Element[] {
   const { margin, pixelSize: cell, pattern } = options;
   const scale = clampModuleScale(options.scale, pattern);
   const size = modules.length;
-  const isAlignment = alignmentMask(size);
+  const isAlignment = options.plain ? () => false : alignmentMask(size);
+  const finder = (x: number, y: number) =>
+    !options.plain && isFinder(x, y, size);
   const dark = (x: number, y: number) =>
     x >= 0 &&
     y >= 0 &&
     x < size &&
     y < size &&
     Boolean(modules[y]?.[x]) &&
-    !isFinder(x, y, size);
+    !finder(x, y);
   const centerOf = (v: number) => (v + 0.5 + margin) * cell;
 
   const solid: string[] = [];
@@ -343,7 +347,7 @@ export function renderShapedBody(
     const r = cell * 0.3;
     for (let y = 0; y < size; y++) {
       for (let x = 0; x < size; x++) {
-        if (dark(x, y) || isFinder(x, y, size)) {
+        if (dark(x, y) || finder(x, y)) {
           continue;
         }
         const x0 = centerOf(x) - cell / 2;

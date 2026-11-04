@@ -236,3 +236,107 @@ describe("validation", () => {
     ).toBeNull();
   });
 });
+
+// ── Engine options (per-eye colors, dot size, auto error correction, logo
+// layout): carried exactly, validated as strictly as the rest.
+describe("engine options", () => {
+  const engineStyle: ThemeStyles = {
+    bgColor: "#ffffff",
+    eyeColors: {
+      topLeft: { outer: "#b91c1c", inner: "#1d4ed8" },
+      bottomLeft: {
+        outer: {
+          type: "linear",
+          angle: 90,
+          stops: [
+            { color: "#111111", offset: 0 },
+            { color: "#7e22ce", offset: 100 },
+          ],
+        },
+      },
+    },
+    moduleScale: 0.8,
+    autoLevel: true,
+    showLogo: true,
+    logoOptions: { size: 0.2, padding: 1, x: 0.6, y: 0.4 },
+  };
+
+  it("round-trips them exactly", () => {
+    const { value, omitted } = encode(engineStyle);
+    expect(omitted).toEqual([]);
+    expect(decodeStyleParam(value)).toEqual({ styles: engineStyle });
+  });
+
+  it("keeps the logo layout but never an uploaded logo", () => {
+    const { value, omitted } = encode({
+      ...engineStyle,
+      customLogo: LOGO_DATA_URL,
+    });
+    expect(omitted).toEqual(["logo"]);
+    const decoded = decodeStyleParam(value);
+    expect(decoded?.styles.logoOptions).toEqual(engineStyle.logoOptions);
+    expect(decoded?.styles.customLogo).toBeUndefined();
+    expect(decoded?.styles.showLogo).toBeUndefined();
+  });
+
+  it("rejects out-of-range, unknown or unsafe values whole", () => {
+    for (const json of [
+      { ms: 0.3 },
+      { ms: 1.5 },
+      { ms: "0.8" },
+      { al: false },
+      { lo: { size: 0.9 } },
+      { lo: { size: 0.05 } },
+      { lo: { padding: 9 } },
+      { lo: { x: 2 } },
+      { lo: { y: -0.1 } },
+      { lo: { src: "https://tracker.example/l.png" } },
+      { ec: { center: { outer: "#000000" } } },
+      { ec: { topLeft: { outer: "url(https://tracker.example/x)" } } },
+      { ec: { topLeft: { frame: "#000000" } } },
+      { ec: "#000000" },
+    ]) {
+      expect(decodeStyleParam(forge(json)), JSON.stringify(json)).toBeNull();
+    }
+  });
+
+  it("leaves an unsafe per-eye color out when encoding", () => {
+    const encoded = encodeStyleParam({
+      bgColor: "#ffffff",
+      eyeColors: { topLeft: { outer: "url(https://tracker.example/x)" } },
+    });
+    expect(
+      encoded && decodeStyleParam(encoded.value)?.styles.eyeColors,
+    ).toBeUndefined();
+  });
+});
+
+describe("engine options: logo shape and plate", () => {
+  it("round-trips the crop and a safe plate color", () => {
+    const styles: ThemeStyles = {
+      bgColor: "#ffffff",
+      showLogo: true,
+      logoOptions: { size: 0.2, shape: "circle", plate: "#fde68a" },
+    };
+    expect(decodeStyleParam(encode(styles).value)).toEqual({ styles });
+  });
+
+  it("rejects an unknown shape or a plate that could load a resource", () => {
+    for (const json of [
+      { lo: { shape: "star" } },
+      { lo: { plate: "url(https://tracker.example/x)" } },
+      { lo: { plate: 7 } },
+    ]) {
+      expect(decodeStyleParam(forge(json)), JSON.stringify(json)).toBeNull();
+    }
+  });
+});
+
+describe("engine options: code shape", () => {
+  it("round-trips a circle code and rejects other shapes", () => {
+    const styles: ThemeStyles = { bgColor: "#ffffff", shape: "circle" };
+    expect(decodeStyleParam(encode(styles).value)).toEqual({ styles });
+    expect(decodeStyleParam(forge({ sh: "heart" }))).toBeNull();
+    expect(decodeStyleParam(forge({ sh: 1 }))).toBeNull();
+  });
+});

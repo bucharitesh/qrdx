@@ -1,7 +1,8 @@
 /** biome-ignore-all lint/style/noMagicNumbers: scoring weights and thresholds */
 import type { QRCode as JsQRResult } from "jsqr";
-import type { ColorConfig, ErrorLevel, QRProps } from "../types";
+import type { ColorConfig, QRProps } from "../types";
 import { normalizeColorConfig } from "../types/color";
+import { EYE_POSITIONS } from "../types/qr";
 import type { QRArtPixels } from "./art";
 import qrcodegen from "./codegen";
 import {
@@ -15,6 +16,8 @@ import { handleImageLoad } from "./detection";
 import { withQRSize } from "./download";
 import { getFrameDimensions, getFrameGapRatio, isFrameActive } from "./frame";
 import { getQRAsSVGDataUri } from "./index";
+import { getLogoBlockDamage } from "./logo-budget";
+import { circleQuietZone, getLayoutMargin } from "./qr-shape";
 import { getStylePairRisk } from "./scan-risk";
 import { getImageSettings, getLuminance, resolveErrorLevel } from "./utils";
 import { parseColor, type RGBAColor } from "./utils/parse-color";
@@ -57,14 +60,6 @@ export interface ScanScoreOptions {
 
 /** Widths (px) of the QR code that `getScanScore` decodes by default. */
 export const SCAN_TEST_SIZES = [96, 160, 320] as const;
-
-/** Share of codewords each error correction level can recover. */
-const EC_CAPACITY: Record<ErrorLevel, number> = {
-  L: 0.07,
-  M: 0.15,
-  Q: 0.25,
-  H: 0.3,
-};
 
 // Code width (px) the artwork is rendered at before downscaling to test sizes.
 const SOURCE_SIZE = 640;
@@ -312,10 +307,19 @@ function contrastChecks(props: QRProps): {
   fails: boolean;
 } {
   const fg = props.fgColor ?? DEFAULT_FGCOLOR;
+  // Per-eye colors replace eyeColor / dotColor on that eye only
+  const perEye = EYE_POSITIONS.flatMap((position) => {
+    const eye = props.eyeColors?.[position];
+    return [
+      ...(eye?.outer ? colorStops(eye.outer, DEFAULT_FGCOLOR) : []),
+      ...(eye?.inner ? colorStops(eye.inner, DEFAULT_FGCOLOR) : []),
+    ];
+  });
   const darkColors = [
     ...colorStops(fg, DEFAULT_FGCOLOR),
     ...colorStops(props.eyeColor ?? fg, DEFAULT_FGCOLOR),
     ...colorStops(props.dotColor ?? fg, DEFAULT_FGCOLOR),
+    ...perEye,
   ];
   const lightColors = colorStops(props.bgColor, DEFAULT_BGCOLOR);
   const white: RGBAColor = { r: 255, g: 255, b: 255, a: 1 };
@@ -401,40 +405,96 @@ function logoCheck(props: QRProps): {
   const settings = getImageSettings(
     cells,
     props.size ?? DEFAULT_SIZE,
-    props.margin ?? DEFAULT_MARGIN,
+    getLayoutMargin(cells.length, props.margin ?? DEFAULT_MARGIN, props.shape),
     imageSettings
   );
   if (!settings) {
     return { check: null, penalty: 0 };
   }
-  const area = settings.excavation
-    ? settings.excavation.w * settings.excavation.h
-    : settings.w * settings.h;
-  const coverage = area / (cells.length * cells.length);
+  // A moved logo must leave each corner eye and the format information
+  // beside it (the 9×9 corner zones) alone: no error correction covers them.
+  const box = settings.excavation ?? settings;
+  const n = cells.length;
+  const zones = [
+    [0, 0],
+    [n - 8, 0],
+    [0, n - 8],
+  ] as const;
+  const coversEye = zones.some(
+    ([zx, zy]) =>
+      box.x < zx + 9 &&
+      box.x + box.w > zx &&
+      box.y < zy + 9 &&
+      box.y + box.h > zy
+  );
+  // Decoders correct perspective with the alignment pattern nearest the
+  // bottom-right corner (version 2 and up, 5×5 around n − 7); others, like
+  // the central one in bigger codes, can sit under a centered logo.
+  const alignment = n > 21 ? n - 9 : null;
+  const coversAlignment =
+    alignment !== null &&
+    box.x < alignment + 5 &&
+    box.x + box.w > alignment &&
+    box.y < alignment + 5 &&
+    box.y + box.h > alignment;
+  if (coversEye || coversAlignment) {
+    return {
+      check: {
+        id: "logo",
+        passed: false,
+        message: coversEye
+          ? "The logo covers a corner eye"
+          : "The logo covers the small square near the bottom-right corner",
+        fix: "Move the logo toward the center or make it smaller",
+      },
+      penalty: 40,
+    };
+  }
+  const coverage = (box.w * box.h) / (n * n);
   const level = resolveErrorLevel(props);
-  const capacity = EC_CAPACITY[level];
-  const ratio = coverage / capacity;
   const percent = Math.round(coverage * 100);
-  const message = `Logo covers ${percent}% of the code; level ${level} recovers about ${Math.round(capacity * 100)}%`;
-  if (ratio <= 0.5) {
-    return { check: { id: "logo", passed: true, message }, penalty: 0 };
+  // Count spoiled codewords per Reed–Solomon block, as getQRData caps logos
+  // (logo-budget.ts): area alone passes logos small codes can't repair.
+  const damage = getLogoBlockDamage(
+    {
+      value: props.value,
+      size: props.size ?? DEFAULT_SIZE,
+      margin: props.margin ?? DEFAULT_MARGIN,
+      level,
+      shape: props.shape,
+    },
+    imageSettings
+  );
+  if (!damage || damage.worst <= damage.budget) {
+    return {
+      check: {
+        id: "logo",
+        passed: true,
+        message: `Logo covers ${percent}% of the code; error correction repairs it with room to spare`,
+      },
+      penalty: 0,
+    };
   }
   return {
     check: {
       id: "logo",
       passed: false,
-      message,
+      message: `Logo covers ${percent}% of the code and spoils ${damage.worst} codewords in one block, which repairs ${damage.correctable}`,
       fix:
-        level === "H"
+        damage.level === "H"
           ? "Use a smaller logo"
           : "Switch error correction to H or use a smaller logo",
     },
-    penalty: ratio > 0.8 ? 25 : 10,
+    penalty: damage.worst > damage.correctable ? 25 : 10,
   };
 }
 
 function quietZoneCheck(props: QRProps): { check: ScanCheck; penalty: number } {
-  const margin = props.margin ?? DEFAULT_MARGIN;
+  // A circle code keeps at least QR_CIRCLE_QUIET_MIN before its decoration
+  const margin =
+    props.shape === "circle"
+      ? circleQuietZone(props.margin ?? DEFAULT_MARGIN)
+      : (props.margin ?? DEFAULT_MARGIN);
   const count = moduleCount(props).length + 2 * margin;
   // A frame keeps a light gap around the code.
   const modules =
@@ -574,15 +634,20 @@ async function scoreArtwork(
   // their own are already covered by the eye-shape check above.
   const styleRisk = getStylePairRisk(props);
   const pairRisk = styleRisk?.kind === "eye" ? null : styleRisk;
-  if (pairRisk) {
+  // Sharp-render pairs fail one strict decoder only (see scan-risk.ts): they
+  // show as a check with its fix but cost nothing until a phone test
+  // confirms them, so grades and the AI design loop don't change.
+  if (pairRisk && pairRisk.kind !== "sharp-dot-eye") {
     penalty += 10;
   }
 
   const jsQR = await loadDecoder();
   throwIfAborted(signal);
 
+  const symbol = moduleCount(props).length;
   const modules =
-    moduleCount(props).length + 2 * (props.margin ?? DEFAULT_MARGIN);
+    symbol +
+    2 * getLayoutMargin(symbol, props.margin ?? DEFAULT_MARGIN, props.shape);
   const decodeChecks: ScanCheck[] = [];
   let largestFails = false;
 

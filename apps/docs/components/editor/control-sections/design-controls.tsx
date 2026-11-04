@@ -10,6 +10,7 @@ import { defaultThemeState } from "@/config/qr";
 import type { DesignSection } from "@/lib/playground-links";
 import type { QRStyle } from "@/types/theme";
 import { ColorPresets } from "./color-presets";
+import { CustomizationSections } from "./customization-sections";
 import { FrameControls, frameName } from "./frame-controls";
 import { LogoControls } from "./logo-controls";
 import { PaddingControls } from "./padding-controls";
@@ -197,6 +198,16 @@ export function DesignControls({
         }
         style={current}
       />
+
+      {/* ── Engine options (feat/customization-gaps): logo options, eye
+          colors, dot size, code shape. Sections live in
+          customization-sections.tsx. ── */}
+      <CustomizationSections
+        focus={focus}
+        onChange={onChange}
+        styles={styles}
+      />
+      {/* ── end engine options ── */}
 
       <ControlSection
         expanded={open("frame")}

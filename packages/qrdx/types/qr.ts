@@ -11,6 +11,14 @@ import { type AnyQRFrame, anyFrameSchema } from "./frame-spec";
 import { type BodyPattern, bodyPatternSchema } from "./image-pattern";
 import type { TemplateDefinition } from "./template";
 
+/**
+ * How a logo is cropped: "square" (as uploaded), "rounded" corners or a
+ * "circle". A plate behind the logo takes the same shape.
+ */
+export const LOGO_SHAPES = ["square", "rounded", "circle"] as const;
+export const logoShapeSchema = z.enum(LOGO_SHAPES);
+export type LogoShape = z.infer<typeof logoShapeSchema>;
+
 // Zod schemas
 export const imageSettingsSchema = z.object({
   src: z.string(),
@@ -24,7 +32,42 @@ export const imageSettingsSchema = z.object({
    * pixels as `width` and `height` (default 0).
    */
   padding: z.number().min(0).optional(),
+  /** Crop the logo to this shape (default "square": no crop). */
+  shape: logoShapeSchema.optional(),
+  /**
+   * Solid color of a plate behind the logo, in the logo's shape. The plate
+   * fills the logo box and the logo is drawn inset inside it.
+   */
+  plate: z.string().optional(),
 });
+
+/**
+ * Smallest and largest logo width, as a share of the code's width. Above
+ * 25% even level H stops reading in our decode tests (tests/engine-options).
+ */
+export const LOGO_SIZE_MIN = 0.1;
+export const LOGO_SIZE_MAX = 0.3;
+/** Logo width `getQRData` uses when no size is given (25%). */
+export const LOGO_SIZE_DEFAULT = 0.25;
+/** Most clear space around a logo, in modules. */
+export const LOGO_PADDING_MAX = 2;
+
+/**
+ * Logo layout for `getQRData` and `<QRCode>`, in units that don't depend on
+ * the render size: `size` is a share of the code's width, `padding` is clear
+ * space in modules, `x` and `y` place the logo's center across the code
+ * (0 to 1, 0.5 is the middle; the logo always stays inside the code).
+ * `shape` crops it and `plate` draws a solid plate behind it.
+ */
+export const logoOptionsSchema = z.object({
+  size: z.number().min(LOGO_SIZE_MIN).max(LOGO_SIZE_MAX).optional(),
+  padding: z.number().min(0).max(LOGO_PADDING_MAX).optional(),
+  x: z.number().min(0).max(1).optional(),
+  y: z.number().min(0).max(1).optional(),
+  shape: logoShapeSchema.optional(),
+  plate: z.string().optional(),
+});
+export type LogoOptions = z.infer<typeof logoOptionsSchema>;
 
 export const errorLevelSchema = z.enum(["L", "M", "Q", "H"]);
 
@@ -37,6 +80,18 @@ export const MODULE_SCALE_MAX = 1;
  * correction to H (level L recovers about 7%).
  */
 export const AUTO_LEVEL_LOGO_COVERAGE = 0.07;
+
+/**
+ * Outline of the whole code: "square" (the QR symbol as is) or "circle": the
+ * symbol sits in a disc filled with decorative modules. Decoders read only
+ * the symbol, which keeps its quiet ring (`margin`, at least
+ * QR_CIRCLE_QUIET_MIN modules) before the decoration starts.
+ */
+export const QR_SHAPES = ["square", "circle"] as const;
+export const qrShapeSchema = z.enum(QR_SHAPES);
+export type QRShape = z.infer<typeof qrShapeSchema>;
+/** Smallest light ring between a circle code's symbol and its decoration. */
+export const QR_CIRCLE_QUIET_MIN = 3;
 
 /** The three finder patterns, for per-eye colors. */
 export const EYE_POSITIONS = ["topLeft", "topRight", "bottomLeft"] as const;
@@ -80,6 +135,7 @@ export const qrPropsSchema = z.object({
     .max(MODULE_SCALE_MAX)
     .optional(),
   autoLevel: z.boolean().optional(),
+  shape: qrShapeSchema.optional(),
 });
 
 // Inferred types
@@ -122,6 +178,9 @@ export interface QRProps {
   // Raise error correction to H when the logo covers more than 7% of the
   // code (off by default, so existing output never changes)
   autoLevel?: boolean;
+  // Outline: "circle" puts the symbol in a disc of decorative modules (see
+  // QR_SHAPES); ignored with a template
+  shape?: QRShape;
 }
 
 export type QRPropsCanvas = QRProps &

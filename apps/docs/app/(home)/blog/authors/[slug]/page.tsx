@@ -8,6 +8,7 @@ import { notFound } from "next/navigation";
 import { BlogList } from "@/components/sections/blog/blog-list";
 import { Breadcrumbs } from "@/components/sections/breadcrumbs";
 import { blogAuthorsSource } from "@/lib/source";
+import { buildTimeParams } from "@/lib/static-params";
 import { getMDXComponents } from "@/mdx-components";
 import {
   absoluteUrl,
@@ -19,8 +20,6 @@ import {
 interface PageProps {
   params: Promise<{ slug: string }>;
 }
-
-export const dynamicParams = false;
 
 export default async function AuthorPage({ params }: PageProps) {
   const { slug } = await params;
@@ -161,10 +160,11 @@ export default async function AuthorPage({ params }: PageProps) {
   );
 }
 
+// Unknown authors render notFound() above (lib/static-params.ts).
 export function generateStaticParams() {
-  return blogAuthorsSource
-    .getPages()
-    .map((page) => ({ slug: page.slugs[0] ?? "" }));
+  return buildTimeParams(() =>
+    blogAuthorsSource.getPages().map((page) => ({ slug: page.slugs[0] ?? "" })),
+  );
 }
 
 export async function generateMetadata({

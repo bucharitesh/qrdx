@@ -55,6 +55,11 @@ export const DESIGN_SECTIONS = [
   "dots",
   "eyes",
   "logo",
+  // Engine options (customization-sections.tsx); Logo options shows only
+  // with a logo on, so links open it through "logo"
+  "eye-colors",
+  "dot-size",
+  "shape",
   "frame",
   "padding",
   "error-correction",
@@ -73,6 +78,16 @@ export const OPEN_TARGETS = [
   "community",
 ] as const;
 export type OpenTarget = (typeof OPEN_TARGETS)[number];
+
+// ─── open=dynamic (hub phase 4) ─────────────────────────────────────────────
+/**
+ * open=dynamic: "Make it dynamic…" for the URL code, the code builder over
+ * the editor. Applying it checks sign-in (asking first) and the content
+ * type (lib/playground-apply.ts, applyDynamicOpen).
+ */
+export const DYNAMIC_OPEN_TARGET = "dynamic";
+export type DynamicOpenTarget = typeof DYNAMIC_OPEN_TARGET;
+// ─── end open=dynamic ───────────────────────────────────────────────────────
 
 /**
  * Get code dialog tabs a link can open (open=code&lang=…): only tabs that
@@ -137,7 +152,7 @@ export interface PlaygroundParams {
   preset?: string;
   /** The raw `style` value, checked for shape and size only; decode it with decodeStyleParam. */
   style?: string;
-  open?: OpenTarget;
+  open?: OpenTarget | DynamicOpenTarget;
   print?: PrintWidth;
   /** With open=print: size the code to scan from this distance (wins over `print`). */
   printDistance?: PrintDistance;
@@ -160,7 +175,7 @@ export interface PlaygroundLinkOptions {
   preset?: string;
   /** From encodeStyleParam */
   style?: string;
-  open?: OpenTarget;
+  open?: OpenTarget | DynamicOpenTarget;
   print?: PrintWidth;
   /** Implies open=print; wins over `print`. */
   printDistance?: PrintDistance;
@@ -315,6 +330,8 @@ export function parsePlaygroundParams(
   const print = parsePrintWidth(get("print"));
   const open = get("open")?.trim().toLowerCase();
   if (isOneOf(OPEN_TARGETS, open)) params.open = open;
+  // open=dynamic: see DYNAMIC_OPEN_TARGET.
+  if (open === DYNAMIC_OPEN_TARGET) params.open = DYNAMIC_OPEN_TARGET;
   // A width alone means the Print-ready tab.
   if (print && (!params.open || params.open === "print")) {
     params.print = print;
@@ -408,6 +425,9 @@ export function playgroundHref(options: PlaygroundLinkOptions = {}): string {
     if (options.open === "code" && isOneOf(CODE_LANGS, options.lang)) {
       query.set("lang", options.lang);
     }
+  } else if (options.open === DYNAMIC_OPEN_TARGET) {
+    // open=dynamic: see DYNAMIC_OPEN_TARGET.
+    query.set("open", DYNAMIC_OPEN_TARGET);
   }
 
   const search = query.toString();

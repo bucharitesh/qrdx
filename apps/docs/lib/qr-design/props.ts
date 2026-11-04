@@ -1,4 +1,5 @@
 import { getQRData, type QRProps } from "qrdx";
+import { styleEngineOptions } from "@/lib/qr-design/engine-options";
 import type { ThemeStyles } from "@/types/theme";
 
 /**
@@ -22,6 +23,9 @@ export function designQRProps(
       bodyPattern: style.bodyPattern,
       hideLogo: !style.showLogo,
       logo,
+      level: style.level,
+      margin: style.margin,
+      ...styleEngineOptions(style),
     }),
     level: style.level,
     cornerEyePattern: style.cornerEyePattern,

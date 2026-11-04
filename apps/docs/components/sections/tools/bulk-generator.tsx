@@ -40,6 +40,7 @@ import { DEFAULT_QR_LOGO } from "@/lib/constants";
 import { useMounted } from "@/lib/hooks/use-mounted";
 import { useQRThemes } from "@/lib/hooks/use-themes";
 import { playgroundHref } from "@/lib/playground-links";
+import { styleEngineOptions } from "@/lib/qr-design/engine-options";
 import { soundEvent } from "@/lib/sound/emit";
 import { useQREditorStore } from "@/store/editor-store";
 import type { ThemeStyles } from "@/types/theme";
@@ -748,6 +749,7 @@ export function BulkGenerator() {
               size={256}
               templateId={selectedStyle.templateId}
               value={previewValue}
+              {...styleEngineOptions(selectedStyle)}
             />
           ) : (
             <div className="flex flex-col items-center gap-3 px-4 text-center">

@@ -103,9 +103,12 @@ export type {
   EyeColors,
   EyePosition,
   ImageSettings,
+  LogoOptions,
+  LogoShape,
   QRProps,
   QRPropsCanvas,
   QRPropsSVG,
+  QRShape,
 } from "./qr";
 export {
   AUTO_LEVEL_LOGO_COVERAGE,
@@ -114,9 +117,19 @@ export {
   eyeColorOverrideSchema,
   eyeColorsSchema,
   imageSettingsSchema,
+  LOGO_PADDING_MAX,
+  LOGO_SHAPES,
+  LOGO_SIZE_DEFAULT,
+  LOGO_SIZE_MAX,
+  LOGO_SIZE_MIN,
+  logoOptionsSchema,
+  logoShapeSchema,
   MODULE_SCALE_MAX,
   MODULE_SCALE_MIN,
+  QR_CIRCLE_QUIET_MIN,
+  QR_SHAPES,
   qrPropsSchema,
+  qrShapeSchema,
 } from "./qr";
 export type {
   BaseTemplateProps,

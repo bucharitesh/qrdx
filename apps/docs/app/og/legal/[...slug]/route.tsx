@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { ImageResponse } from "next/og";
 import { BrandOgImage, loadOgFonts, ogSize } from "@/app/og/brand";
 import { getLegalPageImage, legalSource } from "@/lib/source";
+import { buildTimeParams } from "@/lib/static-params";
 
 // Legal pages live under an optional catch-all, which can't hold an
 // opengraph-image file, so their images are served here (like the docs').
@@ -28,8 +29,11 @@ export async function GET(
   );
 }
 
+// Unknown pages answer notFound() above (lib/static-params.ts).
 export function generateStaticParams() {
-  return legalSource.getPages().map((page) => ({
-    slug: getLegalPageImage(page).segments,
-  }));
+  return buildTimeParams(() =>
+    legalSource.getPages().map((page) => ({
+      slug: getLegalPageImage(page).segments,
+    })),
+  );
 }

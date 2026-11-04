@@ -5,13 +5,14 @@ import {
   getQrTypeTitle,
   QR_TYPE_SLUGS,
 } from "@/lib/qr-types-content";
+import { buildTimeParams } from "@/lib/static-params";
 
 export const alt = "A free QR code generator for one type of content";
 export const size = ogSize;
 export const contentType = "image/png";
 
 export function generateStaticParams() {
-  return QR_TYPE_SLUGS.map((type) => ({ type }));
+  return buildTimeParams(() => QR_TYPE_SLUGS.map((type) => ({ type })));
 }
 
 export default async function Image({

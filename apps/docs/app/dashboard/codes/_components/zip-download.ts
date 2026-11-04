@@ -9,6 +9,7 @@ import {
 } from "@/components/sections/tools/bulk-utils";
 import { defaultThemeState } from "@/config/qr";
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
+import { styleEngineOptions } from "@/lib/qr-design/engine-options";
 import { soundEvent } from "@/lib/sound/emit";
 import type { ThemeStyles } from "@/types/theme";
 
@@ -81,6 +82,8 @@ export async function downloadCodesZip(
                 hideLogo: !(s.showLogo && logo),
                 logo: logo ?? undefined,
                 margin: s.margin,
+                level: s.level,
+                ...styleEngineOptions(s),
               }),
               level: s.level,
               cornerEyePattern: s.cornerEyePattern,

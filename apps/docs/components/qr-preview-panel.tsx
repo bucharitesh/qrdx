@@ -6,6 +6,7 @@ import { getFrameDimensions } from "qrdx";
 import type React from "react";
 import { lazy } from "react";
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
+import { styleEngineOptions } from "@/lib/qr-design/engine-options";
 import { useQREditorStore } from "@/store/editor-store";
 import type { QRStyle } from "@/types/theme";
 import { ArtCanvas } from "./editor/art/art-canvas";
@@ -110,6 +111,7 @@ const QRPreviewPanel: React.FC<QRPreviewPanelProps> = ({ style }) => {
                     margin={style.margin}
                     templateId={style.templateId}
                     value={value}
+                    {...styleEngineOptions(style)}
                   />
                 </div>
               </motion.div>

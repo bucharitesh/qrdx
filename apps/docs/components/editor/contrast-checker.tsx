@@ -20,8 +20,8 @@ import {
 import { cn } from "@repo/design-system/lib/utils";
 import { Moon, Sun1, Warning2 } from "iconsax-reactjs";
 import { useTheme } from "next-themes";
-import type { ColorConfig } from "qrdx/types";
-import { isGradient, normalizeColorConfig } from "qrdx/types";
+import type { ColorConfig, EyePosition } from "qrdx/types";
+import { EYE_POSITIONS, isGradient, normalizeColorConfig } from "qrdx/types";
 import { useMemo, useState } from "react";
 import { useContrastChecker } from "@/lib/hooks/use-contrast-checker";
 import type { ThemeStyles } from "@/types/theme";
@@ -33,6 +33,12 @@ type ContrastCheckerProps = {
 };
 
 const MIN_CONTRAST_RATIO = 4.5;
+
+const EYE_POSITION_LABELS: Record<EyePosition, string> = {
+  topLeft: "Top-left",
+  topRight: "Top-right",
+  bottomLeft: "Bottom-left",
+};
 
 type ColorCategory = "content" | "interactive" | "functional";
 
@@ -123,6 +129,39 @@ const ContrastChecker = ({ currentStyles, disabled }: ContrastCheckerProps) => {
         label: "Eye Dots",
         category: "functional",
       },
+      // Per-eye colors (Eye colors section) override the two above
+      ...EYE_POSITIONS.flatMap((position): ColorPair[] => {
+        const eye = currentStyles?.eyeColors?.[position];
+        const name = EYE_POSITION_LABELS[position];
+        return [
+          ...(eye?.outer
+            ? [
+                {
+                  id: `eye-${position}`,
+                  foregroundId: "eyeColors",
+                  backgroundId: "bgColor",
+                  foreground: eye.outer,
+                  background: currentStyles?.bgColor,
+                  label: `${name} eye`,
+                  category: "interactive",
+                } satisfies ColorPair,
+              ]
+            : []),
+          ...(eye?.inner
+            ? [
+                {
+                  id: `dot-${position}`,
+                  foregroundId: "eyeColors",
+                  backgroundId: "bgColor",
+                  foreground: eye.inner,
+                  background: currentStyles?.bgColor,
+                  label: `${name} eye dot`,
+                  category: "functional",
+                } satisfies ColorPair,
+              ]
+            : []),
+        ];
+      }),
     ],
     [currentStyles],
   );

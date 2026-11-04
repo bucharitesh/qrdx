@@ -79,6 +79,16 @@ export {
   OFFICIAL_FRAMES,
   type OfficialFrame,
 } from "./frames/official";
+export {
+  LOGO_PLATE_INSET,
+  LOGO_ROUNDED_RADIUS,
+} from "./logo";
+export {
+  LOGO_CLEANUP_MAX_SIDE,
+  type LogoPixels,
+  removeLogoBackdrop,
+  removeLogoBackground,
+} from "./logo-cleanup";
 export * from "./print";
 export * from "./qr-code";
 // QRCodeCanvas is the only export that needs client-only hooks. It lives in
@@ -86,12 +96,19 @@ export * from "./qr-code";
 // package stays usable from React Server Components.
 export { QRCodeCanvas } from "./qr-code-canvas";
 export {
+  circleQuietZone,
+  getLayoutMargin,
+} from "./qr-shape";
+export {
   getStylePairRisk,
+  isWeakSharpPair,
+  SHARP_DOT_EYE_SAFE_BODIES,
   type StylePairRisk,
   WEAK_BODY_EYES,
   WEAK_DOT_EYES,
   WEAK_DOTS,
   WEAK_EYES,
+  WEAK_SHARP_DOT_EYES,
 } from "./scan-risk";
 export * from "./scan-score";
 export * from "./templates";
@@ -297,4 +314,15 @@ export async function getQRAsCanvas(
   });
 }
 
-export { getQRData } from "./helpers";
+export {
+  type CodewordMap,
+  damagedCodewords,
+  getCodewordMap,
+} from "./codeword-map";
+export { getLogoSizeLimit, getQRData } from "./helpers";
+export {
+  getLogoBlockDamage,
+  LOGO_EC_SAFETY,
+  type LogoBlockDamage,
+  logoFitsBudget,
+} from "./logo-budget";

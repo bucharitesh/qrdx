@@ -82,7 +82,7 @@ import { QRCodeSVG } from "qrdx";
 
 Any other SVG attribute (`className`, `style`, `aria-label`, …) is forwarded to the root `<svg>`.
 
-`imageSettings`: `src` (image URL or data URL), `width` and `height` (pixels, relative to `size`), `excavate` (clear the modules behind the image), optional `x` / `y`. Use level `H` (or at least `Q`) with a logo and keep it under roughly 25% of the code's width.
+`imageSettings`: `src` (image URL or data URL), `width` and `height` (pixels, relative to `size`), `excavate` (clear the modules behind the image), optional `x` / `y`, `shape` (`"square"`, `"rounded"` or `"circle"` crop) and `plate` (a solid color behind the logo, in its shape; the logo is inset on it). The crop is a clip path that the PDF and EPS exporters apply too. `removeLogoBackground(src)` (browser) and `removeLogoBackdrop(pixels)` clear a logo's solid background from the edges inward. Use level `H` (or at least `Q`) with a logo and keep it under roughly 25% of the code's width.
 
 ### `QRCode`
 
@@ -101,9 +101,10 @@ It accepts the `QRCodeSVG` styling props above (`value`, `size`, `level`, colors
 |------|------|---------|-------------|
 | `logo` | `string` | — | Center logo URL or data URL. No logo is drawn unless you pass one |
 | `hideLogo` | `boolean` | `false` | Hide the logo even when `logo` is set (handy for toggles) |
+| `logoOptions` | `LogoOptions` | — | Logo `size` (share of the code's width, 0.1–0.3, default 0.25), `padding` (clear space, 0–2 modules), `x` / `y` (center across the code, 0–1, default 0.5), `shape` and `plate` |
 | `scale` | `number` | `1` | Multiplier applied to `size` |
 
-The logo is drawn at 25% of the code's width with the modules behind it excavated, so pair it with level `H` (or at least the default `Q`).
+The logo is drawn at 25% of the code's width with the modules behind it excavated, so pair it with level `H` (or at least the default `Q`). `getQRData` takes the same `logoOptions` and turns them into `imageSettings`; with `autoLevel` it lays the logo out at the level the code is drawn at. Both cap the logo (size plus clear space) so its worst Reed–Solomon block loses at most 60% of what it can repair (`getLogoSizeLimit`, `getLogoBlockDamage`, on `getCodewordMap`); small codes hold smaller logos. Raw `imageSettings` are drawn as given, and `getScanScore` checks them with the same per-block count.
 
 ### `QRCodeCanvas`
 
@@ -142,6 +143,7 @@ The same lists are exported as `BODY_PATTERN`, `CORNER_EYE_PATTERNS` and `CORNER
 | `eyeColors` | Per-eye `{ outer, inner }` colors (or gradients) for `topLeft`, `topRight`, `bottomLeft`; each overrides `eyeColor` / `dotColor` |
 | `moduleScale` | 0.5–1 (default 1): smaller modules for a spaced look; each pattern stops at the smallest size that still scans (`MODULE_SCALE_FLOOR`) |
 | `autoLevel` | Raise `level` to H when a logo covers more than 7% of the code (off by default) |
+| `shape` | `"square"` (default) or `"circle"`: the symbol sits in a disc filled with decorative modules, behind a light ring of `margin` modules (at least `QR_CIRCLE_QUIET_MIN`, 3). `getLayoutMargin` gives the margin it is drawn with; print sizes and logos follow it. `QRCodeCanvas` and `getQRAsSVG` draw it square |
 | `imageSettings.padding` | Extra clear space around an excavated logo, in pixels |
 | `bgColor="transparent"` | No background paint (transparent PNG/SVG, no fill in PDF/EPS) |
 
@@ -374,7 +376,7 @@ EPS has no transparency or crop marks, and PNG and JPEG logos are embedded as im
 
 ## Will it scan? (browser)
 
-`getScanScore(props)` estimates how reliably a design scans. It renders the code at 96, 160 and 320 px, simulates camera blur and contrast loss, decodes each with jsQR, and combines that with contrast, polarity, logo coverage vs. error correction, quiet zone and eye-shape risk (`circle` eyes only read in lenient decoders; retired `curly` eyes in saved designs fail strict ones).
+`getScanScore(props)` estimates how reliably a design scans. It renders the code at 96, 160 and 320 px, simulates camera blur and contrast loss, decodes each with jsQR, and combines that with contrast (per-eye colors included), polarity, logo coverage vs. error correction, a logo moved over a corner eye or the bottom-right alignment pattern, quiet zone and eye-shape risk (`circle` eyes only read in lenient decoders; retired `curly` eyes in saved designs fail strict ones). Known-weak style pairs come from `getStylePairRisk`; a `circle` centre inside square-cornered eyes is flagged as `sharp-dot-eye` (missed by jsQR in sharp renders) without lowering the score.
 
 ```ts
 import { getScanScore, getImageScanScore } from "qrdx";
