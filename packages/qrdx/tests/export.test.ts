@@ -310,13 +310,21 @@ describe("getQRData", () => {
     expect(data.imageSettings).toBeUndefined();
   });
 
-  it("adds an excavated 25% logo only when one is given and not hidden", () => {
-    expect(getQRData({ value: VALUE, logo: "data:,x" }).imageSettings).toEqual({
-      src: "data:,x",
-      width: 256,
-      height: 256,
-      excavate: true,
-    });
+  it("adds an excavated logo only when one is given and not hidden", () => {
+    const settings = getQRData({ value: VALUE, logo: "data:,x" }).imageSettings;
+    expect(settings).toMatchObject({ src: "data:,x", excavate: true });
+    // This short code repairs less than a 25% logo spoils (logo-budget.ts)
+    expect(settings?.width).toBeLessThan(256);
+    expect(settings?.height).toBe(settings?.width);
+    // A long code at H keeps the full 25%
+    expect(
+      getQRData({
+        value: `${VALUE}/${"x".repeat(120)}`,
+        level: "H",
+        margin: 4,
+        logo: "data:,x",
+      }).imageSettings?.width
+    ).toBe(256);
     expect(
       getQRData({ value: VALUE, logo: "data:,x", hideLogo: true }).imageSettings
     ).toBeUndefined();

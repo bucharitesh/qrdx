@@ -3,6 +3,7 @@
 import { cn } from "@repo/design-system/lib/utils";
 import { QRCode } from "qrdx";
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
+import { styleEngineOptions } from "@/lib/qr-design/engine-options";
 import type { ThemeStyles } from "@/types/theme";
 
 /** A community design drawn with `value` (in the browser; nothing is sent). */
@@ -38,6 +39,7 @@ export function DesignQr({
         margin={style.margin}
         templateId={style.templateId}
         value={value || " "}
+        {...styleEngineOptions(style)}
       />
     </div>
   );

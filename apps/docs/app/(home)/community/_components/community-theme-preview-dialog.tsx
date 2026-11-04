@@ -27,6 +27,7 @@ import { useToggleLike } from "@/lib/hooks/themes";
 import { useSessionGuard } from "@/lib/hooks/use-gaurds";
 import { usePostLoginAction } from "@/lib/hooks/use-post-login-action";
 import { playgroundHref } from "@/lib/playground-links";
+import { styleEngineOptions } from "@/lib/qr-design/engine-options";
 import { soundEvent } from "@/lib/sound/emit";
 import { useQREditorStore } from "@/store/editor-store";
 import type { CommunityTheme } from "@/types/community";
@@ -260,6 +261,7 @@ export function CommunityThemePreviewDialog({
                     margin={styles.margin}
                     templateId={styles.templateId}
                     value={PREVIEW_VALUE}
+                    {...styleEngineOptions(styles)}
                   />
                 </div>
               </ExamplesPreviewContainer>

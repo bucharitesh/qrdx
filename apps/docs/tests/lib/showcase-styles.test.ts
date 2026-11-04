@@ -67,6 +67,9 @@ async function expectScans(label: string, props: QRProps) {
   );
 }
 
+/** Showcase styles whose centre and eye warn in sharp renders only. */
+const SHARP_RENDER_WARNINGS = new Set<string>(["dots"]);
+
 describe("showcase styles", () => {
   it.each(SHOWCASE_STYLE_NAMES)(
     "%s uses offered shapes and no weak pair",
@@ -81,7 +84,14 @@ describe("showcase styles", () => {
         pickableCornerEyeDotPatternSchema.safeParse(style.cornerEyeDotPattern)
           .success,
       ).toBe(true);
-      expect(getStylePairRisk(style)).toBeNull();
+      const risk = getStylePairRisk(style);
+      // Sharp-render warnings (one strict decoder, screens and sharp prints)
+      // are listed so a new one shows up here; they await a phone check.
+      if (SHARP_RENDER_WARNINGS.has(name)) {
+        expect(risk?.kind).toBe("sharp-dot-eye");
+      } else {
+        expect(risk).toBeNull();
+      }
     },
   );
 

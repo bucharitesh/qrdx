@@ -5,6 +5,7 @@ import qrcodegen from "./codegen";
 import { DEFAULT_MARGIN, ERROR_LEVEL_MAP } from "./constants";
 import { downloadFile } from "./download";
 import { getFrameLayout, isFrameActive } from "./frame";
+import { getLayoutMargin } from "./qr-shape";
 import { resolveErrorLevel } from "./utils";
 import { COORD_DECIMALS, fmt } from "./utils/fmt";
 import { type RGBAColor, rgbToCmyk } from "./utils/parse-color";
@@ -97,10 +98,14 @@ function toMillimetres(value: number, unit: PrintUnit = "mm"): number {
 /** Modules across the code for these props, margin included. */
 export function getQRModuleCount(props: QRProps): number {
   const level = resolveErrorLevel(props);
-  const margin = props.margin ?? DEFAULT_MARGIN;
+  const symbol = qrcodegen.QrCode.encodeText(
+    props.value,
+    ERROR_LEVEL_MAP[level]
+  ).size;
+  // A circle code is drawn further in, inside its disc
   return (
-    qrcodegen.QrCode.encodeText(props.value, ERROR_LEVEL_MAP[level]).size +
-    margin * 2
+    symbol +
+    getLayoutMargin(symbol, props.margin ?? DEFAULT_MARGIN, props.shape) * 2
   );
 }
 
@@ -311,6 +316,19 @@ class PdfPainter extends SvgPainter {
     this.pdf.clip(state.fillRule === "evenodd" ? "evenodd" : undefined);
     this.pdf.discardPath();
     internals.write(`${formatMatrix(matrix)} cm /${name} sh`);
+    this.pdf.restoreGraphicsState();
+  }
+
+  /** `q <path> W n`: everything until `endClip` stays inside the path. */
+  override beginClip(segments: Segment[], matrix: Matrix, evenOdd: boolean) {
+    this.pdf.saveGraphicsState();
+    this.tracePath(segments, matrix);
+    this.pdf.clip(evenOdd ? "evenodd" : undefined);
+    this.pdf.discardPath();
+    return true;
+  }
+
+  override endClip() {
     this.pdf.restoreGraphicsState();
   }
 

@@ -79,6 +79,7 @@ import {
   scanDistanceForPrintWidth,
   scanDistanceUnit,
 } from "@/lib/print-size";
+import { styleEngineOptions } from "@/lib/qr-design/engine-options";
 import { useQREditorStore } from "@/store/editor-store";
 import { usePreferencesStore } from "@/store/preferences-store";
 import type { DownloadOptions as DownloadOptionsType } from "@/types/theme";
@@ -216,6 +217,10 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
         bodyPattern: themeState.styles.bodyPattern,
         hideLogo: !themeState.styles.showLogo,
         logo: themeState.styles.customLogo ?? DEFAULT_QR_LOGO,
+        // Logo clear space and position are in modules
+        level: themeState.styles.level,
+        margin: themeState.styles.margin,
+        ...styleEngineOptions(themeState.styles),
       }),
       level: themeState.styles.level,
       cornerEyePattern: themeState.styles.cornerEyePattern,

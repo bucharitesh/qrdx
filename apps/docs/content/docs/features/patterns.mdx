@@ -59,7 +59,19 @@ Control the dot inside each corner marker. There are {facts.eyeCentres} corner e
 
 `diamond` bodies next to `square` eyes, `pacman` next to `rounded` and `small-square` next to `square` or `rounded` eyes are missed up close; the playground won't combine them, they ship as `WEAK_BODY_EYES`, and `getStylePairRisk(props)` returns the warning the scan score shows.
 
+A `circle` center inside eyes with square corners (`square`, `rounded`, `extra-rounded` and most others) can be missed by strict decoders in sharp renders: on screens, in PNG exports and in large prints. jsQR misses it at some sizes and zbar reads it. Solid bodies (`square`, `liquid`, `classy`, `classy-rounded`) usually still read, and `gear`, `circle` and `octagon` eyes are unaffected. The scan score warns about it (`style-pair`) and you can still pick it. The pairs ship as `WEAK_SHARP_DOT_EYES` (with `SHARP_DOT_EYE_SAFE_BODIES`), and a `rounded` center avoids the problem.
+
 `curly` eyes and `diamond`, `star` and `banner` centers were retired because they don't scan reliably. Designs saved with them still render, but they are no longer offered or listed (see [Retired shapes](/docs/styles#retired-shapes)).
+
+## Circle codes
+
+`shape="circle"` puts the code in a disc and fills the rest of it with decorative modules in the same dot shape. The real code keeps a light ring of `margin` modules around it (at least 3), and scanners read only the code in the middle. The disc is bigger than the code, so print it a little larger for the same scan distance; the print-size calculator counts the whole disc.
+
+```tsx
+<QRCode value="https://example.com" shape="circle" bodyPattern="rounded" />
+```
+
+In our decode tests circle codes read like square ones with solid dot shapes (`square`, `rounded`, `classy`, `liquid`). In the playground it is **Design → Code shape**.
 
 ## Per-eye colors
 
@@ -76,7 +88,9 @@ Control the dot inside each corner marker. There are {facts.eyeCentres} corner e
 />
 ```
 
-Keep every eye dark against the background: decoders find the code by its three eyes.
+Keep every eye dark against the background: decoders find the code by its three eyes. The scan score checks each eye's own colors for contrast.
+
+In the playground, **Design → Eye colors** sets a frame and center color for each eye, and **Design → Dot size** sets `moduleScale` within the range the current dot shape allows.
 
 ## Combine Patterns
 

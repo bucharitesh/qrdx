@@ -338,6 +338,18 @@ class EpsPainter extends SvgPainter {
     return ops.join(" ");
   }
 
+  /** `gsave <path> clip n`: everything until `endClip` stays inside it. */
+  override beginClip(segments: Segment[], matrix: Matrix, evenOdd: boolean) {
+    this.out.push(
+      `gsave ${this.tracePath(segments, matrix)} ${evenOdd ? "eoclip" : "clip"} n`
+    );
+    return true;
+  }
+
+  override endClip() {
+    this.out.push("grestore");
+  }
+
   rect(color: RGBAColor, x: number, y: number, width: number, height: number) {
     this.out.push(
       `${this.color(color)} n ${fmt(x)} ${fmt(y)} m ${fmt(x + width)} ${fmt(y)} l ${fmt(x + width)} ${fmt(y + height)} l ${fmt(x)} ${fmt(y + height)} l h f`
