@@ -12,6 +12,7 @@ export const metadata: Metadata = createMetadata({
   description:
     "Report a QRdx QR code that leads to phishing, malware, scams or other harmful content. We review every report and switch off codes that break our terms.",
   path: "/report-abuse",
+  ownOgImage: true,
 });
 
 const OWN_LINK = /^\/(?:q|p)\/([A-Za-z0-9_-]{3,64})\/?$/;

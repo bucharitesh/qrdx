@@ -91,8 +91,9 @@ export function ThemeCard({ theme, workspace, canCopyToTeam }: ThemeCardProps) {
   const isTeamTheme = theme.scope === "team";
   // Only the active workspace's own themes can be its default.
   const canSetDefault = theme.canEdit && theme.scope === workspace;
-  // Community publishing stays personal: the gallery credits one author.
-  const canPublish = !isTeamTheme;
+  // Your themes, and a workspace's themes for its owners and admins. The
+  // community item is a snapshot credited to whoever publishes it.
+  const canPublish = !isTeamTheme || theme.canEdit;
   const busy = isPending || deleteThemeMutation.isPending;
 
   const run = (
@@ -400,6 +401,7 @@ export function ThemeCard({ theme, workspace, canCopyToTeam }: ThemeCardProps) {
         themeId={theme.id}
         themeName={theme.name}
         themeStyle={theme.style}
+        workspaceTheme={isTeamTheme}
       />
 
       <Dialog onOpenChange={setShowEditTagsDialog} open={showEditTagsDialog}>

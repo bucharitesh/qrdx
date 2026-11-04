@@ -91,12 +91,15 @@ export function ScanScoreDemo() {
             <QRCodeSVG {...props} />
           </QrTile>
           {checking && !reduce && (
+            // The sweep moves by transform, not `top`, so it never counts as
+            // layout shift. The layer is the tile's height, so 8% and 90%
+            // of it are the same positions `top` used.
             <motion.span
               aria-hidden="true"
-              initial={{ top: "8%", opacity: 0 }}
-              animate={{ top: ["8%", "90%"], opacity: 1 }}
+              initial={{ y: "8%", opacity: 0 }}
+              animate={{ y: ["8%", "90%"], opacity: 1 }}
               transition={{
-                top: {
+                y: {
                   duration: 1,
                   ease: "easeInOut",
                   repeat: Number.POSITIVE_INFINITY,
@@ -104,8 +107,10 @@ export function ScanScoreDemo() {
                 },
                 opacity: { duration: 0.2 },
               }}
-              className="pointer-events-none absolute inset-x-2 h-0.5 rounded-full bg-primary"
-            />
+              className="pointer-events-none absolute inset-x-2 inset-y-0"
+            >
+              <span className="block h-0.5 rounded-full bg-primary" />
+            </motion.span>
           )}
         </div>
         <div className="flex min-w-0 max-w-48 flex-1 flex-col gap-4">
