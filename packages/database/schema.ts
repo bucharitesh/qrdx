@@ -27,6 +27,11 @@ export interface UserSettings {
    * there (packages/auth/workspace-hooks.ts). Written by the app only.
    */
   lastWorkspaceId?: string;
+  /**
+   * "What's new": the newest changelog day (YYYY-MM-DD) the person has seen
+   * (apps/docs/actions/changelog.ts). Written by the app only.
+   */
+  changelogSeenAt?: string;
 }
 
 export const page = pgTable("page", {
