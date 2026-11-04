@@ -8,7 +8,9 @@ import {
   CORNER_EYE_DOT_PATTERNS,
   CORNER_EYE_PATTERNS,
   FRAME_STYLES,
+  GRADIENT_FRAME_DEFAULTS,
   getContrastRatio,
+  mixFrameColors,
 } from "qrdx";
 import type { ColorConfig } from "qrdx/types";
 import { describe, expect, it } from "vitest";
@@ -140,7 +142,18 @@ describe("the built-in library", () => {
       if (!frame || frame.style === "custom") continue;
       if (!(frame.text || frame.secondaryText)) continue;
       const onBackground = LABEL_ON_BACKGROUND.has(frame.style);
-      const label = frame.textColor || (onBackground ? frame.color : "#FFFFFF");
+      // Each style's default label color (packages/qrdx/src/frame-styles.ts).
+      const label =
+        frame.textColor ||
+        (frame.style === "gradient-border"
+          ? mixFrameColors(
+              frame.color || GRADIENT_FRAME_DEFAULTS.from,
+              frame.secondaryColor || GRADIENT_FRAME_DEFAULTS.to,
+              0.5,
+            )
+          : onBackground
+            ? frame.color
+            : "#FFFFFF");
       const backdrop = onBackground ? firstStop(bgColor) : frame.color;
       if (!(label && backdrop)) continue;
       const ratio = getContrastRatio(label, backdrop);
