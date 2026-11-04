@@ -145,6 +145,8 @@ const teams = await import("@/actions/organizations");
 const join = await import("@/actions/workspace-join");
 const logo = await import("@/actions/workspace-logo");
 const themes = await import("@/actions/qr-themes");
+const publicStats = await import("@/actions/public-stats");
+const utmTemplates = await import("@/actions/utm-templates");
 const apiKeys = await import("@/app/settings/developers/_lib/api-key-actions");
 const webhooks = await import("@/app/dashboard/webhooks/_lib/actions");
 const { resolveApiCaller } = await import("@/app/api/v1/codes/_lib/api");
@@ -324,6 +326,17 @@ function seed(actor: string) {
       inviterId: "u_owner",
     },
   ]);
+  fakeDb.seed("utmTemplate", [
+    {
+      id: "utm_1",
+      userId: actor,
+      organizationId: "org_t",
+      name: "Spring",
+      utm: { source: "qr" },
+      createdAt: NOW,
+      updatedAt: NOW,
+    },
+  ]);
   fakeDb.seed("qrPreset", [
     {
       id: "theme_1",
@@ -354,6 +367,8 @@ const TABLES = [
   "qrPreset",
   "apiKey",
   "workspaceJoinLink",
+  "codePublicStats",
+  "utmTemplate",
 ];
 const snapshot = () =>
   JSON.stringify(TABLES.map((table) => fakeDb.rows(table)));
@@ -541,6 +556,43 @@ const CASES: [string, Action, () => Promise<unknown>][] = [
     "content.write",
     () =>
       moveCode.moveQrCodeToWorkspace({ id: "code_1", organizationId: "org_b" }),
+  ],
+  // Share analytics (public stats) and UTM templates, from #198
+  [
+    "setPublicStatsShareAction (on)",
+    "content.write",
+    () => publicStats.setPublicStatsShareAction({ codeId: "code_1", on: true }),
+  ],
+  [
+    "setPublicStatsShareAction (off)",
+    "content.write",
+    () =>
+      publicStats.setPublicStatsShareAction({ codeId: "code_1", on: false }),
+  ],
+  [
+    "resetPublicStatsShareAction",
+    "content.write",
+    () => publicStats.resetPublicStatsShareAction({ codeId: "code_1" }),
+  ],
+  [
+    "saveUtmTemplate",
+    "content.write",
+    () =>
+      utmTemplates.saveUtmTemplate({
+        name: "Autumn",
+        utm: { source: "qr", medium: "print" },
+      }),
+  ],
+  [
+    "renameUtmTemplateAction",
+    "content.write",
+    () =>
+      utmTemplates.renameUtmTemplateAction({ id: "utm_1", name: "Renamed" }),
+  ],
+  [
+    "deleteUtmTemplateAction",
+    "content.write",
+    () => utmTemplates.deleteUtmTemplateAction({ id: "utm_1" }),
   ],
   // Pages, responses, files
   [
