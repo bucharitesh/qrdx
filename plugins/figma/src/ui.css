@@ -261,6 +261,26 @@ textarea {
   flex: 1;
 }
 
+.link-button {
+  justify-self: center;
+  padding: 2px 4px;
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  font-size: 11px;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.link-button:hover {
+  color: var(--text);
+  text-decoration-color: currentColor;
+}
+
 .sr-only {
   position: absolute;
   width: 1px;

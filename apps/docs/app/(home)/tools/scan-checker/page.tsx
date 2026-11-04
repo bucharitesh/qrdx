@@ -6,6 +6,7 @@ import { loopVideos } from "@/components/mockups/visuals";
 import { FaqList } from "@/components/sections/tools/faq-list";
 import { ToolHero } from "@/components/sections/tools/tool-hero";
 import { createMetadata } from "@/lib/metadata";
+import { playgroundHref } from "@/lib/playground-links";
 import { PageScanChecker } from "./page-scan-checker";
 
 export const metadata: Metadata = createMetadata({
@@ -98,7 +99,7 @@ export default function ScanCheckerPage() {
           <p className="text-sm text-muted-foreground leading-relaxed">
             The{" "}
             <Link
-              href="/playground"
+              href={playgroundHref()}
               className="font-medium text-foreground underline decoration-foreground/30 underline-offset-4 transition-colors hover:decoration-foreground"
             >
               QRdx editor

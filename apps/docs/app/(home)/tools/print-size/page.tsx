@@ -6,6 +6,7 @@ import { FaqList } from "@/components/sections/tools/faq-list";
 import { PrintSizeCalculator } from "@/components/sections/tools/print-size-calculator";
 import { ToolHero } from "@/components/sections/tools/tool-hero";
 import { createMetadata } from "@/lib/metadata";
+import { playgroundHref } from "@/lib/playground-links";
 import {
   DISTANCE_TO_SIZE_RATIO,
   MIN_MODULE_MM,
@@ -125,7 +126,7 @@ export default function PrintSizePage() {
               </Link>{" "}
               or the{" "}
               <Link
-                href="/playground"
+                href={playgroundHref()}
                 className="font-medium text-foreground underline decoration-foreground/30 underline-offset-4 transition-colors hover:decoration-foreground"
               >
                 full editor

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { AsciiField } from "@/components/fx/ascii-field";
 import { NotFoundCode } from "@/components/not-found-code";
 import { TrackOnMount } from "@/lib/analytics/react";
+import { playgroundHref, withHandoffRef } from "@/lib/playground-links";
 
 export const metadata: Metadata = {
   title: "Page not found",
@@ -38,7 +39,7 @@ export default function NotFound() {
             </Link>
           </Button>
           <Button asChild variant="outline">
-            <Link href="/playground">
+            <Link href={withHandoffRef(playgroundHref(), "not-found")}>
               Open the playground
               <ArrowRight className="size-4" />
             </Link>

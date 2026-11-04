@@ -22,6 +22,7 @@ import { maxYearlySavingsPercent } from "@/components/sections/pricing/plan-cont
 import { siteConfig } from "@/config/site";
 import { track } from "@/lib/analytics";
 import { usePostLoginAction } from "@/lib/hooks/use-post-login-action";
+import { playgroundHref } from "@/lib/playground-links";
 import {
   BILLING_INTERVALS,
   type BillingInterval,
@@ -368,7 +369,7 @@ export function PricingSection({
       action: {
         button: (
           <Button asChild className="w-full" variant="outline">
-            <Link href={isSignedIn ? "/dashboard" : "/playground"}>
+            <Link href={isSignedIn ? "/dashboard" : playgroundHref()}>
               {isSignedIn ? "Go to dashboard" : pricing.tiers.free.cta}
             </Link>
           </Button>

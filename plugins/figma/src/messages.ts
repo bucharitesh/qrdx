@@ -1,3 +1,4 @@
+import { isPlaygroundLink } from "./playground-link";
 import { type QRStyle, sanitizeStyle } from "./presets";
 
 // Messages between the UI iframe (ui.tsx) and the main thread (code.ts).
@@ -17,7 +18,9 @@ export interface QRMeta extends QRStyle {
 
 export type UIMessage =
   | { type: "ready" }
-  | { type: "insert" | "replace"; svg: string; meta: QRMeta };
+  | { type: "insert" | "replace"; svg: string; meta: QRMeta }
+  /** Open the QRdx playground (a link from playground-link.ts) in the browser. */
+  | { type: "open-playground"; link: string };
 
 export interface MainMessage {
   type: "selection";
@@ -60,6 +63,11 @@ export function parseUIMessage(input: unknown): UIMessage | null {
   if (typeof input !== "object" || input === null) return null;
   const message = input as Record<string, unknown>;
   if (message.type === "ready") return { type: "ready" };
+  if (message.type === "open-playground") {
+    return isPlaygroundLink(message.link)
+      ? { type: "open-playground", link: message.link }
+      : null;
+  }
   if (message.type !== "insert" && message.type !== "replace") return null;
   const { svg } = message;
   const meta = toMeta(message.meta);

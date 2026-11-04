@@ -32,6 +32,11 @@ export const BLOG_ART = {
     size: COVER,
     codes: [{ id: "code", value: url("/guarantee"), style: "classic" }],
   },
+  launchCover: {
+    file: "launching-qrdx/cover",
+    size: COVER,
+    codes: [{ id: "code", value: url("/"), style: "signature" }],
+  },
   sizeCover: {
     file: "how-big-should-a-qr-code-be/cover",
     size: COVER,

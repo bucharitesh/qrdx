@@ -61,6 +61,7 @@ import {
   useUpdateCommunityThemeTags,
 } from "@/lib/hooks/themes/use-community-themes";
 import { useDeleteTheme } from "@/lib/hooks/themes/use-theme-mutations";
+import { playgroundHref } from "@/lib/playground-links";
 import { soundEvent } from "@/lib/sound/emit";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 import type { SavedTheme, ThemeActionResult } from "../_lib/theme";
@@ -143,7 +144,7 @@ export function ThemeCard({ theme, workspace, canCopyToTeam }: ThemeCardProps) {
 
   const handleShare = async () => {
     const url = new URL(
-      `/playground/${encodeURIComponent(theme.id)}`,
+      playgroundHref({ themeId: theme.id }),
       window.location.origin,
     ).toString();
     try {
@@ -178,7 +179,7 @@ export function ThemeCard({ theme, workspace, canCopyToTeam }: ThemeCardProps) {
       <Link
         aria-label={`Open ${theme.name} in the playground`}
         className="bg-muted/40 flex items-center justify-center p-6"
-        href={`/playground/${theme.id}`}
+        href={playgroundHref({ themeId: theme.id })}
       >
         <CodeQr
           className="w-32 transition-transform duration-300 group-hover:scale-105"
@@ -234,7 +235,7 @@ export function ThemeCard({ theme, workspace, canCopyToTeam }: ThemeCardProps) {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-52">
             <DropdownMenuItem asChild>
-              <Link href={`/playground/${theme.id}`}>
+              <Link href={playgroundHref({ themeId: theme.id })}>
                 <ExternalLink className="size-4" />
                 {theme.canEdit ? "Edit in playground" : "Open in playground"}
               </Link>

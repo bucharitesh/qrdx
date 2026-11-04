@@ -183,7 +183,7 @@ Revoke the key in Settings → API keys & apps when the agent no longer needs it
 ## Limits
 
 - **The MCP tools make static QR codes.** They render images and build payloads (Wi-Fi, contacts, email, SMS, map locations). They can't create dynamic codes or read anything from a QRdx account; use the REST API for that.
-- **No logos or gradients** from the MCP server or the image API: they draw solid colors. Use the [playground](/playground) or the [React library](/docs/getting-started) for logos and gradients.
+- **No logos or gradients** from the MCP server or the image API: they draw solid colors. Use the [playground](/playground?tab=design) or the [React library](/docs/getting-started) for logos and gradients.
 - **Image URLs contain the encoded data.** Don't put passwords or other secrets in them, such as a private Wi-Fi password in a public README.
 - **Rate limits apply per IP address** to the MCP server and the image API; the numbers are on the [MCP server](/docs/developers/mcp#privacy-and-limits) and [Image API](/docs/developers/image-api#limits) pages.
 - **OAuth tokens act on the person's own workspace only.** To work in another workspace, use an API key created in it. There's no client-credentials grant.

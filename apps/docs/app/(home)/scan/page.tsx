@@ -25,6 +25,7 @@ import { JsonLd } from "@/components/sections/tools/json-ld";
 import { ToolHero } from "@/components/sections/tools/tool-hero";
 import { isFeatureAvailable } from "@/lib/feature-availability";
 import { baseUrl, createMetadata } from "@/lib/metadata";
+import { playgroundHref } from "@/lib/playground-links";
 import { isWebRiskConfigured } from "@/lib/safety/web-risk";
 
 export const metadata: Metadata = createMetadata({
@@ -239,7 +240,7 @@ export default function ScanPage() {
                 QR code generators
               </NextLink>{" "}
               or the{" "}
-              <NextLink href="/playground" className={linkClass}>
+              <NextLink href={playgroundHref()} className={linkClass}>
                 editor
               </NextLink>
               , and test a design with the{" "}

@@ -8,6 +8,7 @@ import {
   type QRMeta,
   type UIMessage,
 } from "./messages";
+import { playgroundLink } from "./playground-link";
 import {
   buildQRProps,
   byteLength,
@@ -121,6 +122,18 @@ function App() {
       ...current,
       style: { ...current.style, ...patch },
     }));
+
+  // Opens in the browser through the main thread (figma.openExternal).
+  function openPlayground() {
+    post({
+      type: "open-playground",
+      link: playgroundLink({
+        value: text,
+        presetId: form.style.presetId,
+        customColors: hasColorOverrides,
+      }),
+    });
+  }
 
   async function submit(mode: "insert" | "replace") {
     if (!(canSubmit && size)) return;
@@ -322,6 +335,9 @@ function App() {
             {selected ? "Insert new" : "Insert QR code"}
           </button>
         </div>
+        <button className="link-button" onClick={openPlayground} type="button">
+          More options in the QRdx playground
+        </button>
       </footer>
     </main>
   );
