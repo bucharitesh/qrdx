@@ -5,6 +5,7 @@
 import { describe, expect, it } from "vitest";
 import { thumbProps } from "@/components/editor/theme-gallery";
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
+import { designQRProps } from "@/lib/qr-design/props";
 import { defaultPresets } from "@/utils/qr-presets";
 
 const SIZE = 96;
@@ -24,8 +25,19 @@ describe("theme gallery thumbnails", () => {
     (id) => {
       const props = thumbProps(styles(id), SIZE);
       expect(props.imageSettings?.src).toBe(DEFAULT_QR_LOGO);
-      // The editor draws a 256 px logo on a 1024 px code.
-      expect(props.imageSettings?.width).toBeCloseTo(SIZE / 4, 5);
+      // The logo the editor draws on a 1024 px code (capped for the code's
+      // length and error correction), scaled to the thumbnail.
+      const editor = designQRProps(
+        "https://qrdx.dev",
+        styles(id),
+        DEFAULT_QR_LOGO,
+      ).imageSettings;
+      expect(editor?.width).toBeGreaterThan(0);
+      expect(props.imageSettings?.width).toBeCloseTo(
+        ((editor?.width ?? 0) * SIZE) / 1024,
+        5,
+      );
+      expect(props.imageSettings?.width).toBeLessThanOrEqual(SIZE / 4);
       expect(props.size).toBe(SIZE);
     },
   );
