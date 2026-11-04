@@ -824,3 +824,120 @@ describe("PATCH and DELETE /v1/codes/{id}", () => {
     expect(response.status).toBe(400);
   });
 });
+
+// ─── Logos in a code's style ────────────────────────────────────────────────
+
+describe("logos in a code's style", () => {
+  const ownFile = (id: string, overrides: Record<string, unknown> = {}) => ({
+    id,
+    userId: "u_alice",
+    organizationId: ownWorkspaceId("u_alice"),
+    filename: "logo.png",
+    mime: "image/png",
+    size: 2048,
+    status: "ready",
+    storageKey: `files/u-alice/${id}.png`,
+    createdAt: NOW,
+    ...overrides,
+  });
+
+  it("takes an uploaded logo by file id and keeps its link", async () => {
+    fakeDb.seed("fileAsset", [ownFile("cm5logo0brand0mark000001")]);
+    const response = await create(
+      {
+        destinationUrl: "https://example.com/logo",
+        style: { fgColor: "#111111", logoFileId: "cm5logo0brand0mark000001" },
+      },
+      write,
+    );
+    expect(response.status).toBe(201);
+    const { data } = await response.json();
+    expect(data.style).toEqual({
+      fgColor: "#111111",
+      showLogo: true,
+      customLogo: `${ORIGIN}/api/files/cm5logo0brand0mark000001`,
+    });
+  });
+
+  it("refuses a file of another workspace, a file that isn't an image, and logos from other sites", async () => {
+    fakeDb.seed("fileAsset", [
+      ownFile("cm5bob0logo0000000000001", {
+        userId: "u_bob",
+        organizationId: ownWorkspaceId("u_bob"),
+      }),
+      ownFile("cm5alice0menu0pdf0000001", { mime: "application/pdf" }),
+    ]);
+    const other = await create(
+      {
+        destinationUrl: "https://example.com",
+        style: { logoFileId: "cm5bob0logo0000000000001" },
+      },
+      write,
+    );
+    expect(other.status).toBe(404);
+    const pdf = await create(
+      {
+        destinationUrl: "https://example.com",
+        style: { logoFileId: "cm5alice0menu0pdf0000001" },
+      },
+      write,
+    );
+    expect(pdf.status).toBe(400);
+    const remote = await create(
+      {
+        destinationUrl: "https://example.com",
+        style: { customLogo: "https://tracker.example/pixel.png" },
+      },
+      write,
+    );
+    expect(remote.status).toBe(400);
+    expect(JSON.stringify(await remote.json())).toContain("logoFileId");
+    expect(fakeDb.rows("qrCode")).toHaveLength(0);
+  });
+
+  it("takes a quick logo icon and image data URLs as the editor saves them", async () => {
+    const icon = await create(
+      { destinationUrl: "https://example.com", style: { logoIcon: "wifi" } },
+      write,
+    );
+    expect(icon.status).toBe(201);
+    expect((await icon.json()).data.style).toMatchObject({
+      showLogo: true,
+      customLogo: expect.stringContaining("data-qrdx-icon%3D%22wifi%22"),
+    });
+    const dataUrl = await create(
+      {
+        destinationUrl: "https://example.com",
+        style: { showLogo: true, customLogo: "data:image/png;base64,iVBORw0K" },
+      },
+      write,
+    );
+    expect(dataUrl.status).toBe(201);
+  });
+
+  it("lets a PATCH send back the logo the code already has", async () => {
+    fakeDb.seed("qrCode", [
+      code({
+        style: { showLogo: true, customLogo: "https://cdn.example/old.png" },
+      }),
+    ]);
+    const same = await patch(
+      "code_1",
+      {
+        style: {
+          fgColor: "#222222",
+          showLogo: true,
+          customLogo: "https://cdn.example/old.png",
+        },
+      },
+      write,
+    );
+    expect(same.status).toBe(200);
+    const changed = await patch(
+      "code_1",
+      { style: { customLogo: "https://cdn.example/new.png" } },
+      write,
+    );
+    expect(changed.status).toBe(400);
+  });
+});
