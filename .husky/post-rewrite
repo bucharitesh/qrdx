@@ -1,0 +1,3 @@
+# git pull --rebase / git rebase: rebuild the engine if the rebase changed it.
+[ "$1" = "rebase" ] && sh scripts/rebuild-engine-if-changed.sh "$(git rev-parse -q --verify ORIG_HEAD)" "$(git rev-parse HEAD)"
+exit 0
