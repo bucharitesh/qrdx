@@ -51,6 +51,7 @@ import { QRCode } from 'qrdx';
 | `moduleScale` | `number` | `1` | Data module size, 0.5 to 1. Each pattern stops at the smallest size that still scans (`MODULE_SCALE_FLOOR`) |
 | `frame` | `QRFrame` | — | Call-to-action frame; see [Frames & print](/docs/features/frames) |
 | `art` | `QRArt` | — | Blend a logo or photo into the modules (Logo QR, Image QR); see [Art QR](/docs/features/art-qr) |
+| `frameLabelMarkers` | `boolean` | `false` | For editors: marks each frame label `<text>` with `data-qrdx-frame-label` (`"text"`, `"secondaryText"` or a spec label's id). Downloads and exports never include it |
 
 All {facts.bodyPatterns} body patterns, {facts.eyeShapes} eyes, {facts.eyeCentres} eye centers and {facts.frames} frames are shown live in [Shapes, eyes and frames](/docs/styles).
 
