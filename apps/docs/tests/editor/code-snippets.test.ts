@@ -9,6 +9,7 @@ import { OFFICIAL_FRAMES } from "qrdx";
 import { colorConfigSchema } from "qrdx/types";
 import { describe, expect, it } from "vitest";
 import { designQrInputSchema } from "@/app/api/mcp/design";
+import { codeStyleInputSchema } from "@/app/api/v1/codes/_lib/schemas";
 import { qrImageQuerySchema } from "@/app/api/v1/qr/_lib/query";
 import { createCodeSchema } from "@/app/dashboard/codes/_lib/qr-codes";
 import {
@@ -31,7 +32,9 @@ import {
 } from "@/components/editor/action-bar/code-snippets";
 import { buildOpenApiDocument } from "@/lib/openapi/document";
 import { CODE_LANGS } from "@/lib/playground-links";
+import { parseStyleQuery } from "@/lib/qr-api/style";
 import { validateDesignContent } from "@/lib/qr-design/content";
+import { logoIconDataUrl } from "@/lib/qr-design/logo";
 import { type ThemeStyles, themeStylePropsSchema } from "@/types/theme";
 
 const root = join(import.meta.dirname, "..", "..");
@@ -84,6 +87,14 @@ const uploadedLogo: ThemeStyles = {
 
 const qrdxLogo: ThemeStyles = { ...plain, showLogo: true };
 
+/** One of the editor's quick icons, stored as the editor stores it. */
+const iconLogo: ThemeStyles = {
+  ...plain,
+  level: "H",
+  showLogo: true,
+  customLogo: logoIconDataUrl("wifi"),
+};
+
 const builtInFrame: ThemeStyles = {
   ...plain,
   frame: {
@@ -130,6 +141,7 @@ const FIXTURES = {
   gradient,
   uploadedLogo,
   qrdxLogo,
+  iconLogo,
   builtInFrame,
   customFrame,
   art,
@@ -253,7 +265,11 @@ describe("every serializer", () => {
 
   it("lists art and the uploaded logo as left out everywhere", () => {
     for (const [tab, serialize] of Object.entries(ALL_SERIALIZERS)) {
-      expect(serialize(urlInput(art)).omitted, tab).toContain(LEFT_OUT.art);
+      // The API tabs say why: art is built in the browser.
+      const artNote = ["image", "api", "mcp"].includes(tab)
+        ? LEFT_OUT.apiArt
+        : LEFT_OUT.art;
+      expect(serialize(urlInput(art)).omitted, tab).toContain(artNote);
       const logo = serialize(urlInput(uploadedLogo)).omitted.join(" | ");
       expect(logo, tab).toMatch(/Your logo|The logo/);
     }
@@ -459,8 +475,16 @@ function imageQuery(url: string) {
   }
   const result = qrImageQuerySchema.safeParse(query);
   expect(result.success, JSON.stringify(result.error?.issues)).toBe(true);
+  // `style` passes the same strict check the route runs.
+  if (query.style !== undefined) {
+    const style = parseStyleQuery(query.style);
+    expect(style.ok, JSON.stringify(style)).toBe(true);
+  }
   return query;
 }
+
+const styleOf = (url: string) =>
+  JSON.parse(new URL(url).searchParams.get("style") ?? "null");
 
 describe("imageSnippet", () => {
   it("never puts private content in the URL, only web addresses", () => {
@@ -522,27 +546,91 @@ describe("imageSnippet", () => {
     });
   });
 
-  it("draws gradients in their first color and says so", () => {
+  it("sends gradients and other colors in style, hex colors flat", () => {
     const { url, omitted } = imageSnippet(urlInput(gradient));
-    expect(imageQuery(url).fg).toBe("6366f1");
-    expect(omitted).toEqual([LEFT_OUT.imageGradients]);
+    const query = imageQuery(url);
+    expect(query.fg).toBeUndefined();
+    expect(query.eyeColor).toBe("111111");
+    expect(styleOf(url)).toEqual({
+      fgColor: {
+        type: "linear",
+        angle: 135,
+        stops: [
+          { color: "#6366f1", offset: 0 },
+          { color: "#a855f7", offset: 50 },
+          { color: "#ec4899", offset: 100 },
+        ],
+      },
+      bgColor: {
+        type: "radial",
+        stops: [
+          { color: "#ffffff", offset: 0 },
+          { color: "#eef2ff", offset: 100 },
+        ],
+      },
+    });
+    expect(omitted).toEqual([]);
+    const rgb = imageSnippet(urlInput({ ...plain, fgColor: "rgb(0 0 0)" }));
+    expect(styleOf(rgb.url)).toEqual({ fgColor: "rgb(0 0 0)" });
+    expect(rgb.omitted).toEqual([]);
   });
 
-  it("leaves out the logo, frames, art and non-hex colors", () => {
-    expect(imageSnippet(urlInput(qrdxLogo)).omitted).toEqual([LEFT_OUT.logo]);
-    expect(imageSnippet(urlInput(uploadedLogo)).omitted).toEqual([
-      LEFT_OUT.uploadedLogo,
+  it("draws a gradient with too many stops, or a color the API refuses, in a safe way and says so", () => {
+    const stops = Array.from({ length: 9 }, (_, index) => ({
+      color: index % 2 ? "#000000" : "#333333",
+      offset: index * 12,
+    }));
+    const many = imageSnippet(
+      urlInput({ ...plain, fgColor: { type: "linear", stops, angle: 0 } }),
+    );
+    expect(imageQuery(many.url).fg).toBe("333333");
+    expect(many.omitted).toEqual([LEFT_OUT.imageGradients]);
+    const unsafe = imageSnippet(
+      urlInput({ ...plain, fgColor: "var(--brand)" }),
+    );
+    expect(imageQuery(unsafe.url).fg).toBeUndefined();
+    expect(unsafe.omitted).toEqual([LEFT_OUT.unsafeColors]);
+  });
+
+  it("puts a frame with only a label in flat parameters, and the rest in style", () => {
+    const label = imageSnippet(
+      urlInput({
+        ...plain,
+        frame: { style: "speech-bubble", text: "Scan me" },
+      }),
+    );
+    expect(imageQuery(label.url)).toMatchObject({
+      frame: "speech-bubble",
+      frameText: "Scan me",
+    });
+    expect(label.omitted).toEqual([]);
+    const colored = imageSnippet(urlInput(builtInFrame));
+    expect(imageQuery(colored.url).frame).toBeUndefined();
+    expect(styleOf(colored.url).frame).toEqual(builtInFrame.frame);
+    expect(colored.omitted).toEqual([]);
+    const custom = imageSnippet(urlInput(customFrame));
+    expect(styleOf(custom.url).frame).toMatchObject({
+      style: "custom",
+      text: "Free Wi-Fi",
+      spec: officialFrame.spec,
+    });
+    expect(custom.omitted).toEqual([]);
+  });
+
+  it("draws quick logo icons, and says why other logos and art stay out", () => {
+    const icon = imageSnippet(urlInput(iconLogo));
+    expect(imageQuery(icon.url).logoIcon).toBe("wifi");
+    expect(icon.url).not.toContain("data%3A");
+    expect(icon.omitted).toEqual([]);
+    expect(imageSnippet(urlInput(qrdxLogo)).omitted).toEqual([
+      LEFT_OUT.qrdxLogo,
     ]);
-    expect(imageSnippet(urlInput(builtInFrame)).omitted).toEqual([
-      LEFT_OUT.frame,
-    ]);
-    expect(imageSnippet(urlInput(customFrame)).omitted).toEqual([
-      LEFT_OUT.customFrame,
-    ]);
-    expect(imageSnippet(urlInput(art)).omitted).toEqual([LEFT_OUT.art]);
-    const rgb = imageSnippet(urlInput({ ...plain, fgColor: "rgb(0 0 0)" }));
-    expect(rgb.omitted).toEqual([LEFT_OUT.nonHexColors]);
-    expect(imageQuery(rgb.url).fg).toBeUndefined();
+    const uploaded = imageSnippet(urlInput(uploadedLogo));
+    expect(uploaded.omitted).toEqual([LEFT_OUT.imageUploadedLogo]);
+    expect(LEFT_OUT.imageUploadedLogo).toContain("logoFileId");
+    expect(imageQuery(uploaded.url).logoFileId).toBeUndefined();
+    expect(imageSnippet(urlInput(art)).omitted).toEqual([LEFT_OUT.apiArt]);
+    expect(LEFT_OUT.apiArt).toMatch(/browser/);
   });
 
   it("keeps newer and retired shapes and borders (the API draws them)", () => {
@@ -592,6 +680,7 @@ describe("restSnippet", () => {
     expect(style.customLogo).toBeUndefined();
     expect(style.showLogo).toBe(false);
     expect(omitted).toEqual([LEFT_OUT.restLogo]);
+    expect(LEFT_OUT.restLogo).toContain("logoFileId");
     // The QRdx logo needs no image, so it stays.
     expect(
       (restBody(restSnippet(urlInput(qrdxLogo)).code).style as ThemeStyles)
@@ -599,10 +688,38 @@ describe("restSnippet", () => {
     ).toBe(true);
   });
 
+  it("sends a quick icon as logoIcon and an uploaded file's link as logoFileId", () => {
+    const icon = restSnippet(urlInput(iconLogo));
+    const iconStyle = restBody(icon.code).style as Record<string, unknown>;
+    expect(iconStyle).toMatchObject({ showLogo: true, logoIcon: "wifi" });
+    expect(iconStyle.customLogo).toBeUndefined();
+    expect(codeStyleInputSchema.safeParse(iconStyle).success).toBe(true);
+    expect(icon.omitted).toEqual([]);
+    const file = restSnippet(
+      urlInput({
+        ...plain,
+        showLogo: true,
+        customLogo: "https://qrdx.dev/api/files/cm5logo0brand0mark000001",
+      }),
+    );
+    const fileStyle = restBody(file.code).style as Record<string, unknown>;
+    expect(fileStyle).toMatchObject({
+      showLogo: true,
+      logoFileId: "cm5logo0brand0mark000001",
+    });
+    expect(fileStyle.customLogo).toBeUndefined();
+    expect(file.omitted).toEqual([]);
+    // Only where they apply.
+    const plainStyle = restBody(restSnippet(urlInput(plain)).code)
+      .style as Record<string, unknown>;
+    expect(plainStyle.logoIcon).toBeUndefined();
+    expect(plainStyle.logoFileId).toBeUndefined();
+  });
+
   it("strips art and keeps frames, custom ones included", () => {
     const withArt = restSnippet(urlInput(art));
     expect((restBody(withArt.code).style as ThemeStyles).art).toBeUndefined();
-    expect(withArt.omitted).toEqual([LEFT_OUT.art]);
+    expect(withArt.omitted).toEqual([LEFT_OUT.apiArt]);
     const custom = restSnippet(urlInput(customFrame));
     const body = restBody(custom.code);
     expect(createCodeSchema.safeParse(body).success).toBe(true);
@@ -684,7 +801,7 @@ describe("mcpSnippet", () => {
     expect(omitted).toEqual([LEFT_OUT.gradientMiddle]);
   });
 
-  it("keeps built-in frames and leaves out custom ones", () => {
+  it("keeps built-in and custom frames", () => {
     const framed = mcpArgs(urlInput(builtInFrame));
     expect(framed.args.style.frame).toEqual({
       style: "banner-bottom",
@@ -694,18 +811,28 @@ describe("mcpSnippet", () => {
     });
     expect(framed.omitted).toEqual([]);
     const custom = mcpArgs(urlInput(customFrame));
-    expect(custom.args.style.frame).toBeUndefined();
-    expect(custom.omitted).toEqual([LEFT_OUT.customFrame]);
+    expect(custom.args.style.frame).toEqual({
+      style: "custom",
+      spec: officialFrame.spec,
+      text: "Free Wi-Fi",
+    });
+    expect(custom.omitted).toEqual([]);
     const hidden = mcpArgs(
       urlInput({ ...plain, frame: { style: "banner-top", text: "" } }),
     );
     expect(hidden.omitted).toEqual([LEFT_OUT.frameLabelHidden]);
   });
 
-  it("leaves out logos, art and retired shapes", () => {
-    expect(mcpArgs(urlInput(qrdxLogo)).omitted).toEqual([LEFT_OUT.logo]);
-    expect(mcpArgs(urlInput(uploadedLogo)).omitted).toEqual([LEFT_OUT.logo]);
-    expect(mcpArgs(urlInput(art)).omitted).toEqual([LEFT_OUT.art]);
+  it("draws quick icons, and leaves out other logos, art and retired shapes", () => {
+    const icon = mcpArgs(urlInput(iconLogo));
+    expect(icon.args.style.logo).toBe("wifi");
+    expect(icon.omitted).toEqual([]);
+    expect(mcpArgs(urlInput(qrdxLogo)).omitted).toEqual([LEFT_OUT.qrdxLogo]);
+    expect(mcpArgs(urlInput(uploadedLogo)).omitted).toEqual([
+      LEFT_OUT.mcpUploadedLogo,
+    ]);
+    expect(LEFT_OUT.mcpUploadedLogo).toContain("logo_file_id");
+    expect(mcpArgs(urlInput(art)).omitted).toEqual([LEFT_OUT.apiArt]);
     const retired = mcpArgs(urlInput(retiredShapes));
     expect(retired.omitted).toEqual([
       'The "curly" eye shape',
