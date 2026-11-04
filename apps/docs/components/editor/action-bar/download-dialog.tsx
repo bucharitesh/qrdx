@@ -50,6 +50,7 @@ import {
   getFrameDimensions,
   getPrintLayout,
   getQRData,
+  getQRModuleCount,
   getSVGString,
   PRESET_SIZES,
   type PrintColorMode,
@@ -66,8 +67,12 @@ import { InfoHint } from "@/components/help/info-hint";
 import { track } from "@/lib/analytics";
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
 import {
+  fromMillimeters,
+  MIN_MODULE_MM,
+  moduleForPrintWidth,
   PRINT_SIZE_LIMITS,
   printWidthForScanDistance,
+  scanDistanceForModule,
   scanDistanceForPrintWidth,
   scanDistanceUnit,
 } from "@/lib/print-size";
@@ -81,9 +86,6 @@ interface DownloadDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
-
-// Modules smaller than this tend to smear on paper.
-const MIN_PRINT_MODULE_MM = 0.3;
 
 function formatLength(mm: number, unit: PrintUnit): string {
   return unit === "in"
@@ -230,6 +232,15 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
     () => ({ ...qrProps, bgColor: themeState.styles.bgColor }),
     [qrProps, themeState.styles.bgColor],
   );
+  // Modules across the print, quiet zone included (what getPrintLayout
+  // divides the width into): the scan distance rule works per module.
+  const printModuleCount = React.useMemo(() => {
+    try {
+      return getQRModuleCount(printProps);
+    } catch {
+      return null;
+    }
+  }, [printProps]);
 
   const printLayout = React.useMemo((): {
     layout: PrintLayout | null;
@@ -636,6 +647,7 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
                   cropMarks={cropMarks}
                   layout={printLayout.layout}
                   layoutError={printLayout.error}
+                  moduleCount={printModuleCount}
                   onBleedChange={setPrintBleed}
                   onColorModeChange={setColorMode}
                   onCropMarksChange={setCropMarks}
@@ -733,6 +745,8 @@ interface PrintOptionsProps {
   colorMode: PrintColorMode;
   layout: PrintLayout | null;
   layoutError: string;
+  /** Modules across the code, quiet zone included; null when it can't be encoded. */
+  moduleCount: number | null;
   onSizeChange: (size: number) => void;
   onUnitChange: (unit: PrintUnit) => void;
   onBleedChange: (bleed: number) => void;
@@ -748,6 +762,7 @@ function PrintOptions({
   colorMode,
   layout,
   layoutError,
+  moduleCount,
   onSizeChange,
   onUnitChange,
   onBleedChange,
@@ -757,25 +772,48 @@ function PrintOptions({
   const limits = PRINT_SIZE_LIMITS[unit];
   const label = "text-muted-foreground mb-2.5 block text-xs font-medium";
 
-  // "Scanned from about": the readout below, run backwards. While someone
-  // types, their text stays as typed; otherwise it follows the width.
+  // "Scanned from about": the readout below, run backwards, per module
+  // (lib/print-size.ts, the same rule as /tools/print-size). While someone
+  // types, their text stays as typed; otherwise it follows the width, and
+  // stays empty when the modules are too small to promise a distance.
   const distanceUnit = scanDistanceUnit(unit);
   const [distanceDraft, setDistanceDraft] = React.useState<string | null>(null);
+  const widthDistance =
+    moduleCount && Number.isFinite(size) && size > 0
+      ? scanDistanceForPrintWidth(size, unit, moduleCount, distanceUnit)
+      : null;
   const shownDistance =
     distanceDraft ??
-    (Number.isFinite(size) && size > 0
-      ? String(roundTo(scanDistanceForPrintWidth(size, unit, distanceUnit), 2))
-      : "");
-  const distanceMin = roundTo(
-    scanDistanceForPrintWidth(limits.min, unit, distanceUnit),
-    2,
-    Math.ceil,
-  );
-  const distanceMax = roundTo(
-    scanDistanceForPrintWidth(limits.max, unit, distanceUnit),
-    2,
-    Math.floor,
-  );
+    (widthDistance === null ? "" : String(roundTo(widthDistance, 2)));
+  // The nearest distance is the smallest printable module (or the smallest
+  // width, when that's bigger); the farthest is the largest width.
+  const distanceMin = moduleCount
+    ? roundTo(
+        fromMillimeters(
+          scanDistanceForModule(
+            Math.max(
+              moduleForPrintWidth(limits.min, unit, moduleCount),
+              MIN_MODULE_MM,
+            ),
+          ),
+          distanceUnit,
+        ),
+        2,
+        Math.ceil,
+      )
+    : null;
+  const distanceMax = moduleCount
+    ? roundTo(
+        fromMillimeters(
+          scanDistanceForModule(
+            moduleForPrintWidth(limits.max, unit, moduleCount),
+          ),
+          distanceUnit,
+        ),
+        2,
+        Math.floor,
+      )
+    : null;
   const outOfRange =
     Number.isFinite(size) && (size < limits.min || size > limits.max);
 
@@ -788,18 +826,29 @@ function PrintOptions({
           </Label>
           <InputGroup>
             <InputGroupInput
+              disabled={!moduleCount}
               id="print-distance"
               inputMode="decimal"
-              max={distanceMax}
-              min={distanceMin}
+              max={distanceMax ?? undefined}
+              min={distanceMin ?? undefined}
               onBlur={() => setDistanceDraft(null)}
               onChange={(event) => {
                 const text = event.target.value;
                 setDistanceDraft(text);
                 const distance = Number(text);
-                if (text.trim() && Number.isFinite(distance) && distance > 0) {
+                if (
+                  moduleCount &&
+                  text.trim() &&
+                  Number.isFinite(distance) &&
+                  distance > 0
+                ) {
                   onSizeChange(
-                    printWidthForScanDistance(distance, distanceUnit, unit),
+                    printWidthForScanDistance(
+                      distance,
+                      distanceUnit,
+                      unit,
+                      moduleCount,
+                    ),
                   );
                 }
               }}
@@ -930,17 +979,19 @@ function PrintOptions({
             {layout.pageWidth !== layout.trimWidth &&
               ` (page ${formatLength(layout.pageWidth, unit)} × ${formatLength(layout.pageHeight, unit)})`}
           </p>
-          <p>
-            Scans from up to about{" "}
-            {formatDistance(layout.maxScanDistance, unit)} away (code width ≈
-            scan distance ÷ 10).
-          </p>
+          {layout.moduleSize >= MIN_MODULE_MM - 1e-9 && (
+            <p>
+              Scans from up to about{" "}
+              {formatDistance(scanDistanceForModule(layout.moduleSize), unit)}{" "}
+              away (about 250× the size of one dot).
+            </p>
+          )}
           {layout.codeWidth < 20 && (
             <p className="text-amber-700 dark:text-amber-400">
               Under 2 cm is hard for phones to scan; go bigger if you can.
             </p>
           )}
-          {layout.moduleSize < MIN_PRINT_MODULE_MM && (
+          {layout.moduleSize < MIN_MODULE_MM - 1e-9 && (
             <p className="text-amber-700 dark:text-amber-400">
               Each dot is only {Math.round(layout.moduleSize * 100) / 100} mm
               and may smear in print. Make the code bigger or shorten its
@@ -962,7 +1013,9 @@ function PrintOptions({
         <p className="text-destructive flex items-center gap-1.5 text-sm">
           <InfoCircle className="size-4 shrink-0" />
           {outOfRange
-            ? `Enter ${limits.min}–${limits.max} ${unit}, or a distance of ${distanceMin}–${distanceMax} ${distanceUnit}.`
+            ? distanceMin !== null && distanceMax !== null
+              ? `Enter ${limits.min}–${limits.max} ${unit}, or a distance of ${distanceMin}–${distanceMax} ${distanceUnit}.`
+              : `Enter ${limits.min}–${limits.max} ${unit}.`
             : layoutError}
         </p>
       )}
