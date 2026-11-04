@@ -99,6 +99,17 @@ interface QREditorStore {
   redo: () => void;
   canUndo: () => boolean;
   canRedo: () => boolean;
+  /**
+   * Shows `state` now without an undo step: a live draft, such as frame text
+   * typed in the preview. End it with `commitThemeDraft`, or cancel it by
+   * drafting the state it started from.
+   */
+  draftThemeState: (state: ThemeEditorState) => void;
+  /**
+   * Ends a draft that started at `before`: one undo step back to it (none
+   * when nothing changed). Later edits never merge into that step.
+   */
+  commitThemeDraft: (before: ThemeEditorState) => void;
 
   contentType: ContentType;
   setContentType: (contentType: ContentType) => void;
@@ -347,6 +358,25 @@ export const useQREditorStore = create<QREditorStore>()(
       },
       canUndo: () => get().history.length > 0,
       canRedo: () => get().future.length > 0,
+      draftThemeState: (state: ThemeEditorState) => {
+        set({ themeState: withOwnPresetStyles(state, get().themeState) });
+      },
+      commitThemeDraft: (before: ThemeEditorState) => {
+        if (isDeepEqual(before, get().themeState)) return;
+        // Dated past the merge window, so the next quick edit (setThemeState)
+        // gets its own step instead of joining this one.
+        const updatedHistory = [
+          ...get().history,
+          {
+            state: before,
+            timestamp: Date.now() - HISTORY_OVERRIDE_THRESHOLD_MS,
+          },
+        ];
+        if (updatedHistory.length > MAX_HISTORY_COUNT) {
+          updatedHistory.shift();
+        }
+        set({ history: updatedHistory, future: [] });
+      },
     }),
     {
       name: "editor-storage",
