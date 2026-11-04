@@ -6,7 +6,7 @@ import { loopVideos } from "@/components/mockups/visuals";
 import { FaqList } from "@/components/sections/tools/faq-list";
 import { ToolHero } from "@/components/sections/tools/tool-hero";
 import { createMetadata } from "@/lib/metadata";
-import { ScanChecker } from "./scan-checker";
+import { PageScanChecker } from "./page-scan-checker";
 
 export const metadata: Metadata = createMetadata({
   title: "QR Code Scan Checker",
@@ -62,7 +62,7 @@ export default function ScanCheckerPage() {
       />
 
       <section aria-label="QR code scan checker" className="w-full px-10 py-10">
-        <ScanChecker />
+        <PageScanChecker />
       </section>
 
       <section className="w-full px-10 py-10 grid gap-8 md:grid-cols-2">
