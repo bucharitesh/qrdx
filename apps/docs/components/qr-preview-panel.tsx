@@ -8,6 +8,7 @@ import { lazy } from "react";
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
 import { useQREditorStore } from "@/store/editor-store";
 import type { QRStyle } from "@/types/theme";
+import { ArtCanvas } from "./editor/art/art-canvas";
 import { usePhotoScanDialogStore } from "./editor/photo-scan-dialog-store";
 import { ScanScoreBadge } from "./editor/scan-score";
 import ExamplesPreviewContainer from "./editor/theme-preview/examples-preview-container";
@@ -125,6 +126,8 @@ const QRPreviewPanel: React.FC<QRPreviewPanelProps> = ({ style }) => {
         ) : (
           <SampleLabel className="absolute bottom-4 left-1/2 z-10 -translate-x-1/2" />
         )}
+        {/* An AI art result from the Art tab covers the code until Back to code. */}
+        <ArtCanvas />
       </div>
     </div>
   );

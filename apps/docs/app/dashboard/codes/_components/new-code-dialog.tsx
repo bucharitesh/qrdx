@@ -36,6 +36,8 @@ import {
 import type { PageUsage } from "@/app/dashboard/pages/_lib/landing-pages";
 import { openCodeBuilder } from "@/components/code-builder/store";
 import { TemplatePreview } from "@/components/landing/template-preview";
+import { InlineLimit } from "@/components/limits/inline-limit";
+import { useShowLimit } from "@/components/limits/limit-dialog";
 import { useWorkspaceHref } from "@/components/workspace-provider";
 import { track } from "@/lib/analytics";
 import { demoPath } from "@/lib/landing/demo-paths";
@@ -159,6 +161,7 @@ export function NewCodeDialog({
   const openUpgradeDialog = useGetProDialogStore(
     (state) => state.openUpgradeDialog,
   );
+  const showLimit = useShowLimit();
   const [type, setType] = useState<string | null>(null);
   const [variantId, setVariantId] = useState<string | null>(null);
   const [title, setTitle] = useState("");
@@ -203,7 +206,7 @@ export function NewCodeDialog({
 
   const chooseType = (next: string) => {
     if (atPageLimit) {
-      openUpgradeDialog("pro");
+      showLimit("landingPages", { used: usage?.used });
       return;
     }
     setType(next);
@@ -287,16 +290,25 @@ export function NewCodeDialog({
                 )}
               </div>
               {atPageLimit && (
-                <div className="bg-muted flex flex-col gap-2 rounded-md p-3 text-sm sm:flex-row sm:items-center sm:justify-between">
-                  <span>
-                    Your plan includes {usage?.limit} hosted pages. Existing
-                    pages keep working.
-                  </span>
-                  <Button onClick={() => openUpgradeDialog("pro")} size="sm">
-                    <Gem />
-                    Upgrade for unlimited
-                  </Button>
-                </div>
+                <InlineLimit
+                  fallback={
+                    <div className="bg-muted flex flex-col gap-2 rounded-md p-3 text-sm sm:flex-row sm:items-center sm:justify-between">
+                      <span>
+                        Your plan includes {usage?.limit} hosted pages. Existing
+                        pages keep working.
+                      </span>
+                      <Button
+                        onClick={() => openUpgradeDialog("pro")}
+                        size="sm"
+                      >
+                        <Gem />
+                        Upgrade for unlimited
+                      </Button>
+                    </div>
+                  }
+                  meterId="landingPages"
+                  used={usage?.used}
+                />
               )}
               {templates ? (
                 <div className="grid gap-2 sm:grid-cols-2">
@@ -403,22 +415,31 @@ export function NewCodeDialog({
                 />
               </div>
               {error && (
-                <div
-                  className="bg-destructive/10 text-destructive space-y-2 rounded-md p-3 text-sm"
-                  role="alert"
-                >
-                  <p>{error.message}</p>
-                  {(error.code === "LIMIT_REACHED" ||
-                    error.code === "PLAN_REQUIRED") && (
-                    <Button
-                      onClick={() => openUpgradeDialog("pro")}
-                      size="sm"
-                      type="button"
+                <InlineLimit
+                  // LIMIT_REACHED here is the hosted-pages cap
+                  // (createLandingPage); anything else is the server's words.
+                  fallback={
+                    <div
+                      className="bg-destructive/10 text-destructive space-y-2 rounded-md p-3 text-sm"
+                      role="alert"
                     >
-                      Upgrade
-                    </Button>
-                  )}
-                </div>
+                      <p>{error.message}</p>
+                      {(error.code === "LIMIT_REACHED" ||
+                        error.code === "PLAN_REQUIRED") && (
+                        <Button
+                          onClick={() => openUpgradeDialog("pro")}
+                          size="sm"
+                          type="button"
+                        >
+                          Upgrade
+                        </Button>
+                      )}
+                    </div>
+                  }
+                  meterId={
+                    error.code === "LIMIT_REACHED" ? "landingPages" : null
+                  }
+                />
               )}
             </form>
           </div>

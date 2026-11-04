@@ -16,6 +16,7 @@ import {
 } from "@/app/dashboard/team/_lib/queries";
 import { countThemesInScope } from "@/app/dashboard/themes/_lib/queries";
 import { getArtCredits } from "@/lib/ai/art";
+import { getCheckoutOpen } from "@/lib/checkout-availability";
 import { AI_REQUEST_FREE_TIER_LIMIT } from "@/lib/constants";
 import {
   getCustomDomainMode,
@@ -28,6 +29,7 @@ import {
   getPlan,
   getPlanForScope,
   getPlanLimits,
+  PLAN_LIMITS,
   type Plan,
   planForSubscriptionProduct,
 } from "@/lib/plans";
@@ -37,10 +39,19 @@ import {
   getMyActiveSubscription,
   validateSubscriptionAndUsage,
 } from "@/lib/subscription";
-import type { Meter, MeterId, SubscriptionSummary } from "./meters";
+import {
+  aiArtNote,
+  type CheckoutOpen,
+  type Meter,
+  type MeterCaps,
+  type MeterId,
+  type MeterResult,
+  meterLabel,
+  resolveMeterCaps,
+  type SubscriptionSummary,
+} from "./meters";
 
-/** A meter, or why it couldn't be read this time. */
-export type MeterResult = Meter | { id: MeterId; label: string; failed: true };
+export type { MeterResult } from "./meters";
 
 export interface PlanUsage {
   plan: Plan;
@@ -56,6 +67,31 @@ export interface PlanUsage {
    */
   hasBillingHistory: boolean;
   meters: MeterResult[];
+  /** Each meter's cap and the plan that lifts it, for limit cards */
+  caps: MeterCaps;
+  /** Paid plans checkout can sell here right now */
+  checkoutOpen: CheckoutOpen;
+}
+
+/**
+ * The caps of a workspace on `plan`, and which plan lifts each. AI theme
+ * requests follow the person's own subscription: a one-time allowance on
+ * Free, none once they pay.
+ */
+export function meterCapsFor(
+  plan: Plan,
+  { isTeam, personalPlan }: { isTeam: boolean; personalPlan: Plan },
+): MeterCaps {
+  return {
+    ...resolveMeterCaps(PLAN_LIMITS, plan, { isTeam }),
+    aiThemes:
+      personalPlan === "free"
+        ? {
+            limit: AI_REQUEST_FREE_TIER_LIMIT,
+            lift: { plan: "pro", limit: null },
+          }
+        : { limit: null, lift: null },
+  };
 }
 
 const finite = (value: number) => (Number.isFinite(value) ? value : null);
@@ -71,19 +107,61 @@ async function hasAnySubscription(userId: string): Promise<boolean> {
 
 /**
  * Every limit this workspace's plan sets that can be counted here, with the
- * real count. Features this deployment can't offer (file storage, custom
- * domains, AI) are left out. One failed count doesn't hide the others.
+ * real count, and the subscription details Plan & usage shows.
  */
 export async function getPlanUsage(scope: ActiveScope): Promise<PlanUsage> {
   const isTeam = !isOwnWorkspaceOf(scope.organizationId, scope.userId);
-  const [plan, personalPlan, own, team, billingHistory] = await Promise.all([
-    getPlanForScope(scope),
-    getPlan(scope.userId),
+  const [usage, own, team, billingHistory] = await Promise.all([
+    getUsageMeters(scope),
     getMyActiveSubscription(scope.userId),
     getTeam(scope.organizationId),
     hasAnySubscription(scope.userId),
   ]);
+
+  return {
+    plan: usage.plan,
+    workspace: {
+      isTeam,
+      name: team?.name ?? "This workspace",
+    },
+    canChangePlan: scope.role === "owner",
+    subscription: own
+      ? {
+          plan: planForSubscriptionProduct(own.productId),
+          status: own.status,
+          interval: own.recurringInterval,
+          currentPeriodEnd: own.currentPeriodEnd.toISOString(),
+          cancelAtPeriodEnd: own.cancelAtPeriodEnd,
+          endsAt: own.endsAt ? own.endsAt.toISOString() : null,
+        }
+      : null,
+    hasBillingHistory: Boolean(own) || billingHistory,
+    meters: usage.meters,
+    caps: usage.caps,
+    checkoutOpen: getCheckoutOpen(),
+  };
+}
+
+/**
+ * The workspace's meters with real counts. Features this deployment can't
+ * offer (file storage, custom domains, AI) are left out, and one failed
+ * count doesn't hide the others. `cappedOnly` counts only what the plan
+ * caps (the app shell's notice only wants meters that can fill up).
+ */
+export async function getUsageMeters(
+  scope: ActiveScope,
+  {
+    cappedOnly = false,
+    skip = [],
+  }: { cappedOnly?: boolean; skip?: readonly MeterId[] } = {},
+): Promise<{ plan: Plan; meters: MeterResult[]; caps: MeterCaps }> {
+  const isTeam = !isOwnWorkspaceOf(scope.organizationId, scope.userId);
+  const [plan, personalPlan] = await Promise.all([
+    getPlanForScope(scope),
+    getPlan(scope.userId),
+  ]);
   const limits = getPlanLimits(plan);
+  const caps = meterCapsFor(plan, { isTeam, personalPlan });
 
   const loaders: Array<{
     id: MeterId;
@@ -92,7 +170,7 @@ export async function getPlanUsage(scope: ActiveScope): Promise<PlanUsage> {
   }> = [
     {
       id: "dynamicCodes",
-      label: "Dynamic QR codes",
+      label: meterLabel("dynamicCodes"),
       load: async () => {
         const usage = await getCodeUsage(scope);
         return {
@@ -105,7 +183,7 @@ export async function getPlanUsage(scope: ActiveScope): Promise<PlanUsage> {
     },
     {
       id: "landingPages",
-      label: "Landing pages",
+      label: meterLabel("landingPages"),
       load: async () => {
         const usage = await getPageUsage(scope);
         return { used: usage.used, limit: usage.limit, unit: "count" };
@@ -113,7 +191,7 @@ export async function getPlanUsage(scope: ActiveScope): Promise<PlanUsage> {
     },
     {
       id: "formResponses",
-      label: "Form responses this month",
+      label: meterLabel("formResponses"),
       load: async () => {
         const usage = await getFormResponseUsage(scope);
         return {
@@ -129,7 +207,7 @@ export async function getPlanUsage(scope: ActiveScope): Promise<PlanUsage> {
   if (isFeatureAvailable("fileStorage")) {
     loaders.push({
       id: "storage",
-      label: "File storage",
+      label: meterLabel("storage"),
       load: async () => {
         const storage = await getStorageOverview(scope);
         return {
@@ -142,11 +220,13 @@ export async function getPlanUsage(scope: ActiveScope): Promise<PlanUsage> {
     });
   }
 
-  if (scope.organizationId) {
+  // Your own workspace on a plan without teams has one seat, yours: not a
+  // limit worth a meter. A team on such a plan (its owner downgraded) is.
+  if (scope.organizationId && (limits.teams || isTeam)) {
     const organizationId = scope.organizationId;
     loaders.push({
       id: "teamSeats",
-      label: "Team seats",
+      label: meterLabel("teamSeats"),
       load: async () => {
         const [members, pending] = await Promise.all([
           listTeamMembers(organizationId),
@@ -168,7 +248,7 @@ export async function getPlanUsage(scope: ActiveScope): Promise<PlanUsage> {
   if (getCustomDomainMode() !== "disabled") {
     loaders.push({
       id: "customDomains",
-      label: "Custom domains",
+      label: meterLabel("customDomains"),
       load: async () => {
         const overview = await getDomainsOverview(scope);
         return {
@@ -182,7 +262,7 @@ export async function getPlanUsage(scope: ActiveScope): Promise<PlanUsage> {
 
   loaders.push({
     id: "savedThemes",
-    label: isTeam ? "Shared themes" : "Saved themes",
+    label: meterLabel("savedThemes", { isTeam }),
     load: async () => {
       // Your themes follow your own plan; another workspace's its owners'.
       const themeLimits = isTeam ? limits : getPlanLimits(personalPlan);
@@ -200,7 +280,7 @@ export async function getPlanUsage(scope: ActiveScope): Promise<PlanUsage> {
 
   loaders.push({
     id: "oauthApps",
-    label: "OAuth apps",
+    label: meterLabel("oauthApps"),
     load: async () => {
       const apps = await listOAuthApps(scope);
       return {
@@ -214,7 +294,7 @@ export async function getPlanUsage(scope: ActiveScope): Promise<PlanUsage> {
   if (isFeatureAvailable("aiArt")) {
     loaders.push({
       id: "aiArt",
-      label: "AI art images this month",
+      label: meterLabel("aiArt"),
       load: async () => {
         const credits = await getArtCredits(scope);
         return {
@@ -222,7 +302,7 @@ export async function getPlanUsage(scope: ActiveScope): Promise<PlanUsage> {
           limit: credits.limit,
           unit: "count",
           resetsAt: credits.resetsAt,
-          note: credits.pooled ? "Shared by the whole team." : undefined,
+          note: aiArtNote({ pooled: credits.pooled, isTeam }),
         };
       },
     });
@@ -231,7 +311,7 @@ export async function getPlanUsage(scope: ActiveScope): Promise<PlanUsage> {
   if (isFeatureAvailable("aiThemes")) {
     loaders.push({
       id: "aiThemes",
-      label: "AI theme requests",
+      label: meterLabel("aiThemes"),
       load: async () => {
         // The person's own count and subscription, on every workspace.
         const usage = await validateSubscriptionAndUsage(scope.userId);
@@ -249,34 +329,22 @@ export async function getPlanUsage(scope: ActiveScope): Promise<PlanUsage> {
     });
   }
 
+  // A cap of 0 (not on this plan) is a plan badge's job, not a meter's.
+  const counted = loaders.filter((meter) => {
+    if (skip.includes(meter.id)) return false;
+    if (!cappedOnly) return true;
+    const limit = caps[meter.id]?.limit;
+    return limit === undefined || (limit !== null && limit > 0);
+  });
   const settled = await Promise.allSettled(
-    loaders.map((meter) => meter.load()),
+    counted.map((meter) => meter.load()),
   );
   const meters: MeterResult[] = settled.map((result, index) => {
-    const { id, label } = loaders[index] as (typeof loaders)[number];
+    const { id, label } = counted[index] as (typeof counted)[number];
     if (result.status === "fulfilled") return { id, label, ...result.value };
     logError(result.reason as Error, { action: "plan-usage.meter", meter: id });
     return { id, label, failed: true };
   });
 
-  return {
-    plan,
-    workspace: {
-      isTeam,
-      name: team?.name ?? "This workspace",
-    },
-    canChangePlan: scope.role === "owner",
-    subscription: own
-      ? {
-          plan: planForSubscriptionProduct(own.productId),
-          status: own.status,
-          interval: own.recurringInterval,
-          currentPeriodEnd: own.currentPeriodEnd.toISOString(),
-          cancelAtPeriodEnd: own.cancelAtPeriodEnd,
-          endsAt: own.endsAt ? own.endsAt.toISOString() : null,
-        }
-      : null,
-    hasBillingHistory: Boolean(own) || billingHistory,
-    meters,
-  };
+  return { plan, meters, caps };
 }

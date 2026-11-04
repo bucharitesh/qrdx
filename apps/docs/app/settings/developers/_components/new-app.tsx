@@ -1,26 +1,18 @@
 "use client";
 
-import { toast } from "@repo/design-system";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useShowLimit } from "@/components/limits/limit-dialog";
 import { useWorkspaceHref } from "@/components/workspace-provider";
 import { track } from "@/lib/analytics";
-import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 import { createOAuthAppAction } from "../_lib/actions";
 import { EMPTY_APP_VALUES, OAuthAppForm } from "./oauth-app-form";
 import { ClientSecretDialog } from "./secret-dialog";
 
-export function NewOAuthApp({
-  storageEnabled,
-  canUpgrade,
-}: {
-  storageEnabled: boolean;
-  /** Your own workspace: upgrading raises the app limit */
-  canUpgrade: boolean;
-}) {
+export function NewOAuthApp({ storageEnabled }: { storageEnabled: boolean }) {
   const inWorkspace = useWorkspaceHref();
   const router = useRouter();
-  const openUpgradeDialog = useGetProDialogStore((s) => s.openUpgradeDialog);
+  const showLimit = useShowLimit();
   const [created, setCreated] = useState<{
     id: string;
     clientId: string;
@@ -34,14 +26,9 @@ export function NewOAuthApp({
         onSubmit={async (input) => {
           const result = await createOAuthAppAction(input);
           if (!result.ok) {
-            if (result.upgrade && canUpgrade) {
-              toast.error(result.error, {
-                action: {
-                  label: "Upgrade",
-                  onClick: () => openUpgradeDialog("pro"),
-                },
-              });
-            }
+            // 402 is the plan's app cap (LIMIT_REACHED): its limit card,
+            // which offers the upgrade only to those who can buy it.
+            if (result.upgrade) showLimit("oauthApps");
             return result.error;
           }
           track("oauth_app_created");

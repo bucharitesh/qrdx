@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { MockupImage } from "@/components/mockups/mockup-image";
 import { qrTypeGroupImages } from "@/components/mockups/visuals";
+import { TypeCodesSection } from "@/components/sections/page-codes/page-code-sections";
 import {
   CardGrid,
   LinkCard,
@@ -73,6 +74,8 @@ export default async function QrTypePage({ params }: PageProps) {
       >
         <TypeGenerator key={content.type} type={content.type} />
       </section>
+
+      <TypeCodesSection type={content.type} name={name} />
 
       <section className="grid w-full md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-border">
         <div className="px-10 py-10 flex flex-col gap-4">

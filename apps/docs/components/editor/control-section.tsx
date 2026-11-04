@@ -12,11 +12,19 @@ import type { ControlSectionProps } from "@/types";
 import { SidePanel } from "./control-sections/side-panel";
 import { SectionContext } from "./section-context";
 
+/** The anchor of a section a link can open (?section=<id>): `section-<id>`. */
+export const sectionAnchorId = (section: string) => `section-${section}`;
+
 interface Props extends ControlSectionProps {
   /** Shown on the right of the header while collapsed (current value) */
   summary?: React.ReactNode;
   /** Anchor id, e.g. to scroll a section into view */
   id?: string;
+  /**
+   * A section a playground link can open (DESIGN_SECTIONS in
+   * lib/playground-links.ts): its anchor becomes `section-<id>`.
+   */
+  section?: string;
   /** Optional one-line help under the title while expanded */
   description?: string;
   /** Info (i) next to the title; content lives in lib/help/hints.ts */
@@ -40,6 +48,7 @@ function ControlSection({
   kbd,
   summary,
   id,
+  section,
   description,
   hint,
   popover = false,
@@ -62,7 +71,11 @@ function ControlSection({
         toggleExpanded: () => setIsExpanded((prev) => !prev),
       }}
     >
-      <section className="scroll-mt-2 border-b last:border-b-0" id={id}>
+      <section
+        className="scroll-mt-2 border-b last:border-b-0"
+        data-section={section}
+        id={id ?? (section ? sectionAnchorId(section) : undefined)}
+      >
         <div className="group/header relative">
           <h3>
             {popover ? (

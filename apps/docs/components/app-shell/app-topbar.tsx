@@ -3,6 +3,7 @@
 import { cn } from "@repo/design-system/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import type { Meter } from "@/app/settings/usage/_lib/meters";
 import bar from "@/components/header-bar.module.css";
 import { QrdxLogo } from "@/components/qrdx-logo";
 import { UserProfileDropdown } from "@/components/user-profile-dropdown";
@@ -66,7 +67,13 @@ function Breadcrumb({ slug }: { slug: string | null }) {
  * ⌘K, Create, Help and the account menu. No marketing menus; the site keeps
  * its own header.
  */
-export function AppTopBar({ shell }: { shell: ShellData | null }) {
+export function AppTopBar({
+  shell,
+  limitWarnings = null,
+}: {
+  shell: ShellData | null;
+  limitWarnings?: Promise<Meter[]> | null;
+}) {
   const slug = shell?.workspace.slug ?? null;
   return (
     // z-40: backdrop-blur makes the bar its own stacking context, so its
@@ -79,7 +86,7 @@ export function AppTopBar({ shell }: { shell: ShellData | null }) {
       )}
     >
       <div className="flex h-12 items-center gap-2 px-3 md:gap-3 md:px-4">
-        <MobileNav shell={shell} />
+        <MobileNav limitWarnings={limitWarnings} shell={shell} />
         <Link
           aria-label="QRdx dashboard"
           className="flex shrink-0 items-center rounded-md p-1"

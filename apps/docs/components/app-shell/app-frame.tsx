@@ -2,6 +2,7 @@
 
 import { cn } from "@repo/design-system/lib/utils";
 import { type ReactNode, useCallback, useEffect, useState } from "react";
+import type { Meter } from "@/app/settings/usage/_lib/meters";
 import { AppSidebar } from "./app-sidebar";
 import { AppTopBar } from "./app-topbar";
 import type { ShellData } from "./shell-data";
@@ -23,9 +24,12 @@ function readCollapsed(): boolean {
  */
 export function AppFrame({
   shell,
+  limitWarnings = null,
   children,
 }: {
   shell: ShellData | null;
+  /** Limits at 90% or more, streamed from the server */
+  limitWarnings?: Promise<Meter[]> | null;
   children: ReactNode;
 }) {
   const [collapsed, setCollapsedState] = useState(false);
@@ -41,7 +45,7 @@ export function AppFrame({
 
   return (
     <div className="flex min-h-svh flex-col">
-      <AppTopBar shell={shell} />
+      <AppTopBar limitWarnings={limitWarnings} shell={shell} />
       <div className="flex flex-1">
         <aside
           className={cn(
@@ -54,6 +58,7 @@ export function AppFrame({
           <div className="sticky top-0 h-[calc(100svh-3rem)]">
             <AppSidebar
               collapsed={collapsed}
+              limitWarnings={limitWarnings}
               onCollapsedChange={setCollapsed}
               shell={shell}
             />

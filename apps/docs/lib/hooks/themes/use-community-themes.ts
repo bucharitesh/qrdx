@@ -95,6 +95,9 @@ const INLINE_REFUSALS = new Set<ErrorCode>([
   ErrorCode.SCAN_GATE,
   ErrorCode.LICENSE_REQUIRED,
   ErrorCode.ALREADY_PUBLISHED,
+  // A workspace theme this member can't publish, or can't publish here yet
+  ErrorCode.THEME_NOT_FOUND,
+  ErrorCode.COMMUNITY_UNAVAILABLE,
 ]);
 
 export function usePublishTheme() {

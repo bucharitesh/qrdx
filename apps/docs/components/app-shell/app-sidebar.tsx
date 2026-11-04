@@ -12,14 +12,18 @@ import {
   type Icon,
   SidebarLeft,
   SidebarRight,
+  Star,
 } from "iconsax-reactjs";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { type ReactElement, useId } from "react";
+import { type ReactElement, Suspense, useId } from "react";
+import type { Meter } from "@/app/settings/usage/_lib/meters";
 import { useAvailability } from "@/components/availability-provider";
 import { OrgSwitcher } from "@/components/org-switcher";
+import { unreadLabel } from "@/lib/changelog-feed";
 import { PLAN_NAMES } from "@/lib/pricing";
 import { workspaceHref } from "@/lib/workspace-paths";
+import { LimitNotice } from "./limit-notice";
 import {
   type AppNavGroup,
   isNavItemActive,
@@ -28,6 +32,7 @@ import {
   settingsNav,
 } from "./nav-config";
 import type { ShellData } from "./shell-data";
+import { useWhatsNew } from "./whats-new";
 
 const rowClass =
   "hover:bg-foreground/[0.05] hover:text-foreground focus-visible:ring-ring/50 flex shrink-0 items-center rounded-md text-sm font-medium outline-none transition-colors focus-visible:ring-[3px]";
@@ -171,6 +176,58 @@ function NavGroups({
   );
 }
 
+/** Opens the "What's new" panel; a count while there are unread entries. */
+function WhatsNewRow({
+  collapsed,
+  onNavigate,
+}: {
+  collapsed: boolean;
+  onNavigate?: () => void;
+}) {
+  const whatsNew = useWhatsNew();
+  if (!whatsNew || whatsNew.items.length === 0) return null;
+  const { unread, openPanel } = whatsNew;
+  const label =
+    unread > 0 ? `What's new, ${unreadLabel(unread)} unread` : "What's new";
+
+  return (
+    <RailTip collapsed={collapsed} label={label}>
+      <button
+        aria-label={collapsed || unread > 0 ? label : undefined}
+        className={cn(
+          rowClass,
+          "text-muted-foreground relative",
+          collapsed ? "size-9 justify-center" : "h-8 w-full gap-2.5 px-2.5",
+        )}
+        onClick={() => {
+          onNavigate?.();
+          openPanel();
+        }}
+        type="button"
+      >
+        <Star aria-hidden className="size-4 shrink-0" />
+        {!collapsed && (
+          <span className="flex-1 truncate text-left">What's new</span>
+        )}
+        {unread > 0 &&
+          (collapsed ? (
+            <span
+              aria-hidden
+              className="bg-primary ring-sidebar absolute top-2 right-2 size-1.5 rounded-full ring-2"
+            />
+          ) : (
+            <span
+              aria-hidden
+              className="bg-primary/10 text-primary rounded-full px-1.5 text-[11px] leading-5 font-medium tabular-nums"
+            >
+              {unreadLabel(unread)}
+            </span>
+          ))}
+      </button>
+    </RailTip>
+  );
+}
+
 /**
  * The sidebar, shared by the desktop rail and the mobile sheet. Dashboard
  * pages get the product nav; settings pages (the workspace's and the
@@ -182,11 +239,14 @@ function NavGroups({
  */
 export function AppSidebar({
   shell,
+  limitWarnings = null,
   collapsed = false,
   onCollapsedChange,
   onNavigate,
 }: {
   shell: ShellData | null;
+  /** Limits at 90% or more, streamed from the server (app-shell.tsx) */
+  limitWarnings?: Promise<Meter[]> | null;
   collapsed?: boolean;
   /** Present on the desktop rail, which can collapse; absent in the sheet. */
   onCollapsedChange?: (collapsed: boolean) => void;
@@ -276,6 +336,26 @@ export function AppSidebar({
           label={inSettings ? "Settings" : "Dashboard"}
           onNavigate={onNavigate}
         />
+      </div>
+
+      <div
+        className={cn(
+          "flex shrink-0 flex-col gap-2 pb-2",
+          collapsed ? "items-center px-2" : "px-2.5",
+        )}
+      >
+        <WhatsNewRow collapsed={collapsed} onNavigate={onNavigate} />
+        {shell && limitWarnings && (
+          <Suspense fallback={null}>
+            <LimitNotice
+              collapsed={collapsed}
+              onNavigate={onNavigate}
+              plan={shell.plan}
+              usageHref={shell.limits.usageHref}
+              warnings={limitWarnings}
+            />
+          </Suspense>
+        )}
       </div>
 
       <div

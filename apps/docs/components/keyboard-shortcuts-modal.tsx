@@ -39,8 +39,9 @@ const shortcutCategories: ShortcutCategory[] = [
     shortcuts: [
       { keys: ["1"], description: "Open Content tab" },
       { keys: ["2"], description: "Open Design tab" },
+      { keys: ["3"], description: "Open Art tab" },
       {
-        keys: ["3"],
+        keys: ["4"],
         description: "Open Generate (AI) tab",
         feature: "aiThemes",
       },

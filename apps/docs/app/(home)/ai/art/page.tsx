@@ -40,12 +40,14 @@ export const metadata: Metadata = createMetadata(
           "scannable ai qr code",
         ],
         path: "/ai/art",
+        ownOgImage: true,
       }
     : {
         title: "QR Code Art: Logo QR and Image QR",
         description:
           "Blend your logo or a photo into a scannable vector QR code, free in the QRdx playground, and export SVG, PDF or EPS. AI-painted QR art is coming soon.",
         path: "/ai/art",
+        ownOgImage: true,
         // The AI generator isn't live here, so keep it out of search.
         robots: { index: false },
       },
@@ -147,7 +149,7 @@ function VectorArtSection({ lead }: { lead: boolean }) {
           {!lead && (
             <Button asChild className="w-fit" variant="outline">
               <Link href={ART_PLAYGROUND_HREF}>
-                Open the Art section
+                Open the Art tab
                 <ArrowRight aria-hidden />
               </Link>
             </Button>

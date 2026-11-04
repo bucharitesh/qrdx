@@ -61,6 +61,8 @@ import {
 } from "qrdx";
 import type { QRArt } from "qrdx/types";
 import React from "react";
+import { AIArtDownloadDialog } from "@/components/editor/art/ai-art-download";
+import { useShownArt } from "@/components/editor/art/art-canvas";
 import { DialogCloseButton } from "@/components/editor/dialog-close-button";
 import { emitSound } from "@/components/editor/sound";
 import { InfoHint } from "@/components/help/info-hint";
@@ -177,6 +179,8 @@ const CHECKERBOARD: React.CSSProperties = {
 
 export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
   const { value, themeState } = useQREditorStore();
+  // An AI art result over the preview is an image: PNG and Print PNG only.
+  const shownArt = useShownArt();
   const { downloadOptions, updateDownloadOption } = usePreferencesStore();
   const [isDownloading, setIsDownloading] = React.useState(false);
   const [svgCopied, setSvgCopied] = React.useState(false);
@@ -460,6 +464,17 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
   );
 
   const sectionLabel = "text-muted-foreground mb-2.5 block text-xs font-medium";
+
+  if (shownArt.result && shownArt.variant) {
+    return (
+      <AIArtDownloadDialog
+        onOpenChange={onOpenChange}
+        open={open}
+        result={shownArt.result}
+        variant={shownArt.variant}
+      />
+    );
+  }
 
   return (
     <ResponsiveDialog onOpenChange={onOpenChange} open={open}>

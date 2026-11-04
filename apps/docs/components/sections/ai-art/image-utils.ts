@@ -77,12 +77,14 @@ export function pickBestScannable(
 }
 
 /**
- * Prepares an uploaded reference image (a logo, photo or palette): at most
- * 512 px and JPEG, so the request stays small. Colors are kept: the model can
- * carry them into the artwork.
+ * Prepares a reference image (an upload, or the editor's logo as a data:
+ * URL): at most 512 px and JPEG, so the request stays small. Colors are
+ * kept: the model can carry them into the artwork.
  */
-export async function prepareReferenceImage(file: File): Promise<string> {
-  const url = URL.createObjectURL(file);
+export async function prepareReferenceImage(
+  source: Blob | string,
+): Promise<string> {
+  const url = typeof source === "string" ? source : URL.createObjectURL(source);
   try {
     const img = await loadImage(url);
     const scale = Math.min(
@@ -107,7 +109,7 @@ export async function prepareReferenceImage(file: File): Promise<string> {
     }
     return dataUrl;
   } finally {
-    URL.revokeObjectURL(url);
+    if (typeof source !== "string") URL.revokeObjectURL(url);
   }
 }
 

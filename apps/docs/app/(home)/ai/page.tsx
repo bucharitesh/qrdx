@@ -21,6 +21,7 @@ export const metadata: Metadata = createMetadata({
     "custom qr code ai",
   ],
   path: "/ai",
+  ownOgImage: true,
 });
 
 export default function AiPage() {
