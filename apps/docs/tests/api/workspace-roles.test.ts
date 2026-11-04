@@ -766,3 +766,66 @@ describe.each(CASES)("%s (needs %s)", (_name, action, run) => {
     }
   });
 });
+
+// Shared themes: the theme screens show them read-only to anyone without
+// themes.manage, and each save refuses them on the server (updateTheme and
+// deleteTheme throw, setDefaultTheme answers ok: false), changing nothing.
+describe("saving a shared theme", () => {
+  const teamTheme = () => fakeDb.find("qrPreset", { id: "team_theme" });
+  const seedTeamTheme = (actor: string) => {
+    seed(actor);
+    fakeDb.seed("qrPreset", [
+      {
+        id: "team_theme",
+        userId: "u_owner",
+        organizationId: "org_t",
+        name: "Team brand",
+        style: { fgColor: "#111111" },
+        isDefault: false,
+        createdAt: NOW,
+        updatedAt: NOW,
+      },
+    ]);
+  };
+  // "refused" only for the role checks' own answers (canEditTheme): an
+  // allowed role may still stop later, e.g. at the default-theme update,
+  // whose `SET is_default = (id = $1)` the in-memory tables can't run.
+  const ROLE_REFUSAL =
+    /can't (edit|delete) it|Only workspace owners and admins can change its default theme/;
+  const attempt = async (run: () => Promise<unknown>) => {
+    try {
+      const result = (await run()) as
+        | { ok?: boolean; error?: string }
+        | undefined;
+      if (result?.ok === false) {
+        return ROLE_REFUSAL.test(result.error ?? "") ? "refused" : "other";
+      }
+      return "saved";
+    } catch (error) {
+      return ROLE_REFUSAL.test(String(error)) ? "refused" : "other";
+    }
+  };
+  const SAVES: [string, () => Promise<unknown>][] = [
+    [
+      "updateTheme",
+      () => themes.updateTheme({ id: "team_theme", name: "Renamed" }),
+    ],
+    ["setDefaultTheme", () => themes.setDefaultTheme("team_theme", true)],
+    ["deleteTheme", () => themes.deleteTheme("team_theme")],
+  ];
+
+  describe.each(SAVES)("%s", (_name, run) => {
+    it.each([...WORKSPACE_ROLES])("as %s", async (role) => {
+      seedTeamTheme(USER[role]);
+      state.scope = { userId: USER[role], organizationId: "org_t", role };
+      const before = JSON.stringify(teamTheme());
+      const outcome = await attempt(run);
+      if (can(role, "themes.manage")) {
+        expect(outcome).not.toBe("refused");
+      } else {
+        expect(outcome).toBe("refused");
+        expect(JSON.stringify(teamTheme())).toBe(before);
+      }
+    });
+  });
+});
