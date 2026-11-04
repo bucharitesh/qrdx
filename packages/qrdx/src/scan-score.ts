@@ -574,7 +574,10 @@ async function scoreArtwork(
   // their own are already covered by the eye-shape check above.
   const styleRisk = getStylePairRisk(props);
   const pairRisk = styleRisk?.kind === "eye" ? null : styleRisk;
-  if (pairRisk) {
+  // Sharp-render pairs fail one strict decoder only (see scan-risk.ts): they
+  // show as a check with its fix but cost nothing until a phone test
+  // confirms them, so grades and the AI design loop don't change.
+  if (pairRisk && pairRisk.kind !== "sharp-dot-eye") {
     penalty += 10;
   }
 

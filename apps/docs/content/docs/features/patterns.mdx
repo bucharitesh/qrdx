@@ -59,6 +59,8 @@ Control the dot inside each corner marker. There are {facts.eyeCentres} corner e
 
 `diamond` bodies next to `square` eyes, `pacman` next to `rounded` and `small-square` next to `square` or `rounded` eyes are missed up close; the playground won't combine them, they ship as `WEAK_BODY_EYES`, and `getStylePairRisk(props)` returns the warning the scan score shows.
 
+A `circle` center inside eyes with square corners (`square`, `rounded`, `extra-rounded` and most others) can be missed by strict decoders in sharp renders: on screens, in PNG exports and in large prints. jsQR misses it at some sizes and zbar reads it. Solid bodies (`square`, `liquid`, `classy`, `classy-rounded`) usually still read, and `gear`, `circle` and `octagon` eyes are unaffected. The scan score warns about it (`style-pair`) and you can still pick it. The pairs ship as `WEAK_SHARP_DOT_EYES` (with `SHARP_DOT_EYE_SAFE_BODIES`), and a `rounded` center avoids the problem.
+
 `curly` eyes and `diamond`, `star` and `banner` centers were retired because they don't scan reliably. Designs saved with them still render, but they are no longer offered or listed (see [Retired shapes](/docs/styles#retired-shapes)).
 
 ## Per-eye colors
