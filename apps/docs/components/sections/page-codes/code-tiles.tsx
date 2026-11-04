@@ -98,10 +98,12 @@ function CodeTile({
             compact ? "px-2.5 pt-2 pb-2.5" : "px-3 pt-2.5 pb-3",
           )}
         >
-          <Label className="truncate text-sm font-medium tracking-tight text-foreground">
+          {/* Names and themes wrap instead of being cut; a row's tiles
+              share its height, so a two-line name never makes them uneven. */}
+          <Label className="text-sm font-medium tracking-tight text-pretty break-words text-foreground">
             {label}
           </Label>
-          <p className="truncate text-xs text-muted-foreground">
+          <p className="text-xs text-pretty break-words text-muted-foreground">
             {themeName(code)}
             {frame && !compact ? ` · ${frame}` : ""}
           </p>

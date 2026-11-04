@@ -96,7 +96,7 @@ function HubStrip({
         items={items}
         label={label}
         compact
-        className="grid-cols-3 lg:grid-cols-6"
+        className="grid-cols-2 sm:grid-cols-3 lg:grid-cols-6"
       />
       <p className="text-xs text-muted-foreground text-center text-balance">
         {SAMPLE_NOTE}

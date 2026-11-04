@@ -2,7 +2,7 @@
 // per code, sized exactly as the page reserves for it (so the lazy image
 // can't shift the layout), with nothing it would have to fetch (an SVG shown
 // as an <img> can't load external files).
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { GET, generateStaticParams } from "@/app/sample-codes/[file]/route";
 import { ALL_PAGE_CODES, pageCodeImage } from "@/lib/landing/page-codes";
 
@@ -12,6 +12,26 @@ const get = (file: string) =>
   });
 
 describe("sample code images", () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it("list no paths in next dev, which would rewrite its prerender manifest", () => {
+    // next dev rewrites .next/dev/prerender-manifest.json without a lock
+    // whenever a route lists paths; parallel image requests corrupted it.
+    vi.stubEnv("NODE_ENV", "development");
+    expect(generateStaticParams()).toEqual([]);
+    vi.stubEnv("NODE_ENV", "production");
+    expect(generateStaticParams()).toHaveLength(ALL_PAGE_CODES.length);
+  });
+
+  it("render every code on request, as next dev does", async () => {
+    // With no static paths, dynamicParams must stay at its default (true)
+    // or next dev would answer 404 for every image.
+    const route = await import("@/app/sample-codes/[file]/route");
+    expect("dynamicParams" in route).toBe(false);
+  });
+
   it("prerender one file per code", () => {
     expect(generateStaticParams()).toEqual(
       ALL_PAGE_CODES.map((code) => ({ file: `${code.id}.svg` })),
