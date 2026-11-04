@@ -12,13 +12,29 @@ import {
 } from "qrdx";
 import type { ColorConfig } from "qrdx/types";
 import { describe, expect, it } from "vitest";
+import { FRAME_CATALOG } from "@/lib/pattern-catalog";
 import { CATEGORY_ORDER } from "@/lib/themes/categories";
 import { isInverted } from "@/lib/themes/color";
+import { FRAME_TEXT_CONTRAST } from "@/lib/themes/compose";
 import { shuffleId, shuffleSeed, shuffleTheme } from "@/lib/themes/shuffle";
 import { defaultPresets } from "@/utils/qr-presets";
 import { judgeTheme } from "../../scripts/themes/judge";
 
 const entries = Object.entries(defaultPresets);
+
+/** Frame styles that set their label on the code's background. */
+const LABEL_ON_BACKGROUND = new Set<string>(
+  FRAME_CATALOG.filter((frame) => frame.textOnLight).map(
+    (frame) => frame.value,
+  ),
+);
+
+const firstStop = (color: ColorConfig | undefined) =>
+  !color || typeof color === "string"
+    ? color
+    : color.type === "solid"
+      ? color.color
+      : color.stops[0]?.color;
 
 describe("built-in themes pass the hard filters", () => {
   for (const [id, preset] of entries) {
@@ -111,21 +127,30 @@ describe("the built-in library", () => {
     }
   });
 
-  it("draws border-frame labels in a color that shows on the background", () => {
-    // "border" and "rounded-border" frames set the label on the code's own
-    // background (packages/qrdx/src/frame.tsx), in textColor or else the
-    // frame color; a textColor equal to the background hid three labels.
+  it("draws every frame label in a color that reads on what it sits on", () => {
+    // Some frame styles set the label on the code's own background (the
+    // pattern catalog's textOnLight: border, rounded-border, focus, phone,
+    // gradient-border, menu-card), in textColor or else the frame color; the
+    // rest set it on the frame, in textColor or else white. The contrast bar
+    // is the theme generator's (lib/themes/compose.ts). A textColor equal to
+    // the background hid three border labels and the Bistro Menu card's.
+    const unreadable: string[] = [];
     for (const [id, preset] of entries) {
       const { frame, bgColor } = preset.styles;
-      if (
-        !(frame?.text && ["border", "rounded-border"].includes(frame.style))
-      ) {
-        continue;
+      if (!frame || frame.style === "custom") continue;
+      if (!(frame.text || frame.secondaryText)) continue;
+      const onBackground = LABEL_ON_BACKGROUND.has(frame.style);
+      const label = frame.textColor || (onBackground ? frame.color : "#FFFFFF");
+      const backdrop = onBackground ? firstStop(bgColor) : frame.color;
+      if (!(label && backdrop)) continue;
+      const ratio = getContrastRatio(label, backdrop);
+      if (ratio < FRAME_TEXT_CONTRAST) {
+        unreadable.push(
+          `${id}: ${frame.style} label ${label} on ${backdrop} (${ratio.toFixed(2)}:1)`,
+        );
       }
-      const label = frame.textColor || frame.color;
-      if (typeof label !== "string" || typeof bgColor !== "string") continue;
-      expect(getContrastRatio(label, bgColor), id).toBeGreaterThanOrEqual(3);
     }
+    expect(unreadable).toEqual([]);
   });
 
   it("gives every industry starter a frame with a call to action", () => {

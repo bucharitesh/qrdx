@@ -934,7 +934,9 @@ const library: Record<string, ThemePreset> = {
         text: "Scan for the menu",
         secondaryText: "Bon appétit",
         color: "#5A2617",
-        textColor: "#FBF3EC",
+        // The menu card sets its labels on the cream card, so they take the
+        // frame's brown (cream on cream hid them).
+        textColor: "#5A2617",
       },
     },
   },
@@ -1181,7 +1183,8 @@ const looks: Record<string, ThemePreset> = {
         style: "phone",
         text: "Get the app",
         color: "#111111",
-        textColor: "#FF6AD5",
+        // The phone sets its label on the pink screen, in the code's ink.
+        textColor: "#14000F",
       },
     },
   },
@@ -1347,7 +1350,8 @@ const looks: Record<string, ThemePreset> = {
         text: "Scan to enter",
         color: "#111111",
         secondaryColor: "#8C6A1C",
-        textColor: "#FFFFFF",
+        // The label sits on the white background, inside the border.
+        textColor: "#111111",
       },
     },
   },
