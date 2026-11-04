@@ -6,6 +6,18 @@ import {
 } from "@/components/editor/dynamic-link-toggle";
 import { useQREditorStore } from "@/store/editor-store";
 import type { QRStyle } from "@/types/theme";
+import type { CodeBuilderOrigin } from "./store";
+
+/**
+ * Where "Open full editor" goes after writing the design: the playground,
+ * or nowhere when the builder was opened from it (the editor is already
+ * underneath, so the builder just closes).
+ */
+export function fullEditorDestination(
+  origin: CodeBuilderOrigin | undefined,
+): string | null {
+  return origin === "playground" ? null : "/playground";
+}
 
 /**
  * "Open full editor": hands the builder's design to the playground, which
