@@ -27,10 +27,7 @@ export function GallerySection() {
         action={<WallLink href={WALL_PATH}>See all</WallLink>}
       />
       <div className="relative">
-        <ShowcaseWall
-          rows={HOME_WALL}
-          className="[mask-image:linear-gradient(to_bottom,#000_58%,transparent_97%)] lg:[mask-image:linear-gradient(to_bottom,#000_68%,transparent_97%)]"
-        />
+        <ShowcaseWall rows={HOME_WALL} fade />
         <div className="absolute inset-x-0 bottom-3 flex justify-center md:bottom-6">
           <Button
             asChild
