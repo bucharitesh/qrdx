@@ -1,5 +1,6 @@
 "use client";
 
+import { toast } from "@repo/design-system";
 import { Spinner as Loader2 } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
@@ -34,16 +35,23 @@ import {
   getLandingPageUsage,
 } from "@/actions/landing-pages";
 import type { PageUsage } from "@/app/dashboard/pages/_lib/landing-pages";
+import { useAvailability } from "@/components/availability-provider";
 import { openCodeBuilder } from "@/components/code-builder/store";
+import { fitStyleForSave } from "@/components/code-builder/validation";
 import { TemplatePreview } from "@/components/landing/template-preview";
 import { InlineLimit } from "@/components/limits/inline-limit";
 import { useShowLimit } from "@/components/limits/limit-dialog";
 import { useWorkspaceHref } from "@/components/workspace-provider";
 import { track } from "@/lib/analytics";
 import { demoPath } from "@/lib/landing/demo-paths";
+import {
+  FILE_PAGE_TYPES,
+  offeredPageTypes,
+} from "@/lib/landing/file-page-types";
 import type { PageTemplate } from "@/lib/landing/templates";
 import { PLAN_NAMES } from "@/lib/pricing";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
+import type { QRStyle } from "@/types/theme";
 
 type TemplatesModule = typeof import("@/lib/landing/templates");
 type DemoModule = typeof import("@/lib/landing/demo");
@@ -143,6 +151,7 @@ export function NewCodeDialog({
   pagesOnly = false,
   initialType = null,
   initialVariant = null,
+  style = null,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -152,8 +161,15 @@ export function NewCodeDialog({
   initialType?: string | null;
   /** Template to preselect in `initialType`'s gallery (from a template demo) */
   initialVariant?: string | null;
+  /**
+   * The page code's design (the playground's, when opened from it); null =
+   * the workspace's default theme, as before.
+   */
+  style?: QRStyle | null;
 }) {
   const inWorkspace = useWorkspaceHref();
+  // Pages built on uploads are hidden where file storage is off.
+  const fileStorage = useAvailability().has("fileStorage");
   const router = useRouter();
   const templates = useTemplates(open);
   const demo = useDemoContent(open);
@@ -172,12 +188,16 @@ export function NewCodeDialog({
 
   useEffect(() => {
     if (open) {
-      setType(initialType);
-      setVariantId(initialType ? initialVariant : null);
+      const start =
+        initialType && (fileStorage || !FILE_PAGE_TYPES.has(initialType))
+          ? initialType
+          : null;
+      setType(start);
+      setVariantId(start ? initialVariant : null);
       setTitle("");
       setError(null);
     }
-  }, [open, initialType, initialVariant]);
+  }, [open, initialType, initialVariant, fileStorage]);
 
   const atPageLimit =
     usage !== null && usage.limit !== null && usage.used >= usage.limit;
@@ -218,15 +238,24 @@ export function NewCodeDialog({
     event.preventDefault();
     if (!(template && variant)) return;
     setError(null);
+    // A very large inline logo is left out of the saved design, as when
+    // saving any code (server actions take up to 1 MB).
+    const fitted = style ? fitStyleForSave(style) : null;
     startTransition(async () => {
       const result = await createLandingPage({
         type: template.type,
         variantId: variant.id,
         title: title.trim() || null,
+        ...(fitted && { style: fitted.style }),
       });
       if (!result.success) {
         setError(result.error);
         return;
+      }
+      if (fitted?.trimmed) {
+        toast.warning("Your logo was too large to save with the page's code.", {
+          description: "Upload a smaller one in the code's design.",
+        });
       }
       track("template_used", { template_type: template.type });
       onOpenChange(false);
@@ -312,16 +341,18 @@ export function NewCodeDialog({
               )}
               {templates ? (
                 <div className="grid gap-2 sm:grid-cols-2">
-                  {templates.listTemplates().map((item) => (
-                    <TypeCard
-                      description={item.description}
-                      icon={item.icon}
-                      key={item.type}
-                      label={item.label}
-                      locked={atPageLimit}
-                      onClick={() => chooseType(item.type)}
-                    />
-                  ))}
+                  {offeredPageTypes(templates.listTemplates(), fileStorage).map(
+                    (item) => (
+                      <TypeCard
+                        description={item.description}
+                        icon={item.icon}
+                        key={item.type}
+                        label={item.label}
+                        locked={atPageLimit}
+                        onClick={() => chooseType(item.type)}
+                      />
+                    ),
+                  )}
                 </div>
               ) : (
                 <div className="grid gap-2 sm:grid-cols-2">
