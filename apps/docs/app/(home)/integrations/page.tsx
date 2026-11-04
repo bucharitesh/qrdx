@@ -32,6 +32,7 @@ export function generateMetadata(): Metadata {
     title: "Integrations",
     description: `Connect QRdx to ${names.join(", ")} and more: ${listed.length} integrations with exact setup steps.`,
     path: "/integrations",
+    ownOgImage: true,
   });
 }
 

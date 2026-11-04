@@ -8,6 +8,7 @@ export const metadata: Metadata = createMetadata({
   title: "QR Codes by Industry: Ideas and Print Sizes",
   description: `QR code ideas for ${industries.items.length} industries, from restaurants and retail to healthcare and construction: which code type to use, print sizes and CTA copy.`,
   path: industries.basePath,
+  ownOgImage: true,
 });
 
 export default function IndustriesHubPage() {
