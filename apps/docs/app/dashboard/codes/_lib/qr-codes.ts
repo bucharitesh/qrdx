@@ -594,6 +594,8 @@ export async function listCodes(
     folderId,
     tagIds = [],
     favorites = false,
+    kind,
+    domainId,
     sort = "newest",
   }: {
     status?: CodeListStatus;
@@ -605,6 +607,10 @@ export async function listCodes(
     /** Codes carrying all of these tags */
     tagIds?: string[];
     favorites?: boolean;
+    /** Website links (redirect) or hosted pages only; omit for both */
+    kind?: QrCodeRow["kind"];
+    /** A custom domain's codes; null = the default short link; omit for any */
+    domainId?: string | null;
     sort?: CodeListSort;
   },
 ): Promise<{ codes: QrCodeListItem[]; total: number }> {
@@ -620,6 +626,12 @@ export async function listCodes(
         : eq(qrCode.folderId, folderId),
     tagIds.length > 0 ? allTagsWhere(tagIds) : undefined,
     favorites ? eq(qrCode.isFavorite, true) : undefined,
+    kind ? eq(qrCode.kind, kind) : undefined,
+    domainId === undefined
+      ? undefined
+      : domainId === null
+        ? isNull(qrCode.domainId)
+        : eq(qrCode.domainId, domainId),
   );
 
   const [rows, [totalRow]] = await Promise.all([
