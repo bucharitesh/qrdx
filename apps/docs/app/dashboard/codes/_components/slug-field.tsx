@@ -107,6 +107,7 @@ export function SlugField({
   editing,
   disabled,
   onUpgrade,
+  pending = false,
 }: {
   value: string;
   onChange: (value: string) => void;
@@ -119,6 +120,11 @@ export function SlugField({
   editing: boolean;
   disabled?: boolean;
   onUpgrade: () => void;
+  /**
+   * The plan's rights are still loading: the field shows read-only, with no
+   * plan badge yet, so the form keeps its shape instead of an empty box.
+   */
+  pending?: boolean;
 }) {
   const describedBy = "code-slug-status";
   // Plans with custom back-halves (lib/plans.ts), when the page knows them.
@@ -130,7 +136,7 @@ export function SlugField({
           Custom back-half{" "}
           <span className="text-muted-foreground font-normal">(optional)</span>
         </Label>
-        {!allowed && (
+        {!(allowed || pending) && (
           <button
             className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium transition-colors"
             onClick={onUpgrade}
@@ -145,7 +151,7 @@ export function SlugField({
         className={cn(
           "border-input focus-within:ring-ring/50 focus-within:border-ring flex h-9 items-center overflow-hidden rounded-md border shadow-xs transition-[color,box-shadow] focus-within:ring-[3px] dark:bg-input/30",
           status.state === "blocked" && "border-destructive/60",
-          (disabled || !allowed) && "opacity-60",
+          (disabled || !allowed || pending) && "opacity-60",
         )}
       >
         <span
@@ -160,11 +166,13 @@ export function SlugField({
           autoCapitalize="none"
           autoComplete="off"
           className="h-full min-w-0 flex-1 rounded-none border-0 pl-2 shadow-none focus-visible:ring-0 disabled:opacity-100 dark:bg-transparent"
-          disabled={disabled || !allowed}
+          disabled={disabled || !allowed || pending}
           id="code-slug"
           maxLength={CUSTOM_SLUG_MAX}
           onChange={(event) => onChange(event.target.value)}
-          placeholder={allowed ? "spring-menu" : "Generated for you"}
+          placeholder={
+            allowed && !pending ? "spring-menu" : "Generated for you"
+          }
           spellCheck={false}
           value={value}
         />
@@ -187,21 +195,25 @@ export function SlugField({
         )}
         id={describedBy}
       >
-        {!allowed
-          ? slugPlans.length > 0
-            ? `Choose your own link, like qrdx.dev/q/spring-menu, on ${formatPlanList(slugPlans)}.`
-            : "Choose your own link, like qrdx.dev/q/spring-menu, on a higher plan."
-          : status.state === "blocked" || status.state === "unknown"
-            ? status.message
-            : status.state === "available"
-              ? editing
-                ? "Available. QR codes printed with the old link stop working."
-                : "Available."
-              : status.state === "checking"
-                ? "Checking…"
-                : editing
-                  ? "Letters, digits, - and _. Changing it changes the link."
-                  : "Letters, digits, - and _. Leave empty for a generated link."}
+        {pending
+          ? editing
+            ? "Leave empty to keep the current link."
+            : "Leave empty for a generated link."
+          : !allowed
+            ? slugPlans.length > 0
+              ? `Choose your own link, like qrdx.dev/q/spring-menu, on ${formatPlanList(slugPlans)}.`
+              : "Choose your own link, like qrdx.dev/q/spring-menu, on a higher plan."
+            : status.state === "blocked" || status.state === "unknown"
+              ? status.message
+              : status.state === "available"
+                ? editing
+                  ? "Available. QR codes printed with the old link stop working."
+                  : "Available."
+                : status.state === "checking"
+                  ? "Checking…"
+                  : editing
+                    ? "Letters, digits, - and _. Changing it changes the link."
+                    : "Letters, digits, - and _. Leave empty for a generated link."}
       </p>
     </div>
   );
