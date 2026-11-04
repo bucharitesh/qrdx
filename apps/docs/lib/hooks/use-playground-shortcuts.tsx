@@ -264,14 +264,17 @@ export function usePlaygroundShortcuts({
     { enabled: shortcutsEnabled },
   );
 
-  // Tab switching: 1 Content, 2 Design, 3 Generate (AI, where available)
+  // Tab switching: 1 Content, 2 Design, 3 Art, 4 Generate (AI, where available)
   useKeyboardShortcut("1", () => handleSetTab("content"), {
     enabled: shortcutsEnabled,
   });
   useKeyboardShortcut("2", () => handleSetTab("customisations"), {
     enabled: shortcutsEnabled,
   });
-  useKeyboardShortcut("3", () => handleSetTab("ai"), {
+  useKeyboardShortcut("3", () => handleSetTab("art"), {
+    enabled: shortcutsEnabled,
+  });
+  useKeyboardShortcut("4", () => handleSetTab("ai"), {
     enabled: shortcutsEnabled && aiAvailable,
   });
 }

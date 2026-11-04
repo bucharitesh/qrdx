@@ -1,6 +1,6 @@
 // Applies a playground link's parameters to the editor, in the hub plan's
 // order: the /playground/<id> theme (already applied by the editor) → preset
-// or style → type and url → tab, section and open. Kept apart from the hook
+// or style → type and url → tab, section and open → the Art tab's mode. Kept apart from the hook
 // (lib/hooks/use-playground-params.ts) so it can be tested on the stores.
 //
 // The look changes as one undo step (the editor's Undo brings back the
@@ -13,11 +13,13 @@ import { useCommunitySheetStore } from "@/components/editor/community-sheet-stor
 import { checkUrl } from "@/components/editor/content-forms/url-check";
 import type { LinkedDynamicCode } from "@/components/editor/dynamic-link-toggle";
 import { usePhotoScanDialogStore } from "@/components/editor/photo-scan-dialog-store";
+import { AI_ART_PRESETS } from "@/components/sections/ai-art/presets";
 import { toPayload } from "@/components/sections/tools/payload";
 import { defaultThemeState } from "@/config/qr";
 import type { ControlTab, PlaygroundParams } from "@/lib/playground-links";
 import { decodeStyleParam } from "@/lib/playground-style";
 import { isDeepEqual } from "@/lib/utils";
+import { useArtSessionStore } from "@/store/art-session-store";
 import { useQREditorStore } from "@/store/editor-store";
 import { usePlaygroundFocusStore } from "@/store/playground-focus-store";
 import type { ThemeEditorState } from "@/types/editor";
@@ -47,6 +49,8 @@ export interface ApplyContext {
   signedIn: boolean;
   /** AI themes work here (aiThemes); otherwise the Generate tab doesn't exist. */
   aiAvailable: boolean;
+  /** AI art works here (aiArt); otherwise art=ai is ignored. */
+  aiArtAvailable?: boolean;
   /** A built-in preset (not a saved theme, not a shuffle). */
   isBuiltInPreset: (id: string) => boolean;
   presetLabel: (id: string) => string;
@@ -206,6 +210,14 @@ export function applyPlaygroundParams(
     if (params.printDistance) applied.push("printDistance");
   }
 
+  // 4. The Art tab's mode (and AI art's style preset).
+  const art = applyArtParams(params, context);
+  applied.push(...art.applied);
+  if (art.look) {
+    lookApplied = true;
+    look ??= art.look;
+  }
+
   const after = useQREditorStore.getState();
   const appliedThemeState = after.themeState;
   const contentChanged =
@@ -260,4 +272,43 @@ function hostOf(url: string): string {
   } catch {
     return "this link";
   }
+}
+
+// ── The Art tab (hub phase 3) ───────────────────────────────────────────────
+
+/**
+ * Picks the Art tab's mode. Logo QR or Image QR on a design whose art is the
+ * other mode switches it, on the same picture, as the tab's own toggle does
+ * (an undo step). AI art, only where it works here, can take a style preset;
+ * its prompt comes from the preset, never from the link.
+ */
+function applyArtParams(
+  params: PlaygroundParams,
+  context: ApplyContext,
+): { applied: string[]; look: string | null } {
+  if (!params.art) return { applied: [], look: null };
+  const session = useArtSessionStore.getState();
+
+  if (params.art === "ai") {
+    if (!context.aiArtAvailable) return { applied: [], look: null };
+    session.pick("ai");
+    const preset = AI_ART_PRESETS.find(({ id }) => id === params.artStyle);
+    if (preset) session.applyStylePreset(preset);
+    return { applied: preset ? ["art", "artStyle"] : ["art"], look: null };
+  }
+
+  const mode = params.art === "image" ? "halftone" : "logo";
+  session.pick(mode);
+  const editor = useQREditorStore.getState();
+  const current = editor.themeState.styles.art;
+  if (!current || current.mode === mode)
+    return { applied: ["art"], look: null };
+  editor.setThemeState({
+    ...editor.themeState,
+    styles: { ...editor.themeState.styles, art: { ...current, mode } },
+  });
+  return {
+    applied: ["art"],
+    look: mode === "logo" ? "Logo QR" : "Image QR",
+  };
 }

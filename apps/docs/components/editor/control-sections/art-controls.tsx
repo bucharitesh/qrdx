@@ -30,9 +30,8 @@ import {
   type ScanScoreResult,
   withQRSize,
 } from "qrdx";
-import type { QRArt, QRArtMode, QRArtVariant } from "qrdx/types";
+import type { QRArt, QRArtImage, QRArtMode, QRArtVariant } from "qrdx/types";
 import * as React from "react";
-import ControlSection from "@/components/editor/control-section";
 import {
   GRADE_COLORS,
   GRADE_LABELS,
@@ -41,6 +40,7 @@ import {
 import { useEditorValue } from "@/components/editor/style-scope";
 import { DEFAULT_QR_LOGO, MAX_LOGO_FILE_SIZE } from "@/lib/constants";
 import { soundEvent } from "@/lib/sound/emit";
+import { useArtSessionStore } from "@/store/art-session-store";
 import type { QRStyle } from "@/types/theme";
 import { ART_COLOR_ISSUE_COPY, artColorFix, artColorIssue } from "./art-colors";
 import {
@@ -60,9 +60,6 @@ const ALLOWED_ART_TYPES = [
   "image/webp",
   "image/svg+xml",
 ];
-
-type ArtChoice = "classic" | QRArtMode;
-type StyleWithArt = QRStyle & { art?: QRArt };
 
 const MODE_COPY: Record<QRArtMode, { upload: string; samples: string }> = {
   logo: {
@@ -86,12 +83,12 @@ function variantOption(mode: QRArtMode, art: QRArt | undefined) {
 
 /**
  * Which sample produced a sampled image, so the grid keeps its selection when
- * the Design tab remounts. Keyed by the image's pixel data.
+ * the Art tab remounts. Keyed by the image's pixel data.
  */
 const pickedSamples = new Map<string, string>();
 
 /** Error correction H and a 4-module quiet zone, for codes that lack them. */
-function recommendedSettings(style: QRStyle): Partial<QRStyle> {
+export function recommendedSettings(style: QRStyle): Partial<QRStyle> {
   const extra: Partial<QRStyle> = {};
   if (style.level !== ART_RECOMMENDED.level) {
     extra.level = ART_RECOMMENDED.level;
@@ -102,30 +99,49 @@ function recommendedSettings(style: QRStyle): Partial<QRStyle> {
   return extra;
 }
 
-interface ArtControlsProps {
-  styles: QRStyle;
-  onChange: (styles: QRStyle) => void;
+/**
+ * `style` with `image` as its Image QR or Logo QR art, plus the settings art
+ * needs to scan. Same mode: the chosen look (variant, eye colors, …) stays.
+ */
+export function withArtImage(
+  style: QRStyle,
+  image: QRArtImage,
+  mode: QRArtMode,
+  intensity = DEFAULT_ART_STRENGTH,
+): QRStyle {
+  const { art: previous, ...rest } = style;
+  return {
+    ...rest,
+    ...recommendedSettings(style),
+    art: {
+      ...(previous?.mode === mode ? previous : {}),
+      mode,
+      image,
+      intensity,
+    },
+  };
 }
 
-/** Logo QR and halftone Image QR: vector art modes from the qrdx library. */
-export function ArtControls({ styles, onChange }: ArtControlsProps) {
-  const style = styles as StyleWithArt;
-  const art = style.art;
-  const fileInputRef = React.useRef<HTMLInputElement>(null);
-  // Picked mode before an image exists, and the last upload for re-sampling.
-  const [pendingMode, setPendingMode] = React.useState<QRArtMode | null>(null);
-  const [source, setSource] = React.useState<Blob | string | null>(null);
+export type VectorArt = ReturnType<typeof useVectorArt>;
+
+/**
+ * Logo QR and Image QR state for the Art tab: the design's art, the last
+ * source image (kept for the visit, so switching mode re-samples it) and the
+ * actions on them.
+ */
+export function useVectorArt(
+  styles: QRStyle,
+  onChange: (styles: QRStyle) => void,
+) {
+  const art = styles.art;
+  const source = useArtSessionStore((state) => state.source);
+  const setSource = useArtSessionStore((state) => state.setSource);
+  const pick = useArtSessionStore((state) => state.pick);
   const [isLoading, setIsLoading] = React.useState(false);
-  const choice: ArtChoice = art?.mode ?? pendingMode ?? "classic";
-  const pickedSample = art ? pickedSamples.get(art.image.data) : undefined;
-  const followsRecommended =
-    Object.keys(recommendedSettings(style)).length === 0;
-  // Art only renders dark-on-light; say so instead of staying silently plain.
-  const colorIssue = artColorIssue(style);
 
   const update = (next: QRArt | undefined, extra: Partial<QRStyle> = {}) => {
-    const { art: _previous, ...rest } = style;
-    onChange({ ...rest, ...extra, ...(next && { art: next }) } as QRStyle);
+    const { art: _previous, ...rest } = styles;
+    onChange({ ...rest, ...extra, ...(next && { art: next }) });
   };
 
   const applyImage = async (
@@ -140,18 +156,9 @@ export function ArtControls({ styles, onChange }: ArtControlsProps) {
         pickedSamples.set(image.data, options.sampleId);
       }
       setSource(input);
-      setPendingMode(null);
+      pick(null);
       // Art codes lean on error correction and a clear border to scan.
-      update(
-        {
-          // Same mode: keep the chosen look (variant, eye colors, …).
-          ...(art?.mode === mode ? art : {}),
-          mode,
-          image,
-          intensity: options.intensity ?? DEFAULT_ART_STRENGTH,
-        },
-        recommendedSettings(style),
-      );
+      onChange(withArtImage(styles, image, mode, options.intensity));
       soundEvent("apply");
     } catch (error) {
       toast.error(
@@ -171,30 +178,62 @@ export function ArtControls({ styles, onChange }: ArtControlsProps) {
     }
   };
 
-  const applySample = (sample: ArtSample, mode: QRArtMode) => {
+  /** Logo QR or Image QR picked in the Art tab's mode toggle. */
+  const chooseMode = (mode: QRArtMode) => {
+    if (art?.mode === mode) {
+      pick(null);
+    } else if (source) {
+      pick(art ? null : mode);
+      void applyImage(source, mode, { intensity: art?.intensity });
+    } else if (art) {
+      // No original in this visit: reuse the sampled image.
+      pick(null);
+      if (art.mode !== mode) update({ ...art, mode });
+    } else {
+      pick(mode);
+    }
+  };
+
+  /** Off: a plain code again. */
+  const removeArt = () => {
+    setSource(null);
+    pick(null);
+    if (art) update(undefined);
+  };
+
+  return { art, isLoading, update, applyImage, chooseMode, removeArt };
+}
+
+interface ArtControlsProps {
+  styles: QRStyle;
+  onChange: (styles: QRStyle) => void;
+  /** The mode the Art tab shows (the design's art, or one picked before an image) */
+  mode: QRArtMode;
+  vector: VectorArt;
+}
+
+/** Logo QR and Image QR: vector art modes from the qrdx library. */
+export function ArtControls({
+  styles,
+  onChange,
+  mode,
+  vector,
+}: ArtControlsProps) {
+  const style = styles;
+  const { art, isLoading, update, applyImage, removeArt } = vector;
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+  const pickedSample = art ? pickedSamples.get(art.image.data) : undefined;
+  const followsRecommended =
+    Object.keys(recommendedSettings(style)).length === 0;
+  // Art only renders dark-on-light; say so instead of staying silently plain.
+  const colorIssue = artColorIssue(style);
+
+  const applySample = (sample: ArtSample) => {
     if (isLoading) return;
     void applyImage(sample.src, mode, {
       intensity: art?.intensity,
       sampleId: sample.id,
     });
-  };
-
-  const handleChoice = (value: string) => {
-    if (!value) return;
-    if (value === "classic") {
-      setPendingMode(null);
-      update(undefined);
-      return;
-    }
-    const mode = value as QRArtMode;
-    if (source) {
-      void applyImage(source, mode, { intensity: art?.intensity });
-    } else if (art) {
-      // No original in this session: reuse the sampled image.
-      update({ ...art, mode });
-    } else {
-      setPendingMode(mode);
-    }
   };
 
   const handleUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -213,9 +252,7 @@ export function ArtControls({ styles, onChange }: ArtControlsProps) {
       });
       return;
     }
-    if (choice !== "classic") {
-      void applyImage(file, choice, { intensity: art?.intensity });
-    }
+    void applyImage(file, mode, { intensity: art?.intensity });
   };
 
   const customLogo = style.customLogo?.startsWith("data:")
@@ -223,203 +260,152 @@ export function ArtControls({ styles, onChange }: ArtControlsProps) {
     : null;
 
   return (
-    <ControlSection
-      description="Blend a logo or photo into the dots. No AI, works in every format."
-      hint="art"
-      summary={
-        choice === "classic"
-          ? "Off"
-          : choice === "logo"
-            ? "Logo QR"
-            : "Image QR"
-      }
-      title="Art"
-    >
-      <div className="space-y-4">
-        <ToggleGroup
-          aria-label="Art mode"
-          className="w-full"
-          onValueChange={handleChoice}
-          type="single"
-          value={choice}
+    <div className="space-y-4">
+      {colorIssue && (
+        <div className="bg-muted/40 flex flex-col gap-2.5 rounded-lg border p-3">
+          <p className="text-muted-foreground flex gap-2 text-xs" role="status">
+            <InfoCircle aria-hidden="true" className="mt-px size-4 shrink-0" />
+            {ART_COLOR_ISSUE_COPY[colorIssue]}
+          </p>
+          <Button
+            className="self-start"
+            onClick={() => {
+              const fix = artColorFix(style);
+              if (fix) onChange({ ...style, ...fix } as QRStyle);
+            }}
+            size="sm"
+            variant="outline"
+          >
+            {colorIssue === "inverted"
+              ? "Swap dot and background colors"
+              : "Put the dots on white"}
+          </Button>
+        </div>
+      )}
+
+      <p className="text-muted-foreground text-xs">
+        {variantOption(mode, art).hint} Finder, alignment and format patterns
+        stay crisp.
+      </p>
+      <ArtSampleGrid
+        key={mode}
+        label={MODE_COPY[mode].samples}
+        mode={mode}
+        onPick={applySample}
+        selected={art?.mode === mode ? pickedSample : undefined}
+      />
+      <div className="flex flex-wrap gap-2">
+        <input
+          accept={ALLOWED_ART_TYPES.join(",")}
+          aria-label={MODE_COPY[mode].upload}
+          className="sr-only"
+          onChange={handleUpload}
+          ref={fileInputRef}
+          type="file"
+        />
+        <Button
+          className="flex-1"
+          disabled={isLoading}
+          onClick={() => fileInputRef.current?.click()}
+          size="sm"
           variant="outline"
         >
-          <ToggleGroupItem className="flex-1 text-xs" value="classic">
-            Classic
-          </ToggleGroupItem>
-          <ToggleGroupItem className="flex-1 text-xs" value="logo">
-            Logo QR
-          </ToggleGroupItem>
-          <ToggleGroupItem className="flex-1 text-xs" value="halftone">
-            Image QR
-          </ToggleGroupItem>
-        </ToggleGroup>
-
-        {choice !== "classic" && colorIssue && (
-          <div className="bg-muted/40 flex flex-col gap-2.5 rounded-lg border p-3">
-            <p
-              className="text-muted-foreground flex gap-2 text-xs"
-              role="status"
-            >
-              <InfoCircle
-                aria-hidden="true"
-                className="mt-px size-4 shrink-0"
-              />
-              {ART_COLOR_ISSUE_COPY[colorIssue]}
-            </p>
-            <Button
-              className="self-start"
-              onClick={() => {
-                const fix = artColorFix(style);
-                if (fix) onChange({ ...style, ...fix } as QRStyle);
-              }}
-              size="sm"
-              variant="outline"
-            >
-              {colorIssue === "inverted"
-                ? "Swap dot and background colors"
-                : "Put the dots on white"}
-            </Button>
-          </div>
-        )}
-
-        {choice === "classic" ? null : (
-          <>
-            <p className="text-muted-foreground text-xs">
-              {variantOption(choice, art).hint} Finder, alignment and format
-              patterns stay crisp.
-            </p>
-            <ArtSampleGrid
-              key={choice}
-              label={MODE_COPY[choice].samples}
-              mode={choice}
-              onPick={(sample) => applySample(sample, choice)}
-              selected={art?.mode === choice ? pickedSample : undefined}
-            />
-            <div className="flex flex-wrap gap-2">
-              <input
-                accept={ALLOWED_ART_TYPES.join(",")}
-                aria-label={MODE_COPY[choice].upload}
-                className="sr-only"
-                onChange={handleUpload}
-                ref={fileInputRef}
-                type="file"
-              />
-              <Button
-                className="flex-1"
-                disabled={isLoading}
-                onClick={() => fileInputRef.current?.click()}
-                size="sm"
-                variant="outline"
-              >
-                {isLoading ? (
-                  <LoaderCircle className="animate-spin" />
-                ) : (
-                  <ImageUp />
-                )}
-                {art ? "Upload another" : "Upload your own"}
-              </Button>
-              {choice === "logo" && customLogo && (
-                <Button
-                  disabled={isLoading}
-                  onClick={() => void applyImage(customLogo, "logo")}
-                  size="sm"
-                  variant="ghost"
-                >
-                  Use my logo
-                </Button>
-              )}
-            </div>
-            <p className="text-muted-foreground text-xs">
-              {MODE_COPY[choice].upload}. PNG, JPG, WebP or SVG, up to{" "}
-              {MAX_LOGO_FILE_SIZE / 1024 / 1024}MB. Your image stays in your
-              browser; only a small color grid is saved.
-            </p>
-
-            {art && (
-              <>
-                <div>
-                  <OptionGroupLabel>Look</OptionGroupLabel>
-                  <ToggleGroup
-                    aria-label="Art look"
-                    className="w-full"
-                    onValueChange={(id) => {
-                      if (id) update({ ...art, variant: id as QRArtVariant });
-                    }}
-                    type="single"
-                    value={variantOption(art.mode, art).id}
-                    variant="outline"
-                  >
-                    {ART_VARIANT_OPTIONS[art.mode].map((option) => (
-                      <ToggleGroupItem
-                        className="flex-1 text-xs"
-                        key={option.id}
-                        value={option.id}
-                      >
-                        {option.name}
-                      </ToggleGroupItem>
-                    ))}
-                  </ToggleGroup>
-                </div>
-                {art.mode === "logo" && (
-                  <div className="flex items-center justify-between gap-3">
-                    <Label
-                      className="cursor-pointer text-xs"
-                      htmlFor="art-match-eyes"
-                    >
-                      Eyes match the logo
-                    </Label>
-                    <Switch
-                      checked={art.matchEyes !== false}
-                      id="art-match-eyes"
-                      onCheckedChange={(checked) =>
-                        update({ ...art, matchEyes: checked })
-                      }
-                    />
-                  </div>
-                )}
-                <ArtStrength
-                  onChange={(intensity) => update({ ...art, intensity })}
-                  value={art.intensity ?? DEFAULT_ART_INTENSITY}
-                />
-                {followsRecommended ? (
-                  <p className="text-muted-foreground text-xs">
-                    Uses high error correction and a clear border so it still
-                    scans.
-                  </p>
-                ) : (
-                  <p className="text-muted-foreground flex flex-wrap items-center gap-x-1 text-xs">
-                    Art scans best with high error correction and a clear
-                    border.
-                    <Button
-                      className="h-auto p-0 text-xs"
-                      onClick={() => update(art, recommendedSettings(style))}
-                      size="sm"
-                      variant="link"
-                    >
-                      Apply
-                    </Button>
-                  </p>
-                )}
-                <ArtScanScore art={art} style={style} />
-                <Button
-                  className="w-full"
-                  onClick={() => {
-                    setSource(null);
-                    update(undefined);
-                  }}
-                  size="sm"
-                  variant="ghost"
-                >
-                  <X />
-                  Remove art
-                </Button>
-              </>
-            )}
-          </>
+          {isLoading ? <LoaderCircle className="animate-spin" /> : <ImageUp />}
+          {art ? "Upload another" : "Upload your own"}
+        </Button>
+        {mode === "logo" && customLogo && (
+          <Button
+            disabled={isLoading}
+            onClick={() => void applyImage(customLogo, "logo")}
+            size="sm"
+            variant="ghost"
+          >
+            Use my logo
+          </Button>
         )}
       </div>
-    </ControlSection>
+      <p className="text-muted-foreground text-xs">
+        {MODE_COPY[mode].upload}. PNG, JPG, WebP or SVG, up to{" "}
+        {MAX_LOGO_FILE_SIZE / 1024 / 1024}MB. Your image stays in your browser;
+        only a small color grid is saved.
+      </p>
+
+      {art && (
+        <>
+          <div>
+            <OptionGroupLabel>Look</OptionGroupLabel>
+            <ToggleGroup
+              aria-label="Art look"
+              className="w-full"
+              onValueChange={(id) => {
+                if (id) update({ ...art, variant: id as QRArtVariant });
+              }}
+              type="single"
+              value={variantOption(art.mode, art).id}
+              variant="outline"
+            >
+              {ART_VARIANT_OPTIONS[art.mode].map((option) => (
+                <ToggleGroupItem
+                  className="flex-1 text-xs"
+                  key={option.id}
+                  value={option.id}
+                >
+                  {option.name}
+                </ToggleGroupItem>
+              ))}
+            </ToggleGroup>
+          </div>
+          {art.mode === "logo" && (
+            <div className="flex items-center justify-between gap-3">
+              <Label
+                className="cursor-pointer text-xs"
+                htmlFor="art-match-eyes"
+              >
+                Eyes match the logo
+              </Label>
+              <Switch
+                checked={art.matchEyes !== false}
+                id="art-match-eyes"
+                onCheckedChange={(checked) =>
+                  update({ ...art, matchEyes: checked })
+                }
+              />
+            </div>
+          )}
+          <ArtStrength
+            onChange={(intensity) => update({ ...art, intensity })}
+            value={art.intensity ?? DEFAULT_ART_INTENSITY}
+          />
+          {followsRecommended ? (
+            <p className="text-muted-foreground text-xs">
+              Uses high error correction and a clear border so it still scans.
+            </p>
+          ) : (
+            <p className="text-muted-foreground flex flex-wrap items-center gap-x-1 text-xs">
+              Art scans best with high error correction and a clear border.
+              <Button
+                className="h-auto p-0 text-xs"
+                onClick={() => update(art, recommendedSettings(style))}
+                size="sm"
+                variant="link"
+              >
+                Apply
+              </Button>
+            </p>
+          )}
+          <ArtScanScore art={art} style={style} />
+          <Button
+            className="w-full"
+            onClick={removeArt}
+            size="sm"
+            variant="ghost"
+          >
+            <X />
+            Remove art
+          </Button>
+        </>
+      )}
+    </div>
   );
 }
 
@@ -585,7 +571,7 @@ function ArtStrength({
 }
 
 /** Live preview of the art code plus the library's scan score for it. */
-function ArtScanScore({ art, style }: { art: QRArt; style: StyleWithArt }) {
+function ArtScanScore({ art, style }: { art: QRArt; style: QRStyle }) {
   const value = useEditorValue();
   const [result, setResult] = React.useState<ScanScoreResult | null>(null);
   const [checking, setChecking] = React.useState(false);

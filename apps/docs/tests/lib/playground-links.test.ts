@@ -5,8 +5,10 @@
 import { getQRModuleCount } from "qrdx";
 import { describe, expect, it } from "vitest";
 import { CODE_TABS } from "@/components/editor/action-bar/code-snippets";
+import { AI_ART_PRESETS } from "@/components/sections/ai-art/presets";
 import {
   CODE_LANGS,
+  DESIGN_SECTIONS,
   formatPrintDistance,
   handoffSource,
   hasOneShotParams,
@@ -14,6 +16,7 @@ import {
   MAX_STYLE_PARAM_LENGTH,
   PRINT_DISTANCE_MAX_MM,
   PRINT_DISTANCE_MIN_MM,
+  parseArtStyleId,
   parseLinkUrl,
   parsePlaygroundParams,
   parsePrintDistance,
@@ -45,7 +48,7 @@ describe("tab aliases", () => {
     expect(resolveControlTab("customisations")).toBe("customisations");
     expect(resolveControlTab("settings")).toBe("settings");
     expect(resolveControlTab("ai")).toBe("ai");
-    expect(resolveControlTab("art")).toBeNull();
+    expect(resolveControlTab("art")).toBe("art");
     expect(resolveControlTab("")).toBeNull();
     expect(resolveControlTab(null)).toBeNull();
   });
@@ -168,8 +171,10 @@ describe("other parameters", () => {
     expect([...CODE_LANGS]).toEqual([...CODE_TABS]);
   });
 
-  it("only takes sections the Design tab can open today", () => {
+  it("only takes sections the Design tab can open", () => {
     expect(parseHref("/playground?section=logo").section).toBe("logo");
+    expect(parseHref("/playground?section=shape").section).toBeUndefined();
+    // Art isn't a Design section any more: it opens the Art tab.
     expect(parseHref("/playground?section=art").section).toBeUndefined();
   });
 
@@ -183,10 +188,6 @@ describe("other parameters", () => {
     expect(parseHref("/playground?style=1.ab%2Bcd").style).toBeUndefined();
     const long = `1.${"a".repeat(MAX_STYLE_PARAM_LENGTH)}`;
     expect(parseHref(`/playground?style=${long}`).style).toBeUndefined();
-  });
-
-  it("ignores art links and art modes from later phases", () => {
-    expect(parseHref("/playground?tab=art&art=ai&artStyle=neon")).toEqual({});
   });
 
   it("never reads private form fields", () => {
@@ -443,5 +444,112 @@ describe("handoffSource", () => {
       "chrome-extension",
     );
     expect(handoffSource("", origin, "https://evil.example")).toBe("direct");
+  });
+});
+
+// ── The Art tab (hub phase 3) ───────────────────────────────────────────────
+
+describe("the Art tab", () => {
+  it("opens with tab=art and picks a mode with art=", () => {
+    expect(parseHref("/playground?tab=art")).toEqual({ tab: "art" });
+    expect(parseHref("/playground?tab=art&art=logo")).toEqual({
+      tab: "art",
+      art: "logo",
+    });
+    expect(parseHref("/playground?tab=art&art=IMAGE").art).toBe("image");
+    expect(parseHref("/playground?tab=art&art=photo")).toEqual({ tab: "art" });
+  });
+
+  it("brings the Art tab with art=, and drops it beside another tab", () => {
+    expect(parseHref("/playground?art=image")).toEqual({
+      tab: "art",
+      art: "image",
+    });
+    expect(parseHref("/playground?tab=design&art=logo")).toEqual({
+      tab: "customisations",
+    });
+    expect(parseHref("/playground?tab=content&art=ai").art).toBeUndefined();
+  });
+
+  it("takes an AI art style only with art=ai, and never a prompt", () => {
+    expect(
+      parseHref(
+        "/playground?tab=art&art=ai&artStyle=zen-garden&prompt=a%20cat",
+      ),
+    ).toEqual({ tab: "art", art: "ai", artStyle: "zen-garden" });
+    expect(
+      parseHref("/playground?tab=art&art=logo&artStyle=zen-garden").artStyle,
+    ).toBeUndefined();
+    expect(
+      parseHref("/playground?tab=art&art=ai&artStyle=Zen%20Garden!").artStyle,
+    ).toBeUndefined();
+    expect(parseArtStyleId("Neon-City")).toBe("neon-city");
+    expect(parseArtStyleId(`a${"b".repeat(60)}`)).toBeNull();
+  });
+
+  it("accepts every AI art style preset as a link", () => {
+    for (const preset of AI_ART_PRESETS) {
+      expect(parseArtStyleId(preset.id)).toBe(preset.id);
+    }
+  });
+
+  it("opens the Art tab from the old Design section link", () => {
+    expect(parseHref("/playground?tab=customisations&section=art")).toEqual({
+      tab: "art",
+    });
+    expect(parseHref("/playground?tab=settings&section=art").tab).toBe("art");
+    expect(parseHref("/playground?section=art")).toEqual({ tab: "art" });
+    // A link naming another tab keeps it.
+    expect(parseHref("/playground?tab=content&section=art")).toEqual({
+      tab: "content",
+    });
+  });
+
+  it("opens every Design section by its id", () => {
+    for (const section of DESIGN_SECTIONS) {
+      expect(parseHref(`/playground?section=${section}`).section).toBe(section);
+    }
+  });
+
+  it("writes Art links that read back the same", () => {
+    const ai = playgroundHref({
+      tab: "art",
+      art: "ai",
+      artStyle: "zen-garden",
+    });
+    expect(ai).toBe("/playground?tab=art&art=ai&artStyle=zen-garden");
+    expect(parseHref(ai)).toEqual({
+      tab: "art",
+      art: "ai",
+      artStyle: "zen-garden",
+    });
+    expect(playgroundHref({ art: "logo" })).toBe(
+      "/playground?tab=art&art=logo",
+    );
+    expect(playgroundHref({ tab: "art" })).toBe("/playground?tab=art");
+    // A style only with AI art, no art beside another tab.
+    expect(playgroundHref({ art: "image", artStyle: "zen-garden" })).toBe(
+      "/playground?tab=art&art=image",
+    );
+    expect(playgroundHref({ tab: "content", art: "logo" })).toBe(
+      "/playground?tab=content",
+    );
+    expect(playgroundHref({ art: "ai", artStyle: "<script>" as string })).toBe(
+      "/playground?tab=art&art=ai",
+    );
+  });
+
+  it("applies art= and artStyle= once, and keeps the tab", () => {
+    const href = "https://qrdx.dev/playground?tab=art&art=ai&artStyle=sushi";
+    expect(hasOneShotParams(parseHref(href))).toBe(true);
+    const stripped = stripOneShotParams(href, "art");
+    expect(stripped).toBe("/playground?tab=art");
+    expect(hasOneShotParams(parseHref(stripped))).toBe(false);
+    expect(
+      stripOneShotParams(
+        "https://qrdx.dev/playground?tab=customisations&section=art",
+        "art",
+      ),
+    ).toBe("/playground?tab=art");
   });
 });
