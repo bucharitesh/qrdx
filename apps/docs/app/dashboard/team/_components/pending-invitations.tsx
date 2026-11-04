@@ -60,8 +60,10 @@ export function PendingInvitations({
         <TableRow>
           <TableHead>Email</TableHead>
           <TableHead>Role</TableHead>
-          <TableHead>Expires</TableHead>
-          <TableHead className="text-right">Actions</TableHead>
+          <TableHead className="hidden sm:table-cell">Expires</TableHead>
+          <TableHead className="text-right">
+            <span className="max-sm:sr-only">Actions</span>
+          </TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -80,7 +82,7 @@ export function PendingInvitations({
                 {TEAM_ROLE_LABELS[invitation.role]}
               </Badge>
             </TableCell>
-            <TableCell className="text-muted-foreground text-sm">
+            <TableCell className="text-muted-foreground hidden text-sm sm:table-cell">
               {formatUtcDateTime(invitation.expiresAt)}
             </TableCell>
             <TableCell>

@@ -113,8 +113,13 @@ export function MembersTable({
           <TableRow>
             <TableHead>Member</TableHead>
             <TableHead>Role</TableHead>
-            <TableHead>Joined</TableHead>
-            {canManage && <TableHead className="text-right">Actions</TableHead>}
+            {/* Phones: name, email and role fit without scrolling sideways. */}
+            <TableHead className="hidden sm:table-cell">Joined</TableHead>
+            {canManage && (
+              <TableHead className="text-right">
+                <span className="max-sm:sr-only">Actions</span>
+              </TableHead>
+            )}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -169,7 +174,7 @@ export function MembersTable({
                   </Badge>
                 )}
               </TableCell>
-              <TableCell className="text-muted-foreground text-sm">
+              <TableCell className="text-muted-foreground hidden text-sm sm:table-cell">
                 {formatUtcDate(member.joinedAt)}
               </TableCell>
               {canManage && (
