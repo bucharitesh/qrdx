@@ -78,6 +78,11 @@ vi.mock("@/lib/email/send", () => ({
 
 const { createCodes } = await import("@/app/dashboard/codes/_lib/qr-codes");
 const { NOTICE_TIMEOUT_MS } = await import("@/lib/limit-notices");
+// Loaded by the background task on first use; loaded here so a busy test
+// run doesn't make the task slower than the waits below.
+await import("@/lib/limit-notices/notify");
+
+const WAIT = { timeout: 5000 };
 
 const scope = {
   userId: "u_alice",
@@ -158,10 +163,12 @@ describe("limit notices never fail the write", () => {
     const [created] = await create();
     expect(created?.destinationUrl).toBe("https://example.com/new");
     expect(fakeDb.rows("qrCode")).toHaveLength(9);
-    await vi.waitFor(() =>
-      expect(errors.some((line) => line.includes("limit_notice.failed"))).toBe(
-        true,
-      ),
+    await vi.waitFor(
+      () =>
+        expect(
+          errors.some((line) => line.includes("limit_notice.failed")),
+        ).toBe(true),
+      WAIT,
     );
     expect(
       errors.find((line) => line.includes("limit_notice.failed")),
@@ -175,13 +182,16 @@ describe("limit notices never fail the write", () => {
     const [created] = await create();
     expect(created).toBeDefined();
     expect(errors).toHaveLength(0);
-    await vi.advanceTimersByTimeAsync(NOTICE_TIMEOUT_MS + 1);
-    expect(
-      errors.some(
-        (line) =>
-          line.includes("limit_notice.failed") && line.includes("timed out"),
-      ),
-    ).toBe(true);
+    // Advance until the task has started its clock and given up.
+    await vi.waitFor(async () => {
+      await vi.advanceTimersByTimeAsync(NOTICE_TIMEOUT_MS + 1);
+      expect(
+        errors.some(
+          (line) =>
+            line.includes("limit_notice.failed") && line.includes("timed out"),
+        ),
+      ).toBe(true);
+    }, WAIT);
     expect(state.sent).toBe(0);
   });
 
@@ -198,7 +208,7 @@ describe("limit notices never fail the write", () => {
       { id: "u_alice", email: "alice@example.com", banned: false },
     ]);
     await create();
-    await vi.waitFor(() => expect(state.sent).toBe(1));
+    await vi.waitFor(() => expect(state.sent).toBe(1), WAIT);
     expect(fakeDb.rows("limitNotice")).toMatchObject([
       { organizationId: "org_acme", limitId: "dynamicCodes", threshold: 90 },
     ]);
