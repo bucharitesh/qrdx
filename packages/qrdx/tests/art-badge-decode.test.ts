@@ -34,7 +34,9 @@ const TEXT = `https://qrdx.dev/q/${"abcdefghijklmnopqrstuvwxyz0123456789".repeat
  * here (level:payload length:logo) so the matrix stays strict; fixing it
  * makes the `it.fails` below fail until the entry is removed.
  */
-const KNOWN_EYE_COLOR = new Set(["L:15:bloom", "L:15:wave", "L:27:wave"]);
+// (The wave entries went once the test rasterizer honoured the logo's
+// clip-path, as browsers do: unclipped, wave read as a different color.)
+const KNOWN_EYE_COLOR = new Set(["L:15:bloom"]);
 
 const images = new Map<string, QRArtImage>();
 function logo(name: string): QRArtImage {

@@ -15,14 +15,17 @@ export {
   qrArtVariantSchema,
 } from "./art";
 export type {
+  AngularGradient,
   ColorConfig,
   ColorType,
+  Gradient,
   GradientStop,
   LinearGradient,
   RadialGradient,
   SolidColor,
 } from "./color";
 export {
+  angularGradientSchema,
   colorConfigSchema,
   colorTypeSchema,
   getColorString,

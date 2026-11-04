@@ -7,9 +7,11 @@
 // and fills each shape with an anti-aliased scanline polygon filler. Supported:
 // path/rect/circle/ellipse/polygon fills (nonzero + evenodd), strokes (butt
 // caps, no joins), transforms, nested <svg> viewports, opacity, gradients
-// flattened to their first stop, and SVG data-URI <image>s (other images are
-// painted as an opaque grey block, like scan-score's own logo placeholder).
-// Masks, clip paths, filters and text are not painted.
+// flattened to their first stop, userSpaceOnUse <pattern> fills (angular
+// gradients, image fills) and clip paths through coverage masks, SVG
+// data-URI <image>s and PNG data-URI <image>s (other images are painted as
+// an opaque grey block, like scan-score's own logo placeholder). Masks,
+// filters and text are not painted.
 
 import jsQR from "jsqr";
 import { parseColor, type RGBAColor } from "../../src/utils/parse-color";
@@ -117,13 +119,76 @@ function toPolygons(segments: Segment[], matrix: Matrix): Point[][] {
   return polygons;
 }
 
-/** Anti-aliased polygon fill, composited source-over. */
+/** Coverage (0–1) of a device-space region, for clipping. */
+export interface ClipMask {
+  x0: number;
+  y0: number;
+  width: number;
+  height: number;
+  data: Float32Array;
+}
+
+const maskAt = (mask: ClipMask, x: number, y: number) => {
+  const mx = x - mask.x0;
+  const my = y - mask.y0;
+  return mx < 0 || my < 0 || mx >= mask.width || my >= mask.height
+    ? 0
+    : (mask.data[my * mask.width + mx] as number);
+};
+
+/** Coverage of `polygons`, cut down to `parent` when given. */
+export function coverageMask(
+  polygons: Point[][],
+  evenOdd: boolean,
+  parent: ClipMask | null
+): ClipMask {
+  let minX = Number.POSITIVE_INFINITY;
+  let minY = Number.POSITIVE_INFINITY;
+  let maxX = Number.NEGATIVE_INFINITY;
+  let maxY = Number.NEGATIVE_INFINITY;
+  for (const polygon of polygons) {
+    for (const [x, y] of polygon) {
+      minX = Math.min(minX, x);
+      maxX = Math.max(maxX, x);
+      minY = Math.min(minY, y);
+      maxY = Math.max(maxY, y);
+    }
+  }
+  if (!Number.isFinite(minX)) {
+    return { x0: 0, y0: 0, width: 0, height: 0, data: new Float32Array(0) };
+  }
+  const x0 = Math.floor(minX);
+  const y0 = Math.floor(minY);
+  const width = Math.max(1, Math.ceil(maxX) - x0);
+  const height = Math.max(1, Math.ceil(maxY) - y0);
+  const scratch = createImage(width, height, null);
+  fillPolygons(
+    scratch,
+    polygons.map((polygon) =>
+      polygon.map(([x, y]) => [x - x0, y - y0] as Point)
+    ),
+    { r: 255, g: 255, b: 255, a: 1 },
+    1,
+    evenOdd
+  );
+  const data = new Float32Array(width * height);
+  for (let i = 0; i < data.length; i++) {
+    const own = (scratch.data[i * 4 + 3] as number) / 255;
+    data[i] = parent
+      ? own * maskAt(parent, x0 + (i % width), y0 + Math.floor(i / width))
+      : own;
+  }
+  return { x0, y0, width, height, data };
+}
+
+/** Anti-aliased polygon fill, composited source-over, inside `mask`. */
 export function fillPolygons(
   image: RasterImage,
   polygons: Point[][],
   color: RGBAColor,
   alpha: number,
-  evenOdd = false
+  evenOdd = false,
+  mask: ClipMask | null = null
 ) {
   if (alpha <= 0 || polygons.length === 0) {
     return;
@@ -219,7 +284,10 @@ export function fillPolygons(
     }
     const row = py * image.width;
     for (let px = x0; px < x1; px++) {
-      const c = Math.min(1, coverage[px - x0] as number) * alpha;
+      const c =
+        Math.min(1, coverage[px - x0] as number) *
+        alpha *
+        (mask ? maskAt(mask, px, py) : 1);
       if (c <= 0) {
         continue;
       }
@@ -246,7 +314,8 @@ function strokePolylines(
   matrix: Matrix,
   width: number,
   color: RGBAColor,
-  alpha: number
+  alpha: number,
+  mask: ClipMask | null = null
 ) {
   const half = (width * matrixScale(matrix)) / 2;
   if (half <= 0) {
@@ -271,7 +340,7 @@ function strokePolylines(
       ]);
     }
   }
-  fillPolygons(image, quads, color, alpha);
+  fillPolygons(image, quads, color, alpha, false, mask);
 }
 
 const opacityOf = (node: SvgNode, name: string) => {
@@ -283,42 +352,47 @@ const GREY: RGBAColor = { r: 128, g: 128, b: 128, a: 1 };
 
 class RasterPainter extends SvgPainter {
   readonly target: RasterImage;
-  /** Opacity inherited from ancestor groups */
-  private readonly opacityStack: number[] = [1];
+  /** Clip masks from `beginClip`, innermost last */
+  private readonly clips: ClipMask[] = [];
 
   constructor(target: RasterImage, gradients: Map<string, string>) {
     super(gradients);
     this.target = target;
   }
 
-  override walk(node: SvgNode, parent: PaintState, isRoot = false) {
-    const own = opacityOf(node, "opacity");
-    const isContainer = node.name === "g" || node.name === "svg";
-    if (isContainer) {
-      this.opacityStack.push((this.opacityStack.at(-1) as number) * own);
-    }
-    super.walk(node, parent, isRoot);
-    if (isContainer) {
-      this.opacityStack.pop();
-    }
+  private get clip(): ClipMask | null {
+    return this.clips.at(-1) ?? null;
   }
 
-  private alpha(node: SvgNode, kind: "fill" | "stroke") {
-    const inherited = this.opacityStack.at(-1) as number;
-    const own =
-      node.name === "g" || node.name === "svg" ? 1 : opacityOf(node, "opacity");
-    return inherited * own * opacityOf(node, `${kind}-opacity`);
+  override beginClip(segments: Segment[], matrix: Matrix, evenOdd: boolean) {
+    this.clips.push(
+      coverageMask(toPolygons(segments, matrix), evenOdd, this.clip)
+    );
+    return true;
+  }
+
+  override endClip() {
+    this.clips.pop();
   }
 
   paint(segments: Segment[], node: SvgNode, state: PaintState): void {
-    const fill = this.resolveColor(state.fill);
-    if (fill) {
+    const opacity = state.opacity ?? 1;
+    const paint = this.resolveFill(
+      state.fill,
+      segments,
+      state.viewport,
+      (state.fillOpacity ?? 1) * opacity
+    );
+    if (paint && "pattern" in paint) {
+      this.paintPattern(segments, state, paint.pattern, paint.alpha);
+    } else if (paint && "color" in paint) {
       fillPolygons(
         this.target,
         toPolygons(segments, state.matrix),
-        fill,
-        fill.a * this.alpha(node, "fill"),
-        state.fillRule === "evenodd"
+        paint.color,
+        paint.color.a,
+        state.fillRule === "evenodd",
+        this.clip
       );
     }
     const stroke = this.resolveColor(state.stroke);
@@ -329,7 +403,8 @@ class RasterPainter extends SvgPainter {
         state.matrix,
         state.strokeWidth,
         stroke,
-        stroke.a * this.alpha(node, "stroke")
+        stroke.a * opacity * opacityOf(node, "stroke-opacity"),
+        this.clip
       );
     }
   }
@@ -376,7 +451,14 @@ class RasterPainter extends SvgPainter {
       applyMatrix(state.matrix, x + width, y + height),
       applyMatrix(state.matrix, x, y + height),
     ];
-    fillPolygons(this.target, [corners], GREY, this.alpha(node, "fill"));
+    fillPolygons(
+      this.target,
+      [corners],
+      GREY,
+      state.opacity ?? 1,
+      false,
+      this.clip
+    );
   }
 }
 

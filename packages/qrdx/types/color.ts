@@ -3,11 +3,13 @@ import { z } from "zod";
 /**
  * Color type discriminator
  */
-export const colorTypeSchema = z.enum(["solid", "linear", "radial"]);
+export const colorTypeSchema = z.enum(["solid", "linear", "radial", "angular"]);
 export type ColorType = z.infer<typeof colorTypeSchema>;
 
 /**
- * Solid color configuration
+ * Solid color configuration. `color` is any CSS color the engine parses
+ * (hex with or without alpha, rgb()/rgba(), a name); alpha is kept in it,
+ * e.g. "#1d4ed880" or "rgba(29, 78, 216, 0.5)".
  */
 export const solidColorSchema = z.object({
   type: z.literal("solid"),
@@ -16,7 +18,8 @@ export const solidColorSchema = z.object({
 export type SolidColor = z.infer<typeof solidColorSchema>;
 
 /**
- * Gradient stop configuration
+ * Gradient stop configuration. A stop's color may carry alpha, as a solid
+ * color does.
  */
 export const gradientStopSchema = z.object({
   color: z.string(),
@@ -46,18 +49,36 @@ export const radialGradientSchema = z.object({
 export type RadialGradient = z.infer<typeof radialGradientSchema>;
 
 /**
+ * Angular (conic) gradient: the color sweeps clockwise around the centre of
+ * the shape it fills, like CSS `conic-gradient(from <angle>deg, …)`.
+ * `angle` is where the sweep starts, in degrees clockwise from the top
+ * (0 = 12 o'clock). Offsets run 0–100 around the full turn.
+ */
+export const angularGradientSchema = z.object({
+  type: z.literal("angular"),
+  stops: z.array(gradientStopSchema).min(2),
+  angle: z.number().optional().default(0),
+});
+export type AngularGradient = z.infer<typeof angularGradientSchema>;
+
+/** Any gradient: linear, radial or angular. */
+export type Gradient = LinearGradient | RadialGradient | AngularGradient;
+
+/**
  * Union type for color configuration
  * Supports:
  * - string: backward compatible solid color
  * - SolidColor: explicit solid color object
- * - LinearGradient: linear gradient with start/end colors and angle
- * - RadialGradient: radial gradient with start/end colors and positioning
+ * - LinearGradient: linear gradient with stops and an angle
+ * - RadialGradient: radial gradient from the centre out
+ * - AngularGradient: conic gradient around the centre
  */
 export const colorConfigSchema = z.union([
   z.string(),
   solidColorSchema,
   linearGradientSchema,
   radialGradientSchema,
+  angularGradientSchema,
 ]);
 export type ColorConfig = z.infer<typeof colorConfigSchema>;
 
@@ -67,7 +88,7 @@ export type ColorConfig = z.infer<typeof colorConfigSchema>;
 export function normalizeColorConfig(
   color: ColorConfig | undefined,
   fallback = "#000000"
-): SolidColor | LinearGradient | RadialGradient {
+): SolidColor | Gradient {
   if (!color) {
     return { type: "solid", color: fallback };
   }
@@ -80,13 +101,15 @@ export function normalizeColorConfig(
 /**
  * Helper to check if color is gradient
  */
-export function isGradient(
-  color: ColorConfig | undefined
-): color is LinearGradient | RadialGradient {
+export function isGradient(color: ColorConfig | undefined): color is Gradient {
   if (!color || typeof color === "string") {
     return false;
   }
-  return color.type === "linear" || color.type === "radial";
+  return (
+    color.type === "linear" ||
+    color.type === "radial" ||
+    color.type === "angular"
+  );
 }
 
 /**
@@ -104,6 +127,11 @@ export function getColorString(
   return normalized.stops[0]?.color || fallback;
 }
 
+/**
+ * CSS `background` for a color config, for swatches and previews: the color
+ * itself, or a CSS gradient that matches how the engine draws it (a linear
+ * angle of 0 runs left to right, as in the QR code).
+ */
 export function getNormalizedColor(
   color: ColorConfig | string | undefined
 ): string {
@@ -126,7 +154,12 @@ export function getNormalizedColor(
     .join(", ");
 
   if (normalized.type === "linear") {
-    return `linear-gradient(${normalized.angle ?? 0}deg, ${colorStops})`;
+    // The engine's 0° points right; CSS's 0deg points up.
+    return `linear-gradient(${(normalized.angle ?? 0) + 90}deg, ${colorStops})`;
+  }
+
+  if (normalized.type === "angular") {
+    return `conic-gradient(from ${normalized.angle ?? 0}deg, ${colorStops})`;
   }
 
   return `radial-gradient(circle, ${colorStops})`;

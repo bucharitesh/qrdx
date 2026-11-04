@@ -156,19 +156,22 @@ const maskAt = (mask: Mask | null, x: number, y: number) => {
   return mask.data[ly * mask.width + lx] as number;
 };
 
-/** Paints `area` (× `clip`) with a per-pixel color; null colors skip. */
+/** Paints `area` (× `clip` × `opacity`) with a per-pixel color; null colors skip. */
 function composite(
   image: RasterImage,
   area: Mask,
   clip: Mask | null,
-  colorAt: (x: number, y: number) => RGB | null
+  colorAt: (x: number, y: number) => RGB | null,
+  opacity = 1
 ) {
   for (let ly = 0; ly < area.height; ly++) {
     for (let lx = 0; lx < area.width; lx++) {
       const x = area.x0 + lx;
       const y = area.y0 + ly;
       const alpha =
-        (area.data[ly * area.width + lx] as number) * maskAt(clip, x, y);
+        (area.data[ly * area.width + lx] as number) *
+        maskAt(clip, x, y) *
+        opacity;
       if (alpha <= 0) continue;
       const color = colorAt(x + 0.5, y + 0.5);
       if (!color) continue;
@@ -589,6 +592,8 @@ export interface Rendered {
   shadings: PsDict[];
   /** Fill colors of solid fills, in order */
   fills: RGB[];
+  /** Fill opacity of each solid fill (PDF `gs` /ca), in the same order */
+  alphas: number[];
 }
 
 interface InterpretOptions {
@@ -596,24 +601,29 @@ interface InterpretOptions {
   scale: number;
   /** Named shadings (PDF page resources) */
   resources?: PsDict;
+  /** Named graphics states (PDF /ExtGState resources): `/ca` is fill opacity */
+  extGStates?: PsDict;
   resolve?: (objectNumber: number) => PsValue;
 }
 
 function interpret(source: string, options: InterpretOptions): Rendered {
   const { page, scale } = options;
   const image = createImage(page.width * scale, page.height * scale);
-  const rendered: Rendered = { image, shadings: [], fills: [] };
+  const rendered: Rendered = { image, shadings: [], fills: [], alphas: [] };
   const stack: (PsValue | typeof MARK)[] = [];
   const userDict = new Map<string, PsValue>();
   interface State {
     ctm: Matrix;
     color: RGB;
     clip: Mask | null;
+    /** Fill opacity from `gs` (PDF /ca) */
+    alpha: number;
   }
   let gs: State = {
     ctm: [scale, 0, 0, -scale, 0, page.height * scale],
     color: [0, 0, 0],
     clip: null,
+    alpha: 1,
   };
   const saved: State[] = [];
   let polygons: Point[][] = [];
@@ -642,7 +652,8 @@ function interpret(source: string, options: InterpretOptions): Rendered {
     if (area) {
       const color = gs.color;
       rendered.fills.push(color);
-      composite(image, area, gs.clip, () => color);
+      rendered.alphas.push(gs.alpha);
+      composite(image, area, gs.clip, () => color, gs.alpha);
     }
   };
   const clipTo = (evenOdd: boolean) => {
@@ -661,8 +672,12 @@ function interpret(source: string, options: InterpretOptions): Rendered {
     const clip = gs.clip;
     if (!clip) throw new Error("Unclipped shading");
     const toShading = invert(gs.ctm);
-    composite(image, clip, null, (x, y) =>
-      shadingColorAt(shading, applyMatrix(toShading, x, y))
+    composite(
+      image,
+      clip,
+      null,
+      (x, y) => shadingColorAt(shading, applyMatrix(toShading, x, y)),
+      gs.alpha
     );
   };
   const finishPath = (paint: () => void) => {
@@ -827,6 +842,13 @@ function interpret(source: string, options: InterpretOptions): Rendered {
       case "sh":
         shade(options.resources?.get(nameOf(stack.pop() as PsValue)));
         break;
+      case "gs": {
+        const state = options.extGStates?.get(nameOf(stack.pop() as PsValue));
+        if (!(state instanceof Map)) throw new Error("ExtGState not found");
+        const ca = state.get("ca");
+        gs = { ...gs, alpha: typeof ca === "number" ? ca : 1 };
+        break;
+      }
       case "shfill":
         shade(stack.pop() as PsValue);
         break;
@@ -896,6 +918,8 @@ export interface PdfDocument {
   content: string;
   /** The page's /Shading resources by name */
   shadings: PsDict;
+  /** The page's /ExtGState resources by name */
+  extGStates: PsDict;
   mediaBox: [number, number];
 }
 
@@ -932,10 +956,19 @@ export function readPdf(buffer: ArrayBuffer): PdfDocument {
           dictionaryAt(text, shadingAt + "/Shading ".length),
           resolve
         ) as PsDict);
+  const extGStateAt = text.indexOf("/ExtGState <<");
+  const extGStates =
+    extGStateAt < 0
+      ? new Map()
+      : (parseLiteral(
+          dictionaryAt(text, extGStateAt + "/ExtGState ".length),
+          resolve
+        ) as PsDict);
   return {
     text,
     content: content.join("\n"),
     shadings,
+    extGStates,
     mediaBox: [Number(box?.[2]), Number(box?.[3])],
   };
 }
@@ -947,6 +980,7 @@ export function rasterizePdf(buffer: ArrayBuffer, scale: number): Rendered {
     page: { width: pdf.mediaBox[0], height: pdf.mediaBox[1] },
     scale,
     resources: pdf.shadings,
+    extGStates: pdf.extGStates,
   });
 }
 
