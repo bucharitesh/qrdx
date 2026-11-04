@@ -79,14 +79,11 @@ function writeLocal(key: string, day: string) {
 export function WhatsNewProvider({
   items,
   seen,
-  markSeen = markChangelogSeen,
   children,
 }: {
   items: ChangelogItem[];
   /** Null when signed out or unknown: nothing is marked new */
   seen: WhatsNewSeen | null;
-  /** Stores "seen" in the account (the dev preview passes a no-op) */
-  markSeen?: () => Promise<unknown>;
   children: ReactNode;
 }) {
   const storageKey = seen ? seenStorageKey(seen.viewerId) : null;
@@ -114,8 +111,8 @@ export function WhatsNewProvider({
     setLocal(newest);
     writeLocal(storageKey, newest);
     // This browser already counts them seen if the write fails.
-    markSeen().catch(() => undefined);
-  }, [items, seenAt, storageKey, unread, markSeen]);
+    markChangelogSeen().catch(() => undefined);
+  }, [items, seenAt, storageKey, unread]);
 
   return (
     <WhatsNewContext.Provider value={{ items, unread, openPanel }}>
@@ -240,7 +237,7 @@ export function WhatsNewSheet({
   );
 }
 
-/** Header, list and footer, inside the sheet (and the dev preview). */
+/** Header, list and footer, inside the sheet. */
 export function WhatsNewPanel({
   items,
   seenAt,
