@@ -9,7 +9,7 @@
 
 import { authClient } from "@repo/auth/client";
 import { toast } from "@repo/design-system";
-import { Close } from "@repo/design-system/components/icons";
+import { Close, Spinner } from "@repo/design-system/components/icons";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -89,6 +89,7 @@ import { defaultThemeState } from "@/config/qr";
 import { track } from "@/lib/analytics";
 import { offeredPageTypes } from "@/lib/landing/file-page-types";
 import { PLAN_NAMES } from "@/lib/pricing";
+import { SHORT_LINK_BASE } from "@/lib/short-links";
 import { soundEvent } from "@/lib/sound/emit";
 import { useGetProDialogStore } from "@/store/get-pro-dialog-store";
 import type { QRStyle } from "@/types/theme";
@@ -348,7 +349,7 @@ export default function CodeBuilderModal({
     null;
   const slugPrefix = host
     ? `${host}/`
-    : `${domainOptions?.defaultHost ?? "qrdx.dev"}/q/`;
+    : `${domainOptions?.defaultHost ?? new URL(SHORT_LINK_BASE).host}/q/`;
   const link = created
     ? {
         value: created.code.shortLink,
@@ -883,7 +884,19 @@ export default function CodeBuilderModal({
             : "The short link is generated when you create the code."}
         </p>
       ) : (
-        <Skeleton className="h-[4.5rem] w-full" />
+        // The plan's rights are still loading: the field itself, read-only,
+        // instead of an empty placeholder box.
+        <SlugField
+          allowed={false}
+          disabled
+          editing={editing}
+          onChange={(slug) => update("slug", slug)}
+          onUpgrade={openGetProDialog}
+          pending
+          prefix={slugPrefix}
+          status={{ state: "idle" }}
+          value={fields.slug}
+        />
       )}
       {domainChanged && !slugChanged && code && (
         <p
@@ -1117,12 +1130,15 @@ export default function CodeBuilderModal({
       </p>
     );
   } else if (!ready) {
+    // Said in words while the code loads, instead of empty boxes.
     main = (
-      <div className="space-y-4">
-        <Skeleton className="h-16 w-full" />
-        <Skeleton className="h-16 w-full" />
-        <Skeleton className="h-16 w-full" />
-      </div>
+      <p
+        className="text-muted-foreground flex items-center gap-2 text-sm"
+        role="status"
+      >
+        <Spinner className="size-4 animate-spin" />
+        Loading this code…
+      </p>
     );
   } else if (optionBody) {
     main = optionBody;
@@ -1184,16 +1200,13 @@ export default function CodeBuilderModal({
     );
   }
 
-  const showPreviewColumn = wide && !(contentType === "page" && !editing);
+  // Not while an edited code loads: the column would be empty until then.
+  const showPreviewColumn =
+    wide && ready && !(contentType === "page" && !editing);
   const showOptions = ready && !(contentType === "page" && !editing);
 
   return (
     <>
-      {/* Tells page shortcuts (lib/hooks/use-keyboard-shortcuts.tsx) a modal
-          is open, as the design system's Dialog overlay does, so the
-          playground's single keys (S, R, X…) stay quiet behind the builder,
-          whose own keys use some of the same letters. */}
-      {open && <span aria-hidden hidden id="modal-backdrop" />}
       <ResponsiveDialog
         onOpenChange={(next) => {
           if (!next) requestClose();
