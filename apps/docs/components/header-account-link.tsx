@@ -4,63 +4,56 @@ import { authClient } from "@repo/auth/client";
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
 import Link from "next/link";
-import type { MouseEvent } from "react";
-import { DEFAULT_NEXT_PATH, SIGN_IN_PATH } from "@/lib/safe-redirect";
-import { useAuthStore } from "@/store/auth-store";
+import { DEFAULT_NEXT_PATH } from "@/lib/safe-redirect";
 
-/** A plain left click; modified clicks (new tab, …) follow the href. */
-const isPlainClick = (event: MouseEvent) =>
-  event.button === 0 &&
-  !event.metaKey &&
-  !event.ctrlKey &&
-  !event.shiftKey &&
-  !event.altKey;
+/** One grid cell for both labels; the hidden one still holds its width. */
+const LABEL = "col-start-1 row-start-1";
 
 /**
- * "Sign in" for visitors, "Dashboard" once signed in. Sign in opens the
- * dialog in place and lands on the dashboard; without JavaScript (or in a new
- * tab) the link goes to /sign-in, which does the same.
+ * The bar's one call to action: "Try the Playground" for visitors,
+ * "Dashboard" once signed in. Both labels are always laid out in the same
+ * cell, so the button is one width in every state and the bar doesn't move
+ * when the session arrives after the first paint.
  */
 export function HeaderAccountLink({
   className,
+  compact = false,
   onNavigate,
 }: {
   className?: string;
-  /** Called before leaving or opening the dialog (e.g. to close a drawer). */
+  /** Shortens the visitor label on phones, where the bar is narrow. */
+  compact?: boolean;
+  /** Called before leaving (e.g. to close a drawer). */
   onNavigate?: () => void;
 }) {
   const { data: session, isPending } = authClient.useSession();
-  const openSignInTo = useAuthStore((state) => state.openSignInTo);
-
-  if (session?.user) {
-    return (
-      <Button asChild className={className} variant="outline">
-        <Link href={DEFAULT_NEXT_PATH} onClick={onNavigate}>
-          Dashboard
-        </Link>
-      </Button>
-    );
-  }
+  const signedIn = Boolean(session?.user);
 
   return (
     <Button
       asChild
-      // Keeps its place while the session loads, so the bar doesn't shift.
+      // Keeps its place while the session loads.
       className={cn(isPending && "invisible", className)}
-      variant="outline"
     >
       <Link
         aria-hidden={isPending || undefined}
-        href={SIGN_IN_PATH}
-        onClick={(event) => {
-          onNavigate?.();
-          if (!isPlainClick(event)) return;
-          event.preventDefault();
-          openSignInTo(DEFAULT_NEXT_PATH);
-        }}
+        href={signedIn ? DEFAULT_NEXT_PATH : "/playground"}
+        onClick={onNavigate}
         tabIndex={isPending ? -1 : undefined}
       >
-        Sign in
+        <span className="grid justify-items-center">
+          <span className={cn(LABEL, signedIn && "invisible")}>
+            {compact ? (
+              <>
+                <span className="sm:hidden">Playground</span>
+                <span className="hidden sm:inline">Try the Playground</span>
+              </>
+            ) : (
+              "Try the Playground"
+            )}
+          </span>
+          <span className={cn(LABEL, !signedIn && "invisible")}>Dashboard</span>
+        </span>
       </Link>
     </Button>
   );
