@@ -6,6 +6,7 @@ import { SectionHeader } from "@/components/sections/section-header";
 import { SLUG_TO_CATEGORY } from "@/lib/blog-constants";
 import { createMetadata } from "@/lib/metadata";
 import { blogCategoriesSource } from "@/lib/source";
+import { buildTimeParams } from "@/lib/static-params";
 import {
   getPublishedPosts,
   rssAlternateTypes,
@@ -19,11 +20,15 @@ interface PageProps {
 /** Categories with fewer published posts than this are kept out of the index. */
 const MIN_POSTS_TO_INDEX = 2;
 
-export const dynamicParams = false;
-
+// Unknown categories render notFound() below (lib/static-params.ts).
 export function generateStaticParams() {
-  return Object.keys(SLUG_TO_CATEGORY).map((slug) => ({ slug }));
+  return buildTimeParams(() =>
+    Object.keys(SLUG_TO_CATEGORY).map((slug) => ({ slug })),
+  );
 }
+
+/** A category slug from the list (own keys only, so "constructor" is not one). */
+const isCategorySlug = (slug: string) => Object.hasOwn(SLUG_TO_CATEGORY, slug);
 
 function getCategoryPosts(categoryName: string) {
   return getPublishedPosts().filter(
@@ -34,7 +39,7 @@ function getCategoryPosts(categoryName: string) {
 export default async function BlogCategoryPage({ params }: PageProps) {
   const { slug } = await params;
 
-  if (!SLUG_TO_CATEGORY[slug]) {
+  if (!isCategorySlug(slug)) {
     notFound();
   }
 
@@ -77,7 +82,7 @@ export async function generateMetadata({
 }: PageProps): Promise<Metadata> {
   const { slug } = await params;
 
-  if (!SLUG_TO_CATEGORY[slug]) {
+  if (!isCategorySlug(slug)) {
     notFound();
   }
 

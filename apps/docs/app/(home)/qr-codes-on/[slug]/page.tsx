@@ -3,15 +3,17 @@ import { notFound } from "next/navigation";
 import { TopicPage } from "@/app/(home)/qr-codes-for/_components/topic-page";
 import { createMetadata } from "@/lib/metadata";
 import { industries, placements } from "@/lib/seo-content";
+import { buildTimeParams } from "@/lib/static-params";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
-export const dynamicParams = false;
-
+// Unknown slugs render notFound() below (lib/static-params.ts).
 export function generateStaticParams() {
-  return placements.items.map((item) => ({ slug: item.slug }));
+  return buildTimeParams(() =>
+    placements.items.map((item) => ({ slug: item.slug })),
+  );
 }
 
 export async function generateMetadata({
