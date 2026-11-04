@@ -2,11 +2,11 @@
 
 import { Tick as Check } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
-import { Input } from "@repo/design-system/components/ui/input";
 import { cn } from "@repo/design-system/lib/utils";
 import { Warning2 as AlertTriangle, Magicpen as Wand2 } from "iconsax-reactjs";
 import Link from "next/link";
 import { useId } from "react";
+import { SolidColorField } from "@/components/editor/gradient-picker";
 import { useWorkspaceHref } from "@/components/workspace-provider";
 import type { LandingTheme } from "@/types/landing";
 import {
@@ -42,6 +42,7 @@ const COLOR_FIELDS: Array<{ key: keyof Colors; label: string }> = [
   { key: "mutedForeground", label: "Secondary text" },
 ];
 
+/** A theme color: the editor's paint picker, solid and opaque (#rrggbb). */
 function ColorInput({
   label,
   value,
@@ -52,34 +53,15 @@ function ColorInput({
   onChange: (value: string) => void;
 }) {
   const id = useId();
-  const six = isHexColor(value) && value.length === 7 ? value : "#000000";
   return (
-    <div className="space-y-1">
-      <label className="text-muted-foreground text-xs" htmlFor={id}>
-        {label}
-      </label>
-      <div className="flex items-center gap-1.5">
-        <input
-          aria-label={`${label} color picker`}
-          className="size-8 shrink-0 cursor-pointer rounded border bg-transparent p-0.5"
-          onChange={(event) => onChange(event.target.value)}
-          type="color"
-          value={six}
-        />
-        <Input
-          aria-invalid={!isHexColor(value)}
-          className="h-8 font-mono text-xs uppercase"
-          id={id}
-          maxLength={9}
-          onChange={(event) => {
-            const next = event.target.value.trim();
-            onChange(next.startsWith("#") ? next : `#${next}`);
-          }}
-          spellCheck={false}
-          value={value}
-        />
-      </div>
-    </div>
+    <SolidColorField
+      className="[&_label]:text-muted-foreground [&_label]:font-normal"
+      design={false}
+      id={id}
+      label={label}
+      onChange={onChange}
+      value={isHexColor(value) ? value : "#000000"}
+    />
   );
 }
 
