@@ -10,6 +10,8 @@ export type PostLoginActionType =
   | "AI_GENERATE_EDIT"
   | "AI_GENERATE_RETRY"
   | "SAVE_THEME_FOR_SHARE"
+  /** The community sheet's "Publish this style": save if needed, then publish. */
+  | "SAVE_THEME_FOR_PUBLISH"
   | "CHECKOUT"
   | "LIKE_THEME"
   /** The playground's Static/Dynamic choice: make the URL code dynamic. */
