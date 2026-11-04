@@ -124,6 +124,7 @@ export const config = {
     "/admin/:path*",
     "/oauth/:path*",
     "/invite/:path*",
+    "/join/:path*",
     // Custom domains: every path except build assets, on hosts that aren't
     // QRdx's own (self-hosted hosts are told apart at runtime instead).
     {

@@ -25,6 +25,8 @@ import { HttpError } from "@/lib/error-response";
 import { parseLandingPageContent } from "@/lib/landing/blocks";
 import { buildTemplateContent, getTemplate } from "@/lib/landing/templates";
 import { noteLimitUsage } from "@/lib/limit-notices";
+import { can } from "@/lib/permissions";
+import { assertCan } from "@/lib/permissions-server";
 import { getPlanForScope, getPlanLimits, type Plan } from "@/lib/plans";
 import { type ActiveScope, isInScope } from "@/lib/scope";
 import { codeLinks, SHORT_LINK_BASE } from "@/lib/short-links";
@@ -481,9 +483,10 @@ export async function publishPage(
 }
 
 function assertCanDelete(scope: ActiveScope, row: PageRow) {
+  assertCan(scope, "content.write");
   if (
     scope.organizationId &&
-    scope.role === "member" &&
+    !can(scope.role, "content.manageAll") &&
     row.userId !== scope.userId
   ) {
     throw new HttpError(

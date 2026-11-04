@@ -7,6 +7,7 @@ import { assertAdmin } from "@/app/admin/_lib/guard";
 import { HttpError } from "@/lib/error-response";
 import { type AdminFileView, setFileBlocked } from "@/lib/files/admin";
 import { deleteFile, fileIdSchema } from "@/lib/files/service";
+import { assertCan } from "@/lib/permissions-server";
 import { enforceRateLimits } from "@/lib/request-guards";
 import { type ActiveScope, getActiveScope } from "@/lib/scope";
 import { logError } from "@/lib/shared";
@@ -88,6 +89,7 @@ async function mutate<T>(
 ): Promise<FileActionResult<T>> {
   try {
     const scope = await getActiveScope();
+    assertCan(scope, "content.write");
     await enforceRateLimits([
       { limiter: mutationLimiter, key: `files:mutate:user:${scope.userId}` },
     ]);

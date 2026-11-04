@@ -26,7 +26,10 @@ const moveSchema = z.object({ id: idSchema, parentId: parentSchema });
 const idOnlySchema = z.object({ id: idSchema });
 
 export async function listCodeFolders(): Promise<OrganizeResult<FolderRow[]>> {
-  return runOrganize("listCodeFolders", listFolders, { revalidate: false });
+  return runOrganize("listCodeFolders", listFolders, {
+    revalidate: false,
+    access: "read",
+  });
 }
 
 export async function createCodeFolder(

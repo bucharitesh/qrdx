@@ -4,7 +4,10 @@ import { database as db, organization, user } from "@repo/database";
 import { eq } from "drizzle-orm";
 import { invitePath } from "@/app/dashboard/team/_lib/team";
 import { isEmailConfigured, sendEmail } from "@/lib/email/send";
-import { TeamInviteEmail } from "@/lib/email/templates/team-invite";
+import {
+  TeamInviteEmail,
+  teamInviteSubject,
+} from "@/lib/email/templates/team-invite";
 import { baseUrl } from "@/lib/metadata";
 
 /**
@@ -41,7 +44,11 @@ export async function sendTeamInviteEmail(invitation: {
     ).toString();
     const result = await sendEmail({
       to: invitation.email,
-      subject: `${inviter?.name || "A teammate"} invited you to ${team.name} on QRdx`,
+      subject: teamInviteSubject({
+        inviterName: inviter?.name || "A teammate",
+        teamName: team.name,
+        memberRole: invitation.role,
+      }),
       react: (
         <TeamInviteEmail
           expiresAt={invitation.expiresAt}

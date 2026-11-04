@@ -17,6 +17,8 @@ import { consumeApiQuota } from "@/lib/api-quota";
 import { HttpError } from "@/lib/error-response";
 import { baseUrl } from "@/lib/metadata";
 import { type OAuthScope, validateAccessToken } from "@/lib/oauth";
+import { can } from "@/lib/permissions";
+import { assertCan } from "@/lib/permissions-server";
 import { getPlanForScope } from "@/lib/plans";
 import { enforceRateLimits, getClientIp } from "@/lib/request-guards";
 import { type ActiveScope, getActiveScope } from "@/lib/scope";
@@ -153,12 +155,18 @@ export async function resolveApiCaller(
     }
     caller = {
       scope: bearer.scope,
-      canWrite: SCOPES_FOR.write.some((s) => bearer.scopes.includes(s)),
+      canWrite:
+        SCOPES_FOR.write.some((s) => bearer.scopes.includes(s)) &&
+        can(bearer.scope.role, "content.write"),
     };
   } else {
     if (access === "write") assertSameOrigin(req);
-    caller = { scope: await sessionScope(req), canWrite: true };
+    const scope = await sessionScope(req);
+    caller = { scope, canWrite: can(scope.role, "content.write") };
   }
+  // A key or session of a viewer or billing member reads only: their role in
+  // the workspace caps what any credential can do (lib/permissions.ts).
+  if (access === "write") assertCan(caller.scope, "content.write");
 
   // The plan lookup overlaps the per-minute checks; only requests they let
   // through use up the daily quota.
@@ -213,6 +221,7 @@ export async function optionalApiKeyCaller(
   if (!SCOPES_FOR[access].some((s) => bearer.scopes.includes(s))) {
     throw scopeError(bearer, `codes:${access}`);
   }
+  if (access === "write") assertCan(bearer.scope, "content.write");
   const [plan] = await Promise.all([
     getPlanForScope(bearer.scope),
     enforceRateLimits([

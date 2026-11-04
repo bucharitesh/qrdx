@@ -567,7 +567,7 @@ describe("who manages a team", () => {
     signIn("u_member", "org_acme");
     expect(await teams.inviteMember(invitation)).toEqual({
       ok: false,
-      error: "Only workspace owners and admins can invite.",
+      error: "Only owners and admins can manage this workspace's people.",
     });
     expect(calls("createInvitation")).toHaveLength(2);
   });
@@ -604,7 +604,11 @@ describe("who manages a team", () => {
     signIn("u_admin", "org_acme");
     expect(
       await teams.updateMemberRole({ memberId: "m_3", role: "owner" }),
-    ).toEqual({ ok: false, error: "Only owners can make someone an owner." });
+    ).toEqual({
+      ok: false,
+      error:
+        "Only owners can make someone an owner, or change an owner's role.",
+    });
     expect(
       (await teams.updateMemberRole({ memberId: "m_3", role: "admin" })).ok,
     ).toBe(true);
@@ -624,17 +628,17 @@ describe("who manages a team", () => {
     signIn("u_member", "org_acme");
     expect(await teams.removeMember({ memberId: "m_2" })).toEqual({
       ok: false,
-      error: "Only workspace owners and admins can remove members.",
+      error: "Only owners and admins can manage this workspace's people.",
     });
     expect(
       await teams.updateMemberRole({ memberId: "m_2", role: "member" }),
     ).toEqual({
       ok: false,
-      error: "Only workspace owners and admins can change roles.",
+      error: "Only owners and admins can manage this workspace's people.",
     });
     expect(await teams.cancelInvitation({ invitationId: pending })).toEqual({
       ok: false,
-      error: "Only workspace owners and admins can revoke invitations.",
+      error: "Only owners and admins can manage this workspace's people.",
     });
     expect(state.calls).toHaveLength(0);
   });
@@ -830,7 +834,11 @@ describe("getActiveScope", () => {
       ["admin, owner", "owner"],
       ["member,admin", "admin"],
       ["member", "member"],
-      ["viewer", "member"],
+      ["member,billing", "member"],
+      ["billing", "billing"],
+      ["viewer", "viewer"],
+      // A role this code doesn't know never grants more than reading.
+      ["superuser", "viewer"],
     ];
     for (const [role, expected] of cases) {
       fakeDb.rows("member").splice(0);
@@ -906,7 +914,7 @@ describe("renaming a workspace", () => {
     signIn("u_member", "org_acme");
     expect(await teams.updateWorkspace({ name: "Mine now" })).toEqual({
       ok: false,
-      error: "Only workspace owners and admins can change its settings.",
+      error: "Only owners and admins can change this workspace's settings.",
     });
     expect(calls("updateOrganization")).toHaveLength(1);
   });

@@ -1,9 +1,10 @@
 import "server-only";
 
 import { database as db, member } from "@repo/database";
-import { and, eq, like } from "drizzle-orm";
+import { and, eq, like, or } from "drizzle-orm";
 import { cache } from "react";
 import { MAX_FREE_THEMES } from "./constants";
+import { holdsPlanRole } from "./permissions";
 import { type Plan, planForProductId } from "./pricing";
 import { getMyActiveSubscription } from "./subscription";
 
@@ -232,30 +233,26 @@ export const getPlan = cache(async (userId: string): Promise<Plan> => {
     : "free";
 });
 
-const hasOwnerRole = (role: string) =>
-  role
-    .split(",")
-    .map((r) => r.trim())
-    .includes("owner");
-
 /**
- * Plan for resources owned by an organization: the best plan among its
- * owners. An organization without owners falls back to Free.
+ * Plan for resources owned by an organization: the best plan among the
+ * members who pay for it, its owners and billing members (PLAN_ROLES in
+ * lib/permissions.ts; packages/auth/server.ts counts seats the same way). An
+ * organization without either falls back to Free.
  */
 export const getOwnerPlanForOrganization = cache(
   async (organizationId: string): Promise<Plan> => {
-    const owners = await db
+    const payers = await db
       .select({ userId: member.userId, role: member.role })
       .from(member)
       .where(
         and(
           eq(member.organizationId, organizationId),
-          like(member.role, "%owner%"),
+          or(like(member.role, "%owner%"), like(member.role, "%billing%")),
         ),
       );
 
     const plans = await Promise.all(
-      owners.filter((m) => hasOwnerRole(m.role)).map((m) => getPlan(m.userId)),
+      payers.filter((m) => holdsPlanRole(m.role)).map((m) => getPlan(m.userId)),
     );
     return highestPlan(plans);
   },

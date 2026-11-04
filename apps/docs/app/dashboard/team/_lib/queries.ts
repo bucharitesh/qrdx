@@ -65,6 +65,7 @@ export async function getTeam(organizationId: string) {
       id: organization.id,
       name: organization.name,
       slug: organization.slug,
+      logo: organization.logo,
       createdAt: organization.createdAt,
     })
     .from(organization)

@@ -41,6 +41,7 @@ import {
 import { SheetsExport } from "@/components/data-connections/sheets-export";
 import { HairlineFigure } from "@/components/mockups/hairline";
 import { HttpError } from "@/lib/error-response";
+import { can } from "@/lib/permissions";
 import { workspaceHref } from "@/lib/workspace-paths";
 
 export const metadata: Metadata = {
@@ -120,11 +121,11 @@ export default async function FormResponsesPage({
     return search ? `${base}?${search}` : base;
   };
   const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
-  const canDelete = !(
-    scope.organizationId &&
-    scope.role === "member" &&
-    page.userId !== scope.userId
-  );
+  const canDelete =
+    can(scope.role, "content.write") &&
+    (!scope.organizationId ||
+      can(scope.role, "content.manageAll") ||
+      page.userId === scope.userId);
   const coupons = page.coupons.filter(
     (coupon) => coupon.redeemable || (redemptions.get(coupon.id) ?? 0) > 0,
   );

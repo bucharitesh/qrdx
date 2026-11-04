@@ -18,7 +18,7 @@ import {
   TaskSquare,
 } from "iconsax-reactjs";
 import Link from "next/link";
-import { useWorkspaceHref } from "@/components/workspace-provider";
+import { useCan, useWorkspaceHref } from "@/components/workspace-provider";
 import { useCreate } from "./create-actions";
 
 /**
@@ -28,6 +28,9 @@ import { useCreate } from "./create-actions";
 export function CreateMenu() {
   const create = useCreate();
   const href = useWorkspaceHref();
+  // Viewers and billing members can't create anything in the workspace.
+  const canWrite = useCan("content.write");
+  if (!canWrite) return null;
 
   return (
     <div className="bg-background flex h-8 items-center rounded-full border shadow-xs">

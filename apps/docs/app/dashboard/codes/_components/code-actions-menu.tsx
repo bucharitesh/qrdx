@@ -23,6 +23,7 @@ import {
 import {
   ArchiveBox as Archive,
   DirectboxSend as ArchiveRestore,
+  Buildings2,
   Chart as ChartNoAxesCombined,
   Copy,
   DocumentDownload,
@@ -70,9 +71,10 @@ import {
   hasOpenOverlay,
 } from "@/components/app-shell/paste-to-create";
 import { openCodeBuilder } from "@/components/code-builder/store";
-import { useWorkspaceSlug } from "@/components/workspace-provider";
+import { useCan, useWorkspaceSlug } from "@/components/workspace-provider";
 import { downloadCodeQr } from "./code-qr";
 import { MoveToFolderDialog } from "./folder-dialogs";
+import { MoveToWorkspaceDialog } from "./move-workspace-dialog";
 import { NotesDialog } from "./notes-dialog";
 import { ShareStatsDialog } from "./share-stats-dialog";
 import { TagsDialog } from "./tag-dialogs";
@@ -109,8 +111,11 @@ export function CodeActionsMenu({
   const openInPlayground = useOpenInPlayground();
   const { run, isPending } = useOrganizeAction();
   const [dialog, setDialog] = useState<
-    "move" | "tags" | "notes" | "purge" | "share" | null
+    "move" | "tags" | "notes" | "purge" | "share" | "workspace" | null
   >(null);
+  // Viewers and billing members read only (lib/permissions.ts): their menu
+  // keeps the links and downloads, and the server refuses changes anyway.
+  const canWrite = useCan("content.write");
   const [menuOpen, setMenuOpen] = useState(false);
 
   const ids = [code.id];
@@ -204,9 +209,11 @@ export function CodeActionsMenu({
   // Move and tags need the list's folders and tags; a trashed code has none.
   const available: RowAction[] = trashed
     ? []
-    : listItem
-      ? ["edit", "copy", "duplicate", "move", "tags", "archive", "trash"]
-      : ["edit", "copy", "duplicate", "archive", "trash"];
+    : !canWrite
+      ? ["copy"]
+      : listItem
+        ? ["edit", "copy", "duplicate", "move", "tags", "archive", "trash"]
+        : ["edit", "copy", "duplicate", "archive", "trash"];
   const handlers: Record<RowAction, () => void> = {
     edit: () => openCodeBuilder({ mode: "edit", code }),
     copy: copyLink,
@@ -320,6 +327,38 @@ export function CodeActionsMenu({
     );
   }
 
+  if (!canWrite) {
+    return (
+      <DropdownMenu onOpenChange={setMenuOpen} open={menuOpen}>
+        {trigger}
+        <DropdownMenuContent
+          align="end"
+          className="w-56"
+          onKeyDown={onMenuKeyDown}
+        >
+          <DropdownMenuItem onSelect={copyLink}>
+            <Link21 /> Copy short link
+            {keyHint("copy")}
+          </DropdownMenuItem>
+          {showAnalyticsLink && (
+            <DropdownMenuItem asChild>
+              <Link href={codeTabHref(workspaceSlug, code.id, "analytics")}>
+                <ChartNoAxesCombined /> View analytics
+              </Link>
+            </DropdownMenuItem>
+          )}
+          <DropdownMenuSeparator />
+          <DropdownMenuItem onSelect={() => download("png")}>
+            <Download /> Download PNG
+          </DropdownMenuItem>
+          <DropdownMenuItem onSelect={() => download("svg")}>
+            <DocumentDownload /> Download SVG
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    );
+  }
+
   return (
     <>
       <DropdownMenu onOpenChange={setMenuOpen} open={menuOpen}>
@@ -397,6 +436,9 @@ export function CodeActionsMenu({
               workspace…" (feat/workspace-roles-join) and "Share analytics"
               (feat/code-features). Use an icon not used elsewhere in this
               menu, and a key from row-shortcuts.ts only if it's free. */}
+          <DropdownMenuItem onSelect={() => setDialog("workspace")}>
+            <Buildings2 /> Move to workspace...
+          </DropdownMenuItem>
           {/* Public, read-only analytics page (share-stats-dialog.tsx) */}
           <DropdownMenuItem onSelect={() => setDialog("share")}>
             <Share /> Share analytics...
@@ -434,6 +476,11 @@ export function CodeActionsMenu({
         </DropdownMenuContent>
       </DropdownMenu>
 
+      <MoveToWorkspaceDialog
+        code={code}
+        onOpenChange={(open) => setDialog(open ? "workspace" : null)}
+        open={dialog === "workspace"}
+      />
       <ShareStatsDialog
         code={code}
         onOpenChange={(open) => setDialog(open ? "share" : null)}

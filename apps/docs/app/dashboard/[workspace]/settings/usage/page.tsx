@@ -47,7 +47,8 @@ export default async function UsagePage({
   );
   const subscription = usage.subscription;
   // The person's own subscription sets this workspace's plan when it is
-  // their own, or when they own it and their plan is the one in force.
+  // their own, or when they pay for it (owner or billing member) and their
+  // plan is the one in force.
   const ownPlanApplies =
     subscription !== null &&
     (!usage.workspace.isTeam ||
@@ -56,9 +57,9 @@ export default async function UsagePage({
   const planLine = ownPlanApplies
     ? renewalLine(subscription)
     : usage.workspace.isTeam && usage.plan !== "free"
-      ? "This workspace's plan comes from its owner's subscription."
+      ? "This workspace's plan comes from the subscription of an owner or billing member."
       : usage.workspace.isTeam && !usage.canChangePlan
-        ? "Ask a workspace owner to upgrade."
+        ? "Ask a workspace owner or billing member to upgrade."
         : "Your static codes are free and never expire.";
 
   return (

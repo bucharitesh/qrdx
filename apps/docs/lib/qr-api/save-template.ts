@@ -2,6 +2,7 @@ import "server-only";
 
 import { isOwnWorkspaceOf } from "@repo/auth/own-workspace-id";
 import { HttpError } from "@/lib/error-response";
+import { can } from "@/lib/permissions";
 import type { ActiveScope } from "@/lib/scope";
 import { type ThemeStyles, themeStylePropsSchema } from "@/types/theme";
 import { resolveLogo } from "./logo";
@@ -70,11 +71,11 @@ async function targetFor(
       where: "own",
     };
   }
-  if (!(scope.role === "owner" || scope.role === "admin")) {
+  if (!can(scope.role, "themes.manage")) {
     throw new HttpError(
       403,
       "FORBIDDEN",
-      "Only workspace owners and admins can add shared themes. This key's creator is a member of its workspace.",
+      `Only workspace owners and admins can add shared themes. This key's creator is ${scope.role === "billing" ? "a billing member" : `a ${scope.role}`} of its workspace.`,
     );
   }
   if (!(await store.teamThemes(scope))) {

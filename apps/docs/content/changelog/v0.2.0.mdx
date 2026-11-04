@@ -1,0 +1,60 @@
+---
+title: "The playground becomes the hub, and a Dub-style dashboard"
+description: "An Art tab, Get code, links into the playground, 41 new themes, more design options, workspaces with roles, a redesigned codes page and the Chrome extension in its store."
+date: "2026-11-05"
+tags: ["Playground", "Design", "Dashboard", "Developers", "Community"]
+version: "0.2.0"
+---
+
+## The playground does more without leaving the page
+
+The [playground](/playground) is now where everything starts.
+
+- **An Art tab** sits next to Content, Design and Generate. Logo QR and Image QR moved there from Design, and AI art now opens over the preview with its scan score, PNG and print downloads, and **Use as Image QR** to turn a result into vector art.
+- **Get code** gives you the current design as a React component, a shadcn/ui component, an image URL, a REST API request or MCP arguments.
+- **Check a photo of the print** reads a picture of your printed code in the browser and tells you whether it opens the right link. Nothing is uploaded.
+- **The More menu** holds the bulk generator (with your current style), the photo check, publishing to the community, the plugins and keyboard shortcuts.
+- **Dynamic codes in place:** "Link options…" and "Make it dynamic…" open the code builder over the playground, and hosted pages are created there too, with your current design.
+- **Print by distance:** type how far away people will scan from, and the print width follows.
+- **Links into the playground** can open a preset, a content type, a design, a tab or section, Get code or the download dialog. Generator pages, tools, docs and the plugins all use them. A web address goes after the `#`, so it never reaches a server.
+
+## More design options
+
+- **Per-eye colors**, **dot size**, and **logo size, clear space and position**.
+- **Logo clean-up:** a rounded or circle crop, a plate behind the logo, and background removal. PDF and EPS exports clip it too.
+- **Circle-shaped codes**: the code sits in a disc of decorative dots with a clear ring around it.
+- **41 new built-in themes**, 113 in all, from gradients and neon frames to pastels and real-world frames like a taxi sign or a gallery label. Every one scores Great on the scan score.
+- **Safer logos:** a logo can no longer cover more of a small code than its error correction can repair. The size slider stops at the limit and says why.
+- **Logo QR badges** are sized the same way, so a badge at full strength no longer breaks a small code.
+- The scan score warns about circle eye centers inside rounded eyes, which some scanners misread, and the photo check says "not checked" when a photo is cropped too tight to see the quiet zone.
+
+## A dashboard modeled on Dub
+
+- **Workspaces** have their own URLs (`/dashboard/<workspace>`), with the switcher at the bottom of the sidebar.
+- **A create modal** with a live preview and scan score, drafts that save themselves, and 22 more dynamic types beyond links and hosted pages, from WhatsApp and maps to social profiles and Spotify. Paste a URL anywhere on the dashboard to start a code.
+- **Codes and Pages & forms each have their own sidebar**, and the panel slides as you move between them.
+- **The codes page** shows cards or rows, with Filter and Display menus, a folder switcher and search as you type.
+- **Roles:** viewers can see everything and change nothing, and billing members manage the plan. Owners and admins can share a **join link**, and each workspace can have a **logo**.
+- **Move a code to another workspace** without changing its short link.
+- **What's new** shows these notes in the dashboard, and **plan limits** show how close you are, with a notice at 90%. Owners get an email at 90% and at 100%.
+- **Saved UTM templates** and **suggested back-halves and tags** in the builder, on Pro.
+- **Share analytics:** a code's scans can have a public, read-only page, which you can reset or turn off at any time.
+
+## Community
+
+- The [community](/community) now shares **frames** as well as themes, under CC0, with public profiles and collections.
+- A **"Made with QRdx" wall** on the home page and the community page shows real codes in every theme, frame and content type. Every tile scans.
+- Browse and apply community themes from a side panel in the playground.
+
+## For developers
+
+- The [image API](/docs/developers/image-api), `POST /v1/codes` and the [MCP server](/mcp) accept the playground's style options: gradients, frames, borders, eye and dot colors, logos from your uploaded files, per-eye colors, dot size, logo options and circle shapes.
+- MCP `design_qr` returns a link that opens the design in the playground, and new tools search the community and save a design as a template.
+- A public, cached community API lists and fetches community items.
+
+## Plugins and the site
+
+- The **Chrome extension is in the [Chrome Web Store](https://chromewebstore.google.com/detail/bpepiomjdoicpmbihlohodghdglkhicc)**. Figma, Canva and Raycast plugins can now open their code in the playground.
+- Marketing pages show real sample codes for their topic, so a restaurant page shows a menu card and a Wi-Fi page shows a Wi-Fi code.
+- More pages have their own preview images when shared, and the home page no longer jumps as you scroll on phones.
+- GitHub now detects the repository's licence as AGPL-3.0. In the repository, the `qrdx` library, the CLI and the plugins are MIT-licensed.
