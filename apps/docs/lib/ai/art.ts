@@ -10,6 +10,7 @@ import {
 } from "@/components/sections/ai-art/config";
 import { isArtAvailable } from "@/lib/ai/art-availability";
 import { HttpError } from "@/lib/error-response";
+import { noteLimitUsage } from "@/lib/limit-notices";
 import { getPlanForScope, getPlanLimits } from "@/lib/plans";
 import { enforceRateLimits, getClientIp } from "@/lib/request-guards";
 import { logError } from "@/lib/shared";
@@ -198,6 +199,14 @@ export async function reserveArtCredits(
         429,
         "AI_ART_DAILY_LIMIT",
         `You've reached today's limit of ${AI_ART_DAILY_LIMIT} AI art images. Try again tomorrow.`,
+      );
+    }
+    // A notice at 90% and 100% of the month's images (after the response).
+    if (scope.organizationId && credits.limit !== null) {
+      noteLimitUsage(
+        { userId: scope.userId, organizationId: scope.organizationId },
+        "aiArt",
+        { used: credits.used, limit: credits.limit, pooled: credits.pooled },
       );
     }
     return { usageIds, credits };

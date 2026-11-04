@@ -24,6 +24,7 @@ import {
 import { HttpError } from "@/lib/error-response";
 import { parseLandingPageContent } from "@/lib/landing/blocks";
 import { buildTemplateContent, getTemplate } from "@/lib/landing/templates";
+import { noteLimitUsage } from "@/lib/limit-notices";
 import { getPlanForScope, getPlanLimits, type Plan } from "@/lib/plans";
 import { type ActiveScope, isInScope } from "@/lib/scope";
 import { codeLinks, SHORT_LINK_BASE } from "@/lib/short-links";
@@ -397,9 +398,14 @@ export async function createPage(
   const removePage = () =>
     db.delete(landingPage).where(eq(landingPage.id, pageId));
 
-  if (capped && (await countPages(scope)) > limit) {
-    await removePage();
-    throw pageLimitReached(limit);
+  if (capped) {
+    const used = await countPages(scope);
+    if (used > limit) {
+      await removePage();
+      throw pageLimitReached(limit);
+    }
+    // Owners hear about it at 90% and 100% (after the response).
+    noteLimitUsage(scope, "landingPages", { used, limit });
   }
 
   let codeId: string;
