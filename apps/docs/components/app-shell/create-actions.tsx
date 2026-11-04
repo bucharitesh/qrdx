@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import {
   createContext,
   type ReactNode,
@@ -11,6 +12,8 @@ import { NewCodeDialog } from "@/app/dashboard/codes/_components/new-code-dialog
 import { CodeBuilderHost } from "@/components/code-builder/code-builder-host";
 import { openCodeBuilder } from "@/components/code-builder/store";
 import { useShowLimit } from "@/components/limits/limit-dialog";
+import { isSettingsPath } from "./nav-config";
+import { usePasteToCreate } from "./paste-to-create";
 import type { ShellData } from "./shell-data";
 
 /** What the Create menu, ⌘K and the `c` key can start. */
@@ -30,9 +33,9 @@ export function useCreate() {
 
 /**
  * Holds what the app chrome opens: the code builder for a new dynamic code
- * and the page gallery for a landing page or form. At the plan's cap (the
- * server would answer LIMIT_REACHED), a new code shows the limit card
- * instead, like the codes list.
+ * (also from a pasted web address) and the page gallery for a landing page
+ * or form. At the plan's cap (the server would answer LIMIT_REACHED), a new
+ * code shows the limit card instead, like the codes list.
  */
 export function CreateProvider({
   codes,
@@ -45,22 +48,39 @@ export function CreateProvider({
   const [kind, setKind] = useState<Exclude<CreateKind, "code">>("page");
   const [open, setOpen] = useState(false);
   const showLimit = useShowLimit();
+  const pathname = usePathname();
 
-  const start = useCallback(
-    (next: CreateKind) => {
-      if (next === "code" && codes && codes.used >= codes.limit) {
+  const startCode = useCallback(
+    (destination?: string) => {
+      if (codes && codes.used >= codes.limit) {
         showLimit("dynamicCodes", { used: codes.used });
         return;
       }
+      openCodeBuilder(
+        destination
+          ? { mode: "create", initial: { destination } }
+          : { mode: "create" },
+      );
+    },
+    [codes, showLimit],
+  );
+
+  const start = useCallback(
+    (next: CreateKind) => {
       if (next === "code") {
-        openCodeBuilder({ mode: "create" });
+        startCode();
         return;
       }
       setKind(next);
       setOpen(true);
     },
-    [codes, showLimit],
+    [startCode],
   );
+
+  // Paste a web address on a dashboard page (not in a field, no dialog
+  // open) to start a code for it, as on Dub's links page. Settings pages,
+  // full of URL fields, leave pastes alone.
+  usePasteToCreate(startCode, !isSettingsPath(pathname));
 
   return (
     <CreateContext.Provider value={start}>
