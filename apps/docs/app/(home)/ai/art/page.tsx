@@ -147,7 +147,7 @@ function VectorArtSection({ lead }: { lead: boolean }) {
           {!lead && (
             <Button asChild className="w-fit" variant="outline">
               <Link href={ART_PLAYGROUND_HREF}>
-                Open the Art section
+                Open the Art tab
                 <ArrowRight aria-hidden />
               </Link>
             </Button>
