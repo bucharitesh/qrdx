@@ -1,0 +1,804 @@
+// Workspace single sign-on, end to end against a running dev server and a
+// THROWAWAY local database, driven over the Chrome DevTools Protocol. It
+// writes to the database (test users, a Business subscription), so it refuses
+// to run unless DATABASE_URL in .env.local points at localhost.
+//
+// Needs, all local:
+//   node e2e/sso/dns-stub.mjs <records.json> 5399
+//   node e2e/sso/mock-idp.mjs 4455
+//   NODE_OPTIONS="--require $PWD/e2e/sso/dns-preload.cjs" \
+//   BETTER_AUTH_TRUSTED_ORIGINS=http://localhost:4455 \
+//     pnpm exec next dev -p <port> > <dev.log>
+//
+//   SSO_E2E_BASE_URL=http://localhost:<port> SSO_E2E_DEV_LOG=<dev.log> \
+//   SSO_E2E_DNS_FILE=<records.json> SSO_E2E_PSQL="psql -h localhost -p <pg> -U postgres qrdx" \
+//   SSO_E2E_SHOTS=<dir> pnpm exec tsx e2e/sso.e2e.mts
+//
+// Covers: plan gate (non-Business page, sign-in refused after a downgrade,
+// also mid-flow), OIDC set-up → domain verification (missing record, then
+// DNS) → sign-in of a new person (joins with the chosen role) → sign-in of
+// an existing account (linked, no duplicate) → an address outside the
+// domain (refused, nothing created) → an unverified connection (refused);
+// SAML set-up from metadata → sign-in → unsigned assertion and assertion
+// without timestamps (refused); viewers can't manage; the recent sign-in
+// rule; screenshots of each screen in light and dark.
+import { execSync } from "node:child_process";
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
+import { launch, sleep } from "./cdp.mjs";
+
+const BASE = (process.env.SSO_E2E_BASE_URL ?? "").replace(/\/$/, "");
+const DEV_LOG = process.env.SSO_E2E_DEV_LOG ?? "";
+const DNS_FILE = process.env.SSO_E2E_DNS_FILE ?? "";
+const PSQL = process.env.SSO_E2E_PSQL ?? "";
+const SHOTS = process.env.SSO_E2E_SHOTS ?? "";
+const IDP = "http://localhost:4455";
+const RUN = Date.now().toString(36);
+const DOMAIN = `acme-${RUN}.test`;
+
+for (const [name, value] of Object.entries({ BASE, DEV_LOG, DNS_FILE, PSQL })) {
+  if (!value)
+    throw new Error(`Set SSO_E2E_${name === "BASE" ? "BASE_URL" : name}`);
+}
+// Throwaway databases only.
+const envFile = readFileSync(join(process.cwd(), ".env.local"), "utf8");
+const dbUrl = envFile.match(/^DATABASE_URL=(.*)$/m)?.[1] ?? "";
+if (
+  !/@(localhost|127\.0\.0\.1)[:/]/.test(dbUrl) ||
+  !/-h localhost/.test(PSQL)
+) {
+  throw new Error(
+    `Refusing to run: the database is not local (${dbUrl.replace(/:[^:@/]*@/, ":***@")})`,
+  );
+}
+console.log(`Database: local (${dbUrl.replace(/:[^:@/]*@/, ":***@")})`);
+
+const sql = (query: string) =>
+  execSync(`${PSQL} -tA -F '|' -c ${JSON.stringify(query)}`, {
+    encoding: "utf8",
+  }).trim();
+const q = (value: string) => `'${value.replace(/'/g, "''")}'`;
+
+let failures = 0;
+function check(name: string, ok: boolean, detail = "") {
+  if (!ok) failures++;
+  console.log(`${ok ? "  ✓" : "  ✗"} ${name}${detail ? ` — ${detail}` : ""}`);
+}
+
+const browser = await launch({ width: 1280, height: 900 });
+const { cdp, evaluate, goto, waitFor } = browser;
+
+async function shot(name: string) {
+  if (!SHOTS) return;
+  // The cookie banner would cover the page.
+  await evaluate(() => {
+    const reject = window.__e2e.byRole("button", "Reject all", { exact: true });
+    if (reject) window.__e2e.click(reject);
+  });
+  await sleep(300);
+  mkdirSync(SHOTS, { recursive: true });
+  for (const scheme of ["light", "dark"] as const) {
+    await cdp.send("Emulation.setEmulatedMedia", {
+      features: [
+        { name: "prefers-color-scheme", value: scheme },
+        { name: "prefers-reduced-motion", value: "reduce" },
+      ],
+    });
+    await evaluate((s: string) => {
+      document.documentElement.classList.toggle("dark", s === "dark");
+      document.documentElement.style.colorScheme = s;
+    }, scheme);
+    await sleep(300);
+    // Headless Chrome sometimes never answers a capture: skip it, don't hang.
+    const captured = (await Promise.race([
+      cdp.send("Page.captureScreenshot", { format: "png" }),
+      sleep(15_000).then(() => null),
+    ])) as { data: string } | null;
+    if (!captured) {
+      console.log(`  (screenshot ${name}-${scheme} timed out)`);
+      continue;
+    }
+    writeFileSync(
+      join(SHOTS, `${name}-${scheme}.png`),
+      Buffer.from(captured.data, "base64"),
+    );
+  }
+  await evaluate(() => document.documentElement.classList.remove("dark"));
+}
+
+/** A real mouse click (Radix menus ignore synthetic events) on the element `find` returns. */
+async function mouseClick(find: string) {
+  const box = await evaluate((source: string) => {
+    const el = new Function(`return (${source})()`)() as Element | null;
+    if (!el) return null;
+    el.scrollIntoView({ block: "center" });
+    const r = el.getBoundingClientRect();
+    return { x: r.x + r.width / 2, y: r.y + r.height / 2 };
+  }, find);
+  if (!box) throw new Error(`Nothing to click: ${find}`);
+  for (const type of ["mouseMoved", "mousePressed", "mouseReleased"]) {
+    await cdp.send("Input.dispatchMouseEvent", {
+      type,
+      x: box.x,
+      y: box.y,
+      button: "left",
+      clickCount: 1,
+    });
+  }
+}
+
+// biome-ignore lint/performance/useDomNodeTextContent: the text a person sees
+const text = () => evaluate(() => document.body.innerText as string);
+const href = () => evaluate(() => location.href as string);
+
+async function waitText(needle: string, timeout = 20_000) {
+  // biome-ignore lint/performance/useDomNodeTextContent: the text a person sees
+  return waitFor((n: string) => document.body.innerText.includes(n), {
+    args: [needle],
+    timeout,
+  });
+}
+
+function latestCode(email: string): string {
+  const log = readFileSync(DEV_LOG, "utf8");
+  const matches = [...log.matchAll(/sign-in code for (\S+): (\d{6})/g)].filter(
+    (m) => m[1] === email,
+  );
+  const code = matches.at(-1)?.[2];
+  if (!code) throw new Error(`No code in the dev log for ${email}`);
+  return code;
+}
+
+/** Email-code sign-in through the same endpoints the panel calls. */
+async function emailSignIn(email: string) {
+  await cdp.send("Network.clearBrowserCookies");
+  await goto(`${BASE}/sign-in`);
+  const sent = await evaluate(async (e: string) => {
+    const r = await fetch("/api/auth/email-otp/send-verification-otp", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ email: e, type: "sign-in" }),
+    });
+    return r.status;
+  }, email);
+  if (sent !== 200) throw new Error(`send code ${sent}`);
+  await sleep(500);
+  const status = await evaluate(
+    async (e: string, otp: string) => {
+      const r = await fetch("/api/auth/sign-in/email-otp", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ email: e, otp }),
+      });
+      return r.status;
+    },
+    email,
+    latestCode(email),
+  );
+  if (status !== 200) throw new Error(`sign in ${status}`);
+}
+
+/** Starts "Sign in with SSO" on /sign-in; returns the page URL afterwards. */
+async function startSso(email: string) {
+  await cdp.send("Network.clearBrowserCookies");
+  await goto(`${BASE}/sign-in`);
+  await evaluate(() =>
+    window.__e2e.click(
+      window.__e2e.byRole("button", "Sign in with SSO", { exact: true }),
+    ),
+  );
+  await waitFor(() => Boolean(window.__e2e.byLabel("Work email")));
+  await evaluate((e: string) => {
+    window.__e2e.setValue(window.__e2e.byLabel("Work email"), e);
+  }, email);
+  await evaluate(() =>
+    window.__e2e.click(
+      window.__e2e.byRole("button", "Continue", { exact: true }),
+    ),
+  );
+  await sleep(2500);
+  return href();
+}
+
+/** At the mock IdP: sign in as `email` (with extra query flags for SAML). */
+async function idpSignIn(email: string, flags: Record<string, string> = {}) {
+  const url = new URL(await href());
+  if (Object.keys(flags).length > 0) {
+    for (const [k, v] of Object.entries(flags)) url.searchParams.set(k, v);
+    url.searchParams.set("auto", email);
+    await goto(url.toString(), { wait: 3500 });
+    return;
+  }
+  await evaluate((e: string) => {
+    window.__e2e.setValue(window.__e2e.byLabel("Sign in as"), e);
+    window.__e2e.click(
+      window.__e2e.byRole("button", "Sign in", { exact: true }),
+    );
+  }, email);
+  await sleep(4000);
+}
+
+const userId = (email: string) =>
+  sql(`select id from "user" where email=${q(email)}`);
+
+try {
+  // ---- people ----
+  const owner = `owner-${RUN}@qrdx.test`;
+  const ana = `ana@${DOMAIN}`; // has an account before SSO
+  const ben = `ben@${DOMAIN}`; // first sign-in is through SSO
+  const carl = `carl@${DOMAIN}`; // SAML
+  const eve = `eve-${RUN}@other.test`; // outside the domain
+
+  await emailSignIn(eve);
+  await emailSignIn(ana);
+  const anaId = userId(ana);
+  await emailSignIn(owner);
+  const ownerId = userId(owner);
+  const slug = sql(
+    `select o.slug from organization o join member m on m.organization_id=o.id where m.user_id=${q(ownerId)} and m.role='owner' limit 1`,
+  );
+  const orgId = sql(`select id from organization where slug=${q(slug)}`);
+  const page = `${BASE}/dashboard/${slug}/settings/sso`;
+
+  console.log("plan gate");
+  await goto(page, { wait: 3000 });
+  check(
+    "Free workspace: one calm line",
+    (await text()).includes("Single sign-on comes with the Business plan."),
+  );
+  await shot("01-not-business");
+
+  sql(
+    `insert into subscription (id, created_at, amount, currency, recurring_interval, status, current_period_start, current_period_end, started_at, customer_id, product_id, checkout_id, user_id) values ('sub-${RUN}', now(), 1500, 'usd', 'month', 'active', now(), now() + interval '30 days', now(), 'cus-${RUN}', 'local-business-monthly', 'chk-${RUN}', ${q(ownerId)})`,
+  );
+
+  console.log("OIDC set-up");
+  await goto(page, { wait: 3000 });
+  check(
+    "Business workspace: set-up form",
+    (await text()).includes("Set up single sign-on"),
+  );
+  const redirectUri = await evaluate(() =>
+    [...document.querySelectorAll("code")]
+      .map((c) => c.textContent)
+      .find((t) => t?.includes("/sso/callback/")),
+  );
+  check(
+    "Shows the OIDC redirect URI",
+    /\/api\/auth\/sso\/callback\/sso-[a-z0-9]{12}$/.test(redirectUri ?? ""),
+    redirectUri,
+  );
+  await shot("02-setup-oidc");
+
+  await evaluate(
+    (domain: string, idp: string) => {
+      const e = window.__e2e;
+      e.setValue(e.byLabel("Email domain"), domain);
+      e.setValue(e.byLabel("Issuer URL"), idp);
+      e.setValue(e.byLabel("Client ID"), "qrdx-test-client");
+      e.setValue(e.byLabel("Client secret"), "qrdx-test-secret");
+      e.click(e.byRole("button", "Save connection", { exact: true }));
+    },
+    DOMAIN,
+    IDP,
+  );
+  await waitText(`Verify ${DOMAIN}`);
+  const providerId = sql(
+    `select provider_id from sso_provider where organization_id=${q(orgId)}`,
+  );
+  check(
+    "Connection saved, unverified",
+    sql(
+      `select domain_verified from sso_provider where provider_id=${q(providerId)}`,
+    ) === "f",
+  );
+  check(
+    "Redirect URI matches the saved connection",
+    (redirectUri ?? "").endsWith(providerId),
+  );
+  const recordName = `_qrdx-${providerId}.${DOMAIN}`;
+  check(
+    "Shows the TXT record name",
+    (await text()).includes(`_qrdx-${providerId}`),
+  );
+  await shot("03-connection-unverified");
+
+  console.log("unverified connection can't sign anyone in");
+  await startSso(ben);
+  check(
+    "Refused before verification",
+    (await text()).includes(`No SSO is set up for ${DOMAIN}.`),
+  );
+  await shot("04-sign-in-sso-not-set-up");
+
+  console.log("domain verification");
+  await emailSignIn(owner);
+  await goto(page, { wait: 3000 });
+  await evaluate(() =>
+    window.__e2e.click(
+      window.__e2e.byRole("button", "Verify", { exact: true }),
+    ),
+  );
+  await waitText("We didn't find the TXT record");
+  check("Missing record: clear reason", true);
+  await shot("05-verify-missing-record");
+
+  const token = await evaluate(() => {
+    const cells = [...document.querySelectorAll("td code")].map(
+      (c) => c.textContent ?? "",
+    );
+    return cells[1] ?? "";
+  });
+  writeFileSync(DNS_FILE, JSON.stringify({ [recordName]: [token] }));
+  await evaluate(() =>
+    window.__e2e.click(
+      window.__e2e.byRole("button", "Verify", { exact: true }),
+    ),
+  );
+  await waitText("Verified");
+  check(
+    "Verified through DNS",
+    sql(
+      `select domain_verified from sso_provider where provider_id=${q(providerId)}`,
+    ) === "t",
+  );
+  await sleep(1500);
+  // Join as viewer.
+  await mouseClick(`() => window.__e2e.byLabel("Join as")`);
+  await sleep(600);
+  await mouseClick(`() => window.__e2e.byRole("option", "Viewer")`);
+  await sleep(2500);
+  check(
+    "Join role saved",
+    sql(`select metadata from organization where id=${q(orgId)}`).includes(
+      '"ssoJoinRole":"viewer"',
+    ),
+  );
+  await goto(page, { wait: 3000 });
+  await shot("06-connection-verified");
+  await evaluate(() =>
+    window.__e2e.click(
+      window.__e2e.byRole("button", "Replace secret", { exact: true }),
+    ),
+  );
+  await waitFor(() => Boolean(window.__e2e.byRole("dialog", "")));
+  await shot("06b-replace-secret");
+  await evaluate(() => {
+    const dialog = document.querySelector('[role="dialog"]') as Element;
+    window.__e2e.setValue(
+      dialog.querySelector("input") as HTMLInputElement,
+      "qrdx-test-secret",
+    );
+    window.__e2e.click(
+      window.__e2e.byRole("button", "Save", { exact: true, root: dialog }),
+    );
+  });
+  await waitText("Client secret updated");
+  check("Client secret replaced", true);
+
+  console.log("OIDC sign-in, new person");
+  await startSso(ben);
+  check("Went to the IdP", (await href()).startsWith(IDP));
+  await shot("07-mock-idp");
+  await idpSignIn(ben);
+  check(
+    "Back in QRdx, signed in",
+    (await href()).startsWith(`${BASE}/dashboard`),
+    await href(),
+  );
+  const benId = userId(ben);
+  check(
+    "Account created, address verified",
+    sql(`select email_verified from "user" where id=${q(benId)}`) === "t",
+  );
+  check(
+    "Linked to the connection",
+    sql(
+      `select count(*) from account where user_id=${q(benId)} and provider_id=${q(providerId)}`,
+    ) === "1",
+  );
+  check(
+    "Joined the workspace as viewer",
+    sql(
+      `select role from member where user_id=${q(benId)} and organization_id=${q(orgId)}`,
+    ) === "viewer",
+  );
+
+  console.log("viewer can't manage");
+  await goto(page, { wait: 3000 });
+  check("Viewer sees why", (await text()).includes("You're a viewer here."));
+  check("No set-up controls", !(await text()).includes("Replace secret"));
+  await shot("08-viewer");
+
+  console.log("OIDC sign-in, existing account");
+  await startSso(ana);
+  await idpSignIn(ana);
+  check(
+    "Signed in",
+    (await href()).startsWith(`${BASE}/dashboard`),
+    await href(),
+  );
+  check(
+    "Same account, no duplicate",
+    sql(`select count(*) from "user" where email=${q(ana)}`) === "1" &&
+      userId(ana) === anaId,
+  );
+  check(
+    "Linked to the connection",
+    sql(
+      `select count(*) from account where user_id=${q(anaId)} and provider_id=${q(providerId)}`,
+    ) === "1",
+  );
+  check(
+    "Joined the workspace",
+    sql(
+      `select role from member where user_id=${q(anaId)} and organization_id=${q(orgId)}`,
+    ) === "viewer",
+  );
+
+  console.log("address outside the domain");
+  const outsider = `zed-${RUN}@elsewhere.test`;
+  await startSso(`zoe@${DOMAIN}`);
+  await idpSignIn(outsider);
+  check(
+    "Refused with a message",
+    (await text()).includes("outside your company's domain"),
+    await href(),
+  );
+  check(
+    "No account created",
+    sql(`select count(*) from "user" where email=${q(outsider)}`) === "0",
+  );
+  await shot("09-outside-domain");
+  await startSso(`zoe@${DOMAIN}`);
+  await idpSignIn(eve);
+  check(
+    "Existing outside account not linked",
+    sql(
+      `select count(*) from account where user_id=${q(userId(eve))} and provider_id=${q(providerId)}`,
+    ) === "0",
+  );
+  check(
+    "…and not signed in",
+    !(await href()).startsWith(`${BASE}/dashboard`),
+    await href(),
+  );
+
+  console.log("removed members and invitations");
+  sql(
+    `delete from member where user_id=${q(benId)} and organization_id=${q(orgId)}`,
+  );
+  await startSso(ben);
+  await idpSignIn(ben);
+  check(
+    "Removed member signs in",
+    (await href()).startsWith(`${BASE}/dashboard`),
+    await href(),
+  );
+  check(
+    "…but isn't added back",
+    sql(
+      `select count(*) from member where user_id=${q(benId)} and organization_id=${q(orgId)}`,
+    ) === "0",
+  );
+  sql(
+    `insert into member (id, organization_id, user_id, role, created_at) values ('m-ben-${RUN}', ${q(orgId)}, ${q(benId)}, 'viewer', now())`,
+  );
+  const dan = `dan@${DOMAIN}`;
+  sql(
+    `insert into invitation (id, organization_id, email, role, status, expires_at, inviter_id, created_at) values ('inv-${RUN}', ${q(orgId)}, ${q(dan)}, 'member', 'pending', now() + interval '2 days', ${q(ownerId)}, now())`,
+  );
+  await startSso(dan);
+  await idpSignIn(dan);
+  check(
+    "Invited person signs in",
+    (await href()).startsWith(`${BASE}/dashboard`),
+    await href(),
+  );
+  check(
+    "…and joins through the invitation, not SSO",
+    sql(
+      `select count(*) from member where user_id=${q(userId(dan))} and organization_id=${q(orgId)}`,
+    ) === "0",
+  );
+
+  console.log("plan drops below Business");
+  sql(`update subscription set status='canceled' where id='sub-${RUN}'`);
+  await startSso(ben);
+  check(
+    "Sign-in refused",
+    (await text()).includes(`SSO for ${DOMAIN} isn't available right now`),
+  );
+  await shot("10-sign-in-plan-dropped");
+  sql(`update subscription set status='active' where id='sub-${RUN}'`);
+  await startSso(ben);
+  sql(`update subscription set status='canceled' where id='sub-${RUN}'`);
+  await idpSignIn(ben);
+  check(
+    "Refused at the callback too",
+    (await href()).includes("/sign-in?error=sso_unavailable"),
+    await href(),
+  );
+  check(
+    "…with a message",
+    (await text()).includes("isn't available for this workspace right now"),
+  );
+  await emailSignIn(owner);
+  await goto(page, { wait: 3000 });
+  check(
+    "Settings say it's paused",
+    (await text()).includes("no longer includes single sign-on"),
+  );
+  check(
+    "…and it can still be removed",
+    await evaluate(() =>
+      Boolean(window.__e2e.byRole("button", "Remove single sign-on")),
+    ),
+  );
+  await shot("11-settings-plan-dropped");
+  sql(`update subscription set status='active' where id='sub-${RUN}'`);
+
+  console.log("recent sign-in rule");
+  sql(
+    `update session set created_at = now() - interval '2 days' where user_id=${q(ownerId)}`,
+  );
+  await goto(page, { wait: 3000 });
+  await evaluate(() =>
+    window.__e2e.click(window.__e2e.byRole("button", "Remove single sign-on")),
+  );
+  await sleep(800);
+  await evaluate(() =>
+    window.__e2e.click(
+      window.__e2e.byRole("button", "Remove", {
+        exact: true,
+        root: document.querySelector('[role="alertdialog"]') ?? document,
+      }),
+    ),
+  );
+  await waitText("sign out and sign in again");
+  check(
+    "Old session must sign in again",
+    sql(
+      `select count(*) from sso_provider where provider_id=${q(providerId)}`,
+    ) === "1",
+  );
+  await shot("12-reauth");
+
+  console.log("remove, then SAML");
+  await emailSignIn(owner);
+  await goto(page, { wait: 3000 });
+  await evaluate(() =>
+    window.__e2e.click(window.__e2e.byRole("button", "Remove single sign-on")),
+  );
+  await sleep(800);
+  await evaluate(() =>
+    window.__e2e.click(
+      window.__e2e.byRole("button", "Remove", {
+        exact: true,
+        root: document.querySelector('[role="alertdialog"]') ?? document,
+      }),
+    ),
+  );
+  await waitText("Set up single sign-on");
+  check(
+    "Removed, links gone",
+    sql(`select count(*) from account where provider_id=${q(providerId)}`) ===
+      "0",
+  );
+  check(
+    "Members stay",
+    sql(
+      `select count(*) from member where organization_id=${q(orgId)} and user_id in (${q(anaId)}, ${q(benId)})`,
+    ) === "2",
+  );
+
+  const metadata = await (await fetch(`${IDP}/saml/metadata`)).text();
+  await evaluate(() =>
+    window.__e2e.click(window.__e2e.byRole("tab", "SAML 2.0")),
+  );
+  await sleep(500);
+  await shot("13-setup-saml");
+  await evaluate(
+    (domain: string, xml: string) => {
+      const e = window.__e2e;
+      e.setValue(e.byLabel("Email domain"), domain);
+      e.setValue(e.byLabel("Identity provider metadata"), xml);
+      e.click(e.byRole("button", "Save connection", { exact: true }));
+    },
+    DOMAIN,
+    metadata,
+  );
+  await waitText(`Verify ${DOMAIN}`);
+  const samlId = sql(
+    `select provider_id from sso_provider where organization_id=${q(orgId)}`,
+  );
+  const samlToken = await evaluate(
+    () =>
+      [...document.querySelectorAll("td code")].map(
+        (c) => c.textContent ?? "",
+      )[1] ?? "",
+  );
+  writeFileSync(
+    DNS_FILE,
+    JSON.stringify({ [`_qrdx-${samlId}.${DOMAIN}`]: [samlToken] }),
+  );
+  await evaluate(() =>
+    window.__e2e.click(
+      window.__e2e.byRole("button", "Verify", { exact: true }),
+    ),
+  );
+  await waitText("Verified");
+  await goto(page, { wait: 3000 });
+  await shot("14-saml-verified");
+
+  console.log("SAML sign-in");
+  await startSso(carl);
+  check(
+    "Went to the IdP (SAML)",
+    (await href()).startsWith(`${IDP}/saml/sso`),
+    await href(),
+  );
+  await idpSignIn(carl, { unsigned: "1" });
+  check(
+    "Unsigned assertion refused",
+    !(await href()).startsWith(`${BASE}/dashboard`) &&
+      sql(`select count(*) from "user" where email=${q(carl)}`) === "0",
+    await href(),
+  );
+  await startSso(carl);
+  await idpSignIn(carl, { notimes: "1" });
+  check(
+    "Assertion without timestamps refused",
+    sql(`select count(*) from "user" where email=${q(carl)}`) === "0",
+    await href(),
+  );
+  await startSso(carl);
+  await idpSignIn(carl);
+  check(
+    "Signed in with SAML",
+    (await href()).startsWith(`${BASE}/dashboard`),
+    await href(),
+  );
+  const carlId = userId(carl);
+  check(
+    "Joined as viewer",
+    sql(
+      `select role from member where user_id=${q(carlId)} and organization_id=${q(orgId)}`,
+    ) === "viewer",
+  );
+  check(
+    "Name from displayName",
+    sql(`select name from "user" where id=${q(carlId)}`) === "carl",
+  );
+  await startSso(ben);
+  await idpSignIn(ben);
+  check(
+    "Earlier OIDC member links to SAML too",
+    sql(
+      `select count(*) from account where user_id=${q(benId)} and provider_id=${q(samlId)}`,
+    ) === "1",
+  );
+
+  console.log("SAML entered by hand, certificate replaced");
+  await emailSignIn(owner);
+  await goto(page, { wait: 3000 });
+  check(
+    "No 'Replace certificate' for a metadata connection",
+    !(await text()).includes("Replace certificate"),
+  );
+  await evaluate(() =>
+    window.__e2e.click(window.__e2e.byRole("button", "Remove single sign-on")),
+  );
+  await sleep(800);
+  await evaluate(() =>
+    window.__e2e.click(
+      window.__e2e.byRole("button", "Remove", {
+        exact: true,
+        root: document.querySelector('[role="alertdialog"]') ?? document,
+      }),
+    ),
+  );
+  await waitText("Set up single sign-on");
+  const certificate = await (await fetch(`${IDP}/saml/certificate`)).text();
+  await evaluate(() =>
+    window.__e2e.click(window.__e2e.byRole("tab", "SAML 2.0")),
+  );
+  await sleep(400);
+  await evaluate(() =>
+    window.__e2e.click(
+      window.__e2e.byRole("button", "Enter the details instead", {
+        exact: true,
+      }),
+    ),
+  );
+  await sleep(400);
+  await evaluate(
+    (domain: string, idp: string, cert: string) => {
+      const e = window.__e2e;
+      e.setValue(e.byLabel("Email domain"), domain);
+      e.setValue(e.byLabel("Sign-in URL"), `${idp}/saml/sso`);
+      e.setValue(
+        e.byLabel("Identity provider entity ID"),
+        `${idp}/saml/metadata`,
+      );
+      e.setValue(e.byLabel("Signing certificate"), cert);
+      e.click(e.byRole("button", "Save connection", { exact: true }));
+    },
+    DOMAIN,
+    IDP,
+    certificate,
+  );
+  await waitText(`Verify ${DOMAIN}`);
+  const manualId = sql(
+    `select provider_id from sso_provider where organization_id=${q(orgId)}`,
+  );
+  const manualToken = await evaluate(
+    () =>
+      [...document.querySelectorAll("td code")].map(
+        (c) => c.textContent ?? "",
+      )[1] ?? "",
+  );
+  writeFileSync(
+    DNS_FILE,
+    JSON.stringify({ [`_qrdx-${manualId}.${DOMAIN}`]: [manualToken] }),
+  );
+  await evaluate(() =>
+    window.__e2e.click(
+      window.__e2e.byRole("button", "Verify", { exact: true }),
+    ),
+  );
+  await waitText("Verified");
+  await goto(page, { wait: 3000 });
+  await evaluate(() =>
+    window.__e2e.click(
+      window.__e2e.byRole("button", "Replace certificate", { exact: true }),
+    ),
+  );
+  await waitFor(() => Boolean(window.__e2e.byRole("dialog", "")));
+  await evaluate((cert: string) => {
+    const dialog = document.querySelector('[role="dialog"]') as Element;
+    window.__e2e.setValue(
+      dialog.querySelector("textarea") as HTMLTextAreaElement,
+      cert,
+    );
+    window.__e2e.click(
+      window.__e2e.byRole("button", "Save", { exact: true, root: dialog }),
+    );
+  }, certificate);
+  await waitText("Certificate updated");
+  check("Certificate replaced", true);
+  await goto(page, { wait: 3000 });
+  await shot("15-saml-manual");
+  const erin = `erin@${DOMAIN}`;
+  await startSso(erin);
+  await idpSignIn(erin);
+  check(
+    "Signed in with the hand-entered SAML connection",
+    (await href()).startsWith(`${BASE}/dashboard`),
+    await href(),
+  );
+  check(
+    "…and joined",
+    sql(
+      `select role from member where user_id=${q(userId(erin))} and organization_id=${q(orgId)}`,
+    ) === "viewer",
+  );
+} catch (error) {
+  failures++;
+  console.error("✗ stopped:", error);
+  if (SHOTS) {
+    const { data } = await cdp.send("Page.captureScreenshot", {
+      format: "png",
+    });
+    writeFileSync(join(SHOTS, "zz-failure.png"), Buffer.from(data, "base64"));
+    console.error(
+      "page:",
+      await href().catch(() => "?"),
+      (await text().catch(() => "")).slice(0, 600),
+    );
+  }
+} finally {
+  await browser.close();
+}
+console.log(failures ? `\n${failures} failed` : "\nAll SSO checks passed");
+process.exit(failures ? 1 : 0);
