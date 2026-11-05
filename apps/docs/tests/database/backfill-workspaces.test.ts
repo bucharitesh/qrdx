@@ -507,6 +507,10 @@ describe("backfill-workspaces: the same rules as the app", () => {
         /organizationId: text\("organization_id"\)\.references/.test(block),
       )
       .map(([, name]) => name)
+      // SSO connections are only ever made for a workspace (apps/docs/lib/
+      // sso/connections.ts); the column is nullable for the plugin's
+      // personal providers, which QRdx doesn't use.
+      .filter((name) => name !== "sso_provider")
       .sort();
     expect(ADOPTED.map((t) => t.table).sort()).toEqual(nullable);
   });

@@ -23,10 +23,14 @@ import {
 import { getAdminUserIds } from "./admin";
 import { sendVerificationOTP } from "./email-otp";
 import { keys } from "./keys";
+import { hasEntitledSubscription, workspacePlanTier } from "./plan";
 import {
-  ENTITLED_SUBSCRIPTION_STATUSES,
-  hasEntitledSubscription,
-} from "./plan";
+  SSO_SERVER_ONLY_PATHS,
+  SSO_SIGN_IN_PATH,
+  SSO_UNUSED_PATHS,
+  ssoGate,
+  ssoOptions,
+} from "./sso";
 import {
   assertDeletable,
   assertNotOwnMember,
@@ -37,55 +41,18 @@ import {
 } from "./workspace-hooks";
 
 // Members per team, owner included, by the best plan among its owners and
-// billing members (the roles that pay, PLAN_ROLES in apps/docs/lib/
-// permissions.ts). Keep in sync with `teamMembers` and
-// getOwnerPlanForOrganization in apps/docs/lib/plans.ts. Business products
-// are the env ids; any other entitled product counts as Pro
-// (planForSubscriptionProduct).
+// billing members (workspacePlanTier in ./plan.ts). Keep in sync with
+// `teamMembers` in apps/docs/lib/plans.ts.
 const TEAM_MEMBER_LIMITS = {
   free: 1,
   pro: 3,
   business: Number.POSITIVE_INFINITY,
 };
-const BUSINESS_PRODUCT_IDS = new Set(
-  [
-    process.env.NEXT_PUBLIC_QRDX_BUSINESS_MONTHLY_PRODUCT_ID,
-    process.env.NEXT_PUBLIC_QRDX_BUSINESS_YEARLY_PRODUCT_ID,
-  ].filter(Boolean)
-);
 // Better Auth's default invitation cap, kept for teams without a member limit.
 const MAX_PENDING_INVITATIONS = 100;
 
-const PLAN_ROLES = new Set(["owner", "billing"]);
-
 async function teamMemberLimit(organizationId: string): Promise<number> {
-  const owners = await db.query.member.findMany({
-    columns: { userId: true, role: true },
-    where: (table, { and, eq, like, or }) =>
-      and(
-        eq(table.organizationId, organizationId),
-        or(like(table.role, "%owner%"), like(table.role, "%billing%"))
-      ),
-  });
-  const ownerIds = owners
-    .filter((m) =>
-      m.role.split(",").some((role) => PLAN_ROLES.has(role.trim()))
-    )
-    .map((m) => m.userId);
-  if (ownerIds.length === 0) return TEAM_MEMBER_LIMITS.free;
-
-  const subscriptions = await db.query.subscription.findMany({
-    columns: { productId: true },
-    where: (table, { and, inArray }) =>
-      and(
-        inArray(table.userId, ownerIds),
-        inArray(table.status, ENTITLED_SUBSCRIPTION_STATUSES)
-      ),
-  });
-  if (subscriptions.length === 0) return TEAM_MEMBER_LIMITS.free;
-  return subscriptions.some((s) => BUSINESS_PRODUCT_IDS.has(s.productId))
-    ? TEAM_MEMBER_LIMITS.business
-    : TEAM_MEMBER_LIMITS.pro;
+  return TEAM_MEMBER_LIMITS[await workspacePlanTier(organizationId)];
 }
 
 /** Pending invitations allowed: the seats left after current members. */
@@ -311,7 +278,10 @@ export const auth = betterAuth({
     // have, so 2FA does nothing yet.
     twoFactor({ issuer: "QRdx", allowPasswordless: true }),
     passkey({ rpName: "QRdx" }),
-    sso({ domainVerification: { enabled: true } }),
+    // Lane C: workspace single sign-on, Business plan only. ./sso.ts adds
+    // QRdx's checks (plan, verified domain, who joins the workspace).
+    sso(ssoOptions),
+    ssoGate(),
   ],
   // The admin panel does not use impersonation or password resets; keep them off the HTTP surface.
   disabledPaths: [
@@ -319,6 +289,9 @@ export const auth = betterAuth({
     "/admin/set-user-password",
     ...UNUSED_EMAIL_OTP_PATHS,
     ...SERVER_ONLY_EMAIL_OTP_PATHS,
+    // Lane C: SSO connections are managed through the app's server actions.
+    ...SSO_SERVER_ONLY_PATHS,
+    ...SSO_UNUSED_PATHS,
   ],
   // Better Auth enforces these in production only, per IP, in memory.
   rateLimit: {
@@ -333,6 +306,11 @@ export const auth = betterAuth({
       [SEND_CODE_PATH]: { window: 60, max: 3 },
       // Each code allows 3 tries, so 5 a minute leaves room for one resend.
       [SIGN_IN_CODE_PATH]: { window: 60, max: 5 },
+      // Lane C: starting an SSO sign-in, and the IdP's return. Per IP, so a
+      // company behind one address shares them.
+      [SSO_SIGN_IN_PATH]: { window: 60, max: 20 },
+      "/sso/callback/*": { window: 60, max: 30 },
+      "/sso/saml2/sp/acs/*": { window: 60, max: 30 },
     },
   },
 }) as any;
