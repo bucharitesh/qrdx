@@ -4023,7 +4023,7 @@
                     "exclusiveMinimum": 0
                   },
                   "bgColor": {
-                    "description": "Background color of the QR code - supports solid colors and gradients",
+                    "description": "Background color of the QR code - supports solid colors, gradients and image fills (a data:image URL, never a link)",
                     "anyOf": [
                       {
                         "type": "string"
@@ -4142,7 +4142,10 @@
                           },
                           "src": {
                             "type": "string",
-                            "minLength": 1
+                            "minLength": 1,
+                            "description": "The picture as a base64 data:image URL (PNG, JPEG, WebP or GIF), at most 1.5 MB. Pictures from links aren't accepted.",
+                            "pattern": "^data:image/(png|jpeg|webp|gif);base64,",
+                            "maxLength": 1500000
                           },
                           "fit": {
                             "default": "cover",
@@ -4185,7 +4188,7 @@
                     ]
                   },
                   "fgColor": {
-                    "description": "Foreground (main) color of the QR code - supports solid colors and gradients",
+                    "description": "Foreground (main) color of the QR code - supports solid colors, gradients and image fills (a data:image URL, never a link)",
                     "anyOf": [
                       {
                         "type": "string"
@@ -4304,7 +4307,10 @@
                           },
                           "src": {
                             "type": "string",
-                            "minLength": 1
+                            "minLength": 1,
+                            "description": "The picture as a base64 data:image URL (PNG, JPEG, WebP or GIF), at most 1.5 MB. Pictures from links aren't accepted.",
+                            "pattern": "^data:image/(png|jpeg|webp|gif);base64,",
+                            "maxLength": 1500000
                           },
                           "fit": {
                             "default": "cover",
@@ -4347,7 +4353,7 @@
                     ]
                   },
                   "eyeColor": {
-                    "description": "Color of the corner eye patterns - supports solid colors and gradients",
+                    "description": "Color of the corner eye patterns - supports solid colors, gradients and image fills (a data:image URL, never a link)",
                     "anyOf": [
                       {
                         "type": "string"
@@ -4466,7 +4472,10 @@
                           },
                           "src": {
                             "type": "string",
-                            "minLength": 1
+                            "minLength": 1,
+                            "description": "The picture as a base64 data:image URL (PNG, JPEG, WebP or GIF), at most 1.5 MB. Pictures from links aren't accepted.",
+                            "pattern": "^data:image/(png|jpeg|webp|gif);base64,",
+                            "maxLength": 1500000
                           },
                           "fit": {
                             "default": "cover",
@@ -4509,7 +4518,7 @@
                     ]
                   },
                   "dotColor": {
-                    "description": "Color of the corner eye dots - supports solid colors and gradients",
+                    "description": "Color of the corner eye dots - supports solid colors, gradients and image fills (a data:image URL, never a link)",
                     "anyOf": [
                       {
                         "type": "string"
@@ -4628,7 +4637,10 @@
                           },
                           "src": {
                             "type": "string",
-                            "minLength": 1
+                            "minLength": 1,
+                            "description": "The picture as a base64 data:image URL (PNG, JPEG, WebP or GIF), at most 1.5 MB. Pictures from links aren't accepted.",
+                            "pattern": "^data:image/(png|jpeg|webp|gif);base64,",
+                            "maxLength": 1500000
                           },
                           "fit": {
                             "default": "cover",
@@ -5037,7 +5049,10 @@
                                   },
                                   "src": {
                                     "type": "string",
-                                    "minLength": 1
+                                    "minLength": 1,
+                                    "description": "The picture as a base64 data:image URL (PNG, JPEG, WebP or GIF), at most 1.5 MB. Pictures from links aren't accepted.",
+                                    "pattern": "^data:image/(png|jpeg|webp|gif);base64,",
+                                    "maxLength": 1500000
                                   },
                                   "fit": {
                                     "default": "cover",
@@ -5198,7 +5213,10 @@
                                   },
                                   "src": {
                                     "type": "string",
-                                    "minLength": 1
+                                    "minLength": 1,
+                                    "description": "The picture as a base64 data:image URL (PNG, JPEG, WebP or GIF), at most 1.5 MB. Pictures from links aren't accepted.",
+                                    "pattern": "^data:image/(png|jpeg|webp|gif);base64,",
+                                    "maxLength": 1500000
                                   },
                                   "fit": {
                                     "default": "cover",
@@ -5364,7 +5382,10 @@
                                   },
                                   "src": {
                                     "type": "string",
-                                    "minLength": 1
+                                    "minLength": 1,
+                                    "description": "The picture as a base64 data:image URL (PNG, JPEG, WebP or GIF), at most 1.5 MB. Pictures from links aren't accepted.",
+                                    "pattern": "^data:image/(png|jpeg|webp|gif);base64,",
+                                    "maxLength": 1500000
                                   },
                                   "fit": {
                                     "default": "cover",
@@ -5525,7 +5546,10 @@
                                   },
                                   "src": {
                                     "type": "string",
-                                    "minLength": 1
+                                    "minLength": 1,
+                                    "description": "The picture as a base64 data:image URL (PNG, JPEG, WebP or GIF), at most 1.5 MB. Pictures from links aren't accepted.",
+                                    "pattern": "^data:image/(png|jpeg|webp|gif);base64,",
+                                    "maxLength": 1500000
                                   },
                                   "fit": {
                                     "default": "cover",
@@ -5691,7 +5715,10 @@
                                   },
                                   "src": {
                                     "type": "string",
-                                    "minLength": 1
+                                    "minLength": 1,
+                                    "description": "The picture as a base64 data:image URL (PNG, JPEG, WebP or GIF), at most 1.5 MB. Pictures from links aren't accepted.",
+                                    "pattern": "^data:image/(png|jpeg|webp|gif);base64,",
+                                    "maxLength": 1500000
                                   },
                                   "fit": {
                                     "default": "cover",
@@ -5852,7 +5879,10 @@
                                   },
                                   "src": {
                                     "type": "string",
-                                    "minLength": 1
+                                    "minLength": 1,
+                                    "description": "The picture as a base64 data:image URL (PNG, JPEG, WebP or GIF), at most 1.5 MB. Pictures from links aren't accepted.",
+                                    "pattern": "^data:image/(png|jpeg|webp|gif);base64,",
+                                    "maxLength": 1500000
                                   },
                                   "fit": {
                                     "default": "cover",
@@ -7082,7 +7112,7 @@
             "exclusiveMinimum": 0
           },
           "bgColor": {
-            "description": "Background color of the QR code - supports solid colors and gradients",
+            "description": "Background color of the QR code - supports solid colors, gradients and image fills (a data:image URL, never a link)",
             "anyOf": [
               {
                 "type": "string"
@@ -7201,7 +7231,10 @@
                   },
                   "src": {
                     "type": "string",
-                    "minLength": 1
+                    "minLength": 1,
+                    "description": "The picture as a base64 data:image URL (PNG, JPEG, WebP or GIF), at most 1.5 MB. Pictures from links aren't accepted.",
+                    "pattern": "^data:image/(png|jpeg|webp|gif);base64,",
+                    "maxLength": 1500000
                   },
                   "fit": {
                     "default": "cover",
@@ -7244,7 +7277,7 @@
             ]
           },
           "fgColor": {
-            "description": "Foreground (main) color of the QR code - supports solid colors and gradients",
+            "description": "Foreground (main) color of the QR code - supports solid colors, gradients and image fills (a data:image URL, never a link)",
             "anyOf": [
               {
                 "type": "string"
@@ -7363,7 +7396,10 @@
                   },
                   "src": {
                     "type": "string",
-                    "minLength": 1
+                    "minLength": 1,
+                    "description": "The picture as a base64 data:image URL (PNG, JPEG, WebP or GIF), at most 1.5 MB. Pictures from links aren't accepted.",
+                    "pattern": "^data:image/(png|jpeg|webp|gif);base64,",
+                    "maxLength": 1500000
                   },
                   "fit": {
                     "default": "cover",
@@ -7406,7 +7442,7 @@
             ]
           },
           "eyeColor": {
-            "description": "Color of the corner eye patterns - supports solid colors and gradients",
+            "description": "Color of the corner eye patterns - supports solid colors, gradients and image fills (a data:image URL, never a link)",
             "anyOf": [
               {
                 "type": "string"
@@ -7525,7 +7561,10 @@
                   },
                   "src": {
                     "type": "string",
-                    "minLength": 1
+                    "minLength": 1,
+                    "description": "The picture as a base64 data:image URL (PNG, JPEG, WebP or GIF), at most 1.5 MB. Pictures from links aren't accepted.",
+                    "pattern": "^data:image/(png|jpeg|webp|gif);base64,",
+                    "maxLength": 1500000
                   },
                   "fit": {
                     "default": "cover",
@@ -7568,7 +7607,7 @@
             ]
           },
           "dotColor": {
-            "description": "Color of the corner eye dots - supports solid colors and gradients",
+            "description": "Color of the corner eye dots - supports solid colors, gradients and image fills (a data:image URL, never a link)",
             "anyOf": [
               {
                 "type": "string"
@@ -7687,7 +7726,10 @@
                   },
                   "src": {
                     "type": "string",
-                    "minLength": 1
+                    "minLength": 1,
+                    "description": "The picture as a base64 data:image URL (PNG, JPEG, WebP or GIF), at most 1.5 MB. Pictures from links aren't accepted.",
+                    "pattern": "^data:image/(png|jpeg|webp|gif);base64,",
+                    "maxLength": 1500000
                   },
                   "fit": {
                     "default": "cover",
@@ -8096,7 +8138,10 @@
                           },
                           "src": {
                             "type": "string",
-                            "minLength": 1
+                            "minLength": 1,
+                            "description": "The picture as a base64 data:image URL (PNG, JPEG, WebP or GIF), at most 1.5 MB. Pictures from links aren't accepted.",
+                            "pattern": "^data:image/(png|jpeg|webp|gif);base64,",
+                            "maxLength": 1500000
                           },
                           "fit": {
                             "default": "cover",
@@ -8257,7 +8302,10 @@
                           },
                           "src": {
                             "type": "string",
-                            "minLength": 1
+                            "minLength": 1,
+                            "description": "The picture as a base64 data:image URL (PNG, JPEG, WebP or GIF), at most 1.5 MB. Pictures from links aren't accepted.",
+                            "pattern": "^data:image/(png|jpeg|webp|gif);base64,",
+                            "maxLength": 1500000
                           },
                           "fit": {
                             "default": "cover",
@@ -8423,7 +8471,10 @@
                           },
                           "src": {
                             "type": "string",
-                            "minLength": 1
+                            "minLength": 1,
+                            "description": "The picture as a base64 data:image URL (PNG, JPEG, WebP or GIF), at most 1.5 MB. Pictures from links aren't accepted.",
+                            "pattern": "^data:image/(png|jpeg|webp|gif);base64,",
+                            "maxLength": 1500000
                           },
                           "fit": {
                             "default": "cover",
@@ -8584,7 +8635,10 @@
                           },
                           "src": {
                             "type": "string",
-                            "minLength": 1
+                            "minLength": 1,
+                            "description": "The picture as a base64 data:image URL (PNG, JPEG, WebP or GIF), at most 1.5 MB. Pictures from links aren't accepted.",
+                            "pattern": "^data:image/(png|jpeg|webp|gif);base64,",
+                            "maxLength": 1500000
                           },
                           "fit": {
                             "default": "cover",
@@ -8750,7 +8804,10 @@
                           },
                           "src": {
                             "type": "string",
-                            "minLength": 1
+                            "minLength": 1,
+                            "description": "The picture as a base64 data:image URL (PNG, JPEG, WebP or GIF), at most 1.5 MB. Pictures from links aren't accepted.",
+                            "pattern": "^data:image/(png|jpeg|webp|gif);base64,",
+                            "maxLength": 1500000
                           },
                           "fit": {
                             "default": "cover",
@@ -8911,7 +8968,10 @@
                           },
                           "src": {
                             "type": "string",
-                            "minLength": 1
+                            "minLength": 1,
+                            "description": "The picture as a base64 data:image URL (PNG, JPEG, WebP or GIF), at most 1.5 MB. Pictures from links aren't accepted.",
+                            "pattern": "^data:image/(png|jpeg|webp|gif);base64,",
+                            "maxLength": 1500000
                           },
                           "fit": {
                             "default": "cover",

@@ -20,6 +20,7 @@ import {
 import { getNormalizedColor } from "qrdx/types";
 import { useEffect, useId, useRef, useState } from "react";
 import { parseColorString, toHex } from "@/lib/paint/color-math";
+import { IMAGE_FILL_MAX_LENGTH } from "@/lib/paint/saved-paint";
 import { CHECKER_STYLE } from "./controls";
 
 // The Image tab: a picture painted through the shapes (an image fill).
@@ -30,6 +31,31 @@ import { CHECKER_STYLE } from "./controls";
 export const PICTURE_MAX_BYTES = 10 * 1024 * 1024;
 /** Longest side a picture is kept at: sharp at print sizes, small to save. */
 const PICTURE_MAX_SIDE = 1024;
+
+/** `img` at `side` px at most, as JPEG, or PNG when it has transparency. */
+function encodePicture(img: HTMLImageElement, side: number): string {
+  const scale = Math.min(
+    1,
+    side / Math.max(img.naturalWidth, img.naturalHeight, 1),
+  );
+  const canvas = document.createElement("canvas");
+  canvas.width = Math.max(1, Math.round(img.naturalWidth * scale));
+  canvas.height = Math.max(1, Math.round(img.naturalHeight * scale));
+  const ctx = canvas.getContext("2d");
+  if (!ctx) throw new Error("This browser can't read the image.");
+  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+  const { data } = ctx.getImageData(0, 0, canvas.width, canvas.height);
+  let transparent = false;
+  for (let i = 3; i < data.length; i += 4) {
+    if ((data[i] as number) < 250) {
+      transparent = true;
+      break;
+    }
+  }
+  return transparent
+    ? canvas.toDataURL("image/png")
+    : canvas.toDataURL("image/jpeg", 0.86);
+}
 
 /**
  * A picked file as a data URL, scaled down to PICTURE_MAX_SIDE: JPEG for
@@ -48,27 +74,13 @@ export async function readPicture(file: File): Promise<string> {
     img.decoding = "async";
     img.src = url;
     await img.decode();
-    const scale = Math.min(
-      1,
-      PICTURE_MAX_SIDE / Math.max(img.naturalWidth, img.naturalHeight, 1),
-    );
-    const canvas = document.createElement("canvas");
-    canvas.width = Math.max(1, Math.round(img.naturalWidth * scale));
-    canvas.height = Math.max(1, Math.round(img.naturalHeight * scale));
-    const ctx = canvas.getContext("2d");
-    if (!ctx) throw new Error("This browser can't read the image.");
-    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-    const { data } = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    let transparent = false;
-    for (let i = 3; i < data.length; i += 4) {
-      if ((data[i] as number) < 250) {
-        transparent = true;
-        break;
-      }
+    // Saved designs take a picture of IMAGE_FILL_MAX_LENGTH at most: step
+    // the size down until it fits (a photo at 1024 px is far below it)
+    for (const side of [PICTURE_MAX_SIDE, 768, 512, 384]) {
+      const encoded = encodePicture(img, side);
+      if (encoded.length <= IMAGE_FILL_MAX_LENGTH) return encoded;
     }
-    return transparent
-      ? canvas.toDataURL("image/png")
-      : canvas.toDataURL("image/jpeg", 0.86);
+    throw new Error("This image is too detailed to keep. Try a smaller one.");
   } finally {
     URL.revokeObjectURL(url);
   }
