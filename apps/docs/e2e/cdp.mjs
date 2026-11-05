@@ -86,6 +86,8 @@ export async function launch({
     chromePath,
     [
       "--headless=new",
+      // Never make a sound on the machine running the suites.
+      "--mute-audio",
       `--remote-debugging-port=${port}`,
       `--user-data-dir=${profile}`,
       "--hide-scrollbars",
