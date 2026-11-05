@@ -1,6 +1,6 @@
 # QRdx for Figma
 
-A Figma plugin that inserts styled QR codes as vector layers, built with the [`qrdx`](../../packages/qrdx) library.
+A Figma plugin that inserts styled QR codes as vector layers, built with the [`qrdx`](../../packages/qrdx) library. It isn't published in the Figma Community yet: build it and import it from source, as [Import for development](#import-for-development) describes.
 
 - Enter a URL or any text, pick one of 12 style presets (the same ones as the Chrome extension, taken from the QRdx playground), adjust the foreground and background colors, and choose a size (32 to 4096 px).
 - **Insert QR code** adds a frame named `QR – <value>` at the center of the viewport, selects it and zooms to it. It is made of editable vector layers, so it stays sharp at any zoom.
