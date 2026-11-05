@@ -4132,6 +4132,55 @@
                           }
                         },
                         "required": ["type", "stops"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "const": "image"
+                          },
+                          "src": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "fit": {
+                            "default": "cover",
+                            "type": "string",
+                            "enum": ["cover", "contain", "tile"]
+                          },
+                          "scale": {
+                            "default": 1,
+                            "type": "number",
+                            "minimum": 0.1,
+                            "maximum": 4
+                          },
+                          "position": {
+                            "default": "center",
+                            "type": "string",
+                            "enum": [
+                              "top-left",
+                              "top",
+                              "top-right",
+                              "left",
+                              "center",
+                              "right",
+                              "bottom-left",
+                              "bottom",
+                              "bottom-right"
+                            ]
+                          },
+                          "opacity": {
+                            "default": 1,
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          },
+                          "underlay": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["type", "src"]
                       }
                     ]
                   },
@@ -4245,6 +4294,55 @@
                           }
                         },
                         "required": ["type", "stops"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "const": "image"
+                          },
+                          "src": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "fit": {
+                            "default": "cover",
+                            "type": "string",
+                            "enum": ["cover", "contain", "tile"]
+                          },
+                          "scale": {
+                            "default": 1,
+                            "type": "number",
+                            "minimum": 0.1,
+                            "maximum": 4
+                          },
+                          "position": {
+                            "default": "center",
+                            "type": "string",
+                            "enum": [
+                              "top-left",
+                              "top",
+                              "top-right",
+                              "left",
+                              "center",
+                              "right",
+                              "bottom-left",
+                              "bottom",
+                              "bottom-right"
+                            ]
+                          },
+                          "opacity": {
+                            "default": 1,
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          },
+                          "underlay": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["type", "src"]
                       }
                     ]
                   },
@@ -4358,6 +4456,55 @@
                           }
                         },
                         "required": ["type", "stops"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "const": "image"
+                          },
+                          "src": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "fit": {
+                            "default": "cover",
+                            "type": "string",
+                            "enum": ["cover", "contain", "tile"]
+                          },
+                          "scale": {
+                            "default": 1,
+                            "type": "number",
+                            "minimum": 0.1,
+                            "maximum": 4
+                          },
+                          "position": {
+                            "default": "center",
+                            "type": "string",
+                            "enum": [
+                              "top-left",
+                              "top",
+                              "top-right",
+                              "left",
+                              "center",
+                              "right",
+                              "bottom-left",
+                              "bottom",
+                              "bottom-right"
+                            ]
+                          },
+                          "opacity": {
+                            "default": 1,
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          },
+                          "underlay": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["type", "src"]
                       }
                     ]
                   },
@@ -4471,6 +4618,55 @@
                           }
                         },
                         "required": ["type", "stops"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "const": "image"
+                          },
+                          "src": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "fit": {
+                            "default": "cover",
+                            "type": "string",
+                            "enum": ["cover", "contain", "tile"]
+                          },
+                          "scale": {
+                            "default": 1,
+                            "type": "number",
+                            "minimum": 0.1,
+                            "maximum": 4
+                          },
+                          "position": {
+                            "default": "center",
+                            "type": "string",
+                            "enum": [
+                              "top-left",
+                              "top",
+                              "top-right",
+                              "left",
+                              "center",
+                              "right",
+                              "bottom-left",
+                              "bottom",
+                              "bottom-right"
+                            ]
+                          },
+                          "opacity": {
+                            "default": 1,
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          },
+                          "underlay": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["type", "src"]
                       }
                     ]
                   },
@@ -4831,6 +5027,55 @@
                                   }
                                 },
                                 "required": ["type", "stops"]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "image"
+                                  },
+                                  "src": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  },
+                                  "fit": {
+                                    "default": "cover",
+                                    "type": "string",
+                                    "enum": ["cover", "contain", "tile"]
+                                  },
+                                  "scale": {
+                                    "default": 1,
+                                    "type": "number",
+                                    "minimum": 0.1,
+                                    "maximum": 4
+                                  },
+                                  "position": {
+                                    "default": "center",
+                                    "type": "string",
+                                    "enum": [
+                                      "top-left",
+                                      "top",
+                                      "top-right",
+                                      "left",
+                                      "center",
+                                      "right",
+                                      "bottom-left",
+                                      "bottom",
+                                      "bottom-right"
+                                    ]
+                                  },
+                                  "opacity": {
+                                    "default": 1,
+                                    "type": "number",
+                                    "minimum": 0,
+                                    "maximum": 1
+                                  },
+                                  "underlay": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": ["type", "src"]
                               }
                             ]
                           },
@@ -4943,6 +5188,55 @@
                                   }
                                 },
                                 "required": ["type", "stops"]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "image"
+                                  },
+                                  "src": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  },
+                                  "fit": {
+                                    "default": "cover",
+                                    "type": "string",
+                                    "enum": ["cover", "contain", "tile"]
+                                  },
+                                  "scale": {
+                                    "default": 1,
+                                    "type": "number",
+                                    "minimum": 0.1,
+                                    "maximum": 4
+                                  },
+                                  "position": {
+                                    "default": "center",
+                                    "type": "string",
+                                    "enum": [
+                                      "top-left",
+                                      "top",
+                                      "top-right",
+                                      "left",
+                                      "center",
+                                      "right",
+                                      "bottom-left",
+                                      "bottom",
+                                      "bottom-right"
+                                    ]
+                                  },
+                                  "opacity": {
+                                    "default": 1,
+                                    "type": "number",
+                                    "minimum": 0,
+                                    "maximum": 1
+                                  },
+                                  "underlay": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": ["type", "src"]
                               }
                             ]
                           }
@@ -5060,6 +5354,55 @@
                                   }
                                 },
                                 "required": ["type", "stops"]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "image"
+                                  },
+                                  "src": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  },
+                                  "fit": {
+                                    "default": "cover",
+                                    "type": "string",
+                                    "enum": ["cover", "contain", "tile"]
+                                  },
+                                  "scale": {
+                                    "default": 1,
+                                    "type": "number",
+                                    "minimum": 0.1,
+                                    "maximum": 4
+                                  },
+                                  "position": {
+                                    "default": "center",
+                                    "type": "string",
+                                    "enum": [
+                                      "top-left",
+                                      "top",
+                                      "top-right",
+                                      "left",
+                                      "center",
+                                      "right",
+                                      "bottom-left",
+                                      "bottom",
+                                      "bottom-right"
+                                    ]
+                                  },
+                                  "opacity": {
+                                    "default": 1,
+                                    "type": "number",
+                                    "minimum": 0,
+                                    "maximum": 1
+                                  },
+                                  "underlay": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": ["type", "src"]
                               }
                             ]
                           },
@@ -5172,6 +5515,55 @@
                                   }
                                 },
                                 "required": ["type", "stops"]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "image"
+                                  },
+                                  "src": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  },
+                                  "fit": {
+                                    "default": "cover",
+                                    "type": "string",
+                                    "enum": ["cover", "contain", "tile"]
+                                  },
+                                  "scale": {
+                                    "default": 1,
+                                    "type": "number",
+                                    "minimum": 0.1,
+                                    "maximum": 4
+                                  },
+                                  "position": {
+                                    "default": "center",
+                                    "type": "string",
+                                    "enum": [
+                                      "top-left",
+                                      "top",
+                                      "top-right",
+                                      "left",
+                                      "center",
+                                      "right",
+                                      "bottom-left",
+                                      "bottom",
+                                      "bottom-right"
+                                    ]
+                                  },
+                                  "opacity": {
+                                    "default": 1,
+                                    "type": "number",
+                                    "minimum": 0,
+                                    "maximum": 1
+                                  },
+                                  "underlay": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": ["type", "src"]
                               }
                             ]
                           }
@@ -5289,6 +5681,55 @@
                                   }
                                 },
                                 "required": ["type", "stops"]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "image"
+                                  },
+                                  "src": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  },
+                                  "fit": {
+                                    "default": "cover",
+                                    "type": "string",
+                                    "enum": ["cover", "contain", "tile"]
+                                  },
+                                  "scale": {
+                                    "default": 1,
+                                    "type": "number",
+                                    "minimum": 0.1,
+                                    "maximum": 4
+                                  },
+                                  "position": {
+                                    "default": "center",
+                                    "type": "string",
+                                    "enum": [
+                                      "top-left",
+                                      "top",
+                                      "top-right",
+                                      "left",
+                                      "center",
+                                      "right",
+                                      "bottom-left",
+                                      "bottom",
+                                      "bottom-right"
+                                    ]
+                                  },
+                                  "opacity": {
+                                    "default": 1,
+                                    "type": "number",
+                                    "minimum": 0,
+                                    "maximum": 1
+                                  },
+                                  "underlay": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": ["type", "src"]
                               }
                             ]
                           },
@@ -5401,6 +5842,55 @@
                                   }
                                 },
                                 "required": ["type", "stops"]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "image"
+                                  },
+                                  "src": {
+                                    "type": "string",
+                                    "minLength": 1
+                                  },
+                                  "fit": {
+                                    "default": "cover",
+                                    "type": "string",
+                                    "enum": ["cover", "contain", "tile"]
+                                  },
+                                  "scale": {
+                                    "default": 1,
+                                    "type": "number",
+                                    "minimum": 0.1,
+                                    "maximum": 4
+                                  },
+                                  "position": {
+                                    "default": "center",
+                                    "type": "string",
+                                    "enum": [
+                                      "top-left",
+                                      "top",
+                                      "top-right",
+                                      "left",
+                                      "center",
+                                      "right",
+                                      "bottom-left",
+                                      "bottom",
+                                      "bottom-right"
+                                    ]
+                                  },
+                                  "opacity": {
+                                    "default": 1,
+                                    "type": "number",
+                                    "minimum": 0,
+                                    "maximum": 1
+                                  },
+                                  "underlay": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": ["type", "src"]
                               }
                             ]
                           }
@@ -6701,6 +7191,55 @@
                   }
                 },
                 "required": ["type", "stops"]
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "const": "image"
+                  },
+                  "src": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "fit": {
+                    "default": "cover",
+                    "type": "string",
+                    "enum": ["cover", "contain", "tile"]
+                  },
+                  "scale": {
+                    "default": 1,
+                    "type": "number",
+                    "minimum": 0.1,
+                    "maximum": 4
+                  },
+                  "position": {
+                    "default": "center",
+                    "type": "string",
+                    "enum": [
+                      "top-left",
+                      "top",
+                      "top-right",
+                      "left",
+                      "center",
+                      "right",
+                      "bottom-left",
+                      "bottom",
+                      "bottom-right"
+                    ]
+                  },
+                  "opacity": {
+                    "default": 1,
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  "underlay": {
+                    "type": "string"
+                  }
+                },
+                "required": ["type", "src"]
               }
             ]
           },
@@ -6814,6 +7353,55 @@
                   }
                 },
                 "required": ["type", "stops"]
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "const": "image"
+                  },
+                  "src": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "fit": {
+                    "default": "cover",
+                    "type": "string",
+                    "enum": ["cover", "contain", "tile"]
+                  },
+                  "scale": {
+                    "default": 1,
+                    "type": "number",
+                    "minimum": 0.1,
+                    "maximum": 4
+                  },
+                  "position": {
+                    "default": "center",
+                    "type": "string",
+                    "enum": [
+                      "top-left",
+                      "top",
+                      "top-right",
+                      "left",
+                      "center",
+                      "right",
+                      "bottom-left",
+                      "bottom",
+                      "bottom-right"
+                    ]
+                  },
+                  "opacity": {
+                    "default": 1,
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  "underlay": {
+                    "type": "string"
+                  }
+                },
+                "required": ["type", "src"]
               }
             ]
           },
@@ -6927,6 +7515,55 @@
                   }
                 },
                 "required": ["type", "stops"]
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "const": "image"
+                  },
+                  "src": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "fit": {
+                    "default": "cover",
+                    "type": "string",
+                    "enum": ["cover", "contain", "tile"]
+                  },
+                  "scale": {
+                    "default": 1,
+                    "type": "number",
+                    "minimum": 0.1,
+                    "maximum": 4
+                  },
+                  "position": {
+                    "default": "center",
+                    "type": "string",
+                    "enum": [
+                      "top-left",
+                      "top",
+                      "top-right",
+                      "left",
+                      "center",
+                      "right",
+                      "bottom-left",
+                      "bottom",
+                      "bottom-right"
+                    ]
+                  },
+                  "opacity": {
+                    "default": 1,
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  "underlay": {
+                    "type": "string"
+                  }
+                },
+                "required": ["type", "src"]
               }
             ]
           },
@@ -7040,6 +7677,55 @@
                   }
                 },
                 "required": ["type", "stops"]
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "const": "image"
+                  },
+                  "src": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "fit": {
+                    "default": "cover",
+                    "type": "string",
+                    "enum": ["cover", "contain", "tile"]
+                  },
+                  "scale": {
+                    "default": 1,
+                    "type": "number",
+                    "minimum": 0.1,
+                    "maximum": 4
+                  },
+                  "position": {
+                    "default": "center",
+                    "type": "string",
+                    "enum": [
+                      "top-left",
+                      "top",
+                      "top-right",
+                      "left",
+                      "center",
+                      "right",
+                      "bottom-left",
+                      "bottom",
+                      "bottom-right"
+                    ]
+                  },
+                  "opacity": {
+                    "default": 1,
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  "underlay": {
+                    "type": "string"
+                  }
+                },
+                "required": ["type", "src"]
               }
             ]
           },
@@ -7400,6 +8086,55 @@
                           }
                         },
                         "required": ["type", "stops"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "const": "image"
+                          },
+                          "src": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "fit": {
+                            "default": "cover",
+                            "type": "string",
+                            "enum": ["cover", "contain", "tile"]
+                          },
+                          "scale": {
+                            "default": 1,
+                            "type": "number",
+                            "minimum": 0.1,
+                            "maximum": 4
+                          },
+                          "position": {
+                            "default": "center",
+                            "type": "string",
+                            "enum": [
+                              "top-left",
+                              "top",
+                              "top-right",
+                              "left",
+                              "center",
+                              "right",
+                              "bottom-left",
+                              "bottom",
+                              "bottom-right"
+                            ]
+                          },
+                          "opacity": {
+                            "default": 1,
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          },
+                          "underlay": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["type", "src"]
                       }
                     ]
                   },
@@ -7512,6 +8247,55 @@
                           }
                         },
                         "required": ["type", "stops"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "const": "image"
+                          },
+                          "src": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "fit": {
+                            "default": "cover",
+                            "type": "string",
+                            "enum": ["cover", "contain", "tile"]
+                          },
+                          "scale": {
+                            "default": 1,
+                            "type": "number",
+                            "minimum": 0.1,
+                            "maximum": 4
+                          },
+                          "position": {
+                            "default": "center",
+                            "type": "string",
+                            "enum": [
+                              "top-left",
+                              "top",
+                              "top-right",
+                              "left",
+                              "center",
+                              "right",
+                              "bottom-left",
+                              "bottom",
+                              "bottom-right"
+                            ]
+                          },
+                          "opacity": {
+                            "default": 1,
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          },
+                          "underlay": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["type", "src"]
                       }
                     ]
                   }
@@ -7629,6 +8413,55 @@
                           }
                         },
                         "required": ["type", "stops"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "const": "image"
+                          },
+                          "src": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "fit": {
+                            "default": "cover",
+                            "type": "string",
+                            "enum": ["cover", "contain", "tile"]
+                          },
+                          "scale": {
+                            "default": 1,
+                            "type": "number",
+                            "minimum": 0.1,
+                            "maximum": 4
+                          },
+                          "position": {
+                            "default": "center",
+                            "type": "string",
+                            "enum": [
+                              "top-left",
+                              "top",
+                              "top-right",
+                              "left",
+                              "center",
+                              "right",
+                              "bottom-left",
+                              "bottom",
+                              "bottom-right"
+                            ]
+                          },
+                          "opacity": {
+                            "default": 1,
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          },
+                          "underlay": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["type", "src"]
                       }
                     ]
                   },
@@ -7741,6 +8574,55 @@
                           }
                         },
                         "required": ["type", "stops"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "const": "image"
+                          },
+                          "src": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "fit": {
+                            "default": "cover",
+                            "type": "string",
+                            "enum": ["cover", "contain", "tile"]
+                          },
+                          "scale": {
+                            "default": 1,
+                            "type": "number",
+                            "minimum": 0.1,
+                            "maximum": 4
+                          },
+                          "position": {
+                            "default": "center",
+                            "type": "string",
+                            "enum": [
+                              "top-left",
+                              "top",
+                              "top-right",
+                              "left",
+                              "center",
+                              "right",
+                              "bottom-left",
+                              "bottom",
+                              "bottom-right"
+                            ]
+                          },
+                          "opacity": {
+                            "default": 1,
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          },
+                          "underlay": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["type", "src"]
                       }
                     ]
                   }
@@ -7858,6 +8740,55 @@
                           }
                         },
                         "required": ["type", "stops"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "const": "image"
+                          },
+                          "src": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "fit": {
+                            "default": "cover",
+                            "type": "string",
+                            "enum": ["cover", "contain", "tile"]
+                          },
+                          "scale": {
+                            "default": 1,
+                            "type": "number",
+                            "minimum": 0.1,
+                            "maximum": 4
+                          },
+                          "position": {
+                            "default": "center",
+                            "type": "string",
+                            "enum": [
+                              "top-left",
+                              "top",
+                              "top-right",
+                              "left",
+                              "center",
+                              "right",
+                              "bottom-left",
+                              "bottom",
+                              "bottom-right"
+                            ]
+                          },
+                          "opacity": {
+                            "default": 1,
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          },
+                          "underlay": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["type", "src"]
                       }
                     ]
                   },
@@ -7970,6 +8901,55 @@
                           }
                         },
                         "required": ["type", "stops"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "const": "image"
+                          },
+                          "src": {
+                            "type": "string",
+                            "minLength": 1
+                          },
+                          "fit": {
+                            "default": "cover",
+                            "type": "string",
+                            "enum": ["cover", "contain", "tile"]
+                          },
+                          "scale": {
+                            "default": 1,
+                            "type": "number",
+                            "minimum": 0.1,
+                            "maximum": 4
+                          },
+                          "position": {
+                            "default": "center",
+                            "type": "string",
+                            "enum": [
+                              "top-left",
+                              "top",
+                              "top-right",
+                              "left",
+                              "center",
+                              "right",
+                              "bottom-left",
+                              "bottom",
+                              "bottom-right"
+                            ]
+                          },
+                          "opacity": {
+                            "default": 1,
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          },
+                          "underlay": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["type", "src"]
                       }
                     ]
                   }

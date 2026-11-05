@@ -9,6 +9,8 @@
 // kept and the icon is drawn again from QRdx's own glyph when the design is
 // read (toPublicStyle in ./public-style-server.ts). The stored data URL is
 // never republished.
+
+import { hasImageFills, withoutImageFills } from "@/lib/paint/image-fills";
 import { LOGO_ICON_IDS, type LogoIconId } from "@/lib/qr-design/style";
 import type { ThemeStyles } from "@/types/theme";
 
@@ -16,7 +18,7 @@ const SVG_DATA_URL = "data:image/svg+xml,";
 const MARKER = "data-qrdx-icon";
 
 /** What was taken out of a design before it was shared. */
-export type RemovedPart = "logo" | "art";
+export type RemovedPart = "logo" | "art" | "image";
 
 /** A design as it is stored in the community: no images, icons by id. */
 export interface PublishableStyle {
@@ -52,7 +54,9 @@ export function toPublishableStyle(style: ThemeStyles): PublishableStyle {
   const { customLogo, art, ...rest } = style;
   const removed: RemovedPart[] = [];
   let logoIcon: LogoIconId | null = null;
-  const next: ThemeStyles = { ...rest };
+  // Image fills are uploads too: each gives way to its underlay color
+  const next: ThemeStyles = withoutImageFills({ ...rest });
+  if (hasImageFills(rest)) removed.push("image");
 
   if (art !== undefined) removed.push("art");
   if (customLogo) {
@@ -70,6 +74,19 @@ export function toPublishableStyle(style: ThemeStyles): PublishableStyle {
 
 /** Plain-language note for the publish dialog about what isn't shared. */
 export function removedPartsNote(removed: RemovedPart[]): string | null {
+  const pictures = removed.includes("image")
+    ? " Image fills aren't shared either; those parts use their underlay color."
+    : "";
+  const note = uploadsNote(removed);
+  if (!note) {
+    return pictures
+      ? "Your image fills aren't shared; those parts use their underlay color."
+      : null;
+  }
+  return `${note}${pictures}`;
+}
+
+function uploadsNote(removed: RemovedPart[]): string | null {
   if (removed.includes("logo") && removed.includes("art")) {
     return "Your uploaded logo and image art aren't shared. The published design has neither.";
   }
