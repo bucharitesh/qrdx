@@ -64,7 +64,7 @@ export const qrImageQuerySchema = qrOptionsSchema.extend({
     .max(STYLE_QUERY_MAX_LENGTH)
     .optional()
     .describe(
-      "The editor's whole style: URL-encoded JSON with the same fields as a saved theme (gradients, frames including custom frame specs, border templates, eye and dot colours, logoIcon, logoFileId), or the `style` value of a playground link (1.…). Flat parameters you also set win over it.",
+      "The editor's whole style: URL-encoded JSON with the same fields as a saved theme (gradients, frames including custom frame specs, border templates, eye and dot colors, logoIcon, logoFileId), or the `style` value of a playground link (1.…). Flat parameters you also set win over it.",
     ),
   item: z
     .string()
@@ -87,7 +87,7 @@ export const qrImageQuerySchema = qrOptionsSchema.extend({
   logoIcon: z
     .enum(LOGO_ICON_IDS)
     .optional()
-    .describe("A quick logo icon in the centre, drawn by QRdx"),
+    .describe("A quick logo icon in the center, drawn by QRdx"),
   logoFileId: z
     .string()
     .regex(FILE_ID, "Must be an uploaded file id")

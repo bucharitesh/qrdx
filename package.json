@@ -51,7 +51,14 @@
       "react-dom": "19.3.1",
       "jspdf@<4.2.1": "^4.2.1",
       "sharp@<0.35.5": "^0.35.5",
-      "rehype-katex>katex": "^0.19.1"
+      "rehype-katex>katex": "^0.19.1",
+      "@babel/core@<=7.29.0": "^7.29.6",
+      "baseline-browser-mapping@>=2.0.0 <2.11.0": "^2.11.0",
+      "fflate@>=0.4.5 <0.4.9": "^0.4.9",
+      "katex@>=0.11.0 <0.18.2": "^0.18.2",
+      "postcss-selector-parser@<6.1.5": "^6.1.5",
+      "postcss-selector-parser@>=7.0.0 <7.1.6": "^7.1.6",
+      "uuid@<11.1.1": "^11.1.1"
     }
   },
   "type": "module"
