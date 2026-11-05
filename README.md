@@ -1,84 +1,131 @@
-<a href="https://qrdx.dev">
-  <img alt="QRdx: free, open-source QR code generator and React library" src="https://github.com/user-attachments/assets/3a1ed345-e594-4c19-9c45-3bc5222cffee">
+<h1 align="center">QRdx</h1>
+
+<p align="center">
+  An open-source QR code generator. Static codes are free with no sign-up or watermark. Dynamic codes come with hosted pages and scan analytics. Developers get an image API, an MCP server, a REST API, a CLI and a React library. You can self-host all of it.
+</p>
+
+<p align="center">
+  <a href="https://qrdx.dev/playground"><strong>Open the playground</strong></a> ·
+  <a href="https://qrdx.dev/docs">Docs</a> ·
+  <a href="https://qrdx.dev/community">Community</a> ·
+  <a href="https://qrdx.dev/pricing">Pricing</a>
+</p>
+
+<p align="center">
+  <a href="LICENSING.md"><img src="https://img.shields.io/badge/license-AGPL--3.0%20%2B%20MIT-blue" alt="License: AGPL-3.0 app, MIT library, CLI and plugins" /></a>
+  <a href="https://www.npmjs.com/package/qrdx"><img src="https://img.shields.io/npm/v/qrdx?label=qrdx%20on%20npm&color=f80" alt="qrdx version on npm" /></a>
+  <a href="https://github.com/bucharitesh/qrdx"><img src="https://img.shields.io/github/stars/bucharitesh/qrdx" alt="GitHub stars" /></a>
+</p>
+
+<a href="https://qrdx.dev/playground?preset=restaurantMenu#url=https://qrdx.dev/menu">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/playground-dark.webp">
+    <img alt="The QRdx playground: a URL in the Content tab, the built-in themes to start from, and a code in the Bistro Menu style in the preview with a scan score of 92, Great" src=".github/assets/playground-light.webp">
+  </picture>
 </a>
 
-<h3 align="center">QRdx</h3>
+<p align="center"><sub>The playground with the Bistro Menu style. <a href="https://assets.qrdx.dev/static/videos/playground-style-export.00d36ff737.mp4">Watch a 15-second clip</a> (MP4) of a link going from a sample code to a styled, framed one.</sub></p>
 
-<p align="center">
-  Free, open-source QR code generator: beautiful static QR codes with no signup or watermark, dynamic QR codes with hosted pages and scan analytics, and a React library, CLI, APIs and MCP server for developers. Self-hostable.
-  <br />
-  <a href="https://qrdx.dev/playground"><strong>Open the generator »</strong></a>
-  <br />
-  <br />
-  <a href="https://qrdx.dev/docs">Docs</a> ·
-  <a href="#quickstart-react-library">React library</a> ·
-  <a href="#quickstart-cli">CLI</a> ·
-  <a href="#self-hosting">Self-hosting</a> ·
-  <a href="#contributing">Contributing</a>
-</p>
+## Try it
 
-<p align="center">
-  <a href="https://github.com/bucharitesh/qrdx/blob/main/LICENSE"><img src="https://img.shields.io/github/license/bucharitesh/qrdx?color=blue" alt="License" /></a>
-  <a href="https://www.npmjs.com/package/qrdx"><img src="https://img.shields.io/npm/v/qrdx?color=f80" alt="npm version" /></a>
-  <a href="https://www.npmjs.com/package/qrdx"><img src="https://img.shields.io/npm/dm/qrdx" alt="npm downloads" /></a>
-  <a href="https://github.com/bucharitesh/qrdx/stargazers"><img src="https://img.shields.io/github/stars/bucharitesh/qrdx" alt="GitHub stars" /></a>
-</p>
+- [Playground](https://qrdx.dev/playground): design a code and download it. No account needed.
+- [The menu card above](https://qrdx.dev/playground?preset=restaurantMenu#url=https://qrdx.dev/menu), ready to edit.
+- [Community](https://qrdx.dev/community): frames and themes people shared, free to use.
+- [Docs](https://qrdx.dev/docs) for the editor, dynamic codes, the APIs and self-hosting.
 
-<p align="center">If QRdx saves you time, <a href="https://github.com/bucharitesh/qrdx">star the repo</a>. It helps others find it.</p>
+## What you can do
 
-## What is QRdx?
+**Design and download, free and without an account**
 
-QRdx is three things in one repository:
+- Start from one of 113 built-in themes, or build a look from 23 body patterns, 17 corner-eye shapes and 21 eye centers. Add one of 19 call-to-action frames and edit its text right in the preview.
+- Or give the code itself a shape: a circle of dots, a heart, or a silhouette traced in your browser from a PNG, JPEG or SVG you upload.
+- Color the background, dots and eyes with a solid color, a linear, radial or angular gradient, a see-through color or a photo.
+- Use the Art tab to blend a logo or photo into the dots (Logo QR and Image QR). They're vector art, so they export to every format. When you're signed in, AI art is there too.
+- Describe the code you want in the Generate tab and an AI assistant designs it (5 free requests with an account).
+- Check the scan score before you print. The playground decodes your design at 96, 160 and 320 px with simulated camera blur and tells you what to fix.
+- Download PNG, JPG, SVG, PDF or EPS with no watermark. Print-ready PDF and EPS come at an exact size in mm or inches, in RGB or CMYK, with optional bleed and PDF crop marks. EPS can't carry a photo fill, so designs with one download as PDF, SVG or PNG.
+- Browse the [community](https://qrdx.dev/community) for frames and themes, all shared under CC0.
+- Free tools: a [bulk generator](https://qrdx.dev/tools/bulk) from CSV, a [scan checker](https://qrdx.dev/tools/scan-checker) for pictures of QR codes, a [print size calculator](https://qrdx.dev/tools/print-size) and a [QR code scanner](https://qrdx.dev/scan).
 
-- **[qrdx.dev](https://qrdx.dev)**: a web app for designing QR codes in the browser. Static codes are free, unlimited and need no account. With an account you also get dynamic QR codes, hosted pages and scan analytics.
-- **[`qrdx`](https://www.npmjs.com/package/qrdx)** and **[`@qrdx/cli`](https://www.npmjs.com/package/@qrdx/cli)**: the React library and command-line tool that power it, so you can render the same QR codes in your own app or scripts.
-- **Developer APIs**: a keyless QR image API, a REST API with OAuth, webhooks and a remote MCP server for AI assistants.
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      <picture>
+        <source media="(prefers-color-scheme: dark)" srcset=".github/assets/scan-check-dark.webp">
+        <img alt="The Will it scan? panel: 92 out of 100, Great, with each check listed and a tip for small print" src=".github/assets/scan-check-light.webp" width="100%">
+      </picture>
+      <br><sub>The scan score, with a fix for each failed check.</sub>
+    </td>
+    <td width="50%" valign="top">
+      <picture>
+        <source media="(prefers-color-scheme: dark)" srcset=".github/assets/print-ready-dark.webp">
+        <img alt="The print-ready download: code width in millimeters, RGB or CMYK, bleed, crop marks, and PDF, SVG or EPS" src=".github/assets/print-ready-light.webp" width="100%">
+      </picture>
+      <br><sub>Print-ready PDF and EPS at an exact size.</sub>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <picture>
+        <source media="(prefers-color-scheme: dark)" srcset=".github/assets/color-picker-dark.webp">
+        <img alt="The color picker on the foreground: Solid, Linear, Radial, Angular and Image tabs, a two-stop linear gradient and its contrast on the background" src=".github/assets/color-picker-light.webp" width="100%">
+      </picture>
+      <br><sub>Solid colors, three kinds of gradient and photo fills.</sub>
+    </td>
+    <td width="50%" valign="top">
+      <picture>
+        <source media="(prefers-color-scheme: dark)" srcset=".github/assets/made-with-qrdx-dark.webp">
+        <img alt="The Made with QRdx wall on the home page: framed codes, Image QR and Logo QR art, and themed codes" src=".github/assets/made-with-qrdx-light.webp" width="100%">
+      </picture>
+      <br><sub>Made with QRdx: real codes you can scan.</sub>
+    </td>
+  </tr>
+</table>
 
-Static QR codes store the content in the code itself, so they never expire and have no scan limits. Dynamic codes encode a short link you can repoint after printing, and they keep redirecting on every plan, even after a downgrade or cancellation ([Never-Hostage Guarantee](https://qrdx.dev/guarantee)).
+**Dynamic codes and hosted pages, with a free account**
 
-## Features
+- Short links you can point somewhere else after printing, with scan analytics by country, city, device and browser.
+- Hosted mobile pages: link lists, business pages, vCard Plus, menus, coupons, events, app links, forms with a response inbox, PDFs, galleries, audio and video.
+- A dashboard for each workspace, with folders, tags, version history and a trash.
+- Pro adds teams (owner, admin, member, billing and viewer roles), routing by device, country, language, time or scan count, A/B tests, passwords and expiry dates, custom domains and retargeting pixels. Business adds conversion tracking, webhooks and Slack or Discord alerts.
 
-**Design and export (free, no account)**
+Free accounts get 10 dynamic codes and 3 hosted pages. Pro is $5 a month ($48 a year) and Business is $15 a month ($144 a year); see [pricing](https://qrdx.dev/pricing). Dynamic codes keep redirecting on every plan, even after a downgrade or a cancellation ([Never-Hostage Guarantee](https://qrdx.dev/guarantee)).
 
-- **Design:** 23 body patterns, 17 corner-eye shapes and 21 eye centers, 19 call-to-action frames, solid colors or linear and radial gradients, center logos and decorative templates
-- **Art QR:** Logo QR and Image QR blend a logo or photo into the modules as vector art. Instances with a Google Gemini API key also offer AI QR art: Gemini repaints the code as a scene, and every image is verified to scan before it's delivered (with an account)
-- **Content types:** URLs, text, Wi-Fi, vCard, email, phone, SMS, WhatsApp, maps, UPI, PayPal and many social and payment profiles
-- **Export:** PNG, JPG, SVG, PDF and vector EPS with no watermark, plus print-ready PDFs at an exact size with bleed and crop marks
-- **Scan checks:** contrast warnings and a "Will it scan?" score
-- **AI themes:** describe a style and generate a matching QR theme (5 free generations with an account)
-- **Saved and community themes:** save your designs, or browse and reuse themes shared by others
-- **Free tools:** [bulk generator](https://qrdx.dev/tools/bulk) from CSV, [scan checker](https://qrdx.dev/tools/scan-checker), [print size calculator](https://qrdx.dev/tools/print-size) and an installable [QR code scanner](https://qrdx.dev/scan)
+## For developers
 
-**Dynamic QR codes (account)**
+**Image API.** A URL is the image, with no API key. Put it in a README, an `<img>` tag or an email:
 
-- **Editable short links** with scan analytics (countries, cities, devices, browsers), folders, tags, notes, version history, trash and CSV import
-- **Hosted mobile pages** at `/p/<slug>`: link lists, business pages, vCard Plus, menus, coupons, events, app links, forms with a response inbox, PDFs, galleries, audio and video
-- **Smart routing** by device, country, language, time or scan count, A/B tests and UTM tags
-- **Link controls:** passwords, start and expiry dates, scan limits and fallback URLs
-- **Custom domains** for short links, **file storage** for pages, **retargeting pixels** and **conversion tracking**
-- **Teams** with owner, admin and member roles
-- **Notifications:** email alerts, a weekly digest, Slack and Discord messages, and signed webhooks for Zapier, Make and n8n
+```md
+![QR code](https://api.qrdx.dev/v1/qr?data=https://github.com/you/repo)
+```
 
-Free accounts get 10 dynamic codes and 3 hosted pages. Pro ($5/month or $48/year) and Business ($15/month or $144/year) raise the limits; see [pricing](https://qrdx.dev/pricing).
+Add `format=png` or `format=eps`, `size`, colors, patterns, a frame, a community item, or the whole design as JSON in `style`. See the [image API docs](https://qrdx.dev/docs/developers/image-api).
 
-**Developers and self-hosting**
+**MCP server.** Let an AI assistant design a code with a checked scan score, render it, look up styles and community frames, and build Wi-Fi, contact, email, SMS and location payloads. For Claude Code:
 
-- **Libraries and tools:** a typed React library, a CLI with SVG, PNG and EPS output, a shadcn/ui registry and an agent skill for AI coding assistants
-- **APIs:** QR image API, REST API with OAuth 2.0 scopes, REST Hooks and an MCP server
-- **Self-hostable:** run the whole web app on your own infrastructure (AGPL-3.0)
+```bash
+claude mcp add --transport http qrdx https://mcp.qrdx.dev/mcp
+```
 
-## Quickstart: React library
+None of that needs an account. With a QRdx API key on the connection, `save_template` also saves a design to your workspace's themes. Cursor, VS Code and other clients: see the [MCP docs](https://qrdx.dev/docs/developers/mcp).
+
+**REST API.** Create and edit dynamic codes (up to 100 per request on Pro and Business), read scan analytics, report conversions, subscribe to webhooks and read your saved themes under `https://api.qrdx.dev/v1`, with an API key or an OAuth 2.0 token. Every endpoint is in the [API reference](https://qrdx.dev/docs/developers/api), generated from the [OpenAPI document](https://qrdx.dev/openapi.json). Start with the [REST API docs](https://qrdx.dev/docs/developers/rest-api).
+
+**React library.** [`packages/qrdx`](packages/qrdx) is the engine behind the playground.
+
+> [!NOTE]
+> npm still has `qrdx` 0.0.46. This repo has 0.0.47, which isn't published yet, and the [library README](packages/qrdx/README.md) documents 0.0.47. In 0.0.46 the basic code works, but most patterns, frames, Art QR, EPS export and the scan score came later, and it lists React 19, sharp and jspdf as its own dependencies. Until 0.0.47 is on npm, use the playground or the image API for those features. Run `npm view qrdx version` to see what npm installs.
 
 ```bash
 npm install qrdx
 ```
 
 ```tsx
-import { QRCode } from "qrdx";
+import { QRCodeSVG } from "qrdx";
 
 export function Example() {
   return (
-    <QRCode
+    <QRCodeSVG
       value="https://qrdx.dev"
       size={256}
       bodyPattern="circle"
@@ -89,122 +136,47 @@ export function Example() {
 }
 ```
 
-`QRCode` renders an SVG. The package also exports `QRCodeCanvas`, `getQRAsSVG` for server-side rendering, download helpers for PNG, JPG, SVG, PDF and EPS, print-ready PDF and EPS at exact physical sizes, Logo QR and Image QR art, a scan score and QR decoding (EPS, print-ready files, frames, art and the scan score need `qrdx` 0.0.47 or later). See the [library docs](https://qrdx.dev/docs) for every prop.
+This example works with both 0.0.46 and 0.0.47.
 
-## Quickstart: CLI
+**CLI.** [`@qrdx/cli`](packages/cli) renders styled codes from the terminal or CI:
 
 ```bash
-# Interactive
-npx @qrdx/cli generate
-
-# Non-interactive
 npx @qrdx/cli generate "https://qrdx.dev" -o qr.svg
-npx @qrdx/cli generate "https://qrdx.dev" -o qr.png --body circle --eye gear --dot flower --size 1024
-npx @qrdx/cli generate "https://qrdx.dev" --logo "https://qrdx.dev/logo.png" --level H -o branded.svg
-npx @qrdx/cli generate "https://qrdx.dev" -o print.eps --size 144   # vector EPS, 2 inches wide (0.0.5+)
+npx @qrdx/cli generate "https://qrdx.dev" -o qr.png --body circle --eye rounded --size 1024
 ```
 
-Run `npx @qrdx/cli --help` for all options, including gradients (`--fg`, `--bg`), templates (`--template`), call-to-action frames (`--frame`) and margins. EPS output and `--frame` need `@qrdx/cli` 0.0.5 or later. See the [CLI docs](https://qrdx.dev/docs/developers/cli).
+> [!NOTE]
+> npm still has `@qrdx/cli` 0.0.4. It has the qrdx 0.0.46 styles and no `--format` or `--frame`, and it writes SVG into a file named `qr.eps`. The repo's 0.0.5 adds EPS, frames and every current pattern but isn't published yet. For EPS today, use the image API: `curl -o qr.eps "https://api.qrdx.dev/v1/qr?data=https://qrdx.dev&format=eps"`.
 
-## Agent skill
+**More**
 
-[`skills/generate-qr`](skills/generate-qr) teaches AI coding agents to generate styled QR codes with the CLI. For Claude Code:
-
-```bash
-cp -r skills/generate-qr ~/.claude/skills/
-```
-
-See [`skills/README.md`](skills/README.md) for other agents.
-
-## Developer APIs, MCP & shadcn
-
-**Image API.** Any URL becomes a QR code image, with no API key. Use it in a README, an `<img>` tag or an email:
-
-```md
-![QR](https://api.qrdx.dev/v1/qr?data=https://github.com/you/repo&format=svg)
-```
-
-Add `format=png` or `format=eps`, `size`, colors (`fg`, `bg`), patterns (`body`, `eye`, `dot`), `level`, `margin` or a frame `template`. See the [image API docs](https://qrdx.dev/docs/developers/image-api).
-
-**REST API.** Create, edit and delete dynamic codes, read their scan analytics, report conversions and subscribe to webhooks under `/api/v1`, authenticated with OAuth 2.0 access tokens (`codes:read`, `codes:write`, `themes:read`, `profile:read`). See the [REST API docs](https://qrdx.dev/docs/developers/rest-api) and [webhooks](https://qrdx.dev/docs/webhooks).
-
-**MCP server.** Let AI assistants generate QR codes and build Wi-Fi, vCard, email, SMS and location payloads. For Claude Code:
-
-```bash
-claude mcp add --transport http qrdx https://mcp.qrdx.dev/mcp
-```
-
-Cursor, VS Code and other clients: see the [MCP docs](https://qrdx.dev/docs/developers/mcp).
-
-**shadcn/ui.** Add a QR code component with PNG and SVG download buttons, or an image QR scanner:
-
-```bash
-npx shadcn@latest add https://qrdx.dev/r/qr-code.json
-npx shadcn@latest add https://qrdx.dev/r/qr-code-scanner.json
-```
-
-## Integrations
-
-- **[Dub](https://dub.co):** create or pick Dub short links for your QR codes. Click analytics for those links come from Dub.
-- **Google Drive:** select Drive files or folders and turn their share links into QR codes.
-- **Slack, Discord, Zapier, Make and n8n:** alerts and signed webhooks for scans, code changes and form submissions (Business). See [notifications](https://qrdx.dev/docs/notifications).
-- **Raycast:** a Raycast extension for generating QR codes ([`plugins/raycast`](plugins/raycast)).
-- **Canva:** a Canva app ([`plugins/canva`](plugins/canva)).
-- **Chrome and Figma:** a Chrome extension ([`plugins/chrome`](plugins/chrome)) and a Figma plugin ([`plugins/figma`](plugins/figma)) that make styled QR codes with the `qrdx` library. Build them from source.
+- [shadcn/ui components](https://qrdx.dev/docs/developers/shadcn): `npx shadcn@latest add https://qrdx.dev/r/qr-code.json` adds a QR code with PNG and SVG downloads, and `qr-code-scanner.json` adds a scanner.
+- [Agent skill](skills): `generate-qr` teaches coding agents to make QR codes with the CLI.
+- Plugins: the [Chrome extension](https://chromewebstore.google.com/detail/bpepiomjdoicpmbihlohodghdglkhicc) is in the Chrome Web Store. The [Figma](plugins/figma), [Raycast](plugins/raycast) and [Canva](plugins/canva) plugins install from source.
 
 ## Self-hosting
 
-You can run the full web app yourself, dynamic codes and hosted pages included, with Docker Compose (Postgres included) or with Node.js. It boots with just three environment variables: `NEXT_PUBLIC_APP_URL`, `DATABASE_URL` and `BETTER_AUTH_SECRET`, plus one GitHub or Google OAuth app for sign-in. Everything else (AI, payments, file storage, email, custom domains, integrations, analytics) is optional.
+You can run the whole web app yourself, dynamic codes and hosted pages included, with Docker Compose (Postgres included) or with Node.js. It needs three environment variables (`NEXT_PUBLIC_APP_URL`, `DATABASE_URL` and `BETTER_AUTH_SECRET`) and one way to sign in: a GitHub or Google OAuth app, or Resend for email sign-in codes. AI, payments, file storage, custom domains and the integrations are optional.
 
 ```bash
 git clone https://github.com/bucharitesh/qrdx.git && cd qrdx
-cp .env.example .env   # set BETTER_AUTH_SECRET and an OAuth provider
+cp .env.example .env   # set BETTER_AUTH_SECRET and a sign-in method
 docker compose up -d --build
 ```
 
-Read the full [self-hosting guide](https://qrdx.dev/docs/self-hosting) before running it in production.
-
-## Tech stack
-
-- [Next.js](https://nextjs.org/) (App Router) and [React](https://react.dev/)
-- [TypeScript](https://www.typescriptlang.org/)
-- [Tailwind CSS](https://tailwindcss.com/), [shadcn/ui](https://ui.shadcn.com/) and [Radix UI](https://www.radix-ui.com/)
-- [Drizzle ORM](https://orm.drizzle.team/) on Postgres ([Neon](https://neon.tech/))
-- [Better Auth](https://www.better-auth.com/) for authentication
-- [Vercel AI SDK](https://ai-sdk.dev/) with Google Gemini for AI themes and AI QR art
-- [Polar](https://polar.sh/) for payments, [PostHog](https://posthog.com/) (with consent) and [Umami](https://umami.is/) (cookieless) for analytics, [Upstash](https://upstash.com/) for rate limiting
-- [Cloudflare R2](https://developers.cloudflare.com/r2/) for file storage and [Resend](https://resend.com/) for email
-- [Fumadocs](https://fumadocs.dev/) for documentation
-- [Turborepo](https://turborepo.com/) and [pnpm](https://pnpm.io/) for the monorepo, [Biome](https://biomejs.dev/) for linting
-
-## Contributing
-
-Contributions are welcome:
-
-- [Open an issue](https://github.com/bucharitesh/qrdx/issues) if you find a bug or want to suggest a feature.
-- [Open a pull request](https://github.com/bucharitesh/qrdx/pulls) for fixes and improvements. Issues labeled `good first issue` are a good place to start.
-
-[CONTRIBUTING.md](CONTRIBUTING.md) covers local setup, the project layout and how to run tests. To report a security issue privately, see [SECURITY.md](SECURITY.md).
-
-## Repo activity
-
-![QRdx repo activity, generated by Axiom](https://repobeats.axiom.co/api/embed/0694ff5c2725e0d236774058f6fc68c2e1a712d7.svg "Repobeats analytics image")
-
-## Star history
-
-[![Star History Chart](https://api.star-history.com/svg?repos=bucharitesh/qrdx&type=date&legend=bottom-right)](https://www.star-history.com/#bucharitesh/qrdx&type=date&legend=bottom-right)
+Read the [self-hosting guide](https://qrdx.dev/docs/self-hosting) before you run it in production.
 
 ## License
 
-QRdx is open source:
+- The web app and everything else in this repository outside the folders below are licensed under the [GNU Affero General Public License v3.0 or later](LICENSE). If you run a modified version as a network service, you have to offer its source code to its users under the same license.
+- The React library ([`packages/qrdx`](packages/qrdx), from 0.0.47), the CLI ([`packages/cli`](packages/cli), from 0.0.5) and the plugins in [`plugins/`](plugins) are MIT-licensed, each with its own `LICENSE` file. Earlier npm releases of the library and the CLI were AGPL-3.0-or-later. [LICENSING.md](LICENSING.md) has the details.
 
-- **The app and everything else in this repository** (outside the MIT folders below) are licensed under the [GNU Affero General Public License v3.0 or later](LICENSE) (see [LICENSING.md](LICENSING.md) for which folders are MIT) (AGPL-3.0-or-later). You can use, modify and self-host it freely. If you run a modified version as a network service, you must also make your modified source code available to its users under the same license.
-- **The developer tools are MIT-licensed**, each with its own `LICENSE`: the React library and QR engine ([`packages/qrdx`](packages/qrdx), `qrdx` on npm, from 0.0.47), the CLI ([`packages/cli`](packages/cli), `@qrdx/cli`, from 0.0.5) and the plugins (`plugins/chrome`, `plugins/figma`, `plugins/raycast`, `plugins/canva`). Earlier npm releases of the library and CLI were AGPL-3.0-or-later.
+The QRdx name and logo are trademarks. Read the [trademark policy](TRADEMARK.md) before you use them for a fork or a hosted service.
 
-The QRdx name and logo are trademarks; see the [trademark policy](TRADEMARK.md) before using them for a fork or a hosted service.
+## Contributing
 
-## Acknowledgments
+Bug reports, ideas and pull requests are welcome. [Open an issue](https://github.com/bucharitesh/qrdx/issues), or look for issues labeled `good first issue`. [CONTRIBUTING.md](CONTRIBUTING.md) covers local setup, the project layout and the checks to run. Report security issues privately, as [SECURITY.md](SECURITY.md) describes.
 
-- QR code generation is based on [qrcode.react](https://github.com/zpao/qrcode.react)
-- Playground design inspired by [tweakcn](https://github.com/jnsahaj/tweakcn)
-- UI components built with Radix UI and Tailwind CSS
+QRdx is a pnpm and Turborepo monorepo: a Next.js app with React, TypeScript, Tailwind CSS, Drizzle on Postgres, Better Auth and the Vercel AI SDK. QR generation started from [qrcode.react](https://github.com/zpao/qrcode.react), and the playground layout was inspired by [tweakcn](https://github.com/jnsahaj/tweakcn).
+
+If QRdx is useful to you, a star helps other people find it.
