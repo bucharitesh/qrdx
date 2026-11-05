@@ -156,6 +156,7 @@ export default async function AccountPage({
             new Date(session.session.createdAt),
             now,
           ),
+          twoFactorOn,
         }}
       />
 
@@ -172,6 +173,7 @@ export default async function AccountPage({
           new Date(session.session.createdAt),
           now,
         )}
+        twoFactorOn={twoFactorOn}
       />
 
       <TwoFactorSection
