@@ -167,6 +167,7 @@ export default async function AccountPage({
       />
 
       <PasskeysSection
+        userId={userId}
         recentSignIn={canChangeEmailNow(
           new Date(session.session.createdAt),
           now,

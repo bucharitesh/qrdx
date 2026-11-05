@@ -895,9 +895,13 @@ async function main() {
       },
     );
 
-    if (page.consoleErrors.length) {
-      console.log(`Console errors:\n  ${page.consoleErrors.join("\n  ")}`);
-    }
+    // An error boundary catching a section's render error still lets the
+    // other checks pass, so page errors fail the run on their own.
+    await step("no page errors in the browser", async () =>
+      page.consoleErrors.length === 0
+        ? true
+        : `${page.consoleErrors.length}:\n  ${page.consoleErrors.join("\n  ")}`,
+    );
   } finally {
     await page.close();
   }
