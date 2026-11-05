@@ -161,7 +161,7 @@ function latestCode(email: string): string | null {
   if (!CODE_LOG) return null;
   const log = readFileSync(CODE_LOG, "utf8");
   const pattern = new RegExp(
-    `QRdx sign-in code for ${email.replace(/[.+]/g, "\\$&")}: (\\d{6})`,
+    `QRdx sign-in code for ${email.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}: (\\d{6})`,
     "g",
   );
   let code: string | null = null;

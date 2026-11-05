@@ -9,6 +9,10 @@
 // The QRdx dev server must trust its origin for OIDC (it's on localhost):
 // BETTER_AUTH_TRUSTED_ORIGINS=http://localhost:4455.
 //
+// SAML: it only answers the QRdx app at MOCK_IDP_SP_ORIGIN (default
+// http://localhost:3113). An AuthnRequest whose ACS URL is anywhere else is
+// refused, and the SP metadata is fetched from that origin only.
+//
 // OIDC client: id "qrdx-test-client", secret "qrdx-test-secret".
 // The sign-in page asks which address to sign in as. ?auto=<email> on the
 // authorize/SSO URL skips the form (scripted runs). SAML extras for negative
@@ -43,6 +47,30 @@ const pluginPackage = realpathSync(
   ),
 );
 const saml = createRequire(pluginPackage)("samlify");
+
+// The one QRdx app this IdP serves (never taken from a request).
+const SP_ORIGIN = new URL(
+  process.env.MOCK_IDP_SP_ORIGIN ?? "http://localhost:3113",
+).origin;
+const ACS_PATH = /^\/api\/auth\/sso\/saml2\/sp\/acs\/([A-Za-z0-9_-]{1,128})$/;
+
+/** The ACS and SP-metadata URLs for an ACS URL, on SP_ORIGIN only. */
+function spEndpoints(acsUrl) {
+  let parsed;
+  try {
+    parsed = new URL(acsUrl);
+  } catch {
+    throw new Error("The AuthnRequest has no valid ACS URL");
+  }
+  const providerId = parsed.pathname.match(ACS_PATH)?.[1];
+  if (parsed.origin !== SP_ORIGIN || !providerId) {
+    throw new Error(`ACS URL isn't on ${SP_ORIGIN}`);
+  }
+  return {
+    acs: `${SP_ORIGIN}/api/auth/sso/saml2/sp/acs/${providerId}`,
+    metadata: `${SP_ORIGIN}/api/auth/sso/saml2/sp/metadata?providerId=${encodeURIComponent(providerId)}`,
+  };
+}
 saml.setSchemaValidator({ validate: () => Promise.resolve("skipped") });
 
 // ---- keys ----
@@ -202,8 +230,9 @@ const idp = () =>
   });
 
 async function samlRespond(res, url, email) {
-  const acs = url.searchParams.get("acs");
-  const metadataUrl = url.searchParams.get("spmeta");
+  const { acs, metadata: metadataUrl } = spEndpoints(
+    url.searchParams.get("acs") ?? "",
+  );
   const metadata = await (await fetch(metadataUrl)).text();
   const sp = saml.ServiceProvider({ metadata });
   const provider = idp();
@@ -324,16 +353,12 @@ const server = createServer(async (req, res) => {
         )
         .toString();
       const requestId = xml.match(/\bID="([^"]+)"/)?.[1] ?? "";
-      const acs = xml.match(/AssertionConsumerServiceURL="([^"]+)"/)?.[1] ?? "";
-      const providerId = acs.split("/").pop();
-      const spmeta = acs.replace(
-        /\/sso\/saml2\/sp\/acs\/.*$/,
-        `/sso/saml2/sp/metadata?providerId=${providerId}`,
+      const { acs } = spEndpoints(
+        xml.match(/AssertionConsumerServiceURL="([^"]+)"/)?.[1] ?? "",
       );
       const next = new URL(`${ORIGIN}/saml/approve`);
       next.searchParams.set("rid", requestId);
       next.searchParams.set("acs", acs);
-      next.searchParams.set("spmeta", spmeta);
       next.searchParams.set("relay", url.searchParams.get("RelayState") ?? "");
       for (const flag of ["unsigned", "notimes", "auto"]) {
         if (url.searchParams.get(flag))
@@ -360,9 +385,10 @@ const server = createServer(async (req, res) => {
     res.writeHead(404);
     res.end("not found");
   } catch (error) {
+    // Details stay in this console; the page gets a fixed message.
     console.error("[mock-idp]", error);
-    res.writeHead(500);
-    res.end(String(error));
+    res.writeHead(500, { "content-type": "text/plain; charset=utf-8" });
+    res.end("Mock IdP error. See its console.");
   }
 });
 server.listen(port, () =>
