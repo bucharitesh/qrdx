@@ -237,6 +237,7 @@ describe("POST /api/generate-qr-theme", () => {
         "save_template",
         "use_image",
         "request_content",
+        "publish_to_community",
       ],
     );
     expect(design?.body.providerOptions).toEqual({

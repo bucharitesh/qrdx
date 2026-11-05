@@ -26,7 +26,7 @@ import {
 import { ensurePublishingProfile } from "./profiles";
 import { toPublicStyle } from "./public-style-server";
 import { checkScanGate, gateFailureMessage, type ScanGate } from "./scan-gate";
-import { COMMUNITY_TAG, guarded } from "./store";
+import { COMMUNITY_TAG, guarded, guardedRead } from "./store";
 import { cleanText, slugify, textProblem } from "./text";
 import type { CommunityItemType } from "./types";
 
@@ -44,6 +44,8 @@ export class PublishError extends Error {
       | "LICENSE_REQUIRED",
     message: string,
     readonly slug?: string,
+    /** With `slug`: the type of the item that's already there */
+    readonly type?: CommunityItemType,
   ) {
     super(message);
     this.name = "PublishError";
@@ -125,6 +127,7 @@ export async function insertItem(
         "ALREADY_PUBLISHED",
         "This design is already in the community.",
         duplicate.slug,
+        item.type,
       );
     }
 
@@ -193,25 +196,26 @@ async function gateOrThrow(style: ThemeStyles): Promise<ScanGate> {
 }
 
 /**
- * A saved theme as a theme item: a snapshot (editing the saved theme later
- * never changes it), without uploaded logos or image art.
+ * A design as a theme item: a snapshot without uploaded logos, image art or
+ * image fills (./public-style.ts), checked like every publish (text, the
+ * Great scan gate on the design as everyone will see it, duplicates).
+ * Saved themes and the AI chat's designs both come through here.
  */
-export async function publishSavedTheme(input: {
+export async function publishStyle(input: {
   userId: string;
-  theme: { id: string; name: string; style: ThemeStyles };
-  tags: string[];
+  style: ThemeStyles;
+  details: ItemDetails;
+  /** Where it was published from, e.g. a saved theme or a chat draft */
+  source?: { kind: string; id: string };
 }): Promise<{ id: string; slug: string; type: CommunityItemType }> {
-  const built = themePayloadFromStyle(input.theme.style);
+  const built = themePayloadFromStyle(input.style);
   if (!built) {
     throw new PublishError(
       "VALIDATION_ERROR",
       "This theme has settings the community can't show. Save it again in the editor.",
     );
   }
-  const details = cleanDetails(
-    { name: input.theme.name, tags: input.tags },
-    COMMUNITY_THEME_TAGS,
-  );
+  const details = cleanDetails(input.details, COMMUNITY_THEME_TAGS);
   const gate = await gateOrThrow(
     toPublicStyle(built.payload.style, built.payload.logoIcon),
   );
@@ -221,8 +225,26 @@ export async function publishSavedTheme(input: {
     ...details,
     payload: built.payload,
     gate,
-    sourceKind: "qr_preset",
-    sourceId: input.theme.id,
+    ...(input.source
+      ? { sourceKind: input.source.kind, sourceId: input.source.id }
+      : {}),
+  });
+}
+
+/**
+ * A saved theme as a theme item: a snapshot (editing the saved theme later
+ * never changes it), without uploaded logos or image art.
+ */
+export async function publishSavedTheme(input: {
+  userId: string;
+  theme: { id: string; name: string; style: ThemeStyles };
+  tags: string[];
+}): Promise<{ id: string; slug: string; type: CommunityItemType }> {
+  return publishStyle({
+    userId: input.userId,
+    style: input.theme.style,
+    details: { name: input.theme.name, tags: input.tags },
+    source: { kind: "qr_preset", id: input.theme.id },
   });
 }
 
@@ -299,4 +321,29 @@ export async function unpublishItem(
     if (removed[0]?.type === "theme") revalidateTag("community-themes", "max");
     return true;
   });
+}
+
+/**
+ * The published item `userId` made from `source` (e.g. a chat draft), or
+ * null: how the chat learns whether the person really published its draft.
+ */
+export async function findPublishedFrom(
+  userId: string,
+  source: { kind: string; id: string },
+): Promise<{ type: CommunityItemType; slug: string } | null> {
+  return guardedRead(async () => {
+    const [row] = await db
+      .select({ type: communityItem.type, slug: communityItem.slug })
+      .from(communityItem)
+      .where(
+        and(
+          eq(communityItem.createdBy, userId),
+          eq(communityItem.sourceKind, source.kind),
+          eq(communityItem.sourceId, source.id),
+          eq(communityItem.status, "published"),
+        ),
+      )
+      .limit(1);
+    return row ? { type: row.type as CommunityItemType, slug: row.slug } : null;
+  }, null);
 }

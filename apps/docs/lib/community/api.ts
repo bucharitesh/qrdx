@@ -15,7 +15,7 @@ import {
 import { presetLogoIcon } from "./public-style";
 import { getItem, listFrames, listItems } from "./queries";
 import { COMMUNITY_TAG } from "./store";
-import { cleanText } from "./text";
+import { untrustedText } from "./text";
 import {
   COMMUNITY_TYPES,
   type CommunityItemCard,
@@ -34,6 +34,7 @@ export {
   COMMUNITY_PAGE_DEFAULT,
   COMMUNITY_PAGE_MAX,
 } from "./limits";
+export { untrustedText } from "./text";
 
 // Item text is written by community members, so it's untrusted data for the
 // agents that read it: names, descriptions, handles, tags and frame labels
@@ -48,38 +49,6 @@ const DESCRIPTION_MAX = 160;
 const HANDLE_MAX = 30;
 const DISPLAY_NAME_MAX = 40;
 const TAG_MAX = 24;
-
-// Links (with or without a scheme), emails and phone numbers, matched
-// anywhere in the text.
-const URLS = /\b(?:https?|ftp|file|data|javascript):\S*|\bwww\.\S+/gi;
-const DOMAINS =
-  /\b[a-z0-9][a-z0-9-]*(?:\.[a-z0-9-]+)*\.(?:com|net|org|io|dev|app|co|me|ly|xyz|info|biz|ai|gg|so|to|link|site|online|shop|store)\b\S*/gi;
-const EMAILS = /[^\s@]+@[^\s@]+\.[^\s@]+/g;
-const PHONES = /\+?\d[\d\s().-]{7,}\d/g;
-const MARKUP = /[<>`{}[\]|\\]/g;
-
-/**
- * Creator text made safe to hand to an agent: one line, no control or
- * invisible characters, no links, emails, phone numbers or markup
- * characters, at most `max` characters.
- */
-export function untrustedText(text: string | null | undefined, max: number) {
-  if (!text) return "";
-  const stripped = cleanText(text, 1000)
-    .replace(URLS, " ")
-    .replace(EMAILS, " ")
-    .replace(DOMAINS, " ")
-    .replace(PHONES, " ")
-    .replace(MARKUP, " ");
-  const clean = cleanText(stripped, Number.MAX_SAFE_INTEGER);
-  const chars = Array.from(clean);
-  return chars.length > max
-    ? `${chars
-        .slice(0, max - 1)
-        .join("")
-        .trimEnd()}…`
-    : clean;
-}
 
 // ── Ids ────────────────────────────────────────────────────────────────────
 

@@ -9,6 +9,7 @@ import {
 } from "qrdx";
 import type { QRCustomFrame } from "qrdx/types";
 import { z } from "zod";
+import { CHAT_DRAFT_SOURCE } from "@/lib/ai/agent/community";
 import { CopyRefusedError, copyItemToWorkspace } from "@/lib/community/copies";
 import {
   getMyCommunityProfile,
@@ -19,6 +20,7 @@ import {
 import {
   PublishError,
   publishFrame,
+  publishStyle,
   unpublishItem,
 } from "@/lib/community/publish";
 import { savedFrames } from "@/lib/community/queries";
@@ -32,6 +34,7 @@ import { type CommunityItemType, itemPath } from "@/lib/community/types";
 import { getActiveScope } from "@/lib/scope";
 import { getCurrentUserId, logError } from "@/lib/shared";
 import { UnauthorizedError } from "@/types/errors";
+import type { ThemeStyles } from "@/types/theme";
 
 // Server actions for the community pages and the editor's frame tools.
 // Each returns a plain result the client shows as it is; nothing here
@@ -93,7 +96,7 @@ function failure<T>(error: unknown, action: string): CommunityResult<T> {
     return fail(
       error.code,
       error.message,
-      error.slug ? itemPath("frame", error.slug) : undefined,
+      error.slug ? itemPath(error.type ?? "frame", error.slug) : undefined,
     );
   }
   if (error instanceof ProfileInputError) {
@@ -146,6 +149,61 @@ export async function publishCommunityFrame(
     return { ok: true, data: { href: itemPath(item.type, item.slug) } };
   } catch (error) {
     return failure(error, "publishCommunityFrame");
+  }
+}
+
+/** A chat tool call id (the draft the AI chat's card was made for). */
+const CHAT_DRAFT_ID = /^[A-Za-z0-9_-]{1,96}$/;
+
+const publishDesignSchema = z.object({
+  style: z.record(z.string(), z.unknown()),
+  name: z.string().max(200),
+  description: z.string().max(2000).optional(),
+  tags: z.array(z.string().max(40)).max(20).optional(),
+  acceptLicense: z.boolean(),
+  /** The AI chat's draft this publish answers (publish_to_community) */
+  chatDraftId: z.string().regex(CHAT_DRAFT_ID).optional(),
+});
+
+/**
+ * Publishes a design that isn't a saved theme (the AI chat's): the same
+ * checks as a saved theme (lib/community/publish.ts publishStyle), run on
+ * the style sent here; nothing the client says about it is trusted. Only a
+ * person's click in the publish dialog calls this, never the model.
+ */
+export async function publishCommunityDesign(
+  input: z.input<typeof publishDesignSchema>,
+): Promise<CommunityResult<{ href: string }>> {
+  try {
+    const userId = await getCurrentUserId();
+    const parsed = publishDesignSchema.safeParse(input);
+    if (!parsed.success) return fail("VALIDATION_ERROR", "Check the details.");
+    if (parsed.data.acceptLicense !== true) {
+      return fail("LICENSE_REQUIRED", "Confirm the CC0 licence to publish.");
+    }
+    if (await limited(publishLimiter, `community-publish:${userId}`)) {
+      return fail(
+        "RATE_LIMITED",
+        "You've published a lot today. Try again tomorrow.",
+      );
+    }
+    const item = await publishStyle({
+      userId,
+      style: parsed.data.style as ThemeStyles,
+      details: {
+        name: parsed.data.name,
+        description: parsed.data.description,
+        tags: parsed.data.tags,
+      },
+      ...(parsed.data.chatDraftId
+        ? {
+            source: { kind: CHAT_DRAFT_SOURCE, id: parsed.data.chatDraftId },
+          }
+        : {}),
+    });
+    return { ok: true, data: { href: itemPath(item.type, item.slug) } };
+  } catch (error) {
+    return failure(error, "publishCommunityDesign");
   }
 }
 

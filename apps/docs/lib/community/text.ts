@@ -38,3 +38,37 @@ export function slugify(text: string, max = 48): string {
     .slice(0, max)
     .replace(/-+$/g, "");
 }
+
+// Links (with or without a scheme), emails and phone numbers, matched
+// anywhere in the text.
+const URLS = /\b(?:https?|ftp|file|data|javascript):\S*|\bwww\.\S+/gi;
+const DOMAINS =
+  /\b[a-z0-9][a-z0-9-]*(?:\.[a-z0-9-]+)*\.(?:com|net|org|io|dev|app|co|me|ly|xyz|info|biz|ai|gg|so|to|link|site|online|shop|store)\b\S*/gi;
+const EMAILS = /[^\s@]+@[^\s@]+\.[^\s@]+/g;
+const PHONES = /\+?\d[\d\s().-]{7,}\d/g;
+const MARKUP = /[<>`{}[\]|\\]/g;
+
+/**
+ * Text someone else wrote, made safe to hand to an agent or show as a
+ * draft: one line, no control or invisible characters, no links, emails,
+ * phone numbers or markup characters, at most `max` characters. Used for
+ * community text read back by the API and MCP, and for what the chat's
+ * model drafts before a person publishes it.
+ */
+export function untrustedText(text: string | null | undefined, max: number) {
+  if (!text) return "";
+  const stripped = cleanText(text, 1000)
+    .replace(URLS, " ")
+    .replace(EMAILS, " ")
+    .replace(DOMAINS, " ")
+    .replace(PHONES, " ")
+    .replace(MARKUP, " ");
+  const clean = cleanText(stripped, Number.MAX_SAFE_INTEGER);
+  const chars = Array.from(clean);
+  return chars.length > max
+    ? `${chars
+        .slice(0, max - 1)
+        .join("")
+        .trimEnd()}…`
+    : clean;
+}
