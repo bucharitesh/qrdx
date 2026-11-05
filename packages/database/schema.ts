@@ -56,7 +56,7 @@ export const user = pgTable(
     banReason: text("ban_reason"),
     banExpires: timestamp("ban_expires"),
     // Better Auth two-factor plugin field: true once an authenticator app is
-    // verified. SQL: packages/database/manual-sql/0017_sign_in_security.sql
+    // verified. SQL: packages/database/manual-sql/0019_sign_in_security.sql
     twoFactorEnabled: boolean("two_factor_enabled").default(false),
     createdAt: timestamp("created_at").notNull(),
     updatedAt: timestamp("updated_at").notNull(),
@@ -115,7 +115,7 @@ export const verification = pgTable("verification", {
 // Sign-in security: two-step verification, passkeys and workspace SSO. Field
 // names match better-auth 1.7.14's twoFactor, @better-auth/passkey and
 // @better-auth/sso schemas; written only through those plugins.
-// SQL: packages/database/manual-sql/0017_sign_in_security.sql
+// SQL: packages/database/manual-sql/0019_sign_in_security.sql
 
 // One row per user with an authenticator app. `secret` and `backup_codes` are
 // encrypted by the plugin with BETTER_AUTH_SECRET.
@@ -223,7 +223,7 @@ export const member = pgTable(
     index("member_user_id_idx").on(table.userId),
     // One membership per person per workspace. SSO sign-ins add people on
     // every sign-in, so two at once must not double up.
-    // SQL: packages/database/manual-sql/0018_member_unique.sql
+    // SQL: packages/database/manual-sql/0020_member_unique.sql
     uniqueIndex("member_organization_id_user_id_unique").on(
       table.organizationId,
       table.userId

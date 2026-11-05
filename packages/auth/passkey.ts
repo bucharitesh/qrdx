@@ -4,7 +4,7 @@ import { APIError, createAuthMiddleware } from "better-auth/api";
 import { parseSetCookieHeader, toCookieOptions } from "better-auth/cookies";
 import type { PasskeyRelyingParty } from "./passkey-rp";
 
-// Passkeys (packages/database/manual-sql/0017). Every passkey is a
+// Passkeys (packages/database/manual-sql/0019_sign_in_security.sql). Every passkey is a
 // discoverable credential that verifies the person (PIN, fingerprint or
 // face) each time it's used, so a passkey sign-in counts as two factors and
 // skips the two-step verification challenge. The plugin only *prefers* user

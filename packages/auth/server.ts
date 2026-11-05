@@ -316,7 +316,7 @@ export const auth = betterAuth({
         },
       },
     }),
-    // Sign-in security (packages/database/manual-sql/0017).
+    // Sign-in security (packages/database/manual-sql/0019_sign_in_security.sql).
     // Two-step verification (Lane A): the plugin, then the challenge after
     // every session-creating endpoint (./sign-in-challenge.ts).
     twoFactorPlugin,
