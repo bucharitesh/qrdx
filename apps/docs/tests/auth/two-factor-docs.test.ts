@@ -38,4 +38,9 @@ describe("two-step verification help page", () => {
     );
     expect(TWO_FACTOR_MESSAGES.locked).toContain(`${LOCKOUT_MINUTES} minutes`);
   });
+
+  it("doesn't carve SAML out of trusted devices", () => {
+    // GET /two-factor/continue reads the trust cookie after a SAML POST.
+    expect(page).not.toMatch(/SAML[^.]*may still ask/);
+  });
 });

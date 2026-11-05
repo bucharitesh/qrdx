@@ -4,7 +4,9 @@
 // this test makes sure nobody adds a plugin without deciding what each new
 // path does. Adding a plugin fails here until its paths are listed below.
 import {
+  CHALLENGE_CODE_PATHS,
   CHALLENGE_COMPLETION_PATHS,
+  CHALLENGE_CONTINUE_PATH,
   PASSKEY_SIGN_IN_PATH,
   SERVER_ONLY_TWO_FACTOR_PATHS,
   UNUSED_TWO_FACTOR_PATHS,
@@ -54,6 +56,10 @@ const PATHS: Record<string, [Kind, string]> = {
   "/two-factor/verify-totp": ["finishes-challenge", "authenticator code"],
   "/two-factor/verify-backup-code": ["finishes-challenge", "backup code"],
   "/two-factor/verify-otp": ["finishes-challenge", "off: no email/SMS codes"],
+  "/two-factor/continue": [
+    "finishes-challenge",
+    "trusted device only (GET after a SAML POST); else the challenge page",
+  ],
 
   // The signed-in person's own session, re-issued
   "/get-session": ["same-person", "refreshes the session's expiry"],
@@ -216,10 +222,16 @@ describe("sign-in challenge coverage", () => {
     }
     for (const p of CHALLENGE_COMPLETION_PATHS) {
       expect(disabled).not.toContain(p);
+    }
+    for (const p of CHALLENGE_CODE_PATHS) {
       expect(auth.options.rateLimit?.customRules?.[p]).toEqual({
         window: 10,
         max: 3,
       });
     }
+    // Checks signed cookies, no codes; once per SAML sign-in.
+    expect(
+      auth.options.rateLimit?.customRules?.[CHALLENGE_CONTINUE_PATH],
+    ).toEqual({ window: 60, max: 120 });
   });
 });

@@ -35,6 +35,7 @@ import { hasEntitledSubscription, workspacePlanTier } from "./plan";
 import { signInChallenge } from "./sign-in-challenge";
 import {
   BACKUP_CODE_COUNT,
+  CHALLENGE_CONTINUE_PATH,
   generateBackupCodes,
   SERVER_ONLY_TWO_FACTOR_PATHS,
   TOTP_DIGITS,
@@ -370,6 +371,10 @@ export const auth = betterAuth({
       // the account for 15 minutes.
       "/two-factor/verify-totp": { window: 10, max: 3 },
       "/two-factor/verify-backup-code": { window: 10, max: 3 },
+      // A SAML sign-in by a 2FA user passes through here once (a GET after
+      // the IdP's POST); it checks no codes, only signed cookies, and a
+      // whole office signs in from one address, so it's as loose as the ACS.
+      [CHALLENGE_CONTINUE_PATH]: { window: 60, max: 120 },
       // Passkeys: the sign-in panel asks for a challenge when it opens (for
       // autofill) and again for the button; each sign-in verifies once.
       [PASSKEY_SIGN_IN_OPTIONS_PATH]: { window: 60, max: 20 },
