@@ -4,6 +4,7 @@
 // style, never the content's values (a Wi-Fi password, a phone number).
 import { colorConfigSchema, frameSchema } from "qrdx/types";
 import { z } from "zod";
+import { withoutImageFills } from "@/lib/paint/image-fills";
 import {
   CONTENT_TYPE_IDS,
   contentTypeLabel,
@@ -50,7 +51,9 @@ const styleSchema = z
       frame,
       showLogo,
     }) =>
-      ({
+      withoutImageFills({
+        // Pictures never reach the model: an image fill counts as its
+        // underlay color (the client strips them too)
         bgColor,
         fgColor,
         eyeColor,
@@ -63,7 +66,7 @@ const styleSchema = z
         templateId,
         frame,
         showLogo,
-      }) as ThemeStyles,
+      } as ThemeStyles),
   );
 
 export const editorContextSchema = z.object({
