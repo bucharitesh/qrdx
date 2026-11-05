@@ -72,9 +72,10 @@ describe("page template cards", () => {
     };
     const html = renderToStaticMarkup(ItemGrid({ cards: [card] }));
     expect(html).toContain('href="/community/templates/harbour-menu-ab12"');
-    expect(html).toContain("Harbour Café");
+    // The page shows its sample text, never what the person wrote.
+    expect(html).toContain("Your name");
     expect(html).toContain("Page template");
-    expect(html).toContain("hello@example.com");
+    expect(html).not.toContain("Harbour Café");
     expect(html).not.toContain("anna@harbour.cafe");
   });
 });

@@ -19,7 +19,12 @@ import {
   copyKitToWorkspace,
   copyTemplateToWorkspace,
 } from "@/lib/community/copies";
-import { scrubPageContent, scrubSummary } from "@/lib/community/page-template";
+import {
+  type KeptProblem,
+  type ScrubbedField,
+  scrubPageContent,
+  scrubSummary,
+} from "@/lib/community/page-template";
 import {
   getMyCommunityProfile,
   type MyCommunityProfile,
@@ -47,6 +52,7 @@ import {
 import { CommunityUnavailableError } from "@/lib/community/store";
 import { type CommunityItemType, itemPath } from "@/lib/community/types";
 import { HttpError } from "@/lib/error-response";
+import { getTemplate } from "@/lib/landing/templates";
 import { type ActiveScope, getActiveScope } from "@/lib/scope";
 import { getCurrentUserId, logError } from "@/lib/shared";
 import { UnauthorizedError } from "@/types/errors";
@@ -73,6 +79,7 @@ export type CommunityResult<T> =
         | "THEME_LIMIT_REACHED"
         | "PAGE_LIMIT_REACHED"
         | "FORBIDDEN"
+        | "CONFLICT"
         | "UNKNOWN";
       message: string;
       /** For ALREADY_PUBLISHED: the existing item's page */
@@ -131,6 +138,19 @@ function failure<T>(error: unknown, action: string): CommunityResult<T> {
   return fail("UNKNOWN", "Something went wrong. Please try again.");
 }
 
+/**
+ * The daily publish limit, counted only once every check has passed (it
+ * runs right before the write), so a refused publish never uses it up.
+ */
+const countPublish = (userId: string) => async () => {
+  if (await limited(publishLimiter, `community-publish:${userId}`)) {
+    throw new PublishError(
+      "RATE_LIMITED",
+      "You've published a lot today. Try again tomorrow.",
+    );
+  }
+};
+
 const publishFrameSchema = z.object({
   frame: z.unknown(),
   name: z.string().max(200),
@@ -150,13 +170,8 @@ export async function publishCommunityFrame(
     if (parsed.data.acceptLicense !== true) {
       return fail("LICENSE_REQUIRED", "Confirm the CC0 licence to publish.");
     }
-    if (await limited(publishLimiter, `community-publish:${userId}`)) {
-      return fail(
-        "RATE_LIMITED",
-        "You've published a lot today. Try again tomorrow.",
-      );
-    }
     const item = await publishFrame({
+      beforeWrite: countPublish(userId),
       userId,
       frame: parsed.data.frame,
       details: {
@@ -200,13 +215,8 @@ export async function publishCommunityDesign(
     if (parsed.data.acceptLicense !== true) {
       return fail("LICENSE_REQUIRED", "Confirm the CC0 licence to publish.");
     }
-    if (await limited(publishLimiter, `community-publish:${userId}`)) {
-      return fail(
-        "RATE_LIMITED",
-        "You've published a lot today. Try again tomorrow.",
-      );
-    }
     const item = await publishStyle({
+      beforeWrite: countPublish(userId),
       userId,
       style: parsed.data.style as ThemeStyles,
       details: {
@@ -257,13 +267,8 @@ export async function publishCommunityThemeFrame(
     if (frame?.style !== "custom") {
       return fail("VALIDATION_ERROR", "This theme has no custom frame.");
     }
-    if (await limited(publishLimiter, `community-publish:${userId}`)) {
-      return fail(
-        "RATE_LIMITED",
-        "You've published a lot today. Try again tomorrow.",
-      );
-    }
     const item = await publishFrame({
+      beforeWrite: countPublish(userId),
       userId,
       frame,
       details: {
@@ -313,9 +318,18 @@ export interface CommunityPagePreview {
   content: LandingPageContent;
   /** What was changed, one line each */
   changes: string[];
+  /** Text fields replaced with sample text; each can be kept */
+  fields: ScrubbedField[];
+  /** Kept text that can't be published */
+  problems: KeptProblem[];
   pageType: string;
-  title: string | null;
+  /** A neutral name from the page type, never the page's own title */
+  defaultName: string;
+  /** The page version reviewed; publishing refuses a newer one */
+  version: number;
 }
+
+const keepSchema = z.array(z.string().min(1).max(200)).max(500);
 
 /**
  * The publish dialog's review step: the page scrubbed as it would be
@@ -324,19 +338,28 @@ export interface CommunityPagePreview {
  */
 export async function previewCommunityPage(
   pageId: string,
+  keep: string[] = [],
 ): Promise<CommunityResult<CommunityPagePreview>> {
   try {
     await getCurrentUserId();
+    const kept = keepSchema.safeParse(keep);
+    if (!kept.success) return fail("VALIDATION_ERROR", "Check the details.");
     const found = await publishablePage(pageId);
     if (!found.ok) return found.result;
-    const { content, report } = scrubPageContent(found.page.content);
+    const { content, report, fields, problems } = scrubPageContent(
+      found.page.content,
+      { keep: kept.data },
+    );
     return {
       ok: true,
       data: {
         content,
         changes: scrubSummary(report),
+        fields,
+        problems,
         pageType: found.page.type,
-        title: found.page.title,
+        defaultName: getTemplate(found.page.type)?.label ?? "Page template",
+        version: found.page.version,
       },
     };
   } catch (error) {
@@ -346,6 +369,9 @@ export async function previewCommunityPage(
 
 const publishPageSchema = z.object({
   pageId: z.string().min(1).max(64),
+  /** The page version the publisher reviewed */
+  version: z.number().int().min(1),
+  keep: keepSchema.optional(),
   name: z.string().max(200),
   description: z.string().max(2000).optional(),
   tags: z.array(z.string().max(40)).max(20).optional(),
@@ -369,13 +395,16 @@ export async function publishCommunityPage(
     }
     const found = await publishablePage(parsed.data.pageId);
     if (!found.ok) return found.result;
-    if (await limited(publishLimiter, `community-publish:${userId}`)) {
+    // What's published is what was reviewed.
+    if (found.page.version !== parsed.data.version) {
       return fail(
-        "RATE_LIMITED",
-        "You've published a lot today. Try again tomorrow.",
+        "CONFLICT",
+        "This page changed since you reviewed it. Review it again before publishing.",
       );
     }
     const item = await publishPageTemplate({
+      keep: parsed.data.keep ?? [],
+      beforeWrite: countPublish(userId),
       userId,
       page: {
         id: found.page.id,
@@ -557,13 +586,8 @@ export async function publishCommunityCollection(
     if (parsed.data.acceptLicense !== true) {
       return fail("LICENSE_REQUIRED", "Confirm the CC0 licence to publish.");
     }
-    if (await limited(publishLimiter, `community-publish:${userId}`)) {
-      return fail(
-        "RATE_LIMITED",
-        "You've published a lot today. Try again tomorrow.",
-      );
-    }
     const item = await publishCollection({
+      beforeWrite: countPublish(userId),
       userId,
       itemIds: parsed.data.itemIds,
       details: {
@@ -594,13 +618,8 @@ export async function publishCommunityKit(
     if (parsed.data.acceptLicense !== true) {
       return fail("LICENSE_REQUIRED", "Confirm the CC0 licence to publish.");
     }
-    if (await limited(publishLimiter, `community-publish:${userId}`)) {
-      return fail(
-        "RATE_LIMITED",
-        "You've published a lot today. Try again tomorrow.",
-      );
-    }
     const item = await publishKit({
+      beforeWrite: countPublish(userId),
       userId,
       parts: {
         page: parsed.data.page,

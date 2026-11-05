@@ -2,6 +2,7 @@
 
 import { Info, Spinner, Tick } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";
+import { Checkbox } from "@repo/design-system/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -15,7 +16,7 @@ import { Label } from "@repo/design-system/components/ui/label";
 import { Textarea } from "@repo/design-system/components/ui/textarea";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useEffect, useId, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 import {
   type CommunityPagePreview,
   previewCommunityPage,
@@ -54,19 +55,20 @@ export function PublishPageDialog({
   open,
   onOpenChange,
   pageId,
-  pageTitle,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   pageId: string;
-  pageTitle?: string | null;
 }) {
   const nameId = useId();
   const descriptionId = useId();
   const [step, setStep] = useState<Step>("review");
   const [preview, setPreview] = useState<CommunityPagePreview | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
-  const [name, setName] = useState(pageTitle ?? "");
+  // The name starts neutral (the page type), never the page's own title.
+  const [name, setName] = useState("");
+  const [keep, setKeep] = useState<string[]>([]);
+  const named = useRef(false);
   const [description, setDescription] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [accepted, setAccepted] = useState(false);
@@ -77,38 +79,64 @@ export function PublishPageDialog({
   } | null>(null);
   const [published, setPublished] = useState<string | null>(null);
 
+  // The preview with the fields the publisher keeps (none at first).
+  const load = useCallback(
+    (kept: string[]) => {
+      let cancelled = false;
+      previewCommunityPage(pageId, kept)
+        .then((result) => {
+          if (cancelled) return;
+          if (result.ok) {
+            setPreview(result.data);
+            if (!named.current) {
+              named.current = true;
+              setName(result.data.defaultName);
+            }
+          } else setLoadError(result.message);
+        })
+        .catch(() => {
+          if (!cancelled) setLoadError("Couldn't load the page. Try again.");
+        });
+      return () => {
+        cancelled = true;
+      };
+    },
+    [pageId],
+  );
+
   useEffect(() => {
     if (!open) return;
     setStep("review");
     setPreview(null);
     setLoadError(null);
-    setName(pageTitle ?? "");
+    named.current = false;
+    setName("");
+    setKeep([]);
     setDescription("");
     setTags([]);
     setAccepted(false);
     setRefusal(null);
     setPublished(null);
-    let cancelled = false;
-    previewCommunityPage(pageId)
-      .then((result) => {
-        if (cancelled) return;
-        if (result.ok) setPreview(result.data);
-        else setLoadError(result.message);
-      })
-      .catch(() => {
-        if (!cancelled) setLoadError("Couldn't load the page. Try again.");
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [open, pageId, pageTitle]);
+    return load([]);
+  }, [open, load]);
+
+  const toggleKeep = (id: string, kept: boolean) => {
+    const next = kept ? [...keep, id] : keep.filter((item) => item !== id);
+    setKeep(next);
+    load(next);
+  };
+  const problemOf = (id: string) =>
+    preview?.problems.find((problem) => problem.id === id)?.message;
 
   const submit = async () => {
     setPending(true);
     setRefusal(null);
     try {
+      if (!preview) return;
       const result = await publishCommunityPage({
         pageId,
+        version: preview.version,
+        keep,
         name,
         description,
         tags,
@@ -183,7 +211,7 @@ export function PublishPageDialog({
                       <Spinner className="size-4" />
                       Checking the page
                     </p>
-                  ) : preview.changes.length > 0 ? (
+                  ) : (
                     <ul className="space-y-1.5">
                       {preview.changes.map((change) => (
                         <li className="flex gap-2" key={change}>
@@ -195,17 +223,70 @@ export function PublishPageDialog({
                         </li>
                       ))}
                     </ul>
-                  ) : (
-                    <p className="text-muted-foreground">
-                      Nothing personal found. The page is shared as it is.
-                    </p>
+                  )}
+                  {preview && preview.fields.length > 0 && (
+                    <fieldset className="space-y-2">
+                      <legend className="text-muted-foreground mb-1 text-xs">
+                        Your text is replaced with sample text. Tick a field to
+                        publish it as you wrote it.
+                      </legend>
+                      <ul className="max-h-56 divide-y overflow-y-auto rounded-lg border">
+                        {preview.fields.map((field) => {
+                          const kept = keep.includes(field.id);
+                          const problem = problemOf(field.id);
+                          const inputId = `keep-${field.id}`;
+                          return (
+                            <li
+                              className="flex gap-2.5 px-3 py-2"
+                              key={field.id}
+                            >
+                              <Checkbox
+                                checked={kept}
+                                className="mt-0.5"
+                                id={inputId}
+                                onCheckedChange={(value) =>
+                                  toggleKeep(field.id, value === true)
+                                }
+                              />
+                              <label
+                                className="min-w-0 flex-1 text-xs leading-snug"
+                                htmlFor={inputId}
+                              >
+                                <span className="text-muted-foreground block">
+                                  {field.block} · {field.field}
+                                  {kept ? " · kept" : ""}
+                                </span>
+                                <span className="block break-words">
+                                  {kept
+                                    ? field.original
+                                    : field.sample || "(empty)"}
+                                </span>
+                                {!kept && (
+                                  <span className="text-muted-foreground block break-words line-through">
+                                    {field.original}
+                                  </span>
+                                )}
+                                {problem && (
+                                  <span
+                                    className="text-destructive block"
+                                    role="alert"
+                                  >
+                                    {problem}
+                                  </span>
+                                )}
+                              </label>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                    </fieldset>
                   )}
                   <p className="text-muted-foreground flex gap-2 text-xs leading-relaxed">
                     <Info aria-hidden className="mt-0.5 size-3.5 shrink-0" />
                     <span>
-                      Read it through before you share it: names and words in
-                      your text stay as you wrote them. Every photo is taken
-                      out, so people add their own.
+                      Every photo is taken out, so people add their own. Text
+                      you keep can't hold links, emails, phone numbers or
+                      addresses.
                     </span>
                   </p>
                   {empty && (
@@ -222,7 +303,9 @@ export function PublishPageDialog({
                 Cancel
               </Button>
               <Button
-                disabled={preview === null || empty}
+                disabled={
+                  preview === null || empty || preview.problems.length > 0
+                }
                 onClick={() => setStep("details")}
               >
                 Continue

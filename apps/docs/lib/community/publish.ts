@@ -51,7 +51,8 @@ export class PublishError extends Error {
       | "VALIDATION_ERROR"
       | "SCAN_GATE"
       | "ALREADY_PUBLISHED"
-      | "LICENSE_REQUIRED",
+      | "LICENSE_REQUIRED"
+      | "RATE_LIMITED",
     message: string,
     readonly slug?: string,
     /** With `slug`: the type of the item that's already there */
@@ -115,6 +116,17 @@ interface NewItem {
   facets?: Record<string, unknown>;
   /** Collections and kits: the items they point at, in order */
   entries?: string[];
+  /**
+   * Runs once every check has passed (duplicates included), right before
+   * the write: the daily publish limit is counted here, so a refused
+   * publish never uses it up.
+   */
+  beforeWrite?: () => Promise<void>;
+}
+
+/** Options every publish takes. */
+export interface PublishOptions {
+  beforeWrite?: () => Promise<void>;
 }
 
 /** Writes a checked item, version 1 and its tags (one batch). */
@@ -143,6 +155,7 @@ export async function insertItem(
       );
     }
 
+    await item.beforeWrite?.();
     const profile = await ensurePublishingProfile(item.userId);
     // A saved theme copied from a community item: this is a remix of it.
     const remix =
@@ -241,13 +254,15 @@ async function gateOrThrow(style: ThemeStyles): Promise<ScanGate> {
  * Great scan gate on the design as everyone will see it, duplicates).
  * Saved themes and the AI chat's designs both come through here.
  */
-export async function publishStyle(input: {
-  userId: string;
-  style: ThemeStyles;
-  details: ItemDetails;
-  /** Where it was published from, e.g. a saved theme or a chat draft */
-  source?: { kind: string; id: string };
-}): Promise<{ id: string; slug: string; type: CommunityItemType }> {
+export async function publishStyle(
+  input: {
+    userId: string;
+    style: ThemeStyles;
+    details: ItemDetails;
+    /** Where it was published from, e.g. a saved theme or a chat draft */
+    source?: { kind: string; id: string };
+  } & PublishOptions,
+): Promise<{ id: string; slug: string; type: CommunityItemType }> {
   const built = themePayloadFromStyle(input.style);
   if (!built) {
     throw new PublishError(
@@ -256,6 +271,11 @@ export async function publishStyle(input: {
     );
   }
   const details = cleanDetails(input.details, COMMUNITY_THEME_TAGS);
+  // A theme's frame text is published too: the same check as a frame's.
+  for (const label of frameTexts(built.payload.style.frame)) {
+    const problem = textProblem(label);
+    if (problem) throw new PublishError("VALIDATION_ERROR", problem);
+  }
   const gate = await gateOrThrow(
     toPublicStyle(built.payload.style, built.payload.logoIcon),
   );
@@ -265,6 +285,7 @@ export async function publishStyle(input: {
     ...details,
     payload: built.payload,
     gate,
+    beforeWrite: input.beforeWrite,
     ...(input.source
       ? { sourceKind: input.source.kind, sourceId: input.source.id }
       : {}),
@@ -275,27 +296,47 @@ export async function publishStyle(input: {
  * A saved theme as a theme item: a snapshot (editing the saved theme later
  * never changes it), without uploaded logos or image art.
  */
-export async function publishSavedTheme(input: {
-  userId: string;
-  theme: { id: string; name: string; style: ThemeStyles };
-  tags: string[];
-}): Promise<{ id: string; slug: string; type: CommunityItemType }> {
+export async function publishSavedTheme(
+  input: {
+    userId: string;
+    theme: { id: string; name: string; style: ThemeStyles };
+    tags: string[];
+  } & PublishOptions,
+): Promise<{ id: string; slug: string; type: CommunityItemType }> {
   return publishStyle({
     userId: input.userId,
     style: input.theme.style,
     details: { name: input.theme.name, tags: input.tags },
     source: { kind: "qr_preset", id: input.theme.id },
+    beforeWrite: input.beforeWrite,
   });
 }
 
+/** Every text a frame shows: its labels, and a custom spec's labels. */
+function frameTexts(frame: unknown): string[] {
+  if (!frame || typeof frame !== "object") return [];
+  const value = frame as {
+    text?: unknown;
+    secondaryText?: unknown;
+    spec?: { labels?: { text?: unknown }[] };
+  };
+  return [
+    value.text,
+    value.secondaryText,
+    ...(value.spec?.labels ?? []).map((label) => label.text),
+  ].filter((text): text is string => typeof text === "string");
+}
+
 /** A custom frame as a frame item. */
-export async function publishFrame(input: {
-  userId: string;
-  frame: unknown;
-  details: ItemDetails;
-  /** Where it came from, e.g. the saved theme it was read from */
-  source?: { kind: string; id: string };
-}): Promise<{ id: string; slug: string; type: CommunityItemType }> {
+export async function publishFrame(
+  input: {
+    userId: string;
+    frame: unknown;
+    details: ItemDetails;
+    /** Where it came from, e.g. the saved theme it was read from */
+    source?: { kind: string; id: string };
+  } & PublishOptions,
+): Promise<{ id: string; slug: string; type: CommunityItemType }> {
   const parsed = framePayloadSchema.safeParse({ frame: input.frame });
   if (!parsed.success) {
     const first = parsed.error.issues[0];
@@ -330,6 +371,7 @@ export async function publishFrame(input: {
     ...details,
     payload: { frame },
     gate,
+    beforeWrite: input.beforeWrite,
     ...(input.source
       ? { sourceKind: input.source.kind, sourceId: input.source.id }
       : {}),
@@ -343,17 +385,25 @@ export async function publishFrame(input: {
  * usual text and duplicate checks. There's no scan check: a template holds
  * no code (its code is checked when someone makes one).
  */
-export async function publishPageTemplate(input: {
-  userId: string;
-  page: { id: string; type: string; content: LandingPageContent };
-  details: ItemDetails;
-}): Promise<{
+export async function publishPageTemplate(
+  input: {
+    userId: string;
+    page: { id: string; type: string; content: LandingPageContent };
+    details: ItemDetails;
+    /** Text fields the publisher keeps as written (ScrubbedField ids) */
+    keep?: readonly string[];
+  } & PublishOptions,
+): Promise<{
   id: string;
   slug: string;
   type: CommunityItemType;
   report: ScrubReport;
 }> {
-  const { content, report } = scrubPageContent(input.page.content);
+  const { content, report, problems } = scrubPageContent(input.page.content, {
+    keep: input.keep,
+  });
+  const [problem] = problems;
+  if (problem) throw new PublishError("VALIDATION_ERROR", problem.message);
   const visible = content.blocks.length;
   if (visible === 0) {
     throw new PublishError(
@@ -385,6 +435,7 @@ export async function publishPageTemplate(input: {
     sourceKind: "landing_page",
     sourceId: input.page.id,
     facets: { pageType: input.page.type },
+    beforeWrite: input.beforeWrite,
   });
   return { ...item, report };
 }

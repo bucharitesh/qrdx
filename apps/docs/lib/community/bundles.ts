@@ -14,6 +14,7 @@ import {
   type ItemDetails,
   insertItem,
   PublishError,
+  type PublishOptions,
 } from "./publish";
 import { guardedRead } from "./store";
 import type { BundleSource, CommunityItemType } from "./types";
@@ -113,14 +114,16 @@ export async function bundleSources(userId: string): Promise<BundleSource[]> {
   }, []);
 }
 
-async function insertBundle(input: {
-  userId: string;
-  type: "collection" | "kit";
-  details: ItemDetails;
-  itemIds: string[];
-  payload: Record<string, unknown>;
-  vocabulary: readonly string[];
-}) {
+async function insertBundle(
+  input: {
+    userId: string;
+    type: "collection" | "kit";
+    details: ItemDetails;
+    itemIds: string[];
+    payload: Record<string, unknown>;
+    vocabulary: readonly string[];
+  } & PublishOptions,
+) {
   const details = cleanDetails(input.details, input.vocabulary);
   // The entries, in order, for the reads (the payload stays the record),
   // written in the same batch as the item.
@@ -131,15 +134,18 @@ async function insertBundle(input: {
     payload: input.payload,
     gate: null,
     entries: input.itemIds,
+    beforeWrite: input.beforeWrite,
   });
 }
 
 /** A collection of published frames, themes and page templates. */
-export async function publishCollection(input: {
-  userId: string;
-  itemIds: string[];
-  details: ItemDetails;
-}) {
+export async function publishCollection(
+  input: {
+    userId: string;
+    itemIds: string[];
+    details: ItemDetails;
+  } & PublishOptions,
+) {
   const ids = [...new Set(input.itemIds)];
   if (ids.length < COLLECTION_MIN_ITEMS || ids.length > COLLECTION_MAX_ITEMS) {
     throw new PublishError(
@@ -167,15 +173,18 @@ export async function publishCollection(input: {
     itemIds: ids,
     payload: { items: ids },
     vocabulary: [],
+    beforeWrite: input.beforeWrite,
   });
 }
 
 /** A kit: a page template with the theme and/or frame it's used with. */
-export async function publishKit(input: {
-  userId: string;
-  parts: { theme?: string | null; frame?: string | null; page: string };
-  details: ItemDetails;
-}) {
+export async function publishKit(
+  input: {
+    userId: string;
+    parts: { theme?: string | null; frame?: string | null; page: string };
+    details: ItemDetails;
+  } & PublishOptions,
+) {
   const wanted: [keyof typeof input.parts, CommunityItemType][] = [
     ["theme", "theme"],
     ["frame", "frame"],
@@ -215,5 +224,6 @@ export async function publishKit(input: {
     itemIds: ids,
     payload: { kit },
     vocabulary: [],
+    beforeWrite: input.beforeWrite,
   });
 }
