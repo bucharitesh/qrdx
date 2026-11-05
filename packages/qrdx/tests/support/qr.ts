@@ -10,7 +10,12 @@ import { getLayoutMargin } from "../../src/qr-shape";
 import { QRCodeSVG, resolveErrorLevel } from "../../src/utils";
 import { parseSvgMarkup, type SvgNode } from "../../src/utils/svg-geometry";
 import type { QRProps } from "../../types";
-import { decodeQR, rasterizeSvg, simulateCamera } from "./raster";
+import {
+  decodeQR,
+  type RasterImage,
+  rasterizeSvg,
+  simulateCamera,
+} from "./raster";
 
 /** SVG markup exactly as <QRCodeSVG> renders it. */
 export function renderSvg(props: QRProps): string {
@@ -45,6 +50,8 @@ export interface CaptureOptions {
   camera?: boolean;
   /** Color around the artwork (paper), default white */
   page?: string;
+  /** Bitmaps for image fills and logos, by href */
+  images?: Map<string, RasterImage>;
 }
 
 /**
@@ -66,6 +73,7 @@ export function capture(
     width: modules * options.modulePx,
     pad: 4 * options.modulePx,
     background: options.page ?? "#ffffff",
+    images: options.images,
   });
   return decodeQR(
     options.camera === false ? image : simulateCamera(image, options.modulePx)

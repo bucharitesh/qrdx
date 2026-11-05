@@ -1,10 +1,13 @@
 import type { JSX } from "react";
 import React from "react";
 import type {
+  AngularGradient,
   BodyPattern,
   ColorConfig,
   ErrorLevel,
   Excavation,
+  GradientStop,
+  ImagePaint,
   ImageSettings,
   LinearGradient,
   Modules,
@@ -12,7 +15,7 @@ import type {
   RadialGradient,
   TemplateConfig,
 } from "../types";
-import { normalizeColorConfig } from "../types/color";
+import { isGradient, isImagePaint, normalizeColorConfig } from "../types/color";
 import {
   AUTO_LEVEL_LOGO_COVERAGE,
   type EyePosition,
@@ -44,6 +47,7 @@ import { hashString } from "./shapes";
 import { getTemplate } from "./templates";
 import { getSolidColor } from "./utils/color";
 import { compact, fmt, SCALE_DECIMALS } from "./utils/fmt";
+import { conicWedges, splitAlpha } from "./utils/paint";
 import { parseColor } from "./utils/parse-color";
 
 // We could just do this in generatePath, except that we want to support
@@ -438,6 +442,143 @@ function calculateCornerGradientCoordinates(
   return { x1, y1, x2, y2 };
 }
 
+/** `<stop>`s for a gradient; a stop with alpha gets a `stop-opacity`. */
+function renderStops(id: string, stops: GradientStop[]) {
+  return stops.map((stop, index) => {
+    const { color, opacity } = splitAlpha(stop.color);
+    return (
+      <stop
+        key={`${id}-stop-${index}`}
+        offset={`${stop.offset}%`}
+        stopColor={color}
+        stopOpacity={opacity}
+      />
+    );
+  });
+}
+
+/**
+ * An angular (conic) gradient as a `<pattern>`: SVG has no conic gradient,
+ * so the sweep is a fan of thin wedges around (`cx`, `cy`) reaching
+ * `radius` (see conicWedges). The tile covers the whole code (0 to `size`),
+ * so shapes see one tile. `data-qrdx-conic` and each wedge's `data-arc` let
+ * the PDF and EPS exporters paint only the wedges a shape needs.
+ */
+function renderConicPattern(
+  id: string,
+  gradient: AngularGradient,
+  cx: number,
+  cy: number,
+  radius: number,
+  size: number
+): JSX.Element {
+  const fan = conicWedges(gradient.stops, gradient.angle ?? 0, cx, cy, radius);
+  const wedges = fan.wedges.map((wedge, index) => (
+    <path
+      d={wedge.d}
+      data-arc={`${wedge.from} ${wedge.sweep}`}
+      fill={wedge.color}
+      fillOpacity={wedge.opacity}
+      key={`${id}-w-${index}`}
+      shapeRendering={wedge.opacity === undefined ? undefined : "crispEdges"}
+    />
+  ));
+  return (
+    <pattern
+      data-qrdx-conic={`${fmt(cx)} ${fmt(cy)}`}
+      height={fmt(size)}
+      id={id}
+      key={id}
+      patternUnits="userSpaceOnUse"
+      width={fmt(size)}
+      x={0}
+      y={0}
+    >
+      {/* One alpha for the whole fan: a group, so overlaps don't add up */}
+      {fan.opacity === undefined ? (
+        wedges
+      ) : (
+        <g opacity={fan.opacity}>{wedges}</g>
+      )}
+    </pattern>
+  );
+}
+
+/** Horizontal and vertical anchors (0, ½, 1) of an image fill's position. */
+function imageAnchor(position: ImagePaint["position"] = "center") {
+  const [first, second] = position.split("-") as [string, string | undefined];
+  const vertical = position === "center" ? "center" : first;
+  const horizontal =
+    second ?? (first === "left" || first === "right" ? first : "center");
+  const x = horizontal === "left" ? 0 : horizontal === "right" ? 1 : 0.5;
+  const y = vertical === "top" ? 0 : vertical === "bottom" ? 1 : 0.5;
+  return { x, y };
+}
+
+const ALIGN_X = ["xMin", "xMid", "xMax"] as const;
+const ALIGN_Y = ["YMin", "YMid", "YMax"] as const;
+
+/**
+ * An image fill as a `<pattern>` over the whole code (0 to `size`), so the
+ * dots, the eyes and the background that share a picture show one picture
+ * (and one copy of it). Cover and contain draw the image once, `scale` times
+ * the code's size around `position`; tile repeats it in squares a quarter of
+ * the code wide at scale 1. The underlay is a rect under the image; opacity
+ * is the image's. PDF export paints the same pattern inside each shape.
+ */
+function renderImagePattern(
+  id: string,
+  paint: ImagePaint,
+  size: number
+): JSX.Element {
+  const scale = paint.scale ?? 1;
+  const tile = paint.fit === "tile";
+  const side = tile ? (size / 4) * scale : size;
+  const underlay = paint.underlay ? splitAlpha(paint.underlay) : null;
+  const width = tile ? side : size * scale;
+  const anchor = imageAnchor(paint.position);
+  const x = tile ? 0 : anchor.x * (size - width);
+  const y = tile ? 0 : anchor.y * (size - width);
+  const align = tile
+    ? "xMidYMid slice"
+    : `${ALIGN_X[anchor.x * 2] ?? "xMid"}${ALIGN_Y[anchor.y * 2] ?? "YMid"} ${paint.fit === "contain" ? "meet" : "slice"}`;
+  return (
+    <pattern
+      height={fmt(side)}
+      id={id}
+      key={id}
+      patternUnits="userSpaceOnUse"
+      width={fmt(side)}
+      x={0}
+      y={0}
+    >
+      {underlay && (
+        <rect
+          fill={underlay.color}
+          fillOpacity={underlay.opacity}
+          height={fmt(side)}
+          width={fmt(side)}
+          x={0}
+          y={0}
+        />
+      )}
+      <image
+        height={fmt(width)}
+        href={paint.src}
+        opacity={(paint.opacity ?? 1) < 1 ? paint.opacity : undefined}
+        preserveAspectRatio={align}
+        width={fmt(width)}
+        x={fmt(x)}
+        y={fmt(y)}
+      />
+    </pattern>
+  );
+}
+
+/** Pattern id of an image fill: the same picture shares one pattern. */
+const imagePatternId = (paint: ImagePaint, size: number) =>
+  generateGradientId("img", [paint, size]);
+
 // Generate gradient definition elements for corners
 function generateCornerGradientDef(
   colorConfig: ColorConfig,
@@ -445,12 +586,20 @@ function generateCornerGradientDef(
   cornerY: number,
   cornerSize: number,
   cornerType: "top-left" | "top-right" | "bottom-left",
-  idPrefix: string
+  idPrefix: string,
+  size: number
 ): { id: string; element: JSX.Element } | null {
   const normalized = normalizeColorConfig(colorConfig);
 
   if (normalized.type === "solid") {
     return null;
+  }
+
+  if (normalized.type === "image") {
+    // Laid over the whole code, like the dots, so eyes and dots that share
+    // a picture show one picture
+    const id = imagePatternId(normalized, size);
+    return { id, element: renderImagePattern(id, normalized, size) };
   }
 
   const id = generateGradientId(idPrefix, [
@@ -459,6 +608,7 @@ function generateCornerGradientDef(
     cornerY,
     cornerSize,
     cornerType,
+    ...(normalized.type === "angular" ? [size] : []),
   ]);
 
   if (normalized.type === "linear") {
@@ -484,13 +634,7 @@ function generateCornerGradientDef(
           y1={fmt(y1)}
           y2={fmt(y2)}
         >
-          {gradient.stops.map((stop, index) => (
-            <stop
-              key={`${id}-stop-${index}`}
-              offset={`${stop.offset}%`}
-              stopColor={stop.color}
-            />
-          ))}
+          {renderStops(id, gradient.stops)}
         </linearGradient>
       ),
     };
@@ -515,14 +659,23 @@ function generateCornerGradientDef(
           key={id}
           r={fmt(radius)}
         >
-          {gradient.stops.map((stop, index) => (
-            <stop
-              key={`${id}-stop-${index}`}
-              offset={`${stop.offset}%`}
-              stopColor={stop.color}
-            />
-          ))}
+          {renderStops(id, gradient.stops)}
         </radialGradient>
+      ),
+    };
+  }
+
+  if (normalized.type === "angular") {
+    // Swept around the eye's own centre; the fan reaches the eye's corners.
+    return {
+      id,
+      element: renderConicPattern(
+        id,
+        normalized,
+        cornerX + cornerSize / 2,
+        cornerY + cornerSize / 2,
+        cornerSize * 0.75,
+        size
       ),
     };
   }
@@ -540,6 +693,11 @@ function generateGradientDef(
 
   if (normalized.type === "solid") {
     return null;
+  }
+
+  if (normalized.type === "image") {
+    const id = imagePatternId(normalized, size);
+    return { id, element: renderImagePattern(id, normalized, size) };
   }
 
   const id = generateGradientId(idPrefix, [normalized, size]);
@@ -561,13 +719,7 @@ function generateGradientDef(
           y1={fmt(y1)}
           y2={fmt(y2)}
         >
-          {gradient.stops.map((stop, index) => (
-            <stop
-              key={`${id}-stop-${index}`}
-              offset={`${stop.offset}%`}
-              stopColor={stop.color}
-            />
-          ))}
+          {renderStops(id, gradient.stops)}
         </linearGradient>
       ),
     };
@@ -592,14 +744,23 @@ function generateGradientDef(
           key={id}
           r={fmt(radius)}
         >
-          {gradient.stops.map((stop, index) => (
-            <stop
-              key={`${id}-stop-${index}`}
-              offset={`${stop.offset}%`}
-              stopColor={stop.color}
-            />
-          ))}
+          {renderStops(id, gradient.stops)}
         </radialGradient>
+      ),
+    };
+  }
+
+  if (normalized.type === "angular") {
+    // The fan reaches the code's corners (half the diagonal is 0.707 size).
+    return {
+      id,
+      element: renderConicPattern(
+        id,
+        normalized,
+        size / 2,
+        size / 2,
+        size * 0.75,
+        size
       ),
     };
   }
@@ -607,22 +768,54 @@ function generateGradientDef(
   return null;
 }
 
-// Get fill value from color config
-function getFillValue(
+/** Paints drawn from a definition: gradients and image fills. */
+const hasPaintDef = (color: ColorConfig) =>
+  isGradient(color) || isImagePaint(color);
+
+/** Definitions once each: image fills that share a picture share an id. */
+function uniqueDefs(
+  defs: ({ id: string; element: JSX.Element } | null | undefined)[]
+): JSX.Element[] {
+  const seen = new Set<string>();
+  const out: JSX.Element[] = [];
+  for (const def of defs) {
+    if (def && !seen.has(def.id)) {
+      seen.add(def.id);
+      out.push(def.element);
+    }
+  }
+  return out;
+}
+
+interface FillProps {
+  fill: string;
+  /** Set when the solid color is see-through */
+  fillOpacity?: number;
+}
+
+/**
+ * `fill` (and `fill-opacity`) for a color config: `url(#id)` for a
+ * gradient, otherwise the solid color, with its alpha split out so SVG
+ * consumers that don't read 8-digit hex (Illustrator) keep it.
+ */
+function getFillProps(
   colorConfig: ColorConfig | undefined,
   gradientId: string | null,
   fallback: string
-): string {
+): FillProps {
   if (gradientId) {
-    return `url(#${gradientId})`;
+    return { fill: `url(#${gradientId})` };
   }
 
   const normalized = normalizeColorConfig(colorConfig, fallback);
-  if (normalized.type === "solid") {
-    return normalized.color;
-  }
-
-  return fallback;
+  const color =
+    normalized.type === "solid"
+      ? normalized.color
+      : normalized.type === "image"
+        ? (normalized.underlay ?? fallback)
+        : fallback;
+  const { color: fill, opacity } = splitAlpha(color);
+  return opacity === undefined ? { fill } : { fill, fillOpacity: opacity };
 }
 
 // Re-export getSolidColor from color utils
@@ -928,33 +1121,23 @@ export function QRCodeSVG(props: QRPropsSVG) {
   const normalizedFgColor = normalizeColorConfig(fgColor, DEFAULT_FGCOLOR);
 
   // Generate gradient definitions if needed
-  const bgColorGradient =
-    normalizedBgColor.type === "linear" || normalizedBgColor.type === "radial"
-      ? generateGradientDef(
-          normalizedBgColor as LinearGradient | RadialGradient,
-          size,
-          "bg-color"
-        )
-      : null;
+  const bgColorGradient = hasPaintDef(normalizedBgColor)
+    ? generateGradientDef(normalizedBgColor, size, "bg-color")
+    : null;
 
-  const fgColorGradient =
-    normalizedFgColor.type === "linear" || normalizedFgColor.type === "radial"
-      ? generateGradientDef(
-          normalizedFgColor as LinearGradient | RadialGradient,
-          size,
-          "fg-color"
-        )
-      : null;
+  const fgColorGradient = hasPaintDef(normalizedFgColor)
+    ? generateGradientDef(normalizedFgColor, size, "fg-color")
+    : null;
 
   // Get fill values - use normalized color for gradient detection
-  const bgFillValue = getFillValue(
-    bgColor, // Pass original for getFillValue to handle normalization internally
+  const bgFillValue = getFillProps(
+    bgColor, // Pass original for getFillProps to handle normalization internally
     bgColorGradient?.id ?? null,
     DEFAULT_BGCOLOR
   );
 
-  const fgFillValue = getFillValue(
-    fgColor, // Pass original for getFillValue to handle normalization internally
+  const fgFillValue = getFillProps(
+    fgColor, // Pass original for getFillProps to handle normalization internally
     fgColorGradient?.id ?? null,
     DEFAULT_FGCOLOR
   );
@@ -963,10 +1146,10 @@ export function QRCodeSVG(props: QRPropsSVG) {
   const dataLayer = artLayer ? (
     <>
       {artLayer}
-      {decorationShapes && <g fill={fgFillValue}>{decorationShapes}</g>}
+      {decorationShapes && <g {...fgFillValue}>{decorationShapes}</g>}
     </>
   ) : (
-    <g fill={fgFillValue}>
+    <g {...fgFillValue}>
       {dataCircles}
       {decorationShapes}
     </g>
@@ -996,14 +1179,15 @@ export function QRCodeSVG(props: QRPropsSVG) {
     idPrefix: string
   ) => {
     const normalized = normalizeColorConfig(color, fgSolid);
-    return normalized.type === "linear" || normalized.type === "radial"
+    return hasPaintDef(normalized)
       ? generateCornerGradientDef(
           normalized,
           cornerX,
           cornerY,
           cornerSize,
           cornerType,
-          idPrefix
+          idPrefix,
+          size
         )
       : null;
   };
@@ -1053,33 +1237,33 @@ export function QRCodeSVG(props: QRPropsSVG) {
   );
 
   // Get fill values for the corner squares and dots
-  const topLeftEyeFillValue = getFillValue(
+  const topLeftEyeFillValue = getFillProps(
     outerColor("topLeft"),
     topLeftEyeGradient?.id ?? null,
     fgSolid
   );
-  const topRightEyeFillValue = getFillValue(
+  const topRightEyeFillValue = getFillProps(
     outerColor("topRight"),
     topRightEyeGradient?.id ?? null,
     fgSolid
   );
-  const bottomLeftEyeFillValue = getFillValue(
+  const bottomLeftEyeFillValue = getFillProps(
     outerColor("bottomLeft"),
     bottomLeftEyeGradient?.id ?? null,
     fgSolid
   );
 
-  const topLeftDotFillValue = getFillValue(
+  const topLeftDotFillValue = getFillProps(
     innerColor("topLeft"),
     topLeftDotGradient?.id ?? null,
     fgSolid
   );
-  const topRightDotFillValue = getFillValue(
+  const topRightDotFillValue = getFillProps(
     innerColor("topRight"),
     topRightDotGradient?.id ?? null,
     fgSolid
   );
-  const bottomLeftDotFillValue = getFillValue(
+  const bottomLeftDotFillValue = getFillProps(
     innerColor("bottomLeft"),
     bottomLeftDotGradient?.id ?? null,
     fgSolid
@@ -1138,14 +1322,16 @@ export function QRCodeSVG(props: QRPropsSVG) {
     <>
       {/* Gradient definitions */}
       <defs>
-        {bgColorGradient?.element}
-        {fgColorGradient?.element}
-        {topLeftEyeGradient?.element}
-        {topRightEyeGradient?.element}
-        {bottomLeftEyeGradient?.element}
-        {topLeftDotGradient?.element}
-        {topRightDotGradient?.element}
-        {bottomLeftDotGradient?.element}
+        {uniqueDefs([
+          bgColorGradient,
+          fgColorGradient,
+          topLeftEyeGradient,
+          topRightEyeGradient,
+          bottomLeftEyeGradient,
+          topLeftDotGradient,
+          topRightDotGradient,
+          bottomLeftDotGradient,
+        ])}
       </defs>
 
       {/* Background: the square, or a circle code's disc */}
@@ -1153,18 +1339,18 @@ export function QRCodeSVG(props: QRPropsSVG) {
         <circle
           cx={fmt(size / 2)}
           cy={fmt(size / 2)}
-          fill={bgFillValue}
+          {...bgFillValue}
           r={fmt(size / 2)}
         />
       ) : (
-        <rect fill={bgFillValue} height={size} width={size} x={0} y={0} />
+        <rect {...bgFillValue} height={size} width={size} x={0} y={0} />
       )}
 
       {/* Data module circles */}
       {dataLayer}
 
       {/* Top-left corner square */}
-      <g fill={topLeftEyeFillValue}>
+      <g {...topLeftEyeFillValue}>
         <path
           d={topLeftEye}
           fillRule="evenodd"
@@ -1173,10 +1359,10 @@ export function QRCodeSVG(props: QRPropsSVG) {
       </g>
 
       {/* Top-left corner dot */}
-      <g fill={topLeftDotFillValue}>{topLeftDot}</g>
+      <g {...topLeftDotFillValue}>{topLeftDot}</g>
 
       {/* Top-right corner square */}
-      <g fill={topRightEyeFillValue}>
+      <g {...topRightEyeFillValue}>
         <path
           d={topRightEye}
           fillRule="evenodd"
@@ -1185,10 +1371,10 @@ export function QRCodeSVG(props: QRPropsSVG) {
       </g>
 
       {/* Top-right corner dot */}
-      <g fill={topRightDotFillValue}>{topRightDot}</g>
+      <g {...topRightDotFillValue}>{topRightDot}</g>
 
       {/* Bottom-left corner square */}
-      <g fill={bottomLeftEyeFillValue}>
+      <g {...bottomLeftEyeFillValue}>
         <path
           d={bottomLeftEye}
           fillRule="evenodd"
@@ -1197,7 +1383,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
       </g>
 
       {/* Bottom-left corner dot */}
-      <g fill={bottomLeftDotFillValue}>{bottomLeftDot}</g>
+      <g {...bottomLeftDotFillValue}>{bottomLeftDot}</g>
 
       {image}
     </>
@@ -1212,16 +1398,15 @@ export function QRCodeSVG(props: QRPropsSVG) {
     const templateSize = 300; // All templates use 300x300 base coordinate system
 
     // Generate background gradient for template size (gradients use userSpaceOnUse, so coordinates must match)
-    const templateBgColorGradient =
-      normalizedBgColor.type === "linear" || normalizedBgColor.type === "radial"
-        ? generateGradientDef(
-            normalizedBgColor as LinearGradient | RadialGradient,
-            templateSize,
-            "bg-color-template"
-          )
-        : null;
+    const templateBgColorGradient = hasPaintDef(normalizedBgColor)
+      ? generateGradientDef(
+          normalizedBgColor,
+          templateSize,
+          "bg-color-template"
+        )
+      : null;
 
-    const templateBgFillValue = getFillValue(
+    const templateBgFillValue = getFillProps(
       bgColor,
       templateBgColorGradient?.id ?? null,
       DEFAULT_BGCOLOR
@@ -1237,14 +1422,16 @@ export function QRCodeSVG(props: QRPropsSVG) {
       >
         {/* Gradient definitions */}
         <defs>
-          {templateBgColorGradient?.element}
-          {fgColorGradient?.element}
-          {topLeftEyeGradient?.element}
-          {topRightEyeGradient?.element}
-          {bottomLeftEyeGradient?.element}
-          {topLeftDotGradient?.element}
-          {topRightDotGradient?.element}
-          {bottomLeftDotGradient?.element}
+          {uniqueDefs([
+            templateBgColorGradient,
+            fgColorGradient,
+            topLeftEyeGradient,
+            topRightEyeGradient,
+            bottomLeftEyeGradient,
+            topLeftDotGradient,
+            topRightDotGradient,
+            bottomLeftDotGradient,
+          ])}
         </defs>
 
         {/* Background */}
@@ -1252,12 +1439,12 @@ export function QRCodeSVG(props: QRPropsSVG) {
           <circle
             cx={templateSize / 2}
             cy={templateSize / 2}
-            fill={templateBgFillValue}
+            {...templateBgFillValue}
             r={templateSize / 2}
           />
         ) : (
           <rect
-            fill={templateBgFillValue}
+            {...templateBgFillValue}
             height={templateSize}
             width={templateSize}
             x={0}
@@ -1271,7 +1458,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
           {dataLayer}
 
           {/* Top-left corner square */}
-          <g fill={topLeftEyeFillValue}>
+          <g {...topLeftEyeFillValue}>
             <path
               d={topLeftEye}
               fillRule="evenodd"
@@ -1280,10 +1467,10 @@ export function QRCodeSVG(props: QRPropsSVG) {
           </g>
 
           {/* Top-left corner dot */}
-          <g fill={topLeftDotFillValue}>{topLeftDot}</g>
+          <g {...topLeftDotFillValue}>{topLeftDot}</g>
 
           {/* Top-right corner square */}
-          <g fill={topRightEyeFillValue}>
+          <g {...topRightEyeFillValue}>
             <path
               d={topRightEye}
               fillRule="evenodd"
@@ -1292,10 +1479,10 @@ export function QRCodeSVG(props: QRPropsSVG) {
           </g>
 
           {/* Top-right corner dot */}
-          <g fill={topRightDotFillValue}>{topRightDot}</g>
+          <g {...topRightDotFillValue}>{topRightDot}</g>
 
           {/* Bottom-left corner square */}
-          <g fill={bottomLeftEyeFillValue}>
+          <g {...bottomLeftEyeFillValue}>
             <path
               d={bottomLeftEye}
               fillRule="evenodd"
@@ -1304,7 +1491,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
           </g>
 
           {/* Bottom-left corner dot */}
-          <g fill={bottomLeftDotFillValue}>{bottomLeftDot}</g>
+          <g {...bottomLeftDotFillValue}>{bottomLeftDot}</g>
 
           {image}
         </g>

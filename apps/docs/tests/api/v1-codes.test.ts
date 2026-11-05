@@ -80,7 +80,10 @@ vi.mock("@/lib/events/emit", () => ({
   emitCodeUpdated: (_scope: unknown, code: { id: string }) =>
     state.emitted.push({ event: "code.updated", ids: [code.id] }),
 }));
-vi.mock("@/lib/shared", () => ({ logError: () => {} }));
+vi.mock("@/lib/shared", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/lib/shared")>()),
+  logError: () => {},
+}));
 
 const list = await import("@/app/api/v1/codes/route");
 const one = await import("@/app/api/v1/codes/[id]/route");
@@ -939,5 +942,148 @@ describe("logos in a code's style", () => {
       write,
     );
     expect(changed.status).toBe(400);
+  });
+});
+
+// Image fills in a saved style hold the picture itself, as a data:image URL
+// (lib/paint/saved-paint.ts), like logos: a picture from a link would load
+// in every viewer's browser. All six paint slots, the REST API, the
+// builder's save and the theme save.
+describe("image fills in a code's style", () => {
+  const JPEG = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAA==";
+  const fill = (src: string) => ({
+    type: "image",
+    src,
+    fit: "cover",
+    scale: 1,
+    position: "center",
+    opacity: 0.5,
+    underlay: "#000000",
+  });
+  const refusals = async (response: Response) => {
+    expect(response.status).toBe(400);
+    return JSON.stringify(await response.json());
+  };
+
+  it("refuses a picture from a link with the reason", async () => {
+    const body = await refusals(
+      await create(
+        {
+          destinationUrl: "https://example.com",
+          style: { fgColor: fill("https://tracker.example/pixel.png") },
+        },
+        write,
+      ),
+    );
+    expect(body).toContain(
+      "Image fills must be a data:image URL (PNG, JPEG, WebP or GIF); pictures from links aren't accepted.",
+    );
+    expect(body).toContain("style.fgColor.src");
+    expect(fakeDb.rows("qrCode")).toHaveLength(0);
+  });
+
+  it("refuses SVG, blob and relative pictures, and one per eye", async () => {
+    for (const src of [
+      "data:image/svg+xml;base64,PHN2Zz48L3N2Zz4=",
+      "data:image/png,not-base64",
+      "blob:https://qrdx.dev/0b6a",
+      "/images/art-samples/photos/dog.webp",
+    ]) {
+      await refusals(
+        await create(
+          {
+            destinationUrl: "https://example.com",
+            style: { bgColor: fill(src) },
+          },
+          write,
+        ),
+      );
+    }
+    const eye = await refusals(
+      await create(
+        {
+          destinationUrl: "https://example.com",
+          style: {
+            eyeColors: {
+              topLeft: { outer: fill("https://tracker.example/eye.png") },
+            },
+          },
+        },
+        write,
+      ),
+    );
+    expect(eye).toContain("style.eyeColors.topLeft.outer.src");
+    expect(fakeDb.rows("qrCode")).toHaveLength(0);
+  });
+
+  it("refuses a picture over 1.5 MB", async () => {
+    const big = `data:image/jpeg;base64,${"A".repeat(1_500_000)}`;
+    const body = await refusals(
+      await create(
+        {
+          destinationUrl: "https://example.com",
+          style: { dotColor: fill(big) },
+        },
+        write,
+      ),
+    );
+    expect(body).toContain("too large to save");
+  });
+
+  it("takes a data:image picture, on create and on PATCH", async () => {
+    const created = await create(
+      {
+        destinationUrl: "https://example.com",
+        style: { fgColor: fill(JPEG), eyeColor: fill(JPEG) },
+      },
+      write,
+    );
+    expect(created.status).toBe(201);
+    const { data } = await created.json();
+    expect(data.style.fgColor).toEqual(fill(JPEG));
+
+    const row = code({ organizationId: ownWorkspaceId("u_alice") });
+    fakeDb.seed("qrCode", [row]);
+    const remote = await patch(
+      row.id as string,
+      { style: { bgColor: fill("https://cdn.example/bg.jpg") } },
+      write,
+    );
+    expect(await refusals(remote)).toContain("style.bgColor.src");
+    const ok = await patch(
+      row.id as string,
+      { style: { bgColor: fill(JPEG) } },
+      write,
+    );
+    expect(ok.status).toBe(200);
+  });
+
+  it("refuses a picture from a link in the builder's and the theme's saves", async () => {
+    state.session = { userId: "u_alice", organizationId: null };
+    const qrCodes = await import("@/actions/qr-codes");
+    const saved = await qrCodes.createQrCode({
+      destinationUrl: "https://example.com",
+      style: { fgColor: fill("https://tracker.example/pixel.png") },
+    } as never);
+    expect(saved).toMatchObject({ success: false });
+    expect(JSON.stringify(saved)).toContain("data:image URL");
+    expect(fakeDb.rows("qrCode")).toHaveLength(0);
+
+    const themes = await import("@/actions/qr-themes");
+    const theme = themes.createTheme({
+      name: "E2E remote picture",
+      style: {
+        eyeColors: {
+          bottomLeft: { inner: fill("https://tracker.example/eye.png") },
+        },
+      } as never,
+    });
+    await expect(theme).rejects.toMatchObject({ message: "Invalid input" });
+    await theme.catch((error: { details?: unknown }) => {
+      expect(JSON.stringify(error.details)).toContain(
+        "pictures from links aren't accepted",
+      );
+    });
+    expect(fakeDb.rows("qrPreset")).toHaveLength(0);
   });
 });

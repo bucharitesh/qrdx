@@ -90,9 +90,16 @@ function readStops(node: SvgNode): ShadingStop[] {
     // SVG clamps offsets to 0–1 and never lets one go below the one before.
     previous = Math.max(previous, Math.min(Math.max(value, 0), 1));
     const color = presentation(child, "stop-color") ?? "#000000";
+    const parsed =
+      parseColor(color === "currentColor" ? "#000000" : color) ?? BLACK;
+    const opacity = Number.parseFloat(
+      presentation(child, "stop-opacity") ?? "1"
+    );
     stops.push({
       offset: previous,
-      color: parseColor(color === "currentColor" ? "#000000" : color) ?? BLACK,
+      color: Number.isFinite(opacity)
+        ? { ...parsed, a: parsed.a * Math.min(Math.max(opacity, 0), 1) }
+        : parsed,
     });
   }
   return stops;
@@ -144,7 +151,7 @@ export function collectGradients(root: SvgNode): Map<string, SvgGradient> {
 }
 
 /** Tight bounding box of segments (cubic extrema included). */
-function boundingBox(segments: Segment[]) {
+export function boundingBox(segments: Segment[]) {
   let minX = Number.POSITIVE_INFINITY;
   let minY = Number.POSITIVE_INFINITY;
   let maxX = Number.NEGATIVE_INFINITY;
