@@ -27,10 +27,15 @@ import {
   destinationKey,
   parseImportMarkers,
 } from "./normalize";
-import { API_PROVIDER_IDS, type ApiProviderId } from "./providers";
+import {
+  API_PROVIDER_IDS,
+  type ApiProviderId,
+  IMPORT_API_PROVIDER_IDS,
+} from "./providers";
 import type {
   CodeRef,
   ImportJob,
+  JobItem,
   MigrationSource,
   ProvidersInfo,
   SourceLink,
@@ -152,20 +157,74 @@ function mockWorld(plan: "pro" | "free") {
     return code;
   };
 
-  // Already in the workspace: one Dub link imported before, and a code
+  // Already in the workspace: one Bitly link imported before, and a code
   // with the same destination as another link.
-  const dub = mockLinks("dub");
+  const bitly = mockLinks("bitly");
   addCode(
-    dub[2]?.destinationUrl ?? "",
+    bitly[2]?.destinationUrl ?? "",
     buildImportNotes({
-      provider: "dub",
-      key: dub[2]?.id ?? "",
-      shortLink: dub[2]?.shortLink ?? null,
+      provider: "bitly",
+      key: bitly[2]?.id ?? "",
+      shortLink: bitly[2]?.shortLink ?? null,
       createdAt: null,
       importedAt: new Date("2026-10-20"),
     }),
   );
-  addCode(dub[4]?.destinationUrl ?? "", null);
+  addCode(bitly[4]?.destinationUrl ?? "", null);
+
+  // An import from Dub made before Dub imports ended (Dub is a partner): it
+  // stays in Recent imports, with two old links still pointing to QRdx.
+  const dubAt = "2026-10-28T09:00:00.000Z";
+  const dubItems = mockLinks("dub")
+    .slice(0, 3)
+    .map((link, index): JobItem => {
+      const code = addCode(
+        link.destinationUrl,
+        buildImportNotes({
+          provider: "dub",
+          key: link.id,
+          shortLink: link.shortLink,
+          createdAt: link.createdAt,
+          importedAt: new Date(dubAt),
+        }),
+      );
+      return {
+        key: link.id,
+        shortLink: link.shortLink,
+        url: link.destinationUrl,
+        title: null,
+        tags: [],
+        createdAt: link.createdAt,
+        slug: null,
+        status: "created",
+        codeId: code.id,
+        newLink: ref(code).shortLink,
+        ...(index < 2 && {
+          redirect: { previousUrl: link.destinationUrl, updatedAt: dubAt },
+        }),
+      };
+    });
+  jobs = [
+    {
+      id: "mockjob_dub",
+      provider: "dub",
+      organizationId: null,
+      createdAt: dubAt,
+      updatedAt: dubAt,
+      status: "done",
+      options: {
+        folderName: "Imported from Dub",
+        carryTags: false,
+        includeDuplicates: false,
+        backHalfDomain: null,
+        keepBackHalves: false,
+        useSuggestions: true,
+        limit: null,
+      },
+      cursor: dubItems.length,
+      items: dubItems,
+    },
+  ];
 
   const repo: MigrateRepo = {
     async usage() {
@@ -372,7 +431,7 @@ export function createMockClient(plan: "pro" | "free" = "pro"): MigrateClient {
   };
   const scope = { userId: "mock-user", organizationId: null };
   const sources = new Map(API_PROVIDER_IDS.map((p) => [p, mockSource(p)]));
-  const connected = new Set<ApiProviderId>(["dub", "bitly", "short-io"]);
+  const connected = new Set<ApiProviderId>(["bitly", "short-io"]);
   const source = (provider: ApiProviderId) =>
     sources.get(provider) as MigrationSource;
 
@@ -382,19 +441,17 @@ export function createMockClient(plan: "pro" | "free" = "pro"): MigrateClient {
       mapErrors(async (): Promise<ProvidersInfo> => {
         const used = (await repo.usage(scope)).remaining;
         return {
-          providers: API_PROVIDER_IDS.map((p) => ({
+          // As in production: retired providers (Dub) aren't offered.
+          providers: IMPORT_API_PROVIDER_IDS.map((p) => ({
             id: p,
             connection: connected.has(p) ? "active" : "none",
-            oauth: p === "dub" || p === "bitly",
-            apiKey:
-              p === "dub"
-                ? null
-                : {
-                    label: p === "bitly" ? "Generic access token" : "API key",
-                    placeholder: "Paste your key",
-                    helpText:
-                      "Create a key in the provider's account settings and paste it here.",
-                  },
+            oauth: p === "bitly",
+            apiKey: {
+              label: p === "bitly" ? "Generic access token" : "API key",
+              placeholder: "Paste your key",
+              helpText:
+                "Create a key in the provider's account settings and paste it here.",
+            },
             available: true,
           })),
           usage: {

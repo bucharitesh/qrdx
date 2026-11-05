@@ -1,84 +1,141 @@
 name: Bug report
-description: Report something that doesn't work in QRdx
+description: Something in QRdx doesn't work the way the docs say it should
 title: "[bug]: "
-labels: ["bug"]
+labels: ["bug", "needs triage"]
 body:
   - type: markdown
     attributes:
       value: |
-        Thanks for taking the time to report a bug. Please search [open and closed issues](https://github.com/bucharitesh/qrdx/issues?q=is%3Aissue) first; it may already be reported or fixed.
+        Thanks for reporting a bug. Please search [open and closed issues](https://github.com/bucharitesh/qrdx/issues?q=is%3Aissue) first, in case it's already reported or fixed.
 
-        Not sure it's a bug? Start a [discussion](https://github.com/bucharitesh/qrdx/discussions/new?category=general) instead. Security issues go through [SECURITY.md](https://github.com/bucharitesh/qrdx/blob/main/SECURITY.md), not public issues.
+        - Questions and "how do I…" go to [Q&A in Discussions](https://github.com/bucharitesh/qrdx/discussions/new?category=q-a).
+        - Trouble running your own instance has its own [self-hosting form](https://github.com/bucharitesh/qrdx/issues/new?template=self_hosting.yml).
+        - Security problems go through [SECURITY.md](https://github.com/bucharitesh/qrdx/blob/main/SECURITY.md), never a public issue.
+        - Account, billing and refund questions about qrdx.dev go to [support@qrdx.dev](mailto:support@qrdx.dev).
 
+  # Keep these options in sync with .github/scripts/issue-area-labels.mjs,
+  # which turns the answer into an area label.
   - type: dropdown
     id: area
     attributes:
-      label: Where does it happen?
+      label: Area
+      description: Where does it happen? Pick the closest match.
       options:
-        - Web app (qrdx.dev editor, accounts, themes)
-        - React library (qrdx)
+        - Playground (editor, styles, art, AI chat, downloads)
+        - Dynamic codes, short links, custom domains and analytics
+        - Hosted pages and forms
+        - Dashboard, workspaces and account settings
+        - REST API (api.qrdx.dev/v1)
+        - Image API (api.qrdx.dev/v1/qr)
+        - MCP server (mcp.qrdx.dev/mcp)
+        - React library (qrdx on npm)
         - CLI (@qrdx/cli)
-        - Self-hosting / Docker
-        - Integrations (Dub, Google Drive, Raycast, Canva)
-        - Documentation
-        - Other
+        - Chrome extension
+        - Figma plugin
+        - Raycast extension
+        - Canva app
+        - Integrations
+        - Community (shared frames and themes)
+        - Free tools (bulk generator, scan checker, print size, scanner)
+        - Self-hosting and Docker
+        - Docs
+        - Something else or not sure
     validations:
       required: true
+
+  - type: dropdown
+    id: integration
+    attributes:
+      label: Integration
+      description: Only if you picked Integrations above.
+      options:
+        - Analytics pixels (Google Analytics 4, Tag Manager, Meta, TikTok, LinkedIn)
+        - Bitly
+        - Box
+        - Cal.com
+        - Calendly
+        - Discord
+        - Dropbox
+        - Dub
+        - Email alerts and digest
+        - Google Drive
+        - Google Sheets
+        - HubSpot
+        - Mailchimp
+        - Notion
+        - OneDrive
+        - Rebrandly
+        - Shopify
+        - Short.io
+        - Slack
+        - Spotify
+        - Stripe
+        - Webhooks (also Zapier, Make and n8n)
+        - YouTube
 
   - type: textarea
     id: description
     attributes:
-      label: Describe the bug
-      description: What happened, and what did you expect to happen? If you plan to send a PR, tell us how you'd fix it.
-      placeholder: When I set a gradient foreground and download as PNG, the gradient is missing...
+      label: What happened?
+      description: What did you expect, and what happened instead? If you plan to send a fix, say how you'd do it.
+      placeholder: I set a linear gradient on the dots and downloaded a PNG. The dots in the PNG are solid black.
     validations:
       required: true
 
   - type: textarea
     id: reproduction
     attributes:
-      label: How to reproduce
-      description: Step-by-step instructions, the CLI command you ran, or a minimal code sample.
+      label: Steps to reproduce
+      description: The steps, the CLI command or API request you ran, or a small code sample. A link to the page where it happens helps. Leave out Wi-Fi passwords, contact details and anything else private that's in your codes.
       placeholder: |
-        1. Go to '...'
-        2. Click on '...'
-        3. See error
+        1. Open the playground and paste a URL
+        2. Pick a linear gradient for the dots
+        3. Download as PNG
     validations:
       required: true
-
-  - type: input
-    id: reproduction-link
-    attributes:
-      label: Reproduction link
-      description: Optional link to a CodeSandbox, StackBlitz or repository that shows the problem.
 
   - type: input
     id: version
     attributes:
       label: Version
-      description: Package version (for example qrdx 0.0.46), commit SHA for self-hosted instances, or "qrdx.dev".
+      description: Write `qrdx.dev` for the hosted app. For the npm packages, the version from `npm ls qrdx` or `qrdx --version` (CLI). For a plugin, its version. If you self-host, write `self-hosted` and fill in the commit below.
+      placeholder: qrdx.dev
     validations:
       required: true
+
+  - type: input
+    id: commit
+    attributes:
+      label: Commit (self-hosted only)
+      description: The output of `git rev-parse --short HEAD` in your checkout.
+
+  - type: input
+    id: browser
+    attributes:
+      label: Browser and OS
+      description: For the CLI or the React library, the Node.js version instead.
+      placeholder: Safari on iOS, or Chrome on Windows 11
 
   - type: textarea
     id: logs
     attributes:
       label: Logs
-      description: Browser console or server logs from around the time of the bug. Paste text rather than screenshots, and remove any secrets.
+      description: Browser console output, server logs or the API response. Paste text rather than screenshots. Remove API keys, cookies, tokens and anything from your `.env` first.
       render: shell
 
   - type: textarea
-    id: system-info
+    id: screenshots
     attributes:
-      label: System info
-      description: Browser, OS, Node.js version or device, as relevant.
-      placeholder: macOS 15, Chrome 130, Node.js 20.18
+      label: Screenshots or a recording
+      description: Drag images or a short video in. Anyone can scan a QR code in a screenshot, so crop out codes that point at something private.
 
   - type: checkboxes
     id: terms
     attributes:
       label: Before submitting
-      description: By submitting this issue, you agree to follow our [contributing guidelines](https://github.com/bucharitesh/qrdx/blob/main/CONTRIBUTING.md).
+      description: By submitting this issue, you agree to follow the [contributing guidelines](https://github.com/bucharitesh/qrdx/blob/main/CONTRIBUTING.md) and the [code of conduct](https://github.com/bucharitesh/qrdx/blob/main/.github/CODE_OF_CONDUCT.md).
       options:
-        - label: I searched the documentation and existing issues
+        - label: I searched the docs and existing issues
+          required: true
+        - label: This report contains no secrets, tokens or private data
           required: true

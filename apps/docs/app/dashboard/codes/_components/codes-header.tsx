@@ -234,7 +234,7 @@ export function CodesHeader({
                 onSelect={() => setImportSignal((count) => count + 1)}
               >
                 <Import aria-hidden />
-                From Dub, Bitly and other apps
+                From Bitly and other apps
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

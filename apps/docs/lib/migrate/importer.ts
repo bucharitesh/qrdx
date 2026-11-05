@@ -24,7 +24,13 @@ import {
   planImport,
   slugLookups,
 } from "./plan";
-import { isApiProviderId } from "./providers";
+import {
+  isApiProviderId,
+  isRetiredProvider,
+  providerName,
+  type RetiredProviderId,
+  retiredMessage,
+} from "./providers";
 import type {
   ChunkResult,
   CodeRef,
@@ -142,6 +148,15 @@ export interface ImporterDeps {
 
 // ─── Preview ─────────────────────────────────────────────────────────────────
 
+/** A retired provider (Dub) takes no new imports or re-points. */
+export function retiredError(provider: RetiredProviderId): ImportError {
+  return new ImportError(
+    410,
+    "PROVIDER_RETIRED",
+    retiredMessage(providerName(provider)),
+  );
+}
+
 async function buildPlan(
   deps: ImporterDeps,
   scope: Scope,
@@ -149,6 +164,8 @@ async function buildPlan(
 ): Promise<ImportPlan> {
   const { repo } = deps;
   const { links, options, provider } = request;
+  // Previews and new jobs both plan here, so neither starts for Dub.
+  if (isRetiredProvider(provider)) throw retiredError(provider);
   const backHalfDomain = options.backHalfDomain;
   // Which namespace each back-half is looked up in depends on the domain.
   const domain = backHalfDomain
@@ -318,6 +335,27 @@ export async function runJobChunk(
       items: job.items.filter((item) =>
         unfinished.some((entry) => entry.key === item.key),
       ),
+      done: job.status === "done",
+    };
+  }
+
+  // A job started before its provider was retired: codes created so far stay
+  // (and were finished above); the links still waiting are skipped, so the
+  // job closes and its summary and undo stay available.
+  if (isRetiredProvider(job.provider)) {
+    const reason = `Imports from ${providerName(job.provider)} have ended`;
+    const waiting = nextChunk(job, Number.POSITIVE_INFINITY);
+    const keys = new Set(
+      waiting.map((index) => (job.items[index] as JobItem).key),
+    );
+    const skipped = new Map<string, Partial<JobItem>>(
+      [...keys].map((key) => [key, { status: "skipped", reason }]),
+    );
+    job = applyChunk(job, skipped, deps.now());
+    await saveJob(deps, scope, jobs, job);
+    return {
+      job: summarizeJob(job),
+      items: job.items.filter((item) => keys.has(item.key)),
       done: job.status === "done",
     };
   }
@@ -549,8 +587,15 @@ export async function runRedirects(
       "Old codes from a file import are re-pointed in the old provider. Use the steps and the mapping CSV.",
     );
   }
+  // Retired provider: no new re-points (an empty dry run), undo only.
+  if (mode === "apply" && isRetiredProvider(job.provider)) {
+    throw retiredError(job.provider);
+  }
+  const retired = isRetiredProvider(job.provider);
   if (mode === "dry-run") {
-    const { items } = redirectBatch(clearRedirectErrors(job), mode);
+    const items = retired
+      ? []
+      : redirectBatch(clearRedirectErrors(job), mode).items;
     return {
       mode,
       items: items.map((item) => ({

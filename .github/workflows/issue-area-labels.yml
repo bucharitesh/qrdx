@@ -1,0 +1,46 @@
+name: Issue area labels
+
+# Issue forms can only apply fixed labels, so this adds the label that matches
+# a new issue's "Area" answer. The map is in .github/scripts/issue-area-labels.mjs.
+# The issue body is read in JavaScript, never interpolated into a shell or a
+# script, and only labels from that fixed map are ever added.
+
+on:
+  issues:
+    types: [opened]
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  label:
+    name: Add area label
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          sparse-checkout: .github/scripts
+          persist-credentials: false
+
+      - name: Add the label
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const { areaLabelFor } = await import(
+              `${process.env.GITHUB_WORKSPACE}/.github/scripts/issue-area-labels.mjs`
+            );
+            const label = areaLabelFor(context.payload.issue.body);
+            if (!label) {
+              core.info("No Area answer with a label; nothing to add.");
+              return;
+            }
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.issue.number,
+              labels: [label],
+            });
+            core.info(`Added "${label}".`);
