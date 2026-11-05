@@ -1,8 +1,7 @@
 "use client";
 
 // The Display menu and the live search field the codes and pages lists
-// share, after Dub's links page (github.com/dubinc/dub, AGPL-3.0:
-// apps/web/ui/links/link-display.tsx, ui/shared/search-box.tsx).
+// share.
 
 import { Close as X } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";

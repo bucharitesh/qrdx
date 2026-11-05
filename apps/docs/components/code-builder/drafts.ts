@@ -1,7 +1,5 @@
-// Draft rules adapted from Dub (github.com/dubinc/dub, AGPL-3.0):
-// apps/web/ui/modals/link-builder/use-link-drafts.ts and
-// apps/web/ui/links/link-builder/draft-controls.tsx. Drafts live only in this
-// browser (localStorage), at most 10 per workspace, none older than 7 days.
+// Draft rules: drafts live only in this browser (localStorage), at most 10
+// per workspace, none older than 7 days.
 // Pure: the storage comes in as an argument, so it's testable without a DOM.
 
 import type { QRStyle } from "@/types/theme";
@@ -51,7 +49,7 @@ export function draftFieldsForStorage(fields: BuilderFields): {
   return { fields: { ...fields, style: rest }, logoDropped: true };
 }
 
-/** Worth keeping: there's a destination or a back-half (Dub's url or key). */
+/** Worth keeping: there's a destination or a back-half. */
 export function hasDraftableContent(fields: BuilderFields): boolean {
   return Boolean(fields.destination.trim() || fields.slug.trim());
 }
@@ -131,7 +129,7 @@ export function removeDraft(drafts: CodeDraft[], id: string): CodeDraft[] {
   return drafts.filter((draft) => draft.id !== id);
 }
 
-/** Drafts of the code being edited, or of new codes (Dub filters the same way). */
+/** Drafts of the code being edited, or of new codes. */
 export function draftsFor(
   drafts: CodeDraft[],
   codeId: string | null,

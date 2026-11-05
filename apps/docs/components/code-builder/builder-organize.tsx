@@ -1,9 +1,7 @@
 "use client";
 
-// Folder and tags for the code, in the form like Dub's tag select and folder
-// selector (github.com/dubinc/dub, AGPL-3.0: apps/web/ui/links/link-builder/
-// tag-select.tsx and controls/link-builder-folder-selector.tsx), built on
-// QRdx's own organize actions and tag chips.
+// Folder and tags for the code, in the form, built on the organize actions
+// and tag chips.
 
 import { toast } from "@repo/design-system";
 import { Tick } from "@repo/design-system/components/icons";
