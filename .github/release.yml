@@ -1,0 +1,28 @@
+# Sections for GitHub's generated release notes ("Generate release notes" on a
+# new release). A pull request goes in the first section whose label it has;
+# one without any of these labels goes under "Other changes".
+changelog:
+  exclude:
+    labels:
+      - duplicate
+      - invalid
+      - wontfix
+  categories:
+    - title: New features
+      labels:
+        - enhancement
+    - title: Bug fixes
+      labels:
+        - bug
+    - title: Self-hosting
+      labels:
+        - self-hosting
+    - title: Docs
+      labels:
+        - documentation
+    - title: Dependencies
+      labels:
+        - dependencies
+    - title: Other changes
+      labels:
+        - "*"

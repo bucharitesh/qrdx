@@ -1,0 +1,55 @@
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Ask anything about using, building with or self-hosting QRdx. Search [existing discussions](https://github.com/bucharitesh/qrdx/discussions/categories/q-a) and the [docs](https://qrdx.dev/docs) first; the answer may already be there. When someone answers your question, mark it as the answer so the next person finds it.
+
+        Found a bug? Use a [bug report](https://github.com/bucharitesh/qrdx/issues/new?template=bug_report.yml). Security problems go through [SECURITY.md](https://github.com/bucharitesh/qrdx/blob/main/SECURITY.md), never a public thread.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      description: Which part of QRdx is it about? Pick the closest match.
+      options:
+        - Playground (editor, styles, art, AI chat, downloads)
+        - Dynamic codes, short links, custom domains and analytics
+        - Hosted pages and forms
+        - Dashboard, workspaces and account settings
+        - REST API (api.qrdx.dev/v1)
+        - Image API (api.qrdx.dev/v1/qr)
+        - MCP server (mcp.qrdx.dev/mcp)
+        - React library (qrdx on npm)
+        - CLI (@qrdx/cli)
+        - Chrome extension
+        - Figma plugin
+        - Raycast extension
+        - Canva app
+        - Integrations
+        - Community (shared frames and themes)
+        - Free tools (bulk generator, scan checker, print size, scanner)
+        - Self-hosting and Docker
+        - Docs
+        - Something else or not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+      description: What are you trying to do?
+    validations:
+      required: true
+
+  - type: textarea
+    id: tried
+    attributes:
+      label: What you've tried
+      description: Code, commands or API requests you ran, docs pages you read, and what happened. Remove API keys, tokens and anything from your `.env`.
+
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: "`qrdx.dev`, a package version (`npm ls qrdx`, `qrdx --version`), or the commit you self-host."
