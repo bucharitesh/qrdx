@@ -196,7 +196,7 @@ export function ChatThemePreview({
 }
 
 const FEEDBACK_MESSAGES = [
-  "Picking colours that scan…",
+  "Picking colors that scan…",
   "Shaping the dots and eyes…",
   "Checking contrast…",
   "Almost there…",
