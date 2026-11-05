@@ -21,7 +21,13 @@ const NEW_ACCOUNT_MS = 60_000;
 /** Holds the start time of the last session counted, so reloads don't recount. */
 const COUNTED_KEY = "qrdx:analytics-auth";
 
-const METHODS = new Set<SignInMethod>(["google", "github", "email-otp"]);
+const METHODS = new Set<SignInMethod>([
+  "google",
+  "github",
+  "email-otp",
+  "passkey",
+  "sso",
+]);
 
 export function toSignInMethod(
   method: string | null | undefined,
