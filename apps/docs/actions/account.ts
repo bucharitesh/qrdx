@@ -17,7 +17,10 @@ import {
   loadDeletionFacts,
 } from "@/lib/account/deletion-server";
 import { signInCodesAvailable } from "@/lib/account/reauth";
-import { checkCurrentCode } from "@/lib/account/two-factor-manage";
+import {
+  checkCurrentCode,
+  twoFactorEnabledFor,
+} from "@/lib/account/two-factor-manage";
 import { secondFactorCodeKind } from "@/lib/auth/two-factor";
 import { logError } from "@/lib/shared";
 
@@ -107,7 +110,7 @@ export async function deleteAccount(
     const plan = planAccountDeletion(await loadDeletionFacts(userId));
     if (plan.blockers.length > 0) return fail(plan.blockers[0]);
 
-    const secondFactor = session.user.twoFactorEnabled
+    const secondFactor = (await twoFactorEnabledFor(userId))
       ? {
           code: parsed.data.twoFactorCode ?? "",
           kind: secondFactorCodeKind(parsed.data.twoFactorCode),

@@ -21,6 +21,7 @@ import {
   type SocialProvider,
   toSignInMethods,
 } from "@/lib/account/sign-in-methods";
+import { twoFactorEnabledFor } from "@/lib/account/two-factor-server";
 import { getMyCommunityProfile } from "@/lib/community/profiles";
 import { CommunityUnavailableError } from "@/lib/community/store";
 import { signInPath } from "@/lib/safe-redirect";
@@ -95,7 +96,7 @@ export default async function AccountPage({
   const now = new Date();
   // Better Auth's listSessions needs a session younger than a day, which
   // would hide this list from most people; the rows are read directly.
-  const [accounts, sessionRows, facts, params, communityProfile] =
+  const [accounts, sessionRows, facts, params, communityProfile, twoFactorOn] =
     await Promise.all([
       auth.api.listUserAccounts({ headers: requestHeaders }) as Promise<
         LinkedAccount[]
@@ -121,6 +122,7 @@ export default async function AccountPage({
         if (error instanceof CommunityUnavailableError) return null;
         throw error;
       }),
+      twoFactorEnabledFor(userId),
     ]);
 
   const sessions = toSessionViews(sessionRows, {
@@ -193,7 +195,7 @@ export default async function AccountPage({
         email={session.user.email}
         reauth={reauth}
         summary={describeDeletionPlan(planAccountDeletion(facts))}
-        twoFactorOn={Boolean(session.user.twoFactorEnabled)}
+        twoFactorOn={twoFactorOn}
       />
     </div>
   );
