@@ -5,7 +5,7 @@
 //
 // Not here, on purpose: uploaded logos and Logo QR / Image QR art (they need
 // an image the user supplies) and retired shapes (curly eyes; diamond, star
-// and banner centres), which don't scan reliably.
+// and banner centers), which don't scan reliably.
 import { getTemplateIds } from "qrdx";
 import {
   BODY_PATTERN,
@@ -54,7 +54,7 @@ export const MARGIN_MAX = 16;
 
 type Hex = (description: string) => z.ZodString;
 
-/** A two-colour gradient on one part of the code. */
+/** A two-color gradient on one part of the code. */
 type GradientInput = {
   type: "linear" | "radial";
   from: string;
@@ -69,7 +69,7 @@ const strictLabel = (description: string) =>
 
 /*
  * Models don't reliably keep to regex patterns or length limits in
- * structured output (Gemini once wrote an explanation inside a colour). The
+ * structured output (Gemini once wrote an explanation inside a color). The
  * designer gets plain strings, and sanitizeDesignStyle makes its answer
  * valid before the strict schema checks it.
  */
@@ -81,8 +81,8 @@ const gradientSchemaOf = (hex: Hex) =>
   z
     .object({
       type: z.enum(["linear", "radial"]),
-      from: hex("Start colour"),
-      to: hex("End colour"),
+      from: hex("Start color"),
+      to: hex("End color"),
       angle: z
         .number()
         .int()
@@ -91,7 +91,7 @@ const gradientSchemaOf = (hex: Hex) =>
         .optional()
         .describe("Linear gradients only: 0 left to right, 90 top to bottom"),
     })
-    .describe("A two-colour gradient that replaces the solid colour");
+    .describe("A two-color gradient that replaces the solid color");
 
 const frameSchemaOf = (hex: Hex, label: (description: string) => z.ZodString) =>
   z.object({
@@ -104,8 +104,8 @@ const frameSchemaOf = (hex: Hex, label: (description: string) => z.ZodString) =>
     secondaryText: label(
       "Second label: bottom band of banner-top-bottom, lower arc of circle, menu-card footer",
     ).optional(),
-    color: hex("Frame colour").optional(),
-    textColor: hex("Frame label colour").optional(),
+    color: hex("Frame color").optional(),
+    textColor: hex("Frame label color").optional(),
   });
 
 const styleSchemaOf = (
@@ -114,17 +114,17 @@ const styleSchemaOf = (
 ) => {
   const gradientSchema = gradientSchemaOf(hex);
   return z.object({
-    bgColor: hex("Background colour"),
-    fgColor: hex("Colour of the dots (data modules)"),
-    eyeColor: hex("Colour of the three corner eye frames"),
-    dotColor: hex("Colour of the corner eye centres"),
+    bgColor: hex("Background color"),
+    fgColor: hex("Color of the dots (data modules)"),
+    eyeColor: hex("Color of the three corner eye frames"),
+    dotColor: hex("Color of the corner eye centers"),
     bodyPattern: z.enum(BODY_PATTERN).describe("Shape of the dots"),
     cornerEyePattern: z
       .enum(CORNER_EYE_PATTERNS)
       .describe("Shape of the corner eye frames"),
     cornerEyeDotPattern: z
       .enum(CORNER_EYE_DOT_PATTERNS)
-      .describe("Shape of the corner eye centres"),
+      .describe("Shape of the corner eye centers"),
     gradients: z
       .object({
         body: gradientSchema.optional(),
@@ -134,7 +134,7 @@ const styleSchemaOf = (
       })
       .optional()
       .describe(
-        "Optional gradients; leave a part out for its solid colour. Each gradient's colours must contrast with the background like the solid ones",
+        "Optional gradients; leave a part out for its solid color. Each gradient's colors must contrast with the background like the solid ones",
       ),
     margin: z
       .number()
@@ -154,7 +154,7 @@ const styleSchemaOf = (
     logo: z
       .enum(LOGO_CHOICES)
       .describe(
-        "Centre logo: none, keep (the current one), qrdx, or an icon (wifi, location, phone, email, link, file, calendar, whatsapp, instagram)",
+        "Center logo: none, keep (the current one), qrdx, or an icon (wifi, location, phone, email, link, file, calendar, whatsapp, instagram)",
       ),
   });
 };
@@ -167,7 +167,7 @@ export const designStyleSchema = styleSchemaOf(strictHex, strictLabel);
 /** The designer model's output: the same shape with plain strings. */
 export const designerOutputSchema = styleSchemaOf(looseHex, looseLabel);
 
-/** The first #RRGGBB (or #RGB) in a model's colour, or `fallback`. */
+/** The first #RRGGBB (or #RGB) in a model's color, or `fallback`. */
 function cleanHex(value: unknown, fallback: string): string {
   if (typeof value !== "string") return fallback;
   const long = /#[0-9a-fA-F]{6}(?![0-9a-fA-F])/.exec(value)?.[0];
@@ -186,7 +186,7 @@ const cleanLabel = (value: unknown) =>
     : undefined;
 
 /**
- * A designer answer made valid: colours reduced to the #RRGGBB they
+ * A designer answer made valid: colors reduced to the #RRGGBB they
  * contain (or the fallback style's), labels clipped to the frame limit.
  */
 export function sanitizeDesignStyle(
@@ -349,7 +349,7 @@ const pick = <T extends string>(
 /**
  * The design that matches editor styles, as the starting point for a
  * change ("make it darker"). Values the schema can't express (a retired
- * shape, an rgba colour) fall back to safe ones.
+ * shape, an rgba color) fall back to safe ones.
  */
 export function fromThemeStyles(
   styles: ThemeStyles,
@@ -419,10 +419,10 @@ const PLAIN_NAMES: Record<string, string> = {
   bgColor: "background",
   fgColor: "dots",
   eyeColor: "corner eyes",
-  dotColor: "eye centres",
+  dotColor: "eye centers",
   bodyPattern: "dot shape",
   cornerEyePattern: "eye shape",
-  cornerEyeDotPattern: "eye centre shape",
+  cornerEyeDotPattern: "eye center shape",
   margin: "margin",
   level: "error correction",
   frame: "frame",

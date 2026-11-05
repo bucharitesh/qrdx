@@ -5,7 +5,7 @@ import { QRCodeSVG } from "qrdx";
 import type { ThemeStyles } from "@/types/theme";
 import { ShineBorder } from "./shine-border";
 
-/** A rich AI suggestion: a mini live preview in its colours, a title and a hint. */
+/** A rich AI suggestion: a mini live preview in its colors, a title and a hint. */
 export function PromptCard({
   title,
   hint,

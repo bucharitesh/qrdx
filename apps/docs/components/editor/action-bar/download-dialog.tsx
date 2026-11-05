@@ -48,6 +48,7 @@ import {
   downloadPrintSVG,
   downloadQRCode,
   EPS_IMAGE_FILL_REASON,
+  getDownloadFilename,
   getFrameDimensions,
   getPrintLayout,
   getQRData,
@@ -328,9 +329,11 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
       ? { isValid: false, error: "Enter a width and height in pixels." }
       : validateSize(exportSize.width, exportSize.height);
   const sizeError = validation.isValid ? "" : (validation.error ?? "");
+  // The pixel size of the file saved (a frame adds to the code), or none
+  // for SVG and EPS; the same name downloadQRCode saves under.
   const filename =
     downloadOptions.filename ||
-    `qr-code-${exportSize.width}x${exportSize.height}.${format}`;
+    getDownloadFilename(format, exportSize, themeState.styles.frame);
 
   const handleDownload = async () => {
     if (sizeError) return;
@@ -339,7 +342,7 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
       await downloadQRCode(qrProps, {
         format,
         size: exportSize,
-        filename: downloadOptions.filename,
+        filename,
       });
       emitSound("download");
       track("qr_downloaded", {
