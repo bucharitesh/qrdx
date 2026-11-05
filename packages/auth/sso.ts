@@ -4,7 +4,7 @@ import { discoverOIDCConfig, type SSOOptions } from "@better-auth/sso";
 import * as schema from "@repo/database";
 import { database as db, eq } from "@repo/database";
 import type { BetterAuthPlugin } from "better-auth";
-import { APIError, createAuthMiddleware } from "better-auth/api";
+import { APIError, createAuthMiddleware, isAPIError } from "better-auth/api";
 import { workspacePlanTier } from "./plan";
 import {
   domainCovers,
@@ -12,6 +12,7 @@ import {
   emailDomain,
   emailInSsoDomain,
   SSO_TOKEN_PREFIX,
+  ssoFailureRedirect,
   ssoJoinRoleFromMetadata,
 } from "./sso-rules";
 
@@ -88,7 +89,7 @@ async function providerById(providerId: unknown): Promise<ProviderRow | null> {
 
 /**
  * Adds someone to the connection's workspace on their first SSO sign-in
- * (when their SSO account link is created), with the workspace's chosen
+ * (as their SSO account link is created), with the workspace's chosen
  * role. Skipped when they're already a member, have a pending invitation
  * (they join through it), or the workspace isn't on Business.
  */
@@ -140,6 +141,45 @@ async function joinWorkspace(userId: string, providerId: string) {
       createdAt: new Date(),
     })
     .onConflictDoNothing();
+}
+
+/**
+ * The workspace an SSO sign-in should open: the connection's, when the
+ * person is a member. It's also remembered as their last workspace, so the
+ * session made after a two-step challenge (a later request, see
+ * ./sign-in-challenge.ts) starts there too (workspace-hooks.ts
+ * initialWorkspaceId).
+ */
+async function ssoWorkspaceFor(
+  userId: string,
+  providerId: unknown
+): Promise<string | null> {
+  const provider = await providerById(providerId);
+  const organizationId = provider?.organizationId;
+  if (!organizationId) return null;
+  const membership = await db.query.member.findFirst({
+    columns: { id: true },
+    where: (table, { and: both, eq: equals }) =>
+      both(
+        equals(table.organizationId, organizationId),
+        equals(table.userId, userId)
+      ),
+  });
+  if (!membership) return null;
+  const person = await db.query.user.findFirst({
+    columns: { settings: true },
+    where: (table, { eq: equals }) => equals(table.id, userId),
+  });
+  await db
+    .update(schema.user)
+    .set({
+      settings: {
+        ...((person?.settings ?? {}) as Record<string, unknown>),
+        lastWorkspaceId: organizationId,
+      } as typeof schema.user.$inferInsert.settings,
+    })
+    .where(eq(schema.user.id, userId));
+  return organizationId;
 }
 
 /** Options for the @better-auth/sso plugin. */
@@ -198,9 +238,38 @@ export const ssoGate = () =>
                 },
               },
             },
+            session: {
+              create: {
+                // Open the connection's workspace (runs before the app's own
+                // hook in ./server.ts, which then leaves it alone).
+                before: async (session, context) => {
+                  if (!(context && SSO_CALLBACK_PATHS.includes(context.path))) {
+                    return;
+                  }
+                  try {
+                    const organizationId = await ssoWorkspaceFor(
+                      session.userId,
+                      context.params?.providerId
+                    );
+                    if (organizationId) {
+                      return {
+                        data: {
+                          ...session,
+                          activeOrganizationId: organizationId,
+                        },
+                      };
+                    }
+                  } catch (error) {
+                    console.error("Could not open the SSO workspace", error);
+                  }
+                },
+              },
+            },
             account: {
               create: {
-                after: async (account, context) => {
+                // Before, not after: after-hooks wait until the whole sign-in
+                // has run, and the session above must find the membership.
+                before: async (account, context) => {
                   if (!(context && SSO_CALLBACK_PATHS.includes(context.path))) {
                     return;
                   }
@@ -269,6 +338,32 @@ export const ssoGate = () =>
             if (provider && (await ssoProviderUsable(provider))) return;
             // Relative, so it works without a fixed base URL too.
             throw ctx.redirect(UNAVAILABLE_REDIRECT);
+          }),
+        },
+      ],
+      after: [
+        {
+          // A refused sign-in lands on /sign-in?next=…&error=… for both
+          // protocols (ssoFailureRedirect).
+          matcher: (ctx) => SSO_CALLBACK_PATHS.includes(ctx.path ?? ""),
+          handler: createAuthMiddleware((ctx) => {
+            if (ctx.context.newSession) return Promise.resolve();
+            const returned = ctx.context.returned;
+            if (!(isAPIError(returned) && returned.statusCode === 302)) {
+              return Promise.resolve();
+            }
+            const location =
+              ctx.context.responseHeaders?.get("location") ??
+              new Headers(returned.headers).get("location");
+            let appOrigin: string;
+            try {
+              appOrigin = new URL(ctx.context.baseURL).origin;
+            } catch {
+              return Promise.resolve();
+            }
+            const target = ssoFailureRedirect(location, appOrigin);
+            if (target) throw ctx.redirect(target);
+            return Promise.resolve();
           }),
         },
       ],
