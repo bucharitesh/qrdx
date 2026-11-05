@@ -43,6 +43,7 @@ const OMITTED_NAMES: Record<OmittedPart, string> = {
   art: "the art",
   frame: "the custom frame",
   image: "your image fills",
+  silhouette: "your code shape",
 };
 
 /** "Your logo and the art aren't in the link." */

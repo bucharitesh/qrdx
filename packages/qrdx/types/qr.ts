@@ -82,16 +82,71 @@ export const MODULE_SCALE_MAX = 1;
 export const AUTO_LEVEL_LOGO_COVERAGE = 0.07;
 
 /**
- * Outline of the whole code: "square" (the QR symbol as is) or "circle": the
- * symbol sits in a disc filled with decorative modules. Decoders read only
- * the symbol, which keeps its quiet ring (`margin`, at least
- * QR_CIRCLE_QUIET_MIN modules) before the decoration starts.
+ * Outline of the whole code: "square" (the QR symbol as is), "circle" or
+ * "heart": the symbol sits in a disc or a heart filled with decorative
+ * modules. Decoders read only the symbol, which keeps its quiet ring
+ * (`margin`, at least QR_CIRCLE_QUIET_MIN modules) before the decoration
+ * starts. `shape` also takes a `QRSilhouette`, an outline of your own.
  */
-export const QR_SHAPES = ["square", "circle"] as const;
+export const QR_SHAPES = ["square", "circle", "heart"] as const;
 export const qrShapeSchema = z.enum(QR_SHAPES);
 export type QRShape = z.infer<typeof qrShapeSchema>;
-/** Smallest light ring between a circle code's symbol and its decoration. */
+/** Smallest light ring between a shaped code's symbol and its decoration. */
 export const QR_CIRCLE_QUIET_MIN = 3;
+
+/** Most cells along a silhouette's longer side. */
+export const QR_SILHOUETTE_MAX_CELLS = 64;
+/** Fewest cells along each side of a silhouette. */
+export const QR_SILHOUETTE_MIN_CELLS = 8;
+/**
+ * Smallest share of the artwork's width the symbol and its quiet ring may
+ * take inside a silhouette (a circle code's is about 0.7, a heart's 0.6).
+ * Thinner silhouettes are refused: the code would be a small square in a
+ * large field of decoration.
+ */
+export const QR_SILHOUETTE_MIN_SHARE = 0.42;
+
+/**
+ * An outline of your own for `shape`: a small grid sampled from a picture's
+ * alpha or darkness (`createQRSilhouette`, `loadQRSilhouette`), never the
+ * picture itself. The symbol sits in the middle of the silhouette's largest
+ * square and the rest of it fills with decorative modules, like a circle
+ * code. `getQRSilhouetteFit` says whether one is roomy enough; one that
+ * isn't draws as a square code.
+ */
+export const qrSilhouetteSchema = z
+  .object({
+    type: z.literal("silhouette"),
+    width: z
+      .number()
+      .int()
+      .min(QR_SILHOUETTE_MIN_CELLS)
+      .max(QR_SILHOUETTE_MAX_CELLS),
+    height: z
+      .number()
+      .int()
+      .min(QR_SILHOUETTE_MIN_CELLS)
+      .max(QR_SILHOUETTE_MAX_CELLS),
+    cells: z
+      .string()
+      .max(QR_SILHOUETTE_MAX_CELLS * QR_SILHOUETTE_MAX_CELLS)
+      .regex(/^[01]*$/)
+      .describe(
+        'Row by row, "1" inside the shape and "0" outside: width × height characters'
+      ),
+  })
+  .refine(
+    (silhouette) =>
+      silhouette.cells.length === silhouette.width * silhouette.height,
+    {
+      message: "Silhouette cells do not match its width and height",
+    }
+  );
+export type QRSilhouette = z.infer<typeof qrSilhouetteSchema>;
+
+/** What `shape` takes: a named outline or a silhouette. */
+export const qrCodeShapeSchema = z.union([qrShapeSchema, qrSilhouetteSchema]);
+export type QRCodeShape = QRShape | QRSilhouette;
 
 /** The three finder patterns, for per-eye colors. */
 export const EYE_POSITIONS = ["topLeft", "topRight", "bottomLeft"] as const;
@@ -135,7 +190,7 @@ export const qrPropsSchema = z.object({
     .max(MODULE_SCALE_MAX)
     .optional(),
   autoLevel: z.boolean().optional(),
-  shape: qrShapeSchema.optional(),
+  shape: qrCodeShapeSchema.optional(),
 });
 
 // Inferred types
@@ -178,9 +233,10 @@ export interface QRProps {
   // Raise error correction to H when the logo covers more than 7% of the
   // code (off by default, so existing output never changes)
   autoLevel?: boolean;
-  // Outline: "circle" puts the symbol in a disc of decorative modules (see
-  // QR_SHAPES); ignored with a template
-  shape?: QRShape;
+  // Outline: "circle" or "heart" puts the symbol in a disc or a heart of
+  // decorative modules (see QR_SHAPES); a QRSilhouette fills an outline of
+  // your own. Ignored with a template.
+  shape?: QRCodeShape;
   // For editors drawing a live preview: marks each frame label <text> with
   // data-qrdx-frame-label (its FrameLabel.field). Off by default, and every
   // export (getQRAsSVGDataUri and the PNG, JPG, PDF and EPS built on it)
