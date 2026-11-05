@@ -54,6 +54,7 @@ import {
   setQrCodesPaused,
   trashQrCodes,
 } from "@/actions/bulk-codes";
+import { keyLabel } from "@/app/dashboard/_lib/list-keys";
 import { codeTabHref } from "@/app/dashboard/codes/_lib/code-tabs";
 import type { TagRow } from "@/app/dashboard/codes/_lib/organize";
 import type { FolderRow } from "@/app/dashboard/codes/_lib/organize-shared";
@@ -62,6 +63,7 @@ import type {
   QrCodeView,
 } from "@/app/dashboard/codes/_lib/qr-codes";
 import {
+  BULK_OWNED,
   ROW_KEYS,
   type RowAction,
   resolveRowShortcut,
@@ -94,6 +96,7 @@ export function CodeActionsMenu({
   tags,
   keysEnabled = false,
   keysActive = false,
+  bulkKeys = false,
 }: {
   code: MenuCode;
   showAnalyticsLink?: boolean;
@@ -101,10 +104,12 @@ export function CodeActionsMenu({
   afterDelete?: string;
   folders?: FolderRow[];
   tags?: TagRow[];
-  /** Row keys (E, L, D, M, T, A, X) are on: the person's shortcuts switch */
+  /** Row keys (E, L, D, M, T, A, ⌫) are on: the person's shortcuts switch */
   keysEnabled?: boolean;
   /** This row is under the pointer or holds focus, so its keys apply */
   keysActive?: boolean;
+  /** Rows are selected: M, T, A and ⌫ act on the selection, not this row */
+  bulkKeys?: boolean;
 }) {
   const workspaceSlug = useWorkspaceSlug();
   const router = useRouter();
@@ -223,8 +228,11 @@ export function CodeActionsMenu({
     archive: toggleArchived,
     trash: () => void trash(),
   };
-  const keyState = useRef({ handlers, available, isPending });
-  keyState.current = { handlers, available, isPending };
+  const pageKeys = bulkKeys
+    ? available.filter((action) => !BULK_OWNED.includes(action))
+    : available;
+  const keyState = useRef({ handlers, available: pageKeys, isPending });
+  keyState.current = { handlers, available: pageKeys, isPending };
 
   // The row's keys while it's under the pointer; the open menu handles its own.
   useEffect(() => {
@@ -264,9 +272,7 @@ export function CodeActionsMenu({
 
   const keyHint = (action: RowAction) =>
     keysEnabled ? (
-      <DropdownMenuShortcut>
-        {ROW_KEYS[action].toUpperCase()}
-      </DropdownMenuShortcut>
+      <DropdownMenuShortcut>{keyLabel(ROW_KEYS[action])}</DropdownMenuShortcut>
     ) : null;
 
   const trigger = (

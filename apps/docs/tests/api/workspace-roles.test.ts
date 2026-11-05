@@ -881,3 +881,90 @@ describe("saving a shared theme", () => {
     });
   });
 });
+
+// ─── The lists' bulk keys (feat/bulk-keys-range-select) ─────────────────────
+// What the codes and pages lists' bulk toolbar and keys call, with several
+// rows selected (app/dashboard/_lib/list-keys.ts offers these keys only with
+// content.write). Viewers and billing members are refused on the server
+// before anything changes; the roles that write get past the role check.
+describe("bulk keys' endpoints, with several rows", () => {
+  const seedMany = (actor: string) => {
+    seed(actor);
+    const code = fakeDb.find("qrCode", { id: "code_1" });
+    const page = fakeDb.find("landingPage", { id: "page_1" });
+    fakeDb.seed("qrCode", [{ ...code, id: "code_2", slug: "abc1235" }]);
+    fakeDb.seed("landingPage", [{ ...page, id: "page_2" }]);
+  };
+  const codes = ["code_1", "code_2"];
+  const BULK: [string, () => Promise<unknown>][] = [
+    [
+      "setQrCodesArchived (A)",
+      () => bulk.setQrCodesArchived({ ids: codes, archived: true }),
+    ],
+    [
+      "moveQrCodes (M)",
+      () => bulk.moveQrCodes({ ids: codes, folderId: "folder_1" }),
+    ],
+    [
+      "tagQrCodes (T)",
+      () => tags.tagQrCodes({ ids: codes, add: ["tag_1"], remove: [] }),
+    ],
+    ["trashQrCodes (Backspace)", () => bulk.trashQrCodes({ ids: codes })],
+    [
+      "restoreQrCodes (R, in the trash)",
+      () => bulk.restoreQrCodes({ ids: codes }),
+    ],
+    [
+      "purgeQrCodes (Backspace, in the trash)",
+      () => bulk.purgeQrCodes({ ids: codes }),
+    ],
+    [
+      "deleteLandingPages (Backspace, Pages)",
+      () => pages.deleteLandingPages({ ids: ["page_1", "page_2"] }),
+    ],
+  ];
+
+  describe.each(BULK)("%s", (_name, run) => {
+    it.each([...WORKSPACE_ROLES])("as %s", async (role) => {
+      seedMany(USER[role]);
+      state.scope = { userId: USER[role], organizationId: "org_t", role };
+      state.authCalls = [];
+      const before = snapshot();
+
+      const result = await run();
+
+      if (can(role, "content.write")) {
+        expect(refusedForRole(result), JSON.stringify(result)).toBe(false);
+      } else {
+        expect(refusedForRole(result), JSON.stringify(result)).toBe(true);
+        expect(state.authCalls).toEqual([]);
+        expect(snapshot()).toBe(before);
+      }
+    });
+  });
+
+  it("deletes a member's own pages and skips a teammate's", async () => {
+    seedMany(USER.member);
+    fakeDb.seed("landingPage", [
+      {
+        ...fakeDb.find("landingPage", { id: "page_1" }),
+        id: "page_theirs",
+        userId: "u_other",
+      },
+    ]);
+    state.scope = {
+      userId: USER.member,
+      organizationId: "org_t",
+      role: "member",
+    };
+    const result = await pages.deleteLandingPages({
+      ids: ["page_1", "page_theirs", "page_2"],
+    });
+    expect(result).toEqual({
+      success: true,
+      data: { deleted: 2, skipped: 1, deletedCodes: 0 },
+    });
+    expect(fakeDb.find("landingPage", { id: "page_theirs" })).toBeDefined();
+    expect(fakeDb.find("landingPage", { id: "page_1" })).toBeUndefined();
+  });
+});

@@ -1,25 +1,42 @@
 name: Feature request
 description: Suggest a new feature or an improvement for QRdx
 title: "[feat]: "
-labels: ["area: request"]
+labels: ["enhancement", "needs triage"]
 body:
   - type: markdown
     attributes:
       value: |
-        Thanks for the suggestion. Please search [open and closed issues](https://github.com/bucharitesh/qrdx/issues?q=is%3Aissue) first. For open-ended ideas, a [discussion](https://github.com/bucharitesh/qrdx/discussions/new?category=general) is often a better start.
+        Thanks for the suggestion. Please search [open and closed issues](https://github.com/bucharitesh/qrdx/issues?q=is%3Aissue) first.
 
+        If the idea is still open-ended and you'd like to talk it through, start a thread in [Ideas](https://github.com/bucharitesh/qrdx/discussions/new?category=ideas) instead. Requests for a new integration or plugin are welcome here.
+
+  # Keep these options in sync with .github/scripts/issue-area-labels.mjs,
+  # which turns the answer into an area label.
   - type: dropdown
     id: area
     attributes:
       label: Area
+      description: Which part of QRdx would it change? Pick the closest match.
       options:
-        - Web app (qrdx.dev editor, accounts, themes)
-        - React library (qrdx)
+        - Playground (editor, styles, art, AI chat, downloads)
+        - Dynamic codes, short links, custom domains and analytics
+        - Hosted pages and forms
+        - Dashboard, workspaces and account settings
+        - REST API (api.qrdx.dev/v1)
+        - Image API (api.qrdx.dev/v1/qr)
+        - MCP server (mcp.qrdx.dev/mcp)
+        - React library (qrdx on npm)
         - CLI (@qrdx/cli)
-        - Self-hosting / Docker
-        - Integrations (Dub, Google Drive, Raycast, Canva)
-        - Documentation
-        - Other
+        - Chrome extension
+        - Figma plugin
+        - Raycast extension
+        - Canva app
+        - Integrations
+        - Community (shared frames and themes)
+        - Free tools (bulk generator, scan checker, print size, scanner)
+        - Self-hosting and Docker
+        - Docs
+        - Something else or not sure
     validations:
       required: true
 
@@ -28,6 +45,7 @@ body:
     attributes:
       label: Problem
       description: What are you trying to do, and what makes it hard today?
+      placeholder: When I ..., I have to ..., because ...
     validations:
       required: true
 
@@ -35,21 +53,23 @@ body:
     id: proposal
     attributes:
       label: Proposed solution
-      description: How should it work? Include API sketches, CLI flags or mockups if you have them.
+      description: How should it work? API sketches, CLI flags or mockups help. For a new integration, name the service and what QRdx should do with it.
     validations:
       required: true
 
   - type: textarea
     id: context
     attributes:
-      label: Additional context
-      description: Alternatives you considered, screenshots or links.
+      label: Alternatives and context
+      description: Workarounds you use today, other tools that do this well, screenshots or links.
 
   - type: checkboxes
     id: terms
     attributes:
       label: Before submitting
-      description: By submitting this issue, you agree to follow our [contributing guidelines](https://github.com/bucharitesh/qrdx/blob/main/CONTRIBUTING.md).
+      description: By submitting this issue, you agree to follow the [contributing guidelines](https://github.com/bucharitesh/qrdx/blob/main/CONTRIBUTING.md) and the [code of conduct](https://github.com/bucharitesh/qrdx/blob/main/.github/CODE_OF_CONDUCT.md).
       options:
         - label: I searched existing issues and pull requests
           required: true
+        - label: I'd like to work on this myself
+          required: false

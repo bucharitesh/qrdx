@@ -1,6 +1,6 @@
-// Adapters from the integration clients in packages/integrations (Dub's
-// DubClient, the shared ShortLinkClient of Bitly, Rebrandly and Short.io) to
-// the importer's MigrationSource, plus plain-words provider errors.
+// Adapters from the integration clients in packages/integrations (the shared
+// ShortLinkClient of Bitly, Rebrandly and Short.io; Dub's DubClient for undo
+// only) to the importer's MigrationSource, plus plain-words provider errors.
 // No database or env access, so tests can pass fake clients.
 
 import type {
@@ -12,7 +12,7 @@ import type {
 // The module, not the package index, so tests don't load the database client.
 import { isIntegrationApiError } from "@repo/integrations/src/core/http-client";
 import { absoluteShortLink, splitShortLink } from "./normalize";
-import { API_PROVIDERS, type ApiProviderId } from "./providers";
+import { API_PROVIDERS, type ApiProviderId, retiredMessage } from "./providers";
 import type {
   LinkFilters,
   LinkPage,
@@ -110,69 +110,15 @@ export function shortLinkSource(
   };
 }
 
-/** Fields of a Dub link the import reads (the API returns more than DubLink types). */
-interface DubLinkFields {
-  id: string;
-  domain?: string;
-  key?: string;
-  url: string;
-  shortLink?: string;
-  title?: string | null;
-  tags?: { name?: string }[] | null;
-  clicks?: number;
-  createdAt?: string;
-  archived?: boolean;
-}
-
-export function fromDubLink(raw: unknown): SourceLink | null {
-  const link = raw as DubLinkFields;
-  if (!(link && typeof link.id === "string" && typeof link.url === "string")) {
-    return null;
-  }
-  const shortLink = absoluteShortLink(
-    link.shortLink ??
-      (link.domain && link.key ? `${link.domain}/${link.key}` : null),
-  );
-  const parts = splitShortLink(shortLink);
-  return {
-    id: link.id,
-    shortLink,
-    domain: (link.domain ?? parts.domain)?.toLowerCase() ?? null,
-    backHalf: link.key ?? parts.backHalf,
-    destinationUrl: link.url,
-    title: link.title?.trim() || null,
-    tags: (link.tags ?? []).flatMap((tag) =>
-      typeof tag?.name === "string" ? [tag.name] : [],
-    ),
-    clicks: typeof link.clicks === "number" ? link.clicks : null,
-    createdAt: link.createdAt ?? null,
-    archived: Boolean(link.archived),
-  };
-}
-
-const DUB_PAGE_SIZE = 100;
-
-export function dubSource(client: DubClient): MigrationSource {
+/**
+ * Dub no longer takes new imports (RETIRED_PROVIDER_IDS). Its earlier jobs
+ * only need undo: putting an old link's recorded destination back.
+ */
+export function dubUndoSource(client: DubClient): MigrationSource {
   return {
     provider: "dub",
-    async listLinks(cursor, filters) {
-      const page = Math.max(1, Number.parseInt(cursor ?? "1", 10) || 1);
-      const raw = await client.getLinks({
-        page,
-        pageSize: DUB_PAGE_SIZE,
-        search: filters.search?.trim() || undefined,
-        domain: filters.domain || undefined,
-        showArchived: false,
-      });
-      const links = raw.flatMap((item) => fromDubLink(item) ?? []);
-      return {
-        links: filterPage(links, filters, { search: true, domain: true }),
-        nextCursor: raw.length === DUB_PAGE_SIZE ? String(page + 1) : null,
-        total: null,
-      };
-    },
-    async getLink(id) {
-      return fromDubLink(await client.getLink(id));
+    async listLinks() {
+      throw new Error(retiredMessage(API_PROVIDERS.dub.name));
     },
     async updateDestination(id, url) {
       await client.updateLink(id, { url });

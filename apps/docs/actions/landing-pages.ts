@@ -2,7 +2,7 @@
 
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import { revalidatePath } from "next/cache";
-import type { z } from "zod";
+import { z } from "zod";
 import { enforceCreateRateLimit } from "@/app/dashboard/codes/_lib/qr-codes";
 import {
   createCodeForPage,
@@ -165,6 +165,58 @@ export async function deleteLandingPage(input: {
   return run(
     "deleteLandingPage",
     (scope) => deletePage(scope, parse(pageIdSchema, input?.id)),
+    { revalidate: true },
+  );
+}
+
+// ─── Bulk delete (the Pages list's selection) ────────────────────────────────
+
+const MAX_BULK_PAGES = 100;
+
+const pageIdsSchema = z
+  .array(pageIdSchema)
+  .min(1, "Select at least one page")
+  .max(MAX_BULK_PAGES, `Select up to ${MAX_BULK_PAGES} pages at a time`)
+  .transform((ids) => [...new Set(ids)]);
+
+/**
+ * Deletes several pages with their QR codes, each the way deleteLandingPage
+ * does. Viewers and billing members are refused before anything is read
+ * (run's content.write check); pages this member may not delete (someone
+ * else's, in a team) or that are gone are skipped and counted.
+ */
+export async function deleteLandingPages(input: { ids: string[] }): Promise<
+  LandingPageActionResult<{
+    deleted: number;
+    skipped: number;
+    deletedCodes: number;
+  }>
+> {
+  return run(
+    "deleteLandingPages",
+    async (scope) => {
+      const ids = parse(pageIdsSchema, input?.ids);
+      let deleted = 0;
+      let skipped = 0;
+      let deletedCodes = 0;
+      for (const id of ids) {
+        try {
+          const result = await deletePage(scope, id);
+          deleted += 1;
+          deletedCodes += result.deletedCodes;
+        } catch (error) {
+          if (
+            error instanceof HttpError &&
+            (error.code === "FORBIDDEN" || error.code === "NOT_FOUND")
+          ) {
+            skipped += 1;
+            continue;
+          }
+          throw error;
+        }
+      }
+      return { deleted, skipped, deletedCodes };
+    },
     { revalidate: true },
   );
 }
