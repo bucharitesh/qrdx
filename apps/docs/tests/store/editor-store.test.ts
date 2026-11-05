@@ -274,3 +274,43 @@ describe("persisted editor state", () => {
     expect(store().hasUnsavedChanges()).toBe(false);
   });
 });
+
+describe("a design from the community (applyDesign)", () => {
+  const theme = {
+    ...defaultThemeState.styles,
+    fgColor: "#0b1026",
+    bodyPattern: "rounded" as const,
+  };
+
+  it("is one undo step, even right after an edit", () => {
+    store().applyThemePreset(shuffleId(SEED_A));
+    later();
+    // The visitor's own tweak, then "Open in Playground" within 0.5 s
+    store().setThemeState({
+      ...store().themeState,
+      styles: { ...store().themeState.styles, fgColor: "#0b6e4f" },
+    });
+    const mine = store().themeState;
+    store().applyDesign(theme);
+    expect(store().themeState.styles).toEqual(theme);
+    // A theme is not the preset any more
+    expect(store().themeState.preset).toBeUndefined();
+    expect(store().themeState.presetStyles).toBeUndefined();
+    store().undo();
+    expect(store().themeState).toEqual(mine);
+  });
+
+  it("keeps the preset for a frame added to the design", () => {
+    store().applyThemePreset("default");
+    later();
+    const styles = {
+      ...store().themeState.styles,
+      frame: { style: "banner-bottom" as const, text: "Scan me" },
+    };
+    store().applyDesign(styles, { keepPreset: true });
+    expect(store().themeState.preset).toBe("default");
+    expect(store().themeState.styles.frame?.text).toBe("Scan me");
+    store().undo();
+    expect(store().themeState.styles.frame).toBeUndefined();
+  });
+});
