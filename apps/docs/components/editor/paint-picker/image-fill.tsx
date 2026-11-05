@@ -79,9 +79,13 @@ export async function readPicture(file: File): Promise<string> {
 const toneCache = new Map<string, ImageTones | null>();
 const pending = new Map<string, Promise<void>>();
 
+/** True once a picture's tones were measured (or couldn't be). */
+export const pictureMeasured = (src: string) => toneCache.has(src);
+
 /**
  * Tones (lightest and darkest tenth) of every picture in `sources`, for the
- * contrast readout. Measured once per picture, in the browser.
+ * contrast readout. Measured once per picture, in the browser; every
+ * mounted reader re-renders when a measurement lands.
  */
 export function useImageTones(sources: string[]): ImageToneMap {
   const [, bump] = useState(0);
@@ -89,11 +93,14 @@ export function useImageTones(sources: string[]): ImageToneMap {
   // biome-ignore lint/correctness/useExhaustiveDependencies: keyed by the sources
   useEffect(() => {
     let alive = true;
+    const refresh = () => {
+      if (alive) bump((count) => count + 1);
+    };
     for (const src of sources) {
-      if (toneCache.has(src) || pending.has(src)) continue;
-      pending.set(
-        src,
-        getImageTones(src)
+      if (toneCache.has(src)) continue;
+      let job = pending.get(src);
+      if (!job) {
+        job = getImageTones(src)
           .then((tones) => {
             toneCache.set(src, tones);
           })
@@ -102,9 +109,10 @@ export function useImageTones(sources: string[]): ImageToneMap {
           })
           .finally(() => {
             pending.delete(src);
-            if (alive) bump((count) => count + 1);
-          }),
-      );
+          });
+        pending.set(src, job);
+      }
+      job.then(refresh, refresh);
     }
     return () => {
       alive = false;

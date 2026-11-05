@@ -89,7 +89,12 @@ import {
   SwatchDot,
 } from "./controls";
 import { GradientBar, GradientToolbar } from "./gradient-editor";
-import { ImageFillEditor, PictureEmpty, useImageTones } from "./image-fill";
+import {
+  ImageFillEditor,
+  PictureEmpty,
+  pictureMeasured,
+  useImageTones,
+} from "./image-fill";
 
 // ── Design context ─────────────────────────────────────────────────────────
 
@@ -566,7 +571,8 @@ function SafetyRow({
     [message, role, paint, style, tones],
   );
   const against = role === "code" ? "on the background" : "with the code";
-  if (isImagePaint(paint) && !tones[paint.src]) {
+  // A picture being measured; one that can't be counts as its underlay
+  if (isImagePaint(paint) && !tones[paint.src] && !pictureMeasured(paint.src)) {
     return (
       <p className="text-muted-foreground text-xs" aria-live="polite">
         Measuring the picture's contrast…
