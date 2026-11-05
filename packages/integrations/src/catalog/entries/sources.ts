@@ -46,7 +46,7 @@ export const sources: IntegrationCatalogEntry[] = [
       },
       {
         title: "Pick a payment link",
-        body: "In the editor's URL type or Dashboard → New code, click From your account → Stripe and choose a link.",
+        body: "In the editor's URL type, open Use a link from… and choose Stripe. In Dashboard → New code, click From your account → Stripe. Then choose a link.",
       },
     ],
     capabilities: [
@@ -101,7 +101,7 @@ export const sources: IntegrationCatalogEntry[] = [
       },
       {
         title: "Pick a product, or export all",
-        body: "Choose From your account → Shopify in the URL type, or download the product CSV and import it under Codes → Import.",
+        body: "In the editor's URL type, open Use a link from… and choose Shopify (in Dashboard → New code, it's From your account → Shopify). Or download the product CSV and import it under Codes → Import.",
       },
     ],
     capabilities: [
@@ -203,7 +203,7 @@ export const sources: IntegrationCatalogEntry[] = [
       },
       {
         title: "Pick an event type",
-        body: "In the URL content type or Dashboard → New code, choose From your account → Calendly.",
+        body: "In the editor's URL type, open Use a link from… and choose Calendly. In Dashboard → New code, choose From your account → Calendly.",
       },
     ],
     capabilities: [

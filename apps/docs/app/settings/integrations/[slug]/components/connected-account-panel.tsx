@@ -180,8 +180,8 @@ function ShortLinkSettings({
           </div>
         ) : links.length === 0 ? (
           <p className="text-muted-foreground text-sm">
-            No links yet. Create one from the QR editor: choose Website, then
-            Shorten.
+            No links yet. Create one from the QR editor: choose the URL type,
+            then Use a link from… → {name}.
           </p>
         ) : (
           <ul className="divide-y rounded-lg border">
@@ -225,8 +225,8 @@ function FilePickerSettings({
     <Section
       description={
         slug === "notion"
-          ? "In the QR editor, choose Website, then Pick a file → Notion. Only pages you shared with QRdx appear: add more in Notion from a page's ••• → Connections, or reconnect and pick them."
-          : `In the QR editor, choose Website, then Pick a file → ${name}. Page blocks with a file (PDF, audio, video, downloads) also get From ${name}.`
+          ? "In the QR editor, choose the URL type, then Use a link from… → Notion. Only pages you shared with QRdx appear: add more in Notion from a page's ••• → Connections, or reconnect and pick them."
+          : `In the QR editor, choose the URL type, then Use a link from… → ${name}. Page blocks with a file (PDF, audio, video, downloads) also get From ${name}.`
       }
       title={`Your ${name} account`}
     >
