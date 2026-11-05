@@ -260,6 +260,37 @@ async function emailCodeStep(page: Page, email: string, next = "/dashboard") {
   await fill(page, "Sign-in code", code);
 }
 
+/** A JSON email-code sign-in from the page: leaves a pending challenge. */
+async function startPendingChallenge(page: Page, email: string) {
+  const since = logSize();
+  await page.evaluate(async (address: string) => {
+    await fetch("/api/auth/email-otp/send-verification-otp", {
+      method: "POST",
+      credentials: "include",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ email: address, type: "sign-in" }),
+    });
+  }, email);
+  const [, code] = await waitForLogLine(
+    new RegExp(`sign-in code for ${escapeRegExp(email)}: (\\d{6})`),
+    since,
+  );
+  const reply = await page.evaluate(
+    async (address: string, otp: string) => {
+      const response = await fetch("/api/auth/sign-in/email-otp", {
+        method: "POST",
+        credentials: "include",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ email: address, otp }),
+      });
+      return response.json();
+    },
+    email,
+    code,
+  );
+  return reply?.twoFactorRedirect === true;
+}
+
 async function enterTotp(page: Page, code: string) {
   await fill(page, "Authenticator code", code);
 }
@@ -483,52 +514,35 @@ async function main() {
     await waitForText(page, "This sign-in timed out or was already finished");
     check("the challenge page without a challenge says to sign in again", true);
     await shot(page, "11-challenge-page-expired");
-    // A pending challenge, as a Google/GitHub/SSO callback leaves one.
-    const since = logSize();
-    await page.evaluate(async (email: string) => {
-      await fetch("/api/auth/email-otp/send-verification-otp", {
-        method: "POST",
-        credentials: "include",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ email, type: "sign-in" }),
-      });
-    }, USER_EMAIL);
-    const [, code] = await waitForLogLine(
-      new RegExp(`sign-in code for ${escapeRegExp(USER_EMAIL)}: (\\d{6})`),
-      since,
-    );
-    const challenged = await page.evaluate(
-      async (email: string, otp: string) => {
-        const response = await fetch("/api/auth/sign-in/email-otp", {
-          method: "POST",
-          credentials: "include",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({ email, otp }),
-        });
-        return response.json();
-      },
-      USER_EMAIL,
-      code,
-    );
-    check(
-      "JSON sign-in answers twoFactorRedirect",
-      challenged?.twoFactorRedirect === true,
-    );
-    await page.goto(
-      `${BASE_URL}/sign-in/two-factor?next=${encodeURIComponent("/oauth/authorize?client_id=x")}`,
-    );
-    await waitForText(page, "Two-step verification");
-    await shot(page, "12-challenge-page");
-    await page.goto(
-      `${BASE_URL}/sign-in/two-factor?next=%2Fsettings%2Faccount`,
-    );
-    await waitForText(page, "Two-step verification");
-    await enterTotp(page, totp(secret));
-    await landedOn(page, "/settings/account");
-    check(
-      "the challenge page finishes it and opens next",
-      (await session(page))?.user?.id === userId,
-    );
+    // A pending challenge, as a Google/GitHub/SSO callback leaves one, then
+    // the page they land on, for each place a sign-in can return to.
+    const destinations = [
+      "/oauth/authorize?client_id=e2e-app&response_type=code",
+      `/invite/e2e-${RUN}`,
+      `/join/e2e-${RUN}`,
+      "/settings/account",
+    ];
+    for (const [index, next] of destinations.entries()) {
+      await clearCookies(page);
+      check(
+        `JSON sign-in answers twoFactorRedirect (${next})`,
+        await startPendingChallenge(page, USER_EMAIL),
+      );
+      await page.goto(
+        `${BASE_URL}/sign-in/two-factor?next=${encodeURIComponent(next)}`,
+      );
+      await waitForText(page, "Your account asks for a second step");
+      if (index === 0) await shot(page, "12-challenge-page");
+      await enterTotp(page, totp(secret));
+      await page.waitFor(
+        (target: string) => `${location.pathname}${location.search}` === target,
+        { args: [next] as never[] },
+      );
+      check(
+        `the challenge page finishes it and opens ${next}`,
+        (await session(page))?.user?.id === userId,
+      );
+    }
 
     // An unsafe next falls back to /dashboard.
     await clearCookies(page);
