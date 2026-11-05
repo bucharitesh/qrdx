@@ -19,6 +19,7 @@ import { Chart, MessageText, Element2 as PanelsTopLeft } from "iconsax-reactjs";
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import Link from "next/link";
+import { getUserSettings } from "@/actions/user-settings";
 import {
   formatDate,
   formatNumber,
@@ -34,6 +35,13 @@ import {
   PageActions,
   PageUsageMeter,
 } from "@/app/dashboard/pages/_components/page-list-controls";
+import {
+  PageCheckbox,
+  PageCheckboxCell,
+  PageRow,
+  PagesSelectAll,
+  PagesSelection,
+} from "@/app/dashboard/pages/_components/pages-selection";
 import { PagesToolbar } from "@/app/dashboard/pages/_components/pages-toolbar";
 import {
   getPageUsage,
@@ -91,9 +99,11 @@ export default async function PagesPage({
     getTemplate(newType)?.variants.some((item) => item.id === requestedTemplate)
       ? requestedTemplate
       : undefined;
-  const [usage, allPages] = await Promise.all([
+  const [usage, allPages, settings] = await Promise.all([
     getPageUsage(scope),
     listPages(scope),
+    // List keys follow the shortcuts switch; unread, they stay on (the default).
+    getUserSettings().catch(() => null),
   ]);
   const canWrite = can(scope.role, "content.write");
   const canDeleteAny =
@@ -195,151 +205,181 @@ export default async function PagesPage({
               <p className="text-muted-foreground rounded-xl border py-10 text-center text-sm">
                 No pages match these filters.
               </p>
-            ) : display.view === "cards" ? (
-              <ul aria-label="Pages" className="space-y-2">
-                {rows.map((row) => (
-                  <li
-                    className="bg-card hover:border-foreground/20 flex items-center gap-3 rounded-xl border px-3 py-3 transition-colors sm:px-4"
-                    key={row.page.id}
-                  >
-                    <span className="bg-muted/50 text-muted-foreground grid size-8 shrink-0 place-items-center rounded-full border">
-                      <row.Icon aria-hidden className="size-4" />
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex min-w-0 items-center gap-1.5">
-                        <Link
-                          className="truncate text-sm font-medium hover:underline"
-                          href={row.href}
-                        >
-                          {row.title}
-                        </Link>
-                        {row.code && row.code.status !== "active" && (
-                          <Badge variant="outline">
-                            {row.code.status === "archived"
-                              ? "Archived"
-                              : "Disabled"}
-                          </Badge>
-                        )}
-                      </div>
-                      <div className="text-muted-foreground mt-0.5 flex min-w-0 items-center gap-1.5 text-xs">
-                        {row.code ? (
-                          <span className="flex min-w-0 items-center gap-0.5">
-                            <span className="text-foreground/80 truncate font-mono">
-                              {row.code.pageUrl.replace(/^https?:\/\//, "")}
-                            </span>
-                            <CopyButton
-                              className="size-6"
-                              successMessage={{ title: "Page link copied" }}
-                              textToCopy={row.code.pageUrl}
-                            />
-                          </span>
-                        ) : (
-                          <span>No QR code links here yet</span>
-                        )}
-                        <span className="shrink-0 max-sm:hidden">
-                          · {row.template?.label ?? row.page.type}
-                        </span>
-                      </div>
-                    </div>
-                    <span className="text-muted-foreground hidden shrink-0 text-xs whitespace-nowrap md:inline">
-                      Updated {formatDate(row.page.updatedAt)}
-                    </span>
-                    {row.isForm && (
-                      <Button
-                        asChild
-                        className="hidden h-7 rounded-full px-2.5 text-xs sm:inline-flex"
-                        size="sm"
-                        variant="outline"
-                      >
-                        <Link href={`${row.href}/responses`}>
-                          <MessageText aria-hidden />
-                          Responses
-                        </Link>
-                      </Button>
-                    )}
-                    <span
-                      className="inline-flex h-7 shrink-0 items-center gap-1.5 rounded-full border px-2.5 text-xs font-medium tabular-nums"
-                      title="All-time scans of this page's QR codes"
-                    >
-                      <Chart
-                        aria-hidden
-                        className="text-muted-foreground size-3.5"
-                      />
-                      <span className="max-sm:hidden">
-                        {scansLabel(row.scans)}
-                      </span>
-                      <span className="sm:hidden">
-                        {formatNumber(row.scans)}
-                      </span>
-                    </span>
-                    <PageActions canDelete={row.canDelete} page={row.page} />
-                  </li>
-                ))}
-              </ul>
             ) : (
-              <div className="rounded-lg border">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Page</TableHead>
-                      <TableHead className="hidden sm:table-cell">
-                        Link
-                      </TableHead>
-                      <TableHead className="hidden md:table-cell">
-                        Type
-                      </TableHead>
-                      <TableHead className="text-right">Scans</TableHead>
-                      <TableHead className="hidden sm:table-cell">
-                        Updated
-                      </TableHead>
-                      <TableHead>
-                        <span className="sr-only">Actions</span>
-                      </TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
+              <PagesSelection
+                keyboardShortcuts={settings?.keyboardShortcuts ?? true}
+                pages={rows.map((row) => ({
+                  id: row.page.id,
+                  canDelete: row.canDelete,
+                  codes: row.page.codes.length,
+                }))}
+              >
+                {display.view === "cards" ? (
+                  <ul aria-label="Pages" className="space-y-2">
                     {rows.map((row) => (
-                      <TableRow key={row.page.id}>
-                        <TableCell className="max-w-[240px] max-sm:max-w-[190px]">
-                          <div className="flex min-w-0 items-center gap-2.5">
-                            <span className="bg-muted/50 text-muted-foreground grid size-7 shrink-0 place-items-center rounded-full border">
-                              <row.Icon aria-hidden className="size-3.5" />
-                            </span>
+                      <PageRow
+                        as="li"
+                        className="bg-card flex items-center gap-3 rounded-xl border px-3 py-3 transition-colors sm:px-4"
+                        id={row.page.id}
+                        key={row.page.id}
+                      >
+                        <PageCheckbox
+                          className="max-sm:hidden"
+                          id={row.page.id}
+                          title={row.title}
+                        />
+                        <span className="bg-muted/50 text-muted-foreground grid size-8 shrink-0 place-items-center rounded-full border">
+                          <row.Icon aria-hidden className="size-4" />
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex min-w-0 items-center gap-1.5">
                             <Link
-                              className="truncate font-medium hover:underline"
+                              className="truncate text-sm font-medium hover:underline"
                               href={row.href}
                             >
                               {row.title}
                             </Link>
+                            {row.code && row.code.status !== "active" && (
+                              <Badge variant="outline">
+                                {row.code.status === "archived"
+                                  ? "Archived"
+                                  : "Disabled"}
+                              </Badge>
+                            )}
                           </div>
-                        </TableCell>
-                        <TableCell className="hidden sm:table-cell">
-                          <span className="text-muted-foreground block max-w-[200px] truncate font-mono text-xs">
-                            {row.code
-                              ? row.code.pageUrl.replace(/^https?:\/\//, "")
-                              : "No QR code yet"}
-                          </span>
-                        </TableCell>
-                        <TableCell className="text-muted-foreground hidden md:table-cell">
-                          {row.template?.label ?? row.page.type}
-                        </TableCell>
-                        <TableCell className="text-right tabular-nums">
-                          {formatNumber(row.scans)}
-                        </TableCell>
-                        <TableCell className="text-muted-foreground hidden whitespace-nowrap sm:table-cell">
-                          {formatDate(row.page.updatedAt)}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <PageActions
-                            canDelete={row.canDelete}
-                            page={row.page}
+                          <div className="text-muted-foreground mt-0.5 flex min-w-0 items-center gap-1.5 text-xs">
+                            {row.code ? (
+                              <span className="flex min-w-0 items-center gap-0.5">
+                                <span className="text-foreground/80 truncate font-mono">
+                                  {row.code.pageUrl.replace(/^https?:\/\//, "")}
+                                </span>
+                                <CopyButton
+                                  className="size-6"
+                                  successMessage={{ title: "Page link copied" }}
+                                  textToCopy={row.code.pageUrl}
+                                />
+                              </span>
+                            ) : (
+                              <span>No QR code links here yet</span>
+                            )}
+                            <span className="shrink-0 max-sm:hidden">
+                              · {row.template?.label ?? row.page.type}
+                            </span>
+                          </div>
+                        </div>
+                        <span className="text-muted-foreground hidden shrink-0 text-xs whitespace-nowrap md:inline">
+                          Updated {formatDate(row.page.updatedAt)}
+                        </span>
+                        {row.isForm && (
+                          <Button
+                            asChild
+                            className="hidden h-7 rounded-full px-2.5 text-xs sm:inline-flex"
+                            size="sm"
+                            variant="outline"
+                          >
+                            <Link href={`${row.href}/responses`}>
+                              <MessageText aria-hidden />
+                              Responses
+                            </Link>
+                          </Button>
+                        )}
+                        <span
+                          className="inline-flex h-7 shrink-0 items-center gap-1.5 rounded-full border px-2.5 text-xs font-medium tabular-nums"
+                          title="All-time scans of this page's QR codes"
+                        >
+                          <Chart
+                            aria-hidden
+                            className="text-muted-foreground size-3.5"
                           />
-                        </TableCell>
-                      </TableRow>
+                          <span className="max-sm:hidden">
+                            {scansLabel(row.scans)}
+                          </span>
+                          <span className="sm:hidden">
+                            {formatNumber(row.scans)}
+                          </span>
+                        </span>
+                        <PageActions
+                          canDelete={row.canDelete}
+                          page={row.page}
+                        />
+                      </PageRow>
                     ))}
-                  </TableBody>
-                </Table>
-              </div>
+                  </ul>
+                ) : (
+                  <div className="overflow-hidden rounded-lg border">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <PageCheckboxCell header>
+                            <PagesSelectAll />
+                          </PageCheckboxCell>
+                          <TableHead>Page</TableHead>
+                          <TableHead className="hidden sm:table-cell">
+                            Link
+                          </TableHead>
+                          <TableHead className="hidden md:table-cell">
+                            Type
+                          </TableHead>
+                          <TableHead className="text-right">Scans</TableHead>
+                          <TableHead className="hidden sm:table-cell">
+                            Updated
+                          </TableHead>
+                          <TableHead>
+                            <span className="sr-only">Actions</span>
+                          </TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {rows.map((row) => (
+                          <PageRow as="tr" id={row.page.id} key={row.page.id}>
+                            <PageCheckboxCell>
+                              <PageCheckbox
+                                id={row.page.id}
+                                title={row.title}
+                              />
+                            </PageCheckboxCell>
+                            <TableCell className="max-w-[240px] max-sm:max-w-[190px]">
+                              <div className="flex min-w-0 items-center gap-2.5">
+                                <span className="bg-muted/50 text-muted-foreground grid size-7 shrink-0 place-items-center rounded-full border">
+                                  <row.Icon aria-hidden className="size-3.5" />
+                                </span>
+                                <Link
+                                  className="truncate font-medium hover:underline"
+                                  href={row.href}
+                                >
+                                  {row.title}
+                                </Link>
+                              </div>
+                            </TableCell>
+                            <TableCell className="hidden sm:table-cell">
+                              <span className="text-muted-foreground block max-w-[200px] truncate font-mono text-xs">
+                                {row.code
+                                  ? row.code.pageUrl.replace(/^https?:\/\//, "")
+                                  : "No QR code yet"}
+                              </span>
+                            </TableCell>
+                            <TableCell className="text-muted-foreground hidden md:table-cell">
+                              {row.template?.label ?? row.page.type}
+                            </TableCell>
+                            <TableCell className="text-right tabular-nums">
+                              {formatNumber(row.scans)}
+                            </TableCell>
+                            <TableCell className="text-muted-foreground hidden whitespace-nowrap sm:table-cell">
+                              {formatDate(row.page.updatedAt)}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <PageActions
+                                canDelete={row.canDelete}
+                                page={row.page}
+                              />
+                            </TableCell>
+                          </PageRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                )}
+              </PagesSelection>
             )}
           </div>
         )}
