@@ -12,6 +12,9 @@
 -- Apply it BEFORE deploying the code that registers these plugins: Better
 -- Auth reads user.two_factor_enabled on every sign-in once twoFactor is on.
 --
+-- APPLIED to the shared Neon database on 2026-11-05: dry run in a rolled-back
+-- transaction first, then applied, then run again (no errors, no changes).
+--
 -- Secrets: two_factor.secret and two_factor.backup_codes are encrypted by
 -- the plugin with BETTER_AUTH_SECRET. passkey.public_key is public.
 -- sso_provider.oidc_config holds the IdP client secret (JSON string), so the
