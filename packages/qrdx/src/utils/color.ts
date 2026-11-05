@@ -26,7 +26,11 @@ export function getSolidColor(
   }
 
   // For gradients, return the first stop color as representative
-  if (colorConfig.type === "linear" || colorConfig.type === "radial") {
+  if (
+    colorConfig.type === "linear" ||
+    colorConfig.type === "radial" ||
+    colorConfig.type === "angular"
+  ) {
     return colorConfig.stops[0]?.color || fallback;
   }
 
