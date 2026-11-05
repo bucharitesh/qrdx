@@ -5,12 +5,12 @@ import { ArrowRight2, Clock, DocumentUpload } from "iconsax-reactjs";
 import Link from "next/link";
 import { useWorkspaceHref } from "@/components/workspace-provider";
 import {
-  API_PROVIDER_IDS,
   API_PROVIDERS,
   type ApiProviderId,
   FILE_PROVIDER_IDS,
   FILE_PROVIDERS,
   type FileProviderId,
+  IMPORT_API_PROVIDER_IDS,
   type ProviderId,
   providerName,
 } from "@/lib/migrate/providers";
@@ -83,8 +83,9 @@ export function ProviderStep({
   const inWorkspace = useWorkspaceHref();
   const status = (id: ApiProviderId) =>
     statuses?.find((entry) => entry.id === id);
-  // Providers this deployment doesn't offer (they need setup in production).
-  const apiIds = API_PROVIDER_IDS.filter(
+  // Retired providers (Dub) are never offered; providers this deployment
+  // doesn't offer (they need setup in production) are left out too.
+  const apiIds = IMPORT_API_PROVIDER_IDS.filter(
     (id) => status(id)?.available !== false,
   );
 

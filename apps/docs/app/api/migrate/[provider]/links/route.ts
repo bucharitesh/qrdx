@@ -1,8 +1,8 @@
 import { z } from "zod";
 import { HttpError } from "@/lib/error-response";
 import { explainProviderError } from "@/lib/migrate/adapters";
-import { ImportError } from "@/lib/migrate/importer";
-import { isApiProviderId } from "@/lib/migrate/providers";
+import { ImportError, retiredError } from "@/lib/migrate/importer";
+import { isApiProviderId, isRetiredProvider } from "@/lib/migrate/providers";
 import { deps, migrateScope, respond } from "@/lib/migrate/server/http";
 import { getSource } from "@/lib/migrate/server/sources";
 import { parseWithSchema } from "@/lib/request-guards";
@@ -29,6 +29,8 @@ export function GET(req: Request, context: Context) {
     if (!isApiProviderId(provider)) {
       throw new HttpError(404, "NOT_FOUND", "Unknown provider.");
     }
+    // Dub takes no new imports, so its links aren't listed for one.
+    if (isRetiredProvider(provider)) throw retiredError(provider);
     const scope = await migrateScope(req);
     const query = parseWithSchema(
       querySchema,
