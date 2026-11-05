@@ -154,14 +154,18 @@ export interface FrameStyleContext {
   border: number;
   band: number;
   fontScale: number;
-  /** Label fitted in a row: font from the row height, shrunk to `maxWidth` */
+  /**
+   * Label fitted in a row: font from the row height, shrunk to `maxWidth`.
+   * `field` is the frame text it draws ("text" unless given).
+   */
   fitLabel: (
     text: string,
     centerX: number,
     centerY: number,
     rowHeight: number,
     maxWidth: number,
-    color: string
+    color: string,
+    field?: "text" | "secondaryText"
   ) => FrameLabel | null;
 }
 
@@ -197,7 +201,8 @@ const bannerTopBottom: Layout = (ctx) => {
         band + innerHeight + band / 2,
         band,
         labelWidth,
-        textColor
+        textColor,
+        "secondaryText"
       )
     ),
     squareEdges: true,
@@ -314,7 +319,9 @@ export function arcLabels(
   radius: number,
   fontSize: number,
   where: "top" | "bottom",
-  color: string
+  color: string,
+  /** The frame text the letters draw (FrameLabel.field) */
+  field: string
 ): FrameLabel[] {
   const chars = [...text];
   const spacing = fontSize * 0.08;
@@ -347,6 +354,7 @@ export function arcLabels(
       maxWidth: fontSize * 2,
       color,
       rotate: (angle * 180) / Math.PI + (where === "top" ? 90 : -90),
+      field,
     });
   });
   return labels;
@@ -376,7 +384,8 @@ const circle: Layout = (ctx) => {
         middle,
         fontFor(ctx.text),
         "top",
-        textColor
+        textColor,
+        "text"
       )
     : [];
   const bottom = ctx.secondaryText
@@ -387,7 +396,8 @@ const circle: Layout = (ctx) => {
         middle,
         fontFor(ctx.secondaryText),
         "bottom",
-        textColor
+        textColor,
+        "secondaryText"
       )
     : [];
   const dot = thickness * 0.07;
@@ -845,7 +855,8 @@ const menuCard: Layout = (ctx) => {
         header + size + footer * 0.45,
         footer * 0.8,
         width - 2 * pad,
-        textColor
+        textColor,
+        "secondaryText"
       )
     ),
     squareEdges: false,

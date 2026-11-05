@@ -48,8 +48,10 @@ export function KeyboardShortcutProvider({
  * dialogs, sheets and drawers (Radix and vaul render role="dialog" with
  * data-state="open"), popovers (Radix Popover is a role="dialog" too), menus
  * and listboxes. `#modal-backdrop` is the design system Dialog's overlay.
- * Tooltips (role="tooltip") don't count: hovering a button mustn't turn its
- * shortcut off.
+ * The playground's inline frame text editor counts too (`data-inline-editor`
+ * with data-state="open"), so typing a label or using its menu never fires a
+ * page shortcut. Tooltips (role="tooltip") don't count: hovering a
+ * button mustn't turn its shortcut off.
  */
 export const OPEN_SURFACE_SELECTOR = [
   "#modal-backdrop",
@@ -57,6 +59,7 @@ export const OPEN_SURFACE_SELECTOR = [
   '[role="alertdialog"][data-state="open"]',
   '[role="menu"][data-state="open"]',
   '[role="listbox"][data-state="open"]',
+  '[data-inline-editor][data-state="open"]',
 ].join(", ");
 
 /** A modal dialog, sheet, popover or menu is open (OPEN_SURFACE_SELECTOR). */

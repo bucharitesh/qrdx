@@ -431,7 +431,8 @@ function compileLabel(
       radius * k,
       fontSize,
       side,
-      color
+      color,
+      label.id
     ).map((letter) => ({ ...letter, ...weight }));
   }
   const x = label.box.x * k;
@@ -457,6 +458,7 @@ function compileLabel(
       color,
       ...(align !== "middle" && { align }),
       ...weight,
+      field: label.id,
     },
   ];
 }

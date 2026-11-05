@@ -38,6 +38,7 @@ export {
 export {
   FRAME_FONT_FAMILY,
   FRAME_GAP_RATIO,
+  FRAME_LABEL_ATTRIBUTE,
   type FrameBox,
   type FrameLabel,
   type FrameLayout,
@@ -146,11 +147,13 @@ export async function getQRAsSVGDataUri(props: QRProps) {
 
   // Create the SVG element with all props including templateId
   // Filter out props that aren't valid for QRCodeSVG (like hideLogo, url, etc.)
+  // Exports never carry the preview's frame label markers.
   const {
     hideLogo: _hideLogo,
     url: _url,
     logo: _logo,
     scale: _scale,
+    frameLabelMarkers: _frameLabelMarkers,
     ...validSVGProps
   } = updatedProps as any;
 
