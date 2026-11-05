@@ -96,6 +96,10 @@ export interface CommunityItemDetail extends CommunityItemCard {
   /** Collections and kits: their items, in order */
   entries?: CommunityItemCard[];
   remixedFromLabel: string | null;
+  /** The original's page while it's still in the community */
+  remixedFrom?: { type: CommunityItemType; slug: string } | null;
+  /** Published remixes of this item */
+  remixCount?: number;
   isLikedByMe: boolean;
   isSavedByMe: boolean;
   /** The viewer published it (and may unpublish it) */

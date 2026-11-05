@@ -22,10 +22,11 @@ import {
   COMMUNITY_LICENSE_URL,
 } from "@/lib/community/licence";
 import { usesLibraryMedia } from "@/lib/community/page-template";
-import { getItem, moreFromCreator } from "@/lib/community/queries";
+import { getItem, moreFromCreator, remixesOf } from "@/lib/community/queries";
 import { MIN_GATE_SCORE } from "@/lib/community/scan-samples";
 import {
   type CommunityItemDetail,
+  itemPath,
   TYPE_LABELS,
   TYPE_SEGMENTS,
   typeFromSegment,
@@ -82,9 +83,10 @@ export default async function CommunityItemPage({
   const { type: segment, slug } = await params;
   const item = await loadItem(segment, slug);
   if (!item) notFound();
-  const [more, admin] = await Promise.all([
+  const [more, admin, remixes] = await Promise.all([
     moreFromCreator(item),
     getAdminUser(),
+    item.id && item.remixCount ? remixesOf(item.id) : [],
   ]);
   const typeLabel = TYPE_LABELS[item.type];
   const isDesign = item.type === "frame" || item.type === "theme";
@@ -171,7 +173,20 @@ export default async function CommunityItemPage({
               )}
               {item.remixedFromLabel && (
                 <p className="text-muted-foreground text-xs">
-                  Remix of {item.remixedFromLabel}
+                  Remix of{" "}
+                  {item.remixedFrom ? (
+                    <Link
+                      className="text-foreground underline underline-offset-2"
+                      href={itemPath(
+                        item.remixedFrom.type,
+                        item.remixedFrom.slug,
+                      )}
+                    >
+                      {item.remixedFromLabel}
+                    </Link>
+                  ) : (
+                    item.remixedFromLabel
+                  )}
                 </p>
               )}
             </div>
@@ -249,6 +264,7 @@ export default async function CommunityItemPage({
         </div>
 
         <div className="mt-14 space-y-10">
+          <ItemRow cards={remixes} title="Remixes" />
           <ItemRow
             cards={more}
             href={

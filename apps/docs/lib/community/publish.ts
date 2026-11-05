@@ -9,7 +9,7 @@ import {
   database as db,
 } from "@repo/database";
 import cuid from "cuid";
-import { and, eq, ne } from "drizzle-orm";
+import { and, eq, ne, sql } from "drizzle-orm";
 import { revalidateTag } from "next/cache";
 import type { QRCustomFrame } from "qrdx/types";
 import { COMMUNITY_THEME_TAGS, MAX_TAGS_PER_THEME } from "@/lib/constants";
@@ -34,6 +34,7 @@ import {
 } from "./payloads";
 import { ensurePublishingProfile } from "./profiles";
 import { toPublicStyle } from "./public-style-server";
+import { remixSourceOf } from "./remix";
 import { checkScanGate, gateFailureMessage, type ScanGate } from "./scan-gate";
 import { COMMUNITY_TAG, guarded, guardedRead } from "./store";
 import { cleanText, slugify, textProblem } from "./text";
@@ -143,6 +144,11 @@ export async function insertItem(
     }
 
     const profile = await ensurePublishingProfile(item.userId);
+    // A saved theme copied from a community item: this is a remix of it.
+    const remix =
+      item.sourceKind === "qr_preset" && item.sourceId
+        ? await remixSourceOf(item.sourceId)
+        : null;
     const id = cuid();
     const slug = itemSlug(item.name, id, item.type);
     const now = new Date();
@@ -163,6 +169,9 @@ export async function insertItem(
       scanScore: item.gate?.minScore ?? null,
       scanCheckedAt: item.gate ? now : null,
       isOfficial: profile.official,
+      remixedFromItemId: remix?.itemId ?? null,
+      remixedFromVersion: remix?.version ?? null,
+      remixedFromLabel: remix?.label ?? null,
       sourceKind: item.sourceKind ?? null,
       sourceId: item.sourceId ?? null,
       publishedAt: now,
@@ -202,6 +211,12 @@ export async function insertItem(
       await db.batch([insertItemRow, insertVersion, insertEntries]);
     } else {
       await db.batch([insertItemRow, insertVersion]);
+    }
+    if (remix) {
+      await db
+        .update(communityItem)
+        .set({ remixCount: sql`${communityItem.remixCount} + 1` })
+        .where(eq(communityItem.id, remix.itemId));
     }
     revalidateTag(COMMUNITY_TAG, "max");
     if (item.type === "theme") {
