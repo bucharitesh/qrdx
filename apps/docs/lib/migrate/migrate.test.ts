@@ -6,10 +6,9 @@ import { describe, it } from "node:test";
 import type { DubClient, ShortLinkClient } from "@repo/integrations";
 import { IntegrationApiError } from "@repo/integrations/src/core/http-client";
 import {
-  dubSource,
+  dubUndoSource,
   explainProviderError,
   filterPage,
-  fromDubLink,
   fromShortLink,
   shortLinkSource,
 } from "./adapters";
@@ -18,8 +17,10 @@ import { detectFileProvider, guessFileMapping, linksFromRows } from "./files";
 import {
   type CreateInput,
   type FinishInput,
+  getJob,
   ImportError,
   type ImporterDeps,
+  listJobs,
   type MigrateRepo,
   previewImport,
   runJobChunk,
@@ -49,7 +50,12 @@ import {
   splitShortLink,
 } from "./normalize";
 import { type PlanContext, planImport, slugLookups } from "./plan";
-import { parseProviderParam } from "./providers";
+import {
+  API_PROVIDER_IDS,
+  IMPORT_API_PROVIDER_IDS,
+  isRetiredProvider,
+  parseProviderParam,
+} from "./providers";
 import type {
   CodeRef,
   ImportJob,
@@ -360,24 +366,6 @@ describe("mapping provider links", () => {
     assert.equal(mapped.clicks, 12);
   });
 
-  it("maps Dub links, including tags and clicks the DubLink type omits", () => {
-    const mapped = fromDubLink({
-      id: "link_1",
-      domain: "go.brand.com",
-      key: "Spring1",
-      url: "https://example.com/spring",
-      shortLink: "https://go.brand.com/Spring1",
-      tags: [{ id: "t1", name: "Print", color: "red" }],
-      clicks: 40,
-      createdAt: "2025-01-01T00:00:00.000Z",
-    });
-    assert.ok(mapped);
-    assert.equal(mapped.backHalf, "Spring1");
-    assert.deepEqual(mapped.tags, ["Print"]);
-    assert.equal(mapped.clicks, 40);
-    assert.equal(fromDubLink({ id: 1 }), null);
-  });
-
   it("builds notes with the source, the original date and a marker", () => {
     const notes = buildImportNotes({
       provider: "bitly",
@@ -434,27 +422,27 @@ describe("mapping provider links", () => {
 });
 
 describe("adapters", () => {
-  it("pages Dub by page number and stops on a short page", async () => {
+  it("Dub (retired) only puts destinations back and lists nothing", async () => {
     const calls: unknown[] = [];
     const client = {
-      getLinks: async (params: unknown) => {
-        calls.push(params);
-        return [
-          { id: "link_1", url: "https://a.com", domain: "dub.sh", key: "x" },
-        ];
+      getLinks: async () => {
+        throw new Error("listed Dub links");
+      },
+      updateLink: async (id: string, data: unknown) => {
+        calls.push([id, data]);
+        return {};
       },
     };
-    const source = dubSource(client as unknown as DubClient);
-    const page = await source.listLinks("3", { search: "a" });
-    assert.equal(page.nextCursor, null);
-    assert.equal(page.links[0]?.shortLink, "https://dub.sh/x");
-    assert.deepEqual(calls[0], {
-      page: 3,
-      pageSize: 100,
-      search: "a",
-      domain: undefined,
-      showArchived: false,
-    });
+    const source = dubUndoSource(client as unknown as DubClient);
+    await assert.rejects(
+      source.listLinks(null, {}),
+      /Imports from Dub have ended/,
+    );
+    assert.equal(source.getLink, undefined);
+    await source.updateDestination?.("link_1", "https://example.com/original");
+    assert.deepEqual(calls, [
+      ["link_1", { url: "https://example.com/original" }],
+    ]);
   });
 
   it("maps a hostname filter to the provider's domain id", async () => {
@@ -658,7 +646,7 @@ describe("chunking and resume", () => {
     const fake = fakeRepo({ crashOnFinish: true });
     const deps = depsFor(fake.repo);
     const { job } = await startJob(deps, SCOPE, {
-      provider: "dub",
+      provider: "bitly",
       links: [link(1), link(2), link(3)],
       options: OPTIONS,
     });
@@ -678,13 +666,13 @@ describe("chunking and resume", () => {
     const fake = fakeRepo();
     const deps = depsFor(fake.repo);
     const first = await startJob(deps, SCOPE, {
-      provider: "dub",
+      provider: "bitly",
       links: [link(1), link(2)],
       options: OPTIONS,
     });
     // Another job with the same links runs while the first is unfinished.
     const second = await startJob(deps, SCOPE, {
-      provider: "dub",
+      provider: "bitly",
       links: [link(1), link(2)],
       options: OPTIONS,
     });
@@ -929,6 +917,180 @@ describe("keep printed codes working", () => {
       ]).includes("'=HYPERLINK"),
       true,
     );
+  });
+});
+
+// ─── Dub is a partner: no new imports, old jobs keep history and undo ───────
+
+/** A Dub job as stored before Dub imports ended (read back like the DB's). */
+function storedDubJob(patch: Partial<ImportJob> = {}): ImportJob {
+  const item = (
+    x: string,
+    extra: Partial<ImportJob["items"][number]> = {},
+  ): ImportJob["items"][number] => ({
+    key: `link_${x}`,
+    shortLink: `https://dub.sh/${x}`,
+    url: `https://example.com/${x}`,
+    title: null,
+    tags: [],
+    createdAt: null,
+    slug: null,
+    status: "created",
+    codeId: `code_${x}`,
+    newLink: `https://qrdx.dev/q/${x}`,
+    ...extra,
+  });
+  const [job] = readJobs({
+    v: 1,
+    jobs: [
+      {
+        id: "dubjob",
+        provider: "dub",
+        organizationId: null,
+        createdAt: "2026-10-20T10:00:00.000Z",
+        updatedAt: "2026-10-20T10:05:00.000Z",
+        status: "done",
+        options: { ...OPTIONS, folderName: "Imported from Dub" },
+        cursor: 3,
+        items: [
+          item("a", {
+            redirect: {
+              previousUrl: "https://example.com/a-original",
+              updatedAt: "2026-10-20T10:06:00.000Z",
+            },
+          }),
+          item("b", {
+            redirect: {
+              previousUrl: "https://example.com/b",
+              updatedAt: "2026-10-20T10:06:00.000Z",
+              undoneAt: "2026-10-21T08:00:00.000Z",
+            },
+          }),
+          item("c"),
+        ],
+        ...patch,
+      },
+    ],
+  });
+  assert.ok(job, "a stored Dub job still parses");
+  return job;
+}
+
+function fakeDubClient() {
+  const updates: [string, unknown][] = [];
+  const client = {
+    updateLink: async (id: string, data: unknown) => {
+      updates.push([id, data]);
+      return {};
+    },
+  };
+  return { source: dubUndoSource(client as unknown as DubClient), updates };
+}
+
+const isRetiredError = (error: unknown) =>
+  error instanceof ImportError &&
+  error.status === 410 &&
+  error.code === "PROVIDER_RETIRED" &&
+  /Imports from Dub have ended/.test(error.message);
+
+describe("Dub imports have ended (Dub is a partner)", () => {
+  it("leaves Dub out of the providers for new imports", () => {
+    assert.ok(!(IMPORT_API_PROVIDER_IDS as readonly string[]).includes("dub"));
+    assert.deepEqual(
+      [...IMPORT_API_PROVIDER_IDS],
+      ["bitly", "rebrandly", "short-io"],
+    );
+    // Stored jobs still name it, so it stays a known id.
+    assert.ok((API_PROVIDER_IDS as readonly string[]).includes("dub"));
+    assert.ok(isRetiredProvider("dub"));
+    assert.ok(!isRetiredProvider("bitly"));
+    // ?import=dub opens the picker, not Dub's link list.
+    assert.equal(parseProviderParam("dub"), null);
+    assert.equal(parseProviderParam(" Dub "), null);
+    assert.equal(parseProviderParam("bitly"), "bitly");
+  });
+
+  it("refuses a new Dub preview or import and writes nothing", async () => {
+    const fake = fakeRepo();
+    const deps = depsFor(fake.repo);
+    const request = {
+      provider: "dub" as const,
+      links: [link(1), link(2)],
+      options: OPTIONS,
+    };
+    await assert.rejects(previewImport(deps, SCOPE, request), isRetiredError);
+    await assert.rejects(startJob(deps, SCOPE, request), isRetiredError);
+    assert.deepEqual(fake.jobs(), []);
+    assert.equal(fake.codes.length, 0);
+    assert.equal(fake.calls.create, 0);
+  });
+
+  it("keeps an earlier Dub job in history, with undo and no new re-points", async () => {
+    const fake = fakeRepo();
+    const deps = depsFor(fake.repo);
+    await fake.repo.saveJobs(SCOPE.userId, [storedDubJob()]);
+
+    const [summary] = await listJobs(deps, SCOPE);
+    assert.equal(summary?.provider, "dub");
+    assert.equal(summary?.created, 3);
+    assert.equal(summary?.redirected, 1);
+    assert.equal((await getJob(deps, SCOPE, "dubjob")).items.length, 3);
+
+    // Nothing new to re-point: link c is never offered.
+    const dry = await runRedirects(deps, SCOPE, "dubjob", "dry-run", null);
+    assert.deepEqual(dry.items, []);
+    const { source, updates } = fakeDubClient();
+    await assert.rejects(
+      runRedirects(deps, SCOPE, "dubjob", "apply", source),
+      isRetiredError,
+    );
+    assert.deepEqual(updates, []);
+
+    // Undo puts the live one (a) back; b was undone already.
+    const undo = await runRedirects(deps, SCOPE, "dubjob", "undo", source);
+    assert.deepEqual(updates, [
+      ["link_a", { url: "https://example.com/a-original" }],
+    ]);
+    assert.equal(undo.remaining, 0);
+    assert.equal(undo.job.redirected, 0);
+    assert.equal(undo.job.undone, 2);
+    // The job survives in the store after the undo.
+    assert.equal((await listJobs(deps, SCOPE))[0]?.undone, 2);
+  });
+
+  it("closes an unfinished Dub job without creating codes", async () => {
+    const fake = fakeRepo();
+    const deps = depsFor(fake.repo);
+    const running = storedDubJob({ status: "running", cursor: 0 });
+    running.items = running.items.map((item, index) =>
+      index === 0
+        ? // Created just before a crash: notes not written yet.
+          { ...item, redirect: undefined, unfinished: true }
+        : {
+            ...item,
+            status: "pending",
+            redirect: undefined,
+            codeId: undefined,
+            newLink: undefined,
+          },
+    );
+    await fake.repo.saveJobs(SCOPE.userId, [running]);
+
+    // First the crashed code is finished (notes, folder), as for any job.
+    const first = await runJobChunk(deps, SCOPE, "dubjob");
+    assert.equal(fake.calls.finish, 1);
+    assert.equal(first.done, false);
+    // Then the links still waiting are skipped and the job is done.
+    const second = await runJobChunk(deps, SCOPE, "dubjob");
+    assert.equal(second.done, true);
+    assert.equal(second.job.created, 1);
+    assert.equal(second.job.skipped, 2);
+    assert.deepEqual(
+      second.items.map((item) => item.reason),
+      ["Imports from Dub have ended", "Imports from Dub have ended"],
+    );
+    assert.equal(fake.calls.create, 0);
+    assert.equal(fake.codes.length, 0);
   });
 });
 

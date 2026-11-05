@@ -11,7 +11,6 @@ const LOGOS: Partial<Record<string, string>> = {
   "adobe-express": "/compare/adobe-express.svg",
   "bitly-qr": "/integrations/bitly.svg",
   "canva-qr": "/compare/canva-qr.svg",
-  dub: "/compare/dub.png",
   flowcode: "/compare/flowcode.svg",
   goqr: "/compare/goqr.png",
   hovercode: "/compare/hovercode.svg",

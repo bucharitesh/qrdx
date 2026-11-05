@@ -10,12 +10,12 @@ import { getConnection } from "@/lib/connected-accounts/server";
 import { getIntegrationAvailability } from "@/lib/integration-availability";
 import { isVisible, setupNeeded } from "@/lib/integration-availability-rules";
 import { isIntegrationConfigured } from "@/lib/integration-oauth";
-import { dubSource, shortLinkSource } from "../adapters";
+import { dubUndoSource, shortLinkSource } from "../adapters";
 import { ImportError } from "../importer";
 import {
-  API_PROVIDER_IDS,
   API_PROVIDERS,
   type ApiProviderId,
+  IMPORT_API_PROVIDER_IDS,
 } from "../providers";
 import type { MigrationSource, ProviderStatus } from "../types";
 
@@ -26,8 +26,9 @@ export async function providerStatuses(
 ): Promise<ProviderStatus[]> {
   const registry = getIntegrationRegistry();
   const availability = getIntegrationAvailability();
+  // Retired providers (Dub) aren't offered: their old jobs open from history.
   return Promise.all(
-    API_PROVIDER_IDS.map(async (id): Promise<ProviderStatus> => {
+    IMPORT_API_PROVIDER_IDS.map(async (id): Promise<ProviderStatus> => {
       const slug = API_PROVIDERS[id].integration;
       const definition = registry.get(slug);
       // Production and preview: providers that need setup aren't offered.
@@ -64,7 +65,11 @@ export async function providerStatuses(
   );
 }
 
-/** The user's connected account as a MigrationSource (token stays server-side). */
+/**
+ * The user's connected account as a MigrationSource (token stays
+ * server-side). Dub shares the Dub integration's connection and, retired for
+ * new imports, can only undo earlier re-points.
+ */
 export async function getSource(
   userId: string,
   provider: ApiProviderId,
@@ -82,7 +87,7 @@ export async function getSource(
     );
   }
   if (provider === "dub")
-    return dubSource(createDubClient(connection.accessToken));
+    return dubUndoSource(createDubClient(connection.accessToken));
   return shortLinkSource(
     provider,
     createShortLinkClient(provider, {

@@ -1,12 +1,12 @@
 ---
-title: Move from Bitly, Dub, Rebrandly and others
+title: Move from Bitly, Rebrandly and others
 description: Import your short links and dynamic QR codes into QRdx, keep printed codes working, and keep your branded back-halves.
 icon: Download
 ---
 
 QRdx imports links and dynamic codes from other providers in one go. Open [Dashboard → Codes](/dashboard?to=codes) and click **Import**. Every import has the same three steps: pick what to bring, preview it, import it.
 
-- **Connected accounts:** Dub, Bitly, Rebrandly and Short.io. QRdx lists your links through the provider's API.
+- **Connected accounts:** Bitly, Rebrandly and Short.io. QRdx lists your links through the provider's API.
 - **Export files:** QR Code Generator PRO, Uniqode (Beaconstac), Flowcode, QR TIGER, ME-QR, TinyURL, Hovercode, Scanova, or any CSV with destination URLs.
 
 Nothing changes in your old account during the import itself.
@@ -39,7 +39,6 @@ Plan limits apply as for any new code. Free includes 10 active dynamic codes; if
 
 | Provider | Connect with | List links | Keep printed codes working |
 |---|---|---|---|
-| Dub | Sign in (OAuth) | Yes | Yes, on every Dub plan |
 | Bitly | Sign in, or a generic access token | Yes | Paid Bitly plans only: 5 link redirects a month on Core, 20 on Growth, 110 on Premium |
 | Rebrandly | API key | Yes | Within Rebrandly's monthly destination edits: 10 on Essentials, 50 on Professional, 150 on Growth (none on Free) |
 | Short.io | API key | Yes, one domain at a time | Yes, on every plan |
@@ -62,7 +61,7 @@ On Pro and Business, tick **Keep the original back-halves** in the import previe
 
 - A back-half is kept when it's 3 to 64 letters, digits, `-` or `_` (see [custom back-halves](/docs/dynamic-qr-codes#custom-back-halves)), isn't reserved, and isn't used yet on `qrdx.dev` by any QRdx code<IfAvailable feature="customDomains"> (on your own domain, only by your codes there)</IfAvailable>.
 - Otherwise the code gets a generated back-half, and the preview shows the change with the reason, for example `spring-menu → Ab3xK9q · Another QRdx code already uses this back-half on qrdx.dev`. The import uses exactly the back-half the preview shows.
-- Back-halves are case-sensitive, as at Bitly, Dub and Short.io.
+- Back-halves are case-sensitive, as at Bitly and Short.io.
 
 <Callout type="warn">
 Keep the provider connected until you're sure: undo needs the connection. The old account also has to stay active for its links to keep redirecting.
