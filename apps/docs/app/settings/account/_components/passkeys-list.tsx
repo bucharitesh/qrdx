@@ -3,7 +3,7 @@
 import { authClient } from "@repo/auth/client";
 import { addPasskeyWith } from "@repo/auth/passkey-client";
 import { toast } from "@repo/design-system";
-import { Spinner } from "@repo/design-system/components/icons";
+import { Close, Spinner } from "@repo/design-system/components/icons";
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -17,6 +17,7 @@ import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -44,6 +45,31 @@ import {
   renamePasskey,
 } from "../_lib/passkey-actions";
 import { SettingsSection } from "./settings-section";
+
+// Tap targets of at least 40 px on phones; from `sm` up the settings keep
+// their compact sizes (Button sm / default, Input).
+const TAP_SM = "h-10 sm:h-8";
+const TAP = "h-10 sm:h-9";
+
+/**
+ * The dialogs' close (×) with a 40 px target on phones (the dialog's own is
+ * the 16 px icon), in the same corner.
+ */
+function DialogCloseButton({ disabled }: { disabled?: boolean }) {
+  return (
+    <DialogClose asChild>
+      <Button
+        aria-label="Close"
+        className="text-muted-foreground hover:text-foreground absolute top-1 right-1 size-10 sm:top-2 sm:right-2 sm:size-8"
+        disabled={disabled}
+        size="icon-sm"
+        variant="ghost"
+      >
+        <Close className="size-4" />
+      </Button>
+    </DialogClose>
+  );
+}
 
 type PluginResult<T> =
   | { data: T; error: null }
@@ -141,7 +167,8 @@ function AddPasskeyDialog({
       }}
       open={open}
     >
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md" showCloseButton={false}>
+        <DialogCloseButton disabled={adding} />
         <DialogHeader>
           <DialogTitle>Add a passkey</DialogTitle>
           <DialogDescription className="text-pretty">
@@ -153,10 +180,15 @@ function AddPasskeyDialog({
 
         {mustSignInAgain ? (
           <DialogFooter>
-            <Button onClick={close} type="button" variant="outline">
+            <Button
+              className={TAP}
+              onClick={close}
+              type="button"
+              variant="outline"
+            >
               Cancel
             </Button>
-            <Button onClick={signOutToReauth} type="button">
+            <Button className={TAP} onClick={signOutToReauth} type="button">
               Sign out
             </Button>
           </DialogFooter>
@@ -165,6 +197,7 @@ function AddPasskeyDialog({
             <div className="space-y-2">
               <Label htmlFor={`${id}-name`}>Name</Label>
               <Input
+                className={TAP}
                 aria-describedby={`${id}-hint ${id}-error`}
                 autoComplete="off"
                 disabled={adding}
@@ -190,6 +223,7 @@ function AddPasskeyDialog({
             </p>
             <DialogFooter>
               <Button
+                className={TAP}
                 disabled={adding}
                 onClick={close}
                 type="button"
@@ -197,7 +231,7 @@ function AddPasskeyDialog({
               >
                 Cancel
               </Button>
-              <Button disabled={adding} type="submit">
+              <Button className={TAP} disabled={adding} type="submit">
                 {adding && <Spinner className="animate-spin" />}
                 Continue
               </Button>
@@ -253,7 +287,8 @@ function RenamePasskeyDialog({
       }}
       open={passkey !== null}
     >
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md" showCloseButton={false}>
+        <DialogCloseButton disabled={saving} />
         <DialogHeader>
           <DialogTitle>Rename passkey</DialogTitle>
           <DialogDescription>
@@ -264,6 +299,7 @@ function RenamePasskeyDialog({
           <div className="space-y-2">
             <Label htmlFor={`${id}-name`}>Name</Label>
             <Input
+              className={TAP}
               aria-describedby={`${id}-error`}
               autoComplete="off"
               disabled={saving}
@@ -286,6 +322,7 @@ function RenamePasskeyDialog({
           </p>
           <DialogFooter>
             <Button
+              className={TAP}
               disabled={saving}
               onClick={onClose}
               type="button"
@@ -293,7 +330,11 @@ function RenamePasskeyDialog({
             >
               Cancel
             </Button>
-            <Button disabled={saving || !name.trim()} type="submit">
+            <Button
+              className={TAP}
+              disabled={saving || !name.trim()}
+              type="submit"
+            >
               {saving && <Spinner className="animate-spin" />}
               Save
             </Button>
@@ -344,6 +385,7 @@ export function PasskeysList({
     <SettingsSection
       action={
         <Button
+          className={TAP_SM}
           disabled={!supported}
           onClick={() => setAdding(true)}
           size="sm"
@@ -371,8 +413,10 @@ export function PasskeysList({
           const Icon = passkey.synced ? Cloud : Key;
           const details = [passkey.added, passkey.provider].filter(Boolean);
           return (
+            // On phones the actions get their own line under the details, so
+            // the name and date aren't squeezed into a narrow column.
             <li
-              className="flex items-center gap-3 px-5 py-4 sm:gap-4 sm:px-6"
+              className="flex flex-wrap items-center gap-x-3 gap-y-1 px-5 py-4 sm:flex-nowrap sm:gap-4 sm:px-6"
               key={passkey.id}
             >
               <span className="bg-muted/60 flex size-9 shrink-0 items-center justify-center rounded-full border">
@@ -391,8 +435,9 @@ export function PasskeysList({
                   {details.join(" · ")}
                 </p>
               </div>
-              <div className="flex shrink-0 gap-1">
+              <div className="flex w-full shrink-0 gap-1 pl-9 sm:w-auto sm:pl-0">
                 <Button
+                  className={TAP_SM}
                   disabled={busy}
                   onClick={() => setRenaming(passkey)}
                   size="sm"
@@ -401,6 +446,7 @@ export function PasskeysList({
                   Rename
                 </Button>
                 <Button
+                  className={TAP_SM}
                   disabled={busy}
                   onClick={() => setRemoving(passkey)}
                   size="sm"
@@ -439,8 +485,15 @@ export function PasskeysList({
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={busy}>Cancel</AlertDialogCancel>
-            <Button disabled={busy} onClick={confirmRemove} variant="outline">
+            <AlertDialogCancel className={TAP} disabled={busy}>
+              Cancel
+            </AlertDialogCancel>
+            <Button
+              className={TAP}
+              disabled={busy}
+              onClick={confirmRemove}
+              variant="outline"
+            >
               {busy && <Spinner className="animate-spin" />}
               Remove
             </Button>
