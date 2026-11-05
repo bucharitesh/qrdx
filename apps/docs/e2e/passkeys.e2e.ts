@@ -29,7 +29,14 @@ import { execSync } from "node:child_process";
 import { createHmac } from "node:crypto";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { findChrome, launch, serverIsUp, sleep } from "./cdp.mjs";
+import {
+  cspEnforced,
+  findChrome,
+  launch,
+  recordCspViolations,
+  serverIsUp,
+  sleep,
+} from "./cdp.mjs";
 
 const BASE_URL = (process.env.E2E_BASE_URL ?? "http://localhost:3000").replace(
   /\/$/,
@@ -406,6 +413,28 @@ async function main() {
         },
       },
     );
+
+    // CSP violations, checked at the end where the server enforces a CSP
+    // (CSP_DEV=1 or production). E2E_CSP_SELFTEST=1 first proves the
+    // recorder catches one.
+    const csp = await recordCspViolations(page);
+    const enforced = await cspEnforced(BASE_URL);
+    if (process.env.E2E_CSP_SELFTEST === "1") {
+      if (enforced) {
+        await step(
+          "CSP self-test: a script from evil.example.com is caught",
+          async () => {
+            const { caught, lines } = await csp.selfTest(BASE_URL);
+            for (const line of lines) console.log(`      ${line}`);
+            return caught ? true : "the recorder saw nothing";
+          },
+        );
+      } else {
+        console.log(
+          "  - CSP self-test skipped: CSP not enforced on this server",
+        );
+      }
+    }
 
     // The authenticator holding the passkey (swapped in the UV check).
     let authenticatorId: string = first;
@@ -1067,6 +1096,17 @@ async function main() {
         }
         return bad.length === 0 ? true : bad.join("\n        ");
       });
+    }
+
+    const cspResult = csp.result(enforced);
+    if (cspResult.skipped) {
+      console.log(`  - no CSP violations: skipped (${cspResult.note})`);
+    } else {
+      await step("no CSP violations", async () =>
+        cspResult.ok
+          ? true
+          : `${cspResult.lines.length}:\n        ${cspResult.lines.join("\n        ")}`,
+      );
     }
 
     // An error boundary catching a section's render error still lets the
