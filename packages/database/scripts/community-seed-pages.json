@@ -60,14 +60,14 @@
                     {
                       "id": "c37290dfb90f",
                       "label": "Link",
-                      "url": "https://example.com/book",
+                      "url": "https://example.com",
                       "description": "",
                       "featured": false
                     },
                     {
                       "id": "13e5bd1a5eee",
                       "label": "Link",
-                      "url": "https://example.com/newsletter",
+                      "url": "https://example.com",
                       "description": "A short description.",
                       "featured": false
                     },
@@ -93,28 +93,28 @@
                     {
                       "id": "95c08db3c27b",
                       "label": "Link",
-                      "url": "https://example.com/presets/alpine",
+                      "url": "https://example.com",
                       "description": "A short description.",
                       "featured": false
                     },
                     {
                       "id": "deb63c614606",
                       "label": "Link",
-                      "url": "https://example.com/presets/valley",
+                      "url": "https://example.com",
                       "description": "A short description.",
                       "featured": false
                     },
                     {
                       "id": "775d09d84e88",
                       "label": "Link",
-                      "url": "https://example.com/presets/coast",
+                      "url": "https://example.com",
                       "description": "A short description.",
                       "featured": false
                     },
                     {
                       "id": "6ddcb91ac647",
                       "label": "Link",
-                      "url": "https://example.com/presets/dusk",
+                      "url": "https://example.com",
                       "description": "A short description.",
                       "featured": false
                     }
@@ -237,28 +237,28 @@
                     {
                       "id": "d91a9ba58080",
                       "label": "Link",
-                      "url": "https://example.com/tickets/brooklyn",
+                      "url": "https://example.com",
                       "description": "A short description.",
                       "featured": false
                     },
                     {
                       "id": "290df13b5072",
                       "label": "Link",
-                      "url": "https://example.com/tickets/philadelphia",
+                      "url": "https://example.com",
                       "description": "A short description.",
                       "featured": false
                     },
                     {
                       "id": "03153504951f",
                       "label": "Link",
-                      "url": "https://example.com/tickets/boston",
+                      "url": "https://example.com",
                       "description": "A short description.",
                       "featured": false
                     },
                     {
                       "id": "6acec0813547",
                       "label": "Link",
-                      "url": "https://example.com/tickets/montreal",
+                      "url": "https://example.com",
                       "description": "A short description.",
                       "featured": false
                     }
@@ -357,21 +357,21 @@
                     {
                       "id": "ecafa5824963",
                       "label": "Link",
-                      "url": "https://example.com/work",
+                      "url": "https://example.com",
                       "description": "",
                       "featured": false
                     },
                     {
                       "id": "62ca0784ca57",
                       "label": "Link",
-                      "url": "https://example.com/journal",
+                      "url": "https://example.com",
                       "description": "",
                       "featured": false
                     },
                     {
                       "id": "3f75c457b859",
                       "label": "Link",
-                      "url": "https://example.com/call",
+                      "url": "https://example.com",
                       "description": "A short description.",
                       "featured": false
                     },
@@ -486,7 +486,7 @@
                     {
                       "id": "e7d662a0c530",
                       "label": "Link",
-                      "url": "https://example.com/guest",
+                      "url": "https://example.com",
                       "description": "A short description.",
                       "featured": false
                     }
@@ -570,28 +570,28 @@
                     {
                       "id": "82ec846b0319",
                       "label": "Link",
-                      "url": "https://example.com/shop/rangefinder",
+                      "url": "https://example.com",
                       "description": "A short description.",
                       "featured": false
                     },
                     {
                       "id": "422b7c9bc416",
                       "label": "Link",
-                      "url": "https://example.com/shop/slr-kit",
+                      "url": "https://example.com",
                       "description": "A short description.",
                       "featured": false
                     },
                     {
                       "id": "176747f48226",
                       "label": "Link",
-                      "url": "https://example.com/shop/black-slr",
+                      "url": "https://example.com",
                       "description": "A short description.",
                       "featured": false
                     },
                     {
                       "id": "ff5a6ccde919",
                       "label": "Link",
-                      "url": "https://example.com/shop/tlr",
+                      "url": "https://example.com",
                       "description": "A short description.",
                       "featured": false
                     }
@@ -610,21 +610,21 @@
                     {
                       "id": "609a1fc80af9",
                       "label": "Link",
-                      "url": "https://example.com/shop",
+                      "url": "https://example.com",
                       "description": "",
                       "featured": true
                     },
                     {
                       "id": "2029f2e4dfe0",
                       "label": "Link",
-                      "url": "https://example.com/sell",
+                      "url": "https://example.com",
                       "description": "",
                       "featured": false
                     },
                     {
                       "id": "bb3f90e08670",
                       "label": "Link",
-                      "url": "https://example.com/repairs",
+                      "url": "https://example.com",
                       "description": "",
                       "featured": false
                     }
@@ -700,7 +700,7 @@
                 "type": "button",
                 "props": {
                   "label": "Button",
-                  "url": "https://example.com/order",
+                  "url": "https://example.com",
                   "style": "filled",
                   "note": "A note"
                 }
@@ -805,7 +805,7 @@
                     {
                       "id": "46557be7849b",
                       "label": "Link",
-                      "url": "https://example.com/veg-box",
+                      "url": "https://example.com",
                       "description": "A short description.",
                       "featured": false
                     },
@@ -892,7 +892,7 @@
                 "type": "button",
                 "props": {
                   "label": "Button",
-                  "url": "https://example.com/book",
+                  "url": "https://example.com",
                   "style": "filled",
                   "note": ""
                 }
@@ -906,28 +906,28 @@
                     {
                       "id": "fd2c6df67a99",
                       "label": "Link",
-                      "url": "https://example.com/services/cut",
+                      "url": "https://example.com",
                       "description": "A short description.",
                       "featured": false
                     },
                     {
                       "id": "69ae784284df",
                       "label": "Link",
-                      "url": "https://example.com/services/colour",
+                      "url": "https://example.com",
                       "description": "A short description.",
                       "featured": false
                     },
                     {
                       "id": "0483b10a9448",
                       "label": "Link",
-                      "url": "https://example.com/services/balayage",
+                      "url": "https://example.com",
                       "description": "A short description.",
                       "featured": false
                     },
                     {
                       "id": "2e75078604b1",
                       "label": "Link",
-                      "url": "https://example.com/gift-cards",
+                      "url": "https://example.com",
                       "description": "A short description.",
                       "featured": false
                     }
@@ -1090,7 +1090,7 @@
                 "type": "button",
                 "props": {
                   "label": "Button",
-                  "url": "https://example.com/consultation",
+                  "url": "https://example.com",
                   "style": "filled",
                   "note": "A note"
                 }
@@ -1104,21 +1104,21 @@
                     {
                       "id": "8aa3a7503072",
                       "label": "Link",
-                      "url": "https://example.com/bookkeeping",
+                      "url": "https://example.com",
                       "description": "A short description.",
                       "featured": false
                     },
                     {
                       "id": "b3f3c063704b",
                       "label": "Link",
-                      "url": "https://example.com/tax",
+                      "url": "https://example.com",
                       "description": "A short description.",
                       "featured": false
                     },
                     {
                       "id": "3cd08f8d6658",
                       "label": "Link",
-                      "url": "https://example.com/payroll",
+                      "url": "https://example.com",
                       "description": "A short description.",
                       "featured": false
                     }
@@ -1220,21 +1220,21 @@
                     {
                       "id": "4121c5208ed0",
                       "label": "Link",
-                      "url": "https://example.com/order",
+                      "url": "https://example.com",
                       "description": "A short description.",
                       "featured": true
                     },
                     {
                       "id": "9270e91f4155",
                       "label": "Link",
-                      "url": "https://example.com/subscription",
+                      "url": "https://example.com",
                       "description": "A short description.",
                       "featured": false
                     },
                     {
                       "id": "e0152fb79cdb",
                       "label": "Link",
-                      "url": "https://example.com/weddings",
+                      "url": "https://example.com",
                       "description": "",
                       "featured": false
                     }
@@ -1514,14 +1514,14 @@
                     {
                       "id": "56b87efb910f",
                       "label": "Link",
-                      "url": "https://example.com/work/onboarding",
+                      "url": "https://example.com",
                       "description": "A short description.",
                       "featured": false
                     },
                     {
                       "id": "40efcb75c1ff",
                       "label": "Link",
-                      "url": "https://example.com/work/design-system",
+                      "url": "https://example.com",
                       "description": "A short description.",
                       "featured": false
                     }
@@ -1634,14 +1634,14 @@
                     {
                       "id": "c583f96086f4",
                       "label": "Link",
-                      "url": "https://example.com/listings/townhouse",
+                      "url": "https://example.com",
                       "description": "A short description.",
                       "featured": false
                     },
                     {
                       "id": "27a04854deaa",
                       "label": "Link",
-                      "url": "https://example.com/listings/two-bed",
+                      "url": "https://example.com",
                       "description": "A short description.",
                       "featured": false
                     }
@@ -1656,7 +1656,7 @@
                 "type": "button",
                 "props": {
                   "label": "Button",
-                  "url": "https://example.com/valuation",
+                  "url": "https://example.com",
                   "style": "outline",
                   "note": ""
                 }
@@ -1964,7 +1964,7 @@
                 "type": "button",
                 "props": {
                   "label": "Button",
-                  "url": "https://example.com/reservations",
+                  "url": "https://example.com",
                   "style": "filled",
                   "note": "A note"
                 }
@@ -2730,7 +2730,7 @@
                   "redeemable": false,
                   "cta": {
                     "label": "Link",
-                    "url": "https://example.com/shop"
+                    "url": "https://example.com"
                   }
                 }
               },
@@ -2969,14 +2969,14 @@
                     {
                       "id": "0c972a656077",
                       "label": "Link",
-                      "url": "https://example.com/stores",
+                      "url": "https://example.com",
                       "description": "",
                       "featured": false
                     },
                     {
                       "id": "38adcece64b9",
                       "label": "Link",
-                      "url": "https://example.com/account",
+                      "url": "https://example.com",
                       "description": "",
                       "featured": false
                     }
@@ -3051,7 +3051,7 @@
                   "organizerUrl": "",
                   "cta": {
                     "label": "Link",
-                    "url": "https://example.com/rsvp"
+                    "url": "https://example.com"
                   },
                   "showCalendar": true
                 }
@@ -3135,7 +3135,7 @@
                   "organizerUrl": "",
                   "cta": {
                     "label": "Link",
-                    "url": "https://example.com/tickets"
+                    "url": "https://example.com"
                   },
                   "showCalendar": true
                 }
@@ -3149,28 +3149,28 @@
                     {
                       "id": "6b707205eb20",
                       "label": "Link",
-                      "url": "https://example.com/agenda",
+                      "url": "https://example.com",
                       "description": "",
                       "featured": false
                     },
                     {
                       "id": "77163c013073",
                       "label": "Link",
-                      "url": "https://example.com/speakers",
+                      "url": "https://example.com",
                       "description": "A short description.",
                       "featured": false
                     },
                     {
                       "id": "5dd71d774c3f",
                       "label": "Link",
-                      "url": "https://example.com/workshops",
+                      "url": "https://example.com",
                       "description": "",
                       "featured": false
                     },
                     {
                       "id": "27f67aa35a29",
                       "label": "Link",
-                      "url": "https://example.com/travel",
+                      "url": "https://example.com",
                       "description": "A short description.",
                       "featured": false
                     }
@@ -3242,13 +3242,13 @@
                   "timeZone": "UTC",
                   "venue": "",
                   "address": "",
-                  "onlineUrl": "https://example.com/live",
+                  "onlineUrl": "https://example.com",
                   "organizer": "Organizer",
                   "organizerEmail": "",
                   "organizerUrl": "",
                   "cta": {
                     "label": "Link",
-                    "url": "https://example.com/register"
+                    "url": "https://example.com"
                   },
                   "showCalendar": true
                 }
@@ -3273,7 +3273,7 @@
                     {
                       "id": "b5d5e7c47cca",
                       "label": "Link",
-                      "url": "https://example.com/recording",
+                      "url": "https://example.com",
                       "description": "",
                       "featured": false
                     }
@@ -3467,7 +3467,7 @@
                   "description": "A short description.",
                   "appStoreUrl": "https://apps.apple.com/",
                   "playStoreUrl": "https://play.google.com/store/apps",
-                  "webUrl": "https://example.com/app",
+                  "webUrl": "https://example.com",
                   "webLabel": "Text"
                 }
               },
@@ -3641,21 +3641,21 @@
                     {
                       "id": "a4f2bfd499b4",
                       "label": "Link",
-                      "url": "https://example.com/sleep",
+                      "url": "https://example.com",
                       "description": "A short description.",
                       "featured": false
                     },
                     {
                       "id": "fba6bf31ffdf",
                       "label": "Link",
-                      "url": "https://example.com/breathe",
+                      "url": "https://example.com",
                       "description": "A short description.",
                       "featured": false
                     },
                     {
                       "id": "64aa7c168575",
                       "label": "Link",
-                      "url": "https://example.com/focus",
+                      "url": "https://example.com",
                       "description": "A short description.",
                       "featured": false
                     }
@@ -4000,7 +4000,7 @@
                 "type": "button",
                 "props": {
                   "label": "Button",
-                  "url": "https://example.com/shop",
+                  "url": "https://example.com",
                   "style": "filled",
                   "note": ""
                 }
@@ -4078,7 +4078,7 @@
                     {
                       "id": "92453855b2a7",
                       "label": "Link",
-                      "url": "https://example.com/prints",
+                      "url": "https://example.com",
                       "description": "",
                       "featured": false
                     }
@@ -4172,21 +4172,21 @@
                     {
                       "id": "62567774f5cc",
                       "label": "Link",
-                      "url": "https://example.com/aero-2#battery",
+                      "url": "https://example.com",
                       "description": "A short description.",
                       "featured": false
                     },
                     {
                       "id": "5f9350a9201a",
                       "label": "Link",
-                      "url": "https://example.com/aero-2#anc",
+                      "url": "https://example.com",
                       "description": "",
                       "featured": false
                     },
                     {
                       "id": "43acd3887957",
                       "label": "Link",
-                      "url": "https://example.com/aero-2/specs",
+                      "url": "https://example.com",
                       "description": "",
                       "featured": false
                     }
@@ -4201,7 +4201,7 @@
                 "type": "button",
                 "props": {
                   "label": "Button",
-                  "url": "https://example.com/shop",
+                  "url": "https://example.com",
                   "style": "filled",
                   "note": "A note"
                 }
@@ -4274,7 +4274,7 @@
                 "type": "button",
                 "props": {
                   "label": "Button",
-                  "url": "https://example.com/rsvp",
+                  "url": "https://example.com",
                   "style": "filled",
                   "note": ""
                 }

@@ -44,6 +44,7 @@ import { textProblem } from "./text";
 export const PAGE_TEMPLATE_MAX_LENGTH = 256_000;
 
 export const SAMPLE_LINK = "https://example.com";
+const SAMPLE_HOST = new URL(SAMPLE_LINK).hostname;
 export const SAMPLE_EMAIL = "hello@example.com";
 export const SAMPLE_PHONE = "+1 555 0100";
 const SAMPLE_ADDRESS = {
@@ -261,7 +262,16 @@ class Scrubber {
     } catch {
       return null;
     }
-    if (value.startsWith(SAMPLE_LINK)) return value;
+    // Already the sample address: kept as the bare sample and not counted.
+    // Compared by host, never by prefix: "https://example.com.janedoe.de" and
+    // "https://example.com@janedoe.de" are someone's own sites. A path is
+    // dropped too, since it could carry a name.
+    if (
+      (url.protocol === "https:" || url.protocol === "http:") &&
+      url.hostname === SAMPLE_HOST
+    ) {
+      return SAMPLE_LINK;
+    }
     if (url.protocol === "mailto:") {
       this.report.emails++;
       return `mailto:${SAMPLE_EMAIL}`;
