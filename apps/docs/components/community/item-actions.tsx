@@ -26,6 +26,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import {
   copyCommunityItem,
+  copyCommunityKit,
   copyCommunityTemplate,
   toggleCommunityLike,
   toggleCommunitySave,
@@ -80,20 +81,31 @@ export function ItemActions({
   >(null);
   const stored = item.id !== null;
   const copyable = item.type === "frame" || item.type === "theme";
-  const template = item.type === "page-template";
+  const template = item.type === "page-template" || item.type === "kit";
 
   // A page template becomes a draft page in the open workspace.
   const copyTemplate = async () => {
     if (!checkValidSession("signin")) return;
     setBusy("template");
-    const result = await copyCommunityTemplate({ slug: item.slug });
+    const result =
+      item.type === "kit"
+        ? await copyCommunityKit({ slug: item.slug })
+        : await copyCommunityTemplate({ slug: item.slug });
     setBusy(null);
     if (!result.ok) {
       toast.error(result.message);
       return;
     }
     soundEvent("success");
-    toast.success(`"${result.data.name}" is in your pages as a draft.`);
+    const look = "themeName" in result.data ? result.data.themeName : null;
+    const refused =
+      "themeRefused" in result.data ? result.data.themeRefused : null;
+    toast.success(
+      look
+        ? `"${result.data.name}" is in your pages as a draft, and its look in your themes.`
+        : `"${result.data.name}" is in your pages as a draft.`,
+      typeof refused === "string" ? { description: refused } : undefined,
+    );
     router.push(
       inWorkspace(`/pages/${encodeURIComponent(result.data.pageId)}`),
     );
@@ -212,7 +224,7 @@ export function ItemActions({
           ) : (
             <DocumentCopy aria-hidden className="size-4" />
           )}
-          Use template
+          {item.type === "kit" ? "Use kit" : "Use template"}
         </Button>
       )}
       <div className="flex flex-wrap gap-2">

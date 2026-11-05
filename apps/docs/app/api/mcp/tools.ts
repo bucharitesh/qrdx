@@ -372,9 +372,9 @@ async function generateQrCode(input: GenerateInput, ctx: ToolContext) {
 
 const searchInput = z.object({
   type: z
-    .enum(["frame", "theme", "collection", "page-template"])
+    .enum(["frame", "theme", "collection", "page-template", "kit"])
     .optional()
-    .describe("Only frames, themes, collections or page templates"),
+    .describe("Only frames, themes, collections, page templates or kits"),
   q: z
     .string()
     .max(100)
@@ -553,7 +553,7 @@ export function registerQrTools(server: McpServer) {
     "search_community",
     {
       title: "Search the QRdx community",
-      description: `Find published community frames, themes, collections and page templates (free under CC0), most popular first; the official @qrdx frames lead the frames. Returns each item's id, name, description, creator, tags and counts. Pass a frame or theme id to get_community_item for its style, or as community_item to design_qr or item to generate_qr_code (page templates are hosted pages, used from the QRdx community site). ${UNTRUSTED_NOTICE}`,
+      description: `Find published community frames, themes, collections, page templates and kits (free under CC0), most popular first; the official @qrdx frames lead the frames. Returns each item's id, name, description, creator, tags and counts. Pass a frame or theme id to get_community_item for its style, or as community_item to design_qr or item to generate_qr_code (page templates and kits hold hosted pages, used from the QRdx community site). ${UNTRUSTED_NOTICE}`,
       inputSchema: searchInput,
       annotations: { ...readOnly, title: "Search the QRdx community" },
     },

@@ -67,6 +67,13 @@ export const hasTemplates = unstable_cache(
   { revalidate: 60, tags: [COMMUNITY_TAG] },
 );
 
+/** Whether any kit is published (for the Kits tab). */
+export const hasKits = unstable_cache(
+  async () => (await listItems({ type: "kit", limit: 1 })).length > 0,
+  ["community-has-kits"],
+  { revalidate: 60, tags: [COMMUNITY_TAG] },
+);
+
 /**
  * The scan gate for an item page. Published versions never change, so the
  * result for a design is cached for good (the design is the cache key).

@@ -6,7 +6,8 @@ export type CommunityTab =
   | "frames"
   | "themes"
   | "collections"
-  | "templates";
+  | "templates"
+  | "kits";
 
 const TABS: { id: CommunityTab; label: string; href: string }[] = [
   { id: "home", label: "Overview", href: "/community" },
@@ -14,6 +15,7 @@ const TABS: { id: CommunityTab; label: string; href: string }[] = [
   { id: "themes", label: "Themes", href: "/community/themes" },
   { id: "collections", label: "Collections", href: "/community/collections" },
   { id: "templates", label: "Page templates", href: "/community/templates" },
+  { id: "kits", label: "Kits", href: "/community/kits" },
 ];
 
 /** The community's type tabs (links, so every view has a URL). */
@@ -21,11 +23,14 @@ export function CommunityTabs({
   active,
   showCollections = true,
   showTemplates = false,
+  showKits = false,
 }: {
   active: CommunityTab;
   showCollections?: boolean;
   /** Shown once a page template is published (or on its own page) */
   showTemplates?: boolean;
+  /** Shown once a kit is published (or on its own page) */
+  showKits?: boolean;
 }) {
   return (
     <nav aria-label="Community" className="border-b">
@@ -33,7 +38,10 @@ export function CommunityTabs({
         {TABS.filter(
           (tab) =>
             (showCollections || tab.id !== "collections") &&
-            (showTemplates || active === "templates" || tab.id !== "templates"),
+            (showTemplates ||
+              active === "templates" ||
+              tab.id !== "templates") &&
+            (showKits || active === "kits" || tab.id !== "kits"),
         ).map((tab) => (
           <Link
             aria-current={tab.id === active ? "page" : undefined}

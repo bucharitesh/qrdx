@@ -33,4 +33,12 @@ export const COPY = {
     intro:
       "Hosted pages people shared as templates, with their own details taken out. Use one and it's copied into your workspace as a draft page.",
   },
+  kit: {
+    heading: "Kits",
+    title: "QR code and page kits",
+    description:
+      "A hosted page template with the QR code look that goes with it, shared by the QRdx community. Free under CC0.",
+    intro:
+      "A page template and the look it goes with. Use one and you get the page as a draft and the look as a saved theme.",
+  },
 } as const;

@@ -347,6 +347,7 @@ export const COMMUNITY_ITEM_TYPES = [
   "theme",
   "collection",
   "page-template",
+  "kit",
 ] as const;
 
 /** A public creator: a person (handle opt-in) or the official QRdx profile. */

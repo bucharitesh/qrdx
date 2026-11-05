@@ -116,6 +116,18 @@ export default async function CommunityItemPage({
           <div className="min-w-0">
             {item.type === "collection" ? (
               <ItemGrid cards={item.entries ?? []} />
+            ) : item.type === "kit" ? (
+              <div className="grid grid-cols-2 items-start gap-4">
+                <TryIt style={item.preview} />
+                {page && (
+                  <PhoneFrame className="w-full">
+                    <TemplatePreview
+                      className="aspect-[9/16] w-full"
+                      content={page.content}
+                    />
+                  </PhoneFrame>
+                )}
+              </div>
             ) : page ? (
               <PhoneFrame className="mx-auto w-full max-w-[340px]">
                 <TemplatePreview
@@ -173,7 +185,7 @@ export default async function CommunityItemPage({
             )}
 
             <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm">
-              {page && (
+              {page && item.type === "page-template" && (
                 <>
                   <dt className="text-muted-foreground">Page type</dt>
                   <dd>{getTemplate(page.type)?.label ?? page.type}</dd>
@@ -246,14 +258,18 @@ export default async function CommunityItemPage({
             }
             title={`More from ${item.creator.displayName}`}
           />
+          {item.type === "kit" && (
+            <ItemRow cards={item.entries ?? []} title="In this kit" />
+          )}
           {page && (
             <section className="bg-muted/30 rounded-xl border p-5 text-sm">
               <h2 className="font-semibold">How to use it</h2>
               <ol className="text-muted-foreground mt-2 list-decimal space-y-1 pl-5">
-                <li>Select Use template.</li>
+                <li>Select Use {item.type === "kit" ? "kit" : "template"}.</li>
                 <li>
-                  It&apos;s copied into your workspace as a draft page. Put in
-                  your own links, details and photos.
+                  {item.type === "kit"
+                    ? "The page is copied into your workspace as a draft, and the look as a saved theme. Put in your own links, details and photos."
+                    : "It's copied into your workspace as a draft page. Put in your own links, details and photos."}
                 </li>
                 <li>Create its QR code to put the page live.</li>
               </ol>

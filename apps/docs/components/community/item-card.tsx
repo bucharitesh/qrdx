@@ -60,6 +60,21 @@ export function ItemCard({
               ))
             )}
           </div>
+        ) : card.type === "kit" ? (
+          // The look and the page, side by side.
+          <div className="absolute inset-0 flex items-start justify-center gap-3 px-5 pt-4">
+            <div className="mt-6 aspect-square w-[38%] rounded-lg bg-white p-2 shadow-sm ring-1 ring-black/5">
+              <DesignQr className="size-full" style={card.preview} />
+            </div>
+            <div className="aspect-[9/16] w-[36%] overflow-hidden rounded-t-xl bg-white shadow-sm ring-1 ring-black/5">
+              {card.page ? (
+                <TemplatePreview
+                  className="size-full"
+                  content={card.page.content}
+                />
+              ) : null}
+            </div>
+          </div>
         ) : card.type === "page-template" ? (
           // The top of the page on a phone-sized screen, cropped by the box.
           <div className="absolute top-4 left-1/2 aspect-[9/16] w-[46%] -translate-x-1/2 overflow-hidden rounded-t-xl bg-white shadow-sm ring-1 ring-black/5 transition-transform duration-300 group-hover:-translate-y-1">

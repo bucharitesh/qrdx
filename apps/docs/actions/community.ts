@@ -12,9 +12,11 @@ import { z } from "zod";
 import { getPageForEdit } from "@/app/dashboard/pages/_lib/landing-pages";
 import { findThemeById } from "@/app/dashboard/themes/_lib/queries";
 import { CHAT_DRAFT_SOURCE } from "@/lib/ai/agent/community";
+import { publishCollection, publishKit } from "@/lib/community/bundles";
 import {
   CopyRefusedError,
   copyItemToWorkspace,
+  copyKitToWorkspace,
   copyTemplateToWorkspace,
 } from "@/lib/community/copies";
 import { scrubPageContent, scrubSummary } from "@/lib/community/page-template";
@@ -529,6 +531,117 @@ export async function copyCommunityTemplate(ref: {
     };
   } catch (error) {
     return failure(error, "copyCommunityTemplate");
+  }
+}
+
+// ── Collections and kits ───────────────────────────────────────────────────
+
+const bundleDetailsSchema = z.object({
+  name: z.string().max(200),
+  description: z.string().max(2000).optional(),
+  acceptLicense: z.boolean(),
+});
+
+const publishCollectionSchema = bundleDetailsSchema.extend({
+  itemIds: z.array(z.string().min(1).max(64)).max(60),
+});
+
+/** Publishes a collection of published items (2 to 48, in order). */
+export async function publishCommunityCollection(
+  input: z.input<typeof publishCollectionSchema>,
+): Promise<CommunityResult<{ href: string }>> {
+  try {
+    const userId = await getCurrentUserId();
+    const parsed = publishCollectionSchema.safeParse(input);
+    if (!parsed.success) return fail("VALIDATION_ERROR", "Check the details.");
+    if (parsed.data.acceptLicense !== true) {
+      return fail("LICENSE_REQUIRED", "Confirm the CC0 licence to publish.");
+    }
+    if (await limited(publishLimiter, `community-publish:${userId}`)) {
+      return fail(
+        "RATE_LIMITED",
+        "You've published a lot today. Try again tomorrow.",
+      );
+    }
+    const item = await publishCollection({
+      userId,
+      itemIds: parsed.data.itemIds,
+      details: {
+        name: parsed.data.name,
+        description: parsed.data.description,
+      },
+    });
+    return { ok: true, data: { href: itemPath(item.type, item.slug) } };
+  } catch (error) {
+    return failure(error, "publishCommunityCollection");
+  }
+}
+
+const publishKitSchema = bundleDetailsSchema.extend({
+  page: z.string().min(1).max(64),
+  theme: z.string().min(1).max(64).nullish(),
+  frame: z.string().min(1).max(64).nullish(),
+});
+
+/** Publishes a kit: a page template with a theme and/or a frame. */
+export async function publishCommunityKit(
+  input: z.input<typeof publishKitSchema>,
+): Promise<CommunityResult<{ href: string }>> {
+  try {
+    const userId = await getCurrentUserId();
+    const parsed = publishKitSchema.safeParse(input);
+    if (!parsed.success) return fail("VALIDATION_ERROR", "Check the details.");
+    if (parsed.data.acceptLicense !== true) {
+      return fail("LICENSE_REQUIRED", "Confirm the CC0 licence to publish.");
+    }
+    if (await limited(publishLimiter, `community-publish:${userId}`)) {
+      return fail(
+        "RATE_LIMITED",
+        "You've published a lot today. Try again tomorrow.",
+      );
+    }
+    const item = await publishKit({
+      userId,
+      parts: {
+        page: parsed.data.page,
+        theme: parsed.data.theme ?? null,
+        frame: parsed.data.frame ?? null,
+      },
+      details: {
+        name: parsed.data.name,
+        description: parsed.data.description,
+      },
+    });
+    return { ok: true, data: { href: itemPath(item.type, item.slug) } };
+  } catch (error) {
+    return failure(error, "publishCommunityKit");
+  }
+}
+
+/**
+ * "Use kit": its page template as a draft page and its look (the theme
+ * with the frame on it) as a saved theme, in the open workspace.
+ */
+export async function copyCommunityKit(ref: { slug: string }): Promise<
+  CommunityResult<{
+    pageId: string;
+    name: string;
+    themeName: string | null;
+    themeRefused: string | null;
+  }>
+> {
+  try {
+    const scope = await getActiveScope();
+    const parsed = templateRefSchema.safeParse(ref);
+    if (!parsed.success) {
+      return fail("NOT_FOUND", "This kit isn't in the community.");
+    }
+    return {
+      ok: true,
+      data: await copyKitToWorkspace(scope, parsed.data.slug),
+    };
+  } catch (error) {
+    return failure(error, "copyCommunityKit");
   }
 }
 
