@@ -16,6 +16,7 @@ import { QrdxLogoAnimation } from "@/components/qrdx-logo-animation";
 import { siteConfig } from "@/config/site";
 import { EmailCodeSignIn } from "./email-code-sign-in";
 import { PasskeySignIn } from "./passkey-sign-in";
+import { SsoSignIn } from "./sso-sign-in";
 
 const FOOTER_LINK =
   "rounded-sm transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
@@ -214,7 +215,15 @@ export function SignInPanel({
         sentTo={codeSentTo}
       />
 
-      {/* Google, GitHub and email codes create the account on first use, so there's no separate sign-up step (a passkey needs an account first). */}
+      {!codeSentTo && (
+        <SsoSignIn
+          callbackURL={callbackURL}
+          disabled={busy}
+          lastUsed={lastLoginMethod === "sso"}
+        />
+      )}
+
+      {/* Google, GitHub, email codes and workspace SSO create the account on first use, so there's no separate sign-up step (a passkey needs an account first). */}
       {!codeSentTo && (
         <p className="px-6 pt-4 pb-6 text-center text-xs text-pretty text-muted-foreground">
           New to QRdx? Google, GitHub or an email code creates your free

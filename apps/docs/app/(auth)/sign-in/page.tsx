@@ -23,10 +23,10 @@ export default async function Page({
 }: {
   searchParams: SearchParams;
 }) {
-  const { next, signedOut } = readSignInParams(await searchParams);
+  const { next, signedOut, ssoError } = readSignInParams(await searchParams);
 
   const session = await auth.api.getSession({ headers: await headers() });
   if (session?.user) redirect(next);
 
-  return <SignInPage next={next} signedOut={signedOut} />;
+  return <SignInPage next={next} signedOut={signedOut} ssoError={ssoError} />;
 }
