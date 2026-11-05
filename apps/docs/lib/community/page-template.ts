@@ -4,8 +4,6 @@ import { z } from "zod";
 import { PAGE_SETTINGS_TYPE } from "@/components/landing/page-settings-block";
 import { getBlock, parseLandingPageContent } from "@/lib/landing/blocks";
 import { getTemplate } from "@/lib/landing/templates";
-import { TEMPLATE_MEDIA_PATH } from "@/lib/landing/templates/media";
-import { baseUrl } from "@/lib/metadata";
 import type { LandingBlock, LandingPageContent } from "@/types/landing";
 
 // A hosted page published as a community page template. Before anything is
@@ -17,9 +15,11 @@ import type { LandingBlock, LandingPageContent } from "@/types/landing";
 //   every email address and phone number become sample ones;
 // - postal addresses, contact names and companies, event organizers and
 //   Wi-Fi network names and passwords become sample data;
-// - uploaded photos and files (and any picture linked from elsewhere) are
-//   removed. Photos and marks from QRdx's own template library
-//   (public/images/templates, Unsplash License or drawn by QRdx) are kept;
+// - every picture is removed, QRdx's own template library included (owner
+//   decision: a template is purely CC0, and library photos are under the
+//   Unsplash License): uploads, linked images, logos, background and share
+//   images, audio covers and video posters. Each slot is left empty for the
+//   person to fill in after "Use template". Uploaded files go too;
 // - links, emails and phone numbers written inside text become sample ones;
 // - page settings (share image, description, custom CSS) and hidden blocks
 //   are left out, and a block that no longer works without what was removed
@@ -66,7 +66,7 @@ export interface ScrubReport {
   names: number;
   /** Wi-Fi network names and passwords */
   wifi: number;
-  /** Uploaded or linked photos removed */
+  /** Pictures removed (uploads, links, QRdx's library, logos, covers) */
   images: number;
   /** Uploaded files removed (PDF, audio, video, downloads) */
   files: number;
@@ -76,8 +76,6 @@ export interface ScrubReport {
   hidden: number;
   /** Share image, description and custom CSS left out */
   settings: boolean;
-  /** Photos kept from QRdx's template library */
-  libraryPhotos: number;
 }
 
 const emptyReport = (): ScrubReport => ({
@@ -92,7 +90,6 @@ const emptyReport = (): ScrubReport => ({
   blocks: [],
   hidden: 0,
   settings: false,
-  libraryPhotos: 0,
 });
 
 /** Keys whose values are never personal data: ids, enums, codes, dates. */
@@ -142,28 +139,6 @@ const PICTURE_KEYS = new Set(["cover", "poster", "images", "photo", "photos"]);
 const digits = (text: string) => text.replace(/\D/g, "").length;
 const looksLikePhone = (text: string) =>
   digits(text) >= 7 && /^\+?[0-9 ()./-]+$/.test(text.trim());
-
-/** Origins QRdx's template media is served from (here and in production). */
-const MEDIA_ORIGINS = new Set([new URL(baseUrl).origin, "https://qrdx.dev"]);
-const MEDIA_FILE = new RegExp(
-  `^${TEMPLATE_MEDIA_PATH.replace(/\//g, "\\/")}[a-z0-9-]+(?:\\.sm)?\\.(?:webp|svg)$`,
-);
-
-/** A photo or mark from QRdx's own template library (licence-checked). */
-export function isLibraryMedia(value: unknown): boolean {
-  if (typeof value !== "string") return false;
-  try {
-    const url = new URL(value);
-    return (
-      MEDIA_ORIGINS.has(url.origin) &&
-      MEDIA_FILE.test(url.pathname) &&
-      !url.search &&
-      !url.hash
-    );
-  } catch {
-    return false;
-  }
-}
 
 const REMOVED = Symbol("removed");
 type Scrubbed = unknown | typeof REMOVED;
@@ -221,7 +196,7 @@ class Scrubber {
       this.report.links++;
       return SAMPLE_LINK;
     }
-    if (isLibraryMedia(value) || value.startsWith(SAMPLE_LINK)) return value;
+    if (value.startsWith(SAMPLE_LINK)) return value;
     this.report.links++;
     if (SAMPLE_KIND_LINKS[key]) return SAMPLE_KIND_LINKS[key];
     if (this.blockType === "video-embed" && key === "url") {
@@ -267,12 +242,8 @@ class Scrubber {
     return this.text(value);
   }
 
-  /** A picture or file: kept from QRdx's library, otherwise removed. */
-  media(value: Record<string, unknown>, kind: "images" | "files"): Scrubbed {
-    if (isLibraryMedia(value.url)) {
-      this.report.libraryPhotos++;
-      return value;
-    }
+  /** A picture or file: always removed, leaving its slot empty. */
+  media(kind: "images" | "files"): Scrubbed {
     this.report[kind]++;
     return REMOVED;
   }
@@ -294,11 +265,11 @@ class Scrubber {
     const isLinkedFile = value.type === "url" && typeof value.url === "string";
     if (isFile || isLinkedFile) {
       const picture = PICTURE_KEYS.has(key) || PICTURE_KEYS.has(parentKey);
-      return this.media(value, picture ? "images" : "files");
+      return this.media(picture ? "images" : "files");
     }
     // A picture ({ url, alt }).
     if (typeof value.url === "string" && "alt" in value) {
-      return this.media(value, "images");
+      return this.media("images");
     }
     // A postal address.
     if (key === "address" && POSTAL_KEYS.some((part) => part in value)) {
@@ -335,7 +306,6 @@ function addReports(into: ScrubReport, from: ScrubReport) {
     "images",
     "files",
     "hidden",
-    "libraryPhotos",
   ] as const) {
     into[key] += from[key];
   }
@@ -347,20 +317,12 @@ function scrubTheme(
 ): LandingPageContent["theme"] {
   const next = { ...theme };
   if (next.background?.type === "image") {
-    if (isLibraryMedia(next.background.url)) {
-      report.libraryPhotos++;
-    } else {
-      report.images++;
-      next.background = { type: "solid" };
-    }
+    report.images++;
+    next.background = { type: "solid" };
   }
   if (next.logo) {
-    if (isLibraryMedia(next.logo.url)) {
-      report.libraryPhotos++;
-    } else {
-      report.images++;
-      delete next.logo;
-    }
+    report.images++;
+    delete next.logo;
   }
   return next;
 }
@@ -438,7 +400,7 @@ export function scrubSummary(report: ScrubReport): string[] {
   }
   if (report.images) {
     lines.push(
-      `${count(report.images, "photo", "photos")} you uploaded or linked removed`,
+      `${count(report.images, "photo", "photos")} removed: people add their own`,
     );
   }
   if (report.files) {
@@ -489,21 +451,4 @@ export function readPageTemplate(
   const content = parseLandingPageContent(parsed.data.page.content, { mode });
   if (!content.success) return null;
   return { page: { type: parsed.data.page.type, content: content.data } };
-}
-
-/** Whether the page shows a photo or mark from QRdx's template library. */
-export function usesLibraryMedia(content: LandingPageContent): boolean {
-  let found = false;
-  const visit = (value: unknown) => {
-    if (found) return;
-    if (typeof value === "string") {
-      found = isLibraryMedia(value);
-    } else if (Array.isArray(value)) {
-      value.forEach(visit);
-    } else if (isRecord(value)) {
-      Object.values(value).forEach(visit);
-    }
-  };
-  visit(content);
-  return found;
 }

@@ -204,8 +204,8 @@ export function PublishPageDialog({
                     <Info aria-hidden className="mt-0.5 size-3.5 shrink-0" />
                     <span>
                       Read it through before you share it: names and words in
-                      your text stay as you wrote them. Photos from QRdx's
-                      template library are kept.
+                      your text stay as you wrote them. Every photo is taken
+                      out, so people add their own.
                     </span>
                   </p>
                   {empty && (
