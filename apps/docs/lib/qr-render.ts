@@ -22,6 +22,7 @@ import {
 } from "react";
 import { z } from "zod";
 import { baseUrl } from "@/lib/metadata";
+import { outlineSvgText } from "@/lib/qr-text-outline";
 
 // Server-side QR rendering shared by the public image API (/api/v1/qr) and the
 // MCP server (/api/mcp). Output is deterministic: the same options always give
@@ -300,21 +301,43 @@ export function serializeQrSvg(element: ReactElement): string {
   return serializeNode(element);
 }
 
+const SVG_DATA_URL = "data:image/svg+xml;base64,";
+
 /**
- * Draws an image (an SVG, PNG or JPEG data URL) onto a `size` × `size`
- * canvas, stretched to fill it, and returns PNG bytes.
+ * An SVG data URL with its text (frame labels) drawn as glyph outlines: the
+ * rasterizer has no fonts on the server and drew boxes for every letter
+ * (lib/qr-text-outline.ts). Anything without text comes back unchanged.
+ */
+async function withOutlinedText(src: string): Promise<string> {
+  if (!src.startsWith(SVG_DATA_URL)) return src;
+  const svg = Buffer.from(src.slice(SVG_DATA_URL.length), "base64").toString();
+  if (!svg.includes("<text")) return src;
+  const outlined = await outlineSvgText(svg);
+  return `${SVG_DATA_URL}${Buffer.from(outlined).toString("base64")}`;
+}
+
+/**
+ * Draws an image (an SVG, PNG or JPEG data URL) onto a `width` × `height`
+ * canvas (square by default), stretched to fill it, and returns PNG bytes.
+ * An SVG's text is drawn from Geist's glyph outlines.
  */
 export async function rasterizeImage(
   src: string,
-  size: number,
+  width: number,
+  height = width,
 ): Promise<ArrayBuffer> {
   const image = new ImageResponse(
     createElement(
       "div",
       { style: { display: "flex", width: "100%", height: "100%" } },
-      createElement("img", { alt: "", height: size, src, width: size }),
+      createElement("img", {
+        alt: "",
+        height,
+        src: await withOutlinedText(src),
+        width,
+      }),
     ),
-    { width: size, height: size },
+    { width, height },
   );
   return image.arrayBuffer();
 }
