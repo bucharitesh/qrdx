@@ -122,7 +122,7 @@ const engineInputFields = {
     .strict()
     .optional()
     .describe(
-      "Per-eye colours: { topLeft, topRight, bottomLeft }, each { outer, inner } as #RRGGBB",
+      "Per-eye colors: { topLeft, topRight, bottomLeft }, each { outer, inner } as #RRGGBB",
     ),
   moduleScale: apiStyleFields.moduleScale,
   autoLevel: apiStyleFields.autoLevel,
@@ -161,12 +161,12 @@ const styleInputSchema = designStyleSchema
       .enum(LOGO_INPUTS)
       .optional()
       .describe(
-        "A quick logo icon in the centre (wifi, location, phone, email, link, file, calendar, whatsapp, instagram), or none. For your own image use logo_file_id.",
+        "A quick logo icon in the center (wifi, location, phone, email, link, file, calendar, whatsapp, instagram), or none. For your own image use logo_file_id.",
       ),
     ...engineInputFields,
   })
   .describe(
-    "How the code looks. Leave options out for defaults (or the preset's or community item's): eyes and eye centres follow the dot colour, square shapes, margin 4, level Q, no frame.",
+    "How the code looks. Leave options out for defaults (or the preset's or community item's): eyes and eye centers follow the dot color, square shapes, margin 4, level Q, no frame.",
   );
 
 export const designQrInputSchema = z.object({
@@ -587,7 +587,7 @@ export function designOptions() {
     contentTypes: contentCatalog(),
     style: {
       colors:
-        "#RRGGBB. bgColor (background), fgColor (dots), eyeColor (corner eyes), dotColor (eye centres). Every colour needs 4.5:1 contrast with the background to score Great; dark on light scans best.",
+        "#RRGGBB. bgColor (background), fgColor (dots), eyeColor (corner eyes), dotColor (eye centers). Every color needs 4.5:1 contrast with the background to score Great; dark on light scans best.",
       gradients:
         "Optional, per part (body, background, eyes, eyeCentres): { type: linear | radial, from, to, angle (linear, 0-360) }.",
       bodyPatterns: BODY_PATTERN,
@@ -613,7 +613,7 @@ export function designOptions() {
       })),
       margin: { min: 0, max: MARGIN_MAX, ideal: 4 },
       engineOptions:
-        "eyeColors { topLeft, topRight, bottomLeft: { outer, inner } } (#RRGGBB), moduleScale 0.5-1 (dot size), autoLevel, shape (square or circle), logoOptions { size 0.1-0.3, padding 0-2 modules, x and y 0-1, shape square|rounded|circle (crop), plate (colour) }. Drawn and scored as given; repairs never change them.",
+        "eyeColors { topLeft, topRight, bottomLeft: { outer, inner } } (#RRGGBB), moduleScale 0.5-1 (dot size), autoLevel, shape (square or circle), logoOptions { size 0.1-0.3, padding 0-2 modules, x and y 0-1, shape square|rounded|circle (crop), plate (color) }. Drawn and scored as given; repairs never change them.",
       logos: {
         icons: LOGO_ICON_IDS,
         how: "style.logo picks a quick icon QRdx draws on a white tile. logo_file_id uses an image you uploaded to QRdx (PNG or JPEG, up to 1 MB) and needs the workspace's API key on the MCP connection. Logos are scored by the modules they cover; a repair may raise error correction to H or remove the logo.",
