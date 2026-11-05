@@ -24,6 +24,9 @@ const MAX_SYMBOL_MM = calculatePrintSize({
   modules: MODULES,
 }).symbolMm;
 
+/** The code's inset from the paper's edge, as a share of the dashed square. */
+const PAPER_INSET = 0.04;
+
 const format = (mm: number) =>
   mm >= 100 ? `${(mm / 10).toFixed(0)} cm` : `${(mm / 10).toFixed(1)} cm`;
 
@@ -70,14 +73,29 @@ export function PrintSizeDemo() {
           </span>
         </p>
         {/* The dashed square is the size needed from the slider's far end
-            (5 m); the code grows into it. */}
+            (5 m); the code grows into it from the bottom-left corner. It is
+            scaled, not resized: changing its width moved its top edge, a
+            layout shift on every frame of the first-view animation. The
+            paper's corners, ring and shadow are divided by the scale so they
+            draw at the same size as before, and the code sits a fixed 4% of
+            the square in from the paper's edge, as its padding did. */}
         <div
           aria-hidden="true"
-          className="flex size-28 shrink-0 items-end justify-start rounded-[8px] border border-dashed border-foreground/20 sm:size-44"
+          className="relative size-28 shrink-0 rounded-[8px] border border-dashed border-foreground/20 sm:size-44"
         >
           <div
-            className={`aspect-square rounded-[6px] bg-white p-[4%] shadow-[0_8px_20px_-12px_rgba(0,0,0,0.35)] ring-1 ring-black/10 transition-[width] duration-200 motion-reduce:transition-none [&_svg]:size-full ${EASE_CLASS}`}
-            style={{ width: `${scale * 100}%` }}
+            className={`absolute inset-0 origin-bottom-left bg-white transition-[scale,border-radius,box-shadow] duration-200 motion-reduce:transition-none ${EASE_CLASS}`}
+            style={{
+              scale: `${scale}`,
+              borderRadius: `${6 / scale}px`,
+              boxShadow: `0 0 0 ${1 / scale}px rgba(0,0,0,0.1), 0 ${8 / scale}px ${20 / scale}px ${-12 / scale}px rgba(0,0,0,0.35)`,
+            }}
+          />
+          <div
+            className={`absolute bottom-[4%] left-[4%] aspect-square w-[92%] origin-bottom-left transition-[scale] duration-200 motion-reduce:transition-none [&_svg]:size-full ${EASE_CLASS}`}
+            style={{
+              scale: `${(scale - 2 * PAPER_INSET) / (1 - 2 * PAPER_INSET)}`,
+            }}
           >
             <QRCodeSVG {...CODE} />
           </div>

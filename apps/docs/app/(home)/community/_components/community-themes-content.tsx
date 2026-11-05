@@ -40,7 +40,6 @@ import { HairlineFigure } from "@/components/mockups/hairline";
 import { useWorkspaceHref } from "@/components/workspace-provider";
 import { useCommunityThemes } from "@/lib/hooks/themes/use-community-themes";
 import { playgroundHref } from "@/lib/playground-links";
-import { useQREditorStore } from "@/store/editor-store";
 import type {
   CommunityFilterOption,
   CommunityTheme,
@@ -93,15 +92,12 @@ export function CommunityThemesContent() {
   );
   const [sheetOpen, setSheetOpen] = useState(false);
   const [previewThemeId, setPreviewThemeId] = useState<string | null>(null);
-  const { themeState, setThemeState } = useQREditorStore();
 
-  const handlePreview = useCallback(
-    (theme: CommunityTheme) => {
-      setThemeState({ ...themeState, styles: theme.styles });
-      setPreviewThemeId(theme.id);
-    },
-    [themeState, setThemeState],
-  );
+  // A preview draws the theme in the dialog only; the visitor's saved design
+  // changes when they choose "Open in Playground".
+  const handlePreview = useCallback((theme: CommunityTheme) => {
+    setPreviewThemeId(theme.id);
+  }, []);
 
   const handleFilterChange = useCallback(
     (newFilter: CommunityFilterOption) => {

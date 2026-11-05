@@ -1,11 +1,15 @@
 // Samples a theme from the building blocks in ./blocks. Pure and seeded: the
 // same random sequence always composes the same theme.
+import { GRADIENT_FRAME_DEFAULTS, mixFrameColors } from "qrdx";
 import type {
   BodyPattern,
+  ColorConfig,
   CornerEyeDotPattern,
   CornerEyePattern,
+  FrameStyle,
 } from "qrdx/types";
 import type { ThemeCategory, ThemeStyles } from "@/types/theme";
+import { FRAME_CATALOG } from "../pattern-catalog";
 import {
   CONTRAST_MIXES,
   EYE_DOTS,
@@ -59,8 +63,67 @@ export interface ComposedTheme {
 /** Contrast floors: modules vs background, eye frames/centres vs background. */
 export const MODULE_CONTRAST = 4.5;
 export const EYE_CONTRAST = 3;
-/** Frame label vs the frame it sits on */
+/** Frame label vs what it sits on (the frame, or the code's background) */
 export const FRAME_TEXT_CONTRAST = 4.5;
+
+// The engine's frame layouts (packages/qrdx/src/frame.tsx, frame-styles.ts)
+// set most labels on the frame color, but some (border, rounded-border,
+// phone, focus, gradient-border, menu-card: the catalog's textOnLight) set
+// them on the code's own background, so the label has to read on that.
+const LABEL_ON_BACKGROUND = new Set<FrameStyle>(
+  FRAME_CATALOG.filter((frame) => frame.textOnLight).map(
+    (frame) => frame.value,
+  ),
+);
+const DEFAULT_FRAME_COLOR = "#000000";
+const DEFAULT_BAND_LABEL = "#FFFFFF";
+
+type ThemeFrame = NonNullable<ThemeStyles["frame"]>;
+
+const labelOnBackground = (style: string) =>
+  LABEL_ON_BACKGROUND.has(style as FrameStyle);
+
+/** What the frame label is drawn on: the frame color or the code's background. */
+export function frameLabelBackdrop(styles: ThemeStyles): ColorConfig {
+  const frame = styles.frame;
+  if (frame && !labelOnBackground(frame.style)) {
+    return frame.color || DEFAULT_FRAME_COLOR;
+  }
+  return styles.bgColor ?? "#FFFFFF";
+}
+
+/** The label color the engine draws: textColor, else each style's default. */
+function frameLabelColor(frame: ThemeFrame): string {
+  if (frame.textColor) return frame.textColor;
+  if (frame.style === "gradient-border") {
+    return mixFrameColors(
+      frame.color || GRADIENT_FRAME_DEFAULTS.from,
+      frame.secondaryColor || GRADIENT_FRAME_DEFAULTS.to,
+      0.5,
+    );
+  }
+  return labelOnBackground(frame.style)
+    ? frame.color || DEFAULT_FRAME_COLOR
+    : DEFAULT_BAND_LABEL;
+}
+
+/**
+ * A label color for a composed frame: the palette's other color (the
+ * background on a band, the frame color on the background), or black or
+ * white when that falls under FRAME_TEXT_CONTRAST.
+ */
+function readableLabel(style: FrameStyle, frameColor: string, bg: string) {
+  const onBackground = labelOnBackground(style);
+  const backdrop = onBackground ? bg : frameColor;
+  const preferred = onBackground ? frameColor : bg;
+  if (contrastRatio(preferred, backdrop) >= FRAME_TEXT_CONTRAST) {
+    return preferred;
+  }
+  return contrastRatio("#FFFFFF", backdrop) >=
+    contrastRatio("#111111", backdrop)
+    ? "#FFFFFF"
+    : "#111111";
+}
 
 const usable = {
   body: (body: BodyPattern) =>
@@ -126,6 +189,7 @@ export function composeTheme(random: Random): ComposedTheme {
   const framed = random.chance(FRAME_RATE);
   const frameStyle = random.pick(FRAME_CHOICES);
   const frameText = random.pick(FRAME_CTAS);
+  const frameColor = gradientStops ? gradientStops[0] : palette.fg;
 
   const styles: ThemeStyles = {
     bgColor: palette.bg,
@@ -150,8 +214,8 @@ export function composeTheme(random: Random): ComposedTheme {
       frame: {
         style: frameStyle,
         text: frameText,
-        color: gradientStops ? gradientStops[0] : palette.fg,
-        textColor: palette.bg,
+        color: frameColor,
+        textColor: readableLabel(frameStyle, frameColor, palette.bg),
       },
     }),
   };
@@ -189,8 +253,16 @@ export function contrastProblems(styles: ThemeStyles): string[] {
   const dot = worstContrast(styles.dotColor ?? styles.fgColor, styles.bgColor);
   if (dot < EYE_CONTRAST) problems.push(`eye centers ${dot.toFixed(2)}:1`);
   const { frame } = styles;
-  if (frame?.text && frame.color && frame.textColor) {
-    const label = worstContrast(frame.textColor, frame.color);
+  if (
+    frame &&
+    frame.style !== "none" &&
+    frame.style !== "custom" &&
+    (frame.text || frame.secondaryText)
+  ) {
+    const label = worstContrast(
+      frameLabelColor(frame),
+      frameLabelBackdrop(styles),
+    );
     if (label < FRAME_TEXT_CONTRAST) {
       problems.push(`frame label ${label.toFixed(2)}:1`);
     }

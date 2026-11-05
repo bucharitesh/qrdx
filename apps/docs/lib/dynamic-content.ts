@@ -118,3 +118,34 @@ export function dynamicDestination(
   }
   return { ok: true, url };
 }
+
+/**
+ * Content types a dynamic code's stored `content_type` is worked out from its
+ * destination: a WhatsApp click-to-chat link (what the WhatsApp form makes,
+ * or one pasted into a website link, the REST API or a CSV import) is a
+ * "whatsapp" code; any other address is a "url" code. Other types are left
+ * as they are.
+ */
+const DESTINATION_CONTENT_TYPES = new Set<string>(["url", "whatsapp"]);
+
+/** True when `contentTypeForDestination` decides this stored type. */
+export const isDestinationContentType = (type: string) =>
+  DESTINATION_CONTENT_TYPES.has(type);
+
+/** "whatsapp" for a wa.me or WhatsApp send link, else "url". */
+export function contentTypeForDestination(
+  destinationUrl: string,
+): "url" | "whatsapp" {
+  let url: URL;
+  try {
+    url = new URL(destinationUrl);
+  } catch {
+    return "url";
+  }
+  const host = url.hostname.toLowerCase().replace(/^www\./, "");
+  if (host === "wa.me") return "whatsapp";
+  const send = url.pathname.replace(/\/+$/, "") === "/send";
+  return (host === "api.whatsapp.com" || host === "whatsapp.com") && send
+    ? "whatsapp"
+    : "url";
+}

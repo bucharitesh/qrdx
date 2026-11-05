@@ -89,6 +89,11 @@ let nextConfig: NextConfig = {
       "iconsax-reactjs",
     ],
   },
+  // Geist for server PNGs: frame labels are drawn from its glyph outlines
+  // (lib/qr-text-outline.ts), read at runtime wherever a PNG is rasterized.
+  outputFileTracingIncludes: {
+    "/**": ["./app/og/fonts/*.ttf"],
+  },
   serverExternalPackages: [
     "ts-morph",
     "typescript",
