@@ -33,6 +33,7 @@ import {
   type ReauthMode,
 } from "./_components/danger-zone-section";
 import { DataExportSection } from "./_components/data-export-section";
+import { PasskeysSection } from "./_components/passkeys-section";
 import { ProfileSection } from "./_components/profile-section";
 import { SessionsSection } from "./_components/sessions-section";
 import {
@@ -160,6 +161,13 @@ export default async function AccountPage({
         linkable={linkableProviders(accounts, configuredProviders())}
         methods={toSignInMethods(accounts, formatDate)}
         outcome={linkOutcome(params)}
+      />
+
+      <PasskeysSection
+        recentSignIn={canChangeEmailNow(
+          new Date(session.session.createdAt),
+          now,
+        )}
       />
 
       <SessionsSection sessions={sessions} />
