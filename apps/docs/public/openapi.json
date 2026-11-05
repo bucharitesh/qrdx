@@ -5939,9 +5939,36 @@
                     "type": "boolean"
                   },
                   "shape": {
-                    "description": "Outline of the code: square (default) or circle, which puts the code in a disc of decorative dots",
+                    "description": "Outline of the code: square (default), circle or heart, which put the code in a disc or a heart of decorative dots",
                     "type": "string",
-                    "enum": ["square", "circle"]
+                    "enum": ["square", "circle", "heart"]
+                  },
+                  "silhouette": {
+                    "description": "A shape of your own the code is filled into (instead of shape): a grid of cells traced from a picture in the editor, never the picture. Grids the code doesn't fit in are refused",
+                    "type": "object",
+                    "properties": {
+                      "type": {
+                        "type": "string",
+                        "const": "silhouette"
+                      },
+                      "width": {
+                        "type": "integer",
+                        "minimum": 8,
+                        "maximum": 64
+                      },
+                      "height": {
+                        "type": "integer",
+                        "minimum": 8,
+                        "maximum": 64
+                      },
+                      "cells": {
+                        "type": "string",
+                        "maxLength": 4096,
+                        "pattern": "^[01]*$",
+                        "description": "Row by row, \"1\" inside the shape and \"0\" outside: width × height characters"
+                      }
+                    },
+                    "required": ["type", "width", "height", "cells"]
                   },
                   "logoOptions": {
                     "description": "Logo size (share of the code width), clear space in modules and position (0 to 1 across the code)",
@@ -9028,9 +9055,36 @@
             "type": "boolean"
           },
           "shape": {
-            "description": "Outline of the code: square (default) or circle, which puts the code in a disc of decorative dots",
+            "description": "Outline of the code: square (default), circle or heart, which put the code in a disc or a heart of decorative dots",
             "type": "string",
-            "enum": ["square", "circle"]
+            "enum": ["square", "circle", "heart"]
+          },
+          "silhouette": {
+            "description": "A shape of your own the code is filled into (instead of shape): a grid of cells traced from a picture in the editor, never the picture. Grids the code doesn't fit in are refused",
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "const": "silhouette"
+              },
+              "width": {
+                "type": "integer",
+                "minimum": 8,
+                "maximum": 64
+              },
+              "height": {
+                "type": "integer",
+                "minimum": 8,
+                "maximum": 64
+              },
+              "cells": {
+                "type": "string",
+                "maxLength": 4096,
+                "pattern": "^[01]*$",
+                "description": "Row by row, \"1\" inside the shape and \"0\" outside: width × height characters"
+              }
+            },
+            "required": ["type", "width", "height", "cells"]
           },
           "logoOptions": {
             "description": "Logo size (share of the code width), clear space in modules and position (0 to 1 across the code)",

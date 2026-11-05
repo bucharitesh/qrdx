@@ -2,6 +2,9 @@
 // uploaded into (the playground, a saved code, a saved theme) and never go
 // into a link, a published style or a snippet. Where a design leaves, each
 // image fill gives way to its underlay color (or the part's default).
+// A code shape traced from an upload (`silhouette`, lib/qr-design/
+// silhouette.ts) travels the same way: where a design leaves, it is dropped
+// and the code takes its named shape (square unless one is set).
 import type { ColorConfig } from "qrdx/types";
 import type { QRStyle } from "@/types/theme";
 
@@ -22,13 +25,22 @@ export function hasImageFills(style: Partial<QRStyle>): boolean {
   );
 }
 
+/** True when the code is drawn in a silhouette traced from an upload. */
+export function hasSilhouette(style: Partial<QRStyle>): boolean {
+  return style.silhouette !== undefined;
+}
+
 /**
  * `style` with each image fill swapped for its underlay color, or left
- * unset without one (the part draws its default). The same object comes
- * back when there are none.
+ * unset without one (the part draws its default), and without its traced
+ * silhouette. The same object comes back when there are neither.
  */
 export function withoutImageFills<T extends Partial<QRStyle>>(style: T): T {
-  if (!hasImageFills(style)) return style;
+  if (!hasImageFills(style)) {
+    if (!hasSilhouette(style)) return style;
+    const { silhouette: _silhouette, ...rest } = style;
+    return rest as T;
+  }
   const swap = (paint: Paint) =>
     typeof paint === "object" && paint?.type === "image"
       ? paint.underlay
@@ -51,5 +63,6 @@ export function withoutImageFills<T extends Partial<QRStyle>>(style: T): T {
   for (const key of ["bgColor", "fgColor", "eyeColor", "dotColor"] as const) {
     if (next[key] === undefined) delete next[key];
   }
+  delete next.silhouette;
   return next;
 }
