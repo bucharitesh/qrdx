@@ -77,7 +77,7 @@ const hint = (action: BulkAction) => keyLabel(BULK_KEYS[action]);
 /**
  * The codes table with selection, bulk actions and drag to folders. Rows are
  * selected with their checkboxes (shift-click for a range) or the keyboard
- * (list-selection.tsx); the bulk keys follow Dub's links toolbar.
+ * (list-selection.tsx), with bulk keys for tags, folders, archive and trash.
  */
 export function CodesList({
   codes: serverCodes,

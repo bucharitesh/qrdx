@@ -102,7 +102,7 @@ export function mainNav(slug: string): AppNavGroup[] {
  * The settings area (its own sidebar, with a way back to the dashboard).
  * Workspace settings live under /dashboard/<slug>/settings and follow the
  * switcher; Account is the signed-in person, under /settings, the same in
- * every workspace (Dub's split).
+ * every workspace.
  */
 export function settingsNav(slug: string): AppNavGroup[] {
   const general = workspaceHref(slug, "/settings");

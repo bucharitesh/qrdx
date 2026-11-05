@@ -1,7 +1,5 @@
-// The builder's keys. Pattern adapted from Dub (github.com/dubinc/dub,
-// AGPL-3.0): apps/web/ui/links/link-builder/link-feature-buttons.tsx,
-// constants.ts and use-link-builder-keyboard-shortcut.ts, where single keys
-// open an option only outside text fields and only in the open builder.
+// The builder's keys: single keys open an option only outside text fields
+// and only in the open builder.
 // Pure, so the rules are tested without a browser.
 
 import type { CodeOptionId } from "@/app/dashboard/codes/_lib/code-options";

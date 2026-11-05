@@ -2,9 +2,7 @@
 // as `services`, so tests run it against fakes). Create posts the form once
 // (createQrCode); a folder and tags follow with the organize actions, since
 // createCodeSchema has no fields for them. Save sends only what changed.
-// Error handling adapted from Dub's use-link-builder-submit.tsx
-// (github.com/dubinc/dub, AGPL-3.0), using QRdx's typed error codes instead
-// of keyword matching.
+// Errors are told apart by QRdx's typed error codes, not keyword matching.
 
 import type { QrCodeView } from "@/app/dashboard/codes/_lib/qr-codes";
 import type { QRStyle } from "@/types/theme";
