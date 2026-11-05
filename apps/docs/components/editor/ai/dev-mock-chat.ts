@@ -6,6 +6,7 @@ import { createUIMessageStream, createUIMessageStreamResponse } from "ai";
 import type {
   ApplyDesignOutput,
   DesignQrOutput,
+  PublishToCommunityOutput,
   SaveTemplateOutput,
 } from "@/lib/ai/agent/tools";
 import type { ChatMessage } from "@/types/ai";
@@ -257,6 +258,20 @@ export function mockChatResponse(
             output,
           });
           await text(writer, "t-saved", "Saved as **Warm Wi-Fi**.");
+        } else if (respond.type === "tool-publish_to_community") {
+          // The recording can't know whether a publish happened; it says no,
+          // as the real tool does when nothing is in the community.
+          const output: PublishToCommunityOutput = {
+            ok: false,
+            published: false,
+            message: "The user didn't publish it. Nothing was shared.",
+          };
+          writer.write({
+            type: "tool-output-available",
+            toolCallId: respond.toolCallId,
+            output,
+          });
+          await text(writer, "t-unshared", "It wasn't shared.");
         } else {
           const output: ApplyDesignOutput = {
             ok: true,
@@ -378,6 +393,44 @@ export function mockChatResponse(
       }
 
       await design(writer, "mock-design");
+      if (mode === "publish") {
+        writer.write({ type: "finish-step" });
+        writer.write({ type: "start-step" });
+        await text(
+          writer,
+          "t-score",
+          "Scan score 85, **Great**. Here's what I'd write for the community:",
+        );
+        writer.write({
+          type: "tool-input-start",
+          toolCallId: "mock-publish",
+          toolName: "publish_to_community",
+        });
+        writer.write({
+          type: "tool-input-available",
+          toolCallId: "mock-publish",
+          toolName: "publish_to_community",
+          input: {
+            design_id: "mock-design",
+            name: "Warm café Wi-Fi",
+            description:
+              "Deep orange dots on cream with a Free Wi-Fi banner, for café tables.",
+            tags: ["warm", "minimal"],
+          },
+        });
+        writer.write({
+          type: "tool-approval-request",
+          approvalId: "mock-publish-approval",
+          toolCallId: "mock-publish",
+        });
+        writer.write({ type: "finish-step" });
+        writer.write({
+          type: "finish",
+          finishReason: "tool-calls",
+          messageMetadata: { resume: "mock" },
+        });
+        return;
+      }
       if (mode === "error") {
         writer.write({ type: "error", errorText: "Mock: generation failed" });
         return;

@@ -40,10 +40,18 @@ import { logError } from "@/lib/shared";
 import type { ChatMessage } from "@/types/ai";
 import type { QRContentConfig } from "@/types/qr-content";
 import type { ThemeStyles } from "@/types/theme";
+// Community: publish_to_community (./community.ts, ./publish-tool.ts)
+import type { CommunityPublishStore } from "./community";
 import type { EditorBase } from "./editor-context";
 // Pictures and missing content: browser-side tools (picture-tools.ts)
 import { PICTURE_TOOLS, type PictureTools } from "./picture-tools";
 import { QR_DESIGN_SYSTEM } from "./prompts";
+// Community: publish_to_community
+import {
+  type PublishToCommunityTool,
+  publishToCommunityApproval,
+  publishToCommunityTool,
+} from "./publish-tool";
 import {
   type SaveTemplateResult,
   TEMPLATE_NAME_MAX_LENGTH,
@@ -121,6 +129,10 @@ export type SaveTemplateOutput = SaveTemplateResult & {
   style?: ThemeStyles;
 };
 
+// ── Community (publish_to_community) ──
+export type { PublishToCommunityOutput } from "./publish-tool";
+// ── end Community ──
+
 export interface AskUserOutput {
   answer: string;
 }
@@ -197,6 +209,8 @@ export type AgentContext = {
   designs: DesignRegistry;
   writer: UIMessageStreamWriter<ChatMessage>;
   templates: TemplateStore;
+  /** Community: what the person published from a chat draft */
+  community: CommunityPublishStore;
   score: ScoreFn;
   /** design_qr calls in this request (MAX_DESIGNS_PER_REQUEST) */
   designCalls: { count: number };
@@ -391,6 +405,8 @@ export type QRAgentTools = {
     SaveTemplateOutput,
     AgentContext
   >;
+  // ── Community ──
+  publish_to_community: PublishToCommunityTool;
 } & PictureTools;
 
 /** What the model reads back from a design: no logo images or attempts. */
@@ -638,6 +654,9 @@ export const QR_AGENT_TOOLS: QRAgentTools = {
 
   // use_image and request_content: answered in the browser (picture-tools.ts)
   ...PICTURE_TOOLS,
+
+  // ── Community: writes nothing, see ./publish-tool.ts ──
+  publish_to_community: publishToCommunityTool,
 };
 
 /** The ThemeStyles a template saves: the look with its logo, no content. */
@@ -701,5 +720,7 @@ export function agentToolApproval() {
         ? ("user-approval" as const)
         : { type: "denied" as const, reason: quota.message };
     },
+    // ── Community ──
+    publish_to_community: publishToCommunityApproval,
   };
 }
