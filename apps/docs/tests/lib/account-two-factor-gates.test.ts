@@ -125,6 +125,23 @@ vi.mock("@/lib/account/two-factor-server", () => ({
   // Read from the database in the app; the session's copy is ignored.
   twoFactorEnabledFor: async () => state.twoFactorEnabled,
   forgetTrustedDevices: async () => {},
+  // The same rules as the real single UPDATE (as in
+  // account-delete-two-factor.test.ts): refuse while locked, an expired lock
+  // starts again from 1, the 10th attempt sets the lock.
+  reserveCodeAttempt: async () => {
+    const row = state.row;
+    if (!row) return { ok: false, reason: "off" };
+    const now = Date.now();
+    if (row.lockedUntil && row.lockedUntil.getTime() > now) {
+      return { ok: false, reason: "locked" };
+    }
+    const attempts = row.lockedUntil
+      ? 1
+      : (row.failedVerificationCount ?? 0) + 1;
+    row.failedVerificationCount = attempts;
+    row.lockedUntil = attempts >= 10 ? new Date(now + 15 * 60_000) : null;
+    return { ok: true, id: row.id, attempts };
+  },
 }));
 vi.mock("@/lib/account/two-factor-notice-server", () => ({
   sendTwoFactorNotice: async () => {},
