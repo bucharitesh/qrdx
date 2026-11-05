@@ -327,3 +327,35 @@ describe("the page theme", () => {
     expect(content.theme.colors).toEqual(DEFAULT_LANDING_THEME.colors);
   });
 });
+
+describe("links that only look like the sample", () => {
+  it("replaces look-alike hosts and drops paths on the sample host", () => {
+    const blocks = listBlocks()
+      .filter((d) =>
+        JSON.stringify(createBlock(d.type).props).includes('"url"'),
+      )
+      .slice(0, 1)
+      .map((d, i) => {
+        const block = createBlock(d.type) as LandingBlock;
+        return {
+          ...block,
+          id: `l${i}`,
+          props: { ...block.props, url: "https://example.com.janedoe.de/me" },
+        };
+      });
+    expect(blocks.length).toBe(1);
+    const tricky = [
+      "https://example.com.janedoe.de/me",
+      "https://example.com@janedoe.de/me",
+      "https://example.com/jane-doe-4b",
+    ];
+    for (const url of tricky) {
+      const first = blocks[0] as LandingBlock;
+      const { content } = scrubPageContent(
+        page([{ ...first, props: { ...first.props, url } }]),
+      );
+      const out = JSON.stringify(content);
+      expect(out).not.toMatch(/janedoe|jane-doe/);
+    }
+  });
+});
