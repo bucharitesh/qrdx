@@ -1,6 +1,7 @@
 // Built-in features (custom domains, AI art, storage, email, …) are offered
 // only where they can work. The environment is injected: every value below is
-// a fake placeholder, and only "is it set" is ever read.
+// a fake placeholder, and only "is it set" is ever read (except the app URL,
+// which passkeys need to be HTTPS).
 import {
   getIntegrationRegistry,
   INTEGRATION_ENV_VARS,
@@ -56,6 +57,7 @@ const EVERYTHING: Record<string, string> = {
   YOUTUBE_API_KEY: FAKE,
   SPOTIFY_CLIENT_ID: FAKE,
   SPOTIFY_CLIENT_SECRET: FAKE,
+  NEXT_PUBLIC_APP_URL: "https://qrdx.example",
 };
 
 /** What each feature needs on Vercel in production, by variable name. */
@@ -82,6 +84,7 @@ const NEEDS: Record<FeatureId, string[]> = {
   scheduledJobs: ["CRON_SECRET"],
   youtubeChannelPicker: ["YOUTUBE_API_KEY"],
   spotifyPlaylistPicker: ["SPOTIFY_CLIENT_ID", "SPOTIFY_CLIENT_SECRET"],
+  passkeys: ["NEXT_PUBLIC_APP_URL"],
 };
 
 const vercelProd = { onVercel: true, production: true };
@@ -146,6 +149,56 @@ describe("each feature, on and off by env", () => {
     expect(computeFeatures(ctx({})).scheduledJobs).toBe(true);
     expect(computeFeatures(ctx({}, { production: true })).scheduledJobs).toBe(
       false,
+    );
+  });
+});
+
+describe("passkeys", () => {
+  const on = (env: Record<string, string | undefined>) =>
+    computeFeatures(ctx(env, vercelProd)).passkeys;
+
+  it("work on an HTTPS app URL, or localhost", () => {
+    expect(on({ NEXT_PUBLIC_APP_URL: "https://qrdx.dev" })).toBe(true);
+    expect(on({ NEXT_PUBLIC_APP_URL: "http://localhost:3000" })).toBe(true);
+  });
+
+  it("are off where browsers won't offer them, naming the app URL", () => {
+    for (const url of [
+      "http://qr.example.com",
+      "https://192.168.1.20",
+      "http://127.0.0.1:3000",
+      "not a url",
+    ]) {
+      const env = { NEXT_PUBLIC_APP_URL: url };
+      expect(on(env), url).toBe(false);
+      expect(missingFeatureSetup("passkeys", ctx(env, vercelProd))).toEqual([
+        "NEXT_PUBLIC_APP_URL",
+      ]);
+    }
+  });
+
+  it("are off when the auth URL is on another origin than the app URL", () => {
+    expect(
+      on({
+        NEXT_PUBLIC_APP_URL: "https://qrdx.dev",
+        BETTER_AUTH_URL: "https://auth.qrdx.dev",
+      }),
+    ).toBe(false);
+    expect(
+      on({
+        NEXT_PUBLIC_APP_URL: "https://qrdx.dev",
+        BETTER_AUTH_URL: "https://qrdx.dev/",
+      }),
+    ).toBe(true);
+  });
+
+  it("hide their help page where they can't work", () => {
+    const view = toPublicAvailability(
+      computeFeatures(ctx({ NEXT_PUBLIC_APP_URL: "http://qr.lan" })),
+    );
+    expect(view.unavailable).toContain("passkeys");
+    expect(view.hiddenPaths).toContain(
+      "/docs/help/privacy-and-security/passkeys",
     );
   });
 });
@@ -264,31 +317,35 @@ describe("docs sidebar", () => {
 // owner's list), with AI_GATEWAY_API_KEY in place of the old Google key and
 // the AI art and checkout switches removed on 2026-11-03. Anything not listed
 // is unset.
-const PRODUCTION_LIKE: Record<string, string> = Object.fromEntries(
-  [
-    "DROPBOX_CLIENT_ID",
-    "DROPBOX_CLIENT_SECRET",
-    "DUB_CLIENT_ID",
-    "DUB_CLIENT_SECRET",
-    "DUB_REDIRECT_URI",
-    "EMAIL_FROM",
-    "AI_GATEWAY_API_KEY",
-    "GOOGLE_CLIENT_ID",
-    "GOOGLE_CLIENT_SECRET",
-    "GOOGLE_DRIVE_REDIRECT_URI",
-    "INTEGRATION_ENCRYPTION_KEY",
-    "CRON_SECRET",
-    "R2_ACCESS_KEY_ID",
-    "R2_ACCOUNT_ID",
-    "R2_BUCKET",
-    "R2_PUBLIC_BASE_URL",
-    "R2_SECRET_ACCESS_KEY",
-    "RESEND_API_KEY",
-    "WEB_RISK_API_KEY",
-    "POLAR_ACCESS_TOKEN",
-    "POLAR_WEBHOOK_SECRET",
-  ].map((name) => [name, FAKE]),
-);
+const PRODUCTION_LIKE: Record<string, string> = {
+  // Always set: the build requires it.
+  NEXT_PUBLIC_APP_URL: "https://qrdx.dev",
+  ...Object.fromEntries(
+    [
+      "DROPBOX_CLIENT_ID",
+      "DROPBOX_CLIENT_SECRET",
+      "DUB_CLIENT_ID",
+      "DUB_CLIENT_SECRET",
+      "DUB_REDIRECT_URI",
+      "EMAIL_FROM",
+      "AI_GATEWAY_API_KEY",
+      "GOOGLE_CLIENT_ID",
+      "GOOGLE_CLIENT_SECRET",
+      "GOOGLE_DRIVE_REDIRECT_URI",
+      "INTEGRATION_ENCRYPTION_KEY",
+      "CRON_SECRET",
+      "R2_ACCESS_KEY_ID",
+      "R2_ACCOUNT_ID",
+      "R2_BUCKET",
+      "R2_PUBLIC_BASE_URL",
+      "R2_SECRET_ACCESS_KEY",
+      "RESEND_API_KEY",
+      "WEB_RISK_API_KEY",
+      "POLAR_ACCESS_TOKEN",
+      "POLAR_WEBHOOK_SECRET",
+    ].map((name) => [name, FAKE]),
+  ),
+};
 
 describe("a production-like deployment", () => {
   const features = computeFeatures(ctx(PRODUCTION_LIKE, vercelProd));
