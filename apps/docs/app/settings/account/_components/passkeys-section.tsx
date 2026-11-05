@@ -1,8 +1,9 @@
 import { getAuthenticatorName } from "@repo/auth/passkey";
 import { isPasskeyOrigin, passkeyRelyingParty } from "@repo/auth/passkey-rp";
-import { auth } from "@repo/auth/server";
+import { database as db, passkey } from "@repo/database";
+import { eq } from "drizzle-orm";
 import { headers } from "next/headers";
-import { type PasskeyRow, toPasskeyViews } from "@/lib/account/passkeys";
+import { toPasskeyViews } from "@/lib/account/passkeys";
 import { isFeatureAvailable } from "@/lib/feature-availability";
 import { requestOrigin } from "../../developers/_lib/origin";
 import { PasskeysList } from "./passkeys-list";
@@ -22,8 +23,11 @@ const NO_ORIGIN = new URL("https://unknown.invalid");
  * the origin it belongs to.
  */
 export async function PasskeysSection({
+  userId,
   recentSignIn,
 }: {
+  /** The signed-in user (the page has already checked the session) */
+  userId: string;
   /** Signed in within the last day, so a passkey can be added now */
   recentSignIn: boolean;
 }) {
@@ -36,9 +40,21 @@ export async function PasskeysSection({
   });
   if (!isPasskeyOrigin(relyingParty, origin)) return null;
 
-  const rows = (await auth.api.listPasskeys({
-    headers: requestHeaders,
-  })) as PasskeyRow[];
+  // Read directly, like the Sessions list: a second session lookup
+  // (auth.api.listPasskeys) throws if the session ends while the page renders
+  // (signed out in another tab), which took the whole page down. Keys and
+  // counters aren't selected.
+  const rows = await db
+    .select({
+      id: passkey.id,
+      name: passkey.name,
+      createdAt: passkey.createdAt,
+      deviceType: passkey.deviceType,
+      backedUp: passkey.backedUp,
+      aaguid: passkey.aaguid,
+    })
+    .from(passkey)
+    .where(eq(passkey.userId, userId));
   const passkeys = toPasskeyViews(rows, {
     formatDate: (date) => DATE_FORMAT.format(date),
     providerName: (aaguid) => getAuthenticatorName(aaguid ?? undefined),
