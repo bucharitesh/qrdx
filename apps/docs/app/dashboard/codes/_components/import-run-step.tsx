@@ -26,6 +26,7 @@ import {
   API_PROVIDERS,
   FILE_PROVIDERS,
   isApiProviderId,
+  isRetiredProvider,
   providerName,
 } from "@/lib/migrate/providers";
 import type { JobItem, JobSummary } from "@/lib/migrate/types";
@@ -177,6 +178,8 @@ export function RunStep({
   const name = providerName(provider);
   const api = isApiProviderId(provider) ? API_PROVIDERS[provider] : null;
   const file = isApiProviderId(provider) ? null : FILE_PROVIDERS[provider];
+  // Dub imports have ended: its old jobs only offer undo of earlier changes.
+  const retired = isRetiredProvider(provider);
 
   const copyAll = async () => {
     try {
@@ -322,27 +325,50 @@ export function RunStep({
           </div>
         )}
 
-        {api?.capabilities.updateDestination && withLinks.length > 0 && (
+        {retired && job.redirected > 0 && (
           <div className="flex flex-col gap-3 rounded-xl border p-4 sm:flex-row sm:items-center">
             <span className="grid size-9 shrink-0 place-items-center rounded-lg border bg-muted/40">
               <Link21 aria-hidden className="size-4 text-foreground/80" />
             </span>
             <div className="min-w-0 flex-1">
               <h3 className="text-sm font-semibold">
-                Keep my printed codes working
+                {`${plural(job.redirected, `old ${name} link`)} ${job.redirected === 1 ? "points" : "point"} to QRdx`}
               </h3>
               <p className="text-muted-foreground text-xs">
-                Optional. Point each old {name} link at its new QRdx code, so
-                codes already printed keep working and their scans show up in
-                QRdx. You'll see every change first, and can undo it.
+                Imports from {name} have ended. Undo puts the original
+                destinations back in your {name} account.
               </p>
             </div>
             <Button onClick={onRedirects} size="sm" variant="outline">
-              {job.redirected > 0 ? "Manage" : "Review changes"}
+              Review undo
               <ArrowRight />
             </Button>
           </div>
         )}
+
+        {!retired &&
+          api?.capabilities.updateDestination &&
+          withLinks.length > 0 && (
+            <div className="flex flex-col gap-3 rounded-xl border p-4 sm:flex-row sm:items-center">
+              <span className="grid size-9 shrink-0 place-items-center rounded-lg border bg-muted/40">
+                <Link21 aria-hidden className="size-4 text-foreground/80" />
+              </span>
+              <div className="min-w-0 flex-1">
+                <h3 className="text-sm font-semibold">
+                  Keep my printed codes working
+                </h3>
+                <p className="text-muted-foreground text-xs">
+                  Optional. Point each old {name} link at its new QRdx code, so
+                  codes already printed keep working and their scans show up in
+                  QRdx. You'll see every change first, and can undo it.
+                </p>
+              </div>
+              <Button onClick={onRedirects} size="sm" variant="outline">
+                {job.redirected > 0 ? "Manage" : "Review changes"}
+                <ArrowRight />
+              </Button>
+            </div>
+          )}
 
         {file && withLinks.length > 0 && (
           <div className="space-y-2 rounded-xl border p-4">
