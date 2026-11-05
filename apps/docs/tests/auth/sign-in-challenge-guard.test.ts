@@ -21,10 +21,15 @@ type Kind =
   /** Passkey sign-in: challenged unless the authenticator verified the user. */
   | "challenged-without-uv"
   /**
-   * Re-issues or rotates the cookie of a session the browser already has
-   * (same person): the challenge skips it, nothing new is reached.
+   * Re-issues the session the request came with (same token): the challenge
+   * skips it, nothing new is reached.
    */
-  | "same-person"
+  | "same-session"
+  /**
+   * Off over HTTP; only the app calls it, through auth.api (not a request),
+   * which the challenge skips.
+   */
+  | "server-only"
   /** Never creates a session. */
   | "no-session";
 
@@ -44,8 +49,8 @@ const PATHS: Record<string, [Kind, string]> = {
   "/sso/callback": ["challenged", "workspace SSO, OIDC shared callback"],
   "/sso/saml2/sp/acs/:providerId": ["challenged", "workspace SSO, SAML"],
   "/passkey/verify-registration": [
-    "challenged",
-    "createSession: true; needs a fresh session of the same person, so same-person applies",
+    "server-only",
+    "createSession: true would make a session; adding a passkey needs a current code with 2FA on",
   ],
   "/admin/impersonate-user": ["challenged", "off over HTTP"],
   "/admin/stop-impersonating": [
@@ -61,21 +66,27 @@ const PATHS: Record<string, [Kind, string]> = {
     "trusted device only (GET after a SAML POST); else the challenge page",
   ],
 
-  // The signed-in person's own session, re-issued
-  "/get-session": ["same-person", "refreshes the session's expiry"],
-  "/update-session": ["same-person", "same session"],
-  "/update-user": ["same-person", "same session, new user data"],
-  "/change-email": ["same-person", "same session"],
-  "/email-otp/change-email": ["same-person", "off over HTTP; same session"],
-  "/change-password": ["same-person", "passwords are off"],
-  "/organization/set-active": ["same-person", "same session"],
-  "/organization/create": ["same-person", "sets the new workspace active"],
-  "/organization/delete": ["same-person", "clears the active workspace"],
-  "/organization/accept-invitation": ["same-person", "sets it active"],
-  "/organization/leave": ["same-person", "clears the active workspace"],
-  "/organization/remove-member": ["same-person", "may clear it"],
-  "/two-factor/enable": ["same-person", "server only; rotates the session"],
-  "/two-factor/disable": ["same-person", "server only; rotates the session"],
+  // The session the request came with, re-issued (same token)
+  "/get-session": ["same-session", "refreshes the session's expiry"],
+  "/update-session": ["same-session", "same session"],
+  "/update-user": ["same-session", "same session, new user data"],
+  "/change-email": ["same-session", "same session"],
+  "/email-otp/change-email": [
+    "server-only",
+    "same session; changing the email needs a current code with 2FA on",
+  ],
+  "/change-password": [
+    "challenged",
+    "passwords are off; a new session would be challenged",
+  ],
+  "/organization/set-active": ["same-session", "same session"],
+  "/organization/create": ["same-session", "sets the new workspace active"],
+  "/organization/delete": ["same-session", "clears the active workspace"],
+  "/organization/accept-invitation": ["same-session", "sets it active"],
+  "/organization/leave": ["same-session", "clears the active workspace"],
+  "/organization/remove-member": ["same-session", "may clear it"],
+  "/two-factor/enable": ["server-only", "rotates the session"],
+  "/two-factor/disable": ["server-only", "rotates the session"],
 
   // No session created
   "/account-info": ["no-session", "read"],
@@ -195,6 +206,17 @@ describe("sign-in challenge coverage", () => {
       .filter((p) => !UNUSED_TWO_FACTOR_PATHS.includes(p));
     expect(finishes.sort()).toEqual([...CHALLENGE_COMPLETION_PATHS].sort());
     expect(PATHS[PASSKEY_SIGN_IN_PATH][0]).toBe("challenged-without-uv");
+  });
+
+  it("keeps every server-only path off over HTTP", async () => {
+    // The challenge skips auth.api calls, so these must not be reachable
+    // by a request.
+    const auth = await loadAuth();
+    const disabled = auth.options.disabledPaths ?? [];
+    const serverOnly = Object.entries(PATHS)
+      .filter(([, [kind]]) => kind === "server-only")
+      .map(([p]) => p);
+    expect(serverOnly.filter((p) => !disabled.includes(p))).toEqual([]);
   });
 
   it("never serves sessions from a cookie cache", async () => {
