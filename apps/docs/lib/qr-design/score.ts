@@ -1,6 +1,5 @@
 import "server-only";
 
-import { ImageResponse } from "next/og";
 import {
   decodePNGPixels,
   getFrameDimensions,
@@ -12,14 +11,15 @@ import {
   withQRSize,
 } from "qrdx";
 import { createElement } from "react";
-import { serializeQrSvg } from "@/lib/qr-render";
+import { rasterizeImage, serializeQrSvg } from "@/lib/qr-render";
 import type { ThemeStyles } from "@/types/theme";
 import { designQRProps } from "./props";
 
 // The editor's scan score, run on the server: the design is rendered by the
-// engine (QRCodeSVG), rasterized with resvg (next/og, as the image API does)
-// and scored by qrdx's getScanScoreFromPixels, which shares every check,
-// weight and the camera model with the browser's getScanScore.
+// engine (QRCodeSVG), rasterized by next/og (rasterizeImage in
+// lib/qr-render.ts, as the image API does) and scored by qrdx's
+// getScanScoreFromPixels, which shares every check, weight and the camera
+// model with the browser's getScanScore.
 
 /**
  * Stands in for any logo: an opaque grey block covers the same modules a
@@ -51,21 +51,14 @@ function svgOf(props: QRProps): string {
   }
 }
 
+/** PNG bytes of `svg` (frame labels drawn from glyph outlines). */
 async function rasterize(
   svg: string,
   width: number,
   height: number,
 ): Promise<Uint8Array> {
   const src = `data:image/svg+xml;base64,${Buffer.from(svg).toString("base64")}`;
-  const image = new ImageResponse(
-    createElement(
-      "div",
-      { style: { display: "flex", width: "100%", height: "100%" } },
-      createElement("img", { alt: "", height, src, width }),
-    ),
-    { width, height },
-  );
-  return new Uint8Array(await image.arrayBuffer());
+  return new Uint8Array(await rasterizeImage(src, width, height));
 }
 
 /**

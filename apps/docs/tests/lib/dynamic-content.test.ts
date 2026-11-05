@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { CONTENT_EXAMPLES } from "@/components/editor/content-forms/content-examples";
 import {
+  contentTypeForDestination,
   DYNAMIC_CONTENT_TYPES,
   dynamicDestination,
   isDynamicContentType,
@@ -123,5 +124,32 @@ describe("dynamicDestination", () => {
       ok: true,
       url: "https://open.spotify.com/track/4uLU6hMCjMI75M1A2tKUQC",
     });
+  });
+});
+
+describe("contentTypeForDestination", () => {
+  it("stores what the builder's WhatsApp form makes as whatsapp, and nothing else", () => {
+    // Each dynamic type's example, made into its destination by the builder.
+    for (const type of DYNAMIC_CONTENT_TYPES) {
+      const result = dynamicDestination(type, asFields(CONTENT_EXAMPLES[type]));
+      if (!result.ok) continue;
+      expect(contentTypeForDestination(result.url), type).toBe(
+        type === "whatsapp" ? "whatsapp" : "url",
+      );
+    }
+  });
+
+  it("knows WhatsApp's other send links", () => {
+    for (const url of [
+      "https://api.whatsapp.com/send?phone=14155550132",
+      "https://www.whatsapp.com/send/?phone=14155550132",
+      "https://WA.ME/14155550132",
+    ]) {
+      expect(contentTypeForDestination(url), url).toBe("whatsapp");
+    }
+    expect(contentTypeForDestination("https://chat.whatsapp.com/Ab12")).toBe(
+      "url",
+    );
+    expect(contentTypeForDestination("not a url")).toBe("url");
   });
 });

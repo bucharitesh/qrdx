@@ -21,6 +21,7 @@ import {
 import { useRouter } from "next/navigation";
 import { lazy, useCallback, useEffect } from "react";
 import ExamplesPreviewContainer from "@/components/editor/theme-preview/examples-preview-container";
+import { defaultThemeState } from "@/config/qr";
 import { siteConfig } from "@/config/site";
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
 import { useToggleLike } from "@/lib/hooks/themes";
@@ -113,9 +114,12 @@ export function CommunityThemePreviewDialog({
   // a /playground/<savedThemeId> link, which shows the whole saved theme. A
   // `style` link can't carry it either: it drops the logo icon a published
   // theme may keep (lib/community/public-style-server.ts).
+  // One undo step, so the visitor's own design is one Undo away.
   const handleViewDetails = () => {
-    const { themeState, setThemeState } = useQREditorStore.getState();
-    setThemeState({ ...themeState, styles: displayTheme.styles });
+    useQREditorStore.getState().applyDesign({
+      ...defaultThemeState.styles,
+      ...displayTheme.styles,
+    });
     onOpenChange(false);
     router.push(playgroundHref({ tab: "design" }));
   };

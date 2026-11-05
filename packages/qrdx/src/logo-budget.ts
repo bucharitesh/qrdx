@@ -10,9 +10,9 @@
 import type { ErrorLevel, ImageSettings, QRCodeShape } from "../types";
 import qrcodegen from "./codegen";
 import { damagedCodewords, getCodewordMap } from "./codeword-map";
-import { ERROR_LEVEL_MAP } from "./constants";
+import { DEFAULT_IMG_SCALE, DEFAULT_LEVEL, ERROR_LEVEL_MAP } from "./constants";
 import { getLayoutMargin } from "./qr-shape";
-import { getImageSettings } from "./utils";
+import { getImageSettings, resolveErrorLevel } from "./utils";
 
 /** Share of each block's repair capacity a logo may use (as the badge). */
 export const LOGO_EC_SAFETY = 0.6;
@@ -154,4 +154,73 @@ export function fitLogoWidth(
     }
   }
   return 0;
+}
+
+export interface RenderedLogoCode extends Omit<LogoCode, "level"> {
+  level?: ErrorLevel;
+  /** The renderer's autoLevel (a logo over 7% of the code raises it to H) */
+  autoLevel?: boolean;
+  /** QRCodeSVG's isOGContext (an excavated logo raises L/M to Q) */
+  isOGContext?: boolean;
+}
+
+/**
+ * `imageSettings` passed straight to a renderer (QRCodeSVG, QRCodeCanvas,
+ * getQRAsSVG), held to the same budget getQRData gives `logo` +
+ * `logoOptions`: unchanged when it fits, else shrunk around its own center
+ * (aspect ratio and clear space kept) to the largest size that does, or
+ * undefined when not even a sliver fits. A logo already capped by getQRData
+ * comes back as it is.
+ */
+export function capImageSettings(
+  code: RenderedLogoCode,
+  imageSettings: ImageSettings | undefined
+): ImageSettings | undefined {
+  if (!imageSettings) {
+    return undefined;
+  }
+  const defaultSize = Math.floor(code.size * DEFAULT_IMG_SCALE);
+  const width = imageSettings.width || defaultSize;
+  const height = imageSettings.height || defaultSize;
+  const layout = (next: number): ImageSettings => {
+    if (next === width) {
+      return imageSettings;
+    }
+    const nextHeight = (height * next) / width;
+    return {
+      ...imageSettings,
+      width: next,
+      height: nextHeight,
+      ...(imageSettings.x != null && {
+        x: imageSettings.x + (width - next) / 2,
+      }),
+      ...(imageSettings.y != null && {
+        y: imageSettings.y + (height - nextHeight) / 2,
+      }),
+    };
+  };
+  const requested = code.level ?? DEFAULT_LEVEL;
+  const base = {
+    value: code.value,
+    size: code.size,
+    margin: code.margin,
+    shape: code.shape,
+  };
+  const drawnAt = (settings: ImageSettings) =>
+    resolveErrorLevel({ ...code, level: requested, imageSettings: settings });
+  const fit = (level: ErrorLevel) => {
+    const fitted = fitLogoWidth(base, [level], width, layout);
+    return fitted > 0 ? layout(fitted) : undefined;
+  };
+  // As getQRData's cap: a raised level (autoLevel, isOGContext) holds only
+  // while the logo still raises it, else size it for the requested level.
+  const drawn = drawnAt(imageSettings);
+  if (drawn === requested) {
+    return fit(requested);
+  }
+  const atDrawn = fit(drawn);
+  if (atDrawn && drawnAt(atDrawn) === drawn) {
+    return atDrawn;
+  }
+  return fit(requested);
 }

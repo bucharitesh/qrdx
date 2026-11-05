@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
+import { BULK_KEYS } from "@/app/dashboard/_lib/list-keys";
 import {
+  BULK_OWNED,
   ROW_KEYS,
   type RowAction,
   type RowKeyContext,
@@ -29,7 +31,24 @@ describe("row shortcuts", () => {
   it("gives each action its own key", () => {
     const keys = Object.values(ROW_KEYS);
     expect(new Set(keys).size).toBe(keys.length);
-    for (const key of keys) expect(key).toMatch(/^[a-z]$/);
+    for (const key of keys) expect(key).toMatch(/^([a-z]|Backspace)$/);
+  });
+
+  it("leaves X to selecting the row, and trashes with Backspace or Delete", () => {
+    expect(resolveRowShortcut(press("x"), ready)).toBeNull();
+    expect(resolveRowShortcut(press("Backspace"), ready)).toBe("trash");
+    expect(resolveRowShortcut(press("Delete"), ready)).toBe("trash");
+  });
+
+  it("shares its keys with the selection's, for the same actions", () => {
+    // With rows selected these keys act on the selection (list-keys.ts).
+    expect(ROW_KEYS.move).toBe(BULK_KEYS.move);
+    expect(ROW_KEYS.tags).toBe(BULK_KEYS.tags);
+    expect(ROW_KEYS.archive).toBe(BULK_KEYS.archive);
+    expect(ROW_KEYS.trash).toBe(BULK_KEYS.trash);
+    expect([...BULK_OWNED].sort()).toEqual(
+      ["archive", "move", "tags", "trash"].sort(),
+    );
   });
 
   it("maps each key to its action, in either case", () => {
@@ -52,7 +71,7 @@ describe("row shortcuts", () => {
       null,
     );
     expect(
-      resolveRowShortcut(press("x"), { ...ready, overlayOpen: true }),
+      resolveRowShortcut(press("Backspace"), { ...ready, overlayOpen: true }),
     ).toBeNull();
   });
 
@@ -74,7 +93,7 @@ describe("row shortcuts", () => {
     expect(resolveRowShortcut(press("m"), outsideList)).toBeNull();
     expect(resolveRowShortcut(press("l"), outsideList)).toBe("copy");
     expect(
-      resolveRowShortcut(press("x"), { ...ready, available: [] }),
+      resolveRowShortcut(press("Backspace"), { ...ready, available: [] }),
     ).toBeNull();
   });
 });

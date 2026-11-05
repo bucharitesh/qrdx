@@ -18,7 +18,7 @@ export interface CompareMigration {
 const importHref = (provider: ProviderId) =>
   dashboardEntry("codes", { import: provider });
 
-function api(provider: "dub" | "bitly", printed: string): CompareMigration {
+function api(provider: "bitly", printed: string): CompareMigration {
   const { name } = API_PROVIDERS[provider];
   return {
     kind: "api",
@@ -87,11 +87,8 @@ function library(anchor: string, name: string): CompareMigration {
 const UNIQODE = FILE_PROVIDERS.uniqode.exportSteps[0] as string;
 const QR_TIGER = FILE_PROVIDERS["qr-tiger"].exportSteps[0] as string;
 
+// Dub has no compare page or import: it's a partner, with an integration.
 export const COMPARE_MIGRATIONS: Record<string, CompareMigration> = {
-  dub: api(
-    "dub",
-    "Printed codes keep working: after the import, QRdx can point each old Dub link at its new code (with a dry run and undo). Moving your own domain? Keep the original back-halves.",
-  ),
   "bitly-qr": api(
     "bitly",
     "Printed codes can keep working: QRdx points each old Bitly link at its new code where your Bitly plan allows link redirects (5 a month on Core, more on higher plans; none on Free). Otherwise keep the Bitly links live until you reprint.",
