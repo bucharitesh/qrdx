@@ -39,6 +39,7 @@ import {
 import { deleteLandingPages } from "@/actions/landing-pages";
 import {
   LIST_ROW_FOCUS,
+  LIST_TABLE_ROW_FOCUS,
   type ListSelectionApi,
   ListShortcuts,
   SelectionStatus,
@@ -239,7 +240,7 @@ export function PageRow({
   if (as === "tr") {
     return (
       <TableRow
-        className={cn(LIST_ROW_FOCUS, className)}
+        className={cn(LIST_TABLE_ROW_FOCUS, className)}
         data-state={selected ? "selected" : undefined}
         {...selection.rowProps(id)}
       >

@@ -12,7 +12,7 @@ import {
 import { Folder2 as Folder, Notepad2 as NotebookPen } from "iconsax-reactjs";
 import Link from "next/link";
 import {
-  LIST_ROW_FOCUS,
+  LIST_TABLE_ROW_FOCUS,
   type ListSelectionApi,
   useModKey,
 } from "@/app/dashboard/_components/list-selection";
@@ -127,7 +127,7 @@ export function CodesTable({
           const title = code.title || displayUrl(code.destinationUrl);
           return (
             <TableRow
-              className={selection ? LIST_ROW_FOCUS : undefined}
+              className={selection ? LIST_TABLE_ROW_FOCUS : undefined}
               data-state={isSelected ? "selected" : undefined}
               key={code.id}
               {...selection?.rowProps(code.id)}
