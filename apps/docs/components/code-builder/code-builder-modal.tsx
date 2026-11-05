@@ -1,8 +1,7 @@
 "use client";
 
-// The dynamic QR code builder: a create and edit modal in the shape of Dub's
-// link builder (github.com/dubinc/dub, AGPL-3.0:
-// apps/web/ui/modals/link-builder/index.tsx), with the QR design first-class.
+// The dynamic QR code builder: a create and edit modal with the QR design
+// first-class.
 // Left: what the code opens, its short link, title, folder and tags. Right:
 // the live QR with its scan score and quick design choices. Footer: the
 // round 4 option buttons and Create. Opened through openCodeBuilder().
@@ -610,7 +609,7 @@ export default function CodeBuilderModal({
     track("dynamic_code_created", {
       source: fromPlayground ? "playground" : "dashboard",
     });
-    // Copied right away, like Dub; the success screen keeps a Copy button.
+    // Copied right away; the success screen keeps a Copy button.
     navigator.clipboard
       ?.writeText(result.code.shortLink)
       .then(() =>

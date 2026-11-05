@@ -86,6 +86,8 @@ export async function launch({
     chromePath,
     [
       "--headless=new",
+      // Test pages play UI sounds; a headless run must never be heard.
+      "--mute-audio",
       `--remote-debugging-port=${port}`,
       `--user-data-dir=${profile}`,
       "--hide-scrollbars",
@@ -97,129 +99,157 @@ export async function launch({
     ],
     { stdio: "ignore" },
   );
-
-  let wsUrl;
-  for (let i = 0; i < 75 && !wsUrl; i++) {
+  // The browser never outlives this process: killed on a normal exit, on
+  // Ctrl-C or termination, and if anything below throws before close().
+  const killChrome = () => {
     try {
-      const list = await (
-        await fetch(`http://127.0.0.1:${port}/json/list`)
-      ).json();
-      wsUrl = list.find(
-        (target) => target.type === "page",
-      )?.webSocketDebuggerUrl;
+      chrome.kill();
     } catch {}
-    if (!wsUrl) await sleep(200);
-  }
-  if (!wsUrl) {
-    chrome.kill();
-    throw new Error("Chrome did not start");
-  }
-  const cdp = await connect(wsUrl);
-  await cdp.send("Page.enable");
-  await cdp.send("Runtime.enable");
-  // Every document (including dev-server reloads) gets the in-page helpers.
-  await cdp.send("Page.addScriptToEvaluateOnNewDocument", {
-    source: PAGE_HELPERS,
-  });
-  await cdp.send("Emulation.setDeviceMetricsOverride", {
-    width,
-    height,
-    deviceScaleFactor: 1,
-    mobile: false,
-  });
-  await cdp.send("Emulation.setEmulatedMedia", {
-    features: [{ name: "prefers-reduced-motion", value: "reduce" }],
-  });
-  if (downloadDir) {
-    await cdp.send("Browser.setDownloadBehavior", {
-      behavior: "allow",
-      downloadPath: downloadDir,
-      eventsEnabled: true,
-    });
-  }
-  const origin = await cdp.send("Runtime.evaluate", { expression: "1" });
-  void origin;
+  };
+  const onSignal = (signal) => {
+    killChrome();
+    process.exit(signal === "SIGINT" ? 130 : 143);
+  };
+  process.on("exit", killChrome);
+  process.once("SIGINT", onSignal);
+  process.once("SIGTERM", onSignal);
+  const forget = () => {
+    process.off("exit", killChrome);
+    process.off("SIGINT", onSignal);
+    process.off("SIGTERM", onSignal);
+  };
 
-  const consoleErrors = [];
-  cdp.on((message) => {
-    if (message.method === "Runtime.exceptionThrown") {
-      consoleErrors.push(
-        message.params.exceptionDetails?.exception?.description ?? "exception",
-      );
+  try {
+    let wsUrl;
+    for (let i = 0; i < 75 && !wsUrl; i++) {
+      try {
+        const list = await (
+          await fetch(`http://127.0.0.1:${port}/json/list`)
+        ).json();
+        wsUrl = list.find(
+          (target) => target.type === "page",
+        )?.webSocketDebuggerUrl;
+      } catch {}
+      if (!wsUrl) await sleep(200);
     }
-    // React reports errors caught by error boundaries through console.error.
-    if (
-      message.method === "Runtime.consoleAPICalled" &&
-      message.params.type === "error"
+    if (!wsUrl) {
+      chrome.kill();
+      throw new Error("Chrome did not start");
+    }
+    const cdp = await connect(wsUrl);
+    await cdp.send("Page.enable");
+    await cdp.send("Runtime.enable");
+    // Every document (including dev-server reloads) gets the in-page helpers.
+    await cdp.send("Page.addScriptToEvaluateOnNewDocument", {
+      source: PAGE_HELPERS,
+    });
+    await cdp.send("Emulation.setDeviceMetricsOverride", {
+      width,
+      height,
+      deviceScaleFactor: 1,
+      mobile: false,
+    });
+    await cdp.send("Emulation.setEmulatedMedia", {
+      features: [{ name: "prefers-reduced-motion", value: "reduce" }],
+    });
+    if (downloadDir) {
+      await cdp.send("Browser.setDownloadBehavior", {
+        behavior: "allow",
+        downloadPath: downloadDir,
+        eventsEnabled: true,
+      });
+    }
+    const origin = await cdp.send("Runtime.evaluate", { expression: "1" });
+    void origin;
+
+    const consoleErrors = [];
+    cdp.on((message) => {
+      if (message.method === "Runtime.exceptionThrown") {
+        consoleErrors.push(
+          message.params.exceptionDetails?.exception?.description ??
+            "exception",
+        );
+      }
+      // React reports errors caught by error boundaries through console.error.
+      if (
+        message.method === "Runtime.consoleAPICalled" &&
+        message.params.type === "error"
+      ) {
+        const text = message.params.args
+          .map((arg) => arg.value ?? arg.description ?? "")
+          .join(" ");
+        if (/Error:/.test(text)) consoleErrors.push(text);
+      }
+    });
+
+    /** Evaluates `fn` (a function source) in the page with JSON args. */
+    async function evaluate(fn, ...args) {
+      const { result, exceptionDetails } = await cdp.send("Runtime.evaluate", {
+        expression: `(${fn})(...${JSON.stringify(args)})`,
+        awaitPromise: true,
+        returnByValue: true,
+      });
+      if (exceptionDetails) {
+        throw new Error(
+          exceptionDetails.exception?.description ??
+            exceptionDetails.text ??
+            "evaluate failed",
+        );
+      }
+      return result.value;
+    }
+
+    async function goto(url, { wait = 1500 } = {}) {
+      const loaded = new Promise((resolve) => {
+        const fn = (message) => {
+          if (message.method === "Page.loadEventFired") {
+            cdp.off(fn);
+            resolve();
+          }
+        };
+        cdp.on(fn);
+      });
+      await cdp.send("Page.navigate", { url });
+      await Promise.race([loaded, sleep(60_000)]);
+      await sleep(wait);
+    }
+
+    /** Polls `fn` in the page until it returns a truthy value. */
+    async function waitFor(
+      fn,
+      { timeout = 15_000, interval = 150, args = [] } = {},
     ) {
-      const text = message.params.args
-        .map((arg) => arg.value ?? arg.description ?? "")
-        .join(" ");
-      if (/Error:/.test(text)) consoleErrors.push(text);
-    }
-  });
-
-  /** Evaluates `fn` (a function source) in the page with JSON args. */
-  async function evaluate(fn, ...args) {
-    const { result, exceptionDetails } = await cdp.send("Runtime.evaluate", {
-      expression: `(${fn})(...${JSON.stringify(args)})`,
-      awaitPromise: true,
-      returnByValue: true,
-    });
-    if (exceptionDetails) {
+      const started = Date.now();
+      let last;
+      while (Date.now() - started < timeout) {
+        last = await evaluate(fn, ...args).catch((error) => ({
+          __error: String(error),
+        }));
+        if (last && !last.__error) return last;
+        await sleep(interval);
+      }
       throw new Error(
-        exceptionDetails.exception?.description ??
-          exceptionDetails.text ??
-          "evaluate failed",
+        `Timed out waiting for condition (${String(fn).slice(0, 80)}…)`,
       );
     }
-    return result.value;
-  }
 
-  async function goto(url, { wait = 1500 } = {}) {
-    const loaded = new Promise((resolve) => {
-      const fn = (message) => {
-        if (message.method === "Page.loadEventFired") {
-          cdp.off(fn);
-          resolve();
-        }
-      };
-      cdp.on(fn);
-    });
-    await cdp.send("Page.navigate", { url });
-    await Promise.race([loaded, sleep(60_000)]);
-    await sleep(wait);
-  }
-
-  /** Polls `fn` in the page until it returns a truthy value. */
-  async function waitFor(
-    fn,
-    { timeout = 15_000, interval = 150, args = [] } = {},
-  ) {
-    const started = Date.now();
-    let last;
-    while (Date.now() - started < timeout) {
-      last = await evaluate(fn, ...args).catch((error) => ({
-        __error: String(error),
-      }));
-      if (last && !last.__error) return last;
-      await sleep(interval);
+    async function close() {
+      try {
+        cdp.close();
+      } catch {}
+      killChrome();
+      forget();
+      await sleep(200);
+      rmSync(profile, { recursive: true, force: true });
     }
-    throw new Error(
-      `Timed out waiting for condition (${String(fn).slice(0, 80)}…)`,
-    );
-  }
 
-  async function close() {
-    try {
-      cdp.close();
-    } catch {}
-    chrome.kill();
-    await sleep(200);
+    return { cdp, evaluate, goto, waitFor, close, consoleErrors };
+  } catch (error) {
+    killChrome();
+    forget();
     rmSync(profile, { recursive: true, force: true });
+    throw error;
   }
-
-  return { cdp, evaluate, goto, waitFor, close, consoleErrors };
 }
 
 // ── Content-Security-Policy violations ──────────────────────────────────────

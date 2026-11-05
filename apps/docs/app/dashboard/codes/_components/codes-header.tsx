@@ -1,9 +1,7 @@
 "use client";
 
-// The codes page's header: the folder switcher as its title, like Dub's
-// links page (github.com/dubinc/dub, AGPL-3.0: apps/web/ui/folders/
-// folder-switcher.tsx), then one New code button and a "…" menu holding
-// both imports.
+// The codes page's header: the folder switcher as its title, then one New
+// code button and a "…" menu holding both imports.
 
 import { Button } from "@repo/design-system/components/ui/button";
 import {

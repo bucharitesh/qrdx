@@ -1,4 +1,4 @@
--- Saved UTM templates (the Dub study's gap 10): one new table, utm_template.
+-- Saved UTM templates: one new table, utm_template.
 -- A template is a named set of UTM parameters a workspace reuses from the
 -- code builder's UTM panel, instead of retyping utm_source, utm_medium and
 -- utm_campaign for every code.

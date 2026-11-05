@@ -1,4 +1,4 @@
--- Workspace join links (Settings → Team, the Dub study's gap 4): one new
+-- Workspace join links (Settings → Team): one new
 -- table, workspace_join_link. Owners and admins make a link
 -- (/join/<token>) that lets anyone signed in join the workspace as a member,
 -- or as the role they picked (never owner), while the plan has seats. They

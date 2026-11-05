@@ -98,7 +98,7 @@ export function CreateProvider({
   );
 
   // Paste a web address on a dashboard page (not in a field, no dialog
-  // open) to start a code for it, as on Dub's links page. Settings pages,
+  // open) to start a code for it. Settings pages,
   // full of URL fields, leave pastes alone.
   usePasteToCreate(startCode, canWrite && !isSettingsPath(pathname));
 
