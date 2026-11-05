@@ -1,3 +1,5 @@
+import { passkey } from "@better-auth/passkey";
+import { sso } from "@better-auth/sso";
 import * as schema from "@repo/database";
 import { database as db } from "@repo/database";
 import { type BetterAuthOptions, betterAuth } from "better-auth";
@@ -12,6 +14,7 @@ import {
   emailOTP,
   lastLoginMethod,
   organization,
+  twoFactor,
 } from "better-auth/plugins";
 import {
   defaultRoles,
@@ -21,9 +24,33 @@ import { getAdminUserIds } from "./admin";
 import { sendVerificationOTP } from "./email-otp";
 import { keys } from "./keys";
 import {
-  ENTITLED_SUBSCRIPTION_STATUSES,
-  hasEntitledSubscription,
-} from "./plan";
+  PASSKEY_SIGN_IN_OPTIONS_PATH,
+  PASSKEY_SIGN_IN_PATH,
+  passkeyOptions,
+  passkeyPolicy,
+  SERVER_ONLY_PASSKEY_PATHS,
+} from "./passkey";
+import { passkeyRelyingParty } from "./passkey-rp";
+import { hasEntitledSubscription, workspacePlanTier } from "./plan";
+import { signInChallenge } from "./sign-in-challenge";
+import {
+  BACKUP_CODE_COUNT,
+  CHALLENGE_CONTINUE_PATH,
+  generateBackupCodes,
+  SERVER_ONLY_TWO_FACTOR_PATHS,
+  TOTP_DIGITS,
+  TOTP_PERIOD_SECONDS,
+  TRUST_DEVICE_DAYS,
+  UNUSED_TWO_FACTOR_PATHS,
+} from "./sign-in-challenge-rules";
+import { signInMethodForPath } from "./sign-in-method";
+import {
+  SSO_SERVER_ONLY_PATHS,
+  SSO_SIGN_IN_PATH,
+  SSO_UNUSED_PATHS,
+  ssoGate,
+  ssoOptions,
+} from "./sso";
 import {
   assertDeletable,
   assertNotOwnMember,
@@ -34,55 +61,18 @@ import {
 } from "./workspace-hooks";
 
 // Members per team, owner included, by the best plan among its owners and
-// billing members (the roles that pay, PLAN_ROLES in apps/docs/lib/
-// permissions.ts). Keep in sync with `teamMembers` and
-// getOwnerPlanForOrganization in apps/docs/lib/plans.ts. Business products
-// are the env ids; any other entitled product counts as Pro
-// (planForSubscriptionProduct).
+// billing members (workspacePlanTier in ./plan.ts). Keep in sync with
+// `teamMembers` in apps/docs/lib/plans.ts.
 const TEAM_MEMBER_LIMITS = {
   free: 1,
   pro: 3,
   business: Number.POSITIVE_INFINITY,
 };
-const BUSINESS_PRODUCT_IDS = new Set(
-  [
-    process.env.NEXT_PUBLIC_QRDX_BUSINESS_MONTHLY_PRODUCT_ID,
-    process.env.NEXT_PUBLIC_QRDX_BUSINESS_YEARLY_PRODUCT_ID,
-  ].filter(Boolean)
-);
 // Better Auth's default invitation cap, kept for teams without a member limit.
 const MAX_PENDING_INVITATIONS = 100;
 
-const PLAN_ROLES = new Set(["owner", "billing"]);
-
 async function teamMemberLimit(organizationId: string): Promise<number> {
-  const owners = await db.query.member.findMany({
-    columns: { userId: true, role: true },
-    where: (table, { and, eq, like, or }) =>
-      and(
-        eq(table.organizationId, organizationId),
-        or(like(table.role, "%owner%"), like(table.role, "%billing%"))
-      ),
-  });
-  const ownerIds = owners
-    .filter((m) =>
-      m.role.split(",").some((role) => PLAN_ROLES.has(role.trim()))
-    )
-    .map((m) => m.userId);
-  if (ownerIds.length === 0) return TEAM_MEMBER_LIMITS.free;
-
-  const subscriptions = await db.query.subscription.findMany({
-    columns: { productId: true },
-    where: (table, { and, inArray }) =>
-      and(
-        inArray(table.userId, ownerIds),
-        inArray(table.status, ENTITLED_SUBSCRIPTION_STATUSES)
-      ),
-  });
-  if (subscriptions.length === 0) return TEAM_MEMBER_LIMITS.free;
-  return subscriptions.some((s) => BUSINESS_PRODUCT_IDS.has(s.productId))
-    ? TEAM_MEMBER_LIMITS.business
-    : TEAM_MEMBER_LIMITS.pro;
+  return TEAM_MEMBER_LIMITS[await workspacePlanTier(organizationId)];
 }
 
 /** Pending invitations allowed: the seats left after current members. */
@@ -143,6 +133,32 @@ const SERVER_ONLY_EMAIL_OTP_PATHS = [
   "/email-otp/request-email-change",
   "/email-otp/change-email",
 ];
+
+// Two-step verification (Lane A). An authenticator app plus backup codes;
+// no codes by email or SMS as a second factor, so the plugin's OTP endpoints
+// are off. Turning it on or off and new backup codes only go through the
+// app's server actions (apps/docs/app/settings/account/_lib/
+// two-factor-actions.ts), which add a recent sign-in, a current code, limits
+// and the notice email. Over HTTP only the challenge's own endpoints remain.
+const twoFactorPlugin = twoFactor({
+  issuer: "QRdx",
+  // QRdx has no passwords; the app's actions check a code instead.
+  allowPasswordless: true,
+  // The issuer is read from here by get-totp-uri, from above by enable.
+  totpOptions: {
+    issuer: "QRdx",
+    digits: TOTP_DIGITS,
+    period: TOTP_PERIOD_SECONDS,
+  },
+  backupCodeOptions: {
+    amount: BACKUP_CODE_COUNT,
+    // Easy-to-read codes; entered codes are normalised to match
+    // (./sign-in-challenge.ts).
+    customBackupCodesGenerate: () => generateBackupCodes(BACKUP_CODE_COUNT),
+    storeBackupCodes: "encrypted",
+  },
+  trustDeviceMaxAge: TRUST_DEVICE_DAYS * 24 * 60 * 60,
+});
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -229,10 +245,9 @@ export const auth = betterAuth({
   },
   plugins: [
     lastLoginMethod({
-      // The plugin doesn't name email-code sign-ins itself; null falls back to
-      // its own detection (Google, GitHub).
-      customResolveMethod: (ctx) =>
-        ctx.path === SIGN_IN_CODE_PATH ? "email-otp" : null,
+      // Email codes, passkeys and workspace SSO (./sign-in-method.ts); null
+      // falls back to the plugin's own detection (Google, GitHub).
+      customResolveMethod: (ctx) => signInMethodForPath(ctx.path),
     }),
     // A first sign-in creates the account, like social sign-in.
     emailOTP({
@@ -301,6 +316,27 @@ export const auth = betterAuth({
         },
       },
     }),
+    // Sign-in security (packages/database/manual-sql/0019_sign_in_security.sql).
+    // Two-step verification (Lane A): the plugin, then the challenge after
+    // every session-creating endpoint (./sign-in-challenge.ts).
+    twoFactorPlugin,
+    signInChallenge(twoFactorPlugin),
+    // Passkeys: rpID and origin from the app's URL (./passkey-rp.ts), user
+    // verification required, sign-in options and registration rules in
+    // ./passkey.ts.
+    passkey(
+      passkeyOptions(
+        passkeyRelyingParty({
+          BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,
+          NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+        })
+      )
+    ),
+    passkeyPolicy(),
+    // Lane C: workspace single sign-on, Business plan only. ./sso.ts adds
+    // QRdx's checks (plan, verified domain, who joins the workspace).
+    sso(ssoOptions),
+    ssoGate(),
   ],
   // The admin panel does not use impersonation or password resets; keep them off the HTTP surface.
   disabledPaths: [
@@ -308,6 +344,14 @@ export const auth = betterAuth({
     "/admin/set-user-password",
     ...UNUSED_EMAIL_OTP_PATHS,
     ...SERVER_ONLY_EMAIL_OTP_PATHS,
+    // Two-step verification (Lane A)
+    ...UNUSED_TWO_FACTOR_PATHS,
+    ...SERVER_ONLY_TWO_FACTOR_PATHS,
+    // Passkeys: added, renamed and removed through the app's server actions.
+    ...SERVER_ONLY_PASSKEY_PATHS,
+    // Lane C: SSO connections are managed through the app's server actions.
+    ...SSO_SERVER_ONLY_PATHS,
+    ...SSO_UNUSED_PATHS,
   ],
   // Better Auth enforces these in production only, per IP, in memory.
   rateLimit: {
@@ -322,6 +366,26 @@ export const auth = betterAuth({
       [SEND_CODE_PATH]: { window: 60, max: 3 },
       // Each code allows 3 tries, so 5 a minute leaves room for one resend.
       [SIGN_IN_CODE_PATH]: { window: 60, max: 5 },
+      // Two-step verification (Lane A): the plugin's own 3 per 10 s, stated
+      // here. Each challenge also allows 5 wrong codes, and 10 in a row lock
+      // the account for 15 minutes.
+      "/two-factor/verify-totp": { window: 10, max: 3 },
+      "/two-factor/verify-backup-code": { window: 10, max: 3 },
+      // A SAML sign-in by a 2FA user passes through here once (a GET after
+      // the IdP's POST); it checks no codes, only signed cookies, and a
+      // whole office signs in from one address, so it's as loose as the ACS.
+      [CHALLENGE_CONTINUE_PATH]: { window: 60, max: 120 },
+      // Passkeys: the sign-in panel asks for a challenge when it opens (for
+      // autofill) and again for the button; each sign-in verifies once.
+      [PASSKEY_SIGN_IN_OPTIONS_PATH]: { window: 60, max: 20 },
+      [PASSKEY_SIGN_IN_PATH]: { window: 60, max: 10 },
+      // Lane C: starting an SSO sign-in, and the IdP's return. Per IP, and a
+      // whole company can sit behind one office address at 9am, so these are
+      // looser than the email-code limits. Each callback still needs the
+      // state from its own sign-in start, so they can't be replayed.
+      [SSO_SIGN_IN_PATH]: { window: 60, max: 60 },
+      "/sso/callback/*": { window: 60, max: 120 },
+      "/sso/saml2/sp/acs/*": { window: 60, max: 120 },
     },
   },
 }) as any;

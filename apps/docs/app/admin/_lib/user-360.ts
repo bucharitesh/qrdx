@@ -72,6 +72,7 @@ export async function loadProfile(userId: string) {
       name: user.name,
       image: user.image,
       emailVerified: user.emailVerified,
+      twoFactorEnabled: user.twoFactorEnabled,
       role: user.role,
       banned: user.banned,
       banReason: user.banReason,

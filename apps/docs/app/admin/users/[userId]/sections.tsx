@@ -81,6 +81,36 @@ export function SignInSection({ profile }: { profile: UserProfile }) {
           )
         }
       />
+      <Row
+        actions={
+          user.twoFactorEnabled && (
+            <AdminAction
+              action="resetTwoFactor"
+              confirmLabel="Turn off"
+              description={`Only after ${user.email} wrote to support from that address and lost their authenticator app and backup codes. Their secret, backup codes and trusted devices are deleted, and the address gets a notice.`}
+              destructive
+              input={{ userId: user.id }}
+              label="Turn off"
+              success="Two-step verification turned off"
+              title="Turn off two-step verification"
+              variant="ghost"
+            />
+          )
+        }
+        meta={
+          user.twoFactorEnabled
+            ? "Sign-in asks for an authenticator or backup code."
+            : "Not set up."
+        }
+        title={
+          <>
+            Two-step verification
+            <Badge variant="outline">
+              {user.twoFactorEnabled ? "on" : "off"}
+            </Badge>
+          </>
+        }
+      />
       {accounts.map((entry) => (
         <Row
           actions={

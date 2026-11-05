@@ -15,6 +15,8 @@ import { type ComponentType, type ReactNode, useEffect, useState } from "react";
 import { QrdxLogoAnimation } from "@/components/qrdx-logo-animation";
 import { siteConfig } from "@/config/site";
 import { EmailCodeSignIn } from "./email-code-sign-in";
+import { PasskeySignIn } from "./passkey-sign-in";
+import { SsoSignIn } from "./sso-sign-in";
 
 const FOOTER_LINK =
   "rounded-sm transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
@@ -68,6 +70,8 @@ export function SignInPanel({
   // Address the email code went to (the code step), and a key to start over.
   const [codeSentTo, setCodeSentTo] = useState<string | null>(null);
   const [emailFormKey, setEmailFormKey] = useState(0);
+  // The email code was right and two-step verification asks for a code.
+  const [twoFactor, setTwoFactor] = useState(false);
 
   useEffect(() => {
     if (shown) setLastLoginMethod(authClient.getLastUsedLoginMethod());
@@ -98,6 +102,7 @@ export function SignInPanel({
     // After the dialog's close animation, so it doesn't flash the email step.
     window.setTimeout(() => {
       setCodeSentTo(null);
+      setTwoFactor(false);
       setEmailFormKey((key) => key + 1);
     }, 300);
   };
@@ -125,14 +130,18 @@ export function SignInPanel({
       <div className="flex flex-col items-center gap-2 px-6 pt-8 pb-6 text-center">
         <QrdxLogoAnimation size={52} className="mb-3" />
         <Title className="text-xl font-semibold tracking-tight">
-          {codeSentTo
-            ? "Check your email"
-            : isSignIn
-              ? "Sign in to QRdx"
-              : "Create your QRdx account"}
+          {twoFactor
+            ? "Two-step verification"
+            : codeSentTo
+              ? "Check your email"
+              : isSignIn
+                ? "Sign in to QRdx"
+                : "Create your QRdx account"}
         </Title>
         <Description className="text-muted-foreground text-sm text-pretty">
-          {codeSentTo ? (
+          {twoFactor ? (
+            "Your account asks for a second step when you sign in."
+          ) : codeSentTo ? (
             <>
               Code sent to{" "}
               <span className="font-medium break-all text-foreground">
@@ -161,7 +170,7 @@ export function SignInPanel({
           {providers.map((provider) => (
             <div className="relative" key={provider.id}>
               <Button
-                className="w-full"
+                className="h-10 w-full sm:h-9"
                 disabled={busy}
                 onClick={provider.onClick}
                 variant="outline"
@@ -185,6 +194,16 @@ export function SignInPanel({
         </div>
       )}
 
+      {!codeSentTo && isSignIn && (
+        <PasskeySignIn
+          disabled={busy}
+          lastUsed={lastLoginMethod === "passkey"}
+          onSignedIn={() => onSignedIn?.()}
+          redirectTo={redirectTo}
+          shown={shown}
+        />
+      )}
+
       {!codeSentTo && (
         <div className="flex items-center gap-3 px-6 py-4">
           <Separator className="flex-1" />
@@ -199,14 +218,24 @@ export function SignInPanel({
         lastUsed={lastLoginMethod === "email-otp"}
         onSentToChange={setCodeSentTo}
         onSignedIn={handleEmailSignedIn}
+        onTwoFactorChange={setTwoFactor}
         redirectTo={redirectTo}
         sentTo={codeSentTo}
       />
 
-      {/* Every method creates the account on first use, so there's no separate sign-up step. */}
+      {!codeSentTo && (
+        <SsoSignIn
+          callbackURL={callbackURL}
+          disabled={busy}
+          lastUsed={lastLoginMethod === "sso"}
+        />
+      )}
+
+      {/* Google, GitHub, email codes and workspace SSO create the account on first use, so there's no separate sign-up step (a passkey needs an account first). */}
       {!codeSentTo && (
         <p className="px-6 pt-4 pb-6 text-center text-xs text-pretty text-muted-foreground">
-          New to QRdx? Any sign-in option creates your free account.
+          New to QRdx? Google, GitHub or an email code creates your free
+          account.
         </p>
       )}
 
