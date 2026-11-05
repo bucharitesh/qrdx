@@ -9,8 +9,22 @@ import {
 } from "qrdx";
 import type { QRCustomFrame } from "qrdx/types";
 import { z } from "zod";
+import { getPageForEdit } from "@/app/dashboard/pages/_lib/landing-pages";
 import { findThemeById } from "@/app/dashboard/themes/_lib/queries";
-import { CopyRefusedError, copyItemToWorkspace } from "@/lib/community/copies";
+import { CHAT_DRAFT_SOURCE } from "@/lib/ai/agent/community";
+import { publishCollection, publishKit } from "@/lib/community/bundles";
+import {
+  CopyRefusedError,
+  copyItemToWorkspace,
+  copyKitToWorkspace,
+  copyTemplateToWorkspace,
+} from "@/lib/community/copies";
+import {
+  type KeptProblem,
+  type ScrubbedField,
+  scrubPageContent,
+  scrubSummary,
+} from "@/lib/community/page-template";
 import {
   getMyCommunityProfile,
   type MyCommunityProfile,
@@ -20,9 +34,12 @@ import {
 import {
   PublishError,
   publishFrame,
+  publishPageTemplate,
+  publishStyle,
   unpublishItem,
 } from "@/lib/community/publish";
 import {
+  canPublishFromWorkspace,
   themePublishAccess,
   WORKSPACE_PUBLISH_REFUSAL,
 } from "@/lib/community/publish-access";
@@ -34,9 +51,13 @@ import {
 } from "@/lib/community/reactions";
 import { CommunityUnavailableError } from "@/lib/community/store";
 import { type CommunityItemType, itemPath } from "@/lib/community/types";
-import { getActiveScope } from "@/lib/scope";
+import { HttpError } from "@/lib/error-response";
+import { getTemplate } from "@/lib/landing/templates";
+import { type ActiveScope, getActiveScope } from "@/lib/scope";
 import { getCurrentUserId, logError } from "@/lib/shared";
 import { UnauthorizedError } from "@/types/errors";
+import type { LandingPageContent } from "@/types/landing";
+import type { ThemeStyles } from "@/types/theme";
 
 // Server actions for the community pages and the editor's frame tools.
 // Each returns a plain result the client shows as it is; nothing here
@@ -56,6 +77,9 @@ export type CommunityResult<T> =
         | "LICENSE_REQUIRED"
         | "NOT_FOUND"
         | "THEME_LIMIT_REACHED"
+        | "PAGE_LIMIT_REACHED"
+        | "FORBIDDEN"
+        | "CONFLICT"
         | "UNKNOWN";
       message: string;
       /** For ALREADY_PUBLISHED: the existing item's page */
@@ -98,7 +122,7 @@ function failure<T>(error: unknown, action: string): CommunityResult<T> {
     return fail(
       error.code,
       error.message,
-      error.slug ? itemPath("frame", error.slug) : undefined,
+      error.slug ? itemPath(error.type ?? "frame", error.slug) : undefined,
     );
   }
   if (error instanceof ProfileInputError) {
@@ -113,6 +137,19 @@ function failure<T>(error: unknown, action: string): CommunityResult<T> {
   logError(error as Error, { action });
   return fail("UNKNOWN", "Something went wrong. Please try again.");
 }
+
+/**
+ * The daily publish limit, counted only once every check has passed (it
+ * runs right before the write), so a refused publish never uses it up.
+ */
+const countPublish = (userId: string) => async () => {
+  if (await limited(publishLimiter, `community-publish:${userId}`)) {
+    throw new PublishError(
+      "RATE_LIMITED",
+      "You've published a lot today. Try again tomorrow.",
+    );
+  }
+};
 
 const publishFrameSchema = z.object({
   frame: z.unknown(),
@@ -133,13 +170,8 @@ export async function publishCommunityFrame(
     if (parsed.data.acceptLicense !== true) {
       return fail("LICENSE_REQUIRED", "Confirm the CC0 licence to publish.");
     }
-    if (await limited(publishLimiter, `community-publish:${userId}`)) {
-      return fail(
-        "RATE_LIMITED",
-        "You've published a lot today. Try again tomorrow.",
-      );
-    }
     const item = await publishFrame({
+      beforeWrite: countPublish(userId),
       userId,
       frame: parsed.data.frame,
       details: {
@@ -151,6 +183,56 @@ export async function publishCommunityFrame(
     return { ok: true, data: { href: itemPath(item.type, item.slug) } };
   } catch (error) {
     return failure(error, "publishCommunityFrame");
+  }
+}
+
+/** A chat tool call id (the draft the AI chat's card was made for). */
+const CHAT_DRAFT_ID = /^[A-Za-z0-9_-]{1,96}$/;
+
+const publishDesignSchema = z.object({
+  style: z.record(z.string(), z.unknown()),
+  name: z.string().max(200),
+  description: z.string().max(2000).optional(),
+  tags: z.array(z.string().max(40)).max(20).optional(),
+  acceptLicense: z.boolean(),
+  /** The AI chat's draft this publish answers (publish_to_community) */
+  chatDraftId: z.string().regex(CHAT_DRAFT_ID).optional(),
+});
+
+/**
+ * Publishes a design that isn't a saved theme (the AI chat's): the same
+ * checks as a saved theme (lib/community/publish.ts publishStyle), run on
+ * the style sent here; nothing the client says about it is trusted. Only a
+ * person's click in the publish dialog calls this, never the model.
+ */
+export async function publishCommunityDesign(
+  input: z.input<typeof publishDesignSchema>,
+): Promise<CommunityResult<{ href: string }>> {
+  try {
+    const userId = await getCurrentUserId();
+    const parsed = publishDesignSchema.safeParse(input);
+    if (!parsed.success) return fail("VALIDATION_ERROR", "Check the details.");
+    if (parsed.data.acceptLicense !== true) {
+      return fail("LICENSE_REQUIRED", "Confirm the CC0 licence to publish.");
+    }
+    const item = await publishStyle({
+      beforeWrite: countPublish(userId),
+      userId,
+      style: parsed.data.style as ThemeStyles,
+      details: {
+        name: parsed.data.name,
+        description: parsed.data.description,
+        tags: parsed.data.tags,
+      },
+      ...(parsed.data.chatDraftId
+        ? {
+            source: { kind: CHAT_DRAFT_SOURCE, id: parsed.data.chatDraftId },
+          }
+        : {}),
+    });
+    return { ok: true, data: { href: itemPath(item.type, item.slug) } };
+  } catch (error) {
+    return failure(error, "publishCommunityDesign");
   }
 }
 
@@ -185,13 +267,8 @@ export async function publishCommunityThemeFrame(
     if (frame?.style !== "custom") {
       return fail("VALIDATION_ERROR", "This theme has no custom frame.");
     }
-    if (await limited(publishLimiter, `community-publish:${userId}`)) {
-      return fail(
-        "RATE_LIMITED",
-        "You've published a lot today. Try again tomorrow.",
-      );
-    }
     const item = await publishFrame({
+      beforeWrite: countPublish(userId),
       userId,
       frame,
       details: {
@@ -204,6 +281,151 @@ export async function publishCommunityThemeFrame(
     return { ok: true, data: { href: itemPath(item.type, item.slug) } };
   } catch (error) {
     return failure(error, "publishCommunityThemeFrame");
+  }
+}
+
+// ── Page templates ─────────────────────────────────────────────────────────
+
+/** A hosted page of the open workspace that `scope` may publish. */
+async function publishablePage(pageId: unknown): Promise<
+  | {
+      ok: true;
+      scope: ActiveScope;
+      page: Awaited<ReturnType<typeof getPageForEdit>>;
+    }
+  | { ok: false; result: CommunityResult<never> }
+> {
+  const id = idSchema.safeParse(pageId);
+  if (!id.success) {
+    return { ok: false, result: fail("NOT_FOUND", "Page not found.") };
+  }
+  const scope = await getActiveScope();
+  if (!canPublishFromWorkspace(scope)) {
+    return { ok: false, result: fail("FORBIDDEN", WORKSPACE_PUBLISH_REFUSAL) };
+  }
+  try {
+    return { ok: true, scope, page: await getPageForEdit(scope, id.data) };
+  } catch (error) {
+    if (error instanceof HttpError && error.status === 404) {
+      return { ok: false, result: fail("NOT_FOUND", "Page not found.") };
+    }
+    throw error;
+  }
+}
+
+export interface CommunityPagePreview {
+  /** The page as it would be shared, personal data taken out */
+  content: LandingPageContent;
+  /** What was changed, one line each */
+  changes: string[];
+  /** Text fields replaced with sample text; each can be kept */
+  fields: ScrubbedField[];
+  /** Kept text that can't be published */
+  problems: KeptProblem[];
+  pageType: string;
+  /** A neutral name from the page type, never the page's own title */
+  defaultName: string;
+  /** The page version reviewed; publishing refuses a newer one */
+  version: number;
+}
+
+const keepSchema = z.array(z.string().min(1).max(200)).max(500);
+
+/**
+ * The publish dialog's review step: the page scrubbed as it would be
+ * shared (lib/community/page-template.ts) and what was taken out. Nothing
+ * is stored.
+ */
+export async function previewCommunityPage(
+  pageId: string,
+  keep: string[] = [],
+): Promise<CommunityResult<CommunityPagePreview>> {
+  try {
+    await getCurrentUserId();
+    const kept = keepSchema.safeParse(keep);
+    if (!kept.success) return fail("VALIDATION_ERROR", "Check the details.");
+    const found = await publishablePage(pageId);
+    if (!found.ok) return found.result;
+    const { content, report, fields, problems } = scrubPageContent(
+      found.page.content,
+      { keep: kept.data },
+    );
+    return {
+      ok: true,
+      data: {
+        content,
+        changes: scrubSummary(report),
+        fields,
+        problems,
+        pageType: found.page.type,
+        defaultName: getTemplate(found.page.type)?.label ?? "Page template",
+        version: found.page.version,
+      },
+    };
+  } catch (error) {
+    return failure(error, "previewCommunityPage");
+  }
+}
+
+const publishPageSchema = z.object({
+  pageId: z.string().min(1).max(64),
+  /** The page version the publisher reviewed */
+  version: z.number().int().min(1),
+  keep: keepSchema.optional(),
+  name: z.string().max(200),
+  description: z.string().max(2000).optional(),
+  tags: z.array(z.string().max(40)).max(20).optional(),
+  acceptLicense: z.boolean(),
+});
+
+/**
+ * Publishes a hosted page as a page template: read from the database (never
+ * from the client), scrubbed of personal data, then checked and stored. In
+ * a shared workspace only owners and admins may.
+ */
+export async function publishCommunityPage(
+  input: z.input<typeof publishPageSchema>,
+): Promise<CommunityResult<{ href: string; changes: string[] }>> {
+  try {
+    const userId = await getCurrentUserId();
+    const parsed = publishPageSchema.safeParse(input);
+    if (!parsed.success) return fail("VALIDATION_ERROR", "Check the details.");
+    if (parsed.data.acceptLicense !== true) {
+      return fail("LICENSE_REQUIRED", "Confirm the CC0 licence to publish.");
+    }
+    const found = await publishablePage(parsed.data.pageId);
+    if (!found.ok) return found.result;
+    // What's published is what was reviewed.
+    if (found.page.version !== parsed.data.version) {
+      return fail(
+        "CONFLICT",
+        "This page changed since you reviewed it. Review it again before publishing.",
+      );
+    }
+    const item = await publishPageTemplate({
+      keep: parsed.data.keep ?? [],
+      beforeWrite: countPublish(userId),
+      userId,
+      page: {
+        id: found.page.id,
+        type: found.page.type,
+        content: found.page.content,
+      },
+      details: {
+        name: parsed.data.name,
+        description: parsed.data.description,
+        tags: parsed.data.tags,
+      },
+    });
+    return {
+      ok: true,
+      data: {
+        href: itemPath(item.type, item.slug),
+        changes: scrubSummary(item.report),
+      },
+    };
+  } catch (error) {
+    return failure(error, "publishCommunityPage");
   }
 }
 
@@ -314,6 +536,131 @@ export async function copyCommunityItem(ref: {
     return { ok: true, data: await copyItemToWorkspace(scope, parsed.data) };
   } catch (error) {
     return failure(error, "copyCommunityItem");
+  }
+}
+
+const templateRefSchema = z.object({ slug: z.string().min(1).max(80) });
+
+/**
+ * "Use template": copies a page template into the open workspace as a
+ * draft page (no QR code yet), within the plan's page limit.
+ */
+export async function copyCommunityTemplate(ref: {
+  slug: string;
+}): Promise<CommunityResult<{ pageId: string; name: string }>> {
+  try {
+    const scope = await getActiveScope();
+    const parsed = templateRefSchema.safeParse(ref);
+    if (!parsed.success) {
+      return fail("NOT_FOUND", "This template isn't in the community.");
+    }
+    return {
+      ok: true,
+      data: await copyTemplateToWorkspace(scope, parsed.data.slug),
+    };
+  } catch (error) {
+    return failure(error, "copyCommunityTemplate");
+  }
+}
+
+// ── Collections and kits ───────────────────────────────────────────────────
+
+const bundleDetailsSchema = z.object({
+  name: z.string().max(200),
+  description: z.string().max(2000).optional(),
+  acceptLicense: z.boolean(),
+});
+
+const publishCollectionSchema = bundleDetailsSchema.extend({
+  itemIds: z.array(z.string().min(1).max(64)).max(60),
+});
+
+/** Publishes a collection of published items (2 to 48, in order). */
+export async function publishCommunityCollection(
+  input: z.input<typeof publishCollectionSchema>,
+): Promise<CommunityResult<{ href: string }>> {
+  try {
+    const userId = await getCurrentUserId();
+    const parsed = publishCollectionSchema.safeParse(input);
+    if (!parsed.success) return fail("VALIDATION_ERROR", "Check the details.");
+    if (parsed.data.acceptLicense !== true) {
+      return fail("LICENSE_REQUIRED", "Confirm the CC0 licence to publish.");
+    }
+    const item = await publishCollection({
+      beforeWrite: countPublish(userId),
+      userId,
+      itemIds: parsed.data.itemIds,
+      details: {
+        name: parsed.data.name,
+        description: parsed.data.description,
+      },
+    });
+    return { ok: true, data: { href: itemPath(item.type, item.slug) } };
+  } catch (error) {
+    return failure(error, "publishCommunityCollection");
+  }
+}
+
+const publishKitSchema = bundleDetailsSchema.extend({
+  page: z.string().min(1).max(64),
+  theme: z.string().min(1).max(64).nullish(),
+  frame: z.string().min(1).max(64).nullish(),
+});
+
+/** Publishes a kit: a page template with a theme and/or a frame. */
+export async function publishCommunityKit(
+  input: z.input<typeof publishKitSchema>,
+): Promise<CommunityResult<{ href: string }>> {
+  try {
+    const userId = await getCurrentUserId();
+    const parsed = publishKitSchema.safeParse(input);
+    if (!parsed.success) return fail("VALIDATION_ERROR", "Check the details.");
+    if (parsed.data.acceptLicense !== true) {
+      return fail("LICENSE_REQUIRED", "Confirm the CC0 licence to publish.");
+    }
+    const item = await publishKit({
+      beforeWrite: countPublish(userId),
+      userId,
+      parts: {
+        page: parsed.data.page,
+        theme: parsed.data.theme ?? null,
+        frame: parsed.data.frame ?? null,
+      },
+      details: {
+        name: parsed.data.name,
+        description: parsed.data.description,
+      },
+    });
+    return { ok: true, data: { href: itemPath(item.type, item.slug) } };
+  } catch (error) {
+    return failure(error, "publishCommunityKit");
+  }
+}
+
+/**
+ * "Use kit": its page template as a draft page and its look (the theme
+ * with the frame on it) as a saved theme, in the open workspace.
+ */
+export async function copyCommunityKit(ref: { slug: string }): Promise<
+  CommunityResult<{
+    pageId: string;
+    name: string;
+    themeName: string | null;
+    themeRefused: string | null;
+  }>
+> {
+  try {
+    const scope = await getActiveScope();
+    const parsed = templateRefSchema.safeParse(ref);
+    if (!parsed.success) {
+      return fail("NOT_FOUND", "This kit isn't in the community.");
+    }
+    return {
+      ok: true,
+      data: await copyKitToWorkspace(scope, parsed.data.slug),
+    };
+  } catch (error) {
+    return failure(error, "copyCommunityKit");
   }
 }
 

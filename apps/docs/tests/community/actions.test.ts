@@ -39,9 +39,11 @@ vi.mock("@/lib/scope", () => ({ getActiveScope: vi.fn() }));
 import { getOfficialFrame } from "qrdx";
 import {
   importCommunityFrameSvg,
+  publishCommunityDesign,
   publishCommunityFrame,
   saveCommunityProfileAction,
 } from "@/actions/community";
+import { accountCommunityStore } from "@/lib/ai/agent/community";
 import { fakeDb } from "../support/fake-db";
 
 const wifi = getOfficialFrame("wifi-card");
@@ -155,5 +157,134 @@ describe("saveCommunityProfileAction", () => {
       code: "VALIDATION_ERROR",
       message: "That handle is reserved.",
     });
+  });
+});
+
+// The AI chat's publish dialog: a design that isn't a saved theme goes
+// through the saved theme's checks (publishStyle), and the item is tagged
+// with the chat's tool call so the chat can confirm it.
+describe("publishCommunityDesign", () => {
+  const GREAT = {
+    bgColor: "#FFFFFF",
+    fgColor: "#1E3A8A",
+    eyeColor: "#1E3A8A",
+    dotColor: "#1E3A8A",
+    bodyPattern: "square",
+    level: "M",
+  };
+
+  it("publishes a Great design without its uploaded logo, for the chat to find", async () => {
+    const result = await publishCommunityDesign({
+      style: {
+        ...GREAT,
+        showLogo: true,
+        customLogo: "data:image/png;base64,iVBORw0KGgo=",
+      },
+      name: "Navy sticker",
+      description: "Calm navy.",
+      tags: ["minimal", "not-a-tag"],
+      acceptLicense: true,
+      chatDraftId: "call_publish",
+    });
+    expect(result).toEqual({
+      ok: true,
+      data: {
+        href: expect.stringMatching(/^\/community\/themes\/navy-sticker-/),
+      },
+    });
+    const [item] = fakeDb.rows("communityItem");
+    expect(item).toMatchObject({
+      type: "theme",
+      createdBy: "u_ana",
+      sourceKind: "ai_chat",
+      sourceId: "call_publish",
+      description: "Calm navy.",
+    });
+    expect(JSON.stringify(item?.payload)).not.toContain("data:image/png");
+    expect(fakeDb.rows("communityItemTag").map((row) => row.tag)).toEqual([
+      "minimal",
+    ]);
+    // What the chat's tool reads after the person approves.
+    expect(
+      await accountCommunityStore.publishedFrom("u_ana", "call_publish"),
+    ).toEqual({ url: expect.stringMatching(/^\/community\/themes\//) });
+    expect(
+      await accountCommunityStore.publishedFrom("u_bob", "call_publish"),
+    ).toBeNull();
+    expect(
+      await accountCommunityStore.publishedFrom("u_ana", "call_other"),
+    ).toBeNull();
+  });
+
+  it("refuses without the licence, below Great, with contact details and signed out", async () => {
+    const base = { style: GREAT, name: "Navy", acceptLicense: true };
+    expect(
+      await publishCommunityDesign({ ...base, acceptLicense: false }),
+    ).toMatchObject({ ok: false, code: "LICENSE_REQUIRED" });
+    expect(
+      await publishCommunityDesign({
+        ...base,
+        style: {
+          ...GREAT,
+          fgColor: "#E5E5E5",
+          dotColor: "#E5E5E5",
+          eyeColor: "#E5E5E5",
+        },
+      }),
+    ).toMatchObject({ ok: false, code: "SCAN_GATE" });
+    expect(
+      await publishCommunityDesign({
+        ...base,
+        description: "Write to hello@navy-cafe.com",
+      }),
+    ).toMatchObject({ ok: false, code: "VALIDATION_ERROR" });
+    expect(
+      await publishCommunityDesign({ ...base, chatDraftId: "bad id!" }),
+    ).toMatchObject({ ok: false, code: "VALIDATION_ERROR" });
+    state.userId = null;
+    expect(await publishCommunityDesign(base)).toMatchObject({
+      ok: false,
+      code: "UNAUTHORIZED",
+    });
+    expect(fakeDb.rows("communityItem")).toHaveLength(0);
+  });
+
+  it("links a duplicate to the theme that's already there", async () => {
+    const base = { style: GREAT, name: "Navy", acceptLicense: true };
+    expect((await publishCommunityDesign(base)).ok).toBe(true);
+    expect(
+      await publishCommunityDesign({ ...base, name: "Navy again" }),
+    ).toMatchObject({
+      ok: false,
+      code: "ALREADY_PUBLISHED",
+      href: expect.stringMatching(/^\/community\/themes\/navy-/),
+    });
+  });
+});
+
+// Review fix D: a theme's frame text is published too, so it gets the same
+// refusal as a frame's labels.
+describe("frame text on a published theme", () => {
+  it("refuses links, emails and phone numbers in the frame text", async () => {
+    const style = {
+      fgColor: "#000000",
+      bgColor: "#FFFFFF",
+      level: "M",
+    };
+    for (const text of [
+      "Call 415 555 0132",
+      "ana@harbour.cafe",
+      "harbour.de",
+    ]) {
+      expect(
+        await publishCommunityDesign({
+          style: { ...style, frame: { style: "banner-bottom", text } },
+          name: "Framed",
+          acceptLicense: true,
+        }),
+        text,
+      ).toMatchObject({ ok: false, code: "VALIDATION_ERROR" });
+    }
+    expect(fakeDb.rows("communityItem")).toHaveLength(0);
   });
 });

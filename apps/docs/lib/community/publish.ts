@@ -2,31 +2,42 @@ import "server-only";
 
 import { createHash } from "node:crypto";
 import {
+  communityCollectionEntry,
   communityItem,
   communityItemTag,
   communityItemVersion,
   database as db,
 } from "@repo/database";
 import cuid from "cuid";
-import { and, eq, ne } from "drizzle-orm";
+import { and, eq, ne, sql } from "drizzle-orm";
 import { revalidateTag } from "next/cache";
 import type { QRCustomFrame } from "qrdx/types";
 import { COMMUNITY_THEME_TAGS, MAX_TAGS_PER_THEME } from "@/lib/constants";
+import { parseLandingPageContent } from "@/lib/landing/blocks";
+import type { LandingPageContent } from "@/types/landing";
 import type { ThemeStyles } from "@/types/theme";
 import { COMMUNITY_LICENSE } from "./licence";
+import {
+  PAGE_TEMPLATE_MAX_LENGTH,
+  type ScrubReport,
+  scrubPageContent,
+} from "./page-template";
 import {
   DESCRIPTION_MAX_LENGTH,
   FRAME_TAGS,
   framePayloadSchema,
   framePreviewStyle,
   NAME_MAX_LENGTH,
+  PAGE_TEMPLATE_TAGS,
   stableStringify,
   themePayloadFromStyle,
 } from "./payloads";
 import { ensurePublishingProfile } from "./profiles";
 import { toPublicStyle } from "./public-style-server";
+import { workspaceCanUnpublish } from "./publish-access";
+import { remixSourceOf } from "./remix";
 import { checkScanGate, gateFailureMessage, type ScanGate } from "./scan-gate";
-import { COMMUNITY_TAG, guarded } from "./store";
+import { COMMUNITY_TAG, guarded, guardedRead } from "./store";
 import { cleanText, slugify, textProblem } from "./text";
 import type { CommunityItemType } from "./types";
 
@@ -41,9 +52,12 @@ export class PublishError extends Error {
       | "VALIDATION_ERROR"
       | "SCAN_GATE"
       | "ALREADY_PUBLISHED"
-      | "LICENSE_REQUIRED",
+      | "LICENSE_REQUIRED"
+      | "RATE_LIMITED",
     message: string,
     readonly slug?: string,
+    /** With `slug`: the type of the item that's already there */
+    readonly type?: CommunityItemType,
   ) {
     super(message);
     this.name = "PublishError";
@@ -101,6 +115,19 @@ interface NewItem {
   sourceKind?: string;
   sourceId?: string;
   facets?: Record<string, unknown>;
+  /** Collections and kits: the items they point at, in order */
+  entries?: string[];
+  /**
+   * Runs once every check has passed (duplicates included), right before
+   * the write: the daily publish limit is counted here, so a refused
+   * publish never uses it up.
+   */
+  beforeWrite?: () => Promise<void>;
+}
+
+/** Options every publish takes. */
+export interface PublishOptions {
+  beforeWrite?: () => Promise<void>;
 }
 
 /** Writes a checked item, version 1 and its tags (one batch). */
@@ -125,10 +152,18 @@ export async function insertItem(
         "ALREADY_PUBLISHED",
         "This design is already in the community.",
         duplicate.slug,
+        item.type,
       );
     }
 
+    await item.beforeWrite?.();
     const profile = await ensurePublishingProfile(item.userId);
+    // A saved theme copied from a community item: this is a remix of it.
+    const remix =
+      (item.sourceKind === "qr_preset" || item.sourceKind === "landing_page") &&
+      item.sourceId
+        ? await remixSourceOf(item.sourceId)
+        : null;
     const id = cuid();
     const slug = itemSlug(item.name, id, item.type);
     const now = new Date();
@@ -149,6 +184,9 @@ export async function insertItem(
       scanScore: item.gate?.minScore ?? null,
       scanCheckedAt: item.gate ? now : null,
       isOfficial: profile.official,
+      remixedFromItemId: remix?.itemId ?? null,
+      remixedFromVersion: remix?.version ?? null,
+      remixedFromLabel: remix?.label ?? null,
       sourceKind: item.sourceKind ?? null,
       sourceId: item.sourceId ?? null,
       publishedAt: now,
@@ -164,16 +202,36 @@ export async function insertItem(
       createdBy: item.userId,
       createdAt: now,
     });
-    if (item.tags.length > 0) {
-      await db.batch([
-        insertItemRow,
-        insertVersion,
-        db
-          .insert(communityItemTag)
-          .values(item.tags.map((tag) => ({ itemId: id, tag }))),
-      ]);
+    const insertTags =
+      item.tags.length > 0
+        ? db
+            .insert(communityItemTag)
+            .values(item.tags.map((tag) => ({ itemId: id, tag })))
+        : null;
+    const insertEntries =
+      item.entries && item.entries.length > 0
+        ? db.insert(communityCollectionEntry).values(
+            item.entries.map((itemId, position) => ({
+              collectionId: id,
+              itemId,
+              position,
+            })),
+          )
+        : null;
+    if (insertTags && insertEntries) {
+      await db.batch([insertItemRow, insertVersion, insertTags, insertEntries]);
+    } else if (insertTags) {
+      await db.batch([insertItemRow, insertVersion, insertTags]);
+    } else if (insertEntries) {
+      await db.batch([insertItemRow, insertVersion, insertEntries]);
     } else {
       await db.batch([insertItemRow, insertVersion]);
+    }
+    if (remix) {
+      await db
+        .update(communityItem)
+        .set({ remixCount: sql`${communityItem.remixCount} + 1` })
+        .where(eq(communityItem.id, remix.itemId));
     }
     revalidateTag(COMMUNITY_TAG, "max");
     if (item.type === "theme") {
@@ -193,25 +251,33 @@ async function gateOrThrow(style: ThemeStyles): Promise<ScanGate> {
 }
 
 /**
- * A saved theme as a theme item: a snapshot (editing the saved theme later
- * never changes it), without uploaded logos or image art.
+ * A design as a theme item: a snapshot without uploaded logos, image art or
+ * image fills (./public-style.ts), checked like every publish (text, the
+ * Great scan gate on the design as everyone will see it, duplicates).
+ * Saved themes and the AI chat's designs both come through here.
  */
-export async function publishSavedTheme(input: {
-  userId: string;
-  theme: { id: string; name: string; style: ThemeStyles };
-  tags: string[];
-}): Promise<{ id: string; slug: string; type: CommunityItemType }> {
-  const built = themePayloadFromStyle(input.theme.style);
+export async function publishStyle(
+  input: {
+    userId: string;
+    style: ThemeStyles;
+    details: ItemDetails;
+    /** Where it was published from, e.g. a saved theme or a chat draft */
+    source?: { kind: string; id: string };
+  } & PublishOptions,
+): Promise<{ id: string; slug: string; type: CommunityItemType }> {
+  const built = themePayloadFromStyle(input.style);
   if (!built) {
     throw new PublishError(
       "VALIDATION_ERROR",
       "This theme has settings the community can't show. Save it again in the editor.",
     );
   }
-  const details = cleanDetails(
-    { name: input.theme.name, tags: input.tags },
-    COMMUNITY_THEME_TAGS,
-  );
+  const details = cleanDetails(input.details, COMMUNITY_THEME_TAGS);
+  // A theme's frame text is published too: the same check as a frame's.
+  for (const label of frameTexts(built.payload.style.frame)) {
+    const problem = textProblem(label);
+    if (problem) throw new PublishError("VALIDATION_ERROR", problem);
+  }
   const gate = await gateOrThrow(
     toPublicStyle(built.payload.style, built.payload.logoIcon),
   );
@@ -221,19 +287,58 @@ export async function publishSavedTheme(input: {
     ...details,
     payload: built.payload,
     gate,
-    sourceKind: "qr_preset",
-    sourceId: input.theme.id,
+    beforeWrite: input.beforeWrite,
+    ...(input.source
+      ? { sourceKind: input.source.kind, sourceId: input.source.id }
+      : {}),
   });
 }
 
+/**
+ * A saved theme as a theme item: a snapshot (editing the saved theme later
+ * never changes it), without uploaded logos or image art.
+ */
+export async function publishSavedTheme(
+  input: {
+    userId: string;
+    theme: { id: string; name: string; style: ThemeStyles };
+    tags: string[];
+  } & PublishOptions,
+): Promise<{ id: string; slug: string; type: CommunityItemType }> {
+  return publishStyle({
+    userId: input.userId,
+    style: input.theme.style,
+    details: { name: input.theme.name, tags: input.tags },
+    source: { kind: "qr_preset", id: input.theme.id },
+    beforeWrite: input.beforeWrite,
+  });
+}
+
+/** Every text a frame shows: its labels, and a custom spec's labels. */
+function frameTexts(frame: unknown): string[] {
+  if (!frame || typeof frame !== "object") return [];
+  const value = frame as {
+    text?: unknown;
+    secondaryText?: unknown;
+    spec?: { labels?: { text?: unknown }[] };
+  };
+  return [
+    value.text,
+    value.secondaryText,
+    ...(value.spec?.labels ?? []).map((label) => label.text),
+  ].filter((text): text is string => typeof text === "string");
+}
+
 /** A custom frame as a frame item. */
-export async function publishFrame(input: {
-  userId: string;
-  frame: unknown;
-  details: ItemDetails;
-  /** Where it came from, e.g. the saved theme it was read from */
-  source?: { kind: string; id: string };
-}): Promise<{ id: string; slug: string; type: CommunityItemType }> {
+export async function publishFrame(
+  input: {
+    userId: string;
+    frame: unknown;
+    details: ItemDetails;
+    /** Where it came from, e.g. the saved theme it was read from */
+    source?: { kind: string; id: string };
+  } & PublishOptions,
+): Promise<{ id: string; slug: string; type: CommunityItemType }> {
   const parsed = framePayloadSchema.safeParse({ frame: input.frame });
   if (!parsed.success) {
     const first = parsed.error.issues[0];
@@ -268,10 +373,73 @@ export async function publishFrame(input: {
     ...details,
     payload: { frame },
     gate,
+    beforeWrite: input.beforeWrite,
     ...(input.source
       ? { sourceKind: input.source.kind, sourceId: input.source.id }
       : {}),
   });
+}
+
+/**
+ * A hosted page as a page template: scrubbed of personal data (links,
+ * contact details, addresses, Wi-Fi, uploaded photos and files; see
+ * ./page-template.ts), validated like a page save, size-capped, then the
+ * usual text and duplicate checks. There's no scan check: a template holds
+ * no code (its code is checked when someone makes one).
+ */
+export async function publishPageTemplate(
+  input: {
+    userId: string;
+    page: { id: string; type: string; content: LandingPageContent };
+    details: ItemDetails;
+    /** Text fields the publisher keeps as written (ScrubbedField ids) */
+    keep?: readonly string[];
+  } & PublishOptions,
+): Promise<{
+  id: string;
+  slug: string;
+  type: CommunityItemType;
+  report: ScrubReport;
+}> {
+  const { content, report, problems } = scrubPageContent(input.page.content, {
+    keep: input.keep,
+  });
+  const [problem] = problems;
+  if (problem) throw new PublishError("VALIDATION_ERROR", problem.message);
+  const visible = content.blocks.length;
+  if (visible === 0) {
+    throw new PublishError(
+      "VALIDATION_ERROR",
+      "Nothing is left to share once your own details are taken out. Add some blocks people can reuse.",
+    );
+  }
+  const checked = parseLandingPageContent(content, { mode: "write" });
+  if (!checked.success) {
+    throw new PublishError(
+      "VALIDATION_ERROR",
+      "This page can't be shared as a template. Publish it again in the page editor first.",
+    );
+  }
+  const payload = { page: { type: input.page.type, content: checked.data } };
+  if (JSON.stringify(payload).length > PAGE_TEMPLATE_MAX_LENGTH) {
+    throw new PublishError(
+      "VALIDATION_ERROR",
+      "This page is too large to share as a template. Remove some blocks or shorten long text.",
+    );
+  }
+  const details = cleanDetails(input.details, PAGE_TEMPLATE_TAGS);
+  const item = await insertItem({
+    userId: input.userId,
+    type: "page-template",
+    ...details,
+    payload,
+    gate: null,
+    sourceKind: "landing_page",
+    sourceId: input.page.id,
+    facets: { pageType: input.page.type },
+    beforeWrite: input.beforeWrite,
+  });
+  return { ...item, report };
 }
 
 /**
@@ -299,9 +467,54 @@ export async function unpublishItem(
         ),
       )
       .returning({ id: communityItem.id, type: communityItem.type });
+    // Not theirs: an owner or admin of the workspace it came from may too.
+    if (removed.length === 0 && (await workspaceCanUnpublish(userId, itemId))) {
+      removed.push(
+        ...(await db
+          .update(communityItem)
+          .set({
+            status: "removed",
+            removedAt: new Date(),
+            removedReason: "workspace",
+            updatedAt: new Date(),
+          })
+          .where(
+            and(
+              eq(communityItem.id, itemId),
+              ne(communityItem.status, "removed"),
+            ),
+          )
+          .returning({ id: communityItem.id, type: communityItem.type })),
+      );
+    }
     if (removed.length === 0) return false;
     revalidateTag(COMMUNITY_TAG, "max");
     if (removed[0]?.type === "theme") revalidateTag("community-themes", "max");
     return true;
   });
+}
+
+/**
+ * The published item `userId` made from `source` (e.g. a chat draft), or
+ * null: how the chat learns whether the person really published its draft.
+ */
+export async function findPublishedFrom(
+  userId: string,
+  source: { kind: string; id: string },
+): Promise<{ type: CommunityItemType; slug: string } | null> {
+  return guardedRead(async () => {
+    const [row] = await db
+      .select({ type: communityItem.type, slug: communityItem.slug })
+      .from(communityItem)
+      .where(
+        and(
+          eq(communityItem.createdBy, userId),
+          eq(communityItem.sourceKind, source.kind),
+          eq(communityItem.sourceId, source.id),
+          eq(communityItem.status, "published"),
+        ),
+      )
+      .limit(1);
+    return row ? { type: row.type as CommunityItemType, slug: row.slug } : null;
+  }, null);
 }
