@@ -15,6 +15,7 @@ import { type ComponentType, type ReactNode, useEffect, useState } from "react";
 import { QrdxLogoAnimation } from "@/components/qrdx-logo-animation";
 import { siteConfig } from "@/config/site";
 import { EmailCodeSignIn } from "./email-code-sign-in";
+import { SsoSignIn } from "./sso-sign-in";
 
 const FOOTER_LINK =
   "rounded-sm transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
@@ -202,6 +203,14 @@ export function SignInPanel({
         redirectTo={redirectTo}
         sentTo={codeSentTo}
       />
+
+      {!codeSentTo && (
+        <SsoSignIn
+          callbackURL={callbackURL}
+          disabled={busy}
+          lastUsed={lastLoginMethod === "sso"}
+        />
+      )}
 
       {/* Every method creates the account on first use, so there's no separate sign-up step. */}
       {!codeSentTo && (
