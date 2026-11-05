@@ -2,7 +2,9 @@
 // pattern of Dub's link rows (github.com/dubinc/dub, AGPL-3.0:
 // apps/web/ui/links/link-controls.tsx): never while typing, never with a
 // modifier, never behind a dialog or menu, and off with the person's
-// keyboard shortcuts switch. Pure, so the rules are tested without a browser.
+// keyboard shortcuts switch. Dub trashes with X; here X selects the row
+// (app/dashboard/_lib/list-keys.ts), so trash is Backspace or Delete. Pure,
+// so the rules are tested without a browser.
 
 export type RowAction =
   | "edit"
@@ -21,12 +23,23 @@ export const ROW_KEYS: Record<RowAction, string> = {
   move: "m",
   tags: "t",
   archive: "a",
-  trash: "x",
+  trash: "Backspace",
 };
 
-const BY_KEY = new Map(
-  Object.entries(ROW_KEYS).map(([action, key]) => [key, action as RowAction]),
-);
+/** Row actions the selection's own keys take over while rows are selected. */
+export const BULK_OWNED: readonly RowAction[] = [
+  "move",
+  "tags",
+  "archive",
+  "trash",
+];
+
+const BY_KEY = new Map<string, RowAction>([
+  ...Object.entries(ROW_KEYS).map(
+    ([action, key]) => [key.toLowerCase(), action as RowAction] as const,
+  ),
+  ["delete", "trash"],
+]);
 
 export interface RowKeyEvent {
   key: string;
