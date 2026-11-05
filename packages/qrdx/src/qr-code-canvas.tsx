@@ -12,7 +12,6 @@
  */
 import { type JSX, useEffect, useRef, useState } from "react";
 import type { QRPropsCanvas } from "../types";
-import { normalizeColorConfig } from "../types/color";
 import qrcodegen from "./codegen";
 import {
   DEFAULT_BGCOLOR,
@@ -31,6 +30,7 @@ import {
   resolveErrorLevel,
   SUPPORTS_PATH2D,
 } from "./utils";
+import { getSolidColor } from "./utils/color";
 
 export function QRCodeCanvas(props: QRPropsCanvas) {
   const {
@@ -134,21 +134,13 @@ export function QRCodeCanvas(props: QRPropsCanvas) {
       const scale = size / numCells;
       ctx.scale(scale, scale);
 
-      // Draw solid background, only paint dark modules.
-      // Extract solid color from bgColor (canvas doesn't support gradient objects)
-      const bgColorNormalized = normalizeColorConfig(bgColor, DEFAULT_BGCOLOR);
-      ctx.fillStyle =
-        bgColorNormalized.type === "solid"
-          ? bgColorNormalized.color
-          : bgColorNormalized.stops[0]?.color || DEFAULT_BGCOLOR;
+      // Draw solid background, only paint dark modules. This canvas draws
+      // solid colors only: a gradient uses its first stop, an image fill its
+      // underlay (QRCodeSVG and the exports draw them in full).
+      ctx.fillStyle = getSolidColor(bgColor, DEFAULT_BGCOLOR);
       ctx.fillRect(0, 0, numCells, numCells);
 
-      // Extract solid color from fgColor (canvas doesn't support gradient objects)
-      const fgColorNormalized = normalizeColorConfig(fgColor, DEFAULT_FGCOLOR);
-      ctx.fillStyle =
-        fgColorNormalized.type === "solid"
-          ? fgColorNormalized.color
-          : fgColorNormalized.stops[0]?.color || DEFAULT_FGCOLOR;
+      ctx.fillStyle = getSolidColor(fgColor, DEFAULT_FGCOLOR);
       if (SUPPORTS_PATH2D) {
         // $FlowFixMe: Path2D c'tor doesn't support args yet.
         ctx.fill(new Path2D(generatePath(cells, margin)));

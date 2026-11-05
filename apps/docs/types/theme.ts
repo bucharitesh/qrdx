@@ -3,11 +3,9 @@ import type { InferSelectModel } from "drizzle-orm";
 import {
   anyFrameSchema,
   bodyPatternSchema,
-  colorConfigSchema,
   cornerEyeDotPatternSchema,
   cornerEyePatternSchema,
   errorLevelSchema,
-  eyeColorsSchema,
   logoOptionsSchema,
   MODULE_SCALE_MAX,
   MODULE_SCALE_MIN,
@@ -15,6 +13,10 @@ import {
   qrShapeSchema,
 } from "qrdx/types";
 import { z } from "zod";
+import {
+  savedColorConfigSchema,
+  savedEyeColorsSchema,
+} from "@/lib/paint/saved-paint";
 
 /**
  * QR Code Style Configuration Schema
@@ -25,25 +27,25 @@ export const themeStylePropsSchema = z.object({
     .positive()
     .optional()
     .describe("Size of the QR code in pixels"),
-  bgColor: colorConfigSchema
+  bgColor: savedColorConfigSchema
     .optional()
     .describe(
-      "Background color of the QR code - supports solid colors and gradients",
+      "Background color of the QR code - supports solid colors, gradients and image fills (a data:image URL, never a link)",
     ),
-  fgColor: colorConfigSchema
+  fgColor: savedColorConfigSchema
     .optional()
     .describe(
-      "Foreground (main) color of the QR code - supports solid colors and gradients",
+      "Foreground (main) color of the QR code - supports solid colors, gradients and image fills (a data:image URL, never a link)",
     ),
-  eyeColor: colorConfigSchema
+  eyeColor: savedColorConfigSchema
     .optional()
     .describe(
-      "Color of the corner eye patterns - supports solid colors and gradients",
+      "Color of the corner eye patterns - supports solid colors, gradients and image fills (a data:image URL, never a link)",
     ),
-  dotColor: colorConfigSchema
+  dotColor: savedColorConfigSchema
     .optional()
     .describe(
-      "Color of the corner eye dots - supports solid colors and gradients",
+      "Color of the corner eye dots - supports solid colors, gradients and image fills (a data:image URL, never a link)",
     ),
   bodyPattern: bodyPatternSchema
     .optional()
@@ -76,7 +78,7 @@ export const themeStylePropsSchema = z.object({
   art: qrArtSchema
     .optional()
     .describe("Logo QR or Image QR (halftone) art built from an image"),
-  eyeColors: eyeColorsSchema
+  eyeColors: savedEyeColorsSchema
     .optional()
     .describe(
       "Per-eye colors (topLeft, topRight, bottomLeft), each with an outer frame and inner dot color that override eyeColor and dotColor",

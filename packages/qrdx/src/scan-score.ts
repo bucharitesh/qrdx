@@ -270,11 +270,146 @@ function gradeFor(score: number, fails: boolean): ScanGrade {
   return "risky";
 }
 
-function colorStops(color: ColorConfig | undefined, fallback: string) {
+/**
+ * The lightest and darkest a picture gets, as "#rrggbb": the colors at its
+ * 90th and 10th percentile luminance. The contrast check judges an image
+ * fill by these (see getImageTones).
+ */
+export interface ImageTones {
+  light: string;
+  dark: string;
+}
+
+/** Image tones by image `src`. */
+export type ImageToneMap = Record<string, ImageTones>;
+
+/**
+ * The colors a paint shows: the color, every gradient stop, or an image
+ * fill's tones at its opacity over its underlay. An image whose tones aren't
+ * known counts as its underlay (or not at all, without one).
+ */
+function colorStops(
+  color: ColorConfig | undefined,
+  fallback: string,
+  tones?: ImageToneMap
+): string[] {
   const normalized = normalizeColorConfig(color, fallback);
-  return normalized.type === "solid"
-    ? [normalized.color]
-    : normalized.stops.map((stop) => stop.color);
+  if (normalized.type === "solid") {
+    return [normalized.color];
+  }
+  if (normalized.type !== "image") {
+    return normalized.stops.map((stop) => stop.color);
+  }
+  const underlay = normalized.underlay ? toRGBA(normalized.underlay) : null;
+  const known = tones?.[normalized.src];
+  if (!known) {
+    return normalized.underlay ? [normalized.underlay] : [];
+  }
+  const opacity = normalized.opacity ?? 1;
+  return [known.light, known.dark].flatMap((tone) => {
+    const parsed = toRGBA(tone);
+    if (!parsed) {
+      return [];
+    }
+    const picture = { ...parsed, a: parsed.a * opacity };
+    if (!underlay) {
+      return [rgbaString(picture)];
+    }
+    // Picture over the underlay: alpha adds up as source-over does
+    const a = picture.a + underlay.a * (1 - picture.a);
+    const mix = (p: number, u: number) =>
+      a > 0 ? (p * picture.a + u * underlay.a * (1 - picture.a)) / a : 0;
+    return [
+      rgbaString({
+        r: mix(picture.r, underlay.r),
+        g: mix(picture.g, underlay.g),
+        b: mix(picture.b, underlay.b),
+        a,
+      }),
+    ];
+  });
+}
+
+const rgbaString = ({ r, g, b, a }: RGBAColor) =>
+  `rgba(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)}, ${Math.round(a * 1000) / 1000})`;
+
+/**
+ * Image tones from RGBA pixels (alpha below half skipped): the average color
+ * of the darkest and the lightest tenth of the pixels.
+ */
+export function getImageTonesFromPixels(pixels: {
+  data: ArrayLike<number>;
+  width: number;
+  height: number;
+}): ImageTones | null {
+  const samples: { lum: number; r: number; g: number; b: number }[] = [];
+  const count = pixels.width * pixels.height;
+  for (let i = 0; i < count; i++) {
+    const r = pixels.data[i * 4] as number;
+    const g = pixels.data[i * 4 + 1] as number;
+    const b = pixels.data[i * 4 + 2] as number;
+    const a = pixels.data[i * 4 + 3] as number;
+    if (a < 128) {
+      continue;
+    }
+    samples.push({ lum: getLuminance(r, g, b), r, g, b });
+  }
+  if (samples.length === 0) {
+    return null;
+  }
+  samples.sort((x, y) => x.lum - y.lum);
+  const tenth = Math.max(1, Math.round(samples.length / 10));
+  const average = (list: typeof samples) => {
+    const sum = list.reduce(
+      (total, item) => ({
+        r: total.r + item.r,
+        g: total.g + item.g,
+        b: total.b + item.b,
+      }),
+      { r: 0, g: 0, b: 0 }
+    );
+    const hex = (value: number) =>
+      Math.round(value / list.length)
+        .toString(16)
+        .padStart(2, "0");
+    return `#${hex(sum.r)}${hex(sum.g)}${hex(sum.b)}`;
+  };
+  return {
+    dark: average(samples.slice(0, tenth)),
+    light: average(samples.slice(-tenth)),
+  };
+}
+
+/** Image tones of a picture (browser only): drawn at 64 px and sampled. */
+export async function getImageTones(src: string): Promise<ImageTones | null> {
+  assertBrowser();
+  const img = await loadImage(src);
+  const { canvas, ctx } = createCanvas(64, 64);
+  ctx.drawImage(img, 0, 0, 64, 64);
+  const tones = getImageTonesFromPixels(ctx.getImageData(0, 0, 64, 64));
+  canvas.remove();
+  return tones;
+}
+
+/** Every image fill's `src` in the props. */
+function imageSources(props: QRProps): string[] {
+  const paints = [
+    props.bgColor,
+    props.fgColor,
+    props.eyeColor,
+    props.dotColor,
+    ...EYE_POSITIONS.flatMap((position) => [
+      props.eyeColors?.[position]?.outer,
+      props.eyeColors?.[position]?.inner,
+    ]),
+  ];
+  const sources = new Set<string>();
+  for (const paint of paints) {
+    if (typeof paint === "object" && paint?.type === "image") {
+      sources.add(paint.src);
+    }
+  }
+  return [...sources];
 }
 
 let normalizeCtx: CanvasRenderingContext2D | null = null;
@@ -308,12 +443,26 @@ export const SCAN_CONTRAST_LOW = 3;
 /** Below this the code fails the scan score outright. */
 export const SCAN_CONTRAST_FAIL = 1.5;
 
+/**
+ * Contrast a picture needs to scan reliably, in the code or behind it: its
+ * detail reads as noise at phone distances. Measured with the sample photos
+ * through the camera model (tests/export-image.test.ts): every picture in
+ * the dots decoded from 6.5:1, and busy photos behind the dots from 12:1.
+ */
+export const SCAN_IMAGE_CONTRAST_MIN = { code: 7, background: 12 } as const;
+
 export interface ScanContrast {
   /**
    * Worst contrast between any code color and any background color (≥ 1);
    * Infinity when no code color parses
    */
   ratio: number;
+  /**
+   * What `ratio`'s pair needs: SCAN_CONTRAST_MIN for colors, more when a
+   * picture is involved (SCAN_IMAGE_CONTRAST_MIN). The low and fail lines
+   * scale with it.
+   */
+  required: number;
   /** Some code color is lighter than the background */
   inverted: boolean;
 }
@@ -335,39 +484,74 @@ const over = (color: RGBAColor, backdrop: RGBAColor): RGBAColor => ({
  * colors count as they look: the background over white paper, the code
  * over the background.
  */
-export function getScanContrast(props: QRProps): ScanContrast {
+export function getScanContrast(
+  props: QRProps,
+  options: { imageTones?: ImageToneMap } = {}
+): ScanContrast {
+  const tones = options.imageTones;
+  // Each color a part shows, and whether it comes from a picture
+  const samples = (
+    color: ColorConfig | undefined,
+    fallback: string
+  ): { color: string; picture: boolean }[] => {
+    const picture = typeof color === "object" && color?.type === "image";
+    return colorStops(color, fallback, tones).map((item) => ({
+      color: item,
+      picture,
+    }));
+  };
   const fg = props.fgColor ?? DEFAULT_FGCOLOR;
   // Per-eye colors replace eyeColor / dotColor on that eye only
   const perEye = EYE_POSITIONS.flatMap((position) => {
     const eye = props.eyeColors?.[position];
     return [
-      ...(eye?.outer ? colorStops(eye.outer, DEFAULT_FGCOLOR) : []),
-      ...(eye?.inner ? colorStops(eye.inner, DEFAULT_FGCOLOR) : []),
+      ...(eye?.outer ? samples(eye.outer, DEFAULT_FGCOLOR) : []),
+      ...(eye?.inner ? samples(eye.inner, DEFAULT_FGCOLOR) : []),
     ];
   });
   const darkColors = [
-    ...colorStops(fg, DEFAULT_FGCOLOR),
-    ...colorStops(props.eyeColor ?? fg, DEFAULT_FGCOLOR),
-    ...colorStops(props.dotColor ?? fg, DEFAULT_FGCOLOR),
+    ...samples(fg, DEFAULT_FGCOLOR),
+    ...samples(props.eyeColor ?? fg, DEFAULT_FGCOLOR),
+    ...samples(props.dotColor ?? fg, DEFAULT_FGCOLOR),
     ...perEye,
   ];
-  const lightColors = colorStops(props.bgColor, DEFAULT_BGCOLOR);
+  const lightColors = samples(props.bgColor, DEFAULT_BGCOLOR);
   // A transparent background prints on whatever is behind it; assume paper.
-  const background = lightColors.map((color) => {
-    const parsed = toRGBA(color);
-    return parsed ? over(parsed, WHITE) : WHITE;
+  const background = (
+    lightColors.length > 0
+      ? lightColors
+      : [{ color: "#ffffff", picture: false }]
+  ).map((item) => {
+    const parsed = toRGBA(item.color);
+    return {
+      color: parsed ? over(parsed, WHITE) : WHITE,
+      picture: item.picture,
+    };
   });
-  const foreground = darkColors
-    .map(toRGBA)
-    .filter((color): color is RGBAColor => color !== null);
+  const foreground = darkColors.flatMap((item) => {
+    const parsed = toRGBA(item.color);
+    return parsed ? [{ color: parsed, picture: item.picture }] : [];
+  });
 
+  // The worst pair relative to what it needs: a picture's detail reads as
+  // noise, so pictures need more contrast than flat colors.
   let worst = Number.POSITIVE_INFINITY;
+  let required = SCAN_CONTRAST_MIN;
   let inverted = false;
   for (const dark of foreground) {
     for (const light of background) {
-      const darkLum = luminanceOf(over(dark, light));
-      const lightLum = luminanceOf(light);
-      worst = Math.min(worst, ratioOf(darkLum, lightLum));
+      const darkLum = luminanceOf(over(dark.color, light.color));
+      const lightLum = luminanceOf(light.color);
+      const ratio = ratioOf(darkLum, lightLum);
+      const needs = light.picture
+        ? SCAN_IMAGE_CONTRAST_MIN.background
+        : dark.picture
+          ? SCAN_IMAGE_CONTRAST_MIN.code
+          : SCAN_CONTRAST_MIN;
+      if (ratio / needs < worst / required) {
+        worst = ratio;
+        required = needs;
+      }
       if (darkLum > lightLum) {
         inverted = true;
       }
@@ -375,25 +559,36 @@ export function getScanContrast(props: QRProps): ScanContrast {
   }
   return {
     ratio: Number.isFinite(worst) ? worst : Number.POSITIVE_INFINITY,
+    required,
     inverted,
   };
 }
 
-function contrastChecks(props: QRProps): {
+function contrastChecks(
+  props: QRProps,
+  imageTones?: ImageToneMap
+): {
   checks: ScanCheck[];
   penalty: number;
   fails: boolean;
 } {
-  const { ratio: worst, inverted } = getScanContrast(props);
+  const {
+    ratio: worst,
+    inverted,
+    required,
+  } = getScanContrast(props, { imageTones });
   // No code color parses: nothing to compare
   if (!Number.isFinite(worst)) {
     return { checks: [], penalty: 0, fails: false };
   }
+  // The low and fail lines scale with what the pair needs
+  const scale = required / SCAN_CONTRAST_MIN;
+  const picture = required !== SCAN_CONTRAST_MIN;
 
   const ratio = Math.round(worst * 10) / 10;
   const checks: ScanCheck[] = [];
   let penalty = 0;
-  if (worst >= SCAN_CONTRAST_MIN) {
+  if (worst >= required) {
     checks.push({
       id: "contrast",
       passed: true,
@@ -401,12 +596,20 @@ function contrastChecks(props: QRProps): {
     });
   } else {
     penalty =
-      worst < SCAN_CONTRAST_FAIL ? 60 : worst < SCAN_CONTRAST_LOW ? 30 : 10;
+      worst < SCAN_CONTRAST_FAIL * scale
+        ? 60
+        : worst < SCAN_CONTRAST_LOW * scale
+          ? 30
+          : 10;
     checks.push({
       id: "contrast",
       passed: false,
-      message: `Low contrast (${ratio}:1); 4.5:1 or more scans reliably`,
-      fix: "Use a darker code color or a lighter background",
+      message: picture
+        ? `Low contrast for a picture (${ratio}:1); ${required}:1 or more scans reliably`
+        : `Low contrast (${ratio}:1); 4.5:1 or more scans reliably`,
+      fix: picture
+        ? "Lower the picture's opacity over a darker underlay (dots) or a lighter one (background)"
+        : "Use a darker code color or a lighter background",
     });
   }
   if (inverted) {
@@ -425,7 +628,11 @@ function contrastChecks(props: QRProps): {
       message: "Dark code on a light background",
     });
   }
-  return { checks, penalty, fails: worst < SCAN_CONTRAST_FAIL };
+  return {
+    checks,
+    penalty,
+    fails: worst < SCAN_CONTRAST_FAIL * (required / SCAN_CONTRAST_MIN),
+  };
 }
 
 function moduleCount(props: QRProps) {
@@ -646,6 +853,60 @@ async function inlineLogo(props: QRProps): Promise<QRProps> {
   return { ...props, imageSettings: { ...imageSettings, src: inlined } };
 }
 
+/**
+ * Image fills drawn from a data URL: an SVG drawn as an image can't load
+ * anything else, so other sources are redrawn on a canvas (or left out).
+ */
+async function inlineImagePaints(props: QRProps): Promise<QRProps> {
+  const inlined = new Map<string, string | null>();
+  for (const src of imageSources(props)) {
+    if (src.startsWith("data:")) {
+      continue;
+    }
+    try {
+      const img = await loadImage(src);
+      const { canvas, ctx } = createCanvas(
+        img.naturalWidth || 256,
+        img.naturalHeight || 256
+      );
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      inlined.set(src, canvas.toDataURL("image/png"));
+      canvas.remove();
+    } catch {
+      inlined.set(src, null);
+    }
+  }
+  if (inlined.size === 0) {
+    return props;
+  }
+  const swap = (paint: ColorConfig | undefined): ColorConfig | undefined => {
+    if (typeof paint !== "object" || paint?.type !== "image") {
+      return paint;
+    }
+    const src = inlined.get(paint.src);
+    if (src === undefined) {
+      return paint;
+    }
+    return src ? { ...paint, src } : (paint.underlay ?? DEFAULT_FGCOLOR);
+  };
+  const eyeColors = props.eyeColors
+    ? Object.fromEntries(
+        Object.entries(props.eyeColors).map(([position, eye]) => [
+          position,
+          eye && { outer: swap(eye.outer), inner: swap(eye.inner) },
+        ])
+      )
+    : undefined;
+  return {
+    ...props,
+    bgColor: swap(props.bgColor),
+    fgColor: swap(props.fgColor),
+    eyeColor: swap(props.eyeColor),
+    dotColor: swap(props.dotColor),
+    ...(eyeColors && { eyeColors }),
+  };
+}
+
 type DrawArtwork = (codeWidth: number) => ImageData;
 
 /**
@@ -659,12 +920,13 @@ async function scoreArtwork(
   props: QRProps,
   draw: DrawArtwork,
   sizes: number[],
-  signal?: AbortSignal
+  signal?: AbortSignal,
+  imageTones?: ImageToneMap
 ): Promise<ScanScoreResult> {
   const checks: ScanCheck[] = [];
   let penalty = 0;
 
-  const contrast = contrastChecks(props);
+  const contrast = contrastChecks(props, imageTones);
   penalty += contrast.penalty;
   const logo = logoCheck(props);
   penalty += logo.penalty;
@@ -750,9 +1012,23 @@ export async function getScanScore(
   const { signal } = options;
   const sizes = testSizes(options);
 
-  const sourceProps = await inlineLogo(
-    withQRSize({ ...props, size: props.size ?? DEFAULT_SIZE }, SOURCE_SIZE)
+  const sourceProps = await inlineImagePaints(
+    await inlineLogo(
+      withQRSize({ ...props, size: props.size ?? DEFAULT_SIZE }, SOURCE_SIZE)
+    )
   );
+  throwIfAborted(signal);
+  const imageTones: ImageToneMap = {};
+  for (const src of imageSources(props)) {
+    try {
+      const tones = await getImageTones(src);
+      if (tones) {
+        imageTones[src] = tones;
+      }
+    } catch {
+      // An image that won't load is judged by its underlay
+    }
+  }
   throwIfAborted(signal);
   const svgUri = await getQRAsSVGDataUri(sourceProps);
   const img = await loadImage(svgUri);
@@ -773,7 +1049,7 @@ export async function getScanScore(
     canvas.remove();
     return image;
   };
-  return await scoreArtwork(props, drawArtwork, sizes, signal);
+  return await scoreArtwork(props, drawArtwork, sizes, signal, imageTones);
 }
 
 /**

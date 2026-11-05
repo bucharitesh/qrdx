@@ -23,6 +23,12 @@ npm's latest is 0.0.46, so these changes ship with the rest of 0.0.47.
 - `getScanContrast(props)` is the scan score's contrast check on its own, and judges see-through colors as they look. `SCAN_CONTRAST_MIN`, `SCAN_CONTRAST_LOW` and `SCAN_CONTRAST_FAIL` are its thresholds.
 - `getNormalizedColor` previews a linear gradient at the angle the code draws it (it was a quarter turn off) and an angular one as a CSS conic gradient.
 
+### Image fills
+
+- **`{ type: "image", src, fit, scale, position, opacity, underlay }`** paints a picture through the background, the dots or the eyes. It is laid over the whole code, so dots and eyes that share a picture show one picture, embedded once. `fit` is `cover`, `contain` or `tile`; `underlay` is a solid color under the picture that its opacity lets through. `src` is held like a logo: a PNG or JPEG data URL embeds everywhere, and servers never fetch a remote address.
+- SVG draws it as a `<pattern>` with an `<image>`. PDF embeds the picture once and paints it inside each shape, at its opacity. **EPS refuses image fills** (`EPS_IMAGE_FILL_REASON`, `hasImageFill`): PostScript has no transparency and would repeat the picture for every dot.
+- The contrast check judges a picture by its tones (`getImageTones`, `getImageTonesFromPixels`: its lightest and darkest tenth) and asks more of it (`SCAN_IMAGE_CONTRAST_MIN`: 7:1 in the code, 12:1 behind it), since its detail reads as noise. `getScanContrast` reports the `required` ratio. `getScanScore` inlines image fills and samples their tones.
+
 ### Fixes
 
 - The SVG reader behind PDF and EPS export no longer throws on character references outside Unicode (such as `&#x110000;`).

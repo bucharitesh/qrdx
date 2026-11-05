@@ -230,6 +230,7 @@ function getPreset(id: string): StylePreset {
 function primaryColor(color: ColorConfig): string {
   if (typeof color === "string") return color;
   if (color.type === "solid") return color.color;
+  if (color.type === "image") return color.underlay ?? "#000000";
   return color.stops[0]?.color ?? "#000000";
 }
 

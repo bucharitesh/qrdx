@@ -451,9 +451,10 @@ export const useQREditorStore = create<QREditorStore>()(
                     styles[key] = colorValue;
                   } else if (
                     "type" in colorValue &&
-                    colorValue.type === "angular"
+                    (colorValue.type === "angular" ||
+                      colorValue.type === "image")
                   ) {
-                    // Angular gradients passed the schema (two stops or more)
+                    // Angular gradients and image fills passed the schema
                     styles[key] = colorValue;
                   } else {
                     // Invalid structure, use default
