@@ -162,3 +162,41 @@ export function ssoServiceProviderUrls(
     samlMetadataUrl: metadata,
   };
 }
+
+const SIGN_IN_PATH = "/sign-in";
+
+/**
+ * Where a failed SSO sign-in should land: the sign-in page with the error
+ * code and the page the person was going to, like an OIDC failure (which
+ * goes to the errorCallbackURL the panel sets). The plugin sends some SAML
+ * failures (an account it can't link, for one) to the success URL instead,
+ * and some to its own /error page. Null when `location` carries no error or
+ * already goes to the sign-in page.
+ */
+export function ssoFailureRedirect(
+  location: string | null | undefined,
+  appOrigin: string
+): string | null {
+  if (!location) return null;
+  let url: URL;
+  try {
+    url = new URL(location, appOrigin);
+  } catch {
+    return null;
+  }
+  const error = url.searchParams.get("error");
+  if (!error) return null;
+  const sameSite = url.origin === new URL(appOrigin).origin;
+  if (sameSite && url.pathname === SIGN_IN_PATH) return null;
+  url.searchParams.delete("error");
+  url.searchParams.delete("error_description");
+  // Only a page of the app, never the auth API or another site.
+  const next =
+    sameSite && !url.pathname.startsWith(AUTH_BASE_PATH)
+      ? `${url.pathname}${url.search}`
+      : null;
+  const target = new URLSearchParams();
+  if (next) target.set("next", next);
+  target.set("error", error.replaceAll(" ", "_"));
+  return `${SIGN_IN_PATH}?${target}`;
+}
