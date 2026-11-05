@@ -219,9 +219,14 @@ type Scrubbed = unknown | typeof REMOVED;
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 
+/** "items.0.label" → "items 1 label", "jobTitle" → "job title". */
 const fieldLabel = (path: string[]) =>
   path
-    .map((part) => (/^\d+$/.test(part) ? String(Number(part) + 1) : part))
+    .map((part) =>
+      /^\d+$/.test(part)
+        ? String(Number(part) + 1)
+        : part.replace(/([a-z])([A-Z])/g, "$1 $2").toLowerCase(),
+    )
     .join(" ");
 
 class Scrubber {
