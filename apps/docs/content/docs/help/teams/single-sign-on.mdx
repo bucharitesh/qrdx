@@ -3,7 +3,7 @@ title: Single sign-on (SSO)
 description: Let your team sign in to QRdx with your company's identity provider, over OIDC or SAML 2.0. Part of the Business plan.
 ---
 
-Single sign-on lets people at your company sign in to QRdx through your identity provider instead of an email code, Google or GitHub. You set up one connection for one email domain, prove you own the domain, and people at that domain can sign in with **Sign in with SSO**. The first time they do, they join your workspace.
+Single sign-on lets people at your company sign in to QRdx through your identity provider instead of an email code, Google or GitHub. You set up one connection for one email domain, prove you own the domain, and people at that domain can sign in with **Sign in with SSO**. Signing in that way makes them a member of your workspace.
 
 Single sign-on is part of the **Business** plan. A workspace has it when one of its owners or billing members is on Business. See [Seats and workspace limits](/docs/help/teams/seats).
 
@@ -57,13 +57,28 @@ A verified domain covers its subdomains too, so `acme.com` also covers `eu.acme.
 1. On the sign-in page, they click **Sign in with SSO** and enter their work email.
 2. QRdx sends them to your identity provider, then back to QRdx, signed in and in your workspace.
 
-If someone turned on [two-step verification](/docs/help/privacy-and-security/two-step-verification), QRdx still asks for their authenticator code after your identity provider signs them in.
+If someone turned on [two-step verification](/docs/help/privacy-and-security/two-step-verification), QRdx still asks for their authenticator code after your identity provider signs them in, unless they chose not to be asked again on that device.
 
-The first time someone signs in with SSO, they join your workspace with the role you pick under **New members**: **Member** (the default) or **Viewer**. You can change anyone's role later on the **Team** page. Someone with a pending invitation to the workspace joins through the invitation instead, with its role.
+Every SSO sign-in makes sure the person is in your workspace:
+
+- Someone who isn't a member joins with the role you pick under **New members**: **Member** (the default) or **Viewer**.
+- Someone with a pending invitation to the workspace joins with the invitation's role, and the invitation is marked accepted.
+- Members keep the role they have. You can change anyone's role on the **Team** page.
+
+This includes people you removed from the workspace: they rejoin the next time they sign in with SSO.
 
 If someone already has a QRdx account with the same email address, signing in with SSO uses that account. They keep their own workspace and everything in it.
 
 QRdx only signs someone in through your connection if the address your provider sends is at your verified domain. Their other ways to sign in, like an email code to the same address, keep working.
+
+## Remove someone for good
+
+Because every SSO sign-in adds the person back, removing them on the **Team** page isn't enough on its own:
+
+1. In your identity provider, unassign them from the QRdx app (or turn off their account there), so it can't sign them in to QRdx.
+2. Then remove them on the **Team** page. The remove dialog reminds you when the person's address is at your verified domain.
+
+Removing someone from the workspace doesn't delete their QRdx account. They can still sign in to their own workspace with an email code, Google or GitHub.
 
 ## Change or remove the connection
 
@@ -77,7 +92,7 @@ If the workspace is no longer on Business, nobody can sign in with SSO, includin
 ## What isn't supported
 
 - Requiring SSO: email codes, Google and GitHub keep working for everyone.
-- Automatic provisioning and removal (SCIM). Removing someone from your identity provider doesn't remove them from the workspace or end their QRdx sessions; remove them on the **Team** page too. Someone you remove isn't added back when they sign in with SSO again.
+- Automatic provisioning and removal (SCIM). Removing someone from your identity provider doesn't remove them from the workspace or end their QRdx sessions; remove them on the **Team** page too (see [Remove someone for good](#remove-someone-for-good)).
 - Roles or groups from your identity provider. Everyone joins with the role under **New members**.
 - More than one connection, or more than one domain, per workspace.
 - Sign-in started from your identity provider's app dashboard (IdP-initiated SAML), SAML single logout, and encrypted assertions.
