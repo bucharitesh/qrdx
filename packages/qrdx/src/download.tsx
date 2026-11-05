@@ -129,6 +129,29 @@ function getFileExtension(format: DownloadFormat): string {
   return format;
 }
 
+/** Vector files: they have no pixel size, so their names state none. */
+const VECTOR_FORMATS: ReadonlySet<DownloadFormat> = new Set(["svg", "eps"]);
+
+/**
+ * The default file name of a download: for PNG and JPG (and the image a
+ * PDF holds) the exact pixel size of what is saved, which a frame makes
+ * bigger than the code (a 400 px code in a bottom banner is 496 × 568);
+ * SVG and EPS have no pixel size and name none.
+ */
+export function getDownloadFilename(
+  format: DownloadFormat,
+  size: DownloadSize,
+  frame?: QRProps["frame"]
+): string {
+  const extension = getFileExtension(format);
+  if (VECTOR_FORMATS.has(format)) {
+    return `qr-code.${extension}`;
+  }
+  // The canvas size getQRAsCanvas and getQRAsPDF draw on
+  const { width, height } = getFrameDimensions(size.width, frame);
+  return `qr-code-${Math.round(width)}x${Math.round(height)}.${extension}`;
+}
+
 // One CSS pixel = one PostScript point (72 per inch).
 const MM_PER_POINT = 25.4 / 72;
 
@@ -261,8 +284,8 @@ export async function downloadQRCode(
   // Create props with the custom size (QR codes are square, so use width)
   const propsWithSize = withQRSize(qrProps, size.width);
 
-  const defaultFilename = `qr-code-${size.width}x${size.height}.${getFileExtension(format)}`;
-  const finalFilename = filename || defaultFilename;
+  const finalFilename =
+    filename || getDownloadFilename(format, size, qrProps.frame);
 
   try {
     if (format === "svg") {

@@ -2,7 +2,7 @@ import { cn } from "@repo/design-system/lib/utils";
 import type { CSSProperties } from "react";
 
 // Same drawing as `Bot` in @repo/design-system/components/icons, split into
-// parts so they can move: eyes blink, the antenna light cycles colours, the
+// parts so they can move: eyes blink, the antenna light cycles colors, the
 // head bobs; on hover (inside a `.group`) the eyes turn into happy arcs and
 // the antenna sparks; `thinking` scans the eyes and speeds up the antenna.
 // Only transform and opacity animate. Reduced motion keeps it still.
