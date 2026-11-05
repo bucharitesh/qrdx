@@ -1,5 +1,6 @@
 "use client";
 
+import { emailInSsoDomain } from "@repo/auth/sso-rules";
 import { toast } from "@repo/design-system";
 import {
   AlertDialog,
@@ -41,10 +42,13 @@ export function MembersTable({
   members,
   currentUserId,
   currentRole,
+  ssoDomains = [],
 }: {
   members: MemberRow[];
   currentUserId: string;
   currentRole: TeamRole;
+  /** Verified SSO domains of this Business workspace (packages/auth/sso.ts). */
+  ssoDomains?: string[];
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -82,6 +86,11 @@ export function MembersTable({
       );
       router.refresh();
     });
+
+  // Every SSO sign-in adds the person back (packages/auth/sso.ts joinWorkspace).
+  const rejoinsWithSso = (target: MemberRow | null) =>
+    target !== null &&
+    ssoDomains.some((domain) => emailInSsoDomain(target.email, domain));
 
   const confirmRemove = () => {
     const target = removing;
@@ -180,9 +189,20 @@ export function MembersTable({
             <AlertDialogTitle>
               Remove {removing?.name || removing?.email}?
             </AlertDialogTitle>
-            <AlertDialogDescription>
-              They lose access to this workspace right away. Dynamic QR codes
-              and themes they created stay with it and keep working.
+            <AlertDialogDescription asChild>
+              <div className="space-y-2">
+                <p>
+                  They lose access to this workspace right away. Dynamic QR
+                  codes and themes they created stay with it and keep working.
+                </p>
+                {rejoinsWithSso(removing) && (
+                  <p className="text-pretty">
+                    {removing?.email} can sign in with single sign-on, so
+                    they'll rejoin the next time they do, unless you unassign
+                    them from QRdx in your identity provider first.
+                  </p>
+                )}
+              </div>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
