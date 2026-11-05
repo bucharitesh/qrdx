@@ -8,7 +8,7 @@ export const shortLinks: IntegrationCatalogEntry[] = [
     tagline:
       "Shorten a QR code's link with your own Bitly account, on bit.ly or your branded domain.",
     description: [
-      "Connect Bitly and the Website type in the QR editor gets a Shorten button. QRdx creates the link in your Bitly account (in your default group, on the domain you pick) or lets you pick one you already have, and the QR code encodes that short link.",
+      "Connect Bitly and it shows up in the QR editor's URL type, under Use a link from… beside the Website address field. QRdx creates the link in your Bitly account (in your default group, on the domain you pick) or lets you pick one you already have, and the QR code encodes that short link.",
       "Because the code holds the Bitly link, you can change where it points later in Bitly and see its clicks there; the printed code stays the same. Settings → Integrations → Bitly shows your groups, domains and recent links.",
     ],
     kind: "connect",
@@ -35,7 +35,7 @@ export const shortLinks: IntegrationCatalogEntry[] = [
       },
       {
         title: "Shorten from the editor",
-        body: "Choose the Website type, enter the address, click Shorten, then create a new link or pick an existing one. Bitly chooses the back-half; changing a link's destination later needs a paid Bitly plan.",
+        body: "Choose the URL type and enter the address. Open Use a link from…, choose Bitly, then create a link under Create new or pick one under Use existing. Bitly chooses the back-half; changing a link's destination later needs a paid Bitly plan.",
       },
     ],
     capabilities: [
@@ -63,7 +63,7 @@ export const shortLinks: IntegrationCatalogEntry[] = [
     tagline:
       "Shorten a QR code's link on your Rebrandly branded domain, with your own slashtag.",
     description: [
-      "Connect Rebrandly with an API key and the Website type in the QR editor gets a Shorten button. Create a branded link with the slashtag you want, or pick one of your existing links; the QR code encodes the Rebrandly link.",
+      "Connect Rebrandly with an API key and it shows up in the QR editor's URL type, under Use a link from… beside the Website address field. Create a branded link with the slashtag you want, or pick one of your existing links; the QR code encodes the Rebrandly link.",
       "Change the destination in Rebrandly whenever you need to and the printed code follows it. Settings → Integrations → Rebrandly lets you pick the domain new links use.",
     ],
     kind: "connect",
@@ -90,7 +90,7 @@ export const shortLinks: IntegrationCatalogEntry[] = [
       },
       {
         title: "Shorten from the editor",
-        body: "Choose the Website type, click Shorten, pick the domain and slashtag, or select an existing link.",
+        body: "Choose the URL type, open Use a link from… and choose Rebrandly. Under Create new, pick the domain and type the slashtag in Back-half, or pick a link under Use existing.",
       },
     ],
     capabilities: [
@@ -124,7 +124,7 @@ export const shortLinks: IntegrationCatalogEntry[] = [
     tagline:
       "Shorten a QR code's link on your own Short.io domain, with the path you choose.",
     description: [
-      "Connect Short.io with a secret API key, pick which of your domains to use, and the Website type in the QR editor gets a Shorten button. Create a link with your own path or pick an existing one; the QR code encodes the Short.io link.",
+      "Connect Short.io with a secret API key, pick which of your domains to use, and it shows up in the QR editor's URL type, under Use a link from… beside the Website address field. Create a link with your own path or pick an existing one; the QR code encodes the Short.io link.",
       "Short.io keeps redirecting and counting clicks, and you can change the destination there later.",
     ],
     kind: "connect",
@@ -151,7 +151,7 @@ export const shortLinks: IntegrationCatalogEntry[] = [
       },
       {
         title: "Shorten from the editor",
-        body: "Choose the Website type, click Shorten, and create a link or select an existing one.",
+        body: "Choose the URL type, open Use a link from… and choose Short.io. Create a link under Create new, or pick one under Use existing.",
       },
     ],
     capabilities: [
