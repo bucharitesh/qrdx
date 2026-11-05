@@ -204,6 +204,66 @@ export async function rasterizeImage(href: string): Promise<string | null> {
   });
 }
 
+export interface ImageBox {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+/**
+ * Where an `<image>` draws, in its user space: its x/y/width/height box,
+ * or, with an explicit preserveAspectRatio other than "none" and the
+ * picture's own size, the picture fitted into it (`meet`) or covering it
+ * (`slice`, which then clips to the box). Without the attribute the picture
+ * is stretched to the box, as the engine's logos ask ("none").
+ */
+export function imagePlacement(
+  node: SvgNode,
+  viewport: [number, number],
+  intrinsic?: { width: number; height: number } | null
+): { draw: ImageBox; clip: ImageBox | null } | null {
+  const box = {
+    x: length(node.attrs.x, viewport[0]),
+    y: length(node.attrs.y, viewport[1]),
+    width: length(node.attrs.width, viewport[0]),
+    height: length(node.attrs.height, viewport[1]),
+  };
+  if (box.width <= 0 || box.height <= 0) {
+    return null;
+  }
+  const aspect = (node.attrs.preserveAspectRatio ?? "").trim();
+  if (
+    !aspect ||
+    aspect.startsWith("none") ||
+    !intrinsic ||
+    !(intrinsic.width > 0 && intrinsic.height > 0)
+  ) {
+    return { draw: box, clip: null };
+  }
+  const [align = "xMidYMid", mode = "meet"] = aspect.split(/\s+/);
+  const slice = mode === "slice";
+  const scale = (slice ? Math.max : Math.min)(
+    box.width / intrinsic.width,
+    box.height / intrinsic.height
+  );
+  const width = intrinsic.width * scale;
+  const height = intrinsic.height * scale;
+  const fraction = (axis: "x" | "y") => {
+    const part = axis === "x" ? align.slice(0, 4) : align.slice(4);
+    return part.endsWith("Min") ? 0 : part.endsWith("Max") ? 1 : 0.5;
+  };
+  return {
+    draw: {
+      x: box.x + (box.width - width) * fraction("x"),
+      y: box.y + (box.height - height) * fraction("y"),
+      width,
+      height,
+    },
+    clip: slice ? box : null,
+  };
+}
+
 /** `<clipPath>` elements by id, anywhere in the tree. */
 function collectClipPaths(
   node: SvgNode,
