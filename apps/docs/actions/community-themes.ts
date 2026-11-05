@@ -19,13 +19,10 @@ import { and, asc, count, desc, eq, inArray, ne, sql } from "drizzle-orm";
 import { revalidateTag, unstable_cache } from "next/cache";
 import { headers } from "next/headers";
 import { z } from "zod";
-import {
-  canEditTheme,
-  findThemeById,
-  isPersonalTheme,
-} from "@/app/dashboard/themes/_lib/queries";
+import { findThemeById } from "@/app/dashboard/themes/_lib/queries";
 import { publicStyleFromSaved } from "@/lib/community/public-style-server";
 import { PublishError, publishSavedTheme } from "@/lib/community/publish";
+import { themePublishAccess } from "@/lib/community/publish-access";
 import {
   myPublishedThemeSources,
   themeItemsFeed,
@@ -40,11 +37,6 @@ import {
   COMMUNITY_THEMES_PAGE_SIZE,
   MAX_TAGS_PER_THEME,
 } from "@/lib/constants";
-import {
-  type ActiveScope,
-  getActiveScope,
-  WorkspaceNotFoundError,
-} from "@/lib/scope";
 import { getCurrentUserId } from "@/lib/shared";
 import type {
   CommunityFilterOption,
@@ -358,33 +350,6 @@ async function publishThemeAsItem(
   }
 }
 
-/**
- * What `userId` may do with a saved theme when publishing: "own" (their
- * themes), "workspace" (a theme of the open workspace they can edit),
- * "view" (one they only see there) or "none" (another workspace's, or a
- * workspace they aren't in).
- */
-async function publishAccess(
-  userId: string,
-  theme: { userId: string; organizationId: string | null },
-): Promise<"own" | "workspace" | "view" | "none"> {
-  if (isPersonalTheme(theme, userId)) return "own";
-  let scope: ActiveScope;
-  try {
-    scope = await getActiveScope();
-  } catch (error) {
-    if (error instanceof WorkspaceNotFoundError) return "none";
-    throw error;
-  }
-  if (
-    scope.userId !== userId ||
-    theme.organizationId !== scope.organizationId
-  ) {
-    return "none";
-  }
-  return canEditTheme(scope, theme) ? "workspace" : "view";
-}
-
 export async function publishTheme(
   themeId: string,
   tags: string[] = [],
@@ -424,7 +389,7 @@ export async function publishTheme(
     // is a snapshot credited to your profile; the theme stays the workspace's.
     const existingTheme = await findThemeById(themeId);
     const access = existingTheme
-      ? await publishAccess(userId, existingTheme)
+      ? await themePublishAccess(userId, existingTheme)
       : "none";
     if (!existingTheme || access === "none") {
       throw new QRCodeThemeNotFoundError(

@@ -6,12 +6,17 @@ import { Suspense } from "react";
 import { CommunityTabs } from "@/components/community/community-tabs";
 import { ItemGrid } from "@/components/community/item-card";
 import { HairlineFigure } from "@/components/mockups/hairline";
-import { hasCollections } from "@/lib/community/home";
+import { hasCollections, hasKits, hasTemplates } from "@/lib/community/home";
 import { LICENSE_SHORT } from "@/lib/community/licence";
 import { listFrames, listItems } from "@/lib/community/queries";
-import { typeFromSegment } from "@/lib/community/types";
+import {
+  type CommunityItemType,
+  TYPE_SEGMENTS,
+  typeFromSegment,
+} from "@/lib/community/types";
 import { createMetadata } from "@/lib/metadata";
 import { playgroundHref } from "@/lib/playground-links";
+import { dashboardEntry } from "@/lib/workspace-paths";
 import { CommunityThemesContent } from "../_components/community-themes-content";
 import { COPY } from "./copy";
 
@@ -50,7 +55,11 @@ export default async function CommunityTypePage({
   const filter: Filter =
     from === "official" || from === "community" ? from : "all";
   const sort = query.sort === "newest" ? "newest" : "popular";
-  const showCollections = await hasCollections();
+  const [showCollections, showTemplates, showKits] = await Promise.all([
+    hasCollections(),
+    hasTemplates(),
+    hasKits(),
+  ]);
 
   return (
     <main className="w-full border-b">
@@ -68,14 +77,10 @@ export default async function CommunityTypePage({
       </section>
 
       <CommunityTabs
-        active={
-          type === "frame"
-            ? "frames"
-            : type === "theme"
-              ? "themes"
-              : "collections"
-        }
+        active={TAB_OF[type]}
         showCollections={showCollections || type === "collection"}
+        showKits={showKits}
+        showTemplates={showTemplates}
       />
 
       {type === "theme" ? (
@@ -92,12 +97,46 @@ export default async function CommunityTypePage({
   );
 }
 
+const TAB_OF = {
+  frame: "frames",
+  theme: "themes",
+  collection: "collections",
+  "page-template": "templates",
+  kit: "kits",
+} as const satisfies Record<CommunityItemType, string>;
+
+const EMPTY: Record<
+  Exclude<CommunityItemType, "theme">,
+  { title: string; body: string; link?: { href: string; label: string } }
+> = {
+  frame: {
+    title: "No frames here yet",
+    body: "Make a frame in the editor's Frame section, then publish it.",
+    link: { href: playgroundHref({ tab: "design" }), label: "Open the editor" },
+  },
+  collection: {
+    title: "No collections yet",
+    body: "Group frames, themes and page templates you saved or made.",
+    link: { href: "/community/new", label: "Make a collection" },
+  },
+  kit: {
+    title: "No kits yet",
+    body: "Pair a page template with a theme or frame you saved, then publish it as a kit.",
+    link: { href: "/community/new?make=kit", label: "Make a kit" },
+  },
+  "page-template": {
+    title: "No page templates yet",
+    body: "Publish one of your hosted pages from Pages in your dashboard. Your own details are taken out first.",
+    link: { href: dashboardEntry("pages"), label: "Open your pages" },
+  },
+};
+
 async function TypeGrid({
   type,
   filter,
   sort,
 }: {
-  type: "frame" | "collection";
+  type: Exclude<CommunityItemType, "theme">;
   filter: Filter;
   sort: "popular" | "newest";
 }) {
@@ -107,8 +146,7 @@ async function TypeGrid({
     type === "frame"
       ? await listFrames({ official, sort })
       : await listItems({ type, official, sort, limit: 200 });
-  const base =
-    type === "frame" ? "/community/frames" : "/community/collections";
+  const base = `/community/${TYPE_SEGMENTS[type]}`;
   const link = (next: Partial<{ from: Filter; sort: string }>) => {
     const params = new URLSearchParams();
     const nextFrom = next.from ?? filter;
@@ -167,19 +205,17 @@ async function TypeGrid({
         <div className="flex flex-col items-center gap-3 py-20 text-center">
           <HairlineFigure className="aspect-square w-36" figure="Palette" />
           <h2 className="text-lg font-semibold tracking-tight">
-            {type === "frame" ? "No frames here yet" : "No collections yet"}
+            {EMPTY[type].title}
           </h2>
           <p className="text-muted-foreground max-w-sm text-sm text-pretty">
-            {type === "frame"
-              ? "Make a frame in the editor's Frame section, then publish it."
-              : "Collections from QRdx appear here."}
+            {EMPTY[type].body}
           </p>
-          {type === "frame" && (
+          {EMPTY[type].link && (
             <Link
               className="text-sm underline underline-offset-2"
-              href={playgroundHref({ tab: "design" })}
+              href={EMPTY[type].link.href}
             >
-              Open the editor
+              {EMPTY[type].link.label}
             </Link>
           )}
         </div>

@@ -65,7 +65,7 @@ export default async function CreatorProfilePage({
   const tabs: { id: CommunityItemType | null; label: string; count: number }[] =
     [
       { id: null, label: "All", count: profile.items.length },
-      ...(["frame", "theme", "collection"] as const)
+      ...(["frame", "theme", "collection", "page-template", "kit"] as const)
         .filter((type) => counts.get(type))
         .map((type) => ({
           id: type,

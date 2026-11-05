@@ -10,9 +10,12 @@ import { removeCommunityItemAction } from "@/app/admin/actions";
 export function RemoveItemButton({
   itemId,
   name,
+  afterRemove = "community",
 }: {
   itemId: string;
   name: string;
+  /** Item pages go back to the community; the admin queue reloads */
+  afterRemove?: "community" | "refresh";
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -26,7 +29,8 @@ export function RemoveItemButton({
       const result = await removeCommunityItemAction({ itemId, reason });
       if (result.ok) {
         toast.success(`Removed "${name}" from the community`);
-        router.push("/community");
+        if (afterRemove === "refresh") router.refresh();
+        else router.push("/community");
       } else {
         toast.error(result.error);
       }
@@ -35,7 +39,7 @@ export function RemoveItemButton({
 
   return (
     <Button disabled={isPending} onClick={onClick} size="sm" variant="outline">
-      Remove from the community
+      {afterRemove === "refresh" ? "Remove" : "Remove from the community"}
     </Button>
   );
 }
