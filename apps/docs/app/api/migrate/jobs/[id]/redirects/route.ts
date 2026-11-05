@@ -3,9 +3,10 @@ import {
   getJob,
   ImportError,
   resetRedirectErrors,
+  retiredError,
   runRedirects,
 } from "@/lib/migrate/importer";
-import { isApiProviderId } from "@/lib/migrate/providers";
+import { isApiProviderId, isRetiredProvider } from "@/lib/migrate/providers";
 import {
   deps,
   migrateScope,
@@ -29,7 +30,8 @@ const bodySchema = z.object({
 /**
  * "Keep my printed codes working": dry-run lists the changes, apply points
  * old links at their QRdx links (≤ 20 per call), undo restores the recorded
- * destinations. Stops with a plain message on plan or quota errors.
+ * destinations. Stops with a plain message on plan or quota errors. Jobs of a
+ * retired provider (Dub) get undo only.
  */
 export function POST(req: Request, context: Context) {
   return respond("POST /api/migrate/jobs/[id]/redirects", async () => {
@@ -43,6 +45,10 @@ export function POST(req: Request, context: Context) {
         "NOT_SUPPORTED",
         "Old codes from a file import are re-pointed in the old provider.",
       );
+    }
+    // Before the connection lookup, so the refusal is the reason shown.
+    if (mode === "apply" && isRetiredProvider(job.provider)) {
+      throw retiredError(job.provider);
     }
     if (retry) await resetRedirectErrors(deps, scope, id);
     const source =

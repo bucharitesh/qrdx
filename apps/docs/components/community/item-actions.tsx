@@ -34,17 +34,20 @@ import { useQREditorStore } from "@/store/editor-store";
 
 /**
  * Puts an item into the editor: a frame joins your design, a theme replaces
- * it. Through the store, since a link's `style` can only replace a design.
+ * it. Through the store, since a link's `style` can only replace a design;
+ * one undo step either way, so your old design is one Undo away.
  */
 export function useApplyToEditor() {
   const router = useRouter();
   return (item: Pick<CommunityItemDetail, "type" | "apply">) => {
-    const { themeState, setThemeState } = useQREditorStore.getState();
-    const styles =
-      item.type === "frame"
+    const { themeState, applyDesign } = useQREditorStore.getState();
+    const frame = item.type === "frame";
+    applyDesign(
+      frame
         ? { ...themeState.styles, ...item.apply }
-        : { ...defaultThemeState.styles, ...item.apply };
-    setThemeState({ ...themeState, styles });
+        : { ...defaultThemeState.styles, ...item.apply },
+      { keepPreset: frame },
+    );
     soundEvent("apply");
     router.push(playgroundHref({ tab: "design" }));
   };

@@ -162,7 +162,7 @@ export function buildLlmsTxt(input: LlmsTxtInput): string {
     {
       title: "Import from other services",
       url: "/docs/migrate",
-      description: "Bring links from Bitly, Dub, Rebrandly and others",
+      description: "Bring links from Bitly, Rebrandly and others",
     },
     on("aiThemes") && {
       title: "AI theme designer",

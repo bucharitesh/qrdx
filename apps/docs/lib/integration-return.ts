@@ -16,7 +16,7 @@ const hasControlOrSpace = (value: string) => {
 };
 
 /**
- * `value` as a same-site path ("/dashboard/codes?import=dub"), or null.
+ * `value` as a same-site path ("/dashboard/codes?import=bitly"), or null.
  * Rejects absolute and protocol-relative URLs ("https://x", "//x"), every
  * backslash (browsers read "/\x" as "//x"), whitespace and control characters
  * (URL parsing silently drops some), and anything that only becomes

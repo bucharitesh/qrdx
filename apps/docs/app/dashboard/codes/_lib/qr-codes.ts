@@ -27,6 +27,10 @@ import {
 } from "@/app/dashboard/domains/_lib/domains";
 import { getDefaultThemeStyle } from "@/app/dashboard/themes/_lib/queries";
 import { snapshotCodeVersion } from "@/lib/code-versions";
+import {
+  contentTypeForDestination,
+  isDestinationContentType,
+} from "@/lib/dynamic-content";
 import { HttpError } from "@/lib/error-response";
 import { noteLimitUsage } from "@/lib/limit-notices";
 import { baseUrl } from "@/lib/metadata";
@@ -812,6 +816,7 @@ export async function createCodes(
         ? scopeForDomain(input.domainId ?? null)
         : SHARED_SLUG_SCOPE,
       destinationUrl: input.destinationUrl,
+      contentType: contentTypeForDestination(input.destinationUrl),
       title: input.title ?? null,
       style: input.style ?? defaultStyle,
       domainId: input.domainId ?? null,
@@ -925,6 +930,15 @@ export async function updateCode(
       next: patch.destinationUrl,
     };
     if (await screenUrlChange(scope, current, change)) values.isActive = false;
+    // A website code pointed at a WhatsApp chat becomes a WhatsApp code, and
+    // back; other content types keep theirs.
+    const contentType = contentTypeForDestination(patch.destinationUrl);
+    if (
+      isDestinationContentType(current.contentType) &&
+      contentType !== current.contentType
+    ) {
+      values.contentType = contentType;
+    }
   }
   if (patch.title !== undefined) values.title = patch.title;
   if (patch.style !== undefined) values.style = patch.style;
@@ -987,6 +1001,7 @@ export async function updateCode(
       (field) =>
         field !== "isActive" &&
         field !== "slugScope" &&
+        field !== "contentType" &&
         !(field === "slug" && values.slug === current.slug),
     ),
   );

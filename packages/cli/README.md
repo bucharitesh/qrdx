@@ -1,6 +1,9 @@
 # @qrdx/cli
 
-QR code generator CLI for developers. Generate styled, scannable QR codes as SVG, PNG or vector EPS — fully non-interactive and CI-friendly, with a guided prompt flow when run in a terminal. It renders with the same [`qrdx`](https://www.npmjs.com/package/qrdx) library as the [QRdx](https://qrdx.dev) web app.
+QR code generator CLI for developers. Generate styled, scannable QR codes as SVG, PNG or vector EPS. It runs non-interactively in scripts and CI, and guides you with prompts when run in a terminal. It renders with the same [`qrdx`](https://www.npmjs.com/package/qrdx) library as the [QRdx](https://qrdx.dev) web app.
+
+> [!NOTE]
+> This README documents `@qrdx/cli` 0.0.5, the version in this repository. npm still has 0.0.4, so `npx @qrdx/cli` runs 0.0.4 until 0.0.5 is published. 0.0.4 has the qrdx 0.0.46 styles and no `--format` or `--frame` options, and it writes SVG into a file named `qr.eps`. For EPS today, use the [image API](https://qrdx.dev/docs/developers/image-api): `curl -o qr.eps "https://api.qrdx.dev/v1/qr?data=https://example.com&format=eps"`. For frames, download from the [playground](https://qrdx.dev/playground). Run `npm view @qrdx/cli version` to see what npm installs.
 
 ## Install
 
@@ -33,7 +36,7 @@ qrdx generate <data> [options]
 
 | Flag | Short | Default | Description |
 |------|-------|---------|-------------|
-| `--output` | `-o` | `qr.svg` | Output path — extension sets format (`.svg`, `.png` or `.eps`) |
+| `--output` | `-o` | `qr.svg` | Output path; the extension sets the format (`.svg`, `.png` or `.eps`) |
 | `--format` | | from the extension | `svg`, `png` or `eps`, for a file name without an extension |
 | `--size` | | `512` | Output size: pixels for SVG and PNG, points (72 per inch) for EPS |
 | `--level` | `-l` | `Q` | Error correction: `L` `M` `Q` `H` |
@@ -127,7 +130,7 @@ Each gradient needs at least 2 stops; `offset` is a percentage from 0 to 100.
 
 ## Interactive mode
 
-When run in a TTY without an output path or data, `qrdx generate` starts a guided prompt flow — data, output path, then optionally advanced customizations (patterns, colors, template, logo, margin). In CI (`CI=true`) or when stdin/stdout is not a TTY it never prompts.
+When run in a TTY without an output path or data, `qrdx generate` starts a guided prompt flow: data, output path, then optional customizations (patterns, colors, template, logo, margin). In CI (`CI=true`) or when stdin/stdout is not a TTY it never prompts.
 
 ## Requirements
 
@@ -136,9 +139,9 @@ Node.js ≥ 22
 ## Links
 
 - [CLI docs](https://qrdx.dev/docs/developers/cli)
-- [qrdx.dev](https://qrdx.dev) — web app: static and dynamic QR codes, hosted pages and scan analytics
-- [Image API](https://qrdx.dev/docs/developers/image-api) and [MCP server](https://qrdx.dev/docs/developers/mcp) — QR codes over HTTP or from AI assistants, no install
-- [github.com/bucharitesh/qrdx](https://github.com/bucharitesh/qrdx) — source
+- [qrdx.dev](https://qrdx.dev): the web app, with static and dynamic QR codes, hosted pages and scan analytics
+- [Image API](https://qrdx.dev/docs/developers/image-api) and [MCP server](https://qrdx.dev/docs/developers/mcp): QR codes over HTTP or from AI assistants, with nothing to install
+- [github.com/bucharitesh/qrdx](https://github.com/bucharitesh/qrdx): the source
 
 ## License
 
