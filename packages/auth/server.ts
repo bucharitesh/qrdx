@@ -1,3 +1,5 @@
+import { passkey } from "@better-auth/passkey";
+import { sso } from "@better-auth/sso";
 import * as schema from "@repo/database";
 import { database as db } from "@repo/database";
 import { type BetterAuthOptions, betterAuth } from "better-auth";
@@ -12,6 +14,7 @@ import {
   emailOTP,
   lastLoginMethod,
   organization,
+  twoFactor,
 } from "better-auth/plugins";
 import {
   defaultRoles,
@@ -301,6 +304,14 @@ export const auth = betterAuth({
         },
       },
     }),
+    // Sign-in security (packages/database/manual-sql/0017). FOUNDATION ONLY:
+    // registered with defaults so the endpoints and tables exist; each is
+    // finished in its own lane before this ships. As registered here, the
+    // twoFactor plugin only challenges password sign-ins, which QRdx doesn't
+    // have, so 2FA does nothing yet.
+    twoFactor({ issuer: "QRdx", allowPasswordless: true }),
+    passkey({ rpName: "QRdx" }),
+    sso({ domainVerification: { enabled: true } }),
   ],
   // The admin panel does not use impersonation or password resets; keep them off the HTTP surface.
   disabledPaths: [
