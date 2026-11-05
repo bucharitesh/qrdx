@@ -8,17 +8,24 @@ import {
   BACKUP_CODE_COUNT,
   CHALLENGE_ATTEMPTS,
   LOCKOUT_MINUTES,
+  normalizeBackupCode,
   TRUST_DEVICE_DAYS,
 } from "@repo/auth/sign-in-challenge-rules";
 
-export { BACKUP_CODE_COUNT, CHALLENGE_ATTEMPTS, TRUST_DEVICE_DAYS };
+export {
+  BACKUP_CODE_COUNT,
+  CHALLENGE_ATTEMPTS,
+  normalizeBackupCode,
+  TRUST_DEVICE_DAYS,
+};
 
 export const TWO_FACTOR_MESSAGES = {
   wrongCode:
     "That code isn't right. Check your authenticator app and try again.",
   wrongBackupCode: "That backup code isn't right, or it was already used.",
   invalidCode: "Enter the 6-digit code from your authenticator app.",
-  invalidBackupCode: "Enter a backup code like abcde-12345.",
+  invalidBackupCode:
+    "That isn't a backup code. They look like ABCDE-FGH23: capital letters and the digits 2 to 9.",
   tooManyAttempts: "Too many wrong codes. Sign in again to try again.",
   locked: `Too many wrong codes in a row. Try again in ${LOCKOUT_MINUTES} minutes.`,
   expired: "This sign-in timed out. Sign in again.",
@@ -67,22 +74,6 @@ export function challengeFailure(
     };
   }
   return { message: TWO_FACTOR_MESSAGES.failed, over: false };
-}
-
-const BACKUP_CODE = /^[A-Za-z0-9]{5}-[A-Za-z0-9]{5}$/;
-
-/**
- * A backup code as stored ("abcde-12345"; letters keep their case), from what
- * someone typed or pasted: spaces dropped, the dash optional. Null when it
- * can't be one.
- */
-export function normalizeBackupCode(input: string): string | null {
-  const compact = input.replace(/\s+/g, "");
-  const code =
-    compact.length === 10 && !compact.includes("-")
-      ? `${compact.slice(0, 5)}-${compact.slice(5)}`
-      : compact;
-  return BACKUP_CODE.test(code) ? code : null;
 }
 
 /** A 6-digit authenticator code. */

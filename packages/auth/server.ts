@@ -35,6 +35,7 @@ import { hasEntitledSubscription, workspacePlanTier } from "./plan";
 import { signInChallenge } from "./sign-in-challenge";
 import {
   BACKUP_CODE_COUNT,
+  generateBackupCodes,
   SERVER_ONLY_TWO_FACTOR_PATHS,
   TOTP_DIGITS,
   TOTP_PERIOD_SECONDS,
@@ -150,6 +151,9 @@ const twoFactorPlugin = twoFactor({
   },
   backupCodeOptions: {
     amount: BACKUP_CODE_COUNT,
+    // Easy-to-read codes; entered codes are normalised to match
+    // (./sign-in-challenge.ts).
+    customBackupCodesGenerate: () => generateBackupCodes(BACKUP_CODE_COUNT),
     storeBackupCodes: "encrypted",
   },
   trustDeviceMaxAge: TRUST_DEVICE_DAYS * 24 * 60 * 60,

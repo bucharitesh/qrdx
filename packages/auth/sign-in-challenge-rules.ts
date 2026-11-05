@@ -14,6 +14,13 @@ export const TOTP_DIGITS = 6;
 export const TOTP_PERIOD_SECONDS = 30;
 /** Backup codes made at setup and on every regenerate; each works once. */
 export const BACKUP_CODE_COUNT = 10;
+/**
+ * Backup code characters: capitals and digits without the ones people misread
+ * (0 O 1 I, and lowercase l never appears). 32 symbols, so 10 of them carry
+ * 50 bits and a random byte maps onto them without bias.
+ */
+export const BACKUP_CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+const BACKUP_CODE_HALF = 5;
 /** "Don't ask again on this device" lasts this long. */
 export const TRUST_DEVICE_DAYS = 30;
 /** A challenge (the two_factor cookie) expires after this (plugin default). */
@@ -50,6 +57,38 @@ export const SERVER_ONLY_TWO_FACTOR_PATHS: readonly string[] = [
   "/two-factor/generate-backup-codes",
   "/two-factor/get-totp-uri",
 ];
+
+/**
+ * New backup codes, "ABCDE-FGH23": the twoFactor plugin's
+ * `customBackupCodesGenerate`. The plugin stores them as given and compares
+ * an entered code by exact string match, so every entered code goes through
+ * normalizeBackupCode first (./sign-in-challenge.ts and the app).
+ */
+export function generateBackupCodes(count = BACKUP_CODE_COUNT): string[] {
+  return Array.from({ length: count }, () => {
+    const bytes = crypto.getRandomValues(new Uint8Array(BACKUP_CODE_HALF * 2));
+    const chars = Array.from(
+      bytes,
+      (byte) => BACKUP_CODE_ALPHABET[byte % BACKUP_CODE_ALPHABET.length]
+    ).join("");
+    return `${chars.slice(0, BACKUP_CODE_HALF)}-${chars.slice(BACKUP_CODE_HALF)}`;
+  });
+}
+
+/**
+ * A backup code in the stored form, from whatever someone typed or pasted:
+ * any case, with or without the dash or spaces. Null when it can't be one
+ * (wrong length, or a character codes never contain, such as 0 or O).
+ */
+export function normalizeBackupCode(input: unknown): string | null {
+  if (typeof input !== "string") return null;
+  const chars = input.replace(/[\s-]+/g, "").toUpperCase();
+  if (chars.length !== BACKUP_CODE_HALF * 2) return null;
+  for (const char of chars) {
+    if (!BACKUP_CODE_ALPHABET.includes(char)) return null;
+  }
+  return `${chars.slice(0, BACKUP_CODE_HALF)}-${chars.slice(BACKUP_CODE_HALF)}`;
+}
 
 /** Passkey sign-in: exempt only when the authenticator verified the user. */
 export const PASSKEY_SIGN_IN_PATH = "/passkey/verify-authentication";
