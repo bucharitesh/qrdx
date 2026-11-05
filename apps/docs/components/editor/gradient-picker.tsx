@@ -75,7 +75,8 @@ function PaintPopover({
     return (
       <Drawer onOpenChange={onOpenChange} open={open}>
         <DrawerTrigger asChild>{trigger}</DrawerTrigger>
-        <DrawerContent className="max-h-[88dvh]">
+        {/* Above the side panels (z-[120]) and the builder (z-[99]) */}
+        <DrawerContent className="z-[130] max-h-[88dvh]">
           <DrawerHeader className="pb-1 text-left">
             <DrawerTitle className="text-sm">{label}</DrawerTitle>
             <DrawerDescription className="sr-only">
@@ -93,7 +94,8 @@ function PaintPopover({
       <PopoverContent
         align="start"
         aria-label={label}
-        className="max-h-[var(--radix-popover-content-available-height)] w-[18.5rem] overflow-y-auto p-3"
+        // Above the side panels (z-[120]) and the code builder (z-[99])
+        className="z-[130] max-h-[var(--radix-popover-content-available-height)] w-[18.5rem] overflow-y-auto p-3"
         collisionPadding={12}
       >
         {children}

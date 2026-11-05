@@ -343,7 +343,8 @@ export function GradientToolbar({
                 <ArrowDown2 className="size-3.5" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="min-w-24">
+            {/* Above the picker (z-[130]) */}
+            <DropdownMenuContent align="start" className="z-[140] min-w-24">
               {ANGLE_PRESETS.map((preset) => (
                 <DropdownMenuItem
                   className="text-xs tabular-nums"

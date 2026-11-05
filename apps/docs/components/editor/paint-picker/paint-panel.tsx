@@ -846,7 +846,8 @@ export function PaintPanel({
           >
             <SelectValue />
           </SelectTrigger>
-          <SelectContent>
+          {/* Above the picker (z-[130]) */}
+          <SelectContent className="z-[140]">
             {MODELS.map((item) => (
               <SelectItem className="text-xs" key={item.id} value={item.id}>
                 {item.label}
