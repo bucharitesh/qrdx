@@ -22,6 +22,10 @@
 -- If it's false: DROP INDEX CONCURRENTLY member_organization_id_user_id_unique;
 -- fix the duplicates, and run this again.
 --
+-- APPLIED to the shared Neon database on 2026-11-06: 0 duplicates first, a
+-- dry run of the same index in a rolled-back transaction, then this file;
+-- the index is valid and unique, and a second run skipped it.
+--
 -- Matches packages/database/schema.ts (member, uniqueIndex
 -- member_organization_id_user_id_unique), so a later `drizzle-kit push` sees
 -- no drift.
