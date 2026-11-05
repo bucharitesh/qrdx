@@ -65,14 +65,20 @@ export interface InlineFrameEditorProps {
 }
 
 /** Where the input goes: over the label's row, or a field on curved text. */
-function inputBox(label: PreviewLabel): Box {
+function inputBox(label: PreviewLabel, artwork: Box | null): Box {
   if (label.curved || label.row.width <= 0) {
+    // A plain field just inside the curve (toward the middle of the frame),
+    // so the letters it edits stay in view as they redraw
     const width = Math.max(200, Math.min(280, label.box.width));
+    const middle = artwork ? artwork.top + artwork.height / 2 : 0;
+    const onTop = label.box.top + label.box.height / 2 < middle;
     return {
       left: label.box.left + label.box.width / 2 - width / 2,
-      top: label.box.top + label.box.height / 2 - 18,
+      top: onTop
+        ? label.box.top + label.box.height + 8
+        : label.box.top - 8 - FIELD_HEIGHT,
       width,
-      height: 36,
+      height: FIELD_HEIGHT,
     };
   }
   return {
@@ -82,6 +88,19 @@ function inputBox(label: PreviewLabel): Box {
     height: label.box.height,
   };
 }
+
+const FIELD_HEIGHT = 36;
+
+const union = (a: Box, b: Box): Box => {
+  const left = Math.min(a.left, b.left);
+  const top = Math.min(a.top, b.top);
+  return {
+    left,
+    top,
+    width: Math.max(a.left + a.width, b.left + b.width) - left,
+    height: Math.max(a.top + a.height, b.top + b.height) - top,
+  };
+};
 
 /**
  * The input laid exactly over a frame label (same place, size, font and
@@ -107,7 +126,7 @@ export function InlineFrameEditor({
   const counterId = useId();
   const [menu, setMenu] = useState<Menu | null>(null);
   const [menuSize, setMenuSize] = useState({ width: 0, height: 0 });
-  const box = inputBox(label);
+  const box = inputBox(label, artwork);
   const plain = label.curved || label.row.width <= 0;
   const left = charactersLeft(text, target.maxLength);
   const showLeft = nearTextLimit(text, target.maxLength);
@@ -130,7 +149,8 @@ export function InlineFrameEditor({
     );
   });
 
-  const anchor = plain ? box : label.box;
+  // The menu clears the curved letters as well as the field
+  const anchor = plain ? union(box, label.box) : label.box;
   const placed = placeMenu(menuSize, anchor, artwork, bounds);
   // Menus open away from the frame, so the text stays in view
   const menuSide = placed.above ? "top" : "bottom";
