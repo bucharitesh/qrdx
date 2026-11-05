@@ -166,10 +166,21 @@ export class FakeCommunityPg {
     if (text === S.items) {
       return result(
         this.rows("community_item").map(
-          ({ id, type, slug, profile_id, is_official, created_by }) => ({
+          ({
             id,
             type,
             slug,
+            status,
+            payload_hash,
+            profile_id,
+            is_official,
+            created_by,
+          }) => ({
+            id,
+            type,
+            slug,
+            status: status ?? null,
+            payload_hash: payload_hash ?? null,
             profile_id,
             is_official,
             created_by,
