@@ -110,7 +110,7 @@ export function PasskeySignIn({
     <div className="grid gap-2 px-6 pt-2">
       <div className="relative">
         <Button
-          className="w-full"
+          className="h-10 w-full sm:h-9"
           disabled={disabled || loading}
           onClick={signIn}
           variant="outline"

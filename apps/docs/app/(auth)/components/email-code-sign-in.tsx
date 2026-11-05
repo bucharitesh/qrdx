@@ -319,6 +319,7 @@ export function EmailCodeSignIn({
         Email address
       </Label>
       <Input
+        className="h-10 sm:h-9"
         aria-describedby={error ? errorId : undefined}
         aria-invalid={Boolean(error)}
         autoCapitalize="none"
@@ -340,7 +341,7 @@ export function EmailCodeSignIn({
       />
       <div className="relative">
         <Button
-          className="w-full"
+          className="h-10 w-full sm:h-9"
           disabled={disabled || sending}
           type="submit"
           variant="outline"
