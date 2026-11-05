@@ -6,7 +6,11 @@
 //   "Last used" → autofill → an assertion without user verification is
 //   refused by the server (no session) → too-old sign-in asks to sign in
 //   again → remove it. The management endpoints are checked to be off over
-//   HTTP. Screenshots of each screen, light and dark, go to E2E_SHOTS.
+//   HTTP. Then, with two-step verification: a second account turns it on
+//   (as e2e/two-factor.e2e.ts does) and adds a passkey; a passkey sign-in
+//   gets a session with no two-step challenge, while an email-code sign-in
+//   is challenged (twoFactorRedirect, no session) until a TOTP code.
+//   Screenshots of each screen, light and dark, go to E2E_SHOTS.
 //
 //   E2E_BASE_URL=http://localhost:3112 \
 //   E2E_CODE_LOG=<the dev server's log file> \
@@ -20,7 +24,9 @@
 // "sign in again" check is skipped and says so. Each run signs up a new
 // passkey-e2e-<run>@qrdx.test account.
 
+/** biome-ignore-all lint/performance/useDomNodeTextContent: checks must only match text a person can see */
 import { execSync } from "node:child_process";
+import { createHmac } from "node:crypto";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { findChrome, launch, serverIsUp, sleep } from "./cdp.mjs";
@@ -34,6 +40,38 @@ const SHOTS = process.env.E2E_SHOTS;
 const DB_SQL = process.env.E2E_DB_SQL;
 const RUN = Date.now().toString(36);
 const EMAIL = `passkey-e2e-${RUN}@qrdx.test`;
+const TWO_FACTOR_EMAIL = `passkey-2fa-e2e-${RUN}@qrdx.test`;
+
+// The authenticator app (RFC 6238, SHA-1, 6 digits, 30 s), as in
+// e2e/two-factor.e2e.ts.
+function base32Decode(input: string): Buffer {
+  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+  let bits = 0;
+  let value = 0;
+  const out: number[] = [];
+  for (const char of input.replace(/[\s=]+/g, "").toUpperCase()) {
+    value = (value << 5) | alphabet.indexOf(char);
+    bits += 5;
+    if (bits >= 8) {
+      out.push((value >>> (bits - 8)) & 255);
+      bits -= 8;
+    }
+  }
+  return Buffer.from(out);
+}
+
+function totp(secret: string, at = Date.now()): string {
+  const counter = Buffer.alloc(8);
+  counter.writeBigUInt64BE(BigInt(Math.floor(at / 1000 / 30)));
+  const hash = createHmac("sha1", base32Decode(secret))
+    .update(counter)
+    .digest();
+  const offset = hash[hash.length - 1] & 15;
+  return String((hash.readUInt32BE(offset) & 0x7fffffff) % 1_000_000).padStart(
+    6,
+    "0",
+  );
+}
 
 type Page = Awaited<ReturnType<typeof launch>>;
 
@@ -197,18 +235,21 @@ const setDialogName = (page: Page, title: string, value: string) =>
     value,
   );
 
-async function signInWithCode(page: Page) {
+/** /sign-in → email → the code from the log. Returns once it's entered. */
+async function enterEmailCode(page: Page, email: string) {
   await page.goto(`${BASE_URL}/sign-in?next=/settings/account`);
   await page.waitFor(() => Boolean(window.__e2e.byLabel("Email address")));
   await page.evaluate((email: string) => {
     const input = window.__e2e.byLabel("Email address") as HTMLInputElement;
     window.__e2e.setValue(input, email);
-  }, EMAIL);
+  }, email);
+  const previous = latestCode(email);
   await clickButton(page, "Email me a code");
   let code: string | null = null;
   for (let i = 0; i < 60 && !code; i++) {
     await sleep(250);
-    code = latestCode(EMAIL);
+    const latest = latestCode(email);
+    if (latest && latest !== previous) code = latest;
   }
   if (!code) throw new Error("no sign-in code in the dev server log");
   await page.waitFor(() => Boolean(document.querySelector("[data-input-otp]")));
@@ -218,6 +259,10 @@ async function signInWithCode(page: Page) {
     ) as HTMLInputElement;
     window.__e2e.setValue(input, value);
   }, code);
+}
+
+async function signInWithCode(page: Page, email = EMAIL) {
+  await enterEmailCode(page, email);
   await page.waitFor(() => location.pathname === "/settings/account", {
     timeout: 30_000,
   });
@@ -643,6 +688,212 @@ async function main() {
       if (user) return "signed in";
       return /isn't linked/.test(String(message)) ? true : `alert: ${message}`;
     });
+
+    // ── With two-step verification on ──
+    // The server's JSON answers to the sign-in requests, read over CDP
+    // (Network domain), by path.
+    const replies = new Map<string, unknown>();
+    const watched = new Map<string, string>();
+    await cdp.send("Network.enable");
+    cdp.on(
+      async (message: {
+        method: string;
+        params: {
+          requestId: string;
+          response?: { url: string };
+        };
+      }) => {
+        if (message.method === "Network.responseReceived") {
+          const path = new URL(message.params.response?.url ?? "").pathname;
+          if (
+            path === "/api/auth/passkey/verify-authentication" ||
+            path === "/api/auth/sign-in/email-otp"
+          ) {
+            watched.set(message.params.requestId, path);
+          }
+        }
+        if (message.method === "Network.loadingFinished") {
+          const path = watched.get(message.params.requestId);
+          if (!path) return;
+          watched.delete(message.params.requestId);
+          try {
+            const { body } = await cdp.send("Network.getResponseBody", {
+              requestId: message.params.requestId,
+            });
+            replies.set(path, JSON.parse(body));
+          } catch {
+            replies.set(path, "unreadable");
+          }
+        }
+      },
+    );
+    // The first account's passkey is gone from QRdx; drop it from the
+    // authenticator too, so the browser offers only the next one.
+    await cdp.send("WebAuthn.clearCredentials", { authenticatorId });
+    let secret = "";
+
+    await step("2FA: an account turns on two-step verification", async () => {
+      await signOut(page);
+      await signInWithCode(page, TWO_FACTOR_EMAIL);
+      await page.goto(`${BASE_URL}/settings/account#two-factor`);
+      await clickButton(page, "Turn on");
+      secret = String(
+        await page.waitFor(() =>
+          (
+            document.querySelector('[role="dialog"] code')?.textContent ?? ""
+          ).replace(/\s+/g, ""),
+        ),
+      );
+      if (secret.length < 16) return `key "${secret}"`;
+      await page.evaluate((code: string) => {
+        const input = window.__e2e.byLabel(
+          "Code from your authenticator app",
+        ) as HTMLInputElement;
+        input.focus();
+        window.__e2e.setValue(input, code);
+      }, totp(secret));
+      await page.waitFor(() =>
+        document.body.innerText.includes("Save these backup codes"),
+      );
+      await page.evaluate(() => {
+        const box = window.__e2e.byLabel("I've saved my backup codes");
+        if (box) window.__e2e.click(box);
+      });
+      await page.waitFor(() => {
+        const dialog = document.querySelector('[role="dialog"]');
+        const done = [...(dialog?.querySelectorAll("button") ?? [])].find(
+          (button) => button.textContent?.trim() === "Done",
+        );
+        if (!done || done.disabled) return false;
+        window.__e2e.click(done);
+        return true;
+      });
+      await page.waitFor(() =>
+        document.body.innerText.includes("10 of 10 backup codes left"),
+      );
+      return true;
+    });
+
+    await step("2FA: the same account adds a passkey", async () => {
+      await page.goto(`${BASE_URL}/settings/account`);
+      await clickButton(page, "Add passkey");
+      await dialogName(page, "Add a passkey");
+      await clickButton(page, "Continue", "Add a passkey");
+      await page.waitFor(() => Boolean(window.__e2e.byText("Passkey added")), {
+        timeout: 20_000,
+      });
+      const { credentials } = await cdp.send("WebAuthn.getCredentials", {
+        authenticatorId,
+      });
+      return credentials.length === 1
+        ? true
+        : `${credentials.length} credentials`;
+    });
+
+    await step(
+      "2FA: a passkey sign-in (with user verification) has no two-step challenge",
+      async () => {
+        await signOut(page);
+        await page.goto(`${BASE_URL}/sign-in?next=/settings/account`);
+        await page.waitFor(() =>
+          Boolean(window.__e2e.byRole("button", "Sign in with a passkey")),
+        );
+        if (await session(page)) return "signed in before the click";
+        replies.clear();
+        await clickButton(page, "Sign in with a passkey");
+        await page.waitFor(() => location.pathname === "/settings/account", {
+          timeout: 20_000,
+        });
+        await sleep(500);
+        const reply = (replies.get("/api/auth/passkey/verify-authentication") ??
+          null) as {
+          twoFactorRedirect?: boolean;
+          user?: { email?: string };
+        } | null;
+        await page.waitFor(() =>
+          Boolean(document.getElementById("two-factor")),
+        );
+        await page.evaluate(() =>
+          document.getElementById("two-factor")?.scrollIntoView(),
+        );
+        await shot(page, "2fa-passkey-sign-in-no-challenge");
+        const user = await session(page);
+        console.log(
+          `      passkey sign-in reply: ${JSON.stringify({ twoFactorRedirect: reply?.twoFactorRedirect ?? null, user: reply?.user?.email ?? null })}`,
+        );
+        if (!reply) return "no reply recorded from verify-authentication";
+        if (reply.twoFactorRedirect) return "answered twoFactorRedirect";
+        if (reply.user?.email !== TWO_FACTOR_EMAIL) return "reply had no user";
+        return user?.email === TWO_FACTOR_EMAIL
+          ? true
+          : `session: ${JSON.stringify(user)}`;
+      },
+    );
+
+    await step(
+      "2FA: an email-code sign-in is challenged, no session until a TOTP code",
+      async () => {
+        await signOut(page);
+        await page.goto(`${BASE_URL}/sign-in?next=/settings/account`);
+        replies.clear();
+        await page.evaluate((email: string) => {
+          const input = window.__e2e.byLabel(
+            "Email address",
+          ) as HTMLInputElement;
+          window.__e2e.setValue(input, email);
+        }, TWO_FACTOR_EMAIL);
+        const previous = latestCode(TWO_FACTOR_EMAIL);
+        await clickButton(page, "Email me a code");
+        let code: string | null = null;
+        for (let i = 0; i < 60 && !code; i++) {
+          await sleep(250);
+          const latest = latestCode(TWO_FACTOR_EMAIL);
+          if (latest && latest !== previous) code = latest;
+        }
+        if (!code) return "no sign-in code in the log";
+        await page.waitFor(() =>
+          Boolean(document.querySelector("[data-input-otp]")),
+        );
+        await page.evaluate((value: string) => {
+          window.__e2e.setValue(
+            document.querySelector("[data-input-otp]") as HTMLInputElement,
+            value,
+          );
+        }, code);
+        await page.waitFor(() =>
+          document.body.innerText.includes(
+            "Your account asks for a second step",
+          ),
+        );
+        await sleep(500);
+        const reply = (replies.get("/api/auth/sign-in/email-otp") ?? null) as {
+          twoFactorRedirect?: boolean;
+        } | null;
+        const before = await session(page);
+        await shot(page, "2fa-email-code-challenged");
+        console.log(
+          `      email-code sign-in reply: ${JSON.stringify(reply)}; session before TOTP: ${JSON.stringify(before)}`,
+        );
+        if (reply?.twoFactorRedirect !== true) {
+          return `reply: ${JSON.stringify(reply)}`;
+        }
+        if (before) return "a session existed before the TOTP code";
+        await page.evaluate((value: string) => {
+          const input = window.__e2e.byLabel(
+            "Authenticator code",
+          ) as HTMLInputElement;
+          input.focus();
+          window.__e2e.setValue(input, value);
+        }, totp(secret));
+        await page.waitFor(() => location.pathname === "/settings/account", {
+          timeout: 20_000,
+        });
+        const after = await session(page);
+        return after?.email === TWO_FACTOR_EMAIL
+          ? true
+          : `session after TOTP: ${JSON.stringify(after)}`;
+      },
+    );
 
     if (page.consoleErrors.length) {
       console.log(`Console errors:\n  ${page.consoleErrors.join("\n  ")}`);
