@@ -20,7 +20,11 @@ import {
 import { getAIMockMode } from "@/components/editor/ai/dev-mock-mode";
 import { emitSound } from "@/components/editor/sound";
 import type { EditorContextInput } from "@/lib/ai/agent/editor-context";
-import type { ApplyDesignOutput, DesignProgress } from "@/lib/ai/agent/tools";
+import type {
+  DesignContent,
+  DesignLogo,
+  DesignProgress,
+} from "@/lib/ai/agent/tools";
 import { parseAiSdkTransportError } from "@/lib/ai/parse-ai-sdk-transport-error";
 import { track } from "@/lib/analytics";
 import { handleUnauthorized } from "@/lib/handle-unauthorized";
@@ -31,6 +35,7 @@ import { useQREditorStore } from "@/store/editor-store";
 import type { ChatMessage } from "@/types/ai";
 import type { ThemeEditorState } from "@/types/editor";
 import type { ContentType, QRContentConfig } from "@/types/qr-content";
+import type { ThemeStyles } from "@/types/theme";
 import { encodeQRContent } from "@/utils/qr-content-encoder";
 import type {
   AppliedState,
@@ -65,7 +70,7 @@ const devFetch: typeof fetch | undefined =
     : undefined;
 
 /** The code in the editor, sent with every request (lib/ai/agent/editor-context.ts). */
-function editorContext(): EditorContextInput {
+export function editorContext(): EditorContextInput {
   const { contentType, contentConfigs, value, themeState } =
     useQREditorStore.getState();
   const config = contentConfigs[contentType] as
@@ -92,12 +97,24 @@ function editorContext(): EditorContextInput {
   };
 }
 
+/** Tools the browser answers (lib/ai/agent/picture-tools.ts CLIENT_TOOL_NAMES). */
+const CLIENT_TOOL_PARTS = new Set([
+  "tool-ask_user",
+  "tool-use_image",
+  "tool-request_content",
+]);
+
 /**
- * Resume a paused run once the user has answered a question or responded to
- * every approval in it. Never for a run that merely ended on a server tool
- * (a step limit), which would start a new request on its own.
+ * Resume a paused run once the user has answered a question (or a
+ * browser-side tool has its result) or responded to every approval in it.
+ * Never for a run that merely ended on a server tool (a step limit), which
+ * would start a new request on its own.
  */
-function shouldResume({ messages }: { messages: ChatMessage[] }): boolean {
+export function shouldResume({
+  messages,
+}: {
+  messages: ChatMessage[];
+}): boolean {
   if (lastAssistantMessageIsCompleteWithApprovalResponses({ messages })) {
     return true;
   }
@@ -111,7 +128,9 @@ function shouldResume({ messages }: { messages: ChatMessage[] }): boolean {
   const lastStep = last.parts.slice(stepStart + 1);
   return lastStep.some(
     (part) =>
-      part.type === "tool-ask_user" && part.state === "output-available",
+      CLIENT_TOOL_PARTS.has(part.type) &&
+      "state" in part &&
+      part.state === "output-available",
   );
 }
 
@@ -132,8 +151,15 @@ function snapshot(): EditorSnapshot {
   };
 }
 
+/** What an approved change puts in the editor: a design, or a placed picture. */
+export interface EditorChange {
+  themeStyles: ThemeStyles;
+  logo: DesignLogo;
+  content: DesignContent | null;
+}
+
 /** Puts an applied design in the editor: its style (through the undo history) and content. */
-function applyToEditor(design: Extract<ApplyDesignOutput, { ok: true }>) {
+function applyToEditor(design: EditorChange) {
   const store = useQREditorStore.getState();
   const current = store.themeState.styles;
   const logo =
@@ -184,13 +210,15 @@ export function ChatEngine({
 
   // Each approved design is applied (and chimes) once; undo keeps what it replaced.
   const handledIds = useRef(new Set<string>());
+  // Tool calls restored from a saved chat (not from this visit's requests).
+  const restoredIds = useRef(new Set<string>());
   const snapshots = useRef(
     new Map<
       string,
       {
         before: EditorSnapshot;
         applied: ThemeEditorState;
-        design: Extract<ApplyDesignOutput, { ok: true }>;
+        design: EditorChange;
       }
     >(),
   );
@@ -287,6 +315,32 @@ export function ChatEngine({
     }
   }, [applyParts]);
 
+  // A picture placed by use_image: the browser built and scored it, and
+  // the user approved it in its card. Undo works as for designs.
+  const applyChange = useCallback(
+    (toolCallId: string, change: EditorChange) => {
+      if (handledIds.current.has(toolCallId)) return;
+      handledIds.current.add(toolCallId);
+      const before = snapshot();
+      const after = applyToEditor(change);
+      snapshots.current.set(toolCallId, {
+        before,
+        applied: after,
+        design: change,
+      });
+      setApplied((current) => ({ ...current, [toolCallId]: "applied" }));
+      setThemeEvent((prev) => ({ kind: "applied", at: (prev?.at ?? 0) + 1 }));
+      emitSound("ai-done");
+      track("ai_theme_generated", { status: "success" });
+    },
+    [],
+  );
+
+  const isRestored = useCallback(
+    (toolCallId: string) => restoredIds.current.has(toolCallId),
+    [],
+  );
+
   const undoApplied = useCallback((toolCallId: string) => {
     const entry = snapshots.current.get(toolCallId);
     if (!entry) return;
@@ -367,7 +421,10 @@ export function ChatEngine({
       // Designs applied before a reload stay as they are; never re-apply.
       for (const message of storedMessages) {
         for (const part of message.parts) {
-          if (isToolUIPart(part)) handledIds.current.add(part.toolCallId);
+          if (isToolUIPart(part)) {
+            handledIds.current.add(part.toolCallId);
+            restoredIds.current.add(part.toolCallId);
+          }
         }
       }
       chat.setMessages(storedMessages);
@@ -384,6 +441,8 @@ export function ChatEngine({
     themeEvent,
     designProgress,
     applied,
+    applyChange,
+    isRestored,
     undoApplied,
     redoApplied,
   };
