@@ -1,8 +1,24 @@
 import "server-only";
 
 import { isOwnWorkspaceOf, ownWorkspaceId } from "@repo/auth/own-workspace-id";
-import { communityTheme, database as db, qrPreset } from "@repo/database";
-import { and, count, desc, eq, isNull, or, type SQL, sql } from "drizzle-orm";
+import {
+  communityItem,
+  communityTheme,
+  database as db,
+  qrPreset,
+} from "@repo/database";
+import {
+  and,
+  count,
+  desc,
+  eq,
+  inArray,
+  isNull,
+  ne,
+  or,
+  type SQL,
+  sql,
+} from "drizzle-orm";
 import { can } from "@/lib/permissions";
 import { getPlanLimits, PLANS } from "@/lib/plans";
 import { PLAN_NAMES } from "@/lib/pricing";
@@ -70,6 +86,40 @@ export function canEditTheme(scope: ActiveScope, theme: ThemeOwner): boolean {
   );
 }
 
+/**
+ * Which of `themeIds` are in the community, read where the gallery reads
+ * (lib/community/store.ts): community_item once the backfill has copied the
+ * themes there (publishing and unpublishing only change items from then on,
+ * so a leftover community_theme row means nothing), community_theme before
+ * that or where the community tables don't exist. Never both at once.
+ */
+async function publishedThemeIds(themeIds: string[]): Promise<Set<string>> {
+  if (themeIds.length === 0) return new Set();
+  // Loaded here, not at the top: this module is imported widely, and the
+  // store sets up its cache when it loads.
+  const { communityState } = await import("@/lib/community/store");
+  if ((await communityState()).themes === "items") {
+    const rows = await db
+      .select({ themeId: communityItem.sourceId })
+      .from(communityItem)
+      .where(
+        and(
+          eq(communityItem.type, "theme"),
+          eq(communityItem.sourceKind, "qr_preset"),
+          inArray(communityItem.sourceId, themeIds),
+          // Hidden by moderation still counts: it can be unpublished.
+          ne(communityItem.status, "removed"),
+        ),
+      );
+    return new Set(rows.flatMap((row) => (row.themeId ? [row.themeId] : [])));
+  }
+  const rows = await db
+    .select({ themeId: communityTheme.themeId })
+    .from(communityTheme)
+    .where(inArray(communityTheme.themeId, themeIds));
+  return new Set(rows.map((row) => row.themeId));
+}
+
 /** Your themes plus, in another workspace, that workspace's shared themes. */
 export async function listVisibleThemes(
   scope: ActiveScope,
@@ -85,10 +135,8 @@ export async function listVisibleThemes(
       style: qrPreset.style,
       createdAt: qrPreset.createdAt,
       updatedAt: qrPreset.updatedAt,
-      isPublished: sql<boolean>`${communityTheme.id} is not null`,
     })
     .from(qrPreset)
-    .leftJoin(communityTheme, eq(qrPreset.id, communityTheme.themeId))
     .where(
       inOwnWorkspace(scope)
         ? personal
@@ -96,7 +144,10 @@ export async function listVisibleThemes(
     )
     .orderBy(desc(qrPreset.createdAt));
 
-  return rows.map((row) => toSavedTheme(scope, row));
+  const published = await publishedThemeIds(rows.map((row) => row.id));
+  return rows.map((row) =>
+    toSavedTheme(scope, { ...row, isPublished: published.has(row.id) }),
+  );
 }
 
 type ThemeRow = Omit<
