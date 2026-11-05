@@ -55,7 +55,9 @@ A verified domain covers its subdomains too, so `acme.com` also covers `eu.acme.
 ## What your team sees
 
 1. On the sign-in page, they click **Sign in with SSO** and enter their work email.
-2. QRdx sends them to your identity provider, then back to QRdx, signed in.
+2. QRdx sends them to your identity provider, then back to QRdx, signed in and in your workspace.
+
+If someone turned on [two-step verification](/docs/help/privacy-and-security/two-step-verification), QRdx still asks for their authenticator code after your identity provider signs them in.
 
 The first time someone signs in with SSO, they join your workspace with the role you pick under **New members**: **Member** (the default) or **Viewer**. You can change anyone's role later on the **Team** page. Someone with a pending invitation to the workspace joins through the invitation instead, with its role.
 
