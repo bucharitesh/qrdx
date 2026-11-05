@@ -1,15 +1,21 @@
 ---
 title: Keep your account secure
-description: How sign-in works, how to sign out other devices, and how to report a security problem.
+description: How sign-in works, two-step verification, passkeys, signing out other devices, and how to report a security problem.
 ---
 
 ## No password to leak
 
-QRdx has no passwords. You sign in with Google, GitHub or a one-time code sent to your email.
+QRdx has no passwords. You sign in with Google, GitHub or a one-time code sent to your email<IfAvailable feature="passkeys">, or with a passkey</IfAvailable>. If your workspace is on the Business plan, it can also let you sign in with your company's [single sign-on](/docs/help/teams/single-sign-on).
 
-That makes your email account, and your Google or GitHub account, the keys to QRdx. Turn on two-step verification for them.
+That makes your email account, and your Google or GitHub account, keys to QRdx. Turn on two-step verification for them too.
 
-QRdx doesn't have its own two-step verification (2FA) or passkeys.
+## Turn on two-step verification
+
+[Two-step verification](/docs/help/privacy-and-security/two-step-verification) makes QRdx ask for a code from an authenticator app after you sign in, whichever way you sign in. Someone who gets into your email or your Google account still can't get into QRdx without it. You get 10 backup codes for when you don't have your phone.
+
+<IfAvailable feature="passkeys" title="Add a passkey">
+A [passkey](/docs/help/privacy-and-security/passkeys) signs you in with your fingerprint, face or screen lock. It only works on QRdx's own site, so a look-alike site can't collect it. A passkey sign-in already counts as two steps, so it doesn't ask for an authenticator code.
+</IfAvailable>
 
 ## Sign out other devices
 
@@ -21,7 +27,11 @@ If you let another app use your QRdx account, it's listed under **Settings** →
 
 ## Sensitive actions need a code
 
-Deleting your account asks for a code sent to your email. Changing your email address needs a recent sign-in and a code sent to the new address.
+- Deleting your account asks for a code sent to your email, and a current authenticator or backup code if two-step verification is on.
+- Changing your email address needs a recent sign-in and a code sent to the new address.
+- Turning on two-step verification<IfAvailable feature="passkeys"> or adding a passkey</IfAvailable> needs a sign-in from the last 24 hours. Turning it off, or making new backup codes, asks for a current authenticator or backup code.
+
+We email you whenever two-step verification is turned on or off, new backup codes are made<IfAvailable feature="passkeys">, or a passkey is added or removed</IfAvailable>.
 
 ## Report a security problem
 
