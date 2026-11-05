@@ -54,7 +54,7 @@ export interface PlanLimits {
   teamMembers: number;
   /** Per-folder access rules for team members */
   folderPermissions: boolean;
-  /** Workspace single sign-on, OIDC and SAML (packages/auth/sso.ts) */
+  /** Workspace single sign-on, OIDC and SAML (packages/auth/ee/sso.ts) */
   sso: boolean;
   auditLog: boolean;
   /** Password, start/expiry dates and scan limits (lib/redirect/lifecycle.ts) */

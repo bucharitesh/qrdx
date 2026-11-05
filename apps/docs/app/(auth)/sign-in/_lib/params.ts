@@ -11,7 +11,7 @@ export interface SignInPageParams {
   next: string;
   /** Arrived from /sign-out: say so. */
   signedOut: boolean;
-  /** A single sign-on that failed on the way back (?error=, lib/sso/messages.ts). */
+  /** A single sign-on that failed on the way back (?error=, ee/sso/messages.ts). */
   ssoError: string | null;
 }
 
