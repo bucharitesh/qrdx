@@ -226,6 +226,8 @@ beforeAll(async () => {
     },
     backupCodeOptions: {
       amount: rules.BACKUP_CODE_COUNT,
+      customBackupCodesGenerate: () =>
+        rules.generateBackupCodes(rules.BACKUP_CODE_COUNT),
       storeBackupCodes: "encrypted",
     },
     trustDeviceMaxAge: rules.TRUST_DEVICE_DAYS * 24 * 60 * 60,
@@ -358,6 +360,10 @@ describe("two-step verification at sign-in", () => {
     });
     backupCodes = regenerated.backupCodes;
     expect(backupCodes).toHaveLength(10);
+    // Easy to read: no 0, O, 1, I or l, grouped 5-5.
+    for (const backupCode of backupCodes) {
+      expect(backupCode).toMatch(/^[A-HJ-NP-Z2-9]{5}-[A-HJ-NP-Z2-9]{5}$/);
+    }
     const view = await auth.api.viewBackupCodes({
       body: { userId: db.user.find((u) => u.email === TWO_FACTOR_EMAIL)?.id },
     });
@@ -407,11 +413,28 @@ describe("two-step verification at sign-in", () => {
     expect(again.status).toBe(401);
     expect(again.json?.code).toBe("INVALID_BACKUP_CODE");
     expect(await second.session()).toBeNull();
-    // A different unused code still works.
+    // Typed the way people do: lower case, no dash. The challenge plugin
+    // normalises it before the plugin's exact-match comparison.
     const other = await second.post("/two-factor/verify-backup-code", {
-      code: backupCodes[1],
+      code: backupCodes[1].replace("-", "").toLowerCase(),
     });
     expect(other.status).toBe(200);
+  });
+
+  it("accepts a backup code with spaces and mixed case, and refuses junk", async () => {
+    const browser = new Browser(auth.handler);
+    await emailCodeSignIn(browser, TWO_FACTOR_EMAIL);
+    const junk = await browser.post("/two-factor/verify-backup-code", {
+      code: "00000-OOOOO",
+    });
+    expect(junk.status).toBe(401);
+    expect(junk.json?.code).toBe("INVALID_BACKUP_CODE");
+    const [left, right] = backupCodes[3].split("-");
+    const spaced = await browser.post("/two-factor/verify-backup-code", {
+      code: ` ${left.toLowerCase()} ${right} `,
+    });
+    expect(spaced.status).toBe(200);
+    expect((await browser.session())?.user.email).toBe(TWO_FACTOR_EMAIL);
   });
 
   it("skips the challenge on a trusted device, and only there", async () => {

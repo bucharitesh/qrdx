@@ -1,6 +1,11 @@
+import {
+  BACKUP_CODE_ALPHABET,
+  generateBackupCodes,
+} from "@repo/auth/sign-in-challenge-rules";
 import { describe, expect, it, vi } from "vitest";
 import { deliverTwoFactorNotice } from "@/lib/account/two-factor-notice";
 import {
+  BACKUP_CODE_COUNT,
   backupCodesText,
   challengeFailure,
   groupSecret,
@@ -11,27 +16,55 @@ import {
 } from "@/lib/auth/two-factor";
 
 describe("normalizeBackupCode", () => {
-  it("accepts the stored shape, with or without the dash", () => {
-    expect(normalizeBackupCode("aB3dE-x9Yz0")).toBe("aB3dE-x9Yz0");
-    expect(normalizeBackupCode(" aB3dEx9Yz0 ")).toBe("aB3dE-x9Yz0");
-    expect(normalizeBackupCode("aB3dE - x9Yz0")).toBe("aB3dE-x9Yz0");
+  it("returns the stored shape from any case, dash or spacing", () => {
+    expect(normalizeBackupCode("ABCDE-FGH23")).toBe("ABCDE-FGH23");
+    expect(normalizeBackupCode("abcde-fgh23")).toBe("ABCDE-FGH23");
+    expect(normalizeBackupCode("abcdefgh23")).toBe("ABCDE-FGH23");
+    expect(normalizeBackupCode(" abc de fgh 23 ")).toBe("ABCDE-FGH23");
+    expect(normalizeBackupCode("aBcDe - FgH23")).toBe("ABCDE-FGH23");
   });
 
-  it("keeps letter case (codes are case-sensitive)", () => {
-    expect(normalizeBackupCode("ABCDE-12345")).toBe("ABCDE-12345");
-    expect(normalizeBackupCode("abcde-12345")).toBe("abcde-12345");
-  });
-
-  it("rejects anything else", () => {
+  it("rejects what can't be a code", () => {
     for (const bad of [
       "",
       "123456",
-      "abcd-12345",
-      "abcde_12345",
-      "abcde-1234!",
+      "ABCD-FGH23",
+      "ABCDE-FGH234",
+      "ABCDE_FGH23",
+      // Characters codes never contain
+      "ABCDE-FGH20",
+      "ABCDO-FGH23",
+      "ABCD1-FGH23",
+      "ABCDI-FGH23",
     ]) {
       expect(normalizeBackupCode(bad), bad).toBeNull();
     }
+    expect(normalizeBackupCode(undefined)).toBeNull();
+    expect(normalizeBackupCode(12345)).toBeNull();
+  });
+});
+
+describe("generateBackupCodes", () => {
+  it("makes 10 distinct easy-to-read codes that normalise to themselves", () => {
+    const codes = generateBackupCodes();
+    expect(codes).toHaveLength(BACKUP_CODE_COUNT);
+    expect(new Set(codes).size).toBe(codes.length);
+    for (const code of codes) {
+      expect(code).toMatch(/^[A-HJ-NP-Z2-9]{5}-[A-HJ-NP-Z2-9]{5}$/);
+      expect(normalizeBackupCode(code)).toBe(code);
+      expect(normalizeBackupCode(code.toLowerCase().replace("-", " "))).toBe(
+        code,
+      );
+    }
+  });
+
+  it("uses every letter of its alphabet and nothing else", () => {
+    const seen = new Set(generateBackupCodes(400).join("").replace(/-/g, ""));
+    expect([...seen].sort().join("")).toBe(
+      [...BACKUP_CODE_ALPHABET].sort().join(""),
+    );
+    for (const char of "0O1Il")
+      expect(BACKUP_CODE_ALPHABET).not.toContain(char);
   });
 });
 
@@ -86,13 +119,13 @@ describe("setup helpers", () => {
 
   it("writes the backup codes file", () => {
     const text = backupCodesText({
-      codes: ["aaaaa-11111", "bbbbb-22222"],
+      codes: ["ABCDE-FGH23", "JKLMN-PQR45"],
       email: "ada@qrdx.test",
       createdAt: new Date("2026-11-05T10:00:00Z"),
     });
     expect(text).toContain("Account: ada@qrdx.test");
     expect(text).toContain("Created: 2026-11-05");
-    expect(text).toContain("aaaaa-11111\nbbbbb-22222\n");
+    expect(text).toContain("ABCDE-FGH23\nJKLMN-PQR45\n");
   });
 });
 

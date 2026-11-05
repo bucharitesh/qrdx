@@ -193,6 +193,7 @@ export default async function AccountPage({
         email={session.user.email}
         reauth={reauth}
         summary={describeDeletionPlan(planAccountDeletion(facts))}
+        twoFactorOn={Boolean(session.user.twoFactorEnabled)}
       />
     </div>
   );
