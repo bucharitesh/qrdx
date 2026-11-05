@@ -34,7 +34,7 @@ export default async function SsoSettingsPage() {
         <Badge variant={allowed ? "default" : "secondary"}>
           {PLAN_NAMES[plan]}
         </Badge>
-        <Button asChild size="sm" variant="outline">
+        <Button asChild className="max-sm:h-10" size="sm" variant="outline">
           <Link href={DOCS_HREF}>Docs</Link>
         </Button>
       </SettingsHeader>
@@ -44,7 +44,8 @@ export default async function SsoSettingsPage() {
           {connection
             ? "This workspace's plan no longer includes single sign-on, so nobody can sign in with it. Members can still use an email code, Google or GitHub. You can remove the connection below."
             : `Single sign-on comes with the ${ssoPlan ? PLAN_NAMES[ssoPlan] : "Business"} plan.`}{" "}
-          <Link className="underline" href="/pricing">
+          {/* Inline padding widens the tap target without moving the text. */}
+          <Link className="py-3 underline" href="/pricing">
             See plans
           </Link>
         </p>
