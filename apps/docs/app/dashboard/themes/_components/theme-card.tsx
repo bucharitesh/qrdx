@@ -35,6 +35,7 @@ import { Label } from "@repo/design-system/components/ui/label";
 import {
   Copy,
   ExportSquare as ExternalLink,
+  Maximize4 as FrameIcon,
   Global as Globe,
   Lock as GlobeLock,
   More as MoreVertical,
@@ -53,6 +54,7 @@ import {
   updateTheme,
 } from "@/actions/qr-themes";
 import { CodeQr } from "@/app/dashboard/codes/_components/code-qr";
+import { PublishFrameDialog } from "@/components/community/publish-frame-dialog";
 import { PublishThemeDialog } from "@/components/community/publish-theme-dialog";
 import { TagSelector } from "@/components/tag-selector";
 import { defaultThemeState } from "@/config/qr";
@@ -83,6 +85,7 @@ export function ThemeCard({ theme, workspace, canCopyToTeam }: ThemeCardProps) {
   const [isPending, startTransition] = useTransition();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [showPublishDialog, setShowPublishDialog] = useState(false);
+  const [showFrameDialog, setShowFrameDialog] = useState(false);
   const [showEditTagsDialog, setShowEditTagsDialog] = useState(false);
   const [showRenameDialog, setShowRenameDialog] = useState(false);
   const [name, setName] = useState(theme.name);
@@ -94,6 +97,9 @@ export function ThemeCard({ theme, workspace, canCopyToTeam }: ThemeCardProps) {
   // Your themes, and a workspace's themes for its owners and admins. The
   // community item is a snapshot credited to whoever publishes it.
   const canPublish = !isTeamTheme || theme.canEdit;
+  // A custom frame can also go out on its own (the server reads it from the
+  // saved theme, with the same access rules).
+  const hasCustomFrame = theme.style?.frame?.style === "custom";
   const busy = isPending || deleteThemeMutation.isPending;
 
   const run = (
@@ -308,6 +314,12 @@ export function ThemeCard({ theme, workspace, canCopyToTeam }: ThemeCardProps) {
                     Publish to community
                   </DropdownMenuItem>
                 )}
+                {hasCustomFrame && (
+                  <DropdownMenuItem onSelect={() => setShowFrameDialog(true)}>
+                    <FrameIcon className="size-4" />
+                    Publish its frame
+                  </DropdownMenuItem>
+                )}
               </>
             )}
             {theme.canEdit && (
@@ -403,6 +415,15 @@ export function ThemeCard({ theme, workspace, canCopyToTeam }: ThemeCardProps) {
         themeStyle={theme.style}
         workspaceTheme={isTeamTheme}
       />
+
+      {hasCustomFrame && (
+        <PublishFrameDialog
+          defaultName={theme.name}
+          onOpenChange={setShowFrameDialog}
+          open={showFrameDialog}
+          themeId={theme.id}
+        />
+      )}
 
       <Dialog onOpenChange={setShowEditTagsDialog} open={showEditTagsDialog}>
         <DialogContent>
