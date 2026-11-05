@@ -313,3 +313,17 @@ describe("codes and files", () => {
     expect(report.codes).toBe(2);
   });
 });
+
+describe("the page theme", () => {
+  it("keeps only the theme fields the schema knows (fail-closed)", () => {
+    const theme = {
+      ...DEFAULT_LANDING_THEME,
+      ownerNote: "Jane Doe, 4B Baker Street",
+      colors: { ...DEFAULT_LANDING_THEME.colors, label: "jane@janedoe.de" },
+    } as LandingPageContent["theme"];
+    const { content } = scrubPageContent({ ...page([]), theme });
+    const out = JSON.stringify(content.theme);
+    expect(out).not.toMatch(/Jane Doe|Baker Street|janedoe/);
+    expect(content.theme.colors).toEqual(DEFAULT_LANDING_THEME.colors);
+  });
+});
