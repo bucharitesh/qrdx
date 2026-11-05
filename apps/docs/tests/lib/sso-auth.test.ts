@@ -332,7 +332,7 @@ describe("joining the workspace at every SSO sign-in", () => {
       userId: "u-ben",
       role: "viewer",
     });
-    // Two sign-ins at once leave one membership (unique index, manual-sql/0018).
+    // Two sign-ins at once leave one membership (unique index, manual-sql/0020).
     expect(writes[0].onConflictDoNothing).toBe(true);
   });
 
