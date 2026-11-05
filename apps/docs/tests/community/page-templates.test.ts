@@ -71,7 +71,6 @@ import {
 } from "@/actions/community";
 import { getCommunityItem } from "@/lib/community/api";
 import {
-  isLibraryMedia,
   readPageTemplate,
   SAMPLE_EMAIL,
   SAMPLE_LINK,
@@ -213,7 +212,6 @@ function strayLinks(content: unknown): string[] {
   return links.filter(
     (link) =>
       !link.startsWith(SAMPLE_LINK) &&
-      !isLibraryMedia(link) &&
       link !== "https://apps.apple.com/" &&
       link !== "https://play.google.com/store/apps" &&
       !link.startsWith("https://www.youtube.com/watch?v="),
@@ -262,17 +260,19 @@ describe("scrubPageContent", () => {
     // Text the person wrote stays as written (they review it before
     // publishing), apart from the contact details inside it.
     expect(json).toContain("Ana Ruiz Studio");
-    // What isn't personal stays: the coupon's barcode, dates, the library photo.
+    // What isn't personal stays: the coupon's barcode and dates. Photos
+    // don't, QRdx's library included.
     expect(json).toContain("4006381333931");
     expect(json).toContain("2026-11-05");
-    expect(json).toContain(LIBRARY_PHOTO);
+    expect(json).not.toContain(LIBRARY_PHOTO);
+    expect(json).not.toContain("/images/templates/");
     // No settings or hidden blocks, no theme upload.
     expect(content.blocks.map((b) => b.type)).not.toContain("page-settings");
     expect(content.theme.background).toEqual({ type: "solid" });
     expect(content.theme.logo).toBeUndefined();
-    // The gallery keeps the library photo only; the PDF loses its file.
+    // The gallery is left empty to fill in; the PDF loses its file.
     const gallery = content.blocks.find((b) => b.type === "gallery");
-    expect(gallery?.props.images).toHaveLength(1);
+    expect(gallery?.props.images).toEqual([]);
     const pdf = content.blocks.find((b) => b.type === "pdf");
     expect(pdf?.props.source).toBeNull();
 
@@ -318,6 +318,12 @@ describe("scrubPageContent", () => {
         expect(strayEmails(content), `${template.type}/${variant.id}`).toEqual(
           [],
         );
+        expect(
+          JSON.stringify(content),
+          `${template.type}/${variant.id} keeps an image`,
+        ).not.toMatch(
+          /\.(?:webp|png|jpe?g|gif|svg|avif)\b|\/images\/templates\//i,
+        );
         // Built-in templates hold only blocks that work without uploads.
         expect(report.blocks, `${template.type}/${variant.id}`).toEqual([]);
       }
@@ -325,22 +331,111 @@ describe("scrubPageContent", () => {
     expect(variants).toBeGreaterThan(20);
   });
 
-  it("refuses look-alike library links", () => {
-    expect(isLibraryMedia(LIBRARY_PHOTO)).toBe(true);
+  it("leaves no image of any kind: uploads, QRdx's library, backgrounds, share images, covers, posters", () => {
+    const upload = (name: string) => ({
+      type: "file",
+      fileId: FILE_ID,
+      name,
+    });
+    const library = (name: string) => templateMediaUrl(name);
+    const source: LandingPageContent = {
+      version: 1,
+      theme: {
+        ...DEFAULT_LANDING_THEME,
+        background: {
+          type: "image",
+          url: library("banner-cafe-tables.webp"),
+          overlay: 0.3,
+        },
+        logo: { url: library("logo-brewly.svg"), alt: "Logo" },
+      },
+      blocks: [
+        block("header", {
+          title: "Café",
+          avatar: { url: library("logo-brewly.svg"), alt: "" },
+          cover: { url: library("hero-latte.webp"), alt: "" },
+        }),
+        block("image", { image: { url: UPLOAD, alt: "Front" } }),
+        block("links", {
+          items: [
+            {
+              id: "l1",
+              label: "Menu",
+              url: "https://example.com/menu",
+              thumbnail: { url: library("tile-alpine.webp"), alt: "" },
+              featured: false,
+            },
+          ],
+        }),
+        block("gallery", {
+          images: [
+            { id: "g1", source: upload("a.jpg"), alt: "", caption: "" },
+            {
+              id: "g2",
+              source: { type: "url", url: library("photo-meadow.webp") },
+              alt: "",
+              caption: "",
+            },
+          ],
+        }),
+        block("video-file", {
+          source: { type: "url", url: "https://cdn.example.org/v.mp4" },
+          poster: { type: "url", url: library("cover-shop.webp") },
+        }),
+        block("audio", {
+          tracks: [
+            {
+              id: "a1",
+              title: "Intro",
+              source: { type: "url", url: "https://cdn.example.org/a.mp3" },
+            },
+          ],
+          cover: upload("cover.png"),
+        }),
+        block("page-settings", {
+          shareImage: { url: library("hero-latte.webp"), alt: "" },
+        }),
+      ],
+    };
+    const valid = parseLandingPageContent(source, { mode: "write" });
+    if (!valid.success) {
+      throw new Error(
+        `fixture is invalid: ${JSON.stringify(valid.error.issues)}`,
+      );
+    }
+    const { content, report } = scrubPageContent(valid.data);
+    const json = JSON.stringify(content);
+
+    // No image URL, no upload, no library path, anywhere.
+    expect(json).not.toMatch(/\.(?:webp|png|jpe?g|gif|svg|avif)\b/i);
+    expect(json).not.toContain("/images/templates/");
+    expect(json).not.toContain("fileId");
+    expect(json).not.toContain("cdn.example.org");
+    expect(content.theme.background).toEqual({ type: "solid" });
+    expect(content.theme.logo).toBeUndefined();
+    const props = (type: string) =>
+      content.blocks.find((b) => b.type === type)?.props as
+        | Record<string, unknown>
+        | undefined;
+    // Each slot is left empty to fill in after Use template.
+    expect(props("header")?.avatar).toBeUndefined();
+    expect(props("header")?.cover).toBeUndefined();
+    expect(props("image")?.image).toBeUndefined();
     expect(
-      isLibraryMedia("https://qrdx.dev/images/templates/hero-latte.webp"),
-    ).toBe(true);
-    expect(
-      isLibraryMedia("https://evil.dev/images/templates/hero-latte.webp"),
-    ).toBe(false);
-    expect(
-      isLibraryMedia("https://qrdx.dev/images/templates/../avatars/me.webp"),
-    ).toBe(false);
-    expect(isLibraryMedia("https://qrdx.dev/images/templates/x.webp?u=1")).toBe(
-      false,
+      (props("links")?.items as { thumbnail?: unknown }[] | undefined)?.[0]
+        ?.thumbnail,
+    ).toBeUndefined();
+    expect(props("gallery")?.images).toEqual([]);
+    expect(props("video-file")?.poster).toBeNull();
+    expect(props("video-file")?.source).toBeNull();
+    expect(props("audio")?.cover).toBeNull();
+    expect(content.blocks.map((b) => b.type)).not.toContain("page-settings");
+    expect(report.images).toBeGreaterThanOrEqual(8);
+    expect(scrubSummary(report).join("\n")).toMatch(
+      /photos removed: people add their own/,
     );
-    expect(isLibraryMedia("https://qrdx.dev/images/templates/x.png")).toBe(
-      false,
+    expect(parseLandingPageContent(content, { mode: "write" }).success).toBe(
+      true,
     );
   });
 });

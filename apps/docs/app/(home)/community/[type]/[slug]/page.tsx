@@ -10,18 +10,14 @@ import { getAdminUser } from "@/app/admin/_lib/guard";
 import { CreatorLine } from "@/components/community/creator-line";
 import { ItemActions } from "@/components/community/item-actions";
 import { ItemGrid, ItemRow } from "@/components/community/item-card";
+import { PagePreview } from "@/components/community/page-preview";
 import { RemoveItemButton } from "@/components/community/remove-item-button";
 import { TryIt } from "@/components/community/try-it";
-import {
-  PhoneFrame,
-  TemplatePreview,
-} from "@/components/landing/template-preview";
 import { itemScanGate } from "@/lib/community/home";
 import {
   COMMUNITY_LICENSE_NAME,
   COMMUNITY_LICENSE_URL,
 } from "@/lib/community/licence";
-import { usesLibraryMedia } from "@/lib/community/page-template";
 import { getItem, moreFromCreator, remixesOf } from "@/lib/community/queries";
 import { MIN_GATE_SCORE } from "@/lib/community/scan-samples";
 import {
@@ -121,22 +117,13 @@ export default async function CommunityItemPage({
             ) : item.type === "kit" ? (
               <div className="grid grid-cols-2 items-start gap-4">
                 <TryIt style={item.preview} />
-                {page && (
-                  <PhoneFrame className="w-full">
-                    <TemplatePreview
-                      className="aspect-[9/16] w-full"
-                      content={page.content}
-                    />
-                  </PhoneFrame>
-                )}
+                {page && <PagePreview content={page.content} />}
               </div>
             ) : page ? (
-              <PhoneFrame className="mx-auto w-full max-w-[340px]">
-                <TemplatePreview
-                  className="aspect-[9/16] w-full"
-                  content={page.content}
-                />
-              </PhoneFrame>
+              <PagePreview
+                className="mx-auto w-full max-w-[340px]"
+                content={page.content}
+              />
             ) : (
               <TryIt style={item.preview} />
             )}
@@ -206,26 +193,9 @@ export default async function CommunityItemPage({
                   <dd>{getTemplate(page.type)?.label ?? page.type}</dd>
                   <dt className="text-muted-foreground">Details</dt>
                   <dd className="text-pretty">
-                    Links, contact details and uploads were taken out when it
-                    was shared. Put in your own after you use it.
+                    Links, contact details and photos were taken out when it was
+                    shared. Put in your own after you use it.
                   </dd>
-                  {usesLibraryMedia(page.content) && (
-                    <>
-                      <dt className="text-muted-foreground">Photos</dt>
-                      <dd className="text-pretty">
-                        From QRdx&apos;s template library, free to use under the{" "}
-                        <a
-                          className="underline underline-offset-2"
-                          href="https://unsplash.com/license"
-                          rel="noopener noreferrer"
-                          target="_blank"
-                        >
-                          Unsplash License
-                        </a>
-                        .
-                      </dd>
-                    </>
-                  )}
                 </>
               )}
               {item.contentTypes.length > 0 && (
