@@ -68,6 +68,8 @@ export function SignInPanel({
   // Address the email code went to (the code step), and a key to start over.
   const [codeSentTo, setCodeSentTo] = useState<string | null>(null);
   const [emailFormKey, setEmailFormKey] = useState(0);
+  // The email code was right and two-step verification asks for a code.
+  const [twoFactor, setTwoFactor] = useState(false);
 
   useEffect(() => {
     if (shown) setLastLoginMethod(authClient.getLastUsedLoginMethod());
@@ -98,6 +100,7 @@ export function SignInPanel({
     // After the dialog's close animation, so it doesn't flash the email step.
     window.setTimeout(() => {
       setCodeSentTo(null);
+      setTwoFactor(false);
       setEmailFormKey((key) => key + 1);
     }, 300);
   };
@@ -125,14 +128,18 @@ export function SignInPanel({
       <div className="flex flex-col items-center gap-2 px-6 pt-8 pb-6 text-center">
         <QrdxLogoAnimation size={52} className="mb-3" />
         <Title className="text-xl font-semibold tracking-tight">
-          {codeSentTo
-            ? "Check your email"
-            : isSignIn
-              ? "Sign in to QRdx"
-              : "Create your QRdx account"}
+          {twoFactor
+            ? "Two-step verification"
+            : codeSentTo
+              ? "Check your email"
+              : isSignIn
+                ? "Sign in to QRdx"
+                : "Create your QRdx account"}
         </Title>
         <Description className="text-muted-foreground text-sm text-pretty">
-          {codeSentTo ? (
+          {twoFactor ? (
+            "Your account asks for a second step when you sign in."
+          ) : codeSentTo ? (
             <>
               Code sent to{" "}
               <span className="font-medium break-all text-foreground">
@@ -199,6 +206,7 @@ export function SignInPanel({
         lastUsed={lastLoginMethod === "email-otp"}
         onSentToChange={setCodeSentTo}
         onSignedIn={handleEmailSignedIn}
+        onTwoFactorChange={setTwoFactor}
         redirectTo={redirectTo}
         sentTo={codeSentTo}
       />
