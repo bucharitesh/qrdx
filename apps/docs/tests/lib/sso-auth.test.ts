@@ -262,7 +262,13 @@ describe("new accounts from SSO", () => {
 });
 
 describe("joining the workspace at every SSO sign-in", () => {
-  type Write = { table: unknown; values?: Row; set?: Row };
+  type Write = {
+    table: unknown;
+    values?: Row;
+    set?: Row;
+    /** The insert was ON CONFLICT DO NOTHING (two sign-ins at once). */
+    onConflictDoNothing?: boolean;
+  };
 
   /** Stubs the reads joinWorkspace makes and records its writes. */
   function stubJoin({
@@ -289,9 +295,17 @@ describe("joining the workspace at every SSO sign-in", () => {
     } as never);
     const writes: Write[] = [];
     vi.spyOn(database, "insert").mockImplementation(((table: unknown) => ({
-      values: async (values: Row) => {
-        writes.push({ table, values });
-      },
+      // Awaited directly, or through .onConflictDoNothing(); recorded once.
+      values: (values: Row) => ({
+        // biome-ignore lint/suspicious/noThenProperty: a drizzle-like query
+        then: (resolve: (v: unknown) => void, reject: (e: unknown) => void) => {
+          writes.push({ table, values });
+          return Promise.resolve().then(resolve, reject);
+        },
+        onConflictDoNothing: async () => {
+          writes.push({ table, values, onConflictDoNothing: true });
+        },
+      }),
     })) as never);
     vi.spyOn(database, "update").mockImplementation(((table: unknown) => ({
       set: (set: Row) => ({
@@ -318,6 +332,8 @@ describe("joining the workspace at every SSO sign-in", () => {
       userId: "u-ben",
       role: "viewer",
     });
+    // Two sign-ins at once leave one membership (unique index, manual-sql/0018).
+    expect(writes[0].onConflictDoNothing).toBe(true);
   });
 
   it("never touches an existing member's role", async () => {
@@ -333,6 +349,7 @@ describe("joining the workspace at every SSO sign-in", () => {
       { status: "accepted" },
       expect.objectContaining({ userId: "u-ben", role: "admin" }),
     ]);
+    expect(writes[1].onConflictDoNothing).toBe(true);
   });
 
   it("adds nobody when another sign-in claimed the invitation first", async () => {
