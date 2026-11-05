@@ -123,7 +123,7 @@ export function ShineBorder({
 }
 
 const GLEAM = {
-  // A soft light sweep: white in dark mode, grey in light.
+  // A soft light sweep: white in dark mode, gray in light.
   light:
     "linear-gradient(100deg, currentColor 0%, currentColor 40%, var(--qx-gleam) 50%, currentColor 60%, currentColor 100%)",
   // The brand blue → violet → cyan passing through the letters.
@@ -134,7 +134,7 @@ const GLEAM = {
 /**
  * Plain label (white in dark mode, ink in light) with a soft sweep across the
  * letters: by default a light pass every 6 s; with `tone="color"` the brand
- * colours glide slowly left and right, back and forth, without a pause.
+ * colors glide slowly left and right, back and forth, without a pause.
  */
 export function ShineText({
   children,

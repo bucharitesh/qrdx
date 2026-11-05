@@ -83,7 +83,7 @@ const same = (a: DesignStyle, b: DesignStyle) =>
 // ── Normalising ────────────────────────────────────────────────────────────
 
 /**
- * Makes a candidate safe to render: upper-case colours, "keep" only when
+ * Makes a candidate safe to render: upper-case colors, "keep" only when
  * there is a logo to keep, and no shape pair the editor blocks (pairs that
  * fail the engine's decode tests can't be picked together there either).
  */
@@ -112,7 +112,7 @@ export function normalizeDesign(
   const risk = getStylePairRisk(next);
   if (risk?.kind === "dot-eye") {
     changes.push(
-      `Changed the eye centres from ${next.cornerEyeDotPattern} to rounded: ${risk.message}`,
+      `Changed the eye centers from ${next.cornerEyeDotPattern} to rounded: ${risk.message}`,
     );
     next.cornerEyeDotPattern = "rounded";
   } else if (risk?.kind === "body-eye") {
@@ -141,7 +141,7 @@ function mix(color: string, target: string, amount: number) {
     .toUpperCase()}`;
 }
 
-/** The background colours a style paints (its gradient stops, if any). */
+/** The background colors a style paints (its gradient stops, if any). */
 const backgrounds = (style: DesignStyle) =>
   style.gradients?.background
     ? [style.gradients.background.from, style.gradients.background.to]
@@ -152,7 +152,7 @@ const lightBackground = (style: DesignStyle) =>
 
 /**
  * Keeps the hue but darkens (light backgrounds) or lightens (dark ones) a
- * colour just enough to reach 4.5:1 against every background colour.
+ * color just enough to reach 4.5:1 against every background color.
  */
 function readable(
   color: string,
@@ -204,7 +204,7 @@ function fixContrast(
   const parts = [
     ["fgColor", "dots", "body"],
     ["eyeColor", "corner eyes", "eyes"],
-    ["dotColor", "eye centres", "eyeCentres"],
+    ["dotColor", "eye centers", "eyeCentres"],
   ] as const;
   for (const [key, name, gradientKey] of parts) {
     const fixed = readable(next[key], next, min);
@@ -298,7 +298,7 @@ export function repairDesign(
       risk?.kind === "sharp-dot-eye"
     ) {
       changes.push(
-        `Changed the eye centres from ${next.cornerEyeDotPattern} to rounded: ${risk.message}`,
+        `Changed the eye centers from ${next.cornerEyeDotPattern} to rounded: ${risk.message}`,
       );
       next.cornerEyeDotPattern = "rounded";
     } else if (risk?.kind === "body-eye") {

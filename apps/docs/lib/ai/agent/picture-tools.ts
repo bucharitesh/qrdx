@@ -19,7 +19,7 @@ const useImageInput = z.object({
   as: z
     .enum(IMAGE_USES)
     .describe(
-      "logo: the centre logo. logo_qr: a logo traced into the dots. image_qr: a photo blended into the dots (behind the code). background: the picture as the code's background. dots: the picture painting the dots. ai_art: AI art from the picture, only when the user asks for AI art (it uses paid credits).",
+      "logo: the center logo. logo_qr: a logo traced into the dots. image_qr: a photo blended into the dots (behind the code). background: the picture as the code's background. dots: the picture painting the dots. ai_art: AI art from the picture, only when the user asks for AI art (it uses paid credits).",
     ),
   image: z
     .number()
@@ -90,7 +90,7 @@ export type PictureTools = {
 export const PICTURE_TOOLS: PictureTools = {
   use_image: tool({
     description:
-      "Put a picture the user attached into the code, in the editor with no AI credits: as the centre logo, Logo QR or Image QR art, the background or the dots. It checks the scan score, repairs it toward Great and asks the user to approve, like apply_design. The run pauses until they decide.",
+      "Put a picture the user attached into the code, in the editor with no AI credits: as the center logo, Logo QR or Image QR art, the background or the dots. It checks the scan score, repairs it toward Great and asks the user to approve, like apply_design. The run pauses until they decide.",
     inputSchema: useImageInput,
     outputSchema: useImageOutput,
   }),
