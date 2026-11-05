@@ -191,3 +191,55 @@ describe("Design → Frame: a shaped code takes the place of a frame", () => {
     expect(withoutShape(framed)).toBe(framed);
   });
 });
+
+describe("a refused upload says which picture, and what stays", () => {
+  const THIN =
+    "This shape is too thin to hold the code with its quiet zone. Try a rounder, fuller shape.";
+
+  it("with no shape yet, gives the reason as it is", async () => {
+    const { uploadRefusal } = await import(
+      "@/components/editor/control-sections/frame-shapes"
+    );
+    expect(
+      uploadRefusal(THIN, {
+        fileName: "bar.svg",
+        thin: true,
+        keepsCurrent: false,
+      }),
+    ).toBe(THIN);
+    expect(
+      uploadRefusal("Use a PNG, JPEG or SVG picture.", { keepsCurrent: false }),
+    ).toBe("Use a PNG, JPEG or SVG picture.");
+  });
+
+  it("with a shape in place, names the picture and keeps the shape", async () => {
+    const { uploadRefusal } = await import(
+      "@/components/editor/control-sections/frame-shapes"
+    );
+    expect(
+      uploadRefusal(THIN, {
+        fileName: "bar.svg",
+        thin: true,
+        keepsCurrent: true,
+      }),
+    ).toBe(
+      "“bar.svg” is too thin to hold the code with its quiet zone, so your current shape is kept. Try a rounder, fuller shape.",
+    );
+    // A long name isn't quoted
+    expect(
+      uploadRefusal(THIN, {
+        fileName: `${"x".repeat(40)}.png`,
+        thin: true,
+        keepsCurrent: true,
+      }),
+    ).toMatch(/^That picture is too thin.*current shape is kept/);
+    expect(
+      uploadRefusal("Use a PNG, JPEG or SVG picture.", {
+        fileName: "logo.gif",
+        keepsCurrent: true,
+      }),
+    ).toBe(
+      "“logo.gif” wasn't used, so your current shape is kept. Use a PNG, JPEG or SVG picture.",
+    );
+  });
+});
