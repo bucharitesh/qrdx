@@ -170,7 +170,7 @@ export function SignInPanel({
           {providers.map((provider) => (
             <div className="relative" key={provider.id}>
               <Button
-                className="w-full"
+                className="h-10 w-full sm:h-9"
                 disabled={busy}
                 onClick={provider.onClick}
                 variant="outline"
