@@ -42,22 +42,6 @@ const PLAIN_EMAIL = `e2e-plain-${RUN}@qrdx.test`;
 
 type Page = Awaited<ReturnType<typeof launch>>;
 
-/** cdp.mjs installs these in every page (PAGE_HELPERS). */
-declare global {
-  interface Window {
-    __e2e: {
-      byRole: (
-        role: string,
-        name: string,
-        options?: { exact?: boolean },
-      ) => HTMLElement | null;
-      byLabel: (text: string) => HTMLElement | null;
-      click: (element: Element) => void;
-      setValue: (element: Element, value: string) => void;
-    };
-  }
-}
-
 let failures = 0;
 const results: string[] = [];
 
