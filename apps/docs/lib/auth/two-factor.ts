@@ -79,6 +79,18 @@ export function challengeFailure(
 /** A 6-digit authenticator code. */
 export const isTotpCode = (code: string) => /^\d{6}$/.test(code);
 
+/**
+ * Which kind of second-factor code someone entered: a 6-digit authenticator
+ * code, a backup code (any case, dash optional), or neither.
+ */
+export function secondFactorCodeKind(
+  input: string | null | undefined,
+): "totp" | "backup" | null {
+  const value = (input ?? "").trim();
+  if (isTotpCode(value)) return "totp";
+  return normalizeBackupCode(value) ? "backup" : null;
+}
+
 /** The base32 secret in an otpauth:// URI, or null. */
 export function secretFromUri(uri: string): string | null {
   try {
