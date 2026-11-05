@@ -221,6 +221,13 @@ export const member = pgTable(
   (table) => [
     index("member_organization_id_idx").on(table.organizationId),
     index("member_user_id_idx").on(table.userId),
+    // One membership per person per workspace. SSO sign-ins add people on
+    // every sign-in, so two at once must not double up.
+    // SQL: packages/database/manual-sql/0018_member_unique.sql
+    uniqueIndex("member_organization_id_user_id_unique").on(
+      table.organizationId,
+      table.userId
+    ),
   ]
 );
 

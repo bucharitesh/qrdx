@@ -215,7 +215,8 @@ export async function ensureOwnWorkspace(
             role: "owner",
             createdAt: now,
           })
-          .onConflictDoNothing({ target: member.id }),
+          // By id or by (workspace, user): either way it's already there.
+          .onConflictDoNothing(),
         ...ADOPTED_TABLES.map((table) =>
           db
             .update(table)

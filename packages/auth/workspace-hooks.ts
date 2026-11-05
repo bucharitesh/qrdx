@@ -77,7 +77,9 @@ export async function createOwnWorkspace(person: {
             role: "owner",
             createdAt: now,
           })
-          .onConflictDoNothing({ target: schema.member.id }),
+          // By id or by (workspace, user): either way it's already there. A
+          // slug clash still raises (the organization insert keeps its target).
+          .onConflictDoNothing(),
       ]);
       return;
     } catch (error) {

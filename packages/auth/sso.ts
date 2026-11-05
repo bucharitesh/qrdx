@@ -178,13 +178,17 @@ export async function joinWorkspace(userId: string, providerId: unknown) {
 }
 
 async function addMember(organizationId: string, userId: string, role: string) {
-  await db.insert(schema.member).values({
-    id: randomUUID(),
-    organizationId,
-    userId,
-    role,
-    createdAt: new Date(),
-  });
+  // Two SSO sign-ins at once: the unique (workspace, user) index keeps one.
+  await db
+    .insert(schema.member)
+    .values({
+      id: randomUUID(),
+      organizationId,
+      userId,
+      role,
+      createdAt: new Date(),
+    })
+    .onConflictDoNothing();
 }
 
 /**
