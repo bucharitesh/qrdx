@@ -15,6 +15,7 @@ import { type ComponentType, type ReactNode, useEffect, useState } from "react";
 import { QrdxLogoAnimation } from "@/components/qrdx-logo-animation";
 import { siteConfig } from "@/config/site";
 import { EmailCodeSignIn } from "./email-code-sign-in";
+import { PasskeySignIn } from "./passkey-sign-in";
 
 const FOOTER_LINK =
   "rounded-sm transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
@@ -185,6 +186,16 @@ export function SignInPanel({
         </div>
       )}
 
+      {!codeSentTo && isSignIn && (
+        <PasskeySignIn
+          disabled={busy}
+          lastUsed={lastLoginMethod === "passkey"}
+          onSignedIn={() => onSignedIn?.()}
+          redirectTo={redirectTo}
+          shown={shown}
+        />
+      )}
+
       {!codeSentTo && (
         <div className="flex items-center gap-3 px-6 py-4">
           <Separator className="flex-1" />
@@ -203,10 +214,11 @@ export function SignInPanel({
         sentTo={codeSentTo}
       />
 
-      {/* Every method creates the account on first use, so there's no separate sign-up step. */}
+      {/* Google, GitHub and email codes create the account on first use, so there's no separate sign-up step (a passkey needs an account first). */}
       {!codeSentTo && (
         <p className="px-6 pt-4 pb-6 text-center text-xs text-pretty text-muted-foreground">
-          New to QRdx? Any sign-in option creates your free account.
+          New to QRdx? Google, GitHub or an email code creates your free
+          account.
         </p>
       )}
 

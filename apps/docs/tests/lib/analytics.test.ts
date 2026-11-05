@@ -419,7 +419,9 @@ describe("sign-in detection", () => {
     expect(authEventFor(session(86_400_000, 10 * 60_000), now)).toBeNull();
     expect(toSignInMethod("github")).toBe("github");
     expect(toSignInMethod("email-otp")).toBe("email-otp");
-    expect(toSignInMethod("passkey")).toBe("unknown");
+    expect(toSignInMethod("passkey")).toBe("passkey");
+    expect(toSignInMethod("sso")).toBe("sso");
+    expect(toSignInMethod("siwe")).toBe("unknown");
     expect(toSignInMethod(null)).toBe("unknown");
   });
 });
