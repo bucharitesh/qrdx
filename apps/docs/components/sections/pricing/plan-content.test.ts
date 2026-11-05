@@ -36,6 +36,7 @@ const base: PlanLimits = {
   teams: false,
   teamMembers: 1,
   folderPermissions: false,
+  sso: false,
   auditLog: false,
   linkControls: false,
   routing: false,
@@ -97,6 +98,7 @@ const LIMITS: PlanLimitsByPlan = {
     teams: true,
     teamMembers: UNLIMITED,
     folderPermissions: true,
+    sso: true,
     auditLog: true,
     linkControls: true,
     routing: true,
@@ -231,6 +233,11 @@ describe("buildComparison", () => {
       pro: false,
       business: true,
     });
+    assert.deepEqual(findRow("Single sign-on"), {
+      free: false,
+      pro: false,
+      business: true,
+    });
   });
 
   it("only sells features that are built", () => {
@@ -265,6 +272,8 @@ describe("buildHighlights", () => {
     );
     assert.ok(highlights.pro.includes("Teams of up to 3 people"));
     assert.ok(highlights.business.includes("25 custom domains"));
+    assert.ok(highlights.business.includes("Single sign-on (SAML and OIDC)"));
+    assert.ok(!highlights.pro.some((line) => /single sign-on/i.test(line)));
   });
 
   it("only sells AI art where it's available", () => {
