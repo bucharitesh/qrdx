@@ -22,6 +22,7 @@ import {
   notificationSetting,
   oauthApp,
   organization,
+  passkey,
   qrCode,
   qrCodeTag,
   qrCodeVersion,
@@ -110,6 +111,21 @@ export function exportQueries(userId: string) {
       .from(session)
       .where(eq(session.userId, userId))
       .orderBy(asc(session.createdAt)),
+
+    // Public keys and credential ids stay out: they identify the
+    // authenticator, and nothing in the archive needs them.
+    passkeys: db
+      .select({
+        name: passkey.name,
+        addedAt: passkey.createdAt,
+        deviceType: passkey.deviceType,
+        backedUp: passkey.backedUp,
+        transports: passkey.transports,
+        aaguid: passkey.aaguid,
+      })
+      .from(passkey)
+      .where(eq(passkey.userId, userId))
+      .orderBy(asc(passkey.createdAt)),
 
     aiUsage: db
       .select({

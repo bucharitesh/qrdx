@@ -304,6 +304,8 @@ describe("exportQueries", () => {
     '"access_token_hash"',
     '"refresh_token_hash"',
     '"metadata"."access',
+    '"public_key"',
+    '"credential_id"',
   ];
 
   it("covers every section of the export", () => {
@@ -329,6 +331,7 @@ describe("exportQueries", () => {
         "oauthApps",
         "pageVersions",
         "pages",
+        "passkeys",
         "profile",
         "scanPage",
         "scannedCodes",
