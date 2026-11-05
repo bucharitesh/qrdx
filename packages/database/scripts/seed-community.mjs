@@ -5,6 +5,10 @@
 //   official/*.json), with the engine's ids as their slugs, so
 //   /community/frames/<id> keeps the same URL it had before the seed;
 // - the 10 new themes and 8 collections in ./community-seed.json;
+// - 41 of the app's built-in themes (apps/docs/utils/qr-presets.ts), as
+//   ./community-seed-presets.json stores them: written from the presets by
+//   apps/docs/scripts/community-seed/generate.ts, each payload what a
+//   publish of that theme stores;
 // - the official account's themes already in the gallery (copied by
 //   backfill-community.mjs) are moved to @qrdx and marked official.
 //
@@ -18,7 +22,9 @@
 // Run after manual-sql/0012_community.sql and backfill-community.mjs. Safe
 // to run more than once: ids are fixed ("ci_official_frame_wifi-card"),
 // inserts use ON CONFLICT DO NOTHING, so a second run plans nothing. An item
-// already seeded is never changed (published versions are immutable).
+// already seeded is never changed (published versions are immutable). Like
+// a publish, an item whose design is already published (same type and
+// payload hash) is skipped with a warning.
 //
 // Every seeded design is checked to scan Great with the publish gate's
 // samples by apps/docs/tests/database/seed-community.test.ts, which also
@@ -40,6 +46,11 @@ const here = (path) => new URL(path, import.meta.url);
 
 export const SEED = JSON.parse(
   readFileSync(here("./community-seed.json"), "utf8")
+);
+
+/** Built-in themes, generated from the app's presets (see the header). */
+export const PRESET_SEED = JSON.parse(
+  readFileSync(here("./community-seed-presets.json"), "utf8")
 );
 
 /** The engine's official frame files, in catalogue order. */
@@ -78,7 +89,7 @@ export const SQL = {
   officialProfile:
     "SELECT id, user_id, workspace_id, verified_at FROM community_profile WHERE kind = 'official' OR id = $1",
   items:
-    "SELECT id, type, slug, profile_id, is_official, created_by FROM community_item",
+    "SELECT id, type, slug, status, payload_hash, profile_id, is_official, created_by FROM community_item",
   insertProfile:
     "INSERT INTO community_profile (id, kind, user_id, workspace_id, handle, display_name, verified_at, status, created_at, updated_at) VALUES ($1, 'official', $2, $3, $4, 'QRdx', $5, 'active', $5, $5) ON CONFLICT DO NOTHING",
   verifyProfile:
@@ -133,6 +144,21 @@ export function buildSeedItems(frames = loadOfficialFrames()) {
       tags: theme.tags.slice(0, 5),
       payload,
       facets: { pairedFrame: theme.frame.official },
+      featured: featured.has(`theme:${theme.id}`),
+    });
+  }
+  // Already in the shape a publish stores: the payload is used as it is.
+  for (const theme of PRESET_SEED.themes) {
+    items.push({
+      id: seedItemId("theme", theme.id),
+      ref: `theme:${theme.id}`,
+      type: "theme",
+      slug: theme.slug,
+      name: theme.name,
+      description: theme.description,
+      tags: theme.tags.slice(0, 5),
+      payload: theme.payload,
+      facets: { preset: theme.id },
       featured: featured.has(`theme:${theme.id}`),
     });
   }
@@ -209,6 +235,12 @@ export function planSeed(snapshot, seedItems, now = new Date()) {
   const takenSlugs = new Set(
     snapshot.items.map((item) => `${item.type}:${item.slug}`)
   );
+  // Designs already published, as a publish refuses them (ALREADY_PUBLISHED)
+  const published = new Map(
+    snapshot.items
+      .filter((item) => item.status === "published" && item.payload_hash)
+      .map((item) => [`${item.type}:${item.payload_hash}`, item.slug])
+  );
   const inserts = [];
   for (const item of seedItems) {
     if (existingIds.has(item.id)) continue;
@@ -218,6 +250,14 @@ export function planSeed(snapshot, seedItems, now = new Date()) {
       );
       continue;
     }
+    const design = `${item.type}:${payloadHash(item.payload)}`;
+    if (published.has(design)) {
+      warnings.push(
+        `${item.type} ${item.slug} is already published as "${published.get(design)}": ${item.id} is skipped.`
+      );
+      continue;
+    }
+    published.set(design, item.slug);
     inserts.push(item);
   }
   // Seeding a collection needs every item it lists in the database.
