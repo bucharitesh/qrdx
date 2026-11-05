@@ -13,6 +13,8 @@
 //   plain      someone without 2FA is never asked
 //   manage     new backup codes and turning it off need a current code
 //   admin      an admin turns it off from the user's 360 page (audited)
+//   delete     with it on, deleting the account takes one authenticator code
+//              and emails nothing; with it off, the emailed code as before
 //
 // It reads sign-in codes and notices from the dev server's log, so it only
 // runs against a local dev server whose output goes to E2E_DEV_LOG:
@@ -883,38 +885,46 @@ async function main() {
     await clickInDialog(page, "Done");
     await waitForText(page, "10 of 10 backup codes left");
 
+    // With 2FA on, one authenticator or backup code replaces the emailed
+    // code: no "Email me a code" step, and no code is sent.
     await clickButton(page, "Delete account…");
     await waitForText(page, "Delete your account?");
-    await fill(page, "Type delete to confirm", "delete");
     const deleteSince = logSize();
-    await clickInDialog(page, "Email me a code");
-    const [, deleteCode] = await waitForLogLine(
-      new RegExp(`sign-in code for ${escapeRegExp(USER_EMAIL)}: (\\d{6})`),
-      deleteSince,
+    const dialogText = () =>
+      page.evaluate(
+        () =>
+          (document.querySelector('[role="alertdialog"]') as HTMLElement | null)
+            ?.innerText ?? "",
+      ) as Promise<string>;
+    const firstLook = await dialogText();
+    check(
+      "deleting with 2FA on has no emailed-code step",
+      firstLook.includes(
+        "Code from your authenticator app, or a backup code",
+      ) &&
+        !firstLook.includes("Email me a code") &&
+        !firstLook.includes("Code from your email"),
+      firstLook.replace(/\s+/g, " ").slice(0, 160),
     );
-    const fillEmailCode = (value: string) =>
-      page.evaluate((v: string) => {
-        const input = document.querySelector(
-          '[role="alertdialog"] input[aria-labelledby], [role="dialog"] input[aria-labelledby]',
-        );
-        if (!input) return false;
-        (input as HTMLInputElement).focus();
-        window.__e2e.setValue(input, v);
-        return true;
-      }, value);
-    await fillEmailCode(deleteCode);
+    await fill(page, "Type delete to confirm", "delete");
     const deleteDisabled = () =>
       page.evaluate(() => {
-        const dialog = document.querySelector(
-          '[role="alertdialog"], [role="dialog"]',
-        );
+        const dialog = document.querySelector('[role="alertdialog"]');
         const button = [...(dialog?.querySelectorAll("button") ?? [])].find(
           (b) => b.textContent?.trim() === "Delete account",
         ) as HTMLButtonElement | undefined;
         return button?.disabled ?? null;
       });
+    const clickDelete = () =>
+      page.evaluate(() => {
+        const dialog = document.querySelector('[role="alertdialog"]');
+        const button = [...(dialog?.querySelectorAll("button") ?? [])].find(
+          (b) => b.textContent?.trim() === "Delete account",
+        );
+        if (button) window.__e2e.click(button);
+      });
     check(
-      "deleting waits for a second-factor code when 2FA is on",
+      "deleting waits for an authenticator or backup code",
       (await deleteDisabled()) === true,
     );
     await fill(
@@ -923,39 +933,38 @@ async function main() {
       wrongCode(secret),
     );
     await shot(page, "17-delete-account-two-factor");
-    await page.evaluate(() => {
-      const dialog = document.querySelector('[role="alertdialog"]');
-      const button = [...(dialog?.querySelectorAll("button") ?? [])].find(
-        (b) => b.textContent?.trim() === "Delete account",
-      );
-      if (button) window.__e2e.click(button);
-    });
+    await clickDelete();
     await waitForText(page, "That code isn't right");
     check(
       "a wrong authenticator code stops the deletion",
       (await session(page))?.user?.id === userId,
     );
     await shot(page, "18-delete-account-wrong-code");
-    // The emailed code wasn't used: the right authenticator code finishes it.
     await fill(
       page,
       "Code from your authenticator app, or a backup code",
       totp(secret),
     );
-    await fillEmailCode(deleteCode);
-    await page.evaluate(() => {
-      const dialog = document.querySelector('[role="alertdialog"]');
-      const button = [...(dialog?.querySelectorAll("button") ?? [])].find(
-        (b) => b.textContent?.trim() === "Delete account",
-      );
-      if (button) window.__e2e.click(button);
-    });
+    await clickDelete();
     await landedOn(page, "/");
     await page.waitFor(() => location.pathname === "/");
     check(
-      "deleted with the emailed and authenticator codes",
+      "deleted with only an authenticator code",
       (await session(page)) === null,
     );
+    const deletionLog = readFileSync(DEV_LOG)
+      .subarray(deleteSince)
+      .toString("utf8");
+    check(
+      "no email code was sent for the deletion",
+      !new RegExp(`sign-in code for ${escapeRegExp(USER_EMAIL)}:`).test(
+        deletionLog,
+      ),
+    );
+    // A request for an emailed code from a 2FA account is refused too
+    // (the action behind "Email me a code"; covered in
+    // tests/lib/account-delete-two-factor.test.ts).
+
     // Signing in with the address now makes a new account, without 2FA.
     await emailCodeStep(page, USER_EMAIL);
     await landedOn(page, "/dashboard");
@@ -963,6 +972,42 @@ async function main() {
     check(
       "the old account is gone (a new one, without 2FA)",
       Boolean(after?.user?.id) && after?.user?.id !== userId,
+    );
+
+    // With 2FA off, deleting still asks for the emailed code.
+    await page.goto(`${BASE_URL}/settings/account#danger`);
+    await waitForText(page, "Danger zone");
+    await clickButton(page, "Delete account…");
+    await waitForText(page, "Delete your account?");
+    const plainLook = await dialogText();
+    check(
+      "deleting with 2FA off asks for an emailed code, no authenticator code",
+      plainLook.includes("Email me a code") &&
+        !plainLook.includes("authenticator app"),
+      plainLook.replace(/\s+/g, " ").slice(0, 160),
+    );
+    await fill(page, "Type delete to confirm", "delete");
+    const plainSince = logSize();
+    await clickInDialog(page, "Email me a code");
+    const [, plainCode] = await waitForLogLine(
+      new RegExp(`sign-in code for ${escapeRegExp(USER_EMAIL)}: (\\d{6})`),
+      plainSince,
+    );
+    await page.evaluate((v: string) => {
+      const input = document.querySelector(
+        '[role="alertdialog"] input[aria-labelledby]',
+      );
+      if (!input) return;
+      (input as HTMLInputElement).focus();
+      window.__e2e.setValue(input, v);
+    }, plainCode);
+    await shot(page, "19-delete-account-email-code");
+    await clickDelete();
+    await landedOn(page, "/");
+    await page.waitFor(() => location.pathname === "/");
+    check(
+      "without 2FA, deleted with the emailed code",
+      (await session(page)) === null,
     );
 
     check(
