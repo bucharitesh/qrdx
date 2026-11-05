@@ -59,8 +59,11 @@ representative at an online or offline event.
 ## Enforcement
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
-reported to the community leaders responsible for enforcement at
-vercel.com/contact.
+reported to the community leaders responsible for enforcement by emailing
+[support@qrdx.dev](mailto:support@qrdx.dev) with a subject line starting with
+`[conduct]`. Content on GitHub can also be reported to GitHub directly, as
+[GitHub's guide to reporting abuse or spam](https://docs.github.com/en/communities/maintaining-your-safety-on-github/reporting-abuse-or-spam)
+describes.
 All complaints will be reviewed and investigated promptly and fairly.
 
 All community leaders are obligated to respect the privacy and security of the
