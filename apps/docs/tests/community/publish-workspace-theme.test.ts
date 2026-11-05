@@ -48,6 +48,7 @@ vi.mock("@/lib/shared", async () => {
       if (!state.userId) throw new UnauthorizedError();
       return state.userId;
     },
+    logError: vi.fn(),
   };
 });
 vi.mock("@/lib/scope", async () => {
@@ -75,6 +76,8 @@ vi.mock("@repo/rate-limit", () => ({
 }));
 
 import { ownWorkspaceId } from "@repo/auth/own-workspace-id";
+import { getOfficialFrame } from "qrdx";
+import { publishCommunityThemeFrame } from "@/actions/community";
 import { publishTheme } from "@/actions/community-themes";
 import { fakeDb } from "../support/fake-db";
 
@@ -296,5 +299,113 @@ describe("publishTheme with a workspace theme", () => {
     await expect(publishTheme("t_team", [], LICENSED)).rejects.toThrow(
       /unauthorized/i,
     );
+  });
+});
+
+// The Themes page's "Publish its frame": the frame comes from the saved
+// theme on the server (never from the client), with the same access rules
+// as publishing the theme, then the editor's frame checks.
+describe("publishCommunityThemeFrame", () => {
+  const wifi = getOfficialFrame("wifi-card");
+  if (!wifi) throw new Error("the engine has no wifi-card frame");
+  const FRAMED = {
+    ...SCANS_GREAT,
+    frame: { style: "custom", spec: wifi.spec, text: "Join our Wi-Fi" },
+  };
+  const details = {
+    name: "Team table card",
+    description: "For the café tables.",
+    tags: ["wifi"],
+    acceptLicense: true,
+  };
+
+  beforeEach(() => {
+    fakeDb.seed("qrPreset", [
+      theme("t_framed", "u_bob", TEAM, FRAMED),
+      theme("t_framed_mine", "u_ana", ownWorkspaceId("u_ana"), FRAMED),
+    ]);
+  });
+
+  it("publishes a workspace theme's frame for its admin, read from the saved theme", async () => {
+    state.scope = { userId: "u_ana", organizationId: TEAM, role: "admin" };
+
+    const result = await publishCommunityThemeFrame({
+      themeId: "t_framed",
+      ...details,
+    });
+
+    expect(result).toEqual({
+      ok: true,
+      data: { href: expect.stringMatching(/^\/community\/frames\//) },
+    });
+    expect(items()).toHaveLength(1);
+    expect(items()[0]).toMatchObject({
+      type: "frame",
+      createdBy: "u_ana",
+      sourceKind: "qr_preset",
+      sourceId: "t_framed",
+      payload: {
+        frame: expect.objectContaining({
+          style: "custom",
+          text: "Join our Wi-Fi",
+        }),
+      },
+    });
+  });
+
+  it("publishes your own theme's frame", async () => {
+    const result = await publishCommunityThemeFrame({
+      themeId: "t_framed_mine",
+      ...details,
+    });
+    expect(result.ok).toBe(true);
+  });
+
+  it("refuses a member, someone outside the workspace and a theme without a custom frame", async () => {
+    state.userId = "u_cy";
+    state.scope = { userId: "u_cy", organizationId: TEAM, role: "member" };
+    expect(
+      await publishCommunityThemeFrame({ themeId: "t_framed", ...details }),
+    ).toMatchObject({
+      ok: false,
+      message:
+        "Only owners and admins of this workspace can publish what's in it.",
+    });
+
+    state.userId = "u_dan";
+    state.scope = {
+      userId: "u_dan",
+      organizationId: ownWorkspaceId("u_dan"),
+      role: "owner",
+    };
+    expect(
+      await publishCommunityThemeFrame({ themeId: "t_framed", ...details }),
+    ).toMatchObject({ ok: false, code: "NOT_FOUND" });
+
+    state.userId = "u_ana";
+    state.scope = { userId: "u_ana", organizationId: TEAM, role: "admin" };
+    expect(
+      await publishCommunityThemeFrame({ themeId: "t_team", ...details }),
+    ).toMatchObject({ ok: false, code: "VALIDATION_ERROR" });
+    expect(items()).toHaveLength(0);
+  });
+
+  it("still needs the licence, and refuses contact details in the text", async () => {
+    state.scope = { userId: "u_ana", organizationId: TEAM, role: "admin" };
+    expect(
+      await publishCommunityThemeFrame({
+        themeId: "t_framed",
+        ...details,
+        acceptLicense: false,
+      }),
+    ).toMatchObject({ ok: false, code: "LICENSE_REQUIRED" });
+    expect(
+      await publishCommunityThemeFrame({
+        themeId: "t_framed",
+        ...details,
+        name: "Call +1 415 555 0132",
+      }),
+    ).toMatchObject({ ok: false, code: "VALIDATION_ERROR" });
+    expect(items()).toHaveLength(0);
   });
 });

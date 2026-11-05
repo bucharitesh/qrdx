@@ -231,6 +231,8 @@ export async function publishFrame(input: {
   userId: string;
   frame: unknown;
   details: ItemDetails;
+  /** Where it came from, e.g. the saved theme it was read from */
+  source?: { kind: string; id: string };
 }): Promise<{ id: string; slug: string; type: CommunityItemType }> {
   const parsed = framePayloadSchema.safeParse({ frame: input.frame });
   if (!parsed.success) {
@@ -266,6 +268,9 @@ export async function publishFrame(input: {
     ...details,
     payload: { frame },
     gate,
+    ...(input.source
+      ? { sourceKind: input.source.kind, sourceId: input.source.id }
+      : {}),
   });
 }
 

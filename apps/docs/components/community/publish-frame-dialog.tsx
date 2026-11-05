@@ -16,7 +16,10 @@ import { Textarea } from "@repo/design-system/components/ui/textarea";
 import Link from "next/link";
 import type { QRCustomFrame } from "qrdx";
 import { useEffect, useId, useState } from "react";
-import { publishCommunityFrame } from "@/actions/community";
+import {
+  publishCommunityFrame,
+  publishCommunityThemeFrame,
+} from "@/actions/community";
 import { TagSelector } from "@/components/tag-selector";
 import {
   DESCRIPTION_MAX_LENGTH,
@@ -29,19 +32,27 @@ import { LicenceConfirm } from "./licence-confirm";
 
 const CHECKS_NOTE = `On a plain black code it must scan Great (${MIN_GATE_SCORE}+) with ${GATE_SAMPLES.map((sample) => sample.label).join(" and ")}. We check when you publish.`;
 
-/** Publish the editor's custom frame: details, the scan check and CC0. */
+/**
+ * Publish a custom frame: details, the scan check and CC0. The editor's
+ * frame is sent as it is; a saved theme's (`themeId`, the Themes page) is
+ * read from the theme on the server, with the theme's access rules.
+ */
 export function PublishFrameDialog({
   open,
   onOpenChange,
   frame,
+  themeId,
+  defaultName = "",
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  frame: QRCustomFrame;
+  frame?: QRCustomFrame;
+  themeId?: string;
+  defaultName?: string;
 }) {
   const nameId = useId();
   const descriptionId = useId();
-  const [name, setName] = useState("");
+  const [name, setName] = useState(defaultName);
   const [description, setDescription] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [accepted, setAccepted] = useState(false);
@@ -54,7 +65,7 @@ export function PublishFrameDialog({
 
   useEffect(() => {
     if (!open) {
-      setName("");
+      setName(defaultName);
       setDescription("");
       setTags([]);
       setAccepted(false);
@@ -62,19 +73,16 @@ export function PublishFrameDialog({
       setPublished(null);
       setPending(false);
     }
-  }, [open]);
+  }, [open, defaultName]);
 
   const submit = async () => {
     setPending(true);
     setRefusal(null);
     try {
-      const result = await publishCommunityFrame({
-        frame,
-        name,
-        description,
-        tags,
-        acceptLicense: accepted,
-      });
+      const details = { name, description, tags, acceptLicense: accepted };
+      const result = themeId
+        ? await publishCommunityThemeFrame({ themeId, ...details })
+        : await publishCommunityFrame({ frame, ...details });
       if (result.ok) {
         setPublished(result.data.href);
         soundEvent("success");
