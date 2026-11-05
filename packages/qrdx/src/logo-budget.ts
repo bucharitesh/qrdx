@@ -7,7 +7,7 @@
 //
 // The budget is the one the Logo QR badge uses (art.tsx): 60% of each
 // block's repair capacity, which leaves room for print and camera errors.
-import type { ErrorLevel, ImageSettings, QRShape } from "../types";
+import type { ErrorLevel, ImageSettings, QRCodeShape } from "../types";
 import qrcodegen from "./codegen";
 import { damagedCodewords, getCodewordMap } from "./codeword-map";
 import { ERROR_LEVEL_MAP } from "./constants";
@@ -37,7 +37,7 @@ export interface LogoCode {
   size: number;
   margin: number;
   level: ErrorLevel;
-  shape?: QRShape;
+  shape?: QRCodeShape;
 }
 
 interface BudgetContext {

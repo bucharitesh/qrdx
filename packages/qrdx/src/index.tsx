@@ -101,6 +101,10 @@ export { QRCodeCanvas } from "./qr-code-canvas";
 export {
   circleQuietZone,
   getLayoutMargin,
+  getQRShapePath,
+  getQRSilhouetteFit,
+  isShapedCode,
+  type QRSilhouetteFit,
 } from "./qr-shape";
 export {
   getStylePairRisk,
@@ -114,6 +118,10 @@ export {
   WEAK_SHARP_DOT_EYES,
 } from "./scan-risk";
 export * from "./scan-score";
+export {
+  createQRSilhouette,
+  loadQRSilhouette,
+} from "./silhouette";
 export * from "./templates";
 export * from "./utils";
 /** Reads an 8-bit PNG into RGBA pixels (no DOM or sharp), or null. */

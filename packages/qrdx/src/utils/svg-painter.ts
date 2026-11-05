@@ -829,10 +829,13 @@ export abstract class SvgPainter {
       fontWeight: readStyle(node, "font-weight") ?? parent.fontWeight,
       textAnchor: readStyle(node, "text-anchor") ?? parent.textAnchor,
     };
-    // The code's background sits on paper (see `flatten`)
+    // The code's background sits on paper (see `flatten`); a heart or
+    // silhouette code's background is a path
     const wasOnPaper = this.onPaper;
     if (
-      (node.name === "rect" || node.name === "circle") &&
+      (node.name === "rect" ||
+        node.name === "circle" ||
+        node.name === "path") &&
       BACKGROUND_PAINT.test(readStyle(node, "fill") ?? "")
     ) {
       this.onPaper = true;
