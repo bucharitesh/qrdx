@@ -1,5 +1,4 @@
-// How a list shows its items (Dub's Display menu, github.com/dubinc/dub,
-// AGPL-3.0: apps/web/ui/links/link-display.tsx): cards or rows, and which
+// How a list shows its items (the Display menu): cards or rows, and which
 // properties. Remembered in a cookie, so the server renders the chosen view
 // from the first paint (localStorage would show the default first). Pure;
 // client and server both read it.

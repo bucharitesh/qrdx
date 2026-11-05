@@ -1,6 +1,5 @@
-// The sidebar's areas, after Dub's dashboard (github.com/dubinc/dub,
-// AGPL-3.0: apps/web/ui/layout/sidebar/sidebar-nav.tsx, app-sidebar-nav.tsx):
-// one panel per area, with a way back, and the panel slides sideways when
+// The sidebar's areas: one panel per area, with a way back, and the panel
+// slides sideways when
 // the area changes. The area always comes from the URL, so deep links,
 // refresh and the back button land in the right one. Pure, so it's tested
 // without a browser.

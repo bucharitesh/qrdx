@@ -1,8 +1,6 @@
 "use client";
 
-// The option buttons in the builder's footer, like Dub's feature buttons
-// (github.com/dubinc/dub, AGPL-3.0: apps/web/ui/links/link-builder/
-// link-feature-buttons.tsx and options-list.tsx), on round 4's option data:
+// The option buttons in the builder's footer, on the code options' data:
 // each shows its plan, a lock when the workspace's plan doesn't include it,
 // and a tick once it's set up.
 
