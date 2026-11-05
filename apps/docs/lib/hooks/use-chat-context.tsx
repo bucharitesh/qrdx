@@ -14,6 +14,7 @@ import {
 } from "react";
 import type { DesignProgress } from "@/lib/ai/agent/tools";
 import type { ChatMessage } from "@/types/ai";
+import type { EditorChange } from "./chat-engine";
 
 export interface ThemeEvent {
   kind: "applied" | "error";
@@ -38,6 +39,10 @@ export interface ChatContextValue extends UseChatHelpers<ChatMessage> {
   designProgress: Record<string, DesignProgress[]>;
   /** Approved designs applied in this session, by apply_design call id */
   applied: Record<string, AppliedState>;
+  /** Puts an approved picture (use_image) in the editor, with Undo. */
+  applyChange: (toolCallId: string, change: EditorChange) => void;
+  /** The tool call came from a saved chat, not from this visit */
+  isRestored: (toolCallId: string) => boolean;
   /** Puts back what an applied design replaced (content and style). */
   undoApplied: (toolCallId: string) => void;
   /** Applies an undone design again. */
@@ -98,6 +103,8 @@ function createIdleChat(
     themeEvent: null,
     designProgress: {},
     applied: {},
+    applyChange: () => {},
+    isRestored: () => true,
     undoApplied: () => {},
     redoApplied: () => {},
     ...Object.fromEntries(METHODS.map((name) => [name, deferred(name)])),

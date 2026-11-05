@@ -4,6 +4,9 @@ Customizable QR codes for React: SVG and canvas rendering, dot and eye patterns,
 
 It powers the [QRdx](https://qrdx.dev) QR code generator. Docs: [qrdx.dev/docs](https://qrdx.dev/docs) · CLI: [`@qrdx/cli`](https://www.npmjs.com/package/@qrdx/cli) · No-code: [image API](https://qrdx.dev/docs/developers/image-api) and [MCP server](https://qrdx.dev/docs/developers/mcp)
 
+> [!NOTE]
+> This README documents qrdx 0.0.47, the version in this repository. npm still has 0.0.46, so `npm install qrdx` installs 0.0.46 until 0.0.47 is published. In 0.0.46 the basic code works, but most patterns, frames, Art QR, EPS export and the scan score came later, and it lists React 19, sharp and jspdf as its own dependencies. Until the release is out, use every option in the [playground](https://qrdx.dev/playground), or render images from a URL with the [image API](https://qrdx.dev/docs/developers/image-api). Run `npm view qrdx version` to see what npm installs, and see [CHANGELOG.md](./CHANGELOG.md) for what 0.0.47 adds.
+
 ## Installation
 
 ```bash
@@ -104,7 +107,7 @@ It accepts the `QRCodeSVG` styling props above (`value`, `size`, `level`, colors
 | `logoOptions` | `LogoOptions` | — | Logo `size` (share of the code's width, 0.1–0.3, default 0.25), `padding` (clear space, 0–2 modules), `x` / `y` (center across the code, 0–1, default 0.5), `shape` and `plate` |
 | `scale` | `number` | `1` | Multiplier applied to `size` |
 
-The logo is drawn at 25% of the code's width with the modules behind it excavated, so pair it with level `H` (or at least the default `Q`). `getQRData` takes the same `logoOptions` and turns them into `imageSettings`; with `autoLevel` it lays the logo out at the level the code is drawn at. Both cap the logo (size plus clear space) so its worst Reed–Solomon block loses at most 60% of what it can repair (`getLogoSizeLimit`, `getLogoBlockDamage`, on `getCodewordMap`); small codes hold smaller logos. Raw `imageSettings` are drawn as given, and `getScanScore` checks them with the same per-block count.
+The logo is drawn at 25% of the code's width with the modules behind it excavated, so pair it with level `H` (or at least the default `Q`). `getQRData` takes the same `logoOptions` and turns them into `imageSettings`; with `autoLevel` it lays the logo out at the level the code is drawn at. Both cap the logo (size plus clear space) so its worst Reed–Solomon block loses at most 60% of what it can repair (`getLogoSizeLimit`, `getLogoBlockDamage`, on `getCodewordMap`); small codes hold smaller logos. Raw `imageSettings` passed to `QRCodeSVG`, `QRCodeCanvas` or `getQRAsSVG` get the same cap: a logo that fits is drawn as given, a bigger one is shrunk around its own center, keeping its aspect ratio and clear space. `getScanScore` checks the logo as passed, before the cap, with the same per-block count.
 
 ### `QRCodeCanvas`
 
@@ -148,9 +151,9 @@ The same lists are exported as `BODY_PATTERN`, `CORNER_EYE_PATTERNS` and `CORNER
 | `imageSettings.padding` | Extra clear space around an excavated logo, in pixels |
 | `bgColor="transparent"` | No background paint (transparent PNG/SVG, no fill in PDF/EPS) |
 
-## Colors and gradients
+## Colors, gradients and image fills
 
-Every color prop takes a `ColorConfig`: a CSS color string, `{ type: "solid", color }`, or a gradient.
+Every color prop takes a `ColorConfig`: a CSS color string, `{ type: "solid", color }`, a linear, radial or angular gradient, or an image fill.
 
 ```tsx
 <QRCodeSVG
@@ -174,6 +177,23 @@ Every color prop takes a `ColorConfig`: a CSS color string, `{ type: "solid", co
 ```
 
 Gradients need at least 2 stops; `offset` is a percentage (0–100).
+
+**Angular gradients.** `{ type: "angular", stops, angle }` sweeps the colors clockwise around the centre of what it fills (the code, or each eye), like CSS `conic-gradient(from <angle>deg, …)`. `angle` is where the sweep starts, in degrees clockwise from the top. SVG has no conic gradient, so it is drawn as a fan of thin wedges in a `<pattern>`; PDF and EPS paint the same wedges inside each shape.
+
+**Alpha.** Colors and gradient stops keep alpha (`#1d4ed8cc`, `rgba(…)`). SVG writes it as `fill-opacity` and `stop-opacity`. PDF keeps it as a fill opacity, except that a gradient whose stops differ in alpha, or a see-through angular gradient, is mixed with the background. EPS has no transparency, so see-through colors are mixed with the background there. `getScanContrast(props)` judges see-through colors as they look.
+
+**Image fills.** `{ type: "image", src, fit, scale, position, opacity, underlay }` paints a picture through the background, the dots or the eyes. It is laid over the whole code, so dots and eyes that share a picture show one picture. `fit` is `cover` (default), `contain` or `tile`; `scale` is 0.1–4; `position` is `center` or an edge or corner (`top-left`, `top`, …); `underlay` is a solid color under the picture that its `opacity` lets through. `src` is held like a logo: a PNG or JPEG data URL embeds everywhere, and servers never fetch a remote address.
+
+```tsx
+<QRCodeSVG
+  value="https://example.com"
+  level="H"
+  fgColor={{ type: "image", src: photoDataUrl, opacity: 0.85, underlay: "#1f2937" }}
+  bgColor="#ffffff"
+/>
+```
+
+SVG draws an image fill as a `<pattern>`, and PDF embeds the picture once. EPS refuses image fills: `getQRAsEPS` throws `EPS_IMAGE_FILL_REASON`, and `hasImageFill(props)` tells you beforehand. The contrast check judges a picture by its lightest and darkest tones and asks more of it (`SCAN_IMAGE_CONTRAST_MIN`), since its detail reads as noise.
 
 ## Templates
 

@@ -90,6 +90,13 @@ interface QREditorStore {
   applyThemePreset: (preset: string) => void;
   /** Replaces the whole look as one undo step, like applying a preset. */
   replaceThemeState: (state: ThemeEditorState) => void;
+  /**
+   * Uses a design from outside the playground (a community theme or frame)
+   * as one undo step, so the old design is one Undo away. A theme drops the
+   * preset id it no longer matches, as a `style` link does; `keepPreset`
+   * keeps it, for a frame added to the current design.
+   */
+  applyDesign: (styles: QRStyle, options?: { keepPreset?: boolean }) => void;
   saveThemeCheckpoint: () => void;
   restoreThemeCheckpoint: () => void;
   resetToCurrentPreset: () => void;
@@ -245,6 +252,18 @@ export const useQREditorStore = create<QREditorStore>()(
           themeCheckpoint: newThemeState,
           history: updatedHistory,
           future: [],
+        });
+      },
+      applyDesign: (styles, { keepPreset = false } = {}) => {
+        const { themeState } = get();
+        const {
+          preset: _preset,
+          presetStyles: _presetStyles,
+          ...rest
+        } = themeState;
+        get().replaceThemeState({
+          ...(keepPreset ? themeState : rest),
+          styles,
         });
       },
       saveThemeCheckpoint: () => {

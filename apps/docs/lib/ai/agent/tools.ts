@@ -41,6 +41,8 @@ import type { ChatMessage } from "@/types/ai";
 import type { QRContentConfig } from "@/types/qr-content";
 import type { ThemeStyles } from "@/types/theme";
 import type { EditorBase } from "./editor-context";
+// Pictures and missing content: browser-side tools (picture-tools.ts)
+import { PICTURE_TOOLS, type PictureTools } from "./picture-tools";
 import { QR_DESIGN_SYSTEM } from "./prompts";
 import {
   type SaveTemplateResult,
@@ -389,7 +391,7 @@ export type QRAgentTools = {
     SaveTemplateOutput,
     AgentContext
   >;
-};
+} & PictureTools;
 
 /** What the model reads back from a design: no logo images or attempts. */
 function designForModel(output: DesignQrOutput) {
@@ -633,6 +635,9 @@ export const QR_AGENT_TOOLS: QRAgentTools = {
       return { ...result, style };
     },
   }),
+
+  // use_image and request_content: answered in the browser (picture-tools.ts)
+  ...PICTURE_TOOLS,
 };
 
 /** The ThemeStyles a template saves: the look with its logo, no content. */

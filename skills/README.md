@@ -1,33 +1,31 @@
 # Agent Skills
 
-Skills for AI coding agents that work with QRdx. Skills are packaged instructions and scripts that extend agent capabilities.
+Skills for AI coding agents that work with QRdx. A skill is a set of instructions and scripts an agent loads when a task needs it. These follow the [Agent Skills](https://agentskills.io/) format.
 
-Skills follow the [Agent Skills](https://agentskills.io/) format.
+## generate-qr
 
-## Available Skills
+Generates styled, scannable QR codes as SVG or PNG with [`@qrdx/cli`](https://www.npmjs.com/package/@qrdx/cli). It works for URLs, plain text, Wi-Fi credentials, vCards and any other string.
 
-### generate-qr
+Agents pick it up for requests like:
 
-Generate styled, scannable QR codes as SVG or PNG using [`@qrdx/cli`](https://www.npmjs.com/package/@qrdx/cli). Supports URLs, plain text, Wi-Fi credentials, vCards, and any string payload.
-
-**Use when:**
 - "Create a QR code for this URL"
 - "Generate a Wi-Fi QR code"
 - "Make a QR for my contact card"
 - "Build a branded QR with our colors and logo"
 - "Batch generate QR codes for these links"
-- Automating QR generation in a CI/CD or content pipeline
+- QR generation in a CI/CD or content pipeline
 
-**Features:**
-- SVG (vector, scalable) and PNG (raster) output
-- 23 body patterns, 17 corner eye patterns, 21 corner dot patterns
-- Solid colors and linear/radial gradients (foreground, background, eye and dot overrides)
+What it covers:
+
+- SVG and PNG output
+- The body, eye and corner dot patterns of the CLI on npm, listed in [`SKILL.md`](generate-qr/SKILL.md)
+- Solid colors and linear or radial gradients, with separate eye and dot colors
 - Decorative templates: `Arrow`, `StandardBox`, `SquareBorder`, `StrikedBox`, `Halloween`
-- Center logo support with module excavation
-- Error correction levels L / M / Q / H
-- Fully non-interactive — safe for scripts and agent workflows; invalid flags fail fast with exit code 1
+- A center logo, with the modules behind it cleared
+- Error correction levels L, M, Q and H
+- Non-interactive runs that are safe in scripts; invalid flags exit with code 1
 
-**Installation:**
+### Install
 
 ```bash
 # Claude Code
@@ -37,14 +35,17 @@ cp -r skills/generate-qr ~/.claude/skills/
 # Add generate-qr.zip as a project attachment, or paste SKILL.md into the conversation
 ```
 
-The skill runs `npx @qrdx/cli`, so it needs Node.js 18+ and network access to npm on first use.
+The skill runs `npx @qrdx/cli`, which installs the CLI from npm on first use. npm has 0.0.4 today, which needs Node.js 18 or later. The repo's 0.0.5 (EPS output, frames and every current pattern) isn't published yet, so the skill sticks to what 0.0.4 does.
 
-## Skill Structure
+For styles the CLI on npm doesn't have yet, an agent can use the keyless [image API](https://qrdx.dev/docs/developers/image-api) or the [MCP server](https://qrdx.dev/docs/developers/mcp) instead.
 
-Each skill contains:
-- `SKILL.md` - Instructions for the agent
-- `scripts/` - Helper scripts for automation (optional)
+## Skill structure
+
+Each skill has:
+
+- `SKILL.md`: the instructions for the agent
+- `scripts/`: helper scripts (optional)
 
 ## License
 
-[AGPL-3.0-or-later](../LICENSE), same as the rest of this repository.
+[AGPL-3.0-or-later](../LICENSE), like the rest of this repository outside the MIT folders listed in [LICENSING.md](../LICENSING.md).

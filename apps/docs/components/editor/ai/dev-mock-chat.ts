@@ -129,6 +129,81 @@ async function design(writer: Writer, toolCallId: string) {
   });
 }
 
+/** The editor's encoded value sent with the request ("" when it has none). */
+function editorValue(init?: RequestInit): string {
+  try {
+    const body = JSON.parse(String(init?.body ?? "{}")) as {
+      editor?: { value?: string };
+    };
+    return body.editor?.value?.trim() ?? "";
+  } catch {
+    return "";
+  }
+}
+
+/**
+ * The picture flows (image, logo): ask for content when the editor has
+ * none, then place the attached picture, then a one-line reply. The
+ * placement, its score and its repairs run for real in the browser.
+ */
+async function pictureFlow(
+  writer: Writer,
+  mode: "image" | "logo",
+  resumed: ChatMessage | null,
+  init?: RequestInit,
+) {
+  const parts = resumed?.parts ?? [];
+  const placed = parts.find((part) => part.type === "tool-use_image");
+  if (placed && "state" in placed && placed.state === "output-available") {
+    const output = (placed as { output?: { applied?: boolean } }).output;
+    await text(
+      writer,
+      "t-placed",
+      output?.applied
+        ? "Done, it's in your editor."
+        : "Okay, I left your code as it was. I can use it as the logo instead.",
+    );
+    writer.write({ type: "finish-step" });
+    writer.write({ type: "finish", finishReason: "stop" });
+    return;
+  }
+  const asked = parts.some((part) => part.type === "tool-request_content");
+  if (!asked && !editorValue(init)) {
+    writer.write({
+      type: "tool-input-start",
+      toolCallId: "mock-content",
+      toolName: "request_content",
+    });
+    writer.write({
+      type: "tool-input-available",
+      toolCallId: "mock-content",
+      toolName: "request_content",
+      input: { reason: "for your picture" },
+    });
+  } else {
+    writer.write({
+      type: "tool-input-start",
+      toolCallId: "mock-image",
+      toolName: "use_image",
+    });
+    writer.write({
+      type: "tool-input-available",
+      toolCallId: "mock-image",
+      toolName: "use_image",
+      input:
+        mode === "logo"
+          ? { as: "logo", summary: "Your picture as the logo" }
+          : { as: "image_qr", summary: "Your photo behind the code" },
+    });
+  }
+  writer.write({ type: "finish-step" });
+  writer.write({
+    type: "finish",
+    finishReason: "tool-calls",
+    messageMetadata: { resume: "mock" },
+  });
+}
+
 function lastAssistant(init?: RequestInit): ChatMessage | null {
   try {
     const body = JSON.parse(String(init?.body ?? "{}")) as {
@@ -203,6 +278,11 @@ export function mockChatResponse(
         }
         writer.write({ type: "finish-step" });
         writer.write({ type: "finish", finishReason: "stop" });
+        return;
+      }
+
+      if (mode === "image" || mode === "logo") {
+        await pictureFlow(writer, mode, resumed, init);
         return;
       }
 

@@ -42,6 +42,21 @@ export function suggestionsFor(message: ChatMessage | undefined): string[] {
       }
       return [];
     }
+    if (part.type === "tool-use_image" && part.state === "output-available") {
+      if (part.output.as === "ai_art") return [];
+      if (!part.output.applied) {
+        return part.output.as === "logo"
+          ? ["Put it behind the code instead"]
+          : ["Use it as the logo instead"];
+      }
+      return [
+        ...new Set([
+          ...(part.input.followups ?? []),
+          "Add a frame with “Scan me”",
+          "Save it as a template",
+        ]),
+      ].slice(0, MAX_CHIPS);
+    }
     if (
       part.type === "tool-save_template" &&
       part.state === "output-available"

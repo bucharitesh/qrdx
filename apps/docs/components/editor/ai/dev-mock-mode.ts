@@ -1,7 +1,17 @@
 // Dev-only: replay recorded AI responses without signing in or spending.
 // /playground?tab=ai&ai-mock=agent | ask | template | limit | chat | error
-// ("theme" is the old name of "agent").
-const MODES = ["agent", "ask", "template", "limit", "chat", "error"] as const;
+// ("theme" is the old name of "agent"). image | logo: an attached picture
+// as Image QR or as the logo, asking for content first when there is none.
+const MODES = [
+  "agent",
+  "ask",
+  "template",
+  "limit",
+  "chat",
+  "error",
+  "image",
+  "logo",
+] as const;
 export type AIMockMode = (typeof MODES)[number];
 
 export function getAIMockMode(): AIMockMode | null {
