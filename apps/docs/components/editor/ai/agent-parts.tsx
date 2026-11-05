@@ -80,7 +80,7 @@ export function ScoreLabel({
   );
 }
 
-function StepLine({
+export function StepLine({
   status,
   children,
 }: {
@@ -109,7 +109,7 @@ const shortChanges = (changes: string[]) =>
     : changes.join(", ");
 
 /** The code as the design will look: its own content, or the editor's. */
-function DesignPreview({
+export function DesignPreview({
   value,
   styles,
   logo,
@@ -399,7 +399,7 @@ function ApprovalButtons({
   );
 }
 
-function Changes({ changes }: { changes: string[] }) {
+export function Changes({ changes }: { changes: string[] }) {
   const [open, setOpen] = useState(false);
   if (changes.length === 0) return null;
   const shown = open ? changes : changes.slice(0, 3);

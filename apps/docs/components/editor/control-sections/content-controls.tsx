@@ -52,7 +52,8 @@ import { useThemePresetStore } from "@/store/theme-preset-store";
 import type { ContentType } from "@/types/qr-content";
 import { getPresetThemeStyles } from "@/utils/qr-presets-helper";
 
-const FORMS: Record<ContentType, React.ComponentType> = {
+/** Each content type's form (also the Generate tab's content dialog). */
+export const FORMS: Record<ContentType, React.ComponentType> = {
   url: UrlForm,
   text: TextForm,
   email: EmailForm,

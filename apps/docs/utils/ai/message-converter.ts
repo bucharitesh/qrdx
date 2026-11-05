@@ -7,11 +7,17 @@ import {
 
 export function buildUserContentPartsFromPromptData(
   promptData: AIPromptData,
+  options: {
+    /** A short text part before each image ("Image 1:"), by its index here */
+    labelImage?: (index: number) => string;
+  } = {},
 ): UserContent {
   const userContentParts: UserContent = [];
 
   if (promptData.images && promptData.images.length > 0) {
-    promptData.images.forEach((image) => {
+    promptData.images.forEach((image, index) => {
+      const label = options.labelImage?.(index);
+      if (label) userContentParts.push({ type: "text", text: label });
       if (image.url.startsWith("data:image/svg+xml")) {
         try {
           const dataUrlPart = image.url.split(",")[1];
