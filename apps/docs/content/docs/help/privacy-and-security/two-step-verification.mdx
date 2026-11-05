@@ -37,11 +37,15 @@ Settings shows how many codes you have left. To get a fresh set, click **New bac
 
 On the code step, tick **Don't ask again on this device for 30 days** to skip the code on that browser for 30 days. Only use it on a device that's yours. Turning two-step verification off forgets every trusted device.
 
+Signing in through a workspace's SAML single sign-on may still ask for the code on a trusted device: your identity provider sends you back to QRdx from its own site, and browsers don't pass the "trusted device" note along on that step.
+
 ## Which sign-ins ask for a code
 
 All of them: email codes, Google, GitHub and workspace single sign-on.
 
-The one exception is a passkey. Signing in with a passkey that checks your fingerprint, face or device PIN already uses two factors, so QRdx doesn't ask for a code. If the passkey didn't check you that way, QRdx asks for the code as well.
+<IfAvailable feature="passkeys">
+The one exception is a [passkey](/docs/help/privacy-and-security/passkeys). A passkey sign-in already uses two factors, the device and your fingerprint, face or device PIN, so QRdx doesn't ask for a code. QRdx only accepts passkeys that check you that way.
+</IfAvailable>
 
 ## Turn it off
 
