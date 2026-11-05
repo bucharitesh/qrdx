@@ -14,6 +14,7 @@
     "test:e2e": "tsx e2e/playground.e2e.ts",
     "test:e2e:app": "tsx e2e/app.e2e.ts",
     "test:e2e:site": "tsx e2e/site.e2e.ts",
+    "test:e2e:passkeys": "tsx e2e/passkeys.e2e.ts",
     "registry:build": "tsx registry/build.ts",
     "openapi:generate": "tsx --tsconfig scripts/openapi/tsconfig.json scripts/openapi/generate.ts",
     "postinstall": "fumadocs-mdx",
