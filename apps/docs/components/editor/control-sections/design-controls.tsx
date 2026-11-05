@@ -15,6 +15,7 @@ import type { QRStyle } from "@/types/theme";
 import { ColorPresets } from "./color-presets";
 import { CustomizationSections } from "./customization-sections";
 import { FrameControls, frameName } from "./frame-controls";
+import { FRAME_SHAPE_NAMES, frameShapeOf } from "./frame-shapes";
 import { LogoControls } from "./logo-controls";
 import { PaddingControls } from "./padding-controls";
 import {
@@ -106,12 +107,15 @@ export function DesignControls({
 
   const level = ERROR_LEVELS.find((item) => item.id === (current.level || "L"));
   const frameStyle = current.frame?.style ?? "none";
+  const shape = frameShapeOf(current);
   const frameSummary =
     frameStyle !== "none"
       ? frameName(current.frame)
-      : current.templateId && current.templateId !== "default"
-        ? "Border"
-        : "None";
+      : shape
+        ? FRAME_SHAPE_NAMES[shape]
+        : current.templateId && current.templateId !== "default"
+          ? "Border"
+          : "None";
   const margin = current.margin ?? 0;
 
   return (

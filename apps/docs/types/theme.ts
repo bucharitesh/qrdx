@@ -17,6 +17,7 @@ import {
   savedColorConfigSchema,
   savedEyeColorsSchema,
 } from "@/lib/paint/saved-paint";
+import { savedSilhouetteSchema } from "@/lib/qr-design/silhouette";
 
 /**
  * QR Code Style Configuration Schema
@@ -98,7 +99,12 @@ export const themeStylePropsSchema = z.object({
   shape: qrShapeSchema
     .optional()
     .describe(
-      "Outline of the code: square (default) or circle, which puts the code in a disc of decorative dots",
+      "Outline of the code: square (default), circle or heart, which put the code in a disc or a heart of decorative dots",
+    ),
+  silhouette: savedSilhouetteSchema
+    .optional()
+    .describe(
+      "A shape of your own the code is filled into (instead of shape): a grid of cells traced from a picture in the editor, never the picture. Grids the code doesn't fit in are refused",
     ),
   logoOptions: logoOptionsSchema
     .optional()

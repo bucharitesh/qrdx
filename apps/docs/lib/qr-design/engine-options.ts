@@ -1,4 +1,4 @@
-import type { EyeColors, LogoOptions, QRShape } from "qrdx/types";
+import type { EyeColors, LogoOptions, QRCodeShape } from "qrdx/types";
 import type { ThemeStyles } from "@/types/theme";
 
 /** Engine options a style can carry beyond colors, shapes and the frame. */
@@ -7,7 +7,18 @@ export interface StyleEngineOptions {
   moduleScale?: number;
   autoLevel?: boolean;
   logoOptions?: LogoOptions;
-  shape?: QRShape;
+  shape?: QRCodeShape;
+}
+
+/**
+ * The outline the code is drawn in: a silhouette of your own wins over a
+ * named shape; square (the default) is left out.
+ */
+function codeShape(style: Partial<ThemeStyles>): QRCodeShape | undefined {
+  if (style.silhouette) return style.silhouette;
+  return style.shape === "circle" || style.shape === "heart"
+    ? style.shape
+    : undefined;
 }
 
 /**
@@ -33,13 +44,14 @@ export function styleEngineOptions(
       Object.keys(style.logoOptions).length > 0 && {
         logoOptions: style.logoOptions,
       }),
-    ...(style.shape === "circle" && { shape: "circle" as const }),
+    ...(codeShape(style) && { shape: codeShape(style) }),
   };
 }
 
 /**
  * The options `<QRCodeSVG>` takes directly (per-eye colors, module size
- * and the circle shape), for previews without a logo. Logo layout goes through `getQRData`.
+ * and the code shape), for previews without a logo. Logo layout goes
+ * through `getQRData`.
  */
 export function styleSvgOptions(
   style: Partial<ThemeStyles>,

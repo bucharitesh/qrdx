@@ -110,7 +110,7 @@ export const HINTS = {
   },
   frame: {
     title: "Frame",
-    body: "Adds a border and a call to action such as “Scan me” around the code. Frames sit outside the code, so they never cover any dots.",
+    body: "Adds a border and a call to action such as “Scan me” around the code, or puts the code in a dot circle, a heart or a shape of your own. Frames sit outside the code, so they never cover any dots.",
     visual: {
       type: "live",
       example: "frames",

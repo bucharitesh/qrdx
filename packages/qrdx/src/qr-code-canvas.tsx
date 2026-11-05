@@ -23,6 +23,7 @@ import {
 } from "./constants";
 import { drawFrameOnCanvas, getFrameLayout, isFrameActive } from "./frame";
 import { logoImageBox, traceLogoShape } from "./logo";
+import { getLayoutMargin, shapeBackground, shapeDecoration } from "./qr-shape";
 import {
   excavateModules,
   generatePath,
@@ -59,6 +60,7 @@ export function QRCodeCanvas(props: QRPropsCanvas) {
     moduleScale: _moduleScale,
     frameLabelMarkers: _frameLabelMarkers,
     autoLevel,
+    shape,
     ...otherProps
   } = props;
   const effectiveLevel = resolveErrorLevel({
@@ -68,6 +70,7 @@ export function QRCodeCanvas(props: QRPropsCanvas) {
     margin,
     imageSettings,
     autoLevel,
+    shape,
   });
   const imgSrc = imageSettings?.src;
   const frameLayout = isFrameActive(frame)
@@ -100,11 +103,15 @@ export function QRCodeCanvas(props: QRPropsCanvas) {
         ERROR_LEVEL_MAP[effectiveLevel]
       ).getModules();
 
-      const numCells = cells.length + margin * 2;
+      // A shaped code (circle, heart, silhouette) sits further in, inside
+      // its outline, with decorative modules around its quiet ring
+      const layoutMargin = getLayoutMargin(cells.length, margin, shape);
+      const decoration = shapeDecoration(value, cells.length, margin, shape);
+      const numCells = cells.length + layoutMargin * 2;
       const calculatedImageSettings = getImageSettings(
         cells,
         size,
-        margin,
+        layoutMargin,
         imageSettings
       );
 
@@ -138,26 +145,43 @@ export function QRCodeCanvas(props: QRPropsCanvas) {
       // solid colors only: a gradient uses its first stop, an image fill its
       // underlay (QRCodeSVG and the exports draw them in full).
       ctx.fillStyle = getSolidColor(bgColor, DEFAULT_BGCOLOR);
-      ctx.fillRect(0, 0, numCells, numCells);
+      const background = shapeBackground(shape, numCells);
+      if (background && "circle" in background) {
+        ctx.beginPath();
+        ctx.arc(numCells / 2, numCells / 2, background.circle, 0, 2 * Math.PI);
+        ctx.fill();
+      } else if (background && SUPPORTS_PATH2D) {
+        ctx.fill(new Path2D(background.path), "evenodd");
+      } else {
+        ctx.fillRect(0, 0, numCells, numCells);
+      }
 
       ctx.fillStyle = getSolidColor(fgColor, DEFAULT_FGCOLOR);
       if (SUPPORTS_PATH2D) {
         // $FlowFixMe: Path2D c'tor doesn't support args yet.
-        ctx.fill(new Path2D(generatePath(cells, margin)));
+        ctx.fill(new Path2D(generatePath(cells, layoutMargin)));
+        if (decoration) {
+          ctx.fill(new Path2D(generatePath(decoration, 0)));
+        }
       } else {
-        cells.forEach((row, rdx) => {
-          row.forEach((cell, cdx) => {
-            if (cell) {
-              ctx.fillRect(cdx + margin, rdx + margin, 1, 1);
-            }
+        for (const [grid, offset] of [
+          [cells, layoutMargin],
+          [decoration ?? [], 0],
+        ] as const) {
+          grid.forEach((row, rdx) => {
+            row.forEach((cell, cdx) => {
+              if (cell) {
+                ctx.fillRect(cdx + offset, rdx + offset, 1, 1);
+              }
+            });
           });
-        });
+        }
       }
 
       if (haveImageToRender) {
         const box = {
-          x: calculatedImageSettings.x + margin,
-          y: calculatedImageSettings.y + margin,
+          x: calculatedImageSettings.x + layoutMargin,
+          y: calculatedImageSettings.y + layoutMargin,
           w: calculatedImageSettings.w,
           h: calculatedImageSettings.h,
         };
