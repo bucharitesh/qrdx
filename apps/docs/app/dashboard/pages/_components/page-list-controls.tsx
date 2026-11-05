@@ -23,6 +23,7 @@ import {
   Chart as ChartNoAxesColumn,
   Copy,
   ExportSquare as ExternalLink,
+  Global as Globe,
   DirectInbox as Inbox,
   More as MoreHorizontal,
   Add as Plus,
@@ -41,6 +42,8 @@ import type {
   LandingPageListItem,
   PageUsage,
 } from "@/app/dashboard/pages/_lib/landing-pages";
+// Community: "Publish to community" (owners and admins; the server checks)
+import { PublishPageDialog } from "@/components/community/publish-page-dialog";
 import { CapMeter } from "@/components/limits/cap-meter";
 import { useShowLimit } from "@/components/limits/limit-dialog";
 import { useCan, useWorkspaceHref } from "@/components/workspace-provider";
@@ -151,6 +154,9 @@ export function PageActions({
   const hasForm = page.blockTypes.some((type) => FORM_BLOCKS.has(type));
   // Viewers and billing members can't add a code (lib/permissions.ts).
   const canWrite = useCan("content.write");
+  // ── Community: publish as a page template (owners and admins) ──
+  const canPublish = useCan("content.manageAll");
+  const [publishing, setPublishing] = useState(false);
 
   const remove = () =>
     startTransition(async () => {
@@ -183,7 +189,7 @@ export function PageActions({
     });
 
   // Nothing to offer a read-only role on a page with no code or form yet.
-  if (!(code || hasForm || canDelete || canWrite)) return null;
+  if (!(code || hasForm || canDelete || canWrite || canPublish)) return null;
 
   return (
     <>
@@ -242,6 +248,12 @@ export function PageActions({
               </Link>
             </DropdownMenuItem>
           )}
+          {canPublish && (
+            <DropdownMenuItem onSelect={() => setPublishing(true)}>
+              <Globe />
+              Publish to community
+            </DropdownMenuItem>
+          )}
           {canDelete && (
             <>
               <DropdownMenuSeparator />
@@ -282,6 +294,15 @@ export function PageActions({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {canPublish && (
+        <PublishPageDialog
+          onOpenChange={setPublishing}
+          open={publishing}
+          pageId={page.id}
+          pageTitle={page.title}
+        />
+      )}
     </>
   );
 }

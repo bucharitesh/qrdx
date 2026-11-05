@@ -490,7 +490,7 @@
             "description": "Only items of this type; all types when left out",
             "schema": {
               "type": "string",
-              "enum": ["frame", "theme", "collection"]
+              "enum": ["frame", "theme", "collection", "page-template"]
             },
             "example": "frame"
           },
@@ -661,7 +661,7 @@
           "description": "The item's `id`, such as `frame:wifi-card`",
           "schema": {
             "type": "string",
-            "pattern": "^(frame|theme|collection):[a-z0-9][a-z0-9-]{0,95}$"
+            "pattern": "^(frame|theme|collection|page-template):[a-z0-9][a-z0-9-]{0,95}$"
           },
           "example": "theme:bistro-ink"
         }
@@ -3833,11 +3833,11 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "Type and slug, such as `frame:wifi-card`: use it as `item` on GET /qr"
+            "description": "Type and slug, such as `frame:wifi-card`: use a frame's or theme's as `item` on GET /qr"
           },
           "type": {
             "type": "string",
-            "enum": ["frame", "theme", "collection"]
+            "enum": ["frame", "theme", "collection", "page-template"]
           },
           "name": {
             "type": "string",
@@ -3934,11 +3934,11 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "Type and slug, such as `frame:wifi-card`: use it as `item` on GET /qr"
+            "description": "Type and slug, such as `frame:wifi-card`: use a frame's or theme's as `item` on GET /qr"
           },
           "type": {
             "type": "string",
-            "enum": ["frame", "theme", "collection"]
+            "enum": ["frame", "theme", "collection", "page-template"]
           },
           "name": {
             "type": "string",
@@ -6013,7 +6013,7 @@
                 "type": "null"
               }
             ],
-            "description": "What the item applies: a theme's design, or `{ frame }` for a frame (a custom frame spec). Null for collections"
+            "description": "What the item applies: a theme's design, or `{ frame }` for a frame (a custom frame spec). Null for collections and page templates"
           },
           "contentTypes": {
             "type": "array",
@@ -6040,6 +6040,10 @@
             "items": {
               "type": "string"
             }
+          },
+          "pageType": {
+            "description": "Page templates: the hosted page type, such as `links` or `menu`",
+            "type": "string"
           }
         },
         "required": [

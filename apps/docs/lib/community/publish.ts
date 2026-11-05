@@ -12,14 +12,22 @@ import { and, eq, ne } from "drizzle-orm";
 import { revalidateTag } from "next/cache";
 import type { QRCustomFrame } from "qrdx/types";
 import { COMMUNITY_THEME_TAGS, MAX_TAGS_PER_THEME } from "@/lib/constants";
+import { parseLandingPageContent } from "@/lib/landing/blocks";
+import type { LandingPageContent } from "@/types/landing";
 import type { ThemeStyles } from "@/types/theme";
 import { COMMUNITY_LICENSE } from "./licence";
+import {
+  PAGE_TEMPLATE_MAX_LENGTH,
+  type ScrubReport,
+  scrubPageContent,
+} from "./page-template";
 import {
   DESCRIPTION_MAX_LENGTH,
   FRAME_TAGS,
   framePayloadSchema,
   framePreviewStyle,
   NAME_MAX_LENGTH,
+  PAGE_TEMPLATE_TAGS,
   stableStringify,
   themePayloadFromStyle,
 } from "./payloads";
@@ -294,6 +302,59 @@ export async function publishFrame(input: {
       ? { sourceKind: input.source.kind, sourceId: input.source.id }
       : {}),
   });
+}
+
+/**
+ * A hosted page as a page template: scrubbed of personal data (links,
+ * contact details, addresses, Wi-Fi, uploaded photos and files; see
+ * ./page-template.ts), validated like a page save, size-capped, then the
+ * usual text and duplicate checks. There's no scan check: a template holds
+ * no code (its code is checked when someone makes one).
+ */
+export async function publishPageTemplate(input: {
+  userId: string;
+  page: { id: string; type: string; content: LandingPageContent };
+  details: ItemDetails;
+}): Promise<{
+  id: string;
+  slug: string;
+  type: CommunityItemType;
+  report: ScrubReport;
+}> {
+  const { content, report } = scrubPageContent(input.page.content);
+  const visible = content.blocks.length;
+  if (visible === 0) {
+    throw new PublishError(
+      "VALIDATION_ERROR",
+      "Nothing is left to share once your own details are taken out. Add some blocks people can reuse.",
+    );
+  }
+  const checked = parseLandingPageContent(content, { mode: "write" });
+  if (!checked.success) {
+    throw new PublishError(
+      "VALIDATION_ERROR",
+      "This page can't be shared as a template. Publish it again in the page editor first.",
+    );
+  }
+  const payload = { page: { type: input.page.type, content: checked.data } };
+  if (JSON.stringify(payload).length > PAGE_TEMPLATE_MAX_LENGTH) {
+    throw new PublishError(
+      "VALIDATION_ERROR",
+      "This page is too large to share as a template. Remove some blocks or shorten long text.",
+    );
+  }
+  const details = cleanDetails(input.details, PAGE_TEMPLATE_TAGS);
+  const item = await insertItem({
+    userId: input.userId,
+    type: "page-template",
+    ...details,
+    payload,
+    gate: null,
+    sourceKind: "landing_page",
+    sourceId: input.page.id,
+    facets: { pageType: input.page.type },
+  });
+  return { ...item, report };
 }
 
 /**

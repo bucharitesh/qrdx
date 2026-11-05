@@ -96,3 +96,25 @@ export const FRAME_TAGS: string[] = [
     "print",
   ]),
 ].sort();
+
+/** Tags a page template can carry: what it's for, plus looks. */
+export const PAGE_TEMPLATE_TAGS: string[] = [
+  "links",
+  "menu",
+  "business",
+  "event",
+  "coupon",
+  "feedback",
+  "contact",
+  "portfolio",
+  "restaurant",
+  "cafe",
+  "shop",
+  "music",
+  "minimal",
+  "bold",
+  "playful",
+  "elegant",
+  "dark",
+  "light",
+].sort();

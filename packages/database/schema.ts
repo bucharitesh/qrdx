@@ -341,8 +341,13 @@ export const themeLike = pgTable(
 // that reads these tables falls back to community_theme until they exist
 // (apps/docs/lib/community/store.ts).
 
-/** Item types, in gallery order. */
-export const COMMUNITY_ITEM_TYPES = ["frame", "theme", "collection"] as const;
+/** Item types, in gallery order (a text column: a new type needs no SQL). */
+export const COMMUNITY_ITEM_TYPES = [
+  "frame",
+  "theme",
+  "collection",
+  "page-template",
+] as const;
 
 /** A public creator: a person (handle opt-in) or the official QRdx profile. */
 export const communityProfile = pgTable(

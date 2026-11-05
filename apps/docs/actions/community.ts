@@ -9,9 +9,15 @@ import {
 } from "qrdx";
 import type { QRCustomFrame } from "qrdx/types";
 import { z } from "zod";
+import { getPageForEdit } from "@/app/dashboard/pages/_lib/landing-pages";
 import { findThemeById } from "@/app/dashboard/themes/_lib/queries";
 import { CHAT_DRAFT_SOURCE } from "@/lib/ai/agent/community";
-import { CopyRefusedError, copyItemToWorkspace } from "@/lib/community/copies";
+import {
+  CopyRefusedError,
+  copyItemToWorkspace,
+  copyTemplateToWorkspace,
+} from "@/lib/community/copies";
+import { scrubPageContent, scrubSummary } from "@/lib/community/page-template";
 import {
   getMyCommunityProfile,
   type MyCommunityProfile,
@@ -21,10 +27,12 @@ import {
 import {
   PublishError,
   publishFrame,
+  publishPageTemplate,
   publishStyle,
   unpublishItem,
 } from "@/lib/community/publish";
 import {
+  canPublishFromWorkspace,
   themePublishAccess,
   WORKSPACE_PUBLISH_REFUSAL,
 } from "@/lib/community/publish-access";
@@ -36,9 +44,11 @@ import {
 } from "@/lib/community/reactions";
 import { CommunityUnavailableError } from "@/lib/community/store";
 import { type CommunityItemType, itemPath } from "@/lib/community/types";
-import { getActiveScope } from "@/lib/scope";
+import { HttpError } from "@/lib/error-response";
+import { type ActiveScope, getActiveScope } from "@/lib/scope";
 import { getCurrentUserId, logError } from "@/lib/shared";
 import { UnauthorizedError } from "@/types/errors";
+import type { LandingPageContent } from "@/types/landing";
 import type { ThemeStyles } from "@/types/theme";
 
 // Server actions for the community pages and the editor's frame tools.
@@ -59,6 +69,8 @@ export type CommunityResult<T> =
         | "LICENSE_REQUIRED"
         | "NOT_FOUND"
         | "THEME_LIMIT_REACHED"
+        | "PAGE_LIMIT_REACHED"
+        | "FORBIDDEN"
         | "UNKNOWN";
       message: string;
       /** For ALREADY_PUBLISHED: the existing item's page */
@@ -265,6 +277,127 @@ export async function publishCommunityThemeFrame(
   }
 }
 
+// ── Page templates ─────────────────────────────────────────────────────────
+
+/** A hosted page of the open workspace that `scope` may publish. */
+async function publishablePage(pageId: unknown): Promise<
+  | {
+      ok: true;
+      scope: ActiveScope;
+      page: Awaited<ReturnType<typeof getPageForEdit>>;
+    }
+  | { ok: false; result: CommunityResult<never> }
+> {
+  const id = idSchema.safeParse(pageId);
+  if (!id.success) {
+    return { ok: false, result: fail("NOT_FOUND", "Page not found.") };
+  }
+  const scope = await getActiveScope();
+  if (!canPublishFromWorkspace(scope)) {
+    return { ok: false, result: fail("FORBIDDEN", WORKSPACE_PUBLISH_REFUSAL) };
+  }
+  try {
+    return { ok: true, scope, page: await getPageForEdit(scope, id.data) };
+  } catch (error) {
+    if (error instanceof HttpError && error.status === 404) {
+      return { ok: false, result: fail("NOT_FOUND", "Page not found.") };
+    }
+    throw error;
+  }
+}
+
+export interface CommunityPagePreview {
+  /** The page as it would be shared, personal data taken out */
+  content: LandingPageContent;
+  /** What was changed, one line each */
+  changes: string[];
+  pageType: string;
+  title: string | null;
+}
+
+/**
+ * The publish dialog's review step: the page scrubbed as it would be
+ * shared (lib/community/page-template.ts) and what was taken out. Nothing
+ * is stored.
+ */
+export async function previewCommunityPage(
+  pageId: string,
+): Promise<CommunityResult<CommunityPagePreview>> {
+  try {
+    await getCurrentUserId();
+    const found = await publishablePage(pageId);
+    if (!found.ok) return found.result;
+    const { content, report } = scrubPageContent(found.page.content);
+    return {
+      ok: true,
+      data: {
+        content,
+        changes: scrubSummary(report),
+        pageType: found.page.type,
+        title: found.page.title,
+      },
+    };
+  } catch (error) {
+    return failure(error, "previewCommunityPage");
+  }
+}
+
+const publishPageSchema = z.object({
+  pageId: z.string().min(1).max(64),
+  name: z.string().max(200),
+  description: z.string().max(2000).optional(),
+  tags: z.array(z.string().max(40)).max(20).optional(),
+  acceptLicense: z.boolean(),
+});
+
+/**
+ * Publishes a hosted page as a page template: read from the database (never
+ * from the client), scrubbed of personal data, then checked and stored. In
+ * a shared workspace only owners and admins may.
+ */
+export async function publishCommunityPage(
+  input: z.input<typeof publishPageSchema>,
+): Promise<CommunityResult<{ href: string; changes: string[] }>> {
+  try {
+    const userId = await getCurrentUserId();
+    const parsed = publishPageSchema.safeParse(input);
+    if (!parsed.success) return fail("VALIDATION_ERROR", "Check the details.");
+    if (parsed.data.acceptLicense !== true) {
+      return fail("LICENSE_REQUIRED", "Confirm the CC0 licence to publish.");
+    }
+    const found = await publishablePage(parsed.data.pageId);
+    if (!found.ok) return found.result;
+    if (await limited(publishLimiter, `community-publish:${userId}`)) {
+      return fail(
+        "RATE_LIMITED",
+        "You've published a lot today. Try again tomorrow.",
+      );
+    }
+    const item = await publishPageTemplate({
+      userId,
+      page: {
+        id: found.page.id,
+        type: found.page.type,
+        content: found.page.content,
+      },
+      details: {
+        name: parsed.data.name,
+        description: parsed.data.description,
+        tags: parsed.data.tags,
+      },
+    });
+    return {
+      ok: true,
+      data: {
+        href: itemPath(item.type, item.slug),
+        changes: scrubSummary(item.report),
+      },
+    };
+  } catch (error) {
+    return failure(error, "publishCommunityPage");
+  }
+}
+
 export interface ImportedFrame {
   spec: FrameSpec;
   warnings: FrameImportWarning[];
@@ -372,6 +505,30 @@ export async function copyCommunityItem(ref: {
     return { ok: true, data: await copyItemToWorkspace(scope, parsed.data) };
   } catch (error) {
     return failure(error, "copyCommunityItem");
+  }
+}
+
+const templateRefSchema = z.object({ slug: z.string().min(1).max(80) });
+
+/**
+ * "Use template": copies a page template into the open workspace as a
+ * draft page (no QR code yet), within the plan's page limit.
+ */
+export async function copyCommunityTemplate(ref: {
+  slug: string;
+}): Promise<CommunityResult<{ pageId: string; name: string }>> {
+  try {
+    const scope = await getActiveScope();
+    const parsed = templateRefSchema.safeParse(ref);
+    if (!parsed.success) {
+      return fail("NOT_FOUND", "This template isn't in the community.");
+    }
+    return {
+      ok: true,
+      data: await copyTemplateToWorkspace(scope, parsed.data.slug),
+    };
+  } catch (error) {
+    return failure(error, "copyCommunityTemplate");
   }
 }
 

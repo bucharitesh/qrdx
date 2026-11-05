@@ -5,18 +5,24 @@ import {
   communityItem,
   communityUse,
   database as db,
+  landingPage,
+  landingPageVersion,
   qrPreset,
 } from "@repo/database";
 import cuid from "cuid";
 import { eq, sql } from "drizzle-orm";
 import { revalidateTag } from "next/cache";
+import { getPageUsage } from "@/app/dashboard/pages/_lib/landing-pages";
 import {
   canManageTeamThemes,
   countThemesInScope,
 } from "@/app/dashboard/themes/_lib/queries";
+import { noteLimitUsage } from "@/lib/limit-notices";
+import { can } from "@/lib/permissions";
 import { getPlan, getPlanForScope, getPlanLimits } from "@/lib/plans";
 import type { ActiveScope } from "@/lib/scope";
 import { themeStylePropsSchema } from "@/types/theme";
+import { readPageTemplate } from "./page-template";
 import { FRAME_BASE_STYLE } from "./payloads";
 import { getItem } from "./queries";
 import { COMMUNITY_TAG, guardedRead } from "./store";
@@ -30,7 +36,12 @@ import type { CommunityItemType } from "./types";
 /** A copy refused for a reason the person can act on. */
 export class CopyRefusedError extends Error {
   constructor(
-    readonly code: "NOT_FOUND" | "THEME_LIMIT_REACHED" | "VALIDATION_ERROR",
+    readonly code:
+      | "NOT_FOUND"
+      | "THEME_LIMIT_REACHED"
+      | "PAGE_LIMIT_REACHED"
+      | "FORBIDDEN"
+      | "VALIDATION_ERROR",
     message: string,
   ) {
     super(message);
@@ -53,7 +64,7 @@ export async function copyItemToWorkspace(
   ref: { type: CommunityItemType; slug: string },
 ): Promise<CopyResult> {
   const item = await getItem(ref.type, ref.slug, scope.userId);
-  if (!item || item.type === "collection") {
+  if (!item || item.type === "collection" || item.type === "page-template") {
     throw new CopyRefusedError(
       "NOT_FOUND",
       "This item isn't in the community.",
@@ -107,12 +118,86 @@ export async function copyItemToWorkspace(
   return { themeId, name, where };
 }
 
+const PAGE_TITLE_MAX = 100;
+
+/**
+ * "Use template": a page template becomes a draft page in the open
+ * workspace, with no QR code yet (the page goes live when the person makes
+ * one). It's a copy: later versions never change it. It counts against the
+ * plan's page limit, checked again after the insert as createPage does.
+ */
+export async function copyTemplateToWorkspace(
+  scope: ActiveScope,
+  slug: string,
+): Promise<{ pageId: string; name: string }> {
+  if (!can(scope.role, "content.write")) {
+    throw new CopyRefusedError(
+      "FORBIDDEN",
+      "You can only view this workspace, so you can't add pages to it.",
+    );
+  }
+  const item = await getItem("page-template", slug, scope.userId);
+  const template = item?.page
+    ? readPageTemplate({ page: item.page }, "write")
+    : null;
+  if (!item?.page || !template) {
+    throw new CopyRefusedError(
+      "NOT_FOUND",
+      "This template isn't in the community.",
+    );
+  }
+
+  const usage = await getPageUsage(scope);
+  const limitReached = () =>
+    new CopyRefusedError(
+      "PAGE_LIMIT_REACHED",
+      `Your plan includes ${usage.limit} hosted pages. Delete one or upgrade to Pro to add more.`,
+    );
+  if (usage.limit !== null && usage.used >= usage.limit) throw limitReached();
+
+  const pageId = cuid();
+  const name = item.name.slice(0, PAGE_TITLE_MAX);
+  const now = new Date();
+  await db.insert(landingPage).values({
+    id: pageId,
+    userId: scope.userId,
+    organizationId: scope.organizationId,
+    type: template.page.type,
+    title: name,
+    content: template.page.content,
+    version: 1,
+    createdAt: now,
+    updatedAt: now,
+  });
+  if (usage.limit !== null) {
+    const after = await getPageUsage(scope);
+    if (after.used > usage.limit) {
+      await db.delete(landingPage).where(eq(landingPage.id, pageId));
+      throw limitReached();
+    }
+    noteLimitUsage(scope, "landingPages", {
+      used: after.used,
+      limit: usage.limit,
+    });
+  }
+  await db.insert(landingPageVersion).values({
+    id: cuid(),
+    pageId,
+    content: template.page.content,
+    createdBy: scope.userId,
+    createdAt: now,
+  });
+
+  if (item.id) await recordCopy(item.id, item.version, scope, null, now);
+  return { pageId, name };
+}
+
 /** One use per person, item and day; the copy's lineage is kept with it. */
 async function recordCopy(
   itemId: string,
   version: number,
   scope: ActiveScope,
-  presetId: string,
+  presetId: string | null,
   now: Date,
 ) {
   await guardedRead(async () => {
