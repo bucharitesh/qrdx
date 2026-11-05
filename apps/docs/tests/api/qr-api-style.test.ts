@@ -145,7 +145,16 @@ describe("the API style", () => {
     for (const bad of [
       { moduleScale: 0.2 },
       { moduleScale: 1.5 },
-      { shape: "heart" },
+      { shape: "star" },
+      // Traced silhouettes stay in the editor; the API takes named shapes
+      {
+        shape: {
+          type: "silhouette",
+          width: 8,
+          height: 8,
+          cells: "1".repeat(64),
+        },
+      },
       { eyeColors: { middle: { outer: "#000" } } },
       { eyeColors: { topLeft: { outer: "url(#x)" } } },
       { logoOptions: { size: 0.5 } },

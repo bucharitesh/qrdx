@@ -333,10 +333,12 @@ describe("engine options: logo shape and plate", () => {
 });
 
 describe("engine options: code shape", () => {
-  it("round-trips a circle code and rejects other shapes", () => {
-    const styles: ThemeStyles = { bgColor: "#ffffff", shape: "circle" };
-    expect(decodeStyleParam(encode(styles).value)).toEqual({ styles });
-    expect(decodeStyleParam(forge({ sh: "heart" }))).toBeNull();
+  it("round-trips circle and heart codes and rejects other shapes", () => {
+    for (const shape of ["circle", "heart"] as const) {
+      const styles: ThemeStyles = { bgColor: "#ffffff", shape };
+      expect(decodeStyleParam(encode(styles).value)).toEqual({ styles });
+    }
+    expect(decodeStyleParam(forge({ sh: "star" }))).toBeNull();
     expect(decodeStyleParam(forge({ sh: 1 }))).toBeNull();
   });
 });
