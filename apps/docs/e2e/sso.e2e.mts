@@ -67,18 +67,83 @@ function check(name: string, ok: boolean, detail = "") {
   console.log(`${ok ? "  ✓" : "  ✗"} ${name}${detail ? ` — ${detail}` : ""}`);
 }
 
-const browser = await launch({ width: 1280, height: 900 });
+// SSO_E2E_MOBILE=1: a 390 x 844 phone (2x, mobile), screenshots in
+// <shots>/mobile, and on every screen: no horizontal page scroll (a failed
+// check) and the tap targets under 40 px (reported).
+const MOBILE = process.env.SSO_E2E_MOBILE === "1";
+const SHOT_DIR = MOBILE && SHOTS ? join(SHOTS, "mobile") : SHOTS;
+const browser = await launch(
+  MOBILE ? { width: 390, height: 844 } : { width: 1280, height: 900 },
+);
 const { cdp, evaluate, goto, waitFor } = browser;
+if (MOBILE) {
+  await cdp.send("Emulation.setDeviceMetricsOverride", {
+    width: 390,
+    height: 844,
+    deviceScaleFactor: 2,
+    mobile: true,
+  });
+  await cdp.send("Emulation.setTouchEmulationEnabled", {
+    enabled: true,
+    maxTouchPoints: 5,
+  });
+}
+const layout: Record<string, { overflow: number; small: string[] }> = {};
+
+/** Horizontal page scroll and small tap targets on the current screen. */
+function layoutReport() {
+  return evaluate(() => {
+    const doc = document.documentElement;
+    const dialogs = [
+      ...document.querySelectorAll('[role="dialog"], [role="alertdialog"]'),
+    ];
+    const roots = dialogs.length
+      ? dialogs
+      : [document.querySelector("main") ?? document.body];
+    const small: string[] = [];
+    for (const root of roots) {
+      for (const el of root.querySelectorAll(
+        'a[href], button, input:not([type="hidden"]), textarea, [role="tab"], [role="combobox"], [role="checkbox"]',
+      )) {
+        const r = el.getBoundingClientRect();
+        if (!(r.width && r.height)) continue;
+        if (getComputedStyle(el).visibility === "hidden") continue;
+        if (r.height >= 40 && r.width >= 40) continue;
+        const label = (
+          el.getAttribute("aria-label") ||
+          el.textContent ||
+          el.getAttribute("placeholder") ||
+          el.tagName
+        )
+          .replace(/\s+/g, " ")
+          .trim()
+          .slice(0, 40);
+        small.push(`${label} ${Math.round(r.width)}x${Math.round(r.height)}`);
+      }
+    }
+    return { overflow: doc.scrollWidth - doc.clientWidth, small };
+  }) as Promise<{ overflow: number; small: string[] }>;
+}
 
 async function shot(name: string) {
   if (!SHOTS) return;
+  const SHOTS_HERE = SHOT_DIR;
   // The cookie banner would cover the page.
   await evaluate(() => {
     const reject = window.__e2e.byRole("button", "Reject all", { exact: true });
     if (reject) window.__e2e.click(reject);
   });
   await sleep(300);
-  mkdirSync(SHOTS, { recursive: true });
+  mkdirSync(SHOTS_HERE, { recursive: true });
+  if (MOBILE) {
+    const report = await layoutReport();
+    layout[name] = report;
+    check(
+      `${name}: no horizontal scroll at 390 px`,
+      report.overflow <= 0,
+      `scrollWidth - clientWidth = ${report.overflow}`,
+    );
+  }
   for (const scheme of ["light", "dark"] as const) {
     await cdp.send("Emulation.setEmulatedMedia", {
       features: [
@@ -92,8 +157,23 @@ async function shot(name: string) {
     }, scheme);
     await sleep(300);
     // Headless Chrome sometimes never answers a capture: skip it, don't hang.
+    // Phones: the whole page, so nothing below the fold goes unseen.
+    const height = MOBILE
+      ? ((await evaluate(
+          () => document.documentElement.scrollHeight,
+        )) as number)
+      : 0;
     const captured = (await Promise.race([
-      cdp.send("Page.captureScreenshot", { format: "png" }),
+      cdp.send(
+        "Page.captureScreenshot",
+        MOBILE
+          ? {
+              format: "png",
+              captureBeyondViewport: true,
+              clip: { x: 0, y: 0, width: 390, height, scale: 1 },
+            }
+          : { format: "png" },
+      ),
       sleep(15_000).then(() => null),
     ])) as { data: string } | null;
     if (!captured) {
@@ -101,7 +181,7 @@ async function shot(name: string) {
       continue;
     }
     writeFileSync(
-      join(SHOTS, `${name}-${scheme}.png`),
+      join(SHOTS_HERE, `${name}-${scheme}.png`),
       Buffer.from(captured.data, "base64"),
     );
   }
@@ -128,6 +208,15 @@ async function mouseClick(find: string) {
     });
   }
 }
+
+/** The TXT record's value on the Verify card (the code after "Value"). */
+const recordValue = () =>
+  evaluate(() => {
+    const label = [...document.querySelectorAll("div")].find(
+      (el) => el.textContent === "Value" && el.children.length === 0,
+    );
+    return label?.nextElementSibling?.querySelector("code")?.textContent ?? "";
+  }) as Promise<string>;
 
 // biome-ignore lint/performance/useDomNodeTextContent: the text a person sees
 const text = () => evaluate(() => document.body.innerText as string);
@@ -181,7 +270,7 @@ async function emailSignIn(email: string) {
 }
 
 /** Starts "Sign in with SSO" on /sign-in; returns the page URL afterwards. */
-async function startSso(email: string) {
+async function startSso(email: string, stepShot?: string) {
   await cdp.send("Network.clearBrowserCookies");
   await goto(`${BASE}/sign-in`);
   await evaluate(() =>
@@ -193,6 +282,7 @@ async function startSso(email: string) {
   await evaluate((e: string) => {
     window.__e2e.setValue(window.__e2e.byLabel("Work email"), e);
   }, email);
+  if (stepShot) await shot(stepShot);
   await evaluate(() =>
     window.__e2e.click(
       window.__e2e.byRole("button", "Continue", { exact: true }),
@@ -455,7 +545,7 @@ try {
   await shot("03-connection-unverified");
 
   console.log("unverified connection can't sign anyone in");
-  await startSso(ben);
+  await startSso(ben, "04a-sign-in-sso-step");
   check(
     "Refused before verification",
     (await text()).includes(`No SSO is set up for ${DOMAIN}.`),
@@ -474,12 +564,7 @@ try {
   check("Missing record: clear reason", true);
   await shot("05-verify-missing-record");
 
-  const token = await evaluate(() => {
-    const cells = [...document.querySelectorAll("td code")].map(
-      (c) => c.textContent ?? "",
-    );
-    return cells[1] ?? "";
-  });
+  const token = await recordValue();
   writeFileSync(DNS_FILE, JSON.stringify({ [recordName]: [token] }));
   await evaluate(() =>
     window.__e2e.click(
@@ -495,9 +580,29 @@ try {
   );
   await sleep(1500);
   // Join as viewer.
-  await mouseClick(`() => window.__e2e.byLabel("Join as")`);
-  await sleep(600);
-  await mouseClick(`() => window.__e2e.byRole("option", "Viewer")`);
+  if (MOBILE) {
+    // CDP touch taps don't open Radix menus; the keyboard does, on phones too.
+    await evaluate(() => window.__e2e.byLabel("Join as")?.focus());
+    for (const key of ["Enter", "ArrowDown", "Enter"]) {
+      await cdp.send("Input.dispatchKeyEvent", {
+        type: "keyDown",
+        key,
+        code: key,
+        windowsVirtualKeyCode: key === "Enter" ? 13 : 40,
+      });
+      await cdp.send("Input.dispatchKeyEvent", {
+        type: "keyUp",
+        key,
+        code: key,
+        windowsVirtualKeyCode: key === "Enter" ? 13 : 40,
+      });
+      await sleep(500);
+    }
+  } else {
+    await mouseClick(`() => window.__e2e.byLabel("Join as")`);
+    await sleep(600);
+    await mouseClick(`() => window.__e2e.byRole("option", "Viewer")`);
+  }
   await sleep(2500);
   check(
     "Join role saved",
@@ -706,6 +811,7 @@ try {
     window.__e2e.click(window.__e2e.byRole("button", "Remove single sign-on")),
   );
   await sleep(800);
+  await shot("12a-remove-dialog");
   await evaluate(() =>
     window.__e2e.click(
       window.__e2e.byRole("button", "Remove", {
@@ -771,12 +877,7 @@ try {
   const samlId = sql(
     `select provider_id from sso_provider where organization_id=${q(orgId)}`,
   );
-  const samlToken = await evaluate(
-    () =>
-      [...document.querySelectorAll("td code")].map(
-        (c) => c.textContent ?? "",
-      )[1] ?? "",
-  );
+  const samlToken = await recordValue();
   writeFileSync(
     DNS_FILE,
     JSON.stringify({ [`_qrdx-${samlId}.${DOMAIN}`]: [samlToken] }),
@@ -922,12 +1023,7 @@ try {
   const manualId = sql(
     `select provider_id from sso_provider where organization_id=${q(orgId)}`,
   );
-  const manualToken = await evaluate(
-    () =>
-      [...document.querySelectorAll("td code")].map(
-        (c) => c.textContent ?? "",
-      )[1] ?? "",
-  );
+  const manualToken = await recordValue();
   writeFileSync(
     DNS_FILE,
     JSON.stringify({ [`_qrdx-${manualId}.${DOMAIN}`]: [manualToken] }),
@@ -945,6 +1041,7 @@ try {
     ),
   );
   await waitFor(() => Boolean(window.__e2e.byRole("dialog", "")));
+  await shot("15a-replace-certificate");
   await evaluate((cert: string) => {
     const dialog = document.querySelector('[role="dialog"]') as Element;
     window.__e2e.setValue(
@@ -974,6 +1071,17 @@ try {
       `select role from member where user_id=${q(userId(erin))} and organization_id=${q(orgId)}`,
     ) === "viewer",
   );
+
+  console.log("docs and pricing");
+  await goto(`${BASE}/docs/help/teams/single-sign-on`, { wait: 3000 });
+  check("Docs page renders", (await text()).includes("Verify your domain"));
+  await shot("19-docs-sso");
+  await goto(`${BASE}/pricing`, { wait: 3000 });
+  check(
+    "Pricing lists single sign-on",
+    (await text()).includes("Single sign-on"),
+  );
+  await shot("20-pricing");
 } catch (error) {
   failures++;
   console.error("✗ stopped:", error);
@@ -990,6 +1098,12 @@ try {
   }
 } finally {
   await browser.close();
+}
+if (MOBILE) {
+  console.log("\nTap targets under 40 px, by screen:");
+  for (const [name, report] of Object.entries(layout)) {
+    console.log(`  ${name}: ${report.small.join("; ") || "none"}`);
+  }
 }
 console.log(failures ? `\n${failures} failed` : "\nAll SSO checks passed");
 process.exit(failures ? 1 : 0);
