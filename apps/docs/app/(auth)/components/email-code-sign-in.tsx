@@ -289,7 +289,9 @@ export function EmailCodeSignIn({
         aria-describedby={error ? errorId : undefined}
         aria-invalid={Boolean(error)}
         autoCapitalize="none"
-        autoComplete="email"
+        // "webauthn" lets the browser suggest saved passkeys here
+        // (passkey-sign-in.tsx).
+        autoComplete="email webauthn"
         disabled={disabled || sending}
         id={`${id}-email`}
         inputMode="email"

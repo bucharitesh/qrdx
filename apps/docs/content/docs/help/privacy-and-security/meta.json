@@ -2,5 +2,5 @@
   "$schema": "../../../../.source/json-schema/docs.meta.json",
   "title": "Privacy and security",
   "icon": "ShieldCheck",
-  "pages": ["scan-data", "account-security", "report-abuse"]
+  "pages": ["scan-data", "account-security", "passkeys", "report-abuse"]
 }

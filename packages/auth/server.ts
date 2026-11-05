@@ -24,9 +24,18 @@ import { getAdminUserIds } from "./admin";
 import { sendVerificationOTP } from "./email-otp";
 import { keys } from "./keys";
 import {
+  PASSKEY_SIGN_IN_OPTIONS_PATH,
+  PASSKEY_SIGN_IN_PATH,
+  passkeyOptions,
+  passkeyPolicy,
+  SERVER_ONLY_PASSKEY_PATHS,
+} from "./passkey";
+import { passkeyRelyingParty } from "./passkey-rp";
+import {
   ENTITLED_SUBSCRIPTION_STATUSES,
   hasEntitledSubscription,
 } from "./plan";
+import { signInMethodForPath } from "./sign-in-method";
 import {
   assertDeletable,
   assertNotOwnMember,
@@ -232,10 +241,9 @@ export const auth = betterAuth({
   },
   plugins: [
     lastLoginMethod({
-      // The plugin doesn't name email-code sign-ins itself; null falls back to
-      // its own detection (Google, GitHub).
-      customResolveMethod: (ctx) =>
-        ctx.path === SIGN_IN_CODE_PATH ? "email-otp" : null,
+      // Email codes, passkeys and workspace SSO (./sign-in-method.ts); null
+      // falls back to the plugin's own detection (Google, GitHub).
+      customResolveMethod: (ctx) => signInMethodForPath(ctx.path),
     }),
     // A first sign-in creates the account, like social sign-in.
     emailOTP({
@@ -310,7 +318,18 @@ export const auth = betterAuth({
     // twoFactor plugin only challenges password sign-ins, which QRdx doesn't
     // have, so 2FA does nothing yet.
     twoFactor({ issuer: "QRdx", allowPasswordless: true }),
-    passkey({ rpName: "QRdx" }),
+    // Passkeys: rpID and origin from the app's URL (./passkey-rp.ts), user
+    // verification required, sign-in options and registration rules in
+    // ./passkey.ts.
+    passkey(
+      passkeyOptions(
+        passkeyRelyingParty({
+          BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,
+          NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+        })
+      )
+    ),
+    passkeyPolicy(),
     sso({ domainVerification: { enabled: true } }),
   ],
   // The admin panel does not use impersonation or password resets; keep them off the HTTP surface.
@@ -319,6 +338,8 @@ export const auth = betterAuth({
     "/admin/set-user-password",
     ...UNUSED_EMAIL_OTP_PATHS,
     ...SERVER_ONLY_EMAIL_OTP_PATHS,
+    // Passkeys: added, renamed and removed through the app's server actions.
+    ...SERVER_ONLY_PASSKEY_PATHS,
   ],
   // Better Auth enforces these in production only, per IP, in memory.
   rateLimit: {
@@ -333,6 +354,10 @@ export const auth = betterAuth({
       [SEND_CODE_PATH]: { window: 60, max: 3 },
       // Each code allows 3 tries, so 5 a minute leaves room for one resend.
       [SIGN_IN_CODE_PATH]: { window: 60, max: 5 },
+      // Passkeys: the sign-in panel asks for a challenge when it opens (for
+      // autofill) and again for the button; each sign-in verifies once.
+      [PASSKEY_SIGN_IN_OPTIONS_PATH]: { window: 60, max: 20 },
+      [PASSKEY_SIGN_IN_PATH]: { window: 60, max: 10 },
     },
   },
 }) as any;
