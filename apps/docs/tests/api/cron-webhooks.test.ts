@@ -39,6 +39,12 @@ vi.mock("@/lib/events/deliveries", () => ({
     return state.nextDeliveryDueAt;
   },
 }));
+vi.mock("@/lib/auth/verification-prune", () => ({
+  pruneExpiredVerifications: async () => {
+    state.dbCalls.push("pruneExpiredVerifications");
+    return 0;
+  },
+}));
 vi.mock("@/lib/data-connections/sync", () => ({
   runIntegrationSyncs: async () => {
     state.dbCalls.push("runIntegrationSyncs");
@@ -137,6 +143,7 @@ describe("frequent calls (?source=github)", () => {
     expect(state.dbCalls).toEqual([
       "runDeliveryWorker",
       "pruneDeliveries",
+      "pruneExpiredVerifications",
       "runIntegrationSyncs",
       "nextDeliveryDueAt",
       "nextIntegrationSyncDueAt",
