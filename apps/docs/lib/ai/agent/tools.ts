@@ -298,7 +298,7 @@ async function designStyle(request: DesignerRequest): Promise<DesignStyle> {
       request.onPartial(clipPartial(partial as Partial<DesignStyle>));
     }
   }
-  // Colours and labels made valid, then checked against the strict schema.
+  // Colors and labels made valid, then checked against the strict schema.
   return designStyleSchema.parse(
     sanitizeDesignStyle(await output, revision?.style ?? base.style),
   );

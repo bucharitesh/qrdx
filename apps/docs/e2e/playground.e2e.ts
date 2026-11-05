@@ -1478,6 +1478,61 @@ async function testCommunityPreview(page: Page) {
   await openPlayground(page);
 }
 
+// ── Cookie banner vs the left panel's overlays ─────────────────────────────
+
+/**
+ * With the cookie banner up (a first visit), the color pickers and side
+ * panels the left panel opens keep clear of it: none is drawn across it.
+ */
+async function testCookieBannerOverlays(page: Page) {
+  // A first visit: no consent choice stored, so the banner shows.
+  await page.cdp.send("Network.deleteCookies", {
+    name: "c15t",
+    url: BASE_URL,
+  });
+  await page.evaluate(
+    `() => { localStorage.removeItem("c15t"); return true; }`,
+  );
+  await page.goto(`${BASE_URL}/playground?tab=design`, { wait: 4000 });
+  await install(page);
+  await page.waitFor(
+    `() => { const b = document.querySelector('section[aria-labelledby="cookie-banner-title"]'); return !!b && b.getBoundingClientRect().height > 0 && !!__e2e.byRole("tab", "design"); }`,
+    { timeout: 30_000 },
+  );
+  const result = (await page.evaluate(`async () => {
+    const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+    const banner = document.querySelector('section[aria-labelledby="cookie-banner-title"]');
+    const panel = [...document.querySelectorAll('[role="tabpanel"]')].find((p) => p.getBoundingClientRect().height > 0) || document.body;
+    const openers = [...panel.querySelectorAll("button")].filter((b) => /: /.test(b.getAttribute("aria-label") || "") || /More$/.test(b.textContent.trim()));
+    const crossed = [];
+    for (const opener of openers.slice(0, 12)) {
+      const name = (opener.getAttribute("aria-label") || opener.textContent.trim()).split(":")[0];
+      opener.scrollIntoView({ block: "end" });
+      await sleep(250);
+      __e2e.click(opener);
+      await sleep(800);
+      const overlay = [...document.querySelectorAll("[data-radix-popper-content-wrapper]")].at(-1);
+      const b = banner.getBoundingClientRect();
+      if (overlay) {
+        const r = overlay.getBoundingClientRect();
+        const area = Math.max(0, Math.min(r.right, b.right) - Math.max(r.left, b.left)) * Math.max(0, Math.min(r.bottom, b.bottom) - Math.max(r.top, b.top));
+        if (area > 0) crossed.push(name + " " + Math.round(area) + " px²");
+      }
+      for (const t of [document, document.activeElement || document.body]) t.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true }));
+      await sleep(400);
+    }
+    return { opened: openers.length, crossed };
+  }`)) as { opened: number; crossed: string[] };
+  record(
+    "cookie banner",
+    "the left panel's pickers and side panels keep clear of the banner",
+    result.opened > 0 && result.crossed.length === 0,
+    `${result.opened} opened${result.crossed.length ? `; across the banner: ${result.crossed.join(", ")}` : ""}`,
+  );
+  // Leave the banner dismissed for the suites after this one.
+  await openPlayground(page);
+}
+
 // ── Main ────────────────────────────────────────────────────────────────────
 
 async function main() {
@@ -1504,6 +1559,7 @@ async function main() {
     ["downloads", (p) => testDownloads(p, downloadDir)],
     ["art tab links", testArtTabLinks],
     ["community preview", testCommunityPreview],
+    ["cookie banner", testCookieBannerOverlays],
   ];
   const selected = process.env.E2E_SUITES?.split(",").map((s) => s.trim());
   try {
