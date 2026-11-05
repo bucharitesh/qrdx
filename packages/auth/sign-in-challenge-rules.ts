@@ -32,13 +32,29 @@ export const LOCKOUT_FAILURES = 10;
 export const LOCKOUT_MINUTES = 15;
 
 /**
- * Endpoints that finish a challenge: they create the session the challenge
- * was for, so they are never challenged themselves. Over HTTP they only work
+ * Endpoints that check a code to finish a challenge. Over HTTP they only work
  * for a pending challenge, never with a session (./sign-in-challenge.ts).
  */
-export const CHALLENGE_COMPLETION_PATHS: readonly string[] = [
+export const CHALLENGE_CODE_PATHS: readonly string[] = [
   "/two-factor/verify-totp",
   "/two-factor/verify-backup-code",
+];
+
+/**
+ * Finishes a challenge on a trusted device, by GET. A SAML sign-in ends in a
+ * cross-site POST from the identity provider, which doesn't carry the
+ * SameSite=Lax trust-device cookie; the challenge sends that browser here
+ * (a top-level GET, which does carry it) instead of straight to the page.
+ */
+export const CHALLENGE_CONTINUE_PATH = "/two-factor/continue";
+
+/**
+ * Endpoints that finish a challenge: they create the session the challenge
+ * was for, so they are never challenged themselves.
+ */
+export const CHALLENGE_COMPLETION_PATHS: readonly string[] = [
+  ...CHALLENGE_CODE_PATHS,
+  CHALLENGE_CONTINUE_PATH,
 ];
 
 /** Codes by email or SMS as a second factor: off (no `otpOptions`). */
@@ -150,4 +166,36 @@ export function challengePageUrl(appOrigin: string, next: string | null) {
   const url = new URL(TWO_FACTOR_CHALLENGE_PATH, appOrigin);
   if (next) url.searchParams.set("next", next);
   return url.toString();
+}
+
+/** Where a session-creating POST that ends in a redirect continues (GET). */
+export function challengeContinueUrl(authBaseUrl: string, next: string | null) {
+  const url = new URL(
+    `${authBaseUrl.replace(/\/$/, "")}${CHALLENGE_CONTINUE_PATH}`
+  );
+  if (next) url.searchParams.set("next", next);
+  return url.toString();
+}
+
+/** Where the continue endpoint lands without a usable `next`. */
+export const CONTINUE_DEFAULT_PATH = "/dashboard";
+
+/**
+ * The continue endpoint's `next` as a path on this site, or null: only a
+ * relative path ("/dashboard/acme?x=1"), never another origin, "//host",
+ * backslashes, whitespace or control characters (like lib/safe-redirect).
+ */
+export function continueNextPath(
+  value: unknown,
+  appOrigin: string
+): string | null {
+  if (typeof value !== "string" || value.length > 2048) return null;
+  if (!value.startsWith("/") || value.startsWith("//")) return null;
+  if (/[\\\s]/.test(value)) return null;
+  for (let i = 0; i < value.length; i++) {
+    const code = value.charCodeAt(i);
+    if (code < 0x20 || code === 0x7f) return null;
+  }
+  const path = challengeReturnPath(value, appOrigin);
+  return path?.startsWith("/") && !path.startsWith("//") ? path : null;
 }
