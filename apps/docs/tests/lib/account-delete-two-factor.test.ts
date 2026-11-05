@@ -21,7 +21,6 @@ vi.mock("@repo/auth/server", () => ({
         user: {
           id: "user_1",
           email: "ada@qrdx.test",
-          twoFactorEnabled: state.twoFactorEnabled,
         },
         session: { createdAt: new Date() },
       }),
@@ -68,6 +67,8 @@ vi.mock("@/lib/account/reauth", () => ({
   signInCodesAvailable: () => state.codesAvailable,
 }));
 vi.mock("@/lib/account/two-factor-manage", () => ({
+  // Read from the database in the app; the session's copy is ignored.
+  twoFactorEnabledFor: async () => state.twoFactorEnabled,
   checkCurrentCode: async (_user: unknown, code: string) => {
     state.calls.push(`second-factor:${code}`);
     return state.secondFactorOk

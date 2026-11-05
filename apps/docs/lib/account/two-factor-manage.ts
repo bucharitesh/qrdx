@@ -22,7 +22,9 @@ import {
 import { logError } from "@/lib/shared";
 import { canChangeEmailNow } from "./email-change";
 import { sendTwoFactorNotice } from "./two-factor-notice-server";
-import { forgetTrustedDevices } from "./two-factor-server";
+import { forgetTrustedDevices, twoFactorEnabledFor } from "./two-factor-server";
+
+export { twoFactorEnabledFor };
 
 // Settings → Profile & security → Two-step verification. Better Auth's
 // enable, disable and backup-code endpoints are off over HTTP
@@ -99,7 +101,7 @@ async function signedIn(): Promise<Signed | null> {
   return {
     userId: session.user.id,
     email: session.user.email,
-    twoFactorEnabled: Boolean(session.user.twoFactorEnabled),
+    twoFactorEnabled: await twoFactorEnabledFor(session.user.id),
     sessionCreatedAt: new Date(session.session.createdAt),
     requestHeaders,
   };

@@ -156,6 +156,7 @@ async function loadAuth() {
       disabledPaths?: string[];
       plugins?: { id: string }[];
       rateLimit?: { customRules?: Record<string, unknown> };
+      session?: { cookieCache?: { enabled?: boolean } };
     };
   };
 }
@@ -188,6 +189,14 @@ describe("sign-in challenge coverage", () => {
       .filter((p) => !UNUSED_TWO_FACTOR_PATHS.includes(p));
     expect(finishes.sort()).toEqual([...CHALLENGE_COMPLETION_PATHS].sort());
     expect(PATHS[PASSKEY_SIGN_IN_PATH][0]).toBe("challenged-without-uv");
+  });
+
+  it("never serves sessions from a cookie cache", async () => {
+    // The challenge deletes the session a sign-in made, and "Sign out
+    // everywhere else" and the admin reset delete sessions too. A cookie
+    // cache would keep a deleted session alive until it expired.
+    const auth = await loadAuth();
+    expect(auth.options.session?.cookieCache?.enabled).not.toBe(true);
   });
 
   it("registers the challenge right after the twoFactor plugin", async () => {

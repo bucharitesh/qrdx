@@ -15,6 +15,20 @@ export interface TwoFactorStatus {
   backupCodesLeft: number | null;
 }
 
+/**
+ * Whether two-step verification is on, read from the database. Checks that
+ * decide whether a code is needed use this, never `session.user`, so they
+ * stay right even if a session is ever served from a cookie cache.
+ */
+export async function twoFactorEnabledFor(userId: string): Promise<boolean> {
+  const [row] = await db
+    .select({ on: userTable.twoFactorEnabled })
+    .from(userTable)
+    .where(eq(userTable.id, userId))
+    .limit(1);
+  return row?.on === true;
+}
+
 /** Whether it's on, and how many backup codes are left (never the codes). */
 export async function loadTwoFactorStatus(
   userId: string,
