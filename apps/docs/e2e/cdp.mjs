@@ -3,6 +3,7 @@
 // label or visible text, never by CSS classes. Launch/connect code follows
 // .claude/build/tools/shot.mjs.
 import { spawn } from "node:child_process";
+import { randomBytes } from "node:crypto";
 import { existsSync, mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -228,7 +229,10 @@ export async function launch({
 // Policy directive …" (blocked scripts no longer say "Refused to").
 const CSP_TEXT = /Refused to|violates the following Content Security Policy/;
 
-const SELFTEST_SCRIPT = "https://evil.example.com/csp-selftest.js";
+// A token unique to this run marks the self-test's own violation, so it's
+// matched exactly (never by a hostname that could appear anywhere).
+const SELFTEST_TOKEN = `csp-selftest-${randomBytes(8).toString("hex")}`;
+const SELFTEST_SCRIPT = `https://evil.example.com/${SELFTEST_TOKEN}.js`;
 
 /**
  * True when `baseUrl` enforces a Content-Security-Policy that governs what
@@ -330,14 +334,14 @@ export async function recordCspViolations(page) {
       const started = Date.now();
       while (
         Date.now() - started < 5000 &&
-        !seen.slice(before).some((v) => v.text.includes("evil.example.com"))
+        !seen.slice(before).some((v) => v.text.includes(SELFTEST_TOKEN))
       ) {
         await sleep(100);
       }
       const caught = seen.slice(before);
       seen.splice(before);
       return {
-        caught: caught.some((v) => v.text.includes("evil.example.com")),
+        caught: caught.some((v) => v.text.includes(SELFTEST_TOKEN)),
         lines: caught.map((v) => `${v.url} :: ${v.text}`),
       };
     },
