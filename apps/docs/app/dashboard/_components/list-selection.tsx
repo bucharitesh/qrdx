@@ -58,6 +58,14 @@ const ROW_ATTR = "data-list-row";
 export const LIST_ROW_FOCUS =
   "outline-none focus-visible:outline-2 focus-visible:outline-solid focus-visible:-outline-offset-2 focus-visible:outline-ring";
 
+/**
+ * The same for a table row: inset from the table's edges and rounded, so it
+ * reads as the row's own outline inside the rounded table (a `tr` takes the
+ * radius for its outline).
+ */
+export const LIST_TABLE_ROW_FOCUS =
+  "outline-none focus-visible:rounded-md focus-visible:outline-2 focus-visible:outline-solid focus-visible:-outline-offset-4 focus-visible:outline-ring";
+
 export interface ListSelectionApi {
   selected: ReadonlySet<string>;
   /** The selected ids in list order */
