@@ -54,12 +54,17 @@ export default async function CommunityPage() {
             Made by QRdx and the people who use it. New items must scan Great (
             {MIN_GATE_SCORE}+) to be published, and every one is free to use.
           </p>
-          <Button asChild className="mt-2">
-            <Link href="/playground?tab=customisations">
-              <Brush2 aria-hidden />
-              Make your own
-            </Link>
-          </Button>
+          <div className="mt-2 flex flex-wrap justify-center gap-2">
+            <Button asChild>
+              <Link href="/playground?tab=customisations">
+                <Brush2 aria-hidden />
+                Make your own
+              </Link>
+            </Button>
+            <Button asChild variant="outline">
+              <Link href="/community/new">Make a collection</Link>
+            </Button>
+          </div>
           <p className="text-muted-foreground text-xs">
             Published under{" "}
             <a

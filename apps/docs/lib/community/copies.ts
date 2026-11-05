@@ -64,15 +64,33 @@ export async function copyItemToWorkspace(
   ref: { type: CommunityItemType; slug: string },
 ): Promise<CopyResult> {
   const item = await getItem(ref.type, ref.slug, scope.userId);
-  if (!item || item.type === "collection" || item.type === "page-template") {
+  if (!item || (item.type !== "frame" && item.type !== "theme")) {
     throw new CopyRefusedError(
       "NOT_FOUND",
       "This item isn't in the community.",
     );
   }
-  const style = themeStylePropsSchema.safeParse(
+  const result = await saveThemeCopy(
+    scope,
+    item.name,
     item.type === "frame" ? { ...FRAME_BASE_STYLE, ...item.apply } : item.apply,
   );
+  if (item.id)
+    await recordCopy(item.id, item.version, scope, result.themeId, new Date());
+  return result;
+}
+
+/**
+ * Saves `style` as a theme the person owns: the open workspace's shared
+ * themes when they may add to them, else their own, within the plan's
+ * saved-theme limit.
+ */
+async function saveThemeCopy(
+  scope: ActiveScope,
+  itemName: string,
+  input: unknown,
+): Promise<CopyResult> {
+  const style = themeStylePropsSchema.safeParse(input);
   if (!style.success) {
     throw new CopyRefusedError(
       "VALIDATION_ERROR",
@@ -102,7 +120,7 @@ export async function copyItemToWorkspace(
   }
 
   const themeId = cuid();
-  const name = item.name.slice(0, NAME_MAX);
+  const name = itemName.slice(0, NAME_MAX);
   const now = new Date();
   await db.insert(qrPreset).values({
     id: themeId,
@@ -114,8 +132,59 @@ export async function copyItemToWorkspace(
     updatedAt: now,
   });
 
-  if (item.id) await recordCopy(item.id, item.version, scope, themeId, now);
   return { themeId, name, where };
+}
+
+/**
+ * "Use kit": the kit's page template as a draft page, then its look (the
+ * theme with the frame on it, or one of them) as a saved theme. The page
+ * comes first; when the plan's theme limit stops the look, the page stays
+ * and the result says why.
+ */
+export async function copyKitToWorkspace(
+  scope: ActiveScope,
+  slug: string,
+): Promise<{
+  pageId: string;
+  name: string;
+  themeName: string | null;
+  themeRefused: string | null;
+}> {
+  const kit = await getItem("kit", slug, scope.userId);
+  const parts = kit?.kit;
+  const entry = (id: string | undefined) =>
+    id ? kit?.entries?.find((card) => card.id === id) : undefined;
+  const page = entry(parts?.page);
+  if (!kit || !parts || !page) {
+    throw new CopyRefusedError(
+      "NOT_FOUND",
+      "This kit, or its page template, isn't in the community any more.",
+    );
+  }
+  const copied = await copyTemplateToWorkspace(scope, page.slug);
+
+  const theme = entry(parts.theme);
+  const frame = entry(parts.frame);
+  const [themeItem, frameItem] = await Promise.all([
+    theme ? getItem("theme", theme.slug, scope.userId) : null,
+    frame ? getItem("frame", frame.slug, scope.userId) : null,
+  ]);
+  let themeName: string | null = null;
+  let themeRefused: string | null = null;
+  if (themeItem || frameItem) {
+    const style = {
+      ...(themeItem ? themeItem.apply : FRAME_BASE_STYLE),
+      ...(frameItem ? frameItem.apply : {}),
+    };
+    try {
+      themeName = (await saveThemeCopy(scope, kit.name, style)).name;
+    } catch (error) {
+      if (!(error instanceof CopyRefusedError)) throw error;
+      themeRefused = error.message;
+    }
+  }
+  if (kit.id) await recordCopy(kit.id, kit.version, scope, null, new Date());
+  return { pageId: copied.pageId, name: copied.name, themeName, themeRefused };
 }
 
 const PAGE_TITLE_MAX = 100;

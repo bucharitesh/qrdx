@@ -2,6 +2,7 @@ import "server-only";
 
 import { createHash } from "node:crypto";
 import {
+  communityCollectionEntry,
   communityItem,
   communityItemTag,
   communityItemVersion,
@@ -111,6 +112,8 @@ interface NewItem {
   sourceKind?: string;
   sourceId?: string;
   facets?: Record<string, unknown>;
+  /** Collections and kits: the items they point at, in order */
+  entries?: string[];
 }
 
 /** Writes a checked item, version 1 and its tags (one batch). */
@@ -175,14 +178,28 @@ export async function insertItem(
       createdBy: item.userId,
       createdAt: now,
     });
-    if (item.tags.length > 0) {
-      await db.batch([
-        insertItemRow,
-        insertVersion,
-        db
-          .insert(communityItemTag)
-          .values(item.tags.map((tag) => ({ itemId: id, tag }))),
-      ]);
+    const insertTags =
+      item.tags.length > 0
+        ? db
+            .insert(communityItemTag)
+            .values(item.tags.map((tag) => ({ itemId: id, tag })))
+        : null;
+    const insertEntries =
+      item.entries && item.entries.length > 0
+        ? db.insert(communityCollectionEntry).values(
+            item.entries.map((itemId, position) => ({
+              collectionId: id,
+              itemId,
+              position,
+            })),
+          )
+        : null;
+    if (insertTags && insertEntries) {
+      await db.batch([insertItemRow, insertVersion, insertTags, insertEntries]);
+    } else if (insertTags) {
+      await db.batch([insertItemRow, insertVersion, insertTags]);
+    } else if (insertEntries) {
+      await db.batch([insertItemRow, insertVersion, insertEntries]);
     } else {
       await db.batch([insertItemRow, insertVersion]);
     }

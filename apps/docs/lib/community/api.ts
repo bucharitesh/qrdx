@@ -56,7 +56,8 @@ const TAG_MAX = 24;
 export const communityItemId = (type: CommunityItemType, slug: string) =>
   `${type}:${slug}`;
 
-const ID = /^(frame|theme|collection|page-template):([a-z0-9][a-z0-9-]{0,95})$/;
+const ID =
+  /^(frame|theme|collection|page-template|kit):([a-z0-9][a-z0-9-]{0,95})$/;
 
 /** The type and slug in an item id, or null when it isn't one. */
 export function parseCommunityItemId(
@@ -194,7 +195,9 @@ function toApiDetail(item: CommunityItemDetail): CommunityApiItemDetail {
   return {
     ...toApiItem(item),
     style:
-      item.type === "collection" || item.type === "page-template"
+      item.type === "collection" ||
+      item.type === "page-template" ||
+      item.type === "kit"
         ? null
         : apiStyleOf(item.apply),
     contentTypes: item.contentTypes.slice(0, 20),
@@ -347,6 +350,12 @@ export async function communityItemStyle(id: string): Promise<{
     throw new CommunityItemError(
       "collection",
       "A collection holds several items: use one of its items instead.",
+    );
+  }
+  if (item.type === "kit") {
+    throw new CommunityItemError(
+      "collection",
+      "A kit holds a page template and a look: use its theme or frame instead.",
     );
   }
   if (item.type === "page-template") {

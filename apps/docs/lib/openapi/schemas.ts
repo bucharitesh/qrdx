@@ -322,7 +322,7 @@ export const communityItemSchema = named(
       .describe(
         "Type and slug, such as `frame:wifi-card`: use a frame's or theme's as `item` on GET /qr",
       ),
-    type: z.enum(["frame", "theme", "collection", "page-template"]),
+    type: z.enum(["frame", "theme", "collection", "page-template", "kit"]),
     name: z.string().describe("Up to 60 characters, links removed"),
     description: z
       .string()
@@ -358,7 +358,7 @@ export const communityItemDetailSchema = named(
       })
       .nullable()
       .describe(
-        "What the item applies: a theme's design, or `{ frame }` for a frame (a custom frame spec). Null for collections and page templates",
+        "What the item applies: a theme's design, or `{ frame }` for a frame (a custom frame spec). Null for collections, page templates and kits",
       ),
     contentTypes: z
       .array(z.string())
@@ -367,7 +367,7 @@ export const communityItemDetailSchema = named(
     items: z
       .array(z.string())
       .optional()
-      .describe("Collections: their items' ids, in order"),
+      .describe("Collections and kits: their items' ids, in order"),
     pageType: z
       .string()
       .optional()

@@ -6,7 +6,7 @@ import { Suspense } from "react";
 import { CommunityTabs } from "@/components/community/community-tabs";
 import { ItemGrid } from "@/components/community/item-card";
 import { HairlineFigure } from "@/components/mockups/hairline";
-import { hasCollections, hasTemplates } from "@/lib/community/home";
+import { hasCollections, hasKits, hasTemplates } from "@/lib/community/home";
 import { LICENSE_SHORT } from "@/lib/community/licence";
 import { listFrames, listItems } from "@/lib/community/queries";
 import {
@@ -55,9 +55,10 @@ export default async function CommunityTypePage({
   const filter: Filter =
     from === "official" || from === "community" ? from : "all";
   const sort = query.sort === "newest" ? "newest" : "popular";
-  const [showCollections, showTemplates] = await Promise.all([
+  const [showCollections, showTemplates, showKits] = await Promise.all([
     hasCollections(),
     hasTemplates(),
+    hasKits(),
   ]);
 
   return (
@@ -78,6 +79,7 @@ export default async function CommunityTypePage({
       <CommunityTabs
         active={TAB_OF[type]}
         showCollections={showCollections || type === "collection"}
+        showKits={showKits}
         showTemplates={showTemplates}
       />
 
@@ -100,6 +102,7 @@ const TAB_OF = {
   theme: "themes",
   collection: "collections",
   "page-template": "templates",
+  kit: "kits",
 } as const satisfies Record<CommunityItemType, string>;
 
 const EMPTY: Record<
@@ -113,7 +116,13 @@ const EMPTY: Record<
   },
   collection: {
     title: "No collections yet",
-    body: "Collections from QRdx appear here.",
+    body: "Group frames, themes and page templates you saved or made.",
+    link: { href: "/community/new", label: "Make a collection" },
+  },
+  kit: {
+    title: "No kits yet",
+    body: "Pair a page template with a theme or frame you saved, then publish it as a kit.",
+    link: { href: "/community/new?make=kit", label: "Make a kit" },
   },
   "page-template": {
     title: "No page templates yet",

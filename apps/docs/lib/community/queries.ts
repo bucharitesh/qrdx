@@ -148,6 +148,16 @@ function frameOf(payload: Record<string, unknown>): QRCustomFrame | null {
   return parsed.success ? parsed.data : null;
 }
 
+/** A kit's parts (item ids), or empty when its payload isn't one. */
+function kitPartsOf(
+  payload: Record<string, unknown>,
+): NonNullable<CommunityItemCard["kit"]> {
+  const kit = (payload.kit ?? {}) as Record<string, unknown>;
+  const id = (value: unknown) =>
+    typeof value === "string" && value.length <= 64 ? value : undefined;
+  return { page: id(kit.page), theme: id(kit.theme), frame: id(kit.frame) };
+}
+
 /** The design a theme or frame item renders, as everyone sees it. */
 export function applyStyleOf(row: {
   type: string;
@@ -243,7 +253,7 @@ async function entriesFor(
 async function toCards(rows: ItemRow[]): Promise<CommunityItemCard[]> {
   const ids = rows.map((row) => row.id);
   const collectionIds = rows
-    .filter((row) => row.type === "collection")
+    .filter((row) => row.type === "collection" || row.type === "kit")
     .map((row) => row.id);
   const [tags, entries] = await Promise.all([
     tagsFor(ids),
@@ -251,8 +261,28 @@ async function toCards(rows: ItemRow[]): Promise<CommunityItemCard[]> {
   ]);
   return rows.map((row) => {
     const card = toCard(row, tags.get(row.id));
-    if (row.type !== "collection") return card;
+    if (row.type !== "collection" && row.type !== "kit") return card;
     const items = entries.get(row.id) ?? [];
+    if (row.type === "kit") {
+      const parts = kitPartsOf(row.payload);
+      const theme = items.find((item) => item.type === "theme");
+      const frame = items.find((item) => item.type === "frame");
+      const page = items.find((item) => item.type === "page-template");
+      // The look: the theme with the frame on it (or either alone).
+      const look: ThemeStyles = {
+        ...(theme?.preview ?? frame?.preview ?? {}),
+        ...(theme && frame?.preview.frame
+          ? { frame: frame.preview.frame }
+          : {}),
+      };
+      return {
+        ...card,
+        kit: parts,
+        itemCount: items.length,
+        preview: look,
+        ...(page?.page ? { page: page.page } : {}),
+      };
+    }
     return {
       ...card,
       itemCount: items.length,
@@ -371,7 +401,7 @@ export async function getItem(
         ])
       : [[], []];
     const entries =
-      type === "collection"
+      type === "collection" || type === "kit"
         ? ((await entriesFor([row.id])).get(row.id) ?? [])
         : undefined;
     const facets = (row.facets ?? {}) as { contentTypes?: unknown };
@@ -448,6 +478,7 @@ export async function getProfileByHandle(
       "theme",
       "collection",
       "page-template",
+      "kit",
     ];
     const lists = await Promise.all(
       types.map((type) =>
