@@ -162,12 +162,22 @@ describe("autoLevel and logo padding", () => {
     };
     expect(resolveErrorLevel(props)).toBe("H");
     expect(getQRModuleCount(props)).toBe(symbolSize(VALUE, "H"));
-    // The same logo at M does not read at all; raised to H it reads at
-    // phone distances (jsQR still misses it at 6 px per module)
+    // Raised to H, the logo is drawn as passed and reads at phone distances
+    // (jsQR still misses it at 6 px per module). At M it is more than M can
+    // repair, so the renderer shrinks it to M's budget (logo-budget.ts):
+    // smaller, and it reads too.
     const at = (extra: Partial<QRProps>) =>
       unreadable({ ...props, ...PLAIN, ...extra }, [4, 9]);
-    expect(at({ autoLevel: false })).toEqual([4, 9]);
     expect(at({})).toEqual([]);
+    const drawnWidth = (extra: Partial<QRProps>) =>
+      Number(
+        renderSvg({ ...props, ...PLAIN, ...extra }).match(
+          /<image\b[^>]*\bwidth="([^"]+)"/
+        )?.[1]
+      );
+    expect(drawnWidth({})).toBeCloseTo(70, 1);
+    expect(drawnWidth({ autoLevel: false })).toBeLessThan(70);
+    expect(at({ autoLevel: false })).toEqual([]);
   });
 
   it("keeps the level for a small logo", () => {

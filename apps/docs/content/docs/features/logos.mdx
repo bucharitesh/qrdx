@@ -39,7 +39,7 @@ Always use higher error correction (`Q` or `H`) with logos.
 />
 ```
 
-`QRCode` and `getQRData` never draw a logo bigger than the code can repair. A logo (with its clear space) spoils every codeword it touches, and each error-correction block repairs only so many, so they count the spoiled codewords block by block and shrink the logo until the worst block uses at most 60% of its repair capacity (the same budget as the Logo QR badge). Small codes hold less: at level Q a short link fits a logo of about 13–17% of the width, and level H or shorter content makes room for more. `getLogoSizeLimit(props)` returns the largest size for a code, and the scan score checks the same count. Raw `imageSettings` on `QRCodeSVG` are drawn as given.
+`QRCode` and `getQRData` never draw a logo bigger than the code can repair. A logo (with its clear space) spoils every codeword it touches, and each error-correction block repairs only so many, so they count the spoiled codewords block by block and shrink the logo until the worst block uses at most 60% of its repair capacity (the same budget as the Logo QR badge). Small codes hold less: at level Q a short link fits a logo of about 13–17% of the width, and level H or shorter content makes room for more. `getLogoSizeLimit(props)` returns the largest size for a code, and the scan score checks the same count. Raw `imageSettings` on `QRCodeSVG`, `QRCodeCanvas` and `getQRAsSVG` get the same cap: a logo that fits is drawn as given, a bigger one is shrunk around its own center.
 
 Keep a moved logo off the three corner eyes and the small square near the bottom-right corner (the alignment pattern decoders use to correct perspective). The scan score fails a logo that covers one of them.
 
