@@ -31,15 +31,22 @@ export function ItemCard({
   className?: string;
 }) {
   const stack = card.type === "collection" ? (card.stack ?? []) : [];
+  // Page previews have links of their own, so the card's link is stretched
+  // over the card instead of wrapping it (nested <a> is invalid HTML and
+  // breaks hydration), as on the /templates gallery.
   return (
-    <Link
+    <article
       className={cn(
-        "group bg-card flex min-w-0 flex-col overflow-hidden rounded-xl border shadow-xs transition-[border-color,box-shadow] outline-none",
-        "hover:border-foreground/15 hover:shadow-sm focus-visible:ring-ring/50 focus-visible:ring-[3px]",
+        "group bg-card relative flex min-w-0 flex-col overflow-hidden rounded-xl border shadow-xs transition-[border-color,box-shadow]",
+        "hover:border-foreground/15 hover:shadow-sm has-[a:focus-visible]:ring-ring/50 has-[a:focus-visible]:ring-[3px]",
         className,
       )}
-      href={cardHref(card)}
     >
+      <Link
+        aria-label={`${card.name}, ${TYPE_LABELS[card.type].one}`}
+        className="absolute inset-0 z-10 rounded-xl outline-none"
+        href={cardHref(card)}
+      />
       <div className="bg-muted/40 relative aspect-[6/5] overflow-hidden border-b">
         {card.type === "collection" ? (
           <div className="absolute inset-5 grid place-items-center">
@@ -125,7 +132,7 @@ export function ItemCard({
           )}
         </div>
       </div>
-    </Link>
+    </article>
   );
 }
 
