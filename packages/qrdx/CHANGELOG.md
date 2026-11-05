@@ -29,6 +29,12 @@ npm's latest is 0.0.46, so these changes ship with the rest of 0.0.47.
 - SVG draws it as a `<pattern>` with an `<image>`. PDF embeds the picture once and paints it inside each shape, at its opacity. **EPS refuses image fills** (`EPS_IMAGE_FILL_REASON`, `hasImageFill`): PostScript has no transparency and would repeat the picture for every dot.
 - The contrast check judges a picture by its tones (`getImageTones`, `getImageTonesFromPixels`: its lightest and darkest tenth) and asks more of it (`SCAN_IMAGE_CONTRAST_MIN`: 7:1 in the code, 12:1 behind it), since its detail reads as noise. `getScanContrast` reports the `required` ratio. `getScanScore` inlines image fills and samples their tones.
 
+### Code shapes
+
+- **Circle and heart codes.** `shape: "circle"` or `"heart"` puts the symbol in the middle of a disc or a heart and fills the rest with decorative modules in the body's dot shape, on the same grid. The symbol keeps a light ring of `margin` modules (at least `QR_CIRCLE_QUIET_MIN`, 3) that no decoration or edge enters, so decoders only see the real code. Outside the outline the image is transparent. `getLayoutMargin` gives the margin a code is drawn with; logos, print sizes (`getQRModuleCount`) and the scan score follow it. SVG, `QRCodeCanvas`, PNG, PDF and EPS draw the outline, image fills and angular gradients included.
+- **Custom shapes.** `shape` also takes a `QRSilhouette`: a grid of at most 64 × 64 cells (`qrSilhouetteSchema`) traced from a picture's transparency or darkness by `loadQRSilhouette` (browser) or `createQRSilhouette` (pixels). The picture itself is never kept. The symbol sits in the middle of the shape's roomiest square. `getQRSilhouetteFit` says whether a silhouette is roomy enough (the symbol and its ring must take at least `QR_SILHOUETTE_MIN_SHARE` of the width) and why not; one that isn't draws as a square code. `getQRShapePath` gives a shape's outline for previews.
+- Heart and silhouette codes decode with solid dot shapes and `square`, `rounded` and `gear` eyes at phone distances and in sharp renders (jsQR), and with zbar.
+
 ### Fixes
 
 - The SVG reader behind PDF and EPS export no longer throws on character references outside Unicode (such as `&#x110000;`).

@@ -143,7 +143,7 @@ The same lists are exported as `BODY_PATTERN`, `CORNER_EYE_PATTERNS` and `CORNER
 | `eyeColors` | Per-eye `{ outer, inner }` colors (or gradients) for `topLeft`, `topRight`, `bottomLeft`; each overrides `eyeColor` / `dotColor` |
 | `moduleScale` | 0.5–1 (default 1): smaller modules for a spaced look; each pattern stops at the smallest size that still scans (`MODULE_SCALE_FLOOR`) |
 | `autoLevel` | Raise `level` to H when a logo covers more than 7% of the code (off by default) |
-| `shape` | `"square"` (default) or `"circle"`: the symbol sits in a disc filled with decorative modules, behind a light ring of `margin` modules (at least `QR_CIRCLE_QUIET_MIN`, 3). `getLayoutMargin` gives the margin it is drawn with; print sizes and logos follow it. `QRCodeCanvas` and `getQRAsSVG` draw it square |
+| `shape` | `"square"` (default), `"circle"` or `"heart"`: the symbol sits in a disc or a heart filled with decorative modules, behind a light ring of `margin` modules (at least `QR_CIRCLE_QUIET_MIN`, 3). It also takes a `QRSilhouette` traced from a picture (`loadQRSilhouette` in the browser, `createQRSilhouette` from pixels); `getQRSilhouetteFit` refuses one too thin to hold the code, which then draws square. `getLayoutMargin` gives the margin it is drawn with; print sizes and logos follow it. `getQRAsSVG` draws it square |
 | `frameLabelMarkers` | For editors: marks each frame label `<text>` with `data-qrdx-frame-label` (`"text"`, `"secondaryText"` or a spec label's id), so a preview can edit labels in place. Off by default; exports never include it |
 | `imageSettings.padding` | Extra clear space around an excavated logo, in pixels |
 | `bgColor="transparent"` | No background paint (transparent PNG/SVG, no fill in PDF/EPS) |

@@ -17,7 +17,7 @@ import { withQRSize } from "./download";
 import { getFrameDimensions, getFrameGapRatio, isFrameActive } from "./frame";
 import { getQRAsSVGDataUri } from "./index";
 import { getLogoBlockDamage } from "./logo-budget";
-import { circleQuietZone, getLayoutMargin } from "./qr-shape";
+import { circleQuietZone, getLayoutMargin, isShapedCode } from "./qr-shape";
 import { getStylePairRisk } from "./scan-risk";
 import { getImageSettings, getLuminance, resolveErrorLevel } from "./utils";
 import { parseColor, type RGBAColor } from "./utils/parse-color";
@@ -739,11 +739,10 @@ function logoCheck(props: QRProps): {
 }
 
 function quietZoneCheck(props: QRProps): { check: ScanCheck; penalty: number } {
-  // A circle code keeps at least QR_CIRCLE_QUIET_MIN before its decoration
-  const margin =
-    props.shape === "circle"
-      ? circleQuietZone(props.margin ?? DEFAULT_MARGIN)
-      : (props.margin ?? DEFAULT_MARGIN);
+  // A shaped code keeps at least QR_CIRCLE_QUIET_MIN before its decoration
+  const margin = isShapedCode(props.shape)
+    ? circleQuietZone(props.margin ?? DEFAULT_MARGIN)
+    : (props.margin ?? DEFAULT_MARGIN);
   const count = moduleCount(props).length + 2 * margin;
   // A frame keeps a light gap around the code.
   const modules =

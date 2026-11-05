@@ -175,7 +175,9 @@ describe("other parameters", () => {
     expect(parseHref("/playground?section=logo").section).toBe("logo");
     expect(parseHref("/playground?section=stickers").section).toBeUndefined();
     // The engine-option sections (customization-sections.tsx) open too
-    expect(parseHref("/playground?section=shape").section).toBe("shape");
+    expect(parseHref("/playground?section=dot-size").section).toBe("dot-size");
+    // Code shapes live in Frame now: old shape links open it
+    expect(parseHref("/playground?section=shape").section).toBe("frame");
     // Art isn't a Design section any more: it opens the Art tab.
     expect(parseHref("/playground?section=art").section).toBeUndefined();
   });

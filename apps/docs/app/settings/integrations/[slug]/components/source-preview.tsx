@@ -15,9 +15,12 @@ import {
 } from "@/lib/data-connections/client";
 
 const WHERE: Record<string, string> = {
-  stripe: "the URL type in the editor and Dashboard → New code",
-  calendly: "the URL type in the editor and Dashboard → New code",
-  shopify: "the URL type in the editor and Dashboard → New code",
+  stripe:
+    "Dashboard → New code (in the editor's URL type, it's under Use a link from…)",
+  calendly:
+    "Dashboard → New code (in the editor's URL type, it's under Use a link from…)",
+  shopify:
+    "Dashboard → New code (in the editor's URL type, it's under Use a link from…)",
   calcom: "the Cal.com type in the editor",
 };
 

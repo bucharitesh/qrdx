@@ -31,6 +31,7 @@ import { useSessionGuard } from "@/lib/hooks/use-gaurds";
 import { soundEvent } from "@/lib/sound/emit";
 import { CustomFrameFields } from "./custom-frame-fields";
 import { FrameColorField, FrameTextSize } from "./frame-fields";
+import { FrameShapes, frameShapeOf, withoutShape } from "./frame-shapes";
 import { carryFrameSettings, customFrameName } from "./frame-specs";
 import { FrameTextPresets } from "./frame-text-presets";
 import { ShapePicker } from "./option-tiles";
@@ -66,6 +67,8 @@ const BUILT_IN_OPTIONS: { id: FrameStyle; name: string }[] = [
 const OFFICIAL_PREFIX = "official:";
 const SAVED_PREFIX = "saved:";
 const CUSTOM_ID = "custom";
+/** The frame picker's value while a shaped code is on: no frame tile */
+const SHAPED_ID = "shaped";
 
 /** Name for the collapsed Frame header. */
 export function frameName(frame: AnyQRFrame | undefined) {
@@ -147,7 +150,10 @@ export function FrameControls() {
   const [importOpen, setImportOpen] = useState(false);
   const [publishOpen, setPublishOpen] = useState(false);
 
-  const setFrame = (next: AnyQRFrame) => setStyle({ ...style, frame: next });
+  // A frame takes the place of a shaped code (frame-shapes.tsx)
+  const setFrame = (next: AnyQRFrame) =>
+    setStyle({ ...withoutShape(style), frame: next });
+  const shaped = frameShapeOf(style) !== null;
 
   // Every option the picker shows, keyed by a string id
   const options = useMemo(() => {
@@ -172,6 +178,7 @@ export function FrameControls() {
   }, [saved]);
 
   const value = useMemo(() => {
+    if (shaped && frame.style === "none") return SHAPED_ID;
     if (!custom) return frame.style as string;
     const official = officialFrameOfSpec(custom.spec);
     if (official) return `${OFFICIAL_PREFIX}${official.id}`;
@@ -180,7 +187,7 @@ export function FrameControls() {
       (item) => JSON.stringify(item.frame.spec) === json,
     );
     return match ? `${SAVED_PREFIX}${match.id}` : CUSTOM_ID;
-  }, [custom, frame.style, saved]);
+  }, [custom, frame.style, saved, shaped]);
 
   const pickerOptions =
     value === CUSTOM_ID && custom
@@ -256,7 +263,9 @@ export function FrameControls() {
         value={value}
       />
 
-      {custom ? (
+      <FrameShapes setStyle={setStyle} style={style} />
+
+      {shaped && frame.style === "none" ? null : custom ? (
         <CustomFrameFields frame={custom} onChange={setFrame} />
       ) : (
         builtIn && (

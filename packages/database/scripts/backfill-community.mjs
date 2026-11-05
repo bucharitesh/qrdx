@@ -87,6 +87,8 @@ export const THEME_STYLE_KEYS = [
   "autoLevel",
   "logoOptions",
   "shape",
+  // A code shape traced from an upload: never published (like customLogo)
+  "silhouette",
 ];
 
 const sha = (text) => createHash("sha256").update(text).digest("hex");
@@ -117,7 +119,7 @@ export function themePayload(style) {
   const source = style && typeof style === "object" ? style : {};
   const next = {};
   for (const key of THEME_STYLE_KEYS) {
-    if (key === "customLogo" || key === "art") continue;
+    if (key === "customLogo" || key === "art" || key === "silhouette") continue;
     if (source[key] !== undefined) next[key] = source[key];
   }
   let logoIcon = null;

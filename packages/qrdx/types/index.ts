@@ -116,10 +116,12 @@ export type {
   ImageSettings,
   LogoOptions,
   LogoShape,
+  QRCodeShape,
   QRProps,
   QRPropsCanvas,
   QRPropsSVG,
   QRShape,
+  QRSilhouette,
 } from "./qr";
 export {
   AUTO_LEVEL_LOGO_COVERAGE,
@@ -139,8 +141,13 @@ export {
   MODULE_SCALE_MIN,
   QR_CIRCLE_QUIET_MIN,
   QR_SHAPES,
+  QR_SILHOUETTE_MAX_CELLS,
+  QR_SILHOUETTE_MIN_CELLS,
+  QR_SILHOUETTE_MIN_SHARE,
+  qrCodeShapeSchema,
   qrPropsSchema,
   qrShapeSchema,
+  qrSilhouetteSchema,
 } from "./qr";
 export type {
   BaseTemplateProps,
