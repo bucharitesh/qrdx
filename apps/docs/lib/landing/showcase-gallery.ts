@@ -835,6 +835,7 @@ const firstColor = (color: ColorConfig | undefined, fallback: string) => {
   if (!color) return fallback;
   if (typeof color === "string") return color;
   if (color.type === "solid") return color.color;
+  if (color.type === "image") return color.underlay ?? fallback;
   return color.stops[0]?.color ?? fallback;
 };
 

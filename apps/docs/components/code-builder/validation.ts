@@ -5,6 +5,7 @@
 
 import type { QrCodeErrorCode } from "@/actions/qr-codes";
 import { baseUrl } from "@/lib/metadata";
+import { withoutImageFills } from "@/lib/paint/image-fills";
 import { SHORT_LINK_BASE } from "@/lib/short-links";
 import type { QRStyle } from "@/types/theme";
 import type { BuilderFields } from "./types";
@@ -161,5 +162,9 @@ export function fitStyleForSave(style: QRStyle): {
     return { style, trimmed: false };
   }
   const { customLogo: _logo, ...rest } = style;
-  return { style: rest, trimmed: true };
+  if (JSON.stringify(rest).length <= MAX_SAVED_STYLE_LENGTH) {
+    return { style: rest, trimmed: true };
+  }
+  // Still too large: image fills give way to their underlay colors too
+  return { style: withoutImageFills(rest), trimmed: true };
 }

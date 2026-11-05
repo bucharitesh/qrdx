@@ -10,7 +10,10 @@ import {
   getColorString,
 } from "qrdx/types";
 import ControlSection from "@/components/editor/control-section";
-import { GradientPicker } from "@/components/editor/gradient-picker";
+import {
+  GradientPicker,
+  QR_IMAGE_KINDS,
+} from "@/components/editor/gradient-picker";
 import type { QRStyle } from "@/types/theme";
 
 export const EYE_POSITION_NAMES: Record<EyePosition, string> = {
@@ -102,12 +105,14 @@ export function EyeColorsSection({
           </legend>
           <div className="grid grid-cols-2 gap-2">
             <GradientPicker
+              kinds={QR_IMAGE_KINDS}
               label="Frame"
               name={`eyeColors.${position}.outer`}
               onChange={(color) => setEye(position, "outer", color)}
               value={outer(position)}
             />
             <GradientPicker
+              kinds={QR_IMAGE_KINDS}
               label="Center"
               name={`eyeColors.${position}.inner`}
               onChange={(color) => setEye(position, "inner", color)}

@@ -119,6 +119,7 @@ function solid(color: ColorConfig | undefined): string | undefined {
   if (!color) return undefined;
   if (typeof color === "string") return color;
   if (color.type === "solid") return color.color;
+  if (color.type === "image") return color.underlay;
   return color.stops[0]?.color;
 }
 

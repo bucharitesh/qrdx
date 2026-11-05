@@ -24,6 +24,7 @@ import type { ApplyDesignOutput, DesignProgress } from "@/lib/ai/agent/tools";
 import { parseAiSdkTransportError } from "@/lib/ai/parse-ai-sdk-transport-error";
 import { track } from "@/lib/analytics";
 import { handleUnauthorized } from "@/lib/handle-unauthorized";
+import { withoutImageFills } from "@/lib/paint/image-fills";
 import { isDeepEqual } from "@/lib/utils";
 import { useAIChatStore } from "@/store/ai-chat-store";
 import { useQREditorStore } from "@/store/editor-store";
@@ -71,7 +72,10 @@ function editorContext(): EditorContextInput {
     | (QRContentConfig & Record<string, unknown>)
     | undefined;
   const { type: _type, ...content } = config ?? { type: contentType };
-  const { customLogo, art, frame, ...rest } = themeState.styles;
+  // Image fills stay in the browser: the chat sees their underlay colors.
+  const { customLogo, art, frame, ...rest } = withoutImageFills(
+    themeState.styles,
+  );
   // The chat designs built-in frames; a custom frame stays out of its context.
   const style = frame && frame.style !== "custom" ? { ...rest, frame } : rest;
   return {

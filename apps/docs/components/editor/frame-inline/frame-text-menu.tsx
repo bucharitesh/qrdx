@@ -1,12 +1,9 @@
 "use client";
 
-import { Input } from "@repo/design-system/components/ui/input";
-import { Label } from "@repo/design-system/components/ui/label";
 import { Warning2 } from "iconsax-reactjs";
 import { getContrastRatio } from "qrdx";
-import { useEffect, useId, useState } from "react";
-import { HexColorPicker } from "react-colorful";
 import { IconPicker } from "../control-sections/custom-frame-fields";
+import { PaintPanel } from "../paint-picker/paint-panel";
 import type { FrameTweak, FrameTweaks } from "./frame-text-fields";
 
 // The controls the inline menu and the phone sheet share: color with its
@@ -14,8 +11,6 @@ import type { FrameTweak, FrameTweaks } from "./frame-text-fields";
 
 /** WCAG AA for text, the bar the editor's contrast checker uses. */
 export const MIN_LABEL_CONTRAST = 4.5;
-
-const HEX_COLOR = /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i;
 
 /** Contrast of the label's drawn color against what's painted behind it. */
 export function labelContrast(
@@ -42,7 +37,10 @@ export function ContrastNote({ ratio }: { ratio: number | null }) {
   );
 }
 
-/** The editor's color picker: a hue/saturation field and a hex input. */
+/**
+ * The editor's paint picker, solid and opaque: frame text and frame colors
+ * are stored as "#rrggbb" and take no gradient or image.
+ */
 export function ColorEditor({
   label,
   value,
@@ -52,42 +50,22 @@ export function ColorEditor({
   value: string;
   onChange: (color: string) => void;
 }) {
-  const id = useId();
-  const [draft, setDraft] = useState(value);
-  useEffect(() => setDraft(value), [value]);
   return (
-    <div className="space-y-2">
-      <HexColorPicker
-        aria-label={label}
-        className="h-36! w-full!"
-        color={value}
-        onChange={onChange}
+    <section aria-label={label}>
+      <PaintPanel
+        alpha={false}
+        onChange={(next) => {
+          const color =
+            typeof next === "string"
+              ? next
+              : next.type === "solid"
+                ? next.color
+                : null;
+          if (color) onChange(color);
+        }}
+        value={value}
       />
-      <div className="flex items-center gap-2">
-        <Label className="sr-only" htmlFor={id}>
-          {label} hex
-        </Label>
-        <span
-          aria-hidden
-          className="size-7 shrink-0 rounded-full border shadow-xs"
-          style={{ backgroundColor: value }}
-        />
-        <Input
-          className="h-8 flex-1 font-mono text-sm"
-          id={id}
-          maxLength={7}
-          onBlur={() => setDraft(value)}
-          onChange={(event) => {
-            setDraft(event.target.value);
-            if (HEX_COLOR.test(event.target.value)) {
-              onChange(event.target.value);
-            }
-          }}
-          placeholder="#000000"
-          value={draft}
-        />
-      </div>
-    </div>
+    </section>
   );
 }
 

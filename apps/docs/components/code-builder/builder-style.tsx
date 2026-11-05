@@ -19,9 +19,14 @@ import {
   patternName,
 } from "@/components/editor/control-sections/pattern-controls";
 import { SidePanelPlacement } from "@/components/editor/control-sections/side-panel";
-import { GradientPicker } from "@/components/editor/gradient-picker";
+import {
+  GradientPicker,
+  PaintDesignProvider,
+  QR_IMAGE_KINDS,
+} from "@/components/editor/gradient-picker";
 import { QRStyleScopeProvider } from "@/components/editor/style-scope";
 import { defaultThemeState } from "@/config/qr";
+import { designColors } from "@/lib/paint/swatches";
 import { soundEvent } from "@/lib/sound/emit";
 import type { QRStyle } from "@/types/theme";
 import { defaultPresets } from "@/utils/qr-presets";
@@ -170,106 +175,121 @@ export function BuilderStyle({
 }) {
   const current = useMemo(() => themeLook(style), [style]);
   const choices = useMemo(() => themeChoices(themes ?? []), [themes]);
+  // The pickers' Theme swatches: the workspace's default theme
+  const paintDesign = useMemo(() => {
+    const workspaceDefault = choices.find((choice) => choice.isDefault);
+    return {
+      themeColors: workspaceDefault
+        ? designColors(themeLook(workspaceDefault.style))
+        : undefined,
+    };
+  }, [choices]);
   const update = <K extends keyof QRStyle>(key: K, next: QRStyle[K]) =>
     onChange({ ...current, [key]: next });
 
   return (
     <QRStyleScopeProvider onChange={onChange} style={current} value={value}>
-      {/* The style column is on the modal's right: panels open to its left. */}
-      <SidePanelPlacement side="left">
-        <div className="@container">
-          <ControlSection
-            expanded
-            summary={
-              choices.find((choice) => sameLook(choice.style, current))?.name
-            }
-            title="Theme"
-          >
-            <ThemeStrip choices={choices} onPick={onChange} style={current} />
-          </ControlSection>
-          <ControlSection
-            hint="colors"
-            summary={
-              <Swatches
-                colors={[
-                  current.bgColor,
-                  current.fgColor,
-                  current.eyeColor,
-                  current.dotColor,
-                ]}
+      <PaintDesignProvider value={paintDesign}>
+        {/* The style column is on the modal's right: panels open to its left. */}
+        <SidePanelPlacement side="left">
+          <div className="@container">
+            <ControlSection
+              expanded
+              summary={
+                choices.find((choice) => sameLook(choice.style, current))?.name
+              }
+              title="Theme"
+            >
+              <ThemeStrip choices={choices} onPick={onChange} style={current} />
+            </ControlSection>
+            <ControlSection
+              hint="colors"
+              summary={
+                <Swatches
+                  colors={[
+                    current.bgColor,
+                    current.fgColor,
+                    current.eyeColor,
+                    current.dotColor,
+                  ]}
+                />
+              }
+              title="Colors"
+            >
+              <div className="grid grid-cols-2 gap-2">
+                <GradientPicker
+                  kinds={QR_IMAGE_KINDS}
+                  label="Background"
+                  name="bgColor"
+                  onChange={(color) => update("bgColor", color)}
+                  value={current.bgColor}
+                />
+                <GradientPicker
+                  kinds={QR_IMAGE_KINDS}
+                  label="Foreground"
+                  name="fgColor"
+                  onChange={(color) => update("fgColor", color)}
+                  value={current.fgColor}
+                />
+                <GradientPicker
+                  kinds={QR_IMAGE_KINDS}
+                  label="Eyes"
+                  name="eyeColor"
+                  onChange={(color) => update("eyeColor", color)}
+                  value={current.eyeColor}
+                />
+                <GradientPicker
+                  kinds={QR_IMAGE_KINDS}
+                  label="Dots"
+                  name="dotColor"
+                  onChange={(color) => update("dotColor", color)}
+                  value={current.dotColor}
+                />
+              </div>
+              <ColorPresets
+                onApply={(colors) => onChange({ ...current, ...colors })}
+                style={current}
               />
-            }
-            title="Colors"
-          >
-            <div className="grid grid-cols-2 gap-2">
-              <GradientPicker
-                label="Background"
-                name="bgColor"
-                onChange={(color) => update("bgColor", color)}
-                value={current.bgColor}
-              />
-              <GradientPicker
-                label="Foreground"
-                name="fgColor"
-                onChange={(color) => update("fgColor", color)}
-                value={current.fgColor}
-              />
-              <GradientPicker
-                label="Eyes"
-                name="eyeColor"
-                onChange={(color) => update("eyeColor", color)}
-                value={current.eyeColor}
-              />
-              <GradientPicker
-                label="Dots"
-                name="dotColor"
-                onChange={(color) => update("dotColor", color)}
-                value={current.dotColor}
-              />
-            </div>
-            <ColorPresets
-              onApply={(colors) => onChange({ ...current, ...colors })}
+            </ControlSection>
+            <ControlSection
+              hint="dots"
+              summary={patternName(current.bodyPattern)}
+              title="Dots"
+            >
+              <DotPatternControl />
+            </ControlSection>
+            <ControlSection
+              hint="eyes"
+              popover
+              summary={eyeSummary(
+                current.cornerEyePattern,
+                current.cornerEyeDotPattern,
+              )}
+              title="Eyes"
+            >
+              <EyeControls />
+            </ControlSection>
+            <LogoControls
+              onStyleChange={(next) =>
+                onChange({
+                  ...current,
+                  customLogo: next.customLogo,
+                  showLogo: next.showLogo,
+                })
+              }
               style={current}
             />
-          </ControlSection>
-          <ControlSection
-            hint="dots"
-            summary={patternName(current.bodyPattern)}
-            title="Dots"
-          >
-            <DotPatternControl />
-          </ControlSection>
-          <ControlSection
-            hint="eyes"
-            popover
-            summary={eyeSummary(
-              current.cornerEyePattern,
-              current.cornerEyeDotPattern,
-            )}
-            title="Eyes"
-          >
-            <EyeControls />
-          </ControlSection>
-          <LogoControls
-            onStyleChange={(next) =>
-              onChange({
-                ...current,
-                customLogo: next.customLogo,
-                showLogo: next.showLogo,
-              })
-            }
-            style={current}
-          />
-          <ControlSection
-            hint="frame"
-            popover
-            summary={frameName(current.frame)}
-            title="Frame"
-          >
-            <FrameControls />
-          </ControlSection>
-        </div>
-      </SidePanelPlacement>
+            <ControlSection
+              hint="frame"
+              popover
+              summary={frameName(current.frame)}
+              title="Frame"
+            >
+              <FrameControls />
+            </ControlSection>
+          </div>
+        </SidePanelPlacement>
+      </PaintDesignProvider>
     </QRStyleScopeProvider>
   );
 }

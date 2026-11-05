@@ -29,9 +29,11 @@ export * from "./detection";
 export * from "./download";
 export {
   downloadPrintEPS,
+  EPS_IMAGE_FILL_REASON,
   type EPSOptions,
   epsToDataUrl,
   getQRAsEPS,
+  hasImageFill,
   type SVGToEPSOptions,
   svgToEPS,
 } from "./eps";

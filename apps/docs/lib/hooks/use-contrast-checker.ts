@@ -30,6 +30,10 @@ function extractColorsForContrast(
   if (normalized.type === "solid") {
     return [normalized.color];
   }
+  // A picture is judged by its underlay here (the picker samples the picture)
+  if (normalized.type === "image") {
+    return normalized.underlay ? [normalized.underlay] : [];
+  }
 
   // For gradients, extract all stop colors
   return normalized.stops.map((stop) => stop.color);
