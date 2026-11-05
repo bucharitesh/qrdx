@@ -243,7 +243,7 @@ const href = () => evaluate(() => location.href as string);
 async function waitText(needle: string, timeout = 20_000) {
   // biome-ignore lint/performance/useDomNodeTextContent: the text a person sees
   return waitFor((n: string) => document.body.innerText.includes(n), {
-    args: [needle],
+    args: [needle] as never[],
     timeout,
   });
 }
@@ -293,17 +293,19 @@ async function startSso(email: string, stepShot?: string) {
   await goto(`${BASE}/sign-in`);
   await evaluate(() =>
     window.__e2e.click(
-      window.__e2e.byRole("button", "Sign in with SSO", { exact: true }),
+      window.__e2e.byRole("button", "Sign in with SSO", {
+        exact: true,
+      }) as HTMLElement,
     ),
   );
   await waitFor(() => Boolean(window.__e2e.byLabel("Work email")));
   await evaluate((e: string) => {
-    window.__e2e.setValue(window.__e2e.byLabel("Work email"), e);
+    window.__e2e.setValue(window.__e2e.byLabel("Work email") as HTMLElement, e);
   }, email);
   if (stepShot) await shot(stepShot);
   await evaluate(() =>
     window.__e2e.click(
-      window.__e2e.byRole("button", "Continue", { exact: true }),
+      window.__e2e.byRole("button", "Continue", { exact: true }) as HTMLElement,
     ),
   );
   await sleep(2500);
@@ -320,9 +322,9 @@ async function idpSignIn(email: string, flags: Record<string, string> = {}) {
     return;
   }
   await evaluate((e: string) => {
-    window.__e2e.setValue(window.__e2e.byLabel("Sign in as"), e);
+    window.__e2e.setValue(window.__e2e.byLabel("Sign in as") as HTMLElement, e);
     window.__e2e.click(
-      window.__e2e.byRole("button", "Sign in", { exact: true }),
+      window.__e2e.byRole("button", "Sign in", { exact: true }) as HTMLElement,
     );
   }, email);
   await sleep(4000);
@@ -532,11 +534,13 @@ try {
   await evaluate(
     (domain: string, idp: string) => {
       const e = window.__e2e;
-      e.setValue(e.byLabel("Email domain"), domain);
-      e.setValue(e.byLabel("Issuer URL"), idp);
-      e.setValue(e.byLabel("Client ID"), "qrdx-test-client");
-      e.setValue(e.byLabel("Client secret"), "qrdx-test-secret");
-      e.click(e.byRole("button", "Save connection", { exact: true }));
+      e.setValue(e.byLabel("Email domain") as HTMLElement, domain);
+      e.setValue(e.byLabel("Issuer URL") as HTMLElement, idp);
+      e.setValue(e.byLabel("Client ID") as HTMLElement, "qrdx-test-client");
+      e.setValue(e.byLabel("Client secret") as HTMLElement, "qrdx-test-secret");
+      e.click(
+        e.byRole("button", "Save connection", { exact: true }) as HTMLElement,
+      );
     },
     DOMAIN,
     IDP,
@@ -575,7 +579,7 @@ try {
   await goto(page, { wait: 3000 });
   await evaluate(() =>
     window.__e2e.click(
-      window.__e2e.byRole("button", "Verify", { exact: true }),
+      window.__e2e.byRole("button", "Verify", { exact: true }) as HTMLElement,
     ),
   );
   await waitText("We didn't find the TXT record");
@@ -586,7 +590,7 @@ try {
   writeFileSync(DNS_FILE, JSON.stringify({ [recordName]: [token] }));
   await evaluate(() =>
     window.__e2e.click(
-      window.__e2e.byRole("button", "Verify", { exact: true }),
+      window.__e2e.byRole("button", "Verify", { exact: true }) as HTMLElement,
     ),
   );
   await waitText("Verified");
@@ -632,7 +636,9 @@ try {
   await shot("06-connection-verified");
   await evaluate(() =>
     window.__e2e.click(
-      window.__e2e.byRole("button", "Replace secret", { exact: true }),
+      window.__e2e.byRole("button", "Replace secret", {
+        exact: true,
+      }) as HTMLElement,
     ),
   );
   await waitFor(() => Boolean(window.__e2e.byRole("dialog", "")));
@@ -644,7 +650,10 @@ try {
       "qrdx-test-secret",
     );
     window.__e2e.click(
-      window.__e2e.byRole("button", "Save", { exact: true, root: dialog }),
+      window.__e2e.byRole("button", "Save", {
+        exact: true,
+        root: dialog,
+      }) as HTMLElement,
     );
   });
   await waitText("Client secret updated");
@@ -826,7 +835,9 @@ try {
   );
   await goto(page, { wait: 3000 });
   await evaluate(() =>
-    window.__e2e.click(window.__e2e.byRole("button", "Remove single sign-on")),
+    window.__e2e.click(
+      window.__e2e.byRole("button", "Remove single sign-on") as HTMLElement,
+    ),
   );
   await sleep(800);
   await shot("12a-remove-dialog");
@@ -835,7 +846,7 @@ try {
       window.__e2e.byRole("button", "Remove", {
         exact: true,
         root: document.querySelector('[role="alertdialog"]') ?? document,
-      }),
+      }) as HTMLElement,
     ),
   );
   await waitText("sign out and sign in again");
@@ -851,7 +862,9 @@ try {
   await emailSignIn(owner);
   await goto(page, { wait: 3000 });
   await evaluate(() =>
-    window.__e2e.click(window.__e2e.byRole("button", "Remove single sign-on")),
+    window.__e2e.click(
+      window.__e2e.byRole("button", "Remove single sign-on") as HTMLElement,
+    ),
   );
   await sleep(800);
   await evaluate(() =>
@@ -859,7 +872,7 @@ try {
       window.__e2e.byRole("button", "Remove", {
         exact: true,
         root: document.querySelector('[role="alertdialog"]') ?? document,
-      }),
+      }) as HTMLElement,
     ),
   );
   await waitText("Set up single sign-on");
@@ -877,16 +890,18 @@ try {
 
   const metadata = await (await fetch(`${IDP}/saml/metadata`)).text();
   await evaluate(() =>
-    window.__e2e.click(window.__e2e.byRole("tab", "SAML 2.0")),
+    window.__e2e.click(window.__e2e.byRole("tab", "SAML 2.0") as HTMLElement),
   );
   await sleep(500);
   await shot("13-setup-saml");
   await evaluate(
     (domain: string, xml: string) => {
       const e = window.__e2e;
-      e.setValue(e.byLabel("Email domain"), domain);
-      e.setValue(e.byLabel("Identity provider metadata"), xml);
-      e.click(e.byRole("button", "Save connection", { exact: true }));
+      e.setValue(e.byLabel("Email domain") as HTMLElement, domain);
+      e.setValue(e.byLabel("Identity provider metadata") as HTMLElement, xml);
+      e.click(
+        e.byRole("button", "Save connection", { exact: true }) as HTMLElement,
+      );
     },
     DOMAIN,
     metadata,
@@ -902,7 +917,7 @@ try {
   );
   await evaluate(() =>
     window.__e2e.click(
-      window.__e2e.byRole("button", "Verify", { exact: true }),
+      window.__e2e.byRole("button", "Verify", { exact: true }) as HTMLElement,
     ),
   );
   await waitText("Verified");
@@ -996,7 +1011,9 @@ try {
     !(await text()).includes("Replace certificate"),
   );
   await evaluate(() =>
-    window.__e2e.click(window.__e2e.byRole("button", "Remove single sign-on")),
+    window.__e2e.click(
+      window.__e2e.byRole("button", "Remove single sign-on") as HTMLElement,
+    ),
   );
   await sleep(800);
   await evaluate(() =>
@@ -1004,34 +1021,36 @@ try {
       window.__e2e.byRole("button", "Remove", {
         exact: true,
         root: document.querySelector('[role="alertdialog"]') ?? document,
-      }),
+      }) as HTMLElement,
     ),
   );
   await waitText("Set up single sign-on");
   const certificate = await (await fetch(`${IDP}/saml/certificate`)).text();
   await evaluate(() =>
-    window.__e2e.click(window.__e2e.byRole("tab", "SAML 2.0")),
+    window.__e2e.click(window.__e2e.byRole("tab", "SAML 2.0") as HTMLElement),
   );
   await sleep(400);
   await evaluate(() =>
     window.__e2e.click(
       window.__e2e.byRole("button", "Enter the details instead", {
         exact: true,
-      }),
+      }) as HTMLElement,
     ),
   );
   await sleep(400);
   await evaluate(
     (domain: string, idp: string, cert: string) => {
       const e = window.__e2e;
-      e.setValue(e.byLabel("Email domain"), domain);
-      e.setValue(e.byLabel("Sign-in URL"), `${idp}/saml/sso`);
+      e.setValue(e.byLabel("Email domain") as HTMLElement, domain);
+      e.setValue(e.byLabel("Sign-in URL") as HTMLElement, `${idp}/saml/sso`);
       e.setValue(
-        e.byLabel("Identity provider entity ID"),
+        e.byLabel("Identity provider entity ID") as HTMLElement,
         `${idp}/saml/metadata`,
       );
-      e.setValue(e.byLabel("Signing certificate"), cert);
-      e.click(e.byRole("button", "Save connection", { exact: true }));
+      e.setValue(e.byLabel("Signing certificate") as HTMLElement, cert);
+      e.click(
+        e.byRole("button", "Save connection", { exact: true }) as HTMLElement,
+      );
     },
     DOMAIN,
     IDP,
@@ -1048,14 +1067,16 @@ try {
   );
   await evaluate(() =>
     window.__e2e.click(
-      window.__e2e.byRole("button", "Verify", { exact: true }),
+      window.__e2e.byRole("button", "Verify", { exact: true }) as HTMLElement,
     ),
   );
   await waitText("Verified");
   await goto(page, { wait: 3000 });
   await evaluate(() =>
     window.__e2e.click(
-      window.__e2e.byRole("button", "Replace certificate", { exact: true }),
+      window.__e2e.byRole("button", "Replace certificate", {
+        exact: true,
+      }) as HTMLElement,
     ),
   );
   await waitFor(() => Boolean(window.__e2e.byRole("dialog", "")));
@@ -1067,7 +1088,10 @@ try {
       cert,
     );
     window.__e2e.click(
-      window.__e2e.byRole("button", "Save", { exact: true, root: dialog }),
+      window.__e2e.byRole("button", "Save", {
+        exact: true,
+        root: dialog,
+      }) as HTMLElement,
     );
   }, certificate);
   await waitText("Certificate updated");
