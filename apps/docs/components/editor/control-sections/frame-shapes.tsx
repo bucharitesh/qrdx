@@ -45,6 +45,29 @@ const SHAPE_HELP: Record<FrameShapeId, string> = {
     "The code sits in the roomiest middle part of your shape, with a clear ring around it. Only the outline is kept, never the picture, and links, the community and snippets use a square code.",
 };
 
+/** File names short enough to quote in a message. */
+const SHORT_NAME = 28;
+
+/**
+ * Why an upload wasn't used, for the message under the upload. With a
+ * silhouette already in place it names the refused picture (when the name
+ * is short) and says the current shape stays, so the message can't read as
+ * if the current shape were the problem. `thin` is a fit refusal.
+ */
+export function uploadRefusal(
+  problem: string,
+  options: { fileName?: string; thin?: boolean; keepsCurrent: boolean },
+): string {
+  if (!options.keepsCurrent) return problem;
+  const name = options.fileName?.trim();
+  const picture =
+    name && name.length <= SHORT_NAME ? `“${name}”` : "That picture";
+  if (options.thin) {
+    return `${picture} is too thin to hold the code with its quiet zone, so your current shape is kept. Try a rounder, fuller shape.`;
+  }
+  return `${picture} wasn't used, so your current shape is kept. ${problem}`;
+}
+
 /** The shaped code a style draws, if any. */
 export function frameShapeOf(style: Partial<QRStyle>): FrameShapeId | null {
   if (style.silhouette) return "silhouette";
@@ -132,9 +155,12 @@ export function FrameShapes({
   React.useEffect(() => {
     if (silhouette) setLastSilhouette(silhouette);
   }, [silhouette]);
-  // Picking a frame elsewhere ends an upload in progress
+  // Picking a frame elsewhere ends an upload in progress and its message
   React.useEffect(() => {
-    if (style.frame && style.frame.style !== "none") setPicking(false);
+    if (style.frame && style.frame.style !== "none") {
+      setPicking(false);
+      setProblem(null);
+    }
   }, [style.frame]);
 
   const pick = (id: FrameShapeId) => {
@@ -157,9 +183,18 @@ export function FrameShapes({
     const file = event.target.files?.[0];
     event.target.value = "";
     if (!file) return;
+    // A refused upload keeps the shape in place; the message says so
+    const refuse = (message: string, thin = false) =>
+      setProblem(
+        uploadRefusal(message, {
+          fileName: file.name,
+          thin,
+          keepsCurrent: silhouette !== null,
+        }),
+      );
     const refused = silhouetteFileProblem(file);
     if (refused) {
-      setProblem(refused);
+      refuse(refused);
       return;
     }
     setBusy(true);
@@ -169,14 +204,14 @@ export function FrameShapes({
       const traced = await loadQRSilhouette(file);
       const fit = getQRSilhouetteFit(traced);
       if (!fit.ok) {
-        setProblem(fit.message);
+        refuse(fit.message, fit.reason === "thin");
         return;
       }
       setPicking(false);
       setStyle(withShape(style, { silhouette: traced }));
       soundEvent("apply");
     } catch (error) {
-      setProblem(
+      refuse(
         error instanceof Error ? error.message : "Couldn't read that picture.",
       );
     } finally {
