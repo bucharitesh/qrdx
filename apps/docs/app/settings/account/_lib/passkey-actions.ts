@@ -15,14 +15,19 @@ import {
   registrationFailure,
 } from "@/lib/account/passkeys";
 import { sendPasskeyNotice } from "@/lib/account/passkeys-server";
+import {
+  checkCurrentCode,
+  twoFactorEnabledFor,
+} from "@/lib/account/two-factor-manage";
 import { logError } from "@/lib/shared";
 
 // Settings → Profile & security → Passkeys. Better Auth's endpoints for
 // adding, renaming and removing passkeys are off over HTTP (packages/auth/
 // passkey.ts), so these actions are the only way in: adding needs a sign-in
 // within the last day (the plugin's own fresh-session rule, and the one email
-// changes use), every change is limited per user, and adding or removing one
-// emails the account's address.
+// changes use) and, with two-step verification on, a current authenticator or
+// backup code (the check and lockout used to turn it off). Every change is
+// limited per user, and adding or removing one emails the account's address.
 
 export type PasskeyActionResult<T = undefined> =
   | (T extends undefined ? { ok: true } : { ok: true; data: T })
@@ -73,8 +78,14 @@ const reauth = () =>
     reason: "reauth",
   }) as const;
 
-/** Signed in recently enough to add a passkey, and within the limit. */
-async function mayAdd(): Promise<
+/**
+ * Signed in recently enough to add a passkey, within the limit and, with
+ * two-step verification on, holding a current code (a backup code is used
+ * up).
+ */
+async function mayAdd(
+  twoFactorCode: string | undefined,
+): Promise<
   { ok: true; user: SignedIn } | { ok: false; error: string; reason?: "reauth" }
 > {
   const user = await signedIn();
@@ -82,6 +93,10 @@ async function mayAdd(): Promise<
   if (!canChangeEmailNow(user.sessionCreatedAt, new Date())) return reauth();
   if (!(await registerLimiter.limit(user.userId)).success) {
     return { ok: false, error: PASSKEY_MESSAGES.rateLimited };
+  }
+  if (await twoFactorEnabledFor(user.userId)) {
+    const check = await checkCurrentCode(user, twoFactorCode ?? "");
+    if (!check.ok) return { ok: false, error: check.error };
   }
   return { ok: true, user };
 }
@@ -100,15 +115,24 @@ function failed(error: unknown, action: string) {
   return { ok: false as const, error: PASSKEY_MESSAGES.failed };
 }
 
+const optionsSchema = z
+  .object({ twoFactorCode: z.string().max(64).optional().catch("") })
+  .optional();
+
 /**
  * Step 1 of adding a passkey: the options for the browser's passkey prompt.
- * The challenge goes into a signed, short-lived cookie for step 2.
+ * The challenge goes into a signed, short-lived cookie for step 2. With
+ * two-step verification on, the code is checked here, before the browser
+ * prompt: step 2 only works with this step's challenge (used once, for this
+ * user, minutes long), and this action is the only way to get one.
  */
-export async function passkeyRegistrationOptions(): Promise<
-  PasskeyActionResult<Record<string, unknown>>
-> {
+export async function passkeyRegistrationOptions(
+  input?: unknown,
+): Promise<PasskeyActionResult<Record<string, unknown>>> {
+  const parsed = optionsSchema.safeParse(input);
+  if (!parsed.success) return { ok: false, error: PASSKEY_MESSAGES.failed };
   try {
-    const allowed = await mayAdd();
+    const allowed = await mayAdd(parsed.data?.twoFactorCode);
     if (!allowed.ok) return allowed;
     const { headers: responseHeaders, response } =
       await auth.api.generatePasskeyRegistrationOptions({
