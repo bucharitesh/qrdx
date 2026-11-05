@@ -1,11 +1,24 @@
-blank_issues_enabled: true
+# Blank issues are off: the four forms cover bugs, features, docs and
+# self-hosting, and the links below cover everything that isn't an issue.
+# People with write access still get a blank issue option, and `gh issue
+# create` and the API aren't affected.
+blank_issues_enabled: false
 contact_links:
-  - name: Documentation
+  - name: Ask a question
+    url: https://github.com/bucharitesh/qrdx/discussions/new?category=q-a
+    about: How-to questions and help with your setup go to Q&A in Discussions.
+  - name: Share an idea
+    url: https://github.com/bucharitesh/qrdx/discussions/new?category=ideas
+    about: Ideas you'd like to talk through before they become a feature request.
+  - name: Read the docs
     url: https://qrdx.dev/docs
-    about: Guides for the React library, the CLI and self-hosting.
-  - name: Questions and ideas
-    url: https://github.com/bucharitesh/qrdx/discussions
-    about: Ask questions and share ideas in GitHub Discussions.
-  - name: Security vulnerability
+    about: The playground, dynamic codes and pages, the APIs, the MCP server, the React library, the CLI and self-hosting.
+  - name: Account, billing and refunds
+    url: https://qrdx.dev/docs/help/contact
+    about: Email support about your qrdx.dev account. Don't post account details in a public issue.
+  - name: Report a harmful QR code
+    url: https://qrdx.dev/report-abuse
+    about: Phishing, malware or other abuse through a QRdx code or page.
+  - name: Report a security vulnerability
     url: https://github.com/bucharitesh/qrdx/blob/main/SECURITY.md
-    about: Report security issues privately. Don't open a public issue.
+    about: Report it privately by email. Don't open a public issue.
