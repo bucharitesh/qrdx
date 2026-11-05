@@ -25,6 +25,11 @@
 -- If it's false: DROP INDEX CONCURRENTLY passkey_credential_id_unique; fix
 -- the duplicates, and run this again.
 --
+-- APPLIED to the shared Neon database on 2026-11-06: 0 passkeys and 0
+-- duplicate credential ids first, a dry run in a rolled-back transaction,
+-- then this file; the index is valid and unique, and passkey_credential_id_idx
+-- is untouched.
+--
 -- Matches packages/database/schema.ts (passkey, uniqueIndex
 -- passkey_credential_id_unique), so a later `drizzle-kit push` sees no drift.
 
