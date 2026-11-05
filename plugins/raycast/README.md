@@ -11,7 +11,7 @@ It depends on `qrdx` 0.0.46 from npm, so it offers that version's patterns.
 
 ## Install from source
 
-You need Raycast, Node.js 22 and pnpm 10. From the root of this repository:
+You need Raycast, Node.js 22 (22.22.3 or later) and pnpm 10. From the root of this repository:
 
 ```bash
 pnpm install
