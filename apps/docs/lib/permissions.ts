@@ -79,6 +79,8 @@ export type WorkspaceAction =
   /** Give or take away the owner and billing roles */
   | "owners.manage"
   | "domains.manage"
+  /** Set up and change the workspace's single sign-on */
+  | "sso.manage"
   | "webhooks.manage"
   /** The workspace's shared themes and its default theme */
   | "themes.manage"
@@ -98,6 +100,8 @@ const ALLOWED: Record<WorkspaceAction, readonly WorkspaceRole[]> = {
   "members.manage": ["owner", "admin"],
   "owners.manage": ["owner"],
   "domains.manage": ["owner", "admin"],
+  // The SSO plugin checks the same two roles (its ADMIN_ROLES).
+  "sso.manage": ["owner", "admin"],
   "webhooks.manage": ["owner", "admin"],
   "themes.manage": ["owner", "admin"],
   "apiKeys.create": ["owner", "admin", "member"],
@@ -174,6 +178,7 @@ const WHO: Record<WorkspaceAction, string> = {
   "members.manage": "owners and admins",
   "owners.manage": "owners",
   "domains.manage": "owners and admins",
+  "sso.manage": "owners and admins",
   "webhooks.manage": "owners and admins",
   "themes.manage": "owners and admins",
   "apiKeys.create": "owners, admins and members",
@@ -190,6 +195,7 @@ const WHAT: Record<WorkspaceAction, string> = {
   "members.manage": "manage this workspace's people",
   "owners.manage": "give or take away the owner and billing roles",
   "domains.manage": "manage this workspace's domains",
+  "sso.manage": "set up single sign-on for this workspace",
   "webhooks.manage": "manage this workspace's webhooks",
   "themes.manage": "manage this workspace's shared themes",
   "apiKeys.create": "create API keys in this workspace",

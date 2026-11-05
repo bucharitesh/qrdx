@@ -1,0 +1,29 @@
+---
+title: "Two-step verification, passkeys and single sign-on"
+description: "Ask for an authenticator code after every sign-in, sign in with a passkey, and let a Business workspace sign people in with its identity provider."
+date: "2026-11-05"
+tags: ["Security", "Teams"]
+version: "0.3.0"
+---
+
+## Two-step verification
+
+Turn it on in **Settings** → **Profile & security** and QRdx asks for a code from an authenticator app after every sign-in: email code, Google, GitHub or workspace single sign-on. [How it works](/docs/help/privacy-and-security/two-step-verification).
+
+- The setup QR code works with any authenticator app that shows 6-digit codes, including most password managers.
+- You get 10 backup codes for when you don't have your phone. Each works once, and you can make a new set.
+- **Don't ask again on this device** skips the code on your own browser for 30 days.
+- Turning it off, making new backup codes or deleting your account asks for a current code. We email you whenever it's turned on or off.
+- If you lose your phone and your backup codes, [support](mailto:support@qrdx.dev) can turn it off after checking it's you.
+
+## Passkeys
+
+Add a passkey in **Settings** → **Profile & security** and sign in with your fingerprint, face or screen lock, from **Sign in with a passkey** or straight from the email field's suggestions. A passkey only works on qrdx.dev, so a look-alike site can't collect it. A passkey sign-in counts as two steps, so it doesn't ask for an authenticator code. We email you when one is added or removed. [How it works](/docs/help/privacy-and-security/passkeys).
+
+## Single sign-on for Business workspaces
+
+Owners and admins of a Business workspace can connect their identity provider over OIDC or SAML 2.0 in the workspace's **Settings** → **Single sign-on**, and verify their email domain with a DNS record. People at that domain then sign in with **Sign in with SSO**, and each time they do, they're in the workspace: with the role they were invited with, or as a member or viewer, whichever you pick. Your identity provider decides who gets in, so to remove someone for good, unassign them there too. Email codes, Google and GitHub keep working for everyone. [Set it up](/docs/help/teams/single-sign-on).
+
+## Also
+
+- Sign-in codes, challenges and other short-lived values that were never used are now cleaned up every day.

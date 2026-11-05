@@ -28,6 +28,7 @@ const MATRIX: Record<
   "members.manage": [true, true, false, false, false],
   "owners.manage": [true, false, false, false, false],
   "domains.manage": [true, true, false, false, false],
+  "sso.manage": [true, true, false, false, false],
   "webhooks.manage": [true, true, false, false, false],
   "themes.manage": [true, true, false, false, false],
   "apiKeys.create": [true, true, true, false, false],
