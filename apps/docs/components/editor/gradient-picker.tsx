@@ -25,6 +25,10 @@ import {
   useRef,
   useState,
 } from "react";
+import {
+  clearOfBanner,
+  useConsentBannerInset,
+} from "@/components/consent/banner-inset";
 import { roleOf } from "@/lib/paint/contrast";
 import { addRecent, paintColors } from "@/lib/paint/swatches";
 import {
@@ -72,6 +76,7 @@ function PaintPopover({
   onOpenChange,
 }: PaintPopoverProps) {
   const sheet = useMediaQuery(SHEET_QUERY) ?? false;
+  const bannerInset = useConsentBannerInset();
   if (sheet) {
     return (
       <Drawer onOpenChange={onOpenChange} open={open}>
@@ -97,7 +102,8 @@ function PaintPopover({
         aria-label={label}
         // Above the side panels (z-[120]) and the code builder (z-[99])
         className="z-[130] max-h-[var(--radix-popover-content-available-height)] w-[18.5rem] overflow-y-auto p-3"
-        collisionPadding={12}
+        // Never across the cookie banner while it shows
+        collisionPadding={clearOfBanner(12, bannerInset)}
       >
         {children}
       </PopoverContent>
