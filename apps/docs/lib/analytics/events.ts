@@ -9,7 +9,13 @@
  */
 
 /** How someone signed in (Better Auth's last-used login method). */
-export type SignInMethod = "google" | "github" | "email-otp" | "unknown";
+export type SignInMethod =
+  | "google"
+  | "github"
+  | "email-otp"
+  | "passkey"
+  | "sso"
+  | "unknown";
 
 /** Where a QR was rendered or exported from. */
 export type QrSource =
