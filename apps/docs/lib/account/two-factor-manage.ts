@@ -2,13 +2,10 @@ import "server-only";
 
 import { forwardAuthCookies } from "@repo/auth/forward-cookies";
 import { auth } from "@repo/auth/server";
-import {
-  LOCKOUT_FAILURES,
-  LOCKOUT_MINUTES,
-} from "@repo/auth/sign-in-challenge-rules";
+import { LOCKOUT_FAILURES } from "@repo/auth/sign-in-challenge-rules";
 import { database as db, twoFactor } from "@repo/database";
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
-import { eq, sql } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { after } from "next/server";
@@ -22,7 +19,11 @@ import {
 import { logError } from "@/lib/shared";
 import { canChangeEmailNow } from "./email-change";
 import { sendTwoFactorNotice } from "./two-factor-notice-server";
-import { forgetTrustedDevices, twoFactorEnabledFor } from "./two-factor-server";
+import {
+  forgetTrustedDevices,
+  reserveCodeAttempt,
+  twoFactorEnabledFor,
+} from "./two-factor-server";
 
 export { twoFactorEnabledFor };
 
@@ -206,9 +207,11 @@ export async function confirmTwoFactorSetup(
 
 /**
  * Checks a current authenticator or backup code (a backup code is used up),
- * counting failures toward the same lockout as sign-in: 10 wrong in a row
- * lock the account's codes for 15 minutes. Turning it off, new backup codes
- * and deleting the account (actions/account.ts) all use this one check.
+ * counting attempts toward the same lockout as sign-in: 10 wrong in a row
+ * lock the account's codes for 15 minutes. Each attempt is counted before
+ * it's checked (reserveCodeAttempt), so parallel guesses can't slip past the
+ * lock. Turning it off, new backup codes and deleting the account
+ * (actions/account.ts) all use this one check.
  */
 export async function checkCurrentCode(
   user: Pick<Signed, "userId" | "requestHeaders">,
@@ -220,17 +223,15 @@ export async function checkCurrentCode(
     return { ok: false, error: MESSAGES.invalidCurrentCode };
   }
 
-  const [row] = await db
-    .select({ id: twoFactor.id, lockedUntil: twoFactor.lockedUntil })
-    .from(twoFactor)
-    .where(eq(twoFactor.userId, user.userId))
-    .limit(1);
-  if (!row) return { ok: false, error: MESSAGES.notOn };
-  if (row.lockedUntil && row.lockedUntil.getTime() > Date.now()) {
-    return { ok: false, error: MESSAGES.locked };
-  }
   if (!(await codeLimiter.limit(user.userId)).success) {
     return { ok: false, error: MESSAGES.rateLimitedLong };
+  }
+  const attempt = await reserveCodeAttempt(user.userId);
+  if (!attempt.ok) {
+    return {
+      ok: false,
+      error: attempt.reason === "off" ? MESSAGES.notOn : MESSAGES.locked,
+    };
   }
 
   try {
@@ -248,20 +249,8 @@ export async function checkCurrentCode(
   } catch (error) {
     const code = authErrorCode(error);
     if (code !== "INVALID_CODE" && code !== "INVALID_BACKUP_CODE") throw error;
-    const [counted] = await db
-      .update(twoFactor)
-      .set({
-        failedVerificationCount: sql`coalesce(${twoFactor.failedVerificationCount}, 0) + 1`,
-      })
-      .where(eq(twoFactor.id, row.id))
-      .returning({ failures: twoFactor.failedVerificationCount });
-    if ((counted?.failures ?? 0) >= LOCKOUT_FAILURES) {
-      await db
-        .update(twoFactor)
-        .set({
-          lockedUntil: new Date(Date.now() + LOCKOUT_MINUTES * 60_000),
-        })
-        .where(eq(twoFactor.id, row.id));
+    // Already counted; the attempt that reached the limit set the lock.
+    if (attempt.attempts >= LOCKOUT_FAILURES) {
       return { ok: false, error: MESSAGES.locked };
     }
     return {
@@ -272,7 +261,7 @@ export async function checkCurrentCode(
   await db
     .update(twoFactor)
     .set({ failedVerificationCount: 0, lockedUntil: null })
-    .where(eq(twoFactor.id, row.id));
+    .where(eq(twoFactor.id, attempt.id));
   return { ok: true };
 }
 
