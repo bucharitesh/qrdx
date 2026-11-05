@@ -15,11 +15,19 @@ import {
 } from "@repo/design-system/components/ui/alert-dialog";
 import { Button } from "@repo/design-system/components/ui/button";
 import { cn } from "@repo/design-system/lib/utils";
-import { Archive, Brush2, FolderAdd, Heart } from "iconsax-reactjs";
+import {
+  Archive,
+  Brush2,
+  DocumentCopy,
+  FolderAdd,
+  Heart,
+} from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import {
   copyCommunityItem,
+  copyCommunityKit,
+  copyCommunityTemplate,
   toggleCommunityLike,
   toggleCommunitySave,
   unpublishCommunityItem,
@@ -68,9 +76,41 @@ export function ItemActions({
   const [liked, setLiked] = useState(item.isLikedByMe);
   const [likes, setLikes] = useState(item.likeCount);
   const [saved, setSaved] = useState(item.isSavedByMe);
-  const [busy, setBusy] = useState<"like" | "save" | "copy" | null>(null);
+  const [busy, setBusy] = useState<
+    "like" | "save" | "copy" | "template" | null
+  >(null);
   const stored = item.id !== null;
-  const copyable = item.type !== "collection";
+  const copyable = item.type === "frame" || item.type === "theme";
+  const template =
+    (item.type === "page-template" || item.type === "kit") && !item.unavailable;
+
+  // A page template becomes a draft page in the open workspace.
+  const copyTemplate = async () => {
+    if (!checkValidSession("signin")) return;
+    setBusy("template");
+    const result =
+      item.type === "kit"
+        ? await copyCommunityKit({ slug: item.slug })
+        : await copyCommunityTemplate({ slug: item.slug });
+    setBusy(null);
+    if (!result.ok) {
+      toast.error(result.message);
+      return;
+    }
+    soundEvent("success");
+    const look = "themeName" in result.data ? result.data.themeName : null;
+    const refused =
+      "themeRefused" in result.data ? result.data.themeRefused : null;
+    toast.success(
+      look
+        ? `"${result.data.name}" is in your pages as a draft, and its look in your themes.`
+        : `"${result.data.name}" is in your pages as a draft.`,
+      typeof refused === "string" ? { description: refused } : undefined,
+    );
+    router.push(
+      inWorkspace(`/pages/${encodeURIComponent(result.data.pageId)}`),
+    );
+  };
 
   const like = async () => {
     if (!(item.id && checkValidSession("signin"))) return;
@@ -171,6 +211,21 @@ export function ItemActions({
         <Button className="w-full" onClick={() => apply(item)} size="lg">
           <Brush2 aria-hidden className="size-4" />
           Use in editor
+        </Button>
+      )}
+      {template && (
+        <Button
+          className="w-full"
+          disabled={busy !== null}
+          onClick={copyTemplate}
+          size="lg"
+        >
+          {busy === "template" ? (
+            <Spinner className="size-4" />
+          ) : (
+            <DocumentCopy aria-hidden className="size-4" />
+          )}
+          {item.type === "kit" ? "Use kit" : "Use template"}
         </Button>
       )}
       <div className="flex flex-wrap gap-2">

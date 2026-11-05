@@ -1,5 +1,5 @@
 // Dev-only: replay recorded AI responses without signing in or spending.
-// /playground?tab=ai&ai-mock=agent | ask | template | limit | chat | error
+// /playground?tab=ai&ai-mock=agent | ask | template | limit | publish | chat | error
 // ("theme" is the old name of "agent"). image | logo: an attached picture
 // as Image QR or as the logo, asking for content first when there is none.
 const MODES = [
@@ -7,6 +7,7 @@ const MODES = [
   "ask",
   "template",
   "limit",
+  "publish",
   "chat",
   "error",
   "image",

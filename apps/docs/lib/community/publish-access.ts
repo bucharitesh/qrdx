@@ -2,10 +2,18 @@ import "server-only";
 
 import { isOwnWorkspaceOf } from "@repo/auth/own-workspace-id";
 import {
+  communityItem,
+  database as db,
+  landingPage,
+  member,
+  qrPreset,
+} from "@repo/database";
+import { and, eq } from "drizzle-orm";
+import {
   canEditTheme,
   isPersonalTheme,
 } from "@/app/dashboard/themes/_lib/queries";
-import { can } from "@/lib/permissions";
+import { can, strongestRole } from "@/lib/permissions";
 import {
   type ActiveScope,
   getActiveScope,
@@ -61,3 +69,47 @@ export function canPublishFromWorkspace(
 /** The refusal shown to members and viewers of a shared workspace. */
 export const WORKSPACE_PUBLISH_REFUSAL =
   "Only owners and admins of this workspace can publish what's in it.";
+
+/**
+ * Whether `userId` may unpublish an item someone else published from a
+ * shared workspace: as an owner or admin of the workspace the page or theme
+ * is in (items stay on the publisher's profile; brand profiles come later).
+ */
+export async function workspaceCanUnpublish(
+  userId: string,
+  itemId: string,
+): Promise<boolean> {
+  const [item] = await db
+    .select({
+      sourceKind: communityItem.sourceKind,
+      sourceId: communityItem.sourceId,
+    })
+    .from(communityItem)
+    .where(eq(communityItem.id, itemId))
+    .limit(1);
+  if (!item?.sourceId) return false;
+  const table =
+    item.sourceKind === "landing_page"
+      ? landingPage
+      : item.sourceKind === "qr_preset"
+        ? qrPreset
+        : null;
+  if (!table) return false;
+  const [source] = await db
+    .select({ organizationId: table.organizationId })
+    .from(table)
+    .where(eq(table.id, item.sourceId))
+    .limit(1);
+  const organizationId = source?.organizationId;
+  if (!organizationId || isOwnWorkspaceOf(organizationId, userId)) {
+    return false;
+  }
+  const [row] = await db
+    .select({ role: member.role })
+    .from(member)
+    .where(
+      and(eq(member.userId, userId), eq(member.organizationId, organizationId)),
+    )
+    .limit(1);
+  return row ? can(strongestRole(row.role), "content.manageAll") : false;
+}

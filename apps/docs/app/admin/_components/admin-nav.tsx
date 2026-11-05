@@ -3,6 +3,7 @@
 import { Bot } from "@repo/design-system/components/icons";
 import { cn } from "@repo/design-system/lib/utils";
 import {
+  People as Community,
   Card as CreditCard,
   Health as HeartPulse,
   Element3 as LayoutDashboard,
@@ -20,6 +21,7 @@ const NAV_ITEMS = [
   { href: "/admin", label: "Overview", icon: LayoutDashboard },
   { href: "/admin/users", label: "Users", icon: Users },
   { href: "/admin/themes", label: "Themes", icon: Palette },
+  { href: "/admin/community", label: "Community", icon: Community },
   { href: "/admin/codes", label: "QR Codes", icon: QrCode },
   { href: "/admin/abuse", label: "Abuse", icon: ShieldAlert },
   { href: "/admin/ai-usage", label: "AI Usage", icon: Bot },
