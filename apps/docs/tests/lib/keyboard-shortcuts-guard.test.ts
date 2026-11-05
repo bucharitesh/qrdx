@@ -36,13 +36,14 @@ describe("which shortcuts run", () => {
 describe("what counts as open", () => {
   const parts = OPEN_SURFACE_SELECTOR.split(", ");
 
-  it("dialogs, sheets, drawers, popovers, menus and listboxes", () => {
+  it("dialogs, sheets, drawers, popovers, menus, listboxes and the inline editor", () => {
     expect(parts).toEqual([
       "#modal-backdrop",
       '[role="dialog"][data-state="open"]',
       '[role="alertdialog"][data-state="open"]',
       '[role="menu"][data-state="open"]',
       '[role="listbox"][data-state="open"]',
+      '[data-inline-editor][data-state="open"]',
     ]);
   });
 

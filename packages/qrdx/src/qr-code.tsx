@@ -41,6 +41,7 @@ export const QRCode = memo(
     moduleScale,
     autoLevel,
     shape,
+    frameLabelMarkers,
   }: QRCodeProps) => {
     // getQRData lays the logo out on a 1024px canvas; scale it to the rendered size.
     const renderSize = size * scale;
@@ -120,6 +121,7 @@ export const QRCode = memo(
         {...(moduleScale !== undefined && { moduleScale })}
         {...(autoLevel && { autoLevel })}
         {...(shape && shape !== "square" && { shape })}
+        {...(frameLabelMarkers && { frameLabelMarkers })}
         size={renderSize}
         style={style}
         templateId={qrData.templateId}
