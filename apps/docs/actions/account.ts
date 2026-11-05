@@ -17,6 +17,8 @@ import {
   loadDeletionFacts,
 } from "@/lib/account/deletion-server";
 import { signInCodesAvailable } from "@/lib/account/reauth";
+import { checkCurrentCode } from "@/lib/account/two-factor-manage";
+import { secondFactorCodeKind } from "@/lib/auth/two-factor";
 import { logError } from "@/lib/shared";
 
 export type DeleteAccountResult =
@@ -41,7 +43,12 @@ const inputSchema = z.object({
     .trim()
     .regex(/^\d{6}$/)
     .optional(),
+  /** With two-step verification on: an authenticator or backup code */
+  twoFactorCode: z.string().max(64).optional(),
 });
+
+const ENTER_SECOND_FACTOR =
+  "Enter a code from your authenticator app, or a backup code.";
 
 const fail = (error: string, codeExpired?: boolean): DeleteAccountResult =>
   codeExpired ? { ok: false, error, codeExpired } : { ok: false, error };
@@ -71,6 +78,10 @@ function codeError(error: unknown): DeleteAccountResult {
  * "delete", a fresh sign-in code emailed to the account's address (or, where
  * this deployment can't send codes, a sign-in within the last 10 minutes),
  * and the deletion plan the page showed, rebuilt here from current data.
+ * With two-step verification on, also a current authenticator or backup
+ * code, through the same check and lockout as turning it off
+ * (lib/account/two-factor-manage.ts). An authenticator code is checked
+ * before the emailed code; a backup code, which is used up, only after it.
  */
 export async function deleteAccount(
   input: unknown,
@@ -96,6 +107,21 @@ export async function deleteAccount(
     const plan = planAccountDeletion(await loadDeletionFacts(userId));
     if (plan.blockers.length > 0) return fail(plan.blockers[0]);
 
+    const secondFactor = session.user.twoFactorEnabled
+      ? {
+          code: parsed.data.twoFactorCode ?? "",
+          kind: secondFactorCodeKind(parsed.data.twoFactorCode),
+        }
+      : null;
+    if (secondFactor && !secondFactor.kind) return fail(ENTER_SECOND_FACTOR);
+    if (secondFactor?.kind === "totp") {
+      const check = await checkCurrentCode(
+        { userId, requestHeaders },
+        secondFactor.code,
+      );
+      if (!check.ok) return fail(check.error);
+    }
+
     if (signInCodesAvailable()) {
       if (!parsed.data.code)
         return fail("Enter the 6-digit code from the email.");
@@ -119,6 +145,15 @@ export async function deleteAccount(
       return fail(
         "For your security, sign out and sign in again, then delete your account within 10 minutes.",
       );
+    }
+
+    if (secondFactor?.kind === "backup") {
+      const check = await checkCurrentCode(
+        { userId, requestHeaders },
+        secondFactor.code,
+      );
+      // The emailed code is already used up: ask for a new one too.
+      if (!check.ok) return fail(check.error, verificationToken !== null);
     }
 
     await executeAccountDeletion({ userId, plan, requestHeaders });

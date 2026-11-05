@@ -168,7 +168,9 @@ async function clickButton(page: Page, name: string) {
 /** A button inside the open dialog (the page behind can have the same name). */
 async function clickInDialog(page: Page, name: string) {
   const ok = await page.evaluate((n: string) => {
-    const dialog = document.querySelector('[role="dialog"]');
+    const dialog = document.querySelector(
+      '[role="dialog"], [role="alertdialog"]',
+    );
     const button = [...(dialog?.querySelectorAll("button") ?? [])].find(
       (b) => b.textContent?.trim() === n,
     );
@@ -463,11 +465,15 @@ async function main() {
       (await session(page)) === null,
     );
     await shot(page, "10-backup-code-used");
-    await fill(page, "Backup code", backupCodes[1].replace("-", ""));
+    await fill(
+      page,
+      "Backup code",
+      backupCodes[1].replace("-", "").toLowerCase(),
+    );
     await clickButton(page, "Verify");
     await landedOn(page, "/dashboard");
     check(
-      "another backup code (typed without the dash) works",
+      "another backup code, typed in lower case without the dash, works",
       (await session(page))?.user?.id === userId,
     );
 
@@ -732,6 +738,121 @@ async function main() {
     check(
       "after the admin reset, sign-in isn't challenged",
       (await session(page))?.user?.id === userId,
+    );
+
+    // ── deleting the account needs a current code too ──
+    // Turn it on again (signed in just above, so recently enough).
+    await page.goto(`${BASE_URL}/settings/account#two-factor`);
+    await waitForText(page, "Two-step verification");
+    await clickButton(page, "Turn on");
+    await waitForText(page, "Set up your authenticator app");
+    secret = (
+      (await page.evaluate(
+        () => document.querySelector('[role="dialog"] code')?.textContent ?? "",
+      )) as string
+    ).replace(/\s+/g, "");
+    await fill(page, "Code from your authenticator app", totp(secret));
+    await waitForText(page, "Save these backup codes");
+    const deletionCodes = (await page.evaluate(() =>
+      [...document.querySelectorAll('[aria-label="Backup codes"] li')].map(
+        (li) => li.textContent?.trim() ?? "",
+      ),
+    )) as string[];
+    check(
+      "backup codes are easy to read (no 0, O, 1 or I)",
+      deletionCodes.length === 10 &&
+        deletionCodes.every((c) =>
+          /^[A-HJ-NP-Z2-9]{5}-[A-HJ-NP-Z2-9]{5}$/.test(c),
+        ),
+      deletionCodes[0],
+    );
+    await page.evaluate(() => {
+      const box = window.__e2e.byLabel("I've saved my backup codes");
+      if (box) window.__e2e.click(box);
+    });
+    await clickInDialog(page, "Done");
+    await waitForText(page, "10 of 10 backup codes left");
+
+    await clickButton(page, "Delete account…");
+    await waitForText(page, "Delete your account?");
+    await fill(page, "Type delete to confirm", "delete");
+    const deleteSince = logSize();
+    await clickInDialog(page, "Email me a code");
+    const [, deleteCode] = await waitForLogLine(
+      new RegExp(`sign-in code for ${escapeRegExp(USER_EMAIL)}: (\\d{6})`),
+      deleteSince,
+    );
+    const fillEmailCode = (value: string) =>
+      page.evaluate((v: string) => {
+        const input = document.querySelector(
+          '[role="alertdialog"] input[aria-labelledby], [role="dialog"] input[aria-labelledby]',
+        );
+        if (!input) return false;
+        (input as HTMLInputElement).focus();
+        window.__e2e.setValue(input, v);
+        return true;
+      }, value);
+    await fillEmailCode(deleteCode);
+    const deleteDisabled = () =>
+      page.evaluate(() => {
+        const dialog = document.querySelector(
+          '[role="alertdialog"], [role="dialog"]',
+        );
+        const button = [...(dialog?.querySelectorAll("button") ?? [])].find(
+          (b) => b.textContent?.trim() === "Delete account",
+        ) as HTMLButtonElement | undefined;
+        return button?.disabled ?? null;
+      });
+    check(
+      "deleting waits for a second-factor code when 2FA is on",
+      (await deleteDisabled()) === true,
+    );
+    await fill(
+      page,
+      "Code from your authenticator app, or a backup code",
+      wrongCode(secret),
+    );
+    await shot(page, "17-delete-account-two-factor");
+    await page.evaluate(() => {
+      const dialog = document.querySelector('[role="alertdialog"]');
+      const button = [...(dialog?.querySelectorAll("button") ?? [])].find(
+        (b) => b.textContent?.trim() === "Delete account",
+      );
+      if (button) window.__e2e.click(button);
+    });
+    await waitForText(page, "That code isn't right");
+    check(
+      "a wrong authenticator code stops the deletion",
+      (await session(page))?.user?.id === userId,
+    );
+    await shot(page, "18-delete-account-wrong-code");
+    // The emailed code wasn't used: the right authenticator code finishes it.
+    await fill(
+      page,
+      "Code from your authenticator app, or a backup code",
+      totp(secret),
+    );
+    await fillEmailCode(deleteCode);
+    await page.evaluate(() => {
+      const dialog = document.querySelector('[role="alertdialog"]');
+      const button = [...(dialog?.querySelectorAll("button") ?? [])].find(
+        (b) => b.textContent?.trim() === "Delete account",
+      );
+      if (button) window.__e2e.click(button);
+    });
+    await landedOn(page, "/");
+    await page.waitFor(() => location.pathname === "/");
+    check(
+      "deleted with the emailed and authenticator codes",
+      (await session(page)) === null,
+    );
+    // Signing in with the address now makes a new account, without 2FA.
+    await emailCodeStep(page, USER_EMAIL);
+    await landedOn(page, "/dashboard");
+    const after = await session(page);
+    check(
+      "the old account is gone (a new one, without 2FA)",
+      Boolean(after?.user?.id) && after?.user?.id !== userId,
     );
 
     check(

@@ -200,15 +200,16 @@ export async function confirmTwoFactorSetup(
   }
 }
 
-// ─── A current code, for turning off and new backup codes ────────────────────
+// ─── A current code, for turning off, new backup codes and deleting ──────────
 
 /**
  * Checks a current authenticator or backup code (a backup code is used up),
  * counting failures toward the same lockout as sign-in: 10 wrong in a row
- * lock the account's codes for 15 minutes.
+ * lock the account's codes for 15 minutes. Turning it off, new backup codes
+ * and deleting the account (actions/account.ts) all use this one check.
  */
-async function checkCurrentCode(
-  user: Signed,
+export async function checkCurrentCode(
+  user: Pick<Signed, "userId" | "requestHeaders">,
   rawCode: string,
 ): Promise<{ ok: true } | { ok: false; error: string }> {
   const totpCode = isTotpCode(rawCode.trim()) ? rawCode.trim() : null;
