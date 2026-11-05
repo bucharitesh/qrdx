@@ -305,7 +305,10 @@ export function ChangeEmailDialog({
             </div>
             {twoFactorOn && (
               <div className="space-y-2">
-                <label className="text-sm font-medium" htmlFor={`${id}-2fa`}>
+                <label
+                  className="block text-sm font-medium"
+                  htmlFor={`${id}-2fa`}
+                >
                   Code from your authenticator app, or a backup code
                 </label>
                 <Input
@@ -313,7 +316,7 @@ export function ChangeEmailDialog({
                   autoCapitalize="none"
                   autoComplete="one-time-code"
                   autoCorrect="off"
-                  className="font-mono"
+                  className="font-mono max-sm:h-10"
                   disabled={codeDead || confirming}
                   id={`${id}-2fa`}
                   onChange={(event) => {
