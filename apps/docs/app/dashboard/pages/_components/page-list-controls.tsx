@@ -300,7 +300,6 @@ export function PageActions({
           onOpenChange={setPublishing}
           open={publishing}
           pageId={page.id}
-          pageTitle={page.title}
         />
       )}
     </>

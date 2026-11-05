@@ -261,3 +261,30 @@ describe("publishCommunityDesign", () => {
     });
   });
 });
+
+// Review fix D: a theme's frame text is published too, so it gets the same
+// refusal as a frame's labels.
+describe("frame text on a published theme", () => {
+  it("refuses links, emails and phone numbers in the frame text", async () => {
+    const style = {
+      fgColor: "#000000",
+      bgColor: "#FFFFFF",
+      level: "M",
+    };
+    for (const text of [
+      "Call 415 555 0132",
+      "ana@harbour.cafe",
+      "harbour.de",
+    ]) {
+      expect(
+        await publishCommunityDesign({
+          style: { ...style, frame: { style: "banner-bottom", text } },
+          name: "Framed",
+          acceptLicense: true,
+        }),
+        text,
+      ).toMatchObject({ ok: false, code: "VALIDATION_ERROR" });
+    }
+    expect(fakeDb.rows("communityItem")).toHaveLength(0);
+  });
+});

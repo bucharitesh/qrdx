@@ -14,6 +14,8 @@ const state = vi.hoisted(() => ({
     role: "owner" | "admin" | "member" | "viewer";
   },
   plan: "free" as string,
+  /** Daily publish limit checks (each one counts a publish) */
+  limitCalls: 0,
 }));
 
 vi.mock(
@@ -42,7 +44,12 @@ vi.mock("@/lib/shared", async () => {
 });
 vi.mock("@/lib/log-error", () => ({ logError: vi.fn() }));
 vi.mock("@repo/rate-limit", () => ({
-  createRateLimiter: () => ({ limit: async () => ({ success: true }) }),
+  createRateLimiter: () => ({
+    limit: async () => {
+      state.limitCalls++;
+      return { success: true };
+    },
+  }),
   slidingWindow: () => null,
 }));
 vi.mock("@/lib/scope", async (importOriginal) => {
@@ -79,7 +86,11 @@ import {
   scrubSummary,
 } from "@/lib/community/page-template";
 import { getItem, itemsForReview } from "@/lib/community/queries";
-import { createBlock, parseLandingPageContent } from "@/lib/landing/blocks";
+import {
+  createBlock,
+  getBlock,
+  parseLandingPageContent,
+} from "@/lib/landing/blocks";
 import { buildTemplateContent, listTemplates } from "@/lib/landing/templates";
 import { templateMediaUrl } from "@/lib/landing/templates/media";
 import {
@@ -257,13 +268,23 @@ describe("scrubPageContent", () => {
     expect(json).toContain(SAMPLE_PHONE);
     expect(json).toContain("123 Main Street");
     expect(json).toContain("Guest Wi-Fi");
-    // Text the person wrote stays as written (they review it before
-    // publishing), apart from the contact details inside it.
-    expect(json).toContain("Ana Ruiz Studio");
+    // Text the person wrote is replaced too unless they keep it (fail-closed).
+    expect(json).not.toContain("Ana Ruiz Studio");
+    expect(json).not.toContain("Opening");
+    expect(json).toContain("Your name");
     // What isn't personal stays: the coupon's barcode and dates. Photos
     // don't, QRdx's library included.
-    expect(json).toContain("4006381333931");
-    expect(json).toContain("2026-11-05");
+    expect(json).not.toContain("4006381333931");
+    expect(json).not.toContain("ANA10");
+    const coupon = content.blocks.find((b) => b.type === "coupon")?.props;
+    expect(coupon).toMatchObject({
+      code: "SAVE10",
+      barcode: "code128",
+      barcodeValue: "",
+    });
+    // The text around the date was free text: replaced as a whole.
+    expect(json).not.toContain("Book at");
+    expect(json).toContain("A few words about this.");
     expect(json).not.toContain(LIBRARY_PHOTO);
     expect(json).not.toContain("/images/templates/");
     // No settings or hidden blocks, no theme upload.
@@ -273,8 +294,8 @@ describe("scrubPageContent", () => {
     // The gallery is left empty to fill in; the PDF loses its file.
     const gallery = content.blocks.find((b) => b.type === "gallery");
     expect(gallery?.props.images).toEqual([]);
-    const pdf = content.blocks.find((b) => b.type === "pdf");
-    expect(pdf?.props.source).toBeNull();
+    // The PDF without its file is left out.
+    expect(content.blocks.map((b) => b.type)).not.toContain("pdf");
 
     // It still saves like a page.
     expect(parseLandingPageContent(content, { mode: "write" }).success).toBe(
@@ -284,14 +305,16 @@ describe("scrubPageContent", () => {
       settings: true,
       hidden: 1,
       wifi: 2,
-      names: 3,
+      codes: 2,
       addresses: 1,
       files: 1,
     });
     expect(report.images).toBeGreaterThanOrEqual(4);
-    expect(report.emails).toBeGreaterThanOrEqual(3);
-    expect(report.phones).toBeGreaterThanOrEqual(3);
-    expect(report.links).toBeGreaterThanOrEqual(3);
+    // Emails and phones inside free text go with the whole text.
+    expect(report.emails).toBeGreaterThanOrEqual(2);
+    expect(report.phones).toBeGreaterThanOrEqual(1);
+    expect(report.texts).toBeGreaterThanOrEqual(5);
+    expect(report.links).toBeGreaterThanOrEqual(2);
     const summary = scrubSummary(report);
     expect(summary.join("\n")).toMatch(/replaced with example\.com/);
     expect(summary.join("\n")).toMatch(/Wi-Fi network name and password/);
@@ -324,8 +347,13 @@ describe("scrubPageContent", () => {
         ).not.toMatch(
           /\.(?:webp|png|jpe?g|gif|svg|avif)\b|\/images\/templates\//i,
         );
-        // Built-in templates hold only blocks that work without uploads.
-        expect(report.blocks, `${template.type}/${variant.id}`).toEqual([]);
+        // Only blocks that needed their file are left out.
+        const fileBlocks = ["pdf", "video-file", "audio", "file-download"].map(
+          (type) => getBlock(type)?.label,
+        );
+        for (const label of report.blocks) {
+          expect(fileBlocks, `${template.type}/${variant.id}`).toContain(label);
+        }
       }
     }
     expect(variants).toBeGreaterThan(20);
@@ -426,9 +454,10 @@ describe("scrubPageContent", () => {
         ?.thumbnail,
     ).toBeUndefined();
     expect(props("gallery")?.images).toEqual([]);
-    expect(props("video-file")?.poster).toBeNull();
-    expect(props("video-file")?.source).toBeNull();
-    expect(props("audio")?.cover).toBeNull();
+    // A video without its file is left out, poster and all.
+    expect(props("video-file")).toBeUndefined();
+    // Audio without its tracks is left out too.
+    expect(props("audio")).toBeUndefined();
     expect(content.blocks.map((b) => b.type)).not.toContain("page-settings");
     expect(report.images).toBeGreaterThanOrEqual(8);
     expect(scrubSummary(report).join("\n")).toMatch(
@@ -470,6 +499,7 @@ beforeEach(() => {
   state.userId = "u_ana";
   state.scope = { userId: "u_ana", organizationId: OWN, role: "owner" };
   state.plan = "free";
+  state.limitCalls = 0;
   fakeDb.unique("communityProfile", "handle");
   fakeDb.unique("communityItem", "type", "slug");
   fakeDb.unique("communityUse", "itemId", "userId", "kind", "day");
@@ -499,6 +529,7 @@ beforeEach(() => {
 });
 
 const details = {
+  version: 1,
   name: "Studio card",
   description: "A contact page for a small studio.",
   tags: ["contact", "minimal", "not-a-tag"],
@@ -715,5 +746,109 @@ describe("the admin review queue", () => {
     expect(
       await itemsForReview({ type: "frame", limit: 25, offset: 0 }),
     ).toEqual({ rows: [], total: 0 });
+  });
+});
+
+// Review fixes B, E and H: a neutral default name, what's published is
+// what was reviewed, kept text is checked, and a refused publish never uses
+// up the daily limit.
+describe("publishing what was reviewed", () => {
+  it("names the template after its page type, never the page's own title", async () => {
+    const preview = await previewCommunityPage("pg_mine");
+    expect(preview).toMatchObject({
+      ok: true,
+      data: { defaultName: "vCard Plus", version: 1 },
+    });
+    if (!preview.ok) return;
+    expect(JSON.stringify(preview.data)).not.toContain("Ana's card");
+    expect(
+      await publishCommunityPage({
+        pageId: "pg_mine",
+        ...details,
+        name: "Ana Ruiz, call 5550132",
+      }),
+    ).toMatchObject({ ok: false, code: "VALIDATION_ERROR" });
+  });
+
+  it("refuses a page that changed since it was reviewed", async () => {
+    const row = fakeDb.find("landingPage", { id: "pg_mine" });
+    if (row) row.version = 2;
+    expect(
+      await publishCommunityPage({ pageId: "pg_mine", ...details, version: 1 }),
+    ).toEqual({
+      ok: false,
+      code: "CONFLICT",
+      message:
+        "This page changed since you reviewed it. Review it again before publishing.",
+    });
+    expect(fakeDb.rows("communityItem")).toHaveLength(0);
+    expect(
+      (
+        await publishCommunityPage({
+          pageId: "pg_mine",
+          ...details,
+          version: 2,
+        })
+      ).ok,
+    ).toBe(true);
+  });
+
+  it("publishes kept text, and refuses kept text with contact details", async () => {
+    const preview = await previewCommunityPage("pg_mine");
+    if (!preview.ok) throw new Error(preview.message);
+    const title = preview.data.fields.find(
+      (field) => field.original === "Ana Ruiz Studio",
+    );
+    const subtitle = preview.data.fields.find((field) =>
+      field.original.includes("ana.ruiz@gmail.com"),
+    );
+    expect(title && subtitle).toBeTruthy();
+    expect(
+      await publishCommunityPage({
+        pageId: "pg_mine",
+        ...details,
+        keep: [String(subtitle?.id)],
+      }),
+    ).toMatchObject({ ok: false, code: "VALIDATION_ERROR" });
+    expect(fakeDb.rows("communityItem")).toHaveLength(0);
+
+    expect(
+      (
+        await publishCommunityPage({
+          pageId: "pg_mine",
+          ...details,
+          keep: [String(title?.id)],
+        })
+      ).ok,
+    ).toBe(true);
+    const stored = JSON.stringify(fakeDb.rows("communityItem")[0]?.payload);
+    expect(stored).toContain("Ana Ruiz Studio");
+    expect(stored).not.toContain("ana.ruiz@gmail.com");
+  });
+
+  it("counts the daily limit only once every check has passed", async () => {
+    await publishCommunityPage({
+      pageId: "pg_mine",
+      ...details,
+      acceptLicense: false,
+    });
+    await publishCommunityPage({ pageId: "pg_mine", ...details, version: 9 });
+    await publishCommunityPage({
+      pageId: "pg_mine",
+      ...details,
+      description: "ana@ruiz.studio",
+    });
+    expect(state.limitCalls).toBe(0);
+    expect(
+      (await publishCommunityPage({ pageId: "pg_mine", ...details })).ok,
+    ).toBe(true);
+    expect(state.limitCalls).toBe(1);
+    // A duplicate is refused before the limit too.
+    await publishCommunityPage({
+      pageId: "pg_mine",
+      ...details,
+      name: "Again",
+    });
+    expect(state.limitCalls).toBe(1);
   });
 });
