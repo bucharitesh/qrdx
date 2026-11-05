@@ -207,7 +207,10 @@ function DeleteAccountDialog({
       }}
       open={open}
     >
-      <AlertDialogContent className="sm:max-w-md">
+      <AlertDialogContent
+        // On phones the fields and buttons here are 40 px tap targets.
+        className="max-sm:[&_[data-slot=alert-dialog-footer]_button]:h-10 max-sm:[&_[data-slot=input]]:h-10 sm:max-w-md"
+      >
         <AlertDialogHeader>
           <AlertDialogTitle>Delete your account?</AlertDialogTitle>
           <AlertDialogDescription>
@@ -276,7 +279,7 @@ function DeleteAccountDialog({
                   <p className="text-muted-foreground flex flex-wrap items-center gap-x-1 text-xs">
                     Sent to {email}. It expires in 5 minutes.
                     <button
-                      className="hover:text-foreground rounded-sm underline underline-offset-4 disabled:pointer-events-none disabled:no-underline disabled:opacity-60"
+                      className="hover:text-foreground -my-3 inline-flex min-h-10 items-center rounded-sm underline underline-offset-4 disabled:pointer-events-none disabled:no-underline disabled:opacity-60"
                       disabled={sending || deleting || secondsLeft > 0}
                       onClick={sendCode}
                       type="button"
@@ -318,9 +321,9 @@ function DeleteAccountDialog({
               </label>
               <Input
                 autoCapitalize="characters"
+                className="font-mono max-sm:h-10"
                 autoComplete="one-time-code"
                 autoCorrect="off"
-                className="font-mono"
                 disabled={deleting}
                 id={`${id}-second-factor`}
                 onChange={(event) => {

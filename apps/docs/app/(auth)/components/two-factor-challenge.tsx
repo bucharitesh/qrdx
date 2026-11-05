@@ -26,8 +26,9 @@ import { cancelTwoFactorChallenge } from "../sign-in/_lib/two-factor-actions";
 const CODE_LENGTH = 6;
 const DIGITS_ONLY = "^\\d+$";
 
+// min-h-10 with -my-3 gives a 40 px tap target without changing the layout.
 const TEXT_ACTION =
-  "rounded-sm text-xs text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50";
+  "-my-3 inline-flex min-h-10 items-center rounded-sm text-xs text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50";
 
 const HINTS: Record<ChallengeMode, string> = {
   totp: "Enter the 6-digit code from your authenticator app.",
@@ -210,7 +211,7 @@ export function TwoFactorChallenge({
             autoComplete="one-time-code"
             autoCorrect="off"
             autoFocus
-            className="text-center font-mono tracking-wider uppercase"
+            className="text-center font-mono tracking-wider uppercase max-sm:h-10"
             disabled={over || leaving || checking}
             id={`${id}-backup`}
             onChange={(event) => {
@@ -222,7 +223,7 @@ export function TwoFactorChallenge({
             value={backupCode}
           />
           <Button
-            className="w-full"
+            className="w-full max-sm:h-10"
             disabled={over || leaving || checking || !backupCode.trim()}
             type="submit"
           >
@@ -236,7 +237,7 @@ export function TwoFactorChallenge({
 
       {over ? (
         <Button
-          className="w-full"
+          className="w-full max-sm:h-10"
           disabled={leaving}
           onClick={() => void leave()}
           variant="outline"
@@ -247,13 +248,15 @@ export function TwoFactorChallenge({
       ) : (
         <div className="flex items-center gap-2 self-start">
           <Checkbox
+            // A 40 px tap target around the 16 px box.
+            className="relative after:absolute after:-inset-3"
             checked={trustDevice}
             disabled={checking || leaving}
             id={`${id}-trust`}
             onCheckedChange={(checked) => setTrustDevice(checked === true)}
           />
           <Label
-            className="text-xs font-normal text-muted-foreground"
+            className="-my-3 min-h-10 py-3 text-xs font-normal text-muted-foreground"
             htmlFor={`${id}-trust`}
           >
             Don't ask again on this device for {TRUST_DEVICE_DAYS} days

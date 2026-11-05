@@ -43,14 +43,14 @@ export function TwoFactorPage({
               onVerified={() => window.location.assign(next)}
             />
           ) : (
-            <Button asChild className="w-full" variant="outline">
+            <Button asChild className="w-full max-sm:h-10" variant="outline">
               <Link href={signInPath(next)}>Sign in again</Link>
             </Button>
           )}
         </div>
       </div>
       <Link
-        className="text-muted-foreground hover:text-foreground rounded-sm text-sm transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+        className="text-muted-foreground hover:text-foreground inline-flex min-h-10 items-center rounded-sm px-2 text-sm transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
         href="/"
       >
         Back to QRdx
