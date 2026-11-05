@@ -1,20 +1,11 @@
 "use client";
 
-import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@repo/design-system/components/ui/popover";
 import { Slider } from "@repo/design-system/components/ui/slider";
 import { FRAME_FONT_SCALE_MAX, FRAME_FONT_SCALE_MIN } from "qrdx";
-import { useEffect, useState } from "react";
-import { HexColorPicker } from "react-colorful";
+import { SolidColorField } from "@/components/editor/gradient-picker";
 
 // Fields shared by the built-in and custom frame controls.
-
-const HEX_COLOR = /^#(?:[0-9a-f]{3}|[0-9a-f]{6})$/i;
 
 interface FrameColorFieldProps {
   id: string;
@@ -24,6 +15,10 @@ interface FrameColorFieldProps {
   onChange: (color: string) => void;
 }
 
+/**
+ * A frame (or logo plate) color: the editor's paint picker, solid only.
+ * Frame colors are stored as "#rrggbb", so it has no opacity.
+ */
 export function FrameColorField({
   id,
   label,
@@ -31,48 +26,14 @@ export function FrameColorField({
   disabled,
   onChange,
 }: FrameColorFieldProps) {
-  const [draft, setDraft] = useState(value);
-
-  useEffect(() => {
-    setDraft(value);
-  }, [value]);
-
   return (
-    <div className="space-y-1.5">
-      <Label className="text-xs" htmlFor={id}>
-        {label}
-      </Label>
-      <div className="flex items-center gap-2">
-        <Popover>
-          <PopoverTrigger asChild disabled={disabled}>
-            <button
-              aria-label={`Pick ${label.toLowerCase()}`}
-              className="size-9 shrink-0 rounded-full border shadow-xs disabled:opacity-50"
-              style={{ backgroundColor: value }}
-              type="button"
-            />
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-3">
-            <HexColorPicker color={value} onChange={onChange} />
-          </PopoverContent>
-        </Popover>
-        <Input
-          className="flex-1 font-mono text-sm"
-          disabled={disabled}
-          id={id}
-          maxLength={7}
-          onBlur={() => setDraft(value)}
-          onChange={(event) => {
-            setDraft(event.target.value);
-            if (HEX_COLOR.test(event.target.value)) {
-              onChange(event.target.value);
-            }
-          }}
-          placeholder="#000000"
-          value={draft}
-        />
-      </div>
-    </div>
+    <SolidColorField
+      disabled={disabled}
+      id={id}
+      label={label}
+      onChange={onChange}
+      value={value}
+    />
   );
 }
 

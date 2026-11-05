@@ -211,6 +211,31 @@ describe("persisted editor state", () => {
     expect(store().themeState.styles).toEqual(base);
   });
 
+  it("keeps angular gradients and see-through colors across a reload", async () => {
+    const angular = {
+      type: "angular",
+      angle: 30,
+      stops: [
+        { color: "#1d4ed8cc", offset: 0 },
+        { color: "#7c3aed", offset: 100 },
+      ],
+    };
+    persist({
+      themeState: {
+        preset: "default",
+        styles: { fgColor: angular, bgColor: "#fef3c780" },
+      },
+      history: [],
+      future: [],
+      value: "https://example.com",
+      contentType: "url",
+      contentConfigs: {},
+    });
+    await useQREditorStore.persist.rehydrate();
+    expect(store().themeState.styles.fgColor).toEqual(angular);
+    expect(store().themeState.styles.bgColor).toBe("#fef3c780");
+  });
+
   it("keeps the stored look across a reload after the blocks change", async () => {
     store().applyThemePreset(shuffleId(SEED_A));
     const lookA = store().themeState.styles;

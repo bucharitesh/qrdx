@@ -1,8 +1,10 @@
 /** biome-ignore-all lint/style/noMagicNumbers: PostScript output */
 /** biome-ignore-all lint/suspicious/noBitwiseOperators: ASCII85 and JPEG parsing */
 import type { QRProps } from "../types";
+import { DEFAULT_BGCOLOR } from "./constants";
 import { downloadFile } from "./download";
 import { getPrintLayout, type PrintColorMode } from "./print";
+import { getSolidColor } from "./utils/color";
 import { fmt } from "./utils/fmt";
 import { type RGBAColor, rgbToCmyk } from "./utils/parse-color";
 import { decodePng, deflate } from "./utils/png";
@@ -10,6 +12,7 @@ import {
   getPrintBleedColor,
   getPrintBleedFill,
   renderPrintSVG,
+  setBackdrop,
 } from "./utils/print-shared";
 import {
   applyMatrix,
@@ -34,7 +37,6 @@ import {
   length,
   type PaintState,
   rasterizeImage,
-  readStyle,
   SvgPainter,
 } from "./utils/svg-painter";
 
@@ -66,6 +68,11 @@ export interface SVGToEPSOptions {
    */
   bleedColor?: string | null;
   title?: string;
+  /**
+   * The code's background color: see-through paint is flattened over it
+   * (on white paper), since PostScript has no transparency. Default white.
+   */
+  background?: string;
 }
 
 // ── Embedded images ────────────────────────────────────────────────────────
@@ -378,28 +385,39 @@ class EpsPainter extends SvgPainter {
     );
   }
 
-  paint(segments: Segment[], node: SvgNode, state: PaintState) {
+  paint(segments: Segment[], _node: SvgNode, state: PaintState) {
     if (segments.length === 0) {
       return;
     }
-    const opacity = Number.parseFloat(readStyle(node, "opacity") ?? "1");
-    const fillOpacity = Number.parseFloat(
-      readStyle(node, "fill-opacity") ?? "1"
-    );
-    if (opacity === 0) {
+    const opacity = state.opacity ?? 1;
+    if (opacity <= 0) {
       return;
     }
-    // PostScript has no transparency: partly transparent shapes paint opaque.
-    const paint =
-      fillOpacity === 0
-        ? null
-        : this.resolveFill(state.fill, segments, state.viewport);
-    if (paint && "gradient" in paint) {
-      this.shade(segments, state, paint.gradient);
+    // PostScript has no transparency: see-through paint is flattened over
+    // the backdrop (the background on paper), see SvgPainter.flatten.
+    const paint = this.resolveFill(
+      state.fill,
+      segments,
+      state.viewport,
+      (state.fillOpacity ?? 1) * opacity
+    );
+    if (paint && "pattern" in paint) {
+      this.paintPattern(segments, state, paint.pattern, paint.alpha);
+    } else if (paint && "gradient" in paint) {
+      this.shade(segments, state, {
+        ...paint.gradient,
+        stops: paint.gradient.stops.map((stop) => ({
+          ...stop,
+          color: this.flatten({ ...stop.color, a: stop.color.a * paint.alpha }),
+        })),
+      });
     }
-    const fill = paint && "color" in paint ? paint.color : null;
-    const stroke =
+    const fill = paint && "color" in paint ? this.flatten(paint.color) : null;
+    const strokeColor =
       state.strokeWidth > 0 ? this.resolveColor(state.stroke) : null;
+    const stroke =
+      strokeColor &&
+      this.flatten({ ...strokeColor, a: strokeColor.a * opacity });
     if (!(fill || stroke)) {
       return;
     }
@@ -509,7 +527,8 @@ class EpsPainter extends SvgPainter {
 /**
  * Converts SVG markup (as this library renders it) to an Encapsulated
  * PostScript file: vector paths for modules, eyes and frames, Helvetica for
- * frame text (Latin-1 only), no transparency. Linear and radial gradient
+ * frame text (Latin-1 only), no transparency (see-through colors are mixed
+ * with `background`, the background itself with white paper). Linear and radial gradient
  * fills become smooth shadings clipped to each shape (`shfill`, which makes
  * the file LanguageLevel 3); gradient strokes and text use their first color.
  * PNG and JPEG logos are embedded; other logo formats are redrawn as PNG in
@@ -550,6 +569,7 @@ export async function svgToEPS(
     collectGradients(root),
     images
   );
+  setBackdrop(painter, { value: "", bgColor: options.background ?? "#ffffff" });
 
   // SVG's y axis points down, PostScript's up.
   const matrix: Matrix = multiply(
@@ -637,6 +657,7 @@ export async function getQRAsEPS(
         ? getPrintBleedFill(props, markup)
         : getPrintBleedColor(props),
     colorMode: options.colorMode,
+    background: getSolidColor(props.bgColor, DEFAULT_BGCOLOR),
   });
 }
 

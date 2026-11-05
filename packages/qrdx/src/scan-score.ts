@@ -301,11 +301,41 @@ const luminanceOf = (color: RGBAColor) =>
 const ratioOf = (a: number, b: number) =>
   (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
 
-function contrastChecks(props: QRProps): {
-  checks: ScanCheck[];
-  penalty: number;
-  fails: boolean;
-} {
+/** Contrast at or above this scans reliably (the scan score's pass line). */
+export const SCAN_CONTRAST_MIN = 4.5;
+/** Below this the score costs 30 points instead of 10. */
+export const SCAN_CONTRAST_LOW = 3;
+/** Below this the code fails the scan score outright. */
+export const SCAN_CONTRAST_FAIL = 1.5;
+
+export interface ScanContrast {
+  /**
+   * Worst contrast between any code color and any background color (≥ 1);
+   * Infinity when no code color parses
+   */
+  ratio: number;
+  /** Some code color is lighter than the background */
+  inverted: boolean;
+}
+
+const WHITE: RGBAColor = { r: 255, g: 255, b: 255, a: 1 };
+
+/** `color` composited over an opaque `backdrop`. */
+const over = (color: RGBAColor, backdrop: RGBAColor): RGBAColor => ({
+  r: color.r * color.a + backdrop.r * (1 - color.a),
+  g: color.g * color.a + backdrop.g * (1 - color.a),
+  b: color.b * color.a + backdrop.b * (1 - color.a),
+  a: 1,
+});
+
+/**
+ * The contrast check behind the scan score: the worst WCAG contrast ratio
+ * between every code color (foreground, eyes, eye centres and per-eye
+ * colors, every gradient stop) and every background color. See-through
+ * colors count as they look: the background over white paper, the code
+ * over the background.
+ */
+export function getScanContrast(props: QRProps): ScanContrast {
   const fg = props.fgColor ?? DEFAULT_FGCOLOR;
   // Per-eye colors replace eyeColor / dotColor on that eye only
   const perEye = EYE_POSITIONS.flatMap((position) => {
@@ -322,25 +352,20 @@ function contrastChecks(props: QRProps): {
     ...perEye,
   ];
   const lightColors = colorStops(props.bgColor, DEFAULT_BGCOLOR);
-  const white: RGBAColor = { r: 255, g: 255, b: 255, a: 1 };
   // A transparent background prints on whatever is behind it; assume paper.
   const background = lightColors.map((color) => {
     const parsed = toRGBA(color);
-    return parsed && parsed.a > 0.5 ? parsed : white;
+    return parsed ? over(parsed, WHITE) : WHITE;
   });
   const foreground = darkColors
     .map(toRGBA)
     .filter((color): color is RGBAColor => color !== null);
 
-  if (foreground.length === 0) {
-    return { checks: [], penalty: 0, fails: false };
-  }
-
   let worst = Number.POSITIVE_INFINITY;
   let inverted = false;
   for (const dark of foreground) {
     for (const light of background) {
-      const darkLum = luminanceOf(dark);
+      const darkLum = luminanceOf(over(dark, light));
       const lightLum = luminanceOf(light);
       worst = Math.min(worst, ratioOf(darkLum, lightLum));
       if (darkLum > lightLum) {
@@ -348,18 +373,35 @@ function contrastChecks(props: QRProps): {
       }
     }
   }
+  return {
+    ratio: Number.isFinite(worst) ? worst : Number.POSITIVE_INFINITY,
+    inverted,
+  };
+}
+
+function contrastChecks(props: QRProps): {
+  checks: ScanCheck[];
+  penalty: number;
+  fails: boolean;
+} {
+  const { ratio: worst, inverted } = getScanContrast(props);
+  // No code color parses: nothing to compare
+  if (!Number.isFinite(worst)) {
+    return { checks: [], penalty: 0, fails: false };
+  }
 
   const ratio = Math.round(worst * 10) / 10;
   const checks: ScanCheck[] = [];
   let penalty = 0;
-  if (worst >= 4.5) {
+  if (worst >= SCAN_CONTRAST_MIN) {
     checks.push({
       id: "contrast",
       passed: true,
       message: `Contrast ${ratio}:1 between code and background`,
     });
   } else {
-    penalty = worst < 1.5 ? 60 : worst < 3 ? 30 : 10;
+    penalty =
+      worst < SCAN_CONTRAST_FAIL ? 60 : worst < SCAN_CONTRAST_LOW ? 30 : 10;
     checks.push({
       id: "contrast",
       passed: false,
@@ -383,7 +425,7 @@ function contrastChecks(props: QRProps): {
       message: "Dark code on a light background",
     });
   }
-  return { checks, penalty, fails: worst < 1.5 };
+  return { checks, penalty, fails: worst < SCAN_CONTRAST_FAIL };
 }
 
 function moduleCount(props: QRProps) {

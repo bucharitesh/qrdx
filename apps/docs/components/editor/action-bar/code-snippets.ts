@@ -187,6 +187,7 @@ export const LEFT_OUT = {
   unsafeColors: "Colors the API doesn't take",
   customFrameTooLarge: "The custom frame (too large for an image URL)",
   eyeGradients: "Gradients on single eyes (drawn in their first color)",
+  angularGradients: "Angular gradients (drawn in their first color)",
   longContent: "Content over 2,048 characters (the image API's limit)",
   privateContent:
     "Your content (image URLs reach a server, so only web addresses go in)",
@@ -341,6 +342,17 @@ const jsxString = (name: string, value: string) =>
     : `${name}="${value}"`;
 
 /** A color prop: `fgColor="#000"` or a gradient object literal. */
+/**
+ * `color` as the published packages, the image API and MCP take it: they
+ * have no angular gradient yet, so one is drawn in its first color (noted).
+ */
+function publishedPaint(color: ColorConfig, notes: Notes): ColorConfig {
+  const paint = normalizeColorConfig(color);
+  if (paint.type !== "angular") return color;
+  notes.add(LEFT_OUT.angularGradients);
+  return paint.stops[0]?.color ?? "#000000";
+}
+
 function colorProp(name: string, color: ColorConfig): string {
   const paint = normalizeColorConfig(color);
   if (paint.type === "solid") return jsxString(name, paint.color);
@@ -370,7 +382,9 @@ function npmStyleProps(style: ThemeStyles, notes: Notes): string[] {
   const props: string[] = [];
   for (const key of ["bgColor", "fgColor", "eyeColor", "dotColor"] as const) {
     const color = style[key];
-    if (color !== undefined) props.push(colorProp(key, color));
+    if (color !== undefined) {
+      props.push(colorProp(key, publishedPaint(color, notes)));
+    }
   }
   const shapes = [
     ["bodyPattern", style.bodyPattern, NPM_QRDX.bodyPatterns, "dot"],
@@ -509,7 +523,7 @@ function imagePaint(
   notes: Notes,
 ): { flat: string } | { style: ColorConfig } | undefined {
   if (color === undefined) return undefined;
-  const paint = normalizeColorConfig(color);
+  const paint = normalizeColorConfig(publishedPaint(color, notes));
   const solid = (value: string) => {
     const trimmed = value.trim();
     if (IMAGE_HEX.test(trimmed)) {
@@ -817,7 +831,7 @@ function mcpPaint(
   fallback: string,
   notes: Notes,
 ): { solid: string; gradient?: McpGradient } {
-  const paint = normalizeColorConfig(color, fallback);
+  const paint = normalizeColorConfig(publishedPaint(color, notes), fallback);
   if (paint.type === "solid") {
     return { solid: mcpHex(paint.color, notes) ?? fallback };
   }
@@ -987,8 +1001,8 @@ const shellArg = (value: string) =>
   SHELL_SAFE.test(value) ? value : singleQuote(value);
 
 /** --fg and friends take a CSS color or a gradient as JSON. */
-function cliColor(color: ColorConfig): string {
-  const paint = normalizeColorConfig(color);
+function cliColor(color: ColorConfig, notes: Notes): string {
+  const paint = normalizeColorConfig(publishedPaint(color, notes));
   return shellArg(paint.type === "solid" ? paint.color : JSON.stringify(paint));
 }
 
@@ -1033,10 +1047,10 @@ export function cliSnippet(input: SnippetInput): Snippet {
   }
 
   const colorFlags = [
-    `--fg ${cliColor(fg)}`,
-    `--bg ${cliColor(style.bgColor ?? ENGINE_DEFAULTS.bgColor)}`,
-    `--eye-color ${cliColor(style.eyeColor ?? fg)}`,
-    `--dot-color ${cliColor(style.dotColor ?? fg)}`,
+    `--fg ${cliColor(fg, notes)}`,
+    `--bg ${cliColor(style.bgColor ?? ENGINE_DEFAULTS.bgColor, notes)}`,
+    `--eye-color ${cliColor(style.eyeColor ?? fg, notes)}`,
+    `--dot-color ${cliColor(style.dotColor ?? fg, notes)}`,
   ];
 
   const otherFlags = [

@@ -278,3 +278,43 @@ export function Contrast({ size = 24, ...props }: LogoProps) {
     </svg>
   );
 }
+
+/**
+ * Eyedropper: picks a color from the screen. iconsax has no pipette; this
+ * is drawn in its Linear style (1.5 stroke, round caps).
+ */
+export function Pipette({
+  className,
+  size = 24,
+  color = "currentColor",
+  strokeWidth = 1.5,
+  variant: _variant,
+  ...props
+}: IconProps) {
+  return (
+    <svg
+      aria-hidden="true"
+      className={className}
+      fill="none"
+      height={size}
+      viewBox="0 0 24 24"
+      width={size}
+      {...props}
+    >
+      <path
+        d="M14.5 6.5 17.3 3.7a2.12 2.12 0 0 1 3 3L17.5 9.5"
+        stroke={color}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={strokeWidth}
+      />
+      <path
+        d="m12.5 4.5 7 7M15.5 7.5l-9.3 9.3a2 2 0 0 0-.53.93L5 21l3.27-.67a2 2 0 0 0 .93-.53L18.5 10.5"
+        stroke={color}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={strokeWidth}
+      />
+    </svg>
+  );
+}

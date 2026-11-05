@@ -449,6 +449,12 @@ export const useQREditorStore = create<QREditorStore>()(
                   ) {
                     // Solid color is valid
                     styles[key] = colorValue;
+                  } else if (
+                    "type" in colorValue &&
+                    colorValue.type === "angular"
+                  ) {
+                    // Angular gradients passed the schema (two stops or more)
+                    styles[key] = colorValue;
                   } else {
                     // Invalid structure, use default
                     styles[key] = defaultValue;
