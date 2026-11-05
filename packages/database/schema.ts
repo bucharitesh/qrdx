@@ -432,8 +432,14 @@ export const themeLike = pgTable(
 // that reads these tables falls back to community_theme until they exist
 // (apps/docs/lib/community/store.ts).
 
-/** Item types, in gallery order. */
-export const COMMUNITY_ITEM_TYPES = ["frame", "theme", "collection"] as const;
+/** Item types, in gallery order (a text column: a new type needs no SQL). */
+export const COMMUNITY_ITEM_TYPES = [
+  "frame",
+  "theme",
+  "collection",
+  "page-template",
+  "kit",
+] as const;
 
 /** A public creator: a person (handle opt-in) or the official QRdx profile. */
 export const communityProfile = pgTable(
@@ -533,6 +539,12 @@ export const communityItem = pgTable(
     index("community_item_profile_id_idx").on(table.profileId),
     index("community_item_payload_hash_idx").on(table.payloadHash),
     index("community_item_source_idx").on(table.sourceKind, table.sourceId),
+    // Full-text search (manual-sql/0017_community_search.sql; the expression
+    // must stay the one apps/docs/lib/community/search.ts queries)
+    index("community_item_search_idx").using(
+      "gin",
+      sql`to_tsvector('simple'::regconfig, coalesce("name", '') || ' ' || coalesce("description", ''))`
+    ),
   ]
 );
 
@@ -623,9 +635,10 @@ export const communityUse = pgTable(
     userId: text("user_id").references(() => user.id, {
       onDelete: "set null",
     }),
-    // "copy"
+    // "copy" (counted once a day), or "lineage:<preset id>" for a further copy
     kind: text("kind").notNull(),
     workspaceId: text("workspace_id"),
+    // The saved theme or page the copy made (ids are unique across both)
     presetId: text("preset_id"),
     // Days since 1970-01-01 (UTC)
     day: integer("day").notNull(),
@@ -639,6 +652,10 @@ export const communityUse = pgTable(
       table.day
     ),
     index("community_use_item_id_idx").on(table.itemId),
+    // Remix lineage lookups (manual-sql/0018_community_use_preset_index.sql)
+    index("community_use_preset_id_idx")
+      .on(table.presetId)
+      .where(sql`"preset_id" IS NOT NULL`),
   ]
 );
 

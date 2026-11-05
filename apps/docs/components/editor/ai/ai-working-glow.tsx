@@ -5,7 +5,7 @@ import { type CSSProperties, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useChatContext } from "@/lib/hooks/use-chat-context";
 
-// Apple-Intelligence-style light while the AI works: colour emitted inward
+// Apple-Intelligence-style light while the AI works: color emitted inward
 // from the real screen edges. Each layer is a band along the viewport edges
 // (it extends past the screen, so the light is brightest right at the edge),
 // filled with a turning conic gradient and blurred more than the last, so it

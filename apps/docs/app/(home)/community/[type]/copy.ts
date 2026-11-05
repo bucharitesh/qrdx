@@ -1,5 +1,5 @@
-// Headings and copy for /community/frames, /themes and /collections, shared
-// by the page and its Open Graph image.
+// Headings and copy for /community/frames, /themes, /collections and
+// /templates, shared by the page and its Open Graph image.
 
 export const COPY = {
   frame: {
@@ -24,5 +24,21 @@ export const COPY = {
     description:
       "Frames and themes grouped by use: restaurants, events, payments and more. Free under CC0.",
     intro: "Frames and themes that work together, grouped by what they're for.",
+  },
+  "page-template": {
+    heading: "Page templates",
+    title: "Hosted page templates",
+    description:
+      "Link pages, menus, business pages and more, shared by the QRdx community. Free under CC0.",
+    intro:
+      "Hosted pages people shared as templates, with their own details taken out. Use one and it's copied into your workspace as a draft page.",
+  },
+  kit: {
+    heading: "Kits",
+    title: "QR code and page kits",
+    description:
+      "A hosted page template with the QR code look that goes with it, shared by the QRdx community. Free under CC0.",
+    intro:
+      "A page template and the look it goes with. Use one and you get the page as a draft and the look as a saved theme.",
   },
 } as const;

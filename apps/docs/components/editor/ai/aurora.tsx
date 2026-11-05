@@ -10,7 +10,7 @@ const AURORA_CSS = `
 @media (prefers-reduced-motion: reduce) { .qx-aurora-a, .qx-aurora-b, .qx-aurora-c { animation: none; } }
 `;
 
-/** Soft, slow-moving blurred colour blobs (decorative). */
+/** Soft, slow-moving blurred color blobs (decorative). */
 export function Aurora({ className }: { className?: string }) {
   return (
     <div

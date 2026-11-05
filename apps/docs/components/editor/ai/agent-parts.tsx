@@ -31,7 +31,8 @@ import type { ThemeStyles } from "@/types/theme";
 
 // How the agent's tool calls show in the chat: a compact list of steps for
 // the design work, option chips for questions, and Approve / Reject cards
-// for the two changes it can make (the editor, the user's templates).
+// for the two changes it can make (the editor, the user's templates). The
+// community publish card is in ./publish-card.tsx.
 
 type Part = ChatMessage["parts"][number];
 type PartOf<T extends Part["type"]> = Extract<Part, { type: T }>;
@@ -142,7 +143,7 @@ export function DesignPreview({
 }
 
 /** The value a design shows: its new content, or what the editor holds. */
-function useDesignValue(design: DesignRecord | undefined) {
+export function useDesignValue(design: DesignRecord | undefined) {
   const editorValue = useQREditorStore((state) => state.value);
   if (!design) return editorValue;
   if (design.content || design.scoredWithSample) return design.value;
@@ -592,7 +593,7 @@ export function SaveTemplateCard({
         <div className="min-w-0 flex-1 space-y-1">
           <p className="text-sm font-medium leading-snug">Template “{name}”</p>
           <p className="text-muted-foreground text-xs leading-5">
-            Saves the look to your themes: colours, shapes, frame and its text,
+            Saves the look to your themes: colors, shapes, frame and its text,
             border and logo. Not the content.
           </p>
         </div>

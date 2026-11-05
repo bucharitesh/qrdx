@@ -2,6 +2,7 @@ import "server-only";
 
 import { unstable_cache } from "next/cache";
 import { FRAME_TEXT_MAX_LENGTH, type QRCustomFrame } from "qrdx/types";
+import { logError } from "@/lib/log-error";
 import { baseUrl } from "@/lib/metadata";
 import type { LogoIconId } from "@/lib/qr-design/style";
 import type { ThemeStyles } from "@/types/theme";
@@ -13,9 +14,10 @@ import {
   COMMUNITY_SEARCH_POOL,
 } from "./limits";
 import { presetLogoIcon } from "./public-style";
-import { getItem, listFrames, listItems } from "./queries";
+import { getItem, listFrames, listItems, searchItemsFullText } from "./queries";
+import { fullTextSearchAvailable, searchWords, toPrefixQuery } from "./search";
 import { COMMUNITY_TAG } from "./store";
-import { cleanText } from "./text";
+import { untrustedText } from "./text";
 import {
   COMMUNITY_TYPES,
   type CommunityItemCard,
@@ -34,6 +36,7 @@ export {
   COMMUNITY_PAGE_DEFAULT,
   COMMUNITY_PAGE_MAX,
 } from "./limits";
+export { untrustedText } from "./text";
 
 // Item text is written by community members, so it's untrusted data for the
 // agents that read it: names, descriptions, handles, tags and frame labels
@@ -49,45 +52,14 @@ const HANDLE_MAX = 30;
 const DISPLAY_NAME_MAX = 40;
 const TAG_MAX = 24;
 
-// Links (with or without a scheme), emails and phone numbers, matched
-// anywhere in the text.
-const URLS = /\b(?:https?|ftp|file|data|javascript):\S*|\bwww\.\S+/gi;
-const DOMAINS =
-  /\b[a-z0-9][a-z0-9-]*(?:\.[a-z0-9-]+)*\.(?:com|net|org|io|dev|app|co|me|ly|xyz|info|biz|ai|gg|so|to|link|site|online|shop|store)\b\S*/gi;
-const EMAILS = /[^\s@]+@[^\s@]+\.[^\s@]+/g;
-const PHONES = /\+?\d[\d\s().-]{7,}\d/g;
-const MARKUP = /[<>`{}[\]|\\]/g;
-
-/**
- * Creator text made safe to hand to an agent: one line, no control or
- * invisible characters, no links, emails, phone numbers or markup
- * characters, at most `max` characters.
- */
-export function untrustedText(text: string | null | undefined, max: number) {
-  if (!text) return "";
-  const stripped = cleanText(text, 1000)
-    .replace(URLS, " ")
-    .replace(EMAILS, " ")
-    .replace(DOMAINS, " ")
-    .replace(PHONES, " ")
-    .replace(MARKUP, " ");
-  const clean = cleanText(stripped, Number.MAX_SAFE_INTEGER);
-  const chars = Array.from(clean);
-  return chars.length > max
-    ? `${chars
-        .slice(0, max - 1)
-        .join("")
-        .trimEnd()}…`
-    : clean;
-}
-
 // ── Ids ────────────────────────────────────────────────────────────────────
 
 /** "frame:wifi-table-card": the item's type and slug, stable for its life. */
 export const communityItemId = (type: CommunityItemType, slug: string) =>
   `${type}:${slug}`;
 
-const ID = /^(frame|theme|collection):([a-z0-9][a-z0-9-]{0,95})$/;
+const ID =
+  /^(frame|theme|collection|page-template|kit):([a-z0-9][a-z0-9-]{0,95})$/;
 
 /** The type and slug in an item id, or null when it isn't one. */
 export function parseCommunityItemId(
@@ -138,6 +110,8 @@ export interface CommunityApiItemDetail extends CommunityApiItem {
   scanScore: number | null;
   /** Collections: their items' ids, in order */
   items?: string[];
+  /** Page templates: the hosted page type (links, menu, business, ...) */
+  pageType?: string;
 }
 
 const pageUrl = (type: CommunityItemType, slug: string) =>
@@ -222,9 +196,15 @@ function apiStyleOf(
 function toApiDetail(item: CommunityItemDetail): CommunityApiItemDetail {
   return {
     ...toApiItem(item),
-    style: item.type === "collection" ? null : apiStyleOf(item.apply),
+    style:
+      item.type === "collection" ||
+      item.type === "page-template" ||
+      item.type === "kit"
+        ? null
+        : apiStyleOf(item.apply),
     contentTypes: item.contentTypes.slice(0, 20),
     scanScore: item.scanScore,
+    ...(item.page ? { pageType: item.page.type } : {}),
     ...(item.entries
       ? {
           items: item.entries.map((entry) =>
@@ -288,6 +268,38 @@ function matches(card: CommunityItemCard, words: string[]): boolean {
 export async function searchCommunity(
   search: CommunitySearch,
 ): Promise<{ items: CommunityApiItem[]; total: number }> {
+  const limit = Math.min(
+    search.limit ?? COMMUNITY_PAGE_DEFAULT,
+    COMMUNITY_PAGE_MAX,
+  );
+  const offset = search.offset ?? 0;
+  // Postgres full-text search once manual-sql/0017 is applied; until then
+  // (or if it fails) the in-memory search below.
+  const query = toPrefixQuery(search.q ?? "");
+  if (query && (await fullTextSearchAvailable())) {
+    try {
+      const found = await searchItemsFullText({
+        query,
+        words: searchWords(search.q ?? ""),
+        type: search.type,
+        tag: search.tag?.trim().toLowerCase() || undefined,
+        limit,
+        offset,
+      });
+      return { items: found.cards.map(toApiItem), total: found.total };
+    } catch (error) {
+      logError(error as Error, { action: "community full-text search" });
+    }
+  }
+  return searchInMemory(search, limit, offset);
+}
+
+/** Today's search: every word in a cached pool of the most popular items. */
+async function searchInMemory(
+  search: CommunitySearch,
+  limit: number,
+  offset: number,
+): Promise<{ items: CommunityApiItem[]; total: number }> {
   const types = search.type ? [search.type] : COMMUNITY_TYPES;
   const lists = await Promise.all(types.map((type) => cachedCards(type)));
   const words = normalize(search.q ?? "")
@@ -313,11 +325,6 @@ export async function searchCommunity(
     .filter((card) => card.slug)
     .filter((card) => !tag || card.tags.includes(tag))
     .filter((card) => matches(card, words));
-  const offset = search.offset ?? 0;
-  const limit = Math.min(
-    search.limit ?? COMMUNITY_PAGE_DEFAULT,
-    COMMUNITY_PAGE_MAX,
-  );
   return {
     items: found.slice(offset, offset + limit).map(toApiItem),
     total: found.length,
@@ -336,7 +343,7 @@ export async function getCommunityItem(
 
 export class CommunityItemError extends Error {
   constructor(
-    readonly reason: "invalid" | "not-found" | "collection",
+    readonly reason: "invalid" | "not-found" | "collection" | "page-template",
     message: string,
   ) {
     super(message);
@@ -372,6 +379,18 @@ export async function communityItemStyle(id: string): Promise<{
     throw new CommunityItemError(
       "collection",
       "A collection holds several items: use one of its items instead.",
+    );
+  }
+  if (item.type === "kit") {
+    throw new CommunityItemError(
+      "collection",
+      "A kit holds a page template and a look: use its theme or frame instead.",
+    );
+  }
+  if (item.type === "page-template") {
+    throw new CommunityItemError(
+      "page-template",
+      "A page template is a hosted page, not a QR style: use a frame or theme instead.",
     );
   }
   return {
