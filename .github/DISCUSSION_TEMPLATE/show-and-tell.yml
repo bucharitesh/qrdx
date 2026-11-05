@@ -1,0 +1,57 @@
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Show a QR code, a hosted page, a frame or theme, or a project you made with QRdx. Printed codes on real menus, posters and packaging are especially welcome.
+
+        Anyone can scan a QR code in a picture. Before you post, check that your codes and links don't point at anything private, such as a Wi-Fi password, a personal contact card or a page you haven't published yet.
+
+  - type: textarea
+    id: what
+    attributes:
+      label: What did you make?
+      description: A sentence or two on what it is and who it's for.
+    validations:
+      required: true
+
+  - type: textarea
+    id: pictures
+    attributes:
+      label: Pictures
+      description: Drag in screenshots or photos of the code, the page or the print.
+
+  - type: input
+    id: link
+    attributes:
+      label: Link
+      description: Where people can see it, if it's online. A live page, a repository or a post.
+
+  - type: dropdown
+    id: used
+    attributes:
+      label: What did you use?
+      multiple: true
+      options:
+        - Playground (editor, styles, art, AI chat, downloads)
+        - Dynamic codes, short links, custom domains and analytics
+        - Hosted pages and forms
+        - REST API (api.qrdx.dev/v1)
+        - Image API (api.qrdx.dev/v1/qr)
+        - MCP server (mcp.qrdx.dev/mcp)
+        - React library (qrdx on npm)
+        - CLI (@qrdx/cli)
+        - Chrome extension
+        - Figma plugin
+        - Raycast extension
+        - Canva app
+        - Integrations
+        - Community (shared frames and themes)
+        - Free tools (bulk generator, scan checker, print size, scanner)
+        - A self-hosted instance
+        - Something else
+
+  - type: textarea
+    id: how
+    attributes:
+      label: How you made it
+      description: Optional. The style or settings you picked, code you wrote, or anything you'd tell someone who wants to make something similar.
