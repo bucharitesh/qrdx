@@ -1,13 +1,21 @@
 // What the community pages show, shared by the server queries and the
 // client components. Safe to import anywhere.
+import type { LandingPageContent } from "@/types/landing";
 import type { ThemeStyles } from "@/types/theme";
 
-export type CommunityItemType = "frame" | "theme" | "collection";
+export type CommunityItemType =
+  | "frame"
+  | "theme"
+  | "collection"
+  | "page-template"
+  | "kit";
 
 export const COMMUNITY_TYPES: CommunityItemType[] = [
   "frame",
   "theme",
   "collection",
+  "page-template",
+  "kit",
 ];
 
 /** URL segment of each type: /community/frames/<slug> */
@@ -15,6 +23,8 @@ export const TYPE_SEGMENTS: Record<CommunityItemType, string> = {
   frame: "frames",
   theme: "themes",
   collection: "collections",
+  "page-template": "templates",
+  kit: "kits",
 };
 
 export const TYPE_LABELS: Record<
@@ -24,6 +34,8 @@ export const TYPE_LABELS: Record<
   frame: { one: "Frame", many: "Frames" },
   theme: { one: "Theme", many: "Themes" },
   collection: { one: "Collection", many: "Collections" },
+  "page-template": { one: "Page template", many: "Page templates" },
+  kit: { one: "Kit", many: "Kits" },
 };
 
 export function typeFromSegment(segment: string): CommunityItemType | null {
@@ -64,8 +76,17 @@ export interface CommunityItemCard {
   preview: ThemeStyles;
   /** Collections: up to 3 designs from their items */
   stack?: ThemeStyles[];
-  /** Collections: how many items they hold */
+  /** Collections and kits: how many items they hold */
   itemCount?: number;
+  /** Kits whose page template was removed: shown as no longer available */
+  unavailable?: boolean;
+  /** Kits: which of their entries is the page, the theme and the frame */
+  kit?: { page?: string; theme?: string; frame?: string };
+  /**
+   * Page templates: the hosted page, scrubbed of personal data when it was
+   * published. Server only: rendered as a preview, never sent to browsers.
+   */
+  page?: { type: string; content: LandingPageContent };
 }
 
 export interface CommunityItemDetail extends CommunityItemCard {
@@ -74,9 +95,13 @@ export interface CommunityItemDetail extends CommunityItemCard {
   /** Content types a frame suits (empty: any) */
   contentTypes: string[];
   scanScore: number | null;
-  /** Collections: their items, in order */
+  /** Collections and kits: their items, in order */
   entries?: CommunityItemCard[];
   remixedFromLabel: string | null;
+  /** The original's page while it's still in the community */
+  remixedFrom?: { type: CommunityItemType; slug: string } | null;
+  /** Published remixes of this item */
+  remixCount?: number;
   isLikedByMe: boolean;
   isSavedByMe: boolean;
   /** The viewer published it (and may unpublish it) */
@@ -90,4 +115,16 @@ export interface CommunityProfileView {
   likeCount: number;
   useCount: number;
   items: CommunityItemCard[];
+}
+
+/** Something a person can put in a collection or kit (create page). */
+export interface BundleSource {
+  id: string;
+  type: CommunityItemType;
+  slug: string;
+  name: string;
+  /** "@ana", or the display name without a handle */
+  creator: string;
+  /** The viewer published it */
+  mine: boolean;
 }

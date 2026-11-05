@@ -6,6 +6,7 @@ import {
   toUIMessageStream,
 } from "ai";
 import type { NextRequest } from "next/server";
+import { accountCommunityStore } from "@/lib/ai/agent/community";
 import {
   describeEditorForModel,
   editorBase,
@@ -49,7 +50,8 @@ import type { ChatMessage } from "@/types/ai";
 // The AI chat in the editor's Generate tab: an agent (lib/ai/models.ts
 // "base") that designs any kind of QR code with the tools in
 // lib/ai/agent/tools.ts. Runs pause for the user (ask_user, and approval
-// before apply_design or save_template) and resume with a second request
+// before apply_design, save_template or publish_to_community) and resume
+// with a second request
 // that carries the answer; lib/ai/agent/resume.ts keeps those from being
 // counted as new AI requests.
 
@@ -96,6 +98,7 @@ export async function POST(req: NextRequest) {
           designs: DesignRegistry.fromMessages(messages),
           writer,
           templates: accountTemplateStore,
+          community: accountCommunityStore,
           score: scoreDesign,
           designCalls: { count: 0 },
         };
@@ -114,6 +117,7 @@ export async function POST(req: NextRequest) {
             check_scan_score: context,
             apply_design: context,
             save_template: context,
+            publish_to_community: context,
           },
           onError: async ({ error }) => {
             logError(error as Error, { route: "/api/generate-qr-theme" });
