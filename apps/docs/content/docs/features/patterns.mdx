@@ -71,7 +71,41 @@ A `circle` center inside eyes with square corners (`square`, `rounded`, `extra-r
 <QRCode value="https://example.com" shape="circle" bodyPattern="rounded" />
 ```
 
-In our decode tests circle codes read like square ones with solid dot shapes (`square`, `rounded`, `classy`, `liquid`). In the playground it is **Design → Code shape**.
+In our decode tests circle codes read like square ones with solid dot shapes (`square`, `rounded`, `classy`, `liquid`). In the playground it is **Design → Frame → Shaped code → Dot circle**.
+
+{/* Heart and custom shapes (feat/heart-silhouette-shapes) */}
+
+## Heart codes
+
+`shape="heart"` works like a circle code, in a heart. The real code sits in the middle of the heart with its light ring of at least 3 modules, and the rest of the heart fills with decorative modules. The code takes a smaller part of a heart than of a circle, so print a heart code larger than a square one for the same scan distance. The scan score counts this: at the same size, a heart code scores lower than a circle code.
+
+```tsx
+<QRCode value="https://example.com" shape="heart" bodyPattern="rounded" />
+```
+
+A shaped code takes the place of a frame in the playground: picking one clears the frame, and picking a frame clears the shape. Every frame paints a light plate under the code, which would hide the outline. The engine still draws `shape` with a `frame` if you pass both.
+
+In our decode tests heart codes read with every solid dot shape, with `square`, `rounded` and `gear` eyes, and in the default look, and zbar reads them in sharp renders.
+
+## Custom shapes
+
+`shape` also takes a silhouette: a small grid traced from a picture of your own (at most 64 cells a side). The code sits in the roomiest middle part of the shape, and the rest of the shape fills with decorative modules. Only the grid is kept, never the picture.
+
+```tsx
+import { getQRSilhouetteFit, loadQRSilhouette, QRCode } from "qrdx";
+
+const shape = await loadQRSilhouette(file); // a PNG, JPEG or SVG, in the browser
+const fit = getQRSilhouetteFit(shape);
+if (!fit.ok) throw new Error(fit.message);
+
+<QRCode value="https://example.com" shape={shape} />;
+```
+
+`loadQRSilhouette` draws the picture on a canvas and uses its transparency, or its darkness when it is opaque (a light shape on a dark background works too). On a server, pass decoded pixels to `createQRSilhouette`. `getQRSilhouetteFit` refuses a shape that is too thin to hold the code with its quiet zone, such as a thin star, a bar or a ring. A refused shape draws as a square code.
+
+In the playground, pick **Design → Frame → Shaped code → Silhouette** and upload a PNG, JPEG or SVG (the heart is **Heart** there). Your shape stays with your design, like an uploaded logo: shared links, community items, code snippets and the AI chat use a square code instead.
+
+{/* end heart and custom shapes */}
 
 ## Per-eye colors
 

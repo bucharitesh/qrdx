@@ -59,7 +59,6 @@ export const DESIGN_SECTIONS = [
   // with a logo on, so links open it through "logo"
   "eye-colors",
   "dot-size",
-  "shape",
   "frame",
   "padding",
   "error-correction",
@@ -308,7 +307,7 @@ export function parsePlaygroundParams(
   const tab = resolveControlTab(get("tab"));
   if (tab) params.tab = tab;
 
-  const section = get("section")?.trim().toLowerCase();
+  const section = legacySection(get("section")?.trim().toLowerCase());
   if (isOneOf(DESIGN_SECTIONS, section)) params.section = section;
   parseArtParams(get, section, params);
 
@@ -537,3 +536,13 @@ function appendArtParams(
   const style = parseArtStyleId(options.artStyle);
   if (style && options.art === "ai") query.set("artStyle", style);
 }
+
+// ── Code shapes moved into Frame (feat/heart-silhouette-shapes) ──
+// The circle, heart and silhouette shapes were a "Code shape" section; they
+// are choices in Design → Frame now, so old `section=shape` links open Frame.
+const LEGACY_SECTIONS: Record<string, DesignSection> = { shape: "frame" };
+
+function legacySection(section: string | undefined): string | undefined {
+  return (section && LEGACY_SECTIONS[section]) ?? section;
+}
+// ── end code shapes ──

@@ -4,10 +4,12 @@ description: Shorten a QR code's link with your own Bitly, Rebrandly or Short.io
 icon: Blocks
 ---
 
-Connect an account in [Settings → Integrations](/settings/integrations) and the **Website** type in the QR editor gets two buttons under the address field:
+Connect an account in [Settings → Integrations](/settings/integrations) and it shows up in the QR editor's **URL** type, in the **Use a link from…** menu beside the **Website address** field. Under **Your accounts**, each service says what it does:
 
-- **Shorten**: creates a link in your Bitly, Rebrandly or Short.io account (or picks one you already have). The QR code encodes that short link, so you can change where it points later in that service, and it counts the clicks.
-- **Pick a file**: browse or search Dropbox<IfAvailable integration="onedrive">, OneDrive</IfAvailable><IfAvailable integration="box">, Box</IfAvailable><IfAvailable integration="notion">, Notion</IfAvailable>. QRdx creates the item's share link and the QR code encodes it.
+- **Shorten**: Bitly, Rebrandly or Short.io. Create a link under **Create new**, or pick one you already have under **Use existing**. The QR code encodes that short link, so you can change where it points later in that service, and it counts the clicks.
+- **File**: Dropbox<IfAvailable integration="onedrive">, OneDrive</IfAvailable><IfAvailable integration="box">, Box</IfAvailable><IfAvailable integration="notion">, Notion</IfAvailable>. Browse or search, then pick a file or folder. QRdx creates the item's share link and the QR code encodes it.
+
+Services you haven't connected yet are behind **Connect an account** at the bottom of the same menu.
 
 Hosted pages can use cloud files too: PDF, audio, video and download blocks get **From Dropbox**<IfAvailable integration="onedrive">, **From OneDrive**</IfAvailable><IfAvailable integration="box">, **From Box**</IfAvailable> next to the upload buttons.
 

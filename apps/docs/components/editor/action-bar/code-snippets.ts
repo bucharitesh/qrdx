@@ -33,7 +33,11 @@ import {
 } from "qrdx/types";
 import { presetLogoIcon } from "@/lib/community/public-style";
 import { DEFAULT_QR_LOGO } from "@/lib/constants";
-import { withoutImageFills } from "@/lib/paint/image-fills";
+import {
+  hasImageFills,
+  hasSilhouette,
+  withoutImageFills,
+} from "@/lib/paint/image-fills";
 import { type CodeLang, parseLinkUrl } from "@/lib/playground-links";
 import { GRADIENT_STOPS_MAX, isSafeColor } from "@/lib/qr-api/style";
 import { CONTENT_FIELDS } from "@/lib/qr-design/content";
@@ -184,7 +188,9 @@ export const LEFT_OUT = {
   moduleScale: "The dot size",
   autoLevel: "Automatic error correction for the logo",
   logoOptions: "The logo's size, position, shape and plate",
-  shape: "The circle shape",
+  shape: "The code shape",
+  silhouette:
+    "Your code shape (traced from your picture, it stays with your design)",
   apiArt:
     "Art (Logo QR or Image QR: it's built from your picture in the browser, and the API doesn't build art)",
   unsafeColors: "Colors the API doesn't take",
@@ -278,7 +284,13 @@ function noteEngineOptions(style: ThemeStyles, notes: Notes) {
   const logo = logoOf(style).kind !== "none";
   if (logo && options.autoLevel) notes.add(LEFT_OUT.autoLevel);
   if (logo && options.logoOptions) notes.add(LEFT_OUT.logoOptions);
-  if (options.shape) notes.add(LEFT_OUT.shape);
+  if (hasSilhouette(style)) notes.add(LEFT_OUT.silhouette);
+  else if (options.shape) notes.add(LEFT_OUT.shape);
+}
+
+/** A traced silhouette, for the API tabs: it never leaves the editor. */
+function noteSilhouette(style: ThemeStyles, notes: Notes) {
+  if (hasSilhouette(style)) notes.add(LEFT_OUT.silhouette);
 }
 
 /** Art, for the API tabs: they can't draw it, and say why. */
@@ -317,7 +329,8 @@ function apiEngineOptions(
     if (Object.keys(eyes).length > 0) out.eyeColors = eyes;
   }
   if (options.moduleScale !== undefined) out.moduleScale = options.moduleScale;
-  if (options.shape) out.shape = options.shape;
+  // Named shapes only: a traced silhouette stays with the design
+  if (typeof options.shape === "string") out.shape = options.shape;
   if (drawsLogo && options.autoLevel) out.autoLevel = true;
   if (drawsLogo && options.logoOptions) {
     const { plate, ...layout } = options.logoOptions;
@@ -377,9 +390,9 @@ function publishedNormalized(
 
 /** `style` without image fills (noted): a snippet never carries a picture. */
 function snippetStyle(style: ThemeStyles, notes: Notes): ThemeStyles {
-  const next = withoutImageFills(style);
-  if (next !== style) notes.add(LEFT_OUT.imageFills);
-  return next;
+  if (hasImageFills(style)) notes.add(LEFT_OUT.imageFills);
+  noteSilhouette(style, notes);
+  return withoutImageFills(style);
 }
 
 /** A color prop: `fgColor="#000"` or a gradient object literal. */
@@ -702,6 +715,7 @@ export function imageSnippet(input: SnippetInput): ImageSnippet {
   else if (logo.kind === "qrdx") notes.add(LEFT_OUT.qrdxLogo);
   else if (logo.kind !== "none") notes.add(LEFT_OUT.imageUploadedLogo);
   noteApiArt(style, notes);
+  noteSilhouette(style, notes);
   Object.assign(
     styleParam,
     apiEngineOptions(style, Boolean(icon), (color) => {
@@ -1005,6 +1019,7 @@ export function mcpSnippet(input: SnippetInput): Snippet {
   else if (logo.kind === "qrdx") notes.add(LEFT_OUT.qrdxLogo);
   else if (logo.kind !== "none") notes.add(LEFT_OUT.mcpUploadedLogo);
   noteApiArt(style, notes);
+  noteSilhouette(style, notes);
   Object.assign(
     design,
     apiEngineOptions(style, Boolean(icon), (color) => {

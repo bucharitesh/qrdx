@@ -19,6 +19,7 @@ import { patterns as eyePatterns } from "@/components/playground/corner-eye-patt
 import { patterns as bodyPatterns } from "@/components/playground/pattern-selector";
 import { soundEvent } from "@/lib/sound/emit";
 import type { QRStyle } from "@/types/theme";
+import { withoutShape } from "./frame-shapes";
 import {
   OptionGrid,
   OptionGroupLabel,
@@ -294,7 +295,7 @@ export function EyeControls() {
 }
 
 export function BorderControl() {
-  const { style, set } = useStyleSetter();
+  const { style, setStyle } = useStyleSetter();
   const templates = getAllTemplates();
   const selected = style.templateId ?? "default";
   return (
@@ -305,7 +306,13 @@ export function BorderControl() {
           <OptionTile
             key={template.id}
             name={template.name}
-            onSelect={() => set("templateId", template.id)}
+            onSelect={() => {
+              // A border takes the place of a shaped code, like a frame
+              const base =
+                template.id === "default" ? style : withoutShape(style);
+              setStyle({ ...base, templateId: template.id });
+              soundEvent("tick");
+            }}
             selected={selected === template.id}
           >
             <QRCodeSVG

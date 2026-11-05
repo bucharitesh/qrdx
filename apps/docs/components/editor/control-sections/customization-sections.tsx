@@ -4,7 +4,6 @@ import * as React from "react";
 import { defaultThemeState } from "@/config/qr";
 import type { DesignSection } from "@/lib/playground-links";
 import type { QRStyle } from "@/types/theme";
-import { CodeShapeSection } from "./code-shape-section";
 import { DotSizeSection } from "./dot-size-section";
 import { EyeColorsSection } from "./eye-colors-section";
 import { LogoOptionsSection } from "./logo-options-section";
@@ -18,8 +17,9 @@ interface CustomizationSectionsProps {
 
 /**
  * Engine options the Design tab adds after the Logo section: logo options
- * (while a logo is on), per-eye colors, dot size and the code's shape. One component, so
- * design-controls.tsx wires them in a single place.
+ * (while a logo is on), per-eye colors and dot size (the code's shape is a
+ * choice in Frame). One component, so design-controls.tsx wires them in a
+ * single place.
  */
 export function CustomizationSections({
   styles,
@@ -52,11 +52,6 @@ export function CustomizationSections({
       <DotSizeSection
         expanded={focus === "dot-size"}
         onChange={(moduleScale) => update({ moduleScale })}
-        style={current}
-      />
-      <CodeShapeSection
-        expanded={focus === "shape"}
-        onChange={(shape) => update({ shape })}
         style={current}
       />
     </>

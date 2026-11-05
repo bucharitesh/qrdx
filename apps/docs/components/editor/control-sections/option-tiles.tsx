@@ -197,7 +197,7 @@ const SMALL_TILE =
   "group bg-card relative grid aspect-square min-w-0 place-items-center rounded-[14px] border p-1 transition-[background-color,border-color,transform] outline-none active:scale-[0.96] hover:border-foreground/20 hover:bg-accent/40 focus-visible:border-foreground/30 focus-visible:ring-ring/40 focus-visible:ring-[3px]";
 
 /** Small preview-only tile for the compact row; the name is its label. */
-function CompactTile({
+export function CompactTile({
   name,
   selected,
   risk,
@@ -329,9 +329,12 @@ export function ShapePicker<T extends string>({
   };
 
   const byId = new Map(options.map((option) => [option.id, option]));
-  const row = featured.includes(value)
-    ? featured
-    : [...featured.slice(0, -1), value];
+  // The current choice joins the row; a value with no option (nothing
+  // picked here) leaves the row as it is
+  const row =
+    featured.includes(value) || !byId.has(value)
+      ? featured
+      : [...featured.slice(0, -1), value];
   const current = byId.get(value);
   const currentRisk = riskOf?.(value) ?? null;
 

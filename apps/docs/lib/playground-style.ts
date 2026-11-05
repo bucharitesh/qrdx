@@ -28,7 +28,11 @@ import {
   qrShapeSchema,
 } from "qrdx/types";
 import { z } from "zod";
-import { withoutImageFills } from "@/lib/paint/image-fills";
+import {
+  hasImageFills,
+  hasSilhouette,
+  withoutImageFills,
+} from "@/lib/paint/image-fills";
 import {
   MAX_STYLE_PARAM_LENGTH,
   parsePresetId,
@@ -67,7 +71,7 @@ const PRESET_KEY = "k";
 const MARGIN_MAX = 16;
 
 /** Parts of a design a link leaves out. */
-export type OmittedPart = "logo" | "art" | "frame" | "image";
+export type OmittedPart = "logo" | "art" | "frame" | "image" | "silhouette";
 
 const SAFE_COLOR =
   /^(?:#(?:[0-9a-f]{3}|[0-9a-f]{4}|[0-9a-f]{6}|[0-9a-f]{8})|(?:rgba?|hsla?)\([\d\s.,%/+-]{1,64}\)|[a-z]{3,24})$/i;
@@ -219,9 +223,11 @@ export function encodeStyleParam(
   const omitted: OmittedPart[] = [];
   const style: LinkedStyle = {};
   // Image fills travel like logos, never in a link: each part keeps its
-  // underlay color, or its default without one.
+  // underlay color, or its default without one. So does a traced
+  // silhouette: the link's code takes its named shape.
   const linked = withoutImageFills(styles);
-  if (linked !== styles) omitted.push("image");
+  if (hasImageFills(styles)) omitted.push("image");
+  if (hasSilhouette(styles)) omitted.push("silhouette");
 
   for (const field of Object.keys(KEYS) as LinkedField[]) {
     if (field === "showLogo") continue;
