@@ -17,20 +17,21 @@ import {
 import type { JobSummary, ProviderStatus } from "@/lib/migrate/types";
 import { formatDay, ProviderLogo, plural, StepLayout } from "./import-shared";
 
+/** Short enough to fit a tile in the three-column row. */
 function metaFor(
   id: ApiProviderId,
   entry: ProviderStatus | undefined,
   loaded: boolean,
 ): string {
-  if (!loaded) return "Checking connection…";
+  if (!loaded) return "Checking…";
   if (entry?.connection === "active") return "Connected";
   // Local dev only: production leaves these providers out.
   if (entry?.needsSetup?.length)
     return `Needs setup · ${entry.needsSetup.join(", ")}`;
   if (entry?.connection === "error") return "Reconnect needed";
   return API_PROVIDERS[id].connect === "oauth"
-    ? "Connect by signing in"
-    : "Connect with an API key";
+    ? "Sign in to connect"
+    : "Paste an API key";
 }
 
 function Tile({
@@ -103,7 +104,9 @@ export function ProviderStep({
                 allows it, old links can then point to their new QRdx codes.
               </p>
             </div>
-            <div className="grid gap-2 sm:grid-cols-2">
+            {/* Three providers: one row from md (where each tile still fits
+                its text), one column below. */}
+            <div className="grid gap-2 md:grid-cols-3" data-provider-grid="api">
               {apiIds.map((id) => (
                 <Tile
                   key={id}
