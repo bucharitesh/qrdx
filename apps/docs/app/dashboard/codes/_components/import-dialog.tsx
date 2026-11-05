@@ -17,6 +17,7 @@ import {
   type FileProviderId,
   getProvider,
   isApiProviderId,
+  isRetiredProvider,
   type ProviderId,
   parseProviderParam,
   providerName,
@@ -81,10 +82,15 @@ function heading(step: Step): { title: string; description: string } {
         description: "New dynamic codes, with notes on where each came from.",
       };
     case "redirects":
-      return {
-        title: "Keep my printed codes working",
-        description: `Point old ${providerName(step.provider)} links at their new QRdx codes.`,
-      };
+      return isRetiredProvider(step.provider)
+        ? {
+            title: `Undo changes in ${providerName(step.provider)}`,
+            description: `Put the original destinations back on your old ${providerName(step.provider)} links.`,
+          }
+        : {
+            title: "Keep my printed codes working",
+            description: `Point old ${providerName(step.provider)} links at their new QRdx codes.`,
+          };
     default:
       return {
         title: "Import codes",
@@ -325,9 +331,10 @@ function ImportDialogInner({
 }
 
 /**
- * "Import" in the codes header: one-click migration from Dub, Bitly,
- * Rebrandly, Short.io (connected accounts) and export files of other
- * providers. `?import=<provider>` opens it on that provider.
+ * "Import" in the codes header: one-click migration from Bitly, Rebrandly,
+ * Short.io (connected accounts) and export files of other providers.
+ * `?import=<provider>` opens it on that provider. Earlier Dub imports (Dub
+ * is retired as a source) still open from Recent imports, for undo.
  */
 export function ImportDialog(props: {
   mock?: boolean;

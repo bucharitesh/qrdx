@@ -1,6 +1,10 @@
 // Providers QRdx can import dynamic codes and short links from. Client-safe:
 // the import dialog, the API routes, the docs and the compare pages read it.
 
+/**
+ * Every API provider an import job can name, including retired ones: stored
+ * jobs keep their provider, so history and undo keep working.
+ */
 export const API_PROVIDER_IDS = [
   "dub",
   "bitly",
@@ -8,6 +12,29 @@ export const API_PROVIDER_IDS = [
   "short-io",
 ] as const;
 export type ApiProviderId = (typeof API_PROVIDER_IDS)[number];
+
+/**
+ * Providers QRdx no longer imports from (owner decision, 2026-11-05: Dub is
+ * a partner, and the Dub integration stays). Their earlier jobs still show in
+ * Recent imports, and undo can still put the old links back; nothing new is
+ * listed, previewed, imported or re-pointed.
+ */
+export const RETIRED_PROVIDER_IDS = ["dub"] as const;
+export type RetiredProviderId = (typeof RETIRED_PROVIDER_IDS)[number];
+
+export function isRetiredProvider(value: string): value is RetiredProviderId {
+  return (RETIRED_PROVIDER_IDS as readonly string[]).includes(value);
+}
+
+/** API providers offered for new imports (the dialog's picker). */
+export const IMPORT_API_PROVIDER_IDS = API_PROVIDER_IDS.filter(
+  (id): id is Exclude<ApiProviderId, RetiredProviderId> =>
+    !isRetiredProvider(id),
+);
+
+/** Why a retired provider's job can't do something new, in plain words. */
+export const retiredMessage = (name: string) =>
+  `Imports from ${name} have ended. Codes already imported stay, and undo still puts the old ${name} links back.`;
 
 export const FILE_PROVIDER_IDS = [
   "qr-code-generator-pro",
@@ -72,6 +99,7 @@ export interface FileProvider {
 export type Provider = ApiProvider | FileProvider;
 
 export const API_PROVIDERS: Record<ApiProviderId, ApiProvider> = {
+  // Retired for new imports (RETIRED_PROVIDER_IDS); kept for history and undo.
   dub: {
     id: "dub",
     kind: "api",
@@ -361,6 +389,8 @@ const ALIASES: Record<string, ProviderId> = {
 export function parseProviderParam(value: string | null | undefined) {
   const key = value?.trim().toLowerCase();
   if (!key) return null;
+  // A retired provider opens the picker instead of its (refused) link list.
+  if (isRetiredProvider(key)) return null;
   if (isProviderId(key)) return key;
   return ALIASES[key] ?? null;
 }

@@ -12,7 +12,11 @@ import {
   withRetry,
 } from "@/lib/migrate/client";
 import { displayLink } from "@/lib/migrate/normalize";
-import { API_PROVIDERS, type ApiProviderId } from "@/lib/migrate/providers";
+import {
+  API_PROVIDERS,
+  type ApiProviderId,
+  isRetiredProvider,
+} from "@/lib/migrate/providers";
 import type {
   JobSummary,
   RedirectMode,
@@ -43,6 +47,8 @@ export function RedirectsStep({
   onBack: () => void;
 }) {
   const { name, redirectLimits } = API_PROVIDERS[provider];
+  // Dub imports have ended: no new changes (the dry run is empty), undo only.
+  const retired = isRetiredProvider(provider);
   const [plan, setPlan] = useState<RedirectPlanItem[] | null>(null);
   const [job, setJob] = useState<JobSummary | null>(null);
   const [agreed, setAgreed] = useState(false);
@@ -140,7 +146,7 @@ export function RedirectsStep({
                 Undo {plural(live, "link")}
               </Button>
             )}
-            {pending > 0 && (
+            {pending > 0 && !retired && (
               <Button
                 disabled={!agreed || busy}
                 onClick={() => execute("apply")}
@@ -156,20 +162,33 @@ export function RedirectsStep({
       }
     >
       <div className="space-y-4">
-        <Note icon={<Warning2 />} tone="warning">
-          <p className="font-medium">
-            This changes links in your {name} account.
-          </p>
-          <p>
-            Each old link will open its new QRdx code, which sends visitors to
-            the same destination, so printed codes keep working and their scans
-            show in QRdx. {name} still sees a click first. Undo puts the
-            original destinations back (they're saved with this import).
-          </p>
-        </Note>
-        <Note icon={<Info />}>
-          <p>{redirectLimits}</p>
-        </Note>
+        {retired ? (
+          <Note icon={<Info />}>
+            <p className="font-medium">Imports from {name} have ended.</p>
+            <p>
+              QRdx no longer changes {name} links. Undo puts the original
+              destinations back in your {name} account (they're saved with this
+              import). The QRdx codes stay.
+            </p>
+          </Note>
+        ) : (
+          <>
+            <Note icon={<Warning2 />} tone="warning">
+              <p className="font-medium">
+                This changes links in your {name} account.
+              </p>
+              <p>
+                Each old link will open its new QRdx code, which sends visitors
+                to the same destination, so printed codes keep working and their
+                scans show in QRdx. {name} still sees a click first. Undo puts
+                the original destinations back (they're saved with this import).
+              </p>
+            </Note>
+            <Note icon={<Info />}>
+              <p>{redirectLimits}</p>
+            </Note>
+          </>
+        )}
 
         {run && (
           <div className="space-y-2 rounded-xl border p-4">
@@ -264,7 +283,9 @@ export function RedirectsStep({
             <p className="text-muted-foreground text-sm">
               {live > 0
                 ? `${plural(live, "old link")} already point${live === 1 ? "s" : ""} to QRdx.`
-                : "No links to change."}
+                : retired
+                  ? `Every old ${name} link has its original destination.`
+                  : "No links to change."}
             </p>
           )
         )}
