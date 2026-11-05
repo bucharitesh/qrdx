@@ -5,7 +5,7 @@ export interface PromptSuggestion {
   title: string;
   hint: string;
   prompt: string;
-  /** Colours and shapes for the card's mini preview (a rough idea of the result) */
+  /** Colors and shapes for the card's mini preview (a rough idea of the result) */
   preview: Partial<ThemeStyles>;
   season?: "halloween";
 }
@@ -17,7 +17,7 @@ export const CREATE_SUGGESTIONS: PromptSuggestion[] = [
     title: "Cafe Wi-Fi",
     hint: "Asks for your network",
     prompt:
-      "Make a Wi-Fi QR code for my cafe with warm coffee colours and a Free Wi-Fi frame.",
+      "Make a Wi-Fi QR code for my cafe with warm coffee colors and a Free Wi-Fi frame.",
     preview: {
       bgColor: "#fdf6ec",
       fgColor: "#5b3a29",
@@ -196,5 +196,5 @@ export const COMPOSER_PLACEHOLDERS = [
   "Retro arcade with pixel dots…",
   "Our café: warm browns, rounded eyes…",
   "Neon cyan on black for a night club…",
-  "Match the colours of my logo…",
+  "Match the colors of my logo…",
 ];

@@ -592,7 +592,7 @@ export function SaveTemplateCard({
         <div className="min-w-0 flex-1 space-y-1">
           <p className="text-sm font-medium leading-snug">Template “{name}”</p>
           <p className="text-muted-foreground text-xs leading-5">
-            Saves the look to your themes: colours, shapes, frame and its text,
+            Saves the look to your themes: colors, shapes, frame and its text,
             border and logo. Not the content.
           </p>
         </div>

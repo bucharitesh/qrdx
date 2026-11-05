@@ -23,6 +23,10 @@ import {
   useId,
   useMemo,
 } from "react";
+import {
+  clearOfBanner,
+  useConsentBannerInset,
+} from "@/components/consent/banner-inset";
 
 // Shape catalogs and the shape sections (eyes, frame) open beside the design
 // panel instead of growing it, so the code preview stays in view: a popover
@@ -114,6 +118,7 @@ export function SidePanel({
 }) {
   const { side } = useContext(SidePanelContext);
   const sheet = useMediaQuery(SIDE_PANEL_SHEET_QUERY) ?? false;
+  const bannerInset = useConsentBannerInset();
   const inside = useMemo(() => ({ inside: true, side }), [side]);
   // Named by its visible title, not an aria-label: the catalog grid inside
   // carries the group's name ("Dot shape") and must stay the one found by it.
@@ -172,7 +177,8 @@ export function SidePanel({
         aria-labelledby={titleId}
         // Above the code builder's modal (z-[99]); never clipped by it.
         className="z-[120] flex max-h-[min(34rem,var(--radix-popover-content-available-height))] w-[min(28rem,calc(100vw-2rem))] flex-col gap-0 p-0"
-        collisionPadding={12}
+        // Never across the cookie banner while it shows
+        collisionPadding={clearOfBanner(12, bannerInset)}
         onOpenAutoFocus={onOpenAutoFocus}
         side={side}
         sideOffset={sideOffset}

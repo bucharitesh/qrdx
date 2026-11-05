@@ -1,5 +1,5 @@
 // A picture the user attached in the Generate tab, put into the code the ways
-// the editor already does it without AI: the centre logo, Logo QR or Image QR
+// the editor already does it without AI: the center logo, Logo QR or Image QR
 // art, or an image fill for the background or the dots. Pure: the browser
 // prepares the picture (attached-image.ts) and scores each attempt with the
 // editor's own scan score; this module builds the style, repairs it toward
@@ -37,7 +37,7 @@ import type { ThemeStyles } from "@/types/theme";
 
 /** The picture, prepared in the browser for the placement it is used for. */
 export interface PlacementAssets {
-  /** The centre logo: a data URL sized for logos */
+  /** The center logo: a data URL sized for logos */
   logo?: string;
   /** The art sample grid for Logo QR ("logo") or Image QR ("halftone") */
   art?: Partial<Record<QRArtMode, QRArtImage>>;
@@ -88,7 +88,7 @@ function withoutArt(style: ThemeStyles, changes: string[]): ThemeStyles {
   return rest;
 }
 
-/** Code colors (dots, eyes, eye centres) that read on `background`. */
+/** Code colors (dots, eyes, eye centers) that read on `background`. */
 function readableCode(
   style: ThemeStyles,
   background: ColorConfig,
@@ -98,7 +98,7 @@ function readableCode(
   const parts = [
     ["fgColor", "dots"],
     ["eyeColor", "corner eyes"],
-    ["dotColor", "eye centres"],
+    ["dotColor", "eye centers"],
   ] as const;
   for (const [key, name] of parts) {
     const paint = next[key];
@@ -288,7 +288,7 @@ export function repairPlacement(
       changes.push(`Changed the dots to rounded: ${risk.message}`);
       next.bodyPattern = "rounded";
     } else if (risk) {
-      changes.push(`Changed the eye centres to rounded: ${risk.message}`);
+      changes.push(`Changed the eye centers to rounded: ${risk.message}`);
       next.cornerEyeDotPattern = "rounded";
     }
   }
@@ -306,7 +306,7 @@ export function repairPlacement(
         next.logoOptions = { ...next.logoOptions, size: smaller };
       }
     } else if (next.showLogo) {
-      changes.push("Removed the centre logo: it covered too much of the code");
+      changes.push("Removed the center logo: it covered too much of the code");
       next.showLogo = false;
     }
   }

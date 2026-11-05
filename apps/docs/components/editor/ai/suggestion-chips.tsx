@@ -38,7 +38,7 @@ export function suggestionsFor(message: ChatMessage | undefined): string[] {
         ].slice(0, MAX_CHIPS);
       }
       if (part.state === "output-denied") {
-        return ["Try a different style", "Keep the colours, change the shapes"];
+        return ["Try a different style", "Keep the colors, change the shapes"];
       }
       return [];
     }
