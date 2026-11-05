@@ -54,6 +54,8 @@ export interface PlanLimits {
   teamMembers: number;
   /** Per-folder access rules for team members */
   folderPermissions: boolean;
+  /** Workspace single sign-on, OIDC and SAML (packages/auth/sso.ts) */
+  sso: boolean;
   auditLog: boolean;
   /** Password, start/expiry dates and scan limits (lib/redirect/lifecycle.ts) */
   linkControls: boolean;
@@ -102,6 +104,7 @@ export const PLAN_LIMITS: Record<Plan, PlanLimits> = {
     teams: false,
     teamMembers: 1,
     folderPermissions: false,
+    sso: false,
     auditLog: false,
     linkControls: false,
     routing: false,
@@ -134,6 +137,7 @@ export const PLAN_LIMITS: Record<Plan, PlanLimits> = {
     teams: true,
     teamMembers: 3,
     folderPermissions: false,
+    sso: false,
     auditLog: false,
     linkControls: true,
     routing: true,
@@ -168,6 +172,7 @@ export const PLAN_LIMITS: Record<Plan, PlanLimits> = {
     teams: true,
     teamMembers: UNLIMITED,
     folderPermissions: true,
+    sso: true,
     auditLog: true,
     linkControls: true,
     routing: true,

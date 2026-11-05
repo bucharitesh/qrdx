@@ -177,6 +177,11 @@ const GROUPS: {
         "Choose the link, like qrdx.dev/q/spring-menu",
       ),
       row("Team members", teamMembers),
+      row(
+        "Single sign-on",
+        flag("sso"),
+        "SAML or OIDC, with your company's identity provider",
+      ),
     ],
   },
   {
@@ -368,6 +373,7 @@ export function buildHighlights(
         ? [`${formatCount(business.customDomains)} custom domains`]
         : []),
       "Unlimited team members",
+      ...(business.sso ? ["Single sign-on (SAML and OIDC)"] : []),
       "Conversion tracking",
       "Webhooks, Zapier and Slack",
       storageAndForms(business, storage),
