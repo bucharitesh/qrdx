@@ -4,7 +4,12 @@ import { z } from "zod";
 import { PAGE_SETTINGS_TYPE } from "@/components/landing/page-settings-block";
 import { getBlock, parseLandingPageContent } from "@/lib/landing/blocks";
 import { getTemplate } from "@/lib/landing/templates";
-import type { LandingBlock, LandingPageContent } from "@/types/landing";
+import {
+  DEFAULT_LANDING_THEME,
+  type LandingBlock,
+  type LandingPageContent,
+  landingThemeSchema,
+} from "@/types/landing";
 import { textProblem } from "./text";
 
 // A hosted page published as a community page template. A template is a
@@ -472,7 +477,11 @@ function scrubTheme(
     report.images++;
     delete next.logo;
   }
-  return next;
+  // Allowlist, like the blocks: only fields the theme schema knows (colours,
+  // a font id, a radius, a background) survive; anything else on the stored
+  // theme is dropped here, not left for a later parse to catch.
+  const parsed = landingThemeSchema.safeParse(next);
+  return parsed.success ? parsed.data : DEFAULT_LANDING_THEME;
 }
 
 export interface ScrubResult {
