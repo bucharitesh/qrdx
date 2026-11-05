@@ -17,6 +17,8 @@
     "./keys": "./keys.ts",
     "./provider": "./provider.tsx",
     "./own-workspace-id": "./own-workspace-id.ts",
+    "./sso": "./sso.ts",
+    "./sso-rules": "./sso-rules.ts",
     "./workspace-hooks": "./workspace-hooks.ts",
     "./workspace-rules": "./workspace-rules.ts"
   },

@@ -7,6 +7,7 @@ import {
   Speedometer as Gauge,
   Global as Globe,
   Home2 as Home,
+  KeySquare,
   type Icon as LucideIcon,
   Element2 as PanelsTopLeft,
   Electricity as Plug,
@@ -141,6 +142,12 @@ export function settingsNav(slug: string): AppNavGroup[] {
           label: "Domains",
           icon: Globe,
           keywords: ["custom domain", "dns"],
+        },
+        {
+          href: workspaceHref(slug, "/settings/sso"),
+          label: "Single sign-on",
+          icon: KeySquare,
+          keywords: ["sso", "saml", "oidc", "okta", "identity provider"],
         },
         {
           href: workspaceHref(slug, "/settings/webhooks"),

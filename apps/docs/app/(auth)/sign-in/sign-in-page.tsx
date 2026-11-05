@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { ssoSignInErrorMessage } from "@/lib/sso/messages";
 import { SignInPanel } from "../components/sign-in-panel";
 
 function Heading({
@@ -32,9 +33,12 @@ function Lead({
 export function SignInPage({
   next,
   signedOut,
+  ssoError = null,
 }: {
   next: string;
   signedOut: boolean;
+  /** Code from a failed single sign-on; its description isn't shown (it's from the URL). */
+  ssoError?: string | null;
 }) {
   return (
     <main className="bg-background flex min-h-svh flex-col items-center justify-center gap-4 px-4 py-10">
@@ -42,7 +46,13 @@ export function SignInPage({
         <SignInPanel
           callbackURL={() => next}
           Description={Lead}
-          notice={signedOut ? "You're signed out." : undefined}
+          notice={
+            ssoError
+              ? ssoSignInErrorMessage(ssoError)
+              : signedOut
+                ? "You're signed out."
+                : undefined
+          }
           redirectTo={next}
           Title={Heading}
         />
