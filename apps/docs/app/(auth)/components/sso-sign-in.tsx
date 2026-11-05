@@ -10,8 +10,9 @@ import { type FormEvent, useId, useState } from "react";
 import { signInPath } from "@/lib/safe-redirect";
 import { ssoSignInErrorMessage } from "@/lib/sso/messages";
 
+// min-h-10: a 40 px tap target on phones without looking bigger.
 const TEXT_ACTION =
-  "rounded-sm text-xs text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50";
+  "inline-flex min-h-10 items-center px-1 rounded-sm text-xs text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50";
 
 interface SsoSignInProps {
   /** Same-site path to land on after sign-in (read when the sign-in starts). */
@@ -66,7 +67,7 @@ export function SsoSignIn({
 
   if (!open) {
     return (
-      <div className="flex items-center justify-center gap-2 px-6 pt-3">
+      <div className="flex items-center justify-center gap-2 px-6 pt-1">
         <button
           className={TEXT_ACTION}
           disabled={disabled}
@@ -87,7 +88,8 @@ export function SsoSignIn({
   return (
     <form className="space-y-2 px-6 pt-4" onSubmit={submit}>
       <Label htmlFor={`${id}-email`}>Work email</Label>
-      <div className="flex gap-2">
+      {/* Stacked on phones, so a long address stays readable. */}
+      <div className="flex flex-col gap-2 sm:flex-row">
         <Input
           aria-describedby={`${id}-error`}
           aria-invalid={Boolean(error)}
@@ -118,7 +120,7 @@ export function SsoSignIn({
       >
         {error}
       </p>
-      <div className="flex justify-between gap-2">
+      <div className="flex items-center justify-between gap-2">
         <span className="text-muted-foreground text-xs">
           If your company set it up for QRdx.
         </span>

@@ -59,7 +59,6 @@ import {
   updateSso,
   verifySso,
 } from "@/actions/sso";
-import { DnsRecords } from "@/app/dashboard/domains/_components/dns-records";
 import { RoleSelect } from "@/app/dashboard/team/_components/role-select";
 import { CopyButton } from "@/components/copy-button";
 import type { SsoConnectionView, SsoOverview } from "@/lib/sso/connections";
@@ -84,11 +83,41 @@ function CopyRow({ label, value }: { label: string; value: string }) {
           {value}
         </code>
         <CopyButton
-          className="-my-0.5 shrink-0"
+          className="-my-2 size-10 shrink-0"
           successMessage={{ title: `${label} copied` }}
           textToCopy={value}
         />
       </div>
+    </div>
+  );
+}
+
+/**
+ * The TXT record, as copyable rows: a table squeezes the long name and value
+ * into narrow columns on a phone.
+ */
+function DnsRecord({
+  domain,
+  record,
+}: {
+  domain: string;
+  record: NonNullable<SsoConnectionView["record"]>;
+}) {
+  // Most DNS providers want the name relative to the domain.
+  const name = record.name.endsWith(`.${domain}`)
+    ? record.name.slice(0, -(domain.length + 1))
+    : record.name;
+  return (
+    <div className="space-y-3">
+      <div className="space-y-1">
+        <div className="text-muted-foreground text-xs">Type</div>
+        <code className="font-mono text-xs font-medium">{record.type}</code>
+      </div>
+      <CopyRow label="Name" value={name} />
+      <p className="text-muted-foreground -mt-2 text-xs break-all">
+        Full name: {record.name}
+      </p>
+      <CopyRow label="Value" value={record.value} />
     </div>
   );
 }
@@ -157,6 +186,7 @@ function ReauthNotice() {
           await authClient.signOut().catch(() => {});
           router.push("/sign-in");
         }}
+        className="max-sm:h-10"
         size="sm"
       >
         Sign out
@@ -243,7 +273,7 @@ function SetupCard({
             }}
             value={protocol}
           >
-            <TabsList>
+            <TabsList className="max-sm:h-11">
               <TabsTrigger value="oidc">OIDC</TabsTrigger>
               <TabsTrigger value="saml">SAML 2.0</TabsTrigger>
             </TabsList>
@@ -306,7 +336,7 @@ function SetupCard({
                   Paste the XML your identity provider offers as its SAML
                   metadata.{" "}
                   <button
-                    className="underline"
+                    className="block min-h-10 underline"
                     onClick={() => setSamlMode("manual")}
                     type="button"
                   >
@@ -350,7 +380,7 @@ function SetupCard({
               <Field
                 hint={
                   <button
-                    className="underline"
+                    className="min-h-10 underline"
                     onClick={() => setSamlMode("metadata")}
                     type="button"
                   >
@@ -567,6 +597,7 @@ function ConnectionCard({
             <div className="flex shrink-0 gap-1">
               {allowed && !connection.fromMetadata && (
                 <Button
+                  className="max-sm:h-10"
                   onClick={() => setUpdating(true)}
                   size="sm"
                   variant="outline"
@@ -577,6 +608,7 @@ function ConnectionCard({
               )}
               <Button
                 aria-label="Remove single sign-on"
+                className="max-sm:size-10"
                 onClick={() => setRemoving(true)}
                 size="icon-sm"
                 variant="ghost"
@@ -699,7 +731,12 @@ function VerifyCard({
               proves this workspace owns the domain.
             </CardDescription>
           </div>
-          <Button disabled={busy || !record} onClick={verify} size="sm">
+          <Button
+            className="max-sm:h-10"
+            disabled={busy || !record}
+            onClick={verify}
+            size="sm"
+          >
             {busy ? <Spinner /> : <RefreshCw />}
             Verify
           </Button>
@@ -707,7 +744,7 @@ function VerifyCard({
       </CardHeader>
       <CardContent className="space-y-3">
         {record ? (
-          <DnsRecords apexName={connection.domain} records={[record]} />
+          <DnsRecord domain={connection.domain} record={record} />
         ) : (
           <p className="text-muted-foreground text-sm">
             The verification record couldn't be loaded. Reload the page.
