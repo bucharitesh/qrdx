@@ -634,15 +634,40 @@ export async function svgToEPS(
   ].join("\n");
 }
 
+/** Why EPS refuses a design with an image fill (see `hasImageFill`). */
+export const EPS_IMAGE_FILL_REASON =
+  "EPS can't carry image fills: PostScript has no transparency and would repeat the picture for every dot. Download PDF, SVG or PNG instead.";
+
+/** True when a color in the props is an image fill. */
+export function hasImageFill(props: QRProps): boolean {
+  const paints = [
+    props.bgColor,
+    props.fgColor,
+    props.eyeColor,
+    props.dotColor,
+    ...Object.values(props.eyeColors ?? {}).flatMap((eye) => [
+      eye?.outer,
+      eye?.inner,
+    ]),
+  ];
+  return paints.some(
+    (paint) => typeof paint === "object" && paint?.type === "image"
+  );
+}
+
 /**
  * Renders a vector EPS for print and design tools (Illustrator, InDesign,
  * CorelDRAW): the QR code is `sizeMm` wide (default 50 mm), plus any frame
  * and bleed. See `svgToEPS` for what is converted and what is left out.
+ * Throws `EPS_IMAGE_FILL_REASON` for a design with an image fill.
  */
 export async function getQRAsEPS(
   props: QRProps,
   options: EPSOptions = {}
 ): Promise<string> {
+  if (hasImageFill(props)) {
+    throw new Error(EPS_IMAGE_FILL_REASON);
+  }
   const layout = getPrintLayout(props, {
     size: options.sizeMm ?? DEFAULT_EPS_SIZE_MM,
     unit: "mm",

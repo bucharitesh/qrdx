@@ -36,6 +36,7 @@ import {
   collectGradientColors,
   collectImageHrefs,
   imageFormat,
+  imagePlacement,
   length,
   type PaintState,
   rasterizeImage,
@@ -510,6 +511,9 @@ class PdfPainter extends SvgPainter {
     this.pdf.text(content, x, y, { align, baseline: "alphabetic" });
   }
 
+  /** jsPDF image alias per source, so each picture is embedded and hashed once */
+  private readonly aliases = new Map<string, string>();
+
   image(node: SvgNode, state: PaintState) {
     const href = node.attrs.href ?? node.attrs["xlink:href"];
     const source = href && (imageFormat(href) ? href : this.images.get(href));
@@ -517,25 +521,61 @@ class PdfPainter extends SvgPainter {
     if (!(source && format)) {
       return;
     }
-    const x = length(node.attrs.x, state.viewport[0]);
-    const y = length(node.attrs.y, state.viewport[1]);
-    const width = length(node.attrs.width, state.viewport[0]);
-    const height = length(node.attrs.height, state.viewport[1]);
-    if (width <= 0 || height <= 0) {
+    let alias = this.aliases.get(source);
+    if (!alias) {
+      alias = `qrdx-image-${this.aliases.size}`;
+      this.aliases.set(source, alias);
+    }
+    let intrinsic: { width: number; height: number } | null = null;
+    if (node.attrs.preserveAspectRatio) {
+      try {
+        const properties = this.pdf.getImageProperties(source);
+        intrinsic = { width: properties.width, height: properties.height };
+      } catch {
+        intrinsic = null;
+      }
+    }
+    const placement = imagePlacement(node, state.viewport, intrinsic);
+    if (!placement) {
       return;
     }
-    const [x0, y0] = applyMatrix(state.matrix, x, y);
-    const [x1, y1] = applyMatrix(state.matrix, x + width, y + height);
-    this.withAlpha(state.opacity ?? 1, 1, () => {
-      this.pdf.addImage(
-        source,
-        format,
-        Math.min(x0, x1),
-        Math.min(y0, y1),
-        Math.abs(x1 - x0),
-        Math.abs(y1 - y0)
+    const { draw, clip } = placement;
+    const [x0, y0] = applyMatrix(state.matrix, draw.x, draw.y);
+    const [x1, y1] = applyMatrix(
+      state.matrix,
+      draw.x + draw.width,
+      draw.y + draw.height
+    );
+    const clipped =
+      clip !== null &&
+      this.beginClip(
+        [
+          { op: "M", x: clip.x, y: clip.y },
+          { op: "L", x: clip.x + clip.width, y: clip.y },
+          { op: "L", x: clip.x + clip.width, y: clip.y + clip.height },
+          { op: "L", x: clip.x, y: clip.y + clip.height },
+          { op: "Z" },
+        ],
+        state.matrix,
+        false
       );
-    });
+    try {
+      this.withAlpha(state.opacity ?? 1, 1, () => {
+        this.pdf.addImage(
+          source,
+          format,
+          Math.min(x0, x1),
+          Math.min(y0, y1),
+          Math.abs(x1 - x0),
+          Math.abs(y1 - y0),
+          alias
+        );
+      });
+    } finally {
+      if (clipped) {
+        this.endClip();
+      }
+    }
   }
 
   /** Matrix that maps a nested <svg> viewport onto its parent. */

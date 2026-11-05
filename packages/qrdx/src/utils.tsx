@@ -7,6 +7,7 @@ import type {
   ErrorLevel,
   Excavation,
   GradientStop,
+  ImagePaint,
   ImageSettings,
   LinearGradient,
   Modules,
@@ -14,7 +15,7 @@ import type {
   RadialGradient,
   TemplateConfig,
 } from "../types";
-import { isGradient, normalizeColorConfig } from "../types/color";
+import { isGradient, isImagePaint, normalizeColorConfig } from "../types/color";
 import {
   AUTO_LEVEL_LOGO_COVERAGE,
   type EyePosition,
@@ -503,6 +504,81 @@ function renderConicPattern(
   );
 }
 
+/** Horizontal and vertical anchors (0, ½, 1) of an image fill's position. */
+function imageAnchor(position: ImagePaint["position"] = "center") {
+  const [first, second] = position.split("-") as [string, string | undefined];
+  const vertical = position === "center" ? "center" : first;
+  const horizontal =
+    second ?? (first === "left" || first === "right" ? first : "center");
+  const x = horizontal === "left" ? 0 : horizontal === "right" ? 1 : 0.5;
+  const y = vertical === "top" ? 0 : vertical === "bottom" ? 1 : 0.5;
+  return { x, y };
+}
+
+const ALIGN_X = ["xMin", "xMid", "xMax"] as const;
+const ALIGN_Y = ["YMin", "YMid", "YMax"] as const;
+
+/**
+ * An image fill as a `<pattern>` over the whole code (0 to `size`), so the
+ * dots, the eyes and the background that share a picture show one picture
+ * (and one copy of it). Cover and contain draw the image once, `scale` times
+ * the code's size around `position`; tile repeats it in squares a quarter of
+ * the code wide at scale 1. The underlay is a rect under the image; opacity
+ * is the image's. PDF export paints the same pattern inside each shape.
+ */
+function renderImagePattern(
+  id: string,
+  paint: ImagePaint,
+  size: number
+): JSX.Element {
+  const scale = paint.scale ?? 1;
+  const tile = paint.fit === "tile";
+  const side = tile ? (size / 4) * scale : size;
+  const underlay = paint.underlay ? splitAlpha(paint.underlay) : null;
+  const width = tile ? side : size * scale;
+  const anchor = imageAnchor(paint.position);
+  const x = tile ? 0 : anchor.x * (size - width);
+  const y = tile ? 0 : anchor.y * (size - width);
+  const align = tile
+    ? "xMidYMid slice"
+    : `${ALIGN_X[anchor.x * 2] ?? "xMid"}${ALIGN_Y[anchor.y * 2] ?? "YMid"} ${paint.fit === "contain" ? "meet" : "slice"}`;
+  return (
+    <pattern
+      height={fmt(side)}
+      id={id}
+      key={id}
+      patternUnits="userSpaceOnUse"
+      width={fmt(side)}
+      x={0}
+      y={0}
+    >
+      {underlay && (
+        <rect
+          fill={underlay.color}
+          fillOpacity={underlay.opacity}
+          height={fmt(side)}
+          width={fmt(side)}
+          x={0}
+          y={0}
+        />
+      )}
+      <image
+        height={fmt(width)}
+        href={paint.src}
+        opacity={(paint.opacity ?? 1) < 1 ? paint.opacity : undefined}
+        preserveAspectRatio={align}
+        width={fmt(width)}
+        x={fmt(x)}
+        y={fmt(y)}
+      />
+    </pattern>
+  );
+}
+
+/** Pattern id of an image fill: the same picture shares one pattern. */
+const imagePatternId = (paint: ImagePaint, size: number) =>
+  generateGradientId("img", [paint, size]);
+
 // Generate gradient definition elements for corners
 function generateCornerGradientDef(
   colorConfig: ColorConfig,
@@ -517,6 +593,13 @@ function generateCornerGradientDef(
 
   if (normalized.type === "solid") {
     return null;
+  }
+
+  if (normalized.type === "image") {
+    // Laid over the whole code, like the dots, so eyes and dots that share
+    // a picture show one picture
+    const id = imagePatternId(normalized, size);
+    return { id, element: renderImagePattern(id, normalized, size) };
   }
 
   const id = generateGradientId(idPrefix, [
@@ -612,6 +695,11 @@ function generateGradientDef(
     return null;
   }
 
+  if (normalized.type === "image") {
+    const id = imagePatternId(normalized, size);
+    return { id, element: renderImagePattern(id, normalized, size) };
+  }
+
   const id = generateGradientId(idPrefix, [normalized, size]);
 
   if (normalized.type === "linear") {
@@ -680,6 +768,25 @@ function generateGradientDef(
   return null;
 }
 
+/** Paints drawn from a definition: gradients and image fills. */
+const hasPaintDef = (color: ColorConfig) =>
+  isGradient(color) || isImagePaint(color);
+
+/** Definitions once each: image fills that share a picture share an id. */
+function uniqueDefs(
+  defs: ({ id: string; element: JSX.Element } | null | undefined)[]
+): JSX.Element[] {
+  const seen = new Set<string>();
+  const out: JSX.Element[] = [];
+  for (const def of defs) {
+    if (def && !seen.has(def.id)) {
+      seen.add(def.id);
+      out.push(def.element);
+    }
+  }
+  return out;
+}
+
 interface FillProps {
   fill: string;
   /** Set when the solid color is see-through */
@@ -701,7 +808,12 @@ function getFillProps(
   }
 
   const normalized = normalizeColorConfig(colorConfig, fallback);
-  const color = normalized.type === "solid" ? normalized.color : fallback;
+  const color =
+    normalized.type === "solid"
+      ? normalized.color
+      : normalized.type === "image"
+        ? (normalized.underlay ?? fallback)
+        : fallback;
   const { color: fill, opacity } = splitAlpha(color);
   return opacity === undefined ? { fill } : { fill, fillOpacity: opacity };
 }
@@ -1009,11 +1121,11 @@ export function QRCodeSVG(props: QRPropsSVG) {
   const normalizedFgColor = normalizeColorConfig(fgColor, DEFAULT_FGCOLOR);
 
   // Generate gradient definitions if needed
-  const bgColorGradient = isGradient(normalizedBgColor)
+  const bgColorGradient = hasPaintDef(normalizedBgColor)
     ? generateGradientDef(normalizedBgColor, size, "bg-color")
     : null;
 
-  const fgColorGradient = isGradient(normalizedFgColor)
+  const fgColorGradient = hasPaintDef(normalizedFgColor)
     ? generateGradientDef(normalizedFgColor, size, "fg-color")
     : null;
 
@@ -1067,7 +1179,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
     idPrefix: string
   ) => {
     const normalized = normalizeColorConfig(color, fgSolid);
-    return isGradient(normalized)
+    return hasPaintDef(normalized)
       ? generateCornerGradientDef(
           normalized,
           cornerX,
@@ -1210,14 +1322,16 @@ export function QRCodeSVG(props: QRPropsSVG) {
     <>
       {/* Gradient definitions */}
       <defs>
-        {bgColorGradient?.element}
-        {fgColorGradient?.element}
-        {topLeftEyeGradient?.element}
-        {topRightEyeGradient?.element}
-        {bottomLeftEyeGradient?.element}
-        {topLeftDotGradient?.element}
-        {topRightDotGradient?.element}
-        {bottomLeftDotGradient?.element}
+        {uniqueDefs([
+          bgColorGradient,
+          fgColorGradient,
+          topLeftEyeGradient,
+          topRightEyeGradient,
+          bottomLeftEyeGradient,
+          topLeftDotGradient,
+          topRightDotGradient,
+          bottomLeftDotGradient,
+        ])}
       </defs>
 
       {/* Background: the square, or a circle code's disc */}
@@ -1284,7 +1398,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
     const templateSize = 300; // All templates use 300x300 base coordinate system
 
     // Generate background gradient for template size (gradients use userSpaceOnUse, so coordinates must match)
-    const templateBgColorGradient = isGradient(normalizedBgColor)
+    const templateBgColorGradient = hasPaintDef(normalizedBgColor)
       ? generateGradientDef(
           normalizedBgColor,
           templateSize,
@@ -1308,14 +1422,16 @@ export function QRCodeSVG(props: QRPropsSVG) {
       >
         {/* Gradient definitions */}
         <defs>
-          {templateBgColorGradient?.element}
-          {fgColorGradient?.element}
-          {topLeftEyeGradient?.element}
-          {topRightEyeGradient?.element}
-          {bottomLeftEyeGradient?.element}
-          {topLeftDotGradient?.element}
-          {topRightDotGradient?.element}
-          {bottomLeftDotGradient?.element}
+          {uniqueDefs([
+            templateBgColorGradient,
+            fgColorGradient,
+            topLeftEyeGradient,
+            topRightEyeGradient,
+            bottomLeftEyeGradient,
+            topLeftDotGradient,
+            topRightDotGradient,
+            bottomLeftDotGradient,
+          ])}
         </defs>
 
         {/* Background */}

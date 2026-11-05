@@ -3,7 +3,13 @@ import { z } from "zod";
 /**
  * Color type discriminator
  */
-export const colorTypeSchema = z.enum(["solid", "linear", "radial", "angular"]);
+export const colorTypeSchema = z.enum([
+  "solid",
+  "linear",
+  "radial",
+  "angular",
+  "image",
+]);
 export type ColorType = z.infer<typeof colorTypeSchema>;
 
 /**
@@ -64,6 +70,46 @@ export type AngularGradient = z.infer<typeof angularGradientSchema>;
 /** Any gradient: linear, radial or angular. */
 export type Gradient = LinearGradient | RadialGradient | AngularGradient;
 
+/** How an image fill sits in the code: fill it, fit inside it, or repeat. */
+export const imageFitSchema = z.enum(["cover", "contain", "tile"]);
+export type ImageFit = z.infer<typeof imageFitSchema>;
+
+/** Which part of the image stays in view (cover) or where it sits (contain). */
+export const imagePositionSchema = z.enum([
+  "top-left",
+  "top",
+  "top-right",
+  "left",
+  "center",
+  "right",
+  "bottom-left",
+  "bottom",
+  "bottom-right",
+]);
+export type ImagePosition = z.infer<typeof imagePositionSchema>;
+
+/**
+ * An image fill: a picture painted through the shapes it fills, laid over
+ * the code's whole area (so the dots and the eyes show one picture).
+ *
+ * `src` is held like a logo: a data URL (PNG or JPEG embed everywhere; other
+ * formats are redrawn as PNG in the browser). Servers never fetch a remote
+ * address. `scale` zooms around `position` (cover, contain) or sizes the
+ * tiles (1 = four across). `opacity` lets `underlay`, a solid color under
+ * the picture, show through: darken a photo for the dots, lighten it for
+ * the background.
+ */
+export const imagePaintSchema = z.object({
+  type: z.literal("image"),
+  src: z.string().min(1),
+  fit: imageFitSchema.optional().default("cover"),
+  scale: z.number().min(0.1).max(4).optional().default(1),
+  position: imagePositionSchema.optional().default("center"),
+  opacity: z.number().min(0).max(1).optional().default(1),
+  underlay: z.string().optional(),
+});
+export type ImagePaint = z.infer<typeof imagePaintSchema>;
+
 /**
  * Union type for color configuration
  * Supports:
@@ -72,6 +118,7 @@ export type Gradient = LinearGradient | RadialGradient | AngularGradient;
  * - LinearGradient: linear gradient with stops and an angle
  * - RadialGradient: radial gradient from the centre out
  * - AngularGradient: conic gradient around the centre
+ * - ImagePaint: a picture painted through the shapes
  */
 export const colorConfigSchema = z.union([
   z.string(),
@@ -79,6 +126,7 @@ export const colorConfigSchema = z.union([
   linearGradientSchema,
   radialGradientSchema,
   angularGradientSchema,
+  imagePaintSchema,
 ]);
 export type ColorConfig = z.infer<typeof colorConfigSchema>;
 
@@ -88,7 +136,7 @@ export type ColorConfig = z.infer<typeof colorConfigSchema>;
 export function normalizeColorConfig(
   color: ColorConfig | undefined,
   fallback = "#000000"
-): SolidColor | Gradient {
+): SolidColor | Gradient | ImagePaint {
   if (!color) {
     return { type: "solid", color: fallback };
   }
@@ -112,9 +160,17 @@ export function isGradient(color: ColorConfig | undefined): color is Gradient {
   );
 }
 
+/** True for an image fill. */
+export function isImagePaint(
+  color: ColorConfig | undefined
+): color is ImagePaint {
+  return typeof color === "object" && color !== null && color.type === "image";
+}
+
 /**
  * Helper to get a solid color string from any ColorConfig
- * For gradients, returns the first stop color
+ * For gradients, returns the first stop color; for an image fill, its
+ * underlay (or `fallback`)
  */
 export function getColorString(
   color: ColorConfig | undefined,
@@ -124,7 +180,24 @@ export function getColorString(
   if (normalized.type === "solid") {
     return normalized.color;
   }
+  if (normalized.type === "image") {
+    return normalized.underlay || fallback;
+  }
   return normalized.stops[0]?.color || fallback;
+}
+
+/** CSS `background-position` for an image fill's position. */
+export function imagePositionCss(position: ImagePosition = "center"): string {
+  const [first, second] = position.split("-") as [string, string | undefined];
+  if (position === "center") {
+    return "center";
+  }
+  if (second) {
+    return `${second} ${first}`;
+  }
+  return first === "top" || first === "bottom"
+    ? `center ${first}`
+    : `${first} center`;
 }
 
 /**
@@ -146,6 +219,20 @@ export function getNormalizedColor(
   const normalized = normalizeColorConfig(color);
   if (normalized.type === "solid") {
     return normalized.color;
+  }
+
+  if (normalized.type === "image") {
+    const size =
+      normalized.fit === "tile"
+        ? `${25 * (normalized.scale ?? 1)}% auto`
+        : (normalized.scale ?? 1) === 1
+          ? normalized.fit === "contain"
+            ? "contain"
+            : "cover"
+          : `${100 * (normalized.scale ?? 1)}% auto`;
+    const repeat = normalized.fit === "tile" ? "repeat" : "no-repeat";
+    const url = `url("${normalized.src.replace(/"/g, "%22")}")`;
+    return `${url} ${imagePositionCss(normalized.position)} / ${size} ${repeat}, ${normalized.underlay ?? "transparent"}`;
   }
 
   const sortedStops = [...normalized.stops].sort((a, b) => a.offset - b.offset);

@@ -25,6 +25,11 @@ export function getSolidColor(
     return colorConfig.color;
   }
 
+  // An image fill stands for its underlay (shown where the image isn't)
+  if (colorConfig.type === "image") {
+    return colorConfig.underlay || fallback;
+  }
+
   // For gradients, return the first stop color as representative
   if (
     colorConfig.type === "linear" ||
