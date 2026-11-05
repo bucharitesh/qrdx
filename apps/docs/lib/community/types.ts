@@ -1,13 +1,19 @@
 // What the community pages show, shared by the server queries and the
 // client components. Safe to import anywhere.
+import type { LandingPageContent } from "@/types/landing";
 import type { ThemeStyles } from "@/types/theme";
 
-export type CommunityItemType = "frame" | "theme" | "collection";
+export type CommunityItemType =
+  | "frame"
+  | "theme"
+  | "collection"
+  | "page-template";
 
 export const COMMUNITY_TYPES: CommunityItemType[] = [
   "frame",
   "theme",
   "collection",
+  "page-template",
 ];
 
 /** URL segment of each type: /community/frames/<slug> */
@@ -15,6 +21,7 @@ export const TYPE_SEGMENTS: Record<CommunityItemType, string> = {
   frame: "frames",
   theme: "themes",
   collection: "collections",
+  "page-template": "templates",
 };
 
 export const TYPE_LABELS: Record<
@@ -24,6 +31,7 @@ export const TYPE_LABELS: Record<
   frame: { one: "Frame", many: "Frames" },
   theme: { one: "Theme", many: "Themes" },
   collection: { one: "Collection", many: "Collections" },
+  "page-template": { one: "Page template", many: "Page templates" },
 };
 
 export function typeFromSegment(segment: string): CommunityItemType | null {
@@ -66,6 +74,11 @@ export interface CommunityItemCard {
   stack?: ThemeStyles[];
   /** Collections: how many items they hold */
   itemCount?: number;
+  /**
+   * Page templates: the hosted page, scrubbed of personal data when it was
+   * published. Server only: rendered as a preview, never sent to browsers.
+   */
+  page?: { type: string; content: LandingPageContent };
 }
 
 export interface CommunityItemDetail extends CommunityItemCard {

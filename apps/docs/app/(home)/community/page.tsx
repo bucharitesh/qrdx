@@ -78,6 +78,7 @@ export default async function CommunityPage() {
       <CommunityTabs
         active="home"
         showCollections={home.collections.length > 0}
+        showTemplates={home.templates.length > 0}
       />
 
       <CommunityWall />
@@ -106,6 +107,11 @@ export default async function CommunityPage() {
           cards={home.fresh}
           href="/community/frames?from=community"
           title="New frames from the community"
+        />
+        <ItemRow
+          cards={home.templates}
+          href="/community/templates"
+          title="New page templates"
         />
       </div>
     </main>

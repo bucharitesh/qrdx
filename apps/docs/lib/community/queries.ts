@@ -15,6 +15,7 @@ import {
 import {
   and,
   asc,
+  count,
   desc,
   eq,
   gt,
@@ -36,6 +37,7 @@ import {
   officialFrameDetail,
 } from "./catalog";
 import { OFFICIAL_HANDLE } from "./handles";
+import { readPageTemplate } from "./page-template";
 import { framePreviewStyle } from "./payloads";
 import { publicStyleFromSaved, toPublicStyle } from "./public-style-server";
 import { guardedRead } from "./store";
@@ -173,6 +175,8 @@ function previewOf(row: ItemRow): ThemeStyles {
 }
 
 function toCard(row: ItemRow, tags: string[] = []): CommunityItemCard {
+  const page =
+    row.type === "page-template" ? readPageTemplate(row.payload)?.page : null;
   return {
     id: row.id,
     type: row.type as CommunityItemType,
@@ -190,6 +194,7 @@ function toCard(row: ItemRow, tags: string[] = []): CommunityItemCard {
       ? new Date(row.publishedAt).toISOString()
       : null,
     preview: previewOf(row),
+    ...(page ? { page } : {}),
   };
 }
 
@@ -438,7 +443,12 @@ export async function getProfileByHandle(
       .limit(1);
     if (!profile) return null;
     const official = profile.kind === "official";
-    const types: CommunityItemType[] = ["frame", "theme", "collection"];
+    const types: CommunityItemType[] = [
+      "frame",
+      "theme",
+      "collection",
+      "page-template",
+    ];
     const lists = await Promise.all(
       types.map((type) =>
         type === "frame" && official
@@ -723,4 +733,84 @@ export async function savedFrames(
       return frame ? [{ id: row.id, name: row.name, frame }] : [];
     });
   }, []);
+}
+
+export interface ReviewRow {
+  id: string;
+  type: CommunityItemType;
+  slug: string;
+  name: string;
+  description: string | null;
+  handle: string | null;
+  displayName: string;
+  createdBy: string | null;
+  likeCount: number;
+  useCount: number;
+  publishedAt: Date;
+}
+
+/**
+ * Post-moderation: members' items as they go live, newest first, for the
+ * admin review queue (/admin/community). Official items aren't listed.
+ * Banned or suspended creators' items are already hidden everywhere.
+ */
+export async function itemsForReview(options: {
+  type?: CommunityItemType;
+  limit: number;
+  offset: number;
+}): Promise<{ rows: ReviewRow[]; total: number }> {
+  return guardedRead(
+    async () => {
+      const where = and(
+        visible(),
+        eq(communityItem.isOfficial, false),
+        ...(options.type ? [eq(communityItem.type, options.type)] : []),
+      );
+      const [rows, [total]] = await Promise.all([
+        db
+          .select({
+            id: communityItem.id,
+            type: communityItem.type,
+            slug: communityItem.slug,
+            name: communityItem.name,
+            description: communityItem.description,
+            handle: communityProfile.handle,
+            displayName: communityProfile.displayName,
+            createdBy: communityItem.createdBy,
+            likeCount: communityItem.likeCount,
+            useCount: communityItem.useCount,
+            publishedAt: communityItem.publishedAt,
+          })
+          .from(communityItem)
+          .innerJoin(
+            communityProfile,
+            eq(communityProfile.id, communityItem.profileId),
+          )
+          .leftJoin(userTable, eq(userTable.id, communityProfile.userId))
+          .where(where)
+          .orderBy(desc(communityItem.publishedAt), asc(communityItem.id))
+          .limit(options.limit)
+          .offset(options.offset),
+        db
+          .select({ n: count() })
+          .from(communityItem)
+          .innerJoin(
+            communityProfile,
+            eq(communityProfile.id, communityItem.profileId),
+          )
+          .leftJoin(userTable, eq(userTable.id, communityProfile.userId))
+          .where(where),
+      ]);
+      return {
+        rows: rows.map((row) => ({
+          ...row,
+          type: row.type as CommunityItemType,
+          likeCount: Number(row.likeCount),
+          useCount: Number(row.useCount),
+        })),
+        total: Number(total?.n ?? 0),
+      };
+    },
+    { rows: [], total: 0 },
+  );
 }

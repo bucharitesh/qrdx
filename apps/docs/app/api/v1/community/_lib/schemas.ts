@@ -10,7 +10,7 @@ import {
 /** GET /v1/community/items query */
 export const communityItemsQuerySchema = z.object({
   type: z
-    .enum(["frame", "theme", "collection"])
+    .enum(["frame", "theme", "collection", "page-template"])
     .optional()
     .describe("Only items of this type; all types when left out"),
   q: z
@@ -50,6 +50,6 @@ export const communityItemIdSchema = z
   .trim()
   .toLowerCase()
   .regex(
-    /^(frame|theme|collection):[a-z0-9][a-z0-9-]{0,95}$/,
+    /^(frame|theme|collection|page-template):[a-z0-9][a-z0-9-]{0,95}$/,
     "Must be an item id such as frame:wifi-table-card",
   );

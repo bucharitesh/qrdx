@@ -13,27 +13,37 @@ export interface CommunityHome {
   collections: CommunityItemCard[];
   themes: CommunityItemCard[];
   fresh: CommunityItemCard[];
+  templates: CommunityItemCard[];
 }
 
 async function loadHome(): Promise<CommunityHome> {
   const state = await communityState();
-  const [official, featuredFrames, featuredThemes, collections, themes, fresh] =
-    await Promise.all([
-      listFrames({ official: true }),
-      listItems({ type: "frame", featured: true, limit: 4 }),
-      listItems({ type: "theme", featured: true, limit: 4 }),
-      listItems({ type: "collection", limit: 8 }),
-      state.themes === "items"
-        ? listItems({ type: "theme", sort: "popular", limit: 8 })
-        : legacyThemeCards(8),
-      listItems({ type: "frame", official: false, sort: "newest", limit: 8 }),
-    ]);
+  const [
+    official,
+    featuredFrames,
+    featuredThemes,
+    collections,
+    themes,
+    fresh,
+    templates,
+  ] = await Promise.all([
+    listFrames({ official: true }),
+    listItems({ type: "frame", featured: true, limit: 4 }),
+    listItems({ type: "theme", featured: true, limit: 4 }),
+    listItems({ type: "collection", limit: 8 }),
+    state.themes === "items"
+      ? listItems({ type: "theme", sort: "popular", limit: 8 })
+      : legacyThemeCards(8),
+    listItems({ type: "frame", official: false, sort: "newest", limit: 8 }),
+    listItems({ type: "page-template", sort: "newest", limit: 8 }),
+  ]);
   return {
     official: official.slice(0, 8),
     featured: [...featuredFrames, ...featuredThemes].slice(0, 8),
     collections,
     themes,
     fresh,
+    templates,
   };
 }
 
@@ -47,6 +57,13 @@ export const getCommunityHome = unstable_cache(loadHome, ["community-home"], {
 export const hasCollections = unstable_cache(
   async () => (await listItems({ type: "collection", limit: 1 })).length > 0,
   ["community-has-collections"],
+  { revalidate: 60, tags: [COMMUNITY_TAG] },
+);
+
+/** Whether any page template is published (for the Templates tab). */
+export const hasTemplates = unstable_cache(
+  async () => (await listItems({ type: "page-template", limit: 1 })).length > 0,
+  ["community-has-templates"],
   { revalidate: 60, tags: [COMMUNITY_TAG] },
 );
 

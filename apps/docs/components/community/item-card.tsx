@@ -1,9 +1,10 @@
-"use client";
-
+// A server component (no "use client"): page template cards render their
+// page preview here, so the page itself never goes to the browser.
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { cn } from "@repo/design-system/lib/utils";
 import { Heart } from "iconsax-reactjs";
 import Link from "next/link";
+import { TemplatePreview } from "@/components/landing/template-preview";
 import {
   type CommunityItemCard,
   itemPath,
@@ -58,6 +59,16 @@ export function ItemCard({
                 </div>
               ))
             )}
+          </div>
+        ) : card.type === "page-template" ? (
+          // The top of the page on a phone-sized screen, cropped by the box.
+          <div className="absolute top-4 left-1/2 aspect-[9/16] w-[46%] -translate-x-1/2 overflow-hidden rounded-t-xl bg-white shadow-sm ring-1 ring-black/5 transition-transform duration-300 group-hover:-translate-y-1">
+            {card.page ? (
+              <TemplatePreview
+                className="size-full"
+                content={card.page.content}
+              />
+            ) : null}
           </div>
         ) : (
           <div className="absolute inset-3 rounded-lg bg-white p-2.5 ring-1 ring-black/5 transition-transform duration-300 group-hover:scale-[1.02]">

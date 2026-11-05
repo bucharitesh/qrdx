@@ -56,7 +56,7 @@ const TAG_MAX = 24;
 export const communityItemId = (type: CommunityItemType, slug: string) =>
   `${type}:${slug}`;
 
-const ID = /^(frame|theme|collection):([a-z0-9][a-z0-9-]{0,95})$/;
+const ID = /^(frame|theme|collection|page-template):([a-z0-9][a-z0-9-]{0,95})$/;
 
 /** The type and slug in an item id, or null when it isn't one. */
 export function parseCommunityItemId(
@@ -107,6 +107,8 @@ export interface CommunityApiItemDetail extends CommunityApiItem {
   scanScore: number | null;
   /** Collections: their items' ids, in order */
   items?: string[];
+  /** Page templates: the hosted page type (links, menu, business, ...) */
+  pageType?: string;
 }
 
 const pageUrl = (type: CommunityItemType, slug: string) =>
@@ -191,9 +193,13 @@ function apiStyleOf(
 function toApiDetail(item: CommunityItemDetail): CommunityApiItemDetail {
   return {
     ...toApiItem(item),
-    style: item.type === "collection" ? null : apiStyleOf(item.apply),
+    style:
+      item.type === "collection" || item.type === "page-template"
+        ? null
+        : apiStyleOf(item.apply),
     contentTypes: item.contentTypes.slice(0, 20),
     scanScore: item.scanScore,
+    ...(item.page ? { pageType: item.page.type } : {}),
     ...(item.entries
       ? {
           items: item.entries.map((entry) =>
@@ -305,7 +311,7 @@ export async function getCommunityItem(
 
 export class CommunityItemError extends Error {
   constructor(
-    readonly reason: "invalid" | "not-found" | "collection",
+    readonly reason: "invalid" | "not-found" | "collection" | "page-template",
     message: string,
   ) {
     super(message);
@@ -341,6 +347,12 @@ export async function communityItemStyle(id: string): Promise<{
     throw new CommunityItemError(
       "collection",
       "A collection holds several items: use one of its items instead.",
+    );
+  }
+  if (item.type === "page-template") {
+    throw new CommunityItemError(
+      "page-template",
+      "A page template is a hosted page, not a QR style: use a frame or theme instead.",
     );
   }
   return {
