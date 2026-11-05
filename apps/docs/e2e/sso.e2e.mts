@@ -14,7 +14,8 @@
 //   SSO_E2E_DNS_FILE=<records.json> SSO_E2E_PSQL="psql -h localhost -p <pg> -U postgres qrdx" \
 //   SSO_E2E_SHOTS=<dir> pnpm exec tsx e2e/sso.e2e.mts
 //
-// Covers: plan gate (non-Business page, sign-in refused after a downgrade,
+// Covers (also: SSO sign-ins open the SSO workspace; two-step verification
+// over OIDC and SAML; SAML refusals land on /sign-in): plan gate (non-Business page, sign-in refused after a downgrade,
 // also mid-flow), OIDC set-up → domain verification (missing record, then
 // DNS) → sign-in of a new person (joins with the chosen role) → sign-in of
 // an existing account (linked, no duplicate) → an address outside the
@@ -23,6 +24,7 @@
 // without timestamps (refused); viewers can't manage; the recent sign-in
 // rule; screenshots of each screen in light and dark.
 import { execSync } from "node:child_process";
+import { createHmac } from "node:crypto";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { launch, sleep } from "./cdp.mjs";
@@ -221,6 +223,155 @@ async function idpSignIn(email: string, flags: Record<string, string> = {}) {
 const userId = (email: string) =>
   sql(`select id from "user" where email=${q(email)}`);
 
+/** The workspace the person's newest session opened. */
+const activeWorkspace = (email: string) =>
+  sql(
+    `select coalesce(active_organization_id, '') from session where user_id=${q(userId(email))} order by created_at desc limit 1`,
+  );
+const liveSessions = (email: string) =>
+  sql(
+    `select count(*) from session where user_id=${q(userId(email))} and expires_at > now()`,
+  );
+/** The browser's session as the app sees it (null when signed out). */
+const browserSession = () =>
+  evaluate(async () => {
+    const response = await fetch("/api/auth/get-session");
+    return response.ok ? await response.json() : "error";
+  });
+
+// ---- the authenticator app (RFC 6238, like e2e/two-factor.e2e.ts) ----
+function base32Decode(input: string): Buffer {
+  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+  let bits = 0;
+  let value = 0;
+  const out: number[] = [];
+  for (const char of input.replace(/[\s=]+/g, "").toUpperCase()) {
+    value = (value << 5) | alphabet.indexOf(char);
+    bits += 5;
+    if (bits >= 8) {
+      out.push((value >>> (bits - 8)) & 255);
+      bits -= 8;
+    }
+  }
+  return Buffer.from(out);
+}
+const step = () => Math.floor(Date.now() / 30_000);
+function totpAt(secret: string, counterValue: number): string {
+  const counter = Buffer.alloc(8);
+  counter.writeBigUInt64BE(BigInt(counterValue));
+  const hash = createHmac("sha1", base32Decode(secret))
+    .update(counter)
+    .digest();
+  const offset = (hash.at(-1) ?? 0) & 15;
+  return String((hash.readUInt32BE(offset) & 0x7fffffff) % 1_000_000).padStart(
+    6,
+    "0",
+  );
+}
+let lastStep = 0;
+/** A code from a 30-second window no earlier code came from. */
+async function freshTotp(secret: string): Promise<string> {
+  while (step() <= lastStep) await sleep(1000);
+  lastStep = step();
+  return totpAt(secret, lastStep);
+}
+
+let slug = "";
+let orgId = "";
+
+/** Turns on two-step verification in Settings the way a person does. */
+async function turnOnTwoFactor(email: string): Promise<string> {
+  await emailSignIn(email);
+  await goto(`${BASE}/settings/account#two-factor`, { wait: 3000 });
+  await waitText("Two-step verification");
+  await evaluate(() => {
+    const e = window.__e2e;
+    const button =
+      e.byRole("button", "Turn on", { exact: true }) ??
+      e.byRole("button", "Turn on");
+    if (button) e.click(button);
+  });
+  await waitText("Set up your authenticator app");
+  const secret = (
+    (await evaluate(
+      () => document.querySelector('[role="dialog"] code')?.textContent ?? "",
+    )) as string
+  ).replace(/\s+/g, "");
+  const code = await freshTotp(secret);
+  await evaluate((c: string) => {
+    const field = window.__e2e.byLabel("Code from your authenticator app");
+    if (field) {
+      field.focus();
+      window.__e2e.setValue(field, c);
+    }
+  }, code);
+  await waitText("Save these backup codes");
+  await evaluate(() => {
+    const box = window.__e2e.byLabel("I've saved my backup codes");
+    if (box) window.__e2e.click(box);
+  });
+  await sleep(300);
+  await evaluate(() => {
+    const dialog = document.querySelector('[role="dialog"]');
+    const done = [...(dialog?.querySelectorAll("button") ?? [])].find(
+      (b) => b.textContent?.trim() === "Done",
+    );
+    if (done) window.__e2e.click(done);
+  });
+  await waitText("10 of 10 backup codes left");
+  return secret;
+}
+
+/**
+ * SSO sign-in of someone with two-step verification on: the challenge page,
+ * no session until the code, then the SSO workspace.
+ */
+async function ssoWithTwoFactor(
+  label: string,
+  email: string,
+  secret: string,
+  shotName: string,
+) {
+  const before = liveSessions(email);
+  await startSso(email);
+  await idpSignIn(email);
+  const at = await href();
+  check(
+    `${label} + 2FA: sent to /sign-in/two-factor?next=…`,
+    at.startsWith(`${BASE}/sign-in/two-factor?next=`),
+    at,
+  );
+  check(
+    `${label} + 2FA: no session before the code`,
+    (await browserSession()) === null && liveSessions(email) === before,
+    `sessions ${before} → ${liveSessions(email)}`,
+  );
+  await waitText("Your account asks for a second step");
+  await shot(shotName);
+  const code = await freshTotp(secret);
+  await evaluate((c: string) => {
+    const field = window.__e2e.byLabel("Authenticator code");
+    if (field) {
+      field.focus();
+      window.__e2e.setValue(field, c);
+    }
+  }, code);
+  await waitFor(() => location.pathname.startsWith("/dashboard/"), {
+    timeout: 20_000,
+  });
+  await sleep(1500);
+  const session = (await browserSession()) as {
+    user?: { email?: string };
+  } | null;
+  check(
+    `${label} + 2FA: signed in after the code, in the SSO workspace`,
+    session?.user?.email === email &&
+      (await href()).startsWith(`${BASE}/dashboard/${slug}`) &&
+      activeWorkspace(email) === orgId,
+    await href(),
+  );
+}
+
 try {
   // ---- people ----
   const owner = `owner-${RUN}@qrdx.test`;
@@ -234,10 +385,10 @@ try {
   const anaId = userId(ana);
   await emailSignIn(owner);
   const ownerId = userId(owner);
-  const slug = sql(
+  slug = sql(
     `select o.slug from organization o join member m on m.organization_id=o.id where m.user_id=${q(ownerId)} and m.role='owner' limit 1`,
   );
-  const orgId = sql(`select id from organization where slug=${q(slug)}`);
+  orgId = sql(`select id from organization where slug=${q(slug)}`);
   const page = `${BASE}/dashboard/${slug}/settings/sso`;
 
   console.log("plan gate");
@@ -382,11 +533,12 @@ try {
   await shot("07-mock-idp");
   await idpSignIn(ben);
   check(
-    "Back in QRdx, signed in",
-    (await href()).startsWith(`${BASE}/dashboard`),
+    "Back in QRdx, signed in, in the SSO workspace",
+    (await href()).startsWith(`${BASE}/dashboard/${slug}`),
     await href(),
   );
   const benId = userId(ben);
+  check("…which the session opened", activeWorkspace(ben) === orgId);
   check(
     "Account created, address verified",
     sql(`select email_verified from "user" where id=${q(benId)}`) === "t",
@@ -414,8 +566,9 @@ try {
   await startSso(ana);
   await idpSignIn(ana);
   check(
-    "Signed in",
-    (await href()).startsWith(`${BASE}/dashboard`),
+    "Signed in, in the SSO workspace",
+    (await href()).startsWith(`${BASE}/dashboard/${slug}`) &&
+      activeWorkspace(ana) === orgId,
     await href(),
   );
   check(
@@ -435,6 +588,12 @@ try {
       `select role from member where user_id=${q(anaId)} and organization_id=${q(orgId)}`,
     ) === "viewer",
   );
+
+  console.log("two-step verification, OIDC");
+  const tara = `tara@${DOMAIN}`; // has 2FA on before her first SSO sign-in
+  const taraSecret = await turnOnTwoFactor(tara);
+  check("Two-step verification on", taraSecret.length >= 16);
+  await ssoWithTwoFactor("OIDC", tara, taraSecret, "16-two-factor-oidc");
 
   console.log("address outside the domain");
   const outsider = `zed-${RUN}@elsewhere.test`;
@@ -655,8 +814,9 @@ try {
   await startSso(carl);
   await idpSignIn(carl);
   check(
-    "Signed in with SAML",
-    (await href()).startsWith(`${BASE}/dashboard`),
+    "Signed in with SAML, in the SSO workspace",
+    (await href()).startsWith(`${BASE}/dashboard/${slug}`) &&
+      activeWorkspace(carl) === orgId,
     await href(),
   );
   const carlId = userId(carl);
@@ -678,6 +838,36 @@ try {
       `select count(*) from account where user_id=${q(benId)} and provider_id=${q(samlId)}`,
     ) === "1",
   );
+
+  console.log("SAML refusals land on the sign-in page");
+  await startSso(`zoe@${DOMAIN}`);
+  await idpSignIn(eve);
+  check(
+    "Existing outside account: /sign-in with next and the code",
+    (await href()) ===
+      `${BASE}/sign-in?next=%2Fdashboard&error=account_not_linked`,
+    await href(),
+  );
+  check("…and the SSO message", (await text()).includes("couldn't be linked"));
+  await shot("17-saml-not-linked");
+  const outsider2 = `yan-${RUN}@elsewhere.test`;
+  await startSso(`zoe@${DOMAIN}`);
+  await idpSignIn(outsider2);
+  check(
+    "Address outside the domain: /sign-in with next and the code",
+    (await href()).startsWith(
+      `${BASE}/sign-in?next=%2Fdashboard&error=sso_email_outside_domain`,
+    ),
+    await href(),
+  );
+  check(
+    "…and the SSO message",
+    (await text()).includes("outside your company's domain") &&
+      sql(`select count(*) from "user" where email=${q(outsider2)}`) === "0",
+  );
+
+  console.log("two-step verification, SAML");
+  await ssoWithTwoFactor("SAML", tara, taraSecret, "18-two-factor-saml");
 
   console.log("SAML entered by hand, certificate replaced");
   await emailSignIn(owner);
@@ -773,8 +963,9 @@ try {
   await startSso(erin);
   await idpSignIn(erin);
   check(
-    "Signed in with the hand-entered SAML connection",
-    (await href()).startsWith(`${BASE}/dashboard`),
+    "Signed in with the hand-entered SAML connection, in the SSO workspace",
+    (await href()).startsWith(`${BASE}/dashboard/${slug}`) &&
+      activeWorkspace(erin) === orgId,
     await href(),
   );
   check(
