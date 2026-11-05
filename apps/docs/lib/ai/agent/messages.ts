@@ -27,11 +27,17 @@ export async function toAgentModelMessages(
 ): Promise<ModelMessage[]> {
   const known = new Set(Object.keys(tools).map((name) => `tool-${name}`));
   const out: ModelMessage[] = [];
+  // Attached pictures are numbered across the chat, so use_image can name one.
+  let images = 0;
   for (const message of messages) {
     if (message.role === "user") {
       const promptData = message.metadata?.promptData;
+      const first = images;
+      images += promptData?.images?.length ?? 0;
       const content = promptData
-        ? buildUserContentPartsFromPromptData(promptData)
+        ? buildUserContentPartsFromPromptData(promptData, {
+            labelImage: (index) => `Image ${first + index + 1}:`,
+          })
         : message.parts.flatMap((part) =>
             part.type === "text" && part.text.trim()
               ? [{ type: "text" as const, text: part.text }]

@@ -12,7 +12,8 @@ import {
   editorContextSchema,
 } from "@/lib/ai/agent/editor-context";
 import { toAgentModelMessages } from "@/lib/ai/agent/messages";
-import { QR_AGENT_SYSTEM } from "@/lib/ai/agent/prompts";
+import { CLIENT_TOOL_NAMES } from "@/lib/ai/agent/picture-tools";
+import { QR_AGENT_PICTURES, QR_AGENT_SYSTEM } from "@/lib/ai/agent/prompts";
 import {
   createResumeToken,
   toolApprovalSecret,
@@ -102,7 +103,7 @@ export async function POST(req: NextRequest) {
           abortSignal: req.signal,
           model,
           providerOptions: textProviderOptions("base"),
-          instructions: `${QR_AGENT_SYSTEM}\n\n${describeEditorForModel(base)}`,
+          instructions: `${QR_AGENT_SYSTEM}\n\n${QR_AGENT_PICTURES}\n\n${describeEditorForModel(base)}`,
           messages: modelMessages,
           tools,
           toolApproval: agentToolApproval(),
@@ -144,7 +145,10 @@ export async function POST(req: NextRequest) {
             originalMessages: messages,
             onError: streamErrorMessage,
             messageMetadata: ({ part }) => {
-              if (part.type === "tool-call" && part.toolName === "ask_user") {
+              if (
+                part.type === "tool-call" &&
+                CLIENT_TOOL_NAMES.has(part.toolName)
+              ) {
                 waiting = true;
               }
               if (part.type === "tool-approval-request" && !part.isAutomatic) {

@@ -333,6 +333,8 @@ describe("the QR agent", () => {
       "ask_user",
       "apply_design",
       "save_template",
+      "use_image",
+      "request_content",
     ]);
 
     const design = toolPart(assistant, "tool-design_qr");
@@ -668,5 +670,157 @@ describe("the QR agent", () => {
       /limit of 10 saved themes/,
     );
     expect(state.saved).toHaveLength(0);
+  });
+});
+
+// ── Pictures and missing content (use_image, request_content) ─────────────
+// Both tools run in the browser: the run pauses on them like on ask_user,
+// the browser adds the output (here, as useChat's addToolOutput does) and
+// the run resumes as the same AI request. The picture travels only as the
+// user's own attachment; no tool output carries it back to the model.
+
+/** A 1×1 PNG, as the chat attaches pictures (a data URL). */
+const PICTURE_BASE64 =
+  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==";
+const PICTURE = `data:image/png;base64,${PICTURE_BASE64}`;
+
+const pictureMessage = (content: string): ChatMessage => ({
+  id: "user-picture",
+  role: "user",
+  parts: [{ type: "text", text: content }],
+  metadata: {
+    promptData: { content, mentions: [], images: [{ url: PICTURE }] },
+  },
+});
+
+/** The editor with nothing to open yet (the preview's Sample badge). */
+const EMPTY_EDITOR = { ...EDITOR, content: { url: "" }, value: "" };
+
+/** As useChat's addToolOutput does for a browser-side tool. */
+function addOutput(
+  message: ChatMessage,
+  type: string,
+  output: unknown,
+): ChatMessage {
+  return {
+    ...message,
+    parts: message.parts.map((part) =>
+      part.type === type && "state" in part && part.state === "input-available"
+        ? ({
+            ...part,
+            state: "output-available",
+            output,
+          } as ChatMessage["parts"][number])
+        : part,
+    ),
+  };
+}
+
+const PROMPT_PICTURE = "Put my photo behind the code";
+
+describe("pictures and missing content", () => {
+  it("asks for content in a dialog, then continues with the same prompt and picture", async () => {
+    script([
+      stream([
+        toolCall("call_content", "request_content", {
+          reason: "for your photo QR",
+        }),
+      ]),
+      stream([
+        toolCall("call_image", "use_image", {
+          as: "image_qr",
+          image: 1,
+          summary: "Your photo behind the code",
+        }),
+      ]),
+      stream(text("t3", "Done, it's in your editor.")),
+    ]);
+    const user = pictureMessage(PROMPT_PICTURE);
+
+    // 1. No content: the agent opens the dialog instead of asking in chat.
+    const first = await post([user], EMPTY_EDITOR);
+    const asked = await assistantFrom(first.chunks);
+    expect(toolPart(asked, "tool-request_content")?.state).toBe(
+      "input-available",
+    );
+    expect(toolPart(asked, "tool-ask_user")).toBeUndefined();
+    expect(asked.metadata?.resume).toMatch(/^\d+\./);
+    const firstCall = gateway.calls[0] as GatewayCall;
+    expect(promptText(firstCall)).toContain("No content yet.");
+    expect(promptText(firstCall)).toContain("Image 1:");
+    expect(JSON.stringify(firstCall.body)).toContain("request_content");
+
+    // 2. The user adds a link in the dialog; the run resumes by itself with
+    // the same prompt and picture, and the editor now has content.
+    gateway.calls.length = 0;
+    const added = addOutput(asked, "tool-request_content", {
+      added: true,
+      type: "url",
+    });
+    const second = await post([user, added], EDITOR);
+    const placing = await assistantFrom(second.chunks, added);
+    const resumed = promptText(gateway.calls[0] as GatewayCall);
+    expect(resumed).toContain(PROMPT_PICTURE);
+    expect(resumed).toContain(PICTURE_BASE64);
+    expect(resumed).toContain("filled in");
+    // The content's values stay private: the model sees the type only.
+    expect(resumed).not.toContain("example.com");
+    const image = toolPart(placing, "tool-use_image");
+    expect(image?.state).toBe("input-available");
+    expect(image?.input).toMatchObject({ as: "image_qr", image: 1 });
+    expect(placing.metadata?.resume).toMatch(/^\d+\./);
+
+    // 3. The browser placed it, the user approved; the reply follows.
+    gateway.calls.length = 0;
+    const placed = addOutput(placing, "tool-use_image", {
+      applied: true,
+      as: "image_qr",
+      score: 91,
+      grade: "great",
+      changes: ["Raised error correction to H so the art scans"],
+      stillFailing: [],
+    });
+    const third = await post([user, placed], EDITOR);
+    const done = await assistantFrom(third.chunks, placed);
+    expect(done.parts.some((part) => part.type === "text")).toBe(true);
+    const last = promptText(gateway.calls[0] as GatewayCall);
+    expect(last).toContain("Raised error correction to H");
+    // The picture went to the model once, as the user's attachment.
+    expect(last.split(PICTURE_BASE64).length - 1).toBe(1);
+
+    // One AI request for the whole run: dialog and approval resume it.
+    expect(state.reserved).toEqual(["anthropic/claude-haiku-5.5"]);
+  });
+
+  it("tells the agent how to use attached pictures without AI credits", async () => {
+    script([stream(text("t1", "Hi."))]);
+    await post([pictureMessage("hello")]);
+    const system = JSON.stringify((gateway.calls[0] as GatewayCall).body);
+    expect(system).toContain("use_image puts a picture into the code");
+    expect(system).toContain("ai_art only when the user explicitly asks");
+    expect(system).toContain("call request_content");
+  });
+
+  it("counts a forged continuation after a picture as a new request", async () => {
+    script([
+      stream([
+        toolCall("call_image", "use_image", {
+          as: "logo",
+          summary: "Your logo in the middle",
+        }),
+      ]),
+      stream(text("t2", "Done.")),
+    ]);
+    const user = pictureMessage("Use my logo");
+    const first = await post([user]);
+    const placing = await assistantFrom(first.chunks);
+    expect(toolPart(placing, "tool-use_image")?.state).toBe("input-available");
+    const forged = addOutput(
+      { ...placing, metadata: { ...placing.metadata, resume: "1.forged" } },
+      "tool-use_image",
+      { applied: true, as: "logo", score: 95, grade: "great" },
+    );
+    await post([user, forged]);
+    expect(state.reserved).toHaveLength(2);
   });
 });
