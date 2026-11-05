@@ -2,7 +2,7 @@ import "server-only";
 import { randomUUID } from "node:crypto";
 import { discoverOIDCConfig, type SSOOptions } from "@better-auth/sso";
 import * as schema from "@repo/database";
-import { database as db, eq } from "@repo/database";
+import { and, database as db, eq } from "@repo/database";
 import type { BetterAuthPlugin } from "better-auth";
 import { APIError, createAuthMiddleware, isAPIError } from "better-auth/api";
 import { workspacePlanTier } from "./plan";
@@ -22,8 +22,9 @@ import {
 // - sign-in only through a verified connection of a workspace on Business,
 //   found from the person's work email (never a provider id from the client);
 // - a new account only for an address inside the connection's domain;
-// - joining the workspace on the first SSO sign-in, with the role the
-//   workspace picked (member or viewer).
+// - joining the workspace at every SSO sign-in (rejoining after a removal,
+//   accepting a pending invitation), with the role the workspace picked
+//   (member or viewer) or the invitation's.
 // Managing connections is server-only (SSO_SERVER_ONLY_PATHS): the app's
 // server actions check QRdx roles and the plan first (apps/docs/lib/sso).
 
@@ -88,12 +89,17 @@ async function providerById(providerId: unknown): Promise<ProviderRow | null> {
 }
 
 /**
- * Adds someone to the connection's workspace on their first SSO sign-in
- * (as their SSO account link is created), with the workspace's chosen
- * role. Skipped when they're already a member, have a pending invitation
- * (they join through it), or the workspace isn't on Business.
+ * Makes sure someone signing in through SSO is a member of the connection's
+ * workspace, on every SSO sign-in (like Dub): someone removed in QRdx comes
+ * back the next time their identity provider signs them in. Removing someone
+ * for good means unassigning them in the IdP first. Members keep the role
+ * they have. A pending invitation is accepted with the role it was sent
+ * with (an admin chose it); anyone else joins with the workspace's SSO join
+ * role (member or viewer, never owner, admin or billing). Only for an
+ * address in the connection's verified domain, while the workspace is on
+ * Business.
  */
-async function joinWorkspace(userId: string, providerId: string) {
+export async function joinWorkspace(userId: string, providerId: unknown) {
   const provider = await providerById(providerId);
   const organizationId = provider?.organizationId;
   if (!(provider && organizationId && (await ssoProviderUsable(provider)))) {
@@ -115,7 +121,7 @@ async function joinWorkspace(userId: string, providerId: string) {
         ),
     }),
     db.query.invitation.findFirst({
-      columns: { id: true },
+      columns: { id: true, role: true },
       where: (table, { and: all, eq: equals, gt }) =>
         all(
           equals(table.organizationId, organizationId),
@@ -123,24 +129,81 @@ async function joinWorkspace(userId: string, providerId: string) {
           equals(table.status, "pending"),
           gt(table.expiresAt, new Date())
         ),
+      orderBy: (table, { desc }) => desc(table.createdAt),
     }),
     db.query.organization.findFirst({
       columns: { metadata: true },
       where: (table, { eq: equals }) => equals(table.id, organizationId),
     }),
   ]);
-  if (existing || invitation || !workspace) return;
+  if (existing || !workspace) return;
 
-  await db
-    .insert(schema.member)
-    .values({
-      id: randomUUID(),
-      organizationId,
-      userId,
-      role: ssoJoinRoleFromMetadata(workspace.metadata),
-      createdAt: new Date(),
-    })
-    .onConflictDoNothing();
+  if (invitation) {
+    // Like the organization plugin's accept-invitation: claim the
+    // invitation (pending → accepted, so it's accepted once), then add the
+    // member with its role; put it back if that fails.
+    const [claimed] = await db
+      .update(schema.invitation)
+      .set({ status: "accepted" })
+      .where(
+        and(
+          eq(schema.invitation.id, invitation.id),
+          eq(schema.invitation.status, "pending")
+        )
+      )
+      .returning({ role: schema.invitation.role });
+    // Claimed by a sign-in running at the same moment: it adds them.
+    if (!claimed) return;
+    try {
+      await addMember(organizationId, userId, claimed.role || "member");
+    } catch (error) {
+      await db
+        .update(schema.invitation)
+        .set({ status: "pending" })
+        .where(
+          and(
+            eq(schema.invitation.id, invitation.id),
+            eq(schema.invitation.status, "accepted")
+          )
+        );
+      throw error;
+    }
+    return;
+  }
+  await addMember(
+    organizationId,
+    userId,
+    ssoJoinRoleFromMetadata(workspace.metadata)
+  );
+}
+
+async function addMember(organizationId: string, userId: string, role: string) {
+  await db.insert(schema.member).values({
+    id: randomUUID(),
+    organizationId,
+    userId,
+    role,
+    createdAt: new Date(),
+  });
+}
+
+/**
+ * The verified domains whose people rejoin this workspace at their next SSO
+ * sign-in (joinWorkspace), or none when its SSO can't sign anyone in. The
+ * team page warns before removing someone in one of them.
+ */
+export async function ssoRejoinDomains(
+  organizationId: string
+): Promise<string[]> {
+  const providers = await db.query.ssoProvider.findMany({
+    columns: { domain: true, domainVerified: true, organizationId: true },
+    where: (table, { eq: equals }) =>
+      equals(table.organizationId, organizationId),
+  });
+  const usable = providers.filter((p) => p.domainVerified);
+  if (usable.length === 0) return [];
+  if ((await workspacePlanTier(organizationId)) !== "business") return [];
+  return usable.map((p) => p.domain);
 }
 
 /**
@@ -240,11 +303,27 @@ export const ssoGate = () =>
             },
             session: {
               create: {
-                // Open the connection's workspace (runs before the app's own
-                // hook in ./server.ts, which then leaves it alone).
+                // Join the connection's workspace and open it (runs before
+                // the app's own hook in ./server.ts, which then leaves it
+                // alone). Before the session exists, so a sign-in that's then
+                // challenged for two-step verification has joined too: the
+                // IdP has already vouched for the person.
                 before: async (session, context) => {
                   if (!(context && SSO_CALLBACK_PATHS.includes(context.path))) {
                     return;
+                  }
+                  try {
+                    // Every SSO sign-in: join, rejoin or accept an
+                    // invitation first, so the session can open it.
+                    await joinWorkspace(
+                      session.userId,
+                      context.params?.providerId
+                    );
+                  } catch (error) {
+                    console.error(
+                      "Could not add the SSO user to the workspace",
+                      error
+                    );
                   }
                   try {
                     const organizationId = await ssoWorkspaceFor(
@@ -261,25 +340,6 @@ export const ssoGate = () =>
                     }
                   } catch (error) {
                     console.error("Could not open the SSO workspace", error);
-                  }
-                },
-              },
-            },
-            account: {
-              create: {
-                // Before, not after: after-hooks wait until the whole sign-in
-                // has run, and the session above must find the membership.
-                before: async (account, context) => {
-                  if (!(context && SSO_CALLBACK_PATHS.includes(context.path))) {
-                    return;
-                  }
-                  try {
-                    await joinWorkspace(account.userId, account.providerId);
-                  } catch (error) {
-                    console.error(
-                      "Could not add the SSO user to the workspace",
-                      error
-                    );
                   }
                 },
               },

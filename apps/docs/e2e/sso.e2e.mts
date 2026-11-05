@@ -22,7 +22,14 @@
 // domain (refused, nothing created) → an unverified connection (refused);
 // SAML set-up from metadata → sign-in → unsigned assertion and assertion
 // without timestamps (refused); viewers can't manage; the recent sign-in
-// rule; screenshots of each screen in light and dark.
+// rule; screenshots of each screen in light and dark. Every SSO sign-in
+// joins the workspace: a removed member rejoins with the join role, a
+// promoted member keeps their role, a pending invitation is accepted with its
+// role; the Team page's remove dialog warns about it for people in the SSO
+// domain only. Trusted devices: OIDC skips the code; SAML posted from another
+// site (the IdP served from 127.0.0.1, so the POST to localhost is cross-site
+// and Chrome leaves the SameSite=Lax trust cookie off it) skips the code
+// through GET /two-factor/continue, and asks again without the cookie.
 import { execSync } from "node:child_process";
 import { createHmac } from "node:crypto";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
@@ -107,6 +114,59 @@ if (process.env.E2E_CSP_SELFTEST === "1") {
     console.log("  - CSP self-test skipped: CSP not enforced on this server");
   }
 }
+
+// Every request the page makes, with the cookies Chrome attached or held back
+// (Network.requestWillBeSentExtraInfo), to show which requests carried the
+// trust-device cookie.
+interface SeenRequest {
+  url: string;
+  method: string;
+  origin: string;
+  cookies: string[];
+  blocked: { name: string; reasons: string[] }[];
+}
+const requests = new Map<string, SeenRequest>();
+const requestOrder: string[] = [];
+await cdp.send("Network.enable");
+cdp.on((message: { method: string; params: Record<string, any> }) => {
+  if (message.method === "Network.requestWillBeSent") {
+    const { requestId, request } = message.params;
+    // A redirect reuses the id: keep each hop.
+    const key = `${requestId}#${requestOrder.length}`;
+    requests.set(key, {
+      url: request.url,
+      method: request.method,
+      origin: request.headers?.Origin ?? request.headers?.origin ?? "",
+      cookies: [],
+      blocked: [],
+    });
+    requestOrder.push(key);
+  }
+  if (message.method === "Network.requestWillBeSentExtraInfo") {
+    const { requestId, associatedCookies = [] } = message.params;
+    const key = [...requestOrder]
+      .reverse()
+      .find((k) => k.startsWith(`${requestId}#`));
+    const seen = key ? requests.get(key) : undefined;
+    if (!seen) return;
+    for (const entry of associatedCookies) {
+      const reasons: string[] = (entry.blockedReasons ?? []).filter(
+        (r: string) => r,
+      );
+      if (reasons.length) {
+        seen.blocked.push({ name: entry.cookie.name, reasons });
+      } else {
+        seen.cookies.push(entry.cookie.name);
+      }
+    }
+  }
+});
+/** Requests since `mark` (an index into requestOrder). */
+const requestsSince = (mark: number) =>
+  requestOrder
+    .slice(mark)
+    .map((key) => requests.get(key))
+    .filter((r): r is SeenRequest => Boolean(r));
 
 /** Horizontal page scroll and small tap targets on the current screen. */
 function layoutReport() {
@@ -287,9 +347,16 @@ async function emailSignIn(email: string) {
   if (status !== 200) throw new Error(`sign in ${status}`);
 }
 
-/** Starts "Sign in with SSO" on /sign-in; returns the page URL afterwards. */
-async function startSso(email: string, stepShot?: string) {
-  await cdp.send("Network.clearBrowserCookies");
+/**
+ * Starts "Sign in with SSO" on /sign-in; returns the page URL afterwards.
+ * Starts from a clean browser (no cookies) unless `keepCookies`.
+ */
+async function startSso(
+  email: string,
+  stepShot?: string,
+  { keepCookies = false } = {},
+) {
+  if (!keepCookies) await cdp.send("Network.clearBrowserCookies");
   await goto(`${BASE}/sign-in`);
   await evaluate(() =>
     window.__e2e.click(
@@ -312,12 +379,21 @@ async function startSso(email: string, stepShot?: string) {
   return href();
 }
 
-/** At the mock IdP: sign in as `email` (with extra query flags for SAML). */
-async function idpSignIn(email: string, flags: Record<string, string> = {}) {
+/**
+ * At the mock IdP: sign in as `email` (with extra query flags for SAML).
+ * `crossSite` (SAML): load the IdP's page from 127.0.0.1 instead of
+ * localhost, so its POST back to QRdx is cross-site, like a real IdP's.
+ */
+async function idpSignIn(
+  email: string,
+  flags: Record<string, string> = {},
+  { crossSite = false } = {},
+) {
   const url = new URL(await href());
-  if (Object.keys(flags).length > 0) {
+  if (Object.keys(flags).length > 0 || crossSite) {
     for (const [k, v] of Object.entries(flags)) url.searchParams.set(k, v);
     url.searchParams.set("auto", email);
+    if (crossSite) url.hostname = "127.0.0.1";
     await goto(url.toString(), { wait: 3500 });
     return;
   }
@@ -348,6 +424,25 @@ const browserSession = () =>
     const response = await fetch("/api/auth/get-session");
     return response.ok ? await response.json() : "error";
   });
+
+/** Ends the browser's session, keeping its other cookies (trust_device). */
+async function signOutKeepingCookies() {
+  await evaluate(async () => {
+    await fetch("/api/auth/sign-out", {
+      method: "POST",
+      credentials: "include",
+      headers: { "content-type": "application/json" },
+      body: "{}",
+    });
+  });
+}
+/** The value of one of QRdx's auth cookies in this browser, or "". */
+async function authCookie(name: string): Promise<string> {
+  const { cookies } = (await cdp.send("Network.getCookies", {
+    urls: [BASE],
+  })) as { cookies: { name: string; value: string }[] };
+  return cookies.find((c) => c.name === `better-auth.${name}`)?.value ?? "";
+}
 
 // ---- the authenticator app (RFC 6238, like e2e/two-factor.e2e.ts) ----
 function base32Decode(input: string): Buffer {
@@ -441,10 +536,11 @@ async function ssoWithTwoFactor(
   email: string,
   secret: string,
   shotName: string,
+  { trust = false, crossSite = false } = {},
 ) {
   const before = liveSessions(email);
   await startSso(email);
-  await idpSignIn(email);
+  await idpSignIn(email, {}, { crossSite });
   const at = await href();
   check(
     `${label} + 2FA: sent to /sign-in/two-factor?next=…`,
@@ -458,6 +554,26 @@ async function ssoWithTwoFactor(
   );
   await waitText("Your account asks for a second step");
   await shot(shotName);
+  if (trust) {
+    await evaluate(() => {
+      const box = window.__e2e.byLabel("Don't ask again on this device");
+      if (box) window.__e2e.click(box);
+    });
+    check(
+      `${label} + 2FA: "Don't ask again on this device" ticked`,
+      (await evaluate(
+        () =>
+          window.__e2e
+            .byLabel("Don't ask again on this device")
+            ?.getAttribute("aria-checked") === "true" ||
+          (
+            window.__e2e.byLabel(
+              "Don't ask again on this device",
+            ) as HTMLInputElement | null
+          )?.checked === true,
+      )) as boolean,
+    );
+  }
   const code = await freshTotp(secret);
   await evaluate((c: string) => {
     const field = window.__e2e.byLabel("Authenticator code");
@@ -480,6 +596,88 @@ async function ssoWithTwoFactor(
       activeWorkspace(email) === orgId,
     await href(),
   );
+  if (trust) {
+    check(
+      `${label} + 2FA: this browser is now trusted`,
+      (await authCookie("trust_device")) !== "",
+    );
+  }
+}
+
+/**
+ * SSO sign-in on a trusted device (cookies kept): no code asked, signed in,
+ * in the SSO workspace. Returns the requests the sign-in made.
+ */
+async function trustedSsoSignIn(
+  label: string,
+  email: string,
+  { crossSite = false } = {},
+) {
+  await signOutKeepingCookies();
+  check(`${label}: signed out first`, (await browserSession()) === null);
+  const trustBefore = await authCookie("trust_device");
+  const before = liveSessions(email);
+  const mark = requestOrder.length;
+  await startSso(email, undefined, { keepCookies: true });
+  await idpSignIn(email, {}, { crossSite });
+  await waitFor(() => location.pathname.startsWith("/dashboard/"), {
+    timeout: 20_000,
+  }).catch(() => null);
+  await sleep(1000);
+  const seen = requestsSince(mark);
+  const session = (await browserSession()) as {
+    user?: { email?: string };
+  } | null;
+  check(
+    `${label}: no code asked`,
+    !seen.some((r) => r.url.includes("/sign-in/two-factor")),
+    seen
+      .filter(
+        (r) =>
+          r.url.startsWith(BASE) &&
+          !r.url.startsWith(`${BASE}/_next/`) &&
+          !r.url.startsWith(`${BASE}/__nextjs`),
+      )
+      .map((r) => `${r.method} ${r.url.replace(BASE, "")}`)
+      .join(" → ")
+      .slice(0, 400),
+  );
+  check(
+    `${label}: signed in, in the SSO workspace`,
+    session?.user?.email === email &&
+      (await href()).startsWith(`${BASE}/dashboard/${slug}`) &&
+      activeWorkspace(email) === orgId &&
+      Number(liveSessions(email)) === Number(before) + 1,
+    `${await href()} sessions ${before} → ${liveSessions(email)}`,
+  );
+  check(
+    `${label}: trust cookie rotated`,
+    trustBefore !== "" &&
+      (await authCookie("trust_device")) !== "" &&
+      (await authCookie("trust_device")) !== trustBefore,
+  );
+  return seen;
+}
+
+/** Opens the Team page's remove dialog for `email`; returns its text. */
+async function removeDialogFor(email: string): Promise<string> {
+  await evaluate((e: string) => {
+    const row = [...document.querySelectorAll("tr")].find((tr) =>
+      tr.textContent?.includes(e),
+    );
+    const button = [...(row?.querySelectorAll("button") ?? [])].find(
+      (b) => b.textContent?.trim() === "Remove",
+    );
+    if (button) window.__e2e.click(button);
+  }, email);
+  await waitFor(() => Boolean(document.querySelector('[role="alertdialog"]')));
+  await sleep(400);
+  return (await evaluate(
+    () =>
+      // biome-ignore lint/performance/useDomNodeTextContent: the text a person sees
+      document.querySelector<HTMLElement>('[role="alertdialog"]')?.innerText ??
+      "",
+  )) as string;
 }
 
 try {
@@ -725,7 +923,12 @@ try {
   const tara = `tara@${DOMAIN}`; // has 2FA on before her first SSO sign-in
   const taraSecret = await turnOnTwoFactor(tara);
   check("Two-step verification on", taraSecret.length >= 16);
-  await ssoWithTwoFactor("OIDC", tara, taraSecret, "16-two-factor-oidc");
+  await ssoWithTwoFactor("OIDC", tara, taraSecret, "16-two-factor-oidc", {
+    trust: true,
+  });
+
+  console.log("trusted device, OIDC");
+  await trustedSsoSignIn("OIDC + trusted device", tara);
 
   console.log("address outside the domain");
   const outsider = `zed-${RUN}@elsewhere.test`;
@@ -755,42 +958,116 @@ try {
     await href(),
   );
 
-  console.log("removed members and invitations");
+  console.log("every SSO sign-in joins: removed, promoted, invited");
+  const team = `${BASE}/dashboard/${slug}/settings/team`;
+  // Someone outside the SSO domain, for the dialog without the warning.
+  const eveId = userId(eve);
   sql(
-    `delete from member where user_id=${q(benId)} and organization_id=${q(orgId)}`,
+    `insert into member (id, organization_id, user_id, role, created_at) values ('m-eve-${RUN}', ${q(orgId)}, ${q(eveId)}, 'member', now())`,
   );
-  await startSso(ben);
-  await idpSignIn(ben);
+  await emailSignIn(owner);
+  await goto(team, { wait: 3000 });
+  const plainDialog = await removeDialogFor(eve);
   check(
-    "Removed member signs in",
-    (await href()).startsWith(`${BASE}/dashboard`),
-    await href(),
+    "Remove dialog: no SSO warning for someone outside the domain",
+    plainDialog.includes("They lose access") &&
+      !plainDialog.includes("single sign-on"),
+    plainDialog.replace(/\s+/g, " ").slice(0, 200),
   );
+  await shot("21a-remove-member");
+  await evaluate(() =>
+    window.__e2e.click(
+      window.__e2e.byRole("button", "Cancel", {
+        exact: true,
+        root: document.querySelector('[role="alertdialog"]') ?? document,
+      }) as HTMLElement,
+    ),
+  );
+  await sleep(600);
+  const ssoDialog = await removeDialogFor(ben);
   check(
-    "…but isn't added back",
+    "Remove dialog: says an SSO member rejoins unless unassigned in the IdP",
+    ssoDialog.includes(
+      `${ben} can sign in with single sign-on, so they'll rejoin the next time they do, unless you unassign them from QRdx in your identity provider first.`,
+    ),
+    ssoDialog.replace(/\s+/g, " ").slice(0, 300),
+  );
+  await shot("21-remove-sso-member");
+  await evaluate(() =>
+    window.__e2e.click(
+      window.__e2e.byRole("button", "Remove member", {
+        exact: true,
+        root: document.querySelector('[role="alertdialog"]') ?? document,
+      }) as HTMLElement,
+    ),
+  );
+  await waitText(`Removed ${ben.split("@")[0]}`).catch(() => null);
+  await sleep(1000);
+  check(
+    "Removed on the Team page",
     sql(
       `select count(*) from member where user_id=${q(benId)} and organization_id=${q(orgId)}`,
     ) === "0",
   );
-  sql(
-    `insert into member (id, organization_id, user_id, role, created_at) values ('m-ben-${RUN}', ${q(orgId)}, ${q(benId)}, 'viewer', now())`,
+  await startSso(ben);
+  await idpSignIn(ben);
+  check(
+    "Removed member rejoins at the next SSO sign-in, in the SSO workspace",
+    (await href()).startsWith(`${BASE}/dashboard/${slug}`) &&
+      activeWorkspace(ben) === orgId,
+    await href(),
   );
+  check(
+    "…with the join role",
+    sql(
+      `select role from member where user_id=${q(benId)} and organization_id=${q(orgId)}`,
+    ) === "viewer",
+  );
+
+  sql(
+    `update member set role='admin' where user_id=${q(anaId)} and organization_id=${q(orgId)}`,
+  );
+  await startSso(ana);
+  await idpSignIn(ana);
+  check(
+    "Promoted member signs in with SSO",
+    (await href()).startsWith(`${BASE}/dashboard/${slug}`),
+    await href(),
+  );
+  check(
+    "…and keeps their role",
+    sql(
+      `select role from member where user_id=${q(anaId)} and organization_id=${q(orgId)}`,
+    ) === "admin",
+  );
+
   const dan = `dan@${DOMAIN}`;
   sql(
-    `insert into invitation (id, organization_id, email, role, status, expires_at, inviter_id, created_at) values ('inv-${RUN}', ${q(orgId)}, ${q(dan)}, 'member', 'pending', now() + interval '2 days', ${q(ownerId)}, now())`,
+    `insert into invitation (id, organization_id, email, role, status, expires_at, inviter_id, created_at) values ('inv-${RUN}', ${q(orgId)}, ${q(dan)}, 'admin', 'pending', now() + interval '2 days', ${q(ownerId)}, now())`,
   );
   await startSso(dan);
   await idpSignIn(dan);
   check(
-    "Invited person signs in",
-    (await href()).startsWith(`${BASE}/dashboard`),
+    "Invited person signs in, in the SSO workspace",
+    (await href()).startsWith(`${BASE}/dashboard/${slug}`) &&
+      activeWorkspace(dan) === orgId,
     await href(),
   );
   check(
-    "…and joins through the invitation, not SSO",
+    "…joins with the invitation's role",
+    sql(
+      `select role from member where user_id=${q(userId(dan))} and organization_id=${q(orgId)}`,
+    ) === "admin",
+  );
+  check(
+    "…and the invitation is accepted",
+    sql(`select status from invitation where id='inv-${RUN}'`) === "accepted",
+  );
+  check(
+    "…once (one membership)",
     sql(
       `select count(*) from member where user_id=${q(userId(dan))} and organization_id=${q(orgId)}`,
-    ) === "0",
+    ) === "1",
   );
 
   console.log("plan drops below Business");
@@ -1002,6 +1279,69 @@ try {
 
   console.log("two-step verification, SAML");
   await ssoWithTwoFactor("SAML", tara, taraSecret, "18-two-factor-saml");
+
+  console.log("trusted device, SAML posted from another site");
+  const mark = requestOrder.length;
+  await ssoWithTwoFactor(
+    "SAML cross-site",
+    tara,
+    taraSecret,
+    "18b-two-factor-saml-cross-site",
+    { trust: true, crossSite: true },
+  );
+  const acsPost = (since: number) =>
+    requestsSince(since).find(
+      (r) => r.method === "POST" && r.url.includes("/sso/saml2/sp/acs/"),
+    );
+  const firstPost = acsPost(mark);
+  check(
+    "SAML cross-site: the ACS POST came from the IdP's site",
+    firstPost?.origin === "http://127.0.0.1:4455",
+    firstPost?.origin,
+  );
+  check(
+    "SAML cross-site: …and went through /two-factor/continue to the page",
+    requestsSince(mark).some((r) =>
+      r.url.startsWith(`${BASE}/api/auth/two-factor/continue?next=`),
+    ),
+  );
+  const seen = await trustedSsoSignIn("SAML + trusted device", tara, {
+    crossSite: true,
+  });
+  const trustedPost = seen.find(
+    (r) => r.method === "POST" && r.url.includes("/sso/saml2/sp/acs/"),
+  );
+  check(
+    "SAML + trusted device: Chrome kept the trust cookie off the cross-site POST",
+    Boolean(trustedPost) &&
+      !trustedPost?.cookies.includes("better-auth.trust_device") &&
+      Boolean(
+        trustedPost?.blocked.some(
+          (b) =>
+            b.name === "better-auth.trust_device" &&
+            b.reasons.some((r) => /SameSite/i.test(r)),
+        ),
+      ),
+    JSON.stringify(trustedPost?.blocked ?? null),
+  );
+  const continued = seen.find((r) =>
+    r.url.startsWith(`${BASE}/api/auth/two-factor/continue`),
+  );
+  check(
+    "SAML + trusted device: …and the GET to /two-factor/continue carried it",
+    Boolean(continued?.cookies.includes("better-auth.trust_device")),
+    JSON.stringify(continued ?? null).slice(0, 300),
+  );
+
+  console.log("SAML without the trust cookie (fresh browser)");
+  await startSso(tara); // clears every cookie
+  await idpSignIn(tara, {}, { crossSite: true });
+  check(
+    "SAML, no trust cookie: the code is asked",
+    (await href()).startsWith(`${BASE}/sign-in/two-factor?next=`) &&
+      (await browserSession()) === null,
+    await href(),
+  );
 
   console.log("SAML entered by hand, certificate replaced");
   await emailSignIn(owner);

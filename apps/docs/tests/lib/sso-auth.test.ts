@@ -4,11 +4,13 @@
 // e2e/sso.e2e.mts.
 import { auth } from "@repo/auth/server";
 import {
+  joinWorkspace,
   SSO_CALLBACK_PATHS,
   SSO_SERVER_ONLY_PATHS,
   SSO_SIGN_IN_PATH,
   SSO_UNUSED_PATHS,
   ssoGate,
+  ssoRejoinDomains,
 } from "@repo/auth/sso";
 import { database } from "@repo/database";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -256,5 +258,142 @@ describe("new accounts from SSO", () => {
       { path: "/sign-in/email-otp", params: {} },
     );
     expect(result).toBeUndefined();
+  });
+});
+
+describe("joining the workspace at every SSO sign-in", () => {
+  type Write = { table: unknown; values?: Row; set?: Row };
+
+  /** Stubs the reads joinWorkspace makes and records its writes. */
+  function stubJoin({
+    plan = "business" as "business" | "pro" | "free",
+    member = null as Row | null,
+    invitation = null as Row | null,
+    claimed = true,
+    email = "ben@acme.com",
+  } = {}) {
+    stubDb({ providers: [provider()], plan });
+    const q = database.query as unknown as Record<
+      string,
+      Record<string, (...args: unknown[]) => unknown>
+    >;
+    vi.spyOn(q.user, "findFirst").mockResolvedValue({ email } as never);
+    vi.spyOn(q.member, "findFirst").mockResolvedValue(
+      (member ?? undefined) as never,
+    );
+    vi.spyOn(q.invitation, "findFirst").mockResolvedValue(
+      (invitation ?? undefined) as never,
+    );
+    vi.spyOn(q.organization, "findFirst").mockResolvedValue({
+      metadata: JSON.stringify({ ssoJoinRole: "viewer" }),
+    } as never);
+    const writes: Write[] = [];
+    vi.spyOn(database, "insert").mockImplementation(((table: unknown) => ({
+      values: async (values: Row) => {
+        writes.push({ table, values });
+      },
+    })) as never);
+    vi.spyOn(database, "update").mockImplementation(((table: unknown) => ({
+      set: (set: Row) => ({
+        where: () => {
+          writes.push({ table, set });
+          const result = Promise.resolve(
+            claimed && set.status === "accepted"
+              ? [{ role: invitation?.role ?? null }]
+              : [],
+          );
+          return Object.assign(result, { returning: () => result });
+        },
+      }),
+    })) as never);
+    return writes;
+  }
+
+  it("adds someone who isn't a member with the workspace's join role", async () => {
+    const writes = stubJoin();
+    await joinWorkspace("u-ben", "sso-abcdefabcdef");
+    expect(writes).toHaveLength(1);
+    expect(writes[0].values).toMatchObject({
+      organizationId: "org-1",
+      userId: "u-ben",
+      role: "viewer",
+    });
+  });
+
+  it("never touches an existing member's role", async () => {
+    const writes = stubJoin({ member: { id: "m1" } });
+    await joinWorkspace("u-ben", "sso-abcdefabcdef");
+    expect(writes).toEqual([]);
+  });
+
+  it("accepts a pending invitation with its role", async () => {
+    const writes = stubJoin({ invitation: { id: "inv-1", role: "admin" } });
+    await joinWorkspace("u-ben", "sso-abcdefabcdef");
+    expect(writes.map((w) => w.set ?? w.values)).toEqual([
+      { status: "accepted" },
+      expect.objectContaining({ userId: "u-ben", role: "admin" }),
+    ]);
+  });
+
+  it("adds nobody when another sign-in claimed the invitation first", async () => {
+    const writes = stubJoin({
+      invitation: { id: "inv-1", role: "admin" },
+      claimed: false,
+    });
+    await joinWorkspace("u-ben", "sso-abcdefabcdef");
+    expect(writes.filter((w) => w.values)).toEqual([]);
+  });
+
+  it("does nothing off Business or outside the domain", async () => {
+    let writes = stubJoin({ plan: "pro" });
+    await joinWorkspace("u-ben", "sso-abcdefabcdef");
+    expect(writes).toEqual([]);
+    vi.restoreAllMocks();
+    writes = stubJoin({ email: "zed@other.com" });
+    await joinWorkspace("u-zed", "sso-abcdefabcdef");
+    expect(writes).toEqual([]);
+  });
+
+  it("runs from the session hook on SSO callbacks only", async () => {
+    const hooks = (
+      ssoGate().init() as unknown as {
+        options: {
+          databaseHooks: {
+            session: {
+              create: {
+                before: (session: Row, context: unknown) => Promise<unknown>;
+              };
+            };
+          };
+        };
+      }
+    ).options.databaseHooks;
+    let writes = stubJoin();
+    await hooks.session.create.before(
+      { userId: "u-ben" },
+      {
+        path: "/sso/saml2/sp/acs/:providerId",
+        params: { providerId: "sso-abcdefabcdef" },
+      },
+    );
+    expect(writes.some((w) => w.values?.role === "viewer")).toBe(true);
+    vi.restoreAllMocks();
+    writes = stubJoin();
+    await hooks.session.create.before(
+      { userId: "u-ben" },
+      { path: "/sign-in/email-otp", params: {} },
+    );
+    expect(writes).toEqual([]);
+  });
+
+  it("lists the domains whose people rejoin, only on Business", async () => {
+    stubDb({ providers: [provider()] });
+    expect(await ssoRejoinDomains("org-1")).toEqual(["acme.com"]);
+    vi.restoreAllMocks();
+    stubDb({ providers: [provider()], plan: "pro" });
+    expect(await ssoRejoinDomains("org-1")).toEqual([]);
+    vi.restoreAllMocks();
+    stubDb({ providers: [provider({ domainVerified: false })] });
+    expect(await ssoRejoinDomains("org-1")).toEqual([]);
   });
 });
