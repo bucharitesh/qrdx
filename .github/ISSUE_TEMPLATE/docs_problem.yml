@@ -1,0 +1,56 @@
+name: Docs problem
+description: A page at qrdx.dev/docs is wrong, out of date, missing something or hard to follow
+title: "[docs]: "
+labels: ["documentation", "needs triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping fix the docs. For a typo or a small fix, you can also send a pull request: the **Open** menu under each docs page's title has **Open in GitHub**, which takes you to the page's source file.
+
+        If the docs are right and the product is wrong, use the [bug report](https://github.com/bucharitesh/qrdx/issues/new?template=bug_report.yml) instead.
+
+  - type: input
+    id: page
+    attributes:
+      label: Page
+      description: The URL of the docs page, with the section anchor if there is one.
+      placeholder: https://qrdx.dev/docs/dynamic-qr-codes
+    validations:
+      required: true
+
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What kind of problem is it?
+      options:
+        - It's wrong or out of date
+        - Something is missing
+        - It's hard to follow
+        - A link, image or code example is broken
+        - A typo or wording
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What's wrong?
+      description: Quote the sentence or code that's wrong, and say what actually happens when you follow it.
+    validations:
+      required: true
+
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested fix
+      description: What should the page say instead? Rough wording is fine.
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Before submitting
+      description: By submitting this issue, you agree to follow the [contributing guidelines](https://github.com/bucharitesh/qrdx/blob/main/CONTRIBUTING.md) and the [code of conduct](https://github.com/bucharitesh/qrdx/blob/main/.github/CODE_OF_CONDUCT.md).
+      options:
+        - label: I searched existing issues for this page
+          required: true
