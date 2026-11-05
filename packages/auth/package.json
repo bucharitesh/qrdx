@@ -13,6 +13,8 @@
     "./keys": "./keys.ts",
     "./provider": "./provider.tsx",
     "./own-workspace-id": "./own-workspace-id.ts",
+    "./sign-in-challenge": "./sign-in-challenge.ts",
+    "./sign-in-challenge-rules": "./sign-in-challenge-rules.ts",
     "./workspace-hooks": "./workspace-hooks.ts",
     "./workspace-rules": "./workspace-rules.ts"
   },

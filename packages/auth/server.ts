@@ -27,6 +27,15 @@ import {
   ENTITLED_SUBSCRIPTION_STATUSES,
   hasEntitledSubscription,
 } from "./plan";
+import { signInChallenge } from "./sign-in-challenge";
+import {
+  BACKUP_CODE_COUNT,
+  SERVER_ONLY_TWO_FACTOR_PATHS,
+  TOTP_DIGITS,
+  TOTP_PERIOD_SECONDS,
+  TRUST_DEVICE_DAYS,
+  UNUSED_TWO_FACTOR_PATHS,
+} from "./sign-in-challenge-rules";
 import {
   assertDeletable,
   assertNotOwnMember,
@@ -146,6 +155,29 @@ const SERVER_ONLY_EMAIL_OTP_PATHS = [
   "/email-otp/request-email-change",
   "/email-otp/change-email",
 ];
+
+// Two-step verification (Lane A). An authenticator app plus backup codes;
+// no codes by email or SMS as a second factor, so the plugin's OTP endpoints
+// are off. Turning it on or off and new backup codes only go through the
+// app's server actions (apps/docs/app/settings/account/_lib/
+// two-factor-actions.ts), which add a recent sign-in, a current code, limits
+// and the notice email. Over HTTP only the challenge's own endpoints remain.
+const twoFactorPlugin = twoFactor({
+  issuer: "QRdx",
+  // QRdx has no passwords; the app's actions check a code instead.
+  allowPasswordless: true,
+  // The issuer is read from here by get-totp-uri, from above by enable.
+  totpOptions: {
+    issuer: "QRdx",
+    digits: TOTP_DIGITS,
+    period: TOTP_PERIOD_SECONDS,
+  },
+  backupCodeOptions: {
+    amount: BACKUP_CODE_COUNT,
+    storeBackupCodes: "encrypted",
+  },
+  trustDeviceMaxAge: TRUST_DEVICE_DAYS * 24 * 60 * 60,
+});
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -304,12 +336,11 @@ export const auth = betterAuth({
         },
       },
     }),
-    // Sign-in security (packages/database/manual-sql/0017). FOUNDATION ONLY:
-    // registered with defaults so the endpoints and tables exist; each is
-    // finished in its own lane before this ships. As registered here, the
-    // twoFactor plugin only challenges password sign-ins, which QRdx doesn't
-    // have, so 2FA does nothing yet.
-    twoFactor({ issuer: "QRdx", allowPasswordless: true }),
+    // Sign-in security (packages/database/manual-sql/0017).
+    // Two-step verification (Lane A): the plugin, then the challenge after
+    // every session-creating endpoint (./sign-in-challenge.ts).
+    twoFactorPlugin,
+    signInChallenge(twoFactorPlugin),
     passkey({ rpName: "QRdx" }),
     sso({ domainVerification: { enabled: true } }),
   ],
@@ -319,6 +350,9 @@ export const auth = betterAuth({
     "/admin/set-user-password",
     ...UNUSED_EMAIL_OTP_PATHS,
     ...SERVER_ONLY_EMAIL_OTP_PATHS,
+    // Two-step verification (Lane A)
+    ...UNUSED_TWO_FACTOR_PATHS,
+    ...SERVER_ONLY_TWO_FACTOR_PATHS,
   ],
   // Better Auth enforces these in production only, per IP, in memory.
   rateLimit: {
@@ -333,6 +367,11 @@ export const auth = betterAuth({
       [SEND_CODE_PATH]: { window: 60, max: 3 },
       // Each code allows 3 tries, so 5 a minute leaves room for one resend.
       [SIGN_IN_CODE_PATH]: { window: 60, max: 5 },
+      // Two-step verification (Lane A): the plugin's own 3 per 10 s, stated
+      // here. Each challenge also allows 5 wrong codes, and 10 in a row lock
+      // the account for 15 minutes.
+      "/two-factor/verify-totp": { window: 10, max: 3 },
+      "/two-factor/verify-backup-code": { window: 10, max: 3 },
     },
   },
 }) as any;
