@@ -2,5 +2,5 @@
   "$schema": "../../../../.source/json-schema/docs.meta.json",
   "title": "Teams",
   "icon": "Users",
-  "pages": ["create-and-invite", "roles", "seats"]
+  "pages": ["create-and-invite", "roles", "seats", "single-sign-on"]
 }
