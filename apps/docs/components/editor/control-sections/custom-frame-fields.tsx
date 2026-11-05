@@ -170,7 +170,7 @@ const iconName = (icon: FrameSpecIcon) =>
   ICON_NAMES[icon] ?? `${icon.charAt(0).toUpperCase()}${icon.slice(1)}`;
 
 /** The frame's icon: one of the engine's glyphs (no images). */
-function IconPicker({
+export function IconPicker({
   current,
   taken,
   onPick,

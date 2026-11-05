@@ -767,6 +767,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
     moduleScale,
     autoLevel,
     shape,
+    frameLabelMarkers,
     ...otherProps
   } = props;
 
@@ -775,7 +776,13 @@ export function QRCodeSVG(props: QRPropsSVG) {
   const rootProps: typeof otherProps = framed ? {} : otherProps;
   const withFrame = (element: JSX.Element) =>
     framed
-      ? wrapWithFrame(element, { size, frame, bgColor, svgProps: otherProps })
+      ? wrapWithFrame(element, {
+          size,
+          frame,
+          bgColor,
+          svgProps: otherProps,
+          markLabels: frameLabelMarkers,
+        })
       : element;
 
   // An excavated logo in OG images raises L/M to Q; with autoLevel, a logo
