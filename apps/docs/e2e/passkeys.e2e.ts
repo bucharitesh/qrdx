@@ -37,6 +37,11 @@ const BASE_URL = (process.env.E2E_BASE_URL ?? "http://localhost:3000").replace(
 );
 const CODE_LOG = process.env.E2E_CODE_LOG;
 const SHOTS = process.env.E2E_SHOTS;
+/**
+ * E2E_MOBILE=1: a 390 x 844 phone (deviceScaleFactor 2, mobile, touch).
+ * Every screenshot then also checks the layout (layoutAt below).
+ */
+const MOBILE = process.env.E2E_MOBILE === "1";
 const DB_SQL = process.env.E2E_DB_SQL;
 const RUN = Date.now().toString(36);
 const EMAIL = `passkey-e2e-${RUN}@qrdx.test`;
@@ -161,8 +166,90 @@ function logHas(text: string): boolean {
   return Boolean(CODE_LOG && readFileSync(CODE_LOG, "utf8").includes(text));
 }
 
+/**
+ * In the page, for the mobile pass: horizontal page scroll, an open dialog
+ * that runs past the screen with no way to scroll it, and tap targets
+ * under 40 px. Targets are checked in this lane's own UI only (the
+ * Passkeys section, passkey dialogs, the passkey sign-in button); other
+ * small targets on the same screen are listed for the report. Plain JS
+ * source (tsx would add helpers that don't exist in the page).
+ */
+const LAYOUT_CHECK = `() => {
+  const root = document.documentElement;
+  const visible = (el) => {
+    const r = el.getBoundingClientRect();
+    const style = getComputedStyle(el);
+    return r.width > 0 && r.height > 0 && style.visibility !== "hidden";
+  };
+  const label = (el) =>
+    (el.getAttribute("aria-label") || el.textContent || el.tagName)
+      .replace(/\\s+/g, " ")
+      .trim()
+      .slice(0, 40);
+  const dialog = [...document.querySelectorAll('[role="dialog"],[role="alertdialog"]')].find(visible);
+  let dialogOverflow = null;
+  if (dialog) {
+    const r = dialog.getBoundingClientRect();
+    const scrolls = dialog.scrollHeight > dialog.clientHeight + 1 &&
+      /(auto|scroll)/.test(getComputedStyle(dialog).overflowY);
+    if ((r.bottom > innerHeight + 1 || r.top < -1 || r.right > innerWidth + 1 || r.left < -1) && !scrolls) {
+      dialogOverflow = { top: Math.round(r.top), bottom: Math.round(r.bottom), left: Math.round(r.left), right: Math.round(r.right) };
+    }
+  }
+  // The docs' own navigation (table of contents, sidebars, heading
+  // permalinks) isn't this lane's UI, even where its links say "passkey".
+  const lane = (el) =>
+    !el.closest("nav, aside, #nd-toc, #nd-sidebar, h1, h2, h3, h4") &&
+    Boolean(
+      el.closest("#passkeys") ||
+      (dialog && dialog.contains(el) && /passkey/i.test(dialog.textContent || "")) ||
+      /passkey/i.test(el.textContent || "")
+    );
+  const small = [];
+  const others = [];
+  const targets = document.querySelectorAll(
+    'button, a[href], input:not([type="hidden"]), [role="checkbox"], [role="switch"]',
+  );
+  for (const el of targets) {
+    if (!visible(el)) continue;
+    const r = el.getBoundingClientRect();
+    if (r.bottom < 0 || r.top > innerHeight) continue;
+    // Inline text links inside sentences are sized by the text around them.
+    if (el.tagName === "A" && getComputedStyle(el).display === "inline") continue;
+    if (r.height >= 40 && r.width >= 40) continue;
+    const item = label(el) + " " + Math.round(r.width) + "x" + Math.round(r.height);
+    (lane(el) ? small : others).push(item);
+  }
+  return {
+    scrollWidth: root.scrollWidth,
+    clientWidth: root.clientWidth,
+    dialogOverflow,
+    small,
+    others,
+  };
+}`;
+
+interface LayoutReport {
+  scrollWidth: number;
+  clientWidth: number;
+  dialogOverflow: object | null;
+  small: string[];
+  others: string[];
+}
+
+/** Mobile pass findings, by screenshot name. */
+const layout = new Map<string, LayoutReport>();
+
 async function shot(page: Page, name: string) {
   if (!SHOTS) return;
+  // The cookie banner would cover the bottom of every screenshot: decline it
+  // (remembered for the rest of the run), as e2e/two-factor.e2e.ts does.
+  await page.evaluate(() => {
+    const button = window.__e2e.byRole("button", "Reject all", {
+      exact: true,
+    });
+    if (button) window.__e2e.click(button);
+  });
   for (const scheme of ["light", "dark"] as const) {
     await page.cdp.send("Emulation.setEmulatedMedia", {
       features: [
@@ -171,6 +258,12 @@ async function shot(page: Page, name: string) {
       ],
     });
     await sleep(400);
+    if (MOBILE && scheme === "light") {
+      layout.set(
+        name,
+        (await page.evaluate(LAYOUT_CHECK as never)) as LayoutReport,
+      );
+    }
     const { data } = await page.cdp.send("Page.captureScreenshot", {
       format: "png",
     });
@@ -286,6 +379,18 @@ async function main() {
 
   const page = await launch({ width: 1280, height: 900 });
   const { cdp } = page;
+  if (MOBILE) {
+    await cdp.send("Emulation.setDeviceMetricsOverride", {
+      width: 390,
+      height: 844,
+      deviceScaleFactor: 2,
+      mobile: true,
+    });
+    await cdp.send("Emulation.setTouchEmulationEnabled", {
+      enabled: true,
+      maxTouchPoints: 5,
+    });
+  }
   try {
     await cdp.send("WebAuthn.enable", { enableUI: false });
     const { authenticatorId: first } = await cdp.send(
@@ -894,6 +999,75 @@ async function main() {
           : `session after TOTP: ${JSON.stringify(after)}`;
       },
     );
+
+    if (MOBILE) {
+      await step("mobile: help pages", async () => {
+        await signOut(page);
+        for (const [name, path, anchor] of [
+          ["help-passkeys", "/docs/help/privacy-and-security/passkeys", ""],
+          [
+            "help-passkeys-two-step",
+            "/docs/help/privacy-and-security/passkeys",
+            "passkeys-and-two-step-verification",
+          ],
+          ["help-sign-in", "/docs/help/account-and-billing/sign-in", ""],
+          [
+            "help-sign-in-passkey-line",
+            "/docs/help/account-and-billing/sign-in",
+            "ways-to-sign-in",
+          ],
+        ]) {
+          await page.goto(`${BASE_URL}${path}`);
+          if (anchor) {
+            await page.evaluate(
+              (id: string) => document.getElementById(id)?.scrollIntoView(),
+              anchor,
+            );
+          }
+          await shot(page, name);
+        }
+        return true;
+      });
+
+      await step(
+        "mobile: no horizontal page scroll on any screen",
+        async () => {
+          const wide = [...layout]
+            .filter(([, r]) => r.scrollWidth > r.clientWidth)
+            .map(([name, r]) => `${name} ${r.scrollWidth}>${r.clientWidth}`);
+          for (const [name, r] of layout) {
+            console.log(
+              `      ${name}: scrollWidth ${r.scrollWidth} / clientWidth ${r.clientWidth}`,
+            );
+          }
+          return layout.size > 0 && wide.length === 0
+            ? true
+            : wide.join(", ") || "no screens measured";
+        },
+      );
+
+      await step("mobile: dialogs fit the screen or scroll", async () => {
+        const bad = [...layout]
+          .filter(([, r]) => r.dialogOverflow)
+          .map(([name, r]) => `${name} ${JSON.stringify(r.dialogOverflow)}`);
+        return bad.length === 0 ? true : bad.join(", ");
+      });
+
+      await step("mobile: passkey tap targets are at least 40 px", async () => {
+        const bad = [...layout]
+          .filter(([, r]) => r.small.length)
+          .map(([name, r]) => `${name}: ${r.small.join("; ")}`);
+        const others = [...layout]
+          .filter(([, r]) => r.others.length)
+          .map(([name, r]) => `${name}: ${r.others.join("; ")}`);
+        if (others.length) {
+          console.log(
+            `      small targets outside this lane:\n        ${others.join("\n        ")}`,
+          );
+        }
+        return bad.length === 0 ? true : bad.join("\n        ");
+      });
+    }
 
     // An error boundary catching a section's render error still lets the
     // other checks pass, so page errors fail the run on their own.
