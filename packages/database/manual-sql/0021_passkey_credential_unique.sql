@@ -1,0 +1,32 @@
+-- One passkey row per WebAuthn credential: a unique index on
+-- passkey (credential_id).
+--
+-- Why: credential ids aren't secret (browsers get them in sign-in options),
+-- and passkey sign-in looks the passkey up by credential id. Without the
+-- index, someone could register a passkey that reuses another person's
+-- credential id, and a lookup could find the wrong row. With it, the second
+-- registration fails instead.
+--
+-- Additive: no column changes, and the existing non-unique
+-- passkey_credential_id_idx stays (dropping it would be a separate change).
+-- Built CONCURRENTLY, so writes aren't blocked; that means it can't run
+-- inside a transaction block, so this file has no BEGIN/COMMIT.
+--
+-- Before running, check there are no duplicates (the build fails otherwise):
+--   SELECT credential_id, count(*) FROM passkey GROUP BY 1 HAVING count(*) > 1;
+-- Dry run (same index, non-concurrent, rolled back):
+--   BEGIN;
+--   CREATE UNIQUE INDEX "passkey_credential_id_unique" ON "passkey" USING btree ("credential_id");
+--   ROLLBACK;
+-- After running, check it's valid (a failed CONCURRENTLY build leaves an
+-- INVALID index that IF NOT EXISTS would then skip):
+--   SELECT indisvalid FROM pg_index
+--   WHERE indexrelid = 'passkey_credential_id_unique'::regclass;
+-- If it's false: DROP INDEX CONCURRENTLY passkey_credential_id_unique; fix
+-- the duplicates, and run this again.
+--
+-- Matches packages/database/schema.ts (passkey, uniqueIndex
+-- passkey_credential_id_unique), so a later `drizzle-kit push` sees no drift.
+
+CREATE UNIQUE INDEX CONCURRENTLY IF NOT EXISTS "passkey_credential_id_unique"
+  ON "passkey" USING btree ("credential_id");
