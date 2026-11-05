@@ -1,8 +1,7 @@
 "use client";
 
-// Saved UTM templates in the UTM panel (the Dub study's gap 10, after Dub's
-// utm-templates-button.tsx and utm-templates-combo.tsx, AGPL-3.0: the flow,
-// not the code): fill the panel from a template, save its values as one,
+// Saved UTM templates in the UTM panel: fill the panel from a template, save
+// its values as one,
 // rename and delete them. Shown only when the workspace's plan has UTM and
 // the server has the table (manual-sql/0013); otherwise nothing renders.
 

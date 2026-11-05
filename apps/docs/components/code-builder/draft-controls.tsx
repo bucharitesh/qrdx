@@ -1,8 +1,7 @@
 "use client";
 
-// Pattern adapted from Dub (github.com/dubinc/dub, AGPL-3.0):
-// apps/web/ui/links/link-builder/draft-controls.tsx. A quiet pill says the
-// draft is saved; with older drafts it becomes a menu to restore one.
+// A quiet pill says the draft is saved; with older drafts it becomes a menu
+// to restore one.
 
 import { Spinner, Tick } from "@repo/design-system/components/icons";
 import { Button } from "@repo/design-system/components/ui/button";

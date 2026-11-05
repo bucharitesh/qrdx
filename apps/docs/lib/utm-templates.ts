@@ -25,7 +25,7 @@ import {
   type UtmTemplateView,
 } from "./utm-templates-shared";
 
-// Saved UTM templates (the Dub study's gap 10): a workspace's named sets of
+// Saved UTM templates: a workspace's named sets of
 // UTM parameters, picked in the UTM panel to fill it. Scoped to the
 // workspace, behind the same plan limit as UTM itself (`routing`). The table
 // comes from manual-sql/0013; until it's applied every read says
