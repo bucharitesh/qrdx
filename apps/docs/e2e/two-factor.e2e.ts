@@ -785,6 +785,8 @@ async function main() {
           : "an authenticator code with the emailed code changes the email",
         (await session(page))?.user?.email === to,
       );
+      // Closed (and done animating) before the next dialog is measured.
+      await page.waitFor(() => !document.querySelector('[role="dialog"]'));
     }
 
     let noticeSince = logSize();
