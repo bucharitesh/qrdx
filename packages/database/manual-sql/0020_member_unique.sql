@@ -2,7 +2,7 @@
 -- member (organization_id, user_id).
 --
 -- Why now: workspace single sign-on adds people to the workspace on every SSO
--- sign-in (packages/auth/sso.ts joinWorkspace). Two sign-ins by the same
+-- sign-in (packages/auth/ee/sso.ts joinWorkspace). Two sign-ins by the same
 -- person at the same moment (two tabs) could otherwise insert the membership
 -- twice. Invitation and join-link adds had the same race. Every app insert
 -- into member is ON CONFLICT DO NOTHING (or treats a unique violation as

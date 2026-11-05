@@ -12,11 +12,12 @@ import { Button } from "@repo/design-system/components/ui/button";
 import { Separator } from "@repo/design-system/components/ui/separator";
 import Link from "next/link";
 import { type ComponentType, type ReactNode, useEffect, useState } from "react";
+import { useAvailability } from "@/components/availability-provider";
 import { QrdxLogoAnimation } from "@/components/qrdx-logo-animation";
 import { siteConfig } from "@/config/site";
+import { SsoSignIn } from "@/ee/sso/sso-sign-in";
 import { EmailCodeSignIn } from "./email-code-sign-in";
 import { PasskeySignIn } from "./passkey-sign-in";
-import { SsoSignIn } from "./sso-sign-in";
 
 const FOOTER_LINK =
   "rounded-sm transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
@@ -72,6 +73,8 @@ export function SignInPanel({
   const [emailFormKey, setEmailFormKey] = useState(0);
   // The email code was right and two-step verification asks for a code.
   const [twoFactor, setTwoFactor] = useState(false);
+  // Workspace SSO runs only on servers with a QRdx licence key.
+  const ssoOffered = useAvailability().has("sso");
 
   useEffect(() => {
     if (shown) setLastLoginMethod(authClient.getLastUsedLoginMethod());
@@ -223,7 +226,7 @@ export function SignInPanel({
         sentTo={codeSentTo}
       />
 
-      {!codeSentTo && (
+      {!codeSentTo && ssoOffered && (
         <SsoSignIn
           callbackURL={callbackURL}
           disabled={busy}

@@ -57,6 +57,9 @@ const config: ViteUserConfig = {
       R2_SECRET_ACCESS_KEY: "test-secret-key",
       R2_BUCKET: "test-bucket",
       RESEND_API_KEY: "",
+      // Workspace SSO (ee/) is on, as on qrdx.dev; tests/auth/sso-off.test.ts
+      // loads the auth server without it.
+      QRDX_EE_LICENSE: "test-license",
     },
   },
 };

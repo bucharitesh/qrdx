@@ -5,7 +5,7 @@ import * as schema from "@repo/database";
 import { and, database as db, eq } from "@repo/database";
 import type { BetterAuthPlugin } from "better-auth";
 import { APIError, createAuthMiddleware, isAPIError } from "better-auth/api";
-import { workspacePlanTier } from "./plan";
+import { workspacePlanTier } from "../plan";
 import {
   domainCovers,
   domainsOverlap,
@@ -26,7 +26,7 @@ import {
 //   accepting a pending invitation), with the role the workspace picked
 //   (member or viewer) or the invitation's.
 // Managing connections is server-only (SSO_SERVER_ONLY_PATHS): the app's
-// server actions check QRdx roles and the plan first (apps/docs/lib/sso).
+// server actions check QRdx roles and the plan first (apps/docs/ee/sso).
 
 export const SSO_SIGN_IN_PATH = "/sign-in/sso";
 // Paths that sign someone in. Lane A challenges them for 2FA; here they're
@@ -50,7 +50,7 @@ export const SSO_SERVER_ONLY_PATHS = [
 // endpoints refuse every request while `saml.enableSingleLogout` is unset.)
 export const SSO_UNUSED_PATHS = ["/sso/callback"];
 
-/** Error codes the sign-in UI turns into messages (apps/docs/lib/sso/messages.ts). */
+/** Error codes the sign-in UI turns into messages (apps/docs/ee/sso/messages.ts). */
 export const SSO_ERROR = {
   emailRequired: "SSO_EMAIL_REQUIRED",
   notFound: "SSO_NOT_FOUND",
