@@ -4,8 +4,7 @@
 //
 // Roles are Better Auth organization roles (member.role, comma-separated
 // when someone holds several; QRdx assigns one). packages/auth/server.ts
-// registers the same five with the plugin. Viewer and billing follow Dub's
-// roles of the same names (github.com/dubinc/dub, AGPL-3.0, rbac/permissions).
+// registers the same five with the plugin.
 
 export const WORKSPACE_ROLES = [
   "owner",

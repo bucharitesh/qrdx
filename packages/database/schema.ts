@@ -161,6 +161,9 @@ export const passkey = pgTable(
   (table) => [
     index("passkey_user_id_idx").on(table.userId),
     index("passkey_credential_id_idx").on(table.credentialID),
+    // One row per credential: sign-in looks passkeys up by credential id.
+    // SQL: packages/database/manual-sql/0021_passkey_credential_unique.sql
+    uniqueIndex("passkey_credential_id_unique").on(table.credentialID),
   ]
 );
 

@@ -1,8 +1,6 @@
 "use client";
 
-// The codes list's toolbar, in the shape of Dub's links page (github.com/
-// dubinc/dub, AGPL-3.0: apps/web/ui/links/use-link-filters.tsx and
-// link-display.tsx): Filter and Display on the left, a live search on the
+// The codes list's toolbar: Filter and Display on the left, a live search on the
 // right, and the filters in use as removable chips below. Every filter lives
 // in the URL (codesHref), so a filtered list can be linked and reloaded.
 

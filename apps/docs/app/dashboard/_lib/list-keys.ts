@@ -1,8 +1,7 @@
 // The dashboard lists' keyboard: selecting rows and acting on the selection.
-// Bulk keys follow Dub's links toolbar (dub.co/help/article/bulk-link-actions:
-// T tags, M folder, A archive, with Esc to clear), and selecting follows
-// Gmail: X toggles the row under the pointer or holding focus, J/K move. Dub
-// deletes with X, which here selects, so delete is Backspace or Delete.
+// Bulk keys: T tags, M folder, A archive, Esc clears. Selecting: X toggles
+// the row under the pointer or holding focus, J/K move. X selects, so delete
+// is Backspace or Delete.
 // Pure, so the rules are tested without a browser.
 
 export type BulkAction = "tags" | "move" | "archive" | "trash" | "restore";

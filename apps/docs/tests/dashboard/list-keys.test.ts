@@ -129,7 +129,7 @@ describe("moving between rows", () => {
 });
 
 describe("bulk keys", () => {
-  it("match Dub's links toolbar, with Backspace or Delete to delete", () => {
+  it("are T, M, A and R, with Backspace or Delete to delete", () => {
     expect(resolveListKey(press("t"), ready)).toEqual({
       type: "bulk",
       action: "tags",

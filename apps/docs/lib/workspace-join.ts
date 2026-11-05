@@ -24,8 +24,7 @@ import { getOwnerPlanForOrganization, getPlanLimits } from "@/lib/plans";
 import { PLAN_NAMES } from "@/lib/pricing";
 import { isUniqueViolation } from "@/lib/slug-claims";
 
-// Workspace join links (Settings → Team; the pattern is Dub's inviteCode,
-// github.com/dubinc/dub, AGPL-3.0). Anyone signed in who opens
+// Workspace join links (Settings → Team). Anyone signed in who opens
 // /join/<token> can join as the link's role (never owner) while the plan has
 // seats. The token is 32 random bytes; only its SHA-256 is stored, so the
 // link is shown once, when it's made or reset. The table comes from

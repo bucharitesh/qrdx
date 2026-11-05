@@ -22,9 +22,7 @@ import {
   suggestPrompt,
 } from "./prompt";
 
-// "Suggest" next to the builder's back-half and tags fields (the Dub
-// study's gap 11, after Dub's AI key and tag suggestions; the flow, not the
-// code). One short call to the small text model through the AI Gateway;
+// "Suggest" next to the builder's back-half and tags fields. One short call to the small text model through the AI Gateway;
 // every back-half it proposes passes the same rules and uniqueness check
 // as one typed by hand, and only free ones come back.
 
