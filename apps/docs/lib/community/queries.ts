@@ -18,12 +18,16 @@ import {
   count,
   desc,
   eq,
+  exists,
   gt,
+  ilike,
   inArray,
   isNotNull,
   lt,
   ne,
+  or,
   type SQL,
+  sql,
 } from "drizzle-orm";
 import { customFrameSchema, type QRCustomFrame } from "qrdx/types";
 import type {
@@ -40,6 +44,7 @@ import { OFFICIAL_HANDLE } from "./handles";
 import { readPageTemplate } from "./page-template";
 import { framePreviewStyle } from "./payloads";
 import { publicStyleFromSaved, toPublicStyle } from "./public-style-server";
+import { SEARCH_DOCUMENT } from "./search";
 import { guardedRead } from "./store";
 import type {
   CommunityCreator,
@@ -893,4 +898,81 @@ export async function itemsForReview(options: {
     },
     { rows: [], total: 0 },
   );
+}
+
+export interface FullTextSearch {
+  /** A tsquery from toPrefixQuery */
+  query: string;
+  words: string[];
+  type?: CommunityItemType;
+  tag?: string;
+  limit: number;
+  offset: number;
+}
+
+/** The two queries of a full-text search, built but not run. */
+export function fullTextSearchQueries(options: FullTextSearch) {
+  const tsquery = sql`to_tsquery('simple'::regconfig, ${options.query})`;
+  const tagged = (tag: string) =>
+    exists(
+      db
+        .select({ one: sql`1` })
+        .from(communityItemTag)
+        .where(
+          and(
+            eq(communityItemTag.itemId, communityItem.id),
+            eq(communityItemTag.tag, tag),
+          ),
+        ),
+    );
+  const where = and(
+    visible(),
+    ...(options.type ? [eq(communityItem.type, options.type)] : []),
+    ...(options.tag ? [tagged(options.tag)] : []),
+    or(
+      sql`${SEARCH_DOCUMENT} @@ ${tsquery}`,
+      ...options.words.map((word) => tagged(word)),
+      ...options.words.map((word) =>
+        ilike(communityProfile.handle, `${word}%`),
+      ),
+    ),
+  ) as SQL;
+  return {
+    rows: itemsQuery()
+      .where(where)
+      .orderBy(
+        desc(sql`ts_rank(${SEARCH_DOCUMENT}, ${tsquery})`),
+        desc(communityItem.likeCount),
+        desc(communityItem.publishedAt),
+        asc(communityItem.id),
+      )
+      .limit(options.limit)
+      .offset(options.offset),
+    total: db
+      .select({ n: count() })
+      .from(communityItem)
+      .innerJoin(
+        communityProfile,
+        eq(communityProfile.id, communityItem.profileId),
+      )
+      .leftJoin(userTable, eq(userTable.id, communityProfile.userId))
+      .where(where),
+  };
+}
+
+/**
+ * Full-text search (manual-sql/0017): published items whose name or
+ * description matches every word as a prefix, or that carry one of the
+ * words as a tag, or whose creator's handle starts with one; best match
+ * first. Only called once the index exists (lib/community/search.ts).
+ */
+export async function searchItemsFullText(
+  options: FullTextSearch,
+): Promise<{ cards: CommunityItemCard[]; total: number }> {
+  const queries = fullTextSearchQueries(options);
+  const [rows, [total]] = await Promise.all([
+    queries.rows as Promise<ItemRow[]>,
+    queries.total,
+  ]);
+  return { cards: await toCards(rows), total: Number(total?.n ?? 0) };
 }
