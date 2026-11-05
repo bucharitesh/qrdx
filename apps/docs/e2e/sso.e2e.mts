@@ -90,6 +90,30 @@ if (MOBILE) {
 }
 const layout: Record<string, { overflow: number; small: string[] }> = {};
 
+// Content-Security-Policy violations ("Refused to …") the browser logs, with
+// the page they happened on (run the dev server with CSP_DEV=1 to enforce
+// the production policy).
+const cspViolations: string[] = [];
+await cdp.send("Log.enable");
+let currentUrl = "";
+cdp.on((message: { method: string; params: Record<string, unknown> }) => {
+  if (message.method === "Page.frameNavigated") {
+    const frame = message.params.frame as { parentId?: string; url: string };
+    if (!frame.parentId) currentUrl = frame.url;
+  }
+  const text =
+    message.method === "Log.entryAdded"
+      ? String((message.params.entry as { text?: string }).text ?? "")
+      : message.method === "Runtime.consoleAPICalled"
+        ? (message.params.args as { value?: unknown }[])
+            .map((arg) => String(arg.value ?? ""))
+            .join(" ")
+        : "";
+  if (text.includes("Refused to")) {
+    cspViolations.push(`${currentUrl.split("?")[0]} :: ${text.slice(0, 300)}`);
+  }
+});
+
 /** Horizontal page scroll and small tap targets on the current screen. */
 function layoutReport() {
   return evaluate(() => {
@@ -1099,6 +1123,8 @@ try {
 } finally {
   await browser.close();
 }
+console.log(`\nCSP violations ("Refused to"): ${cspViolations.length}`);
+for (const line of [...new Set(cspViolations)]) console.log(`  ${line}`);
 if (MOBILE) {
   console.log("\nTap targets under 40 px, by screen:");
   for (const [name, report] of Object.entries(layout)) {
