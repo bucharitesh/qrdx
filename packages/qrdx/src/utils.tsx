@@ -42,6 +42,7 @@ import { generateCornerDotPath } from "./corner-dot";
 import { generateCornerSquarePath } from "./corner-eye";
 import { isFrameActive, wrapWithFrame } from "./frame";
 import { LOGO_PLATE_INSET, LOGO_ROUNDED_RADIUS, renderLogo } from "./logo";
+import { capImageSettings } from "./logo-budget";
 import { getLayoutMargin, shapeBackground, shapeDecoration } from "./qr-shape";
 import { hashString } from "./shapes";
 import { getTemplate } from "./templates";
@@ -950,7 +951,7 @@ export function QRCodeSVG(props: QRPropsSVG) {
     cornerEyeDotPattern = "circle",
     margin = DEFAULT_MARGIN,
     isOGContext = false,
-    imageSettings,
+    imageSettings: requestedImageSettings,
     templateId,
     customTemplate,
     customProps,
@@ -963,6 +964,11 @@ export function QRCodeSVG(props: QRPropsSVG) {
     frameLabelMarkers,
     ...otherProps
   } = props;
+  // A logo no bigger than the code can repair (logo-budget.ts)
+  const imageSettings = capImageSettings(
+    { value, size, margin, level, shape, autoLevel, isOGContext },
+    requestedImageSettings
+  );
 
   // With a frame, the caller's SVG attributes belong on the outer frame <svg>.
   const framed = isFrameActive(frame);

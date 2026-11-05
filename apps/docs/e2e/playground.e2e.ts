@@ -1410,6 +1410,74 @@ async function testArtTabLinks(page: Page) {
   await openPlayground(page);
 }
 
+// ── Community preview ───────────────────────────────────────────────────────
+
+/** The foreground color of the design saved in this browser. */
+const savedFgColor = (page: Page) =>
+  page.evaluate(
+    `() => { try { return JSON.stringify(JSON.parse(localStorage.getItem("editor-storage"))?.state?.themeState?.styles?.fgColor ?? null); } catch { return null; } }`,
+  ) as Promise<string | null>;
+
+/**
+ * Previewing a theme on /community leaves the visitor's own design alone;
+ * "Open in Playground" puts the theme in, and Undo brings their design back.
+ */
+async function testCommunityPreview(page: Page) {
+  const mine = JSON.stringify("#0b6e4f");
+  // A design of the visitor's own, saved in this browser.
+  await page.evaluate(
+    `() => { const raw = JSON.parse(localStorage.getItem("editor-storage") ?? "null"); if (!raw) return false; raw.state.themeState.styles.fgColor = ${mine}; raw.state.themeCheckpoint = raw.state.themeState; localStorage.setItem("editor-storage", JSON.stringify(raw)); return true; }`,
+  );
+  await page.goto(`${BASE_URL}/community/themes`, { wait: 3000 });
+  await install(page);
+  await page.waitFor(
+    `() => !!document.querySelector('[aria-label^="Preview "][role="button"]')`,
+    { timeout: 60_000 },
+  );
+  const before = await savedFgColor(page);
+  await page.evaluate(
+    `() => { document.querySelector('[aria-label^="Preview "][role="button"]').click(); return true; }`,
+  );
+  await page.waitFor(`() => !!document.querySelector('[role="dialog"]')`, {
+    timeout: 20_000,
+  });
+  await sleep(800);
+  const previewed = await savedFgColor(page);
+  await pressKey(page, "ArrowRight", 39);
+  await sleep(800);
+  const browsed = await savedFgColor(page);
+  record(
+    "community",
+    "previewing themes leaves the saved design alone",
+    before === mine && previewed === mine && browsed === mine,
+    `before ${before}, preview ${previewed}, next ${browsed}`,
+  );
+
+  await clickByRole(page, "button", "open in playground", true);
+  await page.waitFor(
+    `() => location.pathname === "/playground" && !!(window.__e2e && __e2e.byRole("tab", "content"))`,
+    { timeout: 60_000 },
+  );
+  await install(page);
+  await sleep(800);
+  const used = await savedFgColor(page);
+  await clickByRole(page, "button", "undo", true);
+  await sleep(700);
+  const undone = await savedFgColor(page);
+  record(
+    "community",
+    "Open in Playground uses the theme, one Undo from the old design",
+    used !== mine && undone === mine,
+    `used ${used}, after undo ${undone}`,
+  );
+
+  // Leave a plain design for the suites after this one.
+  await page.evaluate(
+    `() => { localStorage.removeItem("editor-storage"); return true; }`,
+  );
+  await openPlayground(page);
+}
+
 // ── Main ────────────────────────────────────────────────────────────────────
 
 async function main() {
@@ -1435,6 +1503,7 @@ async function main() {
     ["copy", testCopy],
     ["downloads", (p) => testDownloads(p, downloadDir)],
     ["art tab links", testArtTabLinks],
+    ["community preview", testCommunityPreview],
   ];
   const selected = process.env.E2E_SUITES?.split(",").map((s) => s.trim());
   try {

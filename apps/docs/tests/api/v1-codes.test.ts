@@ -1087,3 +1087,56 @@ describe("image fills in a code's style", () => {
     expect(fakeDb.rows("qrPreset")).toHaveLength(0);
   });
 });
+
+describe("a code's content type", () => {
+  const WHATSAPP =
+    "https://wa.me/14155550132?text=Hi%2C%20I%20want%20to%20book";
+  const dataOf = async (response: Response) =>
+    ((await response.json()) as { data: { id: string; contentType: string } })
+      .data;
+
+  it("stores a WhatsApp chat link as a whatsapp code", async () => {
+    const response = await create({ destinationUrl: WHATSAPP }, write);
+    expect(response.status).toBe(201);
+    const data = await dataOf(response);
+    expect(data.contentType).toBe("whatsapp");
+    expect(fakeDb.find("qrCode", { id: data.id })?.contentType).toBe(
+      "whatsapp",
+    );
+  });
+
+  it("keeps other links as url codes", async () => {
+    for (const destinationUrl of [
+      "https://example.com/menu",
+      "https://chat.whatsapp.com/AbCdEfGh123",
+      "https://example.com/wa.me/123",
+    ]) {
+      const data = await dataOf(await create({ destinationUrl }, write));
+      expect(data.contentType, destinationUrl).toBe("url");
+    }
+  });
+
+  it("follows the destination when a PATCH changes it", async () => {
+    fakeDb.seed("qrCode", [code()]);
+    const toChat = await dataOf(
+      await patch("code_1", { destinationUrl: WHATSAPP }, write),
+    );
+    expect(toChat.contentType).toBe("whatsapp");
+    const back = await dataOf(
+      await patch("code_1", { destinationUrl: "https://example.com" }, write),
+    );
+    expect(back.contentType).toBe("url");
+  });
+
+  it("leaves any other content type alone", async () => {
+    fakeDb.seed("qrCode", [code({ contentType: "maps" })]);
+    await patch(
+      "code_1",
+      {
+        destinationUrl: "https://www.google.com/maps/search/?api=1&query=cafe",
+      },
+      write,
+    );
+    expect(fakeDb.find("qrCode", { id: "code_1" })?.contentType).toBe("maps");
+  });
+});

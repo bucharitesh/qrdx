@@ -23,6 +23,7 @@ import {
 } from "./constants";
 import { drawFrameOnCanvas, getFrameLayout, isFrameActive } from "./frame";
 import { logoImageBox, traceLogoShape } from "./logo";
+import { capImageSettings } from "./logo-budget";
 import { getLayoutMargin, shapeBackground, shapeDecoration } from "./qr-shape";
 import {
   excavateModules,
@@ -42,7 +43,7 @@ export function QRCodeCanvas(props: QRPropsCanvas) {
     fgColor = DEFAULT_FGCOLOR,
     margin = DEFAULT_MARGIN,
     style,
-    imageSettings,
+    imageSettings: requestedImageSettings,
     // SVG-only styling props: the canvas renderer draws plain square modules,
     // so keep these off the <canvas> element.
     eyeColor: _eyeColor,
@@ -63,6 +64,11 @@ export function QRCodeCanvas(props: QRPropsCanvas) {
     shape,
     ...otherProps
   } = props;
+  // A logo no bigger than the code can repair (logo-budget.ts)
+  const imageSettings = capImageSettings(
+    { value, size, margin, level, shape, autoLevel },
+    requestedImageSettings
+  );
   const effectiveLevel = resolveErrorLevel({
     value,
     size,

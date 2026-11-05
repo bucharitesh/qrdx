@@ -10,6 +10,7 @@ import {
 } from "./constants";
 import { isFrameActive, wrapWithFrame } from "./frame";
 import { renderLogo } from "./logo";
+import { capImageSettings } from "./logo-budget";
 import {
   excavateModules,
   generatePath,
@@ -26,7 +27,7 @@ export async function getQRAsSVG(props: QRPropsSVG) {
     bgColor = DEFAULT_BGCOLOR,
     fgColor = DEFAULT_FGCOLOR,
     margin = DEFAULT_MARGIN,
-    imageSettings,
+    imageSettings: requestedImageSettings,
     // Styling props this plain renderer does not support; keep them off <svg>.
     eyeColor: _eyeColor,
     dotColor: _dotColor,
@@ -45,6 +46,11 @@ export async function getQRAsSVG(props: QRPropsSVG) {
     autoLevel,
     ...otherProps
   } = props;
+  // A logo no bigger than the code can repair (logo-budget.ts)
+  const imageSettings = capImageSettings(
+    { value, size, margin, level, autoLevel },
+    requestedImageSettings
+  );
   const effectiveLevel = resolveErrorLevel({
     value,
     size,
