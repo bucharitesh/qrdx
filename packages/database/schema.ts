@@ -538,9 +538,10 @@ export const communityUse = pgTable(
     userId: text("user_id").references(() => user.id, {
       onDelete: "set null",
     }),
-    // "copy"
+    // "copy" (counted once a day), or "lineage:<preset id>" for a further copy
     kind: text("kind").notNull(),
     workspaceId: text("workspace_id"),
+    // The saved theme or page the copy made (ids are unique across both)
     presetId: text("preset_id"),
     // Days since 1970-01-01 (UTC)
     day: integer("day").notNull(),
@@ -554,6 +555,10 @@ export const communityUse = pgTable(
       table.day
     ),
     index("community_use_item_id_idx").on(table.itemId),
+    // Remix lineage lookups (manual-sql/0018_community_use_preset_index.sql)
+    index("community_use_preset_id_idx")
+      .on(table.presetId)
+      .where(sql`"preset_id" IS NOT NULL`),
   ]
 );
 

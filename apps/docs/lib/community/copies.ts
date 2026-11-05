@@ -257,11 +257,15 @@ export async function copyTemplateToWorkspace(
     createdAt: now,
   });
 
-  if (item.id) await recordCopy(item.id, item.version, scope, null, now);
+  if (item.id) await recordCopy(item.id, item.version, scope, pageId, now);
   return { pageId, name };
 }
 
-/** One use per person, item and day; the copy's lineage is kept with it. */
+/**
+ * One use per person, item and day, and the lineage of every copy:
+ * `preset_id` holds the saved theme or the page the copy made (ids are
+ * unique across both), so publishing it later credits this item.
+ */
 async function recordCopy(
   itemId: string,
   version: number,
@@ -291,6 +295,25 @@ async function recordCopy(
         .set({ useCount: sql`${communityItem.useCount} + 1` })
         .where(eq(communityItem.id, itemId));
       revalidateTag(COMMUNITY_TAG, "max");
+      return;
+    }
+    // Already counted today: the use isn't counted again, but the copy's
+    // lineage is still kept (its own row, so remixes of it get credit).
+    if (presetId) {
+      await db
+        .insert(communityUse)
+        .values({
+          id: cuid(),
+          itemId,
+          version,
+          userId: scope.userId,
+          kind: `lineage:${presetId}`,
+          workspaceId: scope.organizationId,
+          presetId,
+          day: Math.floor(now.getTime() / DAY_MS),
+          createdAt: now,
+        })
+        .onConflictDoNothing();
     }
   }, undefined);
 }

@@ -74,8 +74,9 @@ import {
   publishFrame,
   publishPageTemplate,
   publishSavedTheme,
+  unpublishItem,
 } from "@/lib/community/publish";
-import { getItem } from "@/lib/community/queries";
+import { getItem, listItems } from "@/lib/community/queries";
 import { buildTemplateContent } from "@/lib/landing/templates";
 import { fakeDb } from "../support/fake-db";
 
@@ -341,5 +342,40 @@ describe("kits", () => {
         themeRefused: expect.stringMatching(/10 saved themes/),
       },
     });
+  });
+});
+
+// Review G: a kit whose page template is gone isn't listed and says so on
+// its page; a collection below 2 visible items is hidden.
+describe("bundles with removed items", () => {
+  it("hides a kit without its page template and shows it as unavailable", async () => {
+    const { theme, page } = await seedItems();
+    await publishCommunityKit({ page: page.id, theme: theme.id, ...licensed });
+    const kit = fakeDb.find("communityItem", { type: "kit" });
+    expect(await listItems({ type: "kit" })).toHaveLength(1);
+    await unpublishItem("u_bob", page.id);
+    expect(await listItems({ type: "kit" })).toEqual([]);
+    expect(await getItem("kit", String(kit?.slug), null)).toMatchObject({
+      unavailable: true,
+    });
+    expect(await copyCommunityKit({ slug: String(kit?.slug) })).toMatchObject({
+      ok: false,
+      code: "NOT_FOUND",
+    });
+  });
+
+  it("hides a collection once fewer than 2 of its items are visible", async () => {
+    const { theme, frame } = await seedItems();
+    await publishCommunityCollection({
+      itemIds: [theme.id, frame.id],
+      ...licensed,
+    });
+    const collection = fakeDb.find("communityItem", { type: "collection" });
+    expect(await listItems({ type: "collection" })).toHaveLength(1);
+    await unpublishItem("u_bob", frame.id);
+    expect(await listItems({ type: "collection" })).toEqual([]);
+    expect(
+      await getItem("collection", String(collection?.slug), null),
+    ).toBeNull();
   });
 });

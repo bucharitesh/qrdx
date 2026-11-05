@@ -18,6 +18,7 @@ import {
   COMMUNITY_LICENSE_NAME,
   COMMUNITY_LICENSE_URL,
 } from "@/lib/community/licence";
+import { workspaceCanUnpublish } from "@/lib/community/publish-access";
 import { getItem, moreFromCreator, remixesOf } from "@/lib/community/queries";
 import { MIN_GATE_SCORE } from "@/lib/community/scan-samples";
 import {
@@ -79,10 +80,16 @@ export default async function CommunityItemPage({
   const { type: segment, slug } = await params;
   const item = await loadItem(segment, slug);
   if (!item) notFound();
-  const [more, admin, remixes] = await Promise.all([
+  const viewer = await viewerId();
+  const [more, admin, remixes, managesSource] = await Promise.all([
     moreFromCreator(item),
     getAdminUser(),
     item.id && item.remixCount ? remixesOf(item.id) : [],
+    // An owner or admin of the workspace it was published from may
+    // unpublish it too.
+    viewer && item.id && !item.isMine
+      ? workspaceCanUnpublish(viewer, item.id)
+      : false,
   ]);
   const typeLabel = TYPE_LABELS[item.type];
   const isDesign = item.type === "frame" || item.type === "theme";
@@ -114,6 +121,11 @@ export default async function CommunityItemPage({
           <div className="min-w-0">
             {item.type === "collection" ? (
               <ItemGrid cards={item.entries ?? []} />
+            ) : item.unavailable ? (
+              <div className="text-muted-foreground flex aspect-[4/3] items-center justify-center rounded-xl border border-dashed p-8 text-center text-sm text-pretty">
+                This kit is no longer available: its page template was removed
+                from the community.
+              </div>
             ) : item.type === "kit" ? (
               <div className="grid grid-cols-2 items-start gap-4">
                 <TryIt style={item.preview} />
@@ -180,7 +192,9 @@ export default async function CommunityItemPage({
 
             {isDesign && <ScanCheck item={item} />}
 
-            <ItemActions item={actionItem} />
+            <ItemActions
+              item={{ ...actionItem, isMine: item.isMine || managesSource }}
+            />
 
             {admin && item.id && (
               <RemoveItemButton itemId={item.id} name={item.name} />

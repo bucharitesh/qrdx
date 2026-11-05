@@ -75,6 +75,7 @@ import {
   copyCommunityTemplate,
   previewCommunityPage,
   publishCommunityPage,
+  unpublishCommunityItem,
 } from "@/actions/community";
 import { getCommunityItem } from "@/lib/community/api";
 import {
@@ -704,7 +705,12 @@ describe("copyCommunityTemplate", () => {
     ).toHaveLength(1);
     // Counted as a use, once a day.
     await copyCommunityTemplate({ slug });
-    expect(fakeDb.rows("communityUse")).toHaveLength(1);
+    // One counted use; the second copy keeps its own lineage row.
+    const uses = fakeDb.rows("communityUse");
+    expect(uses.filter((row) => row.kind === "copy")).toHaveLength(1);
+    expect(
+      uses.filter((row) => String(row.kind).startsWith("lineage:")),
+    ).toHaveLength(1);
     expect(fakeDb.rows("communityItem")[0]?.useCount).toBe(1);
   });
 
@@ -850,5 +856,57 @@ describe("publishing what was reviewed", () => {
       name: "Again",
     });
     expect(state.limitCalls).toBe(1);
+  });
+});
+
+// Review H: a template an admin publishes from a shared workspace can be
+// unpublished by that workspace's owners and admins too (it stays on the
+// admin's profile), never by its members or by other workspaces.
+describe("unpublishing a workspace's template", () => {
+  it("lets the workspace owner unpublish what an admin published", async () => {
+    fakeDb.seed("member", [
+      {
+        id: "m1",
+        userId: "u_bob",
+        organizationId: TEAM,
+        role: "owner",
+        createdAt: NOW,
+      },
+      {
+        id: "m2",
+        userId: "u_cy",
+        organizationId: TEAM,
+        role: "member",
+        createdAt: NOW,
+      },
+      {
+        id: "m3",
+        userId: "u_ana",
+        organizationId: TEAM,
+        role: "admin",
+        createdAt: NOW,
+      },
+    ]);
+    state.scope = { userId: "u_ana", organizationId: TEAM, role: "admin" };
+    expect(
+      (await publishCommunityPage({ pageId: "pg_team", ...details })).ok,
+    ).toBe(true);
+    const item = fakeDb.rows("communityItem")[0];
+
+    state.userId = "u_cy";
+    expect(await unpublishCommunityItem(String(item?.id))).toMatchObject({
+      ok: false,
+      code: "NOT_FOUND",
+    });
+    state.userId = "u_bob";
+    expect(await unpublishCommunityItem(String(item?.id))).toEqual({
+      ok: true,
+      data: { removed: true },
+    });
+    expect(fakeDb.find("communityItem", { id: item?.id })).toMatchObject({
+      status: "removed",
+      removedReason: "workspace",
+      createdBy: "u_ana",
+    });
   });
 });

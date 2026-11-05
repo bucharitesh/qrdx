@@ -81,7 +81,8 @@ export function ItemActions({
   >(null);
   const stored = item.id !== null;
   const copyable = item.type === "frame" || item.type === "theme";
-  const template = item.type === "page-template" || item.type === "kit";
+  const template =
+    (item.type === "page-template" || item.type === "kit") && !item.unavailable;
 
   // A page template becomes a draft page in the open workspace.
   const copyTemplate = async () => {
