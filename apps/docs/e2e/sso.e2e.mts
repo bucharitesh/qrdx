@@ -27,7 +27,7 @@ import { execSync } from "node:child_process";
 import { createHmac } from "node:crypto";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { launch, sleep } from "./cdp.mjs";
+import { cspEnforced, launch, recordCspViolations, sleep } from "./cdp.mjs";
 
 const BASE = (process.env.SSO_E2E_BASE_URL ?? "").replace(/\/$/, "");
 const DEV_LOG = process.env.SSO_E2E_DEV_LOG ?? "";
@@ -89,6 +89,24 @@ if (MOBILE) {
   });
 }
 const layout: Record<string, { overflow: number; small: string[] }> = {};
+
+// Content-Security-Policy violations (shared recorder, e2e/cdp.mjs), checked
+// at the end where the server enforces a CSP (run the dev server with
+// CSP_DEV=1); E2E_CSP_SELFTEST=1 first proves the recorder catches one.
+const csp = await recordCspViolations(browser);
+const cspOn = await cspEnforced(BASE);
+if (process.env.E2E_CSP_SELFTEST === "1") {
+  if (cspOn) {
+    const { caught, lines } = await csp.selfTest(BASE);
+    check(
+      "CSP self-test: a script from evil.example.com is caught",
+      caught,
+      lines[0] ?? "the recorder saw nothing",
+    );
+  } else {
+    console.log("  - CSP self-test skipped: CSP not enforced on this server");
+  }
+}
 
 /** Horizontal page scroll and small tap targets on the current screen. */
 function layoutReport() {
@@ -1098,6 +1116,12 @@ try {
   }
 } finally {
   await browser.close();
+}
+const cspResult = csp.result(cspOn);
+if (cspResult.skipped) {
+  console.log(`\n  - no CSP violations: skipped (${cspResult.note})`);
+} else {
+  check("no CSP violations", cspResult.ok, cspResult.lines.join("\n      "));
 }
 if (MOBILE) {
   console.log("\nTap targets under 40 px, by screen:");

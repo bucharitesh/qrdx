@@ -27,7 +27,14 @@
 import { createHmac } from "node:crypto";
 import { existsSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { findChrome, launch, serverIsUp, sleep } from "./cdp.mjs";
+import {
+  cspEnforced,
+  findChrome,
+  launch,
+  recordCspViolations,
+  serverIsUp,
+  sleep,
+} from "./cdp.mjs";
 
 const BASE_URL = (process.env.E2E_BASE_URL ?? "http://localhost:3000").replace(
   /\/$/,
@@ -387,6 +394,24 @@ async function main() {
       enabled: true,
       maxTouchPoints: 5,
     });
+  }
+  // CSP violations (shared recorder, e2e/cdp.mjs), checked at the end where
+  // the server enforces a CSP; E2E_CSP_SELFTEST=1 first proves it works.
+  const csp = await recordCspViolations(page);
+  const enforced = await cspEnforced(BASE_URL);
+  if (process.env.E2E_CSP_SELFTEST === "1") {
+    if (enforced) {
+      const { caught, lines } = await csp.selfTest(BASE_URL);
+      check(
+        "CSP self-test: a script from evil.example.com is caught",
+        caught,
+        lines[0] ?? "the recorder saw nothing",
+      );
+    } else {
+      console.log(
+        "NOTE  CSP self-test skipped: CSP not enforced on this server",
+      );
+    }
   }
   let secret = "";
   let backupCodes: string[] = [];
@@ -962,6 +987,13 @@ async function main() {
     }
   } finally {
     await page.close();
+  }
+
+  const cspResult = csp.result(enforced);
+  if (cspResult.skipped) {
+    console.log(`NOTE  no CSP violations: skipped (${cspResult.note})`);
+  } else {
+    check("no CSP violations", cspResult.ok, cspResult.lines.join("\n      "));
   }
 
   if (MOBILE) console.log(`\nMobile layout:\n${layout.join("\n")}`);
