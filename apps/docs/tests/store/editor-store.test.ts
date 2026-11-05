@@ -236,6 +236,28 @@ describe("persisted editor state", () => {
     expect(store().themeState.styles.bgColor).toBe("#fef3c780");
   });
 
+  it("keeps image fills across a reload", async () => {
+    const picture = {
+      type: "image",
+      src: "data:image/jpeg;base64,/9j/4AAQ",
+      fit: "cover",
+      scale: 1,
+      position: "center",
+      opacity: 0.4,
+      underlay: "#000000",
+    };
+    persist({
+      themeState: { preset: "default", styles: { fgColor: picture } },
+      history: [],
+      future: [],
+      value: "https://example.com",
+      contentType: "url",
+      contentConfigs: {},
+    });
+    await useQREditorStore.persist.rehydrate();
+    expect(store().themeState.styles.fgColor).toEqual(picture);
+  });
+
   it("keeps the stored look across a reload after the blocks change", async () => {
     store().applyThemePreset(shuffleId(SEED_A));
     const lookA = store().themeState.styles;

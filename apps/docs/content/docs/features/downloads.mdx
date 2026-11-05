@@ -95,6 +95,9 @@ const eps = await getQRAsEPS(
 
 EPS has no transparency and no crop marks. Linear and radial gradients print as smooth PostScript Level 3 shadings. PNG and JPEG logos are embedded.
 
+{/* Angular gradients, see-through colors and image fills (paint picker) */}
+Angular gradients print as a fan of thin wedges. See-through colors are mixed with the background, and the background with white paper. EPS can't carry an [image fill](/docs/features/colors-gradients#image-fills): `getQRAsEPS` throws `EPS_IMAGE_FILL_REASON`, and the download dialog offers PDF, SVG and PNG instead.
+
 ## Preset Sizes
 
 ```tsx

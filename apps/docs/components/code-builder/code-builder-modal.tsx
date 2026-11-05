@@ -540,9 +540,12 @@ export default function CodeBuilderModal({
     setDraftState("idle");
     for (const warning of result.warnings) toast.error(warning);
     if (result.styleTrimmed) {
-      toast.warning("Your logo was too large to save with the code.", {
-        description: "Upload a smaller one, or add it in the full editor.",
-      });
+      toast.warning(
+        "Your logo or picture was too large to save with the code.",
+        {
+          description: "Upload a smaller one, or add it in the full editor.",
+        },
+      );
     }
     router.refresh();
 

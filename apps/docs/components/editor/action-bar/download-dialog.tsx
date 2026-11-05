@@ -47,11 +47,13 @@ import {
   downloadPrintPDF,
   downloadPrintSVG,
   downloadQRCode,
+  EPS_IMAGE_FILL_REASON,
   getFrameDimensions,
   getPrintLayout,
   getQRData,
   getQRModuleCount,
   getSVGString,
+  hasImageFill,
   PRESET_SIZES,
   type PrintColorMode,
   type PrintLayout,
@@ -238,6 +240,11 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
     () => ({ ...qrProps, bgColor: themeState.styles.bgColor }),
     [qrProps, themeState.styles.bgColor],
   );
+  // EPS can't carry an image fill (see EPS_IMAGE_FILL_REASON)
+  const epsBlocked = hasImageFill(printProps);
+  React.useEffect(() => {
+    if (epsBlocked && format === "eps") updateDownloadOption("format", "pdf");
+  }, [epsBlocked, format, updateDownloadOption]);
   // Modules across the print, quiet zone included (what getPrintLayout
   // divides the width into): the scan distance rule works per module.
   const printModuleCount = React.useMemo(() => {
@@ -538,7 +545,13 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
                     {FORMATS.map((item) => (
                       <ToggleGroupItem
                         className="h-14 flex-col gap-1 px-1 text-xs font-medium"
+                        disabled={item.id === "eps" && epsBlocked}
                         key={item.id}
+                        title={
+                          item.id === "eps" && epsBlocked
+                            ? EPS_IMAGE_FILL_REASON
+                            : undefined
+                        }
                         value={item.id}
                       >
                         <item.Icon className="size-4" />
@@ -550,6 +563,11 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
                     Best for {formatInfo?.bestFor.toLowerCase()}
                     {formatInfo?.vector ? " · stays sharp at any size" : ""}.
                   </p>
+                  {epsBlocked && (
+                    <p className="text-muted-foreground mt-1 text-xs text-pretty">
+                      {EPS_IMAGE_FILL_REASON}
+                    </p>
+                  )}
                 </section>
 
                 <section>
@@ -738,8 +756,11 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
                       SVG
                     </Button>
                     <Button
-                      disabled={isDownloading || !printLayout.layout}
+                      disabled={
+                        isDownloading || !printLayout.layout || epsBlocked
+                      }
                       onClick={() => handlePrintDownload("eps")}
+                      title={epsBlocked ? EPS_IMAGE_FILL_REASON : undefined}
                       variant="ghost"
                     >
                       EPS

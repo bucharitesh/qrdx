@@ -5,7 +5,10 @@ import * as React from "react";
 import ControlSection, {
   sectionAnchorId,
 } from "@/components/editor/control-section";
-import { GradientPicker } from "@/components/editor/gradient-picker";
+import {
+  GradientPicker,
+  QR_IMAGE_KINDS,
+} from "@/components/editor/gradient-picker";
 import { defaultThemeState } from "@/config/qr";
 import type { DesignSection } from "@/lib/playground-links";
 import type { QRStyle } from "@/types/theme";
@@ -131,24 +134,28 @@ export function DesignControls({
       >
         <div className="grid grid-cols-2 gap-2">
           <GradientPicker
+            kinds={QR_IMAGE_KINDS}
             label="Background"
             name="bgColor"
             onChange={(color) => updateStyle("bgColor", color)}
             value={current.bgColor}
           />
           <GradientPicker
+            kinds={QR_IMAGE_KINDS}
             label="Foreground"
             name="fgColor"
             onChange={(color) => updateStyle("fgColor", color)}
             value={current.fgColor}
           />
           <GradientPicker
+            kinds={QR_IMAGE_KINDS}
             label="Eyes"
             name="eyeColor"
             onChange={(color) => updateStyle("eyeColor", color)}
             value={current.eyeColor}
           />
           <GradientPicker
+            kinds={QR_IMAGE_KINDS}
             label="Dots"
             name="dotColor"
             onChange={(color) => updateStyle("dotColor", color)}

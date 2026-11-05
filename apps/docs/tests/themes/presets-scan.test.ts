@@ -36,7 +36,9 @@ const firstStop = (color: ColorConfig | undefined) =>
     ? color
     : color.type === "solid"
       ? color.color
-      : color.stops[0]?.color;
+      : color.type === "image"
+        ? color.underlay
+        : color.stops[0]?.color;
 
 describe("built-in themes pass the hard filters", () => {
   for (const [id, preset] of entries) {

@@ -112,6 +112,61 @@ const level = getContrastLevel(ratio);
 - **Recommended**: 4.5:1 or higher
 - **Excellent**: 7.0:1 or higher
 
+{/* Angular gradients, see-through colors and image fills (paint picker) */}
+
+## Angular gradients
+
+An angular gradient sweeps clockwise around the centre of what it fills, like CSS `conic-gradient`. `angle` is where the sweep starts, in degrees clockwise from the top. Offsets run from 0 to 100 around the turn.
+
+```tsx
+<QRCode
+  value="https://example.com"
+  fgColor={{
+    type: "angular",
+    angle: 30,
+    stops: [
+      { color: "#1d4ed8", offset: 0 },
+      { color: "#7c3aed", offset: 50 },
+      { color: "#1d4ed8", offset: 100 },
+    ],
+  }}
+/>
+```
+
+SVG has no conic gradient, so the code draws a fan of thin wedges, about two color levels apart. PDF and EPS draw the same wedges.
+
+## See-through colors
+
+Colors and gradient stops can carry alpha, such as `#1d4ed8cc` or `rgba(29, 78, 216, 0.8)`. SVG writes it as `fill-opacity` and `stop-opacity`, and PDF keeps it. EPS has no transparency, so a see-through color is mixed with the background. The scan check judges a see-through color the way it looks on the background.
+
+## Image fills
+
+An image fill paints a picture through the background, the dots or the eyes. The picture is laid over the whole code, so dots and eyes that share one show a single picture.
+
+```tsx
+<QRCode
+  value="https://example.com"
+  fgColor={{
+    type: "image",
+    src: "data:image/jpeg;base64,…",
+    fit: "cover", // or "contain", "tile"
+    position: "center",
+    scale: 1,
+    opacity: 0.45,
+    underlay: "#000000",
+  }}
+/>
+```
+
+- `src` is the picture itself, as with a logo. QRdx saves an image fill (in codes, themes and the REST API) only as a base64 `data:image` URL (PNG, JPEG, WebP or GIF) of 1.5 MB at most; a picture from a link is refused. PNG and JPEG embed in every export, and servers never fetch a link.
+- `underlay` is a solid color under the picture. `opacity` lets it through: over black it darkens a photo for the dots, and over white it lightens one for the background.
+- A picture's detail reads as noise to a camera, so the scan check asks for more contrast: 7:1 in the dots or eyes, 12:1 behind them (`SCAN_IMAGE_CONTRAST_MIN`). It measures a picture by its lightest and darkest tenth (`getImageTones`). In the editor, "Make it scannable" finds the opacity over the underlay that passes.
+- SVG, PNG and PDF carry image fills. EPS can't ([Downloads](/docs/features/downloads#eps)).
+
+Image fills travel like logos. They stay with the design in the editor, in saved codes and in saved themes. They don't go into `?style=` links, published community styles, Get code snippets or the chat's context: each image fill gives way to its underlay color there. The image API (`GET /v1/qr`) and the MCP server don't take them yet. `POST /v1/codes` and `PATCH /v1/codes/{id}` take one only as a `data:image` URL, and answer 400 for anything else; there's no uploaded-file id for pictures yet.
+
+Angular gradients and image fills are in the qrdx source and ship with the next npm release. qrdx 0.0.46 on npm doesn't have them.
+
 ## Next Steps
 
 - [Logos](/docs/features/logos) — Add logos to colored QR codes

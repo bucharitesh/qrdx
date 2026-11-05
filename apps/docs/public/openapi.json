@@ -4023,7 +4023,7 @@
                     "exclusiveMinimum": 0
                   },
                   "bgColor": {
-                    "description": "Background color of the QR code - supports solid colors and gradients",
+                    "description": "Background color of the QR code - supports solid colors, gradients and image fills (a data:image URL, never a link)",
                     "anyOf": [
                       {
                         "type": "string"
@@ -4132,11 +4132,63 @@
                           }
                         },
                         "required": ["type", "stops"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "const": "image"
+                          },
+                          "src": {
+                            "type": "string",
+                            "minLength": 1,
+                            "description": "The picture as a base64 data:image URL (PNG, JPEG, WebP or GIF), at most 1.5 MB. Pictures from links aren't accepted.",
+                            "pattern": "^data:image/(png|jpeg|webp|gif);base64,",
+                            "maxLength": 1500000
+                          },
+                          "fit": {
+                            "default": "cover",
+                            "type": "string",
+                            "enum": ["cover", "contain", "tile"]
+                          },
+                          "scale": {
+                            "default": 1,
+                            "type": "number",
+                            "minimum": 0.1,
+                            "maximum": 4
+                          },
+                          "position": {
+                            "default": "center",
+                            "type": "string",
+                            "enum": [
+                              "top-left",
+                              "top",
+                              "top-right",
+                              "left",
+                              "center",
+                              "right",
+                              "bottom-left",
+                              "bottom",
+                              "bottom-right"
+                            ]
+                          },
+                          "opacity": {
+                            "default": 1,
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          },
+                          "underlay": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["type", "src"]
                       }
                     ]
                   },
                   "fgColor": {
-                    "description": "Foreground (main) color of the QR code - supports solid colors and gradients",
+                    "description": "Foreground (main) color of the QR code - supports solid colors, gradients and image fills (a data:image URL, never a link)",
                     "anyOf": [
                       {
                         "type": "string"
@@ -4245,11 +4297,63 @@
                           }
                         },
                         "required": ["type", "stops"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "const": "image"
+                          },
+                          "src": {
+                            "type": "string",
+                            "minLength": 1,
+                            "description": "The picture as a base64 data:image URL (PNG, JPEG, WebP or GIF), at most 1.5 MB. Pictures from links aren't accepted.",
+                            "pattern": "^data:image/(png|jpeg|webp|gif);base64,",
+                            "maxLength": 1500000
+                          },
+                          "fit": {
+                            "default": "cover",
+                            "type": "string",
+                            "enum": ["cover", "contain", "tile"]
+                          },
+                          "scale": {
+                            "default": 1,
+                            "type": "number",
+                            "minimum": 0.1,
+                            "maximum": 4
+                          },
+                          "position": {
+                            "default": "center",
+                            "type": "string",
+                            "enum": [
+                              "top-left",
+                              "top",
+                              "top-right",
+                              "left",
+                              "center",
+                              "right",
+                              "bottom-left",
+                              "bottom",
+                              "bottom-right"
+                            ]
+                          },
+                          "opacity": {
+                            "default": 1,
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          },
+                          "underlay": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["type", "src"]
                       }
                     ]
                   },
                   "eyeColor": {
-                    "description": "Color of the corner eye patterns - supports solid colors and gradients",
+                    "description": "Color of the corner eye patterns - supports solid colors, gradients and image fills (a data:image URL, never a link)",
                     "anyOf": [
                       {
                         "type": "string"
@@ -4358,11 +4462,63 @@
                           }
                         },
                         "required": ["type", "stops"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "const": "image"
+                          },
+                          "src": {
+                            "type": "string",
+                            "minLength": 1,
+                            "description": "The picture as a base64 data:image URL (PNG, JPEG, WebP or GIF), at most 1.5 MB. Pictures from links aren't accepted.",
+                            "pattern": "^data:image/(png|jpeg|webp|gif);base64,",
+                            "maxLength": 1500000
+                          },
+                          "fit": {
+                            "default": "cover",
+                            "type": "string",
+                            "enum": ["cover", "contain", "tile"]
+                          },
+                          "scale": {
+                            "default": 1,
+                            "type": "number",
+                            "minimum": 0.1,
+                            "maximum": 4
+                          },
+                          "position": {
+                            "default": "center",
+                            "type": "string",
+                            "enum": [
+                              "top-left",
+                              "top",
+                              "top-right",
+                              "left",
+                              "center",
+                              "right",
+                              "bottom-left",
+                              "bottom",
+                              "bottom-right"
+                            ]
+                          },
+                          "opacity": {
+                            "default": 1,
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          },
+                          "underlay": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["type", "src"]
                       }
                     ]
                   },
                   "dotColor": {
-                    "description": "Color of the corner eye dots - supports solid colors and gradients",
+                    "description": "Color of the corner eye dots - supports solid colors, gradients and image fills (a data:image URL, never a link)",
                     "anyOf": [
                       {
                         "type": "string"
@@ -4471,6 +4627,58 @@
                           }
                         },
                         "required": ["type", "stops"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "const": "image"
+                          },
+                          "src": {
+                            "type": "string",
+                            "minLength": 1,
+                            "description": "The picture as a base64 data:image URL (PNG, JPEG, WebP or GIF), at most 1.5 MB. Pictures from links aren't accepted.",
+                            "pattern": "^data:image/(png|jpeg|webp|gif);base64,",
+                            "maxLength": 1500000
+                          },
+                          "fit": {
+                            "default": "cover",
+                            "type": "string",
+                            "enum": ["cover", "contain", "tile"]
+                          },
+                          "scale": {
+                            "default": 1,
+                            "type": "number",
+                            "minimum": 0.1,
+                            "maximum": 4
+                          },
+                          "position": {
+                            "default": "center",
+                            "type": "string",
+                            "enum": [
+                              "top-left",
+                              "top",
+                              "top-right",
+                              "left",
+                              "center",
+                              "right",
+                              "bottom-left",
+                              "bottom",
+                              "bottom-right"
+                            ]
+                          },
+                          "opacity": {
+                            "default": 1,
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          },
+                          "underlay": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["type", "src"]
                       }
                     ]
                   },
@@ -4831,6 +5039,58 @@
                                   }
                                 },
                                 "required": ["type", "stops"]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "image"
+                                  },
+                                  "src": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "description": "The picture as a base64 data:image URL (PNG, JPEG, WebP or GIF), at most 1.5 MB. Pictures from links aren't accepted.",
+                                    "pattern": "^data:image/(png|jpeg|webp|gif);base64,",
+                                    "maxLength": 1500000
+                                  },
+                                  "fit": {
+                                    "default": "cover",
+                                    "type": "string",
+                                    "enum": ["cover", "contain", "tile"]
+                                  },
+                                  "scale": {
+                                    "default": 1,
+                                    "type": "number",
+                                    "minimum": 0.1,
+                                    "maximum": 4
+                                  },
+                                  "position": {
+                                    "default": "center",
+                                    "type": "string",
+                                    "enum": [
+                                      "top-left",
+                                      "top",
+                                      "top-right",
+                                      "left",
+                                      "center",
+                                      "right",
+                                      "bottom-left",
+                                      "bottom",
+                                      "bottom-right"
+                                    ]
+                                  },
+                                  "opacity": {
+                                    "default": 1,
+                                    "type": "number",
+                                    "minimum": 0,
+                                    "maximum": 1
+                                  },
+                                  "underlay": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": ["type", "src"]
                               }
                             ]
                           },
@@ -4943,6 +5203,58 @@
                                   }
                                 },
                                 "required": ["type", "stops"]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "image"
+                                  },
+                                  "src": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "description": "The picture as a base64 data:image URL (PNG, JPEG, WebP or GIF), at most 1.5 MB. Pictures from links aren't accepted.",
+                                    "pattern": "^data:image/(png|jpeg|webp|gif);base64,",
+                                    "maxLength": 1500000
+                                  },
+                                  "fit": {
+                                    "default": "cover",
+                                    "type": "string",
+                                    "enum": ["cover", "contain", "tile"]
+                                  },
+                                  "scale": {
+                                    "default": 1,
+                                    "type": "number",
+                                    "minimum": 0.1,
+                                    "maximum": 4
+                                  },
+                                  "position": {
+                                    "default": "center",
+                                    "type": "string",
+                                    "enum": [
+                                      "top-left",
+                                      "top",
+                                      "top-right",
+                                      "left",
+                                      "center",
+                                      "right",
+                                      "bottom-left",
+                                      "bottom",
+                                      "bottom-right"
+                                    ]
+                                  },
+                                  "opacity": {
+                                    "default": 1,
+                                    "type": "number",
+                                    "minimum": 0,
+                                    "maximum": 1
+                                  },
+                                  "underlay": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": ["type", "src"]
                               }
                             ]
                           }
@@ -5060,6 +5372,58 @@
                                   }
                                 },
                                 "required": ["type", "stops"]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "image"
+                                  },
+                                  "src": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "description": "The picture as a base64 data:image URL (PNG, JPEG, WebP or GIF), at most 1.5 MB. Pictures from links aren't accepted.",
+                                    "pattern": "^data:image/(png|jpeg|webp|gif);base64,",
+                                    "maxLength": 1500000
+                                  },
+                                  "fit": {
+                                    "default": "cover",
+                                    "type": "string",
+                                    "enum": ["cover", "contain", "tile"]
+                                  },
+                                  "scale": {
+                                    "default": 1,
+                                    "type": "number",
+                                    "minimum": 0.1,
+                                    "maximum": 4
+                                  },
+                                  "position": {
+                                    "default": "center",
+                                    "type": "string",
+                                    "enum": [
+                                      "top-left",
+                                      "top",
+                                      "top-right",
+                                      "left",
+                                      "center",
+                                      "right",
+                                      "bottom-left",
+                                      "bottom",
+                                      "bottom-right"
+                                    ]
+                                  },
+                                  "opacity": {
+                                    "default": 1,
+                                    "type": "number",
+                                    "minimum": 0,
+                                    "maximum": 1
+                                  },
+                                  "underlay": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": ["type", "src"]
                               }
                             ]
                           },
@@ -5172,6 +5536,58 @@
                                   }
                                 },
                                 "required": ["type", "stops"]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "image"
+                                  },
+                                  "src": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "description": "The picture as a base64 data:image URL (PNG, JPEG, WebP or GIF), at most 1.5 MB. Pictures from links aren't accepted.",
+                                    "pattern": "^data:image/(png|jpeg|webp|gif);base64,",
+                                    "maxLength": 1500000
+                                  },
+                                  "fit": {
+                                    "default": "cover",
+                                    "type": "string",
+                                    "enum": ["cover", "contain", "tile"]
+                                  },
+                                  "scale": {
+                                    "default": 1,
+                                    "type": "number",
+                                    "minimum": 0.1,
+                                    "maximum": 4
+                                  },
+                                  "position": {
+                                    "default": "center",
+                                    "type": "string",
+                                    "enum": [
+                                      "top-left",
+                                      "top",
+                                      "top-right",
+                                      "left",
+                                      "center",
+                                      "right",
+                                      "bottom-left",
+                                      "bottom",
+                                      "bottom-right"
+                                    ]
+                                  },
+                                  "opacity": {
+                                    "default": 1,
+                                    "type": "number",
+                                    "minimum": 0,
+                                    "maximum": 1
+                                  },
+                                  "underlay": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": ["type", "src"]
                               }
                             ]
                           }
@@ -5289,6 +5705,58 @@
                                   }
                                 },
                                 "required": ["type", "stops"]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "image"
+                                  },
+                                  "src": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "description": "The picture as a base64 data:image URL (PNG, JPEG, WebP or GIF), at most 1.5 MB. Pictures from links aren't accepted.",
+                                    "pattern": "^data:image/(png|jpeg|webp|gif);base64,",
+                                    "maxLength": 1500000
+                                  },
+                                  "fit": {
+                                    "default": "cover",
+                                    "type": "string",
+                                    "enum": ["cover", "contain", "tile"]
+                                  },
+                                  "scale": {
+                                    "default": 1,
+                                    "type": "number",
+                                    "minimum": 0.1,
+                                    "maximum": 4
+                                  },
+                                  "position": {
+                                    "default": "center",
+                                    "type": "string",
+                                    "enum": [
+                                      "top-left",
+                                      "top",
+                                      "top-right",
+                                      "left",
+                                      "center",
+                                      "right",
+                                      "bottom-left",
+                                      "bottom",
+                                      "bottom-right"
+                                    ]
+                                  },
+                                  "opacity": {
+                                    "default": 1,
+                                    "type": "number",
+                                    "minimum": 0,
+                                    "maximum": 1
+                                  },
+                                  "underlay": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": ["type", "src"]
                               }
                             ]
                           },
@@ -5401,6 +5869,58 @@
                                   }
                                 },
                                 "required": ["type", "stops"]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "type": {
+                                    "type": "string",
+                                    "const": "image"
+                                  },
+                                  "src": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "description": "The picture as a base64 data:image URL (PNG, JPEG, WebP or GIF), at most 1.5 MB. Pictures from links aren't accepted.",
+                                    "pattern": "^data:image/(png|jpeg|webp|gif);base64,",
+                                    "maxLength": 1500000
+                                  },
+                                  "fit": {
+                                    "default": "cover",
+                                    "type": "string",
+                                    "enum": ["cover", "contain", "tile"]
+                                  },
+                                  "scale": {
+                                    "default": 1,
+                                    "type": "number",
+                                    "minimum": 0.1,
+                                    "maximum": 4
+                                  },
+                                  "position": {
+                                    "default": "center",
+                                    "type": "string",
+                                    "enum": [
+                                      "top-left",
+                                      "top",
+                                      "top-right",
+                                      "left",
+                                      "center",
+                                      "right",
+                                      "bottom-left",
+                                      "bottom",
+                                      "bottom-right"
+                                    ]
+                                  },
+                                  "opacity": {
+                                    "default": 1,
+                                    "type": "number",
+                                    "minimum": 0,
+                                    "maximum": 1
+                                  },
+                                  "underlay": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": ["type", "src"]
                               }
                             ]
                           }
@@ -6592,7 +7112,7 @@
             "exclusiveMinimum": 0
           },
           "bgColor": {
-            "description": "Background color of the QR code - supports solid colors and gradients",
+            "description": "Background color of the QR code - supports solid colors, gradients and image fills (a data:image URL, never a link)",
             "anyOf": [
               {
                 "type": "string"
@@ -6701,11 +7221,63 @@
                   }
                 },
                 "required": ["type", "stops"]
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "const": "image"
+                  },
+                  "src": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "The picture as a base64 data:image URL (PNG, JPEG, WebP or GIF), at most 1.5 MB. Pictures from links aren't accepted.",
+                    "pattern": "^data:image/(png|jpeg|webp|gif);base64,",
+                    "maxLength": 1500000
+                  },
+                  "fit": {
+                    "default": "cover",
+                    "type": "string",
+                    "enum": ["cover", "contain", "tile"]
+                  },
+                  "scale": {
+                    "default": 1,
+                    "type": "number",
+                    "minimum": 0.1,
+                    "maximum": 4
+                  },
+                  "position": {
+                    "default": "center",
+                    "type": "string",
+                    "enum": [
+                      "top-left",
+                      "top",
+                      "top-right",
+                      "left",
+                      "center",
+                      "right",
+                      "bottom-left",
+                      "bottom",
+                      "bottom-right"
+                    ]
+                  },
+                  "opacity": {
+                    "default": 1,
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  "underlay": {
+                    "type": "string"
+                  }
+                },
+                "required": ["type", "src"]
               }
             ]
           },
           "fgColor": {
-            "description": "Foreground (main) color of the QR code - supports solid colors and gradients",
+            "description": "Foreground (main) color of the QR code - supports solid colors, gradients and image fills (a data:image URL, never a link)",
             "anyOf": [
               {
                 "type": "string"
@@ -6814,11 +7386,63 @@
                   }
                 },
                 "required": ["type", "stops"]
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "const": "image"
+                  },
+                  "src": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "The picture as a base64 data:image URL (PNG, JPEG, WebP or GIF), at most 1.5 MB. Pictures from links aren't accepted.",
+                    "pattern": "^data:image/(png|jpeg|webp|gif);base64,",
+                    "maxLength": 1500000
+                  },
+                  "fit": {
+                    "default": "cover",
+                    "type": "string",
+                    "enum": ["cover", "contain", "tile"]
+                  },
+                  "scale": {
+                    "default": 1,
+                    "type": "number",
+                    "minimum": 0.1,
+                    "maximum": 4
+                  },
+                  "position": {
+                    "default": "center",
+                    "type": "string",
+                    "enum": [
+                      "top-left",
+                      "top",
+                      "top-right",
+                      "left",
+                      "center",
+                      "right",
+                      "bottom-left",
+                      "bottom",
+                      "bottom-right"
+                    ]
+                  },
+                  "opacity": {
+                    "default": 1,
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  "underlay": {
+                    "type": "string"
+                  }
+                },
+                "required": ["type", "src"]
               }
             ]
           },
           "eyeColor": {
-            "description": "Color of the corner eye patterns - supports solid colors and gradients",
+            "description": "Color of the corner eye patterns - supports solid colors, gradients and image fills (a data:image URL, never a link)",
             "anyOf": [
               {
                 "type": "string"
@@ -6927,11 +7551,63 @@
                   }
                 },
                 "required": ["type", "stops"]
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "const": "image"
+                  },
+                  "src": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "The picture as a base64 data:image URL (PNG, JPEG, WebP or GIF), at most 1.5 MB. Pictures from links aren't accepted.",
+                    "pattern": "^data:image/(png|jpeg|webp|gif);base64,",
+                    "maxLength": 1500000
+                  },
+                  "fit": {
+                    "default": "cover",
+                    "type": "string",
+                    "enum": ["cover", "contain", "tile"]
+                  },
+                  "scale": {
+                    "default": 1,
+                    "type": "number",
+                    "minimum": 0.1,
+                    "maximum": 4
+                  },
+                  "position": {
+                    "default": "center",
+                    "type": "string",
+                    "enum": [
+                      "top-left",
+                      "top",
+                      "top-right",
+                      "left",
+                      "center",
+                      "right",
+                      "bottom-left",
+                      "bottom",
+                      "bottom-right"
+                    ]
+                  },
+                  "opacity": {
+                    "default": 1,
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  "underlay": {
+                    "type": "string"
+                  }
+                },
+                "required": ["type", "src"]
               }
             ]
           },
           "dotColor": {
-            "description": "Color of the corner eye dots - supports solid colors and gradients",
+            "description": "Color of the corner eye dots - supports solid colors, gradients and image fills (a data:image URL, never a link)",
             "anyOf": [
               {
                 "type": "string"
@@ -7040,6 +7716,58 @@
                   }
                 },
                 "required": ["type", "stops"]
+              },
+              {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "const": "image"
+                  },
+                  "src": {
+                    "type": "string",
+                    "minLength": 1,
+                    "description": "The picture as a base64 data:image URL (PNG, JPEG, WebP or GIF), at most 1.5 MB. Pictures from links aren't accepted.",
+                    "pattern": "^data:image/(png|jpeg|webp|gif);base64,",
+                    "maxLength": 1500000
+                  },
+                  "fit": {
+                    "default": "cover",
+                    "type": "string",
+                    "enum": ["cover", "contain", "tile"]
+                  },
+                  "scale": {
+                    "default": 1,
+                    "type": "number",
+                    "minimum": 0.1,
+                    "maximum": 4
+                  },
+                  "position": {
+                    "default": "center",
+                    "type": "string",
+                    "enum": [
+                      "top-left",
+                      "top",
+                      "top-right",
+                      "left",
+                      "center",
+                      "right",
+                      "bottom-left",
+                      "bottom",
+                      "bottom-right"
+                    ]
+                  },
+                  "opacity": {
+                    "default": 1,
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 1
+                  },
+                  "underlay": {
+                    "type": "string"
+                  }
+                },
+                "required": ["type", "src"]
               }
             ]
           },
@@ -7400,6 +8128,58 @@
                           }
                         },
                         "required": ["type", "stops"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "const": "image"
+                          },
+                          "src": {
+                            "type": "string",
+                            "minLength": 1,
+                            "description": "The picture as a base64 data:image URL (PNG, JPEG, WebP or GIF), at most 1.5 MB. Pictures from links aren't accepted.",
+                            "pattern": "^data:image/(png|jpeg|webp|gif);base64,",
+                            "maxLength": 1500000
+                          },
+                          "fit": {
+                            "default": "cover",
+                            "type": "string",
+                            "enum": ["cover", "contain", "tile"]
+                          },
+                          "scale": {
+                            "default": 1,
+                            "type": "number",
+                            "minimum": 0.1,
+                            "maximum": 4
+                          },
+                          "position": {
+                            "default": "center",
+                            "type": "string",
+                            "enum": [
+                              "top-left",
+                              "top",
+                              "top-right",
+                              "left",
+                              "center",
+                              "right",
+                              "bottom-left",
+                              "bottom",
+                              "bottom-right"
+                            ]
+                          },
+                          "opacity": {
+                            "default": 1,
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          },
+                          "underlay": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["type", "src"]
                       }
                     ]
                   },
@@ -7512,6 +8292,58 @@
                           }
                         },
                         "required": ["type", "stops"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "const": "image"
+                          },
+                          "src": {
+                            "type": "string",
+                            "minLength": 1,
+                            "description": "The picture as a base64 data:image URL (PNG, JPEG, WebP or GIF), at most 1.5 MB. Pictures from links aren't accepted.",
+                            "pattern": "^data:image/(png|jpeg|webp|gif);base64,",
+                            "maxLength": 1500000
+                          },
+                          "fit": {
+                            "default": "cover",
+                            "type": "string",
+                            "enum": ["cover", "contain", "tile"]
+                          },
+                          "scale": {
+                            "default": 1,
+                            "type": "number",
+                            "minimum": 0.1,
+                            "maximum": 4
+                          },
+                          "position": {
+                            "default": "center",
+                            "type": "string",
+                            "enum": [
+                              "top-left",
+                              "top",
+                              "top-right",
+                              "left",
+                              "center",
+                              "right",
+                              "bottom-left",
+                              "bottom",
+                              "bottom-right"
+                            ]
+                          },
+                          "opacity": {
+                            "default": 1,
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          },
+                          "underlay": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["type", "src"]
                       }
                     ]
                   }
@@ -7629,6 +8461,58 @@
                           }
                         },
                         "required": ["type", "stops"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "const": "image"
+                          },
+                          "src": {
+                            "type": "string",
+                            "minLength": 1,
+                            "description": "The picture as a base64 data:image URL (PNG, JPEG, WebP or GIF), at most 1.5 MB. Pictures from links aren't accepted.",
+                            "pattern": "^data:image/(png|jpeg|webp|gif);base64,",
+                            "maxLength": 1500000
+                          },
+                          "fit": {
+                            "default": "cover",
+                            "type": "string",
+                            "enum": ["cover", "contain", "tile"]
+                          },
+                          "scale": {
+                            "default": 1,
+                            "type": "number",
+                            "minimum": 0.1,
+                            "maximum": 4
+                          },
+                          "position": {
+                            "default": "center",
+                            "type": "string",
+                            "enum": [
+                              "top-left",
+                              "top",
+                              "top-right",
+                              "left",
+                              "center",
+                              "right",
+                              "bottom-left",
+                              "bottom",
+                              "bottom-right"
+                            ]
+                          },
+                          "opacity": {
+                            "default": 1,
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          },
+                          "underlay": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["type", "src"]
                       }
                     ]
                   },
@@ -7741,6 +8625,58 @@
                           }
                         },
                         "required": ["type", "stops"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "const": "image"
+                          },
+                          "src": {
+                            "type": "string",
+                            "minLength": 1,
+                            "description": "The picture as a base64 data:image URL (PNG, JPEG, WebP or GIF), at most 1.5 MB. Pictures from links aren't accepted.",
+                            "pattern": "^data:image/(png|jpeg|webp|gif);base64,",
+                            "maxLength": 1500000
+                          },
+                          "fit": {
+                            "default": "cover",
+                            "type": "string",
+                            "enum": ["cover", "contain", "tile"]
+                          },
+                          "scale": {
+                            "default": 1,
+                            "type": "number",
+                            "minimum": 0.1,
+                            "maximum": 4
+                          },
+                          "position": {
+                            "default": "center",
+                            "type": "string",
+                            "enum": [
+                              "top-left",
+                              "top",
+                              "top-right",
+                              "left",
+                              "center",
+                              "right",
+                              "bottom-left",
+                              "bottom",
+                              "bottom-right"
+                            ]
+                          },
+                          "opacity": {
+                            "default": 1,
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          },
+                          "underlay": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["type", "src"]
                       }
                     ]
                   }
@@ -7858,6 +8794,58 @@
                           }
                         },
                         "required": ["type", "stops"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "const": "image"
+                          },
+                          "src": {
+                            "type": "string",
+                            "minLength": 1,
+                            "description": "The picture as a base64 data:image URL (PNG, JPEG, WebP or GIF), at most 1.5 MB. Pictures from links aren't accepted.",
+                            "pattern": "^data:image/(png|jpeg|webp|gif);base64,",
+                            "maxLength": 1500000
+                          },
+                          "fit": {
+                            "default": "cover",
+                            "type": "string",
+                            "enum": ["cover", "contain", "tile"]
+                          },
+                          "scale": {
+                            "default": 1,
+                            "type": "number",
+                            "minimum": 0.1,
+                            "maximum": 4
+                          },
+                          "position": {
+                            "default": "center",
+                            "type": "string",
+                            "enum": [
+                              "top-left",
+                              "top",
+                              "top-right",
+                              "left",
+                              "center",
+                              "right",
+                              "bottom-left",
+                              "bottom",
+                              "bottom-right"
+                            ]
+                          },
+                          "opacity": {
+                            "default": 1,
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          },
+                          "underlay": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["type", "src"]
                       }
                     ]
                   },
@@ -7970,6 +8958,58 @@
                           }
                         },
                         "required": ["type", "stops"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "type": {
+                            "type": "string",
+                            "const": "image"
+                          },
+                          "src": {
+                            "type": "string",
+                            "minLength": 1,
+                            "description": "The picture as a base64 data:image URL (PNG, JPEG, WebP or GIF), at most 1.5 MB. Pictures from links aren't accepted.",
+                            "pattern": "^data:image/(png|jpeg|webp|gif);base64,",
+                            "maxLength": 1500000
+                          },
+                          "fit": {
+                            "default": "cover",
+                            "type": "string",
+                            "enum": ["cover", "contain", "tile"]
+                          },
+                          "scale": {
+                            "default": 1,
+                            "type": "number",
+                            "minimum": 0.1,
+                            "maximum": 4
+                          },
+                          "position": {
+                            "default": "center",
+                            "type": "string",
+                            "enum": [
+                              "top-left",
+                              "top",
+                              "top-right",
+                              "left",
+                              "center",
+                              "right",
+                              "bottom-left",
+                              "bottom",
+                              "bottom-right"
+                            ]
+                          },
+                          "opacity": {
+                            "default": 1,
+                            "type": "number",
+                            "minimum": 0,
+                            "maximum": 1
+                          },
+                          "underlay": {
+                            "type": "string"
+                          }
+                        },
+                        "required": ["type", "src"]
                       }
                     ]
                   }

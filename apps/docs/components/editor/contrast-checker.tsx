@@ -63,6 +63,10 @@ function getColorStyle(color: ColorConfig | string | undefined): string {
   if (normalized.type === "solid") {
     return normalized.color;
   }
+  if (normalized.type === "image") {
+    // The picture's underlay stands in for it here
+    return normalized.underlay ?? "transparent";
+  }
 
   // Generate gradient CSS
   const sortedStops = [...normalized.stops].sort((a, b) => a.offset - b.offset);
@@ -366,7 +370,7 @@ const ContrastChecker = ({ currentStyles, disabled }: ContrastCheckerProps) => {
                                       pair.background,
                                     );
                                     return (
-                                      normalized.type !== "solid" && (
+                                      "stops" in normalized && (
                                         <div className="mt-1 space-y-0.5">
                                           {normalized.stops.map((stop) => (
                                             <div
