@@ -199,6 +199,9 @@ function evaluateSql(expr: SqlExpr, ctx: Ctx): unknown {
           : String(field);
     return match[2] ? value !== null && value === String(v(1)) : value;
   }
+  // ${column} is [not] null
+  match = text.match(/^\$0 is (not )?null$/i);
+  if (match) return match[1] ? v(0) != null : v(0) == null;
   if (/^now\(\)$/i.test(text)) return new Date();
   if (text === "1" || text === "true") return text === "1" ? 1 : true;
   if (/^\$0$/.test(text)) return v(0);
