@@ -11,6 +11,10 @@ import {
 } from "qrdx";
 import { describe, expect, it } from "vitest";
 import {
+  fitStyleForSave,
+  MAX_SAVED_STYLE_LENGTH,
+} from "@/components/code-builder/validation";
+import {
   cliSnippet,
   imageSnippet,
   mcpSnippet,
@@ -18,10 +22,6 @@ import {
   restSnippet,
   shadcnSnippet,
 } from "@/components/editor/action-bar/code-snippets";
-import {
-  fitStyleForSave,
-  MAX_SAVED_STYLE_LENGTH,
-} from "@/components/code-builder/validation";
 import { editorContextSchema } from "@/lib/ai/agent/editor-context";
 import {
   removedPartsNote,
@@ -75,9 +75,9 @@ describe("style links", () => {
   });
 
   it("refuse a link that carries one", () => {
-    const forged = `1.${Buffer.from(
-      JSON.stringify({ fg: picture() }),
-    ).toString("base64url")}`;
+    const forged = `1.${Buffer.from(JSON.stringify({ fg: picture() })).toString(
+      "base64url",
+    )}`;
     const decoded = decodeStyleParam(forged);
     expect(decoded?.styles.fgColor).toBeUndefined();
   });
