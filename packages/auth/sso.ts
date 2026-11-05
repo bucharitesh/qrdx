@@ -90,9 +90,10 @@ async function providerById(providerId: unknown): Promise<ProviderRow | null> {
 
 /**
  * Makes sure someone signing in through SSO is a member of the connection's
- * workspace, on every SSO sign-in (like Dub): someone removed in QRdx comes
- * back the next time their identity provider signs them in. Removing someone
- * for good means unassigning them in the IdP first. Members keep the role
+ * workspace, on every SSO sign-in, so the identity provider decides who's in:
+ * someone removed in QRdx comes back the next time their identity provider
+ * signs them in. Removing someone for good means unassigning them in the IdP
+ * first. Members keep the role
  * they have. A pending invitation is accepted with the role it was sent
  * with (an admin chose it); anyone else joins with the workspace's SSO join
  * role (member or viewer, never owner, admin or billing). Only for an
