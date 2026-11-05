@@ -64,7 +64,7 @@ export const loopVideos = {
     width: 1280,
     height: 800,
     label:
-      "Screen recording: a link typed into the QRdx playground, dot patterns changed in the customisation panel, then the download dialog opened",
+      "Screen recording: a link typed into the QRdx playground, a style picked from the theme gallery, a linear gradient set in the color picker, the frame text changed to Scan to visit in the preview, the Art tab opened, then the download dialog",
   },
   bulk: {
     mp4: mediaUrl("/videos/bulk-csv-to-zip.mp4"),

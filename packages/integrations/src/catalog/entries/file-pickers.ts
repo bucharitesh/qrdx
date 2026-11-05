@@ -8,7 +8,7 @@ export const filePickers: IntegrationCatalogEntry[] = [
     tagline:
       "Pick a Dropbox file or folder and turn its shared link into a QR code.",
     description: [
-      "Connect Dropbox and the Website type in the QR editor gets Pick a file. Browse or search your Dropbox, pick a file or folder, and QRdx creates its shared link (or reuses the one it already has). The QR code opens it.",
+      "Connect Dropbox and it shows up in the QR editor's URL type, under Use a link from… beside the Website address field. Browse or search your Dropbox, pick a file or folder, and QRdx creates its shared link (or reuses the one it already has). The QR code opens it.",
       "Hosted pages can use Dropbox files too: PDF, audio, video and download blocks get From Dropbox and link straight to the file. If your team only allows team links, QRdx tells you so you can change the link in Dropbox.",
     ],
     kind: "connect",
@@ -34,8 +34,8 @@ export const filePickers: IntegrationCatalogEntry[] = [
         body: "QRdx asks to see your files' names and to create shared links, nothing else. Tokens are stored encrypted, and disconnecting revokes them in Dropbox.",
       },
       {
-        title: "Pick a file",
-        body: "In the editor, choose Website, click Pick a file → Dropbox and choose a file or folder.",
+        title: "Pick a file in the editor",
+        body: "In the editor, choose the URL type, open Use a link from…, choose Dropbox and pick a file or folder.",
       },
     ],
     capabilities: [
@@ -63,7 +63,7 @@ export const filePickers: IntegrationCatalogEntry[] = [
     tagline:
       "Pick a OneDrive or SharePoint file and encode a view-only sharing link.",
     description: [
-      "Connect your Microsoft account and the Website type in the QR editor gets Pick a file. Browse or search your OneDrive (personal, or OneDrive for Business in SharePoint), pick a file or folder, and QRdx creates a view-only “Anyone with the link” link for the QR code.",
+      "Connect your Microsoft account and OneDrive shows up in the QR editor's URL type, under Use a link from… beside the Website address field. Browse or search your OneDrive (personal, or OneDrive for Business in SharePoint), pick a file or folder, and QRdx creates a view-only “Anyone with the link” link for the QR code.",
       "If your organization turned off “Anyone” links, QRdx creates an organization-only link instead and tells you that only signed-in colleagues can open it.",
     ],
     kind: "connect",
@@ -89,8 +89,8 @@ export const filePickers: IntegrationCatalogEntry[] = [
         body: "QRdx asks for access to your files so it can create sharing links (Microsoft requires Files.ReadWrite for that). Tokens are stored encrypted.",
       },
       {
-        title: "Pick a file",
-        body: "In the editor, choose Website, click Pick a file → OneDrive and choose a file or folder.",
+        title: "Pick a file in the editor",
+        body: "In the editor, choose the URL type, open Use a link from…, choose OneDrive and pick a file or folder.",
       },
     ],
     capabilities: [
@@ -126,7 +126,7 @@ export const filePickers: IntegrationCatalogEntry[] = [
     tagline:
       "Pick a Box file or folder and turn its shared link into a QR code.",
     description: [
-      "Connect Box and the Website type in the QR editor gets Pick a file. Browse or search your Box, pick a file or folder, and QRdx turns on its shared link for people with the link. The QR code opens it.",
+      "Connect Box and it shows up in the QR editor's URL type, under Use a link from… beside the Website address field. Browse or search your Box, pick a file or folder, and QRdx turns on its shared link for people with the link. The QR code opens it.",
       "Where your Box admin only allows company links, QRdx creates one and tells you that only people signed in to your company's Box can open it. Download blocks on hosted pages use the direct download link when Box provides one.",
     ],
     kind: "connect",
@@ -152,8 +152,8 @@ export const filePickers: IntegrationCatalogEntry[] = [
         body: "Turning on a shared link changes the file's settings, so Box asks for read and write access. Tokens are stored encrypted, and disconnecting revokes them in Box.",
       },
       {
-        title: "Pick a file",
-        body: "In the editor, choose Website, click Pick a file → Box and choose a file or folder.",
+        title: "Pick a file in the editor",
+        body: "In the editor, choose the URL type, open Use a link from…, choose Box and pick a file or folder.",
       },
     ],
     capabilities: [
@@ -181,7 +181,7 @@ export const filePickers: IntegrationCatalogEntry[] = [
     tagline:
       "Pick a Notion page and encode its public link, with a hint when it isn't published yet.",
     description: [
-      "Connect Notion, choose which pages QRdx can see, and the Website type in the QR editor gets Pick a file → Notion. Search those pages and pick one; QRdx encodes its “Publish to web” link so anyone can open it.",
+      "Connect Notion, choose which pages QRdx can see, and Notion shows up in the QR editor's URL type, under Use a link from… beside the Website address field. Search those pages and pick one; QRdx encodes its “Publish to web” link so anyone can open it.",
       "Notion's API can't publish a page for you. If the page isn't published, QRdx still uses its Notion link but tells you that only people in your workspace can open it, and how to publish it.",
     ],
     kind: "connect",
@@ -208,7 +208,7 @@ export const filePickers: IntegrationCatalogEntry[] = [
       },
       {
         title: "Publish the page, then pick it",
-        body: "In Notion, click Share → Publish → Publish to web. Then in the editor choose Website, click Pick a file → Notion and pick the page.",
+        body: "In Notion, click Share → Publish → Publish to web. Then in the editor choose the URL type, open Use a link from…, choose Notion and pick the page.",
       },
     ],
     capabilities: [

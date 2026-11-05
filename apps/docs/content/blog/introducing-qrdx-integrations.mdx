@@ -1,18 +1,18 @@
 ---
 title: Introducing QRdx Integrations
 description: QRdx connects to Bitly, Dub, Google Drive, Dropbox, Stripe, Shopify, Zapier, Make, n8n, Google Sheets and your analytics pixels. What each one does and what it needs.
-date: "2026-11-04"
-updated: "2026-11-04"
+date: "2026-11-05"
+updated: "2026-11-05"
 author: ["ritesh-bucha"]
 category: Company News
 tags: ["integrations", "dub", "bitly", "google drive", "zapier", "webhooks", "oauth"]
 image: /blog/introducing-qrdx-integrations/cover.svg
 imageAlt: "Line drawing of a QR code on a round hub connected by pipes to four tool blocks: a link, a folder, a plug and a key"
 related: ["qr-code-api-guide", "dynamic-vs-static-qr-codes"]
-published: false
+published: true
 ---
 
-Integrations connect QRdx to the tools you already use. Some add a button to the QR editor, like **Shorten** with your own Bitly account or **Pick a file** from Dropbox. Others send what happens in QRdx somewhere else: a Discord channel, a Zap, a Google Sheet. The [integrations page](/integrations) lists every one this site offers, each with its setup steps.
+Integrations connect QRdx to the tools you already use. Some fill in the QR editor for you, like a link shortened with your own Bitly account or a file picked from Dropbox. Others send what happens in QRdx somewhere else, such as a Discord channel, a Zap or a Google Sheet. The [integrations page](/integrations) lists every one this site offers, each with its setup steps.
 
 Each integration has one of three labels. **Connect** means you sign in to the other service, or paste an API key from it, under Settings → Integrations. **Built in** means there's nothing to connect, because you paste a link or an ID into QRdx. **Guide** means it runs inside the other tool on QRdx webhooks, and the page walks you through the setup.
 
@@ -26,7 +26,7 @@ Each integration has one of three labels. **Connect** means you sign in to the o
   caption="The code holds the short link, so you repoint it and count its clicks in the service that made it."
 />
 
-Connect Bitly, Rebrandly or Short.io and the Website type in the QR editor gets a **Shorten** button. QRdx creates the link in your account, or lets you pick one you already have, and the QR code encodes that short link.
+Connect Bitly, Rebrandly or Short.io, and the URL type in the QR editor can shorten its link. Open **Use a link from…** next to the address and pick the service. QRdx creates the link in your account, or lets you pick one you already have, and the QR code encodes that short link.
 
 - Bitly connects with a Bitly sign-in or a generic access token you paste. Links go on bit.ly or one of your branded domains, and Bitly picks the back-half.
 - Rebrandly takes an API key. You choose the domain and the slashtag.
@@ -48,7 +48,7 @@ Dub has its own content type. Connect your Dub workspace and the editor can crea
 
 In the Google Drive content type, pick a document, sheet, slide deck, PDF or folder, and QRdx encodes its share link. People who scan need access to the file, so set its sharing to "Anyone with the link" in Drive if the code is public. You can also use your Drive images in a design.
 
-Dropbox adds **Pick a file** to the Website type. Browse or search your Dropbox and pick a file or folder, and QRdx creates its shared link or reuses the one it already has. If your team only allows team links, QRdx tells you right away, so a printed code doesn't send people to a sign-in page. Hosted pages can use Dropbox files too: PDF, audio, video and download blocks get **From Dropbox** and link straight to the file.
+Dropbox shows up in the same **Use a link from…** menu. Browse or search your Dropbox and pick a file or folder, and QRdx creates its shared link or reuses the one it already has. If your team only allows team links, QRdx tells you right away, so a printed code doesn't send people to a sign-in page. Hosted pages can use Dropbox files too: PDF, audio, video and download blocks get **From Dropbox** and link straight to the file.
 
 <IfAvailable integration="onedrive">
 OneDrive works the same way. QRdx creates a view-only "Anyone with the link" sharing link, or an organization-only one where your admin turned "Anyone" links off, and tells you which one you got.
@@ -64,7 +64,7 @@ Notion pages work too: QRdx encodes the page's "Publish to web" link. Notion's A
 
 ## Payment, product and booking links
 
-These integrations list things from your account, so you pick one instead of copying a link by hand.
+These integrations list things from your account in the URL type's **Use a link from…** menu, so you pick one instead of copying a link by hand.
 
 - Stripe lists your active Payment Links with their name, price and currency. It connects with a restricted key that can only read Payment Links. QRdx refuses full secret keys, and never sees payments, customers or balances.
 - Shopify lists your active products with their image and price, and encodes the product page on your store's primary domain. You connect an app you create for your own store with the `read_products` scope. It can also download a CSV of every product for the bulk importer.
@@ -78,7 +78,7 @@ YouTube and Spotify need no account at all. Paste a link into their content type
 
 ## Scans and form responses, sent where you work
 
-On Business, QRdx sends signed webhooks for scans, scan milestones, new and changed codes, and form submissions. The Zapier, Make and n8n guides show how to catch them. You paste the address from a Webhooks by Zapier trigger, a Make custom webhook or an n8n Webhook node into Settings → Webhooks and pick the events (on Zapier's side, Webhooks by Zapier is a premium app). Each request carries an HMAC-SHA256 signature. Failed deliveries are retried 8 times over two days, and scans arrive in batches of up to 100 a minute.
+On Business, QRdx sends signed webhooks for scans, scan milestones, new and changed codes, and form submissions. The Zapier, Make and n8n guides show how to catch them. You paste the address from a Webhooks by Zapier trigger, a Make custom webhook or an n8n Webhook node into Settings → Webhooks and pick the events (on Zapier's side, Webhooks by Zapier is a premium app). Each request carries an HMAC-SHA256 signature. QRdx tries a failed delivery up to 8 times over about two days, and scans arrive in batches of up to 100 a minute.
 
 Chat alerts are on Business too. Paste a Discord or Slack incoming webhook into Settings → Notifications and choose what to hear about: a code's first scan, scan milestones, form submissions and code changes. Each channel gets at most 30 alerts of one kind an hour, and the messages never mention @everyone, @here or a role, whatever visitors type into a form.
 
@@ -134,7 +134,7 @@ On a self-hosted instance, the integrations that sign in with OAuth need an app 
 
 If your product should make QR codes for its users, it can be a QRdx integration too. Create an OAuth app under Settings → API keys & apps, send people through QRdx's consent screen with OAuth 2.0 and PKCE, and call the [REST API](/docs/developers/rest-api) for them. A Free workspace can have one OAuth app, Pro five and Business 25. When it works end to end, email support@qrdx.dev to have it listed on the integrations page as a Community integration. The [Build an integration](/docs/developers/build-an-integration) guide covers every step.
 
-AI assistants and plugins have their own pages. The [MCP server](/mcp) lets Claude, ChatGPT, Cursor, VS Code and other MCP apps make QR codes in a chat, with no account. The [plugins](/plugins) for Chrome, Figma, Raycast and Canva install from source for now.
+AI assistants and plugins have their own pages. The [MCP server](/mcp) lets Claude, ChatGPT, Cursor, VS Code and other MCP apps make QR codes in a chat, with no account. The Chrome extension is in the [Chrome Web Store](https://chromewebstore.google.com/detail/bpepiomjdoicpmbihlohodghdglkhicc), and the [plugins](/plugins) for Figma, Raycast and Canva install from source for now.
 
 Anything that accepts a webhook or calls an HTTP API works with QRdx. If there's a tool you'd like connected, [open an issue on GitHub](https://github.com/bucharitesh/qrdx/issues/new).
 
