@@ -11,13 +11,18 @@ import {
 } from "@repo/design-system/components/ui/table";
 import { Folder2 as Folder, Notepad2 as NotebookPen } from "iconsax-reactjs";
 import Link from "next/link";
-import { useState } from "react";
+import {
+  LIST_ROW_FOCUS,
+  type ListSelectionApi,
+  useModKey,
+} from "@/app/dashboard/_components/list-selection";
 import type { CodeProperty } from "@/app/dashboard/codes/_lib/display";
 import { CODE_PROPERTIES } from "@/app/dashboard/codes/_lib/display";
 import type { TagRow } from "@/app/dashboard/codes/_lib/organize";
 import type { FolderRow } from "@/app/dashboard/codes/_lib/organize-shared";
 import type { QrCodeListItem } from "@/app/dashboard/codes/_lib/qr-codes";
 import { CopyButton } from "@/components/copy-button";
+import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { useWorkspaceHref } from "@/components/workspace-provider";
 import { CodeActionsMenu } from "./code-actions-menu";
 import { DestinationIcon, FavoriteButton } from "./codes-cards";
@@ -29,8 +34,7 @@ import { TagChip } from "./tag-chip";
 export function CodesTable({
   codes,
   sparklines,
-  selected,
-  onSelect,
+  selection,
   folders,
   tags,
   showFolder = false,
@@ -40,9 +44,8 @@ export function CodesTable({
   codes: QrCodeListItem[];
   /** Daily scans for the last 7 days, by code id */
   sparklines: Record<string, number[]>;
-  /** Selection (checkboxes and dragging several rows); omit for a plain table */
-  selected?: Set<string>;
-  onSelect?: (ids: string[], selected: boolean) => void;
+  /** Checkboxes, ranges and the list's keys (list-selection.tsx); omit for a plain table */
+  selection?: ListSelectionApi;
   folders?: FolderRow[];
   tags?: TagRow[];
   /** Show each code's folder (when listing across folders) */
@@ -54,14 +57,16 @@ export function CodesTable({
 }) {
   const shows = (property: CodeProperty) => properties.includes(property);
   const inWorkspace = useWorkspaceHref();
-  const [activeRow, setActiveRow] = useState<string | null>(null);
-  const selectable = Boolean(selected && onSelect);
+  const modKey = useModKey();
+  const selectable = Boolean(selection);
   const allSelected =
     selectable &&
     codes.length > 0 &&
-    codes.every((code) => selected?.has(code.id));
+    codes.every((code) => selection?.isSelected(code.id));
   const someSelected =
-    selectable && !allSelected && codes.some((code) => selected?.has(code.id));
+    selectable &&
+    !allSelected &&
+    codes.some((code) => selection?.isSelected(code.id));
   const folderNames = new Map((folders ?? []).map((row) => [row.id, row.name]));
   const trash = codes.some((code) => code.deletedAt);
 
@@ -69,20 +74,25 @@ export function CodesTable({
     <Table>
       <TableHeader>
         <TableRow>
-          {selectable && (
+          {selection && (
             <TableHead className="w-8 pr-0">
-              <Checkbox
-                aria-label="Select all codes on this page"
-                checked={
-                  allSelected ? true : someSelected ? "indeterminate" : false
-                }
-                onCheckedChange={(checked) =>
-                  onSelect?.(
-                    codes.map((code) => code.id),
-                    checked === true,
-                  )
-                }
-              />
+              <TooltipWrapper
+                kbd={keyboardShortcuts ? [modKey, "A"] : undefined}
+                label="Select all on this page"
+              >
+                <Checkbox
+                  aria-label="Select all codes on this page"
+                  checked={
+                    allSelected ? true : someSelected ? "indeterminate" : false
+                  }
+                  onCheckedChange={(checked) =>
+                    selection.setMany(
+                      codes.map((code) => code.id),
+                      checked === true,
+                    )
+                  }
+                />
+              </TooltipWrapper>
             </TableHead>
           )}
           <TableHead>Code</TableHead>
@@ -110,34 +120,23 @@ export function CodesTable({
       <TableBody>
         {codes.map((code) => {
           const href = inWorkspace(`/codes/${encodeURIComponent(code.id)}`);
-          const isSelected = selected?.has(code.id) ?? false;
+          const isSelected = selection?.isSelected(code.id) ?? false;
           const inTrash = Boolean(code.deletedAt);
           const folderName =
             showFolder && code.folderId ? folderNames.get(code.folderId) : null;
           const title = code.title || displayUrl(code.destinationUrl);
           return (
             <TableRow
+              className={selection ? LIST_ROW_FOCUS : undefined}
               data-state={isSelected ? "selected" : undefined}
               key={code.id}
-              onBlur={(event) => {
-                if (!event.currentTarget.contains(event.relatedTarget)) {
-                  setActiveRow((row) => (row === code.id ? null : row));
-                }
-              }}
-              onFocus={() => setActiveRow(code.id)}
-              onMouseEnter={() => setActiveRow(code.id)}
-              onMouseLeave={() =>
-                setActiveRow((row) => (row === code.id ? null : row))
-              }
+              {...selection?.rowProps(code.id)}
             >
-              {selectable && (
+              {selection && (
                 <TableCell className="w-8 pr-0">
                   <Checkbox
                     aria-label={`Select ${title}`}
-                    checked={isSelected}
-                    onCheckedChange={(checked) =>
-                      onSelect?.([code.id], checked === true)
-                    }
+                    {...selection.checkboxProps(code.id)}
                   />
                 </TableCell>
               )}
@@ -249,9 +248,10 @@ export function CodesTable({
               </TableCell>
               <TableCell className="text-right">
                 <CodeActionsMenu
+                  bulkKeys={(selection?.count ?? 0) > 0}
                   code={code}
                   folders={folders}
-                  keysActive={activeRow === code.id}
+                  keysActive={selection?.activeRow === code.id}
                   keysEnabled={keyboardShortcuts}
                   tags={tags}
                 />

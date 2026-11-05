@@ -17,6 +17,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
+  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@repo/design-system/components/ui/dropdown-menu";
 import {
@@ -30,7 +31,7 @@ import {
   Tag2 as Tags,
   Trash as Trash2,
 } from "iconsax-reactjs";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import {
   purgeQrCodes,
   restoreQrCodes,
@@ -39,6 +40,18 @@ import {
   setQrCodesPaused,
   trashQrCodes,
 } from "@/actions/bulk-codes";
+import {
+  ListShortcuts,
+  SelectionStatus,
+  type ShortcutRow,
+  useListSelection,
+} from "@/app/dashboard/_components/list-selection";
+import {
+  BULK_KEYS,
+  type BulkAction,
+  keyLabel,
+  offeredBulkActions,
+} from "@/app/dashboard/_lib/list-keys";
 import type { TagRow } from "@/app/dashboard/codes/_lib/organize";
 import type {
   CodesStatus,
@@ -46,6 +59,7 @@ import type {
 } from "@/app/dashboard/codes/_lib/organize-shared";
 import type { QrCodeListItem } from "@/app/dashboard/codes/_lib/qr-codes";
 import { useOptimisticCodeList } from "@/components/code-builder/use-optimistic-codes";
+import { TooltipWrapper } from "@/components/tooltip-wrapper";
 import { useCan } from "@/components/workspace-provider";
 import { CodesCards } from "./codes-cards";
 import { CodesTable } from "./codes-table";
@@ -58,7 +72,13 @@ import { downloadCodesZip } from "./zip-download";
 const OTHERS_SKIPPED =
   "codes created by other team members were skipped: only owners and admins can delete them.";
 
-/** The codes table with selection, bulk actions and drag to folders. */
+const hint = (action: BulkAction) => keyLabel(BULK_KEYS[action]);
+
+/**
+ * The codes table with selection, bulk actions and drag to folders. Rows are
+ * selected with their checkboxes (shift-click for a range) or the keyboard
+ * (list-selection.tsx); the bulk keys follow Dub's links toolbar.
+ */
 export function CodesList({
   codes: serverCodes,
   sparklines,
@@ -80,41 +100,34 @@ export function CodesList({
   // Saves from the code builder show at once, before the refresh lands.
   const codes = useOptimisticCodeList(serverCodes);
   const { display } = useListDisplay();
-  const [selected, setSelected] = useState<Set<string>>(new Set());
   const [dialog, setDialog] = useState<"move" | "tags" | "purge" | null>(null);
   const [zipping, setZipping] = useState(false);
   const { run, isPending } = useOrganizeAction();
   // Viewers and billing members select codes to download them; the write
-  // actions aren't offered (lib/permissions.ts; the server refuses them too).
+  // actions (and their keys) aren't offered (lib/permissions.ts; the server
+  // refuses them too).
   const canWrite = useCan("content.write");
-
-  // Drop selections that left the page (navigation, refresh after an action).
-  useEffect(() => {
-    const visible = new Set(codes.map((code) => code.id));
-    setSelected((current) => {
-      const next = new Set([...current].filter((id) => visible.has(id)));
-      return next.size === current.size ? current : next;
-    });
-  }, [codes]);
-
-  const select = (ids: string[], on: boolean) =>
-    setSelected((current) => {
-      const next = new Set(current);
-      for (const id of ids) {
-        if (on) next.add(id);
-        else next.delete(id);
-      }
-      return next;
-    });
-
-  const selectedCodes = useMemo(
-    () => codes.filter((code) => selected.has(code.id)),
-    [codes, selected],
-  );
-  const ids = selectedCodes.map((code) => code.id);
-  const count = ids.length;
+  const listRef = useRef<HTMLDivElement>(null);
+  const order = useMemo(() => codes.map((code) => code.id), [codes]);
   const busy = isPending || zipping;
-  const clear = () => setSelected(new Set());
+
+  // What the bulk keys run; filled in below, read when a key is pressed.
+  const keyActions = useRef<Partial<Record<BulkAction, () => void>>>({});
+  const selection = useListSelection({
+    order,
+    listRef,
+    keyboardShortcuts,
+    actionsRef: keyActions,
+  });
+  // Rows that left the page (navigation, a refresh after an action) are
+  // dropped by the selection itself, so these are always on screen.
+  const selectedCodes = useMemo(() => {
+    const byId = new Map(codes.map((code) => [code.id, code]));
+    return selection.selectedIds.flatMap((id) => byId.get(id) ?? []);
+  }, [codes, selection.selectedIds]);
+  const ids = selection.selectedIds;
+  const count = ids.length;
+  const clear = selection.clear;
 
   const done = <T,>(result: T | null) => {
     if (result) clear();
@@ -179,11 +192,59 @@ export function CodesList({
     }
   };
 
+  const restore = () =>
+    run(() => restoreQrCodes({ ids }), {
+      success: ({ updated }) => `Restored ${plural(updated, "code")}`,
+    }).then(done);
+
+  const toggleArchived = () =>
+    run(
+      () =>
+        setQrCodesArchived({
+          ids,
+          archived: status !== "archived",
+        }),
+      {
+        success: ({ updated }) =>
+          status === "archived"
+            ? `Unarchived ${plural(updated, "code")}`
+            : `Archived ${plural(updated, "code")}`,
+      },
+    ).then(done);
+
+  // Keys for the actions this role and view offer (offeredBulkActions);
+  // none while one runs. Delete forever opens its confirm dialog, like the
+  // button.
+  const bulk: Record<BulkAction, { label: string; run: () => void }> = {
+    tags: { label: "Tags", run: () => setDialog("tags") },
+    move: { label: "Move to folder", run: () => setDialog("move") },
+    archive: {
+      label: status === "archived" ? "Unarchive" : "Archive",
+      run: () => void toggleArchived(),
+    },
+    restore: { label: "Restore", run: () => void restore() },
+    trash:
+      status === "trash"
+        ? { label: "Delete forever", run: () => setDialog("purge") }
+        : { label: "Move to trash", run: () => void trash() },
+  };
+  keyActions.current = Object.fromEntries(
+    offeredBulkActions("codes", { canWrite, busy, status }).map((action) => [
+      action,
+      bulk[action].run,
+    ]),
+  );
+  const shortcutRows: ShortcutRow[] = offeredBulkActions("codes", {
+    canWrite,
+    status,
+  }).map((action) => ({ label: bulk[action].label, keys: [hint(action)] }));
+
   const allPaused = selectedCodes.every((code) => code.pausedAt);
   const allFavorite = selectedCodes.every((code) => code.isFavorite);
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-2" ref={listRef}>
+      <SelectionStatus count={count} noun={["code", "codes"]} />
       {count > 0 && (
         <div
           aria-label="Bulk actions"
@@ -193,65 +254,70 @@ export function CodesList({
           <span className="px-2 text-sm font-medium tabular-nums">
             {count} selected
           </span>
-          <Button
-            aria-label="Clear selection"
-            onClick={clear}
-            size="icon-sm"
-            variant="ghost"
-          >
-            <X />
-          </Button>
+          <TooltipWrapper kbd="Esc" label="Clear selection">
+            <Button
+              aria-label="Clear selection"
+              onClick={clear}
+              size="icon-sm"
+              variant="ghost"
+            >
+              <X />
+            </Button>
+          </TooltipWrapper>
           <div className="bg-border mx-1 h-5 w-px" />
           {status === "trash" ? (
             canWrite && (
               <>
-                <Button
-                  disabled={busy}
-                  onClick={() =>
-                    run(() => restoreQrCodes({ ids }), {
-                      success: ({ updated }) =>
-                        `Restored ${plural(updated, "code")}`,
-                    }).then(done)
-                  }
-                  size="sm"
-                  variant="ghost"
-                >
-                  <RotateCcw />
-                  Restore
-                </Button>
-                <Button
-                  disabled={busy}
-                  onClick={() => setDialog("purge")}
-                  size="sm"
-                  variant="ghost"
-                >
-                  <Trash2 />
-                  Delete forever
-                </Button>
+                <TooltipWrapper kbd={hint("restore")} label="Restore">
+                  <Button
+                    disabled={busy}
+                    onClick={restore}
+                    size="sm"
+                    variant="ghost"
+                  >
+                    <RotateCcw />
+                    Restore
+                  </Button>
+                </TooltipWrapper>
+                <TooltipWrapper kbd={hint("trash")} label="Delete forever">
+                  <Button
+                    disabled={busy}
+                    onClick={() => setDialog("purge")}
+                    size="sm"
+                    variant="ghost"
+                  >
+                    <Trash2 />
+                    Delete forever
+                  </Button>
+                </TooltipWrapper>
               </>
             )
           ) : (
             <>
               {canWrite && (
                 <>
-                  <Button
-                    disabled={busy}
-                    onClick={() => setDialog("move")}
-                    size="sm"
-                    variant="ghost"
-                  >
-                    <FolderInput />
-                    Move
-                  </Button>
-                  <Button
-                    disabled={busy}
-                    onClick={() => setDialog("tags")}
-                    size="sm"
-                    variant="ghost"
-                  >
-                    <Tags />
-                    Tag
-                  </Button>
+                  <TooltipWrapper kbd={hint("move")} label="Move to folder">
+                    <Button
+                      disabled={busy}
+                      onClick={() => setDialog("move")}
+                      size="sm"
+                      variant="ghost"
+                    >
+                      <FolderInput />
+                      Move
+                    </Button>
+                  </TooltipWrapper>
+                  <TooltipWrapper kbd={hint("tags")} label="Tags">
+                    <Button
+                      disabled={busy}
+                      onClick={() => setDialog("tags")}
+                      size="sm"
+                      variant="ghost"
+                    >
+                      <Tags />
+                      Tag
+                    </Button>
+                  </TooltipWrapper>
                 </>
               )}
               <DropdownMenu>
@@ -314,35 +380,34 @@ export function CodesList({
                         ? "Remove from favorites"
                         : "Add to favorites"}
                     </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onSelect={() =>
-                        run(
-                          () =>
-                            setQrCodesArchived({
-                              ids,
-                              archived: status !== "archived",
-                            }),
-                          {
-                            success: ({ updated }) =>
-                              status === "archived"
-                                ? `Unarchived ${plural(updated, "code")}`
-                                : `Archived ${plural(updated, "code")}`,
-                          },
-                        ).then(done)
-                      }
-                    >
+                    <DropdownMenuItem onSelect={toggleArchived}>
                       {status === "archived" ? <ArchiveRestore /> : <Archive />}
                       {status === "archived" ? "Unarchive" : "Archive"}
+                      {keyboardShortcuts && (
+                        <DropdownMenuShortcut>
+                          {hint("archive")}
+                        </DropdownMenuShortcut>
+                      )}
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onSelect={trash} variant="destructive">
                       <Trash2 />
                       Move to trash
+                      {keyboardShortcuts && (
+                        <DropdownMenuShortcut>
+                          {hint("trash")}
+                        </DropdownMenuShortcut>
+                      )}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               )}
             </>
+          )}
+          {keyboardShortcuts && (
+            <div className="ml-auto">
+              <ListShortcuts actions={shortcutRows} />
+            </div>
           )}
         </div>
       )}
@@ -352,21 +417,19 @@ export function CodesList({
           codes={codes}
           folders={folders}
           keyboardShortcuts={keyboardShortcuts}
-          onSelect={select}
           properties={display.properties}
-          selected={selected}
+          selection={selection}
           sparklines={sparklines}
           tags={tags}
         />
       ) : (
-        <div className="rounded-lg border">
+        <div className="overflow-hidden rounded-lg border">
           <CodesTable
             codes={codes}
             folders={folders}
             keyboardShortcuts={keyboardShortcuts}
-            onSelect={select}
             properties={display.properties}
-            selected={selected}
+            selection={selection}
             showFolder={showFolder}
             sparklines={sparklines}
             tags={tags}

@@ -12,6 +12,10 @@ import { ArrowRight, Chart, Element2 } from "iconsax-reactjs";
 import Link from "next/link";
 import { useState } from "react";
 import { setQrCodesFavorite } from "@/actions/bulk-codes";
+import {
+  LIST_ROW_FOCUS,
+  type ListSelectionApi,
+} from "@/app/dashboard/_components/list-selection";
 import type { CodeProperty } from "@/app/dashboard/codes/_lib/display";
 import type { TagRow } from "@/app/dashboard/codes/_lib/organize";
 import type { FolderRow } from "@/app/dashboard/codes/_lib/organize-shared";
@@ -158,8 +162,7 @@ export function ScansPill({
 export function CodesCards({
   codes,
   sparklines,
-  selected,
-  onSelect,
+  selection,
   folders,
   tags,
   properties,
@@ -167,15 +170,14 @@ export function CodesCards({
 }: {
   codes: QrCodeListItem[];
   sparklines: Record<string, number[]>;
-  selected: Set<string>;
-  onSelect: (ids: string[], selected: boolean) => void;
+  /** Checkboxes, ranges and the list's keys (list-selection.tsx) */
+  selection: ListSelectionApi;
   folders?: FolderRow[];
   tags?: TagRow[];
   properties: CodeProperty[];
   keyboardShortcuts?: boolean;
 }) {
   const inWorkspace = useWorkspaceHref();
-  const [activeRow, setActiveRow] = useState<string | null>(null);
   const shows = (property: CodeProperty) => properties.includes(property);
 
   return (
@@ -183,36 +185,25 @@ export function CodesCards({
       {codes.map((code) => {
         const href = inWorkspace(`/codes/${encodeURIComponent(code.id)}`);
         const inTrash = Boolean(code.deletedAt);
-        const isSelected = selected.has(code.id);
+        const isSelected = selection.isSelected(code.id);
         const title = code.title || displayUrl(code.destinationUrl);
         const quiet = code.status !== "active" || Boolean(code.pausedAt);
         return (
           <li
             className={cn(
               "bg-card relative flex items-center gap-3 rounded-xl border px-3 py-3 transition-colors sm:px-4",
+              LIST_ROW_FOCUS,
               isSelected
                 ? "border-foreground/30 bg-muted/40"
                 : "hover:border-foreground/20",
             )}
             key={code.id}
-            onBlur={(event) => {
-              if (!event.currentTarget.contains(event.relatedTarget)) {
-                setActiveRow((row) => (row === code.id ? null : row));
-              }
-            }}
-            onFocus={() => setActiveRow(code.id)}
-            onMouseEnter={() => setActiveRow(code.id)}
-            onMouseLeave={() =>
-              setActiveRow((row) => (row === code.id ? null : row))
-            }
+            {...selection.rowProps(code.id)}
           >
             <Checkbox
               aria-label={`Select ${title}`}
-              checked={isSelected}
               className="max-sm:hidden"
-              onCheckedChange={(checked) =>
-                onSelect([code.id], checked === true)
-              }
+              {...selection.checkboxProps(code.id)}
             />
             <DestinationIcon code={code} />
 
@@ -297,7 +288,8 @@ export function CodesCards({
             <CodeActionsMenu
               code={code}
               folders={folders}
-              keysActive={activeRow === code.id}
+              bulkKeys={selection.count > 0}
+              keysActive={selection.activeRow === code.id}
               keysEnabled={keyboardShortcuts}
               tags={tags}
             />
