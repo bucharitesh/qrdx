@@ -4,6 +4,7 @@ import {
   CHALLENGE_COMPLETION_PATHS,
   challengePageUrl,
   challengeReturnPath,
+  normalizeBackupCode,
   PASSKEY_SIGN_IN_PATH,
   passkeyAssertionUserVerified,
 } from "./sign-in-challenge-rules";
@@ -29,10 +30,12 @@ import {
 // endpoints that end in a redirect (OAuth and SSO callbacks) send the browser
 // to /sign-in/two-factor?next=<where it was going> instead.
 //
-// apps/docs/tests/lib/sign-in-challenge.test.ts classifies every endpoint
+// apps/docs/tests/auth/sign-in-challenge-guard.test.ts classifies every endpoint
 // path, so a new plugin can't add one without someone deciding.
 
 type Middleware = ReturnType<typeof createAuthMiddleware>;
+
+const BACKUP_CODE_PATH = "/two-factor/verify-backup-code";
 
 interface TwoFactorPluginLike {
   id: string;
@@ -77,6 +80,24 @@ export function signInChallenge(twoFactorPlugin: TwoFactorPluginLike) {
               });
             }
           }),
+        },
+        {
+          // Backup codes are stored as "ABCDE-FGH23" and the plugin compares
+          // by exact match; people type them in any case, with or without
+          // the dash. Anything that can't be a code goes through unchanged
+          // and fails as a wrong code.
+          matcher: (ctx) => ctx.path === BACKUP_CODE_PATH,
+          handler: createAuthMiddleware(
+            (ctx): Promise<{ context: { body: unknown } } | undefined> => {
+              const code = normalizeBackupCode(ctx.body?.code);
+              if (code && code !== ctx.body?.code) {
+                return Promise.resolve({
+                  context: { body: { ...ctx.body, code } },
+                });
+              }
+              return Promise.resolve(undefined);
+            }
+          ),
         },
       ],
       after: [

@@ -206,18 +206,18 @@ export function TwoFactorChallenge({
           <Input
             aria-describedby={statusId}
             aria-invalid={Boolean(error)}
-            autoCapitalize="none"
+            autoCapitalize="characters"
             autoComplete="one-time-code"
             autoCorrect="off"
             autoFocus
-            className="text-center font-mono tracking-wider"
+            className="text-center font-mono tracking-wider uppercase"
             disabled={over || leaving || checking}
             id={`${id}-backup`}
             onChange={(event) => {
               setBackupCode(event.target.value);
               if (!over) setError(null);
             }}
-            placeholder="abcde-12345"
+            placeholder="ABCDE-FGH23"
             spellCheck={false}
             value={backupCode}
           />
