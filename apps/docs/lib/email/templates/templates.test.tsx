@@ -13,6 +13,11 @@ import { LimitNoticeEmail } from "./limit-notice";
 import { ScanMilestoneEmail } from "./scan-milestone";
 import { SignInCodeEmail } from "./sign-in-code";
 import { inviteRole, TeamInviteEmail, teamInviteSubject } from "./team-invite";
+import {
+  TwoFactorNoticeEmail,
+  type TwoFactorNoticeKind,
+  twoFactorNoticeSubject,
+} from "./two-factor-notice";
 import { WeeklyDigestEmail, weekOverWeek } from "./weekly-digest";
 
 // tsconfig has jsx: "preserve", so tsx compiles JSX to React.createElement.
@@ -273,6 +278,29 @@ describe("email templates", () => {
       }
       assert.equal(new URL(href).pathname, "/", href);
       assert.equal(new URL(href).search, "", href);
+    }
+  });
+
+  it("two-step verification notices say what changed and link nowhere but support", async () => {
+    const kinds: [TwoFactorNoticeKind, RegExp][] = [
+      ["on", /Two-step verification is on/i],
+      ["off", /Your backup codes no longer work/],
+      ["backup-codes", /The old ones no longer work/],
+      ["support-off", /QRdx support turned off two-step verification/],
+    ];
+    for (const [kind, line] of kinds) {
+      const { html, text } = await both(<TwoFactorNoticeEmail kind={kind} />);
+      assert.match(text, line);
+      assert.match(text, /If this wasn't you, contact support/);
+      assert.ok(twoFactorNoticeSubject(kind).length > 0);
+      const hrefs = [...html.matchAll(/href="([^"]*)"/g)].map((m) => m[1]);
+      for (const href of hrefs) {
+        if (href.startsWith("mailto:")) {
+          assert.equal(href, "mailto:support@qrdx.dev");
+          continue;
+        }
+        assert.equal(new URL(href).pathname, "/", href);
+      }
     }
   });
 

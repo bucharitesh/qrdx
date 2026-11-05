@@ -39,6 +39,7 @@ import {
   type LinkOutcome,
   SignInMethodsSection,
 } from "./_components/sign-in-methods-section";
+import { TwoFactorSection } from "./_components/two-factor-section";
 
 export const metadata: Metadata = {
   title: "Profile & security",
@@ -160,6 +161,15 @@ export default async function AccountPage({
         linkable={linkableProviders(accounts, configuredProviders())}
         methods={toSignInMethods(accounts, formatDate)}
         outcome={linkOutcome(params)}
+      />
+
+      <TwoFactorSection
+        email={session.user.email}
+        recentSignIn={canChangeEmailNow(
+          new Date(session.session.createdAt),
+          now,
+        )}
+        userId={userId}
       />
 
       <SessionsSection sessions={sessions} />
