@@ -71,6 +71,8 @@ const ROW = {
   scanScore: communityItem.scanScore,
   facets: communityItem.facets,
   remixedFromLabel: communityItem.remixedFromLabel,
+  remixedFromItemId: communityItem.remixedFromItemId,
+  remixCount: communityItem.remixCount,
   sourceId: communityItem.sourceId,
   createdBy: communityItem.createdBy,
   profileId: communityProfile.id,
@@ -99,6 +101,8 @@ interface ItemRow {
   scanScore: number | null;
   facets: Record<string, unknown> | null;
   remixedFromLabel: string | null;
+  remixedFromItemId: string | null;
+  remixCount: number;
   sourceId: string | null;
   createdBy: string | null;
   profileId: string;
@@ -413,6 +417,10 @@ export async function getItem(
         : [],
       scanScore: row.scanScore,
       remixedFromLabel: row.remixedFromLabel,
+      remixedFrom: row.remixedFromItemId
+        ? await remixOriginal(row.remixedFromItemId)
+        : null,
+      remixCount: Number(row.remixCount ?? 0),
       isLikedByMe: liked.length > 0,
       isSavedByMe: saved.length > 0,
       isMine: viewerId !== null && row.createdBy === viewerId,
@@ -426,6 +434,30 @@ export async function getItem(
     if (official) return officialFrameDetail(official);
   }
   return null;
+}
+
+/** The original a remix came from, while it's still in the community. */
+async function remixOriginal(
+  itemId: string,
+): Promise<{ type: CommunityItemType; slug: string } | null> {
+  const [row] = (await itemsQuery()
+    .where(and(visible(), eq(communityItem.id, itemId)))
+    .limit(1)) as ItemRow[];
+  return row ? { type: row.type as CommunityItemType, slug: row.slug } : null;
+}
+
+/** Published remixes of an item, newest first (its item page). */
+export async function remixesOf(
+  itemId: string,
+  limit = 8,
+): Promise<CommunityItemCard[]> {
+  return guardedRead(async () => {
+    const rows = (await itemsQuery()
+      .where(and(visible(), eq(communityItem.remixedFromItemId, itemId)))
+      .orderBy(desc(communityItem.publishedAt), asc(communityItem.id))
+      .limit(limit)) as ItemRow[];
+    return toCards(rows);
+  }, []);
 }
 
 /** More from the same creator, for an item page. */
