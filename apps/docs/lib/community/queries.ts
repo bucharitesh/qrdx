@@ -15,14 +15,19 @@ import {
 import {
   and,
   asc,
+  count,
   desc,
   eq,
+  exists,
   gt,
+  ilike,
   inArray,
   isNotNull,
   lt,
   ne,
+  or,
   type SQL,
+  sql,
 } from "drizzle-orm";
 import { customFrameSchema, type QRCustomFrame } from "qrdx/types";
 import type {
@@ -36,8 +41,10 @@ import {
   officialFrameDetail,
 } from "./catalog";
 import { OFFICIAL_HANDLE } from "./handles";
+import { readPageTemplate } from "./page-template";
 import { framePreviewStyle } from "./payloads";
 import { publicStyleFromSaved, toPublicStyle } from "./public-style-server";
+import { SEARCH_DOCUMENT } from "./search";
 import { guardedRead } from "./store";
 import type {
   CommunityCreator,
@@ -69,6 +76,8 @@ const ROW = {
   scanScore: communityItem.scanScore,
   facets: communityItem.facets,
   remixedFromLabel: communityItem.remixedFromLabel,
+  remixedFromItemId: communityItem.remixedFromItemId,
+  remixCount: communityItem.remixCount,
   sourceId: communityItem.sourceId,
   createdBy: communityItem.createdBy,
   profileId: communityProfile.id,
@@ -97,6 +106,8 @@ interface ItemRow {
   scanScore: number | null;
   facets: Record<string, unknown> | null;
   remixedFromLabel: string | null;
+  remixedFromItemId: string | null;
+  remixCount: number;
   sourceId: string | null;
   createdBy: string | null;
   profileId: string;
@@ -146,6 +157,16 @@ function frameOf(payload: Record<string, unknown>): QRCustomFrame | null {
   return parsed.success ? parsed.data : null;
 }
 
+/** A kit's parts (item ids), or empty when its payload isn't one. */
+function kitPartsOf(
+  payload: Record<string, unknown>,
+): NonNullable<CommunityItemCard["kit"]> {
+  const kit = (payload.kit ?? {}) as Record<string, unknown>;
+  const id = (value: unknown) =>
+    typeof value === "string" && value.length <= 64 ? value : undefined;
+  return { page: id(kit.page), theme: id(kit.theme), frame: id(kit.frame) };
+}
+
 /** The design a theme or frame item renders, as everyone sees it. */
 export function applyStyleOf(row: {
   type: string;
@@ -173,6 +194,8 @@ function previewOf(row: ItemRow): ThemeStyles {
 }
 
 function toCard(row: ItemRow, tags: string[] = []): CommunityItemCard {
+  const page =
+    row.type === "page-template" ? readPageTemplate(row.payload)?.page : null;
   return {
     id: row.id,
     type: row.type as CommunityItemType,
@@ -190,6 +213,7 @@ function toCard(row: ItemRow, tags: string[] = []): CommunityItemCard {
       ? new Date(row.publishedAt).toISOString()
       : null,
     preview: previewOf(row),
+    ...(page ? { page } : {}),
   };
 }
 
@@ -235,10 +259,25 @@ async function entriesFor(
   return map;
 }
 
+/**
+ * Whether a card may be listed: a kit needs its page template and a
+ * collection at least 2 visible items, once removed items stop showing.
+ */
+const listable = (card: CommunityItemCard) =>
+  card.type === "kit"
+    ? Boolean(card.page)
+    : card.type === "collection"
+      ? (card.itemCount ?? 0) >= 2
+      : true;
+
 async function toCards(rows: ItemRow[]): Promise<CommunityItemCard[]> {
+  return (await buildCards(rows)).filter(listable);
+}
+
+async function buildCards(rows: ItemRow[]): Promise<CommunityItemCard[]> {
   const ids = rows.map((row) => row.id);
   const collectionIds = rows
-    .filter((row) => row.type === "collection")
+    .filter((row) => row.type === "collection" || row.type === "kit")
     .map((row) => row.id);
   const [tags, entries] = await Promise.all([
     tagsFor(ids),
@@ -246,8 +285,28 @@ async function toCards(rows: ItemRow[]): Promise<CommunityItemCard[]> {
   ]);
   return rows.map((row) => {
     const card = toCard(row, tags.get(row.id));
-    if (row.type !== "collection") return card;
+    if (row.type !== "collection" && row.type !== "kit") return card;
     const items = entries.get(row.id) ?? [];
+    if (row.type === "kit") {
+      const parts = kitPartsOf(row.payload);
+      const theme = items.find((item) => item.type === "theme");
+      const frame = items.find((item) => item.type === "frame");
+      const page = items.find((item) => item.type === "page-template");
+      // The look: the theme with the frame on it (or either alone).
+      const look: ThemeStyles = {
+        ...(theme?.preview ?? frame?.preview ?? {}),
+        ...(theme && frame?.preview.frame
+          ? { frame: frame.preview.frame }
+          : {}),
+      };
+      return {
+        ...card,
+        kit: parts,
+        itemCount: items.length,
+        preview: look,
+        ...(page?.page ? { page: page.page } : { unavailable: true }),
+      };
+    }
     return {
       ...card,
       itemCount: items.length,
@@ -339,8 +398,10 @@ export async function getItem(
       )
       .limit(1)) as ItemRow[];
     if (!row) return null;
-    const [card] = await toCards([row]);
+    const [card] = await buildCards([row]);
     if (!card) return null;
+    // Hidden once fewer than 2 of its items are still in the community.
+    if (card.type === "collection" && (card.itemCount ?? 0) < 2) return null;
     const [liked, saved] = viewerId
       ? await Promise.all([
           db
@@ -366,7 +427,7 @@ export async function getItem(
         ])
       : [[], []];
     const entries =
-      type === "collection"
+      type === "collection" || type === "kit"
         ? ((await entriesFor([row.id])).get(row.id) ?? [])
         : undefined;
     const facets = (row.facets ?? {}) as { contentTypes?: unknown };
@@ -378,6 +439,10 @@ export async function getItem(
         : [],
       scanScore: row.scanScore,
       remixedFromLabel: row.remixedFromLabel,
+      remixedFrom: row.remixedFromItemId
+        ? await remixOriginal(row.remixedFromItemId)
+        : null,
+      remixCount: Number(row.remixCount ?? 0),
       isLikedByMe: liked.length > 0,
       isSavedByMe: saved.length > 0,
       isMine: viewerId !== null && row.createdBy === viewerId,
@@ -391,6 +456,30 @@ export async function getItem(
     if (official) return officialFrameDetail(official);
   }
   return null;
+}
+
+/** The original a remix came from, while it's still in the community. */
+async function remixOriginal(
+  itemId: string,
+): Promise<{ type: CommunityItemType; slug: string } | null> {
+  const [row] = (await itemsQuery()
+    .where(and(visible(), eq(communityItem.id, itemId)))
+    .limit(1)) as ItemRow[];
+  return row ? { type: row.type as CommunityItemType, slug: row.slug } : null;
+}
+
+/** Published remixes of an item, newest first (its item page). */
+export async function remixesOf(
+  itemId: string,
+  limit = 8,
+): Promise<CommunityItemCard[]> {
+  return guardedRead(async () => {
+    const rows = (await itemsQuery()
+      .where(and(visible(), eq(communityItem.remixedFromItemId, itemId)))
+      .orderBy(desc(communityItem.publishedAt), asc(communityItem.id))
+      .limit(limit)) as ItemRow[];
+    return toCards(rows);
+  }, []);
 }
 
 /** More from the same creator, for an item page. */
@@ -438,7 +527,13 @@ export async function getProfileByHandle(
       .limit(1);
     if (!profile) return null;
     const official = profile.kind === "official";
-    const types: CommunityItemType[] = ["frame", "theme", "collection"];
+    const types: CommunityItemType[] = [
+      "frame",
+      "theme",
+      "collection",
+      "page-template",
+      "kit",
+    ];
     const lists = await Promise.all(
       types.map((type) =>
         type === "frame" && official
@@ -723,4 +818,161 @@ export async function savedFrames(
       return frame ? [{ id: row.id, name: row.name, frame }] : [];
     });
   }, []);
+}
+
+export interface ReviewRow {
+  id: string;
+  type: CommunityItemType;
+  slug: string;
+  name: string;
+  description: string | null;
+  handle: string | null;
+  displayName: string;
+  createdBy: string | null;
+  likeCount: number;
+  useCount: number;
+  publishedAt: Date;
+}
+
+/**
+ * Post-moderation: members' items as they go live, newest first, for the
+ * admin review queue (/admin/community). Official items aren't listed.
+ * Banned or suspended creators' items are already hidden everywhere.
+ */
+export async function itemsForReview(options: {
+  type?: CommunityItemType;
+  limit: number;
+  offset: number;
+}): Promise<{ rows: ReviewRow[]; total: number }> {
+  return guardedRead(
+    async () => {
+      const where = and(
+        visible(),
+        eq(communityItem.isOfficial, false),
+        ...(options.type ? [eq(communityItem.type, options.type)] : []),
+      );
+      const [rows, [total]] = await Promise.all([
+        db
+          .select({
+            id: communityItem.id,
+            type: communityItem.type,
+            slug: communityItem.slug,
+            name: communityItem.name,
+            description: communityItem.description,
+            handle: communityProfile.handle,
+            displayName: communityProfile.displayName,
+            createdBy: communityItem.createdBy,
+            likeCount: communityItem.likeCount,
+            useCount: communityItem.useCount,
+            publishedAt: communityItem.publishedAt,
+          })
+          .from(communityItem)
+          .innerJoin(
+            communityProfile,
+            eq(communityProfile.id, communityItem.profileId),
+          )
+          .leftJoin(userTable, eq(userTable.id, communityProfile.userId))
+          .where(where)
+          .orderBy(desc(communityItem.publishedAt), asc(communityItem.id))
+          .limit(options.limit)
+          .offset(options.offset),
+        db
+          .select({ n: count() })
+          .from(communityItem)
+          .innerJoin(
+            communityProfile,
+            eq(communityProfile.id, communityItem.profileId),
+          )
+          .leftJoin(userTable, eq(userTable.id, communityProfile.userId))
+          .where(where),
+      ]);
+      return {
+        rows: rows.map((row) => ({
+          ...row,
+          type: row.type as CommunityItemType,
+          likeCount: Number(row.likeCount),
+          useCount: Number(row.useCount),
+        })),
+        total: Number(total?.n ?? 0),
+      };
+    },
+    { rows: [], total: 0 },
+  );
+}
+
+export interface FullTextSearch {
+  /** A tsquery from toPrefixQuery */
+  query: string;
+  words: string[];
+  type?: CommunityItemType;
+  tag?: string;
+  limit: number;
+  offset: number;
+}
+
+/** The two queries of a full-text search, built but not run. */
+export function fullTextSearchQueries(options: FullTextSearch) {
+  const tsquery = sql`to_tsquery('simple'::regconfig, ${options.query})`;
+  const tagged = (tag: string) =>
+    exists(
+      db
+        .select({ one: sql`1` })
+        .from(communityItemTag)
+        .where(
+          and(
+            eq(communityItemTag.itemId, communityItem.id),
+            eq(communityItemTag.tag, tag),
+          ),
+        ),
+    );
+  const where = and(
+    visible(),
+    ...(options.type ? [eq(communityItem.type, options.type)] : []),
+    ...(options.tag ? [tagged(options.tag)] : []),
+    or(
+      sql`${SEARCH_DOCUMENT} @@ ${tsquery}`,
+      ...options.words.map((word) => tagged(word)),
+      ...options.words.map((word) =>
+        ilike(communityProfile.handle, `${word}%`),
+      ),
+    ),
+  ) as SQL;
+  return {
+    rows: itemsQuery()
+      .where(where)
+      .orderBy(
+        desc(sql`ts_rank(${SEARCH_DOCUMENT}, ${tsquery})`),
+        desc(communityItem.likeCount),
+        desc(communityItem.publishedAt),
+        asc(communityItem.id),
+      )
+      .limit(options.limit)
+      .offset(options.offset),
+    total: db
+      .select({ n: count() })
+      .from(communityItem)
+      .innerJoin(
+        communityProfile,
+        eq(communityProfile.id, communityItem.profileId),
+      )
+      .leftJoin(userTable, eq(userTable.id, communityProfile.userId))
+      .where(where),
+  };
+}
+
+/**
+ * Full-text search (manual-sql/0017): published items whose name or
+ * description matches every word as a prefix, or that carry one of the
+ * words as a tag, or whose creator's handle starts with one; best match
+ * first. Only called once the index exists (lib/community/search.ts).
+ */
+export async function searchItemsFullText(
+  options: FullTextSearch,
+): Promise<{ cards: CommunityItemCard[]; total: number }> {
+  const queries = fullTextSearchQueries(options);
+  const [rows, [total]] = await Promise.all([
+    queries.rows as Promise<ItemRow[]>,
+    queries.total,
+  ]);
+  return { cards: await toCards(rows), total: Number(total?.n ?? 0) };
 }

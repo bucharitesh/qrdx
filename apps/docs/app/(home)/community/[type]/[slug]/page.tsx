@@ -10,6 +10,7 @@ import { getAdminUser } from "@/app/admin/_lib/guard";
 import { CreatorLine } from "@/components/community/creator-line";
 import { ItemActions } from "@/components/community/item-actions";
 import { ItemGrid, ItemRow } from "@/components/community/item-card";
+import { PagePreview } from "@/components/community/page-preview";
 import { RemoveItemButton } from "@/components/community/remove-item-button";
 import { TryIt } from "@/components/community/try-it";
 import { itemScanGate } from "@/lib/community/home";
@@ -17,14 +18,17 @@ import {
   COMMUNITY_LICENSE_NAME,
   COMMUNITY_LICENSE_URL,
 } from "@/lib/community/licence";
-import { getItem, moreFromCreator } from "@/lib/community/queries";
+import { workspaceCanUnpublish } from "@/lib/community/publish-access";
+import { getItem, moreFromCreator, remixesOf } from "@/lib/community/queries";
 import { MIN_GATE_SCORE } from "@/lib/community/scan-samples";
 import {
   type CommunityItemDetail,
+  itemPath,
   TYPE_LABELS,
   TYPE_SEGMENTS,
   typeFromSegment,
 } from "@/lib/community/types";
+import { getTemplate } from "@/lib/landing/templates";
 import { createMetadata } from "@/lib/metadata";
 import { contentTypeLabel } from "@/lib/qr-design/content";
 import type { ContentType } from "@/types/qr-content";
@@ -76,11 +80,21 @@ export default async function CommunityItemPage({
   const { type: segment, slug } = await params;
   const item = await loadItem(segment, slug);
   if (!item) notFound();
-  const [more, admin] = await Promise.all([
+  const viewer = await viewerId();
+  const [more, admin, remixes, managesSource] = await Promise.all([
     moreFromCreator(item),
     getAdminUser(),
+    item.id && item.remixCount ? remixesOf(item.id) : [],
+    // An owner or admin of the workspace it was published from may
+    // unpublish it too.
+    viewer && item.id && !item.isMine
+      ? workspaceCanUnpublish(viewer, item.id)
+      : false,
   ]);
   const typeLabel = TYPE_LABELS[item.type];
+  const isDesign = item.type === "frame" || item.type === "theme";
+  // The page stays on the server: the actions only need the item's id.
+  const { page, ...actionItem } = item;
 
   return (
     <main className="w-full border-b">
@@ -107,6 +121,21 @@ export default async function CommunityItemPage({
           <div className="min-w-0">
             {item.type === "collection" ? (
               <ItemGrid cards={item.entries ?? []} />
+            ) : item.unavailable ? (
+              <div className="text-muted-foreground flex aspect-[4/3] items-center justify-center rounded-xl border border-dashed p-8 text-center text-sm text-pretty">
+                This kit is no longer available: its page template was removed
+                from the community.
+              </div>
+            ) : item.type === "kit" ? (
+              <div className="grid grid-cols-2 items-start gap-4">
+                <TryIt style={item.preview} />
+                {page && <PagePreview content={page.content} />}
+              </div>
+            ) : page ? (
+              <PagePreview
+                className="mx-auto w-full max-w-[340px]"
+                content={page.content}
+              />
             ) : (
               <TryIt style={item.preview} />
             )}
@@ -143,20 +172,46 @@ export default async function CommunityItemPage({
               )}
               {item.remixedFromLabel && (
                 <p className="text-muted-foreground text-xs">
-                  Remix of {item.remixedFromLabel}
+                  Remix of{" "}
+                  {item.remixedFrom ? (
+                    <Link
+                      className="text-foreground underline underline-offset-2"
+                      href={itemPath(
+                        item.remixedFrom.type,
+                        item.remixedFrom.slug,
+                      )}
+                    >
+                      {item.remixedFromLabel}
+                    </Link>
+                  ) : (
+                    item.remixedFromLabel
+                  )}
                 </p>
               )}
             </div>
 
-            {item.type !== "collection" && <ScanCheck item={item} />}
+            {isDesign && <ScanCheck item={item} />}
 
-            <ItemActions item={item} />
+            <ItemActions
+              item={{ ...actionItem, isMine: item.isMine || managesSource }}
+            />
 
             {admin && item.id && (
               <RemoveItemButton itemId={item.id} name={item.name} />
             )}
 
             <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-sm">
+              {page && item.type === "page-template" && (
+                <>
+                  <dt className="text-muted-foreground">Page type</dt>
+                  <dd>{getTemplate(page.type)?.label ?? page.type}</dd>
+                  <dt className="text-muted-foreground">Details</dt>
+                  <dd className="text-pretty">
+                    Links, contact details and photos were taken out when it was
+                    shared. Put in your own after you use it.
+                  </dd>
+                </>
+              )}
               {item.contentTypes.length > 0 && (
                 <>
                   <dt className="text-muted-foreground">Works with</dt>
@@ -167,7 +222,7 @@ export default async function CommunityItemPage({
                   </dd>
                 </>
               )}
-              {item.type !== "collection" && (
+              {isDesign && (
                 <>
                   <dt className="text-muted-foreground">Exports</dt>
                   <dd>PNG · SVG · PDF · EPS</dd>
@@ -193,6 +248,7 @@ export default async function CommunityItemPage({
         </div>
 
         <div className="mt-14 space-y-10">
+          <ItemRow cards={remixes} title="Remixes" />
           <ItemRow
             cards={more}
             href={
@@ -202,7 +258,28 @@ export default async function CommunityItemPage({
             }
             title={`More from ${item.creator.displayName}`}
           />
-          {item.type !== "collection" && (
+          {item.type === "kit" && (
+            <ItemRow cards={item.entries ?? []} title="In this kit" />
+          )}
+          {page && (
+            <section className="bg-muted/30 rounded-xl border p-5 text-sm">
+              <h2 className="font-semibold">How to use it</h2>
+              <ol className="text-muted-foreground mt-2 list-decimal space-y-1 pl-5">
+                <li>Select Use {item.type === "kit" ? "kit" : "template"}.</li>
+                <li>
+                  {item.type === "kit"
+                    ? "The page is copied into your workspace as a draft, and the look as a saved theme. Put in your own links, details and photos."
+                    : "It's copied into your workspace as a draft page. Put in your own links, details and photos."}
+                </li>
+                <li>Create its QR code to put the page live.</li>
+              </ol>
+              <p className="text-muted-foreground mt-3 text-xs">
+                Free under {COMMUNITY_LICENSE_NAME}: use it for anything, no
+                credit needed.
+              </p>
+            </section>
+          )}
+          {isDesign && (
             <section className="bg-muted/30 rounded-xl border p-5 text-sm">
               <h2 className="font-semibold">How to use it</h2>
               <ol className="text-muted-foreground mt-2 list-decimal space-y-1 pl-5">

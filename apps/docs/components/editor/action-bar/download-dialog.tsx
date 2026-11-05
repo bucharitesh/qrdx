@@ -130,6 +130,8 @@ const FORMATS: {
   bestFor: string;
   Icon: Icon;
   vector?: boolean;
+  /** Shown after "Best for …", lower case */
+  note?: string;
 }[] = [
   { id: "png", label: "PNG", bestFor: "Web, docs and slides", Icon: Gallery },
   { id: "jpg", label: "JPG", bestFor: "Email and small files", Icon: Image },
@@ -143,9 +145,11 @@ const FORMATS: {
   {
     id: "pdf",
     label: "PDF",
+    // A PNG on a PDF page (packages/qrdx download.tsx), so not vector: the
+    // Print-ready tab makes the vector PDF.
     bestFor: "Documents and quick prints",
     Icon: DocumentText,
-    vector: true,
+    note: "for a vector PDF, use Print-ready",
   },
   {
     id: "eps",
@@ -464,7 +468,7 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
             <dd className="text-foreground text-right tabular-nums">
               {printSize} {printUnit}
             </dd>
-            <dt>Colour</dt>
+            <dt>Color</dt>
             <dd className="text-foreground text-right uppercase">
               {colorMode}
             </dd>
@@ -564,7 +568,8 @@ export function DownloadDialog({ open, onOpenChange }: DownloadDialogProps) {
                   </ToggleGroup>
                   <p className="text-muted-foreground mt-2 text-xs">
                     Best for {formatInfo?.bestFor.toLowerCase()}
-                    {formatInfo?.vector ? " · stays sharp at any size" : ""}.
+                    {formatInfo?.vector ? " · stays sharp at any size" : ""}
+                    {formatInfo?.note ? ` · ${formatInfo.note}` : ""}.
                   </p>
                   {epsBlocked && (
                     <p className="text-muted-foreground mt-1 text-xs text-pretty">
@@ -988,7 +993,7 @@ function PrintOptions({
       <section className="grid grid-cols-2 gap-2">
         <div>
           <span className={label} id="print-color-mode">
-            Colour mode
+            Color mode
           </span>
           <ToggleGroup
             aria-labelledby="print-color-mode"
@@ -1073,8 +1078,8 @@ function PrintOptions({
           )}
           {colorMode === "cmyk" && (
             <p>
-              CMYK uses a simple conversion without a colour profile; ask your
-              printer if exact brand colours matter.
+              CMYK uses a simple conversion without a color profile; ask your
+              printer if exact brand colors matter.
             </p>
           )}
           <p>

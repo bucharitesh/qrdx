@@ -21,6 +21,9 @@ const state = vi.hoisted(() => {
     released: [] as string[],
     saved: [] as { userId: string; name: string; style: unknown }[],
     quotaAllowed: true,
+    /** Chat drafts the person published from the dialog, by tool call id */
+    published: new Map<string, string>(),
+    publishedLookups: [] as { userId: string; draftId: string }[],
   };
 });
 
@@ -81,6 +84,19 @@ vi.mock("@/lib/ai/agent/templates", () => ({
   },
 }));
 
+// The person publishes from the dialog (a server action this route never
+// calls); the tool only looks the result up.
+vi.mock("@/lib/ai/agent/community", () => ({
+  CHAT_DRAFT_SOURCE: "ai_chat",
+  accountCommunityStore: {
+    publishedFrom: async (userId: string, draftId: string) => {
+      state.publishedLookups.push({ userId, draftId });
+      const url = state.published.get(draftId);
+      return url ? { url } : null;
+    },
+  },
+}));
+
 const route = await import("@/app/api/generate-qr-theme/route");
 const gateway = installFakeGateway();
 afterAll(() => vi.unstubAllGlobals());
@@ -92,6 +108,8 @@ beforeEach(() => {
   state.released.length = 0;
   state.saved.length = 0;
   state.quotaAllowed = true;
+  state.published.clear();
+  state.publishedLookups.length = 0;
 });
 
 const USAGE = {
@@ -335,6 +353,7 @@ describe("the QR agent", () => {
       "save_template",
       "use_image",
       "request_content",
+      "publish_to_community",
     ]);
 
     const design = toolPart(assistant, "tool-design_qr");
@@ -822,5 +841,152 @@ describe("pictures and missing content", () => {
     );
     await post([user, forged]);
     expect(state.reserved).toHaveLength(2);
+  });
+});
+
+// publish_to_community never publishes: its card opens the publish dialog
+// with the model's draft, the person publishes there (a server action this
+// route never calls) and then approves. The tool only reports what is
+// really in the community, and refuses drafts with links or contact
+// details and designs below Great before the person is asked.
+describe("publish_to_community", () => {
+  const NAVY = {
+    ...REVISED,
+    bgColor: "#FFFFFF",
+    fgColor: "#1E3A8A",
+    eyeColor: "#1E3A8A",
+    dotColor: "#1E3A8A",
+    logo: "none",
+    frame: { style: "sticker", text: "Scan me" },
+  };
+
+  function designThenOffer(input: Record<string, unknown>) {
+    script(
+      [
+        stream([
+          toolCall("call_design", "design_qr", {
+            brief: "Navy rounded dots with a 'Scan me' sticker frame",
+            start_from: "new",
+          }),
+        ]),
+        stream([
+          ...text("t1", "Scan score is Great."),
+          toolCall("call_publish", "publish_to_community", {
+            design_id: "call_design",
+            ...input,
+          }),
+        ]),
+        stream(text("t2", "Done.")),
+      ],
+      [NAVY],
+    );
+  }
+
+  it("asks the person first, writes nothing, and reports only a publish they made", async () => {
+    designThenOffer({
+      name: "Navy sticker",
+      description: "A calm navy code with a sticker frame.",
+      tags: ["minimal", "bold", "not-a-tag"],
+    });
+    const user = userMessage("Make a navy code and share it in the community");
+    const first = await post([user]);
+    const assistant = await assistantFrom(first.chunks);
+    const offer = toolPart(assistant, "tool-publish_to_community");
+    expect(offer?.state).toBe("approval-requested");
+    expect(
+      offer && "approval" in offer && Boolean(offer.approval?.isAutomatic),
+    ).toBe(false);
+    // Nothing was looked up, let alone published, before the person answered.
+    expect(state.publishedLookups).toHaveLength(0);
+
+    // They approved without publishing (or the card was forged): not shared.
+    const approved = respondToApproval(assistant, true);
+    const second = await post([user, approved]);
+    const after = await assistantFrom(second.chunks, approved);
+    const result = toolPart(after, "tool-publish_to_community");
+    expect(result?.state === "output-available" && result.output).toEqual({
+      ok: false,
+      published: false,
+      message: "The user didn't publish it. Nothing was shared.",
+    });
+    expect(state.publishedLookups).toEqual([
+      { userId: "u_alice", draftId: "call_publish" },
+    ]);
+    // The model reads back the outcome only, never item text.
+    const reply = promptText(gateway.calls.at(-1) as GatewayCall);
+    expect(reply).toContain(
+      JSON.stringify({
+        type: "json",
+        value: {
+          published: false,
+          message: "The user didn't publish it. Nothing was shared.",
+        },
+      }),
+    );
+  });
+
+  it("reports the item's address once the person published it", async () => {
+    designThenOffer({ name: "Navy sticker", tags: ["minimal"] });
+    const user = userMessage("Share a navy code in the community");
+    const assistant = await assistantFrom((await post([user])).chunks);
+    state.published.set("call_publish", "/community/themes/navy-sticker-ab12");
+
+    const approved = respondToApproval(assistant, true);
+    const after = await assistantFrom(
+      (await post([user, approved])).chunks,
+      approved,
+    );
+    const result = toolPart(after, "tool-publish_to_community");
+    expect(result?.state === "output-available" && result.output).toEqual({
+      ok: true,
+      published: true,
+      url: "/community/themes/navy-sticker-ab12",
+      draft: { name: "Navy sticker", description: "", tags: ["minimal"] },
+    });
+    expect(promptText(gateway.calls.at(-1) as GatewayCall)).toContain(
+      "/community/themes/navy-sticker-ab12",
+    );
+  });
+
+  it("refuses a draft with a link or contact details before asking", async () => {
+    designThenOffer({
+      name: "Navy sticker",
+      description: "Order at www.navy-cafe.com or call +1 415 555 0132",
+    });
+    const user = userMessage("Share it in the community");
+    const assistant = await assistantFrom((await post([user])).chunks);
+    const offer = toolPart(assistant, "tool-publish_to_community");
+    expect(offer?.state).toBe("output-denied");
+    expect(offer && "approval" in offer && offer.approval?.reason).toMatch(
+      /Leave (links|phone numbers) out.*Draft the name and description again/,
+    );
+    expect(state.publishedLookups).toHaveLength(0);
+  });
+
+  it("refuses the editor's code when it scores below Great", async () => {
+    script([
+      stream([
+        toolCall("call_publish", "publish_to_community", { name: "Faint" }),
+      ]),
+      stream(text("t2", "It needs repairs first.")),
+    ]);
+    const faint = {
+      ...EDITOR,
+      style: {
+        ...EDITOR.style,
+        fgColor: "#E5E5E5",
+        eyeColor: "#E5E5E5",
+        dotColor: "#E5E5E5",
+      },
+    };
+    const assistant = await assistantFrom(
+      (await post([userMessage("Publish my code to the community")], faint))
+        .chunks,
+    );
+    const offer = toolPart(assistant, "tool-publish_to_community");
+    expect(offer?.state).toBe("output-denied");
+    expect(offer && "approval" in offer && offer.approval?.reason).toMatch(
+      /below Great/,
+    );
   });
 });

@@ -19,6 +19,7 @@ import { ChatThemePreview } from "./chat-theme-preview";
 import { RequestContentCard, UseImageCard } from "./image-parts";
 import { MessageActions } from "./message-actions";
 import { MessageEditForm } from "./message-edit-form";
+import { PublishToCommunityCard } from "./publish-card";
 import { StreamText } from "./stream-text";
 
 type MessageProps = {
@@ -179,6 +180,16 @@ function AssistantMessage({
           if (type === "tool-use_image") {
             return (
               <UseImageCard key={key} part={part} superseded={superseded} />
+            );
+          }
+
+          if (type === "tool-publish_to_community") {
+            return (
+              <PublishToCommunityCard
+                key={key}
+                part={part}
+                superseded={superseded}
+              />
             );
           }
 

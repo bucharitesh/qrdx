@@ -9,6 +9,11 @@
 //   ./community-seed-presets.json stores them: written from the presets by
 //   apps/docs/scripts/community-seed/generate.ts, each payload what a
 //   publish of that theme stores;
+// - QRdx's own page templates (apps/docs/lib/landing/templates), each run
+//   through the publish scrub (sample text, no photos, no real data), and
+//   8 official kits pairing one with a seeded theme and/or frame, as
+//   ./community-seed-pages.json stores them (apps/docs/scripts/
+//   community-seed/page-templates.ts);
 // - the official account's themes already in the gallery (copied by
 //   backfill-community.mjs) are moved to @qrdx and marked official.
 //
@@ -46,6 +51,11 @@ const here = (path) => new URL(path, import.meta.url);
 
 export const SEED = JSON.parse(
   readFileSync(here("./community-seed.json"), "utf8")
+);
+
+/** Page templates and kits, generated from the app (see the header). */
+export const PAGES_SEED = JSON.parse(
+  readFileSync(here("./community-seed-pages.json"), "utf8")
 );
 
 /** Built-in themes, generated from the app's presets (see the header). */
@@ -162,7 +172,56 @@ export function buildSeedItems(frames = loadOfficialFrames()) {
       featured: featured.has(`theme:${theme.id}`),
     });
   }
+  // Already in the shape a publish stores, scrubbed by the app.
+  for (const template of PAGES_SEED.templates) {
+    items.push({
+      id: seedItemId("page-template", template.id),
+      ref: `page-template:${template.id}`,
+      type: "page-template",
+      slug: template.slug,
+      name: template.name,
+      description: template.description,
+      tags: template.tags.slice(0, 5),
+      payload: template.payload,
+      facets: { pageType: template.payload.page.type },
+      featured: false,
+    });
+  }
   const byRef = new Map(items.map((item) => [item.ref, item]));
+  for (const kit of PAGES_SEED.kits) {
+    const part = (ref) => {
+      if (!ref) return;
+      const item = byRef.get(ref);
+      if (!item) throw new Error(`kit ${kit.id}: unknown item ${ref}`);
+      return item.id;
+    };
+    const parts = {
+      theme: part(kit.theme),
+      frame: part(kit.frame),
+      page: part(kit.page),
+    };
+    // As a publish orders a kit's entries: theme, frame, page.
+    const entries = [parts.theme, parts.frame, parts.page].filter(Boolean);
+    items.push({
+      id: seedItemId("kit", kit.id),
+      ref: `kit:${kit.id}`,
+      type: "kit",
+      slug: kit.slug,
+      name: kit.name,
+      description: kit.description,
+      tags: [],
+      payload: {
+        kit: {
+          ...(parts.theme ? { theme: parts.theme } : {}),
+          ...(parts.frame ? { frame: parts.frame } : {}),
+          page: parts.page,
+        },
+      },
+      facets: null,
+      featured: false,
+      entries,
+    });
+  }
   for (const collection of SEED.collections) {
     const entries = collection.items.map((ref) => {
       const item = byRef.get(ref);
@@ -260,16 +319,15 @@ export function planSeed(snapshot, seedItems, now = new Date()) {
     published.set(design, item.slug);
     inserts.push(item);
   }
-  // Seeding a collection needs every item it lists in the database.
+  // Seeding a collection or kit needs every item it lists in the database.
   const present = new Set([...existingIds, ...inserts.map((item) => item.id)]);
   const insertable = inserts.filter(
-    (item) =>
-      item.type !== "collection" || item.entries.every((id) => present.has(id))
+    (item) => !item.entries || item.entries.every((id) => present.has(id))
   );
   for (const item of inserts) {
     if (!insertable.includes(item)) {
       warnings.push(
-        `collection ${item.slug} lists an item that wasn't seeded: skipped.`
+        `${item.type} ${item.slug} lists an item that wasn't seeded: skipped.`
       );
     }
   }
@@ -345,10 +403,10 @@ export async function applySeed(client, plan, userId) {
     ]);
   }
   if (plan.verify) await client.query(SQL.verifyProfile, [plan.verify, now]);
-  // Items first (collections reference them), in seed order.
+  // Items first (collections and kits reference them), in seed order.
   const ordered = [
-    ...plan.inserts.filter((item) => item.type !== "collection"),
-    ...plan.inserts.filter((item) => item.type === "collection"),
+    ...plan.inserts.filter((item) => !item.entries),
+    ...plan.inserts.filter((item) => item.entries),
   ];
   for (const item of ordered) {
     const hash = payloadHash(item.payload);
@@ -398,7 +456,7 @@ export async function verifySeed(client, plan) {
       `community_item: ${seeded} of ${ids.length} official item(s) in place`
     );
   }
-  const collections = plan.inserts.filter((item) => item.type === "collection");
+  const collections = plan.inserts.filter((item) => item.entries);
   const expected = collections.reduce(
     (sum, item) => sum + item.entries.length,
     0
