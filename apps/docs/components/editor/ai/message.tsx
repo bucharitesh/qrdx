@@ -16,6 +16,7 @@ import {
 } from "./agent-parts";
 import { ChatImagePreview } from "./chat-image-preview";
 import { ChatThemePreview } from "./chat-theme-preview";
+import { RequestContentCard, UseImageCard } from "./image-parts";
 import { MessageActions } from "./message-actions";
 import { MessageEditForm } from "./message-edit-form";
 import { StreamText } from "./stream-text";
@@ -172,6 +173,22 @@ function AssistantMessage({
           if (type === "tool-save_template") {
             return (
               <SaveTemplateCard key={key} part={part} superseded={superseded} />
+            );
+          }
+
+          if (type === "tool-use_image") {
+            return (
+              <UseImageCard key={key} part={part} superseded={superseded} />
+            );
+          }
+
+          if (type === "tool-request_content") {
+            return (
+              <RequestContentCard
+                key={key}
+                part={part}
+                superseded={superseded}
+              />
             );
           }
 
