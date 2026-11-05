@@ -254,7 +254,22 @@ async function entriesFor(
   return map;
 }
 
+/**
+ * Whether a card may be listed: a kit needs its page template and a
+ * collection at least 2 visible items, once removed items stop showing.
+ */
+const listable = (card: CommunityItemCard) =>
+  card.type === "kit"
+    ? Boolean(card.page)
+    : card.type === "collection"
+      ? (card.itemCount ?? 0) >= 2
+      : true;
+
 async function toCards(rows: ItemRow[]): Promise<CommunityItemCard[]> {
+  return (await buildCards(rows)).filter(listable);
+}
+
+async function buildCards(rows: ItemRow[]): Promise<CommunityItemCard[]> {
   const ids = rows.map((row) => row.id);
   const collectionIds = rows
     .filter((row) => row.type === "collection" || row.type === "kit")
@@ -284,7 +299,7 @@ async function toCards(rows: ItemRow[]): Promise<CommunityItemCard[]> {
         kit: parts,
         itemCount: items.length,
         preview: look,
-        ...(page?.page ? { page: page.page } : {}),
+        ...(page?.page ? { page: page.page } : { unavailable: true }),
       };
     }
     return {
@@ -378,8 +393,10 @@ export async function getItem(
       )
       .limit(1)) as ItemRow[];
     if (!row) return null;
-    const [card] = await toCards([row]);
+    const [card] = await buildCards([row]);
     if (!card) return null;
+    // Hidden once fewer than 2 of its items are still in the community.
+    if (card.type === "collection" && (card.itemCount ?? 0) < 2) return null;
     const [liked, saved] = viewerId
       ? await Promise.all([
           db

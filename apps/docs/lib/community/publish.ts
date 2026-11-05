@@ -34,6 +34,7 @@ import {
 } from "./payloads";
 import { ensurePublishingProfile } from "./profiles";
 import { toPublicStyle } from "./public-style-server";
+import { workspaceCanUnpublish } from "./publish-access";
 import { remixSourceOf } from "./remix";
 import { checkScanGate, gateFailureMessage, type ScanGate } from "./scan-gate";
 import { COMMUNITY_TAG, guarded, guardedRead } from "./store";
@@ -159,7 +160,8 @@ export async function insertItem(
     const profile = await ensurePublishingProfile(item.userId);
     // A saved theme copied from a community item: this is a remix of it.
     const remix =
-      item.sourceKind === "qr_preset" && item.sourceId
+      (item.sourceKind === "qr_preset" || item.sourceKind === "landing_page") &&
+      item.sourceId
         ? await remixSourceOf(item.sourceId)
         : null;
     const id = cuid();
@@ -465,6 +467,26 @@ export async function unpublishItem(
         ),
       )
       .returning({ id: communityItem.id, type: communityItem.type });
+    // Not theirs: an owner or admin of the workspace it came from may too.
+    if (removed.length === 0 && (await workspaceCanUnpublish(userId, itemId))) {
+      removed.push(
+        ...(await db
+          .update(communityItem)
+          .set({
+            status: "removed",
+            removedAt: new Date(),
+            removedReason: "workspace",
+            updatedAt: new Date(),
+          })
+          .where(
+            and(
+              eq(communityItem.id, itemId),
+              ne(communityItem.status, "removed"),
+            ),
+          )
+          .returning({ id: communityItem.id, type: communityItem.type })),
+      );
+    }
     if (removed.length === 0) return false;
     revalidateTag(COMMUNITY_TAG, "max");
     if (removed[0]?.type === "theme") revalidateTag("community-themes", "max");

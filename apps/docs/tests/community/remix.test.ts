@@ -62,9 +62,17 @@ vi.mock("@/lib/plans", async (importOriginal) => ({
 vi.mock("@/lib/limit-notices", () => ({ noteLimitUsage: vi.fn() }));
 
 import { ownWorkspaceId } from "@repo/auth/own-workspace-id";
-import { copyItemToWorkspace } from "@/lib/community/copies";
-import { publishSavedTheme, unpublishItem } from "@/lib/community/publish";
+import {
+  copyItemToWorkspace,
+  copyTemplateToWorkspace,
+} from "@/lib/community/copies";
+import {
+  publishPageTemplate,
+  publishSavedTheme,
+  unpublishItem,
+} from "@/lib/community/publish";
 import { getItem, remixesOf } from "@/lib/community/queries";
+import { buildTemplateContent } from "@/lib/landing/templates";
 import { fakeDb } from "../support/fake-db";
 
 const OWN = ownWorkspaceId("u_ana");
@@ -180,6 +188,84 @@ describe("remix lineage", () => {
     expect(fakeDb.find("communityItem", { id: own.id })).toMatchObject({
       remixedFromItemId: null,
       remixedFromLabel: null,
+    });
+  });
+
+  const ana = { userId: "u_ana", organizationId: OWN, role: "owner" as const };
+
+  it("credits a second copy made the same day (review F1)", async () => {
+    const original = await bobsTheme();
+    await copyItemToWorkspace(ana, { type: "theme", slug: original.slug });
+    const second = await copyItemToWorkspace(ana, {
+      type: "theme",
+      slug: original.slug,
+    });
+    const remix = await publishSavedTheme({
+      userId: "u_ana",
+      theme: {
+        id: second.themeId,
+        name: "Second remix",
+        style: { ...NAVY, fgColor: "#0F172A", dotColor: "#0F172A" },
+      },
+      tags: [],
+    });
+    expect(
+      fakeDb.find("communityItem", { id: remix.id })?.remixedFromItemId,
+    ).toBe(original.id);
+    // Still one use for the day.
+    expect(fakeDb.find("communityItem", { id: original.id })?.useCount).toBe(1);
+  });
+
+  it("gives no credit or count to a removed original (review F2)", async () => {
+    const original = await bobsTheme();
+    const copy = await copyItemToWorkspace(ana, {
+      type: "theme",
+      slug: original.slug,
+    });
+    await unpublishItem("u_bob", original.id);
+    const remix = await publishSavedTheme({
+      userId: "u_ana",
+      theme: {
+        id: copy.themeId,
+        name: "After removal",
+        style: { ...NAVY, fgColor: "#172554", dotColor: "#172554" },
+      },
+      tags: [],
+    });
+    expect(fakeDb.find("communityItem", { id: remix.id })).toMatchObject({
+      remixedFromItemId: null,
+      remixedFromLabel: null,
+    });
+    expect(fakeDb.find("communityItem", { id: original.id })?.remixCount).toBe(
+      0,
+    );
+  });
+
+  it("credits a page template remixed from Use template (review F4)", async () => {
+    state.plan = "pro";
+    const template = await publishPageTemplate({
+      userId: "u_bob",
+      page: {
+        id: "pg_bob",
+        type: "links",
+        content: buildTemplateContent("links"),
+      },
+      details: { name: "Bob's links" },
+    });
+    const copied = await copyTemplateToWorkspace(ana, template.slug);
+    const page = fakeDb.find("landingPage", { id: copied.pageId });
+    const content = structuredClone(page?.content) as ReturnType<
+      typeof buildTemplateContent
+    >;
+    content.blocks = content.blocks.slice(0, -1);
+    const remix = await publishPageTemplate({
+      userId: "u_ana",
+      page: { id: copied.pageId, type: "links", content },
+      details: { name: "Ana's links" },
+    });
+    expect(fakeDb.find("communityItem", { id: remix.id })).toMatchObject({
+      remixedFromItemId: template.id,
+      remixedFromLabel: "Bob's links by bob",
     });
   });
 });

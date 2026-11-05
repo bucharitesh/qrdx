@@ -78,6 +78,8 @@ export interface CommunityItemCard {
   stack?: ThemeStyles[];
   /** Collections and kits: how many items they hold */
   itemCount?: number;
+  /** Kits whose page template was removed: shown as no longer available */
+  unavailable?: boolean;
   /** Kits: which of their entries is the page, the theme and the frame */
   kit?: { page?: string; theme?: string; frame?: string };
   /**
