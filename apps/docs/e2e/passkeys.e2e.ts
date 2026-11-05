@@ -171,7 +171,7 @@ const clickButton = (page: Page, text: string, dialog?: string) =>
       const root = title ? window.__e2e.byRole("dialog", title) : undefined;
       if (title && !root) return false;
       const el = window.__e2e.byRole("button", label, { exact: true, root });
-      if (!el || el.disabled) return false;
+      if (!el || (el as HTMLButtonElement).disabled) return false;
       window.__e2e.click(el);
       return true;
     },
@@ -572,7 +572,7 @@ async function main() {
         const text = await page.waitFor(() => {
           const dialog = window.__e2e.byRole("dialog", "Add a passkey");
           return /sign out and sign in again/.test(dialog?.textContent ?? "")
-            ? dialog.textContent
+            ? (dialog?.textContent ?? false)
             : false;
         });
         await shot(page, "add-passkey-sign-in-again");
@@ -614,6 +614,7 @@ async function main() {
             exact: true,
             root: dialog,
           });
+          if (!button) throw new Error("No Remove button in the dialog");
           window.__e2e.click(button);
         });
         await page.waitFor(() =>
@@ -655,13 +656,6 @@ async function main() {
     `\n${results.length - failed.length} passed, ${failed.length} failed`,
   );
   if (failed.length) process.exitCode = 1;
-}
-
-declare global {
-  interface Window {
-    /** In-page helpers from cdp.mjs */
-    __e2e: any;
-  }
 }
 
 main().catch((error) => {
