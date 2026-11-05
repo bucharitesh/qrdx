@@ -9,6 +9,7 @@ import {
 } from "qrdx";
 import type { QRCustomFrame } from "qrdx/types";
 import { z } from "zod";
+import { findThemeById } from "@/app/dashboard/themes/_lib/queries";
 import { CHAT_DRAFT_SOURCE } from "@/lib/ai/agent/community";
 import { CopyRefusedError, copyItemToWorkspace } from "@/lib/community/copies";
 import {
@@ -23,6 +24,10 @@ import {
   publishStyle,
   unpublishItem,
 } from "@/lib/community/publish";
+import {
+  themePublishAccess,
+  WORKSPACE_PUBLISH_REFUSAL,
+} from "@/lib/community/publish-access";
 import { savedFrames } from "@/lib/community/queries";
 import {
   ItemNotFoundError,
@@ -204,6 +209,59 @@ export async function publishCommunityDesign(
     return { ok: true, data: { href: itemPath(item.type, item.slug) } };
   } catch (error) {
     return failure(error, "publishCommunityDesign");
+  }
+}
+
+const publishThemeFrameSchema = publishFrameSchema
+  .omit({ frame: true })
+  .extend({ themeId: z.string().min(1).max(64) });
+
+/**
+ * Publishes the custom frame of a saved theme (the dashboard's Themes page).
+ * The frame is read from the saved theme on the server, never taken from the
+ * client, and the theme's access rules apply: your themes, or a workspace's
+ * as its owner or admin. Then it's the same publish as the editor's.
+ */
+export async function publishCommunityThemeFrame(
+  input: z.input<typeof publishThemeFrameSchema>,
+): Promise<CommunityResult<{ href: string }>> {
+  try {
+    const userId = await getCurrentUserId();
+    const parsed = publishThemeFrameSchema.safeParse(input);
+    if (!parsed.success) return fail("VALIDATION_ERROR", "Check the details.");
+    if (parsed.data.acceptLicense !== true) {
+      return fail("LICENSE_REQUIRED", "Confirm the CC0 licence to publish.");
+    }
+    const theme = await findThemeById(parsed.data.themeId);
+    const access = theme ? await themePublishAccess(userId, theme) : "none";
+    if (!theme || access === "none") {
+      return fail("NOT_FOUND", "This theme isn't in this workspace.");
+    }
+    if (access === "view") return fail("NOT_FOUND", WORKSPACE_PUBLISH_REFUSAL);
+    const frame = (theme.style as { frame?: { style?: unknown } } | null)
+      ?.frame;
+    if (frame?.style !== "custom") {
+      return fail("VALIDATION_ERROR", "This theme has no custom frame.");
+    }
+    if (await limited(publishLimiter, `community-publish:${userId}`)) {
+      return fail(
+        "RATE_LIMITED",
+        "You've published a lot today. Try again tomorrow.",
+      );
+    }
+    const item = await publishFrame({
+      userId,
+      frame,
+      details: {
+        name: parsed.data.name,
+        description: parsed.data.description,
+        tags: parsed.data.tags,
+      },
+      source: { kind: "qr_preset", id: theme.id },
+    });
+    return { ok: true, data: { href: itemPath(item.type, item.slug) } };
+  } catch (error) {
+    return failure(error, "publishCommunityThemeFrame");
   }
 }
 
