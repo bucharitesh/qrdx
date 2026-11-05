@@ -1,0 +1,100 @@
+name: Self-hosting problem
+description: Trouble installing, running or updating your own QRdx instance with Docker or Node.js
+title: "[self-hosting]: "
+labels: ["self-hosting", "needs triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Before you file this, check the [self-hosting guide](https://qrdx.dev/docs/self-hosting) and its [Troubleshooting](https://qrdx.dev/docs/self-hosting#troubleshooting) section. Most startup errors name the variable that's missing or invalid.
+
+        **Don't paste secrets.** Logs and config can contain your `DATABASE_URL` password, `BETTER_AUTH_SECRET`, OAuth client secrets, API keys and session cookies. Replace each one with `***` before you submit. If a secret does end up in an issue, editing the issue isn't enough, because GitHub keeps the edit history: rotate the secret.
+
+  - type: input
+    id: commit
+    attributes:
+      label: Commit
+      description: The output of `git rev-parse --short HEAD` in your checkout.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: setup
+    attributes:
+      label: How do you run it?
+      options:
+        - Docker Compose (the repository's docker-compose.yml)
+        - Node.js (the manual setup)
+        - Something else (describe it below)
+    validations:
+      required: true
+
+  - type: input
+    id: runtime
+    attributes:
+      label: Docker or Node.js version
+      description: For Docker, the output of `docker --version` and `docker compose version`. For Node.js, `node -v` and `pnpm -v`.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: database
+    attributes:
+      label: Database
+      options:
+        - Postgres from docker-compose.yml
+        - Neon
+        - Another managed Postgres
+    validations:
+      required: true
+
+  - type: dropdown
+    id: stage
+    attributes:
+      label: Where does it go wrong?
+      options:
+        - Building or starting the containers
+        - Syncing the schema (the migrate service or pnpm db:push)
+        - Signing in or creating the first user
+        - Making the first admin
+        - Reverse proxy, HTTPS or Content-Security-Policy
+        - Updating to a newer commit
+        - An optional service (AI, payments, file storage, custom domains, integrations)
+        - The app runs, but a feature in it is broken
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: What you ran, what you expected and what happened instead. Mention anything you changed from the guide, such as a different port, domain or proxy.
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: With Docker Compose, the output of `docker compose logs --tail=200 migrate app`. With Node.js, the server output around the error. Remove secrets first.
+      render: shell
+    validations:
+      required: true
+
+  - type: textarea
+    id: env-names
+    attributes:
+      label: Environment variables you set
+      description: Names only, never values. For example `NEXT_PUBLIC_APP_URL`, `DATABASE_URL`, `BETTER_AUTH_SECRET`, `GITHUB_CLIENT_ID`.
+      render: shell
+
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Before submitting
+      description: By submitting this issue, you agree to follow the [contributing guidelines](https://github.com/bucharitesh/qrdx/blob/main/CONTRIBUTING.md) and the [code of conduct](https://github.com/bucharitesh/qrdx/blob/main/.github/CODE_OF_CONDUCT.md).
+      options:
+        - label: I followed the self-hosting guide and read its Troubleshooting section
+          required: true
+        - label: I removed secrets (`.env` values, keys, tokens, cookies) from everything above
+          required: true
