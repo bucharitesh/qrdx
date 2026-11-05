@@ -448,6 +448,12 @@ export const communityItem = pgTable(
     index("community_item_profile_id_idx").on(table.profileId),
     index("community_item_payload_hash_idx").on(table.payloadHash),
     index("community_item_source_idx").on(table.sourceKind, table.sourceId),
+    // Full-text search (manual-sql/0017_community_search.sql; the expression
+    // must stay the one apps/docs/lib/community/search.ts queries)
+    index("community_item_search_idx").using(
+      "gin",
+      sql`to_tsvector('simple'::regconfig, coalesce("name", '') || ' ' || coalesce("description", ''))`
+    ),
   ]
 );
 

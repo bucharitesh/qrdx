@@ -2,6 +2,7 @@ import "server-only";
 
 import { unstable_cache } from "next/cache";
 import { FRAME_TEXT_MAX_LENGTH, type QRCustomFrame } from "qrdx/types";
+import { logError } from "@/lib/log-error";
 import { baseUrl } from "@/lib/metadata";
 import type { LogoIconId } from "@/lib/qr-design/style";
 import type { ThemeStyles } from "@/types/theme";
@@ -13,7 +14,8 @@ import {
   COMMUNITY_SEARCH_POOL,
 } from "./limits";
 import { presetLogoIcon } from "./public-style";
-import { getItem, listFrames, listItems } from "./queries";
+import { getItem, listFrames, listItems, searchItemsFullText } from "./queries";
+import { fullTextSearchAvailable, searchWords, toPrefixQuery } from "./search";
 import { COMMUNITY_TAG } from "./store";
 import { untrustedText } from "./text";
 import {
@@ -266,6 +268,38 @@ function matches(card: CommunityItemCard, words: string[]): boolean {
 export async function searchCommunity(
   search: CommunitySearch,
 ): Promise<{ items: CommunityApiItem[]; total: number }> {
+  const limit = Math.min(
+    search.limit ?? COMMUNITY_PAGE_DEFAULT,
+    COMMUNITY_PAGE_MAX,
+  );
+  const offset = search.offset ?? 0;
+  // Postgres full-text search once manual-sql/0017 is applied; until then
+  // (or if it fails) the in-memory search below.
+  const query = toPrefixQuery(search.q ?? "");
+  if (query && (await fullTextSearchAvailable())) {
+    try {
+      const found = await searchItemsFullText({
+        query,
+        words: searchWords(search.q ?? ""),
+        type: search.type,
+        tag: search.tag?.trim().toLowerCase() || undefined,
+        limit,
+        offset,
+      });
+      return { items: found.cards.map(toApiItem), total: found.total };
+    } catch (error) {
+      logError(error as Error, { action: "community full-text search" });
+    }
+  }
+  return searchInMemory(search, limit, offset);
+}
+
+/** Today's search: every word in a cached pool of the most popular items. */
+async function searchInMemory(
+  search: CommunitySearch,
+  limit: number,
+  offset: number,
+): Promise<{ items: CommunityApiItem[]; total: number }> {
   const types = search.type ? [search.type] : COMMUNITY_TYPES;
   const lists = await Promise.all(types.map((type) => cachedCards(type)));
   const words = normalize(search.q ?? "")
@@ -291,11 +325,6 @@ export async function searchCommunity(
     .filter((card) => card.slug)
     .filter((card) => !tag || card.tags.includes(tag))
     .filter((card) => matches(card, words));
-  const offset = search.offset ?? 0;
-  const limit = Math.min(
-    search.limit ?? COMMUNITY_PAGE_DEFAULT,
-    COMMUNITY_PAGE_MAX,
-  );
   return {
     items: found.slice(offset, offset + limit).map(toApiItem),
     total: found.length,
