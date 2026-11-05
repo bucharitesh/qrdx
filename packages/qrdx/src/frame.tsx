@@ -77,7 +77,16 @@ export interface FrameLabel {
   align?: "start" | "middle" | "end";
   /** CSS font weight (default 700); PDF and EPS draw 600+ as bold */
   fontWeight?: number;
+  /**
+   * The frame text this label draws: "text", "secondaryText", or a custom
+   * spec's label id. Every letter of curved text carries its label's field.
+   * Editors find a label by it (see `frameLabelMarkers`).
+   */
+  field?: string;
 }
+
+/** Attribute that marks frame labels in SVG drawn with `frameLabelMarkers`. */
+export const FRAME_LABEL_ATTRIBUTE = "data-qrdx-frame-label";
 
 export interface FrameLayout {
   /** Full artwork width (frame included) */
@@ -146,7 +155,8 @@ function makeLabel(
   rowHeight: number,
   maxWidth: number,
   color: string,
-  fontScale = 1
+  fontScale: number,
+  field: string
 ): FrameLabel | null {
   if (!text) {
     return null;
@@ -163,6 +173,7 @@ function makeLabel(
     fontSize,
     maxWidth,
     color,
+    field,
   };
 }
 
@@ -198,7 +209,8 @@ export function getFrameLayout(
     centerY: number,
     rowHeight: number,
     maxWidth: number,
-    labelColor: string
+    labelColor: string,
+    field = "text"
   ) =>
     makeLabel(
       label,
@@ -207,7 +219,8 @@ export function getFrameLayout(
       rowHeight,
       maxWidth,
       labelColor,
-      fontScale
+      fontScale,
+      field
     );
 
   if (isShapedFrameStyle(frame.style)) {
@@ -489,9 +502,11 @@ export function wrapWithFrame(
     frame: AnyQRFrame;
     bgColor?: ColorConfig;
     svgProps?: SVGProps<SVGSVGElement>;
+    /** Mark each label with FRAME_LABEL_ATTRIBUTE (its `field`), for editors */
+    markLabels?: boolean;
   }
 ): ReactElement {
-  const { size, frame, bgColor, svgProps } = options;
+  const { size, frame, bgColor, svgProps, markLabels } = options;
   const layout = getFrameLayout(size, frame, bgColor);
   const labels = frameLabels(layout);
   const width = round(layout.width);
@@ -528,6 +543,8 @@ export function wrapWithFrame(
           {...(label.rotate && {
             transform: `rotate(${round(label.rotate)} ${round(label.x)} ${round(label.y)})`,
           })}
+          {...(markLabels &&
+            label.field && { [FRAME_LABEL_ATTRIBUTE]: label.field })}
         >
           {label.text}
         </text>
