@@ -10,7 +10,7 @@ const CELLS = [
   [2, 2],
 ] as const;
 
-/** A suggestion's look at a glance: its colours and module shape. */
+/** A suggestion's look at a glance: its colors and module shape. */
 export function PromptSwatch({
   swatch,
   className,

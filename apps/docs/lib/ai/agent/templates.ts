@@ -2,7 +2,7 @@ import "server-only";
 
 import type { ThemeStyles } from "@/types/theme";
 
-// Custom templates are saved themes: a look (colours, shapes, frame and its
+// Custom templates are saved themes: a look (colors, shapes, frame and its
 // text, border, logo) without content, in the user's account, listed under
 // Themes and offered in the editor. The chat saves them through the same
 // server action as the editor's "Save theme" dialog (actions/qr-themes.ts),

@@ -11,8 +11,9 @@ import {
 import { cn } from "@repo/design-system/lib/utils";
 import { Setting4, ShieldTick } from "iconsax-reactjs";
 import Link from "next/link";
-import { useLayoutEffect } from "react";
+import { useLayoutEffect, useRef } from "react";
 import { useMounted } from "@/lib/hooks/use-mounted";
+import { setConsentBannerInset } from "./banner-inset";
 import { ACTION_LABELS, PRIVACY_POLICY_URL, TEXT_LINK } from "./consent-copy";
 import {
   CONSENT_EARLY_TAP_ATTRIBUTE,
@@ -49,12 +50,34 @@ export function CookieBanner() {
     if (tap) void performBannerAction(tap);
   }, [early, visible, performBannerAction]);
 
-  if (!early && !visible) return null;
+  // While it shows, the editor's popovers keep clear of it (banner-inset.ts).
+  const shown = early || visible;
+  const ref = useRef<HTMLElement>(null);
+  useLayoutEffect(() => {
+    const section = ref.current;
+    if (!(shown && section)) return;
+    const measure = () => {
+      const box = section.getBoundingClientRect();
+      setConsentBannerInset(box.height > 0 ? window.innerHeight - box.top : 0);
+    };
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(section);
+    window.addEventListener("resize", measure);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", measure);
+      setConsentBannerInset(0);
+    };
+  }, [shown]);
+
+  if (!shown) return null;
 
   const actions = early ? EARLY_BANNER_ACTIONS : banner.orderedActions;
 
   return (
     <section
+      ref={ref}
       aria-labelledby="cookie-banner-title"
       aria-describedby="cookie-banner-description"
       className={cn(

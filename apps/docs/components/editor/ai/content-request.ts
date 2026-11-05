@@ -88,7 +88,7 @@ export const QUICK_CONTENT_TYPES: ContentType[] = (
   CONTENT_CATEGORIES.find((category) => category.id === "popular")?.types ?? []
 ).filter((type) => type !== "url");
 
-/** Every other type, in the catalogue's order, behind "More types". */
+/** Every other type, in the catalog's order, behind "More types". */
 export const MORE_CONTENT_TYPES: ContentType[] = CONTENT_TYPES_METADATA.map(
   (meta) => meta.type,
 ).filter((type) => type !== "url" && !QUICK_CONTENT_TYPES.includes(type));
