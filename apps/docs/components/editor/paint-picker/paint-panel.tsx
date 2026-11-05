@@ -16,10 +16,13 @@ import {
 } from "@repo/design-system/components/ui/toggle-group";
 import { cn } from "@repo/design-system/lib/utils";
 import { Bookmark, Magicpen, Warning2 } from "iconsax-reactjs";
+import type { ImageToneMap } from "qrdx";
 import {
   type ColorConfig,
   type GradientStop,
   getNormalizedColor,
+  type ImagePaint,
+  isImagePaint,
   normalizeColorConfig,
 } from "qrdx/types";
 import {
@@ -86,6 +89,7 @@ import {
   SwatchDot,
 } from "./controls";
 import { GradientBar, GradientToolbar } from "./gradient-editor";
+import { ImageFillEditor, PictureEmpty, useImageTones } from "./image-fill";
 
 // ── Design context ─────────────────────────────────────────────────────────
 
@@ -144,9 +148,9 @@ function usePaintDesign(enabled: boolean): PaintDesign {
 
 // ── Kinds ──────────────────────────────────────────────────────────────────
 
-export type PaintKind = "solid" | "linear" | "radial" | "angular";
+export type PaintKind = "solid" | "linear" | "radial" | "angular" | "image";
 
-/** Every fill type a QR color takes. */
+/** Every color fill type a QR color takes. */
 export const QR_PAINT_KINDS: PaintKind[] = [
   "solid",
   "linear",
@@ -154,11 +158,19 @@ export const QR_PAINT_KINDS: PaintKind[] = [
   "angular",
 ];
 
+/**
+ * The color fills plus an image fill: for the background, the dots and the
+ * eyes where the design is kept with its pictures (the playground, the
+ * builder and saved themes; never links or published styles).
+ */
+export const QR_IMAGE_KINDS: PaintKind[] = [...QR_PAINT_KINDS, "image"];
+
 const KIND_LABELS: Record<PaintKind, string> = {
   solid: "Solid",
   linear: "Linear",
   radial: "Radial",
   angular: "Angular",
+  image: "Image",
 };
 
 /** A second color to start a gradient from `color`: hue +40°, or a tone. */
@@ -173,9 +185,20 @@ function partnerOf(color: string): string {
   return toHex(hslToRgb(next));
 }
 
-/** `paint` as another kind, keeping its stops (and angle) where it can. */
-function convert(paint: ColorConfig, kind: PaintKind, target: string) {
-  const normalized = normalizeColorConfig(paint);
+/**
+ * `paint` as another color kind, keeping its stops (and angle) where it
+ * can. An image fill turns into its underlay color first.
+ */
+function convert(
+  paint: ColorConfig,
+  kind: Exclude<PaintKind, "image">,
+  target: string,
+) {
+  const given = normalizeColorConfig(paint);
+  const normalized =
+    given.type === "image"
+      ? { type: "solid" as const, color: given.underlay ?? target }
+      : given;
   if (kind === "solid") return { type: "solid" as const, color: target };
   let stops: GradientStop[];
   let angle = 0;
@@ -198,6 +221,51 @@ function convert(paint: ColorConfig, kind: PaintKind, target: string) {
   }
   if (kind === "radial") return { type: "radial" as const, stops };
   return { type: kind, stops, angle };
+}
+
+/**
+ * A new image fill from a picture. The color it replaces becomes the
+ * underlay when it suits the part (dark for the code, light for the
+ * background), so the fix has something to blend toward.
+ */
+function newImageFill(
+  src: string,
+  previous: string,
+  role: PaintRole | null,
+): ImagePaint {
+  const parsed = parseColorString(previous);
+  const lum = parsed
+    ? (0.2126 * parsed.r + 0.7152 * parsed.g + 0.0722 * parsed.b) / 255
+    : 0.5;
+  const suits =
+    role === "code" ? lum < 0.35 : role === "background" ? lum > 0.75 : true;
+  return {
+    type: "image",
+    src,
+    fit: "cover",
+    scale: 1,
+    position: "center",
+    opacity: 1,
+    ...(parsed && suits ? { underlay: toHex({ ...parsed, a: 1 }) } : {}),
+  };
+}
+
+/** Every image fill's picture in a design. */
+function imageSourcesOf(style: Partial<QRStyle> | undefined): string[] {
+  if (!style) return [];
+  const paints = [
+    style.bgColor,
+    style.fgColor,
+    style.eyeColor,
+    style.dotColor,
+    ...Object.values(style.eyeColors ?? {}).flatMap((eye) => [
+      eye?.outer,
+      eye?.inner,
+    ]),
+  ];
+  return paints.flatMap((item) =>
+    typeof item === "object" && item?.type === "image" ? [item.src] : [],
+  );
 }
 
 // ── Parsing what people paste ──────────────────────────────────────────────
@@ -478,23 +546,33 @@ function SafetyRow({
   role,
   paint,
   style,
+  tones,
   onFix,
 }: {
   role: PaintRole;
   paint: ColorConfig;
   style: Partial<QRStyle>;
+  /** Tones of the pictures in the design, as measured so far */
+  tones: ImageToneMap;
   onFix: (paint: ColorConfig) => void;
 }) {
   const safety = useMemo(
-    () => paintSafety(role, paint, style),
-    [role, paint, style],
+    () => paintSafety(role, paint, style, tones),
+    [role, paint, style, tones],
   );
   const message = safetyMessage(safety);
   const fixed = useMemo(
-    () => (message ? makeScannable(role, paint, style) : null),
-    [message, role, paint, style],
+    () => (message ? makeScannable(role, paint, style, tones) : null),
+    [message, role, paint, style, tones],
   );
   const against = role === "code" ? "on the background" : "with the code";
+  if (isImagePaint(paint) && !tones[paint.src]) {
+    return (
+      <p className="text-muted-foreground text-xs" aria-live="polite">
+        Measuring the picture's contrast…
+      </p>
+    );
+  }
   return (
     <div className="space-y-1.5" aria-live="polite">
       <div className="flex items-center justify-between gap-2 text-xs">
@@ -578,14 +656,23 @@ export function PaintPanel({
   const design = usePaintDesign(inDesign);
   const paint = normalizeColorConfig(value, fallback);
   const kind = paint.type as PaintKind;
-  const stops = paint.type === "solid" ? null : paint.stops;
+  const stops = "stops" in paint ? paint.stops : null;
+  // The Image tab before a picture is chosen, and the last picture used
+  const [picking, setPicking] = useState(false);
+  const lastPicture = useRef<string | null>(
+    paint.type === "image" ? paint.src : null,
+  );
+  if (paint.type === "image") lastPicture.current = paint.src;
+  const imageMode = paint.type === "image" || picking;
 
   const [selected, setSelected] = useState(0);
   const stopIndex = stops ? clamp(selected, 0, stops.length - 1) : 0;
   const target =
     paint.type === "solid"
       ? paint.color
-      : (paint.stops[stopIndex]?.color ?? fallback);
+      : paint.type === "image"
+        ? (paint.underlay ?? fallback)
+        : (paint.stops[stopIndex]?.color ?? fallback);
 
   // The working color: HSB keeps hue and saturation through gray and black.
   const [hsba, setHsba] = useState<HSBA>(() =>
@@ -715,6 +802,12 @@ export function PaintPanel({
   const rgb = hsbToRgb({ ...hsba, a: 1 });
   const opaqueHex = toHex(rgb);
   const channels = model === "hex" ? null : channelsOf(hsba, model);
+  const tones = useImageTones(
+    [
+      ...imageSourcesOf(design.style),
+      ...(paint.type === "image" ? [paint.src] : []),
+    ].filter((src, index, list) => list.indexOf(src) === index),
+  );
 
   return (
     <div className="space-y-3" onPaste={onPaste}>
@@ -723,15 +816,33 @@ export function PaintPanel({
           aria-label="Fill type"
           className="bg-muted grid w-full gap-0 rounded-lg p-0.5"
           onValueChange={(item) => {
-            if (!item || item === kind) return;
+            if (!item || (item === kind && !picking)) return;
             setSelected(0);
-            emit(convert(paint, item as PaintKind, target) as ColorConfig);
+            if (item === "image") {
+              // The last picture comes back; otherwise pick one first
+              if (lastPicture.current) {
+                setPicking(false);
+                emit(newImageFill(lastPicture.current, target, role));
+              } else {
+                setPicking(true);
+              }
+              return;
+            }
+            setPicking(false);
+            if (item === kind) return;
+            emit(
+              convert(
+                paint,
+                item as Exclude<PaintKind, "image">,
+                target,
+              ) as ColorConfig,
+            );
           }}
           style={{
             gridTemplateColumns: `repeat(${kinds.length}, minmax(0, 1fr))`,
           }}
           type="single"
-          value={kind}
+          value={imageMode ? "image" : kind}
         >
           {kinds.map((item) => (
             <ToggleGroupItem
@@ -745,222 +856,253 @@ export function PaintPanel({
         </ToggleGroup>
       )}
 
-      {stops && (
-        <div className="space-y-2" data-vaul-no-drag="">
-          <GradientBar
-            onChange={(next, index) => {
-              setSelected(index);
-              emit({ ...paint, stops: next } as ColorConfig);
-            }}
-            onSelect={setSelected}
-            selected={stopIndex}
-            stops={stops}
-          />
-          <GradientToolbar
-            angle={
-              paint.type === "linear" || paint.type === "angular"
-                ? Math.round(paint.angle ?? 0)
-                : 0
-            }
-            canRemove={stops.length > MIN_STOPS}
-            fromTop={kind === "angular"}
-            hasAngle={kind !== "radial"}
-            onAngle={(angle) => emit({ ...paint, angle } as ColorConfig)}
-            onRemove={() => {
-              const removed = removeStop(stops, stopIndex);
-              if (!removed) return;
-              setSelected(removed.index);
-              emit({ ...paint, stops: removed.stops } as ColorConfig);
-            }}
-            onReverse={() => {
-              const reversed = reverseStops(stops);
-              const before = normalizeStops(stops).length - 1;
-              setSelected(clamp(before - stopIndex, 0, before));
-              emit({ ...paint, stops: reversed } as ColorConfig);
-            }}
-          />
-        </div>
+      {picking && paint.type !== "image" && (
+        <PictureEmpty
+          onPicture={(src) => {
+            lastPicture.current = src;
+            setPicking(false);
+            emit(newImageFill(src, target, role));
+          }}
+        />
       )}
 
-      <div className="space-y-2.5" data-vaul-no-drag="">
-        <ColorArea color={hsba} onChange={setColor} />
-        <div className="flex items-center gap-2">
-          {canPick && (
-            <Button
-              aria-label="Pick a color from the screen"
-              className="size-8 shrink-0"
-              onClick={pickFromScreen}
-              size="icon"
-              title="Pick from the screen"
-              type="button"
-              variant="ghost"
-            >
-              <Pipette className="size-4" />
-            </Button>
+      {paint.type === "image" && (
+        <ImageFillEditor onChange={(next) => emit(next)} paint={paint} />
+      )}
+
+      {!imageMode && (
+        <>
+          {stops && (
+            <div className="space-y-2" data-vaul-no-drag="">
+              <GradientBar
+                onChange={(next, index) => {
+                  setSelected(index);
+                  emit({ ...paint, stops: next } as ColorConfig);
+                }}
+                onSelect={setSelected}
+                selected={stopIndex}
+                stops={stops}
+              />
+              <GradientToolbar
+                angle={
+                  paint.type === "linear" || paint.type === "angular"
+                    ? Math.round(paint.angle ?? 0)
+                    : 0
+                }
+                canRemove={stops.length > MIN_STOPS}
+                fromTop={kind === "angular"}
+                hasAngle={kind !== "radial"}
+                onAngle={(angle) => emit({ ...paint, angle } as ColorConfig)}
+                onRemove={() => {
+                  const removed = removeStop(stops, stopIndex);
+                  if (!removed) return;
+                  setSelected(removed.index);
+                  emit({ ...paint, stops: removed.stops } as ColorConfig);
+                }}
+                onReverse={() => {
+                  const reversed = reverseStops(stops);
+                  const before = normalizeStops(stops).length - 1;
+                  setSelected(clamp(before - stopIndex, 0, before));
+                  emit({ ...paint, stops: reversed } as ColorConfig);
+                }}
+              />
+            </div>
           )}
-          <div className="min-w-0 flex-1 space-y-2.5 px-1.5">
-            <ChannelSlider
-              background={HUE_TRACK}
-              label="Hue"
-              max={360}
-              onChange={(h) => setColor({ ...working.current, h })}
-              thumbColor={toHex(hsbToRgb({ h: hsba.h, s: 100, b: 100, a: 1 }))}
-              value={hsba.h}
-              valueText={`${round(hsba.h)}°`}
-            />
+
+          <div className="space-y-2.5" data-vaul-no-drag="">
+            <ColorArea color={hsba} onChange={setColor} />
+            <div className="flex items-center gap-2">
+              {canPick && (
+                <Button
+                  aria-label="Pick a color from the screen"
+                  className="size-8 shrink-0"
+                  onClick={pickFromScreen}
+                  size="icon"
+                  title="Pick from the screen"
+                  type="button"
+                  variant="ghost"
+                >
+                  <Pipette className="size-4" />
+                </Button>
+              )}
+              <div className="min-w-0 flex-1 space-y-2.5 px-1.5">
+                <ChannelSlider
+                  background={HUE_TRACK}
+                  label="Hue"
+                  max={360}
+                  onChange={(h) => setColor({ ...working.current, h })}
+                  thumbColor={toHex(
+                    hsbToRgb({ h: hsba.h, s: 100, b: 100, a: 1 }),
+                  )}
+                  value={hsba.h}
+                  valueText={`${round(hsba.h)}°`}
+                />
+                {alpha && (
+                  <ChannelSlider
+                    background={`linear-gradient(to right, ${opaqueHex}00, ${opaqueHex})`}
+                    checker
+                    label="Opacity"
+                    max={100}
+                    onChange={(a) =>
+                      setColor({ ...working.current, a: a / 100 })
+                    }
+                    thumbColor={opaqueHex}
+                    value={hsba.a * 100}
+                    valueText={`${round(hsba.a * 100)}%`}
+                  />
+                )}
+              </div>
+              <span
+                aria-hidden="true"
+                className="relative size-8 shrink-0 overflow-hidden rounded-md"
+                style={CHECKER_STYLE}
+              >
+                <span
+                  className="absolute inset-0 shadow-[inset_0_0_0_1px_rgb(0_0_0/0.12)]"
+                  style={{ background: currentHex }}
+                />
+              </span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-1.5">
+            <Select
+              onValueChange={(next) => chooseModel(next as ColorModel)}
+              value={model}
+            >
+              <SelectTrigger
+                aria-label="Color model"
+                className="h-8 w-[4.25rem] shrink-0 px-2 text-xs"
+                size="sm"
+              >
+                <SelectValue />
+              </SelectTrigger>
+              {/* Above the picker (z-[130]) */}
+              <SelectContent className="z-[140]">
+                {MODELS.map((item) => (
+                  <SelectItem className="text-xs" key={item.id} value={item.id}>
+                    {item.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {model === "hex" ? (
+              <HexField alpha={alpha} color={hsba} onColor={setRgba} />
+            ) : (
+              MODEL_CHANNELS[model].map((spec) => (
+                <NumberField
+                  key={spec.key}
+                  label={spec.label}
+                  max={spec.max}
+                  onChange={(next) =>
+                    setColor(withChannel(hsba, model, spec.key, next))
+                  }
+                  value={channels?.[spec.key] ?? 0}
+                />
+              ))
+            )}
             {alpha && (
-              <ChannelSlider
-                background={`linear-gradient(to right, ${opaqueHex}00, ${opaqueHex})`}
-                checker
-                label="Opacity"
+              <NumberField
+                className="max-w-[3.25rem]"
+                label="Opacity, percent"
                 max={100}
-                onChange={(a) => setColor({ ...working.current, a: a / 100 })}
-                thumbColor={opaqueHex}
-                value={hsba.a * 100}
-                valueText={`${round(hsba.a * 100)}%`}
+                onChange={(next) =>
+                  setColor({ ...working.current, a: next / 100 })
+                }
+                suffix="%"
+                value={round(hsba.a * 100)}
               />
             )}
           </div>
-          <span
-            aria-hidden="true"
-            className="relative size-8 shrink-0 overflow-hidden rounded-md"
-            style={CHECKER_STYLE}
-          >
-            <span
-              className="absolute inset-0 shadow-[inset_0_0_0_1px_rgb(0_0_0/0.12)]"
-              style={{ background: currentHex }}
-            />
-          </span>
-        </div>
-      </div>
+        </>
+      )}
 
-      <div className="flex items-center gap-1.5">
-        <Select
-          onValueChange={(next) => chooseModel(next as ColorModel)}
-          value={model}
-        >
-          <SelectTrigger
-            aria-label="Color model"
-            className="h-8 w-[4.25rem] shrink-0 px-2 text-xs"
-            size="sm"
-          >
-            <SelectValue />
-          </SelectTrigger>
-          {/* Above the picker (z-[130]) */}
-          <SelectContent className="z-[140]">
-            {MODELS.map((item) => (
-              <SelectItem className="text-xs" key={item.id} value={item.id}>
-                {item.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        {model === "hex" ? (
-          <HexField alpha={alpha} color={hsba} onColor={setRgba} />
-        ) : (
-          MODEL_CHANNELS[model].map((spec) => (
-            <NumberField
-              key={spec.key}
-              label={spec.label}
-              max={spec.max}
-              onChange={(next) =>
-                setColor(withChannel(hsba, model, spec.key, next))
-              }
-              value={channels?.[spec.key] ?? 0}
-            />
-          ))
-        )}
-        {alpha && (
-          <NumberField
-            className="max-w-[3.25rem]"
-            label="Opacity, percent"
-            max={100}
-            onChange={(next) => setColor({ ...working.current, a: next / 100 })}
-            suffix="%"
-            value={round(hsba.a * 100)}
-          />
-        )}
-      </div>
-
-      {role && design.style && (
+      {role && design.style && !(picking && paint.type !== "image") && (
         <SafetyRow
           onFix={(fixed) => {
             emit(fixed);
             const next = normalizeColorConfig(fixed);
             const color =
-              next.type === "solid" ? next.color : next.stops[stopIndex]?.color;
+              next.type === "solid"
+                ? next.color
+                : next.type === "image"
+                  ? undefined
+                  : next.stops[stopIndex]?.color;
             const parsed = color ? parseColorString(color) : null;
             if (parsed) setHsba((previous) => toHsba(parsed, previous.h));
           }}
           paint={paint}
           role={role}
           style={design.style}
+          tones={tones}
         />
       )}
 
-      <div className="space-y-2">
-        <div
-          aria-label="Swatches"
-          className="text-muted-foreground -mx-1 flex flex-nowrap gap-x-0.5 overflow-x-auto text-[11px] whitespace-nowrap [scrollbar-width:none]"
-          role="tablist"
-        >
-          {sources.map((id) => (
-            <button
-              aria-selected={id === activeSource}
-              className={cn(
-                "focus-visible:ring-ring/50 rounded px-1 py-0.5 outline-none focus-visible:ring-[3px]",
-                id === activeSource
-                  ? "text-foreground font-medium"
-                  : "hover:text-foreground",
-              )}
-              key={id}
-              onClick={() => chooseSource(id)}
-              role="tab"
-              type="button"
-            >
-              {SOURCE_LABELS[id]}
-            </button>
-          ))}
-        </div>
-        <SwatchGrid
-          colors={swatches[activeSource]}
-          current={currentHex}
-          empty={
-            activeSource === "saved"
-              ? "Save colors to use them again."
-              : activeSource === "recent"
-                ? "Colors you pick show up here."
-                : "No colors yet."
-          }
-          leading={
-            activeSource === "saved" ? (
-              <Button
-                aria-label={
-                  isSaved ? "Remove this color from saved" : "Save this color"
-                }
-                aria-pressed={isSaved}
-                className="size-6 rounded-full"
-                onClick={() => setSaved(toggleSaved(currentHex))}
-                size="icon"
-                title={isSaved ? "Saved: click to remove" : "Save this color"}
+      {!imageMode && (
+        <div className="space-y-2">
+          <div
+            aria-label="Swatches"
+            className="text-muted-foreground -mx-1 flex flex-nowrap gap-x-0.5 overflow-x-auto text-[11px] whitespace-nowrap [scrollbar-width:none]"
+            role="tablist"
+          >
+            {sources.map((id) => (
+              <button
+                aria-selected={id === activeSource}
+                className={cn(
+                  "focus-visible:ring-ring/50 rounded px-1 py-0.5 outline-none focus-visible:ring-[3px]",
+                  id === activeSource
+                    ? "text-foreground font-medium"
+                    : "hover:text-foreground",
+                )}
+                key={id}
+                onClick={() => chooseSource(id)}
+                role="tab"
                 type="button"
-                variant="outline"
               >
-                <Bookmark
-                  className="size-3"
-                  variant={isSaved ? "Bold" : "Linear"}
-                />
-              </Button>
-            ) : undefined
-          }
-          onPick={pickSwatch}
-          onRemove={
-            activeSource === "saved"
-              ? (color) => setSaved(removeSaved(color))
-              : undefined
-          }
-        />
-      </div>
+                {SOURCE_LABELS[id]}
+              </button>
+            ))}
+          </div>
+          <SwatchGrid
+            colors={swatches[activeSource]}
+            current={currentHex}
+            empty={
+              activeSource === "saved"
+                ? "Save colors to use them again."
+                : activeSource === "recent"
+                  ? "Colors you pick show up here."
+                  : "No colors yet."
+            }
+            leading={
+              activeSource === "saved" ? (
+                <Button
+                  aria-label={
+                    isSaved ? "Remove this color from saved" : "Save this color"
+                  }
+                  aria-pressed={isSaved}
+                  className="size-6 rounded-full"
+                  onClick={() => setSaved(toggleSaved(currentHex))}
+                  size="icon"
+                  title={isSaved ? "Saved: click to remove" : "Save this color"}
+                  type="button"
+                  variant="outline"
+                >
+                  <Bookmark
+                    className="size-3"
+                    variant={isSaved ? "Bold" : "Linear"}
+                  />
+                </Button>
+              ) : undefined
+            }
+            onPick={pickSwatch}
+            onRemove={
+              activeSource === "saved"
+                ? (color) => setSaved(removeSaved(color))
+                : undefined
+            }
+          />
+        </div>
+      )}
     </div>
   );
 }
@@ -973,6 +1115,10 @@ export function paintSummary(value: ColorConfig | undefined, fallback: string) {
     if (!parsed) return paint.color;
     const hex = toHex(parsed, { alpha: false }).toUpperCase();
     return parsed.a < 1 ? `${hex} · ${round(parsed.a * 100)}%` : hex;
+  }
+  if (paint.type === "image") {
+    const opacity = paint.opacity ?? 1;
+    return opacity < 1 ? `Image · ${round(opacity * 100)}%` : "Image";
   }
   const label = KIND_LABELS[paint.type as PaintKind];
   return paint.type === "radial"

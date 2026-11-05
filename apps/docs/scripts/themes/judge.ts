@@ -63,7 +63,7 @@ export function toQRProps(styles: ThemeStyles, value = JUDGE_VALUE): QRProps {
 }
 
 const stopAt = (color: ColorConfig | undefined, index: number) =>
-  color && typeof color !== "string" && color.type !== "solid"
+  color && typeof color !== "string" && "stops" in color
     ? (color.stops[Math.min(index, color.stops.length - 1)]?.color ?? color)
     : color;
 

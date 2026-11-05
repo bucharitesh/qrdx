@@ -22,6 +22,7 @@ import { SidePanelPlacement } from "@/components/editor/control-sections/side-pa
 import {
   GradientPicker,
   PaintDesignProvider,
+  QR_IMAGE_KINDS,
 } from "@/components/editor/gradient-picker";
 import { QRStyleScopeProvider } from "@/components/editor/style-scope";
 import { defaultThemeState } from "@/config/qr";
@@ -217,24 +218,28 @@ export function BuilderStyle({
             >
               <div className="grid grid-cols-2 gap-2">
                 <GradientPicker
+                  kinds={QR_IMAGE_KINDS}
                   label="Background"
                   name="bgColor"
                   onChange={(color) => update("bgColor", color)}
                   value={current.bgColor}
                 />
                 <GradientPicker
+                  kinds={QR_IMAGE_KINDS}
                   label="Foreground"
                   name="fgColor"
                   onChange={(color) => update("fgColor", color)}
                   value={current.fgColor}
                 />
                 <GradientPicker
+                  kinds={QR_IMAGE_KINDS}
                   label="Eyes"
                   name="eyeColor"
                   onChange={(color) => update("eyeColor", color)}
                   value={current.eyeColor}
                 />
                 <GradientPicker
+                  kinds={QR_IMAGE_KINDS}
                   label="Dots"
                   name="dotColor"
                   onChange={(color) => update("dotColor", color)}

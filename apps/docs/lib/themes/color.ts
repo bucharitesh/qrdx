@@ -33,6 +33,7 @@ export function contrastRatio(a: string, b: string): number {
 export function colorStops(color: ColorConfig | undefined, fallback: string) {
   if (!color) return [fallback];
   if (typeof color === "string") return [color];
+  if (color.type === "image") return [color.underlay ?? fallback];
   return color.type === "solid"
     ? [color.color]
     : color.stops.map((stop) => stop.color);
