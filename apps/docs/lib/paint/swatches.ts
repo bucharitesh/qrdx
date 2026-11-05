@@ -21,6 +21,9 @@ export function swatchHex(color: string): string | null {
 export function paintColors(paint: ColorConfig | undefined): string[] {
   if (paint === undefined) return [];
   const normalized = normalizeColorConfig(paint);
+  if (normalized.type === "image") {
+    return normalized.underlay ? [normalized.underlay] : [];
+  }
   return normalized.type === "solid"
     ? [normalized.color]
     : normalized.stops.map((stop) => stop.color);

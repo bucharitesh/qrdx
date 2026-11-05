@@ -46,6 +46,7 @@ export {
   PaintDesignProvider,
   type PaintKind,
   PaintPanel,
+  QR_IMAGE_KINDS,
   QR_PAINT_KINDS,
 } from "./paint-picker/paint-panel";
 
