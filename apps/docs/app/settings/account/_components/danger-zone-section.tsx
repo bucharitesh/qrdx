@@ -28,6 +28,7 @@ import {
   isDeleteConfirmed,
 } from "@/lib/account/deletion";
 import { resetAnalytics } from "@/lib/analytics";
+import { secondFactorCodeKind } from "@/lib/auth/two-factor";
 import { SettingsRow, SettingsSection } from "./settings-section";
 
 const CODE_LENGTH = 6;
@@ -83,17 +84,21 @@ function DeleteAccountDialog({
   email,
   summary,
   reauth,
+  twoFactorOn,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   email: string;
   summary: DeletionSummary;
   reauth: ReauthMode;
+  /** Two-step verification is on: a current code is needed too */
+  twoFactorOn: boolean;
 }) {
   const id = useId();
   const router = useRouter();
   const [confirmation, setConfirmation] = useState("");
   const [code, setCode] = useState("");
+  const [twoFactorCode, setTwoFactorCode] = useState("");
   const [codeSent, setCodeSent] = useState(false);
   const [sending, setSending] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -109,7 +114,8 @@ function DeleteAccountDialog({
     confirmed &&
     summary.blockers.length === 0 &&
     !mustSignInAgain &&
-    (!needsCode || code.length === CODE_LENGTH);
+    (!needsCode || code.length === CODE_LENGTH) &&
+    (!twoFactorOn || secondFactorCodeKind(twoFactorCode) !== null);
 
   useEffect(() => {
     if (resendAt <= Date.now()) return;
@@ -124,6 +130,7 @@ function DeleteAccountDialog({
   const reset = () => {
     setConfirmation("");
     setCode("");
+    setTwoFactorCode("");
     setCodeSent(false);
     setError(null);
   };
@@ -166,10 +173,12 @@ function DeleteAccountDialog({
       const result = await deleteAccount({
         confirmation,
         ...(needsCode && { code }),
+        ...(twoFactorOn && { twoFactorCode }),
       });
       if (!result.ok) {
         setError(result.error);
         setCode("");
+        setTwoFactorCode("");
         if (result.codeExpired) setCodeSent(false);
         setDeleting(false);
         return;
@@ -299,6 +308,36 @@ function DeleteAccountDialog({
             </div>
           )}
 
+          {twoFactorOn && (
+            <div className="space-y-2">
+              <label
+                className="text-sm font-medium"
+                htmlFor={`${id}-second-factor`}
+              >
+                Code from your authenticator app, or a backup code
+              </label>
+              <Input
+                autoCapitalize="characters"
+                autoComplete="one-time-code"
+                autoCorrect="off"
+                className="font-mono"
+                disabled={deleting}
+                id={`${id}-second-factor`}
+                onChange={(event) => {
+                  setTwoFactorCode(event.target.value);
+                  setError(null);
+                }}
+                placeholder="123456"
+                spellCheck={false}
+                value={twoFactorCode}
+              />
+              <p className="text-muted-foreground text-xs text-pretty">
+                Two-step verification is on, so deleting your account needs a
+                code too. A backup code is used up.
+              </p>
+            </div>
+          )}
+
           {mustSignInAgain && (
             <div className="space-y-2">
               <p className="text-muted-foreground text-sm text-pretty">
@@ -347,10 +386,12 @@ export function DangerZoneSection({
   email,
   summary,
   reauth,
+  twoFactorOn,
 }: {
   email: string;
   summary: DeletionSummary;
   reauth: ReauthMode;
+  twoFactorOn: boolean;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -384,6 +425,7 @@ export function DangerZoneSection({
         open={open}
         reauth={reauth}
         summary={summary}
+        twoFactorOn={twoFactorOn}
       />
     </SettingsSection>
   );

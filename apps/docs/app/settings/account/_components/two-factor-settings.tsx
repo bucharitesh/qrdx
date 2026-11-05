@@ -454,8 +454,13 @@ export function TwoFactorSettings({
                     className="bg-muted/40 grid grid-cols-2 gap-x-6 gap-y-2 rounded-lg border px-5 py-4 font-mono text-sm"
                   >
                     {flow.codes.map((backupCode) => (
-                      <li className="text-center tabular-nums" key={backupCode}>
-                        {backupCode}
+                      <li
+                        className="text-center tracking-wider tabular-nums"
+                        key={backupCode}
+                      >
+                        {backupCode.slice(0, 5)}
+                        <span className="text-muted-foreground">-</span>
+                        {backupCode.slice(6)}
                       </li>
                     ))}
                   </ul>
