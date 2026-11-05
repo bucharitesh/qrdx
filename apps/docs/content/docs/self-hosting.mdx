@@ -149,6 +149,7 @@ Add one OAuth provider (GitHub or Google), or Resend for email sign-in codes, so
 | Google sign-in | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | Google sign-in is unavailable |
 | Auth base URL | `BETTER_AUTH_URL` | Inferred from each request, with a warning in the logs |
 | Admin panel | `ADMIN_EMAILS`, `ADMIN_USER_IDS` | Nobody can open `/admin` |
+| Workspace single sign-on | `QRDX_EE_LICENSE` | Single sign-on stays off: no **Sign in with SSO**, no SSO settings, and its sign-in routes don't exist. SSO is in the `ee/` folders under the QRdx commercial licence, so production use needs a QRdx subscription or a written agreement. See [Single sign-on](/docs/help/teams/single-sign-on) |
 | AI themes, prompt enhancement and AI QR art (Vercel AI Gateway) | `AI_GATEWAY_API_KEY` | AI requests fail and the AI pages leave the navigation and sitemap. The editor works normally. Create the key in your own Vercel account (AI Gateway, API keys); usage is billed to that account's AI Gateway credits, and your app doesn't have to run on Vercel. The model for each task is set in `apps/docs/lib/ai/models.ts` |
 | Short-link origin | `NEXT_PUBLIC_SHORT_LINK_BASE_URL` | [Dynamic codes](/docs/dynamic-qr-codes#self-hosting) use `NEXT_PUBLIC_APP_URL` |
 | Scan privacy salt | `SCAN_HASH_SALT` | Derived from `BETTER_AUTH_SECRET` |
