@@ -13,6 +13,7 @@ import {
   newSsoProviderId,
   normalizeSsoDomain,
   SSO_JOIN_ROLES,
+  ssoFailureRedirect,
   ssoJoinRoleFromMetadata,
   ssoServiceProviderUrls,
   ssoVerificationRecord,
@@ -194,5 +195,38 @@ describe("sign-in messages", () => {
     );
     expect(ssoSignInErrorMessage("sso_unavailable")).toMatch(/isn't available/);
     expect(ssoSignInErrorMessage("whatever")).toMatch(/didn't work/);
+  });
+});
+
+describe("ssoFailureRedirect", () => {
+  const app = "http://localhost:3000";
+  it("sends a refused sign-in to /sign-in with the page it was going to", () => {
+    // The SAML plugin's "account not linked" goes to the success URL.
+    expect(
+      ssoFailureRedirect(`${app}/dashboard?error=account_not_linked`, app),
+    ).toBe("/sign-in?next=%2Fdashboard&error=account_not_linked");
+    expect(
+      ssoFailureRedirect(
+        `${app}/invite/abc?x=1&error=account%20not%20linked&error_description=nope`,
+        app,
+      ),
+    ).toBe("/sign-in?next=%2Finvite%2Fabc%3Fx%3D1&error=account_not_linked");
+  });
+
+  it("never keeps the auth API or another site as next", () => {
+    expect(
+      ssoFailureRedirect(`${app}/api/auth/error?error=invalid_state`, app),
+    ).toBe("/sign-in?error=invalid_state");
+    expect(
+      ssoFailureRedirect("https://evil.test/x?error=account_not_linked", app),
+    ).toBe("/sign-in?error=account_not_linked");
+  });
+
+  it("leaves successes and the sign-in page alone", () => {
+    expect(ssoFailureRedirect(`${app}/dashboard`, app)).toBeNull();
+    expect(ssoFailureRedirect(null, app)).toBeNull();
+    expect(
+      ssoFailureRedirect(`${app}/sign-in?next=%2Fdashboard&error=x`, app),
+    ).toBeNull();
   });
 });
