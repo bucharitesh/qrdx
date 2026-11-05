@@ -35,6 +35,10 @@ const BASE_URL = (process.env.E2E_BASE_URL ?? "http://localhost:3000").replace(
 );
 const DEV_LOG = process.env.E2E_DEV_LOG ?? "";
 const SHOTS = process.env.E2E_SHOTS ?? "";
+/** E2E_VIEWPORT=mobile: a 390 x 844 phone (DPR 2, touch) instead of desktop. */
+const MOBILE = process.env.E2E_VIEWPORT === "mobile";
+/** Mobile layout findings per screenshot, printed at the end. */
+const layout: string[] = [];
 const ADMIN_EMAIL = process.env.E2E_ADMIN_EMAIL ?? "admin@qrdx.test";
 const RUN = Date.now().toString(36);
 const USER_EMAIL = `e2e-2fa-${RUN}@qrdx.test`;
@@ -117,8 +121,75 @@ const escapeRegExp = (value: string) =>
 
 // ─── Page helpers ───────────────────────────────────────────────────────────
 
+/**
+ * On a phone: no horizontal page scroll (asserted), and the tap targets in
+ * the open dialog or the main card that are under 40 px (listed).
+ */
+async function checkMobileLayout(page: Page, name: string) {
+  const result = (await page.evaluate(() => {
+    const root = document.documentElement;
+    const scope =
+      document.querySelector('[role="alertdialog"], [role="dialog"]') ??
+      document.querySelector("main") ??
+      document.body;
+    const small = [
+      ...scope.querySelectorAll(
+        'button, a[href], input:not([type="hidden"]), [role="checkbox"]',
+      ),
+    ]
+      .filter((el) => window.__e2e.visible(el))
+      .map((el) => {
+        const box = el.getBoundingClientRect();
+        // A hit area widened with an absolute ::after (e.g. checkboxes).
+        const after = getComputedStyle(el, "::after");
+        const grow =
+          after.position === "absolute"
+            ? Math.max(0, -Number.parseFloat(after.top) || 0)
+            : 0;
+        const rect = {
+          width: box.width + grow * 2,
+          height: box.height + grow * 2,
+        };
+        const label = (
+          el.getAttribute("aria-label") ||
+          el.textContent ||
+          el.getAttribute("placeholder") ||
+          el.tagName
+        )
+          .replace(/\s+/g, " ")
+          .trim()
+          .slice(0, 40);
+        return { label, w: Math.round(rect.width), h: Math.round(rect.height) };
+      })
+      .filter((t) => t.h < 40 || t.w < 40);
+    return {
+      scrollWidth: root.scrollWidth,
+      clientWidth: root.clientWidth,
+      small,
+    };
+  })) as {
+    scrollWidth: number;
+    clientWidth: number;
+    small: { label: string; w: number; h: number }[];
+  };
+  const fits = result.scrollWidth <= result.clientWidth;
+  check(
+    `mobile, no horizontal scroll: ${name}`,
+    fits,
+    `scrollWidth ${result.scrollWidth} / clientWidth ${result.clientWidth}`,
+  );
+  layout.push(
+    `${name}: scrollWidth ${result.scrollWidth} <= clientWidth ${result.clientWidth} ${fits ? "OK" : "OVERFLOW"}; small targets: ${
+      result.small.length
+        ? result.small.map((t) => `"${t.label}" ${t.w}x${t.h}`).join(", ")
+        : "none"
+    }`,
+  );
+}
+
 async function shot(page: Page, name: string) {
   if (!SHOTS) return;
+  if (MOBILE) await checkMobileLayout(page, name);
   for (const scheme of ["light", "dark"] as const) {
     await page.cdp.send("Emulation.setEmulatedMedia", {
       features: [
@@ -305,6 +376,18 @@ async function main() {
   }
 
   const page = await launch({ width: 1280, height: 900 });
+  if (MOBILE) {
+    await page.cdp.send("Emulation.setDeviceMetricsOverride", {
+      width: 390,
+      height: 844,
+      deviceScaleFactor: 2,
+      mobile: true,
+    });
+    await page.cdp.send("Emulation.setTouchEmulationEnabled", {
+      enabled: true,
+      maxTouchPoints: 5,
+    });
+  }
   let secret = "";
   let backupCodes: string[] = [];
   let userId = "";
@@ -514,6 +597,8 @@ async function main() {
     ];
     for (const [index, next] of destinations.entries()) {
       await clearCookies(page);
+      // A settled page first: the last destination may still be redirecting.
+      await page.goto(`${BASE_URL}/sign-in`);
       check(
         `JSON sign-in answers twoFactorRedirect (${next})`,
         await startPendingChallenge(page, USER_EMAIL),
@@ -879,6 +964,7 @@ async function main() {
     await page.close();
   }
 
+  if (MOBILE) console.log(`\nMobile layout:\n${layout.join("\n")}`);
   console.log(`\n${results.length - failures} passed, ${failures} failed`);
   if (failures) process.exit(1);
 }
