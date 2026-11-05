@@ -181,3 +181,49 @@ describe("the picker's fix for a picture", () => {
     expect(makeScannable("code", picture(), { bgColor: "#ffffff" })).toBeNull();
   });
 });
+
+describe("saved image fills (the server's rule)", () => {
+  it("take base64 data:image PNG, JPEG, WebP or GIF up to 1.5 MB, nothing else", async () => {
+    const { imageFillSrcProblem, IMAGE_FILL_MAX_LENGTH } = await import(
+      "@/lib/paint/saved-paint"
+    );
+    for (const type of ["png", "jpeg", "webp", "gif"]) {
+      expect(imageFillSrcProblem(`data:image/${type};base64,AAAA`)).toBeNull();
+    }
+    for (const src of [
+      "https://cdn.example/a.png",
+      "//cdn.example/a.png",
+      "data:image/svg+xml;base64,PHN2Zz4=",
+      "data:image/PNG;base64,AAAA",
+      "data:image/png,AAAA",
+      "data:image/png;base64,AA AA",
+      "data:text/html;base64,AAAA",
+      "blob:https://qrdx.dev/1",
+    ]) {
+      expect(imageFillSrcProblem(src)).toMatch(/data:image URL/);
+    }
+    expect(
+      imageFillSrcProblem(
+        `data:image/png;base64,${"A".repeat(IMAGE_FILL_MAX_LENGTH)}`,
+      ),
+    ).toMatch(/too large/);
+  });
+
+  it("are enforced by the saved-style schema in every paint slot", async () => {
+    const { themeStylePropsSchema } = await import("@/types/theme");
+    const remote = picture({ src: "https://tracker.example/p.png" });
+    for (const style of [
+      { bgColor: remote },
+      { fgColor: remote },
+      { eyeColor: remote },
+      { dotColor: remote },
+      { eyeColors: { topRight: { outer: remote } } },
+      { eyeColors: { bottomLeft: { inner: remote } } },
+    ]) {
+      expect(themeStylePropsSchema.safeParse(style).success).toBe(false);
+    }
+    expect(
+      themeStylePropsSchema.safeParse({ fgColor: picture() }).success,
+    ).toBe(true);
+  });
+});

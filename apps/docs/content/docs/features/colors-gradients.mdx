@@ -158,12 +158,12 @@ An image fill paints a picture through the background, the dots or the eyes. The
 />
 ```
 
-- `src` is a data URL, as with a logo. PNG and JPEG embed in every export. Servers never fetch a link.
+- `src` is the picture itself, as with a logo. QRdx saves an image fill (in codes, themes and the REST API) only as a base64 `data:image` URL (PNG, JPEG, WebP or GIF) of 1.5 MB at most; a picture from a link is refused. PNG and JPEG embed in every export, and servers never fetch a link.
 - `underlay` is a solid color under the picture. `opacity` lets it through: over black it darkens a photo for the dots, and over white it lightens one for the background.
 - A picture's detail reads as noise to a camera, so the scan check asks for more contrast: 7:1 in the dots or eyes, 12:1 behind them (`SCAN_IMAGE_CONTRAST_MIN`). It measures a picture by its lightest and darkest tenth (`getImageTones`). In the editor, "Make it scannable" finds the opacity over the underlay that passes.
 - SVG, PNG and PDF carry image fills. EPS can't ([Downloads](/docs/features/downloads#eps)).
 
-Image fills travel like logos. They stay with the design in the editor, in saved codes and in saved themes. They don't go into `?style=` links, published community styles, Get code snippets or the chat's context: each image fill gives way to its underlay color there. The image API (`GET /v1/qr`) and the MCP server don't take them yet. `POST /v1/codes` takes one only as a data URL, the way it takes `customLogo`; there's no uploaded-file id for pictures yet.
+Image fills travel like logos. They stay with the design in the editor, in saved codes and in saved themes. They don't go into `?style=` links, published community styles, Get code snippets or the chat's context: each image fill gives way to its underlay color there. The image API (`GET /v1/qr`) and the MCP server don't take them yet. `POST /v1/codes` and `PATCH /v1/codes/{id}` take one only as a `data:image` URL, and answer 400 for anything else; there's no uploaded-file id for pictures yet.
 
 Angular gradients and image fills are in the qrdx source and ship with the next npm release. qrdx 0.0.46 on npm doesn't have them.
 
