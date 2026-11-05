@@ -273,7 +273,13 @@ export function TwoFactorSettings({
     <SettingsSection
       action={
         status.on ? undefined : (
-          <Button disabled={busy} onClick={turnOn} size="sm" variant="outline">
+          <Button
+            className="max-sm:h-10"
+            disabled={busy}
+            onClick={turnOn}
+            size="sm"
+            variant="outline"
+          >
             {busy && flow.kind === "closed" && (
               <Spinner className="animate-spin" />
             )}
@@ -285,32 +291,36 @@ export function TwoFactorSettings({
       id="two-factor"
       title="Two-step verification"
     >
-      <div className="flex items-center gap-3 px-5 py-4 sm:gap-4 sm:px-6">
-        <span className="bg-muted/60 flex size-9 shrink-0 items-center justify-center rounded-full border">
-          <ShieldTick aria-hidden className="size-4" />
-        </span>
-        <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center gap-2">
-            <p className="text-sm font-medium">Authenticator app</p>
-            <Badge variant={status.on ? "secondary" : "outline"}>
-              {status.on ? "On" : "Off"}
-            </Badge>
+      {/* On phones the buttons sit under the text, so it keeps its width. */}
+      <div className="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:gap-4 sm:px-6">
+        <div className="flex min-w-0 flex-1 items-center gap-3 sm:gap-4">
+          <span className="bg-muted/60 flex size-9 shrink-0 items-center justify-center rounded-full border">
+            <ShieldTick aria-hidden className="size-4" />
+          </span>
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <p className="text-sm font-medium">Authenticator app</p>
+              <Badge variant={status.on ? "secondary" : "outline"}>
+                {status.on ? "On" : "Off"}
+              </Badge>
+            </div>
+            <p className="text-muted-foreground mt-0.5 text-xs text-pretty">
+              {status.on
+                ? left === null
+                  ? "Signing in asks for a code from your app or a backup code."
+                  : `${left} of ${BACKUP_CODE_COUNT} backup codes left.${left <= 3 ? " Make new ones soon." : ""}`
+                : "Use any authenticator app that shows 6-digit codes."}
+            </p>
           </div>
-          <p className="text-muted-foreground mt-0.5 text-xs text-pretty">
-            {status.on
-              ? left === null
-                ? "Signing in asks for a code from your app or a backup code."
-                : `${left} of ${BACKUP_CODE_COUNT} backup codes left.${left <= 3 ? " Make new ones soon." : ""}`
-              : "Use any authenticator app that shows 6-digit codes."}
-          </p>
         </div>
         {status.on && (
-          <div className="flex shrink-0 flex-wrap justify-end gap-2">
+          <div className="flex flex-wrap gap-2 pl-12 sm:shrink-0 sm:justify-end sm:pl-0">
             <Button
               onClick={() => {
                 reset();
                 setFlow({ kind: "verify", purpose: "regenerate" });
               }}
+              className="max-sm:h-10"
               size="sm"
               variant="outline"
             >
@@ -321,6 +331,7 @@ export function TwoFactorSettings({
                 reset();
                 setFlow({ kind: "verify", purpose: "off" });
               }}
+              className="max-sm:h-10"
               size="sm"
               variant="outline"
             >
@@ -336,7 +347,11 @@ export function TwoFactorSettings({
         }}
         open={flow.kind !== "closed"}
       >
-        <DialogContent className="sm:max-w-md">
+        <DialogContent
+          // On phones every button and field in these dialogs is a 40 px
+          // tap target.
+          className="max-sm:[&_[data-slot=button]]:h-10 max-sm:[&_[data-slot=input]]:h-10 sm:max-w-md"
+        >
           {flow.kind === "reauth" && (
             <>
               <DialogHeader>
@@ -381,12 +396,13 @@ export function TwoFactorSettings({
                     Can't scan it? Enter this key in the app instead.
                   </p>
                   <div className="bg-muted/50 flex items-center gap-2 rounded-md border px-3 py-2">
-                    <code className="min-w-0 flex-1 font-mono text-xs break-all">
+                    <code className="min-w-0 flex-1 font-mono text-xs break-normal">
                       {groupSecret(flow.secret)}
                     </code>
                     <Button
                       aria-label="Copy the key"
                       onClick={() => copy(flow.secret, "Key")}
+                      className="size-10"
                       size="icon"
                       type="button"
                       variant="ghost"
@@ -496,11 +512,12 @@ export function TwoFactorSettings({
                   <div className="flex items-center gap-2">
                     <Checkbox
                       checked={saved}
+                      className="relative after:absolute after:-inset-3"
                       id={`${id}-saved`}
                       onCheckedChange={(checked) => setSaved(checked === true)}
                     />
                     <Label
-                      className="text-sm font-normal"
+                      className="-my-3 min-h-10 py-3 text-sm font-normal"
                       htmlFor={`${id}-saved`}
                     >
                       I've saved my backup codes
