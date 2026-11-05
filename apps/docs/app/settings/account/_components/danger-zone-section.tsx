@@ -21,7 +21,7 @@ import {
 import { Warning2 } from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
 import { useEffect, useId, useState } from "react";
-import { deleteAccount } from "@/actions/account";
+import { deleteAccount, sendDeletionCode } from "@/actions/account";
 import {
   DELETE_CONFIRMATION,
   type DeletionSummary,
@@ -36,8 +36,10 @@ const RESEND_COOLDOWN_MS = 30_000;
 const DIGITS_ONLY = "^\\d+$";
 
 /**
- * How the dialog confirms it's really you: a fresh emailed code, or (where
- * this deployment can't send codes) a sign-in within the last 10 minutes.
+ * How the dialog confirms it's really you when two-step verification is off:
+ * a fresh emailed code, or (where this deployment can't send codes) a sign-in
+ * within the last 10 minutes. With it on, an authenticator or backup code
+ * replaces both.
  */
 export type ReauthMode =
   | { kind: "code" }
@@ -91,7 +93,7 @@ function DeleteAccountDialog({
   email: string;
   summary: DeletionSummary;
   reauth: ReauthMode;
-  /** Two-step verification is on: a current code is needed too */
+  /** Two-step verification is on: a current code replaces the emailed one */
   twoFactorOn: boolean;
 }) {
   const id = useId();
@@ -108,8 +110,9 @@ function DeleteAccountDialog({
 
   const secondsLeft = Math.max(0, Math.ceil((resendAt - now) / 1000));
   const confirmed = isDeleteConfirmed(confirmation);
-  const needsCode = reauth.kind === "code";
-  const mustSignInAgain = reauth.kind === "recent-sign-in" && !reauth.recent;
+  const needsCode = !twoFactorOn && reauth.kind === "code";
+  const mustSignInAgain =
+    !twoFactorOn && reauth.kind === "recent-sign-in" && !reauth.recent;
   const ready =
     confirmed &&
     summary.blockers.length === 0 &&
@@ -139,17 +142,9 @@ function DeleteAccountDialog({
     setSending(true);
     setError(null);
     try {
-      const { error: sendError } =
-        await authClient.emailOtp.sendVerificationOtp({
-          email,
-          type: "sign-in",
-        });
-      if (sendError) {
-        setError(
-          sendError.status === 429
-            ? "Too many codes requested. Wait a minute, then try again."
-            : "We couldn't send a code right now. Please try again.",
-        );
+      const result = await sendDeletionCode();
+      if (!result.ok) {
+        setError(result.error);
         return;
       }
       const time = Date.now();
@@ -335,8 +330,8 @@ function DeleteAccountDialog({
                 value={twoFactorCode}
               />
               <p className="text-muted-foreground text-xs text-pretty">
-                Two-step verification is on, so deleting your account needs a
-                code too. A backup code is used up.
+                Two-step verification is on, so we ask for this instead of
+                emailing you a code. A backup code is used up.
               </p>
             </div>
           )}
