@@ -21,6 +21,7 @@ import {
   type SocialProvider,
   toSignInMethods,
 } from "@/lib/account/sign-in-methods";
+import { twoFactorEnabledFor } from "@/lib/account/two-factor-server";
 import { getMyCommunityProfile } from "@/lib/community/profiles";
 import { CommunityUnavailableError } from "@/lib/community/store";
 import { signInPath } from "@/lib/safe-redirect";
@@ -33,12 +34,14 @@ import {
   type ReauthMode,
 } from "./_components/danger-zone-section";
 import { DataExportSection } from "./_components/data-export-section";
+import { PasskeysSection } from "./_components/passkeys-section";
 import { ProfileSection } from "./_components/profile-section";
 import { SessionsSection } from "./_components/sessions-section";
 import {
   type LinkOutcome,
   SignInMethodsSection,
 } from "./_components/sign-in-methods-section";
+import { TwoFactorSection } from "./_components/two-factor-section";
 
 export const metadata: Metadata = {
   title: "Profile & security",
@@ -93,7 +96,7 @@ export default async function AccountPage({
   const now = new Date();
   // Better Auth's listSessions needs a session younger than a day, which
   // would hide this list from most people; the rows are read directly.
-  const [accounts, sessionRows, facts, params, communityProfile] =
+  const [accounts, sessionRows, facts, params, communityProfile, twoFactorOn] =
     await Promise.all([
       auth.api.listUserAccounts({ headers: requestHeaders }) as Promise<
         LinkedAccount[]
@@ -119,6 +122,7 @@ export default async function AccountPage({
         if (error instanceof CommunityUnavailableError) return null;
         throw error;
       }),
+      twoFactorEnabledFor(userId),
     ]);
 
   const sessions = toSessionViews(sessionRows, {
@@ -152,6 +156,7 @@ export default async function AccountPage({
             new Date(session.session.createdAt),
             now,
           ),
+          twoFactorOn,
         }}
       />
 
@@ -160,6 +165,24 @@ export default async function AccountPage({
         linkable={linkableProviders(accounts, configuredProviders())}
         methods={toSignInMethods(accounts, formatDate)}
         outcome={linkOutcome(params)}
+      />
+
+      <PasskeysSection
+        userId={userId}
+        recentSignIn={canChangeEmailNow(
+          new Date(session.session.createdAt),
+          now,
+        )}
+        twoFactorOn={twoFactorOn}
+      />
+
+      <TwoFactorSection
+        email={session.user.email}
+        recentSignIn={canChangeEmailNow(
+          new Date(session.session.createdAt),
+          now,
+        )}
+        userId={userId}
       />
 
       <SessionsSection sessions={sessions} />
@@ -175,6 +198,7 @@ export default async function AccountPage({
         email={session.user.email}
         reauth={reauth}
         summary={describeDeletionPlan(planAccountDeletion(facts))}
+        twoFactorOn={twoFactorOn}
       />
     </div>
   );

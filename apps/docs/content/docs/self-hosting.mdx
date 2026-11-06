@@ -4,7 +4,7 @@ description: Run your own QRdx web app, dynamic QR codes and hosted pages includ
 icon: Server
 ---
 
-QRdx is AGPL-3.0 licensed, and you can run the whole web app (QR editor, accounts, dynamic codes and hosted pages, teams, saved themes, community gallery and these docs) on your own server. You don't need any of this to use the [`qrdx` React library](/docs/getting-started) or the CLI. Those run anywhere without a backend.
+QRdx is AGPL-3.0 licensed, and you can run the web app (QR editor, accounts, two-step verification and passkeys, dynamic codes and hosted pages, teams, saved themes, community gallery and these docs) on your own server. Workspace single sign-on is the exception: it lives in the commercially licensed `ee/` folders and stays off unless you set a license key (`QRDX_EE_LICENSE`). Using it in production needs a written agreement with QRdx; see [LICENSING.md](https://github.com/bucharitesh/qrdx/blob/main/LICENSING.md). You don't need any of this to use the [`qrdx` React library](/docs/getting-started) or the CLI. Those run anywhere without a backend.
 
 <Callout type="warn">
   The Docker setup is new. If something doesn't work, please [open an issue](https://github.com/bucharitesh/qrdx/issues).
@@ -12,8 +12,9 @@ QRdx is AGPL-3.0 licensed, and you can run the whole web app (QR editor, account
 
 ## Requirements
 
-- Docker with Compose v2, or Node.js 22 (22.22.3 or later) and pnpm 10 for the manual setup
-- A way to sign in, so accounts can be created: a GitHub or Google OAuth app, or [Resend](https://resend.com) for email sign-in codes. Codes are emailed only when `NEXT_PUBLIC_APP_URL` isn't `localhost`; `pnpm dev` prints them in the terminal instead.
+- Docker with Compose v2 and BuildKit (Docker Desktop and current Docker Engine include both), or Node.js 22 (22.22.3 or later) and pnpm 10 for the manual setup
+- At least 8 GB of memory for Docker while the image builds
+- A way to sign in, so accounts can be created: a GitHub or Google OAuth app, or [Resend](https://resend.com) for email sign-in codes. Codes are emailed only when `NEXT_PUBLIC_APP_URL` isn't `localhost`. `pnpm dev` prints them in the terminal instead, but the Docker image doesn't, so a local Docker test needs GitHub or Google sign-in.
 - Postgres: the container bundled in `docker-compose.yml`, or a [Neon](https://neon.tech) database
 
 ### How the database connection works
@@ -149,6 +150,7 @@ Add one OAuth provider (GitHub or Google), or Resend for email sign-in codes, so
 | Google sign-in | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | Google sign-in is unavailable |
 | Auth base URL | `BETTER_AUTH_URL` | Inferred from each request, with a warning in the logs |
 | Admin panel | `ADMIN_EMAILS`, `ADMIN_USER_IDS` | Nobody can open `/admin` |
+| Workspace single sign-on | `QRDX_EE_LICENSE` | Single sign-on stays off: no **Sign in with SSO**, no SSO settings, and its sign-in routes don't exist. SSO is in the `ee/` folders under the QRdx commercial license, so production use needs a written agreement with QRdx. See [Single sign-on](/docs/help/teams/single-sign-on) |
 | AI themes, prompt enhancement and AI QR art (Vercel AI Gateway) | `AI_GATEWAY_API_KEY` | AI requests fail and the AI pages leave the navigation and sitemap. The editor works normally. Create the key in your own Vercel account (AI Gateway, API keys); usage is billed to that account's AI Gateway credits, and your app doesn't have to run on Vercel. The model for each task is set in `apps/docs/lib/ai/models.ts` |
 | Short-link origin | `NEXT_PUBLIC_SHORT_LINK_BASE_URL` | [Dynamic codes](/docs/dynamic-qr-codes#self-hosting) use `NEXT_PUBLIC_APP_URL` |
 | Scan privacy salt | `SCAN_HASH_SALT` | Derived from `BETTER_AUTH_SECRET` |
@@ -213,3 +215,6 @@ If a schema change would drop data, `drizzle-kit push` asks for confirmation. In
 - **`migrate` never finishes:** `drizzle-kit push` is waiting for a confirmation. See [Updating](#updating).
 - **A changed `NEXT_PUBLIC_*` value has no effect:** rebuild the image.
 - **Port 4444 is already in use:** change the `db-proxy` port mapping in `docker-compose.yml`. Only local development on the host uses it.
+- **"the --mount option requires BuildKit":** your Docker has no BuildKit. Install the `buildx` plugin, or update Docker.
+- **The build stops with `Killed` or exit code 137:** Docker ran out of memory. Give it at least 8 GB (Docker Desktop: Settings → Resources) and run `docker compose up -d --build` again.
+- **"sign-in code email is off for this deployment":** email codes aren't sent while `NEXT_PUBLIC_APP_URL` is `localhost`. Use GitHub or Google sign-in for a local test.

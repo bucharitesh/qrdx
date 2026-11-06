@@ -80,7 +80,7 @@ const colorString = z
     message: "Must be a hex colour (#155dfc), rgb()/hsl() or a colour name",
   })
   .transform(withHash)
-  .describe("A colour: hex (#155dfc), rgb()/hsl() or a colour name");
+  .describe("A color: hex (#155dfc), rgb()/hsl() or a color name");
 
 const stopSchema = z
   .object({
@@ -93,7 +93,7 @@ const stopsSchema = z
   .array(stopSchema)
   .min(2)
   .max(GRADIENT_STOPS_MAX)
-  .describe(`2 to ${GRADIENT_STOPS_MAX} colour stops`);
+  .describe(`2 to ${GRADIENT_STOPS_MAX} color stops`);
 
 /** A solid colour or a gradient, in the engine's ColorConfig shape. */
 export const apiColorSchema = z
@@ -120,7 +120,7 @@ export const apiColorSchema = z
     },
   )
   .describe(
-    'A colour, or a gradient: { "type": "linear", "angle": 45, "stops": [{ "color": "#155dfc", "offset": 0 }, { "color": "#7c3aed", "offset": 100 }] } or { "type": "radial", "stops": [...] }',
+    'A color, or a gradient: { "type": "linear", "angle": 45, "stops": [{ "color": "#155dfc", "offset": 0 }, { "color": "#7c3aed", "offset": 100 }] } or { "type": "radial", "stops": [...] }',
   );
 
 const frameColor = colorString.optional();
@@ -154,7 +154,7 @@ const TEMPLATE_IDS = getTemplateIds() as [string, ...string[]];
 const eyeOverrideSchema = z
   .object({
     outer: apiColorSchema.optional().describe("The eye's frame"),
-    inner: apiColorSchema.optional().describe("The eye's centre"),
+    inner: apiColorSchema.optional().describe("The eye's center"),
   })
   .strict();
 
@@ -170,7 +170,7 @@ const eyeColorsSchema = z
   )
   .strict()
   .describe(
-    "Per-eye colours: { topLeft, topRight, bottomLeft }, each { outer, inner }",
+    "Per-eye colors: { topLeft, topRight, bottomLeft }, each { outer, inner }",
   );
 
 /** The logo's layout, in the engine's ranges. */
@@ -213,14 +213,14 @@ export const apiStyleFields = {
     .describe("The three corner eye frames (defaults to fgColor)"),
   dotColor: apiColorSchema
     .optional()
-    .describe("The centre of each corner eye (defaults to fgColor)"),
+    .describe("The center of each corner eye (defaults to fgColor)"),
   bodyPattern: bodyPatternSchema.optional().describe("Shape of the dots"),
   cornerEyePattern: cornerEyePatternSchema
     .optional()
     .describe("Shape of the corner eye frames"),
   cornerEyeDotPattern: cornerEyeDotPatternSchema
     .optional()
-    .describe("Shape of the corner eye centres"),
+    .describe("Shape of the corner eye centers"),
   level: errorLevelSchema
     .optional()
     .describe("Error correction: L 7%, M 15%, Q 25%, H 30%"),
@@ -260,7 +260,7 @@ export const apiStyleFields = {
     .boolean()
     .optional()
     .describe(
-      "Show a logo in the centre. With logoIcon or logoFileId it's that logo; alone it's the QRdx mark, which only the editor draws",
+      "Show a logo in the center. With logoIcon or logoFileId it's that logo; alone it's the QRdx mark, which only the editor draws",
     ),
   logoIcon: z
     .enum(LOGO_ICON_IDS)
@@ -298,7 +298,7 @@ export type ApiStyle = z.output<typeof apiStyleSchema>;
 export const apiStyleToolSchema = z
   .record(z.string(), z.unknown())
   .describe(
-    'The editor\'s style JSON, as design_qr returns it in qrdxStyle and a saved theme stores it. Fields: bgColor, fgColor, eyeColor, dotColor (a colour such as #155dfc, or a gradient { type: linear | radial, angle, stops: [{ color, offset 0-100 }] } with 2 to 8 stops), bodyPattern, cornerEyePattern, cornerEyeDotPattern, level (L, M, Q, H), margin (0-16), templateId, frame (a built-in style with text, or { style: "custom", spec }), eyeColors ({ topLeft, topRight, bottomLeft: { outer, inner } }), moduleScale (0.5-1), autoLevel, shape (square or circle), logoOptions ({ size 0.1-0.3, padding 0-2, x and y 0-1, shape square, rounded or circle, plate }), showLogo, logoIcon, logoFileId. Unknown fields are refused.',
+    'The editor\'s style JSON, as design_qr returns it in qrdxStyle and a saved theme stores it. Fields: bgColor, fgColor, eyeColor, dotColor (a color such as #155dfc, or a gradient { type: linear | radial, angle, stops: [{ color, offset 0-100 }] } with 2 to 8 stops), bodyPattern, cornerEyePattern, cornerEyeDotPattern, level (L, M, Q, H), margin (0-16), templateId, frame (a built-in style with text, or { style: "custom", spec }), eyeColors ({ topLeft, topRight, bottomLeft: { outer, inner } }), moduleScale (0.5-1), autoLevel, shape (square or circle), logoOptions ({ size 0.1-0.3, padding 0-2, x and y 0-1, shape square, rounded or circle, plate }), showLogo, logoIcon, logoFileId. Unknown fields are refused.',
   );
 
 export interface StyleIssue {

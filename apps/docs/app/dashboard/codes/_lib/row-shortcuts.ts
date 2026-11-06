@@ -1,8 +1,6 @@
-// Single keys for the codes row under the pointer (or holding focus), in the
-// pattern of Dub's link rows (github.com/dubinc/dub, AGPL-3.0:
-// apps/web/ui/links/link-controls.tsx): never while typing, never with a
-// modifier, never behind a dialog or menu, and off with the person's
-// keyboard shortcuts switch. Dub trashes with X; here X selects the row
+// Single keys for the codes row under the pointer (or holding focus): never
+// while typing, never with a modifier, never behind a dialog or menu, and off
+// with the person's keyboard shortcuts switch. X selects the row
 // (app/dashboard/_lib/list-keys.ts), so trash is Backspace or Delete. Pure,
 // so the rules are tested without a browser.
 

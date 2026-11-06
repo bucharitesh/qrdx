@@ -1,3 +1,4 @@
+import { spawnSync } from "node:child_process";
 import {
   rehypeCodeDefaultOptions,
   remarkSteps,
@@ -165,13 +166,22 @@ export const blog = defineDocs({
   },
 });
 
+// Each page's "last modified" date comes from git. A Docker build has
+// neither the git binary nor the .git folder (see .dockerignore), and
+// fumadocs fails the whole build when it can't run git, so there the dates
+// are left out. The sitemap already handles pages without one.
+const hasGit =
+  spawnSync("git", ["rev-parse", "--is-inside-work-tree"], {
+    stdio: "ignore",
+  }).status === 0;
+
 export default defineConfig({
   plugins: [
     jsonSchema({
       insert: true,
     }),
     lastModified({
-      versionControl: "git",
+      versionControl: hasGit ? "git" : async () => undefined,
     }),
   ],
   mdxOptions: {

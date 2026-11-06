@@ -3,6 +3,7 @@
 // label or visible text, never by CSS classes. Launch/connect code follows
 // .claude/build/tools/shot.mjs.
 import { spawn } from "node:child_process";
+import { randomBytes } from "node:crypto";
 import { existsSync, mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -85,6 +86,8 @@ export async function launch({
     chromePath,
     [
       "--headless=new",
+      // Never make a sound on the machine running the suites.
+      "--mute-audio",
       `--remote-debugging-port=${port}`,
       `--user-data-dir=${profile}`,
       "--hide-scrollbars",
@@ -96,129 +99,297 @@ export async function launch({
     ],
     { stdio: "ignore" },
   );
-
-  let wsUrl;
-  for (let i = 0; i < 75 && !wsUrl; i++) {
+  // The browser never outlives this process: killed on a normal exit, on
+  // Ctrl-C or termination, and if anything below throws before close().
+  const killChrome = () => {
     try {
-      const list = await (
-        await fetch(`http://127.0.0.1:${port}/json/list`)
-      ).json();
-      wsUrl = list.find(
-        (target) => target.type === "page",
-      )?.webSocketDebuggerUrl;
+      chrome.kill();
     } catch {}
-    if (!wsUrl) await sleep(200);
-  }
-  if (!wsUrl) {
-    chrome.kill();
-    throw new Error("Chrome did not start");
-  }
-  const cdp = await connect(wsUrl);
-  await cdp.send("Page.enable");
-  await cdp.send("Runtime.enable");
-  // Every document (including dev-server reloads) gets the in-page helpers.
-  await cdp.send("Page.addScriptToEvaluateOnNewDocument", {
-    source: PAGE_HELPERS,
-  });
-  await cdp.send("Emulation.setDeviceMetricsOverride", {
-    width,
-    height,
-    deviceScaleFactor: 1,
-    mobile: false,
-  });
-  await cdp.send("Emulation.setEmulatedMedia", {
-    features: [{ name: "prefers-reduced-motion", value: "reduce" }],
-  });
-  if (downloadDir) {
-    await cdp.send("Browser.setDownloadBehavior", {
-      behavior: "allow",
-      downloadPath: downloadDir,
-      eventsEnabled: true,
-    });
-  }
-  const origin = await cdp.send("Runtime.evaluate", { expression: "1" });
-  void origin;
+  };
+  const onSignal = (signal) => {
+    killChrome();
+    process.exit(signal === "SIGINT" ? 130 : 143);
+  };
+  process.on("exit", killChrome);
+  process.once("SIGINT", onSignal);
+  process.once("SIGTERM", onSignal);
+  const forget = () => {
+    process.off("exit", killChrome);
+    process.off("SIGINT", onSignal);
+    process.off("SIGTERM", onSignal);
+  };
 
-  const consoleErrors = [];
-  cdp.on((message) => {
-    if (message.method === "Runtime.exceptionThrown") {
-      consoleErrors.push(
-        message.params.exceptionDetails?.exception?.description ?? "exception",
-      );
+  try {
+    let wsUrl;
+    for (let i = 0; i < 75 && !wsUrl; i++) {
+      try {
+        const list = await (
+          await fetch(`http://127.0.0.1:${port}/json/list`)
+        ).json();
+        wsUrl = list.find(
+          (target) => target.type === "page",
+        )?.webSocketDebuggerUrl;
+      } catch {}
+      if (!wsUrl) await sleep(200);
     }
-    // React reports errors caught by error boundaries through console.error.
-    if (
-      message.method === "Runtime.consoleAPICalled" &&
-      message.params.type === "error"
+    if (!wsUrl) {
+      chrome.kill();
+      throw new Error("Chrome did not start");
+    }
+    const cdp = await connect(wsUrl);
+    await cdp.send("Page.enable");
+    await cdp.send("Runtime.enable");
+    // Every document (including dev-server reloads) gets the in-page helpers.
+    await cdp.send("Page.addScriptToEvaluateOnNewDocument", {
+      source: PAGE_HELPERS,
+    });
+    await cdp.send("Emulation.setDeviceMetricsOverride", {
+      width,
+      height,
+      deviceScaleFactor: 1,
+      mobile: false,
+    });
+    await cdp.send("Emulation.setEmulatedMedia", {
+      features: [{ name: "prefers-reduced-motion", value: "reduce" }],
+    });
+    if (downloadDir) {
+      await cdp.send("Browser.setDownloadBehavior", {
+        behavior: "allow",
+        downloadPath: downloadDir,
+        eventsEnabled: true,
+      });
+    }
+    const origin = await cdp.send("Runtime.evaluate", { expression: "1" });
+    void origin;
+
+    const consoleErrors = [];
+    cdp.on((message) => {
+      if (message.method === "Runtime.exceptionThrown") {
+        consoleErrors.push(
+          message.params.exceptionDetails?.exception?.description ??
+            "exception",
+        );
+      }
+      // React reports errors caught by error boundaries through console.error.
+      if (
+        message.method === "Runtime.consoleAPICalled" &&
+        message.params.type === "error"
+      ) {
+        const text = message.params.args
+          .map((arg) => arg.value ?? arg.description ?? "")
+          .join(" ");
+        if (/Error:/.test(text)) consoleErrors.push(text);
+      }
+    });
+
+    /** Evaluates `fn` (a function source) in the page with JSON args. */
+    async function evaluate(fn, ...args) {
+      const { result, exceptionDetails } = await cdp.send("Runtime.evaluate", {
+        expression: `(${fn})(...${JSON.stringify(args)})`,
+        awaitPromise: true,
+        returnByValue: true,
+      });
+      if (exceptionDetails) {
+        throw new Error(
+          exceptionDetails.exception?.description ??
+            exceptionDetails.text ??
+            "evaluate failed",
+        );
+      }
+      return result.value;
+    }
+
+    async function goto(url, { wait = 1500 } = {}) {
+      const loaded = new Promise((resolve) => {
+        const fn = (message) => {
+          if (message.method === "Page.loadEventFired") {
+            cdp.off(fn);
+            resolve();
+          }
+        };
+        cdp.on(fn);
+      });
+      await cdp.send("Page.navigate", { url });
+      await Promise.race([loaded, sleep(60_000)]);
+      await sleep(wait);
+    }
+
+    /** Polls `fn` in the page until it returns a truthy value. */
+    async function waitFor(
+      fn,
+      { timeout = 15_000, interval = 150, args = [] } = {},
     ) {
-      const text = message.params.args
-        .map((arg) => arg.value ?? arg.description ?? "")
+      const started = Date.now();
+      let last;
+      while (Date.now() - started < timeout) {
+        last = await evaluate(fn, ...args).catch((error) => ({
+          __error: String(error),
+        }));
+        if (last && !last.__error) return last;
+        await sleep(interval);
+      }
+      throw new Error(
+        `Timed out waiting for condition (${String(fn).slice(0, 80)}…)`,
+      );
+    }
+
+    async function close() {
+      try {
+        cdp.close();
+      } catch {}
+      killChrome();
+      forget();
+      await sleep(200);
+      rmSync(profile, { recursive: true, force: true });
+    }
+
+    return { cdp, evaluate, goto, waitFor, close, consoleErrors };
+  } catch (error) {
+    killChrome();
+    forget();
+    rmSync(profile, { recursive: true, force: true });
+    throw error;
+  }
+}
+
+// ── Content-Security-Policy violations ──────────────────────────────────────
+
+// How Chrome words a violation: older versions "Refused to load …", current
+// ones "Loading the script '…' violates the following Content Security
+// Policy directive …" (blocked scripts no longer say "Refused to").
+const CSP_TEXT = /Refused to|violates the following Content Security Policy/;
+
+// A token unique to this run marks the self-test's own violation, so it's
+// matched exactly (never by a hostname that could appear anywhere).
+const SELFTEST_TOKEN = `csp-selftest-${randomBytes(8).toString("hex")}`;
+const SELFTEST_SCRIPT = `https://evil.example.com/${SELFTEST_TOKEN}.js`;
+
+/**
+ * True when `baseUrl` enforces a Content-Security-Policy that governs what
+ * pages load (production, or `next dev` with CSP_DEV=1). Plain `next dev`
+ * still sends a header with only frame-ancestors, which blocks nothing a
+ * page loads, so a policy counts only with default-src or script-src.
+ * Report-Only and no header are false.
+ * @param {string} baseUrl
+ */
+export async function cspEnforced(baseUrl) {
+  const response = await fetch(`${baseUrl}/sign-in`, {
+    redirect: "manual",
+    signal: AbortSignal.timeout(60_000),
+  });
+  const policy = response.headers.get("content-security-policy") ?? "";
+  return policy
+    .split(";")
+    .map((part) => part.trim().split(/\s+/)[0]?.toLowerCase())
+    .some((name) => name === "default-src" || name === "script-src");
+}
+
+/**
+ * Records every CSP violation the browser reports, with the page it
+ * happened on: Log entries from the "security" source or with violation
+ * wording, console messages with that wording, and Audits issues of the
+ * content-security-policy kind (one violation usually shows up as both a
+ * Log entry and an issue). Call it right after `launch()`.
+ *
+ * `selfTest(baseUrl)` is the positive control (suites run it with
+ * E2E_CSP_SELFTEST=1): it loads a script from evil.example.com on /sign-in
+ * and returns whether that was caught. Its entries are dropped afterwards,
+ * so they never count as real violations.
+ *
+ * `result(enforced)` is what a suite reports at the end: `skipped` (with a
+ * note) when the server sends no enforced CSP, else `ok` and the lines.
+ *
+ * @param {Awaited<ReturnType<typeof launch>>} page
+ */
+export async function recordCspViolations(page) {
+  const { cdp } = page;
+  /** @type {{ url: string; text: string }[]} */
+  const seen = [];
+  let currentUrl = "";
+  const add = (url, text) => {
+    seen.push({
+      url: String(url || currentUrl).split("?")[0],
+      text: String(text).replace(/\s+/g, " ").slice(0, 400),
+    });
+  };
+  await cdp.send("Log.enable");
+  await cdp.send("Audits.enable");
+  cdp.on((message) => {
+    const params = message.params ?? {};
+    if (message.method === "Page.frameNavigated" && !params.frame?.parentId) {
+      currentUrl = params.frame?.url ?? currentUrl;
+    }
+    if (message.method === "Log.entryAdded") {
+      const entry = params.entry ?? {};
+      const text = String(entry.text ?? "");
+      if (entry.source === "security" || CSP_TEXT.test(text)) {
+        add(entry.url, `[log] ${text}`);
+      }
+    }
+    if (message.method === "Runtime.consoleAPICalled") {
+      const text = (params.args ?? [])
+        .map((arg) => String(arg.value ?? arg.description ?? ""))
         .join(" ");
-      if (/Error:/.test(text)) consoleErrors.push(text);
+      if (CSP_TEXT.test(text)) add("", `[console] ${text}`);
+    }
+    if (
+      message.method === "Audits.issueAdded" &&
+      params.issue?.code === "ContentSecurityPolicyIssue"
+    ) {
+      const details =
+        params.issue.details?.contentSecurityPolicyIssueDetails ?? {};
+      add(
+        details.sourceCodeLocation?.url,
+        `[issue] ${details.contentSecurityPolicyViolationType ?? "csp"}: ${
+          details.violatedDirective ?? "?"
+        } blocked ${details.blockedURL ?? "(inline)"}`,
+      );
     }
   });
 
-  /** Evaluates `fn` (a function source) in the page with JSON args. */
-  async function evaluate(fn, ...args) {
-    const { result, exceptionDetails } = await cdp.send("Runtime.evaluate", {
-      expression: `(${fn})(...${JSON.stringify(args)})`,
-      awaitPromise: true,
-      returnByValue: true,
-    });
-    if (exceptionDetails) {
-      throw new Error(
-        exceptionDetails.exception?.description ??
-          exceptionDetails.text ??
-          "evaluate failed",
-      );
-    }
-    return result.value;
-  }
+  return {
+    /** Real violations seen so far (the self-test's are dropped). */
+    violations: () => [...seen],
 
-  async function goto(url, { wait = 1500 } = {}) {
-    const loaded = new Promise((resolve) => {
-      const fn = (message) => {
-        if (message.method === "Page.loadEventFired") {
-          cdp.off(fn);
-          resolve();
-        }
+    /** @param {string} baseUrl */
+    async selfTest(baseUrl) {
+      const before = seen.length;
+      await page.goto(`${baseUrl}/sign-in`);
+      await page.evaluate((src) => {
+        const script = document.createElement("script");
+        script.src = src;
+        document.head.appendChild(script);
+        return true;
+      }, SELFTEST_SCRIPT);
+      const started = Date.now();
+      while (
+        Date.now() - started < 5000 &&
+        !seen.slice(before).some((v) => v.text.includes(SELFTEST_TOKEN))
+      ) {
+        await sleep(100);
+      }
+      const caught = seen.slice(before);
+      seen.splice(before);
+      return {
+        caught: caught.some((v) => v.text.includes(SELFTEST_TOKEN)),
+        lines: caught.map((v) => `${v.url} :: ${v.text}`),
       };
-      cdp.on(fn);
-    });
-    await cdp.send("Page.navigate", { url });
-    await Promise.race([loaded, sleep(60_000)]);
-    await sleep(wait);
-  }
+    },
 
-  /** Polls `fn` in the page until it returns a truthy value. */
-  async function waitFor(
-    fn,
-    { timeout = 15_000, interval = 150, args = [] } = {},
-  ) {
-    const started = Date.now();
-    let last;
-    while (Date.now() - started < timeout) {
-      last = await evaluate(fn, ...args).catch((error) => ({
-        __error: String(error),
-      }));
-      if (last && !last.__error) return last;
-      await sleep(interval);
-    }
-    throw new Error(
-      `Timed out waiting for condition (${String(fn).slice(0, 80)}…)`,
-    );
-  }
-
-  async function close() {
-    try {
-      cdp.close();
-    } catch {}
-    chrome.kill();
-    await sleep(200);
-    rmSync(profile, { recursive: true, force: true });
-  }
-
-  return { cdp, evaluate, goto, waitFor, close, consoleErrors };
+    /** @param {boolean} enforced */
+    result(enforced) {
+      if (!enforced) {
+        return {
+          skipped: true,
+          ok: true,
+          note: "CSP not enforced on this server; run next dev with CSP_DEV=1",
+          lines: [],
+        };
+      }
+      const lines = [...new Set(seen.map((v) => `${v.url} :: ${v.text}`))];
+      return { skipped: false, ok: lines.length === 0, note: "", lines };
+    },
+  };
 }
 
 /**

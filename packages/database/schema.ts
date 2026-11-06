@@ -55,6 +55,9 @@ export const user = pgTable(
     banned: boolean("banned").default(false),
     banReason: text("ban_reason"),
     banExpires: timestamp("ban_expires"),
+    // Better Auth two-factor plugin field: true once an authenticator app is
+    // verified. SQL: packages/database/manual-sql/0019_sign_in_security.sql
+    twoFactorEnabled: boolean("two_factor_enabled").default(false),
     createdAt: timestamp("created_at").notNull(),
     updatedAt: timestamp("updated_at").notNull(),
   },
@@ -109,6 +112,90 @@ export const verification = pgTable("verification", {
   updatedAt: timestamp("updated_at"),
 });
 
+// Sign-in security: two-step verification, passkeys and workspace SSO. Field
+// names match better-auth 1.7.14's twoFactor, @better-auth/passkey and
+// @better-auth/sso schemas; written only through those plugins.
+// SQL: packages/database/manual-sql/0019_sign_in_security.sql
+
+// One row per user with an authenticator app. `secret` and `backup_codes` are
+// encrypted by the plugin with BETTER_AUTH_SECRET.
+export const twoFactor = pgTable(
+  "two_factor",
+  {
+    id: text("id").primaryKey(),
+    secret: text("secret").notNull(),
+    backupCodes: text("backup_codes").notNull(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    // False between setup and the first correct code.
+    verified: boolean("verified").default(true),
+    failedVerificationCount: integer("failed_verification_count").default(0),
+    lockedUntil: timestamp("locked_until"),
+  },
+  (table) => [
+    index("two_factor_secret_idx").on(table.secret),
+    index("two_factor_user_id_idx").on(table.userId),
+  ]
+);
+
+// WebAuthn credentials. `public_key` is the credential's public key, never a
+// secret.
+export const passkey = pgTable(
+  "passkey",
+  {
+    id: text("id").primaryKey(),
+    name: text("name"),
+    publicKey: text("public_key").notNull(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    credentialID: text("credential_id").notNull(),
+    counter: integer("counter").notNull(),
+    deviceType: text("device_type").notNull(),
+    backedUp: boolean("backed_up").notNull(),
+    transports: text("transports"),
+    createdAt: timestamp("created_at"),
+    aaguid: text("aaguid"),
+  },
+  (table) => [
+    index("passkey_user_id_idx").on(table.userId),
+    index("passkey_credential_id_idx").on(table.credentialID),
+    // One row per credential: sign-in looks passkeys up by credential id.
+    // SQL: packages/database/manual-sql/0021_passkey_credential_unique.sql
+    uniqueIndex("passkey_credential_id_unique").on(table.credentialID),
+  ]
+);
+
+// A workspace's identity provider (OIDC or SAML), one domain each. The
+// provider signs people in only after the workspace proves it owns `domain`
+// (DNS TXT record). `oidc_config` / `saml_config` are JSON strings.
+export const ssoProvider = pgTable(
+  "sso_provider",
+  {
+    id: text("id").primaryKey(),
+    issuer: text("issuer").notNull(),
+    oidcConfig: text("oidc_config"),
+    samlConfig: text("saml_config"),
+    // Who registered it. Nullable (Better Auth generates NOT NULL) so the
+    // workspace keeps its SSO when that person deletes their account; the
+    // plugin checks workspace admin rights, not this column, for org providers.
+    userId: text("user_id").references(() => user.id, {
+      onDelete: "set null",
+    }),
+    providerId: text("provider_id").notNull().unique(),
+    organizationId: text("organization_id").references(() => organization.id, {
+      onDelete: "cascade",
+    }),
+    domain: text("domain").notNull(),
+    domainVerified: boolean("domain_verified").default(false),
+  },
+  (table) => [
+    index("sso_provider_organization_id_idx").on(table.organizationId),
+    index("sso_provider_domain_idx").on(table.domain),
+  ]
+);
+
 // Better Auth organization plugin tables ("teams" in the UI). Written only
 // through the plugin's API; field names match better-auth 1.5's schema.
 export const organization = pgTable("organization", {
@@ -137,6 +224,13 @@ export const member = pgTable(
   (table) => [
     index("member_organization_id_idx").on(table.organizationId),
     index("member_user_id_idx").on(table.userId),
+    // One membership per person per workspace. SSO sign-ins add people on
+    // every sign-in, so two at once must not double up.
+    // SQL: packages/database/manual-sql/0020_member_unique.sql
+    uniqueIndex("member_organization_id_user_id_unique").on(
+      table.organizationId,
+      table.userId
+    ),
   ]
 );
 

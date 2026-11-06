@@ -1,4 +1,4 @@
-// Plan-limit emails (the Dub study's gap 14): which limits send one, when,
+// Plan-limit emails: which limits send one, when,
 // and the words they use. Pure, so the tests cover every case.
 
 import { type MeterId, meterLevel } from "@/app/settings/usage/_lib/meters";

@@ -4,6 +4,7 @@ import { cn } from "@repo/design-system/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { Meter } from "@/app/settings/usage/_lib/meters";
+import { useAvailability } from "@/components/availability-provider";
 import bar from "@/components/header-bar.module.css";
 import { QrdxLogo } from "@/components/qrdx-logo";
 import { UserProfileDropdown } from "@/components/user-profile-dropdown";
@@ -20,7 +21,10 @@ function Breadcrumb({ slug }: { slug: string | null }) {
   const pathname = usePathname();
   const inSettings = isSettingsPath(pathname);
   const home = slug ? workspaceHref(slug) : "/dashboard";
-  const item = slug ? findActiveNavItem(pathname, slug) : undefined;
+  const { showsPath } = useAvailability();
+  const found = slug ? findActiveNavItem(pathname, slug) : undefined;
+  // A page this server doesn't offer (it's left out of the sidebar too).
+  const item = found && showsPath(found.href) ? found : undefined;
   const area = inSettings
     ? { label: "Settings", href: slug ? settingsHome(slug) : "/settings" }
     : { label: "Dashboard", href: home };

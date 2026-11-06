@@ -1,7 +1,8 @@
 // Which built-in features this deployment can offer, decided from what is
 // configured on QRdx's side (an API key, a bucket, a Vercel token). Pure: the
-// environment comes in as an argument and only "is it set" is read, so this
-// is testable without real values and safe to import from client code.
+// environment comes in as an argument and only "is it set" is read (except
+// the app URL for passkeys, which must be HTTPS), so this is testable without
+// real values and safe to import from client code.
 // lib/feature-availability.ts feeds it the server environment.
 //
 // A feature that can't work here is left out everywhere it would be offered:
@@ -11,6 +12,8 @@
 // are decided in lib/integration-availability-rules.ts, which defers to these
 // rules for the catalog entries that are really built-in features.
 
+import { EE_LICENSE_ENV } from "@repo/auth/ee-license";
+import { passkeyRelyingParty } from "@repo/auth/passkey-rp";
 import {
   WORKSPACE_PATTERN_PREFIX,
   workspacePattern,
@@ -28,6 +31,8 @@ export const FEATURE_IDS = [
   "scheduledJobs",
   "youtubeChannelPicker",
   "spotifyPlaylistPicker",
+  "passkeys",
+  "sso",
 ] as const;
 
 export type FeatureId = (typeof FEATURE_IDS)[number];
@@ -49,6 +54,11 @@ interface FeatureRule {
   name: string;
   /** Variable names that must be set; empty when nothing needs configuring. */
   requires: (ctx: FeatureContext) => readonly string[];
+  /**
+   * For a feature that needs more than set variables: false when their
+   * values can't work (the variables named by `requires` are then reported).
+   */
+  usable?: (ctx: FeatureContext) => boolean;
   /**
    * Pages that only offer this feature. They leave the nav, footer, app
    * sidebar, sitemap and llms.txt while it's unavailable; the pages
@@ -143,6 +153,30 @@ export const FEATURE_RULES: Record<FeatureId, FeatureRule> = {
     requires: () => ["SPOTIFY_CLIENT_ID", "SPOTIFY_CLIENT_SECRET"],
     extrasOf: "spotify",
   },
+  passkeys: {
+    // Passkeys belong to the app's host and browsers only offer them over
+    // HTTPS (or on localhost): packages/auth/passkey-rp.ts. Pages served from
+    // another host (a preview URL) hide them too: see lib/passkeys.ts.
+    name: "Passkeys (HTTPS app URL)",
+    requires: () => ["NEXT_PUBLIC_APP_URL"],
+    usable: (ctx) =>
+      passkeyRelyingParty({
+        BETTER_AUTH_URL: ctx.env.BETTER_AUTH_URL,
+        NEXT_PUBLIC_APP_URL: ctx.env.NEXT_PUBLIC_APP_URL,
+      }) !== null,
+    paths: ["/docs/help/privacy-and-security/passkeys"],
+  },
+  sso: {
+    // Workspace single sign-on is in ee/ under the QRdx commercial licence
+    // and runs only with a licence key (packages/auth/ee-license.ts): without
+    // one the server doesn't register it at all.
+    name: "Workspace SSO (QRdx license key)",
+    requires: () => [EE_LICENSE_ENV],
+    paths: [
+      `${WORKSPACE_PATTERN_PREFIX}/settings/sso`,
+      "/docs/help/teams/single-sign-on",
+    ],
+  },
 };
 
 /**
@@ -153,9 +187,13 @@ export function missingFeatureSetup(
   id: FeatureId,
   ctx: FeatureContext,
 ): string[] {
-  return FEATURE_RULES[id]
-    .requires(ctx)
-    .filter((name) => !ctx.env[name]?.trim());
+  const rule = FEATURE_RULES[id];
+  const names = rule.requires(ctx);
+  const missing = names.filter((name) => !ctx.env[name]?.trim());
+  if (missing.length === 0 && rule.usable && !rule.usable(ctx)) {
+    return [...names];
+  }
+  return missing;
 }
 
 export type FeatureMap = Record<FeatureId, boolean>;

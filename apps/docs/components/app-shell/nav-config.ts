@@ -7,6 +7,7 @@ import {
   Speedometer as Gauge,
   Global as Globe,
   Home2 as Home,
+  KeySquare,
   type Icon as LucideIcon,
   Element2 as PanelsTopLeft,
   Electricity as Plug,
@@ -102,7 +103,7 @@ export function mainNav(slug: string): AppNavGroup[] {
  * The settings area (its own sidebar, with a way back to the dashboard).
  * Workspace settings live under /dashboard/<slug>/settings and follow the
  * switcher; Account is the signed-in person, under /settings, the same in
- * every workspace (Dub's split).
+ * every workspace.
  */
 export function settingsNav(slug: string): AppNavGroup[] {
   const general = workspaceHref(slug, "/settings");
@@ -141,6 +142,12 @@ export function settingsNav(slug: string): AppNavGroup[] {
           label: "Domains",
           icon: Globe,
           keywords: ["custom domain", "dns"],
+        },
+        {
+          href: workspaceHref(slug, "/settings/sso"),
+          label: "Single sign-on",
+          icon: KeySquare,
+          keywords: ["sso", "saml", "oidc", "okta", "identity provider"],
         },
         {
           href: workspaceHref(slug, "/settings/webhooks"),

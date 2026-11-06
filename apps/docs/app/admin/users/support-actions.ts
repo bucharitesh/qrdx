@@ -15,7 +15,10 @@ import {
 } from "@repo/database";
 import { and, count, eq, sql } from "drizzle-orm";
 import { headers } from "next/headers";
+import { after } from "next/server";
 import { z } from "zod";
+import { sendTwoFactorNotice } from "@/lib/account/two-factor-notice-server";
+import { resetTwoFactor } from "@/lib/account/two-factor-server";
 import { revokeStoredToken } from "@/lib/connected-accounts/server";
 import { cleanupDataConnection } from "@/lib/data-connections/server";
 import { claimDueDeliveries, processClaimed } from "@/lib/events/deliveries";
@@ -74,6 +77,40 @@ export async function markEmailVerifiedAction(
         .update(user)
         .set({ emailVerified: true, updatedAt: new Date() })
         .where(eq(user.id, userId));
+      return {
+        audit: {
+          targetType: "user",
+          targetId: userId,
+          subjectUserId: userId,
+          metadata: { targetEmail: target.email },
+        },
+      };
+    },
+  );
+}
+
+/**
+ * For someone who lost their authenticator app and backup codes, once they
+ * wrote to support from the account's address: two-step verification goes
+ * off (secret, backup codes and trusted devices gone) and the address gets a
+ * notice. They can sign in with their usual method and turn it on again.
+ */
+export async function resetTwoFactorAction(
+  input: z.input<typeof userReason>,
+): Promise<AdminActionResult> {
+  return runAdminAction(
+    { action: "user.reset_two_factor", schema: userReason, limit: "sensitive" },
+    input,
+    async (_admin, { userId }) => {
+      const [target] = await db
+        .select({ email: user.email, on: user.twoFactorEnabled })
+        .from(user)
+        .where(eq(user.id, userId))
+        .limit(1);
+      if (!target) throw adminError("User not found", 404);
+      if (!target.on) throw adminError("Two-step verification is already off.");
+      await resetTwoFactor(userId);
+      after(() => sendTwoFactorNotice("support-off", target.email));
       return {
         audit: {
           targetType: "user",

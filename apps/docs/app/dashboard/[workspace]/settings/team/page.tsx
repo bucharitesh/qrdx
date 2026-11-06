@@ -1,4 +1,5 @@
 import { isOwnWorkspaceOf } from "@repo/auth/own-workspace-id";
+import { ssoRejoinDomains } from "@repo/auth/sso";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import {
   Card,
@@ -31,6 +32,7 @@ import {
   TEAM_ROLE_LABELS,
 } from "@/app/dashboard/team/_lib/team";
 import { SettingsHeader } from "@/app/settings/components/settings-header";
+import { isFeatureAvailable } from "@/lib/feature-availability";
 import { can, WORKSPACE_ROLE_DESCRIPTIONS } from "@/lib/permissions";
 import { getOwnerPlanForOrganization, getPlanLimits } from "@/lib/plans";
 import { PLAN_NAMES } from "@/lib/pricing";
@@ -66,11 +68,25 @@ async function loadJoinLink(
   }
 }
 
+/**
+ * The SSO domains whose people rejoin at their next SSO sign-in, for the
+ * remove dialog's warning (only where SSO runs: a licensed server). If they can't be read, the page still works
+ * without the warning (logged).
+ */
+async function loadSsoRejoinDomains(organizationId: string) {
+  try {
+    return await ssoRejoinDomains(organizationId);
+  } catch (error) {
+    logError(error as Error, { action: "team.ssoRejoinDomains" });
+    return [];
+  }
+}
+
 /** The workspace's members, invitations and seats. */
 export default async function TeamPage() {
   const scope = await requireDashboardScope();
   const canManage = can(scope.role, "members.manage");
-  const [user, team, members, invitations, teamPlan, joinLink] =
+  const [user, team, members, invitations, teamPlan, joinLink, ssoDomains] =
     await Promise.all([
       getCurrentUser(),
       getTeam(scope.organizationId),
@@ -80,6 +96,9 @@ export default async function TeamPage() {
         : Promise.resolve([]),
       getOwnerPlanForOrganization(scope.organizationId),
       canManage ? loadJoinLink(scope.organizationId) : Promise.resolve(null),
+      canManage && isFeatureAvailable("sso")
+        ? loadSsoRejoinDomains(scope.organizationId)
+        : Promise.resolve([]),
     ]);
   if (!team) notFound();
   const received = await listReceivedInvitations(user.email);
@@ -158,6 +177,7 @@ export default async function TeamPage() {
               role: m.role,
               joinedAt: m.joinedAt.toISOString(),
             }))}
+            ssoDomains={ssoDomains}
           />
         </CardContent>
       </Card>

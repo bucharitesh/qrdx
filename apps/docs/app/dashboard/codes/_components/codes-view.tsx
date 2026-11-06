@@ -62,7 +62,7 @@ const STATUS_NOTES = {
 } as const;
 
 /**
- * The codes list, the way Dub's links page works: a folder switcher as the
+ * The codes list: a folder switcher as the
  * title, a Filter and Display toolbar with live search, then cards or rows,
  * and bulk actions. No second sidebar: the area sidebar has the rest.
  * Rendered by /dashboard/<workspace>/codes (`basePath` is where its links

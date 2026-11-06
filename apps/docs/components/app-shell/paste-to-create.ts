@@ -2,9 +2,8 @@
 
 // Paste a web address anywhere on a dashboard page, outside a text field and
 // with no dialog open, and the code builder opens with it as the
-// destination. The flow follows Dub's links page (github.com/dubinc/dub,
-// AGPL-3.0: apps/web/ui/modals/link-builder/index.tsx); the rules below are
-// QRdx's own, and pure, so they're tested without a browser.
+// destination. The rules below are pure, so they're tested without a
+// browser.
 
 import { useEffect, useRef } from "react";
 import { useCodeBuilderStore } from "@/components/code-builder/store";

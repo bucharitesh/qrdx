@@ -79,6 +79,19 @@ let nextConfig: NextConfig = {
   // Opt-in for Docker / self-hosting: NEXT_OUTPUT=standalone pnpm build
   output: process.env.NEXT_OUTPUT === "standalone" ? "standalone" : undefined,
   reactStrictMode: true,
+  // `next build` type-checks the app without its tests. Some tests import
+  // files from outside the app (plugins/*, .github/scripts) that a Docker
+  // build doesn't copy in. `tsc --noEmit` and CI still check every test.
+  typescript: {
+    tsconfigPath: "tsconfig.build.json",
+  },
+  // `next dev` prints every server action call with its arguments. Those
+  // include secrets typed into settings (an SSO client secret, 2FA and email
+  // codes), so dev logs that get pasted into issues would leak them.
+  logging: {
+    ...(typeof config.logging === "object" ? config.logging : {}),
+    serverFunctions: false,
+  },
   // Logos are sent as data URLs (≤1MB file ≈ 1.37MB base64) through server actions.
   experimental: {
     ...config.experimental,

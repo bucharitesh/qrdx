@@ -1,8 +1,6 @@
 "use client";
 
-// "Suggest" next to the builder's back-half and tags fields (the Dub study's
-// gap 11; Dub's AI key button and tag suggestions in
-// ui/links/link-builder/, AGPL-3.0: the flow, not the code). One request
+// "Suggest" next to the builder's back-half and tags fields. One request
 // fills both: up to three free back-halves and up to three tags, shown as
 // chips under each field. Picking one only fills the form; nothing is saved
 // until the code is.

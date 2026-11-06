@@ -26,8 +26,7 @@ import { type ActiveScope, isInScope } from "@/lib/scope";
 import { logError } from "@/lib/shared";
 import { codeLinks } from "@/lib/short-links";
 
-// Public analytics pages (the Dub study's gap 9, after Dub's shared
-// dashboards; the flow, not the code): an owner or editor turns one on for a
+// Public analytics pages: an owner or editor turns one on for a
 // code and gets /stats/<token>, a read-only page with scans over time, top
 // countries, devices and referrer hosts. No row = off; a new token = a reset
 // link. The table comes from manual-sql/0016; until it's applied, sharing
