@@ -152,6 +152,21 @@ export function readIdpMetadata(xml: string): {
   return { entityId, ssoUrl, certificate };
 }
 
+const WANT_SIGNED_REQUESTS_RE =
+  /(<(?:\w+:)?IDPSSODescriptor\b[^>]*?\bWantAuthnRequestsSigned\s*=\s*)(["'])(?:true|1)\2/g;
+
+/**
+ * IdP metadata as stored: QRdx has no SAML signing key and sends its sign-in
+ * requests unsigned, but the SAML library refuses to build any request for an
+ * identity provider whose metadata says WantAuthnRequestsSigned="true" (some
+ * providers publish that for every app), so every sign-in failed. Stored as
+ * "false"; the identity provider still decides whether to accept an unsigned
+ * request (the docs say to turn off signed requests for QRdx there).
+ */
+export function withUnsignedSignInRequests(xml: string): string {
+  return xml.replace(WANT_SIGNED_REQUESTS_RE, "$1$2false$2");
+}
+
 function toView(row: ProviderRow, token: string | null): SsoConnectionView {
   const oidc = json(row.oidcConfig);
   const saml = json(row.samlConfig);
@@ -553,7 +568,7 @@ function samlBody(
       issuer: urls.samlEntityId,
       samlConfig: {
         entryPoint: metadata.ssoUrl,
-        idpMetadata: { metadata: xml },
+        idpMetadata: { metadata: withUnsignedSignInRequests(xml) },
         identifierFormat: EMAIL_NAME_ID,
       },
     };
