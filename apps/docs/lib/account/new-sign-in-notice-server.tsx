@@ -46,7 +46,7 @@ async function sendNewSignInAlert({
         }),
     },
   );
-  // No addresses or ids in the log.
+  // No addresses or ids in the log. "skipped": a reserved test address.
   const level = outcome === "not-sent" ? "error" : "info";
   console[level](
     JSON.stringify({ event: "account.new_sign_in_alert", outcome }),

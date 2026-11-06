@@ -4,6 +4,7 @@
 import { describe, expect, it } from "vitest";
 import {
   deliverNewSignInNotice,
+  isReservedEmailAddress,
   signInMethodLabel,
 } from "@/lib/account/new-sign-in-notice";
 
@@ -65,8 +66,11 @@ describe("deliverNewSignInNotice", () => {
   });
 
   it("emails where delivery is on, and reports a failed send", async () => {
+    // A real-looking address: reserved test ones are never emailed (below).
+    const real = { ...notice, email: "ada@qrdx.dev" };
     const on = deps({ nodeEnv: "production", deliveryAllowed: true });
-    expect(await deliverNewSignInNotice(notice, on.deps)).toBe("emailed");
+    expect(await deliverNewSignInNotice(real, on.deps)).toBe("emailed");
+    expect(on.calls.sent).toBe(1);
     expect(on.calls.logs).toEqual([]);
 
     const down = deps({
@@ -76,11 +80,46 @@ describe("deliverNewSignInNotice", () => {
         throw new Error("Resend is down");
       },
     });
-    expect(await deliverNewSignInNotice(notice, down.deps)).toBe("not-sent");
+    expect(await deliverNewSignInNotice(real, down.deps)).toBe("not-sent");
 
     const off = deps({ nodeEnv: "production" });
-    expect(await deliverNewSignInNotice(notice, off.deps)).toBe("not-sent");
+    expect(await deliverNewSignInNotice(real, off.deps)).toBe("not-sent");
     expect(off.calls.logs).toEqual([]);
+  });
+
+  it("never emails a reserved test address, even where delivery is on", async () => {
+    for (const email of [
+      "e2e-alerts@qrdx.test",
+      "ada@example.com",
+      "ada@mail.example.org",
+      "ada@example.net",
+      "ada@foo.invalid",
+      "ada@host.localhost",
+      "Ada@QRDX.TEST",
+    ]) {
+      expect(isReservedEmailAddress(email), email).toBe(true);
+      const on = deps({ nodeEnv: "production", deliveryAllowed: true });
+      expect(await deliverNewSignInNotice({ ...notice, email }, on.deps)).toBe(
+        "skipped",
+      );
+      expect(on.calls.sent).toBe(0);
+    }
+    for (const email of [
+      "ada@gmail.com",
+      "ada@examples.com",
+      "ada@test.com",
+      "ada@qrdx.dev",
+    ]) {
+      expect(isReservedEmailAddress(email), email).toBe(false);
+    }
+    // Local dev still logs it, so e2e runs can read it.
+    const dev = deps({});
+    expect(
+      await deliverNewSignInNotice(
+        { ...notice, email: "e2e-alerts@qrdx.test" },
+        dev.deps,
+      ),
+    ).toBe("logged");
   });
 
   it("never emails from tests", async () => {
