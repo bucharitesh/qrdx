@@ -4,11 +4,10 @@ import { registerEmailChangeCodeSender } from "@repo/auth/email-otp";
 import { auth } from "@repo/auth/server";
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import { revalidatePath } from "next/cache";
-import { headers } from "next/headers";
 import { after } from "next/server";
 import { z } from "zod";
+import { confirmedSession } from "@/lib/account/confirmation-server";
 import {
-  canChangeEmailNow,
   confirmFailure,
   EMAIL_CHANGE_MESSAGES,
   isSameEmail,
@@ -17,20 +16,16 @@ import {
   requestFailureMessage,
 } from "@/lib/account/email-change";
 import { afterEmailChanged } from "@/lib/account/email-change-server";
-import {
-  checkCurrentCode,
-  twoFactorEnabledFor,
-} from "@/lib/account/two-factor-manage";
 import { sendEmailChangeCode } from "@/lib/auth/email-change-code";
 import { logError } from "@/lib/shared";
 
 // Settings → Account → Email. Better Auth's email-change endpoints are off
 // over HTTP (packages/auth/server.ts), so these actions are the only way in:
-// they require a recent sign-in, limit each user, and tell the old address.
-// With two-step verification on, confirming also needs a current
-// authenticator or backup code (the check and lockout used to turn it off),
-// asked with the emailed code so "Resend code" doesn't need a new one.
-// The plugin emails the code through the sender registered here.
+// both steps need a recent "Confirm it's you" (lib/account/
+// confirmation-server.ts: a passkey, authenticator or backup code with
+// two-step verification on, else a code to the current address) and answer
+// CONFIRMATION_REQUIRED without one. They limit each user and tell the old
+// address. The plugin emails the code through the sender registered here.
 registerEmailChangeCodeSender(sendEmailChangeCode);
 
 export type EmailChangeResult =
@@ -38,12 +33,8 @@ export type EmailChangeResult =
   | {
       ok: false;
       error: string;
-      /**
-       * "reauth": sign in again first. "code-dead": send a new code.
-       * "two-factor": the authenticator or backup code was refused; the
-       * emailed code wasn't used.
-       */
-      reason?: "reauth" | "code-dead" | "two-factor";
+      /** "code-dead": send a new code. */
+      reason?: "code-dead";
     };
 
 // Per user, on top of the per-address limits in lib/auth/email-change-code.tsx
@@ -57,10 +48,7 @@ const confirmLimiter = createRateLimiter({
   limiter: slidingWindow(10, "15 m"),
 });
 
-const fail = (
-  error: string,
-  reason?: "reauth" | "code-dead" | "two-factor",
-): EmailChangeResult =>
+const fail = (error: string, reason?: "code-dead"): EmailChangeResult =>
   reason ? { ok: false, error, reason } : { ok: false, error };
 
 const newEmailSchema = z
@@ -84,26 +72,18 @@ async function mayChange(
 ): Promise<
   { ok: true; user: Allowed } | { ok: false; result: EmailChangeResult }
 > {
-  const requestHeaders = await headers();
-  const session = await auth.api.getSession({ headers: requestHeaders });
-  if (!session?.user?.id) {
-    return { ok: false, result: fail(EMAIL_CHANGE_MESSAGES.signedOut) };
-  }
-  if (!canChangeEmailNow(new Date(session.session.createdAt), new Date())) {
-    return {
-      ok: false,
-      result: fail(EMAIL_CHANGE_MESSAGES.reauth, "reauth"),
-    };
-  }
-  if (isSameEmail(newEmail, session.user.email)) {
+  const allowed = await confirmedSession(EMAIL_CHANGE_MESSAGES.signedOut);
+  if (!allowed.ok) return { ok: false, result: allowed };
+  const { session } = allowed;
+  if (isSameEmail(newEmail, session.email)) {
     return { ok: false, result: fail(EMAIL_CHANGE_MESSAGES.sameEmail) };
   }
   return {
     ok: true,
     user: {
-      userId: session.user.id,
-      email: session.user.email,
-      requestHeaders,
+      userId: session.userId,
+      email: session.email,
+      requestHeaders: session.requestHeaders,
     },
   };
 }
@@ -145,8 +125,6 @@ export async function confirmEmailChange(
     .object({
       newEmail: newEmailSchema,
       code: codeSchema,
-      // Anything that can't be a code fails the check as one.
-      twoFactorCode: z.string().max(64).optional().catch(""),
     })
     .safeParse(input);
   if (!parsed.success) {
@@ -157,7 +135,7 @@ export async function confirmEmailChange(
         : EMAIL_CHANGE_MESSAGES.invalidEmail,
     );
   }
-  const { newEmail, code, twoFactorCode } = parsed.data;
+  const { newEmail, code } = parsed.data;
   let user: Allowed;
   try {
     const allowed = await mayChange(newEmail);
@@ -165,11 +143,6 @@ export async function confirmEmailChange(
     user = allowed.user;
     if (!(await confirmLimiter.limit(user.userId)).success) {
       return fail(EMAIL_CHANGE_MESSAGES.rateLimited);
-    }
-    // Before the emailed code, which the change below uses up.
-    if (await twoFactorEnabledFor(user.userId)) {
-      const check = await checkCurrentCode(user, twoFactorCode ?? "");
-      if (!check.ok) return fail(check.error, "two-factor");
     }
     // Checks and uses up the code, re-checks that no other account has the
     // address, then updates the user (marked verified: the code proves it).

@@ -20,13 +20,14 @@ import {
 } from "@repo/design-system/components/ui/input-otp";
 import { useRouter } from "next/navigation";
 import { type FormEvent, useEffect, useId, useState } from "react";
+import { DialogCloseButton } from "@/components/confirm-identity/dialog-close-button";
+import { useConfirmation } from "@/components/confirm-identity/provider";
 import {
   EMAIL_CHANGE_MESSAGES,
   isSameEmail,
   MAX_EMAIL_LENGTH,
 } from "@/lib/account/email-change";
 import { track } from "@/lib/analytics";
-import { secondFactorCodeKind } from "@/lib/auth/two-factor";
 import {
   confirmEmailChange,
   type EmailChangeResult,
@@ -41,50 +42,39 @@ const CONNECTION_FAILED =
   "Something went wrong. Check your connection and try again.";
 
 const TEXT_ACTION =
-  "rounded-sm text-xs text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 disabled:no-underline";
+  "-my-3 inline-flex min-h-10 items-center sm:my-0 sm:min-h-0 rounded-sm text-xs text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 disabled:no-underline";
 
 /**
  * Moves the account to a new address: a code goes to the new address, and
- * entering it makes the change (lib/account/email-change.ts). Needs a sign-in
- * within the last day; otherwise it asks the user to sign in again first.
- * With two-step verification on, confirming also asks for a code from the
- * authenticator app or a backup code.
+ * entering it makes the change (lib/account/email-change.ts). Both steps ask
+ * "Confirm it's you" first when this session hasn't recently.
  */
 export function ChangeEmailDialog({
   open,
   onOpenChange,
   currentEmail,
-  recentSignIn,
-  twoFactorOn,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   currentEmail: string;
-  /** Signed in within the last day (checked again on the server) */
-  recentSignIn: boolean;
-  /** Two-step verification is on (checked again on the server) */
-  twoFactorOn: boolean;
 }) {
   const id = useId();
   const router = useRouter();
   const { refetch } = authClient.useSession();
+  const { withConfirmation } = useConfirmation();
   const [newEmail, setNewEmail] = useState("");
   const [sentTo, setSentTo] = useState<string | null>(null);
   const [code, setCode] = useState("");
-  const [twoFactorCode, setTwoFactorCode] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
   const [confirming, setConfirming] = useState(false);
   const [codeDead, setCodeDead] = useState(false);
-  const [mustSignInAgain, setMustSignInAgain] = useState(!recentSignIn);
   const [resendAt, setResendAt] = useState(0);
   const [now, setNow] = useState(() => Date.now());
 
   const secondsLeft = Math.max(0, Math.ceil((resendAt - now) / 1000));
   const busy = sending || confirming;
-  const twoFactorReady =
-    !twoFactorOn || secondFactorCodeKind(twoFactorCode) !== null;
 
   useEffect(() => {
     if (resendAt <= Date.now()) return;
@@ -100,7 +90,6 @@ export function ChangeEmailDialog({
     setNewEmail("");
     setSentTo(null);
     setCode("");
-    setTwoFactorCode("");
     setError(null);
     setNotice(null);
     setCodeDead(false);
@@ -110,7 +99,6 @@ export function ChangeEmailDialog({
   const failed = (result: EmailChangeResult): boolean => {
     if (result.ok) return false;
     setError(result.error);
-    if (result.reason === "reauth") setMustSignInAgain(true);
     if (result.reason === "code-dead") {
       setCode("");
       setCodeDead(true);
@@ -123,8 +111,11 @@ export function ChangeEmailDialog({
     setError(null);
     setNotice(null);
     try {
-      const result = await requestEmailChange({ newEmail: address });
-      if (failed(result)) return;
+      const result = await withConfirmation(
+        () => requestEmailChange({ newEmail: address }),
+        "change-email",
+      );
+      if (result === null || failed(result)) return;
       const time = Date.now();
       setNow(time);
       setResendAt(time + RESEND_COOLDOWN_MS);
@@ -156,22 +147,18 @@ export function ChangeEmailDialog({
 
   const onConfirm = async (event: FormEvent) => {
     event.preventDefault();
-    if (!sentTo || code.length !== CODE_LENGTH || !twoFactorReady || busy) {
-      return;
-    }
+    if (!sentTo || code.length !== CODE_LENGTH || busy) return;
     setConfirming(true);
     setError(null);
     setNotice(null);
     try {
-      const result = await confirmEmailChange({
-        newEmail: sentTo,
-        code,
-        ...(twoFactorOn && { twoFactorCode }),
-      });
+      const result = await withConfirmation(
+        () => confirmEmailChange({ newEmail: sentTo, code }),
+        "change-email",
+      );
+      if (result === null) return;
       if (failed(result)) {
-        // A refused authenticator or backup code didn't use the emailed one.
-        if (!result.ok && result.reason === "two-factor") setTwoFactorCode("");
-        else if (!result.ok && result.reason !== "code-dead") setCode("");
+        if (!result.ok && result.reason !== "code-dead") setCode("");
         return;
       }
       toast.success(`Your email is now ${sentTo}`, {
@@ -206,11 +193,6 @@ export function ChangeEmailDialog({
     reset();
   };
 
-  const signOutToReauth = async () => {
-    await authClient.signOut().catch(() => {});
-    router.push("/");
-  };
-
   const errorLine = (
     <p
       aria-live="polite"
@@ -230,28 +212,22 @@ export function ChangeEmailDialog({
       }}
       open={open}
     >
-      <DialogContent className="sm:max-w-md">
+      <DialogContent
+        // On phones every button and field here is a 40 px tap target.
+        className="max-sm:[&_[data-slot=button]]:h-10 max-sm:[&_[data-slot=input]]:h-10 sm:max-w-md"
+        showCloseButton={false}
+      >
+        <DialogCloseButton disabled={busy} />
         <DialogHeader>
           <DialogTitle>Change your email</DialogTitle>
           <DialogDescription className="text-pretty">
-            {mustSignInAgain
-              ? EMAIL_CHANGE_MESSAGES.reauth
-              : sentTo
-                ? `Enter the 6-digit code we sent to ${sentTo}. It expires in 5 minutes.`
-                : `Sign-in codes and team invitations will go to the new address. ${currentEmail} keeps working until you confirm.`}
+            {sentTo
+              ? `Enter the 6-digit code we sent to ${sentTo}. It expires in 5 minutes.`
+              : `Sign-in codes and team invitations will go to the new address. ${currentEmail} keeps working until you confirm.`}
           </DialogDescription>
         </DialogHeader>
 
-        {mustSignInAgain ? (
-          <DialogFooter>
-            <Button onClick={close} type="button" variant="outline">
-              Cancel
-            </Button>
-            <Button onClick={signOutToReauth} type="button">
-              Sign out
-            </Button>
-          </DialogFooter>
-        ) : sentTo ? (
+        {sentTo ? (
           <form className="space-y-4" onSubmit={onConfirm}>
             <div className="space-y-3">
               <InputOTP
@@ -303,39 +279,6 @@ export function ChangeEmailDialog({
                 </button>
               </div>
             </div>
-            {twoFactorOn && (
-              <div className="space-y-2">
-                <label
-                  className="block text-sm font-medium"
-                  htmlFor={`${id}-2fa`}
-                >
-                  Code from your authenticator app, or a backup code
-                </label>
-                <Input
-                  aria-describedby={`${id}-2fa-hint ${id}-error`}
-                  autoCapitalize="none"
-                  autoComplete="one-time-code"
-                  autoCorrect="off"
-                  className="font-mono max-sm:h-10"
-                  disabled={codeDead || confirming}
-                  id={`${id}-2fa`}
-                  onChange={(event) => {
-                    setTwoFactorCode(event.target.value);
-                    setError(null);
-                  }}
-                  placeholder="123456"
-                  spellCheck={false}
-                  value={twoFactorCode}
-                />
-                <p
-                  className="text-muted-foreground text-xs text-pretty"
-                  id={`${id}-2fa-hint`}
-                >
-                  Two-step verification is on, so changing your email needs this
-                  too. A backup code is used up.
-                </p>
-              </div>
-            )}
             {errorLine}
             <p
               className="text-muted-foreground text-xs text-pretty"
@@ -354,12 +297,7 @@ export function ChangeEmailDialog({
                 Cancel
               </Button>
               <Button
-                disabled={
-                  busy ||
-                  codeDead ||
-                  code.length !== CODE_LENGTH ||
-                  !twoFactorReady
-                }
+                disabled={busy || codeDead || code.length !== CODE_LENGTH}
                 type="submit"
               >
                 {confirming && <Spinner className="animate-spin" />}

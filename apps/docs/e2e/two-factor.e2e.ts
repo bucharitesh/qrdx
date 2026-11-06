@@ -289,6 +289,126 @@ async function fill(page: Page, label: string, value: string) {
   if (!ok) throw new Error(`No field "${label}"`);
 }
 
+// ─── "Confirm it's you" and the turn-on stepper (Settings) ──────────────────
+
+const CONFIRM_DIALOG = "Confirm it's you";
+
+const confirmText = (page: Page) =>
+  page.evaluate(
+    (t: string) => window.__e2e.byRole("dialog", t)?.textContent ?? "",
+    CONFIRM_DIALOG,
+  ) as Promise<string>;
+
+/** Clicks a button in "Confirm it's you" (it can sit over another dialog). */
+async function clickInConfirm(page: Page, name: string) {
+  await page.waitFor(
+    (t: string, n: string) => {
+      const dialog = window.__e2e.byRole("dialog", t);
+      const el = dialog
+        ? window.__e2e.byRole("button", n, { exact: true, root: dialog })
+        : null;
+      if (!el || (el as HTMLButtonElement).disabled) return false;
+      window.__e2e.click(el);
+      return true;
+    },
+    { args: [CONFIRM_DIALOG, name] as never[] },
+  );
+}
+
+/** "Confirm it's you" with a code emailed to the account (2FA off). */
+async function confirmByEmail(page: Page, email: string) {
+  await page.waitFor((t: string) => Boolean(window.__e2e.byRole("dialog", t)), {
+    args: [CONFIRM_DIALOG] as never[],
+  });
+  const since = logSize();
+  await clickInConfirm(page, "Send code");
+  const [, code] = await waitForLogLine(
+    new RegExp(`confirmation code for ${escapeRegExp(email)}: (\\d{6})`),
+    since,
+  );
+  await page.waitFor(
+    (t: string, v: string) => {
+      const input = window.__e2e
+        .byRole("dialog", t)
+        ?.querySelector("[data-input-otp]") as HTMLInputElement | null;
+      if (!input) return false;
+      input.focus();
+      window.__e2e.setValue(input, v);
+      return true;
+    },
+    { args: [CONFIRM_DIALOG, code] as never[] },
+  );
+  await page.waitFor((t: string) => !window.__e2e.byRole("dialog", t), {
+    args: [CONFIRM_DIALOG] as never[],
+  });
+}
+
+/**
+ * "Confirm it's you" with 2FA on: a 6-digit authenticator code or a backup
+ * code, switching to that method first when another is shown. Waits for the
+ * dialog to close unless `{ closes: false }` (a wrong code).
+ */
+async function confirmByCode(
+  page: Page,
+  code: string,
+  { closes = true }: { closes?: boolean } = {},
+) {
+  await page.waitFor((t: string) => Boolean(window.__e2e.byRole("dialog", t)), {
+    args: [CONFIRM_DIALOG] as never[],
+  });
+  const totpCode = /^\d{6}$/.test(code);
+  await page.waitFor(
+    (t: string) =>
+      !/Loading/.test(window.__e2e.byRole("dialog", t)?.textContent ?? ""),
+    { args: [CONFIRM_DIALOG] as never[] },
+  );
+  const text = await confirmText(page);
+  const showing = totpCode
+    ? text.includes("Enter the code from your authenticator app")
+    : text.includes("Backup code");
+  if (!showing) {
+    await clickInConfirm(page, "Use another method");
+    await clickInConfirm(
+      page,
+      totpCode ? "Use an authenticator code" : "Use a backup code",
+    );
+  }
+  await page.waitFor(
+    (t: string, v: string, otp: boolean) => {
+      const dialog = window.__e2e.byRole("dialog", t);
+      const input = (
+        otp
+          ? dialog?.querySelector("[data-input-otp]")
+          : window.__e2e.byLabel("Backup code", dialog ?? undefined)
+      ) as HTMLInputElement | null;
+      if (!input || input.disabled) return false;
+      input.focus();
+      window.__e2e.setValue(input, v);
+      return true;
+    },
+    { args: [CONFIRM_DIALOG, code, totpCode] as never[] },
+  );
+  if (!totpCode) await clickInConfirm(page, "Confirm");
+  if (closes) {
+    await page.waitFor((t: string) => !window.__e2e.byRole("dialog", t), {
+      args: [CONFIRM_DIALOG] as never[],
+    });
+  }
+}
+
+/** The turn-on stepper's first step: pick the authenticator app. */
+async function chooseAuthenticatorApp(page: Page) {
+  await page.waitFor(() => {
+    const radio = document.querySelector(
+      '[role="dialog"] [role="radio"][value="app"]',
+    ) as HTMLElement | null;
+    if (!radio) return false;
+    window.__e2e.click(radio);
+    return radio.getAttribute("aria-checked") === "true";
+  });
+  await clickInDialog(page, "Continue");
+}
+
 async function session(
   page: Page,
 ): Promise<{ user?: { id: string; email: string } } | null> {
@@ -1029,7 +1149,15 @@ async function main() {
     );
     await shot(page, "01-settings-off");
     await clickButton(page, "Turn on");
+    // Asks "Confirm it's you" (an emailed code: 2FA is off), then the
+    // stepper: the authenticator app.
+    await confirmByEmail(page, USER_EMAIL);
+    await chooseAuthenticatorApp(page);
     await waitForText(page, "Set up your authenticator app");
+    // The secret is made when the step opens.
+    await page.waitFor(() =>
+      Boolean(document.querySelector('[role="dialog"] code')),
+    );
     const hasQr = await page.evaluate(() =>
       Boolean(document.querySelector('[role="dialog"] svg')),
     );
@@ -1051,7 +1179,7 @@ async function main() {
       if (el) window.__e2e.setValue(el, "");
     });
     await fill(page, "Code from your authenticator app", totp(secret));
-    await waitForText(page, "Save these backup codes");
+    await waitForText(page, "Save your backup codes");
     backupCodes = (await page.evaluate(() =>
       [...document.querySelectorAll('[aria-label="Backup codes"] li')].map(
         (li) => li.textContent?.trim() ?? "",
@@ -1077,7 +1205,7 @@ async function main() {
       if (box) window.__e2e.click(box);
     });
     await clickInDialog(page, "Done");
-    await waitForText(page, "10 of 10 backup codes left");
+    await waitForText(page, "10 of 10 left");
     check("settings show it on, with 10 codes left", true);
     check(
       "the session survived turning it on (cookie swapped in place)",
@@ -1314,17 +1442,18 @@ async function main() {
     await waitForText(page, "Your account asks for a second step");
     await enterTotp(page, totp(secret));
     await landedOn(page, "/settings/account");
-    await waitForText(page, "backup codes left");
+    await waitForText(page, " left. Each works once");
     const leftText = await pageText(page);
     check(
       "settings count used backup codes",
-      leftText.includes("8 of 10 backup codes left"),
+      leftText.includes("8 of 10 left"),
     );
 
-    // ── changing the email needs a current code too ──
+    // ── changing the email asks "Confirm it's you" ──
     // Moved to a new address and back, so the rest of the run signs in as
-    // before. A wrong authenticator code changes nothing and leaves the
-    // emailed code usable.
+    // before. With 2FA on the dialog offers the app or a backup code, never
+    // an emailed code; a wrong code sends nothing. The second move is inside
+    // the confirmation's 10 minutes, so it doesn't ask again.
     const movedEmail = `e2e-2fa-moved-${RUN}@qrdx.test`;
     const moves: [to: string, back: boolean][] = [
       [movedEmail, false],
@@ -1334,76 +1463,56 @@ async function main() {
       await page.goto(`${BASE_URL}/settings/account`);
       await clickButton(page, "Change");
       await waitForText(page, "Change your email");
-      const since = logSize();
       await fill(page, "New email", to);
+      const since = logSize();
       await clickInDialog(page, "Send code");
+      if (index === 0) {
+        await page.waitFor(
+          (t: string) => Boolean(window.__e2e.byRole("dialog", t)),
+          { args: [CONFIRM_DIALOG] as never[] },
+        );
+        const asked = await confirmText(page);
+        check(
+          "changing the email asks to confirm it's you, with no emailed code",
+          asked.includes("Before you change your email") &&
+            !asked.includes("We'll email"),
+          asked.replace(/\s+/g, " ").slice(0, 160),
+        );
+        await shot(page, "13a-change-email-confirm");
+        await confirmByCode(page, wrongCode(secret), { closes: false });
+        await waitForText(page, "That code isn't right");
+        await shot(page, "13b-change-email-wrong-code");
+        check(
+          "a wrong authenticator code sends no email-change code",
+          !readFileSync(DEV_LOG)
+            .subarray(since)
+            .toString("utf8")
+            .includes(`email-change code for ${to}`),
+        );
+        await confirmByCode(page, totp(secret));
+      }
       const [, emailed] = await waitForLogLine(
         new RegExp(`email-change code for ${escapeRegExp(to)}: (\\d{6})`),
         since,
       );
-      await waitForText(page, "Code from your authenticator app");
       await fill(page, "Code from the new address", emailed);
-      if (index === 0) {
-        const waits = await page.evaluate(() => {
-          const dialog = document.querySelector('[role="dialog"]');
-          const button = [...(dialog?.querySelectorAll("button") ?? [])].find(
-            (b) => b.textContent?.trim() === "Change email",
-          );
-          return button?.disabled === true;
-        });
-        check("Change email waits for an authenticator code", waits);
-        await fill(
-          page,
-          "Code from your authenticator app, or a backup code",
-          wrongCode(secret),
-        );
-        await shot(page, "13a-change-email-code");
-        await clickInDialog(page, "Change email");
-        await waitForText(
-          page,
-          "That code isn't right. Try a new code from your app.",
-        );
-        await shot(page, "13b-change-email-wrong-code");
-        check(
-          "a wrong authenticator code doesn't change the email",
-          (await session(page))?.user?.email === USER_EMAIL,
-        );
-      }
-      await fill(
-        page,
-        "Code from your authenticator app, or a backup code",
-        totp(secret),
-      );
       await clickInDialog(page, "Change email");
       await waitForText(page, `Your email is now ${to}`);
       check(
         back
-          ? "and back again, with the same check"
-          : "an authenticator code with the emailed code changes the email",
+          ? "and back again, without asking again"
+          : "confirmed with the app, the emailed code changes the email",
         (await session(page))?.user?.email === to,
       );
       // Closed (and done animating) before the next dialog is measured.
       await page.waitFor(() => !document.querySelector('[role="dialog"]'));
     }
 
+    // New backup codes: still inside the email change's confirmation.
     let noticeSince = logSize();
-    await clickButton(page, "New backup codes");
+    await clickButton(page, "New codes");
     await waitForText(page, "Make new backup codes?");
-    await fill(
-      page,
-      "Code from your authenticator app, or a backup code",
-      "000000",
-    );
-    await shot(page, "13-verify-dialog");
-    await clickInDialog(page, "Make new codes");
-    await page.waitFor(() =>
-      /isn't right|Too many/.test(document.body.innerText),
-    );
-    await fill(
-      page,
-      "Code from your authenticator app, or a backup code",
-      totp(secret),
-    );
+    await shot(page, "13-new-codes-dialog");
     await clickInDialog(page, "Make new codes");
     await waitForText(page, "Your new backup codes");
     const fresh = (await page.evaluate(() =>
@@ -1427,22 +1536,24 @@ async function main() {
       if (box) window.__e2e.click(box);
     });
     await clickButton(page, "Done");
-    await waitForText(page, "10 of 10 backup codes left");
+    await waitForText(page, "10 of 10 left");
 
+    // Turning off from a new sign-in asks again: with a backup code.
+    await clearCookies(page);
+    await emailCodeStep(page, USER_EMAIL, "/settings/account");
+    await waitForText(page, "Your account asks for a second step");
+    await enterTotp(page, totp(secret, Date.now() + 30_000));
+    await landedOn(page, "/settings/account");
     noticeSince = logSize();
     await clickButton(page, "Turn off");
     await waitForText(page, "Turn off two-step verification?");
-    await fill(
-      page,
-      "Code from your authenticator app, or a backup code",
-      fresh[0],
-    );
     await shot(page, "14-turn-off-dialog");
     await clickInDialog(page, "Turn off");
+    await confirmByCode(page, fresh[0]);
     await page.waitFor(() =>
       document.querySelector("#two-factor")?.textContent?.includes("Off"),
     );
-    check("turned off with a backup code", true);
+    check("turned off, confirmed with a backup code", true);
     check(
       "the session survived turning it off",
       (await session(page))?.user?.id === userId,
@@ -1467,14 +1578,22 @@ async function main() {
     await page.goto(`${BASE_URL}/settings/account#two-factor`);
     await waitForText(page, "Two-step verification");
     await clickButton(page, "Turn on");
+    // Asks "Confirm it's you" (an emailed code: 2FA is off), then the
+    // stepper: the authenticator app.
+    await confirmByEmail(page, USER_EMAIL);
+    await chooseAuthenticatorApp(page);
     await waitForText(page, "Set up your authenticator app");
+    // The secret is made when the step opens.
+    await page.waitFor(() =>
+      Boolean(document.querySelector('[role="dialog"] code')),
+    );
     secret = (
       (await page.evaluate(
         () => document.querySelector('[role="dialog"] code')?.textContent ?? "",
       )) as string
     ).replace(/\s+/g, "");
     await fill(page, "Code from your authenticator app", totp(secret));
-    await waitForText(page, "Save these backup codes");
+    await waitForText(page, "Save your backup codes");
 
     await clearCookies(page);
     await emailCodeStep(page, ADMIN_EMAIL, `/admin/users/${userId}`);
@@ -1544,14 +1663,22 @@ async function main() {
     await page.goto(`${BASE_URL}/settings/account#two-factor`);
     await waitForText(page, "Two-step verification");
     await clickButton(page, "Turn on");
+    // Asks "Confirm it's you" (an emailed code: 2FA is off), then the
+    // stepper: the authenticator app.
+    await confirmByEmail(page, USER_EMAIL);
+    await chooseAuthenticatorApp(page);
     await waitForText(page, "Set up your authenticator app");
+    // The secret is made when the step opens.
+    await page.waitFor(() =>
+      Boolean(document.querySelector('[role="dialog"] code')),
+    );
     secret = (
       (await page.evaluate(
         () => document.querySelector('[role="dialog"] code')?.textContent ?? "",
       )) as string
     ).replace(/\s+/g, "");
     await fill(page, "Code from your authenticator app", totp(secret));
-    await waitForText(page, "Save these backup codes");
+    await waitForText(page, "Save your backup codes");
     const deletionCodes = (await page.evaluate(() =>
       [...document.querySelectorAll('[aria-label="Backup codes"] li')].map(
         (li) => li.textContent?.trim() ?? "",
@@ -1570,87 +1697,66 @@ async function main() {
       if (box) window.__e2e.click(box);
     });
     await clickInDialog(page, "Done");
-    await waitForText(page, "10 of 10 backup codes left");
+    await waitForText(page, "10 of 10 left");
 
-    // With 2FA on, one authenticator or backup code replaces the emailed
-    // code: no "Email me a code" step, and no code is sent.
+    // With 2FA on, deleting from a new sign-in asks "Confirm it's you" with
+    // the app or a backup code: no emailed code is offered or sent.
+    await clearCookies(page);
+    await emailCodeStep(page, USER_EMAIL, "/settings/account");
+    await waitForText(page, "Your account asks for a second step");
+    await enterTotp(page, totp(secret, Date.now() + 30_000));
+    await landedOn(page, "/settings/account");
+    await page.evaluate(() =>
+      document.getElementById("danger")?.scrollIntoView({ block: "center" }),
+    );
     await clickButton(page, "Delete account…");
     await waitForText(page, "Delete your account?");
     const deleteSince = logSize();
-    const dialogText = () =>
-      page.evaluate(
-        () =>
-          (document.querySelector('[role="alertdialog"]') as HTMLElement | null)
-            ?.innerText ?? "",
-      ) as Promise<string>;
-    const firstLook = await dialogText();
-    check(
-      "deleting with 2FA on has no emailed-code step",
-      firstLook.includes(
-        "Code from your authenticator app, or a backup code",
-      ) &&
-        !firstLook.includes("Email me a code") &&
-        !firstLook.includes("Code from your email"),
-      firstLook.replace(/\s+/g, " ").slice(0, 160),
-    );
     await fill(page, "Type delete to confirm", "delete");
-    const deleteDisabled = () =>
-      page.evaluate(() => {
-        const dialog = document.querySelector('[role="alertdialog"]');
-        const button = [...(dialog?.querySelectorAll("button") ?? [])].find(
-          (b) => b.textContent?.trim() === "Delete account",
-        ) as HTMLButtonElement | undefined;
-        return button?.disabled ?? null;
-      });
-    const clickDelete = () =>
-      page.evaluate(() => {
-        const dialog = document.querySelector('[role="alertdialog"]');
-        const button = [...(dialog?.querySelectorAll("button") ?? [])].find(
-          (b) => b.textContent?.trim() === "Delete account",
-        );
-        if (button) window.__e2e.click(button);
-      });
+    await page.evaluate(() => {
+      const dialog = document.querySelector('[role="alertdialog"]');
+      const button = [...(dialog?.querySelectorAll("button") ?? [])].find(
+        (b) => b.textContent?.trim() === "Delete account",
+      );
+      if (button) window.__e2e.click(button);
+    });
+    await page.waitFor(
+      (t: string) => Boolean(window.__e2e.byRole("dialog", t)),
+      { args: [CONFIRM_DIALOG] as never[] },
+    );
+    const deleteAsk = await confirmText(page);
     check(
-      "deleting waits for an authenticator or backup code",
-      (await deleteDisabled()) === true,
+      "deleting with 2FA on asks to confirm it's you, with no emailed code",
+      deleteAsk.includes("Before you delete your account") &&
+        !deleteAsk.includes("We'll email"),
+      deleteAsk.replace(/\s+/g, " ").slice(0, 160),
     );
-    await fill(
-      page,
-      "Code from your authenticator app, or a backup code",
-      wrongCode(secret),
-    );
-    await shot(page, "17-delete-account-two-factor");
-    await clickDelete();
+    await shot(page, "17-delete-account-confirm");
+    await confirmByCode(page, wrongCode(secret), { closes: false });
     await waitForText(page, "That code isn't right");
     check(
       "a wrong authenticator code stops the deletion",
       (await session(page))?.user?.id === userId,
     );
     await shot(page, "18-delete-account-wrong-code");
-    await fill(
-      page,
-      "Code from your authenticator app, or a backup code",
-      totp(secret),
-    );
-    await clickDelete();
+    await confirmByCode(page, totp(secret, Date.now() + 30_000));
     await landedOn(page, "/");
     await page.waitFor(() => location.pathname === "/");
     check(
-      "deleted with only an authenticator code",
+      "deleted, confirmed with an authenticator code",
       (await session(page)) === null,
     );
     const deletionLog = readFileSync(DEV_LOG)
       .subarray(deleteSince)
       .toString("utf8");
     check(
-      "no email code was sent for the deletion",
-      !new RegExp(`sign-in code for ${escapeRegExp(USER_EMAIL)}:`).test(
-        deletionLog,
-      ),
+      "no emailed code was sent for the deletion",
+      !new RegExp(
+        `(sign-in|confirmation) code for ${escapeRegExp(USER_EMAIL)}:`,
+      ).test(deletionLog),
     );
-    // A request for an emailed code from a 2FA account is refused too
-    // (the action behind "Email me a code"; covered in
-    // tests/lib/account-delete-two-factor.test.ts).
+    // A request for an emailed confirmation code from a 2FA account is
+    // refused too (tests/lib/account-confirmation.test.ts).
 
     // Signing in with the address now makes a new account, without 2FA.
     await emailCodeStep(page, USER_EMAIL);
@@ -1661,39 +1767,36 @@ async function main() {
       Boolean(after?.user?.id) && after?.user?.id !== userId,
     );
 
-    // With 2FA off, deleting still asks for the emailed code.
+    // With 2FA off, "Confirm it's you" emails a code to the account.
     await page.goto(`${BASE_URL}/settings/account#danger`);
     await waitForText(page, "Danger zone");
     await clickButton(page, "Delete account…");
     await waitForText(page, "Delete your account?");
-    const plainLook = await dialogText();
+    await fill(page, "Type delete to confirm", "delete");
+    await page.evaluate(() => {
+      const dialog = document.querySelector('[role="alertdialog"]');
+      const button = [...(dialog?.querySelectorAll("button") ?? [])].find(
+        (b) => b.textContent?.trim() === "Delete account",
+      );
+      if (button) window.__e2e.click(button);
+    });
+    await page.waitFor(
+      (t: string) => Boolean(window.__e2e.byRole("dialog", t)),
+      { args: [CONFIRM_DIALOG] as never[] },
+    );
+    const plainLook = await confirmText(page);
     check(
-      "deleting with 2FA off asks for an emailed code, no authenticator code",
-      plainLook.includes("Email me a code") &&
-        !plainLook.includes("authenticator app"),
+      "deleting with 2FA off offers an emailed code, no authenticator code",
+      plainLook.includes("We'll email a 6-digit code") &&
+        !plainLook.includes("authenticator"),
       plainLook.replace(/\s+/g, " ").slice(0, 160),
     );
-    await fill(page, "Type delete to confirm", "delete");
-    const plainSince = logSize();
-    await clickInDialog(page, "Email me a code");
-    const [, plainCode] = await waitForLogLine(
-      new RegExp(`sign-in code for ${escapeRegExp(USER_EMAIL)}: (\\d{6})`),
-      plainSince,
-    );
-    await page.evaluate((v: string) => {
-      const input = document.querySelector(
-        '[role="alertdialog"] input[aria-labelledby]',
-      );
-      if (!input) return;
-      (input as HTMLInputElement).focus();
-      window.__e2e.setValue(input, v);
-    }, plainCode);
     await shot(page, "19-delete-account-email-code");
-    await clickDelete();
+    await confirmByEmail(page, USER_EMAIL);
     await landedOn(page, "/");
     await page.waitFor(() => location.pathname === "/");
     check(
-      "without 2FA, deleted with the emailed code",
+      "without 2FA, deleted with the emailed confirmation code",
       (await session(page)) === null,
     );
 
