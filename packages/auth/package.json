@@ -20,8 +20,9 @@
     "./own-workspace-id": "./own-workspace-id.ts",
     "./sign-in-challenge": "./sign-in-challenge.ts",
     "./sign-in-challenge-rules": "./sign-in-challenge-rules.ts",
-    "./sso": "./sso.ts",
-    "./sso-rules": "./sso-rules.ts",
+    "./ee-license": "./ee-license.ts",
+    "./sso": "./ee/sso.ts",
+    "./sso-rules": "./ee/sso-rules.ts",
     "./workspace-hooks": "./workspace-hooks.ts",
     "./workspace-rules": "./workspace-rules.ts"
   },

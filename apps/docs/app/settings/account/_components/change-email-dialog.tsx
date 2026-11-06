@@ -26,6 +26,7 @@ import {
   MAX_EMAIL_LENGTH,
 } from "@/lib/account/email-change";
 import { track } from "@/lib/analytics";
+import { secondFactorCodeKind } from "@/lib/auth/two-factor";
 import {
   confirmEmailChange,
   type EmailChangeResult,
@@ -46,18 +47,23 @@ const TEXT_ACTION =
  * Moves the account to a new address: a code goes to the new address, and
  * entering it makes the change (lib/account/email-change.ts). Needs a sign-in
  * within the last day; otherwise it asks the user to sign in again first.
+ * With two-step verification on, confirming also asks for a code from the
+ * authenticator app or a backup code.
  */
 export function ChangeEmailDialog({
   open,
   onOpenChange,
   currentEmail,
   recentSignIn,
+  twoFactorOn,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   currentEmail: string;
   /** Signed in within the last day (checked again on the server) */
   recentSignIn: boolean;
+  /** Two-step verification is on (checked again on the server) */
+  twoFactorOn: boolean;
 }) {
   const id = useId();
   const router = useRouter();
@@ -65,6 +71,7 @@ export function ChangeEmailDialog({
   const [newEmail, setNewEmail] = useState("");
   const [sentTo, setSentTo] = useState<string | null>(null);
   const [code, setCode] = useState("");
+  const [twoFactorCode, setTwoFactorCode] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
@@ -76,6 +83,8 @@ export function ChangeEmailDialog({
 
   const secondsLeft = Math.max(0, Math.ceil((resendAt - now) / 1000));
   const busy = sending || confirming;
+  const twoFactorReady =
+    !twoFactorOn || secondFactorCodeKind(twoFactorCode) !== null;
 
   useEffect(() => {
     if (resendAt <= Date.now()) return;
@@ -91,6 +100,7 @@ export function ChangeEmailDialog({
     setNewEmail("");
     setSentTo(null);
     setCode("");
+    setTwoFactorCode("");
     setError(null);
     setNotice(null);
     setCodeDead(false);
@@ -146,14 +156,22 @@ export function ChangeEmailDialog({
 
   const onConfirm = async (event: FormEvent) => {
     event.preventDefault();
-    if (!sentTo || code.length !== CODE_LENGTH || busy) return;
+    if (!sentTo || code.length !== CODE_LENGTH || !twoFactorReady || busy) {
+      return;
+    }
     setConfirming(true);
     setError(null);
     setNotice(null);
     try {
-      const result = await confirmEmailChange({ newEmail: sentTo, code });
+      const result = await confirmEmailChange({
+        newEmail: sentTo,
+        code,
+        ...(twoFactorOn && { twoFactorCode }),
+      });
       if (failed(result)) {
-        if (!result.ok && result.reason !== "code-dead") setCode("");
+        // A refused authenticator or backup code didn't use the emailed one.
+        if (!result.ok && result.reason === "two-factor") setTwoFactorCode("");
+        else if (!result.ok && result.reason !== "code-dead") setCode("");
         return;
       }
       toast.success(`Your email is now ${sentTo}`, {
@@ -285,6 +303,39 @@ export function ChangeEmailDialog({
                 </button>
               </div>
             </div>
+            {twoFactorOn && (
+              <div className="space-y-2">
+                <label
+                  className="block text-sm font-medium"
+                  htmlFor={`${id}-2fa`}
+                >
+                  Code from your authenticator app, or a backup code
+                </label>
+                <Input
+                  aria-describedby={`${id}-2fa-hint ${id}-error`}
+                  autoCapitalize="none"
+                  autoComplete="one-time-code"
+                  autoCorrect="off"
+                  className="font-mono max-sm:h-10"
+                  disabled={codeDead || confirming}
+                  id={`${id}-2fa`}
+                  onChange={(event) => {
+                    setTwoFactorCode(event.target.value);
+                    setError(null);
+                  }}
+                  placeholder="123456"
+                  spellCheck={false}
+                  value={twoFactorCode}
+                />
+                <p
+                  className="text-muted-foreground text-xs text-pretty"
+                  id={`${id}-2fa-hint`}
+                >
+                  Two-step verification is on, so changing your email needs this
+                  too. A backup code is used up.
+                </p>
+              </div>
+            )}
             {errorLine}
             <p
               className="text-muted-foreground text-xs text-pretty"
@@ -303,7 +354,12 @@ export function ChangeEmailDialog({
                 Cancel
               </Button>
               <Button
-                disabled={busy || codeDead || code.length !== CODE_LENGTH}
+                disabled={
+                  busy ||
+                  codeDead ||
+                  code.length !== CODE_LENGTH ||
+                  !twoFactorReady
+                }
                 type="submit"
               >
                 {confirming && <Spinner className="animate-spin" />}

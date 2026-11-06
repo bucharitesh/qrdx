@@ -3,7 +3,8 @@
 //
 //   setup      sign up with an email code, turn it on in Settings (QR code,
 //              key, first code, backup codes saved)
-//   challenge  email-code sign-in asks for a code; a TOTP finishes it
+//   challenge  email-code sign-in asks for a code; a TOTP finishes it; so
+//              does one from a browser already signed in as that person
 //   wrong      5 wrong codes end the challenge ("Sign in again")
 //   backup     a backup code works once and only once
 //   trust      "Don't ask again on this device" skips the next challenge
@@ -11,7 +12,8 @@
 //              a pending challenge and returns to `next`; without one it says
 //              to sign in again
 //   plain      someone without 2FA is never asked
-//   manage     new backup codes and turning it off need a current code
+//   manage     changing the email, new backup codes and turning it off need
+//              a current code
 //   admin      an admin turns it off from the user's 360 page (audited)
 //   delete     with it on, deleting the account takes one authenticator code
 //              and emails nothing; with it off, the emailed code as before
@@ -514,6 +516,29 @@ async function main() {
       (await session(page))?.user?.id === userId,
     );
 
+    // ── signing in again with a live session in the same browser ──
+    // An old session cookie plus the mailbox must not mint a fresh session.
+    // (/sign-in redirects someone signed in, so this is the page's fetch.)
+    check(
+      "signed in before signing in again",
+      (await session(page))?.user?.id === userId,
+    );
+    check(
+      "an email-code sign-in with a live session is challenged",
+      await startPendingChallenge(page, USER_EMAIL),
+    );
+    check("and no session without the code", (await session(page)) === null);
+    await page.goto(
+      `${BASE_URL}/sign-in/two-factor?next=%2Fsettings%2Faccount`,
+    );
+    await waitForText(page, "Your account asks for a second step");
+    await enterTotp(page, totp(secret));
+    await landedOn(page, "/settings/account");
+    check(
+      "a TOTP finishes that one too",
+      (await session(page))?.user?.id === userId,
+    );
+
     // ── wrong codes ──
     await clearCookies(page);
     await emailCodeStep(page, USER_EMAIL);
@@ -698,6 +723,71 @@ async function main() {
       "settings count used backup codes",
       leftText.includes("8 of 10 backup codes left"),
     );
+
+    // ── changing the email needs a current code too ──
+    // Moved to a new address and back, so the rest of the run signs in as
+    // before. A wrong authenticator code changes nothing and leaves the
+    // emailed code usable.
+    const movedEmail = `e2e-2fa-moved-${RUN}@qrdx.test`;
+    const moves: [to: string, back: boolean][] = [
+      [movedEmail, false],
+      [USER_EMAIL, true],
+    ];
+    for (const [index, [to, back]] of moves.entries()) {
+      await page.goto(`${BASE_URL}/settings/account`);
+      await clickButton(page, "Change");
+      await waitForText(page, "Change your email");
+      const since = logSize();
+      await fill(page, "New email", to);
+      await clickInDialog(page, "Send code");
+      const [, emailed] = await waitForLogLine(
+        new RegExp(`email-change code for ${escapeRegExp(to)}: (\\d{6})`),
+        since,
+      );
+      await waitForText(page, "Code from your authenticator app");
+      await fill(page, "Code from the new address", emailed);
+      if (index === 0) {
+        const waits = await page.evaluate(() => {
+          const dialog = document.querySelector('[role="dialog"]');
+          const button = [...(dialog?.querySelectorAll("button") ?? [])].find(
+            (b) => b.textContent?.trim() === "Change email",
+          );
+          return button?.disabled === true;
+        });
+        check("Change email waits for an authenticator code", waits);
+        await fill(
+          page,
+          "Code from your authenticator app, or a backup code",
+          wrongCode(secret),
+        );
+        await shot(page, "13a-change-email-code");
+        await clickInDialog(page, "Change email");
+        await waitForText(
+          page,
+          "That code isn't right. Try a new code from your app.",
+        );
+        await shot(page, "13b-change-email-wrong-code");
+        check(
+          "a wrong authenticator code doesn't change the email",
+          (await session(page))?.user?.email === USER_EMAIL,
+        );
+      }
+      await fill(
+        page,
+        "Code from your authenticator app, or a backup code",
+        totp(secret),
+      );
+      await clickInDialog(page, "Change email");
+      await waitForText(page, `Your email is now ${to}`);
+      check(
+        back
+          ? "and back again, with the same check"
+          : "an authenticator code with the emailed code changes the email",
+        (await session(page))?.user?.email === to,
+      );
+      // Closed (and done animating) before the next dialog is measured.
+      await page.waitFor(() => !document.querySelector('[role="dialog"]'));
+    }
 
     let noticeSince = logSize();
     await clickButton(page, "New backup codes");

@@ -32,6 +32,7 @@ import {
   TEAM_ROLE_LABELS,
 } from "@/app/dashboard/team/_lib/team";
 import { SettingsHeader } from "@/app/settings/components/settings-header";
+import { isFeatureAvailable } from "@/lib/feature-availability";
 import { can, WORKSPACE_ROLE_DESCRIPTIONS } from "@/lib/permissions";
 import { getOwnerPlanForOrganization, getPlanLimits } from "@/lib/plans";
 import { PLAN_NAMES } from "@/lib/pricing";
@@ -69,7 +70,7 @@ async function loadJoinLink(
 
 /**
  * The SSO domains whose people rejoin at their next SSO sign-in, for the
- * remove dialog's warning. If they can't be read, the page still works
+ * remove dialog's warning (only where SSO runs: a licensed server). If they can't be read, the page still works
  * without the warning (logged).
  */
 async function loadSsoRejoinDomains(organizationId: string) {
@@ -95,7 +96,7 @@ export default async function TeamPage() {
         : Promise.resolve([]),
       getOwnerPlanForOrganization(scope.organizationId),
       canManage ? loadJoinLink(scope.organizationId) : Promise.resolve(null),
-      canManage
+      canManage && isFeatureAvailable("sso")
         ? loadSsoRejoinDomains(scope.organizationId)
         : Promise.resolve([]),
     ]);
