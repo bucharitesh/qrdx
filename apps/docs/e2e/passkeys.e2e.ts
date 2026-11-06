@@ -104,7 +104,11 @@ async function step(name: string, fn: () => Promise<true | string>) {
   try {
     const outcome = await fn();
     ok = outcome === true;
-    results.push({ name, ok, detail: ok ? undefined : outcome });
+    results.push({
+      name,
+      ok,
+      detail: outcome === true ? undefined : outcome,
+    });
     console.log(`${ok ? "  ✓" : "  ✗"} ${name}${ok ? "" : ` — ${outcome}`}`);
   } catch (error) {
     const detail = error instanceof Error ? error.message : String(error);
@@ -576,8 +580,12 @@ async function main() {
         await dialogOpen(page, "Add a passkey");
         const name = (await page.evaluate(() => {
           const dialog = window.__e2e.byRole("dialog", "Add a passkey");
-          return (window.__e2e.byLabel("Name", dialog) as HTMLInputElement)
-            ?.value;
+          return (
+            window.__e2e.byLabel(
+              "Name",
+              dialog ?? undefined,
+            ) as HTMLInputElement
+          )?.value;
         })) as string;
         if (!/Chrome on/.test(name)) return `default name: ${name}`;
         await shot(page, "04-turn-on-passkey-name");
@@ -716,7 +724,7 @@ async function main() {
       await page.evaluate(() => {
         const dialog = window.__e2e.byRole("dialog", "Rename passkey");
         window.__e2e.setValue(
-          window.__e2e.byLabel("Name", dialog) as HTMLInputElement,
+          window.__e2e.byLabel("Name", dialog ?? undefined) as HTMLInputElement,
           "Work laptop",
         );
       });
@@ -963,7 +971,10 @@ async function main() {
       await page.evaluate((value: string) => {
         const dialog = window.__e2e.byRole("dialog", "Change your email");
         window.__e2e.setValue(
-          window.__e2e.byLabel("New email", dialog) as HTMLInputElement,
+          window.__e2e.byLabel(
+            "New email",
+            dialog ?? undefined,
+          ) as HTMLInputElement,
           value,
         );
       }, NEW_EMAIL);
