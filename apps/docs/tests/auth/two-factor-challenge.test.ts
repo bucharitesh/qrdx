@@ -264,7 +264,9 @@ beforeAll(async () => {
       passkey({ rpID: "localhost", rpName: "QRdx", origin: ORIGIN }),
       organization(),
       twoFactorPlugin,
-      signInChallenge(twoFactorPlugin),
+      signInChallenge(twoFactorPlugin, {
+        relyingParty: { rpID: "localhost", origin: ORIGIN },
+      }),
     ],
   });
 
