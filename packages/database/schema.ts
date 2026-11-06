@@ -196,6 +196,32 @@ export const ssoProvider = pgTable(
   ]
 );
 
+// Browsers and devices that have finished signing in to an account, so a
+// sign-in from one it hasn't seen is emailed about (packages/auth/
+// new-sign-in.ts). A browser is known by its random `qrdx_device` cookie;
+// only the cookie's SHA-256 is stored. Written only through that plugin.
+// SQL: packages/database/manual-sql/0023_known_device.sql
+export const knownDevice = pgTable(
+  "known_device",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    deviceHash: text("device_hash").notNull(),
+    createdAt: timestamp("created_at").notNull(),
+    lastSeenAt: timestamp("last_seen_at").notNull(),
+    userAgent: text("user_agent"),
+  },
+  (table) => [
+    // Also serves lookups by user (its first column).
+    uniqueIndex("known_device_user_id_device_hash_unique").on(
+      table.userId,
+      table.deviceHash
+    ),
+  ]
+);
+
 // Better Auth organization plugin tables ("teams" in the UI). Written only
 // through the plugin's API; field names match better-auth 1.5's schema.
 export const organization = pgTable("organization", {

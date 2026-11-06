@@ -31,6 +31,7 @@ import {
 import { eeLicensed } from "./ee-license";
 import { sendVerificationOTP } from "./email-otp";
 import { keys } from "./keys";
+import { newSignIn } from "./new-sign-in";
 import {
   PASSKEY_SIGN_IN_OPTIONS_PATH,
   PASSKEY_SIGN_IN_PATH,
@@ -343,6 +344,9 @@ export const auth = betterAuth({
     // (above). ./ee/sso.ts adds QRdx's checks (plan, verified domain, who
     // joins the workspace).
     ...(ssoLicensed ? [sso(ssoOptions), ssoGate()] : []),
+    // New sign-in alerts (./new-sign-in.ts). Last, so it sees each sign-in
+    // after the challenge has had its say.
+    newSignIn(),
   ],
   // The admin panel does not use impersonation or password resets; keep them off the HTTP surface.
   disabledPaths: [
