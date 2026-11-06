@@ -13,7 +13,7 @@ import type { PasskeyRelyingParty } from "./passkey-rp";
 
 /** Signs in with a passkey; the only passkey path that creates a session. */
 export const PASSKEY_SIGN_IN_PATH = "/passkey/verify-authentication";
-/** The challenge for a passkey sign-in (button and autofill). */
+/** The challenge for a passkey sign-in (the sign-in panel's button). */
 export const PASSKEY_SIGN_IN_OPTIONS_PATH =
   "/passkey/generate-authenticate-options";
 
