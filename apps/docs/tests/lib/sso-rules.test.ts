@@ -19,7 +19,11 @@ import {
   ssoVerificationRecord,
 } from "@repo/auth/sso-rules";
 import { describe, expect, it } from "vitest";
-import { describeCertificate, readIdpMetadata } from "@/ee/sso/connections";
+import {
+  describeCertificate,
+  readIdpMetadata,
+  withUnsignedSignInRequests,
+} from "@/ee/sso/connections";
 import { ssoSignInErrorMessage } from "@/ee/sso/messages";
 import { can, WORKSPACE_ROLES } from "@/lib/permissions";
 import { cheapestPlanWith, PLAN_LIMITS, PLANS } from "@/lib/plans";
@@ -181,6 +185,38 @@ describe("IdP metadata", () => {
   it("refuses an unreadable certificate", () => {
     expect(describeCertificate("MIIBfake")).toBeNull();
     expect(describeCertificate("not a certificate")).toBeNull();
+  });
+
+  it("stores metadata that asks for signed sign-in requests as not asking", () => {
+    const asks = xml.replace(
+      "<md:IDPSSODescriptor ",
+      '<md:IDPSSODescriptor WantAuthnRequestsSigned="true" ',
+    );
+    const stored = withUnsignedSignInRequests(asks);
+    expect(stored).toContain(
+      '<md:IDPSSODescriptor WantAuthnRequestsSigned="false" ',
+    );
+    expect(stored.replace('="false"', '="true"')).toBe(asks);
+    expect(
+      withUnsignedSignInRequests(
+        "<IDPSSODescriptor protocolSupportEnumeration='p' WantAuthnRequestsSigned = '1'>",
+      ),
+    ).toBe(
+      "<IDPSSODescriptor protocolSupportEnumeration='p' WantAuthnRequestsSigned = 'false'>",
+    );
+  });
+
+  it("leaves other metadata as it is", () => {
+    expect(withUnsignedSignInRequests(xml)).toBe(xml);
+    const doesNotAsk = xml.replace(
+      "<md:IDPSSODescriptor ",
+      '<md:IDPSSODescriptor WantAuthnRequestsSigned="false" ',
+    );
+    expect(withUnsignedSignInRequests(doesNotAsk)).toBe(doesNotAsk);
+    // Only the identity provider's descriptor, never an SP's in the same file.
+    const sp =
+      '<md:SPSSODescriptor AuthnRequestsSigned="true" WantAssertionsSigned="true">';
+    expect(withUnsignedSignInRequests(sp)).toBe(sp);
   });
 });
 
