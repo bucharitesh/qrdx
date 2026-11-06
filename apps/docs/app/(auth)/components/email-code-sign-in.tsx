@@ -14,6 +14,7 @@ import { Label } from "@repo/design-system/components/ui/label";
 import { Sms } from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
+import type { SecondStep } from "./second-step";
 import { TwoFactorChallenge } from "./two-factor-challenge";
 
 const CODE_LENGTH = 6;
@@ -70,6 +71,8 @@ interface EmailCodeSignInProps {
   lastUsed?: boolean;
   /** The account asks for a second step (two-step verification) now, or not. */
   onTwoFactorChange?: (active: boolean) => void;
+  /** The second step's method on screen, for the heading. */
+  onSecondStepChange?: (step: SecondStep | null) => void;
 }
 
 /** Sign in with a one-time code sent by email (creates the account on first use). */
@@ -81,6 +84,7 @@ export function EmailCodeSignIn({
   disabled = false,
   lastUsed = false,
   onTwoFactorChange,
+  onSecondStepChange,
 }: EmailCodeSignInProps) {
   const router = useRouter();
   const id = useId();
@@ -229,6 +233,7 @@ export function EmailCodeSignIn({
             onTwoFactorChange?.(false);
             changeEmail();
           }}
+          onStepChange={onSecondStepChange}
           onVerified={() => finish(twoFactorTarget)}
         />
       </div>
@@ -323,9 +328,7 @@ export function EmailCodeSignIn({
         aria-describedby={error ? errorId : undefined}
         aria-invalid={Boolean(error)}
         autoCapitalize="none"
-        // "webauthn" lets the browser suggest saved passkeys here
-        // (passkey-sign-in.tsx).
-        autoComplete="email webauthn"
+        autoComplete="email"
         disabled={disabled || sending}
         id={`${id}-email`}
         inputMode="email"

@@ -137,7 +137,12 @@ export function passkeyStep(requests: PasskeyStepRequests) {
     prepare: async () => {
       await load().catch(() => undefined);
     },
-    run: async (): Promise<PasskeyStepResult> => {
+    run: async ({
+      onPromptDone,
+    }: {
+      /** The prompt returned a passkey; the server check starts now. */
+      onPromptDone?: () => void;
+    } = {}): Promise<PasskeyStepResult> => {
       const loaded = await load();
       if (!loaded.ok) {
         return {
@@ -167,6 +172,7 @@ export function passkeyStep(requests: PasskeyStepRequests) {
       const promptMs = Date.now() - started;
       // Sent: the server uses up this challenge whatever the answer.
       cached = null;
+      onPromptDone?.();
       const { error } = await requests.verify({
         response: assertion as unknown as Record<string, unknown>,
       });

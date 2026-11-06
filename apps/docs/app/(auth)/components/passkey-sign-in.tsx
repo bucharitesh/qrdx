@@ -6,12 +6,10 @@ import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
 import { FingerScan } from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useAvailability } from "@/components/availability-provider";
 import { signInFailureMessage } from "@/lib/account/passkeys";
 import { browserHasPasskeys, passkeysWorkOn } from "@/lib/passkeys";
-
-type SignInResult = Awaited<ReturnType<typeof authClient.signIn.passkey>>;
 
 interface PasskeySignInProps {
   /** Same-site path to open after signing in; otherwise stay on the page */
@@ -20,73 +18,32 @@ interface PasskeySignInProps {
   /** Another sign-in method is in progress */
   disabled?: boolean;
   lastUsed?: boolean;
-  /** The panel is open (offers saved passkeys in the email field's autofill) */
-  shown?: boolean;
 }
 
 /**
- * "Sign in with a passkey", plus passkeys in the email field's autofill
- * (conditional UI, where the browser supports it; the field has
- * autocomplete="email webauthn"). Renders nothing where passkeys can't work:
- * not offered on this deployment, a page on another origin (a preview URL),
- * or a browser without WebAuthn.
+ * "Continue with passkey": signs in fully, since a passkey that checks your
+ * PIN, fingerprint or face counts as both steps. Only on a click; passkeys
+ * aren't offered in the email field's suggestions. Renders nothing where
+ * passkeys can't work: not offered on this deployment, a page on another
+ * origin (a preview deployment's URL), or a browser without WebAuthn.
  */
 export function PasskeySignIn({
   redirectTo,
   onSignedIn,
   disabled = false,
   lastUsed = false,
-  shown = true,
 }: PasskeySignInProps) {
   const router = useRouter();
   const offered = useAvailability().has("passkeys");
   const [usable, setUsable] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  // Read inside async callbacks, after the props may have changed.
-  const latest = useRef({ redirectTo, onSignedIn });
-  latest.current = { redirectTo, onSignedIn };
 
   useEffect(() => {
     setUsable(
       offered && browserHasPasskeys() && passkeysWorkOn(window.location.origin),
     );
   }, [offered]);
-
-  /** Signed in: go on. Otherwise show why (or nothing, if cancelled). */
-  const finish = useCallback(
-    (result: SignInResult, target: string | undefined) => {
-      if (result.error) {
-        setError(signInFailureMessage(result.error));
-        return;
-      }
-      // The session updates in place; server-rendered parts need a refresh.
-      if (target) router.push(target);
-      else router.refresh();
-      latest.current.onSignedIn();
-    },
-    [router],
-  );
-
-  // Saved passkeys in the email field's suggestions. The browser keeps the
-  // request open until one is picked; starting another passkey request
-  // (the button, or reopening the panel) cancels it.
-  useEffect(() => {
-    if (!(usable && shown)) return;
-    let active = true;
-    void (async () => {
-      const available =
-        await window.PublicKeyCredential.isConditionalMediationAvailable?.().catch(
-          () => false,
-        );
-      if (!(available && active)) return;
-      const result = await authClient.signIn.passkey({ autoFill: true });
-      if (active) finish(result, latest.current.redirectTo);
-    })();
-    return () => {
-      active = false;
-    };
-  }, [usable, shown, finish]);
 
   if (!usable) return null;
 
@@ -97,7 +54,15 @@ export function PasskeySignIn({
     setError(null);
     try {
       const result = await authClient.signIn.passkey();
-      finish(result, target);
+      if (result.error) {
+        // Nothing when the prompt was just closed.
+        setError(signInFailureMessage(result.error));
+        return;
+      }
+      // The session updates in place; server-rendered parts need a refresh.
+      if (target) router.push(target);
+      else router.refresh();
+      onSignedIn();
     } catch (err) {
       console.error("Passkey sign-in failed:", err);
       setError("Something went wrong. Check your connection and try again.");
@@ -116,7 +81,7 @@ export function PasskeySignIn({
           variant="outline"
         >
           <FingerScan className="size-5" />
-          <span className="font-medium">Sign in with a passkey</span>
+          <span className="font-medium">Continue with passkey</span>
           {loading && <Spinner className="size-4 animate-spin" />}
         </Button>
         {lastUsed && (
