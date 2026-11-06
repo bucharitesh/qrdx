@@ -57,6 +57,18 @@ export const CHALLENGE_COMPLETION_PATHS: readonly string[] = [
   CHALLENGE_CONTINUE_PATH,
 ];
 
+/**
+ * The app's own 2FA management calls (auth.api from Settings, after its own
+ * checks: a recent sign-in or a current code) that can make a new session
+ * for someone with 2FA on. Called server-side, these aren't challenged. Any
+ * other server-side call that makes a session is: a server action that
+ * signs someone in gets no way around the code.
+ */
+export const SERVER_SESSION_SWAP_PATHS: readonly string[] = [
+  "/two-factor/enable",
+  "/two-factor/disable",
+];
+
 /** Codes by email or SMS as a second factor: off (no `otpOptions`). */
 export const UNUSED_TWO_FACTOR_PATHS: readonly string[] = [
   "/two-factor/send-otp",

@@ -17,6 +17,7 @@ import { realpathSync } from "node:fs";
 import path from "node:path";
 import {
   SERVER_ONLY_TWO_FACTOR_PATHS,
+  SERVER_SESSION_SWAP_PATHS,
   TWO_FACTOR_CHALLENGE_PATH,
   UNUSED_TWO_FACTOR_PATHS,
 } from "@repo/auth/sign-in-challenge-rules";
@@ -604,20 +605,28 @@ describe("two-step verification at sign-in", () => {
     expect(browser.has("two_factor")).toBe(false);
   });
 
-  it("doesn't challenge the app's own auth.api calls", async () => {
-    // Not HTTP requests: the app's server code, after its own checks
-    // (turning 2FA on or off swaps the session this way).
+  it("challenges a sign-in made server-side too (auth.api is no way around the code)", async () => {
+    // Only the 2FA management calls on SERVER_SESSION_SWAP_PATHS are exempt
+    // when they run server-side; a server action that signs someone in is
+    // challenged like a browser.
     const { browser } = await signedInBrowser();
     await browser.post("/email-otp/send-verification-otp", {
       email: TWO_FACTOR_EMAIL,
       type: "sign-in",
     });
-    const result = await auth.api.signInEmailOTP({
+    const result = (await auth.api.signInEmailOTP({
       headers: headersFor(browser),
       body: { email: TWO_FACTOR_EMAIL, otp: sentCodes.get(TWO_FACTOR_EMAIL) },
-    });
-    expect(result.user.email).toBe(TWO_FACTOR_EMAIL);
-    expect(result.token).toEqual(expect.any(String));
+    })) as { twoFactorRedirect?: boolean; token?: string };
+    expect(result.twoFactorRedirect).toBe(true);
+    expect(result.token).toBeUndefined();
+  });
+
+  it("exempts only the listed 2FA management paths when they run server-side", () => {
+    expect([...SERVER_SESSION_SWAP_PATHS].sort()).toEqual([
+      "/two-factor/disable",
+      "/two-factor/enable",
+    ]);
   });
 
   it("refuses the challenge endpoints over HTTP to a signed-in browser", async () => {
