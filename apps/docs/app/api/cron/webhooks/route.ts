@@ -1,4 +1,7 @@
-import { pruneExpiredVerifications } from "@/lib/auth/verification-prune";
+import {
+  pruneExpiredVerifications,
+  pruneStaleKnownDevices,
+} from "@/lib/auth/verification-prune";
 import { recordCronCheck, recordCronRun } from "@/lib/cron-runs";
 import {
   nextIntegrationSyncDueAt,
@@ -22,7 +25,8 @@ const noStore = { "Cache-Control": "no-store" };
 /**
  * Webhook worker: retries due deliveries with exponential backoff, sends scan
  * batches whose window closed, runs data-out syncs, prunes deliveries older
- * than 30 days and deletes expired Better Auth verification values.
+ * than 30 days and deletes expired Better Auth verification values. The daily
+ * call also forgets browsers no account has seen for 400 days.
  *
  * Callers: .github/workflows/webhook-worker.yml every 5 minutes with
  * ?source=github, and vercel.json once a day. The frequent call first checks
@@ -74,6 +78,16 @@ export async function GET(request: Request) {
   } catch (error) {
     console.error("Pruning expired verification values failed:", error);
   }
+  // Browsers kept for new sign-in alerts: once a day is plenty for a
+  // 400-day limit.
+  let knownDevicesPruned = 0;
+  if (trigger === "daily") {
+    try {
+      knownDevicesPruned = await pruneStaleKnownDevices();
+    } catch (error) {
+      console.error("Pruning stale known devices failed:", error);
+    }
+  }
   // Data-out streams (Google Sheets, HubSpot, Mailchimp) ride the same cron.
   const integrations = await runIntegrationSyncs({ budgetMs: 12_000 });
 
@@ -108,6 +122,7 @@ export async function GET(request: Request) {
       ...summary,
       pruned,
       verificationsPruned,
+      knownDevicesPruned,
       integrations,
       nextDueAt: nextDueAt === null ? null : new Date(nextDueAt).toISOString(),
     }),

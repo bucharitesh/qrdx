@@ -1,6 +1,7 @@
 import "server-only";
 
-import { database as db, verification } from "@repo/database";
+import { KNOWN_DEVICE_DAYS } from "@repo/auth/new-sign-in";
+import { database as db, knownDevice, verification } from "@repo/database";
 import { inArray, lt } from "drizzle-orm";
 
 /**
@@ -38,6 +39,41 @@ export async function pruneExpiredVerifications(
       .delete(verification)
       .where(inArray(verification.id, expired))
       .returning({ id: verification.id });
+    total += deleted.length;
+    if (deleted.length < chunk) break;
+  }
+  return total;
+}
+
+/**
+ * Browsers that signed in to an account (known_device, for new sign-in
+ * alerts: packages/auth/new-sign-in.ts) are forgotten once they haven't been
+ * seen for 400 days. Their qrdx_device cookie, renewed at every sign-in, has
+ * expired by then, so the row can never match again.
+ */
+export const KNOWN_DEVICE_MAX_AGE_MS = KNOWN_DEVICE_DAYS * 24 * 60 * 60 * 1000;
+
+export function knownDevicePruneCutoff(now: Date): Date {
+  return new Date(now.getTime() - KNOWN_DEVICE_MAX_AGE_MS);
+}
+
+/** Deletes browsers not seen for 400 days, in chunks; returns how many went. */
+export async function pruneStaleKnownDevices(
+  now: Date = new Date(),
+  { chunk = 5000, maxChunks = 10 } = {},
+): Promise<number> {
+  const cutoff = knownDevicePruneCutoff(now);
+  let total = 0;
+  for (let i = 0; i < maxChunks; i++) {
+    const stale = db
+      .select({ id: knownDevice.id })
+      .from(knownDevice)
+      .where(lt(knownDevice.lastSeenAt, cutoff))
+      .limit(chunk);
+    const deleted = await db
+      .delete(knownDevice)
+      .where(inArray(knownDevice.id, stale))
+      .returning({ id: knownDevice.id });
     total += deleted.length;
     if (deleted.length < chunk) break;
   }
