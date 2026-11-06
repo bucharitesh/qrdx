@@ -88,6 +88,29 @@ function stableIds<T>(value: T, seed: string, path = ""): T {
   return value;
 }
 
+/**
+ * The page without its event start dates. Parsing fills them in as a week
+ * from today (lib/landing/blocks/event-schema.tsx), so a stored date would
+ * change the generated file every day and later put the template's event
+ * in the past. Left out, the date is filled in when someone uses the
+ * template (readPageTemplate parses the content again).
+ */
+export function withoutEventStarts(
+  content: LandingPageContent,
+): LandingPageContent {
+  return {
+    ...content,
+    blocks: content.blocks.map((block) => {
+      if (block.type !== "event") return block;
+      const { start: _start, ...props } = block.props as Record<
+        string,
+        unknown
+      >;
+      return { ...block, props } as typeof block;
+    }),
+  };
+}
+
 export function buildSeedPageTemplates(): SeedPageTemplate[] {
   const seen = new Set<string>();
   const out: SeedPageTemplate[] = [];
@@ -98,7 +121,9 @@ export function buildSeedPageTemplates(): SeedPageTemplate[] {
         stableIds(buildTemplateContent(template.type, variant.id), id),
       );
       if (report.blocks.length > 0 || content.blocks.length < 2) continue;
-      const payload = { page: { type: template.type, content } };
+      const payload = {
+        page: { type: template.type, content: withoutEventStarts(content) },
+      };
       const hash = hashOf(payload);
       if (seen.has(hash)) continue;
       seen.add(hash);

@@ -1,5 +1,5 @@
 # Self-hosted QRdx: Postgres, a Neon-compatible HTTP proxy, a one-shot
-# schema sync job and the web app. Untested reference setup.
+# schema sync job and the web app.
 #
 #   cp .env.example .env    # set BETTER_AUTH_SECRET and an OAuth provider
 #   docker compose up -d --build
