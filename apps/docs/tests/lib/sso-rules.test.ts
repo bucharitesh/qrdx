@@ -1,4 +1,4 @@
-// Workspace SSO: the pure rules (packages/auth/sso-rules.ts), the plan gate
+// Workspace SSO: the pure rules (packages/auth/ee/sso-rules.ts), the plan gate
 // in lib/plans.ts, the settings helpers that read IdP metadata, and the
 // sign-in messages. The plugin wiring is in sso-auth.test.ts; the full flows
 // run in e2e/sso.e2e.mts.
@@ -19,10 +19,10 @@ import {
   ssoVerificationRecord,
 } from "@repo/auth/sso-rules";
 import { describe, expect, it } from "vitest";
+import { describeCertificate, readIdpMetadata } from "@/ee/sso/connections";
+import { ssoSignInErrorMessage } from "@/ee/sso/messages";
 import { can, WORKSPACE_ROLES } from "@/lib/permissions";
 import { cheapestPlanWith, PLAN_LIMITS, PLANS } from "@/lib/plans";
-import { describeCertificate, readIdpMetadata } from "@/lib/sso/connections";
-import { ssoSignInErrorMessage } from "@/lib/sso/messages";
 
 describe("plan gate", () => {
   it("only Business includes SSO", () => {

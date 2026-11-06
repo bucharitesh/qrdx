@@ -25,6 +25,7 @@ export function pricingOptions(): PricingOptions {
     customDomains: isFeatureAvailable("customDomains"),
     fileStorage: isFeatureAvailable("fileStorage"),
     emailAlerts: isFeatureAvailable("email"),
+    sso: isFeatureAvailable("sso"),
   };
 }
 

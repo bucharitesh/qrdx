@@ -1,7 +1,7 @@
 // Workspace SSO copy shared by the sign-in panel, the /sign-in page and the
 // settings page. Pure and client-safe.
 
-/** Codes the plugin and packages/auth/sso.ts send back (?error= or JSON). */
+/** Codes the plugin and packages/auth/ee/sso.ts send back (?error= or JSON). */
 export function ssoSignInErrorMessage(
   code: string | null | undefined,
   description?: string | null,

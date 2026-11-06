@@ -47,7 +47,7 @@ export function MembersTable({
   members: MemberRow[];
   currentUserId: string;
   currentRole: TeamRole;
-  /** Verified SSO domains of this Business workspace (packages/auth/sso.ts). */
+  /** Verified SSO domains of this Business workspace (packages/auth/ee/sso.ts). */
   ssoDomains?: string[];
 }) {
   const router = useRouter();
@@ -87,7 +87,7 @@ export function MembersTable({
       router.refresh();
     });
 
-  // Every SSO sign-in adds the person back (packages/auth/sso.ts joinWorkspace).
+  // Every SSO sign-in adds the person back (packages/auth/ee/sso.ts joinWorkspace).
   const rejoinsWithSso = (target: MemberRow | null) =>
     target !== null &&
     ssoDomains.some((domain) => emailInSsoDomain(target.email, domain));

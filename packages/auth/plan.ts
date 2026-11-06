@@ -40,7 +40,7 @@ const PLAN_ROLES = new Set(["owner", "billing"]);
 /**
  * A workspace's plan: the best entitled subscription among its owners and
  * billing members, like getOwnerPlanForOrganization in apps/docs/lib/plans.ts.
- * Seats (./server.ts) and workspace SSO (./sso.ts) are decided by it.
+ * Seats (./server.ts) and workspace SSO (./ee/sso.ts) are decided by it.
  */
 export async function workspacePlanTier(
   organizationId: string

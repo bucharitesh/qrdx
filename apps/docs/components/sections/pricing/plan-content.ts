@@ -118,6 +118,7 @@ const AI_ART_ROW = "AI art images per month";
 const AI_THEMES_ROW = "AI theme generations";
 const CUSTOM_DOMAINS_ROW = "Custom domains";
 const FILE_STORAGE_ROW = "File storage";
+const SSO_ROW = "Single sign-on";
 const EMAIL_ALERTS_ROW = "Email digests and alerts";
 const PIXELS_HINT = "GA4, Meta, GTM, TikTok";
 // Tag Manager only loads on custom domains (components/landing/pixels.tsx).
@@ -178,7 +179,7 @@ const GROUPS: {
       ),
       row("Team members", teamMembers),
       row(
-        "Single sign-on",
+        SSO_ROW,
         flag("sso"),
         "SAML or OIDC, with your company's identity provider",
       ),
@@ -241,6 +242,8 @@ export interface PricingOptions {
   fileStorage?: boolean;
   /** Email alerts and digests (Resend). */
   emailAlerts?: boolean;
+  /** Workspace single sign-on (QRDX_EE_LICENSE). */
+  sso?: boolean;
 }
 
 const ROW_FEATURE: Record<string, keyof PricingOptions> = {
@@ -249,6 +252,7 @@ const ROW_FEATURE: Record<string, keyof PricingOptions> = {
   [CUSTOM_DOMAINS_ROW]: "customDomains",
   [FILE_STORAGE_ROW]: "fileStorage",
   [EMAIL_ALERTS_ROW]: "emailAlerts",
+  [SSO_ROW]: "sso",
 };
 
 const offered = (options: PricingOptions, feature?: keyof PricingOptions) =>
@@ -373,7 +377,9 @@ export function buildHighlights(
         ? [`${formatCount(business.customDomains)} custom domains`]
         : []),
       "Unlimited team members",
-      ...(business.sso ? ["Single sign-on (SAML and OIDC)"] : []),
+      ...(business.sso && offered(options, "sso")
+        ? ["Single sign-on (SAML and OIDC)"]
+        : []),
       "Conversion tracking",
       "Webhooks, Zapier and Slack",
       storageAndForms(business, storage),

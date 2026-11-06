@@ -58,6 +58,7 @@ const EVERYTHING: Record<string, string> = {
   SPOTIFY_CLIENT_ID: FAKE,
   SPOTIFY_CLIENT_SECRET: FAKE,
   NEXT_PUBLIC_APP_URL: "https://qrdx.example",
+  QRDX_EE_LICENSE: FAKE,
 };
 
 /** What each feature needs on Vercel in production, by variable name. */
@@ -85,6 +86,7 @@ const NEEDS: Record<FeatureId, string[]> = {
   youtubeChannelPicker: ["YOUTUBE_API_KEY"],
   spotifyPlaylistPicker: ["SPOTIFY_CLIENT_ID", "SPOTIFY_CLIENT_SECRET"],
   passkeys: ["NEXT_PUBLIC_APP_URL"],
+  sso: ["QRDX_EE_LICENSE"],
 };
 
 const vercelProd = { onVercel: true, production: true };
@@ -199,6 +201,32 @@ describe("passkeys", () => {
     expect(view.unavailable).toContain("passkeys");
     expect(view.hiddenPaths).toContain(
       "/docs/help/privacy-and-security/passkeys",
+    );
+  });
+});
+
+describe("workspace SSO", () => {
+  const on = (env: Record<string, string | undefined>) =>
+    computeFeatures(ctx(env)).sso;
+
+  it("runs only with a licence key, whatever its value", () => {
+    expect(on({ QRDX_EE_LICENSE: "local-dev" })).toBe(true);
+    expect(on({})).toBe(false);
+    expect(on({ QRDX_EE_LICENSE: "  " })).toBe(false);
+    expect(missingFeatureSetup("sso", ctx({}))).toEqual(["QRDX_EE_LICENSE"]);
+  });
+
+  it("hides its settings page and help page without one", () => {
+    const view = toPublicAvailability(computeFeatures(ctx({})));
+    expect(view.unavailable).toContain("sso");
+    expect(view.hiddenPaths).toEqual(
+      expect.arrayContaining([
+        "/dashboard/[workspace]/settings/sso",
+        "/docs/help/teams/single-sign-on",
+      ]),
+    );
+    expect(isPathShown(view.hiddenPaths, "/dashboard/acme/settings/sso")).toBe(
+      false,
     );
   });
 });
@@ -320,6 +348,8 @@ describe("docs sidebar", () => {
 const PRODUCTION_LIKE: Record<string, string> = {
   // Always set: the build requires it.
   NEXT_PUBLIC_APP_URL: "https://qrdx.dev",
+  // qrdx.dev runs the ee/ features (workspace SSO) with its own key.
+  QRDX_EE_LICENSE: FAKE,
   ...Object.fromEntries(
     [
       "DROPBOX_CLIENT_ID",

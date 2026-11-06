@@ -21,6 +21,14 @@ import {
   memberAc,
 } from "better-auth/plugins/organization/access";
 import { getAdminUserIds } from "./admin";
+import {
+  SSO_SERVER_ONLY_PATHS,
+  SSO_SIGN_IN_PATH,
+  SSO_UNUSED_PATHS,
+  ssoGate,
+  ssoOptions,
+} from "./ee/sso";
+import { eeLicensed } from "./ee-license";
 import { sendVerificationOTP } from "./email-otp";
 import { keys } from "./keys";
 import {
@@ -44,13 +52,6 @@ import {
   UNUSED_TWO_FACTOR_PATHS,
 } from "./sign-in-challenge-rules";
 import { signInMethodForPath } from "./sign-in-method";
-import {
-  SSO_SERVER_ONLY_PATHS,
-  SSO_SIGN_IN_PATH,
-  SSO_UNUSED_PATHS,
-  ssoGate,
-  ssoOptions,
-} from "./sso";
 import {
   assertDeletable,
   assertNotOwnMember,
@@ -159,6 +160,11 @@ const twoFactorPlugin = twoFactor({
   },
   trustDeviceMaxAge: TRUST_DEVICE_DAYS * 24 * 60 * 60,
 });
+
+// Workspace single sign-on (./ee/sso.ts, QRdx commercial licence) only runs
+// with a licence key (./ee-license.ts). Without one its plugin, endpoints,
+// blocked paths and rate limits are left out entirely.
+const ssoLicensed = eeLicensed(process.env);
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -333,10 +339,10 @@ export const auth = betterAuth({
       )
     ),
     passkeyPolicy(),
-    // Lane C: workspace single sign-on, Business plan only. ./sso.ts adds
-    // QRdx's checks (plan, verified domain, who joins the workspace).
-    sso(ssoOptions),
-    ssoGate(),
+    // Workspace single sign-on, Business plan only, licensed servers only
+    // (above). ./ee/sso.ts adds QRdx's checks (plan, verified domain, who
+    // joins the workspace).
+    ...(ssoLicensed ? [sso(ssoOptions), ssoGate()] : []),
   ],
   // The admin panel does not use impersonation or password resets; keep them off the HTTP surface.
   disabledPaths: [
@@ -349,9 +355,8 @@ export const auth = betterAuth({
     ...SERVER_ONLY_TWO_FACTOR_PATHS,
     // Passkeys: added, renamed and removed through the app's server actions.
     ...SERVER_ONLY_PASSKEY_PATHS,
-    // Lane C: SSO connections are managed through the app's server actions.
-    ...SSO_SERVER_ONLY_PATHS,
-    ...SSO_UNUSED_PATHS,
+    // SSO connections are managed through the app's server actions.
+    ...(ssoLicensed ? [...SSO_SERVER_ONLY_PATHS, ...SSO_UNUSED_PATHS] : []),
   ],
   // Better Auth enforces these in production only, per IP, in memory.
   rateLimit: {
@@ -379,13 +384,18 @@ export const auth = betterAuth({
       // autofill) and again for the button; each sign-in verifies once.
       [PASSKEY_SIGN_IN_OPTIONS_PATH]: { window: 60, max: 20 },
       [PASSKEY_SIGN_IN_PATH]: { window: 60, max: 10 },
-      // Lane C: starting an SSO sign-in, and the IdP's return. Per IP, and a
-      // whole company can sit behind one office address at 9am, so these are
-      // looser than the email-code limits. Each callback still needs the
-      // state from its own sign-in start, so they can't be replayed.
-      [SSO_SIGN_IN_PATH]: { window: 60, max: 60 },
-      "/sso/callback/*": { window: 60, max: 120 },
-      "/sso/saml2/sp/acs/*": { window: 60, max: 120 },
+      // Starting an SSO sign-in, and the IdP's return (licensed servers
+      // only). Per IP, and a whole company can sit behind one office address
+      // at 9am, so these are looser than the email-code limits. Each callback
+      // still needs the state from its own sign-in start, so they can't be
+      // replayed.
+      ...(ssoLicensed
+        ? {
+            [SSO_SIGN_IN_PATH]: { window: 60, max: 60 },
+            "/sso/callback/*": { window: 60, max: 120 },
+            "/sso/saml2/sp/acs/*": { window: 60, max: 120 },
+          }
+        : {}),
     },
   },
 }) as any;
