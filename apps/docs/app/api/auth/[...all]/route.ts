@@ -1,8 +1,12 @@
 import { registerSignInCodeSender } from "@repo/auth/email-otp";
+import { registerNewSignInNotifier } from "@repo/auth/new-sign-in";
+import { notifyNewSignIn } from "@/lib/account/new-sign-in-notice-server";
 import { sendSignInCode } from "@/lib/auth/sign-in-code";
 
 // @repo/auth has no email stack: this is the endpoint that issues sign-in
-// codes, so it hands the plugin the app's sender before serving requests.
+// codes and finishes sign-ins, so it hands the plugins the app's senders
+// before serving requests.
 registerSignInCodeSender(sendSignInCode);
+registerNewSignInNotifier(notifyNewSignIn);
 
 export { GET, POST } from "@repo/auth/handlers";
