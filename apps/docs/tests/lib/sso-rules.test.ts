@@ -15,6 +15,7 @@ import {
   normalizeSsoDomain,
   SSO_JOIN_ROLES,
   samlPersonName,
+  samlWeakAlgorithms,
   saysNotVerified,
   ssoEmailUnverified,
   ssoFailureRedirect,
@@ -245,6 +246,9 @@ describe("sign-in messages", () => {
       /didn't send an email address/,
     );
     expect(ssoSignInErrorMessage("sso_email_missing")).not.toMatch(/domain/);
+    expect(ssoSignInErrorMessage("sso_weak_signature")).toMatch(
+      /SHA-1.*switch the QRdx app's signature algorithm to SHA-256/,
+    );
   });
 });
 
@@ -316,6 +320,47 @@ describe("what the identity provider sends", () => {
     // Nothing usable: "" (the account starts with the address's local part).
     expect(samlPersonName({ Role: ["admin"] })).toBe("");
     expect(samlPersonName(null)).toBe("");
+  });
+});
+
+describe("SAML signature algorithms", () => {
+  const signed = (signature: string, digest: string) =>
+    `<samlp:Response xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"><ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#"><ds:SignedInfo><ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/><ds:SignatureMethod Algorithm="${signature}"/><ds:Reference URI="#x"><ds:DigestMethod Algorithm="${digest}"/></ds:Reference></ds:SignedInfo></ds:Signature></samlp:Response>`;
+  const RSA_SHA256 = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";
+  const SHA256 = "http://www.w3.org/2001/04/xmlenc#sha256";
+  const RSA_SHA1 = "http://www.w3.org/2000/09/xmldsig#rsa-sha1";
+  const SHA1 = "http://www.w3.org/2000/09/xmldsig#sha1";
+
+  it("accepts SHA-256 or stronger", () => {
+    expect(samlWeakAlgorithms(signed(RSA_SHA256, SHA256))).toEqual([]);
+    expect(
+      samlWeakAlgorithms(
+        signed(
+          "http://www.w3.org/2001/04/xmldsig-more#rsa-sha512",
+          "http://www.w3.org/2001/04/xmlenc#sha512",
+        ),
+      ),
+    ).toEqual([]);
+    // Unsigned: nothing to judge here (the plugin refuses it).
+    expect(samlWeakAlgorithms("<samlp:Response/>")).toEqual([]);
+  });
+
+  it("refuses SHA-1 signatures or digests, in any form", () => {
+    expect(samlWeakAlgorithms(signed(RSA_SHA1, SHA256))).toEqual([RSA_SHA1]);
+    expect(samlWeakAlgorithms(signed(RSA_SHA256, SHA1))).toEqual([SHA1]);
+    // No prefix, single quotes, and a ">" inside another attribute's value.
+    expect(
+      samlWeakAlgorithms(
+        `<SignatureMethod Id="a>b" Algorithm='${RSA_SHA1}'/><DigestMethod Algorithm="${SHA256}"/>`,
+      ),
+    ).toEqual([RSA_SHA1]);
+    // A second signature (the assertion's) is checked too.
+    expect(
+      samlWeakAlgorithms(
+        signed(RSA_SHA256, SHA256) + signed(RSA_SHA256, "urn:unknown"),
+      ),
+    ).toEqual(["urn:unknown"]);
+    expect(samlWeakAlgorithms("<ds:SignatureMethod/>")).toEqual(["(none)"]);
   });
 });
 

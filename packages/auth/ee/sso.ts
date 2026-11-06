@@ -12,9 +12,12 @@ import {
   emailDomain,
   emailInSsoDomain,
   looksLikeEmail,
+  SAML_DIGEST_ALGORITHMS,
+  SAML_SIGNATURE_ALGORITHMS,
   SSO_SIGN_IN_ERROR,
   SSO_TOKEN_PREFIX,
   samlPersonName,
+  samlWeakAlgorithms,
   ssoEmailUnverified,
   ssoFailureRedirect,
   ssoJoinRoleFromMetadata,
@@ -28,6 +31,7 @@ import {
 // - a new account only for an address inside the connection's domain;
 // - no sign-in when the identity provider says the address isn't verified,
 //   or sends no address at all (validateSsoUserInfo);
+// - SAML responses signed with SHA-256 or stronger only;
 // - joining the workspace at every SSO sign-in (rejoining after a removal,
 //   accepting a pending invitation), with the role the workspace picked
 //   (member or viewer) or the invitation's.
@@ -66,6 +70,7 @@ export const SSO_ERROR = {
 
 /** Where a refused callback lands (the sign-in page shows the message). */
 const UNAVAILABLE_REDIRECT = "/sign-in?error=sso_unavailable";
+const WEAK_SIGNATURE_REDIRECT = `/sign-in?error=${SSO_ERROR.weakSignature}`;
 
 type ProviderRow = typeof schema.ssoProvider.$inferSelect;
 
@@ -268,6 +273,14 @@ export const ssoOptions = {
   saml: {
     // Reject assertions without NotBefore/NotOnOrAfter (SAML2Int).
     requireTimestamps: true,
+    // SHA-256 or stronger wherever the plugin checks. It only sees the
+    // algorithm of redirect-bound messages, so ssoGate checks POSTed
+    // responses itself (samlWeakAlgorithms).
+    algorithms: {
+      onDeprecated: "reject",
+      allowedSignatureAlgorithms: SAML_SIGNATURE_ALGORITHMS,
+      allowedDigestAlgorithms: SAML_DIGEST_ALGORITHMS,
+    },
   },
 } satisfies SSOOptions;
 
@@ -472,9 +485,26 @@ export const ssoGate = () =>
             // ACS by GET only forwards someone already signed in.
             if (ctx.path === SAML_ACS_PATH && ctx.method === "GET") return;
             const provider = await providerById(ctx.params?.providerId);
-            if (provider && (await ssoProviderUsable(provider))) return;
             // Relative, so it works without a fixed base URL too.
-            throw ctx.redirect(UNAVAILABLE_REDIRECT);
+            if (!(provider && (await ssoProviderUsable(provider)))) {
+              throw ctx.redirect(UNAVAILABLE_REDIRECT);
+            }
+            // SAML responses signed or digested with SHA-1 (or anything
+            // weaker than SHA-256) are refused before the plugin reads them.
+            if (ctx.path === SAML_ACS_PATH) {
+              const response = (ctx.body as Record<string, unknown> | undefined)
+                ?.SAMLResponse;
+              if (
+                typeof response === "string" &&
+                samlWeakAlgorithms(
+                  Buffer.from(response.replace(/\s+/g, ""), "base64").toString(
+                    "utf8"
+                  )
+                ).length > 0
+              ) {
+                throw ctx.redirect(WEAK_SIGNATURE_REDIRECT);
+              }
+            }
           }),
         },
       ],
