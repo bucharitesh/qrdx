@@ -18,6 +18,7 @@ import {
   samlWeakAlgorithms,
   saysNotVerified,
   ssoEmailUnverified,
+  ssoErrorCode,
   ssoFailureRedirect,
   ssoJoinRoleFromMetadata,
   ssoServiceProviderUrls,
@@ -249,6 +250,9 @@ describe("sign-in messages", () => {
     expect(ssoSignInErrorMessage("sso_weak_signature")).toMatch(
       /SHA-1.*switch the QRdx app's signature algorithm to SHA-256/,
     );
+    expect(ssoSignInErrorMessage("unsolicited_response")).toMatch(
+      /Start from QRdx's sign-in page/,
+    );
   });
 });
 
@@ -386,6 +390,29 @@ describe("ssoFailureRedirect", () => {
     expect(
       ssoFailureRedirect("https://evil.test/x?error=account_not_linked", app),
     ).toBe("/sign-in?error=account_not_linked");
+  });
+
+  it("gives the plugin's own words QRdx's code", () => {
+    expect(ssoErrorCode("invalid_provider", "missing_user_info")).toBe(
+      "sso_email_missing",
+    );
+    expect(
+      ssoErrorCode(
+        "saml_error",
+        "Unable to extract user ID or email from SAML response",
+      ),
+    ).toBe("sso_email_missing");
+    expect(ssoErrorCode("invalid_provider", "token_not_verified")).toBe(
+      "invalid_provider",
+    );
+    expect(ssoErrorCode("account not linked")).toBe("account_not_linked");
+    // OIDC failures already land on /sign-in: only the code changes.
+    expect(
+      ssoFailureRedirect(
+        `${app}/sign-in?next=%2Fdashboard&error=invalid_provider&error_description=missing_user_info`,
+        app,
+      ),
+    ).toBe("/sign-in?next=%2Fdashboard&error=sso_email_missing");
   });
 
   it("leaves successes and the sign-in page alone", () => {
