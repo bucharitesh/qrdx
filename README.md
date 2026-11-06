@@ -170,7 +170,7 @@ Read the [self-hosting guide](https://qrdx.dev/docs/self-hosting) before you run
 
 - The web app and everything else in this repository outside the folders below are licensed under the [GNU Affero General Public License v3.0 or later](LICENSE). If you run a modified version as a network service, you have to offer its source code to its users under the same license.
 - The React library ([`packages/qrdx`](packages/qrdx), from 0.0.47), the CLI ([`packages/cli`](packages/cli), from 0.0.5) and the plugins in [`plugins/`](plugins) are MIT-licensed, each with its own `LICENSE` file. Earlier npm releases of the library and the CLI were AGPL-3.0-or-later.
-- The `ee/` folders ([`apps/docs/ee`](apps/docs/ee), [`packages/auth/ee`](packages/auth/ee)) hold business features, today workspace single sign-on, under the QRdx Commercial License in each folder's `LICENSE.md`. You can read, test and contribute to that code; using it in production needs a QRdx subscription or a written agreement. On a self-hosted instance these features stay off unless `QRDX_EE_LICENSE` is set.
+- The `ee/` folders ([`apps/docs/ee`](apps/docs/ee), [`packages/auth/ee`](packages/auth/ee)) hold business features, today workspace single sign-on, under the QRdx Commercial License in each folder's `LICENSE.md`. You can read, test and contribute to that code; using it in production needs a written agreement with QRdx. On a self-hosted instance these features stay off unless `QRDX_EE_LICENSE` is set.
 
 [LICENSING.md](LICENSING.md) has the details.
 

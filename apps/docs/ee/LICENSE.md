@@ -4,9 +4,9 @@ Copyright (c) 2026 Ritesh Bucha. All rights reserved.
 
 This license covers everything in this `ee/` directory (the "Commercial Software"). The rest of the repository is licensed separately; see [LICENSING.md](../../../LICENSING.md) at the repository root. Third-party components in this directory keep their own licenses.
 
-## 1. Production use needs a subscription or an agreement
+## 1. Production use needs a written agreement
 
-You may use the Commercial Software in production only if you have a current QRdx subscription that includes it, or a separate written agreement with the copyright holder.
+You may use the Commercial Software in production only under a written agreement with the copyright holder.
 
 Production use means running it for real users or real data, including on a self-hosted instance where it's switched on with a license key (`QRDX_EE_LICENSE`).
 
