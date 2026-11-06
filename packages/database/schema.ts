@@ -199,7 +199,9 @@ export const ssoProvider = pgTable(
 // Browsers and devices that have finished signing in to an account, so a
 // sign-in from one it hasn't seen is emailed about (packages/auth/
 // new-sign-in.ts). A browser is known by its random `qrdx_device` cookie;
-// only the cookie's SHA-256 is stored. Written only through that plugin.
+// only the cookie's SHA-256 is stored. `alerted_at` is set on the browsers
+// that got an alert (the per-account alert limits count them). Written only
+// through that plugin; the daily cron deletes rows not seen for 400 days.
 // SQL: packages/database/manual-sql/0023_known_device.sql
 export const knownDevice = pgTable(
   "known_device",
@@ -212,6 +214,7 @@ export const knownDevice = pgTable(
     createdAt: timestamp("created_at").notNull(),
     lastSeenAt: timestamp("last_seen_at").notNull(),
     userAgent: text("user_agent"),
+    alertedAt: timestamp("alerted_at"),
   },
   (table) => [
     // Also serves lookups by user (its first column).
