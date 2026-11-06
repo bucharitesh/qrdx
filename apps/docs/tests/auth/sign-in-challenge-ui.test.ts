@@ -117,12 +117,19 @@ describe("passkeyStepOutcome", () => {
         automatic: false,
       }).message,
     ).toBe(PASSKEY_STEP_MESSAGES.closed);
+  });
+
+  it("asks for another try when the request expired", () => {
     expect(
       passkeyStepOutcome(
         failure("server", { code: "PASSKEY_CHALLENGE_NOT_FOUND" }),
         { automatic: false },
-      ).message,
-    ).toBe(PASSKEY_STEP_MESSAGES.closed);
+      ),
+    ).toEqual({
+      message: "That passkey request expired. Try again.",
+      over: false,
+      counted: false,
+    });
   });
 
   it("says nothing when another method took over", () => {

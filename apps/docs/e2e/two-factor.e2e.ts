@@ -11,6 +11,16 @@
 //   page       /sign-in/two-factor (where Google, GitHub and SSO land) finishes
 //              a pending challenge and returns to `next`; without one it says
 //              to sign in again
+//   passkey    a second account with a passkey (Chrome's virtual
+//              authenticator): its prompt opens on its own after the email
+//              code; the authenticator code and backup code still work from
+//              "Use another method" links; the last method is remembered; a
+//              browser that won't open the prompt gets a button; an assertion
+//              without user verification is refused; "Don't ask again" works
+//              for a passkey; /sign-in/two-factor too; and "Continue with
+//              passkey", last on /sign-in, signs in on its own. (Google and
+//              GitHub can't sign in locally; their callbacks end on the same
+//              /sign-in/two-factor page.)
 //   plain      someone without 2FA is never asked
 //   manage     changing the email, new backup codes and turning it off need
 //              a current code
@@ -54,6 +64,7 @@ const ADMIN_EMAIL = process.env.E2E_ADMIN_EMAIL ?? "admin@qrdx.test";
 const RUN = Date.now().toString(36);
 const USER_EMAIL = `e2e-2fa-${RUN}@qrdx.test`;
 const PLAIN_EMAIL = `e2e-plain-${RUN}@qrdx.test`;
+const PASSKEY_EMAIL = `e2e-2fa-passkey-${RUN}@qrdx.test`;
 
 type Page = Awaited<ReturnType<typeof launch>>;
 
@@ -359,7 +370,47 @@ async function startPendingChallenge(page: Page, email: string) {
   return reply?.twoFactorRedirect === true;
 }
 
+type SecondStep = "passkey" | "totp" | "backup";
+
+/** The second step's method on screen, once it has loaded. */
+async function secondStepShown(page: Page): Promise<SecondStep | "over"> {
+  await page.waitFor(() =>
+    Boolean(
+      window.__e2e.byLabel("Authenticator code") ||
+        window.__e2e.byLabel("Backup code") ||
+        window.__e2e.byRole("button", "Continue with passkey") ||
+        window.__e2e.byRole("button", "Sign in again"),
+    ),
+  );
+  return (await page.evaluate(() =>
+    window.__e2e.byLabel("Authenticator code")
+      ? "totp"
+      : window.__e2e.byLabel("Backup code")
+        ? "backup"
+        : window.__e2e.byRole("button", "Continue with passkey")
+          ? "passkey"
+          : "over",
+  )) as SecondStep | "over";
+}
+
+const SWITCH_TO: Record<SecondStep, string> = {
+  passkey: "Use your passkey",
+  totp: "Use an authenticator code",
+  backup: "Use a backup code",
+};
+
+/**
+ * Shows `step` in the second step. It opens with the method used last in
+ * this browser, so the others are a click away ("Use a backup code").
+ */
+async function pickMethod(page: Page, step: SecondStep) {
+  if ((await secondStepShown(page)) !== step) {
+    await clickButton(page, SWITCH_TO[step]);
+  }
+}
+
 async function enterTotp(page: Page, code: string) {
+  await pickMethod(page, "totp");
   await fill(page, "Authenticator code", code);
 }
 
@@ -368,6 +419,531 @@ async function landedOn(page: Page, path: string, timeout = 20_000) {
     args: [path] as never[],
     timeout,
   });
+}
+
+// ─── A passkey as the second step ───────────────────────────────────────────
+
+/** Chrome's virtual authenticator (internal, resident keys, PIN/biometrics). */
+async function addAuthenticator(
+  page: Page,
+  { userVerified = true }: { userVerified?: boolean } = {},
+): Promise<string> {
+  const { authenticatorId } = (await page.cdp.send(
+    "WebAuthn.addVirtualAuthenticator",
+    {
+      options: {
+        protocol: "ctap2",
+        transport: "internal",
+        hasResidentKey: true,
+        hasUserVerification: true,
+        isUserVerified: userVerified,
+        automaticPresenceSimulation: true,
+      },
+    },
+  )) as { authenticatorId: string };
+  return authenticatorId;
+}
+
+/**
+ * The same passkey on a new authenticator (Chrome allows one internal one at
+ * a time), e.g. one that doesn't verify the person.
+ */
+async function swapAuthenticator(
+  page: Page,
+  current: string,
+  options: { userVerified?: boolean },
+): Promise<string> {
+  const { credentials } = (await page.cdp.send("WebAuthn.getCredentials", {
+    authenticatorId: current,
+  })) as { credentials: unknown[] };
+  await page.cdp.send("WebAuthn.removeVirtualAuthenticator", {
+    authenticatorId: current,
+  });
+  const next = await addAuthenticator(page, options);
+  for (const credential of credentials) {
+    await page.cdp.send("WebAuthn.addCredential", {
+      authenticatorId: next,
+      credential,
+    });
+  }
+  return next;
+}
+
+/** The authenticator waits for a touch that never comes (presence off). */
+async function holdPrompt(page: Page, authenticatorId: string, held: boolean) {
+  await page.cdp.send("WebAuthn.setAutomaticPresenceSimulation", {
+    authenticatorId,
+    enabled: !held,
+  });
+}
+
+async function dialogOrMainText(page: Page) {
+  return (await page.evaluate(
+    () =>
+      (
+        (document.querySelector('[role="dialog"]') ??
+          document.querySelector("main") ??
+          document.body) as HTMLElement
+      ).innerText,
+  )) as string;
+}
+
+/**
+ * Turns on two-step verification with an authenticator app in Settings and
+ * adds a passkey (it asks for a current code). Settings' own flows, as on
+ * this branch: e2e/passkeys.e2e.ts and the setup above cover them.
+ */
+async function setUpPasskeyAccount(page: Page) {
+  await page.goto(`${BASE_URL}/settings/account#two-factor`);
+  await waitForText(page, "Two-step verification");
+  await clickButton(page, "Turn on");
+  await waitForText(page, "Set up your authenticator app");
+  const secret = (
+    (await page.evaluate(
+      () => document.querySelector('[role="dialog"] code')?.textContent ?? "",
+    )) as string
+  ).replace(/\s+/g, "");
+  await fill(page, "Code from your authenticator app", totp(secret));
+  await waitForText(page, "Save these backup codes");
+  const codes = (await page.evaluate(() =>
+    [...document.querySelectorAll('[aria-label="Backup codes"] li')].map(
+      (li) => li.textContent?.trim() ?? "",
+    ),
+  )) as string[];
+  await page.evaluate(() => {
+    const box = window.__e2e.byLabel("I've saved my backup codes");
+    if (box) window.__e2e.click(box);
+  });
+  await clickInDialog(page, "Done");
+  await waitForText(page, "10 of 10 backup codes left");
+
+  await page.goto(`${BASE_URL}/settings/account`);
+  await clickButton(page, "Add passkey");
+  await waitForText(page, "Add a passkey");
+  await page.evaluate((code: string) => {
+    const dialog = document.querySelector('[role="dialog"]');
+    const input = window.__e2e.byLabel(
+      "Code from your authenticator app, or a backup code",
+      dialog ?? undefined,
+    ) as HTMLInputElement;
+    input.focus();
+    window.__e2e.setValue(input, code);
+  }, totp(secret));
+  await clickInDialog(page, "Continue");
+  await waitForText(page, "Passkey added");
+  return { secret, backupCodes: codes };
+}
+
+const heading = (page: Page) =>
+  page.evaluate(
+    () =>
+      document.querySelector('[role="dialog"] h2, main h1, h1')?.textContent ??
+      "",
+  ) as Promise<string>;
+
+async function forgetSecondStep(page: Page) {
+  await page.evaluate(() => {
+    try {
+      localStorage.removeItem("qrdx:second-step");
+    } catch {}
+  });
+}
+
+/** An assertion without user verification, sent to the second step as is. */
+const FORGED_SECOND_STEP = `async () => {
+  const b64 = (s) =>
+    Uint8Array.from(atob(s.replace(/-/g, "+").replace(/_/g, "/")), (c) =>
+      c.charCodeAt(0),
+    );
+  const enc = (buf) =>
+    btoa(String.fromCharCode(...new Uint8Array(buf)))
+      .replace(/\\+/g, "-")
+      .replace(/\\//g, "_")
+      .replace(/=+$/, "");
+  const options = await (
+    await fetch("/api/auth/two-factor/passkey/options", {
+      method: "POST",
+      credentials: "include",
+      headers: { "content-type": "application/json" },
+      body: "{}",
+    })
+  ).json();
+  const credential = await navigator.credentials.get({
+    publicKey: {
+      challenge: b64(options.challenge),
+      rpId: options.rpId,
+      allowCredentials: options.allowCredentials.map((c) => ({
+        type: "public-key",
+        id: b64(c.id),
+      })),
+      userVerification: "discouraged",
+    },
+  });
+  const response = credential.response;
+  const flags = new Uint8Array(response.authenticatorData)[32];
+  const res = await fetch("/api/auth/two-factor/passkey/verify", {
+    method: "POST",
+    credentials: "include",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      response: {
+        id: credential.id,
+        rawId: enc(credential.rawId),
+        type: credential.type,
+        clientExtensionResults: {},
+        response: {
+          clientDataJSON: enc(response.clientDataJSON),
+          authenticatorData: enc(response.authenticatorData),
+          signature: enc(response.signature),
+        },
+      },
+    }),
+  });
+  return {
+    userVerifiedFlag: Boolean(flags & 0x04),
+    status: res.status,
+    body: await res.json().catch(() => null),
+  };
+}`;
+
+/**
+ * Its own account (2FA with an authenticator app, plus a passkey), so the
+ * TOTP account's run above and below is unaffected. Leaves no
+ * authenticator, cookie or remembered method behind.
+ */
+/**
+ * A signed-out browser, from a blank page: clearing cookies under an open
+ * app page makes it react (a redirect, a server action) while the next
+ * navigation cuts it off, which logs errors that aren't the app's.
+ */
+async function leaveSignedIn(page: Page) {
+  await page.goto("about:blank");
+  await clearCookies(page);
+}
+
+async function passkeySecondStep(page: Page) {
+  await leaveSignedIn(page);
+  await page.cdp.send("WebAuthn.enable", { enableUI: false });
+  let authenticatorId = await addAuthenticator(page);
+  try {
+    await emailCodeStep(page, PASSKEY_EMAIL);
+    await landedOn(page, "/dashboard");
+    await forgetSecondStep(page);
+    const passkeyUser = (await session(page))?.user?.id ?? "";
+    const { secret, backupCodes } = await setUpPasskeyAccount(page);
+    const { credentials } = (await page.cdp.send("WebAuthn.getCredentials", {
+      authenticatorId,
+    })) as { credentials: unknown[] };
+    check(
+      "passkey: the account has 2FA and a passkey",
+      Boolean(passkeyUser) && credentials.length === 1,
+      `${credentials.length} credentials`,
+    );
+
+    // The prompt opens on its own after the email code (held open here).
+    await leaveSignedIn(page);
+    await holdPrompt(page, authenticatorId, true);
+    await emailCodeStep(page, PASSKEY_EMAIL, "/settings/account");
+    await waitForText(page, "Waiting for your passkey");
+    const waiting = await dialogOrMainText(page);
+    check(
+      "passkey: after the email code the passkey prompt opens on its own",
+      (await heading(page)) === "Use your passkey" &&
+        waiting.includes("Use an authenticator code") &&
+        waiting.includes("Use a backup code") &&
+        waiting.includes("Don't ask again on this device") &&
+        (await session(page)) === null,
+      `${await heading(page)} | ${waiting.replace(/\s+/g, " ").slice(0, 200)}`,
+    );
+    await shot(page, "20-passkey-step-waiting");
+
+    // "Use an authenticator code" closes the prompt; a code still works.
+    await clickButton(page, "Use an authenticator code");
+    await page.waitFor(() =>
+      Boolean(window.__e2e.byLabel("Authenticator code")),
+    );
+    check(
+      "passkey: the authenticator code is a click away",
+      (await heading(page)) === "Open your authenticator app" &&
+        (await dialogOrMainText(page)).includes("Use your passkey"),
+      await heading(page),
+    );
+    await shot(page, "21-passkey-step-totp-fallback");
+    await holdPrompt(page, authenticatorId, false);
+    await enterTotp(page, totp(secret));
+    await landedOn(page, "/settings/account");
+    check(
+      "passkey: an authenticator code still finishes it",
+      (await session(page))?.user?.id === passkeyUser,
+    );
+
+    // The method used last is remembered: the code field first, no prompt.
+    await leaveSignedIn(page);
+    await emailCodeStep(page, PASSKEY_EMAIL, "/settings/account");
+    check(
+      "passkey: the last method (authenticator code) is preselected",
+      (await secondStepShown(page)) === "totp",
+    );
+    await clickButton(page, "Use your passkey");
+    await landedOn(page, "/settings/account");
+    check(
+      "passkey: switching to the passkey finishes it",
+      (await session(page))?.user?.id === passkeyUser,
+    );
+
+    // Remembered again: the passkey opens and finishes on its own.
+    await leaveSignedIn(page);
+    await emailCodeStep(page, PASSKEY_EMAIL, "/settings/account");
+    await landedOn(page, "/settings/account");
+    check(
+      "passkey: email code, then the passkey finishes it without a click",
+      (await session(page))?.user?.id === passkeyUser,
+    );
+
+    // A backup code from the passkey screen, with format errors first.
+    await leaveSignedIn(page);
+    await holdPrompt(page, authenticatorId, true);
+    await emailCodeStep(page, PASSKEY_EMAIL, "/settings/account");
+    await waitForText(page, "Waiting for your passkey");
+    await clickButton(page, "Use a backup code");
+    await fill(page, "Backup code", "ABCD0-FGH2");
+    await clickButton(page, "Verify");
+    await waitForText(page, "Backup codes have 10 characters");
+    await fill(page, "Backup code", "ABCD0-FGH23");
+    await clickButton(page, "Verify");
+    await waitForText(page, 'Backup codes never use "0"');
+    check(
+      "passkey: a mistyped backup code says what's wrong",
+      (await session(page)) === null,
+    );
+    await shot(page, "22-backup-code-format-error");
+    await holdPrompt(page, authenticatorId, false);
+    await fill(page, "Backup code", backupCodes[0]);
+    await clickButton(page, "Verify");
+    await landedOn(page, "/settings/account");
+    check(
+      "passkey: a backup code still finishes it",
+      (await session(page))?.user?.id === passkeyUser,
+    );
+
+    // A browser that won't verify the person: no error when the prompt
+    // opened on its own (a button instead); an error after the click; and
+    // a forged assertion without user verification is refused by the server.
+    await forgetSecondStep(page);
+    await leaveSignedIn(page);
+    authenticatorId = await swapAuthenticator(page, authenticatorId, {
+      userVerified: false,
+    });
+    await emailCodeStep(page, PASSKEY_EMAIL, "/settings/account");
+    await page.waitFor(() => {
+      const button = window.__e2e.byRole(
+        "button",
+        "Continue with passkey",
+      ) as HTMLButtonElement | null;
+      return Boolean(button && !button.disabled);
+    });
+    await sleep(500);
+    const quiet = await dialogOrMainText(page);
+    check(
+      "passkey: a prompt the browser won't open shows a button, not an error",
+      quiet.includes(
+        "Use Touch ID, Face ID, Windows Hello or a security key",
+      ) && (await session(page)) === null,
+      quiet.replace(/\s+/g, " ").slice(0, 200),
+    );
+    await shot(page, "23-passkey-step-button");
+    await clickButton(page, "Continue with passkey");
+    await waitForText(page, "The passkey prompt was closed or timed out");
+    await shot(page, "24-passkey-step-closed");
+    const forged = (await page.evaluate(FORGED_SECOND_STEP as never)) as {
+      userVerifiedFlag: boolean;
+      status: number;
+      body: { code?: string } | null;
+    };
+    check(
+      "passkey: an assertion without user verification is refused",
+      !forged.userVerifiedFlag &&
+        forged.status === 401 &&
+        forged.body?.code === "PASSKEY_USER_VERIFICATION_REQUIRED" &&
+        (await session(page)) === null,
+      JSON.stringify(forged),
+    );
+    authenticatorId = await swapAuthenticator(page, authenticatorId, {
+      userVerified: true,
+    });
+    // The forged request above used up the page's WebAuthn request (as
+    // another tab would): the first answer is turned away, with fresh
+    // options ready for the next click.
+    await clickButton(page, "Continue with passkey");
+    await waitForText(page, "That passkey request expired. Try again.");
+    await page.waitFor(() => {
+      const button = window.__e2e.byRole(
+        "button",
+        "Continue with passkey",
+      ) as HTMLButtonElement | null;
+      return Boolean(button && !button.disabled);
+    });
+    await clickButton(page, "Continue with passkey");
+    await landedOn(page, "/settings/account");
+    check(
+      "passkey: the button finishes it",
+      (await session(page))?.user?.id === passkeyUser,
+    );
+
+    // "Don't ask again on this device" with a passkey.
+    await leaveSignedIn(page);
+    await holdPrompt(page, authenticatorId, true);
+    await emailCodeStep(page, PASSKEY_EMAIL, "/settings/account");
+    await waitForText(page, "Waiting for your passkey");
+    await page.evaluate(() => {
+      const box = window.__e2e.byLabel("Don't ask again on this device");
+      if (box) window.__e2e.click(box);
+    });
+    await clickButton(page, "Use an authenticator code");
+    await holdPrompt(page, authenticatorId, false);
+    await clickButton(page, "Use your passkey");
+    await landedOn(page, "/settings/account");
+    const trusted = (await page.cdp.send("Network.getCookies", {
+      urls: [BASE_URL],
+    })) as { cookies: { name: string }[] };
+    check(
+      "passkey: 'Don't ask again' trusts the device",
+      trusted.cookies.some((c) => c.name.endsWith("trust_device")),
+    );
+    await signOutKeepingCookies(page);
+    await emailCodeStep(page, PASSKEY_EMAIL);
+    await landedOn(page, "/dashboard");
+    check(
+      "passkey: a device trusted with a passkey isn't asked again",
+      (await session(page))?.user?.id === passkeyUser,
+    );
+
+    // /sign-in/two-factor (Google, GitHub and SSO land here).
+    await leaveSignedIn(page);
+    await page.goto(`${BASE_URL}/sign-in`);
+    check(
+      "passkey: a JSON sign-in answers twoFactorRedirect",
+      await startPendingChallenge(page, PASSKEY_EMAIL),
+    );
+    await holdPrompt(page, authenticatorId, true);
+    await page.goto(
+      `${BASE_URL}/sign-in/two-factor?next=%2Fsettings%2Faccount`,
+    );
+    await waitForText(page, "Waiting for your passkey");
+    check(
+      "passkey: the challenge page opens the prompt too",
+      (await heading(page)) === "Use your passkey",
+      await heading(page),
+    );
+    await shot(page, "25-challenge-page-passkey");
+    await clickButton(page, "Use a backup code");
+    await holdPrompt(page, authenticatorId, false);
+    await clickButton(page, "Use your passkey");
+    await landedOn(page, "/settings/account");
+    check(
+      "passkey: the challenge page finishes it and opens next",
+      (await session(page))?.user?.id === passkeyUser,
+    );
+
+    // The sign-in dialog over a page (the email code's second step there).
+    await leaveSignedIn(page);
+    await page.goto(`${BASE_URL}/playground`);
+    await page.waitFor(() =>
+      Boolean(window.__e2e.byRole("button", "Sign in", { exact: true })),
+    );
+    await rejectCookies(page);
+    await clickButton(page, "Sign in");
+    await page.waitFor(() =>
+      Boolean(document.querySelector('[role="dialog"] input[type="email"]')),
+    );
+    const dialogSince = logSize();
+    await fill(page, "Email address", PASSKEY_EMAIL);
+    await clickInDialog(page, "Email me a code");
+    const [, dialogCode] = await waitForLogLine(
+      new RegExp(`sign-in code for ${escapeRegExp(PASSKEY_EMAIL)}: (\\d{6})`),
+      dialogSince,
+    );
+    await holdPrompt(page, authenticatorId, true);
+    await fill(page, "Sign-in code", dialogCode);
+    await waitForText(page, "Waiting for your passkey");
+    check(
+      "passkey: the sign-in dialog asks for the passkey too",
+      (await page.evaluate(
+        () => document.querySelector('[role="dialog"] h2')?.textContent ?? "",
+      )) === "Use your passkey" && (await session(page)) === null,
+    );
+    await shot(page, "27-dialog-passkey-step");
+    await clickInDialog(page, "Use an authenticator code");
+    await holdPrompt(page, authenticatorId, false);
+    await clickInDialog(page, "Use your passkey");
+    await page.waitFor(() => !document.querySelector('[role="dialog"]'), {
+      timeout: 20_000,
+    });
+    check(
+      "passkey: the dialog's passkey step signs in and closes",
+      (await session(page))?.user?.id === passkeyUser,
+    );
+
+    // "Continue with passkey" on /sign-in: last, no autofill, both steps.
+    await leaveSignedIn(page);
+    await page.goto(`${BASE_URL}/sign-in?next=%2Fsettings%2Faccount`);
+    await waitForText(page, "Continue with passkey");
+    await rejectCookies(page);
+    const layout = (await page.evaluate(() => {
+      const labels = [
+        ...document.querySelectorAll("main button, main input"),
+      ].map(
+        (el) =>
+          (el as HTMLElement).innerText?.trim() ||
+          el.getAttribute("autocomplete") ||
+          "",
+      );
+      return {
+        labels,
+        autocomplete:
+          document
+            .querySelector('input[type="email"]')
+            ?.getAttribute("autocomplete") ?? null,
+      };
+    })) as { labels: string[]; autocomplete: string | null };
+    const passkeyAt = layout.labels.indexOf("Continue with passkey");
+    const ssoAt = layout.labels.indexOf("Sign in with SSO");
+    const emailAt = layout.labels.indexOf("Email me a code");
+    check(
+      "passkey: 'Continue with passkey' is the last way in",
+      passkeyAt > emailAt &&
+        (ssoAt === -1 || passkeyAt > ssoAt) &&
+        passkeyAt === layout.labels.length - 1,
+      layout.labels.join(" | "),
+    );
+    check(
+      "passkey: the email field doesn't offer passkeys (no webauthn autofill)",
+      layout.autocomplete === "email",
+      String(layout.autocomplete),
+    );
+    await shot(page, "26-sign-in-page");
+    await clickButton(page, "Continue with passkey");
+    await landedOn(page, "/settings/account");
+    check(
+      "passkey: 'Continue with passkey' signs in on its own (both steps)",
+      (await session(page))?.user?.id === passkeyUser,
+    );
+    await signOutKeepingCookies(page);
+    await page.goto(`${BASE_URL}/sign-in`);
+    await waitForText(page, "Continue with passkey");
+    const lastUsed = await page.evaluate(() => {
+      const button = window.__e2e.byRole("button", "Continue with passkey");
+      return Boolean(button?.parentElement?.textContent?.includes("Last used"));
+    });
+    check("passkey: the passkey button says 'Last used'", lastUsed);
+  } finally {
+    await page.cdp
+      .send("WebAuthn.removeVirtualAuthenticator", { authenticatorId })
+      .catch(() => undefined);
+    await page.cdp.send("WebAuthn.disable").catch(() => undefined);
+    await forgetSecondStep(page).catch(() => undefined);
+    await leaveSignedIn(page);
+  }
 }
 
 // ─── The run ────────────────────────────────────────────────────────────────
@@ -578,7 +1154,7 @@ async function main() {
     await clearCookies(page);
     await emailCodeStep(page, USER_EMAIL);
     await waitForText(page, "Your account asks for a second step");
-    await clickButton(page, "Use a backup code");
+    await pickMethod(page, "backup");
     await fill(page, "Backup code", backupCodes[0]);
     await shot(page, "09-backup-code-step");
     await clickButton(page, "Verify");
@@ -588,7 +1164,7 @@ async function main() {
     await clearCookies(page);
     await emailCodeStep(page, USER_EMAIL);
     await waitForText(page, "Your account asks for a second step");
-    await clickButton(page, "Use a backup code");
+    await pickMethod(page, "backup");
     await fill(page, "Backup code", backupCodes[0]);
     await clickButton(page, "Verify");
     await waitForText(
@@ -701,6 +1277,9 @@ async function main() {
       "Use another account clears the challenge cookie",
       !left.cookies.some((c) => c.name.endsWith("two_factor")),
     );
+
+    // ── passkey as the second step (its own account) ──
+    await passkeySecondStep(page);
 
     // ── someone without 2FA ──
     await clearCookies(page);

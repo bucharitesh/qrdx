@@ -48,11 +48,9 @@ import {
 const CODE_LENGTH = 6;
 const DIGITS_ONLY = "^\\d+$";
 
-// min-h-10 with -my-3 gives a 40 px tap target without changing the layout.
+// Small text links in 40 px rows: full tap targets that never overlap when
+// stacked.
 const TEXT_ACTION =
-  "-my-3 inline-flex min-h-10 items-center rounded-sm text-xs text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50";
-// The same look, stacked: full 40 px rows, so tap targets never overlap.
-const STACKED_ACTION =
   "inline-flex min-h-10 items-center rounded-sm text-left text-xs text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50";
 
 const HINTS: Record<SecondStep, string> = {
@@ -494,11 +492,12 @@ export function TwoFactorChallenge({
               </Label>
             </div>
           )}
-          <div className="flex w-full items-end justify-between gap-4">
-            <div className="-my-2 flex flex-col items-start">
+          {/* The other methods on the left, one per row; leaving on the right, level with the last row. */}
+          <div className="-my-2 flex w-full items-end justify-between gap-4">
+            <div className="flex flex-col items-start">
               {alternatives.map((step) => (
                 <button
-                  className={STACKED_ACTION}
+                  className={TEXT_ACTION}
                   disabled={checking || leaving}
                   key={step}
                   onClick={() => switchTo(step)}

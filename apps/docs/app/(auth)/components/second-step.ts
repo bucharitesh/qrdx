@@ -87,6 +87,9 @@ export const PASSKEY_STEP_MESSAGES = {
   failed: "Couldn't verify your passkey. Try again.",
   closed:
     "The passkey prompt was closed or timed out. Try again or use another method.",
+  // The server no longer had the request the passkey answered (it expired,
+  // or another tab asked for a newer one).
+  expiredRequest: "That passkey request expired. Try again.",
   userVerification:
     "That passkey didn't ask for your PIN, fingerprint or face. Use one that does, or use another method.",
   unavailable: "There's no passkey for this account here. Use another method.",
@@ -147,7 +150,7 @@ export function passkeyStepOutcome(
         counted: true,
       };
     case "PASSKEY_CHALLENGE_NOT_FOUND":
-      return { message: PASSKEY_STEP_MESSAGES.closed, ...quiet };
+      return { message: PASSKEY_STEP_MESSAGES.expiredRequest, ...quiet };
     case "PASSKEY_STEP_UNAVAILABLE":
       return { message: PASSKEY_STEP_MESSAGES.unavailable, ...quiet };
     case "TOO_MANY_ATTEMPTS_REQUEST_NEW_CODE":
