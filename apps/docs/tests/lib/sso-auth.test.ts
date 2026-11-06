@@ -11,6 +11,7 @@ import {
   SSO_UNUSED_PATHS,
   ssoGate,
   ssoRejoinDomains,
+  validateSsoUserInfo,
 } from "@repo/auth/sso";
 import { database } from "@repo/database";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -258,6 +259,76 @@ describe("new accounts from SSO", () => {
       { path: "/sign-in/email-otp", params: {} },
     );
     expect(result).toBeUndefined();
+  });
+});
+
+describe("what the identity provider says about the address", () => {
+  type Check = Parameters<typeof validateSsoUserInfo>[0];
+  const check = (
+    method: string,
+    action: string,
+    profile: Row | undefined,
+    email = "ana@acme.com",
+    context: object = {},
+  ) =>
+    validateSsoUserInfo(
+      {
+        user: { email },
+        source: {
+          method,
+          action,
+          sso: { providerId: "sso-abcdefabcdef", profile },
+        },
+      } as Check,
+      context as never,
+    );
+
+  it("runs on every sign-in, link and new account", () => {
+    expect(auth.options.user?.validateUserInfo).toBe(validateSsoUserInfo);
+  });
+
+  it("refuses an explicit no, for new accounts, links and returning sign-ins", async () => {
+    for (const action of ["create-user", "link-account", "sign-in"]) {
+      for (const verified of [false, "false", 0]) {
+        expect(
+          await check("sso-oidc", action, { email_verified: verified }),
+          `${action} ${verified}`,
+        ).toMatchObject({ error: "sso_email_unverified" });
+      }
+      expect(
+        await check("sso-saml", action, { email_verified: ["false"] }),
+      ).toMatchObject({ error: "sso_email_unverified" });
+    }
+  });
+
+  it("trusts a yes or silence, as before", async () => {
+    for (const action of ["create-user", "link-account", "sign-in"]) {
+      expect(await check("sso-oidc", action, { email_verified: true })).toBe(
+        undefined,
+      );
+      expect(await check("sso-oidc", action, { sub: "1" })).toBe(undefined);
+      expect(await check("sso-saml", action, { email: "ana@acme.com" })).toBe(
+        undefined,
+      );
+    }
+  });
+
+  it("says when no email address came back", async () => {
+    expect(
+      await check("sso-saml", "create-user", {}, "G-29a5e34a-f01e"),
+    ).toMatchObject({ error: "sso_email_missing" });
+    expect(await check("sso-saml", "sign-in", {}, "ulla")).toMatchObject({
+      error: "sso_email_missing",
+    });
+  });
+
+  it("leaves other sign-in methods alone", async () => {
+    expect(
+      await check("oauth", "create-user", { email_verified: false }, "x"),
+    ).toBe(undefined);
+    expect(
+      await check("email-otp", "create-user", undefined, "zed@other.com"),
+    ).toBe(undefined);
   });
 });
 

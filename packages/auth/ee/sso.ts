@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto";
 import { discoverOIDCConfig, type SSOOptions } from "@better-auth/sso";
 import * as schema from "@repo/database";
 import { and, database as db, eq } from "@repo/database";
-import type { BetterAuthPlugin } from "better-auth";
+import type { BetterAuthOptions, BetterAuthPlugin } from "better-auth";
 import { APIError, createAuthMiddleware, isAPIError } from "better-auth/api";
 import { workspacePlanTier } from "../plan";
 import {
@@ -11,7 +11,10 @@ import {
   domainsOverlap,
   emailDomain,
   emailInSsoDomain,
+  looksLikeEmail,
+  SSO_SIGN_IN_ERROR,
   SSO_TOKEN_PREFIX,
+  ssoEmailUnverified,
   ssoFailureRedirect,
   ssoJoinRoleFromMetadata,
 } from "./sso-rules";
@@ -22,6 +25,8 @@ import {
 // - sign-in only through a verified connection of a workspace on Business,
 //   found from the person's work email (never a provider id from the client);
 // - a new account only for an address inside the connection's domain;
+// - no sign-in when the identity provider says the address isn't verified,
+//   or sends no address at all (validateSsoUserInfo);
 // - joining the workspace at every SSO sign-in (rejoining after a removal,
 //   accepting a pending invitation), with the role the workspace picked
 //   (member or viewer) or the invitation's.
@@ -55,7 +60,7 @@ export const SSO_ERROR = {
   emailRequired: "SSO_EMAIL_REQUIRED",
   notFound: "SSO_NOT_FOUND",
   unavailable: "SSO_NOT_AVAILABLE",
-  outsideDomain: "sso_email_outside_domain",
+  ...SSO_SIGN_IN_ERROR,
 } as const;
 
 /** Where a refused callback lands (the sign-in page shows the message). */
@@ -264,6 +269,50 @@ export const ssoOptions = {
     requireTimestamps: true,
   },
 } satisfies SSOOptions;
+
+type ValidateUserInfo = NonNullable<
+  NonNullable<BetterAuthOptions["user"]>["validateUserInfo"]
+>;
+
+function refusal(error: string, errorDescription: string) {
+  return { error, errorDescription };
+}
+
+/**
+ * The auth options' `user.validateUserInfo`, for SSO sign-ins (other methods
+ * pass). Runs before an account is created, linked or signed in, with what
+ * the identity provider sent (OIDC: its userinfo claims, or the ID token's
+ * when it has no userinfo endpoint; SAML: the response's attributes):
+ * - an address the identity provider explicitly marks unverified is
+ *   refused, for new and existing accounts alike;
+ * - something that isn't an email address (a SAML NameID that's a user name
+ *   or an opaque id, with no email attribute) is refused as "no address".
+ */
+export const validateSsoUserInfo: ValidateUserInfo = ({ user, source }) => {
+  const protocol =
+    source.method === "sso-oidc"
+      ? "oidc"
+      : source.method === "sso-saml"
+        ? "saml"
+        : null;
+  if (!protocol) return;
+  const profile =
+    source.sso?.profile && typeof source.sso.profile === "object"
+      ? (source.sso.profile as Record<string, unknown>)
+      : null;
+  if (!looksLikeEmail(user.email)) {
+    return refusal(
+      SSO_ERROR.emailMissing,
+      "Your identity provider didn't send an email address."
+    );
+  }
+  if (ssoEmailUnverified(protocol, profile)) {
+    return refusal(
+      SSO_ERROR.emailUnverified,
+      "Your identity provider says this email address isn't verified."
+    );
+  }
+};
 
 /**
  * The checks QRdx adds around the plugin's sign-in endpoints. Registered

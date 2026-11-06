@@ -17,6 +17,10 @@ export function ssoSignInErrorMessage(
       return "Single sign-on isn't available for this workspace right now. Sign in another way.";
     case "sso_email_outside_domain":
       return "Your identity provider sent an address outside your company's domain, so QRdx can't sign you in with it. Ask your workspace admin.";
+    case "sso_email_unverified":
+      return "Your company's sign-in system hasn't confirmed this email address, so QRdx can't sign you in with it. Its admin needs to verify email addresses there.";
+    case "sso_email_missing":
+      return "Your company's sign-in system didn't send an email address, so QRdx can't sign you in. Ask your workspace admin.";
     case "account_not_linked":
     case "account not linked":
       return "An account with this address already exists and couldn't be linked. Sign in with an email code instead.";

@@ -27,6 +27,7 @@ import {
   SSO_UNUSED_PATHS,
   ssoGate,
   ssoOptions,
+  validateSsoUserInfo,
 } from "./ee/sso";
 import { eeLicensed } from "./ee-license";
 import { sendVerificationOTP } from "./email-otp";
@@ -179,6 +180,9 @@ export const auth = betterAuth({
       allowUnlinkingAll: true,
     },
   },
+  // Checks what an identity provider sent before an SSO sign-in creates,
+  // links or signs in an account (./ee/sso.ts). Other methods pass.
+  user: ssoLicensed ? { validateUserInfo: validateSsoUserInfo } : undefined,
   // Codes live in the core `verification` table. Identifiers hold addresses
   // ("sign-in-otp-<email>", "change-email-otp-<old>-<new>"), so they are
   // hashed like the codes themselves.
