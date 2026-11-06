@@ -7,8 +7,12 @@ import {
   CHALLENGE_CODE_PATHS,
   CHALLENGE_COMPLETION_PATHS,
   CHALLENGE_CONTINUE_PATH,
+  CHALLENGE_STEP_PATHS,
   PASSKEY_SIGN_IN_PATH,
+  PASSKEY_STEP_OPTIONS_PATH,
+  PASSKEY_STEP_VERIFY_PATH,
   SERVER_ONLY_TWO_FACTOR_PATHS,
+  TWO_FACTOR_METHODS_PATH,
   UNUSED_TWO_FACTOR_PATHS,
 } from "@repo/auth/sign-in-challenge-rules";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -30,6 +34,11 @@ type Kind =
    * which the challenge skips.
    */
   | "server-only"
+  /**
+   * A step towards finishing a challenge: needs a pending challenge (the
+   * two_factor cookie) and never creates a session.
+   */
+  | "challenge-step"
   /** Never creates a session. */
   | "no-session";
 
@@ -61,6 +70,18 @@ const PATHS: Record<string, [Kind, string]> = {
   "/two-factor/continue": [
     "finishes-challenge",
     "trusted device only (GET after a SAML POST); else the challenge page",
+  ],
+  [PASSKEY_STEP_VERIFY_PATH]: [
+    "finishes-challenge",
+    "one of the pending person's passkeys, user verification required",
+  ],
+  [TWO_FACTOR_METHODS_PATH]: [
+    "challenge-step",
+    "which second steps the pending person has",
+  ],
+  [PASSKEY_STEP_OPTIONS_PATH]: [
+    "challenge-step",
+    "a WebAuthn challenge for the pending person's passkeys",
   ],
 
   // The session the request came with, re-issued (same token)
@@ -236,6 +257,10 @@ describe("sign-in challenge coverage", () => {
       .filter((p) => !UNUSED_TWO_FACTOR_PATHS.includes(p));
     expect(finishes.sort()).toEqual([...CHALLENGE_COMPLETION_PATHS].sort());
     expect(PATHS[PASSKEY_SIGN_IN_PATH][0]).toBe("challenged-without-uv");
+    const steps = Object.entries(PATHS)
+      .filter(([, [kind]]) => kind === "challenge-step")
+      .map(([p]) => p);
+    expect(steps.sort()).toEqual([...CHALLENGE_STEP_PATHS].sort());
   });
 
   it("keeps every server-only path off over HTTP", async () => {
@@ -285,5 +310,14 @@ describe("sign-in challenge coverage", () => {
     expect(
       auth.options.rateLimit?.customRules?.[CHALLENGE_CONTINUE_PATH],
     ).toEqual({ window: 60, max: 120 });
+    // The passkey second step: the verify endpoint is a code path (above);
+    // its steps are limited too, and none of them is off.
+    expect(CHALLENGE_CODE_PATHS).toContain(PASSKEY_STEP_VERIFY_PATH);
+    for (const p of CHALLENGE_STEP_PATHS) {
+      expect(disabled).not.toContain(p);
+      expect(auth.options.rateLimit?.customRules?.[p]).toEqual(
+        expect.objectContaining({ window: 60 }),
+      );
+    }
   });
 });
