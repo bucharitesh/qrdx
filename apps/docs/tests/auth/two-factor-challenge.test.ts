@@ -17,6 +17,7 @@ import { realpathSync } from "node:fs";
 import path from "node:path";
 import {
   SERVER_ONLY_TWO_FACTOR_PATHS,
+  SERVER_SESSION_SWAP_PATHS,
   TWO_FACTOR_CHALLENGE_PATH,
   UNUSED_TWO_FACTOR_PATHS,
 } from "@repo/auth/sign-in-challenge-rules";
@@ -197,7 +198,7 @@ const realFetch = globalThis.fetch;
 
 beforeAll(async () => {
   const { betterAuth } = await import(`${betterAuthDir}/dist/index.mjs`);
-  const { twoFactor, emailOTP } = await import(
+  const { twoFactor, emailOTP, organization } = await import(
     `${betterAuthDir}/dist/plugins/index.mjs`
   );
   const { memoryAdapter } = await import(
@@ -214,6 +215,9 @@ beforeAll(async () => {
     verification: [],
     twoFactor: [],
     passkey: [],
+    organization: [],
+    member: [],
+    invitation: [],
   };
   // The same twoFactor options as packages/auth/server.ts.
   const twoFactorPlugin = twoFactor({
@@ -258,6 +262,7 @@ beforeAll(async () => {
         },
       }),
       passkey({ rpID: "localhost", rpName: "QRdx", origin: ORIGIN }),
+      organization(),
       twoFactorPlugin,
       signInChallenge(twoFactorPlugin),
     ],
@@ -490,20 +495,138 @@ describe("two-step verification at sign-in", () => {
     expect((await browser.session())?.user.email).toBe(TWO_FACTOR_EMAIL);
   });
 
-  it("doesn't challenge a sign-in by someone already signed in as that person", async () => {
-    // Account deletion (actions/account.ts) re-checks an email code this way.
+  /** A browser signed in as the 2FA user, challenge finished. */
+  async function signedInBrowser() {
     const browser = new Browser(auth.handler);
     await emailCodeSignIn(browser, TWO_FACTOR_EMAIL);
     await browser.post("/two-factor/verify-totp", { code: totp(totpSecret) });
+    const live = (await browser.request("GET", "/get-session")).json as {
+      session: { token: string };
+    };
+    expect(live.session.token).toEqual(expect.any(String));
+    return { browser, token: live.session.token };
+  }
+
+  it("challenges an email-code sign-in from a browser already signed in as that person", async () => {
+    // An old (stolen) session cookie plus the mailbox must not mint a fresh
+    // session: adding a passkey and changing the email check for one.
+    const { browser } = await signedInBrowser();
+    const sessions = db.session.length;
+    const reply = await emailCodeSignIn(browser, TWO_FACTOR_EMAIL);
+    expect(reply.json).toEqual({
+      twoFactorRedirect: true,
+      twoFactorMethods: ["totp"],
+    });
+    expect(reply.setCookies.some((c) => /session_token=[^;]+;/.test(c))).toBe(
+      false,
+    );
+    // The session the sign-in made is gone again.
+    expect(db.session).toHaveLength(sessions);
+    expect(browser.has("two_factor")).toBe(true);
+    expect(await browser.session()).toBeNull();
+
+    const done = await browser.post("/two-factor/verify-totp", {
+      code: totp(totpSecret),
+    });
+    expect(done.status).toBe(200);
+    expect((await browser.session())?.user.email).toBe(TWO_FACTOR_EMAIL);
+  });
+
+  it("challenges a GitHub callback from a browser already signed in as that person", async () => {
+    const { browser } = await signedInBrowser();
+    const start = await browser.post("/sign-in/social", {
+      provider: "github",
+      callbackURL: "/dashboard",
+    });
+    const state = new URL(String(start.json?.url)).searchParams.get("state");
+    const callback = await browser.get(
+      `/callback/github?code=gh-code&state=${state}`,
+    );
+    expect(callback.status).toBe(302);
+    expect(new URL(String(callback.location)).pathname).toBe(
+      TWO_FACTOR_CHALLENGE_PATH,
+    );
+    expect(
+      callback.setCookies.some((c) => /session_token=[^;]+;/.test(c)),
+    ).toBe(false);
+    expect(await browser.session()).toBeNull();
+  });
+
+  it("doesn't challenge a refresh of the session the browser has", async () => {
+    const { browser, token } = await signedInBrowser();
+    // Due for a refresh (Better Auth's updateAge has passed).
+    const row = db.session.find((s) => s.token === token);
+    if (!row) throw new Error("session row missing");
+    row.expiresAt = new Date(Date.now() + 60 * 60 * 1000);
+    const reply = await browser.get("/get-session");
+    expect(reply.status).toBe(200);
+    expect(reply.json?.twoFactorRedirect).toBeUndefined();
+    const refreshed = reply.json as {
+      session: { token: string; expiresAt: string };
+    };
+    expect(refreshed.session.token).toBe(token);
+    expect(new Date(refreshed.session.expiresAt).getTime()).toBeGreaterThan(
+      Date.now() + 24 * 60 * 60 * 1000,
+    );
+    expect(reply.setCookies.some((c) => /session_token=[^;]+;/.test(c))).toBe(
+      true,
+    );
+    expect(browser.has("two_factor")).toBe(false);
+    expect((await browser.session())?.user.email).toBe(TWO_FACTOR_EMAIL);
+  });
+
+  it("doesn't challenge creating or switching workspace", async () => {
+    const { browser, token } = await signedInBrowser();
+    const created = await browser.post("/organization/create", {
+      name: "Two Step Co",
+      slug: `two-step-${randomBytes(4).toString("hex")}`,
+    });
+    expect(created.status).toBe(200);
+    const id = String(created.json?.id);
+    expect(id).not.toBe("undefined");
+
+    const cleared = await browser.post("/organization/set-active", {
+      organizationId: null,
+    });
+    expect(cleared.status).toBe(200);
+    expect(cleared.json).toBeNull();
+    const switched = await browser.post("/organization/set-active", {
+      organizationId: id,
+    });
+    expect(switched.status).toBe(200);
+    expect(switched.json?.id).toBe(id);
+    expect(switched.json?.twoFactorRedirect).toBeUndefined();
+
+    const now = (await browser.get("/get-session")).json as {
+      session: { token: string; activeOrganizationId: string };
+    };
+    expect(now.session.token).toBe(token);
+    expect(now.session.activeOrganizationId).toBe(id);
+    expect(browser.has("two_factor")).toBe(false);
+  });
+
+  it("challenges a sign-in made server-side too (auth.api is no way around the code)", async () => {
+    // Only the 2FA management calls on SERVER_SESSION_SWAP_PATHS are exempt
+    // when they run server-side; a server action that signs someone in is
+    // challenged like a browser.
+    const { browser } = await signedInBrowser();
     await browser.post("/email-otp/send-verification-otp", {
       email: TWO_FACTOR_EMAIL,
       type: "sign-in",
     });
-    const result = await auth.api.signInEmailOTP({
+    const result = (await auth.api.signInEmailOTP({
       headers: headersFor(browser),
       body: { email: TWO_FACTOR_EMAIL, otp: sentCodes.get(TWO_FACTOR_EMAIL) },
-    });
-    expect(result.user.email).toBe(TWO_FACTOR_EMAIL);
+    })) as { twoFactorRedirect?: boolean; token?: string };
+    expect(result.twoFactorRedirect).toBe(true);
+    expect(result.token).toBeUndefined();
+  });
+
+  it("exempts only the listed 2FA management paths when they run server-side", () => {
+    expect([...SERVER_SESSION_SWAP_PATHS].sort()).toEqual([
+      "/two-factor/disable",
+      "/two-factor/enable",
+    ]);
   });
 
   it("refuses the challenge endpoints over HTTP to a signed-in browser", async () => {

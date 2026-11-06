@@ -11,7 +11,7 @@ import {
   SERVER_ONLY_TWO_FACTOR_PATHS,
   UNUSED_TWO_FACTOR_PATHS,
 } from "@repo/auth/sign-in-challenge-rules";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 type Kind =
   /** Signs someone in (creates a session): challenged when 2FA is on. */
@@ -21,10 +21,15 @@ type Kind =
   /** Passkey sign-in: challenged unless the authenticator verified the user. */
   | "challenged-without-uv"
   /**
-   * Re-issues or rotates the cookie of a session the browser already has
-   * (same person): the challenge skips it, nothing new is reached.
+   * Re-issues the session the request came with (same token): the challenge
+   * skips it, nothing new is reached.
    */
-  | "same-person"
+  | "same-session"
+  /**
+   * Off over HTTP; only the app calls it, through auth.api (not a request),
+   * which the challenge skips.
+   */
+  | "server-only"
   /** Never creates a session. */
   | "no-session";
 
@@ -40,12 +45,9 @@ const PATHS: Record<string, [Kind, string]> = {
     "challenged",
     "off over HTTP; signs in if called",
   ],
-  "/sso/callback/:providerId": ["challenged", "workspace SSO, OIDC"],
-  "/sso/callback": ["challenged", "workspace SSO, OIDC shared callback"],
-  "/sso/saml2/sp/acs/:providerId": ["challenged", "workspace SSO, SAML"],
   "/passkey/verify-registration": [
-    "challenged",
-    "createSession: true; needs a fresh session of the same person, so same-person applies",
+    "server-only",
+    "createSession: true would make a session; adding a passkey needs a current code with 2FA on",
   ],
   "/admin/impersonate-user": ["challenged", "off over HTTP"],
   "/admin/stop-impersonating": [
@@ -61,21 +63,27 @@ const PATHS: Record<string, [Kind, string]> = {
     "trusted device only (GET after a SAML POST); else the challenge page",
   ],
 
-  // The signed-in person's own session, re-issued
-  "/get-session": ["same-person", "refreshes the session's expiry"],
-  "/update-session": ["same-person", "same session"],
-  "/update-user": ["same-person", "same session, new user data"],
-  "/change-email": ["same-person", "same session"],
-  "/email-otp/change-email": ["same-person", "off over HTTP; same session"],
-  "/change-password": ["same-person", "passwords are off"],
-  "/organization/set-active": ["same-person", "same session"],
-  "/organization/create": ["same-person", "sets the new workspace active"],
-  "/organization/delete": ["same-person", "clears the active workspace"],
-  "/organization/accept-invitation": ["same-person", "sets it active"],
-  "/organization/leave": ["same-person", "clears the active workspace"],
-  "/organization/remove-member": ["same-person", "may clear it"],
-  "/two-factor/enable": ["same-person", "server only; rotates the session"],
-  "/two-factor/disable": ["same-person", "server only; rotates the session"],
+  // The session the request came with, re-issued (same token)
+  "/get-session": ["same-session", "refreshes the session's expiry"],
+  "/update-session": ["same-session", "same session"],
+  "/update-user": ["same-session", "same session, new user data"],
+  "/change-email": ["same-session", "same session"],
+  "/email-otp/change-email": [
+    "server-only",
+    "same session; changing the email needs a current code with 2FA on",
+  ],
+  "/change-password": [
+    "challenged",
+    "passwords are off; a new session would be challenged",
+  ],
+  "/organization/set-active": ["same-session", "same session"],
+  "/organization/create": ["same-session", "sets the new workspace active"],
+  "/organization/delete": ["same-session", "clears the active workspace"],
+  "/organization/accept-invitation": ["same-session", "sets it active"],
+  "/organization/leave": ["same-session", "clears the active workspace"],
+  "/organization/remove-member": ["same-session", "may clear it"],
+  "/two-factor/enable": ["server-only", "rotates the session"],
+  "/two-factor/disable": ["server-only", "rotates the session"],
 
   // No session created
   "/account-info": ["no-session", "read"],
@@ -135,8 +143,21 @@ const PATHS: Record<string, [Kind, string]> = {
   "/revoke-session": ["no-session", "ends a session"],
   "/revoke-sessions": ["no-session", "ends sessions"],
   "/send-verification-email": ["no-session", "sends an email"],
-  "/sign-in/sso": ["no-session", "starts SSO; the callback signs in"],
   "/sign-out": ["no-session", "ends the session"],
+  "/two-factor/generate-backup-codes": ["no-session", "server only"],
+  "/two-factor/get-totp-uri": ["no-session", "server only"],
+  "/two-factor/send-otp": ["no-session", "off: no email/SMS codes"],
+  "/unlink-account": ["no-session", "account management"],
+  "/verify-password": ["no-session", "passwords are off"],
+};
+
+// Workspace SSO (packages/auth/ee/sso.ts): registered only on servers with a
+// licence key (packages/auth/ee-license.ts), so only expected there.
+const SSO_PATHS: Record<string, [Kind, string]> = {
+  "/sign-in/sso": ["no-session", "starts SSO; the callback signs in"],
+  "/sso/callback": ["challenged", "workspace SSO, OIDC shared callback"],
+  "/sso/callback/:providerId": ["challenged", "workspace SSO, OIDC"],
+  "/sso/saml2/sp/acs/:providerId": ["challenged", "workspace SSO, SAML"],
   "/sso/delete-provider": ["no-session", "SSO management"],
   "/sso/get-provider": ["no-session", "SSO management"],
   "/sso/providers": ["no-session", "SSO management"],
@@ -147,11 +168,6 @@ const PATHS: Record<string, [Kind, string]> = {
   "/sso/saml2/sp/slo/:providerId": ["no-session", "SAML logout"],
   "/sso/update-provider": ["no-session", "SSO management"],
   "/sso/verify-domain": ["no-session", "SSO management"],
-  "/two-factor/generate-backup-codes": ["no-session", "server only"],
-  "/two-factor/get-totp-uri": ["no-session", "server only"],
-  "/two-factor/send-otp": ["no-session", "off: no email/SMS codes"],
-  "/unlink-account": ["no-session", "account management"],
-  "/verify-password": ["no-session", "passwords are off"],
 };
 
 async function loadAuth() {
@@ -167,34 +183,70 @@ async function loadAuth() {
   };
 }
 
+/** The auth server loaded fresh, with or without the ee/ licence key. */
+async function loadAuthWith(license: string | undefined) {
+  vi.resetModules();
+  vi.stubEnv("QRDX_EE_LICENSE", license);
+  return loadAuth();
+}
+
 describe("sign-in challenge coverage", () => {
-  it("classifies every endpoint path QRdx's auth registers", async () => {
-    const auth = await loadAuth();
-    const registered = [
-      ...new Set(
-        Object.values(auth.api)
-          .map((endpoint) => endpoint.path)
-          .filter((p): p is string => typeof p === "string"),
-      ),
-    ].sort();
-    const unclassified = registered.filter((p) => !(p in PATHS));
-    expect(
-      unclassified,
-      "New auth endpoints: classify each in tests/auth/sign-in-challenge-guard.test.ts (and check the challenge covers it)",
-    ).toEqual([]);
-    // Nothing listed that no longer exists, so the list stays honest.
-    expect(Object.keys(PATHS).filter((p) => !registered.includes(p))).toEqual(
-      [],
-    );
+  afterEach(() => {
+    vi.unstubAllEnvs();
+    vi.resetModules();
   });
 
+  it.each([
+    ["with", "test-license"],
+    ["without", undefined],
+  ])(
+    "classifies every endpoint path QRdx's auth registers %s a licence key",
+    async (_, license) => {
+      const auth = await loadAuthWith(license);
+      const expected = license ? { ...PATHS, ...SSO_PATHS } : PATHS;
+      const registered = [
+        ...new Set(
+          Object.values(auth.api)
+            .map((endpoint) => endpoint.path)
+            .filter((p): p is string => typeof p === "string"),
+        ),
+      ].sort();
+      const unclassified = registered.filter(
+        (p) => !(p in PATHS || p in SSO_PATHS),
+      );
+      expect(
+        unclassified,
+        "New auth endpoints: classify each in tests/auth/sign-in-challenge-guard.test.ts (and check the challenge covers it)",
+      ).toEqual([]);
+      // Nothing listed that no longer exists, so the list stays honest.
+      expect(
+        Object.keys(expected).filter((p) => !registered.includes(p)),
+      ).toEqual([]);
+      // SSO is registered with a key and absent without one.
+      expect(registered.filter((p) => p in SSO_PATHS).sort()).toEqual(
+        license ? Object.keys(SSO_PATHS).sort() : [],
+      );
+    },
+  );
+
   it("matches the challenge plugin's exemptions", () => {
-    const finishes = Object.entries(PATHS)
+    const finishes = Object.entries({ ...PATHS, ...SSO_PATHS })
       .filter(([, [kind]]) => kind === "finishes-challenge")
       .map(([p]) => p)
       .filter((p) => !UNUSED_TWO_FACTOR_PATHS.includes(p));
     expect(finishes.sort()).toEqual([...CHALLENGE_COMPLETION_PATHS].sort());
     expect(PATHS[PASSKEY_SIGN_IN_PATH][0]).toBe("challenged-without-uv");
+  });
+
+  it("keeps every server-only path off over HTTP", async () => {
+    // The challenge skips auth.api calls, so these must not be reachable
+    // by a request.
+    const auth = await loadAuth();
+    const disabled = auth.options.disabledPaths ?? [];
+    const serverOnly = Object.entries(PATHS)
+      .filter(([, [kind]]) => kind === "server-only")
+      .map(([p]) => p);
+    expect(serverOnly.filter((p) => !disabled.includes(p))).toEqual([]);
   });
 
   it("never serves sessions from a cookie cache", async () => {

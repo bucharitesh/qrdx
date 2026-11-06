@@ -38,7 +38,7 @@ export function pathInWorkspace(pathname: string): string {
 }
 
 /**
- * The same section in another workspace, as Dub's switcher does: detail
+ * The same section in another workspace, for the workspace switcher: detail
  * pages (a code, a page, a webhook) go to their list, and the query is
  * dropped, since filters and ids belong to the workspace left behind.
  */

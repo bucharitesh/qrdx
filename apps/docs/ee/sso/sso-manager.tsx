@@ -51,6 +51,8 @@ import {
 } from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
 import { type FormEvent, type ReactNode, useId, useState } from "react";
+import { RoleSelect } from "@/app/dashboard/team/_components/role-select";
+import { CopyButton } from "@/components/copy-button";
 import {
   createSso,
   removeSso,
@@ -58,11 +60,9 @@ import {
   setSsoRole,
   updateSso,
   verifySso,
-} from "@/actions/sso";
-import { RoleSelect } from "@/app/dashboard/team/_components/role-select";
-import { CopyButton } from "@/components/copy-button";
-import type { SsoConnectionView, SsoOverview } from "@/lib/sso/connections";
-import { SSO_REAUTH_MESSAGE } from "@/lib/sso/messages";
+} from "@/ee/sso/actions";
+import type { SsoConnectionView, SsoOverview } from "@/ee/sso/connections";
+import { SSO_REAUTH_MESSAGE } from "@/ee/sso/messages";
 
 const PROTOCOL_NAMES = { oidc: "OIDC", saml: "SAML" } as const;
 

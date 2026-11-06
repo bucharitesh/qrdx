@@ -85,6 +85,16 @@ function totp(secret: string, at = Date.now()): string {
   );
 }
 
+/** A 6-digit code that is certainly wrong right now. */
+function wrongTotp(secret: string): string {
+  const valid = new Set(
+    [-30_000, 0, 30_000].map((d) => totp(secret, Date.now() + d)),
+  );
+  for (let n = 111_111; ; n++) {
+    if (!valid.has(String(n))) return String(n);
+  }
+}
+
 type Page = Awaited<ReturnType<typeof launch>>;
 
 /**
@@ -519,6 +529,18 @@ async function main() {
         if (name !== "Chrome on macOS" && !/^Chrome on /.test(String(name))) {
           return `default name was ${JSON.stringify(name)}`;
         }
+        // Two-step verification is off: no code is asked for.
+        const asksForCode = await page.evaluate(() => {
+          const dialog = window.__e2e.byRole("dialog", "Add a passkey");
+          return Boolean(
+            dialog &&
+              window.__e2e.byLabel(
+                "Code from your authenticator app, or a backup code",
+                dialog,
+              ),
+          );
+        });
+        if (asksForCode) return "asked a non-2FA account for a code";
         await clickButton(page, "Continue", "Add a passkey");
         await page.waitFor(
           () => Boolean(window.__e2e.byText("Passkey added")),
@@ -908,10 +930,70 @@ async function main() {
       return true;
     });
 
-    await step("2FA: the same account adds a passkey", async () => {
-      await page.goto(`${BASE_URL}/settings/account`);
-      await clickButton(page, "Add passkey");
-      await dialogName(page, "Add a passkey");
+    await step(
+      "2FA: adding a passkey asks for a current code; a wrong one adds nothing",
+      async () => {
+        await page.goto(`${BASE_URL}/settings/account`);
+        await clickButton(page, "Add passkey");
+        await dialogName(page, "Add a passkey");
+        const before = await page.evaluate(() => {
+          const dialog = window.__e2e.byRole("dialog", "Add a passkey");
+          const field = dialog
+            ? window.__e2e.byLabel(
+                "Code from your authenticator app, or a backup code",
+                dialog,
+              )
+            : null;
+          const button = dialog
+            ? (window.__e2e.byRole("button", "Continue", {
+                exact: true,
+                root: dialog,
+              }) as HTMLButtonElement | null)
+            : null;
+          return { field: Boolean(field), disabled: button?.disabled ?? null };
+        });
+        if (!before.field) return "no code field";
+        if (before.disabled !== true) return "Continue enabled without a code";
+        await shot(page, "add-passkey-dialog-2fa");
+        await page.evaluate((code: string) => {
+          const dialog = window.__e2e.byRole("dialog", "Add a passkey");
+          const input = window.__e2e.byLabel(
+            "Code from your authenticator app, or a backup code",
+            dialog ?? undefined,
+          ) as HTMLInputElement;
+          input.focus();
+          window.__e2e.setValue(input, code);
+        }, wrongTotp(secret));
+        await clickButton(page, "Continue", "Add a passkey");
+        await page.waitFor(
+          () =>
+            Boolean(
+              window.__e2e.byText(
+                "That code isn't right. Try a new code from your app.",
+              ),
+            ),
+          { timeout: 20_000 },
+        );
+        await shot(page, "add-passkey-dialog-2fa-wrong");
+        const { credentials } = await cdp.send("WebAuthn.getCredentials", {
+          authenticatorId,
+        });
+        return credentials.length === 0
+          ? true
+          : `${credentials.length} credentials after a wrong code`;
+      },
+    );
+
+    await step("2FA: the same account adds a passkey with a code", async () => {
+      await page.evaluate((code: string) => {
+        const dialog = window.__e2e.byRole("dialog", "Add a passkey");
+        const input = window.__e2e.byLabel(
+          "Code from your authenticator app, or a backup code",
+          dialog ?? undefined,
+        ) as HTMLInputElement;
+        input.focus();
+        window.__e2e.setValue(input, code);
+      }, totp(secret));
       await clickButton(page, "Continue", "Add a passkey");
       await page.waitFor(() => Boolean(window.__e2e.byText("Passkey added")), {
         timeout: 20_000,
