@@ -42,6 +42,8 @@ QRdx asks for the `openid`, `email` and `profile` scopes and uses PKCE. The issu
 
 Your provider has to sign its responses and include an HTTP-Redirect sign-in URL. QRdx turns away responses without a valid signature or without validity times (`NotBefore` and `NotOnOrAfter`).
 
+QRdx doesn't sign its sign-in requests. If your provider is set to require signed requests from the QRdx app, turn that off, or it turns people away before they can sign in.
+
 ## Verify your domain
 
 Nobody can sign in through the connection until you prove you own the domain.
