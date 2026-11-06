@@ -170,7 +170,7 @@ export const FEATURE_RULES: Record<FeatureId, FeatureRule> = {
     // Workspace single sign-on is in ee/ under the QRdx commercial licence
     // and runs only with a licence key (packages/auth/ee-license.ts): without
     // one the server doesn't register it at all.
-    name: "Workspace SSO (QRdx licence key)",
+    name: "Workspace SSO (QRdx license key)",
     requires: () => [EE_LICENSE_ENV],
     paths: [
       `${WORKSPACE_PATTERN_PREFIX}/settings/sso`,
