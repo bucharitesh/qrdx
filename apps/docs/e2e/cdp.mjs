@@ -86,7 +86,7 @@ export async function launch({
     chromePath,
     [
       "--headless=new",
-      // Test pages play UI sounds; a headless run must never be heard.
+      // Never make a sound on the machine running the suites.
       "--mute-audio",
       `--remote-debugging-port=${port}`,
       `--user-data-dir=${profile}`,
