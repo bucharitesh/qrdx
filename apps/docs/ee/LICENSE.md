@@ -26,7 +26,7 @@ If you send a change to the Commercial Software (for example in a pull request),
 
 Except as section 2 allows or a written agreement says otherwise, you may not:
 
-- sell, rent, sublicense or otherwise commercialise the Commercial Software;
+- sell, rent, sublicense or otherwise commercialize the Commercial Software;
 - offer it, or a service built on it, to others;
 - remove or work around the license-key check that switches it on;
 - remove or change this license or its copyright notice.
