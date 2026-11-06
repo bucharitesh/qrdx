@@ -49,30 +49,36 @@ export function offeredSteps(
 /** The method to start with: the one used last here, else the best. */
 export function firstStep(
   steps: readonly SecondStep[],
-  remembered: SecondStep | null,
+  remembered: RememberedStep | null,
 ): SecondStep | null {
   if (remembered && steps.includes(remembered)) return remembered;
   return steps[0] ?? null;
 }
 
-// The method that last finished a sign-in in this browser. Only its name is
-// kept, never a code.
+// The method that last finished a sign-in in this browser: a passkey or the
+// authenticator app. Only its name is kept, never a code. A backup code is a
+// fallback, so it's never remembered: the next sign-in opens on whatever was
+// remembered before, not on the backup field.
 const REMEMBERED_KEY = "qrdx:second-step";
 
-function isSecondStep(value: unknown): value is SecondStep {
-  return value === "passkey" || value === "totp" || value === "backup";
+export type RememberedStep = Exclude<SecondStep, "backup">;
+
+function isRememberedStep(value: unknown): value is RememberedStep {
+  return value === "passkey" || value === "totp";
 }
 
-export function readRememberedStep(): SecondStep | null {
+export function readRememberedStep(): RememberedStep | null {
   try {
     const value = window.localStorage.getItem(REMEMBERED_KEY);
-    return isSecondStep(value) ? value : null;
+    return isRememberedStep(value) ? value : null;
   } catch {
     return null;
   }
 }
 
+/** Remembers a passkey or the authenticator app; a backup code changes nothing. */
 export function rememberStep(step: SecondStep): void {
+  if (!isRememberedStep(step)) return;
   try {
     window.localStorage.setItem(REMEMBERED_KEY, step);
   } catch {
