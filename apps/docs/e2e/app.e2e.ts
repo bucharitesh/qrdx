@@ -459,6 +459,22 @@ async function codeAction(page: Page, title: string, item: string) {
   await click(page, { role: "menuitem", name: item });
 }
 
+/**
+ * An item of the codes page's folder switcher (the title menu: "All codes",
+ * each folder, New folder…, and Rename/Delete for the folder shown).
+ */
+async function folderMenu(page: Page, item: string) {
+  await click(page, { role: "button", name: "change folder" });
+  await click(page, { role: "menuitem", name: item });
+}
+
+/** An item of the Filter menu's Tags submenu (a tag, New tag…, Edit tags…). */
+async function tagsMenu(page: Page, item: string) {
+  await click(page, { role: "button", name: "filter", exact: true });
+  await click(page, { role: "menuitem", name: "tags", exact: true });
+  await click(page, { role: "menuitem", name: item });
+}
+
 /** Trashes and permanently deletes a code (cleanup; never throws). */
 async function deleteCodeForever(page: Page, code: CreatedCode) {
   try {
@@ -584,7 +600,7 @@ async function testOrganize(page: Page) {
     await open(page, ws("/codes"));
     folderCreated = Boolean(
       await step(area, "create a folder", async () => {
-        await click(page, { role: "button", name: "new folder", exact: true });
+        await folderMenu(page, "new folder");
         await fill(page, { label: "name", dialog: true }, folderName);
         await click(page, {
           role: "button",
@@ -599,7 +615,7 @@ async function testOrganize(page: Page) {
 
     tagCreated = Boolean(
       await step(area, "create a tag", async () => {
-        await click(page, { role: "button", name: "new tag", exact: true });
+        await tagsMenu(page, "new tag");
         await fill(page, { label: "name", dialog: true }, tagName);
         await click(page, {
           role: "button",
@@ -607,11 +623,7 @@ async function testOrganize(page: Page) {
           exact: true,
           dialog: true,
         });
-        await until(
-          page,
-          `(name) => !__e2e.all("dialog").length && __app.hasText(name)`,
-          { args: [tagName], what: "the new tag in the sidebar" },
-        );
+        await waitText(page, `created tag "${tagName}"`);
         return true;
       }),
     );
@@ -628,7 +640,8 @@ async function testOrganize(page: Page) {
         });
         await waitText(page, `to "${folderName}"`);
         // The folder's own view lists it.
-        await click(page, { role: "link", name: folderName });
+        await open(page, ws("/codes"));
+        await folderMenu(page, folderName);
         await until(
           page,
           `(title) => location.search.includes("folder=") && __app.hasText(title)`,
@@ -650,9 +663,9 @@ async function testOrganize(page: Page) {
           dialog: true,
         });
         await waitText(page, "tags saved");
-        // The tag's view lists it.
+        // Filtering by the tag lists it.
         await open(page, ws("/codes"));
-        await click(page, { role: "link", name: tagName });
+        await tagsMenu(page, tagName);
         await until(
           page,
           `(title) => location.search.includes("tag") && __app.hasText(title)`,
@@ -702,14 +715,10 @@ async function testOrganize(page: Page) {
     if (!codeDeleted) await deleteCodeForever(page, code);
     if (folderCreated) {
       await step(area, "delete the folder", async () => {
+        // Rename and Delete act on the folder shown.
         await open(page, ws("/codes"));
-        await click(page, {
-          role: "button",
-          name: `${folderName} folder actions`,
-          exact: true,
-          hidden: true,
-        });
-        await click(page, { role: "menuitem", name: "delete folder" });
+        await folderMenu(page, folderName);
+        await folderMenu(page, `delete ${folderName}`);
         await click(page, {
           role: "button",
           name: "delete folder",
@@ -723,24 +732,20 @@ async function testOrganize(page: Page) {
     if (tagCreated) {
       await step(area, "delete the tag", async () => {
         await open(page, ws("/codes"));
+        await tagsMenu(page, "edit tags");
         await click(page, {
           role: "button",
-          name: `${tagName} tag actions`,
+          name: `delete ${tagName}`,
           exact: true,
-          hidden: true,
+          dialog: true,
         });
-        await click(page, { role: "menuitem", name: "delete tag" });
         await click(page, {
           role: "button",
           name: "delete tag",
           exact: true,
           dialog: true,
         });
-        await until(
-          page,
-          `(name) => !__e2e.all("dialog").length && !__app.hasText(name)`,
-          { args: [tagName], what: "the tag to disappear" },
-        );
+        await waitText(page, `deleted tag "${tagName}"`);
         return true;
       });
     }
