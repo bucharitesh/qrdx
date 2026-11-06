@@ -52,6 +52,10 @@ import {
 import { useRouter } from "next/navigation";
 import { type FormEvent, type ReactNode, useId, useState } from "react";
 import { RoleSelect } from "@/app/dashboard/team/_components/role-select";
+import {
+  ConfirmIdentityProvider,
+  useConfirmation,
+} from "@/components/confirm-identity/provider";
 import { CopyButton } from "@/components/copy-button";
 import {
   createSso,
@@ -206,6 +210,7 @@ function SetupCard({
 }) {
   const id = useId();
   const router = useRouter();
+  const { withConfirmation } = useConfirmation();
   const [protocol, setProtocol] = useState<"oidc" | "saml">("oidc");
   const [samlMode, setSamlMode] = useState<"metadata" | "manual">("metadata");
   const [error, setError] = useState<string | null>(null);
@@ -218,29 +223,34 @@ function SetupCard({
     setError(null);
     setBusy(true);
     try {
-      const result = await createSso(
-        protocol === "oidc"
-          ? {
-              providerId: draft.providerId,
-              protocol,
-              domain: text("domain"),
-              issuer: text("issuer"),
-              clientId: text("clientId"),
-              clientSecret: text("clientSecret"),
-            }
-          : {
-              providerId: draft.providerId,
-              protocol,
-              domain: text("domain"),
-              ...(samlMode === "metadata"
-                ? { metadataXml: text("metadataXml") }
-                : {
-                    ssoUrl: text("ssoUrl"),
-                    entityId: text("entityId"),
-                    certificate: text("certificate"),
-                  }),
-            },
+      const result = await withConfirmation(
+        () =>
+          createSso(
+            protocol === "oidc"
+              ? {
+                  providerId: draft.providerId,
+                  protocol,
+                  domain: text("domain"),
+                  issuer: text("issuer"),
+                  clientId: text("clientId"),
+                  clientSecret: text("clientSecret"),
+                }
+              : {
+                  providerId: draft.providerId,
+                  protocol,
+                  domain: text("domain"),
+                  ...(samlMode === "metadata"
+                    ? { metadataXml: text("metadataXml") }
+                    : {
+                        ssoUrl: text("ssoUrl"),
+                        entityId: text("entityId"),
+                        certificate: text("certificate"),
+                      }),
+                },
+          ),
+        "sso",
       );
+      if (result === null) return;
       if (!result.success) {
         if (!result.error.reauth) setError(result.error.message);
         report(result);
@@ -450,6 +460,7 @@ function UpdateDialog({
 }) {
   const id = useId();
   const router = useRouter();
+  const { withConfirmation } = useConfirmation();
   const [value, setValue] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -460,11 +471,16 @@ function UpdateDialog({
     setError(null);
     setBusy(true);
     try {
-      const result = await updateSso(
-        isSaml
-          ? { protocol: "saml", certificate: value }
-          : { protocol: "oidc", clientSecret: value },
+      const result = await withConfirmation(
+        () =>
+          updateSso(
+            isSaml
+              ? { protocol: "saml", certificate: value }
+              : { protocol: "oidc", clientSecret: value },
+          ),
+        "sso",
       );
+      if (result === null) return;
       if (!result.success) {
         if (!result.error.reauth) setError(result.error.message);
         else onOpenChange(false);
@@ -552,6 +568,7 @@ function ConnectionCard({
   report: Reporter;
 }) {
   const router = useRouter();
+  const { withConfirmation } = useConfirmation();
   const [updating, setUpdating] = useState(false);
   const [removing, setRemoving] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -560,8 +577,9 @@ function ConnectionCard({
   const remove = async () => {
     setBusy(true);
     try {
-      const result = await removeSso();
+      const result = await withConfirmation(() => removeSso(), "sso");
       setRemoving(false);
+      if (result === null) return;
       if (!result.success) {
         if (!result.error.reauth) toast.error(result.error.message);
         report(result);
@@ -697,6 +715,7 @@ function VerifyCard({
   report: Reporter;
 }) {
   const router = useRouter();
+  const { withConfirmation } = useConfirmation();
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const record = connection.record;
@@ -705,7 +724,8 @@ function VerifyCard({
     setBusy(true);
     setMessage(null);
     try {
-      const result = await verifySso();
+      const result = await withConfirmation(() => verifySso(), "sso");
+      if (result === null) return;
       if (!result.success) {
         setMessage(result.error.message);
         report(result);
@@ -837,41 +857,50 @@ export function SsoManager({ overview }: { overview: SsoOverview }) {
       );
     }
     return (
-      <div className="space-y-6">
-        {needsReauth && <ReauthNotice />}
-        <SetupCard draft={draft} report={report} />
-      </div>
+      <ConfirmIdentityProvider>
+        <div className="space-y-6">
+          {needsReauth && <ReauthNotice />}
+          <SetupCard draft={draft} report={report} />
+        </div>
+      </ConfirmIdentityProvider>
     );
   }
 
   return (
-    <div className="space-y-6">
-      {needsReauth && <ReauthNotice />}
-      <ConnectionCard
-        allowed={allowed}
-        canManage={canManage}
-        connection={connection}
-        report={report}
-      />
-      {canManage && allowed && !connection.verified && (
-        <VerifyCard connection={connection} report={report} />
-      )}
-      {canManage && (
-        <Card>
-          <CardHeader>
-            <CardTitle>In your identity provider</CardTitle>
-            <CardDescription>
-              {connection.protocol === "oidc"
-                ? "Your QRdx app there must allow this redirect URI."
-                : 'Your QRdx app there must use these values. Send the email address as the NameID or as an "email" attribute.'}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <IdpValues protocol={connection.protocol} urls={connection.urls} />
-          </CardContent>
-        </Card>
-      )}
-      {canManage && allowed && <JoinRoleCard report={report} role={joinRole} />}
-    </div>
+    <ConfirmIdentityProvider>
+      <div className="space-y-6">
+        {needsReauth && <ReauthNotice />}
+        <ConnectionCard
+          allowed={allowed}
+          canManage={canManage}
+          connection={connection}
+          report={report}
+        />
+        {canManage && allowed && !connection.verified && (
+          <VerifyCard connection={connection} report={report} />
+        )}
+        {canManage && (
+          <Card>
+            <CardHeader>
+              <CardTitle>In your identity provider</CardTitle>
+              <CardDescription>
+                {connection.protocol === "oidc"
+                  ? "Your QRdx app there must allow this redirect URI."
+                  : 'Your QRdx app there must use these values. Send the email address as the NameID or as an "email" attribute.'}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <IdpValues
+                protocol={connection.protocol}
+                urls={connection.urls}
+              />
+            </CardContent>
+          </Card>
+        )}
+        {canManage && allowed && (
+          <JoinRoleCard report={report} role={joinRole} />
+        )}
+      </div>
+    </ConfirmIdentityProvider>
   );
 }
