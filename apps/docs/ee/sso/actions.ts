@@ -4,10 +4,6 @@ import { isSsoJoinRole, type SsoJoinRole } from "@repo/auth/sso-rules";
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
-import { HttpError } from "@/lib/error-response";
-import { enforceRateLimits } from "@/lib/request-guards";
-import { type ActiveScope, getActiveScope } from "@/lib/scope";
-import { logError } from "@/lib/shared";
 import {
   type CreateSsoInput,
   createSsoConnection,
@@ -17,10 +13,15 @@ import {
   type UpdateSsoInput,
   updateSsoConnection,
   verifySsoDomain,
-} from "@/lib/sso/connections";
+} from "@/ee/sso/connections";
+import { HttpError } from "@/lib/error-response";
+import { isFeatureAvailable } from "@/lib/feature-availability";
+import { enforceRateLimits } from "@/lib/request-guards";
+import { type ActiveScope, getActiveScope } from "@/lib/scope";
+import { logError } from "@/lib/shared";
 import { UnauthorizedError } from "@/types/errors";
 
-// Settings → Single sign-on. lib/sso/connections.ts does the checks (role,
+// Settings → Single sign-on. ee/sso/connections.ts does the checks (role,
 // Business plan, recent sign-in) and calls the plugin through auth.api.
 
 export type SsoActionResult<T> =
@@ -75,6 +76,15 @@ async function mutate<T>(
   fn: (scope: ActiveScope, requestHeaders: Headers) => Promise<T>,
 ): Promise<SsoActionResult<T>> {
   try {
+    // Without a licence key the SSO plugin isn't registered (packages/auth/
+    // ee-license.ts), so there's nothing to manage.
+    if (!isFeatureAvailable("sso")) {
+      throw new HttpError(
+        404,
+        "NOT_FOUND",
+        "Single sign-on isn't available on this server.",
+      );
+    }
     const requestHeaders = await headers();
     const scope = await getActiveScope();
     await enforceRateLimits([

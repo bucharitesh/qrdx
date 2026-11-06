@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { ssoSignInErrorMessage } from "@/lib/sso/messages";
+import { ssoSignInErrorMessage } from "@/ee/sso/messages";
 import { SignInPanel } from "../components/sign-in-panel";
 
 function Heading({

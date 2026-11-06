@@ -11,7 +11,7 @@ import {
   SERVER_ONLY_TWO_FACTOR_PATHS,
   UNUSED_TWO_FACTOR_PATHS,
 } from "@repo/auth/sign-in-challenge-rules";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 type Kind =
   /** Signs someone in (creates a session): challenged when 2FA is on. */
@@ -45,9 +45,6 @@ const PATHS: Record<string, [Kind, string]> = {
     "challenged",
     "off over HTTP; signs in if called",
   ],
-  "/sso/callback/:providerId": ["challenged", "workspace SSO, OIDC"],
-  "/sso/callback": ["challenged", "workspace SSO, OIDC shared callback"],
-  "/sso/saml2/sp/acs/:providerId": ["challenged", "workspace SSO, SAML"],
   "/passkey/verify-registration": [
     "server-only",
     "createSession: true would make a session; adding a passkey needs a current code with 2FA on",
@@ -146,8 +143,21 @@ const PATHS: Record<string, [Kind, string]> = {
   "/revoke-session": ["no-session", "ends a session"],
   "/revoke-sessions": ["no-session", "ends sessions"],
   "/send-verification-email": ["no-session", "sends an email"],
-  "/sign-in/sso": ["no-session", "starts SSO; the callback signs in"],
   "/sign-out": ["no-session", "ends the session"],
+  "/two-factor/generate-backup-codes": ["no-session", "server only"],
+  "/two-factor/get-totp-uri": ["no-session", "server only"],
+  "/two-factor/send-otp": ["no-session", "off: no email/SMS codes"],
+  "/unlink-account": ["no-session", "account management"],
+  "/verify-password": ["no-session", "passwords are off"],
+};
+
+// Workspace SSO (packages/auth/ee/sso.ts): registered only on servers with a
+// licence key (packages/auth/ee-license.ts), so only expected there.
+const SSO_PATHS: Record<string, [Kind, string]> = {
+  "/sign-in/sso": ["no-session", "starts SSO; the callback signs in"],
+  "/sso/callback": ["challenged", "workspace SSO, OIDC shared callback"],
+  "/sso/callback/:providerId": ["challenged", "workspace SSO, OIDC"],
+  "/sso/saml2/sp/acs/:providerId": ["challenged", "workspace SSO, SAML"],
   "/sso/delete-provider": ["no-session", "SSO management"],
   "/sso/get-provider": ["no-session", "SSO management"],
   "/sso/providers": ["no-session", "SSO management"],
@@ -158,11 +168,6 @@ const PATHS: Record<string, [Kind, string]> = {
   "/sso/saml2/sp/slo/:providerId": ["no-session", "SAML logout"],
   "/sso/update-provider": ["no-session", "SSO management"],
   "/sso/verify-domain": ["no-session", "SSO management"],
-  "/two-factor/generate-backup-codes": ["no-session", "server only"],
-  "/two-factor/get-totp-uri": ["no-session", "server only"],
-  "/two-factor/send-otp": ["no-session", "off: no email/SMS codes"],
-  "/unlink-account": ["no-session", "account management"],
-  "/verify-password": ["no-session", "passwords are off"],
 };
 
 async function loadAuth() {
@@ -178,29 +183,54 @@ async function loadAuth() {
   };
 }
 
+/** The auth server loaded fresh, with or without the ee/ licence key. */
+async function loadAuthWith(license: string | undefined) {
+  vi.resetModules();
+  vi.stubEnv("QRDX_EE_LICENSE", license);
+  return loadAuth();
+}
+
 describe("sign-in challenge coverage", () => {
-  it("classifies every endpoint path QRdx's auth registers", async () => {
-    const auth = await loadAuth();
-    const registered = [
-      ...new Set(
-        Object.values(auth.api)
-          .map((endpoint) => endpoint.path)
-          .filter((p): p is string => typeof p === "string"),
-      ),
-    ].sort();
-    const unclassified = registered.filter((p) => !(p in PATHS));
-    expect(
-      unclassified,
-      "New auth endpoints: classify each in tests/auth/sign-in-challenge-guard.test.ts (and check the challenge covers it)",
-    ).toEqual([]);
-    // Nothing listed that no longer exists, so the list stays honest.
-    expect(Object.keys(PATHS).filter((p) => !registered.includes(p))).toEqual(
-      [],
-    );
+  afterEach(() => {
+    vi.unstubAllEnvs();
+    vi.resetModules();
   });
 
+  it.each([
+    ["with", "test-license"],
+    ["without", undefined],
+  ])(
+    "classifies every endpoint path QRdx's auth registers %s a licence key",
+    async (_, license) => {
+      const auth = await loadAuthWith(license);
+      const expected = license ? { ...PATHS, ...SSO_PATHS } : PATHS;
+      const registered = [
+        ...new Set(
+          Object.values(auth.api)
+            .map((endpoint) => endpoint.path)
+            .filter((p): p is string => typeof p === "string"),
+        ),
+      ].sort();
+      const unclassified = registered.filter(
+        (p) => !(p in PATHS || p in SSO_PATHS),
+      );
+      expect(
+        unclassified,
+        "New auth endpoints: classify each in tests/auth/sign-in-challenge-guard.test.ts (and check the challenge covers it)",
+      ).toEqual([]);
+      // Nothing listed that no longer exists, so the list stays honest.
+      expect(
+        Object.keys(expected).filter((p) => !registered.includes(p)),
+      ).toEqual([]);
+      // SSO is registered with a key and absent without one.
+      expect(registered.filter((p) => p in SSO_PATHS).sort()).toEqual(
+        license ? Object.keys(SSO_PATHS).sort() : [],
+      );
+    },
+  );
+
   it("matches the challenge plugin's exemptions", () => {
-    const finishes = Object.entries(PATHS)
+    const finishes = Object.entries({ ...PATHS, ...SSO_PATHS })
       .filter(([, [kind]]) => kind === "finishes-challenge")
       .map(([p]) => p)
       .filter((p) => !UNUSED_TWO_FACTOR_PATHS.includes(p));
