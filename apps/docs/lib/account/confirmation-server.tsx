@@ -432,12 +432,11 @@ export async function verifyOwnPasskey(
   } finally {
     const token = created?.session?.token;
     if (token) {
-      await db
-        .delete(sessionTable)
-        .where(eq(sessionTable.token, token))
-        .catch((error: unknown) =>
-          logError(error as Error, { action: "account.verifyOwnPasskey" }),
-        );
+      try {
+        await db.delete(sessionTable).where(eq(sessionTable.token, token));
+      } catch (error) {
+        logError(error as Error, { action: "account.verifyOwnPasskey" });
+      }
     }
   }
   return created?.user?.id === session.userId
