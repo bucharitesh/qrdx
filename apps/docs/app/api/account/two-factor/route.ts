@@ -1,14 +1,12 @@
 import { NextResponse } from "next/server";
-import {
-  confirmTwoFactorSetup,
-  turnOffTwoFactor,
-} from "@/lib/account/two-factor-manage";
+import { confirmAuthenticatorSetup } from "@/lib/account/two-factor-manage";
 
-// Settings → Profile & security → Two-step verification: confirming setup and
-// turning it off. Both swap the session for a new one, so they answer from a
-// route handler (a server action would re-render the page with the old,
-// deleted session; lib/account/two-factor-manage.ts). Same checks as the
-// server actions: a session, a recent sign-in or a current code, limits.
+// Settings → Profile & security → Two-step verification: confirming an
+// authenticator app. As the first method it swaps the session for a new one,
+// so it answers from a route handler (a server action would re-render the
+// page with the old, deleted session; lib/account/two-factor-manage.ts).
+// Same checks as the server actions: a session, a recent "Confirm it's
+// you", limits.
 
 const NO_STORE = { "Cache-Control": "no-store" };
 
@@ -40,12 +38,9 @@ export async function POST(request: Request) {
       { status: 400, headers: NO_STORE },
     );
   }
-  const input = { code: body?.code };
   const result =
     body?.step === "confirm"
-      ? await confirmTwoFactorSetup(input)
-      : body?.step === "turn-off"
-        ? await turnOffTwoFactor(input)
-        : ({ ok: false, error: "Unknown step." } as const);
+      ? await confirmAuthenticatorSetup({ code: body?.code })
+      : ({ ok: false, error: "Unknown step." } as const);
   return NextResponse.json(result, { headers: NO_STORE });
 }

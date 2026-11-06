@@ -13,37 +13,18 @@ import {
 } from "@repo/design-system/components/ui/alert-dialog";
 import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSlot,
-} from "@repo/design-system/components/ui/input-otp";
 import { Warning2 } from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
-import { useEffect, useId, useState } from "react";
-import { deleteAccount, sendDeletionCode } from "@/actions/account";
+import { useId, useState } from "react";
+import { deleteAccount } from "@/actions/account";
+import { useConfirmation } from "@/components/confirm-identity/provider";
 import {
   DELETE_CONFIRMATION,
   type DeletionSummary,
   isDeleteConfirmed,
 } from "@/lib/account/deletion";
 import { resetAnalytics } from "@/lib/analytics";
-import { secondFactorCodeKind } from "@/lib/auth/two-factor";
 import { SettingsRow, SettingsSection } from "./settings-section";
-
-const CODE_LENGTH = 6;
-const RESEND_COOLDOWN_MS = 30_000;
-const DIGITS_ONLY = "^\\d+$";
-
-/**
- * How the dialog confirms it's really you when two-step verification is off:
- * a fresh emailed code, or (where this deployment can't send codes) a sign-in
- * within the last 10 minutes. With it on, an authenticator or backup code
- * replaces both.
- */
-export type ReauthMode =
-  | { kind: "code" }
-  | { kind: "recent-sign-in"; recent: boolean };
 
 function Consequences({ items }: { items: string[] }) {
   return (
@@ -83,98 +64,43 @@ function Blockers({ items }: { items: string[] }) {
 function DeleteAccountDialog({
   open,
   onOpenChange,
-  email,
   summary,
-  reauth,
-  twoFactorOn,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  email: string;
   summary: DeletionSummary;
-  reauth: ReauthMode;
-  /** Two-step verification is on: a current code replaces the emailed one */
-  twoFactorOn: boolean;
 }) {
   const id = useId();
   const router = useRouter();
+  const { withConfirmation } = useConfirmation();
   const [confirmation, setConfirmation] = useState("");
-  const [code, setCode] = useState("");
-  const [twoFactorCode, setTwoFactorCode] = useState("");
-  const [codeSent, setCodeSent] = useState(false);
-  const [sending, setSending] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [resendAt, setResendAt] = useState(0);
-  const [now, setNow] = useState(() => Date.now());
 
-  const secondsLeft = Math.max(0, Math.ceil((resendAt - now) / 1000));
-  const confirmed = isDeleteConfirmed(confirmation);
-  const needsCode = !twoFactorOn && reauth.kind === "code";
-  const mustSignInAgain =
-    !twoFactorOn && reauth.kind === "recent-sign-in" && !reauth.recent;
   const ready =
-    confirmed &&
-    summary.blockers.length === 0 &&
-    !mustSignInAgain &&
-    (!needsCode || code.length === CODE_LENGTH) &&
-    (!twoFactorOn || secondFactorCodeKind(twoFactorCode) !== null);
-
-  useEffect(() => {
-    if (resendAt <= Date.now()) return;
-    const timer = window.setInterval(() => {
-      const time = Date.now();
-      setNow(time);
-      if (time >= resendAt) window.clearInterval(timer);
-    }, 1000);
-    return () => window.clearInterval(timer);
-  }, [resendAt]);
+    isDeleteConfirmed(confirmation) && summary.blockers.length === 0;
 
   const reset = () => {
     setConfirmation("");
-    setCode("");
-    setTwoFactorCode("");
-    setCodeSent(false);
     setError(null);
-  };
-
-  const sendCode = async () => {
-    setSending(true);
-    setError(null);
-    try {
-      const result = await sendDeletionCode();
-      if (!result.ok) {
-        setError(result.error);
-        return;
-      }
-      const time = Date.now();
-      setNow(time);
-      setResendAt(time + RESEND_COOLDOWN_MS);
-      setCode("");
-      setCodeSent(true);
-    } catch (sendFailure) {
-      console.error("Sending the code failed:", sendFailure);
-      setError("Something went wrong. Check your connection and try again.");
-    } finally {
-      setSending(false);
-    }
   };
 
   const confirmDelete = async () => {
-    if (!ready) return;
+    if (!ready || deleting) return;
     setDeleting(true);
     setError(null);
     try {
-      const result = await deleteAccount({
-        confirmation,
-        ...(needsCode && { code }),
-        ...(twoFactorOn && { twoFactorCode }),
-      });
+      // Asks "Confirm it's you" first when this session hasn't recently.
+      const result = await withConfirmation(
+        () => deleteAccount({ confirmation }),
+        "delete-account",
+      );
+      if (result === null) {
+        setDeleting(false);
+        return;
+      }
       if (!result.ok) {
         setError(result.error);
-        setCode("");
-        setTwoFactorCode("");
-        if (result.codeExpired) setCodeSent(false);
         setDeleting(false);
         return;
       }
@@ -186,11 +112,6 @@ function DeleteAccountDialog({
       setError("Something went wrong. Check your connection and try again.");
       setDeleting(false);
     }
-  };
-
-  const signOutToReauth = async () => {
-    await authClient.signOut().catch(() => {});
-    router.push("/");
   };
 
   return (
@@ -241,118 +162,6 @@ function DeleteAccountDialog({
             />
           </div>
 
-          {needsCode && (
-            <div className="space-y-2">
-              <p className="text-sm font-medium" id={`${id}-code-label`}>
-                Code from your email
-              </p>
-              {codeSent ? (
-                <>
-                  <InputOTP
-                    aria-labelledby={`${id}-code-label`}
-                    disabled={deleting}
-                    maxLength={CODE_LENGTH}
-                    onChange={(value) => {
-                      setCode(value);
-                      if (value) setError(null);
-                    }}
-                    pattern={DIGITS_ONLY}
-                    value={code}
-                  >
-                    {[0, 3].map((start) => (
-                      <InputOTPGroup key={start}>
-                        {[start, start + 1, start + 2].map((index) => (
-                          <InputOTPSlot
-                            className="h-10 w-10 text-base tabular-nums"
-                            index={index}
-                            key={index}
-                          />
-                        ))}
-                      </InputOTPGroup>
-                    ))}
-                  </InputOTP>
-                  <p className="text-muted-foreground flex flex-wrap items-center gap-x-1 text-xs">
-                    Sent to {email}. It expires in 5 minutes.
-                    <button
-                      className="hover:text-foreground -my-3 inline-flex min-h-10 items-center rounded-sm underline underline-offset-4 disabled:pointer-events-none disabled:no-underline disabled:opacity-60"
-                      disabled={sending || deleting || secondsLeft > 0}
-                      onClick={sendCode}
-                      type="button"
-                    >
-                      {secondsLeft > 0
-                        ? `Send again in ${secondsLeft}s`
-                        : "Send a new code"}
-                    </button>
-                  </p>
-                </>
-              ) : (
-                <div className="space-y-2">
-                  <p className="text-muted-foreground text-xs text-pretty">
-                    To make sure it's you, we'll email a 6-digit code to {email}
-                    .
-                  </p>
-                  <Button
-                    disabled={sending || deleting}
-                    onClick={sendCode}
-                    size="sm"
-                    type="button"
-                    variant="outline"
-                  >
-                    {sending && <Spinner className="animate-spin" />}
-                    Email me a code
-                  </Button>
-                </div>
-              )}
-            </div>
-          )}
-
-          {twoFactorOn && (
-            <div className="space-y-2">
-              <label
-                className="text-sm font-medium"
-                htmlFor={`${id}-second-factor`}
-              >
-                Code from your authenticator app, or a backup code
-              </label>
-              <Input
-                autoCapitalize="characters"
-                className="font-mono max-sm:h-10"
-                autoComplete="one-time-code"
-                autoCorrect="off"
-                disabled={deleting}
-                id={`${id}-second-factor`}
-                onChange={(event) => {
-                  setTwoFactorCode(event.target.value);
-                  setError(null);
-                }}
-                placeholder="123456"
-                spellCheck={false}
-                value={twoFactorCode}
-              />
-              <p className="text-muted-foreground text-xs text-pretty">
-                Two-step verification is on, so we ask for this instead of
-                emailing you a code. A backup code is used up.
-              </p>
-            </div>
-          )}
-
-          {mustSignInAgain && (
-            <div className="space-y-2">
-              <p className="text-muted-foreground text-sm text-pretty">
-                For your security, sign out and sign in again, then delete your
-                account within 10 minutes.
-              </p>
-              <Button
-                onClick={signOutToReauth}
-                size="sm"
-                type="button"
-                variant="outline"
-              >
-                Sign out
-              </Button>
-            </div>
-          )}
-
           <p
             aria-live="polite"
             className="text-destructive text-sm text-pretty empty:hidden"
@@ -380,17 +189,7 @@ function DeleteAccountDialog({
   );
 }
 
-export function DangerZoneSection({
-  email,
-  summary,
-  reauth,
-  twoFactorOn,
-}: {
-  email: string;
-  summary: DeletionSummary;
-  reauth: ReauthMode;
-  twoFactorOn: boolean;
-}) {
+export function DangerZoneSection({ summary }: { summary: DeletionSummary }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -418,12 +217,9 @@ export function DangerZoneSection({
       </SettingsRow>
 
       <DeleteAccountDialog
-        email={email}
         onOpenChange={setOpen}
         open={open}
-        reauth={reauth}
         summary={summary}
-        twoFactorOn={twoFactorOn}
       />
     </SettingsSection>
   );

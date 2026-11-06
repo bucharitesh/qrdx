@@ -5,14 +5,12 @@ import { and, desc, eq, gt } from "drizzle-orm";
 import type { Metadata } from "next";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { ConfirmIdentityProvider } from "@/components/confirm-identity/provider";
 import {
   describeDeletionPlan,
-  isRecentSignIn,
   planAccountDeletion,
 } from "@/lib/account/deletion";
 import { loadDeletionFacts } from "@/lib/account/deletion-server";
-import { canChangeEmailNow } from "@/lib/account/email-change";
-import { signInCodesAvailable } from "@/lib/account/reauth";
 import { toSessionViews } from "@/lib/account/sessions";
 import {
   isSocialProvider,
@@ -21,7 +19,6 @@ import {
   type SocialProvider,
   toSignInMethods,
 } from "@/lib/account/sign-in-methods";
-import { twoFactorEnabledFor } from "@/lib/account/two-factor-server";
 import { getMyCommunityProfile } from "@/lib/community/profiles";
 import { CommunityUnavailableError } from "@/lib/community/store";
 import { signInPath } from "@/lib/safe-redirect";
@@ -29,12 +26,8 @@ import { scanGeo } from "@/lib/scans";
 import { isStorageConfigured } from "@/lib/storage/r2";
 import { SettingsHeader } from "../components/settings-header";
 import { CommunityProfileSection } from "./_components/community-profile-section";
-import {
-  DangerZoneSection,
-  type ReauthMode,
-} from "./_components/danger-zone-section";
+import { DangerZoneSection } from "./_components/danger-zone-section";
 import { DataExportSection } from "./_components/data-export-section";
-import { PasskeysSection } from "./_components/passkeys-section";
 import { ProfileSection } from "./_components/profile-section";
 import { SessionsSection } from "./_components/sessions-section";
 import {
@@ -96,7 +89,7 @@ export default async function AccountPage({
   const now = new Date();
   // Better Auth's listSessions needs a session younger than a day, which
   // would hide this list from most people; the rows are read directly.
-  const [accounts, sessionRows, facts, params, communityProfile, twoFactorOn] =
+  const [accounts, sessionRows, facts, params, communityProfile] =
     await Promise.all([
       auth.api.listUserAccounts({ headers: requestHeaders }) as Promise<
         LinkedAccount[]
@@ -122,7 +115,6 @@ export default async function AccountPage({
         if (error instanceof CommunityUnavailableError) return null;
         throw error;
       }),
-      twoFactorEnabledFor(userId),
     ]);
 
   const sessions = toSessionViews(sessionRows, {
@@ -130,76 +122,49 @@ export default async function AccountPage({
     now,
     currentLocation: scanGeo(requestHeaders as unknown as Headers),
   });
-  const reauth: ReauthMode = signInCodesAvailable()
-    ? { kind: "code" }
-    : {
-        kind: "recent-sign-in",
-        recent: isRecentSignIn(new Date(session.session.createdAt), now),
-      };
-
+  // Changes to the account's security ask "Confirm it's you" first
+  // (lib/account/confirmation.ts); one dialog serves the whole page.
   return (
-    <div className="space-y-6">
-      <SettingsHeader
-        description="Your profile, how you sign in, where you're signed in, and your data."
-        title="Profile & security"
-      />
+    <ConfirmIdentityProvider>
+      <div className="space-y-6">
+        <SettingsHeader
+          description="Your profile, how you sign in, where you're signed in, and your data."
+          title="Profile & security"
+        />
 
-      <ProfileSection
-        profile={{
-          name: session.user.name ?? "",
-          email: session.user.email,
-          emailVerified: Boolean(session.user.emailVerified),
-          image: session.user.image ?? null,
-          memberSince: formatDate(new Date(session.user.createdAt)),
-          canUpload: isStorageConfigured,
-          recentSignIn: canChangeEmailNow(
-            new Date(session.session.createdAt),
-            now,
-          ),
-          twoFactorOn,
-        }}
-      />
+        <ProfileSection
+          profile={{
+            name: session.user.name ?? "",
+            email: session.user.email,
+            emailVerified: Boolean(session.user.emailVerified),
+            image: session.user.image ?? null,
+            memberSince: formatDate(new Date(session.user.createdAt)),
+            canUpload: isStorageConfigured,
+          }}
+        />
 
-      <SignInMethodsSection
-        email={session.user.email}
-        linkable={linkableProviders(accounts, configuredProviders())}
-        methods={toSignInMethods(accounts, formatDate)}
-        outcome={linkOutcome(params)}
-      />
+        <SignInMethodsSection
+          email={session.user.email}
+          linkable={linkableProviders(accounts, configuredProviders())}
+          methods={toSignInMethods(accounts, formatDate)}
+          outcome={linkOutcome(params)}
+        />
 
-      <PasskeysSection
-        userId={userId}
-        recentSignIn={canChangeEmailNow(
-          new Date(session.session.createdAt),
-          now,
+        <TwoFactorSection email={session.user.email} userId={userId} />
+
+        <SessionsSection sessions={sessions} />
+
+        {/* Hidden until the community tables exist (manual-sql/0012). */}
+        {communityProfile && (
+          <CommunityProfileSection profile={communityProfile} />
         )}
-        twoFactorOn={twoFactorOn}
-      />
 
-      <TwoFactorSection
-        email={session.user.email}
-        recentSignIn={canChangeEmailNow(
-          new Date(session.session.createdAt),
-          now,
-        )}
-        userId={userId}
-      />
+        <DataExportSection />
 
-      <SessionsSection sessions={sessions} />
-
-      {/* Hidden until the community tables exist (manual-sql/0012). */}
-      {communityProfile && (
-        <CommunityProfileSection profile={communityProfile} />
-      )}
-
-      <DataExportSection />
-
-      <DangerZoneSection
-        email={session.user.email}
-        reauth={reauth}
-        summary={describeDeletionPlan(planAccountDeletion(facts))}
-        twoFactorOn={twoFactorOn}
-      />
-    </div>
+        <DangerZoneSection
+          summary={describeDeletionPlan(planAccountDeletion(facts))}
+        />
+      </div>
+    </ConfirmIdentityProvider>
   );
 }

@@ -1,11 +1,18 @@
 "use client";
 
-import { authClient } from "@repo/auth/client";
 import { toast } from "@repo/design-system";
 import { Spinner } from "@repo/design-system/components/icons";
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@repo/design-system/components/ui/alert-dialog";
 import { Badge } from "@repo/design-system/components/ui/badge";
 import { Button } from "@repo/design-system/components/ui/button";
-import { Checkbox } from "@repo/design-system/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -14,592 +21,555 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@repo/design-system/components/ui/dialog";
-import { Input } from "@repo/design-system/components/ui/input";
 import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSlot,
-} from "@repo/design-system/components/ui/input-otp";
-import { Label } from "@repo/design-system/components/ui/label";
-import { Copy, DocumentDownload, ShieldTick } from "iconsax-reactjs";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@repo/design-system/components/ui/dropdown-menu";
+import {
+  DocumentText,
+  FingerScan,
+  Mobile,
+  More,
+  ShieldTick,
+} from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
-import { QRCode } from "qrdx";
-import { useId, useState } from "react";
-import type { TwoFactorResult } from "@/lib/account/two-factor-manage";
-import type { TwoFactorStatus } from "@/lib/account/two-factor-server";
+import { type ReactNode, useCallback, useEffect, useState } from "react";
+import { ensureConfirmed } from "@/components/confirm-identity/actions";
+import { useConfirmation } from "@/components/confirm-identity/provider";
+import type { ConfirmationAction } from "@/lib/account/confirmation";
+import { PASSKEY_MESSAGES, type PasskeyView } from "@/lib/account/passkeys";
 import {
-  BACKUP_CODE_COUNT,
-  backupCodesText,
-  groupSecret,
-  TWO_FACTOR_MESSAGES,
-} from "@/lib/auth/two-factor";
-import { signInPath } from "@/lib/safe-redirect";
+  passkeyReadyForTwoFactor,
+  removalTurnsOff,
+  type TwoFactorMethods,
+} from "@/lib/account/two-factor-methods";
+import { BACKUP_CODE_COUNT } from "@/lib/auth/two-factor";
+import { browserHasPasskeys } from "@/lib/passkeys";
+import { removePasskey } from "../_lib/passkey-actions";
 import {
   regenerateBackupCodes,
-  startTwoFactorSetup,
+  removeAuthenticatorApp,
+  turnOffTwoFactor,
 } from "../_lib/two-factor-actions";
+import { BackupCodesList } from "./backup-codes";
+import { RenamePasskeyDialog } from "./rename-passkey-dialog";
 import { SettingsSection } from "./settings-section";
+import {
+  type SetupStart,
+  TwoFactorSetupDialog,
+} from "./two-factor-setup-dialog";
 
-const CODE_LENGTH = 6;
-const DIGITS_ONLY = "^\\d+$";
-const REAUTH_MESSAGE =
-  "For your security, sign out and sign in again, then turn on two-step verification within a day.";
+// Tap targets of at least 40 px on phones; from `sm` up the settings keep
+// their compact sizes.
+const TAP_SM = "h-10 sm:h-8";
 
-type Flow =
-  | { kind: "closed" }
-  | { kind: "reauth" }
-  | { kind: "setup"; totpUri: string; secret: string }
-  | { kind: "codes"; codes: string[]; title: string }
-  | { kind: "verify"; purpose: "off" | "regenerate" };
-
-/**
- * Confirming setup and turning it off swap the session, so they go through a
- * route handler rather than a server action (lib/account/two-factor-manage.ts).
- */
-async function postStep<T>(
-  step: "confirm" | "turn-off",
-  code: string,
-): Promise<TwoFactorResult<T>> {
-  try {
-    const response = await fetch("/api/account/two-factor", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ step, code }),
-    });
-    if (!response.ok) return { ok: false, error: TWO_FACTOR_MESSAGES.failed };
-    return (await response.json()) as TwoFactorResult<T>;
-  } catch {
-    return { ok: false, error: TWO_FACTOR_MESSAGES.failed };
-  }
-}
-
-async function copy(text: string, what: string) {
-  try {
-    await navigator.clipboard.writeText(text);
-    toast.success(`${what} copied`);
-  } catch {
-    toast.error("Couldn't copy. Select the text and copy it instead.");
-  }
-}
-
-function download(text: string, filename: string) {
-  const url = URL.createObjectURL(new Blob([text], { type: "text/plain" }));
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = filename;
-  link.click();
-  URL.revokeObjectURL(url);
-}
-
-function SixDigits({
-  value,
-  onChange,
-  onComplete,
-  disabled,
-  invalid,
-  describedBy,
+/** One method or status line: icon, title and details, then its buttons. */
+function MethodRow({
+  icon,
+  title,
+  badge,
+  details,
+  actions,
 }: {
-  value: string;
-  onChange: (value: string) => void;
-  onComplete: (value: string) => void;
-  disabled: boolean;
-  invalid: boolean;
-  describedBy: string;
+  icon: ReactNode;
+  title: string;
+  badge?: ReactNode;
+  details: ReactNode;
+  actions?: ReactNode;
 }) {
   return (
-    <InputOTP
-      aria-describedby={describedBy}
-      aria-label="Code from your authenticator app"
-      autoComplete="one-time-code"
-      containerClassName="justify-center gap-3"
-      disabled={disabled}
-      inputMode="numeric"
-      maxLength={CODE_LENGTH}
-      onChange={onChange}
-      onComplete={onComplete}
-      pattern={DIGITS_ONLY}
-      value={value}
-    >
-      {[0, 3].map((start) => (
-        <InputOTPGroup key={start}>
-          {[start, start + 1, start + 2].map((index) => (
-            <InputOTPSlot
-              aria-invalid={invalid}
-              className="h-11 w-11 text-lg font-medium tabular-nums"
-              index={index}
-              key={index}
-            />
-          ))}
-        </InputOTPGroup>
-      ))}
-    </InputOTP>
+    // On phones the buttons sit under the text, so it keeps its width.
+    <div className="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:gap-4 sm:px-6">
+      <div className="flex min-w-0 flex-1 items-center gap-3 sm:gap-4">
+        <span className="bg-muted/60 flex size-9 shrink-0 items-center justify-center rounded-full border">
+          {icon}
+        </span>
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-center gap-2">
+            <p className="text-sm font-medium">{title}</p>
+            {badge}
+          </div>
+          <p className="text-muted-foreground mt-0.5 text-xs text-pretty">
+            {details}
+          </p>
+        </div>
+      </div>
+      {actions && (
+        <div className="flex flex-wrap gap-2 pl-12 sm:shrink-0 sm:justify-end sm:pl-0">
+          {actions}
+        </div>
+      )}
+    </div>
   );
 }
 
+/** "After you sign in, QRdx asks for your passkey or …". */
+function statusDetails(methods: TwoFactorMethods, ready: boolean): string {
+  if (!methods.on) {
+    return ready
+      ? "Your passkey is ready to be your second step."
+      : "Add a passkey or an authenticator app to turn it on.";
+  }
+  const ways = [
+    ...(methods.passkeys > 0 ? ["your passkey"] : []),
+    ...(methods.authenticatorApp ? ["a code from your authenticator app"] : []),
+  ];
+  return ways.length > 0
+    ? `After you sign in, QRdx asks for ${ways.join(" or ")}. A backup code works too.`
+    : "After you sign in, QRdx asks for a backup code.";
+}
+
+type Confirming =
+  | { kind: "turn-off" }
+  | { kind: "remove-app" }
+  | { kind: "new-codes" }
+  | { kind: "remove-passkey"; passkey: PasskeyView };
+
 export function TwoFactorSettings({
-  status,
+  methods,
+  passkeys,
+  passkeysHere,
   email,
-  recentSignIn,
 }: {
-  status: TwoFactorStatus;
+  methods: TwoFactorMethods;
+  passkeys: PasskeyView[];
+  /** The deployment and this page's origin can use passkeys */
+  passkeysHere: boolean;
   email: string;
-  recentSignIn: boolean;
 }) {
   const router = useRouter();
-  const id = useId();
-  const [flow, setFlow] = useState<Flow>({ kind: "closed" });
+  const { withConfirmation } = useConfirmation();
+  // Unknown until mounted; passkey buttons stay disabled until then.
+  const [supported, setSupported] = useState<boolean | null>(null);
+  const [setupStart, setSetupStart] = useState<SetupStart | null>(null);
+  const [opening, setOpening] = useState<string | null>(null);
+  const [confirming, setConfirming] = useState<Confirming | null>(null);
   const [busy, setBusy] = useState(false);
-  const [code, setCode] = useState("");
-  const [error, setError] = useState<string | null>(null);
+  const [renaming, setRenaming] = useState<PasskeyView | null>(null);
+  const [newCodes, setNewCodes] = useState<string[] | null>(null);
   const [saved, setSaved] = useState(false);
 
-  const reset = () => {
-    setCode("");
-    setError(null);
-    setSaved(false);
-  };
+  useEffect(() => {
+    setSupported(browserHasPasskeys());
+  }, []);
 
-  const close = () => {
-    if (busy) return;
-    // Closing the backup codes: the page shows the new state.
-    if (flow.kind === "codes") router.refresh();
-    setFlow({ kind: "closed" });
-    reset();
-  };
+  const passkeysUsable = passkeysHere && supported === true;
+  const ready = passkeysUsable && passkeyReadyForTwoFactor(methods);
+  const left = methods.backupCodesLeft;
 
-  const turnOn = async () => {
-    reset();
-    if (!recentSignIn) {
-      setFlow({ kind: "reauth" });
-      return;
-    }
-    setBusy(true);
+  /** Asks "Confirm it's you" before a flow with several steps. */
+  const openSetup = async (
+    start: SetupStart,
+    action: ConfirmationAction,
+    opener: string,
+  ) => {
+    setOpening(opener);
     try {
-      const result = await startTwoFactorSetup();
+      const result = await withConfirmation(() => ensureConfirmed(), action);
+      if (result === null) return;
       if (!result.ok) {
-        if (result.reason === "reauth") setFlow({ kind: "reauth" });
-        else toast.error(result.error);
+        toast.error(result.error);
         return;
       }
-      setFlow({
-        kind: "setup",
-        totpUri: result.totpUri,
-        secret: result.secret,
-      });
+      setSetupStart(start);
     } finally {
-      setBusy(false);
+      setOpening(null);
     }
   };
 
-  const confirmSetup = async (value: string) => {
-    if (busy) return;
-    setBusy(true);
-    setError(null);
-    try {
-      const result = await postStep<{ backupCodes: string[] }>(
-        "confirm",
-        value,
-      );
-      if (!result.ok) {
-        setCode("");
-        if (result.reason === "reauth") setFlow({ kind: "reauth" });
-        else setError(result.error);
-        return;
-      }
-      setCode("");
-      setFlow({
-        kind: "codes",
-        codes: result.backupCodes,
-        title: "Two-step verification is on",
-      });
-    } finally {
-      setBusy(false);
-    }
-  };
+  const turnOn = () =>
+    openSetup(
+      ready ? "existing-passkey" : passkeysUsable ? "choose" : "app",
+      "turn-on-two-factor",
+      "turn-on",
+    );
 
-  const verify = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if (busy || flow.kind !== "verify") return;
+  const closeSetup = useCallback(() => setSetupStart(null), []);
+
+  const runConfirmed = async () => {
+    if (!confirming || busy) return;
     setBusy(true);
-    setError(null);
     try {
-      if (flow.purpose === "off") {
-        const result = await postStep("turn-off", code);
+      if (confirming.kind === "turn-off") {
+        const result = await withConfirmation(
+          () => turnOffTwoFactor(),
+          "turn-off-two-factor",
+        );
+        if (result === null) return;
         if (!result.ok) {
-          setError(result.error);
+          toast.error(result.error);
           return;
         }
         toast.success("Two-step verification is off");
-        setFlow({ kind: "closed" });
-        reset();
-        router.refresh();
+      } else if (confirming.kind === "remove-app") {
+        const result = await withConfirmation(
+          () => removeAuthenticatorApp(),
+          "remove-authenticator",
+        );
+        if (result === null) return;
+        if (!result.ok) {
+          toast.error(result.error);
+          return;
+        }
+        toast.success(
+          result.turnedOff
+            ? "Authenticator app removed. Two-step verification is off."
+            : "Authenticator app removed",
+        );
+      } else if (confirming.kind === "new-codes") {
+        const result = await withConfirmation(
+          () => regenerateBackupCodes(),
+          "backup-codes",
+        );
+        if (result === null) return;
+        if (!result.ok) {
+          toast.error(result.error);
+          return;
+        }
+        setConfirming(null);
+        setSaved(false);
+        setNewCodes(result.backupCodes);
         return;
+      } else {
+        const { passkey } = confirming;
+        const result = await withConfirmation(
+          () => removePasskey({ id: passkey.id }),
+          "remove-passkey",
+        );
+        if (result === null) return;
+        if (!result.ok) {
+          toast.error(result.error);
+          return;
+        }
+        toast.success(
+          result.data.turnedOff
+            ? `Removed ${passkey.name}. Two-step verification is off.`
+            : `Removed ${passkey.name}`,
+        );
       }
-      const result = await regenerateBackupCodes({ code });
-      if (!result.ok) {
-        setError(result.error);
-        return;
-      }
-      setCode("");
-      setFlow({
-        kind: "codes",
-        codes: result.backupCodes,
-        title: "Your new backup codes",
-      });
+      setConfirming(null);
+      router.refresh();
     } finally {
       setBusy(false);
     }
   };
 
-  const signOutToReauth = async () => {
-    await authClient.signOut().catch(() => {});
-    router.push(signInPath("/settings/account"));
+  const turnsOffNotice =
+    "It's your only second step, so two-step verification turns off and your backup codes stop working.";
+  const confirmCopy: Record<
+    Confirming["kind"],
+    { title: string; body: string; button: string; destructive: boolean }
+  > = {
+    "turn-off": {
+      title: "Turn off two-step verification?",
+      body: `Signing in will no longer ask for a second step, and your backup codes stop working.${methods.passkeys > 0 ? " Your passkeys stay, and still sign you in." : ""}`,
+      button: "Turn off",
+      destructive: true,
+    },
+    "remove-app": {
+      title: "Remove your authenticator app?",
+      body: removalTurnsOff(methods, "authenticator")
+        ? turnsOffNotice
+        : "Signing in will ask for your passkey or a backup code instead. Delete QRdx from the app too.",
+      button: "Remove",
+      destructive: removalTurnsOff(methods, "authenticator"),
+    },
+    "new-codes": {
+      title: "Make new backup codes?",
+      body: "Your current backup codes stop working straight away.",
+      button: "Make new codes",
+      destructive: false,
+    },
+    "remove-passkey": {
+      title:
+        confirming?.kind === "remove-passkey"
+          ? `Remove ${confirming.passkey.name}?`
+          : "Remove passkey?",
+      body: removalTurnsOff(methods, "passkey")
+        ? `It won't sign in to QRdx anymore. ${turnsOffNotice}`
+        : "It won't sign in to QRdx anymore. Your device or password manager may still list it until you delete it there too.",
+      button: "Remove",
+      destructive: removalTurnsOff(methods, "passkey"),
+    },
   };
-
-  const left = status.backupCodesLeft;
-  const errorId = `${id}-error`;
-  const errorLine = (
-    <p
-      aria-live="polite"
-      className="text-destructive text-sm text-pretty empty:hidden"
-      id={errorId}
-      role={error ? "alert" : undefined}
-    >
-      {error}
-    </p>
-  );
+  const copy = confirming ? confirmCopy[confirming.kind] : null;
 
   return (
     <SettingsSection
-      action={
-        status.on ? undefined : (
-          <Button
-            className="max-sm:h-10"
-            disabled={busy}
-            onClick={turnOn}
-            size="sm"
-            variant="outline"
-          >
-            {busy && flow.kind === "closed" && (
-              <Spinner className="animate-spin" />
-            )}
-            Turn on
-          </Button>
-        )
-      }
-      description="When you sign in, also ask for a code from an authenticator app on your phone or computer."
+      description="After you sign in, QRdx also asks for your passkey or a code from your authenticator app, so access to your email alone isn't enough."
       id="two-factor"
       title="Two-step verification"
     >
-      {/* On phones the buttons sit under the text, so it keeps its width. */}
-      <div className="flex flex-col gap-3 px-5 py-4 sm:flex-row sm:items-center sm:gap-4 sm:px-6">
-        <div className="flex min-w-0 flex-1 items-center gap-3 sm:gap-4">
-          <span className="bg-muted/60 flex size-9 shrink-0 items-center justify-center rounded-full border">
-            <ShieldTick aria-hidden className="size-4" />
-          </span>
-          <div className="min-w-0 flex-1">
-            <div className="flex flex-wrap items-center gap-2">
-              <p className="text-sm font-medium">Authenticator app</p>
-              <Badge variant={status.on ? "secondary" : "outline"}>
-                {status.on ? "On" : "Off"}
-              </Badge>
-            </div>
-            <p className="text-muted-foreground mt-0.5 text-xs text-pretty">
-              {status.on
-                ? left === null
-                  ? "Signing in asks for a code from your app or a backup code."
-                  : `${left} of ${BACKUP_CODE_COUNT} backup codes left.${left <= 3 ? " Make new ones soon." : ""}`
-                : "Use any authenticator app that shows 6-digit codes."}
-            </p>
-          </div>
-        </div>
-        {status.on && (
-          <div className="flex flex-wrap gap-2 pl-12 sm:shrink-0 sm:justify-end sm:pl-0">
+      <MethodRow
+        actions={
+          methods.on ? (
             <Button
-              onClick={() => {
-                reset();
-                setFlow({ kind: "verify", purpose: "regenerate" });
-              }}
-              className="max-sm:h-10"
-              size="sm"
-              variant="outline"
-            >
-              New backup codes
-            </Button>
-            <Button
-              onClick={() => {
-                reset();
-                setFlow({ kind: "verify", purpose: "off" });
-              }}
-              className="max-sm:h-10"
+              className={TAP_SM}
+              onClick={() => setConfirming({ kind: "turn-off" })}
               size="sm"
               variant="outline"
             >
               Turn off
             </Button>
-          </div>
-        )}
-      </div>
+          ) : (
+            <Button
+              className={TAP_SM}
+              disabled={opening !== null || (ready && supported === null)}
+              onClick={turnOn}
+              size="sm"
+              variant={ready ? "default" : "outline"}
+            >
+              {opening === "turn-on" && <Spinner className="animate-spin" />}
+              Turn on
+            </Button>
+          )
+        }
+        badge={
+          <Badge variant={methods.on ? "secondary" : "outline"}>
+            {methods.on ? "On" : "Off"}
+          </Badge>
+        }
+        details={statusDetails(methods, ready)}
+        icon={<ShieldTick aria-hidden className="size-4" />}
+        title="Two-step verification"
+      />
+
+      {passkeysHere && (
+        <div className="scroll-mt-24" id="passkeys">
+          <MethodRow
+            actions={
+              <Button
+                className={TAP_SM}
+                disabled={!passkeysUsable || opening !== null}
+                onClick={() =>
+                  openSetup(
+                    "passkey",
+                    methods.on ? "add-passkey" : "turn-on-two-factor",
+                    "passkey",
+                  )
+                }
+                size="sm"
+                title={
+                  supported === false
+                    ? PASSKEY_MESSAGES.notSupported
+                    : undefined
+                }
+                variant="outline"
+              >
+                {opening === "passkey" && <Spinner className="animate-spin" />}
+                Add passkey
+              </Button>
+            }
+            details={
+              supported === false
+                ? PASSKEY_MESSAGES.notSupported
+                : "Sign in with your fingerprint, face or screen lock. Each one also works as your second step."
+            }
+            icon={<FingerScan aria-hidden className="size-4" />}
+            title="Passkeys"
+          />
+          {passkeys.length === 0 ? (
+            <p className="text-muted-foreground -mt-1 px-5 pb-4 text-xs sm:pr-6 sm:pl-[4.75rem]">
+              No passkeys yet.
+            </p>
+          ) : (
+            <ul className="mx-5 mb-4 divide-y rounded-lg border sm:mr-6 sm:ml-[4.75rem]">
+              {passkeys.map((passkey) => {
+                const details = [passkey.added, passkey.provider].filter(
+                  Boolean,
+                );
+                return (
+                  <li
+                    className="flex items-center gap-3 py-2.5 pr-2 pl-4"
+                    key={passkey.id}
+                  >
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <p className="text-sm font-medium break-words">
+                          {passkey.name}
+                        </p>
+                        <Badge variant="outline">
+                          {passkey.synced ? "Synced" : "Device-bound"}
+                        </Badge>
+                      </div>
+                      {details.length > 0 && (
+                        <p className="text-muted-foreground mt-0.5 text-xs">
+                          {details.join(" · ")}
+                        </p>
+                      )}
+                    </div>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          aria-label={`Options for ${passkey.name}`}
+                          className="size-10 shrink-0 sm:size-8"
+                          size="icon-sm"
+                          variant="ghost"
+                        >
+                          <More className="size-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onSelect={() => setRenaming(passkey)}>
+                          Rename
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onSelect={() =>
+                            setConfirming({ kind: "remove-passkey", passkey })
+                          }
+                        >
+                          Remove
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
+      )}
+
+      <MethodRow
+        actions={
+          methods.authenticatorApp ? (
+            <Button
+              className={TAP_SM}
+              onClick={() => setConfirming({ kind: "remove-app" })}
+              size="sm"
+              variant="outline"
+            >
+              Remove
+            </Button>
+          ) : (
+            <Button
+              className={TAP_SM}
+              disabled={opening !== null}
+              onClick={() =>
+                openSetup(
+                  "app",
+                  methods.on ? "add-authenticator" : "turn-on-two-factor",
+                  "app",
+                )
+              }
+              size="sm"
+              variant="outline"
+            >
+              {opening === "app" && <Spinner className="animate-spin" />}
+              Set up
+            </Button>
+          )
+        }
+        details={
+          methods.authenticatorApp
+            ? "6-digit codes from the app on your phone or computer."
+            : "Use any authenticator app that shows 6-digit codes."
+        }
+        icon={<Mobile aria-hidden className="size-4" />}
+        title="Authenticator app"
+      />
+
+      {methods.on && (
+        <MethodRow
+          actions={
+            <Button
+              className={TAP_SM}
+              onClick={() => setConfirming({ kind: "new-codes" })}
+              size="sm"
+              variant="outline"
+            >
+              New codes
+            </Button>
+          }
+          details={
+            left === null
+              ? "For when you can't use your passkey or app. Each works once."
+              : `${left} of ${BACKUP_CODE_COUNT} left. Each works once.${left <= 3 ? " Make new ones soon." : ""}`
+          }
+          icon={<DocumentText aria-hidden className="size-4" />}
+          title="Backup codes"
+        />
+      )}
+
+      <TwoFactorSetupDialog
+        email={email}
+        onClose={closeSetup}
+        passkeysUsable={passkeysUsable}
+        start={setupStart}
+        turningOn={!methods.on}
+      />
+
+      <RenamePasskeyDialog
+        onClose={() => setRenaming(null)}
+        passkey={renaming}
+      />
+
+      <AlertDialog
+        onOpenChange={(open) => {
+          if (!(open || busy)) setConfirming(null);
+        }}
+        open={confirming !== null}
+      >
+        <AlertDialogContent className="max-sm:[&_[data-slot=alert-dialog-footer]_button]:h-10">
+          <AlertDialogHeader>
+            <AlertDialogTitle>{copy?.title}</AlertDialogTitle>
+            <AlertDialogDescription className="text-pretty">
+              {copy?.body}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={busy}>Cancel</AlertDialogCancel>
+            <Button
+              disabled={busy}
+              onClick={runConfirmed}
+              variant={copy?.destructive ? "destructive" : "outline"}
+            >
+              {busy && <Spinner className="animate-spin" />}
+              {copy?.button}
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <Dialog
         onOpenChange={(open) => {
-          if (!open) close();
+          if (!open && (saved || newCodes?.length === 0)) {
+            setNewCodes(null);
+            router.refresh();
+          }
         }}
-        open={flow.kind !== "closed"}
+        open={newCodes !== null}
       >
-        <DialogContent
-          // On phones every button and field in these dialogs is a 40 px
-          // tap target.
-          className="max-sm:[&_[data-slot=button]]:h-10 max-sm:[&_[data-slot=input]]:h-10 sm:max-w-md"
-        >
-          {flow.kind === "reauth" && (
-            <>
-              <DialogHeader>
-                <DialogTitle>Sign in again first</DialogTitle>
-                <DialogDescription className="text-pretty">
-                  {REAUTH_MESSAGE}
-                </DialogDescription>
-              </DialogHeader>
-              <DialogFooter>
-                <Button onClick={close} type="button" variant="outline">
-                  Cancel
-                </Button>
-                <Button onClick={signOutToReauth} type="button">
-                  Sign out
-                </Button>
-              </DialogFooter>
-            </>
-          )}
-
-          {flow.kind === "setup" && (
-            <>
-              <DialogHeader>
-                <DialogTitle>Set up your authenticator app</DialogTitle>
-                <DialogDescription className="text-pretty">
-                  Scan this QR code with your authenticator app, then enter the
-                  6-digit code it shows.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="flex flex-col items-center gap-4">
-                <div className="rounded-xl border bg-white p-3">
-                  <QRCode
-                    bodyPattern="square"
-                    cornerEyeDotPattern="square"
-                    cornerEyePattern="square"
-                    level="M"
-                    size={168}
-                    value={flow.totpUri}
-                  />
-                </div>
-                <div className="w-full space-y-1.5">
-                  <p className="text-muted-foreground text-xs">
-                    Can't scan it? Enter this key in the app instead.
-                  </p>
-                  <div className="bg-muted/50 flex items-center gap-2 rounded-md border px-3 py-2">
-                    <code className="min-w-0 flex-1 font-mono text-xs break-normal">
-                      {groupSecret(flow.secret)}
-                    </code>
-                    <Button
-                      aria-label="Copy the key"
-                      onClick={() => copy(flow.secret, "Key")}
-                      className="size-10"
-                      size="icon"
-                      type="button"
-                      variant="ghost"
-                    >
-                      <Copy className="size-4" />
-                    </Button>
-                  </div>
-                </div>
-                <SixDigits
-                  describedBy={errorId}
-                  disabled={busy}
-                  invalid={Boolean(error) && !code}
-                  onChange={(value) => {
-                    setCode(value);
-                    if (value) setError(null);
-                  }}
-                  onComplete={(value) => void confirmSetup(value)}
-                  value={code}
-                />
-                <div className="flex min-h-5 items-center justify-center">
-                  {busy ? (
-                    <p className="text-muted-foreground flex items-center gap-1.5 text-xs">
-                      <Spinner className="size-3.5" />
-                      Checking code…
-                    </p>
-                  ) : (
-                    errorLine
-                  )}
-                </div>
-              </div>
-              <DialogFooter>
-                <Button
-                  disabled={busy}
-                  onClick={close}
-                  type="button"
-                  variant="outline"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  disabled={busy || code.length !== CODE_LENGTH}
-                  onClick={() => void confirmSetup(code)}
-                  type="button"
-                >
-                  Turn on
-                </Button>
-              </DialogFooter>
-            </>
-          )}
-
-          {flow.kind === "codes" && (
-            <>
-              <DialogHeader>
-                <DialogTitle>{flow.title}</DialogTitle>
-                <DialogDescription className="text-pretty">
-                  Save these backup codes somewhere safe, like a password
-                  manager. Each works once, if you can't use your authenticator
-                  app. They won't be shown again.
-                </DialogDescription>
-              </DialogHeader>
-              {flow.codes.length > 0 ? (
-                <>
-                  <ul
-                    aria-label="Backup codes"
-                    className="bg-muted/40 grid grid-cols-2 gap-x-6 gap-y-2 rounded-lg border px-5 py-4 font-mono text-sm"
-                  >
-                    {flow.codes.map((backupCode) => (
-                      <li
-                        className="text-center tracking-wider tabular-nums"
-                        key={backupCode}
-                      >
-                        {backupCode.slice(0, 5)}
-                        <span className="text-muted-foreground">-</span>
-                        {backupCode.slice(6)}
-                      </li>
-                    ))}
-                  </ul>
-                  <div className="grid grid-cols-2 gap-2">
-                    <Button
-                      onClick={() =>
-                        copy(flow.codes.join("\n"), "Backup codes")
-                      }
-                      type="button"
-                      variant="outline"
-                    >
-                      <Copy className="size-4" />
-                      Copy
-                    </Button>
-                    <Button
-                      onClick={() =>
-                        download(
-                          backupCodesText({
-                            codes: flow.codes,
-                            email,
-                            createdAt: new Date(),
-                          }),
-                          "qrdx-backup-codes.txt",
-                        )
-                      }
-                      type="button"
-                      variant="outline"
-                    >
-                      <DocumentDownload className="size-4" />
-                      Download
-                    </Button>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Checkbox
-                      checked={saved}
-                      className="relative after:absolute after:-inset-3"
-                      id={`${id}-saved`}
-                      onCheckedChange={(checked) => setSaved(checked === true)}
-                    />
-                    <Label
-                      className="-my-3 min-h-10 py-3 text-sm font-normal"
-                      htmlFor={`${id}-saved`}
-                    >
-                      I've saved my backup codes
-                    </Label>
-                  </div>
-                </>
-              ) : (
-                <p className="text-sm text-pretty">
-                  Your backup codes couldn't be shown. Choose New backup codes
-                  to make a fresh set.
-                </p>
-              )}
-              <DialogFooter>
-                <Button
-                  disabled={flow.codes.length > 0 && !saved}
-                  onClick={close}
-                  type="button"
-                >
-                  Done
-                </Button>
-              </DialogFooter>
-            </>
-          )}
-
-          {flow.kind === "verify" && (
-            <form className="space-y-4" noValidate onSubmit={verify}>
-              <DialogHeader>
-                <DialogTitle>
-                  {flow.purpose === "off"
-                    ? "Turn off two-step verification?"
-                    : "Make new backup codes?"}
-                </DialogTitle>
-                <DialogDescription className="text-pretty">
-                  {flow.purpose === "off"
-                    ? "Signing in will no longer ask for a code from your app, and your backup codes stop working. Enter a code to confirm."
-                    : "Your current backup codes stop working. Enter a code to confirm."}
-                </DialogDescription>
-              </DialogHeader>
-              <div className="space-y-2">
-                <Label htmlFor={`${id}-code`}>
-                  Code from your authenticator app, or a backup code
-                </Label>
-                <Input
-                  aria-describedby={errorId}
-                  aria-invalid={Boolean(error)}
-                  autoCapitalize="none"
-                  autoComplete="one-time-code"
-                  autoCorrect="off"
-                  autoFocus
-                  className="font-mono"
-                  disabled={busy}
-                  id={`${id}-code`}
-                  onChange={(event) => {
-                    setCode(event.target.value);
-                    setError(null);
-                  }}
-                  placeholder="123456"
-                  spellCheck={false}
-                  value={code}
-                />
-                {errorLine}
-              </div>
-              <DialogFooter>
-                <Button
-                  disabled={busy}
-                  onClick={close}
-                  type="button"
-                  variant="outline"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  disabled={busy || !code.trim()}
-                  type="submit"
-                  variant={flow.purpose === "off" ? "destructive" : "default"}
-                >
-                  {busy && <Spinner className="animate-spin" />}
-                  {flow.purpose === "off" ? "Turn off" : "Make new codes"}
-                </Button>
-              </DialogFooter>
-            </form>
-          )}
+        <DialogContent className="sm:max-w-md" showCloseButton={false}>
+          <DialogHeader>
+            <DialogTitle>Your new backup codes</DialogTitle>
+            <DialogDescription className="text-pretty">
+              Each code works once, if you can't use your passkey or
+              authenticator app. Keep them somewhere safe, like a password
+              manager. They won't be shown again.
+            </DialogDescription>
+          </DialogHeader>
+          <BackupCodesList
+            codes={newCodes ?? []}
+            email={email}
+            onSavedChange={setSaved}
+            saved={saved}
+          />
+          <DialogFooter>
+            <Button
+              className="h-10 sm:h-9"
+              disabled={(newCodes?.length ?? 0) > 0 && !saved}
+              onClick={() => {
+                setNewCodes(null);
+                router.refresh();
+              }}
+              type="button"
+            >
+              Done
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </SettingsSection>
