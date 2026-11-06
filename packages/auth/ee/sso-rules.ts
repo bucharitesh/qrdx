@@ -174,12 +174,31 @@ export const SSO_SIGN_IN_ERROR = {
 } as const;
 
 /**
+ * QRdx's code for a failure the plugin reports in its own words: a sign-in
+ * that came back without an email address (OIDC "missing_user_info", or a
+ * SAML response it couldn't read one from).
+ */
+export function ssoErrorCode(error: string, description?: string | null) {
+  const code = error.replaceAll(" ", "_");
+  if (code === "invalid_provider" && description === "missing_user_info") {
+    return SSO_SIGN_IN_ERROR.emailMissing;
+  }
+  if (
+    code === "saml_error" &&
+    /extract user ID or email/i.test(description ?? "")
+  ) {
+    return SSO_SIGN_IN_ERROR.emailMissing;
+  }
+  return code;
+}
+
+/**
  * Where a failed SSO sign-in should land: the sign-in page with the error
  * code and the page the person was going to, like an OIDC failure (which
  * goes to the errorCallbackURL the panel sets). The plugin sends some SAML
  * failures (an account it can't link, for one) to the success URL instead,
  * and some to its own /error page. Null when `location` carries no error or
- * already goes to the sign-in page.
+ * already goes to the sign-in page with a code QRdx has a message for.
  */
 export function ssoFailureRedirect(
   location: string | null | undefined,
@@ -194,8 +213,14 @@ export function ssoFailureRedirect(
   }
   const error = url.searchParams.get("error");
   if (!error) return null;
+  const code = ssoErrorCode(error, url.searchParams.get("error_description"));
   const sameSite = url.origin === new URL(appOrigin).origin;
-  if (sameSite && url.pathname === SIGN_IN_PATH) return null;
+  if (sameSite && url.pathname === SIGN_IN_PATH) {
+    if (code === error) return null;
+    url.searchParams.set("error", code);
+    url.searchParams.delete("error_description");
+    return `${SIGN_IN_PATH}?${url.searchParams}`;
+  }
   url.searchParams.delete("error");
   url.searchParams.delete("error_description");
   // Only a page of the app, never the auth API or another site.
@@ -205,7 +230,7 @@ export function ssoFailureRedirect(
       : null;
   const target = new URLSearchParams();
   if (next) target.set("next", next);
-  target.set("error", error.replaceAll(" ", "_"));
+  target.set("error", code);
   return `${SIGN_IN_PATH}?${target}`;
 }
 
