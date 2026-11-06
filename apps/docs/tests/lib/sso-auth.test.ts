@@ -330,6 +330,59 @@ describe("what the identity provider says about the address", () => {
       await check("email-otp", "create-user", undefined, "zed@other.com"),
     ).toBe(undefined);
   });
+
+  it("names a new SAML account from its attributes, never the NameID", async () => {
+    stubDb({ providers: [provider()] });
+    const { before: beforeCreate } = (
+      ssoGate().init() as unknown as {
+        options: {
+          databaseHooks: {
+            user: {
+              create: {
+                before: (
+                  user: Row,
+                  context: unknown,
+                ) => Promise<{ data: Row } | undefined>;
+              };
+            };
+          };
+        };
+      }
+    ).options.databaseHooks.user.create;
+    const acs = (profile?: Row) => {
+      const context = {
+        path: "/sso/saml2/sp/acs/:providerId",
+        params: { providerId: "sso-abcdefabcdef" },
+      };
+      if (profile)
+        check("sso-saml", "create-user", profile, "ivy@acme.com", context);
+      return context;
+    };
+    const named = await beforeCreate(
+      { email: "ivy@acme.com", name: "ivy@acme.com" },
+      acs({ "urn:oid:2.5.4.42": "Ivy", "urn:oid:2.5.4.4": "Mapped" }),
+    );
+    expect(named?.data).toMatchObject({
+      name: "Ivy Mapped",
+      emailVerified: true,
+    });
+    // An opaque persistent NameID was the plugin's name: dropped, so the
+    // account starts with the local part (the app's own create hook).
+    const opaque = await beforeCreate(
+      { email: "pia@acme.com", name: "G-29a5e34a-f01e" },
+      acs({ email: "pia@acme.com" }),
+    );
+    expect(opaque?.data.name).toBe("");
+    // OIDC keeps the plugin's name (the name claim).
+    const oidc = await beforeCreate(
+      { email: "ben@acme.com", name: "Ben Okafor" },
+      {
+        path: "/sso/callback/:providerId",
+        params: { providerId: "sso-abcdefabcdef" },
+      },
+    );
+    expect(oidc?.data.name).toBe("Ben Okafor");
+  });
 });
 
 describe("joining the workspace at every SSO sign-in", () => {

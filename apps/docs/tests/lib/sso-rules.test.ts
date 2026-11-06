@@ -14,6 +14,7 @@ import {
   newSsoProviderId,
   normalizeSsoDomain,
   SSO_JOIN_ROLES,
+  samlPersonName,
   saysNotVerified,
   ssoEmailUnverified,
   ssoFailureRedirect,
@@ -287,6 +288,34 @@ describe("what the identity provider sends", () => {
     for (const value of ["ulla", "G-29a5e34a-f01e-4d86", "", "a@b", null]) {
       expect(looksLikeEmail(value), String(value)).toBe(false);
     }
+  });
+
+  it("names a SAML user from the common attribute names, never the NameID", () => {
+    expect(samlPersonName({ givenName: "Ivy", surname: "Mapped" })).toBe(
+      "Ivy Mapped",
+    );
+    expect(
+      samlPersonName({
+        "urn:oid:2.5.4.42": ["Xena"],
+        "urn:oid:2.5.4.4": ["Oid"],
+      }),
+    ).toBe("Xena Oid");
+    expect(samlPersonName({ firstName: "Fay", lastName: "Existing" })).toBe(
+      "Fay Existing",
+    );
+    expect(samlPersonName({ givenName: "Solo" })).toBe("Solo");
+    expect(
+      samlPersonName({ "urn:oid:2.16.840.1.113730.3.1.241": "Dee Splay" }),
+    ).toBe("Dee Splay");
+    expect(samlPersonName({ displayName: "Dee", name: "Other" })).toBe("Dee");
+    expect(samlPersonName({ name: "Nam E" })).toBe("Nam E");
+    // Given and surname win over a display name; blanks are skipped.
+    expect(
+      samlPersonName({ givenName: " ", surname: "Last", displayName: "D" }),
+    ).toBe("Last");
+    // Nothing usable: "" (the account starts with the address's local part).
+    expect(samlPersonName({ Role: ["admin"] })).toBe("");
+    expect(samlPersonName(null)).toBe("");
   });
 });
 
