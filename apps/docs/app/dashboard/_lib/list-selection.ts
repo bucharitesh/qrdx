@@ -5,7 +5,7 @@
 // shift-click lays the range from the anchor to the clicked row over the
 // selection as it was when the anchor was set (`base`), so shift-clicking
 // again moves the range's far end: further out extends it, back towards the
-// anchor shrinks it, the way Gmail, Dub and file managers do. The range takes
+// anchor shrinks it, as in a file manager. The range takes
 // the anchor's own state: from a checked anchor it selects, from an unchecked
 // one it clears. `order` is always the list as shown (its sort, filters and
 // page), so a range never reaches rows that aren't on screen.

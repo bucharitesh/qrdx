@@ -6,6 +6,7 @@ import { CommunityTabs } from "@/components/community/community-tabs";
 import { ItemRow } from "@/components/community/item-card";
 import { AsciiField, Backdrop, MeshGradient } from "@/components/fx";
 import { CommunityWall } from "@/components/showcase/community-wall";
+import { readsDatabaseWhileRendering } from "@/lib/build-without-database";
 import { getCommunityHome } from "@/lib/community/home";
 import {
   COMMUNITY_LICENSE_NAME,
@@ -30,6 +31,7 @@ export const metadata: Metadata = createMetadata({
 });
 
 export default async function CommunityPage() {
+  await readsDatabaseWhileRendering();
   const home = await getCommunityHome();
 
   return (

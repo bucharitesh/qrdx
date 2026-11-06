@@ -1,8 +1,6 @@
 "use client";
 
-// The codes list as cards, in the shape of Dub's link cards (github.com/
-// dubinc/dub, AGPL-3.0: apps/web/ui/links/link-card.tsx): what it opens
-// first (icon, title, short link, destination), then tags, date, scans and
+// The codes list as cards: what it opens first (icon, title, short link, destination), then tags, date, scans and
 // the code's menu.
 
 import { Star } from "@repo/design-system/components/icons";

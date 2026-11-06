@@ -1,4 +1,4 @@
--- Public analytics pages (the Dub study's gap 9): one new table,
+-- Public analytics pages: one new table,
 -- code_public_stats. A row turns on /stats/<token> for one dynamic code: a
 -- read-only page with scans over time, top countries, devices and referrer
 -- hosts. Deleting the row turns it off; a new token resets the link.

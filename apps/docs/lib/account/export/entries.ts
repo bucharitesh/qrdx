@@ -152,6 +152,14 @@ export function exportEntries(userId: string): ExportEntry[] {
     },
     {
       kind: "json",
+      path: "passkeys.json",
+      title: "Passkeys",
+      description:
+        "Passkeys added for signing in: name, when each was added, whether it syncs (backedUp) and the authenticator model id (aaguid) when the device gives one. Public keys and credential ids are not included.",
+      load: () => q.passkeys,
+    },
+    {
+      kind: "json",
       path: "codes.json",
       title: "Dynamic codes",
       description:

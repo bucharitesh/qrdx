@@ -20,7 +20,16 @@ import {
  */
 export function featureContext(): FeatureContext {
   return {
-    env: env as Readonly<Record<string, string | undefined>>,
+    env: {
+      ...(env as Readonly<Record<string, string | undefined>>),
+      // Validated by @repo/next-config and Better Auth, not lib/env; passkeys
+      // read them (feature-availability-rules.ts).
+      BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,
+      NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+      // The licence key for ee/ features (workspace SSO), read the same way
+      // by packages/auth/ee-license.ts.
+      QRDX_EE_LICENSE: process.env.QRDX_EE_LICENSE,
+    },
     onVercel: Boolean(process.env.VERCEL),
     production: process.env.NODE_ENV === "production",
   };

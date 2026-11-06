@@ -1,0 +1,34 @@
+// Workspace SSO copy shared by the sign-in panel, the /sign-in page and the
+// settings page. Pure and client-safe.
+
+/** Codes the plugin and packages/auth/ee/sso.ts send back (?error= or JSON). */
+export function ssoSignInErrorMessage(
+  code: string | null | undefined,
+  description?: string | null,
+): string {
+  switch (code) {
+    case "SSO_EMAIL_REQUIRED":
+      return "Enter your work email.";
+    case "SSO_NOT_FOUND":
+    case "SSO_NOT_AVAILABLE":
+      // The server's message names the domain.
+      return description || "SSO isn't set up for that address.";
+    case "sso_unavailable":
+      return "Single sign-on isn't available for this workspace right now. Sign in another way.";
+    case "sso_email_outside_domain":
+      return "Your identity provider sent an address outside your company's domain, so QRdx can't sign you in with it. Ask your workspace admin.";
+    case "account_not_linked":
+    case "account not linked":
+      return "An account with this address already exists and couldn't be linked. Sign in with an email code instead.";
+    case "access_denied":
+      return "Sign-in was cancelled.";
+    case "invalid_state":
+      return "That sign-in took too long or was started elsewhere. Try again.";
+    default:
+      return "Single sign-on didn't work. Try again, or sign in another way.";
+  }
+}
+
+/** Shown on the settings page and in the docs. */
+export const SSO_REAUTH_MESSAGE =
+  "For your security, sign out and sign in again, then change single sign-on within a day.";

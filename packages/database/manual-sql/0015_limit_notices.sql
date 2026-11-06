@@ -1,4 +1,4 @@
--- Plan-limit emails (the Dub study's gap 14): one new table, limit_notice.
+-- Plan-limit emails: one new table, limit_notice.
 -- When a workspace reaches 90% and again 100% of a capped limit in
 -- apps/docs/lib/plans.ts (dynamic codes, hosted pages, saved themes, file
 -- storage, AI art, form responses), its owners get one email per limit,

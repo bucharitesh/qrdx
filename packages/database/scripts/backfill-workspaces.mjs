@@ -193,7 +193,9 @@ export const SQL = {
   pages: "SELECT id, user_id, organization_id FROM landing_page",
   insertOrganization:
     "INSERT INTO organization (id, name, slug, created_at) VALUES ($1, $2, $3, $4) ON CONFLICT (id) DO NOTHING",
-  insertMember: `INSERT INTO member (id, organization_id, user_id, role, created_at) VALUES ($1, $2, $3, 'owner', $4) ON CONFLICT (id) DO NOTHING`,
+  // Any conflict (id, or the (organization_id, user_id) unique index) means
+  // the membership already exists.
+  insertMember: `INSERT INTO member (id, organization_id, user_id, role, created_at) VALUES ($1, $2, $3, 'owner', $4) ON CONFLICT DO NOTHING`,
   moveRows: ({ table }) =>
     `UPDATE "${table}" SET organization_id = $1 WHERE id = ANY($2::text[]) AND organization_id IS NULL`,
   countPersonal: ({ table, owner }) =>

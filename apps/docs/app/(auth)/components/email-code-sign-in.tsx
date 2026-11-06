@@ -14,6 +14,7 @@ import { Label } from "@repo/design-system/components/ui/label";
 import { Sms } from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
+import { TwoFactorChallenge } from "./two-factor-challenge";
 
 const CODE_LENGTH = 6;
 // Matches the server: 3 tries per code, a 5-minute expiry.
@@ -67,6 +68,8 @@ interface EmailCodeSignInProps {
   /** Another sign-in method is in progress */
   disabled?: boolean;
   lastUsed?: boolean;
+  /** The account asks for a second step (two-step verification) now, or not. */
+  onTwoFactorChange?: (active: boolean) => void;
 }
 
 /** Sign in with a one-time code sent by email (creates the account on first use). */
@@ -77,6 +80,7 @@ export function EmailCodeSignIn({
   onSignedIn,
   disabled = false,
   lastUsed = false,
+  onTwoFactorChange,
 }: EmailCodeSignInProps) {
   const router = useRouter();
   const id = useId();
@@ -91,6 +95,10 @@ export function EmailCodeSignIn({
   const [codeDead, setCodeDead] = useState(false);
   const [resendAt, setResendAt] = useState(0);
   const [now, setNow] = useState(() => Date.now());
+  // Two-step verification: where to go once the second step is done.
+  const [twoFactorTarget, setTwoFactorTarget] = useState<
+    string | undefined | null
+  >(null);
 
   const secondsLeft = Math.max(0, Math.ceil((resendAt - now) / 1000));
 
@@ -162,7 +170,7 @@ export function EmailCodeSignIn({
     setError(null);
     setNotice(null);
     try {
-      const { error } = await authClient.signIn.emailOtp({
+      const { data, error } = await authClient.signIn.emailOtp({
         email: sentTo,
         otp,
       });
@@ -181,10 +189,13 @@ export function EmailCodeSignIn({
         }
         return;
       }
-      // The session updates in place; server-rendered parts need a refresh.
-      if (target) router.push(target);
-      else router.refresh();
-      onSignedIn();
+      // The code was right; two-step verification asks for a second one.
+      if ((data as { twoFactorRedirect?: boolean } | null)?.twoFactorRedirect) {
+        setTwoFactorTarget(target);
+        onTwoFactorChange?.(true);
+        return;
+      }
+      finish(target);
     } catch (err) {
       console.error("Email code sign-in failed:", err);
       setCode("");
@@ -194,6 +205,13 @@ export function EmailCodeSignIn({
     }
   };
 
+  const finish = (target: string | undefined) => {
+    // The session updates in place; server-rendered parts need a refresh.
+    if (target) router.push(target);
+    else router.refresh();
+    onSignedIn();
+  };
+
   const changeEmail = () => {
     setCode("");
     setError(null);
@@ -201,6 +219,21 @@ export function EmailCodeSignIn({
     setCodeDead(false);
     onSentToChange(null);
   };
+
+  if (sentTo && twoFactorTarget !== null) {
+    return (
+      <div className="px-6 pb-6">
+        <TwoFactorChallenge
+          onCancel={() => {
+            setTwoFactorTarget(null);
+            onTwoFactorChange?.(false);
+            changeEmail();
+          }}
+          onVerified={() => finish(twoFactorTarget)}
+        />
+      </div>
+    );
+  }
 
   if (sentTo) {
     const statusId = `${id}-status`;
@@ -286,10 +319,13 @@ export function EmailCodeSignIn({
         Email address
       </Label>
       <Input
+        className="h-10 sm:h-9"
         aria-describedby={error ? errorId : undefined}
         aria-invalid={Boolean(error)}
         autoCapitalize="none"
-        autoComplete="email"
+        // "webauthn" lets the browser suggest saved passkeys here
+        // (passkey-sign-in.tsx).
+        autoComplete="email webauthn"
         disabled={disabled || sending}
         id={`${id}-email`}
         inputMode="email"
@@ -305,7 +341,7 @@ export function EmailCodeSignIn({
       />
       <div className="relative">
         <Button
-          className="w-full"
+          className="h-10 w-full sm:h-9"
           disabled={disabled || sending}
           type="submit"
           variant="outline"

@@ -22,9 +22,9 @@ import {
 } from "@/lib/permissions";
 import { getOwnerPlanForOrganization, getPlanLimits } from "@/lib/plans";
 import { PLAN_NAMES } from "@/lib/pricing";
+import { isUniqueViolation } from "@/lib/slug-claims";
 
-// Workspace join links (Settings → Team; the pattern is Dub's inviteCode,
-// github.com/dubinc/dub, AGPL-3.0). Anyone signed in who opens
+// Workspace join links (Settings → Team). Anyone signed in who opens
 // /join/<token> can join as the link's role (never owner) while the plan has
 // seats. The token is 32 random bytes; only its SHA-256 is stored, so the
 // link is shown once, when it's made or reset. The table comes from
@@ -310,7 +310,12 @@ export async function joinWithLink(
     });
   } catch (error) {
     const code = (error as ErrorWithBody).body?.code;
-    if (code === "USER_IS_ALREADY_A_MEMBER_OF_THIS_ORGANIZATION") {
+    // The plugin's own check, or the unique (workspace, user) index when two
+    // joins race past it.
+    if (
+      code === "USER_IS_ALREADY_A_MEMBER_OF_THIS_ORGANIZATION" ||
+      isUniqueViolation(error)
+    ) {
       return { status: "already", slug: target.slug };
     }
     if (code === "ORGANIZATION_MEMBERSHIP_LIMIT_REACHED") {

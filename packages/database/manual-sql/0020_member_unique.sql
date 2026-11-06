@@ -1,0 +1,34 @@
+-- One membership per person per workspace: a unique index on
+-- member (organization_id, user_id).
+--
+-- Why now: workspace single sign-on adds people to the workspace on every SSO
+-- sign-in (packages/auth/sso.ts joinWorkspace). Two sign-ins by the same
+-- person at the same moment (two tabs) could otherwise insert the membership
+-- twice. Invitation and join-link adds had the same race. Every app insert
+-- into member is ON CONFLICT DO NOTHING (or treats a unique violation as
+-- "already a member"), so the index only ever turns a duplicate into a no-op.
+--
+-- Additive: no column changes. Built CONCURRENTLY, so writes to member aren't
+-- blocked while it builds; that also means it can't run inside a transaction
+-- block, so this file has no BEGIN/COMMIT. Run it on its own.
+--
+-- Before running, check there are no duplicates (the build fails otherwise):
+--   SELECT organization_id, user_id, count(*) FROM member
+--   GROUP BY 1, 2 HAVING count(*) > 1;
+-- After running, check the index is valid (a failed CONCURRENTLY build leaves
+-- an INVALID index that IF NOT EXISTS would then skip):
+--   SELECT indisvalid FROM pg_index
+--   WHERE indexrelid = 'member_organization_id_user_id_unique'::regclass;
+-- If it's false: DROP INDEX CONCURRENTLY member_organization_id_user_id_unique;
+-- fix the duplicates, and run this again.
+--
+-- APPLIED to the shared Neon database on 2026-11-06: 0 duplicates first, a
+-- dry run of the same index in a rolled-back transaction, then this file;
+-- the index is valid and unique, and a second run skipped it.
+--
+-- Matches packages/database/schema.ts (member, uniqueIndex
+-- member_organization_id_user_id_unique), so a later `drizzle-kit push` sees
+-- no drift.
+
+CREATE UNIQUE INDEX CONCURRENTLY IF NOT EXISTS "member_organization_id_user_id_unique"
+  ON "member" USING btree ("organization_id", "user_id");
