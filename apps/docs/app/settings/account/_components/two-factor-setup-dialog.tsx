@@ -29,6 +29,7 @@ import { Copy, FingerScan, Mobile } from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
 import { QRCode } from "qrdx";
 import { type FormEvent, useEffect, useId, useRef, useState } from "react";
+import { DialogCloseButton } from "@/components/confirm-identity/dialog-close-button";
 import { useConfirmation } from "@/components/confirm-identity/provider";
 import {
   getPasskeyAssertion,
@@ -395,8 +396,9 @@ export function TwoFactorSetupDialog({
         onPointerDownOutside={(event) => {
           if (busy || step === "codes") event.preventDefault();
         }}
-        showCloseButton={step !== "codes"}
+        showCloseButton={false}
       >
+        {step !== "codes" && <DialogCloseButton disabled={busy} />}
         <DialogHeader>
           {steps.length > 1 && (
             <p className="text-muted-foreground text-xs font-medium tabular-nums">

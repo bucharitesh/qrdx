@@ -15,6 +15,7 @@ import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { useRouter } from "next/navigation";
 import { type FormEvent, useEffect, useId, useState } from "react";
+import { DialogCloseButton } from "@/components/confirm-identity/dialog-close-button";
 import { useConfirmation } from "@/components/confirm-identity/provider";
 import {
   MAX_PASSKEY_NAME_LENGTH,
@@ -72,7 +73,11 @@ export function RenamePasskeyDialog({
       }}
       open={passkey !== null}
     >
-      <DialogContent className="max-sm:[&_[data-slot=button]]:h-10 max-sm:[&_[data-slot=input]]:h-10 sm:max-w-md">
+      <DialogContent
+        className="max-sm:[&_[data-slot=button]]:h-10 max-sm:[&_[data-slot=input]]:h-10 sm:max-w-md"
+        showCloseButton={false}
+      >
+        <DialogCloseButton disabled={saving} />
         <DialogHeader>
           <DialogTitle>Rename passkey</DialogTitle>
           <DialogDescription>

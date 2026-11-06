@@ -58,6 +58,7 @@ import {
   sendConfirmationCode,
   startPasskeyConfirmation,
 } from "./actions";
+import { DialogCloseButton } from "./dialog-close-button";
 import {
   type AssertionOptionsJSON,
   getPasskeyAssertion,
@@ -217,6 +218,8 @@ export function ConfirmIdentityDialog({
   // the button.
   const autoStarted = useRef(false);
   const abort = useRef<AbortController | null>(null);
+  const opening = useRef(0);
+  const [loadedFor, setLoadedFor] = useState(0);
 
   const secondsLeft = Math.max(0, Math.ceil((resendAt - now) / 1000));
 
@@ -227,10 +230,13 @@ export function ConfirmIdentityDialog({
     setBackupCode("");
   };
 
-  // A fresh start each time it opens.
+  // A fresh start each time it opens. Each opening is numbered, and the
+  // passkey prompt only starts once this opening's options are in: the
+  // first render of an opening still holds the last one's method.
   useEffect(() => {
     if (!open) return;
-    let cancelled = false;
+    opening.current += 1;
+    const current = opening.current;
     setOptions(null);
     setMethods([]);
     setMethod(null);
@@ -243,6 +249,7 @@ export function ConfirmIdentityDialog({
     setCode("");
     setBackupCode("");
     autoStarted.current = false;
+    let cancelled = false;
     getConfirmationOptions()
       .then((result) => {
         if (cancelled) return;
@@ -257,6 +264,7 @@ export function ConfirmIdentityDialog({
         setOptions(result.options);
         setMethods(usable);
         setMethod(firstMethod(usable));
+        setLoadedFor(current);
       })
       .catch(() => {
         if (!cancelled) setLoadError(CONFIRMATION_MESSAGES.failed);
@@ -339,12 +347,20 @@ export function ConfirmIdentityDialog({
     [succeed],
   );
 
-  // The passkey prompt opens on its own when it's the method shown.
+  // The passkey prompt opens on its own when it's the method shown (once the
+  // options for this opening are in).
   useEffect(() => {
-    if (!open || method !== "passkey" || autoStarted.current) return;
+    if (
+      !open ||
+      loadedFor !== opening.current ||
+      method !== "passkey" ||
+      autoStarted.current
+    ) {
+      return;
+    }
     autoStarted.current = true;
     void runPasskey(true);
-  }, [open, method, runPasskey]);
+  }, [open, loadedFor, method, runPasskey]);
 
   // Closing the dialog (or switching away) stops a prompt still open.
   useEffect(() => {
@@ -722,7 +738,9 @@ export function ConfirmIdentityDialog({
         className="gap-5 sm:max-w-[420px]"
         // The prompt (passkey) or a code field takes focus itself.
         onOpenAutoFocus={(event) => event.preventDefault()}
+        showCloseButton={false}
       >
+        <DialogCloseButton />
         <DialogHeader>
           <DialogTitle>Confirm it's you</DialogTitle>
           <DialogDescription className="text-pretty">
