@@ -20,6 +20,7 @@ import {
 } from "@repo/design-system/components/ui/input-otp";
 import { useRouter } from "next/navigation";
 import { type FormEvent, useEffect, useId, useState } from "react";
+import { DialogCloseButton } from "@/components/confirm-identity/dialog-close-button";
 import { useConfirmation } from "@/components/confirm-identity/provider";
 import {
   EMAIL_CHANGE_MESSAGES,
@@ -41,7 +42,7 @@ const CONNECTION_FAILED =
   "Something went wrong. Check your connection and try again.";
 
 const TEXT_ACTION =
-  "rounded-sm text-xs text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 disabled:no-underline";
+  "-my-3 inline-flex min-h-10 items-center sm:my-0 sm:min-h-0 rounded-sm text-xs text-muted-foreground underline-offset-4 transition-colors hover:text-foreground hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 disabled:no-underline";
 
 /**
  * Moves the account to a new address: a code goes to the new address, and
@@ -211,7 +212,12 @@ export function ChangeEmailDialog({
       }}
       open={open}
     >
-      <DialogContent className="sm:max-w-md">
+      <DialogContent
+        // On phones every button and field here is a 40 px tap target.
+        className="max-sm:[&_[data-slot=button]]:h-10 max-sm:[&_[data-slot=input]]:h-10 sm:max-w-md"
+        showCloseButton={false}
+      >
+        <DialogCloseButton disabled={busy} />
         <DialogHeader>
           <DialogTitle>Change your email</DialogTitle>
           <DialogDescription className="text-pretty">
