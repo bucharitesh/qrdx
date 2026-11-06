@@ -2,9 +2,10 @@
 // (./sign-in-challenge.ts), the app and tests. No imports.
 //
 // The rule: once someone turns on two-step verification, every sign-in asks
-// for an authenticator or backup code before a session exists. The one
-// exception is a passkey sign-in where the authenticator verified the person
-// (PIN or biometrics), which is already two factors.
+// for a second step (a passkey, an authenticator code or a backup code)
+// before a session exists. The one exception is a passkey sign-in where the
+// authenticator verified the person (PIN or biometrics), which is already
+// two factors.
 
 /** Where a challenged sign-in that ends in a redirect lands. */
 export const TWO_FACTOR_CHALLENGE_PATH = "/sign-in/two-factor";
@@ -25,20 +26,72 @@ const BACKUP_CODE_HALF = 5;
 export const TRUST_DEVICE_DAYS = 30;
 /** A challenge (the two_factor cookie) expires after this (plugin default). */
 export const CHALLENGE_MINUTES = 10;
-/** Wrong codes allowed per challenge (fixed in the plugin). */
+/**
+ * Wrong codes allowed per challenge (fixed in the plugin). A passkey that
+ * fails to verify counts as one too.
+ */
 export const CHALLENGE_ATTEMPTS = 5;
-/** Consecutive wrong codes, across challenges, before the account locks. */
+/**
+ * Consecutive wrong codes (or failed passkeys), across challenges, before
+ * the account locks.
+ */
 export const LOCKOUT_FAILURES = 10;
 export const LOCKOUT_MINUTES = 15;
 
+/** A passkey as the second step (./sign-in-challenge-passkey.ts). */
+export const PASSKEY_STEP_OPTIONS_PATH = "/two-factor/passkey/options";
+export const PASSKEY_STEP_VERIFY_PATH = "/two-factor/passkey/verify";
+/** Which second steps the person signing in has set up. */
+export const TWO_FACTOR_METHODS_PATH = "/two-factor/methods";
+/** A passkey second step's WebAuthn challenge lasts this long, once. */
+export const PASSKEY_STEP_SECONDS = 5 * 60;
+
 /**
- * Endpoints that check a code to finish a challenge. Over HTTP they only work
- * for a pending challenge, never with a session (./sign-in-challenge.ts).
+ * Endpoints that check a code or a passkey to finish a challenge. Over HTTP
+ * they only work for a pending challenge, never with a session
+ * (./sign-in-challenge.ts).
  */
 export const CHALLENGE_CODE_PATHS: readonly string[] = [
   "/two-factor/verify-totp",
   "/two-factor/verify-backup-code",
+  PASSKEY_STEP_VERIFY_PATH,
 ];
+
+/**
+ * Steps on the way to finishing a challenge: they need a pending challenge
+ * (the two_factor cookie) and never create a session.
+ */
+export const CHALLENGE_STEP_PATHS: readonly string[] = [
+  TWO_FACTOR_METHODS_PATH,
+  PASSKEY_STEP_OPTIONS_PATH,
+];
+
+/** What GET /two-factor/methods answers for the person signing in. */
+export interface TwoFactorMethods {
+  /** At least one passkey, on a deployment where passkeys work. */
+  passkey: boolean;
+  /** An authenticator app, confirmed with a first code. */
+  totp: boolean;
+  /** Backup codes left to use. */
+  backupCodes: boolean;
+}
+
+/**
+ * Whether a twoFactor row holds an authenticator app that can answer a
+ * code: a secret, confirmed with a first code (`verified` is false between
+ * setup and that code). A row without one (an account whose second step is
+ * a passkey) never accepts an authenticator code at sign-in.
+ */
+export function totpIsSetUp(
+  row: { secret?: unknown; verified?: boolean | null } | null | undefined
+): boolean {
+  return Boolean(
+    row &&
+      row.verified !== false &&
+      typeof row.secret === "string" &&
+      row.secret.length > 0
+  );
+}
 
 /**
  * Finishes a challenge on a trusted device, by GET. A SAML sign-in ends in a
