@@ -20,6 +20,7 @@ import {
   normalizeBackupCode,
   PASSKEY_SIGN_IN_PATH,
   passkeyAssertionUserVerified,
+  SERVER_SESSION_SWAP_PATHS,
   TRUST_DEVICE_DAYS,
 } from "./sign-in-challenge-rules";
 
@@ -33,8 +34,9 @@ import {
 //
 // - finishing a challenge (CHALLENGE_COMPLETION_PATHS);
 // - a passkey sign-in whose authenticator verified the user (two factors);
-// - the app's own auth.api calls, which aren't HTTP requests (turning 2FA on
-//   or off swaps the session from a route handler after its own checks);
+// - the app's own 2FA management calls made server-side (auth.api, not HTTP)
+//   on SERVER_SESSION_SWAP_PATHS: turning 2FA on or off swaps the session
+//   after the app's own checks. Other server-side sign-ins are challenged;
 // - a request that re-issues the session it came with, same token (a
 //   session refresh, switching workspace, a profile update): no access is
 //   gained that the browser didn't already have.
@@ -163,7 +165,12 @@ export function signInChallenge(twoFactorPlugin: TwoFactorPluginLike) {
               data.user.id
             )) as { twoFactorEnabled?: boolean | null } | null;
             if (!user?.twoFactorEnabled) return;
-            if (!(ctx.request instanceof Request)) return;
+            if (
+              !(ctx.request instanceof Request) &&
+              SERVER_SESSION_SWAP_PATHS.includes(path)
+            ) {
+              return;
+            }
             if ((await requestSessionToken(ctx)) === data.session.token) return;
 
             // The plugin reads the switch from the new session.
