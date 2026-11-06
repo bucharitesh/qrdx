@@ -1185,7 +1185,12 @@ async function testCopy(page: Page) {
 
   await clickByRole(page, "button", "code", true);
   await sleep(800);
-  await clickByRole(page, "button", "copy code", true);
+  // Get code opens on the React tab: its code card's Copy button (the
+  // install line has its own "Copy command").
+  const copied = await page.evaluate(
+    `() => { const dialog = [...document.querySelectorAll('[role="dialog"]')].at(-1); const b = dialog && __e2e.byRole("button", "copy", { exact: true, root: dialog }); if (!b) return false; __e2e.click(b); return true; }`,
+  );
+  if (!copied) throw new Error('No "Copy" button in the Get code dialog');
   await sleep(800);
   const code = await readClipboard(page);
   record(
