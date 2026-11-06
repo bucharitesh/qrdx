@@ -35,6 +35,7 @@ const OPTIONS: PricingOptions = {
   customDomains: isFeatureAvailable("customDomains"),
   fileStorage: isFeatureAvailable("fileStorage"),
   emailAlerts: isFeatureAvailable("email"),
+  sso: isFeatureAvailable("sso"),
 };
 
 const DESCRIPTION = buildPricingDescription(OPTIONS);

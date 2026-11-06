@@ -1,6 +1,6 @@
 // Workspace single sign-on: pure and client-safe. The SSO plugin's gate
 // (./sso.ts), the app's server actions and settings page
-// (apps/docs/lib/sso/*, app/dashboard/[workspace]/settings/sso) and tests
+// (apps/docs/ee/sso/*, app/dashboard/[workspace]/settings/sso) and tests
 // share these.
 //
 // A workspace has at most one connection (OIDC or SAML) for one email

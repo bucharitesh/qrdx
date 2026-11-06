@@ -3039,7 +3039,6 @@
                 "props": {
                   "title": "Event name",
                   "description": "A short description.",
-                  "start": "2026-11-12T19:00",
                   "end": "",
                   "allDay": false,
                   "timeZone": "America/Chicago",
@@ -3123,7 +3122,6 @@
                 "props": {
                   "title": "Event name",
                   "description": "A short description.",
-                  "start": "2026-11-12T19:00",
                   "end": "",
                   "allDay": false,
                   "timeZone": "America/Chicago",
@@ -3236,7 +3234,6 @@
                 "props": {
                   "title": "Event name",
                   "description": "A short description.",
-                  "start": "2026-11-12T19:00",
                   "end": "",
                   "allDay": false,
                   "timeZone": "UTC",
@@ -3336,7 +3333,6 @@
                 "props": {
                   "title": "Event name",
                   "description": "A short description.",
-                  "start": "2026-11-12T19:00",
                   "end": "",
                   "allDay": false,
                   "timeZone": "Europe/Lisbon",

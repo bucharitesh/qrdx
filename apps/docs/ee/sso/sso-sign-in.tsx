@@ -7,8 +7,8 @@ import { Button } from "@repo/design-system/components/ui/button";
 import { Input } from "@repo/design-system/components/ui/input";
 import { Label } from "@repo/design-system/components/ui/label";
 import { type FormEvent, useId, useState } from "react";
+import { ssoSignInErrorMessage } from "@/ee/sso/messages";
 import { signInPath } from "@/lib/safe-redirect";
-import { ssoSignInErrorMessage } from "@/lib/sso/messages";
 
 // min-h-10: a 40 px tap target on phones without looking bigger.
 const TEXT_ACTION =
@@ -24,8 +24,8 @@ interface SsoSignInProps {
 
 /**
  * "Sign in with SSO": a work email finds the company's identity provider
- * (packages/auth/sso.ts), then the browser goes there. Failures on the way
- * back land on /sign-in with ?error= (lib/sso/messages.ts).
+ * (packages/auth/ee/sso.ts), then the browser goes there. Failures on the way
+ * back land on /sign-in with ?error= (ee/sso/messages.ts).
  */
 export function SsoSignIn({
   callbackURL,
