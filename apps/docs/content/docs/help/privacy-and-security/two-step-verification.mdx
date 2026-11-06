@@ -3,7 +3,7 @@ title: Two-step verification
 description: Ask for a code from an authenticator app every time you sign in, keep backup codes, and get back in if you lose your phone.
 ---
 
-Two-step verification (also called 2FA) adds a second step to signing in. After your email code, Google, GitHub or workspace single sign-on, QRdx asks for a 6-digit code from an authenticator app. Someone who gets into your email or your Google account still can't get into QRdx without that code.
+Two-step verification (also called 2FA) adds a second step to signing in. After you sign in with an email code, Google or GitHub<IfAvailable feature="sso"> (or your workspace's single sign-on)</IfAvailable>, QRdx asks for a 6-digit code from an authenticator app. Someone who gets into your email or your Google account still can't get into QRdx without that code.
 
 It works with any authenticator app that shows 6-digit codes that change every 30 seconds, including the one-time code feature of most password managers. QRdx doesn't send second-step codes by email or text message.
 
@@ -39,10 +39,18 @@ On the code step, tick **Don't ask again on this device for 30 days** to skip th
 
 ## Which sign-ins ask for a code
 
-All of them: email codes, Google, GitHub and workspace single sign-on.
+All of them: email codes, Google and GitHub<IfAvailable feature="sso">, and workspace single sign-on</IfAvailable>. That includes signing in again in a browser where you're already signed in.
 
 <IfAvailable feature="passkeys">
 The one exception is a [passkey](/docs/help/privacy-and-security/passkeys). A passkey sign-in already uses two factors, the device and your fingerprint, face or device PIN, so QRdx doesn't ask for a code. QRdx only accepts passkeys that check you that way.
+</IfAvailable>
+
+## Changes that ask for a code
+
+With two-step verification on, changing your email address also asks for a code from your authenticator app or a backup code, on top of a sign-in from the last 24 hours. A backup code is used up.
+
+<IfAvailable feature="passkeys">
+So does adding a [passkey](/docs/help/privacy-and-security/passkeys).
 </IfAvailable>
 
 ## Turn it off

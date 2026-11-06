@@ -25,11 +25,14 @@ const NO_ORIGIN = new URL("https://unknown.invalid");
 export async function PasskeysSection({
   userId,
   recentSignIn,
+  twoFactorOn,
 }: {
   /** The signed-in user (the page has already checked the session) */
   userId: string;
   /** Signed in within the last day, so a passkey can be added now */
   recentSignIn: boolean;
+  /** Two-step verification is on, so adding one asks for a current code */
+  twoFactorOn: boolean;
 }) {
   if (!isFeatureAvailable("passkeys")) return null;
   const requestHeaders = await headers();
@@ -60,5 +63,11 @@ export async function PasskeysSection({
     providerName: (aaguid) => getAuthenticatorName(aaguid ?? undefined),
   });
 
-  return <PasskeysList passkeys={passkeys} recentSignIn={recentSignIn} />;
+  return (
+    <PasskeysList
+      passkeys={passkeys}
+      recentSignIn={recentSignIn}
+      twoFactorOn={twoFactorOn}
+    />
+  );
 }

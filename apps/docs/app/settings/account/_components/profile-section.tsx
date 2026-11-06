@@ -31,6 +31,8 @@ export interface ProfileView {
   canUpload: boolean;
   /** Signed in within the last day, so the email can be changed now */
   recentSignIn: boolean;
+  /** Two-step verification is on, so changing it asks for a current code */
+  twoFactorOn: boolean;
 }
 
 function Avatar({
@@ -296,6 +298,7 @@ function EmailField({ profile }: { profile: ProfileView }) {
         onOpenChange={setOpen}
         open={open}
         recentSignIn={profile.recentSignIn}
+        twoFactorOn={profile.twoFactorOn}
       />
     </>
   );

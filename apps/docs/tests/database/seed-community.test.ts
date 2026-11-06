@@ -56,6 +56,7 @@ import * as seed from "../../../../packages/database/scripts/seed-community.mjs"
 import {
   buildSeedPageTemplates,
   SEED_KITS,
+  withoutEventStarts,
 } from "../../scripts/community-seed/page-templates";
 import {
   buildPresetSeedThemes,
@@ -212,11 +213,22 @@ describe("the page templates and kits", () => {
         page: { type: string; content: Parameters<typeof scrubPageContent>[0] };
       };
       // The app's own validator, in write mode (as a save checks a page).
-      expect(readPageTemplate(payload, "write"), item.slug).not.toBeNull();
-      // Scrubbing it again changes nothing: no real text, links or photos.
-      expect(scrubPageContent(payload.page.content).content, item.slug).toEqual(
-        payload.page.content,
-      );
+      const used = readPageTemplate(payload, "write");
+      expect(used, item.slug).not.toBeNull();
+      // Event dates aren't stored: using the template fills in a future one.
+      for (const block of used?.page.content.blocks ?? []) {
+        if (block.type !== "event") continue;
+        const start = String((block.props as { start?: unknown }).start);
+        expect(start.slice(0, 10) > new Date().toISOString().slice(0, 10)).toBe(
+          true,
+        );
+      }
+      // Scrubbing it again changes nothing: no real text, links or photos
+      // (parsing fills the event date back in, so it's left out here too).
+      expect(
+        withoutEventStarts(scrubPageContent(payload.page.content).content),
+        item.slug,
+      ).toEqual(payload.page.content);
       const json = JSON.stringify(payload);
       expect(json, item.slug).not.toMatch(
         /\.(?:webp|png|jpe?g|gif|svg|avif)\b|\/images\/templates\/|fileId/i,

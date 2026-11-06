@@ -12,6 +12,7 @@
 // are decided in lib/integration-availability-rules.ts, which defers to these
 // rules for the catalog entries that are really built-in features.
 
+import { EE_LICENSE_ENV } from "@repo/auth/ee-license";
 import { passkeyRelyingParty } from "@repo/auth/passkey-rp";
 import {
   WORKSPACE_PATTERN_PREFIX,
@@ -31,6 +32,7 @@ export const FEATURE_IDS = [
   "youtubeChannelPicker",
   "spotifyPlaylistPicker",
   "passkeys",
+  "sso",
 ] as const;
 
 export type FeatureId = (typeof FEATURE_IDS)[number];
@@ -163,6 +165,17 @@ export const FEATURE_RULES: Record<FeatureId, FeatureRule> = {
         NEXT_PUBLIC_APP_URL: ctx.env.NEXT_PUBLIC_APP_URL,
       }) !== null,
     paths: ["/docs/help/privacy-and-security/passkeys"],
+  },
+  sso: {
+    // Workspace single sign-on is in ee/ under the QRdx commercial licence
+    // and runs only with a licence key (packages/auth/ee-license.ts): without
+    // one the server doesn't register it at all.
+    name: "Workspace SSO (QRdx license key)",
+    requires: () => [EE_LICENSE_ENV],
+    paths: [
+      `${WORKSPACE_PATTERN_PREFIX}/settings/sso`,
+      "/docs/help/teams/single-sign-on",
+    ],
   },
 };
 

@@ -35,8 +35,8 @@ import type { ActiveScope } from "@/lib/scope";
 import { SSO_REAUTH_MESSAGE } from "./messages";
 
 // Settings → Single sign-on. The plugin's management endpoints are off over
-// HTTP (packages/auth/sso.ts SSO_SERVER_ONLY_PATHS), so these functions,
-// called by actions/sso.ts and the settings page, are the only way in. Each
+// HTTP (packages/auth/ee/sso.ts SSO_SERVER_ONLY_PATHS), so these functions,
+// called by ee/sso/actions.ts and the settings page, are the only way in. Each
 // checks the QRdx role (sso.manage), the Business plan and, for changes to
 // the connection itself, a recent sign-in, before calling auth.api with the
 // person's own session (the plugin then checks owner/admin again).

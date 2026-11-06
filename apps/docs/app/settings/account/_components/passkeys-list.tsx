@@ -36,6 +36,7 @@ import {
   PASSKEY_MESSAGES,
   type PasskeyView,
 } from "@/lib/account/passkeys";
+import { secondFactorCodeKind } from "@/lib/auth/two-factor";
 import { browserHasPasskeys } from "@/lib/passkeys";
 import {
   addPasskey,
@@ -92,14 +93,18 @@ function AddPasskeyDialog({
   open,
   onOpenChange,
   recentSignIn,
+  twoFactorOn,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   recentSignIn: boolean;
+  /** Two-step verification is on: a current code is needed (server-checked) */
+  twoFactorOn: boolean;
 }) {
   const id = useId();
   const router = useRouter();
   const [name, setName] = useState("");
+  const [twoFactorCode, setTwoFactorCode] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [adding, setAdding] = useState(false);
   const [mustSignInAgain, setMustSignInAgain] = useState(!recentSignIn);
@@ -108,8 +113,12 @@ function AddPasskeyDialog({
   useEffect(() => {
     if (!open) return;
     setName(defaultPasskeyName(navigator.userAgent));
+    setTwoFactorCode("");
     setError(null);
   }, [open]);
+
+  const codeReady =
+    !twoFactorOn || secondFactorCodeKind(twoFactorCode) !== null;
 
   const close = () => {
     if (!adding) onOpenChange(false);
@@ -122,7 +131,7 @@ function AddPasskeyDialog({
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (adding) return;
+    if (adding || !codeReady) return;
     setAdding(true);
     setError(null);
     let serverMessage: string | null = null;
@@ -136,7 +145,12 @@ function AddPasskeyDialog({
     try {
       const { error: failure } = await addPasskeyWith(
         {
-          options: async () => fromServer(await passkeyRegistrationOptions()),
+          options: async () =>
+            fromServer(
+              await passkeyRegistrationOptions(
+                twoFactorOn ? { twoFactorCode } : undefined,
+              ),
+            ),
           verify: async (body) => fromServer(await addPasskey(body)),
         },
         { name: name.trim() || undefined },
@@ -213,6 +227,36 @@ function AddPasskeyDialog({
                 So you can tell your passkeys apart later.
               </p>
             </div>
+            {twoFactorOn && (
+              <div className="space-y-2">
+                <Label htmlFor={`${id}-code`}>
+                  Code from your authenticator app, or a backup code
+                </Label>
+                <Input
+                  aria-describedby={`${id}-code-hint ${id}-error`}
+                  autoCapitalize="none"
+                  autoComplete="one-time-code"
+                  autoCorrect="off"
+                  className={`${TAP} font-mono`}
+                  disabled={adding}
+                  id={`${id}-code`}
+                  onChange={(event) => {
+                    setTwoFactorCode(event.target.value);
+                    setError(null);
+                  }}
+                  placeholder="123456"
+                  spellCheck={false}
+                  value={twoFactorCode}
+                />
+                <p
+                  className="text-muted-foreground text-xs text-pretty"
+                  id={`${id}-code-hint`}
+                >
+                  Two-step verification is on, so adding a passkey needs a code.
+                  A backup code is used up.
+                </p>
+              </div>
+            )}
             <p
               aria-live="polite"
               className="text-destructive text-sm text-pretty empty:hidden"
@@ -231,7 +275,11 @@ function AddPasskeyDialog({
               >
                 Cancel
               </Button>
-              <Button className={TAP} disabled={adding} type="submit">
+              <Button
+                className={TAP}
+                disabled={adding || !codeReady}
+                type="submit"
+              >
                 {adding && <Spinner className="animate-spin" />}
                 Continue
               </Button>
@@ -348,9 +396,11 @@ function RenamePasskeyDialog({
 export function PasskeysList({
   passkeys,
   recentSignIn,
+  twoFactorOn,
 }: {
   passkeys: PasskeyView[];
   recentSignIn: boolean;
+  twoFactorOn: boolean;
 }) {
   const router = useRouter();
   // Unknown until mounted; the button stays disabled until then.
@@ -464,6 +514,7 @@ export function PasskeysList({
         onOpenChange={setAdding}
         open={adding}
         recentSignIn={recentSignIn}
+        twoFactorOn={twoFactorOn}
       />
       <RenamePasskeyDialog
         onClose={() => setRenaming(null)}
