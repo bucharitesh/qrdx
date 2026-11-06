@@ -165,6 +165,13 @@ export function ssoServiceProviderUrls(
 
 const SIGN_IN_PATH = "/sign-in";
 
+/** Error codes QRdx sends back for SSO sign-ins (apps/docs/ee/sso/messages.ts). */
+export const SSO_SIGN_IN_ERROR = {
+  outsideDomain: "sso_email_outside_domain",
+  emailUnverified: "sso_email_unverified",
+  emailMissing: "sso_email_missing",
+} as const;
+
 /**
  * Where a failed SSO sign-in should land: the sign-in page with the error
  * code and the page the person was going to, like an OIDC failure (which
@@ -199,4 +206,48 @@ export function ssoFailureRedirect(
   if (next) target.set("next", next);
   target.set("error", error.replaceAll(" ", "_"));
   return `${SIGN_IN_PATH}?${target}`;
+}
+
+// ---- What the identity provider sends ----
+
+/**
+ * True when a claim or attribute value says "not verified" outright: false,
+ * 0, "false" or "0" (any one value of a list). Absent, true and anything
+ * else is not a "no".
+ */
+export function saysNotVerified(value: unknown): boolean {
+  const values = Array.isArray(value) ? value : [value];
+  return values.some(
+    (entry) =>
+      entry === false ||
+      entry === 0 ||
+      (typeof entry === "string" &&
+        ["false", "0"].includes(entry.trim().toLowerCase()))
+  );
+}
+
+/** SAML attributes some identity providers use for "email verified". */
+const SAML_EMAIL_VERIFIED_ATTRIBUTES = ["email_verified", "emailVerified"];
+
+/**
+ * True when the identity provider explicitly says the address isn't
+ * verified: OIDC's email_verified claim, or a SAML email-verified attribute.
+ * Providers that don't say either way are trusted for the verified domain.
+ */
+export function ssoEmailUnverified(
+  protocol: "oidc" | "saml",
+  profile: Record<string, unknown> | null | undefined
+): boolean {
+  if (!profile) return false;
+  if (protocol === "oidc") return saysNotVerified(profile.email_verified);
+  return SAML_EMAIL_VERIFIED_ATTRIBUTES.some((name) =>
+    saysNotVerified(profile[name])
+  );
+}
+
+/** True for something shaped like an email address (one @, text around it). */
+export function looksLikeEmail(value: unknown): boolean {
+  return (
+    typeof value === "string" && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim())
+  );
 }

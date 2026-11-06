@@ -10,9 +10,12 @@ import {
   emailInSsoDomain,
   isSsoJoinRole,
   isSsoProviderId,
+  looksLikeEmail,
   newSsoProviderId,
   normalizeSsoDomain,
   SSO_JOIN_ROLES,
+  saysNotVerified,
+  ssoEmailUnverified,
   ssoFailureRedirect,
   ssoJoinRoleFromMetadata,
   ssoServiceProviderUrls,
@@ -231,6 +234,59 @@ describe("sign-in messages", () => {
     );
     expect(ssoSignInErrorMessage("sso_unavailable")).toMatch(/isn't available/);
     expect(ssoSignInErrorMessage("whatever")).toMatch(/didn't work/);
+  });
+
+  it("say what the identity provider got wrong", () => {
+    expect(ssoSignInErrorMessage("sso_email_unverified")).toBe(
+      "Your company's sign-in system hasn't confirmed this email address, so QRdx can't sign you in with it. Its admin needs to verify email addresses there.",
+    );
+    expect(ssoSignInErrorMessage("sso_email_missing")).toMatch(
+      /didn't send an email address/,
+    );
+    expect(ssoSignInErrorMessage("sso_email_missing")).not.toMatch(/domain/);
+  });
+});
+
+describe("what the identity provider sends", () => {
+  it("counts only an explicit no as unverified", () => {
+    for (const no of [false, 0, "false", "FALSE", " 0 ", ["true", "false"]]) {
+      expect(saysNotVerified(no), JSON.stringify(no)).toBe(true);
+    }
+    for (const notNo of [
+      true,
+      "true",
+      1,
+      "1",
+      undefined,
+      null,
+      "",
+      "yes",
+      [],
+    ]) {
+      expect(saysNotVerified(notNo), JSON.stringify(notNo)).toBe(false);
+    }
+  });
+
+  it("reads email_verified for OIDC and an email-verified attribute for SAML", () => {
+    expect(ssoEmailUnverified("oidc", { email_verified: false })).toBe(true);
+    expect(ssoEmailUnverified("oidc", { email_verified: "false" })).toBe(true);
+    expect(ssoEmailUnverified("oidc", { email_verified: 0 })).toBe(true);
+    expect(ssoEmailUnverified("oidc", { email_verified: true })).toBe(false);
+    expect(ssoEmailUnverified("oidc", { email: "a@b.co" })).toBe(false);
+    expect(ssoEmailUnverified("oidc", null)).toBe(false);
+    expect(ssoEmailUnverified("saml", { email_verified: ["false"] })).toBe(
+      true,
+    );
+    expect(ssoEmailUnverified("saml", { emailVerified: "false" })).toBe(true);
+    expect(ssoEmailUnverified("saml", { emailVerified: "true" })).toBe(false);
+    expect(ssoEmailUnverified("saml", { email: "a@b.co" })).toBe(false);
+  });
+
+  it("tells an email address from a user name or an opaque id", () => {
+    expect(looksLikeEmail("ana@acme.com")).toBe(true);
+    for (const value of ["ulla", "G-29a5e34a-f01e-4d86", "", "a@b", null]) {
+      expect(looksLikeEmail(value), String(value)).toBe(false);
+    }
   });
 });
 
