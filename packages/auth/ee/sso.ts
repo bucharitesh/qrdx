@@ -14,6 +14,7 @@ import {
   looksLikeEmail,
   SSO_SIGN_IN_ERROR,
   SSO_TOKEN_PREFIX,
+  samlPersonName,
   ssoEmailUnverified,
   ssoFailureRedirect,
   ssoJoinRoleFromMetadata,
@@ -270,6 +271,9 @@ export const ssoOptions = {
   },
 } satisfies SSOOptions;
 
+/** What the identity provider sent, for the SAML account being created. */
+const samlProfiles = new WeakMap<object, Record<string, unknown>>();
+
 type ValidateUserInfo = NonNullable<
   NonNullable<BetterAuthOptions["user"]>["validateUserInfo"]
 >;
@@ -287,8 +291,12 @@ function refusal(error: string, errorDescription: string) {
  *   refused, for new and existing accounts alike;
  * - something that isn't an email address (a SAML NameID that's a user name
  *   or an opaque id, with no email attribute) is refused as "no address".
+ * Also remembers a new SAML account's attributes for its name (ssoGate).
  */
-export const validateSsoUserInfo: ValidateUserInfo = ({ user, source }) => {
+export const validateSsoUserInfo: ValidateUserInfo = (
+  { user, source },
+  context
+) => {
   const protocol =
     source.method === "sso-oidc"
       ? "oidc"
@@ -311,6 +319,9 @@ export const validateSsoUserInfo: ValidateUserInfo = ({ user, source }) => {
       SSO_ERROR.emailUnverified,
       "Your identity provider says this email address isn't verified."
     );
+  }
+  if (protocol === "saml" && source.action === "create-user" && profile) {
+    samlProfiles.set(context, profile);
   }
 };
 
@@ -351,7 +362,19 @@ export const ssoGate = () =>
                         "This address isn't part of the domain this sign-in is set up for.",
                     });
                   }
-                  return { data: { ...user, emailVerified: true } };
+                  if (context.path !== SAML_ACS_PATH) {
+                    return { data: { ...user, emailVerified: true } };
+                  }
+                  // SAML: the name from the attributes, never the NameID
+                  // (often an opaque id). "" starts it with the address's
+                  // local part, like an email sign-up (../server.ts).
+                  return {
+                    data: {
+                      ...user,
+                      emailVerified: true,
+                      name: samlPersonName(samlProfiles.get(context)),
+                    },
+                  };
                 },
               },
             },

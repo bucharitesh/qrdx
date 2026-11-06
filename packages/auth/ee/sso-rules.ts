@@ -251,3 +251,48 @@ export function looksLikeEmail(value: unknown): boolean {
     typeof value === "string" && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim())
   );
 }
+
+// SAML attribute names for a person's name: friendly names, X.500 OIDs and
+// other common spellings, in the order they're tried.
+const SAML_GIVEN_NAME = ["givenName", "urn:oid:2.5.4.42", "firstName"];
+const SAML_SURNAME = ["surname", "urn:oid:2.5.4.4", "lastName"];
+const SAML_DISPLAY_NAME = [
+  "displayName",
+  "urn:oid:2.16.840.1.113730.3.1.241",
+  "name",
+];
+
+function firstText(
+  attributes: Record<string, unknown>,
+  names: string[]
+): string {
+  for (const name of names) {
+    const value = attributes[name];
+    const values = Array.isArray(value) ? value : [value];
+    const text = values.find(
+      (entry): entry is string =>
+        typeof entry === "string" && entry.trim() !== ""
+    );
+    if (text) return text.trim();
+  }
+  return "";
+}
+
+/**
+ * The person's name from SAML attributes (given name and surname, else a
+ * display name), or "" when there's none. Never the NameID: that's often an
+ * opaque id. With "", the account starts with the address's local part, like
+ * an email sign-up.
+ */
+export function samlPersonName(
+  attributes: Record<string, unknown> | null | undefined
+): string {
+  if (!attributes) return "";
+  const full = [
+    firstText(attributes, SAML_GIVEN_NAME),
+    firstText(attributes, SAML_SURNAME),
+  ]
+    .filter(Boolean)
+    .join(" ");
+  return full || firstText(attributes, SAML_DISPLAY_NAME);
+}
