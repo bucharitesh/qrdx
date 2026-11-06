@@ -36,11 +36,15 @@ QRdx asks for the `openid`, `email` and `profile` scopes and uses PKCE. The issu
    - **Assertion Consumer Service (ACS) URL**
    - **Entity ID (audience)**
    - **Metadata URL**, if your provider can read QRdx's settings from a URL
-3. Send the person's email address as the **NameID** (email format) or as an attribute named `email`. A `displayName` attribute, or `givenName` and `surname`, sets their name.
+3. Send the person's email address as the **NameID** (email format) or as an attribute named `email`. For their name, send `givenName` and `surname` (or `firstName` and `lastName`, or the X.500 names `urn:oid:2.5.4.42` and `urn:oid:2.5.4.4`), or a display name (`displayName`, `name` or `urn:oid:2.16.840.1.113730.3.1.241`). Without a name, QRdx uses the part of the address before the @.
 4. Back in QRdx, enter your **Email domain** and paste your provider's **metadata XML**. Or click **Enter the details instead** and fill in the **Sign-in URL (SSO URL)**, the provider's **entity ID** and its **signing certificate**.
 5. Click **Save connection**.
 
 Your provider has to sign its responses and include an HTTP-Redirect sign-in URL. QRdx turns away responses without a valid signature or without validity times (`NotBefore` and `NotOnOrAfter`).
+
+Signatures have to use SHA-256 or stronger. QRdx turns away responses signed or digested with SHA-1; if your provider is set to SHA-1 for the QRdx app, switch it to SHA-256.
+
+QRdx doesn't sign its sign-in requests. If your provider is set to require signed requests from the QRdx app, turn that off, or it turns people away before they can sign in.
 
 ## Verify your domain
 
@@ -72,6 +76,10 @@ This includes people you removed from the workspace: they rejoin the next time t
 If someone already has a QRdx account with the same email address, signing in with SSO uses that account. They keep their own workspace and everything in it.
 
 QRdx only signs someone in through your connection if the address your provider sends is at your verified domain. Their other ways to sign in, like an email code to the same address, keep working.
+
+Email addresses have to be verified in your identity provider. If it tells QRdx an address isn't verified (OIDC's `email_verified` claim, or a SAML `email_verified` or `emailVerified` attribute, set to false), QRdx doesn't sign the person in, doesn't create an account for them and doesn't link an existing one. They see a message asking your admin to verify addresses there. If your provider doesn't say either way, QRdx trusts it for your verified domain.
+
+Signing out of QRdx doesn't sign anyone out of your identity provider. While they're still signed in there, the next **Sign in with SSO** goes straight through without asking for their password. On a shared computer, sign out of your identity provider too.
 
 ## Remove someone for good
 
