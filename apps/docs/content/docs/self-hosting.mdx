@@ -12,8 +12,9 @@ QRdx is AGPL-3.0 licensed, and you can run the web app (QR editor, accounts, two
 
 ## Requirements
 
-- Docker with Compose v2, or Node.js 22 (22.22.3 or later) and pnpm 10 for the manual setup
-- A way to sign in, so accounts can be created: a GitHub or Google OAuth app, or [Resend](https://resend.com) for email sign-in codes. Codes are emailed only when `NEXT_PUBLIC_APP_URL` isn't `localhost`; `pnpm dev` prints them in the terminal instead.
+- Docker with Compose v2 and BuildKit (Docker Desktop and current Docker Engine include both), or Node.js 22 (22.22.3 or later) and pnpm 10 for the manual setup
+- At least 8 GB of memory for Docker while the image builds
+- A way to sign in, so accounts can be created: a GitHub or Google OAuth app, or [Resend](https://resend.com) for email sign-in codes. Codes are emailed only when `NEXT_PUBLIC_APP_URL` isn't `localhost`. `pnpm dev` prints them in the terminal instead, but the Docker image doesn't, so a local Docker test needs GitHub or Google sign-in.
 - Postgres: the container bundled in `docker-compose.yml`, or a [Neon](https://neon.tech) database
 
 ### How the database connection works
@@ -214,3 +215,6 @@ If a schema change would drop data, `drizzle-kit push` asks for confirmation. In
 - **`migrate` never finishes:** `drizzle-kit push` is waiting for a confirmation. See [Updating](#updating).
 - **A changed `NEXT_PUBLIC_*` value has no effect:** rebuild the image.
 - **Port 4444 is already in use:** change the `db-proxy` port mapping in `docker-compose.yml`. Only local development on the host uses it.
+- **"the --mount option requires BuildKit":** your Docker has no BuildKit. Install the `buildx` plugin, or update Docker.
+- **The build stops with `Killed` or exit code 137:** Docker ran out of memory. Give it at least 8 GB (Docker Desktop: Settings → Resources) and run `docker compose up -d --build` again.
+- **"sign-in code email is off for this deployment":** email codes aren't sent while `NEXT_PUBLIC_APP_URL` is `localhost`. Use GitHub or Google sign-in for a local test.

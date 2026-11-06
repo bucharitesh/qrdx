@@ -47,10 +47,13 @@ ARG NEXT_PUBLIC_FEATUREBASE_APP_ID
 ARG NEXT_PUBLIC_QRDX_PRO_MONTHLY_PRODUCT_ID
 ARG NEXT_PUBLIC_QRDX_PRO_YEARLY_PRODUCT_ID
 # Placeholders only satisfy env validation during `next build`. They stay in
-# this stage and are never copied into the runtime image.
+# this stage and are never copied into the runtime image. There's no database
+# here, so QRDX_BUILD_WITHOUT_DATABASE moves pages that read it to request
+# time (lib/build-without-database.ts).
 ENV NEXT_OUTPUT=standalone \
     DATABASE_URL=postgresql://build:build@localhost:5432/build \
-    BETTER_AUTH_SECRET=build-time-placeholder-not-used-at-runtime
+    BETTER_AUTH_SECRET=build-time-placeholder-not-used-at-runtime \
+    QRDX_BUILD_WITHOUT_DATABASE=1
 # Build args that were passed empty are unset, so optional URL fields are
 # treated as missing instead of failing validation.
 RUN for name in $(env | sed -n 's/^\(NEXT_PUBLIC_[A-Z0-9_]*\)=$/\1/p'); do unset "$name"; done \
