@@ -400,8 +400,9 @@ const SWITCH_TO: Record<SecondStep, string> = {
 };
 
 /**
- * Shows `step` in the second step. It opens with the method used last in
- * this browser, so the others are a click away ("Use a backup code").
+ * Shows `step` in the second step. It opens with the passkey or
+ * authenticator code used last in this browser (a backup code is never
+ * remembered), so the others are a click away ("Use a backup code").
  */
 async function pickMethod(page: Page, step: SecondStep) {
   if ((await secondStepShown(page)) !== step) {
@@ -724,6 +725,19 @@ async function passkeySecondStep(page: Page) {
     check(
       "passkey: a backup code still finishes it",
       (await session(page))?.user?.id === passkeyUser,
+    );
+    // The backup code isn't remembered: the passkey still opens first.
+    const rememberedAfterBackup = await page.evaluate(() => {
+      try {
+        return localStorage.getItem("qrdx:second-step");
+      } catch {
+        return null;
+      }
+    });
+    check(
+      "passkey: a backup-code sign-in keeps the passkey as the remembered method",
+      rememberedAfterBackup === "passkey",
+      String(rememberedAfterBackup),
     );
 
     // A browser that won't verify the person: no error when the prompt
@@ -1192,6 +1206,10 @@ async function main() {
     await clearCookies(page);
     await emailCodeStep(page, USER_EMAIL);
     await waitForText(page, "Your account asks for a second step");
+    check(
+      "a backup-code sign-in isn't remembered: the next one opens on the authenticator code",
+      (await secondStepShown(page)) === "totp",
+    );
     await page.evaluate(() => {
       const box = window.__e2e.byLabel("Don't ask again on this device");
       if (box) window.__e2e.click(box);

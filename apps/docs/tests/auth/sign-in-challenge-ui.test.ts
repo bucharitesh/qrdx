@@ -44,7 +44,7 @@ describe("offeredSteps", () => {
 describe("firstStep", () => {
   it("starts with the method used last in this browser", () => {
     expect(firstStep(["passkey", "totp", "backup"], "totp")).toBe("totp");
-    expect(firstStep(["passkey", "totp", "backup"], "backup")).toBe("backup");
+    expect(firstStep(["totp", "backup", "passkey"], "passkey")).toBe("passkey");
   });
 
   it("else with the best one offered", () => {
@@ -74,6 +74,31 @@ describe("the remembered method", () => {
     expect([...store.values()]).toEqual(["passkey"]);
     store.set([...store.keys()][0], "something else");
     expect(readRememberedStep()).toBeNull();
+  });
+
+  it("never remembers a backup code, and keeps what was there", () => {
+    const store = new Map<string, string>();
+    vi.stubGlobal("window", {
+      localStorage: {
+        getItem: (key: string) => store.get(key) ?? null,
+        setItem: (key: string, value: string) => store.set(key, value),
+      },
+    });
+    rememberStep("backup");
+    expect(readRememberedStep()).toBeNull();
+    expect(store.size).toBe(0);
+    rememberStep("totp");
+    rememberStep("backup");
+    expect(readRememberedStep()).toBe("totp");
+    rememberStep("passkey");
+    rememberStep("backup");
+    expect(readRememberedStep()).toBe("passkey");
+    // A stored "backup" is ignored.
+    store.set([...store.keys()][0], "backup");
+    expect(readRememberedStep()).toBeNull();
+    expect(firstStep(["passkey", "totp", "backup"], readRememberedStep())).toBe(
+      "passkey",
+    );
   });
 
   it("works without storage", () => {
