@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto";
 import { discoverOIDCConfig, type SSOOptions } from "@better-auth/sso";
 import * as schema from "@repo/database";
 import { and, database as db, eq } from "@repo/database";
-import type { BetterAuthPlugin } from "better-auth";
+import type { BetterAuthOptions, BetterAuthPlugin } from "better-auth";
 import { APIError, createAuthMiddleware, isAPIError } from "better-auth/api";
 import { workspacePlanTier } from "../plan";
 import {
@@ -11,7 +11,14 @@ import {
   domainsOverlap,
   emailDomain,
   emailInSsoDomain,
+  looksLikeEmail,
+  SAML_DIGEST_ALGORITHMS,
+  SAML_SIGNATURE_ALGORITHMS,
+  SSO_SIGN_IN_ERROR,
   SSO_TOKEN_PREFIX,
+  samlPersonName,
+  samlWeakAlgorithms,
+  ssoEmailUnverified,
   ssoFailureRedirect,
   ssoJoinRoleFromMetadata,
 } from "./sso-rules";
@@ -22,6 +29,9 @@ import {
 // - sign-in only through a verified connection of a workspace on Business,
 //   found from the person's work email (never a provider id from the client);
 // - a new account only for an address inside the connection's domain;
+// - no sign-in when the identity provider says the address isn't verified,
+//   or sends no address at all (validateSsoUserInfo);
+// - SAML responses signed with SHA-256 or stronger only;
 // - joining the workspace at every SSO sign-in (rejoining after a removal,
 //   accepting a pending invitation), with the role the workspace picked
 //   (member or viewer) or the invitation's.
@@ -55,11 +65,12 @@ export const SSO_ERROR = {
   emailRequired: "SSO_EMAIL_REQUIRED",
   notFound: "SSO_NOT_FOUND",
   unavailable: "SSO_NOT_AVAILABLE",
-  outsideDomain: "sso_email_outside_domain",
+  ...SSO_SIGN_IN_ERROR,
 } as const;
 
 /** Where a refused callback lands (the sign-in page shows the message). */
 const UNAVAILABLE_REDIRECT = "/sign-in?error=sso_unavailable";
+const WEAK_SIGNATURE_REDIRECT = `/sign-in?error=${SSO_ERROR.weakSignature}`;
 
 type ProviderRow = typeof schema.ssoProvider.$inferSelect;
 
@@ -262,8 +273,70 @@ export const ssoOptions = {
   saml: {
     // Reject assertions without NotBefore/NotOnOrAfter (SAML2Int).
     requireTimestamps: true,
+    // SHA-256 or stronger wherever the plugin checks. It only sees the
+    // algorithm of redirect-bound messages, so ssoGate checks POSTed
+    // responses itself (samlWeakAlgorithms).
+    algorithms: {
+      onDeprecated: "reject",
+      allowedSignatureAlgorithms: SAML_SIGNATURE_ALGORITHMS,
+      allowedDigestAlgorithms: SAML_DIGEST_ALGORITHMS,
+    },
   },
 } satisfies SSOOptions;
+
+/** What the identity provider sent, for the SAML account being created. */
+const samlProfiles = new WeakMap<object, Record<string, unknown>>();
+
+type ValidateUserInfo = NonNullable<
+  NonNullable<BetterAuthOptions["user"]>["validateUserInfo"]
+>;
+
+function refusal(error: string, errorDescription: string) {
+  return { error, errorDescription };
+}
+
+/**
+ * The auth options' `user.validateUserInfo`, for SSO sign-ins (other methods
+ * pass). Runs before an account is created, linked or signed in, with what
+ * the identity provider sent (OIDC: its userinfo claims, or the ID token's
+ * when it has no userinfo endpoint; SAML: the response's attributes):
+ * - an address the identity provider explicitly marks unverified is
+ *   refused, for new and existing accounts alike;
+ * - something that isn't an email address (a SAML NameID that's a user name
+ *   or an opaque id, with no email attribute) is refused as "no address".
+ * Also remembers a new SAML account's attributes for its name (ssoGate).
+ */
+export const validateSsoUserInfo: ValidateUserInfo = (
+  { user, source },
+  context
+) => {
+  const protocol =
+    source.method === "sso-oidc"
+      ? "oidc"
+      : source.method === "sso-saml"
+        ? "saml"
+        : null;
+  if (!protocol) return;
+  const profile =
+    source.sso?.profile && typeof source.sso.profile === "object"
+      ? (source.sso.profile as Record<string, unknown>)
+      : null;
+  if (!looksLikeEmail(user.email)) {
+    return refusal(
+      SSO_ERROR.emailMissing,
+      "Your identity provider didn't send an email address."
+    );
+  }
+  if (ssoEmailUnverified(protocol, profile)) {
+    return refusal(
+      SSO_ERROR.emailUnverified,
+      "Your identity provider says this email address isn't verified."
+    );
+  }
+  if (protocol === "saml" && source.action === "create-user" && profile) {
+    samlProfiles.set(context, profile);
+  }
+};
 
 /**
  * The checks QRdx adds around the plugin's sign-in endpoints. Registered
@@ -302,7 +375,19 @@ export const ssoGate = () =>
                         "This address isn't part of the domain this sign-in is set up for.",
                     });
                   }
-                  return { data: { ...user, emailVerified: true } };
+                  if (context.path !== SAML_ACS_PATH) {
+                    return { data: { ...user, emailVerified: true } };
+                  }
+                  // SAML: the name from the attributes, never the NameID
+                  // (often an opaque id). "" starts it with the address's
+                  // local part, like an email sign-up (../server.ts).
+                  return {
+                    data: {
+                      ...user,
+                      emailVerified: true,
+                      name: samlPersonName(samlProfiles.get(context)),
+                    },
+                  };
                 },
               },
             },
@@ -400,9 +485,26 @@ export const ssoGate = () =>
             // ACS by GET only forwards someone already signed in.
             if (ctx.path === SAML_ACS_PATH && ctx.method === "GET") return;
             const provider = await providerById(ctx.params?.providerId);
-            if (provider && (await ssoProviderUsable(provider))) return;
             // Relative, so it works without a fixed base URL too.
-            throw ctx.redirect(UNAVAILABLE_REDIRECT);
+            if (!(provider && (await ssoProviderUsable(provider)))) {
+              throw ctx.redirect(UNAVAILABLE_REDIRECT);
+            }
+            // SAML responses signed or digested with SHA-1 (or anything
+            // weaker than SHA-256) are refused before the plugin reads them.
+            if (ctx.path === SAML_ACS_PATH) {
+              const response = (ctx.body as Record<string, unknown> | undefined)
+                ?.SAMLResponse;
+              if (
+                typeof response === "string" &&
+                samlWeakAlgorithms(
+                  Buffer.from(response.replace(/\s+/g, ""), "base64").toString(
+                    "utf8"
+                  )
+                ).length > 0
+              ) {
+                throw ctx.redirect(WEAK_SIGNATURE_REDIRECT);
+              }
+            }
           }),
         },
       ],
