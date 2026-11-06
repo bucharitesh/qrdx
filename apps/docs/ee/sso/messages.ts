@@ -21,6 +21,8 @@ export function ssoSignInErrorMessage(
       return "Your company's sign-in system hasn't confirmed this email address, so QRdx can't sign you in with it. Its admin needs to verify email addresses there.";
     case "sso_email_missing":
       return "Your company's sign-in system didn't send an email address, so QRdx can't sign you in. Ask your workspace admin.";
+    case "sso_weak_signature":
+      return "Your company's sign-in system signed this sign-in with SHA-1 or another outdated algorithm, which QRdx doesn't accept. Its admin needs to switch the QRdx app's signature algorithm to SHA-256.";
     case "account_not_linked":
     case "account not linked":
       return "An account with this address already exists and couldn't be linked. Sign in with an email code instead.";

@@ -170,6 +170,7 @@ export const SSO_SIGN_IN_ERROR = {
   outsideDomain: "sso_email_outside_domain",
   emailUnverified: "sso_email_unverified",
   emailMissing: "sso_email_missing",
+  weakSignature: "sso_weak_signature",
 } as const;
 
 /**
@@ -295,4 +296,50 @@ export function samlPersonName(
     .filter(Boolean)
     .join(" ");
   return full || firstText(attributes, SAML_DISPLAY_NAME);
+}
+
+// ---- SAML signature algorithms ----
+
+/** Signature algorithms QRdx accepts on SAML responses: SHA-256 or stronger. */
+export const SAML_SIGNATURE_ALGORITHMS = [
+  "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256",
+  "http://www.w3.org/2001/04/xmldsig-more#rsa-sha384",
+  "http://www.w3.org/2001/04/xmldsig-more#rsa-sha512",
+  "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha256",
+  "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha384",
+  "http://www.w3.org/2001/04/xmldsig-more#ecdsa-sha512",
+];
+
+/** Digest algorithms QRdx accepts on SAML responses: SHA-256 or stronger. */
+export const SAML_DIGEST_ALGORITHMS = [
+  "http://www.w3.org/2001/04/xmlenc#sha256",
+  "http://www.w3.org/2001/04/xmldsig-more#sha384",
+  "http://www.w3.org/2001/04/xmlenc#sha512",
+];
+
+// A SignatureMethod or DigestMethod start tag (quoted values may hold ">"),
+// then its Algorithm attribute.
+const METHOD_TAG_RE =
+  /<(?:[\w.-]+:)?(SignatureMethod|DigestMethod)\b((?:[^>"']|"[^"]*"|'[^']*')*)>/g;
+const ALGORITHM_ATTRIBUTE_RE = /(?:^|\s)Algorithm\s*=\s*(["'])(.*?)\1/;
+
+/**
+ * Every signature or digest algorithm in a SAML response's XML that isn't
+ * SHA-256 or stronger (SHA-1, for one), wherever it appears. Anything not on
+ * the allowed lists counts, so an odd spelling is refused rather than let
+ * through. Empty when all are allowed, or when the response isn't signed
+ * (the plugin refuses that itself).
+ */
+export function samlWeakAlgorithms(xml: string): string[] {
+  const weak = new Set<string>();
+  for (const [, element, attributes] of xml.matchAll(METHOD_TAG_RE)) {
+    const algorithm =
+      attributes?.match(ALGORITHM_ATTRIBUTE_RE)?.[2]?.trim() ?? "";
+    const allowed =
+      element === "SignatureMethod"
+        ? SAML_SIGNATURE_ALGORITHMS
+        : SAML_DIGEST_ALGORITHMS;
+    if (!allowed.includes(algorithm)) weak.add(algorithm || "(none)");
+  }
+  return [...weak];
 }

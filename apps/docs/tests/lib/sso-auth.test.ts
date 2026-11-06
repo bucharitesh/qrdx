@@ -385,6 +385,57 @@ describe("what the identity provider says about the address", () => {
   });
 });
 
+describe("SAML signature algorithms", () => {
+  const post = (xml: string) =>
+    auth.handler(
+      new Request(
+        "http://localhost:3000/api/auth/sso/saml2/sp/acs/sso-abcdefabcdef",
+        {
+          method: "POST",
+          headers: {
+            "content-type": "application/x-www-form-urlencoded",
+            origin: "http://localhost:3000",
+          },
+          body: new URLSearchParams({
+            SAMLResponse: Buffer.from(xml).toString("base64"),
+          }),
+        },
+      ),
+    );
+  const response = (signature: string, digest: string) =>
+    `<samlp:Response xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"><ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#"><ds:SignedInfo><ds:SignatureMethod Algorithm="${signature}"/><ds:Reference><ds:DigestMethod Algorithm="${digest}"/></ds:Reference></ds:SignedInfo></ds:Signature></samlp:Response>`;
+
+  it("turns away a POSTed response signed or digested with SHA-1", async () => {
+    stubDb({ providers: [provider()] });
+    for (const xml of [
+      response(
+        "http://www.w3.org/2000/09/xmldsig#rsa-sha1",
+        "http://www.w3.org/2001/04/xmlenc#sha256",
+      ),
+      response(
+        "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256",
+        "http://www.w3.org/2000/09/xmldsig#sha1",
+      ),
+    ]) {
+      const result = await post(xml);
+      expect(result.status).toBe(302);
+      expect(result.headers.get("location")).toBe(
+        "/sign-in?error=sso_weak_signature",
+      );
+    }
+  });
+
+  it("is also the plugin's own rule", async () => {
+    const { ssoOptions } = await import("@repo/auth/sso");
+    expect(ssoOptions.saml.algorithms).toMatchObject({
+      onDeprecated: "reject",
+    });
+    expect(ssoOptions.saml.algorithms.allowedSignatureAlgorithms).not.toContain(
+      "http://www.w3.org/2000/09/xmldsig#rsa-sha1",
+    );
+  });
+});
+
 describe("joining the workspace at every SSO sign-in", () => {
   type Write = {
     table: unknown;
