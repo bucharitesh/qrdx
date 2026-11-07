@@ -1,28 +1,34 @@
-// Passkeys end to end against a running dev server, in headless Chrome with
-// a CDP virtual authenticator (WebAuthn domain), no Playwright:
+// Settings → Two-step verification and "Confirm it's you" end to end against
+// a running dev server, in headless Chrome with a CDP virtual authenticator
+// (WebAuthn domain), no Playwright:
 //
-//   sign in with an email code (read from the dev server's log) → add a
-//   passkey in Settings → rename it → sign out → sign in with the button →
-//   "Last used" → autofill → an assertion without user verification is
-//   refused by the server (no session) → too-old sign-in asks to sign in
-//   again → remove it. The management endpoints are checked to be off over
-//   HTTP. Then, with two-step verification: a second account turns it on
-//   (as e2e/two-factor.e2e.ts does) and adds a passkey; a passkey sign-in
-//   gets a session with no two-step challenge, while an email-code sign-in
-//   is challenged (twoFactorRedirect, no session) until a TOTP code.
-//   Screenshots of each screen, light and dark, go to E2E_SHOTS.
+//   sign up with an email code → Turn on → "Confirm it's you" with an
+//   emailed code → the stepper: Passkey → name → browser prompt → backup
+//   codes → on, passkeys only (TOTP refused, no authenticator option to
+//   confirm with) → add the authenticator app as a second method (no new
+//   codes, no second confirmation within 10 minutes) → rename a passkey →
+//   new backup codes, confirmed with the passkey → remove the app,
+//   confirmed with an authenticator code after "Use another method" → remove
+//   the last passkey (the dialog says it turns off) → turn on again with the
+//   app first (the session swap keeps the confirmation) → add a passkey →
+//   turn off (passkeys stay) → "Your passkey is ready" → turn on with it →
+//   change the email and delete the account, each through the dialog.
+//   The management endpoints are checked to be off over HTTP. Screenshots
+//   of each screen, light and dark, go to E2E_SHOTS.
 //
-//   E2E_BASE_URL=http://localhost:3112 \
+//   E2E_BASE_URL=http://localhost:3230 \
 //   E2E_CODE_LOG=<the dev server's log file> \
 //   E2E_SHOTS=<directory> \
 //   E2E_DB_SQL='<command that runs SQL on the LOCAL database, reading stdin>' \
-//   pnpm --filter docs test:e2e:passkeys
+//   [E2E_MOBILE=1] pnpm --filter docs test:e2e:passkeys
 //
-// Sign-in codes are only printed by `next dev` (never emailed there), so
-// this runs against a local dev server only; it skips (exit 0) without a
-// server, Chrome or E2E_CODE_LOG. E2E_DB_SQL is optional: without it the
-// "sign in again" check is skipped and says so. Each run signs up a new
-// passkey-e2e-<run>@qrdx.test account.
+// Codes are only printed by `next dev` (never emailed there), so this runs
+// against a local dev server only; it skips (exit 0) without a server,
+// Chrome or E2E_CODE_LOG. E2E_DB_SQL ends confirmations early ("10 minutes
+// later") and reads the two_factor row; without it those checks are
+// skipped and say so. Each run signs up a new passkey-e2e-<run>@qrdx.test
+// account. Signing in with a passkey and the passkey second step are
+// e2e/two-factor.e2e.ts's.
 
 /** biome-ignore-all lint/performance/useDomNodeTextContent: checks must only match text a person can see */
 import { execSync } from "node:child_process";
@@ -46,13 +52,14 @@ const CODE_LOG = process.env.E2E_CODE_LOG;
 const SHOTS = process.env.E2E_SHOTS;
 /**
  * E2E_MOBILE=1: a 390 x 844 phone (deviceScaleFactor 2, mobile, touch).
- * Every screenshot then also checks the layout (layoutAt below).
+ * Every screenshot then also checks the layout (LAYOUT_CHECK below).
  */
 const MOBILE = process.env.E2E_MOBILE === "1";
 const DB_SQL = process.env.E2E_DB_SQL;
 const RUN = Date.now().toString(36);
 const EMAIL = `passkey-e2e-${RUN}@qrdx.test`;
-const TWO_FACTOR_EMAIL = `passkey-2fa-e2e-${RUN}@qrdx.test`;
+const NEW_EMAIL = `passkey-e2e-${RUN}-new@qrdx.test`;
+const CONFIRM = "Confirm it's you";
 
 // The authenticator app (RFC 6238, SHA-1, 6 digits, 30 s), as in
 // e2e/two-factor.e2e.ts.
@@ -85,93 +92,42 @@ function totp(secret: string, at = Date.now()): string {
   );
 }
 
-/** A 6-digit code that is certainly wrong right now. */
-function wrongTotp(secret: string): string {
-  const valid = new Set(
-    [-30_000, 0, 30_000].map((d) => totp(secret, Date.now() + d)),
-  );
-  for (let n = 111_111; ; n++) {
-    if (!valid.has(String(n))) return String(n);
-  }
-}
-
 type Page = Awaited<ReturnType<typeof launch>>;
-
-/**
- * In the page: a passkey sign-in that asks the authenticator for no user
- * verification ("discouraged") and posts the assertion straight to the
- * server, as a client ignoring QRdx's "required" would. Plain JS source
- * (tsx would add helpers that don't exist in the page).
- */
-const FORGED_ASSERTION = `async () => {
-  const b64 = (s) =>
-    Uint8Array.from(atob(s.replace(/-/g, "+").replace(/_/g, "/")), (c) =>
-      c.charCodeAt(0),
-    );
-  const enc = (buf) =>
-    btoa(String.fromCharCode(...new Uint8Array(buf)))
-      .replace(/\\+/g, "-")
-      .replace(/\\//g, "_")
-      .replace(/=+$/, "");
-  const options = await (
-    await fetch("/api/auth/passkey/generate-authenticate-options")
-  ).json();
-  const credential = await navigator.credentials.get({
-    publicKey: {
-      challenge: b64(options.challenge),
-      rpId: options.rpId,
-      userVerification: "discouraged",
-    },
-  });
-  const response = credential.response;
-  const flags = new Uint8Array(response.authenticatorData)[32];
-  const res = await fetch("/api/auth/passkey/verify-authentication", {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({
-      response: {
-        id: credential.id,
-        rawId: enc(credential.rawId),
-        type: credential.type,
-        clientExtensionResults: {},
-        response: {
-          clientDataJSON: enc(response.clientDataJSON),
-          authenticatorData: enc(response.authenticatorData),
-          signature: enc(response.signature),
-          userHandle: response.userHandle ? enc(response.userHandle) : undefined,
-        },
-      },
-    }),
-  });
-  return {
-    userVerifiedFlag: Boolean(flags & 0x04),
-    status: res.status,
-    body: await res.json().catch(() => null),
-  };
-}`;
 
 const results: { name: string; ok: boolean; detail?: string }[] = [];
 
+/** Set once the browser is up: what a failed step leaves on screen. */
+let onFailure: ((name: string) => Promise<void>) | null = null;
+
 async function step(name: string, fn: () => Promise<true | string>) {
+  let ok = false;
   try {
     const outcome = await fn();
-    const ok = outcome === true;
-    results.push({ name, ok, detail: ok ? undefined : outcome });
+    ok = outcome === true;
+    results.push({
+      name,
+      ok,
+      detail: outcome === true ? undefined : outcome,
+    });
     console.log(`${ok ? "  ✓" : "  ✗"} ${name}${ok ? "" : ` — ${outcome}`}`);
-    return ok;
   } catch (error) {
     const detail = error instanceof Error ? error.message : String(error);
     results.push({ name, ok: false, detail });
     console.log(`  ✗ ${name} — ${detail}`);
-    return false;
   }
+  if (!ok && onFailure) await onFailure(name).catch(() => {});
+  return ok;
 }
 
-function latestCode(email: string): string | null {
+const escapeRegExp = (value: string) =>
+  value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+/** The last code of a kind the dev server logged for an address. */
+function latestLogged(kind: string, email: string): string | null {
   if (!CODE_LOG) return null;
   const log = readFileSync(CODE_LOG, "utf8");
   const pattern = new RegExp(
-    `QRdx sign-in code for ${email.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}: (\\d{6})`,
+    `QRdx ${kind} for ${escapeRegExp(email)}: (\\d{6})`,
     "g",
   );
   let code: string | null = null;
@@ -179,17 +135,47 @@ function latestCode(email: string): string | null {
   return code;
 }
 
-function logHas(text: string): boolean {
-  return Boolean(CODE_LOG && readFileSync(CODE_LOG, "utf8").includes(text));
+async function nextLogged(
+  kind: string,
+  email: string,
+  previous: string | null,
+): Promise<string> {
+  for (let i = 0; i < 80; i++) {
+    const latest = latestLogged(kind, email);
+    if (latest && latest !== previous) return latest;
+    await sleep(250);
+  }
+  throw new Error(`no new ${kind} in the dev server log`);
+}
+
+/** Runs SQL on the local database (E2E_DB_SQL), returning its output. */
+function sql(statement: string): string {
+  if (!DB_SQL) throw new Error("E2E_DB_SQL not set");
+  return execSync(DB_SQL, {
+    input: statement,
+    encoding: "utf8",
+    stdio: ["pipe", "pipe", "inherit"],
+  });
+}
+
+/**
+ * "10 minutes later": this account's confirmations end now. The app stores
+ * UTC wall times in `timestamp` columns, so `now()` is taken in UTC (the
+ * database's own time zone may be local).
+ */
+function expireConfirmations() {
+  sql(
+    `update "verification" set expires_at = (now() at time zone 'utc') - interval '1 second' where identifier like 'qrdx-confirmed-%';`,
+  );
 }
 
 /**
  * In the page, for the mobile pass: horizontal page scroll, an open dialog
  * that runs past the screen with no way to scroll it, and tap targets
- * under 40 px. Targets are checked in this lane's own UI only (the
- * Passkeys section, passkey dialogs, the passkey sign-in button); other
- * small targets on the same screen are listed for the report. Plain JS
- * source (tsx would add helpers that don't exist in the page).
+ * under 40 px in this lane's UI (the Two-step verification section and its
+ * dialogs, "Confirm it's you"); other small targets on the same screen are
+ * listed for the report. Plain JS source (tsx would add helpers that don't
+ * exist in the page).
  */
 const LAYOUT_CHECK = `() => {
   const root = document.documentElement;
@@ -203,7 +189,8 @@ const LAYOUT_CHECK = `() => {
       .replace(/\\s+/g, " ")
       .trim()
       .slice(0, 40);
-  const dialog = [...document.querySelectorAll('[role="dialog"],[role="alertdialog"]')].find(visible);
+  const dialogs = [...document.querySelectorAll('[role="dialog"],[role="alertdialog"]')].filter(visible);
+  const dialog = dialogs[dialogs.length - 1];
   let dialogOverflow = null;
   if (dialog) {
     const r = dialog.getBoundingClientRect();
@@ -213,26 +200,22 @@ const LAYOUT_CHECK = `() => {
       dialogOverflow = { top: Math.round(r.top), bottom: Math.round(r.bottom), left: Math.round(r.left), right: Math.round(r.right) };
     }
   }
-  // The docs' own navigation (table of contents, sidebars, heading
-  // permalinks) isn't this lane's UI, even where its links say "passkey".
   const lane = (el) =>
-    !el.closest("nav, aside, #nd-toc, #nd-sidebar, h1, h2, h3, h4") &&
-    Boolean(
-      el.closest("#passkeys") ||
-      (dialog && dialog.contains(el) && /passkey/i.test(dialog.textContent || "")) ||
-      /passkey/i.test(el.textContent || "")
-    );
+    Boolean(el.closest("#two-factor") || (dialog && dialog.contains(el)));
   const small = [];
   const others = [];
   const targets = document.querySelectorAll(
-    'button, a[href], input:not([type="hidden"]), [role="checkbox"], [role="switch"]',
+    'button, a[href], input:not([type="hidden"]), [role="checkbox"], [role="radio"]',
   );
   for (const el of targets) {
     if (!visible(el)) continue;
+    // input-otp's real input is a transparent overlay across the slots.
+    if (el.hasAttribute("data-input-otp")) continue;
     const r = el.getBoundingClientRect();
     if (r.bottom < 0 || r.top > innerHeight) continue;
-    // Inline text links inside sentences are sized by the text around them.
     if (el.tagName === "A" && getComputedStyle(el).display === "inline") continue;
+    // Radio and checkbox dots are labelled by a 40 px row around them.
+    if (/^(radio|checkbox)$/.test(el.getAttribute("role") || "") && el.closest("label, [class*=after]")) continue;
     if (r.height >= 40 && r.width >= 40) continue;
     const item = label(el) + " " + Math.round(r.width) + "x" + Math.round(r.height);
     (lane(el) ? small : others).push(item);
@@ -259,8 +242,8 @@ const layout = new Map<string, LayoutReport>();
 
 async function shot(page: Page, name: string) {
   if (!SHOTS) return;
-  // The cookie banner would cover the bottom of every screenshot: decline it
-  // (remembered for the rest of the run), as e2e/two-factor.e2e.ts does.
+  // The cookie banner would cover the bottom of every screenshot: decline
+  // it (remembered for the rest of the run).
   await page.evaluate(() => {
     const button = window.__e2e.byRole("button", "Reject all", {
       exact: true,
@@ -302,16 +285,6 @@ async function session(page: Page): Promise<{ email?: string } | null> {
   });
 }
 
-async function signOut(page: Page) {
-  await page.evaluate(async () => {
-    await fetch("/api/auth/sign-out", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: "{}",
-    });
-  });
-}
-
 /** Clicks a button, inside the open dialog titled `dialog` when given. */
 const clickButton = (page: Page, text: string, dialog?: string) =>
   page.waitFor(
@@ -326,42 +299,97 @@ const clickButton = (page: Page, text: string, dialog?: string) =>
     { args: [text, dialog ?? null] as never[] },
   );
 
-/** The "Name" field of the open dialog titled `title`, as a page expression. */
-const NAME_IN_DIALOG = `(title) => {
-  const dialog = window.__e2e.byRole("dialog", title);
-  return dialog ? window.__e2e.byLabel("Name", dialog) : null;
-}`;
-
-const dialogName = (page: Page, title: string) =>
+/** Clicks a button in a row of the Two-step verification section. */
+const clickInSection = (page: Page, text: string, row: string) =>
   page.waitFor(
-    `(title) => (${NAME_IN_DIALOG})(title)?.value || false` as never,
-    { args: [title] as never[] },
+    (label: string, rowTitle: string) => {
+      const section = document.getElementById("two-factor");
+      if (!section) return false;
+      const rows = [...section.querySelectorAll("p.text-sm.font-medium")];
+      const title = rows.find((el) => el.textContent?.trim() === rowTitle);
+      const container = title?.closest(".flex.flex-col") as HTMLElement | null;
+      const el = container
+        ? window.__e2e.byRole("button", label, { exact: true, root: container })
+        : null;
+      if (!el || (el as HTMLButtonElement).disabled) return false;
+      window.__e2e.click(el);
+      return true;
+    },
+    { args: [text, row] as never[] },
   );
 
-const setDialogName = (page: Page, title: string, value: string) =>
+const dialogOpen = (page: Page, title: string, timeout = 20_000) =>
+  page.waitFor((t: string) => Boolean(window.__e2e.byRole("dialog", t)), {
+    args: [title] as never[],
+    timeout,
+  });
+
+const dialogClosed = (page: Page, title: string, timeout = 20_000) =>
+  page.waitFor((t: string) => !window.__e2e.byRole("dialog", t), {
+    args: [title] as never[],
+    timeout,
+  });
+
+const dialogText = (page: Page, title: string) =>
   page.evaluate(
-    `(title, value) => window.__e2e.setValue((${NAME_IN_DIALOG})(title), value)` as never,
+    (t: string) => window.__e2e.byRole("dialog", t)?.textContent ?? "",
     title,
-    value,
+  ) as Promise<string>;
+
+/** Types a code into the 6-digit field of the dialog titled `title`. */
+async function typeCode(page: Page, title: string, code: string) {
+  await page.waitFor(
+    (t: string, value: string) => {
+      const dialog = window.__e2e.byRole("dialog", t);
+      const input = dialog?.querySelector(
+        "[data-input-otp]",
+      ) as HTMLInputElement | null;
+      if (!input || input.disabled) return false;
+      input.focus();
+      window.__e2e.setValue(input, value);
+      return true;
+    },
+    { args: [title, code] as never[] },
+  );
+}
+
+const sectionText = (page: Page) =>
+  page.evaluate(
+    () => document.getElementById("two-factor")?.textContent ?? "",
+  ) as Promise<string>;
+
+const waitForSection = (page: Page, text: string, timeout = 20_000) =>
+  page.waitFor(
+    (t: string) =>
+      (document.getElementById("two-factor")?.textContent ?? "").includes(t),
+    { args: [text] as never[], timeout },
   );
 
-/** /sign-in → email → the code from the log. Returns once it's entered. */
-async function enterEmailCode(page: Page, email: string) {
+async function showSection(page: Page) {
+  await page.evaluate(() =>
+    document.getElementById("two-factor")?.scrollIntoView({ block: "start" }),
+  );
+  await sleep(200);
+}
+
+/** The last confirmation method this browser used (localStorage). */
+const preferMethod = (page: Page, method: string) =>
+  page.evaluate(
+    (m: string) => window.localStorage.setItem("qrdx:confirm-method", m),
+    method,
+  );
+
+/** /sign-in → email → the code from the log. */
+async function signInWithCode(page: Page, email: string) {
   await page.goto(`${BASE_URL}/sign-in?next=/settings/account`);
   await page.waitFor(() => Boolean(window.__e2e.byLabel("Email address")));
-  await page.evaluate((email: string) => {
+  await page.evaluate((value: string) => {
     const input = window.__e2e.byLabel("Email address") as HTMLInputElement;
-    window.__e2e.setValue(input, email);
+    window.__e2e.setValue(input, value);
   }, email);
-  const previous = latestCode(email);
+  const previous = latestLogged("sign-in code", email);
   await clickButton(page, "Email me a code");
-  let code: string | null = null;
-  for (let i = 0; i < 60 && !code; i++) {
-    await sleep(250);
-    const latest = latestCode(email);
-    if (latest && latest !== previous) code = latest;
-  }
-  if (!code) throw new Error("no sign-in code in the dev server log");
+  const code = await nextLogged("sign-in code", email, previous);
   await page.waitFor(() => Boolean(document.querySelector("[data-input-otp]")));
   await page.evaluate((value: string) => {
     const input = document.querySelector(
@@ -369,13 +397,26 @@ async function enterEmailCode(page: Page, email: string) {
     ) as HTMLInputElement;
     window.__e2e.setValue(input, value);
   }, code);
-}
-
-async function signInWithCode(page: Page, email = EMAIL) {
-  await enterEmailCode(page, email);
   await page.waitFor(() => location.pathname === "/settings/account", {
     timeout: 30_000,
   });
+}
+
+/** Finishes "Confirm it's you" with a code emailed to `email`. */
+async function confirmWithEmail(page: Page, email: string, shots?: string) {
+  await dialogOpen(page, CONFIRM);
+  const previous = latestLogged("confirmation code", email);
+  if (shots) await shot(page, `${shots}-send`);
+  await clickButton(page, "Send code", CONFIRM);
+  const code = await nextLogged("confirmation code", email, previous);
+  await page.waitFor(() =>
+    /Enter the code we sent/.test(
+      window.__e2e.byRole("dialog", "Confirm it's you")?.textContent ?? "",
+    ),
+  );
+  if (shots) await shot(page, `${shots}-code`);
+  await typeCode(page, CONFIRM, code);
+  await dialogClosed(page, CONFIRM);
 }
 
 async function main() {
@@ -392,7 +433,14 @@ async function main() {
     return;
   }
   if (SHOTS) mkdirSync(SHOTS, { recursive: true });
-  console.log(`Passkeys e2e against ${BASE_URL} as ${EMAIL}`);
+  console.log(
+    `Two-step settings e2e against ${BASE_URL} as ${EMAIL}${MOBILE ? " (phone)" : ""}`,
+  );
+  if (!DB_SQL) {
+    console.log(
+      "  - E2E_DB_SQL not set: confirmations can't be ended early, so the dialog shows only where one is due",
+    );
+  }
 
   const page = await launch({ width: 1280, height: 900 });
   const { cdp } = page;
@@ -408,9 +456,10 @@ async function main() {
       maxTouchPoints: 5,
     });
   }
+  let secret = "";
   try {
     await cdp.send("WebAuthn.enable", { enableUI: false });
-    const { authenticatorId: first } = await cdp.send(
+    const { authenticatorId } = await cdp.send(
       "WebAuthn.addVirtualAuthenticator",
       {
         options: {
@@ -423,31 +472,35 @@ async function main() {
         },
       },
     );
+    const listCredentials = async () =>
+      (
+        (await cdp.send("WebAuthn.getCredentials", { authenticatorId })) as {
+          credentials: { signCount: number }[];
+        }
+      ).credentials;
+    const credentials = async () => (await listCredentials()).length;
+    /** Goes up each time a passkey answers a prompt. */
+    const signCount = async () =>
+      (await listCredentials()).reduce((sum, c) => sum + c.signCount, 0);
 
-    // CSP violations, checked at the end where the server enforces a CSP
-    // (CSP_DEV=1 or production). E2E_CSP_SELFTEST=1 first proves the
-    // recorder catches one.
     const csp = await recordCspViolations(page);
     const enforced = await cspEnforced(BASE_URL);
-    if (process.env.E2E_CSP_SELFTEST === "1") {
-      if (enforced) {
-        await step(
-          "CSP self-test: a script from evil.example.com is caught",
-          async () => {
-            const { caught, lines } = await csp.selfTest(BASE_URL);
-            for (const line of lines) console.log(`      ${line}`);
-            return caught ? true : "the recorder saw nothing";
-          },
-        );
-      } else {
-        console.log(
-          "  - CSP self-test skipped: CSP not enforced on this server",
-        );
-      }
-    }
-
-    // The authenticator holding the passkey (swapped in the UV check).
-    let authenticatorId: string = first;
+    onFailure = async (name) => {
+      const open = (await page.evaluate(() =>
+        window.__e2e
+          .all("dialog")
+          .map((el) =>
+            (el.textContent ?? "").replace(/\s+/g, " ").slice(0, 160),
+          ),
+      )) as string[];
+      console.log(`      open dialogs: ${JSON.stringify(open)}`);
+      if (!SHOTS) return;
+      const { data } = await cdp.send("Page.captureScreenshot", {
+        format: "png",
+      });
+      const slug = name.replace(/[^a-z0-9]+/gi, "-").slice(0, 40);
+      writeFileSync(join(SHOTS, `FAIL-${slug}.png`), data, "base64");
+    };
 
     await step("management endpoints are off over HTTP (404)", async () => {
       const statuses: Record<string, number> = {};
@@ -456,6 +509,9 @@ async function main() {
         ["POST", "/passkey/verify-registration"],
         ["POST", "/passkey/update-passkey"],
         ["POST", "/passkey/delete-passkey"],
+        ["POST", "/two-factor/enable"],
+        ["POST", "/two-factor/disable"],
+        ["POST", "/two-factor/generate-backup-codes"],
       ]) {
         const res = await fetch(`${BASE_URL}/api/auth${path}`, {
           method,
@@ -469,702 +525,530 @@ async function main() {
         : JSON.stringify(statuses);
     });
 
-    await step("sign in with an email code", async () => {
-      await signInWithCode(page);
+    await step("sign up with an email code; the section is off", async () => {
+      await signInWithCode(page, EMAIL);
       const user = await session(page);
-      return user?.email === EMAIL ? true : `session: ${JSON.stringify(user)}`;
-    });
-
-    await step("Settings shows Passkeys after Sign-in methods", async () => {
-      await page.waitFor(() => Boolean(document.getElementById("passkeys")));
+      if (user?.email !== EMAIL) return `session: ${JSON.stringify(user)}`;
+      await waitForSection(page, "Off");
+      await showSection(page);
+      await shot(page, "01-settings-off");
       const order = await page.evaluate(() =>
         [...document.querySelectorAll("section[id]")].map((s) => s.id),
       );
-      const at = order.indexOf("passkeys");
-      await page.evaluate(() =>
-        document.getElementById("passkeys")?.scrollIntoView(),
+      // Passkeys live inside Two-step verification now.
+      if (order.includes("passkeys")) return "a separate Passkeys section";
+      const anchor = await page.evaluate(() =>
+        Boolean(document.querySelector("#two-factor #passkeys")),
       );
-      await shot(page, "settings-passkeys-empty");
-      return at > 0 && order[at - 1] === "sign-in"
-        ? true
-        : `sections: ${order.join(", ")}`;
-    });
-
-    await step("Settings leaves Passkeys out on another origin", async () => {
-      // The same server and session, reached on a host passkeys don't belong
-      // to (like a preview URL): the section isn't rendered at all.
-      const { cookies } = await cdp.send("Storage.getCookies");
-      const cookie = cookies
-        .filter((c: { name: string }) => c.name.startsWith("better-auth."))
-        .map((c: { name: string; value: string }) => `${c.name}=${c.value}`)
-        .join("; ");
-      const html = async (origin: string) =>
-        (
-          await fetch(`${origin}/settings/account`, {
-            headers: { cookie },
-            redirect: "manual",
-          })
-        ).text();
-      const other = new URL(BASE_URL);
-      other.hostname =
-        other.hostname === "localhost" ? "127.0.0.1" : "localhost";
-      const [own, elsewhere] = await Promise.all([
-        html(BASE_URL),
-        html(other.origin),
-      ]);
-      if (!own.includes('id="passkeys"')) return "missing on its own origin";
-      if (!elsewhere.includes('id="sessions"'))
-        return "other origin didn't render the page";
-      return elsewhere.includes('id="passkeys"')
-        ? `shown on ${other.origin}`
-        : true;
+      return anchor ? true : "no #passkeys anchor in the section";
     });
 
     await step(
-      "add a passkey (named after the browser, editable)",
+      "Turn on asks to confirm it's you with an emailed code",
       async () => {
-        await clickButton(page, "Add passkey");
-        const name = await dialogName(page, "Add a passkey");
-        await shot(page, "add-passkey-dialog");
-        if (name !== "Chrome on macOS" && !/^Chrome on /.test(String(name))) {
-          return `default name was ${JSON.stringify(name)}`;
+        await clickInSection(page, "Turn on", "Two-step verification");
+        await dialogOpen(page, CONFIRM);
+        const text = await dialogText(page, CONFIRM);
+        if (!text.includes("Before you turn on two-step verification")) {
+          return `dialog: ${text}`;
         }
-        // Two-step verification is off: no code is asked for.
-        const asksForCode = await page.evaluate(() => {
-          const dialog = window.__e2e.byRole("dialog", "Add a passkey");
-          return Boolean(
-            dialog &&
-              window.__e2e.byLabel(
-                "Code from your authenticator app, or a backup code",
-                dialog,
-              ),
-          );
-        });
-        if (asksForCode) return "asked a non-2FA account for a code";
-        await clickButton(page, "Continue", "Add a passkey");
-        await page.waitFor(
-          () => Boolean(window.__e2e.byText("Passkey added")),
-          {
-            timeout: 20_000,
-          },
-        );
-        await page.waitFor(() =>
-          document.getElementById("passkeys")?.textContent?.includes("Added"),
-        );
-        const { credentials } = await cdp.send("WebAuthn.getCredentials", {
-          authenticatorId,
-        });
-        await page.evaluate(() =>
-          document.getElementById("passkeys")?.scrollIntoView(),
-        );
-        await shot(page, "settings-passkeys-one");
-        if (credentials.length !== 1)
-          return `${credentials.length} credentials`;
-        if (!credentials[0].isResidentCredential) return "not discoverable";
-        return true;
-      },
-    );
-
-    await step("adding one sends the notice (logged in dev)", async () => {
-      await sleep(1000);
-      return logHas(
-        `QRdx security notice for ${EMAIL}: "A passkey was added to your QRdx account"`,
-      )
-        ? true
-        : "no notice line in the log";
-    });
-
-    await step("rename it", async () => {
-      await clickButton(page, "Rename");
-      await dialogName(page, "Rename passkey");
-      await shot(page, "rename-passkey-dialog");
-      await setDialogName(page, "Rename passkey", "E2E laptop");
-      await clickButton(page, "Save", "Rename passkey");
-      await page.waitFor(() =>
-        document
-          .getElementById("passkeys")
-          ?.textContent?.includes("E2E laptop"),
-      );
-      return true;
-    });
-
-    // The virtual authenticator answers the email field's autofill request
-    // by itself as soon as /sign-in loads, so the button and badge checks
-    // run with autofill switched off in the page (the browser then reports
-    // no conditional mediation, as browsers without autofill support do).
-    const { identifier: noAutofill } = await cdp.send(
-      "Page.addScriptToEvaluateOnNewDocument",
-      {
-        source:
-          "PublicKeyCredential.isConditionalMediationAvailable = async () => false;",
-      },
-    );
-
-    await step("sign out, then sign in with the passkey button", async () => {
-      await signOut(page);
-      await page.goto(`${BASE_URL}/sign-in?next=/settings/account`);
-      await page.waitFor(() =>
-        Boolean(window.__e2e.byRole("button", "Sign in with a passkey")),
-      );
-      await shot(page, "sign-in-with-passkey-button");
-      if (await session(page)) return "signed in before the click";
-      await clickButton(page, "Sign in with a passkey");
-      await page.waitFor(() => location.pathname === "/settings/account", {
-        timeout: 20_000,
-      });
-      const user = await session(page);
-      return user?.email === EMAIL ? true : `session: ${JSON.stringify(user)}`;
-    });
-
-    await step("records passkey as the last used method", async () => {
-      const cookie = await page.evaluate(() => document.cookie);
-      return /last_used_login_method=passkey/.test(cookie)
-        ? true
-        : `cookie: ${cookie}`;
-    });
-
-    await step('"Last used" shows on the passkey button', async () => {
-      await signOut(page);
-      await page.goto(`${BASE_URL}/sign-in?next=/settings/account`);
-      const badge = await page.waitFor(() => {
-        const button = window.__e2e.byRole("button", "Sign in with a passkey");
-        return button?.parentElement?.textContent?.includes("Last used")
-          ? "yes"
-          : false;
-      });
-      await shot(page, "sign-in-last-used-passkey");
-      return badge === "yes" ? true : "no badge";
-    });
-
-    await step(
-      "autofill: a passkey from the email field signs in",
-      async () => {
-        const field = await page.evaluate(() =>
-          (
-            window.__e2e.byLabel("Email address") as HTMLInputElement | null
-          )?.getAttribute("autocomplete"),
-        );
-        if (field !== "email webauthn") return `autocomplete="${field}"`;
-        await cdp.send("Page.removeScriptToEvaluateOnNewDocument", {
-          identifier: noAutofill,
-        });
-        // Signed out on /sign-in, nothing clicked: only the autofill
-        // (conditional) request can sign in here.
-        await page.goto(`${BASE_URL}/sign-in?next=/settings/account`, {
-          wait: 300,
-        });
-        const conditional = await page.evaluate(
-          async () =>
-            (await window.PublicKeyCredential.isConditionalMediationAvailable?.()) ??
-            false,
-        );
-        if (!conditional) return "conditional mediation not available";
-        await page.waitFor(() => location.pathname === "/settings/account", {
-          timeout: 20_000,
-        });
-        const user = await session(page);
-        await cdp.send("Page.addScriptToEvaluateOnNewDocument", {
-          source:
-            "PublicKeyCredential.isConditionalMediationAvailable = async () => false;",
-        });
-        return user?.email === EMAIL
-          ? true
-          : `session: ${JSON.stringify(user)}`;
-      },
-    );
-
-    await step(
-      "an assertion without user verification is refused, with no session",
-      async () => {
-        await signOut(page);
-        await page.goto(`${BASE_URL}/sign-in`);
-        // A second authenticator holding the same passkey, but one that
-        // doesn't verify the person.
-        const { credentials } = await cdp.send("WebAuthn.getCredentials", {
-          authenticatorId,
-        });
-        // Chrome allows one internal authenticator at a time.
-        await cdp.send("WebAuthn.removeVirtualAuthenticator", {
-          authenticatorId,
-        });
-        const { authenticatorId: noUv } = await cdp.send(
-          "WebAuthn.addVirtualAuthenticator",
-          {
-            options: {
-              protocol: "ctap2",
-              transport: "internal",
-              hasResidentKey: true,
-              hasUserVerification: true,
-              isUserVerified: false,
-              automaticPresenceSimulation: true,
-            },
-          },
-        );
-        await cdp.send("WebAuthn.addCredential", {
-          authenticatorId: noUv,
-          credential: credentials[0],
-        });
-
-        // 1. The browser refuses on its own: QRdx asks for "required".
-        await clickButton(page, "Sign in with a passkey");
-        await sleep(2500);
-        const afterButton = await session(page);
-        await shot(page, "sign-in-no-user-verification");
-
-        // 2. A client that ignores "required" (asks for "discouraged")
-        // still can't sign in: the server checks the UV flag.
-        const forged = (await page.evaluate(FORGED_ASSERTION as never)) as {
-          userVerifiedFlag: boolean;
-          status: number;
-          body: { code?: string } | null;
-        };
-        const afterForged = await session(page);
-
-        // Back to a verifying authenticator for the rest of the run.
-        await cdp.send("WebAuthn.removeVirtualAuthenticator", {
-          authenticatorId: noUv,
-        });
-        const { authenticatorId: uv } = await cdp.send(
-          "WebAuthn.addVirtualAuthenticator",
-          {
-            options: {
-              protocol: "ctap2",
-              transport: "internal",
-              hasResidentKey: true,
-              hasUserVerification: true,
-              isUserVerified: true,
-              automaticPresenceSimulation: true,
-            },
-          },
-        );
-        await cdp.send("WebAuthn.addCredential", {
-          authenticatorId: uv,
-          credential: credentials[0],
-        });
-        authenticatorId = uv;
-
-        console.log(`      forged assertion: ${JSON.stringify(forged)}`);
-        if (afterButton) return "the button signed in without UV";
-        if (forged.userVerifiedFlag) return "the assertion had UV after all";
-        if (forged.status !== 401) return `status ${forged.status}`;
-        if (forged.body?.code !== "PASSKEY_USER_VERIFICATION_REQUIRED") {
-          return `code ${forged.body?.code}`;
+        if (!/We'll email a 6-digit code to p…@qrdx\.test/.test(text)) {
+          return `no masked address: ${text}`;
         }
-        return afterForged ? "a session was created" : true;
-      },
-    );
-
-    await step(
-      "a sign-in older than a day must sign in again to add one",
-      async () => {
-        if (!DB_SQL) return "SKIPPED: E2E_DB_SQL not set";
-        await signOut(page);
-        await signInWithCode(page);
-        await page.goto(`${BASE_URL}/settings/account`);
-        // The form is open while the sign-in is fresh; then the session ages
-        // (in the local database), so only the server can catch it.
-        await clickButton(page, "Add passkey");
-        await dialogName(page, "Add a passkey");
-        execSync(DB_SQL, {
-          input: `update "session" set created_at = now() - interval '2 days' where user_id = (select id from "user" where email = '${EMAIL}');`,
-          stdio: ["pipe", "ignore", "inherit"],
-        });
-        await clickButton(page, "Continue", "Add a passkey");
-        const text = await page.waitFor(() => {
-          const dialog = window.__e2e.byRole("dialog", "Add a passkey");
-          return /sign out and sign in again/.test(dialog?.textContent ?? "")
-            ? (dialog?.textContent ?? false)
-            : false;
-        });
-        await shot(page, "add-passkey-sign-in-again");
-        // And a fresh page load shows the same step straight away.
-        await page.goto(`${BASE_URL}/settings/account`);
-        await clickButton(page, "Add passkey");
-        const again = await page.waitFor(
-          () => window.__e2e.byRole("dialog", "Add a passkey")?.textContent,
-        );
-        const { credentials } = await cdp.send("WebAuthn.getCredentials", {
-          authenticatorId,
-        });
-        if (credentials.length !== 1)
-          return `${credentials.length} credentials`;
-        return text && /sign out and sign in again/.test(String(again))
-          ? true
-          : `dialog: ${again}`;
-      },
-    );
-
-    await step(
-      "remove it (with confirmation) and the notice is sent",
-      async () => {
-        await signOut(page);
-        await signInWithCode(page);
+        // The explanation is folded away until asked for.
+        await clickButton(page, "Why am I asked again?", CONFIRM);
         await page.waitFor(() =>
-          document
-            .getElementById("passkeys")
-            ?.textContent?.includes("E2E laptop"),
-        );
-        await clickButton(page, "Remove");
-        await page.waitFor(() =>
-          Boolean(window.__e2e.byRole("dialog", "Remove E2E laptop")),
-        );
-        await shot(page, "remove-passkey-confirm");
-        await page.evaluate(() => {
-          const dialog = window.__e2e.byRole("dialog", "Remove E2E laptop");
-          const button = window.__e2e.byRole("button", "Remove", {
-            exact: true,
-            root: dialog,
-          });
-          if (!button) throw new Error("No Remove button in the dialog");
-          window.__e2e.click(button);
-        });
-        await page.waitFor(() =>
-          document
-            .getElementById("passkeys")
-            ?.textContent?.includes("No passkeys yet"),
-        );
-        await sleep(1000);
-        return logHas(
-          `QRdx security notice for ${EMAIL}: "A passkey was removed from your QRdx account"`,
-        )
-          ? true
-          : "no removal notice in the log";
-      },
-    );
-
-    await step("a removed passkey no longer signs in", async () => {
-      await signOut(page);
-      await page.goto(`${BASE_URL}/sign-in`);
-      await clickButton(page, "Sign in with a passkey");
-      const message = await page.waitFor(
-        () => document.querySelector('[role="alert"]')?.textContent,
-      );
-      await shot(page, "sign-in-removed-passkey");
-      const user = await session(page);
-      if (user) return "signed in";
-      return /isn't linked/.test(String(message)) ? true : `alert: ${message}`;
-    });
-
-    // ── With two-step verification on ──
-    // The server's JSON answers to the sign-in requests, read over CDP
-    // (Network domain), by path.
-    const replies = new Map<string, unknown>();
-    const watched = new Map<string, string>();
-    await cdp.send("Network.enable");
-    cdp.on(
-      async (message: {
-        method: string;
-        params: {
-          requestId: string;
-          response?: { url: string };
-        };
-      }) => {
-        if (message.method === "Network.responseReceived") {
-          const path = new URL(message.params.response?.url ?? "").pathname;
-          if (
-            path === "/api/auth/passkey/verify-authentication" ||
-            path === "/api/auth/sign-in/email-otp"
-          ) {
-            watched.set(message.params.requestId, path);
-          }
-        }
-        if (message.method === "Network.loadingFinished") {
-          const path = watched.get(message.params.requestId);
-          if (!path) return;
-          watched.delete(message.params.requestId);
-          try {
-            const { body } = await cdp.send("Network.getResponseBody", {
-              requestId: message.params.requestId,
-            });
-            replies.set(path, JSON.parse(body));
-          } catch {
-            replies.set(path, "unreadable");
-          }
-        }
-      },
-    );
-    // The first account's passkey is gone from QRdx; drop it from the
-    // authenticator too, so the browser offers only the next one.
-    await cdp.send("WebAuthn.clearCredentials", { authenticatorId });
-    let secret = "";
-
-    await step("2FA: an account turns on two-step verification", async () => {
-      await signOut(page);
-      await signInWithCode(page, TWO_FACTOR_EMAIL);
-      await page.goto(`${BASE_URL}/settings/account#two-factor`);
-      await clickButton(page, "Turn on");
-      secret = String(
-        await page.waitFor(() =>
-          (
-            document.querySelector('[role="dialog"] code')?.textContent ?? ""
-          ).replace(/\s+/g, ""),
-        ),
-      );
-      if (secret.length < 16) return `key "${secret}"`;
-      await page.evaluate((code: string) => {
-        const input = window.__e2e.byLabel(
-          "Code from your authenticator app",
-        ) as HTMLInputElement;
-        input.focus();
-        window.__e2e.setValue(input, code);
-      }, totp(secret));
-      await page.waitFor(() =>
-        document.body.innerText.includes("Save these backup codes"),
-      );
-      await page.evaluate(() => {
-        const box = window.__e2e.byLabel("I've saved my backup codes");
-        if (box) window.__e2e.click(box);
-      });
-      await page.waitFor(() => {
-        const dialog = document.querySelector('[role="dialog"]');
-        const done = [...(dialog?.querySelectorAll("button") ?? [])].find(
-          (button) => button.textContent?.trim() === "Done",
-        );
-        if (!done || done.disabled) return false;
-        window.__e2e.click(done);
-        return true;
-      });
-      await page.waitFor(() =>
-        document.body.innerText.includes("10 of 10 backup codes left"),
-      );
-      return true;
-    });
-
-    await step(
-      "2FA: adding a passkey asks for a current code; a wrong one adds nothing",
-      async () => {
-        await page.goto(`${BASE_URL}/settings/account`);
-        await clickButton(page, "Add passkey");
-        await dialogName(page, "Add a passkey");
-        const before = await page.evaluate(() => {
-          const dialog = window.__e2e.byRole("dialog", "Add a passkey");
-          const field = dialog
-            ? window.__e2e.byLabel(
-                "Code from your authenticator app, or a backup code",
-                dialog,
-              )
-            : null;
-          const button = dialog
-            ? (window.__e2e.byRole("button", "Continue", {
-                exact: true,
-                root: dialog,
-              }) as HTMLButtonElement | null)
-            : null;
-          return { field: Boolean(field), disabled: button?.disabled ?? null };
-        });
-        if (!before.field) return "no code field";
-        if (before.disabled !== true) return "Continue enabled without a code";
-        await shot(page, "add-passkey-dialog-2fa");
-        await page.evaluate((code: string) => {
-          const dialog = window.__e2e.byRole("dialog", "Add a passkey");
-          const input = window.__e2e.byLabel(
-            "Code from your authenticator app, or a backup code",
-            dialog ?? undefined,
-          ) as HTMLInputElement;
-          input.focus();
-          window.__e2e.setValue(input, code);
-        }, wrongTotp(secret));
-        await clickButton(page, "Continue", "Add a passkey");
-        await page.waitFor(
-          () =>
-            Boolean(
-              window.__e2e.byText(
-                "That code isn't right. Try a new code from your app.",
-              ),
-            ),
-          { timeout: 20_000 },
-        );
-        await shot(page, "add-passkey-dialog-2fa-wrong");
-        const { credentials } = await cdp.send("WebAuthn.getCredentials", {
-          authenticatorId,
-        });
-        return credentials.length === 0
-          ? true
-          : `${credentials.length} credentials after a wrong code`;
-      },
-    );
-
-    await step("2FA: the same account adds a passkey with a code", async () => {
-      await page.evaluate((code: string) => {
-        const dialog = window.__e2e.byRole("dialog", "Add a passkey");
-        const input = window.__e2e.byLabel(
-          "Code from your authenticator app, or a backup code",
-          dialog ?? undefined,
-        ) as HTMLInputElement;
-        input.focus();
-        window.__e2e.setValue(input, code);
-      }, totp(secret));
-      await clickButton(page, "Continue", "Add a passkey");
-      await page.waitFor(() => Boolean(window.__e2e.byText("Passkey added")), {
-        timeout: 20_000,
-      });
-      const { credentials } = await cdp.send("WebAuthn.getCredentials", {
-        authenticatorId,
-      });
-      return credentials.length === 1
-        ? true
-        : `${credentials.length} credentials`;
-    });
-
-    await step(
-      "2FA: a passkey sign-in (with user verification) has no two-step challenge",
-      async () => {
-        await signOut(page);
-        await page.goto(`${BASE_URL}/sign-in?next=/settings/account`);
-        await page.waitFor(() =>
-          Boolean(window.__e2e.byRole("button", "Sign in with a passkey")),
-        );
-        if (await session(page)) return "signed in before the click";
-        replies.clear();
-        await clickButton(page, "Sign in with a passkey");
-        await page.waitFor(() => location.pathname === "/settings/account", {
-          timeout: 20_000,
-        });
-        await sleep(500);
-        const reply = (replies.get("/api/auth/passkey/verify-authentication") ??
-          null) as {
-          twoFactorRedirect?: boolean;
-          user?: { email?: string };
-        } | null;
-        await page.waitFor(() =>
-          Boolean(document.getElementById("two-factor")),
-        );
-        await page.evaluate(() =>
-          document.getElementById("two-factor")?.scrollIntoView(),
-        );
-        await shot(page, "2fa-passkey-sign-in-no-challenge");
-        const user = await session(page);
-        console.log(
-          `      passkey sign-in reply: ${JSON.stringify({ twoFactorRedirect: reply?.twoFactorRedirect ?? null, user: reply?.user?.email ?? null })}`,
-        );
-        if (!reply) return "no reply recorded from verify-authentication";
-        if (reply.twoFactorRedirect) return "answered twoFactorRedirect";
-        if (reply.user?.email !== TWO_FACTOR_EMAIL) return "reply had no user";
-        return user?.email === TWO_FACTOR_EMAIL
-          ? true
-          : `session: ${JSON.stringify(user)}`;
-      },
-    );
-
-    await step(
-      "2FA: an email-code sign-in is challenged, no session until a TOTP code",
-      async () => {
-        await signOut(page);
-        await page.goto(`${BASE_URL}/sign-in?next=/settings/account`);
-        replies.clear();
-        await page.evaluate((email: string) => {
-          const input = window.__e2e.byLabel(
-            "Email address",
-          ) as HTMLInputElement;
-          window.__e2e.setValue(input, email);
-        }, TWO_FACTOR_EMAIL);
-        const previous = latestCode(TWO_FACTOR_EMAIL);
-        await clickButton(page, "Email me a code");
-        let code: string | null = null;
-        for (let i = 0; i < 60 && !code; i++) {
-          await sleep(250);
-          const latest = latestCode(TWO_FACTOR_EMAIL);
-          if (latest && latest !== previous) code = latest;
-        }
-        if (!code) return "no sign-in code in the log";
-        await page.waitFor(() =>
-          Boolean(document.querySelector("[data-input-otp]")),
-        );
-        await page.evaluate((value: string) => {
-          window.__e2e.setValue(
-            document.querySelector("[data-input-otp]") as HTMLInputElement,
-            value,
-          );
-        }, code);
-        await page.waitFor(() =>
-          document.body.innerText.includes(
-            "Your account asks for a second step",
+          /before changes to your account's security/.test(
+            window.__e2e.byRole("dialog", "Confirm it's you")?.textContent ??
+              "",
           ),
         );
-        await sleep(500);
-        const reply = (replies.get("/api/auth/sign-in/email-otp") ?? null) as {
-          twoFactorRedirect?: boolean;
-        } | null;
-        const before = await session(page);
-        await shot(page, "2fa-email-code-challenged");
-        console.log(
-          `      email-code sign-in reply: ${JSON.stringify(reply)}; session before TOTP: ${JSON.stringify(before)}`,
-        );
-        if (reply?.twoFactorRedirect !== true) {
-          return `reply: ${JSON.stringify(reply)}`;
-        }
-        if (before) return "a session existed before the TOTP code";
-        await page.evaluate((value: string) => {
-          const input = window.__e2e.byLabel(
-            "Authenticator code",
-          ) as HTMLInputElement;
-          input.focus();
-          window.__e2e.setValue(input, value);
-        }, totp(secret));
-        await page.waitFor(() => location.pathname === "/settings/account", {
-          timeout: 20_000,
-        });
-        const after = await session(page);
-        return after?.email === TWO_FACTOR_EMAIL
-          ? true
-          : `session after TOTP: ${JSON.stringify(after)}`;
+        await confirmWithEmail(page, EMAIL, "02-confirm-email");
+        return true;
       },
     );
 
-    if (MOBILE) {
-      await step("mobile: help pages", async () => {
-        await signOut(page);
-        for (const [name, path, anchor] of [
-          ["help-passkeys", "/docs/help/privacy-and-security/passkeys", ""],
-          [
-            "help-passkeys-two-step",
-            "/docs/help/privacy-and-security/passkeys",
-            "passkeys-and-two-step-verification",
-          ],
-          ["help-sign-in", "/docs/help/account-and-billing/sign-in", ""],
-          [
-            "help-sign-in-passkey-line",
-            "/docs/help/account-and-billing/sign-in",
-            "ways-to-sign-in",
-          ],
-        ]) {
-          await page.goto(`${BASE_URL}${path}`);
-          if (anchor) {
-            await page.evaluate(
-              (id: string) => document.getElementById(id)?.scrollIntoView(),
-              anchor,
-            );
-          }
-          await shot(page, name);
+    await step(
+      "the stepper: choose Passkey, name it, prompt, backup codes",
+      async () => {
+        await dialogOpen(page, "Turn on two-step verification");
+        const choose = await dialogText(page, "Turn on two-step verification");
+        if (!/Step 1 of 3/.test(choose)) return `no stepper: ${choose}`;
+        if (!/Recommended/.test(choose)) return "passkey not recommended";
+        await shot(page, "03-turn-on-choose");
+        await clickButton(page, "Continue", "Turn on two-step verification");
+        await dialogOpen(page, "Add a passkey");
+        const name = (await page.evaluate(() => {
+          const dialog = window.__e2e.byRole("dialog", "Add a passkey");
+          return (
+            window.__e2e.byLabel(
+              "Name",
+              dialog ?? undefined,
+            ) as HTMLInputElement
+          )?.value;
+        })) as string;
+        if (!/Chrome on/.test(name)) return `default name: ${name}`;
+        await shot(page, "04-turn-on-passkey-name");
+        await clickButton(page, "Continue", "Add a passkey");
+        await dialogOpen(page, "Save your backup codes");
+        const codes = (await page.evaluate(() =>
+          [...document.querySelectorAll('[aria-label="Backup codes"] li')].map(
+            (li) => li.textContent?.trim() ?? "",
+          ),
+        )) as string[];
+        if (codes.length !== 10) return `${codes.length} backup codes`;
+        await shot(page, "05-turn-on-backup-codes");
+        const doneDisabled = await page.evaluate(
+          () =>
+            (
+              window.__e2e.byRole("button", "Done", {
+                exact: true,
+              }) as HTMLButtonElement
+            )?.disabled,
+        );
+        if (!doneDisabled) return "Done works before 'I've saved'";
+        await page.evaluate(() => {
+          const box = window.__e2e.byLabel("I've saved my backup codes");
+          if (box) window.__e2e.click(box);
+        });
+        await clickButton(page, "Done", "Save your backup codes");
+        await waitForSection(page, "10 of 10 left");
+        if ((await credentials()) !== 1) return "no credential";
+        await showSection(page);
+        await shot(page, "06-settings-on-passkey");
+        const text = await sectionText(page);
+        return /asks for your passkey/.test(text) &&
+          !/authenticator app\./.test(text)
+          ? true
+          : `section: ${text}`;
+      },
+    );
+
+    await step(
+      "passkey-only: no app secret, and no authenticator option to confirm",
+      async () => {
+        if (!DB_SQL) return "SKIPPED: E2E_DB_SQL not set";
+        const row = sql(
+          `select secret = '' as blank, verified from two_factor where user_id = (select id from "user" where email = '${EMAIL}');`,
+        );
+        if (!/^\s*t\|f\s*$/m.test(row.replace(/ /g, ""))) {
+          // psql's -tA isn't set by every E2E_DB_SQL; accept both layouts.
+          if (!/\bt\b[\s|]+\bf\b/.test(row)) return `row: ${row}`;
         }
+        expireConfirmations();
+        await preferMethod(page, "backup");
+        await clickInSection(page, "New codes", "Backup codes");
+        await dialogOpen(page, "Make new backup codes?");
+        await clickButton(page, "Make new codes", "Make new backup codes?");
+        await dialogOpen(page, CONFIRM);
+        await page.waitFor(() =>
+          Boolean(
+            window.__e2e.byLabel(
+              "Backup code",
+              window.__e2e.byRole("dialog", "Confirm it's you") ?? undefined,
+            ),
+          ),
+        );
+        await clickButton(page, "Use another method", CONFIRM);
+        const options = await dialogText(page, CONFIRM);
+        await shot(page, "07-confirm-other-methods-passkey-only");
+        await clickButton(page, "Cancel", CONFIRM);
+        await dialogClosed(page, CONFIRM);
+        await clickButton(page, "Cancel", "Make new backup codes?").catch(
+          () => {},
+        );
+        if (/authenticator code/i.test(options)) {
+          return "offers an authenticator code";
+        }
+        return /Use your passkey/.test(options) ? true : `options: ${options}`;
+      },
+    );
+
+    await step(
+      "add the authenticator app as a second method (keeps the codes)",
+      async () => {
+        // Confirm again (the last step cancelled), with the passkey.
+        await preferMethod(page, "passkey");
+        const before = await signCount();
+        await clickInSection(page, "Set up", "Authenticator app");
+        await dialogOpen(page, "Set up your authenticator app", 30_000);
+        await page.waitFor(() =>
+          Boolean(
+            window.__e2e
+              .byRole("dialog", "Set up your authenticator app")
+              ?.querySelector("code"),
+          ),
+        );
+        const text = await dialogText(page, "Set up your authenticator app");
+        if (/Step \d of/.test(text)) return "a stepper for a second method";
+        secret = (
+          (await page.evaluate(
+            () =>
+              window.__e2e
+                .byRole("dialog", "Set up your authenticator app")
+                ?.querySelector("code")?.textContent ?? "",
+          )) as string
+        ).replace(/\s+/g, "");
+        await shot(page, "08-add-app");
+        await typeCode(page, "Set up your authenticator app", totp(secret));
+        await dialogClosed(page, "Set up your authenticator app");
+        await waitForSection(page, "6-digit codes from the app");
+        const after = await sectionText(page);
+        await showSection(page);
+        await shot(page, "09-settings-passkey-and-app");
+        if (DB_SQL && (await signCount()) === before) {
+          return "confirmed without the passkey";
+        }
+        return /10 of 10 left/.test(after) ? true : `section: ${after}`;
+      },
+    );
+
+    await step("rename a passkey from its menu", async () => {
+      await page.waitFor(() => {
+        const button = document.querySelector(
+          '#two-factor [aria-label^="Options for"]',
+        ) as HTMLElement | null;
+        if (!button) return false;
+        button.dispatchEvent(
+          new PointerEvent("pointerdown", { bubbles: true, button: 0 }),
+        );
         return true;
       });
+      await page.waitFor(() => {
+        const item = window.__e2e.byRole("menuitem", "Rename", { exact: true });
+        if (!item) return false;
+        window.__e2e.click(item);
+        return true;
+      });
+      await dialogOpen(page, "Rename passkey");
+      await page.evaluate(() => {
+        const dialog = window.__e2e.byRole("dialog", "Rename passkey");
+        window.__e2e.setValue(
+          window.__e2e.byLabel("Name", dialog ?? undefined) as HTMLInputElement,
+          "Work laptop",
+        );
+      });
+      await shot(page, "10-rename-passkey");
+      await clickButton(page, "Save", "Rename passkey");
+      await dialogClosed(page, "Rename passkey");
+      await waitForSection(page, "Work laptop");
+      return true;
+    });
 
+    await step(
+      "new backup codes, confirmed with the passkey (prompt opens on its own)",
+      async () => {
+        if (!DB_SQL) return "SKIPPED: E2E_DB_SQL not set";
+        expireConfirmations();
+        await preferMethod(page, "passkey");
+        const before = await signCount();
+        await clickInSection(page, "New codes", "Backup codes");
+        await dialogOpen(page, "Make new backup codes?");
+        await shot(page, "11-new-codes-ask");
+        await clickButton(page, "Make new codes", "Make new backup codes?");
+        // The passkey prompt answers by itself (virtual authenticator), so
+        // the confirmation closes and the codes show.
+        await dialogOpen(page, "Your new backup codes", 30_000);
+        await shot(page, "12-new-codes");
+        await page.evaluate(() => {
+          const box = window.__e2e.byLabel("I've saved my backup codes");
+          if (box) window.__e2e.click(box);
+        });
+        await clickButton(page, "Done", "Your new backup codes");
+        await dialogClosed(page, "Your new backup codes");
+        return (await signCount()) > before ? true : "the passkey wasn't used";
+      },
+    );
+
+    await step(
+      "remove the app: confirmed with an authenticator code via 'Use another method'",
+      async () => {
+        if (!DB_SQL) return "SKIPPED: E2E_DB_SQL not set";
+        expireConfirmations();
+        await preferMethod(page, "backup");
+        await clickInSection(page, "Remove", "Authenticator app");
+        await dialogOpen(page, "Remove your authenticator app?");
+        const ask = await dialogText(page, "Remove your authenticator app?");
+        if (!/ask for your passkey or a backup code instead/.test(ask)) {
+          return `dialog: ${ask}`;
+        }
+        await shot(page, "13-remove-app-ask");
+        await clickButton(page, "Remove", "Remove your authenticator app?");
+        await dialogOpen(page, CONFIRM);
+        await page.waitFor(() =>
+          Boolean(
+            window.__e2e.byLabel(
+              "Backup code",
+              window.__e2e.byRole("dialog", "Confirm it's you") ?? undefined,
+            ),
+          ),
+        );
+        await shot(page, "14-confirm-backup");
+        await clickButton(page, "Use another method", CONFIRM);
+        await shot(page, "15-confirm-choose");
+        await clickButton(page, "Use an authenticator code", CONFIRM);
+        await page.waitFor(() =>
+          /Enter the code from your authenticator app/.test(
+            window.__e2e.byRole("dialog", "Confirm it's you")?.textContent ??
+              "",
+          ),
+        );
+        await shot(page, "16-confirm-totp");
+        // A wrong code first: refused, the dialog stays.
+        await typeCode(
+          page,
+          CONFIRM,
+          totp(secret) === "000000" ? "111111" : "000000",
+        );
+        await page.waitFor(() =>
+          /isn't right/.test(
+            window.__e2e.byRole("dialog", "Confirm it's you")?.textContent ??
+              "",
+          ),
+        );
+        await shot(page, "17-confirm-totp-wrong");
+        await typeCode(page, CONFIRM, totp(secret));
+        await dialogClosed(page, CONFIRM);
+        await waitForSection(page, "Use any authenticator app");
+        const text = await sectionText(page);
+        return /On/.test(text) && /asks for your passkey/.test(text)
+          ? true
+          : `section: ${text}`;
+      },
+    );
+
+    await step(
+      "remove the last passkey: the dialog says it turns off, then it's off",
+      async () => {
+        await page.waitFor(() => {
+          const button = document.querySelector(
+            '#two-factor [aria-label^="Options for"]',
+          ) as HTMLElement | null;
+          if (!button) return false;
+          button.dispatchEvent(
+            new PointerEvent("pointerdown", { bubbles: true, button: 0 }),
+          );
+          return true;
+        });
+        await page.waitFor(() => {
+          const item = window.__e2e.byRole("menuitem", "Remove", {
+            exact: true,
+          });
+          if (!item) return false;
+          window.__e2e.click(item);
+          return true;
+        });
+        await dialogOpen(page, "Remove Work laptop?");
+        const ask = await dialogText(page, "Remove Work laptop?");
+        if (!/only second step, so two-step verification turns off/.test(ask)) {
+          return `dialog: ${ask}`;
+        }
+        await shot(page, "18-remove-last-passkey");
+        // Within 10 minutes of the last confirmation: no dialog this time.
+        await clickButton(page, "Remove", "Remove Work laptop?");
+        await dialogClosed(page, "Remove Work laptop?");
+        await waitForSection(page, "Add a passkey or an authenticator app");
+        await showSection(page);
+        await shot(page, "19-settings-off-again");
+        return true;
+      },
+    );
+
+    await step(
+      "turn on with the app first; the confirmation survives the session swap",
+      async () => {
+        await clickInSection(page, "Turn on", "Two-step verification");
+        await dialogOpen(page, "Turn on two-step verification");
+        await page.evaluate(() => {
+          const radio = document.querySelector(
+            '[role="dialog"] [role="radio"][value="app"]',
+          ) as HTMLElement | null;
+          if (radio) window.__e2e.click(radio);
+        });
+        await clickButton(page, "Continue", "Turn on two-step verification");
+        await dialogOpen(page, "Set up your authenticator app");
+        await page.waitFor(() =>
+          Boolean(
+            window.__e2e
+              .byRole("dialog", "Set up your authenticator app")
+              ?.querySelector("code"),
+          ),
+        );
+        const text = await dialogText(page, "Set up your authenticator app");
+        if (!/Step 2 of 3/.test(text)) return `stepper: ${text}`;
+        secret = (
+          (await page.evaluate(
+            () =>
+              window.__e2e
+                .byRole("dialog", "Set up your authenticator app")
+                ?.querySelector("code")?.textContent ?? "",
+          )) as string
+        ).replace(/\s+/g, "");
+        await shot(page, "20-turn-on-app");
+        await typeCode(page, "Set up your authenticator app", totp(secret));
+        await dialogOpen(page, "Save your backup codes");
+        await page.evaluate(() => {
+          const box = window.__e2e.byLabel("I've saved my backup codes");
+          if (box) window.__e2e.click(box);
+        });
+        await clickButton(page, "Done", "Save your backup codes");
+        await waitForSection(page, "10 of 10 left");
+        const user = await session(page);
+        if (user?.email !== EMAIL) return "signed out by the swap";
+        // Adding a passkey right after doesn't ask again.
+        await clickInSection(page, "Add passkey", "Passkeys");
+        await dialogOpen(page, "Add a passkey");
+        const asked = await page.evaluate(() =>
+          Boolean(window.__e2e.byRole("dialog", "Confirm it's you")),
+        );
+        await clickButton(page, "Continue", "Add a passkey");
+        await dialogClosed(page, "Add a passkey");
+        await page.waitFor(
+          () =>
+            document.querySelectorAll('#two-factor [aria-label^="Options for"]')
+              .length === 1,
+        );
+        if ((await credentials()) !== 2) return "no new credential";
+        return asked ? "asked again after the swap" : true;
+      },
+    );
+
+    await step(
+      "turn off: passkeys stay; 'ready to be your second step'",
+      async () => {
+        if (!DB_SQL) return "SKIPPED: E2E_DB_SQL not set";
+        expireConfirmations();
+        await preferMethod(page, "passkey");
+        const before = await signCount();
+        await clickInSection(page, "Turn off", "Two-step verification");
+        await dialogOpen(page, "Turn off two-step verification?");
+        const ask = await dialogText(page, "Turn off two-step verification?");
+        await shot(page, "21-turn-off-ask");
+        await clickButton(page, "Turn off", "Turn off two-step verification?");
+        // Confirmed with the passkey, on its own.
+        await waitForSection(
+          page,
+          "Your passkey is ready to be your second step",
+        );
+        await showSection(page);
+        await shot(page, "22-settings-passkey-ready");
+        if ((await signCount()) === before)
+          return "confirmed without the passkey";
+        return /Your passkeys stay/.test(ask) ? true : `dialog: ${ask}`;
+      },
+    );
+
+    await step(
+      "turn on with the existing passkey (emailed code, prompt, codes)",
+      async () => {
+        if (!DB_SQL) return "SKIPPED: E2E_DB_SQL not set";
+        expireConfirmations();
+        await preferMethod(page, "email");
+        const before = await signCount();
+        await clickInSection(page, "Turn on", "Two-step verification");
+        await confirmWithEmail(page, EMAIL);
+        await dialogOpen(page, "Save your backup codes", 30_000);
+        await shot(page, "23-turn-on-existing-passkey-codes");
+        await page.evaluate(() => {
+          const box = window.__e2e.byLabel("I've saved my backup codes");
+          if (box) window.__e2e.click(box);
+        });
+        await clickButton(page, "Done", "Save your backup codes");
+        await waitForSection(page, "10 of 10 left");
+        if ((await signCount()) === before) return "the passkey wasn't used";
+        return (await credentials()) === 2 ? true : "credentials changed";
+      },
+    );
+
+    await step("change the email through the dialog", async () => {
+      if (!DB_SQL) return "SKIPPED: E2E_DB_SQL not set";
+      expireConfirmations();
+      await preferMethod(page, "passkey");
+      const before = await signCount();
+      await page.evaluate(() => window.scrollTo(0, 0));
+      await clickButton(page, "Change");
+      await dialogOpen(page, "Change your email");
+      await page.evaluate((value: string) => {
+        const dialog = window.__e2e.byRole("dialog", "Change your email");
+        window.__e2e.setValue(
+          window.__e2e.byLabel(
+            "New email",
+            dialog ?? undefined,
+          ) as HTMLInputElement,
+          value,
+        );
+      }, NEW_EMAIL);
+      const previous = latestLogged("email-change code", NEW_EMAIL);
+      await clickButton(page, "Send code", "Change your email");
+      // 2FA is on, so the passkey confirms (no emailed confirmation code).
+      const code = await nextLogged("email-change code", NEW_EMAIL, previous);
+      await page.waitFor(() =>
+        /Enter the 6-digit code we sent/.test(
+          window.__e2e.byRole("dialog", "Change your email")?.textContent ?? "",
+        ),
+      );
+      await shot(page, "24-change-email-code");
+      await typeCode(page, "Change your email", code);
+      await clickButton(page, "Change email", "Change your email");
+      await dialogClosed(page, "Change your email");
+      const user = await session(page);
+      if ((await signCount()) === before)
+        return "confirmed without the passkey";
+      return user?.email === NEW_EMAIL
+        ? true
+        : `session: ${JSON.stringify(user)}`;
+    });
+
+    await step("delete the account through the dialog", async () => {
+      if (!DB_SQL) return "SKIPPED: E2E_DB_SQL not set";
+      expireConfirmations();
+      await preferMethod(page, "backup");
+      await page.evaluate(() =>
+        document.getElementById("danger")?.scrollIntoView({ block: "center" }),
+      );
+      await clickButton(page, "Delete account…");
+      await page.waitFor(() =>
+        Boolean(window.__e2e.byRole("dialog", "Delete your account?")),
+      );
+      await page.evaluate(() => {
+        const dialog = window.__e2e.byRole("dialog", "Delete your account?");
+        const input = dialog?.querySelector("input") as HTMLInputElement;
+        window.__e2e.setValue(input, "delete");
+      });
+      await clickButton(page, "Delete account", "Delete your account?");
+      await dialogOpen(page, CONFIRM);
+      await shot(page, "25-delete-confirm");
+      // Switch to the passkey: picking it opens the prompt.
+      await clickButton(page, "Use another method", CONFIRM);
+      await clickButton(page, "Use your passkey", CONFIRM);
+      await page.waitFor(() => location.pathname === "/", { timeout: 30_000 });
+      const gone = sql(
+        `select count(*) from "user" where email in ('${EMAIL}', '${NEW_EMAIL}');`,
+      );
+      return /\b0\b/.test(gone) && (await session(page)) === null
+        ? true
+        : `rows: ${gone.trim()}`;
+    });
+
+    if (MOBILE) {
       await step(
         "mobile: no horizontal page scroll on any screen",
         async () => {
           const wide = [...layout]
             .filter(([, r]) => r.scrollWidth > r.clientWidth)
             .map(([name, r]) => `${name} ${r.scrollWidth}>${r.clientWidth}`);
-          for (const [name, r] of layout) {
-            console.log(
-              `      ${name}: scrollWidth ${r.scrollWidth} / clientWidth ${r.clientWidth}`,
-            );
-          }
           return layout.size > 0 && wide.length === 0
             ? true
             : wide.join(", ") || "no screens measured";
         },
       );
-
       await step("mobile: dialogs fit the screen or scroll", async () => {
         const bad = [...layout]
           .filter(([, r]) => r.dialogOverflow)
           .map(([name, r]) => `${name} ${JSON.stringify(r.dialogOverflow)}`);
         return bad.length === 0 ? true : bad.join(", ");
       });
-
-      await step("mobile: passkey tap targets are at least 40 px", async () => {
+      await step("mobile: tap targets are at least 40 px", async () => {
         const bad = [...layout]
           .filter(([, r]) => r.small.length)
           .map(([name, r]) => `${name}: ${r.small.join("; ")}`);
@@ -1191,8 +1075,6 @@ async function main() {
       );
     }
 
-    // An error boundary catching a section's render error still lets the
-    // other checks pass, so page errors fail the run on their own.
     await step("no page errors in the browser", async () =>
       page.consoleErrors.length === 0
         ? true

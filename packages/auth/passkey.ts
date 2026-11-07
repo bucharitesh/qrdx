@@ -13,7 +13,7 @@ import type { PasskeyRelyingParty } from "./passkey-rp";
 
 /** Signs in with a passkey; the only passkey path that creates a session. */
 export const PASSKEY_SIGN_IN_PATH = "/passkey/verify-authentication";
-/** The challenge for a passkey sign-in (button and autofill). */
+/** The challenge for a passkey sign-in (the sign-in panel's button). */
 export const PASSKEY_SIGN_IN_OPTIONS_PATH =
   "/passkey/generate-authenticate-options";
 
@@ -60,6 +60,13 @@ export function passkeyOptions(
       userVerification: "required",
     },
     registration: {
+      // The plugin's own rule (a sign-in within a day) is off: adding a
+      // passkey happens only through the app's server actions (these paths
+      // are server-only, SERVER_ONLY_PASSKEY_PATHS), which ask the person to
+      // confirm it's you first (apps/docs/lib/account/confirmation-server.tsx).
+      // The person still comes from the session; without one the plugin
+      // refuses (there's no resolveUser).
+      requireSession: false,
       afterVerification: ({ verification }) => {
         refuseWithoutUserVerification(
           verification.registrationInfo?.userVerified === true

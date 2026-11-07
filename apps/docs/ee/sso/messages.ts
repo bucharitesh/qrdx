@@ -17,6 +17,14 @@ export function ssoSignInErrorMessage(
       return "Single sign-on isn't available for this workspace right now. Sign in another way.";
     case "sso_email_outside_domain":
       return "Your identity provider sent an address outside your company's domain, so QRdx can't sign you in with it. Ask your workspace admin.";
+    case "sso_email_unverified":
+      return "Your company's sign-in system hasn't confirmed this email address, so QRdx can't sign you in with it. Its admin needs to verify email addresses there.";
+    case "sso_email_missing":
+      return "Your company's sign-in system didn't send an email address, so QRdx can't sign you in. Ask your workspace admin.";
+    case "sso_weak_signature":
+      return "Your company's sign-in system signed this sign-in with SHA-1 or another outdated algorithm, which QRdx doesn't accept. Its admin needs to switch the QRdx app's signature algorithm to SHA-256.";
+    case "unsolicited_response":
+      return "Signing in from your company's app list doesn't work with QRdx. Start from QRdx's sign-in page: choose Sign in with SSO and enter your work email.";
     case "account_not_linked":
     case "account not linked":
       return "An account with this address already exists and couldn't be linked. Sign in with an email code instead.";
@@ -28,7 +36,3 @@ export function ssoSignInErrorMessage(
       return "Single sign-on didn't work. Try again, or sign in another way.";
   }
 }
-
-/** Shown on the settings page and in the docs. */
-export const SSO_REAUTH_MESSAGE =
-  "For your security, sign out and sign in again, then change single sign-on within a day.";

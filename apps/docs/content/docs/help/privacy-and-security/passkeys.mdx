@@ -1,34 +1,45 @@
 ---
-title: Sign in with a passkey
-description: Add a passkey to sign in with your fingerprint, face or screen lock, and remove one you no longer use.
+title: Passkeys
+description: Sign in with your fingerprint, face or screen lock, use a passkey as your second step, and rename or remove one you no longer use.
 ---
 
-A passkey signs you in to QRdx with your fingerprint, your face or your device's screen lock. It's saved on your device or in your password manager, and it only works on QRdx's own site, so a look-alike site can't collect it.
+A passkey checks it's you with your fingerprint, your face, your device's screen lock or a security key. It's saved on your device or in your password manager, and it only works on QRdx's own site, so a look-alike site can't collect it.
+
+A passkey does two jobs on QRdx:
+
+- it signs you in on its own, with **Continue with passkey** on the sign-in page;
+- it's the second step of [two-step verification](/docs/help/privacy-and-security/two-step-verification) after you sign in with an email code, Google or GitHub<IfAvailable feature="sso"> (or your workspace's single sign-on)</IfAvailable>.
 
 ## Add a passkey
 
 1. Go to **Settings** → **Profile & security**.
-2. Under **Passkeys**, click **Add passkey**.
+2. Under **Two-step verification**, click **Add passkey**, and confirm it's you.
 3. Keep the suggested name (your browser and system, like "Chrome on macOS") or type your own, then click **Continue**.
 4. Your browser asks where to save the passkey and checks your fingerprint, face or screen lock.
 
-You need to have signed in within the last 24 hours to add a passkey. If it's been longer, QRdx asks you to sign out and sign in again first.
-
-If you've turned on [two-step verification](/docs/help/privacy-and-security/two-step-verification), also enter a code from your authenticator app or a backup code before you click **Continue**. A backup code is used up.
-
-QRdx emails your account's address whenever a passkey is added or removed.
+If two-step verification was off, your first passkey turns it on, and QRdx shows you 10 backup codes to save. They get you in when you don't have your passkey.
 
 The passkey has to check that it's you each time it's used. Phones, computers and password managers do this with your fingerprint, face or screen lock. A security key needs a PIN set on it.
 
+QRdx emails your account's address whenever a passkey is added or removed.
+
 ## Sign in with a passkey
 
-On the sign-in page, click **Sign in with a passkey** and choose yours. In browsers that support it, your passkeys also appear as suggestions when you click the email field.
+On the sign-in page, click **Continue with passkey**, at the bottom of the ways to sign in, and choose yours. A passkey sign-in counts as both steps, so QRdx doesn't ask for anything else.
+
+The email field doesn't suggest passkeys: use the button.
 
 A passkey signs in to the account it was added to. It can't create an account: if you're new to QRdx, sign in with Google, GitHub or an email code first, then add a passkey.
 
-## Synced and device-bound passkeys
+## Use a passkey as your second step
 
-Settings labels each passkey **Synced** or **Device-bound**.
+With two-step verification on, sign in the way you usually do. Your browser's passkey prompt then opens on its own; check it's you and you're in. Some browsers only open the prompt after a click: then click **Continue with passkey**.
+
+No passkey to hand? Click **Use an authenticator code** (if you've set up an authenticator app) or **Use a backup code**.
+
+If you added a passkey before it could be a second step and two-step verification is off, Settings says **Your passkey is ready to be your second step**. Click **Turn on** to use it that way: confirm it's you, check it's you with the passkey, and save your backup codes.
+
+## Synced and device-bound passkeys
 
 A synced passkey is backed up to a password manager or a cloud keychain, such as iCloud Keychain or Google Password Manager. It works on every device signed in to that account.
 
@@ -36,12 +47,10 @@ A device-bound passkey stays on the one phone, computer or security key that mad
 
 ## Rename or remove a passkey
 
-Under **Passkeys**, click **Rename** or **Remove** next to the passkey. A removed passkey stops working on QRdx straight away. Your device or password manager may keep listing it until you delete it there as well.
+Under **Two-step verification**, open the menu next to the passkey and click **Rename** or **Remove**, then confirm it's you. A removed passkey stops working on QRdx straight away. Your device or password manager may keep listing it until you delete it there as well.
+
+If that passkey is your only second step, removing it turns two-step verification off. QRdx tells you before you confirm.
 
 Lost a device that had a passkey on it? Sign in another way and remove that passkey.
 
 You can always sign in with a code sent to your email, so removing your last passkey doesn't lock you out.
-
-## Passkeys and two-step verification
-
-A passkey sign-in already takes two things: the device that holds the passkey, and your fingerprint, face or screen lock. If you've turned on [two-step verification](/docs/help/privacy-and-security/two-step-verification), QRdx doesn't ask for an authenticator code after you sign in with a passkey. Signing in with Google, GitHub or an email code<IfAvailable feature="sso"> (or single sign-on)</IfAvailable> still asks for one.

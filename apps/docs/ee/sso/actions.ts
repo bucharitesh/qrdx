@@ -14,6 +14,11 @@ import {
   updateSsoConnection,
   verifySsoDomain,
 } from "@/ee/sso/connections";
+import { CONFIRMATION_REQUIRED } from "@/lib/account/confirmation";
+import {
+  currentSession,
+  requireRecentConfirmation,
+} from "@/lib/account/confirmation-server";
 import { HttpError } from "@/lib/error-response";
 import { isFeatureAvailable } from "@/lib/feature-availability";
 import { enforceRateLimits } from "@/lib/request-guards";
@@ -22,7 +27,10 @@ import { logError } from "@/lib/shared";
 import { UnauthorizedError } from "@/types/errors";
 
 // Settings → Single sign-on. ee/sso/connections.ts does the checks (role,
-// Business plan, recent sign-in) and calls the plugin through auth.api.
+// Business plan) and calls the plugin through auth.api.
+// Creating, editing, verifying and removing the connection also need a
+// recent "Confirm it's you" (lib/account/confirmation-server.ts); without
+// one they answer CONFIRMATION_REQUIRED and the page asks, then retries.
 
 export type SsoActionResult<T> =
   | { success: true; data: T }
@@ -31,8 +39,6 @@ export type SsoActionResult<T> =
       error: {
         code: string;
         message: string;
-        /** Sign out and in again first (lib/account/email-change.ts rule) */
-        reauth?: boolean;
       };
     };
 
@@ -59,7 +65,6 @@ function failure(error: unknown, action: string): SsoActionResult<never> {
       error: {
         code: error.code,
         message: error.message,
-        ...(error.code === "REAUTH_REQUIRED" ? { reauth: true } : {}),
       },
     };
   }
@@ -70,10 +75,19 @@ function failure(error: unknown, action: string): SsoActionResult<never> {
   };
 }
 
+const confirmationRequired = (): SsoActionResult<never> => ({
+  success: false,
+  error: {
+    code: CONFIRMATION_REQUIRED,
+    message: "Confirm it's you to change single sign-on.",
+  },
+});
+
 /** The workspace always comes from the session and the URL, never the client. */
 async function mutate<T>(
   action: string,
   fn: (scope: ActiveScope, requestHeaders: Headers) => Promise<T>,
+  { confirm = false }: { confirm?: boolean } = {},
 ): Promise<SsoActionResult<T>> {
   try {
     // Without a licence key the SSO plugin isn't registered (packages/auth/
@@ -90,6 +104,15 @@ async function mutate<T>(
     await enforceRateLimits([
       { limiter: mutationLimiter, key: `sso:user:${scope.userId}` },
     ]);
+    if (confirm) {
+      const session = await currentSession();
+      if (!session || session.userId !== scope.userId) {
+        throw new UnauthorizedError();
+      }
+      if (await requireRecentConfirmation(session)) {
+        return confirmationRequired();
+      }
+    }
     const data = await fn(scope, requestHeaders);
     revalidatePath("/dashboard", "layout");
     return { success: true, data };
@@ -135,27 +158,33 @@ function toUpdateInput(input: unknown): UpdateSsoInput {
 export async function createSso(
   input: CreateSsoInput,
 ): Promise<SsoActionResult<SsoConnectionView>> {
-  return mutate("createSso", (scope, requestHeaders) =>
-    createSsoConnection(scope, requestHeaders, toCreateInput(input)),
+  return mutate(
+    "createSso",
+    (scope, requestHeaders) =>
+      createSsoConnection(scope, requestHeaders, toCreateInput(input)),
+    { confirm: true },
   );
 }
 
 export async function verifySso(): Promise<SsoActionResult<SsoConnectionView>> {
-  return mutate("verifySso", verifySsoDomain);
+  return mutate("verifySso", verifySsoDomain, { confirm: true });
 }
 
 export async function updateSso(
   input: UpdateSsoInput,
 ): Promise<SsoActionResult<SsoConnectionView>> {
-  return mutate("updateSso", (scope, requestHeaders) =>
-    updateSsoConnection(scope, requestHeaders, toUpdateInput(input)),
+  return mutate(
+    "updateSso",
+    (scope, requestHeaders) =>
+      updateSsoConnection(scope, requestHeaders, toUpdateInput(input)),
+    { confirm: true },
   );
 }
 
 export async function removeSso(): Promise<
   SsoActionResult<{ domain: string }>
 > {
-  return mutate("removeSso", deleteSsoConnection);
+  return mutate("removeSso", deleteSsoConnection, { confirm: true });
 }
 
 export async function setSsoRole(
