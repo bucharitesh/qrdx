@@ -9,12 +9,15 @@
 //   new          another browser signs in: the alert, with its device, place,
 //                address, time in the place's zone and how it signed in (geo
 //                headers set as the hosting platform would)
-//   two-step     with two-step verification on, a new browser's sign-in is
-//                challenged: no alert until the authenticator code finishes
-//                it, then one naming both steps
-//   notices      turning two-step verification on (Confirm it's you with an
-//                emailed code, then the stepper's authenticator app) logs its
-//                notice and isn't counted as a sign-in
+//   throttle     a third new browser within ALERT_GAP_MINUTES of that alert
+//                signs in and is recorded, without a second alert
+//   notices      a second account (no alert yet, so not throttled) turns
+//                two-step verification on (Confirm it's you with an emailed
+//                code, then the stepper's authenticator app): its notice is
+//                logged and it isn't counted as a sign-in
+//   two-step     then a new browser's sign-in to that account is challenged:
+//                no alert until the authenticator code finishes it, then one
+//                naming both steps
 //
 // The dev server logs alerts and notices instead of emailing them, so it only
 // runs against a local dev server whose output goes to E2E_DEV_LOG:
@@ -36,6 +39,8 @@ const BASE_URL = (process.env.E2E_BASE_URL ?? "http://localhost:3000").replace(
 const DEV_LOG = process.env.E2E_DEV_LOG ?? "";
 const RUN = Date.now().toString(36);
 const EMAIL = `e2e-alerts-${RUN}@qrdx.test`;
+/** The second account: two-step verification, and a sign-in challenged by it. */
+const TWO_STEP_EMAIL = `e2e-alerts-2fa-${RUN}@qrdx.test`;
 
 // What the hosting platform adds to each request (lib/security/
 // request-details.ts reads them).
@@ -110,9 +115,13 @@ async function waitForLogLine(
 
 const escapeRegExp = (value: string) =>
   value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-const ALERT = new RegExp(
-  `\\[dev only\\] QRdx new sign-in alert for ${escapeRegExp(EMAIL)}: ([^\\n]*) \\(not emailed`,
-);
+/** The dev server's line for a new sign-in alert to `email`. */
+const alertFor = (email: string) =>
+  new RegExp(
+    `\\[dev only\\] QRdx new sign-in alert for ${escapeRegExp(email)}: ([^\\n]*) \\(not emailed`,
+  );
+const ALERT = alertFor(EMAIL);
+const TWO_STEP_ALERT = alertFor(TWO_STEP_EMAIL);
 
 // ─── Page helpers ───────────────────────────────────────────────────────────
 
@@ -179,7 +188,7 @@ async function deviceCookie(page: Page) {
 }
 
 /** /sign-in → email → code, through the page like a person. */
-async function emailCodeSignIn(page: Page, next = "/dashboard") {
+async function emailCodeSignIn(page: Page, next = "/dashboard", email = EMAIL) {
   await page.goto(`${BASE_URL}/sign-in?next=${encodeURIComponent(next)}`);
   await waitForText(page, "Email me a code");
   await page.evaluate(() => {
@@ -187,10 +196,10 @@ async function emailCodeSignIn(page: Page, next = "/dashboard") {
     if (button) window.__e2e.click(button);
   });
   const since = logSize();
-  await fill(page, "Email address", EMAIL);
+  await fill(page, "Email address", email);
   await clickButton(page, "Email me a code");
   const [, code] = await waitForLogLine(
-    new RegExp(`sign-in code for ${escapeRegExp(EMAIL)}: (\\d{6})`),
+    new RegExp(`sign-in code for ${escapeRegExp(email)}: (\\d{6})`),
     since,
   );
   await waitForText(page, "Check your email");
@@ -236,14 +245,14 @@ async function clickInConfirm(page: Page, name: string) {
 }
 
 /** "Confirm it's you" with a code emailed to the account (2FA off). */
-async function confirmByEmail(page: Page) {
+async function confirmByEmail(page: Page, email: string) {
   await page.waitFor((t: string) => Boolean(window.__e2e.byRole("dialog", t)), {
     args: [CONFIRM_DIALOG] as never[],
   });
   const since = logSize();
   await clickInConfirm(page, "Send code");
   const [, code] = await waitForLogLine(
-    new RegExp(`confirmation code for ${escapeRegExp(EMAIL)}: (\\d{6})`),
+    new RegExp(`confirmation code for ${escapeRegExp(email)}: (\\d{6})`),
     since,
   );
   await page.waitFor(
@@ -371,59 +380,90 @@ async function main() {
     );
     check("the sender logged it (dev doesn't email)", true);
 
-    // ── notices: turn on two-step verification in the first browser ──
-    await first.goto(`${BASE_URL}/settings/account#two-factor`);
-    await waitForText(first, "Two-step verification");
+    // ── throttle: one alert per account every ALERT_GAP_MINUTES ──
+    const third = await newBrowser();
+    pages.push(third);
     since = logSize();
-    await clickButton(first, "Turn on");
+    await emailCodeSignIn(third);
+    await landedOn(third, "/dashboard");
+    await waitForLogLine(
+      /"event":"auth\.new_sign_in","outcome":"throttled"/,
+      since,
+    );
+    check(
+      "a third new browser within 10 minutes: signed in and recorded, no second alert",
+      (await signedInEmail(third)) === EMAIL &&
+        Boolean(await deviceCookie(third)) &&
+        !ALERT.test(logSince(since)),
+    );
+
+    // ── notices: a second account turns on two-step verification ──
+    // It has had no alert, so its challenged sign-in below isn't throttled.
+    const twoStepFirst = await newBrowser();
+    pages.push(twoStepFirst);
+    since = logSize();
+    await emailCodeSignIn(twoStepFirst, "/dashboard", TWO_STEP_EMAIL);
+    await landedOn(twoStepFirst, "/dashboard");
+    await waitForLogLine(
+      /"event":"auth\.new_sign_in","outcome":"first-device"/,
+      since,
+    );
+    await twoStepFirst.goto(`${BASE_URL}/settings/account#two-factor`);
+    await waitForText(twoStepFirst, "Two-step verification");
+    since = logSize();
+    await clickButton(twoStepFirst, "Turn on");
     // "Confirm it's you" first (2FA is off: an emailed code), then the
     // stepper: the authenticator app.
-    await confirmByEmail(first);
-    await chooseAuthenticatorApp(first);
-    await waitForText(first, "Set up your authenticator app");
+    await confirmByEmail(twoStepFirst, TWO_STEP_EMAIL);
+    await chooseAuthenticatorApp(twoStepFirst);
+    await waitForText(twoStepFirst, "Set up your authenticator app");
     // The secret is made when the step opens.
-    await first.waitFor(() =>
+    await twoStepFirst.waitFor(() =>
       Boolean(document.querySelector('[role="dialog"] code')),
     );
     const secret = (
-      (await first.evaluate(
+      (await twoStepFirst.evaluate(
         () => document.querySelector('[role="dialog"] code')?.textContent ?? "",
       )) as string
     ).replace(/\s+/g, "");
-    await fill(first, "Code from your authenticator app", totp(secret));
-    await waitForText(first, "Save your backup codes");
-    await first.evaluate(() => {
+    await fill(twoStepFirst, "Code from your authenticator app", totp(secret));
+    await waitForText(twoStepFirst, "Save your backup codes");
+    await twoStepFirst.evaluate(() => {
       const box = window.__e2e.byLabel("I've saved my backup codes");
       if (box) window.__e2e.click(box);
     });
-    await clickInDialog(first, "Done");
+    await clickInDialog(twoStepFirst, "Done");
     await waitForLogLine(
       new RegExp(
-        `QRdx security notice for ${escapeRegExp(EMAIL)}: two-step verification turned on`,
+        `QRdx security notice for ${escapeRegExp(TWO_STEP_EMAIL)}: two-step verification turned on`,
       ),
       since,
     );
     check("turning it on logs the notice", true);
     check(
       "turning it on (a server-side session swap) isn't a sign-in",
-      !ALERT.test(logSince(since)),
+      !TWO_STEP_ALERT.test(logSince(since)),
     );
 
-    // ── two-step ──
-    const third = await newBrowser();
-    pages.push(third);
+    // ── two-step: a new browser for the second account ──
+    const challenged = await newBrowser();
+    pages.push(challenged);
     since = logSize();
-    await emailCodeSignIn(third, "/settings/account");
-    await waitForText(third, "Your account asks for a second step");
+    await emailCodeSignIn(challenged, "/settings/account", TWO_STEP_EMAIL);
+    await waitForText(challenged, "Your account asks for a second step");
     await sleep(1500);
     check(
       "a challenged sign-in: no alert before the second step",
-      !ALERT.test(logSince(since)) && (await signedInEmail(third)) === null,
+      !TWO_STEP_ALERT.test(logSince(since)) &&
+        (await signedInEmail(challenged)) === null,
     );
-    check("and no device cookie yet", (await deviceCookie(third)) === null);
-    await fill(third, "Authenticator code", totp(secret));
-    await landedOn(third, "/settings/account");
-    const [, afterStep] = await waitForLogLine(ALERT, since);
+    check(
+      "and no device cookie yet",
+      (await deviceCookie(challenged)) === null,
+    );
+    await fill(challenged, "Authenticator code", totp(secret));
+    await landedOn(challenged, "/settings/account");
+    const [, afterStep] = await waitForLogLine(TWO_STEP_ALERT, since);
     check(
       "the authenticator code finishes it, then the alert names both steps",
       /Email code, then an authenticator code$/.test(afterStep),
