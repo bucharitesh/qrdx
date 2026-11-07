@@ -6,10 +6,22 @@
 -- A browser is known by a random 32-byte cookie (qrdx_device, HttpOnly,
 -- 400 days). Only its SHA-256 is stored in device_hash, never the cookie.
 -- user_agent is the browser's own description, kept to show which browser a
--- row is; it can be null.
+-- row is; it can be null. alerted_at is set on the browsers that got an
+-- alert: an account gets at most one every 10 minutes and 10 a day.
+--
+-- Rows stay bounded: the plugin keeps each account's 50 most recently seen
+-- browsers, and the daily cron (apps/docs/lib/auth/verification-prune.ts)
+-- deletes rows whose last_seen_at is more than 400 days old.
 --
 -- Additive and idempotent: a new table only, safe to run more than once, in
--- one transaction. No existing table or column changes.
+-- one transaction. No existing table or column changes. A database that ran
+-- the first version of this file (without alerted_at) gets the column from
+-- the ADD COLUMN IF NOT EXISTS below.
+--
+-- Rollback: the code before this feature (f4dc0a2c) never reads or writes
+-- this table, so it keeps working with the table present (checked by
+-- running f4dc0a2c against a database with it). Leave the table in place
+-- when rolling back; dropping it is a separate change.
 --
 -- Order: apply it BEFORE deploying the code that registers the plugin. If
 -- the code runs first, the plugin's reads fail; it logs the error and lets
@@ -39,8 +51,11 @@ CREATE TABLE IF NOT EXISTS "known_device" (
   "device_hash" text NOT NULL,
   "created_at" timestamp NOT NULL,
   "last_seen_at" timestamp NOT NULL,
-  "user_agent" text
+  "user_agent" text,
+  "alerted_at" timestamp
 );
+
+ALTER TABLE "known_device" ADD COLUMN IF NOT EXISTS "alerted_at" timestamp;
 
 DO $$ BEGIN
   ALTER TABLE "known_device" ADD CONSTRAINT "known_device_user_id_user_id_fk"
