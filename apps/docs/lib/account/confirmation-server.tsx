@@ -46,7 +46,8 @@ import {
 import {
   CONFIRMATION_CODE_SUBJECT,
   ConfirmationCodeEmail,
-} from "./confirmation-email";
+} from "@/lib/email/templates/confirmation-code";
+import { currentRequestDetails } from "@/lib/security/request-details";
 import { isRecentSignIn } from "./deletion";
 import { PASSKEY_MESSAGES } from "./passkeys";
 import { signInCodesAvailable } from "./reauth";
@@ -602,6 +603,7 @@ export async function sendConfirmationCode(): Promise<ConfirmResult> {
       },
       new Date(Date.now() + CONFIRMATION_CODE_MINUTES * 60_000),
     );
+    const details = await currentRequestDetails();
     try {
       await deliverSignInCode(
         { email: session.email, otp: code },
@@ -613,7 +615,13 @@ export async function sendConfirmationCode(): Promise<ConfirmResult> {
             sendEmail({
               to: session.email,
               subject: CONFIRMATION_CODE_SUBJECT,
-              react: <ConfirmationCodeEmail code={code} />,
+              react: (
+                <ConfirmationCodeEmail
+                  code={code}
+                  details={details}
+                  expiresInMinutes={CONFIRMATION_CODE_MINUTES}
+                />
+              ),
               tags: [{ name: "category", value: "confirmation_code" }],
             }),
         },

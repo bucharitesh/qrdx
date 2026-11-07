@@ -206,7 +206,7 @@ beforeAll(async () => {
         },
       }),
       twoFactorPlugin,
-      signInChallenge(twoFactorPlugin),
+      signInChallenge(twoFactorPlugin, { relyingParty: null }),
       newSignIn(),
     ],
   });

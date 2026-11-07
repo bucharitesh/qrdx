@@ -98,23 +98,6 @@ type NoticeKind = Parameters<typeof sendTwoFactorNotice>[0];
 const notify = (kind: NoticeKind, email: string) =>
   after(() => sendTwoFactorNotice(kind, email));
 
-/**
- * Adding or removing the authenticator app while two-step verification stays
- * on. The notice template has no wording for these yet (the email lane adds
- * it); until then this is logged as an unsent notice, never silently skipped.
- */
-const notifyAuthenticatorChange = (change: "added" | "removed") =>
-  after(() =>
-    console.error(
-      JSON.stringify({
-        event: "account.two_factor_notice",
-        kind: `authenticator-${change}`,
-        outcome: "not-sent",
-        reason: "no template",
-      }),
-    ),
-  );
-
 /** Signed in and confirmed in the last 10 minutes, else the failure. */
 const confirmed = () => confirmedSession(MESSAGES.signedOut);
 
@@ -326,7 +309,7 @@ export async function confirmAuthenticatorSetup(
   }
 
   if (wasOn) {
-    notifyAuthenticatorChange("added");
+    notify("app-added", session.email);
     return { ok: true, backupCodes: null };
   }
   notify("on", session.email);
@@ -369,7 +352,7 @@ export async function removeAuthenticatorApp(): Promise<
         .update(twoFactor)
         .set({ secret: NO_AUTHENTICATOR_SECRET, verified: false })
         .where(eq(twoFactor.userId, session.userId));
-      notifyAuthenticatorChange("removed");
+      notify("app-removed", session.email);
       refresh();
       return { ok: true, turnedOff: false };
     }
