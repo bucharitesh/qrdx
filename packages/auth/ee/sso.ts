@@ -13,6 +13,7 @@ import {
   emailInSsoDomain,
   looksLikeEmail,
   SAML_DIGEST_ALGORITHMS,
+  SAML_RESPONSE_MAX_CHARS,
   SAML_SIGNATURE_ALGORITHMS,
   SSO_SIGN_IN_ERROR,
   SSO_TOKEN_PREFIX,
@@ -494,6 +495,13 @@ export const ssoGate = () =>
             if (ctx.path === SAML_ACS_PATH) {
               const response = (ctx.body as Record<string, unknown> | undefined)
                 ?.SAMLResponse;
+              // Far larger than any real response: refused unread.
+              if (
+                typeof response === "string" &&
+                response.length > SAML_RESPONSE_MAX_CHARS
+              ) {
+                throw ctx.redirect(UNAVAILABLE_REDIRECT);
+              }
               if (
                 typeof response === "string" &&
                 samlWeakAlgorithms(

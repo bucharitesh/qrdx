@@ -351,6 +351,28 @@ describe("SAML signature algorithms", () => {
 
   it("refuses SHA-1 signatures or digests, in any form", () => {
     expect(samlWeakAlgorithms(signed(RSA_SHA1, SHA256))).toEqual([RSA_SHA1]);
+  });
+
+  it("stays fast on hostile input (no closing >, many tags)", () => {
+    const hostile = "<SignatureMethod".repeat(40_000);
+    const started = performance.now();
+    expect(samlWeakAlgorithms(hostile)).toEqual([]);
+    expect(performance.now() - started).toBeLessThan(200);
+    const quoted = `<ds:SignatureMethod Algorithm="${"a".repeat(300_000)}`;
+    const again = performance.now();
+    expect(samlWeakAlgorithms(quoted)).toEqual([]);
+    expect(performance.now() - again).toBeLessThan(200);
+  });
+
+  it("reads a quoted > inside the tag and a single-quoted algorithm", () => {
+    expect(
+      samlWeakAlgorithms(
+        `<ds:SignatureMethod Note="a>b" Algorithm='${RSA_SHA1}'/>`,
+      ),
+    ).toEqual([RSA_SHA1]);
+    expect(samlWeakAlgorithms("<ds:SignatureMethodX Algorithm='x'/>")).toEqual(
+      [],
+    );
     expect(samlWeakAlgorithms(signed(RSA_SHA256, SHA1))).toEqual([SHA1]);
     // No prefix, single quotes, and a ">" inside another attribute's value.
     expect(

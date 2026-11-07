@@ -425,6 +425,17 @@ describe("SAML signature algorithms", () => {
     }
   });
 
+  it("refuses an oversized response unread, and quickly", async () => {
+    stubDb({ providers: [provider()] });
+    const started = performance.now();
+    const result = await post("<SignatureMethod".repeat(40_000));
+    expect(result.status).toBe(302);
+    expect(result.headers.get("location")).toBe(
+      "/sign-in?error=sso_unavailable",
+    );
+    expect(performance.now() - started).toBeLessThan(1000);
+  });
+
   it("is also the plugin's own rule", async () => {
     const { ssoOptions } = await import("@repo/auth/sso");
     expect(ssoOptions.saml.algorithms).toMatchObject({
