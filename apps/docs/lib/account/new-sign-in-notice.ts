@@ -4,6 +4,7 @@
  * is ./new-sign-in-notice-server.tsx.
  */
 import type { SecondStep } from "@repo/auth/new-sign-in";
+import { isReservedEmailAddress } from "@/lib/email/reserved-address";
 import type { NoticeDeliveryDeps } from "./email-change";
 
 const METHODS: Record<string, string> = {
@@ -30,20 +31,9 @@ export function signInMethodLabel(
   return secondStep ? `${first}, then ${SECOND_STEPS[secondStep]}` : first;
 }
 
-// Names reserved for tests and examples (RFC 2606, RFC 6761): no inbox
-// behind them, so mail there only bounces. Test and e2e accounts use them
-// (@qrdx.test), and they sign in from fresh browsers all the time.
-const RESERVED_DOMAINS = new Set(["example.com", "example.net", "example.org"]);
-const RESERVED_TLDS = new Set(["test", "invalid", "example", "localhost"]);
-
-export function isReservedEmailAddress(email: string): boolean {
-  const domain = email.trim().toLowerCase().split("@").pop() ?? "";
-  const labels = domain.split(".");
-  return (
-    RESERVED_TLDS.has(labels.at(-1) ?? "") ||
-    RESERVED_DOMAINS.has(labels.slice(-2).join("."))
-  );
-}
+// Test and e2e accounts use reserved addresses (@qrdx.test) and sign in
+// from fresh browsers all the time; they're never emailed.
+export { isReservedEmailAddress } from "@/lib/email/reserved-address";
 
 /**
  * Emails the alert where outbound delivery is on, writes it to the console in
