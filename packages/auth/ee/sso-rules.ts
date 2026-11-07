@@ -271,11 +271,24 @@ export function ssoEmailUnverified(
   );
 }
 
-/** True for something shaped like an email address (one @, text around it). */
+/** The longest address SMTP allows (RFC 5321); longer values aren't one. */
+const MAX_EMAIL_LENGTH = 254;
+
+/**
+ * True for something shaped like an email address: one @ with text before
+ * it, no whitespace, and a dot inside the domain (not at either end). Checked
+ * by position, not a backtracking pattern: the value comes from an identity
+ * provider's attributes, so the work must stay linear and bounded.
+ */
 export function looksLikeEmail(value: unknown): boolean {
-  return (
-    typeof value === "string" && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim())
-  );
+  if (typeof value !== "string") return false;
+  const email = value.trim();
+  if (email.length > MAX_EMAIL_LENGTH || /\s/.test(email)) return false;
+  const at = email.indexOf("@");
+  if (at <= 0 || at !== email.lastIndexOf("@")) return false;
+  const domain = email.slice(at + 1);
+  const dot = domain.indexOf(".", 1);
+  return dot !== -1 && dot < domain.length - 1;
 }
 
 // SAML attribute names for a person's name: friendly names, X.500 OIDs and
