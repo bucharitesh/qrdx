@@ -39,8 +39,6 @@ export type SsoActionResult<T> =
       error: {
         code: string;
         message: string;
-        /** Sign out and in again first (lib/account/email-change.ts rule) */
-        reauth?: boolean;
       };
     };
 
@@ -67,7 +65,6 @@ function failure(error: unknown, action: string): SsoActionResult<never> {
       error: {
         code: error.code,
         message: error.message,
-        ...(error.code === "REAUTH_REQUIRED" ? { reauth: true } : {}),
       },
     };
   }
