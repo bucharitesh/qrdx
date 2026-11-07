@@ -376,7 +376,7 @@ export function samlWeakAlgorithms(xml: string): string[] {
     const name = xml.slice(open + 1, end);
     const element = name.slice(name.lastIndexOf(":") + 1);
     if (element !== "SignatureMethod" && element !== "DigestMethod") {
-      from = end > open + 1 ? end : open + 1;
+      from = Math.max(end, open + 1);
       continue;
     }
     // The end of the start tag: the first ">" outside a quoted value.
