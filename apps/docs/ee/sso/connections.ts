@@ -21,7 +21,6 @@ import {
   ssoVerificationRecord,
 } from "@repo/auth/sso-rules";
 import { database as db } from "@repo/database";
-import { canChangeEmailNow } from "@/lib/account/email-change";
 import { HttpError } from "@/lib/error-response";
 import { checkWebhookUrl, isBlockedAddress } from "@/lib/events/url-safety";
 import { can } from "@/lib/permissions";
@@ -32,14 +31,14 @@ import {
   type Plan,
 } from "@/lib/plans";
 import type { ActiveScope } from "@/lib/scope";
-import { SSO_REAUTH_MESSAGE } from "./messages";
 
 // Settings → Single sign-on. The plugin's management endpoints are off over
 // HTTP (packages/auth/ee/sso.ts SSO_SERVER_ONLY_PATHS), so these functions,
 // called by ee/sso/actions.ts and the settings page, are the only way in. Each
-// checks the QRdx role (sso.manage), the Business plan and, for changes to
-// the connection itself, a recent sign-in, before calling auth.api with the
-// person's own session (the plugin then checks owner/admin again).
+// checks the QRdx role (sso.manage) and the Business plan before calling
+// auth.api with the person's own session (the plugin then checks owner/admin
+// again). ee/sso/actions.ts asks for "Confirm it's you" before changes to the
+// connection itself.
 
 export type SsoProtocol = "oidc" | "saml";
 
@@ -69,8 +68,6 @@ export interface SsoOverview {
   allowed: boolean;
   /** The viewer may change SSO (owner or admin) */
   canManage: boolean;
-  /** Signed in recently enough to change the connection */
-  recentSignIn: boolean;
   joinRole: SsoJoinRole;
   connection: SsoConnectionView | null;
   /** The new connection's id and IdP values, for the set-up form */
@@ -150,6 +147,21 @@ export function readIdpMetadata(xml: string): {
   }
   const certificate = xml.match(PEM_BODY_RE)?.[1] ?? null;
   return { entityId, ssoUrl, certificate };
+}
+
+const WANT_SIGNED_REQUESTS_RE =
+  /(<(?:\w+:)?IDPSSODescriptor\b[^>]*?\bWantAuthnRequestsSigned\s*=\s*)(["'])(?:true|1)\2/g;
+
+/**
+ * IdP metadata as stored: QRdx has no SAML signing key and sends its sign-in
+ * requests unsigned, but the SAML library refuses to build any request for an
+ * identity provider whose metadata says WantAuthnRequestsSigned="true" (some
+ * providers publish that for every app), so every sign-in failed. Stored as
+ * "false"; the identity provider still decides whether to accept an unsigned
+ * request (the docs say to turn off signed requests for QRdx there).
+ */
+export function withUnsignedSignInRequests(xml: string): string {
+  return xml.replace(WANT_SIGNED_REQUESTS_RE, "$1$2false$2");
 }
 
 function toView(row: ProviderRow, token: string | null): SsoConnectionView {
@@ -256,22 +268,15 @@ async function verificationToken(
   }
 }
 
-async function sessionCreatedAt(requestHeaders: Headers): Promise<Date | null> {
-  const session = await auth.api.getSession({ headers: requestHeaders });
-  const createdAt = session?.session?.createdAt;
-  return createdAt ? new Date(createdAt) : null;
-}
-
 /** Everything the settings page shows, for the workspace in `scope`. */
 export async function getSsoOverview(
   scope: ActiveScope,
   requestHeaders: Headers,
 ): Promise<SsoOverview> {
-  const [plan, row, metadata, createdAt] = await Promise.all([
+  const [plan, row, metadata] = await Promise.all([
     getOwnerPlanForOrganization(scope.organizationId),
     findConnection(scope.organizationId),
     workspaceMetadata(scope.organizationId),
-    sessionCreatedAt(requestHeaders),
   ]);
   const canManage = can(scope.role, "sso.manage");
   const draftId = newSsoProviderId();
@@ -283,7 +288,6 @@ export async function getSsoOverview(
     plan,
     allowed: getPlanLimits(plan).sso,
     canManage,
-    recentSignIn: createdAt ? canChangeEmailNow(createdAt, new Date()) : false,
     joinRole: ssoJoinRoleFromMetadata(metadata),
     connection: row ? toView(row, token) : null,
     draft: {
@@ -336,14 +340,10 @@ export type UpdateSsoInput =
 const fail = (status: number, code: string, message: string) =>
   new HttpError(status, code, message);
 
-/** Role, plan and (for connection changes) a recent sign-in. */
+/** Role and plan. */
 async function guard(
   scope: ActiveScope,
-  requestHeaders: Headers,
-  {
-    needsPlan = true,
-    needsRecentSignIn = false,
-  }: { needsPlan?: boolean; needsRecentSignIn?: boolean } = {},
+  { needsPlan = true }: { needsPlan?: boolean } = {},
 ) {
   assertCan(scope, "sso.manage");
   if (needsPlan) {
@@ -354,12 +354,6 @@ async function guard(
         "PLAN_REQUIRED",
         "Single sign-on comes with the Business plan.",
       );
-    }
-  }
-  if (needsRecentSignIn) {
-    const createdAt = await sessionCreatedAt(requestHeaders);
-    if (!(createdAt && canChangeEmailNow(createdAt, new Date()))) {
-      throw fail(403, "REAUTH_REQUIRED", SSO_REAUTH_MESSAGE);
     }
   }
 }
@@ -553,7 +547,7 @@ function samlBody(
       issuer: urls.samlEntityId,
       samlConfig: {
         entryPoint: metadata.ssoUrl,
-        idpMetadata: { metadata: xml },
+        idpMetadata: { metadata: withUnsignedSignInRequests(xml) },
         identifierFormat: EMAIL_NAME_ID,
       },
     };
@@ -578,7 +572,7 @@ export async function createSsoConnection(
   requestHeaders: Headers,
   input: CreateSsoInput,
 ): Promise<SsoConnectionView> {
-  await guard(scope, requestHeaders, { needsRecentSignIn: true });
+  await guard(scope);
   if (await findConnection(scope.organizationId)) {
     throw fail(
       409,
@@ -641,7 +635,7 @@ export async function verifySsoDomain(
   scope: ActiveScope,
   requestHeaders: Headers,
 ): Promise<SsoConnectionView> {
-  await guard(scope, requestHeaders);
+  await guard(scope);
   const row = existingOrThrow(await findConnection(scope.organizationId));
   if (row.domainVerified) return toView(row, null);
   await assertDomainFree(row.domain, scope.organizationId);
@@ -683,7 +677,7 @@ export async function updateSsoConnection(
   requestHeaders: Headers,
   input: UpdateSsoInput,
 ): Promise<SsoConnectionView> {
-  await guard(scope, requestHeaders, { needsRecentSignIn: true });
+  await guard(scope);
   const row = existingOrThrow(await findConnection(scope.organizationId));
   const isSaml = Boolean(row.samlConfig);
   if ((input.protocol === "saml") !== isSaml) {
@@ -733,10 +727,7 @@ export async function deleteSsoConnection(
   scope: ActiveScope,
   requestHeaders: Headers,
 ): Promise<{ domain: string }> {
-  await guard(scope, requestHeaders, {
-    needsPlan: false,
-    needsRecentSignIn: true,
-  });
+  await guard(scope, { needsPlan: false });
   const row = existingOrThrow(await findConnection(scope.organizationId));
   try {
     await auth.api.deleteSSOProvider({
@@ -755,7 +746,7 @@ export async function setSsoJoinRole(
   requestHeaders: Headers,
   role: SsoJoinRole,
 ): Promise<SsoJoinRole> {
-  await guard(scope, requestHeaders, { needsPlan: false });
+  await guard(scope, { needsPlan: false });
   const metadata = await workspaceMetadata(scope.organizationId);
   try {
     await auth.api.updateOrganization({

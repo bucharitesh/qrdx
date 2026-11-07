@@ -1,6 +1,6 @@
 ---
 title: Keep your account secure
-description: How sign-in works, two-step verification, passkeys, signing out other devices, and how to report a security problem.
+description: How sign-in works, two-step verification, passkeys, the emails QRdx sends about your account's security, signing out other devices, and how to report a security problem.
 ---
 
 ## No password to leak
@@ -11,10 +11,42 @@ That makes your email account, and your Google or GitHub account, keys to QRdx. 
 
 ## Turn on two-step verification
 
-[Two-step verification](/docs/help/privacy-and-security/two-step-verification) makes QRdx ask for a code from an authenticator app after you sign in, whichever way you sign in. Someone who gets into your email or your Google account still can't get into QRdx without it. You get 10 backup codes for when you don't have your phone.
+[Two-step verification](/docs/help/privacy-and-security/two-step-verification) makes QRdx ask for a second step after you sign in, whichever way you sign in: <IfAvailable feature="passkeys">your passkey or </IfAvailable>a code from an authenticator app. Someone who gets into your email or your Google account still can't get into QRdx without it. You get 10 backup codes for when you can't do the second step.
 
 <IfAvailable feature="passkeys" title="Add a passkey">
-A [passkey](/docs/help/privacy-and-security/passkeys) signs you in with your fingerprint, face or screen lock. It only works on QRdx's own site, so a look-alike site can't collect it. A passkey sign-in already counts as two steps, so it doesn't ask for an authenticator code.
+A [passkey](/docs/help/privacy-and-security/passkeys) checks it's you with your fingerprint, face or screen lock. It only works on QRdx's own site, so a look-alike site can't collect it. It can sign you in on its own with **Continue with passkey**, or be your second step. Adding your first passkey turns two-step verification on.
+</IfAvailable>
+
+## Changes ask you to confirm it's you
+
+Before a change to your account's security, QRdx asks you to [confirm it's you](/docs/help/privacy-and-security/two-step-verification#confirm-its-you), even though you're signed in: changing your email address, deleting your account, turning two-step verification on or off, new backup codes, or changing your second-step methods.<IfAvailable feature="sso"> So do changes to a workspace's single sign-on connection.</IfAvailable>
+
+With two-step verification on, you confirm with <IfAvailable feature="passkeys">your passkey, </IfAvailable>an authenticator code or a backup code, never with an emailed code. Without it, QRdx emails you a 6-digit code. A confirmation lasts 10 minutes in that browser.
+
+Changing your email address also needs a code sent to the new address.
+
+## Emails about your account's security
+
+We email your account's address when:
+
+- a browser or device signs in to your account for the first time;
+- two-step verification is turned on or off, an authenticator app<IfAvailable feature="passkeys"> or a passkey</IfAvailable> is added or removed, or new backup codes are made;
+- your email address is changed (to the old address).
+
+Each one says what happened, on which device and browser (like "Chrome on macOS"), roughly where, from which IP address and when. **Review security** opens your security settings. If it wasn't you, follow the steps in the email and contact support.
+
+Emails with a code in them, such as sign-in codes and the code that confirms it's you, say roughly where the code was asked for. QRdx will never ask for a code by phone, chat or email: don't pass one on to anyone.
+
+### New sign-ins
+
+QRdx recognises a browser by a cookie it sets when you finish signing in. When a browser or device without that cookie signs in to your account, you get an email. With two-step verification on, it's sent once the second step is done.
+
+Signing in again in a browser QRdx already recognises doesn't send one, and nor does creating your account. If you clear your cookies or use a private window, the next sign-in there counts as new.
+
+Every new browser gets its own email, up to 10 a day, so a burst of sign-ins can't flood your inbox. Every sign-in still shows under **Sessions**. QRdx remembers the 50 browsers you've used most recently, and forgets one that hasn't signed in for 400 days.
+
+<IfAvailable feature="sso">
+One exception: when you sign in through your workspace's SAML identity provider and two-step verification is off, QRdx can't recognise the browser on the way back, so it doesn't send this email.
 </IfAvailable>
 
 ## Sign out other devices
@@ -24,14 +56,6 @@ Go to **Settings** → **Profile & security**. Under **Sessions**, sign out of o
 ## Remove apps you connected
 
 If you let another app use your QRdx account, it's listed under **Settings** → **Authorized apps**. Remove any you don't use.
-
-## Sensitive actions need a code
-
-- Deleting your account asks for a code sent to your email. If two-step verification is on, it asks for a current authenticator or backup code instead.
-- Changing your email address needs a recent sign-in and a code sent to the new address.
-- Turning on two-step verification<IfAvailable feature="passkeys"> or adding a passkey</IfAvailable> needs a sign-in from the last 24 hours. Turning it off, or making new backup codes, asks for a current authenticator or backup code.
-
-We email you whenever two-step verification is turned on or off, new backup codes are made<IfAvailable feature="passkeys">, or a passkey is added or removed</IfAvailable>.
 
 ## Report a security problem
 

@@ -7,6 +7,7 @@ import {
   EmailChangedEmail,
 } from "@/lib/email/templates/email-change";
 import { isBillingConfigured, polar } from "@/lib/polar";
+import { currentRequestDetails } from "@/lib/security/request-details";
 import { deliverEmailChangedNotice } from "./email-change";
 
 // No addresses or ids in these logs: outcomes only.
@@ -49,7 +50,8 @@ async function updatePolarCustomerEmail(
 
 /**
  * Everything after the address changed. Never throws: the change is done,
- * and each step is reported rather than undone.
+ * and each step is reported rather than undone. The notice shows the device,
+ * place and time of the request that changed it (read here).
  */
 export async function afterEmailChanged({
   userId,
@@ -60,6 +62,7 @@ export async function afterEmailChanged({
   previousEmail: string;
   newEmail: string;
 }): Promise<void> {
+  const details = await currentRequestDetails();
   const [notice, polarCustomer] = await Promise.all([
     deliverEmailChangedNotice(
       { previousEmail, newEmail },
@@ -71,7 +74,7 @@ export async function afterEmailChanged({
           sendEmail({
             to: previousEmail,
             subject: EMAIL_CHANGED_SUBJECT,
-            react: <EmailChangedEmail newEmail={newEmail} />,
+            react: <EmailChangedEmail details={details} newEmail={newEmail} />,
             tags: [{ name: "category", value: "email_changed" }],
           }),
       },

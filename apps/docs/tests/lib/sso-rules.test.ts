@@ -10,16 +10,26 @@ import {
   emailInSsoDomain,
   isSsoJoinRole,
   isSsoProviderId,
+  looksLikeEmail,
   newSsoProviderId,
   normalizeSsoDomain,
   SSO_JOIN_ROLES,
+  samlPersonName,
+  samlWeakAlgorithms,
+  saysNotVerified,
+  ssoEmailUnverified,
+  ssoErrorCode,
   ssoFailureRedirect,
   ssoJoinRoleFromMetadata,
   ssoServiceProviderUrls,
   ssoVerificationRecord,
 } from "@repo/auth/sso-rules";
 import { describe, expect, it } from "vitest";
-import { describeCertificate, readIdpMetadata } from "@/ee/sso/connections";
+import {
+  describeCertificate,
+  readIdpMetadata,
+  withUnsignedSignInRequests,
+} from "@/ee/sso/connections";
 import { ssoSignInErrorMessage } from "@/ee/sso/messages";
 import { can, WORKSPACE_ROLES } from "@/lib/permissions";
 import { cheapestPlanWith, PLAN_LIMITS, PLANS } from "@/lib/plans";
@@ -182,6 +192,38 @@ describe("IdP metadata", () => {
     expect(describeCertificate("MIIBfake")).toBeNull();
     expect(describeCertificate("not a certificate")).toBeNull();
   });
+
+  it("stores metadata that asks for signed sign-in requests as not asking", () => {
+    const asks = xml.replace(
+      "<md:IDPSSODescriptor ",
+      '<md:IDPSSODescriptor WantAuthnRequestsSigned="true" ',
+    );
+    const stored = withUnsignedSignInRequests(asks);
+    expect(stored).toContain(
+      '<md:IDPSSODescriptor WantAuthnRequestsSigned="false" ',
+    );
+    expect(stored.replace('="false"', '="true"')).toBe(asks);
+    expect(
+      withUnsignedSignInRequests(
+        "<IDPSSODescriptor protocolSupportEnumeration='p' WantAuthnRequestsSigned = '1'>",
+      ),
+    ).toBe(
+      "<IDPSSODescriptor protocolSupportEnumeration='p' WantAuthnRequestsSigned = 'false'>",
+    );
+  });
+
+  it("leaves other metadata as it is", () => {
+    expect(withUnsignedSignInRequests(xml)).toBe(xml);
+    const doesNotAsk = xml.replace(
+      "<md:IDPSSODescriptor ",
+      '<md:IDPSSODescriptor WantAuthnRequestsSigned="false" ',
+    );
+    expect(withUnsignedSignInRequests(doesNotAsk)).toBe(doesNotAsk);
+    // Only the identity provider's descriptor, never an SP's in the same file.
+    const sp =
+      '<md:SPSSODescriptor AuthnRequestsSigned="true" WantAssertionsSigned="true">';
+    expect(withUnsignedSignInRequests(sp)).toBe(sp);
+  });
 });
 
 describe("sign-in messages", () => {
@@ -195,6 +237,179 @@ describe("sign-in messages", () => {
     );
     expect(ssoSignInErrorMessage("sso_unavailable")).toMatch(/isn't available/);
     expect(ssoSignInErrorMessage("whatever")).toMatch(/didn't work/);
+  });
+
+  it("say what the identity provider got wrong", () => {
+    expect(ssoSignInErrorMessage("sso_email_unverified")).toBe(
+      "Your company's sign-in system hasn't confirmed this email address, so QRdx can't sign you in with it. Its admin needs to verify email addresses there.",
+    );
+    expect(ssoSignInErrorMessage("sso_email_missing")).toMatch(
+      /didn't send an email address/,
+    );
+    expect(ssoSignInErrorMessage("sso_email_missing")).not.toMatch(/domain/);
+    expect(ssoSignInErrorMessage("sso_weak_signature")).toMatch(
+      /SHA-1.*switch the QRdx app's signature algorithm to SHA-256/,
+    );
+    expect(ssoSignInErrorMessage("unsolicited_response")).toMatch(
+      /Start from QRdx's sign-in page/,
+    );
+  });
+});
+
+describe("what the identity provider sends", () => {
+  it("counts only an explicit no as unverified", () => {
+    for (const no of [false, 0, "false", "FALSE", " 0 ", ["true", "false"]]) {
+      expect(saysNotVerified(no), JSON.stringify(no)).toBe(true);
+    }
+    for (const notNo of [
+      true,
+      "true",
+      1,
+      "1",
+      undefined,
+      null,
+      "",
+      "yes",
+      [],
+    ]) {
+      expect(saysNotVerified(notNo), JSON.stringify(notNo)).toBe(false);
+    }
+  });
+
+  it("reads email_verified for OIDC and an email-verified attribute for SAML", () => {
+    expect(ssoEmailUnverified("oidc", { email_verified: false })).toBe(true);
+    expect(ssoEmailUnverified("oidc", { email_verified: "false" })).toBe(true);
+    expect(ssoEmailUnverified("oidc", { email_verified: 0 })).toBe(true);
+    expect(ssoEmailUnverified("oidc", { email_verified: true })).toBe(false);
+    expect(ssoEmailUnverified("oidc", { email: "a@b.co" })).toBe(false);
+    expect(ssoEmailUnverified("oidc", null)).toBe(false);
+    expect(ssoEmailUnverified("saml", { email_verified: ["false"] })).toBe(
+      true,
+    );
+    expect(ssoEmailUnverified("saml", { emailVerified: "false" })).toBe(true);
+    expect(ssoEmailUnverified("saml", { emailVerified: "true" })).toBe(false);
+    expect(ssoEmailUnverified("saml", { email: "a@b.co" })).toBe(false);
+  });
+
+  it("tells an email address from a user name or an opaque id", () => {
+    expect(looksLikeEmail("ana@acme.com")).toBe(true);
+    for (const value of ["ulla", "G-29a5e34a-f01e-4d86", "", "a@b", null]) {
+      expect(looksLikeEmail(value), String(value)).toBe(false);
+    }
+  });
+
+  it("checks addresses quickly and the same way as before", () => {
+    for (const ok of ["a@b.co", "a.b@c.d.e", "  a@b.co  ", "a@b..c"]) {
+      expect(looksLikeEmail(ok), ok).toBe(true);
+    }
+    for (const bad of [
+      "a@b",
+      "a@.b",
+      "a@b.",
+      "@b.co",
+      "a@@b.co",
+      "a@b@c.co",
+      "a b@c.co",
+      `${"a".repeat(250)}@b.co`,
+    ]) {
+      expect(looksLikeEmail(bad), bad).toBe(false);
+    }
+    const hostile = `a@${".".repeat(200_000)}`;
+    const started = performance.now();
+    expect(looksLikeEmail(hostile)).toBe(false);
+    expect(looksLikeEmail(`a@b${".a".repeat(100_000)}`)).toBe(false);
+    expect(performance.now() - started).toBeLessThan(50);
+  });
+
+  it("names a SAML user from the common attribute names, never the NameID", () => {
+    expect(samlPersonName({ givenName: "Ivy", surname: "Mapped" })).toBe(
+      "Ivy Mapped",
+    );
+    expect(
+      samlPersonName({
+        "urn:oid:2.5.4.42": ["Xena"],
+        "urn:oid:2.5.4.4": ["Oid"],
+      }),
+    ).toBe("Xena Oid");
+    expect(samlPersonName({ firstName: "Fay", lastName: "Existing" })).toBe(
+      "Fay Existing",
+    );
+    expect(samlPersonName({ givenName: "Solo" })).toBe("Solo");
+    expect(
+      samlPersonName({ "urn:oid:2.16.840.1.113730.3.1.241": "Dee Splay" }),
+    ).toBe("Dee Splay");
+    expect(samlPersonName({ displayName: "Dee", name: "Other" })).toBe("Dee");
+    expect(samlPersonName({ name: "Nam E" })).toBe("Nam E");
+    // Given and surname win over a display name; blanks are skipped.
+    expect(
+      samlPersonName({ givenName: " ", surname: "Last", displayName: "D" }),
+    ).toBe("Last");
+    // Nothing usable: "" (the account starts with the address's local part).
+    expect(samlPersonName({ Role: ["admin"] })).toBe("");
+    expect(samlPersonName(null)).toBe("");
+  });
+});
+
+describe("SAML signature algorithms", () => {
+  const signed = (signature: string, digest: string) =>
+    `<samlp:Response xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol"><ds:Signature xmlns:ds="http://www.w3.org/2000/09/xmldsig#"><ds:SignedInfo><ds:CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/><ds:SignatureMethod Algorithm="${signature}"/><ds:Reference URI="#x"><ds:DigestMethod Algorithm="${digest}"/></ds:Reference></ds:SignedInfo></ds:Signature></samlp:Response>`;
+  const RSA_SHA256 = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";
+  const SHA256 = "http://www.w3.org/2001/04/xmlenc#sha256";
+  const RSA_SHA1 = "http://www.w3.org/2000/09/xmldsig#rsa-sha1";
+  const SHA1 = "http://www.w3.org/2000/09/xmldsig#sha1";
+
+  it("accepts SHA-256 or stronger", () => {
+    expect(samlWeakAlgorithms(signed(RSA_SHA256, SHA256))).toEqual([]);
+    expect(
+      samlWeakAlgorithms(
+        signed(
+          "http://www.w3.org/2001/04/xmldsig-more#rsa-sha512",
+          "http://www.w3.org/2001/04/xmlenc#sha512",
+        ),
+      ),
+    ).toEqual([]);
+    // Unsigned: nothing to judge here (the plugin refuses it).
+    expect(samlWeakAlgorithms("<samlp:Response/>")).toEqual([]);
+  });
+
+  it("refuses SHA-1 signatures or digests, in any form", () => {
+    expect(samlWeakAlgorithms(signed(RSA_SHA1, SHA256))).toEqual([RSA_SHA1]);
+  });
+
+  it("stays fast on hostile input (no closing >, many tags)", () => {
+    const hostile = "<SignatureMethod".repeat(40_000);
+    const started = performance.now();
+    expect(samlWeakAlgorithms(hostile)).toEqual([]);
+    expect(performance.now() - started).toBeLessThan(200);
+    const quoted = `<ds:SignatureMethod Algorithm="${"a".repeat(300_000)}`;
+    const again = performance.now();
+    expect(samlWeakAlgorithms(quoted)).toEqual([]);
+    expect(performance.now() - again).toBeLessThan(200);
+  });
+
+  it("reads a quoted > inside the tag and a single-quoted algorithm", () => {
+    expect(
+      samlWeakAlgorithms(
+        `<ds:SignatureMethod Note="a>b" Algorithm='${RSA_SHA1}'/>`,
+      ),
+    ).toEqual([RSA_SHA1]);
+    expect(samlWeakAlgorithms("<ds:SignatureMethodX Algorithm='x'/>")).toEqual(
+      [],
+    );
+    expect(samlWeakAlgorithms(signed(RSA_SHA256, SHA1))).toEqual([SHA1]);
+    // No prefix, single quotes, and a ">" inside another attribute's value.
+    expect(
+      samlWeakAlgorithms(
+        `<SignatureMethod Id="a>b" Algorithm='${RSA_SHA1}'/><DigestMethod Algorithm="${SHA256}"/>`,
+      ),
+    ).toEqual([RSA_SHA1]);
+    // A second signature (the assertion's) is checked too.
+    expect(
+      samlWeakAlgorithms(
+        signed(RSA_SHA256, SHA256) + signed(RSA_SHA256, "urn:unknown"),
+      ),
+    ).toEqual(["urn:unknown"]);
+    expect(samlWeakAlgorithms("<ds:SignatureMethod/>")).toEqual(["(none)"]);
   });
 });
 
@@ -220,6 +435,29 @@ describe("ssoFailureRedirect", () => {
     expect(
       ssoFailureRedirect("https://evil.test/x?error=account_not_linked", app),
     ).toBe("/sign-in?error=account_not_linked");
+  });
+
+  it("gives the plugin's own words QRdx's code", () => {
+    expect(ssoErrorCode("invalid_provider", "missing_user_info")).toBe(
+      "sso_email_missing",
+    );
+    expect(
+      ssoErrorCode(
+        "saml_error",
+        "Unable to extract user ID or email from SAML response",
+      ),
+    ).toBe("sso_email_missing");
+    expect(ssoErrorCode("invalid_provider", "token_not_verified")).toBe(
+      "invalid_provider",
+    );
+    expect(ssoErrorCode("account not linked")).toBe("account_not_linked");
+    // OIDC failures already land on /sign-in: only the code changes.
+    expect(
+      ssoFailureRedirect(
+        `${app}/sign-in?next=%2Fdashboard&error=invalid_provider&error_description=missing_user_info`,
+        app,
+      ),
+    ).toBe("/sign-in?next=%2Fdashboard&error=sso_email_missing");
   });
 
   it("leaves successes and the sign-in page alone", () => {

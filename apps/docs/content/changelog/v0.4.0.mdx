@@ -1,0 +1,31 @@
+---
+title: "Passkeys as your second step, new sign-in alerts and Confirm it's you"
+description: "Use a passkey or an authenticator app for two-step verification, get an email when a new browser signs in, and confirm it's you before security changes."
+date: "2026-11-07"
+tags: ["Security"]
+version: "0.4.0"
+---
+
+## A passkey can be your second step
+
+Two-step verification now works with a passkey as well as an authenticator app. After you sign in with an email code, Google, GitHub or single sign-on, your browser's passkey prompt opens on its own; **Use an authenticator code** and **Use a backup code** are right below it. [How it works](/docs/help/privacy-and-security/two-step-verification).
+
+- Turn it on in **Settings** → **Profile & security**: pick **Passkey** or **Authenticator app**, then save your backup codes. You can set up both.
+- Adding your first passkey turns two-step verification on. Removing your last method turns it off, and QRdx tells you before you confirm.
+- Already have a passkey? Settings shows **Your passkey is ready to be your second step** with a **Turn on** button. Nothing changes until you click it.
+- **Don't ask again on this device for 30 days** works with the passkey step too.
+- Passkeys, the authenticator app and backup codes now live together under **Two-step verification**.
+
+On the sign-in page, **Continue with passkey** has moved to the bottom of the list and still signs you in on its own. The email field no longer suggests passkeys.
+
+## Confirm it's you
+
+Changing your email, deleting your account, changing your two-step verification or passkeys, and changing a workspace's single sign-on connection now ask you to confirm it's you first. With two-step verification on, use your passkey, an authenticator code or a backup code; without it, a code QRdx emails you. One confirmation covers 10 minutes of changes. This replaces the codes and recent-sign-in checks those actions asked for before.
+
+## New sign-in alerts
+
+When a browser or device signs in to your account for the first time, we email you with the device, rough location, IP address, time and how it signed in, and a **Review security** button. With two-step verification on, the email comes once the second step is done. You get up to 10 a day. The first sign-in to your account after this update records that browser without an email. After that, any browser QRdx hasn't seen sends one, including browsers you used before the update. [More about these emails](/docs/help/privacy-and-security/account-security#emails-about-your-accounts-security).
+
+## Security emails say where and when
+
+Every security email (two-step verification changes, passkeys added or removed, email changes, new sign-ins and confirmation codes) now shows the device and browser, rough location, IP address and time, in your local time zone where we know it. Sign-in codes say roughly where they were asked for, and every code email reminds you that QRdx never asks for a code by phone, chat or email.

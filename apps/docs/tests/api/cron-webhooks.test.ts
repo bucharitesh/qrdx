@@ -44,6 +44,10 @@ vi.mock("@/lib/auth/verification-prune", () => ({
     state.dbCalls.push("pruneExpiredVerifications");
     return 0;
   },
+  pruneStaleKnownDevices: async () => {
+    state.dbCalls.push("pruneStaleKnownDevices");
+    return 0;
+  },
 }));
 vi.mock("@/lib/data-connections/sync", () => ({
   runIntegrationSyncs: async () => {
@@ -219,6 +223,19 @@ describe("the daily call", () => {
       seeded: T0 + 10 * MINUTE + DAY,
     });
     expect(redis().ttl.get(WORKER_DUE_KEY)).toBeGreaterThan(DAY / 1000);
+  });
+
+  it("also forgets browsers not seen for 400 days, which frequent runs don't", async () => {
+    await json(await call());
+    expect(state.dbCalls).toEqual([
+      "runDeliveryWorker",
+      "pruneDeliveries",
+      "pruneExpiredVerifications",
+      "pruneStaleKnownDevices",
+      "runIntegrationSyncs",
+      "nextDeliveryDueAt",
+      "nextIntegrationSyncDueAt",
+    ]);
   });
 
   it("keeps the worker due when syncs ran out of time", async () => {

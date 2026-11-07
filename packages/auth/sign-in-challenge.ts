@@ -8,6 +8,8 @@ import {
 import { expireCookie, setSessionCookie } from "better-auth/cookies";
 import { constantTimeEqual, generateRandomString } from "better-auth/crypto";
 import * as z from "zod";
+import type { PasskeyRelyingParty } from "./passkey-rp";
+import { passkeyStepEndpoints } from "./sign-in-challenge-passkey";
 import {
   CHALLENGE_CODE_PATHS,
   CHALLENGE_COMPLETION_PATHS,
@@ -21,8 +23,18 @@ import {
   PASSKEY_SIGN_IN_PATH,
   passkeyAssertionUserVerified,
   SERVER_SESSION_SWAP_PATHS,
-  TRUST_DEVICE_DAYS,
+  totpIsSetUp,
 } from "./sign-in-challenge-rules";
+import {
+  CHALLENGE_ERRORS,
+  liveSessionUserId,
+  pendingChallenge,
+  requestSessionToken,
+  TRUST_DEVICE_COOKIE,
+  TWO_FACTOR_COOKIE,
+  trustDeviceMaxAge,
+  trustToken,
+} from "./sign-in-challenge-session";
 
 // Two-step verification for every way in. Better Auth's twoFactor plugin only
 // challenges password sign-ins (/sign-in/email, /sign-in/username,
@@ -53,6 +65,11 @@ import {
 // endpoints that end in a redirect (OAuth and SSO callbacks) send the browser
 // to /sign-in/two-factor?next=<where it was going> instead.
 //
+// It's answered with an authenticator code, a backup code (the plugin's
+// endpoints) or one of the person's passkeys (./sign-in-challenge-passkey.ts,
+// whose endpoints this plugin adds). GET /two-factor/methods tells the page
+// which of those the person has set up.
+//
 // A sign-in that is a POST ending in a redirect (the SAML ACS, posted by the
 // identity provider from another site) can't see the trust-device cookie:
 // it's SameSite=Lax, so cross-site POSTs don't carry it. Those go through
@@ -66,10 +83,7 @@ import {
 type Middleware = ReturnType<typeof createAuthMiddleware>;
 
 const BACKUP_CODE_PATH = "/two-factor/verify-backup-code";
-// The twoFactor plugin's cookie names (better-auth/dist/plugins/two-factor/
-// constant.mjs).
-const TWO_FACTOR_COOKIE = "two_factor";
-const TRUST_DEVICE_COOKIE = "trust_device";
+const TOTP_CODE_PATH = "/two-factor/verify-totp";
 
 interface TwoFactorPluginLike {
   id: string;
@@ -92,7 +106,18 @@ function challengeHandler(plugin: TwoFactorPluginLike): Middleware {
   return handler;
 }
 
-export function signInChallenge(twoFactorPlugin: TwoFactorPluginLike) {
+export interface SignInChallengeOptions {
+  /**
+   * Where passkeys work (./passkey-rp.ts); null turns the passkey second
+   * step off (GET /two-factor/methods then never offers it).
+   */
+  relyingParty: PasskeyRelyingParty | null;
+}
+
+export function signInChallenge(
+  twoFactorPlugin: TwoFactorPluginLike,
+  { relyingParty }: SignInChallengeOptions
+) {
   const challenge = challengeHandler(twoFactorPlugin);
 
   return {
@@ -106,6 +131,7 @@ export function signInChallenge(twoFactorPlugin: TwoFactorPluginLike) {
         },
         (ctx) => continueOnTrustedDevice(ctx)
       ),
+      ...passkeyStepEndpoints(relyingParty),
     },
     hooks: {
       before: [
@@ -121,6 +147,29 @@ export function signInChallenge(twoFactorPlugin: TwoFactorPluginLike) {
               throw new APIError("FORBIDDEN", {
                 message: "Already signed in",
                 code: "ALREADY_SIGNED_IN",
+              });
+            }
+          }),
+        },
+        {
+          // An account whose second step has no authenticator app (a
+          // passkey only) never takes an authenticator code at sign-in,
+          // whatever its twoFactor row holds.
+          matcher: (ctx) =>
+            ctx.path === TOTP_CODE_PATH && ctx.request instanceof Request,
+          handler: createAuthMiddleware(async (ctx) => {
+            const pending = await pendingChallenge(ctx);
+            if (!pending) return;
+            const row = await ctx.context.adapter.findOne<{
+              secret?: string | null;
+              verified?: boolean | null;
+            }>({
+              model: "twoFactor",
+              where: [{ field: "userId", value: pending.userId }],
+            });
+            if (!totpIsSetUp(row)) {
+              throw new APIError("BAD_REQUEST", {
+                ...CHALLENGE_ERRORS.TOTP_NOT_ENABLED,
               });
             }
           }),
@@ -220,55 +269,6 @@ export function signInChallenge(twoFactorPlugin: TwoFactorPluginLike) {
   } satisfies BetterAuthPlugin;
 }
 
-type HookContext = Parameters<Parameters<typeof createAuthMiddleware>[0]>[0];
-
-/** The session token cookie the request came with, if any (signed). */
-async function requestSessionToken(
-  ctx: HookContext | GenericEndpointContext
-): Promise<string | null> {
-  return (
-    (await ctx.getSignedCookie(
-      ctx.context.authCookies.sessionToken.name,
-      ctx.context.secret
-    )) || null
-  );
-}
-
-/** The user of the live session the request came with, if any. */
-async function liveSessionUserId(
-  ctx: HookContext | GenericEndpointContext
-): Promise<string | null> {
-  const token = await requestSessionToken(ctx);
-  if (!token) return null;
-  const found = await ctx.context.internalAdapter.findSession(token);
-  if (!found || new Date(found.session.expiresAt).getTime() <= Date.now()) {
-    return null;
-  }
-  return found.session.userId;
-}
-
-/** HMAC-SHA256, base64url without padding: the twoFactor plugin's token. */
-async function trustToken(secret: string, value: string): Promise<string> {
-  const key = await globalThis.crypto.subtle.importKey(
-    "raw",
-    new TextEncoder().encode(secret),
-    { name: "HMAC", hash: "SHA-256" },
-    false,
-    ["sign"]
-  );
-  const signature = new Uint8Array(
-    await globalThis.crypto.subtle.sign(
-      "HMAC",
-      key,
-      new TextEncoder().encode(value)
-    )
-  );
-  return btoa(String.fromCharCode(...signature))
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/[=]+$/, "");
-}
-
 /**
  * GET /two-factor/continue?next=<path>: the pending challenge (two_factor
  * cookie) is finished without a code only when this browser also holds a
@@ -305,12 +305,7 @@ async function continueOnTrustedDevice(ctx: GenericEndpointContext) {
   const live = await liveSessionUserId(ctx);
   if (live && live !== userId) throw toPage();
 
-  const twoFactorPlugin = ctx.context.getPlugin("two-factor") as {
-    options?: { trustDeviceMaxAge?: number };
-  } | null;
-  const trustMaxAge =
-    twoFactorPlugin?.options?.trustDeviceMaxAge ??
-    TRUST_DEVICE_DAYS * 24 * 60 * 60;
+  const trustMaxAge = trustDeviceMaxAge(ctx);
   const trustCookie = ctx.context.createAuthCookie(TRUST_DEVICE_COOKIE, {
     maxAge: trustMaxAge,
   });
