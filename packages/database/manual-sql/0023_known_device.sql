@@ -20,8 +20,10 @@
 --
 -- Rollback: the code before this feature (f4dc0a2c) never reads or writes
 -- this table, so it keeps working with the table present (checked by
--- running f4dc0a2c against a database with it). Leave the table in place
--- when rolling back; dropping it is a separate change.
+-- reading f4dc0a2c: no reference to the table, the column or the
+-- qrdx_device cookie, and Drizzle and Better Auth only use the tables the
+-- code declares). Leave the table in place when rolling back; dropping it
+-- is a separate change.
 --
 -- Order: apply it BEFORE deploying the code that registers the plugin. If
 -- the code runs first, the plugin's reads fail; it logs the error and lets
