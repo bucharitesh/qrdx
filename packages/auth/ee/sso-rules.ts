@@ -342,11 +342,16 @@ export const SAML_DIGEST_ALGORITHMS = [
   "http://www.w3.org/2001/04/xmlenc#sha512",
 ];
 
-// A SignatureMethod or DigestMethod start tag (quoted values may hold ">"),
-// then its Algorithm attribute.
-const METHOD_TAG_RE =
-  /<(?:[\w.-]+:)?(SignatureMethod|DigestMethod)\b((?:[^>"']|"[^"]*"|'[^']*')*)>/g;
-const ALGORITHM_ATTRIBUTE_RE = /(?:^|\s)Algorithm\s*=\s*(["'])(.*?)\1/;
+/**
+ * The longest SAMLResponse (base64, as posted) QRdx reads. Real responses are
+ * a few to a few tens of KB; this bounds the work an unauthenticated POST to
+ * the assertion consumer service can cause.
+ */
+export const SAML_RESPONSE_MAX_CHARS = 512 * 1024;
+
+const NAME_CHAR = /[\w.:-]/;
+const ALGORITHM_ATTRIBUTE_RE =
+  /(?:^|\s)Algorithm\s*=\s*(?:"([^"]*)"|'([^']*)')/;
 
 /**
  * Every signature or digest algorithm in a SAML response's XML that isn't
@@ -354,17 +359,48 @@ const ALGORITHM_ATTRIBUTE_RE = /(?:^|\s)Algorithm\s*=\s*(["'])(.*?)\1/;
  * the allowed lists counts, so an odd spelling is refused rather than let
  * through. Empty when all are allowed, or when the response isn't signed
  * (the plugin refuses that itself).
+ *
+ * A single forward scan (no backtracking pattern over the whole response):
+ * the XML comes from an unauthenticated POST, so the work must stay linear in
+ * its length. A start tag that never closes ends the scan; the plugin then
+ * refuses the malformed XML itself.
  */
 export function samlWeakAlgorithms(xml: string): string[] {
   const weak = new Set<string>();
-  for (const [, element, attributes] of xml.matchAll(METHOD_TAG_RE)) {
-    const algorithm =
-      attributes?.match(ALGORITHM_ATTRIBUTE_RE)?.[2]?.trim() ?? "";
+  let from = 0;
+  while (from < xml.length) {
+    const open = xml.indexOf("<", from);
+    if (open === -1) break;
+    let end = open + 1;
+    while (end < xml.length && NAME_CHAR.test(xml[end] as string)) end++;
+    const name = xml.slice(open + 1, end);
+    const element = name.slice(name.lastIndexOf(":") + 1);
+    if (element !== "SignatureMethod" && element !== "DigestMethod") {
+      from = end > open + 1 ? end : open + 1;
+      continue;
+    }
+    // The end of the start tag: the first ">" outside a quoted value.
+    let close = end;
+    let quote: string | null = null;
+    for (; close < xml.length; close++) {
+      const char = xml[close];
+      if (quote) {
+        if (char === quote) quote = null;
+      } else if (char === '"' || char === "'") {
+        quote = char;
+      } else if (char === ">") {
+        break;
+      }
+    }
+    if (close >= xml.length) break;
+    const match = xml.slice(end, close).match(ALGORITHM_ATTRIBUTE_RE);
+    const algorithm = (match?.[1] ?? match?.[2] ?? "").trim();
     const allowed =
       element === "SignatureMethod"
         ? SAML_SIGNATURE_ALGORITHMS
         : SAML_DIGEST_ALGORITHMS;
     if (!allowed.includes(algorithm)) weak.add(algorithm || "(none)");
+    from = close + 1;
   }
   return [...weak];
 }
