@@ -30,17 +30,34 @@ export function signInMethodLabel(
   return secondStep ? `${first}, then ${SECOND_STEPS[secondStep]}` : first;
 }
 
+// Names reserved for tests and examples (RFC 2606, RFC 6761): no inbox
+// behind them, so mail there only bounces. Test and e2e accounts use them
+// (@qrdx.test), and they sign in from fresh browsers all the time.
+const RESERVED_DOMAINS = new Set(["example.com", "example.net", "example.org"]);
+const RESERVED_TLDS = new Set(["test", "invalid", "example", "localhost"]);
+
+export function isReservedEmailAddress(email: string): boolean {
+  const domain = email.trim().toLowerCase().split("@").pop() ?? "";
+  const labels = domain.split(".");
+  return (
+    RESERVED_TLDS.has(labels.at(-1) ?? "") ||
+    RESERVED_DOMAINS.has(labels.slice(-2).join("."))
+  );
+}
+
 /**
  * Emails the alert where outbound delivery is on, writes it to the console in
- * local dev. Never throws: the sign-in has happened, so a failed alert is
- * reported (and logged by the caller).
+ * local dev. Reserved test addresses are never emailed ("skipped"). Never
+ * throws: the sign-in has happened, so a failed alert is reported (and
+ * logged by the caller).
  */
 export async function deliverNewSignInNotice(
   { email, summary }: { email: string; summary: string },
   deps: NoticeDeliveryDeps,
-): Promise<"emailed" | "logged" | "not-sent"> {
+): Promise<"emailed" | "logged" | "skipped" | "not-sent"> {
   try {
     if (deps.deliveryAllowed && deps.nodeEnv !== "test") {
+      if (isReservedEmailAddress(email)) return "skipped";
       const result = await deps.send();
       return result.sent ? "emailed" : "not-sent";
     }

@@ -8,7 +8,10 @@ import { createHash, createHmac } from "node:crypto";
 import { realpathSync } from "node:fs";
 import path from "node:path";
 import {
+  ALERT_GAP_MINUTES,
+  ALERTS_PER_DAY,
   DEVICE_COOKIE,
+  MAX_KNOWN_DEVICES,
   type NewSignIn,
   registerNewSignInNotifier,
 } from "@repo/auth/new-sign-in";
@@ -414,6 +417,92 @@ describe("new sign-in alerts", () => {
     expect(posted.device()).toBeNull();
     expect(alerts).toEqual([]);
     expect(devicesOf("saml@qrdx.test")).toHaveLength(1);
+  });
+
+  it("sends at most one alert per account every 10 minutes, and 10 a day", async () => {
+    const email = "burst@qrdx.test";
+    await firstDevice(email);
+    const minutesAgo = (minutes: number) =>
+      new Date(Date.now() - minutes * 60 * 1000);
+
+    // The first new browser is alerted and marked.
+    await emailCodeSignIn(new Browser(auth.handler), email);
+    expect(alerts).toHaveLength(1);
+    const marked = devicesOf(email).filter((d) => d.alertedAt);
+    expect(marked).toHaveLength(1);
+
+    // Another one straight after: recorded, but no second email.
+    const quick = new Browser(auth.handler);
+    expect((await emailCodeSignIn(quick, email)).status).toBe(200);
+    expect(alerts).toHaveLength(1);
+    expect(devicesOf(email)).toHaveLength(3);
+    // ...and it stays known, so it never alerts later either.
+    await quick.post("/sign-out");
+    await emailCodeSignIn(quick, email);
+    expect(alerts).toHaveLength(1);
+
+    // Once the gap has passed, the next new browser is alerted again.
+    marked[0].alertedAt = minutesAgo(ALERT_GAP_MINUTES + 1);
+    await emailCodeSignIn(new Browser(auth.handler), email);
+    expect(alerts).toHaveLength(2);
+
+    // With the day's alerts used up, even an old-enough gap doesn't help.
+    const user = db.user.find((u) => u.email === email);
+    for (let i = 0; i < ALERTS_PER_DAY; i++) {
+      db.knownDevice.push({
+        id: `alerted-${i}`,
+        userId: user?.id,
+        deviceHash: `alerted-${i}`,
+        createdAt: minutesAgo(600),
+        lastSeenAt: minutesAgo(600),
+        userAgent: null,
+        alertedAt: minutesAgo(60 + i),
+      });
+    }
+    for (const device of devicesOf(email)) {
+      if (device.alertedAt && !String(device.id).startsWith("alerted-")) {
+        device.alertedAt = minutesAgo(ALERT_GAP_MINUTES + 1);
+      }
+    }
+    await emailCodeSignIn(new Browser(auth.handler), email);
+    expect(alerts).toHaveLength(2);
+  });
+
+  it(`keeps an account's ${MAX_KNOWN_DEVICES} most recently seen browsers`, async () => {
+    const email = "many@qrdx.test";
+    await firstDevice(email);
+    const user = db.user.find((u) => u.email === email);
+    // Fill up with older browsers, the oldest first.
+    for (let i = 0; i < MAX_KNOWN_DEVICES; i++) {
+      const seen = new Date(
+        Date.now() - (MAX_KNOWN_DEVICES - i) * 60 * 60 * 1000,
+      );
+      db.knownDevice.push({
+        id: `old-${i}`,
+        userId: user?.id,
+        deviceHash: `old-${i}`,
+        createdAt: seen,
+        lastSeenAt: seen,
+        userAgent: null,
+        alertedAt: null,
+      });
+    }
+    expect(devicesOf(email)).toHaveLength(MAX_KNOWN_DEVICES + 1);
+
+    const browser = new Browser(auth.handler);
+    expect((await emailCodeSignIn(browser, email)).status).toBe(200);
+    const kept = devicesOf(email);
+    expect(kept).toHaveLength(MAX_KNOWN_DEVICES);
+    // The two least recently seen went; the new browser and the first one stay.
+    const ids = kept.map((d) => d.id);
+    expect(ids).not.toContain("old-0");
+    expect(ids).not.toContain("old-1");
+    expect(ids).toContain(`old-${MAX_KNOWN_DEVICES - 1}`);
+    expect(kept.map((d) => d.deviceHash)).toContain(
+      sha256(browser.device() ?? ""),
+    );
+    // Other accounts' browsers are untouched.
+    expect(devicesOf("ada@qrdx.test")).toHaveLength(2);
   });
 
   it("never fails a sign-in when the alert can't be sent or recorded", async () => {

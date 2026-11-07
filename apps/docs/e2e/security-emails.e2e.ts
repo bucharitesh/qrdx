@@ -12,7 +12,9 @@
 //   two-step     with two-step verification on, a new browser's sign-in is
 //                challenged: no alert until the authenticator code finishes
 //                it, then one naming both steps
-//   notices      turning two-step verification on logs its notice
+//   notices      turning two-step verification on (Confirm it's you with an
+//                emailed code, then the stepper's authenticator app) logs its
+//                notice and isn't counted as a sign-in
 //
 // The dev server logs alerts and notices instead of emailing them, so it only
 // runs against a local dev server whose output goes to E2E_DEV_LOG:
@@ -195,6 +197,85 @@ async function emailCodeSignIn(page: Page, next = "/dashboard") {
   await fill(page, "Sign-in code", code);
 }
 
+/** A button inside the open dialog (the page behind can have the same name). */
+async function clickInDialog(page: Page, name: string) {
+  const ok = await page.evaluate((n: string) => {
+    const dialog = document.querySelector(
+      '[role="dialog"], [role="alertdialog"]',
+    );
+    const button = [...(dialog?.querySelectorAll("button") ?? [])].find(
+      (b) => b.textContent?.trim() === n,
+    );
+    if (!button) return false;
+    window.__e2e.click(button);
+    return true;
+  }, name);
+  if (!ok) throw new Error(`No dialog button "${name}"`);
+}
+
+// ─── "Confirm it's you" and the turn-on stepper (Settings) ──────────────────
+// Labels from app/settings/account/_components/two-factor-setup-dialog.tsx
+// and components/confirm-identity/, as e2e/two-factor.e2e.ts drives them.
+
+const CONFIRM_DIALOG = "Confirm it's you";
+
+/** Clicks a button in "Confirm it's you" (it can sit over another dialog). */
+async function clickInConfirm(page: Page, name: string) {
+  await page.waitFor(
+    (t: string, n: string) => {
+      const dialog = window.__e2e.byRole("dialog", t);
+      const el = dialog
+        ? window.__e2e.byRole("button", n, { exact: true, root: dialog })
+        : null;
+      if (!el || (el as HTMLButtonElement).disabled) return false;
+      window.__e2e.click(el);
+      return true;
+    },
+    { args: [CONFIRM_DIALOG, name] as never[] },
+  );
+}
+
+/** "Confirm it's you" with a code emailed to the account (2FA off). */
+async function confirmByEmail(page: Page) {
+  await page.waitFor((t: string) => Boolean(window.__e2e.byRole("dialog", t)), {
+    args: [CONFIRM_DIALOG] as never[],
+  });
+  const since = logSize();
+  await clickInConfirm(page, "Send code");
+  const [, code] = await waitForLogLine(
+    new RegExp(`confirmation code for ${escapeRegExp(EMAIL)}: (\\d{6})`),
+    since,
+  );
+  await page.waitFor(
+    (t: string, v: string) => {
+      const input = window.__e2e
+        .byRole("dialog", t)
+        ?.querySelector("[data-input-otp]") as HTMLInputElement | null;
+      if (!input) return false;
+      input.focus();
+      window.__e2e.setValue(input, v);
+      return true;
+    },
+    { args: [CONFIRM_DIALOG, code] as never[] },
+  );
+  await page.waitFor((t: string) => !window.__e2e.byRole("dialog", t), {
+    args: [CONFIRM_DIALOG] as never[],
+  });
+}
+
+/** The stepper's first step: pick the authenticator app, then Continue. */
+async function chooseAuthenticatorApp(page: Page) {
+  await page.waitFor(() => {
+    const radio = document.querySelector(
+      '[role="dialog"] [role="radio"][value="app"]',
+    ) as HTMLElement | null;
+    if (!radio) return false;
+    window.__e2e.click(radio);
+    return radio.getAttribute("aria-checked") === "true";
+  });
+  await clickInDialog(page, "Continue");
+}
+
 async function landedOn(page: Page, path: string, timeout = 20_000) {
   await page.waitFor((p: string) => location.pathname.startsWith(p), {
     args: [path] as never[],
@@ -295,19 +376,27 @@ async function main() {
     await waitForText(first, "Two-step verification");
     since = logSize();
     await clickButton(first, "Turn on");
+    // "Confirm it's you" first (2FA is off: an emailed code), then the
+    // stepper: the authenticator app.
+    await confirmByEmail(first);
+    await chooseAuthenticatorApp(first);
     await waitForText(first, "Set up your authenticator app");
+    // The secret is made when the step opens.
+    await first.waitFor(() =>
+      Boolean(document.querySelector('[role="dialog"] code')),
+    );
     const secret = (
       (await first.evaluate(
         () => document.querySelector('[role="dialog"] code')?.textContent ?? "",
       )) as string
     ).replace(/\s+/g, "");
     await fill(first, "Code from your authenticator app", totp(secret));
-    await waitForText(first, "Save these backup codes");
+    await waitForText(first, "Save your backup codes");
     await first.evaluate(() => {
       const box = window.__e2e.byLabel("I've saved my backup codes");
       if (box) window.__e2e.click(box);
     });
-    await clickButton(first, "Done");
+    await clickInDialog(first, "Done");
     await waitForLogLine(
       new RegExp(
         `QRdx security notice for ${escapeRegExp(EMAIL)}: two-step verification turned on`,

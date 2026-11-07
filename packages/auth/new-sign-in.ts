@@ -27,12 +27,25 @@ import { signInMethodForPath } from "./sign-in-method";
 //   every existing account's first sign-in after this shipped, is recorded
 //   silently, so nobody is emailed just because the feature arrived.
 //
+// Bounds: an account keeps its MAX_KNOWN_DEVICES most recently seen browsers
+// (each cleared cookie or private window adds one), and the daily cron
+// deletes browsers not seen for KNOWN_DEVICE_DAYS, by when their cookie has
+// expired anyway (apps/docs/lib/auth/verification-prune.ts). A burst of
+// sign-ins from new browsers sends at most one alert per account every
+// ALERT_GAP_MINUTES and ALERTS_PER_DAY a day; the others are recorded
+// without one. `alerted_at` marks the browsers that got one.
+//
 // It never blocks or fails a sign-in: errors are logged and the sign-in goes
 // on. It must run after the challenge's hook, so it's registered after it.
 
 export const DEVICE_COOKIE = "qrdx_device";
 // Browsers cap cookie lifetimes at 400 days.
-const DEVICE_COOKIE_MAX_AGE = 400 * 24 * 60 * 60;
+export const KNOWN_DEVICE_DAYS = 400;
+export const MAX_KNOWN_DEVICES = 50;
+export const ALERT_GAP_MINUTES = 10;
+export const ALERTS_PER_DAY = 10;
+const DAY_MS = 24 * 60 * 60 * 1000;
+const DEVICE_COOKIE_MAX_AGE = KNOWN_DEVICE_DAYS * 24 * 60 * 60;
 const DEVICE_ID = /^[0-9a-f]{64}$/;
 const MODEL = "knownDevice";
 // The lastLoginMethod plugin's cookie (its default name, as in ./server.ts):
@@ -104,6 +117,7 @@ interface NewSession {
 
 interface KnownDevice {
   id: string;
+  alertedAt?: Date | string | null;
 }
 
 const sha256 = (value: string) =>
@@ -172,6 +186,46 @@ function deviceId(ctx: HookContext): { id: string; isNew: boolean } | null {
   return { id: randomBytes(32).toString("hex"), isNew: true };
 }
 
+type Adapter = HookContext["context"]["adapter"];
+
+/** Keeps the account's most recently seen browsers; deletes the rest. */
+async function trimKnownDevices(adapter: Adapter, userId: string) {
+  const extra = await adapter.findMany<KnownDevice>({
+    model: MODEL,
+    where: [{ field: "userId", value: userId }],
+    sortBy: { field: "lastSeenAt", direction: "desc" },
+    offset: MAX_KNOWN_DEVICES,
+  });
+  if (extra.length === 0) return 0;
+  return adapter.deleteMany({
+    model: MODEL,
+    where: [{ field: "id", operator: "in", value: extra.map((d) => d.id) }],
+  });
+}
+
+/** Whether this account already had an alert too recently, or too many today. */
+async function alertThrottled(adapter: Adapter, userId: string, now: Date) {
+  const alerted = await adapter.findMany<KnownDevice>({
+    model: MODEL,
+    where: [
+      { field: "userId", value: userId },
+      {
+        field: "alertedAt",
+        operator: "gt",
+        value: new Date(now.getTime() - DAY_MS),
+      },
+    ],
+    limit: ALERTS_PER_DAY,
+  });
+  const gapStart = now.getTime() - ALERT_GAP_MINUTES * 60 * 1000;
+  return (
+    alerted.length >= ALERTS_PER_DAY ||
+    alerted.some(
+      (d) => d.alertedAt && new Date(d.alertedAt).getTime() > gapStart
+    )
+  );
+}
+
 async function recordSignIn(ctx: HookContext): Promise<void> {
   const data = ctx.context.newSession as NewSession | null;
   if (!data) return;
@@ -221,8 +275,9 @@ async function recordSignIn(ctx: HookContext): Promise<void> {
   }
 
   const anyKnown = await find([{ field: "userId", value: userId }]);
+  let created: KnownDevice;
   try {
-    await adapter.create({
+    created = await adapter.create<Record<string, unknown>, KnownDevice>({
       model: MODEL,
       data: { userId, deviceHash, createdAt: now, lastSeenAt: now, userAgent },
     });
@@ -231,8 +286,18 @@ async function recordSignIn(ctx: HookContext): Promise<void> {
     if (await find(thisDevice)) return;
     throw error;
   }
+  try {
+    const trimmed = await trimKnownDevices(adapter, userId);
+    if (trimmed > 0) log("info", { outcome: "trimmed", count: trimmed });
+  } catch (error) {
+    log("error", { outcome: "trim-failed", ...describeError(error) });
+  }
   if (!anyKnown) {
     log("info", { outcome: "first-device" });
+    return;
+  }
+  if (await alertThrottled(adapter, userId, now)) {
+    log("info", { outcome: "throttled" });
     return;
   }
 
@@ -261,6 +326,12 @@ async function recordSignIn(ctx: HookContext): Promise<void> {
     log("error", { outcome: "not-sent", ...describeError(error) });
     return;
   }
+  // Counts towards the account's alert limits.
+  await adapter.update({
+    model: MODEL,
+    where: [{ field: "id", value: created.id }],
+    update: { alertedAt: now },
+  });
   log("info", { outcome: "new-device" });
 }
 
@@ -280,6 +351,7 @@ export function newSignIn() {
           createdAt: { type: "date", required: true, input: false },
           lastSeenAt: { type: "date", required: true, input: false },
           userAgent: { type: "string", required: false, input: false },
+          alertedAt: { type: "date", required: false, input: false },
         },
       },
     },
