@@ -21,18 +21,21 @@
 // an existing account (linked, no duplicate) → an address outside the
 // domain (refused, nothing created) → an unverified connection (refused);
 // SAML set-up from metadata → sign-in → unsigned assertion and assertion
-// without timestamps (refused); viewers can't manage; the recent sign-in
-// rule; screenshots of each screen in light and dark. Every SSO sign-in
-// joins the workspace: a removed member rejoins with the join role, a
-// promoted member keeps their role, a pending invitation is accepted with its
-// role; the Team page's remove dialog warns about it for people in the SSO
-// domain only. Trusted devices: OIDC skips the code; SAML posted from another
-// site (the IdP served from 127.0.0.1, so the POST to localhost is cross-site
-// and Chrome leaves the SameSite=Lax trust cookie off it) skips the code
-// through GET /two-factor/continue, and asks again without the cookie.
+// without timestamps (refused); viewers can't manage; creating, verifying
+// and removing a connection ask "Confirm it's you" (an emailed code for an
+// owner without two-step verification), once per 10 minutes, even for a
+// 2-day-old session; screenshots of each screen in light and dark. Every
+// SSO sign-in joins the workspace: a removed member rejoins with the join
+// role, a promoted member keeps their role, a pending invitation is accepted
+// with its role; the Team page's remove dialog warns about it for people in
+// the SSO domain only. Trusted devices: OIDC skips the code; SAML posted
+// from another site (the IdP served from 127.0.0.1, so the POST to localhost
+// is cross-site and Chrome leaves the SameSite=Lax trust cookie off it)
+// skips the code through GET /two-factor/continue, and asks again without
+// the cookie.
 import { execSync } from "node:child_process";
 import { createHmac } from "node:crypto";
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { mkdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { cspEnforced, launch, recordCspViolations, sleep } from "./cdp.mjs";
 
@@ -347,6 +350,112 @@ async function emailSignIn(email: string) {
   if (status !== 200) throw new Error(`sign in ${status}`);
 }
 
+const CONFIRM = "Confirm it's you";
+
+/** Whether "Confirm it's you" opens within `timeout` ms. */
+const confirmAsked = (timeout = 10_000) =>
+  waitFor((t: string) => Boolean(window.__e2e.byRole("dialog", t)), {
+    args: [CONFIRM] as never[],
+    timeout,
+  }).then(
+    () => true,
+    () => false,
+  );
+
+/**
+ * "Confirm it's you" for an account without two-step verification: Send
+ * code, the code from the dev log, then the dialog closes and the action
+ * that asked runs again. Returns what the dialog said.
+ */
+async function confirmByEmail(email: string, shotName?: string) {
+  if (!(await confirmAsked(20_000))) throw new Error(`${CONFIRM} didn't open`);
+  const asked = (await evaluate(
+    (t: string) =>
+      // biome-ignore lint/performance/useDomNodeTextContent: the text a person sees
+      (window.__e2e.byRole("dialog", t) as HTMLElement | null)?.innerText ?? "",
+    CONFIRM,
+  )) as string;
+  if (shotName) await shot(`${shotName}-send`);
+  const since = statSync(DEV_LOG).size;
+  await waitFor(
+    (t: string) => {
+      const dialog = window.__e2e.byRole("dialog", t);
+      const button = dialog
+        ? window.__e2e.byRole("button", "Send code", {
+            exact: true,
+            root: dialog,
+          })
+        : null;
+      if (!button || (button as HTMLButtonElement).disabled) return false;
+      window.__e2e.click(button);
+      return true;
+    },
+    { args: [CONFIRM] as never[] },
+  );
+  const escaped = email.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const pattern = new RegExp(`confirmation code for ${escaped}: (\\d{6})`);
+  let code = "";
+  for (let i = 0; i < 80 && !code; i++) {
+    const log = readFileSync(DEV_LOG).subarray(since).toString("utf8");
+    code = log.match(pattern)?.[1] ?? "";
+    if (!code) await sleep(250);
+  }
+  if (!code)
+    throw new Error(`No confirmation code in the dev log for ${email}`);
+  if (shotName) {
+    await waitFor(
+      (t: string) =>
+        /Enter the code we sent/.test(
+          window.__e2e.byRole("dialog", t)?.textContent ?? "",
+        ),
+      { args: [CONFIRM] as never[] },
+    );
+    await shot(`${shotName}-code`);
+  }
+  await waitFor(
+    (t: string, value: string) => {
+      const input = window.__e2e
+        .byRole("dialog", t)
+        ?.querySelector("[data-input-otp]") as HTMLInputElement | null;
+      if (!input || input.disabled) return false;
+      input.focus();
+      window.__e2e.setValue(input, value);
+      return true;
+    },
+    { args: [CONFIRM, code] as never[] },
+  );
+  await waitFor((t: string) => !window.__e2e.byRole("dialog", t), {
+    args: [CONFIRM] as never[],
+  });
+  return asked;
+}
+
+/** "Remove single sign-on", then Remove in its dialog. */
+async function clickRemoveSso() {
+  await evaluate(() =>
+    window.__e2e.click(
+      window.__e2e.byRole("button", "Remove single sign-on") as HTMLElement,
+    ),
+  );
+  await sleep(800);
+  await evaluate(() =>
+    window.__e2e.click(
+      window.__e2e.byRole("button", "Remove", {
+        exact: true,
+        root: document.querySelector('[role="alertdialog"]') ?? document,
+      }) as HTMLElement,
+    ),
+  );
+}
+
+/** Clicks Verify on the connection card. */
+const clickVerify = () =>
+  evaluate(() =>
+    window.__e2e.click(
+      window.__e2e.byRole("button", "Verify", { exact: true }) as HTMLElement,
+    ),
+  );
+
 /**
  * Starts "Sign in with SSO" on /sign-in; returns the page URL afterwards.
  * Starts from a clean browser (no cookies) unless `keepCookies`.
@@ -484,7 +593,11 @@ async function freshTotp(secret: string): Promise<string> {
 let slug = "";
 let orgId = "";
 
-/** Turns on two-step verification in Settings the way a person does. */
+/**
+ * Turns on two-step verification in Settings the way a person does: "Confirm
+ * it's you" with an emailed code, then the stepper with the authenticator
+ * app.
+ */
 async function turnOnTwoFactor(email: string): Promise<string> {
   await emailSignIn(email);
   await goto(`${BASE}/settings/account#two-factor`, { wait: 3000 });
@@ -496,7 +609,27 @@ async function turnOnTwoFactor(email: string): Promise<string> {
       e.byRole("button", "Turn on");
     if (button) e.click(button);
   });
+  await confirmByEmail(email);
+  await waitFor(() => {
+    const radio = document.querySelector(
+      '[role="dialog"] [role="radio"][value="app"]',
+    ) as HTMLElement | null;
+    if (!radio) return false;
+    window.__e2e.click(radio);
+    return radio.getAttribute("aria-checked") === "true";
+  });
+  await evaluate(() => {
+    const dialog = window.__e2e.byRole(
+      "dialog",
+      "Turn on two-step verification",
+    );
+    const button = dialog
+      ? window.__e2e.byRole("button", "Continue", { exact: true, root: dialog })
+      : null;
+    if (button) window.__e2e.click(button);
+  });
   await waitText("Set up your authenticator app");
+  await waitFor(() => Boolean(document.querySelector('[role="dialog"] code')));
   const secret = (
     (await evaluate(
       () => document.querySelector('[role="dialog"] code')?.textContent ?? "",
@@ -510,7 +643,7 @@ async function turnOnTwoFactor(email: string): Promise<string> {
       window.__e2e.setValue(field, c);
     }
   }, code);
-  await waitText("Save these backup codes");
+  await waitText("Save your backup codes");
   await evaluate(() => {
     const box = window.__e2e.byLabel("I've saved my backup codes");
     if (box) window.__e2e.click(box);
@@ -523,7 +656,7 @@ async function turnOnTwoFactor(email: string): Promise<string> {
     );
     if (done) window.__e2e.click(done);
   });
-  await waitText("10 of 10 backup codes left");
+  await waitText("10 of 10 left");
   return secret;
 }
 
@@ -743,6 +876,13 @@ try {
     DOMAIN,
     IDP,
   );
+  const createAsked = await confirmByEmail(owner, "02b-confirm-sso");
+  check(
+    "Saving the connection asks to confirm it's you (an emailed code)",
+    createAsked.includes("Before you change single sign-on") &&
+      createAsked.includes("We'll email a 6-digit code"),
+    createAsked.replace(/\s+/g, " ").slice(0, 160),
+  );
   await waitText(`Verify ${DOMAIN}`);
   const providerId = sql(
     `select provider_id from sso_provider where organization_id=${q(orgId)}`,
@@ -773,25 +913,24 @@ try {
   await shot("04-sign-in-sso-not-set-up");
 
   console.log("domain verification");
+  // A new sign-in is a new session: it confirms again.
   await emailSignIn(owner);
   await goto(page, { wait: 3000 });
-  await evaluate(() =>
-    window.__e2e.click(
-      window.__e2e.byRole("button", "Verify", { exact: true }) as HTMLElement,
-    ),
-  );
+  await clickVerify();
+  await confirmByEmail(owner);
+  check("Verifying from a new session asks to confirm it's you", true);
   await waitText("We didn't find the TXT record");
   check("Missing record: clear reason", true);
   await shot("05-verify-missing-record");
 
   const token = await recordValue();
   writeFileSync(DNS_FILE, JSON.stringify({ [recordName]: [token] }));
-  await evaluate(() =>
-    window.__e2e.click(
-      window.__e2e.byRole("button", "Verify", { exact: true }) as HTMLElement,
-    ),
-  );
+  await clickVerify();
   await waitText("Verified");
+  check(
+    "Verifying again within 10 minutes doesn't ask",
+    !(await confirmAsked(500)),
+  );
   check(
     "Verified through DNS",
     sql(
@@ -855,7 +994,10 @@ try {
     );
   });
   await waitText("Client secret updated");
-  check("Client secret replaced", true);
+  check(
+    "Client secret replaced, without asking again",
+    !(await confirmAsked(500)),
+  );
 
   console.log("OIDC sign-in, new person");
   await startSso(ben);
@@ -1106,7 +1248,9 @@ try {
   await shot("11-settings-plan-dropped");
   sql(`update subscription set status='active' where id='sub-${RUN}'`);
 
-  console.log("recent sign-in rule");
+  console.log("a 2-day-old session confirms instead of signing in again");
+  // The session is 2 days old and hasn't confirmed: removing asks "Confirm
+  // it's you", never to sign out and in again, and works once confirmed.
   sql(
     `update session set created_at = now() - interval '2 days' where user_id=${q(ownerId)}`,
   );
@@ -1126,33 +1270,20 @@ try {
       }) as HTMLElement,
     ),
   );
-  await waitText("sign out and sign in again");
+  const removeAsked = await confirmByEmail(owner, "12-remove-confirm");
   check(
-    "Old session must sign in again",
-    sql(
-      `select count(*) from sso_provider where provider_id=${q(providerId)}`,
-    ) === "1",
-  );
-  await shot("12-reauth");
-
-  console.log("remove, then SAML");
-  await emailSignIn(owner);
-  await goto(page, { wait: 3000 });
-  await evaluate(() =>
-    window.__e2e.click(
-      window.__e2e.byRole("button", "Remove single sign-on") as HTMLElement,
-    ),
-  );
-  await sleep(800);
-  await evaluate(() =>
-    window.__e2e.click(
-      window.__e2e.byRole("button", "Remove", {
-        exact: true,
-        root: document.querySelector('[role="alertdialog"]') ?? document,
-      }) as HTMLElement,
-    ),
+    "2-day-old session: removing asks to confirm it's you, not to sign in again",
+    removeAsked.includes("Before you change single sign-on") &&
+      !(await text()).includes("sign out and sign in again"),
+    removeAsked.replace(/\s+/g, " ").slice(0, 160),
   );
   await waitText("Set up single sign-on");
+  check(
+    "2-day-old session: removed once confirmed",
+    sql(
+      `select count(*) from sso_provider where provider_id=${q(providerId)}`,
+    ) === "0",
+  );
   check(
     "Removed, links gone",
     sql(`select count(*) from account where provider_id=${q(providerId)}`) ===
@@ -1165,6 +1296,12 @@ try {
     ) === "2",
   );
 
+  console.log("a confirmation older than 10 minutes asks again, then SAML");
+  // "10 minutes later": the owner's confirmations end now. The app stores
+  // UTC wall times in `timestamp` columns, so now() is taken in UTC.
+  sql(
+    `update verification set expires_at = (now() at time zone 'utc') - interval '1 second' where identifier in (select 'qrdx-confirmed-' || id from session where user_id=${q(ownerId)})`,
+  );
   const metadata = await (await fetch(`${IDP}/saml/metadata`)).text();
   await evaluate(() =>
     window.__e2e.click(window.__e2e.byRole("tab", "SAML 2.0") as HTMLElement),
@@ -1183,6 +1320,12 @@ try {
     DOMAIN,
     metadata,
   );
+  const againAsked = await confirmByEmail(owner);
+  check(
+    "A confirmation older than 10 minutes asks again (SAML set-up)",
+    againAsked.includes("Before you change single sign-on"),
+    againAsked.replace(/\s+/g, " ").slice(0, 160),
+  );
   await waitText(`Verify ${DOMAIN}`);
   const samlId = sql(
     `select provider_id from sso_provider where organization_id=${q(orgId)}`,
@@ -1192,11 +1335,7 @@ try {
     DNS_FILE,
     JSON.stringify({ [`_qrdx-${samlId}.${DOMAIN}`]: [samlToken] }),
   );
-  await evaluate(() =>
-    window.__e2e.click(
-      window.__e2e.byRole("button", "Verify", { exact: true }) as HTMLElement,
-    ),
-  );
+  await clickVerify();
   await waitText("Verified");
   await goto(page, { wait: 3000 });
   await shot("14-saml-verified");
@@ -1350,20 +1489,8 @@ try {
     "No 'Replace certificate' for a metadata connection",
     !(await text()).includes("Replace certificate"),
   );
-  await evaluate(() =>
-    window.__e2e.click(
-      window.__e2e.byRole("button", "Remove single sign-on") as HTMLElement,
-    ),
-  );
-  await sleep(800);
-  await evaluate(() =>
-    window.__e2e.click(
-      window.__e2e.byRole("button", "Remove", {
-        exact: true,
-        root: document.querySelector('[role="alertdialog"]') ?? document,
-      }) as HTMLElement,
-    ),
-  );
+  await clickRemoveSso();
+  await confirmByEmail(owner);
   await waitText("Set up single sign-on");
   const certificate = await (await fetch(`${IDP}/saml/certificate`)).text();
   await evaluate(() =>
@@ -1405,11 +1532,7 @@ try {
     DNS_FILE,
     JSON.stringify({ [`_qrdx-${manualId}.${DOMAIN}`]: [manualToken] }),
   );
-  await evaluate(() =>
-    window.__e2e.click(
-      window.__e2e.byRole("button", "Verify", { exact: true }) as HTMLElement,
-    ),
-  );
+  await clickVerify();
   await waitText("Verified");
   await goto(page, { wait: 3000 });
   await evaluate(() =>
