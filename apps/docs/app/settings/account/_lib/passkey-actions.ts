@@ -4,10 +4,13 @@ import { cookiesToSet } from "@repo/auth/passkey";
 import { auth } from "@repo/auth/server";
 import { createRateLimiter, slidingWindow } from "@repo/rate-limit";
 import { revalidatePath } from "next/cache";
-import { cookies, headers } from "next/headers";
+import { cookies } from "next/headers";
 import { after } from "next/server";
 import { z } from "zod";
-import { canChangeEmailNow } from "@/lib/account/email-change";
+import {
+  type ConfirmableSession,
+  confirmedSession,
+} from "@/lib/account/confirmation-server";
 import {
   defaultPasskeyName,
   normalizePasskeyName,
@@ -16,18 +19,25 @@ import {
 } from "@/lib/account/passkeys";
 import { sendPasskeyNotice } from "@/lib/account/passkeys-server";
 import {
-  checkCurrentCode,
-  twoFactorEnabledFor,
+  turnOffIfNoMethodLeft,
+  turnOnWithPasskeys,
 } from "@/lib/account/two-factor-manage";
+import { sendTwoFactorNotice } from "@/lib/account/two-factor-notice-server";
+import { loadTwoFactorFacts } from "@/lib/account/two-factor-server";
 import { logError } from "@/lib/shared";
 
-// Settings → Profile & security → Passkeys. Better Auth's endpoints for
-// adding, renaming and removing passkeys are off over HTTP (packages/auth/
-// passkey.ts), so these actions are the only way in: adding needs a sign-in
-// within the last day (the plugin's own fresh-session rule, and the one email
-// changes use) and, with two-step verification on, a current authenticator or
-// backup code (the check and lockout used to turn it off). Every change is
-// limited per user, and adding or removing one emails the account's address.
+// Settings → Profile & security → Two-step verification → Passkeys. Better
+// Auth's endpoints for adding, renaming and removing passkeys are off over
+// HTTP (packages/auth/passkey.ts), so these actions are the only way in.
+// Each needs a recent "Confirm it's you" (lib/account/confirmation-server.ts)
+// and answers CONFIRMATION_REQUIRED without one. Adding the first passkey
+// turns two-step verification on (and returns the backup codes); removing
+// the last method turns it off. Every change is limited per user, and adding
+// or removing one emails the account's address.
+//
+// The passkey plugin's own "fresh session" rule (a sign-in within a day) is
+// off for adding passkeys (packages/auth/passkey.ts): confirming it's you
+// covers it. SESSION_NOT_FRESH is still handled, should it ever come back.
 
 export type PasskeyActionResult<T = undefined> =
   | (T extends undefined ? { ok: true } : { ok: true; data: T })
@@ -52,54 +62,7 @@ const changeLimiter = createRateLimiter({
 
 const PATH = "/settings/account";
 
-interface SignedIn {
-  userId: string;
-  email: string;
-  sessionCreatedAt: Date;
-  requestHeaders: Headers;
-}
-
-async function signedIn(): Promise<SignedIn | null> {
-  const requestHeaders = await headers();
-  const session = await auth.api.getSession({ headers: requestHeaders });
-  if (!session?.user?.id) return null;
-  return {
-    userId: session.user.id,
-    email: session.user.email,
-    sessionCreatedAt: new Date(session.session.createdAt),
-    requestHeaders,
-  };
-}
-
-const reauth = () =>
-  ({
-    ok: false,
-    error: PASSKEY_MESSAGES.reauth,
-    reason: "reauth",
-  }) as const;
-
-/**
- * Signed in recently enough to add a passkey, within the limit and, with
- * two-step verification on, holding a current code (a backup code is used
- * up).
- */
-async function mayAdd(
-  twoFactorCode: string | undefined,
-): Promise<
-  { ok: true; user: SignedIn } | { ok: false; error: string; reason?: "reauth" }
-> {
-  const user = await signedIn();
-  if (!user) return { ok: false, error: PASSKEY_MESSAGES.signedOut };
-  if (!canChangeEmailNow(user.sessionCreatedAt, new Date())) return reauth();
-  if (!(await registerLimiter.limit(user.userId)).success) {
-    return { ok: false, error: PASSKEY_MESSAGES.rateLimited };
-  }
-  if (await twoFactorEnabledFor(user.userId)) {
-    const check = await checkCurrentCode(user, twoFactorCode ?? "");
-    if (!check.ok) return { ok: false, error: check.error };
-  }
-  return { ok: true, user };
-}
+const confirmed = () => confirmedSession(PASSKEY_MESSAGES.signedOut);
 
 function failed(error: unknown, action: string) {
   const known = registrationFailure(error);
@@ -115,28 +78,24 @@ function failed(error: unknown, action: string) {
   return { ok: false as const, error: PASSKEY_MESSAGES.failed };
 }
 
-const optionsSchema = z
-  .object({ twoFactorCode: z.string().max(64).optional().catch("") })
-  .optional();
-
 /**
  * Step 1 of adding a passkey: the options for the browser's passkey prompt.
- * The challenge goes into a signed, short-lived cookie for step 2. With
- * two-step verification on, the code is checked here, before the browser
- * prompt: step 2 only works with this step's challenge (used once, for this
- * user, minutes long), and this action is the only way to get one.
+ * The challenge goes into a signed, short-lived cookie for step 2, which
+ * only works with this step's challenge (used once, for this user, minutes
+ * long).
  */
-export async function passkeyRegistrationOptions(
-  input?: unknown,
-): Promise<PasskeyActionResult<Record<string, unknown>>> {
-  const parsed = optionsSchema.safeParse(input);
-  if (!parsed.success) return { ok: false, error: PASSKEY_MESSAGES.failed };
+export async function passkeyRegistrationOptions(): Promise<
+  PasskeyActionResult<Record<string, unknown>>
+> {
   try {
-    const allowed = await mayAdd(parsed.data?.twoFactorCode);
+    const allowed = await confirmed();
     if (!allowed.ok) return allowed;
+    if (!(await registerLimiter.limit(allowed.session.userId)).success) {
+      return { ok: false, error: PASSKEY_MESSAGES.rateLimited };
+    }
     const { headers: responseHeaders, response } =
       await auth.api.generatePasskeyRegistrationOptions({
-        headers: allowed.user.requestHeaders,
+        headers: allowed.session.requestHeaders,
         returnHeaders: true,
       });
     const jar = await cookies();
@@ -154,26 +113,36 @@ const verifySchema = z.object({
   name: z.string().max(500).optional(),
 });
 
+export interface AddedPasskey {
+  id: string;
+  /**
+   * Adding it turned two-step verification on: the new backup codes, shown
+   * once. Null when it was already on.
+   */
+  backupCodes: string[] | null;
+  /** Saved, but two-step verification couldn't be turned on (try again). */
+  turnOnFailed?: boolean;
+}
+
 /** Step 2: checks the new passkey against the challenge and saves it. */
 export async function addPasskey(
   input: unknown,
-): Promise<PasskeyActionResult<{ id: string }>> {
+): Promise<PasskeyActionResult<AddedPasskey>> {
   const parsed = verifySchema.safeParse(input);
   if (!parsed.success) return { ok: false, error: PASSKEY_MESSAGES.failed };
-  let user: SignedIn;
+  let session: ConfirmableSession;
   let saved: { id: string; name?: string | null };
+  let wasOn: boolean;
   try {
-    const current = await signedIn();
-    if (!current) return { ok: false, error: PASSKEY_MESSAGES.signedOut };
-    if (!canChangeEmailNow(current.sessionCreatedAt, new Date())) {
-      return reauth();
-    }
-    user = current;
+    const allowed = await confirmed();
+    if (!allowed.ok) return allowed;
+    session = allowed.session;
+    wasOn = (await loadTwoFactorFacts(session.userId)).on;
     const name =
       normalizePasskeyName(parsed.data.name) ??
-      defaultPasskeyName(user.requestHeaders.get("user-agent"));
+      defaultPasskeyName(session.requestHeaders.get("user-agent"));
     saved = await auth.api.verifyPasskeyRegistration({
-      headers: user.requestHeaders,
+      headers: session.requestHeaders,
       body: { response: parsed.data.response, name },
     });
   } catch (error) {
@@ -182,20 +151,32 @@ export async function addPasskey(
 
   const passkeyName = saved.name ?? "Passkey";
   after(() =>
-    sendPasskeyNotice({ email: user.email, change: "added", passkeyName }),
+    sendPasskeyNotice({ email: session.email, change: "added", passkeyName }),
   );
   revalidatePath(PATH);
-  return { ok: true, data: { id: saved.id } };
+  if (wasOn) return { ok: true, data: { id: saved.id, backupCodes: null } };
+
+  // The first method: two-step verification turns on.
+  try {
+    const backupCodes = await turnOnWithPasskeys(session);
+    return { ok: true, data: { id: saved.id, backupCodes } };
+  } catch (error) {
+    logError(error as Error, { action: "account.addPasskey.turnOn" });
+    return {
+      ok: true,
+      data: { id: saved.id, backupCodes: null, turnOnFailed: true },
+    };
+  }
 }
 
 const idSchema = z.string().min(1).max(200);
 
 /** The signed-in user's passkey by id, if it's theirs. */
-async function ownPasskey(user: SignedIn, id: string) {
+async function ownPasskey(session: ConfirmableSession, id: string) {
   const passkeys = (await auth.api.listPasskeys({
-    headers: user.requestHeaders,
+    headers: session.requestHeaders,
   })) as { id: string; name?: string | null }[];
-  return passkeys.find((passkey) => passkey.id === id) ?? null;
+  return { passkey: passkeys.find((passkey) => passkey.id === id) ?? null };
 }
 
 export async function renamePasskey(
@@ -209,16 +190,17 @@ export async function renamePasskey(
     return { ok: false, error: PASSKEY_MESSAGES.invalidName };
   }
   try {
-    const user = await signedIn();
-    if (!user) return { ok: false, error: PASSKEY_MESSAGES.signedOut };
-    if (!(await changeLimiter.limit(user.userId)).success) {
+    const allowed = await confirmed();
+    if (!allowed.ok) return allowed;
+    const { session } = allowed;
+    if (!(await changeLimiter.limit(session.userId)).success) {
       return { ok: false, error: PASSKEY_MESSAGES.rateLimited };
     }
-    if (!(await ownPasskey(user, parsed.data.id))) {
+    if (!(await ownPasskey(session, parsed.data.id)).passkey) {
       return { ok: false, error: PASSKEY_MESSAGES.notFound };
     }
     await auth.api.updatePasskey({
-      headers: user.requestHeaders,
+      headers: session.requestHeaders,
       body: { id: parsed.data.id, name },
     });
   } catch (error) {
@@ -229,34 +211,44 @@ export async function renamePasskey(
   return { ok: true };
 }
 
+/**
+ * Removes a passkey. When it's the last method of two-step verification (no
+ * other passkey, no authenticator app), two-step verification turns off too;
+ * the dialog says so first.
+ */
 export async function removePasskey(
   input: unknown,
-): Promise<PasskeyActionResult> {
+): Promise<PasskeyActionResult<{ turnedOff: boolean }>> {
   const parsed = z.object({ id: idSchema }).safeParse(input);
   if (!parsed.success) return { ok: false, error: PASSKEY_MESSAGES.notFound };
-  let user: SignedIn;
+  let session: ConfirmableSession;
   let passkeyName: string;
+  let turnsOff: boolean;
   try {
-    const current = await signedIn();
-    if (!current) return { ok: false, error: PASSKEY_MESSAGES.signedOut };
-    user = current;
-    if (!(await changeLimiter.limit(user.userId)).success) {
+    const allowed = await confirmed();
+    if (!allowed.ok) return allowed;
+    session = allowed.session;
+    if (!(await changeLimiter.limit(session.userId)).success) {
       return { ok: false, error: PASSKEY_MESSAGES.rateLimited };
     }
-    const passkey = await ownPasskey(user, parsed.data.id);
+    const { passkey } = await ownPasskey(session, parsed.data.id);
     if (!passkey) return { ok: false, error: PASSKEY_MESSAGES.notFound };
     passkeyName = normalizePasskeyName(passkey.name) ?? "Passkey";
     await auth.api.deletePasskey({
-      headers: user.requestHeaders,
+      headers: session.requestHeaders,
       body: { id: parsed.data.id },
     });
+    // Counted again after the delete, so two removals at once (or the app
+    // removed meanwhile) can't leave it on with no method.
+    turnsOff = await turnOffIfNoMethodLeft(session.userId);
   } catch (error) {
     logError(error as Error, { action: "account.removePasskey" });
     return { ok: false, error: PASSKEY_MESSAGES.failed };
   }
   after(() =>
-    sendPasskeyNotice({ email: user.email, change: "removed", passkeyName }),
+    sendPasskeyNotice({ email: session.email, change: "removed", passkeyName }),
   );
+  if (turnsOff) after(() => sendTwoFactorNotice("off", session.email));
   revalidatePath(PATH);
-  return { ok: true };
+  return { ok: true, data: { turnedOff: turnsOff } };
 }

@@ -8,21 +8,12 @@
  * 2. They enter the code and the change takes effect. The old address gets a
  *    notice, with no link that undoes it.
  *
- * Only a session signed in within the last day may do this, so an old stolen
- * cookie can't move the account. An address that already belongs to another
- * account never gets a code: Better Auth answers as if it sent one, so the
- * form doesn't reveal which addresses have accounts, and the confirming step
- * checks again.
+ * Both steps need a recent "Confirm it's you" (./confirmation-server.tsx), so
+ * an old stolen cookie can't move the account. An address that already
+ * belongs to another account never gets a code: Better Auth answers as if it
+ * sent one, so the form doesn't reveal which addresses have accounts, and
+ * the confirming step checks again.
  */
-
-/** Signed in this recently (Better Auth's own "fresh session" age). */
-export const EMAIL_CHANGE_RECENT_SIGN_IN_MS = 24 * 60 * 60 * 1000;
-
-export function canChangeEmailNow(sessionCreatedAt: Date, now: Date): boolean {
-  return (
-    now.getTime() - sessionCreatedAt.getTime() <= EMAIL_CHANGE_RECENT_SIGN_IN_MS
-  );
-}
 
 /** RFC 5321's limit on an address. */
 export const MAX_EMAIL_LENGTH = 254;

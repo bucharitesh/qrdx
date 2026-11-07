@@ -1,10 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
-  canChangeEmailNow,
   confirmFailure,
   deliverEmailChangedNotice,
   EMAIL_CHANGE_MESSAGES,
-  EMAIL_CHANGE_RECENT_SIGN_IN_MS,
   isSameEmail,
   type NoticeDeliveryDeps,
   normalizeEmail,
@@ -18,32 +16,6 @@ const apiError = (statusCode: number, body: Record<string, string>) =>
     statusCode,
     body,
   });
-
-describe("canChangeEmailNow", () => {
-  const now = new Date("2026-11-01T12:00:00Z");
-
-  it("allows a session signed in within the last day", () => {
-    expect(canChangeEmailNow(new Date("2026-11-01T11:59:00Z"), now)).toBe(true);
-    expect(
-      canChangeEmailNow(
-        new Date(now.getTime() - EMAIL_CHANGE_RECENT_SIGN_IN_MS),
-        now,
-      ),
-    ).toBe(true);
-  });
-
-  it("asks an older session to sign in again", () => {
-    expect(
-      canChangeEmailNow(
-        new Date(now.getTime() - EMAIL_CHANGE_RECENT_SIGN_IN_MS - 1),
-        now,
-      ),
-    ).toBe(false);
-    expect(canChangeEmailNow(new Date("2026-10-20T12:00:00Z"), now)).toBe(
-      false,
-    );
-  });
-});
 
 describe("addresses", () => {
   it("compares addresses ignoring case and surrounding spaces", () => {

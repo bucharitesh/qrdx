@@ -27,10 +27,12 @@ import {
   SSO_UNUSED_PATHS,
   ssoGate,
   ssoOptions,
+  validateSsoUserInfo,
 } from "./ee/sso";
 import { eeLicensed } from "./ee-license";
 import { sendVerificationOTP } from "./email-otp";
 import { keys } from "./keys";
+import { newSignIn } from "./new-sign-in";
 import {
   PASSKEY_SIGN_IN_OPTIONS_PATH,
   PASSKEY_SIGN_IN_PATH,
@@ -45,10 +47,13 @@ import {
   BACKUP_CODE_COUNT,
   CHALLENGE_CONTINUE_PATH,
   generateBackupCodes,
+  PASSKEY_STEP_OPTIONS_PATH,
+  PASSKEY_STEP_VERIFY_PATH,
   SERVER_ONLY_TWO_FACTOR_PATHS,
   TOTP_DIGITS,
   TOTP_PERIOD_SECONDS,
   TRUST_DEVICE_DAYS,
+  TWO_FACTOR_METHODS_PATH,
   UNUSED_TWO_FACTOR_PATHS,
 } from "./sign-in-challenge-rules";
 import { signInMethodForPath } from "./sign-in-method";
@@ -179,6 +184,9 @@ export const auth = betterAuth({
       allowUnlinkingAll: true,
     },
   },
+  // Checks what an identity provider sent before an SSO sign-in creates,
+  // links or signs in an account (./ee/sso.ts). Other methods pass.
+  user: ssoLicensed ? { validateUserInfo: validateSsoUserInfo } : undefined,
   // Codes live in the core `verification` table. Identifiers hold addresses
   // ("sign-in-otp-<email>", "change-email-otp-<old>-<new>"), so they are
   // hashed like the codes themselves.
@@ -324,9 +332,15 @@ export const auth = betterAuth({
     }),
     // Sign-in security (packages/database/manual-sql/0019_sign_in_security.sql).
     // Two-step verification (Lane A): the plugin, then the challenge after
-    // every session-creating endpoint (./sign-in-challenge.ts).
+    // every session-creating endpoint (./sign-in-challenge.ts), answered with
+    // a code or a passkey (same relying party as the passkey plugin below).
     twoFactorPlugin,
-    signInChallenge(twoFactorPlugin),
+    signInChallenge(twoFactorPlugin, {
+      relyingParty: passkeyRelyingParty({
+        BETTER_AUTH_URL: process.env.BETTER_AUTH_URL,
+        NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+      }),
+    }),
     // Passkeys: rpID and origin from the app's URL (./passkey-rp.ts), user
     // verification required, sign-in options and registration rules in
     // ./passkey.ts.
@@ -343,6 +357,9 @@ export const auth = betterAuth({
     // (above). ./ee/sso.ts adds QRdx's checks (plan, verified domain, who
     // joins the workspace).
     ...(ssoLicensed ? [sso(ssoOptions), ssoGate()] : []),
+    // New sign-in alerts (./new-sign-in.ts). Last, so it sees each sign-in
+    // after the challenge has had its say.
+    newSignIn(),
   ],
   // The admin panel does not use impersonation or password resets; keep them off the HTTP surface.
   disabledPaths: [
@@ -376,12 +393,18 @@ export const auth = betterAuth({
       // the account for 15 minutes.
       "/two-factor/verify-totp": { window: 10, max: 3 },
       "/two-factor/verify-backup-code": { window: 10, max: 3 },
+      // A passkey as the second step: checked like a code (the same
+      // attempts and lockout), so limited like one. The page asks which
+      // methods the person has once, and for a passkey challenge on each try.
+      [PASSKEY_STEP_VERIFY_PATH]: { window: 10, max: 3 },
+      [PASSKEY_STEP_OPTIONS_PATH]: { window: 60, max: 10 },
+      [TWO_FACTOR_METHODS_PATH]: { window: 60, max: 20 },
       // A SAML sign-in by a 2FA user passes through here once (a GET after
       // the IdP's POST); it checks no codes, only signed cookies, and a
       // whole office signs in from one address, so it's as loose as the ACS.
       [CHALLENGE_CONTINUE_PATH]: { window: 60, max: 120 },
-      // Passkeys: the sign-in panel asks for a challenge when it opens (for
-      // autofill) and again for the button; each sign-in verifies once.
+      // Passkeys: the sign-in panel's button asks for a challenge, and each
+      // sign-in verifies once.
       [PASSKEY_SIGN_IN_OPTIONS_PATH]: { window: 60, max: 20 },
       [PASSKEY_SIGN_IN_PATH]: { window: 60, max: 10 },
       // Starting an SSO sign-in, and the IdP's return (licensed servers

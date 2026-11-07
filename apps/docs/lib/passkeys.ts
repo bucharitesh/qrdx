@@ -8,8 +8,8 @@ import {
  * Where passkeys can be offered. The deployment's URL decides whether they
  * work at all (the "passkeys" feature, lib/feature-availability-rules.ts);
  * the page's own origin decides whether they work on this page, since a
- * passkey only signs in on the origin it belongs to (a Vercel preview URL
- * isn't qrdx.dev). Client-safe: NEXT_PUBLIC_APP_URL is inlined at build,
+ * passkey only signs in on the origin it belongs to (a preview deployment's
+ * URL isn't qrdx.dev). Client-safe: NEXT_PUBLIC_APP_URL is inlined at build,
  * and the feature rule already requires BETTER_AUTH_URL to agree with it.
  */
 export function appRelyingParty(): PasskeyRelyingParty | null {
