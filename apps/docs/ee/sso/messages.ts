@@ -36,7 +36,3 @@ export function ssoSignInErrorMessage(
       return "Single sign-on didn't work. Try again, or sign in another way.";
   }
 }
-
-/** Shown on the settings page and in the docs. */
-export const SSO_REAUTH_MESSAGE =
-  "For your security, sign out and sign in again, then change single sign-on within a day.";

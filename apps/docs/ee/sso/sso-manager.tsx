@@ -1,6 +1,5 @@
 "use client";
 
-import { authClient } from "@repo/auth/client";
 import {
   SSO_JOIN_ROLES,
   type SsoJoinRole,
@@ -66,7 +65,6 @@ import {
   verifySso,
 } from "@/ee/sso/actions";
 import type { SsoConnectionView, SsoOverview } from "@/ee/sso/connections";
-import { SSO_REAUTH_MESSAGE } from "@/ee/sso/messages";
 
 const PROTOCOL_NAMES = { oidc: "OIDC", saml: "SAML" } as const;
 
@@ -179,26 +177,6 @@ function ErrorLine({ error }: { error: string | null }) {
   );
 }
 
-/** The existing "sign in again" step (Settings → Profile & security). */
-function ReauthNotice() {
-  const router = useRouter();
-  return (
-    <div className="bg-muted/40 flex flex-wrap items-center justify-between gap-3 rounded-lg border p-4">
-      <p className="text-sm text-pretty">{SSO_REAUTH_MESSAGE}</p>
-      <Button
-        onClick={async () => {
-          await authClient.signOut().catch(() => {});
-          router.push("/sign-in");
-        }}
-        className="max-sm:h-10"
-        size="sm"
-      >
-        Sign out
-      </Button>
-    </div>
-  );
-}
-
 type Reporter = <T>(result: SsoActionResult<T>) => T | null;
 
 function SetupCard({
@@ -252,7 +230,7 @@ function SetupCard({
       );
       if (result === null) return;
       if (!result.success) {
-        if (!result.error.reauth) setError(result.error.message);
+        setError(result.error.message);
         report(result);
         return;
       }
@@ -482,8 +460,7 @@ function UpdateDialog({
       );
       if (result === null) return;
       if (!result.success) {
-        if (!result.error.reauth) setError(result.error.message);
-        else onOpenChange(false);
+        setError(result.error.message);
         report(result);
         return;
       }
@@ -581,7 +558,7 @@ function ConnectionCard({
       setRemoving(false);
       if (result === null) return;
       if (!result.success) {
-        if (!result.error.reauth) toast.error(result.error.message);
+        toast.error(result.error.message);
         report(result);
         return;
       }
@@ -837,14 +814,8 @@ function JoinRoleCard({
 /** Settings → Single sign-on, below the header. */
 export function SsoManager({ overview }: { overview: SsoOverview }) {
   const { connection, canManage, allowed, joinRole, draft } = overview;
-  // Setting up needs a recent sign-in: say so before the form is filled in.
-  const [needsReauth, setNeedsReauth] = useState(
-    canManage && !connection && !overview.recentSignIn,
-  );
-
   const report: Reporter = (result) => {
     if (result.success) return result.data;
-    if (result.error.reauth) setNeedsReauth(true);
     return null;
   };
 
@@ -859,7 +830,6 @@ export function SsoManager({ overview }: { overview: SsoOverview }) {
     return (
       <ConfirmIdentityProvider>
         <div className="space-y-6">
-          {needsReauth && <ReauthNotice />}
           <SetupCard draft={draft} report={report} />
         </div>
       </ConfirmIdentityProvider>
@@ -869,7 +839,6 @@ export function SsoManager({ overview }: { overview: SsoOverview }) {
   return (
     <ConfirmIdentityProvider>
       <div className="space-y-6">
-        {needsReauth && <ReauthNotice />}
         <ConnectionCard
           allowed={allowed}
           canManage={canManage}
