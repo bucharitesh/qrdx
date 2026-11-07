@@ -1,7 +1,7 @@
 ---
 title: Cookie Policy
 description: Every cookie and browser storage item QRdx uses, what it is for, how long it lasts, and how to change your choices.
-lastUpdated: 2026-11-01
+lastUpdated: 2026-11-07
 ---
 
 import { CookieSettingsButton } from "@/components/consent/cookie-settings-button";
@@ -39,6 +39,10 @@ On your first visit to qrdx.dev we ask which optional categories you allow. Noth
 | `better-auth.session_token` (named `__Secure-better-auth.session_token` over HTTPS) | QRdx | Keeps you signed in | 7 days, renewed while you use QRdx | Necessary |
 | `better-auth.state` | QRdx | Protects signing in with Google or GitHub against forged requests | 5 minutes | Necessary |
 | `better-auth.last_used_login_method` | QRdx | Remembers whether you last signed in with Google or GitHub | 30 days | Necessary |
+| `better-auth.two_factor` (named `__Secure-better-auth.two_factor` over HTTPS) | QRdx | Holds a sign-in that's waiting for its second step (passkey, authenticator code or backup code) | 10 minutes | Necessary |
+| `better-auth.trust_device` (named `__Secure-better-auth.trust_device` over HTTPS) | QRdx | Remembers that you chose "Don't ask again on this device", so this browser skips the second step | 30 days | Necessary |
+| `better-auth.better-auth-passkey` (named `__Secure-better-auth.better-auth-passkey` over HTTPS) | QRdx | Holds the one-time challenge while you use or add a passkey | 5 minutes | Necessary |
+| `qrdx_device` | QRdx | Recognises this browser, so a sign-in from a browser your account hasn't used is emailed to you. Only a fingerprint of it (a hash) is stored on our servers. | 400 days | Necessary |
 | `<integration>_oauth_state` and `<integration>_code_verifier` | QRdx | Secure the step where you connect an integration such as Dub or Google Drive | 10 minutes | Necessary |
 | `qrdx_currency` | QRdx | Remembers the currency you chose on the pricing page | 1 year | Necessary |
 | `c15t` | QRdx | Remembers your cookie choices | Up to 12 months | Necessary |
@@ -65,6 +69,8 @@ These items stay in your browser (localStorage, sessionStorage or IndexedDB). Th
 | `qrdx:page-draft:<page>` | Unsaved changes to a hosted page you're editing |
 | `qrdx-scanner` (IndexedDB) and `qrdx-scan-history` | The QR scanner's history (up to 500 entries) and whether it's on |
 | `qrdx:mcp-client` | Which MCP client you picked on the MCP page |
+| `qrdx:second-step` | Which second step you used last when signing in (passkey or authenticator code), so it opens first next time |
+| `qrdx:confirm-method` | Which method you used last to confirm it's you, so it opens first next time |
 | `qrdx:sound` | Whether interface sounds are muted. Sounds are on by default. |
 | `qrdx:halloween-2026:hidden` | That you closed the seasonal banner |
 | `qrdx:season-override` (sessionStorage) | A seasonal theme preview, for this tab only |

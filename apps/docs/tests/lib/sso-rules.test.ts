@@ -298,6 +298,29 @@ describe("what the identity provider sends", () => {
     }
   });
 
+  it("checks addresses quickly and the same way as before", () => {
+    for (const ok of ["a@b.co", "a.b@c.d.e", "  a@b.co  ", "a@b..c"]) {
+      expect(looksLikeEmail(ok), ok).toBe(true);
+    }
+    for (const bad of [
+      "a@b",
+      "a@.b",
+      "a@b.",
+      "@b.co",
+      "a@@b.co",
+      "a@b@c.co",
+      "a b@c.co",
+      `${"a".repeat(250)}@b.co`,
+    ]) {
+      expect(looksLikeEmail(bad), bad).toBe(false);
+    }
+    const hostile = `a@${".".repeat(200_000)}`;
+    const started = performance.now();
+    expect(looksLikeEmail(hostile)).toBe(false);
+    expect(looksLikeEmail(`a@b${".a".repeat(100_000)}`)).toBe(false);
+    expect(performance.now() - started).toBeLessThan(50);
+  });
+
   it("names a SAML user from the common attribute names, never the NameID", () => {
     expect(samlPersonName({ givenName: "Ivy", surname: "Mapped" })).toBe(
       "Ivy Mapped",
