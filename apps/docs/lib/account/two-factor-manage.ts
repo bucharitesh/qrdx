@@ -109,12 +109,21 @@ const refresh = () => revalidatePath("/settings/account");
  * Two-step verification on, with passkeys as the method: a `two_factor` row
  * for the backup codes and the attempts counter, with no authenticator
  * secret (two-factor-methods.ts), then the switch. Returns the backup codes,
- * shown once. The session stays as it is. Call only when it's off and the
- * account has a passkey.
+ * shown once, or null when it was already on by now (an authenticator app
+ * confirmed in another tab meanwhile: its row is left alone). The session
+ * stays as it is. Call only when the account has a passkey.
  */
 export async function turnOnWithPasskeys(
   session: Pick<ConfirmableSession, "userId" | "email" | "requestHeaders">,
-): Promise<string[]> {
+): Promise<string[] | null> {
+  // Read again right before replacing the row: the caller's check may be
+  // stale, and a confirmed authenticator app must never be wiped.
+  const [current] = await db
+    .select({ on: userTable.twoFactorEnabled })
+    .from(userTable)
+    .where(eq(userTable.id, session.userId))
+    .limit(1);
+  if (current?.on) return null;
   // An authenticator setup that was started and never confirmed is replaced.
   await db.delete(twoFactor).where(eq(twoFactor.userId, session.userId));
   // The plugin makes the row and the codes (encrypted as it reads them).
@@ -180,6 +189,8 @@ export async function turnOnWithExistingPasskey(
     const check = await verifyOwnPasskey(session, parsed.data.response);
     if (!check.ok) return check;
     const backupCodes = await turnOnWithPasskeys(session);
+    // Turned on in another tab meanwhile: nothing more to do here.
+    if (backupCodes === null) return fail(MESSAGES.alreadyOn);
     refresh();
     return { ok: true, backupCodes };
   } catch (error) {
@@ -329,6 +340,21 @@ export async function confirmAuthenticatorSetup(
 }
 
 /**
+ * After a method is removed: when two-step verification is on but neither a
+ * passkey nor the authenticator app is left (two removals at once, from two
+ * tabs), it's turned off cleanly instead of being left on with backup codes
+ * only. True when it turned it off.
+ */
+export async function turnOffIfNoMethodLeft(userId: string): Promise<boolean> {
+  const facts = await loadTwoFactorFacts(userId);
+  if (!facts.on || facts.passkeys > 0 || hasAuthenticatorApp(facts.row)) {
+    return false;
+  }
+  await resetTwoFactor(userId);
+  return true;
+}
+
+/**
  * Removes the authenticator app. With a passkey left, two-step verification
  * stays on (the secret is blanked; the backup codes keep working); as the
  * last method, it turns off.
@@ -352,6 +378,12 @@ export async function removeAuthenticatorApp(): Promise<
         .update(twoFactor)
         .set({ secret: NO_AUTHENTICATOR_SECRET, verified: false })
         .where(eq(twoFactor.userId, session.userId));
+      // The last passkey may have been removed meanwhile (another tab).
+      if (await turnOffIfNoMethodLeft(session.userId)) {
+        notify("off", session.email);
+        refresh();
+        return { ok: true, turnedOff: true };
+      }
       notify("app-removed", session.email);
       refresh();
       return { ok: true, turnedOff: false };

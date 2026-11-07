@@ -1080,6 +1080,35 @@ describe("removing the last passkey", () => {
     expect(fakeDb.find("user", { id: USER })?.twoFactorEnabled).toBe(true);
   });
 
+  it("two removals at once can't leave it on with no method", async () => {
+    account({ on: true, passkeys: 2 });
+    await confirmNow();
+    const results = await Promise.all([
+      passkeyActions.removePasskey({ id: "pk_1" }),
+      passkeyActions.removePasskey({ id: "pk_2" }),
+    ]);
+    expect(results.every((result) => result.ok)).toBe(true);
+    expect(fakeDb.rows("passkey")).toHaveLength(0);
+    expect(fakeDb.find("user", { id: USER })?.twoFactorEnabled).toBe(false);
+    expect(fakeDb.rows("twoFactor")).toHaveLength(0);
+  });
+
+  it("an app confirmed in another tab is never wiped by a first passkey", async () => {
+    // addPasskey read "off"; meanwhile the app was confirmed and it's on.
+    account({ on: true, app: true, passkeys: 1 });
+    expect(
+      await manage.turnOnWithPasskeys({
+        userId: USER,
+        email: EMAIL,
+        requestHeaders: new Headers(),
+      }),
+    ).toBeNull();
+    expect(fakeDb.find("twoFactor", { userId: USER })).toMatchObject({
+      secret: "enc-secret-0",
+    });
+    expect(state.calls).not.toContain("enable");
+  });
+
   it("with it off, just removes the passkey", async () => {
     account({ passkeys: 1 });
     await confirmNow();
