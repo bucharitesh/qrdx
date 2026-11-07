@@ -112,7 +112,8 @@ export const CHALLENGE_COMPLETION_PATHS: readonly string[] = [
 
 /**
  * The app's own 2FA management calls (auth.api from Settings, after its own
- * checks: a recent sign-in or a current code) that can make a new session
+ * checks: the person confirmed it's you, apps/docs/lib/account/
+ * confirmation-server.tsx) that can make a new session
  * for someone with 2FA on. Called server-side, these aren't challenged. Any
  * other server-side call that makes a session is: a server action that
  * signs someone in gets no way around the code.
@@ -130,7 +131,7 @@ export const UNUSED_TWO_FACTOR_PATHS: readonly string[] = [
 
 /**
  * Off over HTTP; only the app's server actions call them, through auth.api,
- * after a recent sign-in or a current code (Settings → Profile & security).
+ * after the person confirms it's you (Settings → Profile & security).
  */
 export const SERVER_ONLY_TWO_FACTOR_PATHS: readonly string[] = [
   "/two-factor/enable",

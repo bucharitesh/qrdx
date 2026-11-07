@@ -18,16 +18,12 @@ import {
   registrationFailure,
 } from "@/lib/account/passkeys";
 import { sendPasskeyNotice } from "@/lib/account/passkeys-server";
-import { turnOnWithPasskeys } from "@/lib/account/two-factor-manage";
 import {
-  hasAuthenticatorApp,
-  removalTurnsOff,
-} from "@/lib/account/two-factor-methods";
+  turnOffIfNoMethodLeft,
+  turnOnWithPasskeys,
+} from "@/lib/account/two-factor-manage";
 import { sendTwoFactorNotice } from "@/lib/account/two-factor-notice-server";
-import {
-  loadTwoFactorFacts,
-  resetTwoFactor,
-} from "@/lib/account/two-factor-server";
+import { loadTwoFactorFacts } from "@/lib/account/two-factor-server";
 import { logError } from "@/lib/shared";
 
 // Settings → Profile & security → Two-step verification → Passkeys. Better
@@ -39,9 +35,9 @@ import { logError } from "@/lib/shared";
 // the last method turns it off. Every change is limited per user, and adding
 // or removing one emails the account's address.
 //
-// The passkey plugin also refuses to add a passkey from a session older than
-// a day (its own "fresh session" rule, SESSION_NOT_FRESH): that answer asks
-// the person to sign in again.
+// The passkey plugin's own "fresh session" rule (a sign-in within a day) is
+// off for adding passkeys (packages/auth/passkey.ts): confirming it's you
+// covers it. SESSION_NOT_FRESH is still handled, should it ever come back.
 
 export type PasskeyActionResult<T = undefined> =
   | (T extends undefined ? { ok: true } : { ok: true; data: T })
@@ -237,21 +233,14 @@ export async function removePasskey(
     }
     const { passkey } = await ownPasskey(session, parsed.data.id);
     if (!passkey) return { ok: false, error: PASSKEY_MESSAGES.notFound };
-    const facts = await loadTwoFactorFacts(session.userId);
-    turnsOff = removalTurnsOff(
-      {
-        on: facts.on,
-        authenticatorApp: hasAuthenticatorApp(facts.row),
-        passkeys: facts.passkeys,
-      },
-      "passkey",
-    );
     passkeyName = normalizePasskeyName(passkey.name) ?? "Passkey";
     await auth.api.deletePasskey({
       headers: session.requestHeaders,
       body: { id: parsed.data.id },
     });
-    if (turnsOff) await resetTwoFactor(session.userId);
+    // Counted again after the delete, so two removals at once (or the app
+    // removed meanwhile) can't leave it on with no method.
+    turnsOff = await turnOffIfNoMethodLeft(session.userId);
   } catch (error) {
     logError(error as Error, { action: "account.removePasskey" });
     return { ok: false, error: PASSKEY_MESSAGES.failed };

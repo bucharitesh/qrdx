@@ -15,18 +15,6 @@
  * the confirming step checks again.
  */
 
-/**
- * Signed in this recently (Better Auth's own "fresh session" age). Workspace
- * SSO changes (ee/sso/connections.ts) still use this rule.
- */
-export const EMAIL_CHANGE_RECENT_SIGN_IN_MS = 24 * 60 * 60 * 1000;
-
-export function canChangeEmailNow(sessionCreatedAt: Date, now: Date): boolean {
-  return (
-    now.getTime() - sessionCreatedAt.getTime() <= EMAIL_CHANGE_RECENT_SIGN_IN_MS
-  );
-}
-
 /** RFC 5321's limit on an address. */
 export const MAX_EMAIL_LENGTH = 254;
 
