@@ -9,9 +9,8 @@
 //   new          another browser signs in: the alert, with its device, place,
 //                address, time in the place's zone and how it signed in (geo
 //                headers set as the hosting platform would)
-//   throttle     a third new browser within ALERT_GAP_MINUTES of that alert
-//                signs in and is recorded, without a second alert
-//   notices      a second account (no alert yet, so not throttled) turns
+//   every        a third new browser straight after is alerted too
+//   notices      a second account turns
 //                two-step verification on (Confirm it's you with an emailed
 //                code, then the stepper's authenticator app): its notice is
 //                logged and it isn't counted as a sign-in
@@ -380,25 +379,21 @@ async function main() {
     );
     check("the sender logged it (dev doesn't email)", true);
 
-    // ── throttle: one alert per account every ALERT_GAP_MINUTES ──
+    // ── every: each new browser is alerted, even straight after another ──
     const third = await newBrowser();
     pages.push(third);
     since = logSize();
     await emailCodeSignIn(third);
     await landedOn(third, "/dashboard");
-    await waitForLogLine(
-      /"event":"auth\.new_sign_in","outcome":"throttled"/,
-      since,
-    );
+    const [, thirdSummary] = await waitForLogLine(ALERT, since);
     check(
-      "a third new browser within 10 minutes: signed in and recorded, no second alert",
+      "a third new browser straight after is alerted too",
       (await signedInEmail(third)) === EMAIL &&
-        Boolean(await deviceCookie(third)) &&
-        !ALERT.test(logSince(since)),
+        Boolean(await deviceCookie(third)),
+      thirdSummary,
     );
 
     // ── notices: a second account turns on two-step verification ──
-    // It has had no alert, so its challenged sign-in below isn't throttled.
     const twoStepFirst = await newBrowser();
     pages.push(twoStepFirst);
     since = logSize();

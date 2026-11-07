@@ -8,7 +8,6 @@ import { createHash, createHmac } from "node:crypto";
 import { realpathSync } from "node:fs";
 import path from "node:path";
 import {
-  ALERT_GAP_MINUTES,
   ALERTS_PER_DAY,
   DEVICE_COOKIE,
   MAX_KNOWN_DEVICES,
@@ -419,7 +418,7 @@ describe("new sign-in alerts", () => {
     expect(devicesOf("saml@qrdx.test")).toHaveLength(1);
   });
 
-  it("sends at most one alert per account every 10 minutes, and 10 a day", async () => {
+  it("alerts every new browser, up to 10 a day per account", async () => {
     const email = "burst@qrdx.test";
     await firstDevice(email);
     const minutesAgo = (minutes: number) =>
@@ -431,22 +430,18 @@ describe("new sign-in alerts", () => {
     const marked = devicesOf(email).filter((d) => d.alertedAt);
     expect(marked).toHaveLength(1);
 
-    // Another one straight after: recorded, but no second email.
+    // Another new one straight after is alerted too (no quiet window an
+    // intruder could hide in).
     const quick = new Browser(auth.handler);
     expect((await emailCodeSignIn(quick, email)).status).toBe(200);
-    expect(alerts).toHaveLength(1);
+    expect(alerts).toHaveLength(2);
     expect(devicesOf(email)).toHaveLength(3);
-    // ...and it stays known, so it never alerts later either.
+    // ...and it stays known, so it doesn't alert again.
     await quick.post("/sign-out");
     await emailCodeSignIn(quick, email);
-    expect(alerts).toHaveLength(1);
-
-    // Once the gap has passed, the next new browser is alerted again.
-    marked[0].alertedAt = minutesAgo(ALERT_GAP_MINUTES + 1);
-    await emailCodeSignIn(new Browser(auth.handler), email);
     expect(alerts).toHaveLength(2);
 
-    // With the day's alerts used up, even an old-enough gap doesn't help.
+    // With the day's alerts used up, a new browser is recorded without one.
     const user = db.user.find((u) => u.email === email);
     for (let i = 0; i < ALERTS_PER_DAY; i++) {
       db.knownDevice.push({
@@ -459,13 +454,10 @@ describe("new sign-in alerts", () => {
         alertedAt: minutesAgo(60 + i),
       });
     }
-    for (const device of devicesOf(email)) {
-      if (device.alertedAt && !String(device.id).startsWith("alerted-")) {
-        device.alertedAt = minutesAgo(ALERT_GAP_MINUTES + 1);
-      }
-    }
-    await emailCodeSignIn(new Browser(auth.handler), email);
+    const late = new Browser(auth.handler);
+    expect((await emailCodeSignIn(late, email)).status).toBe(200);
     expect(alerts).toHaveLength(2);
+    expect(devicesOf(email)).toHaveLength(4 + ALERTS_PER_DAY);
   });
 
   it(`keeps an account's ${MAX_KNOWN_DEVICES} most recently seen browsers`, async () => {
