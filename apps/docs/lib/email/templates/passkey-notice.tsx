@@ -1,9 +1,11 @@
-import { Link } from "react-email";
-import { baseUrl } from "@/lib/metadata";
 import { EmailDivider, EmailHeading, EmailLayout, EmailText } from "./layout";
 import { MutedText } from "./parts";
-
-const SUPPORT_EMAIL = "support@qrdx.dev";
+import {
+  ReviewSecurityButton,
+  SecurityDetails,
+  type SecurityEventDetails,
+  SupportLink,
+} from "./security-parts";
 
 export type PasskeyChange = "added" | "removed";
 
@@ -16,18 +18,20 @@ export interface PasskeyNoticeEmailProps {
   change: PasskeyChange;
   /** The passkey's name, e.g. "Chrome on macOS" */
   passkeyName: string;
+  /** Where and when; the sender always passes it */
+  details?: SecurityEventDetails;
 }
 
 /**
- * Transactional security notice after a passkey is added or removed. The
- * only links go to the settings page and support; nothing in it changes the
- * account.
+ * Transactional security notice after a passkey is added or removed, with
+ * where and when it happened. The only links go to the security settings and
+ * support; nothing in it changes the account.
  */
 export function PasskeyNoticeEmail({
   change,
   passkeyName,
+  details,
 }: PasskeyNoticeEmailProps) {
-  const settingsUrl = new URL("/settings/account#passkeys", baseUrl).toString();
   const added = change === "added";
   return (
     <EmailLayout
@@ -43,7 +47,8 @@ export function PasskeyNoticeEmail({
         {added ? (
           <>
             The passkey <strong>{passkeyName}</strong> can now sign in to your
-            QRdx account.
+            QRdx account, and works as your second step when two-step
+            verification is on.
           </>
         ) : (
           <>
@@ -52,16 +57,13 @@ export function PasskeyNoticeEmail({
           </>
         )}
       </EmailText>
-      <EmailText>
-        If this was you, there's nothing else to do. You can see your passkeys
-        in <Link href={settingsUrl}>Profile &amp; security</Link>.
-      </EmailText>
+      <SecurityDetails details={details} />
+      <EmailText>If this was you, there's nothing else to do.</EmailText>
+      <ReviewSecurityButton />
       <EmailDivider />
       <MutedText>
         If this wasn't you, sign in and remove any passkey you don't recognise,
-        then contact support at{" "}
-        <Link href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</Link> from this
-        address.
+        then contact support at <SupportLink /> from this address.
       </MutedText>
     </EmailLayout>
   );
