@@ -11,6 +11,7 @@ import {
   SIGN_IN_CODE_SUBJECT,
   SignInCodeEmail,
 } from "@/lib/email/templates/sign-in-code";
+import { currentRequestDetails } from "@/lib/security/request-details";
 import {
   addressKey,
   addressMayRequestCode,
@@ -30,13 +31,17 @@ const perAddressDailyLimiter = createRateLimiter({
   limiter: slidingWindow(30, "1 d"),
 });
 
-/** Registered with @repo/auth in app/api/auth/[...all]/route.ts. */
+/**
+ * Registered with @repo/auth in app/api/auth/[...all]/route.ts. The email
+ * says roughly where the code was asked for, from the request's geo headers.
+ */
 export const sendSignInCode: SignInCodeSender = async ({ email, otp }) => {
   const allowed = await addressMayRequestCode(addressKey(email), [
     perAddressLimiter,
     perAddressDailyLimiter,
   ]);
   if (!allowed) throw signInCodeRateLimited();
+  const { location } = await currentRequestDetails();
   await deliverSignInCode(
     { email, otp },
     {
@@ -47,7 +52,7 @@ export const sendSignInCode: SignInCodeSender = async ({ email, otp }) => {
         sendEmail({
           to: email,
           subject: SIGN_IN_CODE_SUBJECT,
-          react: <SignInCodeEmail code={otp} />,
+          react: <SignInCodeEmail code={otp} location={location} />,
           tags: [{ name: "category", value: "sign_in_code" }],
         }),
     },

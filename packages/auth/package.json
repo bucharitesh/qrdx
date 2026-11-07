@@ -16,6 +16,7 @@
     "./passkey-rp": "./passkey-rp.ts",
     "./sign-in-method": "./sign-in-method.ts",
     "./keys": "./keys.ts",
+    "./new-sign-in": "./new-sign-in.ts",
     "./provider": "./provider.tsx",
     "./own-workspace-id": "./own-workspace-id.ts",
     "./sign-in-challenge": "./sign-in-challenge.ts",

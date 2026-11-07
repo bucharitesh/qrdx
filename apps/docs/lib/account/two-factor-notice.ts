@@ -1,7 +1,7 @@
 /**
  * The notice emailed after a two-step verification change (turned on or off,
- * new backup codes, turned off by support). Pure; the sender is
- * ./two-factor-notice-server.tsx.
+ * new backup codes, an authenticator app added or removed, turned off by
+ * support). Pure; the sender is ./two-factor-notice-server.tsx.
  */
 import type { TwoFactorNoticeKind } from "@/lib/email/templates/two-factor-notice";
 import type { NoticeDeliveryDeps } from "./email-change";
@@ -12,6 +12,8 @@ const DESCRIPTIONS: Record<TwoFactorNoticeKind, string> = {
   on: "two-step verification turned on",
   off: "two-step verification turned off",
   "backup-codes": "new backup codes",
+  "app-added": "authenticator app added",
+  "app-removed": "authenticator app removed",
   "support-off": "two-step verification turned off by support",
 };
 
