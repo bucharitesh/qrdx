@@ -30,6 +30,11 @@ import {
 } from "@/lib/auth/two-factor";
 import { isOutboundDeliveryAllowed } from "@/lib/delivery-guard";
 import { sendEmail } from "@/lib/email/send";
+import {
+  CONFIRMATION_CODE_SUBJECT,
+  ConfirmationCodeEmail,
+} from "@/lib/email/templates/confirmation-code";
+import { currentRequestDetails } from "@/lib/security/request-details";
 import { logError } from "@/lib/shared";
 import {
   CONFIRMATION_CODE_ATTEMPTS,
@@ -43,11 +48,6 @@ import {
   mailProviderFor,
   maskEmail,
 } from "./confirmation";
-import {
-  CONFIRMATION_CODE_SUBJECT,
-  ConfirmationCodeEmail,
-} from "@/lib/email/templates/confirmation-code";
-import { currentRequestDetails } from "@/lib/security/request-details";
 import { isRecentSignIn } from "./deletion";
 import { PASSKEY_MESSAGES } from "./passkeys";
 import { signInCodesAvailable } from "./reauth";
