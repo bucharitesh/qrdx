@@ -2,6 +2,7 @@ import type { CSSProperties } from "react";
 import { Section, Text } from "react-email";
 import { EmailDivider, EmailHeading, EmailLayout, EmailText } from "./layout";
 import { MutedText } from "./parts";
+import { NeverAskForCode } from "./security-parts";
 
 export const SIGN_IN_CODE_SUBJECT = "Your QRdx sign-in code";
 
@@ -46,12 +47,15 @@ export interface SignInCodeEmailProps {
   /** The 6-digit code */
   code: string;
   expiresInMinutes?: number;
+  /** Where the code was asked for, approximately ("Mumbai, India") */
+  location?: string | null;
 }
 
 /** Transactional: the one-time code for signing in with email. No links. */
 export function SignInCodeEmail({
   code,
   expiresInMinutes = 5,
+  location = null,
 }: SignInCodeEmailProps) {
   const expiry = `${expiresInMinutes} minute${expiresInMinutes === 1 ? "" : "s"}`;
   return (
@@ -60,11 +64,15 @@ export function SignInCodeEmail({
       reason="You got this email because someone asked to sign in to QRdx with this address."
     >
       <EmailHeading>Your QRdx sign-in code</EmailHeading>
+      {location ? (
+        <EmailText>Someone asked to sign in from {location}.</EmailText>
+      ) : null}
       <EmailText>Enter this code in the QRdx sign-in window:</EmailText>
       <EmailCodeBox code={code} />
       <EmailText>
         The code expires in {expiry} and works once. Don't share it with anyone.
       </EmailText>
+      <NeverAskForCode />
       <EmailDivider />
       <MutedText>
         If you didn't ask for this, ignore this email. Nobody can sign in

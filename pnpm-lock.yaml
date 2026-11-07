@@ -395,6 +395,12 @@ importers:
       '@repo/database':
         specifier: workspace:*
         version: link:../database
+      '@simplewebauthn/browser':
+        specifier: 13.3.0
+        version: 13.3.0
+      '@simplewebauthn/server':
+        specifier: 13.3.3
+        version: 13.3.3
       '@t3-oss/env-nextjs':
         specifier: ^0.13.11
         version: 0.13.11(typescript@6.0.3)(valibot@1.4.2(typescript@6.0.3))(zod@4.6.7)

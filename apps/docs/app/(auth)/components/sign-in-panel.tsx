@@ -18,6 +18,7 @@ import { siteConfig } from "@/config/site";
 import { SsoSignIn } from "@/ee/sso/sso-sign-in";
 import { EmailCodeSignIn } from "./email-code-sign-in";
 import { PasskeySignIn } from "./passkey-sign-in";
+import { SECOND_STEP_TITLES, type SecondStep } from "./second-step";
 
 const FOOTER_LINK =
   "rounded-sm transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring";
@@ -50,9 +51,10 @@ export interface SignInPanelProps {
 }
 
 /**
- * The sign-in UI itself: Google, GitHub and an email code, with "Last used"
- * and the legal footer. The dialog (auth-dialog.tsx) and the /sign-in page
- * both render it, so the two can't drift apart.
+ * The sign-in UI itself: Google, GitHub, an email code, workspace SSO and a
+ * passkey, with "Last used" and the legal footer. The dialog
+ * (auth-dialog.tsx) and the /sign-in page both render it, so the two can't
+ * drift apart.
  */
 export function SignInPanel({
   mode = "signin",
@@ -71,8 +73,10 @@ export function SignInPanel({
   // Address the email code went to (the code step), and a key to start over.
   const [codeSentTo, setCodeSentTo] = useState<string | null>(null);
   const [emailFormKey, setEmailFormKey] = useState(0);
-  // The email code was right and two-step verification asks for a code.
+  // The email code was right and two-step verification asks for a second
+  // step; which method is on screen (null while it's worked out).
   const [twoFactor, setTwoFactor] = useState(false);
+  const [secondStep, setSecondStep] = useState<SecondStep | null>(null);
   // Workspace SSO runs only on servers with a QRdx licence key.
   const ssoOffered = useAvailability().has("sso");
 
@@ -106,6 +110,7 @@ export function SignInPanel({
     window.setTimeout(() => {
       setCodeSentTo(null);
       setTwoFactor(false);
+      setSecondStep(null);
       setEmailFormKey((key) => key + 1);
     }, 300);
   };
@@ -134,7 +139,9 @@ export function SignInPanel({
         <QrdxLogoAnimation size={52} className="mb-3" />
         <Title className="text-xl font-semibold tracking-tight">
           {twoFactor
-            ? "Two-step verification"
+            ? secondStep
+              ? SECOND_STEP_TITLES[secondStep]
+              : "Two-step verification"
             : codeSentTo
               ? "Check your email"
               : isSignIn
@@ -197,16 +204,6 @@ export function SignInPanel({
         </div>
       )}
 
-      {!codeSentTo && isSignIn && (
-        <PasskeySignIn
-          disabled={busy}
-          lastUsed={lastLoginMethod === "passkey"}
-          onSignedIn={() => onSignedIn?.()}
-          redirectTo={redirectTo}
-          shown={shown}
-        />
-      )}
-
       {!codeSentTo && (
         <div className="flex items-center gap-3 px-6 py-4">
           <Separator className="flex-1" />
@@ -219,9 +216,13 @@ export function SignInPanel({
         disabled={busy}
         key={emailFormKey}
         lastUsed={lastLoginMethod === "email-otp"}
+        onSecondStepChange={setSecondStep}
         onSentToChange={setCodeSentTo}
         onSignedIn={handleEmailSignedIn}
-        onTwoFactorChange={setTwoFactor}
+        onTwoFactorChange={(active) => {
+          setTwoFactor(active);
+          if (!active) setSecondStep(null);
+        }}
         redirectTo={redirectTo}
         sentTo={codeSentTo}
       />
@@ -231,6 +232,16 @@ export function SignInPanel({
           callbackURL={callbackURL}
           disabled={busy}
           lastUsed={lastLoginMethod === "sso"}
+        />
+      )}
+
+      {/* Last in the list: a passkey signs in on its own (it counts as both steps), but only for someone who already added one. */}
+      {!codeSentTo && isSignIn && (
+        <PasskeySignIn
+          disabled={busy}
+          lastUsed={lastLoginMethod === "passkey"}
+          onSignedIn={() => onSignedIn?.()}
+          redirectTo={redirectTo}
         />
       )}
 

@@ -4,6 +4,7 @@ import { render } from "@react-email/render";
 import type { ReactElement } from "react";
 import { Resend } from "resend";
 import { isOutboundDeliveryAllowed } from "@/lib/delivery-guard";
+import { isReservedEmailAddress } from "@/lib/email/reserved-address";
 import { env } from "@/lib/env";
 
 /**
@@ -33,7 +34,11 @@ export interface SendEmailOptions {
 
 export type SendEmailResult =
   | { sent: true; id: string }
-  | { sent: false; reason: "not-configured" | "failed"; error?: string };
+  | {
+      sent: false;
+      reason: "not-configured" | "failed" | "reserved-address";
+      error?: string;
+    };
 
 function log(
   level: "info" | "error",
@@ -65,7 +70,11 @@ export async function sendEmail({
   tags,
   throwOnError = false,
 }: SendEmailOptions): Promise<SendEmailResult> {
-  const recipients = Array.isArray(to) ? to : [to];
+  const requested = Array.isArray(to) ? to : [to];
+  // Reserved test and example addresses never get email (reserved-address.ts).
+  const recipients = requested.filter(
+    (address) => !isReservedEmailAddress(address),
+  );
   const fields = { subject, recipients: recipients.length };
 
   if (!(isEmailConfigured && env.RESEND_API_KEY && env.EMAIL_FROM)) {
@@ -76,6 +85,14 @@ export async function sendEmail({
   if (!isOutboundDeliveryAllowed()) {
     log("info", "email.skipped", { ...fields, reason: "outside-production" });
     return { sent: false, reason: "not-configured" };
+  }
+  if (recipients.length === 0) {
+    log("info", "email.skipped", {
+      ...fields,
+      reason: "reserved-address",
+      skipped: requested.length,
+    });
+    return { sent: false, reason: "reserved-address" };
   }
 
   try {

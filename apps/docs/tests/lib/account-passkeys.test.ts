@@ -333,7 +333,7 @@ describe("notice email", () => {
       expect(text.toLowerCase()).toContain(
         PASSKEY_NOTICE_SUBJECTS[change].toLowerCase(),
       );
-      expect(text).toContain("/settings/account#passkeys");
+      expect(text).toContain("/settings/account#two-factor");
       expect(text).not.toContain("//settings");
       expect(text).toContain("Chrome on macOS");
       expect(text).toMatch(/If this wasn't you/);
@@ -342,7 +342,7 @@ describe("notice email", () => {
       for (const href of hrefs) {
         expect(
           href === "mailto:support@qrdx.dev" ||
-            /^https?:\/\/[^/]+(\/settings\/account#passkeys)?\/?$/.test(href),
+            /^https?:\/\/[^/]+(\/settings\/account#two-factor)?\/?$/.test(href),
           href,
         ).toBe(true);
       }

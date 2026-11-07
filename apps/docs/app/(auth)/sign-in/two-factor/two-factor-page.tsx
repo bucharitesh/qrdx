@@ -3,8 +3,13 @@
 import { Button } from "@repo/design-system/components/ui/button";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { QrdxLogoAnimation } from "@/components/qrdx-logo-animation";
 import { signInPath } from "@/lib/safe-redirect";
+import {
+  SECOND_STEP_TITLES,
+  type SecondStep,
+} from "../../components/second-step";
 import { TwoFactorChallenge } from "../../components/two-factor-challenge";
 
 /**
@@ -20,6 +25,7 @@ export function TwoFactorPage({
   pending: boolean;
 }) {
   const router = useRouter();
+  const [step, setStep] = useState<SecondStep | null>(null);
 
   return (
     <main className="bg-background flex min-h-svh flex-col items-center justify-center gap-4 px-4 py-10">
@@ -27,7 +33,11 @@ export function TwoFactorPage({
         <div className="flex flex-col items-center gap-2 px-6 pt-8 pb-6 text-center">
           <QrdxLogoAnimation className="mb-3" size={52} />
           <h1 className="text-xl font-semibold tracking-tight">
-            {pending ? "Two-step verification" : "Sign in again"}
+            {pending
+              ? step
+                ? SECOND_STEP_TITLES[step]
+                : "Two-step verification"
+              : "Sign in again"}
           </h1>
           <p className="text-muted-foreground text-sm text-pretty">
             {pending
@@ -39,6 +49,7 @@ export function TwoFactorPage({
           {pending ? (
             <TwoFactorChallenge
               onCancel={() => router.push(signInPath(next))}
+              onStepChange={setStep}
               // A full load, so every server-rendered part sees the session.
               onVerified={() => window.location.assign(next)}
             />

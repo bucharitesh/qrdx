@@ -206,7 +206,11 @@ beforeAll(async () => {
     database: memoryAdapter(db),
     rateLimit: { enabled: false },
     advanced: { disableOriginCheck: true },
-    plugins: [acsLike, twoFactorPlugin, signInChallenge(twoFactorPlugin)],
+    plugins: [
+      acsLike,
+      twoFactorPlugin,
+      signInChallenge(twoFactorPlugin, { relyingParty: null }),
+    ],
   });
 
   // Ana and Ben turn on two-step verification.
