@@ -30,10 +30,11 @@ import { signInMethodForPath } from "./sign-in-method";
 // Bounds: an account keeps its MAX_KNOWN_DEVICES most recently seen browsers
 // (each cleared cookie or private window adds one), and the daily cron
 // deletes browsers not seen for KNOWN_DEVICE_DAYS, by when their cookie has
-// expired anyway (apps/docs/lib/auth/verification-prune.ts). A burst of
-// sign-ins from new browsers sends at most one alert per account every
-// ALERT_GAP_MINUTES and ALERTS_PER_DAY a day; the others are recorded
-// without one. `alerted_at` marks the browsers that got one.
+// expired anyway (apps/docs/lib/auth/verification-prune.ts). Every new
+// browser is alerted, up to ALERTS_PER_DAY per account in 24 hours (a burst
+// of sign-ins can't flood the inbox or the email provider); past that, new
+// browsers are recorded without one. `alerted_at` marks the browsers that got
+// one.
 //
 // It never blocks or fails a sign-in: errors are logged and the sign-in goes
 // on. It must run after the challenge's hook, so it's registered after it.
@@ -42,7 +43,6 @@ export const DEVICE_COOKIE = "qrdx_device";
 // Browsers cap cookie lifetimes at 400 days.
 export const KNOWN_DEVICE_DAYS = 400;
 export const MAX_KNOWN_DEVICES = 50;
-export const ALERT_GAP_MINUTES = 10;
 export const ALERTS_PER_DAY = 10;
 const DAY_MS = 24 * 60 * 60 * 1000;
 const DEVICE_COOKIE_MAX_AGE = KNOWN_DEVICE_DAYS * 24 * 60 * 60;
@@ -203,7 +203,7 @@ async function trimKnownDevices(adapter: Adapter, userId: string) {
   });
 }
 
-/** Whether this account already had an alert too recently, or too many today. */
+/** Whether this account has had its ALERTS_PER_DAY alerts in the last 24 hours. */
 async function alertThrottled(adapter: Adapter, userId: string, now: Date) {
   const alerted = await adapter.findMany<KnownDevice>({
     model: MODEL,
@@ -217,13 +217,7 @@ async function alertThrottled(adapter: Adapter, userId: string, now: Date) {
     ],
     limit: ALERTS_PER_DAY,
   });
-  const gapStart = now.getTime() - ALERT_GAP_MINUTES * 60 * 1000;
-  return (
-    alerted.length >= ALERTS_PER_DAY ||
-    alerted.some(
-      (d) => d.alertedAt && new Date(d.alertedAt).getTime() > gapStart
-    )
-  );
+  return alerted.length >= ALERTS_PER_DAY;
 }
 
 async function recordSignIn(ctx: HookContext): Promise<void> {

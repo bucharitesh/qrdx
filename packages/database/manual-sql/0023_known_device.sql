@@ -7,7 +7,7 @@
 -- 400 days). Only its SHA-256 is stored in device_hash, never the cookie.
 -- user_agent is the browser's own description, kept to show which browser a
 -- row is; it can be null. alerted_at is set on the browsers that got an
--- alert: an account gets at most one every 10 minutes and 10 a day.
+-- alert: an account gets at most 10 in 24 hours.
 --
 -- Rows stay bounded: the plugin keeps each account's 50 most recently seen
 -- browsers, and the daily cron (apps/docs/lib/auth/verification-prune.ts)
