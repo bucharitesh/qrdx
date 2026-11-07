@@ -35,9 +35,10 @@ import type { ActiveScope } from "@/lib/scope";
 // Settings → Single sign-on. The plugin's management endpoints are off over
 // HTTP (packages/auth/ee/sso.ts SSO_SERVER_ONLY_PATHS), so these functions,
 // called by ee/sso/actions.ts and the settings page, are the only way in. Each
-// checks the QRdx role (sso.manage), the Business plan and, for changes to
-// the connection itself, a recent sign-in, before calling auth.api with the
-// person's own session (the plugin then checks owner/admin again).
+// checks the QRdx role (sso.manage) and the Business plan before calling
+// auth.api with the person's own session (the plugin then checks owner/admin
+// again). ee/sso/actions.ts asks for "Confirm it's you" before changes to the
+// connection itself.
 
 export type SsoProtocol = "oidc" | "saml";
 
@@ -339,7 +340,7 @@ export type UpdateSsoInput =
 const fail = (status: number, code: string, message: string) =>
   new HttpError(status, code, message);
 
-/** Role, plan and (for connection changes) a recent sign-in. */
+/** Role and plan. */
 async function guard(
   scope: ActiveScope,
   { needsPlan = true }: { needsPlan?: boolean } = {},

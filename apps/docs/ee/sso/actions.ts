@@ -27,7 +27,7 @@ import { logError } from "@/lib/shared";
 import { UnauthorizedError } from "@/types/errors";
 
 // Settings → Single sign-on. ee/sso/connections.ts does the checks (role,
-// Business plan, recent sign-in) and calls the plugin through auth.api.
+// Business plan) and calls the plugin through auth.api.
 // Creating, editing, verifying and removing the connection also need a
 // recent "Confirm it's you" (lib/account/confirmation-server.ts); without
 // one they answer CONFIRMATION_REQUIRED and the page asks, then retries.
