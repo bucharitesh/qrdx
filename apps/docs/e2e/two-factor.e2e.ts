@@ -1,8 +1,9 @@
 // Two-step verification end to end, in headless Chrome against a running dev
 // server and its local database (CDP, no Playwright; see ./cdp.mjs):
 //
-//   setup      sign up with an email code, turn it on in Settings (QR code,
-//              key, first code, backup codes saved)
+//   setup      sign up with an email code, turn it on in Settings ("Confirm
+//              it's you" with an emailed code, then the stepper: QR code, key,
+//              first code, backup codes saved)
 //   challenge  email-code sign-in asks for a code; a TOTP finishes it; so
 //              does one from a browser already signed in as that person
 //   wrong      5 wrong codes end the challenge ("Sign in again")
@@ -22,11 +23,13 @@
 //              GitHub can't sign in locally; their callbacks end on the same
 //              /sign-in/two-factor page.)
 //   plain      someone without 2FA is never asked
-//   manage     changing the email, new backup codes and turning it off need
-//              a current code
+//   manage     changing the email, new backup codes and turning it off ask
+//              "Confirm it's you" (an authenticator or backup code, never an
+//              emailed one)
 //   admin      an admin turns it off from the user's 360 page (audited)
-//   delete     with it on, deleting the account takes one authenticator code
-//              and emails nothing; with it off, the emailed code as before
+//   delete     with it on, deleting the account is confirmed with an
+//              authenticator code and emails nothing; with it off, with an
+//              emailed confirmation code
 //
 // It reads sign-in codes and notices from the dev server's log, so it only
 // runs against a local dev server whose output goes to E2E_DEV_LOG:
@@ -610,22 +613,28 @@ async function dialogOrMainText(page: Page) {
 }
 
 /**
- * Turns on two-step verification with an authenticator app in Settings and
- * adds a passkey (it asks for a current code). Settings' own flows, as on
- * this branch: e2e/passkeys.e2e.ts and the setup above cover them.
+ * Turns on two-step verification with an authenticator app in Settings
+ * ("Confirm it's you" with an emailed code, then the stepper) and adds a
+ * passkey, which the same confirmation still covers. Settings' own flows:
+ * e2e/passkeys.e2e.ts and the setup above cover them.
  */
 async function setUpPasskeyAccount(page: Page) {
   await page.goto(`${BASE_URL}/settings/account#two-factor`);
   await waitForText(page, "Two-step verification");
   await clickButton(page, "Turn on");
+  await confirmByEmail(page, PASSKEY_EMAIL);
+  await chooseAuthenticatorApp(page);
   await waitForText(page, "Set up your authenticator app");
+  await page.waitFor(() =>
+    Boolean(document.querySelector('[role="dialog"] code')),
+  );
   const secret = (
     (await page.evaluate(
       () => document.querySelector('[role="dialog"] code')?.textContent ?? "",
     )) as string
   ).replace(/\s+/g, "");
   await fill(page, "Code from your authenticator app", totp(secret));
-  await waitForText(page, "Save these backup codes");
+  await waitForText(page, "Save your backup codes");
   const codes = (await page.evaluate(() =>
     [...document.querySelectorAll('[aria-label="Backup codes"] li')].map(
       (li) => li.textContent?.trim() ?? "",
@@ -636,22 +645,20 @@ async function setUpPasskeyAccount(page: Page) {
     if (box) window.__e2e.click(box);
   });
   await clickInDialog(page, "Done");
-  await waitForText(page, "10 of 10 backup codes left");
+  await waitForText(page, "10 of 10 left");
 
-  await page.goto(`${BASE_URL}/settings/account`);
+  // Inside the confirmation's 10 minutes: the name step, then the prompt.
   await clickButton(page, "Add passkey");
-  await waitForText(page, "Add a passkey");
-  await page.evaluate((code: string) => {
-    const dialog = document.querySelector('[role="dialog"]');
-    const input = window.__e2e.byLabel(
-      "Code from your authenticator app, or a backup code",
-      dialog ?? undefined,
-    ) as HTMLInputElement;
-    input.focus();
-    window.__e2e.setValue(input, code);
-  }, totp(secret));
+  await page.waitFor(() =>
+    Boolean(window.__e2e.byRole("dialog", "Add a passkey")),
+  );
   await clickInDialog(page, "Continue");
-  await waitForText(page, "Passkey added");
+  await page.waitFor(() => !window.__e2e.byRole("dialog", "Add a passkey"));
+  await page.waitFor(
+    () =>
+      document.querySelectorAll('#two-factor [aria-label^="Options for"]')
+        .length === 1,
+  );
   return { secret, backupCodes: codes };
 }
 
