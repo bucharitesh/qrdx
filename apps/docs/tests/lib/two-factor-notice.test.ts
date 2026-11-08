@@ -126,6 +126,12 @@ describe("what the notices say", () => {
     expect(template.twoFactorNoticeLines("on")).toHaveLength(1);
   });
 
+  it("support's notice says every device was signed out", () => {
+    expect(template.twoFactorNoticeLines("support-off")[0]).toMatch(
+      /signed it out on every device/,
+    );
+  });
+
   it("describes each in the dev log", () => {
     expect(
       notices.describeTwoFactorNotice("backup-code-used", {

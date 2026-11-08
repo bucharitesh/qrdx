@@ -68,7 +68,7 @@ const NOTICES: Record<
   "support-off": {
     subject: "QRdx support turned off two-step verification",
     heading: "Two-step verification is off",
-    body: "QRdx support turned off two-step verification for your account. Signing in no longer asks for a second step. You can turn it on again in Settings → Profile & security.",
+    body: "QRdx support turned off two-step verification for your account and signed it out on every device. Signing in no longer asks for a second step. You can turn it on again in Settings → Profile & security.",
   },
   "backup-code-used": {
     subject: "A backup code was used on your QRdx account",

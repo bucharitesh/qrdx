@@ -95,8 +95,11 @@ export async function markEmailVerifiedAction(
 /**
  * For someone who lost their authenticator app and backup codes, once they
  * wrote to support from the account's address: two-step verification goes
- * off (secret, backup codes and trusted devices gone) and the address gets a
- * notice. They can sign in with their usual method and turn it on again.
+ * off (secret, backup codes and trusted devices gone), every session of the
+ * account is signed out (whoever might hold one has to sign in again, now
+ * without the second step, so only the address's owner should), and the
+ * address gets a notice. They can sign in with their usual method and turn
+ * it on again.
  */
 export async function resetTwoFactorAction(
   input: z.input<typeof userReason>,
@@ -112,7 +115,7 @@ export async function resetTwoFactorAction(
         .limit(1);
       if (!target) throw adminError("User not found", 404);
       if (!target.on) throw adminError("Two-step verification is already off.");
-      await resetTwoFactor(userId);
+      await resetTwoFactor(userId, { signOutEverywhere: true });
       after(() => sendTwoFactorNotice("support-off", target.email));
       return {
         audit: {

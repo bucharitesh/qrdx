@@ -1290,6 +1290,7 @@ describe("removing the last passkey", () => {
       await manage.turnOnWithPasskeys({
         userId: USER,
         email: EMAIL,
+        sessionId: SESSION,
         requestHeaders: new Headers(),
       }),
     ).toBeNull();

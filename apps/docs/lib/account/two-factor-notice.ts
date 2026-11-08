@@ -18,7 +18,8 @@ const DESCRIPTIONS: Record<TwoFactorNoticeKind, string> = {
   "backup-codes": "new backup codes",
   "app-added": "authenticator app added",
   "app-removed": "authenticator app removed",
-  "support-off": "two-step verification turned off by support",
+  "support-off":
+    "two-step verification turned off by support, every session signed out",
   "backup-code-used": "a backup code was used",
 };
 
